@@ -1,121 +1,155 @@
 # Amazon identity and variant check in Chrome (2026-10-15)
 
-**How the check was done**
-- Each listing in the review queue was opened one at a time at a plain `amazon.com/dp/<ASIN>` link with **no affiliate tag**, so the checks never count as ayna clicks.
-- For each listing I recorded the title, brand, the selected size/colour/count, Amazon's own list of sizes for that listing, the details table and the availability text.
-- **Prices were not read or saved.** Amazon images were compared by file name only; none were saved.
-- Raw findings are in `audit/chrome_amazon_findings_2026-10-15.json`. Per-row results are in the new `chrome_*` columns of `amazon_human_review.csv`. To merge again after rebuilding the CSV, run `node scripts/commerce/apply-chrome-findings.mjs`.
+**Rule:** a partner product uses its partner route. A non-partner product goes to Amazon only for the exact item and exact size/count/colour/flavour/formula/style/bundle. If Amazon has the wrong item or size, or the listing is unavailable, the product goes to the exact brand-site offer. With neither, there is no Buy button and the product is flagged for review. The closest Amazon result is never used.
 
-## Numbers
+## How the check was done
+
+- Every listing was opened at a plain `amazon.com/dp/<ASIN>` link with no affiliate tag, so the checks are not ayna clicks.
+- For each listing I recorded the title, brand, selected size/colour/count, Amazon's own variation list, the details table and the availability text.
+- **No prices were read or saved.** Images were compared by file name only.
+- Amazon searches were used only to look for an exact count. Every result I used was then opened and confirmed on its own page.
+- No CAPTCHA, login wall or block was hit, and none was bypassed.
+
+**Not used:** the team sheet `Product_Catalog_Prices` is an automated SerpApi search. Its ASINs are `UNVERIFIED_CANDIDATE_ONLY` and none were promoted. Its scraped Amazon prices are kept out of the product completely.
+
+**Prime and shipping:** Prime, free shipping and delivery dates depend on each shopper's account and address, so ayna doesn't show them.
+
+Raw data:
+- `audit/chrome_amazon_findings_2026-10-15.json`: per-listing results and the searches.
+- `audit/amazon_routing_state_2026-10-15.json`: final state per product and option, from `scripts/commerce/build-amazon-routing-report.mjs`.
+- Per-row results are in the `chrome_*` columns of `amazon_human_review.csv`.
+
+## Totals after the fixes
 
 | | Count |
 | --- | --- |
-| Distinct Amazon listings in the queue | 175 |
-| Opened and read | 159 |
-| Blocked, CAPTCHA or login wall | 0 |
-| Not checked (the browser permission check stopped the run) | 16 |
-| Exact product and exact size/count | 87 |
-| Right product, other issues flagged | 15 |
-| Wrong product, wrong brand or wrong product line | 6 |
-| Count or pack differs from what Ayna says | 40 |
-| Link pins one size/colour on a product with no size picker | 13 |
-| Formula or style differs | 6 |
-| Listing unavailable | 3 |
-| Still needs a person | 16 checked rows, the 16 unchecked listings, and the 54 options with no Amazon size |
+| Products in the catalog | 227 |
+| Products that route to Amazon for at least one option | 83 (74 when no size is chosen) |
+| Amazon listings opened | 202 (175 in the queue + 27 confirmation clicks and exact-count finds) |
+| Blocked by CAPTCHA, login or safety check | 0 |
+| Listings still unchecked | 0 |
+| Distinct Amazon listings confirmed exact and routed | 123 |
+| Options routed to their own confirmed Amazon listing | 77 |
+| Amazon routes now blocked | 38 (32 fall back to a brand or retailer page) |
+| Products with no Buy route | 18 (6 caused by these blocks, 12 from before) |
+| Amazon numeric prices shown | **0** |
+| Tests | 1,449 passing |
 
-The 16 listings not checked:
-- Silverette: Small, Medium and Large, with and without O-Feel.
-- Gaia Vitex: two sizes.
-- The six candidates for products with no Buy link: Luna, Snoogle, Seventh Generation pads, SweetSpot, Tampax Pure and Ziggy.
-- A few others.
+## Final state per product (no size chosen)
 
-They are marked `NOT_CHECKED`.
-
-## Fixed in code now
-
-These listings are the wrong item or unavailable, so they are now blocked as Buy destinations (`src/data/amazonAsinBlocks.js`, with a test). The products fall back to the brand site, and any size with its own correct Amazon listing keeps it.
-
-| Product | What the Amazon link actually opened |
+| State | Products |
 | --- | --- |
-| Inito Fertility Monitor | Inito **test strips**, pack of 30, not the monitor |
-| Willow wearable pump | Willow 360 **milk containers**, 2 count |
-| Belly Bandit Upsie Belly (no size chosen) | a **KeaBabies** belly band. The 8 Belly Bandit sizes are all correct and still go to Amazon. |
-| Saalt Menstrual Cup (no size chosen) | Saalt **Soft** cup, Mountain Iris, a line and colour Ayna doesn't list |
-| Period Co. organic cotton bikini | the **high-waisted** style, in every mapped size; size M is unavailable |
-| Thinx period underwear | **Thinx for All**, size XL, 2-pack |
-| Knix leakproof underwear | size S 3-pack, **currently unavailable** |
-| Proof period underwear | size XL, **currently unavailable**. There is no brand link on file, so it now shows no Buy button until someone adds the brand page. |
+| CONFIRMED_AND_ROUTED | 64 |
+| Routed, with an open question below | 10 |
+| CONFIRMED_BUT_BRAND_FALLBACK | 1 (Veeda: both sizes unavailable on Amazon) |
+| BLOCKED_WRONG_ITEM | 8 |
+| BLOCKED_WRONG_VARIANT | 26 |
+| BLOCKED_UNAVAILABLE | 2 |
+| NOT_CHECKED | 0 |
 
-The Amazon route now covers 102 products, down from 110.
+Per option: 77 confirmed and routed to Amazon; 53 go to the exact brand or retailer option because Amazon has no exact match; 2 are blocked as unavailable (Veeda); 6 are routed with an open question.
 
-## Recommended catalog corrections (not applied: each needs your choice)
+### BLOCKED_WRONG_ITEM (wrong product, brand, line, flavour or formula)
 
-**Count or pack.** The Amazon item is the right product, but Ayna's text names a different count. For each one, either change Ayna's text to the Amazon count, or map the Amazon size that matches Ayna's count.
+| Product | What Amazon had | Now goes to |
+| --- | --- | --- |
+| Inito Fertility Monitor | test strips, 30-pack | inito.com |
+| Willow pump | milk containers | willowpump.com |
+| Belly Bandit (no size chosen) | KeaBabies band | bellybandit.com. The 8 sizes keep their exact listings. |
+| Saalt Cup (no size chosen) | Saalt Soft, Mountain Iris | saalt.com |
+| Period Co bikini | high-waisted style in every size | period.co |
+| Thinx | Thinx for All, XL 2-pack | thinx.com |
+| Good Clean Love "Bio-Match Moisturizer" | Restore gel | **no Buy button** (see open decisions) |
+| NOW Evening Primrose Oil | 1,000 mg, 90 softgels | **no Buy button** (see open decisions) |
 
-| Product | Ayna says | Amazon link is | Exact Amazon size for Ayna's count |
-| --- | --- | --- | --- |
-| Always Infinity FlexFoam | 18 | Size 1, 60 count | not seen |
-| Always Liners | 42 | 162 count | not seen (120 and 216 exist) |
-| AZO Cranberry (no size chosen) | 50 caplets | 100 softgels | B0012JY42I (50 caplets) |
-| AZO Cranberry "100 Caplets 2pk" | caplets | softgels | name the option "100 softgels x 2" |
-| Cora Organic Pads Regular / Super / Overnight / Extra Heavy | 32 / 30 / 28 / 20 | 36 / 36 / 36 / 24 | the counts on Amazon differ |
-| Cora Organic Tampons Regular, Reg/Super, Light/Reg | 32 each | 72 / 36 / 72 | B06XKBV8VV (36 Regular), B0742KBL83 (36 Light/Regular) |
-| L. Organic Cotton Pads | 42 | 56 | not seen |
-| Love Wellness Bye Bye Bloat | 30 capsules | 30-day supply, 60 capsules | change text to 60 capsules |
-| Nature Made Magnesium Glycinate | 60 | 180 | B08XXHCGZT (60) |
-| Nature's Bounty D3 5000 IU | 150 | 240 | B002Y27LLS (150) |
-| Nordic Naturals Omega Woman | 60 | 120 (only size listed) | change text to 120 |
-| NOW D-Mannose | 60 caps | 300 caps | not seen (120 x 3 exists) |
-| NOW Evening Primrose Oil | 100 | 90 | change text to 90 |
-| Rael Overnight Pads | 12 | 40 | not seen |
-| Rael tampons | 32 | 40 (bundle) | not seen |
-| Rael panty liners (no size chosen) | 60/40/20 options | Regular, 44 | B071YSFXMN (Regular 60) |
-| Remifemin | 60 tablets | 120 tablets | not seen |
-| Tampax Radiant | 18 | 84 (3 x 28) | B00J4YX05K (28) |
-| TENA Very Light liners | 50 | 300 | not seen |
-| ThermaCare menstrual wraps | 4 | 6 | change text to 6 |
-| U by Kotex CleanWear | 18 | 50 | not seen |
-| Intimate Rose dilators | 8-piece set | Large pack, sizes 5-8 (4 pieces) | Small B07BKB3852, Medium B07BKBY2DL; no 8-piece on this listing |
-| Lena cup (no size chosen) | one cup | 2-cup set | send no-size clicks to one cup, or say "set of 2" |
-| DivaCup Models 0/1/2 | cup | cup + DivaWash combo | say "with DivaWash" |
-| Flex Cup sizes 01/02 | cup | starter kit (cup + 2 discs) | say "starter kit" |
-| Bodyform pads | pads | 60 pads + 60 liners combo | say "combo" |
+Two narrower blocks are also in place:
+- **Ritual Prenatal Mint:** the Mint ASIN now opens Citrus. Mint goes to ritual.com, which still lists it (SKU EPREMT9MUS). Citrus stays on Amazon.
+- **AZO Cranberry "100 Caplets 2pk":** Amazon sells softgels, not caplets, so this option goes to the brand.
 
-**Size pinned on a product with no size picker.** These Amazon links open one specific size or colour, but the Ayna product doesn't let the shopper pick one. Add a size picker with each size's own Amazon listing, or send the product to the brand site:
-- Oura Ring: Heritage Black, size 11. The listing has a Sizing Kit, B0CYWC18G8.
-- Hanes period underwear: XL 3-pack.
-- Bambody: XXL 3-pack.
-- Depend Silhouette: Large.
-- TomboyX: 9-inch boxer brief, XXL.
-- VIBOOS heating pad: 24x12 Grey Green.
-- Boppy (no colour chosen): Gray Gentle Leaves.
-- LUMMA (no size chosen): Short/Unicorn.
+### BLOCKED_WRONG_VARIANT (right product, wrong count, pack, bundle or pinned size)
 
-**Different name or formula on Amazon.**
-- **Good Clean Love:** Ayna says "Bio-Match Moisturizer"; the link is "Restore Moisturizing Vaginal Gel".
-- **Ritual Prenatal Mint:** the Mint ASIN now opens the Citrus flavour, and Mint isn't on the listing.
+| Product | Ayna | Amazon had | Exact Amazon found? | Now |
+| --- | --- | --- | --- | --- |
+| Always Infinity | 18 | 60 | no (searched) | always.com |
+| Always Liners | 42 | 162 | no (searched) | always.com |
+| Cora pads, overnight pads and tampons | Target packs 32/30/28/20 | 36/72/24 | no | the exact Target pack |
+| Rael Overnight | 12 | 40 | XL Overnight 12 exists; not confirmed as the same pad | getrael.com |
+| Rael tampons | 32 | 40 bundle | no | getrael.com |
+| U by Kotex CleanWear | 18 | 50 | no (the 18-count found is "Balance", a different name) | **no Buy button** |
+| Intimate Rose dilators | 8-piece set | 4-piece pack | no | intimaterose.com |
+| Tampax Radiant | 18 | 84 | no; tampax.com lists 14/28/42 and duo 28/38/52 | tampax.com |
+| ThermaCare | 4-count (Target) | 6-count | no | brand page |
+| DivaCup Models 1 and 2 | cup | cup + DivaWash | no cup-only listing | shopdiva.com |
+| Flex Cup | cup | starter kit with 2 discs | no | flexfits.com |
+| Lena (no size chosen) | one cup | 2-cup set | each size has a single-cup listing | lenacup.com |
+| Bodyform | pads | pads + liners combo | no | bodyform.co.uk |
+| Oura (no size chosen) | ring | Heritage Black, size 11 | no size picker | **no Buy button** |
+| Hanes, Bambody, Depend, TomboyX | no size picker | one pinned size | per-size listings exist | brand page |
+| VIBOOS heating pad | one product | one pinned size/colour | no | **no Buy button** |
+| Boppy, Lumma, Estroven, Rael liners, Rael Large pads (no size chosen) | sizes or prints | one pinned option | each option has its own listing | brand page, until the shopper picks an option |
 
-**Sizes that can be filled from Amazon's own size list** (confirm with one click each; these are in `chrome_proposed_child_asin`):
-- **LUMMA:** all 9 size/colour options.
-- **Boppy:** 9 of the 22 prints. The other 13 aren't on the Amazon listing.
-- **Saalt Cup:** Himalayan Pink Regular is B079DWG2ZV; Ocean Blue Small is B079DX4242. Seafoam Green isn't on Amazon.
-- **Estroven:** the 60 option is B0D14YRD5F (30 x 2).
-- **Spearmint tea**, 1 box: B000Z94H8C.
+**Replaced with the exact Amazon listing** (each opened and confirmed):
+- AZO Cranberry 50 caplets: B0012JY42I
+- Magnesium Glycinate 60: B08XXHCGZT
+- D3 150: B002Y27LLS
+- NOW D-Mannose 60: B0C545MBRC (NOW SKU 2808)
+- L. pads 42: B0FQPVVD1S
+- Remifemin 60: B0CRKXS5LJ
+- TENA very light 50: B08D74XH82. tena.us names this liner "Sensitive Care Extra Coverage Very Light Liner".
 
-## Your team spreadsheet ("Product_Catalog_Prices")
+### BLOCKED_UNAVAILABLE
 
-The "Matched Amazon item" column comes from an automated Amazon search (SerpApi): it is the top search result, not a checked match. Of the 249 rows with a link:
-- 73 use the same ASIN as the catalog;
-- 110 use a different one;
-- 66 are products not on the Amazon route today.
+- **Knix:** knix.com.
+- **Proof:** no brand link on file, so no Buy button.
+- **Veeda 14 and 42 count:** veedausa.com.
 
-Many of the different ones are plainly wrong, for example:
-- Bazooka bubble gum for Hello Disc "Bubblegum";
-- coffee mugs and tumblers for Ruby Cup;
-- face cotton pads for Organyc and Rael pads;
-- cat urinary chews for Good Kitty;
-- Bambody's ASINs listed for Modibodi, Wuka and Dear Kate.
+### Option listings added after one confirmation click each
 
-So the sheet's ASINs shouldn't be loaded into the catalog. The Chrome check above is the source for identity.
+| Product | Options mapped |
+| --- | --- |
+| Lumma | all 9 size/colour options |
+| Boppy | 9 of 22 prints. Amazon's "Green Sage Leaf" is mapped to Ayna's "Green Sage Leaves". The other 13 prints go to boppy.com. |
+| Saalt Cup | Himalayan Pink Regular B079DWG2ZV, Ocean Blue Small B079DX4242. Seafoam Green goes to saalt.com. |
+| Estroven | 30 → B0091CG65G. The 60 option stays on estroven.com, because Amazon only sells 2 x 30. |
+| Spearmint tea | 1 box → B000Z94H8C |
+| Rael liners | 60 Count → B071YSFXMN. 40 and 20 go to getrael.com. |
+| DivaCup | Model 0 → B07KGZ9NMV (cup only) |
+| Silverette | all 6 options confirmed exact |
+| Gaia Vitex | 60, 120 and 180 confirmed exact |
 
-The sheet's "Amazon price" column is a scraped Amazon price. It can't be shown on ayna for the same reason as a hand-read price: only Creators API prices are allowed. Treat it as internal only. "Prime shown" is "No or unknown" on every row. Prime and free shipping depend on the shopper's own account, so ayna shouldn't promise free shipping on Amazon items.
+### Ayna text corrected from the brand's own site
+
+- **Love Wellness Bye Bye Bloat:** 30 capsules → 60 capsules (lovewellness.com Standard is 60).
+- **Nordic Naturals Omega Woman:** 60 → 120 softgels. nordic.com lists only "120 Count - Lemon".
+
+The old dollar figures were never checked against the new counts, so those cards now say "See current price (…)" instead of a number. The change is mirrored in `supabase/seed/2026-10-15_commerce_price_text_fixes.sql`.
+
+**Not changed:**
+- **NOW Evening Primrose Oil:** nowfoods.com sells the 1,000 mg in 90 softgels only, but sells a 100-softgel bottle at 500 mg. Ayna's "100 softgels" may mean the 500 mg product, so the count may not be stale.
+- **ThermaCare:** the 4-count Ayna lists is still sold at Target.
+
+## Open decisions (need you or a person)
+
+1. **Good Clean Love:** is "Bio-Match Moisturizer" Restore or BioNourish? Both use Bio-Match technology. Rename the product to the one you mean; Restore then maps to B000BFL5SK. goodcleanlove.com shows every Restore size as sold out today.
+2. **NOW Evening Primrose Oil:** 500 mg x 100 or 1,000 mg x 90? The 1,000 mg x 90 is B078TGP8BK.
+3. **Tampax Radiant:** 18 isn't sold any more. Pick a current pack and absorbency (Regular 14/28/42 or duo 28/38/52).
+4. **Oura Ring Gen 3:** add a size picker, or link Oura's own sizing flow. I couldn't load ouraring.com to confirm that Gen 3 is still sold.
+5. **Rael Overnight 12:** is it the XL Overnight 12 (B0856SZ7GL)?
+6. **Ziggy:** Ziggy Cup or Ziggy Cup 2, and which size? Amazon has Ziggy Cup 2 Size A (B09Q3MRSM2).
+7. **Products with no size picker:** Hanes, Bambody, Depend and TomboyX could get a size picker with per-size Amazon listings, or stay on the brand page.
+8. **Routed with a small open question:**
+   - **Pack size, where Ayna names none:** Always Discreet (96 = 3 x 32), Kotex Security (Long, 3 x 20), Stayfree (4 x 44).
+   - **Count not shown on Amazon:** Honey Pot boric acid.
+   - **Scent:** Honey Pot wash (Sensitive).
+   - **Kit or size to confirm:** Frida kit (12-piece), Kindra (1 oz vs 2.5 oz), Poise (4-drop Regular), U by Kotex Click tampons (45 count).
+   - **Absorbency:** Seventh Generation tampons (Super, stock not shown).
+   - **Stock not shown on Amazon:** Lansinoh 60, Saalt Ocean Blue Regular and Himalayan Pink Regular, Silverette Large.
+9. **Brand pages that aren't a store or exact product page:** these products now land on a collection or brand-info page, which is the best exact source left:
+   - Always ×2, Tampax, Depend and Bodyform (a UK site);
+   - Hanes, Thinx, TomboyX, Knix and Intimate Rose (collection pages).
+
+   They need either an exact retailer page (for example Target) or no Buy button.
+10. **Products with no Buy link from before:**
+    - **Luna Daily:** the Amazon candidate is the Motherhood wash, a different product.
+    - **Seventh Generation pads, Snoogle, SweetSpot wipes, Tampax Pure:** their Amazon candidates are all unavailable.
+    - **Pink Stork, Queen V, Period Nirvana:** still not found.

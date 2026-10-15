@@ -491,7 +491,7 @@ Amazon logic doesn't apply except to the two physical devices listed as digital 
 | Midi Health | joinmidi.com | none | Membership / per visit; varies by plan and state | — | EXACT_MATCH |
 | Natural Cycles | naturalcycles.com | none | $100/year or $13/month | — | EXACT_MATCH |
 | Nurx | nurx.com | none | $15–20/month | 15 USD | EXACT_MATCH |
-| Oura Ring Gen 3 | amazon.com | amazon_associates | $299 + $6/month | — | NEEDS_PROVIDER_ACCESS |
+| Oura Ring Gen 3 | **no link** | none | $299 + $6/month | — | NO_BUY_LINK |
 | Ovia Health | oviahealth.com | none | Free (employer-sponsored) | — | EXACT_MATCH |
 | Peanut: Find Friends & Support | peanut-app.io | none | Free | — | EXACT_MATCH |
 | Pomelo Care | pomelocare.com | none | Covered by many employers & health plans; confirm eligibility | — | EXACT_MATCH |

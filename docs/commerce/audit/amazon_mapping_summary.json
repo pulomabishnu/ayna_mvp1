@@ -2,7 +2,7 @@
   "products": 111,
   "offers": 248,
   "productLevelAsins": 110,
-  "childAsinMappings": 84,
+  "childAsinMappings": 85,
   "groups": {
     "single_asin_no_ayna_sizes": [
       "d-initio",
@@ -87,52 +87,52 @@
     ],
     "child_asin_for_every_size": [
       "p-belly-bandit",
-      "p-cora-organic-pads",
-      "p-cora-organic-tampons",
-      "p-cora-overnight",
-      "p-cranberry-supplement",
       "p-dame-arc",
-      "p-diva-cup",
-      "p-flex-cup",
       "p-flex-disc",
       "p-hello-disc",
       "p-inositol-wholesome",
       "p-lansinoh-pads",
       "p-lena-cup",
+      "p-lumma-disc",
       "p-lunette-cup",
       "p-organicup",
       "p-rael-organic-pad",
-      "p-rituals-prenatal",
       "p-saalt-cup-steamer",
       "p-saalt-disc",
       "p-silverette-cups",
+      "p-spearmint-pcos",
       "p-veeda-pad",
       "p-vitex"
     ],
-    "sizes_but_one_generic_listing": [
-      "p-boppy-pillow",
-      "p-estroven-mood",
-      "p-lumma-disc",
-      "p-rael-liners"
-    ],
     "child_asin_for_some_sizes": [
+      "p-boppy-pillow",
+      "p-cranberry-supplement",
+      "p-diva-cup",
+      "p-estroven-mood",
       "p-love-wellness-bloat",
       "p-natracare-pad",
       "p-nixit",
-      "p-period-co-underwear",
-      "p-saalt-cup",
-      "p-spearmint-pcos"
+      "p-rael-liners",
+      "p-rituals-prenatal",
+      "p-saalt-cup"
+    ],
+    "sizes_but_one_generic_listing": [
+      "p-cora-organic-pads",
+      "p-cora-organic-tampons",
+      "p-cora-overnight",
+      "p-flex-cup",
+      "p-period-co-underwear"
     ]
   },
   "duplicateChildAsins": [],
-  "optionsWithoutChildAsin": 54,
+  "optionsWithoutChildAsin": 53,
   "brandFallbackAvailable": 97,
   "noFallback": 14,
   "rows": 254,
   "groupCounts": {
     "single_asin_no_ayna_sizes": 79,
-    "child_asin_for_every_size": 22,
-    "sizes_but_one_generic_listing": 4,
-    "child_asin_for_some_sizes": 6
+    "child_asin_for_every_size": 17,
+    "child_asin_for_some_sizes": 10,
+    "sizes_but_one_generic_listing": 5
   }
 }

@@ -6,7 +6,7 @@ This PR is separate from the design PRs.
 | --- | --- |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | how the product/offer/variant model, router, bag, payment and fulfilment work |
 | [AMAZON.md](AMAZON.md) | Amazon answers, what's blocked, the price switch, the human review, the draft question for Amazon |
-| [AMAZON_CHROME_CHECK.md](AMAZON_CHROME_CHECK.md) | 159 Amazon listings opened in Chrome: wrong products blocked, count/pack corrections to choose |
+| [AMAZON_CHROME_CHECK.md](AMAZON_CHROME_CHECK.md) | 202 Amazon listings opened in Chrome: final routing state, blocks, exact replacements, open decisions |
 | [AMAZON_SIZED_AND_SERVICES.md](AMAZON_SIZED_AND_SERVICES.md) | the 22 per-size Amazon products, the 10 not-exact ones, and the 27 apps/services, one by one |
 | [PROVIDERS_AND_PARTNERS.md](PROVIDERS_AND_PARTNERS.md) | checkout readiness, partner candidates and questions, Shoppable, Zinc, Stripe |
 | `commerce_catalog_audit.csv` | one row per product (227) with route, price, size, image, Amazon statuses, severity |
@@ -16,7 +16,7 @@ This PR is separate from the design PRs.
 
 ## Catalog at a glance
 
-**Update after the Chrome check:** 8 Amazon routes were wrong or unavailable and are now blocked (102 products go to Amazon, not 110). See AMAZON_CHROME_CHECK.md. The tables below are the original audit.
+**Update after the Chrome checks:** all 202 Amazon listings were opened. Exact-only routing now sends 74 products to Amazon when no size is chosen (83 for at least one option); 38 Amazon routes are blocked as wrong item, wrong size/pack or unavailable; 0 Amazon prices are shown. See AMAZON_CHROME_CHECK.md. The tables below are the original audit.
 
 227 products: 201 physical, 26 apps or services, and 36 partner products from 11 brands.
 

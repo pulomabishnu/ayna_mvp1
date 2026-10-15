@@ -1,0 +1,2527 @@
+{
+ "summary": {
+  "totalProducts": 227,
+  "amazonRoutedProducts": 83,
+  "amazonRoutedNoSizeChosen": 74,
+  "productsWithNoBuyRoute": 18,
+  "amazonNumericPricesShown": 0,
+  "byState": {
+   "noSizeChosen": {
+    "CONFIRMED_AND_ROUTED": 64,
+    "ROUTED_WITH_OPEN_QUESTION": 10,
+    "CONFIRMED_BUT_BRAND_FALLBACK": 1,
+    "BLOCKED_WRONG_ITEM": 8,
+    "BLOCKED_WRONG_VARIANT": 26,
+    "BLOCKED_UNAVAILABLE": 2,
+    "NO_BUY_ROUTE": 0,
+    "NOT_CHECKED": 0
+   },
+   "options": {
+    "CONFIRMED_AND_ROUTED": 77,
+    "ROUTED_WITH_OPEN_QUESTION": 6,
+    "CONFIRMED_BUT_BRAND_FALLBACK": 53,
+    "BLOCKED_WRONG_ITEM": 0,
+    "BLOCKED_WRONG_VARIANT": 0,
+    "BLOCKED_UNAVAILABLE": 2,
+    "NO_BUY_ROUTE": 0,
+    "NOT_CHECKED": 0
+   }
+  },
+  "exactAmazonIdentitiesRouted": 123,
+  "exactAmazonOptionMappings": 77,
+  "amazonRoutesBlocked": 38,
+  "brandFallbacksFromBlocks": 32
+ },
+ "rows": [
+  {
+   "productId": "d-initio",
+   "option": null,
+   "state": "BLOCKED_WRONG_ITEM",
+   "amazonAsin": null,
+   "blockedAsin": "B0FB4BCFJP",
+   "blockReason": "Inito test strips (pack of 30), not the Inito Fertility Monitor",
+   "routesTo": "inito.com",
+   "chromeStatus": "IDENTITY_MISMATCH"
+  },
+  {
+   "productId": "d-oura",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B0CSRF3Y2F",
+   "blockReason": "Pins Heritage Black, ring size 11",
+   "routesTo": null,
+   "chromeStatus": "VARIANT_MISMATCH"
+  },
+  {
+   "productId": "p-always-discreet-boutique-liners",
+   "option": null,
+   "state": "ROUTED_WITH_OPEN_QUESTION",
+   "amazonAsin": "B082JG2QJL",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|PACK_MISMATCH"
+  },
+  {
+   "productId": "p-always-infinity",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B0H8VXGSWB",
+   "blockReason": "60 count; Ayna says 18 (no 18-count found on Amazon)",
+   "routesTo": "always.com",
+   "chromeStatus": "COUNT_MISMATCH"
+  },
+  {
+   "productId": "p-always-liners",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B003VD5TMM",
+   "blockReason": "162 count; Ayna says 42 (no 42-count found on Amazon)",
+   "routesTo": "always.com",
+   "chromeStatus": "COUNT_MISMATCH"
+  },
+  {
+   "productId": "p-azo-test",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B00854L57U",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-b-complex",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0797JXKL9",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-bambody-underwear",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B0BNP9RJZH",
+   "blockReason": "Pins size XXL 3-pack",
+   "routesTo": "bambody.com",
+   "chromeStatus": "VARIANT_MISMATCH|PACK_MISMATCH"
+  },
+  {
+   "productId": "p-belly-bandit",
+   "option": null,
+   "state": "BLOCKED_WRONG_ITEM",
+   "amazonAsin": null,
+   "blockedAsin": "B07Z4W4KZB",
+   "blockReason": "KeaBabies belly band, not Belly Bandit",
+   "routesTo": "bellybandit.com",
+   "chromeStatus": "IDENTITY_MISMATCH"
+  },
+  {
+   "productId": "p-belly-bandit",
+   "option": "Cream / S",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B005XNCE12",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-belly-bandit",
+   "option": "Cream / M",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B005XNCFKW",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-belly-bandit",
+   "option": "Cream / L",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B005XNCH3W",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-belly-bandit",
+   "option": "Cream / XL",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B00EO7LSS8",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-belly-bandit",
+   "option": "Black / S",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B009EEWGVO",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-belly-bandit",
+   "option": "Black / M",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B009EEWJSE",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-belly-bandit",
+   "option": "Black / L",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B009EEWI7Q",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-belly-bandit",
+   "option": "Black / XL",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B00LMIER30",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-bodyform-pad",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B0DB83YP4H",
+   "blockReason": "60 pads + 60 liners combo, not pads only",
+   "routesTo": "bodyform.co.uk",
+   "chromeStatus": "PACK_MISMATCH"
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B0DNNJWXMQ",
+   "blockReason": "Pins the Gray Gentle Leaves print when no print is chosen",
+   "routesTo": "boppy.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": "Green Sage Leaves",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0DJRQRGSK",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": "Blue Speckled Current",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0DNNKT7MR",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": "Pink Field Flowers",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "boppy.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": "Colorful Forest Animals",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0DJRQ1G66",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": "Cream Retro Squiggles",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0DJRR7J5X",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": "Pink Garden Flowers",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0DJRRHNRH",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": "Clay & Gold Suns",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "boppy.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": "Green Forest Animal Sketches",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "boppy.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": "Forest Green Dinos",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0DNNHM5MK",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": "Neutral Plants & Animals",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0DNNKH1RD",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": "Gray Gentle Leaves",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0DNNJWXMQ",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": "Sand Safari Animals",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "boppy.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": "Soft Pink Daisies",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0GV16DDD9",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": "Gray Beige Leaves",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "boppy.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": "Sand Stick & Leaf",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "boppy.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": "Tan Checkered Stripes",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "boppy.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": "Gray Geo Dinos",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "boppy.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": "Clay Boho Arches",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "boppy.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": "Beige Foliage",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "boppy.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": "Vintage Blue Stripe",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "boppy.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": "Bright Pink Tropical Flowers",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "boppy.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-boppy-pillow",
+   "option": "Beige Woodland Tapestry",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "boppy.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-boric-acid",
+   "option": null,
+   "state": "ROUTED_WITH_OPEN_QUESTION",
+   "amazonAsin": "B08DDJGZRT",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|NEEDS_HUMAN_REVIEW"
+  },
+  {
+   "productId": "p-carefree-liners",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B012IUH2NW",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-cora-disc",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0D364L851",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-cora-organic-pads",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B07XR7DVL4",
+   "blockReason": "Regular 36; Ayna option is the Target 32-count",
+   "routesTo": "target.com",
+   "chromeStatus": "COUNT_MISMATCH"
+  },
+  {
+   "productId": "p-cora-organic-pads",
+   "option": "Regular — 32 count",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "target.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-cora-organic-pads",
+   "option": "Super — 30 count",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "target.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-cora-organic-pads",
+   "option": "Overnight — 28 count",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "target.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-cora-organic-pads",
+   "option": "Extra Heavy Overnight — 20 count",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "target.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-cora-organic-tampons",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B06ZYRXLNV",
+   "blockReason": "18 Regular + 18 Super (36); Ayna option is the Target 32-count",
+   "routesTo": "target.com",
+   "chromeStatus": "COUNT_MISMATCH"
+  },
+  {
+   "productId": "p-cora-organic-tampons",
+   "option": "Regular — 32 count",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "target.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-cora-organic-tampons",
+   "option": "Regular / Super — 32 count",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "target.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-cora-organic-tampons",
+   "option": "Light / Regular — 32 count",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "target.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-cora-overnight",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B07XL578S2",
+   "blockReason": "Overnight 36; Ayna option is the Target 28-count",
+   "routesTo": "target.com",
+   "chromeStatus": "COUNT_MISMATCH"
+  },
+  {
+   "productId": "p-cora-overnight",
+   "option": "Regular — 32 count",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "target.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-cora-overnight",
+   "option": "Super — 30 count",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "target.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-cora-overnight",
+   "option": "Overnight — 28 count",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "target.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-cora-overnight",
+   "option": "Extra Heavy Overnight — 20 count",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "target.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-cranberry-supplement",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0012JY42I",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-cranberry-supplement",
+   "option": "50 Caplets",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0012JY42I",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-cranberry-supplement",
+   "option": "100 Caplets - 2pk",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "azoproducts.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-creatine-womens",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07978VPPH",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-cystex",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07GTJQ3JJ",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-d-mannose-now",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0C545MBRC",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-dame-arc",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0BG8WG6FG",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-dame-arc",
+   "option": "Plum",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0BG8WG6FG",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-dame-arc",
+   "option": "Ice",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0BG6C8KW4",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-depend-silhouette-underwear",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B09P1RYJCG",
+   "blockReason": "Pins size Large",
+   "routesTo": "depend.com",
+   "chromeStatus": "VARIANT_MISMATCH|PACK_MISMATCH"
+  },
+  {
+   "productId": "p-diva-cup",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B08TLJPR71",
+   "blockReason": "Model 1 + DivaWash bundle; no cup-only Model 1 found",
+   "routesTo": "shopdiva.com",
+   "chromeStatus": "PACK_MISMATCH"
+  },
+  {
+   "productId": "p-diva-cup",
+   "option": "Model 0",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07KGZ9NMV",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-diva-cup",
+   "option": "Model 1",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "shopdiva.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-diva-cup",
+   "option": "Model 2",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "shopdiva.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-elvie-trainer",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B018IFNSX4",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-estroven-mood",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B0091CG65G",
+   "blockReason": "Pins the 30-count when no size is chosen; the 30 option keeps it",
+   "routesTo": "estroven.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-estroven-mood",
+   "option": "30",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0091CG65G",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-estroven-mood",
+   "option": "60",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "estroven.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-evening-primrose",
+   "option": null,
+   "state": "BLOCKED_WRONG_ITEM",
+   "amazonAsin": null,
+   "blockedAsin": "B078TGP8BK",
+   "blockReason": "NOW Evening Primrose Oil 1,000 mg, 90 softgels; Ayna says 100 softgels, which NOW sells only as the 500 mg product, so strength and count are not established",
+   "routesTo": null,
+   "chromeStatus": "COUNT_MISMATCH"
+  },
+  {
+   "productId": "p-fish-oil",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B002CQU50U",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-flex-cup",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B07QD4W7RQ",
+   "blockReason": "Starter kit (cup + 2 discs), size 01; no cup-only listing found",
+   "routesTo": "flexfits.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT|PACK_MISMATCH"
+  },
+  {
+   "productId": "p-flex-cup",
+   "option": "Size 01",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "flexfits.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-flex-cup",
+   "option": "Size 02",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "flexfits.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-flex-disc",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0FBTH6RHH",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-flex-disc",
+   "option": "12",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07QHS3PL8",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-flex-disc",
+   "option": "24",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0FBTH6RHH",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-flo-gummies",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0D5JVK842",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-frida-mom-kit",
+   "option": null,
+   "state": "ROUTED_WITH_OPEN_QUESTION",
+   "amazonAsin": "B0CZSD8YZV",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|NEEDS_HUMAN_REVIEW"
+  },
+  {
+   "productId": "p-good-clean-love",
+   "option": null,
+   "state": "BLOCKED_WRONG_ITEM",
+   "amazonAsin": null,
+   "blockedAsin": "B000BFL5SK",
+   "blockReason": "Restore gel; Ayna names \"Bio-Match Moisturizer\", which is a technology used in more than one Good Clean Love moisturizer, so the item is not established",
+   "routesTo": null,
+   "chromeStatus": "FORMULATION_MISMATCH"
+  },
+  {
+   "productId": "p-haakaa-pump",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B01F8W7CF0",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-hanes-period",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B0CMDRQ4TT",
+   "blockReason": "Pins size XL 3-pack",
+   "routesTo": "hanes.com",
+   "chromeStatus": "VARIANT_MISMATCH|PACK_MISMATCH"
+  },
+  {
+   "productId": "p-hatch-oil",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B08LKDVDMB",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-hello-disc",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B09RTMNJLH",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-hello-disc",
+   "option": "Bubblegum",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0GCBHWY24",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-hello-disc",
+   "option": "Sea Fog",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B09RTMNJLH",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-hello-disc",
+   "option": "Black",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0GKBK3FS9",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-honeypot-pad",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B095HXWD9Z",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-honeypot-wash",
+   "option": null,
+   "state": "ROUTED_WITH_OPEN_QUESTION",
+   "amazonAsin": "B0BVDR7HXV",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|NEEDS_HUMAN_REVIEW"
+  },
+  {
+   "productId": "p-hum-flatter-me",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B015OVVI4Q",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-inositol-wholesome",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07HX2DMY8",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-inositol-wholesome",
+   "option": "360 Capsules (90-Servings)",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07YYLM1KZ",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-inositol-wholesome",
+   "option": "120 Capsules (30-Servings)",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07HX2DMY8",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-intimate-rose",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B07BKBCFDL",
+   "blockReason": "Large pack, sizes 5-8 (4 pieces); Ayna says 8-piece set (none found)",
+   "routesTo": "intimaterose.com",
+   "chromeStatus": "PACK_MISMATCH"
+  },
+  {
+   "productId": "p-june-cup",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B086JBZW48",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-kindra-lotion",
+   "option": null,
+   "state": "ROUTED_WITH_OPEN_QUESTION",
+   "amazonAsin": "B08Y671B3S",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|NEEDS_HUMAN_REVIEW"
+  },
+  {
+   "productId": "p-knix-underwear",
+   "option": null,
+   "state": "BLOCKED_UNAVAILABLE",
+   "amazonAsin": null,
+   "blockedAsin": "B0HFTVGGSP",
+   "blockReason": "Currently unavailable; also pins size S 3-pack",
+   "routesTo": "knix.com",
+   "chromeStatus": "LISTING_UNAVAILABLE|VARIANT_MISMATCH"
+  },
+  {
+   "productId": "p-kotex-security",
+   "option": null,
+   "state": "ROUTED_WITH_OPEN_QUESTION",
+   "amazonAsin": "B08HT5W7PF",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "PACK_MISMATCH|NEEDS_HUMAN_REVIEW"
+  },
+  {
+   "productId": "p-kotex-tampon",
+   "option": null,
+   "state": "ROUTED_WITH_OPEN_QUESTION",
+   "amazonAsin": "B083M24HGP",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|NEEDS_HUMAN_REVIEW"
+  },
+  {
+   "productId": "p-l-pad",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0FQPVVD1S",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lansinoh-pads",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0070SKP1O",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lansinoh-pads",
+   "option": "100 Pads",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0070SKP1O",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lansinoh-pads",
+   "option": "60 Pads",
+   "state": "ROUTED_WITH_OPEN_QUESTION",
+   "amazonAsin": "B09VC8TCWW",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT|NEEDS_HUMAN_REVIEW"
+  },
+  {
+   "productId": "p-lansinoh-pads",
+   "option": "36 Pads",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B003U3SWEA",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lelo-sona",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B075GLSQQH",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lena-cup",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B01JXA3JNW",
+   "blockReason": "Two-cup set; each Lena size/colour keeps its own single-cup listing",
+   "routesTo": "lenacup.com",
+   "chromeStatus": "PACK_MISMATCH"
+  },
+  {
+   "productId": "p-lena-cup",
+   "option": "Pink / Small",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B00YNYH8F4",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lena-cup",
+   "option": "Pink / Large",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B00YNYH8EK",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lena-cup",
+   "option": "Purple / Small",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B01JWMWSMY",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lena-cup",
+   "option": "Purple / Large",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B01JWMWSII",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lena-cup",
+   "option": "Turquoise / Small",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B01FV0N9BK",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lena-cup",
+   "option": "Turquoise / Large",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B01FW9NEGA",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lena-cup",
+   "option": "Gray / Small",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B08HSLY3M6",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lena-cup",
+   "option": "Gray / Large",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B08HW1VFFZ",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-love-wellness-bloat",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07TCQS4QJ",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-love-wellness-bloat",
+   "option": "Standard",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07TCQS4QJ",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-love-wellness-bloat",
+   "option": "Jumbo",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "lovewellness.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-lumma-disc",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B07TFHKHM4",
+   "blockReason": "Pins Short / Unicorn when no size is chosen",
+   "routesTo": "mylumma.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lumma-disc",
+   "option": "Short / Pink Love",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07Y5GW3NV",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lumma-disc",
+   "option": "Short / Unicorn",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07TFHKHM4",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lumma-disc",
+   "option": "Short / Clear",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07T8BBKG9",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lumma-disc",
+   "option": "Medium / Pink Love",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07Y5JZ1RG",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lumma-disc",
+   "option": "Medium / Unicorn",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07T8BBYY5",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lumma-disc",
+   "option": "Medium / Clear",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07TFLSGB2",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lumma-disc",
+   "option": "High / Pink Love",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07Y5GWGH8",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lumma-disc",
+   "option": "High / Unicorn",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07TDMGPYG",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lumma-disc",
+   "option": "High / Clear",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07Y5K7ZVJ",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lunette-cup",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0054SQ02K",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lunette-cup",
+   "option": "1. Light to medium flow",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B002MA4SI6",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-lunette-cup",
+   "option": "2. Medium to heavy flow",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0054SQ02K",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-magnesium-glycinate",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B08XXHCGZT",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-mystery-vibe",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0GNSGQ2Q6",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-natracare-pad",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B000VI3LNE",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-natracare-pad",
+   "option": "Regular / 1 Pack",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B000VI3LNE",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-natracare-pad",
+   "option": "Regular / 4 Pack",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "shop.natracare.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-natracare-pad",
+   "option": "Super / 1 Pack",
+   "state": "ROUTED_WITH_OPEN_QUESTION",
+   "amazonAsin": "B000QVDLKO",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "COUNT_MISMATCH|NEEDS_HUMAN_REVIEW"
+  },
+  {
+   "productId": "p-natracare-pad",
+   "option": "Super / 4 Pack",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "shop.natracare.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-natracare-pad",
+   "option": "Long / 1 Pack",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "shop.natracare.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-natracare-pad",
+   "option": "Long / 4 Pack",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "shop.natracare.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-natracare-pad",
+   "option": "Super Plus / 1 Pack",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "shop.natracare.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-natracare-pad",
+   "option": "Super Plus / 4 Pack",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "shop.natracare.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-natracare-tampon",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B00005368L",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-nature-made-iron-65mg",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B003PGJLRO",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-natures-bounty-d3-125mcg",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B002Y27LLS",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-nixit",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0DGW9R5XR",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-nixit",
+   "option": "Teal / Single",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0DGW9R5XR",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-nixit",
+   "option": "Teal / 2 Pack",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "nixit.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-ob-original-multipack-40",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B00NJNJ6WI",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-ob-original-multipack-80",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0D14X9YFR",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-ob-original-regular-40",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B00NJNJCI6",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-ob-original-super-40",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B00NF8A8YM",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-ob-original-super-plus-40",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B00NJNJCBI",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-ob-original-ultra-40",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B00NJNJGUA",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-ob-procomfort-mini-16",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07L7RL3X3",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-ob-procomfort-mini-32",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B071VD5LF7",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-ob-tampon",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B00NJNJ6WI",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-organicup",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B071NCXFMG",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-organicup",
+   "option": "A",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B071NCXFMG",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-organicup",
+   "option": "B",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B072KZM9P3",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-organicup",
+   "option": "Mini",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07SC244TV",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-organyc-pad",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B004DGH596",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-organyc-tampon",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0061WH3GU",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-pelvic-wand",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07HR3GL6V",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-period-co-underwear",
+   "option": null,
+   "state": "BLOCKED_WRONG_ITEM",
+   "amazonAsin": null,
+   "blockedAsin": "B0BTPVSHKD",
+   "blockReason": "Medium-flow high-waist brief, not the organic cotton heavy-flow bikini",
+   "routesTo": "period.co",
+   "chromeStatus": "IDENTITY_MISMATCH"
+  },
+  {
+   "productId": "p-period-co-underwear",
+   "option": "Black / XS",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "period.co",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-period-co-underwear",
+   "option": "Black / S",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "period.co",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-period-co-underwear",
+   "option": "Black / M",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "period.co",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-period-co-underwear",
+   "option": "Black / L",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "period.co",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-period-co-underwear",
+   "option": "Black / XL",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "period.co",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-period-co-underwear",
+   "option": "Black / 2X",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "period.co",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-period-co-underwear",
+   "option": "Black / 3X",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "period.co",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-period-co-underwear",
+   "option": "Black / 4X",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "period.co",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-period-co-underwear",
+   "option": "Black / 5X",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "period.co",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-period-co-underwear",
+   "option": "Black / 6X",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "period.co",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-phd-wash",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0FK84ZWXK",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-playtex-sport",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B08L4Q75QP",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-poise-ultra-thin-moderate",
+   "option": null,
+   "state": "ROUTED_WITH_OPEN_QUESTION",
+   "amazonAsin": "B010OW806O",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|NEEDS_HUMAN_REVIEW"
+  },
+  {
+   "productId": "p-portable-heating",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0DZ2J1GS1",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-probiotics-women",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B00Y8MP4G6",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-proof-period",
+   "option": null,
+   "state": "BLOCKED_UNAVAILABLE",
+   "amazonAsin": null,
+   "blockedAsin": "B09CZWML57",
+   "blockReason": "Currently unavailable; also pins size XL",
+   "routesTo": null,
+   "chromeStatus": "LISTING_UNAVAILABLE|VARIANT_MISMATCH"
+  },
+  {
+   "productId": "p-rael-liners",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B07258JQ9M",
+   "blockReason": "Regular 44; Ayna sells 60/40/20 (60 is B071YSFXMN)",
+   "routesTo": "getrael.com",
+   "chromeStatus": "COUNT_MISMATCH"
+  },
+  {
+   "productId": "p-rael-liners",
+   "option": "60 Count",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B071YSFXMN",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-rael-liners",
+   "option": "40 Count",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "getrael.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-rael-liners",
+   "option": "20 Count",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "getrael.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-rael-organic-pad",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B071VBZLPX",
+   "blockReason": "Regular 56; Ayna product is Large pads (Large 24 and 14 keep their own listings)",
+   "routesTo": "getrael.com",
+   "chromeStatus": "VARIANT_MISMATCH"
+  },
+  {
+   "productId": "p-rael-organic-pad",
+   "option": "24 Count",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0771Y7YQ1",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-rael-organic-pad",
+   "option": "14 Count",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07X7GM5Q9",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-rael-overnight",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B071NLD52C",
+   "blockReason": "Overnight 40; Ayna says 12 (Amazon 12-count is XL Overnight, not confirmed as the same pad)",
+   "routesTo": "getrael.com",
+   "chromeStatus": "COUNT_MISMATCH"
+  },
+  {
+   "productId": "p-rael-tampon",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B083C6BYG9",
+   "blockReason": "40-count bundle; Ayna says 32 (none found)",
+   "routesTo": "getrael.com",
+   "chromeStatus": "COUNT_MISMATCH"
+  },
+  {
+   "productId": "p-remifemin",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0CRKXS5LJ",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-rituals-prenatal",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B09W363MVD",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-rituals-prenatal",
+   "option": "Citrus",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B09W363MVD",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-rituals-prenatal",
+   "option": "Mint",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "ritual.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-saalt-cup",
+   "option": null,
+   "state": "BLOCKED_WRONG_ITEM",
+   "amazonAsin": null,
+   "blockedAsin": "B09JQ4G62Q",
+   "blockReason": "Saalt Soft cup in Mountain Iris, a line and colour Ayna does not list",
+   "routesTo": "saalt.com",
+   "chromeStatus": "IDENTITY_MISMATCH"
+  },
+  {
+   "productId": "p-saalt-cup",
+   "option": "Seafoam Green / Regular",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "saalt.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-saalt-cup",
+   "option": "Seafoam Green / Small",
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "saalt.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-saalt-cup",
+   "option": "Himalayan Pink / Regular",
+   "state": "ROUTED_WITH_OPEN_QUESTION",
+   "amazonAsin": "B079DWG2ZV",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT|NEEDS_HUMAN_REVIEW"
+  },
+  {
+   "productId": "p-saalt-cup",
+   "option": "Himalayan Pink / Small",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B079DYK334",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-saalt-cup",
+   "option": "Ocean Blue / Regular",
+   "state": "ROUTED_WITH_OPEN_QUESTION",
+   "amazonAsin": "B079DVXSP8",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT|NEEDS_HUMAN_REVIEW"
+  },
+  {
+   "productId": "p-saalt-cup",
+   "option": "Ocean Blue / Small",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B079DX4242",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-saalt-cup-steamer",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0CGX2Y8WM",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-saalt-cup-steamer",
+   "option": "Blue Dusk",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0CGX2Y8WM",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-saalt-cup-steamer",
+   "option": "Arctic Mist",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0CGX1MGR8",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-saalt-cup-steamer",
+   "option": "Rose Quartz",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0CGWZRXG5",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-saalt-disc",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0B13WT3KV",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-saalt-disc",
+   "option": "Coastal Blue (Regular)",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0B13WT3KV",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-saalt-disc",
+   "option": "Sunset Coral (Small)",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0B13XG62P",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-seventh-gen-tampon",
+   "option": null,
+   "state": "ROUTED_WITH_OPEN_QUESTION",
+   "amazonAsin": "B07FL7PNQK",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|NEEDS_HUMAN_REVIEW"
+  },
+  {
+   "productId": "p-silverette-cups",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B00D4MWKNQ",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-silverette-cups",
+   "option": "S / No O Feel",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B00D4MWKNQ",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-silverette-cups",
+   "option": "S / Add O Feel",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0B4H75CJZ",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-silverette-cups",
+   "option": "M / No O Feel",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07XGC8RBB",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-silverette-cups",
+   "option": "M / Add O Feel",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0B4H6GXCW",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-silverette-cups",
+   "option": "L / Add O Feel",
+   "state": "ROUTED_WITH_OPEN_QUESTION",
+   "amazonAsin": "B0GFX7239Z",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT|NEEDS_HUMAN_REVIEW"
+  },
+  {
+   "productId": "p-silverette-cups",
+   "option": "L / No O Feel",
+   "state": "ROUTED_WITH_OPEN_QUESTION",
+   "amazonAsin": "B0FTGGL64M",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT|NEEDS_HUMAN_REVIEW"
+  },
+  {
+   "productId": "p-softdisc",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B000X29GY6",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-spearmint-pcos",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B000Z94H8C",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-spearmint-pcos",
+   "option": "1 box (16 tea bags)",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B000Z94H8C",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-spearmint-pcos",
+   "option": "3-Pack (3 x 16 tea bags)",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B09CFLYXZL",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-spearmint-pcos",
+   "option": "6-Pack (6 x 16 tea bags)",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B000EJPDMC",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-stayfree-ultra",
+   "option": null,
+   "state": "ROUTED_WITH_OPEN_QUESTION",
+   "amazonAsin": "B079RGVB2V",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "PACK_MISMATCH|NEEDS_HUMAN_REVIEW"
+  },
+  {
+   "productId": "p-tampax-radiant",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B0B33HDMQ3",
+   "blockReason": "84 count; Ayna says 18, which tampax.com no longer lists",
+   "routesTo": "tampax.com",
+   "chromeStatus": "COUNT_MISMATCH"
+  },
+  {
+   "productId": "p-tena-intimates-very-light-liner",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B08D74XH82",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-thermacare",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B09LHCN264",
+   "blockReason": "6 count; Ayna sells the 4-count (Target)",
+   "routesTo": "thermacare.com",
+   "chromeStatus": "COUNT_MISMATCH"
+  },
+  {
+   "productId": "p-thinx",
+   "option": null,
+   "state": "BLOCKED_WRONG_ITEM",
+   "amazonAsin": null,
+   "blockedAsin": "B0D6SPZV9V",
+   "blockReason": "Thinx for All (a separate line), size XL 2-pack",
+   "routesTo": "thinx.com",
+   "chromeStatus": "IDENTITY_MISMATCH|VARIANT_MISMATCH"
+  },
+  {
+   "productId": "p-tomboyx-period",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B0DW9CB9JH",
+   "blockReason": "Pins 9-inch boxer brief, size XXL",
+   "routesTo": "tomboyx.com",
+   "chromeStatus": "VARIANT_MISMATCH"
+  },
+  {
+   "productId": "p-u-kotex-pad",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B00BM90GCA",
+   "blockReason": "CleanWear 50 count; Ayna says 18 (no 18-count CleanWear found)",
+   "routesTo": null,
+   "chromeStatus": "COUNT_MISMATCH"
+  },
+  {
+   "productId": "p-uberlube",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B00KDHSAAM",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-ubiquinol-thorne",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0H89XNPYS",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-uqora-control",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0DLBSVB4Q",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-v-wash",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B00S6KDGNE",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-veeda-pad",
+   "option": null,
+   "state": "CONFIRMED_BUT_BRAND_FALLBACK",
+   "amazonAsin": null,
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "veedausa.com",
+   "chromeStatus": null
+  },
+  {
+   "productId": "p-veeda-pad",
+   "option": "14 Count",
+   "state": "BLOCKED_UNAVAILABLE",
+   "amazonAsin": null,
+   "blockedAsin": "B00ZAVDST4",
+   "blockReason": "14-count currently unavailable",
+   "routesTo": "veedausa.com",
+   "chromeStatus": "LISTING_UNAVAILABLE"
+  },
+  {
+   "productId": "p-veeda-pad",
+   "option": "42 Count",
+   "state": "BLOCKED_UNAVAILABLE",
+   "amazonAsin": null,
+   "blockedAsin": "B01N1ZHI2A",
+   "blockReason": "42-count currently unavailable",
+   "routesTo": "veedausa.com",
+   "chromeStatus": "LISTING_UNAVAILABLE"
+  },
+  {
+   "productId": "p-viboos-heating-pad",
+   "option": null,
+   "state": "BLOCKED_WRONG_VARIANT",
+   "amazonAsin": null,
+   "blockedAsin": "B0GG6HHCYM",
+   "blockReason": "Pins one size and colour (24x12, Grey Green)",
+   "routesTo": null,
+   "chromeStatus": "IDENTITY_EXACT|NEEDS_HUMAN_REVIEW"
+  },
+  {
+   "productId": "p-vitex",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B003VT3YP0",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-vitex",
+   "option": "60 ct",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B003VT3YP0",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-vitex",
+   "option": "120 ct",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B07YLKKSGX",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-vitex",
+   "option": "180 ct",
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0BRTBBK5K",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-willow-pump",
+   "option": null,
+   "state": "BLOCKED_WRONG_ITEM",
+   "amazonAsin": null,
+   "blockedAsin": "B0862FCV4C",
+   "blockReason": "Willow 360 milk containers (2 count), not the Willow pump",
+   "routesTo": "willowpump.com",
+   "chromeStatus": "IDENTITY_MISMATCH"
+  },
+  {
+   "productId": "p-womaness-me",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B096H6M6GM",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  },
+  {
+   "productId": "p-zinc",
+   "option": null,
+   "state": "CONFIRMED_AND_ROUTED",
+   "amazonAsin": "B0098U0QC0",
+   "blockedAsin": null,
+   "blockReason": null,
+   "routesTo": "amazon.com",
+   "chromeStatus": "IDENTITY_EXACT|VARIANT_EXACT"
+  }
+ ]
+}

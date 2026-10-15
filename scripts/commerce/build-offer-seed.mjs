@@ -23,6 +23,7 @@ import { findBrandPartner } from '../../src/data/brandPartners.js';
 import { resolveCommerce } from '../../src/commerce/router.js';
 import { providerForUrl, PROVIDERS } from '../../src/commerce/policy.js';
 import { asinFromUrl } from '../../src/commerce/amazon.js';
+import { isBlockedAmazon } from '../../src/data/amazonAsinBlocks.js';
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '../..');
 const SEED = '2026-10-15_commerce_offers';
@@ -64,7 +65,9 @@ for (const raw of live.products) {
   // Alternatives: the exact brand page when Amazon is primary, Amazon when it isn't.
   const brandAlt = resolveBuyUrl(p, null, { amazonAllowed: false });
   if (brandAlt && !list.some((o) => o.url === brandAlt)) list.push({ url: brandAlt, primary: false });
-  const amazonAlt = !partner && (getAmazonAffiliateUrlForProduct(p) || (isAmazonUrl(p.affiliateUrl) ? p.affiliateUrl : null));
+  const amazonAlt0 = !partner && (getAmazonAffiliateUrlForProduct(p) || (isAmazonUrl(p.affiliateUrl) ? p.affiliateUrl : null));
+  // A listing checked and found to be the wrong item/size or unavailable is never seeded.
+  const amazonAlt = amazonAlt0 && !isBlockedAmazon(amazonAlt0, { productLevel: true }) ? amazonAlt0 : null;
   if (amazonAlt && !list.some((o) => isAmazonUrl(o.url))) list.push({ url: amazonAlt, primary: false });
 
   for (const o of list) {
@@ -90,7 +93,7 @@ where exists (select 1 from public.product_catalog where id = ${q(p.id)});`);
     for (const v of p.variants || []) {
       const vRouted = resolveCommerce(p, v);
       const vAsin = v.amazonAsin ? String(v.amazonAsin).toUpperCase() : null;
-      const belongs = isAmazon ? Boolean(vAsin) : Boolean(v.url) && host(v.url) === host(o.url);
+      const belongs = isAmazon ? Boolean(vAsin) && !isBlockedAmazon(vAsin) : Boolean(v.url) && host(v.url) === host(o.url);
       if (!belongs) continue;
       const facts = !isAmazon && useVerified ? useVerified.variants?.[v.id] : null;
       variants += 1;
