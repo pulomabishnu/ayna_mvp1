@@ -517,7 +517,7 @@ function ShopSection({ title, chips, filter, setFilter, filters, setFilters, pro
 /* Logged in                                                           */
 /* ------------------------------------------------------------------ */
 
-function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onViewCommunity, onOpenProduct, initialCategory = null, savedProducts = {}, onToggleSaved, quizResults = null, healthProfile = null, matchOpts = null }) {
+function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onViewCommunity, onViewArticles, onViewArticle, onViewAbout, onOpenProduct, initialCategory = null, savedProducts = {}, onToggleSaved, quizResults = null, healthProfile = null, matchOpts = null }) {
   const name = displayNameFromUser(user) || 'there';
   const [filter, setFilter] = useCategoryParam(initialCategory);
   const [personalize, setPersonalize] = useState(true);
@@ -541,13 +541,13 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
       // called "for your needs".
       const scored = list.map((p) => ({ p, m: matchBadge(getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts))?.percent ?? 0 }))
         .filter((x) => x.m >= 70).sort((a, b) => b.m - a.m);
-      if (scored.length >= 4) return scored.slice(0, 8).map((x) => x.p);
+      if (scored.length >= 4) return scored.slice(0, 4).map((x) => x.p);
     }
     if (personalize) {
       const score = (p) => (recommendedIds.has(p.id) ? 2 : ownedCategories.has(p.category) ? 1 : 0);
       list = [...list].sort((a, b) => score(b) - score(a));
     }
-    return list.slice(0, 8);
+    return list.slice(0, 4);
   }, [filter, filters, personalize, ownedIds, recommendedIds, ownedCategories, quizResults, healthProfile, matchOpts]);
 
   // HI03: the one next step. A random empty core area, picked once per page load
@@ -574,29 +574,19 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
   }, [myProducts, nextSeed]);
   const picks = Object.keys(myProducts || {}).length;
 
-  return (
-    <div className="mockup-landing mockup-landing--returning lx">
-      {picks > 0 ? (
-        <section className="lx-today" aria-labelledby="lx-hero-title">
-          <div className="mockup-page lx-today__inner">
-            <h1 id="lx-hero-title" className="lx-today__title">Hello, <em>{name}.</em></h1>
-            <p className="lx-today__sub">
-              {picks} product{picks === 1 ? '' : 's'} in your ecosystem.{' '}
-              <button type="button" className="lx-today__link" onClick={onViewEcosystem}>Open my ecosystem</button>
-            </p>
-            {nextArea && (
-              <button type="button" className="lx-nextcard" onClick={() => onViewDiscovery?.({ initialMacroGroup: nextArea.id })}>
-                <span className="lx-nextcard__label">Your next step</span>
-                <strong>Start your {nextArea.label} shelf</strong>
-                <span className="lx-nextcard__go">Browse {nextArea.label} <Arrow /></span>
-              </button>
-            )}
-          </div>
-        </section>
-      ) : (
-        <BuildHero greeting={`Hello, ${name}`} onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} onOpenProduct={onOpenProduct} />
+  // Signed in, Home is the landing page (same layout and story) with her own
+  // pieces under the welcome-back hero.
+  const slot = (
+    <div className="lx lx-personal">
+      {nextArea && (
+        <div className="mockup-page lx-personal__next">
+          <button type="button" className="lx-nextcard" onClick={() => onViewDiscovery?.({ initialMacroGroup: nextArea.id })}>
+            <span className="lx-nextcard__label">your next step</span>
+            <strong>Start your {nextArea.label} shelf</strong>
+            <span className="lx-nextcard__go">Browse {nextArea.label} <Arrow /></span>
+          </button>
+        </div>
       )}
-
       <ShopSection
         title={personalize && quizResults ? 'Top picks for your needs' : 'Popular on ayna'}
         minimal
@@ -654,7 +644,22 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
         </section>
       )}
 
-      <Trust onViewDiscovery={onViewDiscovery} />
+    </div>
+  );
+  return (
+    <div className="mockup-landing mockup-landing--first mockup-landing--returning">
+      <LandingV2
+        onStartQuiz={onStartQuiz}
+        onViewDiscovery={onViewDiscovery}
+        onOpenProduct={onOpenProduct}
+        onViewArticles={onViewArticles}
+        onViewArticle={onViewArticle}
+        onViewAbout={onViewAbout}
+        onViewCommunity={onViewCommunity}
+        onSearch={(q) => onViewDiscovery?.(discoveryTargetFor(q))}
+        personal={{ name, ecoCount: picks, hasQuiz: Boolean(quizResults), onOpenEcosystem: onViewEcosystem }}
+        personalSlot={(picks > 0 || quizResults) ? slot : null}
+      />
     </div>
   );
 }
@@ -715,6 +720,9 @@ export default function AynaLanding({
         onViewDiscovery={onViewDiscovery}
         onViewEcosystem={onViewEcosystem}
         onViewCommunity={onViewCommunity}
+        onViewArticles={onViewArticles}
+        onViewArticle={onViewArticle}
+        onViewAbout={onViewAbout}
         onOpenProduct={onOpenProduct}
         initialCategory={initialCategory}
         quizResults={quizResults}

@@ -7,7 +7,7 @@ import ConsentBanner from './components/ConsentBanner';
 import SavedForLater from './components/SavedForLater';
 import EcosystemGenerationBar from './components/EcosystemGenerationBar';
 import WebYou from './components/WebYou';
-import { useThemeMode } from './mobile/hooks/useThemeMode.js';
+import { useWebTheme } from './utils/useWebTheme';
 import MonthlyCheckin from './components/MonthlyCheckin';
 import OmittedProducts from './components/OmittedProducts';
 import ViewSkeleton from './components/skeletons/ViewSkeleton';
@@ -560,8 +560,12 @@ function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, quizResults]);
   // Light / dark, shared with the app's own setting on this browser.
-  const { theme, setThemeMode } = useThemeMode();
-  useEffect(() => { document.documentElement.dataset.ayTheme = theme; }, [theme]);
+  const { theme, mode: themeMode, setThemeMode } = useWebTheme();
+  // Dark mode is "brand dark": the light design (same type and components)
+  // on an espresso page. The old neon dark rules are keyed to 'dark' and no
+  // longer apply.
+  const themeAttr = theme === 'dark' ? 'brand-dark' : theme;
+  useEffect(() => { document.documentElement.dataset.ayTheme = themeAttr; }, [themeAttr]);
   const [saveError, setSaveError] = useState(null);
   const reportSaveFailure = useCallback((what, err) => {
     console.error('[Ayna] save failed:', what, err);
@@ -1831,7 +1835,7 @@ function App() {
 
 
   return (
-    <div className="app-container" data-theme={theme} data-view={currentView}>
+    <div className="app-container" data-theme={themeAttr} data-view={currentView}>
       {/* Shared fixed stacking wrapper for top-of-viewport status rows, so the
           save-error banner and the ecosystem-generation bar stack instead of
           overlapping if both are showing at once, neither sets its own
@@ -2090,7 +2094,7 @@ function App() {
             onOpenProduct={handleOpenProduct}
             onSignOut={handleSignOut}
             onDeleteAccount={handleOpenDeleteAccount}
-            theme={theme}
+            theme={themeMode}
             onThemeChange={setThemeMode}
           />
         )}

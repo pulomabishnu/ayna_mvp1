@@ -31,7 +31,7 @@ function readAnalyticsOff() {
   }
 }
 
-function AnalyticsToggle() {
+export function AnalyticsToggle() {
   const [off, setOff] = useState(readAnalyticsOff);
 
   const turnOff = () => {

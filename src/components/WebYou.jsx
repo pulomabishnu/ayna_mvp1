@@ -7,6 +7,7 @@ import { getBrandAffinity, getSafetyAlerts } from '../mobile/utils/shopperProfil
 import { getProfileCompletionPct } from '../mobile/utils/profileCompleteness.js';
 import { ROUTINE_BUCKETS, ROUTINE_BUCKET_LABELS, useRoutine } from '../mobile/hooks/useRoutine.js';
 import { fetchDataExport } from '../mobile/utils/dataExportApi.js';
+import { AnalyticsToggle } from './SiteFooter';
 import ShopperCard from '../mobile/components/ShopperCard.jsx';
 import BadgesPanel from './BadgesPanel';
 import './WebYou.css';
@@ -99,6 +100,17 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
       setName(next); setNameDraft(null); flash('Name saved');
     } catch { flash('Could not save your name right now'); }
   };
+  const provider = user?.app_metadata?.provider || 'email';
+  const [emailDraft, setEmailDraft] = useState(null);
+  const changeEmail = async () => {
+    const next = String(emailDraft || '').trim();
+    if (!next) return;
+    try {
+      const { error } = await getSupabaseClient().auth.updateUser({ email: next });
+      if (error) throw error;
+      setEmailDraft(null); flash(`Check ${next} for a link to confirm the change`);
+    } catch { flash('Could not change your email right now'); }
+  };
   const resetPassword = async () => {
     try {
       const { error } = await getSupabaseClient().auth.resetPasswordForEmail(user.email, { redirectTo: `${window.location.origin}/you` });
@@ -187,11 +199,12 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
           <div className="wyou-card-head"><h2>Account</h2></div>
           <div className="wyou-rows">
             <div><span>Name</span>{nameDraft === null ? <><b>{name || 'Not set'}</b><button type="button" onClick={() => setNameDraft(name)}>Edit</button></> : <form onSubmit={(e) => { e.preventDefault(); saveName(); }}><input autoFocus value={nameDraft} onChange={(e) => setNameDraft(e.target.value)} maxLength={40} aria-label="First name" /><button type="submit">Save</button></form>}</div>
-            <div><span>Email</span><b>{user.email}</b></div>
+            <div><span>Email</span>{emailDraft === null ? <><b>{user.email}{provider === 'google' ? <small className="wyou-sub"> · Signed in with Google</small> : provider === 'apple' ? <small className="wyou-sub"> · Signed in with Apple</small> : null}</b>{provider === 'email' && <button type="button" onClick={() => setEmailDraft('')}>Change</button>}</> : <form onSubmit={(e) => { e.preventDefault(); changeEmail(); }}><input type="email" autoFocus value={emailDraft} onChange={(e) => setEmailDraft(e.target.value)} placeholder="New email" aria-label="New email" required /><button type="submit">Send link</button></form>}</div>
             <div><span>Health profile</span><b>{pct}% complete</b><button type="button" onClick={onEditProfile}>Update</button></div>
             <div><span>Password</span><b>••••••••</b><button type="button" onClick={resetPassword}>Send reset link</button></div>
-            {onThemeChange && <div><span>Appearance</span><b>{theme === 'dark' ? 'Dark' : 'Light'}</b><span className="wyou-seg">{['light', 'dark'].map((m) => <button type="button" key={m} aria-pressed={theme === m} onClick={() => onThemeChange(m)}>{m === 'dark' ? 'Dark' : 'Light'}</button>)}</span></div>}
-            <div><span>Your data</span><b>Everything we store about you</b><button type="button" onClick={downloadData}>Download</button></div>
+            {onThemeChange && <div><span>Appearance</span><b>{theme === 'dark' ? 'Dark' : theme === 'system' ? 'Match my device' : 'Light'}</b><span className="wyou-seg">{[['light', 'Light'], ['dark', 'Dark'], ['system', 'Match my device']].map(([m, l]) => <button type="button" key={m} aria-pressed={theme === m} onClick={() => onThemeChange(m)}>{l}</button>)}</span></div>}
+            <div><span>Usage analytics</span><b>Anonymous, no session recording</b><AnalyticsToggle /></div>
+            <div><span>Your data</span><b>Everything we store about you<small className="wyou-sub">A JSON file: your health profile, ecosystem, reviews, phone and text settings, and AI usage.</small></b><button type="button" onClick={downloadData}>Download</button></div>
           </div>
           {note && <p className="wyou-note" role="status">{note}</p>}
           <div className="wyou-actions">

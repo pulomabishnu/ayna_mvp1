@@ -92,16 +92,24 @@ function Search({ onSearch }) {
   );
 }
 
-function Hero({ onStartQuiz, onSearch }) {
+function Hero({ onStartQuiz, onSearch, personal = null }) {
   return (
     <section className="lv-hero" aria-labelledby="lv-hero-title">
       <div className="lv-hero__photos">
         {HERO.map((p, i) => (<img key={p.src} src={p.src} alt={p.alt} style={{ objectPosition: p.pos }} {...(i === 0 ? { fetchPriority: 'high' } : {})} />))}
       </div>
       <div className="lv-hero__copy">
-        <h1 id="lv-hero-title">Build your <em>ecosystem.</em></h1>
-        <p>Health products matched to your body.</p>
-        <button type="button" className="lv-btn lv-btn--butter" onClick={onStartQuiz}>See my matches<Arrow /></button>
+        {personal ? <>
+          <h1 id="lv-hero-title">Welcome back, <em>{personal.name}.</em></h1>
+          <p>{personal.ecoCount > 0 ? `${personal.ecoCount} product${personal.ecoCount === 1 ? '' : 's'} in your ecosystem.` : 'Health products matched to your body.'}</p>
+          {personal.ecoCount > 0 || personal.hasQuiz
+            ? <button type="button" className="lv-btn lv-btn--butter" onClick={personal.onOpenEcosystem}>Open my ecosystem<Arrow /></button>
+            : <button type="button" className="lv-btn lv-btn--butter" onClick={onStartQuiz}>See my matches<Arrow /></button>}
+        </> : <>
+          <h1 id="lv-hero-title">Build your <em>ecosystem.</em></h1>
+          <p>Health products matched to your body.</p>
+          <button type="button" className="lv-btn lv-btn--butter" onClick={onStartQuiz}>See my matches<Arrow /></button>
+        </>}
         <Search onSearch={onSearch} />
       </div>
       <div className="lv-stamp" aria-hidden="true">
@@ -328,13 +336,16 @@ function Start({ onStartQuiz, onViewDiscovery }) {
 }
 
 /* ---------- page ---------- */
-export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewCommunity, onSearch }) {
+// `personal` (signed in): the same page with a welcome-back hero, and
+// `personalSlot` (her next step, top picks, Powder Room) right under it.
+export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewCommunity, onSearch, personal = null, personalSlot = null }) {
   const [paused, setPaused] = useState(false);
   return (
     <div className={`lv${paused ? ' is-paused' : ''}`}>
       <Ticker />
       <div className="lv-wrap">
-        <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} />
+        <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} personal={personal} />
+        {personalSlot}
         <Purpose onViewAbout={onViewAbout} />
         <Trending onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
         <ShopBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
@@ -342,7 +353,7 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
         <Why paused={paused} />
         <div className="lv-sec lv-carousel"><WebHeroCarousel onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} onStartQuiz={onStartQuiz} /></div>
         <Reads onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
-        <Start onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />
+        {!(personal && personal.hasQuiz) && <Start onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />}
       </div>
       <button type="button" className="lv-pause" aria-pressed={paused} aria-label={paused ? 'Play motion' : 'Pause motion'} title={paused ? 'Play motion' : 'Pause motion'} onClick={() => setPaused((v) => !v)}>
         {paused

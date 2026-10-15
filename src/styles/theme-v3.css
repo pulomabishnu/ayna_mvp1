@@ -3225,3 +3225,68 @@ html body .app-container a.ay-fn:focus-visible { outline: 3px solid #769ebe; }
 .ay-lib-404__code { margin: 0; font: 400 40px/1 'DM Serif Display', serif; }
 .ay-lib-404 h2 { margin: 6px 0; font: 400 26px/1.2 'DM Serif Display', serif; }
 .ay-lib-404__btn { display: inline-block; margin-top: 8px; padding: 10px 16px; border: 2px solid #3e2723; border-radius: 99px; background: #ffedac; color: #3e2723; font: 700 15px/1 'DM Sans', sans-serif; text-decoration: none; }
+/* Account: Delete account sits apart from Log out. */
+html body .app-container .wyou-actions { flex-wrap: wrap; }
+html body .app-container .wyou-actions .wyou-link-danger { flex-basis: 100%; margin-top: 28px; padding-top: 14px; border-top: 1.5px solid rgba(62, 39, 35, .25); text-align: left; }
+.wyou-sub { display: block; font-weight: 400; font-size: 13px; }
+html body .app-container .wyou-rows .ay-footer-legal__link { font: 700 14px/1 'DM Sans', sans-serif; text-decoration: underline; background: none; border: 0; color: inherit; cursor: pointer; }
+
+
+/* ── Dark mode = brand dark (pass 4). The light design, unchanged in type and
+   components, on an espresso page: butter text on the page, butter cards with
+   espresso text, pink and blue accents (like the landing's brown band). ── */
+:root[data-ay-theme='brand-dark'] body, :root[data-ay-theme='brand-dark'] { background: #3e2723 !important; }
+html body .app-container[data-theme='brand-dark'] { --ay-page: #3e2723; background: #3e2723 !important; color-scheme: dark; }
+html body .app-container[data-theme='brand-dark'] :is(main, .app-nav-wrap, .app-nav.app-nav, .site-footer, .ay-footer-legal) { background: #3e2723 !important; }
+/* Page-level text (not inside cards) in butter. */
+html body .app-container[data-theme='brand-dark'] :is(
+  .ay3-title, .ay3-title em, .ay3-kicker, .lx-h2, .lx-h2 em, .lx-today__title, .lx-today__sub, .lx-today__link, .lx-powder__head h2, .lx-shop__head,
+  .ay-wiki-top__text, .ay-wiki-top__sub, .ay-web-lib-cat > h2, .ay-wiki-sec > h2, .ay-wiki-sec > h2 small,
+  .ayna-browse__count, .ayna-browse__featured-note, .ayna-browse__sort, .ay-shop-head, .ayna-browse h1, .ayna-browse h1 em, .ayna-browse > p,
+  .wc-hero-sub, .ay-info__title, .ay-info__lede, .ay-info-section > h2, .ay-info__h2, .eco3-head__title, .eco3-head__sub, .eco3-jump a,
+  #eco3-shelves-title, #eco3-needs-title, #eco3-tools-title, .ay-story > h2, .ay-story h2 em, .pdp-head__name, .pdp-head__eyebrow, .pdp-h2-price, .pdp-h2-price small,
+  .ay-pdp-sechead, .ay-pdp-sechead h2, .ay-pdp-sechead p, .pdp-crumbs, .pdp-crumbs a, .ay-buy__facts, .ay-buy__facts dt, .ay-buy__facts dd, .pdp-commission, .pdp-partner-line,
+  .ay-know__src, .ay-match__body, .ay-match__body h2, .ay-match__reasons, .ay-match__links a, .ay-match__links button, .ay-match__lede,
+  .site-footer, .site-footer a, .site-footer p, .site-footer span, .site-footer h3, .site-footer h4, .ay-footer-legal__link, .ay-footer-link,
+  .app-nav__logo, .app-nav__tab--quiet, .app-nav__exitquiz, .ay-ecoprev__head, .ay-ecoprev__steps, .ay-ecoprev__note,
+  .wyou-hero, .ay-lib-more, .lv-head h2, .lv-sec > header h2
+) { color: #ffedac !important; }
+html body .app-container[data-theme='brand-dark'] .app-nav.app-nav { border-bottom-color: #ffedac !important; }
+html body .app-container[data-theme='brand-dark'] .app-nav__divider { background: #ffedac !important; }
+html body .app-container[data-theme='brand-dark'] .app-nav.app-nav a.app-nav__tab.app-nav__tab--active { background: #ffedac !important; color: #3e2723 !important; border-color: #ffedac !important; }
+html body .app-container[data-theme='brand-dark'] .app-nav.app-nav .app-nav__circle { background: #ffedac !important; color: #3e2723 !important; }
+/* Bordered things on the page get butter lines and pink offset shadows. */
+html body .app-container[data-theme='brand-dark'] :is(.lx-chips button, .ayna-browse__categories button, .ay-lib-chips button, .ay-catrow__arrow, .ayna-browse__filter-button, .ayna-browse__sort select, .pdp-back, .pdp-share) { border-color: #ffedac !important; }
+html body .app-container[data-theme='brand-dark'] .ay-wiki-sec > h2, html body .app-container[data-theme='brand-dark'] .lx-powder__head { border-color: #ffedac !important; }
+/* Brand dark: the page colour token itself (it was pinned to butter for every view). */
+html body .app-container.app-container[data-theme='brand-dark'][data-view] { --ay-page: #3e2723 !important; --mockup-cream: #3e2723; }
+html body .app-container[data-theme='brand-dark'] .app-nav-wrap, html body .app-container[data-theme='brand-dark'] .app-nav.app-nav.app-nav { background: #3e2723 !important; }
+html body .app-container.app-container.app-container[data-theme='brand-dark'] :is(
+  .ay-footer-col__title, .ay-info-card, .ay-info-card h3, .ay-info-card p, .ay-info-card span, .ay-info-card em, .ay-info__small, .ay-info-example, .ay-info__pill, .ay-info__body, .ay-info-step__title, .ay-info-step__body,
+  .eco3-details__card, .eco3-details__title, .eco3-details__hint, .eco3-details__body, .eco3-details__body p, .ay-lib-article__tags .ay-lib-tag, .wyou-quick .wyou-btn, .wyou-quick .wyou-btn small, .wyou-rows .ay-footer-legal__link,
+  .pdp-topbar a, .pdp-topbar span, .pdp-topbar button, .ay-more__body dt, .ay-more__body dd, .ay-gl-type,
+  .app-nav__logo, .site-footer__logo, .ay-footer__blurb, .ay-footer-col__title, .ay-footer-link, .site-footer__baseline span, .ay-footer-legal__text, .ay-footer-legal__text strong, .ay-footer-legal__link,
+  .lx-hero__hello, .lx-hero__title, .lx-hero__sub, .lx-hero__note, .lx-h2, .lx-powder__head h2, .lx-powder__head em, .lx-today__link, .lx-chips__more, .lx-ghost,
+  .ayna-browse__disclosure, .ayna-browse__disclosure a, .ayna-browse__personalized-toggle span, .ayna-browse__sort > span, .ay-suggest__copy h2, .ay-suggest__copy p,
+  .ay3-kicker, .ay3-title, .ay3-title em, .wc-hero-sub, .wyou-who h1, .wyou-who small, .wyou-legal a, .ay-info__intro, .ay-info__title, .ay-info__lede, .ay-info__section-head h2,
+  .pdp-back span, .pdp-share, .pdp-commission, .pdp-partner-line, .pdp-partner-line .pdp-textlink, .pdp-crumbs a, .pdp-crumbs span, .pdp-community-actions h3, .pdp-omit-link,
+  .ay-trust__card, .ay-trust__card h3, .ay-trust__card p, .ay-trust__card small, .ay-trust__card h4, .ay-trust__link, .ay-trust__muted,
+  .eco3-head__sub, .eco3-jump a, .eco3-needs__sub, .eco3-area__head h2, .wishlist-empty p, .ay-more summary, .ay-more__body, .ay-more__body p, .ay-more__body dt, .ay-more__body dd, .ay-more__body li, .ay-more__body small, .ay-gl-label, .ay-gl-note, .ay-gloss, .ay-gl-more,
+  .ay-compare__sugg span, .ay-compare h2, .ay-compare p, .ay-web-lib-card h3, .ay-web-lib-card p, .ay-lib-card__src, .ay-lib-card__foot, .ay-lib-tag
+) { color: #ffedac !important; }
+html body .app-container[data-theme='brand-dark'] :is(.ay-trust__card, .ay-more, .ay-wiki-sec > h2, .lx-powder__head, .ay-web-lib-card, .ay-lib-card) { border-color: rgba(255, 237, 172, .5) !important; }
+html body .app-container.app-container[data-theme='brand-dark'] .app-nav.app-nav a.app-nav__tab.app-nav__tab--active { background: #ffedac !important; color: #3e2723 !important; }
+html body .app-container.app-container[data-theme='brand-dark'] :is(.ay-info-card, .eco3-details__card, .ay-info__pill, .ay-info-example) { border-color: rgba(255, 237, 172, .55) !important; background-color: transparent !important; }
+html body .app-container[data-theme='brand-dark'] .app-nav__beta-badge { background: #f7badd !important; color: #3e2723 !important; }
+/* Brand dark, round 2: these blocks become butter cards (espresso text); the rest of the page text is butter. */
+html body .app-container.app-container.app-container[data-theme='brand-dark'] :is(.pdp-buybox, .ay-story--more .ay-more, .ay-compare__table-wrap, .ay-compare table, .ay-suggest, .care-near-panel, .ay-info-funnel, .ay-info-founder, .ay-info-step__demo, .pdp-community-actions, .wyou-legal) { background: #ffedac !important; color: #3e2723 !important; border: 2px solid #ffedac; border-radius: 12px; }
+html body .app-container.app-container.app-container[data-theme='brand-dark'] :is(.pdp-buybox, .ay-story--more .ay-more, .ay-compare table, .ay-suggest, .care-near-panel, .ay-info-funnel, .ay-info-founder, .ay-info-step__demo, .pdp-community-actions, .wyou-legal) :is(p, span, small, a, dt, dd, th, td, h2, h3, h4, li, button:not(.pdp-btn--buy):not(.is-primary), strong, em, figcaption, summary, label) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container[data-theme='brand-dark'] .ay-story--more .ay-more { padding: 4px 14px; margin-bottom: 8px; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.wc3 .ay3-kicker, .wc3 .ay3-title, .wc3 .ay3-title em, .wc-hero-sub, .eco3-head__sub, .eco3-jump a, .pdp-topbar a, .pdp-topbar span, .pdp-topbar button, .pdp-back, .pdp-back span, .pdp-share, .ay-lib-article__tags .ay-lib-tag, .ay-suggest__copy h2, .ay-suggest__copy p) { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.pdp-back, .pdp-share) { background: transparent !important; border-color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-suggest :is(.ay-suggest__copy h2, .ay-suggest__copy p) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .app-nav.app-nav .app-nav__links a.app-nav__tab--quiet.app-nav__tab--active { background: #ffedac !important; color: #3e2723 !important; }
+/* Signed-in Home: personal block under the landing hero. */
+html body .app-container .lx-personal { padding: 32px 0 8px; }
+html body .app-container .lx-personal__next { margin-bottom: 8px; }
+html body .app-container .lx-personal .lx-shop { padding-top: 24px; }
