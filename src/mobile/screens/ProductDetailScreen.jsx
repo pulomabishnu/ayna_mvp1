@@ -22,6 +22,8 @@ import { apiUrl } from '../../utils/apiUrl.js';
 import { productHref } from '../../utils/productRoute.js';
 import { HEART_PATH } from '../utils/heart.js';
 import { formatPrice } from '../../utils/formatPrice.js';
+import { AMAZON_ASSOCIATE_STATEMENT, AMAZON_LINK_DISCLOSURE } from '../../commerce/amazon.js';
+import { isAmazonUrlOrId } from '../../commerce/policy.js';
 import { displayName } from '../utils/displayName.js';
 import '../pdp.css';
 import '../eco-needs.css';
@@ -386,6 +388,12 @@ export default function ProductDetailScreen({
             </div>
           )}
         </div>
+
+        {!isPartner && buyUrl && isAmazonUrlOrId(buyUrl) && (
+          <p className="ay-amazon-disclosure" style={{ margin: '10px 0 0', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', fontFamily: 'var(--ayna-font-ui)' }}>
+            {AMAZON_LINK_DISCLOSURE}. {AMAZON_ASSOCIATE_STATEMENT}
+          </p>
+        )}
 
         {isPartner && (
           <div className="ayna-figma-partner-disclosure">

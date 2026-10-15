@@ -8,6 +8,9 @@
 // the website, not a mobile-only copy. Keep the helper functions in sync
 // with ProductModal.jsx if that logic changes.
 import { PRODUCT_BUY_URLS } from '../../data/productBuyUrls.js';
+import { resolveCommerce } from '../../commerce/router.js';
+import { commerceContext } from '../../commerce/platform.js';
+import { isAmazonUrlOrId } from '../../commerce/policy.js';
 
 function hasRealPath(url) {
   try {
@@ -43,7 +46,32 @@ function isExactBuyUrl(value) {
   return /^https?:\/\//i.test(url) && hasRealPath(url) && !isSearchResultsUrl(url);
 }
 
-export function getBuyUrl(product) {
+/**
+ * The app's Buy button. Same Commerce Router as the website, so partner /
+ * Amazon / brand-site routing, the exact option and the displayed price all
+ * agree. In the native app Amazon links stay off until Amazon approves the
+ * app (VITE_AMAZON_MOBILE_APP_APPROVED); those products open the brand site.
+ */
+export function getBuyUrl(product, variant = null) {
+  const ctx = commerceContext();
+  const routed = resolveCommerce(product, variant, ctx)?.destinationUrl;
+  if (routed) return routed;
+  const legacy = legacyBuyUrl(product);
+  if (legacy && ctx.platform === 'native' && isAmazonUrlOrId(legacy)
+    && String(ctx.env.VITE_AMAZON_MOBILE_APP_APPROVED || '') !== 'true') return null;
+  return legacy;
+}
+
+/**
+ * The catalog's own exact purchase page (affiliate link, verified buy URL,
+ * product URL), without commerce routing. Used by the product passport's
+ * link checks, which must never crawl Amazon pages.
+ */
+export function getCatalogPurchaseUrl(product) {
+  return legacyBuyUrl(product);
+}
+
+function legacyBuyUrl(product) {
   if (isExactBuyUrl(product?.affiliateUrl)) {
     return String(product.affiliateUrl).trim();
   }

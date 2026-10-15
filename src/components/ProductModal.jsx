@@ -7,6 +7,10 @@ import '../styles/match-ui.css';
 import { getAynaRating } from '../data/aynaReviews';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
 import { isPartnerBrandItem, isPrelaunchPartnerItem, getPartnerDisclosureText } from '../utils/partnerBrands';
+import { AMAZON_ASSOCIATE_STATEMENT, AMAZON_LINK_DISCLOSURE } from '../commerce/amazon.js';
+import { resolveCommerce } from '../commerce/router.js';
+import { commerceContext } from '../commerce/platform.js';
+import { commerceEventProps, COMMERCE_EVENTS } from '../commerce/analytics.js';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
@@ -529,8 +533,12 @@ export default function ProductModal({
   if (!product) return null;
 
   const basePrice = priceParts(product);
+  // The chosen option's price at the merchant its Buy button opens (verified
+  // on that merchant's site, still fresh), else the existing placeholder.
+  const optionCommerce = choice.hasVariants && choice.variant ? resolveCommerce(product, choice.variant, commerceContext()) : null;
+  const optionPrice = optionCommerce?.priceDisplay?.show ? optionCommerce.priceDisplay : null;
   const price = choice.hasVariants
-    ? { known: true, main: choice.variant?.priceLabel || 'See retailer for price', sub: '', isPlaceholder: !choice.variant?.priceLabel }
+    ? { known: true, main: optionPrice?.main || choice.variant?.priceLabel || 'See retailer for price', sub: optionPrice?.sub || '', isPlaceholder: !optionPrice && !choice.variant?.priceLabel }
     : basePrice;
   const perUnit = choice.hasVariants ? '' : perUnitLabel(product);
   const priceText = product.price || product.stage || '';
@@ -551,6 +559,8 @@ export default function ProductModal({
       onClick={() => {
         // Never let the purchase-feedback queue block opening the retailer.
         try { recordRetailerVisit(product, choice.variant); } catch { /* ignore */ }
+        // An affiliate click is not an order; this records only the click.
+        posthog.capture(COMMERCE_EVENTS.EXTERNAL_PURCHASE_CLICKED, commerceEventProps(resolveCommerce(product, choice.variant, commerceContext()), commerceContext()));
         posthog.capture('product_buy_now_clicked', {
           productId: product.id,
           category: product.category,
@@ -586,7 +596,9 @@ export default function ProductModal({
           <small style={{ display: 'block', marginTop: '0.35rem' }}>
             {sizeChosenOnAmazon
               ? 'Buy now opens this product on Amazon. Pick the same size there, and confirm current price and availability with the retailer.'
-              : 'Buy now opens this exact option. Confirm current price and availability with the retailer.'}
+              : optionCommerce?.availability === 'OUT_OF_STOCK'
+                ? `This option was sold out at ${optionCommerce.merchant} when ayna last checked. Confirm availability with the retailer.`
+                : 'Buy now opens this exact option. Confirm current price and availability with the retailer.'}
           </small>
         </label>
       )}
@@ -637,7 +649,7 @@ export default function ProductModal({
       {!buyUrl && <p className="pdp-buybox__note">We don’t have a direct link for this one yet. {(product.whereToBuy || []).length ? `Sold at ${product.whereToBuy.join(', ')}.` : ''}</p>}
       {isPartner && showDisclosure && <p className="pdp-buybox__note pdp-partner-note">{getPartnerDisclosureText(product)}</p>}
       {buyUrl && isAmazonBuyLink && !isPartner && (
-        <p className="pdp-buybox__note pdp-amazon-disclosure">ayna receives a commission on purchases. We have no direct partnership with this brand.</p>
+        <p className="pdp-buybox__note pdp-amazon-disclosure">{AMAZON_LINK_DISCLOSURE}. {AMAZON_ASSOCIATE_STATEMENT} We have no direct partnership with this brand.</p>
       )}
       {usesAffiliateLink && <p className="pdp-buybox__note">ayna may earn a commission if you buy through this link.</p>}
     </div>

@@ -12,6 +12,8 @@
  * - sources are numbered once and cited inline like footnotes.
  */
 import { HEALTH_FUNCTIONS, CATEGORY_LABELS } from '../../data/products.js';
+import { commerceCardPrice } from '../../commerce/router.js';
+import { commerceContext } from '../../commerce/platform.js';
 import { getPassport, EVIDENCE_TYPES } from '../../data/passport/index.js';
 import { priceParts, safetyAlertText, humanizeTag, noDash, matchLine, buildTypedTags } from '../../data/passport/content.js';
 import { whyMatch, confidenceNotes, exclusionLines, isClaimBlocked, MIN_BADGE_SCORE } from '../../utils/matchDisplay.js';
@@ -82,6 +84,7 @@ export function sizeCount(product) {
 export function perUnitLabel(product) {
   const fromUtil = priceParts(product).perUnit;
   if (fromUtil) return fromUtil.replace(' / ', ' per ');
+  if (commerceCardPrice(product, commerceContext())) return ''; // shown price isn't the catalog text
   const p = String(product?.price || '');
   if (!p || /[-–]\s*\$?\d|\bfrom\b|\/\s*(mo|month|year|yr)|per (month|session|visit)|subscription/i.test(p)) return '';
   const amount = p.match(/\$\s*(\d+(?:\.\d+)?)/);

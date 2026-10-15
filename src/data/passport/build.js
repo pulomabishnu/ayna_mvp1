@@ -14,7 +14,7 @@ import { lintProductCopy } from './wording.js';
 import { PASSPORT_REVIEWS } from './reviews.js';
 import { LINK_STATUS, linkRecord } from './linkStatus.js';
 import { getVerificationLinks, hostLabel } from '../../utils/verificationLinks.js';
-import { getBuyUrl } from '../../mobile/data/buyUrl.js';
+import { getCatalogPurchaseUrl as getBuyUrl } from '../../mobile/data/buyUrl.js';
 import { brandOf } from '../../mobile/data/brandFallback.js';
 import { isPlaceholderProductImage } from '../../utils/resolveProductImage.js';
 import { getPricePerUnitLabel } from '../../utils/pricePerUnit.js';
