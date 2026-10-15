@@ -3998,3 +3998,65 @@ html body .app-container .brand-panel .brand-partner__prelaunch-tag { display: i
   html body .app-container.app-container .cr-schools-list li > button, html body .app-container.app-container .ay-info .ay-info-advisor__link.ay-info-advisor__link, html body .app-container.app-container .ay-lib-row__body a, html body .app-container.app-container .app-nav__exitquiz { display: inline-flex !important; align-items: center !important; min-height: 44px !important; }
   html body .app-container .wq-age-slide input[type='range'] { height: 44px !important; }
 }
+
+/* Product page evidence tabs: ayna summary, Clinician opinion, Scientific
+   literature, Reviews. Folder tabs over one card; each tab keeps its colour;
+   its links sit under the text as cards. Brand colours and fonts only. */
+html body .app-container .ay-ev { margin-top: 32px; }
+html body .app-container .ay-ev > h2 { margin: 0 0 16px; }
+html body .app-container .ay-ev__tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0 0 0 12px; position: relative; z-index: 1; }
+html body .app-container .ay-ev__tab { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border: 2px solid #3e2723; border-bottom: 0; border-radius: 14px 14px 0 0; background: #ffedac; color: #3e2723; font: 700 14px/1 'DM Sans', sans-serif; cursor: pointer; transform: translateY(2px); }
+html body .app-container .ay-ev__tab b { min-width: 22px; height: 22px; padding: 0 6px; display: inline-grid; place-items: center; border-radius: 99px; background: #3e2723; color: #ffedac; font-size: 12px; }
+html body .app-container .ay-ev__tab:not(.is-on) { opacity: .75; }
+html body .app-container .ay-ev__tab:hover { opacity: 1; }
+html body .app-container .ay-ev__tab.is-on { opacity: 1; padding-bottom: 2px; }
+html body .app-container .ay-ev__tab.is-sky.is-on { background: #769ebe; }
+html body .app-container .ay-ev__tab.is-rose.is-on { background: #f7badd; }
+html body .app-container .ay-ev__tab.is-ink.is-on { background: #3e2723; color: #ffedac; }
+html body .app-container .ay-ev__tab.is-ink.is-on b { background: #ffedac; color: #3e2723; }
+html body .app-container .ay-ev__tab:focus-visible { outline: 3px solid #3e2723; outline-offset: 2px; }
+html body .app-container .ay-ev__panel { padding: 24px; border: 2px solid #3e2723; border-radius: 18px; background: #ffedac; color: #3e2723; box-shadow: 5px 5px 0 #3e2723; }
+html body .app-container .ay-ev__panel.is-sky { background: #769ebe; }
+html body .app-container .ay-ev__panel.is-rose { background: #f7badd; }
+html body .app-container .ay-ev__panel.is-ink { background: #3e2723; color: #ffedac; }
+html body .app-container .ay-ev__body { margin: 0 0 12px; font: 400 17px/1.65 'DM Sans', sans-serif; color: inherit; }
+html body .app-container .ay-ev__body a { color: inherit; text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
+html body .app-container .ay-ev__by, html body .app-container .ay-ev__strength { margin: 0 0 12px; font: 500 14px/1.5 'DM Sans', sans-serif; color: inherit; }
+html body .app-container .ay-ev__empty { margin: 0; font: 400 16px/1.5 'DM Sans', sans-serif; color: inherit; }
+html body .app-container .ay-ev__rating { margin: 0 0 12px; font: 400 16px/1.4 'DM Sans', sans-serif; }
+html body .app-container .ay-ev__rating b { font: 400 24px/1 'DM Serif Display', serif; margin-right: 4px; }
+html body .app-container .ay-ev__quote { margin: 0 0 12px; padding: 12px 16px; border-left: 4px solid #f7badd; background: rgba(255, 237, 172, .08); font: 400 16px/1.55 'DM Sans', sans-serif; }
+html body .app-container .ay-ev__links { margin-top: 18px; }
+html body .app-container .ay-ev__links-h { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font: 400 20px/1.2 'DM Serif Display', serif; color: inherit; }
+html body .app-container .ay-ev__links-h span { min-width: 22px; height: 22px; padding: 0 6px; display: inline-grid; place-items: center; border-radius: 99px; border: 1.5px solid currentColor; font: 700 12px/1 'DM Sans', sans-serif; }
+html body .app-container .ay-ev__links ul { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+html body .app-container .ay-ev__links li { display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border: 2px solid #3e2723; border-radius: 12px; background: #ffedac; color: #3e2723; }
+html body .app-container .ay-ev__links li a { display: flex; flex-direction: column; gap: 4px; color: #3e2723; text-decoration: none; min-height: 44px; }
+html body .app-container .ay-ev__pub { font: 700 12px/1.3 'DM Sans', sans-serif; }
+html body .app-container .ay-ev__title { font: 600 15px/1.35 'DM Sans', sans-serif; text-decoration: underline; text-underline-offset: 3px; }
+html body .app-container .ay-ev__links li a:hover .ay-ev__title { text-decoration-thickness: 2px; }
+html body .app-container .ay-ev__links li p { margin: 0; font: 400 14px/1.5 'DM Sans', sans-serif; color: #3e2723; }
+@media (max-width: 600px) {
+  html body .app-container .ay-ev__tabs { padding-left: 0; gap: 4px; }
+  html body .app-container .ay-ev__tab { padding: 0 12px; font-size: 13px; }
+  html body .app-container .ay-ev__panel { padding: 18px 16px; }
+}
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ev__panel:not(.is-ink), html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ev__panel:not(.is-ink) :is(p, a, span, b, blockquote) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ev__panel.is-ink { border-color: #ffedac; box-shadow: 5px 5px 0 #ffedac; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ev__panel.is-ink > :is(p, blockquote), html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ev__panel.is-ink .ay-ev__links-h { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ev__links li, html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ev__links li :is(a, span, p) { color: #3e2723 !important; }
+html body .app-container[data-theme='brand-dark'] .ay-ev__tab { border-color: #ffedac; }
+html body .app-container[data-theme='brand-dark'] .ay-ev__tab.is-ink.is-on { background: #3e2723; color: #ffedac; }
+html body .app-container[data-theme='brand-dark'] .ay-ev__tab:not(.is-ink), html body .app-container[data-theme='brand-dark'] .ay-ev__tab:not(.is-ink) { color: #3e2723 !important; }
+/* Evidence tabs as an even 2 x 2 set of pills (the product column is narrow). */
+html body .app-container .ay-ev__tabs { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px !important; padding: 0 !important; margin: 0 0 12px !important; }
+html body .app-container .ay-ev__tab { justify-content: space-between; border-bottom: 2px solid #3e2723 !important; border-radius: 99px !important; transform: none !important; padding: 0 16px !important; opacity: 1 !important; text-align: left; }
+html body .app-container .ay-ev__tab:not(.is-on) { background: transparent !important; }
+html body .app-container .ay-ev__tab.is-on { box-shadow: 3px 3px 0 #3e2723; }
+html body .app-container .ay-ev__tab.is-butter.is-on { background: #ffedac; }
+html body .app-container[data-theme='brand-dark'] .ay-ev__tab:not(.is-on) { color: #ffedac !important; border-color: #ffedac !important; }
+html body .app-container[data-theme='brand-dark'] .ay-ev__tab.is-on { border-color: #ffedac !important; box-shadow: 3px 3px 0 #ffedac; }
+html body .app-container[data-theme='brand-dark'] .ay-ev__tab.is-ink.is-on { background: #ffedac !important; color: #3e2723 !important; }
+html body .app-container[data-theme='brand-dark'] .ay-ev__tab.is-ink.is-on b { background: #3e2723; color: #ffedac; }
+html body .app-container[data-theme='brand-dark'] .ay-ev__tab:not(.is-on) b { background: #ffedac; color: #3e2723; }
+html body .app-container .ay-ev__tab { min-height: 48px !important; line-height: 1.15 !important; }

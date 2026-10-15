@@ -16,7 +16,8 @@ import MatchPill from './MatchPill';
 import { matchLine, priceParts } from '../data/passport/content';
 import { buildGlance, perUnitLabel, sizeCount } from './pdp/glance';
 import { getPassport } from '../data/passport';
-import { ProductMatch, ProductAsk, ProductTrust, ProductMore } from './passport/ProductSections';
+import { ProductMatch, ProductAsk, ProductMore } from './passport/ProductSections';
+import ProductEvidence from './pdp/ProductEvidence';
 import { galleryImages, retailerLinks, similarProducts, sameNeedProducts, productJsonLd, breadcrumbJsonLd } from './pdp/commerce';
 import GalleryThumbs from './pdp/GalleryThumbs';
 import ComparePanel from './pdp/ComparePanel';
@@ -908,7 +909,8 @@ export default function ProductModal({
             </section>
 
 
-            <ProductTrust glance={glance} aynaRating={aynaRating} ratingCount={ratingCount} extras={sectionExtras} evidenceStrength={String(product.evidenceStrength || '').trim()} onXref={openProductByName} />
+            {/* The team's curated evidence, word for word, with each tab's links under it. */}
+            <ProductEvidence product={product} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenProduct={onOpenProduct} />
 
             <ProductAsk productName={displayName} onAsk={onAskAyna} signedIn={Boolean(user)} />
 
