@@ -381,7 +381,11 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     if (!user) { requireAccount('notifications'); return; }
     setShowUpdates(true); setNotifications(null);
     try {
-      setNotifications(await community.listNotifications(supabase));
+      const rows = await community.listNotifications(supabase);
+      const actorOf = (n) => n.actor_id || n.from_user_id || n.sender_id || n.data?.actor_id || n.payload?.actor_id || null;
+      let people = new Map();
+      try { people = await community.getProfilesByIds(supabase, rows.map(actorOf)); } catch { /* names are a nicety */ }
+      setNotifications(rows.map((n) => ({ ...n, actor: people.get(actorOf(n)) || null })));
       if (unreadCount) { await community.markNotificationsRead(supabase); setUnreadCount(0); }
     } catch (e) { setNotifications([]); notifyError(e); }
   };
@@ -816,7 +820,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       {page ? <button type="button" className="wc-back" onClick={closePage}>← Community</button> : <div><p className="ay3-kicker is-keep">The powder room</p><h1 className="ay3-title">Ask, review, <em>share.</em></h1><p className="wc-hero-sub">Real talk between women, about the products we actually use.</p></div>}
       {!page && <div className="wc-mirror" aria-hidden="true"><span className="wc-mirror__frame"><img src="/landing/stalls-trio.webp" alt="" /></span><span className="wc-mirror__lip">say it here ♡</span></div>}
       <div className="wc-head-actions"><label className="wc-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16 16 4.5 4.5" /></svg><input value={search} onChange={(e) => { setSearch(e.target.value); setSearchResults(null); if (page) closePage(); }} placeholder="Search people, posts, playlists" aria-label="Search Community" />{search && <button type="button" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); }}>×</button>}</label>
-        <button type="button" className="wc-bell" onClick={openUpdates} aria-label={unreadCount ? `Updates, ${unreadCount} new` : 'Updates'}><Icon name="bell" size={20} />{unreadCount > 0 && <span className="wc-bell-dot" aria-hidden="true" />}</button>
+        {user && <button type="button" className="wc-bell" onClick={openUpdates} aria-label={unreadCount ? `Updates, ${unreadCount} new` : 'Updates'}><Icon name="bell" size={20} />{unreadCount > 0 && <span className="wc-bell-dot" aria-hidden="true" />}</button>}
         <button type="button" className="wc-head-me" onClick={openMe} aria-label={profile ? 'Your Community profile' : 'Sign in for a Community profile'}><Avatar size={40} name={profile?.display_name || 'You'} path={profile?.avatar_url} anonymous={!profile} /></button>
       </div>
     </div>
@@ -847,7 +851,27 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     {composeSheet}
     {showUpdates && <Sheet title="Updates" onClose={() => setShowUpdates(false)}>
       {!notifications ? <div className="wc-skel-list" aria-busy="true" aria-label="Loading updates"><span className="wc-skel-line" /><span className="wc-skel-line is-mid" /></div>
-        : notifications.length ? <ul className="wc-notes">{notifications.slice(0, 20).map((n) => <li key={n.id}>{n.message || n.body || n.type?.replace(/_/g, ' ')}<small>{timeLabel(n.created_at)}</small></li>)}</ul>
+        : notifications.length ? (() => {
+          // People, not system strings: "Eliz accepted your friend request".
+          const VERBS = { follow: 'followed you', followed: 'followed you', friend_accepted: 'accepted your friend request', friend_request: 'sent you a friend request', comment: 'replied to your post', reply: 'replied to you', reaction: 'found your post helpful', helpful: 'found your post helpful', recommendation: 'recommended a product to you', recommend: 'recommended a product to you', mention: 'mentioned you' };
+          const day = 86400000; const now = Date.now();
+          const group = (n) => { const t = new Date(n.created_at).getTime(); return now - t < day ? 'Today' : now - t < 7 * day ? 'This week' : 'Earlier'; };
+          const items = notifications.slice(0, 20);
+          return ['Today', 'This week', 'Earlier'].map((g) => {
+            const list = items.filter((n) => group(n) === g);
+            if (!list.length) return null;
+            return <div key={g} className="wc-notes-group"><h3 className="wc-notes-h">{g}</h3><ul className="wc-notes">{list.map((n) => {
+              const who = n.actor?.display_name || (n.actor?.username ? `@${n.actor.username}` : 'Someone');
+              const verb = VERBS[String(n.type || '').toLowerCase()];
+              const text = verb ? `${who} ${verb}` : (n.message || n.body || `${who}: ${String(n.type || 'update').replace(/_/g, ' ')}`);
+              return <li key={n.id}>
+                <span className="wc-notes-av" aria-hidden="true">{String(who).replace('@', '').charAt(0).toUpperCase()}</span>
+                {n.actor?.username ? <button type="button" className="wc-notes-link" onClick={() => { setShowUpdates(false); openProfile(n.actor.username); }}>{text}</button> : <span>{text}</span>}
+                <small>{timeLabel(n.created_at)}</small>
+              </li>;
+            })}</ul></div>;
+          });
+        })()
         : <p className="wc-muted">You’re all caught up.</p>}
     </Sheet>}
     {showRules && <Sheet title="Community rules" onClose={() => setShowRules(false)} className="wc-rules-sheet"><CommunityRulesList /><button type="button" className="wc-btn" onClick={() => setShowRules(false)}>Got it</button></Sheet>}

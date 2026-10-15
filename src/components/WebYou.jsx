@@ -183,7 +183,7 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
           {top.length > 0 && missing.length > 0 && <p className="wyou-muted">Not in your Ecosystem yet: {missing.join(', ')}</p>}
         </section>}
 
-        <section className="wyou-card is-account">
+        <section className="wyou-card is-account" id="wyou-account">
           <div className="wyou-card-head"><h2>Account</h2></div>
           <div className="wyou-rows">
             <div><span>Name</span>{nameDraft === null ? <><b>{name || 'Not set'}</b><button type="button" onClick={() => setNameDraft(name)}>Edit</button></> : <form onSubmit={(e) => { e.preventDefault(); saveName(); }}><input autoFocus value={nameDraft} onChange={(e) => setNameDraft(e.target.value)} maxLength={40} aria-label="First name" /><button type="submit">Save</button></form>}</div>

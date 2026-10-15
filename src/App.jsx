@@ -158,7 +158,7 @@ const VIEW_TO_PATH = {
 // Friendly document.title per view'welcome'/'hero' and any view not
 // listed here fall back to the site's base title (see the title effect).
 const VIEW_TITLES = {
-  quiz: 'Health Quiz', ecosystem: 'My Ecosystem', discovery: 'Shop', you: 'You', community: 'Community',
+  quiz: 'Get matched', ecosystem: 'My Ecosystem', discovery: 'Shop', you: 'You', community: 'Community',
   waitlist: 'Startups', recommendations: 'Your Recommendations', articles: 'Health Library', screenings: 'Screenings',
   omitted: 'Omitted Products', comparison: 'Compare Products', recalls: 'Recalls',
   'doctor-prep': 'Appointment Prep', 'profile-edit': 'Edit Profile',
@@ -1242,9 +1242,14 @@ function App() {
     }
 
     setCurrentView('ecosystem');
-    window.setTimeout(() => {
-      document.getElementById('ayna-wishlist')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 180);
+    // The Saved section renders after the page loads; keep looking for up to ~3s.
+    let tries = 0;
+    const seek = () => {
+      const el = document.getElementById('ayna-wishlist');
+      if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+      if ((tries += 1) < 20) window.setTimeout(seek, 150);
+    };
+    window.setTimeout(seek, 150);
   };
   const handleViewDiscovery = (queryOrOptions = '') => {
     if (typeof queryOrOptions === 'object' && queryOrOptions !== null) {
@@ -1851,6 +1856,9 @@ function App() {
             <a href="/community" className={`app-nav__tab app-nav__tab--quiet ${currentView === 'community' ? 'app-nav__tab--active' : ''}`} aria-current={currentView === 'community' ? 'page' : undefined} {...linkProps(() => setCurrentView('community'))}>Community</a>
           </div>
 
+          {currentView === 'quiz' && (
+            <a href="/" className="app-nav__exitquiz" {...linkProps(navigateHome)}>Exit <span>· answers saved on this device</span></a>
+          )}
           <div className="app-nav__actions">
             <a
               href="/ecosystem"
@@ -1866,17 +1874,19 @@ function App() {
             </a>
             <div ref={accountMenuRef} className="app-nav__account desktop-only">
               {user ? (
-                // Going to You is navigation, so it is a real link (G02); "Log in" opens a menu, so it stays a button.
-                <a
-                  href="/you"
+                // Avatar opens a small account menu: profile, health profile, saved, log out.
+                <button
+                  type="button"
                   className="app-nav__circle app-nav__circle--account app-nav__circle--avatar ay-avatar"
-                  aria-label="Your profile"
+                  aria-label="Your account"
+                  aria-haspopup="menu"
+                  aria-expanded={showAccountMenu}
                   aria-current={currentView === 'you' ? 'page' : undefined}
-                  {...linkProps(() => { setShowAccountMenu(false); setCurrentView('you'); })}
+                  onClick={() => setShowAccountMenu((v) => !v)}
                 >
                   <span className="ay-avatar__text">{accountInitials}</span>
                   {checkinDue && <span className="app-nav__circle-dot" aria-hidden />}
-                </a>
+                </button>
               ) : (
                 <button
                   type="button"
@@ -1886,6 +1896,16 @@ function App() {
                 >
                   <span className="ay-login-text">Log in</span>
                 </button>
+              )}
+              {showAccountMenu && user && (
+                <div className="nav-account-menu" role="menu">
+                  <a role="menuitem" href="/you" {...linkProps(() => { setShowAccountMenu(false); setCurrentView('you'); })}>Your profile</a>
+                  <button type="button" role="menuitem" onClick={() => { setShowAccountMenu(false); handleOpenHealthProfileEditor(); }}>Health profile</button>
+                  <a role="menuitem" href="/ecosystem" {...linkProps(() => { setShowAccountMenu(false); handleViewWishlist(); })}>Saved products</a>
+                  <a role="menuitem" href="/you" {...linkProps(() => { setShowAccountMenu(false); setCurrentView('you'); window.setTimeout(() => document.getElementById('wyou-account')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 250); })}>Account settings</a>
+                  <a role="menuitem" href="/campus-resources" {...linkProps(() => { setShowAccountMenu(false); setCurrentView('campus-resources'); })}>Campus resources</a>
+                  <button type="button" role="menuitem" className="is-quiet" onClick={() => { setShowAccountMenu(false); handleSignOut(); }}>Log out</button>
+                </div>
               )}
               {showAccountMenu && !user && (
                 <div className="nav-account-menu" role="menu">
@@ -2361,7 +2381,7 @@ function App() {
         )}
 
         {currentView !== 'quiz' && currentView !== 'campus-resources' && (
-          <nav className="ay-tabbar" aria-label="Main">
+          <nav className="ay-tabbar" aria-label="Main, phone">
             <a href="/" className={['hero', 'welcome'].includes(currentView) ? 'is-on' : ''} {...linkProps(navigateHome)}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11 12 4l8 7v9h-5v-6H9v6H4z" /></svg><span>Home</span>
             </a>

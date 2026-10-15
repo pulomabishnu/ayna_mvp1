@@ -115,9 +115,9 @@ export default function SiteFooter({
 
         <FooterColumn title="Get in touch">
           <a className="ay-footer-link" href="/contact" onClick={(e) => footerGo(e, onViewContact)}>Contact</a>
-          <a className="ay-footer-link" href="https://form.typeform.com/to/Jt7rx3BS?typeform-source=aynahealth.substack.com" target="_blank" rel="noreferrer">Give us Feedback</a>
-          <a className="ay-footer-link" href="https://www.instagram.com/ayna.health/" target="_blank" rel="noreferrer">Instagram</a>
-          <a className="ay-footer-link" href="https://www.tiktok.com/@aynahealth" target="_blank" rel="noreferrer">TikTok</a>
+          <a className="ay-footer-link" href="https://form.typeform.com/to/Jt7rx3BS?typeform-source=aynahealth.co" target="_blank" rel="noreferrer">Give us Feedback <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
+          <a className="ay-footer-link" href="https://www.instagram.com/ayna.health/" target="_blank" rel="noreferrer">Instagram <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
+          <a className="ay-footer-link" href="https://www.tiktok.com/@aynahealth" target="_blank" rel="noreferrer">TikTok <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
         </FooterColumn>
       </div>
 
@@ -132,10 +132,10 @@ export default function SiteFooter({
           qualified healthcare provider for medical decisions. We do not sell your personal health information.
         </p>
         <nav className="ay-footer-legal__links" aria-label="Legal">
-          <button type="button" className="ay-footer-legal__link" onClick={onViewPrivacyPolicy}>Privacy Policy</button>
+          <a className="ay-footer-legal__link" href="/privacy-policy" onClick={(e) => footerGo(e, onViewPrivacyPolicy)}>Privacy Policy</a>
           <a className="ay-footer-legal__link" href="/consumer-health-data.html">Consumer Health Data Privacy</a>
-          <button type="button" className="ay-footer-legal__link" onClick={onViewTermsOfUse}>Terms of Use</button>
-          <button type="button" className="ay-footer-legal__link" onClick={onViewHowWeMakeMoney}>How We Make Money</button>
+          <a className="ay-footer-legal__link" href="/terms-of-use" onClick={(e) => footerGo(e, onViewTermsOfUse)}>Terms of Use</a>
+          <a className="ay-footer-legal__link" href="/how-we-make-money" onClick={(e) => footerGo(e, onViewHowWeMakeMoney)}>How We Make Money</a>
           <AnalyticsToggle />
         </nav>
       </div>

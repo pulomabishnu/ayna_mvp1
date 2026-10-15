@@ -3019,3 +3019,35 @@ html body .app-container .ayna-browse-card__partner { display: inline-block; pad
 .ay-trust__brand h4 { margin: 0 0 4px; font: 700 13px/1.2 'DM Sans', sans-serif; text-transform: uppercase; letter-spacing: .04em; }
 .ay-trust__brand p { margin: 0 0 4px; font-size: 15px; line-height: 1.45; }
 .ay-trust__brand small { font-size: 13px; }
+/* Nav: one "you are here" style for every tab: espresso fill, butter text.
+   Shop and My Ecosystem keep their brand fill only when they are not current. */
+html body .app-container .app-nav.app-nav a.app-nav__tab.app-nav__tab--active,
+html body .app-container:not([data-theme='dark']) .app-nav.app-nav a.app-nav__tab--main.app-nav__tab--active,
+html body .app-container:not([data-theme='dark']) .app-nav.app-nav a.app-nav__tab--main.app-nav__tab--eco.app-nav__tab--active {
+  background: #3e2723 !important; color: #ffedac !important; border-color: #3e2723 !important; opacity: 1 !important; text-decoration: none !important; box-shadow: none !important; transform: none !important;
+}
+html body .app-container .app-nav.app-nav a.app-nav__tab--quiet.app-nav__tab--active { padding: 0 14px !important; border-radius: 99px !important; }
+/* The Start here sticker keeps its colours on every page (pink heroes included). */
+html body .app-container .app-nav.app-nav .app-nav__tab .app-nav__start,
+body:has(.lv) .app-container .app-nav .app-nav__start { background: #ffedac !important; color: #3e2723 !important; border-color: #3e2723 !important; font-family: 'DM Sans', sans-serif !important; }
+/* Account menu under the avatar. */
+html body .app-container .app-nav__account { position: relative; }
+html body .app-container .nav-account-menu { position: absolute; right: 0; top: calc(100% + 10px); z-index: 120; display: grid; min-width: 220px; padding: 6px; border: 2px solid #3e2723; border-radius: 14px; background: #ffedac; box-shadow: 4px 4px 0 #3e2723; }
+html body .app-container .nav-account-menu :is(a, button) { display: block; padding: 10px 12px; border: 0; border-radius: 8px; background: none; color: #3e2723 !important; font: 600 15px/1.2 'DM Sans', sans-serif; text-align: left; text-decoration: none; cursor: pointer; }
+html body .app-container .nav-account-menu :is(a, button):hover { background: #f7badd; }
+html body .app-container .nav-account-menu .is-quiet { margin-top: 4px; border-top: 1.5px solid rgba(62, 39, 35, .25); border-radius: 0 0 8px 8px; }
+/* Heart is an icon button; avatar is a plain initials disc (different jobs, different shapes). */
+html body .app-container .app-nav.app-nav .app-nav__circle--avatar { border-radius: 50% !important; box-shadow: none !important; background: #f7badd !important; }
+.wc-notes-h { margin: 12px 0 4px; font: 700 13px/1.2 'DM Sans', sans-serif; text-transform: uppercase; letter-spacing: .04em; color: #3e2723; }
+html body .app-container .wc-notes li { display: flex; align-items: center; gap: 10px; }
+.wc-notes-av { flex: 0 0 32px; height: 32px; display: grid; place-items: center; border: 2px solid #3e2723; border-radius: 50%; background: #f7badd; color: #3e2723; font: 700 14px/1 'DM Sans', sans-serif; }
+.wc-notes-link { flex: 1; padding: 0; border: 0; background: none; color: #3e2723; font: 600 15px/1.35 'DM Sans', sans-serif; text-align: left; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+html body .app-container .wc-notes li small { margin-left: auto; white-space: nowrap; }
+/* Quiz is a funnel: just the logo and a way out. */
+html body .app-container[data-view='quiz'] .app-nav :is(.app-nav__links, .app-nav__actions, .app-nav__beta-badge) { display: none !important; }
+.app-nav__exitquiz { margin-left: auto; color: #3e2723; font: 700 15px/1 'DM Sans', sans-serif; text-decoration: underline; text-underline-offset: 4px; }
+.app-nav__exitquiz span { font-weight: 400; text-decoration: none; }
+@media (max-width: 600px) { .app-nav__exitquiz span { display: none; } }
+/* Footer: room under the legal line so the Ask ayna pill never covers it; 44px tap targets on phones. */
+html body .app-container .site-footer { padding-bottom: 88px !important; }
+@media (max-width: 720px) { html body .app-container .site-footer :is(.ay-footer-link, .ay-footer-legal__link) { display: inline-flex; align-items: center; min-height: 44px; } }
