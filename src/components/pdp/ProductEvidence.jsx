@@ -1,4 +1,6 @@
 import { splitSentences } from './sentences';
+import { isCredible } from './credible';
+import { useApprovedResearch } from '../../utils/approvedResearch';
 import React, { useEffect, useMemo, useState } from 'react';
 import { getVerificationLinks, hostLabel } from '../../utils/verificationLinks';
 import { humanPublisher } from './glance';
@@ -13,8 +15,6 @@ import { findHardTerms, planGlossaryTerms } from '../../data/glossary';
 // medical societies and academic medical centers. Anything else (brand sites,
 // retailers, magazines, health blogs, court dockets) stays in the All sources
 // index under Product details, never in these two sections.
-const CREDIBLE = /(\.gov|\.gov\.[a-z]{2}|\.mil|\.nhs\.uk|nice\.org\.uk|who\.int|europa\.eu|ncbi\.nlm\.nih|pubmed|cochranelibrary|cochrane\.org|doi\.org|nejm\.org|jamanetwork|thelancet|bmj\.com|nature\.com|sciencedirect|springer|wiley|tandfonline|sagepub|frontiersin|mdpi|plos|oup\.com|academic\.oup|journals\.lww|ajog\.org|acog\.org|aafp\.org|asrm\.org|menopause\.org|endocrine\.org|ics\.org|uptodate|mayoclinic\.org|clevelandclinic\.org|hopkinsmedicine|health\.harvard\.edu|medlineplus|cancer\.org|acs\.org|nccih|aad\.org|apa\.org|jmir\.org|healthychildren\.org|aap\.org|fda\.gov|cdc\.gov|koreamed\.org|doaj\.org|issm\.info|isswsh\.org|reproductivefacts\.org|myadlm\.org|iro\.uiowa\.edu|research\.vu\.nl|essentialmeds\.org|niehs\.nih)/i;
-const isCredible = (url) => { try { const u = new URL(url); if (/\/search\b|[?&#](q|query|search)=/i.test(u.pathname + u.search + u.hash)) return false; return CREDIBLE.test(u.hostname + u.pathname); } catch { return false; } };
 
 /**
  * The research the team wrote for each product, in the order people look for
@@ -251,7 +251,9 @@ function useEvidence(product, aynaData) {
 // Retail and brand pages are where to buy, not reviews: they stay off the Reviews tab.
 const RETAIL = /amzn\.|amazon\.|walmart\.|target\.com|cvs\.com|walgreens\.|ulta\.|sephora\./i;
 
-export default function ProductEvidence({ product, glance = null, aynaData = null, aynaRating = null, ratingCount = 0, rateControls = null, safety = null, extraRows = [] }) {
+export default function ProductEvidence({ product: baseProduct, glance = null, aynaData = null, aynaRating = null, ratingCount = 0, rateControls = null, safety = null, extraRows = [] }) {
+  // Research the team approved in /admin/research fills any empty section.
+  const product = useApprovedResearch(baseProduct);
   const d = useEvidence(product, aynaData);
   const [tab, setTab] = useState('summary');
   const [allIngredients, setAllIngredients] = useState(false);

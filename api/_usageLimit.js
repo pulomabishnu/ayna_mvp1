@@ -39,6 +39,9 @@ export function getPeriod(action) {
 
 // Reused across warm invocations instead of rebuilt per request.
 let _admin = null;
+/** Service-role client (server only). Exported for read-only public routes. */
+export function getServiceClient() { return getAdmin(); }
+
 function getAdmin() {
   if (_admin) return _admin;
   const url = process.env.SUPABASE_URL;
