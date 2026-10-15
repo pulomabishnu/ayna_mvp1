@@ -2469,3 +2469,59 @@ html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card__tags { 
 html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-cover::before, html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-cover::after { content: none !important; }
 html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-cover { display: flex !important; align-items: flex-end; padding: 10px !important; }
 html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-cover strong { align-self: flex-end; text-align: left; position: static !important; }
+
+/* ---- Library, round 2: more character, tighter rhythm ---- */
+.app-container .ay-wiki-top { padding: 40px 0 26px; }
+html body .app-container:not([data-theme='dark']) .ay-wiki-top h1 em { position: relative; z-index: 0; }
+html body .app-container:not([data-theme='dark']) .ay-wiki-top h1 em::after { content: ''; position: absolute; z-index: -1; left: -4px; right: -6px; bottom: .08em; height: .32em; background: #f7badd; border-radius: 4px; transform: rotate(-1deg); }
+/* progress as a little reading card */
+html body .app-container:not([data-theme='dark']) .ay-wiki-top .ay-lib-total { padding: 14px 18px; border: 2px solid var(--ay-ink); border-radius: 14px; background: #769ebe; transform: rotate(1.5deg); box-shadow: 4px 4px 0 var(--ay-ink); }
+html body .app-container:not([data-theme='dark']) .ay-wiki-top .ay-lib-total > span:first-child { font: 400 26px/1 var(--ay-font-display); }
+/* section headings: lettered tab + count */
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-wiki-sec { counter-increment: wikisec; margin-bottom: 40px !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-wiki-sec > h2 { align-items: center !important; gap: 14px !important; font-size: 32px !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-wiki-sec > h2::before { content: counter(wikisec, upper-alpha) !important; display: grid; place-items: center; flex: none; width: 40px; height: 40px; border: 2px solid var(--ay-ink); border-radius: 50%; background: #f7badd; font: 400 20px/1 var(--ay-font-display); }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-wiki-sec:nth-of-type(even) > h2::before { background: #769ebe; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-wiki-sec > h2 small { margin-left: auto; font: 600 13px/1 var(--ay-font-ui); }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay3-libmain { counter-reset: wikisec; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay3-libside ol { counter-reset: none; }
+/* rows: cover as a tiny tilted index card, title gets the highlighter on hover */
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card { padding: 18px 12px !important; column-gap: 24px; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card :is(.ay-lib-cover, .ay-web-lib-card__img) { width: 120px !important; height: 92px !important; box-shadow: 3px 3px 0 var(--ay-ink) !important; transform: rotate(-2deg); transition: transform .25s cubic-bezier(.3,1.4,.5,1) !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-web-lib-grid > li:nth-child(even) .ay-lib-card :is(.ay-lib-cover, .ay-web-lib-card__img) { transform: rotate(1.5deg); }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card:hover :is(.ay-lib-cover, .ay-web-lib-card__img) { transform: rotate(0) scale(1.04); }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card:hover { background: transparent !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card:hover h3 { text-decoration: none; background: linear-gradient(transparent 58%, #f7badd 58%); }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card h3 { width: fit-content; font-size: 24px !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card > p { max-width: 640px; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card__foot { margin-top: 8px !important; }
+/* rail: a little "contents" card like a wiki box */
+html body .app-container:not([data-theme='dark']) .is-wiki .ay3-libside { top: 196px; gap: 22px; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay3-libside__box:first-child { padding: 14px !important; border: 2px solid var(--ay-ink) !important; border-radius: 12px !important; background: #f7badd !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay3-libside__box:first-child a:hover { background: #ffedac; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-personalize { margin: 0 0 28px !important; }
+@media (max-width: 900px) {
+  html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card :is(.ay-lib-cover, .ay-web-lib-card__img) { width: 78px !important; height: 78px !important; }
+  html body .app-container:not([data-theme='dark']) .ay-wiki-top .ay-lib-total { transform: none; }
+  html body .app-container:not([data-theme='dark']) .is-wiki .ay3-libside__box:first-child { padding: 0 !important; border: 0 !important; background: none !important; }
+  html body .app-container:not([data-theme='dark']) .is-wiki .ay-wiki-sec > h2 { font-size: 26px !important; }
+}
+
+/* ---- Article: products in one scrolling row with arrows ---- */
+.app-container .ay-lib-products__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.app-container .ay-lib-products__head h3 { margin: 0 !important; }
+.app-container .ay-lib-products__nav { display: flex; gap: 8px; }
+.app-container:not([data-theme='dark']) .ay-lib-products__nav button { width: 38px; height: 38px; border: 1.5px solid var(--ay-ink); border-radius: 50%; background: #f7badd; color: var(--ay-ink); font: 600 16px/1 var(--ay-font-ui); cursor: pointer; }
+.app-container:not([data-theme='dark']) .ay-lib-products__nav button:hover:not(:disabled) { background: var(--ay-ink); color: #ffedac; }
+.app-container .ay-lib-products__nav button:disabled { opacity: .35; cursor: default; }
+html body .app-container:not([data-theme='dark']) .ay-lib-products__grid { display: flex !important; gap: 18px !important; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 16px 4px 14px !important; grid-template-columns: none !important; }
+.app-container .ay-lib-products__grid::-webkit-scrollbar { display: none; }
+html body .app-container:not([data-theme='dark']) .ay-lib-products__grid > * { flex: 0 0 calc((100% - 36px) / 3) !important; min-width: 170px; scroll-snap-align: start; }
+@media (max-width: 700px) { html body .app-container:not([data-theme='dark']) .ay-lib-products__grid > * { flex-basis: calc((100% - 18px) / 2) !important; min-width: 0; } }
+/* reading view: pink desk, butter page (no off-brand cream) */
+html body .app-container:not([data-theme='dark']):has(.ay-lib-reading) { --ay-page: #f7badd; }
+html:not([data-ay-theme='dark']) body:has(.ay-lib-reading) { background: #f7badd !important; }
+html body .app-container:not([data-theme='dark']):has(.ay-lib-reading) > main { background: #f7badd !important; }
+html body .app-container:not([data-theme='dark']) .ay-lib-reading .ay-web-lib-article { background: #ffedac !important; background-image: none !important; }
+html body .app-container:not([data-theme='dark']) .ay-lib-reading .ay-web-lib-article::before, html body .app-container:not([data-theme='dark']) .ay-lib-reading .ay-web-lib-article::after { background-image: none !important; }
+html body .app-container:not([data-theme='dark']) .ay-lib-reading .ay-lib-products__nav button { background: #769ebe; }

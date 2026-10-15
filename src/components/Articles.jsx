@@ -196,11 +196,29 @@ function ArticleProducts({ articleId, quizResults, healthProfile, onOpenProduct 
     () => getArticleProducts(articleId, quizResults, healthProfile),
     [articleId, quizResults, healthProfile]
   );
+  const rowRef = React.useRef(null);
+  const [edge, setEdge] = React.useState({ start: true, end: true });
+  React.useEffect(() => {
+    const el = rowRef.current;
+    if (!el) return undefined;
+    const read = () => setEdge({ start: el.scrollLeft < 4, end: el.scrollLeft + el.clientWidth >= el.scrollWidth - 4 });
+    read();
+    el.addEventListener('scroll', read, { passive: true });
+    window.addEventListener('resize', read);
+    return () => { el.removeEventListener('scroll', read); window.removeEventListener('resize', read); };
+  }, [items.length]);
   if (items.length === 0) return null;
+  const page = (dir) => { const el = rowRef.current; if (el) el.scrollBy({ left: dir * el.clientWidth * 0.85, behavior: 'smooth' }); };
   return (
     <section className="ay-lib-products" aria-labelledby="ay-lib-products-h">
-      <h3 id="ay-lib-products-h">Products for this topic</h3>
-      <div className="ay-lib-products__grid">
+      <div className="ay-lib-products__head">
+        <h3 id="ay-lib-products-h">Products for this topic</h3>
+        <div className="ay-lib-products__nav">
+          <button type="button" onClick={() => page(-1)} disabled={edge.start} aria-label="Previous products">←</button>
+          <button type="button" onClick={() => page(1)} disabled={edge.end} aria-label="More products">→</button>
+        </div>
+      </div>
+      <div className="ay-lib-products__grid" ref={rowRef}>
         {items.map(({ product, why }) => (
           <ProductCard
             key={product.id}
@@ -876,7 +894,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   const open = (id) => setSelectedId(id);
   const card = (a) => <li key={a.id}>{renderArticleCard(a, open, progressOf(a))}</li>;
   const shelf = (id, label, items) => items.length > 0 && <div key={id} id={`lib-${id}`} className="ay-web-lib-cat ay-wiki-sec">
-    <h2><span>{label}</span></h2>
+    <h2><span>{label}</span><small>{items.length} read{items.length === 1 ? '' : 's'}</small></h2>
     <ul className="ay-web-lib-grid ay-lib-shelf">{items.map(card)}</ul>
   </div>;
 
