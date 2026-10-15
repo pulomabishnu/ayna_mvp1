@@ -4,7 +4,8 @@ import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { safeProductImageSrc } from '../utils/resolveProductImage';
 import { ProductImageFallback } from './ProductTileImage';
 import { InfoPage } from './InfoPage';
-import { RESA_PARTNER_BLURB, RESA_SITE_URL, RESA_WAITLIST_CTA, RESA_WAITLIST_URL } from '../data/resaPartnership';
+import { productHref, isPlainLeftClick } from '../utils/productRoute';
+import { RESA_SITE_URL, RESA_WAITLIST_CTA, RESA_WAITLIST_URL } from '../data/resaPartnership';
 
 /**
  * Brands, the partnership page.
@@ -41,28 +42,28 @@ const PARTNERS = [
     logo: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/686eb5fcdbbd35b6fc957602_Frame%201000011567.jpg',
     url: 'https://www.helloneycher.com/',
     blurb:
-      'Hormone-free intimate care. Moisturizers, balms and suppositories made for vaginal dryness, irritation and odor.',
+      'Hormone-free moisturizers, balms and suppositories for vaginal dryness, irritation and odor.',
   },
   {
     brand: 'Connect Pelvic Floor Fitness',
     logo: 'https://connectpelvicfloorfitness.com/wp-content/uploads/2026/05/social-share-homepage.jpg',
     url: 'https://goto.connectpelvicfloorfitness.com/YVk7WO',
     blurb:
-      'App and web membership for progressive pelvic floor training. Guided strength, HIIT, yoga and mobility workouts built by a pelvic floor physical therapist.',
+      'App and web pelvic floor workouts built by a pelvic floor physical therapist.',
   },
   {
     brand: 'Elitone',
     logo: 'https://thebreastfeedingshop.com/wp-content/uploads/2024/08/Elitone-Pelvic-Floor-Exerciser-1-scaled.webp',
     url: 'https://elitone.com/?af=aynahealth',
     blurb:
-      'FDA-cleared, external at-home devices for bladder leaks. A wearable gel pad does pelvic floor stimulation for you, no insertion, no prescription needed.',
+      'FDA-cleared external device for bladder leaks: a wearable gel pad, no insertion needed.',
   },
   {
     brand: 'Proov',
     logo: 'https://proovtest.com/cdn/shop/products/1_ProHero.jpg?v=1669147223&width=3840',
     url: 'https://proovtest.com/?irclickid=092RZoWR3xyZWgGydJzTuXX9UkrxvuV9I08LVk0&sharedid=&irpid=7622078&utm_source=7622078&utm_medium=affiliate&irgwc=1&afsrc=1&tw_source=impact&tw_campaign=7622078',
     blurb:
-      'At-home fertility and hormone testing. Track your full cycle, confirm ovulation, screen for common fertility factors, and get personalized next steps.',
+      'At-home fertility and hormone tests to track your cycle and confirm ovulation.',
   },
   {
     // Confirmed partner since 2026-09-11 (see src/utils/partnerBrands.js) but
@@ -72,7 +73,7 @@ const PARTNERS = [
     logo: 'https://www.limmethod.com/cdn/shop/files/IMG_2821.jpg?v=1696450654&width=1946',
     url: 'https://www.limmethod.com/?ref=Ayna_Health',
     blurb:
-      'Pelvic-floor wellness through guided, low-impact multidirectional movement using the LiM Sliding Board, accessories, and expert-led Movement Sessions.',
+      'Low-impact pelvic floor movement with the LiM Sliding Board and guided sessions.',
   },
   {
     // Confirmed partner since 2026-09-07 (see src/utils/partnerBrands.js) but
@@ -81,7 +82,7 @@ const PARTNERS = [
     logo: '',
     url: 'https://go.shopmy.us/p-83948920',
     blurb:
-      'Dentist-designed, partial-coverage mouth tape for sleep. Encourages a gentle lip seal and nasal breathing to help with snoring and dry mouth.',
+      'Dentist-designed mouth tape that encourages nasal breathing during sleep.',
   },
   {
     // Confirmed partner since 2026-09-07 (see src/utils/partnerBrands.js) but
@@ -90,7 +91,7 @@ const PARTNERS = [
     logo: '',
     url: 'https://pelvic-bra.myshopify.com/nlbs3u',
     blurb:
-      'A discreet, adjustable compression garment for pelvic heaviness, pressure, bulging, and leakage, worn during daily activity, not a corrective device.',
+      'Adjustable compression garment for pelvic heaviness, pressure and leakage during daily activity.',
   },
   {
     // Confirmed partner since 2026-09-11 (see src/utils/partnerBrands.js) but
@@ -99,7 +100,7 @@ const PARTNERS = [
     logo: '',
     url: 'https://www.bunibody.com/',
     blurb:
-      'Intimate and body care for vulvar moisture, nipple and lip care, scar and body care, pregnancy, postpartum, menopause, and everyday comfort.',
+      'Intimate and body care for vulvar moisture, pregnancy, postpartum and menopause.',
   },
   {
     // Confirmed partner since 2026-09-23 (see src/utils/partnerBrands.js).
@@ -108,14 +109,14 @@ const PARTNERS = [
     logo: '',
     url: 'https://mylola.com/',
     blurb:
-      'Organic cotton period care. Tampons and pads made with 100% organic cotton, transparent ingredients, and a customizable subscription.',
+      'Organic cotton tampons and pads with transparent ingredients and a customizable subscription.',
   },
   {
     brand: 'Winx Health',
     logo: 'https://cdn.shopify.com/s/files/1/0077/8761/0171/files/UTITest_Treat_1.png?v=1771347569',
     url: 'https://hellowinx.com/',
     blurb:
-      'At-home UTI and vaginal health testing paired with telehealth, plus pregnancy tests and daily-defense supplements. Formerly known as Stix.',
+      'At-home UTI and vaginal health tests paired with telehealth. Formerly Stix.',
   },
   {
     brand: 'SootheHer',
@@ -129,7 +130,7 @@ const PARTNERS = [
     logo: '',
     url: 'https://getgina.com/',
     blurb:
-      'Hormone-free vaginal moisturizing glides and applicator refills for intimate comfort.',
+      'Hormone-free vaginal moisturizing glides and applicator refills.',
   },
   {
     // Last on purpose (2026-10-05): pre-launch, so it sits after the shipping
@@ -140,7 +141,7 @@ const PARTNERS = [
     prelaunch: true,
     waitlistUrl: RESA_WAITLIST_URL,
     waitlistCta: RESA_WAITLIST_CTA,
-    blurb: RESA_PARTNER_BLURB,
+    blurb: 'A pre-launch wearable, worn as jewelry, that reads your body signals alongside your cycle.',
   },
   // Liv Labs (Pippa Resistance Spring) is NOT yet a confirmed partner, its
   // two products stay in the catalog (src/data/brands.js) so they still
@@ -169,7 +170,11 @@ function BrandMark({ partner }) {
   return <div className="brand-partner__wordmark">{partner.brand}</div>;
 }
 
-export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToEcosystem, onBrowseBrand }) {
+// A to Z (ignoring case and accents); a pre-launch partner sits after the shipping ones.
+const sortKey = (p) => String(p.brand).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+const ORDERED = [...PARTNERS].sort((a, b) => (Number(!!a.prelaunch) - Number(!!b.prelaunch)) || sortKey(a).localeCompare(sortKey(b)));
+
+export default function BrandPartners({ onOpenProduct, myProducts = {}, onBrowseBrand }) {
   return (
     <InfoPage photos={['sink-heels-dryer', 'vanity-hairdryer', 'bag-tubes']} tone="sky"
       eyebrow="Partnerships"
@@ -181,11 +186,11 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
     >
       {PARTNERS.length > 6 && (
         <nav className="brand-partner__jump" aria-label="Jump to a brand">
-          {PARTNERS.map((p) => <a key={p.brand} href={`#brand-${String(p.brand).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>{p.brand}</a>)}
+          {ORDERED.map((p) => <a key={p.brand} href={`#brand-${String(p.brand).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>{p.brand}</a>)}
         </nav>
       )}
       <div className="ay-info-partners">
-        {PARTNERS.map((partner) => {
+        {ORDERED.map((partner) => {
           const products = ALL_PRODUCTS.filter((p) => p.brand === partner.brand);
           return (
             <article key={partner.brand} id={`brand-${String(partner.brand).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className={`brand-partner${partner.prelaunch ? ' brand-partner--prelaunch' : ''}`}>
@@ -251,17 +256,12 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
                         )}
                       </div>
                       <div className="discovery-card__eyebrow">{eyebrowFor(product)}</div>
-                      <div className="discovery-card__name">{product.name}</div>
+                      <a className="discovery-card__name brand-partner__pname" href={productHref(product)} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onOpenProduct?.(product); }}>{product.name}</a>
                       <div className="discovery-card__price">{product.price}</div>
-                      <button
-                        type="button"
-                        className="discovery-card__join"
-                        onClick={() => onAddToEcosystem?.(product)}
-                        disabled={!!myProducts[product.id]}
-                        style={myProducts[product.id] ? { opacity: 0.55, cursor: 'default' } : undefined}
-                      >
-                        {myProducts[product.id] ? '✓ In ecosystem' : 'Add to ecosystem'}
-                      </button>
+                      {/* View, not Add: the product page carries the match and safety info a one-click add would skip. */}
+                      <a className="discovery-card__join brand-partner__view" href={productHref(product)} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onOpenProduct?.(product); }} aria-label={`View ${product.name}`}>
+                        {myProducts[product.id] ? '✓ In your ecosystem · View' : 'View'}
+                      </a>
                     </div>
                   ))}
                 </div>

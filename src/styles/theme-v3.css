@@ -3423,3 +3423,7 @@ html body .app-container .cr-page #cr-school-h { scroll-margin-top: 96px; }
 html body .app-container[data-theme='brand-dark'] .cr-page .cr-picked { border-color: #ffedac; }
 html body .app-container .cr-page .cr-jump.cr-jump { background: transparent; border: 0; padding: 0; }
 html body .app-container .cr-page .cr-jump a { border-color: #3e2723 !important; color: #3e2723 !important; }
+/* Partner brands: product names and View go to the product page. */
+html body .app-container .brand-partner__pname { display: block; color: #3e2723; text-decoration: none; }
+html body .app-container .brand-partner__pname:hover { text-decoration: underline; }
+html body .app-container a.discovery-card__join.brand-partner__view { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
