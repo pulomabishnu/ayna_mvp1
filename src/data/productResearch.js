@@ -2206,6 +2206,76 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://glamglobal.co.uk/products/o-positiv-flo-pms-gummie-vitamins-proactive-pms-relief-60-count",
       "sourceLabel": "O Positiv FLO PMS Gummies product listing (label directions)"
+    },
+    "ingredientScience": [
+      {
+        "name": "Chasteberry extract",
+        "text": "Chasteberry (Vitex) is the best studied herb in this blend for PMS, and some research suggests it may ease symptoms like breast pain or tenderness. NIH describes those studies as low to moderate quality, so the evidence is limited.",
+        "citations": [
+          {
+            "url": "https://www.nccih.nih.gov/health/chasteberry",
+            "label": "NIH NCCIH: Chasteberry"
+          }
+        ]
+      },
+      {
+        "name": "Dong quai",
+        "text": "Dong quai is a root used in traditional Chinese medicine for menstrual cramps and PMS. Memorial Sloan Kettering lists these only as traditional uses that haven't been studied to see if they work, and notes it may raise bleeding risk.",
+        "citations": [
+          {
+            "url": "https://www.mskcc.org/cancer-care/integrative-medicine/herbs/dong-quai",
+            "label": "Memorial Sloan Kettering: Dong Quai"
+          }
+        ]
+      },
+      {
+        "name": "Vitamin B6",
+        "text": "Some studies show vitamin B6 supplements could reduce PMS symptoms, but NIH says scientists aren't yet certain it helps. The adult upper limit is 100 mg a day, and high doses taken for a year or longer can cause severe nerve damage.",
+        "citations": [
+          {
+            "url": "https://ods.od.nih.gov/Pdf/Factsheets/Vitaminb6-Consumer.Pdf",
+            "label": "NIH Office of Dietary Supplements: Vitamin B6 (consumer fact sheet)"
+          }
+        ]
+      },
+      {
+        "name": "Lemon balm",
+        "text": "Lemon balm (Melissa officinalis) is a calming herb in the mint family. Two placebo-controlled trials in Iranian high school girls (100 and 200 students) found lemon balm capsules lowered PMS symptom scores over three cycles, but these are small studies in one population, so treat the evidence as early.",
+        "citations": [
+          {
+            "url": "https://ijwhr.net/text.php?id=227",
+            "label": "International Journal of Women's Health and Reproduction Sciences (2018): Melissa officinalis capsules and PMS in high school students"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "Of the four herbs and vitamins here, chasteberry has the most research for PMS, and NIH still calls that evidence limited and of low to moderate quality. NIH says it isn't yet clear whether vitamin B6 helps PMS, and Memorial Sloan Kettering notes dong quai's use for cramps and PMS hasn't been studied.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.nccih.nih.gov/health/chasteberry",
+        "label": "NIH NCCIH: Chasteberry",
+        "summary": "Some research suggests chasteberry may reduce PMS symptoms, but the evidence is limited and of low to moderate quality."
+      },
+      {
+        "url": "https://ods.od.nih.gov/Pdf/Factsheets/Vitaminb6-Consumer.Pdf",
+        "label": "NIH Office of Dietary Supplements: Vitamin B6",
+        "summary": "Scientists aren't yet certain about the benefits of vitamin B6 for PMS, though some studies show it could reduce symptoms."
+      },
+      {
+        "url": "https://www.mskcc.org/cancer-care/integrative-medicine/herbs/dong-quai",
+        "label": "Memorial Sloan Kettering: Dong Quai",
+        "summary": "Lists PMS and menstrual cramps as purported uses that haven't been studied by doctors."
+      }
+    ],
+    "warnings": [
+      "Chasteberry may be unsafe if you are pregnant or breastfeeding.",
+      "Chasteberry may not be safe if you have a hormone-sensitive condition, like breast, uterine, or ovarian cancer.",
+      "Possible side effects include nausea, stomach pain, diarrhea, headache, or itching.",
+      "If you take any type of medicine, talk with your health care provider before using any herbal product."
+    ],
+    "warningsSource": {
+      "url": "https://www.nccih.nih.gov/health/chasteberry",
+      "label": "NIH NCCIH: Chasteberry"
     }
   },
   "p-hum-flatter-me": {
@@ -2244,7 +2314,58 @@ export const PRODUCT_RESEARCH = {
         "label": "Journal of Medicinal Food (2018): multienzyme complex in functional dyspepsia, randomized placebo-controlled trial",
         "summary": "In 40 adults with functional dyspepsia, a different multienzyme blend (DigeZyme) improved symptom scores versus placebo over 60 days with no product-related side effects; this was not a study of Flatter Me."
       }
-    ]
+    ],
+    "ingredientScience": [
+      {
+        "name": "Protease, papain, and lipase (enzyme blend)",
+        "text": "These enzymes break down protein (protease, papain) and fat (lipase). Harvard Health says over-the-counter enzyme supplements are promoted for bloating, but for most people there's little evidence they do any good; prescription enzymes are for people whose bodies make too little, like with chronic pancreatitis.",
+        "citations": [
+          {
+            "url": "https://www.health.harvard.edu/staying-healthy/can-taking-enzyme-supplements-help-soothe-my-bloating",
+            "label": "Harvard Health: Can taking enzyme supplements help soothe my bloating?"
+          }
+        ]
+      },
+      {
+        "name": "Alpha-galactosidase and lactase",
+        "text": "The label also lists these two enzymes. Harvard Health says lactase can help people manage lactose intolerance, and alpha-galactosidase (the enzyme in Beano) may reduce gas and bloating if you have trouble digesting beans. They only help with those specific foods.",
+        "citations": [
+          {
+            "url": "https://www.health.harvard.edu/staying-healthy/can-taking-enzyme-supplements-help-soothe-my-bloating",
+            "label": "Harvard Health: Can taking enzyme supplements help soothe my bloating?"
+          }
+        ]
+      },
+      {
+        "name": "Ginger root",
+        "text": "Research shows ginger may help with nausea and vomiting in pregnancy, but NIH doesn't list good evidence for bloating. Ginger itself can cause stomach discomfort, heartburn, or diarrhea in some people.",
+        "citations": [
+          {
+            "url": "https://www.nccih.nih.gov/health/ginger",
+            "label": "NIH NCCIH: Ginger"
+          }
+        ]
+      },
+      {
+        "name": "Peppermint leaf",
+        "text": "Enteric-coated peppermint oil capsules have some evidence for IBS (irritable bowel syndrome) symptoms. This product uses peppermint leaf powder instead, and NIH says there isn't enough evidence to say whether peppermint leaf helps any health condition.",
+        "citations": [
+          {
+            "url": "https://www.nccih.nih.gov/health/peppermintoil",
+            "label": "NIH NCCIH: Peppermint Oil"
+          }
+        ]
+      }
+    ],
+    "warnings": [
+      "Ask your healthcare professional before use if you have or suspect a medical condition, take prescription drugs, or are pregnant or breastfeeding.",
+      "Keep out of reach of children.",
+      "Store in a cool, dry place."
+    ],
+    "warningsSource": {
+      "url": "https://www.vitacost.com/products/hum-nutrition-flatter-me-60-vegan-capsules-136402",
+      "label": "Vitacost: HUM Nutrition Flatter Me product label"
+    }
   },
   "p-thermacare": {
     "whoItsFor": [
@@ -2276,7 +2397,35 @@ export const PRODUCT_RESEARCH = {
         "label": "MedlinePlus (NIH): Painful menstrual periods",
         "summary": "Recommends heat on the lower belly as home care and lists signs, like fever with pelvic pain or pain that does not improve after 3 months of treatment, that mean you should call a provider."
       }
-    ]
+    ],
+    "clinicalNote": "Heat is a standard home remedy for period cramps, and MedlinePlus suggests putting heat on your lower belly, below the belly button. A 2026 review of 57 trials (5,359 women) found heat likely lowers period pain compared with no treatment, though the certainty of the evidence was rated low because many trials had design problems. Most of those trials used heat in general, not this wrap. If cramps still aren't better after 3 months of treatment, or the pain comes outside your period, MedlinePlus says to check in with a provider.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.frontiersin.org/journals/medicine/articles/10.3389/fmed.2025.1730505/full",
+        "label": "Frontiers in Medicine (2026): Heat therapy for primary dysmenorrhea, systematic review and meta-analysis",
+        "summary": "57 randomized trials found heat likely reduces period pain versus no treatment, with low certainty evidence."
+      },
+      {
+        "url": "https://www.nature.com/articles/s41598-018-34303-z",
+        "label": "Scientific Reports (2018): Heat therapy for primary dysmenorrhea, systematic review and meta-analysis",
+        "summary": "Six small trials gave suggestive evidence that heat eases period pain, and the authors called for higher quality trials."
+      },
+      {
+        "url": "https://medlineplus.gov/ency/article/003150.htm",
+        "label": "MedlinePlus: Painful menstrual periods",
+        "summary": "Recommends heat on the lower belly and lists when to contact a provider about period pain."
+      }
+    ],
+    "warnings": [
+      "This product can cause burns; stick the adhesive side to your underwear, not your skin, and don't wear it while sleeping.",
+      "Don't wear it for more than 8 hours in any 24-hour period, and don't fold or bunch it.",
+      "Ask a doctor before use if you have diabetes, poor circulation or heart disease, rheumatoid arthritis, or are pregnant.",
+      "Each heat cell contains iron and can be harmful if swallowed; keep away from children and pets."
+    ],
+    "warningsSource": {
+      "url": "https://www.orderroombox.com/product/thermacare-heatwraps-menstrual-pain-therapy/",
+      "label": "Retailer listing reproducing the ThermaCare Menstrual HeatWraps label"
+    }
   },
   "p-portable-heating": {
     "whoItsFor": [
@@ -2308,6 +2457,29 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://www.walmart.com/ip/17564207615",
       "sourceLabel": "Comfytemp Cordless Heating Pad for Period Cramps (Walmart listing) and Mayo Clinic: Menstrual cramps"
+    },
+    "clinicalNote": "Heat is a standard home remedy for period cramps, and MedlinePlus suggests a heating pad on your lower belly, below the belly button, with one firm rule: never fall asleep with it on. A 2026 review of 57 trials (5,359 women) found heat likely lowers period pain compared with no treatment, though the certainty of the evidence was rated low because many trials had design problems. Those trials tested heat in general, not this pad. If cramps still aren't better after 3 months of treatment, MedlinePlus says to check in with a provider.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.frontiersin.org/journals/medicine/articles/10.3389/fmed.2025.1730505/full",
+        "label": "Frontiers in Medicine (2026): Heat therapy for primary dysmenorrhea, systematic review and meta-analysis",
+        "summary": "57 randomized trials found heat likely reduces period pain versus no treatment, with low certainty evidence."
+      },
+      {
+        "url": "https://medlineplus.gov/ency/article/003150.htm",
+        "label": "MedlinePlus: Painful menstrual periods",
+        "summary": "Recommends a heating pad on the lower belly, warns never to fall asleep with it on, and lists when to contact a provider."
+      }
+    ],
+    "warnings": [
+      "Never use a heating pad while you are asleep, or on someone who is asleep or unconscious.",
+      "Don't use it on skin that can't feel temperature changes, and never use it on an infant.",
+      "Don't crush or fold the pad during use or storage.",
+      "Read and follow all of the manufacturer's instructions before use."
+    ],
+    "warningsSource": {
+      "url": "https://webarchive.library.unt.edu/web/20081205084122/http:/www.fda.gov/cdrh/heatpad.pdf",
+      "label": "FDA/CPSC Public Health Advisory: Hazards Associated with the Use of Electric Heating Pads (1995, archived)"
     }
   },
   "p-viboos-heating-pad": {
@@ -2340,6 +2512,29 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://kateminimalist.com/products/viboos-heating-electric-pad-for-back-shoulders-abdomen-legs-arms-electric-fast-heat-pad-with-heat-settings-auto-shut-off-dark-gray-24-12",
       "sourceLabel": "VIBOOS Electric Heating Pad product listing (retailer page)"
+    },
+    "clinicalNote": "Heat is a standard home remedy for period cramps, and MedlinePlus suggests a heating pad on your lower belly, below the belly button, with one firm rule: never fall asleep with it on. A 2026 review of 57 trials (5,359 women) found heat likely lowers period pain compared with no treatment, though the certainty of the evidence was rated low because many trials had design problems. Those trials tested heat in general, not this pad. If cramps still aren't better after 3 months of treatment, MedlinePlus says to check in with a provider.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.frontiersin.org/journals/medicine/articles/10.3389/fmed.2025.1730505/full",
+        "label": "Frontiers in Medicine (2026): Heat therapy for primary dysmenorrhea, systematic review and meta-analysis",
+        "summary": "57 randomized trials found heat likely reduces period pain versus no treatment, with low certainty evidence."
+      },
+      {
+        "url": "https://medlineplus.gov/ency/article/003150.htm",
+        "label": "MedlinePlus: Painful menstrual periods",
+        "summary": "Recommends a heating pad on the lower belly, warns never to fall asleep with it on, and lists when to contact a provider."
+      }
+    ],
+    "warnings": [
+      "Never use a heating pad while you are asleep, or on someone who is asleep or unconscious.",
+      "Don't sit or lie on the pad, and don't crush or fold it.",
+      "Don't use it on skin that can't feel temperature changes, and never use it on an infant.",
+      "Check it before each use, throw it out if it looks worn or the cord is frayed, and unplug it when you're done."
+    ],
+    "warningsSource": {
+      "url": "https://webarchive.library.unt.edu/web/20081205084122/http:/www.fda.gov/cdrh/heatpad.pdf",
+      "label": "FDA/CPSC Public Health Advisory: Hazards Associated with the Use of Electric Heating Pads (1995, archived)"
     }
   },
   "d-betterhelp": {
@@ -2360,6 +2555,29 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://betterhelp.com:443/faq",
       "sourceLabel": "BetterHelp FAQ"
+    },
+    "clinicalNote": "Therapy by live video seems to work about as well as therapy in person. A 2021 meta-analysis in Clinical Psychology & Psychotherapy (47 comparison studies, 3,564 people) found the difference between video and in-person therapy was negligible. That evidence is about live video sessions; it does not tell you how well text messaging with a therapist works on its own. Separately, in 2023 the FTC (the US consumer protection agency) finalized an order banning BetterHelp from sharing health data for advertising after alleging it had passed users' emails, IP addresses and health questionnaire answers to companies like Facebook and Snapchat.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://stanfordhealthcare.org/publications/809/809484.html",
+        "label": "Clinical Psychology & Psychotherapy (2021): Live psychotherapy by video versus in-person, a meta-analysis (via Stanford Health Care)",
+        "summary": "Across 47 between-group studies (3,564 people), video therapy's results were negligibly different from in-person therapy."
+      },
+      {
+        "url": "https://www.ftc.gov/news-events/news/press-releases/2023/07/ftc-gives-final-approval-order-banning-betterhelp-sharing-sensitive-health-data-advertising?",
+        "label": "FTC (July 2023): FTC gives final approval to order banning BetterHelp from sharing sensitive health data for advertising",
+        "summary": "BetterHelp must pay $7.8 million and is banned from sharing health data for ads, with new consent and data retention requirements."
+      }
+    ],
+    "warnings": [
+      "Not suitable if you are in an urgent crisis or emergency.",
+      "Not for minors or people under the care of a legal guardian.",
+      "Not for court-ordered therapy, and therapists can't fulfill a court order.",
+      "BetterHelp therapists will not prescribe medication and may not be able to make an official diagnosis."
+    ],
+    "warningsSource": {
+      "url": "https://www.betterhelp.com/es/faq",
+      "label": "BetterHelp: Frequently asked questions"
     }
   },
   "d-headspace": {
@@ -2399,7 +2617,25 @@ export const PRODUCT_RESEARCH = {
         "label": "Champion et al., PLOS ONE (2018): pilot RCT of Headspace",
         "summary": "Adults using Headspace reported lower stress and higher life satisfaction and resilience at day 10 and day 30 versus a wait-list, in a small Headspace-funded pilot."
       }
-    ]
+    ],
+    "clinicalNote": "Headspace has more randomized trials behind it than most meditation apps. A 2022 systematic review in JMIR Mental Health found 14 of them: Headspace improved depression in 3 of 4 trials that measured it, anxiety in 2 of 4, and stress in 2 of 5 (one more was mixed). Most trials were small, and half reported a conflict of interest with the company, often free premium access for participants. The authors called the research promising but not conclusive.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://mental.jmir.org/2022/9/e40924",
+        "label": "JMIR Mental Health (2022): Efficacy and Conflicts of Interest in Randomized Controlled Trials Evaluating Headspace and Calm Apps, systematic review",
+        "summary": "Across 14 Headspace trials, results were positive for depression in 75%, anxiety in 50% and stress in 40% of trials that measured them; most were underpowered and half had company-related conflicts of interest."
+      }
+    ],
+    "warnings": [
+      "Not meant for use in a medical emergency. In the US, call or text 988, the Suicide and Crisis Lifeline.",
+      "Headspace is not a medical provider, and its content and coaches do not give medical or clinical advice.",
+      "If you have an existing mental health condition, talk with your health care provider before starting a meditation practice. Rarely, people with anxiety or depression have felt worse during intensive meditation.",
+      "Meant for adults 18 and over, with limited exceptions for ages 13 to 17 through some employer or plan offerings."
+    ],
+    "warningsSource": {
+      "url": "https://headspace.com/terms-and-conditions",
+      "label": "Headspace: Terms and Conditions"
+    }
   },
   "d-calm": {
     "whoItsFor": [
@@ -2438,7 +2674,30 @@ export const PRODUCT_RESEARCH = {
         "label": "JMIR Formative Research (2025): pilot RCT of Calm in undergraduates",
         "summary": "A 30-day pilot in 80 students found greater improvement in sleep quality, stress and anxiety with Calm than control, but no difference in depression."
       }
-    ]
+    ],
+    "clinicalNote": "The best sleep study of Calm is a 2021 randomized trial in PLoS ONE of 263 adults with trouble sleeping. People asked to meditate with Calm at least 10 minutes a day for 8 weeks had less daytime fatigue, less daytime sleepiness and less pre-sleep arousal (a racing mind or tense body at bedtime) than a wait-list group. Their sleep quality also improved, but that was only measured in the Calm group, so it wasn't compared with people who didn't use the app. A 2022 review (searching up to May 2021) counted only one Calm trial meeting its criteria, so overall the evidence for Calm is much thinner than for Headspace.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://doaj.org/article/f9ab9b3c201440168171b987e610d744",
+        "label": "PLoS ONE (2021): Testing a mindfulness meditation mobile app for the treatment of sleep-related symptoms in adults with sleep disturbance, randomized controlled trial",
+        "summary": "Compared with a wait-list, 8 weeks of Calm meditation reduced daytime fatigue, daytime sleepiness and pre-sleep arousal in 263 adults with sleep problems."
+      },
+      {
+        "url": "https://mental.jmir.org/2022/9/e40924",
+        "label": "JMIR Mental Health (2022): Efficacy and Conflicts of Interest in RCTs Evaluating Headspace and Calm Apps, systematic review",
+        "summary": "Found just one Calm randomized trial (88 people), which showed better stress and mindfulness than a wait-list."
+      }
+    ],
+    "warnings": [
+      "Calm does not provide medical advice, diagnosis or treatment, and is not a healthcare or mental health provider.",
+      "In an emergency, including a mental health crisis, call 911 or your local emergency number right away. Don't rely on Calm instead.",
+      "Never ignore professional medical advice or delay getting it because of something in the app.",
+      "You must be 16 or older to use Calm."
+    ],
+    "warningsSource": {
+      "url": "https://calm.com/terms",
+      "label": "Calm: Terms of Service"
+    }
   },
   "d-initio": {
     "whoItsFor": [
@@ -2465,7 +2724,29 @@ export const PRODUCT_RESEARCH = {
         "label": "FDA: Ovulation (Urine Test)",
         "summary": "Home urine tests detect the LH surge about 1 to 1.5 days before ovulation, are reliable about 9 times out of 10 when used correctly, and should not be used as birth control."
       }
-    ]
+    ],
+    "clinicalNote": "Most home ovulation tests look for a surge in LH (luteinizing hormone, the hormone that triggers the ovary to release an egg), which tells you ovulation is likely coming soon, not that it happened. PdG (pregnanediol glucuronide, a breakdown product of progesterone) rises in urine after ovulation, which is why measuring it can help confirm ovulation. In a small 2018 study in Scientific Reports (14 women, 20 cycles, checked against ultrasound), a single urine PdG reading identified ovulation well (AUC 0.95, where 1.0 is perfect). That study used lab analyzers, not Inito's strips, and we could not open a peer-reviewed accuracy study of Inito itself.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://link.springer.com/10.1038/s41598-018-36051-6",
+        "label": "Scientific Reports (2018): Confirmation of ovulation from urinary progesterone analysis, assessment of two automated assay platforms",
+        "summary": "Using transvaginal ultrasound as the reference in 14 women (20 cycles), a urinary PdG threshold confirmed ovulation with an AUC of 0.951."
+      },
+      {
+        "url": "https://medlineplus.gov/ency/article/007062.htm",
+        "label": "MedlinePlus (NIH): Ovulation home test",
+        "summary": "LH tests flag a coming ovulation; a surge can be missed with skipped days or irregular cycles, and medicines like estrogen, progesterone, testosterone and clomiphene can change LH levels."
+      }
+    ],
+    "warnings": [
+      "Don't use an ovulation test to prevent pregnancy. It is not reliable for that.",
+      "Start testing at the right time in your cycle, or results will be unreliable.",
+      "How well it works depends on how carefully you follow the instructions."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/home-use-tests/ovulation-urine-test",
+      "label": "FDA: Ovulation (Urine Test), home use tests"
+    }
   },
   "d-oura": {
     "whoItsFor": [
@@ -2499,7 +2780,48 @@ export const PRODUCT_RESEARCH = {
         "label": "Maijala et al., BMC Women's Health (2019): Oura ring pilot study",
         "summary": "In 22 women, nightly finger temperature from the Oura ring was 0.30 C higher in the luteal phase and detected menstruation and ovulation with moderate to good sensitivity."
       }
-    ]
+    ],
+    "clinicalNote": "After you ovulate, your body temperature rises slightly and stays up until your period. The Oura ring reads skin temperature at your finger while you sleep and looks for that shift. In a 2019 pilot study of 22 women, nighttime finger temperature from the ring rose about 0.3 °C in the second half of the cycle, tracked oral temperature reasonably well, and estimated periods and ovulation to within a few days. The ring is not a medical device, and Oura's own analysis says its ovulation feature is not meant for people on hormonal birth control or people who often skip ovulation.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://doaj.org/article/c13fc1b658874f0abfe65595566d828a",
+        "label": "BMC Women's Health (2019): Nocturnal finger skin temperature in menstrual cycle tracking, pilot study using a wearable Oura ring",
+        "summary": "In 22 women, nightly finger temperature was 0.30 °C higher after ovulation, correlated with oral temperature, and found ovulation with 83.3% sensitivity within a 6-day window."
+      },
+      {
+        "url": "https://jmir.org/2025/1/e60667/PDF",
+        "label": "Journal of Medical Internet Research (2025): Oura Ring as a Tool for Ovulation Detection, Validation Analysis",
+        "summary": "Retrospective analysis of 1,155 cycles by Oura employees; notes the method was not tested in anovulatory cycles or people on hormonal contraception."
+      },
+      {
+        "url": "https://support.ouraring.com/hc/en-us/articles/360025428394",
+        "label": "Oura Support: Safety and warnings",
+        "summary": "States the ring is not a medical device."
+      }
+    ],
+    "effectiveness": "There is a study of this product. A 2025 analysis of 1,155 ovulatory cycles found the ring picked up 96.4% of ovulations and was off by about 1.3 days on average, compared with about 3.4 days for counting calendar days, and it held up better in irregular cycles. Keep in mind the authors work for Oura, the check was against users' own logged home LH (ovulation) tests, and only cycles where ovulation happened were included, so it could not measure false alarms.",
+    "effectivenessSources": [
+      {
+        "url": "https://jmir.org/2025/1/e60667/PDF",
+        "label": "Journal of Medical Internet Research (2025): Oura Ring as a Tool for Ovulation Detection, Validation Analysis",
+        "summary": "Oura's temperature-based method had a mean error of 1.26 days vs 3.44 days for the calendar method; all authors are Oura employees."
+      },
+      {
+        "url": "https://doaj.org/article/c13fc1b658874f0abfe65595566d828a",
+        "label": "BMC Women's Health (2019): Oura ring menstrual cycle tracking pilot study",
+        "summary": "Small pilot (22 women) found period detection sensitivity of 71.9% to 86.5% within 2 to 4 days."
+      }
+    ],
+    "warnings": [
+      "The Oura Ring is not a medical device, so check with a doctor before changing medication, diet, or workouts based on its data.",
+      "Take the ring off if your skin gets irritated, and see a doctor if it is painful or lasts about a week.",
+      "Don't wear it so tight that it causes constant pressure, pain, or numbness, and seek medical help if a stuck finger is very painful, swollen, or discolored.",
+      "Keep it away from children and get medical help right away if a child may have swallowed it."
+    ],
+    "warningsSource": {
+      "url": "https://support.ouraring.com/hc/en-us/articles/360025428394",
+      "label": "Oura Support: Safety and warnings"
+    }
   },
   "d-apple-health": {
     "whoItsFor": [
@@ -2534,7 +2856,17 @@ export const PRODUCT_RESEARCH = {
         "label": "Li et al., npj Digital Medicine (2023): Apple Women's Health Study",
         "summary": "Using over 165,000 cycles logged in Apple Health Cycle Tracking, researchers found cycle length varies by age, with smaller differences by ethnicity and BMI."
       }
-    ]
+    ],
+    "warnings": [
+      "Cycle Tracking should not be used as a form of birth control.",
+      "Don't use Cycle Tracking data to diagnose a health condition.",
+      "Ovulation estimates are estimates only and don't guarantee that ovulation happened.",
+      "Wrist temperature readings can be thrown off by your environment or your body, and ovulation can happen without a clear temperature shift."
+    ],
+    "warningsSource": {
+      "url": "https://support.apple.com/120357",
+      "label": "Apple Support: Receive retrospective ovulation estimates on Apple Watch"
+    }
   },
   "d-bloom": {
     "whoItsFor": [
@@ -2566,6 +2898,28 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://www.suicideandco.org/support-links/bloom-app",
       "sourceLabel": "Suicide&Co: Bloom app overview"
+    },
+    "clinicalNote": "Internet-delivered CBT (cognitive behavioral therapy, a talk therapy that works on unhelpful thoughts and habits) works for anxiety and depression in studies, but programs with a therapist guiding you tend to show bigger effects than fully self-guided ones. Sticking with it is the hard part: in one trial of an unguided program, 73% of users didn't finish. Online CBT isn't recommended as the main treatment for severe illness. We found no published trials of Bloom itself.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.cmaj.ca/content/188/4/263",
+        "label": "CMAJ (2016): Internet-delivered cognitive behavioural therapy in the treatment of psychiatric illness",
+        "summary": "Review finding internet CBT effective for anxiety and depression, with larger effects when guided and low completion when unguided."
+      },
+      {
+        "url": "https://nimh.nih.gov/health/topics/technology-and-the-future-of-mental-health-treatment",
+        "label": "NIMH: Technology and the Future of Mental Health Treatment",
+        "summary": "Notes that most mental health apps lack peer-reviewed research and gives tips for choosing one."
+      }
+    ],
+    "warnings": [
+      "An app may not replace a mental health professional.",
+      "If you're struggling or having thoughts of suicide, call or text the 988 Suicide and Crisis Lifeline at 988. In a life-threatening situation, call 911.",
+      "Most mental health apps don't have peer-reviewed research behind their claims, and they handle sensitive personal information, so check how the app protects your privacy."
+    ],
+    "warningsSource": {
+      "url": "https://nimh.nih.gov/health/topics/technology-and-the-future-of-mental-health-treatment",
+      "label": "NIMH: Technology and the Future of Mental Health Treatment"
     }
   },
   "d-visana": {
@@ -2593,7 +2947,24 @@ export const PRODUCT_RESEARCH = {
         "label": "Systematic review of multidisciplinary team care for pelvic pain and endometriosis, ANZJOG 2024",
         "summary": "Team care for endometriosis is growing and patients value reliable information and emotional support, but the authors found evidence for outcomes is still limited."
       }
-    ]
+    ],
+    "clinicalNote": "Endometriosis care often involves a team: a 2024 review of 19 studies found gynecologists, pain specialists, nurses, physiotherapists, psychologists, sex therapists, nutritionists, and social workers were the members most often involved. Patients said they valued reliable information, feeling respected and believed, talking through long-term plans, and emotional support. The authors also noted that the data behind team-based care is thin and much of it is anecdotal, so it's still unclear how much it improves quality of life.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://pubmed.ncbi.nlm.nih.gov/37753632/",
+        "label": "Aust N Z J Obstet Gynaecol (2024): Evidence for the role of multidisciplinary team care in people with pelvic pain and endometriosis, a systematic review",
+        "summary": "Reviewed 19 studies on team-based endometriosis care, describing who is on the team and what patients value, and found the evidence limited."
+      }
+    ],
+    "warnings": [
+      "See a healthcare provider if you need to change a pad or tampon in less than 2 hours, pass clots the size of a quarter or larger, or have periods lasting more than 7 days.",
+      "Heavy bleeding can leave you tired, low on energy, or short of breath, which are also signs to get checked.",
+      "If your gynecologist finds no cause for heavy bleeding at a routine visit, you should be tested for a bleeding disorder such as von Willebrand disease."
+    ],
+    "warningsSource": {
+      "url": "https://www.cdc.gov/ncbddd/blooddisorders/women/menorrhagia.html",
+      "label": "CDC: About Heavy Menstrual Bleeding"
+    }
   },
   "p-kotex-security": {
     "whoItsFor": [
@@ -7058,6 +7429,28 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://www.ulta.com/p/p-pimprod2050204",
       "sourceLabel": "Ulta Beauty product page (Love Wellness directions)"
+    },
+    "ingredientScience": [
+      {
+        "name": "Hypochlorous acid (0.018%)",
+        "text": "Hypochlorous acid is a chlorine-based germ killer used in wound and skin care, valued for its antimicrobial and anti-inflammatory effects. A 2025 review says it's well tolerated with no serious side effects reported, but that results across studies are not entirely consistent.",
+        "citations": [
+          {
+            "url": "https://www.mdpi.com/2227-9059/13/12/2921",
+            "label": "Biomedicines (MDPI, 2025): Hypochlorous Acid, clinical insights across dermatology and other specialties"
+          }
+        ]
+      }
+    ],
+    "warnings": [
+      "For external use only; spray on the vulva and perineum, never inside the vagina.",
+      "A mild stinging feeling may happen in rare cases.",
+      "This is not a treatment for UTIs; see your doctor for UTI symptoms.",
+      "Don't use it if you're sensitive to any ingredient, and seek medical advice if your symptoms persist."
+    ],
+    "warningsSource": {
+      "url": "https://www.ulta.com/p/p-pimprod2050204",
+      "label": "Ulta Beauty: Love Wellness Intimate Skin Support product label"
     }
   },
   "p-elvie-trainer": {
@@ -7092,7 +7485,17 @@ export const PRODUCT_RESEARCH = {
         "label": "Cochrane Review (2025): Feedback or biofeedback to augment pelvic floor muscle training for urinary incontinence in women",
         "summary": "Across 41 studies and 3,483 women, adding biofeedback to pelvic floor training made little to no difference to quality of life or self-reported cure, with slightly fewer leaks and possibly slightly higher satisfaction."
       }
-    ]
+    ],
+    "warnings": [
+      "Don't use it if you gave birth within the last six weeks, or if you have an active urinary infection until symptoms have stopped.",
+      "If you're pregnant, check with a licensed healthcare professional before using it.",
+      "Don't leave it inside your vagina for more than one hour at a time, or exercise with it for more than 15 minutes in 24 hours.",
+      "Stop and see a healthcare professional if insertion is persistently painful, or you have abnormal bleeding or sudden urine retention or leakage."
+    ],
+    "warningsSource": {
+      "url": "https://cdn2.elvie.com/elvie-website/assets/manuals/aw-000564-elvie-trainer-ifu-rev-h.pdf",
+      "label": "Elvie Trainer Instructions for Use (Elvie, Rev H)"
+    }
   },
   "p-intimate-rose": {
     "whoItsFor": [
@@ -7120,7 +7523,28 @@ export const PRODUCT_RESEARCH = {
         "label": "Cleveland Clinic: Vaginal Dilators",
         "summary": "Lists the conditions dilators are used for (vaginismus, dyspareunia, menopause, radiation, vaginal stenosis), how to use them with water-based lube, and to talk to a provider before starting even though they are sold over the counter."
       }
-    ]
+    ],
+    "clinicalNote": "Dilators are smooth, graduated tubes you insert yourself, starting small and moving up in size, to gently stretch and relax the vaginal muscles. Cleveland Clinic says most people with pain during sex feel some relief with regular, consistent use, and suggests follow-ups with a provider or pelvic floor physical therapist while you work through the sizes. Sessions are usually about 10 to 15 minutes with a water-based lubricant, and you shouldn't rush through sizes or keep going if it hurts. After pelvic radiation, a Cochrane review found no reliable trial evidence that routine dilation prevents narrowing, only observational links, so that use is less settled.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://my.clevelandclinic.org/health/treatments/24971-vaginal-dilators",
+        "label": "Cleveland Clinic: Vaginal Dilators",
+        "summary": "Explains who uses dilators, how to use them, and that most people with painful sex feel some relief with consistent use."
+      },
+      {
+        "url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD007291.pub3",
+        "label": "Cochrane Review: Vaginal dilator therapy for women receiving pelvic radiotherapy",
+        "summary": "Found no reliable randomized evidence that routine dilation during radiotherapy prevents stenosis; observational data link frequent dilation with less self-reported stenosis."
+      }
+    ],
+    "warnings": [
+      "Don't use vaginal dilators if you are pregnant or have an active pelvic infection.",
+      "Use a water-based lubricant only; oil or silicone-based lubricants will damage the silicone."
+    ],
+    "warningsSource": {
+      "url": "https://www.intimaterose.com/pages/video-indications-contraindications-for-vaginal-dilators",
+      "label": "Intimate Rose: Indications and contraindications for vaginal dilators"
+    }
   },
   "p-honeypot-wash": {
     "whoItsFor": [
@@ -7140,6 +7564,59 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://target.com/p/the-honey-pot-sensitive-feminine-wash-5-51-fl-oz/-/A-51130592",
       "sourceLabel": "Target product page, The Honey Pot Sensitive Feminine Wash (brand Q&A)"
+    },
+    "ingredientScience": [
+      {
+        "name": "Aloe leaf juice",
+        "text": "Aloe is a plant gel used to soothe skin. NIH says topical aloe is generally well tolerated, with occasional reports of burning, itching, or rash, but there's no research on it in intimate washes specifically.",
+        "citations": [
+          {
+            "url": "https://www.nccih.nih.gov/health/aloe-vera",
+            "label": "NIH NCCIH: Aloe Vera"
+          }
+        ]
+      },
+      {
+        "name": "Lactic acid",
+        "text": "Lactic acid makes a wash more acidic, closer to the natural acidity of the vagina. In one small study of 36 women (funded by a wash maker, with no comparison group), a lactic acid wash used daily for 28 days was well tolerated and didn't change vulvar skin pH or bacteria, so it seems gentle, but there's no proof it improves vaginal health.",
+        "citations": [
+          {
+            "url": "https://www.mdpi.com/2079-6382/9/2/55/htm",
+            "label": "Antibiotics (MDPI, 2020): 28 day assessment of a lactic acid intimate gel wash on skin tolerance and the vulvar microbiome"
+          }
+        ]
+      },
+      {
+        "name": "Fragrance (natural fragrance, linalool, hydroxycitronellal)",
+        "text": "This version's label lists fragrance plus linalool and hydroxycitronellal (fragrance compounds). The British Association of Dermatologists lists perfumes among everyday products that can irritate the vulva, so if your skin is sensitive, a fragrance-free option may suit you better.",
+        "citations": [
+          {
+            "url": "https://www.skinhealthinfo.org.uk/wp-content/uploads/2018/11/Vulval-skincare-PIL-May-2023.pdf",
+            "label": "British Association of Dermatologists: Vulval skin care patient leaflet (2023)"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "The vagina cleans itself and doesn't need washes or perfume; Harvard Health suggests avoiding products marketed to cleanse the vagina and scented feminine products. For the vulva (the outer skin), dermatologists advise washing gently with your hands, and the British Association of Dermatologists says an emollient (a plain moisturizing cream) is the preferred soap substitute. If you like using a wash, keep it on the outside and rinse it off thoroughly, as the label directs.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.health.harvard.edu/blog/vulvar-health-navigating-the-nether-regions-2019040116322",
+        "label": "Harvard Health: Vulvar health, navigating the nether regions",
+        "summary": "Says the vagina doesn't need cleansing or perfume, and advises avoiding vagina-cleansing and scented feminine products."
+      },
+      {
+        "url": "https://www.skinhealthinfo.org.uk/wp-content/uploads/2018/11/Vulval-skincare-PIL-May-2023.pdf",
+        "label": "British Association of Dermatologists: Vulval skin care patient leaflet (2023)",
+        "summary": "Advises washing the vulva gently by hand, using an emollient instead of soap, and avoiding perfumed products."
+      }
+    ],
+    "warnings": [
+      "For external use only.",
+      "Avoid contact with eyes."
+    ],
+    "warningsSource": {
+      "url": "https://www.heb.com/product-detail/the-honey-pot-intimate-foaming-wash-sensitive-with-cucumber-aloe/12430512",
+      "label": "H-E-B: The Honey Pot Intimate Foaming Wash, Sensitive with Cucumber Aloe (label text)"
     }
   },
   "p-luna-wash": {
@@ -7166,7 +7643,70 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.ulta.com/p/everywhere-wash-pimprod2056336",
         "label": "Ulta Beauty customer reviews: Luna Daily The Everywhere Wash"
       }
-    ]
+    ],
+    "ingredientScience": [
+      {
+        "name": "Lactic acid",
+        "text": "Lactic acid makes a wash more acidic, closer to the natural acidity of the vagina. In one small study of 36 women (funded by a wash maker, with no comparison group), a lactic acid wash used daily for 28 days was well tolerated and didn't change vulvar skin pH or bacteria, so it seems gentle, but there's no proof it improves vaginal health.",
+        "citations": [
+          {
+            "url": "https://www.mdpi.com/2079-6382/9/2/55/htm",
+            "label": "Antibiotics (MDPI, 2020): 28 day assessment of a lactic acid intimate gel wash on skin tolerance and the vulvar microbiome"
+          }
+        ]
+      },
+      {
+        "name": "Chamomile flower extract",
+        "text": "Chamomile is a calming plant extract, and NIH says using it on the skin is possibly safe short term. You're more likely to react to it if you're allergic to related plants like ragweed, chrysanthemums, marigolds, or daisies.",
+        "citations": [
+          {
+            "url": "https://www.nccih.nih.gov/health/chamomile/ataglance.htm?nav=gsa",
+            "label": "NIH NCCIH: Chamomile"
+          }
+        ]
+      },
+      {
+        "name": "Aloe vera leaf juice",
+        "text": "Aloe is a plant gel used to soothe skin. NIH says topical aloe is generally well tolerated, with occasional reports of burning, itching, or rash, but there's no research on it in intimate washes specifically.",
+        "citations": [
+          {
+            "url": "https://www.nccih.nih.gov/health/aloe-vera",
+            "label": "NIH NCCIH: Aloe Vera"
+          }
+        ]
+      },
+      {
+        "name": "Fragrance (Original version)",
+        "text": "Retail listings show the Original wash contains fragrance, and a Fragrance Free version is also sold. The British Association of Dermatologists lists perfumes among products that can irritate the vulva, so the fragrance-free one is the safer pick for sensitive skin.",
+        "citations": [
+          {
+            "url": "https://www.skinhealthinfo.org.uk/wp-content/uploads/2018/11/Vulval-skincare-PIL-May-2023.pdf",
+            "label": "British Association of Dermatologists: Vulval skin care patient leaflet (2023)"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "The vagina cleans itself and doesn't need washes or perfume, so any wash belongs on the outside only. For the vulva, the British Association of Dermatologists advises washing gently with your hands, using an emollient (a plain moisturizing cream) instead of soap, and avoiding perfumed products. Harvard Health also suggests skipping scented feminine products, which fits this page's advice to avoid fragrance if you're sensitive.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.health.harvard.edu/blog/vulvar-health-navigating-the-nether-regions-2019040116322",
+        "label": "Harvard Health: Vulvar health, navigating the nether regions",
+        "summary": "Says the vagina doesn't need cleansing or perfume, and advises avoiding vagina-cleansing and scented feminine products."
+      },
+      {
+        "url": "https://www.skinhealthinfo.org.uk/wp-content/uploads/2018/11/Vulval-skincare-PIL-May-2023.pdf",
+        "label": "British Association of Dermatologists: Vulval skin care patient leaflet (2023)",
+        "summary": "Advises washing the vulva gently by hand, using an emollient instead of soap, and avoiding perfumed products."
+      }
+    ],
+    "warnings": [
+      "For external use only; don't use it inside the vagina, which cleans itself.",
+      "Patch test on the inside of your arm 24 hours before first use."
+    ],
+    "warningsSource": {
+      "url": "https://boots.com/lunadaily-the-everywhere-wash-250ml-10336536",
+      "label": "Boots: Luna Daily The Everywhere Wash (product label text)"
+    }
   },
   "d-natural-cycles": {
     "whoItsFor": [
@@ -7205,7 +7745,43 @@ export const PRODUCT_RESEARCH = {
         "label": "NICE Medtech Innovation Briefing (MIB244): Natural Cycles clinical evidence",
         "summary": "Reviews 5 observational, company-funded studies showing a typical-use pregnancy rate of about 7% a year, and notes there are no head-to-head comparisons with other contraceptives."
       }
-    ]
+    ],
+    "clinicalNote": "Natural Cycles is a fertility awareness method run by an app. You take your temperature each morning with a basal body thermometer (one sensitive enough to catch the small rise of about half a degree Fahrenheit that comes with ovulation), and the app tells you which days you need to abstain or use a condom. How well it works depends a lot on how you use it: in a Swedish study of over 16,000 users, people who switched from the pill got pregnant more often than people who switched from condoms, partly because of unprotected sex on fertile days.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.fda.gov/NewsEvents/Newsroom/PressAnnouncements/ucm616511.htm",
+        "label": "FDA (2018): FDA allows marketing of first direct-to-consumer app for contraceptive use",
+        "summary": "Explains how the app uses daily basal body temperature to flag fertile days and who should not use it."
+      },
+      {
+        "url": "https://doaj.org/article/095a324a0b27478da90484d8a6063548",
+        "label": "BMJ Open (2019): Typical use effectiveness of Natural Cycles, postmarket surveillance study",
+        "summary": "Among 16,331 Swedish users, typical-use pregnancy rates ranged from 3.5 (former condom users) to 8.1 (former pill users) per 100 woman-years."
+      }
+    ],
+    "effectiveness": "For this app specifically: in the studies FDA reviewed (15,570 women), about 1.8 in 100 got pregnant in a year with perfect use and 6.5 in 100 with typical use, which matches the team's 93% figure. A 2021 study of 5,879 US users found similar numbers: a typical-use rate of 6.2 and a perfect-use rate of 2.0 pregnancies per 100 women per year.",
+    "effectivenessSources": [
+      {
+        "url": "https://www.fda.gov/NewsEvents/Newsroom/PressAnnouncements/ucm616511.htm",
+        "label": "FDA (2018): First direct-to-consumer app for contraceptive use",
+        "summary": "Reports a 1.8% perfect-use and 6.5% typical-use yearly failure rate from clinical studies of 15,570 women."
+      },
+      {
+        "url": "https://discovery.fiu.edu/display/pub194530",
+        "label": "Journal of Women's Health (2021): Contraceptive Effectiveness of an FDA-Cleared Birth Control App, Natural Cycles U.S. Cohort",
+        "summary": "In 5,879 US users, the typical-use Pearl Index was 6.2 and perfect-use was 2.0."
+      }
+    ],
+    "warnings": [
+      "Does not protect against sexually transmitted infections.",
+      "Not for you if you have a medical condition where pregnancy would carry a significant risk.",
+      "Not for you if you are using birth control or hormone treatments that stop ovulation.",
+      "No method works perfectly, so pregnancy can still happen even with correct use."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/NewsEvents/Newsroom/PressAnnouncements/ucm616511.htm",
+      "label": "FDA (2018): FDA allows marketing of first direct-to-consumer app for contraceptive use"
+    }
   },
   "d-ovia": {
     "whoItsFor": [
@@ -7233,7 +7809,15 @@ export const PRODUCT_RESEARCH = {
         "summary": "Recommends a pre-pregnancy visit with a provider and at least 400 mcg of folic acid daily starting before conception, along with managing existing conditions and updating vaccines."
       }
     ],
-    "clinicalNote": "Tracking apps are a helpful tool, but NIH guidance still recommends a pre-pregnancy visit with your provider and starting at least 400 mcg of folic acid daily before you conceive."
+    "clinicalNote": "Tracking apps are a helpful tool, but NIH guidance still recommends a pre-pregnancy visit with your provider and starting at least 400 mcg of folic acid daily before you conceive.",
+    "warnings": [
+      "Ovia's own App Store privacy label says your location, identifiers, usage data and diagnostics may be used to track you across other companies' apps and sites.",
+      "The same label says data linked to your identity can include health and fitness data, financial info and sensitive info, so review your privacy settings."
+    ],
+    "warningsSource": {
+      "url": "https://apps.apple.com/app/570244389",
+      "label": "Ovia Cycle & Pregnancy Tracker (Ovuline, Inc.), Apple App Store listing, App Privacy label"
+    }
   },
   "d-glow": {
     "whoItsFor": [
@@ -7268,7 +7852,16 @@ export const PRODUCT_RESEARCH = {
         "summary": "Ten tracker apps gave conflicting dates and only 8% of ovulation predictions were exactly right, and the authors note the fertile window is best predicted with markers like basal temperature, ovulation tests or cervical mucus."
       }
     ],
-    "clinicalNote": "The CDC notes that fertility signs are harder to read with irregular bleeding, after childbirth and around perimenopause, so app predictions are less reliable in those times."
+    "clinicalNote": "The CDC notes that fertility signs are harder to read with irregular bleeding, after childbirth and around perimenopause, so app predictions are less reliable in those times.",
+    "warnings": [
+      "Glow is meant to help you predict ovulation to get pregnant. It is not meant to be used as birth control.",
+      "The app's information does not replace professional medical advice, so check medical questions with a healthcare provider.",
+      "Glow's App Store privacy label says some data, including purchases, location and identifiers, may be used to track you across other companies' apps and sites, so review your privacy settings."
+    ],
+    "warningsSource": {
+      "url": "https://apps.apple.com/app/id638021335",
+      "label": "Glow Ovulation & Period App, Apple App Store listing (description and App Privacy label)"
+    }
   },
   "d-maven": {
     "whoItsFor": [
@@ -7302,7 +7895,29 @@ export const PRODUCT_RESEARCH = {
         "label": "JMIR (2023): Association Between the Use of a Digital Health Platform During Pregnancy and Helping Users Avoid Emergency and In-Person Care",
         "summary": "In a retrospective study of 5,263 pregnant Maven users, written mostly by Maven staff, heavier use of virtual provider visits was linked to self-reported avoidance of ER or office visits, though the design can't show cause and effect."
       }
-    ]
+    ],
+    "clinicalNote": "Maven is a virtual clinic, so the evidence that matters is about telehealth in women's health in general, not about Maven itself. A 2020 review of 47 studies (31,967 people) in Obstetrics & Gynecology found telehealth helped with quitting smoking during pregnancy and with breastfeeding, and cut the number of office visits needed for high-risk pregnancy monitoring without worse outcomes for parent or baby. The review's lead author also noted that we still know very little about how well many of these tools work.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://scholar.usuhs.edu/en/publications/telehealth-interventions-to-improve-obstetric-and-gynecologic-hea/",
+        "label": "Obstetrics & Gynecology (2020): Telehealth Interventions to Improve Obstetric and Gynecologic Health Outcomes, systematic review",
+        "summary": "Across 47 studies, telehealth improved smoking cessation and breastfeeding and reduced high-risk monitoring visits while keeping outcomes the same."
+      },
+      {
+        "url": "https://smhs.gwu.edu/news/telehealth-interventions-associated-improved-obstetric-outcomes",
+        "label": "George Washington University School of Medicine: Telehealth interventions associated with improved obstetric outcomes",
+        "summary": "The lead author says more evidence is needed on how clinicians can fit telehealth into care."
+      }
+    ],
+    "warnings": [
+      "Not for emergency or urgent care needs. In a true emergency, call 911 or go to the nearest emergency room.",
+      "Not a substitute for your own doctor's care.",
+      "Program nurses and other representatives cannot diagnose problems or suggest treatment."
+    ],
+    "warningsSource": {
+      "url": "https://plexusbenefits.uhc.com/wp-content/uploads/2025/07/maven-maternity-member-flier.pdf",
+      "label": "UnitedHealthcare: Maven Maternity member flier"
+    }
   },
   "d-tia": {
     "whoItsFor": [
@@ -7329,7 +7944,25 @@ export const PRODUCT_RESEARCH = {
         "label": "MedlinePlus: Telehealth",
         "summary": "Explains what virtual visits can and can't do, that you should check whether your insurance covers telehealth, and that it isn't for medical emergencies."
       }
-    ]
+    ],
+    "clinicalNote": "Tia pairs regular OB-GYN care with add-ons like acupuncture, so it helps to know where acupuncture has evidence. NIH's complementary health center (NCCIH) says acupuncture may help some pain conditions, like back, neck and knee pain. For women's health uses the picture is weaker: in a 2021 review it did no better than sham (fake) acupuncture for pregnancy or live birth rates with fertility treatment, and for hot flashes it beat no treatment but not sham acupuncture. NCCIH also says not to use acupuncture to put off seeing a health care provider, and to tell all your providers about complementary treatments you use.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://nccih.nih.gov/health/acupuncture",
+        "label": "NIH NCCIH: Acupuncture, Effectiveness and Safety",
+        "summary": "Acupuncture may help several pain conditions; it was not better than sham for IVF pregnancy rates or for hot flashes; serious problems are rare when done properly with sterile single-use needles."
+      }
+    ],
+    "warnings": [
+      "Tia does not currently accept Medicaid.",
+      "Membership fees are not typically covered by insurance, though visits are billed to insurance.",
+      "Late cancellations cost $50 (Signature, under 24 hours' notice) or $75 (Essential, under 48 hours' notice).",
+      "Care is available in New York, California and Arizona only."
+    ],
+    "warningsSource": {
+      "url": "https://asktia.com/membership",
+      "label": "Tia: Membership"
+    }
   },
   "d-ppd": {
     "whoItsFor": [
@@ -7363,7 +7996,35 @@ export const PRODUCT_RESEARCH = {
         "label": "AHRQ Comparative Effectiveness Review No. 256 (2022): Effectiveness of Telehealth for Women's Preventive Services",
         "summary": "Across 16 studies, telehealth for contraceptive care led to similar rates of contraceptive use, STIs and pregnancy as comparison care, though the strength of evidence was low."
       }
-    ]
+    ],
+    "clinicalNote": "Getting birth control through an app is backed by CDC guidance: you do not need a pelvic exam (an internal exam) or a breast exam to start the pill, patch or ring, and you do not need lab tests first. The one check CDC calls essential for the pill, patch and ring (methods that contain estrogen) is a blood pressure reading, and you can report one taken somewhere else. A large 2020 review of telehealth in obstetrics and gynecology found benefits, but its authors said there is still a lot we don't know about how well these tools work.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://cdc.gov/contraception/hcp/usspr/tests-before-contraception.html",
+        "label": "CDC, U.S. Selected Practice Recommendations: Examinations and Tests Needed Before Initiation of Contraceptive Methods",
+        "summary": "Pelvic and breast exams and lab tests are not needed before starting the pill, patch, ring, shot or progestin-only pill; blood pressure is essential for combined methods and can be self-reported."
+      },
+      {
+        "url": "https://scholar.usuhs.edu/en/publications/telehealth-interventions-to-improve-obstetric-and-gynecologic-hea/",
+        "label": "Obstetrics & Gynecology (2020): Telehealth Interventions to Improve Obstetric and Gynecologic Health Outcomes, systematic review",
+        "summary": "Across 47 studies (31,967 people), telehealth helped with smoking cessation and breastfeeding and cut high-risk monitoring visits without worse outcomes."
+      },
+      {
+        "url": "https://smhs.gwu.edu/news/telehealth-interventions-associated-improved-obstetric-outcomes",
+        "label": "George Washington University School of Medicine: Telehealth interventions associated with improved obstetric outcomes",
+        "summary": "The review's lead author notes that we still know very little about how effective many telehealth tools are."
+      }
+    ],
+    "warnings": [
+      "Services vary by state, and care may not be available where you live or you may be referred to in-person care.",
+      "If the provider thinks your symptoms are caused by something other than a simple UTI, they can't prescribe through the app (the visit fee is refunded).",
+      "At-home STI testing and telehealth STI visits are currently paused.",
+      "Shipped orders can't be returned or refunded."
+    ],
+    "warningsSource": {
+      "url": "https://plannedparenthood.org/planned-parenthood-direct",
+      "label": "Planned Parenthood: Planned Parenthood Direct"
+    }
   },
   "d-eight-sleep": {
     "whoItsFor": [
@@ -7397,6 +8058,27 @@ export const PRODUCT_RESEARCH = {
         "label": "Journal of Physiological Anthropology (2012): Effects of thermal environment on sleep and circadian rhythm",
         "summary": "This review finds that in real-life conditions with bedding, heat increases wakefulness and cuts deep and REM sleep, which supports keeping your sleep environment cool."
       }
+    ],
+    "clinicalNote": "Your body needs to cool down a little to fall and stay asleep, and a warm room makes hot flashes (sudden waves of heat, often with sweating) more likely. That is why common advice for night sweats is a cool room, a fan, and fewer blankets. A bed that cools itself is a high-tech take on the same idea. The one published study of the Pod was run by Eight Sleep and did not focus on perimenopause or night sweats, so its benefit for those symptoms specifically hasn't been tested.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://uofmhealth.org/health-library/hw228097",
+        "label": "University of Michigan Health (Healthwise): Hot Flashes and Menopause",
+        "summary": "Hot flashes are more likely in a warm environment; suggests keeping the room cool, using a fan, and sleeping with fewer blankets."
+      },
+      {
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11048088/",
+        "label": "Bioengineering (2024): Sleeping for One Week on a Temperature-Controlled Mattress Cover Improves Sleep and Cardiovascular Recovery",
+        "summary": "Single-group study of 54 healthy adults by mostly Eight Sleep-affiliated authors; did not study menopause symptoms."
+      }
+    ],
+    "effectiveness": "There is one study of this product. In 54 healthy adults sleeping at home, a week with the Pod turned on lowered sleeping heart rate slightly (about 1 beat per minute) and raised heart rate variability (HRV, a sign of recovery) by about 2 ms, and people rated their sleep better. Men who slept cooler gained about 14 minutes of deep sleep, but women's deep sleep did not change significantly (they gained some REM sleep instead). Most authors work for Eight Sleep, there was no comparison group, and it lasted only one week.",
+    "effectivenessSources": [
+      {
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11048088/",
+        "label": "Bioengineering (2024): Temperature-controlled mattress cover, sleep and cardiovascular recovery",
+        "summary": "One week on the Eight Sleep Pod modestly lowered sleeping heart rate and raised HRV; deep sleep rose in men but not significantly in women."
+      }
     ]
   },
   "p-frida-mom-kit": {
@@ -7425,7 +8107,27 @@ export const PRODUCT_RESEARCH = {
         "label": "Boston Medical Center: Perineal care after birth",
         "summary": "Recommends a peri bottle rinse after using the toilet, cold packs on the first day, frozen Tucks pads on top of your pad, sitz baths, pad changes every 2 to 4 hours, and calling your doctor for fever, worsening pain or foul discharge."
       }
-    ]
+    ],
+    "clinicalNote": "After a vaginal birth, the perineum (the skin and muscle between the vagina and anus) is often sore, swollen, or stitched. Hospitals commonly suggest a cold pack or \"ice diaper\" on the first day, chilled pads on top of a regular pad, and spraying warm water on the area after you pee instead of wiping. A 2020 Cochrane review of 10 trials found only limited, very low certainty evidence that ice packs or cold gel pads ease perineal pain in the first two days, so think of cold therapy as a low-risk comfort measure rather than a proven treatment.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.cochrane.org/evidence/CD006304_local-cooling-relieving-pain-perineal-trauma-sustained-during-childbirth",
+        "label": "Cochrane (2020): Local cooling for relieving pain from perineal trauma sustained during childbirth",
+        "summary": "10 trials; limited very low certainty evidence that ice packs or cold gel pads may relieve perineal pain in the first two days after birth."
+      },
+      {
+        "url": "https://www.bmc.org/bump-beyond/postpartum-experience/physical-health/perineal-care.md",
+        "label": "Boston Medical Center, Bump & Beyond: Perineal care",
+        "summary": "Suggests a cold pack or ice diaper on day one, frozen pads on top of a menstrual pad, and a warm water spray bottle after peeing."
+      }
+    ],
+    "warnings": [
+      "Call your OB/GYN right away if you have a fever of 100.4 °F or higher, more pain, or foul-smelling discharge."
+    ],
+    "warningsSource": {
+      "url": "https://www.bmc.org/bump-beyond/postpartum-experience/physical-health/perineal-care.md",
+      "label": "Boston Medical Center, Bump & Beyond: Perineal care (official guidance for postpartum perineal care)"
+    }
   },
   "p-lansinoh-pads": {
     "whoItsFor": [
@@ -7452,7 +8154,24 @@ export const PRODUCT_RESEARCH = {
         "label": "NHS Start for Life: Sore nipples",
         "summary": "Advises changing breast pads after every feed and letting nipples air-dry, and notes that most nipple pain comes from a poor latch."
       }
-    ]
+    ],
+    "clinicalNote": "Nursing pads catch leaking milk, which is common in the early weeks of breastfeeding. The NHS advises changing breast pads after every feed if you use them. Sore nipples are most often caused by a shallow latch, and cracked nipples can let in thrush (a yeast infection), so if your nipples hurt, crack, or bleed, get help from a midwife, health visitor, or breastfeeding specialist early rather than relying on pads alone.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.nhs.uk/best-start-in-life/baby/feeding-your-baby/breastfeeding/breastfeeding-challenges/sore-nipples/",
+        "label": "NHS Best Start in Life: Sore nipples",
+        "summary": "Change breast pads after every feed; poor latch is the most common cause of nipple pain; thrush can follow cracked nipples."
+      }
+    ],
+    "warnings": [
+      "Change pads often to keep your skin healthy, generally after each feeding.",
+      "Change pads during the night if they get soaked.",
+      "The pads are for one-time use only, so throw each one away after use."
+    ],
+    "warningsSource": {
+      "url": "https://lansinoh.helpjuice.com/en_US/stay-dry-disposable-nursing-pads/faqs-stay-dry-disposable-nursing-pads",
+      "label": "Lansinoh Help Center: FAQs, Stay Dry Disposable Nursing Pads"
+    }
   },
   "p-rituals-prenatal": {
     "whoItsFor": [
@@ -7478,7 +8197,61 @@ export const PRODUCT_RESEARCH = {
         "label": "Cochrane Review (2018): Omega-3 fatty acid addition during pregnancy",
         "summary": "Across 70 randomized trials, omega-3 during pregnancy lowered the risk of preterm birth by 11% and of early preterm birth before 34 weeks by 42%, which supports including DHA in a prenatal."
       }
-    ]
+    ],
+    "ingredientScience": [
+      {
+        "name": "Methylfolate (6S-5-methyltetrahydrofolate, \"MTHF folate\")",
+        "text": "Folate helps prevent neural tube defects (serious birth defects of the brain and spine) when taken before and in early pregnancy. But the CDC and NIH say folic acid is the only form proven to do this, and no studies show that other forms like methylfolate prevent these defects, so the evidence for this form is indirect.",
+        "citations": [
+          {
+            "url": "https://www.cdc.gov/folic-acid/hcp/clinical-overview/index.html",
+            "label": "CDC: Folic Acid, Facts for Clinicians"
+          }
+        ]
+      },
+      {
+        "name": "Iron (ferrous bisglycinate)",
+        "text": "You need more iron in pregnancy (27 mg a day vs 18 mg for most adult women), and most pregnant women in the US get less than they need from food. A 2024 Cochrane review found iron supplements cut iron deficiency anemia at term by 59% (moderate certainty), though NIH notes that routine iron in women who already have enough may have downsides.",
+        "citations": [
+          {
+            "url": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
+            "label": "NIH Office of Dietary Supplements: Dietary Supplements and Life Stages, Pregnancy"
+          }
+        ]
+      },
+      {
+        "name": "Choline (choline bitartrate)",
+        "text": "Choline needs go up to 450 mg a day in pregnancy, and fewer than 1 in 10 pregnant women get that much from food. Less than half of US prenatal supplements contain any choline, and those that do usually have only a small amount, so this one helps but likely won't cover your whole need.",
+        "citations": [
+          {
+            "url": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
+            "label": "NIH Office of Dietary Supplements: Dietary Supplements and Life Stages, Pregnancy"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "All women who could get pregnant are advised to take 400 micrograms of folic acid daily, starting at least a month before conception, because starting at the first prenatal visit is too late to prevent neural tube defects. This prenatal uses methylfolate instead of folic acid. The CDC says there are no studies showing other folate forms prevent these defects, and it still recommends folic acid even for people with MTHFR gene variants. NIH also notes that more prenatal folate or iron is not automatically better: there are upper limits (1,000 mcg a day of supplemental folate and 45 mg a day of iron), so check the totals if you take more than one supplement.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.cdc.gov/folic-acid/hcp/clinical-overview/index.html",
+        "label": "CDC: Folic Acid, Facts for Clinicians",
+        "summary": "Folic acid is the only folate type shown to help prevent neural tube defects; recommends 400 mcg daily starting at least 1 month before conception, regardless of MTHFR genotype."
+      },
+      {
+        "url": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
+        "label": "NIH Office of Dietary Supplements: Dietary Supplements and Life Stages, Pregnancy",
+        "summary": "Covers pregnancy needs and upper limits for folate, iron, and choline, and notes 5-MTHF hasn't been tested in trials for neural tube defect prevention."
+      }
+    ],
+    "warnings": [
+      "Accidental overdose of iron-containing products is a leading cause of fatal poisoning in children under 6.",
+      "Keep this product out of reach of children, and call a doctor or poison control center right away in case of accidental overdose.",
+      "Check with your health care practitioner before using it if you are pregnant or nursing."
+    ],
+    "warningsSource": {
+      "url": "https://www.vitacost.com/products/ritual-essential-for-women-prenatal-multivitamin-citrus-60-vegan-capsules-153103",
+      "label": "Ritual Essential for Women Prenatal Multivitamin label, as reproduced on Vitacost"
+    }
   },
   "p-belly-bandit": {
     "whoItsFor": [
@@ -7522,6 +8295,14 @@ export const PRODUCT_RESEARCH = {
         "label": "Journal of Clinical Nursing (2009): Effectiveness of maternity support belts in reducing low back pain during pregnancy, a review",
         "summary": "Found insufficient evidence that maternity belts reduce pregnancy back or pelvic pain and noted reported side effects such as increased pain and skin irritation."
       }
+    ],
+    "clinicalNote": "Low back and pelvic pain are common in pregnancy, especially later on. A Cochrane review (2013, summarized by WONCA's PEARLS) found that adding a rigid pelvic belt to exercise relieved pelvic or back pain more than usual care alone, and found no clear difference between types of support belts. Overall the evidence was low quality because the studies were small and at high risk of bias, and a soft stretchy band like this one is not the same as the rigid belts studied.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.globalfamilydoctor.com/member/Resources/PEARLS/419Interventionseffectiveforpreventingandtreatingpelvicandb.aspx",
+        "label": "WONCA Global Family Doctor, PEARLS 419: Interventions for preventing and treating pelvic and back pain in pregnancy (Cochrane 2013)",
+        "summary": "A rigid pelvic belt plus exercise relieved pain more than usual care; no difference between belt types; overall low-quality evidence."
+      }
     ]
   },
   "p-maude-vibe": {
@@ -7543,7 +8324,15 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://www.cultbeauty.com/p/maude-vibe-grey/17796764/",
       "sourceLabel": "Cult Beauty: Maude Vibe (brand usage and care details)"
-    }
+    },
+    "clinicalNote": "Vibrator use is common: in a 2009 national survey of 2,056 US women, about half (52.5%) had used one. Women who had used one in the past month tended to report better desire, arousal, lubrication, and orgasm, though the survey can't show that the vibrator caused this. Most users (71.5%) never had side effects, and the ones reported, like brief numbness or irritation, were usually mild and rarely lasted a day or more. The study was funded by a condom maker, Church & Dwight.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
+        "label": "Journal of Sexual Medicine (2009), Herbenick et al.: Prevalence and characteristics of vibrator use by women in the United States",
+        "summary": "52.5% of 2,056 women had used a vibrator; recent use was linked with better sexual function scores; side effects were uncommon and mostly short-lived."
+      }
+    ]
   },
   "p-uberlube": {
     "whoItsFor": [
@@ -7563,6 +8352,38 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://www.superdrug.com/health/sexual-health/lube-gel-jelly-oils/uberlube-silicone-lubricant-112ml/p/mp-00057217",
       "sourceLabel": "Superdrug: Uberlube Silicone Lubricant 112ml"
+    },
+    "ingredientScience": [
+      {
+        "name": "Dimethicone, dimethiconol, cyclomethicone (silicones)",
+        "text": "These silicone fluids make up the slippery base. A WHO advisory note calls silicone fluids inert and safe, with little effect on latex condoms, but also says there are no published clinical studies backing their use as condom lubricants, so the safety case rests on lab properties more than trials.",
+        "citations": [
+          {
+            "url": "https://www.e-lactancia.org/media/papers/Lubricants-WHO2012.pdf",
+            "label": "WHO/UNFPA/FHI360 Advisory Note (2012): Use and procurement of additional lubricants for male and female condoms"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "Lubricant can make sex more comfortable and help prevent condoms from tearing. The WHO notes that many water-based lubes are very concentrated (high osmolality), which may damage the lining of the vagina or rectum, a concern that applies to water-based products rather than silicone ones like this. Silicone lubes are compatible with latex and polyurethane condoms and last longer, which also makes them a common pick for anal sex.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.e-lactancia.org/media/papers/Lubricants-WHO2012.pdf",
+        "label": "WHO/UNFPA/FHI360 Advisory Note (2012): Use and procurement of additional lubricants",
+        "summary": "Silicone fluids are inert and compatible with latex; high-osmolality water-based lubes may damage vaginal and anal tissue."
+      },
+      {
+        "url": "https://health.cornell.edu/sites/health/files/pdf-library/Condoms_Lube.pdf",
+        "label": "Cornell Health: Condoms and Lube",
+        "summary": "Silicone-based lube is safe with latex and polyurethane condoms and is longer-lasting."
+      }
+    ],
+    "warnings": [
+      "Some people get slight irritation from silicone-based lube if it isn't washed off soon after vaginal sex."
+    ],
+    "warningsSource": {
+      "url": "https://health.cornell.edu/sites/health/files/pdf-library/Condoms_Lube.pdf",
+      "label": "Cornell Health: Condoms and Lube (guidance for silicone-based lubricants)"
     }
   },
   "p-v-wash": {
@@ -7582,7 +8403,19 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://perfmedicine.apollopharmacy.in/otc/v-wash-plus-intimate-wash-200ml",
       "sourceLabel": "Apollo Pharmacy: VWash Plus Intimate Wash 200ml"
-    }
+    },
+    "ingredientScience": [
+      {
+        "name": "Tea tree oil",
+        "text": "Tea tree oil is mainly used for its antifungal and antibacterial properties, but its evidence is mixed even on regular skin (it may ease athlete's foot but works less well than antifungal medicine). It is a known cause of skin irritation and allergic rash, and Mayo Clinic advises against it if you have eczema or very sensitive skin.",
+        "citations": [
+          {
+            "url": "https://mayoclinic.org/drugs-supplements-tea-tree-oil/art-20364246",
+            "label": "Mayo Clinic: Tea tree oil"
+          }
+        ]
+      }
+    ]
   },
   "p-sweet-spot-wipes": {
     "whoItsFor": [
@@ -7609,7 +8442,29 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.ulta.com/p/p-xlsImpprod18141017",
         "label": "Ulta Beauty customer reviews: SweetSpot Labs Vanilla Blossom Gentle Soothing Wipes"
       }
-    ]
+    ],
+    "ingredientScience": [
+      {
+        "name": "Aloe (aloe barbadensis leaf juice)",
+        "text": "Aloe gel on the skin is generally well tolerated, though there are occasional reports of burning, itching, and rash. Clinical research suggests it may help burns heal, but there isn't reliable evidence that it soothes irritation or eczema, so its role in a wipe is mostly as a gentle, low-risk ingredient.",
+        "citations": [
+          {
+            "url": "https://www.nccih.nih.gov/health/aloe-vera",
+            "label": "NCCIH (NIH): Aloe Vera"
+          }
+        ]
+      }
+    ],
+    "warnings": [
+      "For external use only.",
+      "If you use it on your vulva, always wipe front to back.",
+      "Stop using it if a rash or discomfort develops.",
+      "Keep out of the reach and sight of children."
+    ],
+    "warningsSource": {
+      "url": "https://www.ulta.com/p/unscented-gentle-soothing-wipes-pimprod2007177",
+      "label": "SweetSpot Labs Unscented Gentle Soothing Wipes label text (Ulta product listing)"
+    }
   },
   "p-kindra-lotion": {
     "whoItsFor": [
@@ -7637,7 +8492,48 @@ export const PRODUCT_RESEARCH = {
         "label": "Albalawi et al., Cureus 2023: vaginal hyaluronic acid vs estrogen for vaginal atrophy (systematic review)",
         "summary": "Across six trials, topical hyaluronic acid (an ingredient in this lotion) relieved vaginal atrophy symptoms and painful sex, and the authors called it a reasonable non-hormonal alternative, though estrogen came out ahead in most comparisons."
       }
-    ]
+    ],
+    "ingredientScience": [
+      {
+        "name": "Sodium hyaluronate (hyaluronic acid)",
+        "text": "Hyaluronic acid holds water in tissue, which is why it's used for vaginal dryness. A 2023 review of six small trials in postmenopausal women found it seemed to work about as well as vaginal estrogen for vaginal atrophy (thinning and drying of vaginal tissue), but the authors rated the evidence as weak, and estrogen may still work better for moderate to severe cases.",
+        "citations": [
+          {
+            "url": "https://assets.cureus.com/uploads/review_article/pdf/177678/20230827-27812-1h41f02.pdf",
+            "label": "Cureus (2023): Vaginal hyaluronic acid vs estrogen for vaginal atrophy in postmenopausal women, a systematic review (doi:10.7759/cureus.44191)"
+          }
+        ]
+      },
+      {
+        "name": "Coconut oil",
+        "text": "A Cleveland Clinic ob/gyn lists coconut oil as a natural option to ease dryness during sex and says these oils typically don't cause irritation or infection. Oils break down latex, so they shouldn't be used with latex condoms. We found no trials of coconut oil as a daily vaginal moisturizer.",
+        "citations": [
+          {
+            "url": "https://health.clevelandclinic.org/what-can-i-use-instead-of-lube",
+            "label": "Cleveland Clinic: What can I use instead of lube?"
+          }
+        ]
+      },
+      {
+        "name": "Sunflower seed oil",
+        "text": "Sunflower oil is another plant oil a Cleveland Clinic ob/gyn lists as a natural lubricant option that typically doesn't cause irritation or infection. Like other oils, it can break down latex condoms. We found no trials of it as a vaginal moisturizer.",
+        "citations": [
+          {
+            "url": "https://health.clevelandclinic.org/what-can-i-use-instead-of-lube",
+            "label": "Cleveland Clinic: What can I use instead of lube?"
+          }
+        ]
+      }
+    ],
+    "warnings": [
+      "For external use only, and keep it out of your eyes.",
+      "Stop use and ask a doctor if your symptoms get worse, last more than 7 days, or clear up and then come back within a few days.",
+      "Keep out of reach of children. If swallowed, get medical help or call Poison Control right away."
+    ],
+    "warningsSource": {
+      "url": "https://otclabels.com/lib/otc/otc-meds/daily-vlotion/",
+      "label": "Kindra Daily V Lotion product label (OTC Labels)"
+    }
   },
   "p-citracal-bone-health": {
     "whoItsFor": [
@@ -7664,7 +8560,52 @@ export const PRODUCT_RESEARCH = {
         "label": "NIH Office of Dietary Supplements: Calcium fact sheet",
         "summary": "Women over 50 need 1,200 mg of calcium a day, calcium citrate absorbs well with or without food, doses of 500 mg or less absorb best, and vitamin D helps the body absorb calcium."
       }
-    ]
+    ],
+    "ingredientScience": [
+      {
+        "name": "Calcium citrate",
+        "text": "Calcium is the main mineral in your bones. The citrate form doesn't need much stomach acid to dissolve, so you can take it with or without food, and it causes less gas, bloating, and constipation than calcium carbonate. Your body absorbs calcium best in doses of 500 mg or less at a time.",
+        "citations": [
+          {
+            "url": "https://ods.od.nih.gov/factsheets/Calcium-HealthProfessional/%23h3",
+            "label": "NIH Office of Dietary Supplements: Calcium, Fact Sheet for Health Professionals"
+          }
+        ]
+      },
+      {
+        "name": "Vitamin D3 (cholecalciferol)",
+        "text": "Vitamin D helps your gut absorb calcium and supports normal bone mineralization (how bone hardens). D3 raises blood vitamin D levels more, and keeps them up longer, than the D2 form.",
+        "citations": [
+          {
+            "url": "https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/",
+            "label": "NIH Office of Dietary Supplements: Vitamin D, Fact Sheet for Health Professionals"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "Getting enough calcium and vitamin D matters for bone health, and trials suggest the two together may raise bone density a little in some postmenopausal women. Whether supplements prevent fractures is less clear. One meta-analysis of adults over 50 linked calcium plus vitamin D to fewer total and hip fractures, while other reviews found no effect, and the U.S. Preventive Services Task Force found that daily doses of 1,000 mg calcium or less and 400 IU vitamin D or less don't prevent fractures in postmenopausal women. For women over 50, the upper limit for calcium from food and supplements combined is 2,000 mg a day, so it helps to count what you already get from your diet.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://ods.od.nih.gov/factsheets/Calcium-HealthProfessional/%23h3",
+        "label": "NIH Office of Dietary Supplements: Calcium, Fact Sheet for Health Professionals",
+        "summary": "Covers calcium forms, absorption, upper limits, mixed fracture evidence, kidney stone findings, and drug interactions."
+      },
+      {
+        "url": "https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/",
+        "label": "NIH Office of Dietary Supplements: Vitamin D, Fact Sheet for Health Professionals",
+        "summary": "Explains vitamin D's role in calcium absorption and reviews trials and USPSTF findings on bone density and fractures."
+      }
+    ],
+    "warnings": [
+      "Take with a full glass of water while sitting upright.",
+      "If you're pregnant, breastfeeding, taking medicine, or have any medical condition, ask a health professional before use.",
+      "Older adults, teens, and anyone who has trouble swallowing should check with a health professional before use.",
+      "Not for children under 12, and do not take more than the recommended amount."
+    ],
+    "warningsSource": {
+      "url": "https://nz.iherb.com/pr/citracal-maximum-plus-d3-180-coated-caplets/31720",
+      "label": "Citracal Maximum Plus + D3 label text (iHerb product listing, 180-caplet size)"
+    }
   },
   "d-peanut": {
     "whoItsFor": [
@@ -7691,7 +8632,24 @@ export const PRODUCT_RESEARCH = {
         "label": "Vasquez et al., BMC Psychiatry 2026: perinatal mental health interventions and loneliness (systematic review)",
         "summary": "Across 26 studies, some interventions improved loneliness or feeling supported, but app-based peer support showed mixed results, improving perceived support in some trials without clear mental health gains."
       }
-    ]
+    ],
+    "clinicalNote": "Peer support has some research behind it for new moms, especially those at higher risk of postnatal depression (depression after giving birth). A review of seven randomized trials found that telephone peer support lowered depression scores in high-risk women, and peer-led women's groups reduced moderate depression in poorer communities, but other support models showed no clear effect and no single model could be strongly recommended. We found no published studies of Peanut itself, so think of it as a way to find connection, not a treatment.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.cambridge.org/core/journals/european-psychiatry/article/systematic-literature-review-of-the-use-of-lay-support-models-in-postnatal-depression/F9873CF2B959245EDA3FB44D4CE98C7E",
+        "label": "European Psychiatry (2011): Systematic literature review of the use of lay support models in postnatal depression (conference abstract)",
+        "summary": "Reviewed seven randomized trials of peer and lay support for postnatal depression and found benefit for some targeted programs but mixed results overall."
+      }
+    ],
+    "warnings": [
+      "The app is rated 18+.",
+      "Posts come from other users, and health and wellness topics are part of the community.",
+      "The developer says some data, including purchases and sensitive info, may be used to track you across other companies' apps and websites, so check the privacy settings before sharing."
+    ],
+    "warningsSource": {
+      "url": "https://apps.apple.com/app/id1178656034",
+      "label": "Peanut on the Apple App Store (developer's listing and privacy label)"
+    }
   },
   "p-intimina-lily": {
     "whoItsFor": [
@@ -7720,7 +8678,29 @@ export const PRODUCT_RESEARCH = {
         "summary": "Most new users need about three cycles to get comfortable, cups can be worn up to 12 hours, prolapse can affect fit, and cup use may raise the chance of dislodging an IUD."
       }
     ],
-    "clinicalNote": "Cleveland Clinic says most people need about three cycles to get the hang of a cup, and a little leaking early on usually improves with practice. If you have an IUD, talk to your provider first, since cup use may make it more likely to shift."
+    "clinicalNote": "Cleveland Clinic says most people need about three cycles to get the hang of a cup, and a little leaking early on usually improves with practice. If you have an IUD, talk to your provider first, since cup use may make it more likely to shift.",
+    "ingredientScience": [
+      {
+        "name": "Medical-grade silicone",
+        "text": "The FDA says menstrual cups are generally made of silicone or rubber, and that you should choose silicone if you're sensitive to latex. We found no studies comparing one brand's silicone to another's.",
+        "citations": [
+          {
+            "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+            "label": "FDA: Menstrual Cups"
+          }
+        ]
+      }
+    ],
+    "warnings": [
+      "Do not use Lily Cup if you have had toxic shock syndrome (TSS) in the past.",
+      "Don't wear it for more than 8 hours at a time.",
+      "It is not a contraceptive and won't protect against pregnancy or STIs, so remove it before sex.",
+      "Stop using it and contact a medical practitioner if you have any pain or discomfort."
+    ],
+    "warningsSource": {
+      "url": "https://www.superdrug.com/natural-pain-relief/health/womens-intimate-health-care/periods/menstrual-cups/intimina-menstrual-lily-cup-compact-a/p/mp-00440408",
+      "label": "Intimina Lily Cup Compact label text (Superdrug product listing)"
+    }
   },
   "p-hello-disc": {
     "whoItsFor": [
@@ -7761,7 +8741,29 @@ export const PRODUCT_RESEARCH = {
         "label": "Mason et al., Frontiers in Reproductive Health 2026: experiences using a menstrual disc (qualitative study)",
         "summary": "Women given a disc in a Kenyan trial often needed several tries at first, but by month three most used it without leakage or pain and wanted to keep using it."
       }
-    ]
+    ],
+    "ingredientScience": [
+      {
+        "name": "Medical-grade silicone",
+        "text": "The FDA says menstrual cups and discs are generally made of silicone or rubber, and that you should choose silicone if you're sensitive to latex. We found no studies comparing one brand's silicone to another's.",
+        "citations": [
+          {
+            "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+            "label": "FDA: Menstrual Cups"
+          }
+        ]
+      }
+    ],
+    "warnings": [
+      "Menstrual cups and discs have been linked to toxic shock syndrome (TSS), a rare but serious illness. If you get a fever, vomiting, or diarrhea during your period, remove the disc and get medical advice right away.",
+      "Do not leave the disc in for more than 12 hours.",
+      "It is not birth control and won't prevent pregnancy.",
+      "If condoms are your only birth control, remove the disc before sex, since friction could cause a tiny tear in the condom."
+    ],
+    "warningsSource": {
+      "url": "https://www.chemistwarehouse.co.nz/buy/122640/hello-period-menstrual-disc",
+      "label": "Hello Disc label text (Chemist Warehouse NZ product listing)"
+    }
   },
   "p-saalt-disc": {
     "whoItsFor": [
@@ -7797,7 +8799,28 @@ export const PRODUCT_RESEARCH = {
         "label": "DeLoughery et al., BMJ Sexual & Reproductive Health: Red blood cell capacity of modern menstrual products",
         "summary": "In lab testing with real blood, menstrual discs held the most of any product type, about 61 mL on average, versus roughly 20 to 50 mL for tampons, pads and cups."
       }
-    ]
+    ],
+    "ingredientScience": [
+      {
+        "name": "Medical-grade silicone",
+        "text": "The FDA says menstrual cups and discs are generally made of silicone or rubber, and that you should choose silicone if you're sensitive to latex. We found no studies comparing one brand's silicone to another's.",
+        "citations": [
+          {
+            "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+            "label": "FDA: Menstrual Cups"
+          }
+        ]
+      }
+    ],
+    "warnings": [
+      "If you have an IUD, talk to your doctor first, since removing a disc could pull on the IUD string.",
+      "If you use an IUD and still get periods, check your IUD string after each period for any change in length or feel.",
+      "The Saalt Disc is not a contraceptive and won't protect against STIs."
+    ],
+    "warningsSource": {
+      "url": "https://saalt.com/blogs/news/can-you-use-a-menstrual-cup-with-an-iud",
+      "label": "Saalt: Can you use a menstrual disc or cup with an IUD?"
+    }
   },
   "p-knix-underwear": {
     "whoItsFor": [
@@ -7832,7 +8855,17 @@ export const PRODUCT_RESEARCH = {
         "label": "DeLoughery et al., BMJ Sexual & Reproductive Health: Red blood cell capacity of modern menstrual products",
         "summary": "In lab testing with real blood, period underwear held only a few mL, far less than other products, and the authors say it is unlikely to work on its own for heavy bleeding."
       }
-    ]
+    ],
+    "warnings": [
+      "Wash your period underwear after every single use.",
+      "Machine wash on cold with a mild, ideally unscented detergent, and don't use bleach.",
+      "Lay them flat to dry.",
+      "Try them first at home on your lightest flow day to see how they work for you."
+    ],
+    "warningsSource": {
+      "url": "https://knix.ca/blogs/resources/how-often-should-you-change-your-period-underwear",
+      "label": "Knix: How often should you change your period underwear?"
+    }
   },
   "p-bambody-underwear": {
     "whoItsFor": [
@@ -7859,7 +8892,36 @@ export const PRODUCT_RESEARCH = {
         "label": "DeLoughery et al., BMJ Sexual & Reproductive Health: Red blood cell capacity of modern menstrual products",
         "summary": "In lab testing with real blood, period underwear held only a few mL, far less than other products, and the authors say it is unlikely to work on its own for heavy bleeding."
       }
-    ]
+    ],
+    "ingredientScience": [
+      {
+        "name": "Bamboo viscose",
+        "text": "Bamboo viscose is a kind of rayon: plant cellulose (here from bamboo) dissolved with chemicals and spun into a soft fiber. The US Federal Trade Commission says rayon made from bamboo does not keep the bamboo plant's natural antimicrobial properties, so any benefit comes from how the fabric feels and breathes, not from the bamboo itself. We found no studies on bamboo viscose and vaginal or vulvar irritation.",
+        "citations": [
+          {
+            "url": "https://www.ftc.gov/node/44492",
+            "label": "US Federal Trade Commission (2009): FTC Charges Companies with 'Bamboo-zling' Consumers with False Product Claims"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "Period underwear is underwear with built-in absorbent layers that you wear instead of, or as backup to, a pad or tampon. A Cleveland Clinic ob/gyn says most pairs hold about 1 to 2 tampons' worth of flow, and that they can help people whose skin gets irritated by pads. She advises wearing one pair no more than 12 hours, changing sooner on heavy days, and washing them gently with a mild, unscented detergent and no fabric softener, since leftover detergent can irritate skin. Trying a pair at home on a light day first is a low-stress way to check fit and leaks.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://health.clevelandclinic.org/does-period-underwear-work",
+        "label": "Cleveland Clinic Health Essentials: Does period underwear work?",
+        "summary": "Ob/gyn Karmon James, MD, on capacity (1 to 2 tampons), a 12-hour wear limit, washing, and who period underwear suits."
+      }
+    ],
+    "warnings": [
+      "Do not wear the same pair for more than 12 hours, and change sooner on your heaviest days.",
+      "Wash with a mild, unscented, dye-free detergent and skip fabric softener; leftover detergent can irritate your skin.",
+      "If you mainly need protection from urine leaks, choose a product designed for that."
+    ],
+    "warningsSource": {
+      "url": "https://health.clevelandclinic.org/does-period-underwear-work",
+      "label": "Cleveland Clinic Health Essentials: Does period underwear work? (no brand page or label found for Bambody)"
+    }
   },
   "p-bodily-kit": {
     "whoItsFor": [
@@ -7879,6 +8941,28 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://itsbodily.com/products/postpartum-recovery-kit-save-11",
       "sourceLabel": "Bodily Postpartum Recovery Kit product page"
+    },
+    "clinicalNote": "The kit's items match common hospital advice for the first weeks after a vaginal birth, when the perineum (the skin and muscle between the vagina and anus) is often sore or stitched. Boston Medical Center advises spraying warm water on the area after you pee or poop and patting it dry, and changing your pad every 2 to 4 hours. NHS guidance says pouring water over the area as you pee helps stop stinging and keeps it clean, and suggests breathable cotton or disposable briefs with loose clothing. Neither source mentions sitting cushions, so we could not find guidance for or against the inflatable cushion.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.bmc.org/bump-beyond/postpartum-experience/physical-health/perineal-care",
+        "label": "Boston Medical Center, Bump & Beyond: Perineal care",
+        "summary": "Recommends a warm-water spray bottle after toileting, frequent pad changes, cold packs, sitz baths, and calling OB/GYN for fever, more pain or smelly discharge."
+      },
+      {
+        "url": "https://www.therotherhamft.nhs.uk/node/691/printable/print",
+        "label": "The Rotherham NHS Foundation Trust: Caring for your perineum after giving birth",
+        "summary": "NHS leaflet on keeping stitches clean, pouring water while peeing, breathable underwear, and signs of infection."
+      }
+    ],
+    "warnings": [
+      "Call your OB/GYN right away if you have a fever of 100.4 F or higher, more pain, or a foul-smelling discharge.",
+      "Signs your stitches may be infected include redness, a smelly discharge, new or growing swelling or pain, or feeling feverish and unwell.",
+      "Change your pad often and wash your hands before changing it, to lower the risk of infection."
+    ],
+    "warningsSource": {
+      "url": "https://www.bmc.org/bump-beyond/postpartum-experience/physical-health/perineal-care",
+      "label": "Boston Medical Center: Perineal care (first warning); The Rotherham NHS Foundation Trust: Caring for your perineum after giving birth (second and third). Bodily's product page lists no safety warnings."
     }
   },
   "p-haakaa-pump": {
@@ -7912,7 +8996,17 @@ export const PRODUCT_RESEARCH = {
         "summary": "Clean pump parts after every use and sanitize at least daily, especially if your baby is under 2 months old, premature or has a weakened immune system."
       }
     ],
-    "clinicalNote": "The FDA says manual pumps are single-user devices, so don't share one or buy it secondhand. The CDC recommends cleaning milk-contact parts after every use and sanitizing daily if your baby is young, premature or immunocompromised."
+    "clinicalNote": "The FDA says manual pumps are single-user devices, so don't share one or buy it secondhand. The CDC recommends cleaning milk-contact parts after every use and sanitizing daily if your baby is young, premature or immunocompromised.",
+    "warnings": [
+      "Clean after every use and sterilise by steam or by boiling for 2 to 3 minutes; do not use bleach, sterilising tablets or UV sterilisers.",
+      "Check it regularly and replace it if you see any signs of damage.",
+      "It is not a toy; adult supervision is required.",
+      "It should not hurt your nipples; if it does, Haakaa says the suction is probably too strong."
+    ],
+    "warningsSource": {
+      "url": "https://www.haakaa.co.nz/products/silicone-breast-pump",
+      "label": "Haakaa: Silicone Breast Pump product page (care and caution); suction note from haakaa.co.nz/pages/faq"
+    }
   },
   "p-silverette-cups": {
     "whoItsFor": [
@@ -7947,7 +9041,16 @@ export const PRODUCT_RESEARCH = {
         "label": "Marrazzu et al., Breastfeeding Medicine 2015: silver cap for nipple fissures (randomized trial)",
         "summary": "In 40 breastfeeding women with nipple fissures, those using a silver cap had pain resolve faster by day 7 and 15 than those on standard care, with no reactions reported."
       }
-    ]
+    ],
+    "warnings": [
+      "Take the cups off before you breastfeed.",
+      "Do not use other nipple treatments, like creams, together with the cups; the brand says this may make them work less well.",
+      "Wash them every day with warm water to remove milk residue."
+    ],
+    "warningsSource": {
+      "url": "https://jilliansdrawers.com/products/silverette-silver-nursing-cups",
+      "label": "Jillian's Drawers: Silverette Silver Nursing Cups (brand how-to-use instructions, retailer copy)"
+    }
   },
   "p-hatch-oil": {
     "whoItsFor": [
@@ -7972,6 +9075,36 @@ export const PRODUCT_RESEARCH = {
         "url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD000066.pub2/pdf/CDSR/CD000066/CD000066_abstract.pdf",
         "label": "Brennan et al., Cochrane 2012: Topical preparations for preventing stretch marks in pregnancy",
         "summary": "Across six trials with 800 women, there was no high-quality evidence that any topical cream or oil prevents stretch marks in pregnancy."
+      }
+    ],
+    "ingredientScience": [
+      {
+        "name": "Calendula flower extract",
+        "text": "Calendula (pot marigold) is used to soothe dry, irritated skin. A 2019 systematic review of 14 studies found some support for it in wound healing, but the human trials were few and mixed, and none looked at stretch marks, so the evidence for this use is weak.",
+        "citations": [
+          {
+            "url": "https://ecite.utas.edu.au/133286",
+            "label": "Wound Repair and Regeneration (2019): A systematic review of Calendula officinalis extract for wound healing (Givol et al.)"
+          }
+        ]
+      },
+      {
+        "name": "Tocopherol (vitamin E) and olive oil",
+        "text": "These help keep skin soft. A Cochrane review of 6 trials (800 women) tested creams and oils that all contained vitamin E, including olive oil, and found they did not prevent stretch marks in pregnancy compared with placebo or nothing.",
+        "citations": [
+          {
+            "url": "https://www.cochrane.org/CD000066",
+            "label": "Cochrane: Topical preparations for preventing stretch marks in pregnancy (Brennan, Young, Devane)"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "Stretch marks are very common in pregnancy, and moisturizing oils can make tight, itchy skin feel more comfortable. But a Cochrane review of 6 trials with 800 women found no high-quality evidence that any cream or oil prevents stretch marks or makes them less severe. So think of a belly oil as comfort for dry skin rather than a way to stop stretch marks.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.cochrane.org/CD000066",
+        "label": "Cochrane: Topical preparations for preventing stretch marks in pregnancy",
+        "summary": "Six trials, 800 women: no significant difference in stretch marks with topical products versus placebo or no treatment, and no high-quality evidence for any product."
       }
     ]
   },
@@ -8007,7 +9140,17 @@ export const PRODUCT_RESEARCH = {
         "summary": "Clean pump parts after every use, sanitize at least daily for babies under 2 months, premature or immunocompromised, and air-dry parts without towel-rubbing."
       }
     ],
-    "clinicalNote": "The FDA notes battery-powered pumps suit pumping at work or on the go, and that single-user pumps shouldn't be shared or bought used. The CDC recommends washing milk-contact parts after every use and sanitizing daily for young or premature babies."
+    "clinicalNote": "The FDA notes battery-powered pumps suit pumping at work or on the go, and that single-user pumps shouldn't be shared or bought used. The CDC recommends washing milk-contact parts after every use and sanitizing daily for young or premature babies.",
+    "warnings": [
+      "Do not share, rent or buy a used single-user pump; a contaminated pump can give you and your baby an infection.",
+      "Clean the parts that touch milk after every use: rinse in cool water, wash in warm soapy water, rinse in hot water and air dry.",
+      "If you have pain or get hurt while pumping, contact your health care provider.",
+      "For problems with suction or the motor, contact the manufacturer."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/consumers/consumer-updates/what-know-when-buying-or-using-breast-pump",
+      "label": "FDA: What to know when buying or using a breast pump"
+    }
   },
   "p-boppy-pillow": {
     "whoItsFor": [
@@ -8028,6 +9171,24 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://boppy.com/pages/original-nursing-support-safe-use-and-product-care",
       "sourceLabel": "Boppy Original Nursing Support: safe use and product care"
+    },
+    "clinicalNote": "A nursing pillow is meant for one job: holding your baby at a comfortable height while you feed, sitting up and awake. The US Consumer Product Safety Commission (CPSC) knows of 154 infant deaths and 64 injuries from 2010 to 2022 linked to nursing pillows, mostly from suffocation or a baby being left in one. That led to a federal safety standard for nursing pillows approved in 2024. CPSC's advice is simple: use it only for feeding, never for sleep or lounging, and if your baby dozes off while feeding, move them to a flat, bare crib, bassinet or play yard.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.cpsc.gov/Newsroom/News-Releases/2024/CPSC-Approves-New-Federal-Safety-Standard-for-Nursing-Pillows-to-Prevent-Infant-Deaths-and-Serious-Injuries",
+        "label": "US Consumer Product Safety Commission (2024): New federal safety standard for nursing pillows",
+        "summary": "Reports 154 infant deaths and 64 injuries tied to nursing pillows from 2010 to 2022 and gives safe-use advice for parents."
+      }
+    ],
+    "warnings": [
+      "Never let your baby sleep on the pillow or lie face down on it.",
+      "Never leave your baby unattended; use it only while you are sitting up and your baby is awake.",
+      "Do not use it in a crib, bassinet, play yard or on a bed, or anywhere a baby may sleep.",
+      "Do not set it on a raised surface except when it is supporting your baby on your lap."
+    ],
+    "warningsSource": {
+      "url": "https://boppy.com/pages/original-nursing-support-safe-use-and-product-care",
+      "label": "Boppy: Original Nursing Support safe use and product care"
     }
   },
   "p-snoogle-pillow": {
@@ -8063,7 +9224,16 @@ export const PRODUCT_RESEARCH = {
         "label": "Cronin et al., EClinicalMedicine 2019: going-to-sleep position and late stillbirth (individual participant data meta-analysis)",
         "summary": "Across five studies and over 3,000 women, going to sleep on your back after 28 weeks was linked to about 2.6 times the odds of late stillbirth, while left and right side sleeping were similarly safe."
       }
-    ]
+    ],
+    "warnings": [
+      "For adult use only; do not let children under 2 use this pillow.",
+      "To prevent suffocation, never put it in a crib, play pen or bassinet, or near anywhere a baby may sleep.",
+      "Keep it away from heat and open flame."
+    ],
+    "warningsSource": {
+      "url": "https://well.ca/products/leachco-snoogle-chic-total-body-pillow_129572.html",
+      "label": "Well.ca: Leachco Snoogle Chic Total Body Pillow (label safety precautions, retailer copy)"
+    }
   },
   "p-dame-arc": {
     "whoItsFor": [
@@ -8091,7 +9261,29 @@ export const PRODUCT_RESEARCH = {
         "label": "Herbenick et al., Journal of Sexual Medicine 2009: vibrator use by women in the US (national survey)",
         "summary": "In a national survey of 2,056 women, about half had used a vibrator, users scored higher on most sexual function measures, and side effects like numbness or irritation were uncommon and usually brief (the survey was industry-funded and can't show cause and effect)."
       }
-    ]
+    ],
+    "clinicalNote": "Vibrators are common: in a US national survey of 2,056 women, 52.5% had used one. Recent users scored higher on most measures of sexual function, like desire, arousal, lubrication and orgasm, though the survey can't show the vibrator caused that, and it was funded by a condom maker. Most users (71.5%) never had genital side effects; when they did, they were usually mild and short, like brief numbness or irritation. A hospital patient guide suggests starting on the lowest setting, using a water-based lube, and stopping if anything hurts.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
+        "label": "Journal of Sexual Medicine (2009): Prevalence and characteristics of vibrator use by women in the United States (Herbenick et al.)",
+        "summary": "Nationally representative survey: 52.5% of women had used a vibrator, use was linked to better sexual function scores, and side effects were uncommon and mostly mild."
+      },
+      {
+        "url": "https://www.lakeridgehealth.on.ca/en/ourservices/resources/Cancer/What-you-need-to-know-about-vibrators.pdf",
+        "label": "Lakeridge Health (Durham Regional Cancer Centre): What you need to know about vibrators",
+        "summary": "Hospital patient guide: start on the lowest setting, use water-based lube, wash after each use, and stop if you have pain."
+      }
+    ],
+    "warnings": [
+      "Do not use silicone-based lube with Arc; use water-based.",
+      "Do not insert anally; the base is not flared enough.",
+      "Clean after every use with soap and water or a water-based toy cleaner; never use alcohol, petroleum or acetone, and do not boil it or put it in the dishwasher."
+    ],
+    "warningsSource": {
+      "url": "https://cdn.shopify.com/s/files/1/1027/2873/files/Arc_Manual.pdf",
+      "label": "Dame Arc user manual (PDF)"
+    }
   },
   "p-lelo-sona": {
     "whoItsFor": [
@@ -8119,7 +9311,29 @@ export const PRODUCT_RESEARCH = {
         "label": "Herbenick et al., Journal of Sexual Medicine 2009: vibrator use by women in the US (national survey)",
         "summary": "In a national survey of 2,056 women, about half had used a vibrator, users scored higher on most sexual function measures, and side effects like numbness or irritation were uncommon and usually brief (the survey was industry-funded and can't show cause and effect)."
       }
-    ]
+    ],
+    "clinicalNote": "Vibrators are common: in a US national survey of 2,056 women, 52.5% had used one. Recent users scored higher on most measures of sexual function, like desire, arousal, lubrication and orgasm, though the survey can't show the vibrator caused that, and it was funded by a condom maker. Most users (71.5%) never had genital side effects; when they did, they were usually mild and short, like brief numbness or irritation. We found no studies on sonic or air-pulse devices specifically. A hospital patient guide suggests starting on the lowest setting, using a water-based lube, and stopping if anything hurts.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
+        "label": "Journal of Sexual Medicine (2009): Prevalence and characteristics of vibrator use by women in the United States (Herbenick et al.)",
+        "summary": "Nationally representative survey: 52.5% of women had used a vibrator, use was linked to better sexual function scores, and side effects were uncommon and mostly mild."
+      },
+      {
+        "url": "https://www.lakeridgehealth.on.ca/en/ourservices/resources/Cancer/What-you-need-to-know-about-vibrators.pdf",
+        "label": "Lakeridge Health (Durham Regional Cancer Centre): What you need to know about vibrators",
+        "summary": "Hospital patient guide: start on the lowest setting, use water-based lube, wash after each use, and stop if you have pain."
+      }
+    ],
+    "warnings": [
+      "Use only water-based lube, not silicone lube.",
+      "Clean it with toy cleaner.",
+      "Do not leave it in heat or direct sunlight."
+    ],
+    "warningsSource": {
+      "url": "https://www.superdrug.com/health/sexual-health/vibrators-adult-toys/vibrators/lelo-sona-cruise-clitoral-massager-cerise/p/mp-00120986",
+      "label": "Superdrug: LELO SONA Cruise Clitoral Massager (product copy; lelo.com page could not be opened)"
+    }
   },
   "p-mystery-vibe": {
     "whoItsFor": [
