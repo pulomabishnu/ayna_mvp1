@@ -870,7 +870,7 @@ function withCatalogEvidence(product) {
 }
 
 // Gap-filling research: only adds what a product doesn't have yet.
-function withResearch(product) {
+export function withResearch(product) {
     const r = product && PRODUCT_RESEARCH[product.id];
     if (!r) return product;
     const out = { ...product };
