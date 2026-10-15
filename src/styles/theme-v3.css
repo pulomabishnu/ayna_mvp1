@@ -142,7 +142,7 @@ html:not([data-ay-theme='dark']) body:has(.app-container:not([data-theme='dark']
 .app-container:not([data-theme='dark']) .pdp-suggest.ay3-band { margin-top: 96px !important; padding-block: 72px 88px !important; border-width: 0 !important; background: none !important; box-shadow: none !important; }
 .app-container:not([data-theme='dark']) .pdp-suggest.ay3-band .ay-pdp-sechead p { color: rgba(255, 248, 220, .8) !important; }
 .app-container:not([data-theme='dark']) .pdp-suggest.ay3-band .ayna-discover-card__name, .app-container:not([data-theme='dark']) .pdp-suggest.ay3-band .ayna-discover-card__price { color: var(--ay-paper) !important; }
-.app-container:not([data-theme='dark']) .pdp-suggest.ay3-band .ayna-discover-card__category, .app-container:not([data-theme='dark']) .pdp-suggest.ay3-band .ayna-discover-card__price small { color: rgba(255, 248, 220, .72) !important; }
+.app-container:not([data-theme='dark']) .pdp-suggest.ay3-band .ayna-discover-card__category, .app-container:not([data-theme='dark']) .pdp-suggest.ay3-band .ayna-discover-card__price small { color: #3e2723 !important; }
 .app-container:not([data-theme='dark']) .pdp-suggest.ay3-band .ayna-browse-card .ayna-discover-card__tile { border-color: var(--ay-paper) !important; }
 .app-container:not([data-theme='dark']) .pdp-suggest.ay3-band .ayna-browse-card:hover .ayna-discover-card__tile { box-shadow: 6px 6px 0 var(--ay-rose) !important; }
 
@@ -3184,4 +3184,20 @@ html.ay-motion-paused *, html.ay-motion-paused *::before, html.ay-motion-paused 
 /* Tablet Shop grid: three across. */
 @media (min-width: 701px) and (max-width: 1000px) {
   html body .app-container .ayna-browse__grid:not(.ayna-browse__grid--skeleton) { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+}
+/* Cards sitting on the espresso band keep espresso text (they were inheriting the band's butter text). */
+html body .app-container .ay3-band--ink .ayna-discover-card :is(small, .ay-card-trust, .ay-card-trust__tag, .ay-card-trust__rating, .ay-card-match__eco, .ayna-discover-card__price) { color: #3e2723 !important; }
+html body .app-container .pdp-suggest .ayna-discover-card .ayna-discover-card__body,
+html body .app-container .pdp-suggest .ayna-discover-card .ayna-discover-card__body * { color: #3e2723 !important; }
+/* Landing reads block uses the Library's topic drawings. */
+html body .app-container .lv-reads__img { display: block; }
+html body .app-container .lv-reads__img .ay-lib-cover { width: 100% !important; height: 100% !important; min-height: 140px; aspect-ratio: 4 / 3; border: 2px solid #3e2723; border-radius: 12px; }
+html body .app-container .lv-reads__img .ay-lib-cover__spot { width: 64px !important; height: 64px !important; max-width: none !important; }
+html body .app-container .lv-reads__img .ay-lib-cover.has-spot strong { font-size: 22px !important; }
+html body .app-container .lv-reads > :first-child .ay-lib-cover__spot { width: 120px !important; height: 120px !important; }
+html body .app-container .lv-reads > :first-child .ay-lib-cover.has-spot strong { font-size: 36px !important; }
+@media (max-width: 720px) {
+  html body .app-container .lv-reads__img .ay-lib-cover { aspect-ratio: 16 / 9; min-height: 0; max-height: 200px; }
+  html body .app-container .lv-reads > :first-child .ay-lib-cover__spot { width: 72px !important; height: 72px !important; }
+  html body .app-container .lv-reads > :first-child .ay-lib-cover.has-spot strong { font-size: 24px !important; }
 }

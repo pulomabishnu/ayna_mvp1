@@ -365,13 +365,13 @@ body:has(.lv) main { background: #ffedac !important; }
 body:has(.lv) .site-footer, body:has(.lv) .site-footer > *, body:has(.lv) .ay-footer { background: #ffedac !important; }
 html body:has(.lv) .app-container footer.site-footer.ay-footer, html body:has(.lv) .app-container nav.app-nav.app-nav--landing { background: #ffedac !important; background-color: #ffedac !important; }
 /* palette v3 (Oct 14): butter page, espresso ink, sky + pink accents, vintage grain */
-.app-container .lv { --ink: #3e2723 !important; --ink-2: #5a4540 !important; --paper: #fff8dc !important; --pink: #769ebe !important; --butter: #f7badd !important; --teal: #ffedac; background: #ffedac; }
+.app-container .lv { --ink: #3e2723 !important; --ink-2: #5a4540 !important; --paper: #ffedac !important; --pink: #769ebe !important; --butter: #f7badd !important; --teal: #ffedac; background: #ffedac; }
 body:has(.lv)::after { content: ''; position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: .14;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .24 0 0 0 0 .15 0 0 0 0 .14 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 @media print { body:has(.lv)::after { display: none; } }
 /* palette v3 (Oct 14): butter page, espresso ink, sky + pink accents, vintage grain.
    Variable names kept for the cascade: --pink now holds sky, --butter holds pink. */
-.app-container .lv { --ink: #3e2723 !important; --ink-2: #5a4540 !important; --paper: #fff8dc !important; --pink: #769ebe !important; --butter: #f7badd !important; --teal: #ffedac; background: #ffedac;
+.app-container .lv { --ink: #3e2723 !important; --ink-2: #5a4540 !important; --paper: #ffedac !important; --pink: #769ebe !important; --butter: #f7badd !important; --teal: #ffedac; background: #ffedac;
   --display: 'DM Serif Display', Georgia, serif !important; --label: 'DM Sans', 'DM Sans', sans-serif; }
 .app-container .lv :is(h1, h2, h3) { font-weight: 400 !important; letter-spacing: -.01em !important; }
 .app-container .lv :is(.lv-kicker, .lv-ticker__row li, .lv-stamp span) { font-family: var(--label) !important; font-weight: 400 !important; letter-spacing: .08em; }
@@ -382,16 +382,16 @@ body:has(.lv)::after { content: ''; position: fixed; inset: 0; z-index: 9999; po
 body:has(.lv) .app-nav, body:has(.lv) .site-footer { --ink: #3e2723; color: #3e2723 !important; }
 body:has(.lv) .app-nav :is(.app-nav__logo, .app-nav__tab, .app-nav__beta-badge, .app-nav__circle, a, button, span) { color: #3e2723 !important; border-color: #3e2723 !important; }
 body:has(.lv) .app-nav .app-nav__beta-badge { background: #f7badd !important; }
-body:has(.lv) .app-nav .app-nav__circle { background: #fff8dc !important; }
+body:has(.lv) .app-nav .app-nav__circle { background: #ffedac !important; }
 body:has(.lv) .app-nav :is(svg, svg *) { stroke: currentColor; }
 body:has(.lv) .app-nav svg[fill="black"], body:has(.lv) .app-nav svg :is([fill="black"], [fill="#000"], [fill="#000000"]) { fill: currentColor !important; }
-body:has(.lv) .app-nav [class*=login], body:has(.lv) .app-nav [class*=login] * { background-color: #3e2723 !important; color: #fff8dc !important; border-color: #3e2723 !important; }
+body:has(.lv) .app-nav [class*=login], body:has(.lv) .app-nav [class*=login] * { background-color: #3e2723 !important; color: #ffedac !important; border-color: #3e2723 !important; }
 body:has(.lv) .site-footer :is(.ay-footer-col__title) { color: rgba(62,39,35,.7) !important; }
 body:has(.lv) .site-footer :is(.site-footer__legal) { border-color: rgba(62,39,35,.15) !important; }
 body:has(.lv) .site-footer :is(a, p, span, li, small, h2, h3, h4) { color: #3e2723; }
-.app-container .lv .lv-search input { background: #fff8dc !important; }
+.app-container .lv .lv-search input { background: #ffedac !important; }
 body:has(.lv), body:has(.lv) .app-container, body:has(.lv) .app-container .app-nav, body:has(.lv) .app-container .site-footer {
-  --ay-ink: #3e2723 !important; --ay-paper: #fff8dc !important; --ay-butter: #f7badd !important; --ay-shadow: 3px 3px 0 #3e2723 !important; }
+  --ay-ink: #3e2723 !important; --ay-paper: #ffedac !important; --ay-butter: #f7badd !important; --ay-shadow: 3px 3px 0 #3e2723 !important; }
 html body:has(.lv) .app-container .ay-footer .ay-footer-col__title { color: rgba(62,39,35,.75) !important; }
 html body:has(.lv) .app-container .site-footer .site-footer__legal { border-color: rgba(62,39,35,.15) !important; }
 .app-container .lv .lv-stamp svg { fill: var(--ink); }
@@ -503,7 +503,7 @@ body:has(.lv), body:has(.lv) .app-container, body:has(.lv) .app-container .site-
 .app-container .lv .lv-pause:hover, .app-container .lv .lv-pause:focus-visible { opacity: 1; }
 .app-container .lv .lv-pause svg { width: 14px; height: 14px; fill: var(--ink); }
 /* the old welcome carousel, back, in the v3 palette and without its colour band */
-.app-container .lv .whc { --ay-ink: #3e2723; --ay-paper: #fff8dc; --ay-cream: #ffedac; --ay-tile: #fff8dc; --ay-pink: #f7badd; --ay-butter: #f7badd; --ay-mint: #769ebe; --ay-peri: #769ebe; --ay-shadow: 4px 4px 0 #3e2723; --ay-font-display: 'DM Serif Display', Georgia, serif; --ay-font-ui: 'DM Sans', system-ui, sans-serif;
+.app-container .lv .whc { --ay-ink: #3e2723; --ay-paper: #ffedac; --ay-cream: #ffedac; --ay-tile: #ffedac; --ay-pink: #f7badd; --ay-butter: #f7badd; --ay-mint: #769ebe; --ay-peri: #769ebe; --ay-shadow: 4px 4px 0 #3e2723; --ay-font-display: 'DM Serif Display', Georgia, serif; --ay-font-ui: 'DM Sans', system-ui, sans-serif;
   padding: 0; border-block: 0; background: transparent !important; }
 .app-container .lv .whc :is(h2, .whc-title) { font-family: var(--ay-font-display) !important; font-weight: 400 !important; }
 .app-container .lv .whc :is(p, a, button, li, b, span) { font-family: var(--ay-font-ui) !important; }

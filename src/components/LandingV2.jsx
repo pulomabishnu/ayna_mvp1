@@ -3,6 +3,7 @@ import { productsForNeed } from './landingNeeds';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
 import { isPartnerBrandItem, PARTNER_BRANDS } from '../utils/partnerBrands';
 import { getWeeklyTrendingLineup } from '../utils/trendingLineup';
+import TopicCover from './v3/TopicCover.jsx';
 import { getRecommendedArticles } from './articleRecommendations';
 import { ALL_PRODUCTS, MACRO_GROUPS } from '../data/products';
 import WebHeroCarousel from './WebHeroCarousel.jsx';
@@ -268,7 +269,8 @@ function Reads({ onViewArticle, onViewArticles }) {
         {reads.map((a) => (
           <article key={a.id}>
             <button type="button" onClick={() => open(a.id)}>
-              <span className="lv-reads__img"><img src={`/articles/${a.id}.webp`} alt="" loading="lazy" onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }} /></span>
+              {/* Topic drawings in brand colours (the vector art read as stock). */}
+              <span className="lv-reads__img"><TopicCover id={a.id} title={a.title} /></span>
               <span className="lv-reads__txt"><strong>{a.title}</strong><span>{a.teaser}</span></span>
             </button>
           </article>
