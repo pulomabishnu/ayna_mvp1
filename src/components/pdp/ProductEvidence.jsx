@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { getVerificationLinks, hostLabel } from '../../utils/verificationLinks';
 import { humanPublisher } from './glance';
 import { normalizeFdaStatus } from '../../utils/fdaStatus';
@@ -82,8 +82,8 @@ function ShortThenFull({ short, full }) {
 
 function plural(n, one, many = `${one}s`) { return `${n} ${n === 1 ? one : many}`; }
 
-export default function ProductEvidence({ product, aynaData = null, aynaRating = null, ratingCount = 0, rateControls = null, recall = null, alertText = '' }) {
-  const d = useMemo(() => {
+function useEvidence(product, aynaData) {
+  return useMemo(() => {
     if (!product) return null;
     const brand = product.brand || '';
     const pp = getPassport(product);
@@ -141,19 +141,36 @@ export default function ProductEvidence({ product, aynaData = null, aynaRating =
       privacy: product.privacy && typeof product.privacy === 'object' ? product.privacy : null,
     };
   }, [product, aynaData]);
+}
+
+export default function ProductEvidence({ product, aynaData = null, aynaRating = null, ratingCount = 0, rateControls = null }) {
+  const d = useEvidence(product, aynaData);
   const [allIngredients, setAllIngredients] = useState(false);
+  const [active, setActive] = useState('clinical');
+  useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined') return undefined;
+    const els = ['clinical', 'science', 'reviews'].map((id) => document.getElementById(`ay-sec-${id}`)).filter(Boolean);
+    const io = new IntersectionObserver((entries) => {
+      const vis = entries.filter((e) => e.isIntersecting).sort((x, y) => x.boundingClientRect.top - y.boundingClientRect.top)[0];
+      if (vis) setActive(vis.target.id.replace('ay-sec-', ''));
+    }, { rootMargin: '-140px 0px -55% 0px' });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [d]);
   if (!d) return null;
 
-  const jumps = [['clinical', 'Clinical opinion'], ['science', 'Scientific literature'], ['reviews', 'Reviews'], ['safety', 'Safety']];
+  const jumps = [['clinical', 'Clinical opinion', d.clinicalLinks.length], ['science', 'Scientific literature', d.studies.length + d.ingredients.length], ['reviews', 'Reviews', d.community.length]];
   const jump = (id) => document.getElementById(`ay-sec-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   const shownIngredients = allIngredients ? d.ingredients : d.ingredients.slice(0, 3);
   const noReviews = !d.communityText && !d.community.length && !(ratingCount > 0) && !d.memberReviews.length;
 
   return (
     <div className="ay-ev2">
-      <nav className="ay-ev2__jump" aria-label="On this page">
-        {jumps.map(([id, label]) => <button key={id} type="button" onClick={() => jump(id)}>{label}</button>)}
+      <nav className="ay-ev2__jump" aria-label="The research">
+        <p className="ay-ev2__jump-h">The research</p>
+        {jumps.map(([id, label]) => <button key={id} type="button" className={`is-${id}${active === id ? ' is-on' : ''}`} aria-current={active === id ? 'true' : undefined} onClick={() => jump(id)}>{label}</button>)}
       </nav>
+      <div className="ay-ev2__main">
 
       <section id="ay-sec-clinical" className="ay-ev2__sec" aria-labelledby="ay-clinical-h">
         <header className="ay-ev2__head">
@@ -198,25 +215,32 @@ export default function ProductEvidence({ product, aynaData = null, aynaRating =
         {!noReviews && <p className="ay-ev__by">Public posts and ratings. Not clinical evidence.</p>}
         {rateControls}
       </section>
+      </div>
+    </div>
+  );
+}
 
-      <section id="ay-sec-safety" className="ay-ev2__sec" aria-labelledby="ay-safety-h">
-        <header className="ay-ev2__head"><h2 id="ay-safety-h">Safety</h2></header>
-        {alertText && <p className="ay-ev2__alert" role="note">{noDash(alertText)}</p>}
-        {(d.warnings.length > 0 || d.pregnancy) && <>
-          <h3 className="ay-ev2__sub">Before you use</h3>
-          <ul className="ay-ev2__list">{d.pregnancy && <li>Pregnancy: {d.pregnancy}</li>}{d.warnings.map((w) => <li key={w}>{w}</li>)}</ul>
-        </>}
-        <dl className="ay-ev2__rows">
-          {!d.isDigital && d.fdaRaw && <div><dt>FDA status</dt><dd>{d.fda?.label ? <><b>{d.fda.label}.</b> </> : null}{fmtDate(d.fdaRaw)}</dd></div>}
-          {d.sideEffects && <div><dt>{d.isDigital ? 'Things to know' : 'Possible side effects'}</dt><dd>{d.sideEffects}</dd></div>}
-          {d.allergens && <div><dt>Allergens</dt><dd>{d.allergens}</dd></div>}
-          {d.avoidIf.length > 0 && <div><dt>Skip if you react to</dt><dd>{d.avoidIf.join(', ')}</dd></div>}
-          {!d.isDigital && recall && recall.status !== 'unknown' && <div><dt>Recalls</dt><dd>{recall.status === 'none' ? 'No recalls found.' : noDash(recall.detail || recall.label || '')}</dd></div>}
-          {d.privacy && meaningful(d.privacy.dataStorage) && <div><dt>Data storage</dt><dd>{noDash(d.privacy.dataStorage)}</dd></div>}
-          {d.privacy && meaningful(d.privacy.keyPolicy) && <div><dt>Privacy</dt><dd>{noDash(d.privacy.keyPolicy)}</dd></div>}
-        </dl>
-        <Links items={d.safetyLinks} label={d.safetyLinks.length ? 'Safety sources' : ''} />
-      </section>
+/** Safety lives inside Product details; the warning line under Buy opens it there. */
+export function ProductSafety({ product, recall = null, alertText = '' }) {
+  const d = useEvidence(product, null);
+  if (!d) return null;
+  const showRecall = !d.isDigital && recall && recall.status !== 'unknown';
+  if (!(alertText || d.warnings.length || d.pregnancy || d.fdaRaw || d.sideEffects || d.allergens || d.avoidIf.length || showRecall)) return null;
+  return (
+    <div id="ay-sec-safety" className="ay-safety">
+      <h3>Safety</h3>
+      {alertText && <p className="ay-safety__alert" role="note">{noDash(alertText)}</p>}
+      {(d.warnings.length > 0 || d.pregnancy) && <ul className="ay-safety__list">{d.pregnancy && <li>Pregnancy: {d.pregnancy}</li>}{d.warnings.map((w) => <li key={w}>{w}</li>)}</ul>}
+      <dl className="ay-pd__rows">
+        {!d.isDigital && d.fdaRaw && <div><dt>FDA status</dt><dd>{d.fda?.label ? <><b>{d.fda.label}.</b> </> : null}{fmtDate(d.fdaRaw)}</dd></div>}
+        {d.sideEffects && <div><dt>{d.isDigital ? 'Things to know' : 'Possible side effects'}</dt><dd>{d.sideEffects}</dd></div>}
+        {d.allergens && <div><dt>Allergens</dt><dd>{d.allergens}</dd></div>}
+        {d.avoidIf.length > 0 && <div><dt>Skip if you react to</dt><dd>{d.avoidIf.join(', ')}</dd></div>}
+        {showRecall && <div><dt>Recalls</dt><dd>{recall.status === 'none' ? 'No recalls found.' : noDash(recall.detail || recall.label || '')}</dd></div>}
+        {d.privacy && meaningful(d.privacy.dataStorage) && <div><dt>Data storage</dt><dd>{noDash(d.privacy.dataStorage)}</dd></div>}
+        {d.privacy && meaningful(d.privacy.keyPolicy) && <div><dt>Privacy</dt><dd>{noDash(d.privacy.keyPolicy)}</dd></div>}
+      </dl>
+      <Links items={d.safetyLinks} label={d.safetyLinks.length ? 'Safety sources' : ''} />
     </div>
   );
 }
