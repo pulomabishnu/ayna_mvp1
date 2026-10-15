@@ -512,8 +512,11 @@ export default function ProductModal({
     const compare = similarProducts(product, { pool, limit: 3 });
     const used = new Set([...compare.map((p) => p.id), ...owned]);
     let more = [];
+    // Only products for the same need as this one (no tampons under a TENS
+    // device); with a profile, those are ordered by her match.
+    const sameNeed = sameNeedProducts(product, { pool, limit: 16, exclude: [...used] });
     if (quizResults) {
-      more = pool
+      more = sameNeed
         .filter((p) => !used.has(p.id))
         .map((p) => ({ p, m: getProfileMatchPercentForProduct(p, quizResults, healthProfile, matchOpts) }))
         .filter((x) => Number.isFinite(x.m) && x.m >= 50)

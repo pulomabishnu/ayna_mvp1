@@ -146,7 +146,7 @@ function numberSources(passport) {
       n: i + 1,
       url: s.url,
       title: noDash(s.title || s.publisher || 'Source'),
-      publisher: s.publisher || hostOf(s.url),
+      publisher: humanPublisher(s.publisher) || hostOf(s.url),
       type: s.evidence_type,
       label: s.evidence_label || EVIDENCE_TYPES[s.evidence_type] || EXTRA_LABELS[s.evidence_type] || 'Source',
       summary: clean(s.summary),
@@ -155,7 +155,26 @@ function numberSources(passport) {
   return list;
 }
 function hostOf(url) {
-  try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return ''; }
+  try { return humanPublisher(new URL(url).hostname.replace(/^www\./, '')); } catch { return ''; }
+}
+
+// "Cochranelibrary" / "doi.org" / "ncbi.nlm.nih.gov" read as people would say them.
+const PUBLISHER_NAMES = [
+  [/cochrane/i, 'Cochrane Library'], [/^doi(\.org)?$/i, 'Journal article (DOI)'], [/pubmed|ncbi\.nlm\.nih/i, 'PubMed'],
+  [/acog/i, 'ACOG'], [/fda\.gov|^fda$/i, 'FDA'], [/nih\.gov|^nih$/i, 'NIH'], [/cdc\.gov|^cdc$/i, 'CDC'], [/mayoclinic/i, 'Mayo Clinic'],
+  [/who\.int/i, 'WHO'], [/clevelandclinic/i, 'Cleveland Clinic'], [/uptodate/i, 'UpToDate'], [/nejm/i, 'NEJM'], [/jamanetwork|^jama$/i, 'JAMA'],
+  [/thelancet|lancet/i, 'The Lancet'], [/bmj/i, 'BMJ'], [/sciencedirect/i, 'ScienceDirect'], [/springer/i, 'Springer'], [/wiley/i, 'Wiley'], [/frontiersin/i, 'Frontiers'], [/mdpi/i, 'MDPI'],
+];
+export function humanPublisher(raw) {
+  const t = String(raw || '').trim();
+  if (!t) return '';
+  for (const [re, name] of PUBLISHER_NAMES) if (re.test(t)) return name;
+  if (/^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(t)) {
+    const parts = t.split('.');
+    const core = parts.length > 2 ? parts[parts.length - 2] : parts[0];
+    return core.charAt(0).toUpperCase() + core.slice(1);
+  }
+  return t;
 }
 
 // ---------------------------------------------------------------------------

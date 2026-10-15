@@ -3084,3 +3084,11 @@ html body .app-container :is(.ayna-browse__categories button.is-active, .ay-shop
 @keyframes ayBump { 0% { transform: scale(1); } 40% { transform: scale(1.18); } 100% { transform: scale(1); } }
 html body .app-container .app-nav__circle--wishlist.is-bump { animation: ayBump .45s ease; }
 @media (prefers-reduced-motion: reduce) { html body .app-container .app-nav__circle--wishlist.is-bump { animation: none; } }
+.ay-why-h-edit { display: flex; align-items: center; justify-content: space-between; }
+.ay-why-edit { padding: 0; border: 0; background: none; color: #3e2723; font: 700 14px/1 'DM Sans', sans-serif; text-decoration: underline; cursor: pointer; }
+.ay-why-more { margin-top: 10px; } .ay-why-more summary { cursor: pointer; font: 600 14px/1.3 'DM Sans', sans-serif; }
+.ay-line-icon { width: 18px; height: 18px; fill: none; stroke: #3e2723; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; vertical-align: -3px; margin-right: 6px; }
+/* Product page: the photo stays in view while the right column runs long. */
+@media (min-width: 900px) {
+  html body .app-container .pdp-gallery { position: sticky !important; top: 96px; align-self: start; }
+}

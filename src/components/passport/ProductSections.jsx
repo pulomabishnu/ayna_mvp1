@@ -288,7 +288,19 @@ const TAB_GROUPS = [
   { id: 'details', label: 'Ingredients & use', ids: ['inside', 'howto'], tone: 'peri' },
 ];
 const SUB_LABEL = { evidence: 'The evidence', safety: 'Safety', inside: 'Ingredients', howto: 'How to use', unknown: 'Still unknown', people: 'What people say', brand: 'What the brand claims', clinician: 'Clinical view', match: 'Why it matches you' };
-const SUB_ICON = { evidence: '🔬', safety: '🛡', inside: '🧪', howto: '✋', unknown: '?', people: '💬', brand: '🏷', clinician: '🩺', match: '♡' };
+// Small brown line icons (emoji looked different on every phone and clashed with the brand marks).
+const ICON_PATHS = {
+  evidence: 'M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3',
+  safety: 'M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z',
+  inside: 'M5 8h14l-1.5 12h-11L5 8ZM9 8V5h6v3',
+  howto: 'M4 12h10M10 6l6 6-6 6M18 5v14',
+  unknown: 'M9 9a3 3 0 1 1 4 2.8c-.7.3-1 .9-1 1.7V15M12 18v.5',
+  people: 'M4 5h16v11H9l-5 4V5Z',
+  brand: 'M3 12 12 3h8v8l-9 9-8-8ZM16 8h.01',
+  clinician: 'M6 3v6a6 6 0 0 0 12 0V3M12 15v3a3 3 0 0 0 6 0v-1M18 15a1.5 1.5 0 1 0 0 3',
+  match: 'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z',
+};
+const SUB_ICON = Object.fromEntries(Object.entries(ICON_PATHS).map(([k, d]) => [k, <svg key={k} className="ay-line-icon" viewBox="0 0 24 24" aria-hidden="true"><path d={d} /></svg>]));
 const groupOf = (id) => (TAB_GROUPS.find((g) => g.ids.includes(id)) || {}).id || id;
 
 /* The clinician's own view (when we have one) gets its own tab instead of
