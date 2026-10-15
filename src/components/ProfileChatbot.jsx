@@ -61,7 +61,7 @@ function buildWelcome() {
   // what she can ask. Starter prompts render under it.
   return [{
     role: 'assistant',
-    text: 'Ask about a symptom, a product or something you want to avoid. I can point you to products and, if you say so, add it to your profile.',
+    text: 'Ask about a product, an ingredient, or what to try for something you’re dealing with. I can point you to products and, if you say so, add it to your profile. I’m not a doctor, so this isn’t medical advice.',
     starters: true,
   }];
 }
@@ -327,6 +327,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
       {tucked && !open ? (
         <button type="button" className="ayna-ask-tab" aria-label="Show Ask ayna" onClick={() => setTuck(false)}>
           <span className="ayna-ask-orb ayna-ask-orb--small" aria-hidden="true" />
+          <span className="ayna-ask-tab__label">Ask ayna</span>
           <span className="ayna-ask-tab__chev" aria-hidden="true">‹</span>
         </button>
       ) : (
@@ -388,7 +389,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
               disabled={!canTalk}
               title={canTalk ? 'Speak out loud and hear the answer' : 'Voice isn’t available in this browser'}
             >
-              Talk
+              Voice
             </button>
           </div>
 
@@ -473,7 +474,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder={mode === 'talk'
-                  ? 'Or type while in Talk mode…'
+                  ? 'Or type while in Voice mode…'
                   : 'Ask ayna anything…'}
                 disabled={disabled || sending || speech.isRecording}
               />

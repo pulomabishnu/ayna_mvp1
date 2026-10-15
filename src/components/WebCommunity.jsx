@@ -29,7 +29,8 @@ import '../styles/community2.css';
 // screens: feeds + you on the left, the feed in the middle, and side modules
 // built only from loaded data on the right (each hides when it has nothing).
 
-const TABS = [['for-you', 'For you'], ['following', 'Following'], ['question', 'Questions'], ['review', 'Reviews'], ['playlists', 'Playlists'], ['announcements', 'Announcements']];
+const TABS = [['for-you', 'For you'], ['following', 'Following'], ['question', 'Questions'], ['review', 'Reviews'], ['playlists', 'Playlists']];
+const VERB = { post: 'Post', question: 'Ask', review: 'Review', playlist: 'Playlist', recommend: 'Recommend' };
 const KIND_TITLES = { post: 'New post', question: 'Ask a question', review: 'Write a review', playlist: 'Create a playlist', recommend: 'Recommend a product' };
 const COVER_COLORS = ['#1D1A2B', '#B9C2F4', '#F7BADD', '#BDEBD6', '#F7E78E'];
 const AUDIENCE = [['public', 'Everyone'], ['friends', 'Friends only'], ['private', 'Only me']];
@@ -242,6 +243,8 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const coverPreview = useMemo(() => (coverPhoto ? URL.createObjectURL(coverPhoto) : null), [coverPhoto]);
   useEffect(() => () => { if (coverPreview) URL.revokeObjectURL(coverPreview); }, [coverPreview]);
   const teamBadges = useTeamBadges(supabase, user);
+  // After the first visit the hero shrinks to a title band so the feed starts on screen.
+  const [seenBefore] = useState(() => { try { const v = window.localStorage.getItem('ayna.powderroom.seen'); window.localStorage.setItem('ayna.powderroom.seen', '1'); return v === '1'; } catch { return false; } });
   const badgeFor = (authorId, anon = false) => (!anon && authorId ? teamBadges.get(authorId) || null : null);
   const openRules = () => setShowRules(true);
 
@@ -561,6 +564,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         <div className="wc-post-who">
           {anon || !post.author_username ? <strong>{name}</strong> : <button type="button" className="wc-name" onClick={() => openProfile(post.author_username)}>{name}</button>}
           <VerifiedBadge title={badgeFor(post.author_id, anon)} />
+          {badgeFor(post.author_id, anon) && <span className="wc-team-tag">ayna team</span>}
           <time dateTime={post.created_at || undefined}>{timeLabel(post.created_at)}</time>
         </div>
         <Tag kind={post.kind} />
@@ -587,7 +591,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
 
   const composeLabel = compose === 'question' ? 'Your question' : compose === 'review' ? 'Your review' : compose === 'recommend' ? 'Note to your friends' : 'Your post';
   const composeSheet = compose && <Sheet title={KIND_TITLES[compose]} onClose={closeCompose} className="wc-compose">
-      <div className="wc-seg wc-kinds" role="group" aria-label="What are you sharing?">{Object.keys(KIND_TITLES).map((k) => <button type="button" key={k} aria-pressed={compose === k} onClick={() => openCompose(k)}>{k[0].toUpperCase() + k.slice(1)}</button>)}</div>
+      <div className="wc-seg wc-kinds" role="group" aria-label="What are you sharing?">{Object.keys(KIND_TITLES).map((k) => <button type="button" key={k} aria-pressed={compose === k} onClick={() => openCompose(k)}>{VERB[k] || k}</button>)}</div>
       {composeOnly && user && profileChecked && !profile && <div className="wc-card wc-join"><h3>Pick a name first</h3><p className="wc-muted">Your health answers stay private.</p>
         <RuleField as="input" value={profileName} maxLength={50} onChange={(e) => setProfileName(e.target.value)} placeholder="Display name" aria-label="Display name" onShowRules={openRules} />
         <RuleField as="input" value={profileHandle} maxLength={30} onChange={(e) => setProfileHandle(e.target.value.toLowerCase())} placeholder="Username" aria-label="Username" onShowRules={openRules} />
@@ -767,11 +771,10 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
           <Avatar size={36} name={profile?.display_name || 'You'} path={profile?.avatar_url} anonymous={!profile} />
           <button type="button" className="wc-share" onClick={() => openCompose(tab === 'question' ? 'question' : tab === 'review' ? 'review' : 'post')}>{tab === 'question' ? 'Ask the community a question' : tab === 'review' ? 'Review a product you’ve tried' : 'Share with the community'}</button>
           <div className="wc-composer-kinds" aria-label="Or start a">
-            <button type="button" className="is-question" onClick={() => openCompose('question')}>Ask</button>
-            <button type="button" className="is-review" onClick={() => openCompose('review')}>Review</button>
-            <button type="button" className="is-playlist" onClick={() => openCompose('playlist')}>Playlist</button>
+            {Object.keys(KIND_TITLES).map((k) => <button type="button" key={k} className={`is-${k}`} onClick={() => openCompose(k)}>{VERB[k] || k}</button>)}
           </div>
         </div>
+        {tab === 'for-you' && <div className="wc-pinned"><Announcements supabase={supabase} user={user} products={products} productsById={productsById} loadArticles={loadArticles} teamBadges={teamBadges} variant="web" onOpenProduct={onOpenProduct} onOpenPlaylist={openPlaylistById} onOpenArticle={onOpenArticle} onOpenProfile={openProfile} onRequireAuth={requireAccount} onShowRules={openRules} /></div>}
         {firstLoad ? <div className="wc-skel-list" aria-busy="true" aria-label="Loading posts"><SkeletonPost /><SkeletonPost /><SkeletonPost /></div> : posts.map((p) => renderPost(p))}
         {!loading && posts.length === 0 && (tab === 'following' ? <div className="wc-empty">
           <h2>No posts yet</h2>
@@ -807,7 +810,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const peopleSide = suggestedPeople.slice(0, SIDE_MAX);
 
   return <section className="wc wc3">
-    <div className={`wc-head${page ? '' : ' ay3-band ay3-band--sky ay3-zigzag ay3-edge-bottom ay3-commhero'}`}>
+    <div className={`wc-head${page ? '' : ` ay3-band ay3-band--sky ay3-zigzag ay3-edge-bottom ay3-commhero${seenBefore ? ' is-compact' : ''}`}`}>
       {page ? <button type="button" className="wc-back" onClick={closePage}>← Community</button> : <div><p className="ay3-kicker is-keep">The powder room</p><h1 className="ay3-title">Ask, review, <em>share.</em></h1><p className="wc-hero-sub">Real talk between women, about the products we actually use.</p></div>}
       {!page && <div className="wc-mirror" aria-hidden="true"><span className="wc-mirror__frame"><img src="/landing/stalls-trio.webp" alt="" /></span><span className="wc-mirror__lip">say it here ♡</span></div>}
       <div className="wc-head-actions"><label className="wc-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16 16 4.5 4.5" /></svg><input value={search} onChange={(e) => { setSearch(e.target.value); setSearchResults(null); if (page) closePage(); }} placeholder="Search people, posts, playlists" aria-label="Search Community" />{search && <button type="button" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); }}>×</button>}</label>

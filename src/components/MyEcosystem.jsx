@@ -1,5 +1,4 @@
 import SmartSearchInput from './search/SmartSearchInput.jsx';
-import PhotoPile from './v3/PhotoPile.jsx';
 import NeedsStrip from './v3/NeedsStrip.jsx';
 import ShelfRows from './v3/ShelfRows.jsx';
 

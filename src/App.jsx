@@ -1946,6 +1946,9 @@ function App() {
             profileCategories={landingProfileCategories}
             recommendedProductIds={recommendedProductIds}
             initialCategory={homeCategory}
+            quizResults={quizResults}
+            healthProfile={healthProfile}
+            matchOpts={matchOpts}
           />
         )}
         {guestPreview && !guestPreview.done && !user && (
@@ -2324,6 +2327,32 @@ function App() {
               }
             }}
           />
+        )}
+
+        {currentView !== 'quiz' && (
+          <nav className="ay-tabbar" aria-label="Main">
+            <a href="/" className={['hero', 'welcome'].includes(currentView) ? 'is-on' : ''} {...linkProps(navigateHome)}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11 12 4l8 7v9h-5v-6H9v6H4z" /></svg><span>Home</span>
+            </a>
+            <a href="/shop" className={['discovery', 'product'].includes(currentView) ? 'is-on' : ''} {...linkProps(() => handleViewDiscovery(''))}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2" /></svg><span>Shop</span>
+            </a>
+            <button type="button" className="ay-tabbar__ask" onClick={() => openAsk('')}>
+              <span className="ay-tabbar__orb" aria-hidden="true">✦</span><span>Ask ayna</span>
+            </button>
+            <a href="/community" className={currentView === 'community' ? 'is-on' : ''} {...linkProps(() => setCurrentView('community'))}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z" /></svg><span>Community</span>
+            </a>
+            {user ? (
+              <a href="/you" className={['you', ...ECOSYSTEM_NAV_VIEWS].includes(currentView) ? 'is-on' : ''} {...linkProps(() => setCurrentView('you'))}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" /></svg><span>Me</span>
+              </a>
+            ) : (
+              <button type="button" onClick={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" /></svg><span>Log in</span>
+              </button>
+            )}
+          </nav>
         )}
 
         {currentView !== 'quiz' && currentView !== 'campus-resources' && (

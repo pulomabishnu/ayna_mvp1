@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from 'react';
-import PhotoPile, { FilmStrip } from './v3/PhotoPile.jsx';
 import ProductCard from './ProductCard';
 import SuggestBox from './SuggestBox';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
@@ -891,6 +890,13 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
     return () => ro.disconnect();
   }, [selected]);
 
+  const [barSmall, setBarSmall] = React.useState(false);
+  React.useEffect(() => {
+    const on = () => setBarSmall(window.scrollY > 320);
+    on();
+    window.addEventListener('scroll', on, { passive: true });
+    return () => window.removeEventListener('scroll', on);
+  }, []);
   const open = (id) => setSelectedId(id);
   const card = (a) => <li key={a.id}>{renderArticleCard(a, open, progressOf(a))}</li>;
   const shelf = (id, label, items) => items.length > 0 && <div key={id} id={`lib-${id}`} className="ay-web-lib-cat ay-wiki-sec">
@@ -930,15 +936,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           </button>}
         </article>
         <aside className={`ay3-infobox${closing ? ' is-crumpling' : ''}`} aria-label="About this read">
-          <p className="ay3-infobox__title">{selected.title}</p>
-          <ArticleCover art={selected} />
-          <dl>
-            <div><dt>Reading time</dt><dd>{minutesFor(selected)} min</dd></div>
-            {(selected.tags || []).length > 0 && <div><dt>Topics</dt><dd>{selected.tags.join(', ')}</dd></div>}
-            {selected.source && <div><dt>Sources</dt><dd>{selected.source}</dd></div>}
-            <div><dt>Your progress</dt><dd>{label}</dd></div>
-          </dl>
-          {(() => {
+                    {(() => {
             const related = ARTICLES.filter((a) => a.id !== selected.id && (a.tags || []).some((t) => (selected.tags || []).includes(t))).slice(0, 4);
             return related.length > 0 && (
               <div className="ay3-infobox__rel">
@@ -981,7 +979,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           <ProgressBar value={ARTICLES.length ? finished / ARTICLES.length : 0} />
         </span>
       </header>
-      <div className="ay-wiki-bar">
+      <div className={`ay-wiki-bar${barSmall ? ' is-small' : ''}`}>
         <label className="ay-web-lib-search">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
           <SmartSearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search reads, like heavy periods or PCOS" aria-label="Search reads" />
@@ -993,16 +991,6 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
       {q.length >= 2 && <SearchAssist query={query} resultCount={searchArticles(query, ARTICLES).length} onUse={setQuery} />}
       <div className="ay3-libgrid">
         <aside className="ay3-libside" aria-label="Library index">
-          {q.length < 2 && topic === 'all' && (
-            <nav className="ay3-libside__box">
-              <p className="ay3-libside__title">Contents</p>
-              <ol>
-                {keepReading.length > 0 && <li><a href="#lib-keep">Keep reading</a></li>}
-                {hasProfile && forYou.length > 0 && <li><a href="#lib-foryou">For you</a></li>}
-                {rows.filter((r) => r.items.length).map((r) => <li key={r.id}><a href={`#lib-${r.id}`}>{r.label}</a></li>)}
-              </ol>
-            </nav>
-          )}
           <nav className="ay3-libside__box">
             <p className="ay3-libside__title">A to Z</p>
             <ul className="ay3-az">

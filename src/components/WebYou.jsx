@@ -121,6 +121,26 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
       <span className="wyou-shapes" aria-hidden="true"><i /><i /><i /></span>
     </header>
 
+    {(() => {
+      const TIER = { recall: [0, 'Recall'], sensitivity: [1, 'Your sensitivity'], note: [2, 'FYI'] };
+      const sorted = [...alerts].sort((x, y) => (TIER[x.kind]?.[0] ?? 3) - (TIER[y.kind]?.[0] ?? 3));
+      const active = alerts.filter((a) => a.kind !== 'note').length;
+      const firstLine = (t) => { const m = String(t || '').match(/^(.{10,160}?[.!?])(\s|$)/); return m ? m[1] : String(t || ''); };
+      return <section className="wyou-card is-safety wyou-safety-top">
+        <div className="wyou-card-head"><h2>Safety alerts</h2><span>{active ? `${active} to check` : 'Nothing urgent'}{alerts.length - active > 0 ? ` · ${alerts.length - active} FYI` : ''}</span></div>
+        {sorted.length ? <ul className="wyou-alerts">{sorted.map((a) => {
+          const one = firstLine(a.body);
+          return <li key={a.id} className={`is-${a.kind}`}>
+            <span className="wyou-tier">{TIER[a.kind]?.[1] || 'Note'}</span>
+            <strong>{a.title}</strong>
+            <p>{one}</p>
+            {one !== a.body && <details><summary>Details</summary><p>{a.body}</p></details>}
+            {a.product && <button type="button" onClick={() => onOpenProduct?.(a.product)}>View product</button>}
+          </li>;
+        })}</ul> : <p className="wyou-muted">No alerts on your ecosystem.</p>}
+      </section>;
+    })()}
+
     <div className="wyou-grid">
       <div className="wyou-col">
         {shopper ? <ShopperCard profile={shopper} /> : <section className="wyou-card is-shopper-empty"><h2>At a glance</h2><p className="wyou-muted">Take the quiz to see it.</p><button type="button" className="wyou-btn" onClick={onStartQuiz}>Take the quiz</button></section>}
@@ -132,15 +152,11 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
           <button type="button" className="tone-butter" onClick={onOpenEcosystem}><strong>{products.length}</strong><span>In your Ecosystem</span></button>
           <button type="button" className="tone-pink" onClick={onOpenSaved}><strong>{savedCount}</strong><span>Saved</span></button>
           <div className="wyou-quick">
-            <button type="button" className="wyou-btn is-ghost" onClick={onOpenCheckin}>Do a check-in</button>
-            <button type="button" className="wyou-btn is-ghost" onClick={onOpenStartups}>Meet the startups</button>
+            <button type="button" className="wyou-btn is-ghost wyou-quickbtn" onClick={onOpenCheckin}>Do a check-in<small>Tell us what changed so your picks keep up</small></button>
+            <button type="button" className="wyou-btn is-ghost wyou-quickbtn" onClick={onOpenStartups}>Meet the startups<small>The brands ayna works with</small></button>
           </div>
         </nav>
 
-        <section className="wyou-card is-safety">
-          <div className="wyou-card-head"><h2>Safety alerts</h2><span>{alerts.length} active</span></div>
-          {alerts.length ? <ul className="wyou-alerts">{alerts.map((a) => <li key={a.id} className={`is-${a.kind}`}><strong>{a.title}</strong><p>{a.body}</p>{a.product && <button type="button" onClick={() => onOpenProduct?.(a.product)}>View product</button>}</li>)}</ul> : <p className="wyou-muted">No alerts on your ecosystem.</p>}
-        </section>
 
         {consumables.length > 0 && <Routine products={consumables} />}
 

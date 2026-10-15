@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import PhotoPile from './v3/PhotoPile.jsx';
 import { createPortal } from 'react-dom';
 import SuggestBox from './SuggestBox';
 import './Discovery.css';
@@ -1498,7 +1497,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         <a href="/how-we-make-money" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); setCurrentView?.('how-we-make-money'); }}>How we make money</a>
                     </p>
                 </div>
-                <PhotoPile label="Shop photos" photos={['bag-tubes', 'sink-heels-dryer', 'pink-tile-shelf']} />
             </div>
 
             <form onSubmit={handleSmartSearch} className="ayna-browse__search">
@@ -1583,6 +1581,20 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     </select>
                 </label>
             </div>
+
+            {(() => {
+                const LABELS = { 'under-25': 'Under $25', '25-50': '$25–50', '50-100': '$50–100', '100-plus': '$100+', 'fsa-hsa': 'FSA or HSA', fsa: 'FSA', hsa: 'HSA', 'fragrance-free': 'Fragrance-free', 'sensitive-skin': 'Sensitive skin', vegan: 'Vegan', 'cruelty-free': 'Cruelty-free', organic: 'Organic', 'clean-ingredients': 'Clean ingredients', reusable: 'Reusable', recyclable: 'Recyclable', 'low-waste': 'Low waste', packaging: 'Better packaging', clinician: 'Clinician backed', community: 'Community favourite', 'best-match': 'Best matches', ecosystem: 'In my ecosystem', fertility: 'Fertility', pregnancy: 'Pregnancy', postpartum: 'Postpartum', perimenopause: 'Perimenopause', menopause: 'Menopause' };
+                const applied = [[priceFilter, setPriceFilter], [eligibilityFilter, setEligibilityFilter], [lifeStageFilter, setLifeStageFilter], [preferenceFilter, setPreferenceFilter], [sustainabilityFilter, setSustainabilityFilter], [aynaFilter, setAynaFilter]].filter(([v]) => v && v !== 'all');
+                return (
+                    <div className="ayna-browse__applied" role="status">
+                        <span className="ayna-browse__count">{gridItems.length === 1 ? '1 product' : `${gridItems.length} products`}</span>
+                        {applied.map(([v, set]) => (
+                            <button key={v} type="button" className="ayna-browse__chip-x" onClick={() => set('all')} aria-label={`Remove filter ${LABELS[v] || v}`}>{LABELS[v] || v} <span aria-hidden="true">×</span></button>
+                        ))}
+                        {applied.length > 0 && <button type="button" className="ayna-browse__clearall" onClick={clearSheetFilters}>Clear all</button>}
+                    </div>
+                );
+            })()}
 
             {showFilters && (
                 <FilterSheet

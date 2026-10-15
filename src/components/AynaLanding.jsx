@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PartnerStrip from './PartnerStrip';
-import WebEcosystemChart from './WebEcosystemChart';
-import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
+import { getSupabaseClient } from '../utils/supabaseClient';
+import * as communityStore from '../utils/community/communityStore.js';
+import { matchBadge } from '../utils/matchDisplay';
+import { getProductMatchDetailsForProduct } from '../data/products';
 import '../styles/eco-redesign.css';
 import '../styles/landing.css';
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, itemMatchesMacroGroup } from '../data/products';
@@ -515,7 +517,7 @@ function ShopSection({ title, chips, filter, setFilter, filters, setFilters, pro
 /* Logged in                                                           */
 /* ------------------------------------------------------------------ */
 
-function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onOpenProduct, initialCategory = null, savedProducts = {}, onToggleSaved }) {
+function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onViewCommunity, onOpenProduct, initialCategory = null, savedProducts = {}, onToggleSaved, quizResults = null, healthProfile = null, matchOpts = null }) {
   const name = displayNameFromUser(user) || 'there';
   const [filter, setFilter] = useCategoryParam(initialCategory);
   const [personalize, setPersonalize] = useState(true);
@@ -543,7 +545,17 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
 
   // HI03: the one next step. A random empty core area, picked once per page load
   // (seed fixed at mount so it does not flicker when her shelf changes).
-  const [nextSeed] = useState(() => Math.random());
+  const nextSeed = 0;
+  const [posts, setPosts] = useState([]);
+  useEffect(() => {
+    let live = true;
+    const supabase = getSupabaseClient();
+    if (!supabase) return undefined;
+    communityStore.listFeedPosts(supabase, { limit: 2 }).then((rows) => { if (live) setPosts(rows || []); }).catch(() => {});
+    return () => { live = false; };
+  }, []);
+  const hasProfile = Boolean(quizResults);
+  const badgeFor = (p) => (hasProfile ? matchBadge(getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts)) : null);
   const nextArea = useMemo(() => {
     const owned = Object.values(myProducts || {});
     const core = ['period', 'intimate', 'hormones', 'pelvic', 'sleep-stress', 'skin'];
@@ -551,59 +563,32 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
     return empty.length ? empty[Math.floor(nextSeed * empty.length)] : null;
   }, [myProducts, nextSeed]);
   const picks = Object.keys(myProducts || {}).length;
-  // Same area grouping and ring as the Ecosystem page.
-  const ecoGroups = useMemo(() => {
-    const byArea = new Map();
-    Object.values(myProducts || {}).forEach((p) => {
-      const area = resolveEcosystemProductArea(p, ECOSYSTEM_AREAS);
-      const key = area ? area.key : 'other';
-      if (!byArea.has(key)) byArea.set(key, []);
-      byArea.get(key).push(p);
-    });
-    const groups = ECOSYSTEM_AREAS.filter((a) => byArea.has(a.key)).map((a) => ({ ...a, products: byArea.get(a.key) }));
-    if (byArea.has('other')) groups.push({ key: 'other', label: 'Other', products: byArea.get('other') });
-    return groups.sort((x, y) => y.products.length - x.products.length);
-  }, [myProducts]);
 
   return (
     <div className="mockup-landing mockup-landing--returning lx">
       {picks > 0 ? (
-        <section className="lx-hero lx-hero--home" aria-labelledby="lx-hero-title">
-          <div className="mockup-page lx-hero__inner">
-            <div className="lx-hero__copy">
-              <p className="lx-hero__hello">Hello, {name}</p>
-              <HeroTitle lead="Your" word="ecosystem." />
-              <p className="lx-hero__sub">
-                {picks} pick{picks === 1 ? '' : 's'} across {ecoGroups.length} area{ecoGroups.length === 1 ? '' : 's'} of care.
-              </p>
-              <div className="lx-hero__cta">
-                <button type="button" className="lx-cta" onClick={onViewEcosystem}>
-                  Open my ecosystem
-                  <Arrow />
-                </button>
-              </div>
-              {nextArea && (
-                <button type="button" className="lx-next" onClick={() => onViewDiscovery?.({ initialMacroGroup: nextArea.id })}>
-                  <span className="lx-next__dot" aria-hidden="true" />
-                  <span>Your {nextArea.label} shelf is empty. <b>Add one</b></span>
-                </button>
-              )}
-            </div>
-            <div className="lx-hero__visual">
-              <div className="lx-ring-card">
-                <WebEcosystemChart groups={ecoGroups} onPick={() => onViewEcosystem?.()} />
-              </div>
-            </div>
+        <section className="lx-today" aria-labelledby="lx-hero-title">
+          <div className="mockup-page lx-today__inner">
+            <h1 id="lx-hero-title" className="lx-today__title">Hello, <em>{name}.</em></h1>
+            <p className="lx-today__sub">
+              {picks} product{picks === 1 ? '' : 's'} in your ecosystem.{' '}
+              <button type="button" className="lx-today__link" onClick={onViewEcosystem}>Open my ecosystem</button>
+            </p>
+            {nextArea && (
+              <button type="button" className="lx-nextcard" onClick={() => onViewDiscovery?.({ initialMacroGroup: nextArea.id })}>
+                <span className="lx-nextcard__label">Your next step</span>
+                <strong>Start your {nextArea.label} shelf</strong>
+                <span className="lx-nextcard__go">Browse {nextArea.label} <Arrow /></span>
+              </button>
+            )}
           </div>
         </section>
       ) : (
         <BuildHero greeting={`Hello, ${name}`} onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} onOpenProduct={onOpenProduct} />
       )}
 
-      <Trust onViewDiscovery={onViewDiscovery} />
-
       <ShopSection
-        title={personalize ? 'Picked for you' : 'Popular on ayna'}
+        title={personalize ? 'New for your needs' : 'Popular on ayna'}
         chips={chips}
         filter={filter}
         setFilter={setFilter}
@@ -627,12 +612,38 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
               isSaved={!!savedProducts?.[product.id]}
               onOpen={onOpenProduct}
               onToggleSaved={onToggleSaved}
-              labels={personalize && recommendedIds.has(product.id) ? <span className="ay-for-you">For you</span> : null}
+              matchPercent={personalize ? (badgeFor(product)?.percent ?? null) : null}
+              matchLabel={personalize ? (badgeFor(product)?.label || '') : ''}
             />
           ))}
         </div>
         {shownProducts.length === 0 && <div className="lx-empty">No matches yet. Try another filter.</div>}
       </ShopSection>
+
+      {posts.length > 0 && (
+        <section className="lx-powder mockup-page" aria-labelledby="lx-powder-h">
+          <div className="lx-powder__head">
+            <h2 id="lx-powder-h">From the <em>Powder Room.</em></h2>
+            {onViewCommunity && <button type="button" className="lx-today__link" onClick={onViewCommunity}>See all</button>}
+          </div>
+          <ul className="lx-powder__list">
+            {posts.slice(0, 2).map((post) => {
+              const anon = post.is_anonymous || !post.author_id;
+              const who = anon ? 'Anonymous' : post.author_display_name || post.author_username || 'Community member';
+              return (
+                <li key={post.id}>
+                  <button type="button" className="lx-post" onClick={() => onViewCommunity?.()}>
+                    <span className="lx-post__meta">{post.kind === 'question' ? 'Question' : post.kind === 'review' ? 'Review' : 'Post'} · {who}</span>
+                    <span className="lx-post__body">{post.body}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
+
+      <Trust onViewDiscovery={onViewDiscovery} />
     </div>
   );
 }
@@ -674,6 +685,9 @@ export default function AynaLanding({
   loading = false,
   savedProducts = {},
   onToggleSaved,
+  quizResults = null,
+  healthProfile = null,
+  matchOpts = null,
 }) {
   // HI01: hold a skeleton until the session and profile resolve, so a
   // returning user never sees the new-visitor page flash first.
@@ -689,8 +703,12 @@ export default function AynaLanding({
         onStartQuiz={onStartQuiz}
         onViewDiscovery={onViewDiscovery}
         onViewEcosystem={onViewEcosystem}
+        onViewCommunity={onViewCommunity}
         onOpenProduct={onOpenProduct}
         initialCategory={initialCategory}
+        quizResults={quizResults}
+        healthProfile={healthProfile}
+        matchOpts={matchOpts}
       />
     );
   }
