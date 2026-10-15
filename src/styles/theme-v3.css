@@ -4545,3 +4545,90 @@ html body .app-container .lv .lv-partners--peek .lv-ticker { width: 100% !import
 @media (prefers-reduced-motion: reduce) { html body .app-container .lv .lv-partners--peek .lv-partners__h { transition: none; } }
 html body .app-container .lv .lv-cnt { aspect-ratio: 1 / 1; max-height: 620px; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__panel .ay-gloss { color: #3e2723 !important; border-color: #3e2723 !important; }
+
+/* ===== Product page v4 (Oct 15): side tabs on desktop, accordion on phones =====
+   Research (Baymard): horizontal tab rows get missed and wrap on small screens.
+   So: every section name always visible in a left rail, one reading panel on
+   the right; on phones each section opens in place. One card style for the
+   whole page: 2px espresso line, 20px corners, 4px offset shadow. */
+html body .app-container.app-container.app-container.app-container .ay-tabs { --ay-line: #3e2723; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 28px; align-items: start; }
+html body .app-container.app-container.app-container.app-container .ay-tabs__nav { position: sticky; top: 96px; }
+html body .app-container.app-container.app-container.app-container .ay-tabs__navh { margin: 0 0 10px; padding: 0 14px; font: 700 12px/1.2 'DM Sans', sans-serif; letter-spacing: .08em; text-transform: uppercase; color: #3e2723; opacity: .7; }
+html body .app-container.app-container.app-container.app-container .ay-tabs__nav ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+html body .app-container.app-container.app-container.app-container .ay-tabs__tab { display: flex; align-items: center; width: 100%; min-height: 46px; padding: 0 14px; border: 0 !important; border-radius: 12px; background: transparent; color: #3e2723; font: 600 15px/1.25 'DM Sans', sans-serif; text-align: left; cursor: pointer; transition: background .15s ease; }
+html body .app-container.app-container.app-container.app-container .ay-tabs__tab:hover { background: rgba(247, 186, 221, .55); }
+html body .app-container.app-container.app-container.app-container .ay-tabs__tab.is-on { background: #3e2723; color: #ffedac; }
+html body .app-container.app-container.app-container.app-container .ay-tabs__tab:focus-visible, html body .app-container.app-container.app-container.app-container .ay-tabs__acc:focus-visible { outline: 3px solid #769ebe; outline-offset: 2px; }
+html body .app-container.app-container.app-container.app-container .ay-tabs__acc { display: none; }
+html body .app-container.app-container.app-container.app-container .ay-tabs__panel { min-height: 420px; padding: 36px 44px 40px; border: 2px solid #3e2723; border-radius: 20px; background: #fff8dd; box-shadow: 4px 4px 0 #3e2723; }
+html body .app-container.app-container.app-container.app-container .ay-tabs__head { margin: 0 0 22px; padding: 0 0 18px; border-bottom: 1.5px solid rgba(62, 39, 35, .18); }
+html body .app-container.app-container.app-container.app-container .ay-tabs__head h2 { margin: 0 !important; font: 400 32px/1.1 'DM Serif Display', serif !important; color: #3e2723 !important; letter-spacing: 0 !important; text-transform: none !important; }
+html body .app-container.app-container.app-container.app-container .ay-tabs__head p { margin: 8px 0 0 !important; font: 400 15px/1.5 'DM Sans', sans-serif !important; color: #3e2723 !important; opacity: .75; max-width: 60ch; }
+html body .app-container.app-container.app-container.app-container .ay-tabs__panel > .ay-tabs__head + .ay-ev__body, html body .app-container.app-container.app-container.app-container .ay-tabs__panel > .ay-ev2__badge + .ay-ev__body { padding-left: 18px; border-left: 4px solid var(--rule); font-size: 19px !important; line-height: 1.6 !important; }
+html body .app-container.app-container.app-container.app-container .ay-tabs__panel > .ay-ev__body, html body .app-container.app-container.app-container.app-container .ay-tabs__panel > details, html body .app-container.app-container.app-container.app-container .ay-tabs__panel > .ay-ev__by { max-width: 68ch; }
+/* Read more sits flush with the text, not floating. */
+html body .app-container.app-container.app-container.app-container .ay-tabs__panel .ay-ev__more { margin: 0 0 4px 22px; }
+html body .app-container.app-container.app-container.app-container .ay-tabs__panel .ay-ev__more > summary { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 14px; border: 1.5px solid #3e2723; border-radius: 99px; font: 600 14px/1 'DM Sans', sans-serif; cursor: pointer; list-style: none; text-decoration: none; }
+html body .app-container.app-container.app-container.app-container .ay-tabs__panel .ay-ev__more > summary::-webkit-details-marker { display: none; }
+html body .app-container.app-container.app-container.app-container .ay-tabs__panel .ay-ev__more > summary:hover { background: rgba(247, 186, 221, .55); }
+html body .app-container.app-container.app-container.app-container .ay-tabs__panel .ay-ev__more[open] > summary { margin-bottom: 14px; }
+html body .app-container.app-container.app-container.app-container .ay-tabs__panel .ay-ev__more[open] > .ay-ev__body:first-of-type { display: none; }
+html body .app-container.app-container.app-container.app-container .ay-tabs__panel .ay-tabs__block { margin-top: 28px; }
+/* Ask ayna + Tried it?: two equal cards in one row. */
+html body .app-container.app-container.app-container.app-container .pdp-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 40px; align-items: stretch; }
+html body .app-container.app-container.app-container.app-container .pdp-pair > section { margin: 0 !important; padding: 26px 28px !important; border: 2px solid #3e2723 !important; border-radius: 20px !important; box-shadow: 4px 4px 0 #3e2723 !important; transform: none !important; display: flex !important; flex-direction: column; align-items: flex-start; gap: 14px; }
+html body .app-container.app-container.app-container.app-container .pdp-pair > .ay-story--ask { background: rgba(118, 158, 190, .22) !important; }
+html body .app-container.app-container.app-container.app-container .pdp-pair > .pdp-community-actions { background: rgba(247, 186, 221, .55) !important; }
+html body .app-container.app-container.app-container.app-container .pdp-pair :is(.ay-story--ask h2, .pdp-community-actions > h3) { margin: 0 !important; font: 400 28px/1.15 'DM Serif Display', serif !important; color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container .pdp-pair .ay-ask__head { display: flex; align-items: center; gap: 10px; margin: 0; }
+html body .app-container.app-container.app-container.app-container .pdp-pair__deck { margin: -6px 0 0 !important; font: 400 15px/1.5 'DM Sans', sans-serif !important; color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container .pdp-pair .ay-ask__qs { margin: 0 !important; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+html body .app-container.app-container.app-container.app-container .pdp-pair .pdp-community-actions__grid { display: flex !important; flex-wrap: wrap; gap: 8px; margin: 0 !important; }
+html body .app-container.app-container.app-container.app-container .pdp-pair :is(.ay-ask__qs button, .pdp-community-actions__grid button) { min-height: 40px; padding: 0 14px; border: 1.5px solid #3e2723 !important; border-radius: 99px !important; background: #fff8dd !important; color: #3e2723 !important; font: 600 14px/1 'DM Sans', sans-serif !important; box-shadow: none !important; cursor: pointer; }
+html body .app-container.app-container.app-container.app-container .pdp-pair :is(.ay-ask__cta, .pdp-community-actions__grid button.is-primary) { min-height: 44px; padding: 0 20px; border: 2px solid #3e2723 !important; border-radius: 99px !important; background: #3e2723 !important; color: #ffedac !important; font: 700 15px/1 'DM Sans', sans-serif !important; margin-top: auto; }
+html body .app-container.app-container.app-container.app-container .pdp-pair :is(.ay-ask__qs button, .pdp-community-actions__grid button:not(.is-primary)):hover { background: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container .pdp-pair .pdp-community-actions__grid { order: 2; }
+@media (max-width: 899px) {
+  html body .app-container.app-container.app-container.app-container .ay-tabs { display: block; border-top: 2px solid #3e2723; }
+  html body .app-container.app-container.app-container.app-container .ay-tabs__nav { display: none; }
+  html body .app-container.app-container.app-container.app-container .ay-tabs__acc { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 58px; padding: 0 4px; border: 0; border-bottom: 2px solid #3e2723; background: transparent; color: #3e2723; font: 400 22px/1.2 'DM Serif Display', serif; text-align: left; cursor: pointer; }
+  html body .app-container.app-container.app-container.app-container .ay-tabs__acc i { position: relative; flex: none; width: 30px; height: 30px; border: 2px solid #3e2723; border-radius: 50%; }
+  html body .app-container.app-container.app-container.app-container .ay-tabs__acc i::before, html body .app-container.app-container.app-container.app-container .ay-tabs__acc i::after { content: ''; position: absolute; left: 50%; top: 50%; width: 12px; height: 2px; background: currentColor; transform: translate(-50%, -50%); transition: transform .2s ease; }
+  html body .app-container.app-container.app-container.app-container .ay-tabs__acc i::after { transform: translate(-50%, -50%) rotate(90deg); }
+  html body .app-container.app-container.app-container.app-container .ay-tabs__acc.is-on i { background: #3e2723; color: #ffedac; }
+  html body .app-container.app-container.app-container.app-container .ay-tabs__acc.is-on i::after { transform: translate(-50%, -50%) rotate(0deg); }
+  html body .app-container.app-container.app-container.app-container .ay-tabs.is-collapsed .ay-tabs__panel { display: none; }
+  html body .app-container.app-container.app-container.app-container .ay-tabs__panel { min-height: 0; margin: 0; padding: 18px 4px 26px; border: 0; border-bottom: 2px solid #3e2723; border-radius: 0; background: transparent; box-shadow: none; }
+  html body .app-container.app-container.app-container.app-container .ay-tabs__head { display: none; }
+  html body .app-container.app-container.app-container.app-container .ay-tabs__head + .ay-ev__body, html body .app-container.app-container.app-container.app-container .ay-tabs__panel > .ay-ev2__badge + .ay-ev__body { font-size: 17px !important; }
+  html body .app-container.app-container.app-container.app-container .pdp-pair { grid-template-columns: 1fr; gap: 18px; margin-top: 28px; }
+  html body .app-container.app-container.app-container.app-container .pdp-pair > section { padding: 20px !important; }
+}
+@media (prefers-reduced-motion: reduce) { html body .app-container .ay-tabs__acc i::before, html body .app-container .ay-tabs__acc i::after, html body .app-container .ay-tabs__tab { transition: none; } }
+/* Dark mode: the rail and accordion lines turn butter; the reading panel stays cream. */
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__navh, html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__tab { color: #ffedac; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__tab.is-on { background: #ffedac; color: #3e2723; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__tab:hover:not(.is-on) { background: rgba(247, 186, 221, .25); }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__panel { box-shadow: 4px 4px 0 #ffedac; border-color: #ffedac; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-pair > section { border-color: #ffedac !important; box-shadow: 4px 4px 0 #ffedac !important; background: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-pair > section :is(h2, h3, p, span) { color: #3e2723 !important; }
+@media (max-width: 899px) {
+  html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs { border-top-color: #ffedac; }
+  html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__acc { color: #ffedac; border-bottom-color: #ffedac; }
+  html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__acc i { border-color: #ffedac; }
+  html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__acc.is-on i { background: #ffedac; color: #3e2723; }
+  html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__panel, html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__panel :is(h3, p, li, a, span, b, strong, small, dt, dd, blockquote, summary) { color: #ffedac !important; }
+  html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__panel { border-bottom-color: #ffedac; box-shadow: none; }
+}
+/* Solid brand colours for the two cards (tints went muddy on butter). */
+html body .app-container.app-container.app-container.app-container .pdp-pair > .ay-story--ask { background: #769ebe !important; }
+html body .app-container.app-container.app-container.app-container .pdp-pair > .pdp-community-actions { background: #f7badd !important; }
+html body .app-container.app-container.app-container.app-container .pdp-pair .ay-ask__orb { background: #ffedac; }
+/* No dead butter strip between the last dark band and the footer. */
+html body .app-container .pdp-page--glance .pdp-below--glance:has(> .pdp-suggest:last-child) { padding-bottom: 0 !important; }
+html body .app-container .pdp-page-wrap:has(.pdp-suggest) { padding-bottom: 0 !important; }
+html body .app-container main:has(.pdp-page-wrap .pdp-suggest) + footer, html body .app-container main:has(.pdp-page-wrap .pdp-suggest) ~ footer { margin-top: 0 !important; }
+html body .app-container.app-container.app-container.app-container .ay-tabs__panel .ay-safety__alert { margin: 0 0 16px; }
+html body .app-container.app-container.app-container.app-container .ay-tabs__panel .ay-safety__alert .ay-ev__body { font: 400 16px/1.65 'DM Sans', sans-serif !important; padding: 0 !important; border: 0 !important; }
+html body .app-container.app-container.app-container.app-container .ay-tabs__panel .ay-safety__alert .ay-ev__more { margin-left: 0; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-page--glance .pdp-pair > section :is(h2, h3, p, span:not(.ay-ask__orb)) { color: #3e2723 !important; }

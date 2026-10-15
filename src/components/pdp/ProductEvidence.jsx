@@ -1,3 +1,4 @@
+import { splitSentences } from './sentences';
 import React, { useEffect, useMemo, useState } from 'react';
 import { getVerificationLinks, hostLabel } from '../../utils/verificationLinks';
 import { humanPublisher } from './glance';
@@ -25,7 +26,7 @@ const isCredible = (url) => { try { const u = new URL(url); if (/\/search\b|[?&#
 
 const noDash = (t) => String(t || '').replace(/\s*—\s*/g, ', ').replace(/^,\s*/, '').trim();
 const meaningful = (v) => { const t = String(v || '').trim(); return t && !/^(n\/?a|none|not applicable|unknown|not on file)\.?$/i.test(t) ? t : ''; };
-const sentences = (t) => String(t || '').match(/[^.!?]+[.!?]+(\s|$)|[^.!?]+$/g)?.map((s) => s.trim()).filter(Boolean) || [];
+const sentences = (t) => splitSentences(t);
 const PLATFORM = { reddit: 'Reddit', tiktok: 'TikTok', youtube: 'YouTube', instagram: 'Instagram', facebook: 'Facebook', wikipedia: 'Wikipedia', amazon: 'Amazon', walmart: 'Walmart', wirecutter: 'Wirecutter', instyle: 'InStyle', press: 'Press' };
 const HOST_NAMES = [[/amzn\.|amazon\./i, 'Amazon'], [/reddit\./i, 'Reddit'], [/tiktok\./i, 'TikTok'], [/youtube\.|youtu\.be/i, 'YouTube'], [/instagram\./i, 'Instagram'], [/facebook\./i, 'Facebook'], [/walmart\./i, 'Walmart'], [/target\./i, 'Target'], [/ulta\./i, 'Ulta'], [/sephora\./i, 'Sephora'], [/nytimes\.com\/wirecutter|wirecutter/i, 'Wirecutter']];
 
@@ -192,6 +193,17 @@ function useEvidence(product, aynaData) {
 }
 
 // Retail and brand pages are where to buy, not reviews: they stay off the Reviews tab.
+// One plain line under each section heading: what it is and where it comes from.
+const DECK = {
+  summary: 'What this is, in plain words, from the ayna team.',
+  who: 'Who it suits, what it helps with, and when to skip it.',
+  how: 'Step by step.',
+  clinical: 'What clinicians and clinical guidance say about it.',
+  science: 'Research from government health agencies, medical journals and medical societies.',
+  reviews: 'What people who use it say, on ayna and online.',
+  details: 'Safety, ingredients, size, price and every source we used.',
+};
+
 const RETAIL = /amzn\.|amazon\.|walmart\.|target\.com|cvs\.com|walgreens\.|ulta\.|sephora\./i;
 
 export default function ProductEvidence({ product, glance = null, aynaData = null, aynaRating = null, ratingCount = 0, rateControls = null, safety = null, extraRows = [] }) {
@@ -223,9 +235,17 @@ export default function ProductEvidence({ product, glance = null, aynaData = nul
     { id: 'details', label: 'Details and safety' },
   ].filter(Boolean);
   const cur = tabs.find((t) => t.id === tab) || tabs[0];
+  // Desktop: pick a section on the left; if the panel's top is off screen, bring it back.
+  const pick = (id) => {
+    setTab(id);
+    window.requestAnimationFrame(() => {
+      const el = document.getElementById('ay-tabs');
+      if (el && el.getBoundingClientRect().top < 0) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
   const keyNav = (e) => {
     const i = tabs.findIndex((t) => t.id === cur.id);
-    const n = e.key === 'ArrowRight' ? tabs[(i + 1) % tabs.length] : e.key === 'ArrowLeft' ? tabs[(i - 1 + tabs.length) % tabs.length] : null;
+    const n = /^(ArrowDown|ArrowRight)$/.test(e.key) ? tabs[(i + 1) % tabs.length] : /^(ArrowUp|ArrowLeft)$/.test(e.key) ? tabs[(i - 1 + tabs.length) % tabs.length] : null;
     if (!n) return;
     e.preventDefault(); setTab(n.id);
     window.requestAnimationFrame(() => document.getElementById(`ay-tab-${n.id}`)?.focus());
@@ -241,44 +261,36 @@ export default function ProductEvidence({ product, glance = null, aynaData = nul
   };
   const plan = planGlossaryTerms((textsFor[cur.id] || []).map((t) => ({ key: t, text: t })), 6);
 
-  return (
-    <TermsCtx.Provider value={plan}>
-    <section id="ay-tabs" className="ay-tabs" aria-label="About this product">
-      <div className="ay-tabs__bar" role="tablist" aria-label="About this product" onKeyDown={keyNav}>
-        {tabs.map((t) => (
-          <button key={t.id} id={`ay-tab-${t.id}`} type="button" role="tab" aria-selected={t.id === cur.id} aria-controls="ay-tab-panel" tabIndex={t.id === cur.id ? 0 : -1} className={`ay-tabs__tab is-${t.id}${t.id === cur.id ? ' is-on' : ''}`} onClick={() => setTab(t.id)}>{t.label}</button>
-        ))}
-      </div>
-      <div id="ay-tab-panel" role="tabpanel" aria-labelledby={`ay-tab-${cur.id}`} className={`ay-tabs__panel is-${cur.id}`} key={cur.id}>
+  const renderPanel = (id) => (<>
 
-        {cur.id === 'summary' && <>
+        {id === 'summary' && <>
           {d.aynaSummary ? <ShortThenFull full={[d.aynaSummary, d.aynaDetail].filter(Boolean).join('\n\n')} /> : <p className="ay-ev__empty">No summary on file yet.</p>}
           {d.evidenceStrength && <p className="ay-ev__by">Evidence level on file: {d.evidenceStrength}</p>}
           {d.badges.length > 0 && <div className="ay-tabs__block"><h3>What the brand says about it</h3><ul className="ay-tabs__chips">{d.badges.map((b) => <li key={b}>{b}</li>)}</ul><p className="ay-ev__by">The brand’s own labels and awards. Not checked by ayna.</p></div>}
         </>}
 
-        {cur.id === 'who' && <>
+        {id === 'who' && <>
           {d.who.length > 0 && <ul className="ay-tabs__list">{d.who.map((w) => <li key={w}>{withTerms(w, plan)}</li>)}</ul>}
           {helps.length > 0 && <div className="ay-tabs__block"><h3>Helps with</h3><ul className="ay-tabs__chips">{helps.map((h) => <li key={h}>{h}</li>)}</ul></div>}
           {d.avoidIf.length > 0 && <div className="ay-tabs__block"><h3>Skip it if you react to</h3><p className="ay-ev__body">{d.avoidIf.join(', ')}</p></div>}
           {(d.platform || d.integrations.length > 0) && <div className="ay-tabs__block"><h3>Works with</h3><p className="ay-ev__body">{[d.platform, ...d.integrations].filter(Boolean).join(', ')}</p></div>}
         </>}
 
-        {cur.id === 'how' && d.how && <>
+        {id === 'how' && d.how && <>
           {d.how.intro && <Paras text={d.how.intro} />}
           <ol className="ay-tabs__steps">{d.how.steps.map((st, i) => <li key={st}><b aria-hidden="true">{i + 1}</b><span>{st}</span></li>)}</ol>
           {d.faq && <p className="ay-ev__by"><a href={d.faq} target="_blank" rel="noopener noreferrer">{d.brand || 'The brand'}’s FAQ<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a></p>}
           {d.how.url && <p className="ay-ev__by"><a href={d.how.url} target="_blank" rel="noopener noreferrer">From {d.brand || 'the brand'}’s instructions<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a></p>}
         </>}
 
-        {cur.id === 'clinical' && <>
+        {id === 'clinical' && <>
           <p className={`ay-ev2__badge ${d.independent ? 'is-indep' : 'is-brand'}`}>{d.independent ? 'Independent sources' : 'Based on brand claims'}</p>
           {d.clinician ? <ShortThenFull short={d.clinicianShort} full={d.clinician} /> : <p className="ay-ev__empty">No clinical opinion on file yet.</p>}
           {d.attribution && <p className="ay-ev__by">{d.attribution}</p>}
           <Links items={d.clinicalLinks} label={d.clinicalLinks.length ? plural(d.clinicalLinks.length, 'source') : ''} />
         </>}
 
-        {cur.id === 'science' && <>
+        {id === 'science' && <>
           {d.bottomLine && <><h3 className="ay-ev2__sub">The bottom line</h3><ShortThenFull full={d.bottomLine} /></>}
           {d.ingredients.length > 0 && <>
             <h3 className="ay-ev2__sub">What’s inside, and the research</h3>
@@ -299,7 +311,7 @@ export default function ProductEvidence({ product, glance = null, aynaData = nul
           {!d.bottomLine && !d.ingredients.length && !d.studies.length && <p className="ay-ev__empty">No studies linked yet.</p>}
         </>}
 
-        {cur.id === 'reviews' && <>
+        {id === 'reviews' && <>
           {aynaRating != null && ratingCount > 0
             ? <p className="ay-ev__rating"><b>★ {aynaRating.toFixed(1)}</b> from {plural(ratingCount, 'ayna member')}</p>
             : d.brandRating ? <p className="ay-ev__rating"><b>★ {d.brandRating.value}</b> from {d.brandRating.count} reviews <span className="ay-ev2__badge is-brand">Brand-reported, not verified by ayna</span></p>
@@ -316,7 +328,7 @@ export default function ProductEvidence({ product, glance = null, aynaData = nul
           {rateControls}
         </>}
 
-        {cur.id === 'details' && <>
+        {id === 'details' && <>
           {safety}
           {d.ingredientsText && <div className="ay-tabs__block"><h3>{d.isDigital ? 'What’s included' : 'Ingredients'}</h3><p className="ay-ev__body ay-pd__pre">{d.ingredientsText}</p></div>}
           {d.materials && !/^various|^varies/i.test(d.materials) && d.materials !== d.ingredientsText && d.ingredients.filter((i) => d.materials.toLowerCase().includes(i.name.toLowerCase().split(/\s|&|and/)[0])).length < 3 && <div className="ay-tabs__block"><h3>Materials and what’s in the box</h3><p className="ay-ev__body">{d.materials}</p></div>}
@@ -336,6 +348,36 @@ export default function ProductEvidence({ product, glance = null, aynaData = nul
             <ol>{allSources.map((x) => <li key={x.url}><a href={x.url} target="_blank" rel="noopener noreferrer">{x.title}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a> <small>{[x.publisher, x.year].filter(Boolean).join(' · ')}</small></li>)}</ol>
           </details>}
         </>}
+  </>);
+
+  return (
+    <TermsCtx.Provider value={plan}>
+    <section id="ay-tabs" className={`ay-tabs${tab ? '' : ' is-collapsed'}`} aria-label="About this product">
+      <nav className="ay-tabs__nav" aria-label="About this product">
+        <p className="ay-tabs__navh" aria-hidden="true">About this product</p>
+        <ul>
+          {tabs.map((t) => (
+            <li key={t.id}><button type="button" id={`ay-tab-${t.id}`} aria-current={t.id === cur.id ? 'true' : undefined} aria-controls="ay-tab-panel" className={`ay-tabs__tab is-${t.id}${t.id === cur.id ? ' is-on' : ''}`} onClick={() => pick(t.id)} onKeyDown={keyNav}>{t.label}</button></li>
+          ))}
+        </ul>
+      </nav>
+      <div className="ay-tabs__body">
+        {tabs.map((t) => (
+          <React.Fragment key={t.id}>
+            <button type="button" className={`ay-tabs__acc${tab === t.id ? ' is-on' : ''}`} aria-expanded={tab === t.id} aria-controls={tab === t.id ? 'ay-tab-panel' : undefined} onClick={() => setTab(tab === t.id ? '' : t.id)}>
+              <span>{t.label}</span><i aria-hidden="true" />
+            </button>
+            {t.id === cur.id && (
+              <div id="ay-tab-panel" role="region" aria-label={t.label} className={`ay-tabs__panel is-${t.id}`}>
+                <header className="ay-tabs__head">
+                  <h2>{t.label}</h2>
+                  {DECK[t.id] && <p>{DECK[t.id]}</p>}
+                </header>
+                {renderPanel(t.id)}
+              </div>
+            )}
+          </React.Fragment>
+        ))}
       </div>
     </section>
     </TermsCtx.Provider>
@@ -348,10 +390,16 @@ export function ProductSafety({ product, recall = null, alertText = '', glance =
   if (!d) return null;
   const showRecall = !d.isDigital && recall && recall.status !== 'unknown';
   if (!(alertText || d.warnings.length || d.pregnancy || d.fdaRaw || d.sideEffects || d.allergens || d.avoidIf.length || showRecall)) return null;
+  // The note above often tells the same story as the recall line: say it once.
+  const recallFull = showRecall ? noDash(recall.detail || recall.label || '') : '';
+  const words = (t) => new Set(String(t).toLowerCase().match(/[a-z]{4,}/g) || []);
+  const rw = words(recallFull); const aw = words(alertText);
+  let hit = 0; rw.forEach((x) => { if (aw.has(x)) hit += 1; });
+  const recallText = rw.size && hit / rw.size >= 0.4 ? (/no recall/i.test(recallFull) ? 'No recall has been issued. The note above has the details.' : 'See the note above.') : recallFull;
   return (
     <div id="ay-sec-safety" className="ay-safety">
       <h3>Safety</h3>
-      {alertText && <p className="ay-safety__alert" role="note">{noDash(alertText)}</p>}
+      {alertText && <div className="ay-safety__alert" role="note"><ShortThenFull full={noDash(alertText)} /></div>}
       {(d.warnings.length > 0 || d.pregnancy) && <ul className="ay-safety__list">{d.pregnancy && <li>Pregnancy: {d.pregnancy}</li>}{d.warnings.map((w) => <li key={w}>{w}</li>)}</ul>}
       <dl className="ay-pd__rows">
         {!d.isDigital && d.fdaRaw && <div><dt>FDA status</dt><dd>{d.fda?.label ? <><b>{d.fda.label}.</b> </> : null}{fmtDate(d.fdaRaw)}</dd></div>}
@@ -362,7 +410,7 @@ export function ProductSafety({ product, recall = null, alertText = '', glance =
           .filter((r) => r && !r.unknown && r.value && !/^(pregnancy|allergens|recalls|data storage|privacy)$/i.test(r.label) && !(/pregnan/i.test(r.label) && d.pregnancy === ''))
           .map((r) => <div key={r.label}><dt>{r.label}</dt><dd>{noDash(r.value)}</dd></div>)}
         {d.avoidIf.length > 0 && <div><dt>Skip if you react to</dt><dd>{d.avoidIf.join(', ')}</dd></div>}
-        {showRecall && <div><dt>Recalls</dt><dd>{recall.status === 'none' ? 'No recalls found.' : noDash(recall.detail || recall.label || '')}</dd></div>}
+        {showRecall && <div><dt>Recalls</dt><dd>{recall.status === 'none' ? 'No recalls found.' : recallText}</dd></div>}
         {d.privacy && meaningful(d.privacy.dataStorage) && <div><dt>Data storage</dt><dd>{noDash(d.privacy.dataStorage)}</dd></div>}
         {d.privacy && meaningful(d.privacy.keyPolicy) && <div><dt>Privacy</dt><dd>{noDash(d.privacy.keyPolicy)}</dd></div>}
       </dl>

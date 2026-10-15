@@ -584,6 +584,7 @@ export function ProductAsk({ productName, onAsk, signedIn = false }) {
         <span className="ay-ask__orb" aria-hidden="true">✦</span>
         <h2 id="ay-ask-h">Ask ayna about this product</h2>
       </div>
+      <p className="pdp-pair__deck">Ask anything. ayna answers in plain words.</p>
       <ul className="ay-ask__qs">
         {qs.map((q) => <li key={q}><button type="button" onClick={() => onAsk(`About ${productName}: ${q}`)}>{q}</button></li>)}
       </ul>

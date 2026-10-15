@@ -17,6 +17,7 @@ import { matchLine, priceParts } from '../data/passport/content';
 import { buildGlance, perUnitLabel, sizeCount } from './pdp/glance';
 import { getPassport } from '../data/passport';
 import { ProductMatch, ProductAsk } from './passport/ProductSections';
+import { firstSentence } from './pdp/sentences';
 import ProductEvidence, { ProductSafety } from './pdp/ProductEvidence';
 import { galleryImages, retailerLinks, similarProducts, sameNeedProducts, productJsonLd, breadcrumbJsonLd } from './pdp/commerce';
 import GalleryThumbs from './pdp/GalleryThumbs';
@@ -571,7 +572,7 @@ export default function ProductModal({
   // the product's own safety alert), in plain words from the record.
   const keyCautions = (() => {
     const out = [];
-    const first = (t) => { const m = String(t || '').match(/^(.{8,200}?[.!?])(\s|$)/); return (m ? m[1] : String(t || '')).trim(); };
+    const first = (t) => firstSentence(t, { min: 8, max: 200 });
     const pp = getPassport(product);
     const preg = pp?.safety?.pregnancy;
     const pv = preg?.known && !preg.notApplicable ? (Array.isArray(preg.value) ? preg.value.join(', ') : String(preg.value || '')) : '';
@@ -579,7 +580,13 @@ export default function ProductModal({
     return [...new Set(out.filter(Boolean))].slice(0, 2);
   })();
   const topWarning = (() => {
-    const first = (t) => { const m = String(t || '').replace(/^⚠️?\s*/, '').match(/^(.{8,220}?[.!?])(\s|$)/); return (m ? m[1] : String(t || '')).replace(/\s*—\s*/g, ', ').trim(); };
+    const first = (t) => {
+      // A long note becomes its headline ("2021 lawsuit, later dropped"); the full story is in Details and safety.
+      const one = firstSentence(t, { min: 8, max: 400 }).replace(/\s*—\s*/g, ', ').trim();
+      const colon = one.indexOf(':');
+      if (one.length > 100 && colon > 8 && colon <= 70) return `${one.slice(0, colon)}.`;
+      return one.length > 120 ? firstSentence(one, { max: 120 }) : one;
+    };
     if (recall.status === 'past' || recall.status === 'note') return first(recall.detail || recall.label);
     if (glance?.alert) return first(glance.alert);
     if (keyCautions[0]) return keyCautions[0].replace(/^Pregnancy:\s*Brand:\s*(.*?)\.?$/i, 'Pregnancy: $1 (per the brand).');
@@ -854,8 +861,7 @@ export default function ProductModal({
             <h1 className="pdp-head__name">{displayName}</h1>
             {(() => {
               const raw = String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '').replace(/\s*—\s*/g, ', ').trim();
-              const m = raw.match(/^(.{20,240}?[.!?])(\s|$)/);
-              const lead = m ? m[1] : raw.slice(0, 200);
+              const lead = firstSentence(raw, { min: 20, max: 240 });
               return lead ? <p className="pdp-lead"><span className="pdp-lead__k">ayna summary</span>{lead}</p> : null;
             })()}
 
@@ -932,21 +938,24 @@ export default function ProductModal({
               { label: 'Price check', value: d && !Number.isNaN(d.getTime()) && price.known && !price.isPlaceholder ? `Checked ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : '' },
             ];
           })()} />
-            <ProductAsk productName={displayName} onAsk={onAskAyna} signedIn={Boolean(user)} />
+            <div className="pdp-pair">
+              <ProductAsk productName={displayName} onAsk={onAskAyna} signedIn={Boolean(user)} />
+              {onCommunityAction && (
+              <section className="pdp-community-actions" aria-labelledby="pdp-community-h">
+                {onCommunityAction && <>
+                  <h3 id="pdp-community-h">Tried it?</h3>
+                  <p className="pdp-pair__deck">Tell other women how it went, or share it with a friend.</p>
+                  <div className="pdp-community-actions__grid">
+                    {[['review', 'Write a review'], ['post', 'Mention in a post'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => (
+                      <button key={kind} type="button" className={kind === 'review' ? 'is-primary' : undefined} onClick={() => onCommunityAction(kind)}>{label}</button>
+                    ))}
+                  </div>
+                </>}
+              </section>
+            )}
+            </div>
           </div>
 
-            {onCommunityAction && (
-            <section className="pdp-community-actions" aria-labelledby="pdp-community-h">
-              {onCommunityAction && <>
-                <h3 id="pdp-community-h">Community</h3>
-                <div className="pdp-community-actions__grid">
-                  {[['review', 'Write a review'], ['post', 'Mention in a post'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => (
-                    <button key={kind} type="button" className={kind === 'review' ? 'is-primary' : undefined} onClick={() => onCommunityAction(kind)}>{label}</button>
-                  ))}
-                </div>
-              </>}
-            </section>
-          )}
 
 
           {(
