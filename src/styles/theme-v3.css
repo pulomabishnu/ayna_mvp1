@@ -2912,3 +2912,25 @@ html body .app-container .ay-catrow:has(.ayna-browse__categories[data-fade-start
 html body .app-container .ay-catrow:has(.ayna-browse__categories[data-fade-end='0']) .ay-catrow__arrow.is-next { opacity: .3; pointer-events: none; }
 @media (max-width: 720px) { html body .app-container .ay-catrow__arrow { display: none; } }
 html body .app-container .ay-catrow { align-items: flex-start; } html body .app-container .ay-catrow__arrow { margin-top: 2px; }
+/* Community: the feed column never grows past the screen (it was sizing to its widest post). */
+html body .app-container .wc-main { grid-template-columns: minmax(0, 1fr) !important; min-width: 0; }
+html body .app-container .wc-main > * { min-width: 0; max-width: 100%; }
+@media (max-width: 720px) {
+  html body .app-container .wc-composer .wc-composer-kinds { flex-wrap: wrap !important; overflow: visible !important; }
+}
+html body .app-container:not([data-theme='dark']) .wc-composer { background: #ffedac !important; }
+html body .app-container .wc-composer .wc-composer-kinds > * { flex: 0 0 auto !important; }
+@media (max-width: 720px) {
+  /* Tabs scroll sideways: fade the right edge so it's clear there's more. */
+  html body .app-container .wc-tabs { -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); padding-right: 32px; }
+}
+/* White is only for behind product photos. These surfaces sit on butter. */
+html body .app-container:not([data-theme='dark']) :is(.lx-post, .ay-trust__card) { background: transparent !important; }
+html body .app-container:not([data-theme='dark']) :is(.pdp-actions__eco, .eco3-more__menu, .ay-know > li) { background: #ffedac !important; }
+html body .app-container:not([data-theme='dark']) .wc3 .wc-main > .wc-composer, html body .app-container:not([data-theme='dark']) .wc3 .wc-composer { background: #f7badd !important; background-image: none !important; }
+/* Composer: the prompt gets the full row, the five verbs sit underneath. */
+html body .app-container .wc3 .wc-composer { flex-wrap: wrap !important; }
+html body .app-container .wc3 .wc-composer .wc-share { flex: 1 1 calc(100% - 60px) !important; }
+html body .app-container .wc3 .wc-composer .wc-composer-kinds { flex: 1 1 100% !important; padding-left: 50px; display: flex; gap: 8px; }
+@media (max-width: 720px) { html body .app-container .wc3 .wc-composer .wc-composer-kinds { padding-left: 0; } }
+html body .app-container:not([data-theme='dark']) .wc3 .wc-composer .wc-composer-kinds > button { background: #ffedac !important; color: #3e2723 !important; }
