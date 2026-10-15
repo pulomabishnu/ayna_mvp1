@@ -38,7 +38,7 @@ export default function SavedForLater({
 
       {items.length === 0 ? (
         <div className="wishlist-empty">
-          <p>Nothing saved yet. Tap the heart on anything in Shop.</p>
+          <p>Nothing saved yet. Use the heart on anything in Shop to keep it here.</p>
           <button type="button" className="eco3-pill" onClick={onBrowse}>Go to Shop</button>
         </div>
       ) : (

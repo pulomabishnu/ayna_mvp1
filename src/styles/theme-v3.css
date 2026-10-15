@@ -3092,3 +3092,17 @@ html body .app-container .app-nav__circle--wishlist.is-bump { animation: ayBump 
 @media (min-width: 900px) {
   html body .app-container .pdp-gallery { position: sticky !important; top: 96px; align-self: start; }
 }
+.whc-fact__src { display: block; margin-top: 10px; font: 400 13px/1.35 'DM Sans', sans-serif; opacity: .8; }
+/* Partner brands: a jump row, and brand names as real headings (same look). */
+.brand-partner__jump { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 24px; }
+.brand-partner__jump a { padding: 6px 12px; border: 2px solid #3e2723; border-radius: 99px; color: #3e2723; font: 600 14px/1 'DM Sans', sans-serif; text-decoration: none; background: #ffedac; }
+.brand-partner__jump a:hover { background: #f7badd; }
+html body .app-container h2.brand-partner__name { margin: 0; font-size: inherit; }
+.brand-partner { scroll-margin-top: 100px; }
+.ay-contact-topics button { width: 100%; padding: 6px 8px; border: 0; border-radius: 8px; background: none; color: #3e2723; font: inherit; text-align: left; cursor: pointer; }
+.ay-contact-topics button[aria-pressed='true'] { background: #f7badd; }
+/* Info pages: one still photo in a brand frame; no "Back" on top-level pages (footer and nav reach them). */
+.ay-info__photo { margin: 0; align-self: center; justify-self: end; width: min(320px, 80vw); aspect-ratio: 4 / 5; border: 2px solid #3e2723; border-radius: 16px; overflow: hidden; box-shadow: 6px 6px 0 #3e2723; transform: rotate(1.5deg); }
+.ay-info__photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+html body .app-container:is([data-view='about'], [data-view='how-it-works'], [data-view='how-we-make-money'], [data-view='privacy-policy'], [data-view='terms-of-use'], [data-view='contact'], [data-view='waitlist']) .ay-info__back { display: none !important; }
+@media (max-width: 720px) { .ay-info__photo { display: none; } }

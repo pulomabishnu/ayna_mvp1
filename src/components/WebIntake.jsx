@@ -582,7 +582,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
         </header>
         <span className="wq-section">Done</span>
         <h1 className="wq-title">Your first matches are ready</h1>
-        <p className="wq-subtitle">{intake.safetyConcern === 'Yes' ? 'You said something may be urgent, so care options come first.' : 'That’s enough for safe, personal picks. Add more now for closer ones, or any time later from your profile.'}</p>
+        <p className="wq-subtitle">{intake.safetyConcern === 'Yes' ? 'You said something may be urgent, so care options come first.' : 'That’s enough for your first picks. Add more now for closer ones, or any time later from your profile.'}</p>
         {saveError && <p className="wq-alert">{saveError}</p>}
         <div className="wq-checkpoint-actions">
           <button type="button" className="wq-btn" onClick={() => finish()} disabled={saving}>{saving ? 'Saving…' : 'See my results'} <span aria-hidden="true">→</span></button>

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '../styles/audit-info.css';
-import PhotoPile from './v3/PhotoPile.jsx';
+import { PHOTOS } from './v3/photos.js';
 
 /**
  * Shared shell for the secondary info / legal pages (About, How It Works,
@@ -61,7 +61,10 @@ export function InfoPage({ eyebrow, title, lede, onBack, width = 'default', clas
           {lede && <p className="ay-info__lede">{lede}</p>}
         </div>
         {aside}
-        {!aside && photos?.length > 0 && <PhotoPile label={`${title} photos`} photos={photos} />}
+        {/* One still photo (the tap-to-shuffle pile was a toy with no job). */}
+        {!aside && photos?.length > 0 && (
+          <figure className="ay-info__photo"><img src={`/landing/${photos[0]}.webp`} alt={PHOTOS[photos[0]] || ''} loading="lazy" /></figure>
+        )}
       </header>
       {showToc && items.length > 2 ? (
         <div className="ay-info__layout">

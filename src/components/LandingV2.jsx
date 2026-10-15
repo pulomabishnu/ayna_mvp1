@@ -59,7 +59,7 @@ function Ticker() {
   const names = PARTNER_BRANDS.map((b) => b.name);
   const row = (hidden) => (
     <ul className="lv-ticker__row" aria-hidden={hidden || undefined}>
-      {[...names, ...names].map((t, i) => (<li key={i}>{t}<span aria-hidden="true">{'★'}</span></li>))}
+      {[...names, ...names].map((t, i) => (<li key={i} aria-hidden={i >= names.length ? true : undefined}>{t}<span aria-hidden="true">{'★'}</span></li>))}
     </ul>
   );
   return <div className="lv-ticker" role="presentation"><div className="lv-ticker__track">{row(false)}{row(true)}</div></div>;
@@ -140,7 +140,7 @@ function Tiles({ products, onOpenProduct, ranked = false }) {
             <span className="lv-tile__img">
               {ranked && <b className="lv-rank" aria-hidden="true">{i + 1}</b>}
               <img src={p.image} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} />
-              {isPartnerBrandItem(p) && <span className="lv-fav">ayna<br />favorite</span>}
+              {isPartnerBrandItem(p) && <span className="lv-fav" title="A partner brand ayna has reviewed">ayna<br />partner</span>}
             </span>
             <span className="lv-tile__row">
               <span className="lv-tile__name">{p.name}</span>
@@ -161,7 +161,7 @@ function Trending({ onOpenProduct, onViewDiscovery }) {
   return (
     <section ref={ref} className="lv-sec" aria-labelledby="lv-trend-title">
       <header className="lv-head">
-        <h2 id="lv-trend-title">Trending on <em>ayna</em></h2>
+        <h2 id="lv-trend-title">This week’s <em>picks</em></h2>
         <button type="button" className="lv-btn lv-btn--line" onClick={() => onViewDiscovery?.('')}>See the Shop</button>
       </header>
       <Tiles products={items} onOpenProduct={onOpenProduct} ranked />
@@ -187,7 +187,7 @@ function ShopBand({ onOpenProduct, onViewDiscovery }) {
       </div>
       <div key={need.id} className="lv-band__grid"><Tiles products={need.pool.slice(0, 4)} onOpenProduct={onOpenProduct} /></div>
       <div className="lv-band__foot">
-        <button type="button" className="lv-btn lv-btn--butter" onClick={() => onViewDiscovery?.(need.group ? { initialMacroGroup: need.group } : '')}>See all {need.label.toLowerCase()}</button>
+        <button type="button" className="lv-btn lv-btn--butter" onClick={() => onViewDiscovery?.(need.group ? { initialMacroGroup: need.group } : '')}>See all {need.label} products</button>
         <button type="button" className="lv-link" onClick={() => onViewDiscovery?.('')}>Browse the whole Shop</button>
       </div>
     </section>
@@ -235,7 +235,7 @@ function Why({ paused }) {
         <div className="lv-why__body">
           <p className="lv-script">what ayna actually is</p>
           <h2 id="lv-why-title">Your counter, <em>decoded.</em></h2>
-          <p className="lv-why__lead">Tap a photo.</p>
+          <p className="lv-why__lead">Pick a photo.</p>
           <ol>
             {WHY.map((w, i) => (
               <li key={w.t} className={i === a ? 'is-on' : ''}>
@@ -310,7 +310,6 @@ function Start({ onStartQuiz, onViewDiscovery }) {
     </section>
     <section className="lv-sec lv-final" aria-labelledby="lv-start-title">
       <div className="lv-start__card lv-card">
-        <Win title="start.exe" />
         <div className="lv-start__copy">
           <h2 id="lv-start-title">Start with <em>six</em> questions.</h2>
           <p>Then a shop matched to you.</p>

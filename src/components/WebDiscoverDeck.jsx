@@ -86,7 +86,7 @@ export default function WebDiscoverDeck({ products = [], quizResults = null, sav
                   {current.product.brand && <span>{current.product.brand}</span>}
                   <strong>{current.product.name}</strong>
                   <div><b>{formatPrice(current.product).main}</b>{Number.isFinite(current.match) && current.match > 0 && current.reasons.length > 0 && <em>{Math.round(current.match)}% match</em>}</div>
-                  <small className="wdeck-tap">Tap to flip</small>
+                  <small className="wdeck-tap">Flip</small>
                 </div>
               </div>
               <div className="wdeck-face is-back" aria-hidden={!flipped}>

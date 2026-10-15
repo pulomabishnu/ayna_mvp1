@@ -1962,7 +1962,7 @@ export default function MyEcosystem({
                                     <button type="button" role="menuitem" onClick={(e) => {
                                         e.currentTarget.closest('details').open = false;
                                         if (!myProductList.length || window.confirm('Rebuild your ecosystem from your answers? Products you added yourself stay.')) onBuildEcosystem();
-                                    }}>{myProductList.length ? 'Rebuild from my answers' : 'Build my ecosystem'}</button>
+                                    }}>{myProductList.length ? 'Refresh picks from my answers (your shelves stay)' : 'Build my ecosystem'}</button>
                                 )}
                             </div>
                         </details>

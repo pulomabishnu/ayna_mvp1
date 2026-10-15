@@ -168,8 +168,8 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
           <button type="button" className="tone-butter" onClick={onOpenEcosystem}><strong>{products.length}</strong><span>In your Ecosystem</span></button>
           <button type="button" className="tone-pink" onClick={onOpenSaved}><strong>{savedCount}</strong><span>Saved</span></button>
           <div className="wyou-quick">
-            <button type="button" className="wyou-btn is-ghost wyou-quickbtn" onClick={onOpenCheckin}>Do a check-in<small>Tell us what changed so your picks keep up</small></button>
-            <button type="button" className="wyou-btn is-ghost wyou-quickbtn" onClick={onOpenStartups}>Meet the startups<small>The brands ayna works with</small></button>
+            <button type="button" className="wyou-btn is-ghost wyou-quickbtn" onClick={onOpenCheckin}>Log how this month went<small>A quick check-in so your picks keep up</small></button>
+            <button type="button" className="wyou-btn is-ghost wyou-quickbtn" onClick={onOpenStartups}>Partner brands<small>The brands ayna works with</small></button>
           </div>
         </nav>
 

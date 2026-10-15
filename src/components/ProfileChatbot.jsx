@@ -435,10 +435,10 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
 
                 <span>
                   {speech.isRecording
-                    ? 'Tap the mic again when you are done.'
+                    ? 'Select the mic again when you are done.'
                     : speaking
-                      ? 'Tap the mic anytime to speak again.'
-                      : 'Tap the mic and speak naturally.'}
+                      ? 'Select the mic anytime to speak again.'
+                      : 'Select the mic and speak naturally.'}
                 </span>
               </div>
             </div>

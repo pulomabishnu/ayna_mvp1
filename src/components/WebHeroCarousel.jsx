@@ -52,7 +52,7 @@ function FactSlide({ fact, onViewArticles }) {
       <h2 className="whc-title whc-title--term">{fact.term}</h2>
       <button type="button" className="whc-cta" onClick={onViewArticles}>Read more in the Library</button>
     </div>
-    <div className="whc-art whc-fact"><p>{fact.text}</p></div>
+    <div className="whc-art whc-fact"><p>{fact.text}</p><small className="whc-fact__src">From the ayna glossary. General information, not medical advice.</small></div>
   </>;
 }
 
@@ -104,7 +104,18 @@ export default function WebHeroCarousel({ onStartQuiz, onViewArticles, onViewCom
   const drag = useRef({ x: 0, active: false });
   const count = slides.length;
   const go = (step) => setIndex((i) => (i + step + count) % count);
-  const playing = !paused && !hover && !reduced;
+  // Phones never auto-advance (a half-faded slide is hard to read); on desktop it only plays while in view.
+  const [narrow] = useState(() => typeof window !== 'undefined' && window.matchMedia?.('(max-width: 720px)').matches);
+  const rootRef = useRef(null);
+  const [inView, setInView] = useState(() => typeof IntersectionObserver === 'undefined');
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
+    const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting), { threshold: 0.4 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  const playing = !paused && !hover && !reduced && !narrow && inView;
   const duration = DURATION;
 
   useEffect(() => {
@@ -134,6 +145,7 @@ export default function WebHeroCarousel({ onStartQuiz, onViewArticles, onViewCom
   };
 
   return <section
+    ref={rootRef}
     className={`whc whc--stage is-tone-${slides[index].tone}`}
     aria-roledescription="carousel"
     aria-label="Welcome to ayna"

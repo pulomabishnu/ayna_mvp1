@@ -24,7 +24,7 @@ export default function PhotoPile({ photos = [], label = 'Photos', className = '
           />
         );
       })}
-      <span className="ay3-pile__hint" aria-hidden="true">tap to shuffle</span>
+      <span className="ay3-pile__hint" aria-hidden="true">shuffle</span>
     </button>
   );
 }

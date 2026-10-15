@@ -389,7 +389,7 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
           {!glance.verified && (
             <p className="ay-glance__caveat">
               {glance.researched
-                ? 'Details marked with a date were checked against the listed sources. Full review is still in progress.'
+                ? 'Dated details were checked against the sources listed.'
                 : 'From ayna’s catalog. We have not checked these details against the label yet.'}
             </p>
           )}

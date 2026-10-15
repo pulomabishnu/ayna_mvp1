@@ -41,7 +41,7 @@ const PARTNERS = [
     logo: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/686eb5fcdbbd35b6fc957602_Frame%201000011567.jpg',
     url: 'https://www.helloneycher.com/',
     blurb:
-      'Hormone-free intimate care. Moisturizers, balms and suppositories made for vaginal dryness, irritation and odour.',
+      'Hormone-free intimate care. Moisturizers, balms and suppositories made for vaginal dryness, irritation and odor.',
   },
   {
     brand: 'Connect Pelvic Floor Fitness',
@@ -179,18 +179,23 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
         : 'Check back soon. When partnerships go live, they may be featured in general Browse, but partnership will never change personalized match scores or recommendation order.'}
       width="wide"
     >
+      {PARTNERS.length > 6 && (
+        <nav className="brand-partner__jump" aria-label="Jump to a brand">
+          {PARTNERS.map((p) => <a key={p.brand} href={`#brand-${String(p.brand).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>{p.brand}</a>)}
+        </nav>
+      )}
       <div className="ay-info-partners">
         {PARTNERS.map((partner) => {
           const products = ALL_PRODUCTS.filter((p) => p.brand === partner.brand);
           return (
-            <article key={partner.brand} className={`brand-partner${partner.prelaunch ? ' brand-partner--prelaunch' : ''}`}>
+            <article key={partner.brand} id={`brand-${String(partner.brand).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className={`brand-partner${partner.prelaunch ? ' brand-partner--prelaunch' : ''}`}>
               <header className="brand-partner__head">
                 <BrandMark partner={partner} />
                 <div>
-                  <div className="brand-partner__name">
+                  <h2 className="brand-partner__name">
                     {partner.brand}
                     {partner.prelaunch && <span className="brand-partner__prelaunch-tag">Pre-launch · Waitlist</span>}
-                  </div>
+                  </h2>
                   <p className="brand-partner__blurb">{partner.blurb}</p>
                   {partner.waitlistUrl && (
                     <a

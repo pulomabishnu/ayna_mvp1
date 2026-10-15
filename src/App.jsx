@@ -159,7 +159,7 @@ const VIEW_TO_PATH = {
 // listed here fall back to the site's base title (see the title effect).
 const VIEW_TITLES = {
   quiz: 'Get matched', ecosystem: 'My Ecosystem', discovery: 'Shop', you: 'You', community: 'Community',
-  waitlist: 'Startups', recommendations: 'Your Recommendations', articles: 'Health Library', screenings: 'Screenings',
+  waitlist: 'Partner brands', recommendations: 'Your Recommendations', articles: 'Health Library', screenings: 'Screenings',
   omitted: 'Omitted Products', comparison: 'Compare Products', recalls: 'Recalls',
   'doctor-prep': 'Appointment Prep', 'profile-edit': 'Edit Profile',
   'phone-verify': 'Verify Phone', tracked: 'Tracked Products', 'delete-account': 'Delete Account',
@@ -193,8 +193,8 @@ const PATH_TO_VIEW = Object.fromEntries(
 PATH_TO_VIEW['/my-ecosystem'] = 'ecosystem';
 PATH_TO_VIEW['/terms'] = 'terms-of-use';
 PATH_TO_VIEW['/privacy'] = 'privacy-policy';
-PATH_TO_VIEW['/partners'] = 'startups';
-PATH_TO_VIEW['/partner-brands'] = 'startups';
+PATH_TO_VIEW['/partners'] = 'waitlist';
+PATH_TO_VIEW['/partner-brands'] = 'waitlist';
 
 PATH_TO_VIEW['/'] = 'welcome';
 // Old Shop URL keeps working (bookmarks, shared links); it is replaced with /shop on load.
@@ -659,7 +659,7 @@ function App() {
     const STATIC_VIEWS = [
       'privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback', 'auth-confirm',
       'welcome', 'hero', 'quiz', 'discovery', 'product', 'waitlist', 'articles', 'you', 'community',
-      'how-it-works', 'how-we-make-money', 'campus-resources', 'about', 'contact', 'startups', 'not-found', 'ecosystem',
+      'how-it-works', 'how-we-make-money', 'campus-resources', 'about', 'contact', 'waitlist', 'not-found', 'ecosystem',
     ];
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
@@ -2177,7 +2177,7 @@ function App() {
           <About onBack={handleBackFromStandalonePage} onExplore={() => handleViewDiscovery()} onStart={handleStartQuiz} />
         )}
         {currentView === 'contact' && (
-          <Contact onBack={handleBackFromStandalonePage} />
+          <Contact onBack={handleBackFromStandalonePage} user={user} />
         )}
         {currentView === 'campus-resources' && (
           <Suspense fallback={<ViewLoadingFallback />}>

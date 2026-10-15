@@ -16,7 +16,7 @@ export default function WebEcosystemChart({ groups = [], sectionId = (key) => `e
 
   return (
     <div className="eco3-chart">
-      <div className="eco3-chart__ring" role="img" aria-label={`${total} picks across ${groups.length} areas of care`}>
+      <div className="eco3-chart__ring" role="img" aria-label={`${total} products on ${groups.length} shelves`}>
         <svg viewBox="0 0 184 184" aria-hidden="true">
           <circle className="eco3-chart__track" cx="92" cy="92" r={R} />
           {groups.map((group, index) => {

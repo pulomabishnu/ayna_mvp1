@@ -10,10 +10,12 @@ const REASONS = [
   'Other',
 ];
 
-export default function Contact({ onBack }) {
+export default function Contact({ onBack, user = null }) {
+  // Signed in: name and email are already known.
+  const known = { name: user?.user_metadata?.first_name || user?.user_metadata?.full_name || '', email: user?.email || '' };
   const [form, setForm] = useState({
-    name: '',
-    email: '',
+    name: known.name,
+    email: known.email,
     reason: '',
     subject: '',
     message: '',
@@ -37,7 +39,8 @@ export default function Contact({ onBack }) {
       const response = await fetch(apiUrl('/api/contact'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        // One field fewer: the subject line is the start of the message.
+        body: JSON.stringify({ ...form, subject: form.subject || (form.message.trim().split(/\n/)[0].slice(0, 80) || form.reason) }),
       });
 
       const data = await response.json().catch(() => ({}));
@@ -48,8 +51,8 @@ export default function Contact({ onBack }) {
 
       setStatus('sent');
       setForm({
-        name: '',
-        email: '',
+        name: known.name,
+        email: known.email,
         reason: '',
         subject: '',
         message: '',
@@ -71,10 +74,10 @@ export default function Contact({ onBack }) {
       <div className="ay-info-contact">
         <aside className="ay-info-card ay-info-card--pad ay-info-card--mint ay-info-contact__tips">
           <h2 className="ay-info__h3">Pick a topic</h2>
-          <ul className="ay-info-list">
-            <li><strong>Partnerships</strong> for brand collaborations.</li>
-            <li><strong>Help &amp; Support</strong> for questions about using ayna.</li>
-            <li><strong>Press &amp; Media</strong> for interviews and stories.</li>
+          <ul className="ay-info-list ay-contact-topics">
+            {[['Partnerships', 'for brand collaborations.'], ['Help & Support', 'for questions about using ayna.'], ['Press & Media', 'for interviews and stories.']].filter(([r]) => REASONS.includes(r)).map(([r, d]) => (
+              <li key={r}><button type="button" aria-pressed={form.reason === r} onClick={() => setForm((c) => ({ ...c, reason: r }))}><strong>{r}</strong> {d}</button></li>
+            ))}
           </ul>
         </aside>
 
@@ -103,11 +106,6 @@ export default function Contact({ onBack }) {
               <option value="" disabled>Select one</option>
               {REASONS.map((reason) => <option key={reason} value={reason}>{reason}</option>)}
             </select>
-          </div>
-
-          <div className="ay-info-field">
-            <label htmlFor="contact-subject">Subject</label>
-            <input id="contact-subject" type="text" required maxLength={160} value={form.subject} onChange={update('subject')} placeholder="What is this about?" />
           </div>
 
           <div className="ay-info-field">
