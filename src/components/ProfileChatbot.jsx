@@ -61,7 +61,7 @@ function buildWelcome() {
   // what she can ask. Starter prompts render under it.
   return [{
     role: 'assistant',
-    text: 'Ask about a product, an ingredient, or what to try for something you’re dealing with. I can point you to products and, if you say so, add it to your profile. I’m not a doctor, so this isn’t medical advice.',
+    text: 'Ask about a product, an ingredient, or what to try for something you’re dealing with. I can point you to products and, if you say so, save what you tell me to your health profile. I’m not a doctor, so this isn’t medical advice.',
     starters: true,
   }];
 }
@@ -76,6 +76,13 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
   );
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
+  // After 8 seconds of waiting, say so (a silent wait looks frozen).
+  const [slow, setSlow] = useState(false);
+  useEffect(() => {
+    if (!sending) { setSlow(false); return undefined; }
+    const t = window.setTimeout(() => setSlow(true), 8000);
+    return () => window.clearTimeout(t);
+  }, [sending]);
   const [sendError, setSendError] = useState('');
   const [session, setSession] = useState(undefined); // undefined = still checking
   const [mode, setMode] = useState('chat');
@@ -176,8 +183,22 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     return () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('popstate', onScroll); window.clearInterval(t); };
   }, []);
   const TUCK_KEY = 'ayna_ask_tucked_v1';
-  const [tucked, setTucked] = useState(() => { try { return localStorage.getItem(TUCK_KEY) === '1'; } catch { return false; } });
-  const setTuck = (v) => { setTucked(v); try { localStorage.setItem(TUCK_KEY, v ? '1' : '0'); } catch { /* storage unavailable */ } };
+  // The pill no longer tucks away (the hide control was as loud as the feature).
+  // It slides out of the way while scrolling down and comes back on scroll up.
+  const tucked = false;
+  const setTuck = () => { try { localStorage.removeItem(TUCK_KEY); } catch { /* storage unavailable */ } };
+  const [scrollHidden, setScrollHidden] = useState(false);
+  useEffect(() => {
+    let last = window.scrollY;
+    const on = () => {
+      const y = window.scrollY;
+      if (Math.abs(y - last) < 12) return;
+      setScrollHidden(y > last && y > 240);
+      last = y;
+    };
+    window.addEventListener('scroll', on, { passive: true });
+    return () => window.removeEventListener('scroll', on);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -256,14 +277,15 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     setSpeaking(false);
   }, [mode, open]);
 
-  const handleSend = async (e) => {
-    e.preventDefault();
-    const msg = input.trim();
+  const handleSend = (e) => { e.preventDefault(); sendText(input.trim()); };
+  // retryOf: index of a failed-answer bubble to replace when retrying.
+  const sendText = async (msg, retryOf = null) => {
     if (!msg || sending || disabled) return;
     setInput('');
     setSendError('');
     const userMsg = { role: 'user', text: msg };
-    const messagesWithUser = [...messages, userMsg];
+    const base = retryOf != null ? messages.filter((_, j) => j !== retryOf) : messages;
+    const messagesWithUser = retryOf != null ? base : [...base, userMsg];
     setMessages(messagesWithUser);
     setSending(true);
 
@@ -315,7 +337,9 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
       } else if (err?.code === 'weekly_limit_reached') {
         setSendError("You've used your free chats for this week. They reset weekly, or upgrade for unlimited.");
       } else {
-        setSendError(err?.message || 'Something went wrong. Try again in a moment.');
+        // The failure lives in the conversation, next to the question, with a way forward.
+        const failed = [...messagesWithUser, { role: 'assistant', failed: true, question: msg, text: 'I couldn’t answer that just now.' }];
+        setMessages(failed);
       }
     } finally {
       setSending(false);
@@ -331,27 +355,24 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
           <span className="ayna-ask-tab__chev" aria-hidden="true">‹</span>
         </button>
       ) : (
-        <div className={`ayna-ask-dock${homeTop && !open ? ' is-waiting' : ''}`}>
+        <div className={`ayna-ask-dock${homeTop && !open ? ' is-waiting' : ''}${scrollHidden && !open ? ' is-scroll-hidden' : ''}`}>
           <button
             type="button"
             className="ayna-ask-launcher"
             aria-label="Ask ayna"
             aria-expanded={open}
-            onClick={() => (onRequireAuth && !user ? onRequireAuth() : setOpen(!open))}
+            onClick={() => (onRequireAuth && !user ? onRequireAuth('Ask ayna') : setOpen(!open))}
             disabled={disabled}
           >
             <span className="ayna-ask-orb" aria-hidden="true" />
             <span className="ayna-ask-launcher__label">Ask ayna</span>
           </button>
-          {!open && (
-            <button type="button" className="ayna-ask-tuck" aria-label="Move Ask ayna to the side" title="Move to the side" onClick={() => setTuck(true)}>›</button>
-          )}
         </div>
       )}
 
       {open && (
         <section className="ayna-ask-panel" aria-label="Ask ayna">
-          <header className="ayna-ask-panel__header">
+          <header className={`ayna-ask-panel__header${messages.length > 1 ? " is-compact" : ""}`}>
             <div className="ayna-ask-panel__identity">
               <span className="ayna-ask-orb ayna-ask-orb--small" aria-hidden="true" />
 
@@ -447,9 +468,15 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
                   }`}
                 >
                   {m.role === 'assistant' ? renderMarkdownLite(m.text) : m.text}
+                  {m.failed && (
+                    <div className="ayna-ask-actions">
+                      <button type="button" className="is-primary" onClick={() => sendText(m.question, i)}>Retry</button>
+                      {onNavigateToDiscovery && <button type="button" onClick={() => onNavigateToDiscovery(m.question)}>Search the shop instead</button>}
+                    </div>
+                  )}
                   {m.starters && messages.length === 1 && (
                     <div className="ayna-ask-starters">
-                      {STARTERS.map((q) => <button type="button" key={q} onClick={() => setInput(q)}>{q}</button>)}
+                      {STARTERS.map((q) => <button type="button" key={q} onClick={() => sendText(q)}>{q}</button>)}
                     </div>
                   )}
                 </div>
@@ -457,8 +484,9 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
             ))}
 
             {sending && (
-              <div className="ayna-ask-message ayna-ask-message--ayna ayna-ask-message--typing">
-                Thinking…
+              <div className="ayna-ask-message ayna-ask-message--ayna ayna-ask-message--typing" role="status" aria-label="ayna is typing">
+                <span className="ayna-typing" aria-hidden="true"><i /><i /><i /></span>
+                {slow && <span className="ayna-typing__slow">Still thinking…</span>}
               </div>
             )}
 

@@ -3051,3 +3051,18 @@ html body .app-container[data-view='quiz'] .app-nav :is(.app-nav__links, .app-na
 /* Footer: room under the legal line so the Ask ayna pill never covers it; 44px tap targets on phones. */
 html body .app-container .site-footer { padding-bottom: 88px !important; }
 @media (max-width: 720px) { html body .app-container .site-footer :is(.ay-footer-link, .ay-footer-legal__link) { display: inline-flex; align-items: center; min-height: 44px; } }
+/* Ask ayna: typing dots, out of the way while scrolling down, never over quiz/footer controls. */
+.ayna-typing { display: inline-flex; gap: 4px; align-items: center; padding: 2px 0; }
+.ayna-typing i { width: 7px; height: 7px; border-radius: 50%; background: #3e2723; animation: ayTyping 1s infinite ease-in-out; }
+.ayna-typing i:nth-child(2) { animation-delay: .15s; } .ayna-typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes ayTyping { 0%, 80%, 100% { opacity: .25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+.ayna-typing__slow { margin-left: 8px; font-size: 14px; }
+@media (prefers-reduced-motion: reduce) { .ayna-typing i { animation: none; opacity: .7; } }
+html body .app-container .ayna-ask-dock { transition: transform .25s ease, opacity .25s ease; }
+html body .app-container .ayna-ask-dock.is-scroll-hidden { transform: translateY(140%); opacity: 0; pointer-events: none; }
+/* Once the chat starts, the greeting shrinks to one line. */
+html body .app-container .ayna-ask-panel__header.is-compact { padding-top: 10px !important; padding-bottom: 10px !important; }
+html body .app-container .ayna-ask-panel__header.is-compact :is(.ayna-ask-panel__eyebrow, p) { display: none !important; }
+html body .app-container .ayna-ask-panel__header.is-compact h3 { font-size: 18px !important; margin: 0 !important; }
+html body .app-container:not([data-theme='dark']) :is(.ayna-ask-panel, .ayna-ask-panel__messages, .ayna-ask-panel__composer) { background: #ffedac !important; }
+html body .app-container:not([data-theme='dark']) .ayna-ask-message--ayna { background: transparent !important; border: 2px solid #3e2723 !important; }
