@@ -1,6 +1,6 @@
 /* ayna website, app style.
    Same palette, type and shapes as the mobile app: ink + paper + four
-   pastels, Bricolage display type, Poppins UI type, 2px ink outlines,
+   pastels, Bricolage display type, 'DM Sans' UI type, 2px ink outlines,
    rounded tiles and a small offset shadow. Loaded last, scoped to the
    desktop shell (.app-container) so the mobile app is untouched. */
 
@@ -68,7 +68,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 .app-container :is(input, textarea, select):focus { box-shadow: none !important; }
 .app-container :is(button, a):focus-visible { outline: 2px solid var(--ay-ink) !important; outline-offset: 2px; }
 
-/* Type: chunky display headings, everything else Poppins */
+/* Type: chunky display headings, everything else 'DM Sans' */
 .app-container main :is(h1, h2) { font-family: var(--ay-font-display) !important; font-weight: 800 !important; letter-spacing: -.045em !important; color: var(--ay-ink); }
 .app-container main h3 { font-family: var(--ay-font-ui) !important; letter-spacing: -.01em; color: var(--ay-ink); }
 .app-container main :is(p, li, label, span, small) { font-family: var(--ay-font-ui); }

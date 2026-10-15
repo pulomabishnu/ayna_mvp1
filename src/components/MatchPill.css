@@ -11,7 +11,7 @@
   border-radius: 999px;
   background: var(--ay-ink, #1d1a2b);
   color: var(--ay-paper, #fffcf5);
-  font-family: var(--ay-font-ui, Poppins, system-ui, sans-serif);
+  font-family: var(--ay-font-ui, 'DM Sans', system-ui, sans-serif);
   line-height: 1;
   white-space: nowrap;
   text-decoration: none;

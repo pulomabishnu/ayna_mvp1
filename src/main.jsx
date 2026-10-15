@@ -290,6 +290,15 @@ class ErrorBoundary extends React.Component {
 // check, they always show the mobile UI. The web build still gates it
 // behind the path, so the live website's normal routing is unaffected.
 const isMobilePreview = window.location.pathname === '/mobile-preview' || Capacitor.isNativePlatform();
+// The app's typefaces load only for the app; the website keeps to its two.
+if (isMobilePreview) {
+  try {
+    const l = document.createElement('link');
+    l.rel = 'stylesheet';
+    l.href = 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Poppins:wght@400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,700&family=Archivo+Black&family=DM+Mono:wght@400;500&display=swap';
+    document.head.appendChild(l);
+  } catch { /* fonts are progressive */ }
+}
 
 // Lock pinch-zoom in the native app only. The WKWebView has no browser chrome
 // to reset an accidental pinch, so once someone zooms in there is no way

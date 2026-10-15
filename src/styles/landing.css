@@ -250,7 +250,7 @@
    title over a borderless product row, lots of white space (section pad
    96-120px desktop, 64px mobile), left-aligned story sections.
    Signature devices: her photographs, the yellow marker underline, the
-   round sticker. One expressive face (Bricolage 800), Poppins for UI.
+   round sticker. One expressive face (Bricolage 800), 'DM Sans' for UI.
    ===================================================================== */
 .app-container .lx--photo { background: var(--ay-paper) !important; }
 .app-container .lx--photo .lx-display { display: inline-block; margin: 0 !important; color: var(--ay-ink) !important; font: 800 clamp(56px, 4rem + 4vw, 112px)/.95 var(--ay-font-display) !important; letter-spacing: -.05em !important; background: linear-gradient(transparent 64%, var(--ay-butter) 64% 90%, transparent 90%); }

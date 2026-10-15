@@ -1,5 +1,5 @@
 /* Landing v2: one palette (cream 60 / pink 30 / butter 10, ink for text + lines, one dark band),
-   two fonts (Fraunces display, DM Sans UI), one radius/border/shadow/motion scale. */
+   two fonts ('DM Serif Display' display, DM Sans UI), one radius/border/shadow/motion scale. */
 .lv {
   --ink: #161616; --ink-2: #4a4a4a; --paper: #fffcf5; --white: #fff;
   --pink: #f7badd; --pink-soft: #fde3ef; --butter: #f7e78e; --sky: #c9ecff;
@@ -308,7 +308,7 @@
 .lv-chips { max-width: calc(100% - 2 * var(--pad)); }
 @media (max-width: 767px) { .lv-chips { max-width: none; padding-inline: var(--pad); } .lv-today article { padding: var(--pad); } .lv-start__card { padding: calc(36px + var(--pad)) var(--pad) var(--pad); } .lv-purpose, .lv-purpose__copy { padding: var(--pad); } }
 
-/* the app shell forces Bricolage/Poppins with high specificity; the landing's two families win here */
+/* the app shell forces Bricolage/'DM Sans' with high specificity; the landing's two families win here */
 .app-container .lv, .app-container .lv :is(p, span, li, a, button, input, label, figcaption, small, strong, b, summary) { font-family: var(--ui) !important; }
 .app-container .lv :is(h1, h2, h3), .app-container .lv :is(.lv-script, .lv-rank, .lv-stamp span, .lv-reads strong, .lv-steps b, .lv-spot, .lv-why__card b, .lv-why li b, .lv-why strong) { font-family: var(--display) !important; }
 .app-container .lv :is(h1, h2) { font-weight: 700 !important; letter-spacing: -.02em !important; line-height: 1.05 !important; text-transform: none !important; }

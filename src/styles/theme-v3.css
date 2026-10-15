@@ -3130,9 +3130,7 @@ html body .app-container .ay-lib-personalize { display: inline-flex !important; 
 .ay-needs__done { margin: 0 0 8px; font: 600 15px/1.4 'DM Sans', sans-serif; color: #3e2723; }
 /* Ecosystem: current section underlined in the sticky links. */
 html body .app-container .eco3-jump a.is-on { text-decoration: underline !important; text-decoration-thickness: 3px !important; text-underline-offset: 6px; font-weight: 700 !important; }
-/* One italic serif title per page; sections below are plain DM Sans. */
-html body .app-container:is([data-view='ecosystem']) :is(#eco3-shelves-title, #eco3-needs-title, #eco3-tools-title, #ayna-wishlist h2, .eco3-extras h2) { font-family: 'DM Sans', sans-serif !important; font-weight: 700 !important; font-style: normal !important; font-size: 24px !important; letter-spacing: 0 !important; }
-html body .app-container:is([data-view='ecosystem']) :is(#eco3-shelves-title, #eco3-needs-title, #eco3-tools-title) em { font-style: normal !important; }
+/* (Ecosystem section headings follow the global serif section style now.) */
 /* Shelf card menu */
 .ay-shelf__menu { position: relative; display: inline-block; }
 .ay-shelf__menu > summary { list-style: none; display: grid; place-items: center; width: 36px; height: 36px; border: 2px solid #3e2723; border-radius: 50%; background: #ffedac; color: #3e2723; font: 700 18px/1 'DM Sans', sans-serif; cursor: pointer; }
@@ -3428,7 +3426,7 @@ html body .app-container .brand-partner__pname { display: block; color: #3e2723;
 html body .app-container .brand-partner__pname:hover { text-decoration: underline; }
 html body .app-container a.discovery-card__join.brand-partner__view { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
 /* One page-title size across the site (64px on desktop, scaling down on phones). The landing's photo hero and product names keep their own. */
-html body .app-container main h1:not(#lv-hero-title):not(.pdp-head__name):not(.sr-only) { font-size: clamp(40px, 1.6rem + 2.8vw, 64px) !important; line-height: 1.05 !important; }
+
 /* One gutter: Community lines up with Shop and Library at the page edge. */
 @media (min-width: 1024px) { html body .app-container .wc.wc3 { max-width: none !important; margin-inline: 0 !important; } }
 /* Shop grid: gentler ±1° tilt and 4px more room between cards so tilted corners never touch. */
@@ -3537,3 +3535,45 @@ html body .app-container .ay-match__big b { font: 800 26px/1 'DM Sans', system-u
 html body .app-container .ay-match__big.is-none { background: transparent; color: #3e2723; border: 2px solid #3e2723; font-weight: 700; }
 html body .app-container[data-theme='brand-dark'] .ay-match__big.is-none { color: #ffedac; border-color: #ffedac; }
 html body .app-container .ay-match__links :is(a, button) { display: inline-flex; align-items: center; min-height: 44px; }
+/* Phone tap targets on product pages: source links and footnotes reach 44px of height. */
+@media (max-width: 767px) {
+  html body .app-container .ay-gl-srclist a, html body .app-container .ay-trust__link, html body .app-container .ay-retailers a { display: inline-flex; align-items: center; min-height: 44px; }
+  html body .app-container .ay-fn { display: inline-grid; place-items: center; min-width: 24px; min-height: 24px; }
+}
+
+/* ===== Type system (pass 5): two typefaces, eight styles, no faked bold, nothing under 12px. =====
+   Display 72/44 · Page title 48/34 · Section 32/26 · Subsection 24/22 · Body large 18 · Body 16 · UI 14 · Caption 12 */
+:root {
+  --ay-t-display: clamp(44px, 1.6rem + 3.6vw, 72px);
+  --ay-t-title: clamp(34px, 1.5rem + 1.8vw, 48px);
+  --ay-t-section: clamp(26px, 1rem + 1.2vw, 32px);
+  --ay-t-sub: clamp(22px, 1.1rem + .5vw, 24px);
+  --ay-t-body-lg: 18px; --ay-t-body: 16px; --ay-t-ui: 14px; --ay-t-caption: 12px;
+}
+/* DM Serif Display has one weight: the browser must never smear a fake bold. */
+html { font-synthesis: style; }
+html body .app-container :is(h1, h2, h3, h4) { font-synthesis: style; }
+/* Marketing pages get the display size; app pages the page-title size. */
+html body .app-container main :is(#lv-hero-title, .ay-info__title, .ay-info h1) { font-size: var(--ay-t-display) !important; line-height: 1.02 !important; font-weight: 400 !important; }
+html body .app-container main h1:not(#lv-hero-title):not(.ay-info__title):not(.sr-only):not(.pdp-head__name) { font-size: var(--ay-t-title) !important; line-height: 1.05 !important; font-weight: 400 !important; }
+html body .app-container main .pdp-head__name { font-size: var(--ay-t-title) !important; font-weight: 400 !important; }
+/* Section headings are always the serif, at one size. */
+html body .app-container main :is(.lv-head h2, .ay-story > h2, .eco3-sechead h2, .eco3-shelves__title, .wc-h2, .ay-wiki-sec > h2, .ay-info-section > h2, .ay-info__section-head h2, .ay-info__h2, .cr-h2, .ay-pdp-sechead h2, .ay-compare h2, .lx-h2, .lx-powder__head h2, .ay-web-lib-cat > h2, #eco3-shelves-title, #eco3-needs-title, #eco3-tools-title, .lv-partners__h, .wyou-card-head h2, .ay-badges2__head h2) { font-family: 'DM Serif Display', Georgia, serif !important; font-weight: 400 !important; font-size: var(--ay-t-section) !important; line-height: 1.12 !important; letter-spacing: -.005em !important; }
+html body .app-container main :is(.wc-mod h2, .wc-empty h2, .ay-shelf__name, .ay-trust__card h3, .ay-ask__head h2, .lv-reads2__row strong) { font-family: 'DM Serif Display', Georgia, serif !important; font-weight: 400 !important; font-size: var(--ay-t-sub) !important; line-height: 1.15 !important; }
+/* Labels: sentence case, never spaced-out capitals. */
+html body .app-container main :is(.ay3-kicker, .ay-gl-label, .eco3-needs__kicker, .ay-footer-col__title, .ayna-discover-card__category, .pdp-head__eyebrow, .lv-script, .ay-lib-article__eyebrow, .ay-trust__card h4) { text-transform: none !important; letter-spacing: 0 !important; }
+html body .app-container .ay-footer-col__title { text-transform: none !important; letter-spacing: 0 !important; font: 700 14px/1.3 'DM Sans', system-ui, sans-serif !important; color: #3e2723; }
+html body .app-container[data-theme='brand-dark'] .ay-footer-col__title { color: #ffedac !important; }
+html body .app-container .ayna-discover-card__category { font-size: 12px !important; font-weight: 700 !important; }
+/* The logo is one mark in both places. */
+html body .app-container .site-footer__logo, html body .app-container .ay-footer__logo { font-family: 'Bricolage Grotesque', 'DM Sans', sans-serif !important; font-weight: 800 !important; letter-spacing: -.04em !important; }
+html body .app-container.app-container.app-container main .pdp-head .pdp-head__name.pdp-head__name { font-size: var(--ay-t-title) !important; }
+html body .app-container.app-container.app-container :is(.ayna-discover-card__category, .ayna-browse-card__partner, .ayna-browse-card__eligibility, .lv-fav, .ay-lib-new, .ay-lib-why, .wc-tag, .brand-partner__prelaunch-tag, .lx-post__meta, .ay-match__big, .ay3-libside__title, .cr-case__tag, .ay-buy__facts dt, .ay-compare small) { font-size: max(12px, 1em) !important; text-transform: none !important; letter-spacing: 0 !important; }
+html body .app-container.app-container.app-container :is(.ayna-discover-card__category, .ayna-browse-card__partner, .ayna-browse-card__eligibility, .lv-fav, .ay-lib-new, .ay-lib-why, .wc-tag, .brand-partner__prelaunch-tag) { font-size: 12px !important; }
+html body .app-container.app-container.app-container main :is(h4, dt, small, b, li) { text-transform: none !important; }
+html body .app-container.app-container main :is(#eco3-shelves-title, #eco3-needs-title, #eco3-tools-title, .eco-saved__head h2, #ayna-wishlist h2, .eco3-extras h2).eco3-shelves__title, html body .app-container.app-container main :is(.eco-saved__head h2, #ayna-wishlist h2, .eco3-extras h2) { font-size: var(--ay-t-section) !important; font-family: 'DM Serif Display', Georgia, serif !important; font-weight: 400 !important; }
+/* Italic one-word swaps belong to marketing headlines only (landing, About, How it works, Partners). */
+html body .app-container main :is(h1, h2) em { font-style: normal !important; color: inherit !important; }
+html body .app-container main :is(.lv, .ay-info) :is(h1, h2) em { font-style: italic !important; }
+html body .app-container main .lv :is(h1, h2) em { color: #f7badd !important; }
+html body .app-container main .lv .lv-band :is(h1, h2) em, html body .app-container main .lv .lv-stage :is(h1, h2) em { color: inherit !important; }

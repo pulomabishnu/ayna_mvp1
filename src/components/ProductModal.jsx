@@ -757,7 +757,7 @@ export default function ProductModal({
             className={`pdp-community__star${star <= (hoverRating || 0) ? ' is-on' : ''}`}
             onMouseEnter={() => setHoverRating(star)}
             onMouseLeave={() => setHoverRating(0)}
-            onClick={() => onRate(product, star)}
+            onClick={() => { onRate(product, star); if (onCommunityAction) onCommunityAction('review'); }}
             aria-label={`Rate ${star} star${star === 1 ? '' : 's'}`}
           >
             ★
