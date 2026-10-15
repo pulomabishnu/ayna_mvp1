@@ -14,6 +14,12 @@ describe('badges', () => {
     expect(computeBadges({ eco: { filled: 2, total: 3 } }).find((x) => x.key === 'ecosystem').earned).toBe(false);
     expect(computeBadges({ eco: { filled: 0, total: 0 } }).find((x) => x.key === 'ecosystem').earned).toBe(false);
   });
+  it('friends badge counts friends who joined, not whether they posted', () => {
+    const f = (r) => computeBadges({ referrals: r }).find((x) => x.key === 'friends');
+    expect(f({ joined: 3, qualified: 0 }).earned).toBe(true);
+    expect(f({ joined: 2, qualified: 2 }).earned).toBe(false);
+    expect(f({ joined: 1, qualified: 0 }).progress).toEqual({ value: 1, goal: 3 });
+  });
   it('locked app badge tells her how to earn it, no purchase badge', () => {
     const app = computeBadges().find((x) => x.key === 'app');
     expect(app.hint).toBe('Download the ayna app and sign in');

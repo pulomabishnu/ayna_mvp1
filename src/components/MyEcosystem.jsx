@@ -1,6 +1,7 @@
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import NeedsStrip from './v3/NeedsStrip.jsx';
 import ShelfRows from './v3/ShelfRows.jsx';
+import AddProductDialog from './v3/AddProductDialog.jsx';
 
 import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import SubscriptionPaywallModal from './SubscriptionPaywallModal';
@@ -955,6 +956,9 @@ export default function MyEcosystem({
     const [showAddModal, setShowAddModal] = useState(false);
     useEscapeToClose(showAddModal, () => setShowAddModal(false));
     const [showMoreTools, setShowMoreTools] = useState(false);
+    // Find care opens in place as a side sheet, instead of jumping five screens down.
+    const [showCareSheet, setShowCareSheet] = useState(false);
+    useEscapeToClose(showCareSheet, () => setShowCareSheet(false));
     const careNearYouDetailsRef = useRef(null);
     const [showSyncPaywall, setShowSyncPaywall] = useState(false);
     const [showResaPartnership, setShowResaPartnership] = useState(false);
@@ -2092,11 +2096,7 @@ export default function MyEcosystem({
                         lines={careSummaryLines}
                         prominent={Boolean(careFlags?.careProminent)}
                         onFindCare={() => {
-                            const el = careNearYouDetailsRef.current;
-                            if (el) {
-                                el.open = true;
-                                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            }
+                            setShowCareSheet(true);
                         }}
                     />
                 )}
@@ -2225,6 +2225,25 @@ export default function MyEcosystem({
                 {savedSlot && <div className="eco3-extras__saved">{savedSlot}</div>}
                 </div>
 
+                {showCareSheet && (
+                    <div className="eco2-sheet-overlay eco3-sheet-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowCareSheet(false); }}>
+                        <div className="eco2-sheet eco3-sheet eco3-caresheet" role="dialog" aria-modal="true" aria-labelledby="eco3-caresheet-title">
+                            <button type="button" className="eco2-sheet__close" onClick={() => setShowCareSheet(false)} aria-label="Close" autoFocus>✕</button>
+                            <p className="eco2-sidebar__eyebrow">Find care</p>
+                            <h2 id="eco3-caresheet-title" className="eco2-sheet__title">Care near you.</h2>
+                            <CareNearYouPanel
+                                compact
+                                quizResults={careQuizResults}
+                                healthProfile={healthProfile}
+                                userZipCode={userZipCode}
+                                onZipCodeChange={onZipCodeChange}
+                                onOpenProduct={(p) => { setShowCareSheet(false); onOpenProduct?.(p); }}
+                                onEditHealthProfile={onEditHealthProfile}
+                            />
+                        </div>
+                    </div>
+                )}
+
                 {showMoreTools && (
                     <div className="eco2-sheet-overlay eco3-sheet-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowMoreTools(false); }}>
                         <div className="eco2-sheet eco3-sheet" role="dialog" aria-modal="true" aria-labelledby="eco3-sheet-title">
@@ -2236,11 +2255,7 @@ export default function MyEcosystem({
                                 className="eco2-tool-row"
                                 onClick={() => {
                                     setShowMoreTools(false);
-                                    const el = careNearYouDetailsRef.current;
-                                    if (el) {
-                                        el.open = true;
-                                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                    }
+                                    setShowCareSheet(true);
                                 }}
                             >
                                 Find a clinician
@@ -2256,64 +2271,14 @@ export default function MyEcosystem({
             </section>
 
             {showAddModal && (
-                <div style={{
-                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                    backgroundColor: 'rgba(43, 42, 41, 0.4)', backdropFilter: 'blur(4px)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    zIndex: 1000, padding: '1rem'
-                }} onClick={() => setShowAddModal(false)} className="animate-fade-in-up">
-                    <div style={{
-                        backgroundColor: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)',
-                        width: '100%', maxWidth: '560px', maxHeight: '80vh', overflowY: 'auto',
-                        boxShadow: 'var(--shadow-lg)', padding: '2rem'
-                    }} onClick={e => e.stopPropagation()}>
-                        <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Add to Your Ecosystem</h3>
-                        <input
-                            type="text"
-                            placeholder="Search by name or category..."
-                            value={searchTerm}
-                            onChange={e => setSearchTerm(e.target.value)}
-                            style={{
-                                width: '100%', padding: '0.75rem 1rem', fontSize: '1rem',
-                                border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)',
-                                marginBottom: '1rem', fontFamily: 'var(--font-body)', outline: 'none'
-                            }}
-                        />
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                            {filteredProducts.map(product => {
-                                const isAdded = !!myProducts[product.id];
-                                return (
-                                    <button
-                                        key={product.id}
-                                        style={{
-                                            display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem',
-                                            background: isAdded ? 'var(--color-secondary-fade)' : 'transparent',
-                                            border: `1px solid ${isAdded ? 'var(--color-primary)' : 'var(--color-border)'}`,
-                                            borderRadius: 'var(--radius-md)', cursor: 'pointer', textAlign: 'left', width: '100%'
-                                        }}
-                                        onClick={() => onToggleProduct(product)}
-                                    >
-                                        <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-sm)', overflow: 'hidden', flexShrink: 0 }}>
-                                            <ProductTileImage
-                                                product={product}
-                                                alt={product.name}
-                                                imgStyle={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                                letterNode={<ProductImageFallback compact />}
-                                            />
-                                        </div>
-                                        <div style={{ flexGrow: 1, minWidth: 0 }}>
-                                            <div style={{ fontSize: '0.9rem', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>{product.name}{product.outOfBusiness && <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>}</div>
-                                            <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{product.category} · {product.type}</div>
-                                        </div>
-                                        <span style={{ fontSize: '0.8rem', fontWeight: '600', color: isAdded ? 'var(--color-primary)' : 'var(--color-text-muted)' }}>
-                                            {isAdded ? '✓ Added' : '+ Add'}
-                                        </span>
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    </div>
-                </div>
+                <AddProductDialog
+                    products={filteredProducts}
+                    searchTerm={searchTerm}
+                    onSearch={setSearchTerm}
+                    myProducts={myProducts}
+                    onToggleProduct={onToggleProduct}
+                    onClose={() => setShowAddModal(false)}
+                />
             )}
         {showSyncPaywall && (
             <SubscriptionPaywallModal

@@ -11,8 +11,9 @@
  *                      shelves the Ecosystem page draws). Progress = filled / needs.
  *  3. First post       She has posted at least once in Community.
  *  4. Brought 3 friends  Three people joined through her invite link
- *                      (?ref=<code>), created an account, and posted at least
- *                      once in Community. Needs the referrals migration
+ *                      (?ref=<code>) and created an account. Joining is what
+ *                      counts, never posting: a health community shouldn't
+ *                      reward getting friends to disclose. Needs the referrals migration
  *                      (supabase/migrations/20261013150000_referrals.sql);
  *                      until it is applied the badge shows as locked, 0/3.
  */
@@ -174,11 +175,11 @@ export function ecosystemCompletion(myProducts = [], quizAnswers = null, matchOp
  */
 export function computeBadges({ usedApp = false, eco = { filled: 0, total: 0 }, hasPosted = null, referrals = null } = {}) {
   const ecoDone = eco.total > 0 && eco.filled >= eco.total;
-  const friends = Math.min(FRIENDS_GOAL, referrals?.qualified || 0);
+  const friends = Math.min(FRIENDS_GOAL, referrals?.joined || 0);
   return [
     { key: 'app', label: 'Got the app', earned: Boolean(usedApp), progress: null, hint: 'Download the ayna app and sign in' },
     { key: 'ecosystem', label: 'Full ecosystem', earned: ecoDone, progress: eco.total ? { value: Math.min(eco.filled, eco.total), goal: eco.total } : null, hint: eco.total ? 'One pick for every need' : 'Take the quiz' },
     { key: 'post', label: 'First post', earned: hasPosted === true, progress: null, hint: 'Post in Community' },
-    { key: 'friends', label: 'Brought 3 friends', earned: friends >= FRIENDS_GOAL, progress: { value: friends, goal: FRIENDS_GOAL }, hint: 'Friends who join and post' },
+    { key: 'friends', label: 'Brought 3 friends', earned: friends >= FRIENDS_GOAL, progress: { value: friends, goal: FRIENDS_GOAL }, hint: 'Friends who join with your link' },
   ];
 }

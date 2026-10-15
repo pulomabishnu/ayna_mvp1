@@ -35,7 +35,10 @@ function useBadges({ userId, myProducts, quizAnswers, matchOpts, inApp }) {
 }
 
 export default function BadgesPanel({ userId, myProducts, quizAnswers, matchOpts, variant = 'app' }) {
-  const { badges, inviteLink } = useBadges({ userId, myProducts, quizAnswers, matchOpts, inApp: variant === 'app' });
+  const { badges: all, inviteLink } = useBadges({ userId, myProducts, quizAnswers, matchOpts, inApp: variant === 'app' });
+  // On the website there is no store link to send her to, so "Got the app"
+  // only shows once it's earned (it shouldn't reward leaving the site).
+  const badges = variant === 'web' ? all.filter((b) => b.key !== 'app' || b.earned) : all;
   const [copied, setCopied] = useState(false);
   if (!userId) return null;
   const earned = badges.filter((b) => b.earned).length;
@@ -64,7 +67,7 @@ export default function BadgesPanel({ userId, myProducts, quizAnswers, matchOpts
               {!b.earned && b.progress && (
                 <span className="ay-badges2__progress" aria-label={`${b.progress.value} of ${b.progress.goal}`}>
                   <i aria-hidden="true"><b style={{ width: `${(b.progress.value / b.progress.goal) * 100}%` }} /></i>
-                  <span aria-hidden="true">{b.progress.value}/{b.progress.goal}</span>
+                  <span aria-hidden="true">{b.progress.value}/{b.progress.goal}{b.key === 'ecosystem' ? ' needs' : ''}</span>
                 </span>
               )}
             </span>

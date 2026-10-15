@@ -51,9 +51,26 @@ export function findCatalogRecord(product, map = catalogMap()) {
  * catalog. Products stamped catalogVerified by the server are kept even if
  * the DB-backed part of the catalog hasn't loaded in this tab yet.
  */
+/**
+ * Something the user added herself because it isn't in the catalog yet. It
+ * carries only what she typed (a name and a shelf), never product facts, so
+ * it is safe to keep: id must be ours ("user-…") and the flag explicit.
+ */
+export function toUserAddedProduct(product) {
+  if (!product || product.userAdded !== true) return null;
+  const id = String(product.id || '');
+  const name = String(product.name || '').trim().slice(0, 120);
+  if (!/^user-[a-z0-9-]{1,80}$/.test(id) || !name) return null;
+  const out = { id, name, category: String(product.category || '').slice(0, 40), type: 'user', userAdded: true };
+  if (product.addedAt) out.addedAt = product.addedAt;
+  return out;
+}
+
 export function toCatalogProduct(product, map = catalogMap()) {
   const record = findCatalogRecord(product, map);
   if (!record) {
+    const mine = toUserAddedProduct(product);
+    if (mine) return mine;
     if (product?.catalogVerified === true && product?.catalogId && product?.name) {
       const { llmGenerated: _drop, ...rest } = product;
       return applyCatalogCorrections(rest);

@@ -40,4 +40,10 @@ describe('catalogIntegrity — nothing invented reaches the UI', () => {
     expect(recs[0].topProduct.id).toBe('p-rael-organic-pad');
     expect(recs[0].tiers[0].alternatives.map((a) => a.id)).toEqual(['p-lola-pad']);
   });
+  it('keeps a product the user added herself, with only what she typed', () => {
+    const mine = { id: 'user-advil-liqui-gels-k3', name: 'Advil Liqui-Gels', category: 'cramp-relief', userAdded: true, price: '$1', url: 'https://x.test' };
+    expect(toCatalogProduct(mine)).toEqual({ id: 'user-advil-liqui-gels-k3', name: 'Advil Liqui-Gels', category: 'cramp-relief', type: 'user', userAdded: true });
+    expect(toCatalogProduct({ ...mine, userAdded: undefined })).toBeNull();
+    expect(toCatalogProduct({ ...mine, id: 'advil' })).toBeNull();
+  });
 });

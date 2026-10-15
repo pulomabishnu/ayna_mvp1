@@ -50,6 +50,9 @@ export default function ShelfRows({ groups, onOpenProduct, onToggleProduct, onAd
   const [editing, setEditing] = useState(null);
   const [painting, setPainting] = useState(null);
   const [dragOver, setDragOver] = useState(null);
+  // One-line tip until she dismisses it or arranges something herself.
+  const [hintSeen, setHintSeen] = useState(() => { try { return localStorage.getItem('ayna_shelf_hint_seen') === '1'; } catch { return false; } });
+  const hideHint = () => { setHintSeen(true); try { localStorage.setItem('ayna_shelf_hint_seen', '1'); } catch { /* ignore */ } };
   const drag = useRef(null);
   const update = (fn) => setCustom((prev) => { const next = fn(prev); saveCustom(next); return next; });
   const arranged = useMemo(() => {
@@ -80,12 +83,19 @@ export default function ShelfRows({ groups, onOpenProduct, onToggleProduct, onAd
     return { ...c, order: cur };
   });
   const isCustomised = Boolean(Object.keys(custom.names || {}).length || Object.keys(custom.paints || {}).length || Object.keys(custom.moves || {}).length || (custom.order || []).length);
+  const showHint = !hintSeen && !isCustomised;
 
   return (
     <div className="ay-shelves">
-      {isCustomised && (
+      {(isCustomised || (showHint && arranged.length > 1)) && (
         <div className="ay-shelves__bar">
-          <button type="button" className="ay-shelves__reset" onClick={() => update(() => ({}))}>Reset layout</button>
+          {showHint && arranged.length > 1 && (
+            <p className="ay-shelves__hint">
+              <span aria-hidden="true">⋮⋮</span> Drag shelves to reorder. Use ⋯ on a product to move it.
+              <button type="button" className="ay-shelves__hintx" onClick={hideHint} aria-label="Dismiss tip">×</button>
+            </p>
+          )}
+          {isCustomised && <button type="button" className="ay-shelves__reset" onClick={() => update(() => ({}))}>Reset layout</button>}
         </div>
       )}
       {arranged.map((group) => {

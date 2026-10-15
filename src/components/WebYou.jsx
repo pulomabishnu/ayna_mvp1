@@ -8,6 +8,7 @@ import { getProfileCompletionPct } from '../mobile/utils/profileCompleteness.js'
 import { ROUTINE_BUCKETS, ROUTINE_BUCKET_LABELS, useRoutine } from '../mobile/hooks/useRoutine.js';
 import { fetchDataExport } from '../mobile/utils/dataExportApi.js';
 import { AnalyticsToggle } from './SiteFooter';
+import { findSharedActives } from '../utils/sharedActives';
 import ShopperCard from '../mobile/components/ShopperCard.jsx';
 import BadgesPanel from './BadgesPanel';
 import './WebYou.css';
@@ -33,7 +34,7 @@ const CATEGORY_LABEL = (c) => String(c || '').replace(/-/g, ' ').replace(/^\w/, 
 // Routine is for things you use up (pads, supplements...). Telehealth, apps and other services are left out.
 const isConsumable = (p) => {
   const full = PRODUCT_BY_ID.get(p?.id) || p || {};
-  return (full.type || p?.type) === 'physical' && full.category !== 'telehealth';
+  return ((full.type || p?.type) === 'physical' || p?.userAdded === true) && full.category !== 'telehealth';
 };
 
 /** Category counts from the Ecosystem only, so they always match the Ecosystem number. */
@@ -48,18 +49,24 @@ function ecosystemInsights(products) {
   return { top, missing };
 }
 
-function Routine({ products }) {
+function Routine({ products, total }) {
   // Only things you use up get a routine slot (services like telehealth are left out).
   const [bucket, setBucket] = useState('morning');
   const { routineMap, setProductBucket, removeFromRoutine } = useRoutine();
   const inBucket = products.filter((p) => routineMap[p.id] === bucket);
   const others = products.filter((p) => routineMap[p.id] !== bucket);
+  const placed = products.filter((p) => routineMap[p.id]).length;
+  const services = total - products.length;
+  // Overlaps among the things she places in her routine (e.g. two chasteberry products).
+  const shared = findSharedActives(products.filter((p) => routineMap[p.id]), 3);
   return <section className="wyou-card">
-    <div className="wyou-card-head"><h2>Routine</h2><span>{products.filter((p) => routineMap[p.id]).length}/{products.length} sorted</span></div>
+    <div className="wyou-card-head"><h2>Routine</h2><span>{placed} of {total} placed</span></div>
+    {services > 0 && <p className="wyou-muted wyou-routine-note">{services === 1 ? '1 app or service in your ecosystem isn’t' : `${services} apps and services in your ecosystem aren’t`} part of a routine.</p>}
     <div className="wyou-tabs" role="tablist">{ROUTINE_BUCKETS.map((b) => <button type="button" key={b} role="tab" aria-selected={bucket === b} className={bucket === b ? 'is-on' : ''} onClick={() => setBucket(b)}>{ROUTINE_BUCKET_LABELS[b]}</button>)}</div>
     {inBucket.length ? <ul className="wyou-list">{inBucket.map((p) => <li key={p.id}><span>{p.name}</span><button type="button" onClick={() => removeFromRoutine(p.id)}>Remove</button></li>)}</ul>
       : <p className="wyou-muted">Nothing in {ROUTINE_BUCKET_LABELS[bucket].toLowerCase()} yet.</p>}
-    {others.length > 0 && <div className="wyou-add"><small>Add from your ecosystem</small><div>{others.slice(0, 12).map((p) => <button type="button" key={p.id} onClick={() => setProductBucket(p.id, bucket)}>+ {p.name}</button>)}</div></div>}
+    {shared.length > 0 && <div className="wyou-shared" role="note"><strong>Same active ingredient</strong>{shared.map(([a, names]) => <p key={a}><span className="wyou-shared__a">{a}</span> is in {names.join(' and ')}. Worth checking you need both.</p>)}</div>}
+    {others.length > 0 && <div className="wyou-add"><small>Add from your ecosystem</small><div>{others.map((p) => <button type="button" key={p.id} onClick={() => setProductBucket(p.id, bucket)}>+ {p.name}</button>)}</div></div>}
   </section>;
 }
 
@@ -186,7 +193,7 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
         </nav>
 
 
-        {consumables.length > 0 && <Routine products={consumables} />}
+        {consumables.length > 0 && <Routine products={consumables} total={products.length} />}
 
         {(affinity.length > 0 || top.length > 0) && <section className="wyou-card">
           <div className="wyou-card-head"><h2>What you’re into</h2>{top.length > 0 && <span>From your Ecosystem</span>}</div>

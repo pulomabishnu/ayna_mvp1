@@ -31,6 +31,7 @@ const FOCUS_TO_SYMPTOM = {
 const STEP_MAIN = {
   id: 'howIsRoutine',
   question: "How's your current routine working?",
+  subtitle: 'If something’s off, we’ll adjust your picks.',
   type: 'single',
   options: [
     'Great. No changes',
@@ -83,7 +84,6 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
     ...(showFocusStep && focusIncludesScreening ? [STEP_SCREENING] : []),
   ];
   const step = steps[stepIndex];
-  const progress = steps.length ? ((stepIndex + 1) / steps.length) * 100 : 100;
 
   const finish = (finalAnswers) => {
     const checkinPayload = {
@@ -184,8 +184,8 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
         }}
         onClick={onClose}
       >
-        <div className="card animate-fade-in-up" style={{ maxWidth: '520px', width: '100%', padding: '2rem' }} onClick={e => e.stopPropagation()}>
-          <h2 style={{ fontSize: '1.5rem', marginBottom: '0.75rem' }}>{title}</h2>
+        <div className="card animate-fade-in-up ay-checkin" role="dialog" aria-modal="true" aria-labelledby="ay-checkin-done" style={{ maxWidth: '520px', width: '100%', padding: '2rem' }} onClick={e => e.stopPropagation()}>
+          <h2 id="ay-checkin-done" style={{ fontSize: '1.5rem', marginBottom: '0.75rem' }}>{title}</h2>
           <p style={{ color: 'var(--color-text-muted)', marginBottom: '1rem' }}>{message}</p>
           {tips.length > 0 && (
             <ul style={{ paddingLeft: '1.25rem', marginBottom: '1.5rem', fontSize: '0.95rem', lineHeight: 1.6 }}>
@@ -207,16 +207,15 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
       }}
       onClick={onClose}
     >
-      <div className="card animate-fade-in-up" style={{ maxWidth: '520px', width: '100%', maxHeight: 'min(90vh, 600px)', display: 'flex', flexDirection: 'column', padding: '2rem' }} onClick={e => e.stopPropagation()}>
+      <div className="card animate-fade-in-up ay-checkin" role="dialog" aria-modal="true" aria-labelledby="ay-checkin-q" style={{ position: 'relative', maxWidth: '520px', width: '100%', maxHeight: 'min(90vh, 600px)', display: 'flex', flexDirection: 'column', padding: '2rem' }} onClick={e => e.stopPropagation()}>
+        <button type="button" className="ay-checkin__close" onClick={onClose} aria-label="Close" autoFocus>×</button>
         <div style={{ flexShrink: 0 }}>
-          <div style={{ width: '100%', background: 'var(--color-border)', height: '4px', borderRadius: 'var(--radius-pill)', marginBottom: '0.75rem', overflow: 'hidden' }}>
-            <div style={{ width: `${progress}%`, height: '100%', background: 'var(--color-primary)', transition: 'width 0.3s ease' }} />
-          </div>
-          <p style={{ textAlign: 'right', fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '1.25rem' }}>
-            {stepIndex + 1} of {steps.length}
-          </p>
+          {/* A one-question check-in doesn't need wizard chrome; later steps just say where she is. */}
+          {steps.length > 1 && stepIndex > 0 && (
+            <p style={{ fontSize: '0.8rem', marginBottom: '0.75rem' }}>Step {stepIndex + 1} of {steps.length}</p>
+          )}
 
-          <h2 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', textAlign: 'center' }}>{step.question}</h2>
+          <h2 id="ay-checkin-q" style={{ fontSize: '1.35rem', margin: '0 2.5rem 0.5rem', textAlign: 'center' }}>{step.question}</h2>
           {step.subtitle && <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1.25rem' }}>{step.subtitle}</p>}
         </div>
 

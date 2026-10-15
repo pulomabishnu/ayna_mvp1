@@ -37,26 +37,32 @@ export default function ProductCard({
   if (!product) return null;
   const categoryLabel = CATEGORY_LABELS[product.category] || (product.category ? String(product.category).replace(/-/g, ' ') : 'Product');
   const shownBrand = brandOf(product) || product.brand || '';
-  const rawPrice = formatPrice(product);
+  // Something she added herself (not in the catalog yet): no page to open
+  // and no facts to show, so the card says whose it is and stays put.
+  const isMine = product.userAdded === true;
+  const rawPrice = isMine ? { main: 'Added by you', sub: '' } : formatPrice(product);
   // Long "check the retailer" notes ran past the card edge; say it short.
   const price = /check (the )?retailer|varies by retailer/i.test(String(rawPrice.main || '')) ? { main: 'Price at retailer', sub: '' } : rawPrice;
+  const Link = isMine ? 'div' : 'a';
   return (
     <article className={`ayna-discover-card ayna-browse-card${inEcosystem ? ' is-in-eco' : ''} ${className}`.trim()} style={style}>
-      <a
-        className="ayna-browse-card__link"
-        href={productHref(product)}
-        onClick={(e) => {
-          if (!isPlainLeftClick(e)) return;
-          e.preventDefault();
-          onOpen?.(product);
-        }}
+      <Link
+        className={`ayna-browse-card__link${isMine ? ' is-static' : ''}`}
+        {...(isMine ? {} : {
+          href: productHref(product),
+          onClick: (e) => {
+            if (!isPlainLeftClick(e)) return;
+            e.preventDefault();
+            onOpen?.(product);
+          },
+        })}
       >
         <div className="ayna-discover-card__tile">
           {tile || <ProductTileImage product={product} alt={product.name} letterNode={<ProductImageFallback />} />}
         </div>
         <div className="ayna-discover-card__body">
           <div className="ayna-browse-card__labels">
-            <span className="ayna-discover-card__category">{shownBrand || categoryLabel}</span>
+            <span className="ayna-discover-card__category">{isMine ? categoryLabel : (shownBrand || categoryLabel)}</span>
             {labels}
           </div>
           {/* Brand sits in the eyebrow, so a leading brand is trimmed from
@@ -84,7 +90,7 @@ export default function ProductCard({
             );
           })()}
         </div>
-      </a>
+      </Link>
       {onToggleSaved && (
         <button
           type="button"

@@ -1,15 +1,7 @@
 import React from 'react';
 import GlossaryTerm from './GlossaryTerm';
 import { getCareProfile } from '../utils/careProfile';
-
-// Filler words that appear in many labels and say nothing about overlap.
-const NOT_ACTIVE = /^(water|aqua|glycerin|cellulose|gelatin|silica|rice flour|magnesium stearate|cotton|organic cotton|sugar|natural flavors?|citric acid|pectin|cane sugar|tapioca|vegetable cellulose|microcrystalline cellulose|stearic acid|not listed.*)$/i;
-function actives(p) {
-  return String(p.ingredients || '').split(/[,;]|\band\b/i)
-    .map((t) => t.replace(/\([^)]*\)/g, '').replace(/\d+(\.\d+)?\s*(mg|mcg|g|iu|%)/gi, '').trim().toLowerCase())
-    .filter((t) => t.length > 2 && t.length < 40 && !NOT_ACTIVE.test(t));
-}
-const isService = (p) => p?.type === 'digital' || /telehealth|tracker|mental-health/.test(String(p?.category || ''));
+import { findSharedActives, isService } from '../utils/sharedActives';
 
 export default function DoctorPrep({ checkinData = null, myProducts = {}, quizResults = {}, chatHistory = [], onBack, onOpenCheckin = null }) {
     const products = Object.values(myProducts || {}).filter(Boolean);
@@ -18,11 +10,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
     const age = care.age || 'Not given';
     const list = (xs, none = 'None reported') => (xs.length ? xs.join(', ') : none);
     // Two or more products sharing an active ingredient (e.g. two with chasteberry).
-    const shared = (() => {
-        const seen = new Map();
-        products.filter((p) => !isService(p)).forEach((p) => new Set(actives(p)).forEach((a) => seen.set(a, [...(seen.get(a) || []), p.name])));
-        return [...seen.entries()].filter(([, names]) => names.length > 1).slice(0, 4);
-    })();
+    const shared = findSharedActives(products);
     // Questions drawn from what she told us, not generic.
     const questions = [
         ...care.symptoms.slice(0, 2).map((s) => `What could be behind my ${s.toLowerCase()}, and is anything worth checking?`),
@@ -61,13 +49,13 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>A one-page summary of what you told ayna and the products you use. Bring it to your <GlossaryTerm term="OB/GYN">OB-GYN</GlossaryTerm> or primary care visit.</p>
             </div>
 
-            <div className="card" style={{ padding: '3rem', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-md)' }}>
+            <div className="card dp-summary" style={{ padding: '3rem', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-md)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '2.5rem', borderBottom: '2px solid var(--color-bg)', pb: '1.5rem' }}>
                     <div>
                         <h1 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '0.25rem', color: 'var(--color-primary)' }}>ayna Health Summary</h1>
                         <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Generated on {new Date().toLocaleDateString()}</p>
                     </div>
-                    <button className="btn btn-outline" onClick={() => window.print()}>Print Summary</button>
+                    <button className="btn btn-outline dp-noprint" onClick={() => window.print()}>Print summary</button>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '3rem' }}>

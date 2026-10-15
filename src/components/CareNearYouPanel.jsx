@@ -119,7 +119,7 @@ export default function CareNearYouPanel({
             Education &amp; virtual care context
           </h4>
           <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.9rem', lineHeight: 1.55, color: 'var(--color-text-main)' }}>
-            {bundle.telehealthLinks.map((link) => (
+            {bundle.telehealthLinks.filter((link) => !/hhs\.gov/.test(link.href)).map((link) => (
               <li key={link.href} style={{ marginBottom: '0.5rem' }}>
                 <a href={link.href} target="_blank" rel="noopener noreferrer" style={{ fontWeight: '600', color: 'var(--color-primary)' }}>
                   {link.label} ↗
@@ -152,6 +152,13 @@ export default function CareNearYouPanel({
         </div>
       )}
 
+      {/* Privacy explainer is background reading, not a place to find a clinician: a footnote, not a link in the list. */}
+      {bundle.telehealthLinks.some((link) => /hhs\.gov/.test(link.href)) && (
+        <p className="care-near-panel__foot" style={{ marginTop: '1rem', fontSize: '0.8rem' }}>
+          How your health information can be used in virtual visits:{' '}
+          <a href={bundle.telehealthLinks.find((link) => /hhs\.gov/.test(link.href)).href} target="_blank" rel="noopener noreferrer">HHS on HIPAA ↗</a>
+        </p>
+      )}
     </div>
   );
 }

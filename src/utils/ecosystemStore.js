@@ -85,6 +85,7 @@ function compactProduct(product) {
     'intakeGenerated', '_llmConcern', '_userSwapped',
     'catalogId', 'catalogVerified', 'whyItWorks', 'considerations', 'matchExplanation',
     'aynaMatch', 'aynaMatchPercent', 'matchPercent', 'matchPercentage',
+    'userAdded', 'addedAt',
   ];
   const out = {};
   for (const key of keys) {
