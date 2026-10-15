@@ -11,14 +11,34 @@ const onAmazon = catalog.filter((p) => !isPartnerBrandItem(p) && getAmazonAffili
 const byId = Object.fromEntries(catalog.map((p) => [p.id, p]));
 
 describe('Buy Now destinations', () => {
-  it('sends every non-partner in the Amazon catalog to the tagged Amazon listing', () => {
+  it('sends every non-partner in the Amazon catalog to the tagged Amazon listing when no size is chosen', () => {
     expect(onAmazon.length).toBeGreaterThan(100);
     for (const product of onAmazon) {
-      const options = [null, ...(product.variants || [])];
-      for (const variant of options) {
+      expect(resolveBuyUrl(product, null), product.id).toMatch(/^https:\/\/www\.amazon\.com\/dp\/[A-Z0-9]{10}\?tag=aynahealth-20$/);
+    }
+  });
+
+  it('a chosen size goes to its own child ASIN, else to that exact size on the brand site (never a generic listing)', () => {
+    let checked = 0;
+    for (const product of onAmazon) {
+      for (const variant of product.variants || []) {
         const url = resolveBuyUrl(product, variant);
-        expect(url, product.id).toMatch(/^https:\/\/www\.amazon\.com\/dp\/[A-Z0-9]{10}\?tag=aynahealth-20$/);
+        if (variant.amazonAsin) {
+          expect(url, `${product.id} ${variant.label}`).toBe(`https://www.amazon.com/dp/${variant.amazonAsin.toUpperCase()}?tag=aynahealth-20`);
+        } else if (variant.url) {
+          expect(isAmazonUrl(url), `${product.id} ${variant.label}`).toBe(false);
+          expect(url).toBe(String(variant.url).trim());
+        }
+        checked += 1;
       }
+    }
+    expect(checked).toBeGreaterThan(100);
+  });
+
+  it('can exclude Amazon entirely (native app before Amazon approves it)', () => {
+    for (const product of onAmazon) {
+      const url = resolveBuyUrl(product, null, { amazonAllowed: false });
+      if (url) expect(isAmazonUrl(url), product.id).toBe(false);
     }
   });
 

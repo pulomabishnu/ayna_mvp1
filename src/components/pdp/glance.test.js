@@ -73,7 +73,12 @@ describe('commerce', () => {
     const ld = productJsonLd(p, { buyUrl: 'https://cora.life/products/pads' });
     expect(ld['@type']).toBe('Product');
     expect(ld.aggregateRating).toBeUndefined();
-    expect(ld.offers.price).toBe('10.00');
+    // Cora's Buy button opens Amazon, and an Amazon price may only come from
+    // Creators API, so the hand-typed "$10" is not published as an Offer.
+    expect(ld.offers).toBeUndefined();
+    // A product outside the routed catalog still uses its plain price.
+    const plain = productJsonLd({ id: 'x-plain', name: 'Plain', type: 'physical', price: '$10 for 32' }, { buyUrl: 'https://brand.example/p' });
+    expect(plain.offers.price).toBe('10.00');
     expect(offerPrice({ price: '$29-49/month' })).toBeNull();
     expect(offerPrice({ price: 'From $70' })).toBeNull();
   });
