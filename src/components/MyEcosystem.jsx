@@ -50,6 +50,8 @@ import {
     GENERATION_ABANDON_GRACE_MS,
 } from '../utils/ecosystemGenerationStore';
 import { loadPhoneNumberForUser } from '../utils/phoneNumberStore';
+// SMS opt-in moved to You → Account (a phone signup didn't belong in the middle of a health dashboard).
+const SHOW_SMS_ON_ECOSYSTEM = false;
 import posthog from 'posthog-js';
 
 // Ecosystem products are stored as a full snapshot of the product object at
@@ -1023,7 +1025,8 @@ export default function MyEcosystem({
     });
 
     useEffect(() => {
-        if (!user?.id) {
+        // The text-ayna opt-in lives in You → Account now, so this page doesn't ask for her phone number.
+        if (!user?.id || !SHOW_SMS_ON_ECOSYSTEM) {
             setPhoneNumberInfo(null);
             return;
         }
@@ -2158,7 +2161,7 @@ export default function MyEcosystem({
                 <div className="eco3-extras__tools">
                 <header className="eco3-sechead"><p className="eco3-needs__kicker">Extras</p><h2 className="eco3-shelves__title" id="eco3-tools-title">Your <em>tools.</em></h2><span className="eco3-needs__sub">Care near you, how your matches work, and more.</span></header>
                 <div className="eco3-details">
-                    {smsCardShown && (
+                    {SHOW_SMS_ON_ECOSYSTEM && smsCardShown && (
                         <div className="eco3-details__card eco3-details__sms">
                             <span className="eco3-tool-ic is-sms" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z" /></svg></span>
                             <button type="button" className="eco3-details__close" onClick={handleDismissSmsCard} aria-label="Dismiss">✕</button>

@@ -7,6 +7,7 @@
  * know" instead of being papered over. ayna-written copy is labelled as
  * ayna's, manufacturer copy as the brand's, community copy as people's.
  */
+import { normalizeFdaStatus } from '../../utils/fdaStatus.js';
 import { recallFacts } from '../../utils/productFacts.js';
 import { HEALTH_FUNCTIONS, CATEGORY_LABELS } from '../products.js';
 import { getPassport } from './index.js';
@@ -107,9 +108,9 @@ export function getNamedReviewer(product) {
 }
 
 function shortFda(product) {
-  const s = String(product?.safety?.fdaStatus || '').trim();
-  if (!s || s.includes('⚠') || s.length > 32) return null;
-  return /^fda/i.test(s) ? s : `FDA: ${s}`;
+  // Only a real FDA review earns a header check mark (registration is a listing, not an approval).
+  const n = normalizeFdaStatus(product?.safety?.fdaStatus);
+  return n && (n.key === 'cleared' || n.key === 'approved') ? n.label : null;
 }
 
 /**
@@ -248,7 +249,7 @@ export function buildProductSections(product, ctx = {}) {
     !alert && clean(product.safety?.opinionAlerts) ? { type: 'text', label: 'Things people raise', text: clean(product.safety.opinionAlerts) } : null,
     (product.avoidIfSensitivity || []).length ? { type: 'chips', label: 'Skip if you react to', items: product.avoidIfSensitivity.map(humanizeTag) } : null,
     { type: 'facts', rows: [
-      clean(product.safety?.fdaStatus) ? { label: 'FDA status', value: clean(product.safety.fdaStatus) } : null,
+      normalizeFdaStatus(product.safety?.fdaStatus) ? { label: 'FDA status', value: `${normalizeFdaStatus(product.safety.fdaStatus).label}. ${normalizeFdaStatus(product.safety.fdaStatus).line}` } : null,
       recalls && !recalls.includes('⚠') ? { label: 'Recalls', value: recalls } : null,
       privacy && clean(privacy.sellsData) ? { label: 'Sells your data', value: clean(privacy.sellsData).replace(/^[❌✅]\s*/, '') } : null,
       privacy && clean(privacy.dataStorage) ? { label: 'Data storage', value: clean(privacy.dataStorage) } : null,

@@ -121,7 +121,7 @@ export default function FeedbackPrompts({ user, authLoading, currentView }) {
         const result = await sendFeedback({ action: 'claim-survey' }, true);
         if (!cancelled && result.claimed) surveyReceipt.current = result.receipt;
       } catch {
-        checked.current.delete(key);
+        // If the survey service is down, ask once per visit, not every 8 seconds.
       } finally { active.current = false; }
     }, 8000);
     return () => { cancelled = true; clearInterval(timer); };

@@ -37,14 +37,30 @@ function missingTable(error) {
   return error?.code === '42P01' || error?.code === 'PGRST205' || /does not exist|schema cache/i.test(error?.message || '');
 }
 
-async function fetchRows(db, table, userId, { single = false, select = '*' } = {}) {
-  let query = db.from(table).select(select).eq('user_id', userId);
+// A table this deployment never created holds nothing about anyone, so it is
+// not a gap in the export. Only a real read error marks the export incomplete.
+async function fetchRows(db, table, userId, { single = false, select = '*', column = 'user_id' } = {}) {
+  let query = db.from(table).select(select).eq(column, userId);
   if (single) query = query.maybeSingle();
   const result = await query;
   if (!result.error) return { data: result.data, warning: null };
-  if (missingTable(result.error)) return { data: single ? null : [], warning: `${table}: not present in this schema` };
+  if (missingTable(result.error)) return { data: single ? null : [], warning: null };
   return { data: single ? null : [], warning: `${table}: ${result.error.message}` };
 }
+
+// Saved products are listed by name, not with the full catalog record the
+// app caches alongside them; the catalog is public and not her data.
+function slimProduct(row) {
+  const out = {};
+  ['product_id', 'product_name', 'brand', 'category', 'in_ecosystem', 'saved', 'is_saved', 'shelf', 'notes', 'created_at', 'updated_at', 'added_at']
+    .forEach((k) => { if (row && row[k] !== undefined) out[k] = row[k]; });
+  if (!out.product_name && row?.product_data?.name) out.product_name = row.product_data.name;
+  if (!out.brand && row?.product_data?.brand) out.brand = row.product_data.brand;
+  return out;
+}
+
+const n = (list) => (Array.isArray(list) ? list.length : 0);
+const plural = (count, word) => `${count} ${word}${count === 1 ? '' : 's'}`;
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
@@ -105,13 +121,52 @@ export default async function handler(req, res) {
     fetchRows(db, 'user_learning_memory', user.id),
     fetchRows(db, 'recall_notifications', user.id),
     fetchRows(db, 'account_deletion_requests', user.id, { select: 'status, requested_at, processed_at' }),
+    fetchRows(db, 'community_profiles', user.id, { single: true }),
+    fetchRows(db, 'community_posts', user.id, { column: 'author_id' }),
+    fetchRows(db, 'community_comments', user.id, { column: 'author_id' }),
+    fetchRows(db, 'community_follows', user.id, { column: 'follower_id' }),
+    fetchRows(db, 'community_follows', user.id, { column: 'followee_id' }),
+    fetchRows(db, 'community_playlists', user.id, { column: 'owner_id' }),
+    fetchRows(db, 'community_saved_posts', user.id),
+    fetchRows(db, 'community_helpful_votes', user.id),
+    fetchRows(db, 'community_friend_requests', user.id, { column: 'requester_id' }),
+    fetchRows(db, 'community_friend_requests', user.id, { column: 'addressee_id' }),
+    fetchRows(db, 'community_blocks', user.id, { column: 'blocker_id' }),
+    fetchRows(db, 'community_product_recommendations', user.id, { column: 'recipient_id' }),
   ]);
 
-  const [phone, prefs, intake, ecosystem, healthProfiles, reviews, sms, aiUsage, builds, learningMemory, recalls, deletionRequests] = entries;
+  const [phone, prefs, intake, ecosystem, healthProfiles, reviews, sms, aiUsage, builds, learningMemory, recalls, deletionRequests,
+    cProfile, cPosts, cComments, cFollowing, cFollowers, cPlaylists, cSaved, cHelpful, cReqSent, cReqReceived, cBlocks, cRecs] = entries;
   const warnings = entries.map((entry) => entry.warning).filter(Boolean);
   const meta = user.user_metadata || {};
 
+  const products = (ecosystem.data || []).map(slimProduct);
+  const community = {
+    profile: cProfile.data || null,
+    posts: cPosts.data || [],
+    comments: cComments.data || [],
+    following: cFollowing.data || [],
+    followers: cFollowers.data || [],
+    playlists: cPlaylists.data || [],
+    savedPosts: cSaved.data || [],
+    helpfulVotes: cHelpful.data || [],
+    friendRequestsSent: cReqSent.data || [],
+    friendRequestsReceived: cReqReceived.data || [],
+    blockedAccounts: cBlocks.data || [],
+    productRecommendationsReceived: cRecs.data || [],
+  };
+  const summary = [
+    `Account: ${user.email || 'no email on file'}.`,
+    intake.data ? 'Health profile: included.' : 'Health profile: none saved.',
+    `Products saved or on your shelves: ${n(products)}.`,
+    `Reviews: ${n(reviews.data)}. Community posts: ${n(community.posts)}. Comments: ${n(community.comments)}.`,
+    `Following ${n(community.following)}, ${plural(n(community.followers), 'follower')}.`,
+    phone.data ? `Phone number on file, ${plural(n(sms.data), 'text message')}.` : 'No phone number on file.',
+    warnings.length ? 'Some sections could not be read. Email us and we will send them.' : 'Every section we hold is included.',
+  ];
+
   return res.status(200).json({
+    summary,
     exportedAt: new Date().toISOString(),
     scope: 'Account-linked data stored in ayna application databases. Third-party processor logs or platform records may be subject to separate retention and access processes. Security credentials such as password hashes, session tokens, encryption keys, and encrypted OAuth refresh tokens are intentionally not included.',
     incomplete: warnings.length > 0,
@@ -142,7 +197,7 @@ export default async function handler(req, res) {
       : null,
     notificationPreferences: prefs.data || null,
     healthIntake: intake.data || null,
-    savedAndEcosystemProducts: ecosystem.data || [],
+    savedAndEcosystemProducts: products,
     importedHealthProfiles: healthProfiles.data || [],
     reviews: reviews.data || [],
     smsConversationHistory: sms.data || [],
@@ -151,5 +206,6 @@ export default async function handler(req, res) {
     personalizationMemory: learningMemory.data || [],
     recallNotificationRecords: recalls.data || [],
     accountDeletionRequests: deletionRequests.data || [],
+    community,
   });
 }

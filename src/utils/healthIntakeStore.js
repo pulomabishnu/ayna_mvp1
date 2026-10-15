@@ -72,7 +72,19 @@ function writeLocal(userId, profile) {
   }
 }
 
-export async function loadHealthIntakeForCurrentUser() {
+// Several parts of a page ask for the intake at once; share one request (and
+// its answer for a few seconds) instead of sending the same query 4 times.
+let shared = null;
+function forgetSharedIntake() { shared = null; }
+export function loadHealthIntakeForCurrentUser() {
+  if (shared && Date.now() - shared.at < 4000) return shared.promise;
+  const promise = loadHealthIntakeUncached();
+  shared = { at: Date.now(), promise };
+  promise.catch(() => { shared = null; });
+  return promise;
+}
+
+async function loadHealthIntakeUncached() {
   const supabase = getSupabaseClient();
   const userId = await resolveUserId(supabase);
   const local = readLocal(userId);
@@ -124,6 +136,7 @@ export async function loadHealthIntakeForCurrentUser() {
 }
 
 export async function saveHealthIntakeForCurrentUser(profile) {
+  forgetSharedIntake();
   const supabase = getSupabaseClient();
   const userId = await resolveUserId(supabase);
 
@@ -168,6 +181,7 @@ export async function saveHealthIntakeForCurrentUser(profile) {
 
 /** Clear intake answers while preserving the account and other app data. */
 export async function clearHealthIntakeForCurrentUser() {
+  forgetSharedIntake();
   const supabase = getSupabaseClient();
   const userId = await resolveUserId(supabase);
   const localSaved = writeLocal(userId, { [RESET_MARKER]: Date.now() });

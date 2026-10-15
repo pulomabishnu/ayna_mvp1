@@ -11,6 +11,7 @@
  *   unsourced userRating;
  * - sources are numbered once and cited inline like footnotes.
  */
+import { normalizeFdaStatus } from '../../utils/fdaStatus.js';
 import { HEALTH_FUNCTIONS, CATEGORY_LABELS } from '../../data/products.js';
 import { getPassport, EVIDENCE_TYPES } from '../../data/passport/index.js';
 import { priceParts, safetyAlertText, humanizeTag, noDash, matchLine, buildTypedTags } from '../../data/passport/content.js';
@@ -80,6 +81,8 @@ export function sizeCount(product) {
 
 /** "$0.30 per capsule" from a single catalog price and a count. Never from ranges. */
 export function perUnitLabel(product) {
+  // Only when the units are the same thing: never on a bundle, kit or set of different products.
+  if (/\b(bundle|kit|set|starter)\b/i.test(String(product?.name || ''))) return '';
   const fromUtil = priceParts(product).perUnit;
   if (fromUtil) return fromUtil.replace(' / ', ' per ');
   const p = String(product?.price || '');
@@ -243,7 +246,9 @@ export function buildKeyFacts(product, { passport, sources, details } = {}) {
   add('where', isDigital ? 'Where to get it' : 'Where to buy', where.join(', ') || (details?.access?.known ? details.access.label : (hasBuyLink ? 'Online, through the Buy button' : '')));
   if (!isDigital) {
     const reg = pp?.safety?.regulatory_status;
-    if (reg?.known) add('fda', 'Regulatory status', String(reg.value).replace(/⚠️?/g, '').trim(), { note: verifiedNote(reg), refs: factRefs(reg) });
+    const norm = reg?.known ? normalizeFdaStatus(reg.value) : null;
+    // One of ten fixed answers, with the plain line and the catalog's own note as the detail.
+    if (norm) add('fda', 'FDA status', norm.label, { note: [norm.line, norm.detail !== norm.label ? norm.detail : '', verifiedNote(reg)].filter(Boolean).join(' '), refs: factRefs(reg) });
   }
   return facts;
 }

@@ -2130,6 +2130,7 @@ function App() {
             onOpenSaved={handleViewWishlist}
             onOpenCheckin={() => setShowCheckin(true)}
             onOpenStartups={() => setCurrentView('waitlist')}
+            onOpenPhoneVerify={() => setCurrentView('phone-verify')}
             onOpenProduct={handleOpenProduct}
             onSignOut={handleSignOut}
             onDeleteAccount={handleOpenDeleteAccount}
