@@ -828,6 +828,18 @@ export default function ProductModal({
         <div className="pdp-head ay3-simple" ref={boardRef}>
           <div className="pdp-head__media">
             {galleryTile}
+            {/* Fit sits under the photo so both columns carry equal weight. */}
+            <div className="pdp-head__fit">
+              <ProductMatch glance={glance} matchPercent={matchPercent} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz ? onStartQuiz : null} hasProfile={Boolean(quizResults)} exclusions={matchExclusions} />
+              {!(matchPercent > 0) && !matchExclusions.length && isInEcosystem && (
+                <p className="pdp-h2-fitnote is-static">In your ecosystem</p>
+              )}
+              {onOmit && (
+                <button type="button" className="pdp-omit-link pdp-omit-link--match" onClick={() => onOmit(product)}>
+                  {isOmitted ? 'Undo “Not for me”' : 'Not for me'}
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="pdp-head__detail pdp-h2">
@@ -898,15 +910,6 @@ export default function ProductModal({
 
             {glance?.alert && <SafetyFlag />}
 
-            <ProductMatch glance={glance} matchPercent={matchPercent} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz ? onStartQuiz : null} hasProfile={Boolean(quizResults)} exclusions={matchExclusions} />
-            {!(matchPercent > 0) && !matchExclusions.length && isInEcosystem && (
-              <p className="pdp-h2-fitnote is-static">In your ecosystem</p>
-            )}
-            {onOmit && (
-              <button type="button" className="pdp-omit-link pdp-omit-link--match" onClick={() => onOmit(product)}>
-                {isOmitted ? 'Undo “Not for me”' : 'Not for me'}
-              </button>
-            )}
 
 
 

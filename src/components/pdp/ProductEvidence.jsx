@@ -97,14 +97,13 @@ export default function ProductEvidence({ product, aynaData = null, aynaRating =
       evidenceStrength: meaningful(product.evidenceStrength),
     };
   }, [product, aynaData]);
-  const [tab, setTab] = useState('summary');
+  const [tab, setTab] = useState('clinician');
   if (!data) return null;
 
   const tabs = [
-    { id: 'summary', label: 'ayna summary', count: null, tone: 'butter' },
-    { id: 'clinician', label: data.brandVoice ? 'From the brand' : 'Clinician opinion', count: data.clinical.length, tone: 'sky' },
-    { id: 'science', label: 'Scientific literature', count: data.science.length, tone: 'rose' },
-    { id: 'reviews', label: 'Reviews', count: data.community.length + (ratingCount || 0), tone: 'ink' },
+    { id: 'clinician', label: data.brandVoice ? 'From the brand' : 'Clinical opinion', count: data.clinical.length, tone: 'sky' },
+    { id: 'reviews', label: 'Reviews', count: data.community.length + (ratingCount || 0), tone: 'rose' },
+    { id: 'science', label: 'Scientific literature', count: data.science.length, tone: 'butter' },
   ];
   const cur = tabs.find((t) => t.id === tab) || tabs[0];
   const keyNav = (e) => {
@@ -119,6 +118,15 @@ export default function ProductEvidence({ product, aynaData = null, aynaRating =
   return (
     <section className="ay-story ay-ev" aria-labelledby="ay-ev-h">
       <h2 id="ay-ev-h">What we <em>found</em></h2>
+      {/* ayna summary: always open, above the tabs. */}
+      <div className="ay-ev__summary">
+        <h3>ayna summary</h3>
+        {data.summary ? <Text text={data.summary} /> : <p className="ay-ev__empty">No summary on file yet.</p>}
+        {data.summaryRef && (
+          <p className="ay-ev__body">See <a href={productHref(data.summaryRef.product.id)} onClick={(e) => { if (!onOpenProduct || !isPlainLeftClick(e)) return; e.preventDefault(); onOpenProduct(data.summaryRef.product); }}>{data.summaryRef.product.name}</a> for the {data.summaryRef.what}.</p>
+        )}
+        {data.evidenceStrength && <p className="ay-ev__strength">Evidence level on file: <b>{data.evidenceStrength}</b></p>}
+      </div>
       <div className="ay-ev__tabs" role="tablist" aria-label="Evidence" onKeyDown={keyNav}>
         {tabs.map((t) => (
           <button key={t.id} id={`ay-ev-tab-${t.id}`} type="button" role="tab" aria-selected={t.id === tab} aria-controls="ay-ev-panel" tabIndex={t.id === tab ? 0 : -1} className={`ay-ev__tab is-${t.tone}${t.id === tab ? ' is-on' : ''}`} onClick={() => setTab(t.id)}>
@@ -127,14 +135,6 @@ export default function ProductEvidence({ product, aynaData = null, aynaRating =
         ))}
       </div>
       <div id="ay-ev-panel" role="tabpanel" aria-labelledby={`ay-ev-tab-${cur.id}`} className={`ay-ev__panel is-${cur.tone}`}>
-        {cur.id === 'summary' && <>
-          {data.summary ? <Text text={data.summary} /> : <p className="ay-ev__empty">No summary on file yet.</p>}
-          {data.summaryRef && (
-            <p className="ay-ev__body">See <a href={productHref(data.summaryRef.product.id)} onClick={(e) => { if (!onOpenProduct || !isPlainLeftClick(e)) return; e.preventDefault(); onOpenProduct(data.summaryRef.product); }}>{data.summaryRef.product.name}</a> for the {data.summaryRef.what}.</p>
-          )}
-          {data.evidenceStrength && <p className="ay-ev__strength">Evidence level on file: <b>{data.evidenceStrength}</b></p>}
-          <Links items={[...data.clinical, ...data.science].slice(0, 4)} label="Key sources" />
-        </>}
         {cur.id === 'clinician' && <>
           {data.clinician ? <Text text={data.clinician} /> : <p className="ay-ev__empty">No clinician opinion on file yet.</p>}
           {data.attribution && <p className="ay-ev__by">{data.attribution}</p>}
