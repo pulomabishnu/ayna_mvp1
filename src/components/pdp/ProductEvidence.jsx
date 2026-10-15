@@ -13,7 +13,7 @@ import { findHardTerms, planGlossaryTerms } from '../../data/glossary';
 // medical societies and academic medical centers. Anything else (brand sites,
 // retailers, magazines, health blogs, court dockets) stays in the All sources
 // index under Product details, never in these two sections.
-const CREDIBLE = /(\.gov|\.gov\.[a-z]{2}|\.mil|\.nhs\.uk|nice\.org\.uk|who\.int|europa\.eu|ncbi\.nlm\.nih|pubmed|cochranelibrary|cochrane\.org|doi\.org|nejm\.org|jamanetwork|thelancet|bmj\.com|nature\.com|sciencedirect|springer|wiley|tandfonline|sagepub|frontiersin|mdpi|plos|oup\.com|academic\.oup|journals\.lww|ajog\.org|acog\.org|aafp\.org|asrm\.org|menopause\.org|endocrine\.org|ics\.org|uptodate|mayoclinic\.org|clevelandclinic\.org|hopkinsmedicine|health\.harvard\.edu|medlineplus|cancer\.org|acs\.org|nccih|aad\.org|apa\.org|jmir\.org|healthychildren\.org|aap\.org|fda\.gov|cdc\.gov)/i;
+const CREDIBLE = /(\.gov|\.gov\.[a-z]{2}|\.mil|\.nhs\.uk|nice\.org\.uk|who\.int|europa\.eu|ncbi\.nlm\.nih|pubmed|cochranelibrary|cochrane\.org|doi\.org|nejm\.org|jamanetwork|thelancet|bmj\.com|nature\.com|sciencedirect|springer|wiley|tandfonline|sagepub|frontiersin|mdpi|plos|oup\.com|academic\.oup|journals\.lww|ajog\.org|acog\.org|aafp\.org|asrm\.org|menopause\.org|endocrine\.org|ics\.org|uptodate|mayoclinic\.org|clevelandclinic\.org|hopkinsmedicine|health\.harvard\.edu|medlineplus|cancer\.org|acs\.org|nccih|aad\.org|apa\.org|jmir\.org|healthychildren\.org|aap\.org|fda\.gov|cdc\.gov|koreamed\.org|doaj\.org|issm\.info|isswsh\.org|reproductivefacts\.org|myadlm\.org|iro\.uiowa\.edu|research\.vu\.nl|essentialmeds\.org|niehs\.nih)/i;
 const isCredible = (url) => { try { const u = new URL(url); if (/\/search\b|[?&#](q|query|search)=/i.test(u.pathname + u.search + u.hash)) return false; return CREDIBLE.test(u.hostname + u.pathname); } catch { return false; } };
 
 /**
@@ -171,12 +171,12 @@ function useEvidence(product, aynaData) {
     const brand = product.brand || '';
     const pp = getPassport(product);
     const independent = product.clinicianOpinionSource !== 'brand';
-    const clinicalLinks = collect([...(product.doctorOpinionCitations || []), ...getVerificationLinks(product, 'doctor')], brand).filter((l) => isCredible(l.url));
+    const clinicalLinks = collect([...(product.doctorOpinionCitations || []), ...getVerificationLinks(product, 'doctor'), ...(product.researchClinicalSources || [])], brand).filter((l) => isCredible(l.url));
     const ingredients = (product.ingredientScience || []).filter((i) => i?.name).map((i) => ({
       name: noDash(i.name), text: noDash(i.text), links: collect((i.citations || []).map((c) => ({ ...c, title: c.label })), brand).filter((l) => isCredible(l.url)),
     }));
     const ingredientUrls = new Set(ingredients.flatMap((i) => i.links.map((l) => l.url)));
-    const studies = collect([...getVerificationLinks(product, 'scientific'), ...(product.scientificCitations || [])], brand).filter((s) => !ingredientUrls.has(s.url) && isCredible(s.url));
+    const studies = collect([...getVerificationLinks(product, 'scientific'), ...(product.scientificCitations || []), ...(product.researchScienceSources || [])], brand).filter((s) => !ingredientUrls.has(s.url) && isCredible(s.url));
     const community = collect([
       ...(product.communityReviewSourceUrl ? [{ url: product.communityReviewSourceUrl, text: product.communityReviewSourceLabel }] : []),
       ...getVerificationLinks(product, 'community'),
@@ -237,6 +237,7 @@ function useEvidence(product, aynaData) {
       materials: noDash(meaningful(product.safety?.materials)),
       ingredientNote: noDash(meaningful(product.ingredientScienceNote)),
       priceNote: noDash(meaningful(product.priceNote)),
+      clinicalNote: noDash(meaningful(product.clinicalNote)),
       clinicalSummary: extraSummary(product.verificationLinks?.doctor?.aiSummary, product.doctorOpinion),
       scienceSummary: extraSummary(product.verificationLinks?.scientific?.aiSummary, product.effectiveness),
       communitySummary: extraSummary(product.verificationLinks?.community?.aiSummary, product.communityReview),
@@ -354,7 +355,8 @@ export default function ProductEvidence({ product, glance = null, aynaData = nul
             {d.clinician ? <ShortThenFull short={d.clinicianShort} full={d.clinician} /> : <p className="ay-ev__empty">No clinical opinion on file yet.</p>}
             {d.attribution && <p className="ay-ev__by">{d.attribution}</p>}
           </> },
-          (d.clinicalLinks.length > 0 || d.clinicalSummary) && { id: 'src', label: `Sources${d.clinicalLinks.length ? ` (${d.clinicalLinks.length})` : ''}`, node: <>
+          (d.clinicalLinks.length > 0 || d.clinicalSummary || d.clinicalNote) && { id: 'src', label: `Sources${d.clinicalLinks.length ? ` (${d.clinicalLinks.length})` : ''}`, node: <>
+            {d.clinicalNote && <ShortThenFull full={d.clinicalNote} />}
             {d.clinicalSummary && <ShortThenFull full={d.clinicalSummary} />}
             <Links items={d.clinicalLinks} />
           </> },

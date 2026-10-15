@@ -5,6 +5,7 @@
 // VERIFICATION: Only add real, verifiable products. Confirm whereToBuy URLs work
 // and the brand/product exists. Do not add placeholder or fake entries.
 // ============================================================
+import { PRODUCT_RESEARCH } from './productResearch.js';
 import { EXTENDED_PHYSICAL, EXTENDED_DIGITAL } from './productsExtended.js';
 import { EXTENDED_PHYSICAL_2, EXTENDED_DIGITAL_2 } from './productsExtended2.js';
 import { FILLER_PHYSICAL, FILLER_DIGITAL } from './categoryFillers.js';
@@ -868,6 +869,28 @@ function withCatalogEvidence(product) {
     return corrected;
 }
 
+// Gap-filling research: only adds what a product doesn't have yet.
+function withResearch(product) {
+    const r = product && PRODUCT_RESEARCH[product.id];
+    if (!r) return product;
+    const out = { ...product };
+    const filled = [];
+    if (!(out.whoItsFor || []).length && (r.whoItsFor || []).length) { out.whoItsFor = r.whoItsFor; filled.push('whoItsFor'); }
+    if (!(out.howToUse?.steps || []).length && (r.howToUse?.steps || []).length) { out.howToUse = r.howToUse; filled.push('howToUse'); }
+    // Kept in their own fields: page reading only, so matching and evidence scores don't shift.
+    if ((r.clinicalSources || []).length) { out.researchClinicalSources = r.clinicalSources.map((x) => ({ url: x.url, label: x.label, summary: x.summary })); filled.push('clinicalSources'); }
+    if (r.clinicalNote && !out.clinicalNote) { out.clinicalNote = r.clinicalNote; filled.push('clinicalNote'); }
+    if ((r.scienceSources || []).length) { out.researchScienceSources = r.scienceSources.map((x) => ({ url: x.url, label: x.label, summary: x.summary })); filled.push('scienceSources'); }
+    if (!out.communityReview && r.communityReview) {
+        out.communityReview = r.communityReview;
+        const src = (r.communityReviewSources || [])[0];
+        if (src && !out.communityReviewSourceUrl) { out.communityReviewSourceUrl = src.url; out.communityReviewSourceLabel = src.label; }
+        filled.push('communityReview');
+    }
+    if (filled.length) out.researchFilled = filled;
+    return out;
+}
+
 export const ALL_PRODUCTS = [
     ...PHYSICAL_PRODUCTS,
     ...DIGITAL_PRODUCTS,
@@ -884,6 +907,7 @@ export const ALL_PRODUCTS = [
     ...INCONTINENCE_PHYSICAL
 ]
     .map(withCatalogEvidence)
+    .map(withResearch)
     .filter((p) => !isRxOnlyProduct(p) && !TEMPORARILY_HIDDEN_IDS.has(p.id))
     .map(withImageOverride);
 
