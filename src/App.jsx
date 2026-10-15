@@ -32,6 +32,9 @@ const WebCommunity = lazyView(() => import('./components/WebCommunity'), <ViewSk
 const WebWrapped = lazyView(() => import('./components/WebWrapped'), null);
 const DeleteAccountPage = lazyView(() => import('./components/DeleteAccountPage'));
 const AdminReviewsPage = lazyView(() => import('./components/AdminReviewsPage'));
+const AdminCampaignPage = lazyView(() => import('./components/AdminCampaignPage'));
+const FreeProduct = lazyView(() => import('./components/free-product/FreeProduct'));
+const JoinPage = lazyView(() => import('./components/free-product/JoinPage'));
 const PhoneVerification = lazyView(() => import('./components/PhoneVerification'));
 const Recommendations = lazyView(() => import('./components/Recommendations'));
 const TrackedItems = lazyView(() => import('./components/TrackedItems'));
@@ -149,6 +152,10 @@ const VIEW_TO_PATH = {
   // Not linked from any nav: internal, reached by typing the URL directly.
   // Real access control is server-side (api/reviews-admin checks ADMIN_EMAILS).
   'admin-reviews': '/admin/reviews',
+  'admin-campaign': '/admin/campaign',
+  // Free product campaign + the friend invite landing.
+  'free-product': '/free-product',
+  join: '/join',
 };
 // Friendly document.title per view'welcome'/'hero' and any view not
 // listed here fall back to the site's base title (see the title effect).
@@ -163,6 +170,9 @@ const VIEW_TITLES = {
   about: 'About', contact: 'Contact', 'not-found': 'Page Not Found',
   'campus-resources': 'Campus Sexual Assault Support Resources',
   'admin-reviews': 'All Reviews',
+  'admin-campaign': 'Free Product Campaign',
+  'free-product': 'Your Free Product',
+  join: 'Join ayna',
 };
 
 const DEFAULT_DESCRIPTION = "Personalized women's health product recommendations, matched to your body and backed by real research, doctor input, and other women's experiences.";
@@ -384,7 +394,7 @@ function App() {
     // A 404 keeps the URL she typed (it used to be rewritten to '/').
     const keepPath = currentView === 'not-found' || viewFromSubPath(window.location.pathname) === currentView;
     const path = keepPath ? window.location.pathname : pathForView(currentView, productRouteId);
-    const initialUrl = (currentView === 'auth-callback' || currentView === 'campus-resources')
+    const initialUrl = (currentView === 'auth-callback' || currentView === 'campus-resources' || currentView === 'join' || currentView === 'free-product')
       ? `${path}${window.location.search}${window.location.hash}`
       : path;
     window.history.replaceState({ view: currentView, productId: productRouteId }, '', initialUrl);
@@ -649,7 +659,7 @@ function App() {
     const STATIC_VIEWS = [
       'privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback', 'auth-confirm',
       'welcome', 'hero', 'quiz', 'discovery', 'product', 'waitlist', 'articles', 'you', 'community',
-      'how-it-works', 'how-we-make-money', 'campus-resources',
+      'how-it-works', 'how-we-make-money', 'campus-resources', 'free-product', 'join',
     ];
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
@@ -2009,6 +2019,7 @@ function App() {
             onOpenProduct={handleOpenProduct}
             onSignOut={handleSignOut}
             onDeleteAccount={handleOpenDeleteAccount}
+            onOpenFreeProduct={() => setCurrentView('free-product')}
             theme={theme}
             onThemeChange={setThemeMode}
           />
@@ -2039,6 +2050,26 @@ function App() {
           <DeleteAccountPage onBack={() => setCurrentView('you')} />
         )}
         <FeedbackPrompts key={user?.id || 'guest'} user={user} authLoading={authLoading} currentView={currentView} />
+        {currentView === 'admin-campaign' && (
+          <AdminCampaignPage onBack={handleBackFromStandalonePage} />
+        )}
+        {currentView === 'free-product' && (
+          <FreeProduct
+            user={user}
+            authLoading={authLoading}
+            onLogIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+            onStartQuiz={handleStartQuiz}
+            onGoHome={() => setCurrentView('welcome')}
+          />
+        )}
+        {currentView === 'join' && (
+          <JoinPage
+            user={user}
+            onStartQuiz={handleStartQuiz}
+            onLogIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+            onGoHome={() => setCurrentView('welcome')}
+          />
+        )}
         {currentView === 'admin-reviews' && (
           <AdminReviewsPage onBack={handleBackFromStandalonePage} />
         )}

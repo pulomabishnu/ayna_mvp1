@@ -3,8 +3,16 @@ import { getSupabaseClient, setRememberMe } from '../utils/supabaseClient';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 import { CONSENT_VERSION, stashPendingConsent, stashPendingSignupMeta } from '../utils/pendingConsent.js';
 import { HEARD_ABOUT_OPTIONS, HEARD_ABOUT_OTHER_MAX, heardAboutMetadata } from '../utils/heardAbout.js';
+import { pendingReferralCode } from '../utils/badges.js';
 import '../styles/audit-qya.css';
 import './AuthGate.css';
+
+// The invite code this browser arrived with (?ref=), stored on the new account
+// so the database records the referral when the account is created.
+const referralMeta = () => {
+  const code = pendingReferralCode();
+  return code ? { referred_by: code } : {};
+};
 
 // One short line per tab (audit AU01).
 const SUBTITLES = { signup: 'Make your shop yours.', signin: 'Welcome back.' };
@@ -204,6 +212,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
             emailRedirectTo: 'https://www.aynahealth.co/confirmed',
             data: {
               ...heardMeta,
+              ...referralMeta(),
               first_name: cleanFirstName,
               full_name: cleanFirstName,
               ...consentMetadata(),
@@ -341,6 +350,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         options: {
           data: {
             ...heardMeta,
+            ...referralMeta(),
             first_name: cleanFirstName,
             full_name: cleanFirstName,
             ...consentMetadata(),
