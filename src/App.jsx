@@ -32,6 +32,7 @@ const WebCommunity = lazyView(() => import('./components/WebCommunity'), <ViewSk
 const WebWrapped = lazyView(() => import('./components/WebWrapped'), null);
 const DeleteAccountPage = lazyView(() => import('./components/DeleteAccountPage'));
 const AdminReviewsPage = lazyView(() => import('./components/AdminReviewsPage'));
+const AdminAmazonReviewPage = lazyView(() => import('./components/AdminAmazonReviewPage'));
 const PhoneVerification = lazyView(() => import('./components/PhoneVerification'));
 const Recommendations = lazyView(() => import('./components/Recommendations'));
 const TrackedItems = lazyView(() => import('./components/TrackedItems'));
@@ -149,6 +150,8 @@ const VIEW_TO_PATH = {
   // Not linked from any nav: internal, reached by typing the URL directly.
   // Real access control is server-side (api/reviews-admin checks ADMIN_EMAILS).
   'admin-reviews': '/admin/reviews',
+  // Internal Amazon review queue; api/commerce-amazon-review checks ADMIN_EMAILS.
+  'admin-amazon-review': '/admin/amazon-review',
 };
 // Friendly document.title per view'welcome'/'hero' and any view not
 // listed here fall back to the site's base title (see the title effect).
@@ -163,6 +166,7 @@ const VIEW_TITLES = {
   about: 'About', contact: 'Contact', 'not-found': 'Page Not Found',
   'campus-resources': 'Campus Sexual Assault Support Resources',
   'admin-reviews': 'All Reviews',
+  'admin-amazon-review': 'Amazon Review',
 };
 
 const DEFAULT_DESCRIPTION = "Personalized women's health product recommendations, matched to your body and backed by real research, doctor input, and other women's experiences.";
@@ -2041,6 +2045,9 @@ function App() {
         <FeedbackPrompts key={user?.id || 'guest'} user={user} authLoading={authLoading} currentView={currentView} />
         {currentView === 'admin-reviews' && (
           <AdminReviewsPage onBack={handleBackFromStandalonePage} />
+        )}
+        {currentView === 'admin-amazon-review' && (
+          <AdminAmazonReviewPage onBack={handleBackFromStandalonePage} />
         )}
         {currentView === 'phone-verify' && (
           <PhoneVerification
