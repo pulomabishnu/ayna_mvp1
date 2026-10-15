@@ -4447,3 +4447,15 @@ html body .app-container .ay-ev2__sec#ay-sec-summary { --rule: #3e2723; }
 html body .app-container .pdp-page--glance .ay-ev2__jump button.is-summary.is-on { border-left-color: #3e2723 !important; }
 @media (max-width: 899px) { html body .app-container .pdp-page--glance .ay-ev2__jump button.is-summary.is-on { border-left: 0 !important; } }
 html body .app-container[data-theme='brand-dark'] .pdp-page--glance .ay-ev2__sec#ay-sec-summary { --rule: #ffedac; }
+/* Brands we work with: a small pink tab under the hero; the names appear on hover/tap. */
+html body .app-container .lv .lv-partners--top { display: flex; align-items: stretch; width: max-content; max-width: 100%; background: transparent !important; overflow: hidden; }
+html body .app-container .lv .lv-partners--top .lv-partners__h { display: flex !important; align-items: stretch; padding: 0 !important; border-right: 0 !important; border-radius: 0 0 14px 0; }
+html body .app-container .lv .lv-partners--top.is-open { width: 100%; background: #3e2723 !important; }
+html body .app-container .lv .lv-partners--top.is-open .lv-partners__h { border-radius: 0; border-right: 2px solid #3e2723 !important; }
+html body .app-container .lv .lv-partners__toggle { min-height: 44px; padding: 0 6px 0 18px; border: 0; background: transparent; color: #3e2723; font: 700 14px/1 'DM Sans', sans-serif; cursor: pointer; }
+html body .app-container.app-container .lv .lv-partners.lv-partners--top h2.lv-partners__h a { padding: 0 16px 0 6px; font-size: 16px !important; }
+html body .app-container .lv .lv-partners__reveal { flex: 1; min-width: 0; display: flex; animation: lvReveal .35s ease both; }
+html body .app-container .lv .lv-partners__reveal[hidden] { display: none; }
+html body .app-container .lv .lv-partners__reveal .lv-ticker { flex: 1; }
+@keyframes lvReveal { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@media (prefers-reduced-motion: reduce) { html body .app-container .lv .lv-partners__reveal { animation: none; } }

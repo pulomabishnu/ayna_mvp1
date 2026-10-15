@@ -4,6 +4,16 @@ import { humanPublisher } from './glance';
 import { normalizeFdaStatus } from '../../utils/fdaStatus';
 import { getPassport } from '../../data/passport';
 import { fmtDate } from './fmtDate';
+import GlossaryTerm from '../GlossaryTerm';
+import { findHardTerms, planGlossaryTerms } from '../../data/glossary';
+
+// Clinical opinion and Scientific literature cite credible sources only:
+// government and public-health agencies, peer-reviewed journals and indexes,
+// medical societies and academic medical centers. Anything else (brand sites,
+// retailers, magazines, health blogs, court dockets) stays in the All sources
+// index under Product details, never in these two sections.
+const CREDIBLE = /(\.gov|\.gov\.[a-z]{2}|\.mil|\.nhs\.uk|nice\.org\.uk|who\.int|europa\.eu|ncbi\.nlm\.nih|pubmed|cochranelibrary|cochrane\.org|doi\.org|nejm\.org|jamanetwork|thelancet|bmj\.com|nature\.com|sciencedirect|springer|wiley|tandfonline|sagepub|frontiersin|mdpi|plos|oup\.com|academic\.oup|journals\.lww|ajog\.org|acog\.org|aafp\.org|asrm\.org|menopause\.org|endocrine\.org|ics\.org|uptodate|mayoclinic\.org|clevelandclinic\.org|hopkinsmedicine|health\.harvard\.edu|medlineplus|cancer\.org|acs\.org|nccih|fda\.gov|cdc\.gov)/i;
+const isCredible = (url) => { try { const u = new URL(url); if (/\/search\b|[?&#](q|query|search)=/i.test(u.pathname + u.search + u.hash)) return false; return CREDIBLE.test(u.hostname + u.pathname); } catch { return false; } };
 
 /**
  * The research the team wrote for each product, in the order people look for
@@ -61,8 +71,28 @@ function Links({ items, label }) {
   );
 }
 
+/** Hard words get a dotted underline and a definition (first time on the page only, at most 8). */
+function withTerms(text, plan) {
+  const allowed = plan && plan[text];
+  if (!allowed || !allowed.length) return text;
+  const out = [];
+  let at = 0;
+  const left = new Set(allowed);
+  for (const hit of findHardTerms(text)) {
+    if (!left.has(hit.entry.term)) continue;
+    left.delete(hit.entry.term);
+    if (hit.index > at) out.push(text.slice(at, hit.index));
+    out.push(<GlossaryTerm key={`${hit.index}-${hit.text}`} term={hit.entry.term}>{hit.text}</GlossaryTerm>);
+    at = hit.index + hit.length;
+  }
+  if (!out.length) return text;
+  if (at < text.length) out.push(text.slice(at));
+  return out;
+}
+const TermsCtx = React.createContext(null);
 function Paras({ text }) {
-  return String(text).split(/\n{2,}/).map((p) => p.trim()).filter(Boolean).map((p) => <p key={p.slice(0, 48)} className="ay-ev__body">{p}</p>);
+  const used = React.useContext(TermsCtx);
+  return String(text).split(/\n{2,}/).map((p) => p.trim()).filter(Boolean).map((p) => <p key={p.slice(0, 48)} className="ay-ev__body">{withTerms(p, used)}</p>);
 }
 
 /** Short version first; the full text one tap away. */
@@ -88,12 +118,12 @@ function useEvidence(product, aynaData) {
     const brand = product.brand || '';
     const pp = getPassport(product);
     const independent = product.clinicianOpinionSource !== 'brand';
-    const clinicalLinks = collect([...(product.doctorOpinionCitations || []), ...getVerificationLinks(product, 'doctor')], brand);
+    const clinicalLinks = collect([...(product.doctorOpinionCitations || []), ...getVerificationLinks(product, 'doctor')], brand).filter((l) => isCredible(l.url));
     const ingredients = (product.ingredientScience || []).filter((i) => i?.name).map((i) => ({
-      name: noDash(i.name), text: noDash(i.text), links: collect((i.citations || []).map((c) => ({ ...c, title: c.label })), brand),
+      name: noDash(i.name), text: noDash(i.text), links: collect((i.citations || []).map((c) => ({ ...c, title: c.label })), brand).filter((l) => isCredible(l.url)),
     }));
     const ingredientUrls = new Set(ingredients.flatMap((i) => i.links.map((l) => l.url)));
-    const studies = collect([...getVerificationLinks(product, 'scientific'), ...(product.scientificCitations || [])], brand).filter((s) => !ingredientUrls.has(s.url));
+    const studies = collect([...getVerificationLinks(product, 'scientific'), ...(product.scientificCitations || [])], brand).filter((s) => !ingredientUrls.has(s.url) && isCredible(s.url));
     const community = collect([
       ...(product.communityReviewSourceUrl ? [{ url: product.communityReviewSourceUrl, text: product.communityReviewSourceLabel }] : []),
       ...getVerificationLinks(product, 'community'),
@@ -167,7 +197,13 @@ export default function ProductEvidence({ product, aynaData = null, aynaRating =
   const shownIngredients = allIngredients ? d.ingredients : d.ingredients.slice(0, 3);
   const noReviews = !d.communityText && !d.community.length && !(ratingCount > 0) && !d.memberReviews.length;
 
+  // Each hard word is underlined once, where it first appears (max 8 on the page).
+  const paras = (t) => String(t || '').split(/\n{2,}/).map((x) => x.trim()).filter(Boolean);
+  const lead = d.clinicianShort || sentences(d.clinician).slice(0, 2).join(' ');
+  const order = [...paras([d.aynaSummary, d.aynaDetail].filter(Boolean).join('\n\n')), ...paras(lead), ...paras(d.clinician), ...paras(d.bottomLine), ...d.ingredients.map((i) => i.text), ...paras(d.communityText)].filter(Boolean);
+  const usedTerms = planGlossaryTerms(order.map((t) => ({ key: t, text: t })), 8);
   return (
+    <TermsCtx.Provider value={usedTerms}>
     <div className="ay-ev2">
       <nav className="ay-ev2__jump" aria-label="The research">
         <p className="ay-ev2__jump-h">The research</p>
@@ -200,7 +236,7 @@ export default function ProductEvidence({ product, aynaData = null, aynaRating =
             {shownIngredients.map((i) => (
               <li key={i.name}>
                 <strong>{i.name}</strong>
-                {i.text && <p>{i.text}</p>}
+                {i.text && <p>{withTerms(i.text, usedTerms)}</p>}
                 {i.links.length > 0 && <ul className="ay-ev2__ingr-links">{i.links.map((l) => <li key={l.url}><a href={l.url} target="_blank" rel="noopener noreferrer">{l.title}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a> <small>{l.publisher}</small></li>)}</ul>}
               </li>
             ))}
@@ -226,6 +262,7 @@ export default function ProductEvidence({ product, aynaData = null, aynaRating =
       </section>
       </div>
     </div>
+    </TermsCtx.Provider>
   );
 }
 

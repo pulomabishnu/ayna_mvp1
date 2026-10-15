@@ -353,6 +353,23 @@ function Start({ onStartQuiz, onViewDiscovery }) {
   );
 }
 
+/* Partner brands: just the label until you hover (or tap) it, then the
+   brand names slide out beside it. */
+function PartnersTop({ onViewWaitlist }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <section className={`lv-partners lv-partners--top${open ? ' is-open' : ''}`} aria-labelledby="lv-partners-title"
+      onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}
+      onFocus={() => setOpen(true)} onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setOpen(false); }}>
+      <h2 id="lv-partners-title" className="lv-partners__h">
+        <button type="button" className="lv-partners__toggle" aria-expanded={open} aria-controls="lv-partners-list" onClick={() => setOpen((v) => !v)}>Brands we work with</button>
+        <a href="/partners" aria-label="See all partner brands" onClick={(e) => { if (!onViewWaitlist || !isPlainLeftClick(e)) return; e.preventDefault(); onViewWaitlist(); }}><span aria-hidden="true">→</span></a>
+      </h2>
+      <div id="lv-partners-list" className="lv-partners__reveal" hidden={!open}><Ticker /></div>
+    </section>
+  );
+}
+
 /* ---------- page ---------- */
 // `personal` (signed in): the same page with a welcome-back hero, and
 // `personalSlot` (her next step, top picks, Powder Room) right under it.
@@ -364,10 +381,7 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
       <div className="lv-wrap">
         <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} personal={personal} />
         {/* Partner brands carousel up top, right under the hero. */}
-        <section className="lv-partners lv-partners--top" aria-labelledby="lv-partners-title">
-          <h2 id="lv-partners-title" className="lv-partners__h"><a href="/partners" onClick={(e) => { if (!onViewWaitlist || !isPlainLeftClick(e)) return; e.preventDefault(); onViewWaitlist(); }}>Brands we work with <span aria-hidden="true">→</span></a></h2>
-          <Ticker />
-        </section>
+        <PartnersTop onViewWaitlist={onViewWaitlist} />
         {personalSlot}
         <Purpose onViewAbout={onViewAbout} />
         <Trending onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
