@@ -354,9 +354,9 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
             <p className={`ay-ev2__badge ${d.independent ? 'is-indep' : 'is-brand'}`}>{d.independent ? 'Independent sources' : 'Based on brand claims'}</p>
             {d.clinician ? <ShortThenFull short={d.clinicianShort} full={d.clinician} /> : <p className="ay-ev__empty">No clinical opinion on file yet.</p>}
             {d.attribution && <p className="ay-ev__by">{d.attribution}</p>}
+            {d.clinicalNote && <><ShortThenFull full={d.clinicalNote} /><p className="ay-ev__by">From the clinical guidance under Sources.</p></>}
           </> },
-          (d.clinicalLinks.length > 0 || d.clinicalSummary || d.clinicalNote) && { id: 'src', label: `Sources${d.clinicalLinks.length ? ` (${d.clinicalLinks.length})` : ''}`, node: <>
-            {d.clinicalNote && <ShortThenFull full={d.clinicalNote} />}
+          (d.clinicalLinks.length > 0 || d.clinicalSummary) && { id: 'src', label: `Sources${d.clinicalLinks.length ? ` (${d.clinicalLinks.length})` : ''}`, node: <>
             {d.clinicalSummary && <ShortThenFull full={d.clinicalSummary} />}
             <Links items={d.clinicalLinks} />
           </> },

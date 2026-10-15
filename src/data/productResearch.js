@@ -1,8 +1,9 @@
 // Research that fills gaps on product pages (who it is for, how to use it,
-// credible clinical and science sources, review summaries). Added Oct 15, 2026.
-// Every URL was opened and checked by the researcher. These entries only fill
-// fields a product does not already have: nothing the team wrote by hand is
-// replaced (see withResearch in products.js).
+// ingredient science, clinical context, credible sources, warnings from the
+// label, review summaries). Added Oct 15, 2026. Every URL was opened and
+// checked by the researcher. These entries only fill fields a product does
+// not already have: nothing the team wrote by hand is replaced (see
+// withResearch in products.js and productResearch.test.js).
 export const PRODUCT_RESEARCH = {
   "p-always-infinity": {
     "whoItsFor": [
@@ -23,6 +24,45 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://www.always.co.uk/en-gb/tips-and-advice-for-women/your-first-period/how-to-use-sanitary-pads",
       "sourceLabel": "Always: How to use sanitary pads"
+    },
+    "ingredientScience": [
+      {
+        "name": "Fragrance (parfum, scented versions)",
+        "text": "Fragrance adds scent only and does nothing for absorption. A systematic review of pads and women's health found fragrance in scented pads has been linked to dermatitis (skin inflammation) in some studies, so the unscented version is the safer pick if your skin reacts easily.",
+        "citations": [
+          {
+            "url": "https://synapse.koreamed.org/articles/1130139",
+            "label": "Ewha Medical Journal 2019 (Woo et al.), doi:10.12771/emj.2019.42.3.25: Systematic Review on Sanitary Pads and Female Health"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "Pads like this one are regulated by the FDA as medical devices. FDA advises changing pads every few hours, even on light days, because wearing one too long can irritate your skin, and notes that some people react to scents or other added materials. A Harvard Health article by an OB-GYN suggests choosing unscented cotton pads without a mesh covering and changing them every 2 to 6 hours. A 2019 systematic review of pad safety found evidence on longer-term health effects of pad chemicals is limited, with small studies that neither clearly show harm nor guarantee safety.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+        "label": "FDA: Menstrual Pads and Liners",
+        "summary": "Explains how FDA regulates pads and gives safe-use tips, including changing them every few hours."
+      },
+      {
+        "url": "https://www.health.harvard.edu/blog/vulvar-health-navigating-the-nether-regions-2019040116322",
+        "label": "Harvard Health Blog (Huma Farid, MD, 2019): Vulvar health",
+        "summary": "Advises unscented cotton pads without a mesh covering, changed every 2 to 6 hours, and avoiding scented feminine products."
+      },
+      {
+        "url": "https://synapse.koreamed.org/articles/1130139",
+        "label": "Ewha Medical Journal 2019 (Woo et al.): Systematic Review on Sanitary Pads and Female Health",
+        "summary": "Reviews chemicals found in pads and finds the evidence on health effects limited and inconclusive."
+      }
+    ],
+    "warnings": [
+      "Change your pad every few hours, even if your flow is light, and more often on heavy days.",
+      "Some people react to scents or other added materials in pads.",
+      "If you get itching, a rash, pain, swelling, or discomfort, stop using the pad and contact your healthcare provider."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+      "label": "FDA: Menstrual Pads and Liners (safe use)"
     }
   },
   "p-rael-organic-pad": {
@@ -57,7 +97,28 @@ export const PRODUCT_RESEARCH = {
         "label": "Woo et al., Systematic Review on Sanitary Pads and Female Health, Ewha Medical Journal (2019)",
         "summary": "A review of 71 studies found case reports of pad-related genital dermatitis but concluded a clear cause-and-effect link between pads and health effects has not been established."
       }
-    ]
+    ],
+    "ingredientScience": [
+      {
+        "name": "Organic cotton top sheet",
+        "text": "Clinicians often suggest unscented cotton pads without a mesh covering to keep vulvar skin comfortable. This is expert advice, not evidence from trials comparing cotton or organic pads with conventional ones.",
+        "citations": [
+          {
+            "url": "https://www.health.harvard.edu/blog/vulvar-health-navigating-the-nether-regions-2019040116322",
+            "label": "Harvard Health Blog (Huma Farid, MD, 2019): Vulvar health"
+          }
+        ]
+      }
+    ],
+    "warnings": [
+      "Change your pad every few hours, even if your flow is light, and more often on heavy days.",
+      "Some people react to scents or other added materials in pads.",
+      "If you get itching, a rash, pain, swelling, or discomfort, stop using the pad and contact your healthcare provider."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+      "label": "FDA: Menstrual Pads and Liners (safe use)"
+    }
   },
   "p-honeypot-pad": {
     "whoItsFor": [
@@ -77,6 +138,47 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://support.thehoneypot.co/hc/en-us/articles/360061018132-Is-it-normal-to-feel-irritated-when-I-use-the-herbal-pad",
       "sourceLabel": "The Honey Pot support: Is it normal to feel irritated when I use the herbal pad?"
+    },
+    "ingredientScience": [
+      {
+        "name": "Lavender oil",
+        "text": "Lavender oil is part of the pad's herbal infusion and does not help it absorb. It is a known skin allergen once it oxidizes (breaks down in air): in one dermatology clinic study, 2.8% of patients tested had an allergic reaction to oxidized lavender oil.",
+        "citations": [
+          {
+            "url": "https://www.medicaljournals.se/acta/content/abstract/10.2340/00015555-2319",
+            "label": "Acta Dermato-Venereologica (Hagvall and Bråred Christensson): Contact allergy to oxidized lavender oil"
+          }
+        ]
+      },
+      {
+        "name": "Peppermint oil",
+        "text": "Mint oils give the cooling, tingling feel. Allergy is uncommon but real: in a large North American study, 161 of 28,128 people patch tested (0.6%) reacted to peppermint oil, nearly a third of those reactions were strong, and most also reacted to other fragrance or plant allergens. The current label lists corn mint oil and menthol rather than peppermint oil.",
+        "citations": [
+          {
+            "url": "https://hsrc.himmelfarb.gwu.edu/gwhpubs/5450",
+            "label": "Dermatitis 2024 (Warshaw et al., North American Contact Dermatitis Group), doi:10.1089/derm.2024.0118: Patch testing to peppermint oil"
+          }
+        ]
+      },
+      {
+        "name": "Aloe extract",
+        "text": "Aloe is part of the herbal infusion. Evidence for putting it on skin is weak and comes mostly from small studies (the best is for burns), and topical aloe is generally well tolerated, though there are occasional reports of burning, itching, and rash.",
+        "citations": [
+          {
+            "url": "https://www.nccih.nih.gov/health/aloe-vera",
+            "label": "NIH NCCIH: Aloe Vera"
+          }
+        ]
+      }
+    ],
+    "warnings": [
+      "Change your pad every few hours, even if your flow is light, and more often on heavy days.",
+      "Some people react to scents or other added materials in pads.",
+      "If you get itching, a rash, pain, swelling, or discomfort, stop using the pad and contact your healthcare provider."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+      "label": "FDA: Menstrual Pads and Liners (safe use)"
     }
   },
   "p-saalt-cup": {
@@ -98,6 +200,24 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://saalt.com/pages/instructions",
       "sourceLabel": "Saalt Cup Instructions"
+    },
+    "clinicalNote": "The biggest review of menstrual cups so far, published in The Lancet Public Health in 2019, pooled 43 studies with 3,319 people and concluded that cups are a safe way to manage your period, while noting that few of the studies were high quality. Use of a cup showed no harmful effect on the vaginal flora (the normal mix of bacteria in the vagina). The review did find rare problems: five reported cases of toxic shock syndrome (TSS, a rare but serious bacterial illness), and 13 cases where an IUD (intrauterine device, a type of birth control) was pulled out of place in people using a cup. If you have an IUD, that is a reason to talk to your clinician and break the cup's seal fully before removing it.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://doaj.org/article/e1d5fe32203c4f238d4c324f7d815608",
+        "label": "van Eijk et al., The Lancet Public Health 2019 (doi:10.1016/s2468-2667(19)30111-2): Menstrual cup use, leakage, acceptability, safety, and availability",
+        "summary": "Systematic review and meta-analysis of 43 studies finding menstrual cups safe overall, with rare reports of TSS and IUD dislodgement."
+      }
+    ],
+    "warnings": [
+      "Menstrual cups have been linked to toxic shock syndrome (TSS), a rare but serious illness that can cause death.",
+      "Never wear the cup for more than 12 hours at a time without washing it properly.",
+      "If you have an IUD, check with your doctor first and break the seal before removing the cup so you don't dislodge the IUD.",
+      "If you feel pain, burning, irritation, or inflammation in the genital area, remove the cup and contact a doctor."
+    ],
+    "warningsSource": {
+      "url": "https://cdn.shopify.com/s/files/1/2705/9430/files/files_instructions_saalt_instructions_in_english.pdf",
+      "label": "Saalt Cup instructions leaflet (Saalt)"
     }
   },
   "p-nature-made-iron-65mg": {
@@ -142,6 +262,32 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.ebay.com/p/7034766232",
         "label": "eBay product reviews"
       }
+    ],
+    "clinicalNote": "Iron helps your body make hemoglobin, the protein in red blood cells that carries oxygen, and women with heavy periods and people who are pregnant are among those most likely to run low. Each tablet has 65 mg of iron, which is above the 45 mg a day upper limit set for adults; doctors sometimes prescribe more than that for a limited time to treat iron deficiency, which is why bloodwork and a clinician's plan matter here. Iron can make some medicines work less well, including levothyroxine (a thyroid medicine) and levodopa (used for Parkinson's disease and restless legs syndrome). Keep the bottle away from kids: iron products are a leading cause of fatal poisoning in children under 6.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://ods.od.nih.gov/factsheets/iron-Consumer/",
+        "label": "NIH Office of Dietary Supplements: Iron fact sheet for consumers",
+        "summary": "Covers who is at risk of low iron, the 45 mg adult upper limit, side effects, medicine interactions, and the poisoning risk for young children."
+      },
+      {
+        "url": "https://www.ncbi.nlm.nih.gov/books/NBK557376/",
+        "label": "NIH Bookshelf (StatPearls): Iron Supplementation",
+        "summary": "Clinical review of using oral iron to treat iron deficiency anemia, including absorption, side effects, and interactions."
+      }
+    ],
+    "effectiveness": "For the product type, the evidence is good. A Cochrane review of 67 trials with 8,506 menstruating women found that daily iron supplements lowered rates of anemia and iron deficiency, raised hemoglobin and iron stores, and reduced fatigue, but clearly increased stomach side effects like constipation and belly pain. Oral iron usually takes months to rebuild your stores, and repeat bloodwork shows whether it is working. No study of this specific Nature Made product was found.",
+    "effectivenessSources": [
+      {
+        "url": "https://russia.cochrane.org/news/featured-review-iron-supplementation-taken-daily-improving-health-menstruating-women",
+        "label": "Cochrane: Iron supplementation taken daily for improving health in menstruating women (Low et al.)",
+        "summary": "Summary of a Cochrane review of 67 trials finding daily iron reduces anemia and iron deficiency and eases fatigue, with more stomach side effects."
+      },
+      {
+        "url": "https://www.ncbi.nlm.nih.gov/books/NBK557376/",
+        "label": "NIH Bookshelf (StatPearls): Iron Supplementation",
+        "summary": "Notes that oral iron is usually needed for months and that improvement should show on repeat blood tests."
+      }
     ]
   },
   "p-natures-bounty-d3-125mcg": {
@@ -168,6 +314,22 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.mayoclinic.org/healthy-lifestyle/nutrition-and-healthy-eating/expert-answers/vitamin-d-toxicity/faq-20058108",
         "label": "Mayo Clinic: What is vitamin D toxicity?",
         "summary": "Mayo Clinic says adults should not take more than 4,000 IU of vitamin D a day unless a healthcare professional advises it, that too much can raise blood calcium, and that care teams check calcium and vitamin D levels when they prescribe higher doses for a set period."
+      }
+    ],
+    "clinicalNote": "Most adults aged 19 to 70 need 600 IU of vitamin D a day, and the upper limit for adults is 4,000 IU a day from all sources combined, so one 5,000 IU softgel is above it on its own. Too much vitamin D can raise blood calcium (hypercalcemia), which can cause nausea, vomiting, muscle weakness, excess thirst, and kidney stones, and NIH notes that vitamin D toxicity almost always comes from supplements, not food or sun. Clear toxicity is unlikely below 10,000 IU a day, but NIH says harms may build up over time at lower doses. Vitamin D can also interact with some medicines, including orlistat (a weight-loss drug) and certain statins.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://ods.od.nih.gov/factsheet/VitaminD-HealthProfessional",
+        "label": "NIH Office of Dietary Supplements: Vitamin D fact sheet for health professionals",
+        "summary": "Gives recommended intakes, the 4,000 IU adult upper limit, signs of toxicity, and medicine interactions."
+      }
+    ],
+    "effectiveness": "For the product type: vitamin D3 supplements reliably raise blood vitamin D levels, and NIH notes D3 raises and holds them better than D2. But in the large VITAL trial, 2,000 IU a day for about 5 years in adults who were mostly not deficient did not lower fractures, heart attacks, strokes, or rates of breast, prostate, or colorectal cancer. No study of this specific Nature's Bounty product was found.",
+    "effectivenessSources": [
+      {
+        "url": "https://ods.od.nih.gov/factsheet/VitaminD-HealthProfessional",
+        "label": "NIH Office of Dietary Supplements: Vitamin D fact sheet for health professionals",
+        "summary": "Compares D2 and D3 and summarizes the VITAL trial, which found no fracture, cancer, or heart benefit in mostly vitamin D sufficient adults."
       }
     ]
   },
@@ -2486,6 +2648,19 @@ export const PRODUCT_RESEARCH = {
         "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
         "summary": "The Menopause Society's patient handout says moisturizers are used regularly, often several times a week, and that warming agents and some solvents and preservatives may irritate."
       }
+    ],
+    "clinicalNote": "The North American Menopause Society lists over-the-counter, hormone-free vaginal moisturizers and lubricants as first-line care for dryness from menopause, while noting that few clinical studies have tested these products. It also says there's no evidence yet that hyaluronic acid products work better than other moisturizers. That said, a randomized trial of 144 women found a hyaluronic acid vaginal gel was not inferior to estriol (a low-dose estrogen) cream for relieving dryness. Because this gel contains several plant extracts, the Society's tip applies: try a product on a small patch of skin for 24 hours before using it inside the vagina.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.isswsh.org/images/content/2020-NAMS-GSM-Paper.pdf",
+        "label": "Menopause (journal), 2020: The North American Menopause Society position statement on genitourinary syndrome of menopause",
+        "summary": "Professional position statement naming nonhormone moisturizers and lubricants as first-line for genitourinary syndrome of menopause, with limited trial data and no proven extra benefit from hyaluronic acid."
+      },
+      {
+        "url": "https://boris.unibe.ch/54089",
+        "label": "Archives of Gynecology and Obstetrics (Springer), 2013: Is vaginal hyaluronic acid as effective as vaginal estriol for vaginal dryness relief?",
+        "summary": "Summary of a randomized trial in which hyaluronic acid vaginal gel was non-inferior to estriol cream for vaginal dryness."
+      }
     ]
   },
   "p-good-kitty-uti-biome-shield": {
@@ -2531,7 +2706,29 @@ export const PRODUCT_RESEARCH = {
         "url": "https://goodkittyco.com/products/uti-biome-shield",
         "label": "Good Kitty Co: customer reviews on the UTI Biome Shield product page"
       }
-    ]
+    ],
+    "clinicalNote": "The two main ingredients here have very different evidence. A 2023 Cochrane review of 50 trials found cranberry products probably lower UTI risk, including in women with recurrent UTIs, though not in pregnant women or older adults in care homes. D-mannose has a weaker record: a 2024 randomized trial of 598 women with recurrent UTIs found daily D-mannose did no better than placebo. No published trial of this finished product was found, so its combined effect is unknown.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.cochrane.org/CD001321/UTI_cranberry-for-preventing-urinary-tract-infections",
+        "label": "Cochrane Review, 2023: Cranberries for preventing urinary tract infections",
+        "summary": "Cranberry products probably reduce symptomatic UTIs (RR 0.70 overall, 0.74 in women with recurrent UTIs), with little or no benefit in pregnant women or institutionalized elderly."
+      },
+      {
+        "url": "https://urology.wisc.edu/wp-content/uploads/2024/05/D-Mannose-for-Prevention-of-Recurrent-Urinary-Tract-Infection-Among-Women.pdf",
+        "label": "JAMA Internal Medicine, 2024: D-Mannose for Prevention of Recurrent UTI Among Women, RCT (copy hosted by UW Urology)",
+        "summary": "Daily D-mannose did not reduce recurrent UTIs versus placebo in 598 women in UK primary care."
+      }
+    ],
+    "warnings": [
+      "Don't use cranberry products instead of a proven treatment for a UTI; if you think you have one, see a health care provider.",
+      "There is conflicting evidence on whether cranberry interacts with the blood thinner warfarin, so check with your provider if you take medicines.",
+      "Cranberry in amounts larger than food is not proven safe in pregnancy or breastfeeding; talk with your provider first."
+    ],
+    "warningsSource": {
+      "url": "https://www.nccih.nih.gov/health/cranberry?nav=tw",
+      "label": "NCCIH (NIH): Cranberry (official guidance for the cranberry ingredient; the brand page could not be opened)"
+    }
   },
   "p-oboo-woosh-warming-wand": {
     "whoItsFor": [
@@ -2552,7 +2749,20 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://oboo.love/products/woosh",
       "sourceLabel": "Oboo: Woosh Warming Wand product page"
-    }
+    },
+    "clinicalNote": "The International Society for Sexual Medicine says there are only a limited number of studies on vibrators, but early findings suggest they may improve genital blood flow, arousal, satisfaction, and orgasm, and possibly pelvic floor muscle tone. A Cedars-Sinai urogynecologist describes vibration as a way to boost blood flow to the genitals as estrogen drops in menopause, though the article notes the research comes from a handful of small studies. None of this tested the warming feature or this device.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
+        "label": "International Society for Sexual Medicine (ISSM): What are the benefits of vibrators for sexual health?",
+        "summary": "Medical society Q&A: limited studies suggest vibrators may improve genital blood flow, arousal, satisfaction, orgasm and pelvic floor tone; more research needed."
+      },
+      {
+        "url": "https://www.cedars-sinai.org/stories-and-insights/healthy-living/sexual-healing-vibrators-as-medicine",
+        "label": "Cedars-Sinai, 2025: Sexual Healing, Vibrators as Medicine",
+        "summary": "Academic medical center article quoting a urogynecologist on vibrators for blood flow, pelvic floor relaxation and menopause changes; notes evidence comes from a handful of small studies."
+      }
+    ]
   },
   "p-oboo-nook": {
     "whoItsFor": [
@@ -2588,6 +2798,19 @@ export const PRODUCT_RESEARCH = {
         "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
         "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
         "summary": "The Menopause Society notes that sexual stimulation, alone, with a partner or with a device such as a vibrator, may support vaginal blood flow and natural moisture after menopause."
+      }
+    ],
+    "clinicalNote": "The International Society for Sexual Medicine says there are only a limited number of studies on vibrators, but early findings suggest they may improve genital blood flow, arousal, satisfaction, and orgasm, and possibly pelvic floor muscle tone. Cedars-Sinai's urogynecologist notes that vibrators make orgasm easier for many women and can be used externally, without insertion. The evidence is small and early, and none of it tested this device.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
+        "label": "International Society for Sexual Medicine (ISSM): What are the benefits of vibrators for sexual health?",
+        "summary": "Medical society Q&A: limited studies suggest vibrators may improve genital blood flow, arousal, satisfaction, orgasm and pelvic floor tone; more research needed."
+      },
+      {
+        "url": "https://www.cedars-sinai.org/stories-and-insights/healthy-living/sexual-healing-vibrators-as-medicine",
+        "label": "Cedars-Sinai, 2025: Sexual Healing, Vibrators as Medicine",
+        "summary": "Academic medical center article quoting a urogynecologist on vibrators for blood flow, pelvic floor relaxation and menopause changes; notes evidence comes from a handful of small studies."
       }
     ]
   },
@@ -2626,7 +2849,34 @@ export const PRODUCT_RESEARCH = {
         "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
         "summary": "The Menopause Society notes that sexual stimulation, alone, with a partner or with a device such as a vibrator, may support vaginal blood flow and natural moisture after menopause."
       }
-    ]
+    ],
+    "clinicalNote": "Research on vibrators is still small. A 2023 review found 17 studies linking vibrator use to better arousal, desire, satisfaction and orgasm, with early signs of benefit for pelvic floor muscles and vulvar pain, but the authors say more research is needed. In a large 2009 U.S. survey, about 7 in 10 women who used vibrators had no side effects; the most common one was temporary numbness, and most side effects were mild and short-lived. None of these studies tested Oboo devices. Smooch is for external use only, so it can be an option when penetration is uncomfortable. Oboo's own FAQ says it is compact and powerful rather than especially mild, so starting on the lowest setting makes sense.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.issm.info/sexual-health-headlines/vibrators-may-have-health-benefits",
+        "label": "International Society for Sexual Medicine: Vibrators may have health benefits (on Dubinskaya et al., Sexual Medicine Reviews, 2023)",
+        "summary": "Summarizes a 2023 systematic review of 17 studies that found positive results for sexual function and early signs for pelvic floor and vulvar pain, with more research needed."
+      },
+      {
+        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
+        "label": "International Society for Sexual Medicine: What are the benefits of vibrators for sexual health?",
+        "summary": "Says early research suggests vibrators may improve genital blood flow, arousal, satisfaction and orgasm, but that the number of studies is limited."
+      },
+      {
+        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
+        "label": "Journal of Sexual Medicine (2009), Herbenick et al.: vibrator use by U.S. women (Kinsey Institute PDF)",
+        "summary": "National survey of 2,056 women; 71.5% of vibrator users reported no side effects, and most reported side effects such as numbness were mild and short-lived."
+      }
+    ],
+    "warnings": [
+      "Wash it with warm water and soap after each use.",
+      "If you share it, put a new condom on it each time, especially between different partners.",
+      "Check it regularly for scratches or breaks, and follow the maker's cleaning and storage instructions."
+    ],
+    "warningsSource": {
+      "url": "https://seftonsexualhealth.nhs.uk/adult-safer-sex",
+      "label": "NHS Sefton Sexual Health: Safer sex (sex toys)"
+    }
   },
   "p-oboo-woo": {
     "whoItsFor": [
@@ -2663,7 +2913,34 @@ export const PRODUCT_RESEARCH = {
         "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
         "summary": "The Menopause Society notes that sexual stimulation, alone, with a partner or with a device such as a vibrator, may support vaginal blood flow and natural moisture after menopause."
       }
-    ]
+    ],
+    "clinicalNote": "Research on vibrators is still small. A 2023 review found 17 studies linking vibrator use to better arousal, desire, satisfaction and orgasm, with early signs of benefit for pelvic floor muscles and vulvar pain, but the authors say more research is needed. In a large 2009 U.S. survey, about 7 in 10 women who used vibrators had no side effects; the most common one was temporary numbness, and most side effects were mild and short-lived. None of these studies tested Oboo devices. Woo is for external use only, which keeps things simple if penetration is not something you want right now.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.issm.info/sexual-health-headlines/vibrators-may-have-health-benefits",
+        "label": "International Society for Sexual Medicine: Vibrators may have health benefits (on Dubinskaya et al., Sexual Medicine Reviews, 2023)",
+        "summary": "Summarizes a 2023 systematic review of 17 studies that found positive results for sexual function and early signs for pelvic floor and vulvar pain, with more research needed."
+      },
+      {
+        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
+        "label": "International Society for Sexual Medicine: What are the benefits of vibrators for sexual health?",
+        "summary": "Says early research suggests vibrators may improve genital blood flow, arousal, satisfaction and orgasm, but that the number of studies is limited."
+      },
+      {
+        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
+        "label": "Journal of Sexual Medicine (2009), Herbenick et al.: vibrator use by U.S. women (Kinsey Institute PDF)",
+        "summary": "National survey of 2,056 women; 71.5% of vibrator users reported no side effects, and most reported side effects such as numbness were mild and short-lived."
+      }
+    ],
+    "warnings": [
+      "Wash it with warm water and soap after each use.",
+      "If you share it, put a new condom on it each time, especially between different partners.",
+      "Check it regularly for scratches or breaks, and follow the maker's cleaning and storage instructions."
+    ],
+    "warningsSource": {
+      "url": "https://seftonsexualhealth.nhs.uk/adult-safer-sex",
+      "label": "NHS Sefton Sexual Health: Safer sex (sex toys)"
+    }
   },
   "p-oboo-shoop": {
     "whoItsFor": [
@@ -2700,7 +2977,35 @@ export const PRODUCT_RESEARCH = {
         "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
         "summary": "The Menopause Society notes that sexual stimulation, alone, with a partner or with a device such as a vibrator, may support vaginal blood flow and natural moisture after menopause."
       }
-    ]
+    ],
+    "clinicalNote": "Research on vibrators is still small. A 2023 review found 17 studies linking vibrator use to better arousal, desire, satisfaction and orgasm, with early signs of benefit for pelvic floor muscles and vulvar pain, but the authors say more research is needed. In a large 2009 U.S. survey, about 7 in 10 women who used vibrators had no side effects; the most common one was temporary numbness, and most side effects were mild and short-lived. None of these studies tested Oboo devices. Oboo says Shoop is meant for gentle, shallow internal use or external use; if dryness is part of the picture, a water-based lubricant can make internal use more comfortable.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.issm.info/sexual-health-headlines/vibrators-may-have-health-benefits",
+        "label": "International Society for Sexual Medicine: Vibrators may have health benefits (on Dubinskaya et al., Sexual Medicine Reviews, 2023)",
+        "summary": "Summarizes a 2023 systematic review of 17 studies that found positive results for sexual function and early signs for pelvic floor and vulvar pain, with more research needed."
+      },
+      {
+        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
+        "label": "International Society for Sexual Medicine: What are the benefits of vibrators for sexual health?",
+        "summary": "Says early research suggests vibrators may improve genital blood flow, arousal, satisfaction and orgasm, but that the number of studies is limited."
+      },
+      {
+        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
+        "label": "Journal of Sexual Medicine (2009), Herbenick et al.: vibrator use by U.S. women (Kinsey Institute PDF)",
+        "summary": "National survey of 2,056 women; 71.5% of vibrator users reported no side effects, and most reported side effects such as numbness were mild and short-lived."
+      }
+    ],
+    "warnings": [
+      "Wash it with warm water and soap after each use.",
+      "If you share it, put a new condom on it each time, especially between different partners.",
+      "Check it regularly for scratches or breaks, and follow the maker's cleaning and storage instructions.",
+      "Wash it, or change the condom, when you switch between vaginal and anal use."
+    ],
+    "warningsSource": {
+      "url": "https://seftonsexualhealth.nhs.uk/adult-safer-sex",
+      "label": "NHS Sefton Sexual Health: Safer sex (sex toys)"
+    }
   },
   "p-oboo-moon": {
     "whoItsFor": [
@@ -2727,7 +3032,30 @@ export const PRODUCT_RESEARCH = {
         "label": "Cleveland Clinic: Is Anal Sex Safe?",
         "summary": "A Cleveland Clinic gastroenterologist explains that the anus makes no natural lubrication and its lining tears easily, so you need ample lube, a slow gradual pace, clean toys between uses, and to stop with sharp pain or seek care for heavy or lasting bleeding."
       }
-    ]
+    ],
+    "clinicalNote": "The anus does not make its own lubricant, so plenty of lube matters for any anal toy. In one hospital series of 25 people with an object stuck in the rectum, sex toys were the most common object, two people had tears in the rectal lining (the inner skin of the rectum), and half had used the same object before without trouble. That is why a flared base (a wide end that stops the toy going all the way in), going slowly and stopping with pain or bleeding matter. No study has tested this kit.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://seftonsexualhealth.nhs.uk/adult-safer-sex",
+        "label": "NHS Sefton Sexual Health: Safer sex",
+        "summary": "NHS sexual health advice that the anus does not make its own lubricant, so plenty of lube is important, and that toys should be washed and covered with a new condom when shared."
+      },
+      {
+        "url": "https://www.wjgnet.com/1948-9366/full/v8/i10/679.htm",
+        "label": "World Journal of Gastrointestinal Surgery (2016): Increasing trend in retained rectal foreign bodies",
+        "summary": "In 25 hospital cases, sex toys were the most common objects stuck in the rectum, two people had tears in the rectal lining, and half had used the same object before without problems."
+      }
+    ],
+    "warnings": [
+      "Lubrication is essential: use a generous amount of water-based lube every time.",
+      "Start with short sessions of 10 to 15 minutes and only move up a size when you're ready.",
+      "Remove the plug if you feel any discomfort.",
+      "Wash all plugs with warm soapy water or toy cleaner before and after each use."
+    ],
+    "warningsSource": {
+      "url": "https://oboo.love/products/moon",
+      "label": "Oboo: Moon Anal Training Kit product page"
+    }
   },
   "p-oboo-oooh": {
     "whoItsFor": [
@@ -2764,7 +3092,34 @@ export const PRODUCT_RESEARCH = {
         "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
         "summary": "The Menopause Society notes that sexual stimulation, alone, with a partner or with a device such as a vibrator, may support vaginal blood flow and natural moisture after menopause."
       }
-    ]
+    ],
+    "clinicalNote": "Research on vibrators is still small. A 2023 review found 17 studies linking vibrator use to better arousal, desire, satisfaction and orgasm, with early signs of benefit for pelvic floor muscles and vulvar pain, but the authors say more research is needed. In a large 2009 U.S. survey, about 7 in 10 women who used vibrators had no side effects; the most common one was temporary numbness, and most side effects were mild and short-lived. None of these studies tested Oboo devices. Oooh is an external-only, palm-sized design, and the brand suggests a water-based lubricant if you want more glide.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.issm.info/sexual-health-headlines/vibrators-may-have-health-benefits",
+        "label": "International Society for Sexual Medicine: Vibrators may have health benefits (on Dubinskaya et al., Sexual Medicine Reviews, 2023)",
+        "summary": "Summarizes a 2023 systematic review of 17 studies that found positive results for sexual function and early signs for pelvic floor and vulvar pain, with more research needed."
+      },
+      {
+        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
+        "label": "International Society for Sexual Medicine: What are the benefits of vibrators for sexual health?",
+        "summary": "Says early research suggests vibrators may improve genital blood flow, arousal, satisfaction and orgasm, but that the number of studies is limited."
+      },
+      {
+        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
+        "label": "Journal of Sexual Medicine (2009), Herbenick et al.: vibrator use by U.S. women (Kinsey Institute PDF)",
+        "summary": "National survey of 2,056 women; 71.5% of vibrator users reported no side effects, and most reported side effects such as numbness were mild and short-lived."
+      }
+    ],
+    "warnings": [
+      "Wash it with warm water and soap after each use.",
+      "If you share it, put a new condom on it each time, especially between different partners.",
+      "Check it regularly for scratches or breaks, and follow the maker's cleaning and storage instructions."
+    ],
+    "warningsSource": {
+      "url": "https://seftonsexualhealth.nhs.uk/adult-safer-sex",
+      "label": "NHS Sefton Sexual Health: Safer sex (sex toys)"
+    }
   },
   "p-oboo-groove": {
     "whoItsFor": [
@@ -2801,7 +3156,35 @@ export const PRODUCT_RESEARCH = {
         "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
         "summary": "The Menopause Society notes that sexual stimulation, alone, with a partner or with a device such as a vibrator, may support vaginal blood flow and natural moisture after menopause."
       }
-    ]
+    ],
+    "clinicalNote": "Research on vibrators is still small. A 2023 review found 17 studies linking vibrator use to better arousal, desire, satisfaction and orgasm, with early signs of benefit for pelvic floor muscles and vulvar pain, but the authors say more research is needed. In a large 2009 U.S. survey, about 7 in 10 women who used vibrators had no side effects; the most common one was temporary numbness, and most side effects were mild and short-lived. None of these studies tested Oboo devices. Groove's two motors are controlled separately, so you can keep one part low or off while you find what feels comfortable.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.issm.info/sexual-health-headlines/vibrators-may-have-health-benefits",
+        "label": "International Society for Sexual Medicine: Vibrators may have health benefits (on Dubinskaya et al., Sexual Medicine Reviews, 2023)",
+        "summary": "Summarizes a 2023 systematic review of 17 studies that found positive results for sexual function and early signs for pelvic floor and vulvar pain, with more research needed."
+      },
+      {
+        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
+        "label": "International Society for Sexual Medicine: What are the benefits of vibrators for sexual health?",
+        "summary": "Says early research suggests vibrators may improve genital blood flow, arousal, satisfaction and orgasm, but that the number of studies is limited."
+      },
+      {
+        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
+        "label": "Journal of Sexual Medicine (2009), Herbenick et al.: vibrator use by U.S. women (Kinsey Institute PDF)",
+        "summary": "National survey of 2,056 women; 71.5% of vibrator users reported no side effects, and most reported side effects such as numbness were mild and short-lived."
+      }
+    ],
+    "warnings": [
+      "Wash it with warm water and soap after each use.",
+      "If you share it, put a new condom on it each time, especially between different partners.",
+      "Check it regularly for scratches or breaks, and follow the maker's cleaning and storage instructions.",
+      "Wash it, or change the condom, when you switch between vaginal and anal use."
+    ],
+    "warningsSource": {
+      "url": "https://seftonsexualhealth.nhs.uk/adult-safer-sex",
+      "label": "NHS Sefton Sexual Health: Safer sex (sex toys)"
+    }
   },
   "p-oboo-boom": {
     "whoItsFor": [
@@ -2838,7 +3221,35 @@ export const PRODUCT_RESEARCH = {
         "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
         "summary": "The Menopause Society notes that sexual stimulation, alone, with a partner or with a device such as a vibrator, may support vaginal blood flow and natural moisture after menopause."
       }
-    ]
+    ],
+    "clinicalNote": "Research on vibrators is still small. A 2023 review found 17 studies linking vibrator use to better arousal, desire, satisfaction and orgasm, with early signs of benefit for pelvic floor muscles and vulvar pain, but the authors say more research is needed. In a large 2009 U.S. survey, about 7 in 10 women who used vibrators had no side effects; the most common one was temporary numbness, and most side effects were mild and short-lived. None of these studies tested Oboo devices. Oboo says the warming tail increases blood flow, but no published study of this warming feature was found, so treat that as a brand claim.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.issm.info/sexual-health-headlines/vibrators-may-have-health-benefits",
+        "label": "International Society for Sexual Medicine: Vibrators may have health benefits (on Dubinskaya et al., Sexual Medicine Reviews, 2023)",
+        "summary": "Summarizes a 2023 systematic review of 17 studies that found positive results for sexual function and early signs for pelvic floor and vulvar pain, with more research needed."
+      },
+      {
+        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
+        "label": "International Society for Sexual Medicine: What are the benefits of vibrators for sexual health?",
+        "summary": "Says early research suggests vibrators may improve genital blood flow, arousal, satisfaction and orgasm, but that the number of studies is limited."
+      },
+      {
+        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
+        "label": "Journal of Sexual Medicine (2009), Herbenick et al.: vibrator use by U.S. women (Kinsey Institute PDF)",
+        "summary": "National survey of 2,056 women; 71.5% of vibrator users reported no side effects, and most reported side effects such as numbness were mild and short-lived."
+      }
+    ],
+    "warnings": [
+      "Wash it with warm water and soap after each use.",
+      "If you share it, put a new condom on it each time, especially between different partners.",
+      "Check it regularly for scratches or breaks, and follow the maker's cleaning and storage instructions.",
+      "Wash it, or change the condom, when you switch between vaginal and anal use."
+    ],
+    "warningsSource": {
+      "url": "https://seftonsexualhealth.nhs.uk/adult-safer-sex",
+      "label": "NHS Sefton Sexual Health: Safer sex (sex toys)"
+    }
   },
   "p-oboo-smooth-daily": {
     "whoItsFor": [
@@ -2870,7 +3281,30 @@ export const PRODUCT_RESEARCH = {
         "label": "Mayo Clinic: Female sexual dysfunction, diagnosis and treatment",
         "summary": "Mayo Clinic says herbal and topical oil products sold for sexual wellness haven't been studied well, warns one estrogen-like product may fuel estrogen-sensitive breast tumors, and advises asking your clinician first."
       }
-    ]
+    ],
+    "clinicalNote": "Dermatologists advise caring for vulvar skin with a plain, unscented emollient (a moisturizing cream or ointment that soothes and protects) and avoiding perfumed products and those with long ingredient lists. This balm has a long botanical list that includes sweet orange oil, so a patch test first is sensible if your skin reacts easily. It also contains black cohosh, chaste tree, dong quai and red clover; NIH's summary of black cohosh and red clover for menopause describes mixed or inconsistent results for extract products and does not cover use on vulvar skin. It is oil-based, so it is not condom-safe with latex.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.skinhealthinfo.org.uk/wp-content/uploads/2018/11/Vulval-skincare-PIL-May-2023.pdf",
+        "label": "British Association of Dermatologists: Vulval skincare patient leaflet (2023)",
+        "summary": "Recommends a regular unscented emollient for vulval skin and advises avoiding perfumed products and those with long ingredient lists."
+      },
+      {
+        "url": "https://nccih.nih.gov/health/providers/digest/menopausal-symptoms-and-complementary-health-practices-science",
+        "label": "NIH NCCIH: Menopausal symptoms and complementary health practices",
+        "summary": "Reviews black cohosh and red clover extracts for menopause symptoms, describing mixed or inconsistent results and not addressing use on the skin."
+      }
+    ],
+    "warnings": [
+      "This oil-based balm is not compatible with latex or polyisoprene condoms, dental dams or other latex barriers, and may cause them to break.",
+      "If you need barrier protection, use only polyurethane condoms or a water-based lubricant instead.",
+      "Always patch test first, and stop if your skin reacts.",
+      "It is for external vulva care only and is not designed as a lube."
+    ],
+    "warningsSource": {
+      "url": "https://oboo.love/products/smooth-daily-vulva-balm",
+      "label": "Oboo: Smooth Daily Vulva Balm product page"
+    }
   },
   "p-oboo-smooth-arousal": {
     "whoItsFor": [
@@ -2902,7 +3336,35 @@ export const PRODUCT_RESEARCH = {
         "label": "Mayo Clinic: Female sexual dysfunction, diagnosis and treatment",
         "summary": "Mayo Clinic says herbal and topical oil products sold for sexual wellness haven't been studied well, warns one estrogen-like product may fuel estrogen-sensitive breast tumors, and advises asking your clinician first."
       }
-    ]
+    ],
+    "clinicalNote": "Dermatologists advise caring for vulvar skin with a plain, unscented emollient (a moisturizing cream or ointment that soothes and protects) and avoiding perfumed products and those with long ingredient lists. This balm has a long botanical list that includes peppermint oil, which gives the cooling tingle, so a patch test first is sensible if your skin reacts easily. It also contains black cohosh, chaste tree, dong quai and red clover; NIH's summary of black cohosh and red clover for menopause describes mixed or inconsistent results for extract products and does not cover use on vulvar skin. It is oil-based, so it is not condom-safe with latex. The Menopause Society also notes that oil-based products may raise the risk of vaginal infections, so the brand's advice to keep it external and add a water-based lube for penetration fits.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.skinhealthinfo.org.uk/wp-content/uploads/2018/11/Vulval-skincare-PIL-May-2023.pdf",
+        "label": "British Association of Dermatologists: Vulval skincare patient leaflet (2023)",
+        "summary": "Recommends a regular unscented emollient for vulval skin and advises avoiding perfumed products and those with long ingredient lists."
+      },
+      {
+        "url": "https://nccih.nih.gov/health/providers/digest/menopausal-symptoms-and-complementary-health-practices-science",
+        "label": "NIH NCCIH: Menopausal symptoms and complementary health practices",
+        "summary": "Reviews black cohosh and red clover extracts for menopause symptoms, describing mixed or inconsistent results and not addressing use on the skin."
+      },
+      {
+        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
+        "summary": "Explains that moisturizers are used several times a week, lubricants as needed, and that oil-based products may damage condoms and may raise the risk of vaginal infections."
+      }
+    ],
+    "warnings": [
+      "This oil-based balm is not compatible with latex or polyisoprene condoms, dental dams or other latex barriers, and may cause them to break.",
+      "If you need barrier protection, use only polyurethane condoms or a water-based lubricant instead.",
+      "Always do a patch test before full use, and talk to your healthcare provider if you have concerns or pre-existing conditions.",
+      "It is for external use on the vulva only."
+    ],
+    "warningsSource": {
+      "url": "https://oboo.love/products/smooth-arousal-vulva-balm",
+      "label": "Oboo: Smooth Arousal Vulva Balm product page"
+    }
   },
   "p-oboo-loob-daily": {
     "whoItsFor": [
@@ -2934,7 +3396,29 @@ export const PRODUCT_RESEARCH = {
         "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
         "summary": "The Menopause Society's patient handout says vaginal moisturizers are used regularly, often several times a week, to maintain moisture."
       }
-    ]
+    ],
+    "clinicalNote": "For genitourinary syndrome of menopause (the dryness, irritation and painful sex that come with lower estrogen), The North American Menopause Society lists nonhormone lubricants and regular long-acting vaginal moisturizers as first-line options, though few studies have tested them. Moisturizers are usually used several times a week to keep tissue moist, not just before sex. Loob contains sodium hyaluronate (hyaluronic acid), but the society says there is no evidence hyaluronic acid products work better than others. Some water-based products are hyperosmolar (more concentrated than body fluids, which can irritate), so if one stings, try a patch of skin for 24 hours or switch products; for more severe symptoms, these can be combined with prescription treatment.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.isswsh.org/images/content/2020-NAMS-GSM-Paper.pdf",
+        "label": "Menopause (2020): The North American Menopause Society GSM position statement",
+        "summary": "Names nonhormone lubricants and regular long-acting vaginal moisturizers as first-line options, while noting few studies and no evidence that hyaluronic acid products work better."
+      },
+      {
+        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
+        "summary": "Explains that moisturizers are used several times a week, lubricants as needed, and that oil-based products may damage condoms and may raise the risk of vaginal infections."
+      }
+    ],
+    "warnings": [
+      "Always do a patch test before use.",
+      "Stop using it if irritation occurs.",
+      "Keep out of reach of children."
+    ],
+    "warningsSource": {
+      "url": "https://oboo.love/products/loob-daily",
+      "label": "Oboo: Loob Daily Moisturizer product page"
+    }
   },
   "p-oboo-loob-arousal": {
     "whoItsFor": [
@@ -2966,7 +3450,25 @@ export const PRODUCT_RESEARCH = {
         "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
         "summary": "The Menopause Society advises that lubricants with warming agents, flavors or certain preservatives may irritate some women."
       }
-    ]
+    ],
+    "clinicalNote": "The Menopause Society lists lubricants during sex and regular use of long-acting vaginal moisturizers as first-line treatments for vaginal dryness after menopause, though it also notes that few clinical studies have tested these products directly. It says there are very few safety data on lubricants with flavors or warming properties, and suggests testing a new product on your skin for 24 hours before using it inside the vagina. Loob adds a peppermint oil tingle and several herbal extracts, which go beyond what those studies looked at.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.isswsh.org/images/content/2020-NAMS-GSM-Paper.pdf",
+        "label": "The Menopause Society (NAMS): 2020 Genitourinary Syndrome of Menopause Position Statement (hosted by ISSWSH)",
+        "summary": "Names nonhormone lubricants and long-acting moisturizers as first-line options for menopausal vaginal dryness, notes limited trial data and limited safety data for flavored or warming products, and advises a 24-hour skin patch test."
+      }
+    ],
+    "warnings": [
+      "Always do a patch test before use.",
+      "Stop using it if irritation occurs.",
+      "If you are extra sensitive, start with a small amount.",
+      "Keep out of reach of children."
+    ],
+    "warningsSource": {
+      "url": "https://oboo.love/products/loob-arousal",
+      "label": "Oboo: Loob Arousal Moisturizer product page"
+    }
   },
   "p-oboo-mood-drops": {
     "whoItsFor": [
@@ -2994,7 +3496,29 @@ export const PRODUCT_RESEARCH = {
         "label": "Mayo Clinic: Female sexual dysfunction, diagnosis and treatment",
         "summary": "Mayo Clinic says herbal supplements sold to raise sex drive haven't been studied well and advises talking to your healthcare professional before trying them."
       }
-    ]
+    ],
+    "clinicalNote": "For lavender, one of the herbs in this tincture, NCCIH (part of the NIH) says an oral lavender oil product might help with anxiety, but the studies are small and preliminary, and lavender may interact with sedative drugs or herbs. That research used a specific lavender oil product, not a lavender flower extract like this one. More broadly, NCCIH notes that supplement makers don't have to prove to the FDA that a product is safe or effective before selling it, that some supplements interact with prescription or over-the-counter medicines, and that \"natural\" does not necessarily mean safe. The drops are made with water and ethanol (alcohol).",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.nccih.nih.gov/health/lavender?nav=govd",
+        "label": "NCCIH (NIH): Lavender",
+        "summary": "Says an oral lavender oil product might help anxiety, with weak, preliminary evidence, and flags possible interactions with sedatives."
+      },
+      {
+        "url": "https://nccih.nih.gov/health/tips/supplements",
+        "label": "NCCIH (NIH): 5 Tips: What Consumers Need To Know About Dietary Supplements",
+        "summary": "Explains that supplements aren't proven safe or effective to the FDA before sale, can interact with medicines, and that natural doesn't mean safe."
+      }
+    ],
+    "warnings": [
+      "Check with your healthcare provider before starting any new supplement.",
+      "Check with a doctor first if you are pregnant, nursing, or taking medication.",
+      "This product has not been evaluated by the FDA."
+    ],
+    "warningsSource": {
+      "url": "https://oboo.love/products/in-the-mood-libido-drops",
+      "label": "Oboo: In the Mood Drops product page"
+    }
   },
   "p-oboo-cool-spray": {
     "whoItsFor": [
@@ -3025,6 +3549,21 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://oboo.love/products/cool-spray-for-hot-flashes",
       "sourceLabel": "Oboo Cool Spray for Hot Flashes product page"
+    },
+    "clinicalNote": "The Menopause Society's 2023 position statement on non-hormone treatments for hot flashes does not recommend cooling techniques, and it also does not recommend supplements and herbal remedies. Options it does recommend include cognitive behavioral therapy, clinical hypnosis, weight loss, stellate ganglion block (a nerve injection in the neck), certain antidepressants (SSRIs and SNRIs), gabapentin, oxybutynin, and fezolinetant, a newer FDA-approved non-hormone medication. A cooling mist may still feel nice in the moment, but if hot flashes are disrupting your life, those are the options worth raising with a clinician.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://menopause.org/wp-content/uploads/press-release/nonhormone-therapy-position-statement-release.pdf",
+        "label": "The Menopause Society (NAMS): 2023 Nonhormone Therapy Position Statement press release",
+        "summary": "Lists recommended non-hormone treatments for hot flashes and lists cooling techniques and supplements/herbal remedies as not recommended."
+      }
+    ],
+    "warnings": [
+      "If your skin is extra reactive, start with a small amount first."
+    ],
+    "warningsSource": {
+      "url": "https://oboo.love/products/cool-spray-for-hot-flashes",
+      "label": "Oboo: Cool Spray for Hot Flashes product page"
     }
   },
   "p-proov-empower": {
@@ -3088,6 +3627,22 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://www.bunibody.com/products/buni-bundle",
       "sourceLabel": "BUNI Bundle page, with directions from the REJUVENATE, SOOTHE and TRANSFORM product pages on bunibody.com"
+    },
+    "clinicalNote": "For sore nipples in the first weeks of breastfeeding, a 2014 Cochrane review of four small, low-quality trials found not enough evidence to recommend any specific treatment, and suggested that applying nothing or expressed breast milk may work as well as or better than lanolin. For most women in those trials, nipple pain dropped to mild levels about 7 to 10 days after birth, whatever they used. That doesn't mean a plant-based balm like SOOTHE is harmful, just that comfort is the realistic goal.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.cochrane.org/evidence/CD007366_interventions-treating-painful-nipples-among-breastfeeding-women",
+        "label": "Cochrane: Interventions for treating painful nipples among breastfeeding women (2014)",
+        "summary": "Found too little evidence to recommend any nipple-pain treatment, with breast milk or nothing doing as well as lanolin, and pain easing to mild in about 7 to 10 days for most women."
+      }
+    ],
+    "warnings": [
+      "Get your doctor's approval before using TRANSFORM on new scars.",
+      "Check with your medical professional before using TRANSFORM on a C-section scar."
+    ],
+    "warningsSource": {
+      "url": "https://www.bunibody.com/products/buni-natural-scar-body-treatment-oil",
+      "label": "BUNI: TRANSFORM Scar & Body Treatment Oil product page"
     }
   },
   "p-joylux-vfit": {
@@ -3112,6 +3667,14 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.isswsh.org/images/content/2020-NAMS-GSM-Paper.pdf",
         "label": "The 2020 genitourinary syndrome of menopause position statement of The North American Menopause Society (Menopause, 2020)",
         "summary": "Names lubricants and regularly used vaginal moisturizers as first-line for mild menopausal dryness, and says energy-based vaginal devices are still under investigation, none are FDA-approved for this use, and larger sham-controlled trials are needed."
+      }
+    ],
+    "effectiveness": "There is one published study of this type of therapy, and it was a case series with no comparison group. In the 2017 Joylux-funded study of 55 women aged 30 to 59 with stress urinary incontinence (leaking when you cough, sneeze, or exercise) after vaginal birth, 84% of those with measurable leakage at the start had their leakage cut by more than half after 50 days, and bladder, quality-of-life, and sexual function scores also improved. Without a control group, it's unclear how much of that came from the device itself, and ayna didn't find a controlled trial of vFit for dryness, sensation, or menopause symptoms.",
+    "effectivenessSources": [
+      {
+        "url": "https://link.springer.com/article/10.1007/s00192-016-3248-5",
+        "label": "International Urogynecology Journal (2017): Multimodal vaginal toning for bladder symptoms and quality of life in stress urinary incontinence",
+        "summary": "Joylux-funded case series of 55 postpartum women with stress incontinence reporting less leakage and better symptom scores after 24 home sessions, with no control group."
       }
     ]
   },
@@ -3150,6 +3713,14 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.trustpilot.com/review/joylux.com?page=4",
         "label": "Trustpilot: Joylux reviews (page 4)"
       }
+    ],
+    "effectiveness": "No study of vFit PLUS was found. The only published study of this type of therapy is the 2017 Joylux-funded case series of the standard vFit approach in 55 women with stress urinary incontinence (leaking when you cough, sneeze, or exercise) after vaginal birth. It reported less leakage and better symptom scores after 50 days, but had no control group, so it can't show how much the device itself helped, or whether the brighter LEDs and longer sessions on PLUS add anything.",
+    "effectivenessSources": [
+      {
+        "url": "https://link.springer.com/article/10.1007/s00192-016-3248-5",
+        "label": "International Urogynecology Journal (2017): Multimodal vaginal toning for bladder symptoms and quality of life in stress urinary incontinence",
+        "summary": "Joylux-funded case series of 55 postpartum women with stress incontinence reporting less leakage and better symptom scores after 24 home sessions, with no control group."
+      }
     ]
   },
   "p-joylux-juicy-like-a-peach": {
@@ -3168,6 +3739,41 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.informahealthcare.com/doi/abs/10.1080/13697137.2020.1820478",
         "label": "Potter and Panay, review of vaginal lubricants and moisturizers, Climacteric",
         "summary": "Advises choosing over-the-counter products whose pH and osmolality are close to natural vaginal fluid and that avoid potentially harmful additives, using moisturizers for ongoing symptoms."
+      }
+    ],
+    "ingredientScience": [
+      {
+        "name": "Hypromellose",
+        "text": "Hypromellose (HPMC) is a cellulose-based thickener that turns water into a clear gel and is known for clinging to moist tissue, like the lining of the mouth and gut. A 2025 review describes it as a widely used, low-toxicity ingredient in medicines and cosmetics; it's what gives the gel its body, not a treatment on its own.",
+        "citations": [
+          {
+            "url": "https://www.mdpi.com/1999-4923/17/6/784",
+            "label": "Pharmaceutics (MDPI, 2025): Hydroxypropyl Methylcellulose, A Key Excipient in Pharmaceutical Drug Delivery Systems"
+          }
+        ]
+      },
+      {
+        "name": "Lactic acid",
+        "text": "Lactic acid is a mild acid that keeps the gel acidic. It's also been tested as a gel for bacterial vaginosis (an overgrowth of certain vaginal bacteria), with mixed results in small trials; a 2022 review, funded by a company that sells such gels, called the evidence limited.",
+        "citations": [
+          {
+            "url": "https://www2.mdpi.com/2673-9879/2/3/14",
+            "label": "Future Pharmacology (MDPI, 2022): The Role of Lactic Acid in the Management of Bacterial Vaginosis, A Systematic Literature Review"
+          }
+        ]
+      }
+    ],
+    "effectiveness": "ayna didn't find a published study of this gel, so this is about vaginal moisturizers as a group. In a 2018 trial of 302 postmenopausal women with moderate to severe dryness, itching, or pain with sex, an over-the-counter vaginal moisturizer, a low-dose vaginal estrogen tablet, and a plain placebo gel all eased symptoms about equally over 12 weeks, with about half of women in every group improving meaningfully. The Menopause Society still lists moisturizers as a first-line option, while noting that few studies have tested these products.",
+    "effectivenessSources": [
+      {
+        "url": "https://www.aafp.org/pubs/afp/issues/2018/1115/od3.html",
+        "label": "American Family Physician (AAFP, 2018): summary of Mitchell et al., JAMA Internal Medicine 2018",
+        "summary": "Reports that vaginal estradiol was no more effective than a nonprescription vaginal moisturizer or a placebo gel over 12 weeks in 302 postmenopausal women."
+      },
+      {
+        "url": "https://www.isswsh.org/images/content/2020-NAMS-GSM-Paper.pdf",
+        "label": "The Menopause Society (NAMS): 2020 Genitourinary Syndrome of Menopause Position Statement (hosted by ISSWSH)",
+        "summary": "Lists lubricants and long-acting moisturizers as first-line for menopausal vaginal dryness while noting few clinical studies of these products."
       }
     ]
   },
@@ -3199,6 +3805,49 @@ export const PRODUCT_RESEARCH = {
         "label": "Albalawi et al., Comparison of the Efficacy of Vaginal Hyaluronic Acid to Estrogen for the Treatment of Vaginal Atrophy in Postmenopausal Women: A Systematic Review, Cureus (2023)",
         "summary": "Six small trials suggest vaginal hyaluronic acid works about as well as estrogen for menopausal vaginal symptoms, though not better, and the studies had real limitations; it did not test this gel."
       }
+    ],
+    "ingredientScience": [
+      {
+        "name": "Sodium hyaluronate (hyaluronic acid)",
+        "text": "Hyaluronic acid holds onto water and is the main active idea behind this gel. A 2023 review of six small trials found vaginal hyaluronic acid worked about as well as vaginal estrogen for dryness after menopause, but the studies had real flaws, and The Menopause Society says there's no evidence yet that hyaluronic acid products beat moisturizers or lubricants without it.",
+        "citations": [
+          {
+            "url": "https://assets.cureus.com/uploads/review_article/pdf/177678/20230827-27812-1h41f02.pdf",
+            "label": "Cureus (2023): Comparison of the Efficacy of Vaginal Hyaluronic Acid to Estrogen for the Treatment of Vaginal Atrophy in Postmenopausal Women, A Systematic Review"
+          }
+        ]
+      },
+      {
+        "name": "Hydroxyethylcellulose",
+        "text": "Hydroxyethylcellulose is a cellulose thickener that gives the gel its slip. A gel made from it has been used as the placebo in large vaginal gel trials, and in one trial of more than 1,500 women it caused no more genital side effects than using no gel at all.",
+        "citations": [
+          {
+            "url": "https://rti.org/publication/appropriateness-hydroxyethylcellulose-gel-placebo-control-vaginal-microbicide-trials-comparison-two",
+            "label": "Journal of Acquired Immune Deficiency Syndromes (2013): Appropriateness of hydroxyethylcellulose gel as a placebo control in vaginal microbicide trials (abstract via RTI International)"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "As a water-based lubricant, Let's Spin is the kind of product The Menopause Society lists as a first-line option for dryness during sex, and most water-based lubricants are safe with latex condoms. The society also notes that some water-based products are hyperosmolar (much more concentrated than your body's own fluids), which damaged vaginal cells in lab studies, and that the World Health Organization recommends an osmolality under 1,200 mOsm/kg. If you're trying a new lubricant, the society suggests testing it on a small patch of skin for 24 hours first.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.isswsh.org/images/content/2020-NAMS-GSM-Paper.pdf",
+        "label": "The Menopause Society (NAMS): 2020 Genitourinary Syndrome of Menopause Position Statement (hosted by ISSWSH)",
+        "summary": "Covers lubricants as first-line care, latex compatibility, osmolality concerns with the WHO threshold, and a 24-hour skin patch test."
+      }
+    ],
+    "effectiveness": "ayna didn't find a published study of this gel, so this is about the product type. In a 2018 trial of 302 postmenopausal women, a nonprescription vaginal moisturizer, low-dose vaginal estrogen, and a plain placebo gel all eased dryness and pain with sex about equally over 12 weeks. Small trials of hyaluronic acid vaginal gels found them roughly as helpful as estrogen for dryness, though those trials had real limitations.",
+    "effectivenessSources": [
+      {
+        "url": "https://www.aafp.org/pubs/afp/issues/2018/1115/od3.html",
+        "label": "American Family Physician (AAFP, 2018): summary of Mitchell et al., JAMA Internal Medicine 2018",
+        "summary": "Reports that vaginal estradiol was no more effective than a nonprescription vaginal moisturizer or a placebo gel over 12 weeks in 302 postmenopausal women."
+      },
+      {
+        "url": "https://assets.cureus.com/uploads/review_article/pdf/177678/20230827-27812-1h41f02.pdf",
+        "label": "Cureus (2023): Vaginal Hyaluronic Acid vs Estrogen for Vaginal Atrophy, A Systematic Review",
+        "summary": "Six small trials suggest hyaluronic acid works comparably to estrogen for vaginal atrophy, with notable study limitations."
+      }
     ]
   },
   "p-joylux-reliefher": {
@@ -3217,6 +3866,59 @@ export const PRODUCT_RESEARCH = {
         "url": "https://thieme-connect.de/products/ejournals/html/10.1055/s-0042-1756148",
         "label": "Sarmento et al., Efficacy of Hormonal and Nonhormonal Approaches to Vaginal Atrophy and Sexual Dysfunctions in Postmenopausal Women: A Systematic Review, Revista Brasileira de Ginecologia e Obstetrícia (2022)",
         "summary": "Found hyaluronic acid effective and well tolerated for vaginal atrophy symptoms compared with vaginal estrogen, while noting low to moderate certainty evidence."
+      }
+    ],
+    "ingredientScience": [
+      {
+        "name": "Hyaluronic acid",
+        "text": "Hyaluronic acid holds onto water. A 2023 review of six small trials found vaginal hyaluronic acid worked about as well as vaginal estrogen for dryness after menopause, though the studies had real flaws and none tested this product.",
+        "citations": [
+          {
+            "url": "https://assets.cureus.com/uploads/review_article/pdf/177678/20230827-27812-1h41f02.pdf",
+            "label": "Cureus (2023): Comparison of the Efficacy of Vaginal Hyaluronic Acid to Estrogen for the Treatment of Vaginal Atrophy in Postmenopausal Women, A Systematic Review"
+          }
+        ]
+      },
+      {
+        "name": "Vitamin E",
+        "text": "In a small 2023 trial of 72 postmenopausal women, a vaginal vitamin E cream (100 IU) eased dryness and related symptoms about as much as a vaginal estrogen cream over 8 weeks. That's encouraging but early, since the trial was small and short.",
+        "citations": [
+          {
+            "url": "https://afju.springeropen.com/articles/10.1186/s12301-023-00363-5",
+            "label": "African Journal of Urology (Springer, 2023): Vaginal vitamin E cream vs conjugated estrogen vaginal cream, a randomized controlled trial"
+          }
+        ]
+      },
+      {
+        "name": "Coconut oil",
+        "text": "Virgin coconut oil works as a skin moisturizer: a review notes it was as effective and safe as mineral oil for mild to moderate dry skin. Those studies were on regular skin, not inside the vagina.",
+        "citations": [
+          {
+            "url": "https://www.mdpi.com/1422-0067/19/1/70",
+            "label": "International Journal of Molecular Sciences (MDPI, 2018): Anti-Inflammatory and Skin Barrier Repair Effects of Topical Application of Some Plant Oils"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "These melts are oil-based, with coconut oil and cocoa butter. The Menopause Society notes that oil-based lubricants can erode latex condoms, and that one study found more yeast (Candida) in women who used oils vaginally than in those who didn't. It also says there's no evidence yet that hyaluronic acid products work better than moisturizers or lubricants without it.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.isswsh.org/images/content/2020-NAMS-GSM-Paper.pdf",
+        "label": "The Menopause Society (NAMS): 2020 Genitourinary Syndrome of Menopause Position Statement (hosted by ISSWSH)",
+        "summary": "Notes oil-based lubricants can erode condoms, links vaginal oil use to more Candida colonization, and finds no added benefit shown for hyaluronic acid products."
+      }
+    ],
+    "effectiveness": "ayna didn't find a study of these melts, so this is about their main ingredients. Small trials suggest vaginal hyaluronic acid and vaginal vitamin E can each ease menopausal dryness about as well as vaginal estrogen, but the trials were small and short, and none tested this combination.",
+    "effectivenessSources": [
+      {
+        "url": "https://assets.cureus.com/uploads/review_article/pdf/177678/20230827-27812-1h41f02.pdf",
+        "label": "Cureus (2023): Vaginal Hyaluronic Acid vs Estrogen for Vaginal Atrophy, A Systematic Review",
+        "summary": "Six small trials suggest hyaluronic acid works comparably to estrogen for vaginal atrophy, with notable study limitations."
+      },
+      {
+        "url": "https://afju.springeropen.com/articles/10.1186/s12301-023-00363-5",
+        "label": "African Journal of Urology (2023): Vaginal vitamin E cream vs conjugated estrogen cream RCT",
+        "summary": "In 72 postmenopausal women, vitamin E cream and estrogen cream improved vaginal atrophy symptoms similarly over 8 weeks."
       }
     ]
   },
@@ -3262,6 +3964,56 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.lovelyskin.com/o/reviews/joylux-revitalizher-hydrating-serum",
         "label": "LovelySkin: revitalizHER Hydrating Serum reviews"
       }
+    ],
+    "ingredientScience": [
+      {
+        "name": "Coconut oil",
+        "text": "Virgin coconut oil is a decent skin moisturizer: a review notes it was as effective and safe as mineral oil for mild to moderate dry skin, and it helped skin barrier measures in children with eczema. Those studies weren't on the vulva.",
+        "citations": [
+          {
+            "url": "https://www.mdpi.com/1422-0067/19/1/70",
+            "label": "International Journal of Molecular Sciences (MDPI, 2018): Anti-Inflammatory and Skin Barrier Repair Effects of Topical Application of Some Plant Oils"
+          }
+        ]
+      },
+      {
+        "name": "Jojoba oil",
+        "text": "Jojoba oil is rich in waxy compounds similar to the skin's own oils, and a review suggests it may help repair a damaged skin barrier. The human evidence behind that is thin.",
+        "citations": [
+          {
+            "url": "https://www.mdpi.com/1422-0067/19/1/70",
+            "label": "International Journal of Molecular Sciences (MDPI, 2018): Anti-Inflammatory and Skin Barrier Repair Effects of Topical Application of Some Plant Oils"
+          }
+        ]
+      },
+      {
+        "name": "Vitamin E (tocopherol)",
+        "text": "Vitamin E is an antioxidant that may support the skin barrier and healing, but the evidence the review describes comes mostly from lab and mouse studies, not people.",
+        "citations": [
+          {
+            "url": "https://www.mdpi.com/1422-0067/19/1/70",
+            "label": "International Journal of Molecular Sciences (MDPI, 2018): Anti-Inflammatory and Skin Barrier Repair Effects of Topical Application of Some Plant Oils"
+          }
+        ]
+      },
+      {
+        "name": "Mandarin orange peel oil",
+        "text": "Citrus peel oils contain limonene, which forms skin-allergy-causing compounds as it oxidizes during storage. In a study of 2,273 people patch-tested at European dermatology clinics, up to 6.5% per clinic reacted to oxidized limonene, so it's worth patch testing if your skin is sensitive.",
+        "citations": [
+          {
+            "url": "https://www.em-consulte.com/en/article/542328",
+            "label": "Journal of the American Academy of Dermatology (2002): Oxidized citrus oil (R-limonene), a frequent skin sensitizer in Europe"
+          }
+        ]
+      }
+    ],
+    "effectiveness": "ayna didn't find a study of this serum or of oil-based vulvar serums in general. The closest evidence is for plant oils on ordinary dry skin, where virgin coconut oil moisturized about as well as mineral oil; whether that carries over to vulvar dryness hasn't been tested.",
+    "effectivenessSources": [
+      {
+        "url": "https://www.mdpi.com/1422-0067/19/1/70",
+        "label": "International Journal of Molecular Sciences (MDPI, 2018): Anti-Inflammatory and Skin Barrier Repair Effects of Topical Application of Some Plant Oils",
+        "summary": "Reviews skin studies of plant oils, including coconut oil performing as well as mineral oil for mild to moderate dry skin."
+      }
     ]
   },
   "p-joylux-shebar": {
@@ -3298,6 +4050,69 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.lovelyskin.com/o/reviews/joylux-shebar-intimate-soap",
         "label": "LovelySkin: SHEbar Intimate Soap reviews"
       }
+    ],
+    "ingredientScience": [
+      {
+        "name": "Sodium cocoyl isethionate",
+        "text": "This is the main cleansing agent in syndet bars (bars made with synthetic detergents instead of soap). A small 28-day study in 50 people with mild eczema found syndet bar use was linked to less eczema and kept skin hydration steady, but it had no soap comparison group and several authors worked for the bar makers, so the evidence is modest.",
+        "citations": [
+          {
+            "url": "https://cdn.mdedge.com/files/s3fs-public/Document/September-2017/077050317.pdf",
+            "label": "Cutis (2006): Benefits of mild cleansing: syndet bars for patients with atopic dermatitis"
+          }
+        ]
+      },
+      {
+        "name": "Coconut oil",
+        "text": "Coconut oil is a plant oil that can soften dry skin. In a randomized trial of 148 older adults with dry legs, virgin coconut oil applied twice a day for 2 weeks improved dryness and hydration more than mineral oil, though the trial was small and short. In this bar it is a minor ingredient in a rinse-off product, so it may do less than a leave-on oil.",
+        "citations": [
+          {
+            "url": "https://actamedicaphilippina.upm.edu.ph/index.php/acta/article/download/31/19",
+            "label": "Acta Medica Philippina (2019): Virgin coconut oil vs mineral oil for senile xerosis"
+          }
+        ]
+      },
+      {
+        "name": "Argan oil",
+        "text": "Argan oil is a plant oil used as an emollient (a skin softener that helps hold in moisture). One 60-day study of 60 postmenopausal women found argan oil on the forearm lowered water loss from the skin and raised skin water content, but the study was small and was not done on vulvar skin.",
+        "citations": [
+          {
+            "url": "https://www.termedia.pl/Skin-hydration-in-postmenopausal-women-argan-oil-benefit-with-oral-r-nand-or-topical-use,4,23837,0,1.html",
+            "label": "Menopause Review (2014): Skin hydration in postmenopausal women, argan oil oral and/or topical use"
+          }
+        ]
+      },
+      {
+        "name": "Fragrance",
+        "text": "Fragrance has no skin benefit and is here for scent. NHS vulval care advice says to avoid all fragrances on vulval skin, so if your skin is sensitive this is the ingredient to watch.",
+        "citations": [
+          {
+            "url": "https://www.bradfordhospitals.nhs.uk/wp-content/uploads/2026/03/25070706-Vulva-Care-Advice-Sheet.pdf",
+            "label": "NHS (Bradford Teaching Hospitals): Vulval Care Advice Sheet"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "Your vulva doesn't need a special cleanser. NHS vulval care advice says water alone is enough to clean the area, that you don't need soap, and that a soap substitute can help stop water from drying the skin. The same advice says to avoid all fragrances on vulval skin. A soap-free bar like this is closer to a soap substitute than to regular soap, but it does contain fragrance.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.bradfordhospitals.nhs.uk/wp-content/uploads/2026/03/25070706-Vulva-Care-Advice-Sheet.pdf",
+        "label": "NHS (Bradford Teaching Hospitals): Vulval Care Advice Sheet",
+        "summary": "Says water alone is enough to clean the vulva, soap isn't needed, soap substitutes can limit drying, and all fragrances should be avoided."
+      }
+    ],
+    "effectiveness": "No study of SHEbar itself was found. For the product type, syndet bars built on sodium cocoyl isethionate are described as milder than soap, but the supporting study was small, industry-linked, done in people with eczema rather than on vulvar skin, and had no soap comparison group. NHS advice says water alone is enough to keep the vulva clean.",
+    "effectivenessSources": [
+      {
+        "url": "https://cdn.mdedge.com/files/s3fs-public/Document/September-2017/077050317.pdf",
+        "label": "Cutis (2006): Benefits of mild cleansing: syndet bars for patients with atopic dermatitis",
+        "summary": "A 28-day study of 50 people with mild eczema linked syndet bar use to improved eczema scores, without a soap control group."
+      },
+      {
+        "url": "https://www.bradfordhospitals.nhs.uk/wp-content/uploads/2026/03/25070706-Vulva-Care-Advice-Sheet.pdf",
+        "label": "NHS (Bradford Teaching Hospitals): Vulval Care Advice Sheet",
+        "summary": "States that water alone is enough to clean the vulval area."
+      }
     ]
   },
   "p-joylux-ilyeo-body": {
@@ -3323,6 +4138,19 @@ export const PRODUCT_RESEARCH = {
         "url": "https://journals.sbmu.ac.ir/jlms/article/view/48441",
         "label": "High- and Low-Level Laser Therapy for the Treatment of Orthopedic Pain: A Systematic Review, Journal of Lasers in Medical Sciences (2025)",
         "summary": "Eight randomized trials suggest laser therapy is a safe, helpful add-on for orthopedic pain, but differences in devices and settings ruled out pooling the results."
+      }
+    ],
+    "effectiveness": "No study of ILYEO body itself was found, and none was found for this mix of red light, heat and vibration together. Looking at the parts on their own: a Cochrane review found moderate evidence that heat wraps give a small, short-term drop in pain and disability for recent low back pain. A 2009 Lancet review found low-level laser therapy eased neck pain, but those studies used lasers, not the LED red light in wearables like this, so they don't show this device works.",
+    "effectivenessSources": [
+      {
+        "url": "https://search.pedro.org.au/search-results/record-detail/15878",
+        "label": "Cochrane review (2006): Superficial heat or cold for low back pain (PEDro record)",
+        "summary": "Moderate evidence from a few trials that heat wrap therapy gives a small, short-term reduction in pain and disability in acute and sub-acute low back pain."
+      },
+      {
+        "url": "https://search.pedro.org.au/search-results/record-detail/24285",
+        "label": "Lancet (2009): Low-level laser therapy for neck pain, systematic review and meta-analysis (PEDro record)",
+        "summary": "Low-level laser therapy reduced pain right after treatment in acute neck pain and for up to 22 weeks in chronic neck pain, with mild side effects similar to placebo."
       }
     ]
   },
@@ -3357,6 +4185,22 @@ export const PRODUCT_RESEARCH = {
       {
         "url": "https://www.ulta.com/p/coldher-cooling-bra-inserts-pimprod2048010",
         "label": "Ulta: coldHER Cooling Bra Inserts reviews"
+      }
+    ],
+    "clinicalNote": "Cooling can make a hot flash feel more bearable, but it doesn't reduce how often hot flashes happen. The Menopause Society's 2023 statement on non-hormone treatments does not recommend cooling techniques as a treatment, because the studies so far are small or found no objective change. Treatments with stronger evidence include hormone therapy, which the statement calls the most effective option for those who can take it, plus cognitive behavioral therapy (a structured talk therapy), clinical hypnosis, and some prescription medicines.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://depts.washington.edu/mbwc/content/page-files/NAMS_2023-nonhormone-therapy-position-statement_(1)22.pdf",
+        "label": "The Menopause Society (2023): Nonhormone therapy position statement, Menopause journal",
+        "summary": "Does not recommend cooling techniques for hot flashes due to limited evidence, recommends CBT, hypnosis and several medicines, and notes hormone therapy is the most effective treatment."
+      }
+    ],
+    "effectiveness": "No study of coldHER was found. For cooling products in general, The Menopause Society says the evidence is weak: studies were small and uncontrolled, and one device trial found no objective change in nighttime hot flashes. Treat it as a comfort tool, not a hot flash treatment. No study on cooling pads for breast soreness was found.",
+    "effectivenessSources": [
+      {
+        "url": "https://depts.washington.edu/mbwc/content/page-files/NAMS_2023-nonhormone-therapy-position-statement_(1)22.pdf",
+        "label": "The Menopause Society (2023): Nonhormone therapy position statement, Menopause journal",
+        "summary": "Rates cooling techniques as not recommended because the studies are small, uncontrolled, or showed no objective change."
       }
     ]
   },
@@ -3396,6 +4240,14 @@ export const PRODUCT_RESEARCH = {
         "label": "Han et al., Transcutaneous electrical nerve stimulation (TENS) for pain control in women with primary dysmenorrhoea, Cochrane Database of Systematic Reviews (2024)",
         "summary": "Across 20 small trials, TENS may reduce period pain compared with placebo or no treatment (low certainty evidence), and mild skin redness or irritation at the pad sites is the main possible side effect."
       }
+    ],
+    "clinicalNote": "These pads are the part of the Elaris Pod that touches your skin, so they don't do anything on their own. We couldn't open the SootheHer site to confirm exactly how the Pod works. For electrical stimulation devices for period pain in general, called TENS (transcutaneous electrical nerve stimulation, a mild current sent through pads on the skin), a Cochrane review of 7 small trials found high-frequency TENS eased period pain better than a placebo device, while low-frequency TENS did not. The reviewers noted the number of trials was small.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.cochrane.org/CD002123/MENSTR_transcutaneous-electrical-nerve-stimulation-for-primary-dysmenorrhoea",
+        "label": "Cochrane: Transcutaneous electrical nerve stimulation for primary dysmenorrhoea",
+        "summary": "Across 7 randomized trials, high-frequency TENS relieved period pain better than placebo TENS; low-frequency TENS did not, and the trials were few and small."
+      }
     ]
   },
   "p-gina-insertion-applicator-refills": {
@@ -3409,6 +4261,14 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.mayoclinic.org/diseases-conditions/menopause/expert-answers/vaginal-dryness/faq-20115086",
         "label": "Mayo Clinic: Vaginal dryness after menopause, how to treat it?",
         "summary": "Says vaginal moisturizers are put into the vagina or around the vulva every day or every few days to keep tissues healthy, which is the kind of product this applicator is used to place."
+      }
+    ],
+    "clinicalNote": "This applicator is only a tool for placing gina's Vaginal Moisturizing Glides, so the real question is whether a vaginal moisturizer suits you. Mayo Clinic describes vaginal moisturizers as something you use every few days to keep vaginal tissue moisturized, which is different from a lubricant you use at the time of sex. If dryness keeps bothering you, a doctor may suggest low-dose vaginal estrogen as a cream, tablet or ring, and if you've had breast cancer, Mayo Clinic says to talk with your doctor about the risks of vaginal estrogen first.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://newsnetwork.mayoclinic.org/discussion/womens-wellness-how-to-treat-vaginal-dryness-after-menopause/",
+        "label": "Mayo Clinic News Network: How to treat vaginal dryness after menopause",
+        "summary": "Explains that vaginal moisturizers are applied every few days while lubricants are for sex, and lists low-dose vaginal estrogen and other options for ongoing dryness."
       }
     ]
   },
@@ -3679,6 +4539,19 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.mayoclinic.org/tests-procedures/basal-body-temperature/about/pac-20393026",
         "label": "Mayo Clinic: Basal body temperature for natural family planning",
         "summary": "Describes the small temperature rise after ovulation, notes illness and some medicines can skew it, and says temperature tracking alone is less effective than other birth control."
+      }
+    ],
+    "effectiveness": "No study of Rèsa exists yet because it hasn't launched, so this is evidence for wrist wearables in general. In a 2019 study of a different bracelet (Ava) in 193 women, wrist skin temperature, heart rate, and breathing rate all shifted with cycle phase, and the company's algorithm picked out the fertile window with about 90% accuracy in women who wore it consistently; several authors worked for the company. A 2021 study of the same bracelet in 57 women found wrist temperature caught ovulation more often than a morning oral thermometer (62% vs 23%) but gave many more false alarms.",
+    "effectivenessSources": [
+      {
+        "url": "https://jmir.org/2019/4/e13404/",
+        "label": "Goodale et al., Journal of Medical Internet Research 2019: Wearable sensors reveal menses-driven changes in physiology",
+        "summary": "Found wrist temperature, heart rate, and breathing rate change across the menstrual cycle in a wrist wearable, with a disclosed company conflict of interest."
+      },
+      {
+        "url": "https://www.jmir.org/2021/6/e20710/",
+        "label": "Zhu et al., Journal of Medical Internet Research 2021: Accuracy of wrist skin temperature in detecting ovulation",
+        "summary": "Found wrist skin temperature during sleep was more sensitive but less specific than basal body temperature for detecting ovulation."
       }
     ]
   },
@@ -6007,5 +6880,168 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.nhs.uk/conditions/transcutaneous-electrical-nerve-stimulation-tens/",
       "sourceLabel": "NHS: TENS (transcutaneous electrical nerve stimulation)"
     }
+  },
+  "p-winx-uti-test-treat": {
+    "ingredientScience": [
+      {
+        "name": "Nitrite test pad",
+        "text": "Nitrite is made by bacteria that turn nitrate in urine into nitrite, so a positive result points fairly strongly to a UTI if you have symptoms. A negative result does not rule one out: bacteria need about four hours in the bladder to make nitrite, some germs (like Enterococcus) don't make it at all, and vitamin C in your urine can cause a false negative. The pain reliever phenazopyridine can cause a false positive.",
+        "citations": [
+          {
+            "url": "https://www.aafp.org/pubs/afp/issues/2022/0700/office-based-urinalysis.html",
+            "label": "American Family Physician (AAFP), 2022: Office-Based Urinalysis: A Comprehensive Review"
+          }
+        ]
+      },
+      {
+        "name": "Leukocyte esterase test pad",
+        "text": "Leukocyte esterase is an enzyme released by white blood cells, so it signals inflammation or infection in the urinary tract, not only bacteria. On standard dipsticks, a negative nitrite plus negative leukocyte esterase result lowers the odds of a UTI, but in women with vague symptoms a negative strip still left about a 1 in 4 chance of infection, so a urine culture (a lab test that grows the bacteria) may still be needed.",
+        "citations": [
+          {
+            "url": "https://aafp.org/afp/2006/0101/p129.html",
+            "label": "American Family Physician (AAFP), 2006: Urine Dipstick for Diagnosing Urinary Tract Infection"
+          }
+        ]
+      }
+    ]
+  },
+  "p-winx-vaginal-health-test-treat": {
+    "ingredientScience": [
+      {
+        "name": "Vaginal pH indicator strip",
+        "text": "A healthy vaginal pH is usually 3.8 to 4.5, kept acidic mostly by lactic acid from Lactobacillus bacteria. Bacterial vaginosis (BV) and trichomoniasis (a common STI) are linked to a pH above 4.5, while a yeast infection barely changes pH, so a normal reading can't rule out yeast. Symptoms alone can't reliably tell these apart, so lab testing is still the way to confirm.",
+        "citations": [
+          {
+            "url": "https://www.doi.org/10.1155/2021/4948954",
+            "label": "Peer-reviewed study (2021, DOI 10.1155/2021/4948954): vaginal infection self-test kit vs clinical diagnosis"
+          }
+        ]
+      }
+    ]
+  },
+  "p-winx-pregnancy-tests": {
+    "ingredientScience": [
+      {
+        "name": "hCG test strip",
+        "text": "The strip detects hCG (human chorionic gonadotropin), a hormone made by the placenta that rises very quickly in early pregnancy. FDA notes that 10 to 20 out of every 100 pregnant women won't get a positive result on the first day of a missed period, and that testing 1 to 2 weeks after a missed period gives the most reliable result.",
+        "citations": [
+          {
+            "url": "https://www.fda.gov/medical-devices/home-use-tests/pregnancy",
+            "label": "FDA: Home Use Tests, Pregnancy"
+          }
+        ]
+      }
+    ],
+    "warnings": [
+      "Accuracy depends on following the instructions and reading the result correctly.",
+      "Testing too early can give a false negative because hCG may not be high enough yet.",
+      "Treat a negative result as tentative: FDA suggests avoiding medications and potentially harmful behaviors until you're more certain you're not pregnant.",
+      "Using your first morning urine can improve accuracy."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/home-use-tests/pregnancy",
+      "label": "FDA: Home Use Tests, Pregnancy"
+    }
+  },
+  "p-winx-uti-pain-relief": {
+    "ingredientScience": [
+      {
+        "name": "Phenazopyridine hydrochloride",
+        "text": "A urinary pain reliever thought to numb the lining of the urinary tract; it eases burning, urgency, and frequency but is not an antibiotic and does not treat the infection. The recommended course is 2 days alongside an antibiotic. It was marketed before modern efficacy rules, so the trial evidence is limited and older, though it has a generally favorable safety record when used short-term. It's not recommended with severe kidney disease or G6PD deficiency (an inherited condition that makes red blood cells break down more easily).",
+        "citations": [
+          {
+            "url": "https://www.statpearls.com/point-of-care/143874",
+            "label": "StatPearls (NIH Bookshelf reference): Phenazopyridine"
+          }
+        ]
+      }
+    ]
+  },
+  "p-winx-vaginal-probiotic": {
+    "ingredientScience": [
+      {
+        "name": "Lactobacillus rhamnosus",
+        "text": "A 2022 review of 10 randomized trials found that Lactobacillus probiotics, taken after antibiotic treatment for BV, lowered the chance of BV coming back (about 15% vs 26%). The evidence was rated moderate, most trials only followed women for about a month, and having L. rhamnosus in the product was not itself linked to better results.",
+        "citations": [
+          {
+            "url": "https://www.frontiersin.org/journals/nutrition/articles/10.3389/fnut.2022.938838/full",
+            "label": "Frontiers in Nutrition, 2022: Probiotics to reduce BV recurrence, systematic review and meta-analysis of RCTs"
+          }
+        ]
+      },
+      {
+        "name": "Lactobacillus reuteri",
+        "text": "Usually studied paired with L. rhamnosus. In a UK randomized trial of 238 pregnant women, a daily oral capsule of L. rhamnosus GR-1 and L. reuteri RC-14 did not change the vaginal microbiome or BV rates compared with placebo. Results depend on the exact strain, and this label doesn't say which L. reuteri strain it uses.",
+        "citations": [
+          {
+            "url": "https://openaccess.city.ac.uk/22010",
+            "label": "BJOG, 2020: Oral probiotics (L. rhamnosus GR-1 + L. reuteri RC-14) and vaginal microbiota in pregnancy, RCT"
+          }
+        ]
+      },
+      {
+        "name": "Inulin",
+        "text": "A plant fiber that acts as a prebiotic (food for helpful bacteria). Human studies show it mainly boosts Bifidobacterium in the colon, with a smaller effect on lactobacilli; that research is about gut health, not vaginal health.",
+        "citations": [
+          {
+            "url": "https://core-cms.cambridgecore.org/core/services/aop-cambridge-core/content/view/4C8D01FE5AF4A6A81965344B26FAB14D/S0007114502000958a.pdf/prebiotic-effects-of-inulin-and-oligofructose.pdf",
+            "label": "British Journal of Nutrition, 2002: Prebiotic effects of inulin and oligofructose"
+          }
+        ]
+      }
+    ],
+    "warnings": [
+      "The risk of harm from probiotics is higher in people with severe illnesses or a weakened immune system.",
+      "Some probiotic products have been found to contain microbes not listed on the label.",
+      "Probiotics sold as dietary supplements don't need FDA approval before they are sold."
+    ],
+    "warningsSource": {
+      "url": "https://www.nccih.nih.gov/health/probiotics-usefulness-and-safety",
+      "label": "NCCIH (NIH): Probiotics, Usefulness and Safety"
+    }
+  },
+  "p-winx-uti-daily-defense": {
+    "ingredientScience": [
+      {
+        "name": "Cranberry extract (proanthocyanidins)",
+        "text": "A 2023 Cochrane review of 50 trials (8,857 people) found cranberry products probably lower the risk of UTIs; in women with recurrent UTIs, risk dropped by about a quarter. It showed little or no benefit for pregnant women, elderly people in care homes, or people whose bladder doesn't empty fully.",
+        "citations": [
+          {
+            "url": "https://www.cochrane.org/CD001321/UTI_cranberry-for-preventing-urinary-tract-infections",
+            "label": "Cochrane Review, 2023: Cranberries for preventing urinary tract infections"
+          }
+        ]
+      },
+      {
+        "name": "D-mannose",
+        "text": "A sugar meant to stop E. coli from sticking to the bladder wall. In a 2024 randomized trial of 598 women with recurrent UTIs in UK primary care, daily D-mannose did not reduce UTIs compared with placebo (51% vs 56%, not a significant difference), and the authors said it shouldn't be recommended for prevention in this group.",
+        "citations": [
+          {
+            "url": "https://urology.wisc.edu/wp-content/uploads/2024/05/D-Mannose-for-Prevention-of-Recurrent-Urinary-Tract-Infection-Among-Women.pdf",
+            "label": "JAMA Internal Medicine, 2024: D-Mannose for Prevention of Recurrent UTI Among Women, RCT (copy hosted by UW Urology)"
+          }
+        ]
+      },
+      {
+        "name": "Turmeric",
+        "text": "NIH's integrative health center says there isn't enough evidence to conclude turmeric or curcumin helps any health condition, and it doesn't list UTIs among the uses studied. Highly absorbable curcumin products have been linked to liver injury in some people, and turmeric supplements may be unsafe in pregnancy.",
+        "citations": [
+          {
+            "url": "https://www.nccih.nih.gov/health/turmeric",
+            "label": "NCCIH (NIH): Turmeric"
+          }
+        ]
+      },
+      {
+        "name": "Vitamin C",
+        "text": "Adults should keep total vitamin C under 2,000 mg a day; large supplement doses can cause stomach upset or diarrhea and, in some people, kidney stones. Vitamin C in urine can also make the nitrite pad on a home UTI test read falsely negative.",
+        "citations": [
+          {
+            "url": "https://mayoclinic.org/healthy-lifestyle/adult-health/expert-answers/shaving/faq-20058030",
+            "label": "Mayo Clinic: Too much vitamin C, is it harmful?"
+          }
+        ]
+      }
+    ]
   }
 };

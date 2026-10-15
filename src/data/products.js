@@ -887,6 +887,11 @@ export function withResearch(product) {
         if (src && !out.communityReviewSourceUrl) { out.communityReviewSourceUrl = src.url; out.communityReviewSourceLabel = src.label; }
         filled.push('communityReview');
     }
+    if (!(out.ingredientScience || []).length && (r.ingredientScience || []).length) { out.ingredientScience = r.ingredientScience; filled.push('ingredientScience'); }
+    if (!out.effectiveness && r.effectiveness) { out.effectiveness = r.effectiveness; filled.push('effectiveness'); }
+    if (!(out.warnings || []).length && (r.warnings || []).length) { out.warnings = r.warnings; if (r.warningsSource && !(out.safetyNoteSources || []).length) out.safetyNoteSources = [r.warningsSource]; filled.push('warnings'); }
+    if ((r.clinicalNoteSources || []).length) out.researchClinicalSources = [...(out.researchClinicalSources || []), ...r.clinicalNoteSources.filter((x) => !(out.researchClinicalSources || []).some((y) => y.url === x.url))];
+    if ((r.effectivenessSources || []).length && filled.includes('effectiveness')) out.researchScienceSources = [...(out.researchScienceSources || []), ...r.effectivenessSources.filter((x) => !(out.researchScienceSources || []).some((y) => y.url === x.url))];
     if (filled.length) out.researchFilled = filled;
     return out;
 }
