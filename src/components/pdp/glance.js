@@ -147,13 +147,18 @@ function numberSources(passport) {
       url: s.url,
       title: noDash(s.title || s.publisher || 'Source'),
       publisher: humanPublisher(s.publisher) || hostOf(s.url),
-      type: s.evidence_type,
-      label: s.evidence_label || EVIDENCE_TYPES[s.evidence_type] || EXTRA_LABELS[s.evidence_type] || 'Source',
+      // A store listing or a forum thread must never look like the FDA.
+      type: RETAIL_RE.test(String(s.url || '')) ? 'retailer' : FORUM_RE.test(String(s.url || '')) ? 'community' : s.evidence_type,
+      label: RETAIL_RE.test(String(s.url || '')) ? 'Retailer listing' : FORUM_RE.test(String(s.url || '')) ? 'Community post' : (s.evidence_label || EVIDENCE_TYPES[s.evidence_type] || EXTRA_LABELS[s.evidence_type] || 'Source'),
+      tier: RETAIL_RE.test(String(s.url || '')) || FORUM_RE.test(String(s.url || '')) || ['community', 'manufacturer'].includes(s.evidence_type) ? 'low' : ['regulatory', 'clinical_guideline', 'product_study'].includes(s.evidence_type) ? 'high' : 'mid',
       summary: clean(s.summary),
       year: s.year || null,
     }));
   return list;
 }
+const RETAIL_RE = /\/\/(www\.)?(walmart|amazon|target|cvs|walgreens|ulta|sephora|costco|iherb|ebay)\./i;
+const FORUM_RE = /\/\/(www\.|old\.)?(reddit\.com|quora\.com|facebook\.com\/groups|tiktok\.com)/i;
+
 function hostOf(url) {
   try { return humanPublisher(new URL(url).hostname.replace(/^www\./, '')); } catch { return ''; }
 }
@@ -219,7 +224,10 @@ export function buildKeyFacts(product, { passport, sources, details } = {}) {
     add('inside', 'Ingredients or materials', ingredientHeadline(product), { jump: 'inside' });
   }
   const fsa = pp?.pricing?.fsa_hsa;
-  add('fsa', 'FSA/HSA', fsa?.known ? (fsa.value === 'eligible' ? 'Eligible' : 'Not eligible') : '', { note: verifiedNote(fsa), refs: factRefs(fsa) });
+  // Menstrual care (pads, tampons, cups, discs) is FSA/HSA eligible by law (CARES Act, 2020);
+  // the same rule the Shop cards use, so the card and the page never disagree.
+  const menstrual = ['pad', 'tampon', 'cup', 'disc'].includes(product?.category);
+  add('fsa', 'FSA/HSA', menstrual ? 'Eligible' : fsa?.known ? (fsa.value === 'eligible' ? 'Eligible' : 'Not eligible') : '', { note: menstrual ? '' : verifiedNote(fsa), refs: menstrual ? [] : factRefs(fsa) });
   const where = (product?.whereToBuy || []).map(clean).filter(Boolean);
   const hasBuyLink = Boolean(product?.affiliateUrl || product?.url || product?.amazonUrl || product?.buyUrl);
   add('where', isDigital ? 'Where to get it' : 'Where to buy', where.join(', ') || (details?.access?.known ? details.access.label : (hasBuyLink ? 'Online, through the Buy button' : '')));

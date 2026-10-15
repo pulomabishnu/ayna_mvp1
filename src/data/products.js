@@ -1813,7 +1813,20 @@ function excludedDetails(product, reasons, base) {
     };
 }
 
+// ayna is 18+. Products made for teens are never matched to anyone.
+const TEEN_RE = /\b(teen|teens|tween|tweens|kids|girls'|junior)\b/i;
+export function isTeenProduct(p) {
+    return Boolean(p) && (TEEN_RE.test(String(p.name || '')) || (Array.isArray(p.tags) && p.tags.some((t) => /^(teen|tween)s?$/i.test(String(t)))));
+}
+const TEEN_EXCLUDED = {
+    percent: 0, eligible: false, matchStatus: 'excluded', reasonDetails: [], needMatches: [], unknowns: [], unmetNeeds: [], labels: [], reasons: [],
+    excludedBecause: ['it is made for teens, and ayna is for adults 18 and over'],
+    considerations: [{ text: 'Made for teens. ayna is for adults 18 and over, so we don’t match it to anyone.' }],
+    exclusionReasons: ['Made for teens. ayna is for adults 18 and over, so we don’t match it to anyone.'],
+};
+
 function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
+    if (isTeenProduct(savedProduct)) return { ...TEEN_EXCLUDED };
     const product = hydrateCatalogProduct(savedProduct);
     const up = userProfileFor(quizAnswers, healthProfile, opts);
     const entry = engineResultFor(product, up);
@@ -2034,7 +2047,7 @@ export function getProductRelevanceScore(product, quizAnswers, healthProfile = n
  */
 function rankCatalog(quizAnswers, healthProfile, opts) {
     const up = userProfileFor(quizAnswers, healthProfile, opts);
-    const candidates = filterPrescriptionCareGate(ALL_PRODUCTS);
+    const candidates = filterPrescriptionCareGate(ALL_PRODUCTS).filter((p) => !isTeenProduct(p));
     const profilesById = new Map();
     const matched = [];
     const weaker = [];

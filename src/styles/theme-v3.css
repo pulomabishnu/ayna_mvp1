@@ -3201,3 +3201,22 @@ html body .app-container .lv-reads > :first-child .ay-lib-cover.has-spot strong 
   html body .app-container .lv-reads > :first-child .ay-lib-cover__spot { width: 72px !important; height: 72px !important; }
   html body .app-container .lv-reads > :first-child .ay-lib-cover.has-spot strong { font-size: 24px !important; }
 }
+/* Ecosystem header: one line, "22 products on 8 shelves · about $176/month". */
+html body .app-container .eco3-cost { display: inline !important; margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; }
+html body .app-container .eco3-cost > summary { display: inline !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; text-decoration: underline dotted; text-underline-offset: 4px; cursor: pointer; list-style: none; }
+html body .app-container .eco3-cost > summary::-webkit-details-marker { display: none; }
+html body .app-container .eco3-cost::before { content: ' · '; }
+html body .app-container .eco3-cost[open] > span { display: block; max-width: 520px; margin-top: 6px; font-size: 14px; }
+html body .app-container .ay-match__reasons li.is-miss::before { content: '– '; }
+.ay-know__src { margin: -4px 0 8px; font: 400 13px/1.3 'DM Sans', sans-serif; color: #3e2723; }
+html body .app-container .ay-story--match.is-weak .ay-seal__core { background: #ffedac; }
+/* Source tiers look different: regulatory/clinical solid, research outlined, brand/retailer/community dashed. */
+html body .app-container .ay-gl-type.is-tier-high { background: #3e2723 !important; color: #ffedac !important; border: 2px solid #3e2723 !important; }
+html body .app-container .ay-gl-type.is-tier-mid { background: #769ebe !important; color: #3e2723 !important; border: 2px solid #3e2723 !important; }
+html body .app-container .ay-gl-type.is-tier-low { background: transparent !important; color: #3e2723 !important; border: 2px dashed #3e2723 !important; }
+/* Footnotes: inline, and at least 24px to tap. */
+html body .app-container .ay-fns { display: inline !important; white-space: nowrap; }
+html body .app-container a.ay-fn { display: inline-flex !important; align-items: center; justify-content: center; min-width: 24px; min-height: 24px; padding: 0 3px; margin: 0 1px; border-radius: 6px; font-size: 12px; line-height: 1; vertical-align: super; text-decoration: underline; }
+html body .app-container a.ay-fn:focus-visible { outline: 3px solid #769ebe; }
+.pdp-badge-preorder { display: inline-block; margin-left: 8px; padding: 3px 10px; border: 2px solid #3e2723; border-radius: 99px; background: #769ebe; color: #3e2723; font: 700 12px/1.2 'DM Sans', sans-serif; vertical-align: middle; }
+.pdp-rx { margin: 6px 0 0; padding: 6px 10px; border-left: 4px solid #3e2723; font: 600 14px/1.4 'DM Sans', sans-serif; color: #3e2723; }

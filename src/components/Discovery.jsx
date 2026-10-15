@@ -509,6 +509,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [sortBy, setSortBy] = useState('default');
     // Cards fade in on first load only; after that, filter changes swap in place.
     const [gridSettled, setGridSettled] = useState(false);
+    // The count waits until the list stops changing (it read 246, 245, 244 while the catalog loaded).
+    const [shownCount, setShownCount] = useState(null);
     useEffect(() => { const t = window.setTimeout(() => setGridSettled(true), 1200); return () => window.clearTimeout(t); }, []);
     // Freshly generated on every mount, Discovery unmounts/remounts on each navigation to it,
     // so this reshuffles the browsing grid's default order every time a user lands on the page,
@@ -1061,6 +1063,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         }
         return [...out.filter((p) => !p.llmGenerated), ...out.filter((p) => p.llmGenerated)];
     }, [filtered, enrichedAiSuggestions, enrichedBrowseAiSuggestions, qTrimForAi, passesActiveFilters]);
+    useEffect(() => {
+        const t = window.setTimeout(() => setShownCount(gridItems.length), 700);
+        return () => window.clearTimeout(t);
+    }, [gridItems.length]);
+    useEffect(() => {
+        const t = window.setTimeout(() => setShownCount(gridItems.length), 700);
+        return () => window.clearTimeout(t);
+    }, [gridItems.length]);
     const firstWebIndex = useMemo(() => gridItems.findIndex((p) => p.llmGenerated), [gridItems]);
 
     useEffect(() => {
@@ -1604,7 +1614,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 const applied = [[priceFilter, setPriceFilter], [eligibilityFilter, setEligibilityFilter], [lifeStageFilter, setLifeStageFilter], [preferenceFilter, setPreferenceFilter], [sustainabilityFilter, setSustainabilityFilter], [aynaFilter, setAynaFilter]].filter(([v]) => v && v !== 'all');
                 return (
                     <div className="ayna-browse__applied" role="status">
-                        <span className="ayna-browse__count">{applied.length > 0 || (categoryFilter && categoryFilter !== 'all') || macroGroup !== 'all' ? `Showing ${gridItems.length} of ${combined.length}` : (gridItems.length === 1 ? '1 product' : `${gridItems.length} products`)}</span>
+                        <span className="ayna-browse__count">{applied.length > 0 || (categoryFilter && categoryFilter !== 'all') || macroGroup !== 'all' ? `Showing ${shownCount ?? gridItems.length} of ${combined.length}` : shownCount == null ? '\u00a0' : (shownCount === 1 ? '1 product' : `${shownCount} products`)}</span>
                         {sortBy === 'default' && !(personalizationFilter && (hasQuizFrustrations || hasHealthImport)) && !searchSubmitted && (
                             <span className="ayna-browse__featured-note">Featured order includes partner brands.{(hasQuizFrustrations || hasHealthImport) ? ' Turn on Personalized to sort by your match.' : ''}</span>
                         )}

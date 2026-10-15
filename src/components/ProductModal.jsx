@@ -514,7 +514,11 @@ export default function ProductModal({
     let more = [];
     // Only products for the same need as this one (no tampons under a TENS
     // device); with a profile, those are ordered by her match.
-    const sameNeed = sameNeedProducts(product, { pool, limit: 16, exclude: [...used] });
+    // Services suggest other services for the same conditions (not tampons under a clinic).
+    const tagSet = new Set(product.tags || []);
+    const sameNeed = product.category === 'telehealth'
+      ? pool.filter((p) => p.category === 'telehealth' && !used.has(p.id) && (p.tags || []).some((t) => tagSet.has(t))).slice(0, 16)
+      : sameNeedProducts(product, { pool, limit: 16, exclude: [...used] });
     if (quizResults) {
       more = sameNeed
         .filter((p) => !used.has(p.id))
@@ -526,7 +530,7 @@ export default function ProductModal({
     }
     if (more.length < 4) {
       const have = new Set([...used, ...more.map((p) => p.id)]);
-      more = [...more, ...sameNeedProducts(product, { pool, limit: 4 - more.length, exclude: [...have] })];
+      more = [...more, ...sameNeed.filter((p) => !have.has(p.id)).slice(0, 4 - more.length)];
     }
     return { compare, more, personal: Boolean(quizResults) && more.some((p) => p._match) };
   }, [product, ecosystemProducts, quizResults, healthProfile, matchOpts]);
@@ -566,8 +570,13 @@ export default function ProductModal({
   })();
   // Who actually sells it, so the button says where it goes ("Buy at LOLA ↗").
   let sellerName = '';
-  try { sellerName = buyUrl ? (isAmazonBuyLink ? 'Amazon' : (isPartner && brand) ? brand : new URL(buyUrl).hostname.replace(/^www\./, '')) : ''; } catch { sellerName = ''; }
-  const buyLabel = sellerName && sellerName.length <= 22 ? `Buy at ${sellerName}` : 'Buy from the seller';
+  const brandName = brand || product.brand || '';
+  try { sellerName = buyUrl ? (isAmazonBuyLink ? 'Amazon' : brandName ? brandName : product.type === 'digital' ? product.name : new URL(buyUrl).hostname.replace(/^www\./, '')) : ''; } catch { sellerName = ''; }
+  // The verb matches what you're doing there: buy a thing, book care, start a trial.
+  const priceSays = `${product.price || ''}`;
+  const isCare = product.category === 'telehealth' || product.type === 'digital';
+  const verb = /free trial/i.test(priceSays) ? 'Start free trial' : product.category === 'telehealth' ? 'Book' : isCare ? 'Get started' : 'Buy';
+  const buyLabel = sellerName && sellerName.length <= 32 ? `${verb} at ${sellerName}` : `${verb} with the seller`;
   const buyButton = (extraClass = '') => (buyUrl ? (
     <a
       className={`pdp-btn pdp-btn--navy pdp-btn--buy ${extraClass}`.trim()}
@@ -587,15 +596,12 @@ export default function ProductModal({
         });
       }}
     >
-      {isPrelaunch ? (product.waitlistCtaLabel || 'Join the waitlist') : product.type === 'digital' ? `Get started${sellerName ? ` at ${sellerName}` : ''}` : buyLabel}
+      {isPrelaunch ? (product.waitlistCtaLabel || 'Join the waitlist') : buyLabel}
       {!isPrelaunch && <span className="pdp-btn__ext" aria-hidden="true"> ↗</span>}
       <span className="sr-only"> (opens the seller’s site in a new tab)</span>
     </a>
-  ) : (
-    <button type="button" className={`pdp-btn pdp-btn--navy pdp-btn--buy ${extraClass}`.trim()} disabled>
-      Buy now
-    </button>
-  ));
+  // Never a disabled primary button: with no link, the page says where it's sold instead.
+  ) : null);
 
   const actionButtons = (
     <div className="pdp-actions pdp-buybox">
@@ -665,7 +671,12 @@ export default function ProductModal({
           </ul>
         </div>
       )}
-      {!buyUrl && <p className="pdp-buybox__note">We don’t have a direct link for this one yet. {(product.whereToBuy || []).length ? `Sold at ${product.whereToBuy.join(', ')}.` : ''}</p>}
+      {!buyUrl && (() => {
+        const sites = (product.whereToBuy || []).filter((w) => /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(String(w).trim()));
+        return sites.length
+          ? <a className="pdp-btn pdp-btn--navy pdp-btn--buy" href={`https://${sites[0].trim()}`} target="_blank" rel="noopener noreferrer">{product.category === 'telehealth' ? 'Book at' : 'Visit'} {sites[0]} <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
+          : <p className="pdp-buybox__note">{(product.whereToBuy || []).length ? `Sold at ${product.whereToBuy.join(', ')}.` : 'We don’t have a link for where to get this yet.'}</p>;
+      })()}
       {isPartner && showDisclosure && <p className="pdp-buybox__note pdp-partner-note">{getPartnerDisclosureText(product)}</p>}
       {buyUrl && isAmazonBuyLink && !isPartner && (
         <p className="pdp-buybox__note pdp-amazon-disclosure">ayna receives a commission on purchases. We have no direct partnership with this brand.</p>
@@ -810,13 +821,26 @@ export default function ProductModal({
             {brand && <div className="pdp-head__eyebrow">{brand}</div>}
             <h1 className="pdp-head__name">{displayName}</h1>
 
-            {(price.known || perUnit) && (
-              <div className="pdp-h2-price">
-                {price.known && <span className="pdp-h2-price__main" style={price.isPlaceholder ? { fontSize: '1rem' } : undefined}>{price.main}</span>}
-                {perUnit && <span className="pdp-h2-price__unit">{perUnit}</span>}
-                {price.known && price.sub && <small>{price.sub}</small>}
-              </div>
-            )}
+            {(() => {
+              // A deposit isn't a price; programs, services and subscriptions have no "per unit".
+              const raw = String(product.price || '');
+              const deposit = /deposit/i.test(raw) ? (raw.match(/\$\s?\d[\d,.]*/) || [''])[0] : '';
+              const program = product.type === 'digital' || product.category === 'telehealth' || product.requiresPrescription || /program|month|subscription|\/mo\b|year/i.test(raw);
+              const rx = product.requiresPrescription || /\brx\b|prescription/i.test(`${product.name} ${product.summary || ''}`) && product.category === 'telehealth';
+              if (deposit) {
+                return <div className="pdp-h2-price"><span className="pdp-h2-price__main">Coming soon</span><small>Join the waitlist ({deposit} deposit)</small><span className="pdp-badge-preorder">Pre-order</span></div>;
+              }
+              return <>
+                {(price.known || (perUnit && !program)) && (
+                  <div className="pdp-h2-price">
+                    {price.known && <span className="pdp-h2-price__main" style={price.isPlaceholder ? { fontSize: '1rem' } : undefined}>{price.main}</span>}
+                    {perUnit && !program && <span className="pdp-h2-price__unit">{perUnit}</span>}
+                    {price.known && price.sub && <small>{price.sub}</small>}
+                  </div>
+                )}
+                {rx && <p className="pdp-rx">{product.requiresPrescription ? `Requires a prescription from ${brand || product.brand || 'the provider'}’s clinicians.` : `Can include prescription support from ${brand || product.brand || 'the provider'}’s clinicians, if you qualify.`}</p>}
+              </>;
+            })()}
             {(() => {
               const size = sizeCount(product);
               const fsa = (glance?.facts || []).find((f) => f.id === 'fsa' && !f.unknown);
@@ -850,13 +874,13 @@ export default function ProductModal({
                 const pp = getPassport(product);
                 const checked = pp?.pricing?.price?.verified_at;
                 let seller = '';
-                try { seller = buyUrl ? (isAmazonBuyLink ? 'Amazon' : isPartner ? `${brand || 'The brand'} (ayna partner)` : new URL(buyUrl).hostname.replace(/^www\./, '')) : ''; } catch { seller = ''; }
+                try { seller = buyUrl ? (isAmazonBuyLink ? 'Amazon' : isPartner ? `${brand || product.brand || (() => { try { return new URL(buyUrl).hostname.replace(/^www\./, ''); } catch { return 'The brand'; } })()} (ayna partner)` : new URL(buyUrl).hostname.replace(/^www\./, '')) : ''; } catch { seller = ''; }
                 return (
                   <dl className="ay-buy__facts">
-                    {price.known && <div><dt>Price</dt><dd>{price.main}{price.sub ? ` ${price.sub}` : ''}</dd></div>}
+                    <div><dt>Price</dt><dd>{/deposit/i.test(String(product.price || '')) ? `Waitlist deposit ${(String(product.price).match(/\$\s?\d[\d,.]*/) || [''])[0]} (not the product price)` : price.known && !price.isPlaceholder ? `${price.main}${price.sub ? ` ${price.sub}` : ''}` : `Price at ${seller || 'the retailer'}`}</dd></div>
                     {sizeCount(product)?.text && <div><dt>Size</dt><dd>{choice.variant?.label || sizeCount(product).text}</dd></div>}
                     {seller && <div><dt>Sold by</dt><dd>{seller}</dd></div>}
-                    <div><dt>Price check</dt><dd>{checked ? `Checked ${(() => { const d = new Date(`${String(checked).slice(0, 10)}T12:00:00`); return Number.isNaN(d.getTime()) ? checked : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); })()}` : 'Price at retailer'}</dd></div>
+                    {checked && price.known && !price.isPlaceholder && <div><dt>Price check</dt><dd>{checked ? `Checked ${(() => { const d = new Date(`${String(checked).slice(0, 10)}T12:00:00`); return Number.isNaN(d.getTime()) ? checked : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); })()}` : 'Price at retailer'}</dd></div>}
                   </dl>
                 );
               })()}
@@ -880,7 +904,7 @@ export default function ProductModal({
               const fsa = (glance?.facts || []).find((f) => f.id === 'fsa' && !f.unknown);
               const attrs = buildTypedTags(product).filter((t) => t.type === 'attribute').map((t) => t.label);
               const items = [
-                fsa ? (fsa.value === 'Eligible' ? 'FSA/HSA eligible' : 'Not FSA/HSA eligible') : null,
+                fsa && fsa.value === 'Eligible' ? 'FSA/HSA eligible' : null,
                 ...attrs,
                 product.requiresPrescription ? 'Prescription required' : null,
                 /month|subscription|\/mo\b|per year|\/year/i.test(priceText) ? 'Subscription' : (price.known && /one-time/i.test(priceText) ? 'One-time purchase' : null),

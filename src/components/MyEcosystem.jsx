@@ -1948,10 +1948,10 @@ export default function MyEcosystem({
                         <p className="eco3-head__sub">
                             {llmLoading && myProductList.length === 0 ? 'Building your matches…' : myProductList.length === 0 ? 'No picks yet' : (
                                 <>
-                                    {myProductList.length} product{myProductList.length === 1 ? '' : 's'} on {areaGroups.length} shelf{areaGroups.length === 1 ? '' : 'es'}
+                                    {myProductList.length} product{myProductList.length === 1 ? '' : 's'} on {areaGroups.length} {areaGroups.length === 1 ? 'shelf' : 'shelves'}
                                     {estimatedMonthlyTotal.counted > 0 && (
                                         <details className="eco3-cost">
-                                            <summary>about ${estimatedMonthlyTotal.total.toFixed(0)}{estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? '+' : ''} a month</summary>
+                                            <summary>about ${estimatedMonthlyTotal.total.toFixed(0)}{estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? '+' : ''}/month</summary>
                                             <span>Estimated from the listed prices of {estimatedMonthlyTotal.counted} of your {estimatedMonthlyTotal.totalItems} products, spread over how long each usually lasts.{estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? ` ${estimatedMonthlyTotal.totalItems - estimatedMonthlyTotal.counted} without a listed price are not counted.` : ''} It is an estimate, not what you spend.</span>
                                         </details>
                                     )}

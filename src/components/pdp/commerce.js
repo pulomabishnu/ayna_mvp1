@@ -175,7 +175,7 @@ export function compareRows(products, { matchFor = null } = {}) {
     !isDigital ? { label: 'Ingredients or materials', get: (p) => ingredientHeadline(p, 48) || NOT_ON_FILE } : null,
     { label: 'Evidence on file', get: evidenceSummary },
     { label: 'Safety note on file', get: (p) => (safetyAlertText(p) ? 'Yes, see its page' : 'None flagged') },
-    { label: 'FSA/HSA', get: (p) => { const f = getPassport(p)?.pricing?.fsa_hsa; return f?.known ? (f.value === 'eligible' ? 'Eligible' : 'Not eligible') : NOT_ON_FILE; } },
+    { label: 'FSA/HSA', get: (p) => { if (['pad', 'tampon', 'cup', 'disc'].includes(p?.category)) return 'Eligible'; const f = getPassport(p)?.pricing?.fsa_hsa; return f?.known ? (f.value === 'eligible' ? 'Eligible' : 'Not eligible') : NOT_ON_FILE; } },
     { label: 'Where to buy', get: (p) => (p.whereToBuy || []).slice(0, 3).join(', ') || NOT_ON_FILE },
     matchFor ? { label: 'Your match', get: (p) => { const m = matchFor(p); return Number.isFinite(m) && m > 0 ? `${Math.round(m)}%` : 'No clear match'; } } : null,
   ].filter(Boolean);

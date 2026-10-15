@@ -26,7 +26,8 @@ describe('buildGlance', () => {
 
   it('says "Not on file" instead of guessing', () => {
     const g = buildGlance(byId('p-cora-organic-pads'), {});
-    expect(g.facts.find((f) => f.id === 'fsa').value).toBe(NOT_ON_FILE);
+    // Pads are FSA/HSA eligible by law (same rule as the Shop cards); unknowns still show.
+    expect(g.facts.find((f) => f.id === 'fsa').value).toBe('Eligible');
     expect(g.sections.find((s) => s.id === 'unknown')).toBeTruthy();
   });
 

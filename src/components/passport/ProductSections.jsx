@@ -33,7 +33,7 @@ const KIND_LABEL = {
   match: 'For you',
 };
 
-function Fn({ n, sources }) {
+function Fn({ n, sources, hidden = false }) {
   const s = sources.find((x) => x.n === n);
   return (
     <a
@@ -41,6 +41,7 @@ function Fn({ n, sources }) {
       href={`#ay-src-${n}`}
       aria-label={`Source ${n}${s ? `: ${s.title}` : ''}`}
       title={s ? `${s.label}: ${s.title}` : undefined}
+      tabIndex={hidden ? -1 : undefined}
       onClick={(e) => { e.preventDefault(); jumpTo(`ay-src-${n}`); }}
     >
       {n}
@@ -48,9 +49,10 @@ function Fn({ n, sources }) {
   );
 }
 
-function Refs({ refs, sources }) {
+function Refs({ refs, sources, hidden = false }) {
   if (!refs?.length) return null;
-  return <sup className="ay-fns">{refs.map((n) => <Fn key={n} n={n} sources={sources} />)}</sup>;
+  // Footnotes inside folded text stay out of the tab order until it is shown.
+  return <sup className="ay-fns">{refs.map((n) => <Fn key={n} n={n} sources={sources} hidden={hidden} />)}</sup>;
 }
 
 function Label({ children }) {
@@ -65,7 +67,7 @@ function Para({ text, terms, refs, sources, pre = false, className = '' }) {
     <>
       <p className={`${pre ? 'is-pre ' : ''}${long && !open ? 'is-folded ' : ''}${className}`.trim() || undefined}>
         <GlossaryText text={text} terms={terms} />
-        <Refs refs={refs} sources={sources} />
+        <Refs refs={refs} sources={sources} hidden={long && !open} />
       </p>
       {long && (
         <button type="button" className="ay-gl-more" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
@@ -460,7 +462,7 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
               <li key={src.url} id={`ay-src-${src.n}`} tabIndex={-1}>
                 <span className="ay-gl-cites__n">{src.n}</span>
                 <div>
-                  <span className={`ay-gl-type is-${src.type}`}>{src.label}</span>
+                  <span className={`ay-gl-type is-${src.type} is-tier-${src.tier || 'mid'}`}>{src.label}</span>
                   <a href={src.url} target="_blank" rel="noopener noreferrer">{src.title}</a>
                   <small>{[src.publisher, src.year].filter(Boolean).join(' · ')}</small>
                   {src.summary && <small>{src.summary}</small>}
@@ -530,14 +532,19 @@ export function ProductMatch({ glance, matchPercent, fallback = '', onShowWhy, o
   const list = sec?.blocks?.find((b) => b.type === 'list');
   const reasons = (list?.items || []).map((r) => String(typeof r === 'string' ? r : r?.text || '')).filter(Boolean).slice(0, 4);
   const lines = reasons.length ? reasons : (fallback ? [fallback] : []);
+  // The heading follows the score: a 7% match is never "Why it fits you".
+  const band = matchPercent >= 70 ? 'strong' : matchPercent >= 50 ? 'some' : 'weak';
+  const heading = band === 'strong' ? <>Why it fits <em>you.</em></> : band === 'some' ? <>How it fits <em>you.</em></> : <>How it compares to <em>your needs.</em></>;
+  // A reason that counts against the product gets a –, never a ✓.
+  const isMiss = (t) => /\b(above|over|outside|not|no|doesn.t|does not|isn.t|missing|lower|less|unknown|can.t|cannot|without)\b/i.test(t);
   return (
-    <section className="ay-story ay-story--match" aria-labelledby="ay-match-h">
+    <section className={`ay-story ay-story--match is-${band}`} aria-labelledby="ay-match-h">
       <button type="button" className="ay-match__score" onClick={onShowWhy} aria-label={`${matchPercent}% match. See why`}>
         <MatchSeal><b>{matchPercent}%</b><span>Why? ›</span></MatchSeal>
       </button>
       <div className="ay-match__body">
-        <h2 id="ay-match-h">Why it fits <em>you.</em></h2>
-        {lines.length > 0 && <ul className="ay-match__reasons">{lines.map((r) => <li key={r}>{r}</li>)}</ul>}
+        <h2 id="ay-match-h">{heading}</h2>
+        {lines.length > 0 && <ul className="ay-match__reasons">{lines.map((r) => <li key={r} className={isMiss(r) ? 'is-miss' : 'is-hit'}><span className="sr-only">{isMiss(r) ? 'Counts against: ' : 'Fits: '}</span>{r}</li>)}</ul>}
         <div className="ay-match__links">
           <button type="button" onClick={onShowWhy}>See the breakdown</button>
           <a href="/how-it-works">How we match</a>
@@ -617,6 +624,7 @@ export function ProductGoodToKnow({ items = [] }) {
   return (
     <section className="ay-story ay-story--know" aria-labelledby="ay-know-h">
       <h2 id="ay-know-h">Good to know</h2>
+      <p className="ay-know__src">From the product’s listing and label.</p>
       <ul className="ay-know">{items.map((t) => <li key={t}>{t}</li>)}</ul>
     </section>
   );
@@ -662,7 +670,7 @@ export function ProductMore({ glance, extras = {}, onXref = null }) {
         {sources.length > 0 && <ol className="ay-gl-srclist">{sources.map((src) => (
           <li key={src.url} id={`ay-src-${src.n}`} tabIndex={-1}>
             <span className="ay-gl-cites__n">{src.n}</span>
-            <div><span className={`ay-gl-type is-${src.type}`}>{src.label}</span><a href={src.url} target="_blank" rel="noopener noreferrer">{src.title}</a><small>{[src.publisher, src.year].filter(Boolean).join(' · ')}</small></div>
+            <div><span className={`ay-gl-type is-${src.type} is-tier-${src.tier || 'mid'}`}>{src.label}</span><a href={src.url} target="_blank" rel="noopener noreferrer">{src.title}</a><small>{[src.publisher, src.year].filter(Boolean).join(' · ')}</small></div>
           </li>
         ))}</ol>}
       </>)}
