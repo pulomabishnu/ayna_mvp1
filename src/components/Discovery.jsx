@@ -1493,6 +1493,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             <span className="ayna-browse__personalized-switch">
                 <input
                     type="checkbox"
+                    role="switch"
+                    aria-checked={personalizationFilter}
                     checked={personalizationFilter}
                     onChange={(e) => {
                         setPersonalizationFilter(e.target.checked);

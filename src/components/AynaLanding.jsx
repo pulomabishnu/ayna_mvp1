@@ -183,14 +183,16 @@ function HomeSkeleton() {
 }
 
 /** The mockup's 38×22 pill toggle. Off = grey track, knob left; on = knob right. */
-function Toggle({ on, offTrack = '#DCD5CB', onTrack = 'var(--color-primary)', onKnob = 'var(--color-citric)', ...rest }) {
+function Toggle({ on, offTrack = 'rgba(62, 39, 35, .35)', onTrack = 'var(--color-primary)', onKnob = 'var(--color-citric)', ...rest }) {
   return (
-    <span
+    <button
+      type="button"
       role="switch"
       aria-checked={on}
-      tabIndex={0}
       {...rest}
       style={{
+        padding: 0,
+        border: 0,
         width: '38px',
         height: '22px',
         borderRadius: '999px',
@@ -209,10 +211,10 @@ function Toggle({ on, offTrack = '#DCD5CB', onTrack = 'var(--color-primary)', on
         width: '16px',
         height: '16px',
         borderRadius: '50%',
-        background: on ? onKnob : '#fff',
+        background: on ? onKnob : '#ffedac',
         transition: 'left 0.2s ease, background 0.2s ease',
       }} />
-    </span>
+    </button>
   );
 }
 
@@ -599,10 +601,10 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
         ecosystem
         onViewDiscovery={onViewDiscovery}
         personalizeControl={(
-          <label className="lx-toggle">
-            <span>Personalized</span>
-            <Toggle on={personalize} onClick={() => setPersonalize((v) => !v)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setPersonalize((v) => !v); } }} />
-          </label>
+          <span className="lx-toggle">
+            <span id="lx-personal-label">Personalized</span>
+            <Toggle on={personalize} aria-labelledby="lx-personal-label" onClick={() => setPersonalize((v) => !v)} />
+          </span>
         )}
       >
         <div className="lx-grid">

@@ -2450,21 +2450,6 @@ function App() {
           </nav>
         )}
 
-        {currentView !== 'quiz' && currentView !== 'campus-resources' && (
-          <ProfileChatbot
-            onRequireAuth={(feature) => { setAuthFeature(typeof feature === 'string' ? feature : ''); setPendingAction(typeof feature === 'string' && feature ? 'feature' : 'login'); pendingActionRef.current = typeof feature === 'string' && feature ? 'feature' : 'login'; setShowAuthModal(true); }}
-            openSignal={askOpenSignal}
-            prefill={askPrefill}
-            profile={quizResults}
-            user={user}
-            onProfileUpdate={setQuizResults}
-            chatHistory={chatHistory}
-            onChatHistoryUpdate={setChatHistory}
-            disabled={false}
-            onNavigateToDiscovery={handleViewDiscovery}
-            onViewRecommendations={() => handleViewEcosystem()}
-          />
-        )}
 
         {currentView === 'product' && composerSeed && (
           <WebCommunity
@@ -2756,6 +2741,22 @@ function App() {
           onViewTermsOfUse={() => setCurrentView('terms-of-use')}
         onViewHowWeMakeMoney={handleViewHowWeMakeMoney}
       />
+      {/* Floating Ask pill comes after the page and footer in the DOM, so it is the last stop when tabbing, not the first. */}
+      {currentView !== 'quiz' && currentView !== 'campus-resources' && (
+        <ProfileChatbot
+          onRequireAuth={(feature) => { setAuthFeature(typeof feature === 'string' ? feature : ''); setPendingAction(typeof feature === 'string' && feature ? 'feature' : 'login'); pendingActionRef.current = typeof feature === 'string' && feature ? 'feature' : 'login'; setShowAuthModal(true); }}
+          openSignal={askOpenSignal}
+          prefill={askPrefill}
+          profile={quizResults}
+          user={user}
+          onProfileUpdate={setQuizResults}
+          chatHistory={chatHistory}
+          onChatHistoryUpdate={setChatHistory}
+          disabled={false}
+          onNavigateToDiscovery={handleViewDiscovery}
+          onViewRecommendations={() => handleViewEcosystem()}
+        />
+      )}
       {/* Outside the currentView switch on purpose — the same bar on every
           view, fixed to the bottom of the viewport, so DOM order here is
           only about it never being unmounted by navigation. */}

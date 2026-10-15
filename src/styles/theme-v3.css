@@ -3427,3 +3427,11 @@ html body .app-container .cr-page .cr-jump a { border-color: #3e2723 !important;
 html body .app-container .brand-partner__pname { display: block; color: #3e2723; text-decoration: none; }
 html body .app-container .brand-partner__pname:hover { text-decoration: underline; }
 html body .app-container a.discovery-card__join.brand-partner__view { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+/* One page-title size across the site (64px on desktop, scaling down on phones). The landing's photo hero and product names keep their own. */
+html body .app-container main h1:not(#lv-hero-title):not(.pdp-head__name):not(.sr-only) { font-size: clamp(40px, 1.6rem + 2.8vw, 64px) !important; line-height: 1.05 !important; }
+/* One gutter: Community lines up with Shop and Library at the page edge. */
+@media (min-width: 1024px) { html body .app-container .wc.wc3 { max-width: none !important; margin-inline: 0 !important; } }
+/* Shop grid: gentler ±1° tilt and 4px more room between cards so tilted corners never touch. */
+html body .app-container:not([data-theme='dark']) .ayna-discover-card.ayna-browse-card.ayna-browse-card { --tilt: -1deg !important; }
+html body .app-container:not([data-theme='dark']) .ayna-discover-card.ayna-browse-card.ayna-browse-card:nth-child(even) { --tilt: 1deg !important; }
+html body .app-container:not([data-theme='dark']) .ayna-browse__grid.ayna-browse__grid { gap: 52px 32px !important; }

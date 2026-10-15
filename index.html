@@ -23,7 +23,21 @@
 </head>
 
 <body>
-  <div id="root">Loading ayna…</div>
+  <style>
+    body:has(#ay-boot) { margin: 0; background: #ffedac; }
+    #ay-boot { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; background: #ffedac; color: #3e2723; font-family: 'DM Sans', system-ui, sans-serif; text-align: center; padding: 16px; box-sizing: border-box; }
+    #ay-boot .ay-boot__mark { font: 800 48px/1 'Bricolage Grotesque', system-ui, sans-serif; letter-spacing: -0.03em; }
+    #ay-boot .ay-boot__dots { display: flex; gap: 8px; }
+    #ay-boot .ay-boot__dots i { width: 10px; height: 10px; border-radius: 50%; background: #3e2723; animation: ayBoot 1.2s ease-in-out infinite; }
+    #ay-boot .ay-boot__dots i:nth-child(2) { background: #f7badd; animation-delay: .15s; }
+    #ay-boot .ay-boot__dots i:nth-child(3) { background: #769ebe; animation-delay: .3s; }
+    #ay-boot .ay-boot__slow { margin: 8px 0 0; font-size: 16px; }
+    #ay-boot .ay-boot__slow[hidden] { display: none; }
+    #ay-boot .ay-boot__slow a { color: #3e2723; font-weight: 700; }
+    @keyframes ayBoot { 0%, 100% { transform: translateY(0); opacity: .5; } 50% { transform: translateY(-6px); opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) { #ay-boot .ay-boot__dots i { animation: none; opacity: 1; } }
+  </style>
+  <div id="root"><div id="ay-boot" role="status" aria-live="polite"><span class="ay-boot__mark">ayna</span><span class="ay-boot__dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Loading ayna</span><p class="ay-boot__slow" hidden>Still loading. <a href="">Reload</a></p></div></div>
   <script src="/bootstrap-error.js"></script>
   <script type="module" src="/src/main.jsx"></script>
 </body>
