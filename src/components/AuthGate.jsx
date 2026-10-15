@@ -144,7 +144,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
     const cleanEmail = email.trim().toLowerCase();
     setError('');
     setSuccessMsg('');
-    if (!cleanEmail) { setFieldErrors((prev) => ({ ...prev, email: 'Add your email, then tap "Forgot password?".' })); return; }
+    if (!cleanEmail) { setFieldErrors((prev) => ({ ...prev, email: 'Add your email above, then choose "Forgot password?".' })); return; }
     if (!supabase) return;
     setResetting(true);
     try {
@@ -1344,7 +1344,7 @@ const styles = {
     cursor: 'not-allowed',
   },
   fine: {
-    fontSize: '0.7rem',
+    fontSize: '13px',
     color: 'var(--color-text-muted)',
     textAlign: 'center',
     lineHeight: 1.45,

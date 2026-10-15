@@ -53,7 +53,7 @@ export default function EcosystemShelf({ myProducts = {}, onOpenProduct, onExplo
     <section className="eco-shelf mockup-page">
       {!hideTitle && <h2 className="eco-shelf__title">Your shelves.</h2>}
       <p className="eco-shelf__lede">
-        Each row is an area of care. Tap anything to see why it&apos;s here.
+        Each row is an area of care. Select anything to see why it&apos;s here.
       </p>
 
       <div className="eco-shelf__rows">

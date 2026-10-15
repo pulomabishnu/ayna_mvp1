@@ -876,7 +876,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         {firstLoad ? <SkeletonPlaylists /> : playlists.length ? <div className="wc-pl-grid">{playlists.map(playlistCard)}</div> : <div className="wc-empty"><h2>{playlistSection === 'mine' ? 'You haven’t made a playlist yet' : playlistSection === 'friends' ? 'No playlists from friends yet' : 'No playlists yet'}</h2><p>Collect your favorites in one place.</p><button type="button" className="wc-btn" onClick={() => openCompose('playlist')}>Create playlist</button></div>}
       </> : <>
         <div className="wc-composer">
-          <Avatar size={36} name={profile?.display_name || 'You'} path={profile?.avatar_url} anonymous={!profile} />
+          {user && <Avatar size={36} name={profile?.display_name || 'You'} path={profile?.avatar_url} anonymous={!profile} />}
           <button type="button" className="wc-share" onClick={() => openCompose(tab === 'question' ? 'question' : tab === 'review' ? 'review' : 'post')}>{tab === 'question' ? 'Ask the community a question' : tab === 'review' ? 'Review a product you’ve tried' : 'Share with the community'}</button>
           <div className="wc-composer-kinds" aria-label="Or start a">
             {Object.keys(KIND_TITLES).map((k) => <button type="button" key={k} className={`is-${k}`} onClick={() => openCompose(k)}>{VERB[k] || k}</button>)}
@@ -936,8 +936,9 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
           <RuleField as="input" value={profileName} maxLength={50} onChange={(e) => setProfileName(e.target.value)} placeholder="Display name" aria-label="Display name" onShowRules={openRules} />
           <RuleField as="input" value={profileHandle} maxLength={30} onChange={(e) => setProfileHandle(e.target.value.toLowerCase())} placeholder="Username" aria-label="Username" onShowRules={openRules} />
           <button type="button" className="wc-btn" disabled={busy || !profileName.trim() || !profileHandle.trim() || breaksCommunityRules(profileName, profileHandle)} onClick={saveProfile}>Create profile</button></div>
-          : <div className="wc-me"><Avatar size={40} name={profile?.display_name || 'Guest'} path={profile?.avatar_url} anonymous={!profile} /><div><strong>{profile?.display_name || 'Guest'}</strong><small>{profile ? `@${profile.username}` : 'Posting anonymously'}</small></div>
-            {profile ? <button type="button" className="wc-link wc-me-btn" onClick={() => openProfile(profile.username)}>View profile</button> : <button type="button" className="wc-link wc-me-btn" onClick={() => requireAccount('your Community profile')}>Sign in</button>}</div>}
+          : !user ? <div className="wc-card wc-join is-guest"><h3>Join the conversation</h3><p className="wc-muted">Reading is open to everyone. An account lets you post, reply and follow people.</p><button type="button" className="wc-btn" onClick={() => requireAccount('posting in Community')}>Join or sign in</button></div>
+          : <div className="wc-me"><Avatar size={40} name={profile?.display_name || 'You'} path={profile?.avatar_url} anonymous={!profile} /><div><strong>{profile?.display_name || 'You'}</strong><small>{profile ? `@${profile.username}` : ''}</small></div>
+            {profile && <button type="button" className="wc-link wc-me-btn" onClick={() => openProfile(profile.username)}>View profile</button>}</div>}
         <button type="button" className="wc-rules-btn" onClick={openRules}><span aria-hidden="true">§</span>Community rules</button>
       </nav>
       <div className="wc-main">{main}</div>

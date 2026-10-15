@@ -54,7 +54,7 @@ export default function EcoCabinet({ areaGroups = [], total = 0, name = '', onBu
       </div>
       <div className="ay3-cab__foot">
         <button type="button" className="ay3-cab__toggle" onClick={() => setOpen((v) => !v)} aria-expanded={open}>{open ? 'Close the mirror' : 'Open the mirror'}</button>
-        {open && <p className="ay3-cab__hint" aria-hidden="true">tap a shelf to jump to it</p>}
+        {open && <p className="ay3-cab__hint" aria-hidden="true">select a shelf to jump to it</p>}
       </div>
     </section>
   );

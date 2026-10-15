@@ -1793,7 +1793,7 @@ export default function MyEcosystem({
             saveFetchedLlmFingerprint(intakeFingerprint);
             setLlmError('');
         } else {
-            setLlmError('We stopped building your recommendations. Tap “Refresh recommendations” to try again.');
+            setLlmError('We stopped building your recommendations. Choose “Refresh recommendations” to try again.');
         }
     }, [intakeFingerprint]);
 

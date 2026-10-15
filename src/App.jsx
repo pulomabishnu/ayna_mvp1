@@ -2425,22 +2425,26 @@ function App() {
         )}
 
         {currentView !== 'quiz' && currentView !== 'campus-resources' && (
-          <nav className="ay-tabbar" aria-label="Main, phone">
-            <a href="/" className={['hero', 'welcome'].includes(currentView) ? 'is-on' : ''} {...linkProps(navigateHome)}>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11 12 4l8 7v9h-5v-6H9v6H4z" /></svg><span>Home</span>
-            </a>
+          <nav className="ay-tabbar is-six" aria-label="Main, phone">
+            {/* Same four sections as the desktop nav, plus Ask and You (Home is the logo). */}
             <a href="/shop" className={['discovery', 'product'].includes(currentView) ? 'is-on' : ''} {...linkProps(() => handleViewDiscovery(''))}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2" /></svg><span>Shop</span>
             </a>
+            <a href="/ecosystem" className={ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'is-on' : ''} {...linkProps(() => handleViewEcosystem())}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2" /><path d="M4 10h16M4 15h16" /></svg><span>Ecosystem</span>
+            </a>
             <button type="button" className="ay-tabbar__ask" onClick={() => openAsk('')}>
-              <span className="ay-tabbar__orb" aria-hidden="true">✦</span><span>Ask ayna</span>
+              <span className="ay-tabbar__orb" aria-hidden="true">✦</span><span>Ask</span>
             </button>
+            <a href="/library" className={currentView === 'articles' ? 'is-on' : ''} {...linkProps(() => setCurrentView('articles'))}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H5zM19 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z" /></svg><span>Library</span>
+            </a>
             <a href="/community" className={currentView === 'community' ? 'is-on' : ''} {...linkProps(() => setCurrentView('community'))}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z" /></svg><span>Community</span>
             </a>
             {user ? (
-              <a href="/you" className={['you', ...ECOSYSTEM_NAV_VIEWS].includes(currentView) ? 'is-on' : ''} {...linkProps(() => setCurrentView('you'))}>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" /></svg><span>Me</span>
+              <a href="/you" className={currentView === 'you' ? 'is-on' : ''} {...linkProps(() => setCurrentView('you'))}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" /></svg><span>You</span>
               </a>
             ) : (
               <button type="button" onClick={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}>

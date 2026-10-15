@@ -315,7 +315,7 @@ export default function Announcements({ supabase, user, products = [], productsB
     </div>
     {error && <p className="cr-error" role="alert">{error}</p>}
     {rows === null ? <div className="cr-ann-skel" aria-busy="true" aria-label="Loading announcements"><span /><span /></div>
-      : rows.length === 0 ? <div className="cr-ann-empty"><h2>No announcements yet</h2><p>{available ? 'News from the ayna team will show up here.' : 'Announcements are coming soon.'}</p></div>
+      : rows.length === 0 ? (variant === 'web' ? null : <div className="cr-ann-empty"><h2>No announcements yet</h2><p>{available ? 'News from the ayna team will show up here.' : 'Announcements are coming soon.'}</p></div>)
         : <ol className="cr-ann-list">{rows.map((row) => {
           const rx = reactions[row.id] || { count: 0, mine: false };
           const nReplies = replyCounts[row.id] || 0;

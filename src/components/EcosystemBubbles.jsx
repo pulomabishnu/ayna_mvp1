@@ -230,7 +230,7 @@ export default function EcosystemBubbles({
       <div className="eco-bubbles__side">
         <h1 className="eco-bubbles__title">This is your ecosystem.</h1>
         <p className="eco-bubbles__lede">
-          Tap a circle to see why it&apos;s there.
+          Select a circle to see why it&apos;s there.
         </p>
 
         {selected && !selected.gap && selected.products.length > 0 ? (
