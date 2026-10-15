@@ -209,3 +209,14 @@
 .ayfp-table__detail dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 16px; margin: 0; }
 .ayfp-table__detail dt { font-weight: 700; }
 .ayfp-table__detail dd { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* Check marks: stroke set explicitly so dark mode's svg rules can't blank them. */
+.ayfp :is(.ayfp-req__icon, .ayfp-q__num, .ayfp-friends__dot) svg { fill: none !important; stroke: currentColor !important; }
+.ayfp :is(.ayfp-req.is-done .ayfp-req__icon, .ayfp-q.is-done .ayfp-q__num, .ayfp-friends li.is-verified .ayfp-friends__dot) { color: var(--ay-paper) !important; }
+
+@media (max-width: 760px) {
+  /* Keep the hero's decorative shapes off the headline on phones. */
+  .ayfp :is(.ayfp-hero, .ayfp-claimed__hero, .wyou-hero) .wyou-shapes i:nth-child(2) { display: none; }
+  .ayfp :is(.ayfp-hero, .ayfp-claimed__hero, .wyou-hero) .wyou-shapes i:nth-child(1) { width: 84px; height: 84px; right: -34px; top: -38px; }
+  .ayfp-hero__copy, .ayfp-claimed__hero h1 { padding-right: 36px; }
+}

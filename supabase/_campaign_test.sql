@@ -294,6 +294,8 @@ begin
     ('f1000000-0000-4000-8000-000000000002', 'g2@test.dev', now(), jsonb_build_object('referred_by', c)),
     ('f1000000-0000-4000-8000-000000000003', 'g3@test.dev', now(), jsonb_build_object('referred_by', c));
   assert public.campaign_is_eligible(u, 'free-product-2026'), 'second referrer eligible';
+  -- make sure A has exactly one unit left, whatever the first referrer claimed
+  update public.campaign_rewards set inventory_total = inventory_claimed + 1 where product_id = 't-prod-a';
 
   for i in 1..50 loop
     s := public.campaign_spin(u, 'free-product-2026');

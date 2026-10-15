@@ -66,9 +66,9 @@ export default async function handler(req, res) {
     // Which products people pass on vs. keep.
     const byProduct = {};
     for (const s of spins.data || []) {
-      const b = (byProduct[s.product_id] ||= { shown: 0, claimed: 0, sold_out: 0 });
+      const b = (byProduct[s.product_id] ||= { shown: 0, kept: 0, sold_out: 0 });
       b.shown += 1;
-      if (s.outcome === 'claimed') b.claimed += 1;
+      if (s.outcome === 'claimed') b.kept += 1;
       if (s.outcome === 'sold_out') b.sold_out += 1;
     }
 
@@ -88,7 +88,7 @@ export default async function handler(req, res) {
         rewardId: r.id, productId: r.product_id, name: r.product_catalog?.name, brand: r.product_catalog?.brand,
         total: r.inventory_total, claimed: r.inventory_claimed, remaining: r.inventory_remaining,
         active: r.is_active && r.product_catalog?.is_active !== false,
-        ...(byProduct[r.product_id] || { shown: 0, claimed: 0, sold_out: 0 }),
+        ...(byProduct[r.product_id] || { shown: 0, kept: 0, sold_out: 0 }),
       })),
       people,
     });

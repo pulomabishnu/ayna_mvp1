@@ -38,7 +38,7 @@ export default function FriendsSection({ status }) {
     <section className="wyou-card ayfp-section" aria-labelledby="ayfp-friends-title">
       <div className="wyou-card-head">
         <h2 id="ayfp-friends-title">Your friends</h2>
-        <span>{status.friendsJoined || 0} of {required} joined</span>
+        <span>{(status.friendsJoined || 0) > required ? `${status.friendsJoined} joined` : `${status.friendsJoined || 0} of ${required} joined`}</span>
       </div>
       <p className="wyou-muted ayfp-intro">
         Send your link. A friend counts once they make a <strong>new</strong> ayna account with it and verify their email or phone.

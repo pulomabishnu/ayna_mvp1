@@ -74,7 +74,7 @@ export default function AdminCampaignPage({ onBack }) {
           <table className="ayfp-table">
             <thead><tr><th>Product</th><th>Remaining</th><th>Claimed / total</th><th>Shown</th><th>Kept</th><th>Sold out at claim</th><th>Active</th></tr></thead>
             <tbody>{(data.inventory || []).map((r) => (
-              <tr key={r.rewardId}><td>{r.brand ? `${r.brand} · ` : ''}{r.name || r.productId}</td><td><strong>{r.remaining}</strong></td><td>{r.claimed} / {r.total}</td><td>{r.shown}</td><td>{r.claimed}</td><td>{r.sold_out}</td><td>{r.active ? 'yes' : 'no'}</td></tr>
+              <tr key={r.rewardId}><td>{r.brand ? `${r.brand} · ` : ''}{r.name || r.productId}</td><td><strong>{r.remaining}</strong></td><td>{r.claimed} / {r.total}</td><td>{r.shown}</td><td>{r.kept}</td><td>{r.sold_out}</td><td>{r.active ? 'yes' : 'no'}</td></tr>
             ))}</tbody>
           </table>
           {!data.inventory?.length && <p className="wyou-muted">No products in the reward pool yet. Nobody can spin until you add some.</p>}
