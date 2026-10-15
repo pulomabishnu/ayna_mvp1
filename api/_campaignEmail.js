@@ -40,11 +40,11 @@ export function campaignUrl(path = '/free-product', source = 'email') {
 }
 
 const p = (html, extra = '') =>
-  `<p style="margin:0 0 16px;font:500 16px/26px ${UI};color:${INK};${extra}">${html}</p>`;
+  `<p style="margin:0 0 18px;font:400 17px/27px ${UI};color:${INK};${extra}">${html}</p>`;
 
 function button(label, href) {
   return `
-  <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 8px">
+  <table role="presentation" class="btn" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 8px">
     <tr><td style="border-radius:99px;background:${INK};border:2px solid ${INK}">
       <a href="${escapeHtml(href)}" style="display:inline-block;padding:15px 28px;font:600 17px/22px ${UI};color:${PAGE};text-decoration:none;border-radius:99px">${escapeHtml(label)}&nbsp;&nbsp;&rarr;</a>
     </td></tr>
@@ -53,25 +53,27 @@ function button(label, href) {
 
 /** "3 answers + 3 friends = 1 free product", stacked on phones. */
 function equation() {
-  const tile = (n, line1, line2, fill) => `
+  // Equal-height tiles: big number beside a two-line label, so it reads in one glance.
+  const tile = (n, label, sub, fill) => `
     <td class="eq-tile" width="30%" valign="top" style="padding:0">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr><td style="background:${fill};border:2px solid ${INK};border-right-width:5px;border-bottom-width:5px;border-radius:16px;padding:16px 14px">
-          <div style="font:400 44px/44px ${DISPLAY};color:${INK}">${n}</div>
-          <div style="margin-top:8px;font:700 15px/20px ${UI};color:${INK}">${line1}</div>
-          <div style="margin-top:2px;font:500 13px/18px ${UI};color:${INK}">${line2}</div>
+      <table role="presentation" width="100%" height="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr><td height="96" valign="middle" style="height:96px;background:${fill};border:2px solid ${INK};border-right-width:5px;border-bottom-width:5px;border-radius:16px;padding:12px 14px">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+            <td valign="middle" style="padding-right:10px;font:400 44px/44px ${DISPLAY};color:${INK}">${n}</td>
+            <td valign="middle" style="font:700 15px/19px ${UI};color:${INK}">${label}<br><span style="font-weight:400;font-size:14px">${sub}</span></td>
+          </tr></table>
         </td></tr>
       </table>
     </td>`;
-  const op = (s) => `<td class="eq-op" width="5%" align="center" valign="middle" style="font:400 32px/32px ${DISPLAY};color:${INK};padding:0 4px">${s}</td>`;
+  const op = (sym) => `<td class="eq-op" width="5%" align="center" valign="middle" style="font:400 30px/30px ${DISPLAY};color:${INK};padding:0 4px">${sym}</td>`;
   return `
-  <table role="presentation" class="eq" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 24px">
+  <table role="presentation" class="eq" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 28px">
     <tr>
-      ${tile('3', 'thoughtful answers', 'a few real sentences each', SKY)}
+      ${tile('3', 'answers', 'real ones', SKY)}
       ${op('+')}
-      ${tile('3', 'friends who join', 'and verify their account', ROSE)}
+      ${tile('3', 'friends', 'who join', ROSE)}
       ${op('=')}
-      ${tile('1', 'free product', 'you pick it', '#ffffff')}
+      ${tile('1', 'free', 'product', '#ffffff')}
     </tr>
   </table>`;
 }
@@ -81,16 +83,31 @@ function steps(items) {
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 8px">
     ${items.map(([title, body], i) => `
     <tr>
-      <td width="40" valign="top" style="padding:0 12px 16px 0">
-        <div style="width:30px;height:30px;border:2px solid ${INK};border-radius:99px;background:${ROSE};text-align:center;font:400 17px/30px ${DISPLAY};color:${INK}">${i + 1}</div>
+      <td width="46" valign="top" style="padding:0 14px 20px 0">
+        <div style="width:32px;height:32px;border:2px solid ${INK};border-radius:99px;background:${ROSE};text-align:center;font:400 18px/32px ${DISPLAY};color:${INK}">${i + 1}</div>
       </td>
-      <td valign="top" style="padding:0 0 16px">
-        <div style="font:700 16px/22px ${UI};color:${INK}">${title}</div>
-        <div style="margin-top:2px;font:500 15px/22px ${UI};color:${SOFT}">${body}</div>
+      <td valign="top" style="padding:3px 0 20px">
+        <div style="font:700 17px/24px ${UI};color:${INK}">${title}</div>
+        <div style="margin-top:2px;font:400 16px/24px ${UI};color:${SOFT}">${body}</div>
       </td>
     </tr>`).join('')}
   </table>`;
 }
+
+/** Short checklist in a white box: the rules people must not miss. */
+function goodToKnow(items) {
+  return `
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 28px">
+    <tr><td style="background:#ffffff;border:2px solid ${INK};border-radius:16px;padding:18px 20px">
+      <div style="margin:0 0 10px;font:700 16px/22px ${UI};color:${INK}">Good to know</div>
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+        ${items.map((t) => `<tr><td width="24" valign="top" style="padding:4px 0;font:700 16px/24px ${UI};color:${INK}">&#10003;</td><td valign="top" style="padding:4px 0;font:400 16px/24px ${UI};color:${INK}">${t}</td></tr>`).join('')}
+      </table>
+    </td></tr>
+  </table>`;
+}
+
+const sectionTitle = (t) => `<div style="margin:0 0 18px;font:400 28px/32px ${DISPLAY};color:${INK}">${t}</div>`;
 
 function productCard(product) {
   if (!product) return '';
@@ -147,9 +164,11 @@ export function renderLayout({ title, preheader, body, reason, unsubscribeUrl = 
   a { color:${INK}; }
   @media (max-width: 600px) {
     .px { padding-left:20px !important; padding-right:20px !important; }
-    .h1 { font-size:36px !important; line-height:40px !important; }
+    .h1 { font-size:34px !important; line-height:38px !important; }
+    .btn a { padding:14px 20px !important; font-size:16px !important; }
     .eq-tile { display:block !important; width:100% !important; }
-    .eq-op { display:block !important; width:100% !important; padding:8px 0 !important; text-align:center !important; }
+    .eq-tile td[height] { height:auto !important; }
+    .eq-op { display:block !important; width:100% !important; padding:4px 0 !important; text-align:center !important; font-size:24px !important; line-height:24px !important; }
   }
 </style>
 </head>
@@ -184,26 +203,31 @@ const ACCOUNT_REASON = 'You are getting this because you have an ayna account an
 export function announcementEmail({ unsubscribeUrl = '{{{RESEND_UNSUBSCRIBE_URL}}}' } = {}) {
   const url = campaignUrl('/free-product', 'campaign_email');
   const body = `
-    ${h1(`Give us your thoughts.<br>Get something ${accent('on us.')}`)}
-    ${p('Tell us what you really think of ayna, bring three friends, and pick a free product. That is the whole thing:', `color:${SOFT}`)}
+    ${h1(`Give us your thoughts.<br>Get something ${accent('on&nbsp;us.')}`)}
+    ${p('Answer 3 questions. Bring 3 friends. Pick a free product.', `font-size:19px;line-height:28px`)}
     ${equation()}
     ${button('Start earning your free product', url)}
-    <div style="height:24px"></div>
-    <div style="font:400 28px/32px ${DISPLAY};color:${INK};margin:0 0 16px">How it works</div>
+    <div style="height:36px"></div>
+    ${sectionTitle('How it works')}
     ${steps([
-      ['Verify your account', 'Most accounts already are. If yours is not, the page shows you how.'],
-      ['Answer three short questions', 'What you like, what bugs you, what you would change. A couple of real sentences each, 120 characters or more.'],
-      ['Share your link', 'A friend counts once they make a new ayna account and verify it. Clicks and invites alone do not count.'],
-      ['Spin and pick', 'Spin as many times as you like. Once you claim a product, that is your pick and it is final.'],
+      ['Verify your account', 'Most accounts already are.'],
+      ['Answer 3 questions', 'A couple of real sentences each (120+ characters).'],
+      ['Share your link', 'A friend counts once they sign up and verify.'],
+      ['Spin and pick', 'Spin as much as you want. Your claim is final.'],
     ])}
-    ${p('There are a limited number of each product, and they go to whoever claims them first. One free product per person.', `font-size:14px;line-height:22px;color:${SOFT};margin-top:8px`)}
+    ${goodToKnow([
+      'Products are limited, first come first served.',
+      'Friends need to be new to ayna.',
+      'One free product per person.',
+    ])}
+    ${button('Start earning your free product', url)}
   `;
   return {
     subject: 'Give us your thoughts. Get something on us.',
-    preheader: '3 thoughtful answers + 3 friends who join ayna = a free product you pick.',
+    preheader: '3 answers + 3 friends = a free product you pick.',
     html: renderLayout({
       title: 'Give us your thoughts. Get something on us.',
-      preheader: '3 thoughtful answers + 3 friends who join ayna = a free product you pick.',
+      preheader: '3 answers + 3 friends = a free product you pick.',
       body,
       reason: 'You are getting this because you have an ayna account.',
       unsubscribeUrl,
@@ -211,17 +235,20 @@ export function announcementEmail({ unsubscribeUrl = '{{{RESEND_UNSUBSCRIBE_URL}
     text: [
       'Give us your thoughts. Get something on us.',
       '',
-      '3 thoughtful answers + 3 friends who join ayna = 1 free product, you pick it.',
+      'Answer 3 questions. Bring 3 friends. Pick a free product.',
       '',
       `Start here: ${url}`,
       '',
       'How it works',
       '1. Verify your account. Most accounts already are.',
-      '2. Answer three short questions, a couple of real sentences each (120+ characters).',
-      '3. Share your link. A friend counts once they make a new ayna account and verify it.',
-      '4. Spin and pick. Spin as many times as you like. Claiming a product is final.',
+      '2. Answer 3 questions. A couple of real sentences each (120+ characters).',
+      '3. Share your link. A friend counts once they sign up and verify.',
+      '4. Spin and pick. Spin as much as you want. Your claim is final.',
       '',
-      'Products are limited and go to whoever claims first. One free product per person.',
+      'Good to know',
+      '- Products are limited, first come first served.',
+      '- Friends need to be new to ayna.',
+      '- One free product per person.',
       '',
       `Unsubscribe: ${unsubscribeUrl}`,
     ].join('\n'),
