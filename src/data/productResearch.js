@@ -2990,7 +2990,35 @@ export const PRODUCT_RESEARCH = {
         "label": "Woo et al., Systematic Review on Sanitary Pads and Female Health, Ewha Medical Journal (2019)",
         "summary": "Chemicals such as VOCs and dioxins were found in pads mostly below safety margins, and evidence linking pad adhesives or fragrances to skin irritation was limited and mixed, with no clear cause and effect shown."
       }
-    ]
+    ],
+    "clinicalNote": "Pads are regulated by the FDA as medical devices, and makers have to register them and report problems. The FDA's main safety advice is to change your pad every few hours, even on light days, because wearing one too long can irritate your skin. A Harvard Health article by an OB-GYN suggests unscented pads, changed about every 2 to 6 hours. A 2019 review of pad safety research found the evidence on longer-term health effects of pad chemicals limited, with small studies that neither clearly show harm nor rule it out.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+        "label": "FDA: Menstrual Pads and Liners",
+        "summary": "Explains how FDA regulates pads and gives safe-use tips, including changing them every few hours."
+      },
+      {
+        "url": "https://www.health.harvard.edu/blog/vulvar-health-navigating-the-nether-regions-2019040116322",
+        "label": "Harvard Health Blog (Huma Farid, MD, 2019): Vulvar health",
+        "summary": "Suggests unscented cotton pads without a mesh covering, changed about every 2 to 6 hours, and avoiding scented feminine products."
+      },
+      {
+        "url": "https://synapse.koreamed.org/articles/1130139",
+        "label": "Ewha Medical Journal 2019 (Woo et al.), doi:10.12771/emj.2019.42.3.25: Systematic Review on Sanitary Pads and Female Health",
+        "summary": "Reviews studies on chemicals in pads and finds the evidence on health effects limited and inconclusive."
+      }
+    ],
+    "warnings": [
+      "Change your pad every few hours, even if your flow is light, and more often when it is heavy.",
+      "Wearing a pad too long can irritate your skin.",
+      "Some people react to scents, deodorants or other materials added to pads.",
+      "If you get itching, a rash, pain, swelling or discomfort, stop using the pad and contact your healthcare provider."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+      "label": "FDA: Menstrual Pads and Liners"
+    }
   },
   "p-stayfree-ultra": {
     "whoItsFor": [
@@ -3016,7 +3044,35 @@ export const PRODUCT_RESEARCH = {
         "label": "Woo et al., Systematic Review on Sanitary Pads and Female Health, Ewha Medical Journal (2019)",
         "summary": "Chemicals such as VOCs and dioxins were found in pads mostly below safety margins, and evidence linking pad adhesives or fragrances to skin irritation was limited and mixed, with no clear cause and effect shown."
       }
-    ]
+    ],
+    "clinicalNote": "Pads are regulated by the FDA as medical devices, and makers have to register them and report problems. The FDA's main safety advice is to change your pad every few hours, even on light days, because wearing one too long can irritate your skin. A Harvard Health article by an OB-GYN suggests unscented pads, changed about every 2 to 6 hours. A 2019 review of pad safety research found the evidence on longer-term health effects of pad chemicals limited, with small studies that neither clearly show harm nor rule it out.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+        "label": "FDA: Menstrual Pads and Liners",
+        "summary": "Explains how FDA regulates pads and gives safe-use tips, including changing them every few hours."
+      },
+      {
+        "url": "https://www.health.harvard.edu/blog/vulvar-health-navigating-the-nether-regions-2019040116322",
+        "label": "Harvard Health Blog (Huma Farid, MD, 2019): Vulvar health",
+        "summary": "Suggests unscented cotton pads without a mesh covering, changed about every 2 to 6 hours, and avoiding scented feminine products."
+      },
+      {
+        "url": "https://synapse.koreamed.org/articles/1130139",
+        "label": "Ewha Medical Journal 2019 (Woo et al.), doi:10.12771/emj.2019.42.3.25: Systematic Review on Sanitary Pads and Female Health",
+        "summary": "Reviews studies on chemicals in pads and finds the evidence on health effects limited and inconclusive."
+      }
+    ],
+    "warnings": [
+      "Change your pad every few hours, even if your flow is light, and more often when it is heavy.",
+      "Wearing a pad too long can irritate your skin.",
+      "Some people react to scents, deodorants or other materials added to pads.",
+      "If you get itching, a rash, pain, swelling or discomfort, stop using the pad and contact your healthcare provider."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+      "label": "FDA: Menstrual Pads and Liners"
+    }
   },
   "p-seventh-gen-pad": {
     "whoItsFor": [
@@ -3042,7 +3098,47 @@ export const PRODUCT_RESEARCH = {
         "label": "Woo et al., Systematic Review on Sanitary Pads and Female Health, Ewha Medical Journal (2019)",
         "summary": "Chemicals such as VOCs and dioxins were found in pads mostly below safety margins, and evidence linking pad adhesives or fragrances to skin irritation was limited and mixed, with no clear cause and effect shown."
       }
-    ]
+    ],
+    "ingredientScience": [
+      {
+        "name": "Chlorine-free pulp",
+        "text": "A 2019 review of pad safety found that a US investigation measured dioxin (a pollutant) levels in pads lower than what people take in from food. It found no studies comparing chlorine-free or organic pads with regular ones, so there's no direct evidence either way that chlorine-free pulp is better for your health.",
+        "citations": [
+          {
+            "url": "https://synapse.koreamed.org/articles/1130139",
+            "label": "Ewha Medical Journal 2019 (Woo et al.), doi:10.12771/emj.2019.42.3.25: Systematic Review on Sanitary Pads and Female Health"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "Pads are regulated by the FDA as medical devices, and makers have to register them and report problems. The FDA's main safety advice is to change your pad every few hours, even on light days, because wearing one too long can irritate your skin. A Harvard Health article by an OB-GYN suggests unscented pads, changed about every 2 to 6 hours. A 2019 review of pad safety research found the evidence on longer-term health effects of pad chemicals limited, with small studies that neither clearly show harm nor rule it out. Being fragrance-free fits the advice to avoid scented feminine products.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+        "label": "FDA: Menstrual Pads and Liners",
+        "summary": "Explains how FDA regulates pads and gives safe-use tips, including changing them every few hours."
+      },
+      {
+        "url": "https://www.health.harvard.edu/blog/vulvar-health-navigating-the-nether-regions-2019040116322",
+        "label": "Harvard Health Blog (Huma Farid, MD, 2019): Vulvar health",
+        "summary": "Suggests unscented cotton pads without a mesh covering, changed about every 2 to 6 hours, and avoiding scented feminine products."
+      },
+      {
+        "url": "https://synapse.koreamed.org/articles/1130139",
+        "label": "Ewha Medical Journal 2019 (Woo et al.), doi:10.12771/emj.2019.42.3.25: Systematic Review on Sanitary Pads and Female Health",
+        "summary": "Reviews studies on chemicals in pads and finds the evidence on health effects limited and inconclusive."
+      }
+    ],
+    "warnings": [
+      "Change your pad every few hours, even if your flow is light, and more often when it is heavy.",
+      "Wearing a pad too long can irritate your skin.",
+      "Some people react to scents, deodorants or other materials added to pads.",
+      "If you get itching, a rash, pain, swelling or discomfort, stop using the pad and contact your healthcare provider."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+      "label": "FDA: Menstrual Pads and Liners"
+    }
   },
   "p-u-kotex-pad": {
     "whoItsFor": [
@@ -3085,7 +3181,17 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.walmart.com/ip/430392368",
         "label": "Walmart customer reviews: U by Kotex CleanWear Ultra Thin Pads with Wings"
       }
-    ]
+    ],
+    "warnings": [
+      "Change your pad every few hours, even if your flow is light, and more often when it is heavy.",
+      "Wearing a pad too long can irritate your skin.",
+      "Some people react to scents, deodorants or other materials added to pads.",
+      "If you get itching, a rash, pain, swelling or discomfort, stop using the pad and contact your healthcare provider."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+      "label": "FDA: Menstrual Pads and Liners"
+    }
   },
   "p-bodyform-pad": {
     "whoItsFor": [
@@ -3111,7 +3217,25 @@ export const PRODUCT_RESEARCH = {
         "label": "Woo et al., Systematic Review on Sanitary Pads and Female Health, Ewha Medical Journal (2019)",
         "summary": "Chemicals such as VOCs and dioxins were found in pads mostly below safety margins, and evidence linking pad adhesives or fragrances to skin irritation was limited and mixed, with no clear cause and effect shown."
       }
-    ]
+    ],
+    "clinicalNote": "In the US, pads and liners are regulated by the FDA as medical devices. Makers have to register them, follow good manufacturing practices, and report problems and bad reactions. The FDA's main advice is simple: change your pad every few hours, even on light days, because wearing one too long can irritate your skin. Some people react to added scents or deodorants, so stop using a pad if you get itching, a rash or swelling.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+        "label": "FDA: Menstrual Pads and Liners",
+        "summary": "FDA regulates pads and liners as medical devices and advises changing them every few hours, since wearing one too long can irritate skin."
+      }
+    ],
+    "warnings": [
+      "Change your pad every few hours, even on light days, and more often when your flow is heavy.",
+      "Wearing a pad too long may irritate your skin.",
+      "Some people react to scents, deodorants or other materials added to pads.",
+      "Stop using it and contact your healthcare provider if you get itching, rash, pain, swelling or discomfort."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+      "label": "FDA: Menstrual Pads and Liners"
+    }
   },
   "p-rael-overnight": {
     "whoItsFor": [
@@ -3158,7 +3282,17 @@ export const PRODUCT_RESEARCH = {
         "url": "https://well.ca/products/rael-organic-overnight-pad_171205.html",
         "label": "Well.ca customer review: Rael Organic Overnight Pad"
       }
-    ]
+    ],
+    "warnings": [
+      "Change your pad every few hours, even on light days, and more often when your flow is heavy.",
+      "Wearing a pad too long may irritate your skin.",
+      "Some people react to scents, deodorants or other materials added to pads.",
+      "Stop using it and contact your healthcare provider if you get itching, rash, pain, swelling or discomfort."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+      "label": "FDA: Menstrual Pads and Liners"
+    }
   },
   "p-cora-overnight": {
     "whoItsFor": [
@@ -3184,7 +3318,35 @@ export const PRODUCT_RESEARCH = {
         "label": "Woo et al., Systematic Review on Sanitary Pads and Female Health, Ewha Medical Journal (2019)",
         "summary": "Chemicals such as VOCs and dioxins were found in pads mostly below safety margins, and evidence linking pad adhesives or fragrances to skin irritation was limited and mixed, with no clear cause and effect shown."
       }
-    ]
+    ],
+    "clinicalNote": "In the US, pads and liners are regulated by the FDA as medical devices. Makers have to register them, follow good manufacturing practices, and report problems and bad reactions. The FDA's main advice is simple: change your pad every few hours, even on light days, because wearing one too long can irritate your skin. Some people react to added scents or deodorants, so stop using a pad if you get itching, a rash or swelling. On organic cotton: one 2018 study in women with irritated vulvar skin found organic cotton pads caused fewer irritation effects than conventional synthetic pads. Keep in mind only Cora's topsheet (the layer against your skin) is organic cotton; its absorbent core is wood pulp with a superabsorbent polymer (sodium polyacrylate).",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+        "label": "FDA: Menstrual Pads and Liners",
+        "summary": "FDA regulates pads and liners as medical devices and advises changing them every few hours, since wearing one too long can irritate skin."
+      },
+      {
+        "url": "https://iris.unipv.it/handle/11571/1258246",
+        "label": "Minerva Ginecologica (2018): Evaluation of safety and skin tolerability of organic cotton pads in case of irritative vulvitis (doi:10.23736/S0026-4784.18.04338-1), University of Pavia repository",
+        "summary": "Clinical and lab tests in which organic cotton pads caused fewer irritation effects than conventional synthetic pads in women with irritated vulvar skin."
+      },
+      {
+        "url": "https://cora.com/products/overnight-maxi-pads",
+        "label": "Cora: The Peace-of-Mind Maxi Overnight Pad (brand page, ingredient list)",
+        "summary": "Lists an organic cotton topsheet, a wood pulp and sodium polyacrylate core, and a polyethylene backsheet."
+      }
+    ],
+    "warnings": [
+      "Change your pad every few hours, even on light days, and more often when your flow is heavy.",
+      "Wearing a pad too long may irritate your skin.",
+      "Some people react to scents, deodorants or other materials added to pads.",
+      "Stop using it and contact your healthcare provider if you get itching, rash, pain, swelling or discomfort."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+      "label": "FDA: Menstrual Pads and Liners"
+    }
   },
   "p-carefree-liners": {
     "whoItsFor": [
@@ -3209,7 +3371,30 @@ export const PRODUCT_RESEARCH = {
         "label": "Woo et al., Systematic Review on Sanitary Pads and Female Health, Ewha Medical Journal (2019)",
         "summary": "Found limited, mixed evidence on pads and skin irritation, and the one included study on daily panty liner use found no significant change in vaginal flora."
       }
-    ]
+    ],
+    "clinicalNote": "Liners are regulated by the FDA the same way as pads, and the FDA advises changing them every few hours even on light days, since wearing one too long can irritate skin. In a small study of 12 women, a liner with a non-breathable backing made vulva skin warmer, damper and less acidic than wearing no liner, while a breathable liner left skin close to normal. That study measured skin conditions, not infections, so it does not show liners cause problems.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+        "label": "FDA: Menstrual Pads and Liners",
+        "summary": "FDA regulates pads and liners as medical devices and advises changing them every few hours, since wearing one too long can irritate skin."
+      },
+      {
+        "url": "https://medicaljournalssweden.se/actadv/article/view/11250",
+        "label": "Acta Dermato-Venereologica: The vulva skin microclimate: influence of panty liners on temperature, humidity and pH (doi:10.1080/00015550310007409)",
+        "summary": "In 12 healthy women, a liner with a non-breathable backsheet made vulva skin warmer, damper and less acidic than no liner, while a breathable liner largely left it unchanged."
+      }
+    ],
+    "warnings": [
+      "Change liners every few hours, even on light days.",
+      "Wearing one too long may irritate your skin.",
+      "Some people react to scents, deodorants or other materials added to pads and liners.",
+      "Stop using it and contact your healthcare provider if you get itching, rash, pain, swelling or discomfort."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+      "label": "FDA: Menstrual Pads and Liners"
+    }
   },
   "p-always-liners": {
     "whoItsFor": [
@@ -3234,7 +3419,30 @@ export const PRODUCT_RESEARCH = {
         "label": "Woo et al., Systematic Review on Sanitary Pads and Female Health, Ewha Medical Journal (2019)",
         "summary": "Found limited, mixed evidence on pads and skin irritation, and the one included study on daily panty liner use found no significant change in vaginal flora."
       }
-    ]
+    ],
+    "clinicalNote": "Liners are regulated by the FDA the same way as pads, and the FDA advises changing them every few hours even on light days, since wearing one too long can irritate skin. In a small study of 12 women, a liner with a non-breathable backing made vulva skin warmer, damper and less acidic than wearing no liner, while a breathable liner left skin close to normal. That study measured skin conditions, not infections, so it does not show liners cause problems.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+        "label": "FDA: Menstrual Pads and Liners",
+        "summary": "FDA regulates pads and liners as medical devices and advises changing them every few hours, since wearing one too long can irritate skin."
+      },
+      {
+        "url": "https://medicaljournalssweden.se/actadv/article/view/11250",
+        "label": "Acta Dermato-Venereologica: The vulva skin microclimate: influence of panty liners on temperature, humidity and pH (doi:10.1080/00015550310007409)",
+        "summary": "In 12 healthy women, a liner with a non-breathable backsheet made vulva skin warmer, damper and less acidic than no liner, while a breathable liner largely left it unchanged."
+      }
+    ],
+    "warnings": [
+      "Change liners every few hours, even on light days.",
+      "Wearing one too long may irritate your skin.",
+      "Some people react to scents, deodorants or other materials added to pads and liners.",
+      "Stop using it and contact your healthcare provider if you get itching, rash, pain, swelling or discomfort."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+      "label": "FDA: Menstrual Pads and Liners"
+    }
   },
   "p-rael-liners": {
     "whoItsFor": [
@@ -3259,7 +3467,30 @@ export const PRODUCT_RESEARCH = {
         "label": "Woo et al., Systematic Review on Sanitary Pads and Female Health, Ewha Medical Journal (2019)",
         "summary": "Found limited, mixed evidence on pads and skin irritation, and the one included study on daily panty liner use found no significant change in vaginal flora."
       }
-    ]
+    ],
+    "clinicalNote": "Liners are regulated by the FDA the same way as pads, and the FDA advises changing them every few hours even on light days, since wearing one too long can irritate skin. In a small study of 12 women, a liner with a non-breathable backing made vulva skin warmer, damper and less acidic than wearing no liner, while a breathable liner left skin close to normal. That study measured skin conditions, not infections, so it does not show liners cause problems.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+        "label": "FDA: Menstrual Pads and Liners",
+        "summary": "FDA regulates pads and liners as medical devices and advises changing them every few hours, since wearing one too long can irritate skin."
+      },
+      {
+        "url": "https://medicaljournalssweden.se/actadv/article/view/11250",
+        "label": "Acta Dermato-Venereologica: The vulva skin microclimate: influence of panty liners on temperature, humidity and pH (doi:10.1080/00015550310007409)",
+        "summary": "In 12 healthy women, a liner with a non-breathable backsheet made vulva skin warmer, damper and less acidic than no liner, while a breathable liner largely left it unchanged."
+      }
+    ],
+    "warnings": [
+      "Change liners every few hours, even on light days.",
+      "Wearing one too long may irritate your skin.",
+      "Some people react to scents, deodorants or other materials added to pads and liners.",
+      "Stop using it and contact your healthcare provider if you get itching, rash, pain, swelling or discomfort."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+      "label": "FDA: Menstrual Pads and Liners"
+    }
   },
   "p-playtex-sport": {
     "whoItsFor": [
@@ -3291,7 +3522,25 @@ export const PRODUCT_RESEARCH = {
         "label": "Schlievert and Davis, Device-Associated Menstrual Toxic Shock Syndrome, Clinical Microbiology Reviews (2020)",
         "summary": "Explains that menstrual TSS is driven by the TSST-1 toxin, that tampon warning labels and absorbency standards came from this research, and that cases still occur."
       }
-    ]
+    ],
+    "clinicalNote": "Tampons are medical devices in the US, and the FDA has to review and authorize each one before it can be sold, including checks on its materials and absorbency. The main safety concern is toxic shock syndrome (TSS), a rare but serious illness linked to leaving a tampon in too long, and reported cases have dropped a lot over the past 20 years. In 2026 the FDA studied trace metals in tampons and concluded the amount released during use is too small to cause harm.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+        "label": "FDA: Tampons",
+        "summary": "FDA must review and authorize tampons before sale; TSS is rare but linked to leaving tampons in too long, and a 2026 FDA study found trace metals released during use are too small to cause harm."
+      }
+    ],
+    "warnings": [
+      "Choose the lowest absorbency that handles your flow to lower your risk of toxic shock syndrome (TSS), a rare but serious illness that can be fatal.",
+      "If you get a sudden fever (usually 102°F or more), vomiting, diarrhea, fainting or near fainting when standing up, dizziness, or a rash that looks like sunburn, remove the tampon at once and see a doctor right away.",
+      "If you have had TSS warning signs before, check with your doctor before using tampons again.",
+      "Alternating tampons with pads during your period can lower your TSS risk."
+    ],
+    "warningsSource": {
+      "url": "https://playtextampons.com/pages/tss-information",
+      "label": "Playtex: TSS Information"
+    }
   },
   "p-kotex-tampon": {
     "whoItsFor": [
@@ -3322,7 +3571,25 @@ export const PRODUCT_RESEARCH = {
         "label": "Schlievert and Davis, Device-Associated Menstrual Toxic Shock Syndrome, Clinical Microbiology Reviews (2020)",
         "summary": "Explains that menstrual TSS is driven by the TSST-1 toxin, that tampon warning labels and absorbency standards came from this research, and that cases still occur."
       }
-    ]
+    ],
+    "clinicalNote": "Tampons are medical devices in the US, and the FDA has to review and authorize each one before it can be sold, including checks on its materials and absorbency. The main safety concern is toxic shock syndrome (TSS), a rare but serious illness linked to leaving a tampon in too long, and reported cases have dropped a lot over the past 20 years. In 2026 the FDA studied trace metals in tampons and concluded the amount released during use is too small to cause harm.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+        "label": "FDA: Tampons",
+        "summary": "FDA must review and authorize tampons before sale; TSS is rare but linked to leaving tampons in too long, and a 2026 FDA study found trace metals released during use are too small to cause harm."
+      }
+    ],
+    "warnings": [
+      "Change your tampon every 4 to 8 hours, and never leave one in for more than 8 hours.",
+      "Use the lowest absorbency tampon you need for your flow.",
+      "Only use tampons during your period, not for other vaginal bleeding or discharge.",
+      "If you get a sudden high fever, chills, vomiting, diarrhea, rash, dizziness or fainting, take the tampon out and get medical care right away, since these can be signs of toxic shock syndrome (TSS)."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+      "label": "FDA: Tampons"
+    }
   },
   "p-ob-tampon": {
     "whoItsFor": [
@@ -3354,7 +3621,25 @@ export const PRODUCT_RESEARCH = {
         "label": "Schlievert and Davis, Device-Associated Menstrual Toxic Shock Syndrome, Clinical Microbiology Reviews (2020)",
         "summary": "Explains that menstrual TSS is driven by the TSST-1 toxin, that tampon warning labels and absorbency standards came from this research, and that cases still occur."
       }
-    ]
+    ],
+    "clinicalNote": "Tampons are medical devices in the US, and the FDA has to review and authorize each one before it can be sold, including checks on its materials and absorbency. The main safety concern is toxic shock syndrome (TSS), a rare but serious illness linked to leaving a tampon in too long, and reported cases have dropped a lot over the past 20 years. In 2026 the FDA studied trace metals in tampons and concluded the amount released during use is too small to cause harm.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+        "label": "FDA: Tampons",
+        "summary": "FDA must review and authorize tampons before sale; TSS is rare but linked to leaving tampons in too long, and a 2026 FDA study found trace metals released during use are too small to cause harm."
+      }
+    ],
+    "warnings": [
+      "Choose the lowest absorbency that handles your flow to lower your risk of toxic shock syndrome (TSS), a rare but serious illness that can be fatal.",
+      "If you get a sudden fever (usually 102°F or more), vomiting, diarrhea, fainting or near fainting when standing up, dizziness, or a rash that looks like sunburn, remove the tampon at once and see a doctor right away.",
+      "If you have had TSS warning signs before, check with your doctor before using tampons again.",
+      "Alternating tampons with pads during your period can lower your TSS risk."
+    ],
+    "warningsSource": {
+      "url": "https://www.ob-tampons.com/pages/tss",
+      "label": "o.b.: Toxic Shock Syndrome (TSS)"
+    }
   },
   "p-tampax-radiant": {
     "whoItsFor": [
@@ -3385,7 +3670,25 @@ export const PRODUCT_RESEARCH = {
         "label": "Schlievert and Davis, Device-Associated Menstrual Toxic Shock Syndrome, Clinical Microbiology Reviews (2020)",
         "summary": "Explains that menstrual TSS is driven by the TSST-1 toxin, that tampon warning labels and absorbency standards came from this research, and that cases still occur."
       }
-    ]
+    ],
+    "clinicalNote": "Tampons are medical devices in the US, and the FDA has to review and authorize each one before it can be sold, including checks on its materials and absorbency. The main safety concern is toxic shock syndrome (TSS), a rare but serious illness linked to leaving a tampon in too long, and reported cases have dropped a lot over the past 20 years. In 2026 the FDA studied trace metals in tampons and concluded the amount released during use is too small to cause harm.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+        "label": "FDA: Tampons",
+        "summary": "FDA must review and authorize tampons before sale; TSS is rare but linked to leaving tampons in too long, and a 2026 FDA study found trace metals released during use are too small to cause harm."
+      }
+    ],
+    "warnings": [
+      "Change your tampon every 4 to 8 hours, and never leave one in for more than 8 hours.",
+      "Use the lowest absorbency tampon you need for your flow.",
+      "Only use tampons during your period, not for other vaginal bleeding or discharge.",
+      "If you get a sudden high fever, chills, vomiting, diarrhea, rash, dizziness or fainting, take the tampon out and get medical care right away, since these can be signs of toxic shock syndrome (TSS)."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+      "label": "FDA: Tampons"
+    }
   },
   "p-seventh-gen-tampon": {
     "whoItsFor": [
@@ -3412,6 +3715,41 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
       "sourceLabel": "FDA: Tampons, facts and safe use"
+    },
+    "ingredientScience": [
+      {
+        "name": "Organic cotton",
+        "text": "Cotton is one of the standard tampon fibers, and every FDA-authorized tampon, organic or not, must be bleached without elemental chlorine to keep dioxin (an environmental pollutant) out. Small amounts of metals have been found in both organic and regular tampons, but FDA's 2026 study concluded the amount likely released during use is too small to cause harm.",
+        "citations": [
+          {
+            "url": "https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-tampon-safety",
+            "label": "FDA: The Facts on Tampons and Tampon Safety"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "All FDA-authorized tampons are made of cotton, rayon, or a blend, and their fibers are bleached without elemental chlorine. A 2024 NIH-funded study of 30 tampons from 14 brands found small amounts of metals in all of them, with more arsenic in the organic ones and more lead in the non-organic ones; it did not test whether any metal gets into your body. FDA followed up with its own study in 2026 and concluded the amount likely released during use is too small to cause harm. Toxic shock syndrome (TSS, a rare but serious infection caused by a bacterial toxin) is linked to tampons in general, so the safe-use rules are the same for organic tampons.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-tampon-safety",
+        "label": "FDA: The Facts on Tampons and Tampon Safety",
+        "summary": "FDA's tampon safety page covering materials, chlorine-free bleaching, its 2026 metals study, and TSS."
+      },
+      {
+        "url": "https://factor.niehs.nih.gov/2024/8/feature/3-feature-metals-in-tampons",
+        "label": "NIH (NIEHS Environmental Factor): Metals in tampons",
+        "summary": "NIH summary of the 2024 study that measured metals in organic and non-organic tampons and found health effects are not yet known."
+      }
+    ],
+    "warnings": [
+      "Change your tampon every 4 to 8 hours, and never wear one for more than 8 hours.",
+      "Use the lowest absorbency you need, and only during your period.",
+      "Stop using tampons and get medical care right away if you get a sudden fever (usually 102°F or higher), vomiting, diarrhea, fainting or dizziness, or a sunburn-like rash during or soon after your period.",
+      "Stop and contact your provider if you have pain, unusual symptoms, or an allergic reaction."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-tampon-safety",
+      "label": "FDA: The Facts on Tampons and Tampon Safety"
     }
   },
   "p-rael-tampon": {
@@ -3440,6 +3778,41 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://www.dodoskin.com/products/rael-organic-cotton-compact-tampons-super-4-packs",
       "sourceLabel": "Rael compact tampon directions (retailer listing) and FDA tampon guidance"
+    },
+    "ingredientScience": [
+      {
+        "name": "Organic cotton",
+        "text": "Cotton is one of the standard tampon fibers, and every FDA-authorized tampon, organic or not, must be bleached without elemental chlorine to keep dioxin (an environmental pollutant) out. Small amounts of metals have been found in both organic and regular tampons, but FDA's 2026 study concluded the amount likely released during use is too small to cause harm.",
+        "citations": [
+          {
+            "url": "https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-tampon-safety",
+            "label": "FDA: The Facts on Tampons and Tampon Safety"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "All FDA-authorized tampons are made of cotton, rayon, or a blend, and their fibers are bleached without elemental chlorine. A 2024 NIH-funded study of 30 tampons from 14 brands found small amounts of metals in all of them, with more arsenic in the organic ones and more lead in the non-organic ones; it did not test whether any metal gets into your body. FDA followed up with its own study in 2026 and concluded the amount likely released during use is too small to cause harm. Toxic shock syndrome (TSS, a rare but serious infection caused by a bacterial toxin) is linked to tampons in general, so the safe-use rules are the same for organic tampons.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-tampon-safety",
+        "label": "FDA: The Facts on Tampons and Tampon Safety",
+        "summary": "FDA's tampon safety page covering materials, chlorine-free bleaching, its 2026 metals study, and TSS."
+      },
+      {
+        "url": "https://factor.niehs.nih.gov/2024/8/feature/3-feature-metals-in-tampons",
+        "label": "NIH (NIEHS Environmental Factor): Metals in tampons",
+        "summary": "NIH summary of the 2024 study that measured metals in organic and non-organic tampons and found health effects are not yet known."
+      }
+    ],
+    "warnings": [
+      "Change your tampon every 4 to 8 hours, and never wear one for more than 8 hours.",
+      "Use the lowest absorbency you need, and only during your period.",
+      "Stop using tampons and get medical care right away if you get a sudden fever (usually 102°F or higher), vomiting, diarrhea, fainting or dizziness, or a sunburn-like rash during or soon after your period.",
+      "Stop and contact your provider if you have pain, unusual symptoms, or an allergic reaction."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-tampon-safety",
+      "label": "FDA: The Facts on Tampons and Tampon Safety"
     }
   },
   "p-lena-cup": {
@@ -3460,6 +3833,41 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://cdn.shopify.com/s/files/1/1274/0057/files/LENA_Manual_English.pdf",
       "sourceLabel": "Lena Cup: User Manual (English)"
+    },
+    "ingredientScience": [
+      {
+        "name": "Medical-grade silicone",
+        "text": "FDA says cups are usually made of silicone or rubber, and that silicone is the one to pick if you're sensitive to latex, since rubber cups can set off a latex allergy. That's the main evidence-backed point about the material itself; there's little research comparing silicone grades.",
+        "citations": [
+          {
+            "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+            "label": "FDA: Menstrual Cups"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "A 2019 review in The Lancet Public Health pooled 43 studies with 3,319 people and found cups leaked about the same as or less than pads and tampons in the four studies that compared them directly, and about 73% of people wanted to keep using one. Four studies found no harm to vaginal flora (the normal bacteria that keep the vagina healthy), but the review did log rare problems, including 5 cases of toxic shock syndrome and 13 IUDs that got pulled out of place. Most of the studies were low quality, so the authors called cups a safe option while asking for better research. If you have an IUD, FDA advises talking to your gynecologist before you start using a cup.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://doaj.org/article/e1d5fe32203c4f238d4c324f7d815608",
+        "label": "The Lancet Public Health (2019), van Eijk et al.: Menstrual cup use, leakage, acceptability, safety, and availability (DOAJ record)",
+        "summary": "Systematic review of 43 studies finding cups leak about the same as or less than disposables, with rare harms including TSS and IUD displacement."
+      },
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+        "label": "FDA: Menstrual Cups",
+        "summary": "FDA's menstrual cup page covering materials, wear time, cleaning, and IUD cautions."
+      }
+    ],
+    "warnings": [
+      "Empty the cup about every 8 to 12 hours, following the label.",
+      "Wash your hands before and after handling the cup, and clean it as the instructions say (typically boiling it for 1 to 2 minutes at the end of your cycle).",
+      "Talk to your gynecologist first if you have an IUD, since a cup can interfere with the IUD strings and placement.",
+      "Stop using it and contact your provider if you get itching, rash, pain, swelling, or discomfort, and don't use it for bleeding or discharge that isn't your period."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+      "label": "FDA: Menstrual Cups"
     }
   },
   "p-ruby-cup": {
@@ -3480,6 +3888,41 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
       "sourceLabel": "FDA: Menstrual Cups"
+    },
+    "ingredientScience": [
+      {
+        "name": "Medical-grade silicone",
+        "text": "FDA says cups are usually made of silicone or rubber, and that silicone is the one to pick if you're sensitive to latex, since rubber cups can set off a latex allergy. That's the main evidence-backed point about the material itself; there's little research comparing silicone grades.",
+        "citations": [
+          {
+            "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+            "label": "FDA: Menstrual Cups"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "A 2019 review in The Lancet Public Health pooled 43 studies with 3,319 people and found cups leaked about the same as or less than pads and tampons in the four studies that compared them directly, and about 73% of people wanted to keep using one. Four studies found no harm to vaginal flora (the normal bacteria that keep the vagina healthy), but the review did log rare problems, including 5 cases of toxic shock syndrome and 13 IUDs that got pulled out of place. Most of the studies were low quality, so the authors called cups a safe option while asking for better research. If you have an IUD, FDA advises talking to your gynecologist before you start using a cup.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://doaj.org/article/e1d5fe32203c4f238d4c324f7d815608",
+        "label": "The Lancet Public Health (2019), van Eijk et al.: Menstrual cup use, leakage, acceptability, safety, and availability (DOAJ record)",
+        "summary": "Systematic review of 43 studies finding cups leak about the same as or less than disposables, with rare harms including TSS and IUD displacement."
+      },
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+        "label": "FDA: Menstrual Cups",
+        "summary": "FDA's menstrual cup page covering materials, wear time, cleaning, and IUD cautions."
+      }
+    ],
+    "warnings": [
+      "Empty the cup about every 8 to 12 hours, following the label.",
+      "Wash your hands before and after handling the cup, and clean it as the instructions say (typically boiling it for 1 to 2 minutes at the end of your cycle).",
+      "Talk to your gynecologist first if you have an IUD, since a cup can interfere with the IUD strings and placement.",
+      "Stop using it and contact your provider if you get itching, rash, pain, swelling, or discomfort, and don't use it for bleeding or discharge that isn't your period."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+      "label": "FDA: Menstrual Cups"
     }
   },
   "p-organicup": {
@@ -3500,6 +3943,41 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://allmatters.com/products/menstrual-cup",
       "sourceLabel": "AllMatters: OrganiCup Menstrual Cup"
+    },
+    "ingredientScience": [
+      {
+        "name": "Medical-grade silicone",
+        "text": "FDA says cups are usually made of silicone or rubber, and that silicone is the one to pick if you're sensitive to latex, since rubber cups can set off a latex allergy. That's the main evidence-backed point about the material itself; there's little research comparing silicone grades.",
+        "citations": [
+          {
+            "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+            "label": "FDA: Menstrual Cups"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "A 2019 review in The Lancet Public Health pooled 43 studies with 3,319 people and found cups leaked about the same as or less than pads and tampons in the four studies that compared them directly, and about 73% of people wanted to keep using one. Four studies found no harm to vaginal flora (the normal bacteria that keep the vagina healthy), but the review did log rare problems, including 5 cases of toxic shock syndrome and 13 IUDs that got pulled out of place. Most of the studies were low quality, so the authors called cups a safe option while asking for better research. If you have an IUD, FDA advises talking to your gynecologist before you start using a cup.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://doaj.org/article/e1d5fe32203c4f238d4c324f7d815608",
+        "label": "The Lancet Public Health (2019), van Eijk et al.: Menstrual cup use, leakage, acceptability, safety, and availability (DOAJ record)",
+        "summary": "Systematic review of 43 studies finding cups leak about the same as or less than disposables, with rare harms including TSS and IUD displacement."
+      },
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+        "label": "FDA: Menstrual Cups",
+        "summary": "FDA's menstrual cup page covering materials, wear time, cleaning, and IUD cautions."
+      }
+    ],
+    "warnings": [
+      "Empty the cup about every 8 to 12 hours, following the label.",
+      "Wash your hands before and after handling the cup, and clean it as the instructions say (typically boiling it for 1 to 2 minutes at the end of your cycle).",
+      "Talk to your gynecologist first if you have an IUD, since a cup can interfere with the IUD strings and placement.",
+      "Stop using it and contact your provider if you get itching, rash, pain, swelling, or discomfort, and don't use it for bleeding or discharge that isn't your period."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+      "label": "FDA: Menstrual Cups"
     }
   },
   "p-femmycycle": {
@@ -3520,6 +3998,41 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://www.apotea.se/femmycycle-normal",
       "sourceLabel": "Apotea: FemmyCycle Normal product listing (plus FDA: Menstrual Cups)"
+    },
+    "ingredientScience": [
+      {
+        "name": "Medical-grade silicone",
+        "text": "FDA says cups are usually made of silicone or rubber, and that silicone is the one to pick if you're sensitive to latex, since rubber cups can set off a latex allergy. That's the main evidence-backed point about the material itself; there's little research comparing silicone grades.",
+        "citations": [
+          {
+            "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+            "label": "FDA: Menstrual Cups"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "A 2019 review in The Lancet Public Health pooled 43 studies with 3,319 people and found cups leaked about the same as or less than pads and tampons in the four studies that compared them directly, and about 73% of people wanted to keep using one. Four studies found no harm to vaginal flora (the normal bacteria that keep the vagina healthy), but the review did log rare problems, including 5 cases of toxic shock syndrome and 13 IUDs that got pulled out of place. Most of the studies were low quality, so the authors called cups a safe option while asking for better research. If you have an IUD, FDA advises talking to your gynecologist before you start using a cup.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://doaj.org/article/e1d5fe32203c4f238d4c324f7d815608",
+        "label": "The Lancet Public Health (2019), van Eijk et al.: Menstrual cup use, leakage, acceptability, safety, and availability (DOAJ record)",
+        "summary": "Systematic review of 43 studies finding cups leak about the same as or less than disposables, with rare harms including TSS and IUD displacement."
+      },
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+        "label": "FDA: Menstrual Cups",
+        "summary": "FDA's menstrual cup page covering materials, wear time, cleaning, and IUD cautions."
+      }
+    ],
+    "warnings": [
+      "Empty the cup about every 8 to 12 hours, following the label.",
+      "Wash your hands before and after handling the cup, and clean it as the instructions say (typically boiling it for 1 to 2 minutes at the end of your cycle).",
+      "Talk to your gynecologist first if you have an IUD, since a cup can interfere with the IUD strings and placement.",
+      "Stop using it and contact your provider if you get itching, rash, pain, swelling, or discomfort, and don't use it for bleeding or discharge that isn't your period."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+      "label": "FDA: Menstrual Cups"
     }
   },
   "p-flex-cup": {
@@ -3558,7 +4071,42 @@ export const PRODUCT_RESEARCH = {
         "url": "https://putacupinit.com/flex-cup/comment-page-1/",
         "label": "Put A Cup In It: Flex Cup post and reader comments"
       }
-    ]
+    ],
+    "ingredientScience": [
+      {
+        "name": "Medical-grade silicone",
+        "text": "FDA says cups are usually made of silicone or rubber, and that silicone is the one to pick if you're sensitive to latex, since rubber cups can set off a latex allergy. That's the main evidence-backed point about the material itself; there's little research comparing silicone grades.",
+        "citations": [
+          {
+            "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+            "label": "FDA: Menstrual Cups"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "A 2019 review in The Lancet Public Health pooled 43 studies with 3,319 people and found cups leaked about the same as or less than pads and tampons in the four studies that compared them directly, and about 73% of people wanted to keep using one. Four studies found no harm to vaginal flora (the normal bacteria that keep the vagina healthy), but the review did log rare problems, including 5 cases of toxic shock syndrome and 13 IUDs that got pulled out of place. Most of the studies were low quality, so the authors called cups a safe option while asking for better research. If you have an IUD, FDA advises talking to your gynecologist before you start using a cup.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://doaj.org/article/e1d5fe32203c4f238d4c324f7d815608",
+        "label": "The Lancet Public Health (2019), van Eijk et al.: Menstrual cup use, leakage, acceptability, safety, and availability (DOAJ record)",
+        "summary": "Systematic review of 43 studies finding cups leak about the same as or less than disposables, with rare harms including TSS and IUD displacement."
+      },
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+        "label": "FDA: Menstrual Cups",
+        "summary": "FDA's menstrual cup page covering materials, wear time, cleaning, and IUD cautions."
+      }
+    ],
+    "warnings": [
+      "Empty the cup about every 8 to 12 hours, following the label.",
+      "Wash your hands before and after handling the cup, and clean it as the instructions say (typically boiling it for 1 to 2 minutes at the end of your cycle).",
+      "Talk to your gynecologist first if you have an IUD, since a cup can interfere with the IUD strings and placement.",
+      "Stop using it and contact your provider if you get itching, rash, pain, swelling, or discomfort, and don't use it for bleeding or discharge that isn't your period."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+      "label": "FDA: Menstrual Cups"
+    }
   },
   "p-ziggy-disc": {
     "whoItsFor": [
@@ -3592,7 +4140,42 @@ export const PRODUCT_RESEARCH = {
         "label": "FDA: Menstrual Cups",
         "summary": "FDA, which groups menstrual discs with cups, says to wash your hands and the device before use, empty it every 8 to 12 hours, boil reusable ones for 1 to 2 minutes at the end of each cycle, and check with your gynecologist first if you have an IUD."
       }
-    ]
+    ],
+    "ingredientScience": [
+      {
+        "name": "Medical-grade silicone",
+        "text": "FDA says cups are usually made of silicone or rubber, and that silicone is the one to pick if you're sensitive to latex, since rubber cups can set off a latex allergy. That's the main evidence-backed point about the material itself; there's little research comparing silicone grades.",
+        "citations": [
+          {
+            "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+            "label": "FDA: Menstrual Cups"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "A 2024 lab study in BMJ Sexual & Reproductive Health tested real red blood cells and found discs held the most of any product type, about 61 mL on average, compared with 20 to 34 mL for Tampax tampons and 22 to 35 mL for DivaCup cups. Intimina's Ziggy was one of the discs tested and held 80 mL, the most of any single product in the study. The authors note products may hold less in your body than in the lab, and that doctors checking for heavy periods should ask which products you use, since older bleeding measures were built around older products. FDA groups discs with cups and advises talking to your gynecologist first if you have an IUD.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://srh.bmj.com/content/50/1/21.full.pdf",
+        "label": "BMJ Sexual & Reproductive Health (2024), DeLoughery et al.: Red blood cell capacity of modern menstrual products",
+        "summary": "Lab study using red blood cells found menstrual discs held the most blood of the products tested."
+      },
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+        "label": "FDA: Menstrual Cups",
+        "summary": "FDA's menstrual cup page, which also covers discs, with wear time and IUD cautions."
+      }
+    ],
+    "warnings": [
+      "Empty the cup about every 8 to 12 hours, following the label.",
+      "Wash your hands before and after handling the cup, and clean it as the instructions say (typically boiling it for 1 to 2 minutes at the end of your cycle).",
+      "Talk to your gynecologist first if you have an IUD, since a cup can interfere with the IUD strings and placement.",
+      "Stop using it and contact your provider if you get itching, rash, pain, swelling, or discomfort, and don't use it for bleeding or discharge that isn't your period."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+      "label": "FDA: Menstrual Cups"
+    }
   },
   "p-lumma-disc": {
     "whoItsFor": [
@@ -3626,7 +4209,42 @@ export const PRODUCT_RESEARCH = {
         "label": "FDA: Menstrual Cups",
         "summary": "FDA, which groups menstrual discs with cups, notes that finding the right size can be hard, and advises emptying every 8 to 12 hours, boiling reusable ones at the end of each cycle, and checking with your gynecologist first if you have an IUD."
       }
-    ]
+    ],
+    "ingredientScience": [
+      {
+        "name": "Medical-grade silicone",
+        "text": "FDA says cups are usually made of silicone or rubber, and that silicone is the one to pick if you're sensitive to latex, since rubber cups can set off a latex allergy. That's the main evidence-backed point about the material itself; there's little research comparing silicone grades.",
+        "citations": [
+          {
+            "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+            "label": "FDA: Menstrual Cups"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "A 2024 lab study in BMJ Sexual & Reproductive Health tested real red blood cells and found discs held the most of any product type, about 61 mL on average, compared with 20 to 34 mL for Tampax tampons and 22 to 35 mL for DivaCup cups. Lumma was one of the discs tested, though the paper doesn't say which result was Lumma's. The authors note products may hold less in your body than in the lab, and that doctors checking for heavy periods should ask which products you use, since older bleeding measures were built around older products. FDA groups discs with cups and advises talking to your gynecologist first if you have an IUD.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://srh.bmj.com/content/50/1/21.full.pdf",
+        "label": "BMJ Sexual & Reproductive Health (2024), DeLoughery et al.: Red blood cell capacity of modern menstrual products",
+        "summary": "Lab study using red blood cells found menstrual discs held the most blood of the products tested."
+      },
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+        "label": "FDA: Menstrual Cups",
+        "summary": "FDA's menstrual cup page, which also covers discs, with wear time and IUD cautions."
+      }
+    ],
+    "warnings": [
+      "Empty the cup about every 8 to 12 hours, following the label.",
+      "Wash your hands before and after handling the cup, and clean it as the instructions say (typically boiling it for 1 to 2 minutes at the end of your cycle).",
+      "Talk to your gynecologist first if you have an IUD, since a cup can interfere with the IUD strings and placement.",
+      "Stop using it and contact your provider if you get itching, rash, pain, swelling, or discomfort, and don't use it for bleeding or discharge that isn't your period."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+      "label": "FDA: Menstrual Cups"
+    }
   },
   "p-softdisc": {
     "whoItsFor": [
@@ -3653,7 +4271,31 @@ export const PRODUCT_RESEARCH = {
         "label": "FDA: Menstrual Cups",
         "summary": "FDA, which groups menstrual discs with cups, says to wash your hands before handling one, follow the label for wear time, use it only for period bleeding, and stop and call your provider if you have itching, rash, pain or swelling."
       }
-    ]
+    ],
+    "ingredientScience": [],
+    "clinicalNote": "A 2024 lab study in BMJ Sexual & Reproductive Health tested real red blood cells and found discs held the most of any product type, about 61 mL on average, compared with 20 to 34 mL for Tampax tampons and 22 to 35 mL for DivaCup cups. Softdisc itself was not one of the products tested. The authors note products may hold less in your body than in the lab, and that doctors checking for heavy periods should ask which products you use, since older bleeding measures were built around older products. FDA groups discs with cups and advises talking to your gynecologist first if you have an IUD.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://srh.bmj.com/content/50/1/21.full.pdf",
+        "label": "BMJ Sexual & Reproductive Health (2024), DeLoughery et al.: Red blood cell capacity of modern menstrual products",
+        "summary": "Lab study using red blood cells found menstrual discs held the most blood of the products tested."
+      },
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+        "label": "FDA: Menstrual Cups",
+        "summary": "FDA's menstrual cup page, which also covers discs, with wear time and IUD cautions."
+      }
+    ],
+    "warnings": [
+      "Empty or replace the disc about every 8 to 12 hours, following the label.",
+      "Wash your hands before and after inserting or removing it.",
+      "Talk to your gynecologist first if you have an IUD, since it can interfere with the IUD strings and placement.",
+      "Stop using it and contact your provider if you get itching, rash, pain, swelling, or discomfort, and don't use it for bleeding or discharge that isn't your period."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+      "label": "FDA: Menstrual Cups"
+    }
   },
   "p-period-nirvana-disc": {
     "whoItsFor": [
@@ -3674,7 +4316,42 @@ export const PRODUCT_RESEARCH = {
         "label": "FDA: Menstrual Cups",
         "summary": "FDA, which groups menstrual discs with cups, says to wash your hands and the device before use, empty it every 8 to 12 hours, boil reusable ones for 1 to 2 minutes at the end of each cycle, and check with your gynecologist first if you have an IUD."
       }
-    ]
+    ],
+    "ingredientScience": [
+      {
+        "name": "Medical-grade silicone",
+        "text": "Most reusable discs and cups are made of medical-grade silicone, a soft, flexible material made for use inside the body. With proper care, these products can last years before you need to replace them.",
+        "citations": [
+          {
+            "url": "https://www.nyp.org/healthmatters/your-guide-to-period-products",
+            "label": "NewYork-Presbyterian Health Matters: Your Guide to Period Products"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "A menstrual disc is a shallow, round cup that sits higher in the vagina than a tampon, right at the base of the cervix (the opening of the uterus), and it can be worn for up to 12 hours or until full. A NewYork-Presbyterian gynecologist says discs are generally fine with an IUD (a birth control device placed in the uterus) if you know where your IUD strings are, but a large 2019 review of menstrual cups did record 13 cases of IUDs being pulled out of place, so break the seal gently when removing. Like tampons, discs carry a small but serious risk of toxic shock syndrome (TSS), a rare bacterial infection; that same review counted 5 TSS cases in cup users. In studies of cups, leaks were similar to or lower than with pads or tampons.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.nyp.org/healthmatters/your-guide-to-period-products",
+        "label": "NewYork-Presbyterian Health Matters: Your Guide to Period Products",
+        "summary": "A gynecologist explains how discs sit at the base of the cervix, can be worn up to 12 hours, are generally safe with an IUD, and carry a small TSS risk."
+      },
+      {
+        "url": "https://doaj.org/article/e1d5fe32203c4f238d4c324f7d815608",
+        "label": "The Lancet Public Health 2019: Menstrual cup use, leakage, acceptability, safety, and availability (systematic review, via DOAJ)",
+        "summary": "A review of 43 studies found cup leakage similar to or lower than pads and tampons, and recorded 5 TSS cases and 13 IUD dislodgements in cup users."
+      }
+    ],
+    "warnings": [
+      "Only use internal period products like tampons and menstrual cups when you have your period.",
+      "Change your period products regularly, since wearing one too long can let harmful bacteria grow.",
+      "Wash your hands before and after using a period product.",
+      "Contact your healthcare provider if you have pain, fever or other unusual symptoms."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+      "label": "FDA: Menstrual Product Options, Facts, and Safe Use"
+    }
   },
   "p-aisle-underwear": {
     "whoItsFor": [
@@ -3707,7 +4384,56 @@ export const PRODUCT_RESEARCH = {
         "url": "https://thingtesting.com/brands/aisle/reviews",
         "label": "Thingtesting: Aisle reviews"
       }
-    ]
+    ],
+    "ingredientScience": [
+      {
+        "name": "Organic cotton",
+        "text": "Cotton lets air flow and cuts down on moisture buildup, which is why MedlinePlus recommends cotton underwear (or a cotton-lined crotch) over synthetic fabric to help prevent vaginitis, meaning irritation or infection of the vagina. That's standard self-care advice rather than something tested head to head in trials.",
+        "citations": [
+          {
+            "url": "https://medlineplus.gov/ency/patientinstructions/000566.htm",
+            "label": "MedlinePlus (NIH): Vaginitis, self-care"
+          }
+        ]
+      },
+      {
+        "name": "PFAS-free absorbent layer",
+        "text": "PFAS are \"forever chemicals\" that some makers use to help fabric repel liquid. The EPA says exposure to certain PFAS may be linked to lower fertility, higher cholesterol, weaker vaccine response and some cancers, though research on how different exposure levels affect health is still ongoing. Going PFAS-free avoids that question; the PFAS-free status here is the brand's own claim.",
+        "citations": [
+          {
+            "url": "https://www.epa.gov/pfas/our-current-understanding-human-health-and-environmental-risks-pfas",
+            "label": "US EPA: Our Current Understanding of the Human Health and Environmental Risks of PFAS"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products. A Cleveland Clinic ob/gyn says a typical pair holds about one to two tampons' worth of flow, so on heavy days you may need to change more often, and you shouldn't wear one pair for more than 12 hours. A 2025 study of reusable period products found PFAS (\"forever chemicals\") in all 19 products picked for closer testing, and the researchers think some period underwear has PFAS added to stop leaks, so a PFAS-free claim is worth looking for.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://health.clevelandclinic.org/does-period-underwear-work",
+        "label": "Cleveland Clinic: What Is Period Underwear and Does It Work?",
+        "summary": "An ob/gyn explains that period underwear typically holds one to two tampons' worth of flow and should not be worn more than 12 hours."
+      },
+      {
+        "url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+        "label": "FDA: Menstrual Product Options, Facts, and Safe Use",
+        "summary": "FDA regulates menstrual products, including period underwear, as medical devices and advises changing them regularly."
+      },
+      {
+        "url": "https://axial.acs.org/environmental-and-sustainable-chemistry/forever-chemicals-in-feminine-hygiene-products-expanded-findings-raise-new-pfas-concerns",
+        "label": "American Chemical Society: summary of Wicks et al., Environ Sci Technol Lett 2025 (doi:10.1021/acs.estlett.5c00553)",
+        "summary": "A 2025 study of 59 reusable period products found PFAS in all 19 chosen for closer testing; researchers called the PFAS use unnecessary."
+      }
+    ],
+    "warnings": [
+      "Rinse in cold water right after use to remove excess blood.",
+      "Skip fabric softener and bleach, which can stop the absorbent layers from working.",
+      "Switch to a fresh pair if you start to feel damp or uncomfortable."
+    ],
+    "warningsSource": {
+      "url": "https://periodaisle.com/blogs/all/how-often-should-you-change-period-underwear-best-practices-for-maximum-comfort",
+      "label": "Aisle: How Often Should You Change Period Underwear?"
+    }
   },
   "p-period-co-underwear": {
     "whoItsFor": [
@@ -3734,6 +4460,33 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://www.period.co/products/the-bikini",
       "sourceLabel": "The Period Company: The Bikini Period. in Organic Cotton For Heavy Flows"
+    },
+    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products. A Cleveland Clinic ob/gyn says a typical pair holds about one to two tampons' worth of flow, so on heavy days you may need to change more often, and you shouldn't wear one pair for more than 12 hours. This pair is sold for heavy flow, and its higher absorbency claim comes from the brand's own testing. The brand itself says most people get about 8 hours on a heavy day, and some need to change after 3 to 4.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://health.clevelandclinic.org/does-period-underwear-work",
+        "label": "Cleveland Clinic: What Is Period Underwear and Does It Work?",
+        "summary": "An ob/gyn explains that period underwear typically holds one to two tampons' worth of flow and should not be worn more than 12 hours."
+      },
+      {
+        "url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+        "label": "FDA: Menstrual Product Options, Facts, and Safe Use",
+        "summary": "FDA regulates menstrual products, including period underwear, as medical devices and advises changing them regularly."
+      },
+      {
+        "url": "https://period.co/products/the-bikini",
+        "label": "Period.: The Bikini product page",
+        "summary": "Brand page listing materials (organic cotton body, polyester absorbent and leak layers), its absorbency claim, and typical wear times."
+      }
+    ],
+    "warnings": [
+      "On heavy days, start by checking after about 4 hours until you know your limit.",
+      "Wash without bleach.",
+      "Do not dry clean."
+    ],
+    "warningsSource": {
+      "url": "https://period.co/products/the-bikini",
+      "label": "Period.: The Bikini product page"
     }
   },
   "p-wuka-underwear": {
@@ -3761,6 +4514,54 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://wuka.co.uk/products/wuka-ultimate-midi-brief-heavy-overnight",
       "sourceLabel": "WUKA: Ultimate Midi Brief, Heavy Overnight Flow"
+    },
+    "ingredientScience": [
+      {
+        "name": "Organic cotton",
+        "text": "Cotton lets air flow and cuts down on moisture buildup, which is why MedlinePlus recommends cotton underwear (or a cotton-lined crotch) over synthetic fabric to help prevent vaginitis, meaning irritation or infection of the vagina. That's standard self-care advice rather than something tested head to head in trials.",
+        "citations": [
+          {
+            "url": "https://medlineplus.gov/ency/patientinstructions/000566.htm",
+            "label": "MedlinePlus (NIH): Vaginitis, self-care"
+          }
+        ]
+      },
+      {
+        "name": "PFAS-free absorbent layer",
+        "text": "PFAS are \"forever chemicals\" that some makers use to help fabric repel liquid. The EPA says exposure to certain PFAS may be linked to lower fertility, higher cholesterol, weaker vaccine response and some cancers, though research on how different exposure levels affect health is still ongoing. Going PFAS-free avoids that question; the PFAS-free status here is the brand's own claim.",
+        "citations": [
+          {
+            "url": "https://www.epa.gov/pfas/our-current-understanding-human-health-and-environmental-risks-pfas",
+            "label": "US EPA: Our Current Understanding of the Human Health and Environmental Risks of PFAS"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products. A Cleveland Clinic ob/gyn says a typical pair holds about one to two tampons' worth of flow, so on heavy days you may need to change more often, and you shouldn't wear one pair for more than 12 hours. A 2025 study of reusable period products found PFAS (\"forever chemicals\") in all 19 products picked for closer testing, and the researchers think some period underwear has PFAS added to stop leaks, so a PFAS-free claim is worth looking for.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://health.clevelandclinic.org/does-period-underwear-work",
+        "label": "Cleveland Clinic: What Is Period Underwear and Does It Work?",
+        "summary": "An ob/gyn explains that period underwear typically holds one to two tampons' worth of flow and should not be worn more than 12 hours."
+      },
+      {
+        "url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+        "label": "FDA: Menstrual Product Options, Facts, and Safe Use",
+        "summary": "FDA regulates menstrual products, including period underwear, as medical devices and advises changing them regularly."
+      },
+      {
+        "url": "https://axial.acs.org/environmental-and-sustainable-chemistry/forever-chemicals-in-feminine-hygiene-products-expanded-findings-raise-new-pfas-concerns",
+        "label": "American Chemical Society: summary of Wicks et al., Environ Sci Technol Lett 2025 (doi:10.1021/acs.estlett.5c00553)",
+        "summary": "A 2025 study of 59 reusable period products found PFAS in all 19 chosen for closer testing; researchers called the PFAS use unnecessary."
+      }
+    ],
+    "warnings": [
+      "Wear one pair for up to 8 hours at a time.",
+      "If you can smell period blood, it's time to change."
+    ],
+    "warningsSource": {
+      "url": "https://wuka.co.uk/blogs/periods-a-z/how-do-period-pants-work",
+      "label": "WUKA: How Do Period Pants Work?"
     }
   },
   "p-tomboyx-period": {
@@ -3788,6 +4589,28 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://tomboyx.com/products/first-line-period-bikini-x-black",
       "sourceLabel": "TomboyX First Line Period Bikini product page"
+    },
+    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products. A Cleveland Clinic ob/gyn says a typical pair holds about one to two tampons' worth of flow, so on heavy days you may need to change more often, and you shouldn't wear one pair for more than 12 hours. Cleveland Clinic suggests trying a new pair on your lightest day, at home, to check fit and leaks before relying on it.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://health.clevelandclinic.org/does-period-underwear-work",
+        "label": "Cleveland Clinic: What Is Period Underwear and Does It Work?",
+        "summary": "An ob/gyn explains that period underwear typically holds one to two tampons' worth of flow and should not be worn more than 12 hours."
+      },
+      {
+        "url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+        "label": "FDA: Menstrual Product Options, Facts, and Safe Use",
+        "summary": "FDA regulates menstrual products, including period underwear, as medical devices and advises changing them regularly."
+      }
+    ],
+    "warnings": [
+      "Give new pairs a quick cold wash before you first wear them.",
+      "Avoid bleach, harsh chemicals and fabric softeners, which weaken the fabric.",
+      "Air dry if you can; if you use a dryer, pick the lowest heat."
+    ],
+    "warningsSource": {
+      "url": "https://tomboyx.com/pages/detailed-wash-care-guide",
+      "label": "TomboyX: Detailed Wash and Care Guide"
     }
   },
   "p-dear-kate-underwear": {
@@ -3814,6 +4637,33 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://dearkate.com/blogs/blog/how-to-properly-care-for-your-dear-kate-period-undies",
       "sourceLabel": "Dear Kate: How to Properly Care for Your Period Undies"
+    },
+    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products. A Cleveland Clinic ob/gyn says a typical pair holds about one to two tampons' worth of flow, so on heavy days you may need to change more often, and you shouldn't wear one pair for more than 12 hours. A 2025 study of reusable period products found PFAS (\"forever chemicals\") in all 19 products picked for closer testing, and the researchers think some period underwear has PFAS added to stop leaks, so a PFAS-free claim is worth looking for.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://health.clevelandclinic.org/does-period-underwear-work",
+        "label": "Cleveland Clinic: What Is Period Underwear and Does It Work?",
+        "summary": "An ob/gyn explains that period underwear typically holds one to two tampons' worth of flow and should not be worn more than 12 hours."
+      },
+      {
+        "url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+        "label": "FDA: Menstrual Product Options, Facts, and Safe Use",
+        "summary": "FDA regulates menstrual products, including period underwear, as medical devices and advises changing them regularly."
+      },
+      {
+        "url": "https://axial.acs.org/environmental-and-sustainable-chemistry/forever-chemicals-in-feminine-hygiene-products-expanded-findings-raise-new-pfas-concerns",
+        "label": "American Chemical Society: summary of Wicks et al., Environ Sci Technol Lett 2025 (doi:10.1021/acs.estlett.5c00553)",
+        "summary": "A 2025 study of 59 reusable period products found PFAS in all 19 chosen for closer testing; researchers called the PFAS use unnecessary."
+      }
+    ],
+    "warnings": [
+      "Don't use fabric softener, which leaves residue that blocks liquid from soaking in.",
+      "Don't bleach, dry clean or wash in hot water.",
+      "If a pair gets oversaturated, rinse it and keep it in a sealable pouch until laundry day."
+    ],
+    "warningsSource": {
+      "url": "https://dearkate.com/blogs/blog/how-to-properly-care-for-your-dear-kate-period-undies",
+      "label": "Dear Kate: How to Properly Care for Your Dear Kate Period Undies"
     }
   },
   "p-proof-period": {
@@ -3840,6 +4690,33 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://shopproof.com/pages/faq",
       "sourceLabel": "Proof Leak Proof Underwear FAQs"
+    },
+    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products. A Cleveland Clinic ob/gyn says a typical pair holds about one to two tampons' worth of flow, so on heavy days you may need to change more often, and you shouldn't wear one pair for more than 12 hours. Cleveland Clinic notes period underwear can also be used for urine leaks, discharge and bleeding after birth. A 2025 study of reusable period products found PFAS (\"forever chemicals\") in all 19 products picked for closer testing, and the researchers think some period underwear has PFAS added to stop leaks, so a PFAS-free claim is worth looking for.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://health.clevelandclinic.org/does-period-underwear-work",
+        "label": "Cleveland Clinic: What Is Period Underwear and Does It Work?",
+        "summary": "An ob/gyn explains that period underwear typically holds one to two tampons' worth of flow and should not be worn more than 12 hours."
+      },
+      {
+        "url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+        "label": "FDA: Menstrual Product Options, Facts, and Safe Use",
+        "summary": "FDA regulates menstrual products, including period underwear, as medical devices and advises changing them regularly."
+      },
+      {
+        "url": "https://axial.acs.org/environmental-and-sustainable-chemistry/forever-chemicals-in-feminine-hygiene-products-expanded-findings-raise-new-pfas-concerns",
+        "label": "American Chemical Society: summary of Wicks et al., Environ Sci Technol Lett 2025 (doi:10.1021/acs.estlett.5c00553)",
+        "summary": "A 2025 study of 59 reusable period products found PFAS in all 19 chosen for closer testing; researchers called the PFAS use unnecessary."
+      }
+    ],
+    "warnings": [
+      "Change your period products regularly, since wearing one too long can let harmful bacteria grow.",
+      "Wash your hands before and after using a period product.",
+      "Contact your healthcare provider if you have pain, fever or other unusual symptoms."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+      "label": "FDA: Menstrual Product Options, Facts, and Safe Use"
     }
   },
   "p-hanes-period": {
@@ -3864,6 +4741,28 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://www.hanes.com/women/collections/period-underwear",
       "sourceLabel": "Hanes Comfort, Period. Underwear collection"
+    },
+    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products. A Cleveland Clinic ob/gyn says a typical pair holds about one to two tampons' worth of flow, so on heavy days you may need to change more often, and you shouldn't wear one pair for more than 12 hours. A light to moderate pair like this may need changing sooner on your heaviest days. Cleveland Clinic suggests testing a new pair on a light day at home first.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://health.clevelandclinic.org/does-period-underwear-work",
+        "label": "Cleveland Clinic: What Is Period Underwear and Does It Work?",
+        "summary": "An ob/gyn explains that period underwear typically holds one to two tampons' worth of flow and should not be worn more than 12 hours."
+      },
+      {
+        "url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+        "label": "FDA: Menstrual Product Options, Facts, and Safe Use",
+        "summary": "FDA regulates menstrual products, including period underwear, as medical devices and advises changing them regularly."
+      }
+    ],
+    "warnings": [
+      "Change your period products regularly, since wearing one too long can let harmful bacteria grow.",
+      "Wash your hands before and after using a period product.",
+      "Contact your healthcare provider if you have pain, fever or other unusual symptoms."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+      "label": "FDA: Menstrual Product Options, Facts, and Safe Use"
     }
   },
   "p-neycher-vaginal-moisturizer": {
@@ -5876,7 +6775,30 @@ export const PRODUCT_RESEARCH = {
         "url": "https://walmart.com/ip/seort/14089583",
         "label": "Walmart: o.b. Tampons Multi-Pack reviews"
       }
-    ]
+    ],
+    "clinicalNote": "Toxic shock syndrome (TSS) is a rare but life-threatening illness caused by a toxin made by certain bacteria. Tampons are a known risk factor, especially highly absorbent ones and ones left in for a long time, though today fewer than half of TSS cases are linked to tampon use. The FDA says reported tampon-related TSS cases have dropped a lot over the years, and that if you can wear one tampon for up to 8 hours without changing it, the absorbency may be too high for you. Picking the lowest absorbency you need and changing it every 4 to 8 hours are the main ways to lower your risk.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://medlineplus.gov/ency/article/000653.htm",
+        "label": "MedlinePlus (NIH): Toxic shock syndrome",
+        "summary": "NIH patient page explaining that TSS is a medical emergency, that tampon use (especially highly absorbent tampons or long wear) is a risk factor, and that less than half of cases today are tampon-linked."
+      },
+      {
+        "url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
+        "label": "FDA: The Facts on Tampons and How to Use Them Safely",
+        "summary": "FDA consumer guidance on choosing the lowest absorbency, changing tampons every 4 to 8 hours, and recognizing TSS symptoms."
+      }
+    ],
+    "warnings": [
+      "Use the lowest absorbency tampon you need for your flow.",
+      "Change each tampon every 4 to 8 hours, and never wear one for more than 8 hours at a time.",
+      "Tampons are for one-time use only, so throw each one away after use.",
+      "If you get a sudden fever, vomiting, diarrhea, dizziness, fainting, or a rash that looks like a sunburn during or soon after your period, stop using tampons and get medical help right away."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
+      "label": "FDA: The Facts on Tampons and How to Use Them Safely"
+    }
   },
   "p-ob-original-multipack-80": {
     "whoItsFor": [
@@ -5936,7 +6858,30 @@ export const PRODUCT_RESEARCH = {
         "url": "https://walmart.com/ip/seort/14089583",
         "label": "Walmart: o.b. Tampons Multi-Pack reviews"
       }
-    ]
+    ],
+    "clinicalNote": "Toxic shock syndrome (TSS) is a rare but life-threatening illness caused by a toxin made by certain bacteria. Tampons are a known risk factor, especially highly absorbent ones and ones left in for a long time, though today fewer than half of TSS cases are linked to tampon use. The FDA says reported tampon-related TSS cases have dropped a lot over the years, and that if you can wear one tampon for up to 8 hours without changing it, the absorbency may be too high for you. Picking the lowest absorbency you need and changing it every 4 to 8 hours are the main ways to lower your risk.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://medlineplus.gov/ency/article/000653.htm",
+        "label": "MedlinePlus (NIH): Toxic shock syndrome",
+        "summary": "NIH patient page explaining that TSS is a medical emergency, that tampon use (especially highly absorbent tampons or long wear) is a risk factor, and that less than half of cases today are tampon-linked."
+      },
+      {
+        "url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
+        "label": "FDA: The Facts on Tampons and How to Use Them Safely",
+        "summary": "FDA consumer guidance on choosing the lowest absorbency, changing tampons every 4 to 8 hours, and recognizing TSS symptoms."
+      }
+    ],
+    "warnings": [
+      "Use the lowest absorbency tampon you need for your flow.",
+      "Change each tampon every 4 to 8 hours, and never wear one for more than 8 hours at a time.",
+      "Tampons are for one-time use only, so throw each one away after use.",
+      "If you get a sudden fever, vomiting, diarrhea, dizziness, fainting, or a rash that looks like a sunburn during or soon after your period, stop using tampons and get medical help right away."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
+      "label": "FDA: The Facts on Tampons and How to Use Them Safely"
+    }
   },
   "p-ob-original-regular-40": {
     "whoItsFor": [
@@ -5990,7 +6935,30 @@ export const PRODUCT_RESEARCH = {
         "url": "https://walmart.com/ip/seort/14089583",
         "label": "Walmart: o.b. Tampons Multi-Pack reviews"
       }
-    ]
+    ],
+    "clinicalNote": "Toxic shock syndrome (TSS) is a rare but life-threatening illness caused by a toxin made by certain bacteria. Tampons are a known risk factor, especially highly absorbent ones and ones left in for a long time, though today fewer than half of TSS cases are linked to tampon use. The FDA says reported tampon-related TSS cases have dropped a lot over the years, and that if you can wear one tampon for up to 8 hours without changing it, the absorbency may be too high for you. Picking the lowest absorbency you need and changing it every 4 to 8 hours are the main ways to lower your risk.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://medlineplus.gov/ency/article/000653.htm",
+        "label": "MedlinePlus (NIH): Toxic shock syndrome",
+        "summary": "NIH patient page explaining that TSS is a medical emergency, that tampon use (especially highly absorbent tampons or long wear) is a risk factor, and that less than half of cases today are tampon-linked."
+      },
+      {
+        "url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
+        "label": "FDA: The Facts on Tampons and How to Use Them Safely",
+        "summary": "FDA consumer guidance on choosing the lowest absorbency, changing tampons every 4 to 8 hours, and recognizing TSS symptoms."
+      }
+    ],
+    "warnings": [
+      "Use the lowest absorbency tampon you need for your flow.",
+      "Change each tampon every 4 to 8 hours, and never wear one for more than 8 hours at a time.",
+      "Tampons are for one-time use only, so throw each one away after use.",
+      "If you get a sudden fever, vomiting, diarrhea, dizziness, fainting, or a rash that looks like a sunburn during or soon after your period, stop using tampons and get medical help right away."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
+      "label": "FDA: The Facts on Tampons and How to Use Them Safely"
+    }
   },
   "p-ob-original-super-40": {
     "whoItsFor": [
@@ -6050,7 +7018,30 @@ export const PRODUCT_RESEARCH = {
         "url": "https://walmart.com/ip/seort/14089583",
         "label": "Walmart: o.b. Tampons Multi-Pack reviews"
       }
-    ]
+    ],
+    "clinicalNote": "Toxic shock syndrome (TSS) is a rare but life-threatening illness caused by a toxin made by certain bacteria. Tampons are a known risk factor, especially highly absorbent ones and ones left in for a long time, though today fewer than half of TSS cases are linked to tampon use. The FDA says reported tampon-related TSS cases have dropped a lot over the years, and that if you can wear one tampon for up to 8 hours without changing it, the absorbency may be too high for you. Picking the lowest absorbency you need and changing it every 4 to 8 hours are the main ways to lower your risk.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://medlineplus.gov/ency/article/000653.htm",
+        "label": "MedlinePlus (NIH): Toxic shock syndrome",
+        "summary": "NIH patient page explaining that TSS is a medical emergency, that tampon use (especially highly absorbent tampons or long wear) is a risk factor, and that less than half of cases today are tampon-linked."
+      },
+      {
+        "url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
+        "label": "FDA: The Facts on Tampons and How to Use Them Safely",
+        "summary": "FDA consumer guidance on choosing the lowest absorbency, changing tampons every 4 to 8 hours, and recognizing TSS symptoms."
+      }
+    ],
+    "warnings": [
+      "Use the lowest absorbency tampon you need for your flow.",
+      "Change each tampon every 4 to 8 hours, and never wear one for more than 8 hours at a time.",
+      "Tampons are for one-time use only, so throw each one away after use.",
+      "If you get a sudden fever, vomiting, diarrhea, dizziness, fainting, or a rash that looks like a sunburn during or soon after your period, stop using tampons and get medical help right away."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
+      "label": "FDA: The Facts on Tampons and How to Use Them Safely"
+    }
   },
   "p-ob-original-super-plus-40": {
     "whoItsFor": [
@@ -6110,7 +7101,30 @@ export const PRODUCT_RESEARCH = {
         "url": "https://walmart.com/ip/seort/14089583",
         "label": "Walmart: o.b. Tampons Multi-Pack reviews"
       }
-    ]
+    ],
+    "clinicalNote": "Toxic shock syndrome (TSS) is a rare but life-threatening illness caused by a toxin made by certain bacteria. Tampons are a known risk factor, especially highly absorbent ones and ones left in for a long time, though today fewer than half of TSS cases are linked to tampon use. The FDA says reported tampon-related TSS cases have dropped a lot over the years, and that if you can wear one tampon for up to 8 hours without changing it, the absorbency may be too high for you. Picking the lowest absorbency you need and changing it every 4 to 8 hours are the main ways to lower your risk.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://medlineplus.gov/ency/article/000653.htm",
+        "label": "MedlinePlus (NIH): Toxic shock syndrome",
+        "summary": "NIH patient page explaining that TSS is a medical emergency, that tampon use (especially highly absorbent tampons or long wear) is a risk factor, and that less than half of cases today are tampon-linked."
+      },
+      {
+        "url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
+        "label": "FDA: The Facts on Tampons and How to Use Them Safely",
+        "summary": "FDA consumer guidance on choosing the lowest absorbency, changing tampons every 4 to 8 hours, and recognizing TSS symptoms."
+      }
+    ],
+    "warnings": [
+      "Use the lowest absorbency tampon you need for your flow.",
+      "Change each tampon every 4 to 8 hours, and never wear one for more than 8 hours at a time.",
+      "Tampons are for one-time use only, so throw each one away after use.",
+      "If you get a sudden fever, vomiting, diarrhea, dizziness, fainting, or a rash that looks like a sunburn during or soon after your period, stop using tampons and get medical help right away."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
+      "label": "FDA: The Facts on Tampons and How to Use Them Safely"
+    }
   },
   "p-ob-original-ultra-40": {
     "whoItsFor": [
@@ -6170,7 +7184,30 @@ export const PRODUCT_RESEARCH = {
         "url": "https://walmart.com/ip/seort/14089583",
         "label": "Walmart: o.b. Tampons Multi-Pack reviews"
       }
-    ]
+    ],
+    "clinicalNote": "Toxic shock syndrome (TSS) is a rare but life-threatening illness caused by a toxin made by certain bacteria. Tampons are a known risk factor, especially highly absorbent ones and ones left in for a long time, though today fewer than half of TSS cases are linked to tampon use. The FDA says reported tampon-related TSS cases have dropped a lot over the years, and that if you can wear one tampon for up to 8 hours without changing it, the absorbency may be too high for you. Picking the lowest absorbency you need and changing it every 4 to 8 hours are the main ways to lower your risk.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://medlineplus.gov/ency/article/000653.htm",
+        "label": "MedlinePlus (NIH): Toxic shock syndrome",
+        "summary": "NIH patient page explaining that TSS is a medical emergency, that tampon use (especially highly absorbent tampons or long wear) is a risk factor, and that less than half of cases today are tampon-linked."
+      },
+      {
+        "url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
+        "label": "FDA: The Facts on Tampons and How to Use Them Safely",
+        "summary": "FDA consumer guidance on choosing the lowest absorbency, changing tampons every 4 to 8 hours, and recognizing TSS symptoms."
+      }
+    ],
+    "warnings": [
+      "Use the lowest absorbency tampon you need for your flow.",
+      "Change each tampon every 4 to 8 hours, and never wear one for more than 8 hours at a time.",
+      "Tampons are for one-time use only, so throw each one away after use.",
+      "If you get a sudden fever, vomiting, diarrhea, dizziness, fainting, or a rash that looks like a sunburn during or soon after your period, stop using tampons and get medical help right away."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
+      "label": "FDA: The Facts on Tampons and How to Use Them Safely"
+    }
   },
   "p-ob-procomfort-mini-32": {
     "whoItsFor": [
@@ -6217,7 +7254,17 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.medpex.de/o-b-tampons-procomfort-mini/00723767/erfahrungen",
         "label": "medpex.de: o.b. ProComfort Mini customer reviews (German)"
       }
-    ]
+    ],
+    "warnings": [
+      "Use the lowest absorbency tampon you need for your flow.",
+      "Change each tampon every 4 to 8 hours, and never wear one for more than 8 hours at a time.",
+      "Tampons are for one-time use only, so throw each one away after use.",
+      "If you get a sudden fever, vomiting, diarrhea, dizziness, fainting, or a rash that looks like a sunburn during or soon after your period, stop using tampons and get medical help right away."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
+      "label": "FDA: The Facts on Tampons and How to Use Them Safely"
+    }
   },
   "p-ob-procomfort-mini-16": {
     "whoItsFor": [
@@ -6264,7 +7311,17 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.medpex.de/o-b-tampons-procomfort-mini/00723767/erfahrungen",
         "label": "medpex.de: o.b. ProComfort Mini customer reviews (German)"
       }
-    ]
+    ],
+    "warnings": [
+      "Use the lowest absorbency tampon you need for your flow.",
+      "Change each tampon every 4 to 8 hours, and never wear one for more than 8 hours at a time.",
+      "Tampons are for one-time use only, so throw each one away after use.",
+      "If you get a sudden fever, vomiting, diarrhea, dizziness, fainting, or a rash that looks like a sunburn during or soon after your period, stop using tampons and get medical help right away."
+    ],
+    "warningsSource": {
+      "url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
+      "label": "FDA: The Facts on Tampons and How to Use Them Safely"
+    }
   },
   "p-poise-ultra-thin-moderate": {
     "whoItsFor": [
@@ -6283,6 +7340,32 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://www.carewell.com/product/poise-original-pads-maximum/",
       "sourceLabel": "Carewell: Poise Original Pads, Maximum (directions)"
+    },
+    "clinicalNote": "Stress incontinence means leaking urine when coughing, sneezing, laughing or exercise puts pressure on your bladder, and pregnancy, childbirth and menopause can all weaken the pelvic floor muscles that prevent it. Incontinence affects twice as many women as men. Pads like this are a way to stay protected while you work on treatments: pelvic floor (Kegel) exercises may help, especially for stress leaks, along with bladder training (peeing on a schedule) and cutting back on caffeine and alcohol. Treatments can take a month or more to work.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-control-problems/symptoms-causes",
+        "label": "NIDDK (NIH): Symptoms and Causes of Bladder Control Problems",
+        "summary": "Defines stress incontinence and lists pregnancy, childbirth and menopause among events that weaken pelvic floor muscles."
+      },
+      {
+        "url": "https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-control-problems/treatment",
+        "label": "NIDDK (NIH): Treatments for Bladder Control Problems (Urinary Incontinence)",
+        "summary": "Lists pads and absorbent underwear for managing leaks, plus pelvic floor exercises, bladder training and lifestyle changes to reduce them."
+      },
+      {
+        "url": "https://womenshealth.gov/sites/default/files/documents/fact-sheet-urinary-incontinence.pdf",
+        "label": "US Office on Women's Health: Urinary Incontinence fact sheet",
+        "summary": "Says incontinence affects twice as many women as men and that pads can be used while working on other treatments."
+      }
+    ],
+    "warnings": [
+      "Pads manage leaks but don't treat them; NIDDK advises that you at least talk with your health care professional about bladder problems.",
+      "Special skin cleaners and creams may help keep skin near the urethra from getting irritated by urine."
+    ],
+    "warningsSource": {
+      "url": "https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-control-problems/treatment",
+      "label": "NIDDK (NIH): Treatments for Bladder Control Problems (Urinary Incontinence)"
     }
   },
   "p-always-discreet-boutique-liners": {
@@ -6309,7 +7392,33 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.walmart.com/ip/39878650",
         "label": "Walmart: Always Discreet Incontinence Liners, Very Light Long"
       }
-    ]
+    ],
+    "clinicalNote": "Stress incontinence means leaking urine when coughing, sneezing, laughing or exercise puts pressure on your bladder, and pregnancy, childbirth and menopause can all weaken the pelvic floor muscles that prevent it. Incontinence affects twice as many women as men. A liner like this handles small leaks day to day, while pelvic floor (Kegel) exercises, bladder training (peeing on a schedule) and cutting back on caffeine and alcohol can reduce the leaks themselves.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-control-problems/symptoms-causes",
+        "label": "NIDDK (NIH): Symptoms and Causes of Bladder Control Problems",
+        "summary": "Defines stress incontinence and lists pregnancy, childbirth and menopause among events that weaken pelvic floor muscles."
+      },
+      {
+        "url": "https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-control-problems/treatment",
+        "label": "NIDDK (NIH): Treatments for Bladder Control Problems (Urinary Incontinence)",
+        "summary": "Lists pads and absorbent underwear for managing leaks, plus pelvic floor exercises, bladder training and lifestyle changes to reduce them."
+      },
+      {
+        "url": "https://womenshealth.gov/sites/default/files/documents/fact-sheet-urinary-incontinence.pdf",
+        "label": "US Office on Women's Health: Urinary Incontinence fact sheet",
+        "summary": "Says incontinence affects twice as many women as men and that pads can be used while working on other treatments."
+      }
+    ],
+    "warnings": [
+      "Change your liner based on your own needs; there's no fixed schedule.",
+      "For bladder problems, see your doctor for professional advice."
+    ],
+    "warningsSource": {
+      "url": "https://canary.always.co.uk/en-gb/discreet/incontinence-advice/questions-and-answers-about-incontinence-in-women/incontinence-pads-and-liners/",
+      "label": "Always Discreet (UK): Incontinence pads and liners Q&A"
+    }
   },
   "p-depend-silhouette-underwear": {
     "whoItsFor": [
@@ -6355,7 +7464,30 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.walmart.com/ip/960731633",
         "label": "Walmart: Depend Silhouette for Women reviews"
       }
-    ]
+    ],
+    "clinicalNote": "Absorbent products catch leaks but don't treat what causes them. NIH says pelvic floor muscle exercises (squeezing the muscles that hold in urine) lead to fewer leaks per day, and bladder training (peeing on a set schedule) and losing weight can also help. UK guidance from NICE says pads and absorbent underwear are best used as a short-term way to cope, or long term only if treatment hasn't worked. If your skin gets irritated, NIH notes that special skin cleaners and creams can help protect it.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-control-problems/treatment",
+        "label": "NIDDK (NIH): Treatments for Bladder Control Problems (Urinary Incontinence)",
+        "summary": "NIH overview of bladder control treatments, including pelvic floor exercises, bladder training, weight loss, absorbent products, and skin care."
+      },
+      {
+        "url": "https://www.nice.org.uk/guidance/QS77/chapter/quality-statement-3-containment-products",
+        "label": "NICE Quality Standard QS77: Containment products",
+        "summary": "UK national guidance that containment products should be a temporary coping strategy, or long-term management only if treatment is unsuccessful."
+      }
+    ],
+    "warnings": [
+      "Bladder leaks may be caused by a condition that can be treated, so the label says to see your doctor for advice.",
+      "Keep the plastic bag away from babies and children to avoid the risk of suffocation.",
+      "Like most clothing, this underwear can burn if exposed to a flame.",
+      "Do not flush."
+    ],
+    "warningsSource": {
+      "url": "https://stopandshop.com/groceries/product/depend-womens-silhouette-incontinence-underwear-maximum-l-20-ct-pkg/329225",
+      "label": "Depend Silhouette Maximum label text (as listed on Stop & Shop product page)"
+    }
   },
   "p-tena-intimates-very-light-liner": {
     "whoItsFor": [
@@ -6397,6 +7529,19 @@ export const PRODUCT_RESEARCH = {
       {
         "url": "https://www.walmart.com/ip/796765417",
         "label": "Walmart: TENA Sensitive Care Extra Coverage Very Light Liner reviews"
+      }
+    ],
+    "clinicalNote": "Absorbent products catch leaks but don't treat what causes them. NIH says pelvic floor muscle exercises (squeezing the muscles that hold in urine) lead to fewer leaks per day, and bladder training (peeing on a set schedule) and losing weight can also help. UK guidance from NICE says pads and absorbent underwear are best used as a short-term way to cope, or long term only if treatment hasn't worked. If your skin gets irritated, NIH notes that special skin cleaners and creams can help protect it.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-control-problems/treatment",
+        "label": "NIDDK (NIH): Treatments for Bladder Control Problems (Urinary Incontinence)",
+        "summary": "NIH overview of bladder control treatments, including pelvic floor exercises, bladder training, weight loss, absorbent products, and skin care."
+      },
+      {
+        "url": "https://www.nice.org.uk/guidance/QS77/chapter/quality-statement-3-containment-products",
+        "label": "NICE Quality Standard QS77: Containment products",
+        "summary": "UK national guidance that containment products should be a temporary coping strategy, or long-term management only if treatment is unsuccessful."
       }
     ]
   },
@@ -9361,7 +10506,29 @@ export const PRODUCT_RESEARCH = {
         "label": "Herbenick et al., Journal of Sexual Medicine 2009: vibrator use by women in the US (national survey)",
         "summary": "In a national survey of 2,056 women, about half had used a vibrator, users scored higher on most sexual function measures, and side effects like numbness or irritation were uncommon and usually brief (the survey was industry-funded and can't show cause and effect)."
       }
-    ]
+    ],
+    "clinicalNote": "Research on vibrators for health is still small. The International Society for Sexual Medicine says vibrators may improve genital blood flow, arousal, satisfaction and orgasm, and may also help pelvic floor muscle strength and vulvodynia pain (long-lasting pain at the opening of the vagina), but that there are only a limited number of studies and more research is needed. In a 2009 survey of 2,056 US women, about half had used a vibrator, and 71.5% of users had never had a side effect. The side effects that did happen, like brief numbness or irritation, were mostly mild and short-lived. That survey was funded by a condom maker, Church & Dwight.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
+        "label": "International Society for Sexual Medicine (ISSM): What are the benefits of vibrators for sexual health?",
+        "summary": "Says vibrators may help arousal, orgasm, pelvic muscle strength and vulvodynia pain, but studies are limited and more research is needed."
+      },
+      {
+        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
+        "label": "Journal of Sexual Medicine (2009), Herbenick et al.: Prevalence and characteristics of vibrator use by women in the United States",
+        "summary": "52.5% of 2,056 women had used a vibrator; 71.5% of users never had side effects, and those reported were mostly mild and brief."
+      }
+    ],
+    "warnings": [
+      "Use water-based lubricants to protect the silicone surface.",
+      "Don't fully submerge it for long periods.",
+      "It is designed for adults."
+    ],
+    "warningsSource": {
+      "url": "https://mysteryvibe.com/pages/crescendo2-health",
+      "label": "MysteryVibe: Crescendo 2 product page"
+    }
   },
   "p-phd-wash": {
     "whoItsFor": [
@@ -9381,6 +10548,36 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://phdfemininehealth.com/products/ph-d-boric-acid-honey-lavender-foam-wash",
       "sourceLabel": "pH-D Boric Acid Foam Wash product page"
+    },
+    "ingredientScience": [
+      {
+        "name": "Boric acid",
+        "text": "Boric acid is a mild acid. A federal pesticide information fact sheet says it is low in toxicity on skin and is poorly absorbed unless the skin is damaged. We found no studies testing whether boric acid in an external wash changes vaginal pH; the clinical research on boric acid is about capsules placed inside the vagina for hard-to-treat yeast infections.",
+        "citations": [
+          {
+            "url": "https://www.npic.orst.edu/factsheets/boricgen.html",
+            "label": "National Pesticide Information Center (Oregon State University and US EPA): Boric Acid General Fact Sheet"
+          }
+        ]
+      },
+      {
+        "name": "Lavender oil",
+        "text": "Lavender oil adds scent and is a known skin allergen once it oxidizes (breaks down in air). In one dermatology clinic study, 2.8% of patients tested had an allergic reaction to oxidized lavender oil, so this matters if your skin is sensitive.",
+        "citations": [
+          {
+            "url": "https://www.medicaljournals.se/acta/content/abstract/10.2340/00015555-2319",
+            "label": "Acta Dermato-Venereologica (Hagvall and Bråred Christensson): Contact allergy to oxidized lavender oil"
+          }
+        ]
+      }
+    ],
+    "warnings": [
+      "For external use only.",
+      "Avoid contact with your eyes and mouth."
+    ],
+    "warningsSource": {
+      "url": "https://www.vitacost.com/products/ph-d-feminine-health-boric-acid-foam-wash-sensitive-6-fl-oz-177-ml-152146",
+      "label": "Vitacost: pH-D Feminine Health Boric Acid Foam Wash, Sensitive (label copy)"
     }
   },
   "p-sweetspot-buff-brighten": {
@@ -9416,7 +10613,62 @@ export const PRODUCT_RESEARCH = {
         "label": "Cutis (2025): Beyond the Razor: Managing Pseudofolliculitis Barbae in Skin of Color",
         "summary": "This dermatology review says alpha hydroxy acids such as glycolic acid can reduce the curvature of the hair and that hydroxy acids help by loosening the buildup of skin around hair follicles, though it cites no trial results of its own."
       }
-    ]
+    ],
+    "ingredientScience": [
+      {
+        "name": "Lactic acid",
+        "text": "Lactic acid is an alpha hydroxy acid (AHA), an acid that loosens dead skin cells on the surface. The FDA notes that AHAs make your skin more sensitive to the sun: after four weeks of use, sensitivity to UV redness went up 18% in a study. An expert safety panel considers AHAs safe at 10% or less with a product pH of 3.5 or higher; this product lists 6.7% total AHAs at pH 3.75 to 4.75.",
+        "citations": [
+          {
+            "url": "https://www.fda.gov/cosmetics/cosmetic-ingredients/alpha-hydroxy-acids",
+            "label": "FDA: Alpha Hydroxy Acids"
+          }
+        ]
+      },
+      {
+        "name": "Glycolic acid",
+        "text": "Glycolic acid is another AHA. A 2025 dermatology review on razor bumps (pseudofolliculitis, where shaved hairs curl back into the skin) says AHAs like glycolic acid can reduce how much the hair curls and that hydroxy acids help as add-on treatments. The review gives no study sizes, so treat the evidence as supportive but not strong.",
+        "citations": [
+          {
+            "url": "https://cdn.mdedge.com/files/s3fs-public/issues/articles/CT115004135.pdf",
+            "label": "Cutis 2025;115(4):135-136 (Usatine, Heath, Welch): Beyond the Razor: Managing Pseudofolliculitis Barbae in Skin of Color"
+          }
+        ]
+      },
+      {
+        "name": "Salicylic acid",
+        "text": "Salicylic acid is a beta hydroxy acid (BHA) and a keratolytic, meaning it softens and loosens dead skin and helps unplug blocked pores. MedlinePlus says not to put it on skin that is broken, red, swollen, irritated or infected, and that it can cause stinging or irritation.",
+        "citations": [
+          {
+            "url": "https://medlineplus.gov/druginfo/meds/a607072.html",
+            "label": "MedlinePlus (NIH): Salicylic Acid Topical"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "Ingrown hairs and razor bumps happen when a cut hair curls back and grows into the skin. A 2025 dermatology review says hydroxy acids, the same family as the lactic, glycolic and salicylic acids here, can help as an add-on by loosening dead skin around the hair. The FDA advises that AHA products raise your sun sensitivity, so use sunscreen on treated areas while using them and for a week after.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://cdn.mdedge.com/files/s3fs-public/issues/articles/CT115004135.pdf",
+        "label": "Cutis 2025 (Usatine, Heath, Welch): Beyond the Razor: Managing Pseudofolliculitis Barbae in Skin of Color",
+        "summary": "Reviews razor bump care and lists hydroxy acids, including glycolic acid, as helpful add-on treatments."
+      },
+      {
+        "url": "https://www.fda.gov/cosmetics/cosmetic-ingredients/alpha-hydroxy-acids",
+        "label": "FDA: Alpha Hydroxy Acids",
+        "summary": "Explains AHA sun sensitivity, safe concentration and pH limits, and the recommended sunburn alert."
+      }
+    ],
+    "warnings": [
+      "Wait 24 hours after shaving or waxing before you use a pad.",
+      "This product has AHAs that can make your skin more sensitive to the sun, so use sunscreen and limit sun exposure while using it and for a week after.",
+      "Avoid your eyes; if it gets in them, rinse well with water.",
+      "Stop using it if you get a rash or discomfort, and if you're pregnant, check with your doctor before using AHA or BHA products."
+    ],
+    "warningsSource": {
+      "url": "https://www.ulta.com/p/p-xlsImpprod18651011",
+      "label": "Ulta: SweetSpot Labs Buff & Brighten AHA/BHA Body Exfoliating Pads (brand product listing)"
+    }
   },
   "p-gennev-care": {
     "whoItsFor": [
@@ -9450,7 +10702,27 @@ export const PRODUCT_RESEARCH = {
         "label": "Menopause (2021): Delivery of menopause care during a pandemic, patient satisfaction with telephone visits",
         "summary": "In 246 visits at a Toronto menopause clinic in 2020, patients rated remote visits highly (4.23 out of 5) and about 80% of those who had tried both preferred them, though this was one clinic and not a study of Gennev."
       }
-    ]
+    ],
+    "clinicalNote": "Two position statements from The Menopause Society give useful context for any menopause care service. The Menopause Society's 2022 statement says hormone therapy's benefits outweigh its risks for most healthy women with symptoms who are under 60 or within 10 years of menopause, with the dose and form chosen with you and rechecked over time. For people who can't or don't want to use hormones, its 2023 statement recommends options like cognitive behavioral therapy, clinical hypnosis, certain antidepressants, gabapentin and the newer drug fezolinetant for hot flashes, and does not recommend supplements or herbal remedies.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://menopause.org/wp-content/uploads/press-release/ht-position-statement-release.pdf",
+        "label": "The Menopause Society: 2022 Hormone Therapy Position Statement (press release, July 2022)",
+        "summary": "Says hormone therapy benefits outweigh risks for most healthy women with symptoms who are under 60 or within 10 years of menopause, with personalized dosing and regular rechecks."
+      },
+      {
+        "url": "https://menopause.org/wp-content/uploads/press-release/nonhormone-therapy-position-statement-release.pdf",
+        "label": "The Menopause Society: 2023 Nonhormone Therapy Position Statement (press release, June 2023)",
+        "summary": "Lists recommended nonhormone treatments for hot flashes and says supplements and herbal remedies are not recommended."
+      }
+    ],
+    "warnings": [
+      "Your practitioner may decide you need to be seen in person by a doctor."
+    ],
+    "warningsSource": {
+      "url": "https://help.gennev.com/article/7-providerdiagnosis",
+      "label": "Gennev Help Center: How can the practitioner diagnose me without seeing me in person?"
+    }
   },
   "p-womaness-me": {
     "whoItsFor": [
@@ -9477,7 +10749,56 @@ export const PRODUCT_RESEARCH = {
         "label": "Frontiers in Reproductive Health (2025): Ashwagandha root extract for menopausal symptoms, randomized placebo-controlled trial",
         "summary": "In 60 women aged 45 to 55, 300 mg of one branded ashwagandha extract twice daily for 8 weeks lowered Menopause Rating Scale scores more than placebo, but the trial was small and short and did not test Me.No.Pause. or its dose."
       }
-    ]
+    ],
+    "ingredientScience": [
+      {
+        "name": "Pycnogenol (French maritime pine bark extract)",
+        "text": "A Cochrane review of 27 small trials across 10 long-term conditions found the evidence too weak to draw firm conclusions about whether pine bark extract works or is safe. That review did not look at hot flashes or other menopause symptoms.",
+        "citations": [
+          {
+            "url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD008294.pub5",
+            "label": "Cochrane Database of Systematic Reviews (2020): Pine bark (Pinus spp.) extract for treating chronic disorders"
+          }
+        ]
+      },
+      {
+        "name": "Bacopa (Bacognize)",
+        "text": "Bacopa is an herb studied for memory. A 2012 review of six 12-week trials found it improved memory recall on 9 of 17 tests, with little evidence of benefit for other thinking skills. These trials were not in menopausal women.",
+        "citations": [
+          {
+            "url": "https://research.monash.edu/en/publications/the-cognitive-enhancing-effects-of-bacopa-monnieri-a-systematic-r/",
+            "label": "Journal of Alternative and Complementary Medicine 2012 (Pase et al.), doi:10.1089/acm.2011.0367: The cognitive-enhancing effects of Bacopa monnieri"
+          }
+        ]
+      },
+      {
+        "name": "Ashwagandha",
+        "text": "Small trials suggest ashwagandha may lower stress and slightly improve sleep, according to the NIH Office of Dietary Supplements, which does not mention menopause. Safety data beyond about 3 months is lacking, and there are case reports of liver injury and thyroid changes; some experts advise against it in pregnancy.",
+        "citations": [
+          {
+            "url": "https://ods.od.nih.gov/factsheets/ashwagandha-HealthProfessional/",
+            "label": "NIH Office of Dietary Supplements: Ashwagandha fact sheet for health professionals"
+          }
+        ]
+      }
+    ],
+    "clinicalNote": "The Menopause Society's 2023 statement on nonhormone treatments does not recommend supplements or herbal remedies for hot flashes. It does recommend cognitive behavioral therapy, clinical hypnosis, weight loss, certain antidepressants, gabapentin, oxybutynin and the newer drug fezolinetant. The label doesn't list how much of each ingredient is in a capsule, which makes it hard to compare with the doses used in studies.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://menopause.org/wp-content/uploads/press-release/nonhormone-therapy-position-statement-release.pdf",
+        "label": "The Menopause Society: 2023 Nonhormone Therapy Position Statement (press release, June 2023)",
+        "summary": "Lists recommended nonhormone treatments for hot flashes and says supplements and herbal remedies are not recommended."
+      }
+    ],
+    "warnings": [
+      "If you are pregnant, nursing, taking medications, have a medical condition or have trouble swallowing, check with your doctor before use.",
+      "Don't use it if the clear neck seal is broken or missing.",
+      "California Prop 65 notice: this product can expose you to chemicals including lead."
+    ],
+    "warningsSource": {
+      "url": "https://womaness.com/products/me-no-pause",
+      "label": "Womaness: Me.No.Pause. product page"
+    }
   },
   "d-evernow": {
     "whoItsFor": [
@@ -9509,7 +10830,30 @@ export const PRODUCT_RESEARCH = {
         "label": "Menopause (2021): Delivery of menopause care during a pandemic, patient satisfaction with telephone visits",
         "summary": "At one Toronto menopause clinic, patients rated remote visits highly and most who had tried both preferred them, which supports virtual menopause care in general, though this was not a study of Evernow."
       }
-    ]
+    ],
+    "clinicalNote": "Evernow's clinicians may suggest hormonal or non-hormonal treatment. The Menopause Society's 2022 statement says hormone therapy's benefits outweigh its risks for most healthy women with symptoms who are under 60 or within 10 years of menopause, that patches and lower doses may lower the risk of blood clots, and that the plan should be rechecked over time. Its 2023 statement lists recommended non-hormonal options for hot flashes, including cognitive behavioral therapy, clinical hypnosis, certain antidepressants, gabapentin and fezolinetant, and does not recommend supplements or herbal remedies.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://menopause.org/wp-content/uploads/press-release/ht-position-statement-release.pdf",
+        "label": "The Menopause Society: 2022 Hormone Therapy Position Statement (press release, July 2022)",
+        "summary": "Says hormone therapy benefits outweigh risks for most healthy women with symptoms who are under 60 or within 10 years of menopause, with personalized dosing and regular rechecks."
+      },
+      {
+        "url": "https://menopause.org/wp-content/uploads/press-release/nonhormone-therapy-position-statement-release.pdf",
+        "label": "The Menopause Society: 2023 Nonhormone Therapy Position Statement (press release, June 2023)",
+        "summary": "Lists recommended nonhormone treatments for hot flashes and says supplements and herbal remedies are not recommended."
+      }
+    ],
+    "warnings": [
+      "Evernow providers don't handle medical emergencies; call 911 or go to the nearest emergency room.",
+      "Some health needs aren't right for a telehealth visit, and your provider will decide that.",
+      "Evernow providers are an addition to, not a replacement for, your local primary care provider.",
+      "Evernow has no in-person clinic locations."
+    ],
+    "warningsSource": {
+      "url": "https://www.evernow.com/legal/informed-consent",
+      "label": "Evernow: Informed Consent"
+    }
   },
   "p-mypelvicbra-sports": {
     "clinicalSources": [
