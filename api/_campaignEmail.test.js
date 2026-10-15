@@ -9,10 +9,12 @@ describe('campaign emails', () => {
     expect(subject).toBe('Give us your thoughts. Get something on us.');
     expect(html).toContain('/free-product?utm_source=campaign_email&amp;utm_campaign=free-product-2026');
     expect(text).toMatch(/120\+ characters/);
-    expect(text).toMatch(/new ayna account and verify it/);
+    expect(text).toMatch(/sign up and verify/);
+    expect(text).toMatch(/new to ayna/);
     expect(text).toMatch(/Verify your account/);
-    expect(text).toMatch(/limited and go to whoever claims first/);
-    expect(text).toMatch(/Claiming a product is final/);
+    expect(text).toMatch(/limited, first come first served/);
+    expect(text).toMatch(/One free product per person/);
+    expect(text).toMatch(/Your claim is final/);
     expect(html).toContain('{{{RESEND_UNSUBSCRIBE_URL}}}');
   });
 
