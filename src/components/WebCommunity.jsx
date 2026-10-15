@@ -711,7 +711,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
           <div className="wc-cover-pick">
             <span className="wc-cover-preview" style={coverPreview ? undefined : { background: coverColor, color: coverColor === COVER_COLORS[0] ? '#fffcf5' : '#1d1a2b' }} aria-hidden="true">{coverPreview ? <img src={coverPreview} alt="" /> : <span>{playlistTitle.trim() || 'ayna'}</span>}</span>
             <div className="wc-cover-opts">
-              <div className="wc-colors">{COVER_COLORS.map((c) => <button type="button" key={c} aria-label={`Cover colour ${c}`} aria-pressed={!coverPhoto && coverColor === c} style={{ background: c }} onClick={() => { setCoverColor(c); setCoverPhoto(null); }} />)}</div>
+              <div className="wc-colors">{COVER_COLORS.map((c) => <button type="button" key={c} aria-label={`Cover color ${c}`} aria-pressed={!coverPhoto && coverColor === c} style={{ background: c }} onClick={() => { setCoverColor(c); setCoverPhoto(null); }} />)}</div>
               <label className="wc-btn is-ghost is-small wc-upload">{coverPhoto ? 'Change photo' : 'Upload a photo'}<input type="file" accept="image/*" className="wc-file" onChange={(e) => { const f = e.target.files?.[0]; if (f) { try { checkImageFile(f); setCoverPhoto(f); } catch (err) { setError(err.message); } } e.target.value = ''; }} /></label>
             </div>
           </div>

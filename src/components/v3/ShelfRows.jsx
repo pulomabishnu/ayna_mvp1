@@ -139,12 +139,12 @@ export default function ShelfRows({ groups, onOpenProduct, onToggleProduct, onAd
                 <button type="button" className="ay-shelf__tool" onClick={() => setEditing(group.key)} aria-label={`Rename ${nameOf(group)}`} title="Rename">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4" /></svg>
                 </button>
-                <button type="button" className="ay-shelf__tool" onClick={() => setPainting(painting === group.key ? null : group.key)} aria-expanded={painting === group.key} aria-label={`Change colour of ${nameOf(group)}`} title="Colour">
+                <button type="button" className="ay-shelf__tool" onClick={() => setPainting(painting === group.key ? null : group.key)} aria-expanded={painting === group.key} aria-label={`Change color of ${nameOf(group)}`} title="Color">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-1.9 2-1.9H17a4 4 0 0 0 4-4C21 6.4 17 3 12 3z" /></svg>
                 </button>
               </span>
               {painting === group.key && (
-                <span className="ay-shelf__paints" role="group" aria-label="Shelf colour">
+                <span className="ay-shelf__paints" role="group" aria-label="Shelf color">
                   {PAINTS.map((pt) => (
                     <button key={pt.id} type="button" className="ay-paint" style={{ background: pt.bg }} aria-label={pt.label} title={pt.label} onClick={() => { update((c) => ({ ...c, paints: { ...(c.paints || {}), [group.key]: pt.id } })); setPainting(null); }} />
                   ))}

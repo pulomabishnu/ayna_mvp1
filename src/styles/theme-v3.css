@@ -3848,3 +3848,136 @@ html body .app-container .wc3 .wc-menu { top: 0 !important; right: calc(100% + 6
 html body .app-container .wc-tag-link { align-self: flex-start; min-height: 32px; padding: 0; border: 0; background: none; color: inherit; font: 600 13px/1 'DM Sans', sans-serif; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 html body .app-container .wc-inline-name { padding: 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
 html body .app-container .wc-review-own { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0 0 14px; padding: 0; list-style: none; }
+
+/* Pass 5 Campus: the Cornell news block is a closed, labelled disclosure;
+   "call 911" is a link; the quick-exit button never covers the footer;
+   small links get 44px targets. */
+html body .app-container .cr-case > summary.cr-case__summary { display: grid; gap: 4px; min-height: 44px; cursor: pointer; list-style: none; }
+html body .app-container .cr-case > summary.cr-case__summary::-webkit-details-marker { display: none; }
+html body .app-container .cr-case > summary.cr-case__summary .cr-h2::after { content: ' +'; }
+html body .app-container .cr-case[open] > summary.cr-case__summary .cr-h2::after { content: ' −'; }
+html body .app-container .cr-case > summary .cr-h2 { margin: 0; }
+html body .app-container .cr-emergency__call { color: inherit; text-decoration: underline; text-underline-offset: 3px; display: inline-flex; align-items: center; min-height: 44px; }
+html body .app-container .cr-schools-list > summary { text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
+body:has(.cr-page) .app-container .site-footer { padding-bottom: 96px !important; }
+@media (pointer: coarse) {
+  html body .app-container .cr-page :is(.cr-card__source a, .cr-sources a, .cr-small a, .cr-jump a, .cr-link) { display: inline-flex; align-items: center; min-height: 44px; }
+  html body .app-container .cr-page .cr-sources li, html body .app-container .cr-page .cr-schools-list li { padding: 0; }
+}
+
+/* Pass 5 Partner brands: one grid of brand cards; the picked brand's
+   products open below in the Shop card. */
+html body .app-container .brand-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; margin: 8px 0 32px; padding: 0; list-style: none; }
+html body .app-container .brand-card { display: grid; grid-template-rows: auto auto 1fr auto; gap: 8px; width: 100%; height: 100%; padding: 16px; border: 2px solid #3e2723; border-radius: 16px; background: #ffedac; color: #3e2723; text-align: left; cursor: pointer; transition: transform .15s, box-shadow .15s; }
+html body .app-container .brand-card:hover, html body .app-container .brand-card.is-on { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 #3e2723; }
+html body .app-container .brand-card.is-on { background: #f7badd; }
+html body .app-container .brand-card .brand-partner__logo, html body .app-container .brand-card .brand-partner__wordmark { width: 64px; height: 64px; object-fit: contain; border-radius: 12px; background: #fff; border: 1.5px solid #3e2723; display: grid; place-items: center; font: 700 12px/1.1 'DM Sans', sans-serif; text-align: center; padding: 4px; overflow: hidden; }
+html body .app-container .brand-card__name { font: 400 22px/1.15 'DM Serif Display', serif; }
+html body .app-container .brand-card__tag { display: inline-block; margin-left: 8px; padding: 2px 8px; border: 1.5px solid #3e2723; border-radius: 99px; font: 700 11px/1.4 'DM Sans', sans-serif; vertical-align: middle; }
+html body .app-container .brand-card__blurb { font: 400 14px/1.45 'DM Sans', sans-serif; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+html body .app-container .brand-card__count { font: 700 14px/1 'DM Sans', sans-serif; }
+html body .app-container .brand-panel { scroll-margin-top: 96px; margin: 0 0 32px; padding: 24px; border: 2px solid #3e2723; border-radius: 18px; background: #ffedac; }
+html body .app-container .brand-panel[hidden] { display: none; }
+html body .app-container .brand-panel__head { display: flex; gap: 18px; align-items: flex-start; margin-bottom: 20px; }
+html body .app-container .brand-panel__head .brand-partner__logo, html body .app-container .brand-panel__head .brand-partner__wordmark { width: 88px; height: 88px; flex: none; object-fit: contain; border-radius: 14px; background: #fff; border: 1.5px solid #3e2723; }
+html body .app-container .brand-panel__links { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; margin: 8px 0 0; }
+html body .app-container .brand-panel__links a, html body .app-container .brand-panel__back { display: inline-flex; align-items: center; min-height: 44px; padding: 0; border: 0; background: none; color: #3e2723; font: 700 14px/1 'DM Sans', sans-serif; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+html body .app-container .brand-panel__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+html body .app-container[data-theme='brand-dark'] .brand-card { background: #ffedac; color: #3e2723; }
+html body .app-container[data-theme='brand-dark'] .brand-panel { background: #3e2723; border-color: #ffedac; }
+html body .app-container[data-theme='brand-dark'] .brand-panel :is(.brand-partner__name, .brand-partner__blurb, .brand-panel__links a, .brand-panel__back) { color: #ffedac !important; }
+@media (max-width: 600px) { html body .app-container .brand-panel { padding: 16px; } html body .app-container .brand-panel__head { flex-direction: column; } }
+/* No logo file: the brand name already heads the card, so no squeezed wordmark. */
+html body .app-container :is(.brand-card, .brand-panel__head) .brand-partner__wordmark { display: none !important; }
+html body .app-container .brand-panel__grid .ayna-discover-card.ayna-browse-card { --tilt: 0deg !important; transform: none !important; }
+html body .app-container .brand-panel__links :is(a, button) { font: 700 15px/1 'DM Sans', sans-serif !important; margin: 0 !important; }
+
+/* Pass 5 About: story text sits on the ruled lines (30px rhythm), advisor
+   cards are straight, the closing buttons sit side by side at one height. */
+html body .app-container:not([data-theme='dark']) .ay-info .ay-info-story__text.ay-info-story__text { padding-top: 24px !important; padding-bottom: 24px !important; background: repeating-linear-gradient(#ffedac 0 29px, rgba(247, 186, 221, .7) 29px 30px) !important; background-position: 0 24px !important; background-origin: border-box; transform: none; }
+html body .app-container:not([data-theme='dark']) .ay-info .ay-info-story__text.ay-info-story__text p { font-size: 17px !important; line-height: 30px !important; margin: 0 0 30px !important; padding: 0 !important; }
+html body .app-container:not([data-theme='dark']) .ay-info .ay-info-story__text.ay-info-story__text p:last-child { margin-bottom: 0 !important; }
+html body .app-container .ay-info .ay-info-advisor, html body .app-container .ay-info .ay-info-advisor:nth-child(even) { transform: none !important; }
+html body .app-container .ay-info .ay-info-btn-row { display: flex !important; flex-direction: row !important; flex-wrap: wrap; align-items: stretch; gap: 12px; }
+html body .app-container .ay-info .ay-info-btn-row > .ay-info-btn { width: auto !important; min-height: 48px; margin: 0 !important; }
+html body .app-container .ay-info .ay-info-cta .ay-info-btn-row { flex: 0 0 auto; flex-wrap: nowrap; } html body .app-container .ay-info .ay-info-btn-row > .ay-info-btn { white-space: nowrap; }
+@media (max-width: 700px) { html body .app-container .ay-info .ay-info-cta .ay-info-btn-row { flex-wrap: wrap; } }
+
+/* Pass 5 How it works: the fourth step card matches the other three. */
+html body .app-container:not([data-theme='dark']) .ay-info-step.ay-info-step:last-child { background: repeating-linear-gradient(#ffedac 0 25px, rgba(247, 186, 221, .45) 25px 26px) !important; background-position: 0 44px !important; }
+
+/* Pass 5 How we make money (and every page with "On this page"): a wider
+   contents column so titles fit in two lines, a sentence-case label, and
+   headings that start at the top of their card or section. */
+@media (min-width: 961px) {
+  html body .app-container .ay-info--toc .ay-info__layout { grid-template-columns: 300px minmax(0, 720px) !important; gap: 48px !important; }
+}
+html body .app-container .ay-info__toc-title { text-transform: none !important; letter-spacing: 0 !important; font: 700 15px/1.2 'DM Sans', sans-serif !important; }
+html body .app-container .ay-info .ay-info-summary > :first-child { margin-top: 0 !important; }
+html body .app-container .ay-info .ay-info-summary { padding-top: 24px !important; }
+html body .app-container .ay-info .ay-info__section--prose + .ay-info__section--prose { padding-top: 28px !important; margin-top: 36px !important; }
+html body .app-container .ay-info .ay-info__section--prose .ay-info__section-head { margin-top: 0 !important; padding-top: 0 !important; }
+html body .app-container .ay-info .ay-info__section--prose .ay-info__section-head > :first-child { margin-top: 0 !important; }
+html body .app-container .ay-info .ay-info__section--prose > .ay-info__h2:first-child { margin-top: 0 !important; }
+
+/* Pass 5 Contact: one centred form; topics as chips in the form; errors in
+   brand colours under each field. */
+html body .app-container .ay-info-contact { display: block !important; max-width: 760px; margin: 0 auto; }
+html body .app-container .ay-contact-topicset { margin: 0; padding: 0; border: 0; min-width: 0; }
+html body .app-container .ay-contact-topicset legend { padding: 0; margin: 0 0 8px; font: 700 14px/1.3 'DM Sans', sans-serif; color: #3e2723; }
+html body .app-container .ay-contact-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+html body .app-container .ay-contact-chips button { min-height: 44px; padding: 0 16px; border: 2px solid #3e2723; border-radius: 99px; background: #ffedac; color: #3e2723; font: 600 14px/1 'DM Sans', sans-serif; cursor: pointer; }
+html body .app-container .ay-contact-chips button:hover { box-shadow: 2px 2px 0 #3e2723; }
+html body .app-container .ay-contact-chips button.is-on { background: #3e2723; color: #ffedac; }
+html body .app-container .ay-info-field__err { margin: 6px 0 0; padding: 6px 10px; border-left: 4px solid #3e2723; background: #f7badd; color: #3e2723; font: 600 13px/1.4 'DM Sans', sans-serif; border-radius: 0 8px 8px 0; }
+html body .app-container .ay-info-form [aria-invalid='true']:is(input, textarea) { border-color: #3e2723 !important; border-width: 3px !important; background: #fff8e6 !important; }
+html body .app-container .ay-contact-topicset[aria-invalid='true'] .ay-contact-chips button { border-style: dashed; }
+
+/* Consumer Health Data notice inside the site layout (same text as the static file). */
+html body .app-container .ay-chd h2 { margin: 2rem 0 .6rem; font: 400 26px/1.2 'DM Serif Display', serif; color: #3e2723; }
+html body .app-container .ay-chd p, html body .app-container .ay-chd li { line-height: 1.7; color: #3e2723; }
+html body .app-container .ay-chd .callout { margin: 1.5rem 0; padding: 1rem 1.1rem; border: 2px solid #3e2723; border-radius: 12px; background: #f7badd; }
+html body .app-container .ay-chd table { width: 100%; border-collapse: collapse; margin: .8rem 0 1.4rem; }
+html body .app-container .ay-chd :is(th, td) { text-align: left; vertical-align: top; border-top: 1.5px solid rgba(62, 39, 35, .25); padding: .8rem .7rem; }
+@media (max-width: 650px) { html body .app-container .ay-chd :is(table, thead, tbody, tr, th, td) { display: block; } html body .app-container .ay-chd td { border-top: 0; padding-top: 0; } }
+html body .app-container[data-theme='brand-dark'] .ay-chd :is(h2, p, li, th, td, a) { color: #ffedac; }
+html body .app-container[data-theme='brand-dark'] .ay-chd .callout, html body .app-container[data-theme='brand-dark'] .ay-chd .callout * { color: #3e2723 !important; }
+html body .app-container[data-theme='brand-dark'] .ay-chd :is(th, td) { border-top-color: rgba(255, 237, 172, .3); }
+
+/* Pass 5 Landing: product names wrap in full; "More" reads as the chip row's last control. */
+html body .app-container .lv-tile__name { -webkit-line-clamp: unset !important; display: block !important; overflow: visible !important; }
+html body .app-container .lv-chips .lv-chips__more { border-style: dashed !important; }
+html body .app-container .lv-tile__row { display: flex !important; flex-direction: column !important; align-items: flex-start !important; gap: 2px !important; }
+html body .app-container .lv-tile__price { white-space: normal !important; font-weight: 600; }
+html body .app-container .lv-band__foot { align-items: center !important; }
+html body .app-container .lv-band__foot > * { margin-top: 0 !important; margin-bottom: 0 !important; }
+
+/* Pass 5 Quiz: one centred card on plain cream, no side photos or giant
+   numeral; the count never changes mid-quiz. */
+html body .app-container .wq-stage:not(.wq-stage--summary) { display: block !important; max-width: 680px; margin: 0 auto; }
+html body .app-container:not([data-theme='brand-dark']) .wq-page { background: #ffedac !important; }
+html body .app-container:not([data-theme='brand-dark']) .wq-page::before, html body .app-container:not([data-theme='brand-dark']) .wq-page::after { display: none !important; }
+html body .app-container .wq-urgent { margin: 10px 0 0; font-weight: 600; }
+html body .app-container .wq-urgent a { color: inherit; text-decoration: underline; text-underline-offset: 3px; font-weight: 700; }
+
+/* Pass 5 phone targets: the last controls under 24px get a full 44px row. */
+@media (pointer: coarse), (max-width: 720px) {
+  html body .app-container :is(.ayna-browse__clearall, .ay-needs__covered > summary, .ay-needs__care > summary, .wc-name, .ay-info-advisor__link, .wyou-rows > * > button, .eco3-cost > summary) { display: inline-flex !important; align-items: center; min-height: 44px; min-width: 44px; }
+}
+html body .app-container .ay-card-kind { display: block; margin: -2px 0 4px; font: 500 13px/1.3 'DM Sans', sans-serif; color: #3e2723; opacity: .8; }
+html body .app-container[data-theme='brand-dark'] .ayna-browse-card .ay-card-kind { color: #3e2723; }
+
+/* Dark mode for the pass 5 pieces. */
+html body .app-container.app-container[data-theme='brand-dark'] .ay-contact-topicset legend { color: #ffedac !important; }
+html body .app-container.app-container[data-theme='brand-dark'] .ay-contact-chips button { background: #ffedac !important; color: #3e2723 !important; border-color: #ffedac !important; }
+html body .app-container.app-container[data-theme='brand-dark'] .ay-contact-chips button.is-on { background: #f7badd !important; border-color: #f7badd !important; }
+html body .app-container.app-container[data-theme='brand-dark'] .ay-info-form button[type='submit'] { background: #ffedac !important; color: #3e2723 !important; border-color: #ffedac !important; }
+html body .app-container.app-container[data-theme='brand-dark'] .ay-lib-products-wrap :is(h3, .ay-lib-products__disc) { color: #ffedac !important; }
+html body .app-container.app-container[data-theme='brand-dark'] .ay-lib-reading > .ay-lib-backlink { color: #ffedac !important; border-color: #ffedac !important; }
+
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-contact-chips button, html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-contact-chips button * { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-chd .callout, html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-chd .callout * { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-lib-products-wrap .ayna-discover-card__name { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-info-card .ay-contact-chips button[type='button'][role='radio'] { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-info-card.ay-chd .callout.callout, html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-info-card.ay-chd .callout.callout :is(strong, em, span, a, p)[class=''], html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-info-card.ay-chd .callout.callout > :is(strong, em, span, a, p) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-lib-more-row small { color: #ffedac !important; }

@@ -78,6 +78,8 @@ export default function ProductCard({
             </span>
           )}
           <h3 className="ayna-discover-card__name">{shownBrand ? displayName(product) : product.name}</h3>
+          {/* What it is, in a few words, when the brand took the eyebrow slot. */}
+          {!isMine && shownBrand && <span className="ay-card-kind">{String(categoryLabel).replace(/^[^\w]+\s*/, '')}</span>}
           <span className={`ayna-discover-card__price${price.main === 'Price at retailer' ? ' is-unknown' : ''}`}>{price.main}{price.sub && (/^list\s+\$/i.test(price.sub)
             ? <small><span className="sr-only">List price </span><s>{price.sub.replace(/^list\s+/i, '')}</s></small>
             : <small>{price.sub}</small>)}</span>

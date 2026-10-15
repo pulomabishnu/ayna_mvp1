@@ -147,7 +147,7 @@ export default function SiteFooter({
         </p>
         <nav className="ay-footer-legal__links" aria-label="Legal">
           <a className="ay-footer-legal__link" href="/privacy-policy" onClick={(e) => footerGo(e, onViewPrivacyPolicy)}>Privacy policy</a>
-          <a className="ay-footer-legal__link" href="/consumer-health-data.html">Consumer health data privacy</a>
+          <a className="ay-footer-legal__link" href="/consumer-health-data">Consumer health data privacy</a>
           <a className="ay-footer-legal__link" href="/terms-of-use" onClick={(e) => footerGo(e, onViewTermsOfUse)}>Terms of use</a>
           <a className="ay-footer-legal__link" href="/how-we-make-money" onClick={(e) => footerGo(e, onViewHowWeMakeMoney)}>How we make money</a>
           <AnalyticsToggle />

@@ -1,10 +1,8 @@
 import React from 'react';
-import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
-import { handleImageErrorWithRetry } from '../utils/imageRetry';
-import { safeProductImageSrc } from '../utils/resolveProductImage';
-import { ProductImageFallback } from './ProductTileImage';
+import { ALL_PRODUCTS } from '../data/products';
 import { InfoPage } from './InfoPage';
-import { productHref, isPlainLeftClick } from '../utils/productRoute';
+import { isPlainLeftClick } from '../utils/productRoute';
+import ProductCard from './ProductCard';
 import { RESA_SITE_URL, RESA_WAITLIST_CTA, RESA_WAITLIST_URL } from '../data/resaPartnership';
 
 /**
@@ -149,12 +147,6 @@ const PARTNERS = [
   // out of partnerBrands.js's allowlist until a partnership is confirmed.
 ];
 
-function eyebrowFor(product) {
-  return String(CATEGORY_LABELS[product.category] || product.category || '')
-    .replace(/^[^\w]+\s*/, '')
-    .toUpperCase();
-}
-
 function BrandMark({ partner }) {
   const [logoFailed, setLogoFailed] = React.useState(false);
   if (partner.logo && !logoFailed) {
@@ -162,7 +154,7 @@ function BrandMark({ partner }) {
       <img
         className="brand-partner__logo"
         src={partner.logo}
-        alt={partner.brand}
+        alt={`${partner.brand} logo`}
         onError={() => setLogoFailed(true)}
       />
     );
@@ -174,7 +166,22 @@ function BrandMark({ partner }) {
 const sortKey = (p) => String(p.brand).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 const ORDERED = [...PARTNERS].sort((a, b) => (Number(!!a.prelaunch) - Number(!!b.prelaunch)) || sortKey(a).localeCompare(sortKey(b)));
 
+const slug = (b) => `brand-${String(b).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+
+/* A grid of brand cards (logo, one line, product count). Picking one opens
+   that brand's products below the grid, in the same card the Shop uses, so
+   the page is one screen of brands instead of a storefront per brand. */
 export default function BrandPartners({ onOpenProduct, myProducts = {}, onBrowseBrand }) {
+  const [open, setOpen] = React.useState(() => {
+    try { const h = window.location.hash.slice(1); return ORDERED.find((p) => slug(p.brand) === h)?.brand || null; } catch { return null; }
+  });
+  const panelRef = React.useRef(null);
+  const pick = (brand) => {
+    setOpen((cur) => (cur === brand ? null : brand));
+    window.requestAnimationFrame(() => panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  };
+  const partner = ORDERED.find((p) => p.brand === open) || null;
+  const products = partner ? ALL_PRODUCTS.filter((p) => p.brand === partner.brand) : [];
   return (
     <InfoPage photos={['sink-heels-dryer', 'vanity-hairdryer', 'bag-tubes']} tone="sky"
       eyebrow="Partnerships"
@@ -184,94 +191,46 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onBrowse
         : 'Check back soon. When partnerships go live, they may be featured in general Browse, but partnership will never change personalized match scores or recommendation order.'}
       width="wide"
     >
-      {PARTNERS.length > 6 && (
-        <nav className="brand-partner__jump" aria-label="Jump to a brand">
-          {ORDERED.map((p) => <a key={p.brand} href={`#brand-${String(p.brand).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>{p.brand}</a>)}
-        </nav>
-      )}
-      <div className="ay-info-partners">
-        {ORDERED.map((partner) => {
-          const products = ALL_PRODUCTS.filter((p) => p.brand === partner.brand);
+      <ul className="brand-cards" aria-label="Partner brands, A to Z">
+        {ORDERED.map((p) => {
+          const count = ALL_PRODUCTS.filter((x) => x.brand === p.brand).length;
+          const on = open === p.brand;
           return (
-            <article key={partner.brand} id={`brand-${String(partner.brand).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className={`brand-partner${partner.prelaunch ? ' brand-partner--prelaunch' : ''}`}>
-              <header className="brand-partner__head">
-                <BrandMark partner={partner} />
-                <div>
-                  <h2 className="brand-partner__name">
-                    {partner.brand}
-                    {partner.prelaunch && <span className="brand-partner__prelaunch-tag">Pre-launch · Waitlist</span>}
-                  </h2>
-                  <p className="brand-partner__blurb">{partner.blurb}</p>
-                  {partner.waitlistUrl && (
-                    <a
-                      className="brand-partner__waitlist-cta"
-                      href={partner.waitlistUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {partner.waitlistCta || 'Join the waitlist'} →
-                    </a>
-                  )}
-                  <a
-                    className="brand-partner__link"
-                    href={`/shop?q=${encodeURIComponent(partner.brand)}`}
-                    onClick={(e) => {
-                      if (!onBrowseBrand) return;
-                      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-                      e.preventDefault();
-                      onBrowseBrand(partner.brand);
-                    }}
-                  >
-                    Browse {partner.brand} →
-                  </a>
-                </div>
-              </header>
-
-              {products.length > 0 && (
-                <div className="discovery-grid brand-partner__grid">
-                  {products.map((product) => (
-                    <div key={product.id} className="discovery-card" style={{ cursor: 'default' }}>
-                      <div
-                        className="discovery-card__tile"
-                        role="button"
-                        tabIndex={0}
-                        aria-label={`${product.name}. Open details`}
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => onOpenProduct?.(product)}
-                        onKeyDown={(e) => {
-                          if (e.key !== 'Enter' && e.key !== ' ') return;
-                          e.preventDefault();
-                          onOpenProduct?.(product);
-                        }}
-                      >
-                        {safeProductImageSrc(product.image, product.type === 'digital') ? (
-                          <img
-                            src={safeProductImageSrc(product.image, product.type === 'digital')}
-                            alt=""
-                            loading="lazy"
-                            onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
-                          />
-                        ) : (
-                          <ProductImageFallback />
-                        )}
-                      </div>
-                      <div className="discovery-card__eyebrow">{eyebrowFor(product)}</div>
-                      <a className="discovery-card__name brand-partner__pname" href={productHref(product)} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onOpenProduct?.(product); }}>{product.name}</a>
-                      <div className="discovery-card__price">{product.price}</div>
-                      {/* View, not Add: the product page carries the match and safety info a one-click add would skip. */}
-                      <a className="discovery-card__join brand-partner__view" href={productHref(product)} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onOpenProduct?.(product); }} aria-label={`View ${product.name}`}>
-                        {myProducts[product.id] ? '✓ In your ecosystem · View' : 'View'}
-                      </a>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </article>
+            <li key={p.brand} id={slug(p.brand)}>
+              <button type="button" className={`brand-card${on ? ' is-on' : ''}`} aria-expanded={on} aria-controls="brand-panel" onClick={() => pick(p.brand)}>
+                <BrandMark partner={p} />
+                <span className="brand-card__name">{p.brand}{p.prelaunch && <small className="brand-card__tag">Pre-launch</small>}</span>
+                <span className="brand-card__blurb">{p.blurb}</span>
+                <span className="brand-card__count">{count ? `${count} product${count === 1 ? '' : 's'}` : 'Waitlist'}<span aria-hidden="true">{on ? ' ↑' : ' →'}</span></span>
+              </button>
+            </li>
           );
         })}
-
-        {PARTNERS.length > 0 && <p className="ay-info-partners__more">More coming soon</p>}
-      </div>
+      </ul>
+      <section id="brand-panel" ref={panelRef} className="brand-panel" aria-live="polite" hidden={!partner}>
+        {partner && <>
+          <header className="brand-panel__head">
+            <BrandMark partner={partner} />
+            <div>
+              <h2 className="brand-partner__name">{partner.brand}{partner.prelaunch && <span className="brand-partner__prelaunch-tag">Pre-launch · Waitlist</span>}</h2>
+              <p className="brand-partner__blurb">{partner.blurb}</p>
+              <p className="brand-panel__links">
+                {partner.waitlistUrl && <a className="brand-partner__waitlist-cta" href={partner.waitlistUrl} target="_blank" rel="noopener noreferrer">{partner.waitlistCta || 'Join the waitlist'} →</a>}
+                <a className="brand-partner__link" href={`/shop?q=${encodeURIComponent(partner.brand)}`} onClick={(e) => {
+                  if (!onBrowseBrand || !isPlainLeftClick(e)) return;
+                  e.preventDefault();
+                  onBrowseBrand(partner.brand);
+                }}>See {partner.brand} in Shop →</a>
+                <button type="button" className="brand-panel__back" onClick={() => { setOpen(null); document.getElementById(slug(partner.brand))?.querySelector('button')?.focus(); }}>Back to brands ↑</button>
+              </p>
+            </div>
+          </header>
+          {products.length > 0 && <div className="brand-panel__grid">
+            {products.map((product) => <ProductCard key={product.id} product={product} onOpen={onOpenProduct} inEcosystem={Boolean(myProducts[product.id])} />)}
+          </div>}
+        </>}
+      </section>
+      {PARTNERS.length > 0 && <p className="ay-info-partners__more">More coming soon</p>}
     </InfoPage>
   );
 }

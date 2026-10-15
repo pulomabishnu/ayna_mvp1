@@ -74,6 +74,7 @@ export default function WebWrapped({ products = [], quizResults, onClose, onBrow
         <button type="button" onClick={back} disabled={index === 0 && !onBack} aria-label={index === 0 && onBack ? 'Back to the quiz' : 'Previous slide'}>←</button>
         <span>ayna Wrapped</span>
         <div>
+          {!last && <button type="button" className="wwr-skip" onClick={() => { progressRef.current = 0; setProgress(0); setIndex(slides.length - 1); }}>Skip to my matches</button>}
           {!last && <button type="button" onClick={() => setPaused((v) => !v)} aria-label={paused ? 'Play' : 'Pause'}>{paused ? '▶' : '❚❚'}</button>}
           <button type="button" onClick={onClose} aria-label="Close">×</button>
         </div>

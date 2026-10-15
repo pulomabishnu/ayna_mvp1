@@ -71,7 +71,7 @@ export default function TermsOfUse({ onBack }) {
         <div style={sectionStyle}>
           <h2>6. Privacy and consumer health data</h2>
           <p style={pStyle}>
-            Our <a href="/privacy-policy">Privacy Policy</a> explains how we handle personal information. Our <a href="/consumer-health-data.html">Consumer Health Data Privacy Notice</a> provides additional disclosures and rights relating to consumer health data. Those notices are incorporated into these Terms to the extent applicable.
+            Our <a href="/privacy-policy">Privacy Policy</a> explains how we handle personal information. Our <a href="/consumer-health-data">Consumer Health Data Privacy Notice</a> provides additional disclosures and rights relating to consumer health data. Those notices are incorporated into these Terms to the extent applicable.
           </p>
         </div>
 

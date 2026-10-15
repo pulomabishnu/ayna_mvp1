@@ -65,6 +65,7 @@ import { loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser } from '
 import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
 import AuthGate, { ConsentGate } from './components/AuthGate';
 import PrivacyPolicy from './components/PrivacyPolicy';
+import ConsumerHealthData from './components/ConsumerHealthData';
 import HowWeMakeMoney from './components/HowWeMakeMoney';
 import HowItWorks from './components/HowItWorks';
 import About from './components/About';
@@ -141,6 +142,7 @@ const VIEW_TO_PATH = {
   'doctor-prep': '/appointment-prep', 'profile-edit': '/profile', 'phone-verify': '/text-ayna', tracked: '/tracked',
   'delete-account': '/delete-account',
   'privacy-policy': '/privacy-policy',
+  'consumer-health-data': '/consumer-health-data',
   'terms-of-use': '/terms-of-use',
   'how-we-make-money': '/how-we-make-money',
   'how-it-works': '/how-it-works',
@@ -159,14 +161,14 @@ const VIEW_TO_PATH = {
 // listed here fall back to the site's base title (see the title effect).
 const VIEW_TITLES = {
   quiz: 'Get matched', ecosystem: 'My Ecosystem', discovery: 'Shop', you: 'You', community: 'Community',
-  waitlist: 'Partner brands', recommendations: 'Your Recommendations', articles: 'Health Library', screenings: 'Screenings',
+  waitlist: 'Partner brands', recommendations: 'Your Recommendations', articles: 'Library', screenings: 'Screenings',
   omitted: 'Omitted Products', comparison: 'Compare Products', recalls: 'Recalls',
   'doctor-prep': 'Appointment Prep', 'profile-edit': 'Edit Profile',
   'phone-verify': 'Verify Phone', tracked: 'Tracked Products', 'delete-account': 'Delete Account',
-  'privacy-policy': 'Privacy Policy', 'terms-of-use': 'Terms of Use',
+  'privacy-policy': 'Privacy Policy', 'consumer-health-data': 'Consumer Health Data Privacy Notice', 'terms-of-use': 'Terms of Use',
   'how-we-make-money': 'How We Make Money', 'how-it-works': 'How It Works',
   about: 'About', contact: 'Contact', 'not-found': 'Page Not Found',
-  'campus-resources': 'Campus Support',
+  'campus-resources': 'Campus Resources',
   'admin-reviews': 'All Reviews',
 };
 
@@ -620,6 +622,32 @@ function App() {
   }, [reportSaveFailure]);
   const accountMenuRef = useRef(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // Phone menu: focus moves into the sheet, Tab stays inside it, Escape
+  // closes it, and focus returns to the menu button afterwards.
+  useEffect(() => {
+    if (!mobileMenuOpen) return undefined;
+    const opener = document.activeElement;
+    const sheet = () => document.querySelector('.mobile-nav-sheet');
+    const focusables = () => [...(sheet()?.querySelectorAll('a[href], button:not([disabled])') || [])];
+    const raf = window.requestAnimationFrame(() => (focusables()[1] || focusables()[0])?.focus());
+    const onKey = (e) => {
+      if (e.key === 'Escape') { e.preventDefault(); setMobileMenuOpen(false); return; }
+      if (e.key !== 'Tab') return;
+      const list = focusables();
+      if (!list.length) return;
+      const first = list[0]; const last = list[list.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => {
+      window.cancelAnimationFrame(raf);
+      document.removeEventListener('keydown', onKey);
+      const btn = document.querySelector('.mobile-menu-btn');
+      if (btn && (!document.activeElement || document.activeElement === document.body || sheet()?.contains(document.activeElement))) btn.focus();
+      else if (opener && opener.isConnected && opener === btn) btn.focus();
+    };
+  }, [mobileMenuOpen]);
   const scrollY = useScrollPosition();
 
   const hasHealthImport = useMemo(() => hasHealthProfileSignals(healthProfile), [healthProfile]);
@@ -700,7 +728,7 @@ function App() {
     // straight back to the landing and those pages were unreachable by URL in
     // production. (PROTECTED_VIEWS below is what actually guards private ones.)
     const STATIC_VIEWS = [
-      'privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback', 'auth-confirm',
+      'privacy-policy', 'consumer-health-data', 'terms-of-use', 'confirmed', 'auth-callback', 'auth-confirm',
       'welcome', 'hero', 'quiz', 'discovery', 'product', 'waitlist', 'articles', 'you', 'community',
       'how-it-works', 'how-we-make-money', 'campus-resources', 'about', 'contact', 'waitlist', 'not-found', 'ecosystem',
     ];
@@ -2235,6 +2263,9 @@ function App() {
         )}
         {currentView === 'privacy-policy' && (
           <PrivacyPolicy onBack={handleBackFromStandalonePage} />
+        )}
+        {currentView === 'consumer-health-data' && (
+          <ConsumerHealthData onBack={handleBackFromStandalonePage} />
         )}
         {currentView === 'terms-of-use' && (
           <TermsOfUse onBack={handleBackFromStandalonePage} />

@@ -637,6 +637,40 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
           </div>
         )}
 
+        {/* Fastest way in first: Google and Apple, then "or", then email. */}
+        {!resetView && <>
+          <div className="ay-auth-oauth" style={styles.oauthRow}>
+            <button
+              type="button"
+              onClick={handleGoogle}
+              disabled={googleLoading}
+              style={{
+                ...styles.googleBtn,
+              }}
+            >
+              <GoogleIcon />
+              {googleLoading ? 'Redirecting…' : 'Continue with Google'}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleApple}
+              disabled={appleLoading}
+              style={{
+                ...styles.googleBtn,
+              }}
+            >
+              <AppleIcon />
+              {appleLoading ? 'Redirecting…' : 'Continue with Apple'}
+            </button>
+          </div>
+          <div style={styles.divider}>
+            <span style={styles.dividerLine} />
+            <span style={styles.dividerText}>or</span>
+            <span style={styles.dividerLine} />
+          </div>
+        </>}
+
         {resetView ? (
           <form className="ay-auth-reset" onSubmit={(e) => { e.preventDefault(); handleForgotPassword(); }} noValidate>
             <h3 className="ay-auth-reset__h">Reset your password</h3>
@@ -934,38 +968,6 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
           )}
         </form>
         )}
-
-        <div style={styles.divider}>
-          <span style={styles.dividerLine} />
-          <span style={styles.dividerText}>or</span>
-          <span style={styles.dividerLine} />
-        </div>
-
-        <div className="ay-auth-oauth" style={styles.oauthRow}>
-          <button
-            type="button"
-            onClick={handleGoogle}
-            disabled={googleLoading}
-            style={{
-              ...styles.googleBtn,
-            }}
-          >
-            <GoogleIcon />
-            {googleLoading ? 'Redirecting…' : 'Continue with Google'}
-          </button>
-
-          <button
-            type="button"
-            onClick={handleApple}
-            disabled={appleLoading}
-            style={{
-              ...styles.googleBtn,
-            }}
-          >
-            <AppleIcon />
-            {appleLoading ? 'Redirecting…' : 'Continue with Apple'}
-          </button>
-        </div>
 
         {!isSignup && (
           <p style={styles.fine}>

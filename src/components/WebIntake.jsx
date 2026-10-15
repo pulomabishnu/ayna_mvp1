@@ -13,7 +13,6 @@ import {
   getLifeStages, isMinorAge, normalizeSuggestion, readIntakeDraft, reconstructIntakeFromSnapshot,
   requiredReady, asksBreastfeedingOnTiming, ttcDurationOptions, isValidUsZip,
 } from '../mobile/data/intakeModel.js';
-import QuizIntro from '../mobile/screens/intake/QuizIntro.jsx';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import { rankSearchOptions as rankedSuggestions, matchesSearchOption } from '../utils/search/index.js';
 import './WebIntake.css';
@@ -69,7 +68,7 @@ function Tiles({ items, selected = [], onToggle, labels = {}, label }) {
     {items.map((item, i) => {
       const text = labels[item] || item;
       return <div key={item} className="wq-tile-wrap">
-        <button type="button" role="checkbox" className={`wq-tile tone-${i % 4}${selected.includes(item) ? ' is-on' : ''}`} aria-checked={selected.includes(item)} onClick={() => onToggle(item)}>
+        <button type="button" role="checkbox" aria-label={text} className={`wq-tile tone-${i % 4}${selected.includes(item) ? ' is-on' : ''}`} aria-checked={selected.includes(item)} onClick={() => onToggle(item)}>
           <span className="wq-check" aria-hidden="true">✓</span><span className="wq-tile-text">{text}</span>
         </button>
       </div>;
@@ -147,7 +146,7 @@ function AgeField({ value, onChange, underage, onOpenGate }) {
   return <div className={`wq-age${underage ? ' is-under' : ''}`}>
     <label className="wq-age-field">
       <span>Your age</span>
-      <input type="text" inputMode="numeric" pattern="[0-9]*" autoComplete="off" name="age" value={value} placeholder="e.g. 29" maxLength={2} aria-describedby={underage ? 'wq-age-alert' : undefined} aria-invalid={underage || undefined}
+      <input type="text" inputMode="numeric" pattern="[0-9]*" autoComplete="off" name="age" aria-label="Your age in years" value={value} placeholder="e.g. 29" maxLength={2} aria-describedby={underage ? 'wq-age-alert' : undefined} aria-invalid={underage || undefined}
         onChange={(e) => onChange(e.target.value.replace(/\D/g, '').slice(0, 2))} />
       <small>years</small>
     </label>
@@ -262,6 +261,10 @@ const TOPIC_SHORT = {
 // list the app uses.
 const CHECKPOINT = CHECKPOINT_STEP;
 
+const FOLLOWUP_STEP_IDS = new Set(['periodFlow', 'periodPain', 'utiFrequency', 'ttcDuration', 'postpartumTiming', 'pregnancyTrimester']);
+// Q2 opens on the needs most people start with; "More topics" shows every group.
+const COMMON_NEEDS = ['Period product support', 'Cramps or period pain', 'Heavy periods', 'Vaginal dryness', 'Bladder leakage or incontinence', 'Trouble sleeping'];
+
 function splitSteps(intake) {
   const { required, optional } = splitIntakeSteps(intake);
   const core = required.filter((s) => s.id !== 'lifeStage').map((s) => (s.id === 'age'
@@ -277,7 +280,7 @@ function firstUnansweredStep(intake) {
   return id === 'lifeStage' ? 'age' : id;
 }
 
-export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot = null, introEnabled = true }) {
+export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot = null }) {
   const [savedDraft] = useState(() => (initialSnapshot ? null : readIntakeDraft()));
   const [intake, setIntake] = useState(() => (savedDraft ? { ...EMPTY, ...savedDraft.intake } : reconstructIntakeFromSnapshot(initialSnapshot)));
   const [stepId, setStepId] = useState(() => {
@@ -285,11 +288,6 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
     return initialSnapshot ? firstUnansweredStep(reconstructIntakeFromSnapshot(initialSnapshot)) : 'age';
   });
   const [search, setSearch] = useState('');
-  // The "Two helpers" tips show once per browser, and never when editing a profile.
-  const [showIntro] = useState(() => {
-    if (initialSnapshot) return false;
-    try { const seen = localStorage.getItem('ayna_web_quiz_intro_seen') === '1'; localStorage.setItem('ayna_web_quiz_intro_seen', '1'); return !seen; } catch { return true; }
-  });
   const [infoOpen, setInfoOpen] = useState(false);
   const [glossary, setGlossary] = useState(null);
   // Escape closes the meaning card, like every other dialog on the site.
@@ -306,6 +304,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
   const [saveError, setSaveError] = useState('');
   const [avoidTab, setAvoidTab] = useState('avoid');
   const [supportTab, setSupportTab] = useState(null);
+  const [showAllNeeds, setShowAllNeeds] = useState(false);
 
   // Same draft the app keeps, so an unfinished quiz resumes on either.
   useEffect(() => {
@@ -324,6 +323,11 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
   const index = Math.max(0, steps.findIndex((s) => s.id === stepId));
   const step = steps[index] || steps[0];
   const isLast = index === steps.length - 1;
+  // A follow-up (flow, pain, timing…) keeps its parent's number, so the
+  // count never grows mid-quiz: always "N of 6" for the core questions.
+  const isFollowUp = (st) => FOLLOWUP_STEP_IDS.has(st.id);
+  const shownTotal = phase === 'more' ? steps.length : steps.filter((st) => !isFollowUp(st)).length;
+  const shownIndex = phase === 'more' ? index + 1 : Math.max(1, steps.slice(0, index + 1).filter((st) => !isFollowUp(st)).length);
 
   // Age and life stage share one screen here, so that screen checks both.
   const answerId = step.type === 'aboutYou' ? 'aboutYou' : step.id;
@@ -450,7 +454,13 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
                 return <section key={g.label} className="wq-group"><h3>{g.label}</h3><Chips items={items} selected={intake.supportSelections} onToggle={(v) => toggleExclusive('supportSelections', v, ['Nothing right now'])} /></section>;
               })}
             </div>
-          ) : (() => {
+          ) : !showAllNeeds ? <>
+            <Tiles label="Common needs" items={[...COMMON_NEEDS, ...intake.supportSelections.filter((i) => known.has(i) && !COMMON_NEEDS.includes(i) && i !== 'Nothing right now')]} selected={intake.supportSelections} onToggle={(v) => toggleExclusive('supportSelections', v, ['Nothing right now'])} />
+            <div className="wq-chips is-small">
+              <button type="button" className="wq-chip is-dashed" aria-expanded="false" onClick={() => setShowAllNeeds(true)}>More topics</button>
+              <Chips small items={['Nothing right now']} selected={intake.supportSelections} onToggle={(v) => toggleExclusive('supportSelections', v, ['Nothing right now'])} />
+            </div>
+          </> : (() => {
             const activeLabel = supportTab || SUPPORT_GROUPS.find((g) => g.items.some((i) => intake.supportSelections.includes(i)))?.label || SUPPORT_GROUPS[0]?.label;
             const group = SUPPORT_GROUPS.find((g) => g.label === activeLabel) || SUPPORT_GROUPS[0];
             return <>
@@ -508,7 +518,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
       case 'trustedBrands': return <Tokens values={intake.trustedBrands} onChange={(v) => set('trustedBrands', v)} placeholder="Type a brand" suggestions={BRAND_SUGGESTIONS} />;
       case 'safety': return <>
         <Rows options={URGENT_STATUS} value={intake.safetyConcern} onChange={(v) => set('safetyConcern', v)} />
-        {['Yes', 'Not sure'].includes(intake.safetyConcern) && <div className="wq-alert-card" role="note"><b>Worth a closer look</b><p>Some new or worsening symptoms need a clinician. ayna helps you discover products and doesn’t diagnose. If it feels urgent or severe, get care promptly.{intake.safetyConcern === 'Yes' ? ' We’ll show care options first.' : ''}</p></div>}
+        {['Yes', 'Not sure'].includes(intake.safetyConcern) && <div className="wq-alert-card" role="note"><b>Worth a closer look</b><p>Some new or worsening symptoms need a clinician. ayna helps you discover products and doesn’t diagnose. If it feels urgent or severe, get care promptly.{intake.safetyConcern === 'Yes' ? ' We’ll show care options first.' : ''}</p><p className="wq-urgent">If you’re soaking a pad every hour, fainting, or in severe pain, <a href="tel:911">call 911</a> or go to urgent care.</p></div>}
       </>;
       case 'formats': {
         const custom = intake.preferredFormats.filter((f) => !PRODUCT_FORMATS.includes(f));
@@ -634,12 +644,11 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
 
   return <div className={`wq-page tone-${tone}`} data-step={step.id} data-phase={phase}>
     <div className="wq-stage">
-    <QuizSide n={index + 1} total={steps.length} section={phase === 'more' ? 'Optional' : SECTION_NAMES[step.section]} photos={SECTION_PHOTOS[step.section] || SECTION_PHOTOS.core} />
     <div className="wq-card" key={step.id}>
       <header className="wq-head">
         {index === 0 && phase === 'core' ? <span className="wq-round is-spacer" aria-hidden="true" /> : <button type="button" className="wq-round" aria-label="Previous question" onClick={back}>←</button>}
-        <div className="wq-progress" aria-hidden="true">{steps.map((s, i) => <span key={s.id} className={i < index ? 'is-done' : i === index ? 'is-now' : ''} />)}</div>
-        <span className="wq-count" aria-label={`${phase === 'more' ? 'Optional question' : 'Question'} ${index + 1} of ${steps.length}`}>{index + 1}<i>/{steps.length}</i></span>
+        <div className="wq-progress" aria-hidden="true">{Array.from({ length: shownTotal }, (_, i) => <span key={i} className={i + 1 < shownIndex ? 'is-done' : i + 1 === shownIndex ? 'is-now' : ''} />)}</div>
+        <span className="wq-count" aria-label={`${phase === 'more' ? 'Optional question' : 'Question'} ${shownIndex} of ${shownTotal}`}>{shownIndex}<i>/{shownTotal}</i></span>
       </header>
 
       <div className="wq-label-row">
@@ -668,7 +677,6 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
     </div>
     </div>
 
-    <QuizIntro variant="web" enabled={introEnabled && showIntro} />
     {glossary && <div className="wq-glossary" role="dialog" aria-label={glossary.term} onClick={() => setGlossary(null)}>
       <div onClick={(e) => e.stopPropagation()}><strong>{glossary.term}</strong><p>{glossary.definition}</p><button type="button" className="wq-btn" onClick={() => setGlossary(null)}>Got it</button></div>
     </div>}

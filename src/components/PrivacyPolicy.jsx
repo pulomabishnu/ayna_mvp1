@@ -33,7 +33,7 @@ export default function PrivacyPolicy({ onBack }) {
         </p>
         <p style={pStyle}>
           Consumer health data receives additional disclosures and rights in our{' '}
-          <a href="/consumer-health-data.html">Consumer Health Data Privacy Notice</a>, which supplements this policy.
+          <a href="/consumer-health-data">Consumer Health Data Privacy Notice</a>, which supplements this policy.
         </p>
 
         <div style={sectionStyle}>

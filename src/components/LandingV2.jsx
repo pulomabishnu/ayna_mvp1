@@ -5,6 +5,7 @@ import { isPartnerBrandItem, PARTNER_BRANDS } from '../utils/partnerBrands';
 import { getWeeklyTrendingLineup } from '../utils/trendingLineup';
 import { ALL_PRODUCTS, MACRO_GROUPS } from '../data/products';
 import { getDailyFact } from '../data/welcomeSlides.js';
+import { formatPrice } from '../utils/formatPrice';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import '../styles/landing-v2.css';
 
@@ -156,7 +157,7 @@ function Tiles({ products, onOpenProduct, ranked = false }) {
             </span>
             <span className="lv-tile__row">
               <span className="lv-tile__name">{p.name}</span>
-              {/^\$/.test(String(p.price || '')) && <span className="lv-tile__price">{String(p.price).split(/\s*[(–-]\s*/)[0]}</span>}
+              {(() => { const pr = formatPrice(p).main; return /\$/.test(pr) ? <span className="lv-tile__price">{pr}</span> : null; })()}
             </span>
             {p.brand && <span className="lv-tile__brand">{p.brand}</span>}
           </a>
@@ -167,7 +168,9 @@ function Tiles({ products, onOpenProduct, ranked = false }) {
 }
 
 function Trending({ onOpenProduct, onViewDiscovery }) {
-  const items = useMemo(() => getWeeklyTrendingLineup(ALL_PRODUCTS).map((x) => x.product).filter((p) => p?.image && NEEDS_PHOTO(p)).slice(0, 4), []);
+  // The first four products a new visitor sees: everyday picks, not sex tech.
+  const items = useMemo(() => getWeeklyTrendingLineup(ALL_PRODUCTS).map((x) => x.product)
+    .filter((p) => p?.image && NEEDS_PHOTO(p) && !/sex|intimacy|toy/i.test(String(p.category || '')) && !/\banal\b|vibrator|dildo/i.test(String(p.name || ''))).slice(0, 4), []);
   const ref = useReveal();
   if (items.length < 2) return null;
   return (
@@ -188,14 +191,18 @@ function ShopBand({ onOpenProduct, onViewDiscovery }) {
     .map((n) => ({ ...n, pool: productsForNeed(n).filter(NEEDS_PHOTO).sort((a, b) => Number(isPartnerBrandItem(b)) - Number(isPartnerBrandItem(a))) }))
     .filter((n) => n.pool.length >= 2), []);
   const [id, setId] = useState(needs[0]?.id);
+  const [allChips, setAllChips] = useState(false);
   const need = needs.find((n) => n.id === id) || needs[0];
+  const CHIP_MAX = 7;
+  const shownNeeds = allChips ? needs : needs.slice(0, CHIP_MAX).concat(needs.slice(CHIP_MAX).filter((n) => n.id === id));
   const ref = useReveal();
   if (!need) return null;
   return (
     <section ref={ref} className="lv-band" aria-labelledby="lv-shop-title">
       <h2 id="lv-shop-title">Shop by <em>need</em></h2>
       <div className="lv-chips" role="group" aria-label="Choose a need">
-        {needs.map((n) => (<button key={n.id} type="button" aria-pressed={n.id === need.id} onClick={() => setId(n.id)}>{n.label}</button>))}
+        {shownNeeds.map((n) => (<button key={n.id} type="button" aria-pressed={n.id === need.id} onClick={() => setId(n.id)}>{n.label}</button>))}
+        {needs.length > CHIP_MAX && <button type="button" className="lv-chips__more" aria-expanded={allChips} onClick={() => setAllChips((v) => !v)}>{allChips ? 'Fewer' : `More (${needs.length - CHIP_MAX})`}</button>}
       </div>
       <div key={need.id} className="lv-band__grid"><Tiles products={(() => { const partner = need.pool.filter((p) => isPartnerBrandItem(p)).slice(0, 1); const rest = need.pool.filter((p) => !isPartnerBrandItem(p)); return [...partner, ...rest].slice(0, 4).sort((a, b) => need.pool.indexOf(a) - need.pool.indexOf(b)); })()} onOpenProduct={onOpenProduct} /></div>
       <div className="lv-band__foot">

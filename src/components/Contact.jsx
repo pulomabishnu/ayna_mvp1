@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { apiUrl } from '../utils/apiUrl.js';
 import { InfoPage } from './InfoPage';
 
+// Values the server accepts (api/contact.js); LABELS is how they read here.
+const LABELS = { 'Help & Support': 'Help and support', 'Feedback or Feature Request': 'Feedback or an idea', 'Press & Media': 'Press and media' };
 const REASONS = [
   'Partnerships',
   'Help & Support',
@@ -23,14 +25,31 @@ export default function Contact({ onBack, user = null }) {
   });
   const [status, setStatus] = useState('idle');
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
+  const validate = (f) => {
+    const e = {};
+    if (!f.name.trim()) e.name = 'Add your name.';
+    if (!f.email.trim()) e.email = 'Add your email so we can reply.';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim())) e.email = 'That email doesn’t look right.';
+    if (!f.reason) e.reason = 'Pick a topic.';
+    if (f.message.trim().length < 10) e.message = 'Write at least a sentence (10 characters).';
+    return e;
+  };
 
   const update = (field) => (event) => {
     setForm((current) => ({ ...current, [field]: event.target.value }));
+    if (fieldErrors[field]) setFieldErrors((cur) => ({ ...cur, [field]: undefined }));
   };
+  const errProps = (field) => (fieldErrors[field] ? { 'aria-invalid': true, 'aria-describedby': `contact-${field}-err` } : {});
+  const Err = ({ field }) => (fieldErrors[field] ? <p id={`contact-${field}-err`} className="ay-info-field__err">{fieldErrors[field]}</p> : null);
 
   const submit = async (event) => {
     event.preventDefault();
     if (status === 'sending') return;
+    const found = validate(form);
+    setFieldErrors(found);
+    const first = ['name', 'email', 'reason', 'message'].find((k) => found[k]);
+    if (first) { document.getElementById(first === 'reason' ? 'contact-reason-0' : `contact-${first}`)?.focus(); return; }
 
     setStatus('sending');
     setError('');
@@ -58,6 +77,7 @@ export default function Contact({ onBack, user = null }) {
         message: '',
         companyWebsite: '',
       });
+      setFieldErrors({});
     } catch (err) {
       setStatus('error');
       setError(err?.message || 'We could not send your message. Please try again.');
@@ -72,16 +92,7 @@ export default function Contact({ onBack, user = null }) {
       onBack={onBack}
     >
       <div className="ay-info-contact">
-        <aside className="ay-info-card ay-info-card--pad ay-info-card--mint ay-info-contact__tips">
-          <h2 className="ay-info__h3">Pick a topic</h2>
-          <ul className="ay-info-list ay-contact-topics">
-            {[['Partnerships', 'for brand collaborations.'], ['Help & Support', 'for questions about using ayna.'], ['Press & Media', 'for interviews and stories.']].filter(([r]) => REASONS.includes(r)).map(([r, d]) => (
-              <li key={r}><button type="button" aria-pressed={form.reason === r} onClick={() => setForm((c) => ({ ...c, reason: r }))}><strong>{r}</strong> {d}</button></li>
-            ))}
-          </ul>
-        </aside>
-
-        <form onSubmit={submit} className="ay-info-card ay-info-card--pad ay-info-form">
+        <form onSubmit={submit} noValidate className="ay-info-card ay-info-card--pad ay-info-form">
           <div className="ay-info-form__hp" aria-hidden="true">
             <label>
               Website
@@ -92,25 +103,31 @@ export default function Contact({ onBack, user = null }) {
           <div className="ay-info-form__row">
             <div className="ay-info-field">
               <label htmlFor="contact-name">Name</label>
-              <input id="contact-name" type="text" required maxLength={100} autoComplete="name" value={form.name} onChange={update('name')} placeholder="Your name" />
+              <input id="contact-name" type="text" required maxLength={100} autoComplete="name" value={form.name} onChange={update('name')} placeholder="Your name" {...errProps('name')} />
+              <Err field="name" />
             </div>
             <div className="ay-info-field">
               <label htmlFor="contact-email">Email</label>
-              <input id="contact-email" type="email" required maxLength={200} autoComplete="email" value={form.email} onChange={update('email')} placeholder="you@example.com" />
+              <input id="contact-email" type="email" required maxLength={200} autoComplete="email" value={form.email} onChange={update('email')} placeholder="you@example.com" {...errProps('email')} />
+              <Err field="email" />
             </div>
           </div>
 
-          <div className="ay-info-field">
-            <label htmlFor="contact-reason">What can we help with?</label>
-            <select id="contact-reason" required value={form.reason} onChange={update('reason')}>
-              <option value="" disabled>Select one</option>
-              {REASONS.map((reason) => <option key={reason} value={reason}>{reason}</option>)}
-            </select>
-          </div>
+          <fieldset className="ay-info-field ay-contact-topicset" {...errProps('reason')}>
+            <legend>What can we help with?</legend>
+            <div className="ay-contact-chips" role="radiogroup" aria-label="Topic">
+              {REASONS.map((reason, i) => (
+                <button key={reason} id={`contact-reason-${i}`} type="button" role="radio" aria-checked={form.reason === reason} className={form.reason === reason ? 'is-on' : ''}
+                  onClick={() => { setForm((c) => ({ ...c, reason })); setFieldErrors((cur) => ({ ...cur, reason: undefined })); }}>{LABELS[reason] || reason}</button>
+              ))}
+            </div>
+            <Err field="reason" />
+          </fieldset>
 
           <div className="ay-info-field">
             <label htmlFor="contact-message">Message</label>
-            <textarea id="contact-message" required minLength={10} maxLength={5000} rows={7} value={form.message} onChange={update('message')} placeholder="Tell us how we can help." />
+            <textarea id="contact-message" required minLength={10} maxLength={5000} rows={7} value={form.message} onChange={update('message')} placeholder="Tell us how we can help." {...errProps('message')} />
+            <Err field="message" />
           </div>
 
           {status === 'sent' && (

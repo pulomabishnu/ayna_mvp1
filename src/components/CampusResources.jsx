@@ -69,14 +69,16 @@ function NationalSection({ school }) {
   );
 }
 
+// Shown only once someone has picked Cornell, closed by default, behind a
+// content note: this page is for people who may have just been hurt.
 function JaneDoeSection() {
   const used = [];
   CASE_BLOCKS.forEach((b) => b.sources.forEach((s) => { if (!used.includes(s)) used.push(s); }));
   return (
-    <section className="cr-case" id="jane-doe" aria-labelledby="cr-case-h">
+    <details className="cr-case" id="jane-doe">
+      <summary className="cr-case__summary"><span className="cr-h2" id="cr-case-h">Related news at Cornell</span><span className="cr-small">Jane Doe case and petition. Content note: describes an alleged sexual assault.</span></summary>
       <p className="cr-case__tag">Advocacy and news information, separate from Cornell’s official resources</p>
-      <h2 id="cr-case-h" className="cr-h2">Jane Doe case &amp; petition</h2>
-      <p className="cr-lede">This concerns a case at Cornell University and is shown to all visitors. It is not a support service and is not from Cornell. It summarizes an unresolved case, with each statement attributed to its source. Allegations have not been proven.</p>
+      <p className="cr-lede">This concerns a case at Cornell University. It is not a support service and is not from Cornell. It summarizes an unresolved case, with each statement attributed to its source. Allegations have not been proven.</p>
       <ExternalLink className="cr-btn cr-btn--primary" href={PETITION.url}>{PETITION.label}</ExternalLink>
       <p className="cr-small">{PETITION.note}</p>
 
@@ -98,7 +100,7 @@ function JaneDoeSection() {
         {used.map((k) => <li key={k}><ExternalLink href={SOURCES[k].url}>{SOURCES[k].label}</ExternalLink></li>)}
       </ul>
       <p className="cr-small">Last verified: October 2026. Details of an ongoing case can change; check the linked sources for updates.</p>
-    </section>
+    </details>
   );
 }
 
@@ -113,7 +115,6 @@ function SchoolSection({ school }) {
       <nav className="cr-jump" aria-label={`Jump to a section for ${school.name}`}>
         <ul>
           {groups.map((g) => <li key={g.id}><a href={`#cat-${g.id}`}>{g.label}</a></li>)}
-          {school.id === 'cornell-university' && <li><a href="#jane-doe">Jane Doe case &amp; petition</a></li>}
         </ul>
       </nav>
 
@@ -178,7 +179,7 @@ export default function CampusResources() {
           <p className="cr-lede">Search for your college or university to find confidential support, reporting options, medical care, and other resources available to your campus community.</p>
         </header>
 
-        <p className="cr-emergency" role="note"><strong>{EMERGENCY_NOTICE}</strong></p>
+        <p className="cr-emergency" role="note"><strong>{EMERGENCY_NOTICE.replace(/call 911\.?$/, '')}<a href="tel:911" className="cr-emergency__call">call 911</a>.</strong></p>
 
         <div className="cr-search" role="search">
           <label htmlFor="cr-school-search" className="cr-label">Your school</label>
@@ -215,7 +216,7 @@ export default function CampusResources() {
           )}
           {!trimmed && !selected && (
             <details className="cr-small cr-schools-list">
-              <summary>Schools with verified resources ({SCHOOLS.length})</summary>
+              <summary>See all {SCHOOLS.length} schools with verified resources</summary>
               <ul>
                 {SCHOOLS.map((s) => (
                   <li key={s.id}><button type="button" className="cr-link" onClick={() => pick(s.id)}>{s.name}</button></li>
@@ -232,11 +233,9 @@ export default function CampusResources() {
         </div>
 
         {selected && !unverified && <SchoolSection school={selected} />}
-        {selected?.id === 'cornell-university' && !unverified && <JaneDoeSection />}
-
         <NationalSection school={selected} />
 
-        {!(selected?.id === 'cornell-university' && !unverified) && <JaneDoeSection />}
+        {selected?.id === 'cornell-university' && !unverified && <JaneDoeSection />}
       </div>
     </div>
   );
