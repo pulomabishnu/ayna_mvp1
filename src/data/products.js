@@ -1,3 +1,4 @@
+import { PRODUCT_RESEARCH_CORE } from './productResearchCore.js';
 // ============================================================
 // Ayna Product Database
 // Real products with validated Tier 1 data from customer discovery
@@ -917,6 +918,9 @@ export const ALL_PRODUCTS = [
     ...INCONTINENCE_PHYSICAL
 ]
     .map(withCatalogEvidence)
+    // The research fields matching, search and filters read (safety rules included) ship
+    // with the site; the rest fills in on the product page (data/researchLoader.js).
+    .map((p) => withResearch(p, PRODUCT_RESEARCH_CORE))
     .filter((p) => !isRxOnlyProduct(p) && !TEMPORARILY_HIDDEN_IDS.has(p.id))
     .map(withImageOverride);
 

@@ -272,6 +272,15 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const [open, setOpen] = useState(() => new Set(DEFAULT_OPEN));
   const [allIngredients, setAllIngredients] = useState(false);
   const [onScreen, setOnScreen] = useState('');
+  // Desktop shows every section, so headings are plain; only phone sections fold.
+  const [wide, setWide] = useState(() => typeof window !== 'undefined' && window.matchMedia?.('(min-width: 900px)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia?.('(min-width: 900px)');
+    if (!mq) return undefined;
+    const on = () => setWide(mq.matches);
+    mq.addEventListener?.('change', on);
+    return () => mq.removeEventListener?.('change', on);
+  }, []);
   // "All safety info" under Buy jumps to Safety (and opens it on phone).
   useEffect(() => {
     const on = (e) => {
@@ -453,6 +462,8 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     e.preventDefault();
     setOpen((prev) => new Set([...prev, id]));
     document.getElementById(`ay-s-${id}`)?.scrollIntoView({ behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    // Keyboard focus follows, so the next Tab goes into the section, not the next link.
+    document.getElementById(`ay-s-${id}-h`)?.focus({ preventScroll: true });
   };
 
   return (
@@ -469,11 +480,13 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
         {sections.map((x) => {
           const isOpen = open.has(x.id);
           return (
-            <section key={x.id} id={`ay-s-${x.id}`} className={`ay-sec is-${x.id}${isOpen ? '' : ' is-closed'}`} aria-labelledby={`ay-s-${x.id}-h`}>
-              <h2 className="ay-sec__h" id={`ay-s-${x.id}-h`}>
-                <button type="button" aria-expanded={isOpen} aria-controls={`ay-s-${x.id}-b`} onClick={() => toggle(x.id)}>
-                  <span>{x.label}</span><i aria-hidden="true" />
-                </button>
+            <section key={x.id} id={`ay-s-${x.id}`} className={`ay-sec is-${x.id}${isOpen || wide ? '' : ' is-closed'}`} aria-labelledby={`ay-s-${x.id}-h`}>
+              <h2 className="ay-sec__h" id={`ay-s-${x.id}-h`} tabIndex={-1}>
+                {wide ? <span>{x.label}</span> : (
+                  <button type="button" aria-expanded={isOpen} aria-controls={`ay-s-${x.id}-b`} onClick={() => toggle(x.id)}>
+                    <span>{x.label}</span><i aria-hidden="true" />
+                  </button>
+                )}
               </h2>
               <div className="ay-sec__b" id={`ay-s-${x.id}-b`}>{x.body}</div>
             </section>

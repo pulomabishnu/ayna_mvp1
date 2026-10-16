@@ -2110,7 +2110,7 @@ export default function MyEcosystem({
                 {visibleAreaGroups.length > 0 && (
                     <ShelfRows
                         userId={user?.id || ''}
-                        key={visibleAreaGroups.map((g) => g.key).join('|')}
+                        key={`${user?.id || ''}|${visibleAreaGroups.map((g) => g.key).join('|')}`}
                         groups={visibleAreaGroups}
                         onOpenProduct={onOpenProduct}
                         onToggleProduct={onToggleProduct}

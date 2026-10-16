@@ -85,7 +85,9 @@ async function research(product, section) {
     if (data?.stop_reason !== 'pause_turn') break;
     messages.push({ role: 'assistant', content: data.content || [] });
   }
-  const text = (data?.content || []).filter((b) => b?.type === 'text').map((b) => b.text).join('\n');
+  // Text can start in a paused turn and finish in the next: read every turn's text.
+  const blocks = [...messages.slice(1).flatMap((m) => (Array.isArray(m.content) ? m.content : [])), ...(data?.content || [])];
+  const text = blocks.filter((b) => b?.type === 'text').map((b) => b.text).join('\n');
   const parsed = tryParseJsonCandidate(extractBalancedJsonObject(text) || text);
   if (!parsed || typeof parsed !== 'object') throw Object.assign(new Error('no JSON in reply'), { code: 'bad_reply' });
   return parsed;

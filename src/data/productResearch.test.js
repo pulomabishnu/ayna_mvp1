@@ -37,3 +37,24 @@ describe('product research only fills gaps', () => {
     expect(JSON.stringify(PRODUCT_RESEARCH)).not.toMatch(/[–—]/);
   });
 });
+
+import { PRODUCT_RESEARCH_CORE } from './productResearchCore.js';
+describe('research core ships every field matching reads', () => {
+  it('matches the full research for warnings, who it is for, how to use, effectiveness and reviews', () => {
+    for (const [id, full] of Object.entries(PRODUCT_RESEARCH)) {
+      for (const k of ['whoItsFor', 'howToUse', 'warnings', 'effectiveness', 'communityReview']) {
+        if (full[k] !== undefined) expect(PRODUCT_RESEARCH_CORE[id]?.[k], `${id}.${k}`).toEqual(full[k]);
+      }
+    }
+  });
+});
+
+import { ALL_PRODUCTS } from './products.js';
+import { buildProductProfile, clearProductProfileCache } from '../matching/productProfile.js';
+describe('matching keeps safety flags that come from research', () => {
+  it('holds Remifemin back in pregnancy', () => {
+    clearProductProfileCache();
+    const p = ALL_PRODUCTS.find((x) => x.id === 'p-remifemin');
+    expect(buildProductProfile(p).pregnancy.overall).toBe('contraindicated');
+  });
+});

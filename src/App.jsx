@@ -1354,6 +1354,11 @@ function App() {
   const handleSignOut = () => {
     getSupabaseClient()?.auth.signOut();
     forgetSharedIntake();
+    // A shelf layout saved before layouts were per account belongs to whoever is signing out now.
+    try {
+      const legacy = window.localStorage.getItem('ayna.drawers.v1');
+      if (legacy && user?.id && !window.localStorage.getItem(`ayna.drawers.v1:${user.id}`)) window.localStorage.setItem(`ayna.drawers.v1:${user.id}`, legacy);
+    } catch { /* storage blocked */ }
     clearPersonalStorage();
     toast('You’re signed out.');
     setMyProducts({});

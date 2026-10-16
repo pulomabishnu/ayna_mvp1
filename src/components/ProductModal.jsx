@@ -975,9 +975,9 @@ export default function ProductModal({
                   <button type="button" className="pdp-btn pdp-btn--navy" onClick={() => onCommunityAction('review')}>Write a review</button>
                   <details className="pdp-tried__more">
                     <summary>More ways to share</summary>
-                    <div role="menu">
+                    <div>
                       {[['post', 'Mention in a post'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => (
-                        <button key={kind} type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; onCommunityAction(kind); }}>{label}</button>
+                        <button key={kind} type="button" onClick={(e) => { e.currentTarget.closest('details').open = false; onCommunityAction(kind); }}>{label}</button>
                       ))}
                     </div>
                   </details>
@@ -1006,7 +1006,7 @@ export default function ProductModal({
       </div>
 
       {/* Sticky Buy bar: always on phones; on desktop only once the main Buy button is off screen. */}
-      <aside className={`pdp-sticky${buyAway ? ' is-away' : ''}`} aria-label="Buy">
+      <aside className={`pdp-sticky${buyAway ? ' is-away' : ''}`} aria-label="Buy" data-away={buyAway ? '1' : '0'}>
         <span className="pdp-sticky__name">{displayName}</span>
         {priceText && <span className="pdp-sticky__price">{price.known ? price.main : priceText}</span>}
         {buyButton('pdp-sticky__buy')}
