@@ -98,13 +98,17 @@ export default function ShelfRows({ groups, onOpenProduct, onToggleProduct, onAd
           {isCustomised && <button type="button" className="ay-shelves__reset" onClick={() => update(() => ({}))}>Reset layout</button>}
         </div>
       )}
-      {arranged.map((group) => {
+      {[arranged.filter((g) => g.products.length > 2), arranged.filter((g) => g.products.length <= 2)].map((set, si) => set.length > 0 && (
+      <div key={si} className={si ? 'ay-shelves__small' : 'ay-shelves__big'}>
+      {set.map((group) => {
         const paint = paintOf(group);
+        const small = group.products.length <= 2;
+        const pair = group.products.length === 2;
         return (
           <section
             key={group.key}
             id={`eco-area-${group.key}`}
-            className={`ay-shelf${group.products.length <= 1 ? ' is-small' : ''}${dragOver === group.key ? ' is-drop' : ''}`}
+            className={`ay-shelf${small ? ' is-small' : ''}${pair ? ' is-pair' : ''}${dragOver === group.key ? ' is-drop' : ''}`}
             style={paint ? { '--shelf-tab': paint.bg } : undefined}
             aria-labelledby={`eco-area-title-${group.key}`}
             onDragOver={(e) => { if (drag.current) { e.preventDefault(); if (dragOver !== group.key) setDragOver(group.key); } }}
@@ -185,7 +189,7 @@ export default function ShelfRows({ groups, onOpenProduct, onToggleProduct, onAd
                   />
                 </li>
               ))}
-              {onAddMore && group.key !== 'other' && (
+              {onAddMore && group.key !== 'other' && !small && (
                 <li>
                   <button type="button" className="ay-shelf__addtile" onClick={() => onAddMore(group)}>
                     <span aria-hidden="true">+</span>
@@ -197,6 +201,8 @@ export default function ShelfRows({ groups, onOpenProduct, onToggleProduct, onAd
           </section>
         );
       })}
+      </div>
+      ))}
     </div>
   );
 }

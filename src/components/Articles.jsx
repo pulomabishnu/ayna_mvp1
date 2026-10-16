@@ -12,23 +12,8 @@ import { RELEASED_STARTUPS } from '../data/startups';
 import { buildLibrary } from '../mobile/utils/personalReads.js';
 
 /** Article id → topic-specific tags. Products must have at least one of these to appear under the article. No broad tags (e.g. discomfort), only tags that match the article heading. */
-export const ARTICLE_TOPIC_TAGS = {
-  'intimate-wash': ['vaginal-health', 'intimate-care'],
-  'heavy-bleeding': ['heavy-flow', 'cramps'],
-  'menopause-basics': ['menopause'],
-  'uti-prevention': ['uti'],
-  'yeast-infection-basics': ['vaginal-health'],
-  'period-pain-when-to-seek-care': ['cramps', 'heavy-flow'],
-  'pcos-basics': ['pcos', 'irregular'],
-  'pelvic-floor-dysfunction': ['pelvic-floor', 'pelvic-health'],
-  'endometriosis-basics': ['endometriosis', 'cramps'],
-  'bacterial-vaginosis': ['vaginal-health', 'intimate-care'],
-  'pmdd': ['cramps', 'irregular'],
-  'fibroids': ['heavy-flow', 'cramps'],
-  'iron-deficiency-anemia': ['heavy-flow'],
-  'ovarian-cysts': ['cramps', 'pelvic-floor'],
-  'hormonal-birth-control': ['irregular', 'cramps', 'pcos'],
-};
+import { ARTICLE_TOPIC_TAGS, FRUSTRATION_TO_TAG } from '../data/readPicks.js';
+export { ARTICLE_TOPIC_TAGS };
 
 /** Optional: article id → filter fn. Further narrows products to match article heading (e.g. intimate wash = only wash/cleanser products). */
 const ARTICLE_PRODUCT_TYPE_FILTER = {
@@ -42,19 +27,6 @@ const ARTICLE_PRODUCT_TYPE_FILTER = {
 const ARTICLE_FOCUS_TAGS = ARTICLE_TOPIC_TAGS;
 
 /** Quiz frustrations → tags (align with products.js). */
-const FRUSTRATION_TO_TAG = {
-  'Heavy flow': 'heavy-flow',
-  'Painful cramps': 'cramps',
-  'Hormonal bloating': 'bloating',
-  'Irregular cycles': 'irregular',
-  'Recurrent UTIs': 'uti',
-  'Menopause symptoms': 'menopause',
-  'General discomfort': 'discomfort',
-  'Pelvic pain': 'pelvic-floor',
-  'Endometriosis': 'endometriosis',
-  'PCOS symptoms': 'pcos',
-  'Leaks & staining': 'leaks',
-};
 
 function getProductUrl(p) {
   const raw = p.whereToBuy && p.whereToBuy[0];

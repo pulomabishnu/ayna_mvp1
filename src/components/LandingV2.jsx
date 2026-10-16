@@ -90,10 +90,10 @@ function Search({ onSearch }) {
 
 function Hero({ onStartQuiz, onSearch, personal = null }) {
   return (
-    <section className="lv-hero" aria-labelledby="lv-hero-title">
-      <div className="lv-hero__photos">
+    <section className={`lv-hero${personal?.dashboard ? ' lv-hero--member' : ''}`} aria-labelledby="lv-hero-title">
+      {!personal?.dashboard && <div className="lv-hero__photos">
         {HERO.map((p, i) => (<img key={p.src} src={p.src} alt={p.alt} style={{ objectPosition: p.pos }} {...(i === 0 ? { fetchPriority: 'high' } : {})} />))}
-      </div>
+      </div>}
       <div className="lv-hero__copy">
         {personal ? <>
           <h1 id="lv-hero-title">Welcome back, <em>{personal.name}.</em></h1>
@@ -108,11 +108,11 @@ function Hero({ onStartQuiz, onSearch, personal = null }) {
         </>}
         <Search onSearch={onSearch} />
       </div>
-      <div className="lv-stamp" aria-hidden="true">
+      {!personal?.dashboard && <div className="lv-stamp" aria-hidden="true">
         <svg viewBox="0 0 200 200"><defs><path id="lv-stamp-path" d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1-148 0" /></defs>
           <text><textPath href="#lv-stamp-path" textLength="455" lengthAdjust="spacing">MATCHED TO YOU {'★'} MATCHED TO YOU {'★'}</textPath></text></svg>
         <span>you</span>
-      </div>
+      </div>}
     </section>
   );
 }
@@ -376,6 +376,9 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
     <div className={`lv${paused ? ' is-paused' : ''}`}>
       <div className="lv-wrap">
         <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} personal={personal} />
+        {/* Members who have started get a dashboard (Pass 7), not the marketing story. */}
+        {personal?.dashboard && personalSlot}
+        {!personal?.dashboard && <>
         {/* Partner brands carousel up top, right under the hero. */}
         <PartnersTop onViewWaitlist={onViewWaitlist} />
         {personalSlot}
@@ -388,6 +391,8 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
         <Reads onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
         {!personal && <Purpose onViewAbout={onViewAbout} />}
         {!(personal && personal.hasQuiz) && <Start onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />}
+        </>}
+        {personal?.dashboard && !personal.hasQuiz && <Start onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />}
       </div>
     </div>
   );

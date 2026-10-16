@@ -1968,15 +1968,16 @@ export default function MyEcosystem({
                     </div>
                     <div className="eco3-actions" role="group" aria-label="Ecosystem actions">
                         <button type="button" className="eco3-pill eco3-pill--ink" onClick={() => setShowAddModal(true)}>+ Add a product</button>
-                        {typeof onEditHealthProfile === 'function' && (
-                            <button type="button" className="eco3-pill" onClick={onEditHealthProfile}>Update profile</button>
-                        )}
-                        {typeof onOpenDoctorPrep === 'function' && (
-                            <button type="button" className="eco3-pill" onClick={onOpenDoctorPrep}>Doctor prep</button>
-                        )}
+                        {/* One primary action; the rest live in More (Pass 7: four equal buttons said nothing about where to start). */}
                         <details className="eco3-more">
                             <summary className="eco3-pill">More</summary>
                             <div className="eco3-more__menu" role="menu">
+                                {typeof onEditHealthProfile === 'function' && (
+                                    <button type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; onEditHealthProfile(); }}>Update my answers</button>
+                                )}
+                                {typeof onOpenDoctorPrep === 'function' && (
+                                    <button type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; onOpenDoctorPrep(); }}>Doctor prep</button>
+                                )}
                                 <button type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; setShowMoreTools(true); }}>More tools</button>
                                 {/* Partner news lives here, not among her tools (it read as an ad in a private space). */}
                                 <button type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; posthog.capture('resa_sync_chip_clicked'); setShowResaPartnership(true); }}>About our Rèsa partnership</button>
@@ -2104,7 +2105,8 @@ export default function MyEcosystem({
                     />
                 )}
 
-                {visibleAreaGroups.length > 0 && <header className="eco3-sechead"><h2 className="eco3-shelves__title" id="eco3-shelves-title">Your <em>shelves.</em></h2><span className="eco3-needs__sub">Everything you use, sorted by area of care.</span></header>}
+                {/* The page title already says what this is; the shelves start straight away (heading kept for screen readers and the jump link). */}
+                {visibleAreaGroups.length > 0 && <h2 className="sr-only eco3-shelfanchor" id="eco3-shelves-title" tabIndex={-1}>Your shelves</h2>}
                 {visibleAreaGroups.length > 0 && (
                     <ShelfRows
                         key={visibleAreaGroups.map((g) => g.key).join('|')}

@@ -11,6 +11,8 @@ import ProductCard from './ProductCard';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import { edgeFadeRef } from '../utils/edgeFade';
 import LandingV2 from './LandingV2';
+import { pickReadForYou } from '../data/readPicks.js';
+import ProductTileImage from './ProductTileImage';
 import { getVerificationLinks } from '../utils/verificationLinks';
 
 /**
@@ -593,19 +595,80 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
 
   // Signed in, Home is the landing page (same layout and story) with her own
   // pieces under the welcome-back hero.
+  // Member dashboard (Pass 7): next step, saved, one read for her, then matches.
+  const read = useMemo(() => pickReadForYou(quizResults, healthProfile), [quizResults, healthProfile]);
+  const savedList = useMemo(() => {
+    const byId = new Map(ALL_PRODUCTS.map((p) => [p.id, p]));
+    return Object.keys(savedProducts || {}).map((id) => byId.get(id) || (savedProducts[id]?.id ? savedProducts[id] : null)).filter(Boolean);
+  }, [savedProducts]);
+  // "New since your last visit": matches she has not been shown on Home before.
+  const SEEN_KEY = 'ayna_home_seen_matches_v1';
+  const [seenAtLoad] = useState(() => { try { const v = JSON.parse(localStorage.getItem(SEEN_KEY) || 'null'); return Array.isArray(v) ? new Set(v) : null; } catch { return null; } });
+  const showingMatches = Boolean(personalize && quizResults && (!filter || filter === 'all'));
+  const newCount = showingMatches && seenAtLoad ? shownProducts.filter((p) => !seenAtLoad.has(p.id)).length : 0;
+  useEffect(() => {
+    if (!showingMatches) return;
+    try {
+      const seen = new Set(seenAtLoad || []);
+      shownProducts.forEach((p) => seen.add(p.id));
+      localStorage.setItem(SEEN_KEY, JSON.stringify([...seen].slice(-400)));
+    } catch { /* private mode */ }
+  }, [showingMatches, shownProducts, seenAtLoad]);
+
   const slot = (
     <div className="lx lx-personal">
-      {nextArea && (
-        <div className="mockup-page lx-personal__next">
-          <button type="button" className="lx-nextcard" onClick={() => onViewDiscovery?.({ initialMacroGroup: nextArea.id })}>
-            <span className="lx-nextcard__label">your next step</span>
+      <div className="mockup-page lx-dash">
+        {nextArea ? (
+          <button type="button" className="lx-dash__card lx-dash__card--next" onClick={() => onViewDiscovery?.({ initialMacroGroup: nextArea.id })}>
+            <span className="lx-dash__label">Your next step</span>
             <strong>{recommendedProductIds?.length ? `Your matches in ${nextArea.label}` : `Start your ${nextArea.label} shelf`}</strong>
-            <span className="lx-nextcard__go">Browse {nextArea.label} <Arrow /></span>
+            <span className="lx-dash__go">Browse {nextArea.label} <Arrow /></span>
           </button>
+        ) : (
+          <button type="button" className="lx-dash__card lx-dash__card--next" onClick={() => onViewEcosystem?.()}>
+            <span className="lx-dash__label">Your next step</span>
+            <strong>{picks > 0 ? `Check your ${picks} product${picks === 1 ? '' : 's'}` : 'See your matches'}</strong>
+            <span className="lx-dash__go">Open my ecosystem <Arrow /></span>
+          </button>
+        )}
+        <div className="lx-dash__card">
+          <span className="lx-dash__label">Saved</span>
+          {savedList.length > 0 ? (
+            <>
+              <strong>{savedList.length} saved for later</strong>
+              <ul className="lx-dash__thumbs">
+                {savedList.slice(0, 4).map((p) => (
+                  <li key={p.id}><button type="button" onClick={() => onOpenProduct?.(p)} aria-label={`${p.brand ? `${p.brand} ` : ''}${p.name}`}><ProductTileImage product={p} /></button></li>
+                ))}
+              </ul>
+              <button type="button" className="lx-dash__go" onClick={() => onViewEcosystem?.()}>See all saved <Arrow /></button>
+            </>
+          ) : (
+            <>
+              <strong>Nothing saved yet</strong>
+              <span className="lx-dash__body">Tap the heart on anything in the Shop to keep it here.</span>
+              <button type="button" className="lx-dash__go" onClick={() => onViewDiscovery?.('')}>Go to the Shop <Arrow /></button>
+            </>
+          )}
         </div>
-      )}
+        {read ? (
+          <a className="lx-dash__card" href={`/library/${read.id}`} onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); if (onViewArticle) onViewArticle(read.id); else onViewArticles?.(); }}>
+            <span className="lx-dash__label">A read for you</span>
+            <strong>{read.title}</strong>
+            <span className="lx-dash__body">{read.teaser}</span>
+            <span className="lx-dash__go">Read it <Arrow /></span>
+          </a>
+        ) : (
+          <button type="button" className="lx-dash__card" onClick={() => onViewArticles?.()}>
+            <span className="lx-dash__label">Library</span>
+            <strong>Short reads, real sources</strong>
+            <span className="lx-dash__body">Answer the quiz and we will pick the read that fits you.</span>
+            <span className="lx-dash__go">Open the Library <Arrow /></span>
+          </button>
+        )}
+      </div>
       <ShopSection
-        title={personalize && quizResults ? 'Top picks for your needs' : 'Popular on ayna'}
+        title={showingMatches && newCount > 0 ? `${newCount} new match${newCount === 1 ? '' : 'es'} since your last visit` : personalize && quizResults ? 'Top picks for your needs' : 'Popular on ayna'}
         minimal
         chips={chips}
         filter={filter}
@@ -674,7 +737,7 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
         onViewAbout={onViewAbout}
         onViewCommunity={onViewCommunity}
         onSearch={(q) => onViewDiscovery?.(discoveryTargetFor(q))}
-        personal={{ name, ecoCount: picks, hasQuiz: Boolean(quizResults), onOpenEcosystem: onViewEcosystem }}
+        personal={{ name, ecoCount: picks, hasQuiz: Boolean(quizResults), onOpenEcosystem: onViewEcosystem, dashboard: Boolean(picks > 0 || quizResults) }}
         personalSlot={(picks > 0 || quizResults) ? slot : null}
       />
     </div>

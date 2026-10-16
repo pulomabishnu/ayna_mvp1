@@ -4856,3 +4856,64 @@ html body .app-container.app-container.app-container.app-container .ayna-browse 
 html body .app-container.app-container.app-container.app-container .pdp-quick { display: flex !important; flex-wrap: wrap !important; gap: 0 !important; padding: 0 !important; margin: 6px 0 14px !important; list-style: none !important; }
 html body .app-container.app-container.app-container.app-container .pdp-quick li { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; border-radius: 0 !important; font: 500 14px/1.5 'DM Sans', sans-serif !important; color: var(--ay-ink-soft, #3e2723) !important; }
 html body .app-container.app-container.app-container.app-container .pdp-quick li + li::before { content: '\00B7'; margin: 0 8px; }
+
+/* Pass 7 Ecosystem: shelves in the first screen. Slim header with one primary
+   button, no "Your shelves" heading block, and shelves with one or two
+   products share rows instead of each taking a full-width row. */
+html body .app-container.app-container.app-container.app-container .ay3-ecohero { margin: 0 0 12px !important; padding-top: 28px !important; padding-bottom: 20px !important; align-items: center !important; }
+html body .app-container.app-container.app-container.app-container .ay3-ecohero .eco3-head__text { padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; }
+html body .app-container.app-container.app-container.app-container .ay3-ecohero h1 { font-size: clamp(36px, 1.6rem + 2vw, 52px) !important; }
+html body .app-container.app-container.app-container.app-container .ay3-ecohero .ay3-kicker { display: none !important; }
+html body .app-container.app-container.app-container.app-container .eco3-stickybar { margin: 0 0 20px !important; }
+html body .app-container.app-container.app-container.app-container .eco3-shelfanchor { position: relative !important; display: block; height: 0; scroll-margin-top: 170px; }
+html body .app-container.app-container.app-container.app-container .ay-shelves { display: block !important; }
+html body .app-container.app-container.app-container.app-container .ay-shelves__big { display: grid; gap: 34px; }
+html body .app-container.app-container.app-container.app-container .ay-shelves__small { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr)); gap: 28px 32px; }
+html body .app-container.app-container.app-container.app-container .ay-shelves__big + .ay-shelves__small { margin-top: 34px; }
+html body .app-container.app-container.app-container.app-container .ay-shelves__bar { margin-bottom: 8px !important; }
+html body .app-container.app-container.app-container.app-container .ay-shelves__small { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important; grid-auto-flow: row dense; }
+@media (min-width: 700px) { html body .app-container.app-container.app-container.app-container .ay-shelves__small > .ay-shelf.is-pair { grid-column: span 2; } }
+html body .app-container.app-container.app-container.app-container .ay-shelves__small .ay-shelf__row { overflow-x: visible; padding-right: 0; }
+html body .app-container.app-container.app-container.app-container .ay3-ecohero.ay3-zigzag::after, html body .app-container.app-container.app-container.app-container .ay3-ecohero.ay3-edge-bottom::after, html body .app-container.app-container.app-container.app-container .ay3-ecohero::before { display: none !important; }
+html body .app-container.app-container.app-container.app-container .ay3-ecohero { border-bottom: 0 !important; }
+html body .app-container.app-container.app-container.app-container .ay-shelves__small .ay-shelf__head { flex-wrap: nowrap !important; gap: 8px !important; }
+html body .app-container.app-container.app-container.app-container .ay-shelves__small .ay-shelf__name { font-size: 22px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+html body .app-container.app-container.app-container.app-container .ay-shelves__small .ay-shelf__add { white-space: nowrap; flex: none; margin-left: auto; }
+html body .app-container.app-container.app-container.app-container .ay-shelves__small .ay-shelf__tools { display: none !important; }
+@media (max-width: 767px) {
+  html body .app-container.app-container.app-container.app-container .ay3-ecohero { flex-direction: column !important; align-items: flex-start !important; gap: 14px !important; padding-top: 18px !important; padding-bottom: 8px !important; }
+  html body .app-container.app-container.app-container.app-container .ay3-ecohero .eco3-head__sub { display: flex; flex-wrap: wrap; gap: 0 6px; }
+  html body .app-container.app-container.app-container.app-container .ay3-ecohero .eco3-actions { justify-content: flex-start !important; width: auto !important; }
+  html body .app-container.app-container.app-container.app-container .eco3-stickybar { position: static !important; flex-wrap: wrap !important; gap: 6px !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; background: none !important; }
+  html body .app-container.app-container.app-container.app-container .eco3-stickybar .eco3-search { flex: 1 1 100% !important; width: 100% !important; }
+  html body .app-container.app-container.app-container.app-container .eco3-stickybar .eco3-search input { width: 100% !important; border: 2px solid #3e2723 !important; }
+  html body .app-container.app-container.app-container.app-container .eco3-stickybar .eco3-jump { width: 100% !important; justify-content: flex-start !important; }
+}
+
+/* Pass 7 member Home: a slim welcome and a dashboard instead of the marketing page. */
+html body .app-container.app-container.app-container.app-container .lv .lv-hero.lv-hero--member { min-height: 0 !important; background: none !important; margin: 0 !important; place-items: stretch !important; overflow: visible !important; }
+html body .app-container.app-container.app-container.app-container .lv-hero--member .lv-hero__copy { color: #3e2723 !important; justify-items: start !important; text-align: left !important; padding: 36px 24px 8px !important; gap: 12px !important; max-width: 1240px; width: 100%; margin: 0 auto; grid-template-columns: 1fr auto; align-items: center; }
+html body .app-container.app-container.app-container.app-container .lv-hero--member .lv-hero__copy h1 { grid-column: 1; color: #3e2723 !important; text-shadow: none !important; font-size: clamp(36px, 1.6rem + 2vw, 52px) !important; margin: 0 !important; }
+html body .app-container.app-container.app-container.app-container .lv-hero--member .lv-hero__copy h1 em { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container .lv-hero--member .lv-hero__copy p { grid-column: 1; text-shadow: none !important; margin: 0 !important; font-size: 17px !important; }
+html body .app-container.app-container.app-container.app-container .lv-hero--member .lv-hero__copy > a, html body .app-container.app-container.app-container.app-container .lv-hero--member .lv-hero__copy > button { grid-column: 2; grid-row: 1 / span 2; background: #3e2723 !important; color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container .lv-hero--member .lv-hero__copy > :is(form, .lv-search, [role=search]) { grid-column: 1 / -1; width: 100%; max-width: none; }
+html body .app-container.app-container.app-container.app-container .lx-dash { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin: 16px auto 40px !important; }
+html body .app-container.app-container.app-container.app-container .lx-dash__card { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-height: 100%; padding: 22px 22px 20px; border: 2px solid #3e2723; border-radius: 14px; background: #ffedac; color: #3e2723; text-align: left; text-decoration: none; font: inherit; cursor: pointer; }
+html body .app-container.app-container.app-container.app-container .lx-dash__card--next { background: #f7badd; }
+html body .app-container.app-container.app-container.app-container .lx-dash__label { font: 600 13px/1.2 'DM Sans', sans-serif; letter-spacing: .02em; }
+html body .app-container.app-container.app-container.app-container .lx-dash__card strong { font: 400 24px/1.15 'DM Serif Display', serif; }
+html body .app-container.app-container.app-container.app-container .lx-dash__body { font: 400 15px/1.45 'DM Sans', sans-serif; }
+html body .app-container.app-container.app-container.app-container .lx-dash__go { margin-top: auto; padding: 0; border: 0; background: none; color: #3e2723; font: 600 15px/1.3 'DM Sans', sans-serif; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+html body .app-container.app-container.app-container.app-container .lx-dash__thumbs { display: flex; gap: 8px; margin: 2px 0 4px; padding: 0; list-style: none; }
+html body .app-container.app-container.app-container.app-container .lx-dash__thumbs button { width: 56px; height: 56px; padding: 4px; border: 2px solid #3e2723; border-radius: 10px; background: #fff; cursor: pointer; }
+html body .app-container.app-container.app-container.app-container .lx-dash__thumbs img { width: 100%; height: 100%; object-fit: contain; }
+html body .app-container.app-container.app-container.app-container .lx-dash__card:hover { box-shadow: 4px 4px 0 #3e2723; }
+@media (max-width: 899px) { html body .app-container.app-container.app-container.app-container .lx-dash { grid-template-columns: 1fr; gap: 12px; } html body .app-container.app-container.app-container.app-container .lv-hero--member .lv-hero__copy { grid-template-columns: 1fr; padding-top: 20px !important; } html body .app-container.app-container.app-container.app-container .lv-hero--member .lv-hero__copy > a, html body .app-container.app-container.app-container.app-container .lv-hero--member .lv-hero__copy > button { grid-column: 1; grid-row: auto; } }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lx-dash__card, html body [data-theme='brand-dark'] .app-container .lx-dash__card { background: #3e2723; border-color: #ffedac; color: #ffedac; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lx-dash__card--next { background: #769ebe; color: #3e2723; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lx-dash__go { color: inherit; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv-hero--member .lv-hero__copy, html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv-hero--member .lv-hero__copy :is(h1, h1 em, p) { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container .lx-dash .lx-dash__card strong { font-family: 'DM Serif Display', Georgia, serif !important; font-weight: 400 !important; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .app-nav.app-nav a.app-nav__tab--main:not(.app-nav__tab--active):not(.is-start) { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv-hero--member .lv-hero__copy > :is(a, button) { background: #ffedac !important; color: #3e2723 !important; }
