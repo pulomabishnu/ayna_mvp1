@@ -14,7 +14,8 @@ import '../styles/landing-v2.css';
  * cream (60) / pink (30) / butter (10) with ink for text and lines, plus one
  * dark band. Everything moving can be paused with a single control (WCAG 2.2.2). */
 
-const SEARCH_HINTS = ['organic pads, PCOS support, pelvic floor…'];
+// One topic at a time, changing every few seconds (Ameera, Oct 16).
+const SEARCH_HINTS = ['organic pads', 'PCOS support', 'pelvic floor', 'period cramps', 'vaginal dryness', 'sleep and stress', 'UTI support', 'menopause'];
 const NEEDS_PHOTO = (p) => !/tampon tribe|herau|r[eè]sa/i.test(`${p?.brand || ''} ${p?.name || ''}`);
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
@@ -69,8 +70,16 @@ function Ticker() {
 /* ---------- hero ---------- */
 function Search({ onSearch }) {
   const [q, setQ] = useState('');
-  // One fixed hint: text that changes while you read it was a Pass 6/7 audit fix.
-  const i = 0;
+  const [i, setI] = useState(0);
+  const [focused, setFocused] = useState(false);
+  useEffect(() => {
+    if (q || focused || reducedMotion()) return undefined;
+    const t = window.setInterval(() => {
+      if (document.documentElement.classList.contains('ay-motion-paused')) return;
+      setI((v) => (v + 1) % SEARCH_HINTS.length);
+    }, 2600);
+    return () => window.clearInterval(t);
+  }, [q, focused]);
   return (
     <form className="lv-search" role="search" onSubmit={(e) => { e.preventDefault(); onSearch(q); }}>
       <label>
@@ -80,8 +89,9 @@ function Search({ onSearch }) {
           type="search" value={q} onChange={(e) => setQ(e.target.value)}
           suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }}
           onPick={(s) => onSearch(s.query)} anchor=".lv-search" placeholder=" " enterKeyHint="search" autoComplete="off"
+          onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
         />
-        {!q && <span className="lv-search__hint" aria-hidden="true">Search <b key={i}>{SEARCH_HINTS[i]}</b></span>}
+        {!q && <span className="lv-search__hint" aria-hidden="true">Search <b key={i} className="lv-search__topic">{SEARCH_HINTS[i]}</b></span>}
       </label>
       <button type="submit" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg></button>
     </form>
@@ -383,15 +393,14 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
         {/* Members: the same page, with their own cards under the hero and their top picks in place of the week's picks. */}
         {personal?.dashboard ? personalSlot : <PartnersTop onViewWaitlist={onViewWaitlist} />}
         {!personal?.dashboard && personalSlot}
-        {/* Story order (Pass 7): what it is, how it works, real products, reads, who we are, start. */}
-        {!personal && <Why paused={paused} />}
+        {/* Page order (Ameera, Oct 16): picks, counter, shop by need, what's new, who we are, reads, how it works + start. */}
         <Trending onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={personal?.topPicks || null} />
+        <Why paused={paused} />
         <ShopBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
-        {/* ayna news, word of the day and more: a little way down the page, not first. */}
         <LandingStories paused={paused} onStartQuiz={onStartQuiz} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} />
+        <Purpose onViewAbout={onViewAbout} />
         <Reads onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
         {personalTail}
-        {!personal && <Purpose onViewAbout={onViewAbout} />}
         {!(personal && personal.hasQuiz) && <Start onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />}
       </div>
     </div>

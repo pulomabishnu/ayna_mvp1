@@ -30,14 +30,14 @@ describe('aynaTeam', () => {
     expect(canPostAnnouncements(null)).toBe(false);
   });
   it('splits verified team identity from announcement-writing admins', () => {
-    // Current final rule: only Puloma and Eliz write announcements.
+    // Current rule (2026-10-16): the three founders write announcements.
     expect(canPostAnnouncements({ email: 'puloma@aynahealth.co' })).toBe(true);
     expect(canPostAnnouncements({ email: 'eliz@aynahealth.co' })).toBe(true);
-    expect(canPostAnnouncements({ email: 'ameera@aynahealth.co' })).toBe(false);
+    expect(canPostAnnouncements({ email: 'ameera@aynahealth.co' })).toBe(true);
     // Ameera stays a verified team account with the CMO badge.
     expect(isVerifiedTeamMember({ email: 'ameera@aynahealth.co' })).toBe(true);
     expect(teamMemberForEmail('ameera@aynahealth.co')?.title).toBe('CMO, ayna');
-    expect(isAynaAdmin({ email: 'ameera@aynahealth.co' })).toBe(false);
+    expect(isAynaAdmin({ email: 'ameera@aynahealth.co' })).toBe(true);
     expect(isAynaAdmin({ email: 'nobody@aynahealth.co' })).toBe(false);
   });
 });

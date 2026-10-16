@@ -10,12 +10,14 @@ import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProd
 import ProductTileImage, { ProductImageFallback } from '../ProductTileImage';
 import { RuleField } from './RuleField.jsx';
 import { VerifiedBadge } from './VerifiedBadge.jsx';
+import { RichText } from './richText.jsx';
+import { applyFormat } from './richTextFormat.js';
 import './community-shared.css';
 
 // Announcements: news from the ayna team. Everyone can read, react and reply;
-// only admins, Puloma and Eliz (src/utils/aynaTeam.js, enforced by RLS), can
-// create, edit or delete. Verified non-admin team accounts (Ameera) read like
-// everyone else. Shared by the website (variant="web") and the app
+// only admins, the three founders (src/utils/aynaTeam.js, enforced by RLS), can
+// create, edit or delete. Everyone else reads like
+// any member. Shared by the website (variant="web") and the app
 // (variant="app").
 
 const KIND_LABEL = { playlist: 'Playlist', product: 'Product', read: 'Read', link: 'Link' };
@@ -161,7 +163,18 @@ function Composer({ supabase, user, products, productsById, articles, playlists,
       <label className="cr-label" htmlFor="cr-ann-title">Title</label>
       <RuleField as="input" id="cr-ann-title" data-autofocus value={title} maxLength={ann.ANNOUNCEMENT_TITLE_MAX} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Join our cycle Q&A on Thursday" className="cr-input" onShowRules={onShowRules} />
       <label className="cr-label" htmlFor="cr-ann-body">Message</label>
+      <div className="cr-fmt" role="toolbar" aria-label="Formatting">
+        {[['bold', 'B', 'Bold'], ['underline', 'U', 'Underline'], ['italic', 'I', 'Italic'], ['ul', '•', 'Bulleted list'], ['ol', '1.', 'Numbered list']].map(([k, label, name]) => (
+          <button key={k} type="button" className={`cr-fmt__btn is-${k}`} aria-label={name} title={name} onMouseDown={(e) => e.preventDefault()} onClick={() => {
+            const el = document.getElementById('cr-ann-body');
+            const r = applyFormat(el, body, k);
+            setBody(r.value.slice(0, ann.ANNOUNCEMENT_BODY_MAX));
+            requestAnimationFrame(() => { if (el) { el.focus(); el.setSelectionRange(r.start, r.end); } });
+          }}>{label}</button>
+        ))}
+      </div>
       <RuleField id="cr-ann-body" value={body} maxLength={ann.ANNOUNCEMENT_BODY_MAX} onChange={(e) => setBody(e.target.value)} placeholder="What should the community know?" className="cr-input" autoGrow minRows={4} maxGrowPx={320} onShowRules={onShowRules} />
+      {body.trim() && <div className="cr-fmt-preview"><small>Preview</small><RichText text={body} className="cr-ann-body" /></div>}
     </section>
 
     <section className="cr-group">
@@ -328,7 +341,7 @@ export default function Announcements({ supabase, user, products = [], productsB
               {canPost && <button type="button" className="cr-text-btn" disabled={busy} onClick={() => remove(row)}>Delete</button>}
             </header>
             <h3 className="cr-ann-title">{row.title}</h3>
-            {row.body && <p className="cr-ann-body">{row.body}</p>}
+            {row.body && <RichText text={row.body} className="cr-ann-body" />}
             {media.length > 0 && <div className={`cr-ann-photos is-${Math.min(media.length, 4)}`}>{media.slice(0, 4).map((m) => <img key={m.path} src={publicMediaUrl(m.path)} alt="" loading="lazy" />)}</div>}
             {atts.length > 0 && <ul className="cr-att-list">{atts.map((a, i) => <Attachment key={`${a.type}-${a.id || a.url}-${i}`} a={a} productsById={map} articles={articles} onOpenProduct={onOpenProduct} onOpenPlaylist={onOpenPlaylist} onOpenArticle={onOpenArticle} />)}</ul>}
             <footer className="cr-ann-actions">

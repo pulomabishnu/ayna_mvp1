@@ -1,9 +1,9 @@
 // The ayna team. Two separate concepts:
 //   * verified team member: shows the check + title ("CMO, ayna") next to the
 //     account's name everywhere in Community. All three founders.
-//   * admin: may create/edit/publish/delete Announcements. ONLY Puloma and
-//     Eliz (the founder's current final rule, 2026-10-13). Ameera keeps her
-//     verified "CMO, ayna" badge but cannot write announcements.
+//   * admin: may create/edit/publish/delete Announcements. The three
+//     founders, Ameera, Puloma and Eliz (Ameera, 2026-10-16; was Puloma and
+//     Eliz only on 2026-10-13).
 //
 // Keyed by the account's confirmed sign-in email (lowercase). This file only
 // gates the UI; the database enforces the same split
@@ -14,7 +14,7 @@
 //
 // All three sign-in emails confirmed by Ameera on 2026-10-13.
 export const AYNA_TEAM = {
-  'ameera@aynahealth.co': { firstName: 'Ameera', title: 'CMO, ayna', admin: false, confirmed: true },
+  'ameera@aynahealth.co': { firstName: 'Ameera', title: 'CMO, ayna', admin: true, confirmed: true },
   'puloma@aynahealth.co': { firstName: 'Puloma', title: 'CEO, ayna', admin: true, confirmed: true },
   'eliz@aynahealth.co': { firstName: 'Eliz', title: 'COO, ayna', admin: true, confirmed: true },
 };
@@ -33,7 +33,7 @@ export function isVerifiedTeamMember(user) {
   return Boolean(teamMemberForEmail(user?.email));
 }
 
-/** Admin: may write Announcements. Puloma and Eliz only. */
+/** Admin: may write Announcements. The three founders. */
 export function isAynaAdmin(user) {
   return Boolean(teamMemberForEmail(user?.email)?.admin);
 }

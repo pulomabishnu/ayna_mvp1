@@ -2,16 +2,24 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { getDailyFact } from '../data/welcomeSlides.js';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { listAnnouncements } from '../utils/community/announcementsStore';
+import { ALL_PRODUCTS } from '../data/products';
 
 /**
  * "On ayna" slideshow: ayna news, today's fact, what ayna does, Community.
  * Photo-led like the rest of the landing, one fixed height so nothing below
  * moves, the same font on every tab, and changing slides never scrolls the
- * page. It advances slowly on its own, stops on hover or focus, and follows
+ * page. It advances on its own, stops on hover or focus, and follows
  * the site's one motion switch (footer "Pause motion") and reduced motion.
  */
 
-const DURATION = 7000;
+// Advances on its own (Oct 16: Ameera asked for it, not too slow); stops on hover, focus, Pause motion or reduced motion.
+const DURATION = 5000;
+
+// Three real period products for the little shelf widget (photos on white).
+const SHELF = (() => {
+  const want = ['tampon', 'pad', 'cup'];
+  return want.map((c) => ALL_PRODUCTS.find((p) => p.category === c && p.image && /^https?:|^\//.test(p.image))).filter(Boolean);
+})();
 
 function useLatestAnnouncement() {
   const [item, setItem] = useState(null);
@@ -34,8 +42,8 @@ export default function LandingStories({ paused = false, onStartQuiz, onViewArti
     news
       ? { key: 'news', tab: 'ayna news', tone: 'rose', kicker: 'ayna news', title: news.title, body: news.body, cta: 'Read it in Community', go: onViewCommunity, img: '/landing/curlers-call.webp', alt: 'A woman in hair curlers laughing on the phone in her bathroom' }
       : { key: 'news', tab: 'ayna news', tone: 'rose', kicker: 'ayna news', title: 'ayna Community is open.', body: 'Ask questions, review what you use and share playlists with women who get it.', cta: 'See Community', go: onViewCommunity, img: '/landing/stalls-trio.webp', alt: 'Three friends chatting from neighboring bathroom stalls' },
-    ...(fact ? [{ key: 'fact', tab: 'Word of the day', tone: 'butter', kicker: 'Word of the day', title: fact.term, body: fact.text, note: 'From the ayna glossary. General information, not medical advice.', cta: 'Read more in the Library', go: onViewArticles, img: '/landing/sweater-toilet.webp', alt: 'A woman in a sweater sitting on the toilet, chin in her hand, thinking' }] : []),
-    { key: 'about', tab: 'What ayna does', tone: 'sky', kicker: 'What ayna does', title: 'Health, matched to you.', body: 'Answer six questions. See the products that fit your body, with the research and real reviews beside each one.', cta: 'See my matches', go: onStartQuiz, img: '/landing/blue-sink.webp', alt: 'A blue bathroom sink with everyday products around it' },
+    ...(fact ? [{ key: 'fact', tab: 'Word of the day', tone: 'butter', kicker: 'Word of the day', title: 'One health word, in plain English.', body: 'A new term from the ayna glossary every day.', cta: 'Read more in the Library', go: onViewArticles, visual: 'glossary', term: fact.term, def: fact.text }] : []),
+    { key: 'about', tab: 'What ayna does', tone: 'sky', kicker: 'What ayna does', title: 'Health, matched to you.', body: 'Answer six questions. See the products that fit your body, with the research and real reviews beside each one.', cta: 'See my matches', go: onStartQuiz, visual: 'shelf' },
     { key: 'community', tab: 'Real reviews', tone: 'ink', kicker: 'Community', title: 'Real talk about what women actually use.', body: 'Reviews, questions and routines from the ayna community, in one place.', cta: 'Read reviews', go: onViewCommunity, img: '/landing/tub-girls.webp', alt: 'Two friends laughing in a bathtub' },
   ], [fact, news, onStartQuiz, onViewArticles, onViewCommunity]);
 
@@ -52,8 +60,7 @@ export default function LandingStories({ paused = false, onStartQuiz, onViewArti
     io.observe(el);
     return () => io.disconnect();
   }, []);
-  // You move the stories; they never advance on their own (audit: auto-forwarding gets ignored).
-  const playing = false; void paused; void hold; void reduced; void inView;
+  const playing = !paused && !hold && !reduced && inView;
   const n = slides.length;
   const go = (k) => { setI(((k % n) + n) % n); setProgress(0); };
   useEffect(() => {
@@ -76,9 +83,9 @@ export default function LandingStories({ paused = false, onStartQuiz, onViewArti
   };
 
   return (
-    <div className="lst-band">
+    <div className={`lst-band is-${s.tone}`}>
     <h2 className="lst-band__h">What’s new <em>on ayna</em></h2>
-    <section ref={rootRef} className={`lst is-${s.tone}`} aria-roledescription="carousel" aria-label="On ayna" onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)} onFocus={() => setHold(true)} onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setHold(false); }} onKeyDown={onKey}>
+    <section ref={rootRef} className={`lst lst--open is-${s.tone}`} aria-roledescription="carousel" aria-label="On ayna" onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)} onFocus={() => setHold(true)} onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setHold(false); }} onKeyDown={onKey}>
       <div className="lst__tabs" role="tablist" aria-label="Stories">
         {slides.map((x, k) => (
           <button key={x.key} type="button" role="tab" aria-selected={k === i} aria-controls="lst-slide" className={k === i ? 'is-on' : ''} onClick={() => go(k)}>
@@ -95,7 +102,23 @@ export default function LandingStories({ paused = false, onStartQuiz, onViewArti
           {s.note && <p className="lst__note">{s.note}</p>}
           {s.go && <button type="button" className="lst__cta" onClick={s.go}>{s.cta} <span aria-hidden="true">→</span></button>}
         </div>
-        <figure className="lst__photo"><img src={s.img} alt={s.alt} loading="lazy" /></figure>
+        {s.visual === 'glossary' ? (
+          <div className="lst__widget lst__widget--word">
+            <span className="lst__burst" aria-hidden="true">word of<br />the day</span>
+            <strong>{s.term}</strong>
+            <p>{s.def}</p>
+            <small>From the ayna glossary. General information, not medical advice.</small>
+          </div>
+        ) : s.visual === 'shelf' && SHELF.length >= 2 ? (
+          <div className="lst__widget lst__widget--shelf" aria-hidden="true">
+            <span className="lst__widget-tab">Your shelf</span>
+            <ul>{SHELF.map((p) => <li key={p.id}><img src={p.image} alt="" loading="lazy" /><span>{p.brand || p.name}</span></li>)}</ul>
+            <i className="lst__ledge" />
+            <span className="lst__burst lst__burst--sky">matched<br />to you</span>
+          </div>
+        ) : (
+          <figure className="lst__photo"><img src={s.img || '/landing/blue-sink.webp'} alt={s.alt || ''} loading="lazy" /></figure>
+        )}
       </div>
       <div className="lst__nav">
         <button type="button" onClick={() => go(i - 1)} aria-label="Previous story">←</button>

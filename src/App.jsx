@@ -2002,7 +2002,6 @@ function App() {
                   <button type="button" role="menuitem" onClick={() => { setShowAccountMenu(false); handleOpenHealthProfileEditor(); }}>Health profile</button>
                   <a role="menuitem" href="/ecosystem" {...linkProps(() => { setShowAccountMenu(false); handleViewWishlist(); })}>Saved products</a>
                   <a role="menuitem" href="/you" {...linkProps(() => { setShowAccountMenu(false); setCurrentView('you'); window.setTimeout(() => document.getElementById('wyou-account')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 250); })}>Account settings</a>
-                  <a role="menuitem" href="/campus-resources" {...linkProps(() => { setShowAccountMenu(false); setCurrentView('campus-resources'); })}>Campus resources</a>
                   <button type="button" role="menuitem" className="is-quiet" onClick={() => { setShowAccountMenu(false); handleSignOut(); }}>Log out</button>
                 </div>
               )}
@@ -2050,7 +2049,6 @@ function App() {
               <a href="/ecosystem" className="mobile-drawer-item" {...linkProps(() => { handleViewWishlist(); setMobileMenuOpen(false); })}>
                 Saved {user && savedCount > 0 && <span className="ay-badge">{savedCount}</span>}
               </a>
-              <a href="/campus-resources" className="mobile-drawer-item is-quiet" {...linkProps(() => { setCurrentView('campus-resources'); setMobileMenuOpen(false); })}>Campus resources</a>
               {user ? (
                 <button className="mobile-drawer-item is-quiet" onClick={() => { handleSignOut(); setMobileMenuOpen(false); }}>Log out</button>
               ) : (

@@ -182,3 +182,20 @@ button.cr-ann-name:hover { text-decoration: underline; text-underline-offset: 3p
 .ayna-mobile[data-theme='dark'] .cr-ann .cr-ann-intro small { color: rgba(29, 26, 43, .72); }
 .ayna-mobile[data-theme='dark'] .cr-ann .cr-ann-intro-icon { border-color: #1d1a2b; background: #fffcf5; color: #1d1a2b; }
 .ayna-mobile[data-theme='dark'] .cr-ann .cr-ann-intro .cr-btn { border-color: #1d1a2b; background: #1d1a2b; color: #fffcf5; }
+
+/* Announcement formatting (Oct 16) */
+.cr-fmt { display: flex; gap: 6px; margin: 4px 0 6px; }
+.cr-fmt__btn { min-width: 36px; height: 34px; padding: 0 10px; border: 1.5px solid #3e2723; border-radius: 10px; background: #fff; color: #3e2723; font: 700 14px/1 'DM Sans', sans-serif; cursor: pointer; }
+.cr-fmt__btn.is-underline { text-decoration: underline; }
+.cr-fmt__btn.is-italic { font-style: italic; font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; }
+.cr-fmt__btn:hover { background: #f7badd; }
+.cr-fmt__btn:focus-visible { outline: 2px solid #769ebe; outline-offset: 2px; }
+.cr-fmt-preview { margin-top: 10px; padding: 12px 14px; border: 1.5px dashed #3e2723; border-radius: 12px; }
+.cr-fmt-preview > small { display: block; margin-bottom: 6px; font: 700 12px/1 'DM Sans', sans-serif; opacity: .7; }
+.cr-rich p { margin: 0 0 .6em; }
+.cr-rich p:last-child { margin-bottom: 0; }
+.cr-rich ul, .cr-rich ol { margin: 0 0 .6em; padding-left: 1.3em; }
+.cr-rich ul { list-style: disc; }
+.cr-rich ol { list-style: decimal; }
+.cr-rich li { margin: .15em 0; }
+:is(.app-container, .ayna-mobile) .cr-rich.cr-ann-body { white-space: normal; }

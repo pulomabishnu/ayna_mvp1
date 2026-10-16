@@ -34,7 +34,7 @@ import '../styles/community2.css';
 // screens: feeds + you on the left, the feed in the middle, and side modules
 // built only from loaded data on the right (each hides when it has nothing).
 
-const TABS = [['for-you', 'For you'], ['following', 'Following'], ['question', 'Questions'], ['review', 'Reviews'], ['playlists', 'Playlists']];
+const TABS = [['for-you', 'For you'], ['following', 'Following'], ['question', 'Questions'], ['review', 'Reviews'], ['playlists', 'Playlists'], ['announcements', 'Announcements']];
 const VERB = { post: 'Post', question: 'Ask', review: 'Review', playlist: 'Playlist', recommend: 'Recommend' };
 const KIND_TITLES = { post: 'New post', question: 'Ask a question', review: 'Write a review', playlist: 'Create a playlist', recommend: 'Recommend a product' };
 const COVER_COLORS = ['#1D1A2B', '#B9C2F4', '#F7BADD', '#BDEBD6', '#F7E78E'];
@@ -943,7 +943,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
             {Object.keys(KIND_TITLES).map((k) => <button type="button" key={k} className={`is-${k}`} onClick={() => openCompose(k)}>{VERB[k] || k}</button>)}
           </div>
         </div>}
-        {tab === 'for-you' && <div className="wc-pinned"><Announcements supabase={supabase} user={user} products={products} productsById={productsById} loadArticles={loadArticles} teamBadges={teamBadges} variant="web" onOpenProduct={onOpenProduct} onOpenPlaylist={openPlaylistById} onOpenArticle={onOpenArticle} onOpenProfile={openProfile} onRequireAuth={requireAccount} onShowRules={openRules} /></div>}
+        {/* For you is every post; team news lives in its own Announcements tab (Oct 16). */}
         {firstLoad ? <div className="wc-skel-list" aria-busy="true" aria-label="Loading posts"><SkeletonPost /><SkeletonPost /><SkeletonPost /></div> : posts.filter((p) => !isBlocked(p.author_id)).map((p) => renderPost(p))}
         {!loading && posts.length === 0 && (tab === 'following' ? <div className="wc-empty">
           {(() => {
