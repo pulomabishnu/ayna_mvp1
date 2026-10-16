@@ -17,6 +17,7 @@
  *                      (supabase/migrations/20261013150000_referrals.sql);
  *                      until it is applied the badge shows as locked, 0/3.
  */
+import posthog from 'posthog-js';
 import { getEcosystemSeedFromQuiz, getProductMatchDetailsForProduct } from '../data/products.js';
 
 const PENDING_REF_KEY = 'ayna_pending_ref_v1';
@@ -55,6 +56,7 @@ export function captureReferralFromUrl() {
   if (existing?.code && Date.now() - existing.at < 30 * 864e5) return existing;
   const pending = { code, at: Date.now() };
   safeSet(PENDING_REF_KEY, pending);
+  try { posthog.capture('campaign_referral_link_opened'); } catch { /* analytics never blocks */ }
   return pending;
 }
 
@@ -79,7 +81,8 @@ export async function attachPendingReferral(supabase) {
     await supabase.auth.updateUser({ data: { referred_by: pending.code, referred_at: new Date().toISOString() } });
   } catch { /* metadata is a backup; the table row below is what counts */ }
   try {
-    await supabase.from('referrals').insert({ referred_user_id: user.id, referrer_code: pending.code });
+    const { error } = await supabase.from('referrals').insert({ referred_user_id: user.id, referrer_code: pending.code });
+    if (!error) { try { posthog.capture('campaign_referral_signup_completed'); } catch { /* ignore */ } }
   } catch { /* table not created yet: metadata still holds it */ }
   safeDel(PENDING_REF_KEY);
   return true;

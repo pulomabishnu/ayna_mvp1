@@ -33,6 +33,8 @@ const WebWrapped = lazyView(() => import('./components/WebWrapped'), null);
 const DeleteAccountPage = lazyView(() => import('./components/DeleteAccountPage'));
 const AdminReviewsPage = lazyView(() => import('./components/AdminReviewsPage'));
 const AdminResearchPage = lazyView(() => import('./components/AdminResearchPage'));
+const FreeProductPage = lazyView(() => import('./components/freeProduct/FreeProductPage'));
+const CampaignAdminPage = lazyView(() => import('./components/CampaignAdminPage'));
 const PhoneVerification = lazyView(() => import('./components/PhoneVerification'));
 const Recommendations = lazyView(() => import('./components/Recommendations'));
 const TrackedItems = lazyView(() => import('./components/TrackedItems'));
@@ -54,6 +56,7 @@ const ProductAudit = React.lazy(() => import('./components/ProductAudit'));
 const CampusResources = React.lazy(() => import('./components/CampusResources'));
 import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, hasStatedLifeStage } from './data/products';
 import { behaviorFrom } from './utils/matchDisplay';
+import { captureReferralFromUrl } from './utils/badges';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
 const Screenings = lazyView(() => import('./components/Screenings'));
 import { useScrollPosition } from './hooks/useScrollPosition';
@@ -152,6 +155,10 @@ const VIEW_TO_PATH = {
   'admin-reviews': '/admin/reviews',
   // Same: api/research-product checks ADMIN_EMAILS.
   'admin-research': '/admin/research',
+  // Free product campaign (feedback + 3 verified friends). Server decides everything: api/campaign.js.
+  'free-product': '/free-product',
+  'free-product-reward': '/free-product/reward',
+  'admin-campaign': '/admin/campaign',
 };
 // Friendly document.title per view'welcome'/'hero' and any view not
 // listed here fall back to the site's base title (see the title effect).
@@ -167,6 +174,9 @@ const VIEW_TITLES = {
   'campus-resources': 'Campus Resources',
   'admin-reviews': 'All Reviews',
   'admin-research': 'Product research',
+  'free-product': 'Your Free Product',
+  'free-product-reward': 'Your Free Product',
+  'admin-campaign': 'Free Product Campaign',
 };
 
 const DEFAULT_DESCRIPTION = "Personalized women's health product recommendations, matched to your body and backed by real research, doctor input, and other women's experiences.";
@@ -222,6 +232,10 @@ PATH_TO_VIEW['/partner-brands'] = 'waitlist';
 PATH_TO_VIEW['/'] = 'welcome';
 // Old Shop URL keeps working (bookmarks, shared links); it is replaced with /shop on load.
 PATH_TO_VIEW['/discovery'] = 'discovery';
+// Campaign invite links: /join?ref=<code>. The code is stored first-touch
+// (badges.js) before the URL is tidied to '/', then the visitor lands on home.
+PATH_TO_VIEW['/join'] = 'welcome';
+if (typeof window !== 'undefined') captureReferralFromUrl();
 
 // Deep links inside a view: /library/:articleId and /community/@handle.
 function articleIdFromPath(path) {
@@ -429,7 +443,7 @@ function App() {
     const path = keepPath ? window.location.pathname : pathForView(currentView, productRouteId);
     // Community search lives in ?q= (shareable, survives a refresh); keep only that.
     const communityQ = currentView === 'community' ? new URLSearchParams(window.location.search).get('q') : null;
-    const initialUrl = (currentView === 'auth-callback' || currentView === 'campus-resources')
+    const initialUrl = (currentView === 'auth-callback' || currentView === 'campus-resources' || currentView === 'free-product' || currentView === 'free-product-reward')
       ? `${path}${window.location.search}${window.location.hash}`
       : communityQ ? `${path}?q=${encodeURIComponent(communityQ)}` : path;
     window.history.replaceState({ view: currentView, productId: productRouteId }, '', initialUrl);
@@ -714,6 +728,7 @@ function App() {
       'privacy-policy', 'consumer-health-data', 'terms-of-use', 'confirmed', 'auth-callback', 'auth-confirm',
       'welcome', 'hero', 'quiz', 'discovery', 'product', 'waitlist', 'articles', 'you', 'community',
       'how-it-works', 'how-we-make-money', 'campus-resources', 'about', 'contact', 'waitlist', 'not-found', 'ecosystem',
+      'free-product', 'free-product-reward',
     ];
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       // A different account (or none) must never reuse the previous account's cached intake.
@@ -2160,6 +2175,7 @@ function App() {
             onOpenSaved={handleViewWishlist}
             onOpenCheckin={() => setShowCheckin(true)}
             onOpenStartups={() => setCurrentView('waitlist')}
+            onOpenFreeProduct={() => setCurrentView('free-product')}
             onOpenPhoneVerify={() => setCurrentView('phone-verify')}
             onOpenProduct={handleOpenProduct}
             onSignOut={handleSignOut}
@@ -2196,6 +2212,20 @@ function App() {
         <FeedbackPrompts key={user?.id || 'guest'} user={user} authLoading={authLoading} currentView={currentView} />
         {currentView === 'admin-reviews' && (
           <AdminReviewsPage onBack={handleBackFromStandalonePage} />
+        )}
+        {(currentView === 'free-product' || currentView === 'free-product-reward') && (
+          <FreeProductPage
+            key={currentView}
+            user={user}
+            authLoading={authLoading}
+            stage={currentView === 'free-product-reward' ? 'reward' : 'progress'}
+            onNavigate={(view) => setCurrentView(view)}
+            onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+            onStartQuiz={handleStartQuiz}
+          />
+        )}
+        {currentView === 'admin-campaign' && (
+          <CampaignAdminPage onBack={handleBackFromStandalonePage} />
         )}
         {currentView === 'admin-research' && (
           <AdminResearchPage onBack={handleBackFromStandalonePage} />
