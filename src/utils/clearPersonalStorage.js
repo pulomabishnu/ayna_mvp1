@@ -12,7 +12,7 @@ const KEEP = new Set([
   'ayna_product_images_v11', 'ayna_chunk_reload_attempted', 'ayna_internal_analytics_v1', 'ayna_ask_tucked_v1',
   'ayna.powderroom.seen', 'ayna_reviews', 'ayna.drawers.v1', 'ayna_web_quiz_intro_seen', 'ayna_motion_paused', 'ayna_web_theme_v1', 'ayna_mobile_theme_v1',
 ]);
-const KEEP_PREFIX = ['ayna_read_progress_v1:'];
+const KEEP_PREFIX = ['ayna_read_progress_v1:', 'ayna.drawers.v1:'];
 // Unsynced copies: changes the server has not accepted yet are pushed again on
 // her next sign-in. They are keyed to her account and live in this tab only
 // (sessionStorage), so keeping them loses nothing and shows nothing to others.

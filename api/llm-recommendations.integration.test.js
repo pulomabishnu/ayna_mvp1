@@ -18,6 +18,9 @@
  * Supabase and fetch are mocked; everything in between is the real handler.
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+
+// Each case runs the whole handler (about 1s, sometimes near 5s on a busy machine).
+vi.setConfig({ testTimeout: 20000 });
 import { mockRes, mockReq, mockSupabase, withEnv, anthropicOk } from './_test-helpers.js';
 
 const realFetch = globalThis.fetch;

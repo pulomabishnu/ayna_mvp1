@@ -75,7 +75,8 @@ function writeLocal(userId, profile) {
 // Several parts of a page ask for the intake at once; share one request (and
 // its answer for a few seconds) instead of sending the same query 4 times.
 let shared = null;
-function forgetSharedIntake() { shared = null; }
+/** Drop the shared answer: called when the signed-in account changes, so one account never gets another's intake. */
+export function forgetSharedIntake() { shared = null; }
 export function loadHealthIntakeForCurrentUser() {
   if (shared && Date.now() - shared.at < 4000) return shared.promise;
   const promise = loadHealthIntakeUncached();

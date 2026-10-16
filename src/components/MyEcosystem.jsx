@@ -2109,6 +2109,7 @@ export default function MyEcosystem({
                 {visibleAreaGroups.length > 0 && <h2 className="sr-only eco3-shelfanchor" id="eco3-shelves-title" tabIndex={-1}>Your shelves</h2>}
                 {visibleAreaGroups.length > 0 && (
                     <ShelfRows
+                        userId={user?.id || ''}
                         key={visibleAreaGroups.map((g) => g.key).join('|')}
                         groups={visibleAreaGroups}
                         onOpenProduct={onOpenProduct}

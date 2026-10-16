@@ -52,28 +52,39 @@ export function cleanProduct(p) {
 async function research(product, section) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) throw Object.assign(new Error('ANTHROPIC_API_KEY is not set'), { code: 'not_configured' });
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    signal: AbortSignal.timeout(48_000),
-    headers: {
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-beta': 'web-fetch-2025-09-10',
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: MODEL(),
-      max_tokens: 2000,
-      temperature: 0,
-      tools: [
-        { type: 'web_search_20250305', name: 'web_search', max_uses: 5 },
-        { type: 'web_fetch_20250910', name: 'web_fetch', max_uses: 5 },
-      ],
-      messages: [{ role: 'user', content: buildPrompt(product, section) }],
-    }),
-  });
-  if (!res.ok) throw Object.assign(new Error(`anthropic ${res.status}`), { code: 'llm_failed', status: res.status });
-  const data = await res.json();
+  // Server tools can pause a long turn (stop_reason 'pause_turn'): send it back to continue,
+  // inside the same overall time budget, instead of failing after the searches were paid for.
+  const deadline = Date.now() + 48_000;
+  const messages = [{ role: 'user', content: buildPrompt(product, section) }];
+  let data = null;
+  for (let turn = 0; turn < 4; turn += 1) {
+    const left = deadline - Date.now();
+    if (left < 3_000) throw Object.assign(new Error('research timed out'), { code: 'llm_failed' });
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      signal: AbortSignal.timeout(left),
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-beta': 'web-fetch-2025-09-10',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: MODEL(),
+        max_tokens: 2000,
+        temperature: 0,
+        tools: [
+          { type: 'web_search_20250305', name: 'web_search', max_uses: 5 },
+          { type: 'web_fetch_20250910', name: 'web_fetch', max_uses: 5 },
+        ],
+        messages,
+      }),
+    });
+    if (!res.ok) throw Object.assign(new Error(`anthropic ${res.status}`), { code: 'llm_failed', status: res.status });
+    data = await res.json();
+    if (data?.stop_reason !== 'pause_turn') break;
+    messages.push({ role: 'assistant', content: data.content || [] });
+  }
   const text = (data?.content || []).filter((b) => b?.type === 'text').map((b) => b.text).join('\n');
   const parsed = tryParseJsonCandidate(extractBalancedJsonObject(text) || text);
   if (!parsed || typeof parsed !== 'object') throw Object.assign(new Error('no JSON in reply'), { code: 'bad_reply' });

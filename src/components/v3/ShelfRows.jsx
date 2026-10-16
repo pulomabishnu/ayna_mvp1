@@ -6,12 +6,24 @@ import { toast } from '../../utils/toast';
    card used in the Shop, scrolling sideways with an Add tile at the end.
    Shelves can be renamed, recoloured, reordered and products moved; that
    layout is kept in this browser only and never touches her products. */
+// Kept per account (shelf names can be personal). The old browser-wide layout
+// moves to the first account that opens its shelves, so nobody loses theirs.
 const STORE = 'ayna.drawers.v1';
-function loadCustom() {
-  try { const v = JSON.parse(window.localStorage.getItem(STORE) || '{}'); return v && typeof v === 'object' ? v : {}; } catch { return {}; }
+const keyFor = (userId) => (userId ? `${STORE}:${userId}` : STORE);
+function loadCustom(userId) {
+  try {
+    const own = window.localStorage.getItem(keyFor(userId));
+    let raw = own;
+    if (!own && userId) {
+      raw = window.localStorage.getItem(STORE);
+      if (raw) { window.localStorage.setItem(keyFor(userId), raw); window.localStorage.removeItem(STORE); }
+    }
+    const v = JSON.parse(raw || '{}');
+    return v && typeof v === 'object' ? v : {};
+  } catch { return {}; }
 }
-function saveCustom(v) {
-  try { window.localStorage.setItem(STORE, JSON.stringify(v)); } catch { /* private mode: this visit only */ }
+function saveCustom(userId, v) {
+  try { window.localStorage.setItem(keyFor(userId), JSON.stringify(v)); } catch { /* private mode: this visit only */ }
 }
 const PAINTS = [
   { id: 'butter', label: 'Butter', bg: '#ffedac' },
@@ -45,8 +57,8 @@ function Row({ children, label }) {
   );
 }
 
-export default function ShelfRows({ groups, onOpenProduct, onToggleProduct, onAddMore }) {
-  const [custom, setCustom] = useState(loadCustom);
+export default function ShelfRows({ groups, onOpenProduct, onToggleProduct, onAddMore, userId = '' }) {
+  const [custom, setCustom] = useState(() => loadCustom(userId));
   const [editing, setEditing] = useState(null);
   const [painting, setPainting] = useState(null);
   const [dragOver, setDragOver] = useState(null);
@@ -54,7 +66,7 @@ export default function ShelfRows({ groups, onOpenProduct, onToggleProduct, onAd
   const [hintSeen, setHintSeen] = useState(() => { try { return localStorage.getItem('ayna_shelf_hint_seen') === '1'; } catch { return false; } });
   const hideHint = () => { setHintSeen(true); try { localStorage.setItem('ayna_shelf_hint_seen', '1'); } catch { /* ignore */ } };
   const drag = useRef(null);
-  const update = (fn) => setCustom((prev) => { const next = fn(prev); saveCustom(next); return next; });
+  const update = (fn) => setCustom((prev) => { const next = fn(prev); saveCustom(userId, next); return next; });
   const arranged = useMemo(() => {
     const keys = new Set(groups.map((g) => g.key));
     const moves = custom.moves || {};

@@ -62,7 +62,7 @@ import { enrichLlmProductForDiscovery } from './utils/enrichLlmProductForDiscove
 import ProfileChatbot from './components/ProfileChatbot';
 import { loadHealthProfile, hasHealthProfileSignals } from './utils/healthDataProfile';
 import { loadHealthProfileForCurrentUser, saveHealthProfileForCurrentUser } from './utils/healthProfileStore';
-import { loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser } from './utils/healthIntakeStore';
+import { forgetSharedIntake, loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser } from './utils/healthIntakeStore';
 import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
 import AuthGate, { ConsentGate } from './components/AuthGate';
 import PrivacyPolicy from './components/PrivacyPolicy';
@@ -716,6 +716,8 @@ function App() {
       'how-it-works', 'how-we-make-money', 'campus-resources', 'about', 'contact', 'waitlist', 'not-found', 'ecosystem',
     ];
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // A different account (or none) must never reuse the previous account's cached intake.
+      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') forgetSharedIntake();
       if (session) {
         setUser(session.user);
         setUserSession(session);
@@ -1351,6 +1353,7 @@ function App() {
   // auth event, then land on the top of Home (audit G20, G09).
   const handleSignOut = () => {
     getSupabaseClient()?.auth.signOut();
+    forgetSharedIntake();
     clearPersonalStorage();
     toast('You’re signed out.');
     setMyProducts({});
