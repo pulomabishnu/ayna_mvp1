@@ -11,7 +11,7 @@ import ProductTileImage, { ProductImageFallback } from '../ProductTileImage';
 import { RuleField } from './RuleField.jsx';
 import { VerifiedBadge } from './VerifiedBadge.jsx';
 import { RichText } from './richText.jsx';
-import { applyFormat } from './richTextFormat.js';
+import RichEditor from './RichEditor.jsx';
 import './community-shared.css';
 
 // Announcements: news from the ayna team. Everyone can read, react and reply;
@@ -162,19 +162,8 @@ function Composer({ supabase, user, products, productsById, articles, playlists,
     <section className="cr-group">
       <label className="cr-label" htmlFor="cr-ann-title">Title</label>
       <RuleField as="input" id="cr-ann-title" data-autofocus value={title} maxLength={ann.ANNOUNCEMENT_TITLE_MAX} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Join our cycle Q&A on Thursday" className="cr-input" onShowRules={onShowRules} />
-      <label className="cr-label" htmlFor="cr-ann-body">Message</label>
-      <div className="cr-fmt" role="toolbar" aria-label="Formatting">
-        {[['bold', 'B', 'Bold'], ['underline', 'U', 'Underline'], ['italic', 'I', 'Italic'], ['ul', '•', 'Bulleted list'], ['ol', '1.', 'Numbered list']].map(([k, label, name]) => (
-          <button key={k} type="button" className={`cr-fmt__btn is-${k}`} aria-label={name} title={name} onMouseDown={(e) => e.preventDefault()} onClick={() => {
-            const el = document.getElementById('cr-ann-body');
-            const r = applyFormat(el, body, k);
-            setBody(r.value.slice(0, ann.ANNOUNCEMENT_BODY_MAX));
-            requestAnimationFrame(() => { if (el) { el.focus(); el.setSelectionRange(r.start, r.end); } });
-          }}>{label}</button>
-        ))}
-      </div>
-      <RuleField id="cr-ann-body" value={body} maxLength={ann.ANNOUNCEMENT_BODY_MAX} onChange={(e) => setBody(e.target.value)} placeholder="What should the community know?" className="cr-input" autoGrow minRows={4} maxGrowPx={320} onShowRules={onShowRules} />
-      {body.trim() && <div className="cr-fmt-preview"><small>Preview</small><RichText text={body} className="cr-ann-body" /></div>}
+      <p className="cr-label" id="cr-ann-body-label">Message</p>
+      <RichEditor id="cr-ann-body" onChange={setBody} maxLength={ann.ANNOUNCEMENT_BODY_MAX} placeholder="What should the community know?" onShowRules={onShowRules} label="Message" />
     </section>
 
     <section className="cr-group">

@@ -199,3 +199,16 @@ button.cr-ann-name:hover { text-decoration: underline; text-underline-offset: 3p
 .cr-rich ol { list-style: decimal; }
 .cr-rich li { margin: .15em 0; }
 :is(.app-container, .ayna-mobile) .cr-rich.cr-ann-body { white-space: normal; }
+
+/* Doc-style message box (Oct 16) */
+.cr-rte__box { min-height: 120px; max-height: 360px; overflow-y: auto; white-space: pre-wrap; overflow-wrap: anywhere; cursor: text; outline: none; }
+.cr-rte__box:focus-visible { box-shadow: 0 0 0 3px #769ebe; }
+.cr-rte__box.is-empty::before { content: attr(data-placeholder); color: rgba(62, 39, 35, .5); pointer-events: none; }
+.cr-rte__box ul, .cr-rte__box ol { margin: .3em 0; padding-left: 1.4em; }
+.cr-rte__box ul { list-style: disc; }
+.cr-rte__box ol { list-style: decimal; }
+.cr-rte__box div { min-height: 1.4em; }
+.cr-fmt__btn[aria-pressed="true"] { background: #3e2723; color: #ffedac; }
+[data-theme='brand-dark'] .cr-rte__box.is-empty::before { color: rgba(255, 237, 172, .55); }
+[data-theme='brand-dark'] .cr-fmt__btn { background: transparent; color: #ffedac; border-color: #ffedac; }
+[data-theme='brand-dark'] .cr-fmt__btn[aria-pressed="true"] { background: #ffedac; color: #3e2723; }
