@@ -3311,7 +3311,9 @@ html body .app-container.app-container[data-theme='brand-dark'] .ay-lib-cover.ay
 html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-lib-cover, html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-lib-cover * { color: #3e2723 !important; }
 html body .app-container[data-theme='brand-dark'] :where(#eco3-shelves-title, #eco3-needs-title, #eco3-tools-title) { color: #ffedac !important; }
 /* Brand dark, round 4: buttons on butter cards, and text inside butter cards. */
-html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.ay-suggest .ay-suggest__btn, .pdp-buybox a.pdp-btn.pdp-btn--navy, .pdp-buybox a.pdp-btn.pdp-btn--navy *) { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.ay-suggest .ay-suggest__btn) { color: #ffedac !important; }
+/* Dark Buy button: cream fill, espresso text (Pass 6 and product audit). */
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.pdp-buybox a.pdp-btn.pdp-btn--navy, .pdp-buybox a.pdp-btn.pdp-btn--navy *, .pdp-sticky a.pdp-btn, .pdp-sticky a.pdp-btn *) { color: #3e2723 !important; }
 html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.wc-mod:not(.is-topics), .wc-me, .wyou-card.is-account, .ay-web-lib-article.ay3-paper .ay-lib-article__tags) :is(h2, h3, p, a, span, button:not([aria-pressed='true']):not(.is-on), small, strong, time, .ay-footer-legal__link, .ay-lib-tag) { color: #3e2723 !important; }
 html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.eco3-head__text h1, .eco3-head__text h1 em, .eco3-head__text p, .eco3-head__sub) { color: #3e2723 !important; }
 html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.ay-login .ay-login-text, .wc-tabs button:not(.is-on)) { color: #3e2723 !important; }
@@ -4944,3 +4946,19 @@ html body .app-container.app-container.app-container.app-container .ay-lib-chips
 html body .app-container.app-container.app-container.app-container:not([data-theme='brand-dark']) .lv li > :is(figure, a) { box-shadow: 5px 5px 0 #3e2723 !important; }
 html body .app-container.app-container.app-container.app-container:not([data-theme='brand-dark']) .ayna-browse__search input { box-shadow: 3px 3px 0 #3e2723 !important; }
 html body .app-container.app-container.app-container.app-container .ay3-az li > button { border-radius: 8px !important; }
+
+/* Review fixes: Shop heading sat under the fixed header (old -64px pull-up). */
+html body .app-container.app-container.app-container.app-container .ay3-shophero { margin-top: 0 !important; }
+html body .app-container.app-container.app-container.app-container .ayna-browse { padding-top: 16px !important; }
+/* Dark mode: pink and blue bands keep their light fill, so their text stays espresso. */
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.ay3-band--rose, .ay3-band--sky) :is(h1, h2, p, em, .ay-info__title, .ay-info__lede, .ay-info__eyebrow, .ay-info__back) { color: #3e2723 !important; }
+/* Dark mode: the founders' notepad keeps its butter paper, so its text is espresso. */
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-info-story :is(p, em, strong, span, a) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-info .ay-info-story__text :is(p, em, strong, span, a) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.ay3-band--rose, .ay3-band--sky) :is(h1, h2, p, em, .ay-info__title, .ay-info__lede, .ay-info__eyebrow) { color: #3e2723 !important; }
+/* Review fix: dark-mode Buy button (cream fill, espresso text) and the lines under it. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] a.pdp-btn.pdp-btn--buy, html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] a.pdp-btn.pdp-btn--buy * { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] a.pdp-btn.pdp-btn--buy { background: #ffedac !important; border-color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-buybox :is(.pdp-variants-line, div, p, small, span):not(.pdp-btn *):not(.pdp-btn) { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-buybox a:not(.pdp-btn) { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-quick li { border: 0 !important; background: none !important; color: #ffedac !important; }

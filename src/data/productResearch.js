@@ -233,7 +233,7 @@ export const PRODUCT_RESEARCH = {
         "Take 1 tablet daily with water and a meal, as the label directs for adults with iron deficiency.",
         "Take it at least 2 hours before or 4 hours after antacids, and avoid coffee or tea for an hour around your dose.",
         "Pair it with a vitamin C source like orange juice to help absorption.",
-        "Expect darker stools, and ask your provider about a stool softener if you get constipated.",
+        "Expect darker stools. If you get constipated, tell your provider.",
         "Ask your clinician when to recheck your blood levels.",
         "Check with your doctor if you're pregnant, breastfeeding or take other medicines, and store it out of children's reach."
       ],
@@ -1059,7 +1059,7 @@ export const PRODUCT_RESEARCH = {
         "summary": "Comparing nine US online birth control platforms against CDC eligibility criteria, the authors found they appear to screen adequately for contraindications and prescribe safely, though their health questionnaires could be more rigorous."
       }
     ],
-    "clinicalNote": "With Nurx, a licensed clinician reviews your answers to an online health questionnaire and decides whether a birth control method is safe for you, the same check a clinic does at a visit. A 2019 study of nine US online birth control platforms found they generally did a good job screening for health conditions that make some methods unsafe, judged against CDC guidelines, though the authors said the health questionnaires could be more thorough. A federal evidence review from AHRQ (the Agency for Healthcare Research and Quality) found that telehealth birth control care led to similar results as usual care, such as similar pregnancy rates, but the strength of that evidence is low and no studies looked at harms. Your clinician's decision is based on what you report, so answer the health questions fully and honestly.",
+    "clinicalNote": "With Nurx, a licensed clinician reviews your answers to an online health questionnaire and decides whether a birth control method is safe for you, a screening similar to the one at an in-person visit. A 2019 study of nine US online birth control platforms found they generally did a good job screening for health conditions that make some methods unsafe, judged against CDC guidelines, though the authors said the health questionnaires could be more thorough. A federal evidence review from AHRQ (the Agency for Healthcare Research and Quality) found that telehealth birth control care led to similar results as usual care, such as similar pregnancy rates, but the strength of that evidence is low and no studies looked at harms. Your clinician's decision is based on what you report, so answer the health questions fully and honestly.",
     "clinicalNoteSources": [
       {
         "url": "https://www.ibisreproductivehealth.org/node/1010",
@@ -1778,7 +1778,7 @@ export const PRODUCT_RESEARCH = {
       }
     ],
     "warnings": [
-      "Boil a new cup for 5 to 10 minutes before first use, and wash your hands before inserting or removing it.",
+      "Wash your hands before inserting or removing the cup.",
       "If you feel any discomfort, stop using the cup and contact your doctor.",
       "If you get a sudden high fever, vomiting, diarrhea, dizziness, fainting, or a sunburn-like rash, stop using the cup right away and get medical care.",
       "Don't use foreign objects to remove the cup, and take care with long nails."
@@ -4299,7 +4299,6 @@ export const PRODUCT_RESEARCH = {
   },
   "p-period-nirvana-disc": {
     "whoItsFor": [
-      "People who want a disc designed with input from period educator Kim Rosas",
       "Those who want two sizes to choose from and a notch for removal",
       "People with heavier flow: in a 2023 lab study, menstrual discs held the most of any product type, about 61 mL on average"
     ],
@@ -4668,7 +4667,7 @@ export const PRODUCT_RESEARCH = {
   },
   "p-proof-period": {
     "whoItsFor": [
-      "People who want one pair for both periods and light bladder leaks",
+      "People who want one pair for periods and occasional light bladder leaks (for leaks alone, a product made for urine is the better pick)",
       "Those who want to pick from several absorbency levels",
       "Shoppers looking for PFAS-free absorbent layers",
       "Not the pick as your only protection on your heaviest days: in a 2023 lab study using red blood cells, super-absorbency period underwear held about 2 mL on average, far less than tampons, cups or discs"
@@ -4691,7 +4690,7 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://shopproof.com/pages/faq",
       "sourceLabel": "Proof Leak Proof Underwear FAQs"
     },
-    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products. A Cleveland Clinic ob/gyn says a typical pair holds about one to two tampons' worth of flow, so on heavy days you may need to change more often, and you shouldn't wear one pair for more than 12 hours. Cleveland Clinic notes period underwear can also be used for urine leaks, discharge and bleeding after birth. A 2025 study of reusable period products found PFAS (\"forever chemicals\") in all 19 products picked for closer testing, and the researchers think some period underwear has PFAS added to stop leaks, so a PFAS-free claim is worth looking for.",
+    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products. A Cleveland Clinic ob/gyn says a typical pair holds about one to two tampons' worth of flow, so on heavy days you may need to change more often, and you shouldn't wear one pair for more than 12 hours. Cleveland Clinic notes period underwear can also be used for urine leaks, discharge and bleeding after birth, but if you mainly need it for urine leaks, it suggests a product designed for that. A 2025 study of reusable period products found PFAS (\"forever chemicals\") in all 19 products picked for closer testing, and the researchers think some period underwear has PFAS added to stop leaks, so a PFAS-free claim is worth looking for.",
     "clinicalNoteSources": [
       {
         "url": "https://health.clevelandclinic.org/does-period-underwear-work",
@@ -4827,9 +4826,8 @@ export const PRODUCT_RESEARCH = {
   },
   "p-good-kitty-uti-biome-shield": {
     "whoItsFor": [
-      "People who get recurrent UTIs and want a daily, non-antibiotic prevention routine",
+      "People who get recurrent UTIs and want to try a cranberry and D-mannose supplement, knowing the evidence is mixed",
       "Those whose UTIs tend to follow sex, since the brand gives a separate pre-sex dose",
-      "People in perimenopause or menopause, when falling estrogen raises UTI risk",
       "Not the pick for a UTI you have right now: the brand says it's for prevention only, and an active infection needs antibiotics"
     ],
     "howToUse": {
@@ -5634,8 +5632,8 @@ export const PRODUCT_RESEARCH = {
   },
   "p-oboo-mood-drops": {
     "whoItsFor": [
-      "Women with low desire who want a gentle daily herbal routine rather than a quick fix",
-      "Midlife women looking for stress and tension support alongside libido",
+      "Women Oboo markets it to: those with low desire who want a daily herbal option (there are no studies of this product)",
+      "Oboo also markets it for stress and tension alongside libido",
       "People happy to give it weeks, not minutes, to judge results",
       "Not the pick if you want an immediate effect, and check with your doctor first if you're pregnant, nursing or take medication"
     ],
@@ -8539,7 +8537,7 @@ export const PRODUCT_RESEARCH = {
     "ingredientScience": [
       {
         "name": "Boric acid",
-        "text": "CDC's treatment guidelines use 600 mg in a gelatin capsule, inserted vaginally once a day for 3 weeks, for yeast infections caused by non-albicans Candida (less common yeast species) that keep coming back. That is a specific, doctor-guided use, not routine prevention.",
+        "text": "CDC's treatment guidelines use 600 mg in a gelatin capsule, inserted vaginally once a day for 3 weeks, for yeast infections caused by non-albicans Candida (less common yeast species) that keep coming back. That is a specific, doctor-guided use, not routine prevention. This product is a blend of boric acid and herbs with no boric acid amount stated on the brand page, so it is not that regimen.",
         "citations": [
           {
             "url": "https://www.cdc.gov/stiapp/candidiasis.html",
@@ -8930,7 +8928,7 @@ export const PRODUCT_RESEARCH = {
         "summary": "Among 16,331 Swedish users, typical-use pregnancy rates ranged from 3.5 (former condom users) to 8.1 (former pill users) per 100 woman-years."
       }
     ],
-    "effectiveness": "For this app specifically: in the studies FDA reviewed (15,570 women), about 1.8 in 100 got pregnant in a year with perfect use and 6.5 in 100 with typical use, which matches the team's 93% figure. A 2021 study of 5,879 US users found similar numbers: a typical-use rate of 6.2 and a perfect-use rate of 2.0 pregnancies per 100 women per year.",
+    "effectiveness": "For this app specifically: in the studies FDA reviewed (15,570 women), about 1.8 in 100 got pregnant in a year with perfect use and 6.5 in 100 with typical use. A 2021 study of 5,879 US users found similar numbers: a typical-use rate of 6.2 and a perfect-use rate of 2.0 pregnancies per 100 women per year.",
     "effectivenessSources": [
       {
         "url": "https://www.fda.gov/NewsEvents/Newsroom/PressAnnouncements/ucm616511.htm",
@@ -10140,8 +10138,7 @@ export const PRODUCT_RESEARCH = {
     "whoItsFor": [
       "Breastfeeding parents who want to catch let-down from one breast while baby feeds on the other",
       "Anyone who wants a cheap, cordless, one-piece pump that's easy to clean and travel with",
-      "Those building a small milk stash without a full electric pump setup",
-      "Not the pick if you're prone to oversupply: Haakaa's own research report notes passive pumping may add to oversupply for some users"
+      "Those building a small milk stash without a full electric pump setup"
     ],
     "howToUse": {
       "intro": "Per Haakaa's product instructions and FDA and CDC breast pump guidance:",
@@ -10559,7 +10556,7 @@ export const PRODUCT_RESEARCH = {
   "p-phd-wash": {
     "whoItsFor": [
       "People who want a gentle external wash for the vulva with a light odor-control angle",
-      "Those with sensitive skin who want a sulfate-free, paraben-free wash, which the brand says it is",
+      "Not the pick if you react to fragrance or essential oils: it contains lavender oil",
       "Anyone who wants something they can use daily, including during their period, per the brand",
       "Not a treatment for infection: it's for external washing only, so see a provider for unusual discharge, itching or a strong odor"
     ],
@@ -10752,7 +10749,7 @@ export const PRODUCT_RESEARCH = {
   },
   "p-womaness-me": {
     "whoItsFor": [
-      "Adults in perimenopause or menopause looking for a hormone-free daily supplement for hot flashes, night sweats, mood and sleep",
+      "Adults in perimenopause or menopause. Womaness markets it for hot flashes, night sweats, mood and sleep; The Menopause Society does not recommend supplements for hot flashes",
       "People who want to avoid estrogen and phytoestrogens, since Womaness says the formula contains neither",
       "Those willing to take it every day for about three months, which is how long the brand says to try it for best results",
       "Not the pick to start on your own if you're pregnant, nursing, take medications or have a medical condition: the label says to check with your doctor first"

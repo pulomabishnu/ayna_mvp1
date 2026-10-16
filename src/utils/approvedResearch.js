@@ -11,8 +11,9 @@ export function mergeApprovedResearch(product, sections) {
   const s = sections;
   if (!(out.whoItsFor || []).length && (s.who?.whoItsFor || []).length) out.whoItsFor = s.who.whoItsFor;
   if (!(out.howToUse?.steps || []).length && !String(out.howToUse?.intro || '').trim() && (s.how?.howToUse?.steps || []).length) out.howToUse = s.how.howToUse;
-  if ((s.clinical?.clinicalSources || []).length) out.researchClinicalSources = [...(out.researchClinicalSources || []), ...s.clinical.clinicalSources];
-  if ((s.science?.scienceSources || []).length) out.researchScienceSources = [...(out.researchScienceSources || []), ...s.science.scienceSources];
+  const addNew = (have, more) => [...(have || []), ...more.filter((x) => x?.url && !(have || []).some((y) => y.url === x.url))];
+  if ((s.clinical?.clinicalSources || []).length) out.researchClinicalSources = addNew(out.researchClinicalSources, s.clinical.clinicalSources);
+  if ((s.science?.scienceSources || []).length) out.researchScienceSources = addNew(out.researchScienceSources, s.science.scienceSources);
   if (!out.communityReview && s.reviews?.communityReview) {
     out.communityReview = s.reviews.communityReview;
     const src = (s.reviews.sources || [])[0];

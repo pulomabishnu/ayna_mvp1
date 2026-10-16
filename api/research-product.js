@@ -103,7 +103,7 @@ export default async function handler(req, res) {
     const db = getServiceClient();
     if (!db) return res.status(200).json({ sections: {} });
     const id = clip(req.query.product, 120);
-    const { data, error } = await db.from('product_research').select('section, approved').eq('product_id', id).eq('status', 'approved');
+    const { data, error } = await db.from('product_research').select('section, approved').eq('product_id', id).not('approved', 'is', null);
     if (error) return res.status(200).json({ sections: {} });
     res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
     const sections = {};
@@ -136,8 +136,10 @@ export default async function handler(req, res) {
     const draft = dropUrls(first, dead);
     const row = {
       product_id: product.id, product_name: product.name, brand: product.brand || null, product_url: product.url || null,
-      section, status: 'draft', draft, issues: [...issues, ...notes], approved: null,
-      created_by: user.email, reviewed_by: null, reviewed_at: null, updated_at: new Date().toISOString(),
+      section, status: 'draft', draft, issues: [...issues, ...notes],
+      // `approved` is left out on purpose: re-running research on a published
+      // section keeps the published version live until the new draft is reviewed.
+      created_by: user.email, updated_at: new Date().toISOString(),
     };
     const { data, error: e } = await admin.from('product_research').upsert(row, { onConflict: 'product_id,section' }).select().single();
     if (e) return res.status(503).json({ error: 'table_missing', detail: 'Run supabase/migrations/20261015120000_product_research.sql once.', draft: row });

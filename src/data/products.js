@@ -869,6 +869,10 @@ function withCatalogEvidence(product) {
     return corrected;
 }
 
+// Retail listings are where we read a label, not evidence, so research never links to them.
+const RESEARCH_RETAILER = /(^|\.)(amazon|amzn|walmart|target|ulta|sephora|cvs|walgreens|boots|superdrug|well|stopandshop|instacart|carewell|vitacost|iherb|heb|samsclub|costco|medpex|meijer|kroger|riteaid)\.[a-z.]+$/i;
+const notRetail = (src) => { try { return Boolean(src?.url) && !RESEARCH_RETAILER.test(new URL(src.url).hostname); } catch { return false; } };
+
 // Gap-filling research: only adds what a product doesn't have yet.
 export function withResearch(product) {
     const r = product && PRODUCT_RESEARCH[product.id];
@@ -876,21 +880,21 @@ export function withResearch(product) {
     const out = { ...product };
     const filled = [];
     if (!(out.whoItsFor || []).length && (r.whoItsFor || []).length) { out.whoItsFor = r.whoItsFor; filled.push('whoItsFor'); }
-    if (!(out.howToUse?.steps || []).length && !String(out.howToUse?.intro || '').trim() && (r.howToUse?.steps || []).length) { out.howToUse = r.howToUse; filled.push('howToUse'); }
+    if (!(out.howToUse?.steps || []).length && !String(out.howToUse?.intro || '').trim() && !out.howToUse?.sourceUrl && !String(out.howToUse?.text || '').trim() && (r.howToUse?.steps || []).length) { out.howToUse = r.howToUse.sourceUrl && !notRetail({ url: r.howToUse.sourceUrl }) ? { ...r.howToUse, sourceUrl: undefined, sourceLabel: undefined } : r.howToUse; filled.push('howToUse'); }
     // Kept in their own fields: page reading only, so matching and evidence scores don't shift.
     if ((r.clinicalSources || []).length) { out.researchClinicalSources = r.clinicalSources.map((x) => ({ url: x.url, label: x.label, summary: x.summary })); filled.push('clinicalSources'); }
     if (r.clinicalNote && !out.clinicalNote) { out.clinicalNote = r.clinicalNote; filled.push('clinicalNote'); }
     if ((r.scienceSources || []).length) { out.researchScienceSources = r.scienceSources.map((x) => ({ url: x.url, label: x.label, summary: x.summary })); filled.push('scienceSources'); }
     if (!out.communityReview && r.communityReview) {
         out.communityReview = r.communityReview;
-        const src = (r.communityReviewSources || [])[0];
+        const src = (r.communityReviewSources || []).filter(notRetail)[0];
         if (src && !out.communityReviewSourceUrl) { out.communityReviewSourceUrl = src.url; out.communityReviewSourceLabel = src.label; }
         filled.push('communityReview');
     }
     if (!(out.ingredientScience || []).length && (r.ingredientScience || []).length) { out.ingredientScience = r.ingredientScience; filled.push('ingredientScience'); }
     if (!out.effectiveness && r.effectiveness) { out.effectiveness = r.effectiveness; filled.push('effectiveness'); }
-    if (!(out.warnings || []).length && (r.warnings || []).length) { out.warnings = r.warnings; if (r.warningsSource && !(out.safetyNoteSources || []).length) out.safetyNoteSources = [r.warningsSource]; filled.push('warnings'); }
-    if ((r.clinicalNoteSources || []).length) out.researchClinicalSources = [...(out.researchClinicalSources || []), ...r.clinicalNoteSources.filter((x) => !(out.researchClinicalSources || []).some((y) => y.url === x.url))];
+    if (!(out.warnings || []).length && (r.warnings || []).length) { out.warnings = r.warnings; if (r.warningsSource && notRetail(r.warningsSource) && !(out.safetyNoteSources || []).length) out.safetyNoteSources = [r.warningsSource]; filled.push('warnings'); }
+    if ((r.clinicalNoteSources || []).length && filled.includes('clinicalNote')) out.researchClinicalSources = [...(out.researchClinicalSources || []), ...r.clinicalNoteSources.filter((x) => !(out.researchClinicalSources || []).some((y) => y.url === x.url))];
     if ((r.effectivenessSources || []).length && filled.includes('effectiveness')) out.researchScienceSources = [...(out.researchScienceSources || []), ...r.effectivenessSources.filter((x) => !(out.researchScienceSources || []).some((y) => y.url === x.url))];
     if (filled.length) out.researchFilled = filled;
     return out;

@@ -82,7 +82,7 @@ function compactProduct(product) {
     'image', 'imageUrl', 'images', 'summary', 'description', 'tagline',
     'tags', 'healthFunctions', 'internal', 'safety', 'ageMin', 'ageMax',
     'whereToBuy', 'url', 'website', 'buyUrl', 'purchaseUrl', 'affiliateUrl',
-    'intakeGenerated', '_llmConcern', '_userSwapped',
+    'intakeGenerated', 'llmGenerated', '_llmConcern', '_userSwapped',
     'catalogId', 'catalogVerified', 'whyItWorks', 'considerations', 'matchExplanation',
     'aynaMatch', 'aynaMatchPercent', 'matchPercent', 'matchPercentage',
     'userAdded', 'addedAt',
@@ -272,6 +272,41 @@ export async function loadEcosystemForUser(supabase, userId) {
  * `includeTracking: true` is the explicit full reset (ecosystem + tracking +
  * hidden); saved-for-later rows (is_saved) are never touched either way.
  */
+/** True for a pick ayna generated (quiz seed or AI build) that she has not made her own. */
+export function isGeneratedPick(product) {
+  if (!product) return false;
+  if (product._userSwapped || product.userAdded) return false;
+  return Boolean(product.intakeGenerated || product.llmGenerated);
+}
+
+/**
+ * Takes only ayna's generated picks off her shelves before a rebuild. Products
+ * she added herself, tracked or saved are never touched, and nothing is deleted.
+ * (clearEcosystemForUser below wipes everything and is kept for account reset.)
+ */
+export async function clearGeneratedPicksForUser(supabase, userId) {
+  try {
+    const { data, error } = await supabase
+      .from('user_ecosystems')
+      .select('product_id, product_data')
+      .eq('user_id', userId)
+      .eq('in_ecosystem', true);
+    if (error) throw error;
+    const ids = (data || []).filter((row) => isGeneratedPick(row.product_data)).map((row) => row.product_id);
+    if (!ids.length) return { cleared: 0, synced: true };
+    const { error: updateError } = await supabase
+      .from('user_ecosystems')
+      .update({ in_ecosystem: false, updated_at: new Date().toISOString() })
+      .eq('user_id', userId)
+      .in('product_id', ids);
+    if (updateError) throw updateError;
+    return { cleared: ids.length, synced: true };
+  } catch (error) {
+    console.warn('[Ayna] generated-pick reset deferred:', describeError(error, 'clearGeneratedPicks'));
+    return { cleared: null, synced: false };
+  }
+}
+
 export async function clearEcosystemForUser(supabase, userId, { includeTracking = false } = {}) {
   clearLocalEcosystemShadow(userId, includeTracking);
 

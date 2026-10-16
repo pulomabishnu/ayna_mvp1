@@ -74,6 +74,7 @@ function cleanSources(list, { credibleOnly }, issues, field) {
   for (const s of Array.isArray(list) ? list : []) {
     const url = String(s?.url || '').trim();
     if (!url || seen.has(url)) continue;
+    if (!/^https:\/\//i.test(url)) { issues.push(`${field}: removed a link that isn't https (${url})`); continue; }
     if (isSearchUrl(url)) { issues.push(`${field}: removed a search-results link (${url})`); continue; }
     if (credibleOnly && !isCredibleUrl(url)) { issues.push(`${field}: removed a source that isn't a government, journal or medical-society site (${url})`); continue; }
     seen.add(url);

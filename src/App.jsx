@@ -82,7 +82,7 @@ import AuthCallback from './components/AuthCallback';
 import AuthConfirm from './components/AuthConfirm';
 import EmailConfirmed from './components/EmailConfirmed';
 import { getSupabaseClient } from './utils/supabaseClient';
-import { loadEcosystemForUser, upsertProductState, upsertProductsBatch, clearEcosystemForUser, removeGeneratedProductsFromEcosystem } from './utils/ecosystemStore';
+import { clearGeneratedPicksForUser, isGeneratedPick, loadEcosystemForUser, upsertProductState, upsertProductsBatch, clearEcosystemForUser, removeGeneratedProductsFromEcosystem } from './utils/ecosystemStore';
 import { loadSavedProducts, persistSavedProducts, clearSavedProducts, loadSavedForUser, setSavedForUser } from './utils/savedProductsStore';
 import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/learningMemoryStore';
 import { loadReviewsForUser, upsertProductReviews } from './utils/reviewsStore';
@@ -117,13 +117,6 @@ function accountFirstName(user) {
 }
 
 const ecosystemResetKey = (userId) => `ayna_ecosystem_reset_at:${userId || 'anon'}`;
-
-function markEcosystemResetPending(userId) {
-  if (!userId) return null;
-  const resetAt = Date.now();
-  try { localStorage.setItem(ecosystemResetKey(userId), String(resetAt)); } catch (_) {}
-  return resetAt;
-}
 
 function getPendingEcosystemResetAt(userId) {
   if (!userId) return 0;
@@ -602,20 +595,6 @@ function App() {
     setSaveError(`${what}. Your changes may not be saved. Check your connection and try again.`);
   }, []);
 
-  const resetRemoteEcosystemBestEffort = useCallback(async (supabase, userId) => {
-    if (!supabase || !userId) return { synced: false, skipped: true };
-    markEcosystemResetPending(userId);
-    try {
-      const result = await clearEcosystemForUser(supabase, userId);
-      clearPendingEcosystemReset(userId);
-      return { synced: true, ...result };
-    } catch (error) {
-      // Reset is local-first. A temporary RLS/network failure must never block
-      // rebuilding the ecosystem or show a scary global error banner.
-      console.warn('[Ayna] remote ecosystem reset deferred:', error);
-      return { synced: false, deferred: true };
-    }
-  }, []);
 
   /** Update local state AND persist, so the imported profile survives a device change. */
   const updateHealthProfile = useCallback((next) => {
@@ -974,8 +953,8 @@ function App() {
       // Tagged so a later AI rebuild can tell these generated picks apart from
       // products she added herself (handleBuildEcosystemFromLlm).
       const instantProducts = Object.fromEntries(Object.entries(mergedProducts || {}).map(([id, product]) => [id, { ...product, intakeGenerated: true }]));
-      setMyProducts(instantProducts);
-      setEcosystemOrder(Object.keys(instantProducts));
+      setMyProducts(prev => ({ ...instantProducts, ...Object.fromEntries(Object.entries(prev || {}).filter(([, p]) => p && !isGeneratedPick(p))) }));
+      setEcosystemOrder(prev => [...Object.keys(instantProducts), ...prev.filter(id => !instantProducts[id] && myProductsRef.current[id] && !isGeneratedPick(myProductsRef.current[id]))]);
       clearCachedLlmRecommendations();
       try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
       const _supabase = getSupabaseClient();
@@ -990,7 +969,11 @@ function App() {
         // reset (not fired in parallel) so the clear-then-seed writes can't
         // race and have the seed's `in_ecosystem: true` lost to the reset's
         // `in_ecosystem: false` landing second.
-        seedSavePromiseRef.current = seedSavePromiseRef.current.then(() => resetRemoteEcosystemBestEffort(_supabase, user.id)).then(() => {
+        // Additive, never a reset: she may be signing in to an account that already
+        // has products (guest quiz on a new device, then "Save my matches"). The
+        // old clear-then-seed wiped everything she had added herself. The saved
+        // rows load back in and merge with these picks (see the data load above).
+        seedSavePromiseRef.current = seedSavePromiseRef.current.then(() => clearGeneratedPicksForUser(_supabase, user.id)).then(() => {
           const seeded = Object.values(instantProducts);
           if (seeded.length) {
             return upsertProductsBatch(_supabase, user.id, seeded, { inEcosystem: true, isTracked: false, isOmitted: false });
@@ -1421,8 +1404,9 @@ function App() {
     // Tagged so a later AI rebuild can tell these generated picks apart from
     // products she added herself (handleBuildEcosystemFromLlm).
     const instantProducts = Object.fromEntries(Object.entries(mergedProducts || {}).map(([id, product]) => [id, { ...product, intakeGenerated: true }]));
-    setMyProducts(instantProducts);
-    setEcosystemOrder(Object.keys(instantProducts));
+    // Her own products stay on her shelves; only ayna's earlier picks are replaced.
+    setMyProducts(prev => ({ ...instantProducts, ...Object.fromEntries(Object.entries(prev || {}).filter(([, p]) => p && !isGeneratedPick(p))) }));
+    setEcosystemOrder(prev => [...Object.keys(instantProducts), ...prev.filter(id => !instantProducts[id] && myProductsRef.current[id] && !isGeneratedPick(myProductsRef.current[id]))]);
     llmBuiltThisSessionRef.current = false;
     clearCachedLlmRecommendations();
     try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
@@ -1435,7 +1419,7 @@ function App() {
     // session ends if the async LLM build (the only other thing that writes
     // to user_ecosystems) never finishes.
     if (supabase && user) {
-      seedSavePromiseRef.current = seedSavePromiseRef.current.then(() => resetRemoteEcosystemBestEffort(supabase, user.id)).then(() => {
+      seedSavePromiseRef.current = seedSavePromiseRef.current.then(() => clearGeneratedPicksForUser(supabase, user.id)).then(() => {
         const seeded = Object.values(instantProducts);
         if (seeded.length) {
           return upsertProductsBatch(supabase, user.id, seeded, { inEcosystem: true, isTracked: false, isOmitted: false });
@@ -1463,8 +1447,9 @@ function App() {
     // Tagged so a later AI rebuild can tell these generated picks apart from
     // products she added herself (handleBuildEcosystemFromLlm).
     const instantProducts = Object.fromEntries(Object.entries(mergedProducts || {}).map(([id, product]) => [id, { ...product, intakeGenerated: true }]));
-    setMyProducts(instantProducts);
-    setEcosystemOrder(Object.keys(instantProducts));
+    // Her own products stay on her shelves; only ayna's earlier picks are replaced.
+    setMyProducts(prev => ({ ...instantProducts, ...Object.fromEntries(Object.entries(prev || {}).filter(([, p]) => p && !isGeneratedPick(p))) }));
+    setEcosystemOrder(prev => [...Object.keys(instantProducts), ...prev.filter(id => !instantProducts[id] && myProductsRef.current[id] && !isGeneratedPick(myProductsRef.current[id]))]);
     llmBuiltThisSessionRef.current = false;
     clearCachedLlmRecommendations();
     try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
@@ -1475,7 +1460,7 @@ function App() {
     // re-seeded ecosystem survives even if the async LLM rebuild never
     // completes.
     if (supabase && user) {
-      seedSavePromiseRef.current = seedSavePromiseRef.current.then(() => resetRemoteEcosystemBestEffort(supabase, user.id)).then(() => {
+      seedSavePromiseRef.current = seedSavePromiseRef.current.then(() => clearGeneratedPicksForUser(supabase, user.id)).then(() => {
         const seeded = Object.values(instantProducts);
         if (seeded.length) {
           return upsertProductsBatch(supabase, user.id, seeded, { inEcosystem: true, isTracked: false, isOmitted: false });

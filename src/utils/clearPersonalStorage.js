@@ -13,21 +13,27 @@ const KEEP = new Set([
   'ayna.powderroom.seen', 'ayna_reviews', 'ayna.drawers.v1', 'ayna_web_quiz_intro_seen', 'ayna_motion_paused', 'ayna_web_theme_v1', 'ayna_mobile_theme_v1',
 ]);
 const KEEP_PREFIX = ['ayna_read_progress_v1:'];
+// Unsynced copies: changes the server has not accepted yet are pushed again on
+// her next sign-in. They are keyed to her account and live in this tab only
+// (sessionStorage), so keeping them loses nothing and shows nothing to others.
+const KEEP_IN_TAB_PREFIX = ['ayna_ecosystem_shadow_v2:', 'ayna_health_intake_v2:'];
+const KEEP_QUEUES = new Set(['ayna_suggest_queue_v1', 'ayna_retailer_returns_v1']);
 
-function sweep(store) {
+function sweep(store, inTab = false) {
   if (!store) return;
   const keys = [];
   for (let i = 0; i < store.length; i += 1) keys.push(store.key(i));
   for (const k of keys) {
     if (!k || !/^ayna/i.test(k)) continue;
-    if (KEEP.has(k) || KEEP_PREFIX.some((p) => k.startsWith(p) && !k.endsWith(':guest'))) continue;
+    if (KEEP.has(k) || KEEP_QUEUES.has(k) || KEEP_PREFIX.some((p) => k.startsWith(p) && !k.endsWith(':guest'))) continue;
+    if (inTab && KEEP_IN_TAB_PREFIX.some((p) => k.startsWith(p))) continue;
     try { store.removeItem(k); } catch { /* storage blocked */ }
   }
 }
 
 export function clearPersonalStorage() {
   try { sweep(window.localStorage); } catch { /* storage unavailable */ }
-  try { sweep(window.sessionStorage); } catch { /* storage unavailable */ }
+  try { sweep(window.sessionStorage, true); } catch { /* storage unavailable */ }
 }
 
 export default clearPersonalStorage;
