@@ -573,21 +573,26 @@ export function ProductMatch({ glance, matchPercent, fallback = '', onShowWhy, o
   );
 }
 
-const ASK_GENERAL = ['What is it?', 'Who is it for?', 'Any safety concerns?'];
-export function ProductAsk({ productName, onAsk, signedIn = false }) {
+// Questions the page can't answer on its own: they're about her (product page audit).
+const ASK_SITUATION = ['Is this right for me?', 'Is it safe with what I already use?', 'How does it compare with what I have now?'];
+export function ProductAsk({ productName, onAsk }) {
+  // While this strip is on screen the floating "Ask ayna" button steps aside (it covered the compare table).
+  const ref = React.useRef(null);
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
+    const io = new IntersectionObserver(([e]) => document.body.classList.toggle('ay-ask-inline-on', e.isIntersecting));
+    io.observe(el);
+    return () => { io.disconnect(); document.body.classList.remove('ay-ask-inline-on'); };
+  }, []);
   if (!onAsk) return null;
-  // Three at most. Logged out, only questions ayna can answer without a profile.
-  const qs = signedIn ? ASK_QUESTIONS.filter((q) => !/recommend/i.test(q)).slice(0, 3) : ASK_GENERAL;
   return (
-    <section className="ay-story ay-story--ask" aria-labelledby="ay-ask-h">
-      <div className="ay-ask__head">
-        <span className="ay-ask__orb" aria-hidden="true">✦</span>
-        <h2 id="ay-ask-h">Ask ayna about this product</h2>
-      </div>
-      <ul className="ay-ask__qs">
-        {qs.map((q) => <li key={q}><button type="button" onClick={() => onAsk(`About ${productName}: ${q}`)}>{q}</button></li>)}
+    <section ref={ref} className="ay-askrow" aria-labelledby="ay-ask-h">
+      <h2 id="ay-ask-h">Ask about your situation</h2>
+      <ul>
+        {ASK_SITUATION.map((q) => <li key={q}><button type="button" onClick={() => onAsk(`About ${productName}: ${q}`)}>{q}</button></li>)}
+        <li><button type="button" onClick={() => onAsk(`About ${productName}: `)}>Ask your own question</button></li>
       </ul>
-      <button type="button" className="ay-ask__cta" onClick={() => onAsk(`About ${productName}: `)}>Ask your own question</button>
     </section>
   );
 }

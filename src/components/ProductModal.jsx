@@ -593,7 +593,9 @@ export default function ProductModal({
     if (recall.status === 'past' || recall.status === 'note') return first(recall.detail || recall.label);
     if (glance?.alert) return first(glance.alert);
     if (keyCautions[0]) return keyCautions[0].replace(/^Pregnancy:\s*Brand:\s*(.*?)\.?$/i, 'Pregnancy: $1 (per the brand).');
-    const w = (product.warnings || []).find(Boolean);
+    // Only a real safety item goes next to Buy; care and hygiene tips belong in How to use.
+    const TIP = /^(wash|rinse|boil|clean|store|keep it|dry|sanitize|sterili[sz]e|empty)\b/i;
+    const w = (product.warnings || []).find((x) => x && !TIP.test(String(x).trim()));
     return w ? first(w) : '';
   })();
   // Who actually sells it, so the button says where it goes ("Buy at LOLA ↗").
@@ -636,13 +638,22 @@ export default function ProductModal({
       {/* A size picker only when picking changes something here (price, link or photo);
           otherwise just say which sizes exist. */}
       {choice.hasVariants && !variantsMatter && (
-        <p className="pdp-variants-line">{(() => {
-          // A long list of colors or prints isn't a size list: say how many there are.
-          const labels = product.variants.map((v) => String(v.label || '').replace(/\s*\u2014\s*/g, ', '));
+        (() => {
+          // Options as chips: the right word for what they are, at most 6 then "+N more".
+          const labels = product.variants.map((v) => String(v.label || '').replace(/\s*\u2014\s*/g, ', ')).filter(Boolean);
           const sizey = labels.some((l) => /\d|\b(xs|s|m|l|xl|small|medium|large|regular|super|light|heavy|mini|plus|size|model|pack|count|oz|ml)\b/i.test(l));
-          if (labels.length > 8 || !sizey) return `Comes in ${labels.length} ${sizey ? 'sizes' : 'styles'}.${sizeChosenOnAmazon ? ' Pick yours on Amazon.' : ''}`;
-          return `Sizes: ${labels.join(' · ')}.${sizeChosenOnAmazon ? ' Pick yours on Amazon.' : ''}`;
-        })()}</p>
+          const kind = sizey ? 'Sizes' : /\b(pillow|cover|slipcover)s?\b/i.test(`${product.name} ${labels.join(' ')}`) ? 'Covers' : /color|colour/i.test(labels.join(' ')) ? 'Colors' : 'Styles';
+          const shown = labels.slice(0, 6);
+          return (
+            <div className="pdp-options">
+              <p className="pdp-options__h">{kind}{sizeChosenOnAmazon ? <span> · pick yours on Amazon</span> : null}</p>
+              <ul className="pdp-options__chips">
+                {shown.map((l) => <li key={l}>{l}</li>)}
+                {labels.length > shown.length && <li className="is-more">+{labels.length - shown.length} more</li>}
+              </ul>
+            </div>
+          );
+        })()
       )}
       {choice.hasVariants && variantsMatter && (
         <label className="pdp-variant" style={{ display: 'block', width: '100%', marginBottom: '0.8rem', fontSize: '0.9rem' }}>
@@ -699,6 +710,10 @@ export default function ProductModal({
               : 'ayna may earn a commission. It never changes your match.'}
           {' '}{isPartner && <button type="button" className="pdp-textlink" aria-expanded={showDisclosure} onClick={() => setShowDisclosure((v) => !v)}>{showDisclosure ? 'Less' : 'How partnerships work'}</button>}
         </p>
+      )}
+      {/* Returns are the seller's: link Amazon's own policy when Buy goes there (product page audit). */}
+      {buyUrl && isAmazonBuyLink && !isPrelaunch && (
+        <p className="pdp-returns"><a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=GKM69DUUYKQWKWX7" target="_blank" rel="noopener noreferrer">Amazon’s return policy<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a></p>
       )}
       {retailers.length > 0 && (
         <div className="ay-retailers">
@@ -843,7 +858,6 @@ export default function ProductModal({
           <div className="pdp-topbar__right">
             <button type="button" className="pdp-share" onClick={handleShare} aria-label={`Share ${product?.name || 'this product'}`}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" /></svg>
-              Share
             </button>
           </div>
         </div>
@@ -917,7 +931,8 @@ export default function ProductModal({
               {!(matchPercent > 0) && !matchExclusions.length && isInEcosystem && (
                 <p className="pdp-h2-fitnote is-static">In your ecosystem</p>
               )}
-              {onOmit && (
+              {/* "Not for me" only means something once she has an ecosystem. */}
+              {onOmit && user && (
                 <button type="button" className="pdp-omit-link pdp-omit-link--match" onClick={() => onOmit(product)}>
                   {isOmitted ? 'Undo “Not for me”' : 'Not for me'}
                 </button>
@@ -932,7 +947,7 @@ export default function ProductModal({
         <div className="pdp-below pdp-below--glance">
           {/* Full width, one reading column: the evidence tabs, then Ask ayna. */}
           <div className="pdp-read">
-            <ProductEvidence product={product} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} safety={<ProductSafety product={product} glance={glance} recall={recall} alertText={glance?.alert || ''} />} extraRows={(() => {
+            <ProductEvidence product={product} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} recall={recall} heroLine={firstSentence(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '').replace(/\s*—\s*/g, ', ').trim(), { min: 20, max: 240 })} safety={<ProductSafety product={product} glance={glance} recall={recall} alertText={glance?.alert || ''} />} extraRows={(() => {
             const pp = getPassport(product);
             const checked = pp?.pricing?.price?.verified_at;
             let seller = '';
@@ -944,19 +959,21 @@ export default function ProductModal({
             ];
           })()} />
             <div className="pdp-pair">
-              <ProductAsk productName={displayName} onAsk={onAskAyna} signedIn={Boolean(user)} />
+              <ProductAsk productName={displayName} onAsk={onAskAyna} />
               {onCommunityAction && (
-              <section className="pdp-community-actions" aria-labelledby="pdp-community-h">
-                {onCommunityAction && <>
-                  <h3 id="pdp-community-h">Tried it?</h3>
-                  <div className="pdp-community-actions__grid">
-                    {[['review', 'Write a review'], ['post', 'Mention in a post'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => (
-                      <button key={kind} type="button" className={kind === 'review' ? 'is-primary' : undefined} onClick={() => onCommunityAction(kind)}>{label}</button>
-                    ))}
-                  </div>
-                </>}
-              </section>
-            )}
+                <section className="pdp-tried" aria-labelledby="pdp-community-h">
+                  <h2 id="pdp-community-h">Tried it?</h2>
+                  <button type="button" className="pdp-btn pdp-btn--navy" onClick={() => onCommunityAction('review')}>Write a review</button>
+                  <details className="pdp-tried__more">
+                    <summary>More ways to share</summary>
+                    <div role="menu">
+                      {[['post', 'Mention in a post'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => (
+                        <button key={kind} type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; onCommunityAction(kind); }}>{label}</button>
+                      ))}
+                    </div>
+                  </details>
+                </section>
+              )}
             </div>
           </div>
 
