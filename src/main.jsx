@@ -186,6 +186,10 @@ if (!POSTHOG_KEY) {
     // Automatic exception capture can include raw error messages/stacks. In a
     // health product those may accidentally contain user-entered context, so
     // we send only a coarse, explicitly-sanitized app_error event below.
+    // posthog-js reads `capture_exceptions`; `errorTracking` is not an init
+    // option, so on its own it never disabled anything (only the project
+    // setting did). Kept alongside in case it's referenced elsewhere.
+    capture_exceptions: false,
     errorTracking: { autocaptureExceptions: false },
     loaded: (ph) => {
       window.posthog = ph;
