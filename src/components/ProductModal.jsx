@@ -414,6 +414,15 @@ export default function ProductModal({
   const displayName = String(choice.displayName || product?.name || '').replace(/\s*\u2014\s*/g, ', ');
   const [showWhy, setShowWhy] = useState(false);
   const [showDisclosure, setShowDisclosure] = useState(false);
+  // Desktop: a slim buy bar slides in once the main Buy button scrolls away (product page audit).
+  const [buyAway, setBuyAway] = useState(false);
+  useEffect(() => {
+    const el = document.querySelector('.pdp-buybox');
+    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
+    const io = new IntersectionObserver(([e]) => setBuyAway(!e.isIntersecting && e.boundingClientRect.top < 0));
+    io.observe(el);
+    return () => io.disconnect();
+  }, [product?.id]);
   const [photo, setPhoto] = useState(0);
   const [toast, setToast] = useState('');
   const toastTimer = useRef(0);
@@ -996,8 +1005,9 @@ export default function ProductModal({
         </div>
       </div>
 
-      {/* P13: sticky Buy bar on phones. */}
-      <aside className="pdp-sticky" aria-label="Buy">
+      {/* Sticky Buy bar: always on phones; on desktop only once the main Buy button is off screen. */}
+      <aside className={`pdp-sticky${buyAway ? ' is-away' : ''}`} aria-label="Buy">
+        <span className="pdp-sticky__name">{displayName}</span>
         {priceText && <span className="pdp-sticky__price">{price.known ? price.main : priceText}</span>}
         {buyButton('pdp-sticky__buy')}
         {onToggleSaved && (

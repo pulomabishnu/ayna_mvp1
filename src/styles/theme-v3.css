@@ -5080,3 +5080,41 @@ html body .app-container.app-container.app-container.app-container.app-container
 html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-options__h, html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-options__h span { color: #ffedac !important; }
 html body .app-container[data-theme='brand-dark'] #ay-ask-h, html body .app-container[data-theme='brand-dark'] #pdp-community-h { color: #ffedac !important; }
 html body .app-container:not([data-theme='brand-dark']) #ay-ask-h, html body .app-container:not([data-theme='brand-dark']) #pdp-community-h { color: #3e2723 !important; }
+/* Product page audit, phone: fixed bars took 222px (a third of the screen). The
+   header scrolls away on product pages (the bottom bar still navigates) and the
+   buy bar is 64px: 130px of fixed bars. */
+@media (max-width: 767px) {
+  html body .app-container.app-container.app-container.app-container.app-container:has(.pdp-page) .app-nav-wrap { position: relative !important; }
+  html body .app-container.app-container.app-container.app-container.app-container .pdp-sticky { padding: 8px 16px !important; }
+}
+html body .app-container.app-container.app-container.app-container.app-container .pdp-sticky__name { display: none; }
+@media (min-width: 768px) {
+  html body .app-container.app-container.app-container.app-container.app-container .pdp-sticky { display: flex !important; position: fixed !important; top: 76px; left: 0; right: 0; bottom: auto !important; z-index: 900; align-items: center; gap: 20px; height: 64px; padding: 0 max(32px, calc((100vw - 1200px) / 2)) !important; border: 0 !important; border-bottom: 1.5px solid #3e2723 !important; background: #ffedac !important; transform: translateY(-110%); opacity: 0; pointer-events: none; transition: transform .18s ease-out, opacity .18s ease-out; }
+  html body .app-container.app-container.app-container.app-container.app-container .pdp-sticky.is-away { transform: none; opacity: 1; pointer-events: auto; }
+  html body .app-container.app-container.app-container.app-container.app-container .pdp-sticky__name { display: block; flex: 1 1 auto; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font: 400 22px/1.2 'DM Serif Display', Georgia, serif; color: #3e2723; }
+  html body .app-container.app-container.app-container.app-container.app-container .pdp-sticky__price { font: 600 18px/1 'DM Sans', sans-serif; color: #3e2723; font-variant-numeric: tabular-nums; }
+  html body .app-container.app-container.app-container.app-container.app-container .pdp-sticky .pdp-sticky__buy { min-height: 44px; padding: 0 22px !important; flex: none; }
+  html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-sticky { background: #3e2723 !important; border-bottom-color: #ffedac !important; }
+  html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-sticky :is(.pdp-sticky__name, .pdp-sticky__price) { color: #ffedac !important; }
+}
+@media (prefers-reduced-motion: reduce) { html body .app-container.app-container.app-container.app-container.app-container .pdp-sticky { transition: none !important; } }
+@media (min-width: 768px) {
+  html body .app-container.app-container.app-container.app-container.app-container .pdp-sticky .pdp-sticky__buy { display: inline-flex !important; align-items: center; justify-content: center; height: 44px; padding-top: 0 !important; padding-bottom: 0 !important; line-height: 1 !important; }
+  html body .app-container.app-container.app-container.app-container.app-container .pdp-sticky .pdp-actions__heart { width: 44px; height: 44px; }
+}
+@media (min-width: 900px) {
+  html body .app-container.app-container.app-container.app-container.app-container .ay-stack__rail { top: 164px; }
+  html body .app-container.app-container.app-container.app-container.app-container .ay-sec { scroll-margin-top: 160px; }
+}
+/* Dark mode for the stacked product sections: cream text on espresso, except the pink safety box. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-stack :is(p, li, dt, dd, span, a, strong, b, em, h3, h4, blockquote, small, button, summary):not(.ay-ev2__badge):not(.ay-ev2__badge *) { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-stack :is(.ay-safety__list, .ay-safety__alert) :is(li, p, span, a, strong, b, em, button) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-stack .ay-tabs__steps li b { background: #ffedac !important; color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-stack .ay-tabs__list li::before { background: #f7badd !important; border-color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-stack .ay-ev__quote { border-color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-stack .ay-ev2__ingr li { border-color: rgba(255, 237, 172, .3) !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-stack .ay-src__card:not(.zz):not(.zz) { background: none !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-stack ol.ay-tabs__steps li > b:not(.zz):not(.zz):not(.zz) { background: #ffedac !important; color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-buybox .pdp-textlink:not(.zz) { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-stack .ay-unknown :is(h3, li, p, span):not(.zz):not(.zz):not(.zz) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-stack .ay-safety :is(.ay-src, .ay-src *, .ay-pd__rows *):not(.zz):not(.zz):not(.zz) { color: #ffedac !important; }
