@@ -158,7 +158,12 @@ if (!POSTHOG_KEY) {
     ui_host: 'https://us.posthog.com',
     person_profiles: 'always',
     autocapture: false,
-    capture_pageview: true,
+    // The router uses history.pushState (see App.jsx), so `true` only ever
+    // recorded the first page of a visit: 88% of sessions logged exactly one
+    // pageview, and in-app routes like /quiz never appeared. 'history_change'
+    // also records each client-side navigation. before_send still drops
+    // anything on /campus-resources, since it runs after the URL changes.
+    capture_pageview: 'history_change',
     mask_all_text: true,
     disable_session_recording: true,
     ip: false,
