@@ -690,7 +690,7 @@ export default function ProductModal({
           const sites = (product.whereToBuy || []).filter((w) => /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(String(w).trim()));
           return sites.length
             ? <a className="pdp-btn pdp-btn--navy pdp-btn--buy" href={`https://${sites[0].trim()}`} target="_blank" rel="noopener noreferrer">{product.category === 'telehealth' ? 'Book at' : 'Visit'} {sites[0]} <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
-            : <p className="pdp-buybox__note">{(product.whereToBuy || []).length ? `Sold at ${product.whereToBuy.join(', ')}.` : 'We don’t have a link for where to get this yet.'}</p>;
+            : <p className="pdp-buybox__note">No buy link yet.</p>;
         })()}
         {onAddToEcosystem && user && (
           <button

@@ -213,7 +213,6 @@ export function compareRows(products, { matchFor = null } = {}) {
       return notes.length ? `${notes.join(', ')}, see its page` : 'None flagged';
     } },
     { label: 'FSA/HSA', get: (p) => { if (['pad', 'tampon', 'cup', 'disc'].includes(p?.category)) return 'Eligible'; const f = getPassport(p)?.pricing?.fsa_hsa; return f?.known ? (f.value === 'eligible' ? 'Eligible' : 'Not eligible') : NOT_ON_FILE; } },
-    { label: 'Where to buy', get: whereToBuyLine },
     matchFor ? { label: 'Your match', get: (p) => { const m = matchFor(p); return Number.isFinite(m) && m > 0 ? `${Math.round(m)}%` : 'No clear match'; } } : null,
   ].filter(Boolean);
   return rows

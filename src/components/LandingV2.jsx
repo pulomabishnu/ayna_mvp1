@@ -90,10 +90,11 @@ function Search({ onSearch }) {
 
 function Hero({ onStartQuiz, onSearch, personal = null }) {
   return (
-    <section className={`lv-hero${personal?.dashboard ? ' lv-hero--member' : ''}`} aria-labelledby="lv-hero-title">
-      {!personal?.dashboard && <div className="lv-hero__photos">
+    <section className="lv-hero" aria-labelledby="lv-hero-title">
+      {/* Members get the same photo hero with their name (team call, Oct 16). */}
+      <div className="lv-hero__photos">
         {HERO.map((p, i) => (<img key={p.src} src={p.src} alt={p.alt} style={{ objectPosition: p.pos }} {...(i === 0 ? { fetchPriority: 'high' } : {})} />))}
-      </div>}
+      </div>
       <div className="lv-hero__copy">
         {personal ? <>
           <h1 id="lv-hero-title">Welcome back, <em>{personal.name}.</em></h1>
@@ -108,11 +109,11 @@ function Hero({ onStartQuiz, onSearch, personal = null }) {
         </>}
         <Search onSearch={onSearch} />
       </div>
-      {!personal?.dashboard && <div className="lv-stamp" aria-hidden="true">
+      <div className="lv-stamp" aria-hidden="true">
         <svg viewBox="0 0 200 200"><defs><path id="lv-stamp-path" d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1-148 0" /></defs>
           <text><textPath href="#lv-stamp-path" textLength="455" lengthAdjust="spacing">MATCHED TO YOU {'★'} MATCHED TO YOU {'★'}</textPath></text></svg>
         <span>you</span>
-      </div>}
+      </div>
     </section>
   );
 }
@@ -166,20 +167,23 @@ function Tiles({ products, onOpenProduct, ranked = false }) {
 
 // Core needs lead (periods, intimate care, menopause, pelvic floor); creams, sleep and gadgets come after.
 const CORE = /pad|tampon|cup|disc|period|intimate|vaginal|menopause|pelvic|uti|cramp|fertility|postpartum|pregnan/i;
-function Trending({ onOpenProduct, onViewDiscovery }) {
+function Trending({ onOpenProduct, onViewDiscovery, picks = null }) {
   // The first four products a new visitor sees: everyday picks, not sex tech.
-  const items = useMemo(() => {
+  const weekly = useMemo(() => {
     const list = getWeeklyTrendingLineup(ALL_PRODUCTS).map((x) => x.product)
       .filter((p) => p?.image && NEEDS_PHOTO(p) && !/sex|intimacy|toy/i.test(String(p.category || '')) && !/\banal\b|vibrator|dildo|mouth tape/i.test(String(p.name || '')));
     const core = list.filter((p) => CORE.test(`${p.category} ${(p.healthFunctions || []).join(' ')}`));
     return [...core, ...list.filter((p) => !core.includes(p))].slice(0, 4);
   }, []);
+  const items = picks && picks.length >= 2 ? picks.slice(0, 4) : weekly;
   const ref = useReveal();
   if (items.length < 2) return null;
   return (
     <section ref={ref} className="lv-sec" aria-labelledby="lv-trend-title">
       <header className="lv-head">
-        <h2 id="lv-trend-title">This week’s <em>picks</em></h2>
+        {picks && picks.length >= 2
+          ? <h2 id="lv-trend-title">Top picks for your <em>needs</em></h2>
+          : <h2 id="lv-trend-title">This week’s <em>picks</em></h2>}
         <Go className="lv-btn lv-btn--line" href="/shop" onGo={() => onViewDiscovery?.('')}>See the Shop</Go>
       </header>
       <Tiles products={items} onOpenProduct={onOpenProduct} ranked />
@@ -369,30 +373,26 @@ function PartnersTop({ onViewWaitlist }) {
 /* ---------- page ---------- */
 // `personal` (signed in): the same page with a welcome-back hero, and
 // `personalSlot` (her next step, top picks, Powder Room) right under it.
-export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onViewCommunity, onSearch, personal = null, personalSlot = null }) {
+export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onViewCommunity, onSearch, personal = null, personalSlot = null, personalTail = null }) {
   // One motion control for the whole site: the footer's "Pause motion".
   const paused = useMotionPaused();
   return (
     <div className={`lv${paused ? ' is-paused' : ''}`}>
       <div className="lv-wrap">
         <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} personal={personal} />
-        {/* Members who have started get a dashboard (Pass 7), not the marketing story. */}
-        {personal?.dashboard && personalSlot}
-        {!personal?.dashboard && <>
-        {/* Partner brands carousel up top, right under the hero. */}
-        <PartnersTop onViewWaitlist={onViewWaitlist} />
-        {personalSlot}
+        {/* Members: the same page, with their own cards under the hero and their top picks in place of the week's picks. */}
+        {personal?.dashboard ? personalSlot : <PartnersTop onViewWaitlist={onViewWaitlist} />}
+        {!personal?.dashboard && personalSlot}
         {/* Story order (Pass 7): what it is, how it works, real products, reads, who we are, start. */}
         {!personal && <Why paused={paused} />}
-        <Trending onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
+        <Trending onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={personal?.topPicks || null} />
         <ShopBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
         {/* ayna news, word of the day and more: a little way down the page, not first. */}
         <LandingStories paused={paused} onStartQuiz={onStartQuiz} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} />
         <Reads onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
+        {personalTail}
         {!personal && <Purpose onViewAbout={onViewAbout} />}
         {!(personal && personal.hasQuiz) && <Start onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />}
-        </>}
-        {personal?.dashboard && !personal.hasQuiz && <Start onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />}
       </div>
     </div>
   );

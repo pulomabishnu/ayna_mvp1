@@ -729,7 +729,7 @@ function evidenceDimension(pp, up, needId, explanations) {
   const pclaim = pp.passport?.claim_evidence?.[needId];
   if (top === 'clinical' && ((claim && (claim.product_specific || claim.clinical_guideline)) || (pclaim && (pclaim.product_specific || pclaim.guideline) && pclaim.score >= 0.5))) explanations.push(`Has clinical sources about ${phrase}, which you ranked first`);
   if (top === 'community' && ch.community >= 0.66) explanations.push('Well reviewed by other women, which you ranked first');
-  if (top === 'expert' && ch.expert >= 0.8) explanations.push('Reviewed by experts, which you ranked first');
+  if (top === 'expert' && ch.expert >= 0.8 && pp.evidence.expert_direct) explanations.push('Reviewed by experts, which you ranked first');
   return { value, known: hasData };
 }
 

@@ -112,12 +112,6 @@ function hasCommunitySupport(product) {
   return (Number.isFinite(rating) && rating >= 4) || Boolean(product?.communityReview) || communityLinks.length > 0;
 }
 
-function productTypeOptions() {
-  const set = new Set();
-  ALL_PRODUCTS.forEach((product) => { if (product?.category) set.add(product.category); });
-  return Array.from(set).sort();
-}
-
 /** Mirrors Discovery's "Ayna" match-quality filter, minus the quiz-derived
  * best-match ranking that only Discovery has access to, here "Best Match"
  * just means "already recommended to you," and "In My Ecosystem" is only
@@ -521,21 +515,16 @@ function ShopSection({ title, chips, filter, setFilter, filters, setFilters, pro
 /* Logged in                                                           */
 /* ------------------------------------------------------------------ */
 
-function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onViewCommunity, onViewArticles, onViewArticle, onViewAbout, onOpenProduct, initialCategory = null, savedProducts = {}, onToggleSaved, quizResults = null, healthProfile = null, matchOpts = null }) {
+function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onViewCommunity, onViewArticles, onViewArticle, onViewAbout, onOpenProduct, initialCategory = null, savedProducts = {}, quizResults = null, healthProfile = null, matchOpts = null }) {
   const name = displayNameFromUser(user) || 'there';
-  const [filter, setFilter] = useCategoryParam(initialCategory);
-  const [personalize, setPersonalize] = useState(true);
-  const [filters, setFilters] = useState(NO_FILTERS);
+  const [filter] = useCategoryParam(initialCategory);
+  const personalize = true;
+  const filters = NO_FILTERS;
 
   const ownedIds = useMemo(() => new Set(Object.keys(myProducts || {})), [myProducts]);
   const recommendedIds = useMemo(() => new Set(recommendedProductIds || []), [recommendedProductIds]);
   const ownedCategories = useMemo(() => new Set(Object.values(myProducts || {}).map((p) => p.category).filter(Boolean)), [myProducts]);
 
-  const chips = useMemo(
-    () => SHOP_FILTERS.filter((item) => item.key === 'all' || ALL_PRODUCTS.some((product) => matchesShopFilter(product, item.key))).slice(0, HOME_CHIPS),
-    [],
-  );
-  const productTypes = useMemo(() => productTypeOptions(), []);
 
   const shownProducts = useMemo(() => {
     let list = ALL_PRODUCTS.filter((p) => p?.id && p?.name && !ownedIds.has(p.id) && matchesShopFilter(p, filter));
@@ -576,8 +565,6 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
     }).catch(() => {});
     return () => { live = false; };
   }, []);
-  const hasProfile = Boolean(quizResults);
-  const badgeFor = (p) => (hasProfile ? matchBadge(getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts)) : null);
   const nextArea = useMemo(() => {
     const owned = Object.values(myProducts || {});
     const core = ['period', 'intimate', 'hormones', 'pelvic', 'sleep-stress', 'skin'];
@@ -605,7 +592,6 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
   const SEEN_KEY = 'ayna_home_seen_matches_v1';
   const [seenAtLoad] = useState(() => { try { const v = JSON.parse(localStorage.getItem(SEEN_KEY) || 'null'); return Array.isArray(v) ? new Set(v) : null; } catch { return null; } });
   const showingMatches = Boolean(personalize && quizResults && (!filter || filter === 'all'));
-  const newCount = showingMatches && seenAtLoad ? shownProducts.filter((p) => !seenAtLoad.has(p.id)).length : 0;
   useEffect(() => {
     if (!showingMatches) return;
     try {
@@ -667,41 +653,10 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
           </button>
         )}
       </div>
-      <ShopSection
-        title={showingMatches && newCount > 0 ? `${newCount} new match${newCount === 1 ? '' : 'es'} since your last visit` : personalize && quizResults ? 'Top picks for your needs' : 'Popular on ayna'}
-        minimal
-        chips={chips}
-        filter={filter}
-        setFilter={setFilter}
-        filters={filters}
-        setFilters={setFilters}
-        productTypes={productTypes}
-        ecosystem
-        onViewDiscovery={onViewDiscovery}
-        personalizeControl={(
-          <span className="lx-toggle">
-            <span id="lx-personal-label">Personalized</span>
-            <Toggle on={personalize} aria-labelledby="lx-personal-label" onClick={() => setPersonalize((v) => !v)} />
-          </span>
-        )}
-      >
-        <div className="lx-grid">
-          {shownProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              isSaved={!!savedProducts?.[product.id]}
-              onOpen={onOpenProduct}
-              onToggleSaved={onToggleSaved}
-              matchPercent={personalize ? ((badgeFor(product)?.percent ?? 0) >= 70 ? badgeFor(product).percent : null) : null}
-              matchLabel={personalize ? (badgeFor(product)?.label || '') : ''}
-            />
-          ))}
-        </div>
-        {shownProducts.length === 0 && <div className="lx-empty">No matches yet. Try another filter.</div>}
-      </ShopSection>
-
-      {posts.length > 0 && (
+    </div>
+  );
+  const tail = posts.length > 0 ? (
+    <div className="lx lx-personal">
         <section className="lx-powder mockup-page" aria-labelledby="lx-powder-h">
           <div className="lx-powder__head">
             <h2 id="lx-powder-h">From the <em>Powder Room.</em></h2>
@@ -722,10 +677,8 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
             })}
           </ul>
         </section>
-      )}
-
     </div>
-  );
+  ) : null;
   return (
     <div className="mockup-landing mockup-landing--first mockup-landing--returning">
       <LandingV2
@@ -737,8 +690,9 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
         onViewAbout={onViewAbout}
         onViewCommunity={onViewCommunity}
         onSearch={(q) => onViewDiscovery?.(discoveryTargetFor(q))}
-        personal={{ name, ecoCount: picks, hasQuiz: Boolean(quizResults), onOpenEcosystem: onViewEcosystem, dashboard: Boolean(picks > 0 || quizResults) }}
+        personal={{ name, ecoCount: picks, hasQuiz: Boolean(quizResults), onOpenEcosystem: onViewEcosystem, dashboard: Boolean(picks > 0 || quizResults), topPicks: showingMatches ? shownProducts : null }}
         personalSlot={(picks > 0 || quizResults) ? slot : null}
+        personalTail={(picks > 0 || quizResults) ? tail : null}
       />
     </div>
   );

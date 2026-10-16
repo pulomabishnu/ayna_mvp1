@@ -290,7 +290,8 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const brandSlug = String(d.brand).toLowerCase().replace(/[^a-z0-9]/g, '');
   const onlineLinks = d.community.filter((l) => { let h = ''; try { h = new URL(l.url).hostname; } catch { return false; } return !RETAIL.test(h) && !(brandSlug.length >= 3 && h.replace(/[^a-z0-9]/g, '').includes(brandSlug)); });
   const helps = glance?.who?.helps || [];
-  const facts = (glance?.facts || []).filter((f) => !f.unknown && !['inside', 'fda'].includes(f.id));
+  // Retailer lists are off the page (team call, Oct 16: buying goes through ayna); apps keep 'Where to get it'.
+  const facts = (glance?.facts || []).filter((f) => !f.unknown && !['inside', 'fda'].includes(f.id) && !(f.id === 'where' && !d.isDigital));
   const allSources = glance?.sources || [];
   const shownIngredients = allIngredients ? d.ingredients : d.ingredients.slice(0, 3);
 
@@ -320,10 +321,6 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   // The rating is said once, as a number: drop sentences that only repeat it.
   const communityText = d.brandRating ? sentences(d.communityText).filter((x) => !(x.includes(d.brandRating.value) && x.includes(d.brandRating.count))).join(' ') : d.communityText;
   const showMaterials = Boolean(d.materials) && !/^various|^varies/i.test(d.materials) && d.materials.trim().toLowerCase() !== String(d.ingredientsText || '').trim().toLowerCase();
-  const unknowns = (() => {
-    const unk = (glance?.sections || []).find((x) => x.id === 'unknown');
-    return (unk?.blocks || []).filter((b) => b.type === 'list').flatMap((b) => b.items || []).map((t) => noDash(typeof t === 'string' ? t : t?.text)).filter(Boolean);
-  })();
   const hasRows = bottomIsSpecs || facts.length > 0 || extraRows.some((r) => r && r.value) || d.priceNote || d.inStock.length > 0;
 
   // Ratings from ayna members: a 5-bar breakdown once there are 6 or more (Baymard).
@@ -433,8 +430,8 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       </>}
       {d.evidenceStrength && <p className="ay-ev__by">Evidence level on file: {d.evidenceStrength}</p>}
     </> },
-    (allSources.length > 0 || unknowns.length > 0) && { id: 'sources', label: 'Sources', body: <>
-      {unknowns.length > 0 && <div className="ay-unknown"><h3 className="ay-part__h is-first">What we don’t know yet</h3><ul>{unknowns.map((t) => <li key={t}>{t}</li>)}</ul></div>}
+    // "What we don't know yet" is no longer shown (team call, Oct 16): it sent people off the site.
+    allSources.length > 0 && { id: 'sources', label: 'Sources', body: <>
       <Links items={allSources.map((x) => ({ url: x.url, title: noDash(x.title), publisher: x.publisher, year: x.year }))} compact />
     </> },
   ].filter(Boolean);

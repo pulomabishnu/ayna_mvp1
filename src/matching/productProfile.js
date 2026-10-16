@@ -688,6 +688,8 @@ function evidenceFor(product, brandName) {
     ...out,
     strength: product.evidenceStrength || null, // e.g. 'limited'
     expert_opinion: Boolean(product.doctorOpinion),
+    // A named clinician said it (not ayna's own summary of the literature).
+    expert_direct: Boolean(product.doctorOpinion) && product.clinicianOpinionSource === 'independent' && !/not a direct clinician quote|ayna synthesis|marketing|own site|brand-affiliated/i.test(String(product.clinicianAttribution || '')),
     clinician_source: product.clinicianOpinionSource || null, // independent | brand | mixed
     user_rating: Number.isFinite(product.userRating) ? product.userRating : null,
   };

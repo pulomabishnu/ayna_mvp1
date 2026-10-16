@@ -345,6 +345,9 @@ function applyColdStartFloor(rankedList, pageSize) {
 
 // 'Highest rated' is hidden until cards show ratings (S18).
 const PERSONALIZED_KEY = 'ayna_shop_personalized_v1';
+// Filters she set herself, kept in memory for this page load only: leaving the
+// Shop and coming back keeps them, Clear or a refresh empties them (Oct 16).
+const shopMemo = { uid: null, v: {} };
 const LIVE_SEARCH_TIMEOUT_MS = 25000;
 const SORT_OPTIONS = [
     // Label is swapped to "Best match" only when it really sorts by match (see render).
@@ -496,21 +499,28 @@ function FilterSheet({ groups, personalizedToggle, resultCount, activeCount, onC
 }
 
 export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null, onAsk = null, matchOpts: matchOptsProp = null }) {
+    // Arriving with an intent (a category link, a search) starts fresh; plain "Shop" restores her own filters.
+    const memoUid = user?.id || '';
+    if (shopMemo.uid !== memoUid) { shopMemo.uid = memoUid; shopMemo.v = {}; }
+    const arrivedWithIntent = Boolean(initialSearch || initialCategory || initialMacroGroup || initialPadFlow || initialPadPreference || initialPadUseCase || initialSymptom);
+    const memo = (key, fallback) => (!arrivedWithIntent && shopMemo.v[key] !== undefined ? shopMemo.v[key] : fallback);
+
     const [macroGroup, setMacroGroup] = useState(() => {
         // initialMacroGroup (a whole care area, e.g. from "Swap" in the
         // ecosystem view) sets ONLY the broader group, leaving every
         // category within it visible, narrower than initialCategory,
         // which also pins categoryFilter down to that one specific type.
+        if (!arrivedWithIntent && shopMemo.v.macroGroup) return shopMemo.v.macroGroup;
         if (initialMacroGroup && initialMacroGroup !== 'all') return initialMacroGroup;
         if (!initialCategory || initialCategory === 'all') return 'all';
         return MACRO_GROUPS.find(g => g.categories.includes(initialCategory))?.id || 'all';
     });
-    const [categoryFilter, setCategoryFilter] = useState(initialCategory || 'all');
-    const [typeFilter, setTypeFilter] = useState('all');
+    const [categoryFilter, setCategoryFilter] = useState(() => memo('categoryFilter', initialCategory || 'all'));
+    const [typeFilter, setTypeFilter] = useState(() => memo('typeFilter', 'all'));
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
     const searchPlaceholder = useStaticPlaceholder(SEARCH_PLACEHOLDER_EXAMPLES, { prefix: 'Try: ', fallback: 'Search products', enabled: !searchQuery });
     const [submittedQuery, setSubmittedQuery] = useState(initialSearch || '');
-    const [sortBy, setSortBy] = useState('default');
+    const [sortBy, setSortBy] = useState(() => memo('sortBy', 'default'));
     // Cards fade in on first load only; after that, filter changes swap in place.
     const [gridSettled, setGridSettled] = useState(false);
     // The count waits until the list stops changing (it read 246, 245, 244 while the catalog loaded).
@@ -528,15 +538,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [personalizationFilter, setPersonalizationFilter] = useState(Boolean(user) && (storedPersonalized === null ? true : storedPersonalized === '1'));
     const hasProfileForSort = Boolean(user) && Boolean(hasQuizFrustrations || hasHealthImport);
     const [showFilters, setShowFilters] = useState(false);
-    const [priceFilter, setPriceFilter] = useState('all');
-    const [ratingFilter, setRatingFilter] = useState('all');
-    const [eligibilityFilter, setEligibilityFilter] = useState('all');
-    const [sustainabilityFilter, setSustainabilityFilter] = useState('all');
-    const [lifeStageFilter, setLifeStageFilter] = useState('all');
-    const [aynaFilter, setAynaFilter] = useState('all');
-    // Her own "avoid fragrance" answer starts the Fragrance-free filter on, labelled as from her profile.
-    const profileAvoidsFragrance = Boolean(user) && (quizResults?.fullHealthIntake?.avoidIngredients || quizResults?.avoidIngredients || []).some((x) => /fragrance|scent/i.test(String(x)));
-    const [preferenceFilter, setPreferenceFilter] = useState(profileAvoidsFragrance ? 'fragrance-free' : 'all');
+    const [priceFilter, setPriceFilter] = useState(() => memo('priceFilter', 'all'));
+    const [ratingFilter, setRatingFilter] = useState(() => memo('ratingFilter', 'all'));
+    const [eligibilityFilter, setEligibilityFilter] = useState(() => memo('eligibilityFilter', 'all'));
+    const [sustainabilityFilter, setSustainabilityFilter] = useState(() => memo('sustainabilityFilter', 'all'));
+    const [lifeStageFilter, setLifeStageFilter] = useState(() => memo('lifeStageFilter', 'all'));
+    const [aynaFilter, setAynaFilter] = useState(() => memo('aynaFilter', 'all'));
+    // No filter turns itself on from her profile (Oct 16): filters are only what she picks.
+    const [preferenceFilter, setPreferenceFilter] = useState(() => memo('preferenceFilter', 'all'));
 
     // Signing in mid-visit applies her remembered choice once; nothing flips after that.
     const hadUser = useRef(Boolean(user));
@@ -548,10 +557,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             setPersonalizationFilter(stored === null ? true : stored === '1');
         }
     }, [user]);
-    const [padFlowFilter, setPadFlowFilter] = useState(initialPadFlow || 'all');
-    const [padPreferenceFilter, setPadPreferenceFilter] = useState(initialPadPreference || 'all');
-    const [padUseCaseFilter, setPadUseCaseFilter] = useState(initialPadUseCase || 'all');
+    const [padFlowFilter, setPadFlowFilter] = useState(() => memo('padFlowFilter', initialPadFlow || 'all'));
+    const [padPreferenceFilter, setPadPreferenceFilter] = useState(() => memo('padPreferenceFilter', initialPadPreference || 'all'));
+    const [padUseCaseFilter, setPadUseCaseFilter] = useState(() => memo('padUseCaseFilter', initialPadUseCase || 'all'));
     const [symptomFilter] = useState(initialSymptom || 'all');
+    useEffect(() => {
+        shopMemo.v = { macroGroup, categoryFilter, typeFilter, sortBy, priceFilter, ratingFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, padFlowFilter, padPreferenceFilter, padUseCaseFilter };
+    }, [macroGroup, categoryFilter, typeFilter, sortBy, priceFilter, ratingFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, padFlowFilter, padPreferenceFilter, padUseCaseFilter]);
     const [aiSuggestions, setAiSuggestions] = useState([]);
     const [, setAiQuerySummary] = useState('');
     const [aiRelatedSearches, setAiRelatedSearches] = useState([]);
@@ -1472,6 +1484,21 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         runSearch(searchQuery);
     };
 
+    // Personalized: ranks her matches first and shows match scores. Its own switch (Oct 16), remembered.
+    const setPersonalized = (on) => {
+        setPersonalizationFilter(on);
+        setAiSuggestions([]);
+        setAiRelatedSearches([]);
+        try { localStorage.setItem(PERSONALIZED_KEY, on ? '1' : '0'); } catch { /* private mode */ }
+        if (!on && sortBy === 'best') setSortBy('default');
+    };
+    const personalizedSwitch = (
+        <button type="button" role="switch" aria-checked={personalizationFilter} className={`ayna-browse__pswitch${personalizationFilter ? ' is-on' : ''}`} onClick={() => setPersonalized(!personalizationFilter)}>
+            <span className="ayna-browse__pswitch-track" aria-hidden="true"><span /></span>
+            Personalized
+        </button>
+    );
+
     // "Clear" resets the FILTERS, Personalized is a standing preference the
     // user turned on deliberately, not a filter value like price/rating/life
     // stage, and turning it off as a side effect of clicking something
@@ -1479,6 +1506,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // live, 2026-08-24 bug bash). Personalized has its own explicit toggle
     // right next to this button for anyone who actually wants it off.
     const clearBrowseFilters = () => {
+        setTypeFilter('all');
+        setPadFlowFilter('all');
+        setPadPreferenceFilter('all');
+        setPadUseCaseFilter('all');
         setMacroGroup('all');
         setCategoryFilter('all');
         setPriceFilter('all');
@@ -1601,6 +1632,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     {!user && (
                         <button type="button" className="ayna-browse__personalize-cta" onClick={() => onRequirePersonalizeAuth?.()}>See my matches →</button>
                     )}
+                    {hasProfileForSort && personalizedSwitch}
                 </div>
                 {/* "Best match" is a sort (first, and the default once she has a profile), not a separate switch. */}
                 <label className="ayna-browse__sort">
@@ -1638,7 +1670,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             <span className="ayna-browse__featured-note">Featured order includes partner brands.{(hasQuizFrustrations || hasHealthImport) ? ' Sort by Best match to see your order.' : ''}</span>
                         )}
                         {applied.map(([v, set]) => (
-                            <button key={v} type="button" className="ayna-browse__chip-x" onClick={() => set('all')} aria-label={`Remove filter ${LABELS[v] || v}`}>{LABELS[v] || v}{v === 'fragrance-free' && profileAvoidsFragrance ? ' (from your profile)' : ''} <span aria-hidden="true">×</span></button>
+                            <button key={v} type="button" className="ayna-browse__chip-x" onClick={() => set('all')} aria-label={`Remove filter ${LABELS[v] || v}`}>{LABELS[v] || v} <span aria-hidden="true">×</span></button>
                         ))}
                         {applied.length > 0 && <button type="button" className="ayna-browse__clearall" onClick={clearSheetFilters}>Clear all</button>}
                     </div>
