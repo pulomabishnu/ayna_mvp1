@@ -1955,10 +1955,11 @@ export default function MyEcosystem({
                         <p className="eco3-head__sub">
                             {llmLoading && myProductList.length === 0 ? 'Building your matches…' : myProductList.length === 0 ? 'No picks yet' : (
                                 <>
-                                    {myProductList.length} product{myProductList.length === 1 ? '' : 's'} on {areaGroups.length} {areaGroups.length === 1 ? 'shelf' : 'shelves'}
+                                    {/* The counts are in the number tiles; the line keeps the monthly estimate. */}
+                                    {!(estimatedMonthlyTotal.counted > 0 && estimatedMonthlyTotal.total >= 1) && <>{myProductList.length} product{myProductList.length === 1 ? '' : 's'} on {areaGroups.length} {areaGroups.length === 1 ? 'shelf' : 'shelves'}</>}
                                     {estimatedMonthlyTotal.counted > 0 && estimatedMonthlyTotal.total >= 1 && (
                                         <details className="eco3-cost">
-                                            <summary>about ${estimatedMonthlyTotal.total.toFixed(0)}{estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? '+' : ''}/month</summary>
+                                            <summary>About ${estimatedMonthlyTotal.total.toFixed(0)}{estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? '+' : ''}/month</summary>
                                             <span>Estimated from the listed prices of {estimatedMonthlyTotal.counted} of your {estimatedMonthlyTotal.totalItems} products, spread over how long each usually lasts.{estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? ` ${estimatedMonthlyTotal.totalItems - estimatedMonthlyTotal.counted} without a listed price are not counted.` : ''} It is an estimate, not what you spend.</span>
                                         </details>
                                     )}
@@ -1966,6 +1967,26 @@ export default function MyEcosystem({
                             )}
                         </p>
                     </div>
+                    {/* A few real numbers about her shelves (only what is known). */}
+                    {myProductList.length > 0 && (() => {
+                        const coveredNeeds = needShelves.filter((sh) => (sh.picks || []).some((pk) => myProducts[pk.productId])).length;
+                        const stats = [
+                            { n: myProductList.length, l: myProductList.length === 1 ? 'product' : 'products' },
+                            { n: areaGroups.length, l: areaGroups.length === 1 ? 'shelf' : 'shelves' },
+                            needShelves.length > 0 && { n: `${coveredNeeds}/${needShelves.length}`, l: 'needs covered', tone: coveredNeeds === needShelves.length ? 'is-done' : 'is-gap', href: '#eco3-needs-title' },
+                        ].filter(Boolean);
+                        return (
+                            <ul className="eco3-stats" aria-label="Your ecosystem in numbers">
+                                {stats.map((st) => (
+                                    <li key={st.l} className={st.tone || undefined}>
+                                        {st.href ? (
+                                            <a href={st.href} onClick={(e) => { e.preventDefault(); document.getElementById('eco3-needs-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}><b>{st.n}</b><span>{st.l}</span></a>
+                                        ) : <><b>{st.n}</b><span>{st.l}</span></>}
+                                    </li>
+                                ))}
+                            </ul>
+                        );
+                    })()}
                     <div className="eco3-actions" role="group" aria-label="Ecosystem actions">
                         <button type="button" className="eco3-pill eco3-pill--ink" onClick={() => setShowAddModal(true)}>+ Add a product</button>
                         {/* One primary action; the rest live in More (Pass 7: four equal buttons said nothing about where to start). */}

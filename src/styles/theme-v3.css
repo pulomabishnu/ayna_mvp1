@@ -5274,3 +5274,60 @@ html body .app-container.app-container.app-container.app-container.app-container
 html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-itabs__bar button { font-size: 14.5px !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container #ay-tabs.ay-itabs, html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-itabs__panel[role=tabpanel], html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-itabs__panel ul.ay-glance { border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; padding-left: 0 !important; padding-right: 0 !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-itabs__panel ul.ay-glance { padding: 0 !important; }
+
+/* My Ecosystem v2 (Oct 16): less plain. Real numbers in the header, and
+   shelves that look like shelves: a coloured label tab and a wooden ledge
+   the products stand on. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container .ay3-ecohero { display: grid !important; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center !important; gap: 24px 32px !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats { display: flex; gap: 10px; margin: 0; padding: 0; list-style: none; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li > :is(a, span), html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li { color: #3e2723; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li { display: flex; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li > a, html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li:not(:has(> a)) { display: flex; flex-direction: column; justify-content: center; min-width: 92px; padding: 10px 14px; border: 1.5px solid #3e2723; border-radius: 14px; background: #ffedac; text-decoration: none; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li:nth-child(1) { --tile: #f7badd; } html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li:nth-child(2) { --tile: #769ebe; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li:nth-child(1):not(:has(> a)), html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li:nth-child(2):not(:has(> a)) { background: var(--tile); }
+html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li.is-gap > a { background: #ffedac; box-shadow: 3px 3px 0 #3e2723; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li.is-gap > a:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 #3e2723; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats b { font: 400 30px/1 'DM Serif Display', Georgia, serif; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats span { margin-top: 4px; font: 600 13px/1.2 'DM Sans', sans-serif; }
+@media (max-width: 899px) {
+  html body .app-container.app-container.app-container.app-container.app-container.app-container .ay3-ecohero { grid-template-columns: 1fr; }
+  html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li > a, html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li:not(:has(> a)) { min-width: 0; flex: 1; padding: 8px 10px; }
+  html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats { width: 100%; }
+  html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li { flex: 1; }
+  html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats b { font-size: 24px; }
+}
+/* Shelf label: a coloured tab (her own colour if she picked one). */
+html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-shelf { --shelf-tab-auto: #f7badd; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-shelves__big > .ay-shelf:nth-child(3n+2), html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-shelves__small > .ay-shelf:nth-child(3n+2) { --shelf-tab-auto: #769ebe; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-shelves__big > .ay-shelf:nth-child(3n+3), html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-shelves__small > .ay-shelf:nth-child(3n+3) { --shelf-tab-auto: #ffedac; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-shelf__head { border-bottom: 0 !important; padding-bottom: 0 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-shelf__name { display: inline-block; padding: 6px 16px 5px !important; border: 1.5px solid #3e2723; border-bottom: 0; border-radius: 12px 12px 0 0; background: var(--shelf-tab, var(--shelf-tab-auto)) !important; color: #3e2723 !important; font: 400 22px/1.2 'DM Serif Display', Georgia, serif !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-shelf__count { background: #fff !important; color: #3e2723 !important; }
+/* The ledge the products stand on. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-shelf__rowwrap { position: relative; border-top: 1.5px solid #3e2723; padding-bottom: 22px; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-shelf__rowwrap::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 14px; border: 1.5px solid #3e2723; border-radius: 3px; background: repeating-linear-gradient(90deg, #c9a27a 0 38px, #bf966c 38px 76px); box-shadow: 0 4px 0 #3e2723; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-shelf__row { padding-bottom: 6px !important; align-items: flex-end; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .eco3-stats li > a, html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .eco3-stats li:not(:has(> a)) { border-color: #ffedac; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .eco3-stats li.is-gap > a, html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .eco3-stats li:nth-child(n+3):not(:has(> a)) { background: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .eco3-stats li.is-gap > a :is(b, span) { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .eco3-stats li:nth-child(-n+2) :is(b, span) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-shelf__rowwrap { border-top-color: #ffedac; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-shelf__name { border-color: #ffedac !important; }
+@media (min-width: 900px) {
+  html body .app-container.app-container.app-container.app-container.app-container.app-container .ay3-ecohero { grid-template-columns: minmax(0, 1fr) auto auto !important; grid-template-areas: "text stats actions" !important; }
+  html body .app-container.app-container.app-container.app-container.app-container.app-container .ay3-ecohero > .eco3-head__text { grid-area: text; }
+  html body .app-container.app-container.app-container.app-container.app-container.app-container .ay3-ecohero > .eco3-stats { grid-area: stats; }
+  html body .app-container.app-container.app-container.app-container.app-container.app-container .ay3-ecohero > .eco3-actions { grid-area: actions; }
+  html body .app-container.app-container.app-container.app-container.app-container.app-container .ay3-ecohero > :not(.eco3-head__text):not(.eco3-stats):not(.eco3-actions) { display: none !important; }
+}
+@media (min-width: 900px) {
+  html body .app-container.app-container.app-container.app-container.app-container.app-container .ay3-ecohero.ay3-ecohero { display: flex !important; flex-wrap: nowrap !important; align-items: center !important; justify-content: flex-start !important; gap: 28px !important; grid-template-areas: none !important; }
+  html body .app-container.app-container.app-container.app-container.app-container.app-container .ay3-ecohero > .eco3-head__text { flex: 1 1 auto; min-width: 0; grid-area: auto !important; order: 1; }
+  html body .app-container.app-container.app-container.app-container.app-container.app-container .ay3-ecohero > .eco3-stats { flex: none; grid-area: auto !important; order: 2; }
+  html body .app-container.app-container.app-container.app-container.app-container.app-container .ay3-ecohero > .eco3-actions { flex: none; grid-area: auto !important; order: 3; flex-basis: auto !important; width: auto !important; }
+}
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-shelf__name, html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-shelf__name * { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-shelf__count { color: #3e2723 !important; background: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container .ay3-ecohero .eco3-cost::before, html body .app-container.app-container.app-container.app-container.app-container.app-container .ay3-ecohero .eco3-cost summary::before { content: none !important; display: none !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-shelf .ay-shelf__head .ay-shelf__name:not(.zz):not(.zz):not(.zz), html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-shelf .ay-shelf__head .ay-shelf__name *:not(.zz):not(.zz):not(.zz) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-shelf .ay-shelf__head .ay-shelf__count:not(.zz):not(.zz):not(.zz) { color: #3e2723 !important; background: #ffedac !important; }
