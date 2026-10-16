@@ -262,7 +262,6 @@ function labelParts(label) {
   return m ? { publisher: m[1].trim(), title: m[2].trim() } : { publisher: '', title: String(label || '').trim() };
 }
 
-const DEFAULT_OPEN = new Set(['clinical', 'safety']);
 /** The first sentence, cut to about 110 characters for the glance cards. */
 const firstLine = (t) => { const x = sentences(String(t || ''))[0] || ''; return x.length > 120 ? `${x.slice(0, 110).replace(/\s+\S*$/, '')}…` : x; };
 
@@ -271,25 +270,18 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const product = useApprovedResearch(baseProduct);
   const d = useEvidence(product, aynaData);
   // Phone: sections fold, Clinical opinion and Safety start open. Desktop: always open.
-  const [open, setOpen] = useState(() => new Set(DEFAULT_OPEN));
+  const [tab, setTab] = useState('overview');
   const [allIngredients, setAllIngredients] = useState(false);
-  const [sourcesOpen, setSourcesOpen] = useState(false);
-  // Desktop shows every section, so headings are plain; only phone sections fold.
-  const [wide, setWide] = useState(() => typeof window !== 'undefined' && window.matchMedia?.('(min-width: 900px)').matches);
+  // "All safety info" under Buy opens the Safety tab.
+  const pickTab = (id) => {
+    setTab(id);
+    window.requestAnimationFrame(() => {
+      const el = document.getElementById('ay-tabs');
+      if (el && (el.getBoundingClientRect().top < 70 || el.getBoundingClientRect().top > window.innerHeight - 120)) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
   useEffect(() => {
-    const mq = window.matchMedia?.('(min-width: 900px)');
-    if (!mq) return undefined;
-    const on = () => setWide(mq.matches);
-    mq.addEventListener?.('change', on);
-    return () => mq.removeEventListener?.('change', on);
-  }, []);
-  // "All safety info" under Buy jumps to Safety (and opens it on phone).
-  useEffect(() => {
-    const on = (e) => {
-      const id = e.detail === 'details' ? 'safety' : (e.detail || 'safety');
-      setOpen((prev) => new Set([...prev, id]));
-      window.setTimeout(() => document.getElementById(`ay-s-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30);
-    };
+    const on = (e) => pickTab(e.detail === 'details' || !e.detail ? 'safety' : e.detail);
     window.addEventListener('ay-open-tab', on);
     return () => window.removeEventListener('ay-open-tab', on);
   }, []);
@@ -447,16 +439,6 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     </> },
   ].filter(Boolean);
 
-  const toggle = (id) => setOpen((prev) => { const n = new Set(prev); if (n.has(id)) n.delete(id); else n.add(id); return n; });
-  const jump = (e, id) => {
-    e.preventDefault();
-    setOpen((prev) => new Set([...prev, id]));
-    if (id === 'sources') setSourcesOpen(true);
-    document.getElementById(`ay-s-${id}`)?.scrollIntoView({ behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
-    // Keyboard focus follows, so the next Tab goes into the section, not the next link.
-    document.getElementById(`ay-s-${id}-h`)?.focus({ preventScroll: true });
-  };
-
   // "At a glance": one line per section from what is on file, each a jump link (not sticky).
   const glanceTiles = [
     sections.some((x) => x.id === 'clinical') && { id: 'clinical', label: 'Clinical opinion', tag: d.independent ? 'Independent sources' : 'Based on brand claims', text: firstLine(d.clinicianShort || d.clinician || d.clinicalNote) },
@@ -466,55 +448,52 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   ].filter(Boolean);
 
   const byId = Object.fromEntries(sections.map((x) => [x.id, x]));
-  const renderSec = (x, extra = '') => {
-    if (!x) return null;
-    const closed = x.id === 'sources' ? !sourcesOpen : !(open.has(x.id) || wide);
-    return (
-      <section key={x.id} id={`ay-s-${x.id}`} className={`ay-sec is-${x.id}${extra}${closed ? ' is-closed' : ''}`} aria-labelledby={`ay-s-${x.id}-h`}>
-        <h2 className="ay-sec__h" id={`ay-s-${x.id}-h`} tabIndex={-1}>
-          {wide && x.id !== 'sources' ? <span>{x.label}</span> : (
-            <button type="button" aria-expanded={!closed} aria-controls={`ay-s-${x.id}-b`} onClick={() => (x.id === 'sources' ? setSourcesOpen((v) => !v) : toggle(x.id))}>
-              <span>{x.id === 'sources' && allSources.length ? `${x.label} (${allSources.length})` : x.label}</span><i aria-hidden="true" />
-            </button>
-          )}
-        </h2>
-        <div className="ay-sec__b" id={`ay-s-${x.id}-b`}>{x.body}</div>
-      </section>
-    );
+  // Tabs, one section at a time, no second layer. Overview first: the glance cards open the others.
+  const tabs = [
+    { id: 'overview', label: 'Overview', body: <>
+      {glanceTiles.length > 1 && (
+        <ul className="ay-glance">
+          {glanceTiles.map((t) => (
+            <li key={t.id}>
+              <button type="button" onClick={() => pickTab(t.id)}>
+                <span className="ay-glance__label">{t.label}</span>
+                {t.tag && <span className="ay-glance__tag">{t.tag}</span>}
+                {t.text && <span className="ay-glance__text">{t.text}</span>}
+                <span className="ay-glance__go" aria-hidden="true">→</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      {byId.what && <><h3 className="ay-part__h">What it is</h3>{byId.what.body}</>}
+      {byId.who && <><h3 className="ay-part__h">Who it’s for</h3>{byId.who.body}</>}
+    </> },
+    ...['clinical', 'science', 'safety', 'reviews', 'how'].map((id) => byId[id] && { id, label: id === 'science' ? 'Research' : id === 'clinical' ? 'Clinical' : byId[id].label, body: byId[id].body }),
+    // Sources close the Details tab (seven tabs fit on one line).
+    (byId.details || byId.sources) && { id: 'details', label: 'Details', body: <>
+      {byId.details?.body}
+      {byId.sources && <><h3 className="ay-part__h">Sources{allSources.length ? ` (${allSources.length})` : ''}</h3>{byId.sources.body}</>}
+    </> },
+  ].filter(Boolean);
+  const cur = tabs.find((t) => t.id === tab) || tabs[0];
+  const keyNav = (e) => {
+    const i = tabs.findIndex((t) => t.id === cur.id);
+    const n = e.key === 'ArrowRight' ? tabs[(i + 1) % tabs.length] : e.key === 'ArrowLeft' ? tabs[(i - 1 + tabs.length) % tabs.length] : e.key === 'Home' ? tabs[0] : e.key === 'End' ? tabs[tabs.length - 1] : null;
+    if (!n) return;
+    e.preventDefault(); setTab(n.id);
+    window.requestAnimationFrame(() => document.getElementById(`ay-tab-${n.id}`)?.focus());
   };
-  // Short sections sit side by side on desktop; the rest run full width.
-  const pair = (l, r) => (byId[l] && byId[r]
-    ? <div className="ay-pair" key={`${l}-${r}`}>{renderSec(byId[l])}{renderSec(byId[r])}</div>
-    : <React.Fragment key={`${l}-${r}`}>{renderSec(byId[l])}{renderSec(byId[r])}</React.Fragment>);
 
   return (
     <TermsCtx.Provider value={plan}>
-    <div id="ay-tabs" className="ay-stack">
-      {glanceTiles.length > 1 && (
-        <nav className="ay-glance" aria-label="At a glance">
-          <h2 className="ay-glance__h">At a glance</h2>
-          <ul>
-            {glanceTiles.map((t) => (
-              <li key={t.id}>
-                <a href={`#ay-s-${t.id}`} onClick={(e) => jump(e, t.id)}>
-                  <span className="ay-glance__label">{t.label}</span>
-                  {t.tag && <span className="ay-glance__tag">{t.tag}</span>}
-                  {t.text && <span className="ay-glance__text">{t.text}</span>}
-                  <span className="ay-glance__go" aria-hidden="true">↓</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      )}
-      <div className="ay-stack__body">
-        {renderSec(byId.what)}
-        {pair('who', 'how')}
-        {renderSec(byId.clinical, ' is-band')}
-        {renderSec(byId.science)}
-        {renderSec(byId.safety)}
-        {pair('reviews', 'details')}
-        {renderSec(byId.sources)}
+    <div id="ay-tabs" className="ay-itabs">
+      <div className="ay-itabs__bar" role="tablist" aria-label="About this product">
+        {tabs.map((t) => (
+          <button key={t.id} type="button" role="tab" id={`ay-tab-${t.id}`} aria-selected={t.id === cur.id} aria-controls="ay-tabpanel" tabIndex={t.id === cur.id ? 0 : -1} className={t.id === cur.id ? 'is-on' : undefined} onClick={() => setTab(t.id)} onKeyDown={keyNav}>{t.label}</button>
+        ))}
+      </div>
+      <div className={`ay-itabs__panel is-${cur.id}`} id="ay-tabpanel" role="tabpanel" aria-labelledby={`ay-tab-${cur.id}`} tabIndex={0}>
+        {cur.body}
       </div>
     </div>
     </TermsCtx.Provider>

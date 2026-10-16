@@ -871,7 +871,7 @@ export default function ProductModal({
           </div>
         </div>
 
-        <div className="pdp-head ay3-simple" ref={boardRef}>
+        <div className="pdp-head ay3-simple pdp-head--tabs" ref={boardRef}>
           <div className="pdp-head__media">
             {galleryTile}
           </div>
@@ -951,11 +951,8 @@ export default function ProductModal({
             {/* "Good to know" is gone: its chips repeated FSA/HSA and listed claims the page says it hasn't checked. */}
 
           </div>
-        </div>
-
-        <div className="pdp-below pdp-below--glance">
-          {/* Full width, one reading column: the evidence tabs, then Ask ayna. */}
-          <div className="pdp-read">
+          {/* The research, as tabs, in the first screen: under the photo on desktop, after Buy on phone. */}
+          <div className="pdp-head__info">
             <ProductEvidence product={product} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} recall={recall} heroLine={firstSentence(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '').replace(/\s*—\s*/g, ', ').trim(), { min: 20, max: 240 })} safety={<ProductSafety product={product} glance={glance} recall={recall} alertText={glance?.alert || ''} />} extraRows={(() => {
             const pp = getPassport(product);
             const checked = pp?.pricing?.price?.verified_at;
@@ -967,6 +964,11 @@ export default function ProductModal({
               { label: 'Price check', value: d && !Number.isNaN(d.getTime()) && price.known && !price.isPlaceholder ? `Checked ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : '' },
             ];
           })()} />
+          </div>
+        </div>
+
+        <div className="pdp-below pdp-below--glance">
+          <div className="pdp-read">
             <div className="pdp-pair">
               <ProductAsk productName={displayName} onAsk={onAskAyna} />
               {onCommunityAction && (
