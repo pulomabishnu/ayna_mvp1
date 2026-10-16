@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
-import { ALL_PRODUCTS } from '../data/products';
+import { ALL_PRODUCTS, withResearch } from '../data/products';
+import { loadResearch } from '../data/researchLoader';
 import { getVerificationLinks } from '../utils/verificationLinks';
 import { isCredible } from './pdp/credible';
 
@@ -133,13 +134,17 @@ export default function AdminResearchPage({ onBack }) {
     return () => { live = false; };
   }, [tick]);
 
+  // Gaps are counted after the built-in research, which loads on demand.
+  const [research, setResearch] = useState(null);
+  useEffect(() => { let live = true; loadResearch().then((r) => { if (live) setResearch(r); }); return () => { live = false; }; }, []);
   const products = useMemo(() => {
     const seen = new Set();
     return ALL_PRODUCTS.filter((p) => p?.id && !seen.has(p.id) && seen.add(p.id))
+      .map((p) => (research ? withResearch(p, research) : p))
       .map((p) => ({ p, gaps: gapsFor(p) }))
       .filter((x) => x.gaps.length)
       .sort((a, b) => b.gaps.length - a.gaps.length || a.p.name.localeCompare(b.p.name));
-  }, []);
+  }, [research]);
   const shown = products.filter(({ p }) => !query || `${p.name} ${p.brand || ''}`.toLowerCase().includes(query.toLowerCase()));
   const byProduct = useMemo(() => {
     const m = new Map();

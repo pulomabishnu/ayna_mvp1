@@ -1,5 +1,6 @@
 import { recallFacts } from '../utils/productFacts';
 import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { useResearch } from '../data/researchLoader';
 import { ProductImageFallback } from './ProductTileImage';
 import ProductCard from './ProductCard';
 import { ALL_PRODUCTS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct, CATEGORY_LABELS } from '../data/products';
@@ -360,7 +361,7 @@ async function copyText(text) {
 }
 
 export default function ProductModal({
-  product,
+  product: catalogProduct,
   onOmit,
   isOmitted,
   onAddToEcosystem,
@@ -399,6 +400,8 @@ export default function ProductModal({
   user = undefined,
   onStartQuiz = null,
 }) {
+  // Research loads on demand on the product page only (data/researchLoader.js).
+  const product = useResearch(catalogProduct);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   // Size / pack options (product.variants): Buy now, photo, name and price
   // follow the chosen option.

@@ -5,7 +5,6 @@
 // VERIFICATION: Only add real, verifiable products. Confirm whereToBuy URLs work
 // and the brand/product exists. Do not add placeholder or fake entries.
 // ============================================================
-import { PRODUCT_RESEARCH } from './productResearch.js';
 import { EXTENDED_PHYSICAL, EXTENDED_DIGITAL } from './productsExtended.js';
 import { EXTENDED_PHYSICAL_2, EXTENDED_DIGITAL_2 } from './productsExtended2.js';
 import { FILLER_PHYSICAL, FILLER_DIGITAL } from './categoryFillers.js';
@@ -874,8 +873,10 @@ const RESEARCH_RETAILER = /(^|\.)(amazon|amzn|walmart|target|ulta|sephora|cvs|wa
 const notRetail = (src) => { try { return Boolean(src?.url) && !RESEARCH_RETAILER.test(new URL(src.url).hostname); } catch { return false; } };
 
 // Gap-filling research: only adds what a product doesn't have yet.
-export function withResearch(product) {
-    const r = product && PRODUCT_RESEARCH[product.id];
+// `research` is PRODUCT_RESEARCH, loaded only on product pages (data/researchLoader.js)
+// so the 700KB of research stays out of the first download and out of matching.
+export function withResearch(product, research) {
+    const r = product && research && research[product.id];
     if (!r) return product;
     const out = { ...product };
     const filled = [];
@@ -916,7 +917,6 @@ export const ALL_PRODUCTS = [
     ...INCONTINENCE_PHYSICAL
 ]
     .map(withCatalogEvidence)
-    .map(withResearch)
     .filter((p) => !isRxOnlyProduct(p) && !TEMPORARILY_HIDDEN_IDS.has(p.id))
     .map(withImageOverride);
 

@@ -23,8 +23,12 @@ describe('product research only fills gaps', () => {
     let checked = 0;
     for (const raw of RAW) {
       if (!PRODUCT_RESEARCH[raw.id]) continue;
-      const out = withResearch(raw);
-      for (const [k, v] of Object.entries(raw)) expect(out[k], `${raw.id}.${k}`).toEqual(v);
+      const out = withResearch(raw, PRODUCT_RESEARCH);
+      for (const [k, v] of Object.entries(raw)) {
+        // Empty values (null, '', []) are gaps research may fill; anything written stays.
+        if (v === null || v === undefined || v === '' || (Array.isArray(v) && v.length === 0)) continue;
+        expect(out[k], `${raw.id}.${k}`).toEqual(v);
+      }
       checked += 1;
     }
     expect(checked).toBeGreaterThan(100);
