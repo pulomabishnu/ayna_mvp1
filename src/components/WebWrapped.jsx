@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { getProfileMatchPercentForProduct } from '../data/products';
+import { getProfileMatchPercentForProduct } from '../data/products.js';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { buildPersona } from '../mobile/utils/shopperProfile.js';

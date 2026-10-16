@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ALL_PRODUCTS } from '../data/products';
+import { ALL_PRODUCTS } from '../data/products.js';
 import { PARTNER_BRANDS } from '../utils/partnerBrands';
 import '../styles/partner-strip.css';
 

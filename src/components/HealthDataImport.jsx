@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { loadHealthProfile, saveHealthProfile, parseFhirBundleText } from '../utils/healthDataProfile';
+import { loadHealthProfile, saveHealthProfile, parseFhirBundleText } from '../utils/healthDataProfile.js';
 import { summarizeAppleHealthExport } from '../utils/parseAppleHealthExport';
 
 function parseCommaLines(text) {

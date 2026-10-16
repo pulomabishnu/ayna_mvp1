@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products.js';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from './naturalLanguageSearch';
 
 /**

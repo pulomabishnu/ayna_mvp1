@@ -1,4 +1,4 @@
-import { getRecommendationExplanation } from '../data/products';
+import { getRecommendationExplanation } from '../data/products.js';
 import { KNOWLEDGE_BY_CONDITION } from '../data/knowledge/menstrualHealthKnowledge.js';
 
 function shortFitLine(whyItWorks) {

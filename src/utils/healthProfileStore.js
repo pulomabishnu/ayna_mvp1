@@ -9,7 +9,7 @@
  * with the server as the durable copy.
  */
 import { getSupabaseClient, getSupabaseUser } from './supabaseClient';
-import { loadHealthProfile, saveHealthProfile } from './healthDataProfile';
+import { loadHealthProfile, saveHealthProfile } from './healthDataProfile.js';
 
 const TABLE = 'user_health_profiles';
 

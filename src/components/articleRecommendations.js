@@ -1,4 +1,4 @@
-import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
+import { inferTagsFromHealthProfile } from '../utils/healthDataProfile.js';
 
 // Lightweight metadata used by the recommendations screen. Keep this list in
 // the same order as the full article library; the heavy article bodies stay in

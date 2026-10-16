@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ALL_PRODUCTS } from '../data/products';
+import { ALL_PRODUCTS } from '../data/products.js';
 import { applyCatalogCorrections } from '../data/catalogCorrections';
 import { getAmazonAffiliateUrlForProduct } from '../data/productAffiliateUrls';
 import { isPartnerBrandItem } from './partnerBrands';

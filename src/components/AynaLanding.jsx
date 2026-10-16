@@ -7,7 +7,7 @@ import WebEcosystemChart from './WebEcosystemChart';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
 import '../styles/eco-redesign.css';
 import '../styles/landing.css';
-import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, itemMatchesMacroGroup } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, itemMatchesMacroGroup } from '../data/products.js';
 import ProductCard from './ProductCard';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import { edgeFadeRef } from '../utils/edgeFade';

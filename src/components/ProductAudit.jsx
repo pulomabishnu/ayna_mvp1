@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products.js';
 import { getPassport, passportFacts, QA_STATUS, LINK_STATUS, OFF_SHELF_STATUSES } from '../data/passport/index.js';
 import './ProductAudit.css';
 

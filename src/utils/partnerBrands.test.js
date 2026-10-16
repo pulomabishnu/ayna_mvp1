@@ -7,7 +7,7 @@ import {
   getPartnerDisclosureText,
   PARTNER_BRAND_ORDER,
 } from './partnerBrands';
-import { ALL_PRODUCTS } from '../data/products';
+import { ALL_PRODUCTS } from '../data/products.js';
 import { resolveBuyUrl } from './buyLink';
 
 describe('partnerBrands', () => {

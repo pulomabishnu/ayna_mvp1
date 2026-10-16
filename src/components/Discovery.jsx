@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom';
 import SuggestBox from './SuggestBox';
 import './Discovery.css';
-import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct } from '../data/products.js';
 import { behaviorFrom, matchBadge } from '../utils/matchDisplay';
 import { loadProductCatalog } from '../utils/productCatalog';
 import { scoreSearchMatch, correctedSearchQuery } from '../utils/search/index.js';
