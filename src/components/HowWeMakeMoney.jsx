@@ -47,7 +47,7 @@ export default function HowWeMakeMoney({ onBack }) {
             width="read"
         >
             <div className="ay-info-card ay-info-card--pad ay-info-card--butter ay-info-summary">
-                <h2 className="ay-info__h3">The bottom line</h2>
+                <h2 className="ay-info__h3">Partnerships never change your matches</h2>
                 <p className="ay-info__body">
                     Partnerships and affiliate links help support ayna. They can affect visibility in general Browse when clearly labeled, but they do not decide your personalized match score or recommendation order.
                 </p>

@@ -4917,3 +4917,30 @@ html body .app-container.app-container.app-container.app-container[data-theme='b
 html body .app-container.app-container.app-container.app-container .lx-dash .lx-dash__card strong { font-family: 'DM Serif Display', Georgia, serif !important; font-weight: 400 !important; }
 html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .app-nav.app-nav a.app-nav__tab--main:not(.app-nav__tab--active):not(.is-start) { color: #ffedac !important; }
 html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv-hero--member .lv-hero__copy > :is(a, button) { background: #ffedac !important; color: #3e2723 !important; }
+
+/* Pass 7: content in the first screen on info pages (Contact, Partner brands,
+   About, How we make money). Slimmer band, no torn or zigzag edge, smaller photo. */
+html body .app-container.app-container.app-container.app-container .ay3-infohero { min-height: 0 !important; padding-top: 36px !important; padding-bottom: 32px !important; margin-bottom: 32px !important; align-items: center !important; }
+html body .app-container.app-container.app-container.app-container .ay3-infohero::after, html body .app-container.app-container.app-container.app-container .ay3-infohero::before { display: none !important; }
+html body .app-container.app-container.app-container.app-container .ay3-infohero .ay-info__title { font-size: clamp(36px, 1.6rem + 2.2vw, 56px) !important; margin-bottom: 8px !important; }
+html body .app-container.app-container.app-container.app-container .ay3-infohero .ay-info__photo { width: clamp(150px, 16vw, 210px) !important; max-height: 210px; transform: none !important; }
+html body .app-container.app-container.app-container.app-container .ay3-infohero .ay-info__photo img { aspect-ratio: 1 / 1; height: auto !important; max-height: 210px; object-fit: cover; }
+@media (max-width: 767px) { html body .app-container.app-container.app-container.app-container .ay3-infohero .ay-info__photo { display: none !important; } html body .app-container.app-container.app-container.app-container .ay3-infohero { padding-top: 24px !important; padding-bottom: 20px !important; } }
+html body .app-container.app-container.app-container.app-container:not([data-theme='brand-dark']) .app-nav.app-nav a.app-nav__tab--main:not(.app-nav__tab--active):not(.is-start) { color: #3e2723 !important; }
+
+/* Pass 7 design system: 4 corner sizes (8 small, 14 card, 22 panel, round)
+   and 2 hard shadows (3px controls, 5px cards and photos). Values the census
+   found off-scale are snapped to the nearest step. */
+html body .app-container.app-container.app-container.app-container :is(.ayna-browse-card__link, .ay-web-lib-card, .lv-reads2__img, .ay-lib-cover) { border-radius: 8px !important; }
+html body .app-container.app-container.app-container.app-container :is(.ay3-libside__box, .brand-partner__logo, .lv-tile__img, .lv-purpose__copy, .ays-list, .brand-card, .cr-emergency, .cr-card, .ay-suggest, .ay-info-card, .ay-info-advisor, .ay-info__toc, .ay-info-metric, .lx-dash__card) { border-radius: 14px !important; }
+html body .app-container.app-container.app-container.app-container :is(.lv-cnt, .lst, .lv-start__card, .ay-info__photo, .wc-empty) { border-radius: 22px !important; }
+html body .app-container.app-container.app-container.app-container:not([data-theme='brand-dark']) :is(.lv-cnt, .lst, .ay-info__photo, .lv-start__card, .ays-list, .ay-info__toc, .ayna-browse-card__link, .ay-info-card, .ay-info-team__photo) { box-shadow: 5px 5px 0 #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container:not([data-theme='brand-dark']) :is(.lst__cta, .lv-cnt__n, .ay-suggest, .ay-lib-personalize, .ay-lib-cover, .ay-info-advisor) { box-shadow: 3px 3px 0 #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container .lv li > :is(button, a) { border-radius: 14px !important; }
+html body .app-container.app-container.app-container.app-container .lv li > figure, html body .app-container.app-container.app-container.app-container .ay-info-team__photo { border-radius: 22px !important; }
+html body .app-container.app-container.app-container.app-container .lv-start__card img { border-radius: 14px !important; }
+html body .app-container.app-container.app-container.app-container .ay-info__toc li a { border-radius: 8px !important; }
+html body .app-container.app-container.app-container.app-container .ay-lib-chips li > button, html body .app-container.app-container.app-container.app-container .ay-web-lib li > button { border-radius: 8px !important; }
+html body .app-container.app-container.app-container.app-container:not([data-theme='brand-dark']) .lv li > :is(figure, a) { box-shadow: 5px 5px 0 #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container:not([data-theme='brand-dark']) .ayna-browse__search input { box-shadow: 3px 3px 0 #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container .ay3-az li > button { border-radius: 8px !important; }

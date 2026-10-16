@@ -198,7 +198,6 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onBrowse
           return (
             <li key={p.brand} id={slug(p.brand)}>
               <button type="button" className={`brand-card${on ? ' is-on' : ''}`} aria-expanded={on} aria-controls="brand-panel" onClick={() => pick(p.brand)}>
-                <BrandMark partner={p} />
                 <span className="brand-card__name">{p.brand}{p.prelaunch && <small className="brand-card__tag">Pre-launch</small>}</span>
                 <span className="brand-card__blurb">{p.blurb}</span>
                 <span className="brand-card__count">{count ? `${count} product${count === 1 ? '' : 's'}` : 'Waitlist'}<span aria-hidden="true">{on ? ' ↑' : ' →'}</span></span>
