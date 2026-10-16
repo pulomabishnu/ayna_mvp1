@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ALL_PRODUCTS, itemMatchesMacroGroup } from '../data/products';
+import { ALL_PRODUCTS, itemMatchesMacroGroup } from '../data/products.js';
 import { isPlaceholderProductImage } from '../utils/resolveProductImage';
 
 // Health needs used by the home page: Explore by need and the

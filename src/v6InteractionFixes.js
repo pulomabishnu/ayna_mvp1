@@ -1,4 +1,4 @@
-import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS } from './data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS } from './data/products.js';
 import { getSupabaseClient } from './utils/supabaseClient';
 
 const SUBMITTED_STORAGE_KEY = 'ayna_v6_submitted_products';

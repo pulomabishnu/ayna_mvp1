@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ALL_PRODUCTS, getProductById } from '../data/products';
+import { ALL_PRODUCTS, getProductById } from '../data/products.js';
 import { applyCatalogCorrections } from '../data/catalogCorrections';
 import { resolveProductImage, isPlaceholderProductImage, safeProductImageSrc } from '../utils/resolveProductImage';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';

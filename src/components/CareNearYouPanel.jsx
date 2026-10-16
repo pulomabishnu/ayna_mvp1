@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getCareResourceBundle } from '../data/careResources';
+import { getCareResourceBundle } from '../data/careResources.js';
 
 /**
  * Care near you + telehealth, driven by quiz, chat-updated profile, imported records, and wearable summary.

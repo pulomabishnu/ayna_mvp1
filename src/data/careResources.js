@@ -1,5 +1,5 @@
-import { ALL_PRODUCTS } from './products';
-import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
+import { ALL_PRODUCTS } from './products.js';
+import { inferTagsFromHealthProfile } from '../utils/healthDataProfile.js';
 
 const FRUSTRATION_TO_TAG = {
   'Heavy flow': 'heavy-flow',

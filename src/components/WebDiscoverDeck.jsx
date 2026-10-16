@@ -1,7 +1,7 @@
 import { createPortal } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
-import { getProfileMatchPercentForProduct, getProfileMatchLabelsForProduct } from '../data/products';
+import { getProfileMatchPercentForProduct, getProfileMatchLabelsForProduct } from '../data/products.js';
 import { formatPrice } from '../utils/formatPrice';
 import './WebDiscoverDeck.css';
 

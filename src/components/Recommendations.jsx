@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { getRecommendationExplanation, SIMILAR_PROFILES, ALL_PRODUCTS, CATEGORY_LABELS, getRecommendationsGroupedByWorkflow } from '../data/products';
+import { getRecommendationExplanation, SIMILAR_PROFILES, ALL_PRODUCTS, CATEGORY_LABELS, getRecommendationsGroupedByWorkflow } from '../data/products.js';
 import { getRecommendedArticles } from './Articles';
-import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
+import { inferTagsFromHealthProfile } from '../utils/healthDataProfile.js';
 import CareNearYouPanel from './CareNearYouPanel';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
 import { getPricePerUnitLabel } from '../utils/pricePerUnit';

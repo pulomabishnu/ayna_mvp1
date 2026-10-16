@@ -1,5 +1,5 @@
 import React from 'react';
-import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products.js';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { safeProductImageSrc } from '../utils/resolveProductImage';
 import { ProductImageFallback } from './ProductTileImage';

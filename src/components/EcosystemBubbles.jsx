@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, getProfileMatchLabelsForProduct } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, getProfileMatchLabelsForProduct } from '../data/products.js';
 
 // A product added to the ecosystem is stored as a frozen JSON snapshot
 // (user_ecosystems.product_data, see src/utils/ecosystemStore.js) taken at

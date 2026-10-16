@@ -1,4 +1,4 @@
-import { ALL_PRODUCTS, getProfileMatchPercentForProduct } from '../data/products';
+import { ALL_PRODUCTS, getProfileMatchPercentForProduct } from '../data/products.js';
 
 // How It Works funnel, computed live from the real catalog and the real
 // matching code for one sample profile, instead of made-up example numbers.
