@@ -8007,7 +8007,8 @@ export const PRODUCT_RESEARCH = {
       "Children and teens who have or are recovering from chickenpox or flu-like symptoms should not use it, because of the risk of Reye's syndrome (a rare but serious illness).",
       "It contains an NSAID that may cause stomach bleeding, especially if you are 60 or older, have ulcers, take blood thinners, steroids or other NSAIDs, or drink 3 or more alcoholic drinks a day.",
       "Do not use if you are allergic to salicylates, including aspirin.",
-      "Stop and ask a doctor if you have used it for 3 days, get ringing in your ears, or notice signs of stomach bleeding."
+      "Stop and ask a doctor if you have used it for 3 days, get ringing in your ears, or notice signs of stomach bleeding.",
+      "Pregnancy: Cleveland Clinic says taking it between weeks 20 and 30 of pregnancy may harm the baby and not to take it after week 30, so ask your clinician first."
     ],
     "warningsSource": {
       "url": "https://otclabels.com/lib/otc/otc-meds/cystex-1/",
