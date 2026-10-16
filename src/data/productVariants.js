@@ -64,13 +64,15 @@ export const PRODUCT_VARIANTS = {
         "id": "41628692250690",
         "label": "Green Sage Leaves",
         "url": "https://www.boppy.com/products/nursing-pillow?variant=41628692250690",
-        "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066004210490-4206272.webp?v=1776861492"
+        "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066004210490-4206272.webp?v=1776861492",
+        "amazonAsin": "B0DJRQRGSK"
       },
       {
         "id": "41872243621954",
         "label": "Blue Speckled Current",
         "url": "https://www.boppy.com/products/nursing-pillow?variant=41872243621954",
-        "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066023210490-1483190.webp?v=1776861493"
+        "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066023210490-1483190.webp?v=1776861493",
+        "amazonAsin": "B0DNNKT7MR"
       },
       {
         "id": "41859162472514",
@@ -82,19 +84,22 @@ export const PRODUCT_VARIANTS = {
         "id": "41628692316226",
         "label": "Colorful Forest Animals",
         "url": "https://www.boppy.com/products/nursing-pillow?variant=41628692316226",
-        "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066016210490-7416334.webp?v=1776861493"
+        "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066016210490-7416334.webp?v=1776861493",
+        "amazonAsin": "B0DJRQ1G66"
       },
       {
         "id": "41628692283458",
         "label": "Cream Retro Squiggles",
         "url": "https://www.boppy.com/products/nursing-pillow?variant=41628692283458",
-        "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066015210490-4117851.webp?v=1776861494"
+        "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066015210490-4117851.webp?v=1776861494",
+        "amazonAsin": "B0DJRR7J5X"
       },
       {
         "id": "41628692054082",
         "label": "Pink Garden Flowers",
         "url": "https://www.boppy.com/products/nursing-pillow?variant=41628692054082",
-        "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066003210490-1330071.webp?v=1776861493"
+        "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066003210490-1330071.webp?v=1776861493",
+        "amazonAsin": "B0DJRRHNRH"
       },
       {
         "id": "41859162669122",
@@ -112,19 +117,22 @@ export const PRODUCT_VARIANTS = {
         "id": "41872243261506",
         "label": "Forest Green Dinos",
         "url": "https://www.boppy.com/products/nursing-pillow?variant=41872243261506",
-        "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/MAIN-ForestGreenDinos-on-dove.jpg?v=1771461428"
+        "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/MAIN-ForestGreenDinos-on-dove.jpg?v=1771461428",
+        "amazonAsin": "B0DNNHM5MK"
       },
       {
         "id": "41872243753026",
         "label": "Neutral Plants & Animals",
         "url": "https://www.boppy.com/products/nursing-pillow?variant=41872243753026",
-        "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066006210490-2949252.webp?v=1776861553"
+        "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066006210490-2949252.webp?v=1776861553",
+        "amazonAsin": "B0DNNKH1RD"
       },
       {
         "id": "41872243130434",
         "label": "Gray Gentle Leaves",
         "url": "https://www.boppy.com/products/nursing-pillow?variant=41872243130434",
-        "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066005210490-4182971.webp?v=1776861492"
+        "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066005210490-4182971.webp?v=1776861492",
+        "amazonAsin": "B0DNNJWXMQ"
       },
       {
         "id": "42020980097090",
@@ -136,7 +144,8 @@ export const PRODUCT_VARIANTS = {
         "id": "42020980555842",
         "label": "Soft Pink Daisies",
         "url": "https://www.boppy.com/products/nursing-pillow?variant=42020980555842",
-        "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066013210490-6323462.webp?v=1776861554"
+        "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066013210490-6323462.webp?v=1776861554",
+        "amazonAsin": "B0GV16DDD9"
       },
       {
         "id": "42020979671106",
@@ -210,8 +219,7 @@ export const PRODUCT_VARIANTS = {
         "id": "40115544195121",
         "label": "100 Caplets - 2pk",
         "url": "https://azoproducts.com/products/azo-cranberry-caplets?variant=40115544195121",
-        "image": "https://cdn.shopify.com/s/files/1/0209/0378/8593/files/azo-cran-caps-NOct.webp?v=1788192491",
-        "amazonAsin": "B0C61VBVJC"
+        "image": "https://cdn.shopify.com/s/files/1/0209/0378/8593/files/azo-cran-caps-NOct.webp?v=1788192491"
       }
     ]
   },
@@ -245,7 +253,8 @@ export const PRODUCT_VARIANTS = {
         "id": "29388646678598",
         "label": "30",
         "url": "https://estroven.com/products/menopause-relief-mood-memory-boost?variant=29388646678598",
-        "image": "https://cdn.shopify.com/s/files/1/0038/4188/4230/products/estroven-mood-boost-front-view.jpg?v=1699478289"
+        "image": "https://cdn.shopify.com/s/files/1/0038/4188/4230/products/estroven-mood-boost-front-view.jpg?v=1699478289",
+        "amazonAsin": "B0091CG65G"
       },
       {
         "id": "39984302227528",
@@ -264,15 +273,13 @@ export const PRODUCT_VARIANTS = {
         "id": "39775383093344",
         "label": "Size 01",
         "url": "https://flexfits.com/products/flex-cup?variant=39775383093344",
-        "image": "https://cdn.shopify.com/s/files/1/1097/9960/files/flex-period-cup-with-packaging-and-review.png?v=1763752341",
-        "amazonAsin": "B07QD4W7RQ"
+        "image": "https://cdn.shopify.com/s/files/1/1097/9960/files/flex-period-cup-with-packaging-and-review.png?v=1763752341"
       },
       {
         "id": "39775383126112",
         "label": "Size 02",
         "url": "https://flexfits.com/products/flex-cup?variant=39775383126112",
-        "image": "/products/packaging/target-75665024.jpg",
-        "amazonAsin": "B07QHG6ZY8"
+        "image": "/products/packaging/target-75665024.jpg"
       }
     ]
   },
@@ -506,55 +513,64 @@ export const PRODUCT_VARIANTS = {
         "id": "46904675533057",
         "label": "Short / Pink Love",
         "url": "https://mylumma.com/products/menstrual-disc?variant=46904675533057",
-        "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-pinklove-background.webp?v=1762928416"
+        "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-pinklove-background.webp?v=1762928416",
+        "amazonAsin": "B07Y5GW3NV"
       },
       {
         "id": "46904675565825",
         "label": "Short / Unicorn",
         "url": "https://mylumma.com/products/menstrual-disc?variant=46904675565825",
-        "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-unicorn-background.webp?v=1762928416"
+        "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-unicorn-background.webp?v=1762928416",
+        "amazonAsin": "B07TFHKHM4"
       },
       {
         "id": "46904675598593",
         "label": "Short / Clear",
         "url": "https://mylumma.com/products/menstrual-disc?variant=46904675598593",
-        "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-clear-background.webp?v=1762928416"
+        "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-clear-background.webp?v=1762928416",
+        "amazonAsin": "B07T8BBKG9"
       },
       {
         "id": "46904675631361",
         "label": "Medium / Pink Love",
         "url": "https://mylumma.com/products/menstrual-disc?variant=46904675631361",
-        "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-pinklove-background.webp?v=1762928416"
+        "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-pinklove-background.webp?v=1762928416",
+        "amazonAsin": "B07Y5JZ1RG"
       },
       {
         "id": "46904675664129",
         "label": "Medium / Unicorn",
         "url": "https://mylumma.com/products/menstrual-disc?variant=46904675664129",
-        "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-unicorn-background.webp?v=1762928416"
+        "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-unicorn-background.webp?v=1762928416",
+        "amazonAsin": "B07T8BBYY5"
       },
       {
         "id": "46904675696897",
         "label": "Medium / Clear",
         "url": "https://mylumma.com/products/menstrual-disc?variant=46904675696897",
-        "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-clear-background.webp?v=1762928416"
+        "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-clear-background.webp?v=1762928416",
+        "amazonAsin": "B07TFLSGB2"
       },
       {
         "id": "46904675729665",
         "label": "High / Pink Love",
         "url": "https://mylumma.com/products/menstrual-disc?variant=46904675729665",
-        "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-pinklove-background.webp?v=1762928416"
+        "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-pinklove-background.webp?v=1762928416",
+        "amazonAsin": "B07Y5GWGH8"
       },
       {
         "id": "46904675762433",
         "label": "High / Unicorn",
         "url": "https://mylumma.com/products/menstrual-disc?variant=46904675762433",
-        "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-unicorn-background.webp?v=1762928416"
+        "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-unicorn-background.webp?v=1762928416",
+        "amazonAsin": "B07TDMGPYG"
       },
       {
         "id": "46904675795201",
         "label": "High / Clear",
         "url": "https://mylumma.com/products/menstrual-disc?variant=46904675795201",
-        "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-clear-background.webp?v=1762928416"
+        "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-clear-background.webp?v=1762928416",
+        "amazonAsin": "B07Y5K7ZVJ"
       }
     ]
   },
@@ -979,29 +995,25 @@ export const PRODUCT_VARIANTS = {
         "id": "34035511984187",
         "label": "Black / XS",
         "url": "https://period.co/products/the-bikini?variant=34035511984187",
-        "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712",
-        "amazonAsin": "B0CLSXCD1K"
+        "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712"
       },
       {
         "id": "34035512016955",
         "label": "Black / S",
         "url": "https://period.co/products/the-bikini?variant=34035512016955",
-        "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712",
-        "amazonAsin": "B0CLSTBLVN"
+        "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712"
       },
       {
         "id": "34035512049723",
         "label": "Black / M",
         "url": "https://period.co/products/the-bikini?variant=34035512049723",
-        "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712",
-        "amazonAsin": "B0CLSH74KW"
+        "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712"
       },
       {
         "id": "34035512082491",
         "label": "Black / L",
         "url": "https://period.co/products/the-bikini?variant=34035512082491",
-        "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712",
-        "amazonAsin": "B0CLSJDG22"
+        "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712"
       },
       {
         "id": "34035512115259",
@@ -1013,8 +1025,7 @@ export const PRODUCT_VARIANTS = {
         "id": "34035512148027",
         "label": "Black / 2X",
         "url": "https://period.co/products/the-bikini?variant=34035512148027",
-        "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712",
-        "amazonAsin": "B0CLSGCQHJ"
+        "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712"
       },
       {
         "id": "34035512180795",
@@ -1051,7 +1062,8 @@ export const PRODUCT_VARIANTS = {
         "id": "51779703603565",
         "label": "60 Count",
         "url": "https://www.getrael.com/products/regular-organic-cotton-liners?variant=51779703603565",
-        "image": "https://cdn.shopify.com/s/files/1/2246/3213/files/ORGANIC_COTTON_COVER_PANTY_LINERS_RAEL-LN-03_DTC_60COUNT_REGULAR_PACK_FRONT_6f4b0e7e-aa38-482b-8206-02e3ab8fa67f.webp?v=1738800023"
+        "image": "https://cdn.shopify.com/s/files/1/2246/3213/files/ORGANIC_COTTON_COVER_PANTY_LINERS_RAEL-LN-03_DTC_60COUNT_REGULAR_PACK_FRONT_6f4b0e7e-aa38-482b-8206-02e3ab8fa67f.webp?v=1738800023",
+        "amazonAsin": "B071YSFXMN"
       },
       {
         "id": "51779703636333",
@@ -1099,8 +1111,7 @@ export const PRODUCT_VARIANTS = {
       {
         "id": "42291520602206",
         "label": "Mint",
-        "url": "https://ritual.com/products/essential-prenatal-multivitamin?variant=42291520602206",
-        "amazonAsin": "B0BFGZ8NS2"
+        "url": "https://ritual.com/products/essential-prenatal-multivitamin?variant=42291520602206"
       }
     ]
   },
@@ -1220,7 +1231,8 @@ export const PRODUCT_VARIANTS = {
         "id": "32014539653201",
         "label": "Himalayan Pink / Regular",
         "url": "https://saalt.com/products/saalt-cup?variant=32014539653201",
-        "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Cup-PDP-No-Bag-Himalayan-Pink-Reg_01.jpg?v=1776187271"
+        "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Cup-PDP-No-Bag-Himalayan-Pink-Reg_01.jpg?v=1776187271",
+        "amazonAsin": "B079DWG2ZV"
       },
       {
         "id": "32014576418897",
@@ -1240,7 +1252,8 @@ export const PRODUCT_VARIANTS = {
         "id": "32014576386129",
         "label": "Ocean Blue / Small",
         "url": "https://saalt.com/products/saalt-cup?variant=32014576386129",
-        "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Cup-PDP-No-Bag-Ocean-Blue-Small_02.jpg?v=1776187271"
+        "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Cup-PDP-No-Bag-Ocean-Blue-Small_02.jpg?v=1776187271",
+        "amazonAsin": "B079DX4242"
       }
     ]
   },
@@ -1319,7 +1332,8 @@ export const PRODUCT_VARIANTS = {
         "id": "42304109510837",
         "label": "1 box (16 tea bags)",
         "url": "https://www.traditionalmedicinals.com/products/spearmint-tea?variant=42304109510837",
-        "image": "https://cdn.shopify.com/s/files/1/0506/7037/0997/files/Spearmint_3D_Front_Facing-P103484-02.png?v=1761600246"
+        "image": "https://cdn.shopify.com/s/files/1/0506/7037/0997/files/Spearmint_3D_Front_Facing-P103484-02.png?v=1761600246",
+        "amazonAsin": "B000Z94H8C"
       },
       {
         "id": "42304109576373",
@@ -1414,29 +1428,25 @@ export const PRODUCT_VARIANTS = {
         "id": "target-76155164",
         "label": "Regular — 32 count",
         "url": "https://www.target.com/p/-/A-76155164",
-        "image": "/products/packaging/cora-76155164.jpg",
-        "amazonAsin": "B07XR7DVL4"
+        "image": "/products/packaging/cora-76155164.jpg"
       },
       {
         "id": "target-90569336",
         "label": "Super — 30 count",
         "url": "https://www.target.com/p/-/A-90569336",
-        "image": "/products/packaging/cora-90569336.jpg",
-        "amazonAsin": "B08288RTFX"
+        "image": "/products/packaging/cora-90569336.jpg"
       },
       {
         "id": "target-76155166",
         "label": "Overnight — 28 count",
         "url": "https://www.target.com/p/-/A-76155166",
-        "image": "/products/packaging/cora-76155166.jpg",
-        "amazonAsin": "B07XL578S2"
+        "image": "/products/packaging/cora-76155166.jpg"
       },
       {
         "id": "target-93261793",
         "label": "Extra Heavy Overnight — 20 count",
         "url": "https://www.target.com/p/-/A-93261793",
-        "image": "/products/packaging/cora-93261793.jpg",
-        "amazonAsin": "B0DH6S25DP"
+        "image": "/products/packaging/cora-93261793.jpg"
       }
     ]
   },
@@ -1451,29 +1461,25 @@ export const PRODUCT_VARIANTS = {
         "id": "target-76155164",
         "label": "Regular — 32 count",
         "url": "https://www.target.com/p/-/A-76155164",
-        "image": "/products/packaging/cora-76155164.jpg",
-        "amazonAsin": "B07XR7DVL4"
+        "image": "/products/packaging/cora-76155164.jpg"
       },
       {
         "id": "target-90569336",
         "label": "Super — 30 count",
         "url": "https://www.target.com/p/-/A-90569336",
-        "image": "/products/packaging/cora-90569336.jpg",
-        "amazonAsin": "B08288RTFX"
+        "image": "/products/packaging/cora-90569336.jpg"
       },
       {
         "id": "target-76155166",
         "label": "Overnight — 28 count",
         "url": "https://www.target.com/p/-/A-76155166",
-        "image": "/products/packaging/cora-76155166.jpg",
-        "amazonAsin": "B07XL578S2"
+        "image": "/products/packaging/cora-76155166.jpg"
       },
       {
         "id": "target-93261793",
         "label": "Extra Heavy Overnight — 20 count",
         "url": "https://www.target.com/p/-/A-93261793",
-        "image": "/products/packaging/cora-93261793.jpg",
-        "amazonAsin": "B0DH6S25DP"
+        "image": "/products/packaging/cora-93261793.jpg"
       }
     ]
   },
@@ -1488,22 +1494,19 @@ export const PRODUCT_VARIANTS = {
         "id": "target-82032071",
         "label": "Regular — 32 count",
         "url": "https://www.target.com/p/-/A-82032071",
-        "image": "/products/packaging/cora-82032071.jpg",
-        "amazonAsin": "B06XKF4RMW"
+        "image": "/products/packaging/cora-82032071.jpg"
       },
       {
         "id": "target-53062312",
         "label": "Regular / Super — 32 count",
         "url": "https://www.target.com/p/-/A-53062312",
-        "image": "/products/packaging/cora-53062312.jpg",
-        "amazonAsin": "B06ZYRXLNV"
+        "image": "/products/packaging/cora-53062312.jpg"
       },
       {
         "id": "target-75665033",
         "label": "Light / Regular — 32 count",
         "url": "https://www.target.com/p/-/A-75665033",
-        "image": "/products/packaging/cora-75665033.jpg",
-        "amazonAsin": "B0742LBKKS"
+        "image": "/products/packaging/cora-75665033.jpg"
       }
     ]
   },
@@ -1518,21 +1521,19 @@ export const PRODUCT_VARIANTS = {
         "label": "Model 0",
         "url": "https://shopdiva.com/products/diva-cup-model-0?variant=40325944410193",
         "image": "/products/packaging/diva-0.png",
-        "amazonAsin": "B08TLT6BF7"
+        "amazonAsin": "B07KGZ9NMV"
       },
       {
         "id": "40325946015825",
         "label": "Model 1",
         "url": "https://shopdiva.com/products/diva-cup-model-1?variant=40325946015825",
-        "image": "/products/packaging/diva-1.png",
-        "amazonAsin": "B08TLJPR71"
+        "image": "/products/packaging/diva-1.png"
       },
       {
         "id": "40325949063249",
         "label": "Model 2",
         "url": "https://shopdiva.com/products/diva-cup-model-2?variant=40325949063249",
-        "image": "/products/packaging/diva-2.png",
-        "amazonAsin": "B08TLMWZB4"
+        "image": "/products/packaging/diva-2.png"
       }
     ]
   }

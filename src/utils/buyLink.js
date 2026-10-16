@@ -13,6 +13,8 @@ import { CATALOG_CORRECTIONS } from '../data/catalogCorrections';
 import { PRODUCT_BUY_URLS } from '../data/productBuyUrls';
 import { amazonAffiliateUrlForAsin, getAmazonAffiliateUrlForProduct } from '../data/productAffiliateUrls';
 import { isPartnerBrandItem } from './partnerBrands';
+import { findBrandPartner } from '../data/brandPartners.js';
+import { isBlockedAmazon } from '../data/amazonAsinBlocks.js';
 
 function hasRealPath(url) {
   try {
@@ -64,23 +66,16 @@ export function isAmazonUrl(value) {
 /**
  * Partner tracking parameters that can be added to any page on the
  * partner's own site, so an exact size/option link still earns credit.
- * Only brands whose affiliate program works by query parameter are listed.
+ * Comes from src/data/brandPartners.js (route.type === 'ref_param').
  */
-const PARTNER_REF_PARAMS = [
-  { pattern: /\blim method\b/, hosts: ['limmethod.com'], param: 'ref', value: 'Ayna_Health' },
-  { pattern: /\belitone\b/, hosts: ['elitone.com'], param: 'af', value: 'aynahealth' },
-  { pattern: /\bbuni\b/, hosts: ['bunibody.com'], param: 'ref', value: 'oxaevspm' },
-];
-
 function withPartnerRef(product, url) {
-  const text = `${product?.brand || ''} ${product?.name || ''}`.toLowerCase();
-  const rule = PARTNER_REF_PARAMS.find((r) => r.pattern.test(text));
-  if (!rule) return null;
+  const route = findBrandPartner(product)?.route;
+  if (route?.type !== 'ref_param') return null;
   try {
     const u = new URL(url);
     const host = u.hostname.toLowerCase().replace(/^www\./, '');
-    if (!rule.hosts.includes(host)) return null;
-    u.searchParams.set(rule.param, rule.value);
+    if (!route.hosts.includes(host)) return null;
+    u.searchParams.set(route.param, route.value);
     return u.toString();
   } catch {
     return null;
@@ -124,19 +119,30 @@ function partnerBuyUrl(product, variant) {
   return withPartnerRef(product, page) || page;
 }
 
-function standardBuyUrl(product, variant) {
-  // 1. Ayna's Amazon Associates link — an exact per-option ASIN when one is
-  //    known, otherwise the product's listing (sizes are chosen on Amazon).
-  const variantAmazon = amazonAffiliateUrlForAsin(variant?.amazonAsin);
-  if (variantAmazon) return variantAmazon;
-  const amazon = getAmazonAffiliateUrlForProduct(product);
-  if (amazon) return amazon;
-  if (isExactBuyUrl(product?.affiliateUrl) && isAmazonUrl(product.affiliateUrl)) {
-    return String(product.affiliateUrl).trim();
+function standardBuyUrl(product, variant, { amazonAllowed = true } = {}) {
+  // 1. Ayna's Amazon Associates link, only for the EXACT option: a chosen
+  //    size/count/colour must have its own child ASIN. A chosen option with no
+  //    ASIN of its own goes to that exact option on the brand site instead of
+  //    a generic Amazon listing (rule set by ayna, 2026-10-14: exact variant
+  //    matters more than finding an Amazon listing).
+  if (amazonAllowed) {
+    const variantAmazon = isBlockedAmazon(variant?.amazonAsin) ? null : amazonAffiliateUrlForAsin(variant?.amazonAsin);
+    if (variantAmazon) return variantAmazon;
+    const exactBrandOption = variant && isExactBuyUrl(variant.url) && !isAmazonUrl(variant.url);
+    if (!exactBrandOption) {
+      const amazon = getAmazonAffiliateUrlForProduct(product);
+      if (amazon && !isBlockedAmazon(amazon, { productLevel: true })) return amazon;
+      if (isExactBuyUrl(product?.affiliateUrl) && isAmazonUrl(product.affiliateUrl) && !isBlockedAmazon(product.affiliateUrl, { productLevel: true })) {
+        return String(product.affiliateUrl).trim();
+      }
+    }
   }
 
   // 2. Not on Amazon for us: the exact option, then reviewed destinations.
-  if (isExactBuyUrl(variant?.url)) return String(variant.url).trim();
+  // A blocked Amazon listing (wrong product or unavailable) is never a destination.
+  // An Amazon link must name one exact listing (/dp/ASIN), never a search page.
+  const notAmazon = (u) => !isAmazonUrl(u) || (amazonAllowed && /\/(dp|gp\/product)\/[A-Z0-9]{10}/i.test(String(u)) && !isBlockedAmazon(u, { productLevel: true }));
+  if (isExactBuyUrl(variant?.url) && notAmazon(variant.url)) return String(variant.url).trim();
   const candidates = [
     product?.affiliateUrl,
     CATALOG_CORRECTIONS[product?.id]?.url,
@@ -148,17 +154,20 @@ function standardBuyUrl(product, variant) {
       ? Object.values(product.whereToBuyLinks)
       : []),
   ];
-  return firstOf(candidates, isExactBuyUrl);
+  return firstOf(candidates, (u) => isExactBuyUrl(u) && notAmazon(u));
 }
 
 /**
  * @param {object} product catalog/live product (corrections already applied)
  * @param {object|null} variant selected size/option, if any
+ * @param {{ amazonAllowed?: boolean }} [opts] amazonAllowed=false for surfaces
+ *   where Amazon links are not permitted yet (the native app until Amazon
+ *   approves it as an Approved Mobile Application).
  * @returns {string|null}
  */
-export function resolveBuyUrl(product, variant = null) {
+export function resolveBuyUrl(product, variant = null, opts = {}) {
   if (!product) return null;
-  return isPartnerBrandItem(product) ? partnerBuyUrl(product, variant) : standardBuyUrl(product, variant);
+  return isPartnerBrandItem(product) ? partnerBuyUrl(product, variant) : standardBuyUrl(product, variant, opts);
 }
 
 /** True when Buy Now opens Amazon for this product (not for the selected size). */

@@ -1,0 +1,1124 @@
+{
+ "child_asin_for_every_size": [
+  {
+   "id": "p-belly-bandit",
+   "name": "Belly Bandit Upsie Belly",
+   "listingAsin": "B07Z4W4KZB",
+   "listingIsOneOfChildren": false,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "Cream / S",
+     "childAsin": "B005XNCE12",
+     "routesTo": "https://www.amazon.com/dp/B005XNCE12?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Cream / M",
+     "childAsin": "B005XNCFKW",
+     "routesTo": "https://www.amazon.com/dp/B005XNCFKW?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Cream / L",
+     "childAsin": "B005XNCH3W",
+     "routesTo": "https://www.amazon.com/dp/B005XNCH3W?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Cream / XL",
+     "childAsin": "B00EO7LSS8",
+     "routesTo": "https://www.amazon.com/dp/B00EO7LSS8?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Black / S",
+     "childAsin": "B009EEWGVO",
+     "routesTo": "https://www.amazon.com/dp/B009EEWGVO?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Black / M",
+     "childAsin": "B009EEWJSE",
+     "routesTo": "https://www.amazon.com/dp/B009EEWJSE?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Black / L",
+     "childAsin": "B009EEWI7Q",
+     "routesTo": "https://www.amazon.com/dp/B009EEWI7Q?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Black / XL",
+     "childAsin": "B00LMIER30",
+     "routesTo": "https://www.amazon.com/dp/B00LMIER30?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  },
+  {
+   "id": "p-cora-organic-pads",
+   "name": "Cora Organic Cotton Pads",
+   "listingAsin": "B07XR7DVL4",
+   "listingIsOneOfChildren": true,
+   "defaultVariantId": "target-76155164",
+   "options": [
+    {
+     "label": "Regular — 32 count",
+     "childAsin": "B07XR7DVL4",
+     "routesTo": "https://www.amazon.com/dp/B07XR7DVL4?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Super — 30 count",
+     "childAsin": "B08288RTFX",
+     "routesTo": "https://www.amazon.com/dp/B08288RTFX?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Overnight — 28 count",
+     "childAsin": "B07XL578S2",
+     "routesTo": "https://www.amazon.com/dp/B07XL578S2?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Extra Heavy Overnight — 20 count",
+     "childAsin": "B0DH6S25DP",
+     "routesTo": "https://www.amazon.com/dp/B0DH6S25DP?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  },
+  {
+   "id": "p-cora-organic-tampons",
+   "name": "Cora Organic Cotton Tampons",
+   "listingAsin": "B06ZYRXLNV",
+   "listingIsOneOfChildren": true,
+   "defaultVariantId": "target-82032071",
+   "options": [
+    {
+     "label": "Regular — 32 count",
+     "childAsin": "B06XKF4RMW",
+     "routesTo": "https://www.amazon.com/dp/B06XKF4RMW?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Regular / Super — 32 count",
+     "childAsin": "B06ZYRXLNV",
+     "routesTo": "https://www.amazon.com/dp/B06ZYRXLNV?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Light / Regular — 32 count",
+     "childAsin": "B0742LBKKS",
+     "routesTo": "https://www.amazon.com/dp/B0742LBKKS?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  },
+  {
+   "id": "p-cora-overnight",
+   "name": "Cora Organic Cotton Pads",
+   "listingAsin": "B07XL578S2",
+   "listingIsOneOfChildren": true,
+   "defaultVariantId": "target-76155166",
+   "options": [
+    {
+     "label": "Regular — 32 count",
+     "childAsin": "B07XR7DVL4",
+     "routesTo": "https://www.amazon.com/dp/B07XR7DVL4?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Super — 30 count",
+     "childAsin": "B08288RTFX",
+     "routesTo": "https://www.amazon.com/dp/B08288RTFX?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Overnight — 28 count",
+     "childAsin": "B07XL578S2",
+     "routesTo": "https://www.amazon.com/dp/B07XL578S2?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Extra Heavy Overnight — 20 count",
+     "childAsin": "B0DH6S25DP",
+     "routesTo": "https://www.amazon.com/dp/B0DH6S25DP?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  },
+  {
+   "id": "p-cranberry-supplement",
+   "name": "AZO Cranberry Urinary Health",
+   "listingAsin": "B004RR1FF6",
+   "listingIsOneOfChildren": false,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "50 Caplets",
+     "childAsin": "B0012JY42I",
+     "routesTo": "https://www.amazon.com/dp/B0012JY42I?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "100 Caplets - 2pk",
+     "childAsin": "B0C61VBVJC",
+     "routesTo": "https://www.amazon.com/dp/B0C61VBVJC?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  },
+  {
+   "id": "p-dame-arc",
+   "name": "Dame Arc G-Spot Vibrator",
+   "listingAsin": "B0BG8WG6FG",
+   "listingIsOneOfChildren": true,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "Plum",
+     "childAsin": "B0BG8WG6FG",
+     "routesTo": "https://www.amazon.com/dp/B0BG8WG6FG?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Ice",
+     "childAsin": "B0BG6C8KW4",
+     "routesTo": "https://www.amazon.com/dp/B0BG6C8KW4?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  },
+  {
+   "id": "p-diva-cup",
+   "name": "DIVA Menstrual Cup",
+   "listingAsin": "B08TLJPR71",
+   "listingIsOneOfChildren": true,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "Model 0",
+     "childAsin": "B08TLT6BF7",
+     "routesTo": "https://www.amazon.com/dp/B08TLT6BF7?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Model 1",
+     "childAsin": "B08TLJPR71",
+     "routesTo": "https://www.amazon.com/dp/B08TLJPR71?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Model 2",
+     "childAsin": "B08TLMWZB4",
+     "routesTo": "https://www.amazon.com/dp/B08TLMWZB4?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  },
+  {
+   "id": "p-flex-cup",
+   "name": "Flex Cup",
+   "listingAsin": "B07QD4W7RQ",
+   "listingIsOneOfChildren": true,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "Size 01",
+     "childAsin": "B07QD4W7RQ",
+     "routesTo": "https://www.amazon.com/dp/B07QD4W7RQ?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Size 02",
+     "childAsin": "B07QHG6ZY8",
+     "routesTo": "https://www.amazon.com/dp/B07QHG6ZY8?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  },
+  {
+   "id": "p-flex-disc",
+   "name": "Flex Disc",
+   "listingAsin": "B0FBTH6RHH",
+   "listingIsOneOfChildren": true,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "12",
+     "childAsin": "B07QHS3PL8",
+     "routesTo": "https://www.amazon.com/dp/B07QHS3PL8?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "24",
+     "childAsin": "B0FBTH6RHH",
+     "routesTo": "https://www.amazon.com/dp/B0FBTH6RHH?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  },
+  {
+   "id": "p-hello-disc",
+   "name": "Hello Disc",
+   "listingAsin": "B09RTMNJLH",
+   "listingIsOneOfChildren": true,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "Bubblegum",
+     "childAsin": "B0GCBHWY24",
+     "routesTo": "https://www.amazon.com/dp/B0GCBHWY24?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Sea Fog",
+     "childAsin": "B09RTMNJLH",
+     "routesTo": "https://www.amazon.com/dp/B09RTMNJLH?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Black",
+     "childAsin": "B0GKBK3FS9",
+     "routesTo": "https://www.amazon.com/dp/B0GKBK3FS9?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  },
+  {
+   "id": "p-inositol-wholesome",
+   "name": "Wholesome Story Myo & D-Chiro Inositol",
+   "listingAsin": "B07HX2DMY8",
+   "listingIsOneOfChildren": true,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "360 Capsules (90-Servings)",
+     "childAsin": "B07YYLM1KZ",
+     "routesTo": "https://www.amazon.com/dp/B07YYLM1KZ?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "120 Capsules (30-Servings)",
+     "childAsin": "B07HX2DMY8",
+     "routesTo": "https://www.amazon.com/dp/B07HX2DMY8?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  },
+  {
+   "id": "p-lansinoh-pads",
+   "name": "Lansinoh Stay Dry Nursing Pads",
+   "listingAsin": "B0070SKP1O",
+   "listingIsOneOfChildren": true,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "100 Pads",
+     "childAsin": "B0070SKP1O",
+     "routesTo": "https://www.amazon.com/dp/B0070SKP1O?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "60 Pads",
+     "childAsin": "B09VC8TCWW",
+     "routesTo": "https://www.amazon.com/dp/B09VC8TCWW?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "36 Pads",
+     "childAsin": "B003U3SWEA",
+     "routesTo": "https://www.amazon.com/dp/B003U3SWEA?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  },
+  {
+   "id": "p-lena-cup",
+   "name": "Lena Menstrual Cup",
+   "listingAsin": "B01JXA3JNW",
+   "listingIsOneOfChildren": false,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "Pink / Small",
+     "childAsin": "B00YNYH8F4",
+     "routesTo": "https://www.amazon.com/dp/B00YNYH8F4?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Pink / Large",
+     "childAsin": "B00YNYH8EK",
+     "routesTo": "https://www.amazon.com/dp/B00YNYH8EK?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Purple / Small",
+     "childAsin": "B01JWMWSMY",
+     "routesTo": "https://www.amazon.com/dp/B01JWMWSMY?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Purple / Large",
+     "childAsin": "B01JWMWSII",
+     "routesTo": "https://www.amazon.com/dp/B01JWMWSII?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Turquoise / Small",
+     "childAsin": "B01FV0N9BK",
+     "routesTo": "https://www.amazon.com/dp/B01FV0N9BK?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Turquoise / Large",
+     "childAsin": "B01FW9NEGA",
+     "routesTo": "https://www.amazon.com/dp/B01FW9NEGA?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Gray / Small",
+     "childAsin": "B08HSLY3M6",
+     "routesTo": "https://www.amazon.com/dp/B08HSLY3M6?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Gray / Large",
+     "childAsin": "B08HW1VFFZ",
+     "routesTo": "https://www.amazon.com/dp/B08HW1VFFZ?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  },
+  {
+   "id": "p-lunette-cup",
+   "name": "Lunette Menstrual Cup",
+   "listingAsin": "B0054SQ02K",
+   "listingIsOneOfChildren": true,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "1. Light to medium flow",
+     "childAsin": "B002MA4SI6",
+     "routesTo": "https://www.amazon.com/dp/B002MA4SI6?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "2. Medium to heavy flow",
+     "childAsin": "B0054SQ02K",
+     "routesTo": "https://www.amazon.com/dp/B0054SQ02K?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  },
+  {
+   "id": "p-organicup",
+   "name": "OrganiCup",
+   "listingAsin": "B071NCXFMG",
+   "listingIsOneOfChildren": true,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "A",
+     "childAsin": "B071NCXFMG",
+     "routesTo": "https://www.amazon.com/dp/B071NCXFMG?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "B",
+     "childAsin": "B072KZM9P3",
+     "routesTo": "https://www.amazon.com/dp/B072KZM9P3?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Mini",
+     "childAsin": "B07SC244TV",
+     "routesTo": "https://www.amazon.com/dp/B07SC244TV?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  },
+  {
+   "id": "p-rael-organic-pad",
+   "name": "Rael Large Organic Cotton Cover Pads With Wings",
+   "listingAsin": "B071VBZLPX",
+   "listingIsOneOfChildren": false,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "24 Count",
+     "childAsin": "B0771Y7YQ1",
+     "routesTo": "https://www.amazon.com/dp/B0771Y7YQ1?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "14 Count",
+     "childAsin": "B07X7GM5Q9",
+     "routesTo": "https://www.amazon.com/dp/B07X7GM5Q9?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  },
+  {
+   "id": "p-rituals-prenatal",
+   "name": "Ritual Prenatal Vitamin",
+   "listingAsin": "B09W363MVD",
+   "listingIsOneOfChildren": true,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "Citrus",
+     "childAsin": "B09W363MVD",
+     "routesTo": "https://www.amazon.com/dp/B09W363MVD?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Mint",
+     "childAsin": "B0BFGZ8NS2",
+     "routesTo": "https://www.amazon.com/dp/B0BFGZ8NS2?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  },
+  {
+   "id": "p-saalt-cup-steamer",
+   "name": "Saalt Cup Steamer",
+   "listingAsin": "B0CGX2Y8WM",
+   "listingIsOneOfChildren": true,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "Blue Dusk",
+     "childAsin": "B0CGX2Y8WM",
+     "routesTo": "https://www.amazon.com/dp/B0CGX2Y8WM?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Arctic Mist",
+     "childAsin": "B0CGX1MGR8",
+     "routesTo": "https://www.amazon.com/dp/B0CGX1MGR8?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Rose Quartz",
+     "childAsin": "B0CGWZRXG5",
+     "routesTo": "https://www.amazon.com/dp/B0CGWZRXG5?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  },
+  {
+   "id": "p-saalt-disc",
+   "name": "Saalt Menstrual Disc",
+   "listingAsin": "B0B13WT3KV",
+   "listingIsOneOfChildren": true,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "Coastal Blue (Regular)",
+     "childAsin": "B0B13WT3KV",
+     "routesTo": "https://www.amazon.com/dp/B0B13WT3KV?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Sunset Coral (Small)",
+     "childAsin": "B0B13XG62P",
+     "routesTo": "https://www.amazon.com/dp/B0B13XG62P?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  },
+  {
+   "id": "p-silverette-cups",
+   "name": "Silverette Nursing Cups",
+   "listingAsin": "B00D4MWKNQ",
+   "listingIsOneOfChildren": true,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "S / No O Feel",
+     "childAsin": "B00D4MWKNQ",
+     "routesTo": "https://www.amazon.com/dp/B00D4MWKNQ?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "S / Add O Feel",
+     "childAsin": "B0B4H75CJZ",
+     "routesTo": "https://www.amazon.com/dp/B0B4H75CJZ?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "M / No O Feel",
+     "childAsin": "B07XGC8RBB",
+     "routesTo": "https://www.amazon.com/dp/B07XGC8RBB?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "M / Add O Feel",
+     "childAsin": "B0B4H6GXCW",
+     "routesTo": "https://www.amazon.com/dp/B0B4H6GXCW?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "L / Add O Feel",
+     "childAsin": "B0GFX7239Z",
+     "routesTo": "https://www.amazon.com/dp/B0GFX7239Z?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "L / No O Feel",
+     "childAsin": "B0FTGGL64M",
+     "routesTo": "https://www.amazon.com/dp/B0FTGGL64M?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  },
+  {
+   "id": "p-veeda-pad",
+   "name": "Veeda Natural Cotton Ultra-Thin Pads With Wings",
+   "listingAsin": null,
+   "listingIsOneOfChildren": false,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "14 Count",
+     "childAsin": "B00ZAVDST4",
+     "routesTo": "https://www.amazon.com/dp/B00ZAVDST4?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "42 Count",
+     "childAsin": "B01N1ZHI2A",
+     "routesTo": "https://www.amazon.com/dp/B01N1ZHI2A?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  },
+  {
+   "id": "p-vitex",
+   "name": "Gaia Herbs Vitex Berry (Chasteberry)",
+   "listingAsin": "B003VT3YP0",
+   "listingIsOneOfChildren": true,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "60 ct",
+     "childAsin": "B003VT3YP0",
+     "routesTo": "https://www.amazon.com/dp/B003VT3YP0?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "120 ct",
+     "childAsin": "B07YLKKSGX",
+     "routesTo": "https://www.amazon.com/dp/B07YLKKSGX?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "180 ct",
+     "childAsin": "B0BRTBBK5K",
+     "routesTo": "https://www.amazon.com/dp/B0BRTBBK5K?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  }
+ ],
+ "child_asin_for_some_sizes": [
+  {
+   "id": "p-love-wellness-bloat",
+   "name": "Love Wellness Bye Bye Bloat",
+   "listingAsin": "B07TCQS4QJ",
+   "listingIsOneOfChildren": true,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "Standard",
+     "childAsin": "B07TCQS4QJ",
+     "routesTo": "https://www.amazon.com/dp/B07TCQS4QJ?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Jumbo",
+     "childAsin": null,
+     "routesTo": "https://lovewellness.com/products/bye-bye-bloat?variant=42677789556851",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    }
+   ]
+  },
+  {
+   "id": "p-natracare-pad",
+   "name": "Natracare Ultra Pads",
+   "listingAsin": "B000VI3LNE",
+   "listingIsOneOfChildren": true,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "Regular / 1 Pack",
+     "childAsin": "B000VI3LNE",
+     "routesTo": "https://www.amazon.com/dp/B000VI3LNE?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Regular / 4 Pack",
+     "childAsin": null,
+     "routesTo": "https://shop.natracare.com/products/ultra-pads-regular-super-long-plus?variant=49098168205660",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Super / 1 Pack",
+     "childAsin": "B000QVDLKO",
+     "routesTo": "https://www.amazon.com/dp/B000QVDLKO?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Super / 4 Pack",
+     "childAsin": null,
+     "routesTo": "https://shop.natracare.com/products/ultra-pads-regular-super-long-plus?variant=49098168238428",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Long / 1 Pack",
+     "childAsin": null,
+     "routesTo": "https://shop.natracare.com/products/ultra-pads-regular-super-long-plus?variant=48659752419676",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Long / 4 Pack",
+     "childAsin": null,
+     "routesTo": "https://shop.natracare.com/products/ultra-pads-regular-super-long-plus?variant=49098168271196",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Super Plus / 1 Pack",
+     "childAsin": null,
+     "routesTo": "https://shop.natracare.com/products/ultra-pads-regular-super-long-plus?variant=48659752452444",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Super Plus / 4 Pack",
+     "childAsin": null,
+     "routesTo": "https://shop.natracare.com/products/ultra-pads-regular-super-long-plus?variant=49098168303964",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    }
+   ]
+  },
+  {
+   "id": "p-nixit",
+   "name": "Nixit Menstrual Disc",
+   "listingAsin": "B0DGW9R5XR",
+   "listingIsOneOfChildren": true,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "Teal / Single",
+     "childAsin": "B0DGW9R5XR",
+     "routesTo": "https://www.amazon.com/dp/B0DGW9R5XR?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Teal / 2 Pack",
+     "childAsin": null,
+     "routesTo": "https://nixit.com/products/nixit-menstrual-disc?variant=42370132148317",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    }
+   ]
+  },
+  {
+   "id": "p-period-co-underwear",
+   "name": "The Bikini Period. in Organic Cotton For Heavy Flows",
+   "listingAsin": "B0BTPVSHKD",
+   "listingIsOneOfChildren": false,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "Black / XS",
+     "childAsin": "B0CLSXCD1K",
+     "routesTo": "https://www.amazon.com/dp/B0CLSXCD1K?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Black / S",
+     "childAsin": "B0CLSTBLVN",
+     "routesTo": "https://www.amazon.com/dp/B0CLSTBLVN?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Black / M",
+     "childAsin": "B0CLSH74KW",
+     "routesTo": "https://www.amazon.com/dp/B0CLSH74KW?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Black / L",
+     "childAsin": "B0CLSJDG22",
+     "routesTo": "https://www.amazon.com/dp/B0CLSJDG22?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Black / XL",
+     "childAsin": null,
+     "routesTo": "https://period.co/products/the-bikini?variant=34035512115259",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Black / 2X",
+     "childAsin": "B0CLSGCQHJ",
+     "routesTo": "https://www.amazon.com/dp/B0CLSGCQHJ?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Black / 3X",
+     "childAsin": null,
+     "routesTo": "https://period.co/products/the-bikini?variant=34035512180795",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Black / 4X",
+     "childAsin": null,
+     "routesTo": "https://period.co/products/the-bikini?variant=34439908556859",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Black / 5X",
+     "childAsin": null,
+     "routesTo": "https://period.co/products/the-bikini?variant=34439908819003",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Black / 6X",
+     "childAsin": null,
+     "routesTo": "https://period.co/products/the-bikini?variant=34439909179451",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    }
+   ]
+  },
+  {
+   "id": "p-saalt-cup",
+   "name": "Saalt Menstrual Cup",
+   "listingAsin": "B09JQ4G62Q",
+   "listingIsOneOfChildren": false,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "Seafoam Green / Regular",
+     "childAsin": null,
+     "routesTo": "https://saalt.com/products/saalt-cup?variant=32616289566801",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Seafoam Green / Small",
+     "childAsin": null,
+     "routesTo": "https://saalt.com/products/saalt-cup?variant=32616289042513",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Himalayan Pink / Regular",
+     "childAsin": null,
+     "routesTo": "https://saalt.com/products/saalt-cup?variant=32014539653201",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Himalayan Pink / Small",
+     "childAsin": "B079DYK334",
+     "routesTo": "https://www.amazon.com/dp/B079DYK334?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Ocean Blue / Regular",
+     "childAsin": "B079DVXSP8",
+     "routesTo": "https://www.amazon.com/dp/B079DVXSP8?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "Ocean Blue / Small",
+     "childAsin": null,
+     "routesTo": "https://saalt.com/products/saalt-cup?variant=32014576386129",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    }
+   ]
+  },
+  {
+   "id": "p-spearmint-pcos",
+   "name": "Traditional Medicinals Organic Spearmint Tea",
+   "listingAsin": "B000Z94H8C",
+   "listingIsOneOfChildren": false,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "1 box (16 tea bags)",
+     "childAsin": null,
+     "routesTo": "https://www.traditionalmedicinals.com/products/spearmint-tea?variant=42304109510837",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "3-Pack (3 x 16 tea bags)",
+     "childAsin": "B09CFLYXZL",
+     "routesTo": "https://www.amazon.com/dp/B09CFLYXZL?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    },
+    {
+     "label": "6-Pack (6 x 16 tea bags)",
+     "childAsin": "B000EJPDMC",
+     "routesTo": "https://www.amazon.com/dp/B000EJPDMC?tag=aynahealth-20",
+     "reason": "NONPARTNER_AMAZON_EXACT_MATCH"
+    }
+   ]
+  }
+ ],
+ "sizes_but_one_generic_listing": [
+  {
+   "id": "p-boppy-pillow",
+   "name": "Boppy Nursing Pillow",
+   "listingAsin": "B0DNNJWXMQ",
+   "listingIsOneOfChildren": false,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "Green Sage Leaves",
+     "childAsin": null,
+     "routesTo": "https://www.boppy.com/products/nursing-pillow?variant=41628692250690",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Blue Speckled Current",
+     "childAsin": null,
+     "routesTo": "https://www.boppy.com/products/nursing-pillow?variant=41872243621954",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Pink Field Flowers",
+     "childAsin": null,
+     "routesTo": "https://www.boppy.com/products/nursing-pillow?variant=41859162472514",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Colorful Forest Animals",
+     "childAsin": null,
+     "routesTo": "https://www.boppy.com/products/nursing-pillow?variant=41628692316226",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Cream Retro Squiggles",
+     "childAsin": null,
+     "routesTo": "https://www.boppy.com/products/nursing-pillow?variant=41628692283458",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Pink Garden Flowers",
+     "childAsin": null,
+     "routesTo": "https://www.boppy.com/products/nursing-pillow?variant=41628692054082",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Clay & Gold Suns",
+     "childAsin": null,
+     "routesTo": "https://www.boppy.com/products/nursing-pillow?variant=41859162669122",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Green Forest Animal Sketches",
+     "childAsin": null,
+     "routesTo": "https://www.boppy.com/products/nursing-pillow?variant=41851296645186",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Forest Green Dinos",
+     "childAsin": null,
+     "routesTo": "https://www.boppy.com/products/nursing-pillow?variant=41872243261506",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Neutral Plants & Animals",
+     "childAsin": null,
+     "routesTo": "https://www.boppy.com/products/nursing-pillow?variant=41872243753026",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Gray Gentle Leaves",
+     "childAsin": null,
+     "routesTo": "https://www.boppy.com/products/nursing-pillow?variant=41872243130434",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Sand Safari Animals",
+     "childAsin": null,
+     "routesTo": "https://www.boppy.com/products/nursing-pillow?variant=42020980097090",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Soft Pink Daisies",
+     "childAsin": null,
+     "routesTo": "https://www.boppy.com/products/nursing-pillow?variant=42020980555842",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Gray Beige Leaves",
+     "childAsin": null,
+     "routesTo": "https://www.boppy.com/products/nursing-pillow?variant=42020979671106",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Sand Stick & Leaf",
+     "childAsin": null,
+     "routesTo": "https://www.boppy.com/products/nursing-pillow?variant=41851306639426",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Tan Checkered Stripes",
+     "childAsin": null,
+     "routesTo": "https://www.boppy.com/products/nursing-pillow?variant=41628692086850",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Gray Geo Dinos",
+     "childAsin": null,
+     "routesTo": "https://www.boppy.com/products/nursing-pillow?variant=41628692152386",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Clay Boho Arches",
+     "childAsin": null,
+     "routesTo": "https://www.boppy.com/products/nursing-pillow?variant=41628692185154",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Beige Foliage",
+     "childAsin": null,
+     "routesTo": "https://www.boppy.com/products/nursing-pillow?variant=42989080510530",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Vintage Blue Stripe",
+     "childAsin": null,
+     "routesTo": "https://www.boppy.com/products/nursing-pillow?variant=43092347781186",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Bright Pink Tropical Flowers",
+     "childAsin": null,
+     "routesTo": "https://www.boppy.com/products/nursing-pillow?variant=43092349255746",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Beige Woodland Tapestry",
+     "childAsin": null,
+     "routesTo": "https://www.boppy.com/products/nursing-pillow?variant=44550209536066",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    }
+   ]
+  },
+  {
+   "id": "p-estroven-mood",
+   "name": "Estroven Menopause Relief Mood Boost",
+   "listingAsin": "B0091CG65G",
+   "listingIsOneOfChildren": false,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "30",
+     "childAsin": null,
+     "routesTo": "https://estroven.com/products/menopause-relief-mood-memory-boost?variant=29388646678598",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "60",
+     "childAsin": null,
+     "routesTo": "https://estroven.com/products/menopause-relief-mood-memory-boost?variant=39984302227528",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    }
+   ]
+  },
+  {
+   "id": "p-lumma-disc",
+   "name": "Lumma Unique Menstrual Disc",
+   "listingAsin": "B07TFHKHM4",
+   "listingIsOneOfChildren": false,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "Short / Pink Love",
+     "childAsin": null,
+     "routesTo": "https://mylumma.com/products/menstrual-disc?variant=46904675533057",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Short / Unicorn",
+     "childAsin": null,
+     "routesTo": "https://mylumma.com/products/menstrual-disc?variant=46904675565825",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Short / Clear",
+     "childAsin": null,
+     "routesTo": "https://mylumma.com/products/menstrual-disc?variant=46904675598593",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Medium / Pink Love",
+     "childAsin": null,
+     "routesTo": "https://mylumma.com/products/menstrual-disc?variant=46904675631361",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Medium / Unicorn",
+     "childAsin": null,
+     "routesTo": "https://mylumma.com/products/menstrual-disc?variant=46904675664129",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "Medium / Clear",
+     "childAsin": null,
+     "routesTo": "https://mylumma.com/products/menstrual-disc?variant=46904675696897",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "High / Pink Love",
+     "childAsin": null,
+     "routesTo": "https://mylumma.com/products/menstrual-disc?variant=46904675729665",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "High / Unicorn",
+     "childAsin": null,
+     "routesTo": "https://mylumma.com/products/menstrual-disc?variant=46904675762433",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "High / Clear",
+     "childAsin": null,
+     "routesTo": "https://mylumma.com/products/menstrual-disc?variant=46904675795201",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    }
+   ]
+  },
+  {
+   "id": "p-rael-liners",
+   "name": "Rael Regular Organic Cotton Cover Panty Liners",
+   "listingAsin": "B07258JQ9M",
+   "listingIsOneOfChildren": false,
+   "defaultVariantId": null,
+   "options": [
+    {
+     "label": "60 Count",
+     "childAsin": null,
+     "routesTo": "https://www.getrael.com/products/regular-organic-cotton-liners?variant=51779703603565",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "40 Count",
+     "childAsin": null,
+     "routesTo": "https://www.getrael.com/products/regular-organic-cotton-liners?variant=51779703636333",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    },
+    {
+     "label": "20 Count",
+     "childAsin": null,
+     "routesTo": "https://www.getrael.com/products/regular-organic-cotton-liners?variant=51779703669101",
+     "reason": "AMAZON_VARIANT_NOT_EXACT"
+    }
+   ]
+  }
+ ]
+}

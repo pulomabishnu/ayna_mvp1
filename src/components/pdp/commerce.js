@@ -11,6 +11,8 @@ import { priceParts, safetyAlertText } from '../../data/passport/content.js';
 import { isPlaceholderProductImage } from '../../utils/resolveProductImage.js';
 import { brandOf } from '../../mobile/data/brandFallback.js';
 import { categoryLabel, ingredientHeadline, perUnitLabel, sizeCount, NOT_ON_FILE } from './glance.js';
+import { resolveCommerce } from '../../commerce/router.js';
+import { commerceContext } from '../../commerce/platform.js';
 
 // ---------------------------------------------------------------------------
 // Gallery
@@ -209,7 +211,13 @@ export function productJsonLd(product, { origin = 'https://www.aynahealth.co', b
   if (!product) return null;
   const images = galleryImages(product).map((s) => absolute(s, origin)).filter(Boolean);
   const brand = brandOf(product);
-  const price = offerPrice(product);
+  // Structured-data offers only for a verified, fresh price at the merchant the
+  // Buy button opens (never a hand-typed catalog price, never an Amazon price
+  // that did not come from Creators API).
+  const commerce = product.type === 'digital' ? null : resolveCommerce(product, null, commerceContext());
+  let price = offerPrice(product);
+  if (commerce?.amazon) price = null;
+  else if (commerce?.priceDisplay?.show && commerce.price?.currency === 'USD') price = Number(commerce.price.amount).toFixed(2);
   const pageUrl = url || `${origin.replace(/\/$/, '')}/product/${encodeURIComponent(product.id)}`;
   const data = {
     '@context': 'https://schema.org',

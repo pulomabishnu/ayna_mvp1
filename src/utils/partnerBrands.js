@@ -55,48 +55,20 @@
  * "ayna Favorite" badge and the partner pin) but sort after the ranked ones,
  * in whichever order they'd otherwise fall.
  */
-export const PARTNER_BRAND_ORDER = [
-  /\bbuni\b/, // BUNI Body
-  /\bsoothe ?her\b/, // SootheHer, Elaris Pod added to the catalog 2026-09-23
-  /\bneycher\b/, // Neycher
-  /\bwinx\b/, // Winx Health
-  /\bgina\b/, // gina
-  /\belitone\b/, // Elitone (includes Elitone URGE)
-  /\bproov\b/, // Proov
-  /\bvio2\b/, // VIO2
-  /\bmy pelvic bra\b/, // My Pelvic Bra
-  /\bconnect pelvic floor fitness\b/, // Connect PFF
-  /\blola\b/, // LOLA
-  // Confirmed partners not given an explicit rank in the 2026-09-16 order,
-  // sort after everything above.
-  /\blim method\b/,
-  // Rèsa (2026-10-05), pre-launch; see PRELAUNCH_PARTNER_PATTERNS below.
-  /\br[eè]sa\b/,
-];
+import { BRAND_PARTNERS, PARTNER_MATCHERS } from '../data/brandPartners.js';
+
+// The partner list itself now lives in src/data/brandPartners.js (data, not
+// code). These exports keep their old shapes for existing callers.
+export const PARTNER_BRAND_ORDER = PARTNER_MATCHERS.map(({ patterns }) => patterns[0]);
 
 /** Back-compat alias: the redesign's components/tests import this name. */
 export const PARTNER_BRAND_PATTERNS = PARTNER_BRAND_ORDER;
 
-/**
- * Display names for the contracted partners above, in the same order, each
- * paired with its matching pattern. Used by the "Our brand partners" strip
- * (src/components/PartnerStrip.jsx). Keep in sync with PARTNER_BRAND_ORDER.
- * Add a brand only once its partnership is actually contracted.
- */
-export const PARTNER_BRANDS = [
-  'BUNI', 'SootheHer', 'Neycher', 'Winx Health', 'gina', 'Elitone', 'Proov', 'VIO2',
-  'My Pelvic Bra', 'Connect Pelvic Floor Fitness', 'LOLA', 'LiM Method', 'Rèsa',
-].map((name, i) => ({ name, pattern: PARTNER_BRAND_ORDER[i] }));
+/** Display names for the "Our brand partners" strip, in priority order. */
+export const PARTNER_BRANDS = BRAND_PARTNERS.map((partner, i) => ({ name: partner.name, pattern: PARTNER_BRAND_ORDER[i] }));
 
-/**
- * Partners whose product hasn't launched yet. Users can only join a waitlist
- * (Rèsa: a $9.90 early deposit), so these get a visually distinct
- * "ayna Favorite · Waitlist" badge and a no-commission disclosure. A catalog
- * entry can also opt in with `prelaunch: true`.
- */
-export const PRELAUNCH_PARTNER_PATTERNS = [
-  /\br[eè]sa\b/,
-];
+/** Partners whose product hasn't launched yet (waitlist only). */
+export const PRELAUNCH_PARTNER_PATTERNS = PARTNER_MATCHERS.filter(({ partner }) => partner.prelaunch).map(({ patterns }) => patterns[0]);
 
 export function isPrelaunchPartnerItem(item) {
   if (!isPartnerBrandItem(item)) return false;

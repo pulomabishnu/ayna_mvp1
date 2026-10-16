@@ -62,18 +62,23 @@ describe('commerce', () => {
   it('compare rows use real fields and drop all-unknown rows', () => {
     // Cora moved to retailer variant pricing, so pin the price row with a
     // product that still states a plain price.
-    const p = { ...byId('p-cora-organic-pads'), price: '$10 for 32' };
+    const p = { ...byId('p-lunette-cup'), price: '$10 for 32' };
     const rows = compareRows([p, ...similarProducts(p)]);
     expect(rows.find((r) => r.label === 'Price').values[0]).toBe('$10 for 32');
     rows.forEach((r) => expect(r.values.every((v) => v === NOT_ON_FILE)).toBe(false));
   });
 
   it('JSON-LD has no rating unless real ratings exist, and offers only for a plain price', () => {
-    const p = { ...byId('p-cora-organic-pads'), price: '$10 for 32' };
+    const p = { ...byId('p-lunette-cup'), price: '$10 for 32' };
     const ld = productJsonLd(p, { buyUrl: 'https://cora.life/products/pads' });
     expect(ld['@type']).toBe('Product');
     expect(ld.aggregateRating).toBeUndefined();
-    expect(ld.offers.price).toBe('10.00');
+    // Lunette's Buy button opens Amazon, and an Amazon price may only come from
+    // Creators API, so the hand-typed "$10" is not published as an Offer.
+    expect(ld.offers).toBeUndefined();
+    // A product outside the routed catalog still uses its plain price.
+    const plain = productJsonLd({ id: 'x-plain', name: 'Plain', type: 'physical', price: '$10 for 32' }, { buyUrl: 'https://brand.example/p' });
+    expect(plain.offers.price).toBe('10.00');
     expect(offerPrice({ price: '$29-49/month' })).toBeNull();
     expect(offerPrice({ price: 'From $70' })).toBeNull();
   });

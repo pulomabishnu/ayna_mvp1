@@ -4,9 +4,18 @@
 // short, comparable part as the main line and moves the rest to a small
 // second line. Nothing is invented: unknown prices say "Price at retailer".
 
+import { commerceCardPrice } from '../commerce/router.js';
+import { commerceContext } from '../commerce/platform.js';
+
 const dash = (t) => t.replace(/(\d)\s*-\s*(\$?\d)/g, '$1–$2');
 
 export function formatPrice(item) {
+  // Catalog products: the price of the offer the Buy button actually opens,
+  // only when it was verified at that merchant and is still fresh. Amazon
+  // shows "See price on Amazon" until Creators API supplies the price.
+  const commerce = commerceCardPrice(item, commerceContext());
+  if (commerce) return commerce;
+
   const raw = String(item?.price || item?.stage || '').trim();
   if (!raw || !/\d|free|covered/i.test(raw)) return { main: 'Price at retailer', sub: '' };
 

@@ -1,0 +1,1128 @@
+[
+  {
+    "id": "p-proov-his-hers",
+    "status": "VERIFIED",
+    "blockedReason": null,
+    "sourceUsed": "https://proovtest.com/products/his-and-hers-fertility-starter-kit.json",
+    "verificationMethod": "structured_feed",
+    "productMatch": "same_product_needs_variant",
+    "merchantTitle": "Hers and His Advanced Fertility Test for Couples",
+    "packOrSize": {
+      "ayna": "2 cycles",
+      "merchant": "single variant (Default Title); body text recommends 2 cycles and mentions a 'Complete 2 Cycle option' that is not in the feed",
+      "match": "unclear"
+    },
+    "price": {
+      "regular": 203.99,
+      "sale": 179.99,
+      "currency": "USD",
+      "forOption": "Default Title",
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "match"
+    },
+    "variants": [
+      {
+        "aynaVariantId": null,
+        "merchantTitle": "Default Title",
+        "sku": "HHFSK-01",
+        "barcode": "850035206218",
+        "price": 179.99,
+        "available": true,
+        "match": "unverified"
+      }
+    ],
+    "availability": "AVAILABLE",
+    "linkFix": null,
+    "notes": "Price $179.99 matches Ayna, but the feed has only one variant and no 2-cycle option, so Ayna's '2 cycles' claim is not supported by the feed. Impact pxf.io wrapper not fetched (robots disallowed in earlier pass)."
+  },
+  {
+    "id": "p-honeypot-wash",
+    "status": "VERIFIED",
+    "blockedReason": null,
+    "sourceUsed": "https://thehoneypot.co/products/sensitive-intimate-wash",
+    "verificationMethod": "merchant_page",
+    "productMatch": "unclear",
+    "merchantTitle": "Sensitive Intimate Wash",
+    "packOrSize": {
+      "ayna": "5.5oz",
+      "merchant": "5.51 fl oz",
+      "match": "match"
+    },
+    "price": {
+      "regular": 10.99,
+      "sale": null,
+      "currency": "USD",
+      "forOption": "Default Title",
+      "oneTimeNotSubscription": true,
+      "comparisonToAyna": "mismatch"
+    },
+    "variants": [
+      {
+        "aynaVariantId": null,
+        "merchantTitle": "Default Title",
+        "sku": "F9417X3",
+        "barcode": "850021589417",
+        "price": 10.99,
+        "available": true,
+        "match": "unverified"
+      }
+    ],
+    "availability": "AVAILABLE",
+    "linkFix": null,
+    "notes": "Listed sensitive-foam-wash URL failed (page and .json/.js); Sensitive Intimate Wash (5.51 fl oz, $10.99) found via the official wash collection, but Ayna's generic name and Amazon ASIN mean the exact wash (several Honey Pot washes at $10.99) is unconfirmed. Ayna $10 vs $10.99."
+  },
+  {
+    "id": "p-phd-wash",
+    "status": "VERIFICATION_BLOCKED",
+    "blockedReason": "robots_disallowed",
+    "sourceUsed": null,
+    "verificationMethod": null,
+    "productMatch": "unverified",
+    "merchantTitle": null,
+    "packOrSize": {
+      "ayna": "$12",
+      "merchant": null,
+      "match": "unclear"
+    },
+    "price": {
+      "regular": null,
+      "sale": null,
+      "currency": null,
+      "forOption": null,
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "unverified"
+    },
+    "variants": [],
+    "availability": "UNKNOWN",
+    "linkFix": null,
+    "notes": "phdhealth.com product .json and homepage are robots-disallowed; no official source readable."
+  },
+  {
+    "id": "p-sweetspot-buff-brighten",
+    "status": "VERIFICATION_BLOCKED",
+    "blockedReason": "merchant_unavailable",
+    "sourceUsed": null,
+    "verificationMethod": null,
+    "productMatch": "unverified",
+    "merchantTitle": null,
+    "packOrSize": {
+      "ayna": "$18 for 50",
+      "merchant": null,
+      "match": "unclear"
+    },
+    "price": {
+      "regular": null,
+      "sale": null,
+      "currency": null,
+      "forOption": null,
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "unverified"
+    },
+    "variants": [],
+    "availability": "UNKNOWN",
+    "linkFix": null,
+    "notes": "Product .json returns a client error and the store showed a Shopify password page in the prior pass; sweetspotlabs.com root fetch was not permitted. Nobody can currently buy from this link."
+  },
+  {
+    "id": "p-thinx",
+    "status": "VERIFIED",
+    "blockedReason": null,
+    "sourceUsed": "https://www.thinx.com/collections/period-shop-all/products.json",
+    "verificationMethod": "structured_feed",
+    "productMatch": "unclear",
+    "merchantTitle": "Period shop-all collection (Butterfly Shorts, Hi-Waist, Active Mesh Bikini, Sleep Shorts, ...)",
+    "packOrSize": {
+      "ayna": "per pair",
+      "merchant": "single pairs",
+      "match": "match"
+    },
+    "price": {
+      "regular": "20.00-61.00 (visible portion of feed)",
+      "sale": null,
+      "currency": "USD",
+      "forOption": "single pair, range across styles",
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "mismatch"
+    },
+    "variants": [],
+    "availability": "UNKNOWN",
+    "linkFix": null,
+    "notes": "Feed output was truncated; visible single-pair prices run $20-$61, outside Ayna's $25-$38 range. Ayna names no style and Buy is Amazon, so no specific product could be matched."
+  },
+  {
+    "id": "p-proov-empower",
+    "status": "VERIFIED",
+    "blockedReason": null,
+    "sourceUsed": "https://proovtest.com/products/empower-perimenopause-test-kit.js",
+    "verificationMethod": "structured_feed",
+    "productMatch": "exact",
+    "merchantTitle": "Proov Empower Hormone Tracker",
+    "packOrSize": {
+      "ayna": "kit",
+      "merchant": "kit (single variant)",
+      "match": "match"
+    },
+    "price": {
+      "regular": 69.99,
+      "sale": 59.99,
+      "currency": "USD",
+      "forOption": "Default Title",
+      "oneTimeNotSubscription": true,
+      "comparisonToAyna": "match"
+    },
+    "variants": [
+      {
+        "aynaVariantId": null,
+        "merchantTitle": "Default Title",
+        "sku": "MFB-EMP-01",
+        "barcode": "850035206287",
+        "price": 59.99,
+        "available": true,
+        "match": "exact"
+      }
+    ],
+    "availability": "AVAILABLE",
+    "linkFix": null,
+    "notes": "Exact match at $59.99 (compare-at $69.99), no selling plans. The pxf.io affiliate wrapper itself remains unverified."
+  },
+  {
+    "id": "p-always-liners",
+    "status": "VERIFICATION_BLOCKED",
+    "blockedReason": "page_error",
+    "sourceUsed": null,
+    "verificationMethod": null,
+    "productMatch": "unverified",
+    "merchantTitle": null,
+    "packOrSize": {
+      "ayna": "$6 for 42",
+      "merchant": null,
+      "match": "unclear"
+    },
+    "price": {
+      "regular": null,
+      "sale": null,
+      "currency": null,
+      "forOption": null,
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "unverified"
+    },
+    "variants": [],
+    "availability": "UNKNOWN",
+    "linkFix": null,
+    "notes": "Listed category URL returns a server error; always.com daily-liner pages load but render '0 Product / Loading products...' with no counts or prices, so '$6 for 42' cannot be checked."
+  },
+  {
+    "id": "p-mystery-vibe",
+    "status": "VERIFIED",
+    "blockedReason": null,
+    "sourceUsed": "https://mysteryvibe.com/products/crescendo.json",
+    "verificationMethod": "structured_feed",
+    "productMatch": "exact",
+    "merchantTitle": "CRESCENDO 2",
+    "packOrSize": {
+      "ayna": "1 device",
+      "merchant": "1 device",
+      "match": "match"
+    },
+    "price": {
+      "regular": 329.0,
+      "sale": null,
+      "currency": "USD",
+      "forOption": "Purple",
+      "oneTimeNotSubscription": true,
+      "comparisonToAyna": "mismatch"
+    },
+    "variants": [
+      {
+        "aynaVariantId": null,
+        "merchantTitle": "Purple",
+        "sku": "MV_Crescendo-2-Purple_3",
+        "barcode": "5060464020162",
+        "price": 329.0,
+        "available": true,
+        "match": "unverified"
+      },
+      {
+        "aynaVariantId": null,
+        "merchantTitle": "Turquoise",
+        "sku": "MV_Crescendo-Blue_3",
+        "barcode": "060464020018",
+        "price": 329.0,
+        "available": false,
+        "match": "unverified"
+      }
+    ],
+    "availability": "AVAILABLE",
+    "linkFix": {
+      "from": "https://mysteryvibe.com/products/crescendo-2",
+      "to": "https://mysteryvibe.com/products/crescendo",
+      "evidence": "Brand homepage links Crescendo 2 at /products/crescendo; the /crescendo-2 page and .json return client errors."
+    },
+    "notes": "Official price is $329 vs Ayna $150, a large mismatch. Purple in stock, Turquoise sold out."
+  },
+  {
+    "id": "p-stayfree-ultra",
+    "status": "VERIFICATION_BLOCKED",
+    "blockedReason": "merchant_unavailable",
+    "sourceUsed": "https://stayfree.com/products/stayfree-ultra-thin-pads-regular-with-wings.json",
+    "verificationMethod": null,
+    "productMatch": "unverified",
+    "merchantTitle": null,
+    "packOrSize": {
+      "ayna": "Check retailer for current price and pack size",
+      "merchant": null,
+      "match": "unclear"
+    },
+    "price": {
+      "regular": null,
+      "sale": null,
+      "currency": null,
+      "forOption": null,
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "unverified"
+    },
+    "variants": [],
+    "availability": "UNKNOWN",
+    "linkFix": null,
+    "notes": "Listed /products/ultra-thin-pads errors. Homepage lists four Ultra Thin variants (Regular w/ and w/o wings, Super/Long, Overnight); the Regular w/ Wings feed shows 36 CT at price 0.00, so the brand does not sell direct and no official price exists."
+  },
+  {
+    "id": "p-bodyform-pad",
+    "status": "VERIFICATION_BLOCKED",
+    "blockedReason": "robots_disallowed",
+    "sourceUsed": null,
+    "verificationMethod": null,
+    "productMatch": "unverified",
+    "merchantTitle": null,
+    "packOrSize": {
+      "ayna": "Check retailer for current price and pack size",
+      "merchant": null,
+      "match": "unclear"
+    },
+    "price": {
+      "regular": null,
+      "sale": null,
+      "currency": null,
+      "forOption": null,
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "unverified"
+    },
+    "variants": [],
+    "availability": "UNKNOWN",
+    "linkFix": null,
+    "notes": "bodyform.co.uk page is robots-disallowed; it is also a UK brand page, so US pricing could not be checked anyway."
+  },
+  {
+    "id": "p-ob-procomfort-mini-32",
+    "status": "VERIFICATION_BLOCKED",
+    "blockedReason": "merchant_unavailable",
+    "sourceUsed": "https://www.ob.de/produkte/ob-procomfort/procomfort-mini",
+    "verificationMethod": null,
+    "productMatch": "unverified",
+    "merchantTitle": null,
+    "packOrSize": {
+      "ayna": "See Amazon",
+      "merchant": null,
+      "match": "unclear"
+    },
+    "price": {
+      "regular": null,
+      "sale": null,
+      "currency": null,
+      "forOption": null,
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "unverified"
+    },
+    "variants": [],
+    "availability": "UNKNOWN",
+    "linkFix": null,
+    "notes": "Only official source is a German info page with no price or stated count (images hint 64ct); the US ob-tampons.com catalog lists no ProComfort products. 32ct pack and price unverifiable."
+  },
+  {
+    "id": "p-uberlube",
+    "status": "VERIFIED",
+    "blockedReason": null,
+    "sourceUsed": "https://uberlube.com/products/uberlube-glass-bottle.json",
+    "verificationMethod": "structured_feed",
+    "productMatch": "same_product_needs_variant",
+    "merchantTitle": "Signature Bottle",
+    "packOrSize": {
+      "ayna": "unspecified",
+      "merchant": "55 ml / 112 ml",
+      "match": "unclear"
+    },
+    "price": {
+      "regular": 21.99,
+      "sale": null,
+      "currency": "USD",
+      "forOption": "55 ml",
+      "oneTimeNotSubscription": true,
+      "comparisonToAyna": "mismatch"
+    },
+    "variants": [
+      {
+        "aynaVariantId": null,
+        "merchantTitle": "55 ml",
+        "sku": "uber 50",
+        "barcode": "851674003008",
+        "price": 21.99,
+        "available": true,
+        "match": "unverified"
+      },
+      {
+        "aynaVariantId": null,
+        "merchantTitle": "112 ml",
+        "sku": "uber 100",
+        "barcode": "851674003015",
+        "price": 33.99,
+        "available": true,
+        "match": "unverified"
+      }
+    ],
+    "availability": "AVAILABLE",
+    "linkFix": {
+      "from": "https://uberlube.com/products/uberlube-luxury-lubricant",
+      "to": "https://uberlube.com/products/uberlube-glass-bottle",
+      "evidence": "Brand homepage lists the Signature Glass Bottle at this URL; the old handle and its .json return client errors."
+    },
+    "notes": "Smallest bottle is $21.99 (55 ml) vs Ayna $18 with no size; Ayna should state a size."
+  },
+  {
+    "id": "p-depend-silhouette-underwear",
+    "status": "VERIFICATION_BLOCKED",
+    "blockedReason": "merchant_unavailable",
+    "sourceUsed": "https://www.depend.com/en-us/incontinence-products/women/silhouette-classic-underwear",
+    "verificationMethod": null,
+    "productMatch": "unverified",
+    "merchantTitle": null,
+    "packOrSize": {
+      "ayna": "Check retailer for current price and pack size",
+      "merchant": null,
+      "match": "unclear"
+    },
+    "price": {
+      "regular": null,
+      "sale": null,
+      "currency": null,
+      "forOption": null,
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "unverified"
+    },
+    "variants": [],
+    "availability": "UNKNOWN",
+    "linkFix": {
+      "from": "https://www.depend.com/en-us/incontinence-products/women/depend-silhouette-underwear",
+      "to": "https://www.depend.com/en-us/incontinence-products/women/silhouette-classic-underwear",
+      "evidence": "Depend US homepage nav links Silhouette here; the old URL returned client errors."
+    },
+    "notes": "Official page loads (sizes S-XL) but shows no price or pack count, 'No Retailers Found' and an 'Out of stock' label; brand does not sell direct."
+  },
+  {
+    "id": "p-ob-tampon",
+    "status": "VERIFICATION_BLOCKED",
+    "blockedReason": "merchant_unavailable",
+    "sourceUsed": "https://www.ob-tampons.com/products/ob-tampons-regular.json",
+    "verificationMethod": null,
+    "productMatch": "unverified",
+    "merchantTitle": null,
+    "packOrSize": {
+      "ayna": "40",
+      "merchant": "40ct",
+      "match": "match"
+    },
+    "price": {
+      "regular": null,
+      "sale": null,
+      "currency": null,
+      "forOption": null,
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "unverified"
+    },
+    "variants": [],
+    "availability": "UNKNOWN",
+    "linkFix": null,
+    "notes": "Listed /products/pro-comfort errors. Official US catalog lists Regular/Super/Super Plus/Ultra/Multi-Pack at 40ct, but feed price is 0.00 (not sold direct), so '$6' cannot be verified; Ayna does not say which absorbency."
+  },
+  {
+    "id": "p-rael-overnight",
+    "status": "VERIFIED",
+    "blockedReason": null,
+    "sourceUsed": "https://www.getrael.com/products/overnight-organic-cotton-pads.js",
+    "verificationMethod": "structured_feed",
+    "productMatch": "exact",
+    "merchantTitle": "Overnight Organic Cotton Cover Pads With Wings",
+    "packOrSize": {
+      "ayna": "12",
+      "merchant": "12 Count",
+      "match": "match"
+    },
+    "price": {
+      "regular": 9.49,
+      "sale": null,
+      "currency": "USD",
+      "forOption": "12 Count",
+      "oneTimeNotSubscription": true,
+      "comparisonToAyna": "mismatch"
+    },
+    "variants": [
+      {
+        "aynaVariantId": null,
+        "merchantTitle": "12 Count",
+        "sku": "RAEL-O",
+        "barcode": "810027130792",
+        "price": 9.49,
+        "available": true,
+        "match": "exact"
+      },
+      {
+        "aynaVariantId": null,
+        "merchantTitle": "20 Count",
+        "sku": "RAEL-O20",
+        "barcode": "810027131041",
+        "price": 14.99,
+        "available": true,
+        "match": "unverified"
+      }
+    ],
+    "availability": "AVAILABLE",
+    "linkFix": {
+      "from": "https://www.getrael.com/products/organic-cotton-cover-pads-overnight",
+      "to": "https://www.getrael.com/products/overnight-organic-cotton-pads",
+      "evidence": "Listed in the official pads collection with the same product title; old handle and its .json return client errors."
+    },
+    "notes": "12-count one-time price is $9.49 (subscription $8.54) vs Ayna $10."
+  },
+  {
+    "id": "p-tomboyx-period",
+    "status": "VERIFIED",
+    "blockedReason": null,
+    "sourceUsed": "https://tomboyx.com/collections/period-underwear",
+    "verificationMethod": "merchant_page",
+    "productMatch": "unclear",
+    "merchantTitle": "First Line Period Underwear collection",
+    "packOrSize": {
+      "ayna": "per pair",
+      "merchant": "per pair",
+      "match": "match"
+    },
+    "price": {
+      "regular": "26.00-38.00",
+      "sale": null,
+      "currency": "USD",
+      "forOption": "Bikini $26, Boy Shorts $29, 4.5in Trunks $34, 9in Boxer Briefs $38",
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "mismatch"
+    },
+    "variants": [],
+    "availability": "UNKNOWN",
+    "linkFix": {
+      "from": "https://tomboyx.com/collections/first-line-leakmarks",
+      "to": "https://tomboyx.com/collections/period-underwear",
+      "evidence": "Homepage links period underwear here; old collection handle returned client errors."
+    },
+    "notes": "Official per-pair range $26-$38 vs Ayna $28-$34; Ayna names no style."
+  },
+  {
+    "id": "p-haakaa-pump",
+    "status": "VERIFICATION_BLOCKED",
+    "blockedReason": "regional_restriction",
+    "sourceUsed": null,
+    "verificationMethod": null,
+    "productMatch": "unverified",
+    "merchantTitle": null,
+    "packOrSize": {
+      "ayna": "$13",
+      "merchant": null,
+      "match": "unclear"
+    },
+    "price": {
+      "regular": null,
+      "sale": null,
+      "currency": null,
+      "forOption": null,
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "unverified"
+    },
+    "variants": [],
+    "availability": "UNKNOWN",
+    "linkFix": null,
+    "notes": "Listed NZ product page and .json error; haakaa.co.nz prices in NZD and its only US channel is an Amazon storefront (not fetched). The NZ site now lists a 'Gen 2 silicone manual breast pump'; no official USD price exists."
+  },
+  {
+    "id": "p-remifemin",
+    "status": "VERIFICATION_BLOCKED",
+    "blockedReason": "merchant_unavailable",
+    "sourceUsed": "https://www.remifemin.com/remifemin/",
+    "verificationMethod": null,
+    "productMatch": "unverified",
+    "merchantTitle": null,
+    "packOrSize": {
+      "ayna": "$17 for 60 tablets",
+      "merchant": null,
+      "match": "unclear"
+    },
+    "price": {
+      "regular": null,
+      "sale": null,
+      "currency": null,
+      "forOption": null,
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "unverified"
+    },
+    "variants": [],
+    "availability": "UNKNOWN",
+    "linkFix": null,
+    "notes": "Official page is informational only: no price, no stated tablet counts (image hints 100ct), no buy links. 60-tablet/$17 unverifiable."
+  },
+  {
+    "id": "p-willow-pump",
+    "status": "VERIFIED",
+    "blockedReason": null,
+    "sourceUsed": "https://onewillow.com/products/willow-pump-360.js",
+    "verificationMethod": "structured_feed",
+    "productMatch": "unclear",
+    "merchantTitle": "Willow 360 Wearable Breast Pump",
+    "packOrSize": {
+      "ayna": "1 pump",
+      "merchant": "1 pump",
+      "match": "match"
+    },
+    "price": {
+      "regular": 499.99,
+      "sale": 349.99,
+      "currency": "USD",
+      "forOption": "Default Title",
+      "oneTimeNotSubscription": true,
+      "comparisonToAyna": "mismatch"
+    },
+    "variants": [
+      {
+        "aynaVariantId": null,
+        "merchantTitle": "Default Title",
+        "sku": "PDW49",
+        "barcode": null,
+        "price": 349.99,
+        "available": true,
+        "match": "unverified"
+      }
+    ],
+    "availability": "AVAILABLE",
+    "linkFix": {
+      "from": "https://willowpump.com/products/willow-360-wearable-breast-pump",
+      "to": "https://onewillow.com/products/willow-pump-360",
+      "evidence": "willowpump.com 302-redirects to onewillow.com, whose homepage lists Willow 360 at this URL."
+    },
+    "notes": "Ayna $499 matches the compare-at price but the current price is $349.99 sale. Ayna's generic name could also mean Willow Go ($199.99-$299.99); confirm the Amazon model."
+  },
+  {
+    "id": "p-oboo-woosh-warming-wand",
+    "status": "VERIFIED",
+    "blockedReason": null,
+    "sourceUsed": "https://oboo.love/products/woosh.json",
+    "verificationMethod": "structured_feed",
+    "productMatch": "exact",
+    "merchantTitle": "Woosh Warming Wand",
+    "packOrSize": {
+      "ayna": "1 device",
+      "merchant": "1 device",
+      "match": "match"
+    },
+    "price": {
+      "regular": 119.0,
+      "sale": null,
+      "currency": "USD",
+      "forOption": "Default Title",
+      "oneTimeNotSubscription": true,
+      "comparisonToAyna": "match"
+    },
+    "variants": [
+      {
+        "aynaVariantId": null,
+        "merchantTitle": "Default Title",
+        "sku": "TL-WOOSH-Y",
+        "barcode": "850064180008",
+        "price": 119.0,
+        "available": true,
+        "match": "exact"
+      }
+    ],
+    "availability": "AVAILABLE",
+    "linkFix": {
+      "from": "https://oboomagic.com/products/woosh-warming-wand",
+      "to": "https://oboo.love/products/woosh",
+      "evidence": "oboomagic.com is robots-disallowed (unreadable); oboo.love feed shows the exact product at $119 and Ayna's other Oboo items link there."
+    },
+    "notes": "Exact match at $119. Buy URL domain could not be read, so switching to oboo.love is recommended pending a manual click-through."
+  },
+  {
+    "id": "p-vio2-mouth-tape",
+    "status": "VERIFIED",
+    "blockedReason": null,
+    "sourceUsed": "https://www.vio2tape.com/products/vio2-partial-coverage-mouth-tape-for-sleep-unscented.js",
+    "verificationMethod": "structured_feed",
+    "productMatch": "exact",
+    "merchantTitle": "VIO2 Partial-Coverage Mouth Tape for Sleep (Unscented)",
+    "packOrSize": {
+      "ayna": "48 strips",
+      "merchant": "1 pack includes 48 strips",
+      "match": "match"
+    },
+    "price": {
+      "regular": 29.95,
+      "sale": null,
+      "currency": "USD",
+      "forOption": "1 Pack - Try It",
+      "oneTimeNotSubscription": true,
+      "comparisonToAyna": "match"
+    },
+    "variants": [
+      {
+        "aynaVariantId": null,
+        "merchantTitle": "1 Pack — Try It",
+        "sku": "195893775385",
+        "barcode": "195893775385",
+        "price": 29.95,
+        "available": true,
+        "match": "exact"
+      }
+    ],
+    "availability": "AVAILABLE",
+    "linkFix": null,
+    "notes": "Exact match at $29.95 one-time (optional subscriptions $27.95). ShopMy redirect destination still unverified."
+  },
+  {
+    "id": "p-always-discreet-boutique-liners",
+    "status": "VERIFICATION_BLOCKED",
+    "blockedReason": "merchant_unavailable",
+    "sourceUsed": "https://alwaysdiscreet.com/en-us/incontinence-products/liners-and-pads/boutique-very-light-long-liners",
+    "verificationMethod": null,
+    "productMatch": "unverified",
+    "merchantTitle": null,
+    "packOrSize": {
+      "ayna": "Check retailer for current price and pack size",
+      "merchant": null,
+      "match": "unclear"
+    },
+    "price": {
+      "regular": null,
+      "sale": null,
+      "currency": null,
+      "forOption": null,
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "unverified"
+    },
+    "variants": [],
+    "availability": "UNKNOWN",
+    "linkFix": {
+      "from": "https://www.alwaysdiscreet.com/en-us/incontinence-products/liners/boutique-liners",
+      "to": "https://alwaysdiscreet.com/en-us/incontinence-products/liners-and-pads/boutique-very-light-long-liners",
+      "evidence": "Official sitemap lists this as the only Boutique liner; the old URL returns client errors."
+    },
+    "notes": "Official page shows 32ct and 96ct packs but no price and no buy button; brand does not sell direct."
+  },
+  {
+    "id": "p-femmycycle",
+    "status": "VERIFICATION_BLOCKED",
+    "blockedReason": "merchant_unavailable",
+    "sourceUsed": null,
+    "verificationMethod": null,
+    "productMatch": "unverified",
+    "merchantTitle": null,
+    "packOrSize": {
+      "ayna": "$30 (reusable)",
+      "merchant": null,
+      "match": "unclear"
+    },
+    "price": {
+      "regular": null,
+      "sale": null,
+      "currency": null,
+      "forOption": null,
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "unverified"
+    },
+    "variants": [],
+    "availability": "UNKNOWN",
+    "linkFix": null,
+    "notes": "femmycycle.com now serves an Indonesian 'Segera Diluncurkan' (coming soon) placeholder with no products; product page and .json error. Possibly discontinued or domain lapsed; not confirmed."
+  },
+  {
+    "id": "p-hanes-period",
+    "status": "VERIFIED",
+    "blockedReason": null,
+    "sourceUsed": "https://www.hanes.com/women/collections/period-underwear",
+    "verificationMethod": "merchant_page",
+    "productMatch": "unclear",
+    "merchantTitle": "Hanes Comfort, Period. collection",
+    "packOrSize": {
+      "ayna": "per pair",
+      "merchant": "1-, 2-, 3-, 4-, 6-packs",
+      "match": "mismatch"
+    },
+    "price": {
+      "regular": "4.42-11.00 per pair (1-pack brief $9.99)",
+      "sale": null,
+      "currency": "USD",
+      "forOption": "per pair across listed packs",
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "mismatch"
+    },
+    "variants": [],
+    "availability": "UNKNOWN",
+    "linkFix": {
+      "from": "https://www.hanes.com/women/panties/period-underwear.html",
+      "to": "https://www.hanes.com/women/collections/period-underwear",
+      "evidence": "Hanes homepage links period underwear here; old .html URL returned client errors."
+    },
+    "notes": "Official per-pair prices ($4.42-$11.00) are well below Ayna's $12-$16 per pair, and most items are multi-packs."
+  },
+  {
+    "id": "p-knix-underwear",
+    "status": "VERIFIED",
+    "blockedReason": null,
+    "sourceUsed": "https://knix.com/pages/period-underwear",
+    "verificationMethod": "merchant_page",
+    "productMatch": "unclear",
+    "merchantTitle": "Knix Period Underwear",
+    "packOrSize": {
+      "ayna": "1 pair",
+      "merchant": "single pairs",
+      "match": "match"
+    },
+    "price": {
+      "regular": "25.00-48.00",
+      "sale": null,
+      "currency": "USD",
+      "forOption": "single pairs across 31 styles",
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "not_comparable"
+    },
+    "variants": [],
+    "availability": "UNKNOWN",
+    "linkFix": {
+      "from": "https://knix.com/collections/leakproof-period-underwear",
+      "to": "https://knix.com/pages/period-underwear",
+      "evidence": "Knix homepage nav links Period Underwear here; old collection URL returned client errors."
+    },
+    "notes": "Ayna $28 is a single price for a generic listing; official single pairs run $25-$48 (only the Invisible Cotton No-Show Thong is $28). Style needs a human decision."
+  },
+  {
+    "id": "p-maude-vibe",
+    "status": "VERIFIED",
+    "blockedReason": null,
+    "sourceUsed": "https://getmaude.com/products/vibe-personal-massager.json",
+    "verificationMethod": "structured_feed",
+    "productMatch": "exact",
+    "merchantTitle": "vibe",
+    "packOrSize": {
+      "ayna": "1 device",
+      "merchant": "1 device",
+      "match": "match"
+    },
+    "price": {
+      "regular": 52.0,
+      "sale": null,
+      "currency": "USD",
+      "forOption": "grey",
+      "oneTimeNotSubscription": true,
+      "comparisonToAyna": "mismatch"
+    },
+    "variants": [
+      {
+        "aynaVariantId": null,
+        "merchantTitle": "grey",
+        "sku": "MD-VBE1",
+        "barcode": "860773000443",
+        "price": 52.0,
+        "available": true,
+        "match": "unverified"
+      },
+      {
+        "aynaVariantId": null,
+        "merchantTitle": "green",
+        "sku": "MD-VBE2",
+        "barcode": "855770008332",
+        "price": 52.0,
+        "available": true,
+        "match": "unverified"
+      },
+      {
+        "aynaVariantId": null,
+        "merchantTitle": "charcoal",
+        "sku": "MD-VBE5",
+        "barcode": "855770008622",
+        "price": 52.0,
+        "available": false,
+        "match": "unverified"
+      }
+    ],
+    "availability": "AVAILABLE",
+    "linkFix": {
+      "from": "https://getmaude.com/products/vibe-vibrator",
+      "to": "https://getmaude.com/products/vibe-personal-massager",
+      "evidence": "Brand homepage links 'vibe' at this URL; old handle and .json return client errors."
+    },
+    "notes": "Official price $52 vs Ayna $49. Grey and green in stock, charcoal sold out."
+  },
+  {
+    "id": "p-proov-balance-bundle",
+    "status": "VERIFIED",
+    "blockedReason": null,
+    "sourceUsed": "https://proovtest.com/products/balance-bundle.js",
+    "verificationMethod": "structured_feed",
+    "productMatch": "exact",
+    "merchantTitle": "Balance Supplement Bundle",
+    "packOrSize": {
+      "ayna": "2-month supply",
+      "merchant": "not stated (Luteal Love + Balancing Oil; optional 60-day subscription)",
+      "match": "unclear"
+    },
+    "price": {
+      "regular": 59.99,
+      "sale": 49.99,
+      "currency": "USD",
+      "forOption": "Default Title",
+      "oneTimeNotSubscription": true,
+      "comparisonToAyna": "match"
+    },
+    "variants": [
+      {
+        "aynaVariantId": null,
+        "merchantTitle": "Default Title",
+        "sku": "MFB-BB-2",
+        "barcode": "850035206072",
+        "price": 49.99,
+        "available": true,
+        "match": "exact"
+      }
+    ],
+    "availability": "AVAILABLE",
+    "linkFix": null,
+    "notes": "$49.99 one-time matches Ayna (optional 'every 60 days' subscription at 20% off); the feed does not state a 2-month supply. pxf.io wrapper unverified."
+  },
+  {
+    "id": "p-playtex-sport",
+    "status": "VERIFICATION_BLOCKED",
+    "blockedReason": "robots_disallowed",
+    "sourceUsed": null,
+    "verificationMethod": null,
+    "productMatch": "unverified",
+    "merchantTitle": null,
+    "packOrSize": {
+      "ayna": "Check retailer for current price and pack size",
+      "merchant": null,
+      "match": "unclear"
+    },
+    "price": {
+      "regular": null,
+      "sale": null,
+      "currency": null,
+      "forOption": null,
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "unverified"
+    },
+    "variants": [],
+    "availability": "UNKNOWN",
+    "linkFix": null,
+    "notes": "playtexsport.com homepage, product page and .json are robots-disallowed."
+  },
+  {
+    "id": "p-proov-complete",
+    "status": "VERIFIED",
+    "blockedReason": null,
+    "sourceUsed": "https://proovtest.com/products/complete-testing-system.js",
+    "verificationMethod": "structured_feed",
+    "productMatch": "exact",
+    "merchantTitle": "Proov Complete Fertility Testing System",
+    "packOrSize": {
+      "ayna": "kit",
+      "merchant": "kit (single variant)",
+      "match": "match"
+    },
+    "price": {
+      "regular": 99.99,
+      "sale": null,
+      "currency": "USD",
+      "forOption": "Default Title",
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "match"
+    },
+    "variants": [
+      {
+        "aynaVariantId": null,
+        "merchantTitle": "Default Title",
+        "sku": "MFB-C-17MH-3FSH",
+        "barcode": "850035206065",
+        "price": 99.99,
+        "available": true,
+        "match": "exact"
+      }
+    ],
+    "availability": "AVAILABLE",
+    "linkFix": null,
+    "notes": "Exact match at $99.99. pxf.io wrapper unverified."
+  },
+  {
+    "id": "p-organyc-pad",
+    "status": "VERIFICATION_BLOCKED",
+    "blockedReason": "merchant_unavailable",
+    "sourceUsed": "https://organyc-online.com/products/moderate-flow-pads/",
+    "verificationMethod": null,
+    "productMatch": "unverified",
+    "merchantTitle": null,
+    "packOrSize": {
+      "ayna": "$6 for 10",
+      "merchant": null,
+      "match": "unclear"
+    },
+    "price": {
+      "regular": null,
+      "sale": null,
+      "currency": null,
+      "forOption": null,
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "unverified"
+    },
+    "variants": [],
+    "availability": "UNKNOWN",
+    "linkFix": null,
+    "notes": "Official site lists Moderate/Heavy/Overnight pads but shows no counts or prices and points to a store locator; Ayna does not specify flow. '$6 for 10' unverifiable."
+  },
+  {
+    "id": "p-softdisc",
+    "status": "VERIFICATION_BLOCKED",
+    "blockedReason": "page_error",
+    "sourceUsed": null,
+    "verificationMethod": null,
+    "productMatch": "unverified",
+    "merchantTitle": null,
+    "packOrSize": {
+      "ayna": "$13 for 14",
+      "merchant": null,
+      "match": "unclear"
+    },
+    "price": {
+      "regular": null,
+      "sale": null,
+      "currency": null,
+      "forOption": null,
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "unverified"
+    },
+    "variants": [],
+    "availability": "UNKNOWN",
+    "linkFix": null,
+    "notes": "flexfits.com/products/softdisc and its .json return client errors (2 attempts across passes); the Flex homepage lists Flex Disc (from $16.49) and reusable discs but no Softdisc. Possibly discontinued, not confirmed."
+  },
+  {
+    "id": "p-rael-tampon",
+    "status": "VERIFIED",
+    "blockedReason": null,
+    "sourceUsed": "https://www.getrael.com/products/tampons-made-with-organic-cotton-value-pack.js",
+    "verificationMethod": "structured_feed",
+    "productMatch": "exact",
+    "merchantTitle": "Tampon Variety Pack Made With Organic Cotton",
+    "packOrSize": {
+      "ayna": "32 Count",
+      "merchant": "32 count (Regular + Super)",
+      "match": "match"
+    },
+    "price": {
+      "regular": 15.99,
+      "sale": null,
+      "currency": "USD",
+      "forOption": "Regular + Super",
+      "oneTimeNotSubscription": true,
+      "comparisonToAyna": "not_comparable"
+    },
+    "variants": [
+      {
+        "aynaVariantId": null,
+        "merchantTitle": "Regular + Super",
+        "sku": "RAEL-TRTS32",
+        "barcode": "810027130884",
+        "price": 15.99,
+        "available": true,
+        "match": "exact"
+      }
+    ],
+    "availability": "AVAILABLE",
+    "linkFix": null,
+    "notes": "Exact 32ct variety pack at $15.99 one-time (subscription $14.39); Ayna shows no price. Second listed Rael URL (organic-cotton-tampons) still errors."
+  },
+  {
+    "id": "p-bambody-underwear",
+    "status": "VERIFIED",
+    "blockedReason": null,
+    "sourceUsed": "https://bambody.com/products/bambody-panty.json",
+    "verificationMethod": "structured_feed",
+    "productMatch": "unclear",
+    "merchantTitle": "Bambody Panty",
+    "packOrSize": {
+      "ayna": "unspecified",
+      "merchant": "1pk / 3pk / 6pk",
+      "match": "unclear"
+    },
+    "price": {
+      "regular": "9.99 (1pk) / 39.99 (3pk) / 69.99 (6pk)",
+      "sale": null,
+      "currency": "USD",
+      "forOption": "Black 1pk $9.99",
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "mismatch"
+    },
+    "variants": [
+      {
+        "aynaVariantId": null,
+        "merchantTitle": "Black / 6X-Large / 1pk",
+        "sku": "BAM-FGS-A002-05-AJ1US",
+        "barcode": "B0BNPBBTG9",
+        "price": 9.99,
+        "available": null,
+        "match": "unverified"
+      },
+      {
+        "aynaVariantId": null,
+        "merchantTitle": "Black / Nude / Gray / X-Small / 3pk",
+        "sku": "BAM-FGS-A002-05-BY3US",
+        "barcode": "B0BNP8GVQQ",
+        "price": 39.99,
+        "available": null,
+        "match": "unverified"
+      }
+    ],
+    "availability": "UNKNOWN",
+    "linkFix": {
+      "from": "https://bambody.com/products/absorbent-panties",
+      "to": "https://bambody.com/products/bambody-panty",
+      "evidence": "Bambody homepage lists 'Panty' at this URL; the old handle and .json return client errors."
+    },
+    "notes": "No official price equals Ayna's $15 (1pk $9.99, 3pk $39.99). Feed barcodes are Amazon ASINs in the same B0BNP family as Ayna's ASIN, but the exact ASIN was not seen in the sampled variants."
+  },
+  {
+    "id": "p-poise-ultra-thin-moderate",
+    "status": "VERIFICATION_BLOCKED",
+    "blockedReason": "merchant_unavailable",
+    "sourceUsed": "https://www.poise.com/en-us/products/incontinence-pads/ultra-thin",
+    "verificationMethod": null,
+    "productMatch": "unverified",
+    "merchantTitle": null,
+    "packOrSize": {
+      "ayna": "Check retailer for current price and pack size",
+      "merchant": null,
+      "match": "unclear"
+    },
+    "price": {
+      "regular": null,
+      "sale": null,
+      "currency": null,
+      "forOption": null,
+      "oneTimeNotSubscription": null,
+      "comparisonToAyna": "unverified"
+    },
+    "variants": [],
+    "availability": "UNKNOWN",
+    "linkFix": null,
+    "notes": "Listed moderate-absorbency URL errors; official Ultra Thin page shows no counts or prices and links only to Where to Buy."
+  }
+]

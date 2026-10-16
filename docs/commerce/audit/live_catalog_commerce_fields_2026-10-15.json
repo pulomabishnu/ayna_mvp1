@@ -1,0 +1,4970 @@
+{
+ "fetchedAt": "2026-10-15T02:04:15.027Z",
+ "endpoint": "https://aynahealth.co/api/products",
+ "count": 227,
+ "products": [
+  {
+   "id": "d-apple-health",
+   "name": "Apple Health (Cycle Tracking)",
+   "category": "tracker",
+   "type": "digital",
+   "price": "Free (built into iPhone)",
+   "image": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/60/e8/ae/60e8ae47-8a07-ad37-3371-d515af4b4a43/cycle.tracking-0-0-1x_U007ewatch-0-1-P3-85-220.png/1200x630wa.png",
+   "whereToBuy": [
+    "Pre-installed on iPhone"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-balance-menopause",
+   "name": "Balance: Menopause & Perimenopause",
+   "category": "tracker",
+   "type": "digital",
+   "price": "Free (Premium available)",
+   "image": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/04/8e/69/048e6912-3f1e-ece4-ab0f-40d22c4b4eb2/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/512x512bb.jpg",
+   "whereToBuy": [
+    "App Store",
+    "Google Play"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-betterhelp",
+   "name": "BetterHelp",
+   "category": "mental-health",
+   "type": "digital",
+   "price": "$65-90/week",
+   "image": "https://assets.betterhelp.com/brand/betterhelp/betterhelp-fb.png?v=09c3336ab26b",
+   "whereToBuy": [
+    "betterhelp.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-bloom",
+   "name": "Bloom: CBT Therapy & Self-Care",
+   "category": "mental-health",
+   "type": "digital",
+   "price": "$60/year",
+   "image": "https://static.wixstatic.com/media/130700_e757657e588c4c89a6f981ed95517a2b~mv2.png/v1/fit/w_2500,h_1330,al_c/130700_e757657e588c4c89a6f981ed95517a2b~mv2.png",
+   "whereToBuy": [
+    "App Store"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-calm",
+   "name": "Calm",
+   "category": "mental-health",
+   "type": "digital",
+   "price": "$15/month or $70/year",
+   "image": "https://www.calm.com/_n/images/social/calm-meta.png",
+   "whereToBuy": [
+    "App Store",
+    "Google Play"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-clue",
+   "name": "Clue Period Tracker",
+   "category": "tracker",
+   "type": "digital",
+   "price": "Free (Clue Plus $10/month)",
+   "image": "https://images.ctfassets.net/juauvlea4rbf/23G4fZ83x3DYLiCj6rNH7o/9e791f0a130e8c69a19d0857e232a540/Group_2297__1_.png?w=1172&h=990&q=50&fm=png",
+   "whereToBuy": [
+    "App Store",
+    "Google Play"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-eight-sleep",
+   "name": "Eight Sleep Pod 4",
+   "category": "sleep",
+   "type": "digital",
+   "price": "$2,245+",
+   "image": "https://res.cloudinary.com/eightsleep/image/upload/c_fill,w_1200,h_630,f_jpg,q_auto/v1747147611/Homepage_c0dril.png",
+   "whereToBuy": [
+    "eightsleep.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-evernow",
+   "name": "Evernow Menopause Care",
+   "category": "telehealth",
+   "type": "digital",
+   "price": "$75-125/month",
+   "image": "https://cdn.prod.website-files.com/62039cc91acccd69bbc3274f/6234821b71fe6f2a89a8ec47_OG-min.webp",
+   "whereToBuy": [
+    "Evernow.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-glow",
+   "name": "Glow Period & Ovulation Tracker",
+   "category": "tracker",
+   "type": "digital",
+   "price": "Free (Premium $60/year)",
+   "image": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/5e/77/d4/5e77d423-a88d-55cc-cf31-0fe103756967/GlowAppIcon-0-0-1x_U007epad-0-1-0-85-220.png/512x512bb.jpg",
+   "url": "https://glowing.com/",
+   "whereToBuy": [
+    "App Store",
+    "Google Play"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-happi-pelvic",
+   "name": "Happi Pelvic Floor App",
+   "brand": "Happi",
+   "category": "pelvic-floor",
+   "type": "digital",
+   "price": "Free trial, then subscription",
+   "image": "/ayna_placeholder.png",
+   "whereToBuy": [
+    "App Store",
+    "Google Play"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-headspace",
+   "name": "Headspace",
+   "category": "mental-health",
+   "type": "digital",
+   "price": "$13/month or $70/year",
+   "image": "https://headspace-contentful.imgix.net/knWuaYQdTnPg6o6VPtH1K/a0e32e013ebad294eb678f92334eba49/mobile_hero_1_june5_2x__1_.webp",
+   "whereToBuy": [
+    "App Store",
+    "Google Play"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-hers",
+   "name": "Hers",
+   "brand": "Hers",
+   "category": "telehealth",
+   "type": "digital",
+   "price": "Subscription + per-visit; varies by treatment",
+   "image": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/dd/b6/45/ddb645c3-4a99-9bcc-8603-9d47b9d4d912/HersIcon-0-0-1x_U007emarketing-0-6-0-85-220.png/512x512bb.jpg",
+   "whereToBuy": [
+    "forhers.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-initio",
+   "name": "Inito Fertility Monitor",
+   "category": "tracker",
+   "type": "digital",
+   "price": "$149 monitor + $50/15 strips",
+   "image": "https://m.media-amazon.com/images/I/71uAS-t2WNL._AC_UF1000,1000_QL80_.jpg",
+   "whereToBuy": [
+    "Amazon",
+    "inito.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-maven",
+   "name": "Maven Clinic",
+   "category": "telehealth",
+   "type": "digital",
+   "price": "Free through employer / $15-35 per session",
+   "image": "https://cdn.prod.website-files.com/5fb2b678e994739660d95086/697748722f5193b59b97c29a_fd98d3239db6b066d65587ba90bfb935_4.webp",
+   "whereToBuy": [
+    "mavenclinic.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-midi-health",
+   "name": "Midi Health",
+   "brand": "Midi Health",
+   "category": "telehealth",
+   "type": "digital",
+   "price": "Membership / per visit; varies by plan and state",
+   "image": "https://images.prismic.io/joinmidi-marketing/Z92tBjxkOkZ2kJPK_3-clinician-1x1.jpg?auto=format%2Ccompress&rect=0%2C44%2C1440%2C756&w=2400&h=1260",
+   "whereToBuy": [
+    "joinmidi.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-natural-cycles",
+   "name": "Natural Cycles",
+   "category": "contraception",
+   "type": "digital",
+   "price": "$100/year or $13/month",
+   "image": "https://www.datocms-assets.com/21281/1762899321-us-not-fertile-new-screen-rachel-hand-holding-phone.png?auto=format&fit=max&w=1200",
+   "whereToBuy": [
+    "App Store",
+    "Google Play"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-nurx-bc",
+   "name": "Nurx",
+   "brand": "Nurx",
+   "category": "telehealth",
+   "type": "digital",
+   "price": "$15\u201320/month",
+   "image": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/4b/c9/d9/4bc9d930-40a1-9566-2ec1-83a23ae06789/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/512x512bb.jpg",
+   "url": "https://www.nurx.com/",
+   "whereToBuy": [
+    "Nurx.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-oura",
+   "name": "Oura Ring Gen 3",
+   "category": "tracker",
+   "type": "digital",
+   "price": "$299 + $6/month",
+   "image": "https://static0.xdaimages.com/wordpress/wp-content/uploads/2022/09/Silver-Oura-Ring-Gen-3-Horizon-on-white-background.jpg?q=50&fit=crop&w=800&dpr=1.5",
+   "whereToBuy": [
+    "ouraring.com",
+    "Amazon",
+    "Best Buy"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-ovia",
+   "name": "Ovia Health",
+   "category": "tracker",
+   "type": "digital",
+   "price": "Free (employer-sponsored)",
+   "image": "/products/verified/d-ovia.jpg",
+   "url": "https://www.oviahealth.com/",
+   "whereToBuy": [
+    "App Store",
+    "Google Play"
+   ],
+   "source": "curated",
+   "imageSourceUrl": "https://www.oviahealth.com/",
+   "imageVerifiedAt": "2026-09-25"
+  },
+  {
+   "id": "d-peanut",
+   "name": "Peanut: Find Friends & Support",
+   "category": "mental-health",
+   "type": "digital",
+   "price": "Free",
+   "image": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/3d/96/76/3d967655-d35f-80f1-9f61-2ece4a7e14fb/AppIcon-0-0-1x_U007epad-0-1-0-sRGB-85-220.png/512x512bb.jpg",
+   "url": "https://www.peanut-app.io/",
+   "whereToBuy": [
+    "App Store"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-pomelo-care",
+   "name": "Pomelo Care",
+   "brand": "Pomelo Care",
+   "category": "telehealth",
+   "type": "digital",
+   "price": "Covered by many employers & health plans; confirm eligibility",
+   "image": "https://cdn.prod.website-files.com/6307b1a9769c5035558bb4a1/6349869007d2bd415f92a64b_opengraph.jpg",
+   "url": "https://www.pomelocare.com/",
+   "whereToBuy": [
+    "PomeloCare.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-ppd",
+   "name": "Planned Parenthood Direct",
+   "category": "telehealth",
+   "type": "digital",
+   "price": "$0-15/visit, sliding scale",
+   "image": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/0b/ca/49/0bca4992-624a-eb8d-e3dc-d8251c29cf82/AppIcon-1x_U007emarketing-0-6-0-85-220-0.png/512x512bb.jpg",
+   "whereToBuy": [
+    "ppd.plannedparenthood.org",
+    "App Store"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-stardust",
+   "name": "Stardust Period Tracker",
+   "category": "tracker",
+   "type": "digital",
+   "price": "Free (Stardust Plus available)",
+   "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/61/f9/de/61f9deb9-a4f6-de49-96c6-84eb25541edb/Placeholder.mill/1200x630wa.jpg",
+   "whereToBuy": [
+    "App Store",
+    "Google Play"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-tia",
+   "name": "Tia",
+   "category": "telehealth",
+   "type": "digital",
+   "price": "Membership $15/month + insurance",
+   "image": "https://cdn.sanity.io/images/8qqycr4y/production/a5a207809f4417e461bb0a87fd4cb4281a1b8bf7-1600x836.webp",
+   "whereToBuy": [
+    "asktia.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-visana",
+   "name": "Visana Health",
+   "category": "telehealth",
+   "type": "digital",
+   "price": "Free through insurance",
+   "image": "https://images.seeklogo.com/logo-png/52/1/visana-health-inc-logo-png_seeklogo-526652.png",
+   "whereToBuy": [
+    "VisanaHealth.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "d-wisp-bc",
+   "name": "Wisp",
+   "brand": "Wisp",
+   "category": "telehealth",
+   "type": "digital",
+   "price": "$15\u201320/month",
+   "image": "https://cms.hellowisp.io/uploads/Meta_Hero_1500x1000_f538e24836.jpg",
+   "whereToBuy": [
+    "Hellowisp.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-aisle-underwear",
+   "name": "Aisle Period Underwear",
+   "category": "period-underwear",
+   "type": "physical",
+   "price": "$24\u2013$36 per pair",
+   "image": "http://periodaisle.com/cdn/shop/files/S25_PA_Cheeky_Merlot_M02_31558_Cheeky_Merlot_33347_ad13f801-02fa-4756-a17d-1ba3518c930c.jpg?v=1767893880",
+   "whereToBuy": [
+    "PeriodAisle.com",
+    "Amazon"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-always-discreet-boutique-liners",
+   "name": "Always Discreet Boutique Incontinence Panty Liners for Women, Bladder Leaks",
+   "brand": "Always Discreet",
+   "category": "incontinence",
+   "type": "physical",
+   "price": "Check retailer for current price and pack size",
+   "image": "https://target.scene7.com/is/image/Target/GUEST_7e6e8ee3-b160-4a67-a42c-bc572977875a",
+   "whereToBuy": [
+    "Walmart",
+    "Amazon",
+    "Target",
+    "Kroger",
+    "H-E-B"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-always-infinity",
+   "name": "Always Infinity FlexFoam",
+   "category": "pad",
+   "type": "physical",
+   "price": "$8 for 18",
+   "image": "https://images.ctfassets.net/o5hnyn1x0ewo/5fgLjs17hOqXoAJo2hEMQQ/5f3ad4cdbfc5e8f6df300602fd5b6512/Always-Infinity-Size-1-Regular-Pads-with-Wings_640x512.png?fm=webp",
+   "whereToBuy": [
+    "CVS",
+    "Target",
+    "Walmart",
+    "Amazon"
+   ],
+   "whereToBuyInStock": {
+    "CVS": true,
+    "Amazon": true,
+    "Target": true,
+    "Walmart": true
+   },
+   "source": "curated"
+  },
+  {
+   "id": "p-always-liners",
+   "name": "Always Liners",
+   "category": "pad",
+   "type": "physical",
+   "price": "$6 for 42",
+   "image": "https://m.media-amazon.com/images/I/81r2XaKrw-L._AC_SX679_.jpg",
+   "whereToBuy": [
+    "CVS",
+    "Target",
+    "Walmart",
+    "Amazon"
+   ],
+   "source": "curated",
+   "imageVerifiedAt": "2026-09-27"
+  },
+  {
+   "id": "p-azo-test",
+   "name": "AZO UTI Test Strips",
+   "category": "diagnostics",
+   "type": "physical",
+   "price": "$8 for 3 strips",
+   "image": "https://azoproducts.com/cdn/shop/files/azo-urinary-health-uti-test-strips-3-count_large.webp?v=1752257921",
+   "whereToBuy": [
+    "CVS",
+    "Target",
+    "Walmart",
+    "Amazon"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-b-complex",
+   "name": "Thorne B-Complex #12",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$19 for 60 capsules",
+   "image": "https://d1vo8zfysxy97v.cloudfront.net/media/product/b112__vee5e350a0551e93986381fda90af486aba9927b0.png",
+   "whereToBuy": [
+    "Amazon",
+    "Thorne.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-bambody-underwear",
+   "name": "Bambody Absorbent Panties",
+   "category": "period-underwear",
+   "type": "physical",
+   "price": "$15",
+   "image": "https://m.media-amazon.com/images/I/611IHjwrcnL._AC_UL1500_.jpg",
+   "whereToBuy": [
+    "Amazon"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-belly-bandit",
+   "name": "Belly Bandit Upsie Belly",
+   "category": "pregnancy",
+   "type": "physical",
+   "price": "$50",
+   "image": "http://www.macrobaby.com/cdn/shop/files/belly-bandit-upsie-belly-maternity-support-black_image_1.jpg?v=1736336829&width=600",
+   "whereToBuy": [
+    "Amazon"
+   ],
+   "variants": [
+    {
+     "id": "51315890630",
+     "label": "Cream / S",
+     "url": "https://bellybandit.com/products/upsie-belly?variant=51315890630",
+     "amazonAsin": "B005XNCE12"
+    },
+    {
+     "id": "51315890694",
+     "label": "Cream / M",
+     "url": "https://bellybandit.com/products/upsie-belly?variant=51315890694",
+     "amazonAsin": "B005XNCFKW"
+    },
+    {
+     "id": "51315890758",
+     "label": "Cream / L",
+     "url": "https://bellybandit.com/products/upsie-belly?variant=51315890758",
+     "amazonAsin": "B005XNCH3W"
+    },
+    {
+     "id": "51315890822",
+     "label": "Cream / XL",
+     "url": "https://bellybandit.com/products/upsie-belly?variant=51315890822",
+     "amazonAsin": "B00EO7LSS8"
+    },
+    {
+     "id": "51315890182",
+     "label": "Black / S",
+     "url": "https://bellybandit.com/products/upsie-belly?variant=51315890182",
+     "amazonAsin": "B009EEWGVO"
+    },
+    {
+     "id": "51315890310",
+     "label": "Black / M",
+     "url": "https://bellybandit.com/products/upsie-belly?variant=51315890310",
+     "amazonAsin": "B009EEWJSE"
+    },
+    {
+     "id": "51315890374",
+     "label": "Black / L",
+     "url": "https://bellybandit.com/products/upsie-belly?variant=51315890374",
+     "amazonAsin": "B009EEWI7Q"
+    },
+    {
+     "id": "51315890502",
+     "label": "Black / XL",
+     "url": "https://bellybandit.com/products/upsie-belly?variant=51315890502",
+     "amazonAsin": "B00LMIER30"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Belly Bandit Upsie Belly",
+   "variantSourceUrl": "https://bellybandit.com/products/upsie-belly",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated"
+  },
+  {
+   "id": "p-bodily-kit",
+   "name": "Bodily Postpartum Recovery Kit",
+   "brand": "Bodily",
+   "category": "postpartum",
+   "type": "physical",
+   "price": "From $50",
+   "image": "/products/verified/p-bodily-kit.jpg",
+   "url": "https://itsbodily.com/products/postpartum-recovery-kit-save-11",
+   "whereToBuy": [
+    "Bodily.com"
+   ],
+   "whereToBuyLinks": {
+    "Bodily.com": "https://itsbodily.com/products/postpartum-recovery-kit-save-11"
+   },
+   "source": "curated",
+   "imageSourceUrl": "https://itsbodily.com/products/postpartum-recovery-kit-save-11",
+   "imageVerifiedAt": "2026-09-25"
+  },
+  {
+   "id": "p-bodyform-pad",
+   "name": "Bodyform Ultra Pads",
+   "category": "pad",
+   "type": "physical",
+   "price": "Check retailer for current price and pack size",
+   "image": "https://libresse-images.essity.com/images-c5/497/702497/optimized-AzureJPG615CropUp/bodyform-phoenix-v3-ultimate-ultra-regular-plus-promo-x12-towels-7322542533789.jpg?w=295&h=295&imPolicy=dynamic",
+   "url": "https://www.amazon.com/Womens-Health-Care-Products-Bodyform/s?rh=n%3A386373011%2Cp_4%3ABodyform",
+   "whereToBuy": [
+    "Amazon"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-boppy-pillow",
+   "name": "Boppy Nursing Pillow",
+   "category": "postpartum",
+   "type": "physical",
+   "price": "$45",
+   "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow-protective-liner00067022210490-2282656.png?v=1779347293",
+   "whereToBuy": [
+    "Target",
+    "Walmart",
+    "Amazon"
+   ],
+   "variants": [
+    {
+     "id": "41628692250690",
+     "label": "Green Sage Leaves",
+     "url": "https://www.boppy.com/products/nursing-pillow?variant=41628692250690",
+     "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066004210490-4206272.webp?v=1776861492"
+    },
+    {
+     "id": "41872243621954",
+     "label": "Blue Speckled Current",
+     "url": "https://www.boppy.com/products/nursing-pillow?variant=41872243621954",
+     "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066023210490-1483190.webp?v=1776861493"
+    },
+    {
+     "id": "41859162472514",
+     "label": "Pink Field Flowers",
+     "url": "https://www.boppy.com/products/nursing-pillow?variant=41859162472514",
+     "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066020210490-9184589.webp?v=1776861494"
+    },
+    {
+     "id": "41628692316226",
+     "label": "Colorful Forest Animals",
+     "url": "https://www.boppy.com/products/nursing-pillow?variant=41628692316226",
+     "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066016210490-7416334.webp?v=1776861493"
+    },
+    {
+     "id": "41628692283458",
+     "label": "Cream Retro Squiggles",
+     "url": "https://www.boppy.com/products/nursing-pillow?variant=41628692283458",
+     "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066015210490-4117851.webp?v=1776861494"
+    },
+    {
+     "id": "41628692054082",
+     "label": "Pink Garden Flowers",
+     "url": "https://www.boppy.com/products/nursing-pillow?variant=41628692054082",
+     "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066003210490-1330071.webp?v=1776861493"
+    },
+    {
+     "id": "41859162669122",
+     "label": "Clay & Gold Suns",
+     "url": "https://www.boppy.com/products/nursing-pillow?variant=41859162669122",
+     "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066019210490-9400229.webp?v=1776861493"
+    },
+    {
+     "id": "41851296645186",
+     "label": "Green Forest Animal Sketches",
+     "url": "https://www.boppy.com/products/nursing-pillow?variant=41851296645186",
+     "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066022210490-4986980.webp?v=1776861494"
+    },
+    {
+     "id": "41872243261506",
+     "label": "Forest Green Dinos",
+     "url": "https://www.boppy.com/products/nursing-pillow?variant=41872243261506",
+     "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/MAIN-ForestGreenDinos-on-dove.jpg?v=1771461428"
+    },
+    {
+     "id": "41872243753026",
+     "label": "Neutral Plants & Animals",
+     "url": "https://www.boppy.com/products/nursing-pillow?variant=41872243753026",
+     "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066006210490-2949252.webp?v=1776861553"
+    },
+    {
+     "id": "41872243130434",
+     "label": "Gray Gentle Leaves",
+     "url": "https://www.boppy.com/products/nursing-pillow?variant=41872243130434",
+     "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066005210490-4182971.webp?v=1776861492"
+    },
+    {
+     "id": "42020980097090",
+     "label": "Sand Safari Animals",
+     "url": "https://www.boppy.com/products/nursing-pillow?variant=42020980097090",
+     "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066012120490-7680979.webp?v=1776861554"
+    },
+    {
+     "id": "42020980555842",
+     "label": "Soft Pink Daisies",
+     "url": "https://www.boppy.com/products/nursing-pillow?variant=42020980555842",
+     "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066013210490-6323462.webp?v=1776861554"
+    },
+    {
+     "id": "42020979671106",
+     "label": "Gray Beige Leaves",
+     "url": "https://www.boppy.com/products/nursing-pillow?variant=42020979671106",
+     "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066002120490-5012854.webp?v=1776861554"
+    },
+    {
+     "id": "41851306639426",
+     "label": "Sand Stick & Leaf",
+     "url": "https://www.boppy.com/products/nursing-pillow?variant=41851306639426",
+     "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066008260490-2938751.webp?v=1776861554"
+    },
+    {
+     "id": "41628692086850",
+     "label": "Tan Checkered Stripes",
+     "url": "https://www.boppy.com/products/nursing-pillow?variant=41628692086850",
+     "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066009140490-1976119.webp?v=1776861555"
+    },
+    {
+     "id": "41628692152386",
+     "label": "Gray Geo Dinos",
+     "url": "https://www.boppy.com/products/nursing-pillow?variant=41628692152386",
+     "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066010140490-7661197.webp?v=1776861555"
+    },
+    {
+     "id": "41628692185154",
+     "label": "Clay Boho Arches",
+     "url": "https://www.boppy.com/products/nursing-pillow?variant=41628692185154",
+     "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066011140490-3069423.webp?v=1776861555"
+    },
+    {
+     "id": "42989080510530",
+     "label": "Beige Foliage",
+     "url": "https://www.boppy.com/products/nursing-pillow?variant=42989080510530",
+     "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066027210490-9656428.webp?v=1776861554"
+    },
+    {
+     "id": "43092347781186",
+     "label": "Vintage Blue Stripe",
+     "url": "https://www.boppy.com/products/nursing-pillow?variant=43092347781186",
+     "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066029120490-1631262.webp?v=1776861555"
+    },
+    {
+     "id": "43092349255746",
+     "label": "Bright Pink Tropical Flowers",
+     "url": "https://www.boppy.com/products/nursing-pillow?variant=43092349255746",
+     "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066028210490-8347459.webp?v=1776861617"
+    },
+    {
+     "id": "44550209536066",
+     "label": "Beige Woodland Tapestry",
+     "url": "https://www.boppy.com/products/nursing-pillow?variant=44550209536066",
+     "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow00066024210490-6876159.webp?v=1785479436"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Boppy Nursing Pillow",
+   "variantSourceUrl": "https://www.boppy.com/products/nursing-pillow",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated"
+  },
+  {
+   "id": "p-boric-acid",
+   "name": "The Honey Pot Boric Acid Suppositories",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$16 for 14",
+   "image": "https://thehoneypot.co/cdn/shop/products/Suppositories_Front.jpg?v=1675876514&width=1200",
+   "whereToBuy": [
+    "Target",
+    "Walmart",
+    "Amazon"
+   ],
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-buni-bundle",
+   "name": "BUNI Bundle",
+   "brand": "BUNI",
+   "category": "postpartum",
+   "type": "physical",
+   "price": "$98",
+   "image": "/products/packaging/p-buni-bundle.webp",
+   "url": "https://www.bunibody.com/products/buni-bundle?ref=oxaevspm",
+   "affiliateUrl": "https://www.bunibody.com/products/buni-bundle?ref=oxaevspm",
+   "whereToBuy": [
+    "BUNI Body",
+    "Amazon"
+   ],
+   "whereToBuyLinks": {
+    "Amazon": "https://amzn.to/4xSUqDt",
+    "BUNI Body": "https://www.bunibody.com/products/buni-bundle?ref=oxaevspm"
+   },
+   "source": "curated",
+   "imageSourceUrl": "https://www.bunibody.com/products/buni-bundle",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-buni-rejuvenate-vulva-balm",
+   "name": "REJUVENATE: Vulva Balm",
+   "brand": "BUNI",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$42",
+   "image": "https://cdn.shopify.com/s/files/1/0661/0432/8271/files/buni-vulva-balm-product-page-main.webp?v=1776773714",
+   "url": "https://www.bunibody.com/products/buni-vulva-balm?ref=oxaevspm",
+   "affiliateUrl": "https://www.bunibody.com/products/buni-vulva-balm?ref=oxaevspm",
+   "whereToBuy": [
+    "BUNI Body",
+    "Amazon"
+   ],
+   "whereToBuyLinks": {
+    "Amazon": "https://amzn.to/4yE7pZH",
+    "BUNI Body": "https://www.bunibody.com/products/buni-vulva-balm?ref=oxaevspm"
+   },
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-buni-soothe-nipple-lip-balm",
+   "name": "SOOTHE: Nipple and Lip Balm",
+   "brand": "BUNI",
+   "category": "postpartum",
+   "type": "physical",
+   "price": "$25",
+   "image": "https://cdn.shopify.com/s/files/1/0661/0432/8271/files/buni-nipple-lip-balm-product-page-main_1.webp?v=1776774214",
+   "url": "https://www.bunibody.com/products/buni-nipple-balm?ref=oxaevspm",
+   "affiliateUrl": "https://www.bunibody.com/products/buni-nipple-balm?ref=oxaevspm",
+   "whereToBuy": [
+    "BUNI Body",
+    "Amazon"
+   ],
+   "whereToBuyLinks": {
+    "Amazon": "https://amzn.to/4xnutuF",
+    "BUNI Body": "https://www.bunibody.com/products/buni-nipple-balm?ref=oxaevspm"
+   },
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-buni-transform-scar-body-oil",
+   "name": "TRANSFORM: Scar+Body Treatment Oil",
+   "brand": "BUNI",
+   "category": "postpartum",
+   "type": "physical",
+   "price": "$35",
+   "image": "https://cdn.shopify.com/s/files/1/0661/0432/8271/files/buni-transform-oil-product-page-main_6-2.webp?v=1776774797",
+   "url": "https://www.bunibody.com/products/buni-natural-scar-body-treatment-oil?ref=oxaevspm",
+   "affiliateUrl": "https://www.bunibody.com/products/buni-natural-scar-body-treatment-oil?ref=oxaevspm",
+   "whereToBuy": [
+    "BUNI Body",
+    "Amazon"
+   ],
+   "whereToBuyLinks": {
+    "Amazon": "https://amzn.to/3UOVTfk",
+    "BUNI Body": "https://www.bunibody.com/products/buni-natural-scar-body-treatment-oil?ref=oxaevspm"
+   },
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-carefree-liners",
+   "name": "Carefree Acti-Fresh Liners",
+   "category": "pad",
+   "type": "physical",
+   "price": "Check retailer for current price and pack size",
+   "image": "https://carefreeliners.com/cdn/shop/files/CFR_656900_PDP-Beauty_Pack_Tiles_-_ATF_1_WRAPPED_Regular_20_CT_1024x.webp?v=1781797888",
+   "whereToBuy": [
+    "CVS",
+    "Target",
+    "Walmart",
+    "Amazon"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-citracal-bone-health",
+   "name": "Citracal Maximum Plus Calcium Citrate + D3, 120 Caplets",
+   "category": "menopause",
+   "type": "physical",
+   "price": "See retailer for current price",
+   "image": "/products/packaging/target-91124391.jpg",
+   "url": "https://www.target.com/p/-/A-91124391",
+   "whereToBuy": [
+    "Amazon",
+    "Walmart",
+    "CVS"
+   ],
+   "source": "curated",
+   "imageSourceUrl": "https://www.target.com/p/-/A-91124391",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging"
+  },
+  {
+   "id": "p-cora-disc",
+   "name": "Cora Reusable Disc",
+   "category": "disc",
+   "type": "physical",
+   "price": "$35 (reusable)",
+   "image": "https://target.scene7.com/is/image/Target/GUEST_adc9d805-99e0-40ac-8a00-2203a093b2a3",
+   "whereToBuy": [
+    "Target",
+    "Amazon"
+   ],
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-cora-organic-pads",
+   "name": "Cora Organic Pads",
+   "brand": "Cora",
+   "category": "pad",
+   "type": "physical",
+   "price": "See retailer for price and selected pack size",
+   "image": "/products/packaging/cora-76155164.jpg",
+   "url": "https://cora.life/",
+   "whereToBuy": [
+    "Cora.life",
+    "Target",
+    "Amazon"
+   ],
+   "variants": [
+    {
+     "id": "target-76155164",
+     "label": "Regular \u2014 32 count",
+     "url": "https://www.target.com/p/-/A-76155164",
+     "image": "/products/packaging/cora-76155164.jpg",
+     "amazonAsin": "B07XR7DVL4"
+    },
+    {
+     "id": "target-90569336",
+     "label": "Super \u2014 30 count",
+     "url": "https://www.target.com/p/-/A-90569336",
+     "image": "/products/packaging/cora-90569336.jpg",
+     "amazonAsin": "B08288RTFX"
+    },
+    {
+     "id": "target-76155166",
+     "label": "Overnight \u2014 28 count",
+     "url": "https://www.target.com/p/-/A-76155166",
+     "image": "/products/packaging/cora-76155166.jpg",
+     "amazonAsin": "B07XL578S2"
+    },
+    {
+     "id": "target-93261793",
+     "label": "Extra Heavy Overnight \u2014 20 count",
+     "url": "https://www.target.com/p/-/A-93261793",
+     "image": "/products/packaging/cora-93261793.jpg",
+     "amazonAsin": "B0DH6S25DP"
+    }
+   ],
+   "defaultVariantId": "target-76155164",
+   "variantFamilyName": "Cora Organic Cotton Pads",
+   "variantSourceUrl": "https://www.target.com/p/-/A-76155164",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated"
+  },
+  {
+   "id": "p-cora-organic-tampons",
+   "name": "Cora Organic Tampons",
+   "brand": "Cora",
+   "category": "tampon",
+   "type": "physical",
+   "price": "See retailer for price and selected pack size",
+   "image": "/products/packaging/cora-82032071.jpg",
+   "url": "https://cora.life/",
+   "whereToBuy": [
+    "Cora.life",
+    "Target",
+    "Amazon"
+   ],
+   "variants": [
+    {
+     "id": "target-82032071",
+     "label": "Regular \u2014 32 count",
+     "url": "https://www.target.com/p/-/A-82032071",
+     "image": "/products/packaging/cora-82032071.jpg",
+     "amazonAsin": "B06XKF4RMW"
+    },
+    {
+     "id": "target-53062312",
+     "label": "Regular / Super \u2014 32 count",
+     "url": "https://www.target.com/p/-/A-53062312",
+     "image": "/products/packaging/cora-53062312.jpg",
+     "amazonAsin": "B06ZYRXLNV"
+    },
+    {
+     "id": "target-75665033",
+     "label": "Light / Regular \u2014 32 count",
+     "url": "https://www.target.com/p/-/A-75665033",
+     "image": "/products/packaging/cora-75665033.jpg",
+     "amazonAsin": "B0742LBKKS"
+    }
+   ],
+   "defaultVariantId": "target-82032071",
+   "variantFamilyName": "Cora Organic Cotton Tampons",
+   "variantSourceUrl": "https://www.target.com/p/-/A-82032071",
+   "variantsVerifiedAt": "2026-09-26",
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-cora-overnight",
+   "name": "Cora Overnight Pads",
+   "category": "pad",
+   "type": "physical",
+   "price": "See retailer for price and selected pack size",
+   "image": "/products/packaging/cora-76155166.jpg",
+   "url": "https://cora.life/",
+   "whereToBuy": [
+    "Cora.life",
+    "Target",
+    "Amazon"
+   ],
+   "variants": [
+    {
+     "id": "target-76155164",
+     "label": "Regular \u2014 32 count",
+     "url": "https://www.target.com/p/-/A-76155164",
+     "image": "/products/packaging/cora-76155164.jpg",
+     "amazonAsin": "B07XR7DVL4"
+    },
+    {
+     "id": "target-90569336",
+     "label": "Super \u2014 30 count",
+     "url": "https://www.target.com/p/-/A-90569336",
+     "image": "/products/packaging/cora-90569336.jpg",
+     "amazonAsin": "B08288RTFX"
+    },
+    {
+     "id": "target-76155166",
+     "label": "Overnight \u2014 28 count",
+     "url": "https://www.target.com/p/-/A-76155166",
+     "image": "/products/packaging/cora-76155166.jpg",
+     "amazonAsin": "B07XL578S2"
+    },
+    {
+     "id": "target-93261793",
+     "label": "Extra Heavy Overnight \u2014 20 count",
+     "url": "https://www.target.com/p/-/A-93261793",
+     "image": "/products/packaging/cora-93261793.jpg",
+     "amazonAsin": "B0DH6S25DP"
+    }
+   ],
+   "defaultVariantId": "target-76155166",
+   "variantFamilyName": "Cora Organic Cotton Pads",
+   "variantSourceUrl": "https://www.target.com/p/-/A-76155166",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated"
+  },
+  {
+   "id": "p-cranberry-supplement",
+   "name": "AZO Cranberry Urinary Health",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$10 for 50 caplets",
+   "image": "https://m.media-amazon.com/images/I/51mvl7K-N4L.jpg",
+   "whereToBuy": [
+    "CVS",
+    "Target",
+    "Walmart",
+    "Amazon"
+   ],
+   "variants": [
+    {
+     "id": "40105098674225",
+     "label": "50 Caplets",
+     "url": "https://azoproducts.com/products/azo-cranberry-caplets?variant=40105098674225",
+     "image": "https://cdn.shopify.com/s/files/1/0209/0378/8593/files/azo-cran-caps-NOct.webp?v=1788192491",
+     "amazonAsin": "B0012JY42I"
+    },
+    {
+     "id": "40115544195121",
+     "label": "100 Caplets - 2pk",
+     "url": "https://azoproducts.com/products/azo-cranberry-caplets?variant=40115544195121",
+     "image": "https://cdn.shopify.com/s/files/1/0209/0378/8593/files/azo-cran-caps-NOct.webp?v=1788192491",
+     "amazonAsin": "B0C61VBVJC"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "AZO Cranberry Urinary Health",
+   "variantSourceUrl": "https://azoproducts.com/products/azo-cranberry-caplets",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated"
+  },
+  {
+   "id": "p-creatine-womens",
+   "name": "Thorne Creatine",
+   "brand": "Thorne",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$25\u201340 for 300\u2013500g",
+   "image": "https://d1vo8zfysxy97v.cloudfront.net/media/product/sf903__ve8382489c6ce9fb7f28cdddef00e6f1ece146591.png",
+   "whereToBuy": [
+    "Amazon",
+    "iHerb",
+    "Thorne.com",
+    "CVS"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-cystex",
+   "name": "Cystex Urinary Pain Relief",
+   "brand": "Cystex",
+   "category": "medication",
+   "type": "physical",
+   "price": "$10",
+   "image": "/products/verified/p-cystex.webp",
+   "url": "https://www.cystex.com/cystex-urinary-pain-relief-tablets",
+   "whereToBuy": [
+    "CVS",
+    "Walmart",
+    "Amazon"
+   ],
+   "source": "curated",
+   "imageSourceUrl": "https://www.cystex.com/cystex-urinary-pain-relief-tablets",
+   "imageVerifiedAt": "2026-09-25"
+  },
+  {
+   "id": "p-d-mannose-now",
+   "name": "NOW D-Mannose",
+   "brand": "NOW Foods",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$12 for 60 caps",
+   "image": "https://target.scene7.com/is/image/Target/GUEST_127d7700-f673-4c0d-8564-e47ca95076b3?wid=800&hei=800&qlt=80&fmt=pjpeg",
+   "whereToBuy": [
+    "iHerb",
+    "Amazon",
+    "Walmart"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-dame-arc",
+   "name": "Dame Arc G-Spot Vibrator",
+   "category": "sex-tech",
+   "type": "physical",
+   "price": "$115",
+   "image": "/products/packaging/p-dame-arc.png",
+   "whereToBuy": [
+    "DameProducts.com",
+    "Sephora"
+   ],
+   "variants": [
+    {
+     "id": "41519397273783",
+     "label": "Plum",
+     "url": "https://dame.com/products/arc?variant=41519397273783",
+     "image": "https://cdn.shopify.com/s/files/1/1027/2873/files/arc-6-plum.png?v=1776325687",
+     "amazonAsin": "B0BG8WG6FG"
+    },
+    {
+     "id": "41519634153655",
+     "label": "Ice",
+     "url": "https://dame.com/products/arc?variant=41519634153655",
+     "image": "https://cdn.shopify.com/s/files/1/1027/2873/files/arc-6-ice.png?v=1776325629",
+     "amazonAsin": "B0BG6C8KW4"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Dame Arc G-Spot Vibrator",
+   "variantSourceUrl": "https://dame.com/products/arc",
+   "variantsVerifiedAt": "2026-09-26",
+   "internal": true,
+   "source": "curated",
+   "imageSourceUrl": "https://dame.com/products/arc",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging"
+  },
+  {
+   "id": "p-dear-kate-underwear",
+   "name": "Dear Kate Period Underwear",
+   "category": "period-underwear",
+   "type": "physical",
+   "price": "$32\u2013$38 per pair",
+   "image": "https://cdn.shopify.com/s/files/1/0152/4745/products/DSC01403.jpg?v=1578089113",
+   "url": "https://dearkate.com/",
+   "whereToBuy": [
+    "DearKate.com",
+    "Amazon"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-depend-silhouette-underwear",
+   "name": "Depend Silhouette Incontinence Underwear for Women, Maximum Absorbency",
+   "brand": "Depend",
+   "category": "incontinence",
+   "type": "physical",
+   "price": "Check retailer for current price and pack size",
+   "image": "https://target.scene7.com/is/image/Target/GUEST_e9213c42-1912-4667-aecc-fe66a250fd69?wid=800&hei=800&fmt=pjpeg",
+   "whereToBuy": [
+    "Amazon",
+    "Target",
+    "Walmart"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-diva-cup",
+   "name": "DivaCup",
+   "category": "cup",
+   "type": "physical",
+   "price": "$30 (reusable 10 years)",
+   "image": "/products/packaging/diva-1.png",
+   "whereToBuy": [
+    "CVS",
+    "Target",
+    "Walmart",
+    "Amazon"
+   ],
+   "variants": [
+    {
+     "id": "40325944410193",
+     "label": "Model 0",
+     "url": "https://shopdiva.com/products/diva-cup-model-0?variant=40325944410193",
+     "image": "/products/packaging/diva-0.png",
+     "amazonAsin": "B08TLT6BF7"
+    },
+    {
+     "id": "40325946015825",
+     "label": "Model 1",
+     "url": "https://shopdiva.com/products/diva-cup-model-1?variant=40325946015825",
+     "image": "/products/packaging/diva-1.png",
+     "amazonAsin": "B08TLJPR71"
+    },
+    {
+     "id": "40325949063249",
+     "label": "Model 2",
+     "url": "https://shopdiva.com/products/diva-cup-model-2?variant=40325949063249",
+     "image": "/products/packaging/diva-2.png",
+     "amazonAsin": "B08TLMWZB4"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "DIVA Menstrual Cup",
+   "variantSourceUrl": "https://shopdiva.com/collections/diva-cup-series",
+   "variantsVerifiedAt": "2026-09-26",
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-elitone",
+   "name": "Elitone (Stress + Mixed Incontinence)",
+   "brand": "Elitone",
+   "category": "incontinence",
+   "type": "physical",
+   "price": "From $399",
+   "image": "https://elitone.com/wp-content/uploads/2021/05/SUI-Hero-2-1200x1000-AVIF.avif",
+   "url": "https://elitone.com/product/elitone/",
+   "affiliateUrl": "https://elitone.com/product/elitone/?af=aynahealth",
+   "whereToBuy": [],
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-elitone-urge",
+   "name": "Elitone URGE (Overactive Bladder)",
+   "brand": "Elitone",
+   "category": "incontinence",
+   "type": "physical",
+   "price": "From $399",
+   "image": "https://elitone.com/wp-content/uploads/2023/02/UUI-Hero-071426.avif",
+   "url": "https://elitone.com/product/elitone-urge/",
+   "affiliateUrl": "https://elitone.com/product/elitone-urge/?af=aynahealth",
+   "whereToBuy": [],
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-elvie-trainer",
+   "name": "Elvie Pelvic Floor Trainer",
+   "category": "pelvic-floor",
+   "type": "physical",
+   "price": "$199",
+   "image": "/products/packaging/p-elvie-trainer.jpg",
+   "whereToBuy": [
+    "Amazon",
+    "Target",
+    "Elvie.com"
+   ],
+   "internal": true,
+   "source": "curated",
+   "imageSourceUrl": "https://elvie.com/products/elvie-trainer",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging"
+  },
+  {
+   "id": "p-estroven-mood",
+   "name": "Estroven Menopause Relief Mood Boost",
+   "brand": "Estroven",
+   "category": "supplement",
+   "type": "physical",
+   "price": "Varies by pack size (30 or 60 caplets)",
+   "image": "/products/verified/p-estroven-mood.jpg",
+   "url": "https://estroven.com/products/menopause-relief-mood-memory-boost",
+   "whereToBuy": [
+    "CVS",
+    "Walmart",
+    "Amazon"
+   ],
+   "variants": [
+    {
+     "id": "29388646678598",
+     "label": "30",
+     "url": "https://estroven.com/products/menopause-relief-mood-memory-boost?variant=29388646678598",
+     "image": "https://cdn.shopify.com/s/files/1/0038/4188/4230/products/estroven-mood-boost-front-view.jpg?v=1699478289"
+    },
+    {
+     "id": "39984302227528",
+     "label": "60",
+     "url": "https://estroven.com/products/menopause-relief-mood-memory-boost?variant=39984302227528",
+     "image": "https://cdn.shopify.com/s/files/1/0038/4188/4230/products/estroven-mood-boost-front-view.jpg?v=1699478289"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Estroven Menopause Relief Mood Boost",
+   "variantSourceUrl": "https://estroven.com/products/menopause-relief-mood-memory-boost",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated",
+   "imageSourceUrl": "https://estroven.com/products/menopause-relief-mood-memory-boost",
+   "imageVerifiedAt": "2026-09-25",
+   "originalName": "Estroven Mood & Memory"
+  },
+  {
+   "id": "p-evening-primrose",
+   "name": "NOW Foods Evening Primrose Oil",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$12 for 100 softgels",
+   "image": "https://m.media-amazon.com/images/I/716A2d7a6EL.jpg",
+   "whereToBuy": [
+    "Amazon",
+    "iHerb",
+    "Whole Foods"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-femmycycle",
+   "name": "FemmyCycle Menstrual Cup",
+   "category": "cup",
+   "type": "physical",
+   "price": "$30 (reusable)",
+   "image": "https://menstrualcupreviews.net/wp-content/uploads/2020/06/femmycycle-regular-cup.jpg",
+   "whereToBuy": [
+    "Amazon",
+    "FemmyCycle.com"
+   ],
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-fish-oil",
+   "name": "Nordic Naturals Omega Woman",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$23 for 60 softgels",
+   "image": "https://cdn.shopify.com/s/files/1/0511/3059/7560/files/01780RJ1-OmegaWomanR_120_Box_Front.jpg?v=1754421038",
+   "whereToBuy": [
+    "Amazon",
+    "Whole Foods",
+    "CVS"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-flex-cup",
+   "name": "Flex Cup",
+   "category": "cup",
+   "type": "physical",
+   "price": "$30 (reusable)",
+   "image": "/products/packaging/target-75665024.jpg",
+   "whereToBuy": [
+    "Target",
+    "Amazon",
+    "FlexFits.com"
+   ],
+   "variants": [
+    {
+     "id": "39775383093344",
+     "label": "Size 01",
+     "url": "https://flexfits.com/products/flex-cup?variant=39775383093344",
+     "image": "https://cdn.shopify.com/s/files/1/1097/9960/files/flex-period-cup-with-packaging-and-review.png?v=1763752341",
+     "amazonAsin": "B07QD4W7RQ"
+    },
+    {
+     "id": "39775383126112",
+     "label": "Size 02",
+     "url": "https://flexfits.com/products/flex-cup?variant=39775383126112",
+     "image": "/products/packaging/target-75665024.jpg",
+     "amazonAsin": "B07QHG6ZY8"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Flex Cup",
+   "variantSourceUrl": "https://flexfits.com/products/flex-cup",
+   "variantsVerifiedAt": "2026-09-26",
+   "internal": true,
+   "source": "curated",
+   "imageSourceUrl": "https://www.target.com/p/-/A-75665024",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging"
+  },
+  {
+   "id": "p-flex-disc",
+   "name": "Flex Disc",
+   "category": "disc",
+   "type": "physical",
+   "price": "Check retailer for current price and pack size",
+   "image": "/products/packaging/p-flex-disc.jpg",
+   "whereToBuy": [
+    "Target",
+    "CVS",
+    "Amazon"
+   ],
+   "variants": [
+    {
+     "id": "42412049825888",
+     "label": "12",
+     "url": "https://flexfits.com/products/flex-disc?variant=42412049825888",
+     "image": "/products/packaging/p-flex-disc.jpg",
+     "amazonAsin": "B07QHS3PL8"
+    },
+    {
+     "id": "42412049858656",
+     "label": "24",
+     "url": "https://flexfits.com/products/flex-disc?variant=42412049858656",
+     "amazonAsin": "B0FBTH6RHH"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Flex Disc",
+   "variantSourceUrl": "https://flexfits.com/products/flex-disc",
+   "variantsVerifiedAt": "2026-09-26",
+   "internal": true,
+   "source": "curated",
+   "imageSourceUrl": "https://www.target.com/p/-/A-75665025",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging"
+  },
+  {
+   "id": "p-flo-gummies",
+   "name": "Flo PMS Gummy Vitamins",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$25 for 60 gummies",
+   "image": "https://m.media-amazon.com/images/I/81RReWPD2+L.jpg",
+   "whereToBuy": [
+    "Target",
+    "Amazon",
+    "Flo.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-frida-mom-kit",
+   "name": "Frida Mom Postpartum Kit",
+   "category": "postpartum",
+   "type": "physical",
+   "price": "$100",
+   "image": "https://frida.com/cdn/shop/files/FM_RecoveryEssentialsKit_Thumbnail_992x.jpg?v=1714489405",
+   "whereToBuy": [
+    "Amazon",
+    "Target"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-gennev-care",
+   "name": "Gennev Menopause Care",
+   "category": "telehealth",
+   "type": "physical",
+   "price": "$199/consult",
+   "image": "https://gennev.com/wp-content/uploads/2025/05/asset-content-home-hero-face.jpg",
+   "url": "https://gennev.com/",
+   "whereToBuy": [
+    "Gennev.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-gina-insertion-applicator-refills",
+   "name": "gina Insertion Applicator Refills",
+   "brand": "gina",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$10.00",
+   "image": "/products/gina/insertion-applicator-refills.png",
+   "url": "https://getgina.com/products/insertion-applicator-refills",
+   "whereToBuy": [
+    "getgina.com"
+   ],
+   "internal": true,
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-gina-mineralize",
+   "name": "MINERALIZE \u2014 Shilajit PLUS",
+   "brand": "gina",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$65",
+   "image": "https://www.gina.health/cdn/shop/files/MINERALIZED.jpg?v=1740431199",
+   "url": "https://www.gina.health/products/mineral-shilajit-ocean-plasma",
+   "whereToBuy": [],
+   "source": "curated",
+   "stockNote": "Listed as sold out on the brand's own site as of 2026-08-25 \u2014 verify current stock before promoting.",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-gina-power-protein",
+   "name": "POWER Protein Builder + Hormone Regulation",
+   "brand": "gina",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$72",
+   "image": "https://www.gina.health/cdn/shop/files/POWER_afa5b76a-ff60-41c3-af13-3eaf5f6b0fb4.jpg?v=1740581520",
+   "url": "https://www.gina.health/products/power-protein-builder-hormone-regulation",
+   "whereToBuy": [],
+   "source": "curated",
+   "stockNote": "Listed as sold out on the brand's own site as of 2026-08-25 \u2014 verify current stock before promoting.",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-gina-vaginal-moisturizing-glides",
+   "name": "gina Vaginal Moisturizing Glides",
+   "brand": "gina",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$101.00",
+   "image": "/products/gina/vaginal-moisturizing-glides.webp",
+   "url": "https://getgina.com/products/vaginal-moisturizing-glides",
+   "whereToBuy": [
+    "getgina.com"
+   ],
+   "internal": true,
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-good-clean-love",
+   "name": "Good Clean Love Bio-Match Moisturizer",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$13 for 2oz",
+   "image": "https://m.media-amazon.com/images/I/71UTcfCq9uL.jpg",
+   "whereToBuy": [
+    "CVS",
+    "Target",
+    "Amazon"
+   ],
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-good-kitty-uti-biome-shield",
+   "name": "Good Kitty UTI Biome Shield",
+   "brand": "Good Kitty Co",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$99 starter kit (or $84.15/mo subscription)",
+   "image": "/products/verified/p-good-kitty-uti-biome-shield.jpg",
+   "url": "https://goodkittyco.com/products/uti-biome-shield",
+   "whereToBuy": [],
+   "variants": [
+    {
+     "id": "51606908174648",
+     "label": "60 caps",
+     "url": "https://goodkittyco.com/products/uti-biome-shield?variant=51606908174648"
+    },
+    {
+     "id": "51679438537016",
+     "label": "120 caps",
+     "url": "https://goodkittyco.com/products/uti-biome-shield?variant=51679438537016"
+    },
+    {
+     "id": "51679443026232",
+     "label": "180 caps",
+     "url": "https://goodkittyco.com/products/uti-biome-shield?variant=51679443026232"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Good Kitty UTI Biome Shield",
+   "variantSourceUrl": "https://goodkittyco.com/products/uti-biome-shield",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated",
+   "imageSourceUrl": "https://goodkittyco.com/products/uti-biome-shield",
+   "imageVerifiedAt": "2026-09-25",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-haakaa-pump",
+   "name": "Haakaa Silicone Breast Pump",
+   "category": "postpartum",
+   "type": "physical",
+   "price": "$13",
+   "image": "https://cdn.shopify.com/s/files/1/1101/9058/files/glassbottlkbreastpum.png?v=1778802275",
+   "whereToBuy": [
+    "Amazon",
+    "Target"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-hanes-period",
+   "name": "Hanes Period Underwear",
+   "category": "period-underwear",
+   "type": "physical",
+   "price": "$12\u2013$16 per pair",
+   "image": "https://m.media-amazon.com/images/I/71Ph1Q772PL._AC_UL1500_.jpg",
+   "whereToBuy": [
+    "Walmart",
+    "Target",
+    "Amazon"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-hatch-oil",
+   "name": "Hatch Belly Oil",
+   "category": "pregnancy",
+   "type": "physical",
+   "price": "$58",
+   "image": "https://cdn.shopify.com/s/files/1/1991/8975/files/Hatch-49_1.jpg?v=1763657501",
+   "whereToBuy": [
+    "HatchCollection.com",
+    "Sephora"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-hello-disc",
+   "name": "Hello Disc",
+   "category": "disc",
+   "type": "physical",
+   "price": "$40",
+   "image": "https://cdn.shopify.com/s/files/1/0280/3413/8205/files/Hello_Caddy_silicone_storage_travel_case.png?v=1783061433",
+   "whereToBuy": [
+    "HelloPeriod.com",
+    "Amazon"
+   ],
+   "variants": [
+    {
+     "id": "50103351836919",
+     "label": "Bubblegum",
+     "url": "https://helloperiod.com/products/hello-disc%E2%84%A2?variant=50103351836919",
+     "image": "https://cdn.shopify.com/s/files/1/0280/3413/8205/files/pink_hello_disc_in_hand.png?v=1783065791",
+     "amazonAsin": "B0GCBHWY24"
+    },
+    {
+     "id": "44308103102711",
+     "label": "Sea Fog",
+     "url": "https://helloperiod.com/products/hello-disc%E2%84%A2?variant=44308103102711",
+     "image": "https://cdn.shopify.com/s/files/1/0280/3413/8205/files/hello_period_menstrual_disc_with_loop_tabs.jpg?v=1783065980",
+     "amazonAsin": "B09RTMNJLH"
+    },
+    {
+     "id": "44308103135479",
+     "label": "Black",
+     "url": "https://helloperiod.com/products/hello-disc%E2%84%A2?variant=44308103135479",
+     "amazonAsin": "B0GKBK3FS9",
+     "image": "https://cdn.shopify.com/s/files/1/0280/3413/8205/files/black_menstrual_disc_by_hello_period.jpg?v=1783065936"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Hello Disc",
+   "variantSourceUrl": "https://helloperiod.com/products/hello-disc%E2%84%A2",
+   "variantsVerifiedAt": "2026-09-26",
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-honeypot-pad",
+   "name": "The Honey Pot Herbal Pads",
+   "category": "pad",
+   "type": "physical",
+   "price": "$9.99 for 20",
+   "image": "/products/verified/p-honeypot-pad.jpg",
+   "url": "https://thehoneypot.co/products/regular-herbal-pads-with-wings",
+   "whereToBuy": [
+    "Target",
+    "Walmart",
+    "Amazon"
+   ],
+   "source": "curated",
+   "imageSourceUrl": "https://thehoneypot.co/products/regular-herbal-pads-with-wings",
+   "imageVerifiedAt": "2026-09-25"
+  },
+  {
+   "id": "p-honeypot-wash",
+   "name": "The Honey Pot Intimate Wash",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$10 for 5.5oz",
+   "image": "https://thehoneypot.co/cdn/shop/files/SensitiveWashMother-MOBadge-Nude.jpg?v=1771432432&width=1200",
+   "whereToBuy": [
+    "Target",
+    "Walmart",
+    "Amazon"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-hum-flatter-me",
+   "name": "HUM Nutrition Flatter Me",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$26 for 60 capsules",
+   "image": "https://target.scene7.com/is/image/Target/GUEST_f78049ce-0562-4b34-8acf-e7476d83d21c?wid=300&hei=300&fmt=pjpeg",
+   "whereToBuy": [
+    "Sephora",
+    "Amazon",
+    "HumNutrition.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-inositol-wholesome",
+   "name": "Wholesome Story Myo & D-Chiro Inositol",
+   "brand": "Wholesome Story",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$27.95 for 120 capsules (30 servings)",
+   "image": "/products/verified/p-inositol-wholesome.png",
+   "url": "https://wholesomestory.com/products/myo-d-chiro-inositol",
+   "whereToBuy": [
+    "Amazon",
+    "WholesomeStory.com"
+   ],
+   "variants": [
+    {
+     "id": "35171000287394",
+     "label": "360 Capsules (90-Servings)",
+     "url": "https://wholesomestory.com/products/myo-d-chiro-inositol?variant=35171000287394",
+     "image": "https://cdn.shopify.com/s/files/1/0412/0094/3266/files/Myo_D360ctFrontPanelV.ARev12_25.png?v=1769496959",
+     "amazonAsin": "B07YYLM1KZ"
+    },
+    {
+     "id": "35171000254626",
+     "label": "120 Capsules (30-Servings)",
+     "url": "https://wholesomestory.com/products/myo-d-chiro-inositol?variant=35171000254626",
+     "image": "https://cdn.shopify.com/s/files/1/0412/0094/3266/files/Myo_D120ctFrontPanelV.ARev12_25.png?v=1769496959",
+     "amazonAsin": "B07HX2DMY8"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Wholesome Story Myo & D-Chiro Inositol",
+   "variantSourceUrl": "https://wholesomestory.com/products/myo-d-chiro-inositol",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated",
+   "imageSourceUrl": "https://wholesomestory.com/products/myo-d-chiro-inositol",
+   "imageVerifiedAt": "2026-09-25"
+  },
+  {
+   "id": "p-intimate-rose",
+   "name": "Intimate Rose Vaginal Dilators",
+   "category": "pelvic-floor",
+   "type": "physical",
+   "price": "$50 for 8-piece set",
+   "image": "https://www.intimaterose.com/cdn/shop/files/Dilators_Size1-8.jpg?v=1749126284&width=1946",
+   "whereToBuy": [
+    "Amazon",
+    "IntimateRose.com"
+   ],
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-intimina-kegel",
+   "name": "Intimina Laselle Kegel Exercisers",
+   "brand": "Intimina",
+   "category": "pelvic-floor-exerciser",
+   "type": "physical",
+   "price": "$37.95 (Intimina list price)",
+   "image": "https://assets.intimina.com/files/static/product-images/2022-04/550x550_Laselle_EN.jpg?VersionId=_8_GLEGmnwIH1maYhAsvLEeLm4Usw1Em",
+   "url": "https://www.intimina.com/laselle",
+   "whereToBuy": [
+    "Amazon",
+    "Intimina.com"
+   ],
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-intimina-lily",
+   "name": "Intimina Lily Cup",
+   "category": "cup",
+   "type": "physical",
+   "price": "$30",
+   "image": "https://assets.intimina.com/files/static/product-images/2022-04/550x550_Lily%20Cup_EN.jpg?VersionId=ETb1DKiGPOOFTBT12hVX8D6SkbVdSlsG",
+   "whereToBuy": [
+    "Amazon",
+    "Intimina.com"
+   ],
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-joylux-coldher",
+   "name": "coldHER\u2122 Cooling Bra Inserts",
+   "brand": "Joylux",
+   "category": "menopause",
+   "type": "physical",
+   "price": "$21 for 2 pads",
+   "image": "https://cdn.shopify.com/s/files/1/1120/5174/files/coldher-cooling-bra-inserts-9258458.jpg?v=1753846926",
+   "url": "https://joylux.com/products/coldher",
+   "whereToBuy": [
+    "Joylux"
+   ],
+   "whereToBuyLinks": {
+    "Joylux": "https://joylux.com/products/coldher"
+   },
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-joylux-ilyeo-body",
+   "name": "ILYEO\u2122 body",
+   "brand": "Joylux",
+   "category": "pain-relief",
+   "type": "physical",
+   "price": "$199",
+   "image": "https://cdn.shopify.com/s/files/1/1120/5174/files/ilyeo-body-8041504.jpg?v=1789522687",
+   "url": "https://joylux.com/products/ilyeo-body",
+   "whereToBuy": [
+    "Joylux"
+   ],
+   "whereToBuyLinks": {
+    "Joylux": "https://joylux.com/products/ilyeo-body"
+   },
+   "source": "curated",
+   "fsaHsaEligible": true,
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-joylux-juicy-like-a-peach",
+   "name": "JUICY LIKE A PEACH\u00ae Vaginal Gel",
+   "brand": "Joylux",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$59 for 30 applications",
+   "image": "https://cdn.shopify.com/s/files/1/1120/5174/files/juicy-like-a-peach-3736266.jpg?v=1781733740",
+   "url": "https://joylux.com/products/juicy-like-a-peach",
+   "whereToBuy": [
+    "Joylux"
+   ],
+   "whereToBuyLinks": {
+    "Joylux": "https://joylux.com/products/juicy-like-a-peach"
+   },
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-joylux-lets-spin",
+   "name": "LET'S SPIN\u00ae Intimacy Gel",
+   "brand": "Joylux",
+   "category": "sex-tech",
+   "type": "physical",
+   "price": "$45 for 60 mL",
+   "image": "https://cdn.shopify.com/s/files/1/1120/5174/files/lets-spin-intimacy-gel-422294.jpg?v=1727172815",
+   "url": "https://joylux.com/products/lets-spin-intimacy-gel",
+   "whereToBuy": [
+    "Joylux"
+   ],
+   "whereToBuyLinks": {
+    "Joylux": "https://joylux.com/products/lets-spin-intimacy-gel"
+   },
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-joylux-reliefher",
+   "name": "reliefHER\u2122 Vaginal Hydration Melts",
+   "brand": "Joylux",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$49 for 10 melts",
+   "image": "https://cdn.shopify.com/s/files/1/1120/5174/files/reliefHER_10pack_HERO.jpg?v=1782326170",
+   "url": "https://joylux.com/products/reliefher",
+   "whereToBuy": [
+    "Joylux"
+   ],
+   "whereToBuyLinks": {
+    "Joylux": "https://joylux.com/products/reliefher"
+   },
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-joylux-revitalizher",
+   "name": "revitalizHER\u2122 Hydrating Serum",
+   "brand": "Joylux",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$49 for 30 mL",
+   "image": "https://cdn.shopify.com/s/files/1/1120/5174/files/revitalizher-hydrating-serum-987054.jpg?v=1742591593",
+   "url": "https://joylux.com/products/revitalizher",
+   "whereToBuy": [
+    "Joylux"
+   ],
+   "whereToBuyLinks": {
+    "Joylux": "https://joylux.com/products/revitalizher"
+   },
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-joylux-shebar",
+   "name": "SHEbar\u00ae Intimate Cleansing Bar",
+   "brand": "Joylux",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$13 for 3.2 oz",
+   "image": "https://cdn.shopify.com/s/files/1/1120/5174/files/SHEbar_Packshot_2.jpg?v=1778785371",
+   "url": "https://joylux.com/products/shebar",
+   "whereToBuy": [
+    "Joylux"
+   ],
+   "whereToBuyLinks": {
+    "Joylux": "https://joylux.com/products/shebar"
+   },
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-joylux-vfit",
+   "name": "vFit\u00ae Device",
+   "brand": "Joylux",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$395",
+   "image": "https://cdn.shopify.com/s/files/1/1120/5174/files/vfit-plus-upgraded-device-259789.jpg?v=1745343867",
+   "url": "https://joylux.com/products/vfit",
+   "whereToBuy": [
+    "Joylux"
+   ],
+   "whereToBuyLinks": {
+    "Joylux": "https://joylux.com/products/vfit"
+   },
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-joylux-vfit-plus",
+   "name": "vFit\u00ae PLUS",
+   "brand": "Joylux",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$494",
+   "image": "https://cdn.shopify.com/s/files/1/1120/5174/files/vfit-plus-upgraded-device-259789.jpg?v=1745343867",
+   "url": "https://joylux.com/products/vfit-plus",
+   "whereToBuy": [
+    "Joylux"
+   ],
+   "whereToBuyLinks": {
+    "Joylux": "https://joylux.com/products/vfit-plus"
+   },
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-june-cup",
+   "name": "Ecoblossom Menstrual Cup (Small & Large Set)",
+   "category": "cup",
+   "type": "physical",
+   "price": "$15.99 (2-pack: Small & Large)",
+   "image": "https://m.media-amazon.com/images/I/71S6JSSjhVL._AC_SX679_.jpg",
+   "whereToBuy": [],
+   "internal": true,
+   "source": "curated",
+   "outOfBusiness": true,
+   "originalName": "June Cup"
+  },
+  {
+   "id": "p-kiero-airy-sun-stick-spf50",
+   "name": "Airy Sun Stick SPF 50+",
+   "brand": "kier\u00f3",
+   "category": "skincare",
+   "type": "physical",
+   "price": "$11.99 for 20 g (0.7 oz)",
+   "image": "https://us.kieroskincare.com/cdn/shop/files/kiero-_-05_a549ac4a-c417-4be1-8731-03d3c0ffddb8.jpg",
+   "url": "https://us.kieroskincare.com/products/sun-stick-spf-50",
+   "whereToBuy": [
+    "kier\u00f3"
+   ],
+   "whereToBuyLinks": {
+    "kier\u00f3": "https://us.kieroskincare.com/products/sun-stick-spf-50"
+   },
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-kiero-refining-enzyme-cleanser",
+   "name": "Refining Enzyme Cleanser",
+   "brand": "kier\u00f3",
+   "category": "skincare",
+   "type": "physical",
+   "price": "$11.99 for 50 g (1.76 oz)",
+   "image": "https://us.kieroskincare.com/cdn/shop/files/kiero-_-05_9dcbb676-03a3-45a9-bb4e-ae5dd1708f23.jpg",
+   "url": "https://us.kieroskincare.com/products/refining-enzyme-cleanser",
+   "whereToBuy": [
+    "kier\u00f3"
+   ],
+   "whereToBuyLinks": {
+    "kier\u00f3": "https://us.kieroskincare.com/products/refining-enzyme-cleanser"
+   },
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-kindra-lotion",
+   "name": "Kindra Daily Vaginal Lotion",
+   "category": "menopause",
+   "type": "physical",
+   "price": "$45",
+   "image": "https://ourkindra.com/cdn/shop/files/Kindra_ProductShot_LotionPackagingOTC_FSA2.jpg?v=1738344965",
+   "whereToBuy": [
+    "OurKindra.com"
+   ],
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-knix-underwear",
+   "name": "Knix Leakproof Underwear",
+   "category": "period-underwear",
+   "type": "physical",
+   "price": "$28",
+   "image": "https://cdn.shopify.com/s/files/1/0668/8591/0570/files/Kt_StageProof_Leakproof_UltraThin_No-Show_Dance_Underwear_Black_1_2x_06e19858-52bc-46c1-b6ab-5068d8363039.webp?v=1779240155",
+   "whereToBuy": [
+    "Knix.com",
+    "Nordstrom"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-kotex-security",
+   "name": "Kotex Security Ultra Thin",
+   "category": "pad",
+   "type": "physical",
+   "price": "Check retailer for current price and pack size",
+   "image": "/products/kotex/security-ultra-thin.png",
+   "whereToBuy": [
+    "CVS",
+    "Target",
+    "Walmart",
+    "Amazon"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-kotex-tampon",
+   "name": "U by Kotex Click Tampons",
+   "category": "tampon",
+   "type": "physical",
+   "price": "Check retailer for current price and pack size",
+   "image": "https://target.scene7.com/is/image/Target/GUEST_34cb7fec-ee4d-4c3b-aecc-707f88afee36",
+   "whereToBuy": [
+    "CVS",
+    "Target",
+    "Walmart",
+    "Amazon"
+   ],
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-l-pad",
+   "name": "L. Organic Cotton Pads",
+   "category": "pad",
+   "type": "physical",
+   "price": "$8 for 42",
+   "image": "https://images.ctfassets.net/hk5leik3t8gi/1nN6axTA4awH3RdrWrtS1r/6de2af4a9dd989e9596fe287c5038af7/00073010719613_C1N1.png",
+   "whereToBuy": [
+    "Target",
+    "Walmart",
+    "Amazon"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-lansinoh-pads",
+   "name": "Lansinoh Stay Dry Nursing Pads",
+   "category": "postpartum",
+   "type": "physical",
+   "price": "$12 for 60",
+   "image": "/products/packaging/p-lansinoh-pads.jpg",
+   "whereToBuy": [
+    "Amazon",
+    "Target"
+   ],
+   "variants": [
+    {
+     "id": "28396272058440",
+     "label": "100 Pads",
+     "url": "https://lansinoh.com/products/stay-dry-disposable-nursing-pads?variant=28396272058440",
+     "image": "https://cdn.shopify.com/s/files/1/0054/1989/2808/files/23_ff408736-b8a9-4bf7-a7af-5edd7cf71afb.png?v=1758734582",
+     "amazonAsin": "B0070SKP1O"
+    },
+    {
+     "id": "29251765862472",
+     "label": "60 Pads",
+     "url": "https://lansinoh.com/products/stay-dry-disposable-nursing-pads?variant=29251765862472",
+     "image": "https://cdn.shopify.com/s/files/1/0054/1989/2808/files/22_baef2a6a-0889-43bb-913f-9f9aa649a574.jpg?v=1758734582",
+     "amazonAsin": "B09VC8TCWW"
+    },
+    {
+     "id": "29251765829704",
+     "label": "36 Pads",
+     "url": "https://lansinoh.com/products/stay-dry-disposable-nursing-pads?variant=29251765829704",
+     "image": "https://cdn.shopify.com/s/files/1/0054/1989/2808/files/21.jpg?v=1758734582",
+     "amazonAsin": "B003U3SWEA"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Lansinoh Stay Dry Nursing Pads",
+   "variantSourceUrl": "https://lansinoh.com/products/stay-dry-disposable-nursing-pads",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated",
+   "imageSourceUrl": "https://lansinoh.com/products/stay-dry-disposable-nursing-pads",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging"
+  },
+  {
+   "id": "p-lelo-sona",
+   "name": "LELO SONA Cruise",
+   "category": "sex-tech",
+   "type": "physical",
+   "price": "$129",
+   "image": "https://assets.lelo.com/dx/product-images/2026-07/LELO_SONA_ProductShot_Pink_Front_2000_0.webp?VersionId=PnjshiQe_cpsN.oz1VQ56EMDFmCHL3pA",
+   "url": "https://www.lelo.com/sona-cruise",
+   "whereToBuy": [
+    "Lelo.com",
+    "Amazon"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-lena-cup",
+   "name": "Lena Menstrual Cup",
+   "category": "cup",
+   "type": "physical",
+   "price": "$25 (reusable 10 years)",
+   "image": "/products/packaging/p-lena-cup.png",
+   "whereToBuy": [
+    "Amazon",
+    "LenaCup.com"
+   ],
+   "variants": [
+    {
+     "id": "33551045197",
+     "label": "Pink / Small",
+     "url": "https://lenacup.com/products/lena-cup?variant=33551045197",
+     "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/WhatsApp_Image_2026-07-28_at_16.19.07_45426fb0-4c21-4d7e-a69d-d957c1563bb9.jpg?v=1785341397",
+     "amazonAsin": "B00YNYH8F4"
+    },
+    {
+     "id": "33551045581",
+     "label": "Pink / Large",
+     "url": "https://lenacup.com/products/lena-cup?variant=33551045581",
+     "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/WhatsApp_Image_2026-07-28_at_16.19.08_b0d17a7f-7b28-4380-9e54-087c09939d2c.jpg?v=1785341374",
+     "amazonAsin": "B00YNYH8EK"
+    },
+    {
+     "id": "33551045325",
+     "label": "Purple / Small",
+     "url": "https://lenacup.com/products/lena-cup?variant=33551045325",
+     "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_PUR-S.png?v=1775990773",
+     "amazonAsin": "B01JWMWSMY"
+    },
+    {
+     "id": "33551045773",
+     "label": "Purple / Large",
+     "url": "https://lenacup.com/products/lena-cup?variant=33551045773",
+     "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_Pur-L.png?v=1775990773",
+     "amazonAsin": "B01JWMWSII"
+    },
+    {
+     "id": "33551045517",
+     "label": "Turquoise / Small",
+     "url": "https://lenacup.com/products/lena-cup?variant=33551045517",
+     "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_Turquoise_Small_bacf0152-3456-4c0f-a26f-cd434e8341cb.jpg?v=1783007349",
+     "amazonAsin": "B01FV0N9BK"
+    },
+    {
+     "id": "33551045965",
+     "label": "Turquoise / Large",
+     "url": "https://lenacup.com/products/lena-cup?variant=33551045965",
+     "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_Turquoise_Large_52a7243c-a21f-4b64-a3df-de3810ba13ac.jpg?v=1783007318",
+     "amazonAsin": "B01FW9NEGA"
+    },
+    {
+     "id": "32308037386305",
+     "label": "Gray / Small",
+     "url": "https://lenacup.com/products/lena-cup?variant=32308037386305",
+     "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_BLK-S_ed1c1f7f-df91-41c0-82cf-bbeec40c8078.png?v=1775990773",
+     "amazonAsin": "B08HSLY3M6"
+    },
+    {
+     "id": "32308038402113",
+     "label": "Gray / Large",
+     "url": "https://lenacup.com/products/lena-cup?variant=32308038402113",
+     "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_BLK-L_f3ffc915-e8da-42df-a0d4-2d8190b60937.png?v=1775990773",
+     "amazonAsin": "B08HW1VFFZ"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Lena Menstrual Cup",
+   "variantSourceUrl": "https://lenacup.com/products/lena-cup",
+   "variantsVerifiedAt": "2026-09-26",
+   "internal": true,
+   "source": "curated",
+   "imageSourceUrl": "https://lenacup.com/products/lena-cup",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging"
+  },
+  {
+   "id": "p-lim-method-bundle",
+   "name": "The LiM Bundle",
+   "brand": "LiM Method",
+   "category": "pelvic-floor",
+   "type": "physical",
+   "price": "$199.95",
+   "image": "/products/limmethod/kneeling-pad-flatlay.webp",
+   "url": "https://www.limmethod.com/products/the-lim-bundle-2",
+   "affiliateUrl": "https://www.limmethod.com/products/the-lim-bundle-2?ref=Ayna_Health",
+   "whereToBuy": [
+    "LiM Method"
+   ],
+   "whereToBuyLinks": {
+    "LiM Method": "https://www.limmethod.com/products/the-lim-bundle-2?ref=Ayna_Health"
+   },
+   "variants": [
+    {
+     "id": "50286421115168",
+     "label": "Shadow Gray",
+     "url": "https://www.limmethod.com/products/the-lim-bundle-2?variant=50286421115168",
+     "image": "https://cdn.shopify.com/s/files/1/0764/6573/3920/files/lim-bundle-product-image-1-gray_624d3a0a-be10-4cbe-a491-94d6caa283e8.png?v=1750363955"
+    },
+    {
+     "id": "50286421147936",
+     "label": "Cobalt Blue",
+     "url": "https://www.limmethod.com/products/the-lim-bundle-2?variant=50286421147936",
+     "image": "https://cdn.shopify.com/s/files/1/0764/6573/3920/files/lim-bundle-product-image-1-blue_0c6c59a3-681f-4f34-9dfa-847bcddb5382.png?v=1750363944"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "The LiM Bundle",
+   "variantSourceUrl": "https://www.limmethod.com/products/the-lim-bundle-2",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated",
+   "fsaHsaEligible": true,
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-lim-method-kneeling-pad",
+   "name": "LiM Method Kneeling Pad",
+   "brand": "LiM Method",
+   "category": "pelvic-floor",
+   "type": "physical",
+   "price": "$24.99",
+   "image": "/products/packaging/p-lim-method-kneeling-pad.png",
+   "url": "https://www.limmethod.com/products/kneeling-pad",
+   "affiliateUrl": "https://www.limmethod.com/collections/accessories/products/kneeling-pad?ref=Ayna_Health",
+   "whereToBuy": [
+    "LiM Method"
+   ],
+   "whereToBuyLinks": {
+    "LiM Method": "https://www.limmethod.com/collections/accessories/products/kneeling-pad?ref=Ayna_Health"
+   },
+   "source": "curated",
+   "imageSourceUrl": "https://www.limmethod.com/products/kneeling-pad",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-product",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-lim-method-shoe-covers",
+   "name": "LiM Method Shoe Covers",
+   "brand": "LiM Method",
+   "category": "pelvic-floor",
+   "type": "physical",
+   "price": "$24.99",
+   "image": "https://www.limmethod.com/cdn/shop/files/IMG_2821.jpg?v=1696450654&width=1946",
+   "url": "https://www.limmethod.com/products/shoe-covers",
+   "affiliateUrl": "https://www.limmethod.com/collections/accessories/products/shoe-covers?ref=Ayna_Health",
+   "whereToBuy": [
+    "LiM Method"
+   ],
+   "whereToBuyLinks": {
+    "LiM Method": "https://www.limmethod.com/collections/accessories/products/shoe-covers?ref=Ayna_Health"
+   },
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-livlabs-pippa-fit-kit",
+   "name": "Pippa Resistance Spring Fit Kit",
+   "brand": "Liv Labs",
+   "category": "pelvic-floor",
+   "type": "physical",
+   "price": "$149.00",
+   "image": "/products/packaging/p-livlabs-pippa-fit-kit.png",
+   "url": "https://livlabsfitness.com/products/pippa-fit-kit",
+   "whereToBuy": [
+    "livlabsfitness.com"
+   ],
+   "source": "curated",
+   "imageSourceUrl": "https://livlabsfitness.com/products/pippa-fit-kit",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-livlabs-pippa-starter-kit",
+   "name": "Pippa Resistance Spring Starter Kit",
+   "brand": "Liv Labs",
+   "category": "pelvic-floor",
+   "type": "physical",
+   "price": "$99.00",
+   "image": "/products/packaging/p-livlabs-pippa-starter-kit.png",
+   "url": "https://livlabsfitness.com/products/pippa-resistance-spring-starter-kit",
+   "whereToBuy": [
+    "livlabsfitness.com"
+   ],
+   "source": "curated",
+   "imageSourceUrl": "https://livlabsfitness.com/products/pippa-resistance-spring-starter-kit",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-lola-pad",
+   "name": "LOLA Organic Cotton Pads",
+   "category": "pad",
+   "type": "physical",
+   "price": "$9 for 14",
+   "image": "https://m.media-amazon.com/images/I/71j3reiHuBL.jpg",
+   "url": "https://mylola.com/",
+   "whereToBuy": [
+    "Amazon",
+    "LOLA.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-lola-tampon",
+   "name": "LOLA Organic Tampons",
+   "category": "tampon",
+   "type": "physical",
+   "price": "$10 for 18",
+   "image": "https://mylola.com/cdn/shop/files/four-lola-plastic-applicator-tampon-boxes.img.jpg?v=1753220344&width=1946",
+   "url": "https://mylola.com/",
+   "whereToBuy": [
+    "Amazon",
+    "LOLA.com"
+   ],
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-love-wellness-bloat",
+   "name": "Love Wellness Bye Bye Bloat",
+   "brand": "Love Wellness",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$24 for 30 capsules",
+   "image": "https://cdn.shopify.com/s/files/1/1288/3849/files/01_LW_PDP_BBB_Silo_d91565b2-159b-4249-8db3-633000ab49bf.jpg?v=1762521813",
+   "whereToBuy": [
+    "Amazon",
+    "LoveWellness.com",
+    "Target",
+    "Ulta"
+   ],
+   "variants": [
+    {
+     "id": "42677789524083",
+     "label": "Standard",
+     "url": "https://lovewellness.com/products/bye-bye-bloat?variant=42677789524083",
+     "image": "https://cdn.shopify.com/s/files/1/1288/3849/files/01_LW_PDP_BBB_Silo_d91565b2-159b-4249-8db3-633000ab49bf.jpg?v=1762521813",
+     "amazonAsin": "B07TCQS4QJ"
+    },
+    {
+     "id": "42677789556851",
+     "label": "Jumbo",
+     "url": "https://lovewellness.com/products/bye-bye-bloat?variant=42677789556851",
+     "image": "https://cdn.shopify.com/s/files/1/1288/3849/files/01_LW_PDP_BBB_Silo-JUMBO.jpg?v=1765469181"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Love Wellness Bye Bye Bloat",
+   "variantSourceUrl": "https://lovewellness.com/products/bye-bye-bloat",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated"
+  },
+  {
+   "id": "p-love-wellness-intimate-skin-support",
+   "name": "Love Wellness Intimate Skin Support",
+   "brand": "Love Wellness",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$19.99 for 4 fl oz",
+   "image": "https://lovewellness.com/cdn/shop/files/01_LW_PDP_ISS_Silo_png2.png?v=1790626501",
+   "url": "https://lovewellness.com/products/intimate-skin-support",
+   "whereToBuy": [
+    "LoveWellness.com",
+    "Ulta"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-lumma-disc",
+   "name": "Lumma Unique Menstrual Disc",
+   "category": "disc",
+   "type": "physical",
+   "price": "$35 (reusable)",
+   "image": "https://mylumma.com/cdn/shop/files/bogo-pack-lumma-disc-pinklove-background.webp?v=1762928416",
+   "whereToBuy": [
+    "Amazon",
+    "LummaUnique.com"
+   ],
+   "variants": [
+    {
+     "id": "46904675533057",
+     "label": "Short / Pink Love",
+     "url": "https://mylumma.com/products/menstrual-disc?variant=46904675533057",
+     "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-pinklove-background.webp?v=1762928416"
+    },
+    {
+     "id": "46904675565825",
+     "label": "Short / Unicorn",
+     "url": "https://mylumma.com/products/menstrual-disc?variant=46904675565825",
+     "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-unicorn-background.webp?v=1762928416"
+    },
+    {
+     "id": "46904675598593",
+     "label": "Short / Clear",
+     "url": "https://mylumma.com/products/menstrual-disc?variant=46904675598593",
+     "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-clear-background.webp?v=1762928416"
+    },
+    {
+     "id": "46904675631361",
+     "label": "Medium / Pink Love",
+     "url": "https://mylumma.com/products/menstrual-disc?variant=46904675631361",
+     "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-pinklove-background.webp?v=1762928416"
+    },
+    {
+     "id": "46904675664129",
+     "label": "Medium / Unicorn",
+     "url": "https://mylumma.com/products/menstrual-disc?variant=46904675664129",
+     "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-unicorn-background.webp?v=1762928416"
+    },
+    {
+     "id": "46904675696897",
+     "label": "Medium / Clear",
+     "url": "https://mylumma.com/products/menstrual-disc?variant=46904675696897",
+     "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-clear-background.webp?v=1762928416"
+    },
+    {
+     "id": "46904675729665",
+     "label": "High / Pink Love",
+     "url": "https://mylumma.com/products/menstrual-disc?variant=46904675729665",
+     "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-pinklove-background.webp?v=1762928416"
+    },
+    {
+     "id": "46904675762433",
+     "label": "High / Unicorn",
+     "url": "https://mylumma.com/products/menstrual-disc?variant=46904675762433",
+     "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-unicorn-background.webp?v=1762928416"
+    },
+    {
+     "id": "46904675795201",
+     "label": "High / Clear",
+     "url": "https://mylumma.com/products/menstrual-disc?variant=46904675795201",
+     "image": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/bogo-pack-lumma-disc-clear-background.webp?v=1762928416"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Lumma Unique Menstrual Disc",
+   "variantSourceUrl": "https://mylumma.com/products/menstrual-disc",
+   "variantsVerifiedAt": "2026-09-26",
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-luna-wash",
+   "name": "Luna Daily Intimate Feminine Wash",
+   "brand": "Luna Daily",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$12 for 6oz",
+   "image": "https://m.media-amazon.com/images/I/41-RVVZ5OkL.jpg",
+   "whereToBuy": [
+    "Amazon",
+    "Target"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-lunette-cup",
+   "name": "Lunette Menstrual Cup",
+   "category": "cup",
+   "type": "physical",
+   "price": "$28 (reusable)",
+   "image": "/products/packaging/p-lunette-cup.png",
+   "whereToBuy": [
+    "Amazon",
+    "Lunette.com"
+   ],
+   "variants": [
+    {
+     "id": "33056100646989",
+     "label": "1. Light to medium flow",
+     "url": "https://www.lunette.com/products/menstrual-cup?variant=33056100646989",
+     "image": "https://cdn.shopify.com/s/files/1/1826/3849/files/LUNETTE_Cup_Size_1_Lunette_grey_VIOLET.png?v=1784305836",
+     "amazonAsin": "B002MA4SI6"
+    },
+    {
+     "id": "33056100679757",
+     "label": "2. Medium to heavy flow",
+     "url": "https://www.lunette.com/products/menstrual-cup?variant=33056100679757",
+     "image": "https://cdn.shopify.com/s/files/1/1826/3849/files/LUNETTE_Cup_Size_2_Lunette_grey_VIOLET.png?v=1784305836",
+     "amazonAsin": "B0054SQ02K"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Lunette Menstrual Cup",
+   "variantSourceUrl": "https://www.lunette.com/products/menstrual-cup",
+   "variantsVerifiedAt": "2026-09-26",
+   "internal": true,
+   "source": "curated",
+   "imageSourceUrl": "https://www.lunette.com/products/menstrual-cup",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging"
+  },
+  {
+   "id": "p-magnesium-glycinate",
+   "name": "Nature Made Magnesium Glycinate 200 mg, 60 Capsules",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$21.99 for 60 capsules",
+   "image": "/products/naturemade/magnesium-glycinate-200mg.png",
+   "url": "https://www.naturemade.com/products/high-absorption-magnesium-glycinate-200-mg-capsules",
+   "whereToBuy": [
+    "CVS",
+    "Target",
+    "Walmart",
+    "Amazon"
+   ],
+   "source": "curated",
+   "originalName": "Nature Made Magnesium Glycinate"
+  },
+  {
+   "id": "p-maude-vibe",
+   "name": "Maude Vibe",
+   "category": "sex-tech",
+   "type": "physical",
+   "price": "$49",
+   "image": "http://shopstonedfox.com/cdn/shop/products/VIBE-MAUDE.jpg?v=1659724639",
+   "whereToBuy": [
+    "Sephora"
+   ],
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-modibodi",
+   "name": "Modibodi Period Underwear",
+   "category": "period-underwear",
+   "type": "physical",
+   "price": "$20\u2013$35 per pair",
+   "image": "https://www.theperiod.co/cdn/shop/products/MB_Classic_Bikini_Beige_LM_Front_1024x1024_2x_efb90db8-2189-49af-a8ce-f2f048c0f5b3.jpg?v=1616507387&width=2000",
+   "whereToBuy": [
+    "Amazon",
+    "Modibodi.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-mypelvicbra-classic",
+   "name": "Classic Pelvic Bra",
+   "brand": "My Pelvic Bra",
+   "category": "pelvic-floor",
+   "type": "physical",
+   "price": "\u20ac69.95",
+   "image": "https://www.mypelvicbra.shop/cdn/shop/files/ClassicPelvicBra.jpg",
+   "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE",
+   "affiliateUrl": "https://pelvic-bra.myshopify.com/nlbs3u",
+   "whereToBuy": [],
+   "variants": [
+    {
+     "id": "42741900148797",
+     "label": "XS / White",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE?variant=42741900148797"
+    },
+    {
+     "id": "42741900181565",
+     "label": "XS / Black",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE?variant=42741900181565"
+    },
+    {
+     "id": "42741900083261",
+     "label": "Small / White",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE?variant=42741900083261"
+    },
+    {
+     "id": "42741900116029",
+     "label": "Small / Black",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE?variant=42741900116029"
+    },
+    {
+     "id": "42741900279869",
+     "label": "Medium / White",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE?variant=42741900279869"
+    },
+    {
+     "id": "42741900312637",
+     "label": "Medium / Black",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE?variant=42741900312637"
+    },
+    {
+     "id": "42741900017725",
+     "label": "Large / White",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE?variant=42741900017725"
+    },
+    {
+     "id": "42741900050493",
+     "label": "Large / Black",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE?variant=42741900050493"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Classic Pelvic Bra",
+   "variantSourceUrl": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-mypelvicbra-classic-plus",
+   "name": "Classic Plus Pelvic Bra\u00ae",
+   "brand": "My Pelvic Bra",
+   "category": "pelvic-floor",
+   "type": "physical",
+   "price": "\u20ac77.95",
+   "image": "https://cdn.shopify.com/s/files/1/0640/1513/8877/files/6.png?v=1788247226",
+   "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE-classic-plus",
+   "affiliateUrl": "https://pelvic-bra.myshopify.com/products/classic-pelvic-bra%C2%AE-classic-plus?bg_ref=bZYYwMBpTa",
+   "whereToBuy": [],
+   "variants": [
+    {
+     "id": "43433312157757",
+     "label": "XS / Black",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE-classic-plus?variant=43433312157757"
+    },
+    {
+     "id": "43603903217725",
+     "label": "XS / White",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE-classic-plus?variant=43603903217725"
+    },
+    {
+     "id": "43433312223293",
+     "label": "Small / Black",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE-classic-plus?variant=43433312223293"
+    },
+    {
+     "id": "43603903250493",
+     "label": "Small / White",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE-classic-plus?variant=43603903250493"
+    },
+    {
+     "id": "43433312288829",
+     "label": "Medium / Black",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE-classic-plus?variant=43433312288829"
+    },
+    {
+     "id": "43603903283261",
+     "label": "Medium / White",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE-classic-plus?variant=43603903283261"
+    },
+    {
+     "id": "43433312354365",
+     "label": "Large / Black",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE-classic-plus?variant=43433312354365"
+    },
+    {
+     "id": "43603903316029",
+     "label": "Large / White",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE-classic-plus?variant=43603903316029"
+    },
+    {
+     "id": "43533744996413",
+     "label": "XL / Black",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE-classic-plus?variant=43533744996413"
+    },
+    {
+     "id": "43603903348797",
+     "label": "XL / White",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE-classic-plus?variant=43603903348797"
+    },
+    {
+     "id": "43533745029181",
+     "label": "XXL / Black",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE-classic-plus?variant=43533745029181"
+    },
+    {
+     "id": "43603903381565",
+     "label": "XXL / White",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE-classic-plus?variant=43603903381565"
+    },
+    {
+     "id": "43534242447421",
+     "label": "3XL (XXL + 2\" Extenders) / Black",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE-classic-plus?variant=43534242447421"
+    },
+    {
+     "id": "43603903414333",
+     "label": "3XL (XXL + 2\" Extenders) / White",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE-classic-plus?variant=43603903414333"
+    },
+    {
+     "id": "43534242480189",
+     "label": "4XL (XXL + 4\" Extenders) / Black",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE-classic-plus?variant=43534242480189"
+    },
+    {
+     "id": "43603903447101",
+     "label": "4XL (XXL + 4\" Extenders) / White",
+     "url": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE-classic-plus?variant=43603903447101"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Classic Plus Pelvic Bra\u00ae",
+   "variantSourceUrl": "https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE-classic-plus",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-mypelvicbra-prolapse-chicken",
+   "name": "myPelvicBra\u00ae Pink Prolapse Chicken",
+   "brand": "My Pelvic Bra",
+   "category": "pelvic-floor",
+   "type": "physical",
+   "price": "\u20ac6.95",
+   "image": "https://cdn.shopify.com/s/files/1/0640/1513/8877/files/36.png?v=1788468282",
+   "url": "https://www.mypelvicbra.shop/products/mypelvicbra%C2%AE-pink-prolapse-chicken",
+   "affiliateUrl": "https://pelvic-bra.myshopify.com/products/mypelvicbra%C2%AE-pink-prolapse-chicken?bg_ref=bZYYwMBpTa",
+   "whereToBuy": [],
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-mypelvicbra-sports",
+   "name": "Sports Pelvic Bra\u00ae",
+   "brand": "My Pelvic Bra",
+   "category": "pelvic-floor",
+   "type": "physical",
+   "price": "$49.00",
+   "image": "/products/mypelvicbra/sports-pelvic-bra.webp",
+   "url": "https://www.mypelvicbra.shop/products/sports-pelvic-bra%C2%AE",
+   "affiliateUrl": "https://pelvic-bra.myshopify.com/products/sports-pelvic-bra%C2%AE?bg_ref=bZYYwMBpTa",
+   "whereToBuy": [],
+   "variants": [
+    {
+     "id": "42725565202493",
+     "label": "XS / White",
+     "url": "https://www.mypelvicbra.shop/products/sports-pelvic-bra%C2%AE?variant=42725565202493"
+    },
+    {
+     "id": "43084634816573",
+     "label": "XS / Black",
+     "url": "https://www.mypelvicbra.shop/products/sports-pelvic-bra%C2%AE?variant=43084634816573"
+    },
+    {
+     "id": "42725564907581",
+     "label": "Small / White",
+     "url": "https://www.mypelvicbra.shop/products/sports-pelvic-bra%C2%AE?variant=42725564907581"
+    },
+    {
+     "id": "43084634849341",
+     "label": "Small / Black",
+     "url": "https://www.mypelvicbra.shop/products/sports-pelvic-bra%C2%AE?variant=43084634849341"
+    },
+    {
+     "id": "42725565300797",
+     "label": "Medium / White",
+     "url": "https://www.mypelvicbra.shop/products/sports-pelvic-bra%C2%AE?variant=42725565300797"
+    },
+    {
+     "id": "43084634882109",
+     "label": "Medium / Black",
+     "url": "https://www.mypelvicbra.shop/products/sports-pelvic-bra%C2%AE?variant=43084634882109"
+    },
+    {
+     "id": "42725564842045",
+     "label": "Large / White",
+     "url": "https://www.mypelvicbra.shop/products/sports-pelvic-bra%C2%AE?variant=42725564842045"
+    },
+    {
+     "id": "43084634914877",
+     "label": "Large / Black",
+     "url": "https://www.mypelvicbra.shop/products/sports-pelvic-bra%C2%AE?variant=43084634914877"
+    },
+    {
+     "id": "42725565005885",
+     "label": "XL / White",
+     "url": "https://www.mypelvicbra.shop/products/sports-pelvic-bra%C2%AE?variant=42725565005885"
+    },
+    {
+     "id": "43084634947645",
+     "label": "XL / Black",
+     "url": "https://www.mypelvicbra.shop/products/sports-pelvic-bra%C2%AE?variant=43084634947645"
+    },
+    {
+     "id": "43059242336317",
+     "label": "XXL / White",
+     "url": "https://www.mypelvicbra.shop/products/sports-pelvic-bra%C2%AE?variant=43059242336317"
+    },
+    {
+     "id": "43084634980413",
+     "label": "XXL / Black",
+     "url": "https://www.mypelvicbra.shop/products/sports-pelvic-bra%C2%AE?variant=43084634980413"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Sports Pelvic Bra\u00ae",
+   "variantSourceUrl": "https://www.mypelvicbra.shop/products/sports-pelvic-bra%C2%AE",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-mypelvicbra-waistband-extenders",
+   "name": "Pelvic Bra\u00ae Waistband Extenders",
+   "brand": "My Pelvic Bra",
+   "category": "pelvic-floor",
+   "type": "physical",
+   "price": "\u20ac7.95",
+   "image": "https://cdn.shopify.com/s/files/1/0640/1513/8877/files/WaistbandExtenders_4.jpg?v=1766335111",
+   "url": "https://www.mypelvicbra.shop/products/waistband-extenders",
+   "affiliateUrl": "https://pelvic-bra.myshopify.com/products/waistband-extenders?bg_ref=bZYYwMBpTa",
+   "whereToBuy": [],
+   "variants": [
+    {
+     "id": "42742021881917",
+     "label": "S1 \u2014 Classic | 2\" Extenders / Black",
+     "url": "https://www.mypelvicbra.shop/products/waistband-extenders?variant=42742021881917",
+     "image": "https://cdn.shopify.com/s/files/1/0640/1513/8877/files/WaistbandExtenders.jpg?v=1766335110"
+    },
+    {
+     "id": "43235780558909",
+     "label": "S1 \u2014 Classic | 2\" Extenders / White",
+     "url": "https://www.mypelvicbra.shop/products/waistband-extenders?variant=43235780558909"
+    },
+    {
+     "id": "42742022176829",
+     "label": "S2 \u2014 Classic | 4\" Extenders / Black",
+     "url": "https://www.mypelvicbra.shop/products/waistband-extenders?variant=42742022176829",
+     "image": "https://cdn.shopify.com/s/files/1/0640/1513/8877/files/WaistbandExtenders_3.jpg?v=1766335110"
+    },
+    {
+     "id": "43235780591677",
+     "label": "S2 \u2014 Classic | 4\" Extenders / White",
+     "url": "https://www.mypelvicbra.shop/products/waistband-extenders?variant=43235780591677"
+    },
+    {
+     "id": "42742028337213",
+     "label": "L1 \u2014 Classic Plus | 2\" Extenders / Black",
+     "url": "https://www.mypelvicbra.shop/products/waistband-extenders?variant=42742028337213",
+     "image": "https://cdn.shopify.com/s/files/1/0640/1513/8877/files/WaistbandExtenders_2.jpg?v=1766335110"
+    },
+    {
+     "id": "43235780624445",
+     "label": "L1 \u2014 Classic Plus | 2\" Extenders / White",
+     "url": "https://www.mypelvicbra.shop/products/waistband-extenders?variant=43235780624445"
+    },
+    {
+     "id": "42742028369981",
+     "label": "L2 \u2014 Classic Plus | 4\" Extenders / Black",
+     "url": "https://www.mypelvicbra.shop/products/waistband-extenders?variant=42742028369981"
+    },
+    {
+     "id": "43235780657213",
+     "label": "L2 \u2014 Classic Plus | 4\" Extenders / White",
+     "url": "https://www.mypelvicbra.shop/products/waistband-extenders?variant=43235780657213"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Pelvic Bra\u00ae Waistband Extenders",
+   "variantSourceUrl": "https://www.mypelvicbra.shop/products/waistband-extenders",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-mystery-vibe",
+   "name": "MysteryVibe Crescendo 2",
+   "category": "sex-tech",
+   "type": "physical",
+   "price": "$150",
+   "image": "https://cdn.shopify.com/s/files/1/0082/8879/6719/files/P-Crescendo-2-Bend-Cream-3000x2000_ef8e0576-a31c-415f-9ec3-275583b3e5ff.jpg?v=1762871502",
+   "whereToBuy": [
+    "MysteryVibe.com"
+   ],
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-natracare-pad",
+   "name": "Natracare Ultra Pads",
+   "category": "pad",
+   "type": "physical",
+   "price": "$7 for 14",
+   "image": "http://shop.natracare.com/cdn/shop/files/natracare-ultra-pads-regular-800.jpg?v=1715939406",
+   "whereToBuy": [
+    "Whole Foods",
+    "Amazon",
+    "iHerb"
+   ],
+   "variants": [
+    {
+     "id": "48659752354140",
+     "label": "Regular / 1 Pack",
+     "url": "https://shop.natracare.com/products/ultra-pads-regular-super-long-plus?variant=48659752354140",
+     "image": "https://cdn.shopify.com/s/files/1/0830/8821/2316/files/natracare-ultra-pads-regular-800.jpg?v=1715939406",
+     "amazonAsin": "B000VI3LNE"
+    },
+    {
+     "id": "49098168205660",
+     "label": "Regular / 4 Pack",
+     "url": "https://shop.natracare.com/products/ultra-pads-regular-super-long-plus?variant=49098168205660",
+     "image": "https://cdn.shopify.com/s/files/1/0830/8821/2316/files/0782126003058-Icon.jpg?v=1726134616"
+    },
+    {
+     "id": "48659752386908",
+     "label": "Super / 1 Pack",
+     "url": "https://shop.natracare.com/products/ultra-pads-regular-super-long-plus?variant=48659752386908",
+     "image": "https://cdn.shopify.com/s/files/1/0830/8821/2316/files/natracare-ultra-pads-super-800.jpg?v=1715938321",
+     "amazonAsin": "B000QVDLKO"
+    },
+    {
+     "id": "49098168238428",
+     "label": "Super / 4 Pack",
+     "url": "https://shop.natracare.com/products/ultra-pads-regular-super-long-plus?variant=49098168238428",
+     "image": "https://cdn.shopify.com/s/files/1/0830/8821/2316/files/0782126003089-Icon.jpg?v=1726134616"
+    },
+    {
+     "id": "48659752419676",
+     "label": "Long / 1 Pack",
+     "url": "https://shop.natracare.com/products/ultra-pads-regular-super-long-plus?variant=48659752419676",
+     "image": "https://cdn.shopify.com/s/files/1/0830/8821/2316/files/natracare-ultra-pads-long-800.jpg?v=1715938292"
+    },
+    {
+     "id": "49098168271196",
+     "label": "Long / 4 Pack",
+     "url": "https://shop.natracare.com/products/ultra-pads-regular-super-long-plus?variant=49098168271196",
+     "image": "https://cdn.shopify.com/s/files/1/0830/8821/2316/files/0782126003102-Icon.jpg?v=1726134617"
+    },
+    {
+     "id": "48659752452444",
+     "label": "Super Plus / 1 Pack",
+     "url": "https://shop.natracare.com/products/ultra-pads-regular-super-long-plus?variant=48659752452444",
+     "image": "https://cdn.shopify.com/s/files/1/0830/8821/2316/files/natracare-ultra-pads-super-plus-800.jpg?v=1715938262"
+    },
+    {
+     "id": "49098168303964",
+     "label": "Super Plus / 4 Pack",
+     "url": "https://shop.natracare.com/products/ultra-pads-regular-super-long-plus?variant=49098168303964",
+     "image": "https://cdn.shopify.com/s/files/1/0830/8821/2316/files/0782126003119-Icon.jpg?v=1726134617"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Natracare Ultra Pads",
+   "variantSourceUrl": "https://shop.natracare.com/products/ultra-pads-regular-super-long-plus",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated"
+  },
+  {
+   "id": "p-natracare-tampon",
+   "name": "Natracare Regular Non-Applicator Organic Cotton Tampons",
+   "category": "tampon",
+   "type": "physical",
+   "price": "Varies by retailer (10 or 20 count)",
+   "image": "/products/verified/p-natracare-tampon.jpg",
+   "url": "https://www.natracare.com/products/tampons/organic-regular-non-applicator-tampons/",
+   "whereToBuy": [
+    "Whole Foods",
+    "Amazon"
+   ],
+   "internal": true,
+   "source": "curated",
+   "imageSourceUrl": "https://www.natracare.com/products/tampons/organic-regular-non-applicator-tampons/",
+   "imageVerifiedAt": "2026-09-25",
+   "originalName": "Natracare Organic Tampons"
+  },
+  {
+   "id": "p-nature-made-iron-65mg",
+   "name": "Nature Made Iron 65 mg Tablets",
+   "brand": "Nature Made",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$10.59 (180 tablets, 180-day supply)",
+   "image": "https://www.naturemade.com/cdn/shop/files/NM2612PK001234IRON_150ccfront_1500x.png?v=1717195534",
+   "url": "https://www.naturemade.com/products/iron-tablets",
+   "whereToBuy": [
+    "NatureMade.com",
+    "Amazon"
+   ],
+   "whereToBuyLinks": {
+    "Amazon": "https://www.amazon.com/Nature-Made-Ferrous-Sulfate-Tablets/dp/B003PGJLRO",
+    "NatureMade.com": "https://www.naturemade.com/products/iron-tablets"
+   },
+   "whereToBuyInStock": {
+    "Amazon": true
+   },
+   "source": "curated"
+  },
+  {
+   "id": "p-natures-bounty-d3-125mcg",
+   "name": "Nature's Bounty Vitamin D3 5000 IU Softgels",
+   "brand": "Nature's Bounty",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$10\u201315 (150 softgels)",
+   "image": "https://naturesbounty.com/cdn/shop/products/089377.png",
+   "url": "https://naturesbounty.com/products/vitamin-d3-5000-iu-150-rapid-release-softgels",
+   "whereToBuy": [
+    "Nature's Bounty",
+    "Amazon"
+   ],
+   "whereToBuyLinks": {
+    "Amazon": "https://www.amazon.com/Natures-Bounty-Supplement-Supports-Softgels/dp/B002Y27LLS",
+    "Nature's Bounty": "https://naturesbounty.com/products/vitamin-d3-5000-iu-150-rapid-release-softgels"
+   },
+   "whereToBuyInStock": {
+    "Amazon": true
+   },
+   "source": "curated"
+  },
+  {
+   "id": "p-neycher-hydrobloom-gel",
+   "name": "Neycher HydroBloom Moisturizing Gel",
+   "brand": "Neycher",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$25.97",
+   "image": "https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/69b007753e5c0c33308cc349_hand.webp",
+   "url": "https://www.helloneycher.com/product/hydrobloom-moisturizing-gel",
+   "whereToBuy": [
+    "helloneycher.com"
+   ],
+   "internal": true,
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-neycher-odor-be-gone",
+   "name": "Neycher Odor Be Gone",
+   "brand": "Neycher",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$29.97 (10 suppositories)",
+   "image": "https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/6a0b3e76d248803f468a5c1e_Frame%201000011416%20(1).webp",
+   "url": "https://www.helloneycher.com/product/odor-be-gone",
+   "whereToBuy": [
+    "helloneycher.com"
+   ],
+   "internal": true,
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-neycher-vaginal-moisturizer",
+   "name": "Neycher Vaginal Moisturizer",
+   "brand": "Neycher",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$32.91",
+   "image": "https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/686eb5fcdbbd35b6fc957602_Frame%201000011567.jpg",
+   "url": "https://www.helloneycher.com/product/vaginal-moisturizer",
+   "whereToBuy": [
+    "helloneycher.com",
+    "Amazon"
+   ],
+   "internal": true,
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-nixit",
+   "name": "Nixit Menstrual Disc",
+   "category": "disc",
+   "type": "physical",
+   "price": "$42 (reusable)",
+   "image": "https://nixit.com/cdn/shop/files/4_9f6ddd26-7a61-4d08-b865-16adac0ff5b0_300x300_crop_center.png?v=1770330830",
+   "whereToBuy": [
+    "Amazon",
+    "Nixit.com"
+   ],
+   "variants": [
+    {
+     "id": "15856471801928",
+     "label": "Teal / Single",
+     "url": "https://nixit.com/products/nixit-menstrual-disc?variant=15856471801928",
+     "image": "https://cdn.shopify.com/s/files/1/0015/4478/1896/files/website_-_condoms_1.png?v=1770330830",
+     "amazonAsin": "B0DGW9R5XR"
+    },
+    {
+     "id": "42370132148317",
+     "label": "Teal / 2 Pack",
+     "url": "https://nixit.com/products/nixit-menstrual-disc?variant=42370132148317",
+     "image": "https://cdn.shopify.com/s/files/1/0015/4478/1896/files/website_-_bundles.png?v=1770816865"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Nixit Menstrual Disc",
+   "variantSourceUrl": "https://nixit.com/products/nixit-menstrual-disc",
+   "variantsVerifiedAt": "2026-09-26",
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-nutrafol-balance",
+   "name": "Nutrafol Women's Balance",
+   "brand": "Nutrafol",
+   "category": "hair",
+   "type": "physical",
+   "price": "$88/month ($70.40/month on subscription)",
+   "image": "https://images.ctfassets.net/0rbfqd9c4jdo/RwXGiCToo66NwQtJfRxgW/6ab7faac1286129d6d775d6b33fc48a6/BAL1_6.png",
+   "url": "https://nutrafol.com/hair/women/product/core/balance/",
+   "whereToBuy": [],
+   "source": "curated",
+   "isEmergingBrand": false
+  },
+  {
+   "id": "p-nutrafol-postpartum",
+   "name": "Nutrafol Postpartum",
+   "brand": "Nutrafol",
+   "category": "hair",
+   "type": "physical",
+   "price": "$88/month ($70.40/month on subscription)",
+   "image": "https://images.ctfassets.net/0rbfqd9c4jdo/29t1FkqJzForpVAyo07BNw/18fbcdd867e039e27d6dfa638e448e17/pdp-postpartum-package-spu.jpg?fl=progressive",
+   "url": "https://nutrafol.com/hair/women/product/core/postpartum/",
+   "whereToBuy": [],
+   "source": "curated",
+   "isEmergingBrand": false
+  },
+  {
+   "id": "p-ob-original-multipack-40",
+   "name": "o.b. Original Tampons Multi-Pack, 40ct",
+   "brand": "o.b.",
+   "category": "tampon",
+   "type": "physical",
+   "price": "See Amazon",
+   "image": "https://m.media-amazon.com/images/I/71BxkQUq5sL._AC_SX679_.jpg",
+   "url": "https://www.ob-tampons.com/products/ob-tampons-multipack-r-s-s-plus",
+   "affiliateUrl": "https://www.amazon.com/dp/B00NJNJ6WI?tag=aynahealth-20",
+   "whereToBuy": [
+    "Amazon",
+    "o.b."
+   ],
+   "whereToBuyLinks": {
+    "o.b.": "https://www.ob-tampons.com/products/ob-tampons-multipack-r-s-s-plus",
+    "Amazon": "https://www.amazon.com/dp/B00NJNJ6WI?tag=aynahealth-20"
+   },
+   "source": "curated",
+   "isEmergingBrand": false
+  },
+  {
+   "id": "p-ob-original-multipack-80",
+   "name": "o.b. Original Tampons Multi-Pack, 40ct (Pack of 2)",
+   "brand": "o.b.",
+   "category": "tampon",
+   "type": "physical",
+   "price": "See Amazon",
+   "image": "https://m.media-amazon.com/images/I/714p5CFeMhL._AC_SX679_.jpg",
+   "url": "https://www.ob-tampons.com/products/ob-tampons-multipack-r-s-s-plus",
+   "affiliateUrl": "https://www.amazon.com/dp/B0D14X9YFR?tag=aynahealth-20",
+   "whereToBuy": [
+    "Amazon",
+    "o.b."
+   ],
+   "whereToBuyLinks": {
+    "o.b.": "https://www.ob-tampons.com/products/ob-tampons-multipack-r-s-s-plus",
+    "Amazon": "https://www.amazon.com/dp/B0D14X9YFR?tag=aynahealth-20"
+   },
+   "source": "curated",
+   "isEmergingBrand": false
+  },
+  {
+   "id": "p-ob-original-regular-40",
+   "name": "o.b. Original Tampons Regular, 40ct",
+   "brand": "o.b.",
+   "category": "tampon",
+   "type": "physical",
+   "price": "See Amazon",
+   "image": "https://m.media-amazon.com/images/I/71OlGleVPgL._AC_SX679_.jpg",
+   "url": "https://www.ob-tampons.com/products/ob-tampons-regular",
+   "affiliateUrl": "https://www.amazon.com/dp/B00NJNJCI6?tag=aynahealth-20",
+   "whereToBuy": [
+    "Amazon",
+    "o.b."
+   ],
+   "whereToBuyLinks": {
+    "o.b.": "https://www.ob-tampons.com/products/ob-tampons-regular",
+    "Amazon": "https://www.amazon.com/dp/B00NJNJCI6?tag=aynahealth-20"
+   },
+   "source": "curated",
+   "isEmergingBrand": false
+  },
+  {
+   "id": "p-ob-original-super-40",
+   "name": "o.b. Original Tampons Super, 40ct",
+   "brand": "o.b.",
+   "category": "tampon",
+   "type": "physical",
+   "price": "See Amazon",
+   "image": "https://m.media-amazon.com/images/I/71VFDv3R2wL._AC_SY300_SX300_QL70_FMwebp_.jpg",
+   "url": "https://www.ob-tampons.com/products/ob-tampons-super",
+   "affiliateUrl": "https://www.amazon.com/dp/B00NF8A8YM?tag=aynahealth-20",
+   "whereToBuy": [
+    "Amazon",
+    "o.b."
+   ],
+   "whereToBuyLinks": {
+    "o.b.": "https://www.ob-tampons.com/products/ob-tampons-super",
+    "Amazon": "https://www.amazon.com/dp/B00NF8A8YM?tag=aynahealth-20"
+   },
+   "source": "curated",
+   "isEmergingBrand": false
+  },
+  {
+   "id": "p-ob-original-super-plus-40",
+   "name": "o.b. Original Tampons Super Plus, 40ct",
+   "brand": "o.b.",
+   "category": "tampon",
+   "type": "physical",
+   "price": "See Amazon",
+   "image": "https://m.media-amazon.com/images/I/71HrFyGkE5L._AC_SX679_.jpg",
+   "url": "https://www.ob-tampons.com/products/ob-tampons-super-plus",
+   "affiliateUrl": "https://www.amazon.com/dp/B00NJNJCBI?tag=aynahealth-20",
+   "whereToBuy": [
+    "Amazon",
+    "o.b."
+   ],
+   "whereToBuyLinks": {
+    "o.b.": "https://www.ob-tampons.com/products/ob-tampons-super-plus",
+    "Amazon": "https://www.amazon.com/dp/B00NJNJCBI?tag=aynahealth-20"
+   },
+   "source": "curated",
+   "isEmergingBrand": false
+  },
+  {
+   "id": "p-ob-original-ultra-40",
+   "name": "o.b. Original Tampons Ultra, 40ct",
+   "brand": "o.b.",
+   "category": "tampon",
+   "type": "physical",
+   "price": "See Amazon",
+   "image": "https://m.media-amazon.com/images/I/71wO35LN11L._AC_SY300_SX300_QL70_FMwebp_.jpg",
+   "url": "https://www.ob-tampons.com/products/ob-tampons-ultra",
+   "affiliateUrl": "https://www.amazon.com/dp/B00NJNJGUA?tag=aynahealth-20",
+   "whereToBuy": [
+    "Amazon",
+    "o.b."
+   ],
+   "whereToBuyLinks": {
+    "o.b.": "https://www.ob-tampons.com/products/ob-tampons-ultra",
+    "Amazon": "https://www.amazon.com/dp/B00NJNJGUA?tag=aynahealth-20"
+   },
+   "source": "curated",
+   "isEmergingBrand": false
+  },
+  {
+   "id": "p-ob-procomfort-mini-16",
+   "name": "o.b. ProComfort Mini Tampons, 16ct",
+   "brand": "o.b.",
+   "category": "tampon",
+   "type": "physical",
+   "price": "See Amazon",
+   "image": "https://m.media-amazon.com/images/I/71R9+pNQ8FL._AC_SX679_.jpg",
+   "url": "https://www.ob.de/produkte/ob-procomfort/procomfort-mini",
+   "affiliateUrl": "https://www.amazon.com/dp/B07L7RL3X3?tag=aynahealth-20",
+   "whereToBuy": [
+    "Amazon",
+    "o.b. Germany"
+   ],
+   "whereToBuyLinks": {
+    "Amazon": "https://www.amazon.com/dp/B07L7RL3X3?tag=aynahealth-20",
+    "o.b. Germany": "https://www.ob.de/produkte/ob-procomfort/procomfort-mini"
+   },
+   "source": "curated",
+   "isEmergingBrand": false
+  },
+  {
+   "id": "p-ob-procomfort-mini-32",
+   "name": "o.b. ProComfort Mini Tampons, 32ct",
+   "brand": "o.b.",
+   "category": "tampon",
+   "type": "physical",
+   "price": "See Amazon",
+   "image": "https://m.media-amazon.com/images/I/71-e13ea2GL._AC_SX679_.jpg",
+   "url": "https://www.ob.de/produkte/ob-procomfort/procomfort-mini",
+   "affiliateUrl": "https://www.amazon.com/dp/B071VD5LF7?tag=aynahealth-20",
+   "whereToBuy": [
+    "Amazon",
+    "o.b. Germany"
+   ],
+   "whereToBuyLinks": {
+    "Amazon": "https://www.amazon.com/dp/B071VD5LF7?tag=aynahealth-20",
+    "o.b. Germany": "https://www.ob.de/produkte/ob-procomfort/procomfort-mini"
+   },
+   "source": "curated",
+   "isEmergingBrand": false
+  },
+  {
+   "id": "p-ob-tampon",
+   "name": "OB Tampons",
+   "category": "tampon",
+   "type": "physical",
+   "price": "$6 for 40",
+   "image": "https://target.scene7.com/is/image/Target/GUEST_b762b05c-343e-4d2d-924f-b6aa6a3b6057",
+   "whereToBuy": [
+    "CVS",
+    "Target",
+    "Walmart",
+    "Amazon"
+   ],
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-oboo-boom",
+   "name": "Boom Dual-End Wand",
+   "brand": "Oboo",
+   "category": "sex-tech",
+   "type": "physical",
+   "price": "$119",
+   "image": "/products/packaging/p-oboo-boom.webp",
+   "url": "https://oboo.love/products/boom",
+   "whereToBuy": [],
+   "source": "curated",
+   "imageSourceUrl": "https://oboo.love/products/boom",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-oboo-cool-spray",
+   "name": "Cool Spray for Hot Flashes",
+   "brand": "Oboo",
+   "category": "menopause",
+   "type": "physical",
+   "price": "$20",
+   "image": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/Cool_Spray_2048_Opt.webp?v=1777066860",
+   "url": "https://oboo.love/products/cool-spray-for-hot-flashes",
+   "whereToBuy": [],
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-oboo-groove",
+   "name": "Groove Dual-Action Massager",
+   "brand": "Oboo",
+   "category": "sex-tech",
+   "type": "physical",
+   "price": "$119",
+   "image": "/products/packaging/p-oboo-groove.webp",
+   "url": "https://oboo.love/products/groove",
+   "whereToBuy": [],
+   "source": "curated",
+   "imageSourceUrl": "https://oboo.love/products/groove",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-oboo-loob-arousal",
+   "name": "Loob Arousal Moisturizer",
+   "brand": "Oboo",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$28",
+   "image": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/1_LoobAOpt.webp?v=1777048741",
+   "url": "https://oboo.love/products/loob-arousal",
+   "whereToBuy": [],
+   "variants": [
+    {
+     "id": "45133459390517",
+     "label": "4 oz / 120 ml",
+     "url": "https://oboo.love/products/loob-arousal?variant=45133459390517",
+     "image": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/1_LoobAOpt.webp?v=1777048741"
+    },
+    {
+     "id": "45133459980341",
+     "label": "2 oz / 60 ml",
+     "url": "https://oboo.love/products/loob-arousal?variant=45133459980341",
+     "image": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/1_LoobAOpt.webp?v=1777048741"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Loob Arousal Moisturizer",
+   "variantSourceUrl": "https://oboo.love/products/loob-arousal",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-oboo-loob-daily",
+   "name": "Loob Daily Moisturizer",
+   "brand": "Oboo",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$28",
+   "image": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/LoobDaily1_1_1.webp?v=1776815937",
+   "url": "https://oboo.love/products/loob-daily",
+   "whereToBuy": [],
+   "variants": [
+    {
+     "id": "45133448642613",
+     "label": "4 oz / 120 ml",
+     "url": "https://oboo.love/products/loob-daily?variant=45133448642613",
+     "image": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/LoobDaily1_1_1.webp?v=1776815937"
+    },
+    {
+     "id": "45133461192757",
+     "label": "2 oz / 60 ml",
+     "url": "https://oboo.love/products/loob-daily?variant=45133461192757",
+     "image": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/LoobDaily1_1_1.webp?v=1776815937"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Loob Daily Moisturizer",
+   "variantSourceUrl": "https://oboo.love/products/loob-daily",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-oboo-mood-drops",
+   "name": "In the Mood Drops",
+   "brand": "Oboo",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$28",
+   "image": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/1_MoodOpt_1.webp?v=1777323933",
+   "url": "https://oboo.love/products/in-the-mood-libido-drops",
+   "whereToBuy": [],
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-oboo-moon",
+   "name": "Moon Anal Training Kit",
+   "brand": "Oboo",
+   "category": "sex-tech",
+   "type": "physical",
+   "price": "$119",
+   "image": "/products/packaging/p-oboo-moon.webp",
+   "url": "https://oboo.love/products/moon",
+   "whereToBuy": [],
+   "source": "curated",
+   "imageSourceUrl": "https://oboo.love/products/moon",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-oboo-nook",
+   "name": "Nook Clitoral Massager",
+   "brand": "Oboo",
+   "category": "sex-tech",
+   "type": "physical",
+   "price": "$99",
+   "image": "/products/packaging/p-oboo-nook.webp",
+   "url": "https://oboo.love/products/nook",
+   "whereToBuy": [],
+   "source": "curated",
+   "imageSourceUrl": "https://oboo.love/products/nook",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-oboo-oooh",
+   "name": "Oooh Palm Massager",
+   "brand": "Oboo",
+   "category": "sex-tech",
+   "type": "physical",
+   "price": "$79",
+   "image": "/products/packaging/p-oboo-oooh.webp",
+   "url": "https://oboo.love/products/oooh",
+   "whereToBuy": [],
+   "source": "curated",
+   "imageSourceUrl": "https://oboo.love/products/oooh",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-oboo-shoop",
+   "name": "Shoop Gentle Dual Massager",
+   "brand": "Oboo",
+   "category": "sex-tech",
+   "type": "physical",
+   "price": "$59",
+   "image": "/products/packaging/p-oboo-shoop.webp",
+   "url": "https://oboo.love/products/shoop",
+   "whereToBuy": [],
+   "source": "curated",
+   "imageSourceUrl": "https://oboo.love/products/shoop",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-oboo-smooch",
+   "name": "Smooch Sonic Stimulator",
+   "brand": "Oboo",
+   "category": "sex-tech",
+   "type": "physical",
+   "price": "$79",
+   "image": "/products/packaging/p-oboo-smooch.webp",
+   "url": "https://oboo.love/products/smooch",
+   "whereToBuy": [],
+   "source": "curated",
+   "imageSourceUrl": "https://oboo.love/products/smooch",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-oboo-smooth-arousal",
+   "name": "Smooth Arousal Vulva Balm",
+   "brand": "Oboo",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$36",
+   "image": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/Smooth_Arousal_2048_Opt.webp?v=1777049060",
+   "url": "https://oboo.love/products/smooth-arousal-vulva-balm",
+   "whereToBuy": [],
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-oboo-smooth-daily",
+   "name": "Smooth Daily Vulva Balm",
+   "brand": "Oboo",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$36",
+   "image": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/1_SmoothDOpt.webp?v=1777050035",
+   "url": "https://oboo.love/products/smooth-daily-vulva-balm",
+   "whereToBuy": [],
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-oboo-woo",
+   "name": "Woo Bullet",
+   "brand": "Oboo",
+   "category": "sex-tech",
+   "type": "physical",
+   "price": "$39",
+   "image": "/products/packaging/p-oboo-woo.webp",
+   "url": "https://oboo.love/products/woo",
+   "whereToBuy": [],
+   "source": "curated",
+   "imageSourceUrl": "https://oboo.love/products/woo",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-oboo-woosh-warming-wand",
+   "name": "Oboo Woosh Warming Wand",
+   "brand": "Oboo",
+   "category": "sex-tech",
+   "type": "physical",
+   "price": "$119",
+   "image": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/WooshOpt1.webp?v=1776054530",
+   "url": "https://oboo.love/",
+   "whereToBuy": [],
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-organicup",
+   "name": "OrganiCup",
+   "category": "cup",
+   "type": "physical",
+   "price": "$28 (reusable)",
+   "image": "http://allmatters.com/cdn/shop/files/AllMatters_54_02_84104b40-8478-4db2-adc7-9044fc418f04.jpg?v=1753083478",
+   "whereToBuy": [
+    "Amazon",
+    "OrganiCup.com"
+   ],
+   "variants": [
+    {
+     "id": "42702906392788",
+     "label": "A",
+     "url": "https://allmatters.com/en-us/products/menstrual-cup?variant=42702906392788",
+     "amazonAsin": "B071NCXFMG"
+    },
+    {
+     "id": "42702906425556",
+     "label": "B",
+     "url": "https://allmatters.com/en-us/products/menstrual-cup?variant=42702906425556",
+     "amazonAsin": "B072KZM9P3"
+    },
+    {
+     "id": "42702906458324",
+     "label": "Mini",
+     "url": "https://allmatters.com/en-us/products/menstrual-cup?variant=42702906458324",
+     "amazonAsin": "B07SC244TV"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "OrganiCup",
+   "variantSourceUrl": "https://allmatters.com/en-us/products/menstrual-cup",
+   "variantsVerifiedAt": "2026-09-26",
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-organyc-pad",
+   "name": "Organyc 100% Cotton Pads",
+   "category": "pad",
+   "type": "physical",
+   "price": "$6 for 10",
+   "image": "https://m.media-amazon.com/images/I/71sNubnvkkL.jpg",
+   "whereToBuy": [
+    "Amazon",
+    "Whole Foods"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-organyc-tampon",
+   "name": "Organyc Cotton Tampons",
+   "category": "tampon",
+   "type": "physical",
+   "price": "$7 for 16",
+   "image": "https://m.media-amazon.com/images/I/61jUe05jVPL.jpg",
+   "whereToBuy": [
+    "Amazon",
+    "Whole Foods"
+   ],
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-pelvic-wand",
+   "name": "Intimate Rose Pelvic Wand",
+   "brand": "Intimate Rose",
+   "category": "pelvic-floor",
+   "type": "physical",
+   "price": "$30\u201350",
+   "image": "/products/packaging/p-pelvic-wand.png",
+   "whereToBuy": [
+    "Amazon",
+    "IntimateRose.com",
+    "Pelvic floor PT retailers"
+   ],
+   "internal": true,
+   "source": "curated",
+   "imageSourceUrl": "https://www.intimaterose.com/products/pelvic-wand",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging"
+  },
+  {
+   "id": "p-period-co-underwear",
+   "name": "The Bikini Period. in Organic Cotton For Heavy Flows",
+   "category": "period-underwear",
+   "type": "physical",
+   "price": "$14 per pair",
+   "image": "/products/packaging/p-period-co-underwear.jpg",
+   "url": "https://period.co/products/the-bikini",
+   "whereToBuy": [
+    "Period.co",
+    "Amazon"
+   ],
+   "variants": [
+    {
+     "id": "34035511984187",
+     "label": "Black / XS",
+     "url": "https://period.co/products/the-bikini?variant=34035511984187",
+     "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712",
+     "amazonAsin": "B0CLSXCD1K"
+    },
+    {
+     "id": "34035512016955",
+     "label": "Black / S",
+     "url": "https://period.co/products/the-bikini?variant=34035512016955",
+     "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712",
+     "amazonAsin": "B0CLSTBLVN"
+    },
+    {
+     "id": "34035512049723",
+     "label": "Black / M",
+     "url": "https://period.co/products/the-bikini?variant=34035512049723",
+     "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712",
+     "amazonAsin": "B0CLSH74KW"
+    },
+    {
+     "id": "34035512082491",
+     "label": "Black / L",
+     "url": "https://period.co/products/the-bikini?variant=34035512082491",
+     "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712",
+     "amazonAsin": "B0CLSJDG22"
+    },
+    {
+     "id": "34035512115259",
+     "label": "Black / XL",
+     "url": "https://period.co/products/the-bikini?variant=34035512115259",
+     "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712"
+    },
+    {
+     "id": "34035512148027",
+     "label": "Black / 2X",
+     "url": "https://period.co/products/the-bikini?variant=34035512148027",
+     "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712",
+     "amazonAsin": "B0CLSGCQHJ"
+    },
+    {
+     "id": "34035512180795",
+     "label": "Black / 3X",
+     "url": "https://period.co/products/the-bikini?variant=34035512180795",
+     "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712"
+    },
+    {
+     "id": "34439908556859",
+     "label": "Black / 4X",
+     "url": "https://period.co/products/the-bikini?variant=34439908556859",
+     "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712"
+    },
+    {
+     "id": "34439908819003",
+     "label": "Black / 5X",
+     "url": "https://period.co/products/the-bikini?variant=34439908819003",
+     "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712"
+    },
+    {
+     "id": "34439909179451",
+     "label": "Black / 6X",
+     "url": "https://period.co/products/the-bikini?variant=34439909179451",
+     "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "The Bikini Period. in Organic Cotton For Heavy Flows",
+   "variantSourceUrl": "https://period.co/products/the-bikini",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated",
+   "imageSourceUrl": "https://period.co/products/the-bikini",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-product",
+   "originalName": "Period.co Period Underwear"
+  },
+  {
+   "id": "p-period-nirvana-disc",
+   "name": "Period Nirvana Disc",
+   "category": "disc",
+   "type": "physical",
+   "price": "$42 (reusable)",
+   "image": "https://www.periodnirvana.com/wp-content/uploads/2021/03/plaincupquiz.jpg",
+   "whereToBuy": [
+    "PeriodNirvana.com",
+    "Amazon"
+   ],
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-phd-wash",
+   "name": "pH-D Feminine Health Boric Acid Wash",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$12",
+   "image": "https://i5.walmartimages.com/seo/pH-D-Feminine-Health-Boric-Acid-Sensitive-Foam-Wash-6-oz-1-Count_ef0c5b77-cf7f-485d-9566-bafafa7c46db.a8db6f10e1f5a3a7842630e0147b3261.jpeg",
+   "whereToBuy": [
+    "Target",
+    "Amazon"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-pink-stork-bloat",
+   "name": "Pink Stork Bloat Support",
+   "brand": "Pink Stork",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$22 for 30 capsules",
+   "image": "",
+   "whereToBuy": [
+    "Amazon",
+    "PinkStork.com",
+    "Target"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-playtex-sport",
+   "name": "Playtex Sport Tampons",
+   "category": "tampon",
+   "type": "physical",
+   "price": "Check retailer for current price and pack size",
+   "image": "https://target.scene7.com/is/image/Target/GUEST_b674b28e-9c6c-4d6d-a291-d45ab5200ba5",
+   "whereToBuy": [
+    "CVS",
+    "Target",
+    "Walmart",
+    "Amazon"
+   ],
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-poise-ultra-thin-moderate",
+   "name": "Poise Incontinence Pads for Women, Moderate Absorbency",
+   "brand": "Poise",
+   "category": "incontinence",
+   "type": "physical",
+   "price": "Check retailer for current price and pack size",
+   "image": "https://target.scene7.com/is/image/Target/GUEST_64344ed6-a572-4af5-863a-8a83b7c09bc1",
+   "whereToBuy": [
+    "Amazon",
+    "Target",
+    "Walmart",
+    "CVS"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-portable-heating",
+   "name": "Comfytemp Portable Heating Pad",
+   "category": "cramp-relief",
+   "type": "physical",
+   "price": "$30 (rechargeable)",
+   "image": "https://comfytemp.com/cdn/shop/files/1_3bed29dd-ce12-4a06-ba16-229eaf24898b.webp?v=1768274967",
+   "whereToBuy": [
+    "Amazon"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-probiotics-women",
+   "name": "Garden of Life Dr. Formulated Probiotics Once Daily Women's Shelf-Stable 30 Capsules",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$36.79 for 30 capsules",
+   "image": "https://m.media-amazon.com/images/I/81JXAZDNVSL._AC_SX679_.jpg",
+   "url": "https://www.gardenoflife.com/dr-formulated-probiotics-once-daily-womens-shelf-stable-vegetarian-capsules",
+   "whereToBuy": [
+    "Whole Foods",
+    "Amazon",
+    "Target"
+   ],
+   "source": "curated",
+   "imageVerifiedAt": "2026-09-27",
+   "originalName": "Garden of Life Women's Probiotics"
+  },
+  {
+   "id": "p-proof-period",
+   "name": "Proof Period Underwear",
+   "category": "period-underwear",
+   "type": "physical",
+   "price": "$20\u2013$40 per pair",
+   "image": "https://m.media-amazon.com/images/I/81HsqBCJ9-L._AC_UL1500_.jpg",
+   "whereToBuy": [
+    "Proof.co",
+    "Amazon"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-proov-balance-bundle",
+   "name": "Proov Balance Bundle",
+   "brand": "Proov",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$49.99 (2-month supply)",
+   "image": "https://proovtest.com/cdn/shop/files/BalanceSupplementBundle_2.png?v=1781538761&width=1920",
+   "url": "https://proovtest.com/products/balance-bundle",
+   "affiliateUrl": "https://proov.pxf.io/1GMWVx",
+   "whereToBuy": [],
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-proov-complete",
+   "name": "Proov Complete Fertility Testing System",
+   "brand": "Proov",
+   "category": "diagnostics",
+   "type": "physical",
+   "price": "$99.99",
+   "image": "https://proovtest.com/cdn/shop/files/Complete-PDP-HSA_FSA_3.png?v=1767377529&width=1920",
+   "url": "https://proovtest.com/products/complete-testing-system",
+   "affiliateUrl": "https://proov.pxf.io/9VjJQj",
+   "whereToBuy": [],
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-proov-empower",
+   "name": "Proov Empower Hormone Tracker",
+   "brand": "Proov",
+   "category": "diagnostics",
+   "type": "physical",
+   "price": "$59.99",
+   "image": "https://proovtest.com/cdn/shop/files/Empower-PDP-HSA_FSA.png?v=1759414142&width=1920",
+   "url": "https://proovtest.com/products/empower-perimenopause-test-kit",
+   "affiliateUrl": "https://proov.pxf.io/9VjJrj",
+   "whereToBuy": [],
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-proov-his-hers",
+   "name": "Proov His & Hers Fertility Kit",
+   "brand": "Proov",
+   "category": "diagnostics",
+   "type": "physical",
+   "price": "$179.99 (2 cycles)",
+   "image": "https://proovtest.com/cdn/shop/files/His_Hers-PDP-HSA_FSA_1.png?v=1771351002&width=1920",
+   "url": "https://proovtest.com/products/his-and-hers-fertility-starter-kit",
+   "affiliateUrl": "https://proov.pxf.io/NGv6mb",
+   "whereToBuy": [],
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-queen-v-pop",
+   "name": "Queen V The Pop It Suppositories",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$15",
+   "image": "",
+   "whereToBuy": [
+    "Amazon",
+    "Walmart"
+   ],
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-rael-liners",
+   "name": "Rael Regular Organic Cotton Cover Panty Liners, 60 Count",
+   "category": "pad",
+   "type": "physical",
+   "price": "Check retailer for current price and pack size",
+   "image": "/products/verified/p-rael-liners.png",
+   "url": "https://www.getrael.com/products/regular-organic-cotton-liners",
+   "whereToBuy": [
+    "Target",
+    "Amazon",
+    "Rael.com"
+   ],
+   "variants": [
+    {
+     "id": "51779703603565",
+     "label": "60 Count",
+     "url": "https://www.getrael.com/products/regular-organic-cotton-liners?variant=51779703603565",
+     "image": "https://cdn.shopify.com/s/files/1/2246/3213/files/ORGANIC_COTTON_COVER_PANTY_LINERS_RAEL-LN-03_DTC_60COUNT_REGULAR_PACK_FRONT_6f4b0e7e-aa38-482b-8206-02e3ab8fa67f.webp?v=1738800023"
+    },
+    {
+     "id": "51779703636333",
+     "label": "40 Count",
+     "url": "https://www.getrael.com/products/regular-organic-cotton-liners?variant=51779703636333"
+    },
+    {
+     "id": "51779703669101",
+     "label": "20 Count",
+     "url": "https://www.getrael.com/products/regular-organic-cotton-liners?variant=51779703669101"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Rael Regular Organic Cotton Cover Panty Liners",
+   "variantSourceUrl": "https://www.getrael.com/products/regular-organic-cotton-liners",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated",
+   "imageSourceUrl": "https://www.getrael.com/products/regular-organic-cotton-liners",
+   "imageVerifiedAt": "2026-09-25",
+   "originalName": "Rael Organic Cotton Liners"
+  },
+  {
+   "id": "p-rael-organic-pad",
+   "name": "Rael Large Organic Cotton Cover Pads With Wings",
+   "category": "pad",
+   "type": "physical",
+   "price": "Check retailer for current price (14 or 24 count)",
+   "image": "/products/verified/p-rael-organic-pad.png",
+   "url": "https://www.getrael.com/products/large-organic-cotton-pads",
+   "whereToBuy": [
+    "Target",
+    "Amazon",
+    "Walmart"
+   ],
+   "variants": [
+    {
+     "id": "51779703243117",
+     "label": "24 Count",
+     "url": "https://www.getrael.com/products/large-organic-cotton-pads?variant=51779703243117",
+     "image": "https://cdn.shopify.com/s/files/1/2246/3213/files/ORGANIC_COTTON_COVER_PADS_RAEL-LG-02_DTC__24COUNT_LARGE_PACK_FRONT_9b6b4418-69d7-478b-a992-1bb229f01085.webp?v=1755193727",
+     "amazonAsin": "B0771Y7YQ1"
+    },
+    {
+     "id": "51779703275885",
+     "label": "14 Count",
+     "url": "https://www.getrael.com/products/large-organic-cotton-pads?variant=51779703275885",
+     "amazonAsin": "B07X7GM5Q9"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Rael Large Organic Cotton Cover Pads With Wings",
+   "variantSourceUrl": "https://www.getrael.com/products/large-organic-cotton-pads",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated",
+   "imageSourceUrl": "https://www.getrael.com/products/large-organic-cotton-pads",
+   "imageVerifiedAt": "2026-09-25",
+   "originalName": "Rael Organic Cotton Pads"
+  },
+  {
+   "id": "p-rael-overnight",
+   "name": "Rael Overnight Pads",
+   "category": "pad",
+   "type": "physical",
+   "price": "$10 for 12",
+   "image": "https://www.getrael.com/cdn/shop/files/DTC_Overnight_Pads_12_CT_Lower_Count_2048x2048_1.png?v=1787356458&width=2048",
+   "whereToBuy": [
+    "Target",
+    "Amazon",
+    "Rael.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-rael-tampon",
+   "name": "Rael Organic Cotton Tampon Variety Pack, 32 Count",
+   "category": "tampon",
+   "type": "physical",
+   "price": "Check retailer for current price and pack size",
+   "image": "/products/verified/p-rael-tampon.png",
+   "url": "https://www.getrael.com/products/tampons-made-with-organic-cotton-value-pack",
+   "whereToBuy": [
+    "Target",
+    "Amazon",
+    "Rael.com"
+   ],
+   "internal": true,
+   "source": "curated",
+   "imageSourceUrl": "https://www.getrael.com/products/tampons-made-with-organic-cotton-value-pack",
+   "imageVerifiedAt": "2026-09-25",
+   "originalName": "Rael Organic Tampons"
+  },
+  {
+   "id": "p-remifemin",
+   "name": "Remifemin (Black Cohosh)",
+   "brand": "Remifemin",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$17 for 60 tablets",
+   "image": "https://m.media-amazon.com/images/I/61fjjqNkIWL._AC_SX679_.jpg",
+   "whereToBuy": [
+    "CVS",
+    "Walmart",
+    "Amazon",
+    "iHerb"
+   ],
+   "source": "curated",
+   "imageVerifiedAt": "2026-09-27"
+  },
+  {
+   "id": "p-rituals-prenatal",
+   "name": "Ritual Prenatal Vitamin",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$35/month",
+   "image": "https://images.ctfassets.net/uuc5ok478nyh/5jSYPDIiQMsM9x5n8N1nCt/4e6a2fa8cbb392dfc1f7e6ebc81f6d0b/Essential-_-Gut-Duo-for-Prenatal.png?w=1200&h=692&q=90&fm=png",
+   "whereToBuy": [
+    "Ritual.com"
+   ],
+   "variants": [
+    {
+     "id": "42291520569438",
+     "label": "Citrus",
+     "url": "https://ritual.com/products/essential-prenatal-multivitamin?variant=42291520569438",
+     "amazonAsin": "B09W363MVD"
+    },
+    {
+     "id": "42291520602206",
+     "label": "Mint",
+     "url": "https://ritual.com/products/essential-prenatal-multivitamin?variant=42291520602206",
+     "amazonAsin": "B0BFGZ8NS2"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Ritual Prenatal Vitamin",
+   "variantSourceUrl": "https://ritual.com/products/essential-prenatal-multivitamin",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated"
+  },
+  {
+   "id": "p-ruby-cup",
+   "name": "Ruby Cup",
+   "category": "cup",
+   "type": "physical",
+   "price": "$28 (reusable)",
+   "image": "https://cdn.shopify.com/s/files/1/0147/2724/9974/files/Ruby_Cup_menstrual_cup_duo_bundle.png?v=1765449371",
+   "whereToBuy": [
+    "Amazon",
+    "RubyCup.com"
+   ],
+   "variants": [
+    {
+     "id": "39843284418614",
+     "label": "Ruby / S",
+     "url": "https://rubycup.com/products/menstrual-cup?variant=39843284418614",
+     "image": "https://cdn.shopify.com/s/files/1/0147/2724/9974/files/07_Ruby_Cup_image_of_a_red_Ruby_Cup.jpg?v=1765449269"
+    },
+    {
+     "id": "39843284516918",
+     "label": "Ruby / M",
+     "url": "https://rubycup.com/products/menstrual-cup?variant=39843284516918",
+     "image": "https://cdn.shopify.com/s/files/1/0147/2724/9974/files/07_Ruby_Cup_image_of_a_red_Ruby_Cup.jpg?v=1765449269"
+    },
+    {
+     "id": "32718016675894",
+     "label": "Black / S",
+     "url": "https://rubycup.com/products/menstrual-cup?variant=32718016675894",
+     "image": "https://cdn.shopify.com/s/files/1/0147/2724/9974/files/13.png?v=1765449262"
+    },
+    {
+     "id": "32718017101878",
+     "label": "Black / M",
+     "url": "https://rubycup.com/products/menstrual-cup?variant=32718017101878",
+     "image": "https://cdn.shopify.com/s/files/1/0147/2724/9974/files/13.png?v=1765449262"
+    },
+    {
+     "id": "44215155949879",
+     "label": "Transparent / S",
+     "url": "https://rubycup.com/products/menstrual-cup?variant=44215155949879",
+     "image": "https://cdn.shopify.com/s/files/1/0147/2724/9974/files/ruby_clear_medium_78a70d78-23a4-4789-9105-be107c319df3.jpg?v=1765449274"
+    },
+    {
+     "id": "44215155982647",
+     "label": "Transparent / M",
+     "url": "https://rubycup.com/products/menstrual-cup?variant=44215155982647",
+     "image": "https://cdn.shopify.com/s/files/1/0147/2724/9974/files/ruby_clear_medium_78a70d78-23a4-4789-9105-be107c319df3.jpg?v=1765449274"
+    },
+    {
+     "id": "32718016741430",
+     "label": "Blue / S",
+     "url": "https://rubycup.com/products/menstrual-cup?variant=32718016741430",
+     "image": "https://cdn.shopify.com/s/files/1/0147/2724/9974/files/14_191b7deb-8716-492d-8d04-16e663f4887a.png?v=1765449267"
+    },
+    {
+     "id": "32718017167414",
+     "label": "Blue / M",
+     "url": "https://rubycup.com/products/menstrual-cup?variant=32718017167414",
+     "image": "https://cdn.shopify.com/s/files/1/0147/2724/9974/files/14_191b7deb-8716-492d-8d04-16e663f4887a.png?v=1765449267"
+    },
+    {
+     "id": "32718016479286",
+     "label": "Purple / S",
+     "url": "https://rubycup.com/products/menstrual-cup?variant=32718016479286",
+     "image": "https://cdn.shopify.com/s/files/1/0147/2724/9974/files/15_25186c61-adf8-49c7-99d0-d7a96bdcbd25.png?v=1765449269"
+    },
+    {
+     "id": "32718016905270",
+     "label": "Purple / M",
+     "url": "https://rubycup.com/products/menstrual-cup?variant=32718016905270",
+     "image": "https://cdn.shopify.com/s/files/1/0147/2724/9974/files/15_25186c61-adf8-49c7-99d0-d7a96bdcbd25.png?v=1765449269"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Ruby Cup",
+   "variantSourceUrl": "https://rubycup.com/products/menstrual-cup",
+   "variantsVerifiedAt": "2026-09-26",
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-rubylove",
+   "name": "Ruby Love Period Underwear",
+   "category": "period-underwear",
+   "type": "physical",
+   "price": "$20\u2013$30 per pair",
+   "image": "https://www.rubylove.com/cdn/shop/products/90570b_98f3627ab6704aca9e0bb9fe909ce6b2_mv2_109afb71-c986-4e86-b418-0bf261924c31.jpg?v=1655836506",
+   "whereToBuy": [
+    "Amazon",
+    "RubyLove.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-saalt-cup",
+   "name": "Saalt Menstrual Cup",
+   "category": "cup",
+   "type": "physical",
+   "price": "$29 (reusable up to 10 years)",
+   "image": "https://shop.periodnirvana.com/cdn/shop/files/saaltgreenproduct-regular_c9861160-2ce0-4c42-8b14-7e9bb2193b26.jpg?v=1692474680&width=1920",
+   "whereToBuy": [
+    "Target",
+    "Amazon",
+    "Saalt.com"
+   ],
+   "variants": [
+    {
+     "id": "32616289566801",
+     "label": "Seafoam Green / Regular",
+     "url": "https://saalt.com/products/saalt-cup?variant=32616289566801",
+     "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Cup-PDP-No-Bag-Seafoam-Green-Regular_01.png?v=1776187271"
+    },
+    {
+     "id": "32616289042513",
+     "label": "Seafoam Green / Small",
+     "url": "https://saalt.com/products/saalt-cup?variant=32616289042513",
+     "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Cup-PDP-No-Bag-Seafoam-Green-Small_02.jpg?v=1776187271"
+    },
+    {
+     "id": "32014539653201",
+     "label": "Himalayan Pink / Regular",
+     "url": "https://saalt.com/products/saalt-cup?variant=32014539653201",
+     "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Cup-PDP-No-Bag-Himalayan-Pink-Reg_01.jpg?v=1776187271"
+    },
+    {
+     "id": "32014576418897",
+     "label": "Himalayan Pink / Small",
+     "url": "https://saalt.com/products/saalt-cup?variant=32014576418897",
+     "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Cup-PDP-No-Bag-Himalayan-Pink-Small_01.png?v=1776187271",
+     "amazonAsin": "B079DYK334"
+    },
+    {
+     "id": "32014539620433",
+     "label": "Ocean Blue / Regular",
+     "url": "https://saalt.com/products/saalt-cup?variant=32014539620433",
+     "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Cup-PDP-No-Bag-Ocean-Blue-Regular_01.png?v=1776187271",
+     "amazonAsin": "B079DVXSP8"
+    },
+    {
+     "id": "32014576386129",
+     "label": "Ocean Blue / Small",
+     "url": "https://saalt.com/products/saalt-cup?variant=32014576386129",
+     "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Cup-PDP-No-Bag-Ocean-Blue-Small_02.jpg?v=1776187271"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Saalt Menstrual Cup",
+   "variantSourceUrl": "https://saalt.com/products/saalt-cup",
+   "variantsVerifiedAt": "2026-09-26",
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-saalt-cup-steamer",
+   "name": "Saalt Cup Steamer",
+   "brand": "Saalt",
+   "category": "cup-steamer",
+   "type": "physical",
+   "price": "$39 (one-time purchase)",
+   "image": "https://saalt.com/cdn/shop/files/Saalt-Steamer-PDP-01-Rose-Quartz.jpg?v=1725669379",
+   "url": "https://saalt.com/products/saalt-steamer",
+   "whereToBuy": [
+    "Saalt.com",
+    "Amazon",
+    "Google"
+   ],
+   "whereToBuyLinks": {
+    "Amazon": "https://www.amazon.com/s?k=Saalt+Cup+Steamer",
+    "Google": "https://www.google.com/search?q=saalt+steamer",
+    "Saalt.com": "https://saalt.com/products/saalt-steamer"
+   },
+   "whereToBuyInStock": {
+    "Amazon": true
+   },
+   "variants": [
+    {
+     "id": "40384758382673",
+     "label": "Blue Dusk",
+     "url": "https://saalt.com/products/saalt-steamer?variant=40384758382673",
+     "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Steamer-PDP-02-Blue-Dusk.jpg?v=1762199384",
+     "amazonAsin": "B0CGX2Y8WM"
+    },
+    {
+     "id": "40384758317137",
+     "label": "Arctic Mist",
+     "url": "https://saalt.com/products/saalt-steamer?variant=40384758317137",
+     "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Steamer-PDP-03-Arctic-Mist.jpg?v=1725669379",
+     "amazonAsin": "B0CGX1MGR8"
+    },
+    {
+     "id": "40384758349905",
+     "label": "Rose Quartz",
+     "url": "https://saalt.com/products/saalt-steamer?variant=40384758349905",
+     "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Steamer-PDP-01-Rose-Quartz.jpg?v=1725669379",
+     "amazonAsin": "B0CGWZRXG5"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Saalt Cup Steamer",
+   "variantSourceUrl": "https://saalt.com/products/saalt-steamer",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated"
+  },
+  {
+   "id": "p-saalt-disc",
+   "name": "Saalt Menstrual Disc",
+   "category": "disc",
+   "type": "physical",
+   "price": "$33",
+   "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Disc-PDP-Coastal-Blue-01_01.jpg?v=1775642489",
+   "whereToBuy": [
+    "Target",
+    "Saalt.com"
+   ],
+   "variants": [
+    {
+     "id": "39701604106321",
+     "label": "Coastal Blue (Regular)",
+     "url": "https://saalt.com/products/saalt-disc?variant=39701604106321",
+     "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Disc-PDP-Coastal-Blue-01_01.jpg?v=1775642489",
+     "amazonAsin": "B0B13WT3KV"
+    },
+    {
+     "id": "39701604171857",
+     "label": "Sunset Coral (Small)",
+     "url": "https://saalt.com/products/saalt-disc?variant=39701604171857",
+     "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Disc-PDP-Sunset-Coral-01_02.jpg?v=1775642489",
+     "amazonAsin": "B0B13XG62P"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Saalt Menstrual Disc",
+   "variantSourceUrl": "https://saalt.com/products/saalt-disc",
+   "variantsVerifiedAt": "2026-09-26",
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-seventh-gen-pad",
+   "name": "Seventh Generation Ultra Thin Pads",
+   "category": "pad",
+   "type": "physical",
+   "price": "Check retailer for current price and pack size",
+   "image": "/products/seventhgeneration/ultra-thin-pads.png",
+   "whereToBuy": [
+    "Target",
+    "Whole Foods",
+    "Amazon"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-seventh-gen-tampon",
+   "name": "Seventh Generation Organic Tampons",
+   "category": "tampon",
+   "type": "physical",
+   "price": "$8 for 18",
+   "image": "https://m.media-amazon.com/images/I/81CXzwDsbxL._AC_SX679_.jpg",
+   "whereToBuy": [
+    "Target",
+    "Whole Foods",
+    "Amazon"
+   ],
+   "internal": true,
+   "source": "curated",
+   "imageVerifiedAt": "2026-09-27"
+  },
+  {
+   "id": "p-silverette-cups",
+   "name": "Silverette Nursing Cups",
+   "category": "postpartum",
+   "type": "physical",
+   "price": "$60",
+   "image": "https://cdn.shopify.com/s/files/1/0403/8465/files/Design.jpg?v=1777454452",
+   "whereToBuy": [
+    "Amazon",
+    "SilveretteUSA.com"
+   ],
+   "variants": [
+    {
+     "id": "40049460641897",
+     "label": "S / No O Feel",
+     "url": "https://silveretteusa.com/products/silverette-nursing-cups?variant=40049460641897",
+     "image": "https://cdn.shopify.com/s/files/1/0403/8465/files/Design.jpg?v=1777454452",
+     "amazonAsin": "B00D4MWKNQ"
+    },
+    {
+     "id": "40106524606569",
+     "label": "S / Add O Feel",
+     "url": "https://silveretteusa.com/products/silverette-nursing-cups?variant=40106524606569",
+     "amazonAsin": "B0B4H75CJZ"
+    },
+    {
+     "id": "40049460707433",
+     "label": "M / No O Feel",
+     "url": "https://silveretteusa.com/products/silverette-nursing-cups?variant=40049460707433",
+     "image": "https://cdn.shopify.com/s/files/1/0403/8465/files/Medium.jpg?v=1777454452",
+     "amazonAsin": "B07XGC8RBB"
+    },
+    {
+     "id": "40106524704873",
+     "label": "M / Add O Feel",
+     "url": "https://silveretteusa.com/products/silverette-nursing-cups?variant=40106524704873",
+     "amazonAsin": "B0B4H6GXCW"
+    },
+    {
+     "id": "43154864472169",
+     "label": "L / Add O Feel",
+     "url": "https://silveretteusa.com/products/silverette-nursing-cups?variant=43154864472169",
+     "amazonAsin": "B0GFX7239Z"
+    },
+    {
+     "id": "43154864701545",
+     "label": "L / No O Feel",
+     "url": "https://silveretteusa.com/products/silverette-nursing-cups?variant=43154864701545",
+     "amazonAsin": "B0FTGGL64M"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Silverette Nursing Cups",
+   "variantSourceUrl": "https://silveretteusa.com/products/silverette-nursing-cups",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated",
+   "imageSourceUrl": "https://silveretteusa.com/products/silverette-nursing-cups",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging"
+  },
+  {
+   "id": "p-snoogle-pillow",
+   "name": "Leachco Snoogle Maternity Pillow",
+   "category": "pregnancy",
+   "type": "physical",
+   "price": "$60",
+   "image": "https://cdn.shopify.com/s/files/1/0730/4943/products/Snoogle-Supreme-CBL-4.webp?v=1673993532",
+   "whereToBuy": [
+    "Amazon",
+    "BuyBuyBaby"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-softdisc",
+   "name": "Softdisc (Disposable)",
+   "category": "disc",
+   "type": "physical",
+   "price": "$13 for 14",
+   "image": "https://cdn.shopify.com/s/files/1/0597/6313/0435/files/220428_Softdisc_Amazon_0_c54ca2dd-0766-4028-aca2-790812e606cf.jpg?v=1727390547",
+   "whereToBuy": [
+    "Target",
+    "CVS",
+    "Amazon"
+   ],
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-sootheher-elaris-pod",
+   "name": "SootheHer's Elaris Pod",
+   "brand": "SootheHer",
+   "category": "cramp-relief",
+   "type": "physical",
+   "price": "$89.99 (list $120)",
+   "image": "https://sootheher.com/assets/elaris-butterfly-hero-DnUO3OIN.webp",
+   "url": "https://sootheher.com/",
+   "affiliateUrl": "https://collabs.shop/jfue1u",
+   "whereToBuy": [],
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-sootheher-gel-pad-refills",
+   "name": "SootheHer Gel Pad Refills",
+   "brand": "SootheHer",
+   "category": "cramp-relief",
+   "type": "physical",
+   "price": "$11.99 (list $16, pack of 4)",
+   "image": "/products/sootheher/gel-pad-refills.png",
+   "url": "https://sootheher.com/",
+   "affiliateUrl": "https://collabs.shop/uj8q5x",
+   "whereToBuy": [],
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-spearmint-pcos",
+   "name": "Traditional Medicinals Organic Spearmint Tea",
+   "brand": "Traditional Medicinals",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$8\u201315",
+   "image": "https://cdn.shopify.com/s/files/1/0506/7037/0997/files/Spearmint-CAN-FF-eng-P103350-01_2.png?v=1775664934",
+   "whereToBuy": [
+    "Amazon",
+    "Whole Foods",
+    "iHerb"
+   ],
+   "variants": [
+    {
+     "id": "42304109510837",
+     "label": "1 box (16 tea bags)",
+     "url": "https://www.traditionalmedicinals.com/products/spearmint-tea?variant=42304109510837",
+     "image": "https://cdn.shopify.com/s/files/1/0506/7037/0997/files/Spearmint_3D_Front_Facing-P103484-02.png?v=1761600246"
+    },
+    {
+     "id": "42304109576373",
+     "label": "3-Pack (3 x 16 tea bags)",
+     "url": "https://www.traditionalmedicinals.com/products/spearmint-tea?variant=42304109576373",
+     "image": "https://cdn.shopify.com/s/files/1/0506/7037/0997/files/Spearmint-3pack_2000x2000_c6835c4a-c9d5-40db-bbc4-3cd33d51f7b9.jpg?v=1693261445",
+     "amazonAsin": "B09CFLYXZL"
+    },
+    {
+     "id": "42304109609141",
+     "label": "6-Pack (6 x 16 tea bags)",
+     "url": "https://www.traditionalmedicinals.com/products/spearmint-tea?variant=42304109609141",
+     "image": "https://cdn.shopify.com/s/files/1/0506/7037/0997/files/Spearmint_6pack_2000x2000_5b9cef02-aabb-4c0f-af51-b744859bc98e.jpg?v=1761600246",
+     "amazonAsin": "B000EJPDMC"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Traditional Medicinals Organic Spearmint Tea",
+   "variantSourceUrl": "https://www.traditionalmedicinals.com/products/spearmint-tea",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated"
+  },
+  {
+   "id": "p-stayfree-ultra",
+   "name": "Stayfree Ultra Thin",
+   "category": "pad",
+   "type": "physical",
+   "price": "Check retailer for current price and pack size",
+   "image": "https://cdn.shopify.com/s/files/1/0624/0079/0583/files/1_Hero_a48c1149-5da1-4ffe-a484-ad5690213b56.jpg?v=1774904068",
+   "whereToBuy": [
+    "CVS",
+    "Target",
+    "Walmart",
+    "Amazon"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-sweet-spot-wipes",
+   "name": "SweetSpot Labs Wipes",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$10",
+   "image": "https://shop.sweetspotlabs.com/cdn/shop/products/Individual_Wipettes_Vanilla_Blossom-7count_1.jpg?v=1668707188",
+   "whereToBuy": [
+    "Target",
+    "Ulta"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-sweetspot-buff-brighten",
+   "name": "SweetSpot Labs Buff & Brighten AHA/BHA Body Exfoliating Pads",
+   "brand": "SweetSpot Labs",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$18 for 50",
+   "image": "https://shop.sweetspotlabs.com/cdn/shop/products/buff_brightenjarcopy.jpg?v=1658328685",
+   "whereToBuy": [
+    "SweetSpotLabs.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-tampax-pure",
+   "name": "Tampax Pure Cotton",
+   "category": "tampon",
+   "type": "physical",
+   "price": "$8 for 24",
+   "image": "https://m.media-amazon.com/images/I/71-PhbmuB8L._AC_UF350,350_QL50_.jpg",
+   "whereToBuy": [
+    "CVS",
+    "Target",
+    "Walmart",
+    "Amazon"
+   ],
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-tampax-radiant",
+   "name": "Tampax Radiant Tampons",
+   "category": "tampon",
+   "type": "physical",
+   "price": "$9 for 18",
+   "image": "https://m.media-amazon.com/images/I/61DJa38bJzL._AC_SX679_.jpg",
+   "whereToBuy": [
+    "CVS",
+    "Target",
+    "Walmart",
+    "Amazon"
+   ],
+   "internal": true,
+   "source": "curated",
+   "imageVerifiedAt": "2026-09-27"
+  },
+  {
+   "id": "p-tena-intimates-very-light-liner",
+   "name": "TENA Intimates Very Light Liner for Women",
+   "brand": "TENA",
+   "category": "incontinence",
+   "type": "physical",
+   "price": "$20.64 for 50",
+   "image": "https://tena-images.essity.com/images-c5/138/498138/optimized-AzurePNG2K/tena-sen-car-ex-cov-very-light-liner-4x50-beauty-no-counts-3000x3000px.png?w=800&h=944&imPolicy=dynamic",
+   "whereToBuy": [
+    "Walmart",
+    "Amazon",
+    "TENA.us"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-thermacare",
+   "name": "ThermaCare Menstrual Pain Therapy HeatWraps, 4 Count",
+   "category": "cramp-relief",
+   "type": "physical",
+   "price": "Check retailer for current price and pack size",
+   "image": "/products/packaging/p-thermacare.jpg",
+   "url": "https://www.target.com/p/-/A-89581952",
+   "whereToBuy": [
+    "CVS",
+    "Target",
+    "Walmart",
+    "Amazon"
+   ],
+   "source": "curated",
+   "imageSourceUrl": "https://www.target.com/p/-/A-89581952",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging"
+  },
+  {
+   "id": "p-thinx",
+   "name": "Thinx Period Underwear",
+   "category": "period-underwear",
+   "type": "physical",
+   "price": "$25\u2013$38 per pair",
+   "image": "https://m.media-amazon.com/images/I/819zMD5-brL._AC_UY1000_.jpg",
+   "whereToBuy": [
+    "Target",
+    "Amazon",
+    "Thinx.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-tomboyx-period",
+   "name": "TomboyX Period Underwear",
+   "category": "period-underwear",
+   "type": "physical",
+   "price": "$28\u2013$34 per pair",
+   "image": "https://cdn.shopify.com/s/files/1/0204/2302/files/Plum_FL_Period_Bikini_1.jpg?v=1782399837",
+   "url": "https://tomboyx.com/",
+   "whereToBuy": [
+    "TomboyX.com",
+    "Target"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-u-kotex-pad",
+   "name": "U by Kotex Clean Wear",
+   "category": "pad",
+   "type": "physical",
+   "price": "$8 for 18",
+   "image": "https://m.media-amazon.com/images/I/91WAESuhosL._AC_SX679_.jpg",
+   "whereToBuy": [
+    "CVS",
+    "Target",
+    "Walmart",
+    "Amazon"
+   ],
+   "source": "curated",
+   "imageVerifiedAt": "2026-09-27"
+  },
+  {
+   "id": "p-uberlube",
+   "name": "Uberlube Luxury Lubricant",
+   "category": "sex-tech",
+   "type": "physical",
+   "price": "$18",
+   "image": "http://l-n-w.com/cdn/shop/files/55ml2.jpg?v=1765835524",
+   "whereToBuy": [
+    "Amazon",
+    "CVS"
+   ],
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-ubiquinol-thorne",
+   "name": "Thorne Ubiquinol (CoQ10)",
+   "category": "supplement",
+   "type": "physical",
+   "price": "Check retailer for current price and pack size",
+   "image": "/products/verified/p-ubiquinol-thorne.webp",
+   "url": "https://www.thorne.com/products/dp/ubiquinol",
+   "whereToBuy": [
+    "Thorne.com",
+    "Amazon",
+    "iHerb"
+   ],
+   "source": "curated",
+   "imageSourceUrl": "https://www.thorne.com/products/dp/ubiquinol",
+   "imageVerifiedAt": "2026-09-25"
+  },
+  {
+   "id": "p-uqora-control",
+   "name": "Uqora Control",
+   "brand": "Uqora",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$25/month",
+   "image": "https://cdn.shopify.com/s/files/1/0839/0671/files/3_month.jpg?v=1762457618",
+   "whereToBuy": [
+    "Uqora.com",
+    "Amazon"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-v-wash",
+   "name": "V-Wash Plus",
+   "category": "intimate-care",
+   "type": "physical",
+   "price": "$10",
+   "image": "https://m.media-amazon.com/images/I/5188cGUuY8L.jpg",
+   "whereToBuy": [
+    "Amazon"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-veeda-pad",
+   "name": "Veeda Natural Cotton Ultra-Thin Pads With Wings",
+   "category": "pad",
+   "type": "physical",
+   "price": "Check retailer for current price and pack size",
+   "image": "/products/verified/p-veeda-pad.png",
+   "url": "https://www.veedausa.com/products/pads",
+   "whereToBuy": [
+    "Amazon",
+    "Walmart"
+   ],
+   "variants": [
+    {
+     "id": "1148173689",
+     "label": "14 Count",
+     "url": "https://www.veedausa.com/products/pads?variant=1148173689",
+     "image": "https://cdn.shopify.com/s/files/1/0394/7497/products/thumbnail_dae04116-e126-4d9c-9ea5-2b6e851c9620.png?v=1626101539",
+     "amazonAsin": "B00ZAVDST4"
+    },
+    {
+     "id": "8716363858019",
+     "label": "42 Count",
+     "url": "https://www.veedausa.com/products/pads?variant=8716363858019",
+     "image": "https://cdn.shopify.com/s/files/1/0394/7497/products/thumbnail_32c14e67-cb7f-44ef-a04d-94a38d301c4f.png?v=1626101539",
+     "amazonAsin": "B01N1ZHI2A"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Veeda Natural Cotton Ultra-Thin Pads With Wings",
+   "variantSourceUrl": "https://www.veedausa.com/products/pads",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated",
+   "imageSourceUrl": "https://www.veedausa.com/products/pads",
+   "imageVerifiedAt": "2026-09-25",
+   "originalName": "Veeda Natural Cotton Pads"
+  },
+  {
+   "id": "p-viboos-heating-pad",
+   "name": "VIBOOS Electric Heating Pad",
+   "brand": "VIBOOS",
+   "category": "cramp-relief",
+   "type": "physical",
+   "price": "$12.99",
+   "image": "https://m.media-amazon.com/images/I/71c2ID2AkdL._AC_SL1500_.jpg",
+   "url": "https://www.amazon.com/dp/B0GG6HHCYM",
+   "whereToBuy": [
+    "Amazon"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-vio2-mouth-tape",
+   "name": "VIO2 Partial-Coverage Mouth Tape",
+   "brand": "VIO2",
+   "category": "sleep",
+   "type": "physical",
+   "price": "$29.95 (48 strips)",
+   "image": "https://www.vio2tape.com/cdn/shop/files/vio2tape-health-beauty-1-pack-try-it-vio2-unscented-mouth-tape-33555330531505_1024x874.png?v=1781819129",
+   "url": "https://www.vio2tape.com/",
+   "affiliateUrl": "https://go.shopmy.us/p-83948920",
+   "whereToBuy": [],
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-vitex",
+   "name": "Gaia Herbs Vitex Berry (Chasteberry)",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$18 for 60 capsules",
+   "image": "https://res.cloudinary.com/dqi4zho6f/image/upload/v1762990920/products/fae9d8b3-f564-4fd6-b3d4-9b5a677e3a87/image/89cf145fb4e6f6a4.png",
+   "whereToBuy": [
+    "Amazon",
+    "Whole Foods",
+    "iHerb"
+   ],
+   "variants": [
+    {
+     "id": "20669342449775",
+     "label": "60 ct",
+     "url": "https://www.gaiaherbs.com/collections/women/products/vitex-berry?variant=20669342449775",
+     "image": "https://cdn.shopify.com/s/files/1/0058/0252/4783/files/Gaia-Herbs-Vitex-Berry_LAE14060_201_PDP_medium_a92caced-37bf-44c9-8867-45588c4e7cb7.png?v=1771958409",
+     "amazonAsin": "B003VT3YP0"
+    },
+    {
+     "id": "31067684896904",
+     "label": "120 ct",
+     "url": "https://www.gaiaherbs.com/collections/women/products/vitex-berry?variant=31067684896904",
+     "image": "https://cdn.shopify.com/s/files/1/0058/0252/4783/files/Gaia-Herbs-Vitex-Berry_LAE14120_201_PDP_medium_e5e0d44b-3a8d-4912-abfb-f3f9b290a525.png?v=1763130236",
+     "amazonAsin": "B07YLKKSGX"
+    },
+    {
+     "id": "41289579921544",
+     "label": "180 ct",
+     "url": "https://www.gaiaherbs.com/collections/women/products/vitex-berry?variant=41289579921544",
+     "image": "https://cdn.shopify.com/s/files/1/0058/0252/4783/files/Gaia-Herbs-Vitex-Berry_LAE14180_201_PDP_medium_7b5b35f5-07b8-4b4a-9527-17e17e954ba8.png?v=1763130236",
+     "amazonAsin": "B0BRTBBK5K"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Gaia Herbs Vitex Berry (Chasteberry)",
+   "variantSourceUrl": "https://www.gaiaherbs.com/collections/women/products/vitex-berry",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated"
+  },
+  {
+   "id": "p-willow-pump",
+   "name": "Willow Wearable Breast Pump",
+   "category": "postpartum",
+   "type": "physical",
+   "price": "$499",
+   "image": "https://m.media-amazon.com/images/I/61iiLEkgAtL._AC_UL1500_.jpg",
+   "whereToBuy": [
+    "WillowPump.com",
+    "Target"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-winx-pregnancy-tests",
+   "name": "Winx Health Early Pregnancy Tests",
+   "brand": "Winx Health",
+   "category": "diagnostics",
+   "type": "physical",
+   "price": "$13",
+   "image": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/Early_Pregnancy_Tests.png?v=1775185073",
+   "url": "https://hellowinx.com/products/pregnancy-tests",
+   "whereToBuy": [],
+   "variants": [
+    {
+     "id": "33032204320811",
+     "label": "2 tests",
+     "url": "https://hellowinx.com/products/pregnancy-tests?variant=33032204320811"
+    },
+    {
+     "id": "40043200675883",
+     "label": "10 tests",
+     "url": "https://hellowinx.com/products/pregnancy-tests?variant=40043200675883"
+    }
+   ],
+   "defaultVariantId": "",
+   "variantFamilyName": "Winx Health Early Pregnancy Tests",
+   "variantSourceUrl": "https://hellowinx.com/products/pregnancy-tests",
+   "variantsVerifiedAt": "2026-09-26",
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-winx-uti-daily-defense",
+   "name": "Winx Health Urinary Daily Defense",
+   "brand": "Winx Health",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$28",
+   "image": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/01WinxDailyDefenseHero.png?v=1771339808",
+   "url": "https://hellowinx.com/products/uti-daily-protection-supplement",
+   "whereToBuy": [],
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-winx-uti-pain-relief",
+   "name": "Winx Health UTI Fast-Acting Pain Relief",
+   "brand": "Winx Health",
+   "category": "medication",
+   "type": "physical",
+   "price": "$10.50",
+   "image": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/01WinxUTIPainReliefHero.png?v=1771347535",
+   "url": "https://hellowinx.com/products/uti-fast-acting-pain-relief",
+   "whereToBuy": [],
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-winx-uti-test-treat",
+   "name": "Winx Health UTI Test + Treat",
+   "brand": "Winx Health",
+   "category": "diagnostics",
+   "type": "physical",
+   "price": "$15",
+   "image": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/UTITest_Treat_1.png?v=1771347569",
+   "url": "https://hellowinx.com/products/uti-tests",
+   "whereToBuy": [
+    "Walgreens"
+   ],
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-winx-vaginal-health-test-treat",
+   "name": "Winx Health Vaginal Health Test + Treat",
+   "brand": "Winx Health",
+   "category": "diagnostics",
+   "type": "physical",
+   "price": "$15",
+   "image": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/Vaginal_Health_Test_Treat_Graphic.png?v=1771347513",
+   "url": "https://hellowinx.com/products/vaginal-ph-test-for-yeast-infections",
+   "whereToBuy": [],
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-winx-vaginal-probiotic",
+   "name": "Winx Health Vaginal Health Probiotic",
+   "brand": "Winx Health",
+   "category": "supplement",
+   "type": "physical",
+   "price": "$28",
+   "image": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/01_Winx_probiotic_Hero.png?v=1771347498",
+   "url": "https://hellowinx.com/products/vaginal-health-probiotic",
+   "whereToBuy": [],
+   "source": "curated",
+   "isEmergingBrand": true
+  },
+  {
+   "id": "p-womaness-fountain-glow",
+   "name": "Womaness Fountain of Glow",
+   "brand": "Womaness",
+   "category": "skincare",
+   "type": "physical",
+   "price": "$29.99",
+   "image": "/products/packaging/p-womaness-fountain-glow.jpg",
+   "url": "https://womaness.com/products/fountain-of-glow",
+   "whereToBuy": [],
+   "source": "curated",
+   "imageSourceUrl": "https://womaness.com/products/fountain-of-glow",
+   "imageVerifiedAt": "2026-09-26",
+   "imageReviewStatus": "verified-packaging",
+   "isEmergingBrand": false
+  },
+  {
+   "id": "p-womaness-me",
+   "name": "Womaness Me.No.Pause. Supplement",
+   "category": "menopause",
+   "type": "physical",
+   "price": "$40",
+   "image": "https://cdn.shopify.com/s/files/1/0506/9189/9575/files/MNP-front.jpg?v=1773928360",
+   "whereToBuy": [
+    "Target",
+    "Womaness.com"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-wuka-underwear",
+   "name": "Wuka Period Underwear",
+   "category": "period-underwear",
+   "type": "physical",
+   "price": "$24\u2013$32 per pair",
+   "image": "https://wuka.co.uk/cdn/shop/files/1-stretch-midi-brief-black-heavy-flow-full-length.jpg",
+   "whereToBuy": [
+    "Wuka.com",
+    "Amazon"
+   ],
+   "source": "curated"
+  },
+  {
+   "id": "p-ziggy-disc",
+   "name": "Ziggy Cup (Menstrual Disc)",
+   "category": "disc",
+   "type": "physical",
+   "price": "$40 (reusable)",
+   "image": "https://assets.intimina.com/files/static/product-images/2021-12/INTIMINA_Ziggy2_ProductShot_SizeA_Angle_425.jpg",
+   "whereToBuy": [
+    "Amazon",
+    "ZiggyCup.com"
+   ],
+   "internal": true,
+   "source": "curated"
+  },
+  {
+   "id": "p-zinc",
+   "name": "Garden of Life Vitamin Code Raw Zinc 30 mg",
+   "category": "supplement",
+   "type": "physical",
+   "price": "Check retailer for current price and pack size",
+   "image": "https://m.media-amazon.com/images/I/81kiWOsohsL.jpg",
+   "url": "https://www.gardenoflife.com/products/our-brands/vitamin-code/vitamin-code-raw-zinc-vegan-capsules",
+   "whereToBuy": [
+    "Amazon",
+    "Whole Foods"
+   ],
+   "source": "curated",
+   "originalName": "Garden of Life Zinc 30mg"
+  }
+ ]
+}

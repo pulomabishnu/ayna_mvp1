@@ -1,0 +1,165 @@
+[
+ {
+  "id": "p-gennev-care",
+  "aynaName": "Gennev Menopause Care",
+  "outcome": "BRAND_SITE_FOUND",
+  "brandSite": {
+   "url": "https://gennev.com/",
+   "merchantTitle": "Gennev - virtual menopause care (video visits with menopause-trained doctors and RDs)",
+   "packOrSize": "service (30-min telehealth appointment), not a physical product",
+   "regularPrice": null,
+   "salePrice": null,
+   "currency": "USD",
+   "availability": "service available; insurance-based, check in-network",
+   "verifiedVia": "merchant_page"
+  },
+  "amazonCandidate": null,
+  "recommendedRoute": "brand_site",
+  "evidence": "https://gennev.com/ fetched: describes insurance-based virtual menopause visits; no self-pay price shown.",
+  "notes": "partner=false confirmed. This is a telehealth SERVICE, not a physical product, so Amazon route does not apply. Ayna's '$199/consult' could NOT be verified on gennev.com (site says visits go through insurance); remove or re-source that price."
+ },
+ {
+  "id": "p-luna-wash",
+  "aynaName": "Luna Daily Intimate Feminine Wash",
+  "outcome": "AMBIGUOUS_VARIANT",
+  "brandSite": null,
+  "amazonCandidate": {
+   "url": "https://www.amazon.com/Luna-Daily-Motherhood-Moisturizing-Breastfeeding/dp/B0DC1M8X9G",
+   "asin": "B0DC1M8X9G",
+   "foundVia": "web search result",
+   "packOrSizeFromSearchSnippet": "Search title: 'Luna Daily Intimate Feminine Wash, Coconut & Lactic Acid Formula' (size not in snippet)",
+   "status": "AMAZON_CANDIDATE_NEEDS_HUMAN_CHECK"
+  },
+  "recommendedRoute": "amazon_pending_human_check",
+  "evidence": "WebSearch amazon.com results list several Luna Daily washes (B0DC1M8X9G 'Intimate Feminine Wash, Coconut & Lactic Acid', B0CC9CKKBR/B0CBQNQ9GH Fragrance-Free, B0CC9B3GC2 Hydrating, B0G57KQMXC Original Everywhere Wash); https://www.sephora.com/product/P520521 lists The Everywhere Wash only in 13.5 oz/400ml at $24.",
+  "notes": "partner=false confirmed. No 6 oz size found anywhere (brand sells 100ml/250ml/400ml); scent variant (Original/Fragrance-Free/Hydrating/Coconut) unspecified. B0DC1M8X9G title matches Ayna name best but human must confirm it matches the catalog image (41-RVVZ5OkL) and size. Brand site (lunadaily.com) fetch was blocked/unavailable; note lunadaily.com appears to be an unrelated news site, real brand domain unconfirmed."
+ },
+ {
+  "id": "p-period-nirvana-disc",
+  "aynaName": "Period Nirvana Disc",
+  "outcome": "AMBIGUOUS_VARIANT",
+  "brandSite": null,
+  "amazonCandidate": null,
+  "recommendedRoute": "unavailable",
+  "evidence": "https://shop.periodnirvana.com/pages/about-us says Period Nirvana is mainly a retailer carrying other companies' products; founder co-designed the Hello Disc (https://shop.periodnirvana.com/products/hello-disc-black, price/stock not shown). Store carries Poppins, Diva, Allmatters, Softdisc, Flex etc.",
+  "notes": "partner=false confirmed. 'Period Nirvana' is a retailer, not a disc brand; there is no product called 'Period Nirvana Disc'. Closest is the Hello Disc (co-designed by Period Nirvana's founder) but that is an inference, not confirmed; catalog image is a generic cup-quiz image. Amazon search for Period Nirvana disc returned no Period Nirvana listing (a 'Hello Period Menstrual Disc' B0GCBHWY24 appeared but is NOT confirmed to be the same product - not recorded as candidate). Needs human decision on which disc this entry means; $42 unverified."
+ },
+ {
+  "id": "p-pink-stork-bloat",
+  "aynaName": "Pink Stork Bloat Support",
+  "outcome": "NOT_FOUND",
+  "brandSite": null,
+  "amazonCandidate": null,
+  "recommendedRoute": "unavailable",
+  "evidence": "Searches (incl. amazon.com- and pinkstork.com-scoped) found no 'Bloat Support' 30-capsule product; Pink Stork's bloat product is https://pinkstork.com/products/total-bloat-gummies ('Total Bloat Gummies: 60 Gummies', currently backordered, price not shown), sold on Amazon as Turmeric Ginger Gummies B08Z8K41BH.",
+  "notes": "partner=false confirmed. Did not substitute the gummies (different format/count). Possibly a renamed/discontinued SKU or an invented catalog entry; no evidence a 30-capsule 'Bloat Support' ever existed. .json feed and products.json fetches failed."
+ },
+ {
+  "id": "p-queen-v-pop",
+  "aynaName": "Queen V The Pop It Suppositories",
+  "outcome": "NOT_FOUND",
+  "brandSite": null,
+  "amazonCandidate": null,
+  "recommendedRoute": "unavailable",
+  "evidence": "amazon.com-scoped search returned Queen V 'The Eraser' suppositories (B07D5FX2NJ), DD probiotic, lube, V Bar but no 'Pop It'; general searches for \"Queen V\" \"Pop It\" returned nothing relevant; queenv.com is an unrelated musician's site. Brand relaunched under Reckitt in 2022 (drugstorenews.com/queen-v-relaunches-part-reckitts-portfolio).",
+  "notes": "partner=false confirmed. No evidence a 'Pop It' suppository exists; may be a misnamed entry (Queen V's suppository is 'The Eraser') - not substituted. Recommend removing or having a human identify the intended product."
+ },
+ {
+  "id": "p-seventh-gen-pad",
+  "aynaName": "Seventh Generation Ultra Thin Pads",
+  "outcome": "AMBIGUOUS_VARIANT",
+  "brandSite": null,
+  "amazonCandidate": {
+   "url": "https://www.amazon.com/Seventh-Generation-Ultra-Regular-Wings/dp/B07C57MK7P",
+   "asin": "B07C57MK7P",
+   "foundVia": "web search result",
+   "packOrSizeFromSearchSnippet": "Ultra Thin Pads with Wings, Regular, 36 Count",
+   "status": "AMAZON_CANDIDATE_NEEDS_HUMAN_CHECK"
+  },
+  "recommendedRoute": "amazon_pending_human_check",
+  "evidence": "amazon.com search results: Regular w/ wings 36ct B07C57MK7P, Regular 18ct B001ECQ80Y/B0014GXBTG, Overnight 28ct B07CCDCS52, Super Long 16ct B07C57MRRS; seventhgeneration.com lists Ultra-Thin Pads with Wings Regular (18ct), Super Long (16ct), without-wings Super Long (fetch of product page failed twice).",
+  "notes": "partner=false confirmed. Ayna entry has no absorbency or count ('Check retailer...'). Options: Regular w/ wings (18 or 36ct), Overnight w/ wings (14 or 28ct), Super Long w/ wings (16ct), Super Long without wings. Candidate shown is Regular 36ct only as an example; human must pick variant matching image /products/seventhgeneration/ultra-thin-pads.png. Brand site appears informational (no confirmed direct checkout)."
+ },
+ {
+  "id": "p-snoogle-pillow",
+  "aynaName": "Leachco Snoogle Maternity Pillow",
+  "outcome": "AMBIGUOUS_VARIANT",
+  "brandSite": {
+   "url": "https://leachco.com/products/snoogle",
+   "merchantTitle": "Snoogle\u00ae (variant: Supreme Cool Blue, SKU 980ZS-CBL)",
+   "packOrSize": "1 pillow, 58.75 x 25.5 x 7.75 in",
+   "regularPrice": "69.99",
+   "salePrice": "49.99",
+   "currency": "USD",
+   "availability": "sold out (all 24 variants)",
+   "verifiedVia": "structured_feed"
+  },
+  "amazonCandidate": {
+   "url": "https://www.amazon.com/Leachco-Snoogle-Original-Maternity-Pregnancy/dp/B0000635WI",
+   "asin": "B0000635WI",
+   "foundVia": "web search result",
+   "packOrSizeFromSearchSnippet": "Snoogle Original Maternity/Pregnancy Total Body Pillow, Ivory, 60 Inch",
+   "status": "AMAZON_CANDIDATE_NEEDS_HUMAN_CHECK"
+  },
+  "recommendedRoute": "amazon_pending_human_check",
+  "evidence": "https://leachco.com/products/snoogle.json lists 24 variants (Supreme/Organic/Plush/Jersey/Chic), Supreme Cool Blue $49.99 vs compare-at $69.99; merchant page shows all sold out. Amazon search: Snoogle Original B0000635WI, Snoogle Grey B00P2OH1HE, Organic B0193WSRU0, Chic Jersey B006YZXWAK.",
+  "notes": "partner=false confirmed. Catalog image filename is Snoogle-Supreme-CBL (Supreme Cool Blue) - brand site has that exact variant but it is sold out. Amazon candidate is 'Original' Ivory, which may not equal 'Supreme' cover; human should confirm or pick a Supreme Cool Blue listing. $60 Ayna price does not match brand ($49.99 sale/$69.99 regular). BuyBuyBaby no longer a reliable retailer."
+ },
+ {
+  "id": "p-sweet-spot-wipes",
+  "aynaName": "SweetSpot Labs Wipes",
+  "outcome": "AMBIGUOUS_VARIANT",
+  "brandSite": null,
+  "amazonCandidate": {
+   "url": "https://www.amazon.com/SweetSpot-Labs-Balanced-Feminine-Individually/dp/B0B8DXF7PM",
+   "asin": "B0B8DXF7PM",
+   "foundVia": "web search result",
+   "packOrSizeFromSearchSnippet": "On-The-Go pH Balanced Feminine Wipes, Vanilla Blossom, 30 Individually Wrapped Wipes",
+   "status": "AMAZON_CANDIDATE_NEEDS_HUMAN_CHECK"
+  },
+  "recommendedRoute": "amazon_pending_human_check",
+  "evidence": "Brand page https://shop.sweetspotlabs.com/collections/wipe/products/7-pk-individual-wipes returned 'Our store is temporarily unavailable while we perform some updates'; Amazon search: Vanilla Blossom 30ct B0B8DXF7PM, Assorted Wipettes 7 packets B0040HMJHQ, Unscented 30ct B01KIO3LPS / B0009EXPGI.",
+  "notes": "partner=false confirmed. Catalog image is 'Individual Wipettes Vanilla Blossom 7count' (brand 7-pk). No exact Vanilla Blossom 7-count Amazon listing found; B0B8DXF7PM is same scent but 30ct, B0040HMJHQ is 7ct but Assorted. Human must pick. Brand store down at time of check; retry later for brand_site route."
+ },
+ {
+  "id": "p-tampax-pure",
+  "aynaName": "Tampax Pure Cotton",
+  "outcome": "AMBIGUOUS_VARIANT",
+  "brandSite": null,
+  "amazonCandidate": {
+   "url": "https://www.amazon.com/Tampax-Cotton-Tampons-Unscented-Count/dp/B0BX6KLT6H",
+   "asin": "B0BX6KLT6H",
+   "foundVia": "web search result",
+   "packOrSizeFromSearchSnippet": "Tampax Pure Cotton Tampons, Unscented, 24 Count (absorbency not in snippet)",
+   "status": "AMAZON_CANDIDATE_NEEDS_HUMAN_CHECK"
+  },
+  "recommendedRoute": "amazon_pending_human_check",
+  "evidence": "amazon.com search: 24ct B0BX6KLT6H (absorbency unstated), Super 24ct B0B986WL73, Super 24ct x3 B0BP9WS6RD; tampax.com/en-us/all-products/pure-cotton/pure-cotton-super/ exists but no price/checkout shown.",
+  "notes": "partner=false confirmed. 24-count exists in Regular, Super and Regular/Super duopack; Ayna does not specify absorbency. tampax.com is P&G informational (no direct checkout confirmed). Human must confirm absorbency."
+ },
+ {
+  "id": "p-ziggy-disc",
+  "aynaName": "Ziggy Cup (Menstrual Disc)",
+  "outcome": "BOTH",
+  "brandSite": {
+   "url": "https://www.intimina.com/ziggy-cup-2",
+   "merchantTitle": "INTIMINA Ziggy Cup\u2122 2 - Reusable Menstrual Disc",
+   "packOrSize": "1 disc; Size A or Size B",
+   "regularPrice": "39.95",
+   "salePrice": "19.97",
+   "currency": "USD (assumed; page shows $ only)",
+   "availability": "not stated on page ('Get yours' button present)",
+   "verifiedVia": "merchant_page"
+  },
+  "amazonCandidate": {
+   "url": "https://www.amazon.com/Intimina-Ziggy-Cup-Generation-Ultra-Thin/dp/B09Q3MRSM2",
+   "asin": "B09Q3MRSM2",
+   "foundVia": "web search result",
+   "packOrSizeFromSearchSnippet": "INTIMINA Ziggy Cup 2 - Reusable Menstrual Disc, Size A",
+   "status": "AMAZON_CANDIDATE_NEEDS_HUMAN_CHECK"
+  },
+  "recommendedRoute": "amazon_pending_human_check",
+  "evidence": "https://www.intimina.com/ziggy-cup-2 shows Ziggy Cup 2, sizes A/B, $39.95 with -50% sale $19.97; Amazon search: Size A B09Q3MRSM2, Size B B09Q3MKXVD.",
+  "notes": "partner=false confirmed. Catalog image is INTIMINA_Ziggy2 Size A, so Size A chosen; name itself doesn't specify size. 'ZiggyCup.com' is not the brand's store; official is intimina.com. Original Ziggy Cup (gen 1, B079JYJBF2) is a different product."
+ }
+]
