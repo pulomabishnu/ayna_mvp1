@@ -263,6 +263,8 @@ function labelParts(label) {
 }
 
 const DEFAULT_OPEN = new Set(['clinical', 'safety']);
+/** The first sentence, cut to about 110 characters for the glance cards. */
+const firstLine = (t) => { const x = sentences(String(t || ''))[0] || ''; return x.length > 120 ? `${x.slice(0, 110).replace(/\s+\S*$/, '')}…` : x; };
 
 export default function ProductEvidence({ product: baseProduct, glance = null, aynaData = null, aynaRating = null, ratingCount = 0, rateControls = null, safety = null, recall = null, heroLine = '', extraRows = [] }) {
   // Research the team approved in /admin/research fills any empty section.
@@ -271,7 +273,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   // Phone: sections fold, Clinical opinion and Safety start open. Desktop: always open.
   const [open, setOpen] = useState(() => new Set(DEFAULT_OPEN));
   const [allIngredients, setAllIngredients] = useState(false);
-  const [onScreen, setOnScreen] = useState('');
+  const [sourcesOpen, setSourcesOpen] = useState(false);
   // Desktop shows every section, so headings are plain; only phone sections fold.
   const [wide, setWide] = useState(() => typeof window !== 'undefined' && window.matchMedia?.('(min-width: 900px)').matches);
   useEffect(() => {
@@ -291,18 +293,6 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     window.addEventListener('ay-open-tab', on);
     return () => window.removeEventListener('ay-open-tab', on);
   }, []);
-  // The "On this page" list underlines the section you are reading.
-  useEffect(() => {
-    if (typeof IntersectionObserver === 'undefined') return undefined;
-    const els = [...document.querySelectorAll('.ay-sec[id^="ay-s-"]')];
-    if (!els.length) return undefined;
-    const io = new IntersectionObserver((entries) => {
-      const vis = entries.filter((x) => x.isIntersecting).sort((x, y) => x.boundingClientRect.top - y.boundingClientRect.top)[0];
-      if (vis) setOnScreen(vis.target.id.replace('ay-s-', ''));
-    }, { rootMargin: '-120px 0px -60% 0px' });
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, [d]);
   if (!d) return null;
 
   const brandSlug = String(d.brand).toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -461,44 +451,76 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const jump = (e, id) => {
     e.preventDefault();
     setOpen((prev) => new Set([...prev, id]));
+    if (id === 'sources') setSourcesOpen(true);
     document.getElementById(`ay-s-${id}`)?.scrollIntoView({ behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
     // Keyboard focus follows, so the next Tab goes into the section, not the next link.
     document.getElementById(`ay-s-${id}-h`)?.focus({ preventScroll: true });
   };
 
+  // "At a glance": one line per section from what is on file, each a jump link (not sticky).
+  const glanceTiles = [
+    sections.some((x) => x.id === 'clinical') && { id: 'clinical', label: 'Clinical opinion', tag: d.independent ? 'Independent sources' : 'Based on brand claims', text: firstLine(d.clinicianShort || d.clinician || d.clinicalNote) },
+    sections.some((x) => x.id === 'science') && { id: 'science', label: 'Research', tag: d.productSpecific ? 'Studied as a product' : d.ingredients.length || d.studies.length ? 'Not studied as this exact product' : '', text: [d.ingredients.length && plural(d.ingredients.length, 'ingredient'), d.studies.length && plural(d.studies.length, 'study', 'studies')].filter(Boolean).join(' and ') + (d.ingredients.length || d.studies.length ? ' with sources' : '') || firstLine(science.rest) },
+    sections.some((x) => x.id === 'safety') && { id: 'safety', label: 'Safety', tag: d.warnings.length ? plural(d.warnings.length, 'note') : '', text: firstLine(glance?.alert || d.warnings.find((w) => !/^(wash|rinse|boil|clean|store|keep it|dry|sanitize|sterili[sz]e|empty)\b/i.test(w)) || d.warnings[0] || d.sideEffects || (d.fdaRaw && `FDA: ${d.fda?.label || d.fdaRaw}`)) },
+    { id: 'reviews', label: 'Reviews', tag: aynaRating != null && ratingCount > 0 ? `★ ${aynaRating.toFixed(1)} from ayna members` : d.brandRating ? `★ ${d.brandRating.value}, brand-reported` : communityText || d.communitySummary ? 'What people say online' : 'None yet', text: communityText || d.communitySummary ? firstLine(communityText || d.communitySummary) : 'No reviews yet. Tried it? Be the first.' },
+  ].filter(Boolean);
+
+  const byId = Object.fromEntries(sections.map((x) => [x.id, x]));
+  const renderSec = (x, extra = '') => {
+    if (!x) return null;
+    const closed = x.id === 'sources' ? !sourcesOpen : !(open.has(x.id) || wide);
+    return (
+      <section key={x.id} id={`ay-s-${x.id}`} className={`ay-sec is-${x.id}${extra}${closed ? ' is-closed' : ''}`} aria-labelledby={`ay-s-${x.id}-h`}>
+        <h2 className="ay-sec__h" id={`ay-s-${x.id}-h`} tabIndex={-1}>
+          {wide && x.id !== 'sources' ? <span>{x.label}</span> : (
+            <button type="button" aria-expanded={!closed} aria-controls={`ay-s-${x.id}-b`} onClick={() => (x.id === 'sources' ? setSourcesOpen((v) => !v) : toggle(x.id))}>
+              <span>{x.id === 'sources' && allSources.length ? `${x.label} (${allSources.length})` : x.label}</span><i aria-hidden="true" />
+            </button>
+          )}
+        </h2>
+        <div className="ay-sec__b" id={`ay-s-${x.id}-b`}>{x.body}</div>
+      </section>
+    );
+  };
+  // Short sections sit side by side on desktop; the rest run full width.
+  const pair = (l, r) => (byId[l] && byId[r]
+    ? <div className="ay-pair" key={`${l}-${r}`}>{renderSec(byId[l])}{renderSec(byId[r])}</div>
+    : <React.Fragment key={`${l}-${r}`}>{renderSec(byId[l])}{renderSec(byId[r])}</React.Fragment>);
+
   return (
     <TermsCtx.Provider value={plan}>
     <div id="ay-tabs" className="ay-stack">
-      {/* Desktop: a sticky list of links to the sections (not tabs: every section is open below). */}
-      <nav className="ay-stack__rail" aria-label="On this page">
-        <p className="ay-stack__rail-h">On this page</p>
-        <ul>
-          {sections.map((x) => <li key={x.id}><a href={`#ay-s-${x.id}`} className={onScreen === x.id ? 'is-on' : undefined} aria-current={onScreen === x.id ? 'location' : undefined} onClick={(e) => jump(e, x.id)}>{x.label}</a></li>)}
-        </ul>
-      </nav>
+      {glanceTiles.length > 1 && (
+        <nav className="ay-glance" aria-label="At a glance">
+          <h2 className="ay-glance__h">At a glance</h2>
+          <ul>
+            {glanceTiles.map((t) => (
+              <li key={t.id}>
+                <a href={`#ay-s-${t.id}`} onClick={(e) => jump(e, t.id)}>
+                  <span className="ay-glance__label">{t.label}</span>
+                  {t.tag && <span className="ay-glance__tag">{t.tag}</span>}
+                  {t.text && <span className="ay-glance__text">{t.text}</span>}
+                  <span className="ay-glance__go" aria-hidden="true">↓</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
       <div className="ay-stack__body">
-        {sections.map((x) => {
-          const isOpen = open.has(x.id);
-          return (
-            <section key={x.id} id={`ay-s-${x.id}`} className={`ay-sec is-${x.id}${isOpen || wide ? '' : ' is-closed'}`} aria-labelledby={`ay-s-${x.id}-h`}>
-              <h2 className="ay-sec__h" id={`ay-s-${x.id}-h`} tabIndex={-1}>
-                {wide ? <span>{x.label}</span> : (
-                  <button type="button" aria-expanded={isOpen} aria-controls={`ay-s-${x.id}-b`} onClick={() => toggle(x.id)}>
-                    <span>{x.label}</span><i aria-hidden="true" />
-                  </button>
-                )}
-              </h2>
-              <div className="ay-sec__b" id={`ay-s-${x.id}-b`}>{x.body}</div>
-            </section>
-          );
-        })}
+        {renderSec(byId.what)}
+        {pair('who', 'how')}
+        {renderSec(byId.clinical, ' is-band')}
+        {renderSec(byId.science)}
+        {renderSec(byId.safety)}
+        {pair('reviews', 'details')}
+        {renderSec(byId.sources)}
       </div>
     </div>
     </TermsCtx.Provider>
   );
 }
 
-/** Safety lives inside Product details; the warning line under Buy opens it there. */
 export function ProductSafety({ product, recall = null, alertText = '', glance = null }) {
   const d = useEvidence(product, null);
   if (!d) return null;
