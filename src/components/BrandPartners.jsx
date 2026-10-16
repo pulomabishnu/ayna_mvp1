@@ -3,6 +3,7 @@ import { ALL_PRODUCTS } from '../data/products';
 import { InfoPage } from './InfoPage';
 import { isPlainLeftClick } from '../utils/productRoute';
 import ProductCard from './ProductCard';
+import ProductTileImage from './ProductTileImage';
 import { RESA_SITE_URL, RESA_WAITLIST_CTA, RESA_WAITLIST_URL } from '../data/resaPartnership';
 
 /**
@@ -183,7 +184,16 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onBrowse
   const partner = ORDERED.find((p) => p.brand === open) || null;
   const products = partner ? ALL_PRODUCTS.filter((p) => p.brand === partner.brand) : [];
   return (
-    <InfoPage photos={['sink-heels-dryer', 'vanity-hairdryer', 'bag-tubes']} tone="sky"
+    <InfoPage tone="sky"
+      aside={(() => {
+        // The partners' own products on white, one per brand (not a stock photo).
+        const picks = ORDERED.filter((pt) => !pt.prelaunch).map((pt) => ALL_PRODUCTS.find((x) => x.brand === pt.brand && /^\/(products|brands)\//.test(String(x.image || x.imageUrl || '')))).filter(Boolean).slice(0, 4);
+        return picks.length === 4 ? (
+          <ul className="brand-hero-grid" aria-label="Products from partner brands">
+            {picks.map((x) => <li key={x.id}><ProductTileImage product={x} alt={`${x.brand} ${x.name}`} /></li>)}
+          </ul>
+        ) : null;
+      })()}
       eyebrow="Partnerships"
       title={PARTNERS.length > 0 ? 'Brands we work with.' : 'Brand partnerships are coming soon.'}
       lede={PARTNERS.length > 0
