@@ -9,6 +9,7 @@ import { ROUTINE_BUCKETS, ROUTINE_BUCKET_LABELS, useRoutine } from '../mobile/ho
 import { fetchDataExport } from '../mobile/utils/dataExportApi.js';
 import ShopperCard from '../mobile/components/ShopperCard.jsx';
 import BadgesPanel from './BadgesPanel';
+import FreeProductCard from './free-product/FreeProductCard';
 import './WebYou.css';
 import '../styles/audit-qya.css';
 
@@ -62,7 +63,7 @@ function Routine({ products }) {
   </section>;
 }
 
-export default function WebYou({ user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenStartups, onOpenProduct, onSignOut, onDeleteAccount, onStartQuiz, theme = 'light', onThemeChange }) {
+export default function WebYou({ user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenStartups, onOpenProduct, onSignOut, onDeleteAccount, onStartQuiz, onOpenFreeProduct, theme = 'light', onThemeChange }) {
   const products = useMemo(() => Object.values(myProducts || {}).filter(Boolean), [myProducts]);
   const consumables = useMemo(() => products.filter(isConsumable), [products]);
   const intake = quizResults?.fullHealthIntake || null;
@@ -141,6 +142,8 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
           <div className="wyou-card-head"><h2>Safety alerts</h2><span>{alerts.length} active</span></div>
           {alerts.length ? <ul className="wyou-alerts">{alerts.map((a) => <li key={a.id} className={`is-${a.kind}`}><strong>{a.title}</strong><p>{a.body}</p>{a.product && <button type="button" onClick={() => onOpenProduct?.(a.product)}>View product</button>}</li>)}</ul> : <p className="wyou-muted">No alerts on your ecosystem.</p>}
         </section>
+
+        {onOpenFreeProduct && <FreeProductCard userId={user.id} onOpen={onOpenFreeProduct} />}
 
         {consumables.length > 0 && <Routine products={consumables} />}
 

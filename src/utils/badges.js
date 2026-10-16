@@ -16,6 +16,7 @@
  *                      (supabase/migrations/20261013150000_referrals.sql);
  *                      until it is applied the badge shows as locked, 0/3.
  */
+import posthog from 'posthog-js';
 import { getEcosystemSeedFromQuiz, getProductMatchDetailsForProduct } from '../data/products.js';
 
 const PENDING_REF_KEY = 'ayna_pending_ref_v1';
@@ -54,7 +55,33 @@ export function captureReferralFromUrl() {
   if (existing?.code && Date.now() - existing.at < 30 * 864e5) return existing;
   const pending = { code, at: Date.now() };
   safeSet(PENDING_REF_KEY, pending);
+  try { posthog.capture('referral_signup_started'); } catch { /* analytics off */ }
   return pending;
+}
+
+/**
+ * The invite code waiting for this browser's next sign-up, or null. AuthGate
+ * passes it in the sign-up metadata so the database records the referral at
+ * the moment the account is created (supabase/migrations/20261015120000).
+ */
+export function pendingReferralCode() {
+  const pending = safeGet(PENDING_REF_KEY);
+  if (!pending?.code || !CODE_RE.test(pending.code) || Date.now() - pending.at >= 30 * 864e5) return null;
+  return pending.code;
+}
+
+const VERIFIED_SENT_KEY = 'ayna_ref_verified_sent_v1';
+/** Analytics only (the database is what counts): a referred friend just verified. */
+function trackReferredVerification(user) {
+  const meta = user?.user_metadata || {};
+  if (!meta.referred_by || !(user.email_confirmed_at || user.phone_confirmed_at) || user.is_anonymous) return;
+  const created = Date.parse(user.created_at || '');
+  if (!Number.isFinite(created) || Date.now() - created > 30 * 864e5) return;
+  const sent = safeGet(VERIFIED_SENT_KEY) || {};
+  if (sent[user.id]) return;
+  sent[user.id] = Date.now();
+  safeSet(VERIFIED_SENT_KEY, sent);
+  try { posthog.capture('referral_verified'); } catch { /* analytics off */ }
 }
 
 /**
@@ -70,6 +97,10 @@ export async function attachPendingReferral(supabase) {
   const meta = user.user_metadata || {};
   const created = Date.parse(user.created_at || '');
   const isNewAccount = Number.isFinite(created) && created >= pending.at - 10 * 60 * 1000;
+  if (meta.referred_by && meta.referred_by === pending.code && isNewAccount) {
+    // Recorded at sign-up already (AuthGate passed the code).
+    try { posthog.capture('referral_signup_completed', { via: 'signup' }); } catch { /* analytics off */ }
+  }
   if (meta.referred_by || pending.code === referralCodeFor(user.id) || !isNewAccount) {
     safeDel(PENDING_REF_KEY);
     return false;
@@ -78,7 +109,8 @@ export async function attachPendingReferral(supabase) {
     await supabase.auth.updateUser({ data: { referred_by: pending.code, referred_at: new Date().toISOString() } });
   } catch { /* metadata is a backup; the table row below is what counts */ }
   try {
-    await supabase.from('referrals').insert({ referred_user_id: user.id, referrer_code: pending.code });
+    const { error } = await supabase.from('referrals').insert({ referred_user_id: user.id, referrer_code: pending.code });
+    if (!error) { try { posthog.capture('referral_signup_completed', { via: 'client' }); } catch { /* analytics off */ } }
   } catch { /* table not created yet: metadata still holds it */ }
   safeDel(PENDING_REF_KEY);
   return true;
@@ -92,8 +124,11 @@ export function installReferralCapture(supabase) {
   referralInstalled = true;
   attachPendingReferral(supabase);
   try {
-    supabase.auth.onAuthStateChange?.((event) => {
-      if (event === 'SIGNED_IN' || event === 'USER_UPDATED' || event === 'INITIAL_SESSION') attachPendingReferral(supabase);
+    supabase.auth.onAuthStateChange?.((event, session) => {
+      if (event === 'SIGNED_IN' || event === 'USER_UPDATED' || event === 'INITIAL_SESSION') {
+        attachPendingReferral(supabase);
+        trackReferredVerification(session?.user);
+      }
     });
   } catch { /* older client */ }
 }

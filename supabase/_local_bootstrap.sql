@@ -40,6 +40,15 @@ create table if not exists auth.users (
   created_at timestamptz not null default now()
 );
 
+-- Columns Supabase's auth.users really has that the campaign migration reads
+-- (account verification, anonymous guests, deleted/banned accounts).
+alter table auth.users add column if not exists phone text;
+alter table auth.users add column if not exists email_confirmed_at timestamptz;
+alter table auth.users add column if not exists phone_confirmed_at timestamptz;
+alter table auth.users add column if not exists is_anonymous boolean not null default false;
+alter table auth.users add column if not exists deleted_at timestamptz;
+alter table auth.users add column if not exists banned_until timestamptz;
+
 -- Referenced by every RLS policy. Locally it reads a session GUC so a test can
 -- impersonate a user:  set local request.jwt.claim.sub = '<uuid>';
 create or replace function auth.uid()
