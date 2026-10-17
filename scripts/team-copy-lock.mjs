@@ -12,6 +12,7 @@
 import fs from 'node:fs';
 import { createHash } from 'node:crypto';
 import { ALL_PRODUCTS } from '../src/data/products.js';
+import { applyCatalogCorrections } from '../src/data/catalogCorrections.js';
 
 export const LOCKED_FIELDS = ['name', 'brand', 'price', 'summary', 'description', 'doctorOpinion', 'communityReview', 'effectiveness',
   'ingredients', 'category', 'url', 'image', 'whoItsFor', 'howToUse', 'warnings', 'badges',
@@ -23,7 +24,10 @@ export function currentPrints(products = ALL_PRODUCTS) {
   const out = {};
   for (const p of products) {
     if (!p?.id) continue;
-    out[p.id] = Object.fromEntries(LOCKED_FIELDS.map((f) => [f, fingerprint(get(p, f))]));
+    // Fingerprint what the site shows: the product after the catalog
+    // corrections overlay, so an edit there is caught too.
+    const shown = applyCatalogCorrections(p);
+    out[p.id] = Object.fromEntries(LOCKED_FIELDS.map((f) => [f, fingerprint(get(shown, f))]));
   }
   return out;
 }

@@ -12,10 +12,10 @@ export const EXTENDED_PHYSICAL = [
         // ProductModal.jsx). Product-specific LOLA affiliate link, this
         // lvnta.com link resolves to amazon.com/dp/B0BPP9J2GQ (LOLA Organic
         // Cotton Pads, Ultra Thin with Wings, Heavy, 36ct).
-        affiliateUrl: 'https://lvnta.com/lv_9s1mlpiV0gHbgRP8fx', image: 'https://m.media-amazon.com/images/I/71j3reiHuBL.jpg', summary: 'From LOLA (see LOLA Organic Tampons for the founder story), a 100% organic cotton pad with a plant-based bioplastic back sheet, built around the same ingredient-transparency approach as the rest of the line. Customizable subscription.', safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton (top sheet and core), plant-based bioplastic back sheet, non-toxic adhesive', recalls: 'No recalls found for LOLA pads.', allergens: 'Hypoallergenic, fragrance-free', sideEffects: 'Minimal irritation risk. Rare sensitivity to adhesive.' },
+        affiliateUrl: 'https://lvnta.com/lv_9s1mlpiV0gHbgRP8fx', image: 'https://m.media-amazon.com/images/I/71j3reiHuBL.jpg', summary: 'From LOLA (see LOLA Organic Tampons for the founder story): a 100% organic cotton pad with a plant-based bioplastic back sheet, built around the same ingredient-transparency approach as the rest of the line. Customizable subscription.', safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton (top sheet and core), plant-based bioplastic back sheet, non-toxic adhesive', recalls: 'No recalls found for LOLA pads.', allergens: 'Hypoallergenic, fragrance-free', sideEffects: 'Minimal irritation risk. Rare sensitivity to adhesive.' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-        doctorOpinion: 'Organic cotton construction and freedom from added synthetic fragrance reduce exposure to bleaching byproducts, which can help patients with vulvar sensitivity or contact-irritation history. The plant-based bioplastic back sheet is a genuine departure from the polyethylene backing on most mainstream pads, though no independent clinical study of this specific pad\'s irritation rate versus conventional pads was found, the case for it is ingredient transparency and material choice, not a proven clinical outcome difference.',
+        doctorOpinion: 'Organic cotton construction and freedom from added synthetic fragrance reduce exposure to bleaching byproducts, which can help patients with vulvar sensitivity or contact-irritation history. The plant-based bioplastic back sheet is a genuine departure from the polyethylene backing on most mainstream pads, though no independent clinical study of this specific pad\'s irritation rate versus conventional pads was found: the case for it is ingredient transparency and material choice, not a proven clinical outcome difference.',
         whoItsFor: [
             'People who want organic cotton and a plastic-reduced back sheet over mainstream synthetic pads',
             'Those with a history of vulvar irritation from fragranced or synthetic-material pads',
@@ -327,7 +327,7 @@ verificationLinks: {
         safety: {
             fdaStatus: 'Cosmetic', materials: 'Plant-derived ingredients', recalls: 'No recalls.', allergens: 'Fragrance-free options available',
             sideEffects: 'Mild irritation for highly sensitive individuals.',
-            opinionAlerts: 'Some users question whether any wash product is necessary for intimate areas; a 2023 class-action lawsuit (McAuley v. Honey Pot) made this argument formally, alleging feminine washes are unsuitable for vulvar use since the medical consensus favors water alone, the suit was dismissed for insufficient evidence the products were harmful.'
+            opinionAlerts: 'Some users question whether any wash product is necessary for intimate areas; a 2023 class-action lawsuit (McAuley v. Honey Pot) made this argument formally, alleging feminine washes are unsuitable for vulvar use since the medical consensus favors water alone: the suit was dismissed for insufficient evidence the products were harmful.'
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
@@ -616,7 +616,7 @@ export const EXTENDED_DIGITAL = [
         safety: {
             fdaStatus: 'Not FDA-cleared (wellness device)', materials: 'Polyester, spandex blend; water-based cooling system', recalls: 'No recalls.', allergens: 'No known allergens; water system requires occasional maintenance',
             sideEffects: 'Some users report waking from cooling cycles; not recommended for those with Raynaud\'s.',
-            opinionAlerts: 'High upfront cost ($2,245+) plus $19/month subscription after the first year. Requires a stable Wi-Fi connection and ongoing cloud connectivity to function, in October 2025 an AWS outage knocked out cloud-dependent Pods for some users, leaving beds unable to heat or cool properly overnight. Eight Sleep\'s founder publicly apologized and said an offline mode was coming, though it had not shipped as of this review.'
+            opinionAlerts: 'High upfront cost ($2,245+) plus $19/month subscription after the first year. Requires a stable Wi-Fi connection and ongoing cloud connectivity to function: in October 2025 an AWS outage knocked out cloud-dependent Pods for some users, leaving beds unable to heat or cool properly overnight. Eight Sleep\'s founder publicly apologized and said an offline mode was coming, though it had not shipped as of this review.'
         },
         privacy: { dataStorage: 'Cloud-based, encrypted', sellsData: 'Does not sell personal data', hipaa: 'Not HIPAA', keyPolicy: 'Eight Sleep stores sleep biometrics in the cloud. Data shared with third-party researchers only in anonymized, aggregated form.' },
         clinicianOpinionSource: 'independent',

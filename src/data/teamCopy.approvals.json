@@ -4,5 +4,1007 @@
   "by": "Ameera",
   "what": "initial lock",
   "note": "Locked after restoring the team's product copy (Oct 17). Changes need a named approval."
+ },
+ {
+  "at": "2026-10-17T17:57:05.994Z",
+  "by": "Ameera",
+  "what": "p-always-infinity.effectiveness",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:06.182Z",
+  "by": "Ameera",
+  "what": "p-lola-tampon.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:06.352Z",
+  "by": "Ameera",
+  "what": "p-saalt-cup.safety.sideEffects",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:06.529Z",
+  "by": "Ameera",
+  "what": "p-cora-organic-pads.safety.recalls",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:06.717Z",
+  "by": "Ameera",
+  "what": "p-lola-pad.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:06.911Z",
+  "by": "Ameera",
+  "what": "p-lola-pad.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:07.132Z",
+  "by": "Ameera",
+  "what": "p-honeypot-wash.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:07.324Z",
+  "by": "Ameera",
+  "what": "d-eight-sleep.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:07.500Z",
+  "by": "Ameera",
+  "what": "p-rael-overnight.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:07.674Z",
+  "by": "Ameera",
+  "what": "p-cora-overnight.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:07.856Z",
+  "by": "Ameera",
+  "what": "p-always-liners.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:08.041Z",
+  "by": "Ameera",
+  "what": "p-rael-liners.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:08.245Z",
+  "by": "Ameera",
+  "what": "p-playtex-sport.communityReview",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:08.437Z",
+  "by": "Ameera",
+  "what": "p-playtex-sport.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:08.686Z",
+  "by": "Ameera",
+  "what": "p-tampax-radiant.communityReview",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:08.862Z",
+  "by": "Ameera",
+  "what": "p-tampax-radiant.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:09.068Z",
+  "by": "Ameera",
+  "what": "p-seventh-gen-tampon.communityReview",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:09.254Z",
+  "by": "Ameera",
+  "what": "p-seventh-gen-tampon.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:09.487Z",
+  "by": "Ameera",
+  "what": "p-rael-tampon.communityReview",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:09.657Z",
+  "by": "Ameera",
+  "what": "p-rael-tampon.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:09.840Z",
+  "by": "Ameera",
+  "what": "p-proof-period.communityReview",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:10.046Z",
+  "by": "Ameera",
+  "what": "p-proof-period.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:10.226Z",
+  "by": "Ameera",
+  "what": "p-winx-uti-test-treat.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:10.407Z",
+  "by": "Ameera",
+  "what": "p-winx-uti-test-treat.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:10.617Z",
+  "by": "Ameera",
+  "what": "p-winx-uti-test-treat.howToUse",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:10.795Z",
+  "by": "Ameera",
+  "what": "p-winx-uti-test-treat.warnings",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:10.975Z",
+  "by": "Ameera",
+  "what": "p-winx-uti-test-treat.safety.sideEffects",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:11.157Z",
+  "by": "Ameera",
+  "what": "p-winx-uti-test-treat.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:11.358Z",
+  "by": "Ameera",
+  "what": "p-winx-vaginal-health-test-treat.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:11.579Z",
+  "by": "Ameera",
+  "what": "p-winx-vaginal-health-test-treat.whoItsFor",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:11.791Z",
+  "by": "Ameera",
+  "what": "p-winx-vaginal-health-test-treat.howToUse",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:11.966Z",
+  "by": "Ameera",
+  "what": "p-winx-vaginal-health-test-treat.warnings",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:12.154Z",
+  "by": "Ameera",
+  "what": "p-winx-vaginal-health-test-treat.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:12.336Z",
+  "by": "Ameera",
+  "what": "p-winx-pregnancy-tests.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:12.526Z",
+  "by": "Ameera",
+  "what": "p-winx-pregnancy-tests.howToUse",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:12.712Z",
+  "by": "Ameera",
+  "what": "p-winx-uti-pain-relief.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:12.919Z",
+  "by": "Ameera",
+  "what": "p-winx-uti-pain-relief.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:13.150Z",
+  "by": "Ameera",
+  "what": "p-winx-uti-pain-relief.ingredients",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:13.359Z",
+  "by": "Ameera",
+  "what": "p-winx-uti-pain-relief.whoItsFor",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:13.604Z",
+  "by": "Ameera",
+  "what": "p-winx-uti-pain-relief.howToUse",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:13.764Z",
+  "by": "Ameera",
+  "what": "p-winx-uti-pain-relief.warnings",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:13.944Z",
+  "by": "Ameera",
+  "what": "p-winx-uti-pain-relief.safety.sideEffects",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:14.118Z",
+  "by": "Ameera",
+  "what": "p-winx-uti-pain-relief.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:14.294Z",
+  "by": "Ameera",
+  "what": "p-winx-vaginal-probiotic.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:14.477Z",
+  "by": "Ameera",
+  "what": "p-winx-vaginal-probiotic.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:14.659Z",
+  "by": "Ameera",
+  "what": "p-winx-vaginal-probiotic.howToUse",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:14.832Z",
+  "by": "Ameera",
+  "what": "p-winx-vaginal-probiotic.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:15.054Z",
+  "by": "Ameera",
+  "what": "p-winx-uti-daily-defense.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:15.272Z",
+  "by": "Ameera",
+  "what": "p-winx-uti-daily-defense.communityReview",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:15.447Z",
+  "by": "Ameera",
+  "what": "p-winx-uti-daily-defense.whoItsFor",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:15.628Z",
+  "by": "Ameera",
+  "what": "p-winx-uti-daily-defense.howToUse",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:15.823Z",
+  "by": "Ameera",
+  "what": "p-winx-uti-daily-defense.warnings",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:16.014Z",
+  "by": "Ameera",
+  "what": "p-neycher-vaginal-moisturizer.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:16.201Z",
+  "by": "Ameera",
+  "what": "p-neycher-vaginal-moisturizer.howToUse",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:16.385Z",
+  "by": "Ameera",
+  "what": "p-neycher-vaginal-moisturizer.safety.sideEffects",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:16.590Z",
+  "by": "Ameera",
+  "what": "p-neycher-odor-be-gone.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:16.815Z",
+  "by": "Ameera",
+  "what": "p-neycher-odor-be-gone.communityReview",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:17.048Z",
+  "by": "Ameera",
+  "what": "p-neycher-odor-be-gone.howToUse",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:17.238Z",
+  "by": "Ameera",
+  "what": "p-neycher-odor-be-gone.safety.sideEffects",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:17.424Z",
+  "by": "Ameera",
+  "what": "p-neycher-hydrobloom-gel.warnings",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:17.613Z",
+  "by": "Ameera",
+  "what": "p-neycher-hydrobloom-gel.safety.sideEffects",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:17.816Z",
+  "by": "Ameera",
+  "what": "p-oboo-smooch.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:18.005Z",
+  "by": "Ameera",
+  "what": "p-oboo-shoop.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:18.213Z",
+  "by": "Ameera",
+  "what": "p-oboo-boom.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:18.390Z",
+  "by": "Ameera",
+  "what": "p-oboo-cool-spray.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:18.567Z",
+  "by": "Ameera",
+  "what": "d-connect-pelvic-floor-fitness.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:18.770Z",
+  "by": "Ameera",
+  "what": "d-connect-pelvic-floor-fitness.ingredients",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:19.017Z",
+  "by": "Ameera",
+  "what": "d-connect-pelvic-floor-fitness.safety.sideEffects",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:19.224Z",
+  "by": "Ameera",
+  "what": "p-vio2-mouth-tape.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:19.423Z",
+  "by": "Ameera",
+  "what": "p-vio2-mouth-tape.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:19.606Z",
+  "by": "Ameera",
+  "what": "p-vio2-mouth-tape.howToUse",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:19.788Z",
+  "by": "Ameera",
+  "what": "p-vio2-mouth-tape.warnings",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:19.963Z",
+  "by": "Ameera",
+  "what": "p-vio2-mouth-tape.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:20.141Z",
+  "by": "Ameera",
+  "what": "p-proov-complete.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:20.310Z",
+  "by": "Ameera",
+  "what": "p-proov-complete.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:20.509Z",
+  "by": "Ameera",
+  "what": "p-proov-complete.communityReview",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:20.702Z",
+  "by": "Ameera",
+  "what": "p-proov-complete.warnings",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:20.973Z",
+  "by": "Ameera",
+  "what": "p-proov-complete.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:21.235Z",
+  "by": "Ameera",
+  "what": "p-proov-his-hers.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:21.512Z",
+  "by": "Ameera",
+  "what": "p-proov-his-hers.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:21.767Z",
+  "by": "Ameera",
+  "what": "p-proov-his-hers.warnings",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:22.025Z",
+  "by": "Ameera",
+  "what": "p-proov-his-hers.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:22.237Z",
+  "by": "Ameera",
+  "what": "p-proov-empower.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:22.440Z",
+  "by": "Ameera",
+  "what": "p-proov-empower.warnings",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:22.605Z",
+  "by": "Ameera",
+  "what": "p-proov-empower.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:22.783Z",
+  "by": "Ameera",
+  "what": "p-proov-balance-bundle.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:22.960Z",
+  "by": "Ameera",
+  "what": "p-proov-balance-bundle.effectiveness",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:23.155Z",
+  "by": "Ameera",
+  "what": "p-proov-balance-bundle.warnings",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:23.353Z",
+  "by": "Ameera",
+  "what": "p-proov-balance-bundle.safety.sideEffects",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:23.537Z",
+  "by": "Ameera",
+  "what": "p-proov-path-to-pregnancy.name",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:23.764Z",
+  "by": "Ameera",
+  "what": "p-proov-path-to-pregnancy.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:23.944Z",
+  "by": "Ameera",
+  "what": "p-proov-path-to-pregnancy.warnings",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:24.119Z",
+  "by": "Ameera",
+  "what": "p-elitone.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:24.354Z",
+  "by": "Ameera",
+  "what": "p-elitone.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:24.543Z",
+  "by": "Ameera",
+  "what": "p-elitone.communityReview",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:24.784Z",
+  "by": "Ameera",
+  "what": "p-elitone.howToUse",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:25.026Z",
+  "by": "Ameera",
+  "what": "p-elitone.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:25.227Z",
+  "by": "Ameera",
+  "what": "p-elitone-urge.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:25.463Z",
+  "by": "Ameera",
+  "what": "p-elitone-urge.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:25.646Z",
+  "by": "Ameera",
+  "what": "p-elitone-urge.communityReview",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:25.858Z",
+  "by": "Ameera",
+  "what": "p-elitone-urge.whoItsFor",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:26.114Z",
+  "by": "Ameera",
+  "what": "p-elitone-urge.howToUse",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:26.313Z",
+  "by": "Ameera",
+  "what": "p-elitone-urge.warnings",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:26.547Z",
+  "by": "Ameera",
+  "what": "p-elitone-urge.safety.fdaStatus",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:26.758Z",
+  "by": "Ameera",
+  "what": "p-elitone-urge.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:26.997Z",
+  "by": "Ameera",
+  "what": "p-mypelvicbra-classic.price",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:27.193Z",
+  "by": "Ameera",
+  "what": "p-mypelvicbra-classic.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:27.394Z",
+  "by": "Ameera",
+  "what": "p-mypelvicbra-classic.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:27.589Z",
+  "by": "Ameera",
+  "what": "p-mypelvicbra-classic.effectiveness",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:27.824Z",
+  "by": "Ameera",
+  "what": "p-mypelvicbra-classic.whoItsFor",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:28.049Z",
+  "by": "Ameera",
+  "what": "p-mypelvicbra-classic.howToUse",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:28.283Z",
+  "by": "Ameera",
+  "what": "p-mypelvicbra-classic.warnings",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:28.502Z",
+  "by": "Ameera",
+  "what": "p-buni-rejuvenate-vulva-balm.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:28.738Z",
+  "by": "Ameera",
+  "what": "p-buni-rejuvenate-vulva-balm.howToUse",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:28.957Z",
+  "by": "Ameera",
+  "what": "p-buni-rejuvenate-vulva-balm.warnings",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:29.152Z",
+  "by": "Ameera",
+  "what": "p-buni-rejuvenate-vulva-balm.safety.materials",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:29.334Z",
+  "by": "Ameera",
+  "what": "p-buni-rejuvenate-vulva-balm.safety.sideEffects",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:29.521Z",
+  "by": "Ameera",
+  "what": "p-buni-soothe-nipple-lip-balm.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:29.716Z",
+  "by": "Ameera",
+  "what": "p-buni-soothe-nipple-lip-balm.communityReview",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:29.931Z",
+  "by": "Ameera",
+  "what": "p-buni-soothe-nipple-lip-balm.howToUse",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:30.178Z",
+  "by": "Ameera",
+  "what": "p-buni-soothe-nipple-lip-balm.safety.materials",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:30.409Z",
+  "by": "Ameera",
+  "what": "p-buni-transform-scar-body-oil.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:30.610Z",
+  "by": "Ameera",
+  "what": "p-buni-transform-scar-body-oil.communityReview",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:30.828Z",
+  "by": "Ameera",
+  "what": "p-buni-transform-scar-body-oil.effectiveness",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:31.037Z",
+  "by": "Ameera",
+  "what": "p-buni-transform-scar-body-oil.warnings",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:31.209Z",
+  "by": "Ameera",
+  "what": "p-mypelvicbra-waistband-extenders.price",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:31.387Z",
+  "by": "Ameera",
+  "what": "p-mypelvicbra-classic-plus.price",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:31.573Z",
+  "by": "Ameera",
+  "what": "p-mypelvicbra-classic-plus.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:31.784Z",
+  "by": "Ameera",
+  "what": "p-mypelvicbra-classic-plus.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:32.020Z",
+  "by": "Ameera",
+  "what": "p-mypelvicbra-classic-plus.warnings",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:32.224Z",
+  "by": "Ameera",
+  "what": "p-mypelvicbra-sports.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:32.417Z",
+  "by": "Ameera",
+  "what": "p-mypelvicbra-sports.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:32.595Z",
+  "by": "Ameera",
+  "what": "p-mypelvicbra-sports.warnings",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:32.814Z",
+  "by": "Ameera",
+  "what": "p-sootheher-elaris-pod.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:33.005Z",
+  "by": "Ameera",
+  "what": "p-sootheher-elaris-pod.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:33.198Z",
+  "by": "Ameera",
+  "what": "p-sootheher-elaris-pod.whoItsFor",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:33.420Z",
+  "by": "Ameera",
+  "what": "p-sootheher-elaris-pod.warnings",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:33.612Z",
+  "by": "Ameera",
+  "what": "p-sootheher-elaris-pod.safety.sideEffects",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:33.790Z",
+  "by": "Ameera",
+  "what": "p-sootheher-elaris-pod.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:33.984Z",
+  "by": "Ameera",
+  "what": "p-sootheher-gel-pad-refills.effectiveness",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:34.170Z",
+  "by": "Ameera",
+  "what": "p-sootheher-gel-pad-refills.safety.sideEffects",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:34.365Z",
+  "by": "Ameera",
+  "what": "p-sootheher-gel-pad-refills.safety.opinionAlerts",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:34.548Z",
+  "by": "Ameera",
+  "what": "p-gina-vaginal-moisturizing-glides.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:34.746Z",
+  "by": "Ameera",
+  "what": "p-gina-vaginal-moisturizing-glides.communityReview",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:34.987Z",
+  "by": "Ameera",
+  "what": "p-gina-vaginal-moisturizing-glides.whoItsFor",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:35.169Z",
+  "by": "Ameera",
+  "what": "p-gina-insertion-applicator-refills.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:35.361Z",
+  "by": "Ameera",
+  "what": "p-gina-insertion-applicator-refills.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:35.628Z",
+  "by": "Ameera",
+  "what": "p-gina-insertion-applicator-refills.howToUse",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:35.899Z",
+  "by": "Ameera",
+  "what": "p-livlabs-pippa-starter-kit.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:36.090Z",
+  "by": "Ameera",
+  "what": "p-livlabs-pippa-starter-kit.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:36.303Z",
+  "by": "Ameera",
+  "what": "p-livlabs-pippa-starter-kit.communityReview",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:36.469Z",
+  "by": "Ameera",
+  "what": "p-livlabs-pippa-starter-kit.howToUse",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:36.685Z",
+  "by": "Ameera",
+  "what": "p-livlabs-pippa-starter-kit.warnings",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:36.869Z",
+  "by": "Ameera",
+  "what": "p-livlabs-pippa-starter-kit.safety.fdaStatus",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:37.056Z",
+  "by": "Ameera",
+  "what": "p-livlabs-pippa-fit-kit.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:37.221Z",
+  "by": "Ameera",
+  "what": "p-livlabs-pippa-fit-kit.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:37.398Z",
+  "by": "Ameera",
+  "what": "p-livlabs-pippa-fit-kit.communityReview",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:37.627Z",
+  "by": "Ameera",
+  "what": "p-livlabs-pippa-fit-kit.safety.sideEffects",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:37.806Z",
+  "by": "Ameera",
+  "what": "p-lim-method-bundle.doctorOpinion",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:37.991Z",
+  "by": "Ameera",
+  "what": "p-lim-method-bundle.whoItsFor",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:38.195Z",
+  "by": "Ameera",
+  "what": "p-lim-method-bundle.warnings",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:38.389Z",
+  "by": "Ameera",
+  "what": "p-lim-method-bundle.safety.sideEffects",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:38.582Z",
+  "by": "Ameera",
+  "what": "p-lim-method-shoe-covers.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:38.772Z",
+  "by": "Ameera",
+  "what": "p-lim-method-shoe-covers.safety.sideEffects",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:38.996Z",
+  "by": "Ameera",
+  "what": "p-lim-method-kneeling-pad.summary",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:57:39.180Z",
+  "by": "Ameera",
+  "what": "p-lim-method-kneeling-pad.safety.sideEffects",
+  "note": "Restore team wording an Oct 13 automated pass had changed (Eliz's request relayed by Ameera, Oct 17)"
+ },
+ {
+  "at": "2026-10-17T17:58:04.063Z",
+  "by": "Ameera",
+  "what": "lock now fingerprints the shown card (after catalog corrections), 76 fields re-baselined, no copy changed",
+  "note": "so edits to catalogCorrections.js are caught too"
  }
 ]
