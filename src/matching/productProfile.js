@@ -287,7 +287,7 @@ export const RELEVANCE_RULES = [
   // J Am Coll Nutr 2000, pubmed.ncbi.nlm.nih.gov/10763903). Audit catalog gap fix:
   // PMS was covered almost only by products with "PMS" in their name.
   { id: 'calcium_pms', why: 'Calcium has trial evidence for easing PMS symptoms.',
-    when: (f) => ['supplement', 'menopause'].includes(f.cat) && f.n(/calcium/), set: { 'cycle.pms': SECONDARY, 'mood.cycle_related': ADJACENT } },
+    when: (f) => ['supplement', 'menopause'].includes(f.cat) && f.n(/calcium/), set: { 'cycle.pms': STRONG, 'mood.cycle_related': ADJACENT } },
   { id: 'pms_named', why: 'Made for PMS.',
     when: (f) => f.n(/\bpms\b/), set: { 'cycle.pms': DIRECT } },
   { id: 'pms_tagged', why: 'Studied or marketed for PMS symptoms.',

@@ -20,6 +20,7 @@ import {
 } from '../matching/index.js';
 import { getListingStatus as passportListingStatus } from './passport/index.js';
 import { needPhrase, canonicalNeedId, LIFE_STAGE_BY_ID, FORMAT_BY_ID, VALUE_BY_ID, ATTRIBUTE_PHRASE } from '../matching/ontology.js';
+import { buildEcosystemV2 } from '../matching/v2.js';
 import { getCareResourceBundle } from './careResources.js';
 import { withImageOverride } from './productImageOverrides.js';
 import { applyCatalogEvidence } from './catalogEvidence.js';
@@ -2136,9 +2137,22 @@ export function getPersonalizedProductIds(quizAnswers, healthProfile = null, opt
     return matches.map((p) => p.id);
 }
 
+// Algorithm v2 (src/matching/v2.js) is off for everyone until it passes its
+// release gates and clinical review. To compare on one browser: ?match=v2
+// (remembered), ?match=v1 to go back.
+export function matchEngine() {
+    try {
+        if (typeof window === 'undefined') return 'v1';
+        const q = new URLSearchParams(window.location.search).get('match');
+        if (q === 'v2' || q === 'v1') { try { localStorage.setItem('ayna_match_engine', q); } catch { /* private mode */ } return q; }
+        return localStorage.getItem('ayna_match_engine') === 'v2' ? 'v2' : 'v1';
+    } catch { return 'v1'; }
+}
+
 function ecosystemFor(quizAnswers, healthProfile, opts = {}) {
     const up = userProfileFor(quizAnswers, healthProfile, opts);
-    const eco = buildEcosystem(up, filterPrescriptionCareGate(ALL_PRODUCTS), {
+    const engine = opts.engine || matchEngine();
+    const eco = (engine === 'v2' ? buildEcosystemV2 : buildEcosystem)(up, filterPrescriptionCareGate(ALL_PRODUCTS), {
         getCareResourceBundle,
         ...(opts.picksPerNeed ? { picksPerNeed: opts.picksPerNeed } : {}),
         ...(opts.minTier ? { minTier: opts.minTier } : {}),
@@ -2180,6 +2194,7 @@ export function getEcosystemSeedFromQuiz(quizAnswers, healthProfile = null, opts
         const picks = shelf.picks.map((r) => ({
             productId: r.productId, score: r.score, tier: r.tier, explanations: r.explanations, access: r.access,
             confidence: r.confidence, confidenceLevel: r.confidenceLevel, roles: r.roles || [], aboveNext: r.aboveNext || [],
+            ...(r.v2 ? { v2: r.v2, alsoCovers: r.alsoCovers || [] } : {}),
         }));
         for (const r of shelf.picks) {
             const product = getProductById(r.productId);
