@@ -35,6 +35,36 @@ import { RESA_SITE_URL, RESA_WAITLIST_CTA, RESA_WAITLIST_URL } from '../data/res
  */
 
 const PARTNERS = [
+  // Display order set by the team 2026-10-17 (same order as the partner pin
+  // in Shop/Discovery, see PARTNER_BRAND_ORDER in src/utils/partnerBrands.js).
+  // Momotaro Apotheca, GoodCycle (DailyBasis) and Cool Comforts (VPod, hidden)
+  // are in that order too but have no card yet: they're not on the site.
+  {
+    // Confirmed partner since 2026-09-11 (see src/utils/partnerBrands.js) but
+    // missing a card on this page until 2026-09-23.
+    brand: 'BUNI',
+    logo: '',
+    url: 'https://www.bunibody.com/',
+    blurb:
+      'Intimate and body care for vulvar moisture, pregnancy, postpartum and menopause.',
+  },
+  {
+    // Confirmed partner since 2026-09-11 (see src/utils/partnerBrands.js) but
+    // missing from this page until 2026-09-23, folded in alongside the
+    // Winx/SootheHer/gina additions below.
+    brand: 'LiM Method',
+    logo: 'https://www.limmethod.com/cdn/shop/files/IMG_2821.jpg?v=1696450654&width=1946',
+    url: 'https://www.limmethod.com/?ref=Ayna_Health',
+    blurb:
+      'Low-impact pelvic floor movement with the LiM Sliding Board and guided sessions.',
+  },
+  {
+    brand: 'Winx Health',
+    logo: 'https://cdn.shopify.com/s/files/1/0077/8761/0171/files/UTITest_Treat_1.png?v=1771347569',
+    url: 'https://hellowinx.com/',
+    blurb:
+      'At-home UTI and vaginal health tests paired with telehealth. Formerly Stix.',
+  },
   {
     brand: 'Neycher',
     /** Drop a file at public/brands/neycher.png and it replaces the wordmark. */
@@ -42,6 +72,22 @@ const PARTNERS = [
     url: 'https://www.helloneycher.com/',
     blurb:
       'Hormone-free moisturizers, balms and suppositories for vaginal dryness, irritation and odor.',
+  },
+  {
+    brand: 'SootheHer',
+    logo: '',
+    url: 'https://sootheher.com/',
+    blurb:
+      'The Elaris Pod, a wearable TENS device for drug-free period cramp relief.',
+  },
+  {
+    // Added 2026-10-17 at the team's request (was catalog-only before).
+    // No affiliate link supplied yet, so `url` is the brand site.
+    brand: 'Alubri',
+    logo: '',
+    url: 'https://alubri.com/',
+    blurb:
+      'Hormone-free, fragrance-free vaginal and vulvar moisturizers, plus an OTC anti-itch cream.',
   },
   {
     brand: 'Connect Pelvic Floor Fitness',
@@ -58,6 +104,15 @@ const PARTNERS = [
       'FDA-cleared external device for bladder leaks: a wearable gel pad, no insertion needed.',
   },
   {
+    // Confirmed partner since 2026-09-23 (see src/utils/partnerBrands.js).
+    // No single shared affiliate link, each LOLA product below has its own.
+    brand: 'LOLA',
+    logo: '',
+    url: 'https://mylola.com/',
+    blurb:
+      'Organic cotton tampons and pads with transparent ingredients and a customizable subscription.',
+  },
+  {
     brand: 'Proov',
     logo: 'https://proovtest.com/cdn/shop/products/1_ProHero.jpg?v=1669147223&width=3840',
     url: 'https://proovtest.com/?irclickid=092RZoWR3xyZWgGydJzTuXX9UkrxvuV9I08LVk0&sharedid=&irpid=7622078&utm_source=7622078&utm_medium=affiliate&irgwc=1&afsrc=1&tw_source=impact&tw_campaign=7622078',
@@ -65,23 +120,20 @@ const PARTNERS = [
       'At-home fertility and hormone tests to track your cycle and confirm ovulation.',
   },
   {
-    // Confirmed partner since 2026-09-11 (see src/utils/partnerBrands.js) but
-    // missing from this page until 2026-09-23, folded in alongside the
-    // Winx/SootheHer/gina additions below.
-    brand: 'LiM Method',
-    logo: 'https://www.limmethod.com/cdn/shop/files/IMG_2821.jpg?v=1696450654&width=1946',
-    url: 'https://www.limmethod.com/?ref=Ayna_Health',
+    brand: 'gina',
+    logo: '',
+    url: 'https://getgina.com/',
     blurb:
-      'Low-impact pelvic floor movement with the LiM Sliding Board and guided sessions.',
+      'Hormone-free vaginal moisturizing glides and applicator refills.',
   },
   {
-    // Confirmed partner since 2026-09-07 (see src/utils/partnerBrands.js) but
-    // missing a card on this page until 2026-09-23.
-    brand: 'VIO2',
+    // Added 2026-10-17 at the team's request (was catalog-only before).
+    // No affiliate link supplied yet, so `url` is the brand site.
+    brand: 'Tampon Tribe',
     logo: '',
-    url: 'https://go.shopmy.us/p-83948920',
+    url: 'https://tampontribe.com/',
     blurb:
-      'Dentist-designed mouth tape that encourages nasal breathing during sleep.',
+      'Certified organic cotton tampons, pads and liners with no plastic, sold as a monthly subscription.',
   },
   {
     // Confirmed partner since 2026-09-07 (see src/utils/partnerBrands.js) but
@@ -93,43 +145,13 @@ const PARTNERS = [
       'Adjustable compression garment for pelvic heaviness, pressure and leakage during daily activity.',
   },
   {
-    // Confirmed partner since 2026-09-11 (see src/utils/partnerBrands.js) but
+    // Confirmed partner since 2026-09-07 (see src/utils/partnerBrands.js) but
     // missing a card on this page until 2026-09-23.
-    brand: 'BUNI',
+    brand: 'VIO2',
     logo: '',
-    url: 'https://www.bunibody.com/',
+    url: 'https://go.shopmy.us/p-83948920',
     blurb:
-      'Intimate and body care for vulvar moisture, pregnancy, postpartum and menopause.',
-  },
-  {
-    // Confirmed partner since 2026-09-23 (see src/utils/partnerBrands.js).
-    // No single shared affiliate link, each LOLA product below has its own.
-    brand: 'LOLA',
-    logo: '',
-    url: 'https://mylola.com/',
-    blurb:
-      'Organic cotton tampons and pads with transparent ingredients and a customizable subscription.',
-  },
-  {
-    brand: 'Winx Health',
-    logo: 'https://cdn.shopify.com/s/files/1/0077/8761/0171/files/UTITest_Treat_1.png?v=1771347569',
-    url: 'https://hellowinx.com/',
-    blurb:
-      'At-home UTI and vaginal health tests paired with telehealth. Formerly Stix.',
-  },
-  {
-    brand: 'SootheHer',
-    logo: '',
-    url: 'https://sootheher.com/',
-    blurb:
-      'The Elaris Pod, a wearable TENS device for drug-free period cramp relief.',
-  },
-  {
-    brand: 'gina',
-    logo: '',
-    url: 'https://getgina.com/',
-    blurb:
-      'Hormone-free vaginal moisturizing glides and applicator refills.',
+      'Dentist-designed mouth tape that encourages nasal breathing during sleep.',
   },
   {
     // Last on purpose (2026-10-05): pre-launch, so it sits after the shipping
@@ -163,9 +185,9 @@ function BrandMark({ partner }) {
   return <div className="brand-partner__wordmark">{partner.brand}</div>;
 }
 
-// A to Z (ignoring case and accents); a pre-launch partner sits after the shipping ones.
-const sortKey = (p) => String(p.brand).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-const ORDERED = [...PARTNERS].sort((a, b) => (Number(!!a.prelaunch) - Number(!!b.prelaunch)) || sortKey(a).localeCompare(sortKey(b)));
+// The team's order as listed in PARTNERS (2026-10-17; was A to Z); a
+// pre-launch partner sits after the shipping ones.
+const ORDERED = [...PARTNERS].sort((a, b) => Number(!!a.prelaunch) - Number(!!b.prelaunch));
 
 const slug = (b) => `brand-${String(b).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 

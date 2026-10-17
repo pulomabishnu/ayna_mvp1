@@ -5588,11 +5588,9 @@ export const BRAND_PRODUCTS = [
         },
         isEmergingBrand: true,
     },
-    // Alubri (alubri.com), catalog entries only. Alubri is NOT an ayna brand
-    // partner: keep it out of src/utils/partnerBrands.js's
-    // PARTNER_BRAND_ORDER and off the Brand Partnerships page
-    // (src/components/BrandPartners.jsx), so no partner badge or disclosure
-    // shows and Buy Now uses the standard (non-partner) route.
+    // Alubri (alubri.com). ayna brand partner since 2026-10-17 (team request),
+    // listed in src/utils/partnerBrands.js and on the Brand Partnerships page.
+    // No affiliate link supplied yet, so Buy Now still goes to alubri.com.
     //
     // Sourcing rule for these six entries: alubri.com ONLY (product pages,
     // /pages/faq, /pages/science, /pages/about), fetched 2026-09-29. Prices,
@@ -6766,8 +6764,8 @@ export const BRAND_PRODUCTS = [
         },
         isEmergingBrand: false,
     },
-    // Tampon Tribe (tampontribe.com), catalog entries only, NOT an ayna
-    // brand partner. First batch (2026-09-30): the five products matching
+    // Tampon Tribe (tampontribe.com). ayna brand partner since 2026-10-17
+    // (team request); no affiliate link supplied yet. First batch (2026-09-30): the five products matching
     // the photos ayna supplied (stored under public/products/tampon-tribe/).
     // Facts are from tampontribe.com (Shopify products.json + product pages);
     // brand-site ratings are from its review widget. Options (absorbency,

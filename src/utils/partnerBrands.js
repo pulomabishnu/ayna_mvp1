@@ -43,33 +43,32 @@
  * partner labels/disclosures and general Browse promotion; it must never be
  * used as a personalized recommendation signal.
  *
- * Ordered by explicit display priority (requested 2026-09-16); this is a
- * temporary manual order, not a final ranking, and each brand's full catalog
- * and a real ranking are still to come. Index position = priority (0 = shown
- * first among partners). This list is now the single source of truth for
- * BOTH "is this a partner" (previously a separate PARTNER_BRAND_PATTERNS)
- * and what order partners sort in, so the two can't drift out of sync.
+ * Ordered by explicit display priority (set by the team 2026-10-17; the
+ * Brand Partnerships page in src/components/BrandPartners.jsx uses the same
+ * order). Index position = priority (0 = shown first among partners). This
+ * list is the single source of truth for BOTH "is this a partner" and what
+ * order partners sort in, so the two can't drift out of sync.
  *
- * The trailing entries after LOLA are confirmed partners the 2026-09-16
- * priority order didn't explicitly rank; they stay partners (still get the
- * "ayna Favorite" badge and the partner pin) but sort after the ranked ones,
- * in whichever order they'd otherwise fall.
+ * The team's order also has Momotaro Apotheca (4th), GoodCycle (DailyBasis,
+ * 10th) and Cool Comforts (VPod, 17th, hidden). They aren't on the site yet,
+ * so they're left out until their products are added; slot them back in at
+ * those positions then.
  */
 export const PARTNER_BRAND_ORDER = [
   /\bbuni\b/, // BUNI Body
-  /\bsoothe ?her\b/, // SootheHer, Elaris Pod added to the catalog 2026-09-23
-  /\bneycher\b/, // Neycher
+  /\blim method\b/, // LiM Method
   /\bwinx\b/, // Winx Health
-  /\bgina\b/, // gina
+  /\bneycher\b/, // Neycher
+  /\bsoothe ?her\b/, // SootheHer
+  /\balubri\b/, // Alubri (partner from 2026-10-17)
+  /\bconnect pelvic floor fitness\b/, // Connect Pelvic Floor Fitness
   /\belitone\b/, // Elitone (includes Elitone URGE)
-  /\bproov\b/, // Proov
-  /\bvio2\b/, // VIO2
-  /\bmy pelvic bra\b/, // My Pelvic Bra
-  /\bconnect pelvic floor fitness\b/, // Connect PFF
   /\blola\b/, // LOLA
-  // Confirmed partners not given an explicit rank in the 2026-09-16 order,
-  // sort after everything above.
-  /\blim method\b/,
+  /\bproov\b/, // Proov
+  /\bgina\b/, // gina
+  /\btampon tribe\b/, // Tampon Tribe (partner from 2026-10-17)
+  /\bmy pelvic bra\b/, // My Pelvic Bra
+  /\bvio2\b/, // VIO2
   // Rèsa (2026-10-05), pre-launch; see PRELAUNCH_PARTNER_PATTERNS below.
   /\br[eè]sa\b/,
 ];
@@ -84,8 +83,9 @@ export const PARTNER_BRAND_PATTERNS = PARTNER_BRAND_ORDER;
  * Add a brand only once its partnership is actually contracted.
  */
 export const PARTNER_BRANDS = [
-  'BUNI', 'SootheHer', 'Neycher', 'Winx Health', 'gina', 'Elitone', 'Proov', 'VIO2',
-  'My Pelvic Bra', 'Connect Pelvic Floor Fitness', 'LOLA', 'LiM Method', 'Rèsa',
+  'BUNI', 'LiM Method', 'Winx Health', 'Neycher', 'SootheHer', 'Alubri',
+  'Connect Pelvic Floor Fitness', 'Elitone', 'LOLA', 'Proov', 'gina', 'Tampon Tribe',
+  'My Pelvic Bra', 'VIO2', 'Rèsa',
 ].map((name, i) => ({ name, pattern: PARTNER_BRAND_ORDER[i] }));
 
 /**
