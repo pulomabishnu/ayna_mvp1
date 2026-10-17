@@ -1,8 +1,100 @@
 [
  {
+  "product": "p-advil-ibuprofen-200",
+  "pregnancy": "ask_clinician",
+  "breastfeeding": "ok",
+  "pregnancy_source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1a665e64-9f30-be37-4a83-38789f1f1e89",
+  "breastfeeding_source": "https://www.ncbi.nlm.nih.gov/sites/books/NBK500986/",
+  "source_url": "https://www.ncbi.nlm.nih.gov/sites/books/NBK500986/",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-aleve-naproxen-220",
+  "pregnancy": "ask_clinician",
+  "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=46e7b298-9e19-49b6-be71-e4fdcb09a5d4",
+  "breastfeeding_source": "https://www.ncbi.nlm.nih.gov/sites/books/NBK501044/",
+  "source_url": "https://www.ncbi.nlm.nih.gov/sites/books/NBK501044/",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-monistat-3-combo",
+  "pregnancy": "ask_clinician",
+  "breastfeeding": "unknown",
+  "pregnancy_source": "https://www.cdc.gov/stiapp/candidiasis.html",
+  "breastfeeding_source": null,
+  "source_url": "https://www.cdc.gov/stiapp/candidiasis.html",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-taro-clotrimazole-7",
+  "pregnancy": "ask_clinician",
+  "breastfeeding": "unknown",
+  "pregnancy_source": "https://www.cdc.gov/stiapp/candidiasis.html",
+  "breastfeeding_source": null,
+  "source_url": "https://www.cdc.gov/stiapp/candidiasis.html",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-womens-rogaine-foam",
+  "pregnancy": "avoid",
+  "breastfeeding": "avoid",
+  "pregnancy_source": "https://www.aad.org/public/diseases/hair-loss/types/female-pattern",
+  "breastfeeding_source": "https://www.aad.org/public/diseases/hair-loss/types/female-pattern",
+  "source_url": "https://www.aad.org/public/diseases/hair-loss/types/female-pattern",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-differin-adapalene-gel",
+  "pregnancy": "ask_clinician",
+  "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0739d631-171b-42a8-bd55-0022b8df2d8a",
+  "breastfeeding_source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0739d631-171b-42a8-bd55-0022b8df2d8a",
+  "source_url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0739d631-171b-42a8-bd55-0022b8df2d8a",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-rugby-vitamin-b6-25",
+  "pregnancy": "ask_clinician",
+  "breastfeeding": "unknown",
+  "pregnancy_source": "https://ods.od.nih.gov/factsheets/VitaminB6-HealthProfessional/",
+  "breastfeeding_source": null,
+  "source_url": "https://ods.od.nih.gov/factsheets/VitaminB6-HealthProfessional/",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-nature-made-folic-acid-400",
+  "pregnancy": "ok",
+  "breastfeeding": "ok",
+  "pregnancy_source": "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf",
+  "breastfeeding_source": "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf",
+  "source_url": "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-miralax-peg-3350",
+  "pregnancy": "unknown",
+  "breastfeeding": "ok",
+  "pregnancy_source": null,
+  "breastfeeding_source": "https://www.ncbi.nlm.nih.gov/books/NBK536694/",
+  "source_url": "https://www.ncbi.nlm.nih.gov/books/NBK536694/",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-metamucil-psyllium-orange",
+  "pregnancy": "unknown",
+  "breastfeeding": "ok",
+  "pregnancy_source": null,
+  "breastfeeding_source": "https://www.ncbi.nlm.nih.gov/books/NBK501346/",
+  "source_url": "https://www.ncbi.nlm.nih.gov/books/NBK501346/",
+  "reviewed": "2026-10-17"
+ },
+ {
   "product": "p-inositol-wholesome",
   "pregnancy": "ask_clinician",
   "breastfeeding": "unknown",
+  "pregnancy_source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6617769/",
+  "breastfeeding_source": null,
   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6617769/",
   "reviewed": "2026-10-17"
  },
@@ -10,6 +102,8 @@
   "product": "p-spearmint-pcos",
   "pregnancy": "ask_clinician",
   "breastfeeding": "unknown",
+  "pregnancy_source": "https://health.clevelandclinic.org/spearmint-tea-benefits",
+  "breastfeeding_source": null,
   "source_url": "https://health.clevelandclinic.org/spearmint-tea-benefits",
   "reviewed": "2026-10-17"
  },
@@ -17,6 +111,8 @@
   "product": "p-citracal-bone-health",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://ods.od.nih.gov/factsheets/Calcium-HealthProfessional/%23h3",
+  "breastfeeding_source": "https://ods.od.nih.gov/factsheets/Calcium-HealthProfessional/%23h3",
   "source_url": "https://ods.od.nih.gov/factsheets/Calcium-HealthProfessional/%23h3",
   "reviewed": "2026-10-17"
  },
@@ -24,6 +120,8 @@
   "product": "p-evening-primrose",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.nccih.nih.gov/health/evening-primrose-oil",
+  "breastfeeding_source": "https://www.nccih.nih.gov/health/evening-primrose-oil",
   "source_url": "https://www.nccih.nih.gov/health/evening-primrose-oil",
   "reviewed": "2026-10-17"
  },
@@ -31,6 +129,8 @@
   "product": "p-flo-gummies",
   "pregnancy": "avoid",
   "breastfeeding": "avoid",
+  "pregnancy_source": "https://www.nccih.nih.gov/health/chasteberry",
+  "breastfeeding_source": "https://www.nccih.nih.gov/health/chasteberry",
   "source_url": "https://www.nccih.nih.gov/health/chasteberry",
   "reviewed": "2026-10-17"
  },
@@ -38,6 +138,8 @@
   "product": "p-vitex",
   "pregnancy": "avoid",
   "breastfeeding": "avoid",
+  "pregnancy_source": "https://www.nccih.nih.gov/health/chasteberry",
+  "breastfeeding_source": "https://www.nccih.nih.gov/health/chasteberry",
   "source_url": "https://www.nccih.nih.gov/health/chasteberry",
   "reviewed": "2026-10-17"
  },
@@ -45,6 +147,8 @@
   "product": "p-ob-procomfort-mini-32",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "source_url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "reviewed": "2026-10-17"
  },
@@ -52,6 +156,8 @@
   "product": "p-ob-procomfort-mini-16",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "source_url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "reviewed": "2026-10-17"
  },
@@ -59,6 +165,8 @@
   "product": "p-creatine-womens",
   "pregnancy": "ask_clinician",
   "breastfeeding": "avoid",
+  "pregnancy_source": "https://my.clevelandclinic.org/health/treatments/17674-creatine",
+  "breastfeeding_source": "https://www.ncbi.nlm.nih.gov/sites/books/NBK501853/",
   "source_url": "https://www.ncbi.nlm.nih.gov/sites/books/NBK501853/",
   "reviewed": "2026-10-17"
  },
@@ -66,6 +174,8 @@
   "product": "p-goodbug-gut-balance",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
+  "breastfeeding_source": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
   "source_url": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
   "reviewed": "2026-10-17"
  },
@@ -73,6 +183,8 @@
   "product": "p-hum-flatter-me",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.nccih.nih.gov/health/ginger",
+  "breastfeeding_source": "https://www.nccih.nih.gov/health/ginger",
   "source_url": "https://www.nccih.nih.gov/health/ginger",
   "reviewed": "2026-10-17"
  },
@@ -80,13 +192,17 @@
   "product": "p-love-wellness-bloat",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.nccih.nih.gov/health/ginger",
+  "breastfeeding_source": "https://www.nccih.nih.gov/health/ginger",
   "source_url": "https://www.nccih.nih.gov/health/ginger",
   "reviewed": "2026-10-17"
  },
  {
   "product": "p-zinc",
-  "pregnancy": "unknown",
-  "breastfeeding": "unknown",
+  "pregnancy": "ok",
+  "breastfeeding": "ok",
+  "pregnancy_source": "https://ods.od.nih.gov/factsheets/Zinc-HealthProfessional/",
+  "breastfeeding_source": "https://ods.od.nih.gov/factsheets/Zinc-HealthProfessional/",
   "source_url": "https://ods.od.nih.gov/factsheets/Zinc-HealthProfessional/",
   "reviewed": "2026-10-17"
  },
@@ -94,6 +210,8 @@
   "product": "p-livlabs-pippa-fit-kit",
   "pregnancy": "unknown",
   "breastfeeding": "unknown",
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
   "source_url": "https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-control-problems/treatment",
   "reviewed": "2026-10-17"
  },
@@ -101,6 +219,8 @@
   "product": "p-livlabs-pippa-starter-kit",
   "pregnancy": "unknown",
   "breastfeeding": "unknown",
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
   "source_url": "https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-control-problems/treatment",
   "reviewed": "2026-10-17"
  },
@@ -108,6 +228,8 @@
   "product": "p-rituals-prenatal",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://ods.od.nih.gov/factsheets/Folate-HealthProfessional/",
+  "breastfeeding_source": "https://ods.od.nih.gov/factsheets/Folate-HealthProfessional/",
   "source_url": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
   "reviewed": "2026-10-17"
  },
@@ -115,6 +237,8 @@
   "product": "p-ubiquinol-thorne",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.mayoclinic.org/drugs-supplements/coenzyme-q10/art-20362602",
+  "breastfeeding_source": "https://www.ncbi.nlm.nih.gov/books/NBK501788/",
   "source_url": "https://www.ncbi.nlm.nih.gov/books/NBK501788/",
   "reviewed": "2026-10-17"
  },
@@ -122,6 +246,8 @@
   "product": "p-proov-balance-bundle",
   "pregnancy": "avoid",
   "breastfeeding": "avoid",
+  "pregnancy_source": "https://www.nccih.nih.gov/health/ashwagandha",
+  "breastfeeding_source": "https://www.nccih.nih.gov/health/ashwagandha",
   "source_url": "https://www.nccih.nih.gov/health/ashwagandha",
   "reviewed": "2026-10-17"
  },
@@ -129,6 +255,8 @@
   "product": "p-nature-made-iron-65mg",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://ods.od.nih.gov/factsheets/Iron-HealthProfessional/",
+  "breastfeeding_source": "https://ods.od.nih.gov/factsheets/Iron-HealthProfessional/",
   "source_url": "https://ods.od.nih.gov/factsheets/Iron-HealthProfessional/",
   "reviewed": "2026-10-17"
  },
@@ -136,6 +264,8 @@
   "product": "p-natures-bounty-d3-125mcg",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional",
+  "breastfeeding_source": "https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional",
   "source_url": "https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional",
   "reviewed": "2026-10-17"
  },
@@ -143,6 +273,8 @@
   "product": "p-magnesium-glycinate",
   "pregnancy": "ok",
   "breastfeeding": "ok",
+  "pregnancy_source": "https://ods.od.nih.gov/factsheets/Magnesium-HealthProfessional/",
+  "breastfeeding_source": "https://ods.od.nih.gov/factsheets/Magnesium-HealthProfessional/",
   "source_url": "https://ods.od.nih.gov/factsheets/Magnesium-HealthProfessional/",
   "reviewed": "2026-10-17"
  },
@@ -150,6 +282,8 @@
   "product": "p-uqora-control",
   "pregnancy": "unknown",
   "breastfeeding": "unknown",
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
   "source_url": "https://www.cochrane.org/CD013608/RENAL_d-mannose-preventing-and-treating-urinary-tract-infections",
   "reviewed": "2026-10-17"
  },
@@ -157,6 +291,8 @@
   "product": "p-d-mannose-now",
   "pregnancy": "unknown",
   "breastfeeding": "unknown",
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
   "source_url": "https://www.cochrane.org/CD013608/RENAL_d-mannose-preventing-and-treating-urinary-tract-infections",
   "reviewed": "2026-10-17"
  },
@@ -164,6 +300,8 @@
   "product": "p-estroven-mood",
   "pregnancy": "avoid",
   "breastfeeding": "avoid",
+  "pregnancy_source": "https://www.nccih.nih.gov/health/black-cohosh",
+  "breastfeeding_source": "https://www.nccih.nih.gov/health/black-cohosh",
   "source_url": "https://www.nccih.nih.gov/health/black-cohosh",
   "reviewed": "2026-10-17"
  },
@@ -171,6 +309,8 @@
   "product": "p-remifemin",
   "pregnancy": "avoid",
   "breastfeeding": "avoid",
+  "pregnancy_source": "https://www.nccih.nih.gov/health/black-cohosh",
+  "breastfeeding_source": "https://www.nccih.nih.gov/health/black-cohosh",
   "source_url": "https://www.nccih.nih.gov/health/black-cohosh",
   "reviewed": "2026-10-17"
  },
@@ -178,6 +318,8 @@
   "product": "p-probiotics-women",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
+  "breastfeeding_source": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
   "source_url": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
   "reviewed": "2026-10-17"
  },
@@ -185,6 +327,8 @@
   "product": "p-fish-oil",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://files.nccih.nih.gov/s3fs-public/Omega-3_11-30-2015.pdf",
+  "breastfeeding_source": "https://files.nccih.nih.gov/s3fs-public/Omega-3_11-30-2015.pdf",
   "source_url": "https://files.nccih.nih.gov/s3fs-public/Omega-3_11-30-2015.pdf",
   "reviewed": "2026-10-17"
  },
@@ -192,6 +336,8 @@
   "product": "p-b-complex",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
+  "breastfeeding_source": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
   "source_url": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
   "reviewed": "2026-10-17"
  },
@@ -199,6 +345,8 @@
   "product": "p-cranberry-supplement",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.nccih.nih.gov/health/cranberry",
+  "breastfeeding_source": "https://www.nccih.nih.gov/health/cranberry",
   "source_url": "https://www.nccih.nih.gov/health/cranberry",
   "reviewed": "2026-10-17"
  },
@@ -206,6 +354,8 @@
   "product": "p-womaness-me",
   "pregnancy": "avoid",
   "breastfeeding": "avoid",
+  "pregnancy_source": "https://www.nccih.nih.gov/health/ashwagandha",
+  "breastfeeding_source": "https://www.nccih.nih.gov/health/ashwagandha",
   "source_url": "https://www.nccih.nih.gov/health/ashwagandha",
   "reviewed": "2026-10-17"
  },
@@ -213,6 +363,8 @@
   "product": "p-winx-vaginal-probiotic",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
+  "breastfeeding_source": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
   "source_url": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
   "reviewed": "2026-10-17"
  },
@@ -220,6 +372,8 @@
   "product": "p-winx-uti-daily-defense",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.nccih.nih.gov/health/turmeric",
+  "breastfeeding_source": "https://www.nccih.nih.gov/health/turmeric",
   "source_url": "https://www.nccih.nih.gov/health/turmeric",
   "reviewed": "2026-10-17"
  },
@@ -227,6 +381,8 @@
   "product": "p-good-kitty-uti-biome-shield",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.ncbi.nlm.nih.gov/sites/books/NBK501837/",
+  "breastfeeding_source": "https://www.ncbi.nlm.nih.gov/sites/books/NBK501837/",
   "source_url": "https://www.ncbi.nlm.nih.gov/sites/books/NBK501837/",
   "reviewed": "2026-10-17"
  },
@@ -234,6 +390,8 @@
   "product": "p-goodbug-good-to-glow",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
+  "breastfeeding_source": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
   "source_url": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
   "reviewed": "2026-10-17"
  },
@@ -241,6 +399,8 @@
   "product": "p-happyhead-hair-growth-supplements",
   "pregnancy": "avoid",
   "breastfeeding": "avoid",
+  "pregnancy_source": "https://www.nccih.nih.gov/health/saw-palmetto",
+  "breastfeeding_source": "https://www.nccih.nih.gov/health/saw-palmetto",
   "source_url": "https://www.nccih.nih.gov/health/saw-palmetto",
   "reviewed": "2026-10-17"
  },
@@ -248,6 +408,8 @@
   "product": "p-heraure-hermag-magnesium",
   "pregnancy": "ask_clinician",
   "breastfeeding": "avoid",
+  "pregnancy_source": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
+  "breastfeeding_source": "https://www.ncbi.nlm.nih.gov/books/NBK615235/",
   "source_url": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
   "reviewed": "2026-10-17"
  },
@@ -255,6 +417,8 @@
   "product": "p-buni-transform-scar-body-oil",
   "pregnancy": "avoid",
   "breastfeeding": "ok",
+  "pregnancy_source": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
+  "breastfeeding_source": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
   "source_url": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
   "reviewed": "2026-10-17"
  },
@@ -262,6 +426,8 @@
   "product": "p-buni-bundle",
   "pregnancy": "avoid",
   "breastfeeding": "ok",
+  "pregnancy_source": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
+  "breastfeeding_source": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
   "source_url": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
   "reviewed": "2026-10-17"
  },
@@ -269,6 +435,8 @@
   "product": "p-kiero-pure-radiant-eye-cream",
   "pregnancy": "avoid",
   "breastfeeding": "ok",
+  "pregnancy_source": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
+  "breastfeeding_source": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
   "source_url": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
   "reviewed": "2026-10-17"
  },
@@ -276,6 +444,8 @@
   "product": "p-neycher-vaginal-moisturizer",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+  "breastfeeding_source": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
   "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
   "reviewed": "2026-10-17"
  },
@@ -283,6 +453,8 @@
   "product": "p-neycher-hydrobloom-gel",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
+  "breastfeeding_source": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
   "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
   "reviewed": "2026-10-17"
  },
@@ -290,6 +462,8 @@
   "product": "p-good-clean-love",
   "pregnancy": "unknown",
   "breastfeeding": "unknown",
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
   "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
   "reviewed": "2026-10-17"
  },
@@ -297,6 +471,8 @@
   "product": "p-kindra-lotion",
   "pregnancy": "unknown",
   "breastfeeding": "unknown",
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
   "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
   "reviewed": "2026-10-17"
  },
@@ -304,6 +480,8 @@
   "product": "p-alubri-vaginal-moisturizing-gel",
   "pregnancy": "unknown",
   "breastfeeding": "unknown",
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
   "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
   "reviewed": "2026-10-17"
  },
@@ -311,6 +489,8 @@
   "product": "p-alubri-vaginal-wellness-kit",
   "pregnancy": "unknown",
   "breastfeeding": "unknown",
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
   "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
   "reviewed": "2026-10-17"
  },
@@ -318,6 +498,8 @@
   "product": "p-gina-starter-kit",
   "pregnancy": "unknown",
   "breastfeeding": "unknown",
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
   "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
   "reviewed": "2026-10-17"
  },
@@ -325,6 +507,8 @@
   "product": "p-gina-vaginal-moisturizing-glides",
   "pregnancy": "unknown",
   "breastfeeding": "unknown",
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
   "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
   "reviewed": "2026-10-17"
  },
@@ -332,6 +516,8 @@
   "product": "p-joylux-juicy-like-a-peach",
   "pregnancy": "unknown",
   "breastfeeding": "unknown",
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
   "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
   "reviewed": "2026-10-17"
  },
@@ -339,6 +525,8 @@
   "product": "p-joylux-lets-spin",
   "pregnancy": "unknown",
   "breastfeeding": "unknown",
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
   "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
   "reviewed": "2026-10-17"
  },
@@ -346,6 +534,8 @@
   "product": "p-oboo-loob-arousal",
   "pregnancy": "unknown",
   "breastfeeding": "unknown",
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
   "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
   "reviewed": "2026-10-17"
  },
@@ -353,6 +543,8 @@
   "product": "p-oboo-loob-daily",
   "pregnancy": "unknown",
   "breastfeeding": "unknown",
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
   "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
   "reviewed": "2026-10-17"
  },
@@ -360,6 +552,8 @@
   "product": "p-sootheher-elaris-pod",
   "pregnancy": "avoid",
   "breastfeeding": "unknown",
+  "pregnancy_source": "https://www.nhs.uk/tests-and-treatments/transcutaneous-electrical-nerve-stimulation-tens/",
+  "breastfeeding_source": null,
   "source_url": "https://www.nhs.uk/tests-and-treatments/transcutaneous-electrical-nerve-stimulation-tens/",
   "reviewed": "2026-10-17"
  },
@@ -367,6 +561,8 @@
   "product": "p-sootheher-gel-pad-refills",
   "pregnancy": "avoid",
   "breastfeeding": "unknown",
+  "pregnancy_source": "https://www.nhs.uk/tests-and-treatments/transcutaneous-electrical-nerve-stimulation-tens/",
+  "breastfeeding_source": null,
   "source_url": "https://www.nhs.uk/tests-and-treatments/transcutaneous-electrical-nerve-stimulation-tens/",
   "reviewed": "2026-10-17"
  },
@@ -374,6 +570,8 @@
   "product": "p-intimate-rose",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://my.clevelandclinic.org/health/treatments/24971-vaginal-dilators",
+  "breastfeeding_source": "https://my.clevelandclinic.org/health/treatments/24971-vaginal-dilators",
   "source_url": "https://medlineplus.gov/pelvicfloordisorders.html",
   "reviewed": "2026-10-17"
  },
@@ -381,6 +579,8 @@
   "product": "p-pelvic-wand",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.nhs.uk/pregnancy/common-symptoms/pelvic-pain/",
+  "breastfeeding_source": "https://www.nhs.uk/pregnancy/common-symptoms/pelvic-pain/",
   "source_url": "https://www.nhs.uk/pregnancy/common-symptoms/pelvic-pain/",
   "reviewed": "2026-10-17"
  },
@@ -388,6 +588,8 @@
   "product": "p-uberlube",
   "pregnancy": "unknown",
   "breastfeeding": "unknown",
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
   "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
   "reviewed": "2026-10-17"
  },
@@ -395,6 +597,8 @@
   "product": "p-cora-disc",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "reviewed": "2026-10-17"
  },
@@ -402,6 +606,8 @@
   "product": "p-cora-organic-tampons",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "source_url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "reviewed": "2026-10-17"
  },
@@ -409,6 +615,8 @@
   "product": "p-diva-cup",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "reviewed": "2026-10-17"
  },
@@ -416,6 +624,8 @@
   "product": "p-femmycycle",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "reviewed": "2026-10-17"
  },
@@ -423,6 +633,8 @@
   "product": "p-flex-cup",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "reviewed": "2026-10-17"
  },
@@ -430,6 +642,8 @@
   "product": "p-flex-disc",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "reviewed": "2026-10-17"
  },
@@ -437,6 +651,8 @@
   "product": "p-hello-disc",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "reviewed": "2026-10-17"
  },
@@ -444,6 +660,8 @@
   "product": "p-intimina-lily",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "reviewed": "2026-10-17"
  },
@@ -451,6 +669,8 @@
   "product": "p-kotex-tampon",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "source_url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "reviewed": "2026-10-17"
  },
@@ -458,6 +678,8 @@
   "product": "p-lena-cup",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "reviewed": "2026-10-17"
  },
@@ -465,6 +687,8 @@
   "product": "p-lola-tampon",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "source_url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "reviewed": "2026-10-17"
  },
@@ -472,6 +696,8 @@
   "product": "p-lumma-disc",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "reviewed": "2026-10-17"
  },
@@ -479,6 +705,8 @@
   "product": "p-lunette-cup",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "reviewed": "2026-10-17"
  },
@@ -486,6 +714,8 @@
   "product": "p-natracare-tampon",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "source_url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "reviewed": "2026-10-17"
  },
@@ -493,6 +723,8 @@
   "product": "p-nixit",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "reviewed": "2026-10-17"
  },
@@ -500,6 +732,8 @@
   "product": "p-ob-original-multipack-40",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "source_url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "reviewed": "2026-10-17"
  },
@@ -507,6 +741,8 @@
   "product": "p-ob-original-multipack-80",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "source_url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "reviewed": "2026-10-17"
  },
@@ -514,6 +750,8 @@
   "product": "p-ob-original-regular-40",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "source_url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "reviewed": "2026-10-17"
  },
@@ -521,6 +759,8 @@
   "product": "p-ob-original-super-40",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "source_url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "reviewed": "2026-10-17"
  },
@@ -528,6 +768,8 @@
   "product": "p-ob-original-super-plus-40",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "source_url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "reviewed": "2026-10-17"
  },
@@ -535,6 +777,8 @@
   "product": "p-ob-original-ultra-40",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "source_url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "reviewed": "2026-10-17"
  },
@@ -542,6 +786,8 @@
   "product": "p-ob-tampon",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "source_url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "reviewed": "2026-10-17"
  },
@@ -549,6 +795,8 @@
   "product": "p-organicup",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "reviewed": "2026-10-17"
  },
@@ -556,6 +804,8 @@
   "product": "p-organyc-tampon",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "source_url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "reviewed": "2026-10-17"
  },
@@ -563,6 +813,8 @@
   "product": "p-period-nirvana-disc",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "reviewed": "2026-10-17"
  },
@@ -570,6 +822,8 @@
   "product": "p-playtex-sport",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "source_url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "reviewed": "2026-10-17"
  },
@@ -577,6 +831,8 @@
   "product": "p-rael-tampon",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "source_url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "reviewed": "2026-10-17"
  },
@@ -584,6 +840,8 @@
   "product": "p-ruby-cup",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "reviewed": "2026-10-17"
  },
@@ -591,6 +849,8 @@
   "product": "p-saalt-cup",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "reviewed": "2026-10-17"
  },
@@ -598,6 +858,8 @@
   "product": "p-saalt-disc",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "reviewed": "2026-10-17"
  },
@@ -605,6 +867,8 @@
   "product": "p-seventh-gen-tampon",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "source_url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "reviewed": "2026-10-17"
  },
@@ -612,6 +876,8 @@
   "product": "p-softdisc",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "reviewed": "2026-10-17"
  },
@@ -619,6 +885,8 @@
   "product": "p-tampax-pure",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "source_url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "reviewed": "2026-10-17"
  },
@@ -626,6 +894,8 @@
   "product": "p-tampax-radiant",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "source_url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "reviewed": "2026-10-17"
  },
@@ -633,6 +903,8 @@
   "product": "p-tampontribe-organic-tampons",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "source_url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
   "reviewed": "2026-10-17"
  },
@@ -640,6 +912,8 @@
   "product": "p-ziggy-disc",
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "breastfeeding_source": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
   "reviewed": "2026-10-17"
  },
@@ -647,6 +921,8 @@
   "product": "p-winx-uti-pain-relief",
   "pregnancy": "ask_clinician",
   "breastfeeding": "avoid",
+  "pregnancy_source": "https://www.ncbi.nlm.nih.gov/books/NBK501505/",
+  "breastfeeding_source": "https://www.ncbi.nlm.nih.gov/books/NBK501505/",
   "source_url": "https://www.ncbi.nlm.nih.gov/books/NBK501505/",
   "reviewed": "2026-10-17"
  },
@@ -654,6 +930,8 @@
   "product": "p-cystex",
   "pregnancy": "ask_clinician",
   "breastfeeding": "avoid",
+  "pregnancy_source": "https://www.ncbi.nlm.nih.gov/sites/books/NBK501887/",
+  "breastfeeding_source": "https://www.ncbi.nlm.nih.gov/sites/books/NBK501887/",
   "source_url": "https://www.ncbi.nlm.nih.gov/sites/books/NBK501887/",
   "reviewed": "2026-10-17"
  },
@@ -661,6 +939,8 @@
   "product": "p-boric-acid",
   "pregnancy": "avoid",
   "breastfeeding": "unknown",
+  "pregnancy_source": "https://www.mayoclinic.org/diseases-conditions/yeast-infection/diagnosis-treatment/drc-20379004",
+  "breastfeeding_source": null,
   "source_url": "https://www.mayoclinic.org/diseases-conditions/yeast-infection/diagnosis-treatment/drc-20379004",
   "reviewed": "2026-10-17"
  },
@@ -668,6 +948,8 @@
   "product": "p-neycher-odor-be-gone",
   "pregnancy": "avoid",
   "breastfeeding": "unknown",
+  "pregnancy_source": "https://www.mayoclinic.org/diseases-conditions/yeast-infection/diagnosis-treatment/drc-20379004",
+  "breastfeeding_source": null,
   "source_url": "https://www.mayoclinic.org/diseases-conditions/yeast-infection/diagnosis-treatment/drc-20379004",
   "reviewed": "2026-10-17"
  },
@@ -675,6 +957,8 @@
   "product": "p-phd-wash",
   "pregnancy": "ask_clinician",
   "breastfeeding": "unknown",
+  "pregnancy_source": "https://my.clevelandclinic.org/health/drugs/19641-boric-acid-vaginal-suppository",
+  "breastfeeding_source": null,
   "source_url": "https://my.clevelandclinic.org/health/drugs/19641-boric-acid-vaginal-suppository",
   "reviewed": "2026-10-17"
  },
@@ -682,6 +966,8 @@
   "product": "p-oboo-mood-drops",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
+  "pregnancy_source": "https://www.mayoclinic.org/diseases-conditions/low-sex-drive-in-women/diagnosis-treatment/drc-20374561",
+  "breastfeeding_source": "https://www.mayoclinic.org/diseases-conditions/low-sex-drive-in-women/diagnosis-treatment/drc-20374561",
   "source_url": "https://www.mayoclinic.org/diseases-conditions/low-sex-drive-in-women/diagnosis-treatment/drc-20374561",
   "reviewed": "2026-10-17"
  }

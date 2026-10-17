@@ -35,10 +35,16 @@ for (const f of fs.readdirSync(dir).filter((x) => /^out_.*\.json$/.test(x)).sort
     if (!s?.product || !STATUS.has(s.pregnancy) || !STATUS.has(s.breastfeeding)) continue;
     if (!credible(s.source_url)) { dropped.push(`${f}: safety ${s.product} source not on allowlist`); continue; }
     const prev = safety.get(s.product);
-    // Two domains disagree: keep the more cautious answer.
-    const rank = { avoid: 3, ask_clinician: 2, unknown: 1, ok: 0 };
+    // Two domains disagree: keep the more cautious answer. "unknown" means no
+    // information, so it never replaces a sourced answer.
+    const rank = { avoid: 3, ask_clinician: 2, ok: 1, unknown: 0 };
     const pick = (a, b) => (!a ? b : rank[a] >= rank[b] ? a : b);
-    safety.set(s.product, { product: s.product, pregnancy: pick(prev?.pregnancy, s.pregnancy), breastfeeding: pick(prev?.breastfeeding, s.breastfeeding), source_url: s.source_url, reviewed: today });
+    const preg = pick(prev?.pregnancy, s.pregnancy);
+    const bf = pick(prev?.breastfeeding, s.breastfeeding);
+    safety.set(s.product, { product: s.product, pregnancy: preg, breastfeeding: bf,
+      pregnancy_source: preg === s.pregnancy && s.pregnancy !== 'unknown' ? s.source_url : prev?.pregnancy_source || null,
+      breastfeeding_source: bf === s.breastfeeding && s.breastfeeding !== 'unknown' ? s.source_url : prev?.breastfeeding_source || null,
+      source_url: s.source_url, reviewed: today });
   }
   for (const r of data.red_flags || []) if (r?.id && credible(r.source_url)) redFlags.push(r);
   for (const n of data.needs || []) {

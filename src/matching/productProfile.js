@@ -29,9 +29,13 @@ const RESEARCH_STAGE = new Map(SAFETY_RESEARCH.map((r) => [r.product, r]));
 const RESEARCH_STATUS = { avoid: 'contraindicated', ask_clinician: 'caution' };
 function researchStage(productId, key, applicable) {
   const r = RESEARCH_STAGE.get(productId);
-  const overall = r && RESEARCH_STATUS[r[key]];
-  if (!applicable || !overall) return null;
-  return { overall, trimester_1: overall, trimester_2: overall, trimester_3: overall, evidence_source: r.source_url, last_reviewed: r.reviewed };
+  if (!applicable || !r) return null;
+  // 'ok' from a credible source (e.g. CDC on folic acid) only fills an
+  // unknown: it never overrides a caution or limit from the label or passport.
+  if (r[key] === 'ok') return { overall: 'verified', trimester_1: 'verified', trimester_2: 'verified', trimester_3: 'verified', evidence_source: r[`${key}_source`] || r.source_url, last_reviewed: r.reviewed, onlyIfUnknown: true };
+  const overall = RESEARCH_STATUS[r[key]];
+  if (!overall) return null;
+  return { overall, trimester_1: overall, trimester_2: overall, trimester_3: overall, evidence_source: r[`${key}_source`] || r.source_url, last_reviewed: r.reviewed };
 }
 
 // ─── Relevance levels (spec) ────────────────────────────────────────────────
@@ -125,6 +129,15 @@ function isCareService(f) {
 // then any CAP from a matching rule is applied (MIN). Needs not set = 0.
 // roles: care pathway role used by the UTI / BV modifiers.
 export const RELEVANCE_RULES = [
+  // ── OTC medicines and tests with guideline backing (evidence-backed basics, Oct 17) ──
+  { id: 'otc_nsaid', why: 'An NSAID pain reliever; NSAIDs are first-line for period cramps (NHS, MedlinePlus).',
+    when: (f) => f.n(/ibuprofen|naproxen/), set: { 'pain.menstrual_cramp': DIRECT, 'pain.pelvic': SECONDARY, 'pain.cycle_headache': SECONDARY, 'pain.joint': SECONDARY, 'condition_support.endometriosis': SECONDARY, 'condition_support.adenomyosis': SECONDARY } },
+  { id: 'otc_azole', why: 'An OTC azole antifungal, the standard treatment for an uncomplicated yeast infection (CDC).',
+    when: (f) => f.n(/miconazole|clotrimazole|monistat/), set: { 'vaginal.yeast': DIRECT, 'vaginal.irritation': SECONDARY } },
+  { id: 'minoxidil', why: 'Topical minoxidil is the most recommended treatment for female pattern hair loss (AAD).',
+    when: (f) => f.n(/minoxidil|rogaine/), set: { 'hair.loss': DIRECT } },
+  { id: 'sti_home_test', why: 'An FDA-authorized at-home test for chlamydia, gonorrhea and trichomoniasis.',
+    when: (f) => f.n(/sti test|chlamydia|gonorrh|trichomon/), set: { 'sexual.sti': DIRECT, 'vaginal.discharge': SECONDARY } },
   // ── Period products ────────────────────────────────────────────────────
   { id: 'period_product', why: 'Pads, tampons, cups, discs and period underwear are made for period care.',
     when: (f) => PERIOD_CATEGORIES.has(f.cat), set: { 'period.product_support': DIRECT } },
@@ -383,7 +396,7 @@ export const RELEVANCE_RULES = [
   { id: 'arousal_balm', why: 'An arousal product for sexual wellness.',
     when: (f) => f.n(/arousal/), set: { 'sexual.wellness': STRONG, 'sexual.libido': ADJACENT, 'vaginal.dryness': SECONDARY } },
   { id: 'applicator_refill', why: 'Refills only work with the product they belong to.',
-    when: (f) => f.n(/refill|applicator/) && f.fn('vaginal-health'), set: { 'vaginal.dryness': ADJACENT },
+    when: (f) => f.n(/refill|applicator/) && f.fn('vaginal-health') && !f.n(/miconazole|clotrimazole|monistat/), set: { 'vaginal.dryness': ADJACENT },
     cap: { 'vaginal.dryness': ADJACENT, 'pain.sexual': WEAK } },
   { id: 'lubricant', why: 'Lubricant eases friction during sex.',
     when: (f) => f.t(/lubricant|\blube\b/),
@@ -991,6 +1004,7 @@ function normalizeClinician(text) {
 const STAGE_RANK = { not_applicable: -1, unknown: 0, verified: 1, caution: 2, contraindicated: 3 };
 function worseStage(a, b) {
   if (!b || b.overall === 'unknown' || a.overall === 'not_applicable') return a;
+  if (b.onlyIfUnknown) { const { onlyIfUnknown, ...rest } = b; return a.overall === 'unknown' ? rest : a; }
   return STAGE_RANK[b.overall] > STAGE_RANK[a.overall] ? { ...b, evidence_source: /^https?:/.test(b.evidence_source || '') ? b.evidence_source : 'product passport (reviewed source)' } : a;
 }
 
@@ -1101,7 +1115,7 @@ export function buildProductProfile(product) {
   const f = facts(product);
   const formats = formatsFor(f);
   const isDigital = formats.includes('app_service') && !formats.some((x) => ['device', 'topical', 'pill_capsule', 'test_kit', 'period_care'].includes(x));
-  const ingested = f.cat === 'supplement' || f.cat === 'medication' || ['pill_capsule', 'gummy', 'powder', 'drink_tea'].some((x) => formats.includes(x));
+  const ingested = f.cat === 'supplement' || f.cat === 'medication' || f.n(/laxative|miralax|psyllium/) || ['pill_capsule', 'gummy', 'powder', 'drink_tea'].some((x) => formats.includes(x));
   const sText = safetyText(product);
   const ctx = { isDigital, ingested, text: sText };
 
@@ -1122,7 +1136,9 @@ export function buildProductProfile(product) {
   // enter the body. Apps, services and support garments are not_applicable.
   const bodyContact = ingested || ['topical', 'suppository', 'patch', 'period_care'].some((x) => formats.includes(x))
     || product.internal === true || ['sex-tech', 'cramp-relief', 'incontinence', 'intimate-care'].includes(f.cat)
-    || (f.cat === 'pelvic-floor' && formats.includes('device'));
+    || (f.cat === 'pelvic-floor' && formats.includes('device'))
+    // Drug-labeled topicals (minoxidil, acne medicines) carry pregnancy warnings too.
+    || f.n(/minoxidil|rogaine|adapalene|benzoyl peroxide/);
   const stText = statementText(product);
   const stageApplies = bodyContact && !isDigital;
   // Tampons, cups and discs: "not in pregnancy" is about pregnancy itself (no

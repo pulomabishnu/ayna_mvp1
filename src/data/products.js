@@ -9,6 +9,7 @@ import { PRODUCT_RESEARCH_CORE } from './productResearchCore.js';
 import { EXTENDED_PHYSICAL, EXTENDED_DIGITAL } from './productsExtended.js';
 import { EXTENDED_PHYSICAL_2, EXTENDED_DIGITAL_2 } from './productsExtended2.js';
 import { FILLER_PHYSICAL, FILLER_DIGITAL } from './categoryFillers.js';
+import { BASICS_PRODUCTS } from './basicsProducts.js';
 import { MVP_PHYSICAL, MVP_DIGITAL } from './mvpProducts.js';
 import { MENSTRUAL_PHYSICAL } from './menstrualProducts.js';
 import { BRAND_PRODUCTS } from './brands.js';
@@ -916,7 +917,9 @@ export const ALL_PRODUCTS = [
     ...FILLER_DIGITAL,
     ...MENSTRUAL_PHYSICAL,
     ...BRAND_PRODUCTS,
-    ...INCONTINENCE_PHYSICAL
+    ...INCONTINENCE_PHYSICAL,
+    // Evidence-backed basics (Oct 17): facts from FDA labels and clinical sources.
+    ...BASICS_PRODUCTS,
 ]
     .map(withCatalogEvidence)
     // The research fields matching, search and filters read (safety rules included) ship

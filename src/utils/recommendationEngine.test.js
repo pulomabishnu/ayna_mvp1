@@ -22,7 +22,8 @@ describe('generateTieredRecommendations — every CONCERN_AREAS checkbox produce
     // need itself (e.g. an STI telehealth service), never a generic test kit.
     result[0].tiers.forEach((tier) => {
       expect(tier.needId).toBe('sexual.sti');
-      expect(tier.product.category).not.toBe('diagnostics');
+      // A diagnostic only belongs here if it is an actual STI test.
+      if (tier.product.category === 'diagnostics') expect(tier.product.name).toMatch(/STI|chlamydia|gonorrh/i);
     });
   });
 

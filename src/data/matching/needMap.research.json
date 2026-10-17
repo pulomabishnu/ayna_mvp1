@@ -1,5 +1,155 @@
 [
  {
+  "product": "p-advil-ibuprofen-200",
+  "need": "pain.menstrual_cramp",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "NSAIDs are a first-line treatment for period pain.",
+  "source_url": "https://medlineplus.gov/periodpain.html",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-aleve-naproxen-220",
+  "need": "pain.menstrual_cramp",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "NSAIDs are a first-line treatment for period pain.",
+  "source_url": "https://medlineplus.gov/periodpain.html",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-monistat-3-combo",
+  "need": "vaginal.yeast",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "Short-course topical azoles treat uncomplicated vulvovaginal candidiasis.",
+  "source_url": "https://www.cdc.gov/stiapp/candidiasis.html",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-taro-clotrimazole-7",
+  "need": "vaginal.yeast",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "Topical clotrimazole is a recommended OTC regimen for uncomplicated yeast infection.",
+  "source_url": "https://www.cdc.gov/stiapp/candidiasis.html",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-womens-rogaine-foam",
+  "need": "hair.loss",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "Topical minoxidil is the most recommended treatment for female pattern hair loss.",
+  "source_url": "https://www.aad.org/public/diseases/hair-loss/types/female-pattern",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-panoxyl-bpo-10-wash",
+  "need": "skin.acne",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "The AAD acne guideline strongly recommends benzoyl peroxide.",
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/38300170/",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-differin-adapalene-gel",
+  "need": "skin.acne",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "The AAD acne guideline strongly recommends topical retinoids, including adapalene.",
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/38300170/",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-metamucil-psyllium-orange",
+  "need": "digestive.constipation",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "Fiber supplements are a first-line option for constipation.",
+  "source_url": "https://www.niddk.nih.gov/health-information/digestive-diseases/constipation/treatment",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-miralax-peg-3350",
+  "need": "digestive.constipation",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "Osmotic laxatives such as polyethylene glycol are a first-line option for constipation.",
+  "source_url": "https://www.niddk.nih.gov/health-information/digestive-diseases/constipation/treatment",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-nature-made-folic-acid-400",
+  "need": "fertility.ttc",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "400 mcg folic acid before conception prevents neural tube defects; folic acid is the proven form.",
+  "source_url": "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-nature-made-folic-acid-400",
+  "need": "pregnancy.prenatal",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "Folic acid 400 mcg daily is recommended before and in early pregnancy.",
+  "source_url": "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-easyhome-lh-strips-50",
+  "need": "fertility.ovulation_tracking",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "Urine LH tests time ovulation; LH-timed sex probably raises live birth rates.",
+  "source_url": "https://www.cochrane.org/evidence/CD011345_timed-intercourse-couples-trying-conceive",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-easyhome-lh-strips-50",
+  "need": "fertility.ttc",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "Timing sex with urine LH tests probably raises the chance of pregnancy.",
+  "source_url": "https://www.cochrane.org/evidence/CD011345_timed-intercourse-couples-trying-conceive",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-visby-womens-sti-test",
+  "need": "sexual.sti",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "FDA-authorized at-home test for chlamydia, gonorrhea and trichomoniasis.",
+  "source_url": "https://www.fda.gov/news-events/press-announcements/fda-grants-marketing-authorization-first-home-test-chlamydia-gonorrhea-and-trichomoniasis",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-rugby-vitamin-b6-25",
+  "need": "digestive.nausea",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "B6 10 to 25 mg is recommended for pregnancy nausea; trial results are mixed.",
+  "source_url": "https://ods.od.nih.gov/factsheets/VitaminB6-HealthProfessional/",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
   "product": "p-proov-complete",
   "need": "hormonal.general",
   "strength": "none",

@@ -17,12 +17,11 @@ describe('research data', () => {
   it('every row cites a credible source', () => {
     for (const r of [...NEED_MAP_RESEARCH, ...SAFETY_RESEARCH]) expect(r.source_url).toMatch(/^https:\/\//);
   });
-  it('research safety only tightens: "ok" never makes a product safer', () => {
-    const okIds = SAFETY_RESEARCH.filter((r) => r.pregnancy === 'ok').map((r) => r.product);
-    for (const id of okIds) {
-      const p = P(id);
-      if (p) expect(buildProductProfile(p).pregnancy.evidence_source || '').not.toMatch(/^https/);
-    }
+  it('a sourced "ok" only fills an unknown; it never overrides a caution from the label', () => {
+    // Differin's label says ask a doctor if pregnant: research cannot clear that.
+    expect(buildProductProfile(P('p-differin-adapalene-gel')).pregnancy.overall).toBe('caution');
+    // Folic acid: CDC recommends it before and during pregnancy.
+    expect(buildProductProfile(P('p-nature-made-folic-acid-400')).pregnancy.overall).toBe('verified');
   });
 });
 
