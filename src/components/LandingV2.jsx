@@ -15,7 +15,7 @@ import '../styles/landing-v2.css';
  * dark band. Everything moving can be paused with a single control (WCAG 2.2.2). */
 
 // One topic at a time, changing every few seconds (Ameera, Oct 16).
-const SEARCH_HINTS = ['organic pads', 'PCOS support', 'pelvic floor', 'period cramps', 'vaginal dryness', 'sleep and stress', 'UTI support', 'menopause'];
+const SEARCH_HINTS = ['organic pads', 'PCOS support', 'bad cramps', 'pelvic floor', 'night sweats', 'vaginal dryness', 'leaking when I sneeze', 'sleep and stress', 'UTI burning', 'heavy flow overnight', 'menopause', 'itchy down there', 'hormonal acne', 'trying to conceive', 'postpartum pads'];
 const NEEDS_PHOTO = (p) => !/tampon tribe|herau|r[eè]sa/i.test(`${p?.brand || ''} ${p?.name || ''}`);
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
@@ -396,6 +396,8 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
         <Trending onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={personal?.topPicks || null} />
         <Why paused={paused} />
         <ShopBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
+        {/* The moving photo strip is back (Ameera, Oct 17). */}
+        <Strip />
         <LandingStories paused={paused} onStartQuiz={onStartQuiz} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} />
         <Purpose onViewAbout={onViewAbout} />
         <Reads onViewArticle={onViewArticle} onViewArticles={onViewArticles} />

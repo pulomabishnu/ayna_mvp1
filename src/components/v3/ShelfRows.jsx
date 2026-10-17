@@ -57,6 +57,31 @@ function Row({ children, label }) {
   );
 }
 
+// The shelf row scrolls sideways, which would clip a menu inside it and let
+// the next shelf cover it. The open menu is placed on the page (fixed) next to
+// its button instead, flipping above the button when there is no room below.
+function placeShelfMenu(e) {
+  const d = e.currentTarget;
+  const list = d.querySelector('.ay-shelf__menu-list');
+  if (!list) return;
+  if (!d.open) { list.style.cssText = ''; return; }
+  const r = d.querySelector('summary').getBoundingClientRect();
+  list.style.position = 'fixed';
+  list.style.zIndex = '200';
+  list.style.right = 'auto';
+  list.style.bottom = 'auto';
+  const w = Math.max(list.offsetWidth, 200);
+  const h = list.offsetHeight;
+  const left = Math.min(Math.max(8, r.right - w), window.innerWidth - w - 8);
+  const below = r.bottom + 6;
+  const top = below + h > window.innerHeight - 8 && r.top - 6 - h > 8 ? r.top - 6 - h : below;
+  list.style.left = `${left}px`;
+  list.style.top = `${top}px`;
+  const close = () => { d.open = false; };
+  window.addEventListener('scroll', close, { once: true, capture: true });
+  window.addEventListener('resize', close, { once: true });
+}
+
 export default function ShelfRows({ groups, onOpenProduct, onToggleProduct, onAddMore, userId = '' }) {
   const [custom, setCustom] = useState(() => loadCustom(userId));
   const [editing, setEditing] = useState(null);
@@ -181,7 +206,7 @@ export default function ShelfRows({ groups, onOpenProduct, onToggleProduct, onAd
                     onOpen={onOpenProduct}
                     action={(
                       // One "⋯" per card (was a Move select plus an unlabeled ×).
-                      <details className="ay-shelf__menu">
+                      <details className="ay-shelf__menu" onToggle={placeShelfMenu}>
                         <summary aria-label={`Options for ${p.name}`}>⋯</summary>
                         <div className="ay-shelf__menu-list" role="menu">
                           {arranged.length > 1 && <p className="ay-shelf__menu-h">Move to shelf</p>}

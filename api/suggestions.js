@@ -5,6 +5,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { getClientIp, rateLimit } from './_rateLimit.js';
 import { checkCommunityText } from '../src/utils/communityRules.js';
+import { sendBatch, FROM } from './_email.js';
 
 const CONTEXTS = new Set(['shop', 'shop-empty', 'library', 'app-shop', 'app-library']);
 
@@ -43,6 +44,28 @@ export function buildSuggestionRow(body = {}) {
   const topic = clean(body.topic, 300);
   if (topic.length < 3) return { error: 'Tell us the topic or question.' };
   return { row: { kind, product_name: null, link: null, reason: null, topic, context, platform } };
+}
+
+// Every suggestion is emailed to the founders (Ameera, Eliz, Puloma). The
+// email carries only what was typed: no name, account or IP (it's anonymous).
+export const TEAM_EMAILS = () => (process.env.SUGGESTION_EMAILS ? process.env.SUGGESTION_EMAILS.split(',').map((x) => x.trim()).filter(Boolean)
+  : ['ameera@aynahealth.co', 'eliz@aynahealth.co', 'puloma@aynahealth.co']);
+const escHtml = (t) => String(t || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+export function suggestionEmail(row) {
+  const isProduct = row.kind === 'product';
+  const subject = isProduct ? `New product suggestion: ${row.product_name}` : `New read suggestion: ${row.topic.slice(0, 60)}`;
+  const lines = isProduct
+    ? [['Product', row.product_name], ['Link', row.link], ['Why', row.reason]]
+    : [['Topic', row.topic]];
+  lines.push(['From', `${row.context || 'unknown page'} (${row.platform})`]);
+  const shown = lines.filter(([, v]) => v);
+  return {
+    from: FROM(),
+    to: TEAM_EMAILS(),
+    subject,
+    text: `Someone sent an anonymous suggestion on ayna.\n\n${shown.map(([k, v]) => `${k}: ${v}`).join('\n')}\n`,
+    html: `<p>Someone sent an anonymous suggestion on ayna.</p><table cellpadding="4">${shown.map(([k, v]) => `<tr><td><b>${escHtml(k)}</b></td><td>${escHtml(v)}</td></tr>`).join('')}</table>`,
+  };
 }
 
 let admin = null;
@@ -93,5 +116,7 @@ export default async function handler(req, res) {
     console.error('[suggestions] insert failed:', dbError.code, dbError.message);
     return res.status(503).json({ error: 'Suggestions are offline for a moment.' });
   }
+  // Email the team. A failed email never fails her submission (it's saved).
+  try { await sendBatch([suggestionEmail(row)]); } catch (e) { console.error('[suggestions] email failed:', e?.message); }
   return res.status(200).json({ ok: true });
 }

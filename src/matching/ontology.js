@@ -591,7 +591,7 @@ export function normalizeText(raw) {
 export const SYNONYM_RULES = [
   // Conditions
   { re: /^endo$|\bendometriosis\b|\bendo (pain|flare|belly)\b|\bi have endo\b/, kind: 'condition', id: 'endometriosis', confidence: 0.99 },
-  { re: /\bpcos\b|\bpolycystic ovar(y|ian)\b|\bpcod\b/, kind: 'condition', id: 'pcos', confidence: 0.99 },
+  { re: /\bpcos\b|\bpolycystic ovar(y|ian)\b|\bpcod\b|\bpmos\b|\bpolyendocrine metabolic ovarian\b/, kind: 'condition', id: 'pcos', confidence: 0.99 },
   { re: /\bpmdd\b|premenstrual dysphoric/, kind: 'condition', id: 'pmdd', confidence: 0.98 },
   { re: /\bfibroids?\b|\bleiomyoma/, kind: 'condition', id: 'fibroids', confidence: 0.97 },
   { re: /\badeno(myosis)?\b/, kind: 'condition', id: 'adenomyosis', confidence: 0.95 },

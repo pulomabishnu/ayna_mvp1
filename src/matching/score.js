@@ -394,7 +394,7 @@ export function evaluateSafety(productOrProfile, up) {
       missingFields.push('pregnancy_status');
       cautions.push({ code: 'pregnancy_reported', text: preg.overall === 'contraindicated' ? 'Not for use during pregnancy. Confirm your life stage so we can check this for you.' : 'Check with your clinician before using this in pregnancy.' });
     } else penalize('pregnancy_reported', 'Pregnancy mentioned, not confirmed in your life stage');
-  } else if (pStatus === 'unknown' && preg.overall !== 'not_applicable') {
+  } else if (pStatus === 'unknown' && preg.overall !== 'not_applicable' && !preg.pregnantOnly) {
     blockedClaims.add('pregnancy_safe');
     if (required.includes('pregnancy_status')) missingFields.push('pregnancy_status');
     else if (preg.overall === 'contraindicated') {
@@ -402,8 +402,11 @@ export function evaluateSafety(productOrProfile, up) {
       cautions.push({ code: 'pregnancy_status_unknown', text: 'Not for use during pregnancy.' });
     } else if (pp.ingested) penalize('pregnancy_status_unknown', 'Life stage not shared');
   }
-  if (s.ttc && pStatus !== 'pregnant' && preg.overall !== 'not_applicable') {
-    if (preg.overall === 'contraindicated') {
+  if (s.ttc && pStatus !== 'pregnant' && preg.overall !== 'not_applicable' && !preg.pregnantOnly) {
+    // Something swallowed that isn't safe in pregnancy is held back while she
+    // is trying: she may be pregnant for weeks before she knows.
+    if (preg.overall === 'contraindicated' && pp.ingested) reasons.push({ code: 'ttc_pregnancy_contraindicated', text: 'Not for use in pregnancy, and you may be pregnant before you know it' });
+    else if (preg.overall === 'contraindicated') {
       penalize('ttc_pregnancy_contraindicated', 'Not for use in pregnancy');
       cautions.push({ code: 'ttc_pregnancy', text: 'Not for use during pregnancy. Stop if you become pregnant.' });
     } else if (preg.overall === 'unknown' && pp.ingested) penalize('ttc_pregnancy_unknown', 'Pregnancy safety not confirmed');

@@ -5588,3 +5588,86 @@ html body .app-container.app-container.app-container.app-container.app-container
 html body .app-container.app-container.app-container.app-container.app-container .ay-needs__row .ay-needs__arrow { display: none !important; }
 /* Audit (You): small text links get a 24px tap target. */
 html body .app-container.app-container.app-container.app-container .wyou :is(a, button):not(.wyou-btn):not([class*='tone-']) { min-height: 24px; }
+
+/* Oct 17: partner names move again (Ameera). Still stops for the footer's
+   Pause motion and for reduced-motion settings. */
+html body .app-container.app-container.app-container.app-container.app-container .lv .lv-ticker__track { animation: lvMarq 90s linear infinite !important; }
+html body .app-container.app-container.app-container.app-container.app-container .lv .lv-strip__track { animation: lvMarq 120s linear infinite !important; }
+html body .app-container.app-container.app-container.app-container.app-container .lv :is(.lv-ticker, .lv-strip) { overflow: hidden; }
+html.ay-motion-paused body .app-container.app-container.app-container.app-container.app-container .lv :is(.lv-ticker__track, .lv-strip__track),
+html body .app-container.app-container.app-container.app-container.app-container .lv.is-paused :is(.lv-ticker__track, .lv-strip__track) { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) {
+  html body .app-container.app-container.app-container.app-container.app-container .lv :is(.lv-ticker__track, .lv-strip__track) { animation: none !important; }
+  html body .app-container.app-container.app-container.app-container.app-container .lv :is(.lv-ticker, .lv-strip) { overflow-x: auto; }
+}
+
+/* Oct 17: the "matched to you" seal. Only the ring of words turns; the
+   word in the middle stays upright and still (Ameera). */
+html body .app-container.app-container.app-container.app-container.app-container .lv .lv-stamp { animation: none !important; transform: none !important; }
+html body .app-container.app-container.app-container.app-container.app-container .lv .lv-stamp span { animation: none !important; transform: none !important; }
+html body .app-container.app-container.app-container.app-container.app-container .lv .lv-stamp svg { animation: lvSpin 40s linear infinite !important; transform-origin: 50% 50%; }
+html.ay-motion-paused body .app-container.app-container.app-container.app-container.app-container .lv .lv-stamp svg,
+html body .app-container.app-container.app-container.app-container.app-container .lv.is-paused .lv-stamp svg { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) { html body .app-container.app-container.app-container.app-container.app-container .lv .lv-stamp svg { animation: none !important; } }
+
+/* Oct 17: "This week's picks" tiles are one whole card (photo, name, price,
+   brand inside the same frame), instead of a framed photo with the words
+   hanging outside the shadow. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .lv-tiles > li > a { border: var(--bw, 2px) solid var(--ink, #3e2723); border-radius: 14px; background: var(--white, #fff); overflow: visible; padding: 0 0 14px; gap: 10px; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .lv-tiles > li > a .lv-tile__img { border: 0 !important; border-bottom: var(--bw, 2px) solid var(--ink, #3e2723) !important; border-radius: 12px 12px 0 0 !important; overflow: hidden; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .lv-tiles > li > a :is(.lv-tile__row, .lv-tile__brand) { padding: 0 14px; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .lv-tiles > li > a .lv-tile__brand { margin-top: -6px; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .lv-tiles > li > a:hover .lv-tile__img { transform: none; }
+[data-theme='dark'] body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .lv-tiles > li > a, html body .app-container[data-theme='dark'].app-container.app-container.app-container.app-container.app-container.app-container.app-container .lv-tiles > li > a { background: var(--ay-surface, #2b1d1a); }
+
+/* Oct 17: the Ecosystem header's "More" menu was cut off by the band's
+   clip (it only meant to bleed sideways). While the menu is open the band
+   lets it hang below; the label never shows as selected text. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .eco3 > .ay3-ecohero { clip-path: none !important; box-shadow: none !important; z-index: 5 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .eco3 > .ay3-ecohero::before { content: '' !important; display: block !important; position: absolute !important; top: 0 !important; bottom: 0 !important; left: -100vmax !important; right: -100vmax !important; width: auto !important; max-width: none !important; transform: none !important; background: #3e2723 !important; z-index: -1 !important; pointer-events: none; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .eco3 > .ay3-ecohero:has(.eco3-more[open]) { z-index: 60 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .eco3 > .ay3-ecohero::before { background: #f7badd !important; }
+html body .app-container .eco3-more > summary { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+html body .app-container .eco3-more > summary::selection, html body .app-container .eco3-more > summary *::selection { background: transparent; }
+
+/* ===== Oct 17: brand dark, readable everywhere (contrast audit) ===== */
+/* Page-level headings and ledes that sat espresso on espresso. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(
+  .ay-info__title, .ay-info__title em, .ay-info__lede, .ay-info__body, .ay-info__body em, .ay-info__pill, .ay-info-step__title, .ay-info-step__body, .ay-info-label,
+  .ay3-title, .ay3-title em, .ay3-kicker, .ayna-browse__disclosure, .ayna-browse__disclosure a,
+  .wc3 h1, .wc3 h1 em, .wc3 > header p, .wc-hero h1, .wc-hero h1 em, .wc-empty h1, .wc-empty p, main > h1, main > section > h1, main > div > h1, main > div > p,
+  .lv-search__hint
+) { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-info__pill { border-color: #ffedac !important; }
+/* Butter notes keep espresso text. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.ay-info-note__action, .ay-info-note__action strong) { color: #3e2723 !important; }
+/* Landing search topics: the chips are butter, so their words are espresso. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv-search__topic { color: #ffedac !important; }
+/* "This week's picks" cards: butter card, espresso words. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv-tiles > li > a { background: #ffedac !important; border-color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv-tiles > li > a :is(.lv-tile__name, .lv-tile__price, .lv-tile__brand) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv-tiles > li > a .lv-tile__img { border-bottom-color: #3e2723 !important; }
+/* Shop by need band: reversed like the rest of dark mode (butter band,
+   espresso words), so it no longer melts into the espresso page. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv .lv-band,
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv .lv-band::before,
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv .lv-band::after { background: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv .lv-band :is(h2, h2 em, h3, p, span, strong, small, a:not(.lv-btn), button:not(.lv-btn), .lv-kicker, .lv-script) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv .lv-band :is(.lv-tile__img) { border-color: #3e2723 !important; }
+/* Account: "Turn off all emails" was pink on butter. */
+html body .app-container.app-container.app-container.app-container.app-container .wyou-link-danger { color: #3e2723 !important; text-decoration: underline; }
+
+/* Oct 17: the Ecosystem page's entrance animation left a transform on the page,
+   which pinned the shelf ⋯ menu inside the scrolling shelf (cut off, covered by
+   the next shelf). No transform on the page itself. */
+html body .app-container .eco3.mockup-page { transform: none !important; animation: none !important; }
+/* "rotate: 0deg" still makes a card a containing block for fixed menus; use none. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container :is(.ayna-discover-card, .ay-item, .eco3-mini) { rotate: none !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container :is(.ayna-discover-card, .ay-item, .eco3-mini):hover { rotate: none !important; }
+
+/* Oct 17: Library between 901 and 1000px wide: the side list was pushed into
+   the wide column and the reads squeezed into 240px. Keep the side list first
+   (left, narrow) like desktop. */
+@media (min-width: 901px) and (max-width: 1000px) {
+  html body .app-container .is-wiki .ay3-libgrid > .ay3-libside { order: 0 !important; }
+}

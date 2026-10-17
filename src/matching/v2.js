@@ -43,7 +43,10 @@ export const V2 = {
 // Reviewed product x need rows (clinical sign-off). Empty until the review
 // starts; each row: { product, need, strength: 'primary'|'secondary', grade: 'A'|'B'|'C', reviewer, reviewed }.
 export const NEED_MAP_REVIEWED = [];
-const REVIEWED = new Map(NEED_MAP_REVIEWED.map((r) => [`${r.product}|${r.need}`, r]));
+// Research-graded rows (credible sources only, each with a URL; see
+// scripts/merge-research.mjs). Not a clinical sign-off: clinician rows above win.
+import NEED_MAP_RESEARCH from '../data/matching/needMap.research.js';
+const REVIEWED = new Map([...NEED_MAP_RESEARCH, ...NEED_MAP_REVIEWED].map((r) => [`${r.product}|${r.need}`, r]));
 
 // Products judged on fit, not on an effect claim (deep dive 3): pads, cups,
 // underwear, apps, tests. Their evidence factor is 1.0.
@@ -62,7 +65,7 @@ export function evidenceGrade(pp, needId) {
 
 function strengthOf(pp, needId, relationship) {
   const reviewed = REVIEWED.get(`${pp.product_id}|${needId}`);
-  if (reviewed) return reviewed.strength === 'primary' ? V2.S.direct : V2.S.secondary;
+  if (reviewed) return reviewed.strength === 'primary' ? V2.S.direct : reviewed.strength === 'secondary' ? V2.S.secondary : 0;
   return V2.S[relationship] || 0;
 }
 
@@ -149,11 +152,18 @@ export function buildEcosystemV2(up, products, options = {}) {
       const q = qualificationForEcosystem(r, pp, 50);
       if (q.effectiveScore < q.floor) continue;
       const v2 = scoreV2(pp, r, needIds, userKey);
-      if (v2.health < V2.ecosystemFloor) continue;
-      results.set(n.id, { r, v2 });
+      if (v2.health < V2.partialFloor) continue;
+      results.set(n.id, { r, v2, partial: v2.health < V2.ecosystemFloor });
     }
     if (results.size) candidates.push({ pp, results });
   }
+  // A partial fit (e.g. a secondary option with B-grade evidence) only counts
+  // for a need where nothing clears the full bar, so she still sees the best
+  // evidence-backed option instead of an empty shelf.
+  const fullNeeds = new Set();
+  for (const c of candidates) for (const [needId, x] of c.results) if (!x.partial) fullNeeds.add(needId);
+  for (const c of candidates) for (const [needId, x] of [...c.results]) if (x.partial && fullNeeds.has(needId)) c.results.delete(needId);
+  for (let i = candidates.length - 1; i >= 0; i -= 1) if (!candidates[i].results.size) candidates.splice(i, 1);
 
   const cover = new Map(needs.map((n) => [n.id, 0]));
   const chosen = [];
@@ -199,7 +209,7 @@ export function buildEcosystemV2(up, products, options = {}) {
     // A need already covered by a pick that lives on another shelf shows that
     // pick here too ("Also covers"), instead of looking empty.
     if (!homed.length) {
-      homed = chosen.filter((x) => (x.results.get(shelf.needId)?.v2.health ?? 0) >= V2.ecosystemFloor)
+      homed = chosen.filter((x) => x.results.has(shelf.needId))
         .map((x) => ({ ...x, home: { needId: shelf.needId, ...x.results.get(shelf.needId) } }));
     }
     const picks = homed
@@ -207,7 +217,7 @@ export function buildEcosystemV2(up, products, options = {}) {
       .map((x) => ({
         ...x.home.r,
         v2: x.home.v2,
-        alsoCovers: [...x.results.entries()].filter(([n, y]) => n !== shelf.needId && y.v2.health >= V2.ecosystemFloor).map(([n]) => n),
+        alsoCovers: [...x.results.entries()].filter(([n, y]) => n !== shelf.needId && !y.partial).map(([n]) => n),
       }));
     return {
       ...shelf,

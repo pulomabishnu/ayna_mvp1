@@ -19,6 +19,20 @@
 
 import { detectIngredientKeys } from './medications.js';
 import { getPassport, OFF_SHELF_STATUSES } from '../data/passport/index.js';
+import SAFETY_RESEARCH from '../data/matching/safety.research.js';
+
+// Pregnancy / breastfeeding status from the evidence research (credible
+// sources only, scripts/merge-research.mjs). Used to TIGHTEN only: 'avoid'
+// becomes contraindicated and 'ask_clinician' becomes caution; 'ok' and
+// 'unknown' never loosen what the catalog or passport says.
+const RESEARCH_STAGE = new Map(SAFETY_RESEARCH.map((r) => [r.product, r]));
+const RESEARCH_STATUS = { avoid: 'contraindicated', ask_clinician: 'caution' };
+function researchStage(productId, key, applicable) {
+  const r = RESEARCH_STAGE.get(productId);
+  const overall = r && RESEARCH_STATUS[r[key]];
+  if (!applicable || !overall) return null;
+  return { overall, trimester_1: overall, trimester_2: overall, trimester_3: overall, evidence_source: r.source_url, last_reviewed: r.reviewed };
+}
 
 // ─── Relevance levels (spec) ────────────────────────────────────────────────
 export const LEVEL = { DIRECT: 1.0, STRONG: 0.8, SECONDARY: 0.55, ADJACENT: 0.3, WEAK: 0.1, NONE: 0 };
@@ -133,7 +147,9 @@ export const RELEVANCE_RULES = [
   { id: 'cramp_device', why: 'Heat and TENS devices are made for period cramps.',
     when: (f) => f.cat === 'cramp-relief' && !f.has('accessory') && f.t(/heat|tens\b|transcutaneous|heating|warm/),
     set: (f) => ({ 'pain.menstrual_cramp': DIRECT, 'pain.pelvic': SECONDARY, 'pain.abdominal': ADJACENT,
-      'condition_support.endometriosis': f.has('endometriosis') ? SECONDARY : ADJACENT }) },
+      'condition_support.endometriosis': f.has('endometriosis') ? SECONDARY : ADJACENT,
+      // Adenomyosis pain is managed like period pain at home (heat, TENS) while care is sorted (Cleveland Clinic).
+      'condition_support.adenomyosis': ADJACENT }) },
   { id: 'cramp_accessory', why: 'Refills only work with the device they belong to.',
     when: (f) => f.cat === 'cramp-relief' && f.has('accessory'), set: { 'pain.menstrual_cramp': SECONDARY } },
   { id: 'cramp_supplement', why: 'Supplements marketed for cramps are a secondary option.',
@@ -287,7 +303,7 @@ export const RELEVANCE_RULES = [
   // J Am Coll Nutr 2000, pubmed.ncbi.nlm.nih.gov/10763903). Audit catalog gap fix:
   // PMS was covered almost only by products with "PMS" in their name.
   { id: 'calcium_pms', why: 'Calcium has trial evidence for easing PMS symptoms.',
-    when: (f) => ['supplement', 'menopause'].includes(f.cat) && f.n(/calcium/), set: { 'cycle.pms': STRONG, 'mood.cycle_related': ADJACENT } },
+    when: (f) => ['supplement', 'menopause'].includes(f.cat) && f.n(/calcium/), set: { 'cycle.pms': SECONDARY, 'mood.cycle_related': ADJACENT } },
   { id: 'pms_named', why: 'Made for PMS.',
     when: (f) => f.n(/\bpms\b/), set: { 'cycle.pms': DIRECT } },
   { id: 'pms_tagged', why: 'Studied or marketed for PMS symptoms.',
@@ -455,7 +471,7 @@ function formatsFor(f) {
   if (f.type === 'digital' || f.cat === 'telehealth' || (f.cat === 'mental-health' && f.type !== 'physical')) out.add('app_service');
   if (f.cat === 'diagnostics' || f.t(/test strips?|rapid test/)) out.add('test_kit');
   if (f.fmt(/gumm/)) out.add('gummy');
-  if (f.cat === 'supplement' && f.fmt(/capsule|tablet|softgel|caplet|\bcaps\b|\bpills?\b/)) out.add('pill_capsule');
+  if ((f.cat === 'supplement' || f.cat === 'medication') && f.fmt(/capsule|tablet|softgel|caplet|\bcaps\b|\bpills?\b/)) out.add('pill_capsule');
   if (f.cat === 'supplement' && f.fmt(/powder/)) out.add('powder');
   if (f.t(/\btea\b/) && !f.t(/tea tree/)) out.add('drink_tea');
   if (f.t(/suppositor/)) out.add('suppository');
@@ -881,7 +897,7 @@ export const NEED_CLAIM_WORDS = {
   'vasomotor.hot_flashes': /hot flash|vasomotor/, 'vasomotor.night_sweats': /night sweat|vasomotor/,
   'cycle.pms': /premenstrual|\bpms\b/, 'mood.general_anxiety': /anxiety/, 'mood.low': /depress/,
   'sleep.trouble': /sleep|insomnia/, 'energy.fatigue': /fatigue|energy/, 'skin.acne': /acne/,
-  'condition_support.pcos': /pcos|polycystic/, 'fertility.ovulation_tracking': /ovulat|fertil/, 'fertility.ttc': /fertil|concept/,
+  'condition_support.pcos': /pcos|pmos|polycystic|polyendocrine/, 'fertility.ovulation_tracking': /ovulat|fertil/, 'fertility.ttc': /fertil|concept/,
   'bone.health': /bone|osteopor/, 'pregnancy.prenatal': /prenatal|pregnan|folate|neural tube/,
 };
 function claimEvidenceFor(product, brandName, needIds) {
@@ -975,7 +991,7 @@ function normalizeClinician(text) {
 const STAGE_RANK = { not_applicable: -1, unknown: 0, verified: 1, caution: 2, contraindicated: 3 };
 function worseStage(a, b) {
   if (!b || b.overall === 'unknown' || a.overall === 'not_applicable') return a;
-  return STAGE_RANK[b.overall] > STAGE_RANK[a.overall] ? { ...b, evidence_source: 'product passport (reviewed source)' } : a;
+  return STAGE_RANK[b.overall] > STAGE_RANK[a.overall] ? { ...b, evidence_source: /^https?:/.test(b.evidence_source || '') ? b.evidence_source : 'product passport (reviewed source)' } : a;
 }
 
 /**
@@ -1085,7 +1101,7 @@ export function buildProductProfile(product) {
   const f = facts(product);
   const formats = formatsFor(f);
   const isDigital = formats.includes('app_service') && !formats.some((x) => ['device', 'topical', 'pill_capsule', 'test_kit', 'period_care'].includes(x));
-  const ingested = f.cat === 'supplement' || ['pill_capsule', 'gummy', 'powder', 'drink_tea'].some((x) => formats.includes(x));
+  const ingested = f.cat === 'supplement' || f.cat === 'medication' || ['pill_capsule', 'gummy', 'powder', 'drink_tea'].some((x) => formats.includes(x));
   const sText = safetyText(product);
   const ctx = { isDigital, ingested, text: sText };
 
@@ -1109,8 +1125,18 @@ export function buildProductProfile(product) {
     || (f.cat === 'pelvic-floor' && formats.includes('device'));
   const stText = statementText(product);
   const stageApplies = bodyContact && !isDigital;
-  const pregnancy = worseStage(stageSafety(stText, PREGNANCY_RULES, stageApplies), ppLayer.pregnancyText ? stageSafety(ppLayer.pregnancyText, PREGNANCY_RULES, stageApplies) : null);
-  const breastfeeding = worseStage(stageSafety(stText, BREASTFEEDING_RULES, stageApplies), ppLayer.breastfeedingText ? stageSafety(ppLayer.breastfeedingText, BREASTFEEDING_RULES, stageApplies) : null);
+  // Tampons, cups and discs: "not in pregnancy" is about pregnancy itself (no
+  // periods; nothing inserted postpartum until cleared), so it applies only to
+  // someone who is pregnant, never to trying to conceive or an unknown stage.
+  // Their breastfeeding notes are about the first postpartum weeks, not
+  // breastfeeding months later, so research breastfeeding status skips them.
+  const internalPeriod = !ingested && (['tampon', 'cup', 'disc', 'menstrual-cup', 'menstrual-disc'].includes(f.cat)
+    || /tampon|menstrual (cup|disc)|\b(cup|disc)\b/.test(String(product.name || '').toLowerCase()) && (f.cat === 'period' || formats.includes('period_care')));
+  const pregnancy = worseStage(worseStage(stageSafety(stText, PREGNANCY_RULES, stageApplies), ppLayer.pregnancyText ? stageSafety(ppLayer.pregnancyText, PREGNANCY_RULES, stageApplies) : null),
+    researchStage(product.id, 'pregnancy', stageApplies));
+  if (internalPeriod && pregnancy.overall !== 'not_applicable') pregnancy.pregnantOnly = true;
+  const breastfeeding = worseStage(worseStage(stageSafety(stText, BREASTFEEDING_RULES, stageApplies), ppLayer.breastfeedingText ? stageSafety(ppLayer.breastfeedingText, BREASTFEEDING_RULES, stageApplies) : null),
+    internalPeriod ? null : researchStage(product.id, 'breastfeeding', stageApplies));
 
   // Relevance. Unconditional levels merge by MAX; contextual levels are kept
   // separately (with the contexts they require) and only count at scoring

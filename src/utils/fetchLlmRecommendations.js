@@ -10,7 +10,7 @@ import { filterRecommendationsToCatalog } from './catalogIntegrity';
 import { getAppSessionId } from './conversationId';
 
 const API_PATH = '/api/llm-recommendations';
-const DEFAULT_FETCH_TIMEOUT_MS = 75_000;
+const DEFAULT_FETCH_TIMEOUT_MS = 55_000;
 // v3: bumped in the 2026-09-22 integrity audit so caches holding free-form
 // model products from older builds are never read back.
 const RECS_CACHE_KEY = 'ayna_llm_recommendations_by_intake_v4';
@@ -208,7 +208,13 @@ export async function fetchLlmRecommendations(options = {}, fetchOpts = {}) {
   if (requestAuthToken) {
     try {
       const supabase = getSupabaseClient();
-      requestAuthToken = await getCompactAccessToken(supabase, requestAuthToken);
+      // Capped: a stuck Supabase auth call must never hold the request (and
+      // the "Building your matches" banner) open forever.
+      const fallbackToken = requestAuthToken;
+      requestAuthToken = await Promise.race([
+        getCompactAccessToken(supabase, requestAuthToken),
+        new Promise((resolve) => { setTimeout(() => resolve(fallbackToken), 5000); }),
+      ]);
     } catch (error) {
       captureRecommendationAnalytics('ai_recommendations_failed', {
         ...analyticsBase,

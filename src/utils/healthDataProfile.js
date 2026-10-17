@@ -4,7 +4,7 @@ const STORAGE_KEY = 'ayna_health_profile_v1';
 
 const KEYWORD_TAGS = [
   { re: /endometriosis|adenomyosis/i, tags: ['endometriosis', 'cramps'] },
-  { re: /pcos|polycystic ovary/i, tags: ['pcos'] },
+  { re: /pcos|pmos|polycystic ovary|polyendocrine metabolic/i, tags: ['pcos'] },
   { re: /menopause|perimenopause|hot flash|vasomotor/i, tags: ['menopause'] },
   { re: /postpartum|breastfeeding|lactation/i, tags: ['postpartum'] },
   { re: /pregnant|pregnancy|prenatal/i, tags: ['pregnancy'] },

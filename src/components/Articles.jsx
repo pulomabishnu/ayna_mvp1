@@ -684,6 +684,8 @@ export { ARTICLES };
  */
 const KEEP_ILLUSTRATION = new Set();
 import TopicCover from './v3/TopicCover.jsx';
+import useRotatingPlaceholder from '../utils/useRotatingPlaceholder.js';
+const LIB_SEARCH_EXAMPLES = ['heavy periods', 'PCOS', 'period pain', 'when to see a doctor', 'UTI', 'perimenopause', 'fibroids', 'endometriosis', 'yeast vs BV', 'pelvic floor', 'night sweats', 'missed period'];
 
 function ArticleCover({ art, large = false }) {
   if (art.image && KEEP_ILLUSTRATION.has(art.id)) {
@@ -829,6 +831,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   // A broken read link says so (it used to quietly show the whole list at the wrong address).
   const missingRead = Boolean(initialArticleId) && !validId(initialArticleId) && !selectedId;
   const [query, setQuery] = useState('');
+  const libPlaceholder = useRotatingPlaceholder(LIB_SEARCH_EXAMPLES, { prefix: 'Try: ', fallback: 'Search reads', enabled: !query });
   const [topic, setTopic] = useState('all');
   const [progress, setProgress] = useState(() => loadReadProgress(userId));
   React.useEffect(() => { setProgress(loadReadProgress(userId)); }, [userId]);
@@ -1058,7 +1061,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
       <div className={`ay-wiki-bar${barSmall ? ' is-small' : ''}`}>
         <label className="ay-web-lib-search">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-          <SmartSearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Try: heavy periods or PCOS" aria-label="Search reads" />
+          <SmartSearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder={libPlaceholder} aria-label="Search reads" />
         </label>
         {<div className="ay-web-lib-filter ay-lib-chips" role="group" aria-label="Topics">
           {topics.map(([id, label]) => <button type="button" key={id} className={topic === id ? 'is-on' : ''} aria-pressed={topic === id} onClick={() => setTopic(id)}>{label}</button>)}

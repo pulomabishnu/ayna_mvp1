@@ -62,7 +62,7 @@ const ANSWER_TAGS = [
   [/discharge|odou?r|itch|yeast|\bbv\b|vaginal/i, 'vaginal-health'],
   [/pelvic (pain|floor)/i, 'pelvic-floor'],
   [/menopaus/i, 'menopause'],
-  [/pcos|polycystic/i, 'pcos'],
+  [/pcos|pmos|polycystic|polyendocrine/i, 'pcos'],
   [/endometriosis/i, 'endometriosis'],
 ];
 

@@ -17,3 +17,15 @@ describe('buildSuggestionRow', () => {
     expect(cleanLink('')).toBe('');
   });
 });
+
+import { suggestionEmail, TEAM_EMAILS } from './suggestions.js';
+describe('suggestion email to the founders', () => {
+  it('goes to Ameera, Eliz and Puloma with only what was typed', () => {
+    const e = suggestionEmail({ kind: 'product', product_name: 'Bad <b>cramp</b> patch', link: null, reason: 'helps', topic: null, context: 'shop', platform: 'web' });
+    expect(TEAM_EMAILS()).toEqual(['ameera@aynahealth.co', 'eliz@aynahealth.co', 'puloma@aynahealth.co']);
+    expect(e.to).toEqual(TEAM_EMAILS());
+    expect(e.subject).toMatch(/Bad <b>cramp<\/b> patch/);
+    expect(e.html).not.toMatch(/<b>cramp/);
+    expect(e.text).toMatch(/Why: helps/);
+  });
+});

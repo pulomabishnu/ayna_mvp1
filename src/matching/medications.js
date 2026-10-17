@@ -193,6 +193,9 @@ export const INGREDIENT_KEYWORDS = {
   turmeric: ['turmeric', 'curcumin'],
   valerian: ['valerian'],
   melatonin: ['melatonin'],
+  ashwagandha: ['ashwagandha', 'withania'],
+  fenugreek: ['fenugreek'],
+  vitex: ['vitex', 'chasteberry', 'chaste tree', 'chaste berry'],
 };
 
 function escapeRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
@@ -225,8 +228,8 @@ export const INTERACTION_TABLE = [
     message: 'Vitamin K can affect how warfarin works. Keep vitamin K intake consistent and tell your doctor about any new supplements.', ...LEGACY },
   { medication: 'warfarin', product_ingredient: 'omega3', verdict: 'caution', legacy_severity: 'medium',
     message: 'Fish oil / omega-3 may slightly increase bleeding risk with blood thinners. Use under medical supervision.', ...LEGACY },
-  { medication_class: 'hormonal_contraceptive', product_ingredient: 'stJohnsWort', verdict: 'caution', legacy_severity: 'high',
-    message: "St. John's wort may reduce effectiveness of hormonal birth control. Use backup contraception and discuss with your provider.", ...LEGACY },
+  { medication_class: 'hormonal_contraceptive', product_ingredient: 'stJohnsWort', verdict: 'avoid', legacy_severity: 'high', source: 'https://www.nccih.nih.gov/health/st-johns-wort', reviewed_on: '2026-10-17', reviewer: 'research', needs_clinical_review: true,
+    message: "St. John's wort can make hormonal birth control less effective. Don't combine them without talking to your provider." },
   { medication_class: 'antidepressant', product_ingredient: 'stJohnsWort', verdict: 'avoid', legacy_severity: 'high',
     message: "St. John's wort can interact with antidepressants (serotonin syndrome risk). Do not combine without your doctor's approval.", ...LEGACY },
   { medication: 'warfarin', product_ingredient: 'ginkgo', verdict: 'caution', legacy_severity: 'medium',
@@ -237,6 +240,17 @@ export const INTERACTION_TABLE = [
     message: 'Melatonin can sometimes affect blood pressure. If you take blood pressure medication, mention melatonin use to your doctor.', ...LEGACY },
   { medication_class: 'blood_pressure', product_ingredient: 'magnesium', verdict: 'caution', legacy_severity: 'low',
     message: 'Magnesium can support blood pressure health; large doses may enhance the effect of blood pressure medications. Monitor with your provider.', ...LEGACY },
+  // Added from the evidence research (NIH NCCIH and MedlinePlus herb pages). Not a clinical sign-off.
+  { medication_class: 'anticoagulant', product_ingredient: 'stJohnsWort', verdict: 'avoid', legacy_severity: 'high', source: 'https://www.nccih.nih.gov/health/st-johns-wort', reviewed_on: '2026-10-17', reviewer: 'research', needs_clinical_review: true,
+    message: "St. John's wort can make blood thinners like warfarin work less well. Don't combine them without your doctor's approval." },
+  { medication_class: 'thyroid_hormone', product_ingredient: 'ashwagandha', verdict: 'caution', legacy_severity: 'medium', source: 'https://www.nccih.nih.gov/health/ashwagandha', reviewed_on: '2026-10-17', reviewer: 'research', needs_clinical_review: true,
+    message: 'Ashwagandha may raise thyroid hormone levels. If you take thyroid medication, check with your doctor first.' },
+  { medication_class: 'anticoagulant', product_ingredient: 'fenugreek', verdict: 'caution', legacy_severity: 'medium', source: 'https://medlineplus.gov/druginfo/natural/733.html', reviewed_on: '2026-10-17', reviewer: 'research', needs_clinical_review: true,
+    message: 'Fenugreek may slow blood clotting. If you take a blood thinner, check with your doctor first.' },
+  { medication_class: 'anticoagulant', product_ingredient: 'omega3', verdict: 'caution', legacy_severity: 'medium', source: 'https://www.nccih.nih.gov/health/omega3-supplements-what-you-need-to-know', reviewed_on: '2026-10-17', reviewer: 'research', needs_clinical_review: true,
+    message: 'Fish oil / omega-3 may slightly increase bleeding risk with blood thinners. Use under medical supervision.' },
+  { medication_class: 'hormonal_contraceptive', product_ingredient: 'vitex', verdict: 'caution', legacy_severity: 'medium', source: 'https://www.nccih.nih.gov/health/chasteberry', reviewed_on: '2026-10-17', reviewer: 'research', needs_clinical_review: true,
+    message: 'Chasteberry (vitex) may interfere with hormonal birth control. Check with your provider before combining them.' },
 ];
 
 function rowMatchesMedication(row, med) {

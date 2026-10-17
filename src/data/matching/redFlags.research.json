@@ -1,0 +1,137 @@
+[
+ {
+  "id": "rf.ectopic_rupture",
+  "condition": "Possible ruptured ectopic pregnancy",
+  "signs": [
+   "Sudden, sharp, intense belly pain",
+   "Feeling very dizzy or fainting",
+   "Feeling sick, with possible or known early pregnancy",
+   "Shoulder tip pain (can mean internal bleeding)"
+  ],
+  "action": "call 911",
+  "source_url": "https://www.nhs.uk/conditions/ectopic-pregnancy/symptoms/"
+ },
+ {
+  "id": "rf.ectopic_suspected",
+  "condition": "Possible ectopic pregnancy",
+  "signs": [
+   "Belly pain low on one side in early pregnancy (weeks 4 to 12)",
+   "Vaginal bleeding unlike a normal period (watery, dark brown, on and off)",
+   "Pain when pooping or peeing, or diarrhoea, when you might be pregnant"
+  ],
+  "action": "call your clinician today",
+  "source_url": "https://www.nhs.uk/conditions/ectopic-pregnancy/symptoms/"
+ },
+ {
+  "id": "rf.postpartum_hemorrhage",
+  "condition": "Postpartum hemorrhage (first 24 hours up to 12 weeks after birth)",
+  "signs": [
+   "Heavy bleeding soaking one or more pads in an hour",
+   "Clots bigger than an egg or golf ball, or passing tissue",
+   "Dizziness, blurred vision or feeling faint",
+   "Racing heart, fast breathing, pale or clammy skin",
+   "Pain or swelling in the vagina or perineum"
+  ],
+  "action": "go to ER",
+  "source_url": "https://my.clevelandclinic.org/health/diseases/22228-postpartum-hemorrhage"
+ },
+ {
+  "id": "rf.preeclampsia",
+  "condition": "Preeclampsia in pregnancy",
+  "signs": [
+   "Severe headache",
+   "Vision changes (blurring, temporary vision loss, light sensitivity)",
+   "Severe pain in the upper belly under the right ribs",
+   "Severe shortness of breath",
+   "Sudden swelling of the face or hands"
+  ],
+  "action": "go to ER",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/preeclampsia/symptoms-causes/syc-20355745"
+ },
+ {
+  "id": "rf.postpartum_preeclampsia",
+  "condition": "Postpartum preeclampsia (most within 48 hours, can be up to 6 weeks or later after birth)",
+  "signs": [
+   "Severe headache",
+   "Vision changes",
+   "Pain in the upper belly under the right ribs",
+   "Nausea and vomiting",
+   "Shortness of breath",
+   "Reduced urination",
+   "Blood pressure 140/90 or higher"
+  ],
+  "action": "go to ER",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/postpartum-preeclampsia/symptoms-causes/syc-20376646"
+ },
+ {
+  "id": "rf.postpartum_psychosis_danger",
+  "condition": "Postpartum psychosis with risk of harm",
+  "signs": [
+   "Thoughts of harming yourself or the baby",
+   "Hallucinations or delusions with risk of imminent harm"
+  ],
+  "action": "call 911",
+  "source_url": "https://www.nhs.uk/mental-health/conditions/post-partum-psychosis/"
+ },
+ {
+  "id": "rf.postpartum_psychosis",
+  "condition": "Suspected postpartum psychosis (usually within 2 weeks of birth)",
+  "signs": [
+   "Hearing, seeing or feeling things that are not there",
+   "Unusual fears or beliefs",
+   "Feeling unusually high, racing thoughts, restlessness",
+   "Rapidly changing moods or severe low mood",
+   "Significant confusion"
+  ],
+  "action": "call your clinician today",
+  "source_url": "https://www.nhs.uk/mental-health/conditions/post-partum-psychosis/"
+ },
+ {
+  "id": "rf.toxic_shock_severe",
+  "condition": "Toxic shock syndrome (severe)",
+  "signs": [
+   "Confusion or slurred speech",
+   "Blue, grey, pale or blotchy skin, lips or tongue",
+   "Rash that does not fade under a glass",
+   "Difficulty breathing or very fast breathing",
+   "Large areas of peeling skin"
+  ],
+  "action": "call 911",
+  "source_url": "https://www.nhs.uk/conditions/toxic-shock-syndrome/"
+ },
+ {
+  "id": "rf.toxic_shock",
+  "condition": "Possible toxic shock syndrome (remove any tampon or menstrual cup)",
+  "signs": [
+   "High temperature or shivering with muscle aches",
+   "Vomiting or diarrhoea",
+   "Sandpaper-like rash",
+   "Bright red palms, soles, tongue or eye whites",
+   "Feeling dizzy or confused"
+  ],
+  "action": "call your clinician today",
+  "source_url": "https://www.nhs.uk/conditions/toxic-shock-syndrome/"
+ },
+ {
+  "id": "rf.hyperemesis_dehydration",
+  "condition": "Severe dehydration from vomiting in pregnancy (hyperemesis gravidarum)",
+  "signs": [
+   "Cannot keep any food or fluid down and vomiting for 24 hours or more",
+   "Unable to drink for more than 8 hours or eat for more than 24 hours",
+   "Light-headedness, rapid heartbeat"
+  ],
+  "action": "go to ER",
+  "source_url": "https://guysandstthomas.nhs.uk/health-information/hyperemesis-gravidarum"
+ },
+ {
+  "id": "rf.hyperemesis",
+  "condition": "Hyperemesis gravidarum (not yet an emergency)",
+  "signs": [
+   "Vomiting every day that is getting more frequent",
+   "Losing a lot of weight",
+   "Vomiting stopping you eating or drinking normally"
+  ],
+  "action": "call your clinician today",
+  "source_url": "https://guysandstthomas.nhs.uk/health-information/hyperemesis-gravidarum"
+ }
+]

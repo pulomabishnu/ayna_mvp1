@@ -1075,7 +1075,12 @@ export default function MyEcosystem({
     }, [quizResults]);
 
     // Use ecosystemOrder for stable card positions; fall back to insertion order
-    const myProductIds = ecosystemOrder.length ? ecosystemOrder.filter(id => myProducts[id]) : Object.keys(myProducts);
+    // Every product in her ecosystem shows here. Products missing from the saved
+    // order (added on another device, or by an older build) used to be hidden
+    // on this page while Shop still said "In your ecosystem".
+    const myProductIds = ecosystemOrder.length
+        ? [...ecosystemOrder.filter(id => myProducts[id]), ...Object.keys(myProducts).filter(id => !ecosystemOrder.includes(id))]
+        : Object.keys(myProducts);
     const myProductList = myProductIds.map(id => myProducts[id]).filter(Boolean);
     const estimatedMonthlyTotal = useMemo(() => {
         let total = 0;
@@ -1290,7 +1295,10 @@ export default function MyEcosystem({
 
             // Local-first: give the user a usable ecosystem immediately.
             // The LLM batches below still run and can refine these matches later.
-            const instantLocal = generateTieredRecommendations(intake);
+            // Guarded: if the local engine ever throws, the async step below
+            // still runs and its finally clears "Building your matches".
+            let instantLocal = [];
+            try { instantLocal = generateTieredRecommendations(intake) || []; } catch (e) { console.error('[Ayna] local matches failed', e); }
             if (Array.isArray(instantLocal) && instantLocal.length > 0) {
                 rec.tiered = instantLocal;
                 notifyGeneration(rec);
@@ -1325,6 +1333,9 @@ export default function MyEcosystem({
                     let doneCount = 0;
 
                     const authToken = userSession?.access_token;
+                    // Watchdog: whatever happens upstream, the refine step ends
+                    // within 70s and she keeps the instant local matches.
+                    const watchdog = setTimeout(() => { try { rec.controller.abort(); } catch { /* done */ } }, 70_000);
                     await new Promise(resolveAll => {
                         Array.from({ length: NUM_BATCHES }, (_, i) => {
                             fetchLlmRecommendations(
@@ -1370,6 +1381,7 @@ export default function MyEcosystem({
                         });
                     });
 
+                    clearTimeout(watchdog);
                     if (rec.cancelled) return;
                     // Preserve screened local picks when AI returns only part
                     // of the requested ecosystem or too few distinct options.
@@ -2092,7 +2104,7 @@ export default function MyEcosystem({
                         <button type="button" onClick={handleRefreshRecommendations}>Refresh to try again</button>
                     </div>
                 )}
-                {llmLoading && (
+                {llmLoading && areaGroups.length === 0 && (
                     <div className="eco3-notice eco3-notice--soft" role="status">
                         Building your matches…{' '}
                         <button type="button" onClick={handleCancelRecommendations}>Stop</button>

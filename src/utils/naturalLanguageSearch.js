@@ -121,6 +121,7 @@ const TERM_ALIASES = {
   baby: ['postpartum', 'newborn', 'infant'],
   uti: ['urinary', 'bladder', 'infection'],
   pcos: ['polycystic', 'ovarian'],
+  pmos: ['pcos', 'polycystic'],
   /** Live bug: "sti" returned nothing even though Wisp/Planned Parenthood
    * Direct genuinely offer STI care, their summaries said "STI" but their
    * tags/healthFunctions (the identity fields) didn't, so the single-term

@@ -18,6 +18,8 @@
  * "corrected" into something else or flagged as unknown.
  */
 
+import { PHRASE_NEEDS } from './searchPhrases.research.js';
+
 export const MISSPELLINGS = {
   // Period care
   tampon: ['tampoon', 'tampn', 'tampom', 'tampns', 'tampoons', 'tampoms', 'tammpon', 'tampong', 'tampan', 'tampen', 'tampin', 'tampun', 'tapon', 'tapmon', 'tmapon', 'tamon', 'tampone', 'tampoo', 'tamppon', 'tanpon', 'tampton', 'tampoin'],
@@ -179,6 +181,8 @@ export const ABBREVIATIONS = {
   pmdd: 'pmdd premenstrual dysphoric',
   pcos: 'pcos polycystic',
   pcod: 'pcos polycystic',
+  pmos: 'pcos polycystic',
+  polyendocrine: 'pcos polycystic',
   uti: 'uti urinary',
   utis: 'uti urinary',
   bv: 'bv bacterial vaginosis',
@@ -316,6 +320,8 @@ export const TERM_NEEDS = {
   headaches: ['pain.cycle_headache'],
   pcos: ['condition_support.pcos'],
   polycystic: ['condition_support.pcos'],
+  pmos: ['condition_support.pcos'],
+  polyendocrine: ['condition_support.pcos'],
   endometriosis: ['condition_support.endometriosis'],
   fibroids: ['condition_support.fibroids'],
   fibroid: ['condition_support.fibroids'],
@@ -401,6 +407,10 @@ export const TERM_NEEDS = {
 };
 
 /** Short display names for need chips ("Products for PMS"). */
+// Real-world phrasings from search research (multi-word only). They only add
+// phrases; anything written above keeps its own mapping.
+for (const [phrase, needs] of Object.entries(PHRASE_NEEDS)) if (!TERM_NEEDS[phrase]) TERM_NEEDS[phrase] = needs;
+
 export const NEED_SHORT_LABELS = {
   'cycle.pms': 'PMS',
   'mood.pmdd': 'PMDD',

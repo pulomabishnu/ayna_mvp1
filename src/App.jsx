@@ -102,6 +102,7 @@ import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './components/Ecosy
 import EcosystemPreview from './components/v3/EcosystemPreview';
 import { clearPersonalStorage } from './utils/clearPersonalStorage';
 import { toast } from './utils/toast';
+import { setDarkAccentSwap } from './utils/darkAccentSwap.js';
 import { recordProductView } from './utils/recentActivity';
 import GlobalToast from './components/v3/GlobalToast';
 
@@ -591,6 +592,16 @@ function App() {
   // longer apply.
   const themeAttr = theme === 'dark' ? 'brand-dark' : theme;
   useEffect(() => { document.documentElement.dataset.ayTheme = themeAttr; }, [themeAttr]);
+  // Brand dark also swaps the accents: sky blue <-> rose pink (see darkAccentSwap).
+  useEffect(() => { setDarkAccentSwap(themeAttr === 'brand-dark'); }, [themeAttr]);
+  // Tab icon follows the site's theme: butter tile in light, espresso tile in dark.
+  useEffect(() => {
+    const dark = themeAttr === 'brand-dark';
+    document.querySelectorAll('link[rel="icon"][data-ay-icon]').forEach((l) => {
+      l.removeAttribute('media');
+      l.href = dark ? '/ayna-favicon-v5-dark-64.png' : '/ayna-favicon-v5-64.png';
+    });
+  }, [themeAttr]);
   const [saveError, setSaveError] = useState(null);
   const reportSaveFailure = useCallback((what, err) => {
     console.error('[Ayna] save failed:', what, err);

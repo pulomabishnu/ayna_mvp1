@@ -42,9 +42,13 @@ describe('normalizeMedication: brand -> generic -> class', () => {
 describe('interaction table', () => {
   const legacy = readFileSync(fileURLToPath(new URL('../data/interactions.js', import.meta.url)), 'utf8');
 
-  it('is seeded only from legacy interactions.js, wording kept, marked for review', () => {
+  it('legacy rows keep their wording; research rows cite a credible source; all marked for review', () => {
     expect(INTERACTION_TABLE.length).toBeGreaterThan(0);
-    for (const row of INTERACTION_TABLE) {
+    for (const row of INTERACTION_TABLE.filter((r) => r.reviewer === 'research')) {
+      expect(row.source).toMatch(/^https:\/\/(www\.)?(nccih\.nih\.gov|medlineplus\.gov|ods\.od\.nih\.gov)\//);
+      expect(row.needs_clinical_review).toBe(true);
+    }
+    for (const row of INTERACTION_TABLE.filter((r) => r.reviewer !== 'research')) {
       expect(row.source).toBe('legacy ayna interactions.js');
       expect(row.reviewed_on).toBe(null);
       expect(row.needs_clinical_review).toBe(true);
@@ -54,12 +58,16 @@ describe('interaction table', () => {
   });
 
   it('only uses "avoid" where legacy wording says do not combine', () => {
-    INTERACTION_TABLE.filter((r) => r.verdict === 'avoid').forEach((r) => expect(r.message).toMatch(/Do not combine/));
+    INTERACTION_TABLE.filter((r) => r.verdict === 'avoid' && r.reviewer !== 'research').forEach((r) => expect(r.message).toMatch(/Do not combine/));
+    INTERACTION_TABLE.filter((r) => r.verdict === 'avoid' && r.reviewer === 'research').forEach((r) => expect(r.message).toMatch(/Don't combine/));
   });
 
-  it('St. John\'s wort with an SSRI is avoid; with the pill is caution', () => {
+  it('St. John\'s wort with an SSRI, the pill or warfarin is avoid (NCCIH)', () => {
     expect(lookupInteraction(normalizeMedication('Zoloft'), 'stJohnsWort').verdict).toBe('avoid');
-    expect(lookupInteraction(normalizeMedication('Yaz'), 'stJohnsWort').verdict).toBe('caution');
+    expect(lookupInteraction(normalizeMedication('Yaz'), 'stJohnsWort').verdict).toBe('avoid');
+    expect(lookupInteraction(normalizeMedication('Coumadin'), 'stJohnsWort').verdict).toBe('avoid');
+    expect(lookupInteraction(normalizeMedication('Synthroid'), 'ashwagandha').verdict).toBe('caution');
+    expect(lookupInteraction(normalizeMedication('Yaz'), 'vitex').verdict).toBe('caution');
   });
 
   it('defaults any pair not in the table to unknown, never compatible', () => {

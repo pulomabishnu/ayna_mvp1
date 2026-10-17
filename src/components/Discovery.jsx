@@ -16,7 +16,8 @@ import { isPartnerBrandItem, getPartnerBrandRank } from '../utils/partnerBrands'
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
 import { recordSearch } from '../utils/recentActivity';
 import { availablePreferenceOptions, matchesProductPreference } from '../utils/productPreferences';
-import useStaticPlaceholder from '../utils/useStaticPlaceholder';
+import useRotatingPlaceholder from '../utils/useRotatingPlaceholder.js';
+import { ROTATING_EXAMPLES } from '../data/searchPhrases.research.js';
 import { getVerificationLinks } from '../utils/verificationLinks';
 import { hasFlaggedRecall } from '../utils/productSafetyAlert';
 import { RELEASED_STARTUPS } from '../data/startups';
@@ -56,7 +57,8 @@ const SEARCH_PLACEHOLDER_THEMES = [
     ['postmenopausal bone health supplements', 'vaginal dryness after menopause', 'calcium and vitamin D for bone density'],
     ['at-home hormone test', 'sleep support for hormonal changes', 'probiotics for bloating'],
 ];
-const SEARCH_PLACEHOLDER_EXAMPLES = SEARCH_PLACEHOLDER_THEMES.flat();
+// Everyday phrasings first (search research, Oct 17), then the themed examples.
+const SEARCH_PLACEHOLDER_EXAMPLES = [...ROTATING_EXAMPLES.filter((x) => !/poop/.test(x)), ...SEARCH_PLACEHOLDER_THEMES.flat()];
 
 /** Natural-language phrase for the browse-AI extension's `query` param, prefers the
  * more specific active scope (a chosen sub-category) over the broader macro group, and
@@ -519,7 +521,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [categoryFilter, setCategoryFilter] = useState(() => memo('categoryFilter', initialCategory || 'all'));
     const [typeFilter, setTypeFilter] = useState(() => memo('typeFilter', 'all'));
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
-    const searchPlaceholder = useStaticPlaceholder(SEARCH_PLACEHOLDER_EXAMPLES, { prefix: 'Try: ', fallback: 'Search products', enabled: !searchQuery });
+    const searchPlaceholder = useRotatingPlaceholder(SEARCH_PLACEHOLDER_EXAMPLES, { prefix: 'Try: ', fallback: 'Search products', enabled: !searchQuery });
     const [submittedQuery, setSubmittedQuery] = useState(initialSearch || '');
     const [sortBy, setSortBy] = useState(() => memo('sortBy', 'default'));
     // Cards fade in on first load only; after that, filter changes swap in place.
