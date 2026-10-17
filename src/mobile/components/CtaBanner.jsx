@@ -6,7 +6,7 @@ function GradientBanner({ onClick, title = 'Build your ecosystem', buttonLabel =
         margin: '0 20px 20px',
         borderRadius: 24,
         padding: 20,
-        background: 'linear-gradient(135deg,#1D1A2B 0%,#1D1A2B 52%,#1D1A2B 100%)',
+        background: 'linear-gradient(135deg,#3e2723 0%,#3e2723 52%,#3e2723 100%)',
         color: '#FFFFFF',
         cursor: 'pointer',
         position: 'relative',
@@ -55,12 +55,12 @@ function InlineRow({ onClick }) {
         cursor: 'pointer',
       }}
     >
-      <div style={{ width: 34, height: 34, borderRadius: 99, background: 'linear-gradient(135deg,#1D1A2B,#1D1A2B)', flexShrink: 0 }} />
+      <div style={{ width: 34, height: 34, borderRadius: 99, background: 'linear-gradient(135deg,#3e2723,#3e2723)', flexShrink: 0 }} />
       <div style={{ flex: 1 }}>
         <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))' }}>Build your ecosystem</div>
         <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: '#626262', marginTop: 2 }}>6 steps</div>
       </div>
-      <div style={{ color: '#1D1A2B', fontSize: 'calc(16px * var(--ayna-text-scale, 1))' }}>→</div>
+      <div style={{ color: '#3e2723', fontSize: 'calc(16px * var(--ayna-text-scale, 1))' }}>→</div>
     </div>
   );
 }

@@ -14,7 +14,7 @@ import { summarizeCareNotes, firstCareLink } from '../../utils/careSummary.js';
 import CareNote from '../../components/CareNote.jsx';
 import '../eco-needs.css';
 
-const AREA_TONES = ['#F7BADD', '#BDEBD6', '#B9C2F4', '#F7E78E', '#EF9CCB', '#8FDABB'];
+const AREA_TONES = ['#F7BADD', '#C9D9E8', '#FFE38F', '#769EBE', '#FBD9EC', '#E3ECF3'];
 const MIN_SHELF_SCORE = 50;
 
 function CareLinks({ care, limit = 4 }) {
@@ -140,7 +140,6 @@ export default function EcosystemScreen({
     {careBlock}
 
     <section className="ayna-cabinet-stage ay-eco-hero" aria-labelledby="ayna-cabinet-title">
-      {ringGroups.length > 0 && <div className="ay-eco-cover"><EcosystemChart groups={ringGroups} /></div>}
       <h1 id="ayna-cabinet-title">Your Ecosystem</h1>
       {currentProducts.length > 0 && (
         <div className="ay-eco-actions">
@@ -149,6 +148,7 @@ export default function EcosystemScreen({
           <button type="button" className="ay-text-btn" onClick={onRetake}>Update</button>
         </div>
       )}
+      {ringGroups.length > 0 && <div className="ay-eco-cover"><EcosystemChart groups={ringGroups} /></div>}
       {!hasAnything && <EmptyState compact art="spark" tone="mint" title="No matches yet" body="Update your answers or browse the shop." actionLabel="Shop" onAction={onBrowse} secondaryLabel="Update" onSecondary={onRetake} />}
       {ecosystemNotice && <p className="ayna-cabinet-notice" role="status">{ecosystemNotice}</p>}
     </section>

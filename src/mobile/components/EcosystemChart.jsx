@@ -1,6 +1,6 @@
 // Same order as the area tones on the Ecosystem sections, so ring, legend and
 // section numbers always match.
-const COLORS = ['#F7BADD', '#BDEBD6', '#B9C2F4', '#F7E78E', '#EF9CCB', '#8FDABB'];
+const COLORS = ['#F7BADD', '#C9D9E8', '#FFE38F', '#769EBE', '#FBD9EC', '#E3ECF3'];
 const CIRCUMFERENCE = 2 * Math.PI * 72;
 
 function scrollParent(el) {

@@ -1,6 +1,6 @@
 // Draws the Wrapped summary as a 1080×1920 story image (Spotify-style) so
 // sharing sends a picture, not a link. Uses only what's on the final slide.
-const C = { ink: '#1d1a2b', paper: '#fffcf5', butter: '#f7e78e', pink: '#f7badd', mint: '#bdebd6', peri: '#b9c2f4' };
+const C = { ink: '#3e2723', paper: '#ffffff', butter: '#ffedac', pink: '#f7badd', mint: '#c9d9e8', peri: '#c9d9e8' };
 const DISPLAY = "'Bricolage Grotesque', Poppins, system-ui, sans-serif";
 const UI = "Poppins, system-ui, sans-serif";
 

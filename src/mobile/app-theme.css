@@ -1,0 +1,159 @@
+/* ayna app theme (Oct 17, 2026): the website's brand, built as an app.
+   Brand primitives: butter, espresso, sky, rose. Fonts: DM Serif Display for
+   titles only, DM Sans for everything you read or tap, Bricolage for the
+   wordmark only. Roles are named once here and every screen draws on them.
+
+   App choices (not a copy of the site):
+   - Large left-aligned serif titles, like a native large-title header.
+   - A floating espresso dock for the main tabs, inside the thumb zone.
+   - Cards are white on butter with an espresso hairline and a small hard
+     shadow; pressed state sinks the card instead of hover effects.
+   - Sheets and overlays come up from the bottom with a grab handle.
+   Loaded last so it wins over the older layers. */
+
+/* ---------- primitives + roles (light) ---------- */
+.ayna-mobile.ayna-mobile.ayna-mobile {
+  --b-butter: #ffedac;
+  --b-espresso: #3e2723;
+  --b-sky: #769ebe;
+  --b-rose: #f7badd;
+  --b-white: #ffffff;
+
+  --r-canvas: var(--b-butter);
+  --r-surface: var(--b-white);
+  --r-surface-2: #fff6d6;          /* butter lifted toward white, for grouped rows */
+  --r-ink: var(--b-espresso);
+  --r-ink-2: rgba(62, 39, 35, .72);
+  --r-ink-3: rgba(62, 39, 35, .5);
+  --r-line: rgba(62, 39, 35, .16);
+  --r-line-strong: var(--b-espresso);
+  --r-action: var(--b-espresso);   /* primary button fill */
+  --r-on-action: var(--b-butter);
+  --r-highlight: var(--b-rose);    /* selected chip, active tab, partner */
+  --r-on-highlight: var(--b-espresso);
+  --r-accent: var(--b-sky);        /* info, secondary accents */
+  --r-accent-soft: #d6e2ec;
+  --r-danger: #a6332a;
+  --r-shadow: 3px 3px 0 var(--b-espresso);
+  --r-shadow-sm: 2px 2px 0 var(--b-espresso);
+
+  --r-radius-s: 8px;
+  --r-radius-m: 14px;
+  --r-radius-l: 22px;
+  --r-gutter: 20px;
+
+  --f-display: 'DM Serif Display', Georgia, serif;
+  --f-ui: 'DM Sans', system-ui, sans-serif;
+  --f-logo: 'Bricolage Grotesque', 'DM Sans', sans-serif;
+
+  /* older tokens, mapped onto the roles so every existing screen follows */
+  --ay-ink: var(--r-ink);
+  --ay-ink-soft: var(--r-ink-2);
+  --ay-ink-faint: var(--r-line);
+  --ay-paper: var(--r-surface);
+  --ay-cream: var(--r-canvas);
+  --ay-peri: var(--r-accent-soft);
+  --ay-peri-deep: var(--b-sky);
+  --ay-peri-ink: var(--r-ink);
+  --ay-butter: var(--b-butter);
+  --ay-butter-deep: #ffe38f;
+  --ay-pink: var(--b-rose);
+  --ay-pink-deep: var(--b-rose);
+  --ay-mint: var(--r-accent-soft);
+  --ay-mint-deep: var(--b-sky);
+  --ay-alert: var(--r-danger);
+  --ay-tile: #f5ecd2;
+  --ay-line: var(--r-line);
+  --ay-shadow: var(--r-shadow);
+  --ay-shadow-lg: 4px 4px 0 var(--b-espresso);
+  --ay-font-display: var(--f-display);
+  --ay-font-ui: var(--f-ui);
+  --ay-radius-sm: var(--r-radius-s);
+  --ay-radius-md: var(--r-radius-m);
+  --ay-radius-lg: var(--r-radius-l);
+  --ay-gutter: var(--r-gutter);
+  --ay-section: var(--b-rose);
+
+  --ayna-font-display: var(--f-display);
+  --ayna-font-ui: var(--f-ui);
+  --ayna-bg: var(--r-canvas);
+  --ayna-bg-alt: var(--r-surface-2);
+  --ayna-surface: var(--r-surface);
+  --ayna-surface-alt: var(--r-surface-2);
+  --ayna-border: var(--r-line);
+  --ayna-chip-bg: var(--r-surface);
+  --ayna-chip-border: var(--r-line-strong);
+  --ayna-text: var(--r-ink);
+  --ayna-text-muted: var(--r-ink-2);
+  --ayna-text-faint: var(--r-ink-3);
+  --ayna-heading: var(--r-ink);
+  --ayna-cta-bg: var(--r-action);
+  --ayna-cta-text: var(--r-on-action);
+  --ayna-accent: var(--b-rose);
+  --ayna-accent-dark: var(--r-ink);
+  --ayna-brown: var(--r-ink);
+  --ayna-color-ink: var(--r-ink);
+  --ayna-figma-ink: var(--r-ink);
+  --ayna-figma-berry: var(--r-ink);
+  --ayna-figma-mint: var(--r-accent-soft);
+  --ayna-figma-mist: var(--r-surface-2);
+  --ayna-figma-paper: var(--r-canvas);
+  --ayna-reference-ink: var(--r-ink);
+  --ayna-reference-blue: var(--r-accent-soft);
+  --ayna-reference-yellow: var(--b-butter);
+  --ayna-reference-pink: var(--b-rose);
+  --ayna-reference-paper: var(--r-canvas);
+
+  background: var(--r-canvas);
+  color: var(--r-ink);
+  font-family: var(--f-ui);
+}
+
+/* ---------- dark: espresso canvas, butter type, sky and rose swap ---------- */
+.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] {
+  color-scheme: dark;
+  --r-canvas: #2e1c18;             /* espresso, one step deeper for the page */
+  --r-surface: var(--b-espresso);
+  --r-surface-2: #4a302a;
+  --r-ink: var(--b-butter);
+  --r-ink-2: rgba(255, 237, 172, .78);
+  --r-ink-3: rgba(255, 237, 172, .56);
+  --r-line: rgba(255, 237, 172, .2);
+  --r-line-strong: rgba(255, 237, 172, .7);
+  --r-action: var(--b-butter);
+  --r-on-action: var(--b-espresso);
+  --r-highlight: var(--b-sky);
+  --r-on-highlight: var(--b-espresso);
+  --r-accent: var(--b-rose);
+  --r-accent-soft: rgba(247, 186, 221, .22);
+  --r-danger: #f2a39b;
+  --r-shadow: 3px 3px 0 rgba(0, 0, 0, .45);
+  --r-shadow-sm: 2px 2px 0 rgba(0, 0, 0, .45);
+
+  --ay-butter: rgba(255, 237, 172, .16);
+  --ay-butter-deep: rgba(255, 237, 172, .28);
+  --ay-pink: var(--b-sky);
+  --ay-pink-deep: var(--b-sky);
+  --ay-peri: rgba(247, 186, 221, .22);
+  --ay-peri-deep: var(--b-rose);
+  --ay-mint: rgba(247, 186, 221, .22);
+  --ay-mint-deep: var(--b-rose);
+  --ay-tile: rgba(255, 237, 172, .06);
+  --ay-shadow-lg: 4px 4px 0 rgba(0, 0, 0, .45);
+  --ay-section: var(--b-sky);
+  --ayna-accent: var(--b-sky);
+  --ayna-chip-border: var(--r-line-strong);
+  --ayna-cta-bg: var(--r-action);
+  --ayna-cta-text: var(--r-on-action);
+}
+
+/* the older layers paint a grain over everything; the brand is flat */
+.ayna-mobile.ayna-mobile.ayna-mobile::after { display: none !important; }
+
+/* ---------- type roles ---------- */
+.ayna-mobile.ayna-mobile :is(h1, h2, h3) { font-family: var(--f-display); font-weight: 400; letter-spacing: -0.005em; color: var(--r-ink); }
+.ayna-mobile.ayna-mobile h1 { font-size: calc(34px * var(--ayna-text-scale, 1)); line-height: 1.08; }
+.ayna-mobile.ayna-mobile h2 { font-size: calc(24px * var(--ayna-text-scale, 1)); line-height: 1.15; }
+.ayna-mobile.ayna-mobile h3 { font-size: calc(19px * var(--ayna-text-scale, 1)); line-height: 1.2; }
+.ayna-mobile.ayna-mobile :is(p, li, label, input, textarea, select, button) { font-family: var(--f-ui); }
+.ayna-mobile.ayna-mobile .ayna-shared-wordmark { font-family: var(--f-logo) !important; font-weight: 800 !important; letter-spacing: -0.04em; color: var(--r-ink) !important; }

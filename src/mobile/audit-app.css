@@ -6,7 +6,7 @@
   /* Product photos sit on a plain white tile in both themes (team decision:
      no colored backgrounds behind product images). Ink used on that tile. */
   --ay-img-tile: #ffffff;
-  --ay-img-ink: #1d1a2b;
+  --ay-img-ink: #3e2723;
 }
 
 /* ===== AP02 Product card (grid): 2px ink border, white image tile, left-aligned text ===== */
@@ -166,7 +166,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-center.is-active .ay-nav-center {
   border-color: var(--ay-pink) !important;
   color: var(--ay-img-ink) !important;
-  box-shadow: 0 0 18px rgba(255, 120, 207, .4) !important;
+  box-shadow: 0 0 18px rgba(118, 158, 190, .4) !important;
 }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center.is-active { background: var(--ay-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center:active .ay-nav-center { transform: translateY(2px); }
@@ -233,7 +233,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-cabinet-section-head h2 { font-size: 24px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact {
   display: grid !important; grid-template-columns: minmax(0, 1fr) 32px; align-items: center; gap: 16px;
-  min-height: 72px; padding: 16px 0 !important; justify-items: stretch; text-align: left !important; border: 0 !important; border-bottom: 1px solid var(--ay-line, rgba(29, 26, 43, .1)) !important;
+  min-height: 72px; padding: 16px 0 !important; justify-items: stretch; text-align: left !important; border: 0 !important; border-bottom: 1px solid var(--ay-line, rgba(62, 39, 35, .1)) !important;
   border-radius: 0 !important; background: transparent !important; box-shadow: none !important;
 }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact:last-child { border-bottom: 0 !important; }
@@ -249,7 +249,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact strong { max-width: none !important; margin: 0 !important; font: 700 17px/1.25 var(--ay-font-ui) !important; letter-spacing: -.01em !important; color: var(--ay-ink) !important; }
 
 /* App swipe deck percent: the one ink match pill. */
-.ayna-mobile .ay-deck-meta em { display: inline-flex; align-items: baseline; padding: 5px 10px; border-radius: 99px; background: var(--ay-ink, #1d1a2b); color: var(--ay-paper, #fffcf5); font-style: normal; font-weight: 700; font-size: 12px; line-height: 1; }
+.ayna-mobile .ay-deck-meta em { display: inline-flex; align-items: baseline; padding: 5px 10px; border-radius: 99px; background: var(--ay-ink, #3e2723); color: var(--ay-paper, #ffffff); font-style: normal; font-weight: 700; font-size: 12px; line-height: 1; }
 
 /* Shop deck "Get matched" CTA: centered pill, not a floating left button. */
 .ayna-mobile .ayna-figma-discover-cta { display: flex; justify-content: center; padding: 16px 20px; }

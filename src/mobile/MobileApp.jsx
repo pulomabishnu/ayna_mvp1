@@ -56,6 +56,10 @@ import CommunityScreen from './screens/CommunityScreen.jsx';
 import './audit-app.css';
 // "A tiny bit smaller" density pass; after audit-app.css so it wins ties.
 import './app-density.css';
+// Brand theme (Oct 17): butter, espresso, sky, rose; imported last so it wins.
+import './app-theme.css';
+import './app-components.css';
+import './app-screens.css';
 import './keyboardModality.js';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's

@@ -12,6 +12,6 @@
 .ayna-mobile .ay-header-actions .ay-header-saved:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--ay-ink) !important; }
 .ayna-mobile[data-theme='dark'] .ay-header-actions .ayna-shared-header-action.ay-header-saved {
   border-color: var(--ay-butter) !important; background: #101116 !important; color: #ffffff !important;
-  box-shadow: 0 0 14px rgba(245, 255, 104, .3) !important;
+  box-shadow: 0 0 14px rgba(255, 237, 172, .3) !important;
 }
 @media (prefers-reduced-motion: reduce) { .ayna-mobile .ay-header-actions .ay-header-saved { transition: none; } }

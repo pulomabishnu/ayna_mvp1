@@ -5,20 +5,20 @@
   --ayna-surface: #FFFFFF;
   --ayna-surface-alt: #FFFFFF;
   --ayna-border: #E0E0D9;
-  --ayna-text: #1D1A2B;
+  --ayna-text: #3e2723;
   --ayna-text-muted: #5F5F5F;
   --ayna-text-faint: #777777;
-  --ayna-heading: #1D1A2B;
+  --ayna-heading: #3e2723;
   --ayna-accent: #F7BADD;
-  --ayna-accent-dark: #1D1A2B;
+  --ayna-accent-dark: #3e2723;
   --ayna-peach: #DDF8F2;
-  --ayna-brown: #1D1A2B;
-  --ayna-navy: #1D1A2B;
-  --ayna-cta-bg: #1D1A2B;
+  --ayna-brown: #3e2723;
+  --ayna-navy: #3e2723;
+  --ayna-cta-bg: #3e2723;
   --ayna-cta-text: #FFFFFF;
   --ayna-chip-bg: #FFFFFF;
   --ayna-chip-border: #E0E0D9;
-  --color-primary: #1D1A2B;
+  --color-primary: #3e2723;
   background: var(--ayna-bg);
 }
 .ayna-mobile[data-theme="dark"] {
@@ -35,7 +35,7 @@
   --ayna-chip-border: #414141;
 }
 .ayna-mobile button { -webkit-tap-highlight-color: transparent; }
-.ayna-mobile button:focus-visible { outline: 3px solid #1D1A2B; outline-offset: 2px; }
+.ayna-mobile button:focus-visible { outline: 3px solid #3e2723; outline-offset: 2px; }
 .ayna-mobile .ayna-bottom-nav,
 .ayna-mobile[data-screen='landing'] .ayna-bottom-nav,
 .ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav {
@@ -82,7 +82,7 @@
 .ayna-editorial-read-copy > span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin-top: 6px; color: var(--ayna-text-muted); font: 12px/1.35 var(--ayna-font-ui); }
 .ayna-editorial-read-image { height: 106px; overflow: hidden; background: #e9ded0; display: grid; place-items: center; }
 .ayna-editorial-read-image img { width: 100%; height: 100%; object-fit: cover; }
-.ayna-editorial-read-image > span { color: #1D1A2B; font: italic 24px var(--ayna-font-display); }
+.ayna-editorial-read-image > span { color: #3e2723; font: italic 24px var(--ayna-font-display); }
 @media (max-height: 680px) { .ayna-editorial-welcome-photo { min-height: 30vh; } .ayna-editorial-welcome-content { padding-top: 18px; } }
 
 /* Rebrand entry points: art-directed type and real Ayna photography. */
@@ -96,8 +96,8 @@
 .ayna-mobile .ayna-bottom-nav button { min-height: 52px; font-weight: 700; }
 .ayna-mobile .ayna-bottom-nav button.is-active,
 .ayna-mobile[data-screen='landing'] .ayna-bottom-nav button.is-active,
-.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button.is-active { color: #1D1A2B; }
+.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button.is-active { color: #3e2723; }
 .ayna-mobile .ayna-bottom-nav button.is-active::after { background: #F7BADD; width: 22px; }
-.ayna-editorial-read-copy small { color: #1D1A2B; }
+.ayna-editorial-read-copy small { color: #3e2723; }
 .ayna-editorial-read-image { border-radius: 8px; }
 @media (max-height: 690px) { .ayna-v2-welcome-hero { min-height: 285px; } .ayna-v2-team-photo img { aspect-ratio: 2; } }

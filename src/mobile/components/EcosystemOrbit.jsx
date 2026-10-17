@@ -87,7 +87,7 @@ export default function EcosystemOrbit({ products = [], name = 'You', selectedKe
             width: 100,
             height: 100,
             borderRadius: '50%',
-            background: 'linear-gradient(140deg,#1D1A2B,#1D1A2B 60%,#1D1A2B)',
+            background: 'linear-gradient(140deg,#3e2723,#3e2723 60%,#3e2723)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',

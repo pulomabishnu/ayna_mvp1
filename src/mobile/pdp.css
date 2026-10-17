@@ -238,7 +238,7 @@
 .ayna-mobile .ay-pdp-thumbs { padding: 0 var(--ay-gutter); }
 .ayna-mobile .ay-pdp-thumbs .ay-thumbs button { width: 56px; height: 56px; }
 .ayna-mobile .ay-pdp-safetyflag { justify-self: start; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border: 1.5px solid var(--ay-ink); border-radius: 999px; background: var(--ay-pink); color: var(--ay-ink); font: 500 14px/1.2 var(--ay-font-ui); cursor: pointer; }
-.ayna-mobile[data-theme='dark'] .ay-pdp-safetyflag { color: #050506; border-color: var(--ay-pink); }
+.ayna-mobile[data-theme='dark'] .ay-pdp-safetyflag { color: #2e1c18; border-color: var(--ay-pink); }
 .ayna-mobile .ay-pdp-safetyflag strong { font-weight: 700; }
 .ayna-mobile .ay-pdp-safetyflag span:last-child { text-decoration: underline; text-underline-offset: 3px; }
 .ayna-mobile .ay-pdp-head2 .ay-retailers a { color: var(--ay-ink) !important; }
@@ -257,5 +257,5 @@
 .ayna-mobile .ay-pdp-askcard { grid-template-columns: minmax(0, 1fr); }
 .ayna-mobile .ay-pdp-askcard .ay-pdp-ask { min-width: 0; }
 .ayna-mobile .ay-pdp-askcard .ay-pdp-ask button:not([type='submit']) { max-width: 100%; white-space: normal; line-height: 1.3; }
-.ayna-mobile[data-theme='dark'] .ay-pdp-askcard .ay-pdp-ask > div:last-child { color: #050506 !important; opacity: .75; }
-.ayna-mobile[data-theme='dark'] .ay-pdp-head2 .ay-pdp-fitnote { color: #050506 !important; border-color: var(--ay-butter) !important; }
+.ayna-mobile[data-theme='dark'] .ay-pdp-askcard .ay-pdp-ask > div:last-child { color: #2e1c18 !important; opacity: .75; }
+.ayna-mobile[data-theme='dark'] .ay-pdp-head2 .ay-pdp-fitnote { color: #2e1c18 !important; border-color: var(--ay-butter) !important; }

@@ -38,7 +38,7 @@
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-cover { width: 40px !important; height: 40px !important; border-width: 1.5px; border-radius: 10px; }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-track strong { font: 700 18px/1 var(--ay-font-ui) !important; letter-spacing: -.02em; }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-track:not(:first-child) .ay-reel-eq { color: var(--ay-ink); opacity: .2; }
-.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-progress i { height: 4px; background: rgba(29, 26, 43, .16); }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-progress i { height: 4px; background: rgba(62, 39, 35, .16); }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-pause { width: 40px; height: 40px; border-width: 1.5px; background: var(--ay-paper); }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-ask p { border-width: 1.5px; }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags span { border-width: 1.5px; }

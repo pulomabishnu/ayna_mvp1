@@ -78,7 +78,7 @@
 .ay-for-me i { width: 40px; height: 22px; box-sizing: border-box; border-width: 1.5px; }
 .ay-for-me i b { top: 50%; left: 3px; width: 14px; height: 14px; translate: 0 -50%; }
 .ay-for-me[aria-checked='true'] i b { transform: translateX(18px); }
-.ayna-mobile[data-theme='dark'] .ayna-fresh-product-card .ayna-card-save { color: #1d1a2b !important; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-product-card .ayna-card-save { color: #3e2723 !important; }
 .ayna-mobile[data-theme='dark'] .ayna-fresh-product-card .ayna-card-save svg { stroke: currentColor !important; }
 /* "For me" sits on the title line; one fewer row and divider */
 .ayna-mobile.ayna-mobile .ay-shop-titlebar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }

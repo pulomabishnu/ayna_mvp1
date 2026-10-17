@@ -69,7 +69,7 @@ function ProductMention({ productId, productsById, quizAnswers, onOpenProduct })
   </button>;
 }
 
-const THUMB_TONES = ['#B9C2F4', '#F7BADD', '#BDEBD6', '#F7E78E'];
+const THUMB_TONES = ['#c9d9e8', '#F7BADD', '#c9d9e8', '#ffedac'];
 // Row thumbnail: the uploaded cover, else up to four product photos on white,
 // else a branded pastel tile with the title's first letter.
 function PlaylistThumb({ playlist, productsById }) {
@@ -120,7 +120,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
   const [editDescription, setEditDescription] = useState('');
   const [editVisibility, setEditVisibility] = useState('public');
   const [editCoverMode, setEditCoverMode] = useState('photo');
-  const [editCoverColor, setEditCoverColor] = useState('#1D1A2B');
+  const [editCoverColor, setEditCoverColor] = useState('#3e2723');
   const [editCoverText, setEditCoverText] = useState('');
   const [editCoverPhoto, setEditCoverPhoto] = useState(null);
   const [deletePlaylistTarget, setDeletePlaylistTarget] = useState(null);
@@ -143,7 +143,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
   const [playlistTitle, setPlaylistTitle] = useState('');
   const [playlistVisibility, setPlaylistVisibility] = useState('public');
   const [coverMode, setCoverMode] = useState('color');
-  const [coverColor, setCoverColor] = useState('#1D1A2B');
+  const [coverColor, setCoverColor] = useState('#3e2723');
   const [coverText, setCoverText] = useState('');
   const [coverPhoto, setCoverPhoto] = useState(null);
   const [photos, setPhotos] = useState([]);

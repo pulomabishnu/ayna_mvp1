@@ -1,9 +1,9 @@
 /* Ayna's reference-led system: one blue stage, one yellow action, dark type. */
 .ayna-mobile {
-  --ayna-reference-blue:#b9c2f4;
-  --ayna-reference-yellow:#f7e78e;
-  --ayna-reference-ink:#1d1a2b;
-  --ayna-reference-paper:#faf8f1;
+  --ayna-reference-blue:#c9d9e8;
+  --ayna-reference-yellow:#ffedac;
+  --ayna-reference-ink:#3e2723;
+  --ayna-reference-paper:#ffedac;
   --ayna-reference-pink:#f7badd;
   --ayna-font-display:'Poppins',system-ui,sans-serif;
   --ayna-font-ui:'Poppins',system-ui,sans-serif;

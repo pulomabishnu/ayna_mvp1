@@ -334,7 +334,7 @@ export default function SigninScreen({
       style={{
         flex: 1,
         overflowY: 'auto',
-        background: '#1D1A2B',
+        background: '#3e2723',
         color: '#FFFFFF',
         paddingTop: 'max(20px, env(safe-area-inset-top))',
         paddingLeft: 24,
@@ -440,9 +440,9 @@ export default function SigninScreen({
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMeChecked(e.target.checked)}
-                style={{ width: 18, height: 18, flex: 'none', margin: 0, accentColor: 'var(--ay-ink, #1d1a2b)' }}
+                style={{ width: 18, height: 18, flex: 'none', margin: 0, accentColor: 'var(--ay-ink, #3e2723)' }}
               />
-              <span style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontWeight: 500, color: 'var(--ay-ink, #1d1a2b)' }}>Remember me</span>
+              <span style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontWeight: 500, color: 'var(--ay-ink, #3e2723)' }}>Remember me</span>
             </label>
           )}
 
