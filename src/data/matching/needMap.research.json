@@ -4170,6 +4170,466 @@
   "reviewed": "2026-10-17"
  },
  {
+  "product": "d-nurx-bc",
+  "need": "care.telehealth",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "Nurx is a clinician-run telehealth contraception service, and the AHRQ review (AFP 2023) found telehealth alone gave outcomes similar to in-person visits for contraception.",
+  "source_url": "https://www.aafp.org/pubs/afp/issues/2023/0500/ahrq-telehealth-womens-preventive-services.html",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "d-nurx-bc",
+  "need": "care.find_doctor",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Nurx connects users to a licensed prescriber for contraception and sexual health, a partial fit for finding a doctor since it does not replace an ongoing clinician or specialist.",
+  "source_url": "https://www.aafp.org/pubs/afp/issues/2023/0500/ahrq-telehealth-womens-preventive-services.html",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "d-wisp-bc",
+  "need": "care.telehealth",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "Wisp is a clinician-run telehealth contraception service, and the AHRQ review (AFP 2023) found telehealth alone gave outcomes similar to in-person visits for contraception.",
+  "source_url": "https://www.aafp.org/pubs/afp/issues/2023/0500/ahrq-telehealth-womens-preventive-services.html",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "d-wisp-bc",
+  "need": "care.find_doctor",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Wisp connects users to a licensed prescriber for contraception and sexual health, a partial fit for finding a doctor since it does not replace an ongoing clinician or specialist.",
+  "source_url": "https://www.aafp.org/pubs/afp/issues/2023/0500/ahrq-telehealth-womens-preventive-services.html",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "d-ppd",
+  "need": "care.telehealth",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "Planned Parenthood Direct is a clinician-run telehealth contraception service, and the AHRQ review (AFP 2023) found telehealth alone gave outcomes similar to in-person visits for contraception.",
+  "source_url": "https://www.aafp.org/pubs/afp/issues/2023/0500/ahrq-telehealth-womens-preventive-services.html",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "d-ppd",
+  "need": "care.find_doctor",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Planned Parenthood Direct connects users to a licensed prescriber for contraception and sexual health, a partial fit for finding a doctor since it does not replace an ongoing clinician or specialist.",
+  "source_url": "https://www.aafp.org/pubs/afp/issues/2023/0500/ahrq-telehealth-womens-preventive-services.html",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "d-hers",
+  "need": "care.telehealth",
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "Hers offers virtual visits with licensed clinicians; AHRQ evidence supports telehealth for women's preventive care but its strength is rated low.",
+  "source_url": "https://www.aafp.org/pubs/afp/issues/2023/0500/ahrq-telehealth-womens-preventive-services.html",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "d-hers",
+  "need": "care.find_doctor",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Hers gives access to clinicians (and specialist referral is a recognized telehealth use per MedlinePlus), but it is one route to care rather than a doctor-finding tool.",
+  "source_url": "https://medlineplus.gov/ency/patientinstructions/000919.htm",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "d-maven",
+  "need": "care.telehealth",
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "Maven Clinic offers virtual visits with licensed clinicians; AHRQ evidence supports telehealth for women's preventive care but its strength is rated low.",
+  "source_url": "https://www.aafp.org/pubs/afp/issues/2023/0500/ahrq-telehealth-womens-preventive-services.html",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "d-maven",
+  "need": "care.find_doctor",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Maven Clinic gives access to clinicians (and specialist referral is a recognized telehealth use per MedlinePlus), but it is one route to care rather than a doctor-finding tool.",
+  "source_url": "https://medlineplus.gov/ency/patientinstructions/000919.htm",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "d-pomelo-care",
+  "need": "care.telehealth",
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "Pomelo Care offers virtual visits with licensed clinicians; AHRQ evidence supports telehealth for women's preventive care but its strength is rated low.",
+  "source_url": "https://www.aafp.org/pubs/afp/issues/2023/0500/ahrq-telehealth-womens-preventive-services.html",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "d-pomelo-care",
+  "need": "care.find_doctor",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Pomelo Care gives access to clinicians (and specialist referral is a recognized telehealth use per MedlinePlus), but it is one route to care rather than a doctor-finding tool.",
+  "source_url": "https://medlineplus.gov/ency/patientinstructions/000919.htm",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "d-tia",
+  "need": "care.telehealth",
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "Tia offers virtual visits with licensed clinicians; AHRQ evidence supports telehealth for women's preventive care but its strength is rated low.",
+  "source_url": "https://www.aafp.org/pubs/afp/issues/2023/0500/ahrq-telehealth-womens-preventive-services.html",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "d-tia",
+  "need": "care.find_doctor",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Tia gives access to clinicians (and specialist referral is a recognized telehealth use per MedlinePlus), but it is one route to care rather than a doctor-finding tool.",
+  "source_url": "https://medlineplus.gov/ency/patientinstructions/000919.htm",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "d-midi-health",
+  "need": "care.telehealth",
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "Midi Health is a virtual menopause clinic; a study in Menopause found menopause care well suited to telemedicine with high patient satisfaction, though evidence is observational.",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8785511",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "d-midi-health",
+  "need": "care.find_doctor",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Midi Health connects users with menopause clinicians, helpful where menopause specialists are scarce, but it is not a general doctor directory.",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8785511",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-gennev-care",
+  "need": "care.telehealth",
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "Gennev is a virtual menopause clinic; a study in Menopause found menopause care well suited to telemedicine with high patient satisfaction, though evidence is observational.",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8785511",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-gennev-care",
+  "need": "care.find_doctor",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Gennev connects users with menopause clinicians, helpful where menopause specialists are scarce, but it is not a general doctor directory.",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8785511",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "d-evernow",
+  "need": "care.telehealth",
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "Evernow is a virtual menopause clinic; a study in Menopause found menopause care well suited to telemedicine with high patient satisfaction, though evidence is observational.",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8785511",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "d-evernow",
+  "need": "care.find_doctor",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Evernow connects users with menopause clinicians, helpful where menopause specialists are scarce, but it is not a general doctor directory.",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8785511",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "d-visana",
+  "need": "care.telehealth",
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "Visana is a virtual gynecology clinic; AHRQ evidence supports telehealth for women's care with low strength, and endometriosis or fibroids still need in-person exams, imaging or surgery when indicated.",
+  "source_url": "https://www.aafp.org/pubs/afp/issues/2023/0500/ahrq-telehealth-womens-preventive-services.html",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "d-visana",
+  "need": "care.find_doctor",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Visana links users to clinicians focused on endometriosis and fibroids; Mayo notes evaluation often starts with a gynecologist and may need a surgeon referral.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/endometriosis/diagnosis-treatment/drc-20354661",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "d-betterhelp",
+  "need": "care.telehealth",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "BetterHelp provides remote therapy with licensed therapists; NIMH notes internet-based CBT can be as effective as conventional CBT, but it covers mental health only.",
+  "source_url": "https://nimh.nih.gov/health/topics/technology-and-the-future-of-mental-health-treatment",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "d-bloom",
+  "need": "care.telehealth",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Bloom is a self-guided CBT app with no licensed clinician, and NIMH warns most mental health apps lack peer-reviewed evidence, so it is not a telehealth provider.",
+  "source_url": "https://nimh.nih.gov/health/topics/technology-and-the-future-of-mental-health-treatment",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-proov-path-to-pregnancy",
+  "need": "care.telehealth",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Proov's program is at-home hormone test kits with remote specialist review, which does not replace the full infertility evaluation ASRM advises after 12 months of trying (6 months at 35+).",
+  "source_url": "https://www.reproductivefacts.org/news-and-publications/fact-sheets-and-infographics/defining-infertility/",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-proov-path-to-pregnancy",
+  "need": "care.find_doctor",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Includes reproductive endocrinologist review of test results, but ASRM recommends seeing a reproductive endocrinologist for a full evaluation, which this program does not replace.",
+  "source_url": "https://www.reproductivefacts.org/news-and-publications/fact-sheets-and-infographics/defining-infertility/",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-advil-ibuprofen-200",
+  "need": "pain.pelvic",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Ibuprofen relieves menstrual pain and NIH lists pain relievers among pelvic pain treatments, but chronic pelvic pain treatment depends on the cause.",
+  "source_url": "https://www.nichd.nih.gov/health/topics/pelvicpain/conditioninfo/Pages/treatments.aspx",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-advil-ibuprofen-200",
+  "need": "pain.cycle_headache",
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "Cleveland Clinic lists NSAIDs among usual treatments for menstrual migraine, sometimes started 2 to 3 days before the period.",
+  "source_url": "https://my.clevelandclinic.org/health/diseases/8260-menstrual-migraines-hormone-headaches",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-advil-ibuprofen-200",
+  "need": "pain.joint",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "MedlinePlus lists ibuprofen for arthritis pain and stiffness and for minor aches including muscle aches.",
+  "source_url": "https://medlineplus.gov/druginfo/meds/a682159.html",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-advil-ibuprofen-200",
+  "need": "condition_support.endometriosis",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Mayo Clinic names OTC ibuprofen as an option to ease endometriosis cramps, but it relieves symptoms only and does not treat the disease.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/endometriosis/diagnosis-treatment/drc-20354661",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-aleve-naproxen-220",
+  "need": "pain.pelvic",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Naproxen relieves menstrual pain and NIH lists pain relievers among pelvic pain treatments, but chronic pelvic pain treatment depends on the cause.",
+  "source_url": "https://www.nichd.nih.gov/health/topics/pelvicpain/conditioninfo/Pages/treatments.aspx",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-aleve-naproxen-220",
+  "need": "pain.cycle_headache",
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "Cleveland Clinic lists NSAIDs among usual treatments for menstrual migraine, sometimes started 2 to 3 days before the period.",
+  "source_url": "https://my.clevelandclinic.org/health/diseases/8260-menstrual-migraines-hormone-headaches",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-aleve-naproxen-220",
+  "need": "pain.joint",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "MedlinePlus lists naproxen for arthritis pain and stiffness and for minor aches including muscle aches.",
+  "source_url": "https://medlineplus.gov/druginfo/meds/a681029.html",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-aleve-naproxen-220",
+  "need": "condition_support.endometriosis",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Mayo Clinic names OTC naproxen as an option to ease endometriosis cramps, but it relieves symptoms only and does not treat the disease.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/endometriosis/diagnosis-treatment/drc-20354661",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-advil-ibuprofen-200",
+  "need": "condition_support.adenomyosis",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Mayo Clinic says clinicians may recommend ibuprofen starting 1 to 2 days before the period for adenomyosis pain and flow, as symptom relief only.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/adenomyosis/diagnosis-treatment/drc-20369143",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-aleve-naproxen-220",
+  "need": "condition_support.adenomyosis",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Mayo Clinic recommends an anti-inflammatory medicine (naming ibuprofen) for adenomyosis pain; naproxen is the same NSAID class, symptom relief only.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/adenomyosis/diagnosis-treatment/drc-20369143",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-monistat-3-combo",
+  "need": "vaginal.irritation",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Itching and irritation are common yeast infection symptoms that miconazole treats, but CDC notes no symptom is specific and OTC use without need can delay other diagnoses.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-taro-clotrimazole-7",
+  "need": "vaginal.irritation",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Clotrimazole 1% is a CDC-listed OTC treatment for yeast infection, which causes itching, but irritation has other causes and should be evaluated if it persists.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-panoxyl-bpo-10-wash",
+  "need": "condition_support.pcos",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Mayo notes creams or gels may help PCOS acne, so benzoyl peroxide addresses one symptom but not PCOS itself.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/pcos/diagnosis-treatment/drc-20353443",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-differin-adapalene-gel",
+  "need": "condition_support.pcos",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Mayo notes creams or gels may help PCOS acne, so a topical retinoid addresses one symptom; hormonal acne in PCOS often needs birth control pills or spironolactone.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/pcos/diagnosis-treatment/drc-20353443",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-nature-made-folic-acid-400",
+  "need": "fertility.support",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "CDC recommends 400 mcg folic acid daily starting at least 1 month before conception to prevent neural tube defects; it is preconception care, not a fertility booster.",
+  "source_url": "https://cdc.gov/folic-acid/about/index.html",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-nature-made-folic-acid-400",
+  "need": "pregnancy.safe_discovery",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "CDC recommends 400 mcg folic acid daily for anyone who could become pregnant, before and during early pregnancy.",
+  "source_url": "https://cdc.gov/folic-acid/about/index.html",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-easyhome-lh-strips-50",
+  "need": "fertility.support",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "MedlinePlus describes urine LH tests as the standard way to find when pregnancy is most likely, with ovulation 24 to 36 hours after a positive.",
+  "source_url": "https://medlineplus.gov/ency/article/007062.htm",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-easyhome-lh-strips-50",
+  "need": "hormonal.general",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "LH strips only detect the LH surge for ovulation timing and do not assess hormone-related symptoms in general; irregular cycles can make surges hard to detect.",
+  "source_url": "https://medlineplus.gov/ency/article/007062.htm",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-visby-womens-sti-test",
+  "need": "vaginal.discharge",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "FDA authorized this home test for chlamydia, gonorrhea and trichomoniasis, and CDC notes trich can cause abnormal discharge, but yeast and BV are common causes it does not test for.",
+  "source_url": "https://www.fda.gov/news-events/press-announcements/fda-grants-marketing-authorization-first-home-test-chlamydia-gonorrhea-and-trichomoniasis",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-rugby-vitamin-b6-25",
+  "need": "pregnancy.safe_discovery",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "ACOG (via AFP) calls vitamin B6 alone or with doxylamine safe and effective first-line care for nausea and vomiting of pregnancy, based on consistent evidence.",
+  "source_url": "https://www.aafp.org/afp/2004/0801/p601",
+  "reviewer": "research",
+  "reviewed": "2026-10-17"
+ },
+ {
   "product": "d-wisp-bc",
   "need": "urinary.burning",
   "strength": "primary",

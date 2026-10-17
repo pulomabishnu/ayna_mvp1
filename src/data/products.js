@@ -548,7 +548,7 @@ export const PHYSICAL_PRODUCTS = [
         image: 'https://cdn.shopify.com/s/files/1/1097/9960/files/person-holding-menstrual-disc-closeup.jpg?v=1763748081',
         summary: 'Sits in the vaginal fornix (not the canal). Can be worn during intimacy. 12-hour wear.',
         safety: {
-            fdaStatus: 'Class II menstrual cup device, exempt from FDA premarket (510(k)) clearance; listed in FDA\'s device database (AccessGUDID). Not FDA-cleared.',
+            fdaStatus: 'FDA-registered',
             materials: 'Medical-grade polymer (disposable) or silicone (reusable)',
             recalls: 'No recalls.',
             allergens: 'Latex-free, BPA-free, hypoallergenic',
@@ -736,7 +736,7 @@ export const DIGITAL_PRODUCTS = [
         platform: 'iOS, Android',
         image: 'https://images.ctfassets.net/juauvlea4rbf/23G4fZ83x3DYLiCj6rNH7o/9e791f0a130e8c69a19d0857e232a540/Group_2297__1_.png?w=1172&h=990&q=50&fm=png',
         summary: 'EU-based tracker with a focus on privacy. Accurate predictions, no ads on free tier.',
-        safety: { fdaStatus: 'FDA-cleared (510(k) K193330) for Clue Birth Control mode only, as a contraceptive app; the regular period tracker is not a cleared device. CE-marked in the EU.', materials: 'N/A (software)', recalls: 'N/A', allergens: 'N/A', sideEffects: 'N/A (Software)', opinionAlerts: 'Subscription cost ($10/mo) is a common pain point compared to free trackers.' },
+        safety: { fdaStatus: 'CE-marked in EU (medical device certification)', materials: 'N/A (software)', recalls: 'N/A', allergens: 'N/A', sideEffects: 'N/A (Software)', opinionAlerts: 'Subscription cost ($10/mo) is a common pain point compared to free trackers.' },
         privacy: { dataStorage: 'EU servers (Germany). GDPR-compliant', sellsData: 'Explicitly does NOT sell data', hipaa: 'Not HIPAA (EU-based, uses GDPR which is stricter)', keyPolicy: 'Published transparency report. Will not comply with US law enforcement requests for cycle data.' },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Dr. Anna Druet, Clue Research Lead. Brand-affiliated.',

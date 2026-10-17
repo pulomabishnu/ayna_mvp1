@@ -16,6 +16,7 @@ import {
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import { rankSearchOptions as rankedSuggestions, matchesSearchOption } from '../utils/search/index.js';
 import './WebIntake.css';
+import { commonNeedOptions } from '../matching/commonNeeds.js';
 // Website-only conditions that change what is safe (condition research, Oct 17).
 const WEB_EXTRA_CONDITIONS = ['Kidney disease', 'Bleeding or clotting disorder', 'History of blood clots', 'Heart disease', 'Liver disease', 'Stomach ulcer or stomach bleeding', 'Asthma'];
 import '../styles/audit-qya.css';
@@ -444,6 +445,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
       case 'support': {
         const q = search.trim().toLowerCase();
         const known = new Set(SUPPORT_GROUPS.flatMap((g) => g.items));
+        const tailoredCommon = commonNeedOptions(intake, [...known], COMMON_NEEDS);
         const custom = intake.supportSelections.filter((i) => !known.has(i));
         return <>
           <Search value={search} onChange={setSearch} placeholder="Search, e.g. cramps, sleep, acne" />
@@ -457,7 +459,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
               })}
             </div>
           ) : !showAllNeeds ? <>
-            <Tiles label="Common needs" items={[...COMMON_NEEDS, ...intake.supportSelections.filter((i) => known.has(i) && !COMMON_NEEDS.includes(i) && i !== 'Nothing right now')]} selected={intake.supportSelections} onToggle={(v) => toggleExclusive('supportSelections', v, ['Nothing right now'])} />
+            <Tiles label={tailoredCommon !== COMMON_NEEDS ? 'Common at your stage' : 'Common needs'} items={[...tailoredCommon, ...intake.supportSelections.filter((i) => known.has(i) && !tailoredCommon.includes(i) && i !== 'Nothing right now')]} selected={intake.supportSelections} onToggle={(v) => toggleExclusive('supportSelections', v, ['Nothing right now'])} />
             <div className="wq-chips is-small">
               <button type="button" className="wq-chip is-dashed" aria-expanded="false" onClick={() => setShowAllNeeds(true)}>More topics</button>
               <Chips small items={['Nothing right now']} selected={intake.supportSelections} onToggle={(v) => toggleExclusive('supportSelections', v, ['Nothing right now'])} />

@@ -3364,6 +3364,327 @@
   ]
  },
  {
+  "id": "care.telehealth",
+  "summary": "An AHRQ review (AFP 2023) found telehealth alone had outcomes similar to in-person visits for contraception, though strength of evidence was low. NIMH says internet-based CBT can work as well as conventional CBT, but most self-guided mental health apps lack peer-reviewed evidence. A Menopause journal study found menopause care well suited to telemedicine with high satisfaction.",
+  "effective_types": [
+   {
+    "type": "clinician-run telehealth for contraception",
+    "grade": "A",
+    "sources": [
+     "https://www.aafp.org/pubs/afp/issues/2023/0500/ahrq-telehealth-womens-preventive-services.html"
+    ]
+   },
+   {
+    "type": "virtual women's health or menopause clinic",
+    "grade": "B",
+    "sources": [
+     "https://www.aafp.org/pubs/afp/issues/2023/0500/ahrq-telehealth-womens-preventive-services.html",
+     "https://pmc.ncbi.nlm.nih.gov/articles/PMC8785511"
+    ]
+   },
+   {
+    "type": "online therapy with a licensed therapist",
+    "grade": "B",
+    "sources": [
+     "https://nimh.nih.gov/health/topics/technology-and-the-future-of-mental-health-treatment"
+    ]
+   },
+   {
+    "type": "self-guided mental health app (no clinician)",
+    "grade": "C",
+    "sources": [
+     "https://nimh.nih.gov/health/topics/technology-and-the-future-of-mental-health-treatment"
+    ]
+   }
+  ],
+  "caution": [
+   "Self-guided apps are not telehealth care; check whether a trained professional is involved (NIMH)",
+   "Telehealth is not for emergencies (MedlinePlus)"
+  ],
+  "see_a_clinician_if": [
+   "Suicidal thoughts or psychiatric emergency: call or text 988, or 911 if life-threatening (NIMH)",
+   "Any medical emergency (MedlinePlus)"
+  ],
+  "catalog_gaps": []
+ },
+ {
+  "id": "care.find_doctor",
+  "summary": "Telehealth can connect patients with clinicians and specialists (MedlinePlus), but many conditions need in-person evaluation. ASRM advises seeing a reproductive endocrinologist after 12 months of trying to conceive, or 6 months at 35 or older. Endometriosis care usually starts with a primary care doctor or gynecologist, with surgeon referral when needed (Mayo).",
+  "effective_types": [
+   {
+    "type": "specialist referral via primary care or gynecologist",
+    "grade": "B",
+    "sources": [
+     "https://www.mayoclinic.org/diseases-conditions/endometriosis/diagnosis-treatment/drc-20354661",
+     "https://medlineplus.gov/ency/patientinstructions/000919.htm"
+    ]
+   },
+   {
+    "type": "reproductive endocrinologist evaluation for infertility",
+    "grade": "A",
+    "sources": [
+     "https://www.reproductivefacts.org/news-and-publications/fact-sheets-and-infographics/defining-infertility/"
+    ]
+   }
+  ],
+  "caution": [],
+  "see_a_clinician_if": [
+   "No pregnancy after 12 months of trying, or 6 months at 35+, or sooner with irregular cycles or known risk factors (ASRM)"
+  ],
+  "catalog_gaps": [
+   "Clinician or specialist directory tool (type only)"
+  ]
+ },
+ {
+  "id": "pain.pelvic",
+  "summary": "NIH says pelvic pain treatment depends on the cause and includes pain relievers, muscle relaxants, antidepressants, hormones and surgery. ACOG guidance (via AFP) notes medication evidence for chronic pelvic pain is limited and opioids are not recommended.",
+  "effective_types": [
+   {
+    "type": "NSAID (OTC) for menstrual-related pelvic pain",
+    "grade": "B",
+    "sources": [
+     "https://www.nichd.nih.gov/health/topics/pelvicpain/conditioninfo/Pages/treatments.aspx",
+     "https://medlineplus.gov/druginfo/meds/a682159.html"
+    ]
+   },
+   {
+    "type": "hormonal treatment for endometriosis-related pain",
+    "grade": "B",
+    "sources": [
+     "https://www.nichd.nih.gov/health/topics/pelvicpain/conditioninfo/Pages/treatments.aspx"
+    ]
+   }
+  ],
+  "caution": [
+   "Do not take ibuprofen or naproxen around or after 20 weeks of pregnancy unless told to by a doctor (MedlinePlus)"
+  ],
+  "see_a_clinician_if": [
+   "Ongoing pelvic pain, since treatment depends on finding the cause (NIH NICHD)"
+  ],
+  "catalog_gaps": []
+ },
+ {
+  "id": "pain.cycle_headache",
+  "summary": "Cleveland Clinic lists NSAIDs among the usual treatments for menstrual migraine, sometimes started 2 to 3 days before the period and continued through flow.",
+  "effective_types": [
+   {
+    "type": "NSAID (OTC)",
+    "grade": "B",
+    "sources": [
+     "https://my.clevelandclinic.org/health/diseases/8260-menstrual-migraines-hormone-headaches"
+    ]
+   }
+  ],
+  "caution": [
+   "Avoid NSAIDs around or after 20 weeks of pregnancy unless directed (MedlinePlus)"
+  ],
+  "see_a_clinician_if": [
+   "Sudden or worst-ever headache, headache after head injury, or new neurologic symptoms: seek emergency care (Cleveland Clinic)",
+   "Migraine medicines stop working (Cleveland Clinic)"
+  ],
+  "catalog_gaps": []
+ },
+ {
+  "id": "pain.joint",
+  "summary": "MedlinePlus lists ibuprofen and naproxen for arthritis pain and stiffness and for minor aches.",
+  "effective_types": [
+   {
+    "type": "NSAID (OTC)",
+    "grade": "A",
+    "sources": [
+     "https://medlineplus.gov/druginfo/meds/a682159.html",
+     "https://medlineplus.gov/druginfo/meds/a681029.html"
+    ]
+   }
+  ],
+  "caution": [
+   "Avoid NSAIDs around or after 20 weeks of pregnancy unless directed (MedlinePlus)"
+  ],
+  "see_a_clinician_if": [],
+  "catalog_gaps": []
+ },
+ {
+  "id": "condition_support.endometriosis",
+  "summary": "Mayo Clinic lists OTC NSAIDs such as ibuprofen and naproxen to ease endometriosis cramps, with hormone therapy and surgery for more control. NIH notes hormones can help endometriosis pain. NSAIDs relieve symptoms only.",
+  "effective_types": [
+   {
+    "type": "NSAID (OTC)",
+    "grade": "B",
+    "sources": [
+     "https://www.mayoclinic.org/diseases-conditions/endometriosis/diagnosis-treatment/drc-20354661"
+    ]
+   },
+   {
+    "type": "hormonal therapy (prescription)",
+    "grade": "B",
+    "sources": [
+     "https://www.nichd.nih.gov/health/topics/pelvicpain/conditioninfo/Pages/treatments.aspx"
+    ]
+   }
+  ],
+  "caution": [],
+  "see_a_clinician_if": [
+   "Pain not controlled by OTC medicine, or trouble getting pregnant (Mayo Clinic)"
+  ],
+  "catalog_gaps": []
+ },
+ {
+  "id": "condition_support.adenomyosis",
+  "summary": "Mayo Clinic says clinicians may recommend an anti-inflammatory such as ibuprofen started 1 to 2 days before the period, plus hormonal options, with hysterectomy for severe cases. Heat and warm baths help as self-care.",
+  "effective_types": [
+   {
+    "type": "NSAID (OTC)",
+    "grade": "B",
+    "sources": [
+     "https://www.mayoclinic.org/diseases-conditions/adenomyosis/diagnosis-treatment/drc-20369143"
+    ]
+   },
+   {
+    "type": "heat (heating pad, warm bath)",
+    "grade": "B",
+    "sources": [
+     "https://www.mayoclinic.org/diseases-conditions/adenomyosis/diagnosis-treatment/drc-20369143"
+    ]
+   },
+   {
+    "type": "hormonal birth control or progestin IUD (prescription)",
+    "grade": "B",
+    "sources": [
+     "https://www.mayoclinic.org/diseases-conditions/adenomyosis/diagnosis-treatment/drc-20369143"
+    ]
+   }
+  ],
+  "caution": [],
+  "see_a_clinician_if": [
+   "Severe pain or heavy bleeding not helped by other treatments (Mayo Clinic)"
+  ],
+  "catalog_gaps": []
+ },
+ {
+  "id": "vaginal.irritation",
+  "summary": "Itching and irritation are common yeast infection symptoms, and OTC azoles (clotrimazole 1% for 7 to 14 days, miconazole 4% for 3 days) treat uncomplicated cases. CDC warns no symptom is specific and unneeded OTC use can delay diagnosis of other causes, including trichomoniasis.",
+  "effective_types": [
+   {
+    "type": "OTC intravaginal azole antifungal (for confirmed yeast)",
+    "grade": "B",
+    "sources": [
+     "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm"
+    ]
+   }
+  ],
+  "caution": [
+   "In pregnancy only 7-day topical azoles are recommended (CDC)"
+  ],
+  "see_a_clinician_if": [
+   "Symptoms persist after OTC treatment or return within 2 months (CDC)"
+  ],
+  "catalog_gaps": []
+ },
+ {
+  "id": "vaginal.discharge",
+  "summary": "Abnormal discharge can come from yeast, trichomoniasis or other STIs, and trich cannot be diagnosed by symptoms alone (CDC). FDA authorized a home test for chlamydia, gonorrhea and trichomoniasis in 2025.",
+  "effective_types": [
+   {
+    "type": "FDA-authorized home STI test",
+    "grade": "B",
+    "sources": [
+     "https://www.fda.gov/news-events/press-announcements/fda-grants-marketing-authorization-first-home-test-chlamydia-gonorrhea-and-trichomoniasis",
+     "https://www.cdc.gov/trichomoniasis/about/index.html"
+    ]
+   }
+  ],
+  "caution": [],
+  "see_a_clinician_if": [
+   "Positive home STI result, or symptoms after a negative result (FDA)",
+   "Retest about 3 months after trich treatment (CDC)"
+  ],
+  "catalog_gaps": []
+ },
+ {
+  "id": "condition_support.pcos",
+  "summary": "Mayo Clinic says PCOS treatment manages symptoms with lifestyle changes and medicines; birth control pills and spironolactone reduce androgen-driven acne, and creams or gels may also help.",
+  "effective_types": [
+   {
+    "type": "topical acne treatment",
+    "grade": "B",
+    "sources": [
+     "https://www.mayoclinic.org/diseases-conditions/pcos/diagnosis-treatment/drc-20353443"
+    ]
+   },
+   {
+    "type": "combined birth control pills (prescription)",
+    "grade": "B",
+    "sources": [
+     "https://www.mayoclinic.org/diseases-conditions/pcos/diagnosis-treatment/drc-20353443"
+    ]
+   }
+  ],
+  "caution": [
+   "Spironolactone can cause birth defects; not for pregnancy or pregnancy planning (Mayo Clinic)"
+  ],
+  "see_a_clinician_if": [],
+  "catalog_gaps": []
+ },
+ {
+  "id": "fertility.support",
+  "summary": "Urine LH tests help find the most fertile time, with ovulation expected 24 to 36 hours after a positive (MedlinePlus). CDC advises 400 mcg folic acid daily starting a month before conception. ASRM advises specialist evaluation after 12 months of trying, or 6 at 35+.",
+  "effective_types": [
+   {
+    "type": "urine LH ovulation test",
+    "grade": "A",
+    "sources": [
+     "https://medlineplus.gov/ency/article/007062.htm"
+    ]
+   },
+   {
+    "type": "folic acid 400 mcg (preconception)",
+    "grade": "A",
+    "sources": [
+     "https://cdc.gov/folic-acid/about/index.html"
+    ]
+   }
+  ],
+  "caution": [],
+  "see_a_clinician_if": [
+   "No LH surge detected or no pregnancy after several months of testing (MedlinePlus)",
+   "No pregnancy after 12 months, or 6 months at 35+ (ASRM)"
+  ],
+  "catalog_gaps": []
+ },
+ {
+  "id": "pregnancy.safe_discovery",
+  "summary": "CDC recommends 400 mcg folic acid daily before and during early pregnancy. ACOG calls vitamin B6 alone or with doxylamine safe and effective first-line care for pregnancy nausea.",
+  "effective_types": [
+   {
+    "type": "folic acid 400 mcg",
+    "grade": "A",
+    "sources": [
+     "https://cdc.gov/folic-acid/about/index.html"
+    ]
+   },
+   {
+    "type": "vitamin B6 for nausea of pregnancy",
+    "grade": "A",
+    "sources": [
+     "https://www.aafp.org/afp/2004/0801/p601"
+    ]
+   }
+  ],
+  "caution": [
+   "Avoid ibuprofen and naproxen around or after 20 weeks unless directed (MedlinePlus)"
+  ],
+  "see_a_clinician_if": [],
+  "catalog_gaps": []
+ },
+ {
+  "id": "hormonal.general",
+  "summary": "Home LH strips measure only LH for ovulation timing and do not assess other hormones (MedlinePlus).",
+  "effective_types": [],
+  "caution": [],
+  "see_a_clinician_if": [],
+  "catalog_gaps": []
+ },
+ {
   "id": "urinary.burning",
   "summary": "Burning with urination is a classic bladder-infection symptom; NIDDK says antibiotics prescribed by a clinician are the main treatment, with fluids, OTC pain relievers (ibuprofen, acetaminophen) and a heating pad for comfort. Phenazopyridine relieves dysuria, urgency and frequency but does not treat infection; FDA-labelled OTC use is about 2 days and evidence is mostly older observational data. Home nitrite/leukocyte strips can screen but MedlinePlus warns they are not always accurate and a negative does not rule out UTI. Cranberry is not a treatment for an active UTI (NCCIH).",
   "effective_types": [

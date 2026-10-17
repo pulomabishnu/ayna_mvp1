@@ -20,19 +20,19 @@
  {
   "product": "p-monistat-3-combo",
   "pregnancy": "ask_clinician",
-  "breastfeeding": "unknown",
-  "pregnancy_source": "https://www.cdc.gov/stiapp/candidiasis.html",
-  "breastfeeding_source": null,
-  "source_url": "https://www.cdc.gov/stiapp/candidiasis.html",
+  "breastfeeding": "ok",
+  "pregnancy_source": "https://www.ncbi.nlm.nih.gov/books/NBK501234/",
+  "breastfeeding_source": "https://www.ncbi.nlm.nih.gov/books/NBK501234/",
+  "source_url": "https://www.ncbi.nlm.nih.gov/books/NBK501234/",
   "reviewed": "2026-10-17"
  },
  {
   "product": "p-taro-clotrimazole-7",
   "pregnancy": "ask_clinician",
-  "breastfeeding": "unknown",
-  "pregnancy_source": "https://www.cdc.gov/stiapp/candidiasis.html",
-  "breastfeeding_source": null,
-  "source_url": "https://www.cdc.gov/stiapp/candidiasis.html",
+  "breastfeeding": "ok",
+  "pregnancy_source": "https://www.ncbi.nlm.nih.gov/books/NBK501211/",
+  "breastfeeding_source": "https://www.ncbi.nlm.nih.gov/books/NBK501211/",
+  "source_url": "https://www.ncbi.nlm.nih.gov/books/NBK501211/",
   "reviewed": "2026-10-17"
  },
  {

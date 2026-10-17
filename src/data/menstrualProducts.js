@@ -405,7 +405,7 @@ export const MENSTRUAL_PHYSICAL = [
         whereToBuy: ['Amazon', 'LenaCup.com'],
         image: 'https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_Blue_Cotton_Bag.png?v=1777479161',
         summary: 'Beginner-friendly cup. Available in Original (firmer) and Sensitive (softer). 50,000+ 5-star reviews.',
-        safety: { fdaStatus: 'Class II menstrual cup device, exempt from FDA premarket (510(k)) clearance; listed in FDA\'s device database (AccessGUDID). Not FDA-cleared.', materials: 'Medical-grade silicone', recalls: 'No recalls.', allergens: 'Latex-free, BPA-free' },
+        safety: { fdaStatus: 'FDA-registered', materials: 'Medical-grade silicone', recalls: 'No recalls.', allergens: 'Latex-free, BPA-free' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Lena is often recommended for first-time cup users due to its soft Sensitive option.',

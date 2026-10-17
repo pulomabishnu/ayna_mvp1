@@ -62,3 +62,25 @@ descriptions.
    Changes show up within about an hour (5-minute server cache, 1-hour browser cache).
 
 To hide a brand: add `hidden: true,` after each entry's `id`, then do steps 3–6 (the file ends in `_hidden.sql`).
+
+## Team-written product copy is locked (2026-10-17)
+
+The founders and team (Eliz, Puloma, Ameera) write the product information:
+names, prices, descriptions, clinical and community notes, safety notes,
+images. AI sessions, research merges and scripts changed some of it without
+asking, and Eliz had to redo work. Rules:
+
+- **Never edit a team-written field** in `src/data/*.js` (or anything that
+  overrides it at runtime, e.g. `catalogCorrections.js`, research layers)
+  unless a founder asked for that exact change in this session.
+- New research, evidence grades, safety findings and summaries go in their
+  own files (`src/data/matching/*`, passport files) and are shown **next to**
+  the team's copy, labelled as ayna's check. They never replace it.
+- If you find something in team copy that looks wrong (an unverified FDA
+  claim, a stale price), **report it to the founders** with the source.
+  Do not fix it yourself.
+- `src/data/teamCopy.lock.test.js` fails when any locked field changes. Only
+  after a named founder approves: `node scripts/team-copy-lock.mjs --approve
+  <id>.<field> --by "<who>" --note "<why>"`. New products:
+  `node scripts/team-copy-lock.mjs --add-new --by "<who>"`. Never run these
+  to make a failing test pass on your own.
