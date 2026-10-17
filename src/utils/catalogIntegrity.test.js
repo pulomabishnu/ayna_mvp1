@@ -17,7 +17,9 @@ describe('catalogIntegrity — nothing invented reaches the UI', () => {
     expect(p.price).toBe('Check retailer for current price (14 or 24 count)');
     expect(p.url).not.toBe('https://evil.example');
     expect(p.whyItWorks).toBe('Soft.');
-    expect(p.llmGenerated).toBeUndefined();
+    // "ayna picked this" is a personal flag, not a product fact. It must survive,
+    // or AI picks turn into permanent shelf items after one reload (Oct 17).
+    expect(p.llmGenerated).toBe(true);
     expect(p.catalogVerified).toBe(true);
   });
 

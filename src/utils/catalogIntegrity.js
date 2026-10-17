@@ -17,7 +17,7 @@ import { getLoadedCatalog } from './productCatalog.js';
 // ride along on top of the catalog record.
 const PERSONAL_FIELDS = [
   'whyItWorks', 'considerations', 'matchExplanation',
-  '_llmConcern', '_userSwapped', 'intakeGenerated',
+  '_llmConcern', '_userSwapped', 'intakeGenerated', 'llmGenerated', 'userAdded',
   'aynaMatch', 'aynaMatchPercent', 'matchPercent', 'matchPercentage',
   'addedAt', 'stage',
 ];

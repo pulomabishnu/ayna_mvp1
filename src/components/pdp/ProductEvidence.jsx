@@ -1,3 +1,5 @@
+import UrgentSigns from './UrgentSigns.jsx';
+import { urgentSignsFor } from '../../utils/urgentSigns';
 import { splitSentences } from './sentences';
 import { isCredible } from './credible';
 import { useApprovedResearch } from '../../utils/approvedResearch';
@@ -502,7 +504,8 @@ export function ProductSafety({ product, recall = null, alertText = '', glance =
   const d = useEvidence(product, null);
   if (!d) return null;
   const showRecall = !d.isDigital && recall && recall.status !== 'unknown';
-  if (!(alertText || d.warnings.length || d.pregnancy || d.fdaRaw || d.sideEffects || d.allergens || d.avoidIf.length || showRecall)) return null;
+  const urgent = urgentSignsFor(product);
+  if (!(alertText || d.warnings.length || d.pregnancy || d.fdaRaw || d.sideEffects || d.allergens || d.avoidIf.length || showRecall || urgent.length)) return null;
   // The note above often tells the same story as the recall line: say it once.
   const recallFull = showRecall ? noDash(recall.detail || recall.label || '') : '';
   const words = (t) => new Set(String(t).toLowerCase().match(/[a-z]{4,}/g) || []);
@@ -528,6 +531,7 @@ export function ProductSafety({ product, recall = null, alertText = '', glance =
         {d.privacy && typeof d.privacy.sellsData === 'string' && meaningful(d.privacy.sellsData) && <div><dt>Selling your data</dt><dd>{noDash(d.privacy.sellsData)}</dd></div>}
         {d.privacy && typeof d.privacy.hipaa === 'string' && meaningful(d.privacy.hipaa) && <div><dt>HIPAA and data rules</dt><dd>{noDash(d.privacy.hipaa)}</dd></div>}
       </dl>
+      <UrgentSigns product={product} flags={urgent} />
       <Links items={d.safetyLinks} label={d.safetyLinks.length ? 'Sources' : ''} />
     </div>
   );

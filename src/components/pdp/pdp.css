@@ -59,3 +59,4 @@ button.ay-compare__name:hover { text-decoration-color: currentColor; }
   .ay-compare :is(th, td) { padding: 12px; }
 }
 .ay-compare :is(thead th, tbody td) { min-width: 136px; }
+

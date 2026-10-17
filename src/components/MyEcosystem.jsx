@@ -1,4 +1,6 @@
 import SmartSearchInput from './search/SmartSearchInput.jsx';
+import UrgentSigns from './pdp/UrgentSigns.jsx';
+import { urgentSignsForStages } from '../utils/urgentSigns';
 import NeedsStrip from './v3/NeedsStrip.jsx';
 import ShelfRows from './v3/ShelfRows.jsx';
 import AddProductDialog from './v3/AddProductDialog.jsx';
@@ -14,6 +16,7 @@ import {
     getEcosystemSeedFromQuiz,
     getSelectedNeeds,
     getProductById,
+    getProductMatchDetailsForProduct,
 } from '../data/products';
 import { behaviorFrom, careNotes, shortNeedLabel } from '../utils/matchDisplay';
 import '../styles/match-ui.css';
@@ -1134,6 +1137,7 @@ export default function MyEcosystem({
     const careFirst = Boolean(careFlags?.careFirst);
     const careNoteLines = careNotes(careFlags);
     const careSummaryLines = useMemo(() => summarizeCareNotes(careFlags, { sayWhy: true }), [careFlags]);
+    const stageUrgent = useMemo(() => urgentSignsForStages(quizResults?.fullHealthIntake?.lifeStageSelections || []), [quizResults]);
     // Care links keyed to the needs she actually chose (the engine's reading),
     // not the older broad concern mapping.
     const careQuizResults = useMemo(
@@ -1696,10 +1700,20 @@ export default function MyEcosystem({
                 });
             });
         }
-        if (!enrichedProducts.length) return;
-        onBuildEcosystemFromLlm(enrichedProducts);
+        // Auto picks must pass the matching engine for her (safety, evidence,
+        // fit), the same bar as the instant shelves. The AI suggesting it is not
+        // enough (Flo gummies, Gaia vitex). And each one is marked as ayna's pick
+        // so a later rebuild can replace it; products she added stay put.
+        const vetted = enrichedProducts.filter((p) => {
+            try {
+                const d = getProductMatchDetailsForProduct(p, quizResults, healthProfile);
+                return d && d.eligible !== false && !d.restricted && d.matchStatus === 'scored' && Number(d.percent) >= 50;
+            } catch { return false; }
+        }).map((p) => ({ ...p, llmGenerated: true }));
+        if (!vetted.length) return;
+        onBuildEcosystemFromLlm(vetted);
         posthog.capture('recommendation_viewed', { concernCount: recommendedProductsForDisplay.length });
-    }, [recommendedProductsForDisplay, onBuildEcosystemFromLlm, llmTiered, recommendationRefreshNonce, completedGenerationNonce, llmLoading]);
+    }, [recommendedProductsForDisplay, onBuildEcosystemFromLlm, llmTiered, recommendationRefreshNonce, completedGenerationNonce, llmLoading, quizResults, healthProfile]);
 
     // Bounded worker pool, mirrors the fix already applied to Discovery.jsx.
     // Both effects below used to fire one request per product with no cap: a
@@ -2137,6 +2151,9 @@ export default function MyEcosystem({
                         }}
                     />
                 )}
+
+                {/* Pregnant or postpartum: the warning signs that need help now (research red flags). */}
+                {!ecoQueryTrimmed && stageUrgent.length > 0 && <div className="eco3-urgent"><UrgentSigns flags={stageUrgent} /></div>}
 
                 {/* The page title already says what this is; the shelves start straight away (heading kept for screen readers and the jump link). */}
                 {visibleAreaGroups.length > 0 && <h2 className="sr-only eco3-shelfanchor" id="eco3-shelves-title" tabIndex={-1}>Your shelves</h2>}
