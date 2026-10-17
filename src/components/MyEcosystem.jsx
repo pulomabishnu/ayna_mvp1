@@ -1,4 +1,6 @@
 import SmartSearchInput from './search/SmartSearchInput.jsx';
+import { relatedNeedSuggestions } from '../matching/relatedNeeds';
+import { needPhrase, CONDITION_ID_BY_OPTION } from '../matching/ontology';
 import UrgentSigns from './pdp/UrgentSigns.jsx';
 import { urgentSignsForStages } from '../utils/urgentSigns';
 import NeedsStrip from './v3/NeedsStrip.jsx';
@@ -1137,6 +1139,10 @@ export default function MyEcosystem({
     const careFirst = Boolean(careFlags?.careFirst);
     const careNoteLines = careNotes(careFlags);
     const careSummaryLines = useMemo(() => summarizeCareNotes(careFlags, { sayWhy: true }), [careFlags]);
+    const relatedNeeds = useMemo(() => relatedNeedSuggestions(
+        needShelves.map((x) => x.needId),
+        (quizResults?.fullHealthIntake?.diagnoses || quizResults?.fullHealthIntake?.conditions || []).map((c) => CONDITION_ID_BY_OPTION[c] || String(c).toLowerCase()),
+    ), [needShelves, quizResults]);
     const stageUrgent = useMemo(() => urgentSignsForStages(quizResults?.fullHealthIntake?.lifeStageSelections || []), [quizResults]);
     // Care links keyed to the needs she actually chose (the engine's reading),
     // not the older broad concern mapping.
@@ -2204,6 +2210,21 @@ export default function MyEcosystem({
                             onShop={typeof onGoToSearch === 'function' ? (q) => onGoToSearch({ query: q }) : null}
                             onFindCare={() => setShowCareSheet(true)}
                         />
+                        {relatedNeeds.length > 0 && (
+                            <aside className="eco3-related" aria-label="Often goes together">
+                                <h3 className="eco3-related__h">Often goes together</h3>
+                                <ul>
+                                    {relatedNeeds.map((r) => (
+                                        <li key={r.needId}>
+                                            <b>{(() => { const t = r.label || needPhrase(r.needId); return t.charAt(0).toUpperCase() + t.slice(1); })()}</b>
+                                            <span> is common with {needPhrase(r.because) || r.because.replace(/_/g, ' ')}: about {Math.round(r.rate * 100)} in 100 in research. </span>
+                                            <a href={r.source} target="_blank" rel="noopener noreferrer">Source</a>
+                                        </li>
+                                    ))}
+                                </ul>
+                                {typeof onEditHealthProfile === 'function' && <button type="button" className="eco3-related__add" onClick={onEditHealthProfile}>Add any of these to my answers</button>}
+                            </aside>
+                        )}
                     </section>
                 )}
 

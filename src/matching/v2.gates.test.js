@@ -14,7 +14,7 @@ const byId = new Map(ALL_PRODUCTS.map((p) => [p.id, p]));
 
 describe('v2 golden personas', () => {
   it('G1: regular periods + PMS: the evidence-backed option (calcium), not Flo', () => {
-    const got = ids(seed({ lifeStageSelections: ['I get periods regularly'], supportSelections: ['PMS symptoms'], age: 28 }));
+    const got = ids(seed({ lifeStageSelections: ['I get periods regularly'], supportSelections: ['PMS symptoms'], age: 28, takesCurrent: 'No' }));
     expect(got).toContain('p-citracal-bone-health');
     expect(got).not.toContain('p-flo-gummies');
   });

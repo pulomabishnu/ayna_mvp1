@@ -31,6 +31,7 @@
 // Tiers: excellent >= 80, strong >= 65, exploratory >= 50, browse < 50.
 // ZIP never enters this score. FSA/HSA never enters this score (tie-break only).
 
+import { conditionRulesFor } from './conditionRules.js';
 import { NEED_BY_ID, needPhrase, canonicalNeedId, CONDITION_PATHWAYS, CONDITION_SUPPORT_NEED, URINARY_UTI_NEEDS, MENSTRUAL_PRODUCT_NEEDS, ATTRIBUTE_PHRASE, LIFE_STAGE_BY_ID, CONTEXTS } from './ontology.js';
 import { buildProductProfile, normalizeBrand, CONTEXT_BONUS, productSimilarity } from './productProfile.js';
 import { checkMedicationInteractions, INTERACTION_TABLE } from './medications.js';
@@ -68,6 +69,7 @@ export const CONFIDENCE_PENALTIES = {
   allergy_status_unknown: 0.95,
   leave_out_unknown: 0.92,
   medication_caution: 0.85,
+  condition_caution: 0.85,
   medication_unknown: 0.9,
   medications_not_shared: 0.85,
   pregnancy_unknown: 0.8,
@@ -157,6 +159,7 @@ export function requiredFieldsFor(pp) {
 export const REQUIRED_FIELD_TEXT = {
   medications: 'what medicines or supplements you take',
   pregnancy_status: 'whether you are pregnant (your life stage)',
+  breastfeeding_status: 'whether you are breastfeeding',
 };
 
 // Product-side safety facts the passport does not have yet. When one is
@@ -321,6 +324,31 @@ export function evaluateSafety(productOrProfile, up) {
     penalize('age_unknown_age_limited', 'Age not shared for an age-limited product');
   }
 
+  // 5a. Diagnosed conditions that change what is safe (research rules).
+  {
+    const ids = new Set((s.conditions || []).map((c) => c.id));
+    for (const r of conditionRulesFor(pp, ids)) {
+      if (r.verdict === 'avoid') reasons.push({ code: 'condition_avoid', condition: r.condition, text: r.message, source: r.source_url });
+      else if (r.verdict === 'caution') {
+        penalize('condition_caution', r.message);
+        cautions.push({ code: 'condition_caution', condition: r.condition, text: r.message, source: r.source_url });
+      }
+    }
+  }
+
+  // 5a-2. Vulvar symptoms + fragrance: fragrance is a common cause of vulvar
+  //       irritation (ACOG; contact allergy in about a third of women with
+  //       chronic vulvar complaints), so fragranced products that touch the
+  //       vulva are held back for her even without a stated sensitivity.
+  {
+    const VULVAR = new Set(['vaginal.irritation', 'vaginal.odor', 'vaginal.discharge', 'vaginal.dryness', 'pain.sexual', 'vaginal.yeast', 'vaginal.bv']);
+    const touchesVulva = ['intimate-care', 'lubricant', 'pad', 'liner', 'panty-liner', 'period-underwear', 'tampon', 'sex-tech', 'incontinence'].includes(String(pp.category || '').toLowerCase())
+      || pp.formats.includes('period_care') || pp.formats.includes('suppository');
+    if (touchesVulva && pp.safety.details?.fragrance?.status === 'yes' && up.healthIntent.needs.some((n) => VULVAR.has(n.id))) {
+      reasons.push({ code: 'fragrance_vulvar_symptoms', text: 'Contains fragrance, a common cause of irritation for the symptoms you shared', source: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health' });
+    }
+  }
+
   // 5b. Confirmation-first products (e.g. high-dose iron) need the condition confirmed.
   //     Only applied once she has shared needs or conditions (browsing stays neutral).
   if (pp.requires_condition && (up.healthIntent.needs.length || s.conditions.length)
@@ -411,6 +439,13 @@ export function evaluateSafety(productOrProfile, up) {
       cautions.push({ code: 'ttc_pregnancy', text: 'Not for use during pregnancy. Stop if you become pregnant.' });
     } else if (preg.overall === 'unknown' && pp.ingested) penalize('ttc_pregnancy_unknown', 'Pregnancy safety not confirmed');
   }
+  // Postpartum and breastfeeding not shared: something that is not for
+  // breastfeeding waits until she tells us (asked, not guessed).
+  if (s.breastfeeding !== 'yes' && s.breastfeeding !== 'no' && pp.breastfeeding.overall === 'contraindicated'
+    && (up.physiology.lifeStages || []).some((st) => /postpartum/.test(String(st)))) {
+    missingFields.push('breastfeeding_status');
+    cautions.push({ code: 'breastfeeding_reported', text: 'Not for use while breastfeeding. Tell us if you are breastfeeding so we can check this for you.' });
+  }
   if (s.breastfeeding === 'yes' && pp.breastfeeding.overall !== 'not_applicable') {
     if (pp.breastfeeding.overall === 'contraindicated') reasons.push({ code: 'breastfeeding_contraindicated', text: 'Not for use while breastfeeding' });
     else if (pp.breastfeeding.overall === 'caution') {
@@ -469,6 +504,9 @@ export function evaluateSafety(productOrProfile, up) {
     eligible: reasons.length === 0,
     status,
     restricted,
+    // Pregnant, trying, postpartum or breastfeeding: stricter evidence bars apply downstream.
+    sensitiveStage: ['pregnant', 'reported'].includes(pStatus) || Boolean(s.ttc) || s.breastfeeding === 'yes'
+      || (up.physiology.lifeStages || []).some((st) => /postpartum|pregnan|ttc|breastfeed/.test(String(st))),
     missingFields: [...new Set(missingFields)],
     missingProductInfo: [...new Set(missingProductInfo)],
     reasons,

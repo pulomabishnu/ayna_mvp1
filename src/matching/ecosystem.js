@@ -25,6 +25,8 @@
 // - Every shelf answers "do we actually have a good recommendation?" (quality) and
 //   names "best for" roles when they are true.
 
+import NEED_MAP_RESEARCH from '../data/matching/needMap.research.js';
+const RESEARCH_GRADES = new Map(NEED_MAP_RESEARCH.map((r) => [`${r.product}|${r.need}`, r]));
 import { buildProductProfile } from './productProfile.js';
 import { scoreProductForNeed, evaluateSafety, evidenceChannels, TIERS, REQUIRED_FIELD_TEXT, PRODUCT_INFO_TEXT } from './score.js';
 import { NEED_BY_ID, needPhrase } from './ontology.js';
@@ -51,6 +53,15 @@ export function qualificationForEcosystem(result, pp, baseMinScore) {
   let floor = baseMinScore;
   let effectiveScore = result.score;
   if (!pp?.ingested) return { floor, effectiveScore };
+
+  // Research-graded evidence (A or B, from guidelines and reviews) for this
+  // exact product and need counts as the evidence the stricter floors ask for.
+  const graded = RESEARCH_GRADES.get(`${pp.product_id}|${result.needId}`);
+  // Herbals keep the stricter bar (evidence for blends and botanicals is
+  // usually low quality), and so does anything whose pregnancy or
+  // breastfeeding safety is unconfirmed for her.
+  const stageUnknown = Boolean(result.safety?.sensitiveStage) || (result.safety?.penalties || []).some((x) => /^(pregnancy_unknown|breastfeeding_unknown|ttc_pregnancy_unknown|pregnancy_status_unknown)$/.test(x.code));
+  if (graded && graded.strength !== 'none' && (graded.grade === 'A' || (graded.grade === 'B' && !pp.herbal)) && !stageUnknown) return { floor, effectiveScore };
 
   floor = Math.max(floor, INGESTED_RELATIONSHIP_MIN_SCORE[result.relationship] ?? baseMinScore);
   const evidenceLevel = result.evidence?.level || 'none';

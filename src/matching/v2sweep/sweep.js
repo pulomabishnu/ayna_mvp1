@@ -21,7 +21,7 @@ export function makeProfiles(count = 400, seed = 7) {
       lifeStageSelections: life,
       supportSelections: pick(r, SUPPORT, 1 + Math.floor(r() * 4)),
       avoidIngredients: r() < 0.3 ? pick(r, AVOID, 1) : [],
-      ...(life[0] === 'I am postpartum' && r() < 0.5 ? { breastfeeding: 'Yes' } : {}),
+      ...(life[0] === 'I am postpartum' && r() < 0.5 ? { breastfeeding: 'Yes', breastfeedingStatus: 'Yes' } : {}),
     });
   }
   return out;

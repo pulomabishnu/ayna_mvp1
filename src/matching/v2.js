@@ -25,7 +25,9 @@ export const V2 = {
   S: { direct: 1.0, strong: 1.0, secondary: 0.6 },
   E: { A: 1.0, B: 0.85, C: 0.65 },
   focusWeight: 0.25,
-  prefWeight: 0.15,
+  // Preferences count for a quarter of the ranking (research, Oct 17: no study
+  // gives an optimum; 0.20 to 0.30 recommended). Health fit is never changed by it.
+  prefWeight: 0.25,
   experienceCap: 0.05,
   ecosystemFloor: 0.5,
   partialFloor: 0.35,

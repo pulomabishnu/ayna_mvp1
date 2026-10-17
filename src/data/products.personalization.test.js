@@ -473,7 +473,7 @@ describe('postmenopausal profile regression', () => {
     // "trackers absent from the tail" check does not apply here; the
     // personalized set must still never infer these needs from life stage.
     const quiz = { fullHealthIntake: {
-        age: '60+', lifeStageSelections: ['I am post-menopause'],
+        age: '60+', lifeStageSelections: ['I am post-menopause'], takesCurrent: 'No',
         supportSelections: ['Strength and maintaining muscle', 'Bone health', 'Sleep', 'GLP-1 medication side effects and nausea'],
         supportOtherText: 'Chronic pain / CRPS',
     } };

@@ -10,6 +10,7 @@
 //   Unknown lowers confidence. It is never treated as 'compatible'.
 // - No LLM or network calls. No new interaction claims.
 
+import { RESEARCH_INTERACTIONS, RESEARCH_INGREDIENT_KEYWORDS, RESEARCH_MEDICATIONS } from '../data/matching/medInteractions.research.js';
 import { normalizeText } from './ontology.js';
 
 // ─── Medication classes ─────────────────────────────────────────────────────
@@ -46,6 +47,11 @@ export const MEDICATION_CLASSES = {
   hormonal_contraceptive: { label: 'Hormonal contraceptive', parents: [] },
   nonhormonal_contraceptive: { label: 'Non-hormonal contraceptive', parents: [] },
   supplement: { label: 'Supplement', parents: [] },
+  fluoroquinolone_antibiotic: { label: 'Fluoroquinolone antibiotic', parents: ['antibiotic'] },
+  bisphosphonate: { label: 'Bisphosphonate (bone)', parents: [] },
+  benzodiazepine: { label: 'Benzodiazepine', parents: [] },
+  lithium: { label: 'Lithium', parents: [] },
+  proton_pump_inhibitor: { label: 'Proton pump inhibitor', parents: [] },
 };
 
 // ─── Brand -> generic -> class table ────────────────────────────────────────
@@ -131,6 +137,28 @@ export const MEDICATIONS = [
   { generic: 'vitamin k', brands: [], classes: ['supplement'], ingredient: 'vitaminK', aliases: ['vitamin k2'] },
 ];
 
+// Medicines added with the interaction research (Oct 17): generic names from
+// the research rows, plus their standard US brand names.
+const RESEARCH_BRANDS = {
+  ciprofloxacin: ['Cipro'], levofloxacin: ['Levaquin'], moxifloxacin: ['Avelox'],
+  alendronate: ['Fosamax'], alprazolam: ['Xanax'], lorazepam: ['Ativan'], clonazepam: ['Klonopin'], diazepam: ['Valium'],
+  'lithium carbonate': ['Lithobid'], omeprazole: ['Prilosec'], esomeprazole: ['Nexium'], lansoprazole: ['Prevacid'], pantoprazole: ['Protonix'],
+  apixaban: ['Eliquis'], rivaroxaban: ['Xarelto'], dabigatran: ['Pradaxa'], minocycline: ['Minocin'],
+  enalapril: ['Vasotec'], ramipril: ['Altace'], benazepril: ['Lotensin'], valsartan: ['Diovan'], irbesartan: ['Avapro'], olmesartan: ['Benicar'],
+  nifedipine: ['Procardia'], diltiazem: ['Cardizem'], verapamil: ['Calan'], hydrochlorothiazide: [],
+};
+{
+  const known = new Set(MEDICATIONS.map((m) => m.generic));
+  for (const { class: cls, generics } of RESEARCH_MEDICATIONS) {
+    if (!MEDICATION_CLASSES[cls]) continue;
+    for (const g of generics) {
+      if (known.has(g) || /\b(and|or)\b|\(|\//.test(g)) continue;
+      known.add(g);
+      MEDICATIONS.push({ generic: g, brands: RESEARCH_BRANDS[g] || [], classes: [g === 'hydrochlorothiazide' ? 'blood_pressure' : cls] });
+    }
+  }
+}
+
 const LOOKUP = new Map();
 for (const med of MEDICATIONS) {
   const names = [med.generic, ...med.brands, ...(med.aliases || [])];
@@ -198,6 +226,11 @@ export const INGREDIENT_KEYWORDS = {
   vitex: ['vitex', 'chasteberry', 'chaste tree', 'chaste berry'],
 };
 
+// Ingredient words from the interaction research (short or ambiguous words were dropped).
+for (const [key, words] of Object.entries(RESEARCH_INGREDIENT_KEYWORDS)) {
+  INGREDIENT_KEYWORDS[key] = [...new Set([...(INGREDIENT_KEYWORDS[key] || []), ...words])];
+}
+
 function escapeRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 const INGREDIENT_RES = Object.fromEntries(Object.entries(INGREDIENT_KEYWORDS)
   .map(([k, words]) => [k, new RegExp(`(^|[^a-z0-9])(${words.map(escapeRe).join('|')})([^a-z0-9]|$)`, 'i')]));
@@ -249,9 +282,11 @@ export const INTERACTION_TABLE = [
     message: 'Fenugreek may slow blood clotting. If you take a blood thinner, check with your doctor first.' },
   { medication_class: 'anticoagulant', product_ingredient: 'omega3', verdict: 'caution', legacy_severity: 'medium', source: 'https://www.nccih.nih.gov/health/omega3-supplements-what-you-need-to-know', reviewed_on: '2026-10-17', reviewer: 'research', needs_clinical_review: true,
     message: 'Fish oil / omega-3 may slightly increase bleeding risk with blood thinners. Use under medical supervision.' },
-  { medication_class: 'hormonal_contraceptive', product_ingredient: 'vitex', verdict: 'caution', legacy_severity: 'medium', source: 'https://www.nccih.nih.gov/health/chasteberry', reviewed_on: '2026-10-17', reviewer: 'research', needs_clinical_review: true,
-    message: 'Chasteberry (vitex) may interfere with hormonal birth control. Check with your provider before combining them.' },
 ];
+
+// Interaction research rows (NIH ODS, MedlinePlus, FDA labels, Mayo, NHS), each
+// with its source. Earlier rows win when both cover the same pair.
+INTERACTION_TABLE.push(...RESEARCH_INTERACTIONS);
 
 function rowMatchesMedication(row, med) {
   if (row.medication) return med.generic === row.medication;

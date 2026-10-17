@@ -484,9 +484,12 @@ function formatsFor(f) {
   if (f.type === 'digital' || f.cat === 'telehealth' || (f.cat === 'mental-health' && f.type !== 'physical')) out.add('app_service');
   if (f.cat === 'diagnostics' || f.t(/test strips?|rapid test/)) out.add('test_kit');
   if (f.fmt(/gumm/)) out.add('gummy');
-  if ((f.cat === 'supplement' || f.cat === 'medication') && f.fmt(/capsule|tablet|softgel|caplet|\bcaps\b|\bpills?\b/)) out.add('pill_capsule');
+  if (((f.cat === 'supplement' || f.cat === 'medication') && f.fmt(/capsule|tablet|softgel|caplet|\bcaps\b|\bpills?\b/))
+    // A swallowed pill sold in another category (e.g. calcium caplets under Menopause) is still a pill.
+    || f.n(/\b(caplets?|capsules?|tablets?|softgels?)\b/)) out.add('pill_capsule');
   if (f.cat === 'supplement' && f.fmt(/powder/)) out.add('powder');
-  if (f.t(/\btea\b/) && !f.t(/tea tree/)) out.add('drink_tea');
+  // A tea you drink, not a serum or wash that lists green tea extract.
+  if (f.n(/\btea\b/) || (f.cat === 'supplement' && f.t(/\btea\b/) && !f.t(/tea tree/))) out.add('drink_tea');
   if (f.t(/suppositor/)) out.add('suppository');
   if (f.t(/lotion|cream|\bgel\b|balm|moisturiz|lubricant|\blube\b|\boil\b|spray|wash|wipes|exfoliating pads|glides?\b/) && !f.t(/gel pad/) && !out.has('suppository')) out.add('topical');
   if (f.n(/heat wrap|patch/) || (f.cat === 'cramp-relief' && f.t(/adhesive/))) out.add('patch');
