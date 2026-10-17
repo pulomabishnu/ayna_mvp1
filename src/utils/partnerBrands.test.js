@@ -12,7 +12,7 @@ import { resolveBuyUrl } from './buyLink';
 
 describe('partnerBrands', () => {
   it('ranks partners in the team 2026-10-17 display order', () => {
-    const order = ['BUNI Body', 'LiM Method', 'Winx Health', 'Neycher', 'SootheHer', 'Alubri', 'Connect Pelvic Floor Fitness', 'Elitone', 'LOLA', 'Proov', 'gina', 'Tampon Tribe', 'My Pelvic Bra', 'VIO2'];
+    const order = ['BUNI Body', 'LiM Method', 'Winx Health', 'Momotaro Apotheca', 'Neycher', 'SootheHer', 'Alubri', 'Connect Pelvic Floor Fitness', 'Elitone', 'LOLA', 'Proov', 'gina', 'Tampon Tribe', 'My Pelvic Bra', 'VIO2'];
     const ranks = order.map((brand) => getPartnerBrandRank({ brand, name: 'Some Product' }));
     expect(ranks.every((r) => r !== null)).toBe(true);
     expect(ranks).toEqual([...ranks].sort((a, b) => a - b));

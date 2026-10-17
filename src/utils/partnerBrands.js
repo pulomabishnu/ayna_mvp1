@@ -49,10 +49,9 @@
  * list is the single source of truth for BOTH "is this a partner" and what
  * order partners sort in, so the two can't drift out of sync.
  *
- * The team's order also has Momotaro Apotheca (4th), GoodCycle (DailyBasis,
- * 10th) and Cool Comforts (VPod, 17th, hidden). They aren't on the site yet,
- * so they're left out until their products are added; slot them back in at
- * those positions then.
+ * The team's order also has GoodCycle (DailyBasis, 10th) and Cool Comforts
+ * (VPod, 17th, hidden). They aren't on the site yet, so they're left out
+ * until their products are added; slot them back in at those positions then.
  */
 export const PARTNER_BRAND_ORDER = [
   // Rèsa (2026-10-05), pre-launch; see PRELAUNCH_PARTNER_PATTERNS below.
@@ -61,6 +60,7 @@ export const PARTNER_BRAND_ORDER = [
   /\bbuni\b/, // BUNI Body
   /\blim method\b/, // LiM Method
   /\bwinx\b/, // Winx Health
+  /\bmomotaro\b/, // Momotaro Apotheca (partner from 2026-10-17)
   /\bneycher\b/, // Neycher
   /\bsoothe ?her\b/, // SootheHer
   /\balubri\b/, // Alubri (partner from 2026-10-17)
@@ -84,7 +84,7 @@ export const PARTNER_BRAND_PATTERNS = PARTNER_BRAND_ORDER;
  * Add a brand only once its partnership is actually contracted.
  */
 export const PARTNER_BRANDS = [
-  'Rèsa', 'BUNI', 'LiM Method', 'Winx Health', 'Neycher', 'SootheHer', 'Alubri',
+  'Rèsa', 'BUNI', 'LiM Method', 'Winx Health', 'Momotaro Apotheca', 'Neycher', 'SootheHer', 'Alubri',
   'Connect Pelvic Floor Fitness', 'Elitone', 'LOLA', 'Proov', 'gina', 'Tampon Tribe',
   'My Pelvic Bra', 'VIO2',
 ].map((name, i) => ({ name, pattern: PARTNER_BRAND_ORDER[i] }));

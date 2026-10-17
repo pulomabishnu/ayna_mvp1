@@ -37,8 +37,8 @@ import { RESA_SITE_URL, RESA_WAITLIST_CTA, RESA_WAITLIST_URL } from '../data/res
 const PARTNERS = [
   // Display order set by the team 2026-10-17 (same order as the partner pin
   // in Shop/Discovery, see PARTNER_BRAND_ORDER in src/utils/partnerBrands.js).
-  // Momotaro Apotheca, GoodCycle (DailyBasis) and Cool Comforts (VPod, hidden)
-  // are in that order too but have no card yet: they're not on the site.
+  // GoodCycle (DailyBasis) and Cool Comforts (VPod, hidden) are in that order
+  // too but have no card yet: they're not on the site.
   {
     // First "for now" at Eliz's request (2026-10-17); pre-launch, so it keeps
     // its highlighted waitlist card.
@@ -75,6 +75,15 @@ const PARTNERS = [
     url: 'https://hellowinx.com/',
     blurb:
       'At-home UTI and vaginal health tests paired with telehealth. Formerly Stix.',
+  },
+  {
+    // Added 2026-10-17 at Eliz's request. Affiliate links to come, so `url`
+    // is the brand site for now.
+    brand: 'Momotaro Apotheca',
+    logo: '',
+    url: 'https://momotaroapotheca.com/',
+    blurb:
+      'Certified organic, plant-based vulvar and vaginal care, plus probiotic and urinary supplements.',
   },
   {
     brand: 'Neycher',
