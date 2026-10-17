@@ -699,7 +699,7 @@
 /* Dark mode: Ayna's neon palette on a quiet cyber grid. */
 .ayna-mobile.ayna-mobile[data-theme='dark'] {
   --ay-cyber-edge: rgba(247, 186, 221, .42);
-  --ay-cyber-panel: #101116;
+  --ay-cyber-panel: #3e2723;
   --ay-cyber-grid:
     linear-gradient(rgba(247, 186, 221, .045) 1px, transparent 1px),
     linear-gradient(90deg, rgba(247, 186, 221, .045) 1px, transparent 1px),
@@ -748,7 +748,7 @@
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-editorial-product-grid > .ayna-fresh-product-card:nth-child(4n + 3) { border-color: rgba(255, 237, 172, .65) !important; }
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-editorial-product-grid > .ayna-fresh-product-card:nth-child(4n + 4) { border-color: rgba(247, 186, 221, .65) !important; }
 .ayna-mobile.ayna-mobile[data-theme='dark'] :is(.ayna-fresh-search, .am-search, .am-product-search) {
-  background: #101116 !important;
+  background: #3e2723 !important;
   border: 1px solid rgba(247, 186, 221, .55) !important;
   box-shadow: 0 0 14px rgba(247, 186, 221, .09) !important;
 }

@@ -80,7 +80,7 @@
 .ayna-mobile .ay-carenote__body { display: grid; gap: 4px; min-width: 0; }
 .ayna-mobile .ay-carenote__body p { margin: 0; font: 500 14px/1.45 var(--ay-font-ui); color: var(--ay-ink); }
 .ayna-mobile .ay-carenote__link { justify-self: start; display: inline-flex; align-items: center; gap: 4px; min-height: 32px; margin: 4px 0 0; padding: 0 12px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: transparent; color: var(--ay-ink); font: 700 13px/1 var(--ay-font-ui); text-decoration: none; cursor: pointer; }
-.ayna-mobile[data-theme='dark'] .ay-carenote.ay-care-banner { background: #101116; border: 1px solid rgba(118, 158, 190, .6); box-shadow: 0 0 18px rgba(118, 158, 190, .1); }
+.ayna-mobile[data-theme='dark'] .ay-carenote.ay-care-banner { background: #3e2723; border: 1px solid rgba(118, 158, 190, .6); box-shadow: 0 0 18px rgba(118, 158, 190, .1); }
 .ayna-mobile[data-theme='dark'] .ay-carenote__icon { border-color: var(--ay-pink); box-shadow: 0 0 12px rgba(118, 158, 190, .35); }
 .ayna-mobile[data-theme='dark'] .ay-carenote__link { border-color: rgba(118, 158, 190, .7); }
 

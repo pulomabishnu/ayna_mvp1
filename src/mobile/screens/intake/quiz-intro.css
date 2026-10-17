@@ -26,9 +26,9 @@
 .qi.is-leaving { animation: qi-fade-out .22s ease-in both; }
 .ayna-mobile[data-theme='dark'] .qi,
 .app-container[data-theme='dark'] .qi {
-  --qi-ink: #f4f2ff;
-  --qi-paper: #17161f;
-  --qi-soft: rgba(244, 242, 255, .72);
+  --qi-ink: #ffedac;
+  --qi-paper: #4a302a;
+  --qi-soft: rgba(255, 237, 172, .72);
   --qi-shadow: 4px 4px 0 rgba(255, 255, 255, .72);
   --qi-scrim: rgba(0, 0, 0, .6);
 }
