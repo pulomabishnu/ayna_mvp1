@@ -6234,8 +6234,12 @@ export const BRAND_PRODUCTS = [
     // automated access. Product photos supplied by ayna, stored under
     // public/products/vpod/. affiliateUrl values are Ayna's Shopify Collabs
     // short links (2026-10-16), each verified to redirect to its own product.
+    //
+    // HIDDEN 2026-10-17 (not deleted) so Eliz can fix the descriptions. To make
+    // it live again, follow "Hidden products" in CLAUDE.md.
     {
         id: 'p-vpod-everyday-comfort-single',
+        hidden: true,
         name: 'VPod Everyday Comfort Single Pack',
         brand: 'VPod',
         category: 'intimate-care',
@@ -6328,6 +6332,7 @@ export const BRAND_PRODUCTS = [
     },
     {
         id: 'p-vpod-everyday-comfort-3-pack',
+        hidden: true,
         name: 'VPod Everyday Comfort 3 Pack',
         brand: 'VPod',
         category: 'intimate-care',
@@ -6420,6 +6425,7 @@ export const BRAND_PRODUCTS = [
     },
     {
         id: 'p-vpod-elite-single',
+        hidden: true,
         name: 'VPod Postpartum & Menopause Comfort Single Pack',
         brand: 'VPod',
         category: 'postpartum',
@@ -6509,6 +6515,7 @@ export const BRAND_PRODUCTS = [
     },
     {
         id: 'p-vpod-elite-3-pack',
+        hidden: true,
         name: 'VPod Postpartum & Menopause Comfort 3 Pack',
         brand: 'VPod',
         category: 'postpartum',

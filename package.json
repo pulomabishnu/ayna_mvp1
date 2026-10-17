@@ -10,6 +10,7 @@
     "test": "vitest run",
     "catalog:export": "node scripts/export-catalog.mjs",
     "catalog:check": "node scripts/export-catalog.mjs --check",
+    "catalog:sql": "node scripts/export-catalog.mjs --brand",
     "preview": "vite preview",
     "buyurls:update": "node scripts/update-product-buy-urls.mjs"
   },

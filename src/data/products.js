@@ -904,7 +904,11 @@ export function withResearch(product, research) {
     return out;
 }
 
-export const ALL_PRODUCTS = [
+// CATALOG_PRODUCTS includes entries marked `hidden: true` (unpublished while
+// their copy is being fixed; see "Hidden products" in CLAUDE.md). It's what
+// scripts/export-catalog.mjs writes to product_catalog, as is_active=false, so
+// hiding never drops a row. ALL_PRODUCTS is what every surface shows.
+export const CATALOG_PRODUCTS = [
     ...PHYSICAL_PRODUCTS,
     ...DIGITAL_PRODUCTS,
     ...MVP_PHYSICAL,
@@ -927,6 +931,8 @@ export const ALL_PRODUCTS = [
     .map((p) => withResearch(p, PRODUCT_RESEARCH_CORE))
     .filter((p) => !isRxOnlyProduct(p) && !TEMPORARILY_HIDDEN_IDS.has(p.id))
     .map(withImageOverride);
+
+export const ALL_PRODUCTS = CATALOG_PRODUCTS.filter((p) => !p.hidden);
 
 /**
  * Look up a catalog product by id. Returns null for ids that don't exist in

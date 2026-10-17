@@ -32,7 +32,7 @@
  * secret must be set at all before anything runs, not just checked.
  */
 import { createClient } from '@supabase/supabase-js';
-import { ALL_PRODUCTS, CATEGORY_LABELS } from '../src/data/products.js';
+import { CATALOG_PRODUCTS, CATEGORY_LABELS } from '../src/data/products.js';
 import { callWithFallback, parseProviderOrder, tryParseJsonCandidate } from './_llm.js';
 import { checkRecallsForProduct } from './fda-recall.js';
 import { lookupDsldProduct } from './llm-recommendations.js';
@@ -246,7 +246,9 @@ Return ONLY valid JSON, exactly this shape:
 export function buildExclusionSet(category, dbRows) {
   const names = [];
   const keys = new Set();
-  for (const p of ALL_PRODUCTS) {
+  // CATALOG_PRODUCTS, not ALL_PRODUCTS: a hidden product is still ours, and
+  // must not be rediscovered as new.
+  for (const p of CATALOG_PRODUCTS) {
     if (p.category !== category) continue;
     names.push(`${p.brand || ''} ${p.name}`.trim());
     keys.add(normalizeKey(p.name, p.brand));
