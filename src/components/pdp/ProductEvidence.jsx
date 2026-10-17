@@ -363,7 +363,6 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       {(d.platform || d.integrations.length > 0) && <p className="ay-ev__by"><b>Works with:</b> {[d.platform, ...d.integrations].filter(Boolean).join(', ')}</p>}
     </> },
     (d.clinician || d.clinicalNote || thingsRaised || d.clinicalLinks.length) && { id: 'clinical', label: 'Clinical opinion', body: <>
-      <p className={`ay-ev2__badge ${d.independent ? 'is-indep' : 'is-brand'}`}>{d.independent ? 'Independent sources' : 'Based on brand claims'}</p>
       {d.clinician && <ShortThenFull short={d.clinicianShort} full={d.clinician} />}
       {d.clinicalNote && <ShortThenFull full={d.clinicalNote} />}
       {(d.attribution || d.clinicalNote) && <p className="ay-ev__by">{[d.attribution, d.clinicalNote && 'The added context comes from the clinical guidance under its sources.'].filter(Boolean).join(' ')}</p>}
@@ -374,7 +373,6 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     (graded.length || science.rest || d.scienceSummary || d.ingredients.length || d.studies.length) && { id: 'science', label: 'What the research says', body: <>
       {science.rest && <ShortThenFull full={science.rest} />}
       {d.scienceSummary && <ShortThenFull full={d.scienceSummary} />}
-      {(d.ingredients.length > 0 || d.studies.length > 0) && !d.productSpecific && <p className="ay-ev__by">This research is about the ingredients or this type of product, not a study of this exact product.</p>}
       {d.ingredients.length > 0 && <>
         <h3 className="ay-part__h">Ingredients</h3>
         <ul className="ay-ev2__ingr">
@@ -459,8 +457,8 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
 
   // "At a glance": one line per section from what is on file, each a jump link (not sticky).
   const glanceTiles = [
-    sections.some((x) => x.id === 'clinical') && { id: 'clinical', label: 'Clinical opinion', tag: d.independent ? 'Independent sources' : 'Based on brand claims', text: firstLine(d.clinicianShort || d.clinician || d.clinicalNote) },
-    sections.some((x) => x.id === 'science') && { id: 'science', label: 'Research', tag: d.productSpecific ? 'Studied as a product' : d.ingredients.length || d.studies.length ? 'Not studied as this exact product' : '', text: (() => { const n = researchSourceCount(baseProduct); return n ? `${plural(n, 'research source')} on file` : firstLine(science.rest); })() },
+    sections.some((x) => x.id === 'clinical') && { id: 'clinical', label: 'Clinical opinion', tag: '', text: firstLine(d.clinicianShort || d.clinician || d.clinicalNote) },
+    sections.some((x) => x.id === 'science') && { id: 'science', label: 'Research', tag: '', text: (() => { const n = researchSourceCount(baseProduct); return n ? `${plural(n, 'research source')} on file` : firstLine(science.rest); })() },
     sections.some((x) => x.id === 'safety') && { id: 'safety', label: 'Safety', tag: d.warnings.length ? plural(d.warnings.length, 'note') : '', text: firstLine(glance?.alert || d.warnings.find((w) => !/^(wash|rinse|boil|clean|store|keep it|dry|sanitize|sterili[sz]e|empty)\b/i.test(w)) || d.warnings[0] || d.sideEffects || (d.fdaRaw && `FDA: ${d.fda?.label || d.fdaRaw}`)) },
     { id: 'reviews', label: 'Reviews', tag: aynaRating != null && ratingCount > 0 ? `★ ${aynaRating.toFixed(1)} from ayna members` : d.brandRating ? `★ ${d.brandRating.value}, brand-reported` : communityText || d.communitySummary ? 'What people say online' : 'None yet', text: communityText || d.communitySummary ? firstLine(communityText || d.communitySummary) : 'No reviews yet. Tried it? Be the first.' },
   ].filter(Boolean);

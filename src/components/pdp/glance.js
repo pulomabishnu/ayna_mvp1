@@ -350,7 +350,6 @@ export function buildGlance(product, ctx = {}) {
     !brandVoice ? { type: 'text', label: 'Clinical view', text: clean(product.doctorOpinion), note: clean(product.clinicianAttribution), refs: byType(['clinical_guideline', 'expert_guidance', 'regulatory']).map((s) => s.n) } : null,
     doctorSummary && !same(doctorSummary, clean(product.doctorOpinion)) ? { type: 'text', label: 'What clinical sources say', text: doctorSummary, refs: byType(['clinical_guideline', 'expert_guidance']).map((s) => s.n) } : null,
     sciSummary ? { type: 'text', label: 'What the research says', text: sciSummary, refs: byType(['product_study', 'ingredient_research']).map((s) => s.n) } : null,
-    evidenceSources.length && !pp.evidence.product_specific ? { type: 'note', text: 'The research linked here is about the ingredients or this type of product, not this exact product.' } : null,
   ]);
 
   // Safety

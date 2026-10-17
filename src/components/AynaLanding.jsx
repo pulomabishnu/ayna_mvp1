@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { BASICS_PRODUCTS } from '../data/basicsProducts.js';
 import PartnerStrip from './PartnerStrip';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import * as communityStore from '../utils/community/communityStore.js';
@@ -14,6 +15,9 @@ import LandingV2 from './LandingV2';
 import { pickReadForYou } from '../data/readPicks.js';
 import ProductTileImage from './ProductTileImage';
 import { getVerificationLinks } from '../utils/verificationLinks';
+
+// Drugstore basics (Advil, Aleve, Monistat...) come after curated and partner picks.
+const BASICS_IDS = new Set(BASICS_PRODUCTS.map((p) => p.id));
 
 /**
  * Website home, laid out by the design rulebook (/tmp figma RULEBOOK §14):
@@ -533,7 +537,7 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
       // Top picks by the same match % the cards show; nothing under 70% is
       // called "for your needs".
       const scored = list.map((p) => ({ p, m: matchBadge(getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts))?.percent ?? 0 }))
-        .filter((x) => x.m >= 70).sort((a, b) => b.m - a.m);
+        .filter((x) => x.m >= 70 && x.p.image).sort((a, b) => (BASICS_IDS.has(a.p.id) - BASICS_IDS.has(b.p.id)) || (b.m - a.m));
       if (scored.length >= 4) {
         // Spread across her needs: one per area first (on "All"), then fill by score.
         if (filter && filter !== 'all') return scored.slice(0, 4).map((x) => x.p);

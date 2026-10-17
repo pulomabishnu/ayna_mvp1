@@ -5692,3 +5692,8 @@ html body .app-container.app-container.app-container.app-container.app-container
 .eco3-related__add { margin-top: 10px; padding: 8px 14px; border: 2px solid #3e2723; border-radius: 99px; background: #ffedac; color: #3e2723; font: 700 14px/1 'DM Sans', sans-serif; cursor: pointer; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .eco3-related, html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .eco3-related * { color: #ffedac !important; border-color: #ffedac !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .eco3-related__add { color: #3e2723 !important; }
+
+/* Oct 17: product tiles are white cards, so their name, price and brand are
+   espresso (they were inheriting the band's butter text and disappeared). */
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container:not([data-theme='dark']) .lv-tiles > li > a :is(.lv-tile__name, .lv-tile__price, .lv-tile__brand) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container:not([data-theme='dark']) .lv-tiles > li > a .lv-tile__brand { opacity: .75; }

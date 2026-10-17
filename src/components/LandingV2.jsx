@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { BASICS_PRODUCTS } from '../data/basicsProducts.js';
 import { productsForNeed } from './landingNeeds';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
 import { isPartnerBrandItem, PARTNER_BRANDS } from '../utils/partnerBrands';
@@ -16,6 +17,7 @@ import '../styles/landing-v2.css';
 
 // One topic at a time, changing every few seconds (Ameera, Oct 16).
 const SEARCH_HINTS = ['organic pads', 'PCOS support', 'bad cramps', 'pelvic floor', 'night sweats', 'vaginal dryness', 'leaking when I sneeze', 'sleep and stress', 'UTI burning', 'heavy flow overnight', 'menopause', 'itchy down there', 'hormonal acne', 'trying to conceive', 'postpartum pads'];
+const BASICS_IDS = new Set(BASICS_PRODUCTS.map((p) => p.id));
 const NEEDS_PHOTO = (p) => !/tampon tribe|herau|r[eè]sa/i.test(`${p?.brand || ''} ${p?.name || ''}`);
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
@@ -185,13 +187,20 @@ function Trending({ onOpenProduct, onViewDiscovery, picks = null }) {
     const core = list.filter((p) => CORE.test(`${p.category} ${(p.healthFunctions || []).join(' ')}`));
     return [...core, ...list.filter((p) => !core.includes(p))].slice(0, 4);
   }, []);
-  const items = picks && picks.length >= 2 ? picks.slice(0, 4) : weekly;
+  // Member picks: only products with a real photo, and the drugstore basics
+  // (Advil, Aleve, Monistat...) after the curated and partner products.
+  const personal = useMemo(() => {
+    if (!picks) return null;
+    const shown = picks.filter((p) => p?.image && NEEDS_PHOTO(p));
+    return [...shown.filter((p) => !BASICS_IDS.has(p.id)), ...shown.filter((p) => BASICS_IDS.has(p.id))];
+  }, [picks]);
+  const items = personal && personal.length >= 2 ? personal.slice(0, 4) : weekly;
   const ref = useReveal();
   if (items.length < 2) return null;
   return (
     <section ref={ref} className="lv-sec" aria-labelledby="lv-trend-title">
       <header className="lv-head">
-        {picks && picks.length >= 2
+        {personal && personal.length >= 2
           ? <h2 id="lv-trend-title">Top picks for your <em>needs</em></h2>
           : <h2 id="lv-trend-title">This week’s <em>picks</em></h2>}
         <Go className="lv-btn lv-btn--line" href="/shop" onGo={() => onViewDiscovery?.('')}>See the Shop</Go>
