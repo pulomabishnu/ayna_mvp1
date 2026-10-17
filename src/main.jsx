@@ -31,7 +31,14 @@ const POSTHOG_KEY = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
 // domain, silently dropping every event for a real share of visitors. Same
 // project, same data, just routed through our own domain so it isn't
 // recognizable as third-party analytics traffic.
-const POSTHOG_HOST = import.meta.env.VITE_PUBLIC_POSTHOG_HOST || '/ingest';
+//
+// The native app is the exception: it loads from a local capacitor:// origin
+// (same reason as src/utils/apiUrl.js), so a relative '/ingest' resolves to
+// the bundled files and every app event was silently dropped. There's no ad
+// blocker in the native WebView, so it talks to PostHog directly.
+const POSTHOG_HOST = Capacitor.isNativePlatform()
+  ? 'https://us.i.posthog.com'
+  : (import.meta.env.VITE_PUBLIC_POSTHOG_HOST || '/ingest');
 const GPC_ENABLED = typeof navigator !== 'undefined' && navigator.globalPrivacyControl === true;
 const STORED_ANALYTICS_PREF = getStoredConsent();
 const ANALYTICS_ID_PREFIX = 'ayna_analytics_id_v1:';
