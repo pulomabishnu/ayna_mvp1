@@ -69,7 +69,9 @@ const PERIMENOPAUSE_LAST_PERIOD = ['Within the past 3 months', '3–6 months ago
 const CONDITIONS = [
   'PCOS', 'Endometriosis', 'Fibroids', 'Adenomyosis', 'PMS', 'PMDD', 'Infertility', 'Thyroid condition',
   'Diabetes', 'Insulin resistance', 'High blood pressure', 'Migraine with aura', 'Anemia or iron deficiency',
-  'IBS or another digestive condition', 'Autoimmune condition', 'Anxiety', 'Depression', 'Other / not listed',
+  'IBS or another digestive condition', 'Autoimmune condition', 'Anxiety', 'Depression',
+  'Kidney disease', 'Bleeding or clotting disorder', 'History of blood clots', 'Heart disease', 'Liver disease', 'Stomach ulcer or stomach bleeding', 'Asthma',
+  'Other / not listed',
   'None that I know of', 'Prefer not to say',
 ];
 

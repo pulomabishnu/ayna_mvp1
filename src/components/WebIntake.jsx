@@ -16,6 +16,8 @@ import {
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import { rankSearchOptions as rankedSuggestions, matchesSearchOption } from '../utils/search/index.js';
 import './WebIntake.css';
+// Website-only conditions that change what is safe (condition research, Oct 17).
+const WEB_EXTRA_CONDITIONS = ['Kidney disease', 'Bleeding or clotting disorder', 'History of blood clots', 'Heart disease', 'Liver disease', 'Stomach ulcer or stomach bleeding', 'Asthma'];
 import '../styles/audit-qya.css';
 
 // The website's quiz. Same questions, order, branching and saved answers as
@@ -488,7 +490,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
       </>;
       case 'pregnancyTrimester': return <Rows options={PREGNANCY_TRIMESTER} value={intake.pregnancyTrimester} onChange={(v) => set('pregnancyTrimester', v)} />;
       case 'conditions': {
-        const items = ['None that I know of', 'Prefer not to say', ...CONDITIONS.filter((i) => !['None that I know of', 'Prefer not to say'].includes(i))];
+        const items = ['None that I know of', 'Prefer not to say', ...CONDITIONS.filter((i) => !['None that I know of', 'Prefer not to say', 'Other / not listed'].includes(i)), ...WEB_EXTRA_CONDITIONS, 'Other / not listed'];
         const q = search.trim().toLowerCase();
         const custom = intake.diagnosisSelections.filter((i) => !items.includes(i));
         return <>

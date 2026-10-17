@@ -359,6 +359,14 @@ export const CONDITIONS = [
   { id: 'autoimmune', option: 'Autoimmune condition' },
   { id: 'anxiety', option: 'Anxiety' },
   { id: 'depression', option: 'Depression' },
+  // Safety-relevant conditions (condition research, Oct 17; website intake only).
+  { id: 'kidney_disease', option: 'Kidney disease' },
+  { id: 'bleeding_disorder', option: 'Bleeding or clotting disorder' },
+  { id: 'blood_clot_history', option: 'History of blood clots' },
+  { id: 'heart_disease', option: 'Heart disease' },
+  { id: 'liver_disease', option: 'Liver disease' },
+  { id: 'stomach_ulcer', option: 'Stomach ulcer or stomach bleeding' },
+  { id: 'asthma', option: 'Asthma' },
 ];
 export const NON_CONDITION_OPTIONS = new Set(['None that I know of', 'Prefer not to say', 'Other / not listed']);
 export const CONDITION_ID_BY_OPTION = Object.fromEntries(CONDITIONS.map((c) => [c.option, c.id]));
@@ -369,6 +377,13 @@ export const CONDITION_ID_BY_LEGACY = {
   'high blood pressure': 'hypertension', 'migraine with aura': 'migraine_with_aura', 'anemia / iron deficiency': 'anemia',
   'anemia or iron deficiency': 'anemia', 'ibs or another digestive condition': 'ibs_digestive',
   'autoimmune condition': 'autoimmune', anxiety: 'anxiety', depression: 'depression',
+  'kidney disease': 'kidney_disease',
+  'bleeding or clotting disorder': 'bleeding_disorder',
+  'history of blood clots': 'blood_clot_history',
+  'heart disease': 'heart_disease',
+  'liver disease': 'liver_disease',
+  'stomach ulcer or stomach bleeding': 'stomach_ulcer',
+  'asthma': 'asthma',
 };
 
 // Condition-specific need that the condition's own shelf maps to.

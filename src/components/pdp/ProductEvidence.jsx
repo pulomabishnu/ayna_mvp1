@@ -1,3 +1,7 @@
+import NEED_MAP_RESEARCH from '../../data/matching/needMap.research.js';
+import { needPhrase } from '../../matching/ontology';
+const RESEARCH_BY_PRODUCT = NEED_MAP_RESEARCH.reduce((m, r) => { if (!m.has(r.product)) m.set(r.product, []); m.get(r.product).push(r); return m; }, new Map());
+const GRADE_WORDS = { A: 'Strong evidence', B: 'Some evidence', C: 'Limited evidence' };
 import UrgentSigns from './UrgentSigns.jsx';
 import { urgentSignsFor } from '../../utils/urgentSigns';
 import { splitSentences } from './sentences';
@@ -327,6 +331,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const hasRows = bottomIsSpecs || facts.length > 0 || extraRows.some((r) => r && r.value) || d.priceNote || d.inStock.length > 0;
 
   // Ratings from ayna members: a 5-bar breakdown once there are 6 or more (Baymard).
+  const graded = (RESEARCH_BY_PRODUCT.get(baseProduct?.id) || []).slice().sort((x, y) => (x.strength === 'none') - (y.strength === 'none') || x.grade.localeCompare(y.grade));
   const memberRatings = (aynaData?.reviews || []).map((r) => Number(r?.rating)).filter((n) => n >= 1 && n <= 5);
   const breakdown = memberRatings.length >= 6 ? [5, 4, 3, 2, 1].map((n) => ({ n, c: memberRatings.filter((r) => Math.round(r) === n).length })) : null;
   const ratingLine = aynaRating != null && ratingCount > 0
@@ -365,7 +370,19 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       {d.clinicalSummary && <ShortThenFull full={d.clinicalSummary} />}
       <Links items={d.clinicalLinks} label="Sources" />
     </> },
-    (science.rest || d.scienceSummary || d.ingredients.length || d.studies.length) && { id: 'science', label: 'What the research says', body: <>
+    (graded.length || science.rest || d.scienceSummary || d.ingredients.length || d.studies.length) && { id: 'science', label: 'What the research says', body: <>
+      {graded.length > 0 && <>
+        <h3 className="ay-part__h is-first">How strong is the evidence</h3>
+        <ul className="ay-ev2__grades">
+          {graded.map((g) => (
+            <li key={g.need}>
+              <span className={`ay-ev2__grade is-${g.strength === 'none' ? 'none' : g.grade.toLowerCase()}`}>{g.strength === 'none' ? 'Not a fit' : GRADE_WORDS[g.grade]}</span>
+              <span><b>{needPhrase(g.need).replace(/^./, (c) => c.toUpperCase())}.</b> {noDash(g.rationale)} <a href={g.source_url} target="_blank" rel="noopener noreferrer">Source: {humanPublisher(new URL(g.source_url).hostname.replace(/^www\./, '')) || hostLabel(g.source_url)}</a></span>
+            </li>
+          ))}
+        </ul>
+        <p className="ay-ev__by">Graded from clinical guidelines, systematic reviews and government health sources. Strong means guidelines back this kind of product for this need; limited means little or no good evidence.</p>
+      </>}
       {science.rest && <ShortThenFull full={science.rest} />}
       {d.scienceSummary && <ShortThenFull full={d.scienceSummary} />}
       {(d.ingredients.length > 0 || d.studies.length > 0) && !d.productSpecific && <p className="ay-ev__by">This research is about the ingredients or this type of product, not a study of this exact product.</p>}
@@ -442,7 +459,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   // "At a glance": one line per section from what is on file, each a jump link (not sticky).
   const glanceTiles = [
     sections.some((x) => x.id === 'clinical') && { id: 'clinical', label: 'Clinical opinion', tag: d.independent ? 'Independent sources' : 'Based on brand claims', text: firstLine(d.clinicianShort || d.clinician || d.clinicalNote) },
-    sections.some((x) => x.id === 'science') && { id: 'science', label: 'Research', tag: d.productSpecific ? 'Studied as a product' : d.ingredients.length || d.studies.length ? 'Not studied as this exact product' : '', text: (() => { const n = researchSourceCount(baseProduct); return n ? `${plural(n, 'research source')} on file` : firstLine(science.rest); })() },
+    sections.some((x) => x.id === 'science') && { id: 'science', label: 'Research', tag: graded.find((g) => g.strength !== 'none') ? `${GRADE_WORDS[graded.find((g) => g.strength !== 'none').grade]} for ${needPhrase(graded.find((g) => g.strength !== 'none').need)}` : d.productSpecific ? 'Studied as a product' : d.ingredients.length || d.studies.length ? 'Not studied as this exact product' : '', text: (() => { const n = researchSourceCount(baseProduct); return n ? `${plural(n, 'research source')} on file` : firstLine(science.rest); })() },
     sections.some((x) => x.id === 'safety') && { id: 'safety', label: 'Safety', tag: d.warnings.length ? plural(d.warnings.length, 'note') : '', text: firstLine(glance?.alert || d.warnings.find((w) => !/^(wash|rinse|boil|clean|store|keep it|dry|sanitize|sterili[sz]e|empty)\b/i.test(w)) || d.warnings[0] || d.sideEffects || (d.fdaRaw && `FDA: ${d.fda?.label || d.fdaRaw}`)) },
     { id: 'reviews', label: 'Reviews', tag: aynaRating != null && ratingCount > 0 ? `★ ${aynaRating.toFixed(1)} from ayna members` : d.brandRating ? `★ ${d.brandRating.value}, brand-reported` : communityText || d.communitySummary ? 'What people say online' : 'None yet', text: communityText || d.communitySummary ? firstLine(communityText || d.communitySummary) : 'No reviews yet. Tried it? Be the first.' },
   ].filter(Boolean);

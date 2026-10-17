@@ -1,5 +1,5 @@
 // Generated from the condition research (Oct 17). Do not edit by hand.
-// Only conditions members can choose today; avoid and caution rules only.
+// Conditions members can choose; avoid and caution rules only.
 export default [
  {
   "condition": "hypertension",
@@ -26,6 +26,84 @@ export default [
   "verdict": "caution",
   "message": "NSAIDs can make the body hold on to fluid, which can raise blood pressure.",
   "source_url": "https://www.mayoclinic.org/diseases-conditions/high-blood-pressure/in-depth/blood-pressure/art-20045245"
+ },
+ {
+  "condition": "kidney_disease",
+  "product_class": "nsaid",
+  "match": {
+   "name_regex": "\\b(ibuprofen|naproxen|nsaids?|aspirin|advil|motrin|aleve|midol)\\b",
+   "categories": [
+    "pain_relief"
+   ]
+  },
+  "verdict": "avoid",
+  "message": "NSAIDs such as ibuprofen and naproxen can damage the kidneys, so ask your care team about other pain options.",
+  "source_url": "https://www.niddk.nih.gov/health-information/kidney-disease/chronic-kidney-disease-ckd/managing"
+ },
+ {
+  "condition": "stomach_ulcer",
+  "product_class": "nsaid",
+  "match": {
+   "name_regex": "\\b(ibuprofen|naproxen|nsaids?|aspirin|advil|motrin|aleve|midol)\\b",
+   "categories": [
+    "pain_relief"
+   ]
+  },
+  "verdict": "avoid",
+  "message": "NSAIDs like aspirin, ibuprofen and naproxen are a common cause of stomach ulcers, so talk to your doctor before using them.",
+  "source_url": "https://www.niddk.nih.gov/health-information/digestive-diseases/peptic-ulcers-stomach-ulcers/symptoms-causes"
+ },
+ {
+  "condition": "asthma",
+  "product_class": "nsaid",
+  "match": {
+   "name_regex": "\\b(ibuprofen|naproxen|nsaids?|aspirin|advil|motrin|aleve|midol)\\b",
+   "categories": [
+    "pain_relief"
+   ]
+  },
+  "verdict": "caution",
+  "message": "If you have asthma, tell your doctor before using ibuprofen or similar pain relievers.",
+  "source_url": "https://medlineplus.gov/druginfo/meds/a682159.html"
+ },
+ {
+  "condition": "bleeding_disorder",
+  "product_class": "nsaid",
+  "match": {
+   "name_regex": "\\b(ibuprofen|naproxen|nsaids?|aspirin|advil|motrin|aleve|midol)\\b",
+   "categories": [
+    "pain_relief"
+   ]
+  },
+  "verdict": "caution",
+  "message": "Ibuprofen can cause bleeding, so check with your doctor first if you have a bleeding condition or take a blood thinner.",
+  "source_url": "https://medlineplus.gov/druginfo/meds/a682159.html"
+ },
+ {
+  "condition": "heart_disease",
+  "product_class": "nsaid",
+  "match": {
+   "name_regex": "\\b(ibuprofen|naproxen|nsaids?|aspirin|advil|motrin|aleve|midol)\\b",
+   "categories": [
+    "pain_relief"
+   ]
+  },
+  "verdict": "caution",
+  "message": "Ibuprofen carries heart risks, so tell your doctor before using it if you have heart disease.",
+  "source_url": "https://medlineplus.gov/druginfo/meds/a682159.html"
+ },
+ {
+  "condition": "liver_disease",
+  "product_class": "nsaid",
+  "match": {
+   "name_regex": "\\b(ibuprofen|naproxen|nsaids?|aspirin|advil|motrin|aleve|midol)\\b",
+   "categories": [
+    "pain_relief"
+   ]
+  },
+  "verdict": "caution",
+  "message": "Tell your doctor before using ibuprofen if you have liver disease.",
+  "source_url": "https://medlineplus.gov/druginfo/meds/a682159.html"
  },
  {
   "condition": "diabetes",
@@ -102,6 +180,21 @@ export default [
   "source_url": "https://www.cdc.gov/contraception/hcp/usspr/classifications-mec-contraception.html"
  },
  {
+  "condition": "blood_clot_history",
+  "product_class": "combined_hormonal",
+  "match": {
+   "name_regex": "\\b(combined (hormonal|oral)|estrogen|ethinyl ?estradiol|birth control (pill|patch|ring)|the pill|contracepti(ve|on))\\b",
+   "categories": [
+    "contraception",
+    "hormonal",
+    "telehealth"
+   ]
+  },
+  "verdict": "avoid",
+  "message": "Estrogen-containing birth control is generally not recommended if you have had a blood clot in a vein or lung.",
+  "source_url": "https://www.cdc.gov/contraception/hcp/usspr/classifications-mec-contraception.html"
+ },
+ {
   "condition": "thyroid",
   "product_class": "iron",
   "match": {
@@ -167,6 +260,19 @@ export default [
   "source_url": "https://ods.od.nih.gov/factsheets/Calcium-HealthProfessional/"
  },
  {
+  "condition": "kidney_disease",
+  "product_class": "magnesium",
+  "match": {
+   "name_regex": "\\b(magnesium)\\b",
+   "categories": [
+    "supplement"
+   ]
+  },
+  "verdict": "avoid",
+  "message": "With reduced kidney function, magnesium supplements can build up to unsafe levels, so ask your care team first.",
+  "source_url": "https://ods.od.nih.gov/factsheets/Magnesium-HealthProfessional/"
+ },
+ {
   "condition": "ibs_digestive",
   "product_class": "magnesium",
   "match": {
@@ -178,6 +284,32 @@ export default [
   "verdict": "caution",
   "message": "Higher doses of magnesium often cause diarrhea and cramping.",
   "source_url": "https://ods.od.nih.gov/factsheets/Magnesium-HealthProfessional/"
+ },
+ {
+  "condition": "bleeding_disorder",
+  "product_class": "omega_3",
+  "match": {
+   "name_regex": "\\b(omega-?3|fish oil|epa|dha|krill oil|algal oil)\\b",
+   "categories": [
+    "supplement"
+   ]
+  },
+  "verdict": "caution",
+  "message": "High-dose fish oil can affect platelets, so check with your doctor if you have a bleeding condition or take a blood thinner.",
+  "source_url": "https://ods.od.nih.gov/factsheets/Omega3FattyAcids-HealthProfessional/"
+ },
+ {
+  "condition": "bleeding_disorder",
+  "product_class": "ginkgo",
+  "match": {
+   "name_regex": "\\b(ginkgo)\\b",
+   "categories": [
+    "supplement"
+   ]
+  },
+  "verdict": "avoid",
+  "message": "Ginkgo may raise bleeding risk, especially with blood thinners.",
+  "source_url": "https://www.nccih.nih.gov/health/ginkgo"
  },
  {
   "condition": "thyroid",
@@ -233,6 +365,20 @@ export default [
   },
   "verdict": "caution",
   "message": "Ashwagandha may interact with blood pressure medicines, so check with your doctor first.",
+  "source_url": "https://ods.od.nih.gov/factsheets/Ashwagandha-HealthProfessional/"
+ },
+ {
+  "condition": "liver_disease",
+  "product_class": "ashwagandha",
+  "match": {
+   "name_regex": "\\b(ashwagandha|withania)\\b",
+   "categories": [
+    "supplement",
+    "adaptogen"
+   ]
+  },
+  "verdict": "avoid",
+  "message": "Ashwagandha has been linked to cases of liver injury.",
   "source_url": "https://ods.od.nih.gov/factsheets/Ashwagandha-HealthProfessional/"
  },
  {
@@ -305,6 +451,63 @@ export default [
   "verdict": "avoid",
   "message": "Even small amounts of licorice root have been linked to serious effects in people with high blood pressure.",
   "source_url": "https://www.nccih.nih.gov/health/licorice-root"
+ },
+ {
+  "condition": "kidney_disease",
+  "product_class": "licorice",
+  "match": {
+   "name_regex": "\\b(licorice|liquorice|glycyrrhiz\\w*)\\b",
+   "categories": [
+    "supplement",
+    "tea",
+    "food"
+   ]
+  },
+  "verdict": "avoid",
+  "message": "Licorice root has been linked to serious effects in people with kidney conditions.",
+  "source_url": "https://www.nccih.nih.gov/health/licorice-root"
+ },
+ {
+  "condition": "heart_disease",
+  "product_class": "licorice",
+  "match": {
+   "name_regex": "\\b(licorice|liquorice|glycyrrhiz\\w*)\\b",
+   "categories": [
+    "supplement",
+    "tea",
+    "food"
+   ]
+  },
+  "verdict": "avoid",
+  "message": "Licorice root can cause irregular heartbeat, especially in people with heart conditions.",
+  "source_url": "https://www.nccih.nih.gov/health/licorice-root"
+ },
+ {
+  "condition": "liver_disease",
+  "product_class": "black_cohosh",
+  "match": {
+   "name_regex": "\\b(black cohosh|cimicifuga|actaea racemosa)\\b",
+   "categories": [
+    "supplement"
+   ]
+  },
+  "verdict": "avoid",
+  "message": "Rare but serious liver problems have been reported with black cohosh products.",
+  "source_url": "https://www.nccih.nih.gov/health/black-cohosh"
+ },
+ {
+  "condition": "bleeding_disorder",
+  "product_class": "melatonin",
+  "match": {
+   "name_regex": "\\b(melatonin)\\b",
+   "categories": [
+    "supplement",
+    "sleep"
+   ]
+  },
+  "verdict": "caution",
+  "message": "If you take a blood thinner, use melatonin only with medical supervision.",
+  "source_url": "https://www.nccih.nih.gov/health/melatonin-what-you-need-to-know"
  },
  {
   "condition": "autoimmune",
@@ -551,5 +754,31 @@ export default [
   "verdict": "caution",
   "message": "With diabetes, yeast infections can need longer treatment, so see a clinician if symptoms persist or come back.",
   "source_url": "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm"
+ },
+ {
+  "condition": "heart_disease",
+  "product_class": "minoxidil",
+  "match": {
+   "name_regex": "\\b(minoxidil|rogaine)\\b",
+   "categories": [
+    "hair"
+   ]
+  },
+  "verdict": "caution",
+  "message": "Tell your doctor before using minoxidil if you have heart disease, and get help right away for a racing heart or swelling.",
+  "source_url": "https://medlineplus.gov/druginfo/meds/a689003.html"
+ },
+ {
+  "condition": "kidney_disease",
+  "product_class": "minoxidil",
+  "match": {
+   "name_regex": "\\b(minoxidil|rogaine)\\b",
+   "categories": [
+    "hair"
+   ]
+  },
+  "verdict": "caution",
+  "message": "Tell your doctor before using minoxidil if you have kidney or liver disease.",
+  "source_url": "https://medlineplus.gov/druginfo/meds/a689003.html"
  }
 ];

@@ -52,7 +52,7 @@ const Articles = React.lazy(() => import('./components/Articles'));
 // Internal, read-only product passport audit (dev, or ?internal=1 opt-in).
 const ProductAudit = React.lazy(() => import('./components/ProductAudit'));
 const CampusResources = React.lazy(() => import('./components/CampusResources'));
-import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, hasStatedLifeStage } from './data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, hasStatedLifeStage, matchEngine } from './data/products';
 import { behaviorFrom } from './utils/matchDisplay';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
 const Screenings = lazyView(() => import('./components/Screenings'));
@@ -594,6 +594,8 @@ function App() {
   useEffect(() => { document.documentElement.dataset.ayTheme = themeAttr; }, [themeAttr]);
   // Brand dark also swaps the accents: sky blue <-> rose pink (see darkAccentSwap).
   useEffect(() => { setDarkAccentSwap(themeAttr === 'brand-dark'); }, [themeAttr]);
+  // Every analytics event says which matching engine served it, so v1 and v2 can be compared.
+  useEffect(() => { try { posthog.register?.({ match_engine: matchEngine() }); } catch { /* analytics off */ } }, []);
   // Tab icon follows the site's theme: butter tile in light, espresso tile in dark.
   useEffect(() => {
     const dark = themeAttr === 'brand-dark';

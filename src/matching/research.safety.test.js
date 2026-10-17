@@ -54,3 +54,20 @@ describe('naming', () => {
     expect(JSON.stringify(canonicalize('PMOS'))).toMatch(/pcos/);
   });
 });
+
+describe('condition rules (research, Oct 17)', () => {
+  const up = (diag) => buildUserProfile({ ...EMPTY, personalizationCompleted: true, supportSelections: ['Cramps or period pain'], diagnosisSelections: [diag], takesCurrent: 'No', age: 30 }, { catalog: ALL_PRODUCTS });
+  it('kidney disease holds back NSAIDs', () => {
+    const r = scoreProductForNeed(P('p-advil-ibuprofen-200'), up('Kidney disease'), 'pain.menstrual_cramp');
+    expect(r.safety.eligible).toBe(false);
+  });
+  it('high blood pressure keeps NSAIDs with a caution and its source', () => {
+    const r = scoreProductForNeed(P('p-advil-ibuprofen-200'), up('High blood pressure'), 'pain.menstrual_cramp');
+    expect(r.safety.eligible).toBe(true);
+    expect(r.safety.cautions.some((c) => c.code === 'condition_caution' && /^https/.test(c.source))).toBe(true);
+  });
+  it('a heat wrap with iron powder is not a dose of iron', () => {
+    const r = scoreProductForNeed(P('p-thermacare'), up('Thyroid condition'), 'pain.menstrual_cramp');
+    expect(r.safety.cautions.some((c) => c.code === 'condition_caution')).toBe(false);
+  });
+});
