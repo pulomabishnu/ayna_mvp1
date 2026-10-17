@@ -327,7 +327,7 @@ verificationLinks: {
         safety: {
             fdaStatus: 'Cosmetic', materials: 'Plant-derived ingredients', recalls: 'No recalls.', allergens: 'Fragrance-free options available',
             sideEffects: 'Mild irritation for highly sensitive individuals.',
-            opinionAlerts: 'Some users question whether any wash product is necessary for intimate areas; a 2023 class-action lawsuit (McAuley v. Honey Pot) made this argument formally, alleging feminine washes are unsuitable for vulvar use since the medical consensus favors water alone: the suit was dismissed for insufficient evidence the products were harmful.'
+            opinionAlerts: 'Some users question whether any wash product is necessary for intimate areas; a 2023 class-action lawsuit (McAuley v. Honey Pot) made this argument formally, alleging feminine washes are unsuitable for vulvar use since the medical consensus favors water alone, the suit was dismissed for insufficient evidence the products were harmful.'
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
@@ -616,7 +616,7 @@ export const EXTENDED_DIGITAL = [
         safety: {
             fdaStatus: 'Not FDA-cleared (wellness device)', materials: 'Polyester, spandex blend; water-based cooling system', recalls: 'No recalls.', allergens: 'No known allergens; water system requires occasional maintenance',
             sideEffects: 'Some users report waking from cooling cycles; not recommended for those with Raynaud\'s.',
-            opinionAlerts: 'High upfront cost ($2,245+) plus $19/month subscription after the first year. Requires a stable Wi-Fi connection and ongoing cloud connectivity to function: in October 2025 an AWS outage knocked out cloud-dependent Pods for some users, leaving beds unable to heat or cool properly overnight. Eight Sleep\'s founder publicly apologized and said an offline mode was coming, though it had not shipped as of this review.'
+            opinionAlerts: 'High upfront cost ($2,245+) plus $19/month subscription after the first year. Requires a stable Wi-Fi connection and ongoing cloud connectivity to function, in October 2025 an AWS outage knocked out cloud-dependent Pods for some users, leaving beds unable to heat or cool properly overnight. Eight Sleep\'s founder publicly apologized and said an offline mode was coming, though it had not shipped as of this review.'
         },
         privacy: { dataStorage: 'Cloud-based, encrypted', sellsData: 'Does not sell personal data', hipaa: 'Not HIPAA', keyPolicy: 'Eight Sleep stores sleep biometrics in the cloud. Data shared with third-party researchers only in anonymized, aggregated form.' },
         clinicianOpinionSource: 'independent',

@@ -7,7 +7,7 @@
   "description": "2be88ca4242c",
   "doctorOpinion": "057585608cad",
   "communityReview": "ad66f768c445",
-  "effectiveness": "ae05847e76ce",
+  "effectiveness": "b31ef04f5a41",
   "ingredients": "26b847e613f2",
   "category": "db7732dc6822",
   "url": "2be88ca4242c",
@@ -116,7 +116,7 @@
   "safety.materials": "bc1704f66365",
   "safety.recalls": "97db1ce9ca72",
   "safety.allergens": "03f9bfac6bed",
-  "safety.sideEffects": "370ba1eca8dd",
+  "safety.sideEffects": "9aa208256309",
   "safety.opinionAlerts": "74bdd7f5a954"
  },
  "p-nature-made-iron-65mg": {
@@ -450,7 +450,7 @@
   "badges": "0506570046d0",
   "safety.fdaStatus": "830e72ae2037",
   "safety.materials": "36daf430cfed",
-  "safety.recalls": "dfe0c3c9f5cf",
+  "safety.recalls": "1a15e853580c",
   "safety.allergens": "ae8d228a0a09",
   "safety.sideEffects": "52ae0e5a2471",
   "safety.opinionAlerts": "9b44b3786748"
@@ -1581,7 +1581,7 @@
   "safety.recalls": "97db1ce9ca72",
   "safety.allergens": "06a495ba3510",
   "safety.sideEffects": "c20137d128a1",
-  "safety.opinionAlerts": "52e9deb758d7"
+  "safety.opinionAlerts": "7a3cef8d2a1a"
  },
  "p-luna-wash": {
   "name": "1f1bd21e9623",
@@ -1917,7 +1917,7 @@
   "safety.recalls": "97db1ce9ca72",
   "safety.allergens": "f2501ceb1117",
   "safety.sideEffects": "56d4870a6a7d",
-  "safety.opinionAlerts": "a068fcdb1793"
+  "safety.opinionAlerts": "52b59440fb38"
  },
  "p-frida-mom-kit": {
   "name": "f24b39c86912",
@@ -2853,7 +2853,7 @@
   "safety.recalls": "97db1ce9ca72",
   "safety.allergens": "ae8d228a0a09",
   "safety.sideEffects": "2be88ca4242c",
-  "safety.opinionAlerts": "450458b86895"
+  "safety.opinionAlerts": "b82891353d38"
  },
  "p-cora-overnight": {
   "name": "365e8c3b28b2",
@@ -2877,7 +2877,7 @@
   "safety.recalls": "97db1ce9ca72",
   "safety.allergens": "ae8d228a0a09",
   "safety.sideEffects": "2be88ca4242c",
-  "safety.opinionAlerts": "15d03f818dec"
+  "safety.opinionAlerts": "f06a62624e43"
  },
  "p-carefree-liners": {
   "name": "09e4710099ae",
@@ -2925,7 +2925,7 @@
   "safety.recalls": "97db1ce9ca72",
   "safety.allergens": "f8dc65145608",
   "safety.sideEffects": "2be88ca4242c",
-  "safety.opinionAlerts": "8f6831439b63"
+  "safety.opinionAlerts": "032f26233b64"
  },
  "p-rael-liners": {
   "name": "8d7f41ead533",
@@ -2949,7 +2949,7 @@
   "safety.recalls": "97db1ce9ca72",
   "safety.allergens": "ae8d228a0a09",
   "safety.sideEffects": "2be88ca4242c",
-  "safety.opinionAlerts": "c8d3fe9d5ecd"
+  "safety.opinionAlerts": "8e13958d2832"
  },
  "p-playtex-sport": {
   "name": "d6743e1772c5",
@@ -2958,7 +2958,7 @@
   "summary": "9813569231ab",
   "description": "2be88ca4242c",
   "doctorOpinion": "20c9f498112e",
-  "communityReview": "9b21605d9fa0",
+  "communityReview": "5cab0a3edcd7",
   "effectiveness": "8c017dcf82ac",
   "ingredients": "ec051899495a",
   "category": "358b69a0e407",
@@ -2973,7 +2973,7 @@
   "safety.recalls": "97db1ce9ca72",
   "safety.allergens": "85af99141c1f",
   "safety.sideEffects": "2be88ca4242c",
-  "safety.opinionAlerts": "d3e971a29dc6"
+  "safety.opinionAlerts": "f1b05327c8d1"
  },
  "p-kotex-tampon": {
   "name": "48ab1758cab7",
@@ -3030,7 +3030,7 @@
   "summary": "fc4bcb5aedcd",
   "description": "2be88ca4242c",
   "doctorOpinion": "f0646468bc49",
-  "communityReview": "7f58a31b049c",
+  "communityReview": "9cdb7d110364",
   "effectiveness": "05c2288707b6",
   "ingredients": "34a20e554087",
   "category": "358b69a0e407",
@@ -3045,7 +3045,7 @@
   "safety.recalls": "97db1ce9ca72",
   "safety.allergens": "85af99141c1f",
   "safety.sideEffects": "2be88ca4242c",
-  "safety.opinionAlerts": "d3f898d0d13c"
+  "safety.opinionAlerts": "5e42faf458dd"
  },
  "p-seventh-gen-tampon": {
   "name": "590f3772471f",
@@ -3054,7 +3054,7 @@
   "summary": "a03337d017e5",
   "description": "2be88ca4242c",
   "doctorOpinion": "ea9ce867fdf3",
-  "communityReview": "f1e7c0eab500",
+  "communityReview": "771e253176ad",
   "effectiveness": "2855ce9ed3de",
   "ingredients": "9d2ffef23f2e",
   "category": "358b69a0e407",
@@ -3069,7 +3069,7 @@
   "safety.recalls": "97db1ce9ca72",
   "safety.allergens": "ae8d228a0a09",
   "safety.sideEffects": "2be88ca4242c",
-  "safety.opinionAlerts": "f6cddb8473db"
+  "safety.opinionAlerts": "7c8515e83fd7"
  },
  "p-rael-tampon": {
   "name": "7b082df8a297",
@@ -3078,7 +3078,7 @@
   "summary": "6ba23f1053ae",
   "description": "2be88ca4242c",
   "doctorOpinion": "91bf64c21e61",
-  "communityReview": "eaa6669402f5",
+  "communityReview": "61e9bd381214",
   "effectiveness": "53347f5a5c7c",
   "ingredients": "804c6aa0035e",
   "category": "358b69a0e407",
@@ -3093,7 +3093,7 @@
   "safety.recalls": "97db1ce9ca72",
   "safety.allergens": "ae8d228a0a09",
   "safety.sideEffects": "2be88ca4242c",
-  "safety.opinionAlerts": "23dc637f034f"
+  "safety.opinionAlerts": "c83ba302f190"
  },
  "p-lena-cup": {
   "name": "0dcc65db435e",
@@ -3438,7 +3438,7 @@
   "summary": "8049014c0680",
   "description": "2be88ca4242c",
   "doctorOpinion": "b082b0c8d7c0",
-  "communityReview": "660f82f715f8",
+  "communityReview": "e6ea137ecbc0",
   "effectiveness": "ff87c819625a",
   "ingredients": "81769a876c37",
   "category": "0a0de795fd8e",
@@ -3453,7 +3453,7 @@
   "safety.recalls": "97db1ce9ca72",
   "safety.allergens": "ae8d228a0a09",
   "safety.sideEffects": "2be88ca4242c",
-  "safety.opinionAlerts": "ae1c1b533e80"
+  "safety.opinionAlerts": "7462e7a16974"
  },
  "p-hanes-period": {
   "name": "b6faa4da21a4",
@@ -3771,7 +3771,7 @@
   "name": "e0e95af8ae21",
   "brand": "19d43ca6e359",
   "price": "b1b7f8003071",
-  "summary": "87e434e4ceb2",
+  "summary": "8f77e3f4429d",
   "description": "2be88ca4242c",
   "doctorOpinion": "f7d625bca5a3",
   "communityReview": "2be88ca4242c",
@@ -3819,7 +3819,7 @@
   "name": "b8d262150255",
   "brand": "19d43ca6e359",
   "price": "1cceb6c37849",
-  "summary": "7299e9410f51",
+  "summary": "0dada39f5df2",
   "description": "2be88ca4242c",
   "doctorOpinion": "f7d625bca5a3",
   "communityReview": "2be88ca4242c",
@@ -3915,7 +3915,7 @@
   "name": "d115b245bb5c",
   "brand": "19d43ca6e359",
   "price": "5daee31137bb",
-  "summary": "d4f6f7118ec2",
+  "summary": "b1887bd92db4",
   "description": "2be88ca4242c",
   "doctorOpinion": "f7d625bca5a3",
   "communityReview": "2be88ca4242c",
@@ -4059,7 +4059,7 @@
   "name": "427a12192a18",
   "brand": "19d43ca6e359",
   "price": "88a3115fc835",
-  "summary": "0b342568d5dd",
+  "summary": "12edbf405882",
   "description": "2be88ca4242c",
   "doctorOpinion": "7254bcfdb746",
   "communityReview": "2be88ca4242c",
@@ -4149,13 +4149,13 @@
   "safety.recalls": "b6d9dede9f4c",
   "safety.allergens": "2be88ca4242c",
   "safety.sideEffects": "23999b4d3456",
-  "safety.opinionAlerts": "1e00e3b65c4a"
+  "safety.opinionAlerts": "5ca8d86bf635"
  },
  "p-proov-his-hers": {
   "name": "de43e1b2ccc8",
   "brand": "704997caf278",
   "price": "f484c10a83af",
-  "summary": "4beda1a6dd1c",
+  "summary": "7e6f3af8fb8a",
   "description": "2be88ca4242c",
   "doctorOpinion": "2541025ac043",
   "communityReview": "fd386f8d2018",
@@ -4224,7 +4224,7 @@
   "safety.opinionAlerts": "2f58b6c99ad9"
  },
  "p-proov-path-to-pregnancy": {
-  "name": "4ee8ceaa35f1",
+  "name": "860d0a5d84bc",
   "brand": "704997caf278",
   "price": "4c5f82ecf1d0",
   "summary": "61a49d4413c7",
@@ -4269,7 +4269,7 @@
   "safety.recalls": "b6d9dede9f4c",
   "safety.allergens": "2be88ca4242c",
   "safety.sideEffects": "1dbc671cb4f3",
-  "safety.opinionAlerts": "7e79a04e3024"
+  "safety.opinionAlerts": "81d45aeafea2"
  },
  "p-elitone-urge": {
   "name": "063b633d493a",
@@ -4298,7 +4298,7 @@
  "p-mypelvicbra-classic": {
   "name": "80e68847f92a",
   "brand": "b7345379eb51",
-  "price": "030efd3598b8",
+  "price": "678d1dc42a62",
   "summary": "6a69de1ae2ec",
   "description": "2be88ca4242c",
   "doctorOpinion": "73404155dcdd",
@@ -4778,7 +4778,7 @@
  "p-mypelvicbra-waistband-extenders": {
   "name": "8335b83c926f",
   "brand": "b7345379eb51",
-  "price": "d67c226eeca0",
+  "price": "88e99350580f",
   "summary": "d5cfbf3fc3dd",
   "description": "2be88ca4242c",
   "doctorOpinion": "b9cc4fad23ff",
@@ -4802,7 +4802,7 @@
  "p-mypelvicbra-classic-plus": {
   "name": "a06d6d860474",
   "brand": "b7345379eb51",
-  "price": "163b87bc9170",
+  "price": "2c12f2319e33",
   "summary": "01bece2029d7",
   "description": "2be88ca4242c",
   "doctorOpinion": "33cdd667193c",
@@ -4851,7 +4851,7 @@
   "name": "2c884a523e00",
   "brand": "632e4df179ac",
   "price": "a3cd8d3649bb",
-  "summary": "29bcffbe07ab",
+  "summary": "35363aa60888",
   "description": "2be88ca4242c",
   "doctorOpinion": "e4d2768da83c",
   "communityReview": "2be88ca4242c",
@@ -4868,8 +4868,8 @@
   "safety.materials": "f1a28ef2ce13",
   "safety.recalls": "b6d9dede9f4c",
   "safety.allergens": "2be88ca4242c",
-  "safety.sideEffects": "ed00ccb07fbb",
-  "safety.opinionAlerts": "cfd6ce5eb5e3"
+  "safety.sideEffects": "9a06d8511c83",
+  "safety.opinionAlerts": "1591139dec02"
  },
  "p-sootheher-gel-pad-refills": {
   "name": "841ae00cc378",
@@ -4879,7 +4879,7 @@
   "description": "2be88ca4242c",
   "doctorOpinion": "53df900f3914",
   "communityReview": "2be88ca4242c",
-  "effectiveness": "d34d32a9a7b9",
+  "effectiveness": "1606266428b7",
   "ingredients": "2be88ca4242c",
   "category": "244e671ff7a7",
   "url": "49fb147ab8d8",
@@ -4892,8 +4892,8 @@
   "safety.materials": "b73428605360",
   "safety.recalls": "b6d9dede9f4c",
   "safety.allergens": "2be88ca4242c",
-  "safety.sideEffects": "acd047ac85b3",
-  "safety.opinionAlerts": "753518fa79b6"
+  "safety.sideEffects": "cd26072a0311",
+  "safety.opinionAlerts": "7ab350cc0484"
  },
  "p-gina-vaginal-moisturizing-glides": {
   "name": "e74ce88e0596",
