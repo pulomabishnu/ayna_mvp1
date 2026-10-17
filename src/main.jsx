@@ -31,7 +31,19 @@ const POSTHOG_KEY = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
 // domain, silently dropping every event for a real share of visitors. Same
 // project, same data, just routed through our own domain so it isn't
 // recognizable as third-party analytics traffic.
-const POSTHOG_HOST = import.meta.env.VITE_PUBLIC_POSTHOG_HOST || '/ingest';
+//
+// The native app is the exception: it loads from a local capacitor:// origin
+// (same reason as src/utils/apiUrl.js), so a relative '/ingest' resolves to
+// the bundled files and every app event was silently dropped. There's no ad
+// blocker in the native WebView, so it talks to PostHog directly. (Ram, PR #43)
+const POSTHOG_HOST = Capacitor.isNativePlatform()
+  ? 'https://us.i.posthog.com'
+  : (import.meta.env.VITE_PUBLIC_POSTHOG_HOST || '/ingest');
+// Only the live site and the native app report analytics. Vercel previews
+// (*.vercel.app) and local dev used to send into the production project
+// (27% of events in 90 days), so they stay off entirely.
+const ANALYTICS_HOST_ALLOWED = Capacitor.isNativePlatform()
+  || (typeof window !== 'undefined' && /^(www\.)?aynahealth\.co$/i.test(window.location.hostname));
 const GPC_ENABLED = typeof navigator !== 'undefined' && navigator.globalPrivacyControl === true;
 const STORED_ANALYTICS_PREF = getStoredConsent();
 const ANALYTICS_ID_PREFIX = 'ayna_analytics_id_v1:';
@@ -148,6 +160,8 @@ function sanitizePosthogEvent(event) {
 
 if (!POSTHOG_KEY) {
   console.warn('[Ayna/PostHog] VITE_PUBLIC_POSTHOG_KEY is not set; analytics are disabled.');
+} else if (!ANALYTICS_HOST_ALLOWED) {
+  console.info('[Ayna/PostHog] analytics are off on this host (preview or local).');
 } else {
   posthog.init(POSTHOG_KEY, {
     api_host: POSTHOG_HOST,
@@ -158,7 +172,12 @@ if (!POSTHOG_KEY) {
     ui_host: 'https://us.posthog.com',
     person_profiles: 'always',
     autocapture: false,
-    capture_pageview: true,
+    // The router uses history.pushState (see App.jsx), so `true` only ever
+    // recorded the first page of a visit: 88% of sessions logged exactly one
+    // pageview, and in-app routes like /quiz never appeared. 'history_change'
+    // also records each client-side navigation. before_send still drops
+    // anything on /campus-resources, since it runs after the URL changes. (Ram, PR #47)
+    capture_pageview: 'history_change',
     mask_all_text: true,
     disable_session_recording: true,
     ip: false,
@@ -181,6 +200,10 @@ if (!POSTHOG_KEY) {
     // Automatic exception capture can include raw error messages/stacks. In a
     // health product those may accidentally contain user-entered context, so
     // we send only a coarse, explicitly-sanitized app_error event below.
+    // posthog-js reads `capture_exceptions`; `errorTracking` is not an init
+    // option, so on its own it never disabled anything (only the project
+    // setting did). Kept alongside in case it's referenced elsewhere. (Ram, PR #47)
+    capture_exceptions: false,
     errorTracking: { autocaptureExceptions: false },
     loaded: (ph) => {
       window.posthog = ph;

@@ -31,7 +31,7 @@ const DEFAULT_PREFERENCES = {
   notifications_enabled: true,
   updates_enabled: true,
   night_mode_enabled: false,
-  newsletter_enabled: false,
+  newsletter_enabled: true,
   delivery_channel: 'push',
   personalize_with_data_enabled: true,
   quiet_hours_enabled: false,

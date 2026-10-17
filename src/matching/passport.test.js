@@ -127,9 +127,11 @@ describe('safety unknowns from the passport restrict, never mark safe', () => {
     const r = scoreProductForNeed(plain, up1, 'menopause.body_changes');
     expect(r.relevance).toBeGreaterThan(0);
     expect(r.eligibility).toBe('restricted');
+    // Oct 16: a swallowed herbal with unknown pregnancy safety is held back for
+    // a pregnant user even with no passport at all (unknown is never safe).
     const noPassport = withPassport(herb, null, { passport: null });
     const n = scoreProductForNeed(noPassport, up1, 'menopause.body_changes');
-    expect(n.eligibility).toBe('eligible');
+    expect(n.eligibility).toBe('restricted');
     expect(n.score).toBe(r.score);
   });
 });

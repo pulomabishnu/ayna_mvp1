@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "cross-env PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 vite build",
+    "build": "node scripts/gen-sitemap.mjs && cross-env PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 vite build",
     "lint": "eslint .",
     "test": "vitest run",
     "catalog:export": "node scripts/export-catalog.mjs",
@@ -24,7 +24,7 @@
     "@supabase/auth-js": "2.103.1",
     "@supabase/supabase-js": "^2.103.1",
     "@upstash/redis": "^1.37.0",
-    "posthog-js": "^1.421.0",
+    "posthog-js": "^1.435.6",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "twilio": "^5.4.0"

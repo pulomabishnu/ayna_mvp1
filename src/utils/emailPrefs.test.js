@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest';
 import { normalizeEmailPrefs, EMAIL_DEFAULTS, EMAIL_GROUPS } from './emailPrefs.js';
 
 describe('email preferences', () => {
-  it('fills defaults: everything on but partner news, weekly roundups', () => {
+  it('fills defaults: everything on, weekly roundups', () => {
     expect(normalizeEmailPrefs(null)).toEqual(EMAIL_DEFAULTS);
-    expect(EMAIL_DEFAULTS.partners).toBe(false);
+    expect(EMAIL_DEFAULTS.partners).toBe(true);
     expect(EMAIL_DEFAULTS.communityFreq).toBe('weekly');
   });
   it('keeps her choices and drops junk', () => {

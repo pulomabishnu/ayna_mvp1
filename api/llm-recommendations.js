@@ -548,6 +548,9 @@ export function catalogCandidatesForConcern(catalog, concern, max = 60, intake =
     const scopedIntake = scopedIntakeFor(intake, profile, concern);
     catalog = (catalog || []).filter((product) => {
       const details = getProductMatchDetailsForProduct(product, scopedIntake);
+      // Products held back because the product's own safety facts are unknown
+      // for her (e.g. herbals with no pregnancy data while pregnant/TTC) aren't offered.
+      if ((details.missingProductInfo || []).length > 0) return false;
       return details.eligible && (!menopauseStage || details.percent > 0);
     });
   }

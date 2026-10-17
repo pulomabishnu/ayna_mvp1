@@ -73,6 +73,9 @@ function claimText(text) {
 }
 
 /** Lowercased fields used by the rule predicates. */
+// Botanicals with reproductive or hormonal effects, or no pregnancy data as a class.
+const HERBAL_RE = /\b(vitex|chaste ?berry|chasteberry|agnus castus|dong quai|angelica sinensis|black cohosh|evening primrose|ashwagandha|maca|red clover|st\.? john'?s wort|ginseng|licorice|liquorice|fenugreek|shatavari|wild yam|red raspberry leaf|raspberry leaf|motherwort|valerian|saw palmetto|dandelion|turmeric|curcumin|rhodiola|schisandra|tribulus|hops|kava|ginkgo|cramp bark|false unicorn|blue cohosh|pennyroyal|mugwort|yarrow|herbal blend|botanical blend)\b/;
+
 function facts(product) {
   const tags = new Set((product.tags || []).map((t) => String(t).toLowerCase()));
   const hf = new Set((product.healthFunctions || []).map((t) => String(t).toLowerCase()));
@@ -1209,6 +1212,10 @@ export function buildProductProfile(product) {
     pregnancy,
     breastfeeding,
     ingested,
+    // Swallowed botanical (vitex, dong quai, black cohosh, evening primrose...).
+    // Pregnant, trying and breastfeeding users never see one whose safety for
+    // that stage is unknown (score.js, section 7c).
+    herbal: ingested && HERBAL_RE.test([product.name, product.ingredients, product.summary, product.description].filter(Boolean).join(' ').toLowerCase()),
     interaction_relevant: ingested || formats.includes('suppository') || formats.includes('topical'),
     ingredient_keys: ingredientKeys,
     ingredients: product.ingredients ? String(product.ingredients).split(/[,;]\s*/).map((s) => s.trim()).filter(Boolean) : [],

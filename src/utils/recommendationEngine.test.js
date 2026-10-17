@@ -35,11 +35,20 @@ describe('generateTieredRecommendations — every CONCERN_AREAS checkbox produce
       .not.toContain('Winx Health UTI Fast-Acting Pain Relief');
   });
 
-  it('"Mental health and cycle mood support" matches via the mental-health category', () => {
+  it('"Mental health and cycle mood support" still produces its concern entry', () => {
     const result = generateTieredRecommendations({ primaryConcerns: ['Mental health and cycle mood support'] });
     expect(result.length).toBeGreaterThan(0);
-    const hasAnyTier = result[0].tiers.some((t) => t.product);
-    expect(hasAnyTier).toBe(true);
+    // Tiers only hold products the ecosystem engine would also qualify (Pass 8):
+    // a supplement whose evidence isn't for this claim is never a pick.
+    result[0].tiers.forEach((t) => expect(t.product?.id).not.toBe('p-flo-gummies'));
+  });
+
+  it('never offers an herbal with unknown pregnancy safety to someone pregnant or TTC (Pass 8)', () => {
+    for (const life of ['I am pregnant', 'I am trying to conceive']) {
+      const result = generateTieredRecommendations({ personalizationCompleted: true, lifeStageSelections: [life], supportSelections: ['PMS symptoms', 'Mood swings', 'Cycle-related bloating'], age: 28 });
+      const ids = result.flatMap((section) => section.tiers.map((tier) => tier.product?.id));
+      expect(ids).not.toContain('p-flo-gummies');
+    }
   });
 
   it('"Sleep and energy" matches via the sleep category', () => {

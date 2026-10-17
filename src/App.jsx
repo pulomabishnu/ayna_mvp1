@@ -82,12 +82,13 @@ import AuthCallback from './components/AuthCallback';
 import AuthConfirm from './components/AuthConfirm';
 import EmailConfirmed from './components/EmailConfirmed';
 import { getSupabaseClient } from './utils/supabaseClient';
-import { clearGeneratedPicksForUser, isGeneratedPick, loadEcosystemForUser, upsertProductState, upsertProductsBatch, clearEcosystemForUser, removeGeneratedProductsFromEcosystem } from './utils/ecosystemStore';
+import { clearGeneratedPicksForUser, isGeneratedPick, loadEcosystemForUser, upsertProductState, upsertProductsBatch, removeGeneratedProductsFromEcosystem } from './utils/ecosystemStore';
 import { loadSavedProducts, persistSavedProducts, clearSavedProducts, loadSavedForUser, setSavedForUser } from './utils/savedProductsStore';
 import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/learningMemoryStore';
 import { loadReviewsForUser, upsertProductReviews } from './utils/reviewsStore';
 import { clearCachedLlmRecommendations, fingerprintIntake } from './utils/fetchLlmRecommendations';
 import posthog from 'posthog-js';
+import { identifyAccount } from './utils/analyticsIdentity';
 import { tagInternalUserIfNeeded } from './utils/posthogInternal';
 import { productHref, productRouteKey, parseProductIdFromPath } from './utils/productRoute';
 import { INTAKE_DRAFT_KEY, getIntakeSteps, reconstructIntakeFromSnapshot } from './mobile/data/intakeModel';
@@ -685,8 +686,8 @@ function App() {
           setUserSession(session ?? null);
 
           if (session?.user) {
-            posthog.identify(session.user.id, { email: session.user.email });
-            tagInternalUserIfNeeded(posthog);
+            // One analytics id per account on every device; sign-up and session events (analyticsIdentity.js).
+            identifyAccount(posthog, supabase, session.user).catch(() => {}).finally(() => tagInternalUserIfNeeded(posthog));
           }
         })
         .catch((e) => {
@@ -723,8 +724,7 @@ function App() {
         setUserSession(session);
       }
       if (event === 'SIGNED_IN' && session?.user) {
-        posthog.identify(session.user.id, { email: session.user.email });
-        tagInternalUserIfNeeded(posthog);
+        identifyAccount(posthog, supabase, session.user).catch(() => {}).finally(() => tagInternalUserIfNeeded(posthog));
         setShowAuthModal(false);
         // Deliberately does NOT navigate here. Every in-app path that opens the
         // auth modal (nav "Log in", quiz-complete gate, browse gate, the
@@ -833,14 +833,16 @@ function App() {
       (async () => {
         const resetAt = getPendingEcosystemResetAt(loadForUserId);
         if (resetAt) {
+          // A marker left by an older build (pre Oct 16). It used to run the
+          // full wipe (un-shelving and deleting her own products). Now it only
+          // switches off ayna's generated picks, never deletes, and is cleared
+          // either way so it can't hide anything later.
           try {
-            await clearEcosystemForUser(supabase, loadForUserId);
-            clearPendingEcosystemReset(loadForUserId);
+            await clearGeneratedPicksForUser(supabase, loadForUserId);
           } catch (error) {
-            // Do not block the user on a remote reset. Keep the marker so stale
-            // ecosystem rows are filtered below and retry next session.
-            console.warn('[Ayna] ecosystem reset is pending remote sync:', error);
+            console.warn('[Ayna] leftover ecosystem reset marker:', error);
           }
+          clearPendingEcosystemReset(loadForUserId);
         }
         return loadEcosystemForUser(supabase, loadForUserId).catch(() => null);
       })(),
@@ -866,18 +868,8 @@ function App() {
         });
       }
       if (ecosystem) {
-        const resetAt = getPendingEcosystemResetAt(loadForUserId);
-        const visibleEcosystem = resetAt
-          ? {
-              ...ecosystem,
-              myProducts: Object.fromEntries(
-                Object.entries(ecosystem.myProducts || {}).filter(([productId]) => {
-                  const updatedAt = Date.parse(ecosystem.ecosystemUpdatedAt?.[productId] || '') || 0;
-                  return updatedAt > resetAt;
-                })
-              ),
-            }
-          : ecosystem;
+        // Everything she has on a shelf shows; nothing is hidden by an old reset marker.
+        const visibleEcosystem = ecosystem;
         if (!llmBuiltThisSessionRef.current) {
           // Merge, don't replace: anything the user toggled while the load was
           // in flight is already persisted, and clobbering it here made her

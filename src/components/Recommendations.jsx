@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { getRecommendationExplanation, SIMILAR_PROFILES, ALL_PRODUCTS, CATEGORY_LABELS, getRecommendationsGroupedByWorkflow } from '../data/products';
+import { getRecommendationExplanation, ALL_PRODUCTS, CATEGORY_LABELS, getRecommendationsGroupedByWorkflow } from '../data/products';
 import { getRecommendedArticles } from './Articles';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
 import CareNearYouPanel from './CareNearYouPanel';
@@ -89,25 +89,6 @@ export default function Recommendations({
 
     const isExpanded = (key) => expandedSections[key] === true;
     const toggleExpanded = (key) => setExpandedSections(prev => ({ ...prev, [key]: !prev[key] }));
-
-    // Find matching similar profiles
-    const matchedProfiles = useMemo(() => {
-        if (!results?.frustrations) return [];
-        const tags = results.frustrations.map(f => {
-            const map = { 'Heavy flow': 'heavy-flow', 'Painful cramps': 'cramps', 'Hormonal bloating': 'bloating', 'Recurrent UTIs': 'uti', 'Irregular cycles': 'irregular' };
-            return map[f];
-        }).filter(Boolean);
-
-        const prefs = Array.isArray(results?.preference)
-            ? results.preference
-            : (results?.preference ? [results.preference] : []);
-        if (prefs.includes('Privacy & data security')) tags.push('privacy');
-
-        return tags
-            .filter(t => SIMILAR_PROFILES[t])
-            .map(t => ({ tag: t, ...SIMILAR_PROFILES[t] }))
-            .slice(0, 2);
-    }, [results]);
 
     const recommendedArticles = useMemo(() => getRecommendedArticles(results || {}, healthProfile), [results, healthProfile]);
     const tiered = llmTiered;
@@ -610,41 +591,6 @@ export default function Recommendations({
                     })}
                 </div>
             ))}
-
-            {/* "Women Like You" Section */}
-            {matchedProfiles.length > 0 && (
-                <div style={{ maxWidth: '800px', margin: '0 auto var(--spacing-xl)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <h3 style={{ fontSize: '1.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        Women with similar profiles also use
-                    </h3>
-                    {matchedProfiles.map(profile => (
-                        <div key={profile.tag} style={{
-                            background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)',
-                            borderRadius: 'var(--radius-md)', padding: '1.25rem'
-                        }}>
-                            <div style={{ fontWeight: '600', marginBottom: '0.5rem', fontSize: '0.95rem' }}>{profile.label}</div>
-                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
-                                {profile.topProducts.map(pid => {
-                                    const product = ALL_PRODUCTS.find(p => p.id === pid);
-                                    if (!product || omittedProducts[pid]) return null;
-                                    return (
-                                        <span key={pid} style={{
-                                            background: 'white', border: '1px solid var(--color-border)',
-                                            padding: '0.35rem 0.75rem', borderRadius: 'var(--radius-pill)',
-                                            fontSize: '0.8rem', fontWeight: '500', cursor: 'pointer'
-                                        }} onClick={() => onOpenProduct(product, { source: 'recommendation' })}>
-                                            {product.name}
-                                        </span>
-                                    );
-                                })}
-                            </div>
-                            <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginTop: '0.35rem', fontWeight: '600' }}>
-                                Options to compare. Review each product’s evidence and fit before choosing.
-                            </p>
-                        </div>
-                    ))}
-                </div>
-            )}
 
             {/* Recommended articles */}
             {onViewArticle && recommendedArticles.length > 0 && (

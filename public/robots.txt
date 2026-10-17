@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /you
+Disallow: /ecosystem
+Disallow: /auth/
+Disallow: /mobile-preview
+
+Sitemap: https://www.aynahealth.co/sitemap.xml

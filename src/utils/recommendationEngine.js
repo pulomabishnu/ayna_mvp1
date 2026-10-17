@@ -1,6 +1,8 @@
 import { ALL_PRODUCTS, getProductMatchDetailsForProduct, getSelectedNeeds, getMatchCareFlags } from '../data/products.js';
 import { LEGACY_CONCERN_NEEDS, needIdForOption } from '../matching/ontology.js';
 import { LEGACY_CONCERN_BY_ITEM } from '../mobile/data/intakeModel.js';
+import { buildProductProfile } from '../matching/productProfile.js';
+import { qualificationForEcosystem } from '../matching/ecosystem.js';
 
 // Instant local tiers for the ecosystem, built on the matching engine
 // (src/matching): each concern area is scored on the specific needs she
@@ -226,8 +228,19 @@ function concernNeedIds(concern, intake) {
 function concernMatch(product, intake, needIds) {
     const details = getProductMatchDetailsForProduct(product, intake);
     if (details?.eligible === false) return { details, match: null };
+    // Held back for her (e.g. pregnancy safety unknown): never a tier pick.
+    if ((details?.missingProductInfo || []).length > 0) return { details, match: null };
+    // Same qualification as the ecosystem engine (src/matching/ecosystem.js):
+    // supplement score floors and the "PMS in the name alone" rule.
+    let pp = null;
+    try { pp = buildProductProfile(product); } catch { pp = null; }
+    const qualifies = (m) => {
+        if (!pp) return true;
+        const q = qualificationForEcosystem({ needId: m.needId, score: m.score, relationship: m.relationship, evidence: details?.evidence }, pp, MIN_TIER_SCORE);
+        return q.effectiveScore >= q.floor;
+    };
     const match = (details?.needMatches || [])
-        .filter((m) => needIds.includes(m.needId) && m.relevant && !m.filtered && m.score >= MIN_TIER_SCORE)
+        .filter((m) => needIds.includes(m.needId) && m.relevant && !m.filtered && m.score >= MIN_TIER_SCORE && qualifies(m))
         .sort((x, y) => y.score - x.score)[0] || null;
     return { details, match };
 }

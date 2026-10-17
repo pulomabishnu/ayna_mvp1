@@ -47,7 +47,7 @@ export const INGESTED_RELATIONSHIP_MIN_SCORE = {
 };
 const WEAK_CLAIM_EVIDENCE = new Set(['none', 'community_only', 'not_for_this_claim']);
 
-function qualificationForEcosystem(result, pp, baseMinScore) {
+export function qualificationForEcosystem(result, pp, baseMinScore) {
   let floor = baseMinScore;
   let effectiveScore = result.score;
   if (!pp?.ingested) return { floor, effectiveScore };

@@ -568,7 +568,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [, setAiQuerySummary] = useState('');
     const [aiRelatedSearches, setAiRelatedSearches] = useState([]);
     const [aiLoading, setAiLoading] = useState(false);
-    const [, setAiError] = useState(null);
+    const [aiError, setAiError] = useState(null);
     const [searchSubmitted, setSearchSubmitted] = useState(false);
     const aiAbortRef = useRef(null);
     const inferredCategoryRef = useRef(null);
@@ -610,6 +610,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // query independently found more real products). Only give up after two
     // in a row.
     const dryRoundStreakRef = useRef(0);
+    // X6: a failing AI search gets ONE retry, then stops (it used to fire ~11
+    // failing requests per search). Config/auth/rate-limit errors stop at once.
+    const failStreakRef = useRef(0);
     // Set when a round's fetchSearchSuggestions call itself failed (rate
     // limit, auth required, server error) rather than genuinely succeeding
     // with zero new suggestions, fetchSearchSuggestions never throws on
@@ -1022,6 +1025,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         setBrowseAiRounds(0);
         setBrowseAiLoading(false);
         dryRoundStreakRef.current = 0;
+        failStreakRef.current = 0;
         setBrowseAiErrorCode(null);
         browseAiInFlightRef.current = false;
     }, [browseAiContextKey]);
@@ -1271,9 +1275,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             // falsely claiming "that's everything."
             if (fetchErrorCode) {
                 setBrowseAiErrorCode(fetchErrorCode);
-                setBrowseAiRounds((r) => r + 1);
+                failStreakRef.current += 1;
+                const stop = failStreakRef.current >= 2 || ['auth_required', 'rate_limited', 'no_key'].includes(fetchErrorCode);
+                setBrowseAiRounds((r) => (stop ? MAX_BROWSE_AI_ROUNDS : r + 1));
                 return;
             }
+            failStreakRef.current = 0;
             setBrowseAiErrorCode(null);
             // Dedup against catalog matches, whatever's already accumulated for this browse
             // context (read from the ref, not React state, see browseAiSuggestionsRef's
@@ -1310,6 +1317,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             // no-op calls; a single dry round just costs one retry.
             if (freshCount > 0) {
                 dryRoundStreakRef.current = 0;
+        failStreakRef.current = 0;
                 setBrowseAiRounds((r) => r + 1);
             } else {
                 dryRoundStreakRef.current += 1;
@@ -1325,7 +1333,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             // isn't evidence of "nothing left," so don't touch dryRoundStreakRef.
             if (browseAiContextKeyRef.current === contextKeyAtCallTime) {
                 setBrowseAiErrorCode('request_failed');
-                setBrowseAiRounds((r) => r + 1);
+                failStreakRef.current += 1;
+                setBrowseAiRounds((r) => (failStreakRef.current >= 2 ? MAX_BROWSE_AI_ROUNDS : r + 1));
             }
         } finally {
             clearTimeout(roundTimer);
@@ -1347,6 +1356,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     useEffect(() => {
         if (qTrimForAi) {
             if (!searchSubmitted || aiLoading) return;
+            // The first search already failed: one retry round, then stop.
+            if (aiError && browseAiRounds >= 1) return;
         } else if (macroGroup === 'all' && categoryFilter === 'all') {
             return;
         }
@@ -1354,7 +1365,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         if (browseAiLoading) return;
         if (gridItems.length > visibleCount) return;
         runBrowseAiRound(browseAiContextKey, browseAiRounds);
-    }, [qTrimForAi, searchSubmitted, aiLoading, macroGroup, categoryFilter, browseAiRounds, browseAiLoading, gridItems.length, visibleCount, browseAiContextKey, runBrowseAiRound]);
+    }, [qTrimForAi, searchSubmitted, aiLoading, aiError, macroGroup, categoryFilter, browseAiRounds, browseAiLoading, gridItems.length, visibleCount, browseAiContextKey, runBrowseAiRound]);
 
     useEffect(() => {
         if (qTrimForAi.length < 2) {

@@ -18,7 +18,7 @@ export const EMAIL_DEFAULTS = {
   community: true,
   announcements: true,
   ecosystem: true,
-  partners: false,
+  partners: true,
   reminders: true,
   communityFreq: 'weekly',
   ecosystemFreq: 'weekly',

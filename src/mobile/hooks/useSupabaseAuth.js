@@ -6,6 +6,8 @@ import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { CONSENT_VERSION, stashPendingConsent, flushPendingConsent } from '../../utils/pendingConsent.js';
 import { resetChipPosition } from '../utils/askAynaChipPosition.js';
 import { recordAppSignIn } from '../../utils/badges.js';
+import posthog from 'posthog-js';
+import { identifyAccount } from '../../utils/analyticsIdentity.js';
 
 // Real Supabase identity for the mobile app, separate from
 // useEcosystemSession.js's local app-data cache (products, quiz answers),
@@ -75,6 +77,13 @@ export function useSupabaseAuth() {
     });
     return () => subscription.unsubscribe();
   }, []);
+
+  // Analytics only (no UI change): the app never identified accounts, so app
+  // sign-ins and sign-ups were invisible in PostHog. Same account-wide
+  // analytics id as the website (src/utils/analyticsIdentity.js).
+  useEffect(() => {
+    if (user?.id) identifyAccount(posthog, getSupabaseClient(), user).catch(() => {});
+  }, [user]);
 
   // "Got the app" badge: any signed-in user in the app counts, recorded once
   // in her account metadata (ayna_app_signed_in_at) and on this device.

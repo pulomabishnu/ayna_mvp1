@@ -421,6 +421,14 @@ export function evaluateSafety(productOrProfile, up) {
     if (pStatus === 'pregnant' && preg.overall === 'unknown' && !pk.pregnancy) missingProductInfo.push('pregnancy_info');
     if (s.breastfeeding === 'yes' && pp.breastfeeding.overall === 'unknown' && !pk.breastfeeding) missingProductInfo.push('breastfeeding_info');
   }
+  // 7c. Swallowed herbals: when she is pregnant, trying to conceive or
+  //     breastfeeding and the product's safety for that stage is unknown, it is
+  //     held back (restricted), never shown with a caution and a percent.
+  //     Unknown is never treated as safe (Pass 8, Flo gummies for pregnant users).
+  if (pp.herbal) {
+    if ((pStatus === 'pregnant' || s.ttc) && preg.overall === 'unknown') missingProductInfo.push('pregnancy_info');
+    if (s.breastfeeding === 'yes' && pp.breastfeeding.overall === 'unknown') missingProductInfo.push('breastfeeding_info');
+  }
   for (const stage of up.physiology.lifeStages) {
     if (stage !== 'pregnant' && pp.life_stage[stage] === 'contraindicated') reasons.push({ code: 'life_stage_contraindicated', text: `Not for use in ${LIFE_STAGE_BY_ID[stage]?.phrase || stage}` });
   }

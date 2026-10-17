@@ -2407,29 +2407,30 @@ export function getCheckinRecommendations(profile, checkinData, cycleData, menop
     return deduped.slice(0, 8).map(({ product, reason }) => ({ product, reason }));
 }
 
+// Editor-chosen products per need (not usage data: no claim about what other users use).
 export const SIMILAR_PROFILES = {
     'heavy-flow': {
-        label: 'Users with Heavy Flow',
+        label: 'Heavy flow',
         topProducts: ['p-saalt-cup', 'p-flex-disc', 'p-always-infinity'],
     },
     'cramps': {
-        label: 'Users with Period Pain',
+        label: 'Period pain',
         topProducts: ['p-magnesium-glycinate', 'p-honeypot-pad', 'p-thermacare'],
     },
     'bloating': {
-        label: 'Users with bloating',
+        label: 'Bloating',
         topProducts: ['p-pink-stork-bloat', 'p-love-wellness-bloat', 'p-flo-gummies', 'p-hum-flatter-me'],
     },
     'uti': {
-        label: 'Users with Recurrent UTIs',
+        label: 'Recurrent UTIs',
         topProducts: ['p-azo-test', 'p-boric-acid', 'p-cranberry-supplement'],
     },
     'irregular': {
-        label: 'Users with Irregular Cycles',
+        label: 'Irregular cycles',
         topProducts: ['d-clue', 'd-natural-cycles', 'p-vitex'],
     },
     'pcos': {
-        label: 'Users with PCOS',
+        label: 'PCOS',
         topProducts: ['p-inositol-wholesome', 'p-spearmint-pcos', 'd-maven'],
     }
 };
