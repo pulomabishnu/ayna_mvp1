@@ -6232,7 +6232,8 @@ export const BRAND_PRODUCTS = [
     // scientific). Retailer links were supplied by VPod; Walmart listings were
     // matched to products by their URL names, since Walmart blocks
     // automated access. Product photos supplied by ayna, stored under
-    // public/products/vpod/.
+    // public/products/vpod/. affiliateUrl values are Ayna's Shopify Collabs
+    // short links (2026-10-16), each verified to redirect to its own product.
     {
         id: 'p-vpod-everyday-comfort-single',
         name: 'VPod Everyday Comfort Single Pack',
@@ -6245,6 +6246,7 @@ export const BRAND_PRODUCTS = [
         price: '$19.99 (1 pod)',
         whereToBuy: ['hervpod.com', 'Amazon', 'Walmart'],
         url: 'https://hervpod.com/products/vpod-regular-single-pack',
+        affiliateUrl: 'https://collabs.shop/bxd4fg',
         faqUrl: 'https://hervpod.com/pages/faq',
         image: '/products/vpod/everyday-comfort-single.webp',
         summary: 'A reusable, drug-free cooling gel pod you freeze and place in your underwear for up to 20 minutes of relief from external vulvar and vaginal itching, burning, dryness, irritation, or swelling. The curved, flexible pod has a 100% medical-grade silicone exterior that stays in place without adhesive. VPod markets it for yeast infections, BV, allergies, perimenopause and menopause, pregnancy and postpartum, and after sex or workouts; it eases symptoms but doesn’t treat their cause. One pod per pack.',
@@ -6336,6 +6338,7 @@ export const BRAND_PRODUCTS = [
         price: '$53.99 (3 pods)',
         whereToBuy: ['hervpod.com', 'Walmart'],
         url: 'https://hervpod.com/products/vpod-regular-multipack',
+        affiliateUrl: 'https://collabs.shop/dozcta',
         faqUrl: 'https://hervpod.com/pages/faq',
         image: '/products/vpod/everyday-comfort-3-pack.webp',
         summary: 'A reusable, drug-free cooling gel pod you freeze and place in your underwear for up to 20 minutes of relief from external vulvar and vaginal itching, burning, dryness, irritation, or swelling. The curved, flexible pod has a 100% medical-grade silicone exterior that stays in place without adhesive. VPod markets it for yeast infections, BV, allergies, perimenopause and menopause, pregnancy and postpartum, and after sex or workouts; it eases symptoms but doesn’t treat their cause. Three pods per pack.',
@@ -6427,6 +6430,7 @@ export const BRAND_PRODUCTS = [
         price: '$21.99 (1 pod)',
         whereToBuy: ['hervpod.com'],
         url: 'https://hervpod.com/products/vpod-elite-single-pack',
+        affiliateUrl: 'https://collabs.shop/y6b4i1',
         faqUrl: 'https://hervpod.com/pages/faq',
         image: '/products/vpod/elite-single.webp',
         summary: 'VPod’s extra-soft cooling gel pod designed for new moms, for targeted relief of tearing, bruising, swelling, dryness, and irritation before and after birth, and for menopause-related discomfort. Like the Everyday pod, you freeze it and place it in your underwear for up to 20 minutes; it has a 100% medical-grade silicone exterior and is drug-free. It eases symptoms but doesn’t treat their cause. One pod per pack; sold as VPod Elite.',
@@ -6515,6 +6519,7 @@ export const BRAND_PRODUCTS = [
         price: '$55.99 (3 pods)',
         whereToBuy: ['hervpod.com', 'Walmart'],
         url: 'https://hervpod.com/products/vpod-elite-multi-pack',
+        affiliateUrl: 'https://collabs.shop/i776ti',
         faqUrl: 'https://hervpod.com/pages/faq',
         image: '/products/vpod/elite-3-pack.webp',
         summary: 'VPod’s extra-soft cooling gel pod designed for new moms, for targeted relief of tearing, bruising, swelling, dryness, and irritation before and after birth, and for menopause-related discomfort. Like the Everyday pod, you freeze it and place it in your underwear for up to 20 minutes; it has a 100% medical-grade silicone exterior and is drug-free. It eases symptoms but doesn’t treat their cause. Three pods per pack; sold as VPod Elite.',
