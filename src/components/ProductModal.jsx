@@ -713,10 +713,10 @@ export default function ProductModal({
       {buyUrl && !isPrelaunch && (
         <p className="pdp-commission">
           {isPartner
-            ? 'ayna partner. ayna may earn a commission. Neither changes your match.'
+            ? 'ayna partner. We may earn a commission.'
             : isAmazonBuyLink
-              ? 'ayna may earn a commission from Amazon (no partnership with this brand). It never changes your match.'
-              : 'ayna may earn a commission. It never changes your match.'}
+              ? 'ayna may earn a commission from Amazon.'
+              : 'ayna may earn a commission.'}
           {' '}{isPartner && <button type="button" className="pdp-textlink" aria-expanded={showDisclosure} onClick={() => setShowDisclosure((v) => !v)}>{showDisclosure ? 'Less' : 'How partnerships work'}</button>}
         </p>
       )}

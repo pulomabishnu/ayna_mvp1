@@ -26,7 +26,6 @@ export default function ComparePanel({ product, others = [], onOpen, matchFor = 
     <section className="ay-compare" id="ay-sec-compare" tabIndex={-1} aria-labelledby="ay-compare-h">
       <div className="ay-pdp-sechead">
         <h2 id="ay-compare-h">Compare with <em>similar.</em></h2>
-        <p>Side by side, from ayna’s catalog. Search any product, or pick a related one.</p>
       </div>
       <div className="ay-compare__pick">
         <label className="ay-compare__search">

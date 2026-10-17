@@ -2159,7 +2159,7 @@ export default function MyEcosystem({
 
                 {!ecoQueryTrimmed && needShelves.length > 0 && (
                     <section className="eco3-gaps" aria-labelledby="eco3-needs-title">
-                        <header className="eco3-sechead"><h2 className="eco3-shelves__title" id="eco3-needs-title">Fill the <em>gaps.</em></h2><span className="eco3-needs__sub">The needs you picked, and our strongest match for each.</span></header>
+                        <header className="eco3-sechead"><h2 className="eco3-shelves__title" id="eco3-needs-title">Fill the <em>gaps.</em></h2></header>
                         <NeedsStrip
                             needs={[...needShelves].sort((a, b) => Number(!a.picks.length) - Number(!b.picks.length)).map((shelf) => ({
                                 id: shelf.needId,
@@ -2183,7 +2183,7 @@ export default function MyEcosystem({
 
                 <div className="eco3-extras">
                 <div className="eco3-extras__tools">
-                <header className="eco3-sechead"><p className="eco3-needs__kicker">Extras</p><h2 className="eco3-shelves__title" id="eco3-tools-title">Your <em>tools.</em></h2><span className="eco3-needs__sub">Care near you, how your matches work, and more.</span></header>
+                <header className="eco3-sechead"><h2 className="eco3-shelves__title" id="eco3-tools-title">Your <em>tools.</em></h2></header>
                 <div className="eco3-details">
                     {SHOW_SMS_ON_ECOSYSTEM && smsCardShown && (
                         <div className="eco3-details__card eco3-details__sms">

@@ -1033,7 +1033,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
         // Say why these are "for you", in her words from the quiz.
         const said = [...new Set([...(quizResults?.fullHealthIntake?.supportSelections || []), ...(quizResults?.frustrations || [])].map((x) => String(x).trim()).filter(Boolean))].slice(0, 3);
         return said.length && forYou.length ? <p className="ay-lib-foryou-why">Based on what you told us: {said.map((x) => x.toLowerCase()).join(', ')}.</p> : null;
-      })()}{forYou.length > 3 && <p className="ay-lib-more-row"><button type="button" className="ay-lib-more" onClick={() => setTopic('foryou')}>All {forYou.length} for you</button>{ARTICLES.length > forYou.length && <small>The other {ARTICLES.length - forYou.length} cover topics you didn&apos;t pick. They&apos;re in the sections below.</small>}</p>}</> : <a className="ay-lib-personalize" href="/quiz">See my matches <span aria-hidden="true">→</span></a>}
+      })()}{forYou.length > 3 && <p className="ay-lib-more-row"><button type="button" className="ay-lib-more" onClick={() => setTopic('foryou')}>All {forYou.length} for you</button></p>}</> : <a className="ay-lib-personalize" href="/quiz">See my matches <span aria-hidden="true">→</span></a>}
       {rows.map((r) => shelf(r.id, r.label, r.items))}
     </>;
   }

@@ -1666,9 +1666,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 return (
                     <div className="ayna-browse__applied" role="status">
                         <span className="ayna-browse__count">{submittedQuery ? ((shownCount ?? catalogShown) === 0 ? '\u00a0' : `${shownCount ?? catalogShown} result${(shownCount ?? catalogShown) === 1 ? '' : 's'} for “${submittedQuery}”`) : applied.length > 0 || (categoryFilter && categoryFilter !== 'all') || macroGroup !== 'all' ? `Showing ${shownCount ?? catalogShown} of ${combined.filter((it) => !isTeenProduct(it)).length}` : shownCount == null ? '\u00a0' : shownCount > visibleCount ? `Showing ${visibleCount} of ${shownCount} products` : (shownCount === 1 ? '1 product' : `${shownCount} products`)}</span>
-                        {sortBy === 'default' && !(personalizationFilter && (hasQuizFrustrations || hasHealthImport)) && !searchSubmitted && (
-                            <span className="ayna-browse__featured-note">Featured order includes partner brands.{(hasQuizFrustrations || hasHealthImport) ? ' Sort by Best match to see your order.' : ''}</span>
-                        )}
+                        {/* Partner placement is disclosed by each card's 'ayna partner' label and the header line (Oct 16: no extra note). */}
                         {applied.map(([v, set]) => (
                             <button key={v} type="button" className="ayna-browse__chip-x" onClick={() => set('all')} aria-label={`Remove filter ${LABELS[v] || v}`}>{LABELS[v] || v} <span aria-hidden="true">×</span></button>
                         ))}

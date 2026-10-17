@@ -12,7 +12,10 @@ import crypto from 'node:crypto';
 
 export const SITE = 'https://www.aynahealth.co';
 export const FROM = () => process.env.NOTIFY_FROM_EMAIL || 'ayna <notifications@aynahealth.co>';
-export const REPLY_TO = () => process.env.NOTIFY_REPLY_TO || 'puloma@aynahealth.co';
+// Replies reach all three founders.
+export const REPLY_TO = () => (process.env.NOTIFY_REPLY_TO ? process.env.NOTIFY_REPLY_TO.split(',').map((x) => x.trim()) : ['puloma@aynahealth.co', 'ameera@aynahealth.co', 'eliz@aynahealth.co']);
+// Mailing address in every footer (US CAN-SPAM). Override with MAIL_POSTAL_ADDRESS in Vercel.
+const ADDRESS = () => process.env.MAIL_POSTAL_ADDRESS || 'ayna, 312 West 119th St, New York, NY 10026';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -77,7 +80,7 @@ export const richToText = (text) => String(text || '').replace(/\*\*([^*\n]+?)\*
 function layout({ preheader, title, bodyHtml, cta, userId, group, groupLabel }) {
   const unsub = unsubUrl(userId, group);
   const unsubAll = unsubUrl(userId, 'all');
-  const address = process.env.MAIL_POSTAL_ADDRESS ? `<br>${esc(process.env.MAIL_POSTAL_ADDRESS)}` : '';
+  const address = `<br>${esc(ADDRESS())}`;
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta name="color-scheme" content="light only"></head>
 <body style="margin:0;padding:0;background:#ffedac">
 <span style="display:none;max-height:0;overflow:hidden;opacity:0">${esc(preheader)}</span>
@@ -96,7 +99,7 @@ You're getting this because ${esc(groupLabel)} emails are on in your ayna settin
 }
 
 function footerText(userId, group) {
-  const address = process.env.MAIL_POSTAL_ADDRESS ? `\n${process.env.MAIL_POSTAL_ADDRESS}` : '';
+  const address = `\n${ADDRESS()}`;
   return `\n\n--\nUnsubscribe from these: ${unsubUrl(userId, group)}\nUnsubscribe from all: ${unsubUrl(userId, 'all')}\nEmail settings: ${SITE}/you#wyou-email${address}`;
 }
 

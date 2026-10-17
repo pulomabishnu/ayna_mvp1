@@ -110,8 +110,7 @@ export default async function handler(req, res) {
     },
     body: JSON.stringify({
       from: process.env.CONTACT_FROM_EMAIL || 'Ayna <puloma@aynahealth.co>',
-      to: ['puloma@aynahealth.co'],
-      bcc: ['eliz@aynahealth.co', 'ameera@aynahealth.co'],
+      to: ['puloma@aynahealth.co', 'ameera@aynahealth.co', 'eliz@aynahealth.co'],
       reply_to: email,
       subject: `[Ayna Contact - ${reason}] ${subject}`,
       text: [

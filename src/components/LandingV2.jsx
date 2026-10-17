@@ -269,7 +269,6 @@ function Why({ paused }) {
         <div className="lv-why__body">
           <p className="lv-script">what ayna actually is</p>
           <h2 id="lv-why-title">Your counter, <em>decoded.</em></h2>
-          <p className="lv-why__lead">Tap a number.</p>
           <ol>
             {WHY.map((w, i) => (
               <li key={w.t} className={i === a ? 'is-on' : ''}>

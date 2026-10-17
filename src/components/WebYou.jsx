@@ -46,10 +46,7 @@ function ecosystemInsights(products) {
   const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]);
   const max = sorted.length ? sorted[0][1] : 0;
   const top = sorted.slice(0, 4).map(([cat, n], i) => ({ rank: String(i + 1).padStart(2, '0'), name: CATEGORY_LABEL(cat), count: n, pct: max ? Math.round((n / max) * 100) : 0 }));
-  const allCats = [...new Set(ALL_PRODUCTS.map((p) => p?.category).filter(Boolean))];
-  // Never nudge toward medicines or prescription care.
-  const missing = allCats.filter((c) => !counts.has(c) && !/medication|telehealth|prescription|pain-relief/.test(c)).slice(0, 3).map(CATEGORY_LABEL);
-  return { top, missing };
+  return { top };
 }
 
 /* At a glance: what she told us, in a few facts, and her shelves by the same
@@ -63,7 +60,7 @@ function InviteCard({ userId }) {
   if (!link) return null;
   return <section className="wyou-card wyou-invite" aria-labelledby="wyou-invite-h">
     <div className="wyou-card-head"><h2 id="wyou-invite-h">Invite a friend</h2></div>
-    <p className="wyou-muted">Share your link. Friends who join start with their own private profile.</p>
+    <p className="wyou-muted">Friends who join get their own private profile.</p>
     <div className="wyou-invite__row">
       <input readOnly value={link} aria-label="Your invite link" onFocus={(e) => e.currentTarget.select()} />
       <button type="button" className="wyou-btn" onClick={async () => { try { await navigator.clipboard.writeText(link); setCopied(true); window.setTimeout(() => setCopied(false), 2000); } catch { /* clipboard blocked */ } }}>{copied ? 'Copied' : 'Copy link'}</button>
@@ -96,19 +93,17 @@ const shortName = (p) => {
   return words.length > 4 ? `${words.slice(0, 4).join(' ')}…` : base;
 };
 
-function Routine({ products, total }) {
+function Routine({ products }) {
   // Only things you use up get a routine slot (services like telehealth are left out).
   const [bucket, setBucket] = useState('morning');
   const { routineMap, setProductBucket, removeFromRoutine } = useRoutine();
   const inBucket = products.filter((p) => routineMap[p.id] === bucket);
   const others = products.filter((p) => routineMap[p.id] !== bucket);
   const placed = products.filter((p) => routineMap[p.id]).length;
-  const services = total - products.length;
   // Overlaps among the things she places in her routine (e.g. two chasteberry products).
   const shared = findSharedActives(products.filter((p) => routineMap[p.id]), 3);
   return <section className="wyou-card">
-    <div className="wyou-card-head"><h2>Routine</h2><span>{placed} of {total} placed</span></div>
-    {services > 0 && <p className="wyou-muted wyou-routine-note">{services === 1 ? '1 app or service in your ecosystem isn’t' : `${services} apps and services in your ecosystem aren’t`} part of a routine.</p>}
+    <div className="wyou-card-head"><h2>Routine</h2><span>{placed} of {products.length} placed</span></div>
     <div className="wyou-tabs" role="tablist">{ROUTINE_BUCKETS.map((b) => <button type="button" key={b} role="tab" aria-selected={bucket === b} className={bucket === b ? 'is-on' : ''} onClick={() => setBucket(b)}>{ROUTINE_BUCKET_LABELS[b]}</button>)}</div>
     {inBucket.length ? <ul className="wyou-list">{inBucket.map((p) => <li key={p.id}><span title={p.name}>{shortName(p)}</span><button type="button" onClick={() => removeFromRoutine(p.id)}>Remove</button></li>)}</ul>
       : <p className="wyou-muted">Nothing in {ROUTINE_BUCKET_LABELS[bucket].toLowerCase()} yet.</p>}
@@ -153,7 +148,7 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
     })
     .filter(Boolean);
   const affinity = getBrandAffinity(quizResults, products);
-  const { top, missing } = useMemo(() => ecosystemInsights(products), [products]);
+  const { top } = useMemo(() => ecosystemInsights(products), [products]);
   const savedCount = Object.values(savedProducts || {}).filter(Boolean).length;
   // Same source as the header greeting (user_metadata), read on every render so a
   // late-arriving session (after a reload) shows the name instead of "Not set".
@@ -264,18 +259,17 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
           <button type="button" className="tone-butter" onClick={onOpenEcosystem}><strong>{products.length}</strong><span>In your Ecosystem</span></button>
           <button type="button" className="tone-pink" onClick={onOpenSaved}><strong>{savedCount}</strong><span>Saved</span></button>
           <div className="wyou-quick">
-            <button type="button" className="wyou-btn is-ghost wyou-quickbtn" onClick={onOpenCheckin}>Log how this month went<small>A quick check-in so your picks keep up</small></button>
+            <button type="button" className="wyou-btn is-ghost wyou-quickbtn" onClick={onOpenCheckin}>Log how this month went</button>
           </div>
         </nav>
 
 
-        {consumables.length > 0 && <Routine products={consumables} total={products.length} />}
+        {consumables.length > 0 && <Routine products={consumables} />}
 
         {(affinity.length > 0 || top.length > 0) && <section className="wyou-card">
           <div className="wyou-card-head"><h2>What you’re into</h2>{top.length > 0 && <span>From your Ecosystem</span>}</div>
           {top.length > 0 && <ol className="wyou-top">{top.map((t) => <li key={t.name}><b>{t.rank}</b><span>{t.name}</span><i aria-hidden="true"><em style={{ width: `${t.pct}%` }} /></i><small>{t.count} {t.count === 1 ? 'item' : 'items'}</small></li>)}</ol>}
           {affinity.length > 0 && <div className="wyou-chips">{affinity.map((a) => <span key={a.tag}>{a.label} · {a.score}%</span>)}</div>}
-          {top.length > 0 && missing.length > 0 && <p className="wyou-muted">Not in your Ecosystem yet: {missing.join(', ')}</p>}
         </section>}
 
         <EmailSettings user={user} />

@@ -21,7 +21,6 @@ export default function SavedForLater({
         <p className="eco3-needs__kicker">For later</p>
         <h2>Saved<em>.</em></h2>
         {items.length > 0 && <span className="eco3-area__count eco-saved__count">{items.length}</span>}
-        <span className="eco3-needs__sub eco-saved__sub">Things you hearted in the shop, kept for later.</span>
       </div>
 
       {items.length === 0 ? (
