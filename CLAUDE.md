@@ -34,3 +34,31 @@ labeled "FDA-cleared" when they are not). Rules for adding or editing any entry:
   significant if the paper doesn't, and don't call an open-label study "controlled".
 - **Every link must load.** Don't construct URLs; check each with a request.
 - **No unsourced claims.** If a sentence has no source you have read, cut it.
+
+## Hidden products (unpublished, not deleted)
+
+A catalog entry with `hidden: true` stays in `src/data/*.js` and in
+`product_catalog` (as `is_active = false`), but no page, search, Trending list,
+sitemap, or chatbot shows it. `ALL_PRODUCTS` excludes hidden entries;
+`CATALOG_PRODUCTS` keeps them so the export never drops their rows. Never
+delete a hidden entry, its images, or its seed files. (`TEMPORARILY_HIDDEN_IDS`
+in `src/data/products.js` is a separate list for discontinued products.)
+
+**Currently hidden:** VPod (Cool Comforts Co.), all four entries in
+`src/data/brands.js` (`p-vpod-*`). Hidden 2026-10-17 so Eliz can fix the
+descriptions.
+
+**"Make it live"** (for VPod, or any hidden brand):
+1. Make the requested text edits, following the health-claims rules above.
+2. Delete the `hidden: true,` line from each of the brand's entries (VPod has four).
+3. `npm run catalog:check`, then `npm run catalog:sql -- VPod`. This writes
+   `supabase/seed/<date>_vpod_live.sql` with the current text and
+   `is_active = true`. Confirm its header lists all four ids as Live.
+4. Run the tests and `npm run build`. The build regenerates `public/sitemap.xml`
+   with the brand's pages; commit that too.
+5. Commit and push to `main`. Vercel deploys `main` to production automatically.
+6. A person pastes the generated `_live.sql` file into the Supabase SQL Editor and
+   runs it. The repo has no database credentials, so Claude can't do this step.
+   Changes show up within about an hour (5-minute server cache, 1-hour browser cache).
+
+To hide a brand: add `hidden: true,` after each entry's `id`, then do steps 3–6 (the file ends in `_hidden.sql`).

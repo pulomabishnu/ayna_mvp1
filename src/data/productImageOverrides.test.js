@@ -14,7 +14,7 @@ import { describe, it, expect } from 'vitest';
 import { existsSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ALL_PRODUCTS } from './products.js';
+import { ALL_PRODUCTS, CATALOG_PRODUCTS } from './products.js';
 import { PRODUCT_IMAGE_OVERRIDES, productImageOverride, productGallery, withImageOverride } from './productImageOverrides.js';
 import { isPlaceholderProductImage } from '../utils/resolveProductImage.js';
 
@@ -30,7 +30,8 @@ describe('product image overrides', () => {
   });
 
   it('only maps ids that exist in the catalog', () => {
-    const ids = new Set(ALL_PRODUCTS.map((p) => p.id));
+    // CATALOG_PRODUCTS: hidden products keep their photos for when they return.
+    const ids = new Set(CATALOG_PRODUCTS.map((p) => p.id));
     expect(entries.map(([id]) => id).filter((id) => !ids.has(id))).toEqual([]);
   });
 
@@ -77,7 +78,7 @@ describe('product image overrides', () => {
   });
 
   it('catalog products carry the override cover as their image', () => {
-    const byId = new Map(ALL_PRODUCTS.map((p) => [p.id, p]));
+    const byId = new Map(CATALOG_PRODUCTS.map((p) => [p.id, p]));
     const bad = entries.filter(([id]) => byId.get(id)?.image !== productImageOverride(id));
     expect(bad.map(([id]) => id)).toEqual([]);
   });
