@@ -38,6 +38,7 @@ export const V2 = {
   maxUniversal: 1,
   universalNeedCount: 10,
   needWeight: { first: 1.0, picked: 0.7, inferred: 0.4 },
+  fallbackPerNeed: 2,
 };
 
 // Reviewed product x need rows (clinical sign-off). Empty until the review
@@ -211,6 +212,18 @@ export function buildEcosystemV2(up, products, options = {}) {
     if (!homed.length) {
       homed = chosen.filter((x) => x.results.has(shelf.needId))
         .map((x) => ({ ...x, home: { needId: shelf.needId, ...x.results.get(shelf.needId) } }));
+    }
+    // Nothing evidence-graded fits this need: keep v1's safe picks (already
+    // through every safety rule) rather than an empty shelf, minus anything
+    // the research says does not fit this need. Labelled as partial fits.
+    if (!homed.length && Array.isArray(shelf.picks) && shelf.picks.length) {
+      const fallback = shelf.picks
+        .filter((r) => { const row = REVIEWED.get(`${r.productId}|${shelf.needId}`); return !row || row.strength !== 'none'; })
+        .slice(0, V2.fallbackPerNeed)
+        .map((r) => ({ ...r, v2: { band: 'partial', bandLabel: BAND_LABEL.partial || null, fallback: true }, alsoCovers: [] }));
+      if (fallback.length) {
+        return { ...shelf, picks: fallback, shortBy: Math.max(0, (options.picksPerNeed ?? V2.perNeed) - fallback.length), coverage: round3(cover.get(shelf.needId) || 0), emptyReason: null, fallback: true };
+      }
     }
     const picks = homed
       .sort((a, b) => b.home.v2.rankKey - a.home.v2.rankKey)
