@@ -5613,12 +5613,6 @@ html body .app-container.app-container.app-container.app-container.app-container
 /* Oct 17: "This week's picks" tiles are one whole card (photo, name, price,
    brand inside the same frame), instead of a framed photo with the words
    hanging outside the shadow. */
-html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .lv-tiles > li > a { border: var(--bw, 2px) solid var(--ink, #3e2723); border-radius: 14px; background: var(--white, #fff); overflow: visible; padding: 0 0 14px; gap: 10px; }
-html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .lv-tiles > li > a .lv-tile__img { border: 0 !important; border-bottom: var(--bw, 2px) solid var(--ink, #3e2723) !important; border-radius: 12px 12px 0 0 !important; overflow: hidden; }
-html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .lv-tiles > li > a :is(.lv-tile__row, .lv-tile__brand) { padding: 0 14px; }
-html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .lv-tiles > li > a .lv-tile__brand { margin-top: -6px; }
-html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .lv-tiles > li > a:hover .lv-tile__img { transform: none; }
-[data-theme='dark'] body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .lv-tiles > li > a, html body .app-container[data-theme='dark'].app-container.app-container.app-container.app-container.app-container.app-container.app-container .lv-tiles > li > a { background: var(--ay-surface, #2b1d1a); }
 
 /* Oct 17: the Ecosystem header's "More" menu was cut off by the band's
    clip (it only meant to bleed sideways). While the menu is open the band
@@ -5644,9 +5638,6 @@ html body .app-container.app-container.app-container.app-container.app-container
 /* Landing search topics: the chips are butter, so their words are espresso. */
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv-search__topic { color: #ffedac !important; }
 /* "This week's picks" cards: butter card, espresso words. */
-html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv-tiles > li > a { background: #ffedac !important; border-color: #ffedac !important; }
-html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv-tiles > li > a :is(.lv-tile__name, .lv-tile__price, .lv-tile__brand) { color: #3e2723 !important; }
-html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv-tiles > li > a .lv-tile__img { border-bottom-color: #3e2723 !important; }
 /* Shop by need band: reversed like the rest of dark mode (butter band,
    espresso words), so it no longer melts into the espresso page. */
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv .lv-band,
@@ -5693,7 +5684,3 @@ html body .app-container.app-container.app-container.app-container.app-container
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .eco3-related, html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .eco3-related * { color: #ffedac !important; border-color: #ffedac !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .eco3-related__add { color: #3e2723 !important; }
 
-/* Oct 17: product tiles are white cards, so their name, price and brand are
-   espresso (they were inheriting the band's butter text and disappeared). */
-html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container:not([data-theme='dark']) .lv-tiles > li > a :is(.lv-tile__name, .lv-tile__price, .lv-tile__brand) { color: #3e2723 !important; }
-html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container:not([data-theme='dark']) .lv-tiles > li > a .lv-tile__brand { opacity: .75; }
