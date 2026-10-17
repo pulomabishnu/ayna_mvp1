@@ -128,3 +128,21 @@
   .wyou-badges, .wyou-links { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
   .wyou-card { padding: 20px !important; }
 }
+
+/* Email settings (Oct 16) */
+.wyou-email { display: grid; gap: 0; margin: 12px 0 8px; padding: 0; list-style: none; }
+.wyou-email li { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 14px 0; border-top: 1.5px solid rgba(62, 39, 35, .15); }
+.wyou-email li:first-child { border-top: 0; }
+.wyou-email__text { display: grid; gap: 4px; min-width: 0; }
+.wyou-email__text strong { font: 700 15px/1.3 var(--ay-font-ui); color: var(--ay-ink); }
+.wyou-email__text small { font: 400 14px/1.45 var(--ay-font-ui); color: var(--ay-ink-soft); }
+.wyou-email__freq { justify-self: start; margin-top: 6px; }
+.wyou-email__freq button { min-height: 32px; padding: 0 12px; border: 0; border-radius: 99px; background: transparent; color: var(--ay-ink); font: 600 13px/1 var(--ay-font-ui); cursor: pointer; }
+.wyou-email__freq button[aria-pressed='true'] { background: var(--ay-ink); color: var(--ay-paper); }
+.wyou-switch { position: relative; flex: none; width: 48px; height: 28px; margin-top: 2px; padding: 0; border: 2px solid var(--ay-ink); border-radius: 99px; background: transparent; cursor: pointer; }
+.wyou-switch span { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--ay-ink); transition: transform .18s ease; }
+.wyou-switch[aria-checked='true'] { background: #f7badd; }
+.wyou-switch[aria-checked='true'] span { transform: translateX(20px); }
+.wyou-switch:disabled, .wyou-email__freq button:disabled { opacity: .45; cursor: default; }
+.wyou-switch:focus-visible, .wyou-email__freq button:focus-visible { outline: 3px solid #769ebe; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .wyou-switch span { transition: none; } }

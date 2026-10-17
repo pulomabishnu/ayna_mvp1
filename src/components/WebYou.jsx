@@ -12,6 +12,7 @@ import { findSharedActives } from '../utils/sharedActives';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
 import { inviteLinkFor } from '../utils/badges';
 import { getCareProfile } from '../utils/careProfile';
+import EmailSettings from './EmailSettings';
 import './WebYou.css';
 import '../styles/audit-qya.css';
 
@@ -276,6 +277,8 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
           {affinity.length > 0 && <div className="wyou-chips">{affinity.map((a) => <span key={a.tag}>{a.label} · {a.score}%</span>)}</div>}
           {top.length > 0 && missing.length > 0 && <p className="wyou-muted">Not in your Ecosystem yet: {missing.join(', ')}</p>}
         </section>}
+
+        <EmailSettings user={user} />
 
         <section className="wyou-card is-account" id="wyou-account">
           <div className="wyou-card-head"><h2>Account</h2></div>
