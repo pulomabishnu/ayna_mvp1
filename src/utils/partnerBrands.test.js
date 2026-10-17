@@ -32,11 +32,8 @@ describe('partnerBrands', () => {
     expect(eli).toBe(urge);
   });
 
-  it('ranks the pre-launch partner Rèsa after every shipping partner', () => {
-    const resa = getPartnerBrandRank({ brand: 'Rèsa', name: 'Rèsa Rhythm Bracelet' });
-    const lastShipping = getPartnerBrandRank({ brand: 'VIO2', name: 'VIO2 Partial-Coverage Mouth Tape' });
-    expect(resa).not.toBeNull();
-    expect(resa).toBeGreaterThan(lastShipping);
+  it('ranks the pre-launch partner Rèsa first for now (Eliz, 2026-10-17)', () => {
+    expect(getPartnerBrandRank({ brand: 'Rèsa', name: 'Rèsa Rhythm Bracelet' })).toBe(0);
   });
 
   it('returns null for a non-partner product', () => {

@@ -5479,8 +5479,12 @@ export const BRAND_PRODUCTS = [
     // internally-worn Pippa resistance spring, invented by Carly Price.
     // Product facts checked via web search (direct fetch of
     // livlabsfitness.com is blocked in this environment).
+    //
+    // HIDDEN 2026-10-17 (not deleted) at Eliz's request: not visible anywhere
+    // on the site. To make it live again, follow "Hidden products" in CLAUDE.md.
     {
         id: 'p-livlabs-pippa-starter-kit',
+        hidden: true,
         name: 'Pippa Resistance Spring Starter Kit',
         brand: 'Liv Labs',
         category: 'pelvic-floor',
@@ -5547,6 +5551,7 @@ export const BRAND_PRODUCTS = [
     },
     {
         id: 'p-livlabs-pippa-fit-kit',
+        hidden: true,
         name: 'Pippa Resistance Spring Fit Kit',
         brand: 'Liv Labs',
         category: 'pelvic-floor',

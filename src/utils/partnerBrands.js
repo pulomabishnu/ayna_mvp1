@@ -55,6 +55,9 @@
  * those positions then.
  */
 export const PARTNER_BRAND_ORDER = [
+  // Rèsa (2026-10-05), pre-launch; see PRELAUNCH_PARTNER_PATTERNS below.
+  // First "for now" at Eliz's request (2026-10-17), ahead of the team's list.
+  /\br[eè]sa\b/,
   /\bbuni\b/, // BUNI Body
   /\blim method\b/, // LiM Method
   /\bwinx\b/, // Winx Health
@@ -69,8 +72,6 @@ export const PARTNER_BRAND_ORDER = [
   /\btampon tribe\b/, // Tampon Tribe (partner from 2026-10-17)
   /\bmy pelvic bra\b/, // My Pelvic Bra
   /\bvio2\b/, // VIO2
-  // Rèsa (2026-10-05), pre-launch; see PRELAUNCH_PARTNER_PATTERNS below.
-  /\br[eè]sa\b/,
 ];
 
 /** Back-compat alias: the redesign's components/tests import this name. */
@@ -83,9 +84,9 @@ export const PARTNER_BRAND_PATTERNS = PARTNER_BRAND_ORDER;
  * Add a brand only once its partnership is actually contracted.
  */
 export const PARTNER_BRANDS = [
-  'BUNI', 'LiM Method', 'Winx Health', 'Neycher', 'SootheHer', 'Alubri',
+  'Rèsa', 'BUNI', 'LiM Method', 'Winx Health', 'Neycher', 'SootheHer', 'Alubri',
   'Connect Pelvic Floor Fitness', 'Elitone', 'LOLA', 'Proov', 'gina', 'Tampon Tribe',
-  'My Pelvic Bra', 'VIO2', 'Rèsa',
+  'My Pelvic Bra', 'VIO2',
 ].map((name, i) => ({ name, pattern: PARTNER_BRAND_ORDER[i] }));
 
 /**

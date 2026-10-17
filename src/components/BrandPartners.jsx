@@ -40,6 +40,17 @@ const PARTNERS = [
   // Momotaro Apotheca, GoodCycle (DailyBasis) and Cool Comforts (VPod, hidden)
   // are in that order too but have no card yet: they're not on the site.
   {
+    // First "for now" at Eliz's request (2026-10-17); pre-launch, so it keeps
+    // its highlighted waitlist card.
+    brand: 'Rèsa',
+    logo: '/brands/resa.png',
+    url: RESA_SITE_URL,
+    prelaunch: true,
+    waitlistUrl: RESA_WAITLIST_URL,
+    waitlistCta: RESA_WAITLIST_CTA,
+    blurb: 'A pre-launch wearable, worn as jewelry, that reads your body signals alongside your cycle.',
+  },
+  {
     // Confirmed partner since 2026-09-11 (see src/utils/partnerBrands.js) but
     // missing a card on this page until 2026-09-23.
     brand: 'BUNI',
@@ -153,17 +164,6 @@ const PARTNERS = [
     blurb:
       'Dentist-designed mouth tape that encourages nasal breathing during sleep.',
   },
-  {
-    // Last on purpose (2026-10-05): pre-launch, so it sits after the shipping
-    // partners but keeps its highlighted waitlist card.
-    brand: 'Rèsa',
-    logo: '/brands/resa.png',
-    url: RESA_SITE_URL,
-    prelaunch: true,
-    waitlistUrl: RESA_WAITLIST_URL,
-    waitlistCta: RESA_WAITLIST_CTA,
-    blurb: 'A pre-launch wearable, worn as jewelry, that reads your body signals alongside your cycle.',
-  },
   // Liv Labs (Pippa Resistance Spring) is NOT yet a confirmed partner, its
   // two products stay in the catalog (src/data/brands.js) so they still
   // surface in Discovery/search, but intentionally left off this page and
@@ -185,9 +185,8 @@ function BrandMark({ partner }) {
   return <div className="brand-partner__wordmark">{partner.brand}</div>;
 }
 
-// The team's order as listed in PARTNERS (2026-10-17; was A to Z); a
-// pre-launch partner sits after the shipping ones.
-const ORDERED = [...PARTNERS].sort((a, b) => Number(!!a.prelaunch) - Number(!!b.prelaunch));
+// The team's order exactly as listed in PARTNERS (2026-10-17; was A to Z).
+const ORDERED = PARTNERS;
 
 const slug = (b) => `brand-${String(b).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 
