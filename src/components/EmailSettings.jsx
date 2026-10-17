@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { EMAIL_GROUPS, loadEmailPrefs, normalizeEmailPrefs, saveEmailPrefs } from '../utils/emailPrefs';
+import { teamMemberForEmail } from '../utils/aynaTeam';
 
 // Email settings on the You page (#wyou-email). One switch per kind of email,
 // weekly roundup or as it happens where that applies, and one "turn off all".
@@ -64,6 +65,17 @@ export default function EmailSettings({ user }) {
         })}
       </ul>
       <div className="wyou-actions">
+        {teamMemberForEmail(user?.email) && (
+          <button type="button" className="wyou-btn is-ghost" onClick={async () => {
+            setNote('Sending…');
+            try {
+              const { data } = await getSupabaseClient().auth.getSession();
+              const r = await fetch('/api/send-test-email', { method: 'POST', headers: { Authorization: `Bearer ${data?.session?.access_token || ''}` } });
+              const j = await r.json().catch(() => ({}));
+              setNote(r.ok ? `Test emails sent to ${j.to}` : `Test failed (${j.error || r.status})`);
+            } catch { setNote('Test failed'); }
+          }}>Send me a test email</button>
+        )}
         {off
           ? <button type="button" className="wyou-btn is-ghost" disabled={disabled} onClick={() => save(prefs, false)}>Turn emails back on</button>
           : <button type="button" className="wyou-link-danger" disabled={disabled} onClick={() => save(prefs, true)}>Turn off all emails</button>}

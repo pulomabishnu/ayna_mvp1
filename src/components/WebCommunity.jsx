@@ -190,7 +190,8 @@ function Sheet({ title, onClose, children, className = '' }) {
 export default function WebCommunity({ user, products = [], quizResults = null, myProducts = null, onOpenProduct, onOpenArticle, onRequireAuth, seedKind = null, seedProductId = null, initialProfileHandle = null, onProfileChange, initialPostId = null, onPostChange, composeOnly = false, onDone }) {
   const supabase = user ? getSupabaseClient() : (getGuestClient() || getSupabaseClient());
   const productsById = useMemo(() => new Map(products.map((p) => [String(p.id), p])), [products]);
-  const [tab, setTab] = useState('for-you');
+  // ?tab=announcements (links from emails) opens that feed.
+  const [tab, setTab] = useState(() => { try { const t = new URLSearchParams(window.location.search).get('tab'); return TABS.some(([k]) => k === t) ? t : 'for-you'; } catch { return 'for-you'; } });
   const [posts, setPosts] = useState([]);
   const [cursor, setCursor] = useState(null);
   const [playlists, setPlaylists] = useState([]);

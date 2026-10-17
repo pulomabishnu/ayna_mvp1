@@ -21,6 +21,14 @@
     {
       "path": "/api/discover-products",
       "schedule": "0 22 * * *"
+    },
+    {
+      "path": "/api/send-emails?mode=instant",
+      "schedule": "20 * * * *"
+    },
+    {
+      "path": "/api/send-emails?mode=weekly",
+      "schedule": "0 14 * * 0"
     }
   ],
   "headers": [
