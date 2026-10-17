@@ -2,16 +2,16 @@
 export default [
  {
   "product": "p-inositol-wholesome",
-  "pregnancy": "unknown",
+  "pregnancy": "ask_clinician",
   "breastfeeding": "unknown",
-  "source_url": "https://www.cochrane.org/evidence/CD012378_inositol-women-polycystic-ovary-syndrome",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6617769/",
   "reviewed": "2026-10-17"
  },
  {
   "product": "p-spearmint-pcos",
-  "pregnancy": "unknown",
+  "pregnancy": "ask_clinician",
   "breastfeeding": "unknown",
-  "source_url": "https://pubmed.ncbi.nlm.nih.gov/19585478",
+  "source_url": "https://health.clevelandclinic.org/spearmint-tea-benefits",
   "reviewed": "2026-10-17"
  },
  {
@@ -39,7 +39,7 @@ export default [
   "product": "p-vitex",
   "pregnancy": "avoid",
   "breastfeeding": "avoid",
-  "source_url": "https://www.ncbi.nlm.nih.gov/books/NBK501807/",
+  "source_url": "https://www.nccih.nih.gov/health/chasteberry",
   "reviewed": "2026-10-17"
  },
  {
@@ -58,7 +58,7 @@ export default [
  },
  {
   "product": "p-creatine-womens",
-  "pregnancy": "unknown",
+  "pregnancy": "ask_clinician",
   "breastfeeding": "avoid",
   "source_url": "https://www.ncbi.nlm.nih.gov/sites/books/NBK501853/",
   "reviewed": "2026-10-17"
@@ -66,29 +66,29 @@ export default [
  {
   "product": "p-goodbug-gut-balance",
   "pregnancy": "ask_clinician",
-  "breastfeeding": "unknown",
-  "source_url": "https://www.nccih.nih.gov/health/probiotics-usefulness-and-safety",
+  "breastfeeding": "ask_clinician",
+  "source_url": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
   "reviewed": "2026-10-17"
  },
  {
   "product": "p-hum-flatter-me",
   "pregnancy": "ask_clinician",
-  "breastfeeding": "unknown",
+  "breastfeeding": "ask_clinician",
   "source_url": "https://www.nccih.nih.gov/health/ginger",
   "reviewed": "2026-10-17"
  },
  {
   "product": "p-love-wellness-bloat",
   "pregnancy": "ask_clinician",
-  "breastfeeding": "unknown",
-  "source_url": "https://www.nccih.nih.gov/health/womens-health-and-complementary-approaches?nav=govd",
+  "breastfeeding": "ask_clinician",
+  "source_url": "https://www.nccih.nih.gov/health/ginger",
   "reviewed": "2026-10-17"
  },
  {
   "product": "p-zinc",
   "pregnancy": "unknown",
   "breastfeeding": "unknown",
-  "source_url": "https://www.aad.org/public/diseases/hair-loss/treatment/diagnosis-treat",
+  "source_url": "https://ods.od.nih.gov/factsheets/Zinc-HealthProfessional/",
   "reviewed": "2026-10-17"
  },
  {
@@ -109,7 +109,7 @@ export default [
   "product": "p-rituals-prenatal",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
-  "source_url": "https://ods.od.nih.gov/factsheets/Folate-HealthProfessional/",
+  "source_url": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
   "reviewed": "2026-10-17"
  },
  {
@@ -121,16 +121,44 @@ export default [
  },
  {
   "product": "p-proov-balance-bundle",
-  "pregnancy": "ask_clinician",
-  "breastfeeding": "ask_clinician",
-  "source_url": "https://www.cochrane.org/evidence/CD012396_what-effectiveness-and-safety-luteal-support-infertile-women-trying-conceive-intrauterine",
-  "reviewed": "2026-10-17"
- },
- {
-  "product": "p-womaness-me",
   "pregnancy": "avoid",
   "breastfeeding": "avoid",
   "source_url": "https://www.nccih.nih.gov/health/ashwagandha",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-nature-made-iron-65mg",
+  "pregnancy": "ask_clinician",
+  "breastfeeding": "ask_clinician",
+  "source_url": "https://ods.od.nih.gov/factsheets/Iron-HealthProfessional/",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-natures-bounty-d3-125mcg",
+  "pregnancy": "ask_clinician",
+  "breastfeeding": "ask_clinician",
+  "source_url": "https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-magnesium-glycinate",
+  "pregnancy": "ok",
+  "breastfeeding": "ok",
+  "source_url": "https://ods.od.nih.gov/factsheets/Magnesium-HealthProfessional/",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-uqora-control",
+  "pregnancy": "unknown",
+  "breastfeeding": "unknown",
+  "source_url": "https://www.cochrane.org/CD013608/RENAL_d-mannose-preventing-and-treating-urinary-tract-infections",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-d-mannose-now",
+  "pregnancy": "unknown",
+  "breastfeeding": "unknown",
+  "source_url": "https://www.cochrane.org/CD013608/RENAL_d-mannose-preventing-and-treating-urinary-tract-infections",
   "reviewed": "2026-10-17"
  },
  {
@@ -145,6 +173,118 @@ export default [
   "pregnancy": "avoid",
   "breastfeeding": "avoid",
   "source_url": "https://www.nccih.nih.gov/health/black-cohosh",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-probiotics-women",
+  "pregnancy": "ask_clinician",
+  "breastfeeding": "ask_clinician",
+  "source_url": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-fish-oil",
+  "pregnancy": "ask_clinician",
+  "breastfeeding": "ask_clinician",
+  "source_url": "https://files.nccih.nih.gov/s3fs-public/Omega-3_11-30-2015.pdf",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-b-complex",
+  "pregnancy": "ask_clinician",
+  "breastfeeding": "ask_clinician",
+  "source_url": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-cranberry-supplement",
+  "pregnancy": "ask_clinician",
+  "breastfeeding": "ask_clinician",
+  "source_url": "https://www.nccih.nih.gov/health/cranberry",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-womaness-me",
+  "pregnancy": "avoid",
+  "breastfeeding": "avoid",
+  "source_url": "https://www.nccih.nih.gov/health/ashwagandha",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-winx-vaginal-probiotic",
+  "pregnancy": "ask_clinician",
+  "breastfeeding": "ask_clinician",
+  "source_url": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-winx-uti-daily-defense",
+  "pregnancy": "avoid",
+  "breastfeeding": "ask_clinician",
+  "source_url": "https://www.nccih.nih.gov/health/turmeric",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-good-kitty-uti-biome-shield",
+  "pregnancy": "ask_clinician",
+  "breastfeeding": "ask_clinician",
+  "source_url": "https://www.ncbi.nlm.nih.gov/sites/books/NBK501837/",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-goodbug-good-to-glow",
+  "pregnancy": "ask_clinician",
+  "breastfeeding": "ask_clinician",
+  "source_url": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-happyhead-hair-growth-supplements",
+  "pregnancy": "avoid",
+  "breastfeeding": "avoid",
+  "source_url": "https://www.nccih.nih.gov/health/saw-palmetto",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-heraure-hermag-magnesium",
+  "pregnancy": "ask_clinician",
+  "breastfeeding": "avoid",
+  "source_url": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-buni-transform-scar-body-oil",
+  "pregnancy": "avoid",
+  "breastfeeding": "ok",
+  "source_url": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-buni-bundle",
+  "pregnancy": "avoid",
+  "breastfeeding": "ok",
+  "source_url": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-kiero-pure-radiant-eye-cream",
+  "pregnancy": "avoid",
+  "breastfeeding": "ok",
+  "source_url": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-neycher-vaginal-moisturizer",
+  "pregnancy": "ask_clinician",
+  "breastfeeding": "ask_clinician",
+  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+  "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-neycher-hydrobloom-gel",
+  "pregnancy": "ask_clinician",
+  "breastfeeding": "ask_clinician",
+  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
   "reviewed": "2026-10-17"
  },
  {
@@ -204,20 +344,6 @@ export default [
   "reviewed": "2026-10-17"
  },
  {
-  "product": "p-neycher-hydrobloom-gel",
-  "pregnancy": "unknown",
-  "breastfeeding": "unknown",
-  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-  "reviewed": "2026-10-17"
- },
- {
-  "product": "p-neycher-vaginal-moisturizer",
-  "pregnancy": "ask_clinician",
-  "breastfeeding": "unknown",
-  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-  "reviewed": "2026-10-17"
- },
- {
   "product": "p-oboo-loob-arousal",
   "pregnancy": "unknown",
   "breastfeeding": "unknown",
@@ -229,34 +355,6 @@ export default [
   "pregnancy": "unknown",
   "breastfeeding": "unknown",
   "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-  "reviewed": "2026-10-17"
- },
- {
-  "product": "p-b-complex",
-  "pregnancy": "ask_clinician",
-  "breastfeeding": "ask_clinician",
-  "source_url": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
-  "reviewed": "2026-10-17"
- },
- {
-  "product": "p-heraure-hermag-magnesium",
-  "pregnancy": "ask_clinician",
-  "breastfeeding": "unknown",
-  "source_url": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
-  "reviewed": "2026-10-17"
- },
- {
-  "product": "p-magnesium-glycinate",
-  "pregnancy": "ok",
-  "breastfeeding": "ok",
-  "source_url": "https://ods.od.nih.gov/factsheets/Magnesium-HealthProfessional/",
-  "reviewed": "2026-10-17"
- },
- {
-  "product": "p-fish-oil",
-  "pregnancy": "ask_clinician",
-  "breastfeeding": "ask_clinician",
-  "source_url": "https://files.nccih.nih.gov/s3fs-public/Omega-3_11-30-2015.pdf",
   "reviewed": "2026-10-17"
  },
  {
@@ -544,41 +642,6 @@ export default [
   "pregnancy": "avoid",
   "breastfeeding": "ask_clinician",
   "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
-  "reviewed": "2026-10-17"
- },
- {
-  "product": "p-cranberry-supplement",
-  "pregnancy": "ask_clinician",
-  "breastfeeding": "ask_clinician",
-  "source_url": "https://www.nccih.nih.gov/health/cranberry",
-  "reviewed": "2026-10-17"
- },
- {
-  "product": "p-d-mannose-now",
-  "pregnancy": "unknown",
-  "breastfeeding": "unknown",
-  "source_url": "https://www.cochrane.org/CD013608/RENAL_d-mannose-preventing-and-treating-urinary-tract-infections",
-  "reviewed": "2026-10-17"
- },
- {
-  "product": "p-good-kitty-uti-biome-shield",
-  "pregnancy": "ask_clinician",
-  "breastfeeding": "ask_clinician",
-  "source_url": "https://www.ncbi.nlm.nih.gov/sites/books/NBK501837/",
-  "reviewed": "2026-10-17"
- },
- {
-  "product": "p-uqora-control",
-  "pregnancy": "unknown",
-  "breastfeeding": "unknown",
-  "source_url": "https://www.cochrane.org/CD013608/RENAL_d-mannose-preventing-and-treating-urinary-tract-infections",
-  "reviewed": "2026-10-17"
- },
- {
-  "product": "p-winx-uti-daily-defense",
-  "pregnancy": "avoid",
-  "breastfeeding": "ask_clinician",
-  "source_url": "https://www.nccih.nih.gov/health/turmeric",
   "reviewed": "2026-10-17"
  },
  {
