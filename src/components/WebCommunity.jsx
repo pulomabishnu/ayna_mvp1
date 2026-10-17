@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { getGuestClient, getGuestId, ensureGuestSession } from '../utils/community/guestClient.js';
@@ -1002,7 +1002,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
             if (!followingIds.length) return <><h2>You’re not following anyone yet</h2><p>Follow people to see their posts here.</p></>;
             if (!named.length) return <><h2>People you follow haven’t posted yet</h2><p>Their posts will show up here.</p></>;
             const extra = followingIds.length - named.length;
-            return <><h2>{named.map((p, i) => <React.Fragment key={p.user_id}>{i > 0 && (i === named.length - 1 && !extra ? ' and ' : ', ')}<button type="button" className="wc-inline-name" onClick={() => openProfile(p.username)}>{p.display_name || p.username}</button></React.Fragment>)}{extra > 0 ? ` and ${extra} more` : ''} {named.length + Math.max(extra, 0) === 1 ? 'hasn’t' : 'haven’t'} posted yet</h2><p>Their posts will show up here.</p></>;
+            return <><h2>{named.map((p, i) => <Fragment key={p.user_id}>{i > 0 && (i === named.length - 1 && !extra ? ' and ' : ', ')}<button type="button" className="wc-inline-name" onClick={() => openProfile(p.username)}>{p.display_name || p.username}</button></Fragment>)}{extra > 0 ? ` and ${extra} more` : ''} {named.length + Math.max(extra, 0) === 1 ? 'hasn’t' : 'haven’t'} posted yet</h2><p>Their posts will show up here.</p></>;
           })()}
           <button type="button" className="wc-btn" onClick={() => { const el = document.querySelector('.wc-search input'); if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.focus({ preventScroll: true }); } }}>Find people</button>
           {suggestedPeople.length > 0 && <ul className="wc-suggest" aria-label="People to follow">{suggestedPeople.map((p) => <li key={p.user_id}>
