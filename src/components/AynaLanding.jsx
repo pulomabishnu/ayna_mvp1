@@ -543,7 +543,7 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
         if (filter && filter !== 'all') return scored.slice(0, 4).map((x) => x.p);
         const areaOf = (p) => MACRO_GROUPS.find((g) => g.id !== 'all' && itemMatchesMacroGroup(p, g.id))?.id || p.category;
         const seen = new Set(); const first = [];
-        for (const x of scored) { const a = areaOf(x.p); if (!seen.has(a)) { seen.add(a); first.push(x); } if (first.length === 4) break; }
+        for (const x of scored) { if (BASICS_IDS.has(x.p.id)) continue; const a = areaOf(x.p); if (!seen.has(a)) { seen.add(a); first.push(x); } if (first.length === 4) break; }
         const rest = scored.filter((x) => !first.includes(x));
         return [...first, ...rest].slice(0, 4).map((x) => x.p);
       }
