@@ -39,16 +39,6 @@ const isConsumable = (p) => {
   return ((full.type || p?.type) === 'physical' || p?.userAdded === true) && full.category !== 'telehealth';
 };
 
-/** Category counts from the Ecosystem only, so they always match the Ecosystem number. */
-function ecosystemInsights(products) {
-  const counts = new Map();
-  products.forEach((p) => { const c = p?.category || PRODUCT_BY_ID.get(p?.id)?.category; if (c) counts.set(c, (counts.get(c) || 0) + 1); });
-  const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]);
-  const max = sorted.length ? sorted[0][1] : 0;
-  const top = sorted.slice(0, 4).map(([cat, n], i) => ({ rank: String(i + 1).padStart(2, '0'), name: CATEGORY_LABEL(cat), count: n, pct: max ? Math.round((n / max) * 100) : 0 }));
-  return { top };
-}
-
 /* At a glance: what she told us, in a few facts, and her shelves by the same
    names My Ecosystem uses. No personality label (she never asked for one). */
 /* Badges are gone from the website until the app ships (a badge for an app
@@ -103,7 +93,7 @@ function Routine({ products }) {
   // Overlaps among the things she places in her routine (e.g. two chasteberry products).
   const shared = findSharedActives(products.filter((p) => routineMap[p.id]), 3);
   return <section className="wyou-card">
-    <div className="wyou-card-head"><h2>Routine</h2><span>{placed} of {products.length} placed</span></div>
+    <div className="wyou-card-head"><h2>Routine</h2><span>{placed} of {products.length} placed <small className="wyou-sub">(things you use on a schedule; apps and services aren't counted)</small></span></div>
     <div className="wyou-tabs" role="tablist">{ROUTINE_BUCKETS.map((b) => <button type="button" key={b} role="tab" aria-selected={bucket === b} className={bucket === b ? 'is-on' : ''} onClick={() => setBucket(b)}>{ROUTINE_BUCKET_LABELS[b]}</button>)}</div>
     {inBucket.length ? <ul className="wyou-list">{inBucket.map((p) => <li key={p.id}><span title={p.name}>{shortName(p)}</span><button type="button" onClick={() => removeFromRoutine(p.id)}>Remove</button></li>)}</ul>
       : <p className="wyou-muted">Nothing in {ROUTINE_BUCKET_LABELS[bucket].toLowerCase()} yet.</p>}
@@ -148,7 +138,7 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
     })
     .filter(Boolean);
   const affinity = getBrandAffinity(quizResults, products);
-  const { top } = useMemo(() => ecosystemInsights(products), [products]);
+  // (Category counts now live only in At a glance.)
   const savedCount = Object.values(savedProducts || {}).filter(Boolean).length;
   // Same source as the header greeting (user_metadata), read on every render so a
   // late-arriving session (after a reload) shows the name instead of "Not set".
@@ -266,9 +256,9 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
 
         {consumables.length > 0 && <Routine products={consumables} />}
 
-        {(affinity.length > 0 || top.length > 0) && <section className="wyou-card">
-          <div className="wyou-card-head"><h2>What you’re into</h2>{top.length > 0 && <span>From your Ecosystem</span>}</div>
-          {top.length > 0 && <ol className="wyou-top">{top.map((t) => <li key={t.name}><b>{t.rank}</b><span>{t.name}</span><i aria-hidden="true"><em style={{ width: `${t.pct}%` }} /></i><small>{t.count} {t.count === 1 ? 'item' : 'items'}</small></li>)}</ol>}
+        {/* The per-type counts repeated "Your shelves" in At a glance (audit), so only the interest chips stay. */}
+        {affinity.length > 0 && <section className="wyou-card">
+          <div className="wyou-card-head"><h2>What you’re into</h2></div>
           {affinity.length > 0 && <div className="wyou-chips">{affinity.map((a) => <span key={a.tag}>{a.label} · {a.score}%</span>)}</div>}
         </section>}
 

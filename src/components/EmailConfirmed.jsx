@@ -17,7 +17,7 @@ export default function EmailConfirmed({ onAuthenticated }) {
     // readable by any third-party script on the page.
     try {
       window.history.replaceState(null, '', window.location.pathname + window.location.search);
-    } catch (_) { /* non-fatal */ }
+    } catch { /* non-fatal */ }
     const accessToken = hash.get('access_token');
     const refreshToken = hash.get('refresh_token');
 

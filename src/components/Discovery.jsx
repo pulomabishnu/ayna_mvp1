@@ -14,6 +14,7 @@ import { findConfidentProductMatch } from '../utils/naturalLanguageSearch';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { isPartnerBrandItem, getPartnerBrandRank } from '../utils/partnerBrands';
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
+import { recordSearch } from '../utils/recentActivity';
 import { availablePreferenceOptions, matchesProductPreference } from '../utils/productPreferences';
 import useStaticPlaceholder from '../utils/useStaticPlaceholder';
 import { getVerificationLinks } from '../utils/verificationLinks';
@@ -529,7 +530,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // Freshly generated on every mount, Discovery unmounts/remounts on each navigation to it,
     // so this reshuffles the browsing grid's default order every time a user lands on the page,
     // without reshuffling mid-visit as filters/sort change.
-    const [shuffleSeed] = useState(() => Math.random().toString(36).slice(2));
+    // Audit B20: stable for the whole day (same order on every visit today), so a
+    // returning shopper doesn't lose her place; it still rotates daily for fairness.
+    const [shuffleSeed] = useState(() => `day-${new Date().toISOString().slice(0, 10)}`);
     // Personalization requires an actual account (quiz results / health import /
     // real recommendations all live behind login) -- never on for a logged-out
     // visitor, regardless of any of those other signals somehow being truthy.
@@ -1396,6 +1399,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const runSearch = (rawQuery) => {
         const q = (rawQuery || '').trim();
         if (!q || q.length < 2) return;
+        recordSearch(q);
         setSearchQuery(q);
         // Typos fixed before the category nudges and live search ("tampoons" -> "tampons").
         const qFixed = correctedSearchQuery(q);
@@ -1552,7 +1556,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const activeFilterCount = [priceFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, typeFilter].filter((v) => v && v !== 'all').length + (categoryFilter !== 'all' && !submittedQuery ? 1 : 0);
 
     return (
-        <section className="container animate-fade-in-up ayna-browse" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
+        <section className="container ayna-browse" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
             <div className="ay3-band ay3-band--rose ay3-shophero">
             <div className="ayna-browse__heading ay3-withpile">
                 <div>
@@ -1763,7 +1767,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         )}
                         <ProductCard
                             product={item}
-                            style={{ animation: `fadeInUp 0.4s ${Math.min(idx * 0.04, 0.24)}s backwards` }}
+                            style={undefined}
                             matchPercent={matchPercent}
                             matchLabel={badge ? badge.label : ''}
                             rating={(() => { const d = aynaReviews[item.id]; const v = getAynaRating(item, d); const n = Array.isArray(d?.ratings) ? d.ratings.length : 0; return v != null && n > 0 ? { value: Number(v), count: n } : null; })()}
@@ -1783,7 +1787,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                     <img
                                         src={cardImageSrc}
                                         alt={item.name}
-                                        loading="lazy"
+                                        width={400}
+                                        height={400}
+                                        loading={idx < 4 ? 'eager' : 'lazy'}
+                                        fetchPriority={idx === 0 ? 'high' : undefined}
                                         onError={(e) => {
                                             e.currentTarget.style.display = 'none';
                                             const fallback = e.currentTarget.nextElementSibling;

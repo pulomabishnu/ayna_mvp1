@@ -586,8 +586,15 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
   const read = useMemo(() => pickReadForYou(quizResults, healthProfile), [quizResults, healthProfile]);
   const savedList = useMemo(() => {
     const byId = new Map(ALL_PRODUCTS.map((p) => [p.id, p]));
-    return Object.keys(savedProducts || {}).map((id) => byId.get(id) || (savedProducts[id]?.id ? savedProducts[id] : null)).filter(Boolean);
-  }, [savedProducts]);
+    // Saved is "for later": anything already on her shelves isn't repeated here.
+    return Object.keys(savedProducts || {}).filter((id) => !myProducts?.[id]).map((id) => byId.get(id) || (savedProducts[id]?.id ? savedProducts[id] : null)).filter(Boolean);
+  }, [savedProducts, myProducts]);
+  // A peek at her matches in the next-step area, so that card is never empty.
+  const nextAreaPicks = useMemo(() => {
+    if (!nextArea) return [];
+    const byId = new Map(ALL_PRODUCTS.map((p) => [p.id, p]));
+    return (recommendedProductIds || []).map((id) => byId.get(id)).filter((p) => p && itemMatchesMacroGroup(p, nextArea.id)).slice(0, 4);
+  }, [nextArea, recommendedProductIds]);
   // "New since your last visit": matches she has not been shown on Home before.
   const SEEN_KEY = 'ayna_home_seen_matches_v1';
   const [seenAtLoad] = useState(() => { try { const v = JSON.parse(localStorage.getItem(SEEN_KEY) || 'null'); return Array.isArray(v) ? new Set(v) : null; } catch { return null; } });
@@ -607,7 +614,12 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
         {nextArea ? (
           <button type="button" className="lx-dash__card lx-dash__card--next" onClick={() => onViewDiscovery?.({ initialMacroGroup: nextArea.id })}>
             <span className="lx-dash__label">Your next step</span>
-            <strong>{recommendedProductIds?.length ? `Your matches in ${nextArea.label}` : `Start your ${nextArea.label} shelf`}</strong>
+            <strong>{nextAreaPicks.length ? `Your matches in ${nextArea.label}` : `Start your ${nextArea.label} shelf`}</strong>
+            {nextAreaPicks.length > 0 ? (
+              <ul className="lx-dash__thumbs" aria-hidden="true">
+                {nextAreaPicks.map((p) => <li key={p.id}><span><ProductTileImage product={p} /></span></li>)}
+              </ul>
+            ) : <span className="lx-dash__body">Nothing on your shelves for {nextArea.label.toLowerCase()} yet. See what fits you.</span>}
             <span className="lx-dash__go">Browse {nextArea.label} <Arrow /></span>
           </button>
         ) : (

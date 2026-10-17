@@ -20,12 +20,12 @@ function loadFromStorage() {
     if (legacyRaw) {
       const parsed = JSON.parse(legacyRaw);
       if (parsed && typeof parsed === 'object') {
-        try { window.sessionStorage.setItem(STORAGE_KEY, legacyRaw); } catch (_) {}
-        try { window.localStorage.removeItem(STORAGE_KEY); } catch (_) {}
+        try { window.sessionStorage.setItem(STORAGE_KEY, legacyRaw); } catch { /* ignore */ }
+        try { window.localStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
         return parsed;
       }
     }
-  } catch (_) {}
+  } catch { /* ignore */ }
   return {};
 }
 
@@ -33,9 +33,9 @@ function saveToStorage(data) {
   try {
     if (typeof window !== 'undefined') {
       window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      try { window.localStorage.removeItem(STORAGE_KEY); } catch (_) {}
+      try { window.localStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
     }
-  } catch (_) {}
+  } catch { /* ignore */ }
 }
 
 /**

@@ -34,8 +34,8 @@ function migrateLegacyCacheKey(key) {
     if (current != null) return current;
     const legacy = window.localStorage.getItem(key);
     if (legacy == null) return null;
-    try { window.sessionStorage.setItem(key, legacy); } catch (_) {}
-    try { window.localStorage.removeItem(key); } catch (_) {}
+    try { window.sessionStorage.setItem(key, legacy); } catch { /* ignore */ }
+    try { window.localStorage.removeItem(key); } catch { /* ignore */ }
     return legacy;
   } catch {
     return null;
@@ -82,7 +82,7 @@ export function saveCachedLlmRecommendations(fingerprint, recommendations) {
       RECS_CACHE_KEY,
       JSON.stringify({ fingerprint, recommendations })
     );
-    try { window.localStorage.removeItem(RECS_CACHE_KEY); } catch (_) {}
+    try { window.localStorage.removeItem(RECS_CACHE_KEY); } catch { /* ignore */ }
     return true;
   } catch (e) {
     console.warn('[Ayna] could not cache recommendations for this session:', e?.name);
@@ -115,7 +115,7 @@ export function saveFetchedLlmFingerprint(fingerprint) {
   if (!fingerprint || typeof window === 'undefined') return;
   try {
     window.sessionStorage.setItem(FETCHED_FINGERPRINT_KEY, String(fingerprint));
-    try { window.localStorage.removeItem(FETCHED_FINGERPRINT_KEY); } catch (_) {}
+    try { window.localStorage.removeItem(FETCHED_FINGERPRINT_KEY); } catch { /* ignore */ }
   } catch {
     // no-op
   }

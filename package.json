@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/gen-sitemap.mjs && cross-env PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 vite build",
+    "build": "node scripts/gen-sitemap.mjs && cross-env PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 vite build && node scripts/prerender.mjs",
     "lint": "eslint .",
     "test": "vitest run",
     "catalog:export": "node scripts/export-catalog.mjs",

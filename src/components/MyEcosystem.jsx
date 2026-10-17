@@ -1008,7 +1008,7 @@ export default function MyEcosystem({
                 window.sessionStorage.removeItem('ayna_force_llm_refresh');
                 return 1;
             }
-        } catch (_) {}
+        } catch { /* ignore */ }
         return 0;
     });
     const [completedGenerationNonce, setCompletedGenerationNonce] = useState(0);

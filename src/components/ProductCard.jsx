@@ -80,7 +80,7 @@ export default function ProductCard({
           {/* What it is, in a few words, when the brand took the eyebrow slot. */}
           {!isMine && shownBrand && <span className="ay-card-kind">{String(categoryLabel).replace(/^[^\w]+\s*/, '')}</span>}
           <span className={`ayna-discover-card__price${price.main === 'Price at retailer' ? ' is-unknown' : ''}`}>{price.main}{price.sub && (/^list\s+\$/i.test(price.sub)
-            ? <small><span className="sr-only">List price </span><s>{price.sub.replace(/^list\s+/i, '')}</s></small>
+            ? (() => { const [was, ...rest] = price.sub.replace(/^list\s+/i, '').split(/\s+·\s+/); return <small><span className="sr-only">List price </span><s>{was}</s>{rest.length > 0 && <span className="ay-card-unit">{rest.join(' · ')}</span>}</small>; })()
             : <small>{price.sub}</small>)}</span>
           {(() => {
             // Cards stay simple: the research count lives on the product page.

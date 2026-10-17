@@ -13,7 +13,8 @@ export default function SavedForLater({
   onAddToEcosystem,
   onBrowse,
 }) {
-  const items = Object.values(savedProducts || {});
+  // "For later" only: anything already on her shelves isn't listed twice (audit).
+  const items = Object.values(savedProducts || {}).filter((p) => p?.id && !myProducts?.[p.id]);
 
   return (
     <section id="ayna-wishlist" className="eco-saved mockup-page wishlist-section">

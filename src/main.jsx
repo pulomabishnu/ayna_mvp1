@@ -66,7 +66,7 @@ function opaqueAccountKey(value) {
 function randomAnalyticsId() {
   try {
     if (globalThis.crypto?.randomUUID) return `ayna_${globalThis.crypto.randomUUID()}`;
-  } catch (_) {}
+  } catch { /* ignore */ }
   return `ayna_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 14)}`;
 }
 
@@ -112,7 +112,7 @@ if (originalIdentify) {
         posthog.register?.({ is_internal: true });
         posthog.people?.set?.({ is_internal: true });
       }
-    } catch (_) {}
+    } catch { /* ignore */ }
     return result;
   };
 }
@@ -262,7 +262,7 @@ class ErrorBoundary extends React.Component {
     // the one-shot flag so a LATER, unrelated chunk error in the same tab
     // session (e.g. another deploy landing while it's still open) still gets
     // its own automatic retry instead of going straight to the error screen.
-    try { sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch (_) { /* private mode */ }
+    try { sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch { /* private mode */ }
   }
 
   componentDidCatch(error) {

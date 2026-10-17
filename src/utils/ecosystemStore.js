@@ -55,8 +55,8 @@ function readLocalShadow(userId) {
     const legacy = window.localStorage.getItem(key);
     if (!legacy) return emptyShadow();
     const parsed = normalizeShadow(JSON.parse(legacy));
-    try { window.sessionStorage.setItem(key, JSON.stringify(parsed)); } catch (_) {}
-    try { window.localStorage.removeItem(key); } catch (_) {}
+    try { window.sessionStorage.setItem(key, JSON.stringify(parsed)); } catch { /* ignore */ }
+    try { window.localStorage.removeItem(key); } catch { /* ignore */ }
     return parsed;
   } catch {
     return emptyShadow();
@@ -68,7 +68,7 @@ function writeLocalShadow(userId, shadow) {
   const key = localShadowKey(userId);
   try {
     window.sessionStorage.setItem(key, JSON.stringify(normalizeShadow(shadow)));
-    try { window.localStorage.removeItem(key); } catch (_) {}
+    try { window.localStorage.removeItem(key); } catch { /* ignore */ }
     return true;
   } catch {
     return false;

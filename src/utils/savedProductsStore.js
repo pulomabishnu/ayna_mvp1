@@ -85,7 +85,7 @@ export async function setSavedForUser(supabase, userId, product, isSaved) {
   if (!supabase || !userId || !product?.id) return false;
   if (remoteColumnMissing) return false;
 
-  try { await compactLegacyAuthMetadata(supabase); } catch (_) {}
+  try { await compactLegacyAuthMetadata(supabase); } catch { /* ignore */ }
 
   const { error } = await supabase
     .from('user_ecosystems')

@@ -77,7 +77,7 @@ export function useSpeechToText() {
       if (recognitionRef.current) {
         try {
           recognitionRef.current.stop();
-        } catch (_) {}
+        } catch { /* ignore */ }
         recognitionRef.current = null;
       }
     };

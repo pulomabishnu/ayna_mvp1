@@ -43,8 +43,8 @@ export function loadHealthProfile() {
     const parsed = JSON.parse(legacyRaw);
     if (!parsed || typeof parsed !== 'object') return null;
     const normalized = normalizeProfile(parsed);
-    try { window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(normalized)); } catch (_) {}
-    try { window.localStorage.removeItem(STORAGE_KEY); } catch (_) {}
+    try { window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(normalized)); } catch { /* ignore */ }
+    try { window.localStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
     return normalized;
   } catch {
     return null;
@@ -55,8 +55,8 @@ export function saveHealthProfile(profile) {
   if (typeof window === 'undefined') return null;
   const next = normalizeProfile(profile);
   next.updatedAt = new Date().toISOString();
-  try { window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch (_) {}
-  try { window.localStorage.removeItem(STORAGE_KEY); } catch (_) {}
+  try { window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch { /* ignore */ }
+  try { window.localStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
   return next;
 }
 

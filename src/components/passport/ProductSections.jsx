@@ -531,7 +531,7 @@ export function ProductMatch({ glance, matchPercent, fallback = '', onShowWhy, o
         </button>
         <div className="ay-match__body">
           <h2 id="ay-match-h">How it compares to <em>your needs.</em></h2>
-          <ul className="ay-match__reasons">{(exclusions.length ? exclusions.slice(0, 3) : ['It doesn’t line up with the needs you told us about.']).map((r) => <li key={r} className="is-miss"><span className="sr-only">Counts against: </span>{r}</li>)}</ul>
+          <ul className="ay-match__reasons">{(exclusions.length ? exclusions.slice(0, 3) : ['Not one of the needs you told us about.']).map((r) => <li key={r} className="is-miss"><span className="sr-only">Counts against: </span>{r}</li>)}</ul>
           <div className="ay-match__links"><button type="button" onClick={onShowWhy}>See the breakdown</button><a href="/how-it-works">How we match</a></div>
         </div>
       </section>

@@ -102,6 +102,7 @@ import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './components/Ecosy
 import EcosystemPreview from './components/v3/EcosystemPreview';
 import { clearPersonalStorage } from './utils/clearPersonalStorage';
 import { toast } from './utils/toast';
+import { recordProductView } from './utils/recentActivity';
 import GlobalToast from './components/v3/GlobalToast';
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
@@ -121,12 +122,12 @@ const ecosystemResetKey = (userId) => `ayna_ecosystem_reset_at:${userId || 'anon
 
 function getPendingEcosystemResetAt(userId) {
   if (!userId) return 0;
-  try { return Number(localStorage.getItem(ecosystemResetKey(userId)) || 0) || 0; } catch (_) { return 0; }
+  try { return Number(localStorage.getItem(ecosystemResetKey(userId)) || 0) || 0; } catch { return 0; }
 }
 
 function clearPendingEcosystemReset(userId) {
   if (!userId) return;
-  try { localStorage.removeItem(ecosystemResetKey(userId)); } catch (_) {}
+  try { localStorage.removeItem(ecosystemResetKey(userId)); } catch { /* ignore */ }
 }
 
 const VIEW_TO_PATH = {
@@ -672,7 +673,7 @@ function App() {
       }
 
       sessionStorage.removeItem('ayna_pending_auth_action');
-    } catch (_) {}
+    } catch { /* ignore */ }
   }, []);
 
   React.useEffect(() => {
@@ -762,7 +763,7 @@ function App() {
         try {
           const { data } = await supabase.auth.getSession();
           if (data?.session) return; // recovered, was transient, wipe nothing
-        } catch (_) {
+        } catch {
           // getSession() itself failing doesn't prove there's no session
           // fall through to the wipe rather than loop forever on an
           // unrelated network error, same as every other best-effort check
@@ -800,7 +801,7 @@ function App() {
           localStorage.removeItem('ayna_reviews');
           localStorage.removeItem('ayna_health_profile_v1');
           sessionStorage.removeItem('ayna_force_llm_refresh');
-        } catch (_) {}
+        } catch { /* ignore */ }
         }, 0);
       }
     });
@@ -858,6 +859,20 @@ function App() {
       loadSavedForUser(supabase, loadForUserId).catch(() => null),
     ]).then(([ecosystem, reviews, memory, intake, healthProfileResult, saved]) => {
       if (cancelled) return;
+      if (!ecosystem) {
+        // B3: an expired sign-in used to leave her avatar up over an EMPTY
+        // ecosystem, which reads like her products are gone. If the session is
+        // no longer valid, say so and sign out locally (nothing on the server
+        // is touched; signing back in loads everything).
+        supabase.auth.getUser().then(({ data, error }) => {
+          if (cancelled || (!error && data?.user)) return;
+          // Offline or a server hiccup is not a sign-out: only a real auth answer is.
+          const authFailure = !error || error.status === 401 || error.status === 403 || /jwt|session|not authenticated/i.test(String(error.message || ''));
+          if (!authFailure || error?.name === 'AuthRetryableFetchError') return;
+          toast('You’ve been signed out. Sign in again to see your ecosystem.');
+          supabase.auth.signOut({ scope: 'local' }).catch(() => {});
+        }).catch(() => {});
+      }
       if (saved) {
         // Merge rather than replace: anything saved while signed out on this
         // device should survive signing in.
@@ -906,7 +921,7 @@ function App() {
         setAynaReviews(hydrateAynaReviews(reviews));
       }
       if (memory) {
-        try { localStorage.setItem('ayna_llm_learning_memory_v1', JSON.stringify(memory)); } catch (_) {}
+        try { localStorage.setItem('ayna_llm_learning_memory_v1', JSON.stringify(memory)); } catch { /* ignore */ }
       }
       if (intake?.personalizationCompleted) {
         setQuizResults(mapIntakeToLegacyQuizProfile(intake));
@@ -950,7 +965,7 @@ function App() {
       setMyProducts(prev => ({ ...instantProducts, ...Object.fromEntries(Object.entries(prev || {}).filter(([, p]) => p && !isGeneratedPick(p))) }));
       setEcosystemOrder(prev => [...Object.keys(instantProducts), ...prev.filter(id => !instantProducts[id] && myProductsRef.current[id] && !isGeneratedPick(myProductsRef.current[id]))]);
       clearCachedLlmRecommendations();
-      try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
+      try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch { /* ignore */ }
       const _supabase = getSupabaseClient();
       if (_supabase && user) {
         // Persist the instant seed right away rather than waiting on the async
@@ -1061,7 +1076,7 @@ function App() {
     }
     const timer = setTimeout(() => {
       let pendingStash = false;
-      try { pendingStash = Boolean(sessionStorage.getItem('ayna_pending_consent')); } catch (_) {}
+      try { pendingStash = Boolean(sessionStorage.getItem('ayna_pending_consent')); } catch { /* ignore */ }
       if (!pendingStash) setConsentGateOpen(true);
     }, 2000);
     return () => clearTimeout(timer);
@@ -1101,7 +1116,7 @@ function App() {
         if (active && completedIntake && !quizResults) {
           setQuizResults(mapIntakeToLegacyQuizProfile(savedIntake));
         }
-      } catch (_) {
+      } catch {
         if (timeoutId) window.clearTimeout(timeoutId);
       }
     })();
@@ -1137,12 +1152,12 @@ function App() {
   React.useEffect(() => {
     try {
       if (typeof window !== 'undefined' && localStorage.getItem('ayna_zip')) setUserZipCode(localStorage.getItem('ayna_zip') || '');
-    } catch (_) {}
+    } catch { /* ignore */ }
   }, []);
 
   const handleZipCodeChange = (zip) => {
     setUserZipCode(zip);
-    try { if (typeof window !== 'undefined') localStorage.setItem('ayna_zip', zip || ''); } catch (_) {}
+    try { if (typeof window !== 'undefined') localStorage.setItem('ayna_zip', zip || ''); } catch { /* ignore */ }
   };
 
   // The zip captured during intake was "capture-only, no downstream wiring"
@@ -1165,7 +1180,7 @@ function App() {
         const stored = localStorage.getItem('ayna_checkin_completed_at');
         if (stored) setCheckinCompletedAt(stored);
       }
-    } catch (_) {}
+    } catch { /* ignore */ }
   }, []);
 
   const CHECKIN_INTERVAL_MS = 30 * 24 * 60 * 60 * 1000; // ~monthly
@@ -1195,7 +1210,7 @@ function App() {
       seenLocally = localStorage.getItem(
         `${HEALTH_PROFILE_UPDATE_NOTICE_KEY}:${user.id}`
       ) === '1';
-    } catch (_) {}
+    } catch { /* ignore */ }
 
     const seenInAccount = user?.user_metadata?.[HEALTH_PROFILE_UPDATE_NOTICE_KEY] === true;
 
@@ -1223,7 +1238,7 @@ function App() {
 
     try {
       localStorage.setItem(`${HEALTH_PROFILE_UPDATE_NOTICE_KEY}:${user.id}`, '1');
-    } catch (_) {}
+    } catch { /* ignore */ }
 
     setShowHealthProfileUpdateNotice(false);
 
@@ -1409,7 +1424,7 @@ function App() {
     setEcosystemOrder(prev => [...Object.keys(instantProducts), ...prev.filter(id => !instantProducts[id] && myProductsRef.current[id] && !isGeneratedPick(myProductsRef.current[id]))]);
     llmBuiltThisSessionRef.current = false;
     clearCachedLlmRecommendations();
-    try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
+    try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch { /* ignore */ }
     const supabase = getSupabaseClient();
     // Local reset is immediate; remote sync is best-effort and never blocks build.
     // Persist the instant seed too (chained after the reset, not fired in
@@ -1452,7 +1467,7 @@ function App() {
     setEcosystemOrder(prev => [...Object.keys(instantProducts), ...prev.filter(id => !instantProducts[id] && myProductsRef.current[id] && !isGeneratedPick(myProductsRef.current[id]))]);
     llmBuiltThisSessionRef.current = false;
     clearCachedLlmRecommendations();
-    try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
+    try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch { /* ignore */ }
     const supabase = getSupabaseClient();
     // Local reset is immediate; remote sync is best-effort and never blocks build.
     // Persist the instant seed too (chained after the reset, not fired in
@@ -1644,7 +1659,7 @@ function App() {
       try {
         const memory = JSON.parse(localStorage.getItem('ayna_llm_learning_memory_v1') || 'null');
         if (memory) saveLearningMemoryForUser(getSupabaseClient(), user.id, memory).catch(console.error);
-      } catch (_) {}
+      } catch { /* ignore */ }
     }
   };
 
@@ -1718,6 +1733,7 @@ function App() {
     ? ' app-nav--about'
     : (user && ecosystemCount > 0) ? ' app-nav--returning' : '';
   const handleOpenProduct = (product, meta = {}) => {
+    recordProductView(product?.id);
     if (!product?.id) return;
     const p = product?.llmGenerated ? enrichLlmProductForDiscovery(product) : product;
     const source = meta.source || 'browse';
@@ -2457,7 +2473,7 @@ function App() {
               setCheckinData(answers);
               const now = new Date().toISOString();
               setCheckinCompletedAt(now);
-              try { if (typeof window !== 'undefined') localStorage.setItem('ayna_checkin_completed_at', now); } catch (_) {}
+              try { if (typeof window !== 'undefined') localStorage.setItem('ayna_checkin_completed_at', now); } catch { /* ignore */ }
             }}
             onClose={() => {
               setShowCheckin(false);
@@ -2651,7 +2667,7 @@ function App() {
             onAgreed={(updatedUser) => { if (updatedUser) setUser(updatedUser); setConsentGateOpen(false); }}
             onDecline={async () => {
               setConsentGateOpen(false);
-              try { await getSupabaseClient()?.auth.signOut(); } catch (_) {}
+              try { await getSupabaseClient()?.auth.signOut(); } catch { /* ignore */ }
             }}
           />
         )}
@@ -2685,7 +2701,7 @@ function App() {
                 if (pendingAction === 'quiz-complete' && pendingQuizResults) {
                   sessionStorage.setItem('ayna_pending_quiz_results', JSON.stringify(pendingQuizResults));
                 }
-              } catch (_) {}
+              } catch { /* ignore */ }
             }}
             onSkip={() => {
               setShowAuthModal(false);

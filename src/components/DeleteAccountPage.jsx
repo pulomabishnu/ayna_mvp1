@@ -69,7 +69,7 @@ export default function DeleteAccountPage({ onBack }) {
             sessionStorage.removeItem(REAUTH_PENDING_KEY);
             resumed = true;
           }
-        } catch (_) { /* private mode */ }
+        } catch { /* private mode */ }
         if (resumed) setStep('confirm');
       } finally {
         if (!cancelled) setLoadingUser(false);
@@ -147,7 +147,7 @@ export default function DeleteAccountPage({ onBack }) {
     try {
       sessionStorage.setItem(REAUTH_PENDING_KEY, '1');
       sessionStorage.setItem('ayna_pending_auth_action', 'delete-account');
-    } catch (_) { /* private mode */ }
+    } catch { /* private mode */ }
     const { error: oauthErr } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -156,7 +156,7 @@ export default function DeleteAccountPage({ onBack }) {
       },
     });
     if (oauthErr) {
-      try { sessionStorage.removeItem(REAUTH_PENDING_KEY); } catch (_) {}
+      try { sessionStorage.removeItem(REAUTH_PENDING_KEY); } catch { /* ignore */ }
       setReauthError('Could not start Google sign-in.');
       setReauthBusy(false);
     }
@@ -185,7 +185,7 @@ export default function DeleteAccountPage({ onBack }) {
           reason: reason || 'not specified',
           hasDetails: reasonDetails.trim().length > 0,
         });
-      } catch (_) { /* analytics unavailable */ }
+      } catch { /* analytics unavailable */ }
 
       const res = await fetch('/api/account-delete', {
         method: 'DELETE',

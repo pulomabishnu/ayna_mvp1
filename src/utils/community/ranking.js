@@ -14,6 +14,8 @@ import { topicsForTags, isCycleTopic } from './topics.js';
  *                  for people who don't get periods
  *   matchFor, (productId) => viewer's % match from the existing engine
  *   followingIds / friendIds, social graph
+ *   viewedProductIds / searchTerms, what she opened and searched recently
+ *                  (kept only in her browser, utils/recentActivity.js)
  *   ownedProductIds, ecosystem + wishlist, so posts about products the
  *                  viewer already uses surface
  *
@@ -24,6 +26,8 @@ export const FOR_YOU_WEIGHTS = {
   topic: 3,
   productMatch: 3,
   ownedProduct: 1.5,
+  viewedProduct: 2,
+  searchedTopic: 1.5,
   following: 2,
   friend: 2.5,
   helpful: 0.8,
@@ -47,6 +51,8 @@ export function scorePostForViewer(post, signals = {}, now = Date.now(), weights
     followingIds = new Set(),
     friendIds = new Set(),
     ownedProductIds = new Set(),
+    viewedProductIds = new Set(),
+    searchTerms = [],
   } = signals;
 
   let score = 0;
@@ -70,6 +76,11 @@ export function scorePostForViewer(post, signals = {}, now = Date.now(), weights
     if (best >= 0) score += weights.productMatch * ((best - 50) / 50);
   }
   if (productIds.some((id) => ownedProductIds.has(id))) score += weights.ownedProduct;
+  if (productIds.some((id) => viewedProductIds.has(id))) score += weights.viewedProduct;
+  if (searchTerms.length) {
+    const text = `${post?.title || ''} ${post?.body || ''} ${topics.join(' ')}`.toLowerCase();
+    if (searchTerms.some((t) => t.split(/\s+/).filter((w) => w.length >= 4).some((w) => text.includes(w)))) score += weights.searchedTopic;
+  }
 
   if (post?.author_id && followingIds.has(post.author_id)) score += weights.following;
   if (post?.author_id && friendIds.has(post.author_id)) score += weights.friend;

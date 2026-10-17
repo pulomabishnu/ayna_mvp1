@@ -94,7 +94,7 @@ export async function runEmailJob(admin, { mode, dry, now = Date.now(), send = s
     byUser.get(n.recipient_id).push(n);
   }
 
-  // Announcements go out once, hourly, a few minutes after posting (room for a quick edit).
+  // Announcements go out once, within about 15 minutes of posting (5-minute room for a quick edit; the job runs every 10 minutes).
   let anns = [];
   if (mode === 'instant') {
     const { data, error } = await admin.from('community_announcements').select('id, title, body, created_at')

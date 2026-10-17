@@ -25,7 +25,7 @@
   --ay-font-ui: 'DM Sans', system-ui, sans-serif;
   --ay-font-label: 'DM Sans', 'DM Sans', sans-serif;
   --ay-font-logo: 'Bricolage Grotesque', system-ui, sans-serif;
-  --ay-hand: 'Caveat', 'DM Sans', cursive;
+  --ay-hand: 'DM Serif Display', Georgia, serif;
   --ay-mono: 'DM Sans', ui-monospace, monospace;
   --ay-shadow: 3px 3px 0 var(--ay-ink);
   --ay-shadow-lg: 6px 6px 0 var(--ay-ink);
@@ -388,7 +388,7 @@ html:not([data-ay-theme='dark']) body:has(.app-container:not([data-theme='dark']
    The whole card is the print; brand is written on the white margin,
    name + price printed under it; a strip of washi tape holds it on.
    ===================================================================== */
-.app-container:not([data-theme='dark']) { --ay-hand: 'Caveat', 'DM Sans', cursive; }
+.app-container:not([data-theme='dark']) { --ay-hand: 'DM Serif Display', Georgia, serif; }
 .app-container:not([data-theme='dark']) .ayna-browse__grid { gap: 48px 28px !important; padding-top: 14px; }
 .app-container:not([data-theme='dark']) .ayna-discover-card.ayna-browse-card { --tilt: -1.4deg; --tape: rgba(247, 186, 221, .82); transform: rotate(var(--tilt)) !important; transition: transform .35s cubic-bezier(.3, 1.4, .5, 1), filter .3s !important; }
 .app-container:not([data-theme='dark']) .ayna-discover-card.ayna-browse-card:nth-child(3n+2) { --tilt: 1.2deg; --tape: rgba(118, 158, 190, .78); }
@@ -807,7 +807,7 @@ html:not([data-ay-theme='dark']) body:has(.app-container[data-view='community'],
 .app-container .wq-side__q { margin: 0; font: 400 clamp(120px, 12vw, 190px)/.8 'DM Serif Display', Georgia, serif; letter-spacing: -.04em; animation: ay3In .5s both; }
 .app-container .wq-side__q span { font-style: italic; font-size: .5em; margin-right: .04em; }
 .app-container .wq-side__q small { display: block; margin-top: 10px; font: 400 12px/1 'DM Sans', sans-serif; letter-spacing: .14em; text-transform: uppercase; }
-.app-container .wq-side__sec { width: fit-content; margin: 12px 0 0; padding: 2px 10px; border: 2px solid #3e2723; background: #ffedac; font: 700 30px/1.1 'Caveat', cursive; transform: rotate(-3deg); box-shadow: 3px 3px 0 #3e2723; }
+.app-container .wq-side__sec { width: fit-content; margin: 12px 0 0; padding: 2px 10px; border: 2px solid #3e2723; background: #ffedac; font: 700 30px/1.1 'DM Serif Display', Georgia, serif; transform: rotate(-3deg); box-shadow: 3px 3px 0 #3e2723; }
 .app-container .wq-side__pile { position: relative; height: 300px; margin-top: 40px; }
 .app-container .wq-side__pile img { position: absolute; left: 10%; top: 0; width: 66%; aspect-ratio: 4 / 5; object-fit: cover; padding: 8px 8px 26px; border: 2px solid #3e2723; background: #fff; box-shadow: 5px 5px 0 #3e2723; filter: sepia(.12) saturate(.92); animation: wqDeal .6s cubic-bezier(.3, 1.3, .5, 1) both; }
 .app-container .wq-side__pile .is-0 { z-index: 3; transform: rotate(-5deg); }
@@ -828,7 +828,7 @@ html:not([data-ay-theme='dark']) body:has(.app-container[data-view='community'],
 .app-container:not([data-theme='dark']) .wq-progress span.is-now { background: #ffedac !important; animation: wqBlink 1.4s ease-in-out infinite; }
 @keyframes wqBlink { 50% { opacity: .55; } }
 /* title + section */
-.app-container:not([data-theme='dark']) .wq-section { border: 0 !important; background: none !important; padding: 0 !important; font: 700 26px/1 'Caveat', cursive !important; letter-spacing: 0 !important; text-transform: none !important; }
+.app-container:not([data-theme='dark']) .wq-section { border: 0 !important; background: none !important; padding: 0 !important; font: 700 26px/1 'DM Serif Display', Georgia, serif !important; letter-spacing: 0 !important; text-transform: none !important; }
 .app-container:not([data-theme='dark']) .wq-title { margin-top: 10px !important; }
 /* lettered answers, circled in pink when chosen */
 .app-container:not([data-theme='dark']) .wq-rows { counter-reset: wqopt; }
@@ -888,7 +888,7 @@ html:not([data-ay-theme='dark']) body:has(.app-container[data-view='community'],
   .app-container:not([data-theme='dark']) .wq-noted { right: auto; left: 50%; top: -18px; transform: translateX(-50%) rotate(-8deg); animation: none; }
 }
 @media (prefers-reduced-motion: reduce) { .app-container :is(.wq-card, .wq-side__pile img, .wq-noted, .wq-confetti i, .wq-progress span, .wq-side__q) { animation: none !important; } .app-container .wq-confetti { display: none; } }
-.app-container:not([data-theme='dark']) .wq-page .wq-label-row .wq-section { padding: 0 8px !important; background: #ffedac !important; font: 700 26px/1.1 'Caveat', cursive !important; letter-spacing: 0 !important; text-transform: none !important; transform: rotate(-2deg); }
+.app-container:not([data-theme='dark']) .wq-page .wq-label-row .wq-section { padding: 0 8px !important; background: #ffedac !important; font: 700 26px/1.1 'DM Serif Display', Georgia, serif !important; letter-spacing: 0 !important; text-transform: none !important; transform: rotate(-2deg); }
 
 /* =====================================================================
    My Ecosystem: your bathroom shelves. Each area of care is a shelf
@@ -1070,10 +1070,10 @@ html:not([data-ay-theme='dark']) body:has(.app-container[data-view='community'],
 .app-container .ay3-cab.is-open .ay3-cab__item { transform: none; }
 .app-container .ay3-cab__item img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 4px; }
 .app-container .ay3-cab__shelf:hover .ay3-cab__item { transform: translateY(-4px) rotate(calc((var(--i) - 1.5) * 2deg)); transition-delay: 0s; }
-.app-container .ay3-cab__more { align-self: center; font: 700 22px/1 'Caveat', cursive; color: #3e2723; }
+.app-container .ay3-cab__more { align-self: center; font: 700 22px/1 'DM Serif Display', Georgia, serif; color: #3e2723; }
 .app-container .ay3-cab__label { justify-self: start; margin: 4px 0 4px; padding: 2px 8px; border: 1.5px solid #3e2723; border-radius: 3px; background: #f7badd; color: #3e2723; font: 500 11px/1.2 'DM Sans', ui-monospace, monospace; letter-spacing: .12em; text-transform: uppercase; }
 .app-container .ay3-cab__shelf:nth-child(even) .ay3-cab__label { background: #ffedac; }
-.app-container .ay3-cab__empty { display: grid; place-content: center; gap: 12px; height: 100%; text-align: center; font: 700 26px/1.1 'Caveat', cursive; color: #3e2723; }
+.app-container .ay3-cab__empty { display: grid; place-content: center; gap: 12px; height: 100%; text-align: center; font: 700 26px/1.1 'DM Serif Display', Georgia, serif; color: #3e2723; }
 .app-container .ay3-cab__btn { justify-self: center; padding: 10px 18px; border: 2px solid #3e2723; border-radius: 99px; background: #3e2723; color: #ffedac; font: 700 14px/1 'DM Sans', sans-serif; cursor: pointer; }
 /* the mirror door */
 .app-container .ay3-cab__door { position: absolute; inset: 8px; z-index: 3; padding: 10px; border: 3px solid #3e2723; border-radius: 16px 16px 6px 6px; background: #f7badd; cursor: pointer; transform-origin: 0 50%; transition: transform .9s cubic-bezier(.5, -.2, .2, 1.15), box-shadow .9s; box-shadow: 0 0 0 rgba(62, 39, 35, 0); }
@@ -1085,7 +1085,7 @@ html:not([data-ay-theme='dark']) body:has(.app-container[data-view='community'],
   background: linear-gradient(115deg, transparent 0 28%, rgba(255, 255, 255, .75) 30% 34%, transparent 36% 44%, rgba(255, 255, 255, .5) 46% 48%, transparent 50%) , linear-gradient(160deg, #e9f2f8, #c9dcea 55%, #b7cfe1); }
 .app-container .ay3-cab__glass::after { content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, .7) 40%, transparent 60%) -160% 0 / 200% 100% no-repeat; animation: ay3Sheen 4.5s 1.5s ease-in-out 2; }
 @keyframes ay3Sheen { to { background-position: 160% 0; } }
-.app-container .ay3-cab__lip { position: relative; z-index: 1; color: #c2185b; font: 700 30px/1 'Caveat', cursive; transform: rotate(-6deg); text-shadow: 0 1px 0 rgba(255, 255, 255, .5); }
+.app-container .ay3-cab__lip { position: relative; z-index: 1; color: #c2185b; font: 700 30px/1 'DM Serif Display', Georgia, serif; transform: rotate(-6deg); text-shadow: 0 1px 0 rgba(255, 255, 255, .5); }
 .app-container .ay3-cab__lip.is-big { font-size: clamp(56px, 6vw, 84px); line-height: .9; transform: rotate(-4deg); }
 .app-container .ay3-cab__lip:last-child { transform: rotate(-2deg); }
 .app-container .ay3-cab__knob { position: absolute; right: 2px; top: 50%; width: 10px; height: 34px; margin-top: -17px; border: 2px solid #3e2723; border-radius: 6px; background: #ffedac; }
@@ -1166,7 +1166,7 @@ html:not([data-ay-theme='dark']) body:has(.app-container[data-view='community'],
 .app-container .wc-mirror__frame { display: block; width: clamp(230px, 24vw, 330px); aspect-ratio: 3 / 4; padding: 14px; border: 3px solid #3e2723; border-radius: 50% 50% 46% 46% / 40% 40% 34% 34%; background: #f7badd; box-shadow: 8px 9px 0 #3e2723, inset 0 0 0 6px #ffedac; transform: rotate(2deg); transition: transform .5s cubic-bezier(.3, 1.4, .5, 1); }
 .app-container .wc-mirror__frame img { width: 100%; height: 100%; object-fit: cover; border: 2px solid #3e2723; border-radius: inherit; filter: sepia(.12) saturate(.95); }
 .app-container .wc-mirror:hover .wc-mirror__frame { transform: rotate(-1deg) scale(1.02); }
-.app-container .wc-mirror__lip { position: absolute; left: -18px; bottom: 18%; padding: 2px 10px; color: #c2185b; font: 700 32px/1 'Caveat', cursive; transform: rotate(-10deg); text-shadow: 0 2px 0 #ffedac, 2px 0 0 #ffedac, -2px 0 0 #ffedac, 0 -2px 0 #ffedac; }
+.app-container .wc-mirror__lip { position: absolute; left: -18px; bottom: 18%; padding: 2px 10px; color: #c2185b; font: 700 32px/1 'DM Serif Display', Georgia, serif; transform: rotate(-10deg); text-shadow: 0 2px 0 #ffedac, 2px 0 0 #ffedac, -2px 0 0 #ffedac, 0 -2px 0 #ffedac; }
 @media (min-width: 768px) { .app-container:not([data-theme='dark']) .ay3-commhero .wc-mirror { grid-area: p; } }
 @media (max-width: 767px) { .app-container .wc-mirror { display: none; } }
 /* left: stall door signs */
@@ -1213,7 +1213,7 @@ html:not([data-ay-theme='dark']) body:has(.app-container[data-view='community'],
 /* powder room fixes */
 html body .app-container.app-container:not([data-theme='dark'])[data-view='community'] > main { background-color: #f7badd !important; background-image: linear-gradient(90deg, rgba(255, 248, 220, .6) 2px, transparent 2px), linear-gradient(rgba(255, 248, 220, .6) 2px, transparent 2px) !important; background-size: 46px 46px !important; }
 html body .app-container:not([data-theme='dark']) .wc3 .wc-main > .wc-composer { border: 3px solid var(--ay-ink) !important; border-radius: 22px !important; background-color: #c9dcea !important; background-image: linear-gradient(115deg, transparent 0 30%, rgba(255, 255, 255, .6) 32% 36%, transparent 38%), linear-gradient(160deg, #e9f2f8, #c9dcea) !important; box-shadow: 6px 6px 0 var(--ay-ink) !important; transform: none !important; }
-html body .app-container:not([data-theme='dark']) .wc3 .wc-composer .wc-share { background: rgba(255, 255, 255, .6) !important; color: #c2185b !important; font: 700 22px/1 'Caveat', cursive !important; }
+html body .app-container:not([data-theme='dark']) .wc3 .wc-composer .wc-share { background: rgba(255, 255, 255, .6) !important; color: #c2185b !important; font: 700 22px/1 'DM Serif Display', Georgia, serif !important; }
 .app-container:not([data-theme='dark']) .ay3-commhero .ay3-title { font-size: clamp(52px, 2rem + 4vw, 92px) !important; }
 .app-container:not([data-theme='dark']) .wc3 .wc-post[data-kind='review']::after { top: auto; bottom: 54px; right: 26px; }
 .app-container:not([data-theme='dark']) .wc3 .wc-tabs button::after { padding: 2px 6px; font-size: 9px; }
@@ -1229,7 +1229,7 @@ html body .app-container:not([data-theme='dark']) .wc3 .wc-composer .wc-seg { ba
 .app-container:not([data-theme='dark']) .wc3 .wc-comment:nth-child(even) { background: #f7badd !important; }
 .app-container:not([data-theme='dark']) .wc3 .wc-comment::after { content: ''; position: absolute; right: 22px; bottom: -13px; width: 20px; height: 20px; border: 2px solid var(--ay-ink); border-top: 0; border-left: 0; background: inherit; transform: rotate(45deg); }
 .app-container:not([data-theme='dark']) .wc3 .wc-reply { border-radius: 22px !important; background: linear-gradient(160deg, #e9f2f8, #c9dcea) !important; }
-.app-container:not([data-theme='dark']) .wc3 .wc-reply textarea::placeholder { color: #c2185b !important; font: 700 22px/1 'Caveat', cursive; }
+.app-container:not([data-theme='dark']) .wc3 .wc-reply textarea::placeholder { color: #c2185b !important; font: 700 22px/1 'DM Serif Display', Georgia, serif; }
 html body .app-container:not([data-theme='dark']) .wc3 .wc-composer .wc-composer-kinds { background: transparent !important; box-shadow: none !important; border: 0 !important; }
 
 /* =====================================================================
@@ -4908,7 +4908,7 @@ html body .app-container.app-container.app-container.app-container .lx-dash__car
 html body .app-container.app-container.app-container.app-container .lx-dash__body { font: 400 15px/1.45 'DM Sans', sans-serif; }
 html body .app-container.app-container.app-container.app-container .lx-dash__go { margin-top: auto; padding: 0; border: 0; background: none; color: #3e2723; font: 600 15px/1.3 'DM Sans', sans-serif; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
 html body .app-container.app-container.app-container.app-container .lx-dash__thumbs { display: flex; gap: 8px; margin: 2px 0 4px; padding: 0; list-style: none; }
-html body .app-container.app-container.app-container.app-container .lx-dash__thumbs button { width: 56px; height: 56px; padding: 4px; border: 2px solid #3e2723; border-radius: 10px; background: #fff; cursor: pointer; }
+html body .app-container.app-container.app-container.app-container .lx-dash__thumbs :is(button, span) { display: block; width: 56px; height: 56px; padding: 4px; border: 2px solid #3e2723; border-radius: 10px; background: #fff; cursor: pointer; }
 html body .app-container.app-container.app-container.app-container .lx-dash__thumbs img { width: 100%; height: 100%; object-fit: contain; }
 html body .app-container.app-container.app-container.app-container .lx-dash__card:hover { box-shadow: 4px 4px 0 #3e2723; }
 @media (max-width: 899px) { html body .app-container.app-container.app-container.app-container .lx-dash { grid-template-columns: 1fr; gap: 12px; } html body .app-container.app-container.app-container.app-container .lv-hero--member .lv-hero__copy { grid-template-columns: 1fr; padding-top: 20px !important; } html body .app-container.app-container.app-container.app-container .lv-hero--member .lv-hero__copy > a, html body .app-container.app-container.app-container.app-container .lv-hero--member .lv-hero__copy > button { grid-column: 1; grid-row: auto; } }
@@ -5557,3 +5557,34 @@ html body .app-container.app-container.app-container.app-container.app-container
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .ay-shelves__small > .ay-shelf > .ay-shelf__rowwrap > .ay-shelf__row { flex: 1 1 auto; align-items: stretch !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .ay-shelves__small .ay-shelf__row > li { display: flex; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .ay-shelves__small .ay-shelf__row > li > .ayna-browse-card { height: auto; flex: 1 1 auto; }
+
+/* Audit B4 (Oct 17): DM Serif Display only ships weight 400, so any heavier weight was
+   smeared into a fake bold. Emphasis comes from size and italic instead. */
+html { font-synthesis-weight: none; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container :is(.lv-rank, .lv-script, .ay-info-step__title, .ay-info-card__title) { font-weight: 400 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container :is(.lv, .ay-info) :is(b, strong):where(:is(h1, h2, h3, h4, .lv-script, .ay-info-step__title, .ay-info-card__title) *) { font-weight: 400 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .site-footer .site-footer__logo { font-family: 'Bricolage Grotesque', 'DM Sans', sans-serif !important; font-weight: 800 !important; letter-spacing: -.04em !important; }
+/* Audit B7: the strikethrough covers only the old price; the pack size sits on its own line. */
+html body .app-container .ayna-discover-card__price .ay-card-unit { display: block; text-decoration: none; }
+/* Audit B9: the sign-in card never runs off a short screen; it scrolls inside instead. */
+html body .ay-auth-overlay .ay-auth-card[role='dialog'] { max-height: calc(100dvh - 32px) !important; overflow-y: auto !important; overscroll-behavior: contain; }
+/* Audit B16/B17: Save keeps its label at laptop widths (stacks under Buy when tight), and the
+   My Ecosystem pill grows to fit its label. */
+html body .app-container.app-container.app-container.app-container .pdp-actions__primary { display: flex !important; flex-wrap: wrap !important; gap: 10px !important; }
+html body .app-container.app-container.app-container.app-container .pdp-actions__primary > :not(.pdp-btn--buy) { min-width: 112px !important; width: auto !important; flex: 0 0 auto !important; padding-inline: 20px !important; white-space: nowrap !important; border-radius: 999px !important; }
+html body .app-container.app-container.app-container.app-container .pdp-actions__primary > .pdp-btn--buy { flex: 1 1 200px !important; }
+html body .app-container.app-container.app-container.app-container .app-nav :is(a, button) { white-space: nowrap; }
+html body .app-container.app-container.app-container.app-container .app-nav a:has(> span), html body .app-container.app-container.app-container.app-container .app-nav__links a { min-width: max-content; }
+/* Community: latest ayna announcement pinned in For you, "N new" on the Announcements tab. */
+html body .app-container.app-container.app-container.app-container .wc-pinned-ann { display: grid; gap: 4px; width: 100%; margin: 0 0 16px; padding: 16px 18px; border: 2px solid #3e2723; border-radius: 16px; background: #ffedac; color: #3e2723; text-align: left; cursor: pointer; box-shadow: 4px 4px 0 #3e2723; font: inherit; }
+html body .app-container.app-container.app-container.app-container .wc-pinned-ann.is-new { background: #f7badd; }
+html body .app-container.app-container.app-container.app-container .wc-pinned-ann__label { font: 700 12px/1.2 'DM Sans', sans-serif; letter-spacing: .04em; text-transform: uppercase; }
+html body .app-container.app-container.app-container.app-container .wc-pinned-ann strong { font: 400 22px/1.2 'DM Serif Display', Georgia, serif; }
+html body .app-container.app-container.app-container.app-container .wc-pinned-ann__go { font: 600 14px/1.3 'DM Sans', sans-serif; text-decoration: underline; text-underline-offset: 3px; }
+html body .app-container.app-container.app-container.app-container .wc-tab-new { display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 99px; background: #f7badd; color: #3e2723; border: 1.5px solid #3e2723; font: 700 11px/1.4 'DM Sans', sans-serif; vertical-align: middle; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .wc-pinned-ann { border-color: #ffedac; box-shadow: 4px 4px 0 #ffedac; }
+/* Audit (Fill the gaps): the needs wrap onto lines instead of a sideways strip that cut notes off. */
+html body .app-container.app-container.app-container.app-container.app-container .ay-needs__tags { flex-wrap: wrap !important; overflow: visible !important; row-gap: 12px; }
+html body .app-container.app-container.app-container.app-container.app-container .ay-needs__row .ay-needs__arrow { display: none !important; }
+/* Audit (You): small text links get a 24px tap target. */
+html body .app-container.app-container.app-container.app-container .wyou :is(a, button):not(.wyou-btn):not([class*='tone-']) { min-height: 24px; }

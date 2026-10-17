@@ -1218,13 +1218,13 @@ export default function HealthIntakeForm({ onComplete }) {
         allergyStatus,
         allergyItems,
       };
-    } catch (_) { return EMPTY; }
+    } catch { return EMPTY; }
   });
   const [stepId, setStepId] = useState(() => {
     try {
       const raw = window.sessionStorage.getItem(DRAFT_KEY);
       return raw ? JSON.parse(raw)?.stepId || 'name' : 'name';
-    } catch (_) { return 'name'; }
+    } catch { return 'name'; }
   });
   const [search, setSearch] = useState('');
   const [saving, setSaving] = useState(false);
@@ -1272,7 +1272,7 @@ export default function HealthIntakeForm({ onComplete }) {
   const sectionIndex = Math.max(0, SECTION_ORDER.indexOf(step.section));
 
   useEffect(() => {
-    try { window.sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ intake, stepId })); } catch (_) {}
+    try { window.sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ intake, stepId })); } catch { /* ignore */ }
   }, [intake, stepId]);
 
   useEffect(() => {

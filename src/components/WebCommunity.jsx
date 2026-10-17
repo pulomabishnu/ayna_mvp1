@@ -4,6 +4,7 @@ import { getSupabaseClient } from '../utils/supabaseClient';
 import { getGuestClient, getGuestId, ensureGuestSession } from '../utils/community/guestClient.js';
 import * as community from '../utils/community/communityStore.js';
 import { rankForYou, postProductIds } from '../utils/community/ranking.js';
+import { getRecentActivity } from '../utils/recentActivity.js';
 import { extractHashtagTopics, suggestHashtags, suggestTopicsForProducts } from '../utils/community/topics.js';
 import { uploadCommunityImage, deleteCommunityImage, checkImageFile, MAX_POST_PHOTOS, publicMediaUrl } from '../utils/community/imageUpload.js';
 import { makePlaylistCoverFile } from '../mobile/components/playlistCoverImage.js';
@@ -22,6 +23,7 @@ function TeamTag({ title }) {
 import { toast } from '../utils/toast';
 import { useTeamBadges } from './community/useTeamBadges.js';
 import Announcements from './community/Announcements.jsx';
+import { listAnnouncements } from '../utils/community/announcementsStore.js';
 import { breaksCommunityRules } from '../utils/communityRules.js';
 import { markPerf } from '../utils/perfTimings';
 import './WebCommunity.css';
@@ -33,6 +35,16 @@ import '../styles/community2.css';
 // community store, ranking, topics, guest posting). Three columns on wide
 // screens: feeds + you on the left, the feed in the middle, and side modules
 // built only from loaded data on the right (each hides when it has nothing).
+
+// New ayna announcements show in Updates (and on the bell) until she opens Updates.
+const ANN_SEEN = (userId) => `ayna_ann_seen_v1:${userId}`;
+const readAnnSeen = (userId) => { try { return Number(localStorage.getItem(ANN_SEEN(userId))) || 0; } catch { return 0; } };
+const writeAnnSeen = (userId) => { try { localStorage.setItem(ANN_SEEN(userId), String(Date.now())); } catch { /* private mode */ } };
+async function newAnnouncementsFor(supabase, userId) {
+  const { rows } = await listAnnouncements(supabase, { limit: 10 });
+  const seen = readAnnSeen(userId) || Date.now() - 7 * 86400000;
+  return (rows || []).filter((a) => a.author_id !== userId && new Date(a.created_at).getTime() > seen);
+}
 
 const TABS = [['for-you', 'For you'], ['following', 'Following'], ['question', 'Questions'], ['review', 'Reviews'], ['playlists', 'Playlists'], ['announcements', 'Announcements']];
 const VERB = { post: 'Post', question: 'Ask', review: 'Review', playlist: 'Playlist', recommend: 'Recommend' };
@@ -258,6 +270,20 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const [notifications, setNotifications] = useState(null);
   const [showUpdates, setShowUpdates] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [newAnns, setNewAnns] = useState([]);
+  const [pinnedAnn, setPinnedAnn] = useState(null);
+  // For you: her matches, who she follows, what's on her shelves, and what she
+  // recently opened or searched (that last part stays in her browser).
+  const forYouSignals = () => {
+    const recent = getRecentActivity();
+    return {
+      matchFor,
+      followingIds: new Set(followingIds),
+      ownedProductIds: new Set(Object.keys(myProducts || {})),
+      viewedProductIds: new Set(recent.products),
+      searchTerms: recent.searches.slice(0, 10),
+    };
+  };
   const [profileStats, setProfileStats] = useState(null);
   const [editingProfile, setEditingProfile] = useState(false);
   const [editName, setEditName] = useState('');
@@ -304,10 +330,19 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     return () => { active = false; };
   }, [supabase, posts, comments, searchResults, page, details]);
 
+  // The latest ayna announcement is pinned at the top of For you for everyone.
+  useEffect(() => {
+    if (!supabase) return undefined;
+    let active = true;
+    listAnnouncements(supabase, { limit: 1 }).then(({ rows }) => { if (active) setPinnedAnn(rows?.[0] || null); }).catch(() => {});
+    return () => { active = false; };
+  }, [supabase]);
+
   useEffect(() => {
     if (!supabase || !user) { setUnreadCount(0); return undefined; }
     let active = true;
     community.countUnreadNotifications(supabase).then((n) => { if (active) setUnreadCount(Number(n) || 0); }).catch(() => {});
+    newAnnouncementsFor(supabase, user.id).then((list) => { if (active) setNewAnns(list); }).catch(() => {});
     return () => { active = false; };
   }, [supabase, user]);
 
@@ -335,7 +370,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         if (active) { setPlaylists(rows); setPosts([]); setCursor(null); }
       } else {
         const rows = await community.listFeedPosts(supabase, { kind: tab === 'question' || tab === 'review' ? tab : null, authorIds: tab === 'following' ? followingIds : null });
-        if (active) { setPosts(tab === 'for-you' ? rankForYou(rows, { matchFor, followingIds: new Set(followingIds) }) : rows); setCursor(rows.length === community.PAGE_SIZE ? community.nextCursor(rows, 'recent') : null); }
+        if (active) { setPosts(tab === 'for-you' ? rankForYou(rows, forYouSignals()) : rows); setCursor(rows.length === community.PAGE_SIZE ? community.nextCursor(rows, 'recent') : null); }
       }
     })().catch((e) => { if (active) notifyError(e); }).finally(() => { if (active) setLoading(false); markPerf('community_feed_loaded'); });
     return () => { active = false; };
@@ -374,7 +409,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     setLoading(true);
     try {
       const rows = await community.listFeedPosts(supabase, { kind: tab === 'question' || tab === 'review' ? tab : null, authorIds: tab === 'following' ? followingIds : null, cursor });
-      setPosts((prev) => [...prev, ...(tab === 'for-you' ? rankForYou(rows, { matchFor }) : rows)]);
+      setPosts((prev) => [...prev, ...(tab === 'for-you' ? rankForYou(rows, forYouSignals()) : rows)]);
       setCursor(rows.length === community.PAGE_SIZE ? community.nextCursor(rows, 'recent') : null);
     } catch (e) { notifyError(e); } finally { setLoading(false); }
   };
@@ -424,7 +459,17 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       const actorOf = (n) => n.actor_id || n.from_user_id || n.sender_id || n.data?.actor_id || n.payload?.actor_id || null;
       let people = new Map();
       try { people = await community.getProfilesByIds(supabase, rows.map(actorOf)); } catch { /* names are a nicety */ }
-      setNotifications(rows.map((n) => ({ ...n, actor: people.get(actorOf(n)) || null })));
+      let anns = [];
+      try {
+        const { rows: annRows } = await listAnnouncements(supabase, { limit: 5 });
+        const fresh = new Set(newAnns.map((a) => a.id));
+        anns = (annRows || []).filter((a) => Date.now() - new Date(a.created_at).getTime() < 30 * 86400000)
+          .map((a) => ({ id: `ann-${a.id}`, type: 'announcement', created_at: a.created_at, title: a.title, isNew: fresh.has(a.id) }));
+      } catch { /* announcements are optional here */ }
+      const merged = [...anns, ...rows.map((n) => ({ ...n, actor: people.get(actorOf(n)) || null }))]
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      setNotifications(merged);
+      writeAnnSeen(user.id); setNewAnns([]);
       if (unreadCount) { await community.markNotificationsRead(supabase); setUnreadCount(0); }
     } catch (e) { setNotifications([]); notifyError(e); }
   };
@@ -936,6 +981,11 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         <div className="wc-row is-split wc-subbar"><label className="wc-plfilter"><span>Show</span><select value={playlistSection} onChange={(e) => switchSection(e.target.value)}>{[['recent', 'Everyone’s playlists'], ['friends', 'Friends’ playlists'], ['mine', 'My playlists']].map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select></label><button type="button" className="wc-btn" onClick={() => openCompose('playlist')}>Create playlist</button></div>
         {firstLoad ? <SkeletonPlaylists /> : playlists.length ? <div className="wc-pl-grid">{playlists.map(playlistCard)}</div> : <div className="wc-empty"><h2>{playlistSection === 'mine' ? 'You haven’t made a playlist yet' : playlistSection === 'friends' ? 'No playlists from friends yet' : 'No playlists yet'}</h2><p>Collect your favorites in one place.</p><button type="button" className="wc-btn" onClick={() => openCompose('playlist')}>Create playlist</button></div>}
       </> : <>
+        {tab === 'for-you' && pinnedAnn && <button type="button" className={`wc-pinned-ann${newAnns.some((a) => a.id === pinnedAnn.id) ? ' is-new' : ''}`} onClick={() => switchTab('announcements')}>
+          <span className="wc-pinned-ann__label">{newAnns.some((a) => a.id === pinnedAnn.id) ? 'New from ayna' : 'From ayna'}</span>
+          <strong>{pinnedAnn.title}</strong>
+          <span className="wc-pinned-ann__go">Read the announcement <span aria-hidden="true">→</span></span>
+        </button>}
         {/* Reading is open to everyone; the share box is for members (logged out there's a Join card). */}
         {user && <div className="wc-composer">
           {user && <Avatar size={36} name={profile?.display_name || 'You'} path={profile?.avatar_url} anonymous={!profile} />}
@@ -992,7 +1042,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       {page ? <button type="button" className="wc-back" onClick={closePage}>{page.type === 'post' ? '← Back to feed' : '← Community'}</button> : <div><h1 className="ay3-title">Ask, review, <em>share.</em></h1><p className="wc-hero-sub">Real talk between women, about the products we actually use.</p></div>}
       {!page && <div className="wc-mirror" aria-hidden="true"><span className="wc-mirror__frame"><img src="/landing/stalls-trio.webp" alt="" /></span><span className="wc-mirror__lip">say it here ♡</span></div>}
       <div className="wc-head-actions"><label className="wc-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16 16 4.5 4.5" /></svg><input value={search} onChange={(e) => { setSearch(e.target.value); setSearchResults(null); if (page) closePage(); }} placeholder="Search people, posts, playlists" aria-label="Search Community" />{search && <button type="button" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); }}>×</button>}</label>
-        {user && <button type="button" className="wc-bell" onClick={openUpdates} aria-label={unreadCount ? `Updates, ${unreadCount} new` : 'Updates'}><Icon name="bell" size={20} /><span className="wc-bell-label" aria-hidden="true">Updates</span>{unreadCount > 0 && <span className="wc-bell-dot is-count" aria-hidden="true">{unreadCount > 9 ? '9+' : unreadCount}</span>}</button>}
+        {user && <button type="button" className="wc-bell" onClick={openUpdates} aria-label={unreadCount + newAnns.length ? `Updates, ${unreadCount + newAnns.length} new` : 'Updates'}><Icon name="bell" size={20} /><span className="wc-bell-label" aria-hidden="true">Updates</span>{unreadCount + newAnns.length > 0 && <span className="wc-bell-dot is-count" aria-hidden="true">{unreadCount + newAnns.length > 9 ? '9+' : unreadCount + newAnns.length}</span>}</button>}
         {user && <button type="button" className="wc-head-me" onClick={openMe} aria-label={profile ? 'Your Community profile' : 'Set up your Community profile'}><Avatar size={40} name={profile?.display_name || 'You'} path={profile?.avatar_url} anonymous={!profile} /></button>}
       </div>
     </div>
@@ -1000,7 +1050,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     {notice && <p className="wc-notice" role="status">{notice}</p>}
     <div className="wc-layout">
       <nav className="wc-nav" aria-label="Community">
-        {page?.type !== 'profile' && <div className="wc-tabs" role="tablist" aria-label="Community feeds">{TABS.map(([k, l]) => <button type="button" role="tab" key={k} aria-selected={onFeed && tab === k} className={onFeed && tab === k ? 'is-on' : ''} onClick={() => switchTab(k)}>{l}</button>)}</div>}
+        {page?.type !== 'profile' && <div className="wc-tabs" role="tablist" aria-label="Community feeds">{TABS.map(([k, l]) => <button type="button" role="tab" key={k} aria-selected={onFeed && tab === k} className={onFeed && tab === k ? 'is-on' : ''} onClick={() => switchTab(k)}>{l}{k === 'announcements' && newAnns.length > 0 && <span className="wc-tab-new">{newAnns.length} new</span>}</button>)}</div>}
         {user && !profile ? <div className="wc-card wc-join"><h3>Join Community</h3><p className="wc-muted">Your health answers stay private.</p>
           <RuleField as="input" value={profileName} maxLength={50} onChange={(e) => setProfileName(e.target.value)} placeholder="Display name" aria-label="Display name" onShowRules={openRules} />
           <RuleField as="input" value={profileHandle} maxLength={30} onChange={(e) => setProfileHandle(e.target.value.toLowerCase())} placeholder="Username" aria-label="Username" onShowRules={openRules} />
@@ -1039,6 +1089,11 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
               const who = n.actor?.display_name || (n.actor?.username ? `@${n.actor.username}` : 'Someone');
               const verb = VERBS[String(n.type || '').toLowerCase()];
               const text = verb ? `${who} ${verb}` : (n.message || n.body || `${who}: ${String(n.type || 'update').replace(/_/g, ' ')}`);
+              if (n.type === 'announcement') return <li key={n.id} className={n.isNew ? 'is-new' : undefined}>
+                <Avatar size={32} name="ayna" />
+                <button type="button" className="wc-notes-link" onClick={() => { setShowUpdates(false); switchTab('announcements'); }}>New from ayna: {n.title}</button>
+                <small>{timeLabel(n.created_at)}</small>
+              </li>;
               return <li key={n.id}>
                 <Avatar size={32} name={String(who).replace('@', '')} path={n.actor?.avatar_url} />
                 {(() => {

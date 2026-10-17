@@ -33,18 +33,18 @@ export function loadLearningMemorySession() {
       return {};
     }
     if (legacy) {
-      try { window.sessionStorage.setItem(SESSION_KEY, JSON.stringify(legacy)); } catch (_) {}
-      try { window.localStorage.removeItem(SESSION_KEY); } catch (_) {}
+      try { window.sessionStorage.setItem(SESSION_KEY, JSON.stringify(legacy)); } catch { /* ignore */ }
+      try { window.localStorage.removeItem(SESSION_KEY); } catch { /* ignore */ }
       return legacy;
     }
-  } catch (_) {}
+  } catch { /* ignore */ }
   return {};
 }
 
 export function saveLearningMemorySession(memory) {
   if (typeof window === 'undefined') return;
-  try { window.sessionStorage.setItem(SESSION_KEY, JSON.stringify(memory || {})); } catch (_) {}
-  try { window.localStorage.removeItem(SESSION_KEY); } catch (_) {}
+  try { window.sessionStorage.setItem(SESSION_KEY, JSON.stringify(memory || {})); } catch { /* ignore */ }
+  try { window.localStorage.removeItem(SESSION_KEY); } catch { /* ignore */ }
 }
 
 function safeLegacyStub(memory) {

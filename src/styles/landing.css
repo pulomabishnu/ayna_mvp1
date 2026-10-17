@@ -370,7 +370,7 @@
    ticker bar, script accent words, wavy plum band, starburst stickers,
    inset rounded hero, big pink start card beside "How it works".
    ===================================================================== */
-.app-container .lx .lx-script { display: inline-block; font-family: 'Caveat', 'DM Sans', cursive !important; font-weight: 400 !important; font-style: normal; letter-spacing: 0 !important; text-transform: none; font-size: 1.22em; line-height: .9; }
+.app-container .lx .lx-script { display: inline-block; font-family: 'DM Serif Display', Georgia, serif !important; font-weight: 400 !important; font-style: normal; letter-spacing: 0 !important; text-transform: none; font-size: 1.22em; line-height: .9; }
 
 /* Ticker: one slim moving bar, still when motion is reduced */
 .app-container .lx-ticker { overflow: hidden; background: var(--ay-pink); color: #1d1a2b; border-bottom: 2px solid #1d1a2b; }
@@ -538,7 +538,7 @@
 .app-container .lx-stamp svg { position: absolute; inset: 0; width: 100%; height: 100%; animation: lxSpin 22s linear infinite; }
 .app-container .lx-stamp__disc { fill: var(--ay-butter); stroke: #1d1a2b; stroke-width: 3; }
 .app-container .lx-stamp text { fill: #1d1a2b; font: 800 15px var(--ay-font-ui); letter-spacing: .08em; }
-.app-container .lx .lx-stamp__core { position: relative; display: grid; place-items: center; width: 54px; height: 54px; border: 2px solid #1d1a2b; border-radius: 50%; background: var(--ay-pink); color: #1d1a2b; font: 400 26px/1 'Caveat', cursive; }
+.app-container .lx .lx-stamp__core { position: relative; display: grid; place-items: center; width: 54px; height: 54px; border: 2px solid #1d1a2b; border-radius: 50%; background: var(--ay-pink); color: #1d1a2b; font: 400 26px/1 'DM Serif Display', Georgia, serif; }
 @keyframes lxSpin { to { transform: rotate(360deg); } }
 /* bottom sticker bobs */
 .app-container .lx-sticker { animation: lxBob 3.2s ease-in-out infinite; }

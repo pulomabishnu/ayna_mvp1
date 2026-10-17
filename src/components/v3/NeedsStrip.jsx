@@ -39,7 +39,7 @@ export default function NeedsStrip({ needs, isOwned, onOpenProduct, onToggleProd
               <li key={n.id} style={{ '--r': `${[-2, 1.5, -1, 2, -.5][i % 5]}deg` }}>
                 <button type="button" className={`ay-needs__tag${cur && n.id === cur.id ? ' is-on' : ''}`} aria-pressed={Boolean(cur && n.id === cur.id)} onClick={() => setSel(n.id)}>
                   {n.label}
-                  <small>{n.picks.length ? `${n.picks.length} pick${n.picks.length === 1 ? '' : 's'}` : 'See what to do'}</small>
+                  <small>{n.picks.length ? `${n.picks.length} pick${n.picks.length === 1 ? '' : 's'}` : 'Find care'}</small>
                 </button>
               </li>
             ))}
@@ -78,7 +78,7 @@ export default function NeedsStrip({ needs, isOwned, onOpenProduct, onToggleProd
               <p>Nothing in the shop is a strong enough fit for {cur.phrase} to recommend. A clinician is the best next step for this one.</p>
               <div className="ay-needs__noneacts">
                 {onFindCare && <button type="button" className="eco3-pill eco3-pill--ink" onClick={onFindCare}>Find care</button>}
-                {onShop && <button type="button" className="eco3-pill" onClick={() => onShop(cur.short)}>Browse {cur.short.toLowerCase()} anyway</button>}
+                {onShop && <button type="button" className="eco3-pill" onClick={() => onShop(cur.short)}>Browse anyway</button>}
               </div>
             </div>
           )}

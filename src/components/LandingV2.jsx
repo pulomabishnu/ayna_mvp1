@@ -288,9 +288,9 @@ function Why({ paused }) {
 /* ---------- reads: three equal photo cards with their sources, today's fact above ---------- */
 // The reads that earn trust lead (pass 5), each on a real photo from the shoot.
 const LEAD_READS = [
-  { id: 'heavy-bleeding', title: 'Heavy Menstrual Bleeding', teaser: 'What counts as heavy bleeding, possible causes, when to seek care, and how it’s evaluated.', source: 'UpToDate · ACOG · CDC', src: '/landing/sink-tea.webp', alt: 'A cup of tea on the edge of a bathroom sink' },
-  { id: 'period-pain-when-to-seek-care', title: 'Period Pain: When to Seek Care', teaser: 'Normal cramps vs. signs that something else may be going on, and what clinicians may suggest.', source: 'ACOG · UpToDate · Mayo Clinic', src: '/landing/pajamas-overhead.webp', alt: 'Seen from above, a woman in pajamas resting' },
-  { id: 'pcos-basics', title: 'PCOS: What It Is and How It’s Managed', teaser: 'Diagnosis, symptoms, and evidence-based treatment, including lifestyle and medication.', source: 'ACOG · Endocrine Society · UpToDate', src: '/landing/marble-counter.webp', alt: 'Everyday care products on a marble counter' },
+  { id: 'heavy-bleeding', title: 'Heavy Menstrual Bleeding', teaser: 'What counts as heavy bleeding, possible causes, when to seek care, and how it’s evaluated.', source: 'UpToDate · ACOG · CDC', src: '/landing/articles-heavy-bleeding-satin.webp', alt: 'Pads and tampons scattered on red satin' },
+  { id: 'period-pain-when-to-seek-care', title: 'Period Pain: When to Seek Care', teaser: 'Normal cramps vs. signs that something else may be going on, and what clinicians may suggest.', source: 'ACOG · UpToDate · Mayo Clinic', src: '/landing/articles-period-pain-hotwater.webp', alt: 'A woman in striped pajamas holding a hot water bottle' },
+  { id: 'pcos-basics', title: 'PCOS: What It Is and How It’s Managed', teaser: 'Diagnosis, symptoms, and evidence-based treatment, including lifestyle and medication.', source: 'ACOG · Endocrine Society · UpToDate', src: '/landing/articles-pcos-mirror.webp', alt: 'Red lips reflected in a small red compact mirror' },
 ];
 function Reads({ onViewArticle, onViewArticles }) {
   const ref = useReveal();
@@ -321,10 +321,10 @@ function Reads({ onViewArticle, onViewArticles }) {
 
 /* ---------- how it works: four photos, each numbered (Eliz's mockup), then the start card ---------- */
 const STEPS = [
-  { t: 'Answer six questions', d: 'About your body and what you avoid.', src: '/landing/pink-tile-shelf.webp', alt: 'A pink tiled ledge crowded with everyday care products and a hair dryer', pos: '50% 60%' },
-  { t: 'We check the evidence', d: 'Across products, apps and care.', src: '/landing/blue-sink.webp', alt: 'A woman at a bathroom sink with products spread across it, blue wall behind', pos: '50% 50%' },
-  { t: 'Get your ecosystem', d: 'Ranked for you.', src: '/landing/robe-pickles.webp', alt: 'A woman in a white robe and hair curlers sitting in her bathroom', pos: '50% 35%' },
-  { t: 'You decide', d: 'Nothing is bought until you say so.', src: '/landing/pink-stripe-floor.webp', alt: 'A woman sitting on a pink striped bathroom floor with her things around her', pos: '50% 40%' },
+  { t: 'Answer six questions', d: 'About your body and what you avoid.', src: '/landing/hiw-questions-cabinet.webp', alt: 'A woman in a white robe reaching into her bathroom cabinet', pos: '50% 35%' },
+  { t: 'We check the evidence', d: 'Across products, apps and care.', src: '/landing/hiw-evidence-reading.webp', alt: 'Two friends in glasses reading a book together in front of bookshelves', pos: '50% 40%' },
+  { t: 'Get your ecosystem', d: 'Ranked for you.', src: '/landing/hiw-ecosystem-cabinet.webp', alt: 'A medicine cabinet with shelves full of skincare and beauty products', pos: '50% 50%' },
+  { t: 'You decide', d: 'Nothing is bought until you say so.', src: '/landing/hiw-decide-basket.webp', alt: 'Looking down at a red shopping basket of products between two sneakers', pos: '50% 45%' },
 ];
 
 function Start({ onStartQuiz, onViewDiscovery }) {
@@ -359,7 +359,7 @@ function Start({ onStartQuiz, onViewDiscovery }) {
             <Go className="lv-link" href="/shop" onGo={() => onViewDiscovery?.('')}>Browse the Shop</Go>
           </div>
         </div>
-        <img src="/landing/stalls-trio.webp" alt="Three friends chatting from neighboring bathroom stalls" loading="lazy" width="734" height="397" />
+        <img src="/landing/banner-bath-phone.webp" alt="A woman in a face mask relaxing in a pink tiled bath, scrolling her phone, products along the ledge" loading="lazy" width="960" height="400" />
       </div>
     </section>
     </>

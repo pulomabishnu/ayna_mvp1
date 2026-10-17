@@ -36,7 +36,7 @@ export default function AuthConfirm({ onAuthenticated }) {
 
       try {
         window.history.replaceState(null, '', '/confirmed');
-      } catch (_) {
+      } catch {
         // non-fatal
       }
     });

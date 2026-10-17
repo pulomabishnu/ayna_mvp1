@@ -84,7 +84,7 @@ export async function compactLegacyAuthMetadata(supabase) {
           ({ ecosystem, saved } = legacyMetadata(session.user));
           tokenTooLarge = String(session.access_token || '').length > SAFE_AUTH_TOKEN_CHARS;
         }
-      } catch (_) {
+      } catch {
         // Fall through to the legacy preservation/cleanup path below. If the
         // server still has the blob, that path remains the best effort repair.
       }

@@ -33,10 +33,10 @@ function readLocal(userId) {
     const legacyRaw = window.localStorage.getItem(key);
     if (!legacyRaw) return null;
     const parsed = JSON.parse(legacyRaw);
-    try { window.sessionStorage.setItem(key, legacyRaw); } catch (_) {}
-    try { window.localStorage.removeItem(key); } catch (_) {}
+    try { window.sessionStorage.setItem(key, legacyRaw); } catch { /* ignore */ }
+    try { window.localStorage.removeItem(key); } catch { /* ignore */ }
     return parsed;
-  } catch (_) {
+  } catch {
     return null;
   }
 }
@@ -49,12 +49,12 @@ async function resolveUserId(supabase) {
   try {
     const { data } = await withTimeout(supabase.auth.getSession(), AUTH_TIMEOUT_MS, 'auth_session_timeout');
     if (data?.session?.user?.id) return data.session.user.id;
-  } catch (_) {}
+  } catch { /* ignore */ }
 
   try {
     const user = await withTimeout(getSupabaseUser(), AUTH_TIMEOUT_MS, 'auth_user_timeout');
     return user?.id || null;
-  } catch (_) {
+  } catch {
     return null;
   }
 }
@@ -65,7 +65,7 @@ function writeLocal(userId, profile) {
   try {
     window.sessionStorage.setItem(key, JSON.stringify(profile || {}));
     // Defense in depth for anyone upgrading from a build that used localStorage.
-    try { window.localStorage.removeItem(key); } catch (_) {}
+    try { window.localStorage.removeItem(key); } catch { /* ignore */ }
     return true;
   } catch {
     return false;

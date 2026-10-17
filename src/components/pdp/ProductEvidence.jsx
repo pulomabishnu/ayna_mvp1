@@ -7,6 +7,7 @@ import { humanPublisher } from './glance';
 import { normalizeFdaStatus } from '../../utils/fdaStatus';
 import { getPassport } from '../../data/passport';
 import { fmtDate } from './fmtDate';
+import { researchSourceCount } from './commerce';
 import GlossaryTerm from '../GlossaryTerm';
 import { findHardTerms, planGlossaryTerms } from '../../data/glossary';
 
@@ -439,7 +440,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   // "At a glance": one line per section from what is on file, each a jump link (not sticky).
   const glanceTiles = [
     sections.some((x) => x.id === 'clinical') && { id: 'clinical', label: 'Clinical opinion', tag: d.independent ? 'Independent sources' : 'Based on brand claims', text: firstLine(d.clinicianShort || d.clinician || d.clinicalNote) },
-    sections.some((x) => x.id === 'science') && { id: 'science', label: 'Research', tag: d.productSpecific ? 'Studied as a product' : d.ingredients.length || d.studies.length ? 'Not studied as this exact product' : '', text: [d.ingredients.length && plural(d.ingredients.length, 'ingredient'), d.studies.length && plural(d.studies.length, 'study', 'studies')].filter(Boolean).join(' and ') + (d.ingredients.length || d.studies.length ? ' with sources' : '') || firstLine(science.rest) },
+    sections.some((x) => x.id === 'science') && { id: 'science', label: 'Research', tag: d.productSpecific ? 'Studied as a product' : d.ingredients.length || d.studies.length ? 'Not studied as this exact product' : '', text: (() => { const n = researchSourceCount(baseProduct); return n ? `${plural(n, 'research source')} on file` : firstLine(science.rest); })() },
     sections.some((x) => x.id === 'safety') && { id: 'safety', label: 'Safety', tag: d.warnings.length ? plural(d.warnings.length, 'note') : '', text: firstLine(glance?.alert || d.warnings.find((w) => !/^(wash|rinse|boil|clean|store|keep it|dry|sanitize|sterili[sz]e|empty)\b/i.test(w)) || d.warnings[0] || d.sideEffects || (d.fdaRaw && `FDA: ${d.fda?.label || d.fdaRaw}`)) },
     { id: 'reviews', label: 'Reviews', tag: aynaRating != null && ratingCount > 0 ? `★ ${aynaRating.toFixed(1)} from ayna members` : d.brandRating ? `★ ${d.brandRating.value}, brand-reported` : communityText || d.communitySummary ? 'What people say online' : 'None yet', text: communityText || d.communitySummary ? firstLine(communityText || d.communitySummary) : 'No reviews yet. Tried it? Be the first.' },
   ].filter(Boolean);

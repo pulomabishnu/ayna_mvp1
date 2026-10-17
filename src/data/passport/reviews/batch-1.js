@@ -929,9 +929,12 @@ const R = {
       'health.intended_use': f('Calcium + vitamin D supplement for bone health', 'Vitacost listing', 'https://www.vitacost.com/products/citracal-calcium-supplement-d3-maximum-plus-120-coated-caplets-108822', 'retailer'),
       'evidence.sources': f([
         { title: 'NIH ODS: Calcium fact sheet', url: 'https://ods.od.nih.gov/factsheets/Calcium/', evidence_type: 'regulatory', supports: 'Calcium needs, upper limits, side effects, drug interactions, bone health' },
+        { title: 'Thys-Jacobs S. Micronutrients and the premenstrual syndrome: the case for calcium. J Am Coll Nutr 2000', url: 'https://pubmed.ncbi.nlm.nih.gov/10763903/', evidence_type: 'ingredient_research', supports: 'Calcium and PMS symptoms (review of trials, including a randomized trial)' },
       ], 'NIH ODS', 'https://ods.od.nih.gov/factsheets/Calcium/', 'regulatory'),
       'evidence.claims': f([
         { claim: 'Calcium + vitamin D help meet needs for bone health when diet is low', strength: 'moderate', evidence_type: 'ingredient_research', source_url: 'https://ods.od.nih.gov/factsheets/Calcium/', product_specific: false },
+        // Added Oct 17 (catalog gap: PMS). Calcium, not this exact product, was studied.
+        { claim: 'Calcium may ease premenstrual syndrome (PMS) symptoms', strength: 'limited', evidence_type: 'ingredient_research', source_url: 'https://pubmed.ncbi.nlm.nih.gov/10763903/', product_specific: false },
       ], 'NIH ODS', 'https://ods.od.nih.gov/factsheets/Calcium/', 'regulatory'),
     },
   },

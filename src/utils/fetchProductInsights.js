@@ -48,7 +48,7 @@ function purgeLegacyInsightCache() {
       if (key?.startsWith(CACHE_PREFIX)) keys.push(key);
     }
     keys.forEach((key) => window.localStorage.removeItem(key));
-  } catch {}
+  } catch { /* ignore */ }
 }
 
 export function loadCachedInsights(productId, healthContextKey) {
@@ -83,7 +83,7 @@ export function saveCachedInsights(productId, healthContextKey, data) {
         if (!ts || Date.now() - ts > CACHE_TTL_MS) store.removeItem(k);
       } catch { store.removeItem(k); }
     }
-  } catch {}
+  } catch { /* ignore */ }
 }
 
 export function clearInsightsCacheForProduct(productId) {
@@ -97,7 +97,7 @@ export function clearInsightsCacheForProduct(productId) {
       if (k?.startsWith(`${CACHE_PREFIX}${productId}_`)) keys.push(k);
     }
     keys.forEach((k) => store.removeItem(k));
-  } catch {}
+  } catch { /* ignore */ }
 }
 
 export function buildProductInsightPayload(product) {

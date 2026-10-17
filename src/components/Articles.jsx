@@ -333,7 +333,7 @@ const ARTICLES = [
   },
   {
     id: 'heavy-bleeding',
-    image: '/articles/heavy-bleeding.webp',
+    image: '/landing/articles-heavy-bleeding-satin.webp',
     title: 'Heavy Menstrual Bleeding',
     source: 'UpToDate, ACOG, CDC',
     tags: ['Menstrual health', 'Clinical guidance'],
@@ -417,7 +417,7 @@ const ARTICLES = [
   },
   {
     id: 'period-pain-when-to-seek-care',
-    image: '/articles/period-pain-when-to-seek-care.webp',
+    image: '/landing/articles-period-pain-hotwater.webp',
     title: 'Period Pain: When to Seek Care',
     source: 'ACOG, UpToDate, Mayo Clinic',
     tags: ['Menstrual health', 'Pain'],
@@ -437,7 +437,7 @@ const ARTICLES = [
   },
   {
     id: 'pcos-basics',
-    image: '/articles/pcos-basics.webp',
+    image: '/landing/articles-pcos-mirror.webp',
     title: 'PCOS: What It Is and How It\'s Managed',
     source: 'ACOG, Endocrine Society, UpToDate',
     tags: ['Hormones', 'Reproductive health'],
