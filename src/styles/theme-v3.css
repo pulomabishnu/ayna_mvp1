@@ -5539,3 +5539,21 @@ html body .app-container.app-container.app-container.app-container.app-container
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lst--open .lst__tabs button span { color: #ffedac !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lst--open .lst__tabs button { border-color: #ffedac !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lst .lst__cta:not(.zz) { background: #ffedac !important; color: #3e2723 !important; border-color: #ffedac !important; }
+
+/* Audit Oct 17: card labels wrap cleanly (no orphan "·" at a line start), and the price
+   line never runs under the heart button on narrow cards. */
+html body .app-container.app-container.app-container.app-container.app-container .ayna-browse-card__labels { display: flex !important; flex-wrap: wrap; align-items: baseline; column-gap: 8px; row-gap: 2px; }
+html body .app-container.app-container.app-container.app-container.app-container .ayna-browse-card__labels :is(.ayna-browse-card__partner, .ayna-browse-card__eligibility, .ayna-browse-card__sponsored)::before { content: '' !important; display: inline-block; width: 6px; height: 6px; margin: 0 5px 1px 0; border-radius: 50%; background: #f7badd; border: 1px solid #3e2723; vertical-align: middle; }
+html body .app-container.app-container.app-container.app-container.app-container .ayna-browse-card :is(.ayna-discover-card__price, .ay-card-trust) { padding-right: 52px !important; box-sizing: border-box !important; max-width: 100% !important; }
+/* Audit Oct 17: in the stacked (phone) hero, the 420px flex-basis became a 420px height. */
+@media (max-width: 767px) { html body .app-container.app-container.app-container .ay3-withpile > :first-child { flex: 0 0 auto !important; } }
+/* Audit Oct 17: the member card and Safety alerts were touching. */
+html body .app-container.app-container.app-container.app-container .wyou > .wyou-hero + .wyou-safety-top { margin-top: 22px !important; }
+/* Audit Oct 17: small shelves in one row share a plank line (a taller card no longer
+   drops its plank lower), and short shelf names fit without an ellipsis. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .ay-shelves__small > .ay-shelf { display: flex; flex-direction: column; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .ay-shelves__small > .ay-shelf > .ay-shelf__rowwrap { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-end; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .ay-shelves__small .ay-shelf__name { font-size: 19px !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .ay-shelves__small > .ay-shelf > .ay-shelf__rowwrap > .ay-shelf__row { flex: 1 1 auto; align-items: stretch !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .ay-shelves__small .ay-shelf__row > li { display: flex; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .ay-shelves__small .ay-shelf__row > li > .ayna-browse-card { height: auto; flex: 1 1 auto; }
