@@ -163,7 +163,7 @@ export default function EcosystemScreen({
         const empty = section.products.length === 0 && !(section.picks?.length);
         const shown = section.products.length ? section.products : section.picks || [];
         return <section key={section.key} id={`ayna-area-${section.key}`} className={`ayna-cabinet-collection ayna-area-collection${empty ? ' is-empty-shelf' : ''}`} style={{ '--area-tone': toneFor(section) }} aria-labelledby={`ayna-area-title-${section.key}`}>
-          <div className="ayna-cabinet-section-head ay-shelf-head"><h2 id={`ayna-area-title-${section.key}`}>{section.label}</h2>{shown.length > 0 && <span className="ay-shelf-count" aria-label={`${shown.length} on this shelf`}>{shown.length}</span>}</div>
+          <div className="ayna-cabinet-section-head ay-shelf-head"><h2 id={`ayna-area-title-${section.key}`}>{section.label}</h2>{shown.length > 0 && <span className="ay-shelf-count" aria-label={`${shown.length} on this shelf`}>{shown.length}</span>}<button type="button" className="ay-shelf-add" onClick={() => onBrowse?.(shortNeedLabel(section.label))} aria-label={`Add to ${section.label}`}>+ Add</button></div>
           {shelf && shelf.shortBy > 0 && shelf.picks.length > 0 && <p className="ay-shelf-note">{onlyNote(shelf.picks.length, section.phrase)}</p>}
           {empty && <div className="ay-shelf-empty">
             <p>No strong matches for {section.phrase} yet.</p>
