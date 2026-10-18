@@ -941,6 +941,8 @@ export default function MyEcosystem({
     onOpenProduct,
     onOpenDoctorPrep,
     onBuildEcosystem,
+    onRedoQuiz,
+    onResetEcosystem,
     onEditHealthProfile,
     quizResults = null,
     healthProfile = null,
@@ -2021,6 +2023,7 @@ export default function MyEcosystem({
                     })()}
                     <div className="eco3-actions" role="group" aria-label="Ecosystem actions">
                         <button type="button" className="eco3-pill eco3-pill--ink" onClick={() => setShowAddModal(true)}>+ Add a product</button>
+                        {typeof onRedoQuiz === 'function' && <button type="button" className="eco3-pill" onClick={onRedoQuiz}>Redo quiz</button>}
                         {/* One primary action; the rest live in More (Pass 7: four equal buttons said nothing about where to start). */}
                         <details className="eco3-more">
                             <summary className="eco3-pill">More</summary>
@@ -2039,6 +2042,9 @@ export default function MyEcosystem({
                                         e.currentTarget.closest('details').open = false;
                                         if (!myProductList.length || window.confirm('Refresh your picks from your answers? Products you added yourself stay on your shelves.')) onBuildEcosystem();
                                     }}>{myProductList.length ? 'Refresh picks from my answers (your shelves stay)' : 'Build my ecosystem'}</button>
+                                )}
+                                {typeof onResetEcosystem === 'function' && (
+                                    <button type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; onResetEcosystem(); }}>Reset my ecosystem</button>
                                 )}
                             </div>
                         </details>
