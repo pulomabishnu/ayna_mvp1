@@ -18,6 +18,8 @@ import ComparePanel from '../../components/pdp/ComparePanel.jsx';
 import { jumpTo } from '../../components/pdp/jump.js';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
+import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
+import { productImageOverride } from '../../data/productImageOverrides.js';
 import { apiUrl } from '../../utils/apiUrl.js';
 import { productHref } from '../../utils/productRoute.js';
 import { HEART_PATH } from '../utils/heart.js';
@@ -248,7 +250,7 @@ export default function ProductDetailScreen({
     const compare = onOpenProduct ? similarProducts(product, { pool, limit: 3 }) : [];
     const used = new Set([...compare.map((p) => p.id), ...owned]);
     // Suggestions are photo cards: products without a photo are left out (same rule as the website's top picks).
-    const photoPool = pool.filter((p) => p.image || p.imageUrl || p.images?.[0]);
+    const photoPool = pool.filter((p) => productImageOverride(p) || safeProductImageSrc(p.image || p.imageUrl || p.images?.[0]));
     let more = !onOpenProduct ? [] : quizAnswers ? photoPool
       .filter((p) => !used.has(p.id))
       .map((p) => ({ p, m: getProductMatchDetailsForProduct(p, quizAnswers, null, matchOpts) }))
