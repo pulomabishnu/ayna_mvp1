@@ -7178,7 +7178,7 @@ export const BRAND_PRODUCTS = [
         affiliateUrl: 'https://collabs.shop/kydydp', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://momotaroapotheca.com/pages/faq',
         image: '/products/momotaro/salve.webp',
-        summary: 'Momotaro Apotheca was started in Portland, Oregon by Lindsay Wynn and Taylor Samuelsen. Wynn, a former beauty photographer, says she started making her own products after years of recurring yeast infections and BV, when drugstore options either didn\'t work or made things worse. The Salve is the brand\'s best seller: a certified organic balm for the vulva with a coconut and jojoba base, plus goldenseal, Oregon grape, echinacea, calendula and tea tree. The brand says it comforts dryness, itching and irritation, including irritation that comes with yeast infections and BV, and calms friction from sex, sweat and tight clothing. Free of alcohol, parabens, phthalates, silicone, sulfates and synthetic fragrance.',
+        summary: 'Momotaro Apotheca was started in Portland, Oregon by Lindsay Wynn and Taylor Samuelsen. Wynn, a former beauty photographer, says she started making her own products after years of recurring yeast infections and BV, when drugstore options either didn\'t work or made things worse. The Salve is a certified organic balm for the vulva with a coconut and jojoba base, plus goldenseal, Oregon grape, echinacea, calendula and tea tree. The brand says it comforts dryness, itching and irritation, including irritation that comes with yeast infections and BV, and calms friction from sex, sweat and tight clothing. Free of alcohol, parabens, phthalates, silicone, sulfates and synthetic fragrance.',
         safety: {
             fdaStatus: 'Sold as a topical cosmetic: the brand\'s FAQ says its products are cosmetics, not medicine. It does not appear in FDA\'s drug listings under Momotaro Apotheca (checked on openFDA 2026-10-17).',
             materials: '30 mL (1 oz) jar. Ingredients: organic coconut oil, organic kokum butter, organic beeswax, organic jojoba, organic tea tree, organic goldenseal, organic echinacea, organic calendula, organic Oregon grape. Certified organic (the brand says its suppliers are Oregon Tilth certified) and cruelty-free.',
@@ -7561,7 +7561,7 @@ export const BRAND_PRODUCTS = [
             'First infection, symptoms that come back, or symptoms that don\'t clear in a week: see a clinician.',
             'Fever, pelvic pain, or unusual discharge with a bad smell: see a clinician.',
             'Pregnant or breastfeeding: talk to your provider before using any vaginal product.',
-            'Contains tea tree oil: stop using it if irritation occurs, and avoid oral sex while using it (tea tree oil must not be swallowed).',
+            'Contains tea tree oil: stop using it if irritation occurs. NIH says tea tree oil must never be swallowed.',
         ],
         communityReview: 'Rated 4.94 out of 5 from 31 reviews on the brand\'s own site (29 five-star, 2 four-star). 71% of those reviews were left in exchange for a reward; 90% are from verified buyers. Reviewers with chronic yeast infections describe fast relief: "I get chronic yeast infections and this is the ONLY thing that helps them." Several say they can\'t use standard creams: "I can\'t use Monistat. This saved me. Feels like a concentrated version of salve." One compared it to the drug miconazole and felt it "took a little more time to kick in." Practical notes: it can leak (wear a liner), and a 4-star reviewer said it didn\'t help because "my issue wasn\'t yeast or BV," a reminder to get a diagnosis first.',
         effectiveness: 'No study of this product is cited on momotaroapotheca.com, and FDA has not reviewed it for safety or effectiveness. Its calendula base has small randomized vaginal trials, and berberine and tea tree oil are antifungal in lab studies; none of that research tested this suppository.',
@@ -7630,9 +7630,9 @@ export const BRAND_PRODUCTS = [
         affiliateUrl: 'https://collabs.shop/762eiq', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://momotaroapotheca.com/blogs/vaginal-wellness/hydrosol-what-is-it-how-do-i-use-it',
         image: '/products/momotaro/hydrosol-toner.webp',
-        summary: 'An alcohol-free micromist from Momotaro Apotheca, the Portland vulvovaginal care brand started by Lindsay Wynn. It is made from steam-distilled organic orange blossom, rose, rosemary and lavender waters, which the brand explains are far more diluted, and so gentler, than essential oils. Momotaro Apotheca says it soothes irritation, neutralizes odor and hydrates the face, body and external pelvic area, for use after a shower, workout, period or sex. Customers also use it as a face toner and on body breakouts. Certified organic, vegan and cruelty-free; 100 mL glass bottle, per the label.',
+        summary: 'An alcohol-free micromist from Momotaro Apotheca, the Portland vulvovaginal care brand started by Lindsay Wynn. It is made from steam-distilled organic orange blossom, rose, rosemary and lavender waters, which the brand explains are far more diluted, and so gentler, than essential oils. Momotaro Apotheca says it soothes irritation, neutralizes odor and hydrates the face, body and external pelvic area, for use after a shower, workout, period or sex. Customers also use it as a face toner and on body breakouts. Certified organic, vegan and cruelty-free; 100 mL, per the label shown on the brand\'s site.',
         safety: {
-            fdaStatus: 'Sold as a cosmetic body mist. momotaroapotheca.com does not describe it as FDA-cleared or approved, and it does not appear in FDA\'s drug listings under Momotaro Apotheca (checked on openFDA 2026-10-17).',
+            fdaStatus: 'Sold as a cosmetic body mist: the brand\'s FAQ says its products are topical cosmetics, not medicine. It does not appear in FDA\'s drug listings under Momotaro Apotheca (checked on openFDA 2026-10-17).',
             materials: 'Ingredients: organic orange blossom (Citrus aurantium amara), organic rose water (Rosa damascena), organic rosemary distillate, organic lavender distillate, glyceryl caprylate, glyceryl undecylenate (both derived from coconut and castor). No alcohol, parabens, phthalates, silicone, sulfates or synthetic fragrance.',
             recalls: 'No recalls found.',
             sideEffects: 'One reviewer said it burned when sprayed directly on already-irritated skin. The brand says not to spray it on broken skin and to patch test new products. Full warnings are listed below.',
@@ -7649,7 +7649,7 @@ export const BRAND_PRODUCTS = [
         whoItsFor: [
             'People who want a refreshing, alcohol-free mist after showering, exercise, a period or sex',
             'Skin folds and areas prone to sweat, chafing, ingrown hairs or breakouts, per the brand and reviewers',
-            'Fragrance-free routines: no synthetic fragrance, only light floral waters',
+            'People who avoid synthetic fragrance: it has none, per the brand, only light floral waters',
             'For external use: not for inside the vagina',
         ],
         howToUse: {
@@ -7742,7 +7742,7 @@ export const BRAND_PRODUCTS = [
             { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Topical plant oils for skin barrier repair, review (Int J Mol Sci, 2017)' },
         ],
         whoItsFor: [
-            'People who want a fragrance-free, organic bath oil',
+            'People who want an organic bath oil that is alcohol-, fragrance- and filler-free, per the brand',
             'Spot care for ingrown hairs, razor burn and post-shave bumps, per the brand and reviewers',
             'A body oil for dry skin after the shower',
             'Not the pick if you are pregnant or breastfeeding (it contains goldenseal), or if tea tree oil irritates your skin',
@@ -8000,7 +8000,7 @@ export const BRAND_PRODUCTS = [
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna summary of a peer-reviewed review of plant oils used on skin. Not a direct clinician quote; no study tested this product.',
-        doctorOpinion: 'A simple plant-oil moisturizer. Its base oils, sunflower, sweet almond, argan and jojoba, are all covered in a review of plant oils used on skin, which describes moisturizing, anti-inflammatory and skin-barrier repair effects for them. Applying oil to damp skin after a shower, as the brand suggests, helps hold in water.\n\nUnlike Momotaro\'s Salve and Tonic, it has no tea tree, goldenseal or Oregon grape, so it is aimed at everyday dryness rather than infection-related irritation. It does contain essential oils for scent, so patch test first if your skin is sensitive. No study of this product was found.',
+        doctorOpinion: 'A simple plant-oil moisturizer. Its base oils, sunflower, sweet almond, argan and jojoba, are all covered in a review of plant oils used on skin, which describes moisturizing, anti-inflammatory and skin-barrier repair effects for them. The brand says applying it to damp skin after a shower helps seal in hydration.\n\nUnlike Momotaro\'s Salve and Tonic, it has no tea tree, goldenseal or Oregon grape, so it is aimed at everyday dryness rather than infection-related irritation. It does contain essential oils for scent, so patch test first if your skin is sensitive. No study of this product was found.',
         doctorOpinionShort: 'A plant-oil body moisturizer with sunflower, almond, argan and jojoba, all oils with skin-barrier research behind them. No study of this product; it has essential oils for scent, so patch test first.',
         doctorOpinionCitations: [
             {
@@ -8010,7 +8010,7 @@ export const BRAND_PRODUCTS = [
         ],
         whoItsFor: [
             'Dry skin anywhere on the body, used after a shower',
-            'People who want a moisturizer with no synthetic fragrance, alcohol or preservatives',
+            'People who want a moisturizer with no synthetic fragrance or alcohol, per the brand',
             'Chafing, coarse hair and ingrown hairs, per the brand and reviewers',
             'Not for internal use',
         ],
@@ -8159,7 +8159,7 @@ export const BRAND_PRODUCTS = [
         image: 'https://cdn.shopify.com/s/files/1/1935/6703/files/bathsoakbagcopy.webp?v=1763748643',
         summary: 'A mineral and botanical bath soak that Momotaro Apotheca says eases irritation and calms skin. About 10 oz per bag, roughly two soaks, per the brand.',
         safety: {
-            fdaStatus: 'Sold as a bath soak. momotaroapotheca.com does not describe it as FDA-cleared or approved.',
+            fdaStatus: 'Sold as a bath soak: the brand\'s FAQ says its products are topical cosmetics, not medicine.',
         },
         type: 'physical',
         internal: false,
