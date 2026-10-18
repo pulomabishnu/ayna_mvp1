@@ -2778,7 +2778,7 @@ function HowItWorksScreen({ onBack }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 14 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', background: 'var(--ayna-chip-bg)', borderRadius: 13, padding: '13px 14px' }}>
             <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Pulled in</div>
-            <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-navy)' }}>3,140</div>
+            <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>3,140</div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', background: 'var(--ayna-chip-bg)', borderRadius: 13, padding: '13px 14px' }}>
             <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Relevant to you</div>
