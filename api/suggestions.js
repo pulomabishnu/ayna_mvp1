@@ -5,7 +5,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { getClientIp, rateLimit } from './_rateLimit.js';
 import { checkCommunityText } from '../src/utils/communityRules.js';
-import { sendBatch, FROM } from './_email.js';
 
 const CONTEXTS = new Set(['shop', 'shop-empty', 'library', 'app-shop', 'app-library']);
 
@@ -60,12 +59,35 @@ export function suggestionEmail(row) {
   lines.push(['From', `${row.context || 'unknown page'} (${row.platform})`]);
   const shown = lines.filter(([, v]) => v);
   return {
-    from: FROM(),
+    // Same sender as the contact form, which already reaches all three founders.
+    from: process.env.SUGGESTION_FROM_EMAIL || process.env.CONTACT_FROM_EMAIL || 'Ayna <puloma@aynahealth.co>',
     to: TEAM_EMAILS(),
     subject,
     text: `Someone sent an anonymous suggestion on ayna.\n\n${shown.map(([k, v]) => `${k}: ${v}`).join('\n')}\n`,
     html: `<p>Someone sent an anonymous suggestion on ayna.</p><table cellpadding="4">${shown.map(([k, v]) => `<tr><td><b>${escHtml(k)}</b></td><td>${escHtml(v)}</td></tr>`).join('')}</table>`,
   };
+}
+
+// Single-message send, the same Resend call the contact form uses.
+export async function sendSuggestionEmail(message, fetchImpl = fetch) {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) { console.error('[suggestions] email not sent: RESEND_API_KEY is not configured'); return false; }
+  try {
+    const r = await fetchImpl('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(message),
+    });
+    if (!r.ok) {
+      const body = await r.text().catch(() => '');
+      console.error('[suggestions] email failed:', r.status, body.slice(0, 500));
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.error('[suggestions] email failed:', e?.message);
+    return false;
+  }
 }
 
 let admin = null;
@@ -105,18 +127,18 @@ export default async function handler(req, res) {
   const ruleHit = [row.product_name, row.reason, row.topic].filter(Boolean).map((t) => checkCommunityText(t)).find((r) => r.blocked);
   if (ruleHit) return res.status(400).json({ error: ruleHit.message });
 
+  // Save it, then email it. If saving fails the email still goes out, so the
+  // suggestion is never lost; she only sees an error if both fail.
+  let saved = false;
   const db = getAdmin();
-  if (!db) {
-    console.error('[suggestions] SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is not set');
-    return res.status(503).json({ error: 'Suggestions are offline for a moment.' });
+  if (!db) console.error('[suggestions] SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is not set');
+  else {
+    const { error: dbError } = await db.from('suggestions').insert(row);
+    if (dbError) console.error('[suggestions] insert failed:', dbError.code, dbError.message);
+    else saved = true;
   }
-
-  const { error: dbError } = await db.from('suggestions').insert(row);
-  if (dbError) {
-    console.error('[suggestions] insert failed:', dbError.code, dbError.message);
-    return res.status(503).json({ error: 'Suggestions are offline for a moment.' });
-  }
-  // Email the team. A failed email never fails her submission (it's saved).
-  try { await sendBatch([suggestionEmail(row)]); } catch (e) { console.error('[suggestions] email failed:', e?.message); }
+  // A failed email is logged loudly so it shows up in the Vercel logs.
+  const emailed = await sendSuggestionEmail(suggestionEmail(row));
+  if (!saved && !emailed) return res.status(503).json({ error: 'Suggestions are offline for a moment.' });
   return res.status(200).json({ ok: true });
 }
