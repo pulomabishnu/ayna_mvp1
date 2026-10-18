@@ -20,6 +20,7 @@ import {
 import { fetchDataExport, requestAccountDeletion } from '../../utils/dataExportApi.js';
 import { OPEN_SOURCE_PACKAGES, summarizeLicenses } from '../../data/openSourceLicenses.js';
 import LegalFooter from '../../components/LegalFooter.jsx';
+import HealthConnectionsScreen from './HealthConnectionsScreen.jsx';
 import './about-scrapbook.css';
 import { buildShopperProfile } from '../../utils/shopperProfile.js';
 import BadgesPanel from '../../../components/BadgesPanel.jsx';
@@ -90,6 +91,7 @@ const HUB_ICONS = {
   ecosystem: <><circle cx="12" cy="13" r="3" /><circle cx="12" cy="4.5" r="1.8" /><circle cx="5" cy="18" r="1.8" /><circle cx="19" cy="18" r="1.8" /><path d="M12 10V6.3M9.5 14.6l-3 2.2M14.5 14.6l3 2.2" /></>,
   saved: <><path d="M12 19.5s-7-4.3-7-9.3A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.2c0 5-7 9.3-7 9.3Z" /></>,
   checkin: <><rect x="4" y="5" width="16" height="15" rx="2.5" /><path d="M8 3v4M16 3v4M4 10h16M9 14.5l2 2 4-4" /></>,
+  healthData: <><path d="M3 12h4l2-5 4 10 2-5h6" /></>,
   shopper: <><circle cx="12" cy="12" r="8" /><path d="M12 7.5V12l3 2" /></>,
   startups: <><path d="M12 3.5l2.2 5.3 5.3 2.2-5.3 2.2L12 18.5l-2.2-5.3L4.5 11l5.3-2.2Z" /><path d="M18.5 17.5l.8 1.7 1.7.8-1.7.8-.8 1.7-.8-1.7-1.7-.8 1.7-.8Z" /></>,
   settings: <><path d="M4 7h9M17 7h3M4 17h3M11 17h9" /><circle cx="15" cy="7" r="2" /><circle cx="9" cy="17" r="2" /></>,
@@ -317,6 +319,7 @@ function ProfileHub({ shopperProfile, authUserId, myProducts = [], quizAnswers =
           { key: 'ecosystem', title: `Ecosystem · ${ecosystemCount}`, onClick: onOpenEcosystem },
           { key: 'saved', title: `Saved · ${savedCount}`, onClick: onOpenSaved },
           { key: 'checkin', title: 'Check-ins', sub: "What's changed since last time", onClick: onOpenMonthlyCheckin },
+          { key: 'healthData', title: 'Health data', sub: 'Wearables and health records' },
           { key: 'shopper', title: 'Routine', sub: 'Alerts, routine, brand affinity', badge: shopperAlertsCount > 0 ? `${shopperAlertsCount} new` : null },
           { key: 'startups', title: 'Startups', sub: 'Emerging brands worth backing' },
           { key: 'settings', title: 'Settings', sub: IS_NATIVE_APP ? 'Preferences, notifications and privacy' : 'Preferences, account and privacy' },
@@ -3278,6 +3281,16 @@ export default function ProfileFlow({
     body = <TypefacesScreen onBack={goBack} />;
   } else if (screen === 'researchSources') {
     body = <ResearchSourcesScreen onBack={goBack} />;
+  } else if (screen === 'healthData' || screen.startsWith('healthData:')) {
+    const sourceId = screen.split(':')[1] || null;
+    body = (
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+        <BackHeader title="Health data" onBack={goBack} />
+        <div className="ay-hc-scroll">
+          <HealthConnectionsScreen selectedId={sourceId} onSelect={(id) => pushScreen(`healthData:${id}`)} />
+        </div>
+      </div>
+    );
   } else if (screen === 'manageData') {
     body = <ManageDataScreen onBack={goBack} />;
   }
