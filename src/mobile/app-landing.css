@@ -330,3 +330,5 @@
 /* Wrapped intro: the stamp is the centrepiece of the empty top */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-wrapped .ayw-stamp { position: relative !important; top: auto !important; right: auto !important; width: 150px !important; height: 150px !important; margin: 8vh auto 28px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-wrapped .ayw-stamp span { font-size: 36px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-profile-auth-sheet .ayna-profile-auth-primary { background: #3e2723 !important; color: #ffedac !important; border: 0 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-profile-auth-sheet .ayna-profile-auth-primary { background: #ffedac !important; color: #3e2723 !important; }
