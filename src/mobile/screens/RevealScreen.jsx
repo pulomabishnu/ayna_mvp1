@@ -31,6 +31,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
   const rawMatch = first && answers ? getProfileMatchPercentForProduct(first, answers) : null;
   const firstMatch = Number.isFinite(rawMatch) && rawMatch > 0 ? Math.round(rawMatch) : null;
   const supportCount = (intake?.supportSelections || []).filter((s) => s !== 'Nothing right now').length;
+  const needCount = supportCount || (answers?.supportSelections || []).filter((s) => s !== 'Nothing right now').length;
 
   const slides = products.length
     ? ['intro', ...(topAreas.length ? ['focus'] : []), 'match', ...(persona ? ['persona'] : []), 'lineup', 'finish']
@@ -113,7 +114,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
           <h1 className="ayw-title">Your ayna,<br /><em>wrapped.</em></h1>
           <div className="ayw-stat-row">
             <div><strong>{myProducts.length}</strong><span>{myProducts.length === 1 ? 'pick' : 'picks'}</span></div>
-            <div><strong>{areaCount || topAreas.length}</strong><span>{(areaCount || topAreas.length) === 1 ? 'area' : 'areas'}</span></div>
+            {areaCount || topAreas.length ? <div><strong>{areaCount || topAreas.length}</strong><span>{(areaCount || topAreas.length) === 1 ? 'area' : 'areas'}</span></div> : needCount > 0 && <div><strong>{needCount}</strong><span>{needCount === 1 ? 'need' : 'needs'}</span></div>}
             {supportCount > 0 && <div><strong>{supportCount}</strong><span>{supportCount === 1 ? 'goal' : 'goals'}</span></div>}
           </div>
         </>}

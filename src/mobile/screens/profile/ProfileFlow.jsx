@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { FilmStrip } from '../../components/BrandBits.jsx';
 import { Capacitor } from '@capacitor/core';
 import { ALL_PRODUCTS } from '../../../data/products.js';
 import { getSupabaseClient } from '../../../utils/supabaseClient.js';
@@ -311,6 +312,7 @@ function ProfileHub({ shopperProfile, authUserId, myProducts = [], quizAnswers =
 
       <BadgesPanel userId={authUserId} myProducts={myProducts} quizAnswers={quizAnswers} variant="app" />
 
+      <FilmStrip className="is-short ay-hub-film" />
       <div className="ayna-fresh-profile-menu" style={{ flex: 1, padding: '22px 20px 26px', display: 'flex', flexDirection: 'column', gap: 10 }}>
 
         {[

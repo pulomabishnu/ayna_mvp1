@@ -1,4 +1,5 @@
 import { HEART_PATH } from '../utils/heart.js';
+import { FilmStrip } from './BrandBits.jsx';
 
 // Shared empty / error state: one sticker-style illustration, one line,
 // one action. Used wherever a list can be empty or a feed can fail.
@@ -14,6 +15,7 @@ const ART = {
 export default function EmptyState({ art = 'spark', tone = 'pink', title, body, actionLabel, onAction, secondaryLabel, onSecondary, compact = false }) {
   return (
     <div className={`ay-empty ay-empty--${tone}${compact ? ' is-compact' : ''}`} role="status">
+      {!compact && <FilmStrip className="is-short ay-empty-film" />}
       <div className="ay-empty-art" aria-hidden="true">
         <span className={`ay-empty-burst is-${tone === 'pink' ? 'rose' : 'sky'}`}><svg viewBox="0 0 24 24">{ART[art] || ART.spark}</svg></span>
       </div>
