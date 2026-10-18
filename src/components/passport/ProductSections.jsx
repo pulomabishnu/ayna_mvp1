@@ -337,8 +337,8 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
       const id = e.detail;
       if (id === 'sources' || id === 'clinician' || (glance?.sections || []).some((x) => x.id === id)) {
         const g = groupOf(id);
-        setTab(g);
-        if (g !== id && g !== 'glance') setSub((m) => ({ ...m, [g]: id }));
+        const el = document.getElementById(`ay-panel-${g}`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     };
     window.addEventListener('ay-open-section', on);
@@ -355,29 +355,44 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
     ...(sources.length ? [{ id: 'sources', label: `Sources (${sources.length})`, tone: 'cream' }] : []),
   ];
   void nav; void extraNav;
-  const cur = tabs.find((t) => t.id === tab) || tabs[0];
-  const curGroup = TAB_GROUPS.find((g) => g.id === cur.id);
-  const groupSections = curGroup ? secs.filter((sec) => curGroup.ids.includes(sec.id)) : [];
-  const title = cur.id === 'glance' ? 'Overview' : cur.id === 'sources' ? 'Where this comes from' : cur.label;
+  // App (Oct 18): every part of the product page is open, one after another
+  // (Baymard: people miss what hides behind tabs). The chip row jumps to a part.
+  void tab; void setTab; void sub; void setSub;
+  const jump = (id) => {
+    const el = document.getElementById(`ay-panel-${id}`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  const groupBody = (group) => {
+    const list = secs.filter((sec) => group.ids.includes(sec.id));
+    return list.map((sec) => (
+      <article key={sec.id} className={`ay-gl-card is-${sec.id}${list.length === 1 ? ' is-single' : ''}`}>
+        {list.length > 1 && <h3 className="ay-gl-cardh"><span aria-hidden="true">{SUB_ICON[sec.id]}</span>{SUB_LABEL[sec.id] || sec.title}</h3>}
+        <Section bare section={sec} plan={plan} sources={sources} extra={extras[sec.id]} onXref={onXref} />
+      </article>
+    ));
+  };
 
   return (
-    <section className="ay-glance is-tabbed" id="ay-sec-glance" tabIndex={-1} aria-label="Product information">
-      <div className="ay-glance__nav" role="tablist" aria-label="Product information">
+    <section className="ay-glance is-stacked" id="ay-sec-glance" tabIndex={-1} aria-label="Product information">
+      <nav className="ay-glance__nav" aria-label="Jump to">
         <ul>
           {tabs.map((t) => (
             <li key={t.id}>
-              <button type="button" role="tab" id={`ay-tab-${t.id}`} aria-selected={t.id === cur.id} aria-controls="ay-tabpanel" className={t.id === cur.id ? 'is-on' : undefined} onClick={() => setTab(t.id)}>{t.label}</button>
+              <button type="button" onClick={() => jump(t.id)}>{t.label}</button>
             </li>
           ))}
         </ul>
-      </div>
-
-      <div className="ay-glance__panel" id="ay-tabpanel" role="tabpanel" aria-labelledby={`ay-tab-${cur.id}`} data-tone={cur.tone}>
-        <div className="ay-glance__panelhead">
-          <h2>{title}</h2>
-          {cur.id === 'glance' && sources.length > 0 && <span className="ay-glance__chip">{sources.length} source{sources.length === 1 ? '' : 's'}</span>}
-        </div>
-      {cur.id === 'glance' && (
+      </nav>
+      {tabs.map((t) => {
+        const group = TAB_GROUPS.find((g) => g.id === t.id);
+        const heading = t.id === 'glance' ? 'Overview' : t.id === 'sources' ? 'Where this comes from' : t.label;
+        return (
+          <div key={t.id} className="ay-glance__panel" id={`ay-panel-${t.id}`} data-tone={t.tone}>
+            <div className="ay-glance__panelhead">
+              <h2>{heading}</h2>
+              {t.id === 'glance' && sources.length > 0 && <span className="ay-glance__chip">{sources.length} source{sources.length === 1 ? '' : 's'}</span>}
+            </div>
+            {t.id === 'glance' && (
       <div className="ay-glance__top">
         <div className="ay-glance__what">
           {what.text && (
@@ -420,52 +435,9 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
           ))}
         </dl>
       </div>
-        )}
-        {curGroup && curGroup.id === 'reviews' && groupSections.length > 0 && (
-          <div className={`ay-gl-split${groupSections.length === 1 ? ' is-one' : ''}`}>
-            {groupSections.map((sec) => (
-              <article key={sec.id} className={`ay-gl-card is-${sec.id}`}>
-                <h3 className="ay-gl-cardh"><span aria-hidden="true">{SUB_ICON[sec.id]}</span>{SUB_LABEL[sec.id] || sec.title}</h3>
-                <Section bare section={sec} plan={plan} sources={sources} extra={extras[sec.id]} onXref={onXref} />
-              </article>
-            ))}
-          </div>
-        )}
-        {curGroup && curGroup.id !== 'reviews' && groupSections.length === 1 && (
-          <article className={`ay-gl-card is-single is-${groupSections[0].id}`}>
-            <Section bare section={groupSections[0]} plan={plan} sources={sources} extra={extras[groupSections[0].id]} onXref={onXref} />
-          </article>
-        )}
-        {curGroup && curGroup.id !== 'reviews' && groupSections.length > 1 && (() => {
-          const active = groupSections.find((sec) => sec.id === sub[curGroup.id]) || groupSections[0];
-          return (
-            <div className="ay-gl-subs">
-              <ul className="ay-gl-subnav" aria-label={`${curGroup.label} topics`}>
-                {groupSections.map((sec) => {
-                  const d = sectionDigest(sec);
-                  return (
-                    <li key={sec.id}>
-                      <button type="button" aria-pressed={sec.id === active.id} className={sec.id === active.id ? 'is-on' : undefined} onClick={() => setSub((m) => ({ ...m, [curGroup.id]: sec.id }))}>
-                        <span className="ay-gl-subnav__i" aria-hidden="true">{SUB_ICON[sec.id]}</span>
-                        <span className="ay-gl-subnav__t"><strong>{SUB_LABEL[sec.id] || sec.title}</strong>{d && <small>{d}</small>}</span>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-              <article className={`ay-gl-card is-${active.id}`} key={active.id}>
-                <h3 className="ay-gl-cardh"><span aria-hidden="true">{SUB_ICON[active.id]}</span>{active.title}</h3>
-                <Section bare section={active} plan={plan} sources={sources} extra={extras[active.id]} onXref={onXref} />
-                {groupSections.length > 1 && (() => {
-                  const i = groupSections.indexOf(active);
-                  const nx = groupSections[(i + 1) % groupSections.length];
-                  return <button type="button" className="ay-gl-next" onClick={() => setSub((m) => ({ ...m, [curGroup.id]: nx.id }))}>Next: {SUB_LABEL[nx.id] || nx.title} <span aria-hidden="true">→</span></button>;
-                })()}
-              </article>
-            </div>
-          );
-        })()}
-        {cur.id === 'sources' && (
+            )}
+            {group && groupBody(group)}
+            {t.id === 'sources' && (
           <ol className="ay-gl-srclist">
             {sources.map((src) => (
               <li key={src.url} id={`ay-src-${src.n}`} tabIndex={-1}>
@@ -479,8 +451,10 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
               </li>
             ))}
           </ol>
-        )}
-      </div>
+            )}
+          </div>
+        );
+      })}
     </section>
   );
 }

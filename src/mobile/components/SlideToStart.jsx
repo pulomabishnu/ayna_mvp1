@@ -38,7 +38,9 @@ export default function SlideToStart({ onComplete }) {
     }
   };
 
-  return <div className="ayna-slide-start" ref={trackRef}>
+  // The whole bar is tappable too (Oct 18 app audit): sliding is optional.
+  const tapTrack = (event) => { if (event.target.closest('.ayna-slide-start-handle')) return; onComplete?.(); };
+  return <div className="ayna-slide-start" ref={trackRef} onClick={tapTrack}>
     <span className="ayna-slide-start-fill" style={{ width: distance > 0 ? `${distance + 56}px` : 0 }} aria-hidden="true" />
     <span className="ayna-slide-start-label" aria-hidden="true">Get matched <span>slide to start</span></span>
     <button

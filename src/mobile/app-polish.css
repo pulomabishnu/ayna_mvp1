@@ -1,0 +1,172 @@
+/* ayna app, review round 1 fixes (Oct 18, 2026). Based on the fresh-eyes
+   review and the app design research (HIG, Material, NN/g, Baymard):
+   one shadowed object (product cards, the deck card, the main button),
+   white only behind product photos, DM Serif never bold and never under
+   22px, 44px targets, 20px gutters, 32px between sections. */
+
+/* ===== product card: the website's card (butter body, inset white photo) ===== */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card {
+  background: var(--b-butter) !important; border: 2px solid var(--b-espresso) !important; border-radius: 16px !important;
+  box-shadow: 5px 5px 0 var(--b-espresso) !important; height: auto !important; min-height: 0 !important; align-self: start !important;
+}
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card .ayna-fresh-product-main { height: auto !important; min-height: 0 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card .ayna-fresh-product-image {
+  margin: 8px 8px 0 !important; aspect-ratio: 1 / 1 !important; height: auto !important; border: 0 !important; border-radius: 12px !important; background: #ffffff !important; overflow: hidden !important;
+}
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card .ayna-fresh-product-copy { padding: 10px 12px 12px !important; gap: 3px !important; min-height: 0 !important; flex: 0 0 auto !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card .ayna-fresh-product-copy strong { display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card .ayna-card-brand { font: 600 13px/1.3 var(--f-ui) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card .ayna-card-price-sub[aria-hidden='true'] { display: none !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card .ayna-card-brand[aria-hidden='true'] { display: none !important; }
+/* heart: borderless icon, 44px target */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card .ayna-card-save {
+  width: 44px !important; height: 44px !important; top: 8px !important; right: 8px !important; border: 0 !important; background: transparent !important; box-shadow: none !important;
+}
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card .ayna-card-save svg { width: 24px !important; height: 24px !important; fill: rgba(255, 255, 255, .85); stroke: var(--b-espresso); stroke-width: 1.8; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card .ayna-card-save[aria-pressed='true'] { background: transparent !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card .ayna-card-save[aria-pressed='true'] svg { fill: var(--b-rose); }
+/* partner: a meta line with a rose dot, as on the site */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-card-partner { display: inline-flex; align-items: center; gap: 6px; font: 600 12px/1.3 var(--f-ui); color: rgba(62, 39, 35, .78); }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-card-partner::before { content: ''; width: 9px; height: 9px; border-radius: 50%; background: var(--b-rose); border: 1.5px solid var(--b-espresso); }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-partner-sticker { display: none !important; }
+/* dark: espresso card, butter type, the photo stays white */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-product-card { background: var(--b-espresso) !important; border-color: rgba(255, 237, 172, .7) !important; box-shadow: 5px 5px 0 rgba(0, 0, 0, .55) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-product-card :is(strong, b, .ayna-card-brand, .ayna-card-price-sub, .ay-card-partner, small) { color: var(--b-butter) !important; }
+
+/* ===== shadows only on the main objects ===== */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ay-shelf-head h2, .ay-eco-mix, .ay-eco-cover, .ayna-figma-guest-match, .ay-pdp-hero, .ayna-fresh-detail-image, .ay-intro-part, .ip-card, .ip-age, .ay-empty-art, .ay-lib-item button > div, .ay-lib-item img, .ayna-shared-header-action, .ay-header-ask-pill) { box-shadow: none !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-figma-guest-match { background: var(--b-sky) !important; border: 0 !important; color: var(--b-espresso) !important; min-height: 44px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-hero { border-radius: 16px !important; }
+
+/* ===== Swipe to discover: flat rose row ===== */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-cta { background: var(--b-rose) !important; color: var(--b-espresso) !important; border: 0 !important; box-shadow: none !important; min-height: 56px !important; border-radius: 16px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-copy strong { font: 600 17px/1.2 var(--f-ui) !important; color: var(--b-espresso) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-go { background: var(--b-espresso) !important; color: var(--b-butter) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-discover-cta { background: var(--b-sky) !important; box-shadow: none !important; }
+
+/* ===== header: Ask and heart quiet, no borders ===== */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-header-ask-pill { border: 0 !important; background: rgba(255, 255, 255, .55) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-shared-header-action { border: 0 !important; background: rgba(255, 255, 255, .55) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile:is([data-screen='eco']) :is(.ay-header-ask-pill, .ayna-shared-header-action) { background: rgba(255, 237, 172, .14) !important; color: var(--b-butter) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile:is([data-screen='eco']) .ay-header-ask-orb { border-color: var(--b-butter) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] :is(.ay-header-ask-pill, .ayna-shared-header-action) { background: rgba(62, 39, 35, .12) !important; }
+/* bands keep their colour in dark mode too (colour = place, not mode) */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'][data-screen='browse'] { --band: var(--b-rose); }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'][data-screen='library'] { --band: var(--b-sky); }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hub { --band: var(--b-sky); }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hub .ayna-shared-header { background: var(--b-sky) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero { background: var(--b-sky) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero::after { background: radial-gradient(circle at 12px 0, var(--b-sky) 12px, transparent 12.5px) 0 0 / 24px 14px repeat-x !important; }
+/* tighter bands: less height before content */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ay-shop-titlebar, .ay-lib-title, .ay-eco-hero) h1 { font-size: calc(34px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-shop-heading, .ay-lib-head) { padding-bottom: 16px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-search { min-height: 46px !important; }
+
+/* ===== chips: flat fill unselected, espresso selected; 44 targets ===== */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-shop-category, .ay-lib-topics button, .ayna-category-expanded button) {
+  border: 0 !important; background: rgba(62, 39, 35, .08) !important; min-height: 44px !important;
+}
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] :is(.ayna-shop-category, .ay-lib-topics button, .ayna-category-expanded button) { background: rgba(255, 237, 172, .12) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-shop-category, .ay-lib-topics button, .ayna-category-expanded button)[aria-pressed='true'] { background: var(--r-action) !important; color: var(--r-on-action) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-shop-filter-toggle { border: 2px solid var(--r-line-strong) !important; background: transparent !important; }
+
+/* ===== tab bar: flat, five equal slots, one active style ===== */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav { border-top: 1px solid var(--r-line-strong) !important; min-height: 60px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center .ay-nav-center {
+  width: auto !important; height: auto !important; margin: 0 !important; border: 0 !important; box-shadow: none !important; background: transparent !important; color: inherit !important;
+  box-sizing: content-box; padding: 4px 16px !important; border-radius: 999px !important;
+}
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center .ay-nav-center svg { width: 22px !important; height: 22px !important; padding: 0 !important; background: none !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center.is-active .ay-nav-center { background: var(--b-rose) !important; color: var(--b-espresso) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-center .ay-nav-center { background: transparent !important; color: inherit !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-center.is-active .ay-nav-center { background: var(--b-sky) !important; color: var(--b-espresso) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button span { font-size: 11px !important; white-space: nowrap; }
+
+/* ===== Ecosystem shelves: flat tag, count, Add; flat plank ===== */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ay-shelf-head { border-bottom: 0 !important; padding-bottom: 0 !important; margin-bottom: 14px !important; flex-wrap: nowrap !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ay-shelf-head h2 {
+  border: 0 !important; transform: none !important; border-radius: 6px !important; padding: 6px 12px !important;
+  font: 400 calc(22px * var(--ayna-text-scale, 1))/1.15 var(--f-display) !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 62vw;
+}
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-shelf-count { width: auto !important; height: auto !important; clip-path: none !important; background: none !important; color: var(--r-ink-2) !important; font: 600 14px/1 var(--f-ui) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-shelf-add { border: 0 !important; padding: 0 4px !important; min-width: 44px; min-height: 44px; text-decoration: underline; text-underline-offset: 4px; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-shelf-plank { height: 6px !important; margin: -3px 0 0 !important; border: 0 !important; border-radius: 3px !important; box-shadow: none !important; background: var(--r-ink) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-editorial-product-grid { grid-auto-columns: 150px !important; padding-bottom: 8px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-collection .ayna-editorial-product-grid { grid-auto-columns: 150px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection { margin-top: 28px !important; }
+/* the mix chart: inside the gutters, flat, sans numbers */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-mix { margin: 32px var(--r-gutter) 0 !important; background: transparent !important; border: 2px solid var(--r-line-strong) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-ecosystem-chart-legend :is(b, strong, span, em) { font-family: var(--f-ui) !important; font-weight: 600 !important; }
+
+/* ===== Product page ===== */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-product-purchase-bar { border-top: 1px solid var(--r-line-strong) !important; gap: 10px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-product-purchase-bar button, .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-product-purchase-bar a { border-radius: 999px !important; min-height: 48px !important; font: 700 15px/1 var(--f-ui) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-product-purchase-bar > :first-child { border: 0 !important; background: transparent !important; width: 48px !important; min-width: 48px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-product-purchase-bar > :last-child { box-shadow: 4px 4px 0 var(--b-rose) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance.is-stacked .ay-glance__facts { background: transparent !important; border: 0 !important; border-top: 1px solid var(--r-line) !important; border-radius: 0 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance.is-stacked .ay-glance__facts > div { padding-left: 0 !important; padding-right: 0 !important; border-color: var(--r-line) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance.is-stacked .ay-gl-chips { margin-top: 14px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance.is-stacked .ay-glance__panelhead { border-bottom: 0 !important; padding-bottom: 0 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance.is-stacked .ay-glance__chip { border: 0 !important; background: none !important; font: 600 13px/1 var(--f-ui) !important; color: var(--r-ink-2) !important; padding: 0 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance.is-stacked :is(p, li) { font-size: 16px !important; line-height: 1.55 !important; font-weight: 400 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance.is-stacked .is-lead { font-size: 17px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp small.is-unit, .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp .is-unit { background: none !important; border: 0 !important; padding: 0 !important; font: 600 14px/1 var(--f-ui) !important; color: var(--r-ink-2) !important; }
+
+/* ===== Swipe deck ===== */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-copy strong { font: 600 18px/1.25 var(--f-ui) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-btn { width: 60px !important; height: 60px !important; min-height: 60px !important; border-radius: 50% !important; background: var(--b-butter) !important; color: var(--b-espresso) !important; border: 0 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-btn.is-view { width: auto !important; padding: 0 22px !important; border-radius: 999px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-btn:last-child { background: var(--b-rose) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-stage { margin: 8px 0 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-card { width: 100% !important; height: 100% !important; max-height: 560px; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-card.is-behind { rotate: 2deg; }
+
+/* ===== quiz + check-in: one footer, no wave, titles not width-capped ===== */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-art { display: none !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-foot { background: var(--r-canvas) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-next { border: 0 !important; border-style: solid !important; background: var(--r-action) !important; color: var(--r-on-action) !important; min-height: 56px !important; border-radius: 999px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-next:disabled { opacity: .4 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-next :is(span, i) { color: inherit !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-title { max-width: none !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake [class*='progress'] :is(i, span, b) { background-color: var(--r-line); }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-row { background: transparent !important; border: 2px solid var(--r-line) !important; min-height: 60px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-row:is([aria-pressed='true'], [aria-checked='true']) { background: var(--b-rose) !important; border-color: var(--b-espresso) !important; color: var(--b-espresso) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-intro-part { border-width: 2px !important; font: 600 14px/1.15 var(--f-ui) !important; }
+
+/* ===== Library ===== */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-state:not(.is-mid):not(.is-done) { display: none !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-total { display: inline-flex !important; align-items: center; gap: 8px; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-total i { display: block !important; width: 44px !important; height: 6px !important; border-radius: 3px !important; border: 0 !important; background: linear-gradient(var(--b-espresso), var(--b-espresso)) 0 0 / var(--p, 0%) 100% no-repeat, rgba(62, 39, 35, .18) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-match { background: var(--b-sky) !important; color: var(--b-espresso) !important; border: 0 !important; box-shadow: none !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-match * { color: var(--b-espresso) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-item :is(img, button > div:first-child) { box-shadow: none !important; }
+
+/* ===== You ===== */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-hero [style*='27px'] { font: 400 calc(34px * var(--ayna-text-scale, 1))/1.05 var(--f-display) !important; letter-spacing: 0 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu { background: transparent !important; border: 0 !important; border-top: 1px solid var(--r-line) !important; border-radius: 0 !important; margin: 0 20px 24px !important; padding: 0 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button { min-height: 56px !important; padding-left: 0 !important; padding-right: 0 !important; border-bottom: 1px solid var(--r-line) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button:last-of-type { border-bottom: 1px solid var(--r-line) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button > div:first-child { background: transparent !important; border: 0 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-menu { background: transparent !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-hub { padding-bottom: 96px !important; }
+
+/* ===== Wrapped: butter, not white; sans small type ===== */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-wrapped { --ay-paper: #ffedac; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayw-top span { font: 600 15px/1 var(--f-ui) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayw-hint { font: 600 13px/1 var(--f-ui) !important; opacity: .8; }
+
+/* ===== Ask sheet scrim, article spacing, safe bottom ===== */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile [class*='backdrop'], .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile [class*='scrim'] { background: rgba(62, 39, 35, .4) !important; backdrop-filter: none !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-article :is(img, figure) { margin-top: 16px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-article h1 + p { margin-bottom: 16px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-article p { font-size: 17px !important; line-height: 1.6 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-cabinet-home, .ayna-fresh-browse-screen, .ay-lib, .ayna-fresh-saved) { padding-bottom: 96px !important; }
+/* sign up: inputs on the system border */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-auth-field { border: 2px solid rgba(62, 39, 35, .3) !important; border-radius: 14px !important; min-height: 56px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-auth-field:focus-within { border-color: var(--b-espresso) !important; }
+
+/* pass 6: dark mode bands match their header; header actions readable on espresso */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-shop-heading { --band: var(--b-rose) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-lib-head { --band: var(--b-sky) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark']:is([data-screen='ecointro'], [data-screen='community'], [data-screen='eco']) :is(.ay-header-ask-pill, .ayna-shared-header-action) { background: rgba(255, 237, 172, .14) !important; color: var(--b-butter) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] :is(.ayna-shop-heading, .ay-lib-head) :is(.ay-lib-total, .ay-lib-total *) { color: var(--b-espresso) !important; }
