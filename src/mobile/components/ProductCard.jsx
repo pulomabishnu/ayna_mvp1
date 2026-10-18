@@ -45,6 +45,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
       <button type="button" className="ayna-fresh-product-main" onClick={onClick} aria-label={`${name}, ${shownPrice.main}${shownPrice.sub ? ` ${shownPrice.sub}` : ''}${showMatch ? `, ${badge.label}` : ''}. View product details`}>
       <span className="ayna-fresh-product-image">
         <ProductImage product={product} src={resolvedImage} alt="" allowBrandLogo={isService} style={{ objectFit: 'contain' }} />
+        {isPartner && !isList && <span className="ay-partner-sticker" aria-hidden="true">ayna<br />partner</span>}
       </span>
       <span className="ayna-fresh-product-copy">
         {isList && <span className="ayna-fresh-product-category" aria-hidden={secondaryLabel ? undefined : true}>{secondaryLabel || '\u00a0'}{isPartner ? ' / Partner' : ''}</span>}

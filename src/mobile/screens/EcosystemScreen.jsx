@@ -141,14 +141,16 @@ export default function EcosystemScreen({
 
     <section className="ayna-cabinet-stage ay-eco-hero" aria-labelledby="ayna-cabinet-title">
       <h1 id="ayna-cabinet-title">Your Ecosystem</h1>
+      {currentProducts.length > 0 && <ul className="ay-eco-stickers" aria-label="Your Ecosystem at a glance">
+        <li className="is-rose"><b>{currentProducts.length}</b><span>{currentProducts.length === 1 ? 'product' : 'products'}</span></li>
+        <li className="is-sky"><b>{ringGroups.length}</b><span>{ringGroups.length === 1 ? 'shelf' : 'shelves'}</span></li>
+      </ul>}
       {currentProducts.length > 0 && (
         <div className="ay-eco-actions">
-          {onReplayStory && <button type="button" className="ay-eco-play" onClick={onReplayStory} aria-label="Replay your Wrapped"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg></button>}
-          {onReplayStory && <span className="ay-eco-play-label">Replay Wrapped</span>}
+          {onReplayStory && <button type="button" className="ay-eco-replay" onClick={onReplayStory}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>Replay Wrapped</button>}
           <button type="button" className="ay-text-btn" onClick={onRetake}>Update</button>
         </div>
       )}
-      {ringGroups.length > 0 && <div className="ay-eco-cover"><EcosystemChart groups={ringGroups} /></div>}
       {!hasAnything && <EmptyState compact art="spark" tone="mint" title="No matches yet" body="Update your answers or browse the shop." actionLabel="Shop" onAction={onBrowse} secondaryLabel="Update" onSecondary={onRetake} />}
       {ecosystemNotice && <p className="ayna-cabinet-notice" role="status">{ecosystemNotice}</p>}
     </section>
@@ -156,12 +158,12 @@ export default function EcosystemScreen({
     {careFirst && hasAnything && <p className="ay-care-first__after">Products, when you are ready</p>}
 
     <div className={careFirst ? 'ay-eco-secondary' : undefined}>
-      {sections.map((section, index) => {
+      {sections.map((section) => {
         const { shelf } = section;
         const empty = section.products.length === 0 && !(section.picks?.length);
         const shown = section.products.length ? section.products : section.picks || [];
         return <section key={section.key} id={`ayna-area-${section.key}`} className={`ayna-cabinet-collection ayna-area-collection${empty ? ' is-empty-shelf' : ''}`} style={{ '--area-tone': toneFor(section) }} aria-labelledby={`ayna-area-title-${section.key}`}>
-          <div className="ayna-cabinet-section-head"><h2 id={`ayna-area-title-${section.key}`}><small aria-hidden="true">{String(index + 1).padStart(2, '0')}</small>{section.label}</h2></div>
+          <div className="ayna-cabinet-section-head ay-shelf-head"><h2 id={`ayna-area-title-${section.key}`}>{section.label}</h2>{shown.length > 0 && <span className="ay-shelf-count" aria-label={`${shown.length} on this shelf`}>{shown.length}</span>}</div>
           {shelf && shelf.shortBy > 0 && shelf.picks.length > 0 && <p className="ay-shelf-note">{onlyNote(shelf.picks.length, section.phrase)}</p>}
           {empty && <div className="ay-shelf-empty">
             <p>No strong matches for {section.phrase} yet.</p>
@@ -171,11 +173,13 @@ export default function EcosystemScreen({
           {shown.length > 0 && <div className="ayna-editorial-product-grid">{shown.map((product) => section.products.length
             ? <ProductCard key={product.id} product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} isSaved={!!savedProducts[product.id]} onToggleSaved={onToggleSaved} />
             : <div className="ayna-cabinet-suggestion" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}>Add to Ecosystem</button></div>)}</div>}
+          {shown.length > 0 && <div className="ay-shelf-plank" aria-hidden="true" />}
           {shelf?.care && !careFirst && <details className="ay-shelf-care"><summary>Care options for {section.phrase}</summary><CareLinks care={shelf.care} /></details>}
         </section>;
       }).flatMap((node, index) => (index === 0 && careBanner ? [node, <div key="care-note" className="ay-carenote-slot">{careBanner}</div>] : [node]))}
       {sections.length === 0 && careBanner}
 
+      {ringGroups.length > 0 && <div className="ay-eco-cover ay-eco-mix"><EcosystemChart groups={ringGroups} /></div>}
       {worthALook.length > 0 && <section className="ayna-cabinet-collection" aria-labelledby="ayna-cabinet-next-title">
         <div className="ayna-cabinet-section-head"><h2 id="ayna-cabinet-next-title">Worth a look</h2></div>
         <div className="ayna-editorial-product-grid">{worthALook.map((product) => <div className="ayna-cabinet-suggestion" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}>Add to Ecosystem</button></div>)}</div>
