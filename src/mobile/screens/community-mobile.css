@@ -272,9 +272,9 @@
 .ayna-mobile.ayna-mobile .am-scroll .am-author-copy { display: flex; align-items: baseline; gap: 6px; flex: 1; min-width: 0; }
 .ayna-mobile.ayna-mobile .am-scroll .am-author-copy :is(button, strong) { min-height: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ay-ink); font: 700 14px/1.2 var(--ay-font-ui) !important; }
 .ayna-mobile.ayna-mobile .am-scroll .am-author-copy small { flex: none; color: var(--ay-ink-soft); font: 500 12px/1.2 var(--ay-font-ui); }
-.ayna-mobile .am-tag { flex: none; display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: #c9d9e8; color: #3e2723; font: 700 11px/1 var(--ay-font-ui); }
+.ayna-mobile .am-tag { flex: none; display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: #769ebe; color: #3e2723; font: 700 11px/1 var(--ay-font-ui); }
 .ayna-mobile .am-tag.is-question { background: #ffedac; }
-.ayna-mobile .am-tag.is-review { background: #c9d9e8; }
+.ayna-mobile .am-tag.is-review { background: #769ebe; }
 .ayna-mobile[data-theme='dark'] .am-tag { border-color: transparent; }
 .ayna-mobile.ayna-mobile .am-scroll .am-post-more { width: 32px; height: 32px; min-height: 32px; display: grid; place-items: center; padding: 0; border: 0 !important; border-radius: 50%; background: none !important; color: var(--ay-ink-soft); box-shadow: none !important; }
 .ayna-mobile.ayna-mobile .am-scroll .am-post-more[aria-expanded='true'] { background: var(--ay-tile, rgba(0,0,0,.06)) !important; color: var(--ay-ink); }

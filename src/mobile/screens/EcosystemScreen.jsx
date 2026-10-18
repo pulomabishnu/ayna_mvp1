@@ -14,7 +14,7 @@ import { summarizeCareNotes, firstCareLink } from '../../utils/careSummary.js';
 import CareNote from '../../components/CareNote.jsx';
 import '../eco-needs.css';
 
-const AREA_TONES = ['#F7BADD', '#C9D9E8', '#769EBE', '#FBD9EC', '#E3ECF3', '#FFE38F'];
+const AREA_TONES = ['#F7BADD', '#769EBE', '#3E2723', '#F7BADD', '#769EBE', '#3E2723'];
 const MIN_SHELF_SCORE = 50;
 
 function CareLinks({ care, limit = 4 }) {
@@ -140,7 +140,7 @@ export default function EcosystemScreen({
     {careBlock}
 
     <section className="ayna-cabinet-stage ay-eco-hero" aria-labelledby="ayna-cabinet-title">
-      <h1 id="ayna-cabinet-title">Your Ecosystem</h1>
+      <h1 id="ayna-cabinet-title">Your <em>Ecosystem.</em></h1>
       {currentProducts.length > 0 && <ul className="ay-eco-stickers" aria-label="Your Ecosystem at a glance">
         <li className="is-rose"><b>{myProducts.length}</b><span>{myProducts.length === 1 ? 'product' : 'products'}</span></li>
         <li className="is-sky"><b>{ringGroups.length}</b><span>{ringGroups.length === 1 ? 'shelf' : 'shelves'}</span></li>
@@ -163,7 +163,7 @@ export default function EcosystemScreen({
         const { shelf } = section;
         const empty = section.products.length === 0 && !(section.picks?.length);
         const shown = section.products.length ? section.products : section.picks || [];
-        return <section key={section.key} id={`ayna-area-${section.key}`} className={`ayna-cabinet-collection ayna-area-collection${empty ? ' is-empty-shelf' : ''}`} style={{ '--area-tone': toneFor(section) }} aria-labelledby={`ayna-area-title-${section.key}`}>
+        return <section key={section.key} id={`ayna-area-${section.key}`} className={`ayna-cabinet-collection ayna-area-collection${empty ? ' is-empty-shelf' : ''}`} style={{ '--area-tone': toneFor(section), '--area-ink': toneFor(section) === '#3E2723' ? '#FFEDAC' : '#3E2723' }} aria-labelledby={`ayna-area-title-${section.key}`}>
           <div className="ayna-cabinet-section-head ay-shelf-head"><h2 id={`ayna-area-title-${section.key}`}>{section.label}</h2>{shown.length > 0 && <span className="ay-shelf-count" aria-label={`${shown.length} on this shelf`}>{shown.length}</span>}<button type="button" className="ay-shelf-add" onClick={() => onBrowse?.(shortNeedLabel(section.label))} aria-label={`Add to ${section.label}`}>+ Add</button></div>
           {shelf && shelf.shortBy > 0 && shelf.picks.length > 0 && <p className="ay-shelf-note">{onlyNote(shelf.picks.length, section.phrase)}</p>}
           {empty && <div className="ay-shelf-empty">

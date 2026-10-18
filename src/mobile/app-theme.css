@@ -21,7 +21,7 @@
 
   --r-canvas: var(--b-butter);
   --r-surface: var(--b-white);
-  --r-surface-2: #fff6d6;          /* butter lifted toward white, for grouped rows */
+  --r-surface-2: #ffedac;          /* butter lifted toward white, for grouped rows */
   --r-ink: var(--b-espresso);
   --r-ink-2: rgba(62, 39, 35, .72);
   --r-ink-3: rgba(62, 39, 35, .5);
@@ -32,7 +32,7 @@
   --r-highlight: var(--b-rose);    /* selected chip, active tab, partner */
   --r-on-highlight: var(--b-espresso);
   --r-accent: var(--b-sky);        /* info, secondary accents */
-  --r-accent-soft: #d6e2ec;
+  --r-accent-soft: #769ebe;
   --r-danger: #a6332a;
   --r-shadow: 3px 3px 0 var(--b-espresso);
   --r-shadow-sm: 2px 2px 0 var(--b-espresso);
@@ -56,7 +56,7 @@
   --ay-peri-deep: var(--b-sky);
   --ay-peri-ink: var(--r-ink);
   --ay-butter: var(--b-butter);
-  --ay-butter-deep: #ffe38f;
+  --ay-butter-deep: #ffedac;
   --ay-pink: var(--b-rose);
   --ay-pink-deep: var(--b-rose);
   --ay-mint: var(--r-accent-soft);

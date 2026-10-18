@@ -15,8 +15,7 @@ export default function EmptyState({ art = 'spark', tone = 'pink', title, body, 
   return (
     <div className={`ay-empty ay-empty--${tone}${compact ? ' is-compact' : ''}`} role="status">
       <div className="ay-empty-art" aria-hidden="true">
-        <span className="ay-empty-card" />
-        <span className="ay-empty-card is-front"><svg viewBox="0 0 24 24">{ART[art] || ART.spark}</svg></span>
+        <span className={`ay-empty-burst is-${tone === 'pink' ? 'rose' : 'sky'}`}><svg viewBox="0 0 24 24">{ART[art] || ART.spark}</svg></span>
       </div>
       <h2>{title}</h2>
       {body && <p>{body}</p>}

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Stamp } from '../components/BrandBits.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
 import { HEARD_ABOUT_OPTIONS, HEARD_ABOUT_OTHER_MAX, heardAboutMetadata } from '../../utils/heardAbout.js';
@@ -366,7 +367,7 @@ export default function SigninScreen({
       ) : (
         <>
           <header className="ay-auth-head">
-            <span className="ay-auth-art" aria-hidden="true"><i /><i /><i /></span>
+            <Stamp id="ay-auth-stamp" className="is-inline is-small" />
             <h1>{mode === 'signup' ? (showEcoSummary ? 'Save your Ecosystem' : 'Sign up') : 'Sign in'}</h1>
             {mode === 'signup' && showEcoSummary && <p>Create an account to keep it.</p>}
           </header>

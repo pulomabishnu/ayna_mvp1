@@ -69,7 +69,7 @@ function ProductMention({ productId, productsById, quizAnswers, onOpenProduct })
   </button>;
 }
 
-const THUMB_TONES = ['#c9d9e8', '#F7BADD', '#c9d9e8', '#ffedac'];
+const THUMB_TONES = ['#769ebe', '#F7BADD', '#769ebe', '#ffedac'];
 // Row thumbnail: the uploaded cover, else up to four product photos on white,
 // else a branded pastel tile with the title's first letter.
 function PlaylistThumb({ playlist, productsById }) {
