@@ -142,7 +142,7 @@ export default function EcosystemScreen({
     <section className="ayna-cabinet-stage ay-eco-hero" aria-labelledby="ayna-cabinet-title">
       <h1 id="ayna-cabinet-title">Your Ecosystem</h1>
       {currentProducts.length > 0 && <ul className="ay-eco-stickers" aria-label="Your Ecosystem at a glance">
-        <li className="is-rose"><b>{currentProducts.length}</b><span>{currentProducts.length === 1 ? 'product' : 'products'}</span></li>
+        <li className="is-rose"><b>{currentProducts.length + earlierProducts.length}</b><span>{currentProducts.length + earlierProducts.length === 1 ? 'product' : 'products'}</span></li>
         <li className="is-sky"><b>{ringGroups.length}</b><span>{ringGroups.length === 1 ? 'shelf' : 'shelves'}</span></li>
       </ul>}
       {currentProducts.length > 0 && (
@@ -155,6 +155,7 @@ export default function EcosystemScreen({
       {ecosystemNotice && <p className="ayna-cabinet-notice" role="status">{ecosystemNotice}</p>}
     </section>
 
+    {ringGroups.length > 0 && <div className="ay-eco-cover ay-eco-mix"><EcosystemChart groups={ringGroups} /></div>}
     {careFirst && hasAnything && <p className="ay-care-first__after">Products, when you are ready</p>}
 
     <div className={careFirst ? 'ay-eco-secondary' : undefined}>
@@ -172,14 +173,13 @@ export default function EcosystemScreen({
           {!section.products.length && shown.length > 0 && <p className="ay-shelf-note">Not in your Ecosystem yet</p>}
           {shown.length > 0 && <div className="ayna-editorial-product-grid">{shown.map((product) => section.products.length
             ? <ProductCard key={product.id} product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} isSaved={!!savedProducts[product.id]} onToggleSaved={onToggleSaved} />
-            : <div className="ayna-cabinet-suggestion" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}>Add to Ecosystem</button></div>)}</div>}
+            : <div className="ayna-cabinet-suggestion" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}>Add to Ecosystem</button></div>)}{shown.length === 1 && <button type="button" className="ay-shelf-slot" onClick={() => onBrowse?.(shortNeedLabel(section.label))}><span aria-hidden="true">+</span>Add</button>}</div>}
           {shown.length > 0 && <div className="ay-shelf-plank" aria-hidden="true" />}
           {shelf?.care && !careFirst && <details className="ay-shelf-care"><summary>Care options for {section.phrase}</summary><CareLinks care={shelf.care} /></details>}
         </section>;
       }).flatMap((node, index) => (index === 0 && careBanner ? [node, <div key="care-note" className="ay-carenote-slot">{careBanner}</div>] : [node]))}
       {sections.length === 0 && careBanner}
 
-      {ringGroups.length > 0 && <div className="ay-eco-cover ay-eco-mix"><EcosystemChart groups={ringGroups} /></div>}
       {worthALook.length > 0 && <section className="ayna-cabinet-collection" aria-labelledby="ayna-cabinet-next-title">
         <div className="ayna-cabinet-section-head"><h2 id="ayna-cabinet-next-title">Worth a look</h2></div>
         <div className="ayna-editorial-product-grid">{worthALook.map((product) => <div className="ayna-cabinet-suggestion" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}>Add to Ecosystem</button></div>)}</div>
