@@ -1686,15 +1686,19 @@ const USER_PROFILE_CACHE = new WeakMap();
 function userProfileFor(quizAnswers, healthProfile = null, opts = {}) {
     const key = quizAnswers && typeof quizAnswers === 'object' ? quizAnswers : EMPTY_INTAKE;
     const behaviorRaw = opts?.behavior || null;
+    // Connected health data (src/health/matchContext.js). Personal matching only:
+    // Browse ranking and partner placement never pass it.
+    const healthContext = opts?.healthContext || null;
     let entries = USER_PROFILE_CACHE.get(key);
     if (!entries) { entries = []; USER_PROFILE_CACHE.set(key, entries); }
-    const hit = entries.find((e) => e.healthProfile === healthProfile && e.behaviorRaw === behaviorRaw);
+    const hit = entries.find((e) => e.healthProfile === healthProfile && e.behaviorRaw === behaviorRaw && e.healthContext === healthContext);
     if (hit) return hit.up;
     const up = buildUserProfile(engineIntake(key, healthProfile), {
         catalog: ALL_PRODUCTS,
         behavior: normalizeBehaviorSignals(behaviorRaw) || undefined,
+        healthContext: healthContext || undefined,
     });
-    entries.push({ healthProfile, behaviorRaw, up });
+    entries.push({ healthProfile, behaviorRaw, healthContext, up });
     if (entries.length > 6) entries.shift();
     return up;
 }
@@ -1823,6 +1827,8 @@ function toNeedMatch(r, up) {
         filtered: r.filtered,
         components: r.components,
         source: need?.source || null,
+        // Set only when connected health data supports a need she chose (src/health/matchContext.js).
+        healthData: need?.healthData || null,
         eligibility: r.eligibility,
         restricted: r.restricted,
         confidenceLevel: r.confidenceLevel,
@@ -1895,6 +1901,7 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
     const base = {
         needId: best?.needId || null,
         needLabel: best ? needLabel(up.healthIntent.needs.find((n) => n.id === best.needId)) : null,
+        healthData: best ? (up.healthIntent.needs.find((n) => n.id === best.needId)?.healthData || null) : null,
         needMatches,
         access: result.access,
         blockedClaims: safety.blockedClaims,

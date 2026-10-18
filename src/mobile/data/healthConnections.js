@@ -1,143 +1,168 @@
 /**
- * Wearable and health-record sources for the "Health data" screen.
+ * Health data sources shown on the "Health data" screen (You -> Health data).
  *
- * MOCKUP: nothing here talks to a device or an API yet. The screen keeps
- * connection state in localStorage so the flow can be reviewed end to end.
- * See docs/wearables-ehr-integration.md for the build plan.
+ * `availability` is the honest state of each integration, decided from the
+ * provider's current official developer docs (see the matrix in
+ * docs/wearables-ehr-integration.md). Nothing is shown as connectable unless
+ * a real connection path exists in this build.
  *
- * `access`:
- *   'device' - read on the phone only (HealthKit, Health Connect). Needs the native app.
- *   'cloud'  - OAuth to the vendor's API, works from the website and the app.
- * `phase`: 1 = first build, 2 = later.
+ *   'device'      - read on the phone (HealthKit / Health Connect). Native app only.
+ *   'oauth'       - the provider's official OAuth API, through our server.
+ *   'upload'      - the person uploads an export; we read it on her device.
+ *   'needs_approval' - an official API exists but ayna must be approved first.
+ *   'import_only' - no third-party API; bring data in by export or a phone health app.
+ *   'request'     - "Request another app or wearable".
+ *   'blocked'     - an API exists but its terms don't fit ayna; explained, not connectable.
+ *
+ * `categories` are the consent categories (src/health/metrics.js CATEGORIES).
+ * Every toggle starts OFF.
  */
-
-export const DATA_TYPES = {
-  cycle: { label: 'Cycle', detail: 'Period dates and cycle length', usedFor: 'Period and fertility matches' },
-  temperature: { label: 'Temperature', detail: 'Overnight temperature changes', usedFor: 'Cycle and menopause matches' },
-  sleep: { label: 'Sleep', detail: 'Hours and consistency', usedFor: 'Sleep matches' },
-  hrv: { label: 'Heart rate variability', detail: 'Stress and recovery', usedFor: 'Stress matches' },
-  activity: { label: 'Activity', detail: 'Steps and workouts', usedFor: 'Movement and recovery matches' },
-  conditions: { label: 'Conditions', detail: 'Diagnoses on your record', usedFor: 'Fills in your health profile' },
-  medications: { label: 'Medications', detail: 'Current prescriptions', usedFor: 'Safety checks on products' },
-  allergies: { label: 'Allergies', detail: 'Recorded allergies', usedFor: 'Ingredient safety checks' },
-  labs: { label: 'Lab results', detail: 'Hormone panels and other tests', usedFor: 'Hormone and nutrient matches' },
-};
-
 export const SOURCE_GROUPS = [
-  { id: 'devices', title: 'Devices and apps', tone: 'butter' },
-  { id: 'records', title: 'Health records', tone: 'pink' },
+  { id: 'devices', title: 'Apps and wearables', tone: 'butter' },
+  { id: 'bring', title: 'Bring your data in', tone: 'pink' },
+  { id: 'records', title: 'Health records', tone: 'peri' },
 ];
 
 export const HEALTH_SOURCES = [
   {
-    id: 'apple-health',
+    id: 'apple_health',
     group: 'devices',
     name: 'Apple Health',
-    note: 'Apple Watch and any app that shares with Apple Health',
-    access: 'device',
+    kind: 'On your iPhone',
+    availability: 'device',
     platform: 'ios',
-    phase: 1,
     icon: 'heart',
-    dataTypes: ['cycle', 'temperature', 'sleep', 'hrv', 'activity'],
-  },
-  {
-    id: 'health-connect',
-    group: 'devices',
-    name: 'Health Connect',
-    note: 'Samsung, Pixel, Fitbit and other Android apps',
-    access: 'device',
-    platform: 'android',
-    phase: 1,
-    icon: 'phone',
-    dataTypes: ['cycle', 'temperature', 'sleep', 'hrv', 'activity'],
+    categories: ['sleep', 'cycle', 'temperature', 'heart', 'activity'],
+    reads: 'Daily totals for what you turn on: sleep and sleep stages, period days, basal and overnight temperature, resting heart rate, heart rate variability, average heart rate, steps, active energy and workouts.',
+    never: "We don't read your location, medications, clinical records or anything you leave off. We never write to Apple Health.",
+    note: 'Apple Watch, Oura and other apps that share with Apple Health come through here. Flo does not send period logs to Apple Health, so use Import from Flo for those.',
   },
   {
     id: 'oura',
     group: 'devices',
     name: 'Oura',
-    note: 'Ring',
-    access: 'cloud',
-    phase: 1,
+    kind: 'Ring',
+    availability: 'oauth',
     icon: 'ring',
-    dataTypes: ['cycle', 'temperature', 'sleep', 'hrv', 'activity'],
+    categories: ['sleep', 'temperature', 'heart', 'activity', 'recovery'],
+    reads: 'Daily summaries: sleep and sleep stages, temperature change from your normal, resting heart rate and HRV during sleep, readiness, steps, active calories and workouts.',
+    never: "We don't read your email, profile, tags or minute-by-minute heart rate. Oura data is never given to an AI model.",
+    note: 'Oura data shows in your insights. It does not change your product matches until Oura confirms its terms allow it.',
   },
   {
-    id: 'whoop',
+    id: 'health_connect',
     group: 'devices',
-    name: 'Whoop',
-    note: 'Band',
-    access: 'cloud',
-    phase: 2,
-    icon: 'watch',
-    dataTypes: ['sleep', 'hrv', 'activity'],
+    name: 'Health Connect',
+    kind: 'On your Android phone',
+    availability: 'device',
+    platform: 'android',
+    icon: 'phone',
+    categories: ['sleep', 'cycle', 'temperature', 'heart', 'activity'],
+    reads: 'Daily totals for what you turn on: sleep, period days, basal body temperature, resting heart rate, heart rate variability, average heart rate, steps, active calories and workouts.',
+    never: "We don't read your location, nutrition, medical records or anything you leave off. We never write to Health Connect.",
+    note: 'Samsung Health, Fitbit and other Android apps that share with Health Connect come through here.',
+  },
+  {
+    id: 'strava',
+    group: 'devices',
+    name: 'Strava',
+    kind: 'Running and training',
+    availability: 'blocked',
+    icon: 'run',
+    categories: ['activity'],
+    pending: "Strava's developer terms don't let apps like ayna keep your workouts or use them alongside your other health data, so ayna doesn't connect to Strava directly. If you sync Strava to Apple Health or Health Connect, your workouts come through there.",
   },
   {
     id: 'garmin',
     group: 'devices',
     name: 'Garmin',
-    note: 'Watch',
-    access: 'cloud',
-    phase: 2,
+    kind: 'Watch',
+    availability: 'needs_approval',
     icon: 'watch',
-    dataTypes: ['cycle', 'sleep', 'hrv', 'activity'],
+    categories: ['sleep', 'cycle', 'heart', 'activity', 'recovery'],
+    reads: 'Planned: sleep, stress, steps, resting heart rate, Body Battery, workouts and cycle data from the Garmin Connect app.',
+    never: "We'll never read your location or routes.",
+    pending: "Garmin has to approve ayna for its developer program, and Garmin has paused new applications for now. Until then, some Garmin data can still reach ayna if you sync Garmin Connect to Apple Health or Health Connect.",
   },
   {
-    id: 'apple-health-records',
-    group: 'records',
-    name: 'Apple Health Records',
-    note: 'Records your providers already send to your iPhone',
-    access: 'device',
-    platform: 'ios',
-    phase: 2,
-    icon: 'record',
-    dataTypes: ['conditions', 'medications', 'allergies', 'labs'],
+    id: 'upload',
+    group: 'bring',
+    name: 'Upload health data',
+    kind: 'A file or a screenshot',
+    availability: 'upload',
+    icon: 'upload',
+    categories: ['sleep', 'cycle', 'temperature', 'heart', 'activity', 'recovery'],
+    reads: 'Only the numbers you check and confirm.',
+    never: "We read the file on your device and don't keep it.",
   },
   {
-    id: 'patient-portal',
+    id: 'flo',
+    group: 'bring',
+    name: 'Import from Flo',
+    kind: 'Cycle app',
+    availability: 'import_only',
+    icon: 'cycle',
+    categories: ['cycle'],
+    reads: 'Your period dates from a Flo data export.',
+    never: "Flo doesn't offer apps like ayna a direct connection, so ayna never signs in to Flo.",
+  },
+  {
+    id: 'request',
+    group: 'bring',
+    name: 'Request another app or wearable',
+    kind: 'WHOOP, Fitbit, Natural Cycles, Clue…',
+    availability: 'request',
+    icon: 'plus',
+    categories: [],
+  },
+  {
+    id: 'records',
     group: 'records',
-    name: 'Patient portal',
-    note: "Sign in to your doctor's or hospital's portal",
-    access: 'cloud',
-    phase: 2,
+    name: 'Doctor and hospital records',
+    kind: 'Patient portals',
+    availability: 'later',
     icon: 'clinic',
-    dataTypes: ['conditions', 'medications', 'allergies', 'labs'],
+    categories: [],
+    pending: 'Coming later. Connecting medical records needs its own privacy review, so it comes after wearables.',
   },
 ];
 
-export const CONNECTIONS_STORAGE_KEY = 'ayna.healthConnections.mock.v1';
+export const sourceById = (id) => HEALTH_SOURCES.find((s) => s.id === id) || null;
 
-export function loadConnections() {
-  try {
-    const raw = window.localStorage.getItem(CONNECTIONS_STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : {};
-    return parsed && typeof parsed === 'object' ? parsed : {};
-  } catch {
-    return {};
-  }
-}
+/** API source id for a screen source (the upload and Flo screens both save as 'manual_import'). */
+export const apiSourceFor = (id) => (id === 'upload' || id === 'flo' ? 'manual_import' : id);
 
-export function saveConnections(connections) {
-  try {
-    window.localStorage.setItem(CONNECTIONS_STORAGE_KEY, JSON.stringify(connections));
-  } catch { /* storage unavailable, state stays in memory */ }
-}
+export const SOURCE_NAMES = {
+  apple_health: 'Apple Health', health_connect: 'Health Connect', oura: 'Oura', strava: 'Strava', garmin: 'Garmin', manual_import: 'your uploads',
+};
 
 /** Whether this source can be connected from where the person is right now. */
 export function availabilityFor(source, { isNative = false, nativePlatform = 'web' } = {}) {
-  if (source.access === 'cloud') return { ok: true };
-  if (!isNative) return { ok: false, reason: `Connect from the ayna app on your ${source.platform === 'ios' ? 'iPhone' : 'Android phone'}.` };
-  if (source.platform && source.platform !== nativePlatform) {
-    return { ok: false, reason: source.platform === 'ios' ? 'Only on iPhone.' : 'Only on Android.' };
+  if (!source) return { ok: false, reason: 'unknown' };
+  if (source.availability === 'oauth' || source.availability === 'upload' || source.availability === 'import_only' || source.availability === 'request') return { ok: true };
+  if (source.availability === 'device') {
+    const phone = source.platform === 'ios' ? 'iPhone' : 'Android phone';
+    if (!isNative) return { ok: false, reason: `Open the ayna app on your ${phone} to connect ${source.name}. It can't be connected from a browser.` };
+    if (source.platform !== nativePlatform) return { ok: false, reason: `${source.name} is only on ${source.platform === 'ios' ? 'iPhone' : 'Android'}.` };
+    return { ok: true };
   }
-  return { ok: true };
+  return { ok: false, reason: source.pending || 'Not available yet.' };
 }
 
 export function formatSynced(iso, now = Date.now()) {
-  if (!iso) return '';
+  if (!iso) return 'Not synced yet';
   const mins = Math.max(0, Math.round((now - new Date(iso).getTime()) / 60000));
   if (mins < 1) return 'Synced just now';
   if (mins < 60) return `Synced ${mins} min ago`;
   const hours = Math.round(mins / 60);
   if (hours < 24) return `Synced ${hours}h ago`;
   return `Synced ${Math.round(hours / 24)}d ago`;
+}
+
+export function statusLine(connection, now = Date.now()) {
+  if (!connection || connection.status === 'disconnected') return null;
+  if (connection.status === 'paused') return { text: 'Paused', tone: 'warn' };
+  if (connection.status === 'needs_reauth') return { text: 'Reconnect needed', tone: 'alert' };
+  if (connection.status === 'error') return { text: "Couldn't sync", tone: 'alert' };
+  return { text: formatSynced(connection.last_synced_at, now), tone: 'on' };
 }

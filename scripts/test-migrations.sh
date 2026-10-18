@@ -54,7 +54,7 @@ for f in \
   health_intakes phone_numbers pending_phone_verifications sms_conversations \
   user_ecosystems user_reviews user_learning_memory user_ai_usage \
   user_ecosystem_builds user_health_profiles product_catalog \
-  product_recall_state recall_notifications
+  product_recall_state recall_notifications health_data
 do
   run "supabase/$f.sql"
 done
@@ -87,6 +87,7 @@ verify() {
 
 verify "structural verification" supabase/_verify.sql
 verify "behavioural verification" supabase/_behaviour_test.sql
+verify "health data behavioural verification" supabase/_health_behaviour_test.sql
 
 echo
 printf '   catalog rows: '

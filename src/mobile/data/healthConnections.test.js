@@ -1,41 +1,80 @@
-import { describe, expect, it } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createElement } from 'react';
-import { DATA_TYPES, HEALTH_SOURCES, SOURCE_GROUPS, availabilityFor, formatSynced } from './healthConnections.js';
+import { HEALTH_SOURCES, SOURCE_GROUPS, availabilityFor, statusLine } from './healthConnections.js';
+import { CATEGORIES } from '../../health/metrics.js';
+import { SOURCE_POLICY } from '../../health/policy.js';
+import { formatValue, parseEdited } from '../../health/format.js';
 import HealthConnectionsScreen from '../screens/profile/HealthConnectionsScreen.jsx';
+import HealthInsightsScreen from '../screens/profile/HealthInsightsScreen.jsx';
 
-describe('health connection sources', () => {
-  it('has unique ids, known groups and known data types', () => {
+describe('health source catalog', () => {
+  it('has unique ids, known groups and known consent categories', () => {
     const ids = HEALTH_SOURCES.map((s) => s.id);
     expect(new Set(ids).size).toBe(ids.length);
     const groups = new Set(SOURCE_GROUPS.map((g) => g.id));
-    for (const source of HEALTH_SOURCES) {
-      expect(groups.has(source.group)).toBe(true);
-      expect(source.dataTypes.length).toBeGreaterThan(0);
-      for (const t of source.dataTypes) expect(DATA_TYPES[t]).toBeTruthy();
-      if (source.access === 'device') expect(['ios', 'android']).toContain(source.platform);
+    for (const s of HEALTH_SOURCES) {
+      expect(groups.has(s.group)).toBe(true);
+      for (const c of s.categories) expect(CATEGORIES[c]).toBeTruthy();
     }
   });
-
-  it('keeps on-device sources in the native app', () => {
-    const apple = HEALTH_SOURCES.find((s) => s.id === 'apple-health');
-    const oura = HEALTH_SOURCES.find((s) => s.id === 'oura');
+  it('phone sources are never connectable from a browser or the other platform', () => {
+    const apple = HEALTH_SOURCES.find((s) => s.id === 'apple_health');
+    const hc = HEALTH_SOURCES.find((s) => s.id === 'health_connect');
     expect(availabilityFor(apple, { isNative: false }).ok).toBe(false);
     expect(availabilityFor(apple, { isNative: true, nativePlatform: 'android' }).ok).toBe(false);
-    expect(availabilityFor(apple, { isNative: true, nativePlatform: 'ios' }).ok).toBe(true);
-    expect(availabilityFor(oura, { isNative: false }).ok).toBe(true);
+    expect(availabilityFor(hc, { isNative: true, nativePlatform: 'android' }).ok).toBe(true);
   });
-
-  it('formats sync times', () => {
-    const now = Date.parse('2026-10-17T12:00:00Z');
-    expect(formatSynced('2026-10-17T12:00:00Z', now)).toBe('Synced just now');
-    expect(formatSynced('2026-10-17T11:30:00Z', now)).toBe('Synced 30 min ago');
-    expect(formatSynced('2026-10-17T09:00:00Z', now)).toBe('Synced 3h ago');
+  it('blocked and approval-gated sources can never be connected', () => {
+    for (const id of ['strava', 'garmin', 'records']) {
+      expect(availabilityFor(HEALTH_SOURCES.find((s) => s.id === id), { isNative: true, nativePlatform: 'ios' }).ok).toBe(false);
+    }
   });
+  it('Flo is import-only, never an OAuth "connect"', () => {
+    expect(HEALTH_SOURCES.find((s) => s.id === 'flo').availability).toBe('import_only');
+  });
+  it('Oura data is insights-only until Oura confirms its terms', () => {
+    expect(SOURCE_POLICY.oura).toMatchObject({ insights: true, matching: false });
+  });
+  it('status lines', () => {
+    expect(statusLine({ status: 'paused' }).text).toBe('Paused');
+    expect(statusLine({ status: 'needs_reauth' }).text).toBe('Reconnect needed');
+    expect(statusLine({ status: 'connected', last_synced_at: null }).text).toBe('Not synced yet');
+    expect(statusLine({ status: 'disconnected' })).toBeNull();
+  });
+});
 
-  it('renders the list with every source and the brand promise', () => {
-    const html = renderToStaticMarkup(createElement(HealthConnectionsScreen, { selectedId: null, onSelect: () => {} }));
-    for (const s of HEALTH_SOURCES) expect(html).toContain(s.name);
-    expect(html).toContain('Brands never do');
+describe('value editing on the review screen', () => {
+  it('formats and parses corrections, rejecting impossible values', () => {
+    expect(formatValue('sleep_minutes', 392)).toBe('6h 32m');
+    expect(parseEdited('sleep_minutes', '6h 40m')).toBe(400);
+    expect(parseEdited('resting_hr_bpm', '68 bpm')).toBe(68);
+    expect(parseEdited('resting_hr_bpm', '900')).toBeNull();
+    expect(parseEdited('menstrual_flow', 'Heavy')).toBe(4);
+    expect(parseEdited('basal_temp_c', '97.7 F')).toBeCloseTo(36.5, 1);
+  });
+});
+
+describe('screens render honestly when signed out', () => {
+  it('list shows every source and never claims a connection', () => {
+    const html = renderToStaticMarkup(createElement(HealthConnectionsScreen, { selectedId: null, onSelect: () => {}, authUser: null }));
+    for (const s of HEALTH_SOURCES) expect(html).toContain(s.name.replace('&', '&amp;'));
+    expect(html).toContain('Not available');
+    expect(html).toContain('Sign in');
+    expect(html).not.toContain('>On<');
+  });
+  it('Apple Health detail in a browser explains it needs the app', () => {
+    const html = renderToStaticMarkup(createElement(HealthConnectionsScreen, { selectedId: 'apple_health', onSelect: () => {}, authUser: { id: 'u1' } }));
+    expect(html).toContain("can&#x27;t be connected from a browser");
+    expect(html).toContain('aria-checked="false"');
+    expect(html).not.toContain('aria-checked="true"');
+  });
+  it('Strava explains why it is not connected', () => {
+    const html = renderToStaticMarkup(createElement(HealthConnectionsScreen, { selectedId: 'strava', onSelect: () => {}, authUser: { id: 'u1' } }));
+    expect(html).toContain('developer terms');
+    expect(html).not.toContain('Connect Strava');
+  });
+  it('insights screen asks to sign in rather than showing anything', () => {
+    expect(renderToStaticMarkup(createElement(HealthInsightsScreen, { authUser: null }))).toContain('Sign in');
   });
 });

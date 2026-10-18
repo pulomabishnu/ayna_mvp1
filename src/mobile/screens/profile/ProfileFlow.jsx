@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
-import { ALL_PRODUCTS } from '../../../data/products.js';
 import { getSupabaseClient } from '../../../utils/supabaseClient.js';
 import { apiUrl } from '../../../utils/apiUrl.js';
 import { getBrandAffinity, getCategoryInsights, getSafetyAlerts } from '../../utils/shopperProfileData.js';
@@ -21,6 +20,8 @@ import { fetchDataExport, requestAccountDeletion } from '../../utils/dataExportA
 import { OPEN_SOURCE_PACKAGES, summarizeLicenses } from '../../data/openSourceLicenses.js';
 import LegalFooter from '../../components/LegalFooter.jsx';
 import HealthConnectionsScreen from './HealthConnectionsScreen.jsx';
+import HealthInsightsScreen from './HealthInsightsScreen.jsx';
+import { ALL_PRODUCTS, getSelectedNeeds } from '../../../data/products.js';
 import './about-scrapbook.css';
 import { buildShopperProfile } from '../../utils/shopperProfile.js';
 import BadgesPanel from '../../../components/BadgesPanel.jsx';
@@ -319,7 +320,7 @@ function ProfileHub({ shopperProfile, authUserId, myProducts = [], quizAnswers =
           { key: 'ecosystem', title: `Ecosystem · ${ecosystemCount}`, onClick: onOpenEcosystem },
           { key: 'saved', title: `Saved · ${savedCount}`, onClick: onOpenSaved },
           { key: 'checkin', title: 'Check-ins', sub: "What's changed since last time", onClick: onOpenMonthlyCheckin },
-          { key: 'healthData', title: 'Health data', sub: 'Wearables and health records' },
+          { key: 'healthData', title: 'Health data', sub: 'Apps, wearables and your trends' },
           { key: 'shopper', title: 'Routine', sub: 'Alerts, routine, brand affinity', badge: shopperAlertsCount > 0 ? `${shopperAlertsCount} new` : null },
           { key: 'startups', title: 'Startups', sub: 'Emerging brands worth backing' },
           { key: 'settings', title: 'Settings', sub: IS_NATIVE_APP ? 'Preferences, notifications and privacy' : 'Preferences, account and privacy' },
@@ -1452,7 +1453,7 @@ function isAnalyticsOptedOut() {
   try { return typeof window !== 'undefined' && window.posthog?.has_opted_out_capturing?.() === true; } catch { return false; }
 }
 
-function PrivacyDataScreen({ onBack, onOpenDeleteAccount }) {
+function PrivacyDataScreen({ onBack, onOpenDeleteAccount, onOpenHealthData }) {
   const [analyticsOptedOut, setAnalyticsOptedOut] = useState(isAnalyticsOptedOut);
 
   const toggleAnalytics = () => {
@@ -1474,8 +1475,14 @@ function PrivacyDataScreen({ onBack, onOpenDeleteAccount }) {
 
         <div style={{ margin: '0 0 11px', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your data</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
-          <AccountRow
+          {onOpenHealthData && <AccountRow
             borderTop={false}
+            title="Connected health data"
+            sub="See what's connected, stop syncing, or delete health data ayna holds."
+            onClick={onOpenHealthData}
+          />}
+          <AccountRow
+            borderTop={Boolean(onOpenHealthData)}
             title={<span style={{ color: '#B4402A' }}>Delete my account & data</span>}
             sub="We'll process it within a week, nothing kept after."
             onClick={onOpenDeleteAccount}
@@ -3146,13 +3153,18 @@ export default function ProfileFlow({
   onClearAskAynaHistory,
   textSizeIndex = 1,
   onTextSizeChange,
+  initialScreen = null,
 }) {
   // A real back-navigation stack rather than a static single-parent map
   // several screens (Preferences/Notifications, in particular) are now
   // reachable from more than one place (ProfileHub's own row, and Settings'
   // "Notifications" row), so "back" has to return to wherever the user
   // actually came from, not a fixed screen.
-  const [screenStack, setScreenStack] = useState(() => { const sub = import.meta.env.DEV && new URLSearchParams(window.location.search).get('pscreen'); return sub ? ['hub', sub] : ['hub']; });
+  const [screenStack, setScreenStack] = useState(() => {
+    if (initialScreen) return ['hub', ...(initialScreen === 'healthInsights' ? ['healthData'] : []), initialScreen];
+    const sub = import.meta.env.DEV && new URLSearchParams(window.location.search).get('pscreen');
+    return sub ? ['hub', sub] : ['hub'];
+  });
   const screen = screenStack[screenStack.length - 1];
   const pushScreen = (next) => setScreenStack((stack) => [...stack, next]);
   const initial = (name || 'Y').trim().charAt(0).toUpperCase() || 'Y';
@@ -3160,6 +3172,7 @@ export default function ProfileFlow({
   const goBack = () => setScreenStack((stack) => (stack.length > 1 ? stack.slice(0, -1) : stack));
 
   const profileFilledPct = getProfileCompletionPct(quizAnswers?.fullHealthIntake);
+  const selectedNeedIds = useMemo(() => { try { return quizAnswers ? getSelectedNeeds(quizAnswers).map((n) => n.id) : []; } catch { return []; } }, [quizAnswers]);
   const shopperAlertsCount = getSafetyAlerts(myProducts, quizAnswers).length;
 
   let body;
@@ -3259,6 +3272,7 @@ export default function ProfileFlow({
         onBack={goBack}
         onOpenManageData={() => pushScreen('manageData')}
         onOpenDeleteAccount={() => pushScreen('deleteAccount')}
+        onOpenHealthData={() => pushScreen('healthData')}
       />
     );
   } else if (screen === 'deleteAccount') {
@@ -3282,12 +3296,33 @@ export default function ProfileFlow({
   } else if (screen === 'researchSources') {
     body = <ResearchSourcesScreen onBack={goBack} />;
   } else if (screen === 'healthData' || screen.startsWith('healthData:')) {
-    const sourceId = screen.split(':')[1] || null;
+    const sourceId = screen.slice('healthData:'.length) || null;
     body = (
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
         <BackHeader title="Health data" onBack={goBack} />
         <div className="ay-hc-scroll">
-          <HealthConnectionsScreen selectedId={sourceId} onSelect={(id) => pushScreen(`healthData:${id}`)} />
+          <HealthConnectionsScreen
+            selectedId={screen === 'healthData' ? null : sourceId}
+            onSelect={(id) => pushScreen(`healthData:${id}`)}
+            onBack={goBack}
+            authUser={authUser}
+            onSignIn={onSignIn ? () => { onClose(); onSignIn(); } : undefined}
+            onOpenInsights={() => pushScreen('healthInsights')}
+          />
+        </div>
+      </div>
+    );
+  } else if (screen === 'healthInsights') {
+    body = (
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+        <BackHeader title="Health insights" onBack={goBack} />
+        <div className="ay-hc-scroll">
+          <HealthInsightsScreen
+            authUser={authUser}
+            selectedNeedIds={selectedNeedIds}
+            onConnect={() => pushScreen('healthData')}
+            onEditProfile={onEditProfile ? () => { onClose(); onEditProfile(); } : undefined}
+          />
         </div>
       </div>
     );

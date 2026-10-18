@@ -4,4 +4,6 @@
     <string name="title_activity_main">ayna</string>
     <string name="package_name">co.aynahealth.app</string>
     <string name="custom_url_scheme">co.aynahealth.app</string>
+    <!-- Shown by Health Connect from the permission screen (@capgo/capacitor-health PermissionsRationaleActivity). -->
+    <string name="health_connect_privacy_policy_url">https://www.aynahealth.co/privacy-policy</string>
 </resources>

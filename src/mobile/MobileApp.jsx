@@ -8,7 +8,7 @@ import './reference-system.css';
 import './tokens.css';
 import './app-play.css';
 import './no-focus-ring.css';
-import { ALL_PRODUCTS, getEcosystemAlternatives, getEcosystemSeedFromQuiz, filterPrescriptionCareGate, hydrateCatalogProduct } from '../data/products.js';
+import { ALL_PRODUCTS, getEcosystemAlternatives, getEcosystemSeedFromQuiz, filterPrescriptionCareGate, hydrateCatalogProduct, getSelectedNeeds } from '../data/products.js';
 import { RELEASED_STARTUPS } from '../data/startups.js';
 import { loadProductCatalog } from '../utils/productCatalog.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
@@ -22,6 +22,7 @@ import { useSavedProducts } from './hooks/useSavedProducts.js';
 import { useThemeMode } from './hooks/useThemeMode.js';
 import { usePersonalizedFeed } from './hooks/usePersonalizedFeed.js';
 import { usePushNotifications } from './hooks/usePushNotifications.js';
+import { useHealthData } from './hooks/useHealthData.js';
 import { useTextSize } from './hooks/useTextSize.js';
 import { useEcosystemSession } from './hooks/useEcosystemSession.js';
 import { useSupabaseAuth, MOBILE_OAUTH_PENDING_KEY } from './hooks/useSupabaseAuth.js';
@@ -273,7 +274,7 @@ export default function MobileApp() {
   const [browseQuery, setBrowseQuery] = useState('');
   // Behavior signals for the matching engine (saved, "Not for me", in her
   // Ecosystem). Memoized: the engine caches profiles by this object.
-  const matchOpts = useMemo(
+  const baseMatchOpts = useMemo(
     () => behaviorFrom({ saved: savedMap, omitted: omittedProducts, inEcosystem: myProducts }),
     [savedMap, omittedProducts, myProducts]
   );
@@ -464,6 +465,19 @@ export default function MobileApp() {
   // otherwise be read, without touching the real stored answers themselves
   // (still saved, still shown when editing your own profile).
   const effectiveQuizAnswers = personalizeWithData ? lastQuizAnswers : null;
+  // Connected health data (You -> Health data) can strengthen needs she chose,
+  // only while personalization is on, and only from sources whose terms allow
+  // it (src/health/policy.js). Personal matching only: Browse ranking and
+  // partner placement never read it.
+  const selectedNeedIds = useMemo(() => {
+    try { return effectiveQuizAnswers ? getSelectedNeeds(effectiveQuizAnswers).map((n) => n.id) : []; } catch { return []; }
+  }, [effectiveQuizAnswers]);
+  const health = useHealthData(authUser?.id || null, selectedNeedIds);
+  const healthContext = personalizeWithData ? health.matchContext : null;
+  const matchOpts = useMemo(
+    () => (healthContext ? { ...baseMatchOpts, healthContext } : baseMatchOpts),
+    [baseMatchOpts, healthContext]
+  );
   const suggestedEcosystemProducts = useMemo(() => {
     if (!effectiveQuizAnswers) return [];
     const savedIds = new Set(myProducts.map((product) => product.id));
@@ -651,6 +665,9 @@ export default function MobileApp() {
       setOverlay({ type: 'article', item: a });
     },
     onOpenProfile: openProfile,
+    onOpenHealthData: () => { if (authUser) setOverlay({ type: 'profile', screen: health.insights.sections.length ? 'healthInsights' : 'healthData' }); else openProfile(); },
+    healthSummary: authUser ? health.insights.sections.find((sec) => sec.status === 'ready') || null : null,
+    healthConnectedCount: health.connected.length,
     onRequireAuth: (feature) => requestAuth(feature || 'this feature'),
     onAlreadyHaveAccount: () => openAuth('signin'),
     onAboutAyna: () => setOverlay({ type: 'about' }),
@@ -918,6 +935,8 @@ export default function MobileApp() {
       {overlay?.type === 'profile' && (
         <AskContext.Provider value={nav.onAskAyna}>
         <ProfileFlow
+          key={overlay.screen || 'hub'}
+          initialScreen={overlay.screen || null}
           onClose={() => setOverlay(null)}
           theme={theme}
           onToggleTheme={setThemeMode}

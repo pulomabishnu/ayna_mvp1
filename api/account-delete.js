@@ -1,11 +1,16 @@
 import { verifyUser } from './_usageLimit.js';
 import { revokeStoredAppleAuthorization } from './_appleSignIn.js';
+import { revokeProvider, PROVIDERS } from './_healthProviders.js';
 
 const USER_TABLES = [
   'health_intakes', 'notification_preferences', 'pending_phone_verifications', 'phone_numbers',
   'recall_notifications', 'sms_conversations', 'user_ai_usage', 'user_ecosystem_builds',
   'user_ecosystems', 'user_health_profiles', 'user_learning_memory', 'user_reviews',
   'device_tokens', 'apple_oauth_tokens',
+  // Connected health data (supabase/health_data.sql). Provider access is
+  // revoked first, below, while the tokens still exist.
+  'health_daily_metrics', 'health_connections', 'health_imports', 'health_source_requests',
+  'health_oauth_states', 'health_oauth_tokens', 'health_data_events',
 ];
 
 function missingTable(error) {
@@ -69,6 +74,14 @@ export default async function handler(req, res) {
     // deletion (App Store guideline 5.1.1(v)). Best-effort — never blocks.
     try { await revokeStoredAppleAuthorization(admin, user.id); } catch (e) {
       console.warn('[account-delete] Apple revocation skipped:', e?.message);
+    }
+
+    // Connected health providers (Oura): revoke ayna's access while the
+    // tokens still exist. Best-effort; the tokens are deleted either way.
+    for (const provider of Object.keys(PROVIDERS)) {
+      try { await revokeProvider(admin, user.id, provider); } catch {
+        console.warn('[account-delete] health provider revocation skipped:', provider);
+      }
     }
 
     // Explicitly purge user-owned tables (the app adds several that may not

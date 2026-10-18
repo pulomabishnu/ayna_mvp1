@@ -4,6 +4,8 @@ import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines,
 import '../match.css';
 import '../eco-needs.css';
 import '../../styles/match-ui.css';
+import { whyLine } from '../../health/matchContext.js';
+import { SOURCE_NAMES } from '../data/healthConnections.js';
 
 // Why this matches: what matched and the inputs it used. It never says why
 // she has a symptom; missing answers lower confidence, never the percent.
@@ -28,6 +30,8 @@ const TONE = { excellent: 'is-strong', strong: 'is-good', exploratory: 'is-parti
 
 export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack, onUpdateHealth, onViewDetails }) {
   const details = getProductMatchDetailsForProduct(product, quizAnswers, null, matchOpts);
+  // Only set when connected health data supports a need she chose (src/health/matchContext.js).
+  const healthLine = whyLine(details?.healthData, (id) => SOURCE_NAMES[id] || id);
   const { percent, eligible, matchStatus, reasonDetails = [], considerations = [], unknowns = [], unmetNeeds = [], tier, access } = details;
   const hasScore = eligible !== false && matchStatus === 'scored' && Number.isFinite(percent) && percent > 0;
   const excluded = matchStatus === 'excluded' || eligible === false;
@@ -79,6 +83,12 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
           <section className="ayna-match-section">
             <h2>What matches</h2>
             <ul className="ayna-match-reasons">{reasonDetails.map((reason, index) => <li key={`${reason.component}-${index}`}><span>{reasonKind(reason.component)}</span><p>{tidy(reason.text)}</p></li>)}</ul>
+          </section>
+        )}
+        {hasScore && healthLine && (
+          <section className="ayna-match-section ay-why-health">
+            <h2>Your health data</h2>
+            <p><b>{healthLine.text}.</b> {healthLine.detail}</p>
           </section>
         )}
         {hasScore && why.basedOn.length > 0 && (

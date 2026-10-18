@@ -92,7 +92,8 @@ for f in \
   product_catalog.sql \
   product_recall_state.sql \
   recall_notifications.sql \
-  account_deletion_requests.sql
+  account_deletion_requests.sql \
+  health_data.sql
 do
   echo "── $f"
   psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f "supabase/$f"
@@ -142,6 +143,20 @@ enough.
 **Quota functions are `security definer` and granted only to `service_role`.**
 If `authenticated` could execute `refund_ai_usage()` or
 `release_ecosystem_build()`, a user could mint themselves unlimited quota.
+
+## Connected health data
+
+`health_data.sql` (wearables, phone health stores, uploads). Clients can read
+their own rows and delete their own daily metrics; every other write goes
+through `/api/health-data` with the service role so consent can't be skipped.
+OAuth tokens and states are server-only. Behaviour tests:
+`supabase/_health_behaviour_test.sql` (run by `scripts/test-migrations.sh`).
+Schedule:
+
+```sql
+select cron.schedule('purge-health-oauth-states', '*/30 * * * *',
+  $$select public.purge_expired_health_oauth_states()$$);
+```
 
 ## Required environment variables
 

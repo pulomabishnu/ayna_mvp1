@@ -1,0 +1,13 @@
+{
+  "name": "capacitor-ayna-cycle",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ayna's small native reader for period days (HealthKit menstrualFlow, Health Connect MenstruationFlow/Period). Read-only. The maintained @capgo/capacitor-health plugin covers every other metric.",
+  "main": "index.js",
+  "module": "index.js",
+  "types": "index.d.ts",
+  "type": "module",
+  "files": ["index.js", "index.d.ts", "ios/Sources", "android/src/main/", "android/build.gradle", "Package.swift"],
+  "capacitor": { "ios": { "src": "ios" }, "android": { "src": "android" } },
+  "peerDependencies": { "@capacitor/core": ">=8.0.0" }
+}

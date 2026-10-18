@@ -1,3 +1,4 @@
+import './profile/health-connections.css';
 import { useMemo } from 'react';
 import EmptyState from '../components/EmptyState.jsx';
 import { healthAreaLabel } from '../utils/healthAreaLabel.js';
@@ -36,6 +37,7 @@ export default function EcosystemScreen({
   onOpenArticle, onOpenSaved, onBrowse, onGoCommunity, onRetake,
   onRequestEcosystemReset, ecosystemNotice, onOpenMonthlyCheckin, onOpenProfile,
   quizAnswers = null, matchOpts, onOpenWhyMatch, onAddToEcosystem, onToggleSaved, onReplayStory,
+  onOpenHealthData, healthSummary = null, healthConnectedCount = 0,
 }) {
   const scoreFor = (product, profile) => getProductMatchDetailsForProduct(product, profile, null, matchOpts);
   const currentProducts = quizAnswers
@@ -184,6 +186,15 @@ export default function EcosystemScreen({
 
     {relatedReads.length > 0 && <section className="ayna-cabinet-reads" aria-labelledby="ayna-cabinet-reads-title"><div className="ayna-cabinet-section-head"><h2 id="ayna-cabinet-reads-title">Read next</h2></div>{relatedReads.slice(0, 3).map((article) => <ArticleCard key={article.id} article={article} compact onClick={() => onOpenArticle?.(article)} />)}</section>}
 
+    {authUser && onOpenHealthData && (
+      <button type="button" className="ay-eco-health" onClick={onOpenHealthData}>
+        <span>
+          <b>{healthConnectedCount ? 'Your health trends' : 'Bring in your health data'}</b>
+          <small>{healthSummary ? `${healthSummary.title}: ${healthSummary.headline}` : healthConnectedCount ? 'Your trends appear after about two weeks of data.' : 'Connect Apple Health, Oura or upload a file to see your trends.'}</small>
+        </span>
+        <svg className="ay-hc-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+      </button>
+    )}
     <section className="ayna-home-today"><h2>Monthly check-in</h2><button type="button" onClick={onOpenMonthlyCheckin}>Start</button></section>
 
     <section className="ayna-cabinet-more" aria-label="More ways to manage your cabinet">
