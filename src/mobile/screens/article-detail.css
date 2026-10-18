@@ -37,4 +37,4 @@
 .ayna-mobile .ayna-read-next button:active { transform: scale(.98); }
 .ayna-mobile .ayna-read-next button svg { box-sizing: border-box; width: 40px; height: 40px; padding: 9px; border-radius: 50%; background: var(--ay-ink, #3e2723); color: var(--ay-paper, #ffffff); }
 @media (prefers-reduced-motion: reduce) { .ayna-mobile .ayna-read-next button { transition: none; } }
-.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-read-sources h2 { color: var(--ay-ink, #fff) !important; }
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-read-sources h2 { color: var(--ay-ink, #ffedac) !important; }

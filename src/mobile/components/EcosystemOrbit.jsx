@@ -65,7 +65,7 @@ export default function EcosystemOrbit({ products = [], name = 'You', selectedKe
             width: 178 * 2,
             height: 178 * 2,
             borderRadius: '50%',
-            border: '1px dashed #DCCFC6',
+            border: '1px dashed var(--ayna-border)',
           }}
         />
         <div
@@ -76,7 +76,7 @@ export default function EcosystemOrbit({ products = [], name = 'You', selectedKe
             width: 118 * 2,
             height: 118 * 2,
             borderRadius: '50%',
-            border: '1px solid #E7DED6',
+            border: '1px solid var(--ayna-border)',
           }}
         />
         <div
@@ -92,7 +92,7 @@ export default function EcosystemOrbit({ products = [], name = 'You', selectedKe
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#FFFFFF',
+            color: '#FFEDAC',
             boxShadow: '0 12px 26px rgba(36,42,82,.24)',
           }}
         >
@@ -124,10 +124,10 @@ export default function EcosystemOrbit({ products = [], name = 'You', selectedKe
                 fontFamily: "var(--ayna-font-ui)",
                 textAlign: 'center',
                 color: '#1A1714',
-                background: seat.gap ? 'transparent' : isSelected ? '#F7BADD' : '#FFFFFF',
+                background: seat.gap ? 'transparent' : isSelected ? '#F7BADD' : 'var(--ayna-surface)',
                 borderWidth: 1.5,
                 borderStyle: seat.gap ? 'dashed' : 'solid',
-                borderColor: seat.gap ? '#DCCFC6' : isSelected ? '#F7BADD' : '#E0E0D9',
+                borderColor: seat.gap ? 'var(--ayna-border)' : isSelected ? '#F7BADD' : 'var(--ayna-border)',
                 boxShadow: isSelected ? '0 12px 24px rgba(232,169,79,.38)' : seat.gap ? 'none' : '0 3px 10px rgba(41,37,36,.07)',
                 transform: isSelected ? 'scale(1.06)' : 'none',
                 transition: 'transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .18s',
@@ -135,7 +135,7 @@ export default function EcosystemOrbit({ products = [], name = 'You', selectedKe
             >
               <span style={{ fontWeight: 700, fontSize: 'calc(19px * var(--ayna-text-scale, 1))', lineHeight: 1.15 }}>{seat.gap ? '+ Add' : seat.label}</span>
               {!seat.gap && (
-                <span style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: '#5B514D', marginTop: 2 }}>
+                <span style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2 }}>
                   {seat.products.length}
                 </span>
               )}

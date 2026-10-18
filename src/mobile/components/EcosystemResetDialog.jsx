@@ -27,7 +27,7 @@ export default function EcosystemResetDialog({ open, busy, onCancel, onConfirm }
         </p>
         <div style={{ display: 'flex', gap: 9 }}>
           <button type="button" disabled={busy} onClick={onCancel} style={{ flex: 1, minHeight: 48, border: '1px solid var(--ayna-border)', borderRadius: 12, padding: 12, background: 'transparent', color: 'var(--ayna-heading)', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
-          <button type="button" disabled={busy} onClick={onConfirm} style={{ flex: 1, minHeight: 48, border: 0, borderRadius: 12, padding: 12, background: '#9C4434', color: '#fff', fontWeight: 700, cursor: busy ? 'wait' : 'pointer' }}>{busy ? 'Resetting…' : 'Reset'}</button>
+          <button type="button" disabled={busy} onClick={onConfirm} style={{ flex: 1, minHeight: 48, border: 0, borderRadius: 12, padding: 12, background: 'var(--ayna-heading)', color: '#FFEDAC', fontWeight: 700, cursor: busy ? 'wait' : 'pointer' }}>{busy ? 'Resetting…' : 'Reset'}</button>
         </div>
       </section>
     </div>

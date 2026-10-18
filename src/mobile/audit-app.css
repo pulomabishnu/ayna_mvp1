@@ -201,7 +201,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-pdp-checks li,
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-src-more { color: var(--ay-img-ink) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-pdp-warn { border-color: var(--ay-img-ink) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-pdp-warn > button { background: var(--ay-img-ink) !important; border-color: var(--ay-img-ink) !important; color: #fff !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-pdp-warn > button { background: var(--ay-img-ink) !important; border-color: var(--ay-img-ink) !important; color: #ffedac !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-pdp-card h2 { color: var(--ay-ink) !important; }
 /* Product page suggestions sit on the page gutter like the Ecosystem rows */
 .ayna-mobile.ayna-mobile .ay-pdp-related { margin-top: var(--ay-space-6, 24px) !important; }

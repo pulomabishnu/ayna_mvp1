@@ -546,23 +546,23 @@
 .ayna-mobile[data-theme='dark'] .ayna-play-intake {
   --ip-bg: #2e1c18;
   --ay-ink: #fff;
-  --ay-ink-soft: rgba(255, 255, 255, .76);
-  --ay-ink-faint: rgba(255, 255, 255, .24);
+  --ay-ink-soft: rgba(255, 237, 172, .76);
+  --ay-ink-faint: rgba(255, 237, 172, .24);
   --ay-paper: #4a302a;
   --ay-cream: #111115;
-  --ay-shadow: 3px 3px 0 rgba(255, 255, 255, .72);
-  --ay-shadow-lg: 5px 5px 0 rgba(255, 255, 255, .72);
+  --ay-shadow: 3px 3px 0 rgba(255, 237, 172, .72);
+  --ay-shadow-lg: 5px 5px 0 rgba(255, 237, 172, .72);
   background: #2e1c18;
-  color: #fff;
+  color: #ffedac;
 }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake:is(.ip-tone--peri, .ip-tone--butter, .ip-tone--pink, .ip-tone--mint, .ip-tone--calm) { --ip-bg: #2e1c18; }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-art { opacity: .16 !important; }
-.ayna-mobile[data-theme='dark'] .ayna-play-intake :is(button, input, textarea):focus-visible { outline-color: #fff; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake :is(button, input, textarea):focus-visible { outline-color: #ffedac; }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-next { background: #fff; color: #2e1c18 !important; }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-next:disabled { background: transparent; color: var(--ay-ink-soft) !important; }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-next i svg { stroke: #3e2723; }
-.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-label { color: #fff; }
-.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-answer { color: #fff; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-label { color: #ffedac; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-answer { color: #ffedac; }
 
 /* Repeat pink, mint, butter and periwinkle across answer sets. */
 .ayna-mobile[data-theme='dark'] .ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab):nth-child(4n + 1),
@@ -581,19 +581,19 @@
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-sticker-icon { color: #3e2723; border-color: #3e2723; }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-sticker-icon svg { color: #3e2723; }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-card small, .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-row-copy small { color: rgba(62, 39, 35, .72); }
-.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-sticker-icon { background: rgba(255, 255, 255, .72); }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-sticker-icon { background: rgba(255, 237, 172, .72); }
 /* Phase marks keep their own shapes on the light stickers (they were all flattened to plain white circles). */
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-sticker-glyph { --ay-ink: #3e2723; --ay-paper: #fff; border-color: #3e2723; }
 
 /* Keep text legible on the quiz's dark fields and light accent surfaces. */
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-answer input:not(.ip-note),
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-answer textarea:not(.ip-note) {
-  color: #fff !important;
-  -webkit-text-fill-color: #fff;
-  caret-color: #fff;
+  color: #ffedac !important;
+  -webkit-text-fill-color: #ffedac;
+  caret-color: #ffedac;
 }
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-age-input::placeholder,
-.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-ticket-digits input::placeholder { color: rgba(255, 255, 255, .55) !important; }
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-ticket-digits input::placeholder { color: rgba(255, 237, 172, .55) !important; }
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-note {
   color: #3e2723 !important;
   -webkit-text-fill-color: #3e2723;
@@ -606,11 +606,11 @@
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-split-group > strong,
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-tab[aria-selected='true'] b { color: #3e2723 !important; }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-add-row,
-.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-onfile { background: var(--ay-paper); color: #fff !important; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-onfile { background: var(--ay-paper); color: #ffedac !important; }
 
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-suggest button.is-add { color: #3e2723 !important; }
-.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-podium-rank { color: #fff; }
-.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-mark { color: #fff; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-podium-rank { color: #ffedac; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-mark { color: #ffedac; }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-mark:is([data-mark='helped'], [data-mark='didnt_help']) { color: #3e2723; }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-done-stamp svg { stroke: #3e2723; }
 
@@ -629,7 +629,7 @@
   box-shadow: 0 0 10px rgba(247, 186, 221, .65);
 }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab) {
-  border-color: rgba(255, 255, 255, .8) !important;
+  border-color: rgba(255, 237, 172, .8) !important;
   box-shadow: 0 0 18px rgba(247, 186, 221, .14);
 }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-next:not(:disabled) {
@@ -678,7 +678,7 @@
 @keyframes ip-avoid-in { from { opacity: 0; transform: translateY(8px); } }
 @media (prefers-reduced-motion: reduce) { .ip-avoid-panel { animation: none; } }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-avoid-tabs { background: var(--ay-paper); }
-.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-avoid-foot .ip-chip.is-muted:not([aria-pressed='true']) { background: transparent !important; color: #fff !important; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-avoid-foot .ip-chip.is-muted:not([aria-pressed='true']) { background: transparent !important; color: #ffedac !important; }
 
 /* ZIP: inline error under the ticket (Next stays on this step) */
 .ip-zip { display: grid; gap: 12px; }

@@ -20,11 +20,11 @@
   --b-white: #ffffff;
 
   --r-canvas: var(--b-butter);
-  --r-surface: var(--b-white);
+  --r-surface: var(--b-butter);      /* white is only for product photos */
   --r-surface-2: #ffedac;          /* butter lifted toward white, for grouped rows */
   --r-ink: var(--b-espresso);
   --r-ink-2: rgba(62, 39, 35, .72);
-  --r-ink-3: rgba(62, 39, 35, .5);
+  --r-ink-3: rgba(62, 39, 35, .72);
   --r-line: rgba(62, 39, 35, .16);
   --r-line-strong: var(--b-espresso);
   --r-action: var(--b-espresso);   /* primary button fill */
@@ -117,7 +117,7 @@
   --r-surface-2: #4a302a;
   --r-ink: var(--b-butter);
   --r-ink-2: rgba(255, 237, 172, .78);
-  --r-ink-3: rgba(255, 237, 172, .56);
+  --r-ink-3: rgba(255, 237, 172, .68);
   --r-line: rgba(255, 237, 172, .2);
   --r-line-strong: rgba(255, 237, 172, .7);
   --r-action: var(--b-butter);

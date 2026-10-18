@@ -336,7 +336,7 @@
 .ayna-mobile .am-pl-thumb.is-brand { place-items: center; align-content: center; gap: 0; color: #3e2723; }
 .ayna-mobile .am-pl-thumb.is-brand b { font: 800 28px/1 var(--ay-font-display); letter-spacing: -.04em; }
 .ayna-mobile .am-pl-thumb.is-brand small { font: 700 9px/1 var(--ay-font-ui); letter-spacing: .08em; opacity: .7; }
-.ayna-mobile[data-theme='dark'] .am-pl-thumb { border-color: rgba(255, 255, 255, .5); }
+.ayna-mobile[data-theme='dark'] .am-pl-thumb { border-color: rgba(255, 237, 172, .5); }
 
 /* Product picker and mention percents use the one ink match pill. */
 .ayna-mobile .am-product em { display: inline-flex; align-items: baseline; gap: 3px; padding: 6px 10px; border-radius: 99px; background: var(--ay-ink, #3e2723); color: var(--ay-paper, #ffffff); font: 500 11px/1 var(--ay-font-ui); }

@@ -546,7 +546,7 @@
 
 /* PDP tags + sheet polish */
 .ayna-mobile.ayna-mobile:not([data-theme='dark']) .ayna-fresh-detail-title div.ay-pdp-tag[style] { background: var(--ay-tile) !important; border: 0 !important; color: var(--ay-ink) !important; }
-.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-detail-title .ay-pdp-tag { background: rgba(255,255,255,.1) !important; color: var(--ay-paper) !important; }
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-detail-title .ay-pdp-tag { background: rgba(255, 237, 172,.1) !important; color: var(--ay-paper) !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-detail-title { padding: 18px var(--ay-gutter) 20px !important; }
 .ayna-mobile.ayna-mobile .ayna-source-empty { margin: 16px var(--ay-gutter) 4px; padding: 12px 14px; border: 0; border-radius: var(--ay-radius-md, 16px); background: var(--ay-tile); color: var(--ay-ink-soft); font-size: 13px; }
 .ayna-mobile.ayna-mobile .ayna-profile-auth-sheet { position: relative; padding: 30px var(--ay-gutter) max(20px, env(safe-area-inset-bottom)); border-top: 0; border-radius: 28px 28px 0 0; box-shadow: 0 -10px 40px rgba(62, 39, 35,.18); }
@@ -569,7 +569,7 @@
 /* Photo placeholders: same neutral tile everywhere, no border, quiet mark. */
 .ayna-mobile.ayna-mobile .ayna-fresh-photo-placeholder { background: var(--ay-tile) !important; border: 0 !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-photo-placeholder-mark { color: rgba(62, 39, 35, .28); font-size: 18px; }
-.ayna-mobile[data-theme='dark'] .ayna-fresh-photo-placeholder-mark { color: rgba(255, 255, 255, .3); }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-photo-placeholder-mark { color: rgba(255, 237, 172, .3); }
 
 /* Product cards: centred copy under the photo (title, brand, price). */
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy { align-items: center !important; text-align: center !important; padding: 12px 6px 0 !important; }

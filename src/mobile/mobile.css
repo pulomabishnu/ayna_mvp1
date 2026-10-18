@@ -74,9 +74,9 @@
 .ayna-mobile[data-theme="dark"] {
   --ayna-bg: #3e2723;
   --ayna-bg-alt: #211d30;
-  --ayna-surface: rgba(255,255,255,.055);
+  --ayna-surface: rgba(255, 237, 172,.055);
   --ayna-surface-alt: #282338;
-  --ayna-border: rgba(255,255,255,.21);
+  --ayna-border: rgba(255, 237, 172,.21);
   --ayna-text: #FCFBFB;
   --ayna-text-muted: #d1cbbd;
   --ayna-text-faint: #b5ae9f;
@@ -85,11 +85,11 @@
   --ayna-cta-bg: #F7BADD;
   --ayna-cta-text: #3e2723;
   --ayna-heading: #FCFBFB;
-  --ayna-product-panel: radial-gradient(130% 110% at 28% 0%, rgba(192,118,31,.34), rgba(255,255,255,.03) 68%);
-  --ayna-glass-bg: rgba(255,255,255,.09);
-  --ayna-track: rgba(255,255,255,.12);
-  --ayna-chip-bg: rgba(255,255,255,.06);
-  --ayna-chip-border: rgba(255,255,255,.12);
+  --ayna-product-panel: radial-gradient(130% 110% at 28% 0%, rgba(192,118,31,.34), rgba(255, 237, 172,.03) 68%);
+  --ayna-glass-bg: rgba(255, 237, 172,.09);
+  --ayna-track: rgba(255, 237, 172,.12);
+  --ayna-chip-bg: rgba(255, 237, 172,.06);
+  --ayna-chip-border: rgba(255, 237, 172,.12);
 }
 
 .ayna-mobile a { color: var(--ayna-brown); text-decoration: none; }

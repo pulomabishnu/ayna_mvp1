@@ -256,10 +256,10 @@
 .ayna-mobile[data-theme='dark'] .ayna-fresh-product-card,
 .ayna-mobile[data-theme='dark'] .ayna-fresh-ecosystem .ayna-editorial-read,
 .ayna-mobile[data-theme='dark'] .am-card.am-post-card,
-.ayna-mobile[data-theme='dark'] .am-playlist { background:#242429; border-color:#464854!important; color:#fff; box-shadow:none!important; }
+.ayna-mobile[data-theme='dark'] .am-playlist { background:#242429; border-color:#464854!important; color:#ffedac; box-shadow:none!important; }
 .ayna-mobile[data-theme='dark'] .ayna-fresh-product-copy>strong,
 .ayna-mobile[data-theme='dark'] .ayna-fresh-product-foot,
-.ayna-mobile[data-theme='dark'] .ayna-fresh-ecosystem .ayna-editorial-read-copy strong { color:#fff; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-ecosystem .ayna-editorial-read-copy strong { color:#ffedac; }
 .ayna-mobile[data-theme='dark'] .ayna-fresh-product-reason,
 .ayna-mobile[data-theme='dark'] .ayna-fresh-product-context { color:#d0d0d9; }
 .ayna-mobile[data-theme='dark'] .ayna-fresh-home-heading h1,

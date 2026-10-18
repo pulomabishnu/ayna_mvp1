@@ -246,7 +246,7 @@ export default function AskAynaModal({
       </div>
 
       {sendError && (
-        <div style={{ padding: '0 20px 8px', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: '#B3261E' }}>{sendError}</div>
+        <div style={{ padding: '0 20px 8px', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>{sendError}</div>
       )}
 
       <form

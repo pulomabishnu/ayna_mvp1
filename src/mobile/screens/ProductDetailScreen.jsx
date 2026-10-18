@@ -39,7 +39,7 @@ function toneFor(product) {
 function SafetyFlag() {
   return (
     <button type="button" className="ay-pdp-safetyflag" onClick={() => jumpTo('ay-sec-safety')}>
-      <span aria-hidden="true">⚠️</span><strong>Safety note on file</strong><span>See it</span>
+      <span aria-hidden="true" className="ay-safety-mark">!</span><strong>Safety note on file</strong><span>See it</span>
     </button>
   );
 }
@@ -163,7 +163,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
         </div>
       )}
 
-      {error && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: '#B3261E', lineHeight: 1.5 }}>{error}</div>}
+      {error && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', lineHeight: 1.5 }}>{error}</div>}
 
       <form onSubmit={(e) => { e.preventDefault(); ask(input); }} style={{ display: 'flex', gap: 8 }}>
         <input

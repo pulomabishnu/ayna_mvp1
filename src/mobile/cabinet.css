@@ -238,15 +238,15 @@
 .ayna-mobile .am-tabs button.is-active { color:var(--ayna-retro-rust)!important; border-bottom-color:var(--ayna-retro-rust)!important; }
 
 /* The cabinet keeps its hierarchy when the user selects dark mode. */
-.ayna-mobile[data-theme='dark'] { --ayna-bg:#3e2723; --ayna-bg-alt:#211d30; --ayna-surface:#241f34; --ayna-surface-alt:#282338; --ayna-border:#5b5569; --ayna-chip-bg:#302a3e; --ayna-text:#FCFBFB; --ayna-text-muted:#d1cbbd; --ayna-text-faint:#b5ae9f; --ayna-heading:#FCFBFB; --ayna-cta-bg:#F7BADD; --ayna-cta-text:#3e2723; background:#3e2723; color:#FCFBFB; }
+.ayna-mobile[data-theme='dark'] { --ayna-bg:#3e2723; --ayna-bg-alt:#211d30; --ayna-surface:#241f34; --ayna-surface-alt:#282338; --ayna-border:#5b5569; --ayna-chip-bg:#302a3e; --ayna-text:#FCFBFB; --ayna-text-muted:#d1cbbd; --ayna-text-faint:#b5ae9f; --ayna-heading:#FCFBFB; --ayna-cta-bg:#F7BADD; --ayna-cta-text:#3e2723; background:#3e2723; color:#ffedac; }
 .ayna-mobile[data-theme='dark'] { --ayna-accent-dark:#e5a683; --ayna-figma-berry:#e5a683; --ayna-color-green:#F7BADD; }
-.ayna-mobile[data-theme='dark'] .ayna-shared-header .ayna-shared-wordmark { color:#FCFBFB!important; }
+.ayna-mobile[data-theme='dark'] .ayna-shared-header .ayna-shared-wordmark { color:#ffedac!important; }
 .ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-active { color:#3e2723!important; background:#F7BADD!important; }
-.ayna-mobile[data-theme='dark'] :is(.ayna-cabinet-stage h1,.ayna-cabinet-section-head h2,.ayna-home-today h2,.ayna-cabinet-cover h1,.ayna-cabinet-cover h1 em,.ayna-figma-discover .ayna-shop-heading h1,.ayna-fresh-auth-heading,.ayna-fresh-auth label span,.ayna-fresh-auth-field input) { color:#FCFBFB!important; }
-.ayna-mobile[data-theme='dark'] .ayna-shop-filter-sheet { background:#241f34; color:#FCFBFB; }
-.ayna-mobile[data-theme='dark'] .ayna-detail-sections button[aria-selected='true'] { color:#FCFBFB; border-color:#FCFBFB; }
-.ayna-mobile[data-theme='dark'] .ayna-fresh-detail-title { background:#3e2723!important; color:#FCFBFB!important; }
-.ayna-mobile[data-theme='dark'] .ayna-fresh-detail-title :is(h1,div,p,span,button) { color:#FCFBFB!important; }
+.ayna-mobile[data-theme='dark'] :is(.ayna-cabinet-stage h1,.ayna-cabinet-section-head h2,.ayna-home-today h2,.ayna-cabinet-cover h1,.ayna-cabinet-cover h1 em,.ayna-figma-discover .ayna-shop-heading h1,.ayna-fresh-auth-heading,.ayna-fresh-auth label span,.ayna-fresh-auth-field input) { color:#ffedac!important; }
+.ayna-mobile[data-theme='dark'] .ayna-shop-filter-sheet { background:#241f34; color:#ffedac; }
+.ayna-mobile[data-theme='dark'] .ayna-detail-sections button[aria-selected='true'] { color:#ffedac; border-color:#ffedac; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-detail-title { background:#3e2723!important; color:#ffedac!important; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-detail-title :is(h1,div,p,span,button) { color:#ffedac!important; }
 @media (prefers-reduced-motion:reduce) { .ayna-shop-filter-sheet,.ayna-mobile .ayna-figma-discover .ayna-editorial-product-grid>.ayna-fresh-product-card { animation:none!important; } }
 
 /* Visual quantity: the stack describes the choice before any copy is read. */

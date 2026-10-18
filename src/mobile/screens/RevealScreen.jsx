@@ -164,7 +164,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
             <strong className="ayw-card-title">{persona?.title || 'My ecosystem'}</strong>
             <ul>
               <li><span>Picks</span><b>{myProducts.length}</b></li>
-              <li><span>Areas</span><b>{topAreas.slice(0, 2).join(', ') || areaCount}</b></li>
+              {(topAreas.length > 0 || areaCount > 0) ? <li><span>Areas</span><b>{topAreas.slice(0, 2).join(', ') || areaCount}</b></li> : needCount > 0 && <li><span>Needs</span><b>{needCount}</b></li>}
               {first && <li><span>#1 match</span><b>{first.name}</b></li>}
             </ul>
           </div>

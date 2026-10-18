@@ -525,7 +525,7 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
       </div>
 
       <div style={{ flex: 'none', padding: '14px 20px max(20px, env(safe-area-inset-bottom))', borderTop: '1px solid ' + ROW_BORDER, background: CARD_BG }}>
-        <button type="button" className="ayna-intake-control" onClick={onBrowseLibrary} style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', textAlign: 'center', padding: 15, borderRadius: 99, cursor: 'pointer', background: NAVY, color: '#FFFFFF', boxShadow: '0 14px 28px -14px rgba(36,42,82,.65)' }}>
+        <button type="button" className="ayna-intake-control" onClick={onBrowseLibrary} style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', textAlign: 'center', padding: 15, borderRadius: 99, cursor: 'pointer', background: NAVY, color: '#FFEDAC', boxShadow: '0 14px 28px -14px rgba(36,42,82,.65)' }}>
           Browse the reading library
         </button>
         <button type="button" className="ayna-intake-control" onClick={onChangeAge} style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', textAlign: 'center', padding: 14, borderRadius: 99, cursor: 'pointer', color: NAVY, border: '1.5px solid ' + NAVY, marginTop: 9 }}>

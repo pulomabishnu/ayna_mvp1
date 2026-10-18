@@ -1,10 +1,10 @@
 const TINT_PALETTE = [
-  ['#EEF0FD', '#F7BADD'],
-  ['#FCFBFB', '#EEF0FD'],
-  ['#FCFBFB', '#F7BADD'],
-  ['#EEF0FD', '#FCFBFB'],
-  ['#F7BADD', '#FCFBFB'],
-  ['#FCFBFB', '#F7BADD'],
+  ['#FFEDAC', '#F7BADD'],
+  ['#769EBE', '#FFEDAC'],
+  ['#F7BADD', '#FFEDAC'],
+  ['#FFEDAC', '#769EBE'],
+  ['#F7BADD', '#769EBE'],
+  ['#769EBE', '#F7BADD'],
 ];
 
 function tintForId(id) {
@@ -53,7 +53,7 @@ export default function LibraryCard({ article, onClick, fullWidth = false }) {
           overflow: 'hidden',
           backgroundImage: image
             ? undefined
-            : `repeating-linear-gradient(135deg,rgba(255,255,255,.4) 0 7px,rgba(255,255,255,0) 7px 14px),linear-gradient(155deg,${c1},${c2})`,
+            : `repeating-linear-gradient(135deg,rgba(255,237,172,.4) 0 7px,rgba(255,237,172,0) 7px 14px),linear-gradient(155deg,${c1},${c2})`,
           boxShadow: '0 6px 18px -8px rgba(41,37,36,.22)',
         }}
       >
@@ -76,8 +76,8 @@ export default function LibraryCard({ article, onClick, fullWidth = false }) {
               fontSize: 'calc(7.5px * var(--ayna-text-scale, 1))',
               letterSpacing: '.7px',
               textTransform: 'uppercase',
-              color: image ? '#fff' : 'rgba(41,37,36,.45)',
-              background: image ? 'rgba(0,0,0,.35)' : 'rgba(255,255,255,.62)',
+              color: image ? '#FFEDAC' : 'rgba(41,37,36,.45)',
+              background: image ? 'rgba(0,0,0,.35)' : 'rgba(255,237,172,.62)',
               padding: '3px 6px',
               borderRadius: 99,
             }}

@@ -4,7 +4,7 @@ export function coverInk(color) {
   const channels = [0, 2, 4].map((offset) => parseInt(hex.slice(offset, offset + 2), 16) / 255)
     .map((value) => value <= .04045 ? value / 12.92 : ((value + .055) / 1.055) ** 2.4);
   const luminance = channels[0] * .2126 + channels[1] * .7152 + channels[2] * .0722;
-  return luminance < .24 ? '#FCFBFB' : '#3e2723';
+  return luminance < .24 ? '#FFEDAC' : '#3e2723';
 }
 
 /** Render a color-and-text cover as a real image, so it persists on every device. */
