@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { FilmStrip, Stamp } from '../components/BrandBits.jsx';
+import { Stamp } from '../components/BrandBits.jsx';
 import ProductImage from '../components/ProductImage.jsx';
 import { getProfileMatchPercentForProduct } from '../../data/products.js';
 import IntakeSceneArt from '../components/intake/IntakeSceneArt.jsx';
@@ -109,7 +109,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
 
       <div className="ayw-stage" key={active}>
         {active === 'intro' && <>
-          <FilmStrip className="is-short ayw-film" /><Stamp id="ayw-stamp" className="ayw-stamp" />
+          <Stamp id="ayw-stamp" className="ayw-stamp" />
           <p className="ayw-kicker">Your ecosystem is ready</p>
           <h1 className="ayw-title">Your ayna,<br /><em>wrapped.</em></h1>
           <div className="ayw-stat-row">

@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
-import { FilmStrip } from '../components/BrandBits.jsx';
 import '../ecointro.css';
 
 // The three parts of the intake, in the order it asks them.
@@ -71,7 +70,6 @@ export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount
   return <main className="ayna-ecosystem-start ay-intro">
     <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
     <div className="ayna-ecosystem-start-scroll ay-intro-body">
-      <FilmStrip className="is-short ay-intro-film" />
       <header className="ay-intro-head">
         <h1>{hasIntakeDraft ? <>Your Ecosystem is <em>taking shape.</em></> : <>Make it <em>yours.</em></>}</h1>
         <p>{hasIntakeDraft ? 'Pick up where you left off.' : 'A few questions in three parts.'}</p>

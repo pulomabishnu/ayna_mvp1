@@ -1,5 +1,4 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { BrandTicker, STRIP } from '../components/BrandBits.jsx';
 import MobileHeader from '../components/MobileHeader.jsx';
 import SearchBar from '../components/SearchBar.jsx';
 import DiscoverDeck from '../components/DiscoverDeck.jsx';
@@ -393,7 +392,6 @@ export default function BrowseScreen({
         <div className="ay-shop-titlebar"><h1>Shop</h1>{hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}</div>
         <SearchBar placeholder="Search products or brands" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }} onPick={(s) => setSearchValue(s.query)} />
       </div>
-      {mode === 'products' && !searchValue.trim() && <BrandTicker className="ay-shop-ticker" />}
       {searchTermRaw.length >= 2 && <SearchAssist variant="app" query={searchTermRaw} resultCount={searchScored.length} onUse={setSearchValue} />}
 
       {mode === 'products' && (
@@ -406,7 +404,7 @@ export default function BrowseScreen({
       )}
       {mode === 'products' && !searchValue.trim() && (
         <button type="button" className="ay-discover-cta" onClick={() => setShowDeck(true)}>
-          <span className="ay-discover-art" aria-hidden="true">{STRIP.slice(0, 3).map((p) => <img key={p.src} src={p.src} alt="" loading="lazy" style={{ objectPosition: p.pos }} />)}</span>
+          <span className="ay-discover-art" aria-hidden="true"><i /><i /><i /></span>
           <span className="ay-discover-copy"><strong>Swipe to discover</strong></span>
           <span className="ay-discover-go" aria-hidden="true">→</span>
         </button>
