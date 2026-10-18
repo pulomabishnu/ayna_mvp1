@@ -160,3 +160,28 @@ button.ay-hc-row:active { background: var(--ay-cream); }
 .ay-eco-health > span { flex: 1; display: grid; gap: 3px; }
 .ay-eco-health b { font: 700 15px/1.2 var(--ay-font-ui); }
 .ay-eco-health small { color: var(--ay-ink-soft); font: 500 12.5px/1.35 var(--ay-font-ui); }
+
+/* ---------- Website (You -> Health data at /health-data) ----------
+   The app's tokens live on .ayna-mobile; the website page carries its own
+   copy of the same palette so these screens look identical there. */
+.ay-hc-web {
+  --ay-ink: #1d1a2b; --ay-ink-soft: rgba(29, 26, 43, .62); --ay-ink-faint: rgba(29, 26, 43, .16);
+  --ay-paper: #fffcf5; --ay-cream: #faf8f1; --ay-line: rgba(29, 26, 43, .1);
+  --ay-peri: #b9c2f4; --ay-peri-deep: #9ca9ee; --ay-butter: #f7e78e; --ay-pink: #f7badd; --ay-mint: #bdebd6; --ay-alert: #b4402a;
+  --ay-font-display: 'Bricolage Grotesque', 'Poppins', system-ui, sans-serif; --ay-font-ui: 'Poppins', system-ui, sans-serif;
+  --ay-ease: cubic-bezier(.2, .8, .2, 1); --ay-pop: cubic-bezier(.3, 1.5, .5, 1); --ay-dur-1: 140ms;
+  --ay-shadow: 3px 3px 0 var(--ay-ink); --ay-gutter: 0px;
+  max-width: 720px; margin: 0 auto; padding: 28px 20px 64px; color: var(--ay-ink);
+}
+[data-theme='dark'] .ay-hc-web {
+  --ay-ink: #ffffff; --ay-ink-soft: rgba(255, 255, 255, .74); --ay-ink-faint: rgba(255, 255, 255, .2);
+  --ay-paper: #151519; --ay-cream: #1c1c22; --ay-line: rgba(255, 255, 255, .14); --ay-alert: #ff8a73;
+}
+.ay-hc-web-head { display: flex; align-items: center; gap: 12px; margin: 0 0 18px; }
+.ay-hc-web-head h1 { margin: 0; color: var(--ay-ink); font: 800 30px/1.1 var(--ay-font-display); letter-spacing: -.035em; }
+.ay-hc-web-back { width: 42px; height: 42px; display: grid; place-items: center; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); cursor: pointer; }
+.ay-hc-web-back svg { width: 18px; height: 18px; fill: none; stroke: var(--ay-ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ay-hc-web .ay-hc-switch[aria-checked='true'] { background: var(--ay-mint); }
+.wyou-health { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; cursor: pointer; }
+.wyou-health > span { flex: 1; display: grid; gap: 4px; }
+.wyou-health small { opacity: .75; }
