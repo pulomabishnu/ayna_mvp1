@@ -14,7 +14,7 @@ import { summarizeCareNotes, firstCareLink } from '../../utils/careSummary.js';
 import CareNote from '../../components/CareNote.jsx';
 import '../eco-needs.css';
 
-const AREA_TONES = ['#F7BADD', '#C9D9E8', '#FFE38F', '#769EBE', '#FBD9EC', '#E3ECF3'];
+const AREA_TONES = ['#F7BADD', '#C9D9E8', '#769EBE', '#FBD9EC', '#E3ECF3', '#FFE38F'];
 const MIN_SHELF_SCORE = 50;
 
 function CareLinks({ care, limit = 4 }) {
@@ -103,13 +103,13 @@ export default function EcosystemScreen({
 
   // Ring: needs grouped into areas (two needs in one area share a segment).
   const ringGroups = [];
+  // One ring segment per shelf, named like the shelf, so the donut, legend,
+  // hero counts and shelf tags always agree.
   sections.filter((s) => s.products.length > 0).forEach((s) => {
-    const existing = ringGroups.find((g) => g.label === s.ringLabel);
-    if (existing) existing.products = [...existing.products, ...s.products];
-    else ringGroups.push({ key: s.key, label: s.ringLabel, products: s.products });
+    ringGroups.push({ key: s.key, label: s.label, products: s.products });
   });
   const toneFor = (section) => {
-    const index = ringGroups.findIndex((g) => g.label === section.ringLabel);
+    const index = ringGroups.findIndex((g) => g.key === section.key);
     return AREA_TONES[(index < 0 ? ringGroups.length + sections.indexOf(section) : index) % AREA_TONES.length];
   };
   const worthALook = suggestedEcosystemProducts.filter((p) => !suggestedIds.has(p.id));
@@ -142,7 +142,7 @@ export default function EcosystemScreen({
     <section className="ayna-cabinet-stage ay-eco-hero" aria-labelledby="ayna-cabinet-title">
       <h1 id="ayna-cabinet-title">Your Ecosystem</h1>
       {currentProducts.length > 0 && <ul className="ay-eco-stickers" aria-label="Your Ecosystem at a glance">
-        <li className="is-rose"><b>{currentProducts.length + earlierProducts.length}</b><span>{currentProducts.length + earlierProducts.length === 1 ? 'product' : 'products'}</span></li>
+        <li className="is-rose"><b>{myProducts.length}</b><span>{myProducts.length === 1 ? 'product' : 'products'}</span></li>
         <li className="is-sky"><b>{ringGroups.length}</b><span>{ringGroups.length === 1 ? 'shelf' : 'shelves'}</span></li>
       </ul>}
       {currentProducts.length > 0 && (

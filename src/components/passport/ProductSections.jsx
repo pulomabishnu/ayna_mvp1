@@ -344,6 +344,20 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
     window.addEventListener('ay-open-section', on);
     return () => window.removeEventListener('ay-open-section', on);
   }, [glance]);
+  // App: the chip for the part in view is filled, so the row reads as navigation.
+  useEffect(() => {
+    if (!glance || typeof IntersectionObserver === 'undefined') return undefined;
+    const panels = [...document.querySelectorAll('.ay-glance.is-stacked .ay-glance__panel')];
+    if (!panels.length) return undefined;
+    const seen = new Map();
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => seen.set(e.target.id, e.isIntersecting ? e.boundingClientRect.top : null));
+      const live = [...seen.entries()].filter(([, top]) => top !== null).sort((a, b) => a[1] - b[1]);
+      if (live.length) setTab(live[0][0].replace('ay-panel-', ''));
+    }, { rootMargin: '-120px 0px -55% 0px' });
+    panels.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [glance]);
   if (!glance) return null;
   const { what, who, facts, sources } = glance;
   const secs = splitSections(glance.sections);
@@ -357,7 +371,7 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
   void nav; void extraNav;
   // App (Oct 18): every part of the product page is open, one after another
   // (Baymard: people miss what hides behind tabs). The chip row jumps to a part.
-  void tab; void setTab; void sub; void setSub;
+  void sub; void setSub;
   const jump = (id) => {
     const el = document.getElementById(`ay-panel-${id}`);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -378,7 +392,7 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
         <ul>
           {tabs.map((t) => (
             <li key={t.id}>
-              <button type="button" onClick={() => jump(t.id)}>{t.label}</button>
+              <button type="button" className={tab === t.id ? 'is-active' : undefined} aria-current={tab === t.id ? 'true' : undefined} onClick={() => { setTab(t.id); jump(t.id); }}>{t.label}</button>
             </li>
           ))}
         </ul>

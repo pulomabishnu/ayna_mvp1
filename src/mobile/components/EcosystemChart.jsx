@@ -1,6 +1,6 @@
 // Same order as the area tones on the Ecosystem sections, so ring, legend and
 // section numbers always match.
-const COLORS = ['#F7BADD', '#C9D9E8', '#FFE38F', '#769EBE', '#FBD9EC', '#E3ECF3'];
+const COLORS = ['#F7BADD', '#C9D9E8', '#769EBE', '#FBD9EC', '#E3ECF3', '#FFE38F'];
 const CIRCUMFERENCE = 2 * Math.PI * 72;
 
 function scrollParent(el) {
@@ -61,7 +61,7 @@ export default function EcosystemChart({ groups }) {
           />;
         })}
       </svg>
-      <div className="ayna-ecosystem-chart-center"><strong>{total}</strong><span>{total === 1 ? 'pick' : 'picks'}</span></div>
+      <div className="ayna-ecosystem-chart-center"><strong>{total}</strong><span>on shelves</span></div>
     </div>
     <nav className="ayna-ecosystem-chart-legend" aria-label="Your health areas">
       {groups.map((group, index) => <a key={group.key} href={`#ayna-area-${group.key}`} onClick={(e) => glideTo(e, `ayna-area-${group.key}`)} style={{ '--area-color': COLORS[index % COLORS.length] }}>
