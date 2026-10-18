@@ -26,9 +26,19 @@ describe('health source catalog', () => {
     expect(availabilityFor(hc, { isNative: true, nativePlatform: 'android' }).ok).toBe(true);
   });
   it('blocked and approval-gated sources can never be connected', () => {
-    for (const id of ['strava', 'garmin', 'records']) {
+    for (const id of ['strava', 'garmin']) {
       expect(availabilityFor(HEALTH_SOURCES.find((s) => s.id === id), { isNative: true, nativePlatform: 'ios' }).ok).toBe(false);
     }
+  });
+  it('Apple Health Records: iPhone app only', () => {
+    const rec = HEALTH_SOURCES.find((s) => s.id === 'records');
+    expect(availabilityFor(rec, { isNative: true, nativePlatform: 'ios' }).ok).toBe(true);
+    expect(availabilityFor(rec, { isNative: false }).ok).toBe(false);
+    expect(availabilityFor(rec, { isNative: true, nativePlatform: 'android' }).ok).toBe(false);
+  });
+  it('WHOOP is an OAuth source, read live', () => {
+    expect(HEALTH_SOURCES.find((s) => s.id === 'whoop').availability).toBe('oauth');
+    expect(HEALTH_SOURCES.find((s) => s.id === 'request').kind).not.toMatch(/WHOOP/);
   });
   it('Flo is import-only, never an OAuth "connect"', () => {
     expect(HEALTH_SOURCES.find((s) => s.id === 'flo').availability).toBe('import_only');

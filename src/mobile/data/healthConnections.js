@@ -12,6 +12,7 @@
  *   'needs_approval' - an official API exists but ayna must be approved first.
  *   'import_only' - no third-party API; bring data in by export or a phone health app.
  *   'request'     - "Request another app or wearable".
+ *   'records'     - Apple Health Records, read and kept on the iPhone. iOS app only.
  *   'blocked'     - an API exists but its terms don't fit ayna; explained, not connectable.
  *
  * `categories` are the consent categories (src/health/metrics.js CATEGORIES).
@@ -48,6 +49,18 @@ export const HEALTH_SOURCES = [
     reads: 'Daily summaries: sleep and sleep stages, temperature change from your normal, resting heart rate and HRV during sleep, readiness, steps, active calories and workouts.',
     never: "We don't read your email, profile, tags or minute-by-minute heart rate. Oura data is never given to an AI model.",
     note: 'Oura data shows in your insights. It does not change your product matches until Oura confirms its terms allow it.',
+  },
+  {
+    id: 'whoop',
+    group: 'devices',
+    name: 'WHOOP',
+    kind: 'Band',
+    availability: 'oauth',
+    icon: 'watch',
+    categories: ['sleep', 'temperature', 'heart', 'activity', 'recovery'],
+    reads: 'Your main sleep each night and its stages, recovery score, resting heart rate, heart rate variability, overnight skin temperature and workouts.',
+    never: "We don't read your profile, body measurements, strain or minute-by-minute heart rate. WHOOP data is never given to an AI model.",
+    note: "WHOOP's terms don't allow apps to keep copies of WHOOP data, so ayna reads it fresh from WHOOP each time you open the app and never saves it.",
   },
   {
     id: 'health_connect',
@@ -110,7 +123,7 @@ export const HEALTH_SOURCES = [
     id: 'request',
     group: 'bring',
     name: 'Request another app or wearable',
-    kind: 'WHOOP, Fitbit, Natural Cycles, Clue…',
+    kind: 'Fitbit, Natural Cycles, Clue…',
     availability: 'request',
     icon: 'plus',
     categories: [],
@@ -118,12 +131,15 @@ export const HEALTH_SOURCES = [
   {
     id: 'records',
     group: 'records',
-    name: 'Doctor and hospital records',
-    kind: 'Patient portals',
-    availability: 'later',
+    name: 'Apple Health Records',
+    kind: 'Allergies, conditions and medicines',
+    availability: 'records',
+    platform: 'ios',
     icon: 'clinic',
     categories: [],
-    pending: 'Coming later. Connecting medical records needs its own privacy review, so it comes after wearables.',
+    reads: 'Only what you pick: allergies, conditions and medicines from the health records your hospitals and clinics share with the Health app on your iPhone.',
+    never: "We don't read lab results, vitals, procedures, immunizations, clinical notes or insurance. Your records stay on your iPhone: they aren't sent to ayna's servers, to an AI model, to brands or to partners.",
+    note: 'Used for safety and context in your matches: a warning if a product has something you are allergic to, or may not mix with a medicine. A condition never adds a goal you did not choose.',
   },
 ];
 
@@ -133,14 +149,14 @@ export const sourceById = (id) => HEALTH_SOURCES.find((s) => s.id === id) || nul
 export const apiSourceFor = (id) => (id === 'upload' || id === 'flo' ? 'manual_import' : id);
 
 export const SOURCE_NAMES = {
-  apple_health: 'Apple Health', health_connect: 'Health Connect', oura: 'Oura', strava: 'Strava', garmin: 'Garmin', manual_import: 'your uploads',
+  apple_health: 'Apple Health', health_connect: 'Health Connect', oura: 'Oura', whoop: 'WHOOP', strava: 'Strava', garmin: 'Garmin', manual_import: 'your uploads',
 };
 
 /** Whether this source can be connected from where the person is right now. */
 export function availabilityFor(source, { isNative = false, nativePlatform = 'web' } = {}) {
   if (!source) return { ok: false, reason: 'unknown' };
   if (source.availability === 'oauth' || source.availability === 'upload' || source.availability === 'import_only' || source.availability === 'request') return { ok: true };
-  if (source.availability === 'device') {
+  if (source.availability === 'device' || source.availability === 'records') {
     const phone = source.platform === 'ios' ? 'iPhone' : 'Android phone';
     if (!isNative) return { ok: false, reason: `Open the ayna app on your ${phone} to connect ${source.name}. It can't be connected from a browser.` };
     if (source.platform !== nativePlatform) return { ok: false, reason: `${source.name} is only on ${source.platform === 'ios' ? 'iPhone' : 'Android'}.` };

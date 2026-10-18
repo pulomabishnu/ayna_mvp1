@@ -35,6 +35,8 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSHealthClinicalHealthRecordsShareUsageDescription</key>
+	<string>If you choose, ayna reads your allergies, conditions and medicines from your health records so you can review them and get safer product matches. They stay on this iPhone. They are never used for ads, shared with brands, or sent to an AI model.</string>
 	<key>NSHealthShareUsageDescription</key>
 	<string>ayna reads only the health data you turn on, such as sleep, period days, temperature, heart and activity, to show your trends and personalize your matches. It is never used for ads or shared with brands.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>

@@ -55,6 +55,8 @@ export const startOAuth = (provider, categories, returnTo) => call('/api/health-
 });
 export const syncOAuthSource = (provider) => call('/api/health-oauth', { method: 'POST', body: { action: 'sync', provider } });
 export const oauthStatus = () => call('/api/health-oauth?action=status');
+/** Live-only providers (WHOOP): recent rows, returned to her and never stored. */
+export const fetchLiveRows = (provider) => call('/api/health-oauth', { method: 'POST', body: { action: 'live', provider } });
 
 /** Whether screenshot reading is switched on for this deployment (off until the founders approve the processor). */
 export const extractionStatus = () => call('/api/health-extract').then((d) => Boolean(d?.enabled)).catch(() => false);
@@ -72,3 +74,6 @@ export async function extractFromImage(file, declaredApp) {
   if (!data) throw new HealthApiError('read_failed', 0);
   return call('/api/health-extract', { method: 'POST', body: { mediaType, data, declaredApp: declaredApp || null } });
 }
+
+/** Apple Health Records consent log: record types and a count only. The records stay on her phone. */
+export const logRecordsEvent = (action, types, count) => call('/api/health-data', { method: 'POST', body: { action, types, count } });

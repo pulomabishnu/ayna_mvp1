@@ -144,3 +144,25 @@ describe('/api/health-data', () => {
     spy.mockRestore();
   });
 });
+
+describe('Apple Health Records consent log', () => {
+  beforeEach(() => {
+    ctx.db = createFakeDb({ health_connections: [], health_daily_metrics: [], health_data_events: [], health_imports: [], health_source_requests: [], health_oauth_tokens: [] });
+    ctx.user = { id: 'u1' };
+  });
+  it('logs types and a count only, never record content', async () => {
+    const { default: h } = await import('./health-data.js');
+    const res = mockRes();
+    await h(mockReq({ body: { action: 'records_saved', types: ['allergy', 'labs', 'allergy'], count: 3, names: ['Latex'] } }), res);
+    expect(res.statusCode).toBe(200);
+    const ev = ctx.db.tables.health_data_events.at(-1);
+    expect(ev).toMatchObject({ source: 'apple_health_records', action: 'records_saved', categories: ['allergy'], rows_affected: 3 });
+    expect(JSON.stringify(ctx.db.tables)).not.toMatch(/Latex/);
+  });
+  it('saving with no valid types is refused', async () => {
+    const { default: h } = await import('./health-data.js');
+    const res = mockRes();
+    await h(mockReq({ body: { action: 'records_saved', types: ['labs'], count: 1 } }), res);
+    expect(res.statusCode).toBe(400);
+  });
+});

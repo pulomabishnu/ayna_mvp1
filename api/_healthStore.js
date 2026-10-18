@@ -12,7 +12,7 @@
  *   - OAuth tokens are AES-256-GCM encrypted with HEALTH_TOKEN_ENCRYPTION_KEY.
  */
 import crypto from 'node:crypto';
-import { cleanRows, NOTICE_VERSION, CATEGORIES, SOURCE_IDS, METRICS } from '../src/health/metrics.js';
+import { cleanRows, NOTICE_VERSION, CATEGORIES, SOURCE_IDS, METRICS, LIVE_ONLY_SOURCES } from '../src/health/metrics.js';
 
 export const HEALTH_SOURCES = SOURCE_IDS;
 export const VALID_CATEGORIES = Object.keys(CATEGORIES);
@@ -151,6 +151,8 @@ const METRIC_CATEGORY = Object.fromEntries(Object.entries(METRICS).map(([id, m])
  * turn on are dropped (and counted), never saved.
  */
 export async function saveMetrics(admin, userId, source, inputs, { importId = null } = {}) {
+  // Provider terms forbid keeping copies (WHOOP): never written, whatever the caller.
+  if (LIVE_ONLY_SOURCES.includes(source)) return { saved: 0, errors: { live_only_source: 1 } };
   const connection = await getConnection(admin, userId, source);
   if (!connection || connection.status === 'disconnected') return { saved: 0, errors: { not_connected: 1 } };
   if (!connection.sync_enabled) return { saved: 0, errors: { sync_paused: 1 } };

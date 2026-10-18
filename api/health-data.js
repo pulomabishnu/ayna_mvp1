@@ -11,6 +11,9 @@
  *   POST { action: 'import', declaredApp, fileKind, categories, rows }   rows she confirmed from an upload
  *   POST { action: 'delete_all' }                               delete every health row ayna holds for her
  *   POST { action: 'request_source', name, note }               "Request another app or wearable"
+ *   POST { action: 'records_saved' | 'records_deleted', types, count }
+ *        Apple Health Records consent log. The records stay on her phone;
+ *        only the record TYPES and a count are logged, never a name.
  *
  * Responses never echo health values back except on GET (her own data, to her).
  * Health data never goes to analytics, logs, LLMs or brands from here.
@@ -24,7 +27,8 @@ import {
 import { revokeProvider } from './_healthProviders.js';
 
 const DEVICE_SOURCES = new Set(['apple_health', 'health_connect']);
-const OAUTH_SOURCES = new Set(['oura', 'strava', 'garmin']);
+const RECORD_TYPES = new Set(['allergy', 'condition', 'medication']);
+const OAUTH_SOURCES = new Set(['oura', 'whoop', 'strava', 'garmin']);
 const ALL_SOURCES = new Set([...DEVICE_SOURCES, ...OAUTH_SOURCES, 'manual_import']);
 const MAX_ROWS = 5000;
 
@@ -57,6 +61,14 @@ export default async function handler(req, res) {
     const body = req.body && typeof req.body === 'object' ? req.body : {};
     const action = String(body.action || '');
     const source = String(body.source || '');
+
+    if (action === 'records_saved' || action === 'records_deleted') {
+      const types = [...new Set((Array.isArray(body.types) ? body.types : []).filter((t) => RECORD_TYPES.has(t)))];
+      const count = Number.isInteger(body.count) && body.count >= 0 && body.count <= 1000 ? body.count : null;
+      if (action === 'records_saved' && !types.length) return res.status(400).json({ error: 'no_types' });
+      await recordEvent(admin, userId, 'apple_health_records', action, { categories: types, platform: 'ios', rowsAffected: count });
+      return res.status(200).json({ ok: true });
+    }
 
     if (action === 'request_source') {
       const name = cleanText(body.name, 60);

@@ -31,3 +31,13 @@ describe('health data in the matching engine', () => {
     expect(V2.needWeight.picked + V2.corroborationBoost).toBeLessThan(V2.needWeight.first);
   });
 });
+
+describe('Apple Health Records in matching', () => {
+  it('join the profile for safety and context but never add a need', async () => {
+    const { getSelectedNeeds, getMatchCareFlags } = await import('../data/products.js');
+    const q = { supportSelections: ['Trouble sleeping'] };
+    const healthRecords = { allergies: ['Latex'], conditions: ['Endometriosis'], medications: ['Warfarin'] };
+    expect(getSelectedNeeds(q, null, { healthRecords }).map((n) => n.id)).toEqual(getSelectedNeeds(q).map((n) => n.id));
+    expect(getMatchCareFlags(q, null, { healthRecords }).profileCompleteness).toBeGreaterThan(getMatchCareFlags(q).profileCompleteness);
+  });
+});

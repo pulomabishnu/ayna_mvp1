@@ -1,0 +1,13 @@
+{
+  "name": "capacitor-ayna-records",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ayna's read-only reader for Apple Health Records (HealthKit clinical records: allergies, conditions, medications) as FHIR JSON. iOS only.",
+  "main": "index.js",
+  "module": "index.js",
+  "types": "index.d.ts",
+  "type": "module",
+  "files": ["index.js", "index.d.ts", "ios/Sources", "Package.swift"],
+  "capacitor": { "ios": { "src": "ios" } },
+  "peerDependencies": { "@capacitor/core": ">=8.0.0" }
+}

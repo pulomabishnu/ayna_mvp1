@@ -22,9 +22,9 @@
  */
 import { METRICS } from './metrics.js';
 
-const DEVICE_FIRST = ['oura', 'garmin', 'apple_health', 'health_connect', 'strava', 'manual_import'];
-const PHONE_FIRST = ['apple_health', 'health_connect', 'garmin', 'oura', 'strava', 'manual_import'];
-const WORKOUTS_FIRST = ['strava', 'garmin', 'apple_health', 'health_connect', 'oura', 'manual_import'];
+const DEVICE_FIRST = ['oura', 'whoop', 'garmin', 'apple_health', 'health_connect', 'strava', 'manual_import'];
+const PHONE_FIRST = ['apple_health', 'health_connect', 'garmin', 'oura', 'whoop', 'strava', 'manual_import'];
+const WORKOUTS_FIRST = ['strava', 'whoop', 'garmin', 'apple_health', 'health_connect', 'oura', 'manual_import'];
 
 export const PRECEDENCE = {
   sleep: DEVICE_FIRST,

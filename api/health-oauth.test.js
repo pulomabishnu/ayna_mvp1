@@ -163,3 +163,92 @@ describe('Oura normalization', () => {
     ]);
   });
 });
+
+const whoopSleep = { id: 's1', nap: false, score_state: 'SCORED', end: '2026-10-11T12:30:00.000Z', timezone_offset: '-05:00', score: { stage_summary: { total_light_sleep_time_milli: 14400000, total_slow_wave_sleep_time_milli: 5400000, total_rem_sleep_time_milli: 5400000 } } };
+const whoopRecovery = { sleep_id: 's1', score_state: 'SCORED', created_at: '2026-10-11T13:00:00.000Z', score: { user_calibrating: false, recovery_score: 66, resting_heart_rate: 54, hrv_rmssd_milli: 41.7, skin_temp_celsius: 33.4 } };
+
+describe('health OAuth (WHOOP, live only)', () => {
+  let fetchMock;
+  beforeEach(() => {
+    ctx.db = createFakeDb({ health_connections: [], health_daily_metrics: [], health_data_events: [], health_oauth_tokens: [], health_oauth_states: [] });
+    ctx.user = { id: 'u1' };
+    vi.stubEnv('HEALTH_TOKEN_ENCRYPTION_KEY', KEY);
+    vi.stubEnv('WHOOP_CLIENT_ID', 'wid');
+    vi.stubEnv('WHOOP_CLIENT_SECRET', 'wsecret');
+    fetchMock = vi.fn(async (url, init = {}) => {
+      const u = String(url);
+      if (u.includes('/oauth/oauth2/token')) return okJson({ access_token: 'WAT', refresh_token: 'WRT', expires_in: 3600, scope: 'read:sleep read:recovery read:workout offline' });
+      if (u.includes('/v2/user/access') && init.method === 'DELETE') return { ok: true, status: 204, json: async () => ({}) };
+      if (u.includes('/v2/activity/sleep')) return okJson({ records: [whoopSleep], next_token: null });
+      if (u.includes('/v2/recovery')) return okJson({ records: [whoopRecovery] });
+      return okJson({ records: [] });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+  });
+  afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
+
+  const connectWhoop = async (categories = ['sleep', 'heart']) => {
+    const r = await start({ provider: 'whoop', categories });
+    const url = new URL(r.body.url);
+    const back = await callback({ state: url.searchParams.get('state'), code: 'good' });
+    return { url, back };
+  };
+
+  it('start uses an 8-character state and only the scopes ayna reads', async () => {
+    const r = await start({ provider: 'whoop', categories: ['sleep'] });
+    const url = new URL(r.body.url);
+    expect(url.origin + url.pathname).toBe('https://api.prod.whoop.com/oauth/oauth2/auth');
+    expect(url.searchParams.get('state')).toHaveLength(8);
+    expect(url.searchParams.get('scope')).toBe('read:sleep read:recovery read:workout offline');
+    expect(url.searchParams.get('scope')).not.toMatch(/profile|body_measurement|cycles/);
+  });
+
+  it('connecting stores tokens and consent but never WHOOP data', async () => {
+    const { back } = await connectWhoop();
+    expect(back.headers.location).toMatch(/health_source=whoop&health_status=connected/);
+    expect(ctx.db.tables.health_connections[0]).toMatchObject({ source: 'whoop', categories: ['sleep', 'heart'] });
+    expect(ctx.db.tables.health_oauth_tokens).toHaveLength(1);
+    expect(ctx.db.tables.health_daily_metrics).toHaveLength(0);
+  });
+
+  it('live returns consented rows and saves nothing', async () => {
+    await connectWhoop(['sleep']);
+    const { default: h } = await import('./health-oauth.js');
+    const res = mockRes();
+    await h(mockReq({ body: { action: 'live', provider: 'whoop' } }), res);
+    expect(res.statusCode).toBe(200);
+    const metrics = res.body.rows.map((r) => r.metric).sort();
+    expect(metrics).toEqual(['sleep_deep_minutes', 'sleep_minutes', 'sleep_rem_minutes']); // heart not consented
+    expect(res.body.rows.find((r) => r.metric === 'sleep_minutes')).toMatchObject({ day: '2026-10-11', value: 420, source: 'whoop' });
+    expect(ctx.db.tables.health_daily_metrics).toHaveLength(0);
+    expect(ctx.db.tables.health_connections[0].last_synced_at).toBeTruthy();
+  });
+
+  it('sync on WHOOP does not store either', async () => {
+    await connectWhoop();
+    const { default: h } = await import('./health-oauth.js');
+    const res = mockRes();
+    await h(mockReq({ body: { action: 'sync', provider: 'whoop' } }), res);
+    expect(res.body).toMatchObject({ ok: true, saved: 0 });
+    expect(ctx.db.tables.health_daily_metrics).toHaveLength(0);
+  });
+
+  it('live is refused for providers whose data is stored', async () => {
+    vi.stubEnv('OURA_CLIENT_ID', 'cid');
+    vi.stubEnv('OURA_CLIENT_SECRET', 'secret');
+    const { default: h } = await import('./health-oauth.js');
+    const res = mockRes();
+    await h(mockReq({ body: { action: 'live', provider: 'oura' } }), res);
+    expect(res.statusCode).toBe(400);
+  });
+
+  it('disconnect revokes access at WHOOP and deletes the tokens', async () => {
+    await connectWhoop();
+    const { default: h } = await import('./health-data.js');
+    const res = mockRes();
+    await h(mockReq({ body: { action: 'disconnect', source: 'whoop', deleteData: true } }), res);
+    expect(res.body).toMatchObject({ ok: true, revoked: true });
+    expect(fetchMock.mock.calls.some(([u, i]) => String(u).endsWith('/developer/v2/user/access') && i?.method === 'DELETE')).toBe(true);
+    expect(ctx.db.tables.health_oauth_tokens).toHaveLength(0);
+  });
+});

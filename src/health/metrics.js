@@ -75,7 +75,10 @@ export const METRICS = {
 
 export const FLOW_LEVELS = { none: 0, unspecified: 1, light: 2, medium: 3, heavy: 4 };
 
-export const SOURCE_IDS = ['apple_health', 'health_connect', 'oura', 'strava', 'garmin', 'manual_import'];
+export const SOURCE_IDS = ['apple_health', 'health_connect', 'oura', 'whoop', 'strava', 'garmin', 'manual_import'];
+
+/** Sources whose provider terms forbid keeping copies: read live, never saved (WHOOP API Terms §4.2(2)). */
+export const LIVE_ONLY_SOURCES = ['whoop'];
 
 /** The version of the health-data notice a consent was given against. Bump when the wording or purposes change. */
 export const NOTICE_VERSION = 'health-data-2026-10-18';

@@ -19,7 +19,7 @@
 -- ── Connections: one row per user per source ───────────────────────────────
 create table if not exists public.health_connections (
   user_id uuid not null references auth.users(id) on delete cascade,
-  source text not null check (source in ('apple_health','health_connect','oura','strava','garmin','manual_import')),
+  source text not null check (source in ('apple_health','health_connect','oura','whoop','strava','garmin','manual_import')),
   status text not null default 'connected' check (status in ('connected','paused','needs_reauth','error','disconnected')),
   sync_enabled boolean not null default true,
   -- Consent is per category; only these categories are accepted from this source.
@@ -41,7 +41,7 @@ create table if not exists public.health_data_events (
   id bigint generated always as identity primary key,
   user_id uuid not null references auth.users(id) on delete cascade,
   source text not null,
-  action text not null check (action in ('consent_granted','consent_updated','consent_withdrawn','sync_paused','sync_resumed','disconnected','data_deleted','all_data_deleted','import_confirmed','import_discarded')),
+  action text not null check (action in ('consent_granted','consent_updated','consent_withdrawn','sync_paused','sync_resumed','disconnected','data_deleted','all_data_deleted','import_confirmed','import_discarded','records_saved','records_deleted')),
   categories text[] not null default '{}'::text[],
   notice_version text,
   platform text,
@@ -91,7 +91,7 @@ create table if not exists public.health_source_requests (
 -- ── Server-only: encrypted OAuth tokens and one-time OAuth states ─────────
 create table if not exists public.health_oauth_tokens (
   user_id uuid not null references auth.users(id) on delete cascade,
-  provider text not null check (provider in ('oura','strava','garmin')),
+  provider text not null check (provider in ('oura','whoop','strava','garmin')),
   encrypted_access_token text not null,
   encrypted_refresh_token text,
   encryption_iv text not null,
@@ -107,7 +107,7 @@ create table if not exists public.health_oauth_tokens (
 );
 
 create table if not exists public.health_oauth_states (
-  nonce text primary key check (char_length(nonce) between 20 and 100),
+  nonce text primary key check (char_length(nonce) between 8 and 100),
   user_id uuid not null references auth.users(id) on delete cascade,
   provider text not null,
   categories text[] not null default '{}'::text[],
@@ -119,6 +119,25 @@ create table if not exists public.health_oauth_states (
 );
 
 alter table public.health_oauth_states add column if not exists return_path text not null default '/';
+
+-- WHOOP (2026-10-18): a connection and token row, never metric rows (WHOOP's
+-- terms forbid storing its data; health_daily_metrics deliberately excludes it).
+-- WHOOP also requires an 8-character OAuth state. Re-asserted here so an older
+-- copy of these tables is upgraded in place.
+alter table public.health_connections drop constraint if exists health_connections_source_check;
+alter table public.health_connections add constraint health_connections_source_check
+  check (source in ('apple_health','health_connect','oura','whoop','strava','garmin','manual_import'));
+alter table public.health_oauth_tokens drop constraint if exists health_oauth_tokens_provider_check;
+alter table public.health_oauth_tokens add constraint health_oauth_tokens_provider_check
+  check (provider in ('oura','whoop','strava','garmin'));
+alter table public.health_oauth_states drop constraint if exists health_oauth_states_nonce_check;
+alter table public.health_oauth_states add constraint health_oauth_states_nonce_check
+  check (char_length(nonce) between 8 and 100);
+-- Apple Health Records (2026-10-18): the records themselves stay on her phone;
+-- only the fact that she saved or deleted them (types and a count) is logged.
+alter table public.health_data_events drop constraint if exists health_data_events_action_check;
+alter table public.health_data_events add constraint health_data_events_action_check
+  check (action in ('consent_granted','consent_updated','consent_withdrawn','sync_paused','sync_resumed','disconnected','data_deleted','all_data_deleted','import_confirmed','import_discarded','records_saved','records_deleted'));
 
 -- ── Row level security ────────────────────────────────────────────────────
 alter table public.health_connections enable row level security;

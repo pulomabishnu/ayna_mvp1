@@ -474,10 +474,13 @@ export default function MobileApp() {
   }, [effectiveQuizAnswers]);
   const health = useHealthData(authUser?.id || null, selectedNeedIds);
   const healthContext = personalizeWithData ? health.matchContext : null;
-  const matchOpts = useMemo(
-    () => (healthContext ? { ...baseMatchOpts, healthContext } : baseMatchOpts),
-    [baseMatchOpts, healthContext]
-  );
+  // Apple Health Records she saved on this phone: allergies and medicines for
+  // safety, conditions as context. Never sent anywhere.
+  const healthRecords = personalizeWithData ? health.records : null;
+  const matchOpts = useMemo(() => {
+    if (!healthContext && !healthRecords) return baseMatchOpts;
+    return { ...baseMatchOpts, ...(healthContext ? { healthContext } : {}), ...(healthRecords ? { healthRecords } : {}) };
+  }, [baseMatchOpts, healthContext, healthRecords]);
   const suggestedEcosystemProducts = useMemo(() => {
     if (!effectiveQuizAnswers) return [];
     const savedIds = new Set(myProducts.map((product) => product.id));

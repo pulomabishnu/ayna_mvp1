@@ -10,7 +10,7 @@
  */
 import { getServiceClient } from './_usageLimit.js';
 import { logHealthError, upsertConnection } from './_healthStore.js';
-import { exchangeCode, syncProvider } from './_healthProviders.js';
+import { exchangeCode, isLiveOnly, syncProvider } from './_healthProviders.js';
 
 const APP_SCHEME = 'co.aynahealth.app://health-connected';
 
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
   if (req.method !== 'GET') { res.setHeader('Allow', 'GET'); return res.status(405).json({ error: 'method_not_allowed' }); }
   const admin = getServiceClient();
   const nonce = typeof req.query?.state === 'string' ? req.query.state : '';
-  if (!admin || !/^[A-Za-z0-9_-]{20,100}$/.test(nonce)) return back(res, null, null, 'invalid_state');
+  if (!admin || !/^[A-Za-z0-9_-]{8,100}$/.test(nonce)) return back(res, null, null, 'invalid_state');
 
   // Claim the state: delete-returning makes it single-use even under a replay race.
   const { data: rows, error } = await admin.from('health_oauth_states').delete().eq('nonce', nonce).select('*');
@@ -44,7 +44,8 @@ export default async function handler(req, res) {
   try {
     await exchangeCode(admin, state.user_id, state.provider, req.query.code);
     await upsertConnection(admin, state.user_id, state.provider, { categories: state.categories, platform: state.return_to === 'app' ? null : 'web' });
-    try { await syncProvider(admin, state.user_id, state.provider); } catch { /* connected; the first sync can retry */ }
+    // Stored providers get a first sync now; live-only ones (WHOOP) are read when she opens ayna.
+    if (!isLiveOnly(state.provider)) { try { await syncProvider(admin, state.user_id, state.provider); } catch { /* connected; the first sync can retry */ } }
     return back(res, state, state.provider, 'connected');
   } catch (e) {
     logHealthError('health-oauth-callback', e?.message);

@@ -14,6 +14,9 @@
  * powers Insights only. Oura data that reaches ayna through Apple Health or
  * Health Connect is covered by those platforms' rules instead.
  *
+ * WHOOP: the WHOOP API Terms bar permanent copies of WHOOP data, so WHOOP
+ * rows are fetched live and never saved; ads use and AI training are barred.
+ *
  * Strava: the Strava API Policy (effective June 1, 2026) bars storing data
  * beyond 7 days and combining it with other customer data, so ayna does not
  * connect to Strava's API at all. Strava workouts can still arrive through
@@ -24,6 +27,9 @@ export const SOURCE_POLICY = {
   health_connect: { insights: true, matching: true },
   manual_import: { insights: true, matching: true },
   oura: { insights: true, matching: false, matchingNote: 'Oura data shows in your insights. It does not change your product matches until Oura confirms its terms allow it.' },
+  // WHOOP: terms bar storing copies, ads use and AI training; they do not bar
+  // personal matching. Read live, never stored (src/health/providers/whoop.js).
+  whoop: { insights: true, matching: true },
   garmin: { insights: true, matching: false },
   strava: { insights: false, matching: false },
 };

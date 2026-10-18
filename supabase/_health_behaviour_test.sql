@@ -39,6 +39,17 @@ begin
     raise exception 'unknown consent category accepted';
   exception when check_violation then null;
   end;
+  begin
+    insert into public.health_daily_metrics (user_id, source, origin, metric, day, value, unit)
+    values ('00000000-0000-4000-8000-0000000000c1','whoop','whoop','sleep_minutes','2026-10-10',400,'min');
+    raise exception 'WHOOP data was stored (its terms forbid keeping copies)';
+  exception when check_violation then null;
+  end;
+  insert into public.health_connections (user_id, source, categories) values ('00000000-0000-4000-8000-0000000000c1','whoop', array['sleep']);
+  delete from public.health_connections where user_id = '00000000-0000-4000-8000-0000000000c1';
+  insert into public.health_data_events (user_id, source, action, categories, rows_affected)
+  values ('00000000-0000-4000-8000-0000000000c1','apple_health_records','records_saved', array['allergy'], 2);
+  delete from public.health_data_events where user_id = '00000000-0000-4000-8000-0000000000c1';
   raise notice 'Health constraints: OK';
 end $$;
 

@@ -11,6 +11,7 @@ import {
 import { healthStoreAvailability, openHealthPermissions, requestHealthAccess } from '../../../health/native.js';
 import { setHealthFlash, syncCloudSource, syncPhoneSource, takeHealthFlash, useHealthData } from '../../hooks/useHealthData.js';
 import HealthUploadScreen from './HealthUploadScreen.jsx';
+import HealthRecordsScreen from './HealthRecordsScreen.jsx';
 import './health-connections.css';
 
 /**
@@ -48,7 +49,7 @@ const ERRORS = {
 const errorText = (e) => ERRORS[e?.code] || 'Something went wrong. Try again.';
 
 /* --------------------------------- List ---------------------------------- */
-function SourceList({ connections, onOpen, onOpenInsights, hasInsights, signedIn, onSignIn, onRefresh }) {
+function SourceList({ connections, records, onOpen, onOpenInsights, hasInsights, signedIn, onSignIn, onRefresh }) {
   const [now] = useState(() => Date.now());
   const byId = Object.fromEntries(connections.map((c) => [c.source, c]));
   return (
@@ -68,7 +69,9 @@ function SourceList({ connections, onOpen, onOpenInsights, hasInsights, signedIn
           <div className="ay-hc-card">
             {HEALTH_SOURCES.filter((s) => s.group === group.id).map((source) => {
               const connection = byId[apiSourceFor(source.id)];
-              const status = source.id === 'upload' || source.id === 'flo' ? null : statusLine(connection, now);
+              const recordCount = records ? records.allergies.length + records.conditions.length + records.medications.length : 0;
+              const status = source.id === 'records' ? (recordCount ? { text: `${recordCount} saved on this iPhone`, tone: 'on' } : null)
+                : source.id === 'upload' || source.id === 'flo' ? null : statusLine(connection, now);
               const sub = status?.text
                 || (source.availability === 'needs_approval' ? 'Waiting on Garmin approval'
                   : source.availability === 'later' ? 'Coming later'
@@ -357,7 +360,7 @@ function FloImport({ onUpload }) {
 }
 
 /* -------------------------------- Request -------------------------------- */
-const POPULAR = ['WHOOP', 'Fitbit', 'Samsung Health', 'Natural Cycles', 'Clue', 'Apple Watch', 'Ultrahuman', 'Withings'];
+const POPULAR = ['Fitbit', 'Samsung Health', 'Natural Cycles', 'Clue', 'Apple Watch', 'Ultrahuman', 'Withings'];
 function RequestSource({ signedIn, onSignIn }) {
   const [name, setName] = useState('');
   const [note, setNote] = useState('');
@@ -374,7 +377,7 @@ function RequestSource({ signedIn, onSignIn }) {
     <form className="ay-hc-detail ay-hc-form" onSubmit={submit}>
       <div className="ay-hc-detail-head"><Icon name="plus" lg /><div><h2>Request an app or wearable</h2><p>Tell us what you use</p></div></div>
       <label htmlFor="ay-hc-req-name">App or wearable</label>
-      <input id="ay-hc-req-name" list="ay-hc-req-list" value={name} onChange={(e) => setName(e.target.value)} maxLength={60} placeholder="e.g. WHOOP" autoComplete="off" />
+      <input id="ay-hc-req-name" list="ay-hc-req-list" value={name} onChange={(e) => setName(e.target.value)} maxLength={60} placeholder="e.g. Fitbit" autoComplete="off" />
       <datalist id="ay-hc-req-list">{POPULAR.map((p) => <option key={p} value={p} />)}</datalist>
       <label htmlFor="ay-hc-req-note">Note (optional)</label>
       <textarea id="ay-hc-req-note" value={note} onChange={(e) => setNote(e.target.value)} maxLength={280} rows={3} placeholder="What would you want ayna to do with it?" />
@@ -401,6 +404,7 @@ export default function HealthConnectionsScreen({ selectedId, onSelect, onBack, 
         {flash && <p className="ay-hc-done" role="status">{flash}</p>}
         <SourceList
           connections={health.connections}
+          records={health.records}
           onOpen={onSelect}
           onOpenInsights={onOpenInsights}
           hasInsights={health.insights.sections.length > 0}
@@ -416,6 +420,7 @@ export default function HealthConnectionsScreen({ selectedId, onSelect, onBack, 
   if (source.id === 'upload') return <HealthUploadScreen signedIn={signedIn} onSignIn={onSignIn} presetApp={preset === 'flo' ? 'Flo' : ''} onDone={(msg) => { health.refresh(); done(msg); }} />;
   if (source.id === 'flo') return <FloImport onUpload={() => onSelect('upload:flo')} />;
   if (source.id === 'request') return <RequestSource signedIn={signedIn} onSignIn={onSignIn} />;
+  if (source.id === 'records') return <HealthRecordsScreen source={source} userId={authUser?.id || null} saved={health.records} onSignIn={onSignIn} onDone={done} />;
   if (source.availability === 'needs_approval' || source.availability === 'later' || source.availability === 'blocked') return <PendingDetail source={source} />;
 
   const connection = health.connections.find((c) => c.source === apiSourceFor(source.id));

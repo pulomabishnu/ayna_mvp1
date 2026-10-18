@@ -2,12 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- HealthKit read access for "Health data" (You -> Health data). No clinical
-	     records (com.apple.developer.healthkit.access is deliberately absent) and
-	     no background delivery. -->
+	<!-- HealthKit read access for "Health data" (You -> Health data), plus
+	     Clinical Health Records (allergies, conditions, medications only; see
+	     native/capacitor-ayna-records). No background delivery. The App ID must
+	     also have Clinical Health Records enabled in the developer account. -->
 	<key>com.apple.developer.healthkit</key>
 	<true/>
 	<key>com.apple.developer.healthkit.access</key>
-	<array/>
+	<array>
+		<string>health-records</string>
+	</array>
 </dict>
 </plist>

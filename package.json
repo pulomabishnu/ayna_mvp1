@@ -27,6 +27,7 @@
     "@supabase/supabase-js": "^2.103.1",
     "@upstash/redis": "^1.37.0",
     "capacitor-ayna-cycle": "file:native/capacitor-ayna-cycle",
+    "capacitor-ayna-records": "file:native/capacitor-ayna-records",
     "posthog-js": "^1.435.6",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

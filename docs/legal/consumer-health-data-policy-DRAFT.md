@@ -14,12 +14,16 @@ Only the categories you turn on, as daily summaries:
 - **Temperature:** basal body temperature, overnight skin temperature, temperature change from your normal
 - **Heart:** resting heart rate, heart rate variability, average heart rate
 - **Activity:** steps, active energy, workout time and count
-- **Readiness:** your device's daily readiness score (Oura)
+- **Readiness:** your device's daily readiness score (Oura, WHOOP recovery)
 
 We do not collect your location, routes, medications or clinical records from these sources, minute-by-minute readings, or anything you leave off.
 
+**WHOOP:** WHOOP data is read from WHOOP when you open ayna and is not stored by ayna.
+
+**Apple Health Records (iPhone, only if you choose):** allergies, conditions and medicines from the health records your providers share with the Health app. You pick which types ayna may read and which items to keep. What you keep is stored on your iPhone only and is not sent to ayna's servers. ayna's servers record only that you saved or deleted records, which types, and how many. Used only for safety and context in your own matches. [Counsel: confirm wording.]
+
 ## Where it comes from
-Apple Health (iPhone), Health Connect (Android), Oura (with your sign-in), and files or numbers you upload and confirm. We record which app or device each value came from.
+Apple Health and Apple Health Records (iPhone), Health Connect (Android), Oura and WHOOP (with your sign-in), and files or numbers you upload and confirm. We record which app or device each value came from.
 
 ## Why we use it
 - To show you your own trends (Health Insights).
