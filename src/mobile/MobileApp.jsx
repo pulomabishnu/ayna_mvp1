@@ -292,7 +292,7 @@ export default function MobileApp() {
   // Registration only, nothing sends a push yet.
   usePushNotifications(authUser?.id);
   const { textSizeIndex, setTextSizeIndex, textScale } = useTextSize();
-  const [askAynaOpen, setAskAynaOpen] = useState(false);
+  const [askAynaOpen, setAskAynaOpen] = useState(() => !!(import.meta.env.DEV && new URLSearchParams(window.location.search).get('ask')));
   const [askAynaHistoryState, setAskAynaHistoryState] = useState({ userId: null, messages: [] });
   const askAynaHistory = askAynaHistoryState.userId === authUser?.id ? askAynaHistoryState.messages : [];
   const setAskAynaHistory = (messages) => setAskAynaHistoryState({ userId: authUser?.id, messages });
@@ -839,7 +839,7 @@ export default function MobileApp() {
         />
       )}
       {showTabBar && <MobileTabBar
-        active={askAynaOpen ? 'library' : activeTab}
+        active={activeTab}
         onHome={() => { setAskAynaOpen(false); setOverlay(null); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
         onBrowse={() => { setAskAynaOpen(false); setOverlay(null); setBrowseQuery(''); setScreen('browse'); }}
         onCommunity={() => { setAskAynaOpen(false); setOverlay(null); setCommunitySeed(null); setScreen('community'); }}
@@ -957,7 +957,7 @@ export default function MobileApp() {
       <AskAynaModal
         key={authUser?.id || 'anonymous'}
         open={askAynaOpen}
-        enabled={!!authUser}
+        enabled={!!authUser || !!(import.meta.env.DEV && new URLSearchParams(window.location.search).get('ask'))}
         profile={effectiveQuizAnswers}
         onProfileUpdate={(answers) => updateSession({ lastQuizAnswers: answers })}
         chatHistory={askAynaHistory}

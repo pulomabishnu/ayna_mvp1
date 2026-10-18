@@ -207,9 +207,10 @@ export default function AskAynaModal({
             <div
               style={{
                 maxWidth: '85%',
-                background: m.role === 'user' ? 'var(--ayna-cta-bg)' : 'var(--ayna-chip-bg)',
-                color: m.role === 'user' ? 'var(--ayna-cta-text)' : 'var(--ayna-text)',
-                borderRadius: 16,
+                background: m.role === 'user' ? 'var(--ayna-heading)' : 'transparent',
+                color: m.role === 'user' ? 'var(--ayna-bg)' : 'var(--ayna-text)',
+                border: m.role === 'user' ? 0 : '2px solid var(--ayna-heading)',
+                borderRadius: m.role === 'user' ? '18px 18px 6px 18px' : '18px 18px 18px 6px',
                 padding: '11px 14px',
                 fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
                 lineHeight: 1.5,
