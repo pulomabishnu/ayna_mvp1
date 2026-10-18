@@ -5479,8 +5479,12 @@ export const BRAND_PRODUCTS = [
     // internally-worn Pippa resistance spring, invented by Carly Price.
     // Product facts checked via web search (direct fetch of
     // livlabsfitness.com is blocked in this environment).
+    //
+    // HIDDEN 2026-10-17 (not deleted) at Eliz's request: not visible anywhere
+    // on the site. To make it live again, follow "Hidden products" in CLAUDE.md.
     {
         id: 'p-livlabs-pippa-starter-kit',
+        hidden: true,
         name: 'Pippa Resistance Spring Starter Kit',
         brand: 'Liv Labs',
         category: 'pelvic-floor',
@@ -5547,6 +5551,7 @@ export const BRAND_PRODUCTS = [
     },
     {
         id: 'p-livlabs-pippa-fit-kit',
+        hidden: true,
         name: 'Pippa Resistance Spring Fit Kit',
         brand: 'Liv Labs',
         category: 'pelvic-floor',
@@ -5588,11 +5593,9 @@ export const BRAND_PRODUCTS = [
         },
         isEmergingBrand: true,
     },
-    // Alubri (alubri.com), catalog entries only. Alubri is NOT an ayna brand
-    // partner: keep it out of src/utils/partnerBrands.js's
-    // PARTNER_BRAND_ORDER and off the Brand Partnerships page
-    // (src/components/BrandPartners.jsx), so no partner badge or disclosure
-    // shows and Buy Now uses the standard (non-partner) route.
+    // Alubri (alubri.com). ayna brand partner since 2026-10-17 (team request),
+    // listed in src/utils/partnerBrands.js and on the Brand Partnerships page.
+    // No affiliate link supplied yet, so Buy Now still goes to alubri.com.
     //
     // Sourcing rule for these six entries: alubri.com ONLY (product pages,
     // /pages/faq, /pages/science, /pages/about), fetched 2026-09-29. Prices,
@@ -6766,8 +6769,8 @@ export const BRAND_PRODUCTS = [
         },
         isEmergingBrand: false,
     },
-    // Tampon Tribe (tampontribe.com), catalog entries only, NOT an ayna
-    // brand partner. First batch (2026-09-30): the five products matching
+    // Tampon Tribe (tampontribe.com). ayna brand partner since 2026-10-17
+    // (team request); no affiliate link supplied yet. First batch (2026-09-30): the five products matching
     // the photos ayna supplied (stored under public/products/tampon-tribe/).
     // Facts are from tampontribe.com (Shopify products.json + product pages);
     // brand-site ratings are from its review widget. Options (absorbency,
@@ -7124,6 +7127,677 @@ export const BRAND_PRODUCTS = [
         isEmergingBrand: false,
     },
 
+    // Momotaro Apotheca (momotaroapotheca.com). ayna brand partner since
+    // 2026-10-17 (Eliz's request; affiliate links to come). The six core
+    // products matching the photos Eliz supplied; expanded 2026-10-18 to the
+    // depth of the other partner cards, at Eliz's request.
+    //
+    // Sources, all read directly:
+    // - Product facts (prices, sizes, ingredients, directions, warnings) and
+    //   the founder story: momotaroapotheca.com product pages, /pages/about,
+    //   /pages/faq, /pages/ingredients, /pages/homeopathic-medicine, and two
+    //   brand blog posts (Hydrosol, Tonic), fetched 2026-10-17/18.
+    // - Reviews: the brand's own Junip review feed (849 reviews, pulled
+    //   2026-10-18), grouped by product. The feed marks each review
+    //   "rewarded" (the reviewer got a reward) and "verified buyer"; the
+    //   shares are stated on each card.
+    // - Regulation: openFDA (only the suppository is listed: NDC 83385-001,
+    //   "unapproved homeopathic") and FDA's homeopathic products page.
+    // - Safety: NIH NCCIH pages (goldenseal, tea tree oil, cranberry,
+    //   probiotics).
+    // - Studies: abstracts read via NCBI E-utilities; each card states the
+    //   design and size, and that none tested a Momotaro product.
+    // The brand's claims about yeast infections, BV and UTIs stay "the brand
+    // says", never stated as fact.
+    {
+        id: 'p-momotaro-salve',
+        name: 'Momotaro Apotheca Soothe & Restore Salve',
+        brand: 'Momotaro Apotheca',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health'],
+        tags: ['discomfort', 'comfort', 'organic', 'hormone-free', 'cruelty-free', 'external-only'],
+        price: '$37 (30 mL)',
+        userRating: 4.9,
+        userRatingSourceUrl: 'https://momotaroapotheca.com/products/salve',
+        whereToBuy: ['momotaroapotheca.com'],
+        url: 'https://momotaroapotheca.com/products/salve',
+        faqUrl: 'https://momotaroapotheca.com/pages/faq',
+        image: '/products/momotaro/salve.webp',
+        summary: 'Momotaro Apotheca was started in Portland, Oregon by Lindsay Wynn and Taylor Samuelsen. Wynn, a former beauty photographer, says she started making her own products after years of recurring yeast infections and BV, when drugstore options either didn\'t work or made things worse. The Salve is the brand\'s best seller: a certified organic balm for the vulva with a coconut and jojoba base, plus goldenseal, Oregon grape, echinacea, calendula and tea tree. The brand says it comforts dryness, itching and irritation, including irritation that comes with yeast infections and BV, and calms friction from sex, sweat and tight clothing. Free of alcohol, parabens, phthalates, silicone, sulfates and synthetic fragrance.',
+        safety: {
+            fdaStatus: 'Sold as a topical cosmetic: the brand\'s FAQ says its products are cosmetics, not medicine. It does not appear in FDA\'s drug listings under Momotaro Apotheca (checked on openFDA 2026-10-17).',
+            materials: '30 mL (1 oz) jar. Ingredients: organic coconut oil, organic kokum butter, organic beeswax, organic jojoba, organic tea tree, organic goldenseal, organic echinacea, organic calendula, organic Oregon grape. Certified organic (the brand says its suppliers are Oregon Tilth certified) and cruelty-free.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Tea tree oil can cause redness or irritation in some people, per NIH, and a few reviewers on the brand\'s site say it burned or irritated their skin. Contains goldenseal, which NIH says people who are pregnant or breastfeeding should not use. Full warnings are listed below.',
+            opinionAlerts: 'The brand markets the salve for yeast infections, BV and UTIs, and calls it "doctor recommended" without naming a doctor. Those are its own claims; momotaroapotheca.com cites no study of this product. About 4 in 10 of its on-site reviews were left in exchange for a reward.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna summary of NIH (NCCIH) safety information and peer-reviewed studies of the ingredients. Not a direct clinician quote; none of the studies tested this product.',
+        doctorOpinion: 'A plant-oil balm can be a gentle way to protect dry, chafed or irritated vulvar skin. Coconut and jojoba oils are both used in dermatology for their moisturizing and skin-barrier effects.\n\nThe brand\'s bigger claim is that goldenseal and Oregon grape, both sources of berberine, "target bacteria and yeast at the source". In lab studies, berberine slows Candida growth and stops it from sticking to vaginal cells, and tea tree oil and coconut oil also kill Candida in a dish. Calendula has the only human trials: in an Iranian trial of 150 women with yeast infections, a calendula vaginal cream cleared fewer infections than clotrimazole at 10 to 15 days (49% vs. 74%) but more at 30 to 35 days (77% vs. 34%). Those were lab studies or creams made for vaginal use, not this salve, which is for the outside only.\n\nTwo ingredient notes from NIH: tea tree oil can cause redness or irritation in some people, and people who are pregnant or breastfeeding should not use goldenseal.\n\nItching, burning or unusual discharge can come from a yeast infection, BV or an STI, and each needs a different treatment. If symptoms are new, keep coming back, or don\'t clear up, see a clinician for a diagnosis.',
+        doctorOpinionShort: 'A plant-oil balm for dry, irritated vulvar skin. Its antifungal ingredients work in lab studies and calendula has small vaginal trials, but none tested this salve. Tea tree can irritate, and NIH says to avoid goldenseal in pregnancy and breastfeeding.',
+        doctorOpinionCitations: [
+            { url: 'https://www.nccih.nih.gov/health/tea-tree-oil', label: 'NIH (NCCIH): Tea Tree Oil' },
+            { url: 'https://www.nccih.nih.gov/health/goldenseal', label: 'NIH (NCCIH): Goldenseal' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/27880086/', label: 'PubMed (NIH): Calendula vs. clotrimazole vaginal cream for yeast infection, randomized trial, n=150 (Women Health, 2017)' },
+        ],
+        // From the "Organic support for" list on momotaroapotheca.com.
+        whoItsFor: [
+            'Vulvar dryness, itching, irritation or burning',
+            'Chafing and sensitivity from sex, tight clothing, sweat or exercise',
+            'Comfort alongside treatment for yeast infections or BV, per the brand',
+            'Post-shave irritation and ingrown hairs, per customer reviews',
+            'Not the pick if you are pregnant or breastfeeding (it contains goldenseal), or if tea tree oil irritates your skin',
+        ],
+        howToUse: {
+            intro: 'Per Momotaro Apotheca\'s own directions:',
+            steps: [
+                'With clean hands, apply a pea-sized amount around the vulva or affected area.',
+                'Use as needed, for everyday support or during flare-ups. The brand says it is safe for daily use.',
+                'The brand recommends use over 60 to 90 days for best results.',
+                'External use only. The brand\'s Vaginal Suppository is its internal option.',
+            ],
+            sourceUrl: 'https://momotaroapotheca.com/products/salve',
+            sourceLabel: 'momotaroapotheca.com: Soothe & Restore Salve',
+        },
+        warnings: [
+            'For external use only. Avoid contact with eyes.',
+            'Stop using it if irritation occurs. Contains tea tree oil, which can irritate some people.',
+            'Pregnant, breastfeeding, or under medical care: talk to your provider first. NIH says not to use goldenseal while pregnant or breastfeeding.',
+            'If symptoms persist or worsen, see a healthcare professional.',
+            'Keep out of reach of children.',
+        ],
+        communityReview: 'Rated 4.93 out of 5 from 507 reviews on the brand\'s own site (483 five-star, 9 three-star or lower). 39% of those reviews were left in exchange for a reward; 89% are from verified buyers. Many reviewers describe years of recurring yeast infections or BV and say the salve calms flare-ups: "I use almost daily, and this seems to have decrease the frequency with which I develop any sort of infection. Best for post-coitus." Others use it after shaving: "It\'s perfect for preventing irritation and ingrown hairs post shave!" The critical reviews mostly come back to the tea tree: "The tea tree in it was burning and I did not like it," "Irritated my skin terrible," and one long-time customer who said a newer batch smelled different. One three-star reviewer wrote that it soothed but "has not stopped my regular yeast infections."',
+        effectiveness: 'No study of this product is cited on momotaroapotheca.com. Its key ingredients show antifungal activity in lab studies (berberine, tea tree oil, coconut oil), and calendula vaginal cream has small randomized trials against standard yeast and BV treatments. None of that research used this salve or tested a balm applied only to the outside.',
+        ingredients: 'Organic coconut oil, kokum butter, beeswax, jojoba, tea tree, goldenseal, echinacea, calendula, Oregon grape.',
+        ingredientScienceNote: 'These are the ingredients Momotaro Apotheca highlights. The studies show what each ingredient can do, mostly in lab dishes, not that this salve works.',
+        ingredientScience: [
+            {
+                name: 'Goldenseal and Oregon grape (berberine)',
+                text: 'Both plants contain berberine. In lab studies, berberine slowed the growth of several Candida species, including drug-resistant ones, broke down their biofilms, and kept Candida albicans from sticking to vaginal cells. These were cell and lab studies, not trials in people. NIH says people who are pregnant or breastfeeding should not use goldenseal.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6957002/', label: 'NIH (PMC): Berberine against Candida in planktonic and biofilm conditions, lab study (Drug Des Devel Ther, 2020)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/35295335/', label: 'PubMed (NIH): Berberine inhibits Candida adhesion to vaginal epithelial cells, cell study (Front Pharmacol, 2022)' },
+                    { url: 'https://www.nccih.nih.gov/health/goldenseal', label: 'NIH (NCCIH): Goldenseal' },
+                ],
+            },
+            {
+                name: 'Calendula',
+                text: 'In a triple-blind Iranian trial of 150 women with yeast infections, a calendula vaginal cream used for 7 nights cleared fewer infections than clotrimazole at the first check (49% vs. 74%) but more by 30 to 35 days (77% vs. 34%). In a separate trial of 80 women with BV, symptoms cleared in everyone in both the calendula and metronidazole groups. Both trials used creams inserted in the vagina, not an external balm.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/27880086/', label: 'PubMed (NIH): Calendula vs. clotrimazole for vaginal candidiasis, randomized trial, n=150 (Women Health, 2017)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/29441319/', label: 'PubMed (NIH): Calendula vs. metronidazole for BV, randomized trial, n=80 (J Adv Pharm Technol Res, 2018)' },
+                ],
+            },
+            {
+                name: 'Tea tree oil',
+                text: 'In lab tests on more than 100 Candida samples, tea tree oil stopped 90% of them from growing at a 0.25% concentration. NIH says tea tree oil on the skin is usually fine but can cause redness or irritation, especially if the product is old or has been exposed to heat, light or air, and that it should never be swallowed.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/9848442/', label: 'PubMed (NIH): Tea tree oil against Candida, lab study (J Antimicrob Chemother, 1998)' },
+                    { url: 'https://www.nccih.nih.gov/health/tea-tree-oil', label: 'NIH (NCCIH): Tea Tree Oil' },
+                ],
+            },
+            {
+                name: 'Coconut and jojoba oils',
+                text: 'A review of plant oils used on skin describes coconut and jojoba oils as moisturizing and skin-barrier supporting, with anti-inflammatory effects. In a lab study of 52 Candida samples, virgin coconut oil killed every Candida albicans sample, though at much higher concentrations than the drug fluconazole.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Anti-inflammatory and skin barrier repair effects of topical plant oils, review (Int J Mol Sci, 2017)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/17651080/', label: 'PubMed (NIH): Coconut oil against Candida species, lab study (J Med Food, 2007)' },
+                ],
+            },
+        ],
+        scientificCitations: [
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/27880086/', text: 'Calendula vs. clotrimazole for vaginal candidiasis (Women Health, 2017)', summary: 'Triple-blind randomized trial in 150 women: calendula vaginal cream was slower than clotrimazole but more women were clear of infection at 30 to 35 days. Tests a vaginal cream, not this salve.' },
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6957002/', text: 'Berberine against Candida (Drug Des Devel Ther, 2020)', summary: 'Lab study showing berberine slows Candida growth and biofilms. Not a human study.' },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: {
+                links: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/27880086/', text: 'Calendula vs. clotrimazole, randomized trial (2017)', summary: 'Iranian trial of 150 women with vaginal yeast infections; vaginal cream, not this salve.' },
+                    { url: 'https://www.nccih.nih.gov/health/goldenseal', text: 'NIH (NCCIH): Goldenseal', summary: 'Safety: not for use while pregnant or breastfeeding.' },
+                ],
+            },
+            community: {
+                links: [
+                    { platform: 'website', url: 'https://momotaroapotheca.com/products/salve', text: 'momotaroapotheca.com: Soothe & Restore Salve', summary: 'The brand\'s product page, with ingredients, directions, warnings and 500+ customer reviews (about 4 in 10 rewarded).' },
+                    { platform: 'website', url: 'https://momotaroapotheca.com/pages/about', text: 'momotaroapotheca.com: About', summary: 'Founder Lindsay Wynn\'s story and the brand\'s organic sourcing.' },
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/@momotaroapotheca', text: 'TikTok: @momotaroapotheca', summary: 'The brand\'s own TikTok account (brand content, not independent reviews).' },
+                ],
+            },
+        },
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-momotaro-daily-probiotic',
+        name: 'Momotaro Apotheca Daily Probiotic',
+        brand: 'Momotaro Apotheca',
+        category: 'supplement',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health', 'supplement'],
+        tags: ['supplement', 'vegan', 'cruelty-free'],
+        price: '$49 (30 capsules)',
+        userRating: 5.0,
+        userRatingSourceUrl: 'https://momotaroapotheca.com/products/probiotic',
+        whereToBuy: ['momotaroapotheca.com'],
+        url: 'https://momotaroapotheca.com/products/probiotic',
+        faqUrl: 'https://momotaroapotheca.com/pages/faq',
+        image: '/products/momotaro/daily-probiotic.webp',
+        summary: 'A once-a-day probiotic from Momotaro Apotheca, the Portland vulvovaginal care brand started by Lindsay Wynn after her own years of recurring yeast infections and BV. Each capsule has 25 billion cultures from 10 strains of Lactobacillus and Bifidobacterium, including L. crispatus, L. gasseri, L. rhamnosus and L. reuteri, in an acid- and bile-resistant capsule. The brand says it supports the gut, the immune system and the vaginal microbiome, and recommends at least 90 days of daily use. Vegan, shelf-stable, and free of gluten, soy and preservatives. 30 capsules, a one-month supply.',
+        safety: {
+            fdaStatus: 'Sold as a dietary supplement. The label says its statements have not been evaluated by the FDA and that it is not intended to diagnose, treat, cure, or prevent any disease.',
+            materials: '30 capsules. Strains: Lactobacillus acidophilus, L. plantarum, L. reuteri, L. crispatus, Bifidobacterium lactis, L. gasseri, L. paracasei, L. rhamnosus, L. brevis, B. longum. Other ingredients: microcrystalline cellulose, vegetable cellulose (capsule), silica. Strain codes and the amount of each strain aren\'t listed.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Intended for adults. Talk to your provider before use if pregnant, breastfeeding, or taking medication, per the brand. Full warnings are listed below.',
+            opinionAlerts: 'The brand says its strains are "clinically proven" for vaginal and gut health and help protect against BV, UTIs and yeast infections. No study of this blend is cited, and the label doesn\'t give strain codes, so it can\'t be matched to published trials. 61% of its on-site reviews were left in exchange for a reward.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna summary of NIH (NCCIH) information on probiotics and peer-reviewed trials of related strains. Not a direct clinician quote; none of the studies tested this product.',
+        doctorOpinion: 'This probiotic includes Lactobacillus crispatus, L. gasseri and other strains found in a healthy vagina, which is the idea behind the brand\'s claims. There is some real research behind oral lactobacilli: in a placebo-controlled trial of 166 women just treated for BV, a daily capsule of L. crispatus, L. brevis and L. acidophilus cut BV recurrence over 4 months (18% vs. 32%). A Cochrane review found probiotics added to antifungal treatment helped short-term cure of yeast infections, but the evidence was low quality and the benefit didn\'t last at later checks.\n\nThe catch, as NIH notes, is that probiotic effects depend on the exact strain. Those trials used specific, named strains; this label doesn\'t give strain codes, and no study of this blend is cited. A probiotic is also not a treatment for an active infection. If you have symptoms of BV, a yeast infection or a UTI, see a clinician for a diagnosis.',
+        doctorOpinionShort: 'Some oral lactobacillus blends cut BV recurrence in trials, but effects depend on the exact strain, and this label doesn\'t name strain codes or cite a study of the blend. Not a treatment for an active infection.',
+        doctorOpinionCitations: [
+            { url: 'https://www.nccih.nih.gov/health/probiotics-what-you-need-to-know', label: 'NIH (NCCIH): Probiotics, what you need to know' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/32091443/', label: 'PubMed (NIH): Oral lactobacilli and BV recurrence, randomized placebo-controlled trial, n=166 (J Low Genit Tract Dis, 2020)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/29168557/', label: 'Cochrane (2017): Probiotics for vulvovaginal candidiasis in non-pregnant women' },
+        ],
+        whoItsFor: [
+            'Adults who want a daily probiotic aimed at both gut and vaginal health',
+            'People with recurring BV or yeast infections who want to try a probiotic alongside their clinician\'s plan',
+            'People who prefer a vegan, shelf-stable capsule',
+            'Not a treatment for an active infection: see a clinician if you have symptoms',
+        ],
+        howToUse: {
+            intro: 'Per Momotaro Apotheca\'s own directions:',
+            steps: [
+                'Take one capsule a day with a meal, or within 30 minutes of eating.',
+                'Take it at about the same time each day; the brand says consistency matters more than timing.',
+                'The brand says to use it for at least 90 days to notice most benefits.',
+            ],
+            sourceUrl: 'https://momotaroapotheca.com/products/probiotic',
+            sourceLabel: 'momotaroapotheca.com: Daily Probiotic',
+        },
+        warnings: [
+            'Intended for adults. Keep out of reach of children.',
+            'Pregnant, breastfeeding, or taking medication: talk to your provider before use.',
+            'A probiotic doesn\'t treat an active infection. See a clinician for symptoms of BV, a yeast infection or a UTI.',
+            'Swallow only. The brand\'s FAQ says the probiotic is to be taken by mouth.',
+        ],
+        communityReview: 'Rated 4.96 out of 5 from 46 reviews on the brand\'s own site (44 five-star, 2 four-star, none lower). 61% of those reviews were left in exchange for a reward; 91% are from verified buyers. Reviewers with recurring BV report fewer flare-ups: "I\'m on my second month of this probiotic after having BV in December. So far no recurrence of the BV. It helps keep me regular as well." Another wrote, "For the past two years I\'ve alternated between a yeast infection or BV every other month... since taking this I have had neither!" There are no critical reviews to quote; the lowest, at four stars, called it "one of the better probiotics I have tried."',
+        effectiveness: 'No study of this blend is cited on momotaroapotheca.com. Related research: a 166-woman trial of a different oral lactobacillus blend cut BV recurrence after antibiotics (18% vs. 32%), and a Cochrane review rated the evidence for probiotics in yeast infections as low quality. Effects are strain-specific, per NIH.',
+        ingredients: '25 billion cultures: L. acidophilus, L. plantarum, L. reuteri, L. crispatus, B. lactis, L. gasseri, L. paracasei, L. rhamnosus, L. brevis, B. longum.',
+        ingredientScienceNote: 'These studies used specific, named strains. This label lists species but not strain codes, so the results show what similar probiotics can do, not that this one works.',
+        ingredientScience: [
+            {
+                name: 'Lactobacillus crispatus, L. brevis and L. acidophilus',
+                text: 'In a placebo-controlled trial at 7 centers, 166 women who had just been treated for BV took a capsule of these three species (specific strains) daily for 4 months. BV came back in 18% of them vs. 32% on placebo. In a smaller Estonian trial, oral L. crispatus capsules (other strains) also reduced BV and yeast infection symptoms over 3 months.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/32091443/', label: 'PubMed (NIH): Oral lactobacilli and BV recurrence, randomized trial, n=166 (J Low Genit Tract Dis, 2020)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/36856121/', label: 'PubMed (NIH): Oral and vaginal L. crispatus for BV and yeast infections, randomized trial (Benef Microbes, 2023)' },
+                ],
+            },
+            {
+                name: 'Probiotics for yeast infections',
+                text: 'A Cochrane review of 10 trials (1,656 women) found that probiotics added to antifungal medicine raised short-term cure rates and cut relapse at one month, but the evidence was low to very low quality and the benefit didn\'t hold at later follow-ups. Every trial used probiotics alongside antifungals, not on their own.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/29168557/', label: 'Cochrane (2017): Probiotics for vulvovaginal candidiasis in non-pregnant women' },
+                ],
+            },
+            {
+                name: 'Why the strain matters',
+                text: 'NIH notes that different probiotics can have different effects: if one kind of Lactobacillus helps, that doesn\'t mean another kind, or a Bifidobacterium, will do the same.',
+                citations: [
+                    { url: 'https://www.nccih.nih.gov/health/probiotics-what-you-need-to-know', label: 'NIH (NCCIH): Probiotics, what you need to know' },
+                ],
+            },
+        ],
+        scientificCitations: [
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/32091443/', text: 'Oral lactobacilli and BV recurrence (J Low Genit Tract Dis, 2020)', summary: 'Placebo-controlled trial in 166 women after BV treatment: recurrence 18% vs. 32% over 4 months. Different strains from this product.' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/29168557/', text: 'Probiotics for vulvovaginal candidiasis (Cochrane, 2017)', summary: 'Low-quality evidence of short-term benefit when added to antifungals; no lasting benefit shown.' },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: {
+                links: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/32091443/', text: 'Oral lactobacilli and BV recurrence, randomized trial (2020)', summary: '166 women; different strains from this product.' },
+                    { url: 'https://www.nccih.nih.gov/health/probiotics-what-you-need-to-know', text: 'NIH (NCCIH): Probiotics', summary: 'Effects depend on the specific strain.' },
+                ],
+            },
+            community: {
+                links: [
+                    { platform: 'website', url: 'https://momotaroapotheca.com/products/probiotic', text: 'momotaroapotheca.com: Daily Probiotic', summary: 'The brand\'s product page, with the strain list, directions, label statements and its customer reviews (61% rewarded).' },
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/@momotaroapotheca', text: 'TikTok: @momotaroapotheca', summary: 'The brand\'s own TikTok account (brand content, not independent reviews).' },
+                ],
+            },
+        },
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-momotaro-urinary-tract-supplement',
+        name: 'Momotaro Apotheca Urinary Tract & Pelvic Health Super Supplement',
+        brand: 'Momotaro Apotheca',
+        category: 'supplement',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['uti-prevention', 'supplement'],
+        tags: ['uti', 'supplement', 'vegan', 'organic'],
+        price: '$35 (60 capsules)',
+        userRating: 4.9,
+        userRatingSourceUrl: 'https://momotaroapotheca.com/products/the-uti-supplement',
+        whereToBuy: ['momotaroapotheca.com'],
+        url: 'https://momotaroapotheca.com/products/the-uti-supplement',
+        faqUrl: 'https://momotaroapotheca.com/pages/faq',
+        image: '/products/momotaro/urinary-tract-supplement.webp',
+        summary: 'A plant-based capsule from Momotaro Apotheca, the Portland vulvovaginal care brand started by Lindsay Wynn. It combines D-mannose, a cranberry fruit concentrate (12:1, 3,000 mg per the brand), Oregon grape root, uva ursi (bearberry leaf) and marshmallow root, made with certified organic ingredients. The brand designed it for times of urinary discomfort and says it supports UTIs, recurring bladder discomfort, interstitial cystitis, BV and yeast imbalance. It is meant for short stretches, not continuous long-term use. 60 vegan capsules.',
+        safety: {
+            fdaStatus: 'Sold as a dietary supplement. The brand says its statements have not been evaluated by the FDA and that it is not intended to diagnose, treat, cure, or prevent any disease.',
+            materials: '60 vegetarian capsules. Ingredients: D-mannose, cranberry fruit (Vaccinium macrocarpon), Oregon grape (Mahonia aquifolium), bearberry (Arctostaphylos uva-ursi), marshmallow root (Althaea officinalis), brown rice flour, rice hulls, vegetarian capsule. Per-capsule amounts other than the cranberry figure aren\'t listed on the product page.',
+            recalls: 'No recalls found.',
+            sideEffects: 'The brand says it is meant for times of urinary discomfort, not continuous long-term use, because of the uva ursi. Cranberry may interact with the blood thinner warfarin, per NIH. Full warnings are listed below.',
+            opinionAlerts: 'The brand says it "supports UTIs" and is "effective for both acute and recurrent symptoms." NIH says cranberry may help prevent repeat UTIs in some women but is not a treatment for an existing UTI, and a large 2024 trial found D-mannose didn\'t prevent repeat UTIs. Only 37% of its on-site reviews are marked as verified buyers, and many recent ones are just a few words long.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna summary of NIH (NCCIH) information and peer-reviewed trials of the ingredients. Not a direct clinician quote; none of the studies tested this product.',
+        doctorOpinion: 'The main ingredients have been tested on their own, with mixed results. Cranberry has the best evidence: a 2023 Cochrane review of 50 trials found cranberry products probably lower the risk of repeat UTIs in women who get them (about 26% fewer). NIH stresses that cranberry is not a treatment for an existing UTI.\n\nD-mannose looked promising in small early trials, but a large 2024 placebo-controlled trial of 598 women with recurring UTIs found 2 grams a day for 6 months didn\'t reduce UTIs, and the authors said it shouldn\'t be recommended for prevention. Uva ursi was tested as a UTI treatment in a German trial of 398 women: it cut antibiotic use but symptoms were worse and lasted longer than with an antibiotic, and more women developed kidney infections (8 vs. 2). The brand itself says uva ursi is for short-term use. Oregon grape is a source of berberine, and NIH warns that berberine (in goldenseal) can be harmful to newborns.\n\nAn untreated UTI can spread to the kidneys. Burning when you pee with fever, back or side pain, or blood in your urine needs medical care right away, not a supplement.',
+        doctorOpinionShort: 'Cranberry probably lowers repeat UTIs in women who get them, but doesn\'t treat an existing one. A large trial found D-mannose didn\'t prevent UTIs, and uva ursi did worse than an antibiotic as a treatment. Short-term use only.',
+        doctorOpinionCitations: [
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/37068952/', label: 'Cochrane (2023): Cranberries for preventing urinary tract infections, 50 trials' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/38587819/', label: 'PubMed (NIH): D-mannose for recurrent UTI, randomized placebo-controlled trial, n=598 (JAMA Intern Med, 2024)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/34111592/', label: 'PubMed (NIH): Uva ursi vs. fosfomycin for uncomplicated UTI, randomized trial, n=398 (Clin Microbiol Infect, 2021)' },
+            { url: 'https://www.nccih.nih.gov/health/cranberry', label: 'NIH (NCCIH): Cranberry' },
+        ],
+        whoItsFor: [
+            'Adults with repeat UTIs who want a cranberry-based supplement alongside their clinician\'s plan',
+            'Short stretches of urinary discomfort, per the brand',
+            'Not a replacement for antibiotics if you have a UTI: see a provider for diagnosis and treatment',
+            'Not for long-term daily use, per the brand, because it contains uva ursi',
+            'Ask a provider first if you are pregnant, breastfeeding, or take warfarin',
+        ],
+        howToUse: {
+            intro: 'Per Momotaro Apotheca\'s own directions:',
+            steps: [
+                'For acute discomfort, take "up to 8x with a large glass of water 2-3 times a day," as the brand puts it, or as directed by your healthcare practitioner.',
+                'Use it during times of urinary discomfort, not continuously over a long period.',
+                'If symptoms keep coming back, the brand recommends talking to a healthcare provider.',
+            ],
+            sourceUrl: 'https://momotaroapotheca.com/products/the-uti-supplement',
+            sourceLabel: 'momotaroapotheca.com: Urinary Tract & Pelvic Health Super Supplement',
+        },
+        warnings: [
+            'Not a treatment for an existing UTI. Fever, back or side pain, or blood in your urine need medical care right away.',
+            'Designed for short-term use, not continuous long-term use (it contains uva ursi), per the brand.',
+            'Taking warfarin or other medicines: ask your provider first; NIH notes cranberry may interact with warfarin.',
+            'Pregnant or breastfeeding: ask your provider first. NIH warns berberine, found in Oregon grape, can be harmful to newborns.',
+            'Intended for adults. Keep out of reach of children.',
+        ],
+        communityReview: 'Rated 4.94 out of 5 from 68 reviews on the brand\'s own site (64 five-star, 4 four-star). Read these with care: only 37% are marked as verified buyers, 32% were rewarded, and many from 2024 and 2025 are just a few words ("plant magic," "steady and real"). Earlier, longer reviews describe catching UTIs early: "I started to get a tingly feeling a couple days ago, so i took two of these with lots of water and it was gone!" One reviewer with UTIs every few months wrote that she went almost 5 months without one. Another said her doctor kept finding no UTI behind her symptoms, and the supplement helped.',
+        effectiveness: 'No study of this blend is cited on momotaroapotheca.com. Ingredient by ingredient: cranberry probably lowers repeat UTIs in women who get them (Cochrane, 2023); D-mannose didn\'t prevent repeat UTIs in a 598-woman trial (2024); uva ursi did worse than an antibiotic as a UTI treatment in a 398-woman trial (2021).',
+        ingredients: 'D-mannose, cranberry fruit concentrate, Oregon grape root, uva ursi (bearberry leaf), marshmallow root.',
+        ingredientScienceNote: 'These studies tested single ingredients, mostly at set doses. This product\'s per-capsule amounts aren\'t listed (except cranberry), so the results show what each ingredient can do, not what this blend does.',
+        ingredientScience: [
+            {
+                name: 'Cranberry',
+                text: 'A 2023 Cochrane review of 50 trials (8,857 people) found cranberry products probably reduce symptomatic, culture-confirmed UTIs in women with recurring UTIs (risk ratio 0.74), in children, and after procedures that raise UTI risk, but showed little or no benefit in elderly people in care homes or in pregnancy. NIH says cranberry shouldn\'t be used instead of a proven treatment for a UTI.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/37068952/', label: 'Cochrane (2023): Cranberries for preventing urinary tract infections' },
+                    { url: 'https://www.nccih.nih.gov/health/cranberry', label: 'NIH (NCCIH): Cranberry' },
+                ],
+            },
+            {
+                name: 'D-mannose',
+                text: 'In a double-blind trial across 99 UK primary care practices, 598 women with recurring UTIs took 2 grams of D-mannose or placebo daily for 6 months. 51% on D-mannose vs. 56% on placebo had another UTI, not a real difference, and the authors concluded it should not be recommended for prevention.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/38587819/', label: 'PubMed (NIH): D-mannose for recurrent UTI, randomized placebo-controlled trial, n=598 (JAMA Intern Med, 2024)' },
+                ],
+            },
+            {
+                name: 'Uva ursi (bearberry)',
+                text: 'In a double-blind German trial, 398 women with uncomplicated UTIs got uva ursi or the antibiotic fosfomycin. Uva ursi cut antibiotic use by 64%, but symptoms were heavier and 8 women developed kidney infections vs. 2 on the antibiotic. The authors concluded uva ursi led to more symptoms and more safety concerns.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/34111592/', label: 'PubMed (NIH): Uva ursi vs. fosfomycin, randomized trial, n=398 (Clin Microbiol Infect, 2021)' },
+                ],
+            },
+            {
+                name: 'Oregon grape (berberine)',
+                text: 'Oregon grape is a source of berberine, per the brand. Berberine slows Candida in lab studies, but there are no human UTI trials of it cited here. NIH warns that berberine (in goldenseal) can be harmful to newborns.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6957002/', label: 'NIH (PMC): Berberine against Candida, lab study (Drug Des Devel Ther, 2020)' },
+                    { url: 'https://www.nccih.nih.gov/health/goldenseal', label: 'NIH (NCCIH): Goldenseal (berberine and newborns)' },
+                ],
+            },
+        ],
+        scientificCitations: [
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/37068952/', text: 'Cranberries for preventing UTIs (Cochrane, 2023)', summary: '50 trials: cranberry probably lowers repeat UTIs in women who get them; not a treatment.' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/38587819/', text: 'D-mannose for recurrent UTI (JAMA Intern Med, 2024)', summary: 'Placebo-controlled trial of 598 women: no reduction in UTIs.' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/34111592/', text: 'Uva ursi vs. fosfomycin (Clin Microbiol Infect, 2021)', summary: '398 women: fewer antibiotics but more symptoms and more kidney infections than with the antibiotic.' },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: {
+                links: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/37068952/', text: 'Cochrane (2023): Cranberries for preventing UTIs', summary: 'The strongest evidence for any ingredient in this blend.' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/38587819/', text: 'D-mannose trial (2024)', summary: 'No benefit for preventing repeat UTIs.' },
+                    { url: 'https://www.nccih.nih.gov/health/cranberry', text: 'NIH (NCCIH): Cranberry', summary: 'Prevention only, not treatment; possible warfarin interaction.' },
+                ],
+            },
+            community: {
+                links: [
+                    { platform: 'website', url: 'https://momotaroapotheca.com/products/the-uti-supplement', text: 'momotaroapotheca.com: Urinary Tract & Pelvic Health Super Supplement', summary: 'The brand\'s product page, with ingredients, directions, its uva ursi note and customer reviews (37% verified buyers).' },
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/@momotaroapotheca', text: 'TikTok: @momotaroapotheca', summary: 'The brand\'s own TikTok account (brand content, not independent reviews).' },
+                ],
+            },
+        },
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-momotaro-vaginal-suppository',
+        name: 'Momotaro Apotheca Vaginal Suppository',
+        brand: 'Momotaro Apotheca',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: true,
+        healthFunctions: ['vaginal-health'],
+        tags: ['discomfort', 'organic', 'hormone-free', 'cruelty-free'],
+        price: '$48 (14 suppositories)',
+        userRating: 4.9,
+        userRatingSourceUrl: 'https://momotaroapotheca.com/products/the-suppository',
+        whereToBuy: ['momotaroapotheca.com'],
+        url: 'https://momotaroapotheca.com/products/the-suppository',
+        faqUrl: 'https://momotaroapotheca.com/pages/homeopathic-medicine',
+        image: '/products/momotaro/vaginal-suppository.webp',
+        summary: 'A homeopathic vaginal suppository that Momotaro Apotheca, the Portland brand started by Lindsay Wynn after her own recurring yeast infections and BV, says it developed over three years. The brand markets it for yeast infections, BV and vaginal irritation and calls it "a natural alternative to antibiotics and antifungals." The homeopathic actives are echinacea, wood creosote (beechwood) and northern white cedar (thuja) at 12X dilution, in a base of cocoa butter, coconut oil, beeswax and jojoba with Oregon grape, calendula and tea tree. 14 suppositories, 2 mL each. The brand suggests storing it somewhere cool, like the fridge.',
+        safety: {
+            fdaStatus: 'Listed with the FDA as an unapproved homeopathic over-the-counter drug (NDC 83385-001; active ingredients Echinacea purpurea, wood creosote and Thuja occidentalis, each at 12X). FDA says homeopathic products sold in the US have not been reviewed by the FDA for safety or effectiveness.',
+            materials: '14 suppositories, 2 mL each. Ingredients: organic beechwood (Kreosotum), organic beeswax, organic calendula, organic cocoa butter, organic coconut oil, organic echinacea, organic jojoba oil, organic northern white cedar (Thuja occidentalis), organic Oregon grape, organic tea tree oil. Made without parabens, phthalates, silicone, sulfates or synthetic fragrance.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Contains tea tree oil, which can cause redness or irritation in some people, per NIH. A reviewer notes it can leak and recommends wearing a pantyliner. The product page lists no warnings; read the carton. Full warnings are listed below.',
+            opinionAlerts: 'FDA warns that people may use unapproved homeopathic drugs instead of proven treatments, which can delay care that works. The brand\'s own FAQ says its products are "for external use only" and "topical cosmetics", which doesn\'t match this product, a vaginal suppository listed with the FDA as a drug; ayna reads that FAQ as out of date. 71% of its on-site reviews were left in exchange for a reward.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna summary of FDA guidance on homeopathic products, NIH (NCCIH) information on tea tree oil, and peer-reviewed studies of the base ingredients. Not a direct clinician quote; none of the studies tested this product.',
+        doctorOpinion: 'This is a homeopathic drug. FDA lists it as unapproved, and FDA says homeopathic products have not been reviewed for safety or effectiveness. At 12X, the homeopathic actives are diluted a trillion-fold. FDA also warns that using an unapproved homeopathic product instead of a proven treatment can delay care that works.\n\nThe base has more going on than the homeopathic part. Calendula vaginal cream has small trials: in 150 Iranian women with yeast infections, it cleared fewer infections than clotrimazole at 10 to 15 days but more at 30 to 35 days, and in 80 women with BV, symptoms cleared in both the calendula and metronidazole groups. Berberine (from Oregon grape) and tea tree oil slow Candida in lab studies. None of this was tested in this suppository.\n\nYeast infections and BV have similar symptoms but need different treatments, and proven over-the-counter and prescription options exist for both. If this is your first infection, symptoms keep coming back, or they don\'t clear up within a week, see a clinician for a diagnosis. One reviewer found her problem "wasn\'t yeast or BV" at all.',
+        doctorOpinionShort: 'An FDA-listed but unapproved homeopathic drug; FDA hasn\'t reviewed homeopathic products for safety or effectiveness. Its calendula base has small vaginal trials, but nothing tested this product. Don\'t let it delay a diagnosis or a proven treatment.',
+        doctorOpinionCitations: [
+            { url: 'https://www.fda.gov/drugs/information-drug-class/homeopathic-products', label: 'FDA: Homeopathic Products' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/27880086/', label: 'PubMed (NIH): Calendula vs. clotrimazole vaginal cream, randomized trial, n=150 (Women Health, 2017)' },
+            { url: 'https://www.nccih.nih.gov/health/tea-tree-oil', label: 'NIH (NCCIH): Tea Tree Oil' },
+        ],
+        whoItsFor: [
+            'People with a diagnosed yeast infection who want a plant-based, hormone-free option and have talked it through with a clinician',
+            'People who react badly to standard antifungal creams, per several reviewers',
+            'Not the pick for a first-time or recurring infection without a diagnosis: yeast infections and BV need different, proven treatments',
+            'Pregnant or breastfeeding: talk to your provider first',
+        ],
+        howToUse: {
+            intro: 'Per Momotaro Apotheca\'s own directions:',
+            steps: [
+                'For acute issues, insert one vaginally twice a day for 5 to 7 days until symptoms clear.',
+                'It can also be used as needed for discomfort.',
+                'The brand suggests pairing it with its Salve for the outside.',
+                'Store somewhere cool and dry, like the refrigerator; the natural ingredients can separate.',
+            ],
+            sourceUrl: 'https://momotaroapotheca.com/products/the-suppository',
+            sourceLabel: 'momotaroapotheca.com: Vaginal Suppository',
+        },
+        warnings: [
+            'A homeopathic product the FDA has not reviewed for safety or effectiveness. Don\'t use it instead of a proven treatment.',
+            'First infection, symptoms that come back, or symptoms that don\'t clear in a week: see a clinician.',
+            'Fever, pelvic pain, or unusual discharge with a bad smell: see a clinician.',
+            'Pregnant or breastfeeding: talk to your provider before using any vaginal product.',
+            'Contains tea tree oil: stop using it if irritation occurs, and avoid oral sex while using it (tea tree oil must not be swallowed).',
+        ],
+        communityReview: 'Rated 4.94 out of 5 from 31 reviews on the brand\'s own site (29 five-star, 2 four-star). 71% of those reviews were left in exchange for a reward; 90% are from verified buyers. Reviewers with chronic yeast infections describe fast relief: "I get chronic yeast infections and this is the ONLY thing that helps them." Several say they can\'t use standard creams: "I can\'t use Monistat. This saved me. Feels like a concentrated version of salve." One compared it to the drug miconazole and felt it "took a little more time to kick in." Practical notes: it can leak (wear a liner), and a 4-star reviewer said it didn\'t help because "my issue wasn\'t yeast or BV," a reminder to get a diagnosis first.',
+        effectiveness: 'No study of this product is cited on momotaroapotheca.com, and FDA has not reviewed it for safety or effectiveness. Its calendula base has small randomized vaginal trials, and berberine and tea tree oil are antifungal in lab studies; none of that research tested this suppository.',
+        ingredients: 'Homeopathic actives (12X): Echinacea purpurea, wood creosote (beechwood), Thuja occidentalis. Base: cocoa butter, coconut oil, beeswax, jojoba, Oregon grape, calendula, tea tree.',
+        ingredientScienceNote: 'Homeopathic actives at 12X are diluted a trillion-fold, so the studies below are about the base ingredients. They show what those ingredients can do, not that this suppository works.',
+        ingredientScience: [
+            {
+                name: 'Homeopathic actives (echinacea, wood creosote, thuja at 12X)',
+                text: 'FDA says homeopathic products have not been reviewed for safety or effectiveness, and warns that relying on them instead of FDA-approved treatment can delay care that works.',
+                citations: [
+                    { url: 'https://www.fda.gov/drugs/information-drug-class/homeopathic-products', label: 'FDA: Homeopathic Products' },
+                ],
+            },
+            {
+                name: 'Calendula',
+                text: 'In a triple-blind trial of 150 women with yeast infections, calendula vaginal cream used for 7 nights was slower than clotrimazole (49% vs. 74% clear at 10 to 15 days) but more women were clear at 30 to 35 days (77% vs. 34%). In 80 women with BV, symptoms cleared in everyone in both the calendula and metronidazole groups. Both were small trials of creams, not this suppository.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/27880086/', label: 'PubMed (NIH): Calendula vs. clotrimazole for vaginal candidiasis, randomized trial, n=150 (Women Health, 2017)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/29441319/', label: 'PubMed (NIH): Calendula vs. metronidazole for BV, randomized trial, n=80 (J Adv Pharm Technol Res, 2018)' },
+                ],
+            },
+            {
+                name: 'Oregon grape (berberine) and tea tree oil',
+                text: 'In lab studies, berberine slowed Candida growth and kept it from sticking to vaginal cells, and tea tree oil stopped 90% of Candida samples from growing at a 0.25% concentration. These are lab results, not trials in people. NIH notes tea tree oil can irritate and must never be swallowed.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/35295335/', label: 'PubMed (NIH): Berberine inhibits Candida adhesion to vaginal epithelial cells, cell study (Front Pharmacol, 2022)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/9848442/', label: 'PubMed (NIH): Tea tree oil against Candida, lab study (J Antimicrob Chemother, 1998)' },
+                ],
+            },
+        ],
+        scientificCitations: [
+            { url: 'https://www.fda.gov/drugs/information-drug-class/homeopathic-products', text: 'FDA: Homeopathic Products', summary: 'Homeopathic products have not been reviewed by FDA for safety or effectiveness.' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/27880086/', text: 'Calendula vs. clotrimazole for vaginal candidiasis (Women Health, 2017)', summary: 'Randomized trial in 150 women; a calendula cream, not this suppository.' },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: {
+                links: [
+                    { url: 'https://www.fda.gov/drugs/information-drug-class/homeopathic-products', text: 'FDA: Homeopathic Products', summary: 'Why homeopathic products are not FDA-reviewed, and the risk of delaying proven treatment.' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/27880086/', text: 'Calendula vs. clotrimazole trial (2017)', summary: '150 women with vaginal yeast infections.' },
+                ],
+            },
+            community: {
+                links: [
+                    { platform: 'website', url: 'https://momotaroapotheca.com/products/the-suppository', text: 'momotaroapotheca.com: Vaginal Suppository', summary: 'The brand\'s product page, with ingredients, directions and customer reviews (71% rewarded).' },
+                    { platform: 'website', url: 'https://momotaroapotheca.com/pages/homeopathic-medicine', text: 'momotaroapotheca.com: Homeopathic Medicine', summary: 'The brand\'s explanation of why it made a homeopathic formula.' },
+                ],
+            },
+        },
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-momotaro-hydrosol-toner',
+        name: 'Momotaro Apotheca Organic Hydrosol Toner',
+        brand: 'Momotaro Apotheca',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health', 'skin-hair'],
+        tags: ['comfort', 'organic', 'vegan', 'cruelty-free', 'external-only'],
+        price: '$56 (100 mL)',
+        userRating: 4.9,
+        userRatingSourceUrl: 'https://momotaroapotheca.com/products/hydrosol',
+        whereToBuy: ['momotaroapotheca.com'],
+        url: 'https://momotaroapotheca.com/products/hydrosol',
+        faqUrl: 'https://momotaroapotheca.com/blogs/vaginal-wellness/hydrosol-what-is-it-how-do-i-use-it',
+        image: '/products/momotaro/hydrosol-toner.webp',
+        summary: 'An alcohol-free micromist from Momotaro Apotheca, the Portland vulvovaginal care brand started by Lindsay Wynn. It is made from steam-distilled organic orange blossom, rose, rosemary and lavender waters, which the brand explains are far more diluted, and so gentler, than essential oils. Momotaro Apotheca says it soothes irritation, neutralizes odor and hydrates the face, body and external pelvic area, for use after a shower, workout, period or sex. Customers also use it as a face toner and on body breakouts. Certified organic, vegan and cruelty-free; 100 mL glass bottle, per the label.',
+        safety: {
+            fdaStatus: 'Sold as a cosmetic body mist. momotaroapotheca.com does not describe it as FDA-cleared or approved, and it does not appear in FDA\'s drug listings under Momotaro Apotheca (checked on openFDA 2026-10-17).',
+            materials: 'Ingredients: organic orange blossom (Citrus aurantium amara), organic rose water (Rosa damascena), organic rosemary distillate, organic lavender distillate, glyceryl caprylate, glyceryl undecylenate (both derived from coconut and castor). No alcohol, parabens, phthalates, silicone, sulfates or synthetic fragrance.',
+            recalls: 'No recalls found.',
+            sideEffects: 'One reviewer said it burned when sprayed directly on already-irritated skin. The brand says not to spray it on broken skin and to patch test new products. Full warnings are listed below.',
+            opinionAlerts: 'Claims about calming inflammation and odor-causing bacteria are the brand\'s own; momotaroapotheca.com cites no study of this product. 44% of its on-site reviews were left in exchange for a reward.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna summary of the brand\'s own information and a review of rose (Rosa damascena) research. Not a direct clinician quote; no study tested this product.',
+        doctorOpinion: 'A water-based floral mist for external skin, including the outer pelvic area, with no alcohol or synthetic fragrance, per the brand. Floral waters are very dilute, which the brand points to as the reason they are gentler than essential oils. A review of rose (Rosa damascena) research describes antibacterial and antioxidant effects in lab studies, but there are no studies of this mist, so its odor and irritation claims are the brand\'s own.\n\nA change in vaginal odor, especially a fishy smell or with unusual discharge, can be a sign of BV or another infection. A mist won\'t treat that; see a clinician.',
+        doctorOpinionShort: 'An alcohol-free floral mist for external skin. Rose extracts show antibacterial effects in lab studies, but its odor and irritation claims are the brand\'s own; a new odor with discharge needs a clinician, not a spray.',
+        doctorOpinionCitations: [
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3586833/', label: 'NIH (PMC): Pharmacological effects of Rosa damascena, review (Iran J Basic Med Sci, 2011)' },
+            { url: 'https://momotaroapotheca.com/blogs/vaginal-wellness/hydrosol-what-is-it-how-do-i-use-it', label: 'momotaroapotheca.com: What is a hydrosol (the brand\'s explanation)' },
+        ],
+        whoItsFor: [
+            'People who want a refreshing, alcohol-free mist after showering, exercise, a period or sex',
+            'Skin folds and areas prone to sweat, chafing, ingrown hairs or breakouts, per the brand and reviewers',
+            'Fragrance-free routines: no synthetic fragrance, only light floral waters',
+            'For external use: not for inside the vagina',
+        ],
+        howToUse: {
+            intro: 'Per Momotaro Apotheca\'s own directions:',
+            steps: [
+                'Hold a few inches from clean skin and mist the face, body or external pelvic area.',
+                'Spray into skin folds and areas prone to sweat or irritation. Don\'t spray on broken skin.',
+                'Let it air dry. Use daily or as needed, after a shower, workout, period or sex.',
+            ],
+            sourceUrl: 'https://momotaroapotheca.com/products/hydrosol',
+            sourceLabel: 'momotaroapotheca.com: Organic Hydrosol Toner',
+        },
+        warnings: [
+            'For external use only. Don\'t spray on broken skin.',
+            'Patch test first, per the brand. Stop using it if irritation occurs.',
+            'A new vaginal odor with unusual discharge can mean an infection: see a clinician.',
+        ],
+        communityReview: 'Rated 4.85 out of 5 from 34 reviews on the brand\'s own site (30 five-star, 1 three-star). 44% of those reviews were left in exchange for a reward; 91% are from verified buyers. Reviewers use it after the gym and sex ("This has been a godsend after I get sweaty... I stop worrying about my smell"), and many have found other uses: as a face toner, on armpits, and on butt breakouts and folliculitis. The critical notes: one bottle\'s plastic sprayer arrived broken, and one reviewer said it burned when sprayed directly on irritated skin, though she still found it useful sprayed on underwear.',
+        effectiveness: 'No study of this product is cited on momotaroapotheca.com. Rose extracts show antibacterial and antioxidant effects in lab studies; that doesn\'t show this mist reduces odor or irritation.',
+        ingredients: 'Organic orange blossom, rose, rosemary and lavender distillates; glyceryl caprylate and glyceryl undecylenate.',
+        ingredientScienceNote: 'These are the ingredients Momotaro Apotheca highlights. The research is on the plants, mostly in lab studies, not on this mist.',
+        ingredientScience: [
+            {
+                name: 'Rose water (Rosa damascena)',
+                text: 'A review of Rosa damascena research describes antibacterial, antioxidant and anti-inflammatory effects, mostly from lab and animal studies. It doesn\'t include trials of rose water on vulvar skin.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3586833/', label: 'NIH (PMC): Pharmacological effects of Rosa damascena, review (Iran J Basic Med Sci, 2011)' },
+                ],
+            },
+            {
+                name: 'Hydrosols vs. essential oils',
+                text: 'The brand explains that hydrosols are the water left from steam-distilling plants, holding only trace amounts of the plants\' compounds, which is why they are gentler than essential oils. It still recommends a patch test on the inner forearm before using a new product on sensitive skin.',
+                citations: [
+                    { url: 'https://momotaroapotheca.com/blogs/vaginal-wellness/hydrosol-what-is-it-how-do-i-use-it', label: 'momotaroapotheca.com: What is a hydrosol' },
+                ],
+            },
+        ],
+        scientificCitations: [
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3586833/', text: 'Pharmacological effects of Rosa damascena (Iran J Basic Med Sci, 2011)', summary: 'Review of mostly lab and animal research on rose; not a study of this product.' },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: {
+                links: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3586833/', text: 'Rosa damascena review (2011)', summary: 'Lab and animal research on rose extracts.' },
+                ],
+            },
+            community: {
+                links: [
+                    { platform: 'website', url: 'https://momotaroapotheca.com/products/hydrosol', text: 'momotaroapotheca.com: Organic Hydrosol Toner', summary: 'The brand\'s product page, with ingredients, directions and customer reviews (44% rewarded).' },
+                    { platform: 'website', url: 'https://momotaroapotheca.com/blogs/vaginal-wellness/hydrosol-what-is-it-how-do-i-use-it', text: 'momotaroapotheca.com: What is a hydrosol', summary: 'The brand\'s guide to what it is and six ways to use it.' },
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/@momotaroapotheca', text: 'TikTok: @momotaroapotheca', summary: 'The brand\'s own TikTok account (brand content, not independent reviews).' },
+                ],
+            },
+        },
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-momotaro-bath-body-tonic',
+        name: 'Momotaro Apotheca Nourishing Bath & Body Tonic',
+        brand: 'Momotaro Apotheca',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health', 'skin-hair'],
+        tags: ['comfort', 'organic', 'vegan', 'cruelty-free', 'external-only'],
+        price: '$48 (55 mL)',
+        userRating: 4.9,
+        userRatingSourceUrl: 'https://momotaroapotheca.com/products/tonic',
+        whereToBuy: ['momotaroapotheca.com'],
+        url: 'https://momotaroapotheca.com/products/tonic',
+        faqUrl: 'https://momotaroapotheca.com/blogs/vaginal-wellness/8-ways-to-use-our-tonic-for-oil-your-needs',
+        image: '/products/momotaro/bath-body-tonic.webp',
+        summary: 'A jojoba-oil concentrate from Momotaro Apotheca, the Portland vulvovaginal care brand started by Lindsay Wynn. It has six ingredients: jojoba oil, tea tree, cedarwood and sweet orange essential oils, and infusions of goldenseal and Oregon grape, both sources of berberine. Momotaro Apotheca says to add it to a warm bath or use it as a spot treatment for irritation, ingrown hairs and razor burn, and markets it for discomfort from yeast and bacterial infections. Not for internal use. Certified organic and vegan; 55 mL (1.9 fl oz).',
+        safety: {
+            fdaStatus: 'Sold as a bath and body oil (a topical cosmetic, per the brand\'s FAQ). It does not appear in FDA\'s drug listings under Momotaro Apotheca (checked on openFDA 2026-10-17).',
+            materials: '55 mL (1.9 fl oz). Ingredients: organic jojoba oil, organic tea tree essential oil, cedarwood Virginia (Juniperus virginiana) essential oil, organic sweet orange essential oil, infusion of goldenseal leaf, Oregon grape. No alcohol, fragrance or fillers; the oils can separate, so shake before use.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Tea tree oil can cause redness or irritation in some people, and should never be swallowed, per NIH. Contains goldenseal, which NIH says people who are pregnant or breastfeeding should not use. Full warnings are listed below.',
+            opinionAlerts: 'The brand markets it as a spot treatment for discomfort from yeast and bacterial infections and calls it antimicrobial and antifungal. Those are its own claims; momotaroapotheca.com cites no study of this product. 43% of its on-site reviews were left in exchange for a reward.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna summary of NIH (NCCIH) safety information and peer-reviewed studies of the ingredients. Not a direct clinician quote; none of the studies tested this product.',
+        doctorOpinion: 'A jojoba-based oil for the bath or for spot use on skin, including after shaving. Jojoba is used in dermatology for its moisturizing and skin-barrier effects. The brand says its goldenseal and Oregon grape help with yeast and bacterial infections; berberine and tea tree oil do slow Candida in lab studies, but nothing tested this oil, and a few drops in a bath is very diluted.\n\nNIH notes that tea tree oil can irritate skin and should never be swallowed, and that people who are pregnant or breastfeeding should not use goldenseal. The brand itself says it is not for internal use and to avoid broken skin and mucous membranes. One reviewer developed cysts after using it post-shave, so try a small area first.',
+        doctorOpinionShort: 'A jojoba bath and spot oil. Its antifungal ingredients work in lab studies but nothing tested this product. Tea tree can irritate, NIH says to avoid goldenseal in pregnancy and breastfeeding, and it\'s not for internal use.',
+        doctorOpinionCitations: [
+            { url: 'https://www.nccih.nih.gov/health/tea-tree-oil', label: 'NIH (NCCIH): Tea Tree Oil' },
+            { url: 'https://www.nccih.nih.gov/health/goldenseal', label: 'NIH (NCCIH): Goldenseal' },
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Topical plant oils for skin barrier repair, review (Int J Mol Sci, 2017)' },
+        ],
+        whoItsFor: [
+            'People who want a fragrance-free, organic bath oil',
+            'Spot care for ingrown hairs, razor burn and post-shave bumps, per the brand and reviewers',
+            'A body oil for dry skin after the shower',
+            'Not the pick if you are pregnant or breastfeeding (it contains goldenseal), or if tea tree oil irritates your skin',
+        ],
+        howToUse: {
+            intro: 'Per Momotaro Apotheca\'s own directions:',
+            steps: [
+                'Add 5 to 10 droppers-full to a clean, warm bath and soak.',
+                'Or apply as a spot treatment for blemishes or ingrown hairs, or as a pre-, during- or post-shave oil.',
+                'Shake gently before use; the oils can separate naturally.',
+                'Not for internal use. Avoid broken skin and mucous membranes.',
+            ],
+            sourceUrl: 'https://momotaroapotheca.com/products/tonic',
+            sourceLabel: 'momotaroapotheca.com: Nourishing Bath & Body Tonic',
+        },
+        warnings: [
+            'For external use only. Not for internal use; avoid broken skin and mucous membranes.',
+            'Avoid contact with eyes. Stop using it if irritation occurs.',
+            'Never swallow: it contains tea tree oil.',
+            'Pregnant, breastfeeding, or under medical care: talk to your provider first. NIH says not to use goldenseal while pregnant or breastfeeding.',
+            'Keep out of reach of children.',
+        ],
+        communityReview: 'Rated 4.90 out of 5 from 58 reviews on the brand\'s own site (52 five-star, 6 four-star). 43% of those reviews were left in exchange for a reward; 90% are from verified buyers. Reviewers use it most after shaving and in the bath: "This makes my skin feel so silky! Amazing for post shave soothing!" and "I use this after every shower and I swear it helps keep chronic BV and yeast infections at bay." One credits it, with the salve, for easing her vulvodynia. Critical notes: several dislike the smell, one said a bottle goes fast at the recommended dose, and one developed "3 large cysts" after using it post-shave.',
+        effectiveness: 'No study of this product is cited on momotaroapotheca.com. Berberine (from goldenseal and Oregon grape) and tea tree oil are antifungal in lab studies, and jojoba is a well-tolerated skin oil; none of that research tested this tonic.',
+        ingredients: 'Organic jojoba oil, tea tree, cedarwood and sweet orange essential oils, goldenseal leaf infusion, Oregon grape.',
+        ingredientScienceNote: 'These are the ingredients Momotaro Apotheca highlights. The studies show what each ingredient can do, mostly in lab dishes, not that this tonic works.',
+        ingredientScience: [
+            {
+                name: 'Goldenseal and Oregon grape (berberine)',
+                text: 'In lab studies, berberine slowed the growth of several Candida species, including drug-resistant ones, and broke down their biofilms. These were lab studies, not trials in people. NIH says people who are pregnant or breastfeeding should not use goldenseal.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6957002/', label: 'NIH (PMC): Berberine against Candida, lab study (Drug Des Devel Ther, 2020)' },
+                    { url: 'https://www.nccih.nih.gov/health/goldenseal', label: 'NIH (NCCIH): Goldenseal' },
+                ],
+            },
+            {
+                name: 'Tea tree oil',
+                text: 'Tea tree oil stopped 90% of Candida samples from growing at a 0.25% concentration in lab tests. NIH says a small amount of evidence suggests it may help acne and athlete\'s foot, that it can cause redness or irritation, and that it should never be swallowed.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/9848442/', label: 'PubMed (NIH): Tea tree oil against Candida, lab study (J Antimicrob Chemother, 1998)' },
+                    { url: 'https://www.nccih.nih.gov/health/tea-tree-oil', label: 'NIH (NCCIH): Tea Tree Oil' },
+                ],
+            },
+            {
+                name: 'Jojoba oil',
+                text: 'A review of plant oils used on skin includes jojoba among the oils with anti-inflammatory and skin-barrier repair effects, which is why it is a common base for skin oils.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Anti-inflammatory and skin barrier repair effects of topical plant oils, review (Int J Mol Sci, 2017)' },
+                ],
+            },
+        ],
+        scientificCitations: [
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', text: 'Topical plant oils and the skin barrier (Int J Mol Sci, 2017)', summary: 'Review including jojoba oil; not a study of this product.' },
+            { url: 'https://www.nccih.nih.gov/health/tea-tree-oil', text: 'NIH (NCCIH): Tea Tree Oil', summary: 'Evidence and safety for tea tree oil on skin.' },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: {
+                links: [
+                    { url: 'https://www.nccih.nih.gov/health/tea-tree-oil', text: 'NIH (NCCIH): Tea Tree Oil', summary: 'Can irritate; never swallow.' },
+                    { url: 'https://www.nccih.nih.gov/health/goldenseal', text: 'NIH (NCCIH): Goldenseal', summary: 'Not for use while pregnant or breastfeeding.' },
+                ],
+            },
+            community: {
+                links: [
+                    { platform: 'website', url: 'https://momotaroapotheca.com/products/tonic', text: 'momotaroapotheca.com: Nourishing Bath & Body Tonic', summary: 'The brand\'s product page, with ingredients, directions, warnings and customer reviews (43% rewarded).' },
+                    { platform: 'website', url: 'https://momotaroapotheca.com/blogs/vaginal-wellness/8-ways-to-use-our-tonic-for-oil-your-needs', text: 'momotaroapotheca.com: 8 ways to use the Tonic', summary: 'The brand\'s guide to bath, shave and spot uses.' },
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/@momotaroapotheca', text: 'TikTok: @momotaroapotheca', summary: 'The brand\'s own TikTok account (brand content, not independent reviews).' },
+                ],
+            },
+        },
+        isEmergingBrand: true,
+    },
     // Rèsa brand partnership (2026-10-05), PRE-LAUNCH. Rèsa hasn't shipped
     // yet: the only thing a user can do today is reserve a spot on the
     // waitlist with a $9.90 early deposit. `prelaunch: true` drives the
