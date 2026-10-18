@@ -29,3 +29,25 @@ describe('suggestion email to the founders', () => {
     expect(e.text).toMatch(/Why: helps/);
   });
 });
+
+describe('sendSuggestionEmail', () => {
+  it('sends one message through Resend and reports success', async () => {
+    const prev = process.env.RESEND_API_KEY; process.env.RESEND_API_KEY = 'test-key';
+    const { sendSuggestionEmail, suggestionEmail: build } = await import('./suggestions.js');
+    let call = null;
+    const ok = await sendSuggestionEmail(build({ kind: 'read', topic: 'PCOS and sleep', context: 'library', platform: 'app' }), async (url, init) => { call = { url, init }; return { ok: true }; });
+    expect(ok).toBe(true);
+    expect(call.url).toBe('https://api.resend.com/emails');
+    const body = JSON.parse(call.init.body);
+    expect(body.to).toEqual(['ameera@aynahealth.co', 'eliz@aynahealth.co', 'puloma@aynahealth.co']);
+    expect(body.subject).toContain('New read suggestion');
+    if (prev === undefined) delete process.env.RESEND_API_KEY; else process.env.RESEND_API_KEY = prev;
+  });
+  it('returns false (and does not throw) when Resend rejects it', async () => {
+    const prev = process.env.RESEND_API_KEY; process.env.RESEND_API_KEY = 'test-key';
+    const { sendSuggestionEmail } = await import('./suggestions.js');
+    const ok = await sendSuggestionEmail({ to: [] }, async () => ({ ok: false, status: 403, text: async () => 'domain not verified' }));
+    expect(ok).toBe(false);
+    if (prev === undefined) delete process.env.RESEND_API_KEY; else process.env.RESEND_API_KEY = prev;
+  });
+});
