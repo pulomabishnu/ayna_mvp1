@@ -20,6 +20,15 @@ describe('normalizeFdaStatus', () => {
     expect(k('N/A (Software)')).toBe('na');
     expect(k('OTC drug')).toBe('otc-drug');
   });
+  it('never turns a negated "cleared" or "approved" into a positive label (2026-10-18)', () => {
+    expect(k('Not FDA-cleared or approved. Joylux says the FDA designated vFit a "low-risk general wellness device" in 2017.')).toBe('not-device');
+    expect(k('alubri.com presents it as a hormone-free personal-care moisturizer and does not describe it as an FDA-cleared device or drug.')).toBe('cosmetic');
+    expect(k('Sold as a cosmetic body mist. The brand does not describe it as FDA-cleared or approved.')).toBe('cosmetic');
+    expect(k('Accessory to the FDA-cleared Elaris Pod device, per the brand; not separately FDA-cleared.')).toBe('not-device');
+  });
+  it('labels homeopathic and other unapproved drugs as listings, never approvals', () => {
+    expect(k('Listed with the FDA as an unapproved homeopathic over-the-counter drug (NDC 83385-001).')).toBe('listed');
+  });
   it('drops values that are not an FDA status', () => {
     expect(k('Phthalate-free')).toBe(null);
     expect(k('Dermatologist tested')).toBe(null);
