@@ -5595,7 +5595,7 @@ export const BRAND_PRODUCTS = [
     },
     // Alubri (alubri.com). ayna brand partner since 2026-10-17 (team request),
     // listed in src/utils/partnerBrands.js and on the Brand Partnerships page.
-    // No affiliate link supplied yet, so Buy Now still goes to alubri.com.
+    // Shopify Collabs affiliate links (collabs.shop) added 2026-10-18 for all six.
     //
     // Sourcing rule for these six entries: alubri.com ONLY (product pages,
     // /pages/faq, /pages/science, /pages/about), fetched 2026-09-29. Prices,
@@ -5628,6 +5628,7 @@ export const BRAND_PRODUCTS = [
         price: '$29.99 (50 mL, 8 applicators)',
         whereToBuy: ['alubri.com', 'Amazon', 'Walmart', 'Target', 'Grove'],
         url: 'https://alubri.com/products/vaginal-moisturizing-gel',
+        affiliateUrl: 'https://collabs.shop/d0dtyn', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://alubri.com/pages/faq',
         image: '/products/alubri/vaginal-moisturizing-gel.webp',
         summary: 'A hormone-free, fragrance-free internal vaginal moisturizer that Alubri says delivers up to 72 hours of hydration from one application. It pairs hyaluronic acid (sodium hyaluronate) and lactic acid with Alubri\'s proprietary "Activated Oil Complex" (pre-activated coconut and rosehip oils), which the brand says balances the vaginal microbiome. Each box is a 50 mL tube with 8 single-use applicators; used twice a week, one box lasts about 4 weeks.',
@@ -5742,6 +5743,7 @@ export const BRAND_PRODUCTS = [
         price: '$24.99 (50 mL) · $12.99 (1.0 fl oz trial size)',
         whereToBuy: ['alubri.com', 'Amazon', 'Walmart', 'Target', 'Grove'],
         url: 'https://alubri.com/products/intimate-serum',
+        affiliateUrl: 'https://collabs.shop/jseteg', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://alubri.com/pages/faq',
         image: '/products/alubri/intimate-serum.webp',
         summary: 'A lightweight, water-based serum for external intimate skin: the vulva, labia, and vaginal opening. It pairs hyaluronic acid (sodium hyaluronate) with inulin, which Alubri says also supports a healthy skin microbiome, plus aloe, green tea, and chamomile. The brand says it absorbs with no oily residue, feels cooling, and helps the skin hold on to its natural moisture. Hormone-free and fragrance-free. Sold in a 50 mL bottle or a 1.0 fl oz trial size.',
@@ -5836,6 +5838,7 @@ export const BRAND_PRODUCTS = [
         price: '$29.99 (50 mL)',
         whereToBuy: ['alubri.com', 'Amazon', 'Walmart', 'Target', 'Grove'],
         url: 'https://alubri.com/products/calming-cream',
+        affiliateUrl: 'https://collabs.shop/wnwjkw', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://alubri.com/pages/faq',
         image: '/products/alubri/calming-cream.png',
         summary: 'An over-the-counter anti-itch cream for external intimate skin, with 0.25% hydrocortisone to relieve itching and irritation. The base adds shea butter, hyaluronic acid, lactic acid, oat, aloe, and Alubri\'s Activated Oil Complex, which the brand says supports a balanced vulvar microbiome. Alubri positions it as giving the relief of an OTC ointment in a lightweight, non-greasy cream. Hormone-free and fragrance-free.',
@@ -5938,6 +5941,7 @@ export const BRAND_PRODUCTS = [
         price: '$24.99 (50 g)',
         whereToBuy: ['alubri.com', 'Amazon', 'Walmart', 'Target', 'Grove'],
         url: 'https://alubri.com/products/vulva-balm',
+        affiliateUrl: 'https://collabs.shop/frt2q3', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://alubri.com/pages/faq',
         image: '/products/alubri/vulva-balm.png',
         summary: 'A non-greasy daily moisturizer for the vulva that Alubri says hydrates, soothes, protects against dryness, and calms sensitive skin. It combines hyaluronic acid (sodium hyaluronate), a peptide, and Alubri\'s Activated Oil Complex with oat, green tea, dragon fruit, and Tasmanian pepperberry extracts. The brand describes a rich but lightweight balm that absorbs quickly to a soft, powdery finish. Hormone-free, fragrance-free, and hypoallergenic.',
@@ -6039,6 +6043,7 @@ export const BRAND_PRODUCTS = [
         price: '$19.99 (2-week trial)',
         whereToBuy: ['alubri.com', 'Amazon', 'Walmart', 'Target', 'Grove'],
         url: 'https://alubri.com/products/vaginal-wellness-kit-bag-version',
+        affiliateUrl: 'https://collabs.shop/a8b3sb', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://alubri.com/pages/faq',
         image: '/products/alubri/vaginal-wellness-kit.webp',
         summary: 'A 2-week trial kit of Alubri\'s two core moisturizers in trial sizes: the Vaginal Moisturizing Gel (30 mL, with single-use applicators) for internal hydration and microbiome balance, and the Intimate Serum (30 mL) for external vulvar hydration. Alubri pitches it as an easy introduction to the brand.',
@@ -6138,6 +6143,7 @@ export const BRAND_PRODUCTS = [
         price: '$19.99 (trial sizes)',
         whereToBuy: ['alubri.com', 'Amazon'],
         url: 'https://alubri.com/products/rejuvenate-restore-kit',
+        affiliateUrl: 'https://collabs.shop/xbngwb', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://alubri.com/pages/faq',
         image: '/products/alubri/rejuvenate-restore-kit.png',
         summary: 'A trial-size pair of Alubri\'s two external products for comfort before and after intimacy: the Intimate Serum (28 mL) for daily water-based hydration, and the Calming Cream (30 mL), an OTC 0.25% hydrocortisone cream for itching and irritation. Both are hormone-free and fragrance-free.',
@@ -6770,7 +6776,8 @@ export const BRAND_PRODUCTS = [
         isEmergingBrand: false,
     },
     // Tampon Tribe (tampontribe.com). ayna brand partner since 2026-10-17
-    // (team request); no affiliate link supplied yet. First batch (2026-09-30): the five products matching
+    // (team request); Awin affiliate links added 2026-10-18 for tampons, pads,
+    // reusable pads and teen pads (none supplied for the bulk liners). First batch (2026-09-30): the five products matching
     // the photos ayna supplied (stored under public/products/tampon-tribe/).
     // Facts are from tampontribe.com (Shopify products.json + product pages);
     // brand-site ratings are from its review widget. Options (absorbency,
@@ -6798,6 +6805,7 @@ export const BRAND_PRODUCTS = [
         userRatingSourceUrl: 'https://tampontribe.com/products/tampons',
         whereToBuy: ['tampontribe.com'],
         url: 'https://tampontribe.com/products/tampons',
+        affiliateUrl: 'https://www.awin1.com/cread.php?awinmid=91275&awinaffid=3082811&ued=https%3A%2F%2Ftampontribe.com%2Fproducts%2Ftampons%3Fselling_plan%3D626000030%26variant%3D44206457192706', // ayna affiliate link (2026-10-18)
         image: '/products/tampon-tribe/organic-tampons.webp',
         summary: 'Certified organic cotton tampons with a biodegradable cardboard "twist" applicator and no plastic anywhere, including the packaging. The absorbent core is wrapped in an organic cotton "safety veil" that the brand says keeps loose cotton strands from being left behind. No rayon/viscose, perfume, dyes, or chlorine bleaching. Sold as a monthly subscription you can customize, pause, or cancel, with free U.S. delivery; the first box arrives in a reusable jute bag, refills in recycled paper.',
         safety: {
@@ -6870,6 +6878,7 @@ export const BRAND_PRODUCTS = [
         userRatingSourceUrl: 'https://tampontribe.com/products/pads',
         whereToBuy: ['tampontribe.com'],
         url: 'https://tampontribe.com/products/pads',
+        affiliateUrl: 'https://tidd.ly/4zEjNsY', // ayna affiliate link (2026-10-18)
         image: '/products/tampon-tribe/organic-pads.webp',
         summary: 'Thin, winged pads made with certified organic cotton and no plastic. Day pads are 240 mm long with 100 ml absorbency; Night pads are 290 mm with 120 ml absorbency and double wings. "Gravity" anti-leak edges help keep you dry. Individually wrapped, with a plant-based backing and a vegan biopolymer adhesive instead of glue. Sold as a monthly subscription with free U.S. delivery.',
         safety: {
@@ -7005,6 +7014,7 @@ export const BRAND_PRODUCTS = [
         price: '$16.80 for 2 pads',
         whereToBuy: ['tampontribe.com'],
         url: 'https://tampontribe.com/products/reusable-pads-2-pack',
+        affiliateUrl: 'https://tidd.ly/4hTD188', // ayna affiliate link (2026-10-18)
         image: '/products/tampon-tribe/reusable-pads-2-pack.webp',
         summary: 'Washable cloth pads made with ultra-soft certified organic cotton, sold in a 2-pack. Rated for medium flow, holding up to 3 tampons’ worth; change more often on heavy days. Three layers with odor control, a super-absorbent inner layer, "gravity" leak-guard edges, and V-shaped straps that fasten with a metal clasp behind your underwear. The brand says they’re PFAS-free, plant-based, and vegan, and offers a money-back guarantee.',
         safety: {
@@ -7071,6 +7081,7 @@ export const BRAND_PRODUCTS = [
         price: '$10 for 18 pads (individually boxed, or in a jute bag)',
         whereToBuy: ['tampontribe.com'],
         url: 'https://tampontribe.com/products/organic-teen-pads',
+        affiliateUrl: 'https://tidd.ly/4k3ndRp', // ayna affiliate link (2026-10-18)
         image: '/products/tampon-tribe/organic-teen-pads.webp',
         summary: 'Smaller winged pads made for teens and tweens, sized to fit smaller bodies and underwear: 7.2 inches long with 40 ml absorbency. Made with certified organic cotton and no plastic, fragrance, or dyes, with "gravity" anti-leak edges. Individually wrapped, and available individually boxed so they’re easy to keep in a school bag.',
         safety: {
@@ -7128,7 +7139,8 @@ export const BRAND_PRODUCTS = [
     },
 
     // Momotaro Apotheca (momotaroapotheca.com). ayna brand partner since
-    // 2026-10-17 (Eliz's request; affiliate links to come). The six core
+    // 2026-10-17 (Eliz's request; Shopify Collabs affiliate links added
+    // 2026-10-18). The six core
     // products matching the photos Eliz supplied; expanded 2026-10-18 to the
     // depth of the other partner cards, at Eliz's request.
     //
@@ -7163,6 +7175,7 @@ export const BRAND_PRODUCTS = [
         userRatingSourceUrl: 'https://momotaroapotheca.com/products/salve',
         whereToBuy: ['momotaroapotheca.com'],
         url: 'https://momotaroapotheca.com/products/salve',
+        affiliateUrl: 'https://collabs.shop/kydydp', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://momotaroapotheca.com/pages/faq',
         image: '/products/momotaro/salve.webp',
         summary: 'Momotaro Apotheca was started in Portland, Oregon by Lindsay Wynn and Taylor Samuelsen. Wynn, a former beauty photographer, says she started making her own products after years of recurring yeast infections and BV, when drugstore options either didn\'t work or made things worse. The Salve is the brand\'s best seller: a certified organic balm for the vulva with a coconut and jojoba base, plus goldenseal, Oregon grape, echinacea, calendula and tea tree. The brand says it comforts dryness, itching and irritation, including irritation that comes with yeast infections and BV, and calms friction from sex, sweat and tight clothing. Free of alcohol, parabens, phthalates, silicone, sulfates and synthetic fragrance.',
@@ -7283,6 +7296,7 @@ export const BRAND_PRODUCTS = [
         userRatingSourceUrl: 'https://momotaroapotheca.com/products/probiotic',
         whereToBuy: ['momotaroapotheca.com'],
         url: 'https://momotaroapotheca.com/products/probiotic',
+        affiliateUrl: 'https://collabs.shop/vgem4q', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://momotaroapotheca.com/pages/faq',
         image: '/products/momotaro/daily-probiotic.webp',
         summary: 'A once-a-day probiotic from Momotaro Apotheca, the Portland vulvovaginal care brand started by Lindsay Wynn after her own years of recurring yeast infections and BV. Each capsule has 25 billion cultures from 10 strains of Lactobacillus and Bifidobacterium, including L. crispatus, L. gasseri, L. rhamnosus and L. reuteri, in an acid- and bile-resistant capsule. The brand says it supports the gut, the immune system and the vaginal microbiome, and recommends at least 90 days of daily use. Vegan, shelf-stable, and free of gluten, soy and preservatives. 30 capsules, a one-month supply.',
@@ -7387,6 +7401,7 @@ export const BRAND_PRODUCTS = [
         userRatingSourceUrl: 'https://momotaroapotheca.com/products/the-uti-supplement',
         whereToBuy: ['momotaroapotheca.com'],
         url: 'https://momotaroapotheca.com/products/the-uti-supplement',
+        affiliateUrl: 'https://collabs.shop/4zbsop', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://momotaroapotheca.com/pages/faq',
         image: '/products/momotaro/urinary-tract-supplement.webp',
         summary: 'A plant-based capsule from Momotaro Apotheca, the Portland vulvovaginal care brand started by Lindsay Wynn. It combines D-mannose, a cranberry fruit concentrate (12:1, 3,000 mg per the brand), Oregon grape root, uva ursi (bearberry leaf) and marshmallow root, made with certified organic ingredients. The brand designed it for times of urinary discomfort and says it supports UTIs, recurring bladder discomfort, interstitial cystitis, BV and yeast imbalance. It is meant for short stretches, not continuous long-term use. 60 vegan capsules.',
@@ -7504,6 +7519,7 @@ export const BRAND_PRODUCTS = [
         userRatingSourceUrl: 'https://momotaroapotheca.com/products/the-suppository',
         whereToBuy: ['momotaroapotheca.com'],
         url: 'https://momotaroapotheca.com/products/the-suppository',
+        affiliateUrl: 'https://collabs.shop/tso57q', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://momotaroapotheca.com/pages/homeopathic-medicine',
         image: '/products/momotaro/vaginal-suppository.webp',
         summary: 'A homeopathic vaginal suppository that Momotaro Apotheca, the Portland brand started by Lindsay Wynn after her own recurring yeast infections and BV, says it developed over three years. The brand markets it for yeast infections, BV and vaginal irritation and calls it "a natural alternative to antibiotics and antifungals." The homeopathic actives are echinacea, wood creosote (beechwood) and northern white cedar (thuja) at 12X dilution, in a base of cocoa butter, coconut oil, beeswax and jojoba with Oregon grape, calendula and tea tree. 14 suppositories, 2 mL each. The brand suggests storing it somewhere cool, like the fridge.',
@@ -7611,6 +7627,7 @@ export const BRAND_PRODUCTS = [
         userRatingSourceUrl: 'https://momotaroapotheca.com/products/hydrosol',
         whereToBuy: ['momotaroapotheca.com'],
         url: 'https://momotaroapotheca.com/products/hydrosol',
+        affiliateUrl: 'https://collabs.shop/762eiq', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://momotaroapotheca.com/blogs/vaginal-wellness/hydrosol-what-is-it-how-do-i-use-it',
         image: '/products/momotaro/hydrosol-toner.webp',
         summary: 'An alcohol-free micromist from Momotaro Apotheca, the Portland vulvovaginal care brand started by Lindsay Wynn. It is made from steam-distilled organic orange blossom, rose, rosemary and lavender waters, which the brand explains are far more diluted, and so gentler, than essential oils. Momotaro Apotheca says it soothes irritation, neutralizes odor and hydrates the face, body and external pelvic area, for use after a shower, workout, period or sex. Customers also use it as a face toner and on body breakouts. Certified organic, vegan and cruelty-free; 100 mL glass bottle, per the label.',
@@ -7704,6 +7721,7 @@ export const BRAND_PRODUCTS = [
         userRatingSourceUrl: 'https://momotaroapotheca.com/products/tonic',
         whereToBuy: ['momotaroapotheca.com'],
         url: 'https://momotaroapotheca.com/products/tonic',
+        affiliateUrl: 'https://collabs.shop/ilr3bp', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://momotaroapotheca.com/blogs/vaginal-wellness/8-ways-to-use-our-tonic-for-oil-your-needs',
         image: '/products/momotaro/bath-body-tonic.webp',
         summary: 'A jojoba-oil concentrate from Momotaro Apotheca, the Portland vulvovaginal care brand started by Lindsay Wynn. It has six ingredients: jojoba oil, tea tree, cedarwood and sweet orange essential oils, and infusions of goldenseal and Oregon grape, both sources of berberine. Momotaro Apotheca says to add it to a warm bath or use it as a spot treatment for irritation, ingrown hairs and razor burn, and markets it for discomfort from yeast and bacterial infections. Not for internal use. Certified organic and vegan; 55 mL (1.9 fl oz).',
