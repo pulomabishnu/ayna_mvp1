@@ -156,7 +156,7 @@ const PARTNERS = [
     logo: '',
     url: 'https://tampontribe.com/',
     blurb:
-      'Certified organic cotton tampons, pads and liners with no plastic, sold as a monthly subscription.',
+      'Certified organic cotton tampons, pads and liners with no plastic, plus a silicone-free menstrual cup.',
   },
   {
     // Confirmed partner since 2026-09-07 (see src/utils/partnerBrands.js) but
