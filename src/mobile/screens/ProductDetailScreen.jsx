@@ -247,7 +247,9 @@ export default function ProductDetailScreen({
     const pool = ALL_PRODUCTS.filter((p) => p && p.id && p.name && p.id !== product.id);
     const compare = onOpenProduct ? similarProducts(product, { pool, limit: 3 }) : [];
     const used = new Set([...compare.map((p) => p.id), ...owned]);
-    let more = !onOpenProduct ? [] : quizAnswers ? pool
+    // Suggestions are photo cards: products without a photo are left out (same rule as the website's top picks).
+    const photoPool = pool.filter((p) => p.image || p.imageUrl || p.images?.[0]);
+    let more = !onOpenProduct ? [] : quizAnswers ? photoPool
       .filter((p) => !used.has(p.id))
       .map((p) => ({ p, m: getProductMatchDetailsForProduct(p, quizAnswers, null, matchOpts) }))
       .filter(({ m }) => m?.matchStatus === 'scored' && Number.isFinite(m.percent) && m.percent >= 50)
@@ -255,7 +257,7 @@ export default function ProductDetailScreen({
       .slice(0, 4)
       .map(({ p }) => p) : [];
     const personal = more.length > 0;
-    if (onOpenProduct && more.length < 4) more = [...more, ...sameNeedProducts(product, { pool, limit: 4 - more.length, exclude: [...used, ...more.map((p) => p.id)] })];
+    if (onOpenProduct && more.length < 4) more = [...more, ...sameNeedProducts(product, { pool: photoPool, limit: 4 - more.length, exclude: [...used, ...more.map((p) => p.id)] })];
     return { compare, more, personal };
   }, [product, onOpenProduct, ecosystemProducts, quizAnswers, matchOpts]);
 
