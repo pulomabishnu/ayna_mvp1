@@ -3738,16 +3738,17 @@ textarea {
 .consent-banner {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000;
   padding: 1.25rem 1.5rem;
-  background: var(--mockup-hero-gradient);
-  border-top: 1px solid rgba(244, 240, 250, 0.2);
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.25);
+  /* Brand kit (palette v3): espresso bar, butter text, pink link. */
+  background: #3e2723;
+  border-top: 2px solid #3e2723;
+  box-shadow: 0 -2px 12px rgba(62, 39, 35, 0.25);
   display: flex; align-items: center; justify-content: space-between;
   gap: 16px; flex-wrap: wrap;
-  font-family: var(--font-body);
+  font-family: 'DM Sans', system-ui, sans-serif;
 }
 
 .consent-banner p {
-  color: #F4F0FA;
+  color: #ffedac;
   font-size: 0.85rem;
   line-height: 1.6;
   margin: 0;
@@ -3756,7 +3757,7 @@ textarea {
 }
 
 .consent-banner a {
-  color: var(--color-amber);
+  color: #f7badd;
   text-decoration: underline;
 }
 
@@ -3766,22 +3767,25 @@ textarea {
   flex-shrink: 0;
 }
 
-/* Same rule as .ayna-landing-chips button, equal weight, neither button
-   styled as the "real" choice. */
+/* Equal weight on purpose: neither button is styled as the "real" choice. */
 .consent-banner__actions button {
-  border: 1px solid rgba(244, 240, 250, 0.26);
-  background: rgba(255, 255, 255, 0.07);
-  color: #F4F0FA;
+  border: 2px solid #ffedac;
+  background: transparent;
+  color: #ffedac;
   font-family: inherit;
-  font-size: 13px;
-  padding: 11px 19px;
+  font-size: 14px;
+  font-weight: 700;
+  min-height: 44px;
+  padding: 10px 20px;
   border-radius: 999px;
   cursor: pointer;
-  transition: background var(--transition-fast);
+  transition: background var(--transition-fast), color var(--transition-fast);
 }
 
-.consent-banner__actions button:hover {
-  background: rgba(255, 255, 255, 0.16);
+.consent-banner__actions button:hover,
+.consent-banner__actions button:focus-visible {
+  background: #ffedac;
+  color: #3e2723;
 }
 
 @media (max-width: 560px) {
