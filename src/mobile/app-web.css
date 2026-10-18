@@ -1,0 +1,124 @@
+/* ayna app, closer to the website (Oct 18, 2026). Ameera: "make it match more
+   like the website, use elements from it, but make it look good as an app."
+   Pieces taken from the site: the bordered butter header, the bottom tab bar
+   with a raised round centre button, coloured title bands with a scalloped
+   bottom edge, cards with the 5px espresso offset shadow and an inset photo
+   well, white search fields with a shadow, outline chips. Loaded last. */
+
+/* ---------- header: butter bar with an espresso rule, like the site ---------- */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-shared-header {
+  background: var(--r-canvas) !important; border-bottom: 2px solid var(--r-line-strong) !important;
+  padding-bottom: 10px !important; margin-bottom: 0 !important;
+}
+
+/* ---------- tab bar: docked, butter, espresso rule, raised round centre ---------- */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav {
+  left: 0 !important; right: 0 !important; bottom: 0 !important; max-width: none !important;
+  border-radius: 0 !important; background: var(--r-canvas) !important; color: var(--r-ink) !important;
+  border: 0 !important; border-top: 2px solid var(--r-line-strong) !important; box-shadow: none !important;
+  padding: 6px 6px max(8px, env(safe-area-inset-bottom)) !important;
+}
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button { color: var(--r-ink) !important; border-radius: 14px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button span { font: 600 11px/1 var(--f-ui) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-active:not(.is-center) { background: transparent !important; color: var(--r-ink) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-active:not(.is-center) svg { background: var(--b-rose); border: 2px solid var(--b-espresso); border-radius: 999px; padding: 3px 12px; width: 48px !important; height: 30px !important; box-sizing: border-box; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-active span { font-weight: 800 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center { color: var(--r-ink) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center .ay-nav-center {
+  width: 50px !important; height: 50px !important; margin-top: -28px !important;
+  background: var(--b-rose) !important; color: var(--b-espresso) !important;
+  border: 2px solid var(--b-espresso) !important; box-shadow: 3px 3px 0 var(--b-espresso) !important;
+}
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center.is-active .ay-nav-center { background: var(--b-sky) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center.is-active { color: var(--r-ink) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-bottom-nav { background: var(--r-canvas) !important; border: 0 !important; border-top: 2px solid var(--r-line-strong) !important; box-shadow: none !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-active:not(.is-center) { background: transparent !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-active:not(.is-center) svg { background: var(--b-sky); border-color: var(--b-butter); color: var(--b-espresso); }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-center .ay-nav-center { background: var(--b-sky) !important; border-color: var(--b-butter) !important; box-shadow: 3px 3px 0 rgba(0, 0, 0, .45) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-center.is-active .ay-nav-center { background: var(--b-rose) !important; }
+
+/* ---------- title bands with the site's scalloped edge ---------- */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-shop-heading, .ay-lib-head) {
+  position: relative; margin: 0 calc(-1 * var(--r-gutter)) 26px !important;
+  padding: 22px var(--r-gutter) 22px !important; text-align: center;
+  --band: var(--b-rose); background: var(--band) !important; color: var(--b-espresso) !important;
+}
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-head { --band: var(--b-sky); }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-shop-heading, .ay-lib-head)::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -13px; height: 14px; pointer-events: none;
+  background: radial-gradient(circle at 12px 0, var(--band) 12px, transparent 12.5px) 0 0 / 24px 14px repeat-x;
+}
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ay-shop-titlebar, .ay-lib-title) { justify-content: center !important; position: relative; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ay-shop-titlebar, .ay-lib-title) h1 { font-size: calc(38px * var(--ayna-text-scale, 1)) !important; color: var(--b-espresso) !important; margin: 0 auto 14px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-title .ay-lib-total { position: absolute; right: 0; top: 50%; transform: translateY(-80%); color: var(--b-espresso) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-shop-titlebar > :not(h1) { position: absolute; right: 0; top: 4px; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-shop-heading { --band: var(--b-sky); }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-lib-head { --band: var(--b-rose); }
+
+/* Ecosystem: an espresso band like the site's dark hero */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero {
+  position: relative; margin: 0 calc(-1 * var(--r-gutter)) 30px !important; padding: 22px var(--r-gutter) 24px !important;
+  background: var(--b-espresso) !important; color: var(--b-butter) !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important;
+}
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -13px; height: 14px; pointer-events: none;
+  background: radial-gradient(circle at 12px 0, var(--b-espresso) 12px, transparent 12.5px) 0 0 / 24px 14px repeat-x;
+}
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero h1 { color: var(--b-butter) !important; text-align: center; font-size: calc(38px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero .ay-eco-actions { justify-content: center; gap: 12px; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero :is(.ay-eco-play-label, p) { color: var(--b-butter) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero .ay-eco-play { background: var(--b-rose) !important; color: var(--b-espresso) !important; border: 2px solid var(--b-butter) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero .ay-text-btn { color: var(--b-butter) !important; border-color: var(--b-butter) !important; background: transparent !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero .ay-eco-cover { background: var(--b-butter) !important; border: 0 !important; box-shadow: 5px 5px 0 var(--b-rose) !important; color: var(--b-espresso) !important; --ay-ink: #3e2723; --ay-paper: #ffedac; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero .ay-eco-cover :is(span, strong, small, li, p) { color: var(--b-espresso) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero :is(.ay-empty, [class*='empty']) :is(h2, h3, p) { color: var(--b-butter) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-eco-hero { background: #1f1310 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-eco-hero::after { background: radial-gradient(circle at 12px 0, #1f1310 12px, transparent 12.5px) 0 0 / 24px 14px repeat-x; }
+
+/* ---------- search: white field, espresso border, small offset shadow ---------- */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-search {
+  background: var(--b-white) !important; border: 2px solid var(--b-espresso) !important; border-radius: 14px !important;
+  box-shadow: 3px 3px 0 var(--b-espresso) !important; color: var(--b-espresso) !important; text-align: left;
+}
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-search input { color: var(--b-espresso) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-search input::placeholder { color: rgba(62, 39, 35, .6) !important; }
+
+/* ---------- product cards: the site's card, offset shadow, inset photo well ---------- */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card {
+  border: 2px solid var(--b-espresso) !important; border-radius: 14px !important;
+  box-shadow: 5px 5px 0 var(--b-espresso) !important; background: var(--r-canvas) !important;
+}
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card :is(.ayna-fresh-product-image, .ayna-fresh-photo, [class*='product-image'], [class*='photo']):first-child {
+  margin: 8px 8px 0 !important; border: 2px solid var(--b-espresso) !important; border-radius: 10px !important; background: #ffffff !important; overflow: hidden;
+}
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--b-espresso) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-product-card { background: var(--r-surface) !important; border-color: var(--b-butter) !important; box-shadow: 5px 5px 0 rgba(0, 0, 0, .45) !important; }
+
+/* ---------- chips: outline, active fills espresso ---------- */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ay-category-nav button, .ay-lib-topics button, .ayna-category-nav button) {
+  border: 2px solid var(--r-line-strong) !important; background: transparent !important; color: var(--r-ink) !important; box-shadow: none !important; font-weight: 600 !important;
+}
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ay-category-nav button, .ay-lib-topics button, .ayna-category-nav button):is([aria-pressed='true'], [aria-selected='true'], .is-active, .active) {
+  background: var(--r-action) !important; color: var(--r-on-action) !important; border-color: var(--r-action) !important;
+}
+
+/* Shop's heading and the Ecosystem hero already span the screen: no bleed, let the scallop show */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-shop-heading { margin: 0 0 26px !important; overflow: visible !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero { margin: 0 0 30px !important; overflow: visible !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-browse-screen, .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-home { overflow-x: clip !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-title .ay-lib-total { position: static !important; transform: none !important; display: block; margin: -6px auto 12px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-title { flex-direction: column !important; align-items: center !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-head { margin: 0 0 26px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav { width: 100% !important; margin: 0 !important; inset: auto 0 0 0 !important; box-sizing: border-box !important; }
+
+/* Profile ("You"): sky band with the scalloped edge */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-hero { position: relative; background: var(--b-sky) !important; color: var(--b-espresso) !important; overflow: visible !important; margin-bottom: 28px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-hero::after { content: ''; position: absolute; left: 0; right: 0; bottom: -13px; height: 14px; pointer-events: none; background: radial-gradient(circle at 12px 0, var(--b-sky) 12px, transparent 12.5px) 0 0 / 24px 14px repeat-x; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-hero :is(h1, h2, span, p, strong) { color: var(--b-espresso) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero { background: var(--b-rose) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero::after { background: radial-gradient(circle at 12px 0, var(--b-rose) 12px, transparent 12.5px) 0 0 / 24px 14px repeat-x; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button { border: 2px solid var(--b-espresso) !important; box-shadow: 3px 3px 0 var(--b-espresso) !important; background: var(--b-white) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-menu > button { background: var(--r-surface) !important; border-color: var(--b-butter) !important; box-shadow: none !important; }
+
+/* Product page: the photo card gets the site's offset shadow */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-detail .ayna-fresh-product-hero, .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp :is(.ay-pdp-media, .ay-pdp-gallery, [class*='hero-image'], [class*='product-hero']) { box-shadow: 5px 5px 0 var(--b-espresso) !important; border: 2px solid var(--b-espresso) !important; border-radius: 14px !important; }

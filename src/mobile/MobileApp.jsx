@@ -60,6 +60,7 @@ import './app-density.css';
 import './app-theme.css';
 import './app-components.css';
 import './app-screens.css';
+import './app-web.css';
 import './keyboardModality.js';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
