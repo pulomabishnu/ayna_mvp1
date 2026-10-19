@@ -20,9 +20,9 @@ const listStyle = {
 
 export default function TermsOfUse({ onBack }) {
   return (
-    <InfoPage eyebrow="Legal" title="Terms of Use" onBack={onBack} width="read">
+    <InfoPage eyebrow="Legal" title="Terms of Service" onBack={onBack} width="read">
       <div className="ay-info-card ay-info-card--pad ay-info-legal">
-        <p style={{ ...pStyle, marginTop: 0 }}><strong>Last updated September 12, 2026</strong></p>
+        <p style={{ ...pStyle, marginTop: 0 }}><strong>Last updated October 19, 2026</strong></p>
         <p style={pStyle}>
           These Terms govern your use of www.aynahealth.co and related ayna services (the “Services”). The Services are currently operated by Ayna Health, Inc., doing business as ayna (“ayna,” “we,” “us,” or “our”). By using the Services, you agree to these Terms and our Privacy Policy.
         </p>
@@ -159,7 +159,17 @@ export default function TermsOfUse({ onBack }) {
         </div>
 
         <div style={sectionStyle}>
-          <h2>18. Contact</h2>
+          <h2>18. SMS Terms</h2>
+          <p style={pStyle}>
+            ayna offers optional text messages: one-time verification codes, reminders you set up, order updates, and replies when you text ayna a question (up to 5 replies a day). You opt in by adding and verifying your mobile number in the ayna app or website and turning on each type of text you want.
+          </p>
+          <p style={pStyle}>
+            Message frequency varies. Message and data rates may apply. Reply STOP to cancel at any time; you will get one confirmation text and no further messages. Reply START to resubscribe. Reply HELP for help, or email <a href="mailto:puloma@aynahealth.co">puloma@aynahealth.co</a>. Carriers are not liable for delayed or undelivered messages. Texts are general wellness information, not medical advice. See our <a href="/privacy-policy">Privacy Policy</a> for how we handle your number.
+          </p>
+        </div>
+
+        <div style={sectionStyle}>
+          <h2>19. Contact</h2>
           <p style={pStyle}>
             Questions about these Terms: <a href="mailto:puloma@aynahealth.co">puloma@aynahealth.co</a>.
           </p>

@@ -27,7 +27,7 @@ export default function PrivacyPolicy({ onBack }) {
   return (
     <InfoPage eyebrow="Legal" title="Privacy Policy" onBack={onBack} width="read">
       <div className="ay-info-card ay-info-card--pad ay-info-legal">
-        <p style={{ ...pStyle, marginTop: 0 }}><strong>Last updated September 12, 2026</strong></p>
+        <p style={{ ...pStyle, marginTop: 0 }}><strong>Last updated October 19, 2026</strong></p>
         <p style={pStyle}>
           This policy explains how ayna handles personal information when you use www.aynahealth.co and related ayna services. ayna is a wellness, educational and product-discovery service, not a healthcare provider or emergency service. ayna accounts and account-only health features are for adults age 18 and older.
         </p>
@@ -146,7 +146,17 @@ export default function PrivacyPolicy({ onBack }) {
         </div>
 
         <div style={sectionStyle}>
-          <h2>12. Changes and contact</h2>
+          <h2>12. Text messages (SMS)</h2>
+          <p style={pStyle}>
+            If you add and verify your mobile number in ayna and turn on text messages, ayna uses your number to send the texts you chose: one-time verification codes, reminders you set up, order updates, and replies when you text ayna. Each type is a separate opt-in that is off until you turn it on. Message frequency varies. Message and data rates may apply. Reply STOP to opt out at any time and HELP for help.
+          </p>
+          <p style={pStyle}>
+            We do not sell or share your SMS opt-in data or personal information with third parties for marketing purposes. Mobile phone numbers and text messaging opt-in data and consent are not shared with any third parties or affiliates, except the service providers that deliver the messages for ayna (Twilio).
+          </p>
+        </div>
+
+        <div style={sectionStyle}>
+          <h2>13. Changes and contact</h2>
           <p style={pStyle}>
             We may update this policy as the product or law changes. Material changes will be reflected by changing the date above and, when required, by providing additional notice or requesting additional consent before using existing information for a newly disclosed purpose.
           </p>

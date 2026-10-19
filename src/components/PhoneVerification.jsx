@@ -5,7 +5,8 @@ const AYNA_SMS_NUMBER = import.meta.env.VITE_AYNA_SMS_NUMBER || '';
 
 const CONSENT_TEXT =
   'By texting Ayna, you agree that your messages will be used to give you personalized health information. ' +
-  'Standard text message rates may apply. Reply STOP at any time to stop receiving texts.';
+  'Msg & data rates may apply. Message frequency varies. Reply STOP to opt out, HELP for help. ' +
+  'See our Terms of Service and Privacy Policy at aynahealth.co.';
 
 async function callApi(path, body, authToken) {
   const res = await fetch(path, {
