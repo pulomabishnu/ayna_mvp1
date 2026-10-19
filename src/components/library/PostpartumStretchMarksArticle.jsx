@@ -124,11 +124,11 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
           </div>
         </section>
 
-        <figure style={{ margin: "0", display: "grid", gap: "10px" }}>
+        <figure style={{ margin: "0", display: "grid", gap: "10px", justifyItems: "center" }}>
           <div style={{ width: "min(100%, 560px)", borderRadius: "28px", overflow: "hidden", border: "2px solid #ffedac" }}>
             <img src={IMG.glitter} alt="Glitter Stretch Marks, digital artwork by Sara Shakeel" width="794" height="798" style={{ width: "100%", height: "auto", display: "block" }} />
           </div>
-          <figcaption style={{ font: "400 14px/1.5 'DM Sans'" }}>Shakeel, S. (2017). Glitter Stretch Marks [Digital artwork]. Featured in <a href="https://www.vogue.it/bellezza/tendenze-news/2017/11/16/le-smagliature-diventano-opera-arte-instagram-2" target="_blank" rel="noopener noreferrer">Vogue Italia</a>.</figcaption>
+          <figcaption style={{ font: "400 14px/1.5 'DM Sans'", textAlign: "center" }}>Shakeel, S. (2017). Glitter Stretch Marks [Digital artwork]. Featured in <a href="https://www.vogue.it/bellezza/tendenze-news/2017/11/16/le-smagliature-diventano-opera-arte-instagram-2" target="_blank" rel="noopener noreferrer">Vogue Italia</a>.</figcaption>
         </figure>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%,240px),1fr))", gap: "56px", alignItems: "start" }}>
