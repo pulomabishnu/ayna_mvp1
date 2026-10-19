@@ -133,3 +133,23 @@
 .app-container .ay-web-next-read { margin-top: 48px !important; padding: 16px 24px !important; gap: 8px 16px !important; min-height: 72px; }
 .app-container .ay-web-next-read small { font: 600 14px/1.2 var(--ay-font-ui) !important; }
 .app-container .ay-web-next-read span { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--ay-ink); color: var(--ay-paper) !important; font-size: 20px !important; }
+
+/* Featured read at the top of the Library: the article's own colours (brown,
+   butter, pink) so it looks the same in light and dark mode, plus a "New"
+   sticker in the style of the nav's "Start here" tag. */
+html body .app-container .ay-lib-feature { position: relative; display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: 28px; align-items: center; margin: 0 0 40px; padding: 24px; border: 2px solid #3e2723; border-radius: 24px; background: #43292a !important; color: #ffedac !important; box-shadow: 5px 5px 0 #f7badd; text-decoration: none !important; transition: transform .2s, box-shadow .2s; }
+html body .app-container .ay-lib-feature:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 #f7badd; }
+html body .app-container .ay-lib-feature__new { position: absolute; top: -14px; left: -10px; z-index: 1; padding: 7px 14px; border: 2px solid #3e2723; border-radius: 99px; background: #f7badd !important; color: #3e2723 !important; font: 800 13px/1 'DM Sans', sans-serif !important; letter-spacing: .08em; text-transform: uppercase; transform: rotate(-6deg); box-shadow: 2px 2px 0 #3e2723; }
+html body .app-container .ay-lib-feature__img { width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; border: 2px solid #ffedac; border-radius: 18px; display: block; }
+html body .app-container .ay-lib-feature__text { display: grid; gap: 12px; min-width: 0; }
+html body .app-container .ay-lib-feature__kicker { color: #f7badd !important; font: 700 12px/1.2 'DM Sans', sans-serif !important; letter-spacing: .08em; text-transform: uppercase; }
+html body .app-container .ay-lib-feature__title { color: #ffedac !important; font: 400 clamp(26px, 2.6vw, 36px)/1.1 'DM Serif Display', Georgia, serif !important; text-wrap: balance; }
+html body .app-container .ay-lib-feature__title em { color: #f7badd !important; font-style: italic; }
+html body .app-container .ay-lib-feature__teaser { color: #ffedac !important; font: 400 17px/1.5 'DM Sans', sans-serif !important; }
+html body .app-container .ay-lib-feature__by { color: #ffedac !important; opacity: .85; font: 600 14px/1.3 'DM Sans', sans-serif !important; }
+html body .app-container .ay-lib-feature__cta { justify-self: start; margin-top: 4px; padding: 11px 18px; border-radius: 99px; background: #ffedac !important; color: #3e2723 !important; font: 700 15px/1 'DM Sans', sans-serif !important; }
+html body .app-container .ay-lib-feature .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (max-width: 640px) {
+  html body .app-container .ay-lib-feature { grid-template-columns: 1fr; gap: 18px; padding: 18px; }
+  html body .app-container .ay-lib-feature__img { aspect-ratio: auto; }
+}

@@ -892,7 +892,7 @@ export { ARTICLES };
  * keeps its own art via ARTICLES.image. Add an id here only for art drawn in
  * the ayna palette and style.
  */
-const KEEP_ILLUSTRATION = new Set();
+const KEEP_ILLUSTRATION = new Set(['postpartum-stretch-marks']);
 
 /* Reads a writer designed as a full page (her own layout, colours and image
    placement). The website shows that page; ARTICLES keeps the plain text for
@@ -900,6 +900,29 @@ const KEEP_ILLUSTRATION = new Set();
 const DESIGNED_READS = {
   'postpartum-stretch-marks': { Component: PostpartumStretchMarksArticle, next: 'pelvic-floor-dysfunction' },
 };
+
+/* The read featured at the top of the Library, with a "New" sticker. */
+const FEATURED_READ = { id: 'postpartum-stretch-marks', by: 'Geena Yousry, MS1' };
+
+function FeaturedRead({ onOpen }) {
+  const art = ARTICLES.find((a) => a.id === FEATURED_READ.id);
+  if (!art) return null;
+  const cut = art.title.indexOf('? ');
+  const [lead, rest] = cut > 0 ? [art.title.slice(0, cut + 1), art.title.slice(cut + 2)] : [art.title, ''];
+  return (
+    <a href={`/library/${art.id}`} className="ay-lib-feature" onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); onOpen(art.id); }}>
+      <span className="ay-lib-feature__new" aria-hidden="true">New</span>
+      <img className="ay-lib-feature__img" src={art.image} alt="" width="794" height="798" />
+      <span className="ay-lib-feature__text">
+        <small className="ay-lib-feature__kicker"><span className="sr-only">New. </span>Featured read · {sectionOf(art.id)?.label}</small>
+        <strong className="ay-lib-feature__title">{lead}{rest && <> <em>{rest}</em></>}</strong>
+        <span className="ay-lib-feature__teaser">{art.teaser}</span>
+        <span className="ay-lib-feature__by">By {FEATURED_READ.by} · {minutesFor(art)} min read</span>
+        <span className="ay-lib-feature__cta">Read it <span aria-hidden="true">→</span></span>
+      </span>
+    </a>
+  );
+}
 import TopicCover from './v3/TopicCover.jsx';
 import PostpartumStretchMarksArticle from './library/PostpartumStretchMarksArticle.jsx';
 import useRotatingPlaceholder from '../utils/useRotatingPlaceholder.js';
@@ -1257,6 +1280,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
     body = <ul className="ay-web-lib-grid">{items.map(card)}</ul>;
   } else {
     body = <>
+      <FeaturedRead onOpen={open} />
       {shelf('keep', 'Keep reading', keepReading)}
       {hasProfile ? <>{shelf('foryou', 'Top 3 for you', forYou.slice(0, 3))}{(() => {
         // Say why these are "for you", in her words from the quiz.
