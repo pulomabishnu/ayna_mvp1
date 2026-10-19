@@ -8,7 +8,7 @@ import LibraryCard from '../components/LibraryCard.jsx';
 import SuggestBox from '../../components/SuggestBox.jsx';
 import { getPersonalizedProductIds, getProfileMatchPercentForProduct, productSearchText, MACRO_GROUPS, itemMatchesMacroGroup, CATEGORY_LABELS } from '../../data/products.js';
 import { getVerificationLinks } from '../../utils/verificationLinks.js';
-import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
+import { isPartnerBrandItem, partnerBoostAllowed } from '../../utils/partnerBrands.js';
 import { scoreSearchMatch, correctedSearchQuery, searchArticles } from '../../utils/search/index.js';
 import SearchAssist from '../../components/search/SearchAssist.jsx';
 import { fetchSearchSuggestions } from '../../utils/fetchSearchSuggestions.js';
@@ -334,7 +334,7 @@ export default function BrowseScreen({
   // rule as desktop Discovery.jsx: a partnership buys visibility on the
   // page you browse freely, never placement inside an actual text search
   // or personalized ("For You") recommendation.
-  if (sortBy === 'default' && !searchTermRaw && !(personalized && hasProfile)) {
+  if (partnerBoostAllowed({ personalized: Boolean(personalized && hasProfile), hasQuery: Boolean(searchTermRaw), sort: sortBy })) {
     filtered = [...filtered].sort((a, b) => (isPartnerBrandItem(b) ? 1 : 0) - (isPartnerBrandItem(a) ? 1 : 0));
   }
   const filterKey = `${searchTerm}|${personalized}|${activeGroup}|${JSON.stringify(filters)}|${sortBy}`;

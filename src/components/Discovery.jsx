@@ -12,7 +12,7 @@ import SmartSearchInput from './search/SmartSearchInput.jsx';
 import SearchAssist from './search/SearchAssist.jsx';
 import { findConfidentProductMatch } from '../utils/naturalLanguageSearch';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
-import { isPartnerBrandItem, getPartnerBrandRank } from '../utils/partnerBrands';
+import { isPartnerBrandItem, getPartnerBrandRank, partnerBoostAllowed } from '../utils/partnerBrands';
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
 import { recordSearch } from '../utils/recentActivity';
 import { availablePreferenceOptions, matchesProductPreference } from '../utils/productPreferences';
@@ -319,7 +319,7 @@ function pickOnePerPartnerBrand(items, seed) {
 // users who came for the curated content. Partner-pinned items are never displaced.
 const COLD_START_PAGE_FLOOR = 6;
 
-function applyColdStartFloor(rankedList, pageSize) {
+function applyColdStartFloor(rankedList, pageSize, { protectPartners = true } = {}) {
     const page = rankedList.slice(0, pageSize);
     const rest = rankedList.slice(pageSize);
     const coldOnPage = page.filter(isColdStartItem).length;
@@ -333,7 +333,9 @@ function applyColdStartFloor(rankedList, pageSize) {
     // those stay pinned regardless of this guarantee.
     const displaceable = [];
     for (let i = page.length - 1; i >= 0 && displaceable.length < promotable.length; i--) {
-        if (!isPartnerBrandItem(page[i])) displaceable.push(i);
+        // Partners keep their spot only where they were pinned (plain browse); in a
+        // text search they are ordinary results and can be bumped like any other.
+        if (!protectPartners || !isPartnerBrandItem(page[i])) displaceable.push(i);
     }
     const newPage = [...page];
     const bumped = [];
@@ -936,7 +938,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             // Featured leads with one product per partner brand; the brand's other
             // products stay in the Shop in their normal place (they used to be
             // hidden, so the count changed from load to load).
-            const featuredLead = browsingWithoutTextQuery && !personalizationFilter
+            const featuredLead = partnerBoostAllowed({ personalized: Boolean(personalizationFilter), hasQuery: !browsingWithoutTextQuery })
                 ? new Set(pickOnePerPartnerBrand(list, shuffleSeed).filter((it) => getPartnerBrandRank(it) !== null).map((it) => it.id))
                 : null;
             const leadRank = (it) => (featuredLead && featuredLead.has(it.id) ? getPartnerBrandRank(it) : null);
@@ -984,7 +986,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             // shot at page 1 whether the tied bucket it's sitting in came from browsing or
             // from a text search — the visibility problem is identical either way.
             if (!personalizationFilter) {
-                list = applyColdStartFloor(list, PAGE_SIZE);
+                list = applyColdStartFloor(list, PAGE_SIZE, { protectPartners: Boolean(featuredLead) });
             }
         }
         return list;
