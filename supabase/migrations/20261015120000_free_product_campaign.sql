@@ -726,7 +726,8 @@ begin
     updated_at = now();
   update public.reward_claims set fulfillment_status = 'preparing', updated_at = now()
   where id = v_claim.id and fulfillment_status = 'needs_shipping';
-  return jsonb_build_object('ok', true, 'claim', public.campaign_claim_json(v_claim.id));
+  -- updated: they had already given an address (the team gets an "address changed" alert).
+  return jsonb_build_object('ok', true, 'updated', v_claim.fulfillment_status = 'preparing', 'claim', public.campaign_claim_json(v_claim.id));
 end
 $$;
 

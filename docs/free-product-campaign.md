@@ -21,11 +21,18 @@
 - The PR haul pool is in `supabase/seed/free_product_pr_haul.sql` (22 products, 24 units). Re-running it updates units without touching what has been claimed. Add more products later on `/admin/campaign` (Add a product).
 
 ## Setup (nothing here has been run)
-1. Apply `supabase/migrations/20261013150000_referrals.sql` if it is not applied yet.
-2. Apply `supabase/migrations/20261015120000_free_product_campaign.sql`. The campaign is created paused with an empty pool.
-3. Run `supabase/seed/free_product_pr_haul.sql` to load the PR haul products, or add products on `/admin/campaign`.
-4. Press Launch. Friends count from that moment.
-5. Emails are off. To turn them on later: set `RESEND_API_KEY`, `CAMPAIGN_EMAILS_ENABLED=1`, `CAMPAIGN_POSTAL_ADDRESS`, and add the hourly cron for `/api/campaign-notify` in `vercel.json`. The announcement is a mockup in `emails/free-product/announcement.html` (`node scripts/render-campaign-emails.mjs` rebuilds it); send it as a Resend broadcast so `{{{RESEND_UNSUBSCRIBE_URL}}}` is filled in.
+1. In the Supabase SQL Editor, apply in this order (each is safe to re-run):
+   - `supabase/migrations/20261013150000_referrals.sql` (if not applied yet)
+   - `supabase/migrations/20261019120000_referral_from_signup.sql` (records a referral from sign-up metadata, so a friend who confirms on another device still counts; also backfills)
+   - `supabase/migrations/20261015120000_free_product_campaign.sql` (the campaign is created paused with an empty pool)
+2. Run `supabase/seed/free_product_pr_haul.sql` to load the PR haul products, or add products on `/admin/campaign`.
+3. In Vercel, set `ADMIN_EMAILS` (who can open `/admin/campaign`), `RESEND_API_KEY`, `CRON_SECRET`, and optionally `CAMPAIGN_TEAM_EMAIL`.
+4. Press Launch on `/admin/campaign`. Friends count from that moment.
+
+## Who gets what email
+- **Team alerts** (on as soon as `RESEND_API_KEY` is set): an email to `CAMPAIGN_TEAM_EMAIL` (or everyone in `ADMIN_EMAILS`) when someone claims, and another with the full shipping address when they add or change it. Mark it shipped on `/admin/campaign`.
+- **Emails to people** (off until `CAMPAIGN_EMAILS_ENABLED=1` and `CAMPAIGN_POSTAL_ADDRESS` are set): "unlocked" (hourly cron `/api/campaign-notify`, already in `vercel.json`), "claimed", "shipped". They never send with the postal-address placeholder in the footer.
+- **The announcement** is not sent by the code. It is `emails/free-product/announcement.html` (`node scripts/render-campaign-emails.mjs` rebuilds it); send it as a Resend Broadcast to your audience so `{{{RESEND_UNSUBSCRIBE_URL}}}` is filled in. Send a test to yourself first.
 
 ## Tests
 - `npx vitest run src/utils/freeProductCampaign.test.js api/campaign*.test.js api/_campaignEmail.test.js`

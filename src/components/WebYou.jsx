@@ -239,11 +239,12 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
       </section>;
     })()}
 
+    {onOpenFreeProduct && <FreeProductAccountCard onOpen={onOpenFreeProduct} />}
+
     <div className="wyou-grid">
       <div className="wyou-col">
         {shopper ? <Glance profile={shopper} products={products} quizResults={quizResults} /> : <section className="wyou-card is-shopper-empty"><h2>At a glance</h2><p className="wyou-muted">Take the quiz to see it.</p><button type="button" className="wyou-btn" onClick={onStartQuiz}>Take the quiz</button></section>}
         <InviteCard userId={user.id} />
-        {onOpenFreeProduct && <FreeProductAccountCard onOpen={onOpenFreeProduct} />}
       </div>
 
       <div className="wyou-col">

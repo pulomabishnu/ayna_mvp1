@@ -54,6 +54,8 @@ run supabase/seed/product_catalog.sql
 # my_referral_stats() reads community_posts; that table's DDL is not in the repo.
 q "create table if not exists public.community_posts (id uuid primary key default gen_random_uuid(), author_id uuid);" >/dev/null
 run supabase/migrations/20261013150000_referrals.sql
+run supabase/migrations/20261019120000_referral_from_signup.sql
+run supabase/migrations/20261019120000_referral_from_signup.sql
 run supabase/migrations/20261015120000_free_product_campaign.sql
 # Idempotent: applying it twice must not fail or change anything.
 run supabase/migrations/20261015120000_free_product_campaign.sql
@@ -65,6 +67,32 @@ PGOPTIONS='-c client_min_messages=notice' psql -v ON_ERROR_STOP=1 -q -d "$DB" -f
   | sed -n -e 's/^psql.*NOTICE:  /   /p' -e '/ERROR/p' -e '/CONTEXT/p'; [ "${PIPESTATUS[0]}" = 0 ] || { echo "❌ behavioural tests failed"; exit 1; }
 
 C=free-product-2026
+
+echo
+echo "── share link: friend signs up with the code, confirms later somewhere else"
+q "update public.reward_campaigns set is_active = true, starts_at = now() - interval '1 day', ends_at = null where id = '$C';" >/dev/null
+R=$(q "select public.test_user('sharer@example.com')")
+RC=$(q "select public.ayna_referral_code('$R')")
+# Sign-up: the form sends referred_by in metadata. No browser insert happens.
+F=$(q "insert into auth.users (id, email, created_at, raw_user_meta_data) values (gen_random_uuid(), 'friend1@example.com', now(), jsonb_build_object('referred_by', '$RC')) returning id")
+ROW=$(q "select referrer_code from public.referrals where referred_user_id = '$F'")
+S1=$(q "select status from public.campaign_referral_rows('$C', '$R') where referred_user_id = '$F'")
+# She taps the confirmation link on her phone: only email_confirmed_at changes.
+q "update auth.users set email_confirmed_at = now() where id = '$F';" >/dev/null
+S2=$(q "select status from public.campaign_referral_rows('$C', '$R') where referred_user_id = '$F'")
+# Browser path later sets the same metadata again, or a second code: first one stays.
+q "update auth.users set raw_user_meta_data = jsonb_build_object('referred_by', 'aaaaaaaaaa') where id = '$F';" >/dev/null
+KEEP=$(q "select referrer_code from public.referrals where referred_user_id = '$F'")
+# Own code and an old account never count.
+OWN=$(q "with u as (insert into auth.users (id, email, created_at) values ('11111111-2222-4333-8444-555555555555', 'self@example.com', now()) returning id) select 1")
+q "update auth.users set raw_user_meta_data = jsonb_build_object('referred_by', '1111111122') where id = '11111111-2222-4333-8444-555555555555';" >/dev/null
+OLD=$(q "select public.test_user('old@example.com', now() - interval '30 days')")
+q "update auth.users set raw_user_meta_data = jsonb_build_object('referred_by', '$RC') where id = '$OLD';" >/dev/null
+NOROWS=$(q "select count(*) from public.referrals where referred_user_id in ('11111111-2222-4333-8444-555555555555', '$OLD')")
+echo "   row=$ROW before_confirm=$S1 after_confirm=$S2 first_code_kept=$([ "$KEEP" = "$RC" ] && echo yes || echo no) own_or_old_rows=$NOROWS"
+[ "$ROW" = "$RC" ] && [ "$S1" = unverified ] && [ "$S2" = verified ] && [ "$KEEP" = "$RC" ] && [ "$NOROWS" = 0 ] \
+  || { echo "❌ share link test failed"; exit 1; }
+echo "   ok  counted as soon as she confirms, from any device"
 
 echo
 echo "── race: 20 people claim the same product with 5 units, all at once"

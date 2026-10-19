@@ -35,7 +35,16 @@ beforeEach(() => {
   vi.clearAllMocks();
   rateLimit.mockResolvedValue({ ok: true });
   delete process.env.CAMPAIGN_EMAILS_ENABLED;
+  vi.unstubAllEnvs();
 });
+
+const ADDRESS = { fullName: 'Test Person', addressLine1: '1 Main St', city: 'New York', state: 'NY', postalCode: '10001', email: 't@example.com' };
+function teamMailOn() {
+  vi.stubEnv('RESEND_API_KEY', 'k');
+  vi.stubEnv('CAMPAIGN_TEAM_EMAIL', 'team@aynahealth.co');
+  return vi.spyOn(globalThis, 'fetch').mockResolvedValue({ ok: true, json: async () => ({}) });
+}
+const sentTo = (spy) => spy.mock.calls.map(([, init]) => JSON.parse(init.body));
 
 describe('api/campaign auth', () => {
   it('401 without a session', async () => {
@@ -229,5 +238,77 @@ describe('shipping', () => {
     await handler(mockReq({ body: { action: 'shipping', address: { fullName: ' Test  Person ', addressLine1: '1 Main St', city: 'New York', state: 'ny', postalCode: '10001', email: 't@example.com' } } }), res);
     expect(res.statusCode).toBe(200);
     expect(admin.rpcCalls.find((c) => c.name === 'campaign_save_shipping').args.p_address).toMatchObject({ fullName: 'Test Person', state: 'NY' });
+  });
+});
+
+describe('team alerts', () => {
+  it('emails the team when someone claims, even while user emails are off', async () => {
+    const fetchSpy = teamMailOn();
+    setup({
+      campaign_claim: { data: { ok: true, replayed: false, claim: { id: 'c1', claimedAt: '2026-10-19T18:00:00Z', product: { brand: 'Kieró', name: 'Barrier Cream' } } }, error: null },
+      campaign_mark_notified: { data: true, error: null },
+      campaign_unmark_notified: { data: null, error: null },
+    });
+    const res = mockRes();
+    await handler(mockReq({ body: { action: 'claim', spinId: SPIN, idempotencyKey: KEY } }), res);
+    expect(res.statusCode).toBe(200);
+    const mails = sentTo(fetchSpy);
+    expect(mails).toHaveLength(1);
+    expect(mails[0].to).toEqual(['team@aynahealth.co']);
+    expect(mails[0].subject).toBe('Free product claimed: Kieró · Barrier Cream');
+    expect(mails[0].text).toContain('me@example.com');
+    fetchSpy.mockRestore();
+  });
+
+  it('does not alert twice for a replayed claim', async () => {
+    const fetchSpy = teamMailOn();
+    setup({ campaign_claim: { data: { ok: true, replayed: true, claim: { id: 'c1' } }, error: null } });
+    await handler(mockReq({ body: { action: 'claim', spinId: SPIN, idempotencyKey: KEY } }), mockRes());
+    expect(fetchSpy).not.toHaveBeenCalled();
+    fetchSpy.mockRestore();
+  });
+
+  it('emails the team the full address when someone adds it', async () => {
+    const fetchSpy = teamMailOn();
+    setup({ campaign_save_shipping: { data: { ok: true, updated: false, claim: { product: { brand: 'Kieró', name: 'Barrier Cream' } } }, error: null } });
+    const res = mockRes();
+    await handler(mockReq({ body: { action: 'shipping', address: ADDRESS } }), res);
+    expect(res.statusCode).toBe(200);
+    const [mail] = sentTo(fetchSpy);
+    expect(mail.subject).toBe('Ready to ship: Kieró · Barrier Cream to Test Person');
+    for (const v of ['Test Person', '1 Main St', 'New York', 'NY', '10001', 't@example.com']) expect(mail.text).toContain(v);
+    fetchSpy.mockRestore();
+  });
+
+  it('says "address changed" when they edit it', async () => {
+    const fetchSpy = teamMailOn();
+    setup({ campaign_save_shipping: { data: { ok: true, updated: true, claim: { product: { name: 'Barrier Cream' } } }, error: null } });
+    await handler(mockReq({ body: { action: 'shipping', address: ADDRESS } }), mockRes());
+    expect(sentTo(fetchSpy)[0].subject).toMatch(/^Address changed:/);
+    fetchSpy.mockRestore();
+  });
+
+  it('falls back to ADMIN_EMAILS, and a failed alert never fails the save', async () => {
+    vi.stubEnv('RESEND_API_KEY', 'k');
+    vi.stubEnv('ADMIN_EMAILS', 'a@aynahealth.co, b@aynahealth.co');
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('down'));
+    const err = vi.spyOn(console, 'error').mockImplementation(() => {});
+    setup({ campaign_save_shipping: { data: { ok: true, claim: {} }, error: null } });
+    const res = mockRes();
+    await handler(mockReq({ body: { action: 'shipping', address: ADDRESS } }), res);
+    expect(res.statusCode).toBe(200);
+    expect(JSON.parse(fetchSpy.mock.calls[0][1].body).to).toEqual(['a@aynahealth.co', 'b@aynahealth.co']);
+    fetchSpy.mockRestore();
+    err.mockRestore();
+  });
+
+  it('sends nothing without a Resend key', async () => {
+    vi.stubEnv('CAMPAIGN_TEAM_EMAIL', 'team@aynahealth.co');
+    vi.stubEnv('RESEND_API_KEY', '');
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
+    setup({ campaign_save_shipping: { data: { ok: true, claim: {} }, error: null } });
+    await handler(mockReq({ body: { action: 'shipping', address: ADDRESS } }), mockRes());
+    expect(fetchSpy).not.toHaveBeenCalled();
+    fetchSpy.mockRestore();
   });
 });

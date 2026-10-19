@@ -124,11 +124,43 @@ export function referralCodeFor(userId) {
   return /^[a-z0-9]{6,20}$/.test(code) ? code : null;
 }
 
+const CANONICAL_ORIGIN = 'https://www.aynahealth.co';
+
+/**
+ * Where share links point. On the live site always www.aynahealth.co: sign-up
+ * confirmation emails land there, and the friend's saved ?ref lives in that
+ * host's storage, so a link copied on the bare domain must not split them.
+ * Local and preview builds keep their own origin so links work while testing.
+ */
+export function shareOrigin() {
+  if (typeof window === 'undefined') return CANONICAL_ORIGIN;
+  const host = window.location.hostname || '';
+  return host === 'aynahealth.co' || host.endsWith('.aynahealth.co') ? CANONICAL_ORIGIN : window.location.origin;
+}
+
 export function joinLinkFor(userId, origin) {
   const code = referralCodeFor(userId);
   if (!code) return null;
-  const base = origin || (typeof window !== 'undefined' ? window.location.origin : 'https://www.aynahealth.co');
+  const base = origin || shareOrigin();
   return `${base.replace(/\/+$/, '')}/join?ref=${code}`;
+}
+
+/**
+ * The invite code saved when a friend opened a /join?ref= link (badges.js,
+ * captureReferralFromUrl), as sign-up metadata. The database writes the
+ * referrals row from it the moment the account is created (trigger
+ * ayna_referral_from_metadata), so the referral still counts when she
+ * confirms her email in another browser or on her phone. Lives here, not in
+ * badges.js, so the sign-up form does not pull in the product catalog.
+ */
+export function pendingReferralMeta() {
+  try {
+    const pending = JSON.parse(window.localStorage.getItem('ayna_pending_ref_v1') || 'null');
+    if (!pending?.code || !/^[a-z0-9]{6,20}$/.test(pending.code) || !(Date.now() - pending.at <= 30 * 864e5)) return {};
+    return { referred_by: pending.code, referred_at: new Date().toISOString() };
+  } catch {
+    return {};
+  }
 }
 
 /* --------------------------------- Shipping --------------------------------- */

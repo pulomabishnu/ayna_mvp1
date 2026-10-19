@@ -41,4 +41,14 @@ describe('campaign emails', () => {
     expect(await sendCampaignEmail('a@b.co', unlockedEmail(), { fetchImpl })).toMatchObject({ ok: false, skipped: true });
     expect(fetchImpl).not.toHaveBeenCalled();
   });
+
+  it('never sends a user email while the footer still has the postal-address placeholder', async () => {
+    const fetchImpl = vi.fn();
+    vi.stubEnv('CAMPAIGN_EMAILS_ENABLED', '1');
+    vi.stubEnv('RESEND_API_KEY', 'k');
+    vi.stubEnv('CAMPAIGN_POSTAL_ADDRESS', '');
+    expect(await sendCampaignEmail('a@b.co', unlockedEmail(), { fetchImpl })).toMatchObject({ ok: false, error: 'no_postal_address' });
+    expect(fetchImpl).not.toHaveBeenCalled();
+    vi.unstubAllEnvs();
+  });
 });

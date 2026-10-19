@@ -308,19 +308,14 @@ export function emailsEnabled() {
   return process.env.CAMPAIGN_EMAILS_ENABLED === '1' && Boolean(process.env.RESEND_API_KEY);
 }
 
-/**
- * @returns {Promise<{ ok: boolean, skipped?: boolean, error?: string }>}
- */
-export async function sendCampaignEmail(to, message, { fetchImpl = fetch } = {}) {
-  if (!emailsEnabled()) return { ok: false, skipped: true };
-  if (!to) return { ok: false, error: 'no_recipient' };
+async function postToResend(to, message, fetchImpl) {
   try {
     const res = await fetchImpl('https://api.resend.com/emails', {
       method: 'POST',
       headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         from: process.env.CAMPAIGN_FROM_EMAIL || process.env.CONTACT_FROM_EMAIL || 'ayna <puloma@aynahealth.co>',
-        to: [to],
+        to,
         subject: message.subject,
         html: message.html,
         text: message.text,
@@ -332,4 +327,85 @@ export async function sendCampaignEmail(to, message, { fetchImpl = fetch } = {})
   } catch (e) {
     return { ok: false, error: e?.name === 'TimeoutError' ? 'timeout' : 'network' };
   }
+}
+
+/**
+ * Email to a person in the campaign. Never sends while the footer still has
+ * the postal-address placeholder (CAMPAIGN_POSTAL_ADDRESS unset): marketing
+ * email needs a real address.
+ * @returns {Promise<{ ok: boolean, skipped?: boolean, error?: string }>}
+ */
+export async function sendCampaignEmail(to, message, { fetchImpl = fetch } = {}) {
+  if (!emailsEnabled()) return { ok: false, skipped: true };
+  if (!to) return { ok: false, error: 'no_recipient' };
+  if (String(message?.html || '').includes('{{COMPANY_POSTAL_ADDRESS}}')) return { ok: false, error: 'no_postal_address' };
+  return postToResend([to], message, fetchImpl);
+}
+
+/* ------------------------------- Team alerts -------------------------------- */
+
+/** Who hears about claims and addresses: CAMPAIGN_TEAM_EMAIL, else the ADMIN_EMAILS list. */
+export function teamAlertRecipients() {
+  const raw = process.env.CAMPAIGN_TEAM_EMAIL || process.env.ADMIN_EMAILS || '';
+  return [...new Set(raw.split(',').map((e) => e.trim().toLowerCase()).filter((e) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e)))];
+}
+
+/** Internal mail, so it does not wait for CAMPAIGN_EMAILS_ENABLED; it only needs Resend and a recipient. */
+export function teamAlertsEnabled() {
+  return Boolean(process.env.RESEND_API_KEY) && teamAlertRecipients().length > 0;
+}
+
+const plainRow = (label, value) => (value ? `${label}: ${value}` : '');
+const htmlRows = (rows) => rows.filter(([, v]) => v).map(([k, v]) =>
+  `<tr><td style="padding:4px 16px 4px 0;color:${SOFT};font:400 14px/20px ${UI};vertical-align:top">${escapeHtml(k)}</td><td style="padding:4px 0;color:${INK};font:600 14px/20px ${UI}">${escapeHtml(v)}</td></tr>`).join('');
+function teamMessage({ subject, intro, rows }) {
+  const adminUrl = `${SITE_URL}/admin/campaign`;
+  return {
+    subject,
+    html: `<div style="background:${PAGE};padding:24px"><div style="max-width:560px;margin:0 auto;background:#fff;border:2px solid ${INK};border-radius:16px;padding:24px">
+      <p style="margin:0 0 16px;color:${INK};font:400 16px/24px ${UI}">${escapeHtml(intro)}</p>
+      <table role="presentation" cellpadding="0" cellspacing="0">${htmlRows(rows)}</table>
+      <p style="margin:20px 0 0"><a href="${adminUrl}" style="color:${INK};font:600 15px/22px ${UI}">Open the campaign admin page</a></p>
+    </div></div>`,
+    text: `${intro}\n\n${rows.map(([k, v]) => plainRow(k, v)).filter(Boolean).join('\n')}\n\n${adminUrl}`,
+  };
+}
+const productLine = (product) => [product?.brand, product?.name, product?.size].filter(Boolean).join(' · ');
+
+/** Someone claimed a product. They still need to add an address. */
+export function teamClaimAlert({ accountEmail, product, claimedAt }) {
+  const what = productLine(product) || 'a product';
+  return teamMessage({
+    subject: `Free product claimed: ${what}`,
+    intro: 'Someone just claimed a free product. They still need to add their shipping address; you will get another email when they do.',
+    rows: [['Product', what], ['Account', accountEmail], ['Claimed', claimedAt ? new Date(claimedAt).toUTCString() : '']],
+  });
+}
+
+/** Someone added (or changed) their shipping address. Everything needed to ship it. */
+export function teamShippingAlert({ accountEmail, product, address = {}, updated = false }) {
+  const what = productLine(product) || 'their free product';
+  return teamMessage({
+    subject: `${updated ? 'Address changed' : 'Ready to ship'}: ${what} to ${address.fullName || 'a winner'}`,
+    intro: updated
+      ? 'A winner changed their shipping address. Use this one.'
+      : 'A winner added their shipping address. It is ready to pack and ship. Mark it shipped on the admin page when it goes out.',
+    rows: [
+      ['Product', what],
+      ['Name', address.fullName],
+      ['Address', address.addressLine1],
+      ['Apt / suite', address.addressLine2],
+      ['City', address.city],
+      ['State', address.state],
+      ['ZIP', address.postalCode],
+      ['Contact email', address.email],
+      ['Account', accountEmail],
+    ],
+  });
+}
+
+/** Best effort: never throws, never blocks the person's request. */
+export async function sendTeamAlert(message, { fetchImpl = fetch } = {}) {
+  if (!teamAlertsEnabled()) return { ok: false, skipped: true };
+  return postToResend(teamAlertRecipients(), message, fetchImpl);
 }

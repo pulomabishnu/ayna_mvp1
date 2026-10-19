@@ -16,7 +16,7 @@
 import { verifyUser } from './_usageLimit.js';
 import { rateLimit } from './_rateLimit.js';
 import { rpc, setPrivateHeaders } from './_campaign.js';
-import { claimedEmail, sendCampaignEmail } from './_campaignEmail.js';
+import { claimedEmail, sendCampaignEmail, sendTeamAlert, teamClaimAlert, teamShippingAlert } from './_campaignEmail.js';
 import {
   CAMPAIGN_ID,
   FEEDBACK_QUESTIONS,
@@ -113,8 +113,19 @@ async function handleClaim(admin, user, body, res) {
     } catch (e) {
       console.error('[campaign] claim email failed', e?.message);
     }
+    await alertTeam(teamClaimAlert({ accountEmail: user.email || user.phone, product: result.claim?.product, claimedAt: result.claim?.claimedAt }));
   }
   return res.status(200).json(result);
+}
+
+/** Tell the team (CAMPAIGN_TEAM_EMAIL or ADMIN_EMAILS). Best effort: never fails the request. */
+async function alertTeam(message) {
+  try {
+    const sent = await sendTeamAlert(message);
+    if (!sent.ok && !sent.skipped) console.error('[campaign] team alert failed', sent.error);
+  } catch (e) {
+    console.error('[campaign] team alert failed', e?.message);
+  }
 }
 
 export default async function handler(req, res) {
@@ -158,6 +169,7 @@ export default async function handler(req, res) {
         if (!ok) return res.status(422).json({ error: 'invalid_address', errors });
         const result = await rpc(admin, 'campaign_save_shipping', { p_campaign: CAMPAIGN_ID, p_user: user.id, p_address: value });
         if (!result?.ok) return res.status(409).json(result || { ok: false, error: 'not_saved' });
+        await alertTeam(teamShippingAlert({ accountEmail: user.email || user.phone, product: result.claim?.product, address: value, updated: Boolean(result.updated) }));
         return res.status(200).json(result);
       }
       default:

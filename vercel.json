@@ -29,6 +29,10 @@
     {
       "path": "/api/send-emails?mode=weekly",
       "schedule": "0 14 * * 0"
+    },
+    {
+      "path": "/api/campaign-notify",
+      "schedule": "17 * * * *"
     }
   ],
   "headers": [
