@@ -282,7 +282,9 @@
 .ayna-mobile.ayna-mobile .am-scroll .am-post-menu button { min-height: 40px; color: var(--ay-ink); font: 600 14px/1 var(--ay-font-ui); }
 .ayna-mobile .am-post-stars { display: flex; gap: 2px; }
 .ayna-mobile .am-post-stars svg { width: 15px; height: 15px; fill: none !important; stroke: var(--ay-ink); stroke-width: 1.8; stroke-linejoin: round; }
-.ayna-mobile .am-post-stars svg.is-on { fill: var(--ay-butter) !important; }
+.ayna-mobile .am-post-stars { color: var(--ay-ink); }
+/* Filled stars are ink: butter on a white card read as five empty outlines. */
+.ayna-mobile .am-post-stars svg.is-on { fill: var(--ay-ink) !important; }
 .ayna-mobile.ayna-mobile .am-scroll .am-postbody { min-height: 0; padding: 0 !important; color: var(--ay-ink); font: 500 15px/1.45 var(--ay-font-ui) !important; letter-spacing: 0 !important; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 6; overflow: hidden; }
 .ayna-mobile.ayna-mobile .am-scroll .am-subpage .am-postbody { display: block; -webkit-line-clamp: unset; font-size: 16px !important; }
 .ayna-mobile.ayna-mobile .am-scroll .am-post-card .am-photo-grid { width: 100%; margin: 0; border-radius: 12px; }

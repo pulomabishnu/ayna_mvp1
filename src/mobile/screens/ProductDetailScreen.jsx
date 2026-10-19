@@ -25,6 +25,10 @@ import { productHref } from '../../utils/productRoute.js';
 import { HEART_PATH } from '../utils/heart.js';
 import { formatPrice } from '../../utils/formatPrice.js';
 import { displayName } from '../utils/displayName.js';
+import ProductCommunityReviews from '../../components/pdp/ProductCommunityReviews.jsx';
+import { useProductReviews } from '../../components/pdp/useProductReviews.js';
+import { RatingStars } from '../../components/community/RatingStars.jsx';
+import { summarizeReviewRows, formatAverage } from '../../utils/community/reviewRatings.js';
 import '../pdp.css';
 import '../eco-needs.css';
 
@@ -209,6 +213,8 @@ export default function ProductDetailScreen({
   isInEcosystem = false,
   onAddToEcosystem,
   onCommunityAction,
+  // Opens one community review in Community (from the Reviews list below).
+  onOpenReview = null,
   onRequireAuth,
   onStartQuiz,
   whyMatched,
@@ -221,6 +227,10 @@ export default function ProductDetailScreen({
   isOmitted = false,
   onToggleOmit,
 }) {
+  // Live community reviews: the average and count come from these rows, so
+  // an edited or deleted review changes them on the next read.
+  const reviewRows = useProductReviews(product?.id);
+  const reviewStats = reviewRows.length ? summarizeReviewRows(reviewRows)[product?.id] : null;
   const [partnerOpen, setPartnerOpen] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
   // Rendered locally (not through MobileApp's shared `overlay` state, which
@@ -434,6 +444,12 @@ export default function ProductDetailScreen({
         {related.more.length > 0 && <section className="ayna-cabinet-collection ay-pdp-related" aria-labelledby="ay-pdp-related-more">
           <div className="ay-pdp-sechead"><h2 id="ay-pdp-related-more">You may also like</h2><p>{related.personal ? 'Picks that fit your profile.' : 'For the same needs, from other parts of the shop.'}</p></div>
           <div className="ayna-editorial-product-grid">{related.more.map((p) => <ProductCard key={p.id} product={p} quizAnswers={quizAnswers} onClick={() => onOpenProduct(p)} />)}</div>
+        </section>}
+
+        {reviewStats && <section className="ay-pdp-community-actions ay-pdp-reviews" aria-labelledby="ay-pdp-reviews-h" id="ay-pdp-reviews">
+          <div className="ay-pdp-community-head"><svg viewBox="0 0 24 24" aria-hidden="true">{PANEL_ICONS.community}</svg><h2 id="ay-pdp-reviews-h">Reviews</h2></div>
+          <p className="ay-pdp-reviews__sum"><span aria-hidden="true"><RatingStars value={Math.round(reviewStats.average)} size={16} /></span> <b>{formatAverage(reviewStats.average)}</b> from {reviewStats.count} {reviewStats.count === 1 ? 'review' : 'reviews'}</p>
+          <ProductCommunityReviews productId={product?.id} rows={reviewRows} onOpenReview={onOpenReview} heading="What ayna members say" />
         </section>}
 
         {onCommunityAction && <section className="ay-pdp-community-actions" aria-label="Community">

@@ -18,6 +18,7 @@ import { priceParts, safetyAlertText, humanizeTag, noDash, matchLine, buildTyped
 import { whyMatch, confidenceNotes, exclusionLines, isClaimBlocked, MIN_BADGE_SCORE } from '../../utils/matchDisplay.js';
 import { planGlossaryTerms } from '../../data/glossary.js';
 import { brandOf } from '../../mobile/data/brandFallback.js';
+import { getAynaRatingCount } from '../../data/aynaReviews.js';
 
 export const NOT_ON_FILE = 'Not on file';
 const GENERIC_USES = new Set(['supplement', 'telehealth']);
@@ -396,7 +397,7 @@ export function buildGlance(product, ctx = {}) {
 
   // What people say (spec 27: never overstated)
   const reviews = (aynaData?.reviews || []).map((r) => clean(r?.text)).filter(Boolean).slice(0, 3);
-  const ratingCount = Array.isArray(aynaData?.ratings) ? aynaData.ratings.length : 0;
+  const ratingCount = getAynaRatingCount(aynaData);
   push('people', 'What people say', 'people', [
     aynaRating != null && ratingCount > 0 ? { type: 'rating', value: aynaRating, count: ratingCount } : null,
     reviews.length ? { type: 'reviews', items: reviews } : null,

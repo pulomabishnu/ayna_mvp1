@@ -17,6 +17,9 @@ import { fmtDate } from './fmtDate';
 import { researchSourceCount } from './commerce';
 import GlossaryTerm from '../GlossaryTerm';
 import { findHardTerms, planGlossaryTerms } from '../../data/glossary';
+import ProductCommunityReviews from './ProductCommunityReviews.jsx';
+import { useProductReviews } from './useProductReviews.js';
+import { summarizeReviewRows, takeProductTab } from '../../utils/community/reviewRatings.js';
 
 // Clinical opinion and Scientific literature cite credible sources only:
 // government and public-health agencies, peer-reviewed journals and indexes,
@@ -273,12 +276,19 @@ function labelParts(label) {
 /** The first sentence, cut to about 110 characters for the glance cards. */
 const firstLine = (t) => { const x = sentences(String(t || ''))[0] || ''; return x.length > 120 ? `${x.slice(0, 110).replace(/\s+\S*$/, '')}…` : x; };
 
-export default function ProductEvidence({ product: baseProduct, glance = null, aynaData = null, aynaRating = null, ratingCount = 0, rateControls = null, safety = null, recall = null, heroLine = '', extraRows = [] }) {
+export default function ProductEvidence({ product: baseProduct, glance = null, aynaData = null, aynaRating: aynaRatingProp = null, ratingCount: ratingCountProp = 0, rateControls = null, safety = null, recall = null, heroLine = '', extraRows = [], onOpenReview = null }) {
   // Research the team approved in /admin/research fills any empty section.
   const product = useApprovedResearch(baseProduct);
   const d = useEvidence(product, aynaData);
+  // Community reviews of this product, live: the average and count below are
+  // worked out from these rows, so an edited or deleted review updates them.
+  const reviewRows = useProductReviews(baseProduct?.id);
+  const liveStats = reviewRows.length ? summarizeReviewRows(reviewRows)[baseProduct?.id] : null;
+  const aynaRating = liveStats ? liveStats.average : aynaRatingProp;
+  const ratingCount = liveStats ? liveStats.count : ratingCountProp;
   // Phone: sections fold, Clinical opinion and Safety start open. Desktop: always open.
-  const [tab, setTab] = useState('overview');
+  // A product card's star line opens the page straight on Reviews.
+  const [tab, setTab] = useState(() => takeProductTab() || 'overview');
   const [allIngredients, setAllIngredients] = useState(false);
   // "All safety info" under Buy opens the Safety tab.
   const pickTab = (id) => {
@@ -288,6 +298,12 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       if (el && (el.getBoundingClientRect().top < 70 || el.getBoundingClientRect().top > window.innerHeight - 120)) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   };
+  useEffect(() => {
+    if (tab !== 'reviews') return;
+    window.requestAnimationFrame(() => document.getElementById('ay-tabs')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+    // Only on arrival from a card's review link.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
     const on = (e) => pickTab(e.detail === 'details' || !e.detail ? 'safety' : e.detail);
     window.addEventListener('ay-open-tab', on);
@@ -333,10 +349,11 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
 
   // Ratings from ayna members: a 5-bar breakdown once there are 6 or more (Baymard).
   const graded = (RESEARCH_BY_PRODUCT.get(baseProduct?.id) || []).slice().sort((x, y) => (x.strength === 'none') - (y.strength === 'none') || x.grade.localeCompare(y.grade));
-  const memberRatings = (aynaData?.reviews || []).map((r) => Number(r?.rating)).filter((n) => n >= 1 && n <= 5);
-  const breakdown = memberRatings.length >= 6 ? [5, 4, 3, 2, 1].map((n) => ({ n, c: memberRatings.filter((r) => Math.round(r) === n).length })) : null;
+  const histogram = liveStats?.histogram || aynaData?.histogram || null;
+  const memberRatingCount = histogram ? Object.values(histogram).reduce((a, b) => a + (Number(b) || 0), 0) : 0;
+  const breakdown = memberRatingCount >= 6 ? [5, 4, 3, 2, 1].map((n) => ({ n, c: Number(histogram[n]) || 0 })) : null;
   const ratingLine = aynaRating != null && ratingCount > 0
-    ? <p className="ay-ev__rating"><b>★ {aynaRating.toFixed(1)}</b> from {plural(ratingCount, 'ayna member')}</p>
+    ? <p className="ay-ev__rating"><b>★ {aynaRating.toFixed(1)}</b> from {plural(ratingCount, 'ayna member review')}</p>
     : d.brandRating ? <p className="ay-ev__rating"><b>★ {d.brandRating.value}</b> from {d.brandRating.count} reviews <span className="ay-ev2__badge is-brand">Brand-reported, not verified by ayna</span></p>
       : d.userRating ? <p className="ay-ev__rating"><b>★ {d.userRating.value}</b> <a href={d.userRating.url} target="_blank" rel="noopener noreferrer">online rating<span aria-hidden="true"> ↗</span></a></p> : null;
 
@@ -407,16 +424,17 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       {ratingLine}
       {breakdown && (
         <ul className="ay-ev__bars" aria-label="Ratings from ayna members">
-          {breakdown.map((b) => <li key={b.n}><span>{b.n} ★</span><i><s style={{ width: `${Math.round((b.c / memberRatings.length) * 100)}%` }} /></i><span>{b.c}</span></li>)}
+          {breakdown.map((b) => <li key={b.n}><span>{b.n} ★</span><i><s style={{ width: `${Math.round((b.c / memberRatingCount) * 100)}%` }} /></i><span>{b.c}</span></li>)}
         </ul>
       )}
+      <ProductCommunityReviews productId={baseProduct?.id} rows={reviewRows} onOpenReview={onOpenReview} />
       {communityText && <ShortThenFull full={communityText} />}
       {d.communitySummary && <ShortThenFull full={d.communitySummary} />}
       {d.ratingNote && <p className="ay-ev__by">{d.ratingNote}</p>}
       {d.incentivized.length > 0 && <p className="ay-ev__by">Reviews on {d.incentivized.join(', ')} may include incentivized reviews.</p>}
       {(communityText || d.communitySummary) && <p className="ay-ev__by">Online reviews and posts are people’s experiences, not clinical evidence.</p>}
       {d.memberReviews.length > 0 && <><h3 className="ay-part__h">From ayna members</h3>{d.memberReviews.map((r) => <blockquote key={r.slice(0, 40)} className="ay-ev__quote">{r}</blockquote>)}</>}
-      {!ratingLine && !communityText && !d.communitySummary && !d.memberReviews.length && <p className="ay-ev__body">No reviews yet.</p>}
+      {!ratingLine && !reviewRows.length && !communityText && !d.communitySummary && !d.memberReviews.length && <p className="ay-ev__body">No reviews yet.</p>}
       {rateControls}
       <Links items={[...onlineLinks, ...(d.brand ? [{ url: `https://www.trustpilot.com/search?query=${encodeURIComponent(d.brand)}`, title: `${d.brand} on Trustpilot`, publisher: 'Trustpilot' }] : [])]} label="Read more reviews online" />
     </> },

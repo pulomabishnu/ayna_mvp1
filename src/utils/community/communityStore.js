@@ -9,6 +9,7 @@
  */
 
 import { topicForHashtag } from './topics';
+import { announceReviewsChanged, normalizeRating } from './reviewRatings.js';
 
 export const PAGE_SIZE = 20;
 
@@ -166,8 +167,12 @@ export async function createPost(supabase, userId, { kind, body, topics = [], is
     photo_url: photoUrl || null,
   };
   if (kind === 'review') {
+    // The database only accepts 1 to 5 here; a missing or odd value would
+    // otherwise save a review with no stars to show.
+    const stars = normalizeRating(rating);
+    if (!stars) throw new Error('Pick a star rating.');
     row.product_id = productId;
-    row.rating = rating;
+    row.rating = stars;
     row.would_recommend = wouldRecommend;
   }
   const post = check(await supabase.from('community_posts').insert(row).select('id').single());
@@ -191,16 +196,44 @@ export async function createPost(supabase, userId, { kind, body, topics = [], is
       throw error;
     }
   }
+  if (kind === 'review') announceReviewsChanged({ productId, postId: post.id });
   return post;
 }
 
 export async function updatePostBody(supabase, postId, body) {
-  check(await supabase.from('community_posts').update({ body: String(body).trim() }).eq('id', postId));
+  return updatePost(supabase, postId, { body });
+}
+
+/**
+ * Edit a post. For a review, `rating` (1 to 5) changes the stars too; the
+ * product averages are read live, so they follow on the next read.
+ */
+export async function updatePost(supabase, postId, { body, rating } = {}) {
+  const patch = {};
+  if (body !== undefined) patch.body = String(body).trim();
+  if (rating !== undefined && rating !== null) {
+    const stars = normalizeRating(rating);
+    if (!stars) throw new Error('Pick a star rating.');
+    patch.rating = stars;
+  }
+  if (!Object.keys(patch).length) return;
+  const rows = check(await supabase.from('community_posts').update(patch).eq('id', postId).select('id'));
+  if (Array.isArray(rows) && !rows.length) throw new Error('This post could not be saved. Please refresh and try again.');
+  if ('rating' in patch) announceReviewsChanged({ postId });
 }
 
 export async function deletePost(supabase, postId, userId) {
   const rows = check(await supabase.from('community_posts').delete().eq('id', postId).eq('author_id', userId).select('id'));
   if (!rows?.length) throw new Error('This post could not be deleted. Please refresh and try again.');
+  announceReviewsChanged({ postId, deleted: true });
+}
+
+/** Live reviews of one product (newest first), for the product page. */
+export async function listProductReviews(supabase, productId, { limit = 50 } = {}) {
+  if (!productId) return [];
+  return check(await supabase.from('community_feed_posts').select('*')
+    .eq('kind', 'review').eq('product_id', String(productId))
+    .order('created_at', { ascending: false }).order('id', { ascending: false }).limit(limit)) || [];
 }
 
 // ── Comments ────────────────────────────────────────────────────────────────

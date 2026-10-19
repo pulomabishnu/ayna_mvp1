@@ -21,7 +21,7 @@ import { ROTATING_EXAMPLES } from '../data/searchPhrases.research.js';
 import { getVerificationLinks } from '../utils/verificationLinks';
 import { hasFlaggedRecall } from '../utils/productSafetyAlert';
 import { RELEASED_STARTUPS } from '../data/startups';
-import { getAynaRating } from '../data/aynaReviews';
+import { getAynaRating, getAynaRatingCount } from '../data/aynaReviews';
 import { getPricePerUnitLabel } from '../utils/pricePerUnit';
 import { fetchDsldProducts } from '../utils/fetchDsldProducts';
 import { enrichLlmProductForDiscovery } from '../utils/enrichLlmProductForDiscovery';
@@ -1772,7 +1772,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             style={undefined}
                             matchPercent={matchPercent}
                             matchLabel={badge ? badge.label : ''}
-                            rating={(() => { const d = aynaReviews[item.id]; const v = getAynaRating(item, d); const n = Array.isArray(d?.ratings) ? d.ratings.length : 0; return v != null && n > 0 ? { value: Number(v), count: n } : null; })()}
+                            rating={(() => { const d = aynaReviews[item.id]; const v = getAynaRating(item, d); const n = getAynaRatingCount(d); return v != null && n > 0 ? { value: Number(v), count: n } : null; })()}
                             isSaved={isWishlisted}
                             inEcosystem={isInEcosystem}
                             onOpen={(p) => onOpenProduct?.(p, searchSubmitted

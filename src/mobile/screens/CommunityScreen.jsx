@@ -18,6 +18,8 @@ import PlaylistAudiencePicker from '../components/PlaylistAudiencePicker.jsx';
 import { makePlaylistCoverFile } from '../components/playlistCoverImage.js';
 import { RuleField, CommunityRulesList } from '../../components/community/RuleField.jsx';
 import { VerifiedBadge } from '../../components/community/VerifiedBadge.jsx';
+import { RatingStars, RatingPicker } from '../../components/community/RatingStars.jsx';
+import { normalizeRating } from '../../utils/community/reviewRatings.js';
 import { useTeamBadges } from '../../components/community/useTeamBadges.js';
 import Announcements from '../../components/community/Announcements.jsx';
 import { breaksCommunityRules } from '../../utils/communityRules.js';
@@ -108,7 +110,7 @@ function ProductPicker({ products, value, onChange }) {
   </div>;
 }
 
-export default function CommunityScreen({ authUser, products = [], articles = null, quizAnswers, headerInitial, onOpenProduct, onOpenArticle, onGoBrowse, onGoEco, onOpenSaved, onOpenProfile, onRequireAuth, seedKind, seedProductId, seedPlaylistId }) {
+export default function CommunityScreen({ authUser, products = [], articles = null, quizAnswers, headerInitial, onOpenProduct, onOpenArticle, onGoBrowse, onGoEco, onOpenSaved, onOpenProfile, onRequireAuth, seedKind, seedProductId, seedPlaylistId, seedPostId }) {
   const supabase = authUser ? getSupabaseClient() : (getGuestClient() || getSupabaseClient());
   const productsById = useMemo(() => new Map(products.map((p) => [String(p.id), p])), [products]);
   const [tab, setTab] = useState('for-you');
@@ -166,6 +168,9 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
   const [refresh, setRefresh] = useState(0);
   const [reportPost, setReportPost] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [editPost, setEditPost] = useState(null);
+  const [editBody, setEditBody] = useState('');
+  const [editRating, setEditRating] = useState(0);
   const [postMenuId, setPostMenuId] = useState(null);
   const [reportReason, setReportReason] = useState('misinformation');
   const screenRef = useRef(null);
@@ -173,7 +178,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
   const teamBadges = useTeamBadges(supabase, authUser);
   const badgeFor = (authorId, anon = false) => (!anon && authorId ? teamBadges.get(authorId) || null : null);
   const openRules = () => setShowRules(true);
-  const sheetOpen = Boolean(compose || editingPlaylist || editingProfile || reportPost || deleteTarget || deletePlaylistTarget || showRules);
+  const sheetOpen = Boolean(compose || editingPlaylist || editingProfile || reportPost || deleteTarget || deletePlaylistTarget || editPost || showRules);
   useEffect(() => {
     if (!sheetOpen) return;
     const previous = document.activeElement;
@@ -186,7 +191,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       if (event.key === 'Escape') {
         event.preventDefault();
         if (showRules) { setShowRules(false); return; }
-        setCompose(null); setEditingPlaylist(false); setEditingProfile(false); setReportPost(null); setDeleteTarget(null); setDeletePlaylistTarget(null);
+        setCompose(null); setEditingPlaylist(false); setEditingProfile(false); setReportPost(null); setDeleteTarget(null); setDeletePlaylistTarget(null); setEditPost(null);
       }
       if (event.key !== 'Tab') return;
       const nodes = controls();
@@ -282,6 +287,12 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     try { setItems(await community.listPlaylistItems(supabase, playlist.id)); }
     catch (e) { if (!playlist.preview_product_ids?.length) notifyError(e); }
   };
+  // Opened from a product page's review list: open that review.
+  useEffect(() => {
+    if (!seedPostId || !supabase) return;
+    community.getFeedPost(supabase, seedPostId).then((post) => { if (post) openPost(post); else setError('This post isn’t available anymore.'); }).catch(notifyError);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seedPostId]);
   // Opened from elsewhere (Ecosystem -> Save as a playlist -> Open playlist).
   useEffect(() => {
     if (seedPlaylistId && supabase) openPlaylistById(seedPlaylistId);
@@ -500,6 +511,29 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     } catch (e) { notifyError(e); } finally { setBusy(false); }
   };
 
+  const startEdit = (post) => {
+    setPostMenuId(null); setError('');
+    setEditPost(post); setEditBody(post.body || ''); setEditRating(normalizeRating(post.rating));
+  };
+  const saveEdit = async () => {
+    if (!editPost || busy) return;
+    const isReview = editPost.kind === 'review';
+    if (isReview && !normalizeRating(editRating)) { setError('Pick a star rating.'); return; }
+    setBusy(true); setError('');
+    try {
+      const client = authUser ? supabase : getGuestClient();
+      if (!client) throw new Error('Please sign in again to edit this post.');
+      const nextBody = editBody.trim();
+      const patch = { body: nextBody, ...(isReview ? { rating: normalizeRating(editRating) } : {}) };
+      await community.updatePost(client, editPost.id, patch);
+      const apply = (p) => (p.id === editPost.id ? { ...p, ...patch, edited_at: new Date().toISOString() } : p);
+      setPosts((prev) => prev.map(apply));
+      setProfilePosts((prev) => prev.map(apply));
+      if (page?.type === 'post' && details?.id === editPost.id) setDetails((d) => apply(d));
+      setEditPost(null); setNotice(isReview ? 'Review updated.' : 'Post updated.');
+    } catch (e) { notifyError(e); } finally { setBusy(false); }
+  };
+
   const submitReport = async () => {
     if (!reportPost) return;
     setBusy(true); setError('');
@@ -539,10 +573,10 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
         <span className={`am-tag is-${kind}`}>{POST_KINDS[kind]}</span>
         <div className="am-post-menu-wrap">
           <button type="button" className="am-post-more" aria-label={`More options for ${authorName}'s post`} aria-expanded={postMenuId === post.id} onClick={() => setPostMenuId((id) => id === post.id ? null : post.id)}><CommunityIcon name="more" size={18} /></button>
-          {postMenuId === post.id && <div className="am-post-menu"><button type="button" onClick={() => { setPostMenuId(null); if (post.is_mine) setDeleteTarget(post); else setReportPost(post); }}>{post.is_mine ? 'Delete post' : 'Report post'}</button></div>}
+          {postMenuId === post.id && <div className="am-post-menu">{post.is_mine && <button type="button" onClick={() => startEdit(post)}>{post.kind === 'review' ? 'Edit review' : 'Edit post'}</button>}<button type="button" onClick={() => { setPostMenuId(null); if (post.is_mine) setDeleteTarget(post); else setReportPost(post); }}>{post.is_mine ? 'Delete post' : 'Report post'}</button></div>}
         </div>
       </div>
-      {post.kind === 'review' && <span className="am-post-stars" role="img" aria-label={`Rated ${post.rating || 0} out of 5`}>{[1, 2, 3, 4, 5].map((n) => <svg key={n} viewBox="0 0 24 24" aria-hidden="true" className={n <= (post.rating || 0) ? 'is-on' : ''}><path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9L12 3.5Z" /></svg>)}</span>}
+      {post.kind === 'review' && <RatingStars value={post.rating} className="am-post-stars" />}
       <button type="button" className="am-postbody" onClick={() => openPost(post)}>{post.body}</button>
       {(post.media || []).length > 0 && <button type="button" className="am-photo-grid" onClick={() => openPost(post)} aria-label="Open post photos">{post.media.slice(0, 4).map((photo) => <img key={photo.path} src={publicMediaUrl(photo.path)} alt="" loading="lazy" />)}</button>}
       {postProductIds(post).slice(0, 1).map((id) => <ProductMention key={id} productId={id} productsById={productsById} quizAnswers={quizAnswers} onOpenProduct={onOpenProduct} />)}
@@ -638,6 +672,14 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     </div></div>}
     {deletePlaylistTarget && <div className="am-sheet-backdrop" onClick={() => setDeletePlaylistTarget(null)}><div className="am-sheet" role="dialog" aria-modal="true" aria-label="Delete playlist" onClick={(e) => e.stopPropagation()}><div className="am-sheet-head"><h2>Delete playlist?</h2><button type="button" aria-label="Close" onClick={() => setDeletePlaylistTarget(null)}>×</button></div><p className="am-detail-copy">This removes the playlist and its product list. This cannot be undone.</p><button type="button" className="am-primary" disabled={busy} onClick={confirmDeletePlaylist}>{busy ? 'Deleting…' : 'Delete playlist'}</button><button type="button" className="am-secondary" onClick={() => setDeletePlaylistTarget(null)}>Cancel</button></div></div>}
     {deleteTarget && <div className="am-sheet-backdrop" onClick={() => setDeleteTarget(null)}><div className="am-sheet" role="dialog" aria-modal="true" aria-label="Delete post" onClick={(e) => e.stopPropagation()}><div className="am-sheet-head"><h2>Delete post?</h2><button type="button" onClick={() => setDeleteTarget(null)}>×</button></div><p className="am-detail-copy">This will remove your post and its replies from Community.</p><button type="button" className="am-primary" disabled={busy} onClick={confirmDelete}>{busy ? 'Deleting…' : 'Delete post'}</button><button type="button" className="am-secondary" onClick={() => setDeleteTarget(null)}>Cancel</button></div></div>}
+    {editPost && <div className="am-sheet-backdrop" onClick={() => setEditPost(null)}><div className="am-sheet am-compose-sheet" role="dialog" aria-modal="true" aria-label={editPost.kind === 'review' ? 'Edit review' : 'Edit post'} onClick={(e) => e.stopPropagation()}>
+      <div className="am-sheet-head"><h2>{editPost.kind === 'review' ? 'Edit review' : 'Edit post'}</h2><button type="button" aria-label="Close" onClick={() => setEditPost(null)}>×</button></div>
+      {editPost.kind === 'review' && <div className="am-rating"><span id="am-edit-rating-label">Your rating</span><RatingPicker value={editRating} onChange={setEditRating} label="Your rating" /></div>}
+      <label className="am-field-label" htmlFor="am-edit-text">{editPost.kind === 'review' ? 'Your experience' : 'Your post'}</label>
+      <RuleField id="am-edit-text" value={editBody} onChange={(e) => setEditBody(e.target.value)} onShowRules={openRules} />
+      {error && <p className="am-error" role="alert">{error}</p>}
+      <button type="button" className="am-primary am-submit" disabled={busy || !editBody.trim() || breaksCommunityRules(editBody) || (editPost.kind === 'review' && !normalizeRating(editRating))} onClick={saveEdit}>{busy ? 'Saving…' : 'Save changes'}</button>
+    </div></div>}
     {reportPost && <div className="am-sheet-backdrop" onClick={() => setReportPost(null)}><div className="am-sheet" role="dialog" aria-modal="true" aria-label="Report post" onClick={(e) => e.stopPropagation()}><div className="am-sheet-head"><h2>Report post</h2><button type="button" onClick={() => setReportPost(null)}>×</button></div><p className="am-detail-copy">Tell us what needs review.</p><select value={reportReason} onChange={(e) => setReportReason(e.target.value)}><option value="misinformation">Health misinformation</option><option value="harassment">Harassment</option><option value="spam">Spam</option><option value="other">Something else</option></select><button type="button" className="am-primary" disabled={busy} onClick={submitReport}>Send report</button></div></div>}
     {compose && <div className="am-sheet-backdrop" onClick={() => setCompose(null)}><div className="am-sheet am-compose-sheet" role="dialog" aria-modal="true" aria-label="Create in Community" onClick={(e) => e.stopPropagation()}>
       <div className="am-sheet-head"><div><h2>{({ post: 'New post', question: 'Ask a question', review: 'Write a review', playlist: 'Create a playlist', recommend: 'Recommend a product' })[compose]}</h2></div><button type="button" aria-label="Close" onClick={() => setCompose(null)}>×</button></div>

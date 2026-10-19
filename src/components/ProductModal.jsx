@@ -6,7 +6,7 @@ import ProductCard from './ProductCard';
 import { ALL_PRODUCTS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct, CATEGORY_LABELS } from '../data/products';
 import { exclusionLines } from '../utils/matchDisplay';
 import '../styles/match-ui.css';
-import { getAynaRating } from '../data/aynaReviews';
+import { getAynaRating, getAynaRatingCount } from '../data/aynaReviews';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
 import { isPartnerBrandItem, isPrelaunchPartnerItem, getPartnerDisclosureText } from '../utils/partnerBrands';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
@@ -395,6 +395,8 @@ export default function ProductModal({
   // Opens the composer with this product attached ('post' | 'review' |
   // 'playlist' | 'recommend').
   onCommunityAction = null,
+  // Opens one community review (its post page) from the Reviews tab.
+  onOpenReview = null,
   // Signed-in person, if any. Logged out, the page offers Save instead of
   // "Add to my ecosystem" (there is no ecosystem yet).
   user = undefined,
@@ -508,7 +510,7 @@ export default function ProductModal({
   // Only ratings real people left on ayna. The catalog's userRating has no
   // count or source behind it, so it is not shown.
   const aynaRating = getAynaRating(product, aynaData);
-  const ratingCount = Array.isArray(aynaData?.ratings) ? aynaData.ratings.length : 0;
+  const ratingCount = getAynaRatingCount(aynaData);
 
   const glance = useMemo(
     () => buildGlance(product, { details: matchDetails, aynaData, aynaRating }),
@@ -805,7 +807,13 @@ export default function ProductModal({
             className={`pdp-community__star${star <= (hoverRating || 0) ? ' is-on' : ''}`}
             onMouseEnter={() => setHoverRating(star)}
             onMouseLeave={() => setHoverRating(0)}
-            onClick={() => { onRate(product, star); if (onCommunityAction) onCommunityAction('review'); }}
+            onClick={() => {
+              // The star she taps starts a community review with that rating.
+              // The review is the one record of it, so editing or deleting it
+              // later changes the product's average too.
+              if (onCommunityAction) onCommunityAction('review', { rating: star });
+              else onRate(product, star);
+            }}
             aria-label={`Rate ${star} star${star === 1 ? '' : 's'}`}
           >
             ★
@@ -953,7 +961,7 @@ export default function ProductModal({
           </div>
           {/* The research, as tabs, in the first screen: under the photo on desktop, after Buy on phone. */}
           <div className="pdp-head__info">
-            <ProductEvidence product={product} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} recall={recall} heroLine={firstSentence(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '').replace(/\s*—\s*/g, ', ').trim(), { min: 20, max: 240 })} safety={<ProductSafety product={product} glance={glance} recall={recall} alertText={glance?.alert || ''} />} extraRows={(() => {
+            <ProductEvidence product={product} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} recall={recall} heroLine={firstSentence(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '').replace(/\s*—\s*/g, ', ').trim(), { min: 20, max: 240 })} safety={<ProductSafety product={product} glance={glance} recall={recall} alertText={glance?.alert || ''} />} extraRows={(() => {
             const pp = getPassport(product);
             const checked = pp?.pricing?.price?.verified_at;
             let seller = '';

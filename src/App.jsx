@@ -107,6 +107,7 @@ import { toast } from './utils/toast';
 import { setDarkAccentSwap } from './utils/darkAccentSwap.js';
 import { recordProductView } from './utils/recentActivity';
 import GlobalToast from './components/v3/GlobalToast';
+import { loadProductReviewStats, mergeReviewBuckets, REVIEWS_CHANGED_EVENT } from './utils/community/reviewRatings.js';
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
@@ -528,6 +529,22 @@ function App() {
   const [ecosystemSeedMeta, setEcosystemSeedMeta] = useState({});
   const [user, setUser] = useState(null);
   const [userSession, setUserSession] = useState(null);
+  // Star averages on product cards and pages come from live community reviews
+  // (re-read whenever a review is posted, edited or deleted), never from a
+  // stored copy, so an edited or deleted review never leaves old stars behind.
+  const [communityReviewStats, setCommunityReviewStats] = useState({});
+  useEffect(() => {
+    let active = true;
+    const load = () => {
+      loadProductReviewStats(getSupabaseClient())
+        .then((stats) => { if (active) setCommunityReviewStats(stats); })
+        .catch(() => { if (active) setCommunityReviewStats({}); });
+    };
+    load();
+    window.addEventListener(REVIEWS_CHANGED_EVENT, load);
+    return () => { active = false; window.removeEventListener(REVIEWS_CHANGED_EVENT, load); };
+  }, [user?.id]);
+  const productReviewBuckets = useMemo(() => mergeReviewBuckets(aynaReviews, communityReviewStats), [aynaReviews, communityReviewStats]);
   // Set to true once the LLM builds the ecosystem this session, prevents
   // Supabase token-refresh reloads from overwriting in-memory LLM products.
   const llmBuiltThisSessionRef = useRef(false);
@@ -2184,7 +2201,7 @@ function App() {
             seedKind={communitySeed?.kind || null}
             seedProductId={communitySeed?.productId || null}
             initialProfileHandle={communityHandle}
-            initialPostId={communityPostId}
+            initialPostId={communitySeed?.postId || communityPostId}
             onPostChange={(id) => {
               const here = window.location.pathname;
               if (id) { const next = `/community/p/${id}`; if (here !== next) window.history.pushState({ view: 'community' }, '', next); }
@@ -2484,7 +2501,7 @@ function App() {
             onOpenProduct={handleOpenProduct}
             initialSearch={discoverySearch}
             recommendedProductIds={recommendedProductIds}
-            aynaReviews={aynaReviews}
+            aynaReviews={productReviewBuckets}
             savedProducts={savedProducts}
             onToggleSaved={toggleSavedProduct}
             hasQuizFrustrations={!!(quizResults?.frustrations?.length)}
@@ -2614,6 +2631,7 @@ function App() {
             key={composerSeed.token}
             seedKind={composerSeed.kind}
             seedProductId={composerSeed.productId}
+            seedRating={composerSeed.rating || null}
             user={user}
             products={ALL_PRODUCTS}
             quizResults={quizResults}
@@ -2645,7 +2663,7 @@ function App() {
               isSaved={!!savedProducts[displayedProduct.id]}
               savedProducts={savedProducts}
               userZipCode={userZipCode || undefined}
-              aynaReviews={aynaReviews}
+              aynaReviews={productReviewBuckets}
               onRate={handleRateProduct}
               onReview={handleReviewProduct}
               quizResults={quizResults}
@@ -2658,8 +2676,14 @@ function App() {
               onOpenProduct={handleOpenProduct}
               onBack={handleBackFromProduct}
               onOpenShop={(category) => handleViewDiscovery(category ? { initialCategory: category } : '')}
-              onCommunityAction={(kind) => {
-                const seed = { kind, productId: displayedProduct?.id || null, token: Date.now() };
+              onOpenReview={(postId) => {
+                setCommunitySeed({ postId, token: Date.now() });
+                setCurrentView('community');
+                const next = `/community/p/${postId}`;
+                if (window.location.pathname !== next) window.history.replaceState({ view: 'community' }, '', next);
+              }}
+              onCommunityAction={(kind, extra = {}) => {
+                const seed = { kind, productId: displayedProduct?.id || null, rating: extra?.rating || null, token: Date.now() };
                 if (!user && kind !== 'post') {
                   setCommunitySeed(null);
                   setAuthFeature(kind === 'review' ? 'reviews' : kind === 'question' ? 'questions' : 'Community');

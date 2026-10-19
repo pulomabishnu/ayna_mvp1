@@ -966,6 +966,7 @@ export default function MobileApp() {
         seedKind={communitySeed?.kind}
         seedProductId={communitySeed?.productId}
         seedPlaylistId={communitySeed?.playlistId}
+        seedPostId={communitySeed?.postId}
         onGoBrowse={() => { setBrowseQuery(''); setScreen('browse'); }}
         initialSearch={screen === 'browse' ? browseQuery : ''}
         onGoLibrary={() => setScreen('library')}
@@ -1050,6 +1051,7 @@ export default function MobileApp() {
             isOmitted={!!omittedProducts[overlay.item?.id]}
             onToggleOmit={() => handleToggleOmit(overlay.item)}
             matchOpts={matchOpts}
+            onOpenReview={(postId) => { setCommunitySeed({ postId, token: Date.now() }); setOverlay(null); setScreen('community'); }}
             onCommunityAction={(kind) => {
               if (!authUser && ['review', 'playlist', 'recommend'].includes(kind)) {
                 const productId = overlay.item?.id;

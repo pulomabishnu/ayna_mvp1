@@ -15,6 +15,7 @@ import { formatPrice } from '../../utils/formatPrice.js';
 import { getPricePerUnitLabel } from '../../utils/pricePerUnit.js';
 import { whyMatch, confidenceNotes, exclusionLines, isClaimBlocked, MIN_BADGE_SCORE } from '../../utils/matchDisplay.js';
 import { planGlossaryTerms } from '../glossary.js';
+import { getAynaRatingCount } from '../aynaReviews.js';
 
 /** No em dashes in anything we show; some catalog copy still has them. */
 export function noDash(text) {
@@ -272,7 +273,7 @@ export function buildProductSections(product, ctx = {}) {
 
   // 9. What people say (never overstated, spec 27)
   const reviews = (aynaData?.reviews || []).map((r) => clean(r?.text)).filter(Boolean).slice(0, 3);
-  const ratingCount = Array.isArray(aynaData?.ratings) ? aynaData.ratings.length : 0;
+  const ratingCount = getAynaRatingCount(aynaData);
   push('people', 'What people say', [
     aynaRating != null ? { type: 'facts', rows: [{ label: 'ayna members', value: `★ ${aynaRating.toFixed(1)} from ${countLabel(ratingCount, 'rating')}` }] } : null,
     reviews.length ? { type: 'reviews', items: reviews } : null,

@@ -26,6 +26,7 @@ import Announcements from './community/Announcements.jsx';
 import { listAnnouncements } from '../utils/community/announcementsStore.js';
 import { breaksCommunityRules } from '../utils/communityRules.js';
 import { markPerf } from '../utils/perfTimings';
+import { normalizeRating, ratingLabel } from '../utils/community/reviewRatings.js';
 import './WebCommunity.css';
 import '../styles/audit-community.css';
 import '../styles/verify-content.css';
@@ -87,8 +88,8 @@ function Star({ on, size = 18 }) {
   return <svg className={`wc-star${on ? ' is-on' : ''}`} width={size} height={size} viewBox="0 0 24 24" aria-hidden="true"><path d={STAR_PATH} fill={on ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>;
 }
 function Stars({ value = 0, size = 18 }) {
-  const n = Math.max(0, Math.min(5, Number(value) || 0));
-  return <span className="wc-stars" role="img" aria-label={`Rated ${n} out of 5`}>{[1, 2, 3, 4, 5].map((i) => <Star key={i} on={i <= n} size={size} />)}</span>;
+  const n = normalizeRating(value);
+  return <span className="wc-stars" role="img" aria-label={ratingLabel(n)} data-rating={n}>{[1, 2, 3, 4, 5].map((i) => <Star key={i} on={i <= n} size={size} />)}</span>;
 }
 function Check({ checked, onChange, children }) {
   return <label className="wc-check">
@@ -199,7 +200,7 @@ function Sheet({ title, onClose, children, className = '' }) {
   </div></div>, host);
 }
 
-export default function WebCommunity({ user, products = [], quizResults = null, myProducts = null, onOpenProduct, onOpenArticle, onRequireAuth, seedKind = null, seedProductId = null, initialProfileHandle = null, onProfileChange, initialPostId = null, onPostChange, composeOnly = false, onDone }) {
+export default function WebCommunity({ user, products = [], quizResults = null, myProducts = null, onOpenProduct, onOpenArticle, onRequireAuth, seedKind = null, seedProductId = null, seedRating = null, initialProfileHandle = null, onProfileChange, initialPostId = null, onPostChange, composeOnly = false, onDone }) {
   const supabase = user ? getSupabaseClient() : (getGuestClient() || getSupabaseClient());
   const productsById = useMemo(() => new Map(products.map((p) => [String(p.id), p])), [products]);
   // ?tab=announcements (links from emails) opens that feed.
@@ -224,7 +225,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const [body, setBody] = useState('');
   const [productId, setProductId] = useState(seedProductId);
   const [anonymous, setAnonymous] = useState(false);
-  const [rating, setRating] = useState(null);
+  const [rating, setRating] = useState(() => normalizeRating(seedRating) || null);
   const [playlistTitle, setPlaylistTitle] = useState('');
   const [playlistVisibility, setPlaylistVisibility] = useState('public');
   const [coverColor, setCoverColor] = useState(COVER_COLORS[0]);
@@ -267,6 +268,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [editPost, setEditPost] = useState(null);
   const [editBody, setEditBody] = useState('');
+  const [editRating, setEditRating] = useState(0);
   const [notifications, setNotifications] = useState(null);
   const [showUpdates, setShowUpdates] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -715,7 +717,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         <div className="wc-menu-wrap">
           <button type="button" className="wc-more" aria-label={`More options for ${name}'s post`} aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => setMenuId(menuOpen ? null : post.id)}><Icon name="more" size={18} /></button>
           {menuOpen && <div className="wc-menu" role="menu">
-            {post.is_mine && user && <button type="button" role="menuitem" onClick={() => { setMenuId(null); setEditPost(post); setEditBody(post.body || ''); }}>Edit post</button>}
+            {post.is_mine && user && <button type="button" role="menuitem" onClick={() => { setMenuId(null); setEditPost(post); setEditBody(post.body || ''); setEditRating(normalizeRating(post.rating)); }}>{post.kind === 'review' ? 'Edit review' : 'Edit post'}</button>}
             <button type="button" role="menuitem" onClick={() => { setMenuId(null); if (post.is_mine) setDeleteTarget(post); else setReportPost(post); }}>{post.is_mine ? 'Delete post' : 'Report post'}</button>
           </div>}
         </div>
@@ -1117,15 +1119,23 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         {user && p.user_id !== user.id && (followingIds.includes(p.user_id) ? <span className="wc-rel-state">✓ Following</span> : <button type="button" className="wc-btn is-small" onClick={() => toggleFollow(p.user_id)}>{peopleList.title === 'Followers' ? 'Follow back' : 'Follow'}</button>)}
       </li>)}</ul>}
     </Sheet>}
-    {editPost && <Sheet title="Edit post" onClose={() => setEditPost(null)}>
-      <RuleField autoGrow minRows={4} value={editBody} maxLength={POST_MAX} onChange={(e) => setEditBody(e.target.value)} onShowRules={openRules} />
-      <div className="wc-compose-foot"><button type="button" className="wc-btn" disabled={busy || !editBody.trim() || breaksCommunityRules(editBody)} onClick={async () => {
+    {editPost && <Sheet title={editPost.kind === 'review' ? 'Edit review' : 'Edit post'} onClose={() => setEditPost(null)}>
+      {editPost.kind === 'review' && <section className="wc-group">
+        <h3 className="wc-label" id="wc-edit-rating-label">Your rating</h3>
+        <div className="wc-rating" role="radiogroup" aria-labelledby="wc-edit-rating-label">{[1, 2, 3, 4, 5].map((n) => <button type="button" key={n} role="radio" aria-checked={editRating === n} aria-label={`${n} ${n === 1 ? 'star' : 'stars'}`} className={editRating && n <= editRating ? 'is-on' : ''} onClick={() => setEditRating(n)}><Star on={Boolean(editRating) && n <= editRating} size={28} /></button>)}</div>
+      </section>}
+      <RuleField autoGrow minRows={4} value={editBody} maxLength={POST_MAX} onChange={(e) => setEditBody(e.target.value)} onShowRules={openRules} aria-label={editPost.kind === 'review' ? 'Your review' : 'Your post'} />
+      <div className="wc-compose-foot"><button type="button" className="wc-btn" disabled={busy || !editBody.trim() || breaksCommunityRules(editBody) || (editPost.kind === 'review' && !normalizeRating(editRating))} onClick={async () => {
         setBusy(true);
         try {
-          await community.updatePostBody(supabase, editPost.id, editBody.trim());
-          setPosts((prev) => prev.map((p) => (p.id === editPost.id ? { ...p, body: editBody.trim() } : p)));
-          if (details?.id === editPost.id) setDetails((d) => ({ ...d, body: editBody.trim() }));
-          setEditPost(null); toast('Post updated');
+          const isReview = editPost.kind === 'review';
+          const patch = { body: editBody.trim(), ...(isReview ? { rating: normalizeRating(editRating) } : {}) };
+          await community.updatePost(supabase, editPost.id, patch);
+          const apply = (p) => (p.id === editPost.id ? { ...p, ...patch, edited_at: new Date().toISOString() } : p);
+          setPosts((prev) => prev.map(apply));
+          setProfilePosts((prev) => prev.map(apply));
+          if (details?.id === editPost.id) setDetails((d) => apply(d));
+          setEditPost(null); toast(isReview ? 'Review updated' : 'Post updated');
         } catch (e) { notifyError(e); } finally { setBusy(false); }
       }}>{busy ? 'Saving…' : 'Save changes'}</button></div>
     </Sheet>}

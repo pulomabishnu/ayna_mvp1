@@ -90,13 +90,30 @@ export function addReview(productId, text) {
 }
 
 /**
+ * How many reviews the average below is built from. Live community stats
+ * carry `count`; the older { ratings: [] } shape counts its array.
+ * @param {{ ratings?: number[], count?: number } | null | undefined} aynaData
+ * @returns {number}
+ */
+export function getAynaRatingCount(aynaData) {
+  if (aynaData && Number.isFinite(Number(aynaData.count)) && aynaData.count != null) return Math.max(0, Number(aynaData.count));
+  return Array.isArray(aynaData?.ratings) ? aynaData.ratings.length : 0;
+}
+
+/**
  * Get the Ayna-computed rating for a product, or null if no Ayna ratings.
+ * Prefers the live community average (`average` + `count`, see
+ * utils/community/reviewRatings.js); falls back to averaging `ratings`.
  * Falls back to product.userRating when displaying; this function returns only Ayna-derived rating.
  * @param {object} product
- * @param {{ ratings?: number[], reviews?: object[] } | null | undefined} aynaData
+ * @param {{ ratings?: number[], reviews?: object[], average?: number|null, count?: number } | null | undefined} aynaData
  * @returns {number | null}
  */
 export function getAynaRating(product, aynaData) {
+  if (aynaData && aynaData.count != null) {
+    const avg = Number(aynaData.average);
+    return Number(aynaData.count) > 0 && Number.isFinite(avg) ? avg : null;
+  }
   const ratings = aynaData?.ratings;
   if (!ratings || !Array.isArray(ratings) || ratings.length === 0) return null;
   const sum = ratings.reduce((a, b) => a + Number(b), 0);

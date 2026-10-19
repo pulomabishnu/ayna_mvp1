@@ -23,7 +23,7 @@
 .am-stars button { width: 40px; height: 40px; display: grid; place-items: center; padding: 0; border: 0; background: none; cursor: pointer; transition: transform .2s var(--ay-pop); }
 .am-stars button:active { transform: scale(.85); }
 .am-stars svg { width: 28px; height: 28px; fill: var(--ay-paper); stroke: var(--ay-ink); stroke-width: 1.6; stroke-linejoin: round; transition: fill .15s; }
-.am-stars button.is-on svg { fill: var(--ay-butter); }
+.am-stars button.is-on svg { fill: var(--ay-ink); }
 
 /* Audience picker: card radios instead of browser radios */
 .ayna-mobile .am-audience { display: grid; gap: 8px; margin: 0; padding: 0; border: 0; }

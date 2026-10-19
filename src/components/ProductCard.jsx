@@ -5,6 +5,7 @@ import { formatPrice } from '../utils/formatPrice';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import MatchPill from './MatchPill';
 import { displayName } from '../mobile/utils/displayName.js';
+import { requestProductTab, formatAverage } from '../utils/community/reviewRatings.js';
 import { brandOf } from '../mobile/data/brandFallback.js';
 import '../styles/match-ui.css';
 import '../styles/verify-content.css';
@@ -54,6 +55,8 @@ export default function ProductCard({
           onClick: (e) => {
             if (!isPlainLeftClick(e)) return;
             e.preventDefault();
+            // The star line is the way to the reviews: the page opens on Reviews.
+            if (e.target?.closest?.('.ay-card-trust__rating')) requestProductTab('reviews');
             onOpen?.(product);
           },
         })}
@@ -88,8 +91,7 @@ export default function ProductCard({
             if (!hasRating) return null;
             return (
               <span className="ay-card-trust">
-                {hasRating && <span className="ay-card-trust__rating"><span aria-hidden="true">★</span> {rating.value.toFixed(1)} · {rating.count} review{rating.count === 1 ? '' : 's'}</span>}
-                
+                {hasRating && <span className="ay-card-trust__rating is-link" data-reviews-link="true"><span aria-hidden="true">★</span> <span className="sr-only">Rated </span>{formatAverage(rating.value)}<span className="sr-only"> out of 5</span> · <u>{rating.count} review{rating.count === 1 ? '' : 's'}</u></span>}
               </span>
             );
           })()}

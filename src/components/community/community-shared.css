@@ -212,3 +212,18 @@ button.cr-ann-name:hover { text-decoration: underline; text-underline-offset: 3p
 [data-theme='brand-dark'] .cr-rte__box.is-empty::before { color: rgba(255, 237, 172, .55); }
 [data-theme='brand-dark'] .cr-fmt__btn { background: transparent; color: #ffedac; border-color: #ffedac; }
 [data-theme='brand-dark'] .cr-fmt__btn[aria-pressed="true"] { background: #ffedac; color: #3e2723; }
+
+/* Review stars (RatingStars.jsx): filled stars are ink, so they read on any card. */
+.cr-stars { display: inline-flex; align-items: center; gap: 2px; color: var(--ay-ink, #3e2723); line-height: 1; }
+.cr-stars svg { display: block; flex: none; }
+.cr-rating-picker { display: flex; gap: 4px; color: var(--ay-ink, #3e2723); }
+.cr-rating-picker button { width: 40px; height: 40px; display: grid; place-items: center; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
+.cr-rating-picker button:focus-visible { outline: 2px solid #769ebe; outline-offset: 2px; border-radius: 8px; }
+.cr-review-link { display: inline-flex; align-items: center; gap: 6px; padding: 0; border: 0; background: none; color: var(--ay-ink, #3e2723); font: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.cr-product-reviews { display: grid; gap: 10px; margin: 8px 0 12px; padding: 0; list-style: none; }
+.cr-product-reviews li { display: grid; gap: 4px; padding: 10px 12px; border: 1.5px solid var(--ay-ink, #3e2723); border-radius: 14px; }
+.cr-product-reviews li > button, .cr-product-reviews li > a { display: grid; gap: 4px; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; text-decoration: none; cursor: pointer; }
+.cr-product-reviews p { margin: 0; overflow-wrap: anywhere; }
+.cr-product-reviews small { opacity: .75; }
+.ay-pdp-reviews__sum { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+.ay-card-trust__rating.is-link u { text-underline-offset: 2px; }
