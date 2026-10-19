@@ -325,6 +325,10 @@ function NotFoundState({ title, subtitle, ctaLabel, onCta, onSearch, searchPlace
         </form>
       )}
       <button type="button" className={onSearch ? 'ay-404__alt' : 'btn btn-navy'} onClick={onCta}>{ctaLabel}</button>
+      {/* Tear-off tabs along the bottom of the lost-and-found poster: one address per tab. */}
+      <div className="ay-404__tabs" aria-hidden="true">
+        {Array.from({ length: 6 }, (_, i) => <span key={i}><i>aynahealth.co</i></span>)}
+      </div>
     </div>
   );
 }
