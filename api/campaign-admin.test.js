@@ -21,6 +21,15 @@ describe('api/campaign-admin', () => {
     expect(res.statusCode).toBe(403);
   });
 
+  it('the campaign team (CAMPAIGN_TEAM_EMAIL) can open it too', async () => {
+    const { isAdminEmail } = await import('./_campaign.js');
+    vi.stubEnv('ADMIN_EMAILS', 'team@aynahealth.co');
+    vi.stubEnv('CAMPAIGN_TEAM_EMAIL', 'a@aynahealth.co, B@aynahealth.co');
+    expect(isAdminEmail('b@aynahealth.co')).toBe(true);
+    expect(isAdminEmail('team@aynahealth.co')).toBe(true);
+    expect(isAdminEmail('x@aynahealth.co')).toBe(false);
+  });
+
   it('403 for everyone when ADMIN_EMAILS is not set', async () => {
     vi.stubEnv('ADMIN_EMAILS', '');
     verifyUser.mockResolvedValue({ user: { id: 'u', email: 'team@aynahealth.co' }, error: null, admin: mockSupabase() });

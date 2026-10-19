@@ -19,10 +19,14 @@ export function setPrivateHeaders(res) {
   res.setHeader('X-Content-Type-Options', 'nosniff');
 }
 
-/** Same rule as api/reviews-admin.js: ADMIN_EMAILS allowlist, empty means nobody. */
+/**
+ * Who can open /admin/campaign: the site's ADMIN_EMAILS allowlist (same as
+ * api/reviews-admin.js) plus the campaign team in CAMPAIGN_TEAM_EMAIL, who
+ * also get the claim and shipping alerts. Both empty means nobody.
+ */
 export function isAdminEmail(email) {
   if (!email) return false;
-  const allow = String(process.env.ADMIN_EMAILS || '')
+  const allow = `${process.env.ADMIN_EMAILS || ''},${process.env.CAMPAIGN_TEAM_EMAIL || ''}`
     .split(',')
     .map((e) => e.trim().toLowerCase())
     .filter(Boolean);
