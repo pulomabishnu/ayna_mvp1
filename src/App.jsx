@@ -47,6 +47,8 @@ const Recalls = lazyView(() => import('./components/Recalls'));
 // how this file computes recommendations.
 const BrandPartners = React.lazy(() => import('./components/BrandPartners'));
 const MyEcosystem = React.lazy(() => import('./components/MyEcosystem'));
+const RedoQuizDialog = React.lazy(() => import('./components/RedoQuizDialog'));
+const NewForYouPanel = React.lazy(() => import('./components/NewForYouPanel'));
 const Discovery = React.lazy(() => import('./components/Discovery'));
 const Articles = React.lazy(() => import('./components/Articles'));
 // Internal, read-only product passport audit (dev, or ?internal=1 opt-in).
@@ -92,6 +94,8 @@ import { identifyAccount } from './utils/analyticsIdentity';
 import { tagInternalUserIfNeeded } from './utils/posthogInternal';
 import { productHref, productRouteKey, parseProductIdFromPath } from './utils/productRoute';
 import { INTAKE_DRAFT_KEY, getIntakeSteps, reconstructIntakeFromSnapshot } from './mobile/data/intakeModel';
+import { clearRoutine } from './mobile/hooks/useRoutine';
+import { REDO_KEEP, addWithoutRemoving, addedHealthSources, productsNotInEcosystem } from './utils/quizRedo';
 import './styles/flow.css';
 import './styles/web-neon-dark.css';
 import './styles/web-density.css';
@@ -577,6 +581,12 @@ function App() {
   // Bumped by "Build your ecosystem" in the sign-in modal so the quiz restarts
   // (with its intro) even when the modal opened on top of the quiz itself.
   const [quizRun, setQuizRun] = useState(0);
+  // Redo quiz: the choice dialog, which choice she made (read when the quiz
+  // finishes), and the "New for you" panel on the Ecosystem page.
+  const [redoDialog, setRedoDialog] = useState(null); // { step: 'choose' | 'confirm', key }
+  const [redoBusy, setRedoBusy] = useState(false);
+  const redoModeRef = useRef(null);
+  const [newForYou, setNewForYou] = useState(null); // { kind: 'added' | 'suggested', products, sources }
   const [askOpenSignal, setAskOpenSignal] = useState(0);
   const [askPrefill, setAskPrefill] = useState('');
   // Opens Ask ayna, optionally with a question typed in (Shop's empty state).
@@ -1290,29 +1300,55 @@ function App() {
   };
 
   const handleStartQuiz = () => setCurrentView('quiz');
-  // Redo the quiz from the first question (not a resumed draft).
-  const handleRedoQuiz = () => { setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); };
-  // Same reset as the app: clears her Ecosystem, its tracking and her quiz
-  // answers after she confirms. Saved products, check-ins and the account stay.
-  const handleResetEcosystem = async () => {
-    if (!user?.id) return;
-    if (!window.confirm('Reset your Ecosystem? This clears your Ecosystem, its product tracking and your quiz answers. Saved products, check-ins and your account stay.')) return;
+  // Start the quiz from the first question (not a resumed draft).
+  const startQuizFromTop = () => { setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); };
+  // Redo quiz: with products in her Ecosystem she chooses first (keep and add,
+  // or start fresh behind a second warning). With none there is nothing to keep.
+  const handleRedoQuiz = () => {
+    if (!Object.keys(myProductsRef.current || {}).length) { redoModeRef.current = null; startQuizFromTop(); return; }
+    setRedoDialog({ step: 'choose', key: Date.now() });
+  };
+  const handleRedoKeep = () => {
+    redoModeRef.current = REDO_KEEP;
+    setRedoDialog(null);
+    setNewForYou(null);
+    posthog.capture('quiz_redo_chosen', { choice: 'keep', productCount: Object.keys(myProductsRef.current || {}).length });
+    startQuizFromTop();
+  };
+  // Start fresh: clears her Ecosystem, its tracking (recalls, hidden picks),
+  // her routine spots and her quiz answers. Saved products, check-ins, reviews,
+  // posts and the account stay. Same reset the app does.
+  const handleRedoFresh = async () => {
+    if (!user?.id || redoBusy) return;
+    setRedoBusy(true);
     const supabase = getSupabaseClient();
     try {
       if (supabase) await clearEcosystemForUser(supabase, user.id, { includeTracking: true });
       await clearHealthIntakeForCurrentUser();
     } catch (e) {
+      setRedoBusy(false);
       reportSaveFailure('Could not reset your ecosystem', e);
       return;
     }
     forgetSharedIntake();
     try { localStorage.removeItem(INTAKE_DRAFT_KEY); } catch { /* storage blocked */ }
+    clearRoutine();
+    posthog.capture('quiz_redo_chosen', { choice: 'fresh', productCount: Object.keys(myProductsRef.current || {}).length });
     setMyProducts({});
     setTrackedProducts({});
     setOmittedProducts({});
     setQuizResults(null);
-    toast('Your Ecosystem is reset.');
-    handleRedoQuiz();
+    setNewForYou(null);
+    setRedoBusy(false);
+    setRedoDialog(null);
+    redoModeRef.current = null;
+    toast('Your Ecosystem is cleared. Let’s build a new one.');
+    startQuizFromTop();
+  };
+  // "Reset my ecosystem" in the More menu: straight to the same warning.
+  const handleResetEcosystem = () => {
+    if (!user?.id) return;
+    setRedoDialog({ step: 'confirm', key: Date.now() });
   };
   const handleOpenHealthProfileEditor = () => setCurrentView('profile-edit');
   // Leave the profile editor without saving anything (the editor only writes
@@ -1458,6 +1494,37 @@ function App() {
     // Tagged so a later AI rebuild can tell these generated picks apart from
     // products she added herself (handleBuildEcosystemFromLlm).
     const instantProducts = Object.fromEntries(Object.entries(mergedProducts || {}).map(([id, product]) => [id, { ...product, intakeGenerated: true }]));
+    if (redoModeRef.current === REDO_KEEP) {
+      // "Keep my products and add new ones": nothing is removed or replaced,
+      // and no AI rebuild runs (it would replace ayna's earlier picks). Only
+      // matches she does not already have (or hid) are added.
+      redoModeRef.current = null;
+      const additions = productsNotInEcosystem(Object.values(instantProducts), myProductsRef.current, omittedProducts);
+      setMyProducts((prev) => addWithoutRemoving(prev, additions));
+      setEcosystemOrder((prev) => [...prev, ...additions.map((p) => p.id).filter((id) => !prev.includes(id))]);
+      clearCachedLlmRecommendations();
+      setNewForYou(additions.length ? { kind: 'added', products: additions } : null);
+      toast(additions.length
+        ? `${additions.length} new product${additions.length === 1 ? '' : 's'} added. Everything you had stayed.`
+        : 'No new matches this time. Everything you had stayed.');
+      const supabase = getSupabaseClient();
+      if (supabase && additions.length) {
+        seedSavePromiseRef.current = seedSavePromiseRef.current
+          .then(() => upsertProductsBatch(supabase, user.id, additions, { inEcosystem: true, isTracked: false, isOmitted: false }))
+          .then((result) => { if (result?.synced === false) reportSaveFailure('Could not save your ecosystem', new Error('The server did not accept the product update.')); })
+          .catch((e) => reportSaveFailure('Could not save your ecosystem', e));
+      }
+      posthog.capture('intake_completed', {
+        redo: 'keep',
+        added: additions.length,
+        concernsCount: Array.isArray(completedResults.primaryConcerns) ? completedResults.primaryConcerns.length : 0,
+        conditionsCount: Array.isArray(completedResults.conditions) ? completedResults.conditions.length : 0,
+      });
+      setCurrentView('ecosystem');
+      setShowWrapped(true);
+      return;
+    }
+    redoModeRef.current = null;
     // Her own products stay on her shelves; only ayna's earlier picks are replaced.
     setMyProducts(prev => ({ ...instantProducts, ...Object.fromEntries(Object.entries(prev || {}).filter(([, p]) => p && !isGeneratedPick(p))) }));
     setEcosystemOrder(prev => [...Object.keys(instantProducts), ...prev.filter(id => !instantProducts[id] && myProductsRef.current[id] && !isGeneratedPick(myProductsRef.current[id]))]);
@@ -1524,6 +1591,24 @@ function App() {
       }).catch(e => reportSaveFailure('Could not save your ecosystem', e));
     }
     setCurrentView('ecosystem');
+  };
+
+  // Health data (Apple Health, Google Fit, records, a wearable summary) just
+  // connected after she took the quiz: offer matches she does not have yet.
+  // Offered only, never added for her.
+  const handleHealthDataUpdate = (next) => {
+    const sources = addedHealthSources(healthProfile, next);
+    updateHealthProfile(next);
+    if (!sources.length || !quizResults || !user) return;
+    let suggestions = [];
+    try {
+      const { mergedProducts } = getEcosystemSeedFromQuiz(quizResults, next);
+      suggestions = productsNotInEcosystem(Object.values(mergedProducts || {}), myProductsRef.current, omittedProducts);
+    } catch { /* matching failed: nothing to offer */ }
+    if (!suggestions.length) return;
+    setNewForYou({ kind: 'suggested', products: suggestions, sources });
+    posthog.capture('health_data_new_recommendations', { count: suggestions.length, sources });
+    toast(`${suggestions.length} new product${suggestions.length === 1 ? '' : 's'} recommended for you. See your Ecosystem.`);
   };
 
   const handleSwapEcosystemSeedProduct = (oldProductId, newProduct) => {
@@ -2159,6 +2244,21 @@ function App() {
             }}
           />
         )}
+        {redoDialog && (
+          <Suspense fallback={null}>
+            <RedoQuizDialog
+              key={redoDialog.key}
+              open
+              step={redoDialog.step}
+              productCount={Object.keys(myProducts).length}
+              trackedCount={Object.keys(trackedProducts).length}
+              busy={redoBusy}
+              onKeep={handleRedoKeep}
+              onFresh={handleRedoFresh}
+              onClose={() => setRedoDialog(null)}
+            />
+          </Suspense>
+        )}
         {showWrapped && (
           <WebWrapped
             products={Object.values(myProducts || {})}
@@ -2257,7 +2357,7 @@ function App() {
         {currentView === 'recommendations' && (
           <Recommendations
             results={quizResults}
-            onRetake={handleStartQuiz}
+            onRetake={quizResults ? handleRedoQuiz : handleStartQuiz}
             trackedProducts={trackedProducts}
             toggleTrackProduct={toggleTrackProduct}
             myProducts={myProducts}
@@ -2283,7 +2383,7 @@ function App() {
             onOpenProduct={handleOpenProduct}
             omittedProducts={omittedProducts}
             onViewOmitted={handleViewOmitted}
-            onHealthProfileUpdate={updateHealthProfile}
+            onHealthProfileUpdate={handleHealthDataUpdate}
             healthProfile={healthProfile}
             onEditHealthProfile={handleOpenHealthProfileEditor}
           />
@@ -2415,8 +2515,22 @@ function App() {
             ecosystemSeedMeta={ecosystemSeedMeta}
             onSwapSeedProduct={handleSwapEcosystemSeedProduct}
             onGoToSearch={(queryOrOptions) => handleViewDiscovery(queryOrOptions || '')}
-            onHealthProfileUpdate={updateHealthProfile}
+            onHealthProfileUpdate={handleHealthDataUpdate}
             onViewRecommendedArticles={handleViewArticles}
+            newForYouSlot={newForYou && (
+              <Suspense fallback={null}>
+                <NewForYouPanel
+                  kind={newForYou.kind}
+                  products={newForYou.products}
+                  sources={newForYou.sources}
+                  myProducts={myProducts}
+                  onOpenProduct={handleOpenProduct}
+                  onAdd={(p) => { if (!myProductsRef.current[p.id]) toggleMyProduct(p); }}
+                  onAddAll={(list) => list.forEach((p) => { if (!myProductsRef.current[p.id]) toggleMyProduct(p); })}
+                  onDismiss={() => setNewForYou(null)}
+                />
+              </Suspense>
+            )}
             onOpenArticle={(articleId) => {
               setSelectedArticleId(articleId);
               setCurrentView('articles');

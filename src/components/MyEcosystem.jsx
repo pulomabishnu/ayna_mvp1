@@ -931,6 +931,8 @@ function estimateMonthlyCost(priceStr, product) {
 
 export default function MyEcosystem({
     savedSlot = null,
+    // "New for you" after a keep-and-add redo, or new picks after connecting health data (App.jsx).
+    newForYouSlot = null,
     myProducts,
     ecosystemOrder = [],
     onToggleProduct,
@@ -2050,6 +2052,8 @@ export default function MyEcosystem({
                         </details>
                     </div>
                 </header>
+
+                {newForYouSlot}
 
                 {careFirst && (
                     <section className="eco3-carefirst" aria-labelledby="eco3-carefirst-title">

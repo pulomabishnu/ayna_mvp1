@@ -46,6 +46,8 @@ import NewAccountStart from '../components/NewAccountStart.jsx';
 import { markOAuthSource, takeOAuthSource, shouldOfferEcosystemStart } from '../utils/oauthNewAccount.js';
 import EcosystemScreen from './screens/EcosystemScreen.jsx';
 import EcosystemResetDialog from './components/EcosystemResetDialog.jsx';
+import { clearRoutine } from './hooks/useRoutine.js';
+import { appendWithoutRemoving, productsNotInEcosystem } from '../utils/quizRedo.js';
 import SavedScreen from './screens/SavedScreen.jsx';
 import WhyMatchScreen from './screens/WhyMatchScreen.jsx';
 import LibraryScreen from './screens/LibraryScreen.jsx';
@@ -203,6 +205,8 @@ export default function MobileApp() {
   const [intakeMode, setIntakeMode] = useState('new');
   const [ecosystemNotice, setEcosystemNotice] = useState('');
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
+  // 'choose' = Redo quiz (keep and add, or start fresh); 'confirm' = Reset Ecosystem.
+  const [resetDialogStep, setResetDialogStep] = useState('confirm');
   const [resettingEcosystem, setResettingEcosystem] = useState(false);
   const [authMode, setAuthMode] = useState('signup');
   const [authPrompt, setAuthPrompt] = useState(null);
@@ -609,14 +613,16 @@ export default function MobileApp() {
       await clearHealthIntakeForCurrentUser();
       pendingQuizEcosystemRef.current = null;
       ecosystemFlagsRef.current = { trackedProducts: {}, omittedProducts: {} };
-      updateSession({ myProducts: [], lastQuizAnswers: null, hasEcosystem: false, pendingIntakeSync: false });
+      updateSession({ myProducts: [], lastQuizAnswers: null, hasEcosystem: false, pendingIntakeSync: false, omittedProducts: {} });
+      clearRoutine();
       setEcosystemNotice('');
       try { localStorage.removeItem('ayna_intake_draft_v1'); } catch { /* storage unavailable */ }
       setHasIntakeDraft(false);
       setIntakeMode('new');
       setEditingHealthProfile(false);
       setResetDialogOpen(false);
-      setScreen('ecointro');
+      // Start fresh from Redo quiz goes straight into the quiz.
+      setScreen(resetDialogStep === 'choose' ? 'quiz' : 'ecointro');
     } finally {
       setResettingEcosystem(false);
     }
@@ -663,16 +669,22 @@ export default function MobileApp() {
       }
       setScreen(screen === 'quiz' ? (hasEcosystem ? 'eco' : 'ecointro') : screen === 'ecointro' ? 'landing' : screen === 'eco' ? 'browse' : hasEcosystem ? 'eco' : 'landing');
     },
-    onRetake: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
-    onRequestEcosystemReset: () => setResetDialogOpen(true),
+    // Redo quiz: with products in her Ecosystem she chooses first.
+    onRetake: () => {
+      if (!myProducts.length) { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); return; }
+      setResetDialogStep('choose');
+      setResetDialogOpen(true);
+    },
+    onRequestEcosystemReset: () => { setResetDialogStep('confirm'); setResetDialogOpen(true); },
     onUpdateHealth: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
     onEditProfile: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
     onComplete: (quizAnswers) => {
       const seededProducts = seedEcosystemFromAnswers(quizAnswers, behaviorFrom({ omitted: omittedProducts }));
+      // Keep my products and add new ones: nothing she has is removed; only
+      // matches she does not have (and did not hide) are added.
       const existingProducts = intakeMode === 'add' ? myProducts : [];
-      const existingIds = new Set(existingProducts.map((product) => product.id));
-      const addedProducts = seededProducts.filter((product) => !existingIds.has(product.id));
-      const nextProducts = [...existingProducts, ...addedProducts];
+      const addedProducts = productsNotInEcosystem(seededProducts, existingProducts, intakeMode === 'add' ? omittedProducts : {});
+      const nextProducts = appendWithoutRemoving(existingProducts, addedProducts);
 
       updateSession({
         myProducts: nextProducts,
@@ -838,7 +850,17 @@ export default function MobileApp() {
         onLibrary={() => { setAskAynaOpen(false); setOverlay(null); setScreen('library'); }}
         onProfile={() => { setAskAynaOpen(false); openProfile(); }}
       />}
-      <EcosystemResetDialog open={resetDialogOpen} busy={resettingEcosystem} onCancel={() => setResetDialogOpen(false)} onConfirm={handleResetEcosystem} />
+      <EcosystemResetDialog
+        key={`${resetDialogStep}-${resetDialogOpen}`}
+        open={resetDialogOpen}
+        busy={resettingEcosystem}
+        step={resetDialogStep}
+        productCount={myProducts.length}
+        trackedCount={Object.keys(ecosystemFlagsRef.current.trackedProducts || {}).length}
+        onCancel={() => setResetDialogOpen(false)}
+        onConfirm={handleResetEcosystem}
+        onKeep={() => { setResetDialogOpen(false); setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); }}
+      />
       {(overlay?.type === 'profile-auth' || authPrompt) && (
         <div className="ayna-profile-auth-backdrop" style={authPrompt ? { zIndex: 100, bottom: 0 } : undefined} onClick={() => { setOverlay(null); setAuthPrompt(null); authResumeRef.current = null; }}>
           <section className="ayna-profile-auth-sheet" role="dialog" aria-modal="true" aria-labelledby="ayna-profile-auth-title" onClick={(event) => event.stopPropagation()}>
