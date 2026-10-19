@@ -79,14 +79,17 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
 
   return (
     <div className="ayna-fresh-article" ref={scrollRef} onScroll={handleScroll} style={{ flex: 1, overflowY: 'auto', background: 'var(--ayna-bg)', animation: 'ay-page .25s ease-out' }}>
-      <div className={`ay-read-status${shown >= 1 ? ' is-done' : ''}`} role="progressbar" aria-label="Reading progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(shown * 100)}>
-        <span className="ay-read-status-bar"><i style={{ width: `${shown * 100}%` }} /></span>
-        <span className="ay-read-status-label">{shown >= 1 ? 'Finished' : shown > 0 ? `${Math.round(shown * 100)}% read` : `${readMinutes} min read`}</span>
+      {/* Progress and the back arrow stay on screen while she scrolls. */}
+      <div className="ay-read-sticky">
+        <div className={`ay-read-status${shown >= 1 ? ' is-done' : ''}`} role="progressbar" aria-label="Reading progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(shown * 100)}>
+          <span className="ay-read-status-bar"><i style={{ width: `${shown * 100}%` }} /></span>
+          <span className="ay-read-status-label">{shown >= 1 ? 'Finished' : shown > 0 ? `${Math.round(shown * 100)}% read` : `${readMinutes} min read`}</span>
+        </div>
+        <header className="ayna-detail-header">
+          <button type="button" aria-label="Back to reads" onClick={onBack}><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg></button>
+          <span className="ayna-read-meta">{tags[0] || 'Read'} · {readMinutes} min</span>
+        </header>
       </div>
-      <header className="ayna-detail-header">
-        <button type="button" aria-label="Back to reads" onClick={onBack}><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg></button>
-        <span className="ayna-read-meta">{tags[0] || 'Read'} · {readMinutes} min</span>
-      </header>
       {hasTeamCover(article) ? <div className="ayna-read-photo"><img src={image} alt="" /></div> : <div className="ay-app-readhero"><TopicCover id={article.id} title={title} className="ay-app-cover is-hero" /></div>}
       <div className="ayna-read-content">
         <h1 className="ay-read-title">{title}</h1>

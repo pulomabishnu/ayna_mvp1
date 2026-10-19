@@ -24,7 +24,7 @@ const LINK_STYLE = {
  * identically for mobile and desktop).
  *
  * Appears at the bottom of every mobile screen except Browse, which already
- * carries its own "ALL OTC · NOT A DIAGNOSIS" disclosure line.
+ * carries its own "Over-the-counter options. Not a diagnosis." line.
  *
  * variant="light" is for the handful of screens with a fixed dark gradient
  * background regardless of light/dark theme (Landing, Signin, the ecosystem

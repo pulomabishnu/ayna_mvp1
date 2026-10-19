@@ -20,8 +20,15 @@ export function formatPrice(item) {
   // Approximate prices: "~$20-35" -> "About $20–35"
   text = text.replace(/^~\s*/, 'About ');
 
+  // Several sizes ("$24.99 (50 mL) · $12.99 (trial size)"): the first is the
+  // main line, the others go to the second line whole (the old one-group
+  // match split them mid-parenthesis: "50 mL) · $12.99 (1.0 fl oz").
+  const sizes = text.split(/\s+·\s+/);
+  const moreSizes = sizes.length > 1 && /\$/.test(sizes[1]) ? sizes.slice(1).join(' · ') : '';
+  if (moreSizes) text = sizes[0];
+
   // Parenthetical detail -> second line
-  const paren = text.match(/^(.*?)\s*\((.+)\)\s*(.*)$/);
+  const paren = text.match(/^(.*?)\s*\(([^()]+)\)\s*(.*)$/);
   if (paren) {
     text = `${paren[1]} ${paren[3]}`.trim();
     sub = paren[2].replace(/,\s*/g, ' · ');
@@ -45,5 +52,6 @@ export function formatPrice(item) {
   if (/€/.test(text) && !/\$/.test(text)) sub = ['EU price', sub].filter(Boolean).join(' · ');
   if (/^free\b/i.test(text) && text.length > 4) { sub = [text.slice(4).trim(), sub].filter(Boolean).join(' · '); text = 'Free'; }
 
+  if (moreSizes) sub = [sub, moreSizes].filter(Boolean).join(' · ');
   return { main: text, sub };
 }

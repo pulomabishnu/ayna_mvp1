@@ -16,7 +16,8 @@ import { loadEcosystemForUser, upsertProductState, upsertProductsBatch, clearEco
 import { loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser, clearHealthIntakeForCurrentUser } from '../utils/healthIntakeStore.js';
 import { mapIntakeToLegacyQuizProfile } from '../utils/healthIntake.js';
 import { behaviorFrom } from '../utils/matchDisplay.js';
-import { ARTICLES, getArticlesByProfileRelevance } from '../components/Articles.jsx';
+import { ARTICLES } from '../components/Articles.jsx';
+import { rankReadsForProfile, readFitsStage } from './utils/personalReads.js';
 import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } from '../components/EcosystemBubbles.jsx';
 import { useSavedProducts } from './hooks/useSavedProducts.js';
 import { useThemeMode } from './hooks/useThemeMode.js';
@@ -972,10 +973,12 @@ export default function MobileApp() {
   };
 
   const showTabBar = !['landing', 'quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan'].includes(screen) && (!overlay || ['profile', 'profile-auth'].includes(overlay.type));
-  const rankedEcosystemReads = getArticlesByProfileRelevance(effectiveQuizAnswers || {}, null);
-  const ecosystemReads = (rankedEcosystemReads.length ? rankedEcosystemReads : ARTICLES)
+  // Reads ranked from her app answers (personalReads.js): matching reads
+  // first, reads for another life stage (e.g. menopause at 24) last.
+  const rankedEcosystemReads = rankReadsForProfile(ARTICLES, effectiveQuizAnswers);
+  const ecosystemReads = rankedEcosystemReads
     .filter((article) => !readArticleIds.includes(article.id))
-    .concat((rankedEcosystemReads.length ? rankedEcosystemReads : ARTICLES).filter((article) => readArticleIds.includes(article.id)))
+    .concat(rankedEcosystemReads.filter((article) => readArticleIds.includes(article.id)))
     .slice(0, 3);
   const activeTab = ['profile', 'profile-auth'].includes(overlay?.type) ? 'profile'
     : screen === 'browse' ? 'browse'
@@ -1121,7 +1124,7 @@ export default function MobileApp() {
             onBack={() => setOverlay(null)}
             savedProgress={readProgress[overlay.item.id] || 0}
             onProgress={(value) => recordReadProgress(overlay.item.id, value)}
-            nextRead={getNextArticle(overlay.item, ARTICLES, readArticleIds, getArticlesByProfileRelevance(effectiveQuizAnswers || {}, null))}
+            nextRead={getNextArticle(overlay.item, ARTICLES, readArticleIds, rankReadsForProfile(ARTICLES, effectiveQuizAnswers), (article) => readFitsStage(article, effectiveQuizAnswers))}
             onNext={(article) => {
               setReadArticleIds((ids) => ids.includes(article.id) ? ids : [...ids, article.id]);
               setOverlay({ type: 'article', item: article });

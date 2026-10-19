@@ -1,10 +1,13 @@
 import { ARTICLE_CATEGORIES } from '../data/articleRows.js';
 
-export function getNextArticle(current, articles, seenIds, suggestedArticles = []) {
+// fits(article): false for a read meant for a different life stage than
+// hers (personalReads.readFitsStage). Those are only offered last.
+export function getNextArticle(current, articles, seenIds, suggestedArticles = [], fits = () => true) {
   if (!current?.id || !Array.isArray(articles)) return null;
   const byId = new Map(articles.map((article) => [article.id, article]));
   const seen = new Set(seenIds);
   seen.add(current.id);
+  articles.forEach((article) => { if (!fits(article)) seen.add(article.id); });
 
   const topic = ARTICLE_CATEGORIES.find((category) => category.articleIds.includes(current.id));
   if (topic) {
@@ -17,6 +20,7 @@ export function getNextArticle(current, articles, seenIds, suggestedArticles = [
   const suggested = suggestedArticles.find((article) => byId.has(article.id) && !seen.has(article.id));
   if (suggested) return { article: byId.get(suggested.id), label: 'Suggested for you' };
 
-  const next = articles.find((article) => !seen.has(article.id));
+  const next = articles.find((article) => !seen.has(article.id))
+    || articles.find((article) => article.id !== current.id && !(seenIds || []).includes(article.id));
   return next ? { article: next, label: 'Keep reading' } : null;
 }

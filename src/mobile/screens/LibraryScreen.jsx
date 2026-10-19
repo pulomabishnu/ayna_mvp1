@@ -2,7 +2,7 @@ import { useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
 import SearchBar from '../components/SearchBar.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
-import { buildLibrary } from '../utils/personalReads.js';
+import { buildLibrary, hasQuizAnswers } from '../utils/personalReads.js';
 import SuggestBox from '../../components/SuggestBox.jsx';
 import SearchAssist from '../../components/search/SearchAssist.jsx';
 import { searchArticles } from '../../utils/search/index.js';
@@ -16,11 +16,14 @@ function ReadState({ value = 0 }) {
   </span>;
 }
 
-export default function LibraryScreen({ articles = [], quizAnswers = null, readProgress = {}, onOpenArticle, onOpenSaved, onStartQuiz }) {
+export default function LibraryScreen({ articles = [], quizAnswers = null, lastQuizAnswers = null, readProgress = {}, onOpenArticle, onOpenSaved, onStartQuiz }) {
   const [query, setQuery] = useState('');
   const [topic, setTopic] = useState('all');
   const q = query.trim().toLowerCase();
   const { forYou, rows, hasProfile } = buildLibrary(articles, quizAnswers);
+  // "Get reads for you" only for someone with no answers yet. With answers
+  // (or with personalization switched off) it must never restart the quiz.
+  const canAskForQuiz = !hasQuizAnswers(quizAnswers) && !hasQuizAnswers(lastQuizAnswers);
   const progressOf = (a) => readProgress[a.id] || 0;
   const finished = articles.filter((a) => progressOf(a) >= 1).length;
   const keepReading = articles.filter((a) => progressOf(a) > 0 && progressOf(a) < 1);
@@ -45,7 +48,7 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, readP
   } else {
     body = <>
       {row('keep', 'Keep reading', keepReading)}
-      {hasProfile ? row('foryou', 'For you', forYou) : onStartQuiz && <button type="button" className="ay-lib-match" onClick={onStartQuiz}>Get reads for you <span aria-hidden="true">→</span></button>}
+      {hasProfile ? row('foryou', 'For you', forYou) : canAskForQuiz && onStartQuiz && <button type="button" className="ay-lib-match" onClick={onStartQuiz}>Get reads for you <span aria-hidden="true">→</span></button>}
       {rows.map((r) => row(r.id, r.label, r.items))}
     </>;
   }

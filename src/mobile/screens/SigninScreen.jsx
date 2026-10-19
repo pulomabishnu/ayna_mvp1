@@ -61,6 +61,12 @@ const EmailIcon = (
     <path d="M4 7l8 6 8-6" />
   </svg>
 );
+const PersonIcon = (
+  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--ayna-border)" strokeWidth="1.75" strokeLinecap="round" style={{ flex: 'none' }} aria-hidden="true">
+    <circle cx="12" cy="8" r="4" />
+    <path d="M4.5 20a7.5 7.5 0 0 1 15 0" />
+  </svg>
+);
 const LockIcon = (
   <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--ayna-border)" strokeWidth="1.75" style={{ flex: 'none' }}>
     <rect x="5" y="11" width="14" height="9" rx="2.5" />
@@ -230,7 +236,6 @@ export default function SigninScreen({
     return () => window.removeEventListener('ayna:native-oauth-error', onOAuthError);
   }, []);
 
-  const initial = (firstName || '').trim().charAt(0).toUpperCase() || '?';
   const allConsented = checked.every(Boolean);
   const toggleCheck = (i) => setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v)));
 
@@ -400,15 +405,9 @@ export default function SigninScreen({
 
           <div className="ay-auth-form">
           {mode === 'signup' && (
-            <label className="ayna-fresh-auth-field" style={{ background: 'var(--ayna-surface)', borderRadius: 14, padding: '14px 16px', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ width: 42, height: 42, borderRadius: 99, background: '#F7BADD', color: 'var(--ayna-heading)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: "var(--ayna-font-display)", fontSize: 'calc(19px * var(--ayna-text-scale, 1))' }}>
-                {initial}
-              </div>
-              <div style={{ flex: 1 }}>
-                <span style={{ display: 'block', fontFamily: "var(--ayna-font-ui)", fontSize: 12, fontWeight: 700, color: 'var(--ayna-text-muted)' }}>First name</span>
-                <input type="text" autoComplete="given-name" placeholder="Your first name" value={firstName} onChange={(e) => setFirstName(e.target.value)} style={{ ...inputStyle, fontSize: 'calc(17px * var(--ayna-text-scale, 1))', fontWeight: 500 }} />
-              </div>
-            </label>
+            <Field label="First name" icon={PersonIcon}>
+              <input type="text" autoComplete="given-name" placeholder="Your first name" value={firstName} onChange={(e) => setFirstName(e.target.value)} style={inputStyle} />
+            </Field>
           )}
 
           <Field label="Email" icon={EmailIcon}>

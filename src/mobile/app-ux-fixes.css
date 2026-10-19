@@ -95,3 +95,128 @@
   overflow-wrap: break-word;
 }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { margin-bottom: 6px !important; }
+
+
+/* ── Oct 19 review pass ─────────────────────────────────────────────── */
+
+/* Bottom nav at 320px: "Ecosystem" and "Community" touched. Slightly smaller
+   labels on narrow phones leave a visible gap. */
+@media (max-width: 359px) {
+  .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button > span:last-child { font-size: 10px !important; letter-spacing: -.01em !important; }
+}
+
+/* Shop: chips scroll in their own row; the filter button sits beside it
+   (CategoryNav.jsx), so nothing slides underneath the button. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-shop-category-bar { display: flex !important; align-items: flex-start; gap: 8px; padding-right: var(--r-gutter, 20px); }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-shop-category-bar > .ayna-shop-category-row { flex: 1 1 auto !important; min-width: 0 !important; padding-right: 12px !important; -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 18px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 18px), transparent); }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-shop-category-bar > .ayna-shop-filter-toggle { flex: none !important; position: relative !important; inset: auto !important; margin: 2px 0 0 !important; box-shadow: none !important; }
+
+/* Product page bar: the label scales with text size but is capped, so the
+   heart, ecosystem and Shop buttons always fit side by side at 320px. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-bar .ay-pdp-eco-btn { font-size: min(calc(13px * var(--ayna-text-scale, 1)), 15px) !important; white-space: nowrap; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-bar > a, .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-bar > div { min-width: 64px; font-size: min(calc(14.5px * var(--ayna-text-scale, 1)), 17px) !important; }
+
+/* Larger text setting: product page title, price and body text follow
+   --ayna-text-scale (they were fixed px in the earlier override sheets). */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp .ay-pdp-eyebrow { font-size: calc(13px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp .ay-pdp-title h1 { font-size: min(calc(27px * var(--ayna-text-scale, 1)), 11vw) !important; overflow-wrap: anywhere; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp .ay-pdp-price .is-price { font-size: calc(20px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp .ay-pdp-price .is-note { font-size: calc(14px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp .ay-pdp-price small { font-size: calc(13px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp .ay-pdp-match > span { font-size: calc(14px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp .ay-pdp-safetyflag { font-size: calc(14px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp .ayna-figma-partner-disclosure button span:nth-child(2), .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp .ayna-figma-partner-copy { font-size: calc(12px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp .ay-glance__srh { font-size: calc(26px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp .ay-gl-more { font-size: calc(14px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp dl dt { font-size: calc(13px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp dl dd { font-size: calc(15px * var(--ayna-text-scale, 1)) !important; overflow-wrap: anywhere; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp dl dd small { font-size: calc(12px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp .ay-pdp-sechead h2 { font-size: calc(22px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp .ay-pdp-sechead p { font-size: calc(16px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp .ay-compare :is(th, td) { font-size: calc(14px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp .ayna-figma-guest-match { font-size: min(calc(15px * var(--ayna-text-scale, 1)), 18px) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp .ay-pdp-omit button, .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp .ay-pdp-community-grid button { font-size: calc(13px * var(--ayna-text-scale, 1)) !important; }
+
+/* Same for the quiz question and answers (the header count stays fixed). */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-title { font-size: min(calc(40px * var(--ayna-text-scale, 1)), 14vw) !important; overflow-wrap: break-word; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake :is(.ip-subtitle, .ip-label) { font-size: calc(13.5px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-info-pop { font-size: calc(14px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake :is(.ip-hint, .ip-callout) { font-size: calc(13px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-sticker-label { font-size: calc(13.5px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-stickers.has-icons .ip-sticker-label { font-size: calc(14px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-chip > span, .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake button.ip-chip { font-size: calc(13.5px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-chips.is-compact .ip-chip > span, .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-chips.is-compact button.ip-chip { font-size: calc(12.5px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-tab > span { font-size: calc(13px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-row > span { font-size: calc(15px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake :is(.ip-add-row, .ip-podium-label, .ip-avoid-tabs button) { font-size: calc(14px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake :is(.ip-addown, .ip-dots-head > span) { font-size: calc(13px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake :is(.ip-price-label, .ip-ticket-foot) { font-size: calc(12px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-card > strong { font-size: calc(21px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-card > small { font-size: calc(11px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-spectrum-readout strong { font-size: min(calc(34px * var(--ayna-text-scale, 1)), 11vw) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-checkpoint-more { font-size: calc(16px * var(--ayna-text-scale, 1)) !important; }
+
+/* Life stage cards: the tick sat on top of the label. Keep room for it. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-stickers:has(.ip-sticker-glyph) .ip-sticker { overflow: visible !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-stickers:has(.ip-sticker-glyph) .ip-sticker-badge { top: -8px !important; right: -8px !important; translate: none !important; width: 22px !important; height: 22px !important; box-shadow: 0 0 0 2px var(--ayna-bg, #ffedac); z-index: 1; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-sticker-label { min-width: 0; word-break: normal !important; overflow-wrap: break-word !important; -webkit-hyphens: auto; hyphens: auto; }
+/* Two columns at the largest text sizes: the label grows only as far as a
+   word like "Perimenopause" still fits its card. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-stickers:has(.ip-sticker-glyph) { container-type: inline-size; }
+@media (min-width: 360px) {
+  .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-stickers:has(.ip-sticker-glyph) .ip-sticker-label { font-size: min(calc(13.5px * var(--ayna-text-scale, 1)), 4cqi) !important; }
+}
+@media (max-width: 359px) {
+  /* Two columns left about 80px per label, so "Perimenopause" broke
+     mid-word. One column on narrow phones. */
+  .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-stickers:has(.ip-sticker-glyph) { grid-template-columns: minmax(0, 1fr) !important; }
+  .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-stickers:has(.ip-sticker-glyph) .ip-sticker { min-height: 48px !important; }
+}
+
+/* "Taking anything?" with Yes and nothing added yet: say why Next waits. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-hint--need { margin: 10px 0 0 !important; color: var(--ay-ink, #3e2723) !important; font-weight: 600 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-hint--need { color: #ffedac !important; }
+
+/* Quiz "Done": start near the top, and the "quick extras" line is a note,
+   not a box that looks like a button. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake.ip-checkpoint .ip-question { justify-content: flex-start !important; min-height: 0 !important; padding-top: 28px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-checkpoint-more { border: 0 !important; background: none !important; box-shadow: none !important; padding: 0 !important; margin: 20px 0 0 !important; }
+
+/* 44px hit areas without changing what you see. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ip-label-row .ip-info { position: relative !important; isolation: isolate; width: 44px !important; height: 44px !important; margin: -8px -8px -8px auto !important; border: 0 !important; background: transparent !important; color: var(--ay-ink, #3e2723) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ip-label-row .ip-info::before { content: '' !important; position: absolute !important; inset: 8px !important; z-index: -1; border: 1.5px solid currentColor; border-radius: 50%; background: transparent; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ip-label-row .ip-info[aria-expanded='true'] { color: #ffedac !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ip-label-row .ip-info[aria-expanded='true']::before { background: #3e2723; border-color: #3e2723; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ip-label-row .ip-info { color: #ffedac !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ip-label-row .ip-info[aria-expanded='true'] { color: #3e2723 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ip-label-row .ip-info[aria-expanded='true']::before { background: #ffedac; border-color: #ffedac; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ip-label-row .ip-info::after { content: none !important; }
+
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-pause { position: relative !important; isolation: isolate; width: 44px !important; height: 44px !important; margin: -8px !important; border: 0 !important; background: transparent !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-pause::before { content: '' !important; position: absolute !important; inset: 8px !important; z-index: -1; border: 1.5px solid currentColor; border-radius: 50%; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-pause::after { content: none !important; }
+
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-hc-link { display: inline-flex !important; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; margin: -13px -4px !important; padding: 0 4px !important; vertical-align: middle; }
+
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-legal :is(a, button) { display: inline-block !important; padding: 11px 0 !important; margin: -11px 0 !important; vertical-align: baseline; }
+
+/* Shop search clear button: brand espresso instead of the browser's blue
+   (the field stays butter in both themes). */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-search input[type='search']::-webkit-search-cancel-button {
+  -webkit-appearance: none; appearance: none; width: 18px; height: 18px; margin-left: 6px; cursor: pointer;
+  background: #3e2723;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 6l12 12M18 6 6 18' stroke='%23000' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 6l12 12M18 6 6 18' stroke='%23000' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+}
+
+/* Reader: the back arrow stays with the progress bar while she scrolls. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-read-sticky { position: sticky !important; top: 0; z-index: 6; background: var(--ayna-bg) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-read-sticky > .ay-read-status { position: static !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-read-sticky > .ayna-detail-header { padding-top: 8px !important; padding-bottom: 8px !important; background: var(--ayna-bg) !important; }
+
+/* Safety note pill: a clear "!" mark in both themes. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-safetyflag .ay-safety-mark { background: #3e2723 !important; color: #ffedac !important; font: 800 13px/1 'DM Sans', system-ui, sans-serif !important; width: 22px !important; height: 22px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-pdp-safetyflag { background: #f7badd !important; color: #3e2723 !important; border-color: #f7badd !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-pdp-safetyflag :is(strong, span:last-child) { color: #3e2723 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp .ay-pdp-safetyflag { flex-wrap: wrap !important; row-gap: 2px; max-width: 100%; box-sizing: border-box; padding-top: 8px !important; padding-bottom: 8px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp .ay-pdp-safetyflag > :is(strong, span) { white-space: nowrap; }

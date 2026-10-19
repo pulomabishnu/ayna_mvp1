@@ -594,13 +594,11 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   const currentIndex = Math.max(0, visibleSteps.findIndex((s) => s.id === stepId));
   const step = atCheckpoint ? { id: CHECKPOINT_STEP, section: 'checkpoint', title: '', type: 'checkpoint' } : (visibleSteps[currentIndex] || visibleSteps[0]);
   const isLast = currentIndex === visibleSteps.length - 1;
-  // The website asks age and life stage on one "About you" screen, so its
-  // required count is one lower. For the header counter and dots, both
-  // screens here share one "About you" slot: the totals match the website's
-  // for the same answers, and neither quiz over- or under-counts.
-  const countedSteps = phase === 'required' ? visibleSteps.filter((s) => s.id !== 'lifeStage') : visibleSteps;
-  const countedIndex = Math.max(0, countedSteps.findIndex((s) => s.id === (stepId === 'lifeStage' ? 'age' : step.id)));
-  const countedRequiredTotal = requiredSteps.filter((s) => s.id !== 'lifeStage').length;
+  // Every screen is its own numbered step (age and life stage used to share
+  // one "About you" number, so the count and bar stood still between them).
+  const countedSteps = visibleSteps;
+  const countedIndex = Math.max(0, countedSteps.findIndex((s) => s.id === step.id));
+  const countedRequiredTotal = requiredSteps.length;
 
   const set = (key, value) => setIntake((prev) => ({ ...prev, [key]: value }));
   const toggleExclusive = (key, value, exclusiveValues = []) => setIntake((prev) => {
@@ -732,7 +730,8 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         />
         {intake.allergyStatus === 'Yes' && (
           <div className="ip-gap">
-            <TokenInput values={intake.allergyItems} onChange={(v) => set('allergyItems', v)} placeholder="Type an allergy or sensitivity" suggestions={ALLERGIES} suggestionLimit={8} />
+            <TokenInput values={intake.allergyItems} onChange={(v) => set('allergyItems', v)} placeholder="Allergy or sensitivity" suggestions={ALLERGIES} suggestionLimit={8} />
+            {intake.allergyItems.length === 0 && <p className="ip-hint ip-hint--need">Add at least one, or pick No.</p>}
           </div>
         )}
       </>
@@ -743,7 +742,8 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         <Segmented options={MEDICATION_STATUS} value={intake.takesCurrent} onChange={(value) => setIntake((prev) => ({ ...prev, takesCurrent: value, currentMedicationItems: value === 'Yes' ? prev.currentMedicationItems : [] }))} />
         {intake.takesCurrent === 'Yes' && (
           <div className="ip-gap">
-            <TokenInput values={intake.currentMedicationItems} onChange={(v) => set('currentMedicationItems', v)} placeholder="Medication, supplement, or birth control" suggestions={MEDICATION_SUGGESTIONS} suggestionLimit={10} />
+            <TokenInput values={intake.currentMedicationItems} onChange={(v) => set('currentMedicationItems', v)} placeholder="Medicine or supplement" suggestions={MEDICATION_SUGGESTIONS} suggestionLimit={10} />
+            {intake.currentMedicationItems.length === 0 && <p className="ip-hint ip-hint--need">Add at least one, or pick No.</p>}
           </div>
         )}
         <p className="ip-callout">Check with a clinician before starting anything new.</p>
@@ -891,7 +891,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
             <span className="ip-count" aria-label={`All ${countedRequiredTotal} required questions done`}>{String(countedRequiredTotal).padStart(2, '0')}<i>/{String(countedRequiredTotal).padStart(2, '0')}</i></span>
             <span className="ip-skip-spacer" />
           </div>
-          <div className="ip-progress" aria-hidden="true">{requiredSteps.filter((s) => s.id !== 'lifeStage').map((s) => <span key={s.id} className="is-done" />)}</div>
+          <div className="ip-progress" aria-hidden="true">{requiredSteps.map((s) => <span key={s.id} className="is-done" />)}</div>
         </header>
         <div className="ip-body">
           <div className="ip-question" key="q-checkpoint">

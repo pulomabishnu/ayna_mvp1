@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
 import SearchBar from '../components/SearchBar.jsx';
 import DiscoverDeck from '../components/DiscoverDeck.jsx';
@@ -9,20 +9,12 @@ import SuggestBox from '../../components/SuggestBox.jsx';
 import { getPersonalizedProductIds, getProfileMatchPercentForProduct, productSearchText, MACRO_GROUPS, itemMatchesMacroGroup, CATEGORY_LABELS } from '../../data/products.js';
 import { getVerificationLinks } from '../../utils/verificationLinks.js';
 import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
-import { scoreSearchMatch, correctedSearchQuery, searchArticles } from '../../utils/search/index.js';
+import { scoreSearchMatch, correctedSearchQuery, searchArticles, analyzeSearch } from '../../utils/search/index.js';
 import SearchAssist from '../../components/search/SearchAssist.jsx';
 import { fetchSearchSuggestions } from '../../utils/fetchSearchSuggestions.js';
+import { stableShopOrder, rankShopForProfile } from '../utils/shopOrder.js';
+import { hasQuizAnswers } from '../utils/personalReads.js';
 
-// Fisher-Yates, uniform shuffle, unlike sort(() => Math.random() - 0.5)
-// (which is biased and not a proper random permutation).
-function fisherYatesShuffle(list) {
-  const result = list.slice();
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [result[i], result[j]] = [result[j], result[i]];
-  }
-  return result;
-}
 
 const FILTER_FIELDS = [
   ['category', 'Product type', [['all', 'All products']]],
@@ -242,10 +234,14 @@ export default function BrowseScreen({
   // back to (see fetchSearchSuggestions.js), not a separate mechanism.
   const [aiState, setAiState] = useState({ query: '', loading: false, suggestions: [], error: null });
 
-  // Re-shuffled once per mount, this screen unmounts whenever you navigate
-  // away (MobileApp swaps which screen component renders), so a fresh
-  // shuffle happens on every visit to Browse, not just once per app load.
-  const [shuffled] = useState(() => fisherYatesShuffle(products));
+  // Default order (shopOrder.js): one shuffle per app session, so it does
+  // not reshuffle on every visit; with quiz answers, ranked by the matching
+  // engine so what fits her age, life stage and budget comes first.
+  const rankByProfile = hasQuizAnswers(quizAnswers);
+  const shuffled = useMemo(() => {
+    const base = stableShopOrder(products);
+    return rankByProfile ? rankShopForProfile(base, quizAnswers, matchOpts) : base;
+  }, [products, rankByProfile, quizAnswers, matchOpts]);
 
   // frustrations is the legacy desktop quiz shape; the real current mobile
   // intake (IntakeScreen.jsx) never sets it at all, it produces
@@ -333,8 +329,9 @@ export default function BrowseScreen({
   // Brand partners pinned to the top of the default browsing sort, same
   // rule as desktop Discovery.jsx: a partnership buys visibility on the
   // page you browse freely, never placement inside an actual text search
-  // or personalized ("For You") recommendation.
-  if (sortBy === 'default' && !searchTermRaw && !(personalized && hasProfile)) {
+  // or a personalized order (For You, or the default order once she has
+  // quiz answers).
+  if (sortBy === 'default' && !searchTermRaw && !(personalized && hasProfile) && !rankByProfile) {
     filtered = [...filtered].sort((a, b) => (isPartnerBrandItem(b) ? 1 : 0) - (isPartnerBrandItem(a) ? 1 : 0));
   }
   const filterKey = `${searchTerm}|${personalized}|${activeGroup}|${JSON.stringify(filters)}|${sortBy}`;
@@ -373,6 +370,10 @@ export default function BrowseScreen({
   }, [searchTermRaw, searchScored.length, activeGroup]);
 
   const matchingReads = searchTermRaw.length >= 2 ? searchArticles(searchTermRaw, articles) : [];
+  // SearchAssist above already says "No results for 'xyz'" in this case;
+  // the grid's own empty line would say it a second time.
+  const searchAnalysis = searchTermRaw.length >= 2 ? analyzeSearch(searchTermRaw) : null;
+  const assistSaysNoResults = Boolean(searchAnalysis?.unknown?.length && !searchAnalysis.didYouMean && searchScored.length === 0);
 
 
   return (
@@ -449,7 +450,7 @@ export default function BrowseScreen({
               </div>
               <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`ai-${filterKey}`} products={aiState.suggestions} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
             </>
-          ) : (
+          ) : assistSaysNoResults ? null : (
             <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
               No products match.
             </div>
@@ -464,12 +465,11 @@ export default function BrowseScreen({
               margin: '22px 20px 0',
               textAlign: 'center',
               fontFamily: "var(--ayna-font-ui)",
-              fontSize: 'calc(11px * var(--ayna-text-scale, 1))',
-              letterSpacing: 0.8,
+              fontSize: 'calc(12px * var(--ayna-text-scale, 1))',
               color: 'var(--ayna-text-faint)',
             }}
           >
-            ALL OTC · NOT A DIAGNOSIS
+            Over-the-counter options. Not a diagnosis.
           </div>
           {matchingReads.length > 0 && <section style={{ marginTop: 25 }} aria-label="Related reads">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '0 20px 12px' }}>
