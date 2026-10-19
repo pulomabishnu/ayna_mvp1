@@ -95,6 +95,16 @@ echo "   row=$ROW before_confirm=$S1 after_confirm=$S2 first_code_kept=$([ "$KEE
 echo "   ok  counted as soon as she confirms, from any device"
 
 echo
+echo "── live check script (the one to paste into production) passes here"
+q "update public.reward_campaigns set is_active = true, starts_at = now() - interval '1 day', ends_at = null where id = '$C';" >/dev/null
+LIVE=$(psql -q -d "$DB" -f supabase/_campaign_live_check.sql 2>&1 || true)
+echo "$LIVE" | sed -n 's/^psql.*ERROR:  /   /p;/^[0-9 ]\{2\}/p;/^   after/p;/^(This/p'
+echo "$LIVE" | grep -q "LIVE CHECK PASSED" || { echo "$LIVE"; echo "❌ live check failed"; exit 1; }
+LEFT=$(q "select count(*) from auth.users where email like 'lc%' or phone like '1555%'")
+[ "$LEFT" = 0 ] || { echo "❌ live check left $LEFT accounts behind"; exit 1; }
+echo "   ok  every case passes and nothing is left behind"
+
+echo
 echo "── race: 20 people claim the same product with 5 units, all at once"
 q "delete from public.reward_claims; delete from public.reward_spins; update public.reward_products set is_active = false;
    update public.reward_campaigns set is_active = true, starts_at = now() - interval '1 day', ends_at = null where id = '$C';" >/dev/null
