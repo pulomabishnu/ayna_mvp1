@@ -634,7 +634,7 @@ const ARTICLES = [
     teaser: 'From viral belly oils to prescription retinoids, here’s what actually works, what’s mostly marketing, and what the research says.',
     body: (
       <>
-        <div style={{ marginBottom: '1rem' }}><em>By Geena Yousry, MS1 (medical student)</em></div>
+        <div style={{ marginBottom: '1rem' }}><em>Reviewed by Dr. Anuja Vyas, Board-Certified OBGYN, Co-founder of <a href="/partners#brand-buni">BUNI Body</a>. Written by Geena Yousry, MS1, Medical Student.</em></div>
         <figure style={{ margin: '0 0 1.5rem' }}>
           <img src="/articles/postpartum-stretch-marks/glitter.webp" alt="Glitter Stretch Marks digital artwork by Sara Shakeel" width="400" height="400" style={{ width: '100%', maxWidth: 400, height: 'auto', borderRadius: 16, display: 'block' }} />
           <figcaption style={{ fontSize: 14, marginTop: 8 }}>Shakeel, S. (2017). Glitter Stretch Marks [Digital artwork]. Featured in Vogue Italia.</figcaption>
