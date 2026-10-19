@@ -1447,8 +1447,14 @@ const SMS_ERRORS = {
   rate_limited: 'Too many tries. Wait a few minutes, then try again.',
   too_many_attempts: 'Too many tries. Wait a few minutes, then try again.',
   sms_not_configured: 'Text messages aren’t switched on yet.',
+  not_signed_in: 'Sign in again to manage your texts.',
+  auth_required: 'Sign in again to manage your texts.',
+  invalid_session: 'Sign in again to manage your texts.',
+  network: 'Couldn’t reach ayna. Check your connection and try again.',
+  texts_stopped: 'You replied STOP. Text START to ayna first, then try again.',
+  phone_not_verified: 'Verify your number first.',
 };
-const smsError = (e) => SMS_ERRORS[e?.code] || e?.message || 'Something went wrong. Try again.';
+const smsError = (e) => SMS_ERRORS[e?.code] || 'Something went wrong. Try again.';
 const SMS_PREF_ROWS = [
   ['reminders', 'Reminders', 'Restock and routine reminders you set up.'],
   ['orders', 'Order updates', 'When an order ships or needs you.'],
@@ -1520,7 +1526,7 @@ function TextMessagesScreen({ onBack, authUser }) {
         {status.stopped && <p className="ay-sms-note">You replied STOP, so texts are paused. Text START to {status.textNumber || 'ayna'} to turn them back on.</p>}
       </div>
       <SectionLabel>What we text you</SectionLabel>
-      <div className="ay-sms-card">
+      <div className="ay-sms-card ay-sms-prefs">
         {SMS_PREF_ROWS.map(([key, title, sub], i) => <ToggleRow key={key} first={i === 0} title={title} sub={sub} on={Boolean(status.prefs?.[key])} onClick={() => !busy && !status.stopped && toggle(key)} />)}
         {error && <p className="ay-hc-error" role="alert">{error}</p>}
       </div>
@@ -1531,7 +1537,7 @@ function TextMessagesScreen({ onBack, authUser }) {
   return (
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
       <BackHeader title="Text messages" onBack={onBack} />
-      <div className="ayna-settings-scroll ay-sms">{content}</div>
+      <div className={`ayna-settings-scroll ay-sms${status?.stopped ? ' is-stopped' : ''}`}>{content}</div>
     </div>
   );
 }
