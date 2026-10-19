@@ -29,6 +29,10 @@
     {
       "path": "/api/send-emails?mode=weekly",
       "schedule": "0 14 * * 0"
+    },
+    {
+      "path": "/api/campaign-notify",
+      "schedule": "17 * * * *"
     }
   ],
   "headers": [
@@ -81,11 +85,11 @@
       "destination": "https://us.i.posthog.com/:path"
     },
     {
-      "source": "/:page(about|product|wrapped|admin|appointment-prep|auth|campus-resources|community|comparison|confirmed|consumer-health-data|contact|delete-account|discovery|ecosystem|how-it-works|how-we-make-money|internal|library|mobile-preview|my-ecosystem|omitted|partner-brands|partners|privacy|privacy-policy|profile|quiz|recalls|recommendations|screenings|shop|startups|terms|terms-of-use|text-ayna|tracked|you)",
+      "source": "/:page(about|product|wrapped|admin|appointment-prep|auth|campus-resources|community|comparison|confirmed|consumer-health-data|contact|delete-account|discovery|free-product|join|ecosystem|how-it-works|how-we-make-money|internal|library|mobile-preview|my-ecosystem|omitted|partner-brands|partners|privacy|privacy-policy|profile|quiz|recalls|recommendations|screenings|shop|startups|terms|terms-of-use|text-ayna|tracked|you)",
       "destination": "/index.html"
     },
     {
-      "source": "/:page(about|product|wrapped|admin|appointment-prep|auth|campus-resources|community|comparison|confirmed|consumer-health-data|contact|delete-account|discovery|ecosystem|how-it-works|how-we-make-money|internal|library|mobile-preview|my-ecosystem|omitted|partner-brands|partners|privacy|privacy-policy|profile|quiz|recalls|recommendations|screenings|shop|startups|terms|terms-of-use|text-ayna|tracked|you)/:rest*",
+      "source": "/:page(about|product|wrapped|admin|appointment-prep|auth|campus-resources|community|comparison|confirmed|consumer-health-data|contact|delete-account|discovery|free-product|join|ecosystem|how-it-works|how-we-make-money|internal|library|mobile-preview|my-ecosystem|omitted|partner-brands|partners|privacy|privacy-policy|profile|quiz|recalls|recommendations|screenings|shop|startups|terms|terms-of-use|text-ayna|tracked|you)/:rest*",
       "destination": "/index.html"
     }
   ]

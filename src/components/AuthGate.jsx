@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { getSupabaseClient, setRememberMe } from '../utils/supabaseClient';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 import { CONSENT_VERSION, stashPendingConsent, stashPendingSignupMeta } from '../utils/pendingConsent.js';
+import { pendingReferralMeta } from '../utils/freeProductCampaign.js';
 import { HEARD_ABOUT_OPTIONS, HEARD_ABOUT_OTHER_MAX, heardAboutMetadata } from '../utils/heardAbout.js';
 import '../styles/audit-qya.css';
 import './AuthGate.css';
@@ -223,6 +224,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
             emailRedirectTo: 'https://www.aynahealth.co/confirmed',
             data: {
               ...heardMeta,
+              ...pendingReferralMeta(),
               first_name: cleanFirstName,
               full_name: cleanFirstName,
               ...consentMetadata(),
@@ -360,6 +362,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         options: {
           data: {
             ...heardMeta,
+            ...pendingReferralMeta(),
             first_name: cleanFirstName,
             full_name: cleanFirstName,
             ...consentMetadata(),
