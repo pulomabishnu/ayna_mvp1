@@ -5684,3 +5684,31 @@ html body .app-container.app-container.app-container.app-container.app-container
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .eco3-related, html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .eco3-related * { color: #ffedac !important; border-color: #ffedac !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .eco3-related__add { color: #3e2723 !important; }
 
+
+/* About > Our story: the notebook card keeps its light paper in dark mode, so
+   its text stays ink. Must out-rank the dark-mode text rule above
+   (9x .app-container), which turned it cream on cream (reported 2026-10-18). */
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-info .ay-info-story__text :is(p, em, strong, span, a) { color: #3e2723 !important; }
+
+/* "When to get help now" keeps its light card in dark mode, so its text stays
+   ink. Must out-rank the product-tab text rule above (.ay-itabs__panel ...
+   :not(.zz)), which turned it cream on cream (reported 2026-10-18). */
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-urgent.ay-urgent.ay-urgent,
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-urgent.ay-urgent.ay-urgent :is(p, li, dt, dd, span, a, strong, b, em, h3, h4, blockquote, small, button, div):not(.zz) { color: #3e2723 !important; }
+
+/* More dark-mode contrast fixes found the same day (2026-10-18): How-to step
+   numbers (cream circle), the per-unit price line, and evidence-grade badges. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-itabs__panel .ay-tabs__steps > li > b:not(.zz),
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ev2__grade.ay-ev2__grade:not(.zz) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-h2-price__unit.pdp-h2-price__unit:not(.zz) { color: #ffedac !important; }
+
+/* Phone tab bar (Oct 19): every tab is the same shape (a 40px icon row, then
+   the label), so all six labels share one baseline. Ask keeps its pink orb,
+   now inside the bar instead of poking out over the line. */
+@media (max-width: 720px) {
+  html body .app-container .ay-tabbar { align-items: stretch !important; }
+  html body .app-container .ay-tabbar > :is(a, button) { grid-template-rows: 40px auto !important; align-content: end !important; justify-items: center !important; gap: 2px !important; min-height: 60px !important; padding: 4px 0 4px !important; }
+  html body .app-container .ay-tabbar > :is(a, button) > svg { align-self: center !important; }
+  html body .app-container .ay-tabbar .ay-tabbar__orb,
+  html body .app-container .ay-tabbar.is-six .ay-tabbar__orb { align-self: center !important; width: 38px !important; height: 38px !important; margin: 0 !important; border: 2px solid var(--ay-ink) !important; box-shadow: none !important; font-size: 17px !important; }
+}
