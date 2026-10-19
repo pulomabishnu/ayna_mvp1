@@ -42,7 +42,7 @@ function Fn({ n, sources, hidden = false }) {
       aria-label={`Source ${n}${s ? `: ${s.title}` : ''}`}
       title={s ? `${s.label}: ${s.title}` : undefined}
       tabIndex={hidden ? -1 : undefined}
-      onClick={(e) => { e.preventDefault(); jumpTo(`ay-src-${n}`); }}
+      onClick={(e) => { e.preventDefault(); jumpOpen('sources', `ay-src-${n}`); }}
     >
       {n}
     </a>
@@ -305,6 +305,13 @@ const ICON_PATHS = {
 const SUB_ICON = Object.fromEntries(Object.entries(ICON_PATHS).map(([k, d]) => [k, <svg key={k} className="ay-line-icon" viewBox="0 0 24 24" aria-hidden="true"><path d={d} /></svg>]));
 const groupOf = (id) => (TAB_GROUPS.find((g) => g.ids.includes(id)) || {}).id || id;
 
+/* Inside a tab that holds two parts, the part's heading already says it. */
+function dropRepeatLabel(sec) {
+  const head = String(SUB_LABEL[sec.id] || sec.title || '').toLowerCase();
+  const blocks = (sec.blocks || []).map((b, i) => (i === 0 && b?.label && String(b.label).toLowerCase() === head ? { ...b, label: undefined } : b));
+  return { ...sec, blocks };
+}
+
 /* The clinician's own view (when we have one) gets its own tab instead of
    sitting inside the evidence list. Nothing is added that isn't in the data. */
 function splitSections(sections = []) {
@@ -332,31 +339,14 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
   const plan = glance?.glossary || {};
   const [tab, setTab] = useState('glance');
   const [sub, setSub] = useState({});
+  // A link anywhere on the page (a fact, a [n] footnote) opens the tab that holds it.
   useEffect(() => {
     const on = (e) => {
       const id = e.detail;
-      if (id === 'sources' || id === 'clinician' || (glance?.sections || []).some((x) => x.id === id)) {
-        const g = groupOf(id);
-        const el = document.getElementById(`ay-panel-${g}`);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      if (id === 'sources' || id === 'clinician' || (glance?.sections || []).some((x) => x.id === id)) setTab(groupOf(id));
     };
     window.addEventListener('ay-open-section', on);
     return () => window.removeEventListener('ay-open-section', on);
-  }, [glance]);
-  // App: the chip for the part in view is filled, so the row reads as navigation.
-  useEffect(() => {
-    if (!glance || typeof IntersectionObserver === 'undefined') return undefined;
-    const panels = [...document.querySelectorAll('.ay-glance.is-stacked .ay-glance__panel')];
-    if (!panels.length) return undefined;
-    const seen = new Map();
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => seen.set(e.target.id, e.isIntersecting ? e.boundingClientRect.top : null));
-      const live = [...seen.entries()].filter(([, top]) => top !== null).sort((a, b) => a[1] - b[1]);
-      if (live.length) setTab(live[0][0].replace('ay-panel-', ''));
-    }, { rootMargin: '-120px 0px -55% 0px' });
-    panels.forEach((el) => io.observe(el));
-    return () => io.disconnect();
   }, [glance]);
   if (!glance) return null;
   const { what, who, facts, sources } = glance;
@@ -369,42 +359,46 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
     ...(sources.length ? [{ id: 'sources', label: `Sources (${sources.length})`, tone: 'cream' }] : []),
   ];
   void nav; void extraNav;
-  // App (Oct 18): every part of the product page is open, one after another
-  // (Baymard: people miss what hides behind tabs). The chip row jumps to a part.
+  // App (Oct 19): real tabs, one part at a time, so the page reads in small
+  // pieces instead of one long scroll. Everything is still one tap away, and
+  // links on the page open the tab they point to.
   void sub; void setSub;
-  const jump = (id) => {
-    const el = document.getElementById(`ay-panel-${id}`);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const choose = (id) => {
+    setTab(id);
+    // If she has scrolled down into a long part, bring the new tab's start into view.
+    const nav = document.getElementById('ay-sec-glance');
+    if (nav && nav.getBoundingClientRect().top < 0) nav.scrollIntoView({ block: 'start' });
   };
+  const active = tabs.some((t) => t.id === tab) ? tab : 'glance';
   const groupBody = (group) => {
     const list = secs.filter((sec) => group.ids.includes(sec.id));
     return list.map((sec) => (
       <article key={sec.id} className={`ay-gl-card is-${sec.id}${list.length === 1 ? ' is-single' : ''}`}>
         {list.length > 1 && <h3 className="ay-gl-cardh"><span aria-hidden="true">{SUB_ICON[sec.id]}</span>{SUB_LABEL[sec.id] || sec.title}</h3>}
-        <Section bare section={sec} plan={plan} sources={sources} extra={extras[sec.id]} onXref={onXref} />
+        <Section bare section={list.length > 1 ? dropRepeatLabel(sec) : sec} plan={plan} sources={sources} extra={extras[sec.id]} onXref={onXref} />
       </article>
     ));
   };
 
   return (
     <section className="ay-glance is-stacked" id="ay-sec-glance" tabIndex={-1} aria-label="Product information">
-      <nav className="ay-glance__nav" aria-label="Jump to">
-        <ul>
+      <nav className="ay-glance__nav" aria-label="Product information">
+        <ul role="tablist">
           {tabs.map((t) => (
-            <li key={t.id}>
-              <button type="button" className={tab === t.id ? 'is-active' : undefined} aria-current={tab === t.id ? 'true' : undefined} onClick={() => { setTab(t.id); jump(t.id); }}>{t.label}</button>
+            <li key={t.id} role="presentation">
+              <button type="button" role="tab" id={`ay-tab-${t.id}`} aria-selected={active === t.id} aria-controls={`ay-panel-${t.id}`} className={active === t.id ? 'is-active' : undefined} onClick={() => choose(t.id)}>{t.label}</button>
             </li>
           ))}
         </ul>
       </nav>
-      {tabs.map((t) => {
+      {tabs.filter((t) => t.id === active).map((t) => {
         const group = TAB_GROUPS.find((g) => g.id === t.id);
         const heading = t.id === 'glance' ? 'Overview' : t.id === 'sources' ? 'Where this comes from' : t.label;
         return (
-          <div key={t.id} className="ay-glance__panel" id={`ay-panel-${t.id}`} data-tone={t.tone}>
+          <div key={t.id} className="ay-glance__panel is-tab" id={`ay-panel-${t.id}`} role="tabpanel" aria-labelledby={`ay-tab-${t.id}`} data-tone={t.tone}>
             <div className="ay-glance__panelhead">
-              <h2>{heading}</h2>
-              {t.id === 'glance' && sources.length > 0 && <span className="ay-glance__chip">{sources.length} source{sources.length === 1 ? '' : 's'}</span>}
+              <h2 className="ay-glance__srh">{heading}</h2>
+              {t.id === 'glance' && sources.length > 0 && <button type="button" className="ay-glance__chip" onClick={() => choose('sources')}>{sources.length} source{sources.length === 1 ? '' : 's'}</button>}
             </div>
             {t.id === 'glance' && (
       <div className="ay-glance__top">

@@ -682,7 +682,8 @@ export { ARTICLES };
  * keeps its own art via ARTICLES.image. Add an id here only for art drawn in
  * the ayna palette and style.
  */
-const KEEP_ILLUSTRATION = new Set();
+import { TEAM_COVER_READS } from '../data/readCovers.js';
+const KEEP_ILLUSTRATION = TEAM_COVER_READS;
 import TopicCover from './v3/TopicCover.jsx';
 import useRotatingPlaceholder from '../utils/useRotatingPlaceholder.js';
 const LIB_SEARCH_EXAMPLES = ['heavy periods', 'PCOS', 'period pain', 'when to see a doctor', 'UTI', 'perimenopause', 'fibroids', 'endometriosis', 'yeast vs BV', 'pelvic floor', 'night sweats', 'missed period'];

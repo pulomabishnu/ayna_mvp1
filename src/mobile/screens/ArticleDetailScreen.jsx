@@ -1,3 +1,5 @@
+import TopicCover from '../../components/v3/TopicCover.jsx';
+import { hasTeamCover } from '../../data/readCovers.js';
 import { Children, isValidElement, useRef, useState } from 'react';
 import LegalFooter from '../components/LegalFooter.jsx';
 import './article-detail.css';
@@ -85,7 +87,7 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
         <button type="button" aria-label="Back to reads" onClick={onBack}><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg></button>
         <span className="ayna-read-meta">{tags[0] || 'Read'} · {readMinutes} min</span>
       </header>
-      {image && <div className="ayna-read-photo"><img src={image} alt="" /></div>}
+      {hasTeamCover(article) ? <div className="ayna-read-photo"><img src={image} alt="" /></div> : <div className="ay-app-readhero"><TopicCover id={article.id} title={title} className="ay-app-cover is-hero" /></div>}
       <div className="ayna-read-content">
         <h1 className="ay-read-title">{title}</h1>
         {teaser && (

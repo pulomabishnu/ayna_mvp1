@@ -1,3 +1,5 @@
+import TopicCover from '../../components/v3/TopicCover.jsx';
+import { hasTeamCover } from '../../data/readCovers.js';
 const TINT_PALETTE = [
   ['#FFEDAC', '#F7BADD'],
   ['#769EBE', '#FFEDAC'],
@@ -15,8 +17,19 @@ function tintForId(id) {
 }
 
 export default function LibraryCard({ article, onClick, fullWidth = false }) {
-  const { id, title, tags = [], image } = article || {};
+  const { id, title, tags = [] } = article || {};
+  // Same drawn cover as the website, unless the team put in a picture for this read.
+  const image = hasTeamCover(article) ? article.image : null;
   const [c1, c2] = tintForId(id || title);
+  void c1; void c2;
+  if (!image) {
+    return (
+      <button type="button" onClick={onClick} aria-label={`Read ${title}`} className={`ay-app-readcard${fullWidth ? ' is-full' : ''}`}>
+        <TopicCover id={id} title={title} className="ay-app-cover" />
+        <span className="ay-app-readcard__title">{title}</span>
+      </button>
+    );
+  }
 
   return (
     <button

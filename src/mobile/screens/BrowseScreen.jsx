@@ -405,7 +405,7 @@ export default function BrowseScreen({
       {mode === 'products' && !searchValue.trim() && (
         <button type="button" className="ay-discover-cta" onClick={() => setShowDeck(true)}>
           <span className="ay-discover-art" aria-hidden="true"><i /><i /><i /></span>
-          <span className="ay-discover-copy"><strong>Swipe to discover</strong></span>
+          <span className="ay-discover-copy"><strong>Swipe to discover</strong><small>One product at a time. Right to save, left to skip.</small></span>
           <span className="ay-discover-go" aria-hidden="true">→</span>
         </button>
       )}
