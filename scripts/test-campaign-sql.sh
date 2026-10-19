@@ -162,8 +162,8 @@ q "update public.reward_products set inventory_claimed = 1 where brand = 'Kieró
 OUT2=$(psql -v ON_ERROR_STOP=1 -q -t -A -d "$DB" -f supabase/seed/free_product_pr_haul.sql | tail -1)
 KEPT=$(q "select inventory_claimed || '/' || inventory_total from public.reward_products where brand = 'Kieró' and name = 'Moisturizing Barrier Cream'")
 echo "   after re-run: $OUT2 (products|units), barrier cream claimed/total = $KEPT"
-[ "$OUT2" = "22|24" ] && [ "$KEPT" = "1/2" ] || { echo "❌ seed test failed"; exit 1; }
-echo "   ok  22 products, 24 units, re-run is safe"
+[ "$OUT2" = "49|52" ] && [ "$KEPT" = "1/2" ] || { echo "❌ seed test failed"; exit 1; }
+echo "   ok  49 products, 52 units, re-run is safe"
 
 echo
 echo "✅ campaign SQL: behaviour and concurrency tests pass"
