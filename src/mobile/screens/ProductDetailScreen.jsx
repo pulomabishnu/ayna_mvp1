@@ -200,7 +200,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
         </button>
       </form>
 
-      <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>Ayna's answers are educational, not medical advice.</div>
+      <div className="ay-pdp-ask-note">ayna's answers are educational, not medical advice.</div>
     </div>
   );
 }
