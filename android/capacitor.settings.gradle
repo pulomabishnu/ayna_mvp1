@@ -10,3 +10,9 @@ project(':capacitor-browser').projectDir = new File('../node_modules/@capacitor/
 
 include ':capacitor-push-notifications'
 project(':capacitor-push-notifications').projectDir = new File('../node_modules/@capacitor/push-notifications/android')
+
+include ':capgo-capacitor-health'
+project(':capgo-capacitor-health').projectDir = new File('../node_modules/@capgo/capacitor-health/android')
+
+include ':capacitor-ayna-cycle'
+project(':capacitor-ayna-cycle').projectDir = new File('../native/capacitor-ayna-cycle/android')

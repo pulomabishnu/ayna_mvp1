@@ -721,6 +721,16 @@ export function buildUserProfile(intakeInput, options = {}) {
     stale: Object.fromEntries(Object.keys(RECENCY_RULES).map((k) => [k, stale(k)])),
   };
 
+  // Connected health data (src/health/matchContext.js): marks needs she CHOSE
+  // that a recent trend supports. Never adds or removes a need.
+  const healthByNeed = options.healthContext?.byNeed || null;
+  if (healthByNeed) {
+    for (const need of needs) {
+      const ctx = need.explicit ? healthByNeed[need.id] : null;
+      if (ctx) { need.corroborated = true; need.healthData = ctx; }
+    }
+  }
+
   return {
     version: 2,
     answers,

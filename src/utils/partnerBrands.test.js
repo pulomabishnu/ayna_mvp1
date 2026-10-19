@@ -11,8 +11,8 @@ import { ALL_PRODUCTS } from '../data/products';
 import { resolveBuyUrl } from './buyLink';
 
 describe('partnerBrands', () => {
-  it('ranks partners in the requested 2026-09-16 display order', () => {
-    const order = ['BUNI Body', 'SootheHer', 'Neycher', 'Winx Health', 'gina', 'Elitone', 'Proov', 'VIO2', 'My Pelvic Bra', 'Connect Pelvic Floor Fitness', 'LOLA'];
+  it('ranks partners in the team 2026-10-17 display order', () => {
+    const order = ['BUNI Body', 'LiM Method', 'Winx Health', 'Momotaro Apotheca', 'Neycher', 'SootheHer', 'Alubri', 'Connect Pelvic Floor Fitness', 'Elitone', 'LOLA', 'Proov', 'gina', 'Tampon Tribe', 'My Pelvic Bra', 'VIO2'];
     const ranks = order.map((brand) => getPartnerBrandRank({ brand, name: 'Some Product' }));
     expect(ranks.every((r) => r !== null)).toBe(true);
     expect(ranks).toEqual([...ranks].sort((a, b) => a - b));
@@ -32,11 +32,8 @@ describe('partnerBrands', () => {
     expect(eli).toBe(urge);
   });
 
-  it('keeps a confirmed partner not in the explicit priority list as a partner, ranked after it', () => {
-    const lim = getPartnerBrandRank({ brand: 'LiM Method', name: 'The LiM Bundle' });
-    const lastRanked = getPartnerBrandRank({ brand: 'LOLA', name: 'LOLA Organic Cotton Pads' });
-    expect(lim).not.toBeNull();
-    expect(lim).toBeGreaterThan(lastRanked);
+  it('ranks the pre-launch partner Rèsa first for now (Eliz, 2026-10-17)', () => {
+    expect(getPartnerBrandRank({ brand: 'Rèsa', name: 'Rèsa Rhythm Bracelet' })).toBe(0);
   });
 
   it('returns null for a non-partner product', () => {

@@ -1681,20 +1681,40 @@ function engineIntake(quizAnswers, healthProfile) {
     return intake;
 }
 
+// Apple Health Records she reviewed and saved on her phone (src/health/records.js).
+// They join the intake the same way imported records do: allergies and medicines
+// for safety, conditions as context that never creates a need.
+function withHealthRecords(healthProfile, records) {
+    if (!records || typeof records !== 'object') return healthProfile;
+    const base = healthProfile && typeof healthProfile === 'object' ? healthProfile : {};
+    const merge = (a, b) => [...new Set([...asStringArray(a), ...asStringArray(b)])];
+    return {
+        ...base,
+        conditions: merge(base.conditions, records.conditions),
+        medications: merge(base.medications, records.medications),
+        allergies: merge(base.allergies, records.allergies),
+    };
+}
+
 const EMPTY_INTAKE = {};
 const USER_PROFILE_CACHE = new WeakMap();
 function userProfileFor(quizAnswers, healthProfile = null, opts = {}) {
     const key = quizAnswers && typeof quizAnswers === 'object' ? quizAnswers : EMPTY_INTAKE;
     const behaviorRaw = opts?.behavior || null;
+    // Connected health data (src/health/matchContext.js). Personal matching only:
+    // Browse ranking and partner placement never pass it.
+    const healthContext = opts?.healthContext || null;
+    const healthRecords = opts?.healthRecords || null;
     let entries = USER_PROFILE_CACHE.get(key);
     if (!entries) { entries = []; USER_PROFILE_CACHE.set(key, entries); }
-    const hit = entries.find((e) => e.healthProfile === healthProfile && e.behaviorRaw === behaviorRaw);
+    const hit = entries.find((e) => e.healthProfile === healthProfile && e.behaviorRaw === behaviorRaw && e.healthContext === healthContext && e.healthRecords === healthRecords);
     if (hit) return hit.up;
-    const up = buildUserProfile(engineIntake(key, healthProfile), {
+    const up = buildUserProfile(engineIntake(key, withHealthRecords(healthProfile, healthRecords)), {
         catalog: ALL_PRODUCTS,
         behavior: normalizeBehaviorSignals(behaviorRaw) || undefined,
+        healthContext: healthContext || undefined,
     });
-    entries.push({ healthProfile, behaviorRaw, up });
+    entries.push({ healthProfile, behaviorRaw, healthContext, healthRecords, up });
     if (entries.length > 6) entries.shift();
     return up;
 }
@@ -1823,6 +1843,8 @@ function toNeedMatch(r, up) {
         filtered: r.filtered,
         components: r.components,
         source: need?.source || null,
+        // Set only when connected health data supports a need she chose (src/health/matchContext.js).
+        healthData: need?.healthData || null,
         eligibility: r.eligibility,
         restricted: r.restricted,
         confidenceLevel: r.confidenceLevel,
@@ -1895,6 +1917,7 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
     const base = {
         needId: best?.needId || null,
         needLabel: best ? needLabel(up.healthIntent.needs.find((n) => n.id === best.needId)) : null,
+        healthData: best ? (up.healthIntent.needs.find((n) => n.id === best.needId)?.healthData || null) : null,
         needMatches,
         access: result.access,
         blockedClaims: safety.blockedClaims,

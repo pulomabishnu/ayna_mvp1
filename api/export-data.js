@@ -133,10 +133,17 @@ export default async function handler(req, res) {
     fetchRows(db, 'community_friend_requests', user.id, { column: 'addressee_id' }),
     fetchRows(db, 'community_blocks', user.id, { column: 'blocker_id' }),
     fetchRows(db, 'community_product_recommendations', user.id, { column: 'recipient_id' }),
+    // Connected health data. OAuth tokens are credentials and never exported.
+    fetchRows(db, 'health_connections', user.id, { select: 'source, status, sync_enabled, categories, platform, last_synced_at, notice_version, created_at, updated_at' }),
+    fetchRows(db, 'health_daily_metrics', user.id, { select: 'source, origin, metric, day, value, unit, method, synced_at' }),
+    fetchRows(db, 'health_data_events', user.id, { select: 'source, action, categories, notice_version, rows_affected, created_at' }),
+    fetchRows(db, 'health_imports', user.id, { select: 'declared_app, file_kind, status, rows_saved, created_at' }),
+    fetchRows(db, 'health_source_requests', user.id, { select: 'source_name, note, created_at' }),
   ]);
 
   const [phone, prefs, intake, ecosystem, healthProfiles, reviews, sms, aiUsage, builds, learningMemory, recalls, deletionRequests,
-    cProfile, cPosts, cComments, cFollowing, cFollowers, cPlaylists, cSaved, cHelpful, cReqSent, cReqReceived, cBlocks, cRecs] = entries;
+    cProfile, cPosts, cComments, cFollowing, cFollowers, cPlaylists, cSaved, cHelpful, cReqSent, cReqReceived, cBlocks, cRecs,
+    hConnections, hMetrics, hEvents, hImports, hRequests] = entries;
   const warnings = entries.map((entry) => entry.warning).filter(Boolean);
   const meta = user.user_metadata || {};
 
@@ -159,6 +166,7 @@ export default async function handler(req, res) {
     `Account: ${user.email || 'no email on file'}.`,
     intake.data ? 'Health profile: included.' : 'Health profile: none saved.',
     `Products saved or on your shelves: ${n(products)}.`,
+    n(hConnections.data) ? `Connected health data: ${plural(n(hMetrics.data), 'daily value')} from ${plural(n(hConnections.data), 'source')}.` : 'Connected health data: none.',
     `Reviews: ${n(reviews.data)}. Community posts: ${n(community.posts)}. Comments: ${n(community.comments)}.`,
     `Following ${n(community.following)}, ${plural(n(community.followers), 'follower')}.`,
     phone.data ? `Phone number on file, ${plural(n(sms.data), 'text message')}.` : 'No phone number on file.',
@@ -207,5 +215,12 @@ export default async function handler(req, res) {
     recallNotificationRecords: recalls.data || [],
     accountDeletionRequests: deletionRequests.data || [],
     community,
+    connectedHealthData: {
+      connections: hConnections.data || [],
+      dailyValues: hMetrics.data || [],
+      consentAndDeletionLog: hEvents.data || [],
+      uploads: hImports.data || [],
+      sourceRequests: hRequests.data || [],
+    },
   });
 }

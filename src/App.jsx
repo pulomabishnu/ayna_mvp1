@@ -52,8 +52,10 @@ const Articles = React.lazy(() => import('./components/Articles'));
 // Internal, read-only product passport audit (dev, or ?internal=1 opt-in).
 const ProductAudit = React.lazy(() => import('./components/ProductAudit'));
 const CampusResources = React.lazy(() => import('./components/CampusResources'));
-import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, hasStatedLifeStage, matchEngine } from './data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, hasStatedLifeStage, matchEngine, getSelectedNeeds } from './data/products';
 import { behaviorFrom } from './utils/matchDisplay';
+import WebHealthData from './components/WebHealthData';
+import { useHealthData } from './mobile/hooks/useHealthData.js';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
 const Screenings = lazyView(() => import('./components/Screenings'));
 import { useScrollPosition } from './hooks/useScrollPosition';
@@ -137,7 +139,7 @@ const VIEW_TO_PATH = {
   articles: '/library', screenings: '/screenings', omitted: '/omitted',
   comparison: '/comparison', recalls: '/recalls',
   'doctor-prep': '/appointment-prep', 'profile-edit': '/profile', 'phone-verify': '/text-ayna', tracked: '/tracked',
-  'delete-account': '/delete-account',
+  'delete-account': '/delete-account', 'health-data': '/health-data',
   'privacy-policy': '/privacy-policy',
   'consumer-health-data': '/consumer-health-data',
   'terms-of-use': '/terms-of-use',
@@ -163,7 +165,7 @@ const VIEW_TITLES = {
   waitlist: 'Partner brands', recommendations: 'Your Recommendations', articles: 'Library', screenings: 'Screenings',
   omitted: 'Omitted Products', comparison: 'Compare Products', recalls: 'Recalls',
   'doctor-prep': 'Appointment Prep', 'profile-edit': 'Edit Profile',
-  'phone-verify': 'Verify Phone', tracked: 'Tracked Products', 'delete-account': 'Delete Account',
+  'phone-verify': 'Verify Phone', tracked: 'Tracked Products', 'delete-account': 'Delete Account', 'health-data': 'Health data',
   'privacy-policy': 'Privacy Policy', 'consumer-health-data': 'Consumer Health Data Privacy Notice', 'terms-of-use': 'Terms of Use',
   'how-we-make-money': 'How We Make Money', 'how-it-works': 'How It Works',
   about: 'About', contact: 'Contact', 'not-found': 'Page Not Found',
@@ -1095,11 +1097,11 @@ function App() {
     return () => clearTimeout(timer);
   }, [user, authLoading, currentView]);
 
-  const PROTECTED_VIEWS = ['comparison', 'omitted', 'recalls', 'doctor-prep', 'profile-edit', 'phone-verify', 'tracked', 'screenings', 'delete-account'];
+  const PROTECTED_VIEWS = ['comparison', 'omitted', 'recalls', 'doctor-prep', 'profile-edit', 'phone-verify', 'tracked', 'screenings', 'delete-account', 'health-data'];
   useEffect(() => {
     if (!authLoading && !user && PROTECTED_VIEWS.includes(currentView)) {
       // Say what the page was, so the sign-in sheet explains itself.
-      const FEATURE = { 'doctor-prep': 'appointment prep', recalls: 'recall alerts', tracked: 'recall alerts', comparison: 'comparisons', omitted: 'your hidden products', 'profile-edit': 'your health profile', 'phone-verify': 'ayna by text', screenings: 'screening reminders', 'delete-account': 'account settings' };
+      const FEATURE = { 'doctor-prep': 'appointment prep', recalls: 'recall alerts', tracked: 'recall alerts', comparison: 'comparisons', omitted: 'your hidden products', 'profile-edit': 'your health profile', 'phone-verify': 'ayna by text', screenings: 'screening reminders', 'delete-account': 'account settings', 'health-data': 'health data' };
       setCurrentView('welcome', { replace: true });
       setAuthFeature(FEATURE[currentView] || '');
       setPendingAction(FEATURE[currentView] ? 'feature' : 'login'); pendingActionRef.current = FEATURE[currentView] ? 'feature' : 'login';
@@ -1141,9 +1143,19 @@ function App() {
   // Behavior signals for the matching engine (saved, Not for me, in her
   // ecosystem), shared by Shop, Ecosystem and the product page so they all
   // show the same per-need score. Memoized: the engine caches by identity.
+  // Connected health data (You -> Health data) strengthens needs she chose,
+  // only from sources whose terms allow it (src/health/policy.js). Personal
+  // matching only: never Browse ranking, partner placement or ads.
+  const healthNeedIds = useMemo(() => {
+    try { return quizResults ? getSelectedNeeds(quizResults).map((n) => n.id) : []; } catch { return []; }
+  }, [quizResults]);
+  const health = useHealthData(user?.id || null, healthNeedIds);
   const matchOpts = useMemo(
-    () => behaviorFrom({ saved: savedProducts, omitted: omittedProducts, inEcosystem: myProducts }),
-    [savedProducts, omittedProducts, myProducts]
+    () => {
+      const base = behaviorFrom({ saved: savedProducts, omitted: omittedProducts, inEcosystem: myProducts });
+      return health.matchContext ? { ...base, healthContext: health.matchContext } : base;
+    },
+    [savedProducts, omittedProducts, myProducts, health.matchContext]
   );
 
   const recommendedProductIds = useMemo(() => {
@@ -2209,6 +2221,9 @@ function App() {
             onOpenProduct={handleOpenProduct}
             onSignOut={handleSignOut}
             onDeleteAccount={handleOpenDeleteAccount}
+            onOpenHealthData={() => setCurrentView('health-data')}
+            healthSummary={health.insights.sections.find((sec) => sec.status === 'ready') || null}
+            healthConnectedCount={health.connected.length}
             theme={themeMode}
             onThemeChange={setThemeMode}
           />
@@ -2237,6 +2252,15 @@ function App() {
         )}
         {currentView === 'delete-account' && (
           <DeleteAccountPage onBack={() => setCurrentView('you')} />
+        )}
+        {currentView === 'health-data' && user && (
+          <WebHealthData
+            user={user}
+            quizResults={quizResults}
+            onBack={() => setCurrentView('you')}
+            onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+            onEditProfile={() => setCurrentView(quizResults ? 'profile-edit' : 'quiz')}
+          />
         )}
         <FeedbackPrompts key={user?.id || 'guest'} user={user} authLoading={authLoading} currentView={currentView} />
         {currentView === 'admin-reviews' && (

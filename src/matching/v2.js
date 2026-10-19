@@ -40,6 +40,8 @@ export const V2 = {
   maxUniversal: 1,
   universalNeedCount: 10,
   needWeight: { first: 1.0, picked: 0.7, inferred: 0.4 },
+  // Added to a chosen need's weight when her connected health data shows a trend supporting it.
+  corroborationBoost: 0.15,
   fallbackPerNeed: 2,
 };
 
@@ -134,7 +136,9 @@ export function buildEcosystemV2(up, products, options = {}) {
   const scaffold = buildEcosystem(up, products, { ...options, picksPerNeed: options.picksPerNeed ?? V2.perNeed });
   const needs = up.healthIntent.needs;
   const needIds = new Set(needs.map((n) => n.id));
-  const weight = new Map(needs.map((n, i) => [n.id, ['legacy', 'inferred', 'life_stage'].includes(n.source) ? V2.needWeight.inferred : i === 0 ? V2.needWeight.first : V2.needWeight.picked]));
+  // Health-data trends can strengthen a need she chose (never create one): see src/health/matchContext.js.
+  const baseWeight = (n, i) => (['legacy', 'inferred', 'life_stage'].includes(n.source) ? V2.needWeight.inferred : i === 0 ? V2.needWeight.first : V2.needWeight.picked);
+  const weight = new Map(needs.map((n, i) => [n.id, Math.min(1, baseWeight(n, i) + (n.corroborated ? V2.corroborationBoost : 0))]));
   const userKey = String(up.userKey || up.id || needs.map((n) => n.id).join(','));
 
   const candidates = []; // { pp, results: Map(needId -> { r, v2 }) }

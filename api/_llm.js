@@ -313,7 +313,10 @@ function withPrismTrace(provider, fn, defaultModel) {
       provider,
       model: args.model || defaultModel(),
       system: args.system,
-      prompt: args.prompt,
+      // trace.redact: health content (e.g. a screenshot of someone's health
+      // app) must not be copied to the tracing service. The call is still
+      // traced (route, model, latency, outcome), without the content.
+      prompt: trace?.redact ? '[redacted: health data]' : args.prompt,
     };
     try {
       const out = await fn(args);
@@ -324,7 +327,7 @@ function withPrismTrace(provider, fn, defaultModel) {
       await emitTrace({
         ...base,
         output,
-        rawOutput: output !== out.text ? out.text : undefined,
+        rawOutput: !trace?.redact && output !== out.text ? out.text : undefined,
         stopReason: out.stopReason,
         latencyMs: Date.now() - started,
       });

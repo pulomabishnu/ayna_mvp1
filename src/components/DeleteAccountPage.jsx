@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import posthog from 'posthog-js';
 import { getSupabaseClient } from '../utils/supabaseClient';
+import { deleteAllSavedRecordsOnDevice } from '../health/records.js';
 
 const REASON_OPTIONS = [
   'Not what I expected',
@@ -31,6 +32,7 @@ function clearAynaStorage(store) {
 function clearLocalAynaData() {
   try { clearAynaStorage(window.localStorage); } catch { /* private mode */ }
   try { clearAynaStorage(window.sessionStorage); } catch { /* private mode */ }
+  deleteAllSavedRecordsOnDevice(); // Apple Health Records kept on this phone
 }
 
 export default function DeleteAccountPage({ onBack }) {

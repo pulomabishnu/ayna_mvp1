@@ -15,6 +15,13 @@ const USER_TABLES = [
   ['user_ecosystems', '*'],
   ['user_learning_memory', '*'],
   ['user_reviews', '*'],
+  // Connected health data (supabase/health_data.sql). OAuth tokens are a
+  // credential, not account data, and are never exported.
+  ['health_connections', '*'],
+  ['health_daily_metrics', '*'],
+  ['health_data_events', '*'],
+  ['health_imports', '*'],
+  ['health_source_requests', '*'],
 ];
 
 function dedupeById(rows) {
