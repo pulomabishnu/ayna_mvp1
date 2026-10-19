@@ -1469,6 +1469,7 @@ function TextMessagesScreen({ onBack, authUser }) {
   const [phone, setPhone] = useState('');
   const [code, setCode] = useState('');
   const [sent, setSent] = useState(false);
+  const [agreed, setAgreed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const load = () => {
@@ -1507,8 +1508,11 @@ function TextMessagesScreen({ onBack, authUser }) {
         {!sent ? <>
           <label htmlFor="ay-sms-phone">Mobile number</label>
           <input id="ay-sms-phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="(555) 555-0123" value={phone} onChange={(e) => setPhone(e.target.value)} />
-          <p className="ay-sms-consent">By tapping Send code, you agree to get texts from ayna at this number. Msg &amp; data rates may apply. Message frequency varies. Reply STOP to opt out, HELP for help.</p>
-          <button type="button" className="ay-qc-primary" disabled={busy || phone.replace(/\D/g, '').length < 10} onClick={send}>{busy ? 'Sending…' : 'Send code'}</button>
+          <label className="ay-sms-agree">
+            <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} />
+            <span>I agree to get texts from ayna at this number, including reminders, order updates and replies when I text ayna. Msg &amp; data rates may apply. Message frequency varies. Reply STOP to opt out, HELP for help. See our <a href="https://www.aynahealth.co/terms-of-use" target="_blank" rel="noopener noreferrer">Terms</a> and <a href="https://www.aynahealth.co/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</span>
+          </label>
+          <button type="button" className="ay-qc-primary" disabled={busy || !agreed || phone.replace(/\D/g, '').length < 10} onClick={send}>{busy ? 'Sending…' : 'Send code'}</button>
         </> : <>
           <label htmlFor="ay-sms-code">Code we texted to {phone}</label>
           <input id="ay-sms-code" inputMode="numeric" autoComplete="one-time-code" maxLength={8} value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} />
