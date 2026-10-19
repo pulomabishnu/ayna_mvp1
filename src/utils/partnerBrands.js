@@ -135,3 +135,14 @@ const PRELAUNCH_PARTNER_DISCLOSURE =
 export function getPartnerDisclosureText(item) {
   return isPrelaunchPartnerItem(item) ? PRELAUNCH_PARTNER_DISCLOSURE : PARTNER_DISCLOSURE;
 }
+
+/**
+ * The only place partner brands may move up: the Shop / Browse grid, on its
+ * default sort, with no text search, while personalization is off. Partners
+ * never change match scores, "For you" picks, search results, the AI picks or
+ * the chatbot. Website (Discovery.jsx) and app (BrowseScreen.jsx) both ask
+ * this, so the rule can't drift between them.
+ */
+export function partnerBoostAllowed({ personalized = false, hasQuery = false, sort = 'default' } = {}) {
+  return sort === 'default' && !hasQuery && !personalized;
+}
