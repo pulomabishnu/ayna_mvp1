@@ -5701,3 +5701,14 @@ html body .app-container.app-container.app-container.app-container.app-container
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-itabs__panel .ay-tabs__steps > li > b:not(.zz),
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ev2__grade.ay-ev2__grade:not(.zz) { color: #3e2723 !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-h2-price__unit.pdp-h2-price__unit:not(.zz) { color: #ffedac !important; }
+
+/* Phone tab bar (Oct 19): every tab is the same shape (a 40px icon row, then
+   the label), so all six labels share one baseline. Ask keeps its pink orb,
+   now inside the bar instead of poking out over the line. */
+@media (max-width: 720px) {
+  html body .app-container .ay-tabbar { align-items: stretch !important; }
+  html body .app-container .ay-tabbar > :is(a, button) { grid-template-rows: 40px auto !important; align-content: end !important; justify-items: center !important; gap: 2px !important; min-height: 60px !important; padding: 4px 0 4px !important; }
+  html body .app-container .ay-tabbar > :is(a, button) > svg { align-self: center !important; }
+  html body .app-container .ay-tabbar .ay-tabbar__orb,
+  html body .app-container .ay-tabbar.is-six .ay-tabbar__orb { align-self: center !important; width: 38px !important; height: 38px !important; margin: 0 !important; border: 2px solid var(--ay-ink) !important; box-shadow: none !important; font-size: 17px !important; }
+}
