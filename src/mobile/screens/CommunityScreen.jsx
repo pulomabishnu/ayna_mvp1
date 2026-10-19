@@ -599,7 +599,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     return <div className="am-community-empty-slot"><EmptyState art={copy[4]} tone={copy[5]} title={copy[0]} body={copy[1]} actionLabel={copy[2]} onAction={() => copy[3] ? openCompose(copy[3]) : setTab('for-you')} /></div>;
   };
 
-  if (!supabase) return <div className="am-screen"><MobileHeader activeTab="community" onGoBrowse={onGoBrowse} onGoEco={onGoEco} /><EmptyState art="offline" tone="butter" title="Community isn’t loading" body="Try again later." actionLabel="Shop" onAction={onGoBrowse} /></div>;
+  if (!supabase) return <div className="am-screen"><MobileHeader activeTab="community" onGoBrowse={onGoBrowse} onGoEco={onGoEco} /><EmptyState art="offline" tone="butter" title="Community isn’t loading" body="Try again later." actionLabel="Try again" onAction={() => setRefresh((n) => n + 1)} secondaryLabel="Shop" onSecondary={onGoBrowse} /></div>;
   return <div className="am-screen" ref={screenRef}>
     <MobileHeader activeTab="community" initial={headerInitial} onGoBrowse={onGoBrowse} onGoEco={onGoEco} onGoCommunity={() => {}} onOpenSaved={onOpenSaved} onOpenProfile={onOpenProfile} />
     <div className="am-scroll">

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import PlaylistCoverPicker from './PlaylistCoverPicker.jsx';
 import PlaylistAudiencePicker from './PlaylistAudiencePicker.jsx';
-import { buildRoutine, buildShoppingList } from '../../health/plan.js';
+import { buildRoutine, buildShoppingList, overBudget } from '../../health/plan.js';
 import { getBuyUrl } from '../data/buyUrl.js';
 import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
 import { productImageOverride } from '../../data/productImageOverrides.js';
@@ -14,10 +14,13 @@ import { productImageOverride } from '../../data/productImageOverrides.js';
 
 function Thumb({ product }) {
   const src = productImageOverride(product) || safeProductImageSrc(product.image || product.imageUrl || product.images?.[0]);
-  return <span className="ay-rt-thumb">{src ? <img src={src} alt="" loading="lazy" /> : <span aria-hidden="true">{(product.brand || product.name || '?').charAt(0)}</span>}</span>;
+  const [broken, setBroken] = useState(false);
+  return <span className="ay-rt-thumb">{src && !broken ? <img src={src} alt="" loading="lazy" onError={() => setBroken(true)} /> : <span aria-hidden="true">{(product.brand || product.name || '?').charAt(0)}</span>}</span>;
 }
 
-export function Routine({ products, insights, onOpenProduct }) {
+const OverBudget = () => <span className="ay-rt-budget">Over your budget</span>;
+
+export function Routine({ products, insights, onOpenProduct, budget = null }) {
   const routine = useMemo(() => buildRoutine(products, insights), [products, insights]);
   if (!routine.slots.length) return null;
   return (
@@ -35,6 +38,7 @@ export function Routine({ products, insights, onOpenProduct }) {
                   <Thumb product={product} />
                   <span className="ay-rt-text">
                     <b>{product.name}</b>
+                    {overBudget(product, budget) && <OverBudget />}
                     {how && <span className="ay-rt-how">{how.text}</span>}
                     {how?.source && <small>From {how.source}</small>}
                   </span>
@@ -48,7 +52,7 @@ export function Routine({ products, insights, onOpenProduct }) {
   );
 }
 
-export function ShoppingList({ products, insights, have = {}, onToggleHave, onOpenProduct, onSavePlaylist, onOpenPlaylist }) {
+export function ShoppingList({ products, insights, have = {}, onToggleHave, onOpenProduct, onSavePlaylist, onOpenPlaylist, budget = null, onRequireAuth }) {
   const list = useMemo(() => buildShoppingList(products, insights, { getBuyUrl }), [products, insights]);
   if (!list.count) return null;
   const owned = list.groups.flatMap((g) => g.items).filter((i) => have[i.product.id]).length;
@@ -70,6 +74,7 @@ export function ShoppingList({ products, insights, have = {}, onToggleHave, onOp
                   </label>
                   <button type="button" className="ay-sl-name" onClick={() => onOpenProduct?.(product)}>
                     <b>{product.name}</b>
+                    {overBudget(product, budget) && <OverBudget />}
                     <small>{[price, where.length ? where.join(', ') : null].filter(Boolean).join(' · ')}</small>
                   </button>
                   {buyUrl && !got && <a className="ay-sl-buy" href={buyUrl} target="_blank" rel="noopener noreferrer sponsored">Buy<span className="ay-sl-sr"> {product.name}</span></a>}
@@ -79,6 +84,7 @@ export function ShoppingList({ products, insights, have = {}, onToggleHave, onOp
           </ul>
         </div>
       ))}
+      {!onSavePlaylist && onRequireAuth && <button type="button" className="ay-sl-pl-open" onClick={() => onRequireAuth('playlists')}><span aria-hidden="true">♫</span>Sign in to save as a playlist</button>}
       {onSavePlaylist && <SavePlaylist items={list.groups.flatMap((g) => g.items).map((it) => it.product)} have={have} onSave={onSavePlaylist} onOpen={onOpenPlaylist} />}
     </section>
   );
@@ -128,10 +134,10 @@ function SavePlaylist({ items, have, onSave, onOpen }) {
       <h3>Save as a playlist</h3>
       <label htmlFor="ay-sl-pl-title">Name</label>
       <input id="ay-sl-pl-title" value={title} maxLength={60} onChange={(e) => setTitle(e.target.value)} />
-      <div className="ay-sl-pl-which" role="radiogroup" aria-label="Which products">
+      {toBuy.length !== items.length && <div className="ay-sl-pl-which" role="radiogroup" aria-label="Which products">
         <button type="button" role="radio" aria-checked={which === 'tobuy'} className={which === 'tobuy' ? 'is-on' : ''} onClick={() => setWhich('tobuy')}>Still to buy ({toBuy.length})</button>
         <button type="button" role="radio" aria-checked={which === 'all'} className={which === 'all' ? 'is-on' : ''} onClick={() => setWhich('all')}>Everything ({items.length})</button>
-      </div>
+      </div>}
       <PlaylistAudiencePicker id="ay-sl-pl-aud" value={visibility} onChange={setVisibility} />
       <PlaylistCoverPicker title={title} mode={coverMode} onMode={setCoverMode} color={coverColor} onColor={setCoverColor} text={coverText} onText={setCoverText} photo={coverPhoto} onPhoto={setCoverPhoto} />
       {state.step === 'error' && <p className="ay-hc-error" role="alert">{state.message}</p>}

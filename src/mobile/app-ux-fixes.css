@@ -1,0 +1,96 @@
+/* Fresh-eyes UX fixes (Oct 19). Imported last in MobileApp.jsx so it wins
+   ties with the earlier override sheets; the repeated .ayna-mobile matches
+   their specificity convention. Brand colours only. */
+
+/* Shop: while search suggestions are open, the category chips sit under the
+   dropdown and poked out below it. Hide them until the list closes. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-screen='browse']:has(.ayna-fresh-search input[aria-expanded='true']) .ayna-category-index {
+  visibility: hidden !important;
+}
+
+/* Why this match: needs this product does not address, listed once. */
+.ayna-mobile .ay-need-rows__off { margin: 12px 0 0 !important; font: 500 calc(13px * var(--ayna-text-scale, 1))/1.4 'DM Sans', system-ui, sans-serif !important; color: var(--ay-ink, #3e2723) !important; opacity: .72; }
+.ayna-mobile .ay-need-rows + .ay-need-rows__off { padding-top: 12px; border-top: 1.5px solid rgba(62, 39, 35, .16); }
+/* The "add more" hint without a button is a note, not a control. */
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-why-hint.is-static { border-style: solid !important; border-color: rgba(62, 39, 35, .24) !important; }
+
+/* Save your Ecosystem: the back button sat over the title's first letter. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-auth-back {
+  position: relative !important;
+  z-index: 1;
+  flex: none !important;
+  margin-bottom: 16px !important;
+}
+/* The header was a fixed 64px with the two-line title centred in it, so the
+   title spilled up over the back button. Let it grow to fit. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-auth-head {
+  flex: none !important;
+  height: auto !important;
+  min-height: 0 !important;
+  align-content: flex-start !important;
+  align-items: flex-start !important;
+}
+/* Pick tiles with no catalog photo: the brand name, not a lone letter. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-auth-eco-thumbs > span.no-photo { background: #ffffff !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-auth-eco-fallback--name {
+  display: grid !important;
+  place-items: center;
+  padding: 4px !important;
+  box-sizing: border-box;
+  font: 700 11px/1.1 'DM Sans', system-ui, sans-serif !important;
+  font-style: normal !important;
+  text-align: center;
+  overflow-wrap: anywhere;
+  color: #3e2723 !important;
+}
+
+/* Quiz: one continuous progress bar (the total can grow with her answers). */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-progress--fill {
+  display: block !important;
+  height: 4px !important;
+  border-radius: 9px;
+  background: rgba(62, 39, 35, .16) !important;
+  overflow: hidden;
+}
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-progress--fill span {
+  display: block !important;
+  height: 100% !important;
+  border-radius: 9px;
+  background: #3e2723 !important;
+  animation: none !important;
+  transition: width .3s ease;
+}
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-progress--fill { background: rgba(255, 237, 172, .2) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-progress--fill span { background: #ffedac !important; }
+@media (prefers-reduced-motion: reduce) {
+  .ayna-mobile .ayna-play-intake .ip-progress--fill span { transition: none !important; }
+}
+
+/* Quiz intro: the press demo sits in the chip's empty end, off the word, and
+   the card rests at the bottom so the question above stays readable. */
+.qi .qi-mock-chip--hold { padding-right: 52px; }
+.qi .qi-mock-chip--hold .qi-finger--hold { top: 50%; left: calc(100% - 26px); }
+.ayna-mobile .qi--app { place-items: end center; padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+
+/* Wrapped finish card: the #1 match name gets two lines instead of an ellipsis. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayw-card li { align-items: flex-start !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayw-card li b {
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  white-space: normal !important;
+  overflow: hidden !important;
+  text-overflow: clip !important;
+  line-height: 1.2 !important;
+}
+
+/* Ecosystem shelf titles: wrap at large text sizes instead of clipping. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ay-shelf-head h2, .ayna-cabinet-section-head h2) {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: break-word;
+}

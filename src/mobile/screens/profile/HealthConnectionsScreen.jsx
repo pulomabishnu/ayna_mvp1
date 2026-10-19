@@ -91,7 +91,9 @@ function SourceList({ connections, records, onOpen, onOpenInsights, hasInsights,
               const recordCount = records ? records.allergies.length + records.conditions.length + records.medications.length : 0;
               const status = source.id === 'records' ? (recordCount ? { text: `${recordCount} saved on this iPhone`, tone: 'on' } : null)
                 : source.id === 'upload' || source.id === 'flo' ? null : statusLine(connection, now);
-              const sub = status?.text
+              // Found through its note ("Fitbit ... come through here"), not its name: say so.
+              const via = q && !source.name.toLowerCase().includes(q) && String(source.note || '').toLowerCase().includes(q) ? `${query.trim()} data can come through ${source.name}` : null;
+              const sub = via || status?.text
                 || (source.availability === 'needs_approval' ? 'Waiting on Garmin approval'
                   : source.availability === 'later' ? 'Coming later'
                   : source.availability === 'blocked' ? 'Not available' : source.kind);

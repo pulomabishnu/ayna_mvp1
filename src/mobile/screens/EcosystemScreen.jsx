@@ -15,11 +15,11 @@ import { summarizeCareNotes, firstCareLink } from '../../utils/careSummary.js';
 import CareNote from '../../components/CareNote.jsx';
 import { Routine, ShoppingList } from '../components/RoutinePlan.jsx';
 import HealthDashboard from '../components/HealthDashboard.jsx';
+import { budgetMax } from '../../health/plan.js';
 import '../eco-needs.css';
 
 const AREA_TONES = ['#F7BADD', '#769EBE', '#3E2723', '#F7BADD', '#769EBE', '#3E2723'];
 const MIN_SHELF_SCORE = 50;
-const SUGGEST_LABEL = { 'sleep.trouble': 'sleep', 'cycle.irregular': 'irregular cycles', 'energy.fatigue': 'low energy' };
 
 function CareLinks({ care, limit = 4 }) {
   if (!care) return null;
@@ -46,7 +46,7 @@ export default function EcosystemScreen({
   onRequestEcosystemReset, ecosystemNotice, onOpenMonthlyCheckin, onOpenProfile,
   quizAnswers = null, matchOpts, onOpenWhyMatch, onAddToEcosystem, onToggleSaved, onReplayStory,
   onOpenHealthData, healthSummary = null, healthConnectedCount = 0,
-  healthSuggestions = [], healthInsights = null, onAddGoal, ecoTab = 'products', onEcoTab, routineHave = {}, onToggleHave,
+  healthInsights = null, onAddGoal, ecoTab = 'products', onEcoTab, routineHave = {}, onToggleHave,
   onSavePlaylist, onOpenPlaylist, onConnectHealth, onRequireAuth,
 }) {
   const goalIds = useMemo(() => (quizAnswers ? getSelectedNeeds(quizAnswers).map((n) => n.id) : []), [quizAnswers]);
@@ -172,16 +172,10 @@ export default function EcosystemScreen({
       {[['products', 'Products'], ['dashboard', 'Dashboard']].map(([id, label]) => <button key={id} type="button" role="tab" aria-selected={ecoTab === id} className={ecoTab === id ? 'is-on' : ''} onClick={() => onEcoTab(id)}>{label}</button>)}
     </div>}
 
-    {ecoTab !== 'dashboard' && healthSuggestions.length > 0 && onAddGoal && <section className="ay-eco-suggest" aria-label="From your health data">
-      {healthSuggestions.map((s) => <div key={s.needId} className="ay-hd-suggest-item">
-        <p>{s.summary}. Want ayna to match you for {SUGGEST_LABEL[s.needId] || 'it'} too?</p>
-        <button type="button" className="ay-hc-primary" onClick={() => onAddGoal(s.needId)}>Add {SUGGEST_LABEL[s.needId] || 'it'} to my goals</button>
-      </div>)}
-    </section>}
 
     {ecoTab === 'dashboard' && myProducts.length > 0 ? <div className="ay-eco-routine">
       <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} onConnect={onConnectHealth} onAddGoal={onAddGoal} onSignIn={() => onRequireAuth?.('health data')} />
-      <Routine products={myProducts} insights={healthInsights} onOpenProduct={onOpenProduct} />
+      <Routine products={myProducts} insights={healthInsights} onOpenProduct={onOpenProduct} budget={budgetMax(quizAnswers)} />
     </div> : <>
     {ringGroups.length > 0 && <div className="ay-eco-cover ay-eco-mix"><EcosystemChart groups={ringGroups} /></div>}
     {careFirst && hasAnything && <p className="ay-care-first__after">Products, when you are ready</p>}
@@ -228,7 +222,7 @@ export default function EcosystemScreen({
     )}
     <section className="ayna-home-today"><h2>Monthly check-in</h2><button type="button" onClick={onOpenMonthlyCheckin}>Start</button></section>
 
-    {myProducts.length > 0 && <div className="ay-eco-shop"><ShoppingList products={myProducts} insights={healthInsights} have={routineHave} onToggleHave={onToggleHave} onOpenProduct={onOpenProduct} onSavePlaylist={onSavePlaylist} onOpenPlaylist={onOpenPlaylist} /></div>}
+    {myProducts.length > 0 && <div className="ay-eco-shop"><ShoppingList products={myProducts} insights={healthInsights} have={routineHave} onToggleHave={onToggleHave} onOpenProduct={onOpenProduct} onSavePlaylist={onSavePlaylist} onOpenPlaylist={onOpenPlaylist} budget={budgetMax(quizAnswers)} onRequireAuth={onRequireAuth} /></div>}
 
     <section className="ayna-cabinet-more" aria-label="More ways to manage your cabinet">
       {earlierProducts.length > 0 && <details><summary>Earlier picks <span>{earlierProducts.length}</span></summary><p>Kept in your Ecosystem outside your current shortlist.</p><div className="ayna-editorial-product-grid">{earlierProducts.map((product) => <ProductCard key={product.id} product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} />)}</div></details>}

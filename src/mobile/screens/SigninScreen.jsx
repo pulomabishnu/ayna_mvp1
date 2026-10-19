@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
+import { hydrateCatalogProduct } from '../../data/products.js';
+import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
+import { productImageOverride } from '../../data/productImageOverrides.js';
 import { HEARD_ABOUT_OPTIONS, HEARD_ABOUT_OTHER_MAX, heardAboutMetadata } from '../../utils/heardAbout.js';
 import { stashPendingSignupMeta } from '../../utils/pendingConsent.js';
 import { setRememberMe } from '../../utils/supabaseClient.js';
@@ -171,6 +174,12 @@ export default function SigninScreen({
   topAreas = [],
 }) {
   const ecoPicks = (myProducts || []).filter(Boolean);
+  // Thumbnails use the catalog photo (same lookup as the product page), and
+  // picks that have one go first so the row shows real products.
+  const picksWithPhoto = ecoPicks.map((p) => hydrateCatalogProduct(p)).map((p) => {
+    const raw = p.image || p.imageUrl || p.images?.[0];
+    return { p, src: raw, hasPhoto: Boolean(productImageOverride(p) || safeProductImageSrc(raw, p.type === 'digital')) };
+  }).sort((a, b) => Number(b.hasPhoto) - Number(a.hasPhoto));
   const showEcoSummary = ecoPicks.length > 0 && !authUser;
   const [mode, setMode] = useState(initialMode); // 'signup' | 'signin' | 'check-email'
   const [firstName, setFirstName] = useState('');
@@ -377,10 +386,11 @@ export default function SigninScreen({
                 {topAreas.length > 0 && <span>{topAreas.slice(0, 4).join(', ')}</span>}
               </div>
               <div className="ay-auth-eco-thumbs" aria-hidden="true">
-                {ecoPicks.slice(0, ecoPicks.length > 4 ? 3 : 4).map((p, i) => (
-                  <span key={p.id || i}>
-                    <i className="ay-auth-eco-fallback">{String(p.brand || p.name || '?').trim().charAt(0).toUpperCase()}</i>
-                    <ProductImage product={p} src={p.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#fff' }} />
+                {picksWithPhoto.slice(0, ecoPicks.length > 4 ? 3 : 4).map(({ p, src, hasPhoto }, i) => (
+                  <span key={p.id || i} className={hasPhoto ? 'has-photo' : 'no-photo'}>
+                    {hasPhoto
+                      ? <ProductImage product={p} src={src} allowBrandLogo={p.type === 'digital'} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#fff' }} />
+                      : <i className="ay-auth-eco-fallback ay-auth-eco-fallback--name">{String(p.brand || p.name || '').trim().split(/\s+/)[0] || 'ayna'}</i>}
                   </span>
                 ))}
                 {ecoPicks.length > 4 && <span className="is-more">+{ecoPicks.length - 3}</span>}

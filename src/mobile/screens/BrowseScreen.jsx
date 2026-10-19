@@ -404,12 +404,16 @@ export default function BrowseScreen({
       )}
       {mode === 'products' && !searchValue.trim() && (
         <button type="button" className="ay-discover-cta" onClick={() => setShowDeck(true)}>
-          <span className="ay-discover-art" aria-hidden="true"><i /><i /><i /></span>
-          <span className="ay-discover-copy"><strong>Swipe to discover</strong><small>One product at a time. Right to save, left to skip.</small></span>
+          <svg className="ay-discover-fan" viewBox="0 0 56 44" aria-hidden="true">
+            <rect className="c1" x="6" y="6" width="22" height="30" rx="5" transform="rotate(-12 17 21)" />
+            <rect className="c2" x="17" y="5" width="22" height="30" rx="5" />
+            <rect className="c3" x="28" y="6" width="22" height="30" rx="5" transform="rotate(12 39 21)" />
+          </svg>
+          <span className="ay-discover-copy"><strong>Swipe to discover</strong><small>Right to save, left to skip</small></span>
           <span className="ay-discover-go" aria-hidden="true">→</span>
         </button>
       )}
-      {showDeck && <DiscoverDeck products={filtered} quizAnswers={authUser ? quizAnswers : null} savedProducts={savedProducts} onToggleSaved={onToggleSaved} onOpenProduct={(product) => { setShowDeck(false); onOpenProduct?.(product); }} onClose={() => setShowDeck(false)} />}
+      {showDeck && <DiscoverDeck canSave={!!authUser} products={filtered} quizAnswers={authUser ? quizAnswers : null} savedProducts={savedProducts} onToggleSaved={onToggleSaved} onOpenProduct={(product) => { setShowDeck(false); onOpenProduct?.(product); }} onClose={() => setShowDeck(false)} />}
       {mode === 'products' && <>
         {showFilters && <div className="ayna-shop-filter-backdrop" onClick={() => setShowFilters(false)}>
           <div ref={filterSheetRef} className="ayna-shop-filter-sheet" role="dialog" aria-modal="true" aria-label="Shop filters" onClick={(event) => event.stopPropagation()}>

@@ -91,12 +91,14 @@ export default function QuizIntro({ variant = 'app', enabled = true }) {
 
         <div className="qi-demo qi-demo--hold">
           <div className="qi-stage" aria-hidden="true">
-            <span className="qi-mock-chip">Perimenopause</span>
-            <span className="qi-bubble qi-bubble--hold">The years before menopause</span>
-            <span className="qi-finger qi-finger--hold">
-              <svg viewBox="0 0 48 48"><circle className="qi-ring-track" cx="24" cy="24" r="21" /><circle className="qi-ring" cx="24" cy="24" r="21" /></svg>
-              <i />
+            {/* The finger sits in the chip's empty end so it never covers the answer text. */}
+            <span className="qi-mock-chip qi-mock-chip--hold">Perimenopause
+              <span className="qi-finger qi-finger--hold">
+                <svg viewBox="0 0 48 48"><circle className="qi-ring-track" cx="24" cy="24" r="21" /><circle className="qi-ring" cx="24" cy="24" r="21" /></svg>
+                <i />
+              </span>
             </span>
+            <span className="qi-bubble qi-bubble--hold">The years before menopause</span>
           </div>
           <p className="qi-caption">Hold an answer to see what it means</p>
         </div>

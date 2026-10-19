@@ -134,3 +134,17 @@ describe('estimatePhase', () => {
     expect(estimatePhase({ ...c, cycleDay: 14 }).basis).toMatch(/estimate.*not a form of birth control/s);
   });
 });
+
+import { budgetMax, overBudget } from './plan.js';
+describe('budget', () => {
+  it('reads her top price and flags only clearly pricier one-off items', () => {
+    const answers = { fullHealthIntake: { priceRange: ['Under $25'] } };
+    expect(budgetMax(answers)).toBe(25);
+    expect(overBudget({ price: '$2,245+' }, 25)).toBe(true);
+    expect(overBudget({ price: '$12.99' }, 25)).toBe(false);
+    expect(overBudget({ price: '$30/month' }, 25)).toBe(false);
+    expect(overBudget({ price: 'Price at retailer' }, 25)).toBe(false);
+    expect(budgetMax({ priceRange: ['Price is not a major factor for me'] })).toBeNull();
+    expect(budgetMax({})).toBeNull();
+  });
+});

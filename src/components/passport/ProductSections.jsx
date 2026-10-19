@@ -281,14 +281,15 @@ function Section({ section, plan, sources, extra, onXref, bare = false }) {
 
 /* Tabs are grouped so there are only a few, in plain words:
    summary (plus why it matched), research and safety, reviews, sources. */
+// Five tabs (Oct 19): what it is and how to use it, why it fits her, what
+// the research and safety say, what people say, and where it all comes from.
 const TAB_GROUPS = [
   { id: 'match', label: 'Your match', ids: ['match'], tone: 'pink' },
-  { id: 'clinician', label: 'Clinical view', ids: ['clinician'], tone: 'peri' },
+  { id: 'evidence', label: 'Research & safety', ids: ['clinician', 'evidence', 'unknown', 'safety'], tone: 'peri' },
   { id: 'reviews', label: 'Reviews', ids: ['people', 'brand'], tone: 'pink' },
-  { id: 'evidence', label: 'Evidence', ids: ['evidence', 'unknown'], tone: 'peri' },
-  { id: 'safety', label: 'Safety', ids: ['safety'], tone: 'pink' },
-  { id: 'details', label: 'Ingredients & use', ids: ['inside', 'howto'], tone: 'peri' },
 ];
+// Ingredients and how to use sit under Overview.
+const OVERVIEW_IDS = ['inside', 'howto'];
 const SUB_LABEL = { evidence: 'The evidence', safety: 'Safety', inside: 'Ingredients', howto: 'How to use', unknown: 'Still unknown', people: 'What people say', brand: 'What the brand claims', clinician: 'Clinical view', match: 'Why it matches you' };
 // Small brown line icons (emoji looked different on every phone and clashed with the brand marks).
 const ICON_PATHS = {
@@ -303,7 +304,7 @@ const ICON_PATHS = {
   match: 'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z',
 };
 const SUB_ICON = Object.fromEntries(Object.entries(ICON_PATHS).map(([k, d]) => [k, <svg key={k} className="ay-line-icon" viewBox="0 0 24 24" aria-hidden="true"><path d={d} /></svg>]));
-const groupOf = (id) => (TAB_GROUPS.find((g) => g.ids.includes(id)) || {}).id || id;
+const groupOf = (id) => (OVERVIEW_IDS.includes(id) ? 'glance' : (TAB_GROUPS.find((g) => g.ids.includes(id)) || {}).id || id);
 
 /* Inside a tab that holds two parts, the part's heading already says it. */
 function dropRepeatLabel(sec) {
@@ -374,8 +375,8 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
     const list = secs.filter((sec) => group.ids.includes(sec.id));
     return list.map((sec) => (
       <article key={sec.id} className={`ay-gl-card is-${sec.id}${list.length === 1 ? ' is-single' : ''}`}>
-        {list.length > 1 && <h3 className="ay-gl-cardh"><span aria-hidden="true">{SUB_ICON[sec.id]}</span>{SUB_LABEL[sec.id] || sec.title}</h3>}
-        <Section bare section={list.length > 1 ? dropRepeatLabel(sec) : sec} plan={plan} sources={sources} extra={extras[sec.id]} onXref={onXref} />
+        {(list.length > 1 || group.forceHeads) && <h3 className="ay-gl-cardh"><span aria-hidden="true">{SUB_ICON[sec.id]}</span>{SUB_LABEL[sec.id] || sec.title}</h3>}
+        <Section bare section={list.length > 1 || group.forceHeads ? dropRepeatLabel(sec) : sec} plan={plan} sources={sources} extra={extras[sec.id]} onXref={onXref} />
       </article>
     ));
   };
@@ -445,6 +446,7 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
       </div>
             )}
             {group && groupBody(group)}
+            {t.id === 'glance' && secs.some((sec) => OVERVIEW_IDS.includes(sec.id)) && <div className="ay-glance__more">{groupBody({ ids: OVERVIEW_IDS, forceHeads: true })}</div>}
             {t.id === 'sources' && (
           <ol className="ay-gl-srclist">
             {sources.map((src) => (

@@ -923,11 +923,13 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
           <button type="button" className="ip-round" aria-label="Go back" onClick={goBack}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
           </button>
-          <span className="ip-count" aria-label={`${phase === 'optional' ? 'Optional question' : 'Question'} ${countedIndex + 1} of ${countedSteps.length}`}>{String(countedIndex + 1).padStart(2, '0')}<i>/{String(countedSteps.length).padStart(2, '0')}</i></span>
+          {/* Later questions depend on earlier answers, so the total can grow mid-quiz.
+              Show a fill bar for progress instead of a "02/08" total that shifts. */}
+          <span className="ip-count ip-count--plain">{phase === 'optional' ? 'Optional' : 'Question'} {countedIndex + 1}</span>
           {step.optional ? <button type="button" className="ip-skip" onClick={skipStep}>Skip</button> : <span className="ip-skip-spacer" />}
         </div>
-        <div className="ip-progress" aria-hidden="true">
-          {countedSteps.map((s, i) => <span key={s.id} className={i < countedIndex ? 'is-done' : i === countedIndex ? 'is-now' : ''} />)}
+        <div className="ip-progress ip-progress--fill" role="progressbar" aria-label="Quiz progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(((countedIndex + 1) / Math.max(1, countedSteps.length)) * 100)}>
+          <span style={{ width: `${((countedIndex + 1) / Math.max(1, countedSteps.length)) * 100}%` }} />
         </div>
       </header>
 

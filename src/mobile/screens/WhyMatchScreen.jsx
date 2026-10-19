@@ -37,6 +37,9 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
   const excluded = matchStatus === 'excluded' || eligible === false;
   const why = whyMatch(details);
   const rows = matchStatus === 'no-profile' ? [] : needBreakdown(details);
+  // Needs this product scores 0 on are listed once as "not for this" instead of empty bars.
+  const scoredRows = rows.filter((r) => r.score > 0 || r.restricted);
+  const offRows = rows.filter((r) => !(r.score > 0 || r.restricted));
   const best = rows.find((r) => r.needId === details.needId) || rows[0];
   const notes = hasScore ? confidenceNotes(details, product) : [];
   const exclusionReasons = excluded ? exclusionLines(details) : [];
@@ -98,7 +101,7 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
           </section>
         )}
         {hasScore && why.hint && (
-          <section className="ay-why-hint">
+          <section className={`ay-why-hint${onUpdateHealth ? '' : ' is-static'}`}>
             <p>{why.hint}</p>
             {onUpdateHealth && <button type="button" onClick={onUpdateHealth}>Add to profile</button>}
           </section>
@@ -106,12 +109,13 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
         {rows.length > 1 && !excluded && (
           <section className="ayna-match-section">
             <h2>Your needs</h2>
-            <ul className="ay-need-rows">{rows.map((r) => <li key={r.needId} className={r.score > 0 ? `is-${r.tier}` : 'is-none'}>
+            {scoredRows.length > 0 && <ul className="ay-need-rows">{scoredRows.map((r) => <li key={r.needId} className={r.score > 0 ? `is-${r.tier}` : 'is-none'}>
               <span className="ay-need-rows__label">{tidy(r.short)}</span>
               <span className="ay-need-rows__bar" aria-hidden="true"><i style={{ width: `${r.score}%` }} /></span>
               <strong>{r.score}</strong>
               <small>{r.word}</small>
-            </li>)}</ul>
+            </li>)}</ul>}
+            {offRows.length > 0 && <p className="ay-need-rows__off">Not for this: {offRows.map((r) => tidy(r.short)).join(', ')}</p>}
           </section>
         )}
         {unmetNeeds.length > 0 && rows.length === 0 && (

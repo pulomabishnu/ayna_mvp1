@@ -54,7 +54,7 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, readP
     <MobileHeader onOpenSaved={onOpenSaved} />
     <header className="ay-lib-head">
       <div className="ay-lib-title"><h1>Library</h1>
-        <span className="ay-lib-total" aria-label={`${finished} of ${articles.length} finished`}><i style={{ '--p': `${articles.length ? Math.round((finished / articles.length) * 100) : 0}%` }} />{finished}/{articles.length}</span>
+        <span className="ay-lib-total"><i aria-hidden="true" style={{ '--p': `${articles.length ? Math.round((finished / articles.length) * 100) : 0}%` }} />{finished} of {articles.length} read</span>
       </div>
       <SearchBar placeholder="Search reads" ariaLabel="Search reads" value={query} onChange={(e) => setQuery(e.target.value)} />
     </header>

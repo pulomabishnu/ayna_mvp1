@@ -288,6 +288,7 @@ export default function ProductDetailScreen({
         quizAnswers={quizAnswers}
         matchOpts={matchOpts}
         onBack={() => setShowWhyMatch(false)}
+        onUpdateHealth={onStartQuiz}
         onViewDetails={() => setShowWhyMatch(false)}
       />
     );
@@ -389,7 +390,7 @@ export default function ProductDetailScreen({
             {headLine && <span>{headLine}</span>}
           </div>}
           {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && quizAnswers && <button type="button" className="ay-pdp-fitnote" onClick={openWhyMatch}>{matchDetails.matchStatus === 'excluded' ? (exclusions[0] || 'Not a fit right now') : 'No clear match'} <span aria-hidden="true">→</span></button>}
-          {matchDetails.matchStatus === 'no-profile' && <button type="button" className="ayna-figma-guest-match" onClick={onStartQuiz}>See your match <span aria-hidden="true">↗</span></button>}
+          {matchDetails.matchStatus === 'no-profile' && <button type="button" className="ayna-figma-guest-match" onClick={onStartQuiz}>Get matched</button>}
           {glance?.alert && <SafetyFlag />}
           {retailers.length > 0 && (
             <div className="ay-retailers">

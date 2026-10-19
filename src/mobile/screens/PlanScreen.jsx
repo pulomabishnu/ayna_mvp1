@@ -1,4 +1,5 @@
 import { Routine, ShoppingList } from '../components/RoutinePlan.jsx';
+import { budgetMax } from '../../health/plan.js';
 import { SOURCE_NAMES } from '../data/healthConnections.js';
 import './profile/health-connections.css';
 
@@ -7,6 +8,14 @@ import './profile/health-connections.css';
  * routine and her shopping list, all from the products matching picked and
  * her own data. A suggested goal is only added when she taps it.
  */
+const planIntro = (products) => {
+  const toBuy = products.filter((p) => p.type !== 'digital').length;
+  const n = products.length;
+  const head = `${n} ${n === 1 ? 'match' : 'matches'} for you`;
+  if (toBuy === n) return `${head}, as a routine and a shopping list.`;
+  if (!toBuy) return `${head}, as a routine. They are apps and services, so nothing to buy in a store.`;
+  return `${head}: ${toBuy} to buy and ${n - toBuy} ${n - toBuy === 1 ? 'app or service' : 'apps or services'}.`;
+};
 const SUGGEST_LABEL = { 'sleep.trouble': 'sleep', 'cycle.irregular': 'irregular cycles', 'energy.fatigue': 'low energy' };
 const fromLine = (sources = []) => {
   const names = sources.map((s) => SOURCE_NAMES[s] || s);
@@ -15,8 +24,9 @@ const fromLine = (sources = []) => {
 
 export default function PlanScreen({
   planProducts = [], planInsights = null, planSuggestions = [], planAddedGoals = {}, onAddPlanGoal,
-  routineHave = {}, onToggleHave, onOpenProduct, onSeeMatches, onBack,
+  routineHave = {}, onToggleHave, onOpenProduct, onSeeMatches, onBack, planAnswers = null,
 }) {
+  const budget = budgetMax(planAnswers);
   const ready = (planInsights?.sections || []).filter((s) => s.status === 'ready');
   const building = (planInsights?.sections || []).filter((s) => s.status === 'building');
   return (
@@ -31,7 +41,7 @@ export default function PlanScreen({
       </header>
       <div className="ay-qc-copy">
         <h1>Your <em>plan.</em></h1>
-        <p>{planProducts.length ? `${planProducts.length} products matched to you, as a routine and a shopping list.` : 'Your answers are in. Here is what we have so far.'}</p>
+        <p>{planProducts.length ? planIntro(planProducts) : 'Your answers are in. Here is what we have so far.'}</p>
       </div>
 
       {(ready.length > 0 || building.length > 0) && (
@@ -60,8 +70,8 @@ export default function PlanScreen({
         </section>
       )}
 
-      <Routine products={planProducts} insights={planInsights} onOpenProduct={onOpenProduct} />
-      <ShoppingList products={planProducts} insights={planInsights} have={routineHave} onToggleHave={onToggleHave} onOpenProduct={onOpenProduct} />
+      <Routine products={planProducts} insights={planInsights} onOpenProduct={onOpenProduct} budget={budget} />
+      <ShoppingList products={planProducts} insights={planInsights} have={routineHave} onToggleHave={onToggleHave} onOpenProduct={onOpenProduct} budget={budget} />
 
       <footer className="ay-qc-foot">
         <button type="button" className="ay-qc-primary" onClick={onSeeMatches}>See my matches</button>

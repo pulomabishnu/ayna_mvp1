@@ -33,7 +33,7 @@
   --r-on-highlight: var(--b-espresso);
   --r-accent: var(--b-sky);        /* info, secondary accents */
   --r-accent-soft: #769ebe;
-  --r-danger: #a6332a;
+  --r-danger: var(--b-espresso);   /* brand only: destructive actions say so in words */
   --r-shadow: 3px 3px 0 var(--b-espresso);
   --r-shadow-sm: 2px 2px 0 var(--b-espresso);
 
@@ -126,7 +126,7 @@
   --r-on-highlight: var(--b-espresso);
   --r-accent: var(--b-rose);
   --r-accent-soft: rgba(247, 186, 221, .22);
-  --r-danger: #f2a39b;
+  --r-danger: var(--b-rose);
   --r-shadow: 3px 3px 0 rgba(0, 0, 0, .45);
   --r-shadow-sm: 2px 2px 0 rgba(0, 0, 0, .45);
 

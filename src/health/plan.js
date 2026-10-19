@@ -9,6 +9,27 @@
  * trend). No product is ever added here that matching did not pick.
  */
 
+import { PRICE_RANGE_BOUNDS, PRICE_NOT_IMPORTANT } from '../matching/userProfile.js';
+import { parsePrice } from '../matching/productProfile.js';
+
+/** Her top price from the quiz ("Under $25" -> 25), or null when she skipped it or said price doesn't matter. */
+export function budgetMax(answers) {
+  const intake = answers?.fullHealthIntake ? { ...answers, ...answers.fullHealthIntake } : answers || {};
+  const ranges = Array.isArray(intake.priceRange) ? intake.priceRange : [];
+  if (!ranges.length || ranges.includes(PRICE_NOT_IMPORTANT)) return null;
+  const bounds = ranges.map((r) => PRICE_RANGE_BOUNDS[r]).filter(Boolean);
+  if (!bounds.length) return null;
+  const max = Math.max(...bounds.map((b) => b[1]));
+  return Number.isFinite(max) ? max : null;
+}
+
+/** True only when the listed price is clearly above her budget (unparseable prices are never flagged). */
+export function overBudget(product, max) {
+  if (max == null || !product) return false;
+  const price = parsePrice(product.price);
+  return price.amount != null && !price.recurring && price.amount > max;
+}
+
 /** Where a catalog category sits in a routine. */
 const SLOT_BY_CATEGORY = {
   supplement: 'daily', skincare: 'daily', hair: 'daily', 'gut-health': 'daily', tracker: 'daily',

@@ -73,6 +73,7 @@ import './app-design.css';
 import './app-polish.css';
 import './app-landing.css';
 import './app-health.css';
+import './app-ux-fixes.css';
 import './keyboardModality.js';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
@@ -306,6 +307,16 @@ export default function MobileApp() {
   const ecosystemFlagsRef = useRef({ trackedProducts: {}, omittedProducts: {} });
   const pendingQuizEcosystemRef = useRef(null);
   const { savedMap, isSaved, toggleSaved } = useSavedProducts(authUser);
+  // A pick she tried to save while signed out: saved for real once she is
+  // signed in (only if a session exists), so signing in never loses it.
+  const [pendingGuestSave, setPendingGuestSave] = useState(null);
+  useEffect(() => {
+    const product = pendingGuestSave;
+    if (!authUser?.id || !product) return undefined;
+    let live = true;
+    Promise.resolve().then(() => { if (!live) return; setPendingGuestSave(null); if (!savedMap[product.id]) toggleSaved(product); });
+    return () => { live = false; };
+  }, [authUser?.id, pendingGuestSave, savedMap, toggleSaved]);
   const [browseQuery, setBrowseQuery] = useState('');
   // Behavior signals for the matching engine (saved, "Not for me", in her
   // Ecosystem). Memoized: the engine caches profiles by this object.
@@ -339,6 +350,14 @@ export default function MobileApp() {
   const [resumeQuizDraft, setResumeQuizDraft] = useState(false);
   const [revealAtEnd, setRevealAtEnd] = useState(false);
   const lastIntakeModeRef = useRef('new');
+  // "Get matched" on a product page: after the quiz, land back on that product with her match.
+  const returnProductRef = useRef(null);
+  useEffect(() => {
+    if (screen !== 'eco' || !returnProductRef.current) return;
+    const item = returnProductRef.current;
+    returnProductRef.current = null;
+    Promise.resolve().then(() => setOverlay({ type: 'product', item }));
+  }, [screen]);
   useEffect(() => {
     // Back in the quiz: her answers live in the quiz draft again until she finishes.
     if (screen === 'quiz' && session.pendingQuiz) updateSession({ pendingQuiz: null });
@@ -844,6 +863,7 @@ export default function MobileApp() {
     onQuizConnectContinue: () => setScreen('plan'),
     onQuizConnectSignIn: () => { authResumeRef.current = null; authReturnScreenRef.current = 'connect'; setAuthMode('signup'); setScreen('signin'); },
     planProducts,
+    planAnswers: pendingAnswers,
     planInsights: healthInsightsForPlan,
     planSuggestions: planHealthContext?.suggestions || [],
     planAddedGoals,
@@ -981,7 +1001,10 @@ export default function MobileApp() {
         readArticleIds={readArticleIds}
         readProgress={readProgress}
         savedProducts={savedMap}
-        onToggleSaved={(product) => authUser ? toggleSaved(product) : requestAuth('Saved')}
+        onToggleSaved={(product) => authUser ? toggleSaved(product) : requestAuth('Saved', () => {
+          setScreen('browse');
+          getSupabaseClient()?.auth.getSession().then(({ data }) => { if (data?.session) setPendingGuestSave(product); }).catch(() => {});
+        })}
         onAddToEcosystem={handleAddToEcosystem}
         myProducts={myProducts}
         omittedProducts={omittedProducts}
@@ -1065,7 +1088,7 @@ export default function MobileApp() {
               setOverlay(null);
               setScreen('community');
             }}
-            onStartQuiz={() => { setOverlay(null); setIntakeMode(hasEcosystem ? 'add' : 'new'); setEditingHealthProfile(hasEcosystem); setScreen('quiz'); }}
+            onStartQuiz={() => { returnProductRef.current = overlay.item || null; setOverlay(null); setIntakeMode(hasEcosystem ? 'add' : 'new'); setEditingHealthProfile(hasEcosystem); setScreen('quiz'); }}
             authUser={authUser}
             onRequireAuth={(feature) => requestAuth(feature || 'Ask Ayna', () => { setScreen(screen); setOverlay({ type: 'product', item: overlay.item }); })}
             quizAnswers={authUser ? effectiveQuizAnswers : null}

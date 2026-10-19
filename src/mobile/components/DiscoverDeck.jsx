@@ -17,7 +17,9 @@ function imageFor(product) {
   return product?.image || product?.imageUrl || product?.images?.[0];
 }
 
-export default function DiscoverDeck({ products = [], quizAnswers = null, savedProducts = {}, onToggleSaved, onOpenProduct, onClose }) {
+// `canSave` false (signed out): Save asks her to sign in and the card stays
+// put, so the pick is never lost and nothing is shown as saved that isn't.
+export default function DiscoverDeck({ products = [], quizAnswers = null, savedProducts = {}, onToggleSaved, onOpenProduct, onClose, canSave = true }) {
   const deck = useMemo(() => {
     const withMatch = products.slice(0, 200).map((product) => ({
       product,
@@ -40,6 +42,7 @@ export default function DiscoverDeck({ products = [], quizAnswers = null, savedP
 
   function act(kind) {
     if (!current || leaving) return;
+    if (kind === 'save' && !canSave) { setDrag(null); onToggleSaved?.(current.product); return; }
     if (kind === 'save' && !savedProducts[current.product.id]) onToggleSaved?.(current.product);
     setDrag(null);
     if (reduced) { setIndex((i) => i + 1); return; }
@@ -75,7 +78,7 @@ export default function DiscoverDeck({ products = [], quizAnswers = null, savedP
   const hint = dx > 30 ? 'save' : dx < -30 ? 'skip' : null;
 
   return (
-    <div className="ay-deck" role="dialog" aria-modal="true" aria-label="Discover products">
+    <div className="ay-deck" role="dialog" aria-modal="true" aria-label="Discover products" data-no-page-swipe>
       <header className="ay-deck-head">
         <button ref={closeRef} type="button" className="ay-deck-close" onClick={onClose} aria-label="Close discover">×</button>
         <strong>Discover</strong>
