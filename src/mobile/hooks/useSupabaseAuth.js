@@ -5,6 +5,7 @@ import { Browser } from '@capacitor/browser';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { CONSENT_VERSION, stashPendingConsent, flushPendingConsent } from '../../utils/pendingConsent.js';
 import { resetChipPosition } from '../utils/askAynaChipPosition.js';
+import { unregisterDeviceToken } from '../utils/deviceTokenApi.js';
 import { recordAppSignIn } from '../../utils/badges.js';
 import posthog from 'posthog-js';
 import { identifyAccount } from '../../utils/analyticsIdentity.js';
@@ -342,6 +343,8 @@ export function useSupabaseAuth() {
 
   async function signOut() {
     const supabase = getSupabaseClient();
+    // Unlink push first: once signed out, the server can't tell whose phone this is.
+    try { await unregisterDeviceToken(); } catch { /* best effort */ }
     if (supabase) await supabase.auth.signOut();
     resetChipPosition();
   }

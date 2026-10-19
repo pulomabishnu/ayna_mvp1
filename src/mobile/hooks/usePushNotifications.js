@@ -63,7 +63,10 @@ export function usePushNotifications(userId) {
   }, []);
 
   useEffect(() => {
-    if (!token || !userId) return;
+    // Signed out: sign-out unlinked this token, so the next sign-in (even the
+    // same account) must register it again.
+    if (!userId) { sentRef.current = null; return; }
+    if (!token) return;
     const key = `${token}:${userId}`;
     if (sentRef.current === key) return;
     registerDeviceToken(token, 'ios')

@@ -9,6 +9,18 @@ export default function AuthCallback({ onAuthenticated }) {
   useEffect(() => {
     const supabase = getSupabaseClient();
     if (!supabase) { setStatus('error'); return; }
+    // The fallback wait below subscribes asynchronously; a cleanup returned
+    // from inside its .then() was never React's, so on unmount the listener
+    // and the 10s "timed out" timer leaked, and the timer still fired after a
+    // successful sign-in. Held here so the effect's own cleanup can stop them.
+    let disposed = false;
+    let fallbackSubscription = null;
+    let fallbackTimer = null;
+    const stopFallbackWait = () => {
+      clearTimeout(fallbackTimer);
+      fallbackSubscription?.unsubscribe();
+      fallbackSubscription = null;
+    };
 
     const hashParams = new URLSearchParams(window.location.hash.slice(1));
     // Scrub the fragment immediately. The client uses Supabase's `implicit`
@@ -167,24 +179,26 @@ export default function AuthCallback({ onAuthenticated }) {
 
     // Fallback: check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (disposed) return;
       if (session?.user) { void flushPendingConsent(supabase); finishAuth(session.user); return; }
 
       const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
         if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
-          subscription.unsubscribe();
+          stopFallbackWait();
           void flushPendingConsent(supabase);
           finishAuth(session.user);
         }
       });
+      fallbackSubscription = subscription;
 
-      const t = setTimeout(() => {
-        subscription.unsubscribe();
+      fallbackTimer = setTimeout(() => {
+        stopFallbackWait();
         setStatus('error');
         setErrorMsg('Sign-in timed out. Please return to ayna and try again.');
       }, 10000);
-
-      return () => { clearTimeout(t); subscription.unsubscribe(); };
     });
+
+    return () => { disposed = true; stopFallbackWait(); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (status === 'recovery' || status === 'recovered') {
