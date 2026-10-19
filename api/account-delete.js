@@ -4,7 +4,7 @@ import { revokeProvider, PROVIDERS } from './_healthProviders.js';
 
 const USER_TABLES = [
   'health_intakes', 'notification_preferences', 'pending_phone_verifications', 'phone_numbers',
-  'recall_notifications', 'sms_conversations', 'user_ai_usage', 'user_ecosystem_builds',
+  'recall_notifications', 'sms_conversations', 'sms_preferences', 'sms_events', 'user_ai_usage', 'user_ecosystem_builds',
   'user_ecosystems', 'user_health_profiles', 'user_learning_memory', 'user_reviews',
   'device_tokens', 'apple_oauth_tokens',
   // Connected health data (supabase/health_data.sql). Provider access is

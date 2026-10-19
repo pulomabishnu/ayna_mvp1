@@ -76,6 +76,8 @@ export function mockSupabase({
         upsert(p, o) { rec.op = 'upsert'; rec.payload = p; rec.options = o; return api; },
         delete() { rec.op = 'delete'; return api; },
         eq(col, val) { rec.filters[col] = val; return api; },
+        gte(col, val) { rec.filters[`${col}>=`] = val; return api; },
+        in(col, vals) { rec.filters[`${col} in`] = vals; return api; },
         order() { return api; },
         limit() { return api; },
         maybeSingle() { return api; },

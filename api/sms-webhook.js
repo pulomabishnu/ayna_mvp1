@@ -3,6 +3,15 @@
  * Looks up the texting user by phone number, loads her real health profile,
  * and replies via Claude at a 6th-grade reading level. Logs every inbound
  * and outbound message to sms_conversations (never the phone number itself).
+ *
+ * Per-feature opt-ins (api/_smsStore.js, supabase/sms_2026-10-19.sql):
+ *   - HELP/INFO answers any number; STOP from an unknown number gets silence.
+ *   - STOP also turns every feature off in sms_preferences; START clears the
+ *     stop but leaves features off until she turns them on in the app.
+ *   - Chat needs chat=true (or the legacy website consent, see _smsStore.js);
+ *     otherwise one "chats are off" reply per day.
+ *   - SMS_DAILY_CHAT_LIMIT answered texts per day, then one notice.
+ *   - Her stored profile is only used when health details are on.
  */
 /* global process */
 import twilio from 'twilio';
@@ -14,12 +23,41 @@ import { callWithFallback, parseProviderOrder } from './_llm.js';
 import { hashedSessionId, traceMessages } from './_prismTrace.js';
 import { ALL_PRODUCTS } from '../src/data/products.js';
 import { stripLinks } from './_catalogGrounding.js';
+import {
+  SMS_DAILY_CHAT_LIMIT, countEventsToday, loadPrefsRow, logSmsEvent, prefsFromRow, rowFromPrefs, ALL_OFF,
+} from './_smsStore.js';
 
 const NO_ACCOUNT_REPLY =
   "Hi! I'm Ayna. To get personalized health texts, complete your free health profile at https://ayna.health/quiz. It takes 5 minutes.";
 
 const STOP_KEYWORDS = new Set(['STOP', 'STOPALL', 'UNSUBSCRIBE', 'CANCEL', 'END', 'QUIT']);
 const START_KEYWORDS = new Set(['START', 'UNSTOP', 'YES']);
+const HELP_KEYWORDS = new Set(['HELP', 'INFO']);
+
+const SUPPORT_EMAIL = () => process.env.SMS_SUPPORT_EMAIL || 'puloma@aynahealth.co';
+export const HELP_REPLY = () => `ayna: health product matches and reads. Reply STOP to opt out. Help: ${SUPPORT_EMAIL()}`;
+export const CHAT_OFF_REPLY = 'Text chats with ayna are off for this number. Turn them on in the ayna app: You, Settings, Text messages.';
+export const DAILY_LIMIT_REPLY = `You've used today's ${SMS_DAILY_CHAT_LIMIT} texts with ayna. You can keep chatting in the app.`;
+export const MAX_REPLY_CHARS = 600;
+
+/** Keep a reply to one short SMS thread: cut at a sentence end under the cap. */
+export function capReply(text, max = MAX_REPLY_CHARS) {
+  const t = String(text || '').trim();
+  if (t.length <= max) return t;
+  const cut = t.slice(0, max);
+  const end = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('! '), cut.lastIndexOf('? '));
+  return end > max / 2 ? cut.slice(0, end + 1) : `${cut.slice(0, max - 3).trimEnd()}...`;
+}
+
+/** Reply `message` at most once per New York day per person, otherwise stay silent. */
+async function replyOncePerDay(res, admin, userId, kind, message) {
+  let already = 0;
+  try { already = await countEventsToday(admin, userId, kind); } catch (e) { console.error('[sms-webhook] notice count failed:', e?.message); }
+  if (already > 0) return res.status(200).send('');
+  await logSmsEvent(admin, userId, kind);
+  await logMessage(admin, userId, 'outbound', message);
+  return sendTwiml(res, message);
+}
 
 const BANNED_WORD_REPLACEMENTS = [
   [/\bdiagnose[sd]?\b/gi, 'may help with'],
@@ -201,6 +239,11 @@ export default async function handler(req, res) {
   const messageSid = typeof body.MessageSid === 'string' ? body.MessageSid : null;
   if (!from || !text) return res.status(400).send('Bad request');
 
+  const upper = text.toUpperCase();
+
+  // Carrier rule: HELP gets the same answer for every number, known or not.
+  if (HELP_KEYWORDS.has(upper)) return sendTwiml(res, HELP_REPLY());
+
   const admin = getAdmin();
 
   const { data: phoneRow, error: lookupError } = await admin
@@ -215,12 +258,25 @@ export default async function handler(req, res) {
   }
 
   if (!phoneRow || !phoneRow.is_verified) {
+    // Never answer a STOP with a sign-up pitch.
+    if (STOP_KEYWORDS.has(upper)) return res.status(200).send('');
     console.log(`[sms-webhook] no verified account for ${maskedTail(from)}`);
     return sendTwiml(res, NO_ACCOUNT_REPLY);
   }
 
   const { user_id: userId, sms_opted_out: optedOut } = phoneRow;
-  const upper = text.toUpperCase();
+
+  // Per-feature opt-ins (supabase/sms_2026-10-19.sql). A read failure is
+  // treated as "everything off" so it can never widen what we send.
+  let prefsRow = null;
+  let prefsReadOk = true;
+  try {
+    prefsRow = await loadPrefsRow(admin, userId);
+  } catch (e) {
+    prefsReadOk = false;
+    console.error('[sms-webhook] prefs read failed:', e?.message);
+  }
+  const prefs = prefsReadOk ? prefsFromRow(prefsRow) : { ...ALL_OFF };
 
   if (STOP_KEYWORDS.has(upper)) {
     const { error: optOutError } = await admin
@@ -232,6 +288,12 @@ export default async function handler(req, res) {
       console.error('[sms-webhook] OPT-OUT WRITE FAILED for user', userId, optOutError.message);
       return sendTwiml(res, "Sorry, we couldn't process that just now. Please reply STOP again, or email pulomabishnu@gmail.com.");
     }
+    // Every feature goes back to off; turning texts on again is a fresh opt-in in the app.
+    const nowIso = new Date().toISOString();
+    const { error: prefsStopError } = await admin.from('sms_preferences')
+      .upsert({ user_id: userId, ...rowFromPrefs(ALL_OFF), stopped_at: nowIso, updated_at: nowIso }, { onConflict: 'user_id' });
+    if (prefsStopError) console.error('[sms-webhook] prefs stop write failed:', prefsStopError.message);
+    await logSmsEvent(admin, userId, 'stop');
     await logMessage(admin, userId, 'inbound', text);
     await logMessage(admin, userId, 'outbound', "You're unsubscribed from Ayna texts. Reply START to opt back in.");
     return sendTwiml(res, "You're unsubscribed from Ayna texts. Reply START to opt back in.");
@@ -242,21 +304,34 @@ export default async function handler(req, res) {
   // to the LLM path, spending a Claude call and an outbound SMS to answer a bare
   // "YES" with no context.
   if (START_KEYWORDS.has(upper)) {
-    if (!optedOut) {
+    const chatLine = prefs.chat
+      ? "Text me anytime, like 'what helps with PCOS bloating'."
+      : 'Choose which texts you get in the ayna app: You, Settings, Text messages.';
+    if (!optedOut && !prefsRow?.stopped_at) {
       await logMessage(admin, userId, 'inbound', text);
-      return sendTwiml(res, "You're already subscribed. Text me anytime, like 'what helps with PCOS bloating'.");
+      return sendTwiml(res, `You're already subscribed. ${chatLine}`);
     }
-    const { error: optInError } = await admin
-      .from('phone_numbers')
-      .update({ sms_opted_out: false, updated_at: new Date().toISOString() })
-      .eq('user_id', userId);
-    if (optInError) {
-      console.error('[sms-webhook] OPT-IN WRITE FAILED for user', userId, optInError.message);
-      return sendTwiml(res, "Sorry, we couldn't process that just now. Please reply START again.");
+    if (optedOut) {
+      const { error: optInError } = await admin
+        .from('phone_numbers')
+        .update({ sms_opted_out: false, updated_at: new Date().toISOString() })
+        .eq('user_id', userId);
+      if (optInError) {
+        console.error('[sms-webhook] OPT-IN WRITE FAILED for user', userId, optInError.message);
+        return sendTwiml(res, "Sorry, we couldn't process that just now. Please reply START again.");
+      }
     }
+    if (prefsRow) {
+      // Clears the STOP. Her feature settings stay off until she turns them on in the app.
+      const { error: prefsStartError } = await admin.from('sms_preferences')
+        .update({ stopped_at: null, updated_at: new Date().toISOString() }).eq('user_id', userId);
+      if (prefsStartError) console.error('[sms-webhook] prefs start write failed:', prefsStartError.message);
+    }
+    await logSmsEvent(admin, userId, 'start');
+    const backIn = `You're back in${prefs.chat ? '!' : '.'} ${chatLine}`;
     await logMessage(admin, userId, 'inbound', text);
-    await logMessage(admin, userId, 'outbound', "You're back in! Text me anytime, like 'what helps with PCOS bloating'.");
-    return sendTwiml(res, "You're back in! Text me anytime, like 'what helps with PCOS bloating'.");
+    await logMessage(admin, userId, 'outbound', backIn);
+    return sendTwiml(res, backIn);
   }
 
   // Unique index on message_sid makes a replayed delivery a no-op insert; if the
@@ -280,6 +355,25 @@ export default async function handler(req, res) {
     return res.status(200).send('');
   }
 
+  if (!prefs.chat || prefsRow?.stopped_at) {
+    return replyOncePerDay(res, admin, userId, 'chat_off_notice', CHAT_OFF_REPLY);
+  }
+
+  // Founder rule: SMS_DAILY_CHAT_LIMIT answered texts per person per New York
+  // day, then one notice, then silence until tomorrow. Checked before the
+  // weekly quota so a capped text never spends quota.
+  let chatsToday = 0;
+  try {
+    chatsToday = await countEventsToday(admin, userId, 'chat_reply');
+  } catch (e) {
+    // Fail closed: an unknown count must not become unlimited LLM + SMS spend.
+    console.error('[sms-webhook] daily count failed:', e?.message);
+    chatsToday = SMS_DAILY_CHAT_LIMIT;
+  }
+  if (chatsToday >= SMS_DAILY_CHAT_LIMIT) {
+    return replyOncePerDay(res, admin, userId, 'chat_limit_notice', DAILY_LIMIT_REPLY);
+  }
+
   // These three share only userId and are independent of each other.
   const [, intakeRes, recentRes] = await Promise.all([
     admin.from('phone_numbers').update({ last_sms_at: new Date().toISOString() }).eq('user_id', userId),
@@ -291,7 +385,9 @@ export default async function handler(req, res) {
       .order('created_at', { ascending: false })
       .limit(10),
   ]);
-  const profile = intakeRes?.data?.profile || {};
+  // Her stored profile (conditions, symptoms) only shapes a text when she
+  // turned on health details for texts.
+  const profile = prefs.healthDetails ? intakeRes?.data?.profile || {} : {};
   const recentMessages = recentRes?.data;
 
   // Weekly quota + a short-window burst limit. Without these a single verified
@@ -310,12 +406,16 @@ export default async function handler(req, res) {
     return sendTwiml(res, msg);
   }
 
+  await logSmsEvent(admin, userId, 'chat_reply');
+
   let knowledgeContext = '';
-  try {
-    const chunks = retrieveKnowledgeForIntake(profile, 5);
-    knowledgeContext = buildKnowledgeContext(chunks);
-  } catch (e) {
-    console.error('[sms-webhook] knowledge retrieval error:', e?.message);
+  if (prefs.healthDetails) {
+    try {
+      const chunks = retrieveKnowledgeForIntake(profile, 5);
+      knowledgeContext = buildKnowledgeContext(chunks);
+    } catch (e) {
+      console.error('[sms-webhook] knowledge retrieval error:', e?.message);
+    }
   }
 
   const userPrompt = buildSmsPrompt(text, profile, knowledgeContext, recentMessages);
@@ -339,7 +439,7 @@ export default async function handler(req, res) {
   if (!reply) {
     reply = "Sorry, I'm having trouble right now. Please try texting again in a few minutes.";
   } else {
-    reply = stripLinks(sanitizeBannedWords(reply));
+    reply = capReply(stripLinks(sanitizeBannedWords(reply)));
   }
 
   await logMessage(admin, userId, 'outbound', reply);

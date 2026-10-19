@@ -10,6 +10,8 @@ const USER_TABLES = [
   ['phone_numbers', '*'],
   ['recall_notifications', '*'],
   ['sms_conversations', '*'],
+  ['sms_preferences', '*'],
+  ['sms_events', '*'],
   ['user_ai_usage', '*'],
   ['user_ecosystem_builds', '*'],
   ['user_ecosystems', '*'],

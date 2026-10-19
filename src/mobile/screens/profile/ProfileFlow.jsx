@@ -16,6 +16,7 @@ import {
   sendPhoneVerificationCode,
   confirmPhoneVerificationCode,
 } from '../../utils/notificationPreferencesApi.js';
+import { fetchSmsStatus, startSmsVerify, checkSmsVerify, saveSmsPrefs, removeSmsPhone } from '../../../utils/smsApi.js';
 import { fetchDataExport, requestAccountDeletion } from '../../utils/dataExportApi.js';
 import { OPEN_SOURCE_PACKAGES, summarizeLicenses } from '../../data/openSourceLicenses.js';
 import LegalFooter from '../../components/LegalFooter.jsx';
@@ -1405,12 +1406,13 @@ const SET_ICONS = {
   account: <><circle cx="12" cy="9" r="3.5" /><path d="M5.5 20a6.5 6.5 0 0 1 13 0" /></>,
   privacy: <><rect x="5" y="10" width="14" height="10" rx="2" /><path d="M8.5 10V8a3.5 3.5 0 0 1 7 0v2" /></>,
   legal: <><path d="M7 3h7l4 4v14H7Z" /><path d="M14 3v4h4M10 12h5M10 16h5" /></>,
+  texts: <><path d="M5 5h14v10H10l-4 4v-4H5Z" /><path d="M9 10h.01M12 10h.01M15 10h.01" /></>,
   contact: <><rect x="4" y="6" width="16" height="12" rx="2" /><path d="m4.5 7 7.5 6 7.5-6" /></>,
 };
 
-function SettingsScreen({ onBack, onOpenPreferences, onOpenHowItWorks, onOpenAboutAyna, onOpenContact, onOpenAccountInfo, onOpenPrivacyData, onOpenLegal, authUser, onSignOut, onSignIn }) {
+function SettingsScreen({ onBack, onOpenTexts, onOpenPreferences, onOpenHowItWorks, onOpenAboutAyna, onOpenContact, onOpenAccountInfo, onOpenPrivacyData, onOpenLegal, authUser, onSignOut, onSignIn }) {
   const groups = [
-    ['Preferences', 'butter', [{ icon: 'appearance', title: 'Appearance & preferences', onClick: onOpenPreferences }]],
+    ['Preferences', 'butter', [{ icon: 'appearance', title: 'Appearance & preferences', onClick: onOpenPreferences }, ...(onOpenTexts ? [{ icon: 'texts', title: 'Text messages', onClick: onOpenTexts }] : [])]],
     ['About', 'pink', [{ icon: 'how', title: 'How it works', onClick: onOpenHowItWorks }, { icon: 'about', title: 'About ayna', onClick: onOpenAboutAyna }, { icon: 'brands', title: 'Brand partnerships', href: BRAND_PARTNERSHIPS_URL }]],
     ['Account', 'mint', [{ icon: 'account', title: 'Account information', onClick: onOpenAccountInfo }, { icon: 'privacy', title: 'Privacy & data', onClick: onOpenPrivacyData }, { icon: 'legal', title: 'Legal', onClick: onOpenLegal }, { icon: 'contact', title: 'Contact', onClick: onOpenContact }]],
   ];
@@ -1434,6 +1436,104 @@ function SettingsScreen({ onBack, onOpenPreferences, onOpenHowItWorks, onOpenAbo
       <LegalFooter />
     </div>
   </div>;
+}
+
+/* ------------------------------ Text messages ------------------------------ */
+// Backed by /api/sms (api/sms.js). Consent wording follows carrier (CTIA) rules.
+const SMS_ERRORS = {
+  invalid_phone_number: 'That number doesn’t look right. Use a US mobile number.',
+  invalid_or_expired_code: 'That code didn’t work or has expired. Send a new one.',
+  phone_already_linked: 'That number is already linked to another ayna account.',
+  rate_limited: 'Too many tries. Wait a few minutes, then try again.',
+  too_many_attempts: 'Too many tries. Wait a few minutes, then try again.',
+  sms_not_configured: 'Text messages aren’t switched on yet.',
+};
+const smsError = (e) => SMS_ERRORS[e?.code] || e?.message || 'Something went wrong. Try again.';
+const SMS_PREF_ROWS = [
+  ['reminders', 'Reminders', 'Restock and routine reminders you set up.'],
+  ['orders', 'Order updates', 'When an order ships or needs you.'],
+  ['chat', 'Text ayna', 'Ask ayna questions by text, up to 5 texts a day.'],
+  ['healthDetails', 'Include health details', 'Texts aren’t as private as the app. Leave this off to keep texts general.'],
+];
+
+function TextMessagesScreen({ onBack, authUser }) {
+  const [status, setStatus] = useState(null);
+  const [loadError, setLoadError] = useState('');
+  const [phone, setPhone] = useState('');
+  const [code, setCode] = useState('');
+  const [sent, setSent] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const load = () => {
+    setLoadError('');
+    fetchSmsStatus().then(setStatus).catch((e) => setLoadError(smsError(e)));
+  };
+  useEffect(() => { if (authUser) load(); }, [authUser]);
+  const run = async (fn) => {
+    setBusy(true); setError('');
+    try { await fn(); } catch (e) { setError(smsError(e)); } finally { setBusy(false); }
+  };
+  const send = () => run(async () => { await startSmsVerify(phone.trim()); setSent(true); });
+  const verify = () => run(async () => {
+    await checkSmsVerify(phone.trim(), code.trim());
+    setSent(false); setCode('');
+    setStatus(await fetchSmsStatus());
+  });
+  const toggle = (key) => run(async () => {
+    const prefs = { ...status.prefs, [key]: !status.prefs[key] };
+    const body = status.prefsSaved ? { [key]: prefs[key] } : prefs;
+    await saveSmsPrefs(body);
+    setStatus((s) => ({ ...s, prefs, prefsSaved: true }));
+  });
+  const remove = () => run(async () => { await removeSmsPhone(); setStatus(await fetchSmsStatus()); setPhone(''); });
+
+  let content;
+  if (!authUser) content = <SignedOutCard>Sign in to get texts from ayna.</SignedOutCard>;
+  else if (loadError) content = <div className="ay-sms-card"><p className="ay-hc-error" role="alert">{loadError}</p><button type="button" className="ay-qc-skip" onClick={load}>Try again</button></div>;
+  else if (!status) content = <p className="ay-sms-muted" role="status">Loading…</p>;
+  else if (!status.configured) content = <div className="ay-sms-card"><h2>Text messages aren’t switched on yet</h2><p className="ay-sms-muted">We’re still setting up texts. Your notification settings in the app keep working in the meantime.</p></div>;
+  else if (!status.verified) {
+    content = (
+      <div className="ay-sms-card">
+        <h2>Get texts from ayna</h2>
+        <p className="ay-sms-muted">Reminders, order updates and a way to text ayna. You choose which ones.</p>
+        {!sent ? <>
+          <label htmlFor="ay-sms-phone">Mobile number</label>
+          <input id="ay-sms-phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="(555) 555-0123" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          <p className="ay-sms-consent">By tapping Send code, you agree to get texts from ayna at this number. Msg &amp; data rates may apply. Message frequency varies. Reply STOP to opt out, HELP for help.</p>
+          <button type="button" className="ay-qc-primary" disabled={busy || phone.replace(/\D/g, '').length < 10} onClick={send}>{busy ? 'Sending…' : 'Send code'}</button>
+        </> : <>
+          <label htmlFor="ay-sms-code">Code we texted to {phone}</label>
+          <input id="ay-sms-code" inputMode="numeric" autoComplete="one-time-code" maxLength={8} value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} />
+          <div className="ay-sms-row">
+            <button type="button" className="ay-qc-primary" disabled={busy || code.length < 4} onClick={verify}>{busy ? 'Checking…' : 'Verify'}</button>
+            <button type="button" className="ay-qc-skip" disabled={busy} onClick={() => { setSent(false); setCode(''); setError(''); }}>Change number</button>
+          </div>
+        </>}
+        {error && <p className="ay-hc-error" role="alert">{error}</p>}
+      </div>
+    );
+  } else {
+    content = <>
+      <div className="ay-sms-card">
+        <p className="ay-sms-phone"><span>Texts go to</span><b>{status.phone}</b></p>
+        {status.stopped && <p className="ay-sms-note">You replied STOP, so texts are paused. Text START to {status.textNumber || 'ayna'} to turn them back on.</p>}
+      </div>
+      <SectionLabel>What we text you</SectionLabel>
+      <div className="ay-sms-card">
+        {SMS_PREF_ROWS.map(([key, title, sub], i) => <ToggleRow key={key} first={i === 0} title={title} sub={sub} on={Boolean(status.prefs?.[key])} onClick={() => !busy && !status.stopped && toggle(key)} />)}
+        {error && <p className="ay-hc-error" role="alert">{error}</p>}
+      </div>
+      {status.prefs?.chat && status.textNumber && !status.stopped && <p className="ay-sms-muted ay-sms-chat">Text ayna at <a href={`sms:${status.textNumber}`}>{status.textNumber}</a>.</p>}
+      <button type="button" className="ay-sms-remove" disabled={busy} onClick={remove}>Remove this number</button>
+    </>;
+  }
+  return (
+    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+      <BackHeader title="Text messages" onBack={onBack} />
+      <div className="ayna-settings-scroll ay-sms">{content}</div>
+    </div>
+  );
 }
 
 /* ------------------------------ Privacy & data ------------------------------ */
@@ -3239,6 +3339,7 @@ export default function ProfileFlow({
       <SettingsScreen
         onBack={goBack}
         onOpenPreferences={() => pushScreen('preferences')}
+        onOpenTexts={() => pushScreen('texts')}
         onOpenHowItWorks={() => pushScreen('howItWorks')}
         onOpenAboutAyna={() => pushScreen('aboutAyna')}
         onOpenContact={() => pushScreen('contact')}
@@ -3250,6 +3351,8 @@ export default function ProfileFlow({
         onSignIn={onSignIn ? () => { onClose(); onSignIn(); } : undefined}
       />
     );
+  } else if (screen === 'texts') {
+    body = <TextMessagesScreen onBack={goBack} authUser={authUser} />;
   } else if (screen === 'howItWorks') {
     body = <HowItWorksScreen onBack={goBack} />;
   } else if (screen === 'aboutAyna') {

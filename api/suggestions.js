@@ -5,6 +5,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { getClientIp, rateLimit } from './_rateLimit.js';
 import { checkCommunityText } from '../src/utils/communityRules.js';
+import { sendTeamAlert } from './_twilio.js';
 
 const CONTEXTS = new Set(['shop', 'shop-empty', 'library', 'app-shop', 'app-library']);
 
@@ -66,6 +67,13 @@ export function suggestionEmail(row) {
     text: `Someone sent an anonymous suggestion on ayna.\n\n${shown.map(([k, v]) => `${k}: ${v}`).join('\n')}\n`,
     html: `<p>Someone sent an anonymous suggestion on ayna.</p><table cellpadding="4">${shown.map(([k, v]) => `<tr><td><b>${escHtml(k)}</b></td><td>${escHtml(v)}</td></tr>`).join('')}</table>`,
   };
+}
+
+/** One-line team text for a suggestion. No identity, just what was typed, trimmed. */
+export function suggestionTextLine(row) {
+  return row.kind === 'product'
+    ? `new product suggestion: ${String(row.product_name || '').slice(0, 80)}`
+    : `new read suggestion: ${String(row.topic || '').slice(0, 80)}`;
 }
 
 // Single-message send, the same Resend call the contact form uses.
@@ -139,6 +147,9 @@ export default async function handler(req, res) {
   }
   // A failed email is logged loudly so it shows up in the Vercel logs.
   const emailed = await sendSuggestionEmail(suggestionEmail(row));
+  // Plus a short text to the founders (TEAM_SMS_NUMBERS). Only what was typed,
+  // never who sent it; never fails the request (sendTeamAlert cannot throw).
+  await sendTeamAlert(suggestionTextLine(row));
   if (!saved && !emailed) return res.status(503).json({ error: 'Suggestions are offline for a moment.' });
   return res.status(200).json({ ok: true });
 }

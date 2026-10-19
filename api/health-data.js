@@ -26,6 +26,7 @@ import {
   saveMetrics, sanitizeCategories, setConnectionState, upsertConnection,
 } from './_healthStore.js';
 import { revokeProvider } from './_healthProviders.js';
+import { sendTeamAlert } from './_twilio.js';
 
 const DEVICE_SOURCES = new Set(['apple_health', 'health_connect']);
 const RECORD_TYPES = new Set(['allergy', 'condition', 'medication']);
@@ -82,6 +83,8 @@ export default async function handler(req, res) {
       // Tell the founders. Only what she typed; no name, email or health data.
       // Saved either way: an email failure never loses the request.
       const emailed = await sendSuggestionEmail(sourceRequestEmail({ name, note }));
+      // And a short team text (no identity, no note). Never fails the request.
+      await sendTeamAlert(`new app or wearable request: ${name}`);
       return res.status(200).json({ ok: true, emailed });
     }
 

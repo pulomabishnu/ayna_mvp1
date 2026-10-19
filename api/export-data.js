@@ -139,11 +139,14 @@ export default async function handler(req, res) {
     fetchRows(db, 'health_data_events', user.id, { select: 'source, action, categories, notice_version, rows_affected, created_at' }),
     fetchRows(db, 'health_imports', user.id, { select: 'declared_app, file_kind, status, rows_saved, created_at' }),
     fetchRows(db, 'health_source_requests', user.id, { select: 'source_name, note, created_at' }),
+    // Text message settings and the consent log (no bodies, no numbers).
+    fetchRows(db, 'sms_preferences', user.id, { single: true, select: 'reminders, orders, chat, health_details, stopped_at, consent_text_version, consent_at, created_at, updated_at' }),
+    fetchRows(db, 'sms_events', user.id, { select: 'kind, detail, created_at' }),
   ]);
 
   const [phone, prefs, intake, ecosystem, healthProfiles, reviews, sms, aiUsage, builds, learningMemory, recalls, deletionRequests,
     cProfile, cPosts, cComments, cFollowing, cFollowers, cPlaylists, cSaved, cHelpful, cReqSent, cReqReceived, cBlocks, cRecs,
-    hConnections, hMetrics, hEvents, hImports, hRequests] = entries;
+    hConnections, hMetrics, hEvents, hImports, hRequests, smsPrefs, smsEvents] = entries;
   const warnings = entries.map((entry) => entry.warning).filter(Boolean);
   const meta = user.user_metadata || {};
 
@@ -209,6 +212,8 @@ export default async function handler(req, res) {
     importedHealthProfiles: healthProfiles.data || [],
     reviews: reviews.data || [],
     smsConversationHistory: sms.data || [],
+    textMessageSettings: smsPrefs.data || null,
+    textMessageConsentLog: smsEvents.data || [],
     aiUsageRecords: aiUsage.data || [],
     ecosystemBuildHistory: builds.data || [],
     personalizationMemory: learningMemory.data || [],
