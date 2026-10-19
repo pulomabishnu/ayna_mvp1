@@ -1381,14 +1381,23 @@ function App() {
   const handleViewHowItWorks = () => setCurrentView('how-it-works');
   const handleViewAbout = () => setCurrentView('about');
   const handleViewContact = () => setCurrentView('contact');
-  const handleViewArticles = () => {
-    setSelectedArticleId(null);
+  // Every way into the Library goes through here. With no id it is the
+  // index (it used to keep the last-read article open under a /library URL
+  // when reached from the phone tab bar); with an id the URL is
+  // /library/:id, so a refresh or shared link reopens that read.
+  const openLibrary = (articleId = null) => {
+    setSelectedArticleId(articleId || null);
+    const before = window.location.pathname;
     setCurrentView('articles');
+    if (!articleId) return;
+    const next = `/library/${articleId}`;
+    if (window.location.pathname === next) return;
+    // setCurrentView already pushed /library unless we were on it; reuse that entry.
+    if (before === '/library') { window.history.pushState({ view: 'articles' }, '', next); inAppPushCountRef.current += 1; }
+    else window.history.replaceState({ view: 'articles' }, '', next);
   };
-  const handleViewArticle = (articleId) => {
-    setSelectedArticleId(articleId);
-    setCurrentView('articles');
-  };
+  const handleViewArticles = () => openLibrary();
+  const handleViewArticle = (articleId) => openLibrary(articleId);
   const handleViewScreenings = () => setCurrentView('screenings');
   const handleViewOmitted = () => setCurrentView('omitted');
   const handleViewComparison = () => setCurrentView('comparison');
@@ -1998,7 +2007,7 @@ function App() {
               My Ecosystem
             </a>
             <span className="app-nav__divider" aria-hidden="true" />
-            <a href="/library" className={`app-nav__tab app-nav__tab--quiet ${currentView === 'articles' ? 'app-nav__tab--active' : ''}`} aria-current={currentView === 'articles' ? 'page' : undefined} {...linkProps(() => { setSelectedArticleId(null); setCurrentView('articles'); })}>Library</a>
+            <a href="/library" className={`app-nav__tab app-nav__tab--quiet ${currentView === 'articles' ? 'app-nav__tab--active' : ''}`} aria-current={currentView === 'articles' ? 'page' : undefined} {...linkProps(() => openLibrary())}>Library</a>
             <a href="/community" className={`app-nav__tab app-nav__tab--quiet ${currentView === 'community' ? 'app-nav__tab--active' : ''}`} aria-current={currentView === 'community' ? 'page' : undefined} {...linkProps(() => setCurrentView('community'))}>Community</a>
           </div>
 
@@ -2085,7 +2094,7 @@ function App() {
               {[
                 ['discovery', '/shop', 'Shop', () => handleViewDiscovery('')],
                 ['ecosystem', '/ecosystem', 'My Ecosystem', () => handleViewEcosystem()],
-                ['articles', '/library', 'Library', () => { setSelectedArticleId(null); setCurrentView('articles'); }],
+                ['articles', '/library', 'Library', () => openLibrary()],
                 ['community', '/community', 'Community', () => setCurrentView('community')],
                 ...(user ? [['you', '/you', 'You', () => setCurrentView('you')]] : []),
               ].map(([view, href, label, go]) => (
@@ -2190,7 +2199,7 @@ function App() {
             quizResults={quizResults}
             myProducts={myProducts}
             onOpenProduct={handleOpenProduct}
-            onOpenArticle={(a) => { setSelectedArticleId(a.id); setCurrentView('articles'); }}
+            onOpenArticle={(a) => openLibrary(a.id)}
             onRequireAuth={(feature) => { setAuthFeature(typeof feature === 'string' ? feature : ''); setPendingAction(typeof feature === 'string' && feature ? 'feature' : 'login'); pendingActionRef.current = typeof feature === 'string' && feature ? 'feature' : 'login'; setShowAuthModal(true); }}
           />
         )}
@@ -2417,10 +2426,7 @@ function App() {
             onGoToSearch={(queryOrOptions) => handleViewDiscovery(queryOrOptions || '')}
             onHealthProfileUpdate={updateHealthProfile}
             onViewRecommendedArticles={handleViewArticles}
-            onOpenArticle={(articleId) => {
-              setSelectedArticleId(articleId);
-              setCurrentView('articles');
-            }}
+            onOpenArticle={(articleId) => openLibrary(articleId)}
             onLlmRecommendationsLoaded={handleLlmRecommendationsLoaded}
             onBuildEcosystemFromLlm={handleBuildEcosystemFromLlm}
             user={user}
@@ -2567,7 +2573,7 @@ function App() {
             <button type="button" className="ay-tabbar__ask" onClick={() => openAsk('')}>
               <span className="ay-tabbar__orb" aria-hidden="true">✦</span><span>Ask</span>
             </button>
-            <a href="/library" className={currentView === 'articles' ? 'is-on' : ''} {...linkProps(() => setCurrentView('articles'))}>
+            <a href="/library" className={currentView === 'articles' ? 'is-on' : ''} {...linkProps(() => openLibrary())}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H5zM19 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z" /></svg><span>Library</span>
             </a>
             <a href="/community" className={currentView === 'community' ? 'is-on' : ''} {...linkProps(() => setCurrentView('community'))}>
