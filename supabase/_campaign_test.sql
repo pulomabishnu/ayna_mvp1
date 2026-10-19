@@ -16,6 +16,9 @@ update public.reward_campaigns
 insert into public.reward_products (campaign_id, product_id, inventory_total)
 select 'free-product-2026', id, case when row_number() over (order by id) = 1 then 1 else 2 end
 from (select id from public.product_catalog where is_active order by id limit 2) p;
+-- A reward-only item (not in the catalog), like the PR-haul products.
+insert into public.reward_products (campaign_id, name, brand, size, category, image_url, product_url, inventory_total)
+values ('free-product-2026', 'Test Barrier Cream', 'Testbrand', '50 g', 'skincare', 'https://example.com/cream.jpg', 'https://example.com/cream', 2);
 
 -- ── Eligibility: verification, feedback, referrals ──────────────────────────
 do $$
@@ -134,26 +137,36 @@ begin
   select sum(inventory_claimed) into before_total from public.reward_products where campaign_id = c;
   assert before_total = 0, 'a spin does not take inventory';
 
-  -- 30 respins with two products available: never the same product twice in a row.
-  prev := s -> 'product' ->> 'rewardProductId';
-  for i in 1..30 loop
+  assert (s ->> 'spinsLeft')::int = 2, 'two spins left after the first: ' || s::text;
+
+  -- Three spins with three products available: three different products.
+  for i in 2..3 loop
     s := public.campaign_spin(c, r);
-    assert s -> 'product' ->> 'rewardProductId' <> prev, 'respin repeated the previous product';
-    prev := s -> 'product' ->> 'rewardProductId';
+    assert (s ->> 'ok')::boolean, 'spin ' || i || ' works';
   end loop;
   last_spin := (s ->> 'spinId')::uuid;
-  assert (select count(*) from public.reward_spins where user_id = r) = 31, 'every spin recorded';
-  assert (select sum(inventory_claimed) from public.reward_products where campaign_id = c) = 0, 'respins never take inventory';
+  assert (select count(distinct reward_product_id) from public.reward_spins where user_id = r) = 3, 'three spins land on three different products';
+  assert (select sum(inventory_claimed) from public.reward_products where campaign_id = c) = 0, 'spins never take inventory';
+  assert (public.campaign_progress(c, r) ->> 'spinsLeft')::int = 0, 'no spins left';
+  assert not (public.campaign_progress(c, r) ->> 'canSpin')::boolean, 'cannot spin after three';
+  assert jsonb_array_length(public.campaign_progress(c, r) -> 'landed') = 3, 'all three landed products listed';
 
-  -- Older spin cannot be claimed.
-  k := public.campaign_claim(c, r, first_spin, 'key-stale-000000000001');
-  assert k ->> 'error' = 'stale_spin', 'stale spin refused: ' || k::text;
+  -- A fourth spin is refused.
+  s := public.campaign_spin(c, r);
+  assert s ->> 'error' = 'no_spins_left', 'fourth spin refused: ' || s::text;
+  assert (select count(*) from public.reward_spins where user_id = r) = 3, 'refused spin not recorded';
+
+  -- The reward-only item reads like any product.
+  assert exists (select 1 from jsonb_array_elements(public.campaign_progress(c, r) -> 'landed') x
+    where x -> 'product' ->> 'name' = 'Test Barrier Cream' and x -> 'product' ->> 'brand' = 'Testbrand'
+      and x -> 'product' ->> 'size' = '50 g' and x -> 'product' ->> 'image' = 'https://example.com/cream.jpg'), 'reward-only item json';
 
   -- Someone else's spin cannot be claimed.
   k := public.campaign_claim(c, (select id from auth.users where email = 'unverified@example.com'), last_spin, 'key-other-00000000001');
   assert k ->> 'error' in ('not_eligible', 'invalid_spin'), 'other user spin refused: ' || k::text;
 
-  -- Real claim.
+  -- Real claim, of the FIRST product she landed on (any landed product can be claimed).
+  last_spin := first_spin;
   k := public.campaign_claim(c, r, last_spin, 'key-claim-00000000001');
   assert (k ->> 'ok')::boolean, 'claim works: ' || k::text;
   assert (select sum(inventory_claimed) from public.reward_products where campaign_id = c) = 1, 'exactly one unit taken';
@@ -189,7 +202,7 @@ begin
   exception when check_violation then null;
   end;
 
-  raise notice 'ok  spins, respins, claim, replay, duplicate protection';
+  raise notice 'ok  3 spins max, different products, claim any landed product, replay, duplicate protection';
 end $$;
 
 -- ── Product sold out between spin and claim ─────────────────────────────────
@@ -201,12 +214,12 @@ declare
   u2 uuid := public.test_make_eligible('free-product-2026', 'two@example.com');
   s1 jsonb; s2 jsonb; k jsonb; claimed_before integer;
 begin
-  -- Reset: product A has exactly 1 unit, B is switched off, so both spin A.
+  -- Reset: product A has exactly 1 unit, B (and the reward-only item) are switched off, so both spin A.
   delete from public.reward_claims where user_id in (u1, u2);
-  select id into a from public.reward_products where campaign_id = c order by product_id limit 1;
-  select id into b from public.reward_products where campaign_id = c and id <> a limit 1;
+  select id into a from public.reward_products where campaign_id = c and product_id is not null order by product_id limit 1;
+  select id into b from public.reward_products where campaign_id = c and product_id is not null and id <> a limit 1;
   update public.reward_products set inventory_total = inventory_claimed + 1, is_active = true where id = a;
-  update public.reward_products set is_active = false where id = b;
+  update public.reward_products set is_active = false where campaign_id = c and id <> a;
 
   s1 := public.campaign_spin(c, u1);
   s2 := public.campaign_spin(c, u2);
@@ -241,6 +254,30 @@ begin
   raise notice 'ok  sold out between spin and claim, empty pool, restock';
 end $$;
 
+-- ── Bonus spin when everything she landed on is gone ─────────────────────────
+do $$
+declare
+  c text := 'free-product-2026';
+  u uuid := public.test_make_eligible('free-product-2026', 'bonus@example.com');
+  d uuid;
+  s jsonb; i integer;
+begin
+  update public.reward_products set is_active = true, inventory_total = inventory_claimed + 5 where campaign_id = c;
+  for i in 1..3 loop s := public.campaign_spin(c, u); assert (s ->> 'ok')::boolean, 'bonus setup spin'; end loop;
+  assert public.campaign_spin(c, u) ->> 'error' = 'no_spins_left', 'out of spins';
+  -- Everything she landed on sells out; a new item is added.
+  update public.reward_products set inventory_claimed = inventory_total
+   where id in (select reward_product_id from public.reward_spins where user_id = u);
+  insert into public.reward_products (campaign_id, name, brand, inventory_total)
+  values (c, 'Test Body Scrub', 'Testbrand', 1) returning id into d;
+  assert (public.campaign_progress(c, u) ->> 'canSpin')::boolean, 'can spin again when every landed product is gone';
+  s := public.campaign_spin(c, u);
+  assert s -> 'product' ->> 'rewardProductId' = d::text, 'bonus spin lands on what is left';
+  assert public.campaign_spin(c, u) ->> 'error' = 'no_spins_left', 'only one bonus spin while it is available';
+  assert (public.campaign_claim(c, u, (s ->> 'spinId')::uuid, 'key-bonus-00000000001') ->> 'ok')::boolean, 'bonus product claimable';
+  raise notice 'ok  one extra spin only when everything she landed on is gone';
+end $$;
+
 -- ── Campaign paused / ended ─────────────────────────────────────────────────
 do $$
 declare
@@ -248,6 +285,7 @@ declare
   u uuid := (select id from auth.users where email = 'one@example.com');
   s jsonb;
 begin
+  update public.reward_products set inventory_total = inventory_claimed + 5 where campaign_id = 'free-product-2026';
   s := public.campaign_spin(c, u);
   assert (s ->> 'ok')::boolean, 'spins while live';
   update public.reward_campaigns set is_active = false where id = c;
@@ -277,7 +315,8 @@ begin
   exception when check_violation then null;
   end;
   o := public.campaign_admin_overview(c);
-  assert jsonb_array_length(o -> 'inventory') = 2, 'admin sees inventory';
+  assert jsonb_array_length(o -> 'inventory') = 4, 'admin sees inventory (2 catalog + 2 reward-only)';
+  assert exists (select 1 from jsonb_array_elements(o -> 'inventory') x where x ->> 'name' = 'Test Barrier Cream' and x ->> 'size' = '50 g'), 'admin sees reward-only item';
   assert exists (select 1 from jsonb_array_elements(o -> 'people') x where x -> 'claim' -> 'shipping' ->> 'city' = 'New York'), 'admin sees shipping';
   assert (public.campaign_admin_set_fulfillment((k -> 'claim' ->> 'id')::uuid, 'shipped') ->> 'ok')::boolean, 'admin marks shipped';
   assert public.campaign_save_shipping(c, r, '{"fullName":"Test Person","addressLine1":"2 Main St","city":"New York","state":"NY","postalCode":"10001","email":"t@example.com"}') ->> 'error' = 'already_shipped', 'address locked after shipping';

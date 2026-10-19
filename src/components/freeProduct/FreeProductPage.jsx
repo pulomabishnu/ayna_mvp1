@@ -353,6 +353,7 @@ function ResultCard({ product, headingRef }) {
       <div className="fp-result__body">
         {product.brand && <p className="fp-result__brand">{product.brand}</p>}
         <h2 tabIndex={-1} ref={headingRef}>{product.name}</h2>
+        {product.size && <p className="fp-result__size">{product.size}</p>}
         {product.category && <span className="fp-pill tone-sky">{String(product.category).replace(/[-_]/g, ' ').replace(/^\w/, (c) => c.toUpperCase())}</span>}
         {summary && <p className="fp-result__summary">{summary}</p>}
       </div>
@@ -360,7 +361,7 @@ function ResultCard({ product, headingRef }) {
   );
 }
 
-function ConfirmDialog({ product, busy, onConfirm, onCancel }) {
+function ConfirmDialog({ product, busy, onConfirm, onCancel, cancelLabel = 'Keep spinning' }) {
   const confirmRef = useRef(null);
   const boxRef = useRef(null);
   useEffect(() => {
@@ -384,10 +385,10 @@ function ConfirmDialog({ product, busy, onConfirm, onCancel }) {
     <div className="fp-dialog" role="presentation" onMouseDown={(e) => { if (e.target === e.currentTarget && !busy) onCancel(); }}>
       <div className="fp-dialog__box" role="dialog" aria-modal="true" aria-labelledby="fp-confirm-title" aria-describedby="fp-confirm-body" ref={boxRef}>
         <h2 id="fp-confirm-title">Claim {product.name}?</h2>
-        <p id="fp-confirm-body">Once you claim this product, your reward is locked in and you won't be able to spin for another one.</p>
+        <p id="fp-confirm-body">Once you claim this, your reward is locked in and you can't pick another one.</p>
         <div className="fp-dialog__actions">
           <button type="button" className="fp-btn is-ink" ref={confirmRef} onClick={onConfirm} disabled={busy} aria-busy={busy || undefined}>{busy ? 'Claiming…' : 'Yes, claim it'}</button>
-          <button type="button" className="fp-btn is-ghost" onClick={onCancel} disabled={busy}>Keep spinning</button>
+          <button type="button" className="fp-btn is-ghost" onClick={onCancel} disabled={busy}>{cancelLabel}</button>
         </div>
       </div>
     </div>
@@ -504,19 +505,56 @@ function ClaimedView({ claim, user, onUpdated, onBack }) {
   );
 }
 
+function LandedList({ landed, currentId, onPick, disabled }) {
+  if (!landed.length) return null;
+  return (
+    <section className="fp-landed" aria-labelledby="fp-landed-h">
+      <h2 id="fp-landed-h">Your spins</h2>
+      <p className="fp-muted">You can claim anything you landed on.</p>
+      <ul>
+        {landed.map((l, i) => {
+          const on = l.spinId === currentId;
+          return (
+            <li key={l.spinId} className={`${on ? 'is-on' : ''}${l.available ? '' : ' is-gone'}`}>
+              <div className="fp-landed__tile">
+                <ProductTileImage product={{ id: l.product.productId, name: l.product.name, brand: l.product.brand, image: l.product.image, type: 'physical' }} alt="" />
+              </div>
+              <div className="fp-landed__body">
+                <span className="fp-landed__n">Spin {landed.length - i}</span>
+                <b>{l.product.name}</b>
+                {l.product.brand && <span>{l.product.brand}</span>}
+              </div>
+              {l.available ? (
+                <button type="button" className="fp-btn" onClick={() => onPick(l)} disabled={disabled || on} aria-pressed={on}>{on ? 'Showing' : 'Pick this'}</button>
+              ) : (
+                <span className="fp-landed__gone">Just claimed by someone else</span>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
+
 function RewardView({ status, user, onRefresh, onBack, toast, setStatus }) {
+  const maxSpins = status.campaign.maxSpins || 3;
   const [current, setCurrent] = useState(status.lastSpin || null); // { spinId, product }
   const [spinning, setSpinning] = useState(false);
   const [settled, setSettled] = useState(Boolean(status.lastSpin));
   const [confirming, setConfirming] = useState(false);
   const [claiming, setClaiming] = useState(false);
-  const [problem, setProblem] = useState(null); // { tone, text }
+  const [problem, setProblem] = useState(null); // { tone, text, spin }
   const [announce, setAnnounce] = useState('');
   const spinCount = useRef(status.spins || 0);
   const headingRef = useRef(null);
   const currentRef = useRef(current);
   currentRef.current = current;
   const pool = status.pool || [];
+  const landed = status.landed || [];
+  const spinsLeft = Math.max(0, Math.min(status.spinsLeft ?? maxSpins, maxSpins - spinCount.current));
+  const canSpin = Boolean(status.canSpin) && !spinning;
+  const currentGone = current && landed.some((l) => l.spinId === current.spinId && !l.available);
 
   useEffect(() => { api.trackOnce('reward_experience_opened', {}, user.id); }, [user.id]);
 
@@ -534,9 +572,10 @@ function RewardView({ status, user, onRefresh, onBack, toast, setStatus }) {
     } catch (err) {
       setSpinning(false);
       if (err.code === 'no_inventory') { setProblem({ tone: 'soft', text: 'Every product has been claimed for now.' }); onRefresh(); }
+      else if (err.code === 'no_spins_left') { setProblem({ tone: 'soft', text: 'That was your last spin. Pick one of your spins below.' }); onRefresh(); }
       else if (err.code === 'already_claimed' || err.code === 'not_eligible' || err.code === 'campaign_inactive') onRefresh();
-      else if (err.code === 'slow_down') setProblem({ tone: 'soft', text: "That's a lot of spins. Give it a minute, then try again." });
-      else setProblem({ tone: 'alert', text: "Couldn't reach ayna. Nothing was lost, try spinning again." });
+      else if (err.code === 'slow_down') setProblem({ tone: 'soft', text: 'Give it a minute, then try again.', spin: true });
+      else setProblem({ tone: 'alert', text: "Couldn't reach ayna. Nothing was lost, try spinning again.", spin: true });
     }
   };
 
@@ -548,8 +587,16 @@ function RewardView({ status, user, onRefresh, onBack, toast, setStatus }) {
       setAnnounce(`You got ${c.product.name}${c.product.brand ? ` by ${c.product.brand}` : ''}.`);
       api.track('reward_product_shown', { productId: c.product.productId, spinNumber: spinCount.current });
     }
+    onRefresh(); // spins left and the list of spins come from the server
     setTimeout(() => headingRef.current?.focus({ preventScroll: false }), 30);
-  }, []);
+  }, [onRefresh]);
+
+  const pick = (l) => {
+    setProblem(null);
+    setCurrent({ spinId: l.spinId, product: l.product });
+    setSettled(true);
+    setTimeout(() => headingRef.current?.focus({ preventScroll: false }), 30);
+  };
 
   const confirmClaim = async () => {
     if (!current || claiming) return;
@@ -572,14 +619,14 @@ function RewardView({ status, user, onRefresh, onBack, toast, setStatus }) {
       setConfirming(false);
       if (err.code === 'out_of_stock') {
         api.track('reward_claim_failed', { reason: 'out_of_stock', productId: current.product.productId });
-        setProblem({ tone: 'butter', text: "That one was just claimed. Spin again and we'll find you another." });
+        const fresh = await onRefresh();
+        const others = (fresh?.landed || []).some((l) => l.available);
+        setProblem(fresh?.canSpin
+          ? { tone: 'butter', text: "That one was just claimed. Spin again and we'll find you another.", spin: true }
+          : { tone: 'butter', text: others ? 'That one was just claimed. Pick another one of your spins below.' : 'That one was just claimed, and so was everything else you landed on.' });
         setCurrent(null);
-        onRefresh();
       } else if (err.code === 'already_claimed') {
         onRefresh();
-      } else if (err.code === 'stale_spin') {
-        setProblem({ tone: 'soft', text: 'That spin was replaced by a newer one. Spin again to keep going.' });
-        setCurrent(null);
       } else if (err.code === 'not_eligible' || err.code === 'campaign_inactive') {
         api.track('reward_claim_failed', { reason: err.code });
         onRefresh();
@@ -592,7 +639,7 @@ function RewardView({ status, user, onRefresh, onBack, toast, setStatus }) {
     }
   };
 
-  if (!status.inventoryAvailable && !current) {
+  if (!status.inventoryAvailable && !current && !landed.some((l) => l.available)) {
     return (
       <div className="fp-reward">
         <PageHead tone="sky" kicker="Your free product" title="Your free product is unlocked." center />
@@ -602,37 +649,53 @@ function RewardView({ status, user, onRefresh, onBack, toast, setStatus }) {
     );
   }
 
+  const spinsLabel = spinsLeft === 1 ? '1 spin left' : `${spinsLeft} spins left`;
+
   return (
     <div className="fp-reward">
-      <PageHead tone="sky" kicker="Your free product" title="Your free product is unlocked." lead="Spin for something you'll actually want. Spin as many times as you like. Claiming one is final." center />
+      <PageHead tone="sky" kicker="Your free product" title="Your free product is unlocked." lead={`You get ${maxSpins} spins. Claim anything you land on. Claiming is final.`} center>
+        <ol className="fp-spinpips" aria-label={spinsLabel}>
+          {Array.from({ length: maxSpins }, (_, i) => <li key={i} className={i < maxSpins - spinsLeft ? 'is-used' : ''} aria-hidden="true" />)}
+          <li className="fp-spinpips__label">{spinsLabel}</li>
+        </ol>
+      </PageHead>
 
       {pool.length > 0 && <ProductReel pool={pool} spinning={spinning} result={current} onSettled={onSettled} />}
       <p className="fp-sr" aria-live="polite">{announce}</p>
 
-      {problem && <Notice tone={problem.tone} action={<button type="button" className="fp-btn" onClick={doSpin} disabled={spinning}>Spin again</button>}>{problem.text}</Notice>}
+      {problem && (
+        <Notice tone={problem.tone} action={problem.spin && canSpin ? <button type="button" className="fp-btn" onClick={doSpin} disabled={spinning}>Spin again</button> : null}>{problem.text}</Notice>
+      )}
 
       {spinning && <p className="fp-spin-hint" role="status">Finding something for you…</p>}
 
       {!spinning && current && settled && (
         <div className="fp-reward__result">
-          <h2 className="fp-sr" tabIndex={-1} ref={headingRef}>Your spin</h2>
+          <h2 className="fp-sr" tabIndex={-1} ref={headingRef}>Your pick</h2>
           <ResultCard product={current.product} />
-          <div className="fp-reward__actions">
-            <Cta onClick={() => setConfirming(true)}>Claim this</Cta>
-            <button type="button" className="fp-btn is-ghost is-lg" onClick={doSpin}>Spin again</button>
-          </div>
-          <p className="fp-muted">Not for you? Spin again.</p>
+          {currentGone ? (
+            <p className="fp-muted">Someone just claimed this one. Pick another below{canSpin ? ' or spin again' : ''}.</p>
+          ) : (
+            <div className="fp-reward__actions">
+              <Cta onClick={() => setConfirming(true)}>Claim this</Cta>
+              {canSpin && <button type="button" className="fp-btn is-ghost is-lg" onClick={doSpin}>Spin again · {spinsLabel}</button>}
+            </div>
+          )}
+          {!canSpin && !currentGone && <p className="fp-muted">That was your last spin. Claim this or pick another one of your spins.</p>}
+          {canSpin && !currentGone && <p className="fp-muted">Not for you? Spin again.</p>}
         </div>
       )}
 
-      {!spinning && !current && !problem && (
+      {!spinning && !current && !problem && canSpin && (
         <div className="fp-reward__actions is-start">
-          <Cta onClick={doSpin}>Spin</Cta>
+          <Cta onClick={doSpin}>Spin · {spinsLabel}</Cta>
         </div>
       )}
+
+      {!spinning && landed.length > 1 && <LandedList landed={landed} currentId={current?.spinId} onPick={pick} disabled={claiming} />}
 
       {confirming && current && (
-        <ConfirmDialog product={current.product} busy={claiming} onConfirm={confirmClaim} onCancel={() => setConfirming(false)} />
+        <ConfirmDialog product={current.product} busy={claiming} onConfirm={confirmClaim} onCancel={() => setConfirming(false)} cancelLabel={canSpin ? 'Keep spinning' : 'Go back'} />
       )}
       <button type="button" className="fp-link" onClick={onBack}>Back to your progress</button>
       {toast}

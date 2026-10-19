@@ -144,7 +144,7 @@ export default async function handler(req, res) {
         if (await limited('spin', user.id, res)) return;
         const result = await rpc(admin, 'campaign_spin', { p_campaign: CAMPAIGN_ID, p_user: user.id });
         if (!result?.ok) {
-          const code = result?.error === 'no_inventory' || result?.error === 'already_claimed' ? 409 : 403;
+          const code = ['no_inventory', 'already_claimed', 'no_spins_left'].includes(result?.error) ? 409 : 403;
           return res.status(code).json(result || { ok: false, error: 'spin_failed' });
         }
         return res.status(200).json(result);

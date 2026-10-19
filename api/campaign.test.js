@@ -135,6 +135,14 @@ describe('spin', () => {
     expect(res.body.error).toBe('no_inventory');
   });
 
+  it('409 when all 3 spins are used', async () => {
+    setup({ campaign_spin: { data: { ok: false, error: 'no_spins_left' }, error: null } });
+    const res = mockRes();
+    await handler(mockReq({ body: { action: 'spin' } }), res);
+    expect(res.statusCode).toBe(409);
+    expect(res.body.error).toBe('no_spins_left');
+  });
+
   it('403 when not eligible (e.g. someone opening the reward URL early)', async () => {
     setup({ campaign_spin: { data: { ok: false, error: 'not_eligible' }, error: null } });
     const res = mockRes();

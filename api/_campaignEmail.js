@@ -213,7 +213,7 @@ export function announcementEmail({ unsubscribeUrl = '{{{RESEND_UNSUBSCRIBE_URL}
       ['Verify your account', 'Most accounts already are.'],
       ['Answer 3 questions', 'A couple of real sentences each (120+ characters).'],
       ['Share your link', 'A friend counts once they sign up and verify.'],
-      ['Spin and pick', 'Spin as much as you want. Your claim is final.'],
+      ['Spin and pick', 'You get 3 spins. Claim the one you want. Your claim is final.'],
     ])}
     ${goodToKnow([
       'Products are limited, first come first served.',
@@ -243,7 +243,7 @@ export function announcementEmail({ unsubscribeUrl = '{{{RESEND_UNSUBSCRIBE_URL}
       '1. Verify your account. Most accounts already are.',
       '2. Answer 3 questions. A couple of real sentences each (120+ characters).',
       '3. Share your link. A friend counts once they sign up and verify.',
-      '4. Spin and pick. Spin as much as you want. Your claim is final.',
+      '4. Spin and pick. You get 3 spins. Claim the one you want. Your claim is final.',
       '',
       'Good to know',
       '- Products are limited, first come first served.',
@@ -259,13 +259,13 @@ export function unlockedEmail() {
   const url = campaignUrl('/free-product/reward', 'unlocked_email');
   const body = `
     ${h1('Your free product is unlocked.')}
-    ${p('Your answers are in and three friends are verified. Thank you, really. Come spin for something you will actually want.')}
+    ${p('Your answers are in and three friends are verified. Thank you, really. You get 3 spins to find something you will actually want.')}
     ${button('Pick my free product', url)}
     ${p('Products are limited and go to whoever claims them first, so we would not wait too long.', `font-size:14px;line-height:22px;color:${SOFT};margin-top:16px`)}
   `;
   return {
     subject: 'Your free product is unlocked',
-    html: renderLayout({ title: 'Your free product is unlocked', preheader: 'Come spin for something you will actually want.', body, reason: ACCOUNT_REASON }),
+    html: renderLayout({ title: 'Your free product is unlocked', preheader: 'You get 3 spins to find something you will actually want.', body, reason: ACCOUNT_REASON }),
     text: `Your free product is unlocked.\n\nYour answers are in and three friends are verified. Come spin for something you will actually want:\n${url}\n\nProducts are limited and go to whoever claims them first.`,
   };
 }

@@ -35,7 +35,8 @@ export default function CampaignAdminPage({ onBack }) {
   const [state, setState] = useState('loading');
   const [data, setData] = useState(null);
   const [msg, setMsg] = useState('');
-  const [adding, setAdding] = useState({ productId: '', inventoryTotal: 5 });
+  const EMPTY_ITEM = { brand: '', name: '', size: '', imageUrl: '', productUrl: '', inventoryTotal: 1 };
+  const [adding, setAdding] = useState(EMPTY_ITEM);
   const [open, setOpen] = useState(null);
 
   const load = useCallback(() => getAdminOverview().then(
@@ -57,8 +58,10 @@ export default function CampaignAdminPage({ onBack }) {
       const r = await adminAction(body);
       setMsg(done || (r.emailed ? 'Saved. Shipping email sent.' : 'Saved.'));
       await load();
+      return true;
     } catch (e) {
       setMsg(e.body?.message || `Could not save (${e.code}).`);
+      return false;
     }
   };
 
@@ -111,7 +114,7 @@ export default function CampaignAdminPage({ onBack }) {
             <tbody>
               {data.inventory.map((r) => (
                 <tr key={r.rewardProductId}>
-                  <td><b>{r.name}</b><br /><small>{r.brand} · {r.productId}</small></td>
+                  <td><b>{r.name}</b><br /><small>{[r.brand, r.size].filter(Boolean).join(' · ')}{r.productId ? ` · ${r.productId}` : ''}</small></td>
                   <td>
                     <input type="number" min={r.inventoryClaimed} defaultValue={r.inventoryTotal} aria-label={`Total units of ${r.name}`} style={{ width: 80 }}
                       onBlur={(e) => { const v = Number(e.target.value); if (v !== r.inventoryTotal) act({ action: 'inventory', rewardProductId: r.rewardProductId, inventoryTotal: v }); }} />
@@ -126,9 +129,14 @@ export default function CampaignAdminPage({ onBack }) {
               {!data.inventory.length && <tr><td colSpan={7}>No products yet. Add one below.</td></tr>}
             </tbody>
           </table>
-          <form style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 16, alignItems: 'flex-end' }} onSubmit={(e) => { e.preventDefault(); act({ action: 'add_product', ...adding, inventoryTotal: Number(adding.inventoryTotal) }, 'Added to the pool.'); }}>
-            <label className="fp-field" style={{ flex: '1 1 240px' }}><span>Catalog product id</span><input value={adding.productId} placeholder="p-uqora-control" onChange={(e) => setAdding((a) => ({ ...a, productId: e.target.value }))} /></label>
-            <label className="fp-field" style={{ width: 120 }}><span>Units</span><input type="number" min={1} value={adding.inventoryTotal} onChange={(e) => setAdding((a) => ({ ...a, inventoryTotal: e.target.value }))} /></label>
+          <form className="fp-additem" onSubmit={(e) => { e.preventDefault(); act({ action: 'add_product', ...adding, inventoryTotal: Number(adding.inventoryTotal) }, 'Added to the pool.').then((ok) => { if (ok) setAdding(EMPTY_ITEM); }); }}>
+            <h3>Add a product</h3>
+            <label className="fp-field"><span>Brand</span><input value={adding.brand} onChange={(e) => setAdding((a) => ({ ...a, brand: e.target.value }))} /></label>
+            <label className="fp-field"><span>Product</span><input value={adding.name} onChange={(e) => setAdding((a) => ({ ...a, name: e.target.value }))} /></label>
+            <label className="fp-field"><span>Size (optional)</span><input value={adding.size} onChange={(e) => setAdding((a) => ({ ...a, size: e.target.value }))} /></label>
+            <label className="fp-field"><span>Units</span><input type="number" min={1} value={adding.inventoryTotal} onChange={(e) => setAdding((a) => ({ ...a, inventoryTotal: e.target.value }))} /></label>
+            <label className="fp-field" style={{ gridColumn: '1 / -1' }}><span>Photo URL (https)</span><input value={adding.imageUrl} onChange={(e) => setAdding((a) => ({ ...a, imageUrl: e.target.value }))} /></label>
+            <label className="fp-field" style={{ gridColumn: '1 / -1' }}><span>Product page URL (optional)</span><input value={adding.productUrl} onChange={(e) => setAdding((a) => ({ ...a, productUrl: e.target.value }))} /></label>
             <button type="submit" className="fp-btn is-ink">Add to pool</button>
           </form>
         </div>

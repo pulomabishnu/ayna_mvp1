@@ -13,12 +13,17 @@
 - Own account verified: Supabase confirmed it (`email_confirmed_at` or `phone_confirmed_at`). One function: `campaign_user_is_verified`.
 - 3 answers, each at least 120 characters after collapsing whitespace, at least 12 words, not repeated characters or one phrase repeated, not a copy of another answer. Distinct answers only count once in the database too.
 - 3 friends whose accounts were created at or after launch, attributed within 7 days of signing up (existing referrals policy), verified, not the same inbox as you (plus-addresses and Gmail dots ignored), not the same inbox as another friend.
+- 3 spins per person (`reward_campaigns.max_spins`). Each spin lands on a product she hasn't landed on yet when one is available. She can claim any product she landed on that still has units. If everything she landed on has since been claimed, she gets one more spin.
 - One claim per person per campaign (unique constraint). Claiming is final.
+
+## Reward pool
+- A reward is either a catalog product (`product_id`) or a reward-only item (`name`, `brand`, `size`, `image_url`, `product_url`). Reward-only items never show in Shop and store no health claims.
+- The PR haul pool is in `supabase/seed/free_product_pr_haul.sql` (22 products, 24 units). Re-running it updates units without touching what has been claimed. Add more products later on `/admin/campaign` (Add a product).
 
 ## Setup (nothing here has been run)
 1. Apply `supabase/migrations/20261013150000_referrals.sql` if it is not applied yet.
 2. Apply `supabase/migrations/20261015120000_free_product_campaign.sql`. The campaign is created paused with an empty pool.
-3. Add products and units on `/admin/campaign` (catalog ids from `product_catalog`).
+3. Run `supabase/seed/free_product_pr_haul.sql` to load the PR haul products, or add products on `/admin/campaign`.
 4. Press Launch. Friends count from that moment.
 5. Emails are off. To turn them on later: set `RESEND_API_KEY`, `CAMPAIGN_EMAILS_ENABLED=1`, `CAMPAIGN_POSTAL_ADDRESS`, and add the hourly cron for `/api/campaign-notify` in `vercel.json`. The announcement is a mockup in `emails/free-product/announcement.html` (`node scripts/render-campaign-emails.mjs` rebuilds it); send it as a Resend broadcast so `{{{RESEND_UNSUBSCRIBE_URL}}}` is filled in.
 

@@ -46,6 +46,28 @@ describe('api/campaign-admin', () => {
   });
 });
 
+describe('api/campaign-admin add_product', () => {
+  const asAdmin = (admin) => verifyUser.mockResolvedValue({ user: { id: 'u', email: 'team@aynahealth.co' }, error: null, admin });
+
+  it('adds a reward-only item with only https links and no catalog id', async () => {
+    const admin = mockSupabase({ tableResults: { 'reward_products.insert': { data: null, error: null } } });
+    asAdmin(admin);
+    const res = mockRes();
+    await adminHandler(mockReq({ body: { action: 'add_product', brand: ' Kieró ', name: 'Moisturizing  Barrier Cream', size: '1.76 oz (50 g)', inventoryTotal: 2, imageUrl: 'javascript:alert(1)', productUrl: 'https://example.com/p' } }), res);
+    expect(res.statusCode).toBe(200);
+    const insert = admin.tableCalls.find((c) => c.table === 'reward_products' && c.op === 'insert').payload;
+    expect(insert).toMatchObject({ brand: 'Kieró', name: 'Moisturizing Barrier Cream', size: '1.76 oz (50 g)', inventory_total: 2, image_url: null, product_url: 'https://example.com/p' });
+    expect(insert.product_id).toBeUndefined();
+  });
+
+  it('needs a brand and a name', async () => {
+    asAdmin(mockSupabase());
+    const res = mockRes();
+    await adminHandler(mockReq({ body: { action: 'add_product', name: 'x', inventoryTotal: 1 } }), res);
+    expect(res.statusCode).toBe(400);
+  });
+});
+
 describe('api/campaign-notify (cron)', () => {
   it('401 without the cron secret', async () => {
     const res = mockRes();

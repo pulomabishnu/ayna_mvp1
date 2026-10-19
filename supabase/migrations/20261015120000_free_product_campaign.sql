@@ -45,6 +45,9 @@ create table if not exists public.reward_campaigns (
   feedback_required integer not null default 3 check (feedback_required between 1 and 10),
   feedback_min_chars integer not null default 120 check (feedback_min_chars between 20 and 2000),
   referrals_required integer not null default 3 check (referrals_required between 0 and 20),
+  -- Spins per person. Claim any product you landed on; no spins after the last one
+  -- (unless everything you landed on has since been claimed, then one more).
+  max_spins integer not null default 3 check (max_spins between 1 and 50),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   check (ends_at is null or starts_at is null or ends_at > starts_at)
@@ -69,11 +72,20 @@ create table if not exists public.campaign_feedback (
 create index if not exists campaign_feedback_user_idx on public.campaign_feedback (user_id, campaign_id);
 
 -- The reward pool. Only products listed here can ever be won; the rest of the
--- catalog is never free inventory.
+-- catalog is never free inventory. A reward is either a catalog product
+-- (product_id) or a reward-only item described here (name, brand, size,
+-- image_url, product_url), e.g. PR-haul products that are not sold on ayna.
+-- Reward-only items never appear in Shop and carry no health claims.
 create table if not exists public.reward_products (
   id uuid primary key default gen_random_uuid(),
   campaign_id text not null references public.reward_campaigns (id) on delete cascade,
-  product_id text not null references public.product_catalog (id),
+  product_id text references public.product_catalog (id),
+  name text check (name is null or char_length(name) between 1 and 160),
+  brand text check (brand is null or char_length(brand) between 1 and 80),
+  size text check (size is null or char_length(size) <= 60),
+  category text check (category is null or char_length(category) <= 40),
+  image_url text check (image_url is null or image_url ~ '^https://'),
+  product_url text check (product_url is null or product_url ~ '^https://'),
   inventory_total integer not null check (inventory_total >= 0),
   inventory_claimed integer not null default 0 check (inventory_claimed >= 0),
   inventory_remaining integer generated always as (inventory_total - inventory_claimed) stored,
@@ -81,8 +93,11 @@ create table if not exists public.reward_products (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint reward_products_never_oversold check (inventory_claimed <= inventory_total),
+  constraint reward_products_described check (product_id is not null or (name is not null and brand is not null)),
   unique (campaign_id, product_id)
 );
+create unique index if not exists reward_products_item_uniq
+  on public.reward_products (campaign_id, lower(brand), lower(name)) where product_id is null;
 
 create table if not exists public.reward_spins (
   id uuid primary key default gen_random_uuid(),
@@ -100,7 +115,7 @@ create table if not exists public.reward_claims (
   campaign_id text not null references public.reward_campaigns (id) on delete cascade,
   user_id uuid not null references auth.users (id) on delete cascade,
   reward_product_id uuid not null references public.reward_products (id),
-  product_id text not null,
+  product_id text,
   spin_id uuid references public.reward_spins (id) on delete set null,
   idempotency_key text not null check (char_length(idempotency_key) between 16 and 80),
   spins_before_claim integer not null default 1,
@@ -289,15 +304,17 @@ set search_path = public
 as $$
   select jsonb_build_object(
     'rewardProductId', rp.id,
-    'productId', pc.id,
-    'name', pc.name,
-    'brand', pc.brand,
-    'category', pc.category,
-    'summary', pc.summary,
-    'image', pc.image
+    'productId', coalesce(pc.id, 'reward-' || rp.id::text),
+    'name', coalesce(rp.name, pc.name),
+    'brand', coalesce(rp.brand, pc.brand),
+    'size', rp.size,
+    'category', coalesce(rp.category, pc.category),
+    'summary', case when rp.product_id is null then null else pc.summary end,
+    'image', coalesce(rp.image_url, pc.image),
+    'url', coalesce(rp.product_url, pc.url)
   )
   from public.reward_products rp
-  join public.product_catalog pc on pc.id = rp.product_id
+  left join public.product_catalog pc on pc.id = rp.product_id
   where rp.id = p_reward_product
 $$;
 
@@ -320,7 +337,8 @@ as $$
   where c.id = p_claim
 $$;
 
--- Products that can be won right now: active, in the catalog, with units left.
+-- Products that can be won right now: active, units left, and (for catalog
+-- products) still active in the catalog.
 create or replace function public.campaign_available_products(p_campaign text)
 returns setof public.reward_products
 language sql
@@ -330,10 +348,10 @@ set search_path = public
 as $$
   select rp.*
   from public.reward_products rp
-  join public.product_catalog pc on pc.id = rp.product_id
+  left join public.product_catalog pc on pc.id = rp.product_id
   where rp.campaign_id = p_campaign
     and rp.is_active
-    and pc.is_active
+    and (rp.product_id is null or pc.is_active)
     and rp.inventory_claimed < rp.inventory_total
 $$;
 
@@ -359,6 +377,9 @@ declare
   v_inventory boolean;
   v_spins integer;
   v_last_spin uuid;
+  v_landed jsonb;
+  v_landed_available boolean;
+  v_can_spin boolean;
 begin
   select * into c from public.reward_campaigns where id = p_campaign;
   if not found then
@@ -411,6 +432,26 @@ begin
   from public.reward_spins s
   where s.campaign_id = p_campaign and s.user_id = p_user;
 
+  -- Every product she has landed on (newest first), and whether it can still be claimed.
+  select
+    coalesce(jsonb_agg(jsonb_build_object(
+      'spinId', l.spin_id,
+      'product', public.campaign_product_json(l.reward_product_id),
+      'available', l.available
+    ) order by l.seq desc), '[]'::jsonb),
+    coalesce(bool_or(l.available), false)
+  into v_landed, v_landed_available
+  from (
+    select distinct on (s.reward_product_id) s.reward_product_id, s.id as spin_id, s.seq,
+      exists (select 1 from public.campaign_available_products(p_campaign) a where a.id = s.reward_product_id) as available
+    from public.reward_spins s
+    where s.campaign_id = p_campaign and s.user_id = p_user
+    order by s.reward_product_id, s.seq desc
+  ) l;
+
+  -- Spins run out at max_spins, unless everything she landed on is gone.
+  v_can_spin := v_inventory and (v_spins < c.max_spins or not v_landed_available);
+
   return jsonb_build_object(
     'campaign', jsonb_build_object(
       'id', c.id,
@@ -422,7 +463,8 @@ begin
       'endsAt', c.ends_at,
       'feedbackRequired', c.feedback_required,
       'feedbackMinChars', c.feedback_min_chars,
-      'referralsRequired', c.referrals_required
+      'referralsRequired', c.referrals_required,
+      'maxSpins', c.max_spins
     ),
     'verified', v_verified,
     'feedback', v_feedback,
@@ -433,6 +475,9 @@ begin
     'eligible', v_requirements_met and v_live and v_claim is null,
     'inventoryAvailable', v_inventory,
     'spins', v_spins,
+    'spinsLeft', greatest(c.max_spins - v_spins, 0),
+    'canSpin', v_requirements_met and v_live and v_claim is null and v_can_spin,
+    'landed', case when v_claim is null then v_landed else '[]'::jsonb end,
     'lastSpin', case when v_last_spin is null or v_claim is not null then null else jsonb_build_object(
       'spinId', v_last_spin,
       'product', (select public.campaign_product_json(s.reward_product_id) from public.reward_spins s where s.id = v_last_spin)
@@ -489,7 +534,8 @@ $$;
 
 -- ── Spin ─────────────────────────────────────────────────────────────────────
 -- Picks one product at random, on the server, from what has units left, and
--- avoids repeating the last product shown when anything else is available.
+-- avoids anything she has already landed on when something else is available.
+-- Allows max_spins per person (one more if everything she landed on is gone).
 -- Records the spin; never touches inventory.
 
 create or replace function public.campaign_spin(p_campaign text, p_user uuid)
@@ -521,6 +567,9 @@ begin
   if not (progress ->> 'eligible')::boolean then
     return jsonb_build_object('ok', false, 'error', 'not_eligible');
   end if;
+  if (progress ->> 'inventoryAvailable')::boolean and not (progress ->> 'canSpin')::boolean then
+    return jsonb_build_object('ok', false, 'error', 'no_spins_left');
+  end if;
 
   select s.reward_product_id into v_last
   from public.reward_spins s
@@ -533,10 +582,13 @@ begin
     return jsonb_build_object('ok', false, 'error', 'no_inventory');
   end if;
 
+  -- Prefer something new; then anything but the last one; then anything.
   select a.id into v_pick
   from public.campaign_available_products(p_campaign) a
-  where v_count = 1 or v_last is null or a.id <> v_last
-  order by random()
+  order by
+    exists (select 1 from public.reward_spins s where s.campaign_id = p_campaign and s.user_id = p_user and s.reward_product_id = a.id),
+    (v_count > 1 and a.id = v_last),
+    random()
   limit 1;
 
   insert into public.reward_spins (campaign_id, user_id, reward_product_id)
@@ -547,6 +599,7 @@ begin
     'ok', true,
     'spinId', v_spin,
     'spinNumber', (select count(*) from public.reward_spins where campaign_id = p_campaign and user_id = p_user),
+    'spinsLeft', greatest((progress -> 'campaign' ->> 'maxSpins')::int - (select count(*)::int from public.reward_spins where campaign_id = p_campaign and user_id = p_user), 0),
     'product', public.campaign_product_json(v_pick)
   );
 end
@@ -557,7 +610,8 @@ $$;
 --   1. per-person advisory lock, so a double click is processed one at a time
 --   2. replay of the same idempotency key returns the existing claim
 --   3. eligibility recomputed from stored rows
---   4. the spin must be this person's most recent spin in this campaign
+--   4. the spin must be one of this person's own spins in this campaign
+--      (she can claim anything she landed on, not only the latest)
 --   5. conditional UPDATE takes one unit only if one is left (row lock; a
 --      concurrent claimer waits, then re-checks the condition and gets 0 rows)
 --   6. claim inserted; unique constraints are the last line of defence, and
@@ -574,7 +628,6 @@ declare
   existing public.reward_claims;
   progress jsonb;
   v_spin public.reward_spins;
-  v_latest uuid;
   v_rp public.reward_products;
   v_claim uuid;
   v_spins integer;
@@ -612,13 +665,6 @@ begin
     return jsonb_build_object('ok', false, 'error', 'invalid_spin');
   end if;
 
-  select id into v_latest from public.reward_spins
-  where campaign_id = p_campaign and user_id = p_user
-  order by seq desc limit 1;
-  if v_latest <> v_spin.id then
-    return jsonb_build_object('ok', false, 'error', 'stale_spin');
-  end if;
-
   update public.reward_products rp
      set inventory_claimed = rp.inventory_claimed + 1,
          updated_at = now()
@@ -626,7 +672,7 @@ begin
      and rp.campaign_id = p_campaign
      and rp.is_active
      and rp.inventory_claimed < rp.inventory_total
-     and exists (select 1 from public.product_catalog pc where pc.id = rp.product_id and pc.is_active)
+     and (rp.product_id is null or exists (select 1 from public.product_catalog pc where pc.id = rp.product_id and pc.is_active))
   returning rp.* into v_rp;
 
   if not found then
@@ -756,19 +802,21 @@ begin
   select coalesce(jsonb_agg(jsonb_build_object(
       'rewardProductId', rp.id,
       'productId', rp.product_id,
-      'name', pc.name,
-      'brand', pc.brand,
-      'image', pc.image,
+      'name', coalesce(rp.name, pc.name),
+      'brand', coalesce(rp.brand, pc.brand),
+      'size', rp.size,
+      'image', coalesce(rp.image_url, pc.image),
+      'url', coalesce(rp.product_url, pc.url),
       'inventoryTotal', rp.inventory_total,
       'inventoryClaimed', rp.inventory_claimed,
       'inventoryRemaining', rp.inventory_remaining,
       'isActive', rp.is_active,
       'timesShown', (select count(*) from public.reward_spins s where s.reward_product_id = rp.id),
       'timesClaimed', (select count(*) from public.reward_claims k where k.reward_product_id = rp.id)
-    ) order by rp.created_at), '[]'::jsonb)
+    ) order by coalesce(rp.brand, pc.brand), coalesce(rp.name, pc.name)), '[]'::jsonb)
   into v_inventory
   from public.reward_products rp
-  join public.product_catalog pc on pc.id = rp.product_id
+  left join public.product_catalog pc on pc.id = rp.product_id
   where rp.campaign_id = p_campaign;
 
   with participants as (
@@ -795,9 +843,10 @@ begin
       'claim', (select jsonb_build_object(
           'id', k.id, 'claimedAt', k.claimed_at, 'fulfillmentStatus', k.fulfillment_status,
           'spinsBeforeClaim', k.spins_before_claim, 'shippedAt', k.shipped_at,
-          'productId', k.product_id, 'productName', pc.name, 'brand', pc.brand,
+          'productId', k.product_id, 'productName', public.campaign_product_json(k.reward_product_id) ->> 'name',
+          'brand', public.campaign_product_json(k.reward_product_id) ->> 'brand',
           'shipping', (select to_jsonb(s) - 'claim_id' - 'user_id' from public.reward_shipping s where s.claim_id = k.id))
-        from public.reward_claims k join public.product_catalog pc on pc.id = k.product_id
+        from public.reward_claims k
         where k.campaign_id = p_campaign and k.user_id = u.id)
     ) as person
     from participants pt
@@ -887,3 +936,14 @@ on conflict (id) do nothing;
 --   insert into public.reward_products (campaign_id, product_id, inventory_total)
 --   values ('free-product-2026', '<product_catalog.id>', 5)
 --   on conflict (campaign_id, product_id) do update set inventory_total = excluded.inventory_total;
+
+-- Upgrades for a database that already ran an earlier draft of this file.
+alter table public.reward_campaigns add column if not exists max_spins integer not null default 3;
+alter table public.reward_products alter column product_id drop not null;
+alter table public.reward_products add column if not exists name text;
+alter table public.reward_products add column if not exists brand text;
+alter table public.reward_products add column if not exists size text;
+alter table public.reward_products add column if not exists category text;
+alter table public.reward_products add column if not exists image_url text;
+alter table public.reward_products add column if not exists product_url text;
+alter table public.reward_claims alter column product_id drop not null;

@@ -5,7 +5,8 @@
  *   GET  /api/campaign-admin                                   everything
  *   POST { action: 'fulfillment', claimId, status }            needs_shipping|preparing|shipped|delivered|canceled
  *   POST { action: 'inventory', rewardProductId, inventoryTotal?, isActive? }
- *   POST { action: 'add_product', productId, inventoryTotal }  adds a catalog product to the pool
+ *   POST { action: 'add_product', inventoryTotal, productId }   adds a catalog product to the pool
+ *   POST { action: 'add_product', inventoryTotal, brand, name, size?, category?, imageUrl?, productUrl? }  adds a reward-only item
  *   POST { action: 'campaign', state: 'launch'|'pause'|'resume'|'end' }
  */
 import { verifyUser } from './_usageLimit.js';
@@ -72,13 +73,34 @@ export default async function handler(req, res) {
     }
 
     if (body.action === 'add_product') {
-      const productId = String(body.productId || '').trim();
       const total = intIn(body.inventoryTotal, 1, 100000);
-      if (!/^[a-z0-9-]{2,120}$/i.test(productId) || total === null) return res.status(400).json({ error: 'bad_request' });
-      const { data: product } = await admin.from('product_catalog').select('id').eq('id', productId).maybeSingle();
-      if (!product) return res.status(404).json({ error: 'unknown_product', message: 'That id is not in product_catalog.' });
-      const { error: insErr } = await admin.from('reward_products').insert({ campaign_id: CAMPAIGN_ID, product_id: productId, inventory_total: total });
-      if (insErr) return res.status(409).json({ error: 'already_in_pool' });
+      if (total === null) return res.status(400).json({ error: 'bad_request' });
+      const productId = String(body.productId || '').trim();
+      if (productId) {
+        // A catalog product (shows its catalog name, photo and research).
+        if (!/^[a-z0-9-]{2,120}$/i.test(productId)) return res.status(400).json({ error: 'bad_request' });
+        const { data: product } = await admin.from('product_catalog').select('id').eq('id', productId).maybeSingle();
+        if (!product) return res.status(404).json({ error: 'unknown_product', message: 'That id is not in product_catalog.' });
+        const { error: insErr } = await admin.from('reward_products').insert({ campaign_id: CAMPAIGN_ID, product_id: productId, inventory_total: total });
+        if (insErr) return res.status(409).json({ error: 'already_in_pool' });
+        return res.status(200).json({ ok: true });
+      }
+      // A reward-only item (e.g. PR haul): name and brand required, no health claims stored.
+      const text = (v, max) => String(v ?? '').replace(/\s+/g, ' ').trim().slice(0, max);
+      const httpsUrl = (v) => { const u = text(v, 2000); return /^https:\/\/[^\s]+$/.test(u) ? u : null; };
+      const item = {
+        campaign_id: CAMPAIGN_ID,
+        name: text(body.name, 160),
+        brand: text(body.brand, 80),
+        size: text(body.size, 60) || null,
+        category: text(body.category, 40) || null,
+        image_url: httpsUrl(body.imageUrl),
+        product_url: httpsUrl(body.productUrl),
+        inventory_total: total,
+      };
+      if (!item.name || !item.brand) return res.status(400).json({ error: 'bad_request', message: 'Add a brand and a product name.' });
+      const { error: insErr } = await admin.from('reward_products').insert(item);
+      if (insErr) return res.status(409).json({ error: 'already_in_pool', message: 'That product is already in the pool.' });
       return res.status(200).json({ ok: true });
     }
 
