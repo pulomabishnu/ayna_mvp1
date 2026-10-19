@@ -639,7 +639,7 @@ const ARTICLES = [
           <img src="/articles/postpartum-stretch-marks/glitter.webp" alt="Glitter Stretch Marks digital artwork by Sara Shakeel" width="400" height="400" style={{ width: '100%', maxWidth: 400, height: 'auto', borderRadius: 16, display: 'block' }} />
           <figcaption style={{ fontSize: 14, marginTop: 8 }}>Shakeel, S. (2017). Glitter Stretch Marks [Digital artwork]. Featured in Vogue Italia.</figcaption>
         </figure>
-        <p>If you've ever searched for the best stretch-mark cream on google or tik tok, you know the beauty industry has a product for practically everything- it's overstimulating as HECK. Belly oils promising smoother skin, collagen creams claiming to erase stretch marks, and serums that supposedly work miracles overnight.</p>
+        <p>If you've ever searched for the best stretch mark cream on Google or TikTok, you know the beauty industry has a product for practically everything - it's overstimulating as HECK. Belly oils promising smoother skin, collagen creams claiming to erase stretch marks, and serums that supposedly work miracles overnight.</p>
         <p>Some cost $10. Others cost $100. And somehow, they all seem to promise the same thing.</p>
         <figure style={{ margin: '0 0 1rem' }}>
           <img src="/articles/postpartum-stretch-marks/reaction.webp" alt="Reaction GIF" width="244" height="224" loading="lazy" style={{ width: '100%', maxWidth: 244, height: 'auto', borderRadius: 16, display: 'block' }} />
