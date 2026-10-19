@@ -35,7 +35,7 @@ export default function HealthChart({ chart }) {
   };
   return (
     <figure className={`ay-hd-chart is-${type}`}>
-      <p className="ay-hd-readout" aria-live="polite"><b>{formatMetric(metric, shown.value)}</b> <span>{fmtDay(shown.day)}</span></p>
+      <p className="ay-hd-readout" aria-live="polite"><span>{active >= points.length - 1 ? 'Latest, ' : ''}{fmtDay(shown.day)}:</span> <b>{formatMetric(metric, shown.value)}</b>{active >= points.length - 1 && points.length > 1 ? <small> Tap a bar or point to see another day</small> : null}</p>
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={summary} tabIndex={0} onKeyDown={key}>
         {usual != null && <line className="ay-hd-usual" x1={PAD.l} x2={W - PAD.r} y1={y(usual)} y2={y(usual)} />}
         {type === 'bar'

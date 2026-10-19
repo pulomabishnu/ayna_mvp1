@@ -148,3 +148,12 @@ describe('budget', () => {
     expect(budgetMax({})).toBeNull();
   });
 });
+
+import { healthMatchContext } from './matchContext.js';
+describe('suggested goals', () => {
+  it('never suggests low energy from heart or readiness data, but still backs it up when chosen', () => {
+    const sig = [{ needId: 'energy.fatigue', summary: 'x' }, { needId: 'sleep.trouble', summary: 'y' }];
+    expect(healthMatchContext(sig, []).suggestions.map((s) => s.needId)).toEqual(['sleep.trouble']);
+    expect(Object.keys(healthMatchContext(sig, ['energy.fatigue']).byNeed)).toEqual(['energy.fatigue']);
+  });
+});

@@ -3283,7 +3283,7 @@ export default function ProfileFlow({
 
   const goBack = () => setScreenStack((stack) => (stack.length > 1 ? stack.slice(0, -1) : stack));
 
-  const profileFilledPct = getProfileCompletionPct(quizAnswers?.fullHealthIntake);
+  const profileFilledPct = getProfileCompletionPct(quizAnswers?.fullHealthIntake || quizAnswers);
   const selectedNeedIds = useMemo(() => { try { return quizAnswers ? getSelectedNeeds(quizAnswers).map((n) => n.id) : []; } catch { return []; } }, [quizAnswers]);
   const shopperAlertsCount = getSafetyAlerts(myProducts, quizAnswers).length;
 

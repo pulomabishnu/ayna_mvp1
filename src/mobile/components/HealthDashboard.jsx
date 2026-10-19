@@ -27,6 +27,7 @@ function loadLayout() {
 }
 function saveLayout(v) { try { localStorage.setItem(LAYOUT_KEY, JSON.stringify(v)); } catch { /* storage blocked: layout lasts this visit */ } }
 
+const perDay = (metric) => (metric === 'sleep_minutes' ? 'A night, this week' : metric === 'temp_deviation_c' ? 'This week' : 'A day, this week');
 const SUGGEST_LABEL = { 'sleep.trouble': 'sleep', 'cycle.irregular': 'irregular cycles', 'energy.fatigue': 'low energy' };
 
 /** This week against her usual, with both numbers, so the change matches what it compares. */
@@ -143,6 +144,7 @@ export default function HealthDashboard({ authUser, selectedNeedIds = [], onConn
         <header>
           <span className="ay-hd-tile-label">{c.label}</span>
           <p className="ay-hd-main-num">{formatMetric(c.metric, c.week ?? c.avg)}</p>
+          <small className="ay-hd-per">{c.week != null ? perDay(c.metric) : `Average, last ${days} days`}</small>
           <Delta metric={c.metric} delta={c.delta} />
         </header>
         <HealthChart chart={c} />
@@ -171,6 +173,7 @@ export default function HealthDashboard({ authUser, selectedNeedIds = [], onConn
         <button type="button" onClick={() => setView(it.group)}>
           <span className="ay-hd-tile-label">{c.label}</span>
           <b>{c.metric === 'steps' ? Math.round(c.week ?? c.avg).toLocaleString('en-US') : formatMetric(c.metric, c.week ?? c.avg)}</b>
+          <small className="ay-hd-per">{c.week != null ? perDay(c.metric) : 'Average'}</small>
           <Spark points={c.points.slice(-14)} />
           <span className="ay-hd-word">{word}</span>
         </button>

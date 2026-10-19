@@ -49,7 +49,8 @@ button.ay-hc-row:active { background: var(--ay-cream); }
 
 .ay-hc-switch { position: relative; flex: none; width: 48px; height: 28px; padding: 3px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); cursor: pointer; transition: background-color .2s var(--ay-ease); }
 .ay-hc-switch span { display: block; width: 19px; height: 19px; border-radius: 50%; background: var(--ay-ink); transition: transform .22s var(--ay-pop); }
-.ay-hc-switch[aria-checked='true'] { background: var(--ay-mint); }
+.ay-hc-switch[aria-checked='true'] { background: #769ebe; }
+.ay-hc-switch:disabled { opacity: .5; cursor: default; }
 .ay-hc-switch[aria-checked='true'] span { transform: translateX(20px); }
 .ay-hc-switch:focus-visible { outline: 3px solid var(--ay-peri-deep); outline-offset: 2px; }
 
@@ -182,7 +183,8 @@ button.ay-hc-row:active { background: var(--ay-cream); }
 .ay-hc-web-head h1 { margin: 0; color: var(--ay-ink); font: 400 32px/1.1 var(--ay-font-display); letter-spacing: -.01em; }
 .ay-hc-web-back { width: 42px; height: 42px; display: grid; place-items: center; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); cursor: pointer; }
 .ay-hc-web-back svg { width: 18px; height: 18px; fill: none; stroke: var(--ay-ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.ay-hc-web .ay-hc-switch[aria-checked='true'] { background: var(--ay-mint); }
+.ay-hc-web .ay-hc-switch[aria-checked='true'] { background: #769ebe; }
+.ay-hc-switch:disabled { opacity: .5; cursor: default; }
 .wyou-health { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; cursor: pointer; }
 .wyou-health > span { flex: 1; display: grid; gap: 4px; }
 .wyou-health small { opacity: .75; }

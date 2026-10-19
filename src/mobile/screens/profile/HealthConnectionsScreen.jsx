@@ -281,7 +281,7 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
         </div>
       </div>
 
-      {!availability.ok && <p className="ay-hc-note">{availability.reason}</p>}
+      {!availability.ok && <p className="ay-hc-note">{live && (source.availability === 'device' || source.availability === 'records') ? `Connected from your ${source.platform === 'ios' ? 'iPhone' : 'Android phone'}. Change what you share in the ayna app there.` : availability.reason}</p>}
       {availability.ok && storeState && !storeState.available && <p className="ay-hc-note">{storeMessage(storeState.reason, source)}</p>}
       {connection?.status === 'needs_reauth' && <p className="ay-hc-note is-alert">{source.name} stopped letting ayna sync. Reconnect to keep your data current.</p>}
       {connection?.status === 'error' && <p className="ay-hc-note is-alert">The last sync failed. Try Sync now; if it keeps failing, reconnect.</p>}

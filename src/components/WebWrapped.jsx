@@ -92,7 +92,7 @@ export default function WebWrapped({ products = [], quizResults, onClose, onBrow
           </div>
         </>}
         {active === 'focus' && <>
-          <p className="wwr-kicker">You came for</p>
+          <p className="wwr-kicker">Your Ecosystem covers</p>
           <ol className="wwr-ranks">{areas.slice(0, 3).map((a, i) => <li key={a} style={{ '--i': i }}><span>{i + 1}</span><strong>{a}</strong></li>)}</ol>
         </>}
         {active === 'match' && first && <>

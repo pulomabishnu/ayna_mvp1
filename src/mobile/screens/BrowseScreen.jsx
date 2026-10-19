@@ -413,7 +413,7 @@ export default function BrowseScreen({
           <span className="ay-discover-go" aria-hidden="true">→</span>
         </button>
       )}
-      {showDeck && <DiscoverDeck canSave={!!authUser} products={filtered} quizAnswers={authUser ? quizAnswers : null} savedProducts={savedProducts} onToggleSaved={onToggleSaved} onOpenProduct={(product) => { setShowDeck(false); onOpenProduct?.(product); }} onClose={() => setShowDeck(false)} />}
+      {showDeck && <DiscoverDeck products={filtered} quizAnswers={authUser ? quizAnswers : null} savedProducts={savedProducts} onToggleSaved={onToggleSaved} onOpenProduct={(product) => { setShowDeck(false); onOpenProduct?.(product); }} onClose={() => setShowDeck(false)} />}
       {mode === 'products' && <>
         {showFilters && <div className="ayna-shop-filter-backdrop" onClick={() => setShowFilters(false)}>
           <div ref={filterSheetRef} className="ayna-shop-filter-sheet" role="dialog" aria-modal="true" aria-label="Shop filters" onClick={(event) => event.stopPropagation()}>

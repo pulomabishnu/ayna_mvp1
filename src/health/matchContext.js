@@ -21,6 +21,12 @@
  * @param {Array<string>} selectedNeedIds  needs she chose in the intake
  * @returns {{ byNeed: Record<string, {summary, sources, metric}>, suggestions: Array }}
  */
+// Goals we offer to add only when her data shows the thing itself (shorter
+// sleep for sleep, varying cycle lengths for cycles). Heart rate or readiness
+// changes never become a suggested goal like "low energy": that would read as
+// a guess about how she feels. They still back up a goal she already chose.
+const SUGGESTABLE = new Set(['sleep.trouble', 'cycle.irregular']);
+
 export function healthMatchContext(signals = [], selectedNeedIds = []) {
   const chosen = new Set(selectedNeedIds);
   const byNeed = {};
@@ -30,7 +36,7 @@ export function healthMatchContext(signals = [], selectedNeedIds = []) {
     const entry = { summary: s.summary, sources: s.sources || [], metric: s.metric, section: s.section };
     if (chosen.has(s.needId)) {
       if (!byNeed[s.needId]) byNeed[s.needId] = entry;
-    } else if (!suggestions.some((x) => x.needId === s.needId)) {
+    } else if (SUGGESTABLE.has(s.needId) && !suggestions.some((x) => x.needId === s.needId)) {
       suggestions.push({ needId: s.needId, ...entry });
     }
   }

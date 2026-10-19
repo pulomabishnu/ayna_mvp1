@@ -128,6 +128,8 @@ export default function EcosystemScreen({
   const worthALook = suggestedEcosystemProducts.filter((p) => !suggestedIds.has(p.id));
   const hasAnything = currentProducts.length > 0 || sections.some((s) => s.picks?.length);
 
+  const checkin = <section className="ayna-home-today ay-eco-checkin"><div><h2>Monthly check-in</h2><p>A few quick questions so your matches keep up with how you feel.</p></div><button type="button" onClick={onOpenMonthlyCheckin}>Start</button></section>;
+
   const careBlock = careFirst && seed && <section className="ay-care-first" aria-labelledby="ay-care-first-title">
     <p className="ay-care-first__eyebrow">Care first</p>
     <h2 id="ay-care-first-title">Reach a clinician first</h2>
@@ -155,7 +157,7 @@ export default function EcosystemScreen({
     <section className="ayna-cabinet-stage ay-eco-hero" aria-labelledby="ayna-cabinet-title">
       <h1 id="ayna-cabinet-title">Your <em>Ecosystem.</em></h1>
       {currentProducts.length > 0 && <ul className="ay-eco-stickers" aria-label="Your Ecosystem at a glance">
-        <li className="is-rose"><b>{myProducts.length}</b><span>{myProducts.length === 1 ? 'product' : 'products'}</span></li>
+        <li className="is-rose"><b>{currentProducts.length}</b><span>{currentProducts.length === 1 ? 'product' : 'products'}</span></li>
         <li className="is-sky"><b>{ringGroups.length}</b><span>{ringGroups.length === 1 ? 'shelf' : 'shelves'}</span></li>
       </ul>}
       {currentProducts.length > 0 && (
@@ -176,6 +178,7 @@ export default function EcosystemScreen({
     {ecoTab === 'dashboard' && myProducts.length > 0 ? <div className="ay-eco-routine">
       <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} onConnect={onConnectHealth} onAddGoal={onAddGoal} onSignIn={() => onRequireAuth?.('health data')} />
       <Routine products={myProducts} insights={healthInsights} onOpenProduct={onOpenProduct} budget={budgetMax(quizAnswers)} />
+      {checkin}
     </div> : <>
     {ringGroups.length > 0 && <div className="ay-eco-cover ay-eco-mix"><EcosystemChart groups={ringGroups} /></div>}
     {careFirst && hasAnything && <p className="ay-care-first__after">Products, when you are ready</p>}
@@ -209,7 +212,7 @@ export default function EcosystemScreen({
     </div>
     </>}
 
-    {relatedReads.length > 0 && <section className="ayna-cabinet-reads" aria-labelledby="ayna-cabinet-reads-title"><div className="ayna-cabinet-section-head"><h2 id="ayna-cabinet-reads-title">Read next</h2></div>{relatedReads.slice(0, 3).map((article) => <ArticleCard key={article.id} article={article} compact onClick={() => onOpenArticle?.(article)} />)}</section>}
+    {ecoTab !== 'dashboard' && relatedReads.length > 0 && <section className="ayna-cabinet-reads" aria-labelledby="ayna-cabinet-reads-title"><div className="ayna-cabinet-section-head"><h2 id="ayna-cabinet-reads-title">Read next</h2></div>{relatedReads.slice(0, 3).map((article) => <ArticleCard key={article.id} article={article} compact onClick={() => onOpenArticle?.(article)} />)}</section>}
 
     {authUser && onOpenHealthData && ecoTab !== 'dashboard' && (
       <button type="button" className="ay-eco-health" onClick={() => { if (onEcoTab && myProducts.length) { onEcoTab('dashboard'); scrollToTabs(); } else onOpenHealthData(); }}>
@@ -220,13 +223,13 @@ export default function EcosystemScreen({
         <svg className="ay-hc-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
       </button>
     )}
-    <section className="ayna-home-today"><h2>Monthly check-in</h2><button type="button" onClick={onOpenMonthlyCheckin}>Start</button></section>
+    {(ecoTab !== 'dashboard' || !myProducts.length) && checkin}
 
-    {myProducts.length > 0 && <div className="ay-eco-shop"><ShoppingList products={myProducts} insights={healthInsights} have={routineHave} onToggleHave={onToggleHave} onOpenProduct={onOpenProduct} onSavePlaylist={onSavePlaylist} onOpenPlaylist={onOpenPlaylist} budget={budgetMax(quizAnswers)} onRequireAuth={onRequireAuth} /></div>}
+    {ecoTab !== 'dashboard' && myProducts.length > 0 && <div className="ay-eco-shop"><ShoppingList products={myProducts} insights={healthInsights} have={routineHave} onToggleHave={onToggleHave} onOpenProduct={onOpenProduct} onSavePlaylist={onSavePlaylist} onOpenPlaylist={onOpenPlaylist} budget={budgetMax(quizAnswers)} onRequireAuth={onRequireAuth} /></div>}
 
     <section className="ayna-cabinet-more" aria-label="More ways to manage your cabinet">
-      {earlierProducts.length > 0 && <details><summary>Earlier picks <span>{earlierProducts.length}</span></summary><p>Kept in your Ecosystem outside your current shortlist.</p><div className="ayna-editorial-product-grid">{earlierProducts.map((product) => <ProductCard key={product.id} product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} />)}</div></details>}
-      <section className="ay-eco-manage" aria-labelledby="ay-eco-manage-title"><h2 id="ay-eco-manage-title">Manage your Ecosystem</h2><div><button type="button" onClick={onRetake}>Redo quiz</button><button type="button" className="ayna-destructive-text" onClick={onRequestEcosystemReset}>Reset Ecosystem</button></div></section>
+      {ecoTab !== 'dashboard' && earlierProducts.length > 0 && <details><summary>Earlier picks <span>{earlierProducts.length}</span></summary><p>Kept in your Ecosystem outside your current shortlist.</p><div className="ayna-editorial-product-grid">{earlierProducts.map((product) => <ProductCard key={product.id} product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} />)}</div></details>}
+      <section className="ay-eco-manage" aria-labelledby="ay-eco-manage-title"><h2 id="ay-eco-manage-title">Manage your Ecosystem</h2><div><button type="button" className="ayna-destructive-text" onClick={onRequestEcosystemReset}>Reset Ecosystem</button></div></section>
     </section>
     <LegalFooter />
   </div>;

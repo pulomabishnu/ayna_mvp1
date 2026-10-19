@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import {
   loadSavedProducts,
+  clearSavedProducts,
   persistSavedProducts,
   loadSavedForUser,
   setSavedForUser,
@@ -49,6 +50,14 @@ export function useSavedProducts(user) {
           persistSavedProducts(merged);
           return merged;
         });
+        // Saves made on this phone before she signed in go up to her account,
+        // so they follow her to the website and other devices.
+        const localOnly = Object.values(loadSavedProducts()).filter((p) => p?.id && !remoteSaved[p.id]);
+        for (const product of localOnly) {
+          setSavedForUser(supabase, userId, product, true).catch((error) => {
+            console.warn('[Ayna] mobile saved-product upload unavailable:', error?.message || error);
+          });
+        }
       })
       .catch((error) => {
         console.warn('[Ayna] mobile saved-products sync unavailable:', error?.message || error);
@@ -91,5 +100,9 @@ export function useSavedProducts(user) {
     }
   }, [savedMap, user]);
 
-  return { savedMap, isSaved, toggleSaved };
+  // Sign-out: forget this account's saves on the device (they live in her
+  // account), so the next person on this phone starts clean.
+  const clearLocal = useCallback(() => { clearSavedProducts(); setSavedMap({}); }, []);
+
+  return { savedMap, isSaved, toggleSaved, clearLocal };
 }

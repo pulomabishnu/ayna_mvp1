@@ -120,7 +120,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
         </>}
 
         {active === 'focus' && <>
-          <p className="ayw-kicker">You came for</p>
+          <p className="ayw-kicker">Your Ecosystem covers</p>
           <ol className="ayw-ranks">
             {topAreas.slice(0, 3).map((area, i) => <li key={area} style={{ '--i': i }}><span>{i + 1}</span><strong>{area}</strong></li>)}
           </ol>

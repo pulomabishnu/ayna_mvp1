@@ -306,17 +306,26 @@ export default function MobileApp() {
   // the same Supabase user_ecosystems rows used by the website.
   const ecosystemFlagsRef = useRef({ trackedProducts: {}, omittedProducts: {} });
   const pendingQuizEcosystemRef = useRef(null);
-  const { savedMap, isSaved, toggleSaved } = useSavedProducts(authUser);
-  // A pick she tried to save while signed out: saved for real once she is
-  // signed in (only if a session exists), so signing in never loses it.
-  const [pendingGuestSave, setPendingGuestSave] = useState(null);
+  const { savedMap, isSaved, toggleSaved, clearLocal: clearLocalSaves } = useSavedProducts(authUser);
+  // Guests save on this phone straight away (the same local store the website
+  // uses); signing in later merges these into her account. One gentle nudge
+  // per visit, never a wall in front of the save.
+  const [saveNudge, setSaveNudge] = useState(false);
+  const saveNudgeShownRef = useRef(false);
+  const handleToggleSaved = (product) => {
+    const adding = !savedMap[product?.id];
+    toggleSaved(product);
+    if (!authUser && adding && !saveNudgeShownRef.current) {
+      saveNudgeShownRef.current = true;
+      setSaveNudge(true);
+    }
+  };
   useEffect(() => {
-    const product = pendingGuestSave;
-    if (!authUser?.id || !product) return undefined;
-    let live = true;
-    Promise.resolve().then(() => { if (!live) return; setPendingGuestSave(null); if (!savedMap[product.id]) toggleSaved(product); });
-    return () => { live = false; };
-  }, [authUser?.id, pendingGuestSave, savedMap, toggleSaved]);
+    if (!saveNudge) return undefined;
+    const t = setTimeout(() => setSaveNudge(false), 6000);
+    return () => clearTimeout(t);
+  }, [saveNudge]);
+  useEffect(() => { if (authUser) Promise.resolve().then(() => setSaveNudge(false)); }, [authUser]);
   const [browseQuery, setBrowseQuery] = useState('');
   // Behavior signals for the matching engine (saved, "Not for me", in her
   // Ecosystem). Memoized: the engine caches profiles by this object.
@@ -630,6 +639,7 @@ export default function MobileApp() {
     setAskAynaHistory([]);
     pendingQuizEcosystemRef.current = null;
     resetSession();
+    if (authUser) clearLocalSaves();
     signOutSupabase();
     setScreen('landing');
   };
@@ -1001,10 +1011,7 @@ export default function MobileApp() {
         readArticleIds={readArticleIds}
         readProgress={readProgress}
         savedProducts={savedMap}
-        onToggleSaved={(product) => authUser ? toggleSaved(product) : requestAuth('Saved', () => {
-          setScreen('browse');
-          getSupabaseClient()?.auth.getSession().then(({ data }) => { if (data?.session) setPendingGuestSave(product); }).catch(() => {});
-        })}
+        onToggleSaved={handleToggleSaved}
         onAddToEcosystem={handleAddToEcosystem}
         myProducts={myProducts}
         omittedProducts={omittedProducts}
@@ -1050,6 +1057,13 @@ export default function MobileApp() {
         onLibrary={() => { setAskAynaOpen(false); setOverlay(null); setScreen('library'); }}
         onProfile={() => { setAskAynaOpen(false); openProfile(); }}
       />}
+      {saveNudge && !authUser && (
+        <div className="ay-save-nudge" role="status">
+          <span>Saved on this phone. Sign in to keep your saves on every device.</span>
+          <button type="button" onClick={() => { setSaveNudge(false); openAuth('signin'); }}>Sign in</button>
+          <button type="button" className="ay-save-nudge-x" aria-label="Dismiss" onClick={() => setSaveNudge(false)}>×</button>
+        </div>
+      )}
       <EcosystemResetDialog open={resetDialogOpen} busy={resettingEcosystem} onCancel={() => setResetDialogOpen(false)} onConfirm={handleResetEcosystem} />
       {(overlay?.type === 'profile-auth' || authPrompt) && (
         <div className="ayna-profile-auth-backdrop" style={authPrompt ? { zIndex: 100, bottom: 0 } : undefined} onClick={() => { setOverlay(null); setAuthPrompt(null); authResumeRef.current = null; }}>
@@ -1057,7 +1071,7 @@ export default function MobileApp() {
             <button type="button" className="ayna-profile-auth-close" aria-label="Close" onClick={() => { setOverlay(null); setAuthPrompt(null); authResumeRef.current = null; }}>×</button>
             <h2 id="ayna-profile-auth-title">{authPrompt ? `Sign in for ${authPrompt.feature}` : 'Sign in to ayna'}</h2>
             <button type="button" className="ayna-profile-auth-primary" onClick={() => openAuth('signin', !!authPrompt)}>Sign in</button>
-            <button type="button" className="ayna-profile-auth-new" onClick={startEcosystemFlow}>Don’t have an account? <b>Build your Ecosystem</b></button>
+            <button type="button" className="ayna-profile-auth-new" onClick={startEcosystemFlow}>{hasEcosystem ? <>New here? <b>Save your Ecosystem to an account</b></> : <>Don’t have an account? <b>Build your Ecosystem</b></>}</button>
           </section>
         </div>
       )}
@@ -1068,7 +1082,7 @@ export default function MobileApp() {
             product={overlay.item}
             onBack={() => setOverlay(null)}
             isSaved={isSaved(overlay.item?.id)}
-            onToggleSaved={() => toggleSaved(overlay.item)}
+            onToggleSaved={() => handleToggleSaved(overlay.item)}
             isInEcosystem={myProducts.some((p) => p.id === overlay.item?.id)}
             onAddToEcosystem={() => handleAddToEcosystem(overlay.item)}
             isOmitted={!!omittedProducts[overlay.item?.id]}
