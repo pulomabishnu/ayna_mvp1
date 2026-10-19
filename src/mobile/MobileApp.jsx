@@ -57,6 +57,9 @@ import QuizConnectScreen from './screens/QuizConnectScreen.jsx';
 import PlanScreen from './screens/PlanScreen.jsx';
 import { healthMatchContext } from '../health/matchContext.js';
 import { addNeedToAnswers } from '../matching/addNeed.js';
+import * as communityStore from '../utils/community/communityStore.js';
+import { uploadCommunityImage, deleteCommunityImage } from '../utils/community/imageUpload.js';
+import { makePlaylistCoverFile } from './components/playlistCoverImage.js';
 // Launch-audit overrides; imported last so it loads after every screen's CSS.
 import './audit-app.css';
 // "A tiny bit smaller" density pass; after audit-app.css so it wins ties.
@@ -754,6 +757,29 @@ export default function MobileApp() {
     return true;
   };
 
+  // Ecosystem shopping list -> a Community playlist (same tables and cover
+  // upload as Community's own "New playlist"). Throws a readable message.
+  const handleSaveShoppingPlaylist = async ({ title, visibility, productIds, cover }) => {
+    const supabase = getSupabaseClient();
+    if (!authUser?.id || !supabase) throw new Error('Sign in to save playlists.');
+    let uploaded = null;
+    let playlist = null;
+    try {
+      if (cover.mode === 'photo' && !cover.photo) throw new Error('Choose a cover photo first.');
+      const file = cover.mode === 'photo' ? cover.photo : await makePlaylistCoverFile(cover.text || title, cover.color);
+      uploaded = await uploadCommunityImage(supabase, file, { folder: 'covers', userId: authUser.id });
+      playlist = await communityStore.createPlaylist(supabase, authUser.id, { title, visibility, coverUrl: uploaded.url });
+    } catch (error) {
+      if (uploaded && !playlist) await deleteCommunityImage(supabase, uploaded.path).catch(() => {});
+      throw new Error(error?.message && !/^\w+_\w+$/.test(error.message) ? error.message : 'The playlist could not be saved. Try again.');
+    }
+    let added = 0;
+    for (const id of productIds) {
+      try { await communityStore.addToPlaylist(supabase, playlist.id, id); added += 1; } catch { /* counted below */ }
+    }
+    return { playlist, added, missed: productIds.length - added };
+  };
+
   const nav = {
     // Night mode is a persistent user preference (Preferences screen), it
     // stays on everywhere until turned off there, so navigation must never
@@ -782,6 +808,9 @@ export default function MobileApp() {
     ecoTab,
     onEcoTab: setEcoTab,
     routineHave: session.routineHave || {},
+    onSavePlaylist: authUser ? handleSaveShoppingPlaylist : null,
+    onOpenPlaylist: (playlistId) => { setOverlay(null); setCommunitySeed({ playlistId, token: Date.now() }); setScreen('community'); },
+    onConnectHealth: () => (authUser ? setOverlay({ type: 'profile', screen: 'healthData' }) : requestAuth('health data')),
     onToggleHave: (id) => updateSession((prev) => {
       const next = { ...(prev.routineHave || {}) };
       if (next[id]) delete next[id]; else next[id] = true;
@@ -936,6 +965,7 @@ export default function MobileApp() {
         {...nav}
         seedKind={communitySeed?.kind}
         seedProductId={communitySeed?.productId}
+        seedPlaylistId={communitySeed?.playlistId}
         onGoBrowse={() => { setBrowseQuery(''); setScreen('browse'); }}
         initialSearch={screen === 'browse' ? browseQuery : ''}
         onGoLibrary={() => setScreen('library')}
@@ -1103,7 +1133,7 @@ export default function MobileApp() {
           onTextSizeChange={setTextSizeIndex}
           onEditProfile={() => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); }}
           onAddGoal={handleAddGoal}
-          onOpenRoutine={() => { setEcoTab('routine'); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
+          onOpenRoutine={() => { setEcoTab('dashboard'); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
           onOpenMonthlyCheckin={() => setScreen('checkin')}
         />
         </AskContext.Provider>

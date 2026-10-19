@@ -3,6 +3,7 @@ import { checkImageFile } from '../../utils/community/imageUpload.js';
 import { coverInk } from './playlistCoverImage.js';
 
 const COLORS = ['#3e2723', '#F7BADD', '#FFEDAC', '#769EBE'];
+const COLOR_NAMES = { '#3e2723': 'espresso', '#F7BADD': 'pink', '#FFEDAC': 'butter', '#769EBE': 'sky blue' };
 const EXAMPLES = ['Period care picks', 'My everyday routine', 'Worth sharing'];
 
 export default function PlaylistCoverPicker({ title, mode, onMode, color, onColor, text, onText, photo, onPhoto, existingCoverUrl }) {
@@ -38,7 +39,7 @@ export default function PlaylistCoverPicker({ title, mode, onMode, color, onColo
       <input id="am-cover-text" value={text} onChange={(event) => onText(event.target.value.slice(0, 55))} placeholder={title || 'e.g. Period care picks'} maxLength={55} />
       <small className="am-cover-hint">Leave blank to use your playlist name, or try:</small>
       <div className="am-cover-examples">{EXAMPLES.map((example) => <button type="button" key={example} onClick={() => onText(example)}>{example}</button>)}</div>
-      <div className="am-cover-colors" aria-label="Background color">{COLORS.map((choice) => <button type="button" key={choice} aria-label={`Choose ${choice} background`} aria-pressed={color === choice} className={color === choice ? 'is-selected' : ''} style={{ background: choice }} onClick={() => onColor(choice)} />)}</div>
+      <div className="am-cover-colors" aria-label="Background color">{COLORS.map((choice) => <button type="button" key={choice} aria-label={`${COLOR_NAMES[choice] || choice} background`} aria-pressed={color === choice} className={color === choice ? 'is-selected' : ''} style={{ background: choice }} onClick={() => onColor(choice)} />)}</div>
     </> : <><label className="am-photo-input">Choose a cover photo<input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,image/gif" onChange={choosePhoto} />{photo && <small>{photo.name}</small>}</label>{photoError && <p role="alert" className="am-cover-error">{photoError}</p>}</>}
   </div>;
 }

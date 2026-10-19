@@ -108,7 +108,7 @@ function ProductPicker({ products, value, onChange }) {
   </div>;
 }
 
-export default function CommunityScreen({ authUser, products = [], articles = null, quizAnswers, headerInitial, onOpenProduct, onOpenArticle, onGoBrowse, onGoEco, onOpenSaved, onOpenProfile, onRequireAuth, seedKind, seedProductId }) {
+export default function CommunityScreen({ authUser, products = [], articles = null, quizAnswers, headerInitial, onOpenProduct, onOpenArticle, onGoBrowse, onGoEco, onOpenSaved, onOpenProfile, onRequireAuth, seedKind, seedProductId, seedPlaylistId }) {
   const supabase = authUser ? getSupabaseClient() : (getGuestClient() || getSupabaseClient());
   const productsById = useMemo(() => new Map(products.map((p) => [String(p.id), p])), [products]);
   const [tab, setTab] = useState('for-you');
@@ -282,6 +282,11 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     try { setItems(await community.listPlaylistItems(supabase, playlist.id)); }
     catch (e) { if (!playlist.preview_product_ids?.length) notifyError(e); }
   };
+  // Opened from elsewhere (Ecosystem -> Save as a playlist -> Open playlist).
+  useEffect(() => {
+    if (seedPlaylistId && supabase) openPlaylistById(seedPlaylistId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seedPlaylistId]);
   const openPlaylistById = async (id) => {
     try { const playlist = await community.getPlaylist(supabase, id); if (playlist) await openPlaylist(playlist); else setError('This playlist isn’t available anymore.'); } catch (e) { notifyError(e); }
   };

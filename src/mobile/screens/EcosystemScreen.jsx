@@ -14,6 +14,7 @@ import { careNotes, shortNeedLabel } from '../../utils/matchDisplay.js';
 import { summarizeCareNotes, firstCareLink } from '../../utils/careSummary.js';
 import CareNote from '../../components/CareNote.jsx';
 import { Routine, ShoppingList } from '../components/RoutinePlan.jsx';
+import HealthDashboard from '../components/HealthDashboard.jsx';
 import '../eco-needs.css';
 
 const AREA_TONES = ['#F7BADD', '#769EBE', '#3E2723', '#F7BADD', '#769EBE', '#3E2723'];
@@ -29,6 +30,11 @@ function CareLinks({ care, limit = 4 }) {
   </li>)}</ul>;
 }
 
+// Bring the Products / Dashboard toggle into view (the screen scrolls inside its own container).
+function scrollToTabs() {
+  requestAnimationFrame(() => document.querySelector('.ay-eco-tabs')?.scrollIntoView({ block: 'start', behavior: 'smooth' }));
+}
+
 function onlyNote(count, phrase) {
   return `Only ${count} strong match${count === 1 ? '' : 'es'} for ${phrase} so far`;
 }
@@ -41,7 +47,9 @@ export default function EcosystemScreen({
   quizAnswers = null, matchOpts, onOpenWhyMatch, onAddToEcosystem, onToggleSaved, onReplayStory,
   onOpenHealthData, healthSummary = null, healthConnectedCount = 0,
   healthSuggestions = [], healthInsights = null, onAddGoal, ecoTab = 'products', onEcoTab, routineHave = {}, onToggleHave,
+  onSavePlaylist, onOpenPlaylist, onConnectHealth, onRequireAuth,
 }) {
+  const goalIds = useMemo(() => (quizAnswers ? getSelectedNeeds(quizAnswers).map((n) => n.id) : []), [quizAnswers]);
   const scoreFor = (product, profile) => getProductMatchDetailsForProduct(product, profile, null, matchOpts);
   const currentProducts = quizAnswers
     ? selectEcosystemProducts(myProducts, quizAnswers, quizAnswers.fullHealthIntake?.recommendedProductsPerArea, scoreFor)
@@ -160,20 +168,20 @@ export default function EcosystemScreen({
       {ecosystemNotice && <p className="ayna-cabinet-notice" role="status">{ecosystemNotice}</p>}
     </section>
 
-    {healthSuggestions.length > 0 && onAddGoal && <section className="ay-eco-suggest" aria-label="From your health data">
+    {myProducts.length > 0 && onEcoTab && <div className="ay-eco-tabs" role="tablist" aria-label="Ecosystem view">
+      {[['products', 'Products'], ['dashboard', 'Dashboard']].map(([id, label]) => <button key={id} type="button" role="tab" aria-selected={ecoTab === id} className={ecoTab === id ? 'is-on' : ''} onClick={() => onEcoTab(id)}>{label}</button>)}
+    </div>}
+
+    {ecoTab !== 'dashboard' && healthSuggestions.length > 0 && onAddGoal && <section className="ay-eco-suggest" aria-label="From your health data">
       {healthSuggestions.map((s) => <div key={s.needId} className="ay-hd-suggest-item">
         <p>{s.summary}. Add {SUGGEST_LABEL[s.needId] || 'it'} and ayna will match you for it too.</p>
         <button type="button" className="ay-hc-primary" onClick={() => onAddGoal(s.needId)}>Add {SUGGEST_LABEL[s.needId] || 'it'}</button>
       </div>)}
     </section>}
 
-    {myProducts.length > 0 && onEcoTab && <div className="ay-eco-tabs" role="tablist" aria-label="Ecosystem view">
-      {[['products', 'Products'], ['routine', 'Routine']].map(([id, label]) => <button key={id} type="button" role="tab" aria-selected={ecoTab === id} className={ecoTab === id ? 'is-on' : ''} onClick={() => onEcoTab(id)}>{label}</button>)}
-    </div>}
-
-    {ecoTab === 'routine' && myProducts.length > 0 ? <div className="ay-eco-routine">
+    {ecoTab === 'dashboard' && myProducts.length > 0 ? <div className="ay-eco-routine">
+      <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} onConnect={onConnectHealth} onAddGoal={onAddGoal} onSignIn={() => onRequireAuth?.('health data')} />
       <Routine products={myProducts} insights={healthInsights} onOpenProduct={onOpenProduct} />
-      <ShoppingList products={myProducts} insights={healthInsights} have={routineHave} onToggleHave={onToggleHave} onOpenProduct={onOpenProduct} />
     </div> : <>
     {ringGroups.length > 0 && <div className="ay-eco-cover ay-eco-mix"><EcosystemChart groups={ringGroups} /></div>}
     {careFirst && hasAnything && <p className="ay-care-first__after">Products, when you are ready</p>}
@@ -209,8 +217,8 @@ export default function EcosystemScreen({
 
     {relatedReads.length > 0 && <section className="ayna-cabinet-reads" aria-labelledby="ayna-cabinet-reads-title"><div className="ayna-cabinet-section-head"><h2 id="ayna-cabinet-reads-title">Read next</h2></div>{relatedReads.slice(0, 3).map((article) => <ArticleCard key={article.id} article={article} compact onClick={() => onOpenArticle?.(article)} />)}</section>}
 
-    {authUser && onOpenHealthData && (
-      <button type="button" className="ay-eco-health" onClick={onOpenHealthData}>
+    {authUser && onOpenHealthData && ecoTab !== 'dashboard' && (
+      <button type="button" className="ay-eco-health" onClick={() => { if (onEcoTab && myProducts.length) { onEcoTab('dashboard'); scrollToTabs(); } else onOpenHealthData(); }}>
         <span>
           <b>{healthConnectedCount ? 'Your health' : 'Bring in your health data'}</b>
           <small>{healthSummary ? `${healthSummary.title}: ${healthSummary.headline}` : healthConnectedCount ? 'Your trends appear after about two weeks of data.' : 'Connect Apple Health, Oura or upload a file to see your trends.'}</small>
@@ -219,6 +227,8 @@ export default function EcosystemScreen({
       </button>
     )}
     <section className="ayna-home-today"><h2>Monthly check-in</h2><button type="button" onClick={onOpenMonthlyCheckin}>Start</button></section>
+
+    {myProducts.length > 0 && <div className="ay-eco-shop"><ShoppingList products={myProducts} insights={healthInsights} have={routineHave} onToggleHave={onToggleHave} onOpenProduct={onOpenProduct} onSavePlaylist={onSavePlaylist} onOpenPlaylist={onOpenPlaylist} /></div>}
 
     <section className="ayna-cabinet-more" aria-label="More ways to manage your cabinet">
       {earlierProducts.length > 0 && <details><summary>Earlier picks <span>{earlierProducts.length}</span></summary><p>Kept in your Ecosystem outside your current shortlist.</p><div className="ayna-editorial-product-grid">{earlierProducts.map((product) => <ProductCard key={product.id} product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} />)}</div></details>}

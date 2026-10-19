@@ -1,4 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import PlaylistCoverPicker from './PlaylistCoverPicker.jsx';
+import PlaylistAudiencePicker from './PlaylistAudiencePicker.jsx';
 import { buildRoutine, buildShoppingList } from '../../health/plan.js';
 import { getBuyUrl } from '../data/buyUrl.js';
 import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
@@ -46,7 +48,7 @@ export function Routine({ products, insights, onOpenProduct }) {
   );
 }
 
-export function ShoppingList({ products, insights, have = {}, onToggleHave, onOpenProduct }) {
+export function ShoppingList({ products, insights, have = {}, onToggleHave, onOpenProduct, onSavePlaylist, onOpenPlaylist }) {
   const list = useMemo(() => buildShoppingList(products, insights, { getBuyUrl }), [products, insights]);
   if (!list.count) return null;
   const owned = list.groups.flatMap((g) => g.items).filter((i) => have[i.product.id]).length;
@@ -77,6 +79,66 @@ export function ShoppingList({ products, insights, have = {}, onToggleHave, onOp
           </ul>
         </div>
       ))}
+      {onSavePlaylist && <SavePlaylist items={list.groups.flatMap((g) => g.items).map((it) => it.product)} have={have} onSave={onSavePlaylist} onOpen={onOpenPlaylist} />}
     </section>
+  );
+}
+
+/**
+ * "Save as a playlist": the shopping list as a Community playlist (same
+ * playlists as Community, same cover and audience pickers). Only me by
+ * default, since what someone shops for can say something about her health.
+ */
+function SavePlaylist({ items, have, onSave, onOpen }) {
+  const [open, setOpen] = useState(false);
+  const [title, setTitle] = useState('My shopping list');
+  const [which, setWhich] = useState('tobuy');
+  const [visibility, setVisibility] = useState('private');
+  const [coverMode, setCoverMode] = useState('color');
+  const [coverColor, setCoverColor] = useState('#F7BADD');
+  const [coverText, setCoverText] = useState('');
+  const [coverPhoto, setCoverPhoto] = useState(null);
+  const [state, setState] = useState({ step: 'idle' });
+  const toBuy = items.filter((p) => !have[p.id]);
+  const picked = (which === 'tobuy' ? toBuy : items).slice(0, 50);
+  const save = async () => {
+    if (!title.trim() || !picked.length) return;
+    setState({ step: 'saving' });
+    try {
+      const out = await onSave({ title: title.trim(), visibility, productIds: picked.map((p) => p.id), cover: { mode: coverMode, color: coverColor, text: coverText, photo: coverPhoto } });
+      setState({ step: 'done', playlist: out.playlist, added: out.added, missed: out.missed || 0 });
+    } catch (e) {
+      setState({ step: 'error', message: e?.message || 'The playlist could not be saved. Try again.' });
+    }
+  };
+  if (state.step === 'done') {
+    return (
+      <div className="ay-sl-pl is-done" role="status">
+        <p><b>Saved as “{state.playlist?.title || title}”.</b> {state.missed ? `${state.added} added, ${state.missed} could not be added.` : `${state.added} ${state.added === 1 ? 'product' : 'products'} in it.`}</p>
+        <div className="ay-sl-pl-row">
+          {onOpen && state.playlist?.id && <button type="button" className="ay-qc-primary" onClick={() => onOpen(state.playlist.id)}>Open playlist</button>}
+          <button type="button" className="ay-qc-skip" onClick={() => { setOpen(false); setState({ step: 'idle' }); }}>Done</button>
+        </div>
+      </div>
+    );
+  }
+  if (!open) return <button type="button" className="ay-sl-pl-open" onClick={() => setOpen(true)}><span aria-hidden="true">♫</span>Save as a playlist</button>;
+  return (
+    <div className="ay-sl-pl">
+      <h3>Save as a playlist</h3>
+      <label htmlFor="ay-sl-pl-title">Name</label>
+      <input id="ay-sl-pl-title" value={title} maxLength={60} onChange={(e) => setTitle(e.target.value)} />
+      <div className="ay-sl-pl-which" role="radiogroup" aria-label="Which products">
+        <button type="button" role="radio" aria-checked={which === 'tobuy'} className={which === 'tobuy' ? 'is-on' : ''} onClick={() => setWhich('tobuy')}>Still to buy ({toBuy.length})</button>
+        <button type="button" role="radio" aria-checked={which === 'all'} className={which === 'all' ? 'is-on' : ''} onClick={() => setWhich('all')}>Everything ({items.length})</button>
+      </div>
+      <PlaylistAudiencePicker id="ay-sl-pl-aud" value={visibility} onChange={setVisibility} />
+      <PlaylistCoverPicker title={title} mode={coverMode} onMode={setCoverMode} color={coverColor} onColor={setCoverColor} text={coverText} onText={setCoverText} photo={coverPhoto} onPhoto={setCoverPhoto} />
+      {state.step === 'error' && <p className="ay-hc-error" role="alert">{state.message}</p>}
+      <div className="ay-sl-pl-row">
+        <button type="button" className="ay-qc-primary" disabled={state.step === 'saving' || !title.trim() || !picked.length} onClick={save}>{state.step === 'saving' ? 'Saving…' : `Save ${picked.length} ${picked.length === 1 ? 'product' : 'products'}`}</button>
+        <button type="button" className="ay-qc-skip" onClick={() => setOpen(false)} disabled={state.step === 'saving'}>Cancel</button>
+      </div>
+    </div>
   );
 }
