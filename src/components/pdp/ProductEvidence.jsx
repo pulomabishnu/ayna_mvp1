@@ -180,7 +180,9 @@ function useEvidence(product, aynaData) {
     ], brand);
     // A star rating the brand publishes about itself: shown, and labelled as such.
     const brandRatingText = [product.safety?.opinionAlerts, product.ratingNote, product.communityReview].join(' ');
-    const br = brandRatingText.match(/(\d(?:\.\d)?)[-\s]?star[^.]{0,40}?(?:across|from|of)\s+([\d,]+)\s+(?:verified\s+)?reviews/i);
+    // "4.6 out of 5 stars from 119 reviews" first: the older pattern alone read the "5" of "out of 5" as the rating.
+    const br = brandRatingText.match(/(?<![\d.])(\d(?:\.\d{1,2})?)\s+out of\s+5\s+stars?[^.]{0,40}?(?:across|from|of)\s+([\d,]+)\s+(?:verified\s+)?reviews/i)
+      || brandRatingText.match(/(\d(?:\.\d)?)[-\s]?star[^.]{0,40}?(?:across|from|of)\s+([\d,]+)\s+(?:verified\s+)?reviews/i);
     const brandRating = br ? { value: br[1], count: br[2] } : null;
     // Safety, each fact once.
     const warnings = (product.warnings || []).map(noDash).filter(Boolean);

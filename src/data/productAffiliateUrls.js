@@ -119,6 +119,24 @@ Winx Health UTI Fast-Acting Pain Relief|B008KPZMJG
 Winx Health Vaginal Health Probiotic|B0D5FZGY8W
 Winx Health Vaginal Health Test + Treat|B09J522MNP
 Womaness Me.No.Pause. Supplement|B096H6M6GM
+kieró Refining Enzyme Cleanser|B0FRMDSSY6
+kieró Prime Sun Gel SPF 40|B0HBVTHQDG
+kieró Airy Sun Stick SPF 50|B0HBVSP2QH
+kieró Pure Radiant Eye Cream|B0FRMQZRF3
+kieró Comfort Cleansing Balm|B0FRMXWM2M
+kieró Moisturizing Barrier Cream|B0FRMRCRBP
+kieró Balance Toner Pads|B0FRM64YB5
+CBB Perfect PH Probiotic Gummies|B0F7QXCGR5
+ESTHER FORMULA Esther Lyuh Ceramide Strips (Hyaluronic Acid & Ceramide)|B0FQN7VN4R
+Mighty Patch Original Pimple Patch|B074PVTPBW
+Pimple Correct Acne Clearing Gel Pen|B0G2DTH1GQ
+Mighty Cleanser 2% Salicylic Acid Acne Face Wash|B0H1NP4L26
+Coco & Eve Tripeptide Hair Density Serum|B0DF2G14KF
+Najeau Follicle Drops Pre-Shampoo Scalp Oil|B0FM1JK11M
+Refilled Hair Recovery Cytokine Effector Plus (Spot Serum)|B0GMRT3ZLD
+BIGVITA Scalp Serum+|B0D82212P3
+Arrae MB-1 Metabolism Support|B0FZV4LDX2
+CBB Women's 13 in 1 Supplement Gummies|B0BWSMCMTZ
 `.trim().split('\n');
 
 function normalizeProductName(value) {
@@ -201,6 +219,14 @@ const AMAZON_ROW_BY_PRODUCT_ID = {
   'p-period-co-underwear': 'period co period underwear',
   'p-nature-made-iron-65mg': 'nature made iron 65 mg',
   'p-natures-bounty-d3-125mcg': 'nature s bounty vitamin d3 5000 iu',
+  // kieró's names are generic ("Balance Toner Pads"), so map them by id.
+  'p-kiero-refining-enzyme-cleanser': 'kiero refining enzyme cleanser',
+  'p-kiero-prime-sun-gel-spf40': 'kiero prime sun gel spf 40',
+  'p-kiero-airy-sun-stick-spf50': 'kiero airy sun stick spf 50',
+  'p-kiero-pure-radiant-eye-cream': 'kiero pure radiant eye cream',
+  'p-kiero-comfort-cleansing-balm': 'kiero comfort cleansing balm',
+  'p-kiero-moisturizing-barrier-cream': 'kiero moisturizing barrier cream',
+  'p-kiero-balance-toner-pads': 'kiero balance toner pads',
 };
 
 export function getAmazonAffiliateUrl(productName) {

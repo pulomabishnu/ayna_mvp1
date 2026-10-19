@@ -35,10 +35,11 @@ describe('buildEcosystem', () => {
   });
 
   it('picks per need controls quantity, never quality: returns fewer rather than lower-scoring products', () => {
-    const many = buildEcosystem(user({ supportSelections: ['Acne'], recommendedProductsPerArea: 5 }), ALL_PRODUCTS);
+    // Asks for more than the catalog can fill at the quality bar (6 acne picks qualify since the Oct 19 Hero additions).
+    const many = buildEcosystem(user({ supportSelections: ['Acne'], recommendedProductsPerArea: 10 }), ALL_PRODUCTS);
     const acne = shelf(many, 'skin.acne');
-    expect(acne.picks.length).toBeLessThan(5);
-    expect(acne.shortBy).toBe(5 - acne.picks.length);
+    expect(acne.picks.length).toBeLessThan(10);
+    expect(acne.shortBy).toBe(10 - acne.picks.length);
     acne.picks.forEach((p) => expect(p.score).toBeGreaterThanOrEqual(50));
     const strict = buildEcosystem(user({ supportSelections: ['Acne'] }), ALL_PRODUCTS, { minTier: 'strong' });
     expect(shelf(strict, 'skin.acne').picks).toHaveLength(0);
