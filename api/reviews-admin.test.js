@@ -15,10 +15,17 @@ function reviewer(id, date, feedback = '') {
 beforeEach(() => {
   vi.clearAllMocks();
   vi.stubEnv('ADMIN_EMAILS', 'ADMIN@example.test');
-  verifyUser.mockResolvedValue({ user: { email: 'admin@example.test' }, admin: { auth: { admin: { listUsers } } } });
+  verifyUser.mockResolvedValue({ user: { email: 'admin@example.test', email_confirmed_at: '2026-10-01T00:00:00Z' }, admin: { auth: { admin: { listUsers } } } });
 });
 afterEach(() => vi.unstubAllEnvs());
 describe('popup review administration', () => {
+  it('turns away an ADMIN_EMAILS address that was never confirmed', async () => {
+    verifyUser.mockResolvedValueOnce({ user: { email: 'admin@example.test', email_confirmed_at: null }, admin: { auth: { admin: { listUsers } } } });
+    const res = response();
+    await handler({ method: 'GET' }, res);
+    expect(res.code).toBe(403);
+    expect(listFeedback).not.toHaveBeenCalled();
+  });
   it('returns completed popup responses newest first, including rating-only responses', async () => {
     listUsers.mockResolvedValue({ data: { users: [reviewer('older', '2026-09-19'), { id: 'dismissed', user_metadata: { satisfaction_survey_shown_at: '2026-09-20' } }, reviewer('newer', '2026-09-20', 'Useful!')] } });
     const res = response();

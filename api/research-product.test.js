@@ -59,15 +59,24 @@ describe('approved research only fills empty sections', () => {
 describe('admin gate', () => {
   let restore;
   afterEach(() => { restore?.(); globalThis.__mockAdmin = undefined; });
-  function admin(email) {
+  function admin(email, confirmed = true) {
     return {
-      auth: { getUser: vi.fn(async () => ({ data: { user: { id: 'u', email } }, error: null })) },
+      auth: { getUser: vi.fn(async () => ({ data: { user: { id: 'u', email, email_confirmed_at: confirmed ? '2026-10-01T00:00:00Z' : null } }, error: null })) },
       from: () => ({ select: () => ({ order: () => ({ limit: async () => ({ data: [], error: null }) }) }) }),
     };
   }
   it('turns away anyone not on ADMIN_EMAILS', async () => {
     restore = withEnv({ SUPABASE_URL: 'https://x.supabase.co', SUPABASE_SERVICE_ROLE_KEY: 'k', ADMIN_EMAILS: 'eliz@aynahealth.co' });
     globalThis.__mockAdmin = admin('someone@else.com');
+    vi.resetModules();
+    const handler = (await import('./research-product.js')).default;
+    const res = mockRes();
+    await handler(mockReq({ method: 'GET', query: { list: '1' } }), res);
+    expect(res.statusCode).toBe(403);
+  });
+  it('turns away an ADMIN_EMAILS address that was never confirmed', async () => {
+    restore = withEnv({ SUPABASE_URL: 'https://x.supabase.co', SUPABASE_SERVICE_ROLE_KEY: 'k', ADMIN_EMAILS: 'eliz@aynahealth.co' });
+    globalThis.__mockAdmin = admin('eliz@aynahealth.co', false);
     vi.resetModules();
     const handler = (await import('./research-product.js')).default;
     const res = mockRes();

@@ -127,7 +127,7 @@ export default async function handler(req, res) {
   privateHeaders(res);
   const { user, error, admin } = await verifyUser(req);
   if (error || !user || !admin) return res.status(error === 'server_misconfigured' ? 503 : 401).json({ error: error || 'auth_required' });
-  if (!isAdminEmail(user.email)) return res.status(403).json({ error: 'forbidden' });
+  if (!user.email_confirmed_at || !isAdminEmail(user.email)) return res.status(403).json({ error: 'forbidden' });
 
   if (req.method === 'GET') {
     const { data, error: e } = await admin.from('product_research').select('*').order('updated_at', { ascending: false }).limit(500);

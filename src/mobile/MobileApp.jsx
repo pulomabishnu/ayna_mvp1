@@ -509,13 +509,15 @@ export default function MobileApp() {
     if (offer) Promise.resolve().then(() => setNewAccountStart(true));
   }, [loadedAccountId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     setOverlay(null);
     setAskAynaOpen(false);
     setAskAynaHistory([]);
     pendingQuizEcosystemRef.current = null;
     resetSession();
-    signOutSupabase();
+    // Awaited: sign-out first unlinks this phone's push token, and landing
+    // while authUser is still set would bounce straight back to the ecosystem.
+    try { await signOutSupabase(); } catch { /* local reset above still applies */ }
     setScreen('landing');
   };
 

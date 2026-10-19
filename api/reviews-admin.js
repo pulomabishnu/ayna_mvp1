@@ -57,7 +57,9 @@ export default async function handler(req, res) {
     });
   }
 
-  if (!isAdminEmail(user.email)) {
+  // An unconfirmed address proves nothing: with "Confirm email" off, anyone can
+  // sign up as a founder's address and get a session. Same rule as send-test-email.js.
+  if (!user.email_confirmed_at || !isAdminEmail(user.email)) {
     return res.status(403).json({ error: 'forbidden' });
   }
 

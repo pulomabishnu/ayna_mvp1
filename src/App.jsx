@@ -817,6 +817,12 @@ function App() {
           localStorage.removeItem('ayna_health_profile_v1');
           sessionStorage.removeItem('ayna_force_llm_refresh');
         } catch { /* ignore */ }
+        // A real sign-out that didn't come from the header's Log out (session
+        // expired, signed out in another tab, declined the consent gate) left
+        // her ZIP, quiz draft and chat trace id for the next person. Only on
+        // SIGNED_OUT: a signed-out guest's cold load (INITIAL_SESSION) keeps
+        // the quiz draft she is building.
+        if (event === 'SIGNED_OUT') clearPersonalStorage();
         }, 0);
       }
     });
