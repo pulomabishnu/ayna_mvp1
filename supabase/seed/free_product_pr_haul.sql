@@ -45,7 +45,7 @@ with items (name, brand, size, category, image_url, product_url, units) as (
   ('Glutathione 7 Dark Spot Serum', 'manyo', '1.01 fl oz (30 ml)', 'skincare', 'https://m.media-amazon.com/images/I/61aYjktnM9L._AC_SL500_.jpg', 'https://www.amazon.com/dp/B0GGH9DCKK', 1),
   ('Collagen Skin Lift Gummies', 'UPSA x Nourished', '30 gummies', 'supplement', 'https://m.media-amazon.com/images/I/71-p1fIYtiL._AC_SL500_.jpg', 'https://www.amazon.com/dp/B0GFGG7WN9', 1),
   ('Good Down There Vaginal Health Probiotic', 'The Good Bug', '1.06 oz (30 g)', 'supplement', 'https://cdn.shopify.com/s/files/1/0657/8225/1745/products/GoodDownThere_3.jpg?width=500', 'https://thegoodbug.com/products/good-down-there-for-vaginal-health', 1),
-  ('MB-1 Metabolism Support', 'Arrae', '40 capsules', 'supplement', 'https://m.media-amazon.com/images/I/51cUawzhbWL._AC_SL500_.jpg', 'https://www.amazon.com/dp/B0DCQC1DNS', 1),
+  ('MB-1 Metabolism Support', 'Arrae', '40 capsules', 'supplement', 'https://m.media-amazon.com/images/I/51cUawzhbWL._AC_SL500_.jpg', 'https://www.amazon.com/dp/B0FZV4LDX2', 1),
   ('Tropic Lush Body Mist', 'The Crème Shop', '3.38 fl oz (100 ml)', 'fragrance', 'https://cdn.shopify.com/s/files/1/0930/8720/files/584514659_01.png?width=500', 'https://www.thecremeshop.com/products/tropic-lush-body-mist', 1),
   ('Cloud Kiss Body Mist', 'The Crème Shop', '3.38 fl oz (100 ml)', 'fragrance', 'https://m.media-amazon.com/images/I/61lr+qlMK3L._AC_SL500_.jpg', 'https://www.amazon.com/dp/B0GYTFS8C8', 1),
   ('Women''s 13-in-1 Supplement Gummies', 'CBB (Curvy Body Bears)', '60 gummies', 'supplement', 'https://m.media-amazon.com/images/I/51slr4TLhVL._AC_SL500_.jpg', 'https://www.amazon.com/dp/B0BWSMCMTZ', 1),
