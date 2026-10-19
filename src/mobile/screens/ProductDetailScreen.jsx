@@ -314,7 +314,12 @@ export default function ProductDetailScreen({
   const buyUrl = getBuyUrl(product);
   const isPartner = isPartnerBrandItem(product);
   const partnerDisclosure = getPartnerDisclosureText(product);
-  const glance = buildGlance(product, { details: quizAnswers ? matchDetails : null, whyMatched });
+  const glanceRaw = buildGlance(product, { details: quizAnswers ? matchDetails : null, whyMatched });
+  // On the app the Overview tab already shows the full Ingredients section, so the
+  // short "Ingredients or materials" fact above it would repeat the same list.
+  const glance = glanceRaw && Array.isArray(glanceRaw.facts) && (glanceRaw.sections || []).some((sec) => sec.id === 'inside')
+    ? { ...glanceRaw, facts: glanceRaw.facts.filter((f) => f.id !== 'inside') }
+    : glanceRaw;
   const images = galleryImages(product);
   const shownImage = images[Math.min(photo, Math.max(images.length - 1, 0))] || image;
   const retailers = retailerLinks(product, buyUrl);

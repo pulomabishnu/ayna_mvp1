@@ -266,8 +266,8 @@ function SuggestList({ draft, matches, onPick }) {
   if (!draft.trim()) return null;
   return (
     <div className="ip-suggest" role="listbox">
-      <button type="button" className="is-add" onClick={() => onPick(draft)}>+ Add “{draft.trim()}”</button>
       {matches.map((option) => <button type="button" key={option} onClick={() => onPick(option)}>{option}</button>)}
+      {!matches.some((m) => m.toLowerCase() === draft.trim().toLowerCase()) && <button type="button" className="is-add" onClick={() => onPick(draft)}>+ Add “{draft.trim()}”</button>}
     </div>
   );
 }
@@ -302,7 +302,7 @@ function TokenInput({ values, onChange, placeholder, suggestions = [], suggestio
     <div className="ip-token-input">
       <label className="ip-search">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-        <SmartSearchInput vocabulary={suggestions} value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(draft); }} placeholder={placeholder} aria-label={placeholder} />
+        <SmartSearchInput vocabulary={suggestions} value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(matches[0] || draft); }} placeholder={placeholder} aria-label={placeholder} />
         {draft && <button type="button" aria-label="Clear" onClick={() => setDraft('')}>×</button>}
       </label>
       <SuggestList draft={draft} matches={matches} onPick={addValue} />
@@ -888,7 +888,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
             <button type="button" className="ip-round" aria-label="Go back" onClick={goBack}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
             </button>
-            <span className="ip-count" aria-label={`All ${countedRequiredTotal} required questions done`}>{String(countedRequiredTotal).padStart(2, '0')}<i>/{String(countedRequiredTotal).padStart(2, '0')}</i></span>
+            <span className="ip-count ip-count--plain" aria-label={`All ${countedRequiredTotal} required questions done`}>All done</span>
             <span className="ip-skip-spacer" />
           </div>
           <div className="ip-progress" aria-hidden="true">{requiredSteps.map((s) => <span key={s.id} className="is-done" />)}</div>
@@ -897,7 +897,8 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
           <div className="ip-question" key="q-checkpoint">
             <div className="ip-label-row"><span className="ip-label ip-label--done">Done</span></div>
             <h1 className="ip-title">Your first matches are ready</h1>
-            <p className="ip-subtitle">{careFirst ? 'You said something may be urgent, so care options come first.' : 'That’s enough for safe, personal picks.'}</p>
+            <p className="ip-subtitle">{careFirst ? 'You said something may be urgent, so your results start with ways to reach care.' : 'That’s enough for safe, personal picks.'}</p>
+            {careFirst && <div className="ip-care-now" role="note"><b>If this is an emergency, call 911.</b> <span>If you're thinking about harming yourself, call or text 988.</span> <span>Your results open with clinician and urgent care options.</span></div>}
             <p className="ip-checkpoint-more">Want them even closer? {optionalSteps.length} quick extras, all optional. Skip any of them.</p>
           </div>
         </div>
