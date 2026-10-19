@@ -65,7 +65,7 @@ import { enrichLlmProductForDiscovery } from './utils/enrichLlmProductForDiscove
 import ProfileChatbot from './components/ProfileChatbot';
 import { loadHealthProfile, hasHealthProfileSignals } from './utils/healthDataProfile';
 import { loadHealthProfileForCurrentUser, saveHealthProfileForCurrentUser } from './utils/healthProfileStore';
-import { forgetSharedIntake, loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser } from './utils/healthIntakeStore';
+import { forgetSharedIntake, loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser, clearHealthIntakeForCurrentUser } from './utils/healthIntakeStore';
 import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
 import AuthGate, { ConsentGate } from './components/AuthGate';
 import PrivacyPolicy from './components/PrivacyPolicy';
@@ -85,7 +85,7 @@ import AuthCallback from './components/AuthCallback';
 import AuthConfirm from './components/AuthConfirm';
 import EmailConfirmed from './components/EmailConfirmed';
 import { getSupabaseClient } from './utils/supabaseClient';
-import { clearGeneratedPicksForUser, isGeneratedPick, loadEcosystemForUser, upsertProductState, upsertProductsBatch, removeGeneratedProductsFromEcosystem } from './utils/ecosystemStore';
+import { clearGeneratedPicksForUser, isGeneratedPick, loadEcosystemForUser, upsertProductState, upsertProductsBatch, removeGeneratedProductsFromEcosystem, clearEcosystemForUser } from './utils/ecosystemStore';
 import { loadSavedProducts, persistSavedProducts, clearSavedProducts, loadSavedForUser, setSavedForUser } from './utils/savedProductsStore';
 import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/learningMemoryStore';
 import { loadReviewsForUser, upsertProductReviews } from './utils/reviewsStore';
@@ -446,8 +446,10 @@ function App() {
     const path = keepPath ? window.location.pathname : pathForView(currentView, productRouteId);
     // Community search lives in ?q= (shareable, survives a refresh); keep only that.
     const communityQ = currentView === 'community' ? new URLSearchParams(window.location.search).get('q') : null;
+    // Partners keeps its #brand-… hash so a link can open one brand's card.
     const initialUrl = (currentView === 'auth-callback' || currentView === 'campus-resources' || currentView === 'free-product' || currentView === 'free-product-reward')
       ? `${path}${window.location.search}${window.location.hash}`
+      : currentView === 'waitlist' && /^#brand-[a-z0-9-]+$/.test(window.location.hash) ? `${path}${window.location.hash}`
       : communityQ ? `${path}?q=${encodeURIComponent(communityQ)}` : path;
     window.history.replaceState({ view: currentView, productId: productRouteId }, '', initialUrl);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1303,6 +1305,30 @@ function App() {
   };
 
   const handleStartQuiz = () => setCurrentView('quiz');
+  // Redo the quiz from the first question (not a resumed draft).
+  const handleRedoQuiz = () => { setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); };
+  // Same reset as the app: clears her Ecosystem, its tracking and her quiz
+  // answers after she confirms. Saved products, check-ins and the account stay.
+  const handleResetEcosystem = async () => {
+    if (!user?.id) return;
+    if (!window.confirm('Reset your Ecosystem? This clears your Ecosystem, its product tracking and your quiz answers. Saved products, check-ins and your account stay.')) return;
+    const supabase = getSupabaseClient();
+    try {
+      if (supabase) await clearEcosystemForUser(supabase, user.id, { includeTracking: true });
+      await clearHealthIntakeForCurrentUser();
+    } catch (e) {
+      reportSaveFailure('Could not reset your ecosystem', e);
+      return;
+    }
+    forgetSharedIntake();
+    try { localStorage.removeItem(INTAKE_DRAFT_KEY); } catch { /* storage blocked */ }
+    setMyProducts({});
+    setTrackedProducts({});
+    setOmittedProducts({});
+    setQuizResults(null);
+    toast('Your Ecosystem is reset.');
+    handleRedoQuiz();
+  };
   const handleOpenHealthProfileEditor = () => setCurrentView('profile-edit');
   // Leave the profile editor without saving anything (the editor only writes
   // on "See my results"), back to wherever it was opened from.
@@ -2408,6 +2434,8 @@ function App() {
             onOpenProduct={handleOpenProduct}
             onOpenDoctorPrep={() => setCurrentView('doctor-prep')}
             onBuildEcosystem={handleStartQuiz}
+            onRedoQuiz={handleRedoQuiz}
+            onResetEcosystem={handleResetEcosystem}
             onEditHealthProfile={handleOpenHealthProfileEditor}
             onOpenPhoneVerify={handleOpenPhoneVerification}
             quizResults={quizResults}

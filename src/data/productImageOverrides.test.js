@@ -6,6 +6,10 @@ const PACKSHOT_PENDING = new Set([
   'p-tampontribe-pantyliners-bulk-buy',
   'p-tampontribe-teen-pads',
   'p-resa-rhythm-bracelet',
+  // Momotaro Apotheca (Oct 17): brand photos until packshots are shot.
+  // Oct 18 additions (Eliz's photos): Alubri kit, Momotaro Body Oil, Tampon Tribe bulk buys.
+  ...['p-alubri-moisture-renewal-kit', 'p-momotaro-body-oil', 'p-tampontribe-tampons-bulk-buy', 'p-tampontribe-pads-bulk-buy', 'p-tampontribe-menstrual-cup'],
+  ...['p-momotaro-salve', 'p-momotaro-daily-probiotic', 'p-momotaro-urinary-tract-supplement', 'p-momotaro-vaginal-suppository', 'p-momotaro-hydrosol-toner', 'p-momotaro-bath-body-tonic'],
   // Evidence-backed basics (Oct 17): retailer photos until packshots are shot.
   ...['p-advil-ibuprofen-200', 'p-aleve-naproxen-220', 'p-monistat-3-combo', 'p-taro-clotrimazole-7', 'p-womens-rogaine-foam', 'p-panoxyl-bpo-10-wash', 'p-differin-adapalene-gel', 'p-metamucil-psyllium-orange', 'p-miralax-peg-3350', 'p-nature-made-folic-acid-400', 'p-easyhome-lh-strips-50', 'p-visby-womens-sti-test', 'p-rugby-vitamin-b6-25'],
 ]);

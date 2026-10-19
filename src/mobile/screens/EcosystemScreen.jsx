@@ -146,7 +146,7 @@ export default function EcosystemScreen({
         <div className="ay-eco-actions">
           {onReplayStory && <button type="button" className="ay-eco-play" onClick={onReplayStory} aria-label="Replay your Wrapped"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg></button>}
           {onReplayStory && <span className="ay-eco-play-label">Replay Wrapped</span>}
-          <button type="button" className="ay-text-btn" onClick={onRetake}>Update</button>
+          <button type="button" className="ay-text-btn" onClick={onRetake}>Redo quiz</button>
         </div>
       )}
       {!hasAnything && <EmptyState compact art="spark" tone="mint" title="No matches yet" body="Update your answers or browse the shop." actionLabel="Shop" onAction={onBrowse} secondaryLabel="Update" onSecondary={onRetake} />}
@@ -188,7 +188,7 @@ export default function EcosystemScreen({
 
     <section className="ayna-cabinet-more" aria-label="More ways to manage your cabinet">
       {earlierProducts.length > 0 && <details><summary>Earlier picks <span>{earlierProducts.length}</span></summary><p>Kept in your Ecosystem outside your current shortlist.</p><div className="ayna-editorial-product-grid">{earlierProducts.map((product) => <ProductCard key={product.id} product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} />)}</div></details>}
-      <details><summary>Manage Ecosystem</summary><button type="button" onClick={onRetake}>Update recommendations</button><button type="button" className="ayna-destructive-text" onClick={onRequestEcosystemReset}>Reset Ecosystem</button></details>
+      <details open><summary>Manage Ecosystem</summary><button type="button" onClick={onRetake}>Redo quiz</button><button type="button" className="ayna-destructive-text" onClick={onRequestEcosystemReset}>Reset Ecosystem</button></details>
     </section>
     <LegalFooter />
   </div>;

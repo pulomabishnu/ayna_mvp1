@@ -256,7 +256,7 @@ const WHY = [
   { t: 'Your whole routine', d: 'Save what you use and see what fits next.', img: '/landing/sink-tea.webp', alt: 'A bathroom sink holding heels, sunglasses, tea and makeup' },
 ];
 
-const SPOTS = [['18%', '26%'], ['70%', '18%'], ['34%', '70%'], ['80%', '62%']];
+const SPOTS = [['27%', '24%'], ['74%', '40%'], ['20%', '66%'], ['88%', '56%']];
 
 function Why({ paused }) {
   const ref = useReveal();
@@ -270,7 +270,7 @@ function Why({ paused }) {
       <div className="lv-why lv-why--grid">
         {/* One counter photo with the four numbers scattered on it. */}
         <div className="lv-cnt" role="group" aria-label="What ayna does: tap a number">
-          <img src="/landing/marble-counter.webp" alt="A marble bathroom counter full of products, seen from above" loading="lazy" />
+          <img src="/landing/hiw-ecosystem-vanity.webp" alt="A marble bathroom vanity by candlelight, skincare and makeup laid out around the sink" loading="lazy" />
           {WHY.map((w, i) => (
             <button key={w.t} type="button" className={`lv-cnt__n${i === a ? ' is-on' : ''}`} style={{ left: SPOTS[i][0], top: SPOTS[i][1] }} aria-pressed={i === a} aria-label={`${i + 1}. ${w.t}`} onClick={() => pick(i)}>{i + 1}</button>
           ))}
