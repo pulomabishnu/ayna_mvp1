@@ -893,7 +893,15 @@ export { ARTICLES };
  * the ayna palette and style.
  */
 const KEEP_ILLUSTRATION = new Set();
+
+/* Reads a writer designed as a full page (her own layout, colours and image
+   placement). The website shows that page; ARTICLES keeps the plain text for
+   search, read time and the app. */
+const DESIGNED_READS = {
+  'postpartum-stretch-marks': { Component: PostpartumStretchMarksArticle, next: 'pelvic-floor-dysfunction' },
+};
 import TopicCover from './v3/TopicCover.jsx';
+import PostpartumStretchMarksArticle from './library/PostpartumStretchMarksArticle.jsx';
 import useRotatingPlaceholder from '../utils/useRotatingPlaceholder.js';
 const LIB_SEARCH_EXAMPLES = ['heavy periods', 'PCOS', 'period pain', 'when to see a doctor', 'UTI', 'perimenopause', 'fibroids', 'endometriosis', 'yeast vs BV', 'pelvic floor', 'night sweats', 'missed period'];
 
@@ -1173,6 +1181,12 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
       : <small>{items.length} read{items.length === 1 ? '' : 's'}</small>}</h2>
     <ul className="ay-web-lib-grid ay-lib-shelf">{items.map(card)}</ul>
   </div>;
+
+  if (selected && DESIGNED_READS[selected.id]) {
+    const Designed = DESIGNED_READS[selected.id].Component;
+    const nextArticle = ARTICLES.find((a) => a.id === DESIGNED_READS[selected.id].next) || null;
+    return <Designed key={selected.id} onBack={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); closeRead(); }} nextArticle={nextArticle} onOpenNext={open} fallback={<article><h1>{selected.title}</h1>{withHeadings(selected.body)}</article>} />;
+  }
 
   if (selected) {
     const next = nextInSection(selected.id);
