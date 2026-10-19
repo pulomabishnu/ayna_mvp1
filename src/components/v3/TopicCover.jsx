@@ -18,6 +18,7 @@ const COVERS = {
   'iron-deficiency-anemia': ['Low iron', 'pink', 'leaf'],
   'ovarian-cysts': ['Cysts', 'pink', 'bubbles'],
   'hormonal-birth-control': ['Birth control', 'peri', 'pills'],
+  'postpartum-stretch-marks': ['Stretch marks', 'mint', null],
 };
 
 const SECTION_TONE = {
@@ -25,6 +26,7 @@ const SECTION_TONE = {
   'pcos-basics': 'peri', 'menopause-basics': 'peri', pmdd: 'peri', 'hormonal-birth-control': 'peri',
   'endometriosis-basics': 'butter', 'pelvic-floor-dysfunction': 'butter', 'ovarian-cysts': 'butter',
   'intimate-wash': 'ink', 'uti-prevention': 'ink', 'yeast-infection-basics': 'ink', 'bacterial-vaginosis': 'ink',
+  'postpartum-stretch-marks': 'mint',
 };
 
 /* Small spot drawings for each topic, one stroke weight, drawn in the
@@ -49,7 +51,7 @@ const SPOTS = {
 
 export default function TopicCover({ id, title = '', className = '' }) {
   const [word, , spot] = COVERS[id] || [title, 'peri', null];
-  // Colour means the Library section: menstrual pink, hormonal sky, chronic and pelvic butter, vaginal and urinary espresso.
+  // Colour means the Library section: menstrual pink, hormonal sky, chronic and pelvic butter, vaginal and urinary espresso, pregnancy and postpartum mint.
   const tone = SECTION_TONE[id] || 'peri';
   return (
     <span className={`ay-lib-cover is-${tone}${spot ? ' has-spot' : ''} ${className}`.trim()} aria-hidden="true">
