@@ -76,11 +76,14 @@ function sleepSection(resolved, today) {
   return {
     id: 'sleep', title: 'Sleep', status: 'ready',
     headline: `Average ${fmtMinutes(c.recentAvg)} this week`,
+    plain: Math.abs(c.delta) < 10
+      ? `You've slept about ${fmtMinutes(c.recentAvg)} a night, right around your usual.`
+      : `You've slept about ${fmtMinutes(c.delta)} ${c.delta < 0 ? 'less' : 'more'} a night than usual this week (${fmtMinutes(c.recentAvg)} on average).`,
     change: Math.abs(c.delta) >= 10 ? { direction: c.delta < 0 ? 'down' : 'up', text: `${fmtMinutes(c.delta)} ${c.delta < 0 ? 'less' : 'more'} than your usual` } : { direction: 'flat', text: 'About the same as your usual' },
     explanation: less ? 'Your sleep has been shorter than your recent average.' : more ? 'Your sleep has been longer than your recent average.' : 'Your sleep has been steady.',
     affects: less && shortNow ? 'If sleep is one of your goals, sleep picks are a stronger fit for you right now.' : null,
     sources: sourcesOf(pts), trend: lastDays(pts, today), unit: 'min',
-    signal: less && shortNow ? { needId: 'sleep.trouble', summary: 'Your recent sleep has been shorter than your usual', metric: 'sleep_minutes' } : null,
+    signal: less && shortNow ? { needId: 'sleep.trouble', summary: "You've been sleeping less than usual", metric: 'sleep_minutes' } : null,
   };
 }
 
@@ -113,12 +116,15 @@ function cycleSection(resolved, today) {
   return {
     id: 'cycle', title: 'Cycle', status: 'ready',
     headline: cycleDay <= 60 ? `Day ${cycleDay} of your cycle` : 'No recent period logged',
+    plain: varied
+      ? `Your last ${recentLengths.length} cycles ranged from ${Math.min(...recentLengths)} to ${Math.max(...recentLengths)} days.`
+      : `Your last ${recentLengths.length} cycles were all about ${avg} days long.`,
     change: { direction: 'flat', text: `Your recent cycles averaged ${avg} days` },
     explanation: varied ? 'Your cycle length has varied more over your last few cycles.' : 'Your cycle length has been fairly regular.',
     estimate: cycleDay <= 60 ? { label: 'Next period, estimated', day: expected, basis: `Based on your last ${recentLengths.length} cycles. Estimates can be off by several days.` } : null,
     affects: varied ? 'If irregular cycles are one of your goals, cycle picks are a stronger fit for you right now.' : null,
     sources: sourcesOf(pts), trend: recentLengths.map((n, i) => ({ day: starts[starts.length - recentLengths.length + i], value: n })), unit: 'days',
-    signal: varied ? { needId: 'cycle.irregular', summary: 'Your cycle length has varied more over your last few cycles', metric: 'menstrual_flow' } : null,
+    signal: varied ? { needId: 'cycle.irregular', summary: 'Your cycle length has been changing more than before', metric: 'menstrual_flow' } : null,
   };
 }
 
@@ -130,19 +136,22 @@ function heartSection(resolved, today) {
   const hrv = series(resolved, hrvMetric);
   const r = compare(rhr, today);
   const h = compare(hrv, today);
-  if (!r.enough && !h.enough) return notEnough('heart', 'Heart & stress', [...rhr, ...hrv], 'heart data');
+  if (!r.enough && !h.enough) return notEnough('heart', 'Heart', [...rhr, ...hrv], 'heart data');
   const rhrUp = r.enough && r.delta >= 3;
   const hrvDown = h.enough && h.baselineAvg > 0 && (h.delta / h.baselineAvg) <= -0.1;
   const lower = rhrUp || hrvDown;
   const lead = r.enough
     ? { headline: `Resting heart rate ${Math.round(r.recentAvg)} bpm this week`, change: Math.abs(r.delta) >= 1 ? { direction: r.delta > 0 ? 'up' : 'down', text: `${Math.abs(Math.round(r.delta))} bpm ${r.delta > 0 ? 'higher' : 'lower'} than your usual` } : { direction: 'flat', text: 'About the same as your usual' } }
     : { headline: `Heart rate variability ${Math.round(h.recentAvg)} ms this week`, change: { direction: h.delta < 0 ? 'down' : 'up', text: `${Math.abs(Math.round(h.delta))} ms ${h.delta < 0 ? 'lower' : 'higher'} than your usual` } };
+  const plain = r.enough
+    ? (Math.abs(r.delta) < 1 ? `Your resting heart rate is right around your usual, about ${Math.round(r.recentAvg)} bpm.` : `Your resting heart rate is about ${Math.abs(Math.round(r.delta))} bpm ${r.delta > 0 ? 'higher' : 'lower'} than usual this week.`)
+    : `Your heart rate variability is about ${Math.abs(Math.round(h.delta))} ms ${h.delta < 0 ? 'lower' : 'higher'} than usual this week.`;
   return {
-    id: 'heart', title: 'Heart & stress', status: 'ready', ...lead,
+    id: 'heart', title: 'Heart', status: 'ready', ...lead, plain,
     explanation: lower ? 'Your recovery metrics have been lower than your recent baseline.' : 'Your heart metrics have been close to your usual.',
     affects: lower ? 'If energy is one of your goals, energy picks are a stronger fit for you right now.' : null,
     sources: sourcesOf([...rhr, ...hrv]), trend: lastDays(r.enough ? rhr : hrv, today), unit: r.enough ? 'bpm' : 'ms',
-    signal: lower ? { needId: 'energy.fatigue', summary: 'Your recovery metrics have been lower than your usual', metric: r.enough ? 'resting_hr_bpm' : hrvMetric } : null,
+    signal: lower ? { needId: 'energy.fatigue', summary: rhrUp ? 'Your resting heart rate has been higher than usual' : 'Your heart rate variability has been lower than usual', metric: r.enough ? 'resting_hr_bpm' : hrvMetric } : null,
   };
 }
 
@@ -155,11 +164,12 @@ function recoverySection(resolved, today) {
   return {
     id: 'recovery', title: 'Recovery', status: 'ready',
     headline: `Readiness ${Math.round(c.recentAvg)} on average this week`,
+    plain: Math.abs(c.delta) < 2 ? `Your readiness score is right around your usual, about ${Math.round(c.recentAvg)}.` : `Your readiness score is about ${Math.abs(Math.round(c.delta))} points ${c.delta < 0 ? 'lower' : 'higher'} than usual this week.`,
     change: Math.abs(c.delta) >= 2 ? { direction: c.delta < 0 ? 'down' : 'up', text: `${Math.abs(Math.round(c.delta))} points ${c.delta < 0 ? 'lower' : 'higher'} than your usual` } : { direction: 'flat', text: 'About the same as your usual' },
     explanation: lower ? 'Your readiness has been lower than your recent baseline.' : 'Your readiness has been steady.',
     affects: lower ? 'If energy is one of your goals, energy picks are a stronger fit for you right now.' : null,
     sources: sourcesOf(pts), trend: lastDays(pts, today), unit: 'score',
-    signal: lower ? { needId: 'energy.fatigue', summary: 'Your readiness has been lower than your usual', metric: 'readiness_score' } : null,
+    signal: lower ? { needId: 'energy.fatigue', summary: 'Your readiness score has been lower than usual', metric: 'readiness_score' } : null,
   };
 }
 
@@ -180,6 +190,9 @@ function activitySection(resolved, today) {
   const headline = s.enough ? `About ${Math.round(s.recentAvg).toLocaleString('en-US')} steps a day this week` : `${fmtMinutes(wRecent)} of workouts this week`;
   return {
     id: 'activity', title: 'Activity', status: 'ready', headline,
+    plain: Math.abs(pct) < 10
+      ? (s.enough ? `You're moving about as much as usual, around ${Math.round(s.recentAvg).toLocaleString('en-US')} steps a day.` : 'Your workouts are about the same as usual.')
+      : (s.enough ? `You've walked about ${Math.abs(pct)}% ${pct < 0 ? 'less' : 'more'} than usual this week.` : `Your workout time is about ${Math.abs(pct)}% ${pct < 0 ? 'lower' : 'higher'} than usual this week.`),
     change: Math.abs(pct) >= 10 ? { direction: pct < 0 ? 'down' : 'up', text: `${Math.abs(pct)}% ${pct < 0 ? 'less' : 'more'} than your usual` } : { direction: 'flat', text: 'About the same as your usual' },
     explanation: pct >= 25 ? 'You have been moving more than usual.' : pct <= -25 ? 'You have been moving less than usual.' : 'Your activity has been steady.',
     affects: null,

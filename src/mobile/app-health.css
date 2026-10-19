@@ -307,3 +307,14 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-pl .am-cover-examples button { color: var(--hd-ink) !important; border-color: var(--hd-ink) !important; background: transparent !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .am-cover-colors button { border: 2px solid var(--ayna-heading) !important; box-sizing: border-box; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .am-cover-colors button.is-selected { outline: 3px solid var(--ayna-heading) !important; outline-offset: 3px; }
+
+/* Apps and wearables search */
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-hc-search { position: relative; display: flex; align-items: center; margin: 0 0 18px; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-hc-search svg { position: absolute; left: 16px; width: 20px; height: 20px; fill: none; stroke: var(--hd-ink); stroke-width: 2; stroke-linecap: round; pointer-events: none; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-hc-search input { box-sizing: border-box !important; width: 100% !important; min-height: 50px !important; padding: 0 44px 0 46px !important; border: 2px solid var(--hd-ink) !important; border-radius: 99px !important; background: var(--hd-card) !important; color: var(--hd-ink) !important; font: 600 16px/1 var(--f-ui) !important; box-shadow: var(--ay-shadow); -webkit-appearance: none; appearance: none; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-hc-search input::placeholder { color: var(--hd-soft) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-hc-search input::-webkit-search-cancel-button { display: none; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-hc-search input:focus-visible { outline: 3px solid var(--b-sky); outline-offset: 2px; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-hc-search button { position: absolute; right: 6px; width: 40px; height: 40px; border: 0; border-radius: 50%; background: transparent; color: var(--hd-ink) !important; font: 400 26px/1 var(--f-ui) !important; cursor: pointer; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-hc-nomatch { display: grid; gap: 12px; margin: 0 0 22px; padding: 16px; border: 2px dashed var(--hd-ink); border-radius: 20px; color: var(--hd-ink); }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-hc-nomatch p { margin: 0; font: 500 calc(14px * var(--ayna-text-scale, 1))/1.5 var(--f-ui); }

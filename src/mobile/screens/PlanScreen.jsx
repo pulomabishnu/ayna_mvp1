@@ -7,7 +7,7 @@ import './profile/health-connections.css';
  * routine and her shopping list, all from the products matching picked and
  * her own data. A suggested goal is only added when she taps it.
  */
-const SUGGEST_LABEL = { 'sleep.trouble': 'sleep', 'cycle.irregular': 'irregular cycles', 'energy.fatigue': 'energy' };
+const SUGGEST_LABEL = { 'sleep.trouble': 'sleep', 'cycle.irregular': 'irregular cycles', 'energy.fatigue': 'low energy' };
 const fromLine = (sources = []) => {
   const names = sources.map((s) => SOURCE_NAMES[s] || s);
   return names.length ? `From ${names.join(' and ')}` : null;
@@ -42,8 +42,7 @@ export default function PlanScreen({
               {ready.map((s) => (
                 <li key={s.id} className={`is-${s.id}`}>
                   <b>{s.title}</b>
-                  <span>{s.explanation || s.headline}</span>
-                  {s.change && s.change.direction !== 'flat' && <small>{s.change.text}</small>}
+                  <span>{s.plain || s.explanation || s.headline}</span>
                 </li>
               ))}
             </ul>
@@ -52,10 +51,10 @@ export default function PlanScreen({
           {!ready.length && <p className="ay-rt-lede">Your data is in. Trends show up once there are about two weeks of it.</p>}
           {planSuggestions.map((s) => (
             <div key={s.needId} className="ay-hd-suggest-item">
-              <p>{s.summary}. Add {SUGGEST_LABEL[s.needId] || 'it'} and ayna will match you for it too.</p>
+              <p>{s.summary}. Want ayna to match you for {SUGGEST_LABEL[s.needId] || 'it'} too?</p>
               {planAddedGoals[s.needId]
                 ? <p className="ay-hd-added" role="status">Added. Your matches include {SUGGEST_LABEL[s.needId] || 'it'}.</p>
-                : <button type="button" className="ay-hc-primary" onClick={() => onAddPlanGoal?.(s.needId)}>Add {SUGGEST_LABEL[s.needId] || 'it'}</button>}
+                : <button type="button" className="ay-hc-primary" onClick={() => onAddPlanGoal?.(s.needId)}>Add {SUGGEST_LABEL[s.needId] || 'it'} to my goals</button>}
             </div>
           ))}
         </section>

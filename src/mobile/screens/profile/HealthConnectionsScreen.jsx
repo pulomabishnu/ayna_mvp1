@@ -51,7 +51,11 @@ const errorText = (e) => ERRORS[e?.code] || 'Something went wrong. Try again.';
 /* --------------------------------- List ---------------------------------- */
 function SourceList({ connections, records, onOpen, onOpenInsights, hasInsights, signedIn, onSignIn, onRefresh, compact = false }) {
   const [now] = useState(() => Date.now());
+  const [query, setQuery] = useState('');
   const byId = Object.fromEntries(connections.map((c) => [c.source, c]));
+  const q = query.trim().toLowerCase();
+  const matches = (source) => !q || [source.name, source.kind, source.note, source.reads].some((t) => String(t || '').toLowerCase().includes(q));
+  const anyMatch = HEALTH_SOURCES.some((src) => src.id !== 'request' && matches(src));
   return (
     <>
       {!compact && <p className="ay-hc-intro">Bring your health data into ayna to sharpen your matches and see your trends. You choose what to share. Brands never see it.</p>}
@@ -63,11 +67,26 @@ function SourceList({ connections, records, onOpen, onOpenInsights, hasInsights,
           <span><b>Your health dashboard</b><small>Charts for sleep, cycle, heart and activity</small></span><Chevron />
         </button>
       )}
-      {SOURCE_GROUPS.map((group) => (
+      <div className="ay-hc-search" role="search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="M16 16l4.5 4.5" /></svg>
+        <label htmlFor="ay-hc-search-input" className="ay-sl-sr">Search apps and wearables</label>
+        <input id="ay-hc-search-input" type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search apps and wearables" autoComplete="off" enterKeyHint="search" />
+        {query && <button type="button" onClick={() => setQuery('')} aria-label="Clear search">×</button>}
+      </div>
+      {q && !anyMatch && (
+        <div className="ay-hc-nomatch" role="status">
+          <p><b>We don't connect to “{query.trim()}” yet.</b> Tell us you use it and the team will hear about it.</p>
+          <button type="button" className="ay-hc-primary" onClick={() => onOpen(`request:${encodeURIComponent(query.trim().slice(0, 60))}`)}>Request {query.trim().slice(0, 30)}</button>
+        </div>
+      )}
+      {SOURCE_GROUPS.map((group) => {
+        const list = HEALTH_SOURCES.filter((s) => s.group === group.id && (matches(s) || (s.id === 'request' && q)));
+        if (!list.length || (q && !anyMatch)) return null;
+        return (
         <section key={group.id} className={`ay-hc-group is-${group.tone}`} aria-label={group.title}>
           <h2>{group.title}</h2>
           <div className="ay-hc-card">
-            {HEALTH_SOURCES.filter((s) => s.group === group.id).map((source) => {
+            {list.map((source) => {
               const connection = byId[apiSourceFor(source.id)];
               const recordCount = records ? records.allergies.length + records.conditions.length + records.medications.length : 0;
               const status = source.id === 'records' ? (recordCount ? { text: `${recordCount} saved on this iPhone`, tone: 'on' } : null)
@@ -89,7 +108,8 @@ function SourceList({ connections, records, onOpen, onOpenInsights, hasInsights,
             })}
           </div>
         </section>
-      ))}
+        );
+      })}
       <ul className="ay-hc-promises">
         <li>Used only for your own matches and insights.</li>
         <li>Never shared with or sold to brands, and never changes what partners pay for or where they show up.</li>
@@ -361,8 +381,8 @@ function FloImport({ onUpload }) {
 
 /* -------------------------------- Request -------------------------------- */
 const POPULAR = ['Fitbit', 'Samsung Health', 'Natural Cycles', 'Clue', 'Apple Watch', 'Ultrahuman', 'Withings'];
-function RequestSource({ signedIn, onSignIn }) {
-  const [name, setName] = useState('');
+function RequestSource({ signedIn, onSignIn, presetName = '' }) {
+  const [name, setName] = useState(presetName);
   const [note, setNote] = useState('');
   const [state, setState] = useState('idle');
   const [error, setError] = useState(null);
@@ -372,7 +392,7 @@ function RequestSource({ signedIn, onSignIn }) {
     setState('busy'); setError(null);
     try { await requestSource(name.trim(), note.trim() || null); setState('done'); } catch (err) { setError(errorText(err)); setState('idle'); }
   };
-  if (state === 'done') return <p className="ay-hc-done" role="status">Thanks. Requests decide what ayna connects next.</p>;
+  if (state === 'done') return <p className="ay-hc-done" role="status">Sent to the ayna team. Requests decide what we connect next.</p>;
   return (
     <form className="ay-hc-detail ay-hc-form" onSubmit={submit}>
       <div className="ay-hc-detail-head"><Icon name="plus" lg /><div><h2>Request an app or wearable</h2><p>Tell us what you use</p></div></div>
@@ -420,7 +440,7 @@ export default function HealthConnectionsScreen({ selectedId, onSelect, onBack, 
 
   if (source.id === 'upload') return <HealthUploadScreen signedIn={signedIn} onSignIn={onSignIn} presetApp={preset === 'flo' ? 'Flo' : ''} onDone={(msg) => { health.refresh(); done(msg); }} />;
   if (source.id === 'flo') return <FloImport onUpload={() => onSelect('upload:flo')} />;
-  if (source.id === 'request') return <RequestSource signedIn={signedIn} onSignIn={onSignIn} />;
+  if (source.id === 'request') return <RequestSource signedIn={signedIn} onSignIn={onSignIn} presetName={preset ? decodeURIComponent(preset) : ''} />;
   if (source.id === 'records') return <HealthRecordsScreen source={source} userId={authUser?.id || null} saved={health.records} onSignIn={onSignIn} onDone={done} />;
   if (source.availability === 'needs_approval' || source.availability === 'later' || source.availability === 'blocked') return <PendingDetail source={source} />;
 

@@ -18,6 +18,7 @@
  * Responses never echo health values back except on GET (her own data, to her).
  * Health data never goes to analytics, logs, LLMs or brands from here.
  */
+import { sendSuggestionEmail, TEAM_EMAILS } from './suggestions.js';
 import { verifyUser } from './_usageLimit.js';
 import { rateLimit } from './_rateLimit.js';
 import {
@@ -78,7 +79,10 @@ export default async function handler(req, res) {
       if (!limited.ok) return res.status(429).json({ error: 'rate_limited' });
       const { error: insertError } = await admin.from('health_source_requests').insert({ user_id: userId, source_name: name, note });
       if (insertError) throw new Error('request_save_failed');
-      return res.status(200).json({ ok: true });
+      // Tell the founders. Only what she typed; no name, email or health data.
+      // Saved either way: an email failure never loses the request.
+      const emailed = await sendSuggestionEmail(sourceRequestEmail({ name, note }));
+      return res.status(200).json({ ok: true, emailed });
     }
 
     if (action === 'delete_all') {
@@ -185,4 +189,16 @@ export default async function handler(req, res) {
     logHealthError('health-data', e?.message);
     return res.status(500).json({ error: 'health_data_failed' });
   }
+}
+
+const esc = (t) => String(t || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+export function sourceRequestEmail({ name, note }) {
+  const lines = [['App or wearable', name], ['Note', note]].filter(([, v]) => v);
+  return {
+    from: process.env.SUGGESTION_FROM_EMAIL || process.env.CONTACT_FROM_EMAIL || 'Ayna <puloma@aynahealth.co>',
+    to: TEAM_EMAILS(),
+    subject: `App or wearable request: ${name}`,
+    text: `Someone asked ayna to connect an app or wearable.\n\n${lines.map(([k, v]) => `${k}: ${v}`).join('\n')}\n`,
+    html: `<p>Someone asked ayna to connect an app or wearable.</p><table cellpadding="4">${lines.map(([k, v]) => `<tr><td><b>${esc(k)}</b></td><td>${esc(v)}</td></tr>`).join('')}</table>`,
+  };
 }

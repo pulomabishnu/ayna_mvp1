@@ -18,7 +18,7 @@ import '../screens/profile/health-connections.css';
 
 const sourceNames = (sources) => sources.map((s) => SOURCE_NAMES[s] || s).join(' and ');
 const fmtDay = (day) => new Date(`${day}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
-const SUGGEST_LABEL = { 'sleep.trouble': 'sleep', 'cycle.irregular': 'irregular cycles', 'energy.fatigue': 'energy' };
+const SUGGEST_LABEL = { 'sleep.trouble': 'sleep', 'cycle.irregular': 'irregular cycles', 'energy.fatigue': 'low energy' };
 
 function Delta({ metric, delta }) {
   if (delta == null) return <span className="ay-hd-delta is-none">Building your usual</span>;
@@ -146,15 +146,18 @@ export default function HealthDashboard({ authUser, selectedNeedIds = [], onConn
 
       {ready.length > 0 && (
         <section aria-labelledby="ay-hd-changed">
-          <h2 id="ay-hd-changed" className="ay-hd-h2">In plain words</h2>
+          <h2 id="ay-hd-changed" className="ay-hd-h2">Your week, in short</h2>
           <ul className="ay-hd-lines">
-            {ready.map((s) => (
-              <li key={s.id} className={`is-${s.id}`}>
-                <b>{s.title}</b>
-                <span>{s.explanation || s.headline}</span>
-                {s.change && s.change.direction !== 'flat' && <small>{s.change.text}</small>}
-              </li>
-            ))}
+            {ready.map((s) => {
+              const boosted = s.signal && health.matchContext?.byNeed?.[s.signal.needId];
+              return (
+                <li key={s.id} className={`is-${s.id}`}>
+                  <b>{s.title}</b>
+                  <span>{s.plain || s.explanation || s.headline}</span>
+                  {boosted && <small>Because {SUGGEST_LABEL[s.signal.needId] || 'this'} is one of your goals, those picks rank a little higher for you right now.</small>}
+                </li>
+              );
+            })}
           </ul>
           {sources.length > 0 && <p className="ay-hd-small">From {sourceNames(sources)}. Trends, not diagnoses.</p>}
         </section>
@@ -162,13 +165,13 @@ export default function HealthDashboard({ authUser, selectedNeedIds = [], onConn
 
       {suggestions.length > 0 && onAddGoal && (
         <section className="ay-hd-suggest" aria-labelledby="ay-hd-suggest-title">
-          <h2 id="ay-hd-suggest-title" className="ay-hd-h2">Worth adding to your goals?</h2>
+          <h2 id="ay-hd-suggest-title" className="ay-hd-h2">Something to add?</h2>
           {suggestions.map((s) => (
             <div key={s.needId} className="ay-hd-suggest-item">
-              <p>{s.summary}. Add {SUGGEST_LABEL[s.needId] || 'it'} and ayna will match you for it too.</p>
+              <p>{s.summary}. Want ayna to match you for {SUGGEST_LABEL[s.needId] || 'it'} too?</p>
               {added[s.needId]
                 ? <p className="ay-hd-added" role="status">Added. Your matches now include {SUGGEST_LABEL[s.needId] || 'it'}.</p>
-                : <button type="button" className="ay-hc-primary" onClick={() => add(s.needId)}>Add {SUGGEST_LABEL[s.needId] || 'it'}</button>}
+                : <button type="button" className="ay-hc-primary" onClick={() => add(s.needId)}>Add {SUGGEST_LABEL[s.needId] || 'it'} to my goals</button>}
             </div>
           ))}
         </section>

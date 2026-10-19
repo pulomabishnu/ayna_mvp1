@@ -19,7 +19,7 @@ import '../eco-needs.css';
 
 const AREA_TONES = ['#F7BADD', '#769EBE', '#3E2723', '#F7BADD', '#769EBE', '#3E2723'];
 const MIN_SHELF_SCORE = 50;
-const SUGGEST_LABEL = { 'sleep.trouble': 'sleep', 'cycle.irregular': 'irregular cycles', 'energy.fatigue': 'energy' };
+const SUGGEST_LABEL = { 'sleep.trouble': 'sleep', 'cycle.irregular': 'irregular cycles', 'energy.fatigue': 'low energy' };
 
 function CareLinks({ care, limit = 4 }) {
   if (!care) return null;
@@ -174,8 +174,8 @@ export default function EcosystemScreen({
 
     {ecoTab !== 'dashboard' && healthSuggestions.length > 0 && onAddGoal && <section className="ay-eco-suggest" aria-label="From your health data">
       {healthSuggestions.map((s) => <div key={s.needId} className="ay-hd-suggest-item">
-        <p>{s.summary}. Add {SUGGEST_LABEL[s.needId] || 'it'} and ayna will match you for it too.</p>
-        <button type="button" className="ay-hc-primary" onClick={() => onAddGoal(s.needId)}>Add {SUGGEST_LABEL[s.needId] || 'it'}</button>
+        <p>{s.summary}. Want ayna to match you for {SUGGEST_LABEL[s.needId] || 'it'} too?</p>
+        <button type="button" className="ay-hc-primary" onClick={() => onAddGoal(s.needId)}>Add {SUGGEST_LABEL[s.needId] || 'it'} to my goals</button>
       </div>)}
     </section>}
 

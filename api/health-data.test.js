@@ -151,6 +151,36 @@ describe('/api/health-data', () => {
     expect((await call({ action: 'import', categories: [], rows: [{}] })).body.error).toBe('no_categories');
   });
 
+  it('a source request emails the three founders with only what she typed', async () => {
+    vi.stubEnv('RESEND_API_KEY', 'test-key');
+    const sent = [];
+    const realFetch = globalThis.fetch;
+    globalThis.fetch = async (url, opts) => { sent.push({ url, body: JSON.parse(opts.body) }); return { ok: true, text: async () => '' }; };
+    try {
+      const r = await call({ action: 'request_source', name: 'Fitbit', note: 'my <b>watch</b>' });
+      expect(r.statusCode).toBe(200);
+      expect(r.body.emailed).toBe(true);
+      expect(ctx.db.tables.health_source_requests).toHaveLength(1);
+      expect(sent[0].url).toBe('https://api.resend.com/emails');
+      expect(sent[0].body.to).toEqual(['ameera@aynahealth.co', 'eliz@aynahealth.co', 'puloma@aynahealth.co']);
+      expect(sent[0].body.subject).toBe('App or wearable request: Fitbit');
+      expect(sent[0].body.html).toContain('&lt;b&gt;watch&lt;/b&gt;');
+      expect(JSON.stringify(sent[0].body)).not.toContain('u1');
+    } finally { globalThis.fetch = realFetch; }
+  });
+
+  it('the request is still saved when the email fails', async () => {
+    vi.stubEnv('RESEND_API_KEY', 'test-key');
+    const realFetch = globalThis.fetch;
+    globalThis.fetch = async () => ({ ok: false, status: 429, text: async () => 'daily quota' });
+    try {
+      const r = await call({ action: 'request_source', name: 'Clue' });
+      expect(r.statusCode).toBe(200);
+      expect(r.body.emailed).toBe(false);
+      expect(ctx.db.tables.health_source_requests).toHaveLength(1);
+    } finally { globalThis.fetch = realFetch; }
+  });
+
   it('source requests store a name and short note only', async () => {
     expect((await call({ action: 'request_source', name: '  WHOOP ', note: 'pls' })).body.ok).toBe(true);
     expect(ctx.db.tables.health_source_requests[0]).toMatchObject({ user_id: 'u1', source_name: 'WHOOP', note: 'pls' });
