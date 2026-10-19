@@ -127,7 +127,6 @@ export default async function handler(req, res) {
   privateHeaders(res);
   const { user, error, admin } = await verifyUser(req);
   if (error || !user || !admin) return res.status(error === 'server_misconfigured' ? 503 : 401).json({ error: error || 'auth_required' });
-  // Unconfirmed addresses don't count (anyone can sign up as one), same as send-test-email.js.
   if (!user.email_confirmed_at || !isAdminEmail(user.email)) return res.status(403).json({ error: 'forbidden' });
 
   if (req.method === 'GET') {
