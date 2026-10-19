@@ -1,5 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { ALL_PRODUCTS } from '../../data/products';
+import { productHref, isPlainLeftClick } from '../../utils/productRoute.js';
 
 /*
  * Geena Yousry's postpartum stretch marks article, laid out exactly as she
@@ -33,10 +35,23 @@ const REFS = [
   ['Wang, F., Li, X., Wang, X., & Jiang, X. (2020). Efficacy of topical silicone gel in scar management: A systematic review and meta-analysis of randomised controlled trials. International Wound Journal, 17(3), 765–773.', '10.1111/iwj.13337'],
 ];
 
-// Her product picks, styled as she drew them. None of them is in the catalog
-// yet, so they are labels, not links.
+// Her product picks, styled as she drew them. A pick that is in the ayna
+// catalog links to its ayna product page (opened in place on a plain click);
+// the rest stay labels until they have a product card.
+const PICK_IDS = {
+  'BUNI Transform Body and Scar Oil': 'p-buni-transform-scar-body-oil',
+  'TRANSFORM Scar & Body Treatment Oil': 'p-buni-transform-scar-body-oil',
+};
+const OpenProductContext = createContext(null);
+const PILL_STYLE = { padding: '9px 14px', borderRadius: '99px', background: 'var(--g-butter)', color: '#3e2723', font: "700 14px/1 'DM Sans'" };
+
 function Pill({ name }) {
-  return <span className="ay-geena__pill" style={{ padding: '9px 14px', borderRadius: '99px', background: 'var(--g-butter)', color: '#3e2723', font: "700 14px/1 'DM Sans'" }}>{name}</span>;
+  const onOpenProduct = useContext(OpenProductContext);
+  const product = PICK_IDS[name] ? ALL_PRODUCTS.find((p) => p.id === PICK_IDS[name]) : null;
+  if (!product) return <span className="ay-geena__pill" style={PILL_STYLE}>{name}</span>;
+  return (
+    <a className="ay-geena__pill" href={productHref(product)} style={{ ...PILL_STYLE, textDecoration: 'none' }} onClick={(e) => { if (!onOpenProduct || !isPlainLeftClick(e)) return; e.preventDefault(); onOpenProduct(product); }}>{name}</a>
+  );
 }
 
 // The site's stylesheets restyle every p, span and card with !important, which
@@ -68,6 +83,7 @@ const SCOPED_CSS = `
 .ay-geena a { color: var(--g-fg); }
 .ay-geena a:hover { color: var(--g-fg); text-decoration-thickness: 2px; }
 .ay-geena:not(.is-light) a:hover { color: #f7badd; }
+.ay-geena a.ay-geena__pill, .ay-geena a.ay-geena__pill:hover { color: #3e2723; }
 .ay-geena ::selection { background: #f7badd; color: #3e2723; }
 .ay-geena .ay-geena__next:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #f7badd !important; color: #3e2723 !important; }
 `;
@@ -84,7 +100,7 @@ function useSiteDark() {
   return dark;
 }
 
-export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onOpenNext, fallback = null }) {
+export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onOpenNext, onOpenProduct = null, fallback = null }) {
   const [p, setP] = useState(0);
   const [refsOpen, setRefsOpen] = useState(false);
   const dark = useSiteDark();
@@ -116,6 +132,7 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
   ) : null;
 
   return (
+    <OpenProductContext.Provider value={onOpenProduct}>
     <ShadowPage fallback={fallback}>
     <style>{SCOPED_CSS}</style>
     <div className={`ay-geena${dark ? '' : ' is-light'}`} style={{ minHeight: "100vh", background: "var(--g-bg)", color: "var(--g-fg)" }}>
@@ -421,5 +438,6 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
       </main>
     </div>
     </ShadowPage>
+    </OpenProductContext.Provider>
   );
 }

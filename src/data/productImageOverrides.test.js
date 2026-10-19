@@ -11,6 +11,8 @@ const PACKSHOT_PENDING = new Set([
   ...['p-alubri-moisture-renewal-kit', 'p-momotaro-body-oil', 'p-tampontribe-tampons-bulk-buy', 'p-tampontribe-pads-bulk-buy', 'p-tampontribe-menstrual-cup'],
   ...['p-momotaro-salve', 'p-momotaro-daily-probiotic', 'p-momotaro-urinary-tract-supplement', 'p-momotaro-vaginal-suppository', 'p-momotaro-hydrosol-toner', 'p-momotaro-bath-body-tonic'],
   // Evidence-backed basics (Oct 17): retailer photos until packshots are shot.
+  // PR haul additions (Oct 19, Ameera): retailer photos until packshots are shot.
+  ...['p-goodbug-good-down-there', 'p-cbb-perfect-ph-probiotic-gummies', 'p-estherformula-ceramide-strips', 'p-hero-mighty-patch-original', 'p-hero-pimple-correct', 'p-hero-mighty-cleanser', 'p-cocoandeve-tripeptide-hair-density-serum', 'p-najeau-follicle-drops', 'p-refilled-cytokine-effector-plus', 'p-bigvita-scalp-serum-plus', 'p-kiero-moisturizing-barrier-cream', 'p-kiero-balance-toner-pads', 'p-arrae-mb-1', 'p-cbb-13-in-1-womens-gummies'],
   ...['p-advil-ibuprofen-200', 'p-aleve-naproxen-220', 'p-monistat-3-combo', 'p-taro-clotrimazole-7', 'p-womens-rogaine-foam', 'p-panoxyl-bpo-10-wash', 'p-differin-adapalene-gel', 'p-metamucil-psyllium-orange', 'p-miralax-peg-3350', 'p-nature-made-folic-acid-400', 'p-easyhome-lh-strips-50', 'p-visby-womens-sti-test', 'p-rugby-vitamin-b6-25'],
 ]);
 

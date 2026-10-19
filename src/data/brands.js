@@ -8654,4 +8654,1552 @@ export const BRAND_PRODUCTS = [
         badges: ['Pre-launch', 'Waitlist', 'Female-Founded'],
         isEmergingBrand: true,
     },
+
+    // ---- PR haul products added 2026-10-19 (vaginal health and skin supplements), requested by Ameera. ----
+    // The Good Bug, Good Down There, verified against thegoodbug.com on 2026-10-19
+    // (product page, read with WebFetch and in a browser from a US location, plus the
+    // store's product .json for variants and images). The store shows INR by default and
+    // US dollars to US visitors: $14 for 15 sticks was read from the US view. No Amazon US
+    // listing was found (amazon.com search, 2026-10-19), so there is no ASIN for this one.
+    // The page names four Lactobacillus species but no strain codes and no CFU, so no
+    // strain-level study could be matched. D-mannose and cranberry studies read from their
+    // abstracts via NCBI E-utilities. openFDA food recall search: no matches.
+    // Not a brand partner, no affiliate link.
+    {
+        id: 'p-goodbug-good-down-there',
+        name: 'The Good Bug Good Down There Vaginal Health Stick',
+        brand: 'The Good Bug',
+        category: 'supplement',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health', 'supplement'],
+        tags: ['goodbug', 'tgb', 'vaginal health', 'probiotic', 'synbiotic', 'cranberry', 'd-mannose', 'uti', 'ph balance', 'supplement'],
+        price: '$14 (15 sticks)',
+        whereToBuy: ['thegoodbug.com'],
+        url: 'https://thegoodbug.com/products/good-down-there-for-vaginal-health',
+        image: 'https://cdn.shopify.com/s/files/1/0657/8225/1745/products/GoodDownThere_3.jpg?width=500', // from ayna's sheet; loads
+        summary: "A daily powder stick for vaginal and urinary health. It combines four Lactobacillus species (L. crispatus, L. gasseri, L. jensenii and L. rhamnosus) with D-mannose, cranberry extract, zinc, vitamin C and inulin, in a cranberry flavor. The Good Bug says it promotes a healthy vaginal pH, balances good bacteria, supports urinary tract health and helps reduce UTI recurrence. The page says it is not designed to treat UTIs, BV or yeast infections. Sold in packs of 15, 30, 60 or 90 sticks.",
+        ingredients: "Full ingredient list per The Good Bug: Sweetener [Sorbitol (INS 420(i))], Stabilizer [Xylitol (INS 967)], D-Mannose, Cranberry Extract, Lactobacillus crispatus, Lactobacillus gasseri, Lactobacillus jensenii (spelled \"jenseni\" in the list), Lactobacillus rhamnosus, Zinc Gluconate, Vitamin C, Inulin, Acidity Regulator [Citric Acid (INS 330)], Sweetener [Steviol Glycoside (INS 960)], Anti-Sticking Agent [Magnesium Stearate (INS 470(iii))]. Added cranberry flavor. The page doesn't give strain codes, CFU, or the amount of D-mannose, cranberry or any other ingredient.",
+        safety: {
+            fdaStatus: "Sold in India as a nutraceutical; the product page lists an FSSAI license. In the US this would be a dietary supplement, which the FDA does not evaluate for safety or efficacy. The page shows a \"US FDA Licensed\" badge; the FDA does not license or approve dietary supplements, and ayna found no FDA record for this product.",
+            materials: 'Powder sticks; packs of 15, 30, 60 or 90. Sweetened with sorbitol, xylitol and stevia. Made in India by Sundyota Numandis Probioceuticals for SevenTurns Private Limited, Mumbai. Best before 18 months from manufacture. The page leaves the net quantity blank.',
+            recalls: 'No recalls found.',
+            sideEffects: "The Good Bug says to check with a healthcare practitioner first if you are pregnant or breastfeeding, take prescription medicine for a neurological condition, have allergies to any ingredient, or recently had surgery. It contains sugar alcohols (sorbitol, xylitol). Full warnings are listed below.",
+            opinionAlerts: "The page names four Lactobacillus species but no strain codes or CFU, and gives no amounts for D-mannose or cranberry, so it can't be matched to published trials. It also says D-mannose is more effective than antibiotics at preventing repeat infections; no source is given, and a 598-woman placebo-controlled trial found D-mannose did not prevent repeat UTIs. No study of this product was found.",
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna summary of NIH (NCCIH) information on probiotics and peer-reviewed research on cranberry and D-mannose. Not a direct clinician quote; none of the studies tested this product.',
+        doctorOpinion: "The Good Bug says Good Down There promotes a healthy vaginal pH, balances good bacteria, supports urinary tract health and helps reduce UTI recurrence. No study of this product was found, and the page doesn't cite one.\n\nThe probiotic part can't be checked against research. L. crispatus, L. gasseri, L. jensenii and L. rhamnosus are species found in a healthy vagina, but the page lists no strain codes and no CFU count. NIH notes that the effects of a probiotic depend on the specific strain: one kind of Lactobacillus helping doesn't mean another will.\n\nFor the urinary claims, the evidence on the two other actives points in different directions. A 2023 Cochrane review of 50 trials (8,857 people) found cranberry products probably lower the risk of symptomatic, culture-confirmed UTIs in women with recurrent UTIs (8 trials, 1,555 women), with moderate-certainty evidence overall. For D-mannose, a 2024 double-blind, placebo-controlled trial of 598 women with recurrent UTIs across 99 UK primary care practices found 2 g a day for 6 months did not reduce repeat UTIs (51% vs 56%, not a significant difference), and the authors said it should not be recommended for prevention in that group. The page doesn't list how much cranberry or D-mannose each stick contains.",
+        doctorOpinionShort: "Cranberry products probably lower repeat UTIs in women prone to them, but a large 2024 trial found D-mannose did not. The probiotic species are vaginal ones, but no strain codes or CFU are given, so they can't be matched to research. No study of this product was found.",
+        doctorOpinionCitations: [
+            { url: 'https://thegoodbug.com/products/good-down-there-for-vaginal-health', label: 'thegoodbug.com: Good Down There, ingredients and claims' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/37068952/', label: 'PubMed: Cranberries for preventing urinary tract infections, Cochrane review (2023)', chipLabel: 'Cranberry Cochrane review, 50 trials (2023)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/38587819/', label: 'PubMed: d-Mannose for prevention of recurrent urinary tract infection among women, randomized clinical trial (JAMA Intern Med, 2024)', chipLabel: 'D-mannose trial, 598 women (2024)' },
+            { url: 'https://www.nccih.nih.gov/health/probiotics-usefulness-and-safety', label: 'NIH (NCCIH): Probiotics, usefulness and safety' },
+        ],
+        whoItsFor: [
+            'Adults who want a daily powder aimed at vaginal and urinary health',
+            'People who prefer a stick mixed into water over capsules',
+            'Not a treatment for an active UTI, BV or yeast infection: see a clinician if you have symptoms',
+        ],
+        howToUse: {
+            intro: "The Good Bug sizes its packs at one stick a day (15 sticks for 15 days, 30 for a month). The product page doesn't give mixing directions; its other sticks are mixed into water, so check the box.",
+            steps: [
+                'Take one stick a day, going by the pack sizes.',
+                'The Good Bug also suggests fiber, plenty of water, less sugar and refined carbs, wiping front to back and urinating after sex.',
+            ],
+            sourceUrl: 'https://thegoodbug.com/products/good-down-there-for-vaginal-health',
+            sourceLabel: 'thegoodbug.com: Good Down There',
+        },
+        warnings: [
+            'Pregnant or breastfeeding, taking prescription medicine for a neurological condition, allergic to any ingredient, or recently had surgery: check with a doctor first (per The Good Bug).',
+            'Not a treatment for a UTI, BV or yeast infection (per The Good Bug). See a clinician for burning, unusual discharge, odor or fever.',
+            'Contains sugar alcohols (sorbitol, xylitol), which can loosen stools in some people.',
+        ],
+        communityReview: "The Good Bug's product page shows 4.3 out of 5 stars from 1,629 reviews. The first reviews shown talk about glowing skin, stronger nails and PCOS symptoms rather than vaginal or urinary health, so the reviews may be pooled across the brand's products. These are reviews on the brand's own site; no independent review data was found at time of writing.",
+        effectiveness: 'No study of this product was found. Cranberry products probably lower repeat UTIs in women prone to them; D-mannose did not in a 598-woman trial. The probiotic strains are not named, so their effect is unknown.',
+        ingredientScienceNote: "These studies tested cranberry and D-mannose on their own, not this product. The page doesn't give amounts, so it isn't known whether a stick matches the doses studied.",
+        ingredientScience: [
+            {
+                name: 'Cranberry',
+                text: 'A 2023 Cochrane review of 50 randomized trials (8,857 people) found cranberry products reduced symptomatic, culture-confirmed UTIs overall (moderate-certainty evidence). In women with recurrent UTIs (8 trials, 1,555 women) they probably lowered the risk by about a quarter. They showed little or no benefit in pregnant women or older adults in care homes. Stomach side effects were similar to placebo.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/37068952/', label: 'PubMed: Cranberries for preventing urinary tract infections (Cochrane Database Syst Rev, 2023)' },
+                ],
+            },
+            {
+                name: 'D-mannose',
+                text: 'In a 2024 double-blind, placebo-controlled trial at 99 UK primary care practices, 598 women with recurrent UTIs took 2 g of D-mannose powder or a placebo daily for 6 months. 51% of the D-mannose group and 56% of the placebo group saw a doctor for a suspected UTI, a difference that was not statistically significant, and no secondary outcome differed. The authors concluded D-mannose should not be recommended for UTI prevention in this group.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/38587819/', label: 'PubMed: d-Mannose for prevention of recurrent UTI among women, randomized clinical trial (JAMA Intern Med, 2024)' },
+                ],
+            },
+            {
+                name: 'Why the strain matters',
+                text: "NIH notes that different probiotics can have different effects: if one kind of Lactobacillus helps, that doesn't mean another kind will do the same. Good Down There lists species (L. crispatus, L. gasseri, L. jensenii, L. rhamnosus) but no strain codes, so no study can be matched to it.",
+                citations: [
+                    { url: 'https://www.nccih.nih.gov/health/probiotics-usefulness-and-safety', label: 'NIH (NCCIH): Probiotics, usefulness and safety' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: {
+                links: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/37068952/', text: 'Cranberries for preventing UTIs (Cochrane, 2023)', summary: '50 trials; probably fewer repeat UTIs in women prone to them.' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/38587819/', text: 'D-mannose for recurrent UTI, randomized trial (2024)', summary: '598 women; no reduction in repeat UTIs vs placebo.' },
+                ],
+            },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://thegoodbug.com/products/good-down-there-for-vaginal-health',
+                        text: 'thegoodbug.com: Good Down There customer reviews',
+                        summary: "The Good Bug's own product page shows 4.3 out of 5 stars from 1,629 reviews; the reviews shown first are about skin and nails, so they may be pooled across products.",
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+
+    // CBB (Curvy Body Bears), Perfect PH Probiotic Gummies, verified against the Amazon
+    // listing (ASIN B0F7QXCGR5, read in a browser on 2026-10-19: title, ingredients text,
+    // description, bottle images, product details, reviews). The brand's own site,
+    // curvybodybears.com, loads but does not sell this product (its catalog has the Perfect PH
+    // Feminine Wash and other gummies only), so `url` is the Amazon dp link. The only
+    // probiotic named is Bacillus coagulans, with no strain code and no CFU; the listing
+    // shows no Supplement Facts panel. openFDA food recall search: no matches.
+    // Not a brand partner, no affiliate link.
+    {
+        id: 'p-cbb-perfect-ph-probiotic-gummies',
+        name: 'CBB Perfect PH Probiotic Gummies',
+        brand: 'CBB (Curvy Body Bears)',
+        category: 'supplement',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health', 'supplement'],
+        tags: ['cbb', 'curvy body bears', 'vaginal health', 'probiotic', 'gummies', 'ph balance', 'bacillus coagulans', 'vegan', 'supplement'],
+        price: '$17.99 on Amazon (60 gummies)',
+        userRating: 4.5,
+        userRatingSourceUrl: 'https://www.amazon.com/dp/B0F7QXCGR5',
+        whereToBuy: ['Amazon'],
+        url: 'https://www.amazon.com/dp/B0F7QXCGR5',
+        image: 'https://m.media-amazon.com/images/I/41qCKV-R2gL._AC_SL500_.jpg', // from ayna's sheet; loads
+        summary: "Pineapple-flavored gummies sold as \"vaginal probiotics\". The bottle says they help maintain a healthy vaginal pH, support yeast balance and keep odor away, and lists odor control, healthy pH, yeast balance and vaginal flow. The only probiotic named is Bacillus coagulans, a spore-forming gut bacterium, not one of the Lactobacillus species that dominate a healthy vagina. The Amazon title also lists vitamin C. 60 gummies, which the listing calls a 30-day supply. Vegan, gluten-free, soy-free and non-GMO per the listing.",
+        ingredients: "Per the Amazon listing: Natural Pineapple Flavor, Orange juice concentrate, Bacillus Coagulans. The bottle's key ingredients are Bacillus coagulans (probiotic) and pineapple fruit powder. The listing title and description also mention vitamin C, but it isn't in the ingredient text. No strain code, CFU count or Supplement Facts panel was shown.",
+        safety: {
+            fdaStatus: 'Sold as a dietary supplement. The listing says its statements have not been evaluated by the FDA and that it is not intended to diagnose, treat, cure, or prevent any disease.',
+            materials: '60 gummies (30-day supply per the listing). Manufacturer listed as Curvy Body Bears; country of manufacture not stated. Labeled vegan, gluten-free, halal and allergen-free on the bottle.',
+            recalls: 'No recalls found.',
+            sideEffects: "No warnings or directions were shown on the Amazon listing. Check the bottle before use, and ask a clinician first if you are pregnant, breastfeeding or have a medical condition.",
+            opinionAlerts: "Labeled \"vaginal probiotics\", but the only probiotic named is Bacillus coagulans, with no strain code or CFU, so it can't be matched to any study. Vitamin C is in the title but not the ingredient list. No study of this product was found.",
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna summary of NIH (NCCIH) information on probiotics. Not a direct clinician quote; no study of this product or its strain was found.',
+        doctorOpinion: "CBB says Perfect PH gummies help maintain a healthy vaginal pH, support yeast balance and keep odor away. No study of this product was found, and the listing doesn't cite one.\n\nThe only probiotic named is Bacillus coagulans, a spore-forming bacterium mostly studied for the gut. A healthy vagina is usually dominated by Lactobacillus species, and this product contains none. The label gives no strain code and no CFU count, so there is no way to match it to published research. NIH notes that effects depend on the specific strain, so research on one kind of probiotic doesn't carry over to another.\n\nThe listing also names vitamin C in its title but not in the ingredient list, so it isn't clear how much, if any, each gummy contains.",
+        doctorOpinionShort: "Sold as a vaginal probiotic, but its only named probiotic is Bacillus coagulans, a gut bacterium, with no strain code or CFU, so it can't be matched to any research. No study of this product was found.",
+        doctorOpinionCitations: [
+            { url: 'https://www.amazon.com/dp/B0F7QXCGR5', label: 'Amazon: CBB Perfect PH Probiotic Gummies, ingredients and claims' },
+            { url: 'https://www.nccih.nih.gov/health/probiotics-usefulness-and-safety', label: 'NIH (NCCIH): Probiotics, usefulness and safety' },
+        ],
+        whoItsFor: [
+            'Adults who want a flavored gummy instead of a capsule and accept that the evidence is thin',
+            'Not a treatment for BV, a yeast infection or a UTI: see a clinician if you have symptoms such as odor, itching or unusual discharge',
+        ],
+        warnings: [
+            'A probiotic doesn\'t treat an active infection. See a clinician for symptoms of BV, a yeast infection or a UTI.',
+            'Pregnant, breastfeeding, or managing a medical condition: check with a clinician before use.',
+            'The listing shows no dose directions; follow the bottle.',
+        ],
+        communityReview: "Rated 4.5 out of 5 from 139 ratings on Amazon (81% five-star, 7% four-star, 4% three-star, 3% two-star, 5% one-star). Most of the reviews shown praise the pineapple taste and the gummy format; a few say it helps them feel balanced. One reviewer whose spouse took them for a while noticed no improvements or side effects, and said the gummies stuck together over time.",
+        effectiveness: 'No study of this product or its strain was found. The label names Bacillus coagulans without a strain code or CFU, so its effect is unknown.',
+        ingredientScience: [
+            {
+                name: 'Why the strain matters',
+                text: "NIH notes that different probiotics can have different effects, and the most common probiotics are Lactobacillus and Bifidobacterium. This product's only named probiotic is Bacillus coagulans, with no strain code, so no study can be matched to it.",
+                citations: [
+                    { url: 'https://www.nccih.nih.gov/health/probiotics-usefulness-and-safety', label: 'NIH (NCCIH): Probiotics, usefulness and safety' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: {
+                links: [
+                    { url: 'https://www.nccih.nih.gov/health/probiotics-usefulness-and-safety', text: 'NIH (NCCIH): Probiotics', summary: 'Effects depend on the specific strain.' },
+                ],
+            },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.amazon.com/dp/B0F7QXCGR5',
+                        text: 'Amazon: CBB Perfect PH Probiotic Gummies reviews',
+                        summary: '4.5 out of 5 from 139 ratings on Amazon.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+
+    // ESTHER FORMULA, Esther Lyuh Ceramide Strips (sold on Amazon US as "Hyaluronic Acid &
+    // Ceramide Strips (15ct)"), identified from the Amazon listing for ASIN B0FQN7VN4R, read in
+    // a browser on 2026-10-19: title, ingredients, directions, product details, all gallery
+    // images (box front reads "Esther Lyuh Ceramide Strips, Dietary Supplement, 15 Strips /
+    // Net Wt. 0.16 oz (4.5g)"; Supplement Facts panel), and reviews. estherformula.com did not
+    // load (browser error page). Cross-checked against the Olive Young US product page for the
+    // same box. No PubMed record for "activeCera" or for this product. openFDA food recall
+    // search: no matches. Not a brand partner, no affiliate link.
+    {
+        id: 'p-estherformula-ceramide-strips',
+        name: 'ESTHER FORMULA Esther Lyuh Ceramide Strips (Hyaluronic Acid & Ceramide)',
+        brand: 'ESTHER FORMULA',
+        category: 'supplement',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['supplement', 'skin-hair'],
+        tags: ['esther formula', 'esther lyuh', 'skin', 'hydration', 'ceramide', 'hyaluronic acid', 'gotu kola', 'oral strip', 'k-beauty', 'beauty supplement', 'supplement'],
+        price: '$24.99 on Amazon (15 strips)',
+        userRating: 4.4,
+        userRatingSourceUrl: 'https://www.amazon.com/dp/B0FQN7VN4R',
+        whereToBuy: ['Amazon', 'Olive Young US'],
+        url: 'https://www.amazon.com/dp/B0FQN7VN4R',
+        whereToBuyLinks: {
+            Amazon: 'https://www.amazon.com/dp/B0FQN7VN4R',
+            'Olive Young US': 'https://us.oliveyoung.com/products/UA99304443',
+        },
+        image: 'https://m.media-amazon.com/images/I/51q39aFdEdL._AC_SL500_.jpg', // from ayna's sheet; loads
+        summary: "Apple-flavored strips that dissolve on the roof of the mouth, from the Korean supplement brand ESTHER FORMULA. Each strip has 960 mcg of plant ceramides (activeCera, fermented from fruit and vegetable extract), 90 mg of hyaluronic acid (Hi-Aqua) and 10 mg of gotu kola extract. The brand says it supports skin hydration, elasticity and the skin barrier. 15 individually wrapped strips. Vegan and sugar-free; sweetened with aspartame.",
+        ingredients: "Supplement Facts per strip (0.3 g), from the Amazon listing images: Ceramides (from Fruits and Vegetable Extract) 960 mcg, Hyaluronic Acid 90 mg, Gotu Kola Extract 10 mg, Sodium 5 mg, 0 calories. Other ingredients per Olive Young US: Pullulan, Calcium Lactate, Beta-Cyclodextrin, Fruit and Vegetable Extract, Glycerin, Hydroxypropyl Methylcellulose, Citric Acid, Aspartame, Apple Flavor.",
+        safety: {
+            fdaStatus: 'Sold as a dietary supplement, which the FDA does not evaluate for safety or efficacy. The listing says its statements have not been evaluated by the FDA.',
+            materials: '15 individually wrapped oral strips, 0.3 g each (4.5 g total). Manufacturer listed on Amazon as ESTHER FORMULA USA Corporation; country of manufacture not stated on the pages read.',
+            recalls: 'No recalls found.',
+            sideEffects: "Contains phenylalanine (from aspartame), which matters for people with phenylketonuria (PKU). For adults only; check with a doctor before use if pregnant, nursing, taking medication or managing a medical condition (per Olive Young US). Full warnings are listed below.",
+            opinionAlerts: "The \"clinically proven\" numbers (+60% hydration, +35% or +50% elasticity) come from trials of the activeCera ingredient, footnoted as 12 people over 8 weeks, not of these strips, and ayna couldn't find that trial published. The listing's images give two different elasticity numbers and two different doses (1 to 2 strips vs 1 to 4 strips a day). No study of this product was found.",
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna summary of a peer-reviewed meta-analysis of oral skin-moisturizing supplements. Not a direct clinician quote; no study of this product was found.',
+        doctorOpinion: "ESTHER FORMULA says these strips support skin hydration, elasticity and the skin barrier. Its listing shows \"clinically proven\" gains of 60% in hydration and 35% in elasticity, but its own footnotes say those come from an 8-week trial of the activeCera ingredient in 12 people, not of these strips. ayna couldn't find that trial published, and the listing doesn't say whether it had a placebo group. A separate +50% skin barrier protein figure is footnoted as a cell-culture (lab) study, and the claim that the strip absorbs through the mouth lining is footnoted as lab and rat work on hyaluronic acid only. No study of this product was found.\n\nThere is some broader research on oral skin supplements. A 2022 meta-analysis of 66 randomized trials found that oral ceramides and oral hyaluronan both improved skin hydration compared with placebo in healthy adults, and that ceramides also reduced water loss through the skin. Those trials used other ceramide and hyaluronan products at their own doses, so they show what the ingredients can do, not that this product does. One of the four authors worked for a pharmaceutical company.",
+        doctorOpinionShort: "Oral ceramides and hyaluronan improved skin hydration in a 2022 meta-analysis of randomized trials. The brand's own numbers come from a 12-person ingredient trial ayna couldn't find published. No study of this product was found.",
+        doctorOpinionCitations: [
+            { url: 'https://www.amazon.com/dp/B0FQN7VN4R', label: 'Amazon: ESTHER FORMULA Hyaluronic Acid & Ceramide Strips, ingredients and claims' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/35719159/', label: 'PubMed: Effectiveness of dietary supplements for skin moisturizing in healthy adults, systematic review and meta-analysis of RCTs (Front Nutr, 2022)', chipLabel: 'Oral skin supplements meta-analysis, 66 trials (2022)' },
+        ],
+        whoItsFor: [
+            'Adults with dry or dehydrated skin who want to try an oral supplement alongside topical care',
+            'People who prefer a dissolving strip to capsules',
+            'Not for people with phenylketonuria (PKU): it contains aspartame',
+        ],
+        howToUse: {
+            intro: 'Per ESTHER FORMULA on Amazon. The listing gives two different amounts: the text says 1 to 4 strips daily, and the how-to image says 1 to 2 daily for maintenance.',
+            steps: [
+                'Place one strip on the roof of your mouth.',
+                'Let it dissolve completely. No water needed.',
+                'Take 1 to 2 strips a day (image) or up to 4 (listing text); check the box you receive.',
+            ],
+            sourceUrl: 'https://www.amazon.com/dp/B0FQN7VN4R',
+            sourceLabel: 'Amazon: ESTHER FORMULA Ceramide Strips',
+        },
+        warnings: [
+            'Phenylketonurics: contains phenylalanine (aspartame).',
+            'For adults only. Keep out of reach of children.',
+            'Pregnant, nursing, taking medication, or managing a medical condition: check with a doctor before use.',
+        ],
+        communityReview: "Rated 4.4 out of 5 from 63 ratings on Amazon (75% five-star, 8% four-star, 7% three-star, 1% two-star, 9% one-star). Reviewers mostly mention easy use, taste and softer, more hydrated skin; one 4-star reviewer said results weren't dramatic, and a 3-star reviewer said the strips were stale and crunchy. At least one top review was an Amazon Vine review of a free product.",
+        effectiveness: 'Oral ceramides and hyaluronan improved skin hydration in a meta-analysis of randomized trials of other products. No study of these strips was found.',
+        ingredientScienceNote: "These results come from trials of other oral ceramide and hyaluronan products. This product's own figures come from an unpublished ingredient trial.",
+        ingredientScience: [
+            {
+                name: 'Oral ceramides and hyaluronan',
+                text: 'A 2022 systematic review and meta-analysis of 66 randomized controlled trials in healthy adults found oral ceramides increased skin hydration and reduced water loss through the skin compared with placebo, and oral hyaluronan increased skin hydration (too few trials to judge water loss). All the supplements studied were safe over the trial periods, usually 24 weeks or less. One author worked for a pharmaceutical company.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/35719159/', label: 'PubMed: Effectiveness of dietary supplements for skin moisturizing in healthy adults (Front Nutr, 2022)' },
+                ],
+            },
+            {
+                name: 'activeCera (brand-cited trial)',
+                text: "ESTHER FORMULA cites an 8-week human trial of 12 people for its +60% hydration and +35% elasticity figures. The trial tested the activeCera ingredient, not these strips, and ayna couldn't find it published in PubMed.",
+                citations: [
+                    { url: 'https://www.amazon.com/dp/B0FQN7VN4R', label: 'Amazon: ESTHER FORMULA listing images and footnotes' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: {
+                links: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/35719159/', text: 'Oral skin-moisturizing supplements, meta-analysis (2022)', summary: '66 trials; oral ceramides and hyaluronan improved hydration. Not this product.' },
+                ],
+            },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.amazon.com/dp/B0FQN7VN4R',
+                        text: 'Amazon: ESTHER FORMULA Ceramide Strips reviews',
+                        summary: '4.4 out of 5 from 63 ratings on Amazon.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://us.oliveyoung.com/products/UA99304443',
+                        text: 'Olive Young US: Esther Lyuh Ceramide Strips',
+                        summary: 'Retailer page with the full ingredient list and warnings.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+
+    // ---- PR haul products added 2026-10-19 (acne), requested by Ameera. ----
+    // Hero Cosmetics, Mighty Patch Original, verified against
+    // herocosmetics.us/products/mighty-patch-original on 2026-10-19.
+    // Regulatory status from openFDA device registration/listing (Church &
+    // Dwight, registration 2280705, product codes NAD and NAC, Class I).
+    // openFDA 510(k) searches (applicant "hero", applicant "church dwight",
+    // device_name "mighty") returned no Mighty Patch or hydrocolloid clearance.
+    // Science: Chao et al., J Cosmet Sci 2006 (read on library.scconline.org).
+    // Not a brand partner, no affiliate link.
+    {
+        id: 'p-hero-mighty-patch-original',
+        name: 'Mighty Patch Original Pimple Patch',
+        brand: 'Hero Cosmetics',
+        category: 'skincare',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['acne', 'skin', 'pcos', 'pimple patch', 'hydrocolloid', 'drug-free'],
+        price: '$12.99 for 36 patches on herocosmetics.us',
+        whereToBuy: ['Hero Cosmetics'],
+        url: 'https://herocosmetics.us/products/mighty-patch-original',
+        image: 'https://m.media-amazon.com/images/I/61p+1+md+8L._AC_SL500_.jpg', // from ayna's sheet; loads (checked 2026-10-19)
+        summary: 'A drug-free hydrocolloid patch (12 mm) that you stick on a pimple overnight. Hero says it absorbs gunk in about 6 hours, shrinks the look of a pimple in one use, and keeps you from picking at it. It has no acne medicine in it, so it works as a covering, not a treatment.',
+        ingredients: 'Hero names hydrocolloid as the key ingredient and calls it medical-grade. The product page does not publish a full material list.',
+        safety: {
+            fdaStatus: 'Listed with the FDA as a Class I wound dressing (occlusive dressing, product code NAD, and hydrophilic dressing, product code NAC) under Church & Dwight\'s registration, per openFDA. No 510(k) clearance was found for it. It is not a drug and has no Drug Facts label.',
+            materials: '12 mm round hydrocolloid patches, 36 per pack (also sold in 72). Hero describes them as drug-free.',
+            recalls: 'No recalls found. openFDA device recall searches for Church & Dwight and for "Mighty Patch" returned no patch recalls.',
+            sideEffects: 'The product page lists no warnings or side effects. In the one small trial of a similar hydrocolloid acne dressing (not this brand), no significant side effects were seen in either group.',
+            opinionAlerts: 'Contains no acne medicine. Hydrocolloid patches were studied on inflamed, red bumps; the small trial did not test blackheads, whiteheads or deep cysts. Wear time is stated as about 6 hours in one place and 6 to 8 hours in another on Hero\'s page.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from Hero Cosmetics; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'Hero says Mighty Patch absorbs gunk in about 6 hours, shrinks the look of a pimple in one use, and protects it from picking and popping. It also says the patch is drug-free, derm-tested and suitable for sensitive skin. No independent study of this product was found.\n\nThe main evidence for hydrocolloid on pimples is one small pilot trial from 2006. In Taiwan, 20 people with mild to moderate acne were randomized to a hydrocolloid acne dressing (made by 3M, not Hero) or plain skin tape on inflamed bumps for 7 days, with the dressing changed every 2 days. The authors report that the hydrocolloid group had a significantly greater drop in acne severity and redness, and their inflamed bumps healed in about 3.2 days compared with 4.3 days with tape. No significant side effects were found. With only 10 people per group and one week of follow-up, the authors called it a pilot and asked for a larger study.\n\nRegulatory status: openFDA lists Mighty Patch as a Class I wound dressing under Church & Dwight. That is a listing, not an FDA clearance or approval, and no 510(k) clearance was found.',
+        doctorOpinionShort: 'A drug-free hydrocolloid sticker for single pimples. One 2006 pilot trial of 20 people found a similar hydrocolloid dressing (made by 3M) helped inflamed bumps heal faster than plain tape over a week. FDA-listed as a Class I wound dressing; no 510(k) clearance found. No independent study of this product was found.',
+        doctorOpinionCitations: [
+            { url: 'https://herocosmetics.us/products/mighty-patch-original', label: 'herocosmetics.us: Mighty Patch Original, claims and directions' },
+            { url: 'https://library.scconline.org/v057n02/1', label: 'J Cosmet Sci (2006): Chao et al., randomized double-blind pilot trial of a hydrocolloid acne dressing vs skin tape', chipLabel: 'Hydrocolloid pilot trial, 20 people (2006)' },
+            { url: 'https://api.fda.gov/device/registrationlisting.json?search=proprietary_name:patch+AND+registration.name:church&limit=10', label: 'openFDA: device registration and listing for Mighty Patch (Church & Dwight, Class I, codes NAD and NAC)', chipLabel: 'FDA device listing' },
+        ],
+        whoItsFor: [
+            'People with a single red, inflamed pimple who want to cover it overnight and stop picking',
+            'People who want a drug-free option or are already using another acne medicine',
+            'Not a treatment for blackheads, whiteheads, deep cysts, or widespread acne',
+        ],
+        howToUse: {
+            intro: 'Per Hero\'s product page.',
+            steps: [
+                'Cleanse your face and let it dry.',
+                'Apply a patch to the blemish.',
+                'Leave it on for about 6 to 8 hours (overnight), then peel it off.',
+            ],
+            sourceUrl: 'https://herocosmetics.us/products/mighty-patch-original',
+            sourceLabel: 'herocosmetics.us: Mighty Patch Original',
+        },
+        warnings: [
+            'Contains no acne medicine (Hero describes it as drug-free). Hero\'s page lists no other warnings.',
+        ],
+        communityReview: 'Hero\'s own product page shows 5,460 reviews but no numeric average rating. On Amazon the 36-count listing shows 4.6 out of 5 stars from 186,714 ratings (read 2026-10-19).',
+        effectiveness: 'One 20-person, one-week pilot trial found a hydrocolloid acne dressing (not this brand) helped inflamed bumps heal faster than plain tape. No study of Mighty Patch itself was found.',
+        ingredientScience: [
+            {
+                name: 'Hydrocolloid dressing on inflamed pimples',
+                text: 'In a 2006 randomized, double-blind pilot trial at a hospital dermatology department in Taiwan, 20 people aged 11 to 35 with mild to moderate acne were split into two groups of 10. One group used a hydrocolloid acne dressing made by 3M on inflamed bumps and the other used skin tape, for 7 days. The authors report a significantly greater drop in acne severity and in redness, oiliness and dark marks with the hydrocolloid dressing, and inflamed bumps healed in about 3.2 days vs 4.3 days. No significant side effects were found. It was a small, short pilot study of a different brand\'s dressing, and the authors called for a larger trial.',
+                citations: [
+                    { url: 'https://library.scconline.org/v057n02/1', label: 'J Cosmet Sci (2006): A pilot study on efficacy treatment of acne vulgaris using a new method, randomized double-blind trial with Acne Dressing (Chao et al.)' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://herocosmetics.us/products/mighty-patch-original',
+                        text: 'herocosmetics.us: Mighty Patch Original customer reviews',
+                        summary: 'Hero\'s own product page shows 5,460 reviews; no average rating was shown.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: false,
+    },
+
+    // Hero Cosmetics, Pimple Correct (salicylic acid 2% gel pen), verified
+    // against herocosmetics.us/products/pimple-correct and the DailyMed Drug
+    // Facts (setid 869afe67-edae-4778-b990-08c2313d5aad, Church & Dwight,
+    // NDC 10237-003-00, 10 mL) on 2026-10-19. openFDA drug label search
+    // (generic salicylic acid, manufacturer Church & Dwight) returned this
+    // label. No openFDA drug enforcement (recall) record for Church & Dwight
+    // mentions Hero. Not a brand partner, no affiliate link.
+    {
+        id: 'p-hero-pimple-correct',
+        name: 'Pimple Correct Acne Clearing Gel Pen',
+        brand: 'Hero Cosmetics',
+        category: 'skincare',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['acne', 'skin', 'pcos', 'salicylic acid', 'spot treatment'],
+        price: '$19.99 for 10 ml (0.34 fl oz) on herocosmetics.us',
+        whereToBuy: ['Hero Cosmetics'],
+        url: 'https://herocosmetics.us/products/pimple-correct',
+        image: 'https://m.media-amazon.com/images/I/61Le1S+bw0L._AC_SL500_.jpg', // from ayna's sheet; loads (checked 2026-10-19)
+        summary: 'A 2% salicylic acid spot-treatment gel in a twist pen, sold as an over-the-counter acne drug. Hero says it targets early-stage pimples to help stop them getting bigger and helps prevent new ones. Apply a thin layer to clean, dry spots, starting once a day and building up to three times a day if your skin tolerates it.',
+        ingredients: 'Active: salicylic acid 2% (acne treatment). Inactive, per the Drug Facts label: water/aqua/eau, butylene glycol, nigella sativa seed extract, isopentyldiol, sodium polyacrylate, lactic acid, hydroxyethylcellulose, melaleuca alternifolia (tea tree) leaf oil, niacinamide, polydextrose, caffeine, maltodextrin, xanthan gum, allantoin, ceratonia siliqua gum, sodium hydroxide, opuntia ficus-indica stem extract, agar, aloe barbadensis leaf juice powder, glycerin, biosaccharide gum-1, melia azadirachta leaf extract, melia azadirachta flower extract, 1,2-hexanediol, caprylyl glycol, sodium levulinate, glyceryl caprylate, tocopherol, tocopheryl acetate, coccinia indica fruit extract, disodium phosphate, polysorbate 60, ammonium acryloyldimethyltaurate/VP copolymer, gellan gum, sodium anisate, aloe barbadensis flower extract, solanum melongena fruit extract, azelaic acid, corallina officinalis extract, curcuma longa root extract, ocimum sanctum leaf extract, simmondsia chinensis seed oil, sodium phosphate, sebacic acid, limonene.',
+        safety: {
+            fdaStatus: 'FDA-regulated over-the-counter acne drug with a Drug Facts label (DailyMed, Church & Dwight Co., Inc.; distributed by Hero Cosmetics). Salicylic acid 0.5% to 2% is an allowed acne active ingredient under the FDA\'s OTC acne rules.',
+            materials: 'Gel in a 10 ml (0.34 fl oz) twist pen with applicator.',
+            recalls: 'No recalls found. No openFDA drug recall record for Church & Dwight mentions Hero or Pimple Correct.',
+            allergens: 'Contains tea tree leaf oil and limonene. Hero says it has no added fragrance.',
+            sideEffects: 'Dryness, peeling and irritation are possible, and more likely if you use another topical acne medicine at the same time.',
+            opinionAlerts: 'Azelaic acid and niacinamide are listed as inactive ingredients, so their amounts are not given and they should not be counted as treatment doses. Hero\'s FAQ says to check with a doctor before use if pregnant; the Drug Facts label itself has no pregnancy line.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from Hero Cosmetics; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'Hero calls Pimple Correct a max-strength, derm-tested spot treatment that penetrates to help stop early-stage breakouts and helps prevent new ones. No independent study of this product was found.\n\nThe active ingredient is salicylic acid at 2%, the highest strength the FDA allows in over-the-counter acne products. In the American Academy of Dermatology\'s 2024 acne guidelines, topical salicylic acid gets a conditional recommendation, a weaker grade than the strong recommendations given to benzoyl peroxide and topical retinoids such as adapalene. The AAD suggests giving acne treatments 6 to 8 weeks to work.\n\nThe gel also lists azelaic acid, niacinamide and tea tree oil, but only as inactive ingredients with no amounts given, so they should not be thought of as treatment doses.',
+        doctorOpinionShort: 'A 2% salicylic acid spot gel, the top OTC strength. The AAD\'s 2024 guidelines give salicylic acid a conditional (weaker) recommendation than benzoyl peroxide or adapalene. Extra ingredients like azelaic acid and niacinamide are listed as inactive, with no amounts. No independent study of this product was found.',
+        doctorOpinionCitations: [
+            { url: 'https://herocosmetics.us/products/pimple-correct', label: 'herocosmetics.us: Pimple Correct, claims and directions' },
+            { url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=869afe67-edae-4778-b990-08c2313d5aad', label: 'DailyMed: Hero Cosmetics Pimple Correct Drug Facts (salicylic acid 2%)', chipLabel: 'Drug Facts label' },
+            { url: 'https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:38300170%20AND%20SRC:MED&resultType=core&format=json', label: 'J Am Acad Dermatol (2024): Guidelines of care for the management of acne vulgaris (Reynolds et al.), abstract via Europe PMC', chipLabel: 'AAD acne guidelines (2024)' },
+        ],
+        whoItsFor: [
+            'People with a few new, early pimples who want an OTC spot treatment',
+            'People who prefer a precise pen applicator over a full-face product',
+            'Not a substitute for a clinician visit for widespread, painful or hormonal acne that doesn\'t improve',
+        ],
+        howToUse: {
+            intro: 'Per the Drug Facts label and Hero\'s product page.',
+            steps: [
+                'Cleanse skin thoroughly and let it dry.',
+                'Twist the bottom of the pen to release the gel.',
+                'Apply a thin layer over the affected area. Start once a day, then go up to two or three times a day if needed.',
+                'If dryness or peeling is bothersome, cut back to once a day or every other day.',
+            ],
+            sourceUrl: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=869afe67-edae-4778-b990-08c2313d5aad',
+            sourceLabel: 'DailyMed: Pimple Correct Drug Facts',
+        },
+        warnings: [
+            'For external use only.',
+            'Skin irritation and dryness are more likely if you use another topical acne medicine at the same time. If irritation occurs, use only one topical acne medicine at a time.',
+            'Avoid contact with eyes; if contact occurs, rinse thoroughly with water.',
+            'Do not use on open or irritated skin.',
+            'Stop use and ask a doctor if irritation becomes severe.',
+            'Pregnant: check with a doctor first (per Hero\'s FAQ).',
+            'Keep out of reach of children. If swallowed, get medical help or contact a Poison Control Center right away.',
+        ],
+        communityReview: 'Hero\'s own product page shows 539 reviews but no numeric average rating. On Amazon the 0.34 fl oz listing shows 4.3 out of 5 stars from 177 ratings (read 2026-10-19).',
+        effectiveness: 'Salicylic acid 2% is an FDA-allowed OTC acne ingredient with a conditional recommendation in the AAD\'s 2024 guidelines. No study of this product was found.',
+        ingredientScience: [
+            {
+                name: 'Salicylic acid 2%',
+                text: 'The FDA\'s OTC acne rules allow salicylic acid at 0.5% to 2%, so this is the top over-the-counter strength. The American Academy of Dermatology\'s 2024 guidelines, built on a systematic review, give topical salicylic acid a conditional recommendation, weaker than the strong recommendations for benzoyl peroxide, topical retinoids and topical antibiotics.',
+                citations: [
+                    { url: 'https://www.ecfr.gov/current/title-21/chapter-I/subchapter-D/part-333/subpart-D/section-333.310', label: 'FDA (21 CFR 333.310): Acne active ingredients, salicylic acid 0.5 to 2 percent' },
+                    { url: 'https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:38300170%20AND%20SRC:MED&resultType=core&format=json', label: 'J Am Acad Dermatol (2024): Guidelines of care for the management of acne vulgaris, abstract via Europe PMC' },
+                ],
+            },
+        ],
+        scientificCitations: [
+            {
+                url: 'https://www.aad.org/public/diseases/acne/DIY/types-breakouts',
+                text: 'American Academy of Dermatology: How to treat different types of acne',
+                summary: 'AAD guidance: for papules, wash twice daily with a benzoyl peroxide or salicylic acid acne wash, and give treatment 6 to 8 weeks to work. General guidance, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://herocosmetics.us/products/pimple-correct',
+                        text: 'herocosmetics.us: Pimple Correct customer reviews',
+                        summary: 'Hero\'s own product page shows 539 reviews; no average rating was shown.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: false,
+    },
+
+    // Hero Cosmetics, Mighty Cleanser (salicylic acid 2% face wash), verified
+    // against herocosmetics.us/products/mighty-cleanser and the DailyMed Drug
+    // Facts (setid 5597df54-2e58-0d6a-e063-6394a90a1697, Church & Dwight,
+    // NDC 10237-002-50, 150 mL) on 2026-10-19. It IS an OTC acne drug, so it
+    // qualifies. No openFDA drug recall record for Church & Dwight mentions
+    // Hero. Not a brand partner, no affiliate link.
+    {
+        id: 'p-hero-mighty-cleanser',
+        name: 'Mighty Cleanser 2% Salicylic Acid Acne Face Wash',
+        brand: 'Hero Cosmetics',
+        category: 'skincare',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['acne', 'skin', 'pcos', 'cleanser', 'salicylic acid'],
+        price: '$10.99 for 150 ml (5.07 fl oz) on herocosmetics.us',
+        whereToBuy: ['Hero Cosmetics'],
+        url: 'https://herocosmetics.us/products/mighty-cleanser',
+        image: 'https://m.media-amazon.com/images/I/6140V0SQHdL._AC_SL500_.jpg', // from ayna's sheet; loads (checked 2026-10-19)
+        summary: 'A 2% salicylic acid face wash sold as an over-the-counter acne drug. Hero says it clears active pimples, reduces the amount and severity of acne, and helps prevent new breakouts. Use it once or twice a day, massage onto wet skin, and rinse.',
+        ingredients: 'Active: salicylic acid 2% (acne treatment). Inactive, per the Drug Facts label: water, propanediol, cocamidopropylamine oxide, cocamidopropyl betaine, potassium cocoate, glycerin, polyacrylate crosspolymer-6, sodium PCA, polyepsilon-lysine, 1,2-hexanediol, styrene/acrylates copolymer, coco-glucoside, caprylhydroxamic acid, trisodium ethylenediamine disuccinate, sodium benzoate, benzoic acid, citric acid, sodium hydroxide, sodium chloride.',
+        safety: {
+            fdaStatus: 'FDA-regulated over-the-counter acne drug with a Drug Facts label (DailyMed, Church & Dwight Co., Inc.). Salicylic acid 0.5% to 2% is an allowed acne active ingredient under the FDA\'s OTC acne rules.',
+            materials: 'Rinse-off face wash in a 150 ml (5.07 fl oz) tube.',
+            recalls: 'No recalls found. No openFDA drug recall record for Church & Dwight mentions Hero or Mighty Cleanser.',
+            sideEffects: 'Dryness and irritation are possible, and more likely if you use another topical acne medicine at the same time.',
+            opinionAlerts: 'Hero\'s "89% say skin feels soft" style numbers come from a consumer self-assessment of 171 people, not a clinical trial.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from Hero Cosmetics; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'Hero says Mighty Cleanser clears active pimples, reduces the amount and severity of acne, and helps prevent new breakouts. Its other numbers (for example 89% saying skin feels soft and 88% saying it feels less oily) come from a consumer self-assessment of 171 people, which measures how skin feels, not acne counts. No independent study of this product was found.\n\nThe active ingredient is salicylic acid at 2%, the highest strength the FDA allows in over-the-counter acne products. The American Academy of Dermatology suggests washing twice a day with a benzoyl peroxide or salicylic acid acne wash for red bumps, and giving treatment 6 to 8 weeks to work. Its 2024 guidelines give topical salicylic acid a conditional recommendation, weaker than the strong recommendations for benzoyl peroxide and topical retinoids.',
+        doctorOpinionShort: 'A 2% salicylic acid acne face wash, the top OTC strength. The AAD lists salicylic acid washes as an option for red bumps but gives salicylic acid a weaker (conditional) recommendation than benzoyl peroxide or adapalene. Hero\'s percentages come from a 171-person self-assessment of how skin feels. No independent study of this product was found.',
+        doctorOpinionCitations: [
+            { url: 'https://herocosmetics.us/products/mighty-cleanser', label: 'herocosmetics.us: Mighty Cleanser, claims and consumer self-assessment' },
+            { url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5597df54-2e58-0d6a-e063-6394a90a1697', label: 'DailyMed: Hero Mighty Cleanser Drug Facts (salicylic acid 2%)', chipLabel: 'Drug Facts label' },
+            { url: 'https://www.aad.org/public/diseases/acne/DIY/types-breakouts', label: 'American Academy of Dermatology: How to treat different types of acne' },
+        ],
+        whoItsFor: [
+            'People with mild acne or oily, breakout-prone skin who want an OTC acne face wash',
+            'Not a substitute for a clinician visit for widespread, painful or hormonal acne that doesn\'t improve',
+        ],
+        howToUse: {
+            intro: 'Per the Drug Facts label.',
+            steps: [
+                'Use 1 to 2 times a day.',
+                'Wet your hands and face.',
+                'Gently massage onto the face, avoiding the eyes, and rinse thoroughly.',
+                'If dryness or irritation occurs, use it less often; if it continues, stop using it.',
+            ],
+            sourceUrl: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5597df54-2e58-0d6a-e063-6394a90a1697',
+            sourceLabel: 'DailyMed: Mighty Cleanser Drug Facts',
+        },
+        warnings: [
+            'For external use only.',
+            'Skin irritation and dryness are more likely if you use another topical acne medicine at the same time. If irritation occurs, use only one topical acne medicine at a time.',
+            'Avoid the eyes.',
+            'Keep out of reach of children. If swallowed, get medical help or contact a Poison Control Center right away.',
+        ],
+        communityReview: 'Hero\'s own product page shows 83 reviews but no numeric average rating. On Amazon the 5.07 fl oz listing shows 4.7 out of 5 stars from 53 ratings (read 2026-10-19).',
+        effectiveness: 'Salicylic acid 2% is an FDA-allowed OTC acne ingredient with a conditional recommendation in the AAD\'s 2024 guidelines. Hero\'s own data is a 171-person self-assessment of skin feel. No study of this product was found.',
+        ingredientScience: [
+            {
+                name: 'Salicylic acid 2%',
+                text: 'The FDA\'s OTC acne rules allow salicylic acid at 0.5% to 2%, so this is the top over-the-counter strength. The American Academy of Dermatology\'s 2024 guidelines, built on a systematic review, give topical salicylic acid a conditional recommendation, weaker than the strong recommendations for benzoyl peroxide, topical retinoids and topical antibiotics. The AAD\'s patient guidance lists a salicylic acid or benzoyl peroxide wash, twice a day, as a first step for red bumps.',
+                citations: [
+                    { url: 'https://www.ecfr.gov/current/title-21/chapter-I/subchapter-D/part-333/subpart-D/section-333.310', label: 'FDA (21 CFR 333.310): Acne active ingredients, salicylic acid 0.5 to 2 percent' },
+                    { url: 'https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:38300170%20AND%20SRC:MED&resultType=core&format=json', label: 'J Am Acad Dermatol (2024): Guidelines of care for the management of acne vulgaris, abstract via Europe PMC' },
+                    { url: 'https://www.aad.org/public/diseases/acne/DIY/types-breakouts', label: 'American Academy of Dermatology: How to treat different types of acne' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://herocosmetics.us/products/mighty-cleanser',
+                        text: 'herocosmetics.us: Mighty Cleanser customer reviews',
+                        summary: 'Hero\'s own product page shows 83 reviews; no average rating was shown.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: false,
+    },
+
+    // ---- PR haul products added 2026-10-19 (hair thinning and scalp care), requested by Ameera. ----
+    // Coco & Eve Tripeptide Hair Density Serum, verified against
+    // cocoandeve.com/products/tripeptide-hair-density-serum (price, claims,
+    // full ingredient list, how-to, FAQ, review count), the brand's blog post
+    // cocoandeve.com/blogs/news/clinically-tested-hair-serum, and Amazon
+    // B0DF2G14KF (2.03 fl oz, price, rating), all on 2026-10-19. Image from
+    // ayna's sheet (loads). Studies read via NCBI E-utilities. openFDA drug
+    // label, drug/food enforcement and device recall searches for the brand
+    // returned no matches. Not a brand partner, no affiliate link.
+    {
+        id: 'p-cocoandeve-tripeptide-hair-density-serum',
+        name: 'Coco & Eve Tripeptide Hair Density Serum',
+        brand: 'Coco & Eve',
+        category: 'hair',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['coco & eve', 'coco and eve', 'boost therapy', 'hair', 'scalp', 'hair serum', 'thinning', 'shedding', 'peptide', 'caffeine', 'redensyl', 'procapil', 'cosmetic'],
+        price: '$35 for 2.03 fl oz (60 ml) on cocoandeve.com and on Amazon',
+        whereToBuy: ['cocoandeve.com', 'Amazon'],
+        url: 'https://www.cocoandeve.com/products/tripeptide-hair-density-serum',
+        whereToBuyLinks: {
+            'cocoandeve.com': 'https://www.cocoandeve.com/products/tripeptide-hair-density-serum',
+            Amazon: 'https://www.amazon.com/dp/B0DF2G14KF',
+        },
+        image: 'https://m.media-amazon.com/images/I/51xmpBxUvcL._AC_SL500_.jpg', // from ayna's sheet
+        summary: 'A lightweight, leave-in scalp serum in a 2.03 fl oz (60 ml) bottle from Coco & Eve\'s Boost Therapy line. Coco & Eve says it uses two branded ingredient blends, Redensyl and Procapil, plus caffeine, panthenol and a probiotic ferment to reduce thinning and shedding and make hair look denser. Apply a few drops to a clean, dry scalp once a day, ideally at bedtime, and don\'t rinse. It is sold as a cosmetic for both women and men.',
+        ingredients: 'Full ingredient list per Coco & Eve: Aqua (Water), Butylene Glycol, Glycerin, Propanediol, Panthenol, 1,2-Hexanediol, Caffeine, Trisodium Ethylenediamine Disuccinate, PPG-26-Buteth-26, PEG-40 Hydrogenated Castor Oil, Caprylhydroxamic Acid, Sorbitol, Lactic Acid, Cocos Nucifera Oil, Xanthan Gum, Ceratonia Siliqua Gum, Larix Europaea Wood Extract, Glycine, Sodium Metabisulfite, Zinc Chloride, Camellia Sinensis Leaf Extract, Apigenin, Oleanolic Acid, Lactobacillus Ferment Lysate, Biotinoyl Tripeptide-1, Sodium Benzoate, Potassium Sorbate. Coco & Eve\'s FAQ also mentions red clover extract, which is not in this list.',
+        safety: {
+            fdaStatus: 'Sold as a cosmetic; not an FDA-approved drug for hair loss. The FDA-approved over-the-counter treatment for women is minoxidil (see below).',
+            materials: '2.03 fl oz (60 ml) dropper bottle, leave-in. Coco & Eve says it has no added fragrance and is vegan, sulfate-free, silicone-free and paraben-free; ayna did not independently verify those claims. It contains coconut oil and a small amount of sodium metabisulfite (a sulfite preservative).',
+            recalls: 'No recalls found.',
+            sideEffects: 'Coco & Eve\'s product page lists no warnings. Patch test first if you have a sensitive scalp, and stop if you get redness or itching.',
+            opinionAlerts: 'The headline numbers (+214% hair growth in 10 days, +10,200 new hairs in 3 months, +29% denser hair) are labeled by Coco & Eve as "Redensyl testing," meaning tests of the ingredient, not of this serum. Coco & Eve also calls the serum "clinically proven" but doesn\'t say how many people were tested, for how long, or whether there was a comparison group.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from Coco & Eve; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'Coco & Eve says the serum is clinically proven to visibly increase hair density in four weeks and to stimulate hair growth activity in 10 days, and that it reduces hair loss and gives thicker hair bulbs after 4 months. The specific percentages on the page come from testing of Redensyl, one of its ingredient blends, not of this serum. Coco & Eve doesn\'t publish how many people tested the serum itself or whether there was a comparison group, and no published study of this product was found.\n\nThe best human evidence for Redensyl is a 2020 Greek trial of 44 adults with pattern hair loss (41 finished, 23 of them women). They used a lotion combining Redensyl with a second active (Sepicontrol A5) or a vehicle lotion twice a day for 24 weeks. In the active group, the ratio of growing to resting hairs rose from 2.25 to 6.02 and most people rated themselves moderately improved. It was single-blinded, tested a combination product rather than Redensyl alone, and the abstract doesn\'t report how the active group compared with the vehicle group.\n\nCaffeine has one notable trial: in 210 men with pattern hair loss, a 0.2% caffeine scalp liquid did about as well as 5% minoxidil after 6 months. That trial was in men and wasn\'t blinded, and Coco & Eve doesn\'t publish its caffeine concentration. No published study of Procapil on its own, in women, was found that ayna could read.\n\nIf you have thinning hair, a dermatologist can check for causes and discuss treatments with stronger evidence. Minoxidil is the over-the-counter hair-loss treatment the FDA has approved for women.',
+        doctorOpinionShort: 'The big percentages are from tests of one ingredient (Redensyl), not this serum. Redensyl\'s best human study was a 44-person trial of a combination lotion, and caffeine\'s best trial was in men. No published study of this serum was found. Minoxidil is the FDA-approved OTC option for women.',
+        doctorOpinionCitations: [
+            { url: 'https://www.cocoandeve.com/products/tripeptide-hair-density-serum', label: 'cocoandeve.com: Tripeptide Hair Density Serum, ingredients and claims' },
+            { url: 'https://www.cocoandeve.com/blogs/news/clinically-tested-hair-serum', label: 'cocoandeve.com: 10 Days, 214% Fuller Hair (brand blog post)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/32473084/', label: 'PubMed: A randomized, single-blinded, vehicle-controlled study of a topical active blend (Redensyl + Sepicontrol A5) in androgenetic alopecia (Dermatol Ther 2020)', chipLabel: 'Redensyl combination lotion, 44 adults (2020)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/29055953/', label: 'PubMed: Caffeine-based topical liquid 0.2% vs minoxidil 5% in male androgenetic alopecia, open-label randomized trial (Skin Pharmacol Physiol 2017)', chipLabel: 'Caffeine vs minoxidil trial, 210 men (2017)' },
+            { url: 'https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=021812', label: 'FDA (Drugs@FDA): NDA 021812, Women\'s Rogaine 5% minoxidil foam, over-the-counter', chipLabel: 'FDA: minoxidil for women' },
+        ],
+        whoItsFor: [
+            'People with thinning hair or extra shedding who want a non-drug, leave-in cosmetic scalp serum',
+            'People who prefer a formula with no added fragrance',
+            'Not a substitute for seeing a dermatologist about new, sudden or patchy hair loss',
+        ],
+        howToUse: {
+            intro: 'Per Coco & Eve: use once a day, ideally at bedtime.',
+            steps: [
+                'Apply a few drops to a clean, dry scalp, focusing on the areas that need extra care.',
+                'Gently massage it into the scalp.',
+                'Don\'t rinse it off.',
+            ],
+            sourceUrl: 'https://www.cocoandeve.com/products/tripeptide-hair-density-serum',
+            sourceLabel: 'cocoandeve.com: Tripeptide Hair Density Serum',
+        },
+        warnings: [
+            'Contains coconut oil and sodium metabisulfite (a sulfite): patch test first if you react to either.',
+            'Already using minoxidil or another medicated hair-loss treatment: check with a healthcare professional before combining.',
+            'Sudden, patchy or postpartum hair loss: see a dermatologist rather than self-treating.',
+        ],
+        communityReview: 'On cocoandeve.com it shows 4.8 out of 5 stars from 317 reviews. On Amazon it has 4.4 out of 5 stars from 297 ratings; 71% are five stars and 7% are one star. Amazon reviews range from "my hair is NOTICEABLY thicker" after a couple of weeks to "Doesn\'t work" and "makes it soo greasy."',
+        effectiveness: 'No published study of this serum was found. Its headline numbers come from tests of Redensyl, whose best human study tested a combination lotion in 44 adults. Caffeine did about as well as minoxidil in one trial in men.',
+        ingredientScience: [
+            {
+                name: 'Redensyl',
+                text: 'Coco & Eve says Redensyl targets hair follicle stem cells and that Redensyl testing showed +214% hair growth in 10 days and +29% denser hair; those are ingredient tests, not tests of this serum. In a 2020 single-blinded trial, 44 adults with pattern hair loss (41 finished: 18 men, 23 women) used a lotion with Redensyl plus a second active, Sepicontrol A5, or a vehicle lotion twice daily for 24 weeks. In the active group (n = 26), the ratio of growing to resting hairs rose from 2.25 to 6.02, 7.7% had great improvement and 73.1% moderate improvement, with no significant side effects. The product combined two actives, and the abstract doesn\'t compare the active group with the vehicle group.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/32473084/', label: 'PubMed: A randomized, single-blinded, vehicle-controlled study of a topical active blend in the treatment of androgenetic alopecia (Katoulis et al., Dermatol Ther 2020)' },
+                ],
+            },
+            {
+                name: 'Caffeine',
+                text: 'In a 2017 open-label, randomized trial of 210 men with pattern hair loss, a 0.2% caffeine scalp liquid was not inferior to 5% minoxidil after 6 months: the share of hairs in the growth phase improved 10.59% with caffeine and 11.68% with minoxidil. The trial was in men only and wasn\'t blinded. Coco & Eve doesn\'t publish its caffeine concentration.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/29055953/', label: 'PubMed: An open-label randomized multicenter study assessing the noninferiority of a caffeine-based topical liquid 0.2% versus minoxidil 5% solution in male androgenetic alopecia (Dhurat et al., 2017)' },
+                ],
+            },
+            {
+                name: 'Procapil (biotinoyl tripeptide-1, apigenin, oleanolic acid)',
+                text: 'Coco & Eve says Procapil combats follicle aging and prevents hair loss, and that it gives thicker hair bulbs after 4 months. All three Procapil components appear in the ingredient list. ayna did not find a published study of Procapil on its own, in women, that it could read, so this claim is the brand\'s.',
+                citations: [
+                    { url: 'https://www.cocoandeve.com/products/tripeptide-hair-density-serum', label: 'cocoandeve.com: Tripeptide Hair Density Serum, Procapil claim' },
+                ],
+            },
+        ],
+        scientificCitations: [
+            {
+                url: 'https://www.aad.org/public/diseases/hair-loss/types/female-pattern',
+                text: 'American Academy of Dermatology: Female pattern hair loss',
+                summary: 'The AAD says the FDA has approved 2% and 5% minoxidil as a non-prescription treatment for female pattern hair loss and calls it the most-recommended treatment. This is general guidance, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/dp/B0DF2G14KF',
+                        text: 'Amazon: Coco & Eve Tripeptide Hair Density Serum reviews',
+                        summary: '4.4 out of 5 stars from 297 ratings on Amazon as of October 2026.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.cocoandeve.com/products/tripeptide-hair-density-serum',
+                        text: 'cocoandeve.com: Tripeptide Hair Density Serum customer reviews',
+                        summary: '4.8 out of 5 stars from 317 reviews on Coco & Eve\'s own site.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: false,
+    },
+
+    // Najeau Follicle Drops, verified against Amazon B0FM1JK11M (title,
+    // bullets, description, safety info, directions, price, unit price,
+    // rating) and the SalonCentric listing 6039-NAJ1003 (full ingredient list,
+    // sold by Najeau) on 2026-10-19. najeau.com/products/follicle-drops
+    // redirected to najeau.com/lander, so there is no brand product page to
+    // link and `url` is the Amazon listing. Size 1.7 fl oz is worked out from
+    // Amazon's own unit price ($49.00 at $28.82/fl oz). Image from ayna's
+    // sheet (loads). openFDA searches for the brand returned no matches. Not
+    // a brand partner, no affiliate link.
+    {
+        id: 'p-najeau-follicle-drops',
+        name: 'Najeau Follicle Drops Pre-Shampoo Scalp Oil',
+        brand: 'Najeau',
+        category: 'hair',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['najeau', 'follicle drops', 'hair', 'scalp', 'scalp oil', 'pre-shampoo', 'dry scalp', 'buildup', 'olive oil', 'cosmetic'],
+        price: '$49.00 for 1.7 fl oz on Amazon',
+        whereToBuy: ['Amazon'],
+        url: 'https://www.amazon.com/dp/B0FM1JK11M',
+        image: 'https://m.media-amazon.com/images/I/512842JgyVL._AC_SL500_.jpg', // from ayna's sheet
+        summary: 'A pre-shampoo scalp oil in a glass dropper bottle, made from cold-pressed olive, castor, soybean, basil and neem seed oils with aloe. You apply it to a dry scalp, leave it on for several minutes, then shampoo it out, 1 to 3 times a week. Najeau says it breaks down oil and product buildup and leaves the scalp hydrated and pH balanced, and also that it increases blood flow to the follicle and stimulates hair growth.',
+        ingredients: 'Full ingredient list per Najeau\'s SalonCentric listing: Olea Europaea (Olive) Fruit Oil, Ricinus Communis (Castor) Seed Oil, Glycine Soja (Soybean) Oil, Ocimum Basilicum (Basil) Oil, Aloe Barbadensis Leaf Juice, Azadirachta Indica Seed Oil, Tocopherol, Linalool, Geraniol, Eugenol, Citral, Limonene. The Amazon listing names rosemary oil as a key ingredient, but rosemary is not in this list.',
+        safety: {
+            fdaStatus: 'Sold as a cosmetic; not an FDA-approved drug for hair loss.',
+            materials: 'Plant-oil blend in a glass dropper bottle, rinsed out with shampoo. Amazon\'s title calls it fragrance-free, but the ingredient list ends with linalool, geraniol, eugenol, citral and limonene, which are fragrance allergens (likely from the basil oil). It also contains soybean oil.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Per Najeau\'s Amazon safety information: for external use only, avoid the eyes, patch test before use, and ask a physician first if pregnant, nursing or under medical treatment.',
+            opinionAlerts: 'Najeau\'s Amazon listing says it is "consumer tested for visible results in 4 weeks" but gives no numbers or study details. Its growth claims (more blood flow to the follicle, stimulates growth) have no study behind them that ayna could find.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from Najeau; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'Najeau says Follicle Drops break down product and oil buildup at the root, leave the scalp pH balanced and hydrated, increase blood flow to the hair bulb and follicle, and stimulate hair growth. It says consumer testing showed a less dry, itchy and oily scalp in 4 weeks, but gives no numbers, sample size or method. No study of this product was found.\n\nThis is a rinse-off oil used 1 to 3 times a week, so it is best thought of as a scalp-conditioning and cleansing step. ayna did not find research it could read showing that the oils in it (olive, castor, soybean, basil, neem) grow hair or reduce hair loss in people, so the growth claims are the brand\'s. The rosemary oil named on Amazon is not in the published ingredient list.\n\nThe ingredient list also contains linalool, geraniol, eugenol, citral and limonene, which are common fragrance allergens, even though the product is sold as fragrance-free. If you have a fragrance or soy allergy, check with a dermatologist first.\n\nIf you have thinning hair, a dermatologist can check for causes and discuss treatments with stronger evidence. Minoxidil is the over-the-counter hair-loss treatment the FDA has approved for women.',
+        doctorOpinionShort: 'A rinse-off pre-shampoo oil for dry scalp and buildup. Its hair-growth claims have no study behind them that ayna could find, the rosemary named on Amazon isn\'t in the ingredient list, and it contains fragrance allergens despite a fragrance-free label.',
+        doctorOpinionCitations: [
+            { url: 'https://www.amazon.com/dp/B0FM1JK11M', label: 'Amazon: Najeau Follicle Drops, claims, directions and safety information' },
+            { url: 'https://www.saloncentric.com/6039-NAJ1003.html', label: 'SalonCentric: Najeau Follicle Drops, full ingredient list' },
+            { url: 'https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=021812', label: 'FDA (Drugs@FDA): NDA 021812, Women\'s Rogaine 5% minoxidil foam, over-the-counter', chipLabel: 'FDA: minoxidil for women' },
+        ],
+        whoItsFor: [
+            'People with a dry scalp or product buildup who like a pre-wash scalp oil routine',
+            'Not a hair-loss treatment: for thinning hair, see a dermatologist about options with evidence',
+            'Not a good fit if you\'re allergic to soy or to common fragrance allergens such as linalool or limonene',
+        ],
+        howToUse: {
+            intro: 'Per Najeau: use 1 to 3 times a week, or as needed, before shampooing.',
+            steps: [
+                'Shake well.',
+                'Part dry hair into sections and apply 3 to 6 drops in each section.',
+                'Massage gently into the scalp with your fingers or a scalp massager.',
+                'Leave on for several minutes, then double shampoo and condition as usual.',
+            ],
+            sourceUrl: 'https://www.amazon.com/dp/B0FM1JK11M',
+            sourceLabel: 'Amazon: Najeau Follicle Drops',
+        },
+        warnings: [
+            'External use only. Avoid the eyes; if contact occurs, rinse thoroughly with water (per Najeau).',
+            'Patch test before use (per Najeau). Contains soybean oil and the fragrance allergens linalool, geraniol, eugenol, citral and limonene.',
+            'Pregnant, nursing or under medical treatment: consult a physician before use (per Najeau).',
+            'Keep out of reach of children.',
+        ],
+        communityReview: 'On Amazon it has 4.5 out of 5 stars from 25 ratings; 57% are five stars and none are one or two stars. All of the reviews shown on the page are Amazon Vine reviews of a free product. Reviewers mostly describe a less dry scalp and an oil that rinses clean, and several say the herbal smell is strong. No reviews were found on a Najeau brand site.',
+        effectiveness: 'A cleansing and conditioning scalp oil. No study of this product was found, and ayna found no human evidence it could read that its oils grow hair.',
+        ingredientScience: [],
+        scientificCitations: [
+            {
+                url: 'https://www.aad.org/public/diseases/hair-loss/types/female-pattern',
+                text: 'American Academy of Dermatology: Female pattern hair loss',
+                summary: 'The AAD says the FDA has approved 2% and 5% minoxidil as a non-prescription treatment for female pattern hair loss and calls it the most-recommended treatment. This is general guidance, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/dp/B0FM1JK11M',
+                        text: 'Amazon: Najeau Follicle Drops reviews',
+                        summary: '4.5 out of 5 stars from 25 ratings as of October 2026; the reviews shown are Vine reviews of a free product.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+
+    // Refilled Hair Recovery Cytokine Effector Plus (Amazon title: "cADPR
+    // Effector Plus Hair Growth Spot Serum"), verified against Amazon
+    // B0GMRT3ZLD (title, bullets, ingredients and safety info as Amazon shows
+    // them, price, unit price, rating, manufacturer cnf Co., Ltd.) and Ulta
+    // (ulta.com/p/hair-recovery-cytokine-effector-plus-pimprod2057765: full
+    // ingredient list, claims, how-to, 0.51 oz, $29.00) on 2026-10-19. No
+    // Refilled brand product page was found, so `url` is the Amazon listing.
+    // Image from ayna's sheet (loads). PubMed has no study of cyclic ADP-ribose
+    // and hair (one unrelated hit). openFDA searches returned no matches. Not
+    // a brand partner, no affiliate link.
+    {
+        id: 'p-refilled-cytokine-effector-plus',
+        name: 'Refilled Hair Recovery Cytokine Effector Plus (Spot Serum)',
+        brand: 'Refilled',
+        category: 'hair',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['refilled', 'effector plus', 'cadpr', 'cytokine', 'hair', 'scalp', 'hair serum', 'thinning', 'hairline', 'edges', 'roll-on', 'korean', 'cosmetic'],
+        price: '$27.99 for 0.51 fl oz (15 ml) on Amazon; $29.00 at Ulta',
+        whereToBuy: ['Amazon', 'Ulta'],
+        url: 'https://www.amazon.com/dp/B0GMRT3ZLD',
+        whereToBuyLinks: {
+            Amazon: 'https://www.amazon.com/dp/B0GMRT3ZLD',
+            Ulta: 'https://www.ulta.com/p/hair-recovery-cytokine-effector-plus-pimprod2057765',
+        },
+        image: 'https://m.media-amazon.com/images/I/61AgTzHlPLL._AC_SL500_.jpg', // from ayna's sheet
+        summary: 'A small Korean roll-on scalp serum (0.51 fl oz, 15 ml) with a stainless steel roller, meant for spot use on the hairline, part, crown or brows. Refilled builds it around cADPR (cyclic adenosine diphosphate ribose), which it calls patented technology, plus salicylic acid, menthol, biotin and botanical extracts. Refilled says to use it 2 to 4 times a day without rinsing. It is sold as a cosmetic.',
+        ingredients: 'Full ingredient list per Ulta: Water, Alcohol Denat., Glycerin, Dipropylene Glycol, Butylene Glycol, Lecithin, Dioscorea Japonica Root Extract, Viola Mandshurica Flower Extract, Aloe Barbadensis Leaf Extract, Ulmus Davidiana Root Extract, Laminaria Japonica Extract, Menthol, 1,2-Hexanediol, Salicylic Acid, Panthenol, Fragrance, Arginine, Caprylyl Glycol, Polysorbate 20, Caprylic/Capric Triglyceride, Nicotinic Acid Adenine Dinucleotide Phosphate, Xylitol, Cannabis Sativa Seed Oil, Houttuynia Cordata Extract, Ginkgo Biloba Leaf Extract, Citrus Limon (Lemon) Fruit Extract, Chamaecyparis Obtusa Leaf Extract, Bambusa Vulgaris Extract, Pinus Densiflora Leaf Extract, Thuja Orientalis Extract, Glycine, Propolis Extract, Citrus Nobilis (Mandarin Orange) Oil, Serine, Glutamic Acid, Glutathione, Zingiber Officinale (Ginger) Root Oil, Cyclic Adenosine Diphosphate Ribose, Aspartic Acid, Leucine, Polyglyceryl-4 Caprate, Alanine, Lysine, Tyrosine, Phenylalanine, Proline, Threonine, Valine, Isoleucine, Histidine, Cysteine, Methionine, Niacinamide, Biotin, Inositol, Sodium Ascorbyl Phosphate, Tocopherol, Limonene, Linalool. Amazon lists the ingredients only as "cADPR. NAD+. Salicylic Acid. Biotin. Cytokine." The full list has no ingredient named cytokine and no NAD+ (it has a related compound, nicotinic acid adenine dinucleotide phosphate).',
+        safety: {
+            fdaStatus: 'Sold as a cosmetic; not an FDA-approved drug for hair loss.',
+            materials: '0.51 fl oz (15 ml) glass roll-on bottle with a stainless steel roller. The second ingredient is denatured alcohol, and it contains salicylic acid, menthol, added fragrance, limonene and linalool. Amazon says it is non-returnable and shipped as a hazardous material.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Per Refilled\'s Amazon safety information: external use only; stop if rash or irritation occurs when the skin is exposed to direct sunlight and see a doctor if it continues; don\'t apply on wounds; rinse right away if it gets in your eyes. Ulta adds: stop if you get excessive discomfort or irritation, and don\'t use on damaged or broken skin.',
+            opinionAlerts: 'Refilled\'s results (89.90% less hair fall in concentrated areas, 11.65% less scalp redness and irritation, visible improvement after 2 weeks) are described only as "clinical testing with dermatologist supervision," with no details on how many people took part or whether there was a comparison group. No published research on cADPR for hair was found.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from Refilled; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'Refilled says, based on clinical testing with dermatologist supervision, that this serum reduced hair fall along the hairline, crown and part by 89.90%, reduced scalp redness and irritation by 11.65%, and visibly improved problem areas after 2 weeks. It doesn\'t say how many people were tested, for how long, or whether there was a comparison group, and no published study of this product was found.\n\nThe ingredient Refilled builds the product around, cADPR (cyclic adenosine diphosphate ribose), has no published hair research that ayna could find: a PubMed search for it with hair returned one unrelated study. The listing also says the serum contains cytokines and NAD+, but neither appears by name in the full ingredient list on Ulta. Biotin is a common hair ingredient, but a 2017 review found evidence for it only in people with a deficiency or specific hair and nail conditions, and that review was about biotin taken by mouth, not on the scalp.\n\nThe formula is alcohol-based and contains salicylic acid, menthol and fragrance, and Refilled says to use it up to 4 times a day. That is a lot of exposure for a sensitive scalp or hairline, so patch test first.\n\nIf you have thinning hair, a dermatologist can check for causes and discuss treatments with stronger evidence. Minoxidil is the over-the-counter hair-loss treatment the FDA has approved for women.',
+        doctorOpinionShort: 'Refilled\'s results come from unpublished testing with no details. Its headline ingredient, cADPR, has no published hair research ayna could find, and the "cytokine" and "NAD+" on Amazon aren\'t named in the full ingredient list. Alcohol-based with salicylic acid, menthol and fragrance.',
+        doctorOpinionCitations: [
+            { url: 'https://www.ulta.com/p/hair-recovery-cytokine-effector-plus-pimprod2057765', label: 'Ulta: Refilled Hair Recovery Cytokine Effector Plus, ingredients, claims and directions' },
+            { url: 'https://www.amazon.com/dp/B0GMRT3ZLD', label: 'Amazon: Refilled cADPR Effector Plus, listing and safety information' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/28879195/', label: 'PubMed: A review of the use of biotin for hair loss (Skin Appendage Disord 2017)', chipLabel: 'Biotin review (2017)' },
+            { url: 'https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=021812', label: 'FDA (Drugs@FDA): NDA 021812, Women\'s Rogaine 5% minoxidil foam, over-the-counter', chipLabel: 'FDA: minoxidil for women' },
+        ],
+        whoItsFor: [
+            'People who want a small, cooling roll-on for a thinning hairline, part or crown and are comfortable with brand-only evidence',
+            'Not ideal for a sensitive scalp: it contains alcohol, salicylic acid, menthol and fragrance',
+            'Not a substitute for seeing a dermatologist about new, sudden or patchy hair loss',
+        ],
+        howToUse: {
+            intro: 'Per Refilled (Ulta listing): use 2 to 4 times a day, about every 3 to 4 hours, day or evening.',
+            steps: [
+                'Apply directly to thinning areas: hairline, crown, part line or eyebrows.',
+                'Gently massage into the scalp with your fingertips in circular motions.',
+                'Let it absorb fully. No rinsing needed.',
+            ],
+            sourceUrl: 'https://www.ulta.com/p/hair-recovery-cytokine-effector-plus-pimprod2057765',
+            sourceLabel: 'Ulta: Refilled Hair Recovery Cytokine Effector Plus',
+        },
+        warnings: [
+            'External use only. Rinse right away if it gets in your eyes (per Refilled).',
+            'Stop using it if you get a rash or irritation, including with sun exposure, and see a doctor if it continues (per Refilled).',
+            'Don\'t apply on wounds, damaged or broken skin (per Refilled).',
+            'Contains alcohol, salicylic acid, menthol and fragrance: patch test first if you have a sensitive scalp.',
+            'Keep away from children under 3 (per Refilled).',
+        ],
+        communityReview: 'On Amazon it has 4.6 out of 5 stars from 29 ratings; 72% are five stars and none are one or two stars. All of the reviews shown on the page are Amazon Vine reviews of a free product. Reviewers mostly mention the cooling feel, the easy roller and less itching; a few say they see a little new growth after a few weeks, and others haven\'t noticed a change in density yet. ayna did not capture review numbers from Ulta.',
+        effectiveness: 'No published study of this serum or of cADPR for hair was found. Refilled\'s results come from unpublished testing with no details on size or design.',
+        ingredientScience: [
+            {
+                name: 'cADPR (cyclic adenosine diphosphate ribose)',
+                text: 'Refilled calls this patented Korean scalp technology that supports healthier-looking hair and stronger-looking roots. A PubMed search for cyclic ADP-ribose and hair returned one study, about hair cells in the inner ear, not scalp hair. ayna found no published research on it for hair loss.',
+                citations: [
+                    { url: 'https://www.ulta.com/p/hair-recovery-cytokine-effector-plus-pimprod2057765', label: 'Ulta: Refilled Effector Plus, ingredient claims' },
+                ],
+            },
+            {
+                name: 'Biotin',
+                text: 'Refilled says biotin helps hair look thicker and fuller. A 2017 review of biotin for hair and nails found 18 reported cases where it helped, all in people with an underlying problem such as biotin deficiency, and concluded there isn\'t enough evidence to support it in healthy people. The review covered biotin taken by mouth, not applied to the scalp.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/28879195/', label: 'PubMed: A review of the use of biotin for hair loss (Patel et al., Skin Appendage Disord 2017)' },
+                ],
+            },
+        ],
+        scientificCitations: [
+            {
+                url: 'https://www.aad.org/public/diseases/hair-loss/types/female-pattern',
+                text: 'American Academy of Dermatology: Female pattern hair loss',
+                summary: 'The AAD says the FDA has approved 2% and 5% minoxidil as a non-prescription treatment for female pattern hair loss and calls it the most-recommended treatment. This is general guidance, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/dp/B0GMRT3ZLD',
+                        text: 'Amazon: Refilled cADPR Effector Plus reviews',
+                        summary: '4.6 out of 5 stars from 29 ratings as of October 2026; the reviews shown are Vine reviews of a free product.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+
+    // BIGVITA Scalp Serum+, verified against bigvita.com/products/scalp-serum
+    // (price, claims incl. "4% AnaGain", how-to, FAQ, review stats), Amazon
+    // B0D82212P3 (title, bullets, price, unit price, rating, manufacturer
+    // LUNA INC) and H-E-B (heb.com/product-detail/.../15992170: full
+    // ingredient list, 1.02 oz) on 2026-10-19. Size: Amazon's unit price
+    // ($39.00 at $38.24/fl oz) and H-E-B both give 1.02 oz; BIGVITA says a box
+    // holds three bottles. Image from ayna's sheet (loads). Studies read via
+    // NCBI E-utilities. openFDA searches returned no matches. Not a brand
+    // partner, no affiliate link.
+    {
+        id: 'p-bigvita-scalp-serum-plus',
+        name: 'BIGVITA Scalp Serum+',
+        brand: 'BIGVITA',
+        category: 'hair',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['bigvita', 'scalp serum+', 'anagain', 'pea sprout', 'hair', 'scalp', 'hair serum', 'thinning', 'shedding', 'biotin', 'centella', 'cosmetic'],
+        price: '$39.00 for a box of three bottles (1.02 fl oz total) on bigvita.com and Amazon',
+        whereToBuy: ['bigvita.com', 'Amazon'],
+        url: 'https://www.bigvita.com/products/scalp-serum',
+        whereToBuyLinks: {
+            'bigvita.com': 'https://www.bigvita.com/products/scalp-serum',
+            Amazon: 'https://www.amazon.com/dp/B0D82212P3',
+        },
+        image: 'https://m.media-amazon.com/images/I/51O7+TsgxZL._AC_SL500_.jpg', // from ayna's sheet
+        summary: 'A leave-in, water-based scalp serum that comes as a box of three small bottles (1.02 fl oz in total) with a massaging applicator tip. BIGVITA says it contains 4% AnaGain (a pea sprout extract) plus centella, Biota orientalis leaf extract, biotin and niacinamide, and that it reduces shedding and supports thicker-looking hair. BIGVITA says each bottle lasts about 5 to 10 days, so a box lasts roughly 2 to 4 weeks. It is sold as a cosmetic.',
+        ingredients: 'Full ingredient list per H-E-B: Water/Aqua/Eau, Ethyl Alcohol, Butylene Glycol, Niacinamide, Pentylene Glycol, Allantoin, Centella Asiatica Leaf Extract, Pisum Sativum (Pea) Sprout Extract, Biotin, Biota Orientalis Leaf Extract, PEG-40, Hydrogenated Castor Oil, Betaine, Disodium EDTA, Fragrance/Parfum, Citric Acid, Phenoxyethanol, Ethylhexylglycerin. BIGVITA says the pea sprout extract (AnaGain) is at 4%.',
+        safety: {
+            fdaStatus: 'Sold as a cosmetic; not an FDA-approved drug for hair loss.',
+            materials: 'Three small bottles plus a massaging applicator tip. The second ingredient is alcohol, and it contains added fragrance (BIGVITA describes a "citron noir" scent). BIGVITA calls it clean, non-toxic and hormone-free; ayna did not independently verify those claims. BIGVITA says it is made in Canada.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Per the H-E-B and Amazon listings: external use only, avoid contact with eyes. Contains alcohol and fragrance, so patch test first if you have a sensitive scalp.',
+            opinionAlerts: 'BIGVITA says AnaGain is "clinically studied." The study ayna read applied a 2% pea sprout fluid to 10 volunteers and measured hair-related gene activity, not hair growth, and was run by the ingredient\'s maker. The hair-loss result in that paper came from a pea sprout supplement taken by mouth, not a scalp serum.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from BIGVITA; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'BIGVITA says 4% AnaGain is clinically studied to reactivate hair growth by shortening the resting phase and extending the growth phase, that centella improves scalp circulation, that Biota orientalis supports the growth cycle, and that the serum reduces shedding. No study of this product was found.\n\nThe main human study of pea sprout extract is a 2020 short report by researchers at Mibelle, the company that makes AnaGain. Applying a fluid with 2% pea sprout extract to the scalp of 10 volunteers raised the activity of two hair-related genes (FGF7 and noggin). That measured gene activity, not hair growth. In a separate pilot of 21 people, a 100 mg pea sprout supplement taken by mouth for 8 weeks reduced hair loss. A 2025 study found pea sprout extract supported hair growth signals in human hair cells and in mice. None of this tested a scalp serum for hair growth in people.\n\nCentella has lab evidence only: in a 2017 study, a centella extract helped lab-grown human hair papilla cells. Biotin helps hair mainly in people who are deficient, according to a 2017 review of oral biotin. ayna did not read a study of Biota orientalis for hair loss in people; BIGVITA\'s own page says more human studies are needed.\n\nIf you have thinning hair, a dermatologist can check for causes and discuss treatments with stronger evidence. Minoxidil is the over-the-counter hair-loss treatment the FDA has approved for women.',
+        doctorOpinionShort: 'Pea sprout extract (AnaGain) has a 10-person scalp study that measured gene activity, not hair growth, run by the ingredient\'s maker; its hair-loss result came from a supplement taken by mouth. Centella has lab evidence only. No study of this serum was found.',
+        doctorOpinionCitations: [
+            { url: 'https://www.bigvita.com/products/scalp-serum', label: 'bigvita.com: Scalp Serum+, claims, FAQ and how to use' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/31680356/', label: 'PubMed: Clinical evaluation of pea sprout extract in the treatment of hair loss (Phytother Res 2020)', chipLabel: 'Pea sprout extract, 10 + 21 people (2020)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/41309367/', label: 'PubMed: Pea sprout extract promotes hair follicle regeneration, cell and mouse study (J Microbiol Biotechnol 2025)', chipLabel: 'Pea sprout cell and mouse study (2025)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/29032741/', label: 'PubMed: Titrated extract of Centella asiatica in cultured human dermal papilla cells (Biosci Biotechnol Biochem 2017)', chipLabel: 'Centella lab study (2017)' },
+            { url: 'https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=021812', label: 'FDA (Drugs@FDA): NDA 021812, Women\'s Rogaine 5% minoxidil foam, over-the-counter', chipLabel: 'FDA: minoxidil for women' },
+        ],
+        whoItsFor: [
+            'People with shedding or thinning hair who want a light, non-greasy cosmetic scalp serum with a massaging tip',
+            'People comfortable with early-stage ingredient evidence',
+            'Not a substitute for seeing a dermatologist about new, sudden or patchy hair loss',
+        ],
+        howToUse: {
+            intro: 'Per BIGVITA: use daily. A bottle lasts about 7 to 10 days with daily use.',
+            steps: [
+                'Remove the cap from the serum bottle and attach the included applicator.',
+                'Apply the serum directly to your scalp.',
+                'Gently massage it in. No rinsing needed.',
+            ],
+            sourceUrl: 'https://www.bigvita.com/products/scalp-serum',
+            sourceLabel: 'bigvita.com: Scalp Serum+',
+        },
+        warnings: [
+            'External use only; avoid contact with eyes (per the H-E-B listing).',
+            'Contains alcohol and added fragrance: patch test first if you have a sensitive scalp.',
+            'Already using minoxidil or another medicated hair-loss treatment: check with a healthcare professional before combining.',
+        ],
+        communityReview: 'On bigvita.com it shows 4.69 out of 5 stars from 70 reviews (48 five-star and 22 four-star). On Amazon it has 3.7 out of 5 stars from 34 ratings; 53% are five stars and 18% are one star. Reviews on BIGVITA\'s site include "less shedding and even some baby hairs growing in" and "noticed a slight change" after a week.',
+        effectiveness: 'No study of this serum was found. Pea sprout extract has a small scalp study that measured gene activity, plus a small oral-supplement pilot, both from the ingredient\'s maker.',
+        ingredientScience: [
+            {
+                name: 'Pea sprout extract (AnaGain)',
+                text: 'BIGVITA says 4% AnaGain is clinically studied to shorten the resting phase and extend the growth phase. In a 2020 short report by Mibelle, AnaGain\'s maker, a fluid with 2% pea sprout extract applied to a scalp zone of 10 volunteers raised the activity of two hair-related genes, FGF7 by 56% and noggin by 85%. That measured gene activity, not hair growth. A separate pilot in 21 people found a 100 mg daily pea sprout supplement taken by mouth reduced hair loss after 28 days. A 2025 study found pea sprout extract activated hair growth signaling in human hair papilla cells and in mice.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/31680356/', label: 'PubMed: Short communication, clinical evaluation of pea sprout extract in the treatment of hair loss (Grothe et al., Phytother Res 2020)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/41309367/', label: 'PubMed: Pea sprout extract promotes hair follicle regeneration via anagen phase prolongation (Kim et al., J Microbiol Biotechnol 2025)' },
+                ],
+            },
+            {
+                name: 'Centella asiatica',
+                text: 'BIGVITA says centella improves scalp circulation and nutrient delivery to follicles. In a 2017 lab study, a titrated centella extract increased the growth and size of human hair papilla cells grown as 3D spheres. It hasn\'t been tested for hair loss in people in any study ayna read.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/29032741/', label: 'PubMed: Titrated extract of Centella asiatica increases hair inductive property in 3D spheroid cultured human dermal papilla cells (2017)' },
+                ],
+            },
+            {
+                name: 'Biotin',
+                text: 'BIGVITA says biotin supports hair strength. A 2017 review of biotin for hair and nails found 18 reported cases where it helped, all in people with an underlying problem such as biotin deficiency, and concluded there isn\'t enough evidence to support it in healthy people. The review covered biotin taken by mouth, not applied to the scalp.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/28879195/', label: 'PubMed: A review of the use of biotin for hair loss (Patel et al., Skin Appendage Disord 2017)' },
+                ],
+            },
+        ],
+        scientificCitations: [
+            {
+                url: 'https://www.aad.org/public/diseases/hair-loss/types/female-pattern',
+                text: 'American Academy of Dermatology: Female pattern hair loss',
+                summary: 'The AAD says the FDA has approved 2% and 5% minoxidil as a non-prescription treatment for female pattern hair loss and calls it the most-recommended treatment. This is general guidance, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/dp/B0D82212P3',
+                        text: 'Amazon: BIGVITA Scalp Serum+ reviews',
+                        summary: '3.7 out of 5 stars from 34 ratings as of October 2026; 18% are one star.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.bigvita.com/products/scalp-serum',
+                        text: 'bigvita.com: Scalp Serum+ customer reviews',
+                        summary: '4.69 out of 5 stars from 70 reviews on BIGVITA\'s own site.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+
+    // ---- PR haul products added 2026-10-19 (kieró skincare and supplements), requested by Ameera. ----
+    // kieró Moisturizing Barrier Cream, verified against
+    // us.kieroskincare.com/products/moisturizing-barrier-cream on 2026-10-19
+    // (price, INCI list, claims, how-to, review stats, read in a browser) and the
+    // Amazon listing B0FRMRCRBP (title, size, price, rating, safety text, read in a
+    // browser). Science claims read from abstracts via NCBI E-utilities; AAD page
+    // read directly. openFDA drug enforcement search for "kiero": no matches.
+    // Not a brand partner and no affiliate link. Sold out on kieró's US site at
+    // time of writing; in stock on Amazon. Image is kieró's own product photo
+    // (loads, 1080x1080), matching the other kieró entries; ayna's sheet photo
+    // https://m.media-amazon.com/images/I/41vDShxlGZL._AC_SL500_.jpg also loads.
+    {
+        id: 'p-kiero-moisturizing-barrier-cream',
+        name: 'Moisturizing Barrier Cream',
+        brand: 'kieró',
+        category: 'skincare',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['skin', 'moisturizer', 'barrier', 'ceramides', 'squalane', 'hyaluronic acid', 'vegan', 'fragrance-free'],
+        price: '$12.99 for 50 g (1.76 oz) on kieró\'s US site; $13.99 on Amazon',
+        whereToBuy: ['kieró', 'Amazon'],
+        url: 'https://us.kieroskincare.com/products/moisturizing-barrier-cream',
+        whereToBuyLinks: {
+            'kieró': 'https://us.kieroskincare.com/products/moisturizing-barrier-cream',
+            Amazon: 'https://www.amazon.com/dp/B0FRMRCRBP',
+        },
+        image: 'https://us.kieroskincare.com/cdn/shop/files/kiero_c1ec7bd0-990c-4bb7-a6f3-c6fd338869fe.jpg',
+        summary: 'A face and neck cream with squalane, panthenol, several forms of hyaluronic acid, ceramide NP, and blue agave extract. kieró says it strengthens the skin barrier, prevents moisture loss, and hydrates dull skin without a greasy feel. It is step 4 (hydrate) of kieró\'s 5-step routine, which blends Korean-beauty formulation with Latin American botanicals. Use morning and night.',
+        ingredients: 'Full INCI list per kieró: Water, Squalane, Butylene Glycol, 1,2-Hexanediol, Panthenol, Ammonium Acryloyldimethyltaurate/VP Copolymer, Acrylates/C10-30 Alkyl Acrylate Crosspolymer, Arginine, Allantoin, Ethylhexylglycerin, Dextrin, Sodium Acrylate/Sodium Acryloyldimethyl Taurate Copolymer, Polyisobutene, Disodium EDTA, Gardenia Florida Fruit Extract, Sodium Hyaluronate, Caprylyl/Capryl Glucoside, Sorbitan Oleate, Glycerin, Hyaluronic Acid, Hydrolyzed Hyaluronic Acid, Hydrolyzed Sodium Hyaluronate, Hydroxypropyltrimonium Hyaluronate, Potassium Hyaluronate, Sodium Hyaluronate Crosspolymer, Hydrogenated Lecithin, Agave Tequilana Leaf Extract (1 ppm), Ceramide NP, Pentylene Glycol, Sodium Acetylated Hyaluronate.',
+        safety: {
+            fdaStatus: 'Sold as a cosmetic moisturizer; not an FDA-approved drug. kieró states the formula is vegan and free of sulfates, parabens, and phthalates; ayna did not independently verify those claims.',
+            materials: 'Cream in a 50 g (1.76 oz) jar. The main moisturizing ingredients are squalane (second on the list), glycerin, panthenol, and eight forms of hyaluronic acid. Ceramide NP and the blue agave (Agave tequilana) leaf extract are near the end of the list, and kieró lists the agave at 1 ppm (0.0001%). No added fragrance or essential oils appear in the published ingredient list. Amazon lists the manufacturer as GreenCos Co., Ltd.',
+            recalls: 'No recalls found.',
+            sideEffects: 'kieró\'s page lists no warnings. The Amazon listing advises stopping and seeing a specialist if redness or itching appears, not applying it to wounds or irritated skin, and rinsing right away if it gets in your eyes. Full warnings are listed below.',
+            opinionAlerts: 'Blue agave is the headline ingredient, but kieró\'s own ingredient list gives it at 1 ppm (0.0001%), and ceramide NP is listed near the end, so it is likely present in a small amount. Benefit claims (barrier repair, less moisture loss) come from kieró, and no study of the finished product was found.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from kieró; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'kieró says this cream strengthens the skin barrier and prevents moisture loss, with blue agave for hydration, ceramides for the barrier, and squalane for a smooth finish. No independent study of this product was found, so what follows is what the research says about its main ingredients.\n\nCeramides are the best-studied barrier ingredient here. In a 12-week, double-blind study of people using a prescription acne gel (adapalene with benzoyl peroxide), those who also used a ceramide cleanser and lotion kept lower water loss through the skin and had less dryness than those using a basic face wash. That tested a different brand\'s ceramide routine in people on irritating acne medicine. kieró lists ceramide NP near the end of its ingredient list and doesn\'t give its amount.\n\nThe blue agave that kieró features is listed at 1 ppm, or 0.0001% of the formula. ayna found no study of agave leaf extract on skin.\n\nThe bulk of the hydration likely comes from ingredients higher on the list: squalane, glycerin, panthenol, and eight forms of hyaluronic acid. A review written by Bayer (which sells dexpanthenol creams) says studies support panthenol\'s moisturizing and barrier benefits. A review co-written by L\'Oréal scientists says many studies support topical hyaluronic acid for skin hydration. The American Academy of Dermatology lists hyaluronic acid and glycerin among the ingredients to look for in a moisturizer for dry skin and recommends fragrance-free products.',
+        doctorOpinionShort: 'A fragrance-free cream built on squalane, glycerin, panthenol, and hyaluronic acid, ingredients the AAD recommends for dry skin. Ceramides have good evidence for barrier repair, but ceramide NP is near the end of the list here, and the featured blue agave is listed at just 1 ppm. No independent study of this product was found.',
+        doctorOpinionCitations: [
+            { url: 'https://us.kieroskincare.com/products/moisturizing-barrier-cream', label: 'kieroskincare.com: Moisturizing Barrier Cream, ingredient list and claims' },
+            { url: 'https://www.aad.org/public/everyday-care/skin-care-basics/dry/dermatologists-tips-relieve-dry-skin', label: 'American Academy of Dermatology: Dermatologists\' tips for relieving dry skin' },
+        ],
+        whoItsFor: [
+            'Normal, dry, or combination skin looking for a light daily moisturizer',
+            'People who prefer a fragrance-free, vegan formula',
+            'People using drying acne treatments who want a simple moisturizer (ceramide moisturizers helped in one study of a different brand)',
+        ],
+        howToUse: {
+            intro: 'Per kieró\'s own site: use morning and night as step 4 (hydrate) of the routine.',
+            steps: [
+                'Cleanse and prepare your skin first.',
+                'Spread an even amount over your face and neck.',
+                'Use morning and night to seal in moisture. The AAD suggests applying moisturizer while skin is still damp.',
+            ],
+            sourceUrl: 'https://us.kieroskincare.com/products/moisturizing-barrier-cream',
+            sourceLabel: 'kieroskincare.com: Moisturizing Barrier Cream',
+        },
+        warnings: [
+            'Redness or itching after use: stop and see a doctor (per the Amazon listing).',
+            'Don\'t apply to wounds or irritated skin (per the Amazon listing).',
+            'Keep out of eyes; if it gets in, rinse right away (per the Amazon listing).',
+        ],
+        communityReview: 'kieró\'s US site shows 4.91 out of 5 from 213 reviews; its rating bars show 194 reviews (91%) in the top row and 19 (9%) in the second, with none lower. On Amazon it has 4.0 out of 5 stars from 54 ratings as of October 2026. The first set of reviews is on kieró\'s own site; the Amazon rating is from Amazon\'s product page.',
+        effectiveness: 'Moisturizes with squalane, glycerin, panthenol, and hyaluronic acid. Ceramides have good evidence for barrier repair, but ceramide NP is near the end of the list and the featured agave is at 1 ppm. No independent study of the finished product was found.',
+        ingredientScience: [
+            {
+                name: 'Ceramide NP',
+                text: 'kieró states ceramides help maintain the skin barrier. In a 12-week, double-blind study, people using a prescription acne gel (adapalene 0.3% with benzoyl peroxide 2.5%) who also used a ceramide-containing cleanser and lotion had lower water loss through the skin and less dryness, redness, and scaling than those using a basic face wash. That study tested a different brand\'s ceramide routine. kieró lists ceramide NP second to last and doesn\'t give its amount.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/37276158/', label: 'PubMed: Ceramide-containing adjunctive skin care for skin barrier restoration during acne vulgaris treatment (2023)' },
+                ],
+            },
+            {
+                name: 'Panthenol (provitamin B5)',
+                text: 'Fifth on the ingredient list. A review written with Bayer, which makes dexpanthenol creams, says various studies confirm its moisturizing and barrier-supporting effects. kieró doesn\'t list its concentration.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/28503966/', label: 'PubMed: Topical use of dexpanthenol, a 70th anniversary article (2017)' },
+                ],
+            },
+            {
+                name: 'Hyaluronic acid (eight forms)',
+                text: 'kieró\'s formula contains eight forms of hyaluronic acid and its salts. A review co-written by L\'Oréal scientists says many studies support topical hyaluronic acid for skin hydration. The American Academy of Dermatology lists hyaluronic acid and glycerin among the ingredients to look for in a moisturizer for dry skin.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/36200921/', label: 'PubMed: Benefits of topical hyaluronic acid for skin quality and signs of skin aging (2022)' },
+                    { url: 'https://www.aad.org/public/everyday-care/skin-care-basics/dry/dermatologists-tips-relieve-dry-skin', label: 'American Academy of Dermatology: Dermatologists\' tips for relieving dry skin' },
+                ],
+            },
+            {
+                name: 'Blue agave (Agave tequilana) leaf extract',
+                text: 'kieró features blue agave for lasting hydration, but its ingredient list gives the extract at 1 ppm (0.0001% of the formula). ayna found no study of agave leaf extract on skin.',
+                citations: [
+                    { url: 'https://us.kieroskincare.com/products/moisturizing-barrier-cream', label: 'kieroskincare.com: Moisturizing Barrier Cream ingredient list' },
+                ],
+            },
+        ],
+        scientificCitations: [
+            {
+                url: 'https://www.aad.org/public/everyday-care/skin-care-basics/dry/dermatologists-tips-relieve-dry-skin',
+                text: 'American Academy of Dermatology: Dermatologists\' tips for relieving dry skin',
+                summary: 'AAD guidance: choose a fragrance-free cream or ointment, look for ingredients such as hyaluronic acid and glycerin, and apply while skin is still damp. This is general guidance, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/dp/B0FRMRCRBP',
+                        text: 'Amazon: kieró Moisturizing Barrier Cream reviews',
+                        summary: '4.0 out of 5 stars from 54 ratings on Amazon as of October 2026.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://us.kieroskincare.com/products/moisturizing-barrier-cream',
+                        text: 'kieroskincare.com: Moisturizing Barrier Cream customer reviews',
+                        summary: 'kieró\'s own product page shows 4.91 out of 5 from 213 reviews.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+
+    // kieró Balance Toner Pads, verified against
+    // us.kieroskincare.com/products/balance-toner-pads on 2026-10-19 (price, INCI
+    // list, claims, how-to, review stats, read in a browser) and the Amazon listing
+    // B0FRM64YB5 (title, 60 pads / 6.26 fl oz, price, rating, directions, safety
+    // text, read in a browser). FDA's AHA page and the AAD exfoliation page read
+    // directly; science claims read from abstracts via NCBI E-utilities. openFDA
+    // drug enforcement and drug label searches for "kiero": no matches. Not a brand
+    // partner and no affiliate link. Sold out on kieró's US site at time of
+    // writing; in stock on Amazon. Image is kieró's own product photo (loads,
+    // 1080x1080); ayna's sheet photo
+    // https://m.media-amazon.com/images/I/61+AE4eQd+L._AC_SL500_.jpg also loads.
+    {
+        id: 'p-kiero-balance-toner-pads',
+        name: 'Balance Toner Pads',
+        brand: 'kieró',
+        category: 'skincare',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['skin', 'toner', 'exfoliation', 'aha', 'pha', 'glycolic acid', 'vegan', 'fragrance-free'],
+        price: '$12.99 for 60 pads (185 ml / 6.26 fl oz) on kieró\'s US site; $13.99 on Amazon',
+        whereToBuy: ['kieró', 'Amazon'],
+        url: 'https://us.kieroskincare.com/products/balance-toner-pads',
+        whereToBuyLinks: {
+            'kieró': 'https://us.kieroskincare.com/products/balance-toner-pads',
+            Amazon: 'https://www.amazon.com/dp/B0FRM64YB5',
+        },
+        image: 'https://us.kieroskincare.com/cdn/shop/files/kiero-_-_-05.jpg',
+        summary: 'Pre-soaked toner pads with glycolic acid (an AHA), gluconolactone (a PHA), passion fruit extract, panthenol, and hyaluronic acid. kieró says they gently exfoliate, renew skin texture, fade dark spots, minimize the look of pores, and hydrate. It is step 2 (balance) of kieró\'s 5-step routine. Wipe over the face after cleansing, avoiding the eyes. Because it contains an AHA, the FDA advises daily sunscreen while using it.',
+        ingredients: 'Full INCI list per kieró: Water, Melaleuca Alternifolia (Tea Tree) Leaf Water, Butylene Glycol, 1,2-Hexanediol, Glycerin, Glycolic Acid, Potassium Hydroxide, Allantoin, Gluconolactone, Panthenol, Sodium Hyaluronate, Cyanocobalamin, Passiflora Edulis Fruit Extract, Hydrolyzed Hyaluronic Acid, Hydroxypropyltrimonium Hyaluronate, Pentylene Glycol, Sodium Hyaluronate Crosspolymer, Sodium Acetylated Hyaluronate.',
+        safety: {
+            fdaStatus: 'Sold as a cosmetic toner; not an FDA-approved drug. kieró doesn\'t publish the glycolic acid percentage or the product\'s pH. kieró states the formula is vegan and free of sulfates, parabens, and phthalates; ayna did not independently verify those claims.',
+            materials: '60 cotton pads in 185 ml (6.26 fl oz) of toner. Exfoliating acids: glycolic acid (AHA) and gluconolactone (PHA), with potassium hydroxide to adjust pH. The second ingredient is tea tree leaf water (a water distilled from the leaves, not tea tree oil). Also contains glycerin, allantoin, panthenol, hyaluronic acid, passion fruit extract, and cyanocobalamin (vitamin B12, which is pink). No added fragrance appears in the published ingredient list. Amazon lists the manufacturer as Natuzen Co., Ltd.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Glycolic acid makes skin more sensitive to the sun. In a study the FDA cites, 4 weeks of 10% glycolic acid increased sunburn cells and lowered the UV dose needed to redden skin; the effect was gone a week after stopping. The FDA recommends AHA products carry a sunburn alert telling users to wear sunscreen; kieró\'s page and the Amazon listing don\'t include one. The AAD warns that exfoliating while using retinoids or benzoyl peroxide can worsen dryness. Full warnings are listed below.',
+            opinionAlerts: 'Sun sensitivity: contains glycolic acid, so use sunscreen daily while using these and for a week after stopping (FDA). kieró doesn\'t give the acid strength or pH. Benefit claims (fading dark spots, smaller-looking pores, oil control) come from kieró, and no study of the finished product was found.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from kieró; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'kieró says these pads gently exfoliate with AHA and PHA, renew texture, fade dark spots, minimize the look of pores, and hydrate, and that passion fruit extract helps control excess oil. No independent study of this product was found, so what follows is what the research and regulators say about its main ingredients.\n\nGlycolic acid is the most common alpha hydroxy acid (AHA). The FDA says AHAs make skin more sensitive to the sun: in a study of 29 people that the FDA cites, applying 10% glycolic acid for 4 weeks increased sunburn cells and lowered the amount of UV needed to redden the skin. The effect went away within a week of stopping. The FDA recommends AHA products carry a "Sunburn Alert" and that users wear sunscreen during use and for a week after. kieró\'s page doesn\'t include this alert, and it doesn\'t say how much glycolic acid the pads contain or what their pH is. The FDA notes that an expert safety panel considers glycolic acid products safe at 10% or less with a pH of 3.5 or higher, when they protect against sun sensitivity or tell users to use sun protection daily.\n\nGluconolactone is a polyhydroxy acid (PHA). In lab tests it gave some protection against UV damage, and in a small human test it did not significantly increase sunburn cells, but the authors said more research is needed.\n\nThe second ingredient is tea tree leaf water, which is different from tea tree oil. A safety review of tea tree oil says topical use is relatively safe and adverse events are minor, but some people are allergic to it. ayna found no study of the leaf water or of the passion fruit extract on skin.\n\nThe American Academy of Dermatology says people with sensitive, dry, or acne-prone skin may do best with a mild chemical exfoliant, should moisturize right after, and shouldn\'t exfoliate on broken or sunburned skin or while using retinoids or benzoyl peroxide.',
+        doctorOpinionShort: 'Toner pads with glycolic acid (an AHA) and gluconolactone (a PHA) for gentle chemical exfoliation. kieró doesn\'t say how strong the acid is, and AHAs make skin more sun-sensitive, so the FDA advises daily sunscreen while using them and for a week after. No independent study of this product was found.',
+        doctorOpinionCitations: [
+            { url: 'https://us.kieroskincare.com/products/balance-toner-pads', label: 'kieroskincare.com: Balance Toner Pads, ingredient list and claims' },
+            { url: 'https://www.fda.gov/cosmetics/cosmetic-ingredients/alpha-hydroxy-acids', label: 'FDA: Alpha hydroxy acids in cosmetics' },
+            { url: 'https://www.aad.org/public/everyday-care/skin-care-secrets/routine/safely-exfoliate-at-home', label: 'American Academy of Dermatology: How to safely exfoliate at home' },
+        ],
+        whoItsFor: [
+            'People who want gentle chemical exfoliation in a quick wipe-on step',
+            'Normal, oily, or combination skin looking to smooth rough texture',
+            'People who already wear sunscreen every day (needed with any AHA product)',
+        ],
+        howToUse: {
+            intro: 'Per kieró\'s own site and the Amazon listing: use daily, morning or night, as step 2 (balance) of the routine.',
+            steps: [
+                'Cleanse your skin first.',
+                'Gently wipe one pad over your face and neck, avoiding the eye area.',
+                'Follow with serum and moisturizer. The AAD recommends moisturizing right after exfoliating.',
+                'Wear sunscreen every day while using these and for a week after you stop. The FDA recommends this for any AHA product.',
+            ],
+            sourceUrl: 'https://us.kieroskincare.com/products/balance-toner-pads',
+            sourceLabel: 'kieroskincare.com: Balance Toner Pads',
+        },
+        warnings: [
+            'Sun sensitivity: contains glycolic acid (an AHA). Use sunscreen, cover up, and limit sun exposure while using it and for a week after (FDA).',
+            'Using a prescription retinoid, retinol, or benzoyl peroxide: exfoliating on top of them can worsen dryness and irritation (AAD).',
+            'Don\'t use on broken, cut, or sunburned skin (AAD).',
+            'Contains tea tree leaf water. Some people are allergic to tea tree; stop if you get redness or itching.',
+            'Keep out of eyes; if it gets in, rinse right away (per the Amazon listing).',
+        ],
+        communityReview: 'kieró\'s US site shows 4.92 out of 5 from 420 reviews; its rating bars show 391 reviews (93%) in the top row, 26 (6%) in the second, 2 in the third, none in the fourth, and 1 in the lowest. On Amazon it has 4.3 out of 5 stars from 56 ratings as of October 2026. The first set of reviews is on kieró\'s own site; the Amazon rating is from Amazon\'s product page.',
+        effectiveness: 'Glycolic acid and gluconolactone exfoliate chemically; the strength isn\'t disclosed. Claims about dark spots, pores, and oil control come from kieró. No independent study of the finished product was found.',
+        ingredientScience: [
+            {
+                name: 'Glycolic acid (AHA)',
+                text: 'kieró states AHA refines texture and unclogs pores. In a randomized, double-blind study of 29 people, cited by the FDA, 10% glycolic acid applied for 4 weeks increased sunburn cells and lowered the UV dose needed to redden the skin; the effect was gone a week after stopping. The FDA recommends AHA products carry a sunburn alert and notes that an expert panel considers glycolic acid products safe at 10% or less with a pH of 3.5 or higher, with daily sun protection. kieró doesn\'t list the concentration or pH.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/12713551/', label: 'PubMed: Topical glycolic acid enhances photodamage by ultraviolet light (2003)' },
+                    { url: 'https://www.fda.gov/cosmetics/cosmetic-ingredients/alpha-hydroxy-acids', label: 'FDA: Alpha hydroxy acids in cosmetics' },
+                ],
+            },
+            {
+                name: 'Gluconolactone (PHA)',
+                text: 'kieró states PHA gently exfoliates. In a lab model, gluconolactone gave up to 50% protection against UV damage, and in a small human test it did not significantly increase sunburn cells. The authors said more research is needed. This was not a test of exfoliation or of this product.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/14756648/', label: 'PubMed: The polyhydroxy acid gluconolactone protects against ultraviolet radiation in an in vitro model of cutaneous photoaging (2004)' },
+                ],
+            },
+            {
+                name: 'Tea tree (Melaleuca alternifolia) leaf water',
+                text: 'The second ingredient. It is a water distilled from tea tree leaves, not the essential oil. A safety review of tea tree oil found topical use relatively safe, with minor and occasional side effects, but allergic reactions occur in some people. ayna found no study of the leaf water itself.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/16243420/', label: 'PubMed: A review of the toxicity of Melaleuca alternifolia (tea tree) oil (2006)' },
+                ],
+            },
+        ],
+        scientificCitations: [
+            {
+                url: 'https://www.aad.org/public/everyday-care/skin-care-secrets/routine/safely-exfoliate-at-home',
+                text: 'American Academy of Dermatology: How to safely exfoliate at home',
+                summary: 'AAD guidance: people with dry, sensitive, or acne-prone skin should choose gentle exfoliation, moisturize afterward, and avoid exfoliating on broken or sunburned skin or while using retinoids or benzoyl peroxide. This is general guidance, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/dp/B0FRM64YB5',
+                        text: 'Amazon: kieró Balance Toner Pads reviews',
+                        summary: '4.3 out of 5 stars from 56 ratings on Amazon as of October 2026.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://us.kieroskincare.com/products/balance-toner-pads',
+                        text: 'kieroskincare.com: Balance Toner Pads customer reviews',
+                        summary: 'kieró\'s own product page shows 4.92 out of 5 from 420 reviews.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+
+    // Arrae MB-1, verified on 2026-10-19 against arrae.com/products/mb-1 (price,
+    // claims, how-to, ingredients, review stats, read in a browser) and the Amazon
+    // listing B0DCQC1DNS (title, variants, bullets, safety text, and the Supplement
+    // Facts panel image, read in a browser). Supplement Facts below are from the
+    // Amazon label image, which matches the "Ingredients" section of Arrae's page.
+    // NOTE: ASIN B0DCQC1DNS is the 60-capsule variant; ayna's sheet says 40
+    // capsules (Amazon's 40-count variant is a different ASIN, B0FZV4LDX2). Arrae's
+    // page also shows a second, different ingredient list (see report). Studies read
+    // from abstracts via NCBI E-utilities; NIH ODS fact sheets read directly. openFDA
+    // food and drug enforcement searches for "arrae": no matches. Not a brand
+    // partner, no affiliate link. Image: ayna's sheet photo (loads, 385x500).
+    {
+        id: 'p-arrae-mb-1',
+        name: 'Arrae MB-1 Metabolism Support',
+        brand: 'Arrae',
+        category: 'supplement',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['supplement'],
+        tags: ['arrae', 'mb-1', 'metabolism', 'weight management', 'cravings', 'african mango', 'cissus', 'green tea', 'chromium', 'probiotic', 'caffeine', 'supplement'],
+        price: '$55 for a 1-month supply on arrae.com ($44 a month by subscription); on Amazon $52.49 for 60 capsules or $27.99 for 40',
+        whereToBuy: ['arrae.com', 'Amazon'],
+        url: 'https://arrae.com/products/mb-1',
+        whereToBuyLinks: {
+            'arrae.com': 'https://arrae.com/products/mb-1',
+            Amazon: 'https://www.amazon.com/dp/B0DCQC1DNS',
+        },
+        image: 'https://m.media-amazon.com/images/I/51cUawzhbWL._AC_SL500_.jpg', // from ayna's sheet; loads
+        summary: 'A daily capsule sold for metabolism, cravings, and weight management. It combines African mango seed extract (IGOB131), Cissus leaf extract (CQR-300), green tea extract, grains of paradise, chromium, vitamin B6, and the probiotic Bifidobacterium lactis B420. Arrae claims body weight reductions of up to 12%, fewer cravings, more daily calorie burn, and healthy blood sugar, and footnotes that these figures are based on research on individual ingredients, not on MB-1 itself. Contains caffeine from green tea. The serving is 2 capsules a day.',
+        ingredients: 'Supplement Facts per the label shown on Amazon. Serving size 2 capsules; 30 servings per container (60 capsules). Vitamin B6 (as pyridoxal 5-phosphate 68%) 5 mg (294% DV). Chromium (as chromium picolinate) 500 mcg (1428% DV). Proprietary blend 895 mg: Cissus leaf extract (CQR-300), green tea extract, African mango seed extract (IGOB131), grains of paradise seed extract; amounts of each not disclosed. Probiotic 25 mg (10 billion CFU): Bifidobacterium lactis B420. Other ingredients: vegetable capsule (HPMC), rice hull (ground). Distributed by Arrae Inc, Dayton, NJ. Arrae\'s own page lists the same formula in its Ingredients section, but its "Full Ingredients List" panel shows a different one (10 mg B6, a 1.35 g blend with African pepper, green tea, African mango and grains of paradise, and a 27 mg blend of three other probiotic strains), possibly for MB-1 Max or MB-1 45+.',
+        safety: {
+            fdaStatus: 'A dietary supplement, which the FDA does not evaluate for safety or efficacy. The label says its statements have not been evaluated by the FDA and that it is not intended to diagnose, treat, cure, or prevent any disease.',
+            materials: 'Vegetable capsules; 2 a day. Amazon sells 40- and 60-capsule bottles; Arrae sells a 1-month supply. Contains caffeine from green tea extract; the amount isn\'t stated. Arrae says it is third-party tested and links a certificate of analysis.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Per the label on Amazon: don\'t take it if you are pregnant or nursing, under 18, have a medical condition, take any medications, have a history of liver problems, or on an empty stomach, or on a day you take other green tea products. Don\'t exceed 1 serving a day. Green tea extract has been linked to rare liver injury, with higher risk on an empty stomach, and chromium can lower blood sugar with diabetes medicines (NIH). Full warnings are listed below.',
+            opinionAlerts: 'Weight-loss claims: Arrae\'s "up to 12%" figure comes from ingredient research, not from a study of MB-1. The main study behind it was a 10-week trial of 72 people by one research group, and reviews of African mango call the evidence limited by small, flawed trials. The blend\'s amounts are not disclosed, so the doses can\'t be compared with the studies. Liver caution: contains green tea extract. Not for anyone pregnant, nursing, under 18, on medications, or with liver problems (per the label).',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from Arrae; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'Arrae says MB-1 reduces body weight by up to 12%, curbs cravings, raises daily calorie burn, and supports healthy blood sugar, and footnotes that these figures are "based on individual ingredient research." No study of MB-1 itself was found, so what follows is what the research says about its ingredients.\n\nThe weight claims trace mainly to African mango (IGOB131) combined with Cissus (CQR-300). In a 10-week, double-blind, placebo-controlled trial by a research group in Cameroon, 72 adults with overweight or obesity took Cissus alone, Cissus with African mango, or a placebo, with no diet or exercise changes. Both active groups lost more weight and body fat and had lower cholesterol and blood sugar than placebo, with larger changes for the combination. NIH\'s Office of Dietary Supplements (ODS) notes that the African mango trials were all run by the same group of authors. A 2013 systematic review found three such trials, all with flaws in how they were reported, and concluded the effect was unproven and African mango can\'t be recommended for weight loss. A 2020 meta-analysis of five trials rated four as having a high risk of bias, and the one well-run trial found no significant difference. MB-1 lists both extracts inside an 895 mg blend without saying how much of each it contains, so its doses can\'t be compared with the trials.\n\nFor the other ingredients, the evidence is small. ODS says chromium produced only about 1 kg more weight loss than placebo in reviews of trials, and green tea\'s effect on weight is small and probably not clinically relevant. Grains of paradise raised energy use and slightly reduced belly (visceral) fat in a 4-week study of 19 young, non-obese women, but total body fat didn\'t change. The probiotic B420, at the same 10 billion CFU dose used here, was tested for 6 months in 225 adults with overweight; in the main analysis no group differed from placebo in body fat, and benefits appeared only in a narrower analysis of people who followed the protocol. That trial was run by the company that makes B420.\n\nSafety matters more than usual here. ODS reports at least 50 cases of liver damage linked to green tea extracts, with risk appearing higher on an empty stomach, and Arrae\'s own label says not to take MB-1 on an empty stomach or with a history of liver problems. Chromium may cause low blood sugar with insulin or metformin and may reduce absorption of levothyroxine. One person with chronic kidney disease had kidney failure associated with African mango.',
+        doctorOpinionShort: 'A metabolism blend whose "up to 12%" weight-loss claim comes from small ingredient studies, mainly one 10-week trial of 72 people, not from MB-1 itself. Reviews call the African mango evidence limited, and the blend\'s doses aren\'t disclosed. Contains green tea extract (rare liver injury) and chromium (can lower blood sugar with diabetes drugs). Not for pregnancy, nursing, under 18, or anyone on medication, per the label.',
+        doctorOpinionCitations: [
+            { url: 'https://arrae.com/products/mb-1', label: 'arrae.com: MB-1, ingredients and claims' },
+            { url: 'https://www.amazon.com/dp/B0DCQC1DNS', label: 'Amazon: Arrae MB-1 listing, Supplement Facts and safety information' },
+            { url: 'https://ods.od.nih.gov/factsheets/WeightLoss-HealthProfessional/', label: 'NIH Office of Dietary Supplements: Dietary supplements for weight loss', chipLabel: 'NIH ODS: weight-loss supplements' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/18377661/', label: 'PubMed: Cissus quadrangularis/Irvingia gabonensis combination in weight loss, double-blind, placebo-controlled study (2008)', chipLabel: 'Cissus + African mango trial, 72 people (2008)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/31855111/', label: 'PubMed: Effects of Irvingia gabonensis seed extract supplementation, systematic review and meta-analysis (2020)', chipLabel: 'African mango meta-analysis, 5 trials (2020)' },
+        ],
+        whoItsFor: [
+            'Healthy adults 18 and older, not pregnant or nursing, who want to try a supplement alongside diet and exercise and understand the evidence is limited',
+            'Not for anyone taking medications, with a medical condition, or with a history of liver problems (per the label)',
+            'Not a substitute for talking to a doctor about weight, blood sugar, or metabolism',
+        ],
+        howToUse: {
+            intro: 'Per Arrae\'s site and the Amazon listing: 2 capsules a day. Arrae recommends 3 months of daily use alongside a balanced diet and active lifestyle.',
+            steps: [
+                'Take 2 capsules with your first meal of the day. The label says not to take it on an empty stomach.',
+                'If you are sensitive to caffeine, Arrae suggests taking one capsule at breakfast and one at lunch.',
+                'Take it earlier in the day, since it contains caffeine from green tea.',
+                'Don\'t take more than 1 serving a day, and skip other green tea products that day (per the label).',
+            ],
+            sourceUrl: 'https://arrae.com/products/mb-1',
+            sourceLabel: 'arrae.com: MB-1',
+        },
+        warnings: [
+            'Pregnant, nursing, or under 18: don\'t use (per the label).',
+            'Taking any medication or have a medical condition: don\'t use unless your doctor approves (per the label). Chromium may cause low blood sugar with insulin or metformin and may reduce levothyroxine absorption (NIH ODS).',
+            'History of liver problems: don\'t use (per the label). Green tea extract has been linked to rare liver injury (NIH ODS).',
+            'Don\'t take it on an empty stomach or with other green tea products the same day (per the label).',
+            'Kidney disease: one case of kidney failure has been associated with African mango (NIH ODS); check with your doctor first.',
+            'Contains caffeine.',
+        ],
+        communityReview: 'Arrae\'s product page shows 4.68 out of 5 from 3,613 reviews. On Amazon it has 4.0 out of 5 stars from 274 ratings as of October 2026: 61% five stars, 12% four, 9% three, 5% two, and 13% one star; the Amazon reviews cover both the 40- and 60-capsule bottles. The first rating is from Arrae\'s own site; the second is from Amazon\'s product page.',
+        effectiveness: 'No study of MB-1 was found. Its main ingredients have small, short trials with mixed quality; reviews call the African mango evidence limited, and chromium and green tea produce only about 1 kg more weight loss than placebo.',
+        ingredientScience: [
+            {
+                name: 'African mango (IGOB131) with Cissus (CQR-300)',
+                text: 'Arrae\'s "up to 12%" body weight, blood sugar, and waist figures cite these two together. In a 10-week, randomized, double-blind, placebo-controlled trial by a research group in Cameroon, 72 adults with overweight or obesity took Cissus alone, Cissus with African mango, or a placebo. Both active groups had significantly lower body weight, body fat, waist size, cholesterol, and blood sugar than placebo, with larger changes for the combination. MB-1 doesn\'t disclose how much of either extract it contains.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/18377661/', label: 'PubMed: The use of a Cissus quadrangularis/Irvingia gabonensis combination in the management of weight loss, double-blind, placebo-controlled study (2008)' },
+                ],
+            },
+            {
+                name: 'African mango (Irvingia gabonensis)',
+                text: 'A 2013 systematic review found three trials, all by the same authors and all with reporting flaws; each reported weight loss, but the reviewers concluded the effect was unproven and that it can\'t be recommended as a weight-loss aid. A 2020 meta-analysis of five trials rated four as having a high risk of bias, and the only low-risk trial found no significant difference in weight. NIH ODS says it appears well tolerated (headache, sleep trouble, and gas were reported) but human safety hasn\'t been rigorously studied, and one person with chronic kidney disease had kidney failure associated with it.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/23419021/', label: 'PubMed: The efficacy of Irvingia gabonensis supplementation in the management of overweight and obesity, systematic review (2013)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/31855111/', label: 'PubMed: Effects of Irvingia gabonensis seed extract supplementation on anthropometric and cardiovascular outcomes, systematic review and meta-analysis (2020)' },
+                    { url: 'https://ods.od.nih.gov/factsheets/WeightLoss-HealthProfessional/', label: 'NIH Office of Dietary Supplements: Dietary supplements for weight loss' },
+                ],
+            },
+            {
+                name: 'Green tea extract',
+                text: 'Arrae states it supports metabolism. NIH ODS concludes any weight effect of green tea is small and probably not clinically relevant (about 1 kg more than placebo in a review of 14 trials, with no difference in the studies done outside Japan). ODS also reports at least 50 cases of liver damage linked to green tea extracts since 2006, with risk appearing higher when taken on an empty stomach.',
+                citations: [
+                    { url: 'https://ods.od.nih.gov/factsheets/WeightLoss-HealthProfessional/', label: 'NIH Office of Dietary Supplements: Dietary supplements for weight loss' },
+                ],
+            },
+            {
+                name: 'Chromium (500 mcg as chromium picolinate)',
+                text: 'Arrae states it supports metabolic function and blood sugar. NIH ODS says a review of 9 trials found about 1.1 kg more weight loss than placebo, of debatable clinical relevance, and that clinical trials found only a very small benefit. Chromium may cause low blood sugar when taken with insulin or metformin and may reduce absorption of levothyroxine. People with kidney or liver disease should be cautious with high amounts.',
+                citations: [
+                    { url: 'https://ods.od.nih.gov/factsheets/Chromium-Consumer/', label: 'NIH Office of Dietary Supplements: Chromium fact sheet for consumers' },
+                    { url: 'https://ods.od.nih.gov/factsheets/WeightLoss-HealthProfessional/', label: 'NIH Office of Dietary Supplements: Dietary supplements for weight loss' },
+                ],
+            },
+            {
+                name: 'Grains of paradise (Aframomum melegueta)',
+                text: 'Arrae states it boosts daily calorie burn. In a 4-week, single-blind, placebo-controlled crossover study of 19 non-obese women aged 20 to 22, a daily 30 mg extract increased whole-body energy use and slightly reduced belly (visceral) fat, but total and under-the-skin fat didn\'t change. MB-1 doesn\'t disclose how much it contains.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/24759256/', label: 'PubMed: Daily ingestion of grains of paradise (Aframomum melegueta) extract increases whole-body energy expenditure and decreases visceral fat in humans (2014)' },
+                ],
+            },
+            {
+                name: 'Bifidobacterium lactis B420 (10 billion CFU)',
+                text: 'Arrae calls it a clinically studied strain for bloating and gut balance. In a 6-month, double-blind trial of 225 adults with overweight, B420 at the same 10 billion CFU daily dose did not change body fat compared with placebo in the main analysis. Among the people who followed the protocol, B420 with fiber reduced body fat by 4.5% relative to placebo, while B420 alone did not differ significantly. The study was run by DuPont, which makes B420.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/27810310/', label: 'PubMed: Probiotic with or without fiber controls body fat mass, associated with serum zonulin, in overweight and obese adults, randomized controlled trial (2016)' },
+                ],
+            },
+            {
+                name: 'Vitamin B6 (5 mg as P5P)',
+                text: 'This is 294% of the daily value. NIH ODS sets the adult upper limit at 100 mg a day (Europe\'s food safety agency set a lower limit of 12 mg in 2023), so 5 mg is well below both.',
+                citations: [
+                    { url: 'https://ods.od.nih.gov/factsheets/VitaminB6-Consumer/', label: 'NIH Office of Dietary Supplements: Vitamin B6 fact sheet for consumers' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/dp/B0DCQC1DNS',
+                        text: 'Amazon: Arrae MB-1 reviews',
+                        summary: '4.0 out of 5 stars from 274 ratings on Amazon as of October 2026; 13% of ratings are one star.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://arrae.com/products/mb-1',
+                        text: 'arrae.com: MB-1 customer reviews',
+                        summary: 'Arrae\'s own product page shows 4.68 out of 5 from 3,613 reviews.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: false,
+    },
+
+    // CBB (Curvy Body Bears) Women's 13 in 1 Supplement Gummies (blue bottle, berry
+    // flavor), verified on 2026-10-19 against the Amazon listing B0BWSMCMTZ (title,
+    // price, variant, bullets, ingredient text, rating, and the Supplement Facts
+    // panel on the bottle image, read in a browser) and the brand page
+    // curvybodybears.com (Blue Gummies, $29.99, sold out, no Supplement Facts).
+    // Supplement Facts below are from the bottle image on Amazon. NIH ODS fact
+    // sheets read directly. openFDA food enforcement search for Curvy Body / C.B.B.:
+    // no matches. Not a brand partner, no affiliate link. Image: ayna's sheet photo
+    // (loads, 259x500). A separate researcher is handling CBB's Perfect PH probiotic
+    // gummies; brand string matches that entry.
+    {
+        id: 'p-cbb-13-in-1-womens-gummies',
+        name: 'CBB Women\'s 13 in 1 Supplement Gummies',
+        brand: 'CBB (Curvy Body Bears)',
+        category: 'supplement',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['supplement'],
+        tags: ['cbb', 'curvy body bears', 'multivitamin', 'gummies', 'herbal', 'black cohosh', 'maca', 'ginseng', 'vegan', 'supplement'],
+        price: '$17.99 for 60 gummies on Amazon; $29.99 on the brand\'s site (sold out)',
+        whereToBuy: ['curvybodybears.com', 'Amazon'],
+        url: 'https://curvybodybears.com/products/cbb-gummies-womens-support-supplement-berry-flavored-60-gummies-1-month-supply',
+        whereToBuyLinks: {
+            'curvybodybears.com': 'https://curvybodybears.com/products/cbb-gummies-womens-support-supplement-berry-flavored-60-gummies-1-month-supply',
+            Amazon: 'https://www.amazon.com/dp/B0BWSMCMTZ',
+        },
+        image: 'https://m.media-amazon.com/images/I/51slr4TLhVL._AC_SL500_.jpg', // from ayna's sheet; loads
+        summary: 'Berry-flavored gummies with four vitamins (A, C, E, and B6) and a 450 mg blend of nine herbs: maca, Asian ginseng, anise, motherwort, saw palmetto, fenugreek, black cohosh, kelp, and ginger. The listing describes it as a daily women\'s multivitamin with botanicals "traditionally included in women\'s wellness routines" and makes no specific health claims. The vitamin doses are low for a multivitamin, and the amount of each herb isn\'t disclosed. 2 gummies a day; 60 gummies (30 servings) per bottle.',
+        ingredients: 'Supplement Facts per the bottle shown on Amazon. Serving size 2 gummies (5 g); 30 servings per container. Calories 15; total carbohydrates 4 g (1% DV); sugars 3 g. Vitamin A (as retinol acetate) 35 mcg RAE (4% DV). Vitamin C (as ascorbic acid) 25 mg (28% DV). Vitamin E (as alpha tocopherol acetate) 15 mg (100% DV). Vitamin B6 (as pyridoxine HCl) 1 mg (59% DV). Proprietary herbal blend 450 mg: maca root, Panax ginseng root, star anise fruit, motherwort herb, saw palmetto fruit, fenugreek seed, black cohosh root, kelp, ginger root; amounts of each not disclosed. Other ingredients: glucose syrup, white granulated sugar, isomalt, pectin, DL-malic acid, trisodium citrate, natural flavor, color (Blue 1). Distributed by C.B.B. LLC, Hoboken, NJ; country of origin China. The Amazon ingredient text lists slightly different forms (vitamin A as retinyl palmitate, vitamin E as d-alpha tocopheryl succinate, anise seed instead of star anise) and omits Blue 1.',
+        safety: {
+            fdaStatus: 'A dietary supplement, which the FDA does not evaluate for safety or efficacy. The label says its statements have not been evaluated by the FDA and that it is not intended to diagnose, treat, cure, or prevent any disease.',
+            materials: 'Pectin gummies (vegan, gluten-free, soy-free, non-GMO per the listing), berry flavored, colored with Blue 1. Each 2-gummy serving has 3 g of sugar. Made in China for C.B.B. LLC.',
+            recalls: 'No recalls found.',
+            sideEffects: 'The label\'s only direction is to take two gummies a day and not exceed that dose; no warnings were shown. It contains black cohosh, which has been linked to rare liver injury; the US Pharmacopeia recommends a warning for people with liver disorders, and pregnant women are advised not to take it without supervision (NIH). It also contains kelp, a source of iodine, but the label doesn\'t say how much. Full warnings are listed below.',
+            opinionAlerts: 'Herb amounts are hidden in a 450 mg blend split across nine herbs, so it\'s not possible to know whether any is present at a studied dose. Contains black cohosh (rare liver injury reports) and kelp (iodine, amount not listed). The Amazon ingredient text and the bottle\'s Supplement Facts don\'t fully match. No study of this product was found.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product description is sourced from CBB\'s Amazon listing; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'CBB describes these as daily women\'s multivitamin gummies that pair vitamins A, C, E, and B6 with nine botanicals "traditionally included in women\'s wellness routines." The listing doesn\'t claim any specific health benefit. No study of this product was found.\n\nThe vitamin amounts are modest: 100% of the daily value for vitamin E, 59% for B6, 28% for C, and 4% for A, with no minerals. As a multivitamin it covers less than most.\n\nThe nine herbs share a single 450 mg blend, an average of 50 mg each, and the label doesn\'t say how much of any one is in it. That makes it impossible to compare with studies of those herbs.\n\nTwo of the herbs carry safety notes from NIH\'s Office of Dietary Supplements (ODS). Black cohosh, usually taken for menopause symptoms, has been linked to at least 83 reports of liver damage worldwide. ODS says a causal link hasn\'t been shown, but the US Pharmacopeia recommends a warning for people with liver disorders, and pregnant women are advised not to take it unless a provider supervises. ODS also notes that trials, including a 2016 meta-analysis of 4 trials in 511 women, found it didn\'t reliably reduce hot flashes. Kelp is a source of iodine. ODS says too much iodine can cause thyroid problems, and kelp is usually avoided on low-iodine diets such as before radioactive iodine treatment. The label doesn\'t list the iodine content.',
+        doctorOpinionShort: 'Low-dose vitamins A, C, E, and B6 plus nine herbs in an undisclosed 450 mg blend, with no specific health claims. Contains black cohosh, linked to rare liver injury and not advised in pregnancy without supervision, and kelp, an unmeasured iodine source. No study of this product was found.',
+        doctorOpinionCitations: [
+            { url: 'https://www.amazon.com/dp/B0BWSMCMTZ', label: 'Amazon: CBB 13 in 1 Women\'s Gummies listing and Supplement Facts' },
+            { url: 'https://ods.od.nih.gov/factsheets/BlackCohosh-HealthProfessional/', label: 'NIH Office of Dietary Supplements: Black cohosh fact sheet', chipLabel: 'NIH ODS: black cohosh' },
+            { url: 'https://ods.od.nih.gov/factsheets/Iodine-Consumer/', label: 'NIH Office of Dietary Supplements: Iodine fact sheet for consumers', chipLabel: 'NIH ODS: iodine' },
+        ],
+        whoItsFor: [
+            'Adults who want a low-dose vitamin gummy and are comfortable with an undisclosed herbal blend',
+            'Not for pregnancy (unless a provider supervises), liver problems, or thyroid conditions without a doctor\'s OK (black cohosh and kelp)',
+            'Not a substitute for a full multivitamin if you need minerals such as iron, calcium, or vitamin D',
+        ],
+        howToUse: {
+            intro: 'Per the label shown on Amazon: adults take two gummies a day.',
+            steps: [
+                'Chew 2 gummies thoroughly before swallowing.',
+                'Don\'t take more than the recommended dose.',
+            ],
+            sourceUrl: 'https://www.amazon.com/dp/B0BWSMCMTZ',
+            sourceLabel: 'Amazon: CBB 13 in 1 Women\'s Gummies',
+        },
+        warnings: [
+            'Liver disorders, or symptoms like abdominal pain, dark urine, or yellowing skin: avoid or stop and see a doctor. Contains black cohosh (US Pharmacopeia recommendation, via NIH ODS).',
+            'Pregnant: don\'t take black cohosh unless a provider supervises (American Herbal Products Association, via NIH ODS).',
+            'Thyroid conditions, a low-iodine diet, or thyroid medication: contains kelp, an iodine source, in an unlisted amount (NIH ODS).',
+            'Contains 3 g of sugar per serving and Blue 1 dye.',
+        ],
+        communityReview: 'On Amazon it has 4.4 out of 5 stars from 1,300 ratings as of October 2026: 78% five stars, 4% four, 6% three, 5% two, and 7% one star. The brand\'s own product page shows no reviews and lists the product as sold out.',
+        effectiveness: 'Low-dose vitamins with nine herbs in an undisclosed blend. No study of this product was found, and the herb amounts can\'t be compared with research.',
+        ingredientScience: [
+            {
+                name: 'Black cohosh',
+                text: 'Usually taken for menopause symptoms. NIH ODS reports at least 83 cases of liver damage worldwide, though a causal link hasn\'t been shown; the US Pharmacopeia recommends a caution for people with liver disorders. For hot flashes, a 2012 Cochrane review of 16 trials (2,027 women) found insufficient evidence for or against it, and a 2016 meta-analysis of 4 trials (511 women) found no significant reduction. This product doesn\'t disclose how much it contains.',
+                citations: [
+                    { url: 'https://ods.od.nih.gov/factsheets/BlackCohosh-HealthProfessional/', label: 'NIH Office of Dietary Supplements: Black cohosh fact sheet for health professionals' },
+                ],
+            },
+            {
+                name: 'Kelp (iodine source)',
+                text: 'Kelp supplements contain iodine. NIH ODS sets the adult upper limit at 1,100 mcg of iodine a day from all sources and says too much can cause goiter, thyroid inflammation, and other thyroid problems. High-dose iodine can interact with antithyroid drugs such as methimazole. The label doesn\'t list the kelp or iodine amount.',
+                citations: [
+                    { url: 'https://ods.od.nih.gov/factsheets/Iodine-Consumer/', label: 'NIH Office of Dietary Supplements: Iodine fact sheet for consumers' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/dp/B0BWSMCMTZ',
+                        text: 'Amazon: CBB 13 in 1 Women\'s Gummies reviews',
+                        summary: '4.4 out of 5 stars from 1,300 ratings on Amazon as of October 2026.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
 ];
