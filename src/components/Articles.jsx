@@ -625,6 +625,216 @@ const ARTICLES = [
       </>
     ),
   },
+  {
+    id: 'postpartum-stretch-marks',
+    image: '/articles/postpartum-stretch-marks/glitter.webp',
+    title: 'Can You Actually Improve Postpartum Stretch Marks and Scars? I Looked at the Research Behind 5 MOST Popular Treatments',
+    source: 'Geena Yousry, MS1 · Cochrane, Dermatologic Surgery, Actas Dermo-Sifiliográficas',
+    tags: ['Postpartum', 'Skin'],
+    teaser: 'From viral belly oils to prescription retinoids, here’s what actually works, what’s mostly marketing, and what the research says.',
+    body: (
+      <>
+        <div style={{ marginBottom: '1rem' }}><em>Reviewed by Dr. Anuja Vyas, Board-Certified OBGYN, Co-founder of <a href="/partners#brand-buni">BUNI Body</a>. Written by Geena Yousry, MS1, Medical Student.</em></div>
+        <figure style={{ margin: '0 0 1.5rem' }}>
+          <img src="/articles/postpartum-stretch-marks/glitter.webp" alt="Glitter Stretch Marks digital artwork by Sara Shakeel" width="400" height="400" style={{ width: '100%', maxWidth: 400, height: 'auto', borderRadius: 16, display: 'block' }} />
+          <figcaption style={{ fontSize: 14, marginTop: 8 }}>Shakeel, S. (2017). Glitter Stretch Marks [Digital artwork]. Featured in Vogue Italia.</figcaption>
+        </figure>
+        <p>If you've ever searched for the best stretch-mark cream on google or tik tok, you know the beauty industry has a product for practically everything- it's overstimulating as HECK. Belly oils promising smoother skin, collagen creams claiming to erase stretch marks, and serums that supposedly work miracles overnight.</p>
+        <p>Some cost $10. Others cost $100. And somehow, they all seem to promise the same thing.</p>
+        <figure style={{ margin: '0 0 1rem' }}>
+          <img src="/articles/postpartum-stretch-marks/reaction.webp" alt="Reaction GIF" width="244" height="224" loading="lazy" style={{ width: '100%', maxWidth: 244, height: 'auto', borderRadius: 16, display: 'block' }} />
+        </figure>
+        <p><strong>PERO LIKE do they actually work?</strong></p>
+        <p>As a medical student passionate about women's health, I decided to go down the PubMed rabbit hole so you wouldn't have to, digging through clinical research to separate the science from the skincare marketing. Because, while there's nothing wrong with a cute body oil, there's a difference between a product that makes your skin FEEL amazing and one that's actually been shown to improve stretch marks.</p>
+        <p><strong>A little reminder before I start: YOUR BODY DOESN'T NEED FIXING.</strong></p>
+        <p>Stretchmarks and scars are completely normal. I have stretch marks myself, and I've never even been pregnant (TMI, I know). Whether you want to explore treatments or embrace them as they are, both are perfectly valid choices.</p>
+        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
+          <li><strong>The good news?</strong> Stretch marks and scars can often become less noticeable.</li>
+          <li><strong>The catch?</strong> No product or procedure can reliably erase them completely.</li>
+        </ul>
+        <p>So, which treatments are actually worth considering, and which ones might be better left on the shelf?</p>
+        <p>Consider this your evidence-based beauty edit….with a little less BS (I mean, marketing) and a lot more science!</p>
+
+        <h2 className="ay-lib-h2">The Difference Is More Than Skin Deep</h2>
+        <p>Before we start filling our shopping carts, let's clear something up: not all postpartum marks are created equal.</p>
+        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
+          <li><strong>Stretch marks:</strong> Medically known as striae distensae, develop when changes in the skin's collagen and elastic-fiber network occur during pregnancy. They often start out pink, red, or purple (striae rubrae) before gradually becoming lighter, silvery, and slightly sunken (striae albae).</li>
+          <li><strong>C-section and perineal scars:</strong> Develop as the body repairs tissue following an incision or tear.</li>
+        </ul>
+        <p>Stretch marks have scar-like features, but they aren't identical to surgical scars. And that matters, because the treatments that help one won't necessarily help the other.</p>
+        <p>Now…onto the options</p>
+        <figure style={{ margin: '0 0 1rem' }}>
+          <img src="/articles/postpartum-stretch-marks/thumbs.webp" alt="Thumbs-up photo" width="320" height="480" loading="lazy" style={{ width: '100%', maxWidth: 260, height: 'auto', borderRadius: 16, display: 'block' }} />
+        </figure>
+
+        <h2 className="ay-lib-h2">01 · Prescription tretinoin</h2>
+        <p><em>Best-studied topical option for newer stretch marks</em></p>
+        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
+          <li><strong>Best for:</strong> Newer red or purple stretch marks</li>
+          <li><strong>The science:</strong> Encouraging, but based on relatively small studies</li>
+          <li><strong>Worth knowing:</strong> Prescription-only. Avoid retinoids during pregnancy, and speak with your clinician about breastfeeding precautions before using them.</li>
+        </ul>
+        <p>You've probably heard of retinoids in the context of acne or anti-aging skincare. But their collagen-stimulating effects have also made them a subject of interest in stretch-mark research.</p>
+        <p>And this is where things get interesting.</p>
+        <p>A 2026 systematic review published in Actas Dermo-Sifiliográficas, which examined 69 studies of stretch-mark treatments overall, found that 0.1% tretinoin improved stretch-mark appearance in most of the studies evaluating it, particularly when the marks were newer.</p>
+        <p>BUT this isn't an overnight transformation. Most studies involved at least 12 weeks of treatment, and dryness or irritation can come with the territory. A gentle moisturizer can help keep your skin comfortable along the way (and yes, your favorite body oil can still have a place in your routine!).</p>
+        <p>So, is your favorite retinol body lotion basically the same thing? Not quite (I wish lol)</p>
+        <p>Prescription tretinoin and over-the-counter retinol products belong to the same broader ingredient family, but they aren't interchangeable. The evidence supporting tretinoin doesn't automatically extend to every retinol cream marketed for body texture.</p>
+        <p><strong>The verdict</strong></p>
+        <p>If newer stretch marks are your main concern, tretinoin is one of the more evidence-supported topical options to discuss with a dermatologist. Avoid topical retinoids during pregnancy; if breastfeeding, discuss use and infant-contact precautions with your clinician.</p>
+        <p><strong>What to shop</strong></p>
+        <p>Prescription tretinoin isn't exactly a casual add-to-cart situation. 0.1% tretinoin needs to be prescribed by your doctor.</p>
+        <p>But shhh… if you're looking for an OTC retinol body lotion, I've got my eye on The Ordinary Retinol 0.5% in Squalane. Don't forget to pair it with a gentle, fragrance-free moisturizer!</p>
+        <p>AND for my expecting mothers and breastfeeders, there's Nēmah Revitalizing Stretch Mark Cream and Mederma Stretch Marks Therapy, which are pregnancy-friendly options.</p>
+        <p>After delivery, BUNI Transform Body and Scar Oil incorporates a milder retinoid (retinyl palmitate) with snail secretion filtrate to hydrate and reduce the appearance of stretch marks. This is safe during breastfeeding and the large roller ball design makes it especially appealing for quick application and scar massage.</p>
+        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
+          <li>The Ordinary Retinol 0.5% in Squalane</li>
+          <li>Nēmah Stretch Mark Cream</li>
+          <li>Mederma Stretch Marks Therapy</li>
+          <li>BUNI Transform Body and Scar Oil</li>
+        </ul>
+        <p>Remember these are alternatives but a prescription product may be the better option.</p>
+
+        <h2 className="ay-lib-h2">02 · Silicone scar sheets</h2>
+        <p><em>Safest and best at-home option to consider for C-section scars</em></p>
+        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
+          <li><strong>Best for:</strong> Fully healed C-section incisions</li>
+          <li><strong>The science:</strong> Among the better-supported non-invasive scar treatments</li>
+          <li><strong>Worth knowing:</strong> Consistency matters</li>
+        </ul>
+        <p>Silicone scar sheets and gels aren't particularly the most trendy and glamorous. They don't come with exotic botanical extracts or elaborate skincare rituals. But unlike many products promising to erase scars, they have a meaningful body of clinical research behind them.</p>
+        <p>Silicone helps maintain a hydrated environment over scar tissue, and studies suggest it can improve certain features of scars, including thickness, redness, and flexibility.</p>
+        <p>A study comparing silicone gel with silicone sheets on C-section scars found broadly similar results, meaning the choice may come down to which format you find more comfortable.</p>
+        <p>And unlike the latest $80 miracle cream, a higher price tag doesn't necessarily translate into better results.</p>
+        <p><strong>The verdict</strong></p>
+        <p>One of the first at-home treatments worth discussing for a C-section scar. Only begin after the incision has fully closed and your clinician has cleared you to use it. Scar improvement generally takes consistent use over weeks to months.</p>
+        <p><strong>Products worth looking at</strong></p>
+        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
+          <li>ScarAway Silicone Scar Sheets</li>
+          <li>Kelo-cote Silicone Scar Gel</li>
+          <li>La Roche-Posay Cicaplast Defense Gel Scar</li>
+        </ul>
+        <p>These are product examples, not independently tested rankings.</p>
+        <blockquote style={{ margin: '1rem 0', paddingLeft: '1rem', borderLeft: '3px solid var(--color-primary)' }}>
+          <p><strong>✦ From our clinical experts</strong></p>
+          <p>The combination of tissue massage along, above, and below the c-section scar with a good product - whether prescription or not - and regular application of silicone scar tape is the best defense against not only stretch marks but also painful or lumpy scars.</p>
+        </blockquote>
+
+        <h2 className="ay-lib-h2">03 · Belly oils, Centella, and hyaluronic acid</h2>
+        <p><em>Best for hydration (not miracles)</em></p>
+        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
+          <li><strong>Best for:</strong> Dryness, itchiness, and keeping postpartum skin comfortable</li>
+          <li><strong>The science:</strong> Good rationale for hydration; limited evidence for stretch-mark reduction</li>
+          <li><strong>Worth knowing:</strong> A moisturizer isn't necessarily a stretch-mark treatment</li>
+        </ul>
+        <p>Let's talk about the beauty industry's favorite postpartum category: belly oils.</p>
+        <p>Cocoa butter. Vitamin E. Olive oil. Botanical blends with beautiful packaging and even more beautiful promises.</p>
+        <p>I have nothing against a good body oil. It sure makes my skin feel AMAZEEEE. But after looking at the literature, I think it's important to separate what these products actually do from what they're marketed to do.</p>
+        <p>Clinical trials haven't consistently shown that cocoa butter or olive oil prevents pregnancy-related stretch marks. That doesn't mean they're useless. They can moisturize the skin, reduce dryness, and make a skincare routine feel a little more luxurious.</p>
+        <p>It just means we shouldn't confuse hydration with structural skin remodeling.</p>
+        <p><strong>But what about Centella asiatica and hyaluronic acid?</strong></p>
+        <p>These ingredients are a little more interesting from a research perspective.</p>
+        <p>Hyaluronic acid helps attract and retain moisture, while Centella asiatica has been investigated for its potential effects on skin repair and collagen-related processes. Some studies of combination formulations have reported encouraging results.</p>
+        <p>The problem? Many products contain several active ingredients, making it difficult to know which one contributed to the improvement. The overall evidence is still inconsistent.</p>
+        <p><strong>The verdict</strong></p>
+        <p>If you enjoy a belly oil or body butter, use it! Just buy it because you like how it makes your skin feel, not because the label promises to erase stretch marks, it can reduce redness and the overall discoloration. Centella and hyaluronic acid are reasonable skincare ingredients to consider, but neither is a guaranteed treatment.</p>
+        <p><strong>What to shop</strong></p>
+        <p>A fragrance-free body moisturizer, a hyaluronic-acid body lotion, or a Centella-containing cream. Prioritize comfort, formulation, and price over dramatic stretch-mark claims.</p>
+        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
+          <li>TRANSFORM Scar &amp; Body Treatment Oil</li>
+          <li>SKIN1004 Madagascar Centella Soothing Cream</li>
+          <li>Cowshed Mother Stretch Mark Balm</li>
+          <li>Summer Fridays Babymoon Belly Balm</li>
+          <li>Earth Mama Belly Butter</li>
+        </ul>
+
+        <h2 className="ay-lib-h2">04 · Microneedling</h2>
+        <p><em>Best for persistent stretch marks and texture</em></p>
+        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
+          <li><strong>Best for:</strong> Stretch marks that haven't improved enough with topical skincare</li>
+          <li><strong>The science:</strong> Promising clinical evidence for professional treatments</li>
+          <li><strong>Worth knowing:</strong> Technique and safety matter</li>
+        </ul>
+        <p>If creams can only do so much, what about treatments that work beneath the surface?</p>
+        <p>Microneedling uses fine needles to create controlled micro-injuries in the skin, triggering a repair response that encourages collagen and elastin remodeling. Radiofrequency microneedling adds heat energy to stimulate deeper tissue changes.</p>
+        <p>Unlike a moisturizer, this approach actually targets some of the structural changes associated with stretch marks.</p>
+        <p>Clinical studies suggest microneedling can improve their appearance, including older marks, although results vary and multiple sessions may be needed.</p>
+        <p><strong>Can you do it at home?</strong></p>
+        <p>At-home microneedling devices are available, and skincare routines sometimes pair them with products such as Medicube PDRN serum, Centella asiatica serum, and rich moisturizers.</p>
+        <figure style={{ margin: '0 0 1rem' }}>
+          <img src="/articles/postpartum-stretch-marks/diy.webp" alt="#DIY GIF" width="480" height="270" loading="lazy" style={{ width: '100%', maxWidth: 480, height: 'auto', borderRadius: 16, display: 'block' }} />
+        </figure>
+        <blockquote style={{ margin: '1rem 0', paddingLeft: '1rem', borderLeft: '3px solid var(--color-primary)' }}>
+          <p><strong>! But here's where I'd be careful</strong></p>
+          <p>Deeper at-home needling can cause infection, scarring, and pigmentation changes, particularly when equipment or technique is inappropriate.</p>
+        </blockquote>
+        <p><strong>The verdict</strong></p>
+        <p>Microneedling is worth considering for persistent stretch marks, but a qualified clinician offers the safer, better-studied approach. If you're recently postpartum, make sure any incisions have healed and discuss timing before undergoing treatment. And don't forget to factor in the time and cost, since multiple sessions may be needed to see noticeable results.</p>
+        <p><strong>What to shop</strong></p>
+        <p>Hydrating skincare for intact skin and professionally recommended aftercare. For the microneedling itself, prioritize a qualified provider over an at-home device. But after talking with your provider, an at home device I would suggest:</p>
+        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
+          <li>ORA Body Microneedle Roller System</li>
+        </ul>
+
+        <h2 className="ay-lib-h2">05 · Laser treatments</h2>
+        <p><em>Best for targeted professional treatment</em></p>
+        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
+          <li><strong>Best for:</strong> Persistent stretch marks, redness, or selected surgical scars</li>
+          <li><strong>The science:</strong> Promising, with outcomes varying by device and skin type</li>
+          <li><strong>Worth knowing:</strong> Not all lasers do the same thing</li>
+        </ul>
+        <p>When people hear the word laser, it's easy to imagine a treatment that simply makes stretch marks disappear.</p>
+        <p>Unfortunately, dermatology is a little more complicated than that.</p>
+        <p>Different lasers target different concerns. Vascular lasers may help reduce the redness of newer stretch marks, while fractional lasers stimulate skin remodeling and may improve the texture of older marks.</p>
+        <p>Fractional CO₂ lasers have also been studied for surgical scars, including C-section scars.</p>
+        <p>A 2026 systematic review identified fractional lasers among the more promising stretch-mark treatments, although the authors emphasized that study sizes and treatment protocols varied considerably.</p>
+        <blockquote style={{ margin: '1rem 0', paddingLeft: '1rem', borderLeft: '3px solid var(--color-primary)' }}>
+          <p><strong>! One important consideration: skin tone</strong></p>
+          <p>Some laser treatments carry a risk of post-inflammatory hyperpigmentation, particularly in darker skin tones. That doesn't mean people with deeper skin tones can't benefit from laser treatments, but it does mean choosing an experienced clinician and an appropriate device is especially important.</p>
+        </blockquote>
+        <p><strong>The verdict</strong></p>
+        <p>Lasers may offer meaningful improvement when topical products aren't enough, but they're an investment, often require multiple sessions, and aren't a guaranteed fix.</p>
+        <p><strong>What to shop</strong></p>
+        <p>A consultation with a board-certified dermatologist experienced in treating your skin type.</p>
+
+        <h2 className="ay-lib-h2">And what about perineal or episiotomy scars?</h2>
+        <p>This is one area where I'd skip the beauty aisle altogether.</p>
+        <p>Unlike abdominal stretch marks or C-section scars, perineal scars involve sensitive tissue, and treatment is often more about comfort and function than appearance.</p>
+        <p>If you're experiencing persistent pain, tightness, discomfort during intercourse, or problems with healing, an OB-GYN or pelvic floor physical therapist can help assess what's going on.</p>
+        <p>Retinoids, exfoliating acids, and ordinary cosmetic scar treatments shouldn't be applied to vulvar or perineal tissue without medical guidance.</p>
+
+        <figure style={{ margin: '1.5rem 0' }}>
+          <img src="/articles/postpartum-stretch-marks/klimt.webp" alt="Gustav Klimt, Hope II" width="660" height="900" loading="lazy" style={{ width: '100%', maxWidth: 420, height: 'auto', borderRadius: 16, display: 'block' }} />
+          <figcaption style={{ fontSize: 14, marginTop: 8 }}>Gustav Klimt, Hope II (1907–1908)</figcaption>
+        </figure>
+        <h2 className="ay-lib-h2">One last thing: Your skin isn't something you need to apologize for</h2>
+        <p>After looking through the research, here's what I hope you take away from this article: you don't need to spend hundreds of dollars trying to get rid of something that's completely normal.</p>
+        <p>It's so easy to scroll through social media, see someone's seemingly flawless postpartum body, and start questioning your own. Suddenly, a stretch mark you've never thought twice about becomes something you feel pressured to fix.</p>
+        <p>But a before-and-after picture doesn't tell you everything. Neither does a glowing review, a viral TikTok, or a product promising results that sound almost too good to be true. Your body has gone through an enormous amount of change. Give yourself some grace babe!!</p>
+        <p>If you want to try a silicone sheet, explore microneedling, or simply enjoy moisturizing body oil because it makes you feel good, go for it. Taking care of your skin can be an act of self-care, not self-criticism.</p>
+        <p>And if you'd rather do absolutely nothing? That's just as valid.</p>
+        <p>As someone studying medicine, I believe women deserve access to the science behind the products they're encouraged to buy (not just the marketing).</p>
+        <p>But more than anything, I hope you remember this: you're beautiful as you are, stretch marks, scars and everything in between!</p>
+        <p>No cream, treatment, or internet trend gets to decide otherwise. So take care of yourself, be kind to your body, and please don't stress over a few lines on your skin. You've got enough on your plate queen.</p>
+        <p><em>Geena</em></p>
+
+        <p><strong>References:</strong></p>
+        <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
+          <li>Algarra Sahuquillo, J., &amp; Martín-Gorgojo, A. (2026). Stretch marks: Systematic review of its therapeutic approach. Actas Dermo-Sifiliográficas, 117(4), 104553. <a href="https://doi.org/10.1016/j.ad.2025.104553" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>doi:10.1016/j.ad.2025.104553</a></li>
+          <li>Brennan, M., Young, G., &amp; Devane, D. (2012). Topical preparations for preventing stretch marks in pregnancy. Cochrane Database of Systematic Reviews, (11), CD000066. <a href="https://doi.org/10.1002/14651858.CD000066.pub2" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>doi:10.1002/14651858.CD000066.pub2</a></li>
+          <li>Grove, G. L., Karmisholt, K. E., Philipsen, P. A., Bjerring, P., &amp; Haedersdal, M. (2026). Treatment of striae albae with combination of fractional radiofrequency and topical tretinoin: A randomized controlled trial. Lasers in Medical Science.</li>
+          <li>Güner Emül, T., &amp; Kaplan Serin, E. (2026). Effect of aromatherapy oil applications on striae gravidarum: A systematic review. Skin Research and Technology.</li>
+          <li>Lu, H., Guo, J., Hong, X., Chen, A., Zhang, X., &amp; Shen, S. (2020). Comparative effectiveness of different therapies for treating striae distensae: A systematic review and network meta-analysis. Medicine, 99(39), e22256. <a href="https://doi.org/10.1097/MD.0000000000022256" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>doi:10.1097/MD.0000000000022256</a></li>
+          <li>Mustafa, A., Zahid, R., Khan, S., et al. (2025). Evaluating CO2 laser and micro-needling therapies for striae distensae: A comprehensive meta-analysis and systematic review. Lasers in Medical Science.</li>
+          <li>Saki, N., Rahimi, F., Pezeshkian, F. S., &amp; Parvar, S. Y. (2022). Comparison of the efficacy of microneedling versus CO2 fractional laser to treat striae alba: A randomized clinical trial. Dermatologic Therapy, 35(1), e15212. <a href="https://doi.org/10.1111/dth.15212" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>doi:10.1111/dth.15212</a></li>
+          <li>Solt Kırca, A., &amp; Kanza Gül, D. (2022). Effects of olive oil on striae gravidarum in primiparous women: A randomized controlled clinical study. Alternative Therapies in Health and Medicine.</li>
+          <li>Tian, T., Luo, Y. J., Wang, H., Chen, H. D., &amp; Li, Y. H. (2019). Efficacy and safety of a sublative bipolar fractional radiofrequency system combined with topical tretinoin in treating striae gravidarum: A randomized pilot study. Dermatologic Surgery, 45(10), 1245–1252. <a href="https://doi.org/10.1097/DSS.0000000000001933" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>doi:10.1097/DSS.0000000000001933</a></li>
+          <li>Tran, B., Wu, J. J., Ratner, D., &amp; Han, G. (2020). Topical scar treatment products for wounds: A systematic review. Dermatologic Surgery, 46(12), 1564–1571. <a href="https://doi.org/10.1097/DSS.0000000000002712" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>doi:10.1097/DSS.0000000000002712</a></li>
+          <li>Wang, F., Li, X., Wang, X., &amp; Jiang, X. (2020). Efficacy of topical silicone gel in scar management: A systematic review and meta-analysis of randomised controlled trials. International Wound Journal, 17(3), 765–773. <a href="https://doi.org/10.1111/iwj.13337" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>doi:10.1111/iwj.13337</a></li>
+        </ul>
+      </>
+    ),
+  },
 ];
 
 /** Return articles relevant to quiz answers (for recommendations page). */
@@ -684,7 +894,38 @@ export { ARTICLES };
  */
 import { TEAM_COVER_READS } from '../data/readCovers.js';
 const KEEP_ILLUSTRATION = TEAM_COVER_READS;
+
+/* Reads a writer designed as a full page (her own layout, colours and image
+   placement). The website shows that page; ARTICLES keeps the plain text for
+   search, read time and the app. */
+const DESIGNED_READS = {
+  'postpartum-stretch-marks': { Component: PostpartumStretchMarksArticle, next: 'pelvic-floor-dysfunction' },
+};
+
+/* The read featured at the top of the Library, with a "New" sticker. */
+const FEATURED_READ = { id: 'postpartum-stretch-marks', by: 'Geena Yousry, MS1' };
+
+function FeaturedRead({ onOpen }) {
+  const art = ARTICLES.find((a) => a.id === FEATURED_READ.id);
+  if (!art) return null;
+  const cut = art.title.indexOf('? ');
+  const [lead, rest] = cut > 0 ? [art.title.slice(0, cut + 1), art.title.slice(cut + 2)] : [art.title, ''];
+  return (
+    <a href={`/library/${art.id}`} className="ay-lib-feature" onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); onOpen(art.id); }}>
+      <span className="ay-lib-feature__new" aria-hidden="true">New</span>
+      <img className="ay-lib-feature__img" src={art.image} alt="" width="794" height="798" />
+      <span className="ay-lib-feature__text">
+        <small className="ay-lib-feature__kicker"><span className="sr-only">New. </span>Featured read · {sectionOf(art.id)?.label}</small>
+        <strong className="ay-lib-feature__title">{lead}{rest && <> <em>{rest}</em></>}</strong>
+        <span className="ay-lib-feature__teaser">{art.teaser}</span>
+        <span className="ay-lib-feature__by">By {FEATURED_READ.by} · {minutesFor(art)} min read</span>
+        <span className="ay-lib-feature__cta">Read it <span aria-hidden="true">→</span></span>
+      </span>
+    </a>
+  );
+}
 import TopicCover from './v3/TopicCover.jsx';
+import PostpartumStretchMarksArticle from './library/PostpartumStretchMarksArticle.jsx';
 import useRotatingPlaceholder from '../utils/useRotatingPlaceholder.js';
 const LIB_SEARCH_EXAMPLES = ['heavy periods', 'PCOS', 'period pain', 'when to see a doctor', 'UTI', 'perimenopause', 'fibroids', 'endometriosis', 'yeast vs BV', 'pelvic floor', 'night sweats', 'missed period'];
 
@@ -749,6 +990,8 @@ const ARTICLE_CATEGORIES = [
   { id: 'hormonal', label: 'Hormonal Health', articleIds: ['pcos-basics', 'menopause-basics', 'pmdd', 'hormonal-birth-control'] },
   { id: 'chronic', label: 'Chronic & Pelvic Conditions', articleIds: ['endometriosis-basics', 'pelvic-floor-dysfunction', 'ovarian-cysts'] },
   { id: 'vaginal-urinary', label: 'Vaginal & Urinary Health', articleIds: ['intimate-wash', 'uti-prevention', 'yeast-infection-basics', 'bacterial-vaginosis'] },
+
+  { id: 'postpartum', label: 'Pregnancy & Postpartum', articleIds: ['postpartum-stretch-marks'] },
 ];
 const sectionOf = (id) => ARTICLE_CATEGORIES.find((c) => c.articleIds.includes(id)) || null;
 // Next read: the next one in the same section, looping (never a funnel to one page).
@@ -963,6 +1206,12 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
     <ul className="ay-web-lib-grid ay-lib-shelf">{items.map(card)}</ul>
   </div>;
 
+  if (selected && DESIGNED_READS[selected.id]) {
+    const Designed = DESIGNED_READS[selected.id].Component;
+    const nextArticle = ARTICLES.find((a) => a.id === DESIGNED_READS[selected.id].next) || null;
+    return <Designed key={selected.id} onBack={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); closeRead(); }} nextArticle={nextArticle} onOpenNext={open} fallback={<article><h1>{selected.title}</h1>{withHeadings(selected.body)}</article>} />;
+  }
+
   if (selected) {
     const next = nextInSection(selected.id);
     const done = progressOf(selected) >= 1;
@@ -1032,6 +1281,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
     body = <ul className="ay-web-lib-grid">{items.map(card)}</ul>;
   } else {
     body = <>
+      <FeaturedRead onOpen={open} />
       {shelf('keep', 'Keep reading', keepReading)}
       {hasProfile ? <>{shelf('foryou', 'Top 3 for you', forYou.slice(0, 3))}{(() => {
         // Say why these are "for you", in her words from the quiz.

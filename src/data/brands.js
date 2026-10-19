@@ -5595,7 +5595,7 @@ export const BRAND_PRODUCTS = [
     },
     // Alubri (alubri.com). ayna brand partner since 2026-10-17 (team request),
     // listed in src/utils/partnerBrands.js and on the Brand Partnerships page.
-    // No affiliate link supplied yet, so Buy Now still goes to alubri.com.
+    // Shopify Collabs affiliate links (collabs.shop) added 2026-10-18 for all six.
     //
     // Sourcing rule for these six entries: alubri.com ONLY (product pages,
     // /pages/faq, /pages/science, /pages/about), fetched 2026-09-29. Prices,
@@ -5628,6 +5628,7 @@ export const BRAND_PRODUCTS = [
         price: '$29.99 (50 mL, 8 applicators)',
         whereToBuy: ['alubri.com', 'Amazon', 'Walmart', 'Target', 'Grove'],
         url: 'https://alubri.com/products/vaginal-moisturizing-gel',
+        affiliateUrl: 'https://collabs.shop/d0dtyn', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://alubri.com/pages/faq',
         image: '/products/alubri/vaginal-moisturizing-gel.webp',
         summary: 'A hormone-free, fragrance-free internal vaginal moisturizer that Alubri says delivers up to 72 hours of hydration from one application. It pairs hyaluronic acid (sodium hyaluronate) and lactic acid with Alubri\'s proprietary "Activated Oil Complex" (pre-activated coconut and rosehip oils), which the brand says balances the vaginal microbiome. Each box is a 50 mL tube with 8 single-use applicators; used twice a week, one box lasts about 4 weeks.',
@@ -5742,6 +5743,7 @@ export const BRAND_PRODUCTS = [
         price: '$24.99 (50 mL) · $12.99 (1.0 fl oz trial size)',
         whereToBuy: ['alubri.com', 'Amazon', 'Walmart', 'Target', 'Grove'],
         url: 'https://alubri.com/products/intimate-serum',
+        affiliateUrl: 'https://collabs.shop/jseteg', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://alubri.com/pages/faq',
         image: '/products/alubri/intimate-serum.webp',
         summary: 'A lightweight, water-based serum for external intimate skin: the vulva, labia, and vaginal opening. It pairs hyaluronic acid (sodium hyaluronate) with inulin, which Alubri says also supports a healthy skin microbiome, plus aloe, green tea, and chamomile. The brand says it absorbs with no oily residue, feels cooling, and helps the skin hold on to its natural moisture. Hormone-free and fragrance-free. Sold in a 50 mL bottle or a 1.0 fl oz trial size.',
@@ -5836,6 +5838,7 @@ export const BRAND_PRODUCTS = [
         price: '$29.99 (50 mL)',
         whereToBuy: ['alubri.com', 'Amazon', 'Walmart', 'Target', 'Grove'],
         url: 'https://alubri.com/products/calming-cream',
+        affiliateUrl: 'https://collabs.shop/wnwjkw', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://alubri.com/pages/faq',
         image: '/products/alubri/calming-cream.png',
         summary: 'An over-the-counter anti-itch cream for external intimate skin, with 0.25% hydrocortisone to relieve itching and irritation. The base adds shea butter, hyaluronic acid, lactic acid, oat, aloe, and Alubri\'s Activated Oil Complex, which the brand says supports a balanced vulvar microbiome. Alubri positions it as giving the relief of an OTC ointment in a lightweight, non-greasy cream. Hormone-free and fragrance-free.',
@@ -5938,6 +5941,7 @@ export const BRAND_PRODUCTS = [
         price: '$24.99 (50 g)',
         whereToBuy: ['alubri.com', 'Amazon', 'Walmart', 'Target', 'Grove'],
         url: 'https://alubri.com/products/vulva-balm',
+        affiliateUrl: 'https://collabs.shop/frt2q3', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://alubri.com/pages/faq',
         image: '/products/alubri/vulva-balm.png',
         summary: 'A non-greasy daily moisturizer for the vulva that Alubri says hydrates, soothes, protects against dryness, and calms sensitive skin. It combines hyaluronic acid (sodium hyaluronate), a peptide, and Alubri\'s Activated Oil Complex with oat, green tea, dragon fruit, and Tasmanian pepperberry extracts. The brand describes a rich but lightweight balm that absorbs quickly to a soft, powdery finish. Hormone-free, fragrance-free, and hypoallergenic.',
@@ -6039,6 +6043,7 @@ export const BRAND_PRODUCTS = [
         price: '$19.99 (2-week trial)',
         whereToBuy: ['alubri.com', 'Amazon', 'Walmart', 'Target', 'Grove'],
         url: 'https://alubri.com/products/vaginal-wellness-kit-bag-version',
+        affiliateUrl: 'https://collabs.shop/a8b3sb', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://alubri.com/pages/faq',
         image: '/products/alubri/vaginal-wellness-kit.webp',
         summary: 'A 2-week trial kit of Alubri\'s two core moisturizers in trial sizes: the Vaginal Moisturizing Gel (30 mL, with single-use applicators) for internal hydration and microbiome balance, and the Intimate Serum (30 mL) for external vulvar hydration. Alubri pitches it as an easy introduction to the brand.',
@@ -6138,6 +6143,7 @@ export const BRAND_PRODUCTS = [
         price: '$19.99 (trial sizes)',
         whereToBuy: ['alubri.com', 'Amazon'],
         url: 'https://alubri.com/products/rejuvenate-restore-kit',
+        affiliateUrl: 'https://collabs.shop/xbngwb', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://alubri.com/pages/faq',
         image: '/products/alubri/rejuvenate-restore-kit.png',
         summary: 'A trial-size pair of Alubri\'s two external products for comfort before and after intimacy: the Intimate Serum (28 mL) for daily water-based hydration, and the Calming Cream (30 mL), an OTC 0.25% hydrocortisone cream for itching and irritation. Both are hormone-free and fragrance-free.',
@@ -6770,7 +6776,8 @@ export const BRAND_PRODUCTS = [
         isEmergingBrand: false,
     },
     // Tampon Tribe (tampontribe.com). ayna brand partner since 2026-10-17
-    // (team request); no affiliate link supplied yet. First batch (2026-09-30): the five products matching
+    // (team request); Awin affiliate links added 2026-10-18 for tampons, pads,
+    // reusable pads and teen pads (none supplied for the bulk liners). First batch (2026-09-30): the five products matching
     // the photos ayna supplied (stored under public/products/tampon-tribe/).
     // Facts are from tampontribe.com (Shopify products.json + product pages);
     // brand-site ratings are from its review widget. Options (absorbency,
@@ -6798,6 +6805,7 @@ export const BRAND_PRODUCTS = [
         userRatingSourceUrl: 'https://tampontribe.com/products/tampons',
         whereToBuy: ['tampontribe.com'],
         url: 'https://tampontribe.com/products/tampons',
+        affiliateUrl: 'https://www.awin1.com/cread.php?awinmid=91275&awinaffid=3082811&ued=https%3A%2F%2Ftampontribe.com%2Fproducts%2Ftampons%3Fselling_plan%3D626000030%26variant%3D44206457192706', // ayna affiliate link (2026-10-18)
         image: '/products/tampon-tribe/organic-tampons.webp',
         summary: 'Certified organic cotton tampons with a biodegradable cardboard "twist" applicator and no plastic anywhere, including the packaging. The absorbent core is wrapped in an organic cotton "safety veil" that the brand says keeps loose cotton strands from being left behind. No rayon/viscose, perfume, dyes, or chlorine bleaching. Sold as a monthly subscription you can customize, pause, or cancel, with free U.S. delivery; the first box arrives in a reusable jute bag, refills in recycled paper.',
         safety: {
@@ -6870,6 +6878,7 @@ export const BRAND_PRODUCTS = [
         userRatingSourceUrl: 'https://tampontribe.com/products/pads',
         whereToBuy: ['tampontribe.com'],
         url: 'https://tampontribe.com/products/pads',
+        affiliateUrl: 'https://tidd.ly/4zEjNsY', // ayna affiliate link (2026-10-18)
         image: '/products/tampon-tribe/organic-pads.webp',
         summary: 'Thin, winged pads made with certified organic cotton and no plastic. Day pads are 240 mm long with 100 ml absorbency; Night pads are 290 mm with 120 ml absorbency and double wings. "Gravity" anti-leak edges help keep you dry. Individually wrapped, with a plant-based backing and a vegan biopolymer adhesive instead of glue. Sold as a monthly subscription with free U.S. delivery.',
         safety: {
@@ -7005,6 +7014,7 @@ export const BRAND_PRODUCTS = [
         price: '$16.80 for 2 pads',
         whereToBuy: ['tampontribe.com'],
         url: 'https://tampontribe.com/products/reusable-pads-2-pack',
+        affiliateUrl: 'https://tidd.ly/4hTD188', // ayna affiliate link (2026-10-18)
         image: '/products/tampon-tribe/reusable-pads-2-pack.webp',
         summary: 'Washable cloth pads made with ultra-soft certified organic cotton, sold in a 2-pack. Rated for medium flow, holding up to 3 tampons’ worth; change more often on heavy days. Three layers with odor control, a super-absorbent inner layer, "gravity" leak-guard edges, and V-shaped straps that fasten with a metal clasp behind your underwear. The brand says they’re PFAS-free, plant-based, and vegan, and offers a money-back guarantee.',
         safety: {
@@ -7071,6 +7081,7 @@ export const BRAND_PRODUCTS = [
         price: '$10 for 18 pads (individually boxed, or in a jute bag)',
         whereToBuy: ['tampontribe.com'],
         url: 'https://tampontribe.com/products/organic-teen-pads',
+        affiliateUrl: 'https://tidd.ly/4k3ndRp', // ayna affiliate link (2026-10-18)
         image: '/products/tampon-tribe/organic-teen-pads.webp',
         summary: 'Smaller winged pads made for teens and tweens, sized to fit smaller bodies and underwear: 7.2 inches long with 40 ml absorbency. Made with certified organic cotton and no plastic, fragrance, or dyes, with "gravity" anti-leak edges. Individually wrapped, and available individually boxed so they’re easy to keep in a school bag.',
         safety: {
@@ -7128,7 +7139,8 @@ export const BRAND_PRODUCTS = [
     },
 
     // Momotaro Apotheca (momotaroapotheca.com). ayna brand partner since
-    // 2026-10-17 (Eliz's request; affiliate links to come). The six core
+    // 2026-10-17 (Eliz's request; Shopify Collabs affiliate links added
+    // 2026-10-18). The six core
     // products matching the photos Eliz supplied; expanded 2026-10-18 to the
     // depth of the other partner cards, at Eliz's request.
     //
@@ -7163,9 +7175,10 @@ export const BRAND_PRODUCTS = [
         userRatingSourceUrl: 'https://momotaroapotheca.com/products/salve',
         whereToBuy: ['momotaroapotheca.com'],
         url: 'https://momotaroapotheca.com/products/salve',
+        affiliateUrl: 'https://collabs.shop/kydydp', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://momotaroapotheca.com/pages/faq',
         image: '/products/momotaro/salve.webp',
-        summary: 'Momotaro Apotheca was started in Portland, Oregon by Lindsay Wynn and Taylor Samuelsen. Wynn, a former beauty photographer, says she started making her own products after years of recurring yeast infections and BV, when drugstore options either didn\'t work or made things worse. The Salve is the brand\'s best seller: a certified organic balm for the vulva with a coconut and jojoba base, plus goldenseal, Oregon grape, echinacea, calendula and tea tree. The brand says it comforts dryness, itching and irritation, including irritation that comes with yeast infections and BV, and calms friction from sex, sweat and tight clothing. Free of alcohol, parabens, phthalates, silicone, sulfates and synthetic fragrance.',
+        summary: 'Momotaro Apotheca was started in Portland, Oregon by Lindsay Wynn and Taylor Samuelsen. Wynn, a former beauty photographer, says she started making her own products after years of recurring yeast infections and BV, when drugstore options either didn\'t work or made things worse. The Salve is a certified organic balm for the vulva with a coconut and jojoba base, plus goldenseal, Oregon grape, echinacea, calendula and tea tree. The brand says it comforts dryness, itching and irritation, including irritation that comes with yeast infections and BV, and calms friction from sex, sweat and tight clothing. Free of alcohol, parabens, phthalates, silicone, sulfates and synthetic fragrance.',
         safety: {
             fdaStatus: 'Sold as a topical cosmetic: the brand\'s FAQ says its products are cosmetics, not medicine. It does not appear in FDA\'s drug listings under Momotaro Apotheca (checked on openFDA 2026-10-17).',
             materials: '30 mL (1 oz) jar. Ingredients: organic coconut oil, organic kokum butter, organic beeswax, organic jojoba, organic tea tree, organic goldenseal, organic echinacea, organic calendula, organic Oregon grape. Certified organic (the brand says its suppliers are Oregon Tilth certified) and cruelty-free.',
@@ -7283,6 +7296,7 @@ export const BRAND_PRODUCTS = [
         userRatingSourceUrl: 'https://momotaroapotheca.com/products/probiotic',
         whereToBuy: ['momotaroapotheca.com'],
         url: 'https://momotaroapotheca.com/products/probiotic',
+        affiliateUrl: 'https://collabs.shop/vgem4q', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://momotaroapotheca.com/pages/faq',
         image: '/products/momotaro/daily-probiotic.webp',
         summary: 'A once-a-day probiotic from Momotaro Apotheca, the Portland vulvovaginal care brand started by Lindsay Wynn after her own years of recurring yeast infections and BV. Each capsule has 25 billion cultures from 10 strains of Lactobacillus and Bifidobacterium, including L. crispatus, L. gasseri, L. rhamnosus and L. reuteri, in an acid- and bile-resistant capsule. The brand says it supports the gut, the immune system and the vaginal microbiome, and recommends at least 90 days of daily use. Vegan, shelf-stable, and free of gluten, soy and preservatives. 30 capsules, a one-month supply.',
@@ -7387,6 +7401,7 @@ export const BRAND_PRODUCTS = [
         userRatingSourceUrl: 'https://momotaroapotheca.com/products/the-uti-supplement',
         whereToBuy: ['momotaroapotheca.com'],
         url: 'https://momotaroapotheca.com/products/the-uti-supplement',
+        affiliateUrl: 'https://collabs.shop/4zbsop', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://momotaroapotheca.com/pages/faq',
         image: '/products/momotaro/urinary-tract-supplement.webp',
         summary: 'A plant-based capsule from Momotaro Apotheca, the Portland vulvovaginal care brand started by Lindsay Wynn. It combines D-mannose, a cranberry fruit concentrate (12:1, 3,000 mg per the brand), Oregon grape root, uva ursi (bearberry leaf) and marshmallow root, made with certified organic ingredients. The brand designed it for times of urinary discomfort and says it supports UTIs, recurring bladder discomfort, interstitial cystitis, BV and yeast imbalance. It is meant for short stretches, not continuous long-term use. 60 vegan capsules.',
@@ -7504,6 +7519,7 @@ export const BRAND_PRODUCTS = [
         userRatingSourceUrl: 'https://momotaroapotheca.com/products/the-suppository',
         whereToBuy: ['momotaroapotheca.com'],
         url: 'https://momotaroapotheca.com/products/the-suppository',
+        affiliateUrl: 'https://collabs.shop/tso57q', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://momotaroapotheca.com/pages/homeopathic-medicine',
         image: '/products/momotaro/vaginal-suppository.webp',
         summary: 'A homeopathic vaginal suppository that Momotaro Apotheca, the Portland brand started by Lindsay Wynn after her own recurring yeast infections and BV, says it developed over three years. The brand markets it for yeast infections, BV and vaginal irritation and calls it "a natural alternative to antibiotics and antifungals." The homeopathic actives are echinacea, wood creosote (beechwood) and northern white cedar (thuja) at 12X dilution, in a base of cocoa butter, coconut oil, beeswax and jojoba with Oregon grape, calendula and tea tree. 14 suppositories, 2 mL each. The brand suggests storing it somewhere cool, like the fridge.',
@@ -7545,7 +7561,7 @@ export const BRAND_PRODUCTS = [
             'First infection, symptoms that come back, or symptoms that don\'t clear in a week: see a clinician.',
             'Fever, pelvic pain, or unusual discharge with a bad smell: see a clinician.',
             'Pregnant or breastfeeding: talk to your provider before using any vaginal product.',
-            'Contains tea tree oil: stop using it if irritation occurs, and avoid oral sex while using it (tea tree oil must not be swallowed).',
+            'Contains tea tree oil: stop using it if irritation occurs. NIH says tea tree oil must never be swallowed.',
         ],
         communityReview: 'Rated 4.94 out of 5 from 31 reviews on the brand\'s own site (29 five-star, 2 four-star). 71% of those reviews were left in exchange for a reward; 90% are from verified buyers. Reviewers with chronic yeast infections describe fast relief: "I get chronic yeast infections and this is the ONLY thing that helps them." Several say they can\'t use standard creams: "I can\'t use Monistat. This saved me. Feels like a concentrated version of salve." One compared it to the drug miconazole and felt it "took a little more time to kick in." Practical notes: it can leak (wear a liner), and a 4-star reviewer said it didn\'t help because "my issue wasn\'t yeast or BV," a reminder to get a diagnosis first.',
         effectiveness: 'No study of this product is cited on momotaroapotheca.com, and FDA has not reviewed it for safety or effectiveness. Its calendula base has small randomized vaginal trials, and berberine and tea tree oil are antifungal in lab studies; none of that research tested this suppository.',
@@ -7611,11 +7627,12 @@ export const BRAND_PRODUCTS = [
         userRatingSourceUrl: 'https://momotaroapotheca.com/products/hydrosol',
         whereToBuy: ['momotaroapotheca.com'],
         url: 'https://momotaroapotheca.com/products/hydrosol',
+        affiliateUrl: 'https://collabs.shop/762eiq', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://momotaroapotheca.com/blogs/vaginal-wellness/hydrosol-what-is-it-how-do-i-use-it',
         image: '/products/momotaro/hydrosol-toner.webp',
-        summary: 'An alcohol-free micromist from Momotaro Apotheca, the Portland vulvovaginal care brand started by Lindsay Wynn. It is made from steam-distilled organic orange blossom, rose, rosemary and lavender waters, which the brand explains are far more diluted, and so gentler, than essential oils. Momotaro Apotheca says it soothes irritation, neutralizes odor and hydrates the face, body and external pelvic area, for use after a shower, workout, period or sex. Customers also use it as a face toner and on body breakouts. Certified organic, vegan and cruelty-free; 100 mL glass bottle, per the label.',
+        summary: 'An alcohol-free micromist from Momotaro Apotheca, the Portland vulvovaginal care brand started by Lindsay Wynn. It is made from steam-distilled organic orange blossom, rose, rosemary and lavender waters, which the brand explains are far more diluted, and so gentler, than essential oils. Momotaro Apotheca says it soothes irritation, neutralizes odor and hydrates the face, body and external pelvic area, for use after a shower, workout, period or sex. Customers also use it as a face toner and on body breakouts. Certified organic, vegan and cruelty-free; 100 mL, per the label shown on the brand\'s site.',
         safety: {
-            fdaStatus: 'Sold as a cosmetic body mist. momotaroapotheca.com does not describe it as FDA-cleared or approved, and it does not appear in FDA\'s drug listings under Momotaro Apotheca (checked on openFDA 2026-10-17).',
+            fdaStatus: 'Sold as a cosmetic body mist: the brand\'s FAQ says its products are topical cosmetics, not medicine. It does not appear in FDA\'s drug listings under Momotaro Apotheca (checked on openFDA 2026-10-17).',
             materials: 'Ingredients: organic orange blossom (Citrus aurantium amara), organic rose water (Rosa damascena), organic rosemary distillate, organic lavender distillate, glyceryl caprylate, glyceryl undecylenate (both derived from coconut and castor). No alcohol, parabens, phthalates, silicone, sulfates or synthetic fragrance.',
             recalls: 'No recalls found.',
             sideEffects: 'One reviewer said it burned when sprayed directly on already-irritated skin. The brand says not to spray it on broken skin and to patch test new products. Full warnings are listed below.',
@@ -7632,7 +7649,7 @@ export const BRAND_PRODUCTS = [
         whoItsFor: [
             'People who want a refreshing, alcohol-free mist after showering, exercise, a period or sex',
             'Skin folds and areas prone to sweat, chafing, ingrown hairs or breakouts, per the brand and reviewers',
-            'Fragrance-free routines: no synthetic fragrance, only light floral waters',
+            'People who avoid synthetic fragrance: it has none, per the brand, only light floral waters',
             'For external use: not for inside the vagina',
         ],
         howToUse: {
@@ -7704,6 +7721,7 @@ export const BRAND_PRODUCTS = [
         userRatingSourceUrl: 'https://momotaroapotheca.com/products/tonic',
         whereToBuy: ['momotaroapotheca.com'],
         url: 'https://momotaroapotheca.com/products/tonic',
+        affiliateUrl: 'https://collabs.shop/ilr3bp', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://momotaroapotheca.com/blogs/vaginal-wellness/8-ways-to-use-our-tonic-for-oil-your-needs',
         image: '/products/momotaro/bath-body-tonic.webp',
         summary: 'A jojoba-oil concentrate from Momotaro Apotheca, the Portland vulvovaginal care brand started by Lindsay Wynn. It has six ingredients: jojoba oil, tea tree, cedarwood and sweet orange essential oils, and infusions of goldenseal and Oregon grape, both sources of berberine. Momotaro Apotheca says to add it to a warm bath or use it as a spot treatment for irritation, ingrown hairs and razor burn, and markets it for discomfort from yeast and bacterial infections. Not for internal use. Certified organic and vegan; 55 mL (1.9 fl oz).',
@@ -7724,7 +7742,7 @@ export const BRAND_PRODUCTS = [
             { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Topical plant oils for skin barrier repair, review (Int J Mol Sci, 2017)' },
         ],
         whoItsFor: [
-            'People who want a fragrance-free, organic bath oil',
+            'People who want an organic bath oil that is alcohol-, fragrance- and filler-free, per the brand',
             'Spot care for ingrown hairs, razor burn and post-shave bumps, per the brand and reviewers',
             'A body oil for dry skin after the shower',
             'Not the pick if you are pregnant or breastfeeding (it contains goldenseal), or if tea tree oil irritates your skin',
@@ -7797,6 +7815,767 @@ export const BRAND_PRODUCTS = [
             },
         },
         isEmergingBrand: true,
+    },
+    // Alubri Moisture Renewal Kit (added 2026-10-18 at Eliz's request, with
+    // her photo). Facts from alubri.com/products/moisture-renewal-kit; study
+    // results are the brand's own, as on the full-size Gel and Balm entries.
+    {
+        id: 'p-alubri-moisture-renewal-kit',
+        name: 'Alubri Moisture Renewal Kit',
+        brand: 'Alubri',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: true,
+        healthFunctions: [
+            'vaginal-health',
+        ],
+        tags: [
+            'discomfort',
+            'comfort',
+            'menopause',
+            'hormone-free',
+        ],
+        price: '$19.99 (30 mL gel with 4 applicators + 15 g balm)',
+        whereToBuy: [
+            'alubri.com',
+        ],
+        url: 'https://alubri.com/products/moisture-renewal-kit',
+        affiliateUrl: 'https://collabs.shop/f4isvs',
+        faqUrl: 'https://alubri.com/pages/faq',
+        image: '/products/alubri/moisture-renewal-kit.webp',
+        summary: 'A two-week trial kit of Alubri\'s two dryness products: a 30 mL Vaginal Moisturizing Gel with 4 single-use applicators for inside, and a 15 g Vulva Balm for outside. Alubri says the gel gives up to 72 hours of hydration and balances the vaginal microbiome, and the balm relieves and prevents external dryness. Both are hormone-free and fragrance-free, and the brand describes them as gynecologist- and dermatologist-tested. A smaller, lower-cost way to try both before buying full sizes.',
+        safety: {
+            fdaStatus: 'alubri.com presents both products as hormone-free personal-care moisturizers and does not describe either as an FDA-cleared device or drug.',
+            materials: 'Kit: 30 mL (1 fl oz) Vaginal Moisturizing Gel with 4 applicators, and 15 g (0.5 oz) Vulva Balm. Gel ingredients: aqua (water), glucomannan, hydrolyzed Rosa canina (rosehip) fruit oil, hydrolyzed Cocos nucifera (coconut) oil, sodium hyaluronate, lactic acid, Hylocereus undatus (dragon fruit) fruit extract, Aloe barbadensis leaf juice, propanediol, xanthan gum, potassium sorbate, sodium benzoate, benzyl alcohol, benzoic acid. Balm ingredients: aqua (water), dimethicone, isododecane, caprylic/capric triglyceride, ozokerite, propanediol, sorbitan oleate, dimethicone crosspolymer, ceresin, hydrolyzed Rosa canina (rosehip) fruit oil, hydrolyzed Cocos nucifera (coconut) oil, sodium hyaluronate, palmitoyl hexapeptide-52, Hylocereus undatus (dragon fruit) fruit extract, Tasmannia lanceolata (Tasmanian pepperberry) fruit extract, Avena sativa (oat) kernel extract, Camellia sinensis (green tea) leaf extract, Passiflora incarnata flower extract, tocopherol, alpha-glucan oligosaccharide, tocopheryl acetate, Lactobacillus ferment lysate, biosaccharide gum-4, adenosine, ethylhexylglycerin, phenoxyethanol, sodium chloride, benzyl alcohol, potassium sorbate, benzoic acid.',
+            recalls: 'No recalls are mentioned on alubri.com; check current regulator and manufacturer recall notices.',
+            sideEffects: 'Alubri says some women feel a mild warming or blushing sensation on first use, or brief stinging from the lactic acid, that usually fades within minutes. If discomfort persists, stop and see a doctor. Full warnings are listed below.',
+            opinionAlerts: 'The clinical figures (72-hour hydration, microbiome changes, vulvar pH) come from studies Alubri describes on its own site for the full-size products; the full studies aren\'t published there.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced only from Alubri\'s own site (alubri.com), not independent clinical literature. The kit contains the same two products as the full-size Gel and Balm.',
+        doctorOpinion: 'This kit is trial sizes of two products already on ayna, so the same evidence applies. For the gel, Alubri cites an independent, third-party study of 51 menopausal women who used it twice a week for a month: one application raised vaginal hydration by 64% at 72 hours, and 94% said they felt moisturized. For the balm, Alubri reports that vulvar pH in menopausal women dropped from 6.3 to 6.0 in its own 2-week study of 50 women. Both were developed with Dr. Nicole Kerner, Alubri\'s co-founder and Chief Medical Officer, a board-certified, menopause-certified OB-GYN. These are brand-reported results; the full studies aren\'t published on alubri.com.\n\nThe 4 gel applicators cover about two weeks at the brand\'s twice-a-week schedule, which is enough to tell whether the gel suits you before buying the full size.',
+        doctorOpinionShort: 'Trial sizes of Alubri\'s gel and balm. Brand-reported studies: the gel raised vaginal hydration 64% at 72 hours in 51 menopausal women. About two weeks of use.',
+        doctorOpinionCitations: [
+            {
+                url: 'https://alubri.com/products/moisture-renewal-kit',
+                label: 'alubri.com: Moisture Renewal Kit',
+            },
+            {
+                url: 'https://alubri.com/pages/science',
+                label: 'alubri.com: Science (study results)',
+            },
+        ],
+        whoItsFor: [
+            'Vaginal and vulvar dryness from perimenopause, menopause, postpartum or breastfeeding',
+            'Anyone who wants to try Alubri\'s internal gel and external balm before buying full sizes',
+            'People who want hormone-free, fragrance-free options',
+        ],
+        howToUse: {
+            intro: 'Per Alubri\'s own directions:',
+            steps: [
+                'Gel: attach a single-use applicator to the tube and squeeze to fill it to 3 grams.',
+                'Insert the applicator into the vagina, push to release the gel, then remove and throw the applicator away.',
+                'Lie flat for about 10 minutes so the gel absorbs. Use twice a week, ideally at bedtime, or as needed.',
+                'Balm: apply over the vulva (clitoris, labia and vaginal opening) daily or as needed, for example after grooming.',
+            ],
+            sourceUrl: 'https://alubri.com/products/moisture-renewal-kit',
+            sourceLabel: 'alubri.com: Moisture Renewal Kit',
+        },
+        warnings: [
+            'A mild warming or blushing feeling on first use is normal per Alubri. If discomfort persists, stop and see a doctor.',
+            'Alubri says a slight increase in discharge is normal at first and should ease within a few uses.',
+            'Itching or irritation that persists despite a moisturizer can be a sign of infection. See a doctor.',
+            'Not tested for compatibility with condoms, per Alubri.',
+            'The balm is for external use only.',
+        ],
+        communityReview: 'alubri.com shows no customer reviews for this kit. Reviews for the full-size products are on their Amazon listings (linked from the Vaginal Moisturizing Gel and Vulva Balm pages on ayna).',
+        effectiveness: 'Same products as the full sizes: Alubri reports a 64% increase in vaginal hydration 72 hours after one gel application in its study of 51 menopausal women, and a vulvar pH drop with the balm in a 50-woman study. No independent study is cited on alubri.com.',
+        ingredients: 'Gel: sodium hyaluronate (hyaluronic acid), lactic acid, Activated Oil Complex (hydrolyzed coconut and rosehip oils), aloe, glucomannan. Balm: sodium hyaluronate, a peptide, Activated Oil Complex, oat, green tea and dragon fruit extracts.',
+        ingredientScienceNote: 'The same key ingredients as the full-size Gel and Balm. These studies show what each ingredient can do, not that this kit works.',
+        ingredientScience: [
+            {
+                name: 'Coconut and rosehip oils (Activated Oil Complex)',
+                text: 'Applied to dry skin twice a day for 2 weeks, virgin coconut oil improved hydration as well as mineral oil in a randomized, double-blind trial. An NIH-indexed review notes rosehip oil is rich in linoleic acid and antioxidants that may help calm skin inflammation. These studies used ordinary oils on skin, not Alubri\'s "pre-activated" blend, so the brand\'s microbiome claims aren\'t tested by them.',
+                citations: [
+                    {
+                        url: 'https://pubmed.ncbi.nlm.nih.gov/15724344/',
+                        label: 'PubMed (NIH): Virgin coconut oil vs. mineral oil for dry skin, randomized trial (Dermatitis, 2004)',
+                    },
+                    {
+                        url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/',
+                        label: 'NIH (PMC): Anti-inflammatory and skin barrier effects of plant oils, incl. rosehip (Int J Mol Sci, 2017)',
+                    },
+                ],
+            },
+            {
+                name: 'Lactic acid',
+                text: 'In a healthy vagina dominated by Lactobacillus, those bacteria make lactic acid, which keeps vaginal pH low and may help protect against infection. A 2021 systematic review found there isn\'t yet high-quality evidence that lactic acid products cure bacterial vaginosis or shift the vaginal microbiome, so they\'re best seen as pH support.',
+                citations: [
+                    {
+                        url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3819307/',
+                        label: 'NIH (PMC): Vaginal pH and lactic acid when lactobacilli dominate (PLoS One, 2013)',
+                    },
+                    {
+                        url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7877752/',
+                        label: 'NIH (PMC): Lactic acid products for bacterial vaginosis, systematic review (PLoS One, 2021)',
+                    },
+                ],
+            },
+            {
+                name: 'Sodium hyaluronate (hyaluronic acid)',
+                text: 'Hyaluronic acid holds water in tissue. In a randomized trial of 144 postmenopausal women with vaginal dryness, a hyaluronic acid vaginal gel used every 3 days for 30 days improved dryness symptoms in 84% of women, about the same as estriol (estrogen) cream at 89%. That trial tested a different gel, so it supports the ingredient, not Alubri\'s product specifically.',
+                citations: [
+                    {
+                        url: 'https://pubmed.ncbi.nlm.nih.gov/23574713/',
+                        label: 'PubMed (NIH): Hyaluronic acid vaginal gel vs. estriol cream for vaginal dryness (J Sex Med, 2013)',
+                    },
+                ],
+            },
+        ],
+        scientificCitations: [],
+        verificationLinks: {
+            doctor: {
+                links: [],
+            },
+            scientific: {
+                links: [],
+            },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://alubri.com/products/moisture-renewal-kit',
+                        text: 'alubri.com: Moisture Renewal Kit',
+                        summary: 'The brand\'s kit page, with contents, ingredients and directions.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://alubri.com/pages/science',
+                        text: 'alubri.com: Science',
+                        summary: 'Where Alubri presents its study results for the gel and balm.',
+                    },
+                ],
+            },
+        },
+        isEmergingBrand: true,
+    },
+    // Momotaro Apotheca additions (2026-10-18, Eliz's request). Body Oil is
+    // shown (Eliz's photo; facts from momotaroapotheca.com/products/body-oil;
+    // reviews from the brand's Junip feed). The rest are HIDDEN (not deleted):
+    // kept with their affiliate links but not shown anywhere until asked.
+    {
+        id: 'p-momotaro-body-oil',
+        name: 'Momotaro Apotheca Organic Body Oil',
+        brand: 'Momotaro Apotheca',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: [
+            'skin-hair',
+        ],
+        tags: [
+            'comfort',
+            'organic',
+            'vegan',
+            'cruelty-free',
+            'external-only',
+        ],
+        price: '$58 (177 mL / 6 oz)',
+        userRating: 5,
+        userRatingSourceUrl: 'https://momotaroapotheca.com/products/body-oil',
+        whereToBuy: [
+            'momotaroapotheca.com',
+        ],
+        url: 'https://momotaroapotheca.com/products/body-oil',
+        affiliateUrl: 'https://collabs.shop/4fet6y',
+        faqUrl: 'https://momotaroapotheca.com/pages/faq',
+        image: '/products/momotaro/body-oil.webp',
+        summary: 'A head-to-toe body oil from Momotaro Apotheca, the Portland brand started by Lindsay Wynn. It blends cold-pressed organic sunflower, sweet almond, argan and jojoba oils with sea buckthorn, and a light scent from sandalwood, black pepper and grapefruit essential oils. The brand says it hydrates, softens and supports the skin barrier, absorbs to a non-greasy finish, and can be used on the body, face, hair and scalp. Certified organic, vegan and cruelty-free; no alcohol, parabens, phthalates or synthetic fragrance. 177 mL (6 oz).',
+        safety: {
+            fdaStatus: 'Sold as a cosmetic body oil (the brand\'s FAQ says its products are cosmetics, not medicine). It does not appear in FDA\'s drug listings under Momotaro Apotheca (checked on openFDA 2026-10-17).',
+            materials: '177 mL (6 oz). Ingredients: sunflower seed oil (Helianthus annuus), sweet almond (Prunus amygdalus dulcis), argan (Argania spinosa), jojoba seed (Simmondsia chinensis), black pepper essential oil (Piper nigrum), sandalwood (Santalum album), grapefruit peel (Citrus paradisi), sea buckthorn fruit oil (Hippophae rhamnoides). No alcohol, parabens, phthalates, silicone, sulfates or synthetic fragrance.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Contains essential oils and sweet almond oil. The brand recommends patch testing new products on the inner forearm before using them on sensitive areas. Full warnings are listed below.',
+            opinionAlerts: 'Claims about skin-barrier support and inflammation are the brand\'s own; momotaroapotheca.com cites no study of this product. 38% of its on-site reviews were left in exchange for a reward.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna summary of a peer-reviewed review of plant oils used on skin. Not a direct clinician quote; no study tested this product.',
+        doctorOpinion: 'A simple plant-oil moisturizer. Its base oils, sunflower, sweet almond, argan and jojoba, are all covered in a review of plant oils used on skin, which describes moisturizing, anti-inflammatory and skin-barrier repair effects for them. The brand says applying it to damp skin after a shower helps seal in hydration.\n\nUnlike Momotaro\'s Salve and Tonic, it has no tea tree, goldenseal or Oregon grape, so it is aimed at everyday dryness rather than infection-related irritation. It does contain essential oils for scent, so patch test first if your skin is sensitive. No study of this product was found.',
+        doctorOpinionShort: 'A plant-oil body moisturizer with sunflower, almond, argan and jojoba, all oils with skin-barrier research behind them. No study of this product; it has essential oils for scent, so patch test first.',
+        doctorOpinionCitations: [
+            {
+                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/',
+                label: 'NIH (PMC): Anti-inflammatory and skin barrier repair effects of topical plant oils, review (Int J Mol Sci, 2017)',
+            },
+        ],
+        whoItsFor: [
+            'Dry skin anywhere on the body, used after a shower',
+            'People who want a moisturizer with no synthetic fragrance or alcohol, per the brand',
+            'Chafing, coarse hair and ingrown hairs, per the brand and reviewers',
+            'Not for internal use',
+        ],
+        howToUse: {
+            intro: 'Per Momotaro Apotheca\'s own directions:',
+            steps: [
+                'Apply generously to clean, damp skin after showering to lock in moisture.',
+                'Massage in with broad, upward strokes.',
+                'Use daily on the body, face, hair or scalp; smooth onto dry spots like hands and heels, or onto hair ends.',
+                'Let it absorb for a few moments before dressing.',
+            ],
+            sourceUrl: 'https://momotaroapotheca.com/products/body-oil',
+            sourceLabel: 'momotaroapotheca.com: Organic Body Oil',
+        },
+        warnings: [
+            'For external use only.',
+            'Patch test first, per the brand, especially if you have sensitive skin; it contains essential oils.',
+            'Contains sweet almond oil.',
+            'Stop using it if irritation occurs.',
+        ],
+        communityReview: 'Rated 4.97 out of 5 from 34 reviews on the brand\'s own site (33 five-star, 1 four-star). 38% of those reviews were left in exchange for a reward; 76% are from verified buyers. Reviewers like that it is light and not greasy: "Not greasy, can put clothes on or get in bed right after using." One switched to it after developing an allergy to standard body creams, and another said it worked on her winter eczema. Critical notes: one reviewer\'s bottle leaked, a few wished for a stronger or different scent, and one said it took a while to soak in.',
+        effectiveness: 'No study of this product is cited on momotaroapotheca.com. Its base oils are described in research reviews as moisturizing and skin-barrier supporting.',
+        ingredients: 'Organic sunflower, sweet almond, argan and jojoba oils; sea buckthorn fruit oil; sandalwood, black pepper and grapefruit essential oils.',
+        ingredientScienceNote: 'These are the base oils Momotaro Apotheca highlights. The research is on the oils, not on this product.',
+        ingredientScience: [
+            {
+                name: 'Sunflower, sweet almond, argan and jojoba oils',
+                text: 'A review of plant oils used on skin covers all four, describing moisturizing, antioxidant, anti-inflammatory and skin-barrier repair effects. The review summarizes many smaller studies and doesn\'t test this blend.',
+                citations: [
+                    {
+                        url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/',
+                        label: 'NIH (PMC): Anti-inflammatory and skin barrier repair effects of topical plant oils, review (Int J Mol Sci, 2017)',
+                    },
+                ],
+            },
+        ],
+        scientificCitations: [
+            {
+                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/',
+                text: 'Topical plant oils and the skin barrier (Int J Mol Sci, 2017)',
+                summary: 'Review covering sunflower, almond, argan and jojoba oils; not a study of this product.',
+            },
+        ],
+        verificationLinks: {
+            doctor: {
+                links: [],
+            },
+            scientific: {
+                links: [
+                    {
+                        url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/',
+                        text: 'Plant oils for skin review (2017)',
+                        summary: 'Research behind the base oils.',
+                    },
+                ],
+            },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://momotaroapotheca.com/products/body-oil',
+                        text: 'momotaroapotheca.com: Organic Body Oil',
+                        summary: 'The brand\'s product page, with ingredients, directions and customer reviews (38% rewarded).',
+                    },
+                    {
+                        platform: 'tiktok',
+                        url: 'https://www.tiktok.com/@momotaroapotheca',
+                        text: 'TikTok: @momotaroapotheca',
+                        summary: 'The brand\'s own TikTok account (brand content, not independent reviews).',
+                    },
+                ],
+            },
+        },
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-momotaro-suppository-weekender',
+        hidden: true,
+        name: 'Momotaro Apotheca Suppository Weekender (sample pack)',
+        brand: 'Momotaro Apotheca',
+        category: 'intimate-care',
+        internal: true,
+        healthFunctions: [
+            'vaginal-health',
+        ],
+        tags: [
+            'organic',
+        ],
+        price: '$15 (sample pack)',
+        url: 'https://momotaroapotheca.com/products/suppository-weekender-sample-pak',
+        affiliateUrl: 'https://collabs.shop/obornf',
+        image: 'https://cdn.shopify.com/s/files/1/1935/6703/files/weekender_1680x_4df539a4-6881-4ca4-800c-ae743046efce.webp?v=1685046173',
+        summary: 'A sample pack of Momotaro Apotheca\'s homeopathic Vaginal Suppository (see the full Vaginal Suppository entry for ingredients, FDA status and evidence).',
+        safety: {
+            fdaStatus: 'Same product as the Vaginal Suppository: listed with the FDA as an unapproved homeopathic drug (NDC 83385-001, sold in 3-packet pouches as well as 14-count cartons).',
+        },
+        type: 'physical',
+        whereToBuy: [
+            'momotaroapotheca.com',
+        ],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-momotaro-partner-preview-kit',
+        hidden: true,
+        name: 'Momotaro Apotheca Partner Preview Kit',
+        brand: 'Momotaro Apotheca',
+        category: 'intimate-care',
+        healthFunctions: [
+            'vaginal-health',
+        ],
+        tags: [
+            'organic',
+        ],
+        price: '$158',
+        url: 'https://momotaroapotheca.com/products/partner-preview-kit',
+        affiliateUrl: 'https://collabs.shop/4df4sg',
+        image: 'https://cdn.shopify.com/s/files/1/1935/6703/files/Dyspareunia.webp?v=1739905121',
+        summary: 'A preview kit of Momotaro Apotheca products, which the brand pitches as a way to get to know the line. The product page doesn\'t list the kit\'s contents.',
+        safety: {
+            fdaStatus: 'momotaroapotheca.com doesn\'t list this kit\'s contents, so its regulatory status depends on what\'s inside (see the individual Momotaro entries).',
+        },
+        type: 'physical',
+        internal: false,
+        whereToBuy: [
+            'momotaroapotheca.com',
+        ],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-momotaro-bath-soak',
+        hidden: true,
+        name: 'Momotaro Apotheca Organic Botanical Bath Soak',
+        brand: 'Momotaro Apotheca',
+        category: 'intimate-care',
+        healthFunctions: [
+            'skin-hair',
+        ],
+        tags: [
+            'organic',
+            'external-only',
+        ],
+        price: '$28 (about 10 oz, roughly two soaks)',
+        url: 'https://momotaroapotheca.com/products/organic-botanical-bath-soak',
+        affiliateUrl: 'https://collabs.shop/fkbgym',
+        image: 'https://cdn.shopify.com/s/files/1/1935/6703/files/bathsoakbagcopy.webp?v=1763748643',
+        summary: 'A mineral and botanical bath soak that Momotaro Apotheca says eases irritation and calms skin. About 10 oz per bag, roughly two soaks, per the brand.',
+        safety: {
+            fdaStatus: 'Sold as a bath soak: the brand\'s FAQ says its products are topical cosmetics, not medicine.',
+        },
+        type: 'physical',
+        internal: false,
+        whereToBuy: [
+            'momotaroapotheca.com',
+        ],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-momotaro-pill-case',
+        hidden: true,
+        name: 'Momotaro Apotheca Pill Case',
+        brand: 'Momotaro Apotheca',
+        category: 'supplement',
+        healthFunctions: [
+            'supplement',
+        ],
+        tags: [],
+        price: '$15',
+        url: 'https://momotaroapotheca.com/products/pill-case',
+        affiliateUrl: 'https://collabs.shop/8fblaw',
+        image: 'https://cdn.shopify.com/s/files/1/1935/6703/files/pillcase_white.png?v=1684246050',
+        summary: 'A six-compartment slide-open pill case sized for Momotaro Apotheca\'s Probiotic and urinary supplement. BPA-free ABS and PP plastic, recyclable, hand wash only, per the brand.',
+        safety: {
+            fdaStatus: 'A storage case, not a health product.',
+        },
+        type: 'physical',
+        internal: false,
+        whereToBuy: [
+            'momotaroapotheca.com',
+        ],
+        isEmergingBrand: true,
+    },
+    // Tampon Tribe additions (2026-10-18, Eliz's request). The two bulk buys
+    // are shown (Eliz's photos; facts from their tampontribe.com pages; the
+    // rest copied from the matching subscription entries). The pantyliner
+    // subscription and sample are HIDDEN (not deleted); the menstrual cup is
+    // shown (Eliz asked for it later the same day).
+    {
+        id: 'p-tampontribe-tampons-bulk-buy',
+        name: 'Tampon Tribe Organic Tampons Bulk Buy',
+        brand: 'Tampon Tribe',
+        category: 'tampon',
+        type: 'physical',
+        internal: true,
+        healthFunctions: [
+            'menstrual-collection',
+        ],
+        tags: [
+            'organic',
+            'sustainability',
+            'comfort',
+            'heavy-flow',
+        ],
+        price: '$20 one-time purchase (28 Regular, 28 Super, 24 Super Plus, Day + Night 16 Regular + 12 Super Plus, or Mixed 16 Regular + 6 Super + 6 Super Plus)',
+        whereToBuy: [
+            'tampontribe.com',
+        ],
+        url: 'https://tampontribe.com/products/organic-tampons-bulk-buy',
+        affiliateUrl: 'https://tidd.ly/481nNrK',
+        image: '/products/tampon-tribe/tampons-bulk-buy.webp',
+        summary: 'A one-time bulk bag of Tampon Tribe\'s certified organic cotton tampons: 24 to 28 per bag, in one absorbency or a mix, delivered in an up-cycled jute bag. Same tampons as the subscription: GOTS and ICEA certified organic cotton, a biodegradable cardboard "twist" applicator with a rounded tip, and a safety layer around the core that the brand says keeps fibers from being left behind. No plastic, viscose, perfume, superabsorbents or chlorine bleaching. No subscription needed.',
+        safety: {
+            fdaStatus: 'Tampons are regulated by the FDA as medical devices; tampontribe.com doesn’t list this product’s FDA clearance details. The manufacturer, Cohitech, is FDA-registered and certified to ISO 13485 (medical-device quality management).',
+            materials: '100% organic cotton absorbent core and cover (certified organic under GOTS by ICEA) with an organic cotton safety veil around the core; biodegradable cardboard twist applicator with a rounded tip; paper wrapper. No superabsorbents, glue, rayon/viscose, perfume, or chlorine/dioxin bleaching.',
+            recalls: 'No recalls are mentioned on tampontribe.com; check current FDA and manufacturer recall notices.',
+            allergens: 'Hypoallergenic (independently dermatologist-tested, per manufacturer Cohitech), fragrance-free, dye-free, and vegan.',
+            sideEffects: 'Toxic shock syndrome (TSS) is rare but serious with any tampon: use the lowest absorbency you need and never wear one longer than 8 hours. Full warnings are listed below.',
+            opinionAlerts: 'Organic cotton avoids fragrance, dyes, and chlorine bleaching, but "100% cotton" isn’t automatically lower TSS risk: a 2018 lab study found cotton/rayon blend tampons grew less S. aureus than cotton-only ones. Absorbency and wear time matter most (FDA). Certification and testing: Tampon Tribe’s manufacturer, Cohitech (Spain), states its products are certified organic under GOTS by ICEA, and a June 2024 independent lab report (CALITEC LAB, Barcelona) found no pesticide residues, glyphosate, GMOs, formaldehyde, or detectable heavy metals in its organic cotton. Two limits: the lab tested a sample of raw organic cotton, not finished tampons, and neither Tampon Tribe nor Cohitech posts the GOTS certificate number, so the certification rests on Cohitech’s public statement plus that report; ayna will link the certificate once it’s provided. Separately, Tampon Tribe calls itself the only totally plastic-free U.S. period product; that’s a marketing claim the certifications don’t cover, and ayna couldn’t verify it.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of FDA and ACOG guidance and peer-reviewed research; not a direct clinician quote. Product details are from tampontribe.com.',
+        doctorOpinion: 'Organic cotton with no fragrance, dyes, or chlorine bleaching is a reasonable choice for people with vulvar irritation or who want fewer additives. What the evidence doesn’t support is treating "100% organic cotton" as a TSS safety upgrade: FDA’s guidance focuses on using the lowest absorbency you need and changing every 4 to 8 hours, and a 2018 lab study actually found cotton/rayon blend tampons grew less Staphylococcus aureus than cotton-only ones.\n\nTampon Tribe’s cotton "safety veil" around the core is designed to keep fibers from shedding on removal, a concern with some cotton tampons. No independent study of Tampon Tribe tampons was found.',
+        doctorOpinionShort: 'A plastic-free, organic cotton tampon with a cardboard applicator. Organic cotton cuts additives but isn’t a proven TSS-risk downgrade; FDA says to use the lowest absorbency and change every 4 to 8 hours. No study of this brand was found.',
+        whoItsFor: [
+            'People who want organic cotton tampons with no plastic, fragrance or dyes',
+            'Anyone who prefers to buy in bulk once instead of a monthly subscription',
+            'People who want a cardboard applicator instead of plastic',
+        ],
+        howToUse: {
+            intro: 'Per Tampon Tribe’s directions and FDA tampon guidance:',
+            steps: [
+                'Unwrap the paper wrap.',
+                'Twist the top part of the applicator in the opposite direction from the base.',
+                'Push the base up slightly so the tip of the tampon shows, then insert.',
+                'Choose the lowest absorbency that handles your flow, and change every 4 to 8 hours; never longer than 8 hours (FDA).',
+            ],
+            sourceUrl: 'https://tampontribe.com/products/organic-tampons-bulk-buy',
+            sourceLabel: 'tampontribe.com: Organic Tampons Bulk Buy',
+        },
+        warnings: [
+            'Toxic shock syndrome (TSS) is rare but serious. Remove the tampon and get emergency care for sudden high fever, vomiting, diarrhea, dizziness or fainting, or a sunburn-like rash during your period (FDA).',
+            'Use only during your period, with the lowest absorbency you need.',
+            'Not a form of contraception and does not protect against STIs.',
+        ],
+        communityReview: 'Reviews for these tampons are on the regular Organic Tampons listing: 4.6 out of 5 from 401 reviews on tampontribe.com (as of September 30, 2026).',
+        effectiveness: 'Same tampons as the subscription, in Regular, Super and Super Plus. No independent lab comparison of Tampon Tribe tampons against other brands was found.',
+        integrations: [],
+        badges: [],
+        verificationLinks: {
+            doctor: {
+                links: [],
+            },
+            scientific: {
+                links: [
+                    {
+                        url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-tampon-safety',
+                        text: 'FDA: Tampon Safety Facts',
+                        summary: 'FDA advises using the lowest absorbency tampon you need, changing every 4 to 8 hours and never wearing one longer than 8 hours, and knowing the signs of toxic shock syndrome (sudden high fever, vomiting, diarrhea, fainting or dizziness, or a sunburn-like rash). FDA also notes cleared tampons are made of cotton, rayon, or blends, bleached without elemental chlorine. This is category guidance, not validation of a specific product.',
+                    },
+                    {
+                        url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5981080/',
+                        text: 'Impact of currently marketed tampons and menstrual cups on S. aureus growth and TSST-1 production in vitro (Nonfoux et al., 2018)',
+                        summary: 'In a lab study of 11 tampon types, tampons made of a cotton/rayon mix grew less Staphylococcus aureus than cotton-only tampons. It suggests "100% cotton" isn’t automatically lower TSS risk; absorbency and wear time matter more. Lab evidence, not a study of Tampon Tribe tampons.',
+                    },
+                    {
+                        url: 'https://tampontribe.com/blogs/news/our-third-party-testing-and-certifications',
+                        text: 'Tampon Tribe: Third-Party Testing and Certifications',
+                        summary: 'Tampon Tribe’s testing page, linking its June 2024 independent lab analysis (CALITEC LAB, Barcelona) of its organic cotton: glyphosate and AMPA below 0.01 mg/kg, no multi-residue pesticides detected, GMO-negative, residual chlorine below 0.1 mg/L, formaldehyde below 0.01 mg/kg, and 9 heavy metals (including arsenic, lead, mercury, and cadmium) below detection limits. This tested a sample of raw organic cotton from manufacturer Cohitech, not finished products, and isn’t a clinical study.',
+                    },
+                    {
+                        url: 'https://www.cohitech.net/en/',
+                        text: 'Cohitech (Cotton High Tech): manufacturer certifications',
+                        summary: 'Tampon Tribe’s manufacturer, the Spanish organic cotton producer named on its lab report. Cohitech states its products are certified organic under GOTS by ICEA and by Cotton Inc., that it is FDA-registered with ISO 13485/MDSAP medical-device quality certification, and that products are dermatologically tested by independent labs as hypoallergenic and non-irritating. Its site doesn’t post the GOTS certificate number.',
+                    },
+                ],
+            },
+            community: {
+                links: [
+                    {
+                        url: 'https://tampontribe.com/products/organic-tampons-bulk-buy',
+                        text: 'tampontribe.com: Organic Tampons Bulk Buy',
+                        summary: 'The brand\'s bulk-buy page.',
+                    },
+                    {
+                        url: 'https://tampontribe.com/products/tampons',
+                        text: 'tampontribe.com: Organic Tampons reviews',
+                        summary: 'The same tampons\' subscription listing: 4.6/5 from 401 reviews as of September 30, 2026.',
+                    },
+                ],
+            },
+        },
+        isEmergingBrand: false,
+    },
+    {
+        id: 'p-tampontribe-pads-bulk-buy',
+        name: 'Tampon Tribe Organic Pads Bulk Buy (20)',
+        brand: 'Tampon Tribe',
+        category: 'pad',
+        type: 'physical',
+        internal: false,
+        healthFunctions: [
+            'menstrual-collection',
+        ],
+        tags: [
+            'organic',
+            'sustainability',
+            'comfort',
+            'cost',
+        ],
+        price: '$20 for 20 pads (14 Day + 6 Night), one-time purchase',
+        whereToBuy: [
+            'tampontribe.com',
+        ],
+        url: 'https://tampontribe.com/products/organic-pads-bulk-buy',
+        affiliateUrl: 'https://tidd.ly/4i2KEt3',
+        image: '/products/tampon-tribe/pads-bulk-buy.webp',
+        summary: 'A one-time bulk bag of 20 of Tampon Tribe\'s ultrathin certified organic cotton pads: 14 Day and 6 Night, in a jute bag. Each pad is individually wrapped in a starch film, not plastic, and uses a biodegradable polymer adhesive. No plastic, perfume, superabsorbents or chlorine bleaching. Same pads as the subscription, with no subscription needed.',
+        safety: {
+            fdaStatus: 'Menstrual pads are regulated by the FDA as medical devices; tampontribe.com doesn’t list this product’s FDA details. The manufacturer, Cohitech, is FDA-registered and certified to ISO 13485 (medical-device quality management).',
+            materials: '100% organic cotton top layer and absorbent core (certified organic under GOTS by ICEA). No superabsorbent gel, perfume, dyes, or glue; plant-based backing with a vegan biopolymer adhesive. Vegan and hypoallergenic. Individually wrapped.',
+            recalls: 'No recalls are mentioned on tampontribe.com; check current FDA and manufacturer recall notices.',
+            allergens: 'Hypoallergenic (independently dermatologist-tested, per manufacturer Cohitech), fragrance-free, dye-free, and vegan.',
+            sideEffects: 'None expected. Stop using if you notice irritation. Full notes are listed below.',
+            opinionAlerts: 'Without superabsorbent gel, these rely on cotton alone, so they may need changing more often on heavy days. Certification and testing: Tampon Tribe’s manufacturer, Cohitech (Spain), states its products are certified organic under GOTS by ICEA, and a June 2024 independent lab report (CALITEC LAB, Barcelona) found no pesticide residues, glyphosate, GMOs, formaldehyde, or detectable heavy metals in its organic cotton. Two limits: the lab tested a sample of raw organic cotton, not finished pads, and neither Tampon Tribe nor Cohitech posts the GOTS certificate number, so the certification rests on Cohitech’s public statement plus that report; ayna will link the certificate once it’s provided. Separately, Tampon Tribe calls itself the only totally plastic-free U.S. period product; that’s a marketing claim the certifications don’t cover, and ayna couldn’t verify it.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of FDA and ACOG guidance and peer-reviewed research; not a direct clinician quote. Product details are from tampontribe.com.',
+        doctorOpinion: 'Cotton pads without fragrance, dyes, or plastic top sheets are a sensible choice for people with vulvar irritation or sensitivity to synthetic materials. ACOG’s general advice applies: change a pad at least every 4 to 8 hours, or whenever it feels full or wet. Because they skip superabsorbent gel, they may need changing more often on heavy days. No independent study of these pads was found.',
+        doctorOpinionShort: 'Organic cotton, plastic-free pads with wings. A reasonable pick for sensitive skin; change every 4 to 8 hours per ACOG. No study of this brand was found.',
+        whoItsFor: [
+            'People with vulvar irritation or sensitivity to plastic or synthetic pad materials',
+            'Anyone who prefers to buy in bulk once instead of a monthly subscription',
+            'A mix of day and overnight use',
+        ],
+        howToUse: {
+            intro: 'Per ACOG’s general pad guidance:',
+            steps: [
+                'Peel off the backing and press the pad into your underwear, folding the wings around the edges.',
+                'Change at least every 4 to 8 hours, or whenever it feels full, wet, or uncomfortable.',
+                'Wrap the used pad and put it in the trash. Tampon Tribe says the pads will biodegrade, but it doesn’t recommend flushing them.',
+            ],
+            sourceUrl: 'https://www.acog.org/womens-health/faqs/your-first-period',
+            sourceLabel: 'ACOG: Your First Period',
+        },
+        warnings: [
+            'Don’t flush; Tampon Tribe itself doesn’t recommend it.',
+            'Stop using if you notice irritation or a rash.',
+        ],
+        communityReview: 'Reviews for these pads are on the regular Organic Pads listing: 4.8 out of 5 from 163 reviews on tampontribe.com (as of September 30, 2026).',
+        effectiveness: 'Same pads as the subscription: Day pads hold up to 100 ml and Night pads up to 120 ml, per the brand. No independent comparison with other pads was found.',
+        integrations: [],
+        badges: [],
+        verificationLinks: {
+            doctor: {
+                links: [],
+            },
+            scientific: {
+                links: [
+                    {
+                        url: 'https://www.acog.org/womens-health/faqs/your-first-period',
+                        text: 'ACOG: Your First Period',
+                        summary: 'ACOG advises changing a pad at least every 4 to 8 hours, or whenever it feels full, wet, or uncomfortable, and explains how pads with wings stay in place. General guidance for any pad, not validation of a specific product.',
+                    },
+                    {
+                        url: 'https://tampontribe.com/blogs/news/our-third-party-testing-and-certifications',
+                        text: 'Tampon Tribe: Third-Party Testing and Certifications',
+                        summary: 'Tampon Tribe’s testing page, linking its June 2024 independent lab analysis (CALITEC LAB, Barcelona) of its organic cotton: glyphosate and AMPA below 0.01 mg/kg, no multi-residue pesticides detected, GMO-negative, residual chlorine below 0.1 mg/L, formaldehyde below 0.01 mg/kg, and 9 heavy metals (including arsenic, lead, mercury, and cadmium) below detection limits. This tested a sample of raw organic cotton from manufacturer Cohitech, not finished products, and isn’t a clinical study.',
+                    },
+                    {
+                        url: 'https://www.cohitech.net/en/',
+                        text: 'Cohitech (Cotton High Tech): manufacturer certifications',
+                        summary: 'Tampon Tribe’s manufacturer, the Spanish organic cotton producer named on its lab report. Cohitech states its products are certified organic under GOTS by ICEA and by Cotton Inc., that it is FDA-registered with ISO 13485/MDSAP medical-device quality certification, and that products are dermatologically tested by independent labs as hypoallergenic and non-irritating. Its site doesn’t post the GOTS certificate number.',
+                    },
+                ],
+            },
+            community: {
+                links: [
+                    {
+                        url: 'https://tampontribe.com/products/organic-pads-bulk-buy',
+                        text: 'tampontribe.com: Organic Pads Bulk Buy',
+                        summary: 'The brand\'s bulk-buy page.',
+                    },
+                    {
+                        url: 'https://tampontribe.com/products/pads',
+                        text: 'tampontribe.com: Organic Pads reviews',
+                        summary: 'The same pads\' subscription listing: 4.8/5 from 163 reviews as of September 30, 2026.',
+                    },
+                ],
+            },
+        },
+        isEmergingBrand: false,
+    },
+    {
+        id: 'p-tampontribe-pantyliners-subscription',
+        hidden: true,
+        name: 'Tampon Tribe Organic Pantyliners (subscription)',
+        brand: 'Tampon Tribe',
+        category: 'pad',
+        healthFunctions: [
+            'menstrual-collection',
+        ],
+        tags: [
+            'organic',
+            'sustainability',
+            'comfort',
+        ],
+        price: '$10.60 for 24 or $20 for 48, as a subscription',
+        url: 'https://tampontribe.com/products/pantyliners',
+        affiliateUrl: 'https://tidd.ly/4yYEiAX',
+        image: 'https://cdn.shopify.com/s/files/1/0048/6971/8083/products/organic-pantyliners-4568288.jpg?v=1783121130',
+        summary: 'The subscription version of Tampon Tribe\'s ultrathin certified organic cotton pantyliners (see the Pantyliners Bulk Buy entry). Pause, change or cancel anytime, with free U.S. delivery, per the brand.',
+        safety: {
+            fdaStatus: 'Pantyliners are regulated by the FDA as medical devices; tampontribe.com doesn\'t list this product\'s FDA details (see the Pantyliners Bulk Buy entry).',
+        },
+        type: 'physical',
+        internal: false,
+        whereToBuy: [
+            'tampontribe.com',
+        ],
+        isEmergingBrand: false,
+    },
+    // Shown (Eliz, 2026-10-18), with the brand photo she picked.
+    {
+        id: 'p-tampontribe-menstrual-cup',
+        name: 'Tampon Tribe Menstrual Cup',
+        brand: 'Tampon Tribe',
+        category: 'cup',
+        type: 'physical',
+        internal: true,
+        healthFunctions: [
+            'menstrual-collection',
+        ],
+        tags: [
+            'sustainability',
+            'cost',
+            'comfort',
+            'heavy-flow',
+        ],
+        price: '$39.99 (Medium or Large) or $69.99 for both sizes',
+        whereToBuy: [
+            'tampontribe.com',
+        ],
+        url: 'https://tampontribe.com/products/menstrual-cup',
+        affiliateUrl: 'https://tidd.ly/4hViLDa',
+        image: '/products/tampon-tribe/menstrual-cup.webp',
+        summary: 'A reusable menstrual cup made of medical-grade TPE (thermoplastic elastomer) instead of silicone, with no latex, BPA or phthalates; the brand says it is made in Germany and lasts up to 10 years with normal care. Tampon Tribe says TPE warms to body temperature and molds to your shape, and the cup has rounded edges, an easy-grip stem and a patented design meant to reduce leaks and avoid suction on removal. Worn for up to 12 hours depending on flow. Medium (25 mL) is for people under 25 who haven\'t given birth vaginally; Large (30 mL) is for everyone else.',
+        safety: {
+            fdaStatus: 'Menstrual cups are regulated by the FDA, which requires makers to register and list them and follow good manufacturing practices. Tampon Tribe says its TPE is compliant with FDA, RoHS, REACH and Prop 65 standards; tampontribe.com doesn\'t list the cup\'s FDA registration details.',
+            materials: 'Medical-grade TPE (thermoplastic elastomer). Silicone-free, latex-free, BPA-free and phthalate-free, per the brand. Medium: 25 mL capacity, 43 mm wide, 67 mm long. Large: 30 mL, 46 mm wide, 66 mm long. Recyclable, per the brand.',
+            recalls: 'No recalls found.',
+            allergens: 'Latex-free and silicone-free, per the brand, which may suit people who react to either.',
+            sideEffects: 'A systematic review of cup studies found rare reports of pain or vaginal wounds, rashes or allergies, urinary complaints and toxic shock syndrome. FDA says to stop using a cup and contact your provider if you get itching, a rash, pain, swelling or discomfort. Full warnings are listed below.',
+            opinionAlerts: 'Tampon Tribe says the cup is "endorsed by MDs and leading researchers" and that TPE is more comfortable than silicone; neither claim is backed by a study on tampontribe.com. Most cup research is on silicone cups, not TPE.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna summary of FDA guidance on menstrual cups and a systematic review of cup studies. Not a direct clinician quote; no study tested this cup.',
+        doctorOpinion: 'Menstrual cups as a category have reasonable evidence. A 2019 Lancet Public Health review of 43 studies (3,319 people) found cups leaked about the same as or less than pads and tampons, didn\'t harm vaginal bacteria, and 73% of users wanted to keep using one. Most people needed a few cycles to get used to inserting and removing it.\n\nThe review also logged rare problems: 5 reports of toxic shock syndrome, 13 IUDs dislodged, and a few cases of pain, wounds or rashes. FDA advises talking to your gynecologist before using a cup with an IUD, and emptying and washing it every 8 to 12 hours.\n\nThis cup is made of TPE rather than the more common silicone. Tampon Tribe says that makes it softer and more comfortable, but most cup research used silicone cups, and no study of this cup was found.',
+        doctorOpinionShort: 'Cups leak about as much as or less than pads and tampons and are generally safe (2019 review of 43 studies), with rare TSS and IUD dislodgement. TPE rather than silicone; no study of this cup was found.',
+        doctorOpinionCitations: [
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/31324419/',
+                label: 'PubMed (NIH): Menstrual cup use, leakage, acceptability and safety, systematic review and meta-analysis (Lancet Public Health, 2019)',
+            },
+            {
+                url: 'https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups',
+                label: 'FDA: Menstrual Cups',
+            },
+        ],
+        whoItsFor: [
+            'People who want a reusable, lower-waste alternative to tampons and pads',
+            'Anyone sensitive to latex or silicone, since this cup is TPE',
+            'Medium for under 25 and no vaginal birth; Large for over 25 or after a vaginal birth, per the brand',
+            'Have an IUD? Talk to your gynecologist first (FDA)',
+            'Not for bleeding after childbirth, or for discharge from an infection (FDA)',
+        ],
+        howToUse: {
+            intro: 'Per FDA guidance and Tampon Tribe\'s tips:',
+            steps: [
+                'Wash your hands, and wash the cup following the instructions before inserting it (FDA).',
+                'Fold the cup and insert it. Tampon Tribe says it should sit a bit lower than a tampon.',
+                'To help it open and seal, push the stem up slightly, rotate the cup, or gently squeeze its base. Run a finger around the base to check for folds.',
+                'Empty and wash it every 8 to 12 hours; never longer than 12 hours.',
+                'At the end of your period, wash it and place it in boiling water for 1 to 2 minutes, or follow the cleaning instructions in the box (FDA).',
+            ],
+            sourceUrl: 'https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups',
+            sourceLabel: 'FDA: Menstrual Cups',
+        },
+        warnings: [
+            'Toxic shock syndrome has been reported with menstrual cups, though rarely. Remove the cup and get emergency care for sudden high fever, vomiting, a sunburn-like rash or dizziness during your period.',
+            'Have an IUD? Talk to your gynecologist first: cups can dislodge an IUD (FDA; the 2019 review found 13 cases).',
+            'Not for bleeding after childbirth or for discharge from an infection (FDA).',
+            'Stop using it and contact your provider if you get itching, a rash, pain, swelling or discomfort (FDA).',
+            'Not a form of contraception and does not protect against STIs.',
+        ],
+        communityReview: 'tampontribe.com loads its customer reviews with a script ayna can\'t read automatically, so no rating is quoted here; read them on the product page. In the 2019 review of cup studies, 73% of participants wanted to keep using a cup after trying one.',
+        effectiveness: 'No study of this cup was found. For cups in general, a 2019 review of 43 studies found leakage similar to or lower than pads and tampons. Capacity is 25 mL (Medium) or 30 mL (Large), per the brand.',
+        ingredients: 'Medical-grade TPE (thermoplastic elastomer); no silicone, latex, BPA or phthalates.',
+        scientificCitations: [
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/31324419/',
+                text: 'Menstrual cup use, leakage, acceptability and safety (Lancet Public Health, 2019)',
+                summary: 'Systematic review of 43 studies (3,319 people): cups leaked the same as or less than pads and tampons; rare TSS, IUD dislodgement and injury reports.',
+            },
+            {
+                url: 'https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups',
+                text: 'FDA: Menstrual Cups',
+                summary: 'How to use and clean cups, IUD caution, and when to stop and call a provider.',
+            },
+        ],
+        verificationLinks: {
+            doctor: {
+                links: [],
+            },
+            scientific: {
+                links: [
+                    {
+                        url: 'https://pubmed.ncbi.nlm.nih.gov/31324419/',
+                        text: 'Menstrual cup systematic review (2019)',
+                        summary: '43 studies on leakage, acceptability and safety; most used silicone cups.',
+                    },
+                    {
+                        url: 'https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups',
+                        text: 'FDA: Menstrual Cups',
+                        summary: 'Use, cleaning and safety guidance.',
+                    },
+                ],
+            },
+            community: {
+                links: [
+                    {
+                        url: 'https://tampontribe.com/products/menstrual-cup',
+                        text: 'tampontribe.com: Menstrual Cup',
+                        summary: 'The brand\'s product page, with sizes, materials, troubleshooting tips and customer reviews.',
+                    },
+                ],
+            },
+        },
+        isEmergingBrand: false,
+    },
+    {
+        id: 'p-tampontribe-sample',
+        hidden: true,
+        name: 'Tampon Tribe Sample Pack',
+        brand: 'Tampon Tribe',
+        category: 'pad',
+        healthFunctions: [
+            'menstrual-collection',
+        ],
+        tags: [
+            'organic',
+        ],
+        price: '$10 including U.S. delivery, one-time',
+        url: 'https://tampontribe.com/products/secret-sample',
+        affiliateUrl: 'https://www.awin1.com/cread.php?awinmid=91275&awinaffid=3082811&ued=https%3A%2F%2Ftampontribe.com%2Fproducts%2Fsecret-sample',
+        image: 'https://cdn.shopify.com/s/files/1/0048/6971/8083/products/sample-us-10-3328589.jpg?v=1783121228',
+        summary: 'A one-time sample of Tampon Tribe\'s organic cotton products: 6 tampons (Regular, Super, Super Plus), 4 Day pads, 2 Night pads and 4 pantyliners in a jute bag, per the brand.',
+        safety: {
+            fdaStatus: 'Tampons, pads and pantyliners are regulated by the FDA as medical devices; tampontribe.com doesn\'t list FDA details for these (see the matching Tampon Tribe entries).',
+        },
+        type: 'physical',
+        internal: false,
+        whereToBuy: [
+            'tampontribe.com',
+        ],
+        isEmergingBrand: false,
     },
     // Rèsa brand partnership (2026-10-05), PRE-LAUNCH. Rèsa hasn't shipped
     // yet: the only thing a user can do today is reserve a spot on the

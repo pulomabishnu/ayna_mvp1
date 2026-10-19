@@ -39,6 +39,10 @@ create table if not exists auth.users (
   raw_app_meta_data jsonb default '{}'::jsonb,
   created_at timestamptz not null default now()
 );
+-- Real Supabase columns some migrations read (account verification, phone sign-in).
+alter table auth.users add column if not exists email_confirmed_at timestamptz;
+alter table auth.users add column if not exists phone text;
+alter table auth.users add column if not exists phone_confirmed_at timestamptz;
 
 -- Referenced by every RLS policy. Locally it reads a session GUC so a test can
 -- impersonate a user:  set local request.jwt.claim.sub = '<uuid>';

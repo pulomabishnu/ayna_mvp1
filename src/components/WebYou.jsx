@@ -11,6 +11,7 @@ import { AnalyticsToggle } from './SiteFooter';
 import { findSharedActives } from '../utils/sharedActives';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
 import { inviteLinkFor } from '../utils/badges';
+import FreeProductAccountCard from './freeProduct/FreeProductAccountCard';
 import { getCareProfile } from '../utils/careProfile';
 import EmailSettings from './EmailSettings';
 import './WebYou.css';
@@ -102,7 +103,7 @@ function Routine({ products }) {
   </section>;
 }
 
-export default function WebYou({ user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenProduct, onOpenPhoneVerify, onSignOut, onDeleteAccount, onStartQuiz, onSignIn, theme = 'light', onThemeChange, onOpenHealthData, healthSummary = null, healthConnectedCount = 0 }) {
+export default function WebYou({ user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenProduct, onOpenPhoneVerify, onSignOut, onDeleteAccount, onStartQuiz, onSignIn, theme = 'light', onThemeChange, onOpenFreeProduct, onOpenHealthData, healthSummary = null, healthConnectedCount = 0 }) {
   const products = useMemo(() => Object.values(myProducts || {}).filter(Boolean), [myProducts]);
   const consumables = useMemo(() => products.filter(isConsumable), [products]);
   const intake = quizResults?.fullHealthIntake || null;
@@ -237,6 +238,8 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
         })}</ul> : <p className="wyou-muted">No alerts on your ecosystem.</p>}
       </section>;
     })()}
+
+    {onOpenFreeProduct && <FreeProductAccountCard onOpen={onOpenFreeProduct} />}
 
     <div className="wyou-grid">
       <div className="wyou-col">

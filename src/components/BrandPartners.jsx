@@ -77,7 +77,8 @@ const PARTNERS = [
       'At-home UTI and vaginal health tests paired with telehealth. Formerly Stix.',
   },
   {
-    // Added 2026-10-17 at Eliz's request. Affiliate links to come, so `url`
+    // Added 2026-10-17 at Eliz's request. Products use per-product affiliate
+    // links (2026-10-18); no brand-wide link, so `url`
     // is the brand site for now.
     brand: 'Momotaro Apotheca',
     logo: '',
@@ -102,7 +103,8 @@ const PARTNERS = [
   },
   {
     // Added 2026-10-17 at the team's request (was catalog-only before).
-    // No affiliate link supplied yet, so `url` is the brand site.
+    // Products use per-product affiliate links (2026-10-18); no brand-wide
+    // link, so `url` is the brand site.
     brand: 'Alubri',
     logo: '',
     url: 'https://alubri.com/',
@@ -148,12 +150,13 @@ const PARTNERS = [
   },
   {
     // Added 2026-10-17 at the team's request (was catalog-only before).
-    // No affiliate link supplied yet, so `url` is the brand site.
+    // Products use per-product affiliate links (2026-10-18); no brand-wide
+    // link, so `url` is the brand site.
     brand: 'Tampon Tribe',
     logo: '',
     url: 'https://tampontribe.com/',
     blurb:
-      'Certified organic cotton tampons, pads and liners with no plastic, sold as a monthly subscription.',
+      'Certified organic cotton tampons, pads and liners with no plastic, plus a silicone-free menstrual cup.',
   },
   {
     // Confirmed partner since 2026-09-07 (see src/utils/partnerBrands.js) but

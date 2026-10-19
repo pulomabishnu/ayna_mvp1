@@ -16,15 +16,36 @@ export const FDA_STATUSES = {
   na: { label: 'Not applicable', line: 'Apps and services are not FDA products.' },
 };
 
+// A clause that says "cleared" or "approved" only counts when the clause
+// isn't negated ("not FDA-cleared", "does not describe it as FDA-cleared or
+// approved"). Reading single keywords used to turn those notes into
+// "FDA-approved" / "FDA-cleared" labels (Joylux, Alubri, found 2026-10-18).
+const NEG = /\b(not|never|no|nor|without|isn['’]t|aren['’]t|doesn['’]t|wasn['’]t|hasn['’]t)\b/;
+function clauses(t) { return t.split(/[.;:]\s+|[.;:]$/).filter(Boolean); }
+function mentions(t, word) {
+  let positive = false; let negated = false;
+  for (const c of clauses(t)) {
+    const m = c.match(word);
+    if (!m) continue;
+    if (NEG.test(c.slice(0, m.index))) negated = true; else positive = true;
+  }
+  return { positive, negated };
+}
+
 export function normalizeFdaStatus(raw) {
   const s = String(raw || '').replace(/⚠️?/g, '').trim();
   if (!s) return null;
   const t = s.toLowerCase();
   const negCleared = /not (an |a )?(fda[- ])?cleared|not separately|no 510\(k\)|exempt from/.test(t);
+  const cleared = mentions(t, /(510\(k\)|de novo|fda[- ]cleared|\bcleared\b)/);
+  const clearedWord = mentions(t, /(fda[- ]cleared|\bcleared\b)/);
+  const approved = mentions(t, /\bapproved\b/); // \b keeps "unapproved" out
   let key = null;
-  if (/(says|claims|per the brand|could not find|not confirmed)/.test(t) && /cleared/.test(t) && !/not (an )?fda-?cleared/.test(t)) key = 'brand-claim';
-  else if (/approved/.test(t) && !/not (an )?(fda-)?approved|not fda-approved/.test(t)) key = 'approved';
-  else if (/(510\(k\)|de novo|fda-cleared|fda cleared)/.test(t) && !negCleared) key = 'cleared';
+  // Homeopathic and other unapproved drugs are FDA listings, never approvals.
+  if (/unapproved|homeopathic/.test(t)) key = 'listed';
+  else if (/(says|claims|per the brand|could not find|not confirmed)/.test(t) && clearedWord.positive && !clearedWord.negated && !negCleared) key = 'brand-claim';
+  else if (approved.positive && !approved.negated) key = 'approved';
+  else if (cleared.positive && !cleared.negated && !negCleared && /(510\(k\)|de novo|fda-cleared|fda cleared)/.test(t)) key = 'cleared';
   else if (/prescription via|licensed (clinician|provider|healthcare|telehealth|therapy)|clinical care|licensed providers/.test(t)) key = 'care';
   else if (/over-the-counter (urinary )?(drug|analgesic|external analgesic)|otc drug|external analgesic|sunscreens are regulated/.test(t)) key = 'otc-drug';
   else if (/supplement|nutraceutical|\busp\b|\bnsf\b|\bgmp\b|non-gmo|ifos/.test(t) && !/cosmetic/.test(t)) key = 'supplement';

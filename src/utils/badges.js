@@ -17,6 +17,7 @@
  *                      (supabase/migrations/20261013150000_referrals.sql);
  *                      until it is applied the badge shows as locked, 0/3.
  */
+import posthog from 'posthog-js';
 import { getEcosystemSeedFromQuiz, getProductMatchDetailsForProduct } from '../data/products.js';
 
 const PENDING_REF_KEY = 'ayna_pending_ref_v1';
@@ -55,32 +56,48 @@ export function captureReferralFromUrl() {
   if (existing?.code && Date.now() - existing.at < 30 * 864e5) return existing;
   const pending = { code, at: Date.now() };
   safeSet(PENDING_REF_KEY, pending);
+  try { posthog.capture('campaign_referral_link_opened'); } catch { /* analytics never blocks */ }
   return pending;
 }
 
+const isDuplicate = (error) => error?.code === '23505' || /duplicate key/i.test(error?.message || '');
+
 /**
  * After sign-in: store the referrer on a NEW account only (created after the
- * invite link was opened), never on her own code, never twice.
+ * invite link was opened), never on her own code, never twice. The saved code
+ * is only forgotten once the referrals row exists, so a failed insert (network,
+ * table not there yet) is retried on the next sign-in or page load.
  */
 export async function attachPendingReferral(supabase) {
   const pending = safeGet(PENDING_REF_KEY);
   if (!pending?.code || !supabase?.auth) return false;
+  if (Date.now() - pending.at > 30 * 864e5) { safeDel(PENDING_REF_KEY); return false; }
   let user = null;
   try { user = (await supabase.auth.getUser())?.data?.user || null; } catch { return false; }
   if (!user?.id) return false;
   const meta = user.user_metadata || {};
   const created = Date.parse(user.created_at || '');
   const isNewAccount = Number.isFinite(created) && created >= pending.at - 10 * 60 * 1000;
-  if (meta.referred_by || pending.code === referralCodeFor(user.id) || !isNewAccount) {
+  // First touch wins: a code already on the account (set at sign-up) beats this one.
+  const code = CODE_RE.test(String(meta.referred_by || '')) ? meta.referred_by : pending.code;
+  if (code === referralCodeFor(user.id) || (!meta.referred_by && !isNewAccount)) {
     safeDel(PENDING_REF_KEY);
     return false;
   }
+  if (!meta.referred_by) {
+    try {
+      await supabase.auth.updateUser({ data: { referred_by: code, referred_at: new Date().toISOString() } });
+    } catch { /* the insert below is what counts */ }
+  }
   try {
-    await supabase.auth.updateUser({ data: { referred_by: pending.code, referred_at: new Date().toISOString() } });
-  } catch { /* metadata is a backup; the table row below is what counts */ }
-  try {
-    await supabase.from('referrals').insert({ referred_user_id: user.id, referrer_code: pending.code });
-  } catch { /* table not created yet: metadata still holds it */ }
+    const { error } = await supabase.from('referrals').insert({ referred_user_id: user.id, referrer_code: code });
+    // 42501: the policy said no (account older than 7 days, own code). That is final.
+    if (error && error.code === '42501') { safeDel(PENDING_REF_KEY); return false; }
+    if (error && !isDuplicate(error)) return false; // keep the code; try again next time
+    if (!error) { try { posthog.capture('campaign_referral_signup_completed'); } catch { /* ignore */ } }
+  } catch {
+    return false;
+  }
   safeDel(PENDING_REF_KEY);
   return true;
 }
