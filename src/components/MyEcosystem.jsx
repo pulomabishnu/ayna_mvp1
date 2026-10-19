@@ -19,7 +19,7 @@ import {
     getSelectedNeeds,
     getProductById,
     getProductMatchDetailsForProduct,
-} from '../data/products';
+} from '../data/products.js';
 import { behaviorFrom, careNotes, shortNeedLabel } from '../utils/matchDisplay';
 import '../styles/match-ui.css';
 import ProductTileImage, { resolveCatalogProductImage, ProductImageFallback } from './ProductTileImage';

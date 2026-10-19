@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import HealthDataImport from './HealthDataImport';
 import CareNearYouPanel from './CareNearYouPanel';
-import { getCheckinRecommendations, CATEGORY_LABELS } from '../data/products';
+import { getCheckinRecommendations, CATEGORY_LABELS } from '../data/products.js';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 
 function ImgOrInitial({ item, size }) {

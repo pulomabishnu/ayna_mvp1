@@ -1,5 +1,5 @@
-import { CATEGORY_LABELS } from '../data/products';
-import { inferTagsFromHealthProfile } from './healthDataProfile';
+import { CATEGORY_LABELS } from '../data/products.js';
+import { inferTagsFromHealthProfile } from './healthDataProfile.js';
 
 /**
  * Short intro copy for Discovery, before the product grid.

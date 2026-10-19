@@ -1,5 +1,5 @@
 import React from 'react';
-import { CATEGORY_LABELS } from '../data/products';
+import { CATEGORY_LABELS } from '../data/products.js';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
 import { formatPrice } from '../utils/formatPrice';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';

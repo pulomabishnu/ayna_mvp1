@@ -5,7 +5,7 @@ import * as ann from '../../utils/community/announcementsStore.js';
 import { uploadCommunityImage, deleteCommunityImage, checkImageFile, MAX_POST_PHOTOS, publicMediaUrl } from '../../utils/community/imageUpload.js';
 import { canPostAnnouncements, teamMemberForEmail } from '../../utils/aynaTeam.js';
 import { breaksCommunityRules } from '../../utils/communityRules.js';
-import { CATEGORY_LABELS } from '../../data/products';
+import { CATEGORY_LABELS } from '../../data/products.js';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../../utils/naturalLanguageSearch.js';
 import ProductTileImage, { ProductImageFallback } from '../ProductTileImage';
 import { RuleField } from './RuleField.jsx';

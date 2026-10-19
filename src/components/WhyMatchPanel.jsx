@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom';
 import { useEffect } from 'react';
-import { getProductMatchDetailsForProduct } from '../data/products';
+import { getProductMatchDetailsForProduct } from '../data/products.js';
 import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, whyMatch, BASED_ON_LINE } from '../utils/matchDisplay';
 import '../styles/match-ui.css';
 

@@ -1,6 +1,6 @@
 import { avatarInitials } from '../utils/avatarInitials';
 import { useMemo, useState } from 'react';
-import { ALL_PRODUCTS } from '../data/products';
+import { ALL_PRODUCTS } from '../data/products.js';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { buildShopperProfile } from '../mobile/utils/shopperProfile.js';
 import { getBrandAffinity, getSafetyAlerts } from '../mobile/utils/shopperProfileData.js';

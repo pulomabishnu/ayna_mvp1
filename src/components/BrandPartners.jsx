@@ -1,5 +1,5 @@
 import React from 'react';
-import { ALL_PRODUCTS } from '../data/products';
+import { ALL_PRODUCTS } from '../data/products.js';
 import { InfoPage } from './InfoPage';
 import { isPlainLeftClick } from '../utils/productRoute';
 import ProductCard from './ProductCard';

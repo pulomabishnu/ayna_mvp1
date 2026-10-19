@@ -3,7 +3,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useResearch } from '../data/researchLoader';
 import { ProductImageFallback } from './ProductTileImage';
 import ProductCard from './ProductCard';
-import { ALL_PRODUCTS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct, CATEGORY_LABELS } from '../data/products';
+import { ALL_PRODUCTS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct, CATEGORY_LABELS } from '../data/products.js';
 import { exclusionLines } from '../utils/matchDisplay';
 import '../styles/match-ui.css';
 import { getAynaRating, getAynaRatingCount } from '../data/aynaReviews';

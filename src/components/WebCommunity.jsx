@@ -8,7 +8,7 @@ import { getRecentActivity } from '../utils/recentActivity.js';
 import { extractHashtagTopics, suggestHashtags, suggestTopicsForProducts } from '../utils/community/topics.js';
 import { uploadCommunityImage, deleteCommunityImage, checkImageFile, MAX_POST_PHOTOS, publicMediaUrl } from '../utils/community/imageUpload.js';
 import { makePlaylistCoverFile } from '../mobile/components/playlistCoverImage.js';
-import { CATEGORY_LABELS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../data/products';
+import { CATEGORY_LABELS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../data/products.js';
 import { scoreSearchMatch } from '../utils/search/index.js';
 import { searchCommunityTolerant } from '../utils/search/communitySearch.js';
 import SmartSearchInput from './search/SmartSearchInput.jsx';

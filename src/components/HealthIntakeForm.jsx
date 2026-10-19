@@ -10,7 +10,7 @@ const PREFERENCE_GROUPS = [
   { label: 'I need products suited for…', items: ['Sensitive skin', 'Pregnancy considerations'] },
 ];
 const DUPLICATE_FREE_OPTIONS = ['Fragrance-free', 'Dye-free', 'Paraben-free', 'Sulfate-free', 'Latex-free'];
-import { ALL_PRODUCTS } from '../data/products';
+import { ALL_PRODUCTS } from '../data/products.js';
 import { mapIntakeToLegacyQuizProfile } from '../utils/healthIntake';
 import { saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore';
 

@@ -1,4 +1,4 @@
-import { inferTagsFromHealthProfile, normalizeProfile } from './healthDataProfile';
+import { inferTagsFromHealthProfile, normalizeProfile } from './healthDataProfile.js';
 
 const MAX_TOTAL = 4000;
 

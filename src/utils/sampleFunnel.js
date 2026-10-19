@@ -1,4 +1,4 @@
-import { ALL_PRODUCTS, getProfileMatchPercentForProduct, filterPrescriptionCareGate, isTeenProduct } from '../data/products';
+import { ALL_PRODUCTS, getProfileMatchPercentForProduct, filterPrescriptionCareGate, isTeenProduct } from '../data/products.js';
 import { RELEASED_STARTUPS } from '../data/startups';
 
 // How It Works funnel, computed live from the real catalog and the real

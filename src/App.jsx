@@ -54,7 +54,7 @@ const Articles = React.lazy(() => import('./components/Articles'));
 // Internal, read-only product passport audit (dev, or ?internal=1 opt-in).
 const ProductAudit = React.lazy(() => import('./components/ProductAudit'));
 const CampusResources = React.lazy(() => import('./components/CampusResources'));
-import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, hasStatedLifeStage, matchEngine, getSelectedNeeds } from './data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, hasStatedLifeStage, matchEngine, getSelectedNeeds } from './data/products.js';
 import { behaviorFrom } from './utils/matchDisplay';
 import WebHealthData from './components/WebHealthData';
 import { useHealthData } from './mobile/hooks/useHealthData.js';
@@ -65,7 +65,7 @@ import { useScrollPosition } from './hooks/useScrollPosition';
 import ProductModal from './components/ProductModal';
 import { enrichLlmProductForDiscovery } from './utils/enrichLlmProductForDiscovery';
 import ProfileChatbot from './components/ProfileChatbot';
-import { loadHealthProfile, hasHealthProfileSignals } from './utils/healthDataProfile';
+import { loadHealthProfile, hasHealthProfileSignals } from './utils/healthDataProfile.js';
 import { loadHealthProfileForCurrentUser, saveHealthProfileForCurrentUser } from './utils/healthProfileStore';
 import { forgetSharedIntake, loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser, clearHealthIntakeForCurrentUser } from './utils/healthIntakeStore';
 import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';

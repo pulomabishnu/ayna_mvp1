@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { availablePreferenceOptions, matchesProductPreference } from '../utils/productPreferences';
-import { ALL_PRODUCTS, CATEGORY_LABELS, getProductMatchDetailsForProduct } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, getProductMatchDetailsForProduct } from '../data/products.js';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { getVerificationLinks } from '../utils/verificationLinks';
 import { getWeeklyTrendingLineup, isBeautyProduct, orderByWeeklyTrending, takeDistinctCategories, trendingAreaLabel } from '../utils/trendingLineup';

@@ -3,7 +3,7 @@ import {
     ALL_PRODUCTS, getRecommendations, getPersonalizedProductIds, getProductMatchDetailsForProduct, getProductRelevanceScore, hydrateCatalogProduct,
     getNeedMatchesForProduct, getEcosystemSeedFromQuiz, getRecommendationMatchesAndRest, getProfileMatchPercentForProduct, getProfileMatchLabelsForProduct,
     getMatchCareFlags, getEcosystemAlternatives, getRecommendationExplanation, isOffShelfProduct,
-} from './products';
+} from './products.js';
 import { mapIntakeToLegacyQuizProfile } from '../utils/healthIntake';
 
 describe('getPersonalizedProductIds', () => {
@@ -461,7 +461,7 @@ describe('ASK2 adapters', () => {
     });
 
     it('check-in picks never infer menopause or irregular cycles from tracker use', async () => {
-        const { getCheckinRecommendations } = await import('./products');
+        const { getCheckinRecommendations } = await import('./products.js');
         const recs = getCheckinRecommendations({ frustrations: [] }, { focusAreas: [] }, [{ date: '2026-10-01' }], [{ symptoms: ['hot flashes'] }]);
         expect(recs).toEqual([]);
     });
