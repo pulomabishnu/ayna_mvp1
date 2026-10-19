@@ -332,7 +332,7 @@ function Reads({ onViewArticle, onViewArticles }) {
 const STEPS = [
   { t: 'Answer six questions', d: 'About your body and what you avoid.', src: '/landing/hiw-questions-cabinet.webp', alt: 'A woman in a white robe reaching into her bathroom cabinet', pos: '50% 35%' },
   { t: 'We check the evidence', d: 'Across products, apps and care.', src: '/landing/hiw-evidence-reading.webp', alt: 'Two friends in glasses reading a book together in front of bookshelves', pos: '50% 40%' },
-  { t: 'Get your ecosystem', d: 'Ranked for you.', src: '/landing/hiw-ecosystem-cabinet.webp', alt: 'A medicine cabinet with shelves full of skincare and beauty products', pos: '50% 50%' },
+  { t: 'Get your ecosystem', d: 'Ranked for you.', src: '/landing/hiw-ecosystem-vanity.webp', alt: 'A marble bathroom vanity by candlelight, skincare and makeup laid out around the sink', pos: '50% 45%' },
   { t: 'You decide', d: 'Nothing is bought until you say so.', src: '/landing/hiw-decide-basket.webp', alt: 'Looking down at a red shopping basket of products between two sneakers', pos: '50% 45%' },
 ];
 
