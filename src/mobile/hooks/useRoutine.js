@@ -39,6 +39,11 @@ function persistRoutine(map) {
   }
 }
 
+/** "Start fresh" on a redo: her routine spots belong to the Ecosystem being cleared. */
+export function clearRoutine() {
+  try { localStorage.removeItem(ROUTINE_KEY); } catch { /* storage unavailable */ }
+}
+
 export function useRoutine() {
   const [routineMap, setRoutineMap] = useState(loadRoutine);
 
