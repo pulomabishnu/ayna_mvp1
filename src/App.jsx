@@ -432,8 +432,10 @@ function App() {
     const path = keepPath ? window.location.pathname : pathForView(currentView, productRouteId);
     // Community search lives in ?q= (shareable, survives a refresh); keep only that.
     const communityQ = currentView === 'community' ? new URLSearchParams(window.location.search).get('q') : null;
+    // Partners keeps its #brand-… hash so a link can open one brand's card.
     const initialUrl = (currentView === 'auth-callback' || currentView === 'campus-resources')
       ? `${path}${window.location.search}${window.location.hash}`
+      : currentView === 'waitlist' && /^#brand-[a-z0-9-]+$/.test(window.location.hash) ? `${path}${window.location.hash}`
       : communityQ ? `${path}?q=${encodeURIComponent(communityQ)}` : path;
     window.history.replaceState({ view: currentView, productId: productRouteId }, '', initialUrl);
   // eslint-disable-next-line react-hooks/exhaustive-deps

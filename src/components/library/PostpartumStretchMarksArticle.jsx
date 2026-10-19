@@ -136,9 +136,15 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
         <section style={{ display: "grid", gap: "22px", maxWidth: "900px" }}>
           <h1 style={{ margin: "0", font: "400 clamp(38px,5.2vw,68px)/1.04 'DM Serif Display',Georgia,serif", letterSpacing: "-.01em", textWrap: "balance" }}>Can You Actually Improve Postpartum Stretch Marks and Scars? <em style={{ color: "var(--g-pink)" }}>I Looked at the Research Behind 5 MOST Popular Treatments</em></h1>
           <p style={{ margin: "0", font: "400 clamp(19px,1.8vw,23px)/1.5 'DM Sans'", maxWidth: "56ch", textWrap: "pretty" }}>From viral belly oils to prescription retinoids, here's what actually works, what's mostly marketing, and what the research says.</p>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <span style={{ display: "grid", placeItems: "center", width: "44px", height: "44px", borderRadius: "50%", background: "#f7badd", color: "#3e2723", font: "400 20px/1 'DM Serif Display',serif" }}>G</span>
-            <span style={{ display: "grid", gap: "3px" }}><strong style={{ font: "700 16px/1.2 'DM Sans'" }}>Geena Yousry, MS1</strong><span style={{ font: "400 14px/1.2 'DM Sans'" }}>Medical student</span></span>
+          <div style={{ display: "grid", gap: "14px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <span aria-hidden="true" style={{ display: "grid", placeItems: "center", flex: "none", width: "44px", height: "44px", borderRadius: "50%", background: "#f7badd", color: "#3e2723", font: "400 20px/1 'DM Serif Display',serif" }}>A</span>
+              <span style={{ display: "grid", gap: "4px" }}><span style={{ font: "700 12px/1 'DM Sans'", letterSpacing: ".08em", textTransform: "uppercase", color: "var(--g-pink)" }}>Reviewed by</span><strong style={{ font: "700 16px/1.3 'DM Sans'" }}>Dr. Anuja Vyas, Board-Certified OBGYN, Co-founder of <a href="/partners#brand-buni" style={{ textDecoration: "underline", textUnderlineOffset: "3px" }}>BUNI Body</a></strong></span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <span aria-hidden="true" style={{ display: "grid", placeItems: "center", flex: "none", width: "44px", height: "44px", borderRadius: "50%", background: "#f7badd", color: "#3e2723", font: "400 20px/1 'DM Serif Display',serif" }}>G</span>
+              <span style={{ display: "grid", gap: "4px" }}><span style={{ font: "700 12px/1 'DM Sans'", letterSpacing: ".08em", textTransform: "uppercase", color: "var(--g-pink)" }}>Written by</span><strong style={{ font: "700 16px/1.3 'DM Sans'" }}>Geena Yousry, MS1, Medical Student</strong></span>
+            </div>
           </div>
         </section>
 
