@@ -28,4 +28,9 @@ export const ARTICLE_CATEGORIES = [
     label: 'Pelvic Health',
     articleIds: ['pelvic-floor-dysfunction', 'endometriosis-basics', 'ovarian-cysts'],
   },
+  {
+    id: 'postpartum',
+    label: 'Pregnancy & Postpartum',
+    articleIds: ['postpartum-stretch-marks'],
+  },
 ];
