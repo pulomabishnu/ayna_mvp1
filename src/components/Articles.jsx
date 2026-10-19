@@ -1208,7 +1208,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   if (selected && DESIGNED_READS[selected.id]) {
     const Designed = DESIGNED_READS[selected.id].Component;
     const nextArticle = ARTICLES.find((a) => a.id === DESIGNED_READS[selected.id].next) || null;
-    return <Designed key={selected.id} onBack={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); closeRead(); }} nextArticle={nextArticle} onOpenNext={open} fallback={<article><h1>{selected.title}</h1>{withHeadings(selected.body)}</article>} />;
+    return <Designed key={selected.id} onBack={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); closeRead(); }} nextArticle={nextArticle} onOpenNext={open} onOpenProduct={onOpenProduct} fallback={<article><h1>{selected.title}</h1>{withHeadings(selected.body)}</article>} />;
   }
 
   if (selected) {
