@@ -37,6 +37,8 @@
 	<true/>
 	<key>NSHealthClinicalHealthRecordsShareUsageDescription</key>
 	<string>If you choose, ayna reads your allergies, conditions and medicines from your health records so you can review them and get safer product matches. They stay on this iPhone. They are never used for ads, shared with brands, or sent to an AI model.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>ayna does not save anything to Apple Health. It only reads the health data you choose to share.</string>
 	<key>NSHealthShareUsageDescription</key>
 	<string>ayna reads only the health data you turn on, such as sleep, period days, temperature, heart and activity, to show your trends and personalize your matches. It is never used for ads or shared with brands.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
