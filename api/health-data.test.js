@@ -75,6 +75,35 @@ describe('/api/health-data', () => {
     expect(r.body.saved).toBe(0);
   });
 
+  it('editing what a paused source shares keeps it paused', async () => {
+    await call({ action: 'connect', source: 'apple_health', categories: ['sleep', 'activity'], platform: 'ios' });
+    await call({ action: 'pause', source: 'apple_health' });
+    await call({ action: 'update', source: 'apple_health', categories: ['sleep'] });
+    const conn = ctx.db.tables.health_connections.find((c) => c.source === 'apple_health');
+    expect(conn).toMatchObject({ status: 'paused', sync_enabled: false });
+    const r = await call({ action: 'sync', source: 'apple_health', rows: [{ metric: 'sleep_minutes', day: day(1), value: 400 }] });
+    expect(r.body.saved).toBe(0);
+  });
+
+  it('disconnecting clears the last sync so a reconnect backfills fully', async () => {
+    await call({ action: 'connect', source: 'apple_health', categories: ['sleep'], platform: 'ios' });
+    await call({ action: 'sync', source: 'apple_health', rows: [{ metric: 'sleep_minutes', day: day(1), value: 400 }] });
+    expect(ctx.db.tables.health_connections[0].last_synced_at).toBeTruthy();
+    await call({ action: 'disconnect', source: 'apple_health', deleteData: true });
+    expect(ctx.db.tables.health_connections[0].last_synced_at).toBeNull();
+  });
+
+  it('GET returns every row even past one API page', async () => {
+    await call({ action: 'connect', source: 'apple_health', categories: ['sleep', 'activity', 'heart'], platform: 'ios' });
+    const rows = [];
+    for (let i = 0; i < 18; i += 1) for (const metric of ['sleep_minutes', 'steps', 'resting_hr_bpm']) rows.push({ metric, day: day(i), value: metric === 'steps' ? 5000 : metric === 'sleep_minutes' ? 400 : 60 });
+    // Pad the table directly beyond 1000 rows for this user.
+    for (let i = 0; i < 1100; i += 1) ctx.db.tables.health_daily_metrics.push({ user_id: 'u1', source: 'apple_health', origin: `o${i}`, metric: 'steps', day: day(0), value: 1, unit: 'count', method: 'observed' });
+    await call({ action: 'sync', source: 'apple_health', rows });
+    const r = await call({}, 'GET');
+    expect(r.body.rows.length).toBe(1100 + rows.length);
+  });
+
   it('disconnect only keeps data; disconnect + delete removes it', async () => {
     await call({ action: 'connect', source: 'apple_health', categories: ['sleep'], platform: 'ios' });
     await call({ action: 'sync', source: 'apple_health', rows: [{ metric: 'sleep_minutes', day: day(1), value: 400 }] });

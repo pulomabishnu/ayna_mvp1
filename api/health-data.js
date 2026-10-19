@@ -89,8 +89,11 @@ export default async function handler(req, res) {
       }
       const { count, error: delError } = await admin.from('health_daily_metrics').delete({ count: 'exact' }).eq('user_id', userId);
       if (delError) throw new Error('metric_delete_failed');
-      await admin.from('health_imports').delete().eq('user_id', userId);
-      await admin.from('health_connections').delete().eq('user_id', userId);
+      const { error: importError } = await admin.from('health_imports').delete().eq('user_id', userId);
+      if (importError) throw new Error('import_delete_failed');
+      // Connections go too, so nothing re-uploads on the next auto-sync.
+      const { error: connError } = await admin.from('health_connections').delete().eq('user_id', userId);
+      if (connError) throw new Error('connection_delete_failed');
       await recordEvent(admin, userId, 'all', 'all_data_deleted', { rowsAffected: count || 0 });
       return res.status(200).json({ ok: true, deleted: count || 0 });
     }
@@ -134,7 +137,7 @@ export default async function handler(req, res) {
         revoked = await revokeProvider(admin, userId, source).then(() => true).catch((e) => { logHealthError('disconnect.revoke', e?.message); return false; });
       }
       if (existing) {
-        await setConnectionState(admin, userId, source, { status: 'disconnected', sync_enabled: false, categories: [] });
+        await setConnectionState(admin, userId, source, { status: 'disconnected', sync_enabled: false, categories: [], last_synced_at: null });
         await recordEvent(admin, userId, source, 'consent_withdrawn', { categories: existing.categories });
       }
       let deleted = 0;

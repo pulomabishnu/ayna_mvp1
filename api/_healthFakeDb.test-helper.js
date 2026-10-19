@@ -24,6 +24,8 @@ export function createFakeDb(initial = {}) {
     let countMode = null;
     let single = null;
     let limitN = null;
+    let rangeFrom = null;
+    let rangeTo = null;
     const api = {
       select() { if (op !== 'select') returning = true; return api; },
       insert(rows) { op = 'insert'; payload = Array.isArray(rows) ? rows : [rows]; return api; },
@@ -35,6 +37,7 @@ export function createFakeDb(initial = {}) {
       gte(col, val) { filters.push((r) => r[col] >= val); return api; },
       order() { return api; },
       limit(n) { limitN = n; return api; },
+      range(from, to) { rangeFrom = from; rangeTo = to; return api; },
       maybeSingle() { single = 'maybe'; return new Promise((res, rej) => api.then(res, rej)); },
       single() { single = 'one'; return new Promise((res, rej) => api.then(res, rej)); },
       then(resolve, reject) {
@@ -67,6 +70,7 @@ export function createFakeDb(initial = {}) {
         return { data: returning ? gone : null, error: null, count: countMode ? gone.length : null };
       }
       let out = rows.filter(match);
+      if (rangeFrom != null) out = out.slice(rangeFrom, rangeTo + 1);
       if (limitN != null) out = out.slice(0, limitN);
       if (single === 'maybe') return { data: out[0] || null, error: null };
       if (single === 'one') return out[0] ? { data: out[0], error: null } : { data: null, error: { message: 'no rows' } };

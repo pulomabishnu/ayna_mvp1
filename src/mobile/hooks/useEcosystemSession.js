@@ -19,6 +19,11 @@ const DEFAULT_SESSION = {
   // "Not for me": { [productId]: true }. Passed to the matching engine as
   // omitted so these never come back in recommendations, seeds or swaps.
   omittedProducts: {},
+  // Quiz answers waiting on the quiz-end health and plan steps; saved as
+  // lastQuizAnswers when she taps "See my matches".
+  pendingQuiz: null,
+  // Shopping list: { [productId]: true } for what she already has. Not health data.
+  routineHave: {},
 };
 
 function loadSession() {
@@ -33,6 +38,8 @@ function loadSession() {
       pendingIntakeSync: parsed?.pendingIntakeSync === true,
       userName: typeof parsed?.userName === 'string' ? parsed.userName : '',
       omittedProducts: parsed?.omittedProducts && typeof parsed.omittedProducts === 'object' && !Array.isArray(parsed.omittedProducts) ? parsed.omittedProducts : {},
+      pendingQuiz: parsed?.pendingQuiz && typeof parsed.pendingQuiz === 'object' && parsed.pendingQuiz.answers && typeof parsed.pendingQuiz.answers === 'object' ? { answers: parsed.pendingQuiz.answers, mode: parsed.pendingQuiz.mode === 'add' ? 'add' : 'new' } : null,
+      routineHave: parsed?.routineHave && typeof parsed.routineHave === 'object' && !Array.isArray(parsed.routineHave) ? parsed.routineHave : {},
     };
   } catch {
     return DEFAULT_SESSION;

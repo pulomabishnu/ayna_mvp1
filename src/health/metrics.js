@@ -100,6 +100,9 @@ export function cleanRow(input, { allowedCategories, source } = {}) {
   if (!def) return { error: 'unknown_metric' };
   if (allowedCategories && !allowedCategories.includes(def.category)) return { error: 'category_not_consented' };
   if (typeof input.day !== 'string' || !DAY_RE.test(input.day) || Number.isNaN(Date.parse(`${input.day}T00:00:00Z`))) return { error: 'bad_day' };
+  // No future days (a day of slack for time zones) and nothing older than five years.
+  const dayTime = Date.parse(`${input.day}T00:00:00Z`);
+  if (dayTime > Date.now() + 2 * 86400000 || dayTime < Date.now() - 5 * 366 * 86400000) return { error: 'bad_day' };
   const value = typeof input.value === 'string' ? Number(input.value) : input.value;
   if (typeof value !== 'number' || !Number.isFinite(value)) return { error: 'bad_value' };
   if (value < def.min || value > def.max) return { error: 'out_of_range' };

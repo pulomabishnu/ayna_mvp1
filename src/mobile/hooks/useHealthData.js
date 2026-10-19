@@ -15,6 +15,10 @@ import { healthMatchContext } from '../../health/matchContext.js';
 import { usableForInsights, usableForMatching } from '../../health/policy.js';
 import { healthStoreAvailability, nativeSourceForPlatform, readDailyHealth } from '../../health/native.js';
 import { deleteSavedRecords, hasRecords, loadSavedRecords, saveRecords } from '../../health/records.js';
+import { DEV_DEMO_CONNECTIONS, devDemoRows } from '../../health/devDemo.js';
+
+// DEVELOPMENT ONLY (?healthdemo=1 in the local preview): made-up rows so the screens can be checked. Off in production builds.
+export const DEV_HEALTH_DEMO = Boolean(import.meta.env.DEV && typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('healthdemo') === '1');
 
 const AUTO_SYNC_MS = 6 * 3600000;
 
@@ -76,29 +80,50 @@ const lastAutoSync = {};
 export function resetHealthStore() {
   state = { status: 'idle', connections: [], rows: [], live: {}, records: null, error: null, userId: null, loadedAt: 0 };
   inflight = null;
+  loadSeq += 1;
   emit();
 }
 
 let inflight = null;
+let loadSeq = 0;
 
-export function loadHealthData(userId) {
+/** Her own calendar day (native rows are written in local days, not UTC). */
+export const localToday = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+
+/** Days to read from the phone: the gap since the last sync, at least 14, at most 90. */
+const phoneDays = (lastSyncedAt) => {
+  if (!lastSyncedAt) return 90;
+  const gap = Math.ceil((Date.now() - Date.parse(lastSyncedAt)) / 86400000) + 2;
+  return Math.min(90, Math.max(14, Number.isFinite(gap) ? gap : 90));
+};
+
+export function loadHealthData(userId, { force = false } = {}) {
   if (!userId) { resetHealthStore(); return Promise.resolve(); }
-  // Several screens mount the hook at once; share one request.
-  if (inflight && inflight.userId === userId) return inflight.promise;
+  // Several screens mount the hook at once; share one request. A forced
+  // refresh (right after connecting) waits for it, then loads fresh.
+  if (inflight && inflight.userId === userId) return force ? inflight.promise.then(() => loadHealthData(userId)) : inflight.promise;
+  const seq = ++loadSeq;
   set({ status: state.userId === userId && state.loadedAt ? 'refreshing' : 'loading', userId, error: null, records: state.userId === userId ? state.records : loadSavedRecords(userId) });
   const promise = (async () => {
+    if (DEV_HEALTH_DEMO) {
+      set({ status: 'ready', connections: DEV_DEMO_CONNECTIONS, rows: devDemoRows(), live: {}, loadedAt: Date.now() });
+      inflight = null;
+      return;
+    }
     try {
       const out = await fetchHealthData();
+      // Signed out or switched accounts while this was loading: drop it.
+      if (seq !== loadSeq || state.userId !== userId) return;
       const connections = out.connections || [];
       const keepLive = Object.fromEntries(Object.entries(state.live || {}).filter(([src]) => connections.some((c) => c.source === src && active(c))));
       set({ status: 'ready', connections, rows: out.rows || [], live: keepLive, loadedAt: Date.now() });
     } catch (e) {
-      set({ status: 'error', error: e?.code || 'load_failed' });
+      if (seq === loadSeq && state.userId === userId) set({ status: 'error', error: e?.code || 'load_failed' });
     } finally {
-      inflight = null;
+      if (inflight?.seq === seq) inflight = null;
     }
   })();
-  inflight = { userId, promise };
+  inflight = { userId, promise, seq };
   return promise;
 }
 
@@ -133,25 +158,37 @@ export async function syncPhoneSource({ force = false } = {}) {
   const source = nativeSourceForPlatform();
   const connection = state.connections.find((c) => c.source === source);
   if (!source || !active(connection)) return { skipped: 'not_connected' };
-  if (!force && lastAutoSync[source] && Date.now() - lastAutoSync[source] < AUTO_SYNC_MS) return { skipped: 'recent' };
+  const key = `${state.userId}:${source}`;
+  if (!force && lastAutoSync[key] && Date.now() - lastAutoSync[key] < AUTO_SYNC_MS) return { skipped: 'recent' };
   const availability = await healthStoreAvailability();
   if (!availability.available) return { skipped: availability.reason || 'unavailable' };
-  lastAutoSync[source] = Date.now();
-  const rows = await readDailyHealth(connection.categories, { days: connection.last_synced_at ? 14 : 90 });
-  const result = rows.length ? await syncDeviceRows(source, rows) : { saved: 0 };
-  await loadHealthData(state.userId);
-  return { saved: result.saved || 0, empty: rows.length === 0 };
+  lastAutoSync[key] = Date.now();
+  try {
+    const rows = await readDailyHealth(connection.categories, { days: phoneDays(connection.last_synced_at) });
+    const result = rows.length ? await syncDeviceRows(source, rows) : { saved: 0 };
+    await loadHealthData(state.userId, { force: true });
+    return { saved: result.saved || 0, empty: rows.length === 0 };
+  } catch (e) {
+    delete lastAutoSync[key]; // a failed sync can be retried right away
+    throw e;
+  }
 }
 
 export async function syncCloudSource(provider, { force = false } = {}) {
   if (LIVE_ONLY_SOURCES.includes(provider)) return refreshLiveSource(provider, { force });
   const connection = state.connections.find((c) => c.source === provider);
   if (!active(connection)) return { skipped: 'not_connected' };
-  if (!force && lastAutoSync[provider] && Date.now() - lastAutoSync[provider] < AUTO_SYNC_MS) return { skipped: 'recent' };
-  lastAutoSync[provider] = Date.now();
-  const result = await syncOAuthSource(provider);
-  await loadHealthData(state.userId);
-  return result;
+  const key = `${state.userId}:${provider}`;
+  if (!force && lastAutoSync[key] && Date.now() - lastAutoSync[key] < AUTO_SYNC_MS) return { skipped: 'recent' };
+  lastAutoSync[key] = Date.now();
+  try {
+    const result = await syncOAuthSource(provider);
+    await loadHealthData(state.userId, { force: true });
+    return result;
+  } catch (e) {
+    delete lastAutoSync[key];
+    throw e;
+  }
 }
 
 function subscribe(listener) { listeners.add(listener); return () => listeners.delete(listener); }
@@ -173,16 +210,17 @@ export function useHealthData(userId, selectedNeedIds = []) {
 
   // Quiet background refresh at most every 6 hours per source, after load.
   useEffect(() => {
-    if (s.status !== 'ready' || !userId) return;
+    if (s.status !== 'ready' || !userId || DEV_HEALTH_DEMO) return;
     syncPhoneSource().catch(() => {});
     syncCloudSource('oura').catch(() => {});
     for (const p of LIVE_ONLY_SOURCES) refreshLiveSource(p).catch(() => {});
   }, [s.status, s.loadedAt, userId]);
 
   const allRows = useMemo(() => [...s.rows, ...Object.values(s.live || {}).filter(Boolean).flat()], [s.rows, s.live]);
-  const insights = useMemo(() => buildInsights(allRows.filter(usableForInsights)), [allRows]);
+  const insightRows = useMemo(() => allRows.filter(usableForInsights), [allRows]);
+  const insights = useMemo(() => buildInsights(insightRows, { today: localToday() }), [insightRows]);
   // Health Match only reads sources whose terms allow it (src/health/policy.js).
-  const matchSignals = useMemo(() => buildInsights(allRows.filter(usableForMatching)).signals, [allRows]);
+  const matchSignals = useMemo(() => buildInsights(allRows.filter(usableForMatching), { today: localToday() }).signals, [allRows]);
   const needKey = selectedNeedIds.join('|');
   const matchContext = useMemo(
     () => (matchSignals.length ? healthMatchContext(matchSignals, selectedNeedIds) : null),
@@ -191,5 +229,6 @@ export function useHealthData(userId, selectedNeedIds = []) {
   );
   const connected = s.connections.filter((c) => c.status !== 'disconnected');
   const records = hasRecords(s.records) ? s.records : null;
-  return { ...s, records, connected, insights, matchContext, refresh: () => loadHealthData(userId) };
+  // insightRows/matchSignals: for the dashboard charts and for quiz-end matching with a new set of goals.
+  return { ...s, records, connected, insights, insightRows, matchSignals, matchContext, refresh: () => loadHealthData(userId, { force: true }) };
 }

@@ -49,18 +49,18 @@ const ERRORS = {
 const errorText = (e) => ERRORS[e?.code] || 'Something went wrong. Try again.';
 
 /* --------------------------------- List ---------------------------------- */
-function SourceList({ connections, records, onOpen, onOpenInsights, hasInsights, signedIn, onSignIn, onRefresh }) {
+function SourceList({ connections, records, onOpen, onOpenInsights, hasInsights, signedIn, onSignIn, onRefresh, compact = false }) {
   const [now] = useState(() => Date.now());
   const byId = Object.fromEntries(connections.map((c) => [c.source, c]));
   return (
     <>
-      <p className="ay-hc-intro">Bring your health data into ayna to sharpen your matches and see your trends. You choose what to share. Brands never see it.</p>
+      {!compact && <p className="ay-hc-intro">Bring your health data into ayna to sharpen your matches and see your trends. You choose what to share. Brands never see it.</p>}
       {!signedIn && (
         <div className="ay-hc-note">Sign in to connect apps and upload data. <button type="button" className="ay-hc-link" onClick={onSignIn}>Sign in</button></div>
       )}
-      {hasInsights && (
+      {hasInsights && !compact && (
         <button type="button" className="ay-hc-insights-link" onClick={onOpenInsights}>
-          <span><b>Your health insights</b><small>Sleep, cycle, recovery and activity trends</small></span><Chevron />
+          <span><b>Your health dashboard</b><small>Charts for sleep, cycle, heart and activity</small></span><Chevron />
         </button>
       )}
       {SOURCE_GROUPS.map((group) => (
@@ -390,7 +390,7 @@ function RequestSource({ signedIn, onSignIn }) {
 }
 
 /* --------------------------------- Screen -------------------------------- */
-export default function HealthConnectionsScreen({ selectedId, onSelect, onBack, authUser, onSignIn, onOpenInsights }) {
+export default function HealthConnectionsScreen({ selectedId, onSelect, onBack, authUser, onSignIn, onOpenInsights, compact = false }) {
   const health = useHealthData(authUser?.id || null);
   const [flash] = useState(takeHealthFlash);
   const [baseId, preset] = String(selectedId || '').split(':');
@@ -411,6 +411,7 @@ export default function HealthConnectionsScreen({ selectedId, onSelect, onBack, 
           signedIn={signedIn}
           onSignIn={onSignIn}
           onRefresh={health.refresh}
+          compact={compact}
         />
         {health.status === 'error' && signedIn && <p className="ay-hc-error" role="alert">{"Couldn't load your health data."} <button type="button" className="ay-hc-link" onClick={health.refresh}>Try again</button></p>}
       </>

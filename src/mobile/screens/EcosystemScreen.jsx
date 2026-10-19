@@ -13,10 +13,12 @@ import { selectEcosystemProducts } from '../utils/recommendationSelection.js';
 import { careNotes, shortNeedLabel } from '../../utils/matchDisplay.js';
 import { summarizeCareNotes, firstCareLink } from '../../utils/careSummary.js';
 import CareNote from '../../components/CareNote.jsx';
+import { Routine, ShoppingList } from '../components/RoutinePlan.jsx';
 import '../eco-needs.css';
 
 const AREA_TONES = ['#F7BADD', '#769EBE', '#3E2723', '#F7BADD', '#769EBE', '#3E2723'];
 const MIN_SHELF_SCORE = 50;
+const SUGGEST_LABEL = { 'sleep.trouble': 'sleep', 'cycle.irregular': 'irregular cycles', 'energy.fatigue': 'energy' };
 
 function CareLinks({ care, limit = 4 }) {
   if (!care) return null;
@@ -38,6 +40,7 @@ export default function EcosystemScreen({
   onRequestEcosystemReset, ecosystemNotice, onOpenMonthlyCheckin, onOpenProfile,
   quizAnswers = null, matchOpts, onOpenWhyMatch, onAddToEcosystem, onToggleSaved, onReplayStory,
   onOpenHealthData, healthSummary = null, healthConnectedCount = 0,
+  healthSuggestions = [], healthInsights = null, onAddGoal, ecoTab = 'products', onEcoTab, routineHave = {}, onToggleHave,
 }) {
   const scoreFor = (product, profile) => getProductMatchDetailsForProduct(product, profile, null, matchOpts);
   const currentProducts = quizAnswers
@@ -157,6 +160,21 @@ export default function EcosystemScreen({
       {ecosystemNotice && <p className="ayna-cabinet-notice" role="status">{ecosystemNotice}</p>}
     </section>
 
+    {healthSuggestions.length > 0 && onAddGoal && <section className="ay-eco-suggest" aria-label="From your health data">
+      {healthSuggestions.map((s) => <div key={s.needId} className="ay-hd-suggest-item">
+        <p>{s.summary}. Add {SUGGEST_LABEL[s.needId] || 'it'} and ayna will match you for it too.</p>
+        <button type="button" className="ay-hc-primary" onClick={() => onAddGoal(s.needId)}>Add {SUGGEST_LABEL[s.needId] || 'it'}</button>
+      </div>)}
+    </section>}
+
+    {myProducts.length > 0 && onEcoTab && <div className="ay-eco-tabs" role="tablist" aria-label="Ecosystem view">
+      {[['products', 'Products'], ['routine', 'Routine']].map(([id, label]) => <button key={id} type="button" role="tab" aria-selected={ecoTab === id} className={ecoTab === id ? 'is-on' : ''} onClick={() => onEcoTab(id)}>{label}</button>)}
+    </div>}
+
+    {ecoTab === 'routine' && myProducts.length > 0 ? <div className="ay-eco-routine">
+      <Routine products={myProducts} insights={healthInsights} onOpenProduct={onOpenProduct} />
+      <ShoppingList products={myProducts} insights={healthInsights} have={routineHave} onToggleHave={onToggleHave} onOpenProduct={onOpenProduct} />
+    </div> : <>
     {ringGroups.length > 0 && <div className="ay-eco-cover ay-eco-mix"><EcosystemChart groups={ringGroups} /></div>}
     {careFirst && hasAnything && <p className="ay-care-first__after">Products, when you are ready</p>}
 
@@ -187,13 +205,14 @@ export default function EcosystemScreen({
         <div className="ayna-editorial-product-grid">{worthALook.map((product) => <div className="ayna-cabinet-suggestion" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}>Add to Ecosystem</button></div>)}</div>
       </section>}
     </div>
+    </>}
 
     {relatedReads.length > 0 && <section className="ayna-cabinet-reads" aria-labelledby="ayna-cabinet-reads-title"><div className="ayna-cabinet-section-head"><h2 id="ayna-cabinet-reads-title">Read next</h2></div>{relatedReads.slice(0, 3).map((article) => <ArticleCard key={article.id} article={article} compact onClick={() => onOpenArticle?.(article)} />)}</section>}
 
     {authUser && onOpenHealthData && (
       <button type="button" className="ay-eco-health" onClick={onOpenHealthData}>
         <span>
-          <b>{healthConnectedCount ? 'Your health trends' : 'Bring in your health data'}</b>
+          <b>{healthConnectedCount ? 'Your health' : 'Bring in your health data'}</b>
           <small>{healthSummary ? `${healthSummary.title}: ${healthSummary.headline}` : healthConnectedCount ? 'Your trends appear after about two weeks of data.' : 'Connect Apple Health, Oura or upload a file to see your trends.'}</small>
         </span>
         <svg className="ay-hc-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>

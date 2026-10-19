@@ -91,7 +91,8 @@ export async function loadTokens(admin, userId, provider) {
 }
 
 export async function deleteTokens(admin, userId, provider) {
-  await admin.from('health_oauth_tokens').delete().eq('user_id', userId).eq('provider', provider);
+  const { error } = await admin.from('health_oauth_tokens').delete().eq('user_id', userId).eq('provider', provider);
+  if (error) throw new Error('token_delete_failed');
 }
 
 /* ------------------------------ connections ------------------------------ */
@@ -124,7 +125,8 @@ export async function upsertConnection(admin, userId, source, { categories, plat
   const action = existing && existing.status !== 'disconnected' ? 'consent_updated' : 'consent_granted';
   await recordEvent(admin, userId, source, action, { categories: clean, platform });
   const { error } = await admin.from('health_connections').upsert({
-    user_id: userId, source, status, sync_enabled: true, categories: clean, platform,
+    // A paused source stays paused when she edits what it shares.
+    user_id: userId, source, status, sync_enabled: status !== 'paused', categories: clean, platform,
     notice_version: NOTICE_VERSION, last_error_code: null,
   }, { onConflict: 'user_id,source' });
   if (error) throw new Error('connection_save_failed');
@@ -158,12 +160,14 @@ export async function saveMetrics(admin, userId, source, inputs, { importId = nu
   if (!connection.sync_enabled) return { saved: 0, errors: { sync_paused: 1 } };
   const { rows, errors } = cleanRows(inputs, { allowedCategories: connection.categories, source });
   if (!rows.length) return { saved: 0, errors };
-  const payload = rows.map((r) => ({ user_id: userId, ...r, import_id: importId, notice_version: connection.notice_version || NOTICE_VERSION, synced_at: new Date().toISOString() }));
+  // One row per key (last one wins): Postgres rejects a batch that repeats a key.
+  const unique = [...new Map(rows.map((r) => [`${r.origin}|${r.metric}|${r.day}`, r])).values()];
+  const payload = unique.map((r) => ({ user_id: userId, ...r, import_id: importId, notice_version: connection.notice_version || NOTICE_VERSION, synced_at: new Date().toISOString() }));
   for (let i = 0; i < payload.length; i += 500) {
     const { error } = await admin.from('health_daily_metrics').upsert(payload.slice(i, i + 500), { onConflict: 'user_id,source,origin,metric,day' });
     if (error) throw new Error('metric_save_failed');
   }
-  return { saved: rows.length, errors };
+  return { saved: unique.length, errors };
 }
 
 export async function deleteMetricsForCategories(admin, userId, source, categories) {
@@ -177,17 +181,38 @@ export async function deleteMetricsForCategories(admin, userId, source, categori
 export async function deleteSourceData(admin, userId, source) {
   const { count, error } = await admin.from('health_daily_metrics').delete({ count: 'exact' }).eq('user_id', userId).eq('source', source);
   if (error) throw new Error('metric_delete_failed');
-  if (source === 'manual_import') await admin.from('health_imports').delete().eq('user_id', userId);
+  if (source === 'manual_import') {
+    const { error: importError } = await admin.from('health_imports').delete().eq('user_id', userId);
+    if (importError) throw new Error('import_delete_failed');
+  }
   return count || 0;
 }
 
+const READ_PAGE = 1000; // Supabase's default max rows per request
+const READ_MAX = 20000;
+
+/** Every row in the window, paged so the API row cap never cuts off recent days. */
 export async function readMetrics(admin, userId, { days = 120 } = {}) {
   const since = new Date(Date.now() - days * 86400000).toISOString().slice(0, 10);
-  const { data, error } = await admin.from('health_daily_metrics')
-    .select('source,origin,metric,day,value,unit,method')
-    .eq('user_id', userId).gte('day', since).order('day', { ascending: true }).limit(20000);
-  if (error) throw new Error('metric_read_failed');
-  return (data || []).map((r) => ({ ...r, value: Number(r.value) }));
+  const rows = [];
+  for (let from = 0; from < READ_MAX; from += READ_PAGE) {
+    const { data, error } = await admin.from('health_daily_metrics')
+      .select('source,origin,metric,day,value,unit,method')
+      .eq('user_id', userId).gte('day', since)
+      .order('day', { ascending: true }).order('source', { ascending: true }).order('origin', { ascending: true }).order('metric', { ascending: true })
+      .range(from, from + READ_PAGE - 1);
+    if (error) throw new Error('metric_read_failed');
+    rows.push(...(data || []));
+    if (!data || data.length < READ_PAGE) break;
+  }
+  return rows.map((r) => ({ ...r, value: Number(r.value) }));
+}
+
+/** How many days to ask a source for: the gap since the last sync, at least 14, at most 90. */
+export function backfillDays(lastSyncedAt, now = Date.now()) {
+  if (!lastSyncedAt) return 90;
+  const gap = Math.ceil((now - Date.parse(lastSyncedAt)) / 86400000) + 2;
+  return Math.min(90, Math.max(14, Number.isFinite(gap) ? gap : 90));
 }
 
 export { NOTICE_VERSION };

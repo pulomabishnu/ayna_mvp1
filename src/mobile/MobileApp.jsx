@@ -22,7 +22,7 @@ import { useSavedProducts } from './hooks/useSavedProducts.js';
 import { useThemeMode } from './hooks/useThemeMode.js';
 import { usePersonalizedFeed } from './hooks/usePersonalizedFeed.js';
 import { usePushNotifications } from './hooks/usePushNotifications.js';
-import { useHealthData } from './hooks/useHealthData.js';
+import { useHealthData, DEV_HEALTH_DEMO } from './hooks/useHealthData.js';
 import { useTextSize } from './hooks/useTextSize.js';
 import { useEcosystemSession } from './hooks/useEcosystemSession.js';
 import { useSupabaseAuth, MOBILE_OAUTH_PENDING_KEY } from './hooks/useSupabaseAuth.js';
@@ -53,6 +53,10 @@ import LibraryScreen from './screens/LibraryScreen.jsx';
 import { AskContext } from './askContext.js';
 import MonthlyCheckinScreen from './screens/MonthlyCheckinScreen.jsx';
 import CommunityScreen from './screens/CommunityScreen.jsx';
+import QuizConnectScreen from './screens/QuizConnectScreen.jsx';
+import PlanScreen from './screens/PlanScreen.jsx';
+import { healthMatchContext } from '../health/matchContext.js';
+import { addNeedToAnswers } from '../matching/addNeed.js';
 // Launch-audit overrides; imported last so it loads after every screen's CSS.
 import './audit-app.css';
 // "A tiny bit smaller" density pass; after audit-app.css so it wins ties.
@@ -65,6 +69,7 @@ import './app-web.css';
 import './app-design.css';
 import './app-polish.css';
 import './app-landing.css';
+import './app-health.css';
 import './keyboardModality.js';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
@@ -93,6 +98,8 @@ const SCREENS = {
   community: CommunityScreen,
   checkin: MonthlyCheckinScreen,
   library: LibraryScreen,
+  connect: QuizConnectScreen,
+  plan: PlanScreen,
 };
 
 // Same catalog desktop's Discovery page browses: prescription-only items
@@ -176,6 +183,14 @@ function seedEcosystemFromAnswers(quizAnswers, matchOpts) {
   }));
 }
 
+// Which quiz-end step (connect / plan) this tab was on, so a full-page sign-in
+// redirect (Oura, WHOOP, Google, Apple) comes back to it. Tab-only storage.
+const QUIZ_STEP_KEY = 'ayna_quiz_step';
+const DEV_DEMO_USER = import.meta.env.DEV ? { id: 'dev-health-demo', email: 'demo@localhost', user_metadata: { full_name: 'Demo' } } : null;
+function quizStepToResume() {
+  try { const v = sessionStorage.getItem(QUIZ_STEP_KEY); return ['connect', 'plan'].includes(v) ? v : null; } catch { return null; }
+}
+
 function hasSavedIntakeDraft() {
   try {
     const draft = JSON.parse(localStorage.getItem('ayna_intake_draft_v1') || 'null');
@@ -189,7 +204,14 @@ export default function MobileApp() {
   const myProducts = useMemo(() => storedProducts.map(hydrateCatalogProduct), [storedProducts]);
   // The welcome screen is the signed-out entry point. Returning accounts
   // move into their ecosystem once auth finishes restoring their session.
-  const [screen, setScreen] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('screen')) || (!hasEcosystem && hasSavedIntakeDraft() ? 'ecointro' : 'landing'));
+  const [screen, setScreen] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('screen'))
+    // Answers waiting on the quiz-end steps always come back there (after a
+    // provider or Google sign-in redirect, a refresh, or the app relaunching),
+    // so they are never stranded.
+    || (session.pendingQuiz ? quizStepToResume() || 'connect' : null)
+    || (!hasEcosystem && hasSavedIntakeDraft() ? 'ecointro' : 'landing'));
+  const [ecoTab, setEcoTab] = useState('products');
+  const [planAddedGoals, setPlanAddedGoals] = useState({});
   const [hasIntakeDraft, setHasIntakeDraft] = useState(hasSavedIntakeDraft);
   // Product/article detail render as an overlay ON TOP of whichever base
   // screen (Browse, My Ecosystem, Saved) is currently mounted, instead of
@@ -234,7 +256,9 @@ export default function MobileApp() {
     if (screen === 'eco' && dx < 0) { setBrowseQuery(''); setScreen('browse'); }
     if (screen === 'browse' && dx > 0 && hasEcosystem) setScreen('eco');
   };
-  const { user: authUser, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
+  const { user: realAuthUser, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
+  // DEVELOPMENT ONLY: a stand-in signed-in user for the ?healthdemo=1 preview. Never in production.
+  const authUser = realAuthUser || (DEV_HEALTH_DEMO ? DEV_DEMO_USER : null);
   const [loadedAccountId, setLoadedAccountId] = useState(null);
   useEffect(() => {
     if (authLoading || !authUser || screen !== 'landing') return;
@@ -249,7 +273,7 @@ export default function MobileApp() {
     setAuthPrompt(null);
     setAskAynaOpen(false);
     setOverlay(null);
-    if (mode === 'signup' && !lastQuizAnswers) {
+    if (mode === 'signup' && !lastQuizAnswers && !session.pendingQuiz) {
       setIntakeMode('new');
       setEditingHealthProfile(false);
       setScreen('quiz');
@@ -313,10 +337,23 @@ export default function MobileApp() {
   const [revealAtEnd, setRevealAtEnd] = useState(false);
   const lastIntakeModeRef = useRef('new');
   useEffect(() => {
+    // Back in the quiz: her answers live in the quiz draft again until she finishes.
+    if (screen === 'quiz' && session.pendingQuiz) updateSession({ pendingQuiz: null });
+  }, [screen, session.pendingQuiz, updateSession]);
+  useEffect(() => {
+    try {
+      if (['connect', 'plan'].includes(screen)) sessionStorage.setItem(QUIZ_STEP_KEY, screen);
+      else if (['quiz', 'building', 'reveal', 'eco', 'ecointro', 'browse'].includes(screen)) sessionStorage.removeItem(QUIZ_STEP_KEY);
+    } catch { /* storage blocked */ }
+  }, [screen]);
+  useEffect(() => {
     if (screen !== 'quiz' && resumeQuizDraft) Promise.resolve().then(() => setResumeQuizDraft(false));
   }, [screen, resumeQuizDraft]);
   const resumeQuizAtLastStep = () => {
-    const snapshot = lastQuizAnswers?.fullHealthIntake || null;
+    // From the quiz-end steps, go back into the answers she just gave (not yet saved).
+    const fromPending = Boolean(session.pendingQuiz?.answers);
+    const snapshot = (fromPending ? session.pendingQuiz.answers : lastQuizAnswers)?.fullHealthIntake || null;
+    if (fromPending) lastIntakeModeRef.current = session.pendingQuiz.mode || 'new';
     let resumed = false;
     if (snapshot) {
       try {
@@ -423,7 +460,8 @@ export default function MobileApp() {
         lastQuizAnswers: restoredQuizAnswers || (Array.isArray(pending) ? prev.lastQuizAnswers : null),
       }));
 
-      if (remoteProducts.length > 0) setScreen('eco');
+      // Mid quiz-end steps: stay there so her new answers get applied.
+      if (remoteProducts.length > 0 && !session.pendingQuiz) setScreen('eco');
       setLoadedAccountId(userId);
     })().catch((error) => {
       console.warn('[Ayna] mobile ecosystem sync failed:', error);
@@ -497,6 +535,36 @@ export default function MobileApp() {
       .slice(0, 6);
   }, [effectiveQuizAnswers, myProducts, matchOpts]);
 
+  // End of the quiz (connect -> plan -> matches): her new answers wait in
+  // session.pendingQuiz until she taps "See my matches". Health data is read
+  // against the goals she just chose, so it can strengthen them, never add one.
+  const pendingQuiz = session.pendingQuiz || null;
+  const pendingAnswers = pendingQuiz?.answers || null;
+  const pendingNeedIds = useMemo(() => {
+    try { return pendingAnswers ? getSelectedNeeds(pendingAnswers).map((n) => n.id) : []; } catch { return []; }
+  }, [pendingAnswers]);
+  const planHealthContext = useMemo(
+    () => (personalizeWithData && health.matchSignals?.length ? healthMatchContext(health.matchSignals, pendingNeedIds) : null),
+    [personalizeWithData, health.matchSignals, pendingNeedIds],
+  );
+  // Same behavior inputs the quiz always seeded with ("Not for me" only), plus health context.
+  const planBaseOpts = useMemo(() => behaviorFrom({ omitted: omittedProducts }), [omittedProducts]);
+  const planMatchOpts = useMemo(() => ({
+    ...planBaseOpts,
+    ...(planHealthContext ? { healthContext: planHealthContext } : {}),
+    ...(healthRecords ? { healthRecords } : {}),
+  }), [planBaseOpts, planHealthContext, healthRecords]);
+  const planSeeded = useMemo(() => {
+    if (!pendingAnswers || !['connect', 'plan'].includes(screen)) return [];
+    try { return seedEcosystemFromAnswers(pendingAnswers, planMatchOpts); } catch { return []; }
+  }, [pendingAnswers, planMatchOpts, screen]);
+  const planProducts = useMemo(() => {
+    const existing = pendingQuiz?.mode === 'add' ? myProducts : [];
+    const ids = new Set(existing.map((p) => p.id));
+    return [...existing, ...planSeeded.filter((p) => !ids.has(p.id))];
+  }, [pendingQuiz?.mode, myProducts, planSeeded]);
+  const healthInsightsForPlan = personalizeWithData && authUser ? health.insights : null;
+
   // Only true right after a mobile-initiated Google sign-in completes, the
   // full-page OAuth redirect leaves this app entirely and comes back on
   // /auth/callback (rendered by desktop's App.jsx, since main.jsx picks
@@ -530,7 +598,7 @@ export default function MobileApp() {
   const [newAccountStart, setNewAccountStart] = useState(false);
   useEffect(() => {
     if (!authUser?.id || loadedAccountId !== authUser.id) return;
-    const offer = shouldOfferEcosystemStart({ user: authUser, source: takeOAuthSource(), hasIntake: Boolean(lastQuizAnswers), productCount: myProducts.length });
+    const offer = shouldOfferEcosystemStart({ user: authUser, source: takeOAuthSource(), hasIntake: Boolean(lastQuizAnswers || session.pendingQuiz), productCount: myProducts.length });
     if (offer) Promise.resolve().then(() => setNewAccountStart(true));
   }, [loadedAccountId]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -634,7 +702,7 @@ export default function MobileApp() {
       await clearHealthIntakeForCurrentUser();
       pendingQuizEcosystemRef.current = null;
       ecosystemFlagsRef.current = { trackedProducts: {}, omittedProducts: {} };
-      updateSession({ myProducts: [], lastQuizAnswers: null, hasEcosystem: false, pendingIntakeSync: false });
+      updateSession({ myProducts: [], lastQuizAnswers: null, hasEcosystem: false, pendingIntakeSync: false, pendingQuiz: null, routineHave: {} });
       setEcosystemNotice('');
       try { localStorage.removeItem('ayna_intake_draft_v1'); } catch { /* storage unavailable */ }
       setHasIntakeDraft(false);
@@ -655,6 +723,35 @@ export default function MobileApp() {
     const tag = Array.isArray(product.tags) ? product.tags[0] : undefined;
     const alternatives = getEcosystemAlternatives(product.id, tag, effectiveQuizAnswers) || [];
     setOverlay({ type: 'product', item: alternatives[0] || product });
+  };
+
+  // "Add to my goals" on a health-data suggestion (You -> Health, Ecosystem):
+  // the goal is added exactly as if she had picked it in the quiz, and the
+  // new matches for it join her Ecosystem. Nothing is added without the tap.
+  const handleAddGoal = (needId) => {
+    if (!lastQuizAnswers) {
+      setEcosystemNotice('Take the quiz first, then you can add goals from your health data.');
+      return false;
+    }
+    const nextAnswers = addNeedToAnswers(lastQuizAnswers, needId);
+    if (nextAnswers === lastQuizAnswers) return false;
+    let added = [];
+    try {
+      const ids = new Set(myProducts.map((p) => p.id));
+      added = seedEcosystemFromAnswers(nextAnswers, behaviorFrom({ omitted: omittedProducts })).filter((p) => p.needId === needId && !ids.has(p.id));
+    } catch { added = []; }
+    const nextProducts = [...myProducts, ...added];
+    updateSession({ lastQuizAnswers: nextAnswers, myProducts: nextProducts, hasEcosystem: nextProducts.length > 0 });
+    let label = needId;
+    try { label = getSelectedNeeds(nextAnswers).find((n) => n.id === needId)?.phrase || needId; } catch { /* keep id */ }
+    setEcosystemNotice(added.length ? `Added ${label} to your goals. ${added.length} new match${added.length === 1 ? '' : 'es'} in your Ecosystem.` : `Added ${label} to your goals. No new strong matches for it yet.`);
+    const supabase = getSupabaseClient();
+    if (authUser && supabase && added.length) {
+      upsertProductsBatch(supabase, authUser.id, added, { inEcosystem: true, isTracked: false, isOmitted: false })
+        .catch((error) => console.warn('[Ayna] mobile goal add sync failed:', error));
+    }
+    saveHealthIntakeForCurrentUser(nextAnswers?.fullHealthIntake || nextAnswers).catch(() => {});
+    return true;
   };
 
   const nav = {
@@ -679,16 +776,28 @@ export default function MobileApp() {
     onOpenHealthData: () => { if (authUser) setOverlay({ type: 'profile', screen: health.insights.sections.length ? 'healthInsights' : 'healthData' }); else openProfile(); },
     healthSummary: authUser ? health.insights.sections.find((sec) => sec.status === 'ready') || null : null,
     healthConnectedCount: health.connected.length,
+    healthSuggestions: personalizeWithData && authUser ? health.matchContext?.suggestions || [] : [],
+    healthInsights: healthInsightsForPlan,
+    onAddGoal: handleAddGoal,
+    ecoTab,
+    onEcoTab: setEcoTab,
+    routineHave: session.routineHave || {},
+    onToggleHave: (id) => updateSession((prev) => {
+      const next = { ...(prev.routineHave || {}) };
+      if (next[id]) delete next[id]; else next[id] = true;
+      return { routineHave: next };
+    }),
     onRequireAuth: (feature) => requestAuth(feature || 'this feature'),
     onAlreadyHaveAccount: () => openAuth('signin'),
     onAboutAyna: () => setOverlay({ type: 'about' }),
     onOpenWhyMatch: (p) => setOverlay({ type: 'why-match', item: p }),
     onAskAyna: () => authUser ? setAskAynaOpen(true) : requestAuth('Ask Ayna', () => { setScreen(screen); setAskAynaOpen(true); }),
     onBack: () => {
-      if (['building', 'reveal'].includes(screen)) {
+      if (['building', 'reveal', 'connect'].includes(screen)) {
         resumeQuizAtLastStep();
         return;
       }
+      if (screen === 'plan') { setScreen('connect'); return; }
       setScreen(screen === 'quiz' ? (hasEcosystem ? 'eco' : 'ecointro') : screen === 'ecointro' ? 'landing' : screen === 'eco' ? 'browse' : hasEcosystem ? 'eco' : 'landing');
     },
     onRetake: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
@@ -696,8 +805,29 @@ export default function MobileApp() {
     onUpdateHealth: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
     onEditProfile: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
     onComplete: (quizAnswers) => {
-      const seededProducts = seedEcosystemFromAnswers(quizAnswers, behaviorFrom({ omitted: omittedProducts }));
-      const existingProducts = intakeMode === 'add' ? myProducts : [];
+      // Not saved as her answers yet: first the optional health step, then her plan.
+      updateSession({ pendingQuiz: { answers: quizAnswers, mode: intakeMode } });
+      setPlanAddedGoals({});
+      setResumeQuizDraft(false);
+      setIntakeMode('new');
+      setScreen(authUser && health.connected.length ? 'plan' : 'connect');
+    },
+    onQuizConnectContinue: () => setScreen('plan'),
+    onQuizConnectSignIn: () => { authResumeRef.current = null; authReturnScreenRef.current = 'connect'; setAuthMode('signup'); setScreen('signin'); },
+    planProducts,
+    planInsights: healthInsightsForPlan,
+    planSuggestions: planHealthContext?.suggestions || [],
+    planAddedGoals,
+    onAddPlanGoal: (needId) => {
+      updateSession((prev) => (prev.pendingQuiz ? { pendingQuiz: { ...prev.pendingQuiz, answers: addNeedToAnswers(prev.pendingQuiz.answers, needId) } } : {}));
+      setPlanAddedGoals((g) => ({ ...g, [needId]: true }));
+    },
+    onSeeMatches: () => {
+      if (!pendingQuiz) { setScreen(hasEcosystem ? 'eco' : 'ecointro'); return; }
+      const quizAnswers = pendingQuiz.answers;
+      const mode = pendingQuiz.mode;
+      const seededProducts = planSeeded.length ? planSeeded : seedEcosystemFromAnswers(quizAnswers, planMatchOpts);
+      const existingProducts = mode === 'add' ? myProducts : [];
       const existingIds = new Set(existingProducts.map((product) => product.id));
       const addedProducts = seededProducts.filter((product) => !existingIds.has(product.id));
       const nextProducts = [...existingProducts, ...addedProducts];
@@ -707,8 +837,9 @@ export default function MobileApp() {
         lastQuizAnswers: quizAnswers,
         hasEcosystem: nextProducts.length > 0,
         pendingIntakeSync: !authUser,
+        pendingQuiz: null,
       });
-      if (intakeMode === 'add') {
+      if (mode === 'add') {
         setEcosystemNotice(addedProducts.length
           ? `${addedProducts.length} new product${addedProducts.length === 1 ? '' : 's'} added. Your existing Ecosystem stayed in place.`
           : 'No new strong matches this time. Your existing Ecosystem stayed in place.');
@@ -735,9 +866,7 @@ export default function MobileApp() {
       // that user on any other device. No-ops harmlessly when signed out.
       const rawIntake = quizAnswers?.fullHealthIntake || quizAnswers;
       saveHealthIntakeForCurrentUser(rawIntake).catch(() => {});
-      lastIntakeModeRef.current = intakeMode;
-      setResumeQuizDraft(false);
-      setIntakeMode('new');
+      lastIntakeModeRef.current = mode;
       setScreen('building');
     },
     // The reveal->sign-in funnel is for a first-time, still-anonymous build:
@@ -769,20 +898,21 @@ export default function MobileApp() {
     onSignIn: signInWithPassword,
     // Remember where Google/Apple started: the post-quiz save may create an
     // account; a plain sign-in that does gets the "build it first" step.
-    onGoogleSignIn: () => { const mode = authMode === 'signup' || lastQuizAnswers ? 'save' : 'signin'; markOAuthSource(mode); return signInWithGoogle({ mode }); },
-    onAppleSignIn: () => { const mode = authMode === 'signup' || lastQuizAnswers ? 'save' : 'signin'; markOAuthSource(mode); return signInWithApple({ mode }); },
+    onGoogleSignIn: () => { const mode = authMode === 'signup' || lastQuizAnswers || session.pendingQuiz ? 'save' : 'signin'; markOAuthSource(mode); return signInWithGoogle({ mode }); },
+    onAppleSignIn: () => { const mode = authMode === 'signup' || lastQuizAnswers || session.pendingQuiz ? 'save' : 'signin'; markOAuthSource(mode); return signInWithApple({ mode }); },
     onResendConfirmation: resendConfirmation,
     onAuthenticated: (name) => {
       updateSession((prev) => ({ userName: name || prev.userName }));
       const resume = authMode === 'signin' ? authResumeRef.current : null;
       authResumeRef.current = null;
       if (resume) resume();
+      else if (session.pendingQuiz && authReturnScreenRef.current === 'connect') setScreen('connect');
       else setScreen(hasEcosystem ? 'eco' : 'ecointro');
     },
     hasEcosystem,
   };
 
-  const showTabBar = !['landing', 'quiz', 'building', 'reveal', 'signin', 'checkin'].includes(screen) && (!overlay || ['profile', 'profile-auth'].includes(overlay.type));
+  const showTabBar = !['landing', 'quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan'].includes(screen) && (!overlay || ['profile', 'profile-auth'].includes(overlay.type));
   const rankedEcosystemReads = getArticlesByProfileRelevance(effectiveQuizAnswers || {}, null);
   const ecosystemReads = (rankedEcosystemReads.length ? rankedEcosystemReads : ARTICLES)
     .filter((article) => !readArticleIds.includes(article.id))
@@ -794,7 +924,7 @@ export default function MobileApp() {
       : screen === 'community' ? 'community'
         : ['eco', 'ecointro'].includes(screen) ? 'home' : null;
 
-  if (authLoading || (authUser?.id && loadedAccountId !== authUser.id)) {
+  if (authLoading || (authUser?.id && !DEV_HEALTH_DEMO && loadedAccountId !== authUser.id)) {
     return <div className="ayna-mobile" data-theme={resolvedTheme} style={{ display: 'grid', placeItems: 'center', minHeight: '100dvh', background: 'var(--ayna-bg)' }} role="status" aria-live="polite"><div style={{ textAlign: 'center', color: 'var(--ayna-heading)' }}><div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 34 }}>ayna</div><p style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 14 }}>Opening your Ecosystem…</p></div></div>;
   }
 
@@ -850,7 +980,7 @@ export default function MobileApp() {
         ]}
       />
       </AskContext.Provider>
-      {newAccountStart && authUser && !['quiz', 'building'].includes(screen) && (
+      {newAccountStart && authUser && !['quiz', 'building', 'connect', 'plan'].includes(screen) && (
         <NewAccountStart
           name={resolvedName}
           onStart={() => { setNewAccountStart(false); startEcosystemFlow(); }}
@@ -972,6 +1102,8 @@ export default function MobileApp() {
           textSizeIndex={textSizeIndex}
           onTextSizeChange={setTextSizeIndex}
           onEditProfile={() => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); }}
+          onAddGoal={handleAddGoal}
+          onOpenRoutine={() => { setEcoTab('routine'); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
           onOpenMonthlyCheckin={() => setScreen('checkin')}
         />
         </AskContext.Provider>

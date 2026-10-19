@@ -320,7 +320,7 @@ function ProfileHub({ shopperProfile, authUserId, myProducts = [], quizAnswers =
           { key: 'ecosystem', title: `Ecosystem · ${ecosystemCount}`, onClick: onOpenEcosystem },
           { key: 'saved', title: `Saved · ${savedCount}`, onClick: onOpenSaved },
           { key: 'checkin', title: 'Check-ins', sub: "What's changed since last time", onClick: onOpenMonthlyCheckin },
-          { key: 'healthData', title: 'Health data', sub: 'Apps, wearables and your trends' },
+          { key: 'healthData', title: 'Health', sub: 'Your charts, trends and connected apps', onClick: () => onOpen('healthInsights') },
           { key: 'shopper', title: 'Routine', sub: 'Alerts, routine, brand affinity', badge: shopperAlertsCount > 0 ? `${shopperAlertsCount} new` : null },
           { key: 'startups', title: 'Startups', sub: 'Emerging brands worth backing' },
           { key: 'settings', title: 'Settings', sub: IS_NATIVE_APP ? 'Preferences, notifications and privacy' : 'Preferences, account and privacy' },
@@ -3150,6 +3150,8 @@ export default function ProfileFlow({
   onGoEcosystem,
   onOpenSaved,
   onEditProfile,
+  onAddGoal,
+  onOpenRoutine,
   onOpenMonthlyCheckin,
   personalizeWithData = true,
   onPersonalizeWithDataChange,
@@ -3319,13 +3321,14 @@ export default function ProfileFlow({
   } else if (screen === 'healthInsights') {
     body = (
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-        <BackHeader title="Health insights" onBack={goBack} />
+        <BackHeader title="Your health" onBack={goBack} />
         <div className="ay-hc-scroll">
           <HealthInsightsScreen
             authUser={authUser}
             selectedNeedIds={selectedNeedIds}
             onConnect={() => pushScreen('healthData')}
-            onEditProfile={onEditProfile ? () => { onClose(); onEditProfile(); } : undefined}
+            onAddGoal={onAddGoal}
+            onOpenRoutine={onOpenRoutine ? () => { onClose(); onOpenRoutine(); } : undefined}
           />
         </div>
       </div>

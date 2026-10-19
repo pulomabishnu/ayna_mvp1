@@ -19,7 +19,7 @@ import { ouraRows, OURA_ENDPOINTS, OURA_SCOPES } from '../src/health/providers/o
 import { whoopRows, WHOOP_ENDPOINTS, WHOOP_SCOPES } from '../src/health/providers/whoop.js';
 import { cleanRows } from '../src/health/metrics.js';
 import {
-  deleteTokens, getConnection, loadTokens, logHealthError, saveMetrics, saveTokens, setConnectionState,
+  backfillDays, deleteTokens, getConnection, loadTokens, logHealthError, saveMetrics, saveTokens, setConnectionState,
 } from './_healthStore.js';
 
 const TIMEOUT_MS = 15000;
@@ -201,7 +201,7 @@ export async function syncProvider(admin, userId, provider, { days } = {}) {
   if (!connection.sync_enabled) return { saved: 0, skipped: 'paused' };
   try {
     const token = await accessToken(admin, userId, provider);
-    const span = days || (connection.last_synced_at ? 14 : 90);
+    const span = days || backfillDays(connection.last_synced_at);
     const end = Date.now() + 86400000; // Oura's end_date is exclusive
     const startDay = isoDay(end - (span + 1) * 86400000);
     const endDay = isoDay(end);
