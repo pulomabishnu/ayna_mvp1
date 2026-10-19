@@ -35,7 +35,9 @@ const START_KEYWORDS = new Set(['START', 'UNSTOP', 'YES']);
 const HELP_KEYWORDS = new Set(['HELP', 'INFO']);
 
 const SUPPORT_EMAIL = () => process.env.SMS_SUPPORT_EMAIL || 'puloma@aynahealth.co';
-export const HELP_REPLY = () => `ayna: health product matches and reads. Reply STOP to opt out. Help: ${SUPPORT_EMAIL()}`;
+export const HELP_REPLY = () => `ayna: For help, email ${SUPPORT_EMAIL()} or visit aynahealth.co. Msg & data rates may apply. Reply STOP to opt out.`;
+export const STOP_REPLY = "ayna: You're unsubscribed and won't get more texts. Reply START to resubscribe.";
+const OPT_IN_LINE = "ayna: You're subscribed to ayna texts. Msg frequency varies. Msg & data rates may apply. Reply HELP for help, STOP to opt out.";
 export const CHAT_OFF_REPLY = 'Text chats with ayna are off for this number. Turn them on in the ayna app: You, Settings, Text messages.';
 export const DAILY_LIMIT_REPLY = `You've used today's ${SMS_DAILY_CHAT_LIMIT} texts with ayna. You can keep chatting in the app.`;
 export const MAX_REPLY_CHARS = 600;
@@ -295,8 +297,8 @@ export default async function handler(req, res) {
     if (prefsStopError) console.error('[sms-webhook] prefs stop write failed:', prefsStopError.message);
     await logSmsEvent(admin, userId, 'stop');
     await logMessage(admin, userId, 'inbound', text);
-    await logMessage(admin, userId, 'outbound', "You're unsubscribed from Ayna texts. Reply START to opt back in.");
-    return sendTwiml(res, "You're unsubscribed from Ayna texts. Reply START to opt back in.");
+    await logMessage(admin, userId, 'outbound', STOP_REPLY);
+    return sendTwiml(res, STOP_REPLY);
   }
 
   // Handled unconditionally: previously a user who was NOT opted out and texted
@@ -309,7 +311,7 @@ export default async function handler(req, res) {
       : 'Choose which texts you get in the ayna app: You, Settings, Text messages.';
     if (!optedOut && !prefsRow?.stopped_at) {
       await logMessage(admin, userId, 'inbound', text);
-      return sendTwiml(res, `You're already subscribed. ${chatLine}`);
+      return sendTwiml(res, `${OPT_IN_LINE} You're already subscribed. ${chatLine}`);
     }
     if (optedOut) {
       const { error: optInError } = await admin
@@ -328,7 +330,7 @@ export default async function handler(req, res) {
       if (prefsStartError) console.error('[sms-webhook] prefs start write failed:', prefsStartError.message);
     }
     await logSmsEvent(admin, userId, 'start');
-    const backIn = `You're back in${prefs.chat ? '!' : '.'} ${chatLine}`;
+    const backIn = `${OPT_IN_LINE} You're back in. ${chatLine}`;
     await logMessage(admin, userId, 'inbound', text);
     await logMessage(admin, userId, 'outbound', backIn);
     return sendTwiml(res, backIn);

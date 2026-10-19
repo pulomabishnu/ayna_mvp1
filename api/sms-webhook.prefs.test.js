@@ -91,7 +91,7 @@ describe('keywords', () => {
   it('HELP answers any number, even unknown, with the support line', async () => {
     seed({ phone: null });
     const r = await send('help');
-    expect(r.body).toContain('ayna: health product matches and reads. Reply STOP to opt out. Help: puloma@aynahealth.co');
+    expect(r.body).toContain('ayna: For help, email puloma@aynahealth.co or visit aynahealth.co. Msg &amp; data rates may apply. Reply STOP to opt out.');
   });
 
   it('STOP sets stopped_at, turns every feature off and logs a stop event', async () => {
