@@ -1,6 +1,8 @@
 import { formatMetric, isFlat, trendWord } from '../../health/dashboard.js';
 import { CycleRing } from './HealthChart.jsx';
 import { estimatePhase, PHASES } from '../../health/phase.js';
+import ProductCard from './ProductCard.jsx';
+import { weekSummary, suggestedQuestions, phasePicks } from '../utils/dashboardAsk.js';
 
 /**
  * The Summary view of Your health as a bento grid (inspired by clinical
@@ -114,16 +116,14 @@ function MetricCard({ chart, tone, wide, onOpen }) {
 
 function CycleCard({ cycle, estimate, onOpen }) {
   const phase = estimatePhase(cycle);
-  const phaseName = phase ? (phase.id === 'ovulation' ? 'Ovulation window' : phase.name) : 'Your cycle';
+  const phaseName = phase ? (phase.id === 'ovulation' ? 'Around ovulation' : phase.name) : 'Your cycle';
   return (
     <button type="button" className="ay-bn-cycle" onClick={onOpen} aria-label={`Cycle day ${cycle.cycleDay}. ${phaseName}. Open cycle charts.`}>
-      <Shape kind="heart" />
       <span className="ay-bn-cycle-text">
-        <span className="ay-bn-label">Your cycle</span>
         <span className="ay-bn-big">Day {cycle.cycleDay}</span>
         <span className="ay-bn-phase">{phaseName}</span>
         <span className="ay-bn-stats">
-          {cycle.avgLength && <span><b>{cycle.avgLength} days</b><small>Usual length</small></span>}
+          {cycle.avgLength && <span><b>{cycle.avgLength} days</b><small>Usual cycle</small></span>}
           {estimate && <span><b>{fmtDay(estimate.day)}</b><small>Next period</small></span>}
         </span>
       </span>
@@ -152,12 +152,12 @@ function PhaseStrip({ cycle }) {
         {seg.map((x) => (
           <span key={x.id} className={`is-${x.id}${x.id === phase.id ? ' is-now' : ''}`} style={{ flex: x.to - x.from + 1 }} title={short[x.id]} />
         ))}
-        <i className="ay-bn-today" style={{ left: `${((cycle.cycleDay - 0.5) / L) * 100}%` }} aria-hidden="true"><b>Today, day {cycle.cycleDay}</b></i>
+        <i className="ay-bn-today" style={{ left: `${((cycle.cycleDay - 0.5) / L) * 100}%` }} aria-hidden="true" />
       </div>
       <ul className="ay-bn-legend">
         {seg.map((x) => <li key={x.id} className={`is-${x.id}${x.id === phase.id ? ' is-now' : ''}`}><i aria-hidden="true" />{short[x.id]}<small>days {x.from}{x.to > x.from ? `-${x.to}` : ''}</small></li>)}
       </ul>
-      <p><b>{PHASES[phase.id]?.name}.</b> {PHASES[phase.id]?.what}</p>
+      <p>{PHASES[phase.id]?.what}</p>
     </section>
   );
 }
@@ -180,26 +180,64 @@ function upcoming(cycle, estimate, today) {
   return out.sort((a, b) => a.day.localeCompare(b.day)).slice(0, 4);
 }
 
-export default function HealthBento({ name, week, cycle, estimate, pinnedCharts, ready, today, onOpenArea }) {
-  const phase = cycle?.cycleDay ? estimatePhase(cycle) : null;
-  const firstChange = ready.find((s) => s.id !== 'cycle' && s.change && s.change.direction !== 'flat');
-  const lead = [
-    cycle?.cycleDay ? `Day ${cycle.cycleDay} of your cycle${phase ? `, ${phase.id === 'ovulation' ? 'around ovulation' : phase.name.toLowerCase()}` : ''}.` : null,
-    firstChange ? `${firstChange.title} ${firstChange.change.text.replace(/than your usual$/, 'than usual')}.` : null,
-  ].filter(Boolean).join(' ');
+const SPARK = 'M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.4z';
+
+/** A plain summary of her week and questions built from it; a tap asks ayna with her numbers attached. */
+function AskWeek({ summary, questions, onAsk }) {
+  if (!onAsk || (!summary && !questions.length)) return null;
+  return (
+    <section className="ay-askweek" aria-labelledby="ay-askweek-title">
+      <h3 id="ay-askweek-title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={SPARK} /></svg>Ask ayna about your week</h3>
+      {summary && <p>{summary}</p>}
+      {questions.length > 0 && (
+        <ul>
+          {questions.map((q) => (
+            <li key={q}><button type="button" onClick={() => onAsk(q)}><span>{q}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8" /></svg></button></li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+/** Her products (then matches) for this point in her cycle, each group with one short reason. */
+function PhaseProducts({ groups, onOpenProduct }) {
+  if (!groups.length) return null;
+  return (
+    <section className="ay-phasepicks" aria-labelledby="ay-phasepicks-title">
+      <h3 id="ay-phasepicks-title">For this phase</h3>
+      {groups.map((g) => (
+        <div key={g.reason} className="ay-phasepicks-group">
+          <p>{g.reason}</p>
+          <div className="ay-shelf2-row">
+            {g.products.map((p) => <ProductCard key={p.id} product={p} onClick={() => onOpenProduct?.(p)} />)}
+          </div>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+export default function HealthBento({ name, week, cycle, estimate, pinnedCharts, ready, today, onOpenArea, products = [], matches = [], onOpenProduct, onAsk }) {
   const coming = upcoming(cycle, estimate, today);
   const hour = new Date().getHours();
   const hello = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  const summary = weekSummary(ready);
+  const questions = suggestedQuestions({ cycle, estimate, ready, products, today });
+  const picks = phasePicks({ cycle, estimate, ready, products, matches, today });
 
   return (
     <div className="ay-bn">
       <header className="ay-bn-hello">
         <h2>{hello}{name ? `, ${name}` : ''}</h2>
-        {lead && <p>{lead}</p>}
       </header>
+
+      <AskWeek summary={summary} questions={questions} onAsk={onAsk} />
 
       {cycle?.cycleDay && <CycleCard cycle={cycle} estimate={estimate} onOpen={() => onOpenArea('cycle')} />}
       {cycle?.cycleDay && <PhaseStrip cycle={cycle} />}
+
+      <PhaseProducts groups={picks} onOpenProduct={onOpenProduct} />
 
       {pinnedCharts.length > 0 && (
         <ul className="ay-bn-grid" aria-label="Your pinned numbers">

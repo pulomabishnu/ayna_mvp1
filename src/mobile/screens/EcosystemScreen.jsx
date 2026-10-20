@@ -1,5 +1,5 @@
 import './profile/health-connections.css';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import EmptyState from '../components/EmptyState.jsx';
 import { healthAreaLabel } from '../utils/healthAreaLabel.js';
 import MobileHeader from '../components/MobileHeader.jsx';
@@ -35,6 +35,21 @@ function CareLinks({ care, limit = 4 }) {
 // Bring the Products / Dashboard toggle into view (the screen scrolls inside its own container).
 function scrollToTabs() {
   requestAnimationFrame(() => document.querySelector('.ay-eco-tabs')?.scrollIntoView({ block: 'start', behavior: 'smooth' }));
+}
+
+/** The optional-questions nudge: one compact row, with earlier answers one tap away. */
+function QuizNudge({ remaining, onPersonalize, onRetake }) {
+  const [menu, setMenu] = useState(false);
+  const optional = remaining > 0 && onPersonalize;
+  return <section className="ay-nudge" aria-labelledby="ay-nudge-title">
+    <div className="ay-nudge-text">
+      <h2 id="ay-nudge-title">{optional ? 'Make my matches more personal' : 'Your quiz answers'}</h2>
+      <p>{optional ? `${remaining} quick question${remaining === 1 ? '' : 's'}, all optional` : 'Something changed? Update them anytime'}</p>
+    </div>
+    <button type="button" className="ay-nudge-go" onClick={optional ? onPersonalize : onRetake}>{optional ? 'Answer' : 'Update'}</button>
+    {optional && <button type="button" className="ay-nudge-more" aria-label="More quiz options" aria-expanded={menu} onClick={() => setMenu((v) => !v)}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6" /><circle cx="12" cy="12" r="1.6" /><circle cx="19" cy="12" r="1.6" /></svg></button>}
+    {optional && menu && <div className="ay-nudge-menu"><button type="button" onClick={() => { setMenu(false); onRetake(); }}>Change my earlier answers</button></div>}
+  </section>;
 }
 
 function onlyNote(count, phrase) {
@@ -178,19 +193,7 @@ export default function EcosystemScreen({
       {!hasAnything && !quizDraft && <EmptyState compact art="spark" tone="mint" title="No matches yet" body="Update your answers below or browse the shop." actionLabel="Shop" onAction={onBrowse} />}
       {/* One quiz card at a time: an unfinished quiz first, else the optional questions. */}
       {quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
-      {onRetake && !quizDraft && <section className="ay-eco-personal" aria-labelledby="ay-eco-personal-title">
-        {remainingOptional > 0 && <p className="ay-eco-personal__tag">Optional</p>}
-        <h2 id="ay-eco-personal-title">{remainingOptional > 0 ? 'Make my matches more personal' : 'Your quiz answers'}</h2>
-        <p>{remainingOptional > 0
-          ? `${remainingOptional} more quick question${remainingOptional === 1 ? '' : 's'}, all optional. Pick up where you left off and skip any you like.`
-          : 'Something changed? Update your answers anytime and your matches follow.'}</p>
-        {remainingOptional > 0 && onPersonalize
-          ? <>
-            <button type="button" className="ay-eco-personal__go" onClick={onPersonalize}>Answer {remainingOptional} more question{remainingOptional === 1 ? '' : 's'}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
-            <button type="button" className="ay-eco-personal__edit" onClick={onRetake}>Change my earlier answers</button>
-          </>
-          : <button type="button" className="ay-eco-personal__go" onClick={onRetake}>Update my answers<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>}
-      </section>}
+      {onRetake && !quizDraft && <QuizNudge remaining={remainingOptional} onPersonalize={onPersonalize} onRetake={onRetake} />}
       {ecosystemNotice && <p className="ayna-cabinet-notice" role="status">{ecosystemNotice}</p>}
     </section>
 
@@ -200,7 +203,7 @@ export default function EcosystemScreen({
 
 
     {ecoTab === 'dashboard' && myProducts.length > 0 ? <div className="ay-eco-routine">
-      <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} onConnect={onConnectHealth} onAddGoal={onAddGoal} onSignIn={() => onRequireAuth?.('health data')} />
+      <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} products={myProducts} matches={suggestedEcosystemProducts} onOpenProduct={onOpenProduct} onConnect={onConnectHealth} onAddGoal={onAddGoal} onSignIn={() => onRequireAuth?.('health data')} />
       <Routine products={myProducts} insights={healthInsights} onOpenProduct={onOpenProduct} budget={budgetMax(quizAnswers)} />
       {checkin}
     </div> : <>
@@ -212,26 +215,32 @@ export default function EcosystemScreen({
         const { shelf } = section;
         const empty = section.products.length === 0 && !(section.picks?.length);
         const shown = section.products.length ? section.products : section.picks || [];
-        return <section key={section.key} id={`ayna-area-${section.key}`} className={`ayna-cabinet-collection ayna-area-collection${empty ? ' is-empty-shelf' : ''}`} style={{ '--area-tone': toneFor(section), '--area-ink': toneFor(section) === '#3E2723' ? '#FFEDAC' : '#3E2723' }} aria-labelledby={`ayna-area-title-${section.key}`}>
-          <div className="ayna-cabinet-section-head ay-shelf-head"><h2 id={`ayna-area-title-${section.key}`}>{section.label}</h2>{shown.length > 0 && <span className="ay-shelf-count" aria-label={`${shown.length} on this shelf`}>{shown.length}</span>}<button type="button" className="ay-shelf-add" onClick={() => onBrowse?.(shortNeedLabel(section.label))} aria-label={`Add to ${section.label}`}>+ Add</button></div>
-          {shelf && shelf.shortBy > 0 && shelf.picks.length > 0 && <p className="ay-shelf-note">{onlyNote(shelf.picks.length, section.phrase)}</p>}
-          {empty && <div className="ay-shelf-empty">
+        return <section key={section.key} id={`ayna-area-${section.key}`} className={`ay-shelf2${empty ? ' is-empty-shelf' : ''}`} style={{ '--area-tone': toneFor(section), '--area-ink': toneFor(section) === '#3E2723' ? '#FFEDAC' : '#3E2723' }} aria-labelledby={`ayna-area-title-${section.key}`}>
+          <div className="ay-shelf2-head">
+            <i className="ay-shelf2-dot" aria-hidden="true" />
+            <h2 id={`ayna-area-title-${section.key}`}>{section.label}</h2>
+            {shown.length > 0 && <span className="ay-shelf2-count" aria-label={`${shown.length} on this shelf`}>{shown.length}</span>}
+            <button type="button" className="ay-shelf2-add" onClick={() => onBrowse?.(shortNeedLabel(section.label))} aria-label={`Add to ${section.label}`}>+ Add</button>
+          </div>
+          {shelf && shelf.shortBy > 0 && shelf.picks.length > 0 && <p className="ay-shelf2-note">{onlyNote(shelf.picks.length, section.phrase)}</p>}
+          {empty && <div className="ay-shelf2-empty">
             <p>No strong matches for {section.phrase} yet.</p>
             <button type="button" onClick={() => onBrowse?.(shortNeedLabel(section.label))}>Shop {shortNeedLabel(section.label).toLowerCase()} <span aria-hidden="true">→</span></button>
           </div>}
-          {!section.products.length && shown.length > 0 && <p className="ay-shelf-note">Not in your Ecosystem yet</p>}
-          {shown.length > 0 && <div className="ayna-editorial-product-grid">{shown.map((product) => section.products.length
+          {!section.products.length && shown.length > 0 && <p className="ay-shelf2-note">Not in your Ecosystem yet</p>}
+          {shown.length > 0 && <div className="ay-shelf2-row">{shown.map((product) => section.products.length
             ? <ProductCard key={product.id} product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} isSaved={!!savedProducts[product.id]} onToggleSaved={onToggleSaved} />
-            : <div className="ayna-cabinet-suggestion" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}>Add to Ecosystem</button></div>)}{shown.length === 1 && <button type="button" className="ay-shelf-slot" onClick={() => onBrowse?.(shortNeedLabel(section.label))}><span aria-hidden="true">+</span>Add</button>}</div>}
-          {shown.length > 0 && <div className="ay-shelf-plank" aria-hidden="true" />}
+            : <div className="ay-shelf2-pick" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}>+ Add to Ecosystem</button></div>)}
+            <button type="button" className="ay-shelf2-slot" onClick={() => onBrowse?.(shortNeedLabel(section.label))}><span aria-hidden="true">+</span>Add a product</button>
+          </div>}
           {shelf?.care && !careFirst && <details className="ay-shelf-care"><summary>Care options for {section.phrase}</summary><CareLinks care={shelf.care} /></details>}
         </section>;
       }).flatMap((node, index) => (index === 0 && careBanner ? [node, <div key="care-note" className="ay-carenote-slot">{careBanner}</div>] : [node]))}
       {sections.length === 0 && careBanner}
 
-      {worthALook.length > 0 && <section className="ayna-cabinet-collection" aria-labelledby="ayna-cabinet-next-title">
-        <div className="ayna-cabinet-section-head"><h2 id="ayna-cabinet-next-title">Worth a look</h2></div>
-        <div className="ayna-editorial-product-grid">{worthALook.map((product) => <div className="ayna-cabinet-suggestion" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}>Add to Ecosystem</button></div>)}</div>
+      {worthALook.length > 0 && <section className="ay-shelf2" aria-labelledby="ayna-cabinet-next-title">
+        <div className="ay-shelf2-head"><h2 id="ayna-cabinet-next-title">Worth a look</h2><span className="ay-shelf2-count">{worthALook.length}</span></div>
+        <div className="ay-shelf2-row">{worthALook.map((product) => <div className="ay-shelf2-pick" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}>+ Add to Ecosystem</button></div>)}</div>
       </section>}
     </div>
     </>}

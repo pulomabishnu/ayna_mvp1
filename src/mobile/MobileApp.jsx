@@ -77,6 +77,7 @@ import './app-polish.css';
 import './app-landing.css';
 import './app-health.css';
 import './app-ux-fixes.css';
+import './app-compact.css';
 import './keyboardModality.js';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
@@ -360,6 +361,7 @@ export default function MobileApp() {
   const { textSizeIndex, setTextSizeIndex, textScale } = useTextSize();
   const [askAynaOpen, setAskAynaOpen] = useState(() => !!(import.meta.env.DEV && new URLSearchParams(window.location.search).get('ask')));
   const [askAynaHistoryState, setAskAynaHistoryState] = useState({ userId: null, messages: [] });
+  const [askSeed, setAskSeed] = useState(null);
   const askAynaHistory = askAynaHistoryState.userId === authUser?.id ? askAynaHistoryState.messages : [];
   const setAskAynaHistory = (messages) => setAskAynaHistoryState({ userId: authUser?.id, messages });
   // App-wide gate for Preferences > AI & Personalization > "Personalize with
@@ -904,7 +906,12 @@ export default function MobileApp() {
     onAlreadyHaveAccount: () => openAuth('signin'),
     onAboutAyna: () => setOverlay({ type: 'about' }),
     onOpenWhyMatch: (p) => setOverlay({ type: 'why-match', item: p }),
-    onAskAyna: () => authUser ? setAskAynaOpen(true) : requestAuth('Ask ayna', () => { setScreen(screen); setAskAynaOpen(true); }),
+    // onAskAyna() opens the drawer; onAskAyna({ question, context }) also asks
+    // that question with what she's looking at (e.g. her dashboard numbers).
+    onAskAyna: (opts) => {
+      if (opts && typeof opts.question === 'string') setAskSeed({ id: Date.now(), question: opts.question, context: typeof opts.context === 'string' ? opts.context : '' });
+      if (authUser) setAskAynaOpen(true); else requestAuth('Ask ayna', () => { setScreen(screen); setAskAynaOpen(true); });
+    },
     onBack: () => {
       if (['building', 'reveal', 'connect'].includes(screen)) {
         resumeQuizAtLastStep();
@@ -1222,6 +1229,7 @@ export default function MobileApp() {
           savedCount={Object.keys(savedMap || {}).length}
           quizAnswers={effectiveQuizAnswers}
           myProducts={myProducts}
+          matchProducts={suggestedEcosystemProducts}
           savedProducts={savedMap}
           onViewAlternative={handleViewAlternative}
           onBrowse={() => setScreen('browse')}
@@ -1250,6 +1258,7 @@ export default function MobileApp() {
       <AskAynaModal
         key={authUser?.id || 'anonymous'}
         open={askAynaOpen}
+        seed={askSeed}
         enabled={!!authUser || !!(import.meta.env.DEV && new URLSearchParams(window.location.search).get('ask'))}
         profile={effectiveQuizAnswers}
         onProfileUpdate={(answers) => updateSession({ lastQuizAnswers: answers })}

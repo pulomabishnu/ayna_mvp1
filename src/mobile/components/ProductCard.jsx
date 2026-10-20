@@ -40,6 +40,29 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
     : functions.includes('fertility') || ['diagnostics', 'supplement', 'vitamin'].includes(category) ? 'lime'
       : ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'pelvic-floor'].includes(category) ? 'mint' : 'pink';
 
+  // Grid card (Shop grid, Ecosystem shelves, search, Saved): one compact card
+  // app-wide. Its own class names so the older card rules don't reach it.
+  if (!isList) {
+    const showBrand = secondaryLabel && !brandRepeatsName;
+    return (
+      <article className="ay-pc">
+        <button type="button" className="ay-pc-main" onClick={onClick} aria-label={`${name}, ${shownPrice.main}${shownPrice.sub ? ` ${shownPrice.sub}` : ''}${showMatch ? `, ${badge.label}` : ''}. View product details`}>
+          <span className="ay-pc-photo">
+            <ProductImage product={product} src={resolvedImage} alt="" allowBrandLogo={isService} style={{ objectFit: 'contain' }} />
+            {isPartner && <small className="ay-pc-partner">ayna partner</small>}
+          </span>
+          <span className="ay-pc-copy">
+            <small className="ay-pc-brand" aria-hidden={showBrand ? undefined : true}>{showBrand ? secondaryLabel : '\u00a0'}</small>
+            <strong className="ay-pc-name">{brandRepeatsName ? name : displayName(product)}</strong>
+            <span className="ay-pc-price">{hasDisplayPrice ? <b>{shownPrice.main}</b> : <b className="is-muted">{shownPrice.main}</b>}</span>
+          </span>
+        </button>
+        {showMatch && <MatchPill percent={badge.percent ?? match.percent} size="sm" className="ay-pc-match" label={`${badge.label}. Why this match for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}
+        {onToggleSaved && <button type="button" className={`ay-pc-save${isSaved ? ' is-on' : ''}`} aria-label={isSaved ? `Remove ${name} from Saved` : `Save ${name}`} aria-pressed={isSaved} onClick={() => onToggleSaved(product)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></button>}
+      </article>
+    );
+  }
+
   return (
     <article className={`ayna-fresh-product-card ${isList ? 'is-list' : ''} tone-${tone}`}>
       <button type="button" className="ayna-fresh-product-main" onClick={onClick} aria-label={`${name}, ${shownPrice.main}${shownPrice.sub ? ` ${shownPrice.sub}` : ''}${showMatch ? `, ${badge.label}` : ''}. View product details`}>
