@@ -8,13 +8,13 @@ export default function OmittedProducts({ omittedProducts, toggleOmitProduct }) 
         <div className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
             <div className="ay3-pagehead ay3-band ay3-band--paper ay3-edge-bottom" style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)' }}>
                 <p className="ay3-kicker">Hidden</p>
-                <h2 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Not for <em>me.</em></h2>
+                <h2 style={{ fontSize: 'var(--ay-fs-title)', marginBottom: '0.5rem' }}>Not for <em>me.</em></h2>
                 <p style={{ color: 'var(--color-text-muted)' }}>These products will no longer appear in your Discovery or Recommendations.</p>
             </div>
 
             {omittedList.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '4rem', background: 'var(--color-bg)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--color-border)' }}>
-                    <p style={{ color: 'var(--color-text-muted)', fontSize: '1.2rem' }}>You haven't omitted any products yet.</p>
+                    <p style={{ color: 'var(--color-text-muted)', fontSize: 16 }}>You haven't omitted any products yet.</p>
                 </div>
             ) : (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem', maxWidth: '1000px', margin: '0 auto' }}>
@@ -31,12 +31,12 @@ export default function OmittedProducts({ omittedProducts, toggleOmitProduct }) 
                                 )}
                             />
                             <div style={{ flexGrow: 1 }}>
-                                <h3 style={{ fontSize: '1rem', marginBottom: '0.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>{product.name}{product.outOfBusiness && <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>}</h3>
-                                <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{product.category}</p>
+                                <h3 style={{ fontSize: 16, marginBottom: '0.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>{product.name}{product.outOfBusiness && <span style={{ fontSize: 12.5, fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>}</h3>
+                                <p style={{ fontSize: 12.5, color: 'var(--color-text-muted)' }}>{product.category}</p>
                             </div>
                             <button
                                 className="btn btn-outline"
-                                style={{ fontSize: '0.75rem', padding: '0.4rem 0.75rem' }}
+                                style={{ fontSize: 12.5, padding: '0.4rem 0.75rem' }}
                                 onClick={() => toggleOmitProduct(product)}
                             >
                                 Restore

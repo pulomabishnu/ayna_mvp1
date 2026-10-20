@@ -213,30 +213,30 @@ export default function DeleteAccountPage({ onBack }) {
     }
   };
 
-  const labelStyle = { display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.9rem', marginBottom: '0.9rem' };
-  const inputStyle = { padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: '0.9rem' };
+  const labelStyle = { display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: 14, marginBottom: '0.9rem' };
+  const inputStyle = { padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 14 };
 
   return (
     <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '640px' }}>
       <div className="card" style={{ padding: '1rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-          <h2 style={{ margin: 0, fontSize: '1.45rem', color: '#8a1c13' }}>Delete your account</h2>
+          <h2 style={{ margin: 0, fontSize: 'var(--ay-fs-section)', color: '#8a1c13' }}>Delete your account</h2>
           <button type="button" className="btn btn-outline" onClick={onBack} disabled={busy || reauthBusy}>
             Back
           </button>
         </div>
 
-        <p style={{ margin: '0 0 1rem', color: 'var(--color-text-muted)', fontSize: '0.9rem', lineHeight: 1.5 }}>
+        <p style={{ margin: '0 0 1rem', color: 'var(--color-text-muted)', fontSize: 14, lineHeight: 1.5 }}>
           This permanently deletes your ayna account, health intake, imported health profile, ecosystem, saved/tracked/hidden products, reviews, learning memory, phone/SMS records, notification preferences, and other account-linked data. Active-tab ayna caches on this browser are cleared too. This cannot be undone.
         </p>
 
         {loadingUser && (
-          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Loading your account…</p>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: 14 }}>Loading your account…</p>
         )}
 
         {!loadingUser && step === 'reauth' && (
           <>
-            <p style={{ margin: '0 0 1rem', fontSize: '0.9rem', fontWeight: 600 }}>
+            <p style={{ margin: '0 0 1rem', fontSize: 14, fontWeight: 600 }}>
               First, confirm it's you by logging in again.
             </p>
 
@@ -264,7 +264,7 @@ export default function DeleteAccountPage({ onBack }) {
                     style={{ ...inputStyle, maxWidth: '320px' }}
                   />
                 </label>
-                {reauthError && <p role="status" style={{ margin: '0 0 0.9rem', color: '#8a1c13', fontSize: '0.85rem' }}>{reauthError}</p>}
+                {reauthError && <p role="status" style={{ margin: '0 0 0.9rem', color: '#8a1c13', fontSize: 14 }}>{reauthError}</p>}
                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                   <button
                     type="button"
@@ -282,10 +282,10 @@ export default function DeleteAccountPage({ onBack }) {
               <>
                 {!otpSent ? (
                   <>
-                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '0.9rem' }}>
+                    <p style={{ color: 'var(--color-text-muted)', fontSize: 14, marginBottom: '0.9rem' }}>
                       We'll text a verification code to the phone number on your account to confirm it's you.
                     </p>
-                    {reauthError && <p role="status" style={{ margin: '0 0 0.9rem', color: '#8a1c13', fontSize: '0.85rem' }}>{reauthError}</p>}
+                    {reauthError && <p role="status" style={{ margin: '0 0 0.9rem', color: '#8a1c13', fontSize: 14 }}>{reauthError}</p>}
                     <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                       <button type="button" className="btn btn-primary" onClick={handleSendOtp} disabled={reauthBusy}>
                         {reauthBusy ? 'Sending…' : 'Send code'}
@@ -305,7 +305,7 @@ export default function DeleteAccountPage({ onBack }) {
                         style={{ ...inputStyle, maxWidth: '220px' }}
                       />
                     </label>
-                    {reauthError && <p role="status" style={{ margin: '0 0 0.9rem', color: '#8a1c13', fontSize: '0.85rem' }}>{reauthError}</p>}
+                    {reauthError && <p role="status" style={{ margin: '0 0 0.9rem', color: '#8a1c13', fontSize: 14 }}>{reauthError}</p>}
                     <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                       <button type="button" className="btn btn-primary" onClick={handleVerifyOtp} disabled={!otpCode.trim() || reauthBusy}>
                         {reauthBusy ? 'Verifying…' : 'Verify'}
@@ -318,10 +318,10 @@ export default function DeleteAccountPage({ onBack }) {
 
             {reauthMethod === 'google' && (
               <>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '0.9rem' }}>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: 14, marginBottom: '0.9rem' }}>
                   You'll be asked to confirm your Google account.
                 </p>
-                {reauthError && <p role="status" style={{ margin: '0 0 0.9rem', color: '#8a1c13', fontSize: '0.85rem' }}>{reauthError}</p>}
+                {reauthError && <p role="status" style={{ margin: '0 0 0.9rem', color: '#8a1c13', fontSize: 14 }}>{reauthError}</p>}
                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                   <button type="button" className="btn btn-primary" onClick={handleGoogleReauth} disabled={reauthBusy}>
                     {reauthBusy ? 'Redirecting…' : 'Continue with Google'}
@@ -371,7 +371,7 @@ export default function DeleteAccountPage({ onBack }) {
               </label>
             )}
 
-            {error && <p role="status" style={{ margin: '0 0 0.9rem', color: '#8a1c13', fontSize: '0.85rem' }}>{error}</p>}
+            {error && <p role="status" style={{ margin: '0 0 0.9rem', color: '#8a1c13', fontSize: 14 }}>{error}</p>}
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '0.5rem' }}>
               <button type="button" className="btn btn-outline" onClick={onBack} disabled={busy}>
@@ -387,7 +387,7 @@ export default function DeleteAccountPage({ onBack }) {
                   borderRadius: 'var(--radius-md)',
                   background: '#b42318',
                   color: 'white',
-                  fontWeight: 700,
+                  fontWeight: 600,
                   cursor: busy ? 'not-allowed' : 'pointer',
                   opacity: busy ? 0.55 : 1,
                 }}

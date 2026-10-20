@@ -32,7 +32,7 @@
   }
   .ayna-added-features {
     max-width: 1120px !important; margin: 0 auto !important; padding: 28px 24px 64px !important;
-    color: var(--color-text-main) !important; font-family: var(--font-heading) !important;
+    color: var(--color-text-main) !important; font-family: var(--ay-serif) !important;
   }
   .v6-cabinet-zone, .v6-product-bubble, .v6-wood-cabinet,
   .v6-unlock-card, .v6-category-card, .v6-eco-product-card,
@@ -73,10 +73,10 @@
   .v6-cabinet-lock { position: relative !important; inset: auto !important; padding: 0 !important; backdrop-filter: none !important; }
   .v6-unlock-card--slim { margin: auto !important; }
   .v6-category-card { overflow: hidden !important; }
-  .v6-category-card strong { font-family: var(--font-serif) !important; font-size: 20px !important; }
-  .v6-category-card small { font-size: 12px !important; }
+  .v6-category-card strong { font-family: var(--ay-serif) !important; font-size: var(--ay-fs-section) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
+  .v6-category-card small { font-size: var(--ay-fs-caption) !important; }
   .v6-category-card > div:last-child { padding: 16px !important; }
-  .v6-section-head h2 { font-size: clamp(32px,4vw,48px) !important; }
+  .v6-section-head h2 { font-size: var(--ay-fs-display) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
   .v6-footer { background: var(--color-bg) !important; color: var(--color-text-main) !important; }
   .v6-footer * { color: inherit !important; }
   .v6-footer-column__title { color: var(--color-terracotta) !important; }
@@ -180,6 +180,6 @@
 }
 
 .ayna-login-actions { display: grid; gap: 10px; text-align: center; }
-.ayna-login-actions p, .ayna-login-new { font: 400 13px/1.5 var(--font-heading); color: var(--color-text-main); }
+.ayna-login-actions p, .ayna-login-new { font: 500 var(--ay-fs-secondary)/1.5 var(--ay-sans); color: var(--color-text-main); }
 .ayna-login-actions p button { padding: 0; background: transparent; border: 0; color: inherit; text-decoration: underline; cursor: pointer; font: inherit; }
 .ayna-login-new { text-align: center; }

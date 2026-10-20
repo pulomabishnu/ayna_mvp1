@@ -137,7 +137,7 @@ export default function HealthProfileEditor({ currentProfile, onSave, onCancel, 
     <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '920px' }}>
       <div className="card" style={{ padding: '1rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-          <h2 style={{ margin: 0, fontSize: '1.45rem' }}>Update your health profile</h2>
+          <h2 style={{ margin: 0, fontSize: 'var(--ay-fs-section)' }}>Update your health profile</h2>
           <button type="button" className="btn btn-outline" onClick={onCancel}>
             Back to Ecosystem
           </button>
@@ -150,7 +150,7 @@ export default function HealthProfileEditor({ currentProfile, onSave, onCancel, 
           <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
             <span>Age</span>
             <input value={draft.age || ''} onChange={(e) => setField('age', e.target.value)} />
-            {errors.age && <span style={{ color: '#b42318', fontSize: '0.8rem' }}>{errors.age}</span>}
+            {errors.age && <span style={{ color: '#b42318', fontSize: 12.5 }}>{errors.age}</span>}
           </label>
           <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
             <span>Location</span>
@@ -207,7 +207,7 @@ export default function HealthProfileEditor({ currentProfile, onSave, onCancel, 
                     border: `1px solid ${selected ? 'var(--color-primary)' : 'var(--color-border)'}`,
                     background: selected ? 'var(--color-secondary-fade)' : 'var(--color-surface-soft)',
                     borderRadius: 'var(--radius-pill)',
-                    fontSize: '0.8rem',
+                    fontSize: 12.5,
                     padding: '0.35rem 0.7rem',
                     cursor: 'pointer',
                   }}
@@ -217,7 +217,7 @@ export default function HealthProfileEditor({ currentProfile, onSave, onCancel, 
               );
             })}
           </div>
-          {errors.primaryConcerns && <p style={{ color: '#b42318', fontSize: '0.8rem', marginBottom: 0 }}>{errors.primaryConcerns}</p>}
+          {errors.primaryConcerns && <p style={{ color: '#b42318', fontSize: 12.5, marginBottom: 0 }}>{errors.primaryConcerns}</p>}
         </div>
 
         <div style={{ display: 'grid', gap: '0.7rem', marginTop: '1rem' }}>
@@ -259,18 +259,18 @@ export default function HealthProfileEditor({ currentProfile, onSave, onCancel, 
           </label>
           <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
             <span>Insurance type</span>
-            <select value={draft.insuranceType || ''} onChange={(e) => setField('insuranceType', e.target.value)} style={{ padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: '0.95rem' }}>
+            <select value={draft.insuranceType || ''} onChange={(e) => setField('insuranceType', e.target.value)} style={{ padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 16 }}>
               <option value=''>Select…</option>
               {INSURANCE_TYPES.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
             </select>
           </label>
           <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
             <span>Insurance provider name</span>
-            <input type='text' value={draft.insurancePlan || ''} onChange={(e) => setField('insurancePlan', e.target.value)} placeholder='e.g. Aetna, Blue Cross, United' style={{ padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: '0.95rem' }} />
+            <input type='text' value={draft.insurancePlan || ''} onChange={(e) => setField('insurancePlan', e.target.value)} placeholder='e.g. Aetna, Blue Cross, United' style={{ padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 16 }} />
           </label>
           <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
             <span>FSA / HSA account</span>
-            <select value={draft.fsaHsa || ''} onChange={(e) => setField('fsaHsa', e.target.value)} style={{ padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: '0.95rem' }}>
+            <select value={draft.fsaHsa || ''} onChange={(e) => setField('fsaHsa', e.target.value)} style={{ padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 16 }}>
               <option value=''>Select…</option>
               {FSA_HSA_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
             </select>
@@ -280,7 +280,7 @@ export default function HealthProfileEditor({ currentProfile, onSave, onCancel, 
         {onOpenPhoneVerify && (
           <div style={{ marginTop: '1.25rem', padding: '0.85rem', borderRadius: 'var(--radius-md)', background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)' }}>
             <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>Text Ayna</div>
-            <p style={{ margin: '0 0 0.5rem', color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>
+            <p style={{ margin: '0 0 0.5rem', color: 'var(--color-text-muted)', fontSize: 14 }}>
               Verify your phone number to get personalized health texts from Ayna anytime.
             </p>
             <button type="button" className="btn btn-outline" onClick={onOpenPhoneVerify}>

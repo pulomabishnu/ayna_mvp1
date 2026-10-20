@@ -10,22 +10,22 @@
 .app-container .fpc__tag {
   display: inline-block; margin-bottom: 8px; padding: 3px 10px; border-radius: 999px;
   background: var(--ay-ink, #3e2723); color: var(--ay-paper, #ffedac);
-  font: 600 12px/18px var(--ay-font-ui, 'DM Sans', sans-serif); letter-spacing: .02em;
+  font: 600 var(--ay-fs-caption)/18px var(--ay-sans); letter-spacing: .02em;
 }
-.app-container .fpc h2 { margin: 0 0 6px; color: inherit; font: 400 28px/1.1 var(--ay-font-display, 'DM Serif Display', Georgia, serif) !important; }
-.app-container .fpc p { margin: 0; max-width: 56ch; color: inherit; font: 400 15px/22px var(--ay-font-ui, 'DM Sans', sans-serif); }
+.app-container .fpc h2 { margin: 0 0 6px; color: inherit; font: 400 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
+.app-container .fpc p { margin: 0; max-width: 56ch; color: inherit; font: 400 var(--ay-fs-body)/22px var(--ay-sans); }
 .app-container .fpc p b { font-weight: 600; }
 .app-container .fpc__cta {
   flex: none; display: inline-flex; align-items: center; justify-content: center;
   height: auto !important; min-height: 52px !important; padding: 14px 28px !important; border: 0; border-radius: 999px; cursor: pointer; white-space: nowrap;
   background: var(--ay-ink, #3e2723); color: var(--ay-paper, #ffedac);
-  font: 600 16px/1.2 var(--ay-font-ui, 'DM Sans', sans-serif) !important;
+  font: 600 var(--ay-fs-body)/1.2 var(--ay-sans) !important;
 }
 .app-container .fpc__cta:hover { filter: brightness(1.15); }
 .app-container .fpc__cta:focus-visible { outline: 3px solid var(--ay-ink, #3e2723); outline-offset: 3px; }
 .app-container[data-theme='dark'] .fpc { border-color: transparent; }
 @media (max-width: 640px) {
   .app-container .fpc { flex-direction: column; align-items: stretch; padding: 20px; }
-  .app-container .fpc h2 { font-size: 24px !important; }
+  .app-container .fpc h2 { font-size: var(--ay-fs-section) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
   .app-container .fpc__cta { width: 100%; }
 }

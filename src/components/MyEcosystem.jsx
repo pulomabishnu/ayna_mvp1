@@ -242,7 +242,7 @@ function EcosystemFunctionProductCard({
             {/* Concern label fixed at top so alternatives section never shifts it */}
             <div style={{ marginBottom: '0.35rem' }}>
                 <span style={{
-                    fontSize: '0.68rem', fontWeight: '700',
+                    fontSize: 12.5, fontWeight: 600,
                     display: 'inline-block', maxWidth: '100%',
                     padding: '0.22rem 0.5rem',
                     borderRadius: 'var(--radius-pill)',
@@ -277,36 +277,36 @@ function EcosystemFunctionProductCard({
                     />
                 )}
             </div>
-            <h4 style={{ fontSize: '0.88rem', margin: '0 0 0.25rem', lineHeight: 1.25, color: 'var(--color-text-main)' }}>
+            <h4 style={{ fontSize: 14, margin: '0 0 0.25rem', lineHeight: 1.25, color: 'var(--color-text-main)' }}>
                 {product.name}
                 {product.outOfBusiness && (
-                    <span style={{ fontSize: '0.6rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-bg)', padding: '0.1rem 0.35rem', borderRadius: 'var(--radius-pill)', marginLeft: '0.25rem', verticalAlign: 'middle' }}>
+                    <span style={{ fontSize: 12.5, fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-bg)', padding: '0.1rem 0.35rem', borderRadius: 'var(--radius-pill)', marginLeft: '0.25rem', verticalAlign: 'middle' }}>
                         No longer sold
                     </span>
                 )}
             </h4>
-            <p style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', margin: '0 0 0.35rem', fontWeight: '600' }}>{brandDisplay}</p>
+            <p style={{ fontSize: 12.5, color: 'var(--color-text-muted)', margin: '0 0 0.35rem', fontWeight: '600' }}>{brandDisplay}</p>
             {summaryShort ? (
-                <p style={{ fontSize: '0.75rem', color: 'var(--color-text-main)', lineHeight: 1.4, margin: '0 0 0.5rem', flex: 1 }}>{summaryShort}</p>
+                <p style={{ fontSize: 12.5, color: 'var(--color-text-main)', lineHeight: 1.4, margin: '0 0 0.5rem', flex: 1 }}>{summaryShort}</p>
             ) : (
-                <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontStyle: 'italic', margin: '0 0 0.5rem', flex: 1 }}>No summary in database.</p>
+                <p style={{ fontSize: 12.5, color: 'var(--color-text-muted)', fontStyle: 'italic', margin: '0 0 0.5rem', flex: 1 }}>No summary in database.</p>
             )}
             {recommendationReason ? (
-                <p style={{ fontSize: '0.72rem', color: 'var(--color-primary-hover)', margin: '0 0 0.45rem', lineHeight: 1.35 }}>
+                <p style={{ fontSize: 12.5, color: 'var(--color-primary-hover)', margin: '0 0 0.45rem', lineHeight: 1.35 }}>
                     <strong>Why this fits you:</strong> {recommendationReason}
                 </p>
             ) : null}
-            <div style={{ fontSize: '0.82rem', fontWeight: '600', color: 'var(--color-primary)', marginBottom: perUnitPrice ? '0.1rem' : '0.35rem' }}>
+            <div style={{ fontSize: 12.5, fontWeight: '600', color: 'var(--color-primary)', marginBottom: perUnitPrice ? '0.1rem' : '0.35rem' }}>
                 {product.price || product.stage || 'N/A'}
             </div>
             {perUnitPrice ? (
-                <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>{perUnitPrice}</div>
+                <div style={{ fontSize: 12.5, color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>{perUnitPrice}</div>
             ) : null}
             <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginTop: 'auto' }}>
                 <button
                     type="button"
                     className="btn btn-primary"
-                    style={{ flex: 1, minWidth: '72px', fontSize: '0.75rem', padding: '0.35rem 0.45rem' }}
+                    style={{ flex: 1, minWidth: '72px', fontSize: 12.5, padding: '0.35rem 0.45rem' }}
                     onClick={() => onOpenProduct(product)}
                 >
                     Details
@@ -314,7 +314,7 @@ function EcosystemFunctionProductCard({
                 <button
                     type="button"
                     className="btn btn-outline"
-                    style={{ flex: 1, minWidth: '72px', fontSize: '0.75rem', padding: '0.35rem 0.45rem' }}
+                    style={{ flex: 1, minWidth: '72px', fontSize: 12.5, padding: '0.35rem 0.45rem' }}
                     onClick={() => onToggleProduct(product)}
                     title={isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'}
                 >
@@ -437,11 +437,11 @@ function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthP
         >
             <p
                 style={{
-                    fontSize: '0.72rem',
+                    fontSize: 12.5,
                     fontWeight: '600',
                     color: 'var(--color-text-muted)',
                     margin: '0 0 0.4rem',
-                    fontFamily: 'var(--font-body)',
+                    fontFamily: 'var(--ay-sans)',
                 }}
             >
                 Top 3 alternatives · {frustrationLabel}
@@ -457,8 +457,8 @@ function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthP
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     gap: '0.5rem',
-                    fontSize: '0.88rem',
-                    fontFamily: 'var(--font-body)',
+                    fontSize: 14,
+                    fontFamily: 'var(--ay-sans)',
                     fontWeight: '500',
                     padding: '0.55rem 0.75rem',
                     borderRadius: 'var(--radius-md)',
@@ -470,7 +470,7 @@ function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthP
                 }}
             >
                 <span style={{ flex: 1, minWidth: 0, color: 'var(--color-text-muted)' }}>Compare or swap for another top pick…</span>
-                <span aria-hidden style={{ flexShrink: 0, fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>{open ? '▴' : '▾'}</span>
+                <span aria-hidden style={{ flexShrink: 0, fontSize: 12.5, color: 'var(--color-text-muted)' }}>{open ? '▴' : '▾'}</span>
             </button>
             {open && (
                 <ul
@@ -508,7 +508,7 @@ function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthP
                                     background: 'transparent',
                                     cursor: 'pointer',
                                     textAlign: 'left',
-                                    fontFamily: 'var(--font-body)',
+                                    fontFamily: 'var(--ay-sans)',
                                 }}
                                 onClick={() => {
                                     onSwap?.(product.id, a);
@@ -532,7 +532,7 @@ function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthP
                                         <ProductImageFallback compact />
                                     )}
                                 </div>
-                                <span style={{ fontSize: '0.85rem', fontWeight: '500', color: 'var(--color-text-main)', lineHeight: 1.35 }}>
+                                <span style={{ fontSize: 14, fontWeight: '500', color: 'var(--color-text-main)', lineHeight: 1.35 }}>
                                     {a.name}
                                 </span>
                             </button>
@@ -548,10 +548,10 @@ function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthP
                                 borderRadius: 'var(--radius-sm)',
                                 background: 'var(--color-secondary-fade)',
                                 cursor: 'pointer',
-                                fontSize: '0.85rem',
+                                fontSize: 14,
                                 fontWeight: '600',
                                 color: 'var(--color-primary)',
-                                fontFamily: 'var(--font-body)',
+                                fontFamily: 'var(--ay-sans)',
                             }}
                             onClick={() => {
                                 onGoToSearch?.();
@@ -590,17 +590,17 @@ function IntakeRecAltMini({ alt, myProducts, onToggleProduct, onOpenProduct, res
                     )}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: '0.88rem', fontWeight: '700', color: 'var(--color-text-main)', lineHeight: 1.3 }}>{alt.name}</div>
-                    {alt.brand && <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{alt.brand}</div>}
+                    <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-text-main)', lineHeight: 1.3 }}>{alt.name}</div>
+                    {alt.brand && <div style={{ fontSize: 12.5, color: 'var(--color-text-muted)' }}>{alt.brand}</div>}
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', marginTop: '0.45rem' }}>
-                        <button type="button" className="btn btn-outline" style={{ padding: '0.3rem 0.55rem', fontSize: '0.75rem' }} onClick={() => onToggleProduct(alt)}>
+                        <button type="button" className="btn btn-outline" style={{ padding: '0.3rem 0.55rem', fontSize: 12.5 }} onClick={() => onToggleProduct(alt)}>
                             {inEco ? '✓ In ecosystem' : '+ Add to Ecosystem'}
                         </button>
-                        <button type="button" className="btn btn-primary" style={{ padding: '0.3rem 0.55rem', fontSize: '0.75rem' }} onClick={() => onOpenProduct(alt, { source: 'recommendation' })}>
+                        <button type="button" className="btn btn-primary" style={{ padding: '0.3rem 0.55rem', fontSize: 12.5 }} onClick={() => onOpenProduct(alt, { source: 'recommendation' })}>
                             Details
                         </button>
                         {buyUrl && (
-                            <a href={buyUrl} target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ padding: '0.3rem 0.55rem', fontSize: '0.75rem', textDecoration: 'none' }}>
+                            <a href={buyUrl} target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ padding: '0.3rem 0.55rem', fontSize: 12.5, textDecoration: 'none' }}>
                                 Buy ↗
                             </a>
                         )}
@@ -664,7 +664,7 @@ function IntakeRecommendationsProductCard({
                     position: 'absolute', top: '0.45rem', left: '0.45rem',
                     background: product.type === 'physical' ? 'var(--color-surface-contrast)' : 'var(--color-primary)',
                     color: 'white', padding: '0.15rem 0.45rem', borderRadius: 'var(--radius-pill)',
-                    fontSize: '0.62rem', fontWeight: '600', textTransform: 'uppercase',
+                    fontSize: 12.5, fontWeight: '600', textTransform: 'none',
                 }}>
                     {product.type === 'physical' ? 'Physical' : 'Digital'}
                 </span>
@@ -672,7 +672,7 @@ function IntakeRecommendationsProductCard({
                     <span style={{
                         position: 'absolute', top: '0.45rem', right: '0.45rem',
                         background: 'var(--color-primary)', color: 'white', padding: '0.15rem 0.45rem',
-                        borderRadius: 'var(--radius-pill)', fontSize: '0.62rem', fontWeight: '600',
+                        borderRadius: 'var(--radius-pill)', fontSize: 12.5, fontWeight: '600',
                     }}>✓ Tracked</span>
                 )}
             </div>
@@ -680,76 +680,76 @@ function IntakeRecommendationsProductCard({
                 {showTopPickBadge && (
                     <span style={{
                         background: 'linear-gradient(135deg, #FEF9C3, #FDE68A)', color: '#854D0E',
-                        padding: '0.22rem 0.55rem', borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '700',
+                        padding: '0.22rem 0.55rem', borderRadius: 'var(--radius-pill)', fontSize: 12.5, fontWeight: 600,
                         border: '1px solid #FACC15',
                     }}>Top pick for you</span>
                 )}
                 {hasIndependentClinician ? (
                     <span style={{
                         background: '#DCFCE7', color: '#166534', padding: '0.22rem 0.55rem',
-                        borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '700',
+                        borderRadius: 'var(--radius-pill)', fontSize: 12.5, fontWeight: 600,
                     }}>Independent clinician verified</span>
                 ) : (
                     <span style={{
                         background: '#FEF3C7', color: '#92400E', padding: '0.22rem 0.55rem',
-                        borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '700',
+                        borderRadius: 'var(--radius-pill)', fontSize: 12.5, fontWeight: 600,
                     }}>No independent clinician opinion yet</span>
                 )}
             </div>
             <div style={{ padding: '0.65rem 0.75rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                 {tierSubLabel && (
-                    <p style={{ fontSize: '0.68rem', fontWeight: '700', color: 'var(--color-text-muted)', margin: '0 0 0.25rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{tierSubLabel}</p>
+                    <p style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--color-text-muted)', margin: '0 0 0.25rem', textTransform: 'none', letterSpacing: 'normal' }}>{tierSubLabel}</p>
                 )}
-                <h3 style={{ fontSize: '0.95rem', marginBottom: '0.25rem', lineHeight: 1.25 }}>{product.name}</h3>
+                <h3 style={{ fontSize: 16, marginBottom: '0.25rem', lineHeight: 1.25 }}>{product.name}</h3>
                 {product.dsldVerified && (
-                    <span style={{ fontSize: '0.6rem', background: '#DCFCE7', color: '#166534', padding: '0.12rem 0.4rem', borderRadius: 'var(--radius-pill)', fontWeight: '700', display: 'inline-block', marginBottom: '0.35rem' }}>
+                    <span style={{ fontSize: 12.5, background: '#DCFCE7', color: '#166534', padding: '0.12rem 0.4rem', borderRadius: 'var(--radius-pill)', fontWeight: 600, display: 'inline-block', marginBottom: '0.35rem' }}>
                         ✓ NIH Verified Supplement
                     </span>
                 )}
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.78rem', marginBottom: '0.5rem', lineHeight: 1.4 }}>{(product.summary || '').length > 120 ? `${(product.summary || '').slice(0, 117)}…` : (product.summary || '')}</p>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: 12.5, marginBottom: '0.5rem', lineHeight: 1.4 }}>{(product.summary || '').length > 120 ? `${(product.summary || '').slice(0, 117)}…` : (product.summary || '')}</p>
                 {whyItWorks && (
-                    <p style={{ fontSize: '0.75rem', color: 'var(--color-primary-hover)', fontWeight: '500', marginBottom: '0.4rem', lineHeight: 1.35 }}>
+                    <p style={{ fontSize: 12.5, color: 'var(--color-primary-hover)', fontWeight: '500', marginBottom: '0.4rem', lineHeight: 1.35 }}>
                         {(whyItWorks || '').length > 140 ? `${whyItWorks.slice(0, 137)}…` : whyItWorks}
                     </p>
                 )}
                 {considerations && (
-                    <p style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem', lineHeight: 1.35, fontStyle: 'italic' }}>
+                    <p style={{ fontSize: 12.5, color: 'var(--color-text-muted)', marginBottom: '0.5rem', lineHeight: 1.35, fontStyle: 'italic' }}>
                         {(considerations || '').length > 120 ? `${considerations.slice(0, 117)}…` : considerations}
                     </p>
                 )}
                 <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
                     {showNoRecallsTag && (
-                        <span style={{ fontSize: '0.65rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>✓ No recalls</span>
+                        <span style={{ fontSize: 12.5, background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>✓ No recalls</span>
                     )}
                     {showRecallWarning && (
-                        <span style={{ fontSize: '0.65rem', background: '#FEF3C7', color: '#92400E', padding: '0.2rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>Safety note</span>
+                        <span style={{ fontSize: 12.5, background: '#FEF3C7', color: '#92400E', padding: '0.2rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>Safety note</span>
                     )}
                     {product.privacy?.sellsData?.includes('❌') && (
-                        <span style={{ fontSize: '0.65rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>No data selling</span>
+                        <span style={{ fontSize: 12.5, background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>No data selling</span>
                     )}
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', marginBottom: '0.45rem', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: '0.88rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{product.price || 'N/A'}</span>
+                    <span style={{ fontSize: 14, fontWeight: '600', color: 'var(--color-text-main)' }}>{product.price || 'N/A'}</span>
                 </div>
                 <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginTop: 'auto' }}>
-                    <button type="button" className="btn btn-outline" style={{ padding: '0.32rem 0.55rem', fontSize: '0.72rem' }} onClick={() => onToggleProduct(product)}>
+                    <button type="button" className="btn btn-outline" style={{ padding: '0.32rem 0.55rem', fontSize: 12.5 }} onClick={() => onToggleProduct(product)}>
                         {isInEcosystem ? '✓ Added' : '+ Add'}
                     </button>
-                    <button type="button" className="btn btn-outline" style={{ padding: '0.32rem 0.55rem', fontSize: '0.72rem' }} onClick={() => onToggleCompare(compareKey)}>
+                    <button type="button" className="btn btn-outline" style={{ padding: '0.32rem 0.55rem', fontSize: 12.5 }} onClick={() => onToggleCompare(compareKey)}>
                         {compareOn ? 'Hide compare' : 'Compare'}
                     </button>
-                    <button type="button" className="btn btn-primary" style={{ padding: '0.32rem 0.55rem', fontSize: '0.72rem' }} onClick={() => onOpenProduct(product, { source: 'recommendation' })}>
+                    <button type="button" className="btn btn-primary" style={{ padding: '0.32rem 0.55rem', fontSize: 12.5 }} onClick={() => onOpenProduct(product, { source: 'recommendation' })}>
                         Details
                     </button>
                     {buyUrl && (
-                        <a href={buyUrl} target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ padding: '0.32rem 0.55rem', fontSize: '0.72rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
+                        <a href={buyUrl} target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ padding: '0.32rem 0.55rem', fontSize: 12.5, textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
                             Buy ↗
                         </a>
                     )}
                 </div>
                 {alts.length > 0 && (
                     <div style={{ marginTop: '0.85rem', paddingTop: '0.85rem', borderTop: '1px solid var(--color-border)' }}>
-                        <div style={{ fontSize: '0.72rem', fontWeight: '700', color: 'var(--color-text-muted)', marginBottom: '0.4rem' }}>3 alternatives</div>
+                        <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--color-text-muted)', marginBottom: '0.4rem' }}>3 alternatives</div>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
                             {alts.map((alt) => {
                                 const mk = `${compareKey}::${alt.id}`;
@@ -759,7 +759,7 @@ function IntakeRecommendationsProductCard({
                                         key={alt.id}
                                         type="button"
                                         className="btn btn-outline"
-                                        style={{ padding: '0.25rem 0.65rem', fontSize: '0.78rem', borderRadius: 'var(--radius-pill)' }}
+                                        style={{ padding: '0.25rem 0.65rem', fontSize: 12.5, borderRadius: 'var(--radius-pill)' }}
                                         onClick={() => onSelectAltMini(pillOpen ? '' : mk)}
                                     >
                                         {alt.name}
@@ -1838,14 +1838,14 @@ export default function MyEcosystem({
     const recommendedSection = hasCompletedPersonalization && (llmLoading || llmError || llmPartialConcerns.length > 0 || recommendedProductsForDisplay.length > 0 || activeTiered.length > 0) ? (
         <div style={{ marginBottom: 'var(--spacing-xl)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
-                <h3 style={{ fontSize: '1.35rem', margin: 0, color: 'var(--color-text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <h3 style={{ fontSize: 'var(--ay-fs-section)', margin: 0, color: 'var(--color-text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     Recommended for You
-                    {llmLoading && <span style={{ fontSize: '0.78rem', fontWeight: 400, color: 'var(--color-text-muted)' }}>loading…</span>}
+                    {llmLoading && <span style={{ fontSize: 12.5, fontWeight: 400, color: 'var(--color-text-muted)' }}>loading…</span>}
                 </h3>
                 <button
                     type="button"
                     className="btn btn-outline"
-                    style={{ fontSize: '0.8rem', padding: '0.35rem 0.7rem' }}
+                    style={{ fontSize: 12.5, padding: '0.35rem 0.7rem' }}
                     onClick={handleRefreshRecommendations}
                     disabled={llmLoading || !hasCompletedPersonalization}
                     title="Get new picks based on your latest answers"
@@ -1857,12 +1857,12 @@ export default function MyEcosystem({
                 <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact onCancel={handleCancelRecommendations} />
             )}
             {llmLoading && !llmLoadStartedAt && (
-                <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.9rem', padding: '1.5rem' }}>
+                <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: 14, padding: '1.5rem' }}>
                     Loading recommendations…
                 </p>
             )}
             {llmError && !llmLoading && (
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textAlign: 'center' }}>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: 14, textAlign: 'center' }}>
                     We couldn't load your recommendations: {llmError}
                 </p>
             )}
@@ -1871,7 +1871,7 @@ export default function MyEcosystem({
                 elsewhere in this file), since a couple of missing sections isn't
                 the same as the whole build failing. */}
             {llmPartialConcerns.length > 0 && !llmError && !llmLoading && (
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textAlign: 'center', margin: '0 0 0.75rem' }}>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: 14, textAlign: 'center', margin: '0 0 0.75rem' }}>
                     Couldn't generate picks for {llmPartialConcerns.join(', ')} this time.{' '}
                     <button
                         type="button"
@@ -1903,10 +1903,10 @@ export default function MyEcosystem({
                                         textAlign: 'left',
                                     }}
                                 >
-                                    <span style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--color-text-main)' }}>
+                                    <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--color-text-main)' }}>
                                         {section.displayLabel || normalizeConcernLabel(section.concern)}
                                     </span>
-                                    <span style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>{isOpen ? 'Hide ▴' : 'Show ▾'}</span>
+                                    <span style={{ fontSize: 14, color: 'var(--color-text-muted)' }}>{isOpen ? 'Hide ▴' : 'Show ▾'}</span>
                                 </button>
                                 {isOpen && (
                                     <div style={{ marginTop: '0.65rem' }}>
@@ -1928,7 +1928,7 @@ export default function MyEcosystem({
                                                     );
                                                     return (
                                                         <div key={swapKey} style={{ minWidth: 0 }}>
-                                                            <div style={{ fontSize: '0.78rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.02em', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>
+                                                            <div style={{ fontSize: 12.5, fontWeight: 600, textTransform: 'none', letterSpacing: 'normal', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>
                                                                 {tier.label}
                                                             </div>
                                                             <EcosystemFunctionProductCard
@@ -1950,7 +1950,7 @@ export default function MyEcosystem({
                                                                 previously discarded before reaching any UI. */}
                                                             {Array.isArray(tier.safetyFlags) && tier.safetyFlags.length > 0 && (
                                                                 <p style={{
-                                                                    margin: '0.4rem 0 0', fontSize: '0.72rem', lineHeight: 1.45,
+                                                                    margin: '0.4rem 0 0', fontSize: 12.5, lineHeight: 1.45,
                                                                     color: '#92400E', background: '#FFFBEB',
                                                                     border: '1px solid #FDE68A', borderRadius: '6px',
                                                                     padding: '0.4rem 0.55rem',
@@ -1963,7 +1963,7 @@ export default function MyEcosystem({
                                                 })}
                                             </div>
                                         ) : (
-                                            <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', margin: 0 }}>
+                                            <p style={{ fontSize: 14, color: 'var(--color-text-muted)', margin: 0 }}>
                                                 Nothing here yet for this concern. Try searching instead.
                                             </p>
                                         )}

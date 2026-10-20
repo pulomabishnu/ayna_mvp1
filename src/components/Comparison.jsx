@@ -10,7 +10,7 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
             <div className="container animate-fade-in" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
                 <div className="ay3-pagehead ay3-band ay3-band--sky ay3-zigzag ay3-edge-bottom" style={{ textAlign: 'center', marginBottom: '3rem' }}>
                     <p className="ay3-kicker">Compare</p>
-                    <h2 style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>Side by <em>side.</em></h2>
+                    <h2 style={{ fontSize: 'var(--ay-fs-title)', marginBottom: '0.75rem' }}>Side by <em>side.</em></h2>
                     <p style={{ color: 'var(--color-text-muted)', maxWidth: '520px', margin: '0 auto' }}>
                         Compare up to 3 products side-by-side: safety, ingredients, and expert opinions.
                     </p>
@@ -38,8 +38,8 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
                             e.currentTarget.style.background = 'var(--color-surface-soft)';
                         }}
                     >
-                        <h3 style={{ fontSize: '1.15rem', marginBottom: '0.5rem' }}>Go to Shop</h3>
-                        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
+                        <h3 style={{ fontSize: 16, marginBottom: '0.5rem' }}>Go to Shop</h3>
+                        <p style={{ fontSize: 14, color: 'var(--color-text-muted)' }}>
                             Search Discovery and add products from the full catalog.
                         </p>
                     </button>
@@ -53,8 +53,8 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
                             textAlign: 'center'
                         }}
                     >
-                        <h3 style={{ fontSize: '1.15rem', marginBottom: '0.5rem' }}>Compare from your ecosystem</h3>
-                        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1.25rem' }}>
+                        <h3 style={{ fontSize: 16, marginBottom: '0.5rem' }}>Compare from your ecosystem</h3>
+                        <p style={{ fontSize: 14, color: 'var(--color-text-muted)', marginBottom: '1.25rem' }}>
                             {ecosystemList.length > 0
                                 ? `Pick up to 3 from your ${ecosystemList.length} saved product(s).`
                                 : 'Add products to My Ecosystem first, then compare them here.'}
@@ -66,14 +66,14 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
                                         key={p.id}
                                         type="button"
                                         className="btn btn-primary"
-                                        style={{ width: '100%', maxWidth: '240px', padding: '0.5rem 1rem', fontSize: '0.9rem' }}
+                                        style={{ width: '100%', maxWidth: '240px', padding: '0.5rem 1rem', fontSize: 14 }}
                                         onClick={() => onAddToCompare(p)}
                                     >
                                         Add {p.name} to comparison
                                     </button>
                                 ))}
                                 {ecosystemList.length > 5 && (
-                                    <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
+                                    <span style={{ fontSize: 12.5, color: 'var(--color-text-muted)' }}>
                                         +{ecosystemList.length - 5} more in your ecosystem
                                     </span>
                                 )}
@@ -121,22 +121,22 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
             <div className="ay3-pagehead ay3-band ay3-band--sky ay3-zigzag ay3-edge-bottom" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: '1rem' }}>
                 <div>
                     <p className="ay3-kicker">Compare</p>
-                    <h2 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Side by <em>side.</em></h2>
+                    <h2 style={{ fontSize: 'var(--ay-fs-title)', marginBottom: '0.5rem' }}>Side by <em>side.</em></h2>
                     <p style={{ color: 'var(--color-text-muted)' }}>See how they differ on safety, how well they work, and value.</p>
                 </div>
                 <button className="btn btn-outline" onClick={onClear} style={{ color: 'var(--color-text-muted)' }}>Clear All</button>
             </div>
             {canAddMore && (onBrowseProducts || onAddToCompare) && (
                 <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '2rem', alignItems: 'center' }}>
-                    <span style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>Add product:</span>
+                    <span style={{ fontSize: 14, color: 'var(--color-text-muted)' }}>Add product:</span>
                     {onBrowseProducts && (
-                        <button type="button" className="btn btn-outline" style={{ padding: '0.4rem 1rem', fontSize: '0.9rem' }} onClick={onBrowseProducts}>
+                        <button type="button" className="btn btn-outline" style={{ padding: '0.4rem 1rem', fontSize: 14 }} onClick={onBrowseProducts}>
                             Browse products
                         </button>
                     )}
                     {onAddToCompare && moreFromEcosystem.length > 0 && (
                         <select
-                            style={{ padding: '0.4rem 0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: '0.9rem', background: 'var(--color-surface-soft)' }}
+                            style={{ padding: '0.4rem 0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 14, background: 'var(--color-surface-soft)' }}
                             value=""
                             onChange={(e) => {
                                 const id = e.target.value;
@@ -157,12 +157,12 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
 
             <div style={{ display: 'grid', gridTemplateColumns: `150px repeat(${compareList.length}, 1fr)`, gap: '1px', background: 'var(--color-border)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
                 {/* Headers */}
-                <div style={{ background: 'var(--color-surface-soft)', padding: '1.5rem', fontWeight: '700' }}></div>
+                <div style={{ background: 'var(--color-surface-soft)', padding: '1.5rem', fontWeight: 600 }}></div>
                 {compareList.map(p => (
                     <div key={p.id} style={{ background: 'var(--color-surface)', padding: '1.5rem', textAlign: 'center', position: 'relative' }}>
                         <button
                             onClick={() => onRemove(p)}
-                            style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'none', border: 'none', color: 'var(--color-text-muted)', cursor: 'pointer', fontSize: '1rem' }}
+                            style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'none', border: 'none', color: 'var(--color-text-muted)', cursor: 'pointer', fontSize: 16 }}
                         >X</button>
                         <ProductTileImage
                             product={p}
@@ -174,23 +174,23 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
                                 </div>
                             )}
                         />
-                        <h3 style={{ fontSize: '1rem', fontWeight: '700' }}>{p.name}</h3>
+                        <h3 style={{ fontSize: 16, fontWeight: 600 }}>{p.name}</h3>
                     </div>
                 ))}
 
                 {/* Rows */}
                 {categories.map(cat => (
                     <React.Fragment key={cat.key}>
-                        <div style={{ background: 'var(--color-surface-soft)', padding: '1.5rem', fontWeight: '600', fontSize: '0.85rem', color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>
+                        <div style={{ background: 'var(--color-surface-soft)', padding: '1.5rem', fontWeight: '600', fontSize: 14, color: 'var(--color-text-muted)', textTransform: 'none' }}>
                             {cat.label}
                         </div>
                         {compareList.map(p => (
-                            <div key={`${p.id}-${cat.key}`} style={{ background: 'var(--color-surface)', padding: '1.5rem', fontSize: '0.95rem', lineHeight: '1.6' }}>
+                            <div key={`${p.id}-${cat.key}`} style={{ background: 'var(--color-surface)', padding: '1.5rem', fontSize: 16, lineHeight: '1.6' }}>
                                 {cat.key === 'category' ? (CATEGORY_LABELS[getVal(p, cat.key)] || getVal(p, cat.key))
                                     : cat.key === 'doctorOpinion' ? (
                                         <>
                                             {getVal(p, cat.key)}
-                                            <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: '600', marginTop: '0.35rem' }}>
+                                            <span style={{ display: 'block', fontSize: 12.5, color: 'var(--color-text-muted)', fontWeight: '600', marginTop: '0.35rem' }}>
                                                 {p.clinicianOpinionSource === 'independent' ? '(Independent. Not brand-affiliated)' : p.clinicianOpinionSource === 'brand' ? '(Brand-affiliated)' : p.clinicianOpinionSource === 'mixed' ? '(Mixed: some sources brand-affiliated)' : ''}
                                             </span>
                                         </>
@@ -202,8 +202,8 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
             </div>
 
             <div style={{ marginTop: '3rem', padding: '2rem', background: 'var(--color-secondary-fade)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-primary-fade)' }}>
-                <h3 style={{ fontSize: '1.1rem', color: 'var(--color-primary)', marginBottom: '1rem' }}>ayna's Tip</h3>
-                <p style={{ fontSize: '1rem', lineHeight: '1.7', color: 'var(--color-text-main)' }}>
+                <h3 style={{ fontSize: 16, color: 'var(--color-primary)', marginBottom: '1rem' }}>ayna's Tip</h3>
+                <p style={{ fontSize: 16, lineHeight: '1.7', color: 'var(--color-text-main)' }}>
                     When choosing between products, look closely at <strong>Materials & Ingredients</strong> and the <strong>Doctor's Opinion</strong>.
                     A higher price often means more marketing, not better ingredients. Look for "B-Corp" or "Sustainable" badges. They can mean higher ethical standards.
                 </p>
