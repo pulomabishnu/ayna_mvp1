@@ -1,0 +1,430 @@
+
+THE MASTER WEBSITE DESIGN PROMPT
+A complete research, UX, visual design, content, responsive, accessibility, QA, and anti-vibe-coded specification
+Built from Figma design guidance, usability research, accessibility standards, and production web-design practice.
+
+WHAT THIS DOCUMENT IS
+Paste the MASTER PROMPT section into Claude, Codex, ChatGPT, a design agent, or give it directly to a product designer/developer. Replace bracketed project-specific fields. The prompt is intentionally strict: it forces the designer to justify every piece of copy, layout, component, effect, state, and interaction instead of producing generic startup UI.
+Use it for
+Primary outcome
+Core rule
+New websites, redesigns, landing pages, marketplaces, apps, dashboards
+A coherent, usable, distinctive, production-ready design system and page experience
+If an element does not improve clarity, usability, trust, conversion, or brand expression, remove it
+
+Contents
+1. How to use the master prompt
+2. Master role, objective, and non-negotiables
+3. Research before design
+4. Information architecture and user flows
+5. Content and copy system
+6. Anti-vibe-coded content rules
+7. Visual direction and brand system
+8. Grid, spacing, rhythm, and layout
+9. Color system
+10. Typography system
+11. Imagery, illustration, and iconography
+12. Components and interaction states
+13. Forms and onboarding
+14. Marketplace and commerce UX
+15. Community and content UX
+16. Responsive and mobile behavior
+17. Motion and microinteractions
+18. Accessibility and inclusive design
+19. Performance, SEO, and technical design
+20. Figma/design-system implementation
+21. Edge states and real-world content
+22. Anti-vibe-coded visual rules
+23. Page-by-page requirements
+24. QA and critique process
+25. Final preflight checklist
+26. Source links and references
+
+1. How to use this master prompt
+• For an AI design/code agent: paste the full prompt, then add your project brief, screenshots, existing design system, codebase constraints, analytics, and required pages.
+• For a designer: treat it as a design-direction and QA specification. Do not mechanically apply every pattern; choose what fits the actual information and user task.
+• For a developer: treat design tokens, responsive rules, component states, semantics, accessibility, loading/error states, and content constraints as implementation requirements.
+• For a redesign: audit the existing product against every rule before replacing anything. Preserve working patterns; redesign only where the current experience fails the brief.
+• For every project: use real content as early as possible. Never polish placeholder UI while ignoring actual copy length, real images, real product data, errors, empty states, and mobile behavior.
+PROJECT VARIABLES TO FILL IN
+Project / brand: [NAME]Website type: [MARKETING / MARKETPLACE / APP / ECOMMERCE / COMMUNITY / EDITORIAL / OTHER]Primary users: [WHO]Primary user goals: [GOALS]Primary business goal: [GOAL]Primary CTA: [CTA]Secondary CTA: [CTA]Brand attributes: [3-6 ATTRIBUTES]Brand must NOT feel like: [ANTI-ATTRIBUTES]Required pages: [LIST]Existing design/code references: [LINKS]Competitors / inspiration: [LINKS]Accessibility target: WCAG 2.2 AA unless a stricter requirement is specified.
+2. Master role, objective, and non-negotiables
+MASTER ROLE
+Act as a senior product designer, UX architect, visual designer, content designer, accessibility specialist, conversion designer, and front-end design-systems lead working together. Your job is not to make something that merely looks modern. Your job is to create a website that is immediately understandable, distinct to the brand, easy to navigate, responsive, accessible, performant, production-realistic, and visually intentional.
+• Design the experience before the decoration. Start with users, tasks, hierarchy, information architecture, trust, and conversion path.
+• Do not create UI simply because a template commonly contains it. Every section, card, icon, label, CTA, animation, badge, and paragraph must have a reason.
+• Do not “fill space.” Empty space is an acceptable and often desirable design decision.
+• Do not invent product claims, metrics, reviews, partners, endorsements, medical certainty, AI capabilities, or UI states. Use supplied facts only, or label content clearly as placeholder.
+• Use established interaction patterns for usability. Be original in brand expression, not in ways that make navigation, forms, checkout, search, or accessibility harder.
+• Prefer reduction before addition. When a page feels wrong, first remove duplication, unnecessary copy, redundant containers, and decorative filler.
+• The design must survive production. It must work with long copy, missing images, errors, slow loading, keyboard navigation, zoom, small screens, and real data.
+3. Research before design
+• Understand the audience: primary user groups, motivations, context, device usage, level of domain knowledge, emotional state, accessibility needs, and objections.
+• Understand the product: what the product actually does, what is unique, what is commodity, what requires trust, what requires explanation, and what must be experienced rather than described.
+• Understand the business: conversion goals, acquisition channels, retention loops, monetization, required compliance, SEO needs, analytics, and operational constraints.
+• Audit competitors: do not simply collect screenshots. Identify repeated category conventions, useful familiar patterns, overused clichés, trust mechanisms, visual sameness, and gaps the brand can own.
+• Audit inspiration: for every reference site, write exactly what is being borrowed: typography hierarchy, image treatment, navigation density, motion, composition, product-showcase approach, or editorial rhythm. Never mix five unrelated reference sites without defining the role of each.
+• Audit the current website if one exists: navigation, content duplication, conversion friction, spacing drift, inconsistent components, bad mobile behavior, accessibility, performance, unclear copy, and visual patterns that feel generic.
+4. Information architecture and user flows
+• Give every page one primary job. If the page cannot be described in one sentence, it is probably trying to do too much.
+• Build a sitemap before high-fidelity design. Group content according to user mental models, not internal company structure.
+• Use clear navigation labels. Prefer Shop, Community, Learn, About over vague labels such as Explore Ecosystem, Discover Solutions, or Experience Wellness unless those terms are genuinely understood by users.
+• Minimize equivalent choices. Do not offer Browse, Shop, Discover, Explore, Marketplace, and Products as six separate destinations when they overlap.
+• Keep critical destinations shallow. Core user tasks should usually be reachable in two to three meaningful navigation decisions.
+• Use progressive disclosure. Expose the minimum information needed to make the next decision, then allow deeper inspection.
+• Design flows, not screens. Map entry point → decision → action → confirmation → next useful step, including back, cancel, edit, failure, and recovery.
+• Preserve context. During checkout, onboarding, quizzes, or multi-step forms, show progress and allow users to understand where they are.
+5. Content and copy system
+• Write for scanning. Front-load meaning. Use informative headings, short paragraphs, meaningful labels, lists when they improve scanning, and one idea per paragraph.
+• Headline = idea; supporting copy = explanation. Never use supporting copy merely to restate the headline.
+• Use concrete language. Replace vague claims like “a seamless personalized wellness experience” with observable value: “Tell us your symptoms. See products matched to them.”
+• Prefer user language to internal language. Translate architecture, algorithms, category strategy, and investor language into user outcomes.
+• Use specific CTAs. “See my matches,” “Compare products,” “Read the research,” or “Join the community” is stronger than “Learn more” or “Submit.”
+• Do not over-explain visible UI. If the interface already communicates the relationship, use a short label or no copy instead of a paragraph.
+• Use tone by context. Marketing may be expressive; health warnings, checkout, errors, privacy, and security should be direct and precise.
+• Avoid fake humanity. Do not spray “we get it,” “finally,” “seriously,” slang, emojis, exclamation marks, or cutesy error messages across the entire experience.
+• Read copy aloud. If it sounds like a pitch deck, corporate boilerplate, SEO stuffing, or AI-generated filler, rewrite it.
+Content editing test
+• Can this paragraph become one sentence?
+• Can this sentence become a label?
+• Can this label disappear because the UI already explains it?
+• Does the paragraph contain more than one idea?
+• Could the headline belong to any startup in any industry?
+• Are we using adjectives instead of evidence?
+• Are we repeating “personalized,” “seamless,” “empowering,” “innovative,” “intuitive,” or “trusted” without adding meaning?
+• Are we adding copy because the layout feels empty?
+• Is critical information placed near the decision it affects?
+6. Anti-vibe-coded content rules
+• Never add text simply to fill whitespace.
+• Do not put a description under every section heading by default.
+• Do not write “built to,” “designed to,” “powered by,” “reimagining,” “the future of,” or “one platform for everything” unless the sentence immediately becomes specific.
+• Do not use internal technical architecture as consumer copy unless the user benefits from understanding it.
+• Do not start every sentence with “we.” Center the user and task.
+• Do not use fake FAQ questions written as promotional claims.
+• Do not write SEO copy that sounds unnatural or repetitive.
+• Do not explain obvious icons, buttons, or visible relationships with extra paragraphs.
+• Do not turn every feature into a paragraph; use the actual interface, a diagram, stat, comparison, or concise label when faster.
+• Do not make error, privacy, payment, health-warning, or security copy clever.
+• Do not make every screen sound like a brand ad. Utility surfaces should prioritize clarity.
+• Do not invent urgency, fake demand, fabricated social proof, or unsupported statistics.
+• Do not use a match score or AI label in a way that implies medical certainty or capability the product does not have.
+7. Visual direction and brand system
+• Write a one-sentence visual thesis before designing. Example format: “[Brand] feels like [reference world 1] + [reference world 2], expressed through [specific visual devices].”
+• Define what the brand is NOT. Anti-attributes are as important as attributes: not sterile, not corporate SaaS, not pastel wellness generic, not AI-neon, not childish, not luxury-without-substance, etc.
+• Choose two to three recognizable signature devices. Examples: a distinctive type pairing, cut-out product photography, a custom underline, community collage, a specific score visualization.
+• Create cohesion through repetition. Signature devices should recur, but not on every block.
+• Do not confuse trend adoption with brand identity. Glassmorphism, neo-brutalism, gradients, 3D, collage, retro, and maximalism are tools, not a strategy.
+• Design the marketing site and product UI as relatives, not clones. Marketing can be more expressive; product UI should be more efficient while sharing color, type, iconography, tone, and motion principles.
+8. Grid, spacing, rhythm, and layout
+DEFAULT SPACING SCALE
+Use a consistent spacing system such as 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96, 120, 160px. Do not invent arbitrary values unless optical adjustment genuinely requires it.
+• Internal relationships: 4–8px for icon/text, helper relationships, compact metadata; 8–12px for title/subtitle and label/input; 16–24px for component padding; 24–40px between content groups.
+• Desktop sections: approximately 64px for compact sections, 80–96px for normal sections, 96–128px for major sections, and 120–160px+ only for intentionally dramatic editorial moments.
+• Mobile sections: approximately 32–40px compact, 48–64px normal, 64–80px major.
+• Outer page margins: roughly 64–96px on wide desktop, 40–64px on standard desktop, 24–40px tablet, 16–24px mobile.
+• Container width: often 1200–1440px depending on brand; 1280–1320px is a useful consumer starting point. Backgrounds may bleed full width while content remains constrained.
+• Reading width: approximately 600–760px for long-form text. Do not stretch prose across the entire container.
+• Grid: 12 columns desktop, 6–8 tablet, 4 mobile. Common desktop gutters are 20–32px; tablet/mobile generally 16–24px.
+• Proximity: things that belong together must be closer than things that do not. Use whitespace to communicate grouping before reaching for borders and cards.
+• Alignment: repeat edges intentionally. Small unplanned alignment drift makes otherwise polished work feel unfinished.
+• Rhythm: vary dense and quiet sections, large and small compositions, image-led and text-led moments. Do not repeat the same section template down the whole page.
+Layout anti-patterns
+• Everything centered for the entire page.
+• Every section is full viewport height.
+• Every section uses eyebrow → heading → paragraph → three cards.
+• Every block is wrapped in a giant rounded panel.
+• Cards nested inside cards inside section cards.
+• Randomly different section widths or gutters.
+• Huge dead zones that exist only because a copied reference site used them.
+• Equal visual weight on every piece of content.
+• Using decoration to fix weak hierarchy instead of fixing hierarchy.
+9. Color system
+• Build neutrals first. Define background, surface, elevated surface, border, primary text, secondary text, muted text, inverse text, and disabled states.
+• Build a brand scale. Create usable tints/shades around the main brand color rather than one raw hex used everywhere.
+• Create semantic colors. Success, warning, error, and info each need background, border, text/icon treatment—not simply one bright color.
+• Use a secondary color deliberately. It should support the primary, not compete with it.
+• Accent colors should be scarce. Use them for meaningful highlights, selection, specific data, or editorial moments.
+• Design in grayscale as a test. If hierarchy disappears when color is removed, the structure is too dependent on color.
+• Do not rely on color alone. Errors, selected states, warnings, and status changes need shape, text, icon, weight, or another signal.
+• Contrast: target WCAG 2.2 AA. Normal text generally needs at least 4.5:1 contrast; large text generally at least 3:1.
+• Do not make muted text illegible. Secondary information still has to be readable.
+• Avoid random rainbow sections. Background shifts should signify a new mode, category, or deliberate brand moment.
+10. Typography system
+STARTING TYPE SCALE
+Desktop starting point: Display 64–96; H1 48–64; H2 36–48; H3 28–36; H4 22–28; Body Large 18–20; Body 16; Small 14; Caption 12–13. Mobile should compress intentionally rather than mathematically scaling every size.
+• Use one type family, or two at most for most brands. An expressive face plus a functional face is often enough.
+• Body text: usually 16–18px, with line height around 1.4–1.6 depending on the font and context.
+• Large headlines: use tighter line-height, often around 0.95–1.15. Control line breaks as part of the composition.
+• Long-form reading: keep line length roughly 45–75 characters when possible.
+• Weight hierarchy: 400 / 500 / 600 / 700 is often sufficient. Do not use six weights in one small region.
+• Tracking: large display text may be slightly tighter; short uppercase labels may be slightly wider; body copy usually stays near default.
+• Alignment: left-align long copy. Centering is best reserved for short, controlled statements.
+• Do not use tiny low-contrast text for aesthetics. Do not use uppercase for long paragraphs or italicize full blocks without a reason.
+• Do not default to a serif because “serif = premium” or monospace because “monospace = tech.” Typeface choice should support the visual thesis and reading task.
+11. Imagery, illustration, and iconography
+• Create an image art direction. Choose documentary, editorial, direct flash, studio product, warm natural light, collage, illustration, or another defined system. Do not mix unrelated stock styles.
+• Use meaningful visuals. Actual product UI, product photography, diagrams, community content, evidence, and real data are stronger than generic decorative assets.
+• Avoid generic stock-health imagery. A smiling woman holding a salad, doctor pointing at tablet, or generic wellness flat lay rarely differentiates a brand.
+• Define image ratios. Use consistent product, avatar, editorial, and hero ratios to preserve grid stability.
+• Responsive art direction: do not merely shrink desktop crops. Define mobile crops, focal points, and alternate assets when necessary.
+• Use one icon family. Keep stroke width, corner treatment, optical weight, and bounding box consistent. Common UI sizes: 16, 20, 24, 32px.
+• Do not put every icon in a colored rounded square. Use icon containers only when they communicate hierarchy or function.
+• Avoid mixed illustration languages. Do not combine 3D clay, hand drawing, flat vector, pixel art, and watercolor unless the brand system explicitly calls for that contrast.
+• If using collage, define rules. Maximum overlaps, border treatment, rotation range, asset types, and texture should be consistent rather than random.
+• If using grain/texture, make it a system. Do not use a different texture effect on every section.
+12. Components and interaction states
+• Buttons: primary, secondary, tertiary/text, and destructive. Common heights: 32–36 small, 40–44 medium, 48–52 large, 56 extra-large. Preserve clear hierarchy.
+• Touch target: interactive targets should generally provide at least a 44×44px clickable/tappable region.
+• Button states: default, hover, pressed, focus, disabled, loading; add selected, success, or error only where the component truly uses them.
+• Pressed feedback: a subtle darker fill, reduced shadow, or ~0.98 scale can create physical feedback.
+• Focus: must be obvious for keyboard use. Do not remove outlines without an equally strong accessible replacement.
+• Inputs: approximately 44–52px high; label, value, placeholder if useful, helper copy, error, success, disabled, leading/trailing icons, and focus must all be designed.
+• Cards: use them for discrete objects or repeated comparable items—not as a default wrapper for every sentence.
+• Tabs: use for parallel views, not unrelated navigation destinations. Selected state must not depend on color alone.
+• Accordions: use for secondary or long detail. Do not hide core product value inside them.
+• Modals: use when interruption is justified. Long mobile workflows often work better as full-screen sheets.
+• Tooltips: supplementary only; do not hide required knowledge inside hover-only UI.
+• Toasts: use for short confirmations, not critical failures. Important problems require persistent messaging.
+• Carousels: use for optional horizontal exploration. Do not hide core messaging on slide five or auto-rotate essential content.
+13. Forms and onboarding
+• Ask only for information you actually use.
+• Explain why sensitive questions matter at the point of collection.
+• Never preselect sensitive health, identity, or consent answers.
+• Use one concept per screen when questions require thought; group only genuinely related inputs.
+• Provide accurate progress and a clear back action in multi-step flows.
+• Keep labels visible; do not use placeholder text as the only label.
+• Use inline validation, but do not declare an email invalid after the user has typed only one character.
+• Preserve user input after errors.
+• Use appropriate input types and mobile keyboards.
+• Allow verification-code paste and natural backspace behavior.
+• Disable duplicate submissions while loading, but preserve the button width and context.
+• Do not create fake algorithmic waiting time to make the product feel intelligent.
+• Provide browse-without-onboarding when feasible, particularly if forcing onboarding would block basic understanding of the product.
+14. Marketplace and commerce UX
+• Product grids: keep image ratios, title position, price position, badge placement, and card width consistent so users can compare quickly.
+• Line clamping: grid titles may need two-line limits, but full product names must remain accessible somewhere.
+• Badge discipline: show only the most meaningful one or two labels. Define what “new,” “best seller,” “match,” or “featured” actually means.
+• Price hierarchy: current price strongest; previous price muted/struck through; discount accent secondary.
+• Reviews: show rating plus review count and source context. A 5.0 from one review is not the same as 4.8 from 1,800 reviews.
+• Filters: group by user mental model, display applied filters, clear-all, result count, and mobile sheet treatment.
+• Search: include recent searches, suggestions/autocomplete where useful, typo handling, category suggestions, filters, sorting, result count, and a helpful zero-results state.
+• Product pages: clearly show image, brand, name, price, variants, availability, benefits, evidence/trust, shipping, returns, reviews, and the action to buy.
+• Checkout: show fees, shipping, tax, total, timing, and editability clearly. Do not surprise users late.
+• Do not use dark patterns. No fake scarcity, preselected paid add-ons, hidden cancel paths, confirmshaming, or misleading CTA hierarchy.
+15. Community and content UX
+• Community content should look like community content, not polished brand testimonials.
+• Distinguish product reviews, community posts, expert content, and brand testimonials visually and semantically.
+• Keep authorship, timestamps/context, reply/save/follow actions, moderation/safety states, and reporting understandable.
+• Do not overload a small post card with too many competing actions.
+• Use rich-text behavior only where users expect authoring tools, and make formatting controls accessible.
+• Long-form articles need a controlled reading column, strong heading hierarchy, readable body type, source/citation treatment, and meaningful image captions.
+• If the site includes health education, clearly distinguish editorial guidance, evidence, personal experience, and medical advice boundaries.
+16. Responsive and mobile behavior
+• Responsive design is not shrinking. For every component define whether it shrinks, wraps, stacks, reorders, scrolls, collapses, hides, or becomes a different control.
+• Use content-driven breakpoints. If the navigation breaks at 1100px, change it there rather than waiting for an arbitrary 768px breakpoint.
+• Starting breakpoint map: small mobile &lt;375; mobile 375–479; large mobile 480–767; tablet 768–1023; desktop 1024–1279; large desktop 1280–1439; wide 1440+. Adjust to actual content.
+• Mobile navigation: prioritize a few high-frequency destinations; do not squeeze the desktop navbar smaller.
+• Mobile filters/sort: use sheets/drawers rather than tiny sidebars.
+• Mobile CTAs: stack cramped buttons; make primary actions full-width when the task benefits from it, not by default everywhere.
+• Mobile grids: do not turn a large desktop grid into an endless one-column page if a shelf, pagination, tabs, or view-all interaction would be better.
+• Safe areas: sticky bottom actions must respect phone home indicators/notches.
+• Keyboard behavior: forms must remain usable when the software keyboard is open.
+• Test real viewport sizes: 320, 375/390, 430, 768, 1024, 1280, 1440, and 1920, plus landscape where relevant.
+17. Motion and microinteractions
+• Use motion to explain state and relationship. Buttons, drawers, accordions, tabs, save/follow actions, loading, success, and navigation transitions are valid uses.
+• Motion tokens: rough starting points: fast 100ms, default 150ms, medium 250ms, slow 400ms. Use slower narrative animation only when it earns the time.
+• Do not animate everything on scroll. Repeated fade-up sections quickly look templated.
+• Avoid word-by-word heading animation except for rare signature moments. Reading should not be slowed by decoration.
+• Avoid custom cursors, scroll hijacking, artificial loading, looping floating elements, and excessive spring animation unless the interaction specifically benefits.
+• Reduced motion: respect prefers-reduced-motion and remove parallax, major zooming, and nonessential continuous movement.
+• Utility must stay fast. Do not make a menu, checkout, or ordinary control slow because the brand is “luxury.”
+18. Accessibility and inclusive design
+• Use WCAG 2.2 AA as the baseline unless project requirements are stricter.
+• Normal text should generally meet 4.5:1 contrast; large text generally 3:1.
+• Visible focus states are required.
+• Keyboard users must be able to reach, operate, and escape interactive controls logically.
+• Visual order should match DOM/tab order.
+• Do not communicate state only through color.
+• Interactive targets should be comfortably tappable, generally at least 44×44px.
+• Provide meaningful alt text for informative imagery; decorative images should not create screen-reader noise.
+• Avoid embedding important text inside images.
+• Support browser zoom and text resizing; test around 200%.
+• Respect reduced-motion preferences.
+• Use semantic HTML: header, nav, main, footer, headings in logical order, buttons for actions, links for navigation, labels tied to inputs.
+• Health, safety, privacy, price, and error information must not be tiny, low-contrast, hover-only, or visually de-emphasized to the point of being missed.
+19. Performance, SEO, and technical design
+• Performance is part of perceived quality and conversion. Do not trade core speed for decorative effects.
+• Compress and size images properly; use AVIF/WebP where appropriate, SVG for logos/icons, and responsive image sources.
+• Reserve image dimensions to prevent layout shift.
+• Prioritize above-the-fold logo, CSS, fonts, and hero media; lazy-load lower content.
+• Do not load six font families or every possible font weight.
+• Avoid giant autoplay hero video if a lighter treatment communicates the same value.
+• Do not add animation libraries, 3D, WebGL, trackers, or scripts unless they materially support the experience.
+• Use semantic headings, human-readable URLs, internal linking, indexable text, and descriptive metadata.
+• Do not sacrifice human copy quality for keyword repetition.
+• Design SEO landing pages only where there is real information, expertise, or product value—not thin filler pages.
+20. Figma/design-system implementation
+• Foundations: color variables, semantic color roles, typography styles, spacing tokens, radii, borders, shadows, grids, icons, motion.
+• Components: buttons, inputs, checkboxes, radios, switches, tabs, chips, badges, cards, dropdowns, navigation, accordions, modals, drawers, toasts, tooltips, tables, search, pagination.
+• Patterns: forms, auth, onboarding, filters, search, checkout, empty states, errors, review patterns, content publishing.
+• Use Auto Layout. Define direction, gap, padding, alignment, hug/fill, min/max widths. Avoid manually positioning repeated component internals.
+• Use properties/variants instead of duplicate components. Button properties might include hierarchy, size, state, icon, full-width.
+• Token architecture: primitive tokens (orange.500, space.16) → semantic tokens (surface.primary, text.muted, action.primary) → component tokens (button.primary.background).
+• Name systematically. Button / Primary / Large; Card / Product / Grid; Navigation / Header / Mobile—not “final button 3.”
+• Document usage, not just appearance. Explain when to use, when not to use, states, content limits, responsive behavior, and accessibility.
+• Do not detach components to solve recurring needs. Fix the component system when the variation is legitimate.
+• Do not create variants for arbitrary one-pixel differences. A design system should be flexible without becoming impossible to maintain.
+21. Edge states and real-world content
+• Design default, loading, loaded, empty, error, partial, unavailable, and permission-blocked states as appropriate.
+• Test zero items, one item, many items, short names, very long names, long emails/URLs, large prices, no images, broken images, no reviews, thousands of reviews, sale prices, unavailable products, and stale data.
+• Skeletons should match the geometry of final content and should not flash for extremely short loads.
+• Errors must explain what happened and how to recover.
+• Never reset completed user work after an error.
+• Success states should confirm completion and offer a useful next step without immediately overwhelming users with upsells.
+• Empty states should be concise: explain what is empty, why it matters, and the next relevant action.
+• Do not use placeholder content that could accidentally be mistaken for final production facts.
+22. Anti-vibe-coded visual rules
+• Do not use giant rounded containers around every section.
+• Do not nest cards for no semantic reason.
+• Do not make everything a pill.
+• Do not put every icon inside a pastel rounded square.
+• Do not default to three equal feature cards because the layout is easy.
+• Do not center every section.
+• Do not add an uppercase eyebrow above every heading.
+• Do not add a CTA beneath every section.
+• Do not use generic blue-purple “AI” gradients unless the brand actually owns that palette.
+• Do not put a glow behind every screenshot or card.
+• Do not use glassmorphism where no real layering exists.
+• Do not use gradient text on every major headline.
+• Do not float five meaningless UI cards around a hero mockup.
+• Do not invent fake dashboard/product UI just to make a site look technical.
+• Do not show tiny unreadable screenshots inside device frames; crop to the meaningful interaction.
+• Do not paste every app screenshot inside a phone/laptop mockup.
+• Do not use random arrows, sparkles, squiggles, flowers, blobs, grids, or stickers unless they belong to a defined visual language.
+• Do not mix several unrelated photo, icon, illustration, texture, and type styles.
+• Do not randomly rotate or overlap elements without composition rules.
+• Do not use huge typography simply because current trend sites do.
+• Do not use a serif as a shortcut for “luxury” or monospace as a shortcut for “tech.”
+• Do not make secondary text too faint to read.
+• Do not use upper-case long-form text or over-bold half a paragraph.
+• Do not use multiple shadow languages or arbitrary border widths.
+• Do not animate every element when it enters the viewport.
+• Do not build a horizontal-scroll experience, splash screen, or custom cursor merely to look experimental.
+• Do not use marquees in several consecutive sections.
+• Do not make every information block interactive; static clarity is often better.
+• Do not copy Apple, Stripe, Linear, Vercel, Rhode, Glossier, or another reference site wholesale. Translate principles into the brand.
+The removal test
+NON-NEGOTIABLE EDITING TEST
+For every element, ask: “If I remove this, does the page become less understandable, less usable, less trustworthy, less persuasive, or less distinctly on-brand?” If the answer is no, remove it or justify it explicitly.
+23. Page-by-page requirements
+Homepage / landing page
+• Within seconds, communicate what the product is, why it matters, and the primary action.
+• Show the real product early.
+• Lead with the strongest available evidence or proof, not a generic company story.
+• Use a narrative order: what → why → how → proof → experience → action.
+• Do not replicate the entire app or list every feature.
+Product / service page
+• Make identity, price, availability, key benefits, evidence/trust, reviews, shipping/returns, and CTA immediately legible.
+• Keep the purchase action obvious through long content.
+• Place relevant warnings/limitations near the decision.
+• Explain personalization/matching without implying medical certainty.
+Search / collection page
+• Prioritize query/category context, result count, sort, filters, applied filters, products/results, loading, and zero-results recovery.
+• Keep product cards comparable and scan-friendly.
+• Do not let a filter UI consume the entire mobile viewport permanently.
+Community
+• Clarify content types, author identity/context, follow/save/reply/review actions, and moderation/reporting.
+• Preserve a human content feel; do not style every post like brand marketing.
+• Avoid overcrowding each card with too many controls.
+Profile / dashboard
+• Prioritize high-frequency information and actions.
+• Use density appropriate to task; avoid huge marketing whitespace.
+• Explain profile-derived personalization and allow users to edit the inputs that affect outcomes.
+Checkout
+• Keep total cost, fees, shipping, tax, delivery expectations, order items, and editing controls explicit.
+• Minimize distraction and navigation away from the task.
+• Do not add surprise charges or manipulative upsells.
+Article / educational page
+• Use a strong reading width, source/citation treatment, clear authorship, update/review information where relevant, and accessible heading hierarchy.
+• Distinguish evidence, expert guidance, and community/personal experience.
+• Use visuals that teach rather than merely break up text.
+24. QA and critique process
+1. Blur test. Blur or squint at the page. Can you still identify the primary headline, action, navigation, major content groups, and focal visual?
+2. Grayscale test. Does hierarchy and state still make sense without color?
+3. No-decoration test. Temporarily remove gradients, texture, animation, shadows, stickers, and decorative icons. Does the composition still hold up?
+4. No-image test. Can users still understand what this is and what they can do?
+5. Copy edit. Remove at least 20% of unnecessary words before adding more visual elements.
+6. Template test. Could this entire page belong to a random AI SaaS startup if the logo disappeared? If yes, strengthen brand-specific product content and visual language.
+7. Real-content test. Insert the longest likely title, longest username, zero-state, missing image, errors, and actual product data.
+8. Responsive test. Inspect all key breakpoints and confirm intentional reflow, not simply shrinking.
+9. Keyboard test. Navigate with Tab, Shift+Tab, Enter, Space, Escape, and arrow keys where expected.
+10. Zoom test. Test at 200% browser zoom.
+11. Performance test. Check heavy images/video/fonts/scripts and prevent layout shift.
+12. User-task test. Ask a first-time user to perform the primary task without explanation and observe hesitation, backtracking, missed controls, and misunderstood labels.
+13. Analytics test after launch. Watch CTA usage, search behavior, filters, drop-off, rage clicks, errors, scroll depth, form abandonment, and checkout completion; diagnose rather than blindly optimize vanity metrics.
+25. Final preflight checklist
+• Within 5 seconds, a new user can explain what the site/product is.
+• Within 10 seconds, a new user can identify the main thing they can do.
+• The primary CTA is obvious and more visually important than secondary actions.
+• Navigation labels are clear and do not require decoding.
+• Every section has a reason to exist.
+• No paragraph merely repeats its heading.
+• No text exists solely to fill empty space.
+• No unsupported claim, fabricated metric, fake review, fake urgency, or invented product UI remains.
+• The page is not composed almost entirely of rounded cards.
+• The same three-card layout is not repeated throughout the page.
+• The site has a recognizable visual thesis and two to three signature brand devices.
+• Color roles are systematic and accessible.
+• Typography roles are systematic and readable.
+• Spacing, gutters, margins, and alignment follow a consistent system.
+• Product/content imagery follows a defined art direction.
+• Icons follow one visual family.
+• Buttons, inputs, tabs, cards, and overlays have all relevant interaction states.
+• Loading, empty, error, unavailable, and success states are designed.
+• No critical information is available only on hover.
+• No critical status depends on color alone.
+• Keyboard focus is obvious.
+• Touch targets are comfortably tappable.
+• Page works at small mobile widths and at large desktop widths.
+• 200% zoom is usable.
+• Reduced-motion preferences are respected.
+• Long text and missing data do not break layouts.
+• Images have correct aspect-ratio behavior and do not cause layout shift.
+• Performance is not being sacrificed for visual effects.
+• Checkout/pricing is transparent.
+• Sensitive data collection is explained clearly.
+• Health or safety information is presented with appropriate seriousness and does not imply unsupported medical certainty.
+• Removing the logo would not make the site indistinguishable from a generic template.
+• Every decorative element can be justified by brand, hierarchy, storytelling, or interaction.
+• The final site feels designed rather than merely decorated.
+MASTER PROMPT: paste-ready version
+COPY / PASTE
+Design and/or implement this website as a senior multidisciplinary product-design team. Begin with research, information architecture, task flows, content hierarchy, and brand thesis before high-fidelity visuals. The final experience must be immediately understandable, responsive, accessible, performant, production-realistic, and distinctly specific to this brand.Do not “vibe-code” the interface. Do not add copy, cards, pills, icons, badges, gradients, rounded containers, floating UI, glows, animations, sections, or CTAs simply because a modern website template usually contains them. Every element must improve clarity, usability, trust, conversion, storytelling, or recognizable brand expression. If removing something does not make the page worse on one of those dimensions, remove it.Use the supplied facts and real product content. Never invent claims, metrics, reviews, partnerships, users, endorsements, medical certainty, product features, AI functionality, or fake dashboard states. Mark genuine placeholders clearly.CONTENT: write for scanning. One idea per paragraph. Front-load meaning. Headline = idea; support copy = new explanation. Do not repeat the heading underneath. Prefer concrete language to empty adjectives. Avoid generic startup copy such as “seamless,” “revolutionary,” “the future of,” “built to empower,” “reimagining,” and “one platform for everything” unless made immediately specific. Use precise CTA labels. Use expressive brand voice in marketing, but direct language in forms, checkout, errors, privacy, warnings, and health/safety contexts.LAYOUT: use a deliberate grid, consistent container widths, systematic page margins, gutters, spacing, and vertical rhythm. A strong starting spacing scale is 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96, 120, 160px. Use proximity and whitespace before adding borders or card containers. Use roughly 12 columns desktop, 6–8 tablet, 4 mobile, adjusted to actual content. Long-form text should remain in a readable column. Vary section composition and density instead of repeating eyebrow + title + paragraph + three cards.COLOR: build neutral, brand, semantic, surface, border, text, and interaction roles. Use color to communicate, not decorate. Ensure WCAG 2.2 AA contrast, do not rely on color alone, and do not make secondary information unreadably light. Avoid generic AI blue-purple gradients or rainbow section backgrounds unless truly on-brand.TYPOGRAPHY: use a deliberate type scale, usually one or two families, a controlled set of weights, readable body sizes, appropriate line-height, controlled line length, and intentional headline line breaks. Do not use a serif merely to look premium, monospace merely to look technical, tiny gray text for aesthetics, excessive all-caps, or five competing typographic personalities.IMAGERY: establish a consistent art direction. Prioritize actual product UI, product imagery, community content, diagrams, evidence, and real data over generic stock wellness imagery or abstract filler. Define image ratios and mobile crops. Use one icon language. Do not put every icon in a pastel rounded square. Do not invent fake product screens.COMPONENTS: design all relevant states for buttons, inputs, navigation, filters, search, tabs, cards, accordions, modals, drawers, toasts, tooltips, product cards, review modules, and other controls. Use at least ~44×44px interactive targets where appropriate. Provide visible keyboard focus. Hover is enhancement, never the only path to essential information.FORMS/ONBOARDING: ask only for information that is used. Explain sensitive questions. Preserve labels and entered data. Provide natural validation and error recovery. Show accurate progress. Do not fake wait time. Do not preselect sensitive data or consent.COMMERCE: make products easy to compare through consistent imagery, card anatomy, pricing, badges, rating context, filters, search, and result counts. Be transparent about totals, fees, shipping, tax, availability, returns, and limitations. Never use fake urgency or other dark patterns.RESPONSIVE: do not simply shrink desktop. For every component define whether it wraps, stacks, reorders, scrolls, collapses, hides, or becomes a new mobile control. Use content-driven breakpoints. Test at 320, 375/390, 430, 768, 1024, 1280, 1440, and 1920 widths. Ensure sticky UI and software keyboards do not obstruct tasks.MOTION: use motion to explain state and relationship. Utility interactions should feel immediate. Avoid animating every section on scroll, excessive springs, custom cursors, scroll hijacking, fake loading, or decorative looping motion. Respect reduced-motion preferences.ACCESSIBILITY: meet WCAG 2.2 AA. Provide semantic HTML, logical heading order, readable contrast, meaningful alt text, input labels, visible focus, keyboard support, appropriate touch targets, reduced-motion support, zoom resilience, and redundant state cues beyond color.PERFORMANCE/SEO: optimize images, fonts, video, layout stability, and scripts. Use semantic/indexable text, human-readable URLs, real headings, internal links, and natural keyword use. Do not sacrifice load speed for visual effects or keyword-stuff pages.DESIGN SYSTEM: create primitive → semantic → component tokens for color, spacing, typography, radii, borders, shadows, motion, and component roles. Use Auto Layout/realistic flex behavior, reusable components, variants/properties, systematic naming, and documented usage rules. Do not detach recurring components or create arbitrary one-off values.ANTI-VIBE-CODED VISUAL RULES: avoid excessive rounded cards, cards inside cards, giant radius everywhere, pill-everything, repeated three-card feature sections, universal centered alignment, eyebrow labels above every heading, CTA after every section, decorative arrows, random sparkles/blobs, generic AI gradients, heavy glows, gratuitous glassmorphism, floating screenshot clutter, fake dashboards, unreadably tiny device mockups, mixed illustration/photo/icon styles, excessive text animation, repeated fade-up scroll effects, and effects that do not survive a grayscale/no-decoration test.EDGE CASES: design loading, empty, error, success, unavailable, missing-image, long-title, zero-review, large-review-count, long-user-content, and slow-network states. Preserve user work after failures. Provide recovery and next actions.FINAL CRITIQUE: run a blur test, grayscale test, no-decoration test, no-image test, copy-reduction pass, real-content stress test, mobile/desktop test, keyboard test, 200% zoom test, performance test, and brand-specificity test. Ask: “Could this page belong to any random startup if the logo were removed?” If yes, strengthen the real product, brand language, imagery, composition, or content rather than adding decoration.Before finalizing, explain the design logic: the visual thesis, information hierarchy, grid/spacing system, type system, color roles, page narrative, component system, responsive transformations, accessibility decisions, trust strategy, and which generic patterns were deliberately avoided.
+26. Source links and references
+Figma Resource Library — Main design learning library.
+Figma: What is web design? — Web design fundamentals, user-centered design, performance and responsive thinking.
+Figma: Web design and development — Web design/development workflow, semantic structure, responsive grids, and implementation.
+Figma: Responsive website design — Responsive layouts, navigation, imagery, typography, Auto Layout, and testing.
+Figma: Typography in design — Typography hierarchy, alignment, readability, web text guidance.
+Figma: Typography anatomy — X-height, tracking, leading, readability and typographic structure.
+Figma: Color theory — Color roles, theory, hierarchy, and communication.
+Figma: Types of color palettes — Palette structures and 60/30/10 guidance.
+Figma: What is information architecture? — Information architecture, choices, disclosure, navigation and search.
+Figma: Website structure — Site structure, navigation, hierarchy, SEO, and scalability.
+Figma: UI design principles — Hierarchy, consistency, progressive disclosure and core UI principles.
+Figma: UX design — User-centered UX, consistency, control, testing and usability.
+Figma: Graphic design principles — Balance, hierarchy, alignment, proximity, repetition, contrast, movement and whitespace.
+Figma: Visual hierarchy — Directing attention and establishing importance.
+Figma: Web design grid layout examples — Columns, rows, gutters, margins and modular grids.
+Figma: Design tokens — Primitive, semantic and component token architecture.
+Figma: Design system examples — Design-system structure, reuse and consistency.
+Figma: Enterprise design systems — Documentation, governance and scalable component systems.
+Figma: Button states — Hover, pressed, focus, disabled, loading, target size and interaction feedback.
+Figma: Creating accessible and inclusive design — Readable type, inclusive interaction, contrast and mobile usability.
+Figma: Content research — Concise content, real content, reading aloud, avoiding jargon and content research.
+Figma: Web design trends — Trends as tools: motion, maximalism, retro, 3D, dark mode, experimental patterns.
+Nielsen Norman Group: How Users Read on the Web — Foundational research on scanning, concise writing, meaningful headings and inverted-pyramid structure.
+Nielsen Norman Group: Concise, Scannable, and Objective — Usability evidence for concise, scannable web writing.
+W3C Web Content Accessibility Guidelines (WCAG) 2.2 — Primary accessibility standard for contrast, keyboard interaction, target size, focus and other web requirements.
+web.dev: Core Web Vitals — Performance and user-experience metrics including loading, responsiveness, and visual stability.
+Note: Exact numeric values in this document are practical starting ranges, not universal laws. Adjust them to the brand, typeface, content density, device behavior, and user task while preserving consistency, accessibility, and hierarchy.
