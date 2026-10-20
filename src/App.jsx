@@ -31,6 +31,7 @@ const WebCommunity = lazyView(() => import('./components/WebCommunity'), <ViewSk
 // than flashing a page skeleton under the overlay while the chunk loads.
 const WebWrapped = lazyView(() => import('./components/WebWrapped'), null);
 const DeleteAccountPage = lazyView(() => import('./components/DeleteAccountPage'));
+const WebHealth = lazyView(() => import('./components/WebHealth'));
 const AdminReviewsPage = lazyView(() => import('./components/AdminReviewsPage'));
 const AdminResearchPage = lazyView(() => import('./components/AdminResearchPage'));
 const FreeProductPage = lazyView(() => import('./components/freeProduct/FreeProductPage'));
@@ -143,7 +144,7 @@ const VIEW_TO_PATH = {
   articles: '/library', screenings: '/screenings', omitted: '/omitted',
   comparison: '/comparison', recalls: '/recalls',
   'doctor-prep': '/appointment-prep', 'profile-edit': '/profile', 'phone-verify': '/text-ayna', tracked: '/tracked',
-  'delete-account': '/delete-account', 'health-data': '/health-data',
+  'delete-account': '/delete-account', 'health-data': '/health-data', health: '/health',
   'privacy-policy': '/privacy-policy',
   'consumer-health-data': '/consumer-health-data',
   'terms-of-use': '/terms-of-use',
@@ -173,7 +174,7 @@ const VIEW_TITLES = {
   waitlist: 'Partner brands', recommendations: 'Your Recommendations', articles: 'Library', screenings: 'Screenings',
   omitted: 'Omitted Products', comparison: 'Compare Products', recalls: 'Recalls',
   'doctor-prep': 'Appointment Prep', 'profile-edit': 'Edit Profile',
-  'phone-verify': 'Verify Phone', tracked: 'Tracked Products', 'delete-account': 'Delete Account', 'health-data': 'Health data',
+  'phone-verify': 'Verify Phone', tracked: 'Tracked Products', 'delete-account': 'Delete Account', 'health-data': 'Health data', health: 'Your health',
   'privacy-policy': 'Privacy Policy', 'consumer-health-data': 'Consumer Health Data Privacy Notice', 'terms-of-use': 'Terms of Use',
   'how-we-make-money': 'How We Make Money', 'how-it-works': 'How It Works',
   about: 'About', contact: 'Contact', 'not-found': 'Page Not Found',
@@ -764,7 +765,7 @@ function App() {
       'privacy-policy', 'consumer-health-data', 'terms-of-use', 'confirmed', 'auth-callback', 'auth-confirm',
       'welcome', 'hero', 'quiz', 'discovery', 'product', 'waitlist', 'articles', 'you', 'community',
       'how-it-works', 'how-we-make-money', 'campus-resources', 'about', 'contact', 'waitlist', 'not-found', 'ecosystem',
-      'free-product', 'free-product-reward',
+      'free-product', 'free-product-reward', 'health',
     ];
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       // A different account (or none) must never reuse the previous account's cached intake.
@@ -2090,6 +2091,7 @@ function App() {
               {showAccountMenu && user && (
                 <div className="nav-account-menu" role="menu">
                   <a role="menuitem" href="/you" {...linkProps(() => { setShowAccountMenu(false); setCurrentView('you'); })}>Your profile</a>
+                  <a role="menuitem" href="/health" {...linkProps(() => { setShowAccountMenu(false); setCurrentView('health'); })}>Your health</a>
                   <button type="button" role="menuitem" onClick={() => { setShowAccountMenu(false); handleOpenHealthProfileEditor(); }}>Health profile</button>
                   <a role="menuitem" href="/ecosystem" {...linkProps(() => { setShowAccountMenu(false); handleViewWishlist(); })}>Saved products</a>
                   <a role="menuitem" href="/you" {...linkProps(() => { setShowAccountMenu(false); setCurrentView('you'); window.setTimeout(() => document.getElementById('wyou-account')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 250); })}>Account settings</a>
@@ -2131,6 +2133,7 @@ function App() {
                 ['ecosystem', '/ecosystem', 'My Ecosystem', () => handleViewEcosystem()],
                 ['articles', '/library', 'Library', () => { setSelectedArticleId(null); setCurrentView('articles'); }],
                 ['community', '/community', 'Community', () => setCurrentView('community')],
+                ['health', '/health', 'Your health', () => setCurrentView('health')],
                 ...(user ? [['you', '/you', 'You', () => setCurrentView('you')]] : []),
               ].map(([view, href, label, go]) => (
                 <a key={view} href={href} className={`mobile-drawer-item${(view === 'ecosystem' ? ECOSYSTEM_NAV_VIEWS.includes(currentView) : currentView === view) ? ' is-active' : ''}`} {...linkProps(() => { go(); setMobileMenuOpen(false); })}>
@@ -2257,6 +2260,7 @@ function App() {
             onSignOut={handleSignOut}
             onDeleteAccount={handleOpenDeleteAccount}
             onOpenHealthData={() => setCurrentView('health-data')}
+            onOpenHealth={() => setCurrentView('health')}
             healthSummary={health.insights.sections.find((sec) => sec.status === 'ready') || null}
             healthConnectedCount={health.connected.length}
             theme={themeMode}
@@ -2287,6 +2291,17 @@ function App() {
         )}
         {currentView === 'delete-account' && (
           <DeleteAccountPage onBack={() => setCurrentView('you')} />
+        )}
+        {currentView === 'health' && (
+          <WebHealth
+            user={user}
+            health={health}
+            onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+            onOpenConnections={() => {
+              if (user) { setCurrentView('health-data'); return; }
+              setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true);
+            }}
+          />
         )}
         {currentView === 'health-data' && user && (
           <WebHealthData
