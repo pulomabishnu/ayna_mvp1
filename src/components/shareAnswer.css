@@ -6,6 +6,10 @@
   --sa-bg: #ffedac;
   --sa-pink: #f7badd;
   --sa-line: rgba(62, 39, 35, 0.18);
+  --sa-nav: 0px; /* fixed bottom tab bar on phones, set below */
+}
+@media (max-width: 767px) {
+  .ay-sa { --sa-nav: calc(80px + env(safe-area-inset-bottom)); }
 }
 :root[data-ay-theme='brand-dark'] .ay-sa,
 :root[data-ay-theme='brand-dark'] .ay-share-answer,
@@ -35,7 +39,7 @@
 .app-container:not([data-theme='dark'])[data-view='shared-answer'] { --ay-page: #ffedac; }
 .ay-sa {
   box-sizing: border-box; width: 100%; max-width: 680px; margin: 0 auto;
-  padding: 32px 16px 48px; color: var(--sa-ink); font-family: 'DM Sans', system-ui, sans-serif;
+  padding: 32px 16px calc(48px + var(--sa-nav)); color: var(--sa-ink); font-family: 'DM Sans', system-ui, sans-serif;
 }
 .ay-sa__title {
   margin: 0 0 24px; font: 400 30px/1.12 'DM Serif Display', Georgia, serif; letter-spacing: -0.01em; color: var(--sa-ink);
@@ -50,7 +54,7 @@
 .ay-sa__answer { font-size: 15px; line-height: 1.6; overflow-wrap: anywhere; }
 .ay-sa__answer p { margin: 0 0 12px; }
 .ay-sa__answer ul, .ay-sa__answer ol { margin: 0 0 12px; padding-left: 20px; }
-.ay-sa .ay-sa__sources h2 { margin: 16px 0 8px; font: 600 15px/1.3 'DM Sans', system-ui, sans-serif !important; letter-spacing: 0 !important; color: inherit; }
+.ay-sa .ay-sa__sources h2, html body .app-container.app-container .ay-sa .ay-sa__sources h2 { margin: 16px 0 8px; font: 600 15px/1.3 'DM Sans', system-ui, sans-serif !important; letter-spacing: 0 !important; color: inherit; }
 .ay-sa__sources ol { margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.5; }
 .ay-sa__sources a { color: inherit; text-underline-offset: 3px; overflow-wrap: anywhere; }
 .ay-sa__disclaimer { margin: 16px 0 0; font-size: 12px; opacity: 0.8; }
@@ -84,11 +88,13 @@
 
 .ay-sa__prompt {
   margin: 16px 0 0; padding: 18px; border-radius: 24px; background: var(--sa-pink); color: #3e2723;
+  scroll-margin-top: 88px;
+  scroll-margin-bottom: calc(var(--sa-nav) + 16px);
 }
 .ay-sa__prompt .ay-sa__primary { background: #3e2723; color: #ffedac; border-color: #3e2723; }
 .ay-sa__prompt .ay-sa__ghost { color: #3e2723; border-color: #3e2723; }
 .ay-sa__prompt .ay-sa__link { color: #3e2723; padding-bottom: 0; }
-.ay-sa__prompt-title { margin: 0 0 4px; font: 400 22px/1.2 'DM Serif Display', Georgia, serif; }
+.ay-sa__prompt-title, html body .app-container.app-container .ay-sa .ay-sa__prompt-title { margin: 0 0 4px; font: 400 22px/1.2 'DM Serif Display', Georgia, serif !important; letter-spacing: -0.01em !important; }
 .ay-sa__prompt-line { margin: 0 0 16px; font-size: 15px; }
 .ay-sa__row { display: flex; flex-wrap: wrap; gap: 12px; }
 

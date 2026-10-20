@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite.jsx';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
 import { publicMediaUrl } from '../utils/community/imageUpload.js';
@@ -39,6 +39,25 @@ export default function SharedAnswerPage({ slug, user, session, onRequireAuth, o
   const [friendError, setFriendError] = useState('');
   const [prompt, setPrompt] = useState(false);
   const [reload, setReload] = useState(0);
+  const promptRef = useRef(null);
+  const signUpRef = useRef(null);
+  // The prompt opens under the owner row: bring all of it above the phone tab
+  // bar (scroll-margin-bottom in shareAnswer.css) and put focus on Sign up.
+  useEffect(() => {
+    if (!prompt) return undefined;
+    const reduce = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    signUpRef.current?.focus({ preventScroll: true });
+    const frame = window.requestAnimationFrame(() => {
+      const card = promptRef.current?.getBoundingClientRect();
+      if (!card) return;
+      // Keep the whole card (its buttons above all) clear of the fixed tab bar, 16px gap.
+      const nav = document.querySelector('.ay-tabbar');
+      const navTop = nav && window.getComputedStyle(nav).position === 'fixed' ? nav.getBoundingClientRect().top : window.innerHeight;
+      const overlap = card.bottom - (navTop - 16);
+      if (overlap > 0) window.scrollBy({ top: overlap, behavior: reduce ? 'auto' : 'smooth' });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [prompt]);
   const token = session?.access_token && !session?.user?.is_anonymous ? session.access_token : null;
   const signedIn = Boolean(user && !user.is_anonymous);
 
@@ -210,11 +229,11 @@ export default function SharedAnswerPage({ slug, user, session, onRequireAuth, o
       {friendError && <p className="ay-sa__error" role="alert">{friendError}</p>}
 
       {prompt && !signedIn && (
-        <section className="ay-sa__prompt" role="dialog" aria-labelledby="ay-sa-prompt-title">
+        <section ref={promptRef} className="ay-sa__prompt" role="dialog" aria-labelledby="ay-sa-prompt-title">
           <p id="ay-sa-prompt-title" className="ay-sa__prompt-title">{name ? `Sign up to add ${name} as a friend` : 'Sign up to add this friend'}</p>
           <p className="ay-sa__prompt-line">We’ll send the request as soon as you’re in.</p>
           <div className="ay-sa__row">
-            <button type="button" className="ay-sa__primary" onClick={() => onRequireAuth?.('signup')}>Sign up</button>
+            <button ref={signUpRef} type="button" className="ay-sa__primary" onClick={() => onRequireAuth?.('signup')}>Sign up</button>
             <button type="button" className="ay-sa__ghost" onClick={() => onRequireAuth?.('signin')}>Sign in</button>
           </div>
           <button type="button" className="ay-sa__link" onClick={() => { clearPendingFriend(); setPrompt(false); }}>Not now</button>
