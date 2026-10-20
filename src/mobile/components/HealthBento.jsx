@@ -1,6 +1,6 @@
 import { formatMetric, isFlat, trendWord } from '../../health/dashboard.js';
 import { CycleRing } from './HealthChart.jsx';
-import { estimatePhase } from '../../health/phase.js';
+import { estimatePhase, PHASES } from '../../health/phase.js';
 
 /**
  * The Summary view of Your health as a bento grid (inspired by clinical
@@ -83,6 +83,14 @@ function stats(c) {
   ];
 }
 
+function vsUsual(c) {
+  if (c.delta == null || c.usual == null) return 'Building your usual, about two weeks of data';
+  if (isFlat(c.metric, c.delta)) return 'Right around your usual';
+  const amt = c.metric === 'steps' ? Math.abs(Math.round(c.delta)).toLocaleString('en-US') : formatMetric(c.metric, Math.abs(c.delta));
+  const more = c.metric === 'sleep_minutes' ? (c.delta > 0 ? 'more' : 'less') : c.metric === 'steps' ? (c.delta > 0 ? 'more' : 'fewer') : (c.delta > 0 ? 'higher' : 'lower');
+  return `${amt} ${more} than your usual`;
+}
+
 function MetricCard({ chart, tone, wide, onOpen }) {
   const big = chart.metric === 'steps' ? Math.round(chart.week ?? chart.avg).toLocaleString('en-US') : formatMetric(chart.metric, chart.week ?? chart.avg);
   const word = trendWord(chart.metric, chart.delta);
@@ -94,6 +102,7 @@ function MetricCard({ chart, tone, wide, onOpen }) {
         <span className="ay-bn-label">{chart.label}</span>
         <span className="ay-bn-big">{big}</span>
         <span className="ay-bn-per">{per}</span>
+        <span className="ay-bn-vs">{vsUsual(chart)}</span>
         <span className="ay-bn-stats">
           {stats(chart).map((s) => <span key={s.k}><b>{s.v}</b><small>{s.k}</small></span>)}
         </span>
@@ -123,6 +132,34 @@ function CycleCard({ cycle, estimate, onOpen }) {
         <CycleRing cycleDay={cycle.cycleDay} avgLength={cycle.avgLength} periodLength={cycle.periodLength} windowStart={phase?.windowStart} windowEnd={phase?.windowEnd} />
       </span>
     </button>
+  );
+}
+
+/** The four phases across her cycle, with today marked and what this phase can mean. */
+function PhaseStrip({ cycle }) {
+  const phase = estimatePhase(cycle);
+  if (!phase?.windowStart || !cycle.avgLength) return null;
+  const L = Math.max(cycle.avgLength, cycle.cycleDay);
+  const seg = [
+    { id: 'period', from: 1, to: Math.max(1, cycle.periodLength || 5) },
+    { id: 'follicular', from: Math.max(1, cycle.periodLength || 5) + 1, to: phase.windowStart - 1 },
+    { id: 'ovulation', from: phase.windowStart, to: phase.windowEnd },
+    { id: 'luteal', from: phase.windowEnd + 1, to: L },
+  ].filter((x) => x.to >= x.from);
+  const short = { period: 'Period', follicular: 'Follicular', ovulation: 'Ovulation', luteal: 'Luteal' };
+  return (
+    <section className="ay-bn-phases" aria-label="Your cycle phases">
+      <div className="ay-bn-phasebar">
+        {seg.map((x) => (
+          <span key={x.id} className={`is-${x.id}${x.id === phase.id ? ' is-now' : ''}`} style={{ flex: x.to - x.from + 1 }} title={short[x.id]} />
+        ))}
+        <i className="ay-bn-today" style={{ left: `${((cycle.cycleDay - 0.5) / L) * 100}%` }} aria-hidden="true"><b>Today, day {cycle.cycleDay}</b></i>
+      </div>
+      <ul className="ay-bn-legend">
+        {seg.map((x) => <li key={x.id} className={`is-${x.id}${x.id === phase.id ? ' is-now' : ''}`}><i aria-hidden="true" />{short[x.id]}<small>days {x.from}{x.to > x.from ? `-${x.to}` : ''}</small></li>)}
+      </ul>
+      <p><b>{PHASES[phase.id]?.name}.</b> {PHASES[phase.id]?.what}</p>
+    </section>
   );
 }
 
@@ -163,6 +200,7 @@ export default function HealthBento({ name, week, cycle, estimate, pinnedCharts,
       </header>
 
       {cycle?.cycleDay && <CycleCard cycle={cycle} estimate={estimate} onOpen={() => onOpenArea('cycle')} />}
+      {cycle?.cycleDay && <PhaseStrip cycle={cycle} />}
 
       {pinnedCharts.length > 0 && (
         <ul className="ay-bn-grid" aria-label="Your pinned numbers">
