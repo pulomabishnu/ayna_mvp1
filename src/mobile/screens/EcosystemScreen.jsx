@@ -231,7 +231,7 @@ export default function EcosystemScreen({
           {shown.length > 0 && <div className="ay-shelf2-row">{shown.map((product) => section.products.length
             ? <ProductCard key={product.id} product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} isSaved={!!savedProducts[product.id]} onToggleSaved={onToggleSaved} />
             : <div className="ay-shelf2-pick" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}>+ Add to Ecosystem</button></div>)}
-            <button type="button" className="ay-shelf2-slot" onClick={() => onBrowse?.(shortNeedLabel(section.label))}><span aria-hidden="true">+</span>Add a product</button>
+            <button type="button" className="ay-shelf2-slot" onClick={() => onBrowse?.(shortNeedLabel(section.label))} aria-label={`Add a product to ${section.label}`}><span aria-hidden="true">+</span>Add</button>
           </div>}
           {shelf?.care && !careFirst && <details className="ay-shelf-care"><summary>Care options for {section.phrase}</summary><CareLinks care={shelf.care} /></details>}
         </section>;
