@@ -6,6 +6,7 @@ import '../styles/verify-people.css';
 import '../styles/site-footer.css';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { installReferralCapture } from '../utils/badges';
+import { WEFUNDER_URL, trackInvestClick } from '../data/invest';
 
 /**
  * Site footer: brand blurb + Explore / Company / Get in touch columns, a
@@ -125,6 +126,7 @@ export default function SiteFooter({
         <FooterColumn title="Company">
           <a className="ay-footer-link" href="/about" onClick={(e) => footerGo(e, onViewAbout)}>About</a>
           <a className="ay-footer-link" href="/partners" onClick={(e) => footerGo(e, onViewWaitlist)}>Partner brands</a>
+          <a className="ay-footer-link" href={WEFUNDER_URL} target="_blank" rel="noopener" onClick={() => trackInvestClick('footer')}>Invest in ayna <span aria-hidden="true">↗</span><span className="sr-only"> (opens Wefunder in a new tab)</span></a>
         </FooterColumn>
 
         <FooterColumn title="Get in touch">
