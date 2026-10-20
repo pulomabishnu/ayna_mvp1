@@ -286,3 +286,8 @@ html body .app-container main .ay-wh.ay-wh .ay-wh-lockpanel h2 { max-width: 22ch
   .app-container .ay-wh.ay-wh .ay-wh-lockjoin .ay-wh-lockactions { flex-direction: column; align-items: stretch; }
 }
 .app-container .ay-wh.ay-wh .ay-wh-pro { margin-bottom: -4px; padding: 4px 12px; border: 1.5px solid #3e2723; border-radius: 99px; font: 600 var(--ay-fs-caption)/1.2 var(--ay-sans); color: #3e2723; text-transform: none; letter-spacing: 0; }
+/* Phone width: "Connected apps" stays on one line; the phase legend is two columns so "days 15-27" never breaks. */
+.app-container .ay-wh.ay-wh .ay-wh-btn.is-small { white-space: nowrap; flex: none; }
+@media (max-width: 639px) {
+  .app-container .ay-wh.ay-wh .ay-bn-legend { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 12px; }
+}

@@ -115,7 +115,7 @@ export default function AskAynaModal({
     e.preventDefault();
     const msg = input.trim();
     if (!msg || sending) return;
-    if (!session?.access_token) { onRequireAuth?.('Ask Ayna'); return; }
+    if (!session?.access_token) { onRequireAuth?.('Ask ayna'); return; }
     setInput('');
     setSendError('');
     const userMsg = { role: 'user', text: msg };
@@ -161,7 +161,7 @@ export default function AskAynaModal({
       onChatHistoryUpdate?.(newMessages);
     } catch (err) {
       if (err?.code === 'not_signed_in') {
-        onRequireAuth?.('Ask Ayna');
+        onRequireAuth?.('Ask ayna');
       } else if (err?.code === 'weekly_limit_reached') {
         setSendError("You've used your free chats for this week. They reset weekly.");
       } else {
@@ -279,9 +279,10 @@ export default function AskAynaModal({
       >
         <input
           type="text"
+          className="ay-ask-input"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={session === undefined ? 'Loading…' : 'Ask Ayna anything…'}
+          placeholder={session === undefined ? 'Loading…' : 'Ask ayna anything…'}
           disabled={sending || session === undefined}
           style={{
             flex: 1,

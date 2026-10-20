@@ -93,7 +93,6 @@
 }
 
 .ayna-mobile a { color: var(--ayna-brown); text-decoration: none; }
-.ayna-mobile a:hover { color: #8A4F30; }
 
 .ayna-mobile .font-serif { font-family: var(--ayna-font-display); }
 .ayna-mobile .font-sans { font-family: var(--ayna-font-ui); }

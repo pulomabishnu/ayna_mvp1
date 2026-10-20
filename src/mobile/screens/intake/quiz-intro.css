@@ -72,7 +72,7 @@
 
 /* mock question + i */
 .qi-mock-q { position: absolute; top: 16px; left: 16px; right: 16px; height: 40px; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; padding: 0 6px 0 12px; border: 1.5px solid var(--qi-dark); border-radius: 12px; background: var(--qi-light); }
-.qi-mock-title { font: 800 16px/1 'Bricolage Grotesque', 'DM Sans', sans-serif; letter-spacing: -.03em; }
+.qi-mock-title { font: 600 15px/1 'DM Sans', system-ui, sans-serif; letter-spacing: 0; }
 .qi-mock-i { width: 28px; height: 28px; display: grid; place-items: center; border: 1.5px solid var(--qi-dark); border-radius: 50%; background: var(--qi-light); color: var(--qi-dark); font: italic 500 13px/1 'DM Sans', system-ui, sans-serif; animation: qi-i var(--qi-dur) linear both; }
 
 /* mock answer chip */
@@ -88,7 +88,7 @@
 
 /* finger + press ring */
 .qi-finger { position: absolute; width: 48px; height: 48px; margin: -24px 0 0 -24px; display: grid; place-items: center; pointer-events: none; }
-.qi-finger i { width: 22px; height: 22px; border: 2px solid var(--qi-dark); border-radius: 50%; background: rgba(255, 252, 245, .7); box-shadow: 0 0 0 4px rgba(62, 39, 35, .14); }
+.qi-finger i { width: 22px; height: 22px; border: 2px solid var(--qi-dark); border-radius: 50%; background: rgba(255, 237, 172, .7); box-shadow: 0 0 0 4px rgba(62, 39, 35, .14); }
 .qi-finger--tap { top: 36px; right: 4px; animation: qi-tap var(--qi-dur) linear both; }
 .qi-finger--hold { top: 36px; left: 72px; animation: qi-hold var(--qi-dur) linear both; }
 .qi-finger svg { position: absolute; inset: 0; width: 48px; height: 48px; rotate: -90deg; fill: none; stroke-width: 3; }

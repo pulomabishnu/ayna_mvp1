@@ -357,12 +357,18 @@ if (Capacitor.isNativePlatform()) {
   }
 }
 
+// While the app code loads: the page colour of the theme she picked (espresso in dark,
+// butter in light), so there is no off-white flash before the first screen.
+function mobileLoadingBackground() {
+  try { return localStorage.getItem('ayna_mobile_theme_v1') === 'dark' ? '#3e2723' : '#ffedac'; } catch { return '#ffedac'; }
+}
+
 installNoEmDash(document.body)
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ErrorBoundary>
       {isMobilePreview ? (
-        <React.Suspense fallback={<div style={{ minHeight: '100vh', background: '#fffcf5' }} />}>
+        <React.Suspense fallback={<div style={{ minHeight: '100vh', background: mobileLoadingBackground() }} />}>
           <MobileApp />
         </React.Suspense>
       ) : <App />}

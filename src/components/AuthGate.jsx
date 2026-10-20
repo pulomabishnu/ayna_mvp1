@@ -541,7 +541,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
     justifyContent: 'center',
     overflowY: 'auto',
     // Ink at 60% over everything, header included (audit AU04).
-    background: 'rgba(29, 26, 43, 0.6)',
+    background: 'rgba(62, 39, 35, 0.6)',
     zIndex: 1700,
     padding: '96px 16px 24px',
   } : embedded ? {
@@ -1093,7 +1093,7 @@ export function ConsentGate({ onAgreed, onDecline }) {
       aria-labelledby="ay-consent-gate-title"
       style={{
         position: 'fixed', inset: 0, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', overflowY: 'auto',
-        background: 'rgba(29, 26, 43, 0.6)', zIndex: 1710, padding: '96px 16px 24px',
+        background: 'rgba(62, 39, 35, 0.6)', zIndex: 1710, padding: '96px 16px 24px',
       }}
     >
       <div className="ay-auth-card" style={styles.card} ref={gateRef}>
@@ -1239,9 +1239,9 @@ const styles = {
   },
   configWarning: {
     fontSize: 12.5,
-    color: '#92400E',
-    background: '#FEF3C7',
-    border: '1px solid #FDE68A',
+    color: '#3e2723',
+    background: 'rgba(247, 186, 221, 0.45)',
+    border: '1px solid #f7badd',
     borderRadius: 'var(--radius-sm)',
     padding: '0.6rem 0.75rem',
     lineHeight: 1.45,

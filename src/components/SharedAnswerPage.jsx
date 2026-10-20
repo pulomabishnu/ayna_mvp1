@@ -159,36 +159,36 @@ export default function SharedAnswerPage({ slug, user, session, onRequireAuth, o
   };
 
   if (state.status === 'loading') {
-    return <main className="ay-sa" aria-busy="true"><div className="ay-sa__skeleton" /><div className="ay-sa__skeleton is-short" /></main>;
+    return <div className="ay-sa" aria-busy="true"><div className="ay-sa__skeleton" /><div className="ay-sa__skeleton is-short" /></div>;
   }
 
   if (state.status === 'gone') {
     return (
-      <main className="ay-sa ay-sa--gone">
+      <div className="ay-sa ay-sa--gone">
         <h1 className="ay-sa__title">This answer isn’t shared anymore.</h1>
         <p className="ay-sa__lede">The person who shared it turned the link off.</p>
         <div className="ay-sa__ctas">
           <button type="button" className="ay-sa__primary" onClick={onAskOwn}>Ask ayna your own question</button>
           <a className="ay-sa__link" href="/" onClick={(e) => { e.preventDefault(); onHome?.(); }}>Go to ayna</a>
         </div>
-      </main>
+      </div>
     );
   }
 
   if (state.status === 'error') {
     return (
-      <main className="ay-sa ay-sa--gone">
+      <div className="ay-sa ay-sa--gone">
         <h1 className="ay-sa__title">Couldn’t load this answer</h1>
         <p className="ay-sa__lede">Check your connection and try again.</p>
         <div className="ay-sa__ctas"><button type="button" className="ay-sa__primary" onClick={() => setReload((n) => n + 1)}>Try again</button></div>
-      </main>
+      </div>
     );
   }
 
   const sources = Array.isArray(answer.sources) ? answer.sources : [];
   const friendLabel = FRIEND_LABEL[friend.state] || 'Add friend';
   return (
-    <main className="ay-sa">
+    <div className="ay-sa">
       <h1 className="ay-sa__title">{title}</h1>
 
       <section className="ay-sa__qa" aria-label="Question and answer">
@@ -243,6 +243,6 @@ export default function SharedAnswerPage({ slug, user, session, onRequireAuth, o
       <div className="ay-sa__ctas">
         <button type="button" className="ay-sa__primary is-feature" onClick={onAskOwn}>Ask ayna your own question</button>
       </div>
-    </main>
+    </div>
   );
 }

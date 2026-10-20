@@ -39,40 +39,40 @@
 .app-container:not([data-theme='dark'])[data-view='shared-answer'] { --ay-page: #ffedac; }
 .ay-sa {
   box-sizing: border-box; width: 100%; max-width: 680px; margin: 0 auto;
-  padding: 32px 16px calc(48px + var(--sa-nav)); color: var(--sa-ink); font-family: 'DM Sans', system-ui, sans-serif;
+  padding: 32px 16px 48px; /* the page's own main already clears the phone tab bar */ color: var(--sa-ink); font: 400 var(--ay-fs-body)/1.55 var(--ay-sans);
 }
 .ay-sa__title {
-  margin: 0 0 24px; font: 400 30px/1.12 'DM Serif Display', Georgia, serif; letter-spacing: -0.01em; color: var(--sa-ink);
+  margin: 0 0 24px; font: 400 var(--ay-fs-title)/1.15 var(--ay-serif); letter-spacing: -0.01em; color: var(--sa-ink);
 }
-.ay-sa__lede { margin: -12px 0 24px; font-size: 15px; line-height: 1.5; }
+.ay-sa__lede { margin: -12px 0 24px; font: 400 var(--ay-fs-body)/1.55 var(--ay-sans); }
 .ay-sa__qa { padding: 0 0 24px; border-bottom: 1px solid var(--sa-line); }
 .ay-sa__question {
   margin: 0 0 16px; padding: 12px 16px; border-radius: 22px 22px 22px 6px;
-  background: var(--sa-ink); color: var(--sa-bg); font-size: 16px; font-weight: 600; line-height: 1.4;
+  background: var(--sa-ink); color: var(--sa-bg); font: 600 var(--ay-fs-card)/1.4 var(--ay-sans);
   width: fit-content; max-width: 100%; overflow-wrap: anywhere;
 }
-.ay-sa__answer { font-size: 15px; line-height: 1.6; overflow-wrap: anywhere; }
+.ay-sa__answer { font: 400 var(--ay-fs-body)/1.55 var(--ay-sans); overflow-wrap: anywhere; }
 .ay-sa__answer p { margin: 0 0 12px; }
 .ay-sa__answer ul, .ay-sa__answer ol { margin: 0 0 12px; padding-left: 20px; }
-.ay-sa .ay-sa__sources h2, html body .app-container.app-container .ay-sa .ay-sa__sources h2 { margin: 16px 0 8px; font: 600 15px/1.3 'DM Sans', system-ui, sans-serif !important; letter-spacing: 0 !important; color: inherit; }
-.ay-sa__sources ol { margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.5; }
+.ay-sa .ay-sa__sources h2, html body .app-container.app-container .ay-sa .ay-sa__sources h2 { margin: 16px 0 8px; font: 600 var(--ay-fs-secondary)/1.3 var(--ay-sans) !important; letter-spacing: 0 !important; color: inherit; }
+.ay-sa__sources ol { margin: 0; padding-left: 20px; font: 500 var(--ay-fs-secondary)/1.5 var(--ay-sans); }
 .ay-sa__sources a { color: inherit; text-underline-offset: 3px; overflow-wrap: anywhere; }
-.ay-sa__disclaimer { margin: 16px 0 0; font-size: 12px; opacity: 0.8; }
+.ay-sa__disclaimer { margin: 16px 0 0; font: 500 var(--ay-fs-caption)/1.4 var(--ay-sans); opacity: 0.8; }
 
 .ay-sa__owner { display: flex; align-items: center; gap: 12px; padding: 24px 0 0; }
 .ay-sa__avatar {
   flex: none; width: 48px; height: 48px; border-radius: 50%; overflow: hidden;
   display: grid; place-items: center; background: var(--sa-pink); color: #3e2723;
-  font: 400 22px/1 'DM Serif Display', Georgia, serif;
+  font: 400 22px/1 var(--ay-serif);
 }
 .ay-sa__avatar img { width: 100%; height: 100%; object-fit: cover; }
 .ay-sa__who { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.ay-sa__who strong { font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ay-sa__who span { font-size: 13px; opacity: 0.8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ay-sa__who strong { font: 600 var(--ay-fs-card)/1.3 var(--ay-sans); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ay-sa__who span { font: 500 var(--ay-fs-secondary)/1.3 var(--ay-sans); opacity: 0.8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .ay-sa__primary, .ay-sa__ghost {
   min-height: 44px; padding: 0 20px; border-radius: 99px; cursor: pointer;
-  font: 600 15px/1 'DM Sans', system-ui, sans-serif; border: 2px solid var(--sa-ink);
+  font: 600 var(--ay-fs-body)/1 var(--ay-sans); border: 2px solid var(--sa-ink);
 }
 .ay-sa__primary { background: var(--sa-ink); color: var(--sa-bg); }
 .ay-sa__primary.is-feature { box-shadow: 3px 3px 0 var(--sa-pink); }
@@ -82,9 +82,9 @@
 .ay-sa__primary:active, .ay-sa__ghost:active:not(:disabled) { transform: translateY(1px); }
 .ay-sa__link {
   background: none; border: 0; padding: 12px 0; color: var(--sa-ink); cursor: pointer;
-  font: 600 15px/1 'DM Sans', system-ui, sans-serif; text-decoration: underline; text-underline-offset: 3px;
+  font: 600 var(--ay-fs-body)/1 var(--ay-sans); text-decoration: underline; text-underline-offset: 3px;
 }
-.ay-sa__error { margin: 12px 0 0; font-size: 13px; }
+.ay-sa__error { margin: 12px 0 0; font: 500 var(--ay-fs-secondary)/1.4 var(--ay-sans); }
 
 .ay-sa__prompt {
   margin: 16px 0 0; padding: 18px; border-radius: 24px; background: var(--sa-pink); color: #3e2723;
@@ -94,8 +94,8 @@
 .ay-sa__prompt .ay-sa__primary { background: #3e2723; color: #ffedac; border-color: #3e2723; }
 .ay-sa__prompt .ay-sa__ghost { color: #3e2723; border-color: #3e2723; }
 .ay-sa__prompt .ay-sa__link { color: #3e2723; padding-bottom: 0; }
-.ay-sa__prompt-title, html body .app-container.app-container .ay-sa .ay-sa__prompt-title { margin: 0 0 4px; font: 400 22px/1.2 'DM Serif Display', Georgia, serif !important; letter-spacing: -0.01em !important; }
-.ay-sa__prompt-line { margin: 0 0 16px; font-size: 15px; }
+.ay-sa__prompt-title, html body .app-container.app-container .ay-sa .ay-sa__prompt-title { margin: 0 0 4px; font: 400 var(--ay-fs-section)/1.15 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
+.ay-sa__prompt-line { margin: 0 0 16px; font: 400 var(--ay-fs-body)/1.55 var(--ay-sans); }
 .ay-sa__row { display: flex; flex-wrap: wrap; gap: 12px; }
 
 .ay-sa__ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 32px; }
@@ -105,5 +105,4 @@
 
 @media (min-width: 900px) {
   .ay-sa { padding-top: 48px; }
-  .ay-sa__title { font-size: 34px; }
 }

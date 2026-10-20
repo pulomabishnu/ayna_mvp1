@@ -823,7 +823,7 @@ html:not([data-ay-theme='dark']) body:has(.app-container[data-view='community'],
 .app-container:not([data-theme='dark']) .wq-progress { display: flex; gap: 4px; padding: 7px 8px !important; border-radius: 3px; background: #3e2723 !important; position: relative; }
 .app-container:not([data-theme='dark']) .wq-progress::before, .app-container:not([data-theme='dark']) .wq-progress::after { content: ''; position: absolute; left: 4px; right: 4px; height: 3px; background: repeating-linear-gradient(90deg, #ffedac 0 6px, transparent 6px 12px); }
 .app-container:not([data-theme='dark']) .wq-progress::before { top: 1px; } .app-container:not([data-theme='dark']) .wq-progress::after { bottom: 1px; }
-.app-container:not([data-theme='dark']) .wq-progress span { flex: 1; height: 12px !important; border: 0 !important; border-radius: 1px !important; background: rgba(255, 248, 220, .18) !important; transition: background .3s; }
+.app-container:not([data-theme='dark']) .wq-progress span { flex: 1; height: 12px !important; border: 0 !important; border-radius: 1px !important; background: rgba(255, 237, 172, .18) !important; transition: background .3s; }
 .app-container:not([data-theme='dark']) .wq-progress span.is-done { background: #f7badd !important; }
 .app-container:not([data-theme='dark']) .wq-progress span.is-now { background: #ffedac !important; animation: wqBlink 1.4s ease-in-out infinite; }
 @keyframes wqBlink { 50% { opacity: .55; } }
@@ -5467,7 +5467,8 @@ html body .app-container.app-container.app-container.app-container.app-container
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst--open .lst__tabs button.is-on { background: var(--lst-fg) !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst--open .lst__tabs button.is-on span { color: var(--band, #f7badd) !important; opacity: 1 !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst--open .lst__tabs button span { font: 600 var(--ay-fs-secondary)/1 var(--ay-sans) !important; color: var(--lst-fg); }
-html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst--open .lst__tabs i { height: 3px !important; background: rgba(127,127,127,.25) !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst--open .lst__tabs i { height: 3px !important; background: rgba(62, 39, 35, .2) !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst--open.is-ink .lst__tabs i { background: rgba(255, 237, 172, .25) !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst--open .lst__tabs button.is-on i b { background: var(--band, #f7badd) !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst-band.is-butter .lst { --lst-bg: #ffedac; } html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst-band.is-sky .lst { --lst-bg: #769ebe; --lst-fg: #3e2723; } html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst-band.is-rose .lst { --lst-bg: #f7badd; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst--open .lst__slide { height: 360px !important; gap: 40px; align-items: center; }
@@ -5718,3 +5719,14 @@ html body .app-container.app-container.app-container.app-container.app-container
 .app-container { line-height: 1.55; }
 .app-container :where(b, strong) { font-weight: 600; }
 .app-container :where(h1, h2, h3, h4, h5, h6) :where(b, strong) { font-weight: inherit; }
+/* Shop card price line: price and size share one baseline with a gap (not a margin), so when the
+   note wraps under a long price ("Often covered") it lines up with the text above instead of indenting. */
+html body .app-container:not([data-theme='dark']) .ayna-browse-card .ayna-discover-card__price { column-gap: 6px; }
+html body .app-container:not([data-theme='dark']) .ayna-browse-card .ayna-discover-card__price small { margin-left: 0 !important; }
+/* Library list tiles on phones: a little less side padding so one-word labels ("Menopause") fit the tile. */
+@media (max-width: 767px) {
+  html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-cover { padding: 10px 3px !important; }
+  html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-cover strong { letter-spacing: -0.01em !important; overflow-wrap: normal; }
+}
+/* Phone tab bar: a long label ("Community" in 600 when selected) gets its full width instead of spilling. */
+html body .app-container .ay-tabbar.is-six { grid-template-columns: repeat(6, minmax(max-content, 1fr)) !important; }

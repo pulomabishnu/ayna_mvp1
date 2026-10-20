@@ -608,3 +608,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-agree.ay-check-invalid input:checked { background-color: #3e2723 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-card input.is-invalid { background: #f7badd !important; border: 2px solid #3e2723 !important; color: #3e2723 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-card .ay-inline-err { color: var(--ayna-heading, #3e2723) !important; }
+/* Read covers: small covers are 17px card titles in DM Sans 600 (serif is never under 22px);
+   the big cover on a read is a serif 400 heading, not a faux-bold serif. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-app-cover strong { font-family: var(--f-ui) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ay-app-cover.is-hero, .ay-app-readcard.is-full .ay-app-cover) strong { font: 400 28px/1.15 var(--f-display) !important; letter-spacing: -.01em !important; }
