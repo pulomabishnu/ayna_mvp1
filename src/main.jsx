@@ -323,6 +323,25 @@ if (isMobilePreview) {
   } catch { /* fonts are progressive */ }
 }
 
+// Native app: shop and article links open in an in-app browser sheet
+// (SFSafariViewController / Custom Tabs) instead of leaving ayna, so people
+// don't lose their place (focus group, Oct 19). Done once, for every external
+// link, so no screen can forget it.
+if (Capacitor.isNativePlatform()) {
+  document.addEventListener('click', (event) => {
+    if (event.defaultPrevented || event.button !== 0) return;
+    const a = event.target?.closest?.('a[href]');
+    if (!a) return;
+    let url;
+    try { url = new URL(a.getAttribute('href'), window.location.href); } catch { return; }
+    if (!/^https?:$/.test(url.protocol) || url.origin === window.location.origin) return;
+    event.preventDefault();
+    import('@capacitor/browser')
+      .then(({ Browser }) => Browser.open({ url: url.toString(), presentationStyle: 'popover' }))
+      .catch(() => { window.open(url.toString(), '_blank'); });
+  }, true);
+}
+
 // Lock pinch-zoom in the native app only. The WKWebView has no browser chrome
 // to reset an accidental pinch, so once someone zooms in there is no way
 // back to 100% and the whole layout stays broken, this is the "you can
