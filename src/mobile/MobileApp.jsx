@@ -31,6 +31,8 @@ import { fetchNotificationPreferences } from './utils/notificationPreferencesApi
 import { ECOSYSTEM_AREAS as AREA_LABELS } from './data/ecosystemAreas.js';
 import { getNextArticle } from './utils/nextArticle.js';
 import { INTAKE_DRAFT_KEY, getIntakeSteps, isStepAnswered, reconstructIntakeFromSnapshot } from './data/intakeModel.js';
+import { clearIntakeDraft, readDraftProgress } from './data/quizDraftProgress.js';
+import FinishQuizCard from '../components/FinishQuizCard.jsx';
 import MobileTabBar from './components/MobileTabBar.jsx';
 import AskAynaModal from './components/AskAynaModal.jsx';
 import ProfileFlow, { AboutAynaScreen } from './screens/profile/ProfileFlow.jsx';
@@ -838,7 +840,31 @@ export default function MobileApp() {
     return { playlist, added, missed: productIds.length - added };
   };
 
+  // An unfinished quiz (draft saved, no finished answers yet): where she
+  // stands, for the "Finish your quiz" card. Drafts live on this device.
+  const quizDraft = hasIntakeDraft && !lastQuizAnswers?.fullHealthIntake && screen !== 'quiz' ? readDraftProgress() : null;
+  const resumeQuiz = () => {
+    setOverlay(null);
+    setIntakeMode(hasEcosystem ? 'add' : 'new');
+    setIntakeAtOptional(false);
+    setEditingHealthProfile(false);
+    setResumeQuizDraft(true);
+    setScreen('quiz');
+  };
+  const startQuizOver = () => {
+    clearIntakeDraft();
+    setHasIntakeDraft(false);
+    setOverlay(null);
+    setIntakeMode(hasEcosystem ? 'add' : 'new');
+    setIntakeAtOptional(false);
+    setEditingHealthProfile(false);
+    setResumeQuizDraft(false);
+    setScreen('quiz');
+  };
   const nav = {
+    quizDraft,
+    onResumeQuiz: resumeQuiz,
+    onStartOverQuiz: startQuizOver,
     // Night mode is a persistent user preference (Preferences screen), it
     // stays on everywhere until turned off there, so navigation must never
     // force it back to light.
@@ -1055,7 +1081,7 @@ export default function MobileApp() {
         hasIntakeDraft={hasIntakeDraft && !hasEcosystem}
         onDraftChange={setHasIntakeDraft}
         initialSnapshot={editingHealthProfile && !resumeQuizDraft ? lastQuizAnswers?.fullHealthIntake || null : null}
-        startAtBeginning={intakeMode === 'add' && !resumeQuizDraft && !intakeAtOptional}
+        startAtBeginning={intakeMode === 'add' && !resumeQuizDraft && !intakeAtOptional && editingHealthProfile}
         startAtOptional={intakeAtOptional && !resumeQuizDraft}
         introEnabled={!resumeQuizDraft && !intakeAtOptional}
         revealStartAtEnd={revealAtEnd}
@@ -1105,7 +1131,8 @@ export default function MobileApp() {
             <button type="button" className="ayna-profile-auth-close" aria-label="Close" onClick={() => { setOverlay(null); setAuthPrompt(null); authResumeRef.current = null; }}>×</button>
             <h2 id="ayna-profile-auth-title">{authPrompt ? `Sign in for ${authPrompt.feature}` : 'Sign in to ayna'}</h2>
             <button type="button" className="ayna-profile-auth-primary" onClick={() => openAuth('signin', !!authPrompt)}>Sign in</button>
-            <button type="button" className="ayna-profile-auth-new" onClick={startEcosystemFlow}>{hasEcosystem ? <>New here? <b>Save your Ecosystem to an account</b></> : <>Don’t have an account? <b>Build your Ecosystem</b></>}</button>
+            {!authPrompt && quizDraft && <FinishQuizCard progress={quizDraft} onContinue={resumeQuiz} onStartOver={startQuizOver} />}
+            {!(quizDraft && !authPrompt) && <button type="button" className="ayna-profile-auth-new" onClick={startEcosystemFlow}>{hasEcosystem ? <>New here? <b>Save your Ecosystem to an account</b></> : <>Don’t have an account? <b>Build your Ecosystem</b></>}</button>}
           </section>
         </div>
       )}
@@ -1205,6 +1232,9 @@ export default function MobileApp() {
           textSizeIndex={textSizeIndex}
           onTextSizeChange={setTextSizeIndex}
           onEditProfile={() => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); }}
+          quizDraft={quizDraft}
+          onResumeQuiz={resumeQuiz}
+          onStartOverQuiz={startQuizOver}
           onAddGoal={handleAddGoal}
           onOpenRoutine={() => { setEcoTab('dashboard'); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
           onOpenMonthlyCheckin={() => setScreen('checkin')}

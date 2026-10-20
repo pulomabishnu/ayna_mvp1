@@ -4,7 +4,7 @@ import { saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore.js';
 import { defineOption } from '../mobile/data/glossary.js';
 import {
   ALLERGY_STATUS, AVOID_LABELS, CHECKPOINT_STEP, LIFE_STAGE_EXCLUSIVE, MEDICATION_STATUS, URGENT_STATUS,
-  firstUnansweredStepId, isStepAnswered, markSkipped, splitIntakeSteps, toggleLifeStageSelection,
+  firstOptionalResumeStepId, firstUnansweredStepId, isStepAnswered, markSkipped, splitIntakeSteps, toggleLifeStageSelection,
   ALLERGIES, AVOID_GROUPS, AVOID_INGREDIENTS, AVOID_PAIRS, BRAND_OPENNESS, BRAND_SUGGESTIONS, BREASTFEEDING_STATUS, CATALOG_PRODUCT_NAMES,
   CONDITIONS, EMPTY, FOLLOWUP_QUESTIONS, FREE_TEXT_PROMPTS, FSA_HSA, INTAKE_DRAFT_KEY, LARGE_PURCHASE_FREQUENCY, LIFE_STAGES,
   LIFE_STAGE_LABELS, LIFE_STAGE_VALUE_BY_LABEL, MEDICATION_SUGGESTIONS, MIDLIFE_LIFE_STAGES, PERIMENOPAUSE_LAST_PERIOD,
@@ -13,6 +13,7 @@ import {
   getLifeStages, isMinorAge, normalizeSuggestion, readIntakeDraft, reconstructIntakeFromSnapshot,
   requiredReady, asksBreastfeedingOnTiming, ttcDurationOptions, isValidUsZip,
 } from '../mobile/data/intakeModel.js';
+import { WEB_FOLLOWUP_STEP_IDS } from '../mobile/data/quizDraftProgress.js';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import { rankSearchOptions as rankedSuggestions, matchesSearchOption } from '../utils/search/index.js';
 import './WebIntake.css';
@@ -264,7 +265,7 @@ const TOPIC_SHORT = {
 // list the app uses.
 const CHECKPOINT = CHECKPOINT_STEP;
 
-const FOLLOWUP_STEP_IDS = new Set(['periodFlow', 'periodPain', 'utiFrequency', 'ttcDuration', 'postpartumTiming', 'pregnancyTrimester']);
+const FOLLOWUP_STEP_IDS = WEB_FOLLOWUP_STEP_IDS;
 // Q2 opens on the needs most people start with; "More topics" shows every group.
 const COMMON_NEEDS = ['Period product support', 'Cramps or period pain', 'Heavy periods', 'Vaginal dryness', 'Bladder leakage or incontinence', 'Trouble sleeping'];
 
@@ -283,12 +284,16 @@ function firstUnansweredStep(intake) {
   return id === 'lifeStage' ? 'age' : id;
 }
 
-export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot = null }) {
+export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot = null, startAtOptional = false }) {
   const [savedDraft] = useState(() => (initialSnapshot ? null : readIntakeDraft()));
   const [intake, setIntake] = useState(() => (savedDraft ? { ...EMPTY, ...savedDraft.intake } : reconstructIntakeFromSnapshot(initialSnapshot)));
   const [stepId, setStepId] = useState(() => {
     if (savedDraft?.stepId) return savedDraft.stepId === 'lifeStage' ? 'age' : savedDraft.stepId;
-    return initialSnapshot ? firstUnansweredStep(reconstructIntakeFromSnapshot(initialSnapshot)) : 'age';
+    if (!initialSnapshot) return 'age';
+    // "Make my matches more personal": the first optional question still open.
+    const resumed = reconstructIntakeFromSnapshot(initialSnapshot);
+    if (startAtOptional) { const id = firstOptionalResumeStepId(resumed); return id === 'lifeStage' ? 'age' : id; }
+    return firstUnansweredStep(resumed);
   });
   const [search, setSearch] = useState('');
   const [infoOpen, setInfoOpen] = useState(false);

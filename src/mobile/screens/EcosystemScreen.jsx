@@ -18,6 +18,7 @@ import HealthDashboard from '../components/HealthDashboard.jsx';
 import { budgetMax } from '../../health/plan.js';
 import { optionalProgress, reconstructIntakeFromSnapshot } from '../data/intakeModel.js';
 import '../eco-needs.css';
+import FinishQuizCard from '../../components/FinishQuizCard.jsx';
 
 const AREA_TONES = ['#F7BADD', '#769EBE', '#3E2723', '#F7BADD', '#769EBE', '#3E2723'];
 const MIN_SHELF_SCORE = 50;
@@ -49,6 +50,7 @@ export default function EcosystemScreen({
   onOpenHealthData, healthSummary = null, healthConnectedCount = 0,
   healthInsights = null, onAddGoal, ecoTab = 'products', onEcoTab, routineHave = {}, onToggleHave,
   onSavePlaylist, onOpenPlaylist, onConnectHealth, onRequireAuth, onPersonalize, lastQuizAnswers = null,
+  quizDraft = null, onResumeQuiz, onStartOverQuiz,
 }) {
   // Optional quiz questions still open (from her saved answers, even when
   // personalization is switched off).
@@ -173,8 +175,10 @@ export default function EcosystemScreen({
           <button type="button" className="ay-eco-replay" onClick={onReplayStory}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>Replay Wrapped</button>
         </div>
       )}
-      {!hasAnything && <EmptyState compact art="spark" tone="mint" title="No matches yet" body="Update your answers below or browse the shop." actionLabel="Shop" onAction={onBrowse} />}
-      {onRetake && <section className="ay-eco-personal" aria-labelledby="ay-eco-personal-title">
+      {!hasAnything && !quizDraft && <EmptyState compact art="spark" tone="mint" title="No matches yet" body="Update your answers below or browse the shop." actionLabel="Shop" onAction={onBrowse} />}
+      {/* One quiz card at a time: an unfinished quiz first, else the optional questions. */}
+      {quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
+      {onRetake && !quizDraft && <section className="ay-eco-personal" aria-labelledby="ay-eco-personal-title">
         {remainingOptional > 0 && <p className="ay-eco-personal__tag">Optional</p>}
         <h2 id="ay-eco-personal-title">{remainingOptional > 0 ? 'Make my matches more personal' : 'Your quiz answers'}</h2>
         <p>{remainingOptional > 0

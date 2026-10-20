@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
 import '../ecointro.css';
+import FinishQuizCard from '../../components/FinishQuizCard.jsx';
 
 // The three parts of the intake, in the order it asks them.
 const PARTS = [
@@ -66,7 +67,7 @@ function SlideToContinue({ onComplete, label = 'Continue', hint = 'slide' }) {
   </div>;
 }
 
-export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount, authUser, onOpenSaved, onBrowse, onGoCommunity, headerInitial = 'A', onOpenProfile, hasIntakeDraft = false }) {
+export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount, authUser, onOpenSaved, onBrowse, onGoCommunity, headerInitial = 'A', onOpenProfile, hasIntakeDraft = false, quizDraft = null, onResumeQuiz, onStartOverQuiz }) {
   return <main className="ayna-ecosystem-start ay-intro">
     <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
     <div className="ayna-ecosystem-start-scroll ay-intro-body">
@@ -84,9 +85,11 @@ export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount
         ))}
       </ol>
 
-      {/* Continue resumes the quiz draft where she left off (IntakeScreen reads it), or starts fresh. */}
+      {/* A saved draft gets the "Finish your quiz" card (exact step); otherwise the slider starts fresh. */}
       <div className="ayna-ecosystem-start-actions ay-intro-actions">
-        <SlideToContinue onComplete={onStartQuiz} label="Continue" hint={hasIntakeDraft ? 'where you left off' : 'slide to start'} />
+        {quizDraft && onResumeQuiz
+          ? <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} className="ay-intro-finish" />
+          : <SlideToContinue onComplete={onStartQuiz} label="Continue" hint={hasIntakeDraft ? 'where you left off' : 'slide to start'} />}
         {!authUser && <p className="ay-intro-signin">Already have an account? <button type="button" onClick={onAlreadyHaveAccount}>Sign in</button></p>}
       </div>
     </div>
