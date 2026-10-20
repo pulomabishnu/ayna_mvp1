@@ -9,6 +9,7 @@ import { getDailyFact } from '../data/welcomeSlides.js';
 import { formatPrice } from '../utils/formatPrice';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import LandingStories from './LandingStories';
+import { WEFUNDER_URL, INVEST_TERMS, TTW_DISCLAIMER, INVEST_RISK, trackInvestClick } from '../data/invest';
 import '../styles/landing-v2.css';
 
 /* First-visit landing, v2. One job per section, minimal words, one palette:
@@ -375,6 +376,30 @@ function Start({ onStartQuiz, onViewDiscovery }) {
   );
 }
 
+/* ---------- community round (Wefunder, testing the waters) ----------
+   Copy lives in src/data/invest.js. The disclaimer must stay with the button. */
+function Invest() {
+  const ref = useReveal();
+  return (
+    <section ref={ref} className="lv-sec lv-invest" aria-labelledby="lv-invest-title">
+      <div className="lv-invest__card">
+        <div className="lv-invest__copy">
+          <h2 id="lv-invest-title">Own a piece of <em>ayna</em>.</h2>
+          <p className="lv-invest__body">ayna is built with the women who use it. We're planning a community round on Wefunder so you can back what we're building. {INVEST_TERMS}</p>
+          <a className="lv-btn lv-btn--ink" href={WEFUNDER_URL} target="_blank" rel="noopener" onClick={() => trackInvestClick('landing')}>
+            Reserve your spot on Wefunder<span className="lv-sr"> (opens in a new tab)</span><Arrow />
+          </a>
+          <div className="lv-invest__legal">
+            <p>{TTW_DISCLAIMER}</p>
+            <p>{INVEST_RISK}</p>
+          </div>
+        </div>
+        <img className="lv-invest__img" src="/landing/pink-tile-shelf.webp" alt="A pink tiled bathroom ledge crowded with skincare bottles, a hairbrush and a hair dryer" loading="lazy" width="667" height="1000" />
+      </div>
+    </section>
+  );
+}
+
 /* Partner brands: the brown strip of names always runs; the pink
    "Brands we work with" label slides in when you hover (or focus) it. */
 function PartnersTop({ onViewWaitlist }) {
@@ -401,7 +426,7 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
         {/* Members: the same page, with their own cards under the hero and their top picks in place of the week's picks. */}
         {personal?.dashboard ? personalSlot : <PartnersTop onViewWaitlist={onViewWaitlist} />}
         {!personal?.dashboard && personalSlot}
-        {/* Page order (Ameera, Oct 16): picks, counter, shop by need, what's new, who we are, reads, how it works + start. */}
+        {/* Page order (Ameera, Oct 16): picks, counter, shop by need, what's new, who we are, reads, invest (Wefunder), how it works + start. */}
         <Trending onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={personal?.topPicks || null} />
         <Why paused={paused} />
         <ShopBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
@@ -411,6 +436,7 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
         <Purpose onViewAbout={onViewAbout} />
         <Reads onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
         {personalTail}
+        <Invest />
         {!(personal && personal.hasQuiz) && <Start onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />}
       </div>
     </div>
