@@ -61,13 +61,21 @@ export async function requestHealthAccess(categories) {
   if (!metrics.length) throw new Error('no_categories');
   const read = pluginTypesFor(metrics, platform);
   let granted = null;
+  const within = (p, ms, label) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error(`timeout:${label}`)), ms))]);
   if (read.length) {
-    const status = await Health.requestAuthorization({ read, write: [], requestHistoryAccess: platform === 'android' });
-    // Android reports real grants; iOS reports nothing useful for reads.
-    if (platform === 'android') granted = status?.readAuthorized || [];
+    try {
+      const status = await within(Health.requestAuthorization({ read, write: [], requestHistoryAccess: platform === 'android' }), 120000, 'health_sheet');
+      // Android reports real grants; iOS reports nothing useful for reads.
+      if (platform === 'android') granted = status?.readAuthorized || [];
+    } catch (err) {
+      console.warn('[ayna health] permission sheet', err?.message || err);
+      // iOS never tells apps whether reads were allowed, so a slow or odd answer
+      // here is not a reason to stop: reading just returns nothing for what she declined.
+      if (platform !== 'ios') throw err;
+    }
   }
   if (metrics.includes('menstrual_flow') && Capacitor.isPluginAvailable('AynaCycle')) {
-    await AynaCycle.requestAuthorization();
+    try { await within(AynaCycle.requestAuthorization(), 60000, 'cycle_sheet'); } catch (err) { console.warn('[ayna health] cycle permission', err?.message || err); }
   }
   return { asked: true, granted };
 }
