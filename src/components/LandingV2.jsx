@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import posthog from 'posthog-js';
+import { WEFUNDER_URL, MIN_INVESTMENT, TESTING_WATERS_NOTICE } from '../data/investRound';
 import { BASICS_PRODUCTS } from '../data/basicsProducts.js';
 import { productsForNeed } from './landingNeeds';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
@@ -144,6 +146,33 @@ function Purpose({ onViewAbout }) {
         <img src="/team/ayna-founders.jpg" alt="Puloma, Eliz and Ameera, ayna's founders, sitting together in Central Park" loading="lazy" width="1800" height="1198" />
         <figcaption className="lv-script">Puloma, Eliz &amp; Ameera</figcaption>
       </figure>
+    </section>
+  );
+}
+
+/* ---------- invest: Wefunder community round (Ameera, Oct 20) ----------
+   Testing-the-waters rules apply: no offering terms here (see data/investRound.js). */
+function Invest() {
+  const ref = useReveal();
+  const onClick = () => { try { posthog.capture('invest_cta_clicked', { location: 'landing' }); } catch { /* analytics never blocks */ } };
+  return (
+    <section ref={ref} id="invest" className="lv-sec lv-invest" aria-labelledby="lv-invest-title">
+      <div className="lv-invest__card lv-card">
+        <div className="lv-invest__copy">
+          <p className="lv-script">invest in ayna</p>
+          <h2 id="lv-invest-title">Own a piece of <em>ayna</em>.</h2>
+          <p>We&rsquo;re building ayna with a community of women who care about health. Join our community round on Wefunder.</p>
+          <ul className="lv-invest__perks">
+            <li><b>{MIN_INVESTMENT}</b><span>minimum investment</span></li>
+            <li><b>Free</b><span>ayna goodies</span></li>
+            <li><b>Perks</b><span>for investors</span></li>
+          </ul>
+          <a className="lv-btn lv-btn--ink" href={WEFUNDER_URL} target="_blank" rel="noopener noreferrer" onClick={onClick}>
+            Invest on Wefunder<Arrow /><span className="lv-sr"> (opens in a new tab)</span>
+          </a>
+        </div>
+        <p className="lv-invest__legal">{TESTING_WATERS_NOTICE}</p>
+      </div>
     </section>
   );
 }
@@ -409,6 +438,8 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
         <Strip />
         <LandingStories paused={paused} onStartQuiz={onStartQuiz} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} />
         <Purpose onViewAbout={onViewAbout} />
+        {/* Wefunder community round, right after who we are (Ameera, Oct 20). */}
+        <Invest />
         <Reads onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
         {personalTail}
         {!(personal && personal.hasQuiz) && <Start onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />}

@@ -6,6 +6,7 @@ import '../styles/verify-people.css';
 import '../styles/site-footer.css';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { installReferralCapture } from '../utils/badges';
+import { WEFUNDER_URL } from '../data/investRound';
 
 /**
  * Site footer: brand blurb + Explore / Company / Get in touch columns, a
@@ -125,6 +126,7 @@ export default function SiteFooter({
         <FooterColumn title="Company">
           <a className="ay-footer-link" href="/about" onClick={(e) => footerGo(e, onViewAbout)}>About</a>
           <a className="ay-footer-link" href="/partners" onClick={(e) => footerGo(e, onViewWaitlist)}>Partner brands</a>
+          <a className="ay-footer-link" href={WEFUNDER_URL} target="_blank" rel="noopener noreferrer" onClick={() => { try { posthog.capture('invest_cta_clicked', { location: 'footer' }); } catch { /* analytics never blocks */ } }}>Invest in ayna <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
         </FooterColumn>
 
         <FooterColumn title="Get in touch">
@@ -144,6 +146,7 @@ export default function SiteFooter({
         <p className="ay-footer-legal__text">
           <strong>18+ only.</strong> ayna provides wellness information only, not medical advice. Always consult a
           qualified healthcare provider for medical decisions. We do not sell your personal health information.
+          {' '}Our Wefunder round is testing the waters under Regulation Crowdfunding: no money is accepted and a reservation involves no obligation until a Form C is filed.
         </p>
         <nav className="ay-footer-legal__links" aria-label="Legal">
           <a className="ay-footer-legal__link" href="/privacy-policy" onClick={(e) => footerGo(e, onViewPrivacyPolicy)}>Privacy policy</a>
