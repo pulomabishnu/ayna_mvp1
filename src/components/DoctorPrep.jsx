@@ -52,7 +52,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
             <div className="card dp-summary" style={{ padding: '3rem', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-md)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '2.5rem', borderBottom: '2px solid var(--color-bg)', pb: '1.5rem' }}>
                     <div>
-                        <h1 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '0.25rem', color: 'var(--color-primary)' }}>ayna Health Summary</h1>
+                        <h1 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '0.25rem', color: 'var(--color-primary)' }}>ayna health summary</h1>
                         <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Generated on {new Date().toLocaleDateString()}</p>
                     </div>
                     <button className="btn btn-outline dp-noprint" onClick={() => window.print()}>Print summary</button>

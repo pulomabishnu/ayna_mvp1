@@ -163,7 +163,7 @@ export default function AskAynaModal({
       } else if (err?.code === 'weekly_limit_reached') {
         setSendError("You've used your free chats for this week. They reset weekly.");
       } else {
-        setSendError(err?.message || 'Something went wrong. Try again in a moment.');
+        setSendError(err?.message || 'ayna couldn’t answer just now. Check your connection and ask again in a moment.');
       }
     } finally {
       setSending(false);
@@ -183,7 +183,7 @@ export default function AskAynaModal({
         flexDirection: 'column',
       }}
     >
-      <div className="ayna-ask-drawer-content" role="dialog" aria-label="Ask Ayna" aria-modal={open ? true : undefined} aria-hidden={!open} inert={!open ? true : undefined}>
+      <div className="ayna-ask-drawer-content" role="dialog" aria-label="Ask ayna" aria-modal={open ? true : undefined} aria-hidden={!open} inert={!open ? true : undefined}>
       <div
         style={{
           paddingTop: 'max(20px, env(safe-area-inset-top))',

@@ -292,7 +292,7 @@ function ProgressView({ status, user, onUnlock, onRefresh, toast }) {
       <div className="fp-ctabar">
         {status.eligible ? (
           status.inventoryAvailable ? (
-            <Cta onClick={onUnlock}>Unlock my free product</Cta>
+            <Cta onClick={onUnlock}>Spin for my free product</Cta>
           ) : (
             <Notice tone="soft"><b>You did it, and every product has been claimed for now.</b> You're still eligible. We'll email you as soon as we add more.</Notice>
           )
@@ -642,7 +642,7 @@ function RewardView({ status, user, onRefresh, onBack, toast, setStatus }) {
   if (!status.inventoryAvailable && !current && !landed.some((l) => l.available)) {
     return (
       <div className="fp-reward">
-        <PageHead tone="sky" kicker="Your free product" title="Your free product is unlocked." center />
+        <PageHead tone="sky" kicker="Your free product" title="You’ve earned a free product." center />
         <Notice tone="soft"><b>Every product has been claimed for now.</b> You're still eligible and we've saved your spot. We'll email you as soon as we add more.</Notice>
         <button type="button" className="fp-link" onClick={onBack}>Back to your progress</button>
       </div>
@@ -653,7 +653,7 @@ function RewardView({ status, user, onRefresh, onBack, toast, setStatus }) {
 
   return (
     <div className="fp-reward">
-      <PageHead tone="sky" kicker="Your free product" title="Your free product is unlocked." lead={`You get ${maxSpins} spins. Claim anything you land on. Claiming is final.`} center>
+      <PageHead tone="sky" kicker="Your free product" title="You’ve earned a free product." lead={`You get ${maxSpins} spins. Claim anything you land on. Claiming is final.`} center>
         <ol className="fp-spinpips" aria-label={spinsLabel}>
           {Array.from({ length: maxSpins }, (_, i) => <li key={i} className={i < maxSpins - spinsLeft ? 'is-used' : ''} aria-hidden="true" />)}
           <li className="fp-spinpips__label">{spinsLabel}</li>
@@ -812,14 +812,14 @@ export default function FreeProductPage({ user, authLoading, stage = 'progress',
       ? <RewardView status={status} user={user} onRefresh={load} onBack={() => go('free-product')} toast={toastNode} setStatus={setStatus} />
       : (
         <div className="fp-intro">
-          <PageHead tone="paper" kicker="Your free product" title="Not unlocked yet." lead={remainingLabel(status) || 'Finish every step first.'} />
+          <PageHead tone="paper" kicker="Your free product" title="Not earned yet." lead={remainingLabel(status) || 'Finish every step first.'} />
           <Cta onClick={() => go('free-product')}>See what's left</Cta>
         </div>
       );
   } else {
     content = (
       <>
-        <PageHead tone="rose" kicker="Free product" title="Your free product progress" lead={status.eligible ? 'Your free product is unlocked.' : 'Three thoughtful answers and three friends who join ayna. Then you pick something free.'}>
+        <PageHead tone="rose" kicker="Free product" title="Your free product progress" lead={status.eligible ? 'You’ve earned it. Spin to pick your free product.' : 'Three thoughtful answers and three friends who join ayna. Then you pick something free.'}>
           <Equation compact />
         </PageHead>
         <ProgressView status={status} user={user} onUnlock={() => go('free-product-reward')} onRefresh={load} toast={toast} />

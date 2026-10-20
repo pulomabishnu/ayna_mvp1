@@ -1458,7 +1458,7 @@ export default function HealthIntakeForm({ onComplete }) {
           {!step.optional && <p className="ayna-intake-hint">{step.section === 'safety' ? 'Required for safety' : 'Required'}</p>}
           <div className="ayna-intake-stage">{renderBody()}</div>
           <div className="ayna-continue-wrap">
-            <button type="button" className="ayna-continue" onClick={goNext} disabled={!ready || saving}>{saving ? 'Saving...' : isLast ? 'Finish profile' : 'Continue'}{countForStep > 0 && <span className="ayna-count">{countForStep}</span>}<span aria-hidden="true">→</span></button>
+            <button type="button" className="ayna-continue" onClick={goNext} disabled={!ready || saving}>{saving ? 'Saving...' : isLast ? 'Finish profile' : 'Next question'}{countForStep > 0 && <span className="ayna-count">{countForStep}</span>}<span aria-hidden="true">→</span></button>
             {step.optional && <button type="button" className="ayna-skip" onClick={goNext}>{step.id === 'products' ? 'Skip for now' : 'Skip this step'}</button>}
           </div>
 

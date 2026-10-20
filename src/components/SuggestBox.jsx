@@ -134,13 +134,13 @@ export default function SuggestBox({ mode = 'product', variant = 'web', context 
         <div className="ay-suggest__thanks" ref={thanksRef} tabIndex={-1} role="status">
           <span className="ay-suggest__check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span>
           <div className="ay-suggest__copy">
-            <h2 id={`${uid}-t`}>Thank you!</h2>
+            <h2 id={`${uid}-t`}>Thanks, we got it.</h2>
             <p>{kind === 'product' ? 'Got it. We look at every product idea.' : 'Got it. It goes on our reading list.'}</p>
             {crisis && <p className="ay-suggest__crisis">{CRISIS_LINE}</p>}
           </div>
           <div className="ay-suggest__thanks-actions">
             <button type="button" className="ay-suggest__ghost" onClick={reset}>Send another</button>
-            <button type="button" className="ay-suggest__ghost is-quiet" onClick={() => { reset(); setOpen(false); }}>Done</button>
+            <button type="button" className="ay-suggest__ghost is-quiet" onClick={() => { reset(); setOpen(false); }}>Close</button>
           </div>
         </div>
       </section>

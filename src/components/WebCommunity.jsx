@@ -820,7 +820,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       </div>
     </Sheet>;
 
-  if (composeOnly && !supabase) return <Sheet title="Community isn’t loading" onClose={() => onDone?.()}><p className="wc-muted">Try again later.</p><button type="button" className="wc-btn" onClick={() => onDone?.()}>Close</button></Sheet>;
+  if (composeOnly && !supabase) return <Sheet title="Community isn’t loading" onClose={() => onDone?.()}><p className="wc-muted">We couldn’t reach the community. Check your connection and reload the page.</p><button type="button" className="wc-btn" onClick={() => onDone?.()}>Close</button></Sheet>;
   if (composeOnly) {
     if (!user) return null;
     return <>
@@ -829,7 +829,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       {doneLabel && createPortal(<div className="wc-sheet-backdrop wc-done-backdrop" onClick={() => onDone?.()}><div className="wc-done" role="status" aria-live="polite"><span className="wc-done-mark" aria-hidden="true"><Icon name="check" size={22} /></span><strong>{doneLabel}</strong></div></div>, document.querySelector('.app-container') || document.body)}
     </>;
   }
-  if (!supabase) return <section className="wc"><div className="wc-empty"><h1>Community isn’t loading</h1><p>Try again later.</p></div></section>;
+  if (!supabase) return <section className="wc"><div className="wc-empty"><h1>Community isn’t loading</h1><p>We couldn’t reach the community. Check your connection and reload the page.</p></div></section>;
 
   const openPeopleList = async (kind, owner) => {
     const title = kind === 'followers' ? 'Followers' : 'Following';
@@ -1043,7 +1043,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     <div className={`wc-head${page ? '' : ` ay3-band ay3-band--sky ay3-zigzag ay3-edge-bottom ay3-commhero${seenBefore ? ' is-compact' : ''}`}`}>
       {page ? <button type="button" className="wc-back" onClick={closePage}>{page.type === 'post' ? '← Back to feed' : '← Community'}</button> : <div><h1 className="ay3-title">Ask, review, <em>share.</em></h1><p className="wc-hero-sub">Real talk between women, about the products we actually use.</p></div>}
       {!page && <div className="wc-mirror" aria-hidden="true"><span className="wc-mirror__frame"><img src="/landing/stalls-trio.webp" alt="" /></span><span className="wc-mirror__lip">say it here ♡</span></div>}
-      <div className="wc-head-actions"><label className="wc-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16 16 4.5 4.5" /></svg><input value={search} onChange={(e) => { setSearch(e.target.value); setSearchResults(null); if (page) closePage(); }} placeholder="Search people, posts, playlists" aria-label="Search Community" />{search && <button type="button" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); }}>×</button>}</label>
+      <div className="wc-head-actions"><label className="wc-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16 16 4.5 4.5" /></svg><input value={search} onChange={(e) => { setSearch(e.target.value); setSearchResults(null); if (page) closePage(); }} placeholder="Search people, posts, playlists" aria-label="Search community" />{search && <button type="button" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); }}>×</button>}</label>
         {user && <button type="button" className="wc-bell" onClick={openUpdates} aria-label={unreadCount + newAnns.length ? `Updates, ${unreadCount + newAnns.length} new` : 'Updates'}><Icon name="bell" size={20} /><span className="wc-bell-label" aria-hidden="true">Updates</span>{unreadCount + newAnns.length > 0 && <span className="wc-bell-dot is-count" aria-hidden="true">{unreadCount + newAnns.length > 9 ? '9+' : unreadCount + newAnns.length}</span>}</button>}
         {user && <button type="button" className="wc-head-me" onClick={openMe} aria-label={profile ? 'Your Community profile' : 'Set up your Community profile'}><Avatar size={40} name={profile?.display_name || 'You'} path={profile?.avatar_url} anonymous={!profile} /></button>}
       </div>
@@ -1053,7 +1053,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     <div className="wc-layout">
       <nav className="wc-nav" aria-label="Community">
         {page?.type !== 'profile' && <div className="wc-tabs" role="tablist" aria-label="Community feeds">{TABS.map(([k, l]) => <button type="button" role="tab" key={k} aria-selected={onFeed && tab === k} className={onFeed && tab === k ? 'is-on' : ''} onClick={() => switchTab(k)}>{l}{k === 'announcements' && newAnns.length > 0 && <span className="wc-tab-new">{newAnns.length} new</span>}</button>)}</div>}
-        {user && !profile ? <div className="wc-card wc-join"><h3>Join Community</h3><p className="wc-muted">Your health answers stay private.</p>
+        {user && !profile ? <div className="wc-card wc-join"><h3>Join the community</h3><p className="wc-muted">Your health answers stay private.</p>
           <RuleField as="input" value={profileName} maxLength={50} onChange={(e) => setProfileName(e.target.value)} placeholder="Display name" aria-label="Display name" onShowRules={openRules} />
           <RuleField as="input" value={profileHandle} maxLength={30} onChange={(e) => setProfileHandle(e.target.value.toLowerCase())} placeholder="Username" aria-label="Username" onShowRules={openRules} />
           <button type="button" className="wc-btn" disabled={busy || !profileName.trim() || !profileHandle.trim() || breaksCommunityRules(profileName, profileHandle)} onClick={saveProfile}>Create profile</button></div>

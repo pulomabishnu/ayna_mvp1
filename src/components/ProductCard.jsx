@@ -9,6 +9,7 @@ import { requestProductTab, formatAverage } from '../utils/community/reviewRatin
 import { brandOf } from '../mobile/data/brandFallback.js';
 import '../styles/match-ui.css';
 import '../styles/verify-content.css';
+import { productImageAlt } from '../utils/seoMeta';
 
 const HEART = 'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z';
 
@@ -62,7 +63,7 @@ export default function ProductCard({
         })}
       >
         <div className="ayna-discover-card__tile">
-          {tile || <ProductTileImage product={product} alt={product.name} letterNode={<ProductImageFallback />} />}
+          {tile || <ProductTileImage product={product} alt={productImageAlt(product)} letterNode={<ProductImageFallback />} />}
         </div>
         <div className="ayna-discover-card__body">
           <div className="ayna-browse-card__labels">

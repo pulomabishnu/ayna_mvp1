@@ -236,7 +236,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                                 <span style={{ background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)', padding: '0.1rem 0.6rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem', fontWeight: '600' }}>{joinedList.length}</span>
                             </h3>
                             <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
-                                You're on the list! You'll be notified when these products launch.
+                                You're on the list. We'll email you when these products launch.
                             </p>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                 {joinedList.map((startup, idx) => (

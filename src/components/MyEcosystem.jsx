@@ -2254,7 +2254,7 @@ export default function MyEcosystem({
                                             <a className="eco3-pill" href={buildAynaVCardDataUri(AYNA_SMS_NUMBER)} download="Ayna.vcf">Save to Contacts</a>
                                         )}
                                         <button type="button" className="eco3-pill" onClick={handleCopySmsNumber}>
-                                            {smsCardCopied ? 'Copied!' : 'Copy number'}
+                                            {smsCardCopied ? 'Number copied' : 'Copy number'}
                                         </button>
                                     </div>
                                 </>

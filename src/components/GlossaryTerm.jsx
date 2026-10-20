@@ -115,7 +115,7 @@ export default function GlossaryTerm({ term, define, children, inline = true }) 
         </div>
         <p>{short}</p>
         {entry?.long && !more && (
-          <button type="button" className="ay-gloss-card__more" onClick={() => { setMore(true); setPinned(true); }}>Learn more</button>
+          <button type="button" className="ay-gloss-card__more" onClick={() => { setMore(true); setPinned(true); }}>Read the full definition</button>
         )}
         {more && entry?.long && <p className="ay-gloss-card__long">{entry.long}</p>}
         {more && entry?.related?.length > 0 && (

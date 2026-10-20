@@ -9,7 +9,9 @@ const SITE = 'https://www.aynahealth.co';
 const STATIC = ['/', '/shop', '/library', '/community', '/about', '/how-it-works', '/how-we-make-money', '/partners', '/contact', '/privacy-policy', '/terms-of-use', '/consumer-health-data', '/quiz'];
 const articlesSrc = fs.readFileSync(new URL('../src/components/Articles.jsx', import.meta.url), 'utf8');
 const start = articlesSrc.indexOf('const ARTICLES = [');
-const articleIds = start < 0 ? [] : [...articlesSrc.slice(start).matchAll(/\n {2}\{\s*\n?\s*id: '([^']+)'/g)].map((m) => m[1]);
+// Only the ARTICLES array itself (the section list after it also has ids, which are not reads).
+const end = start < 0 ? -1 : articlesSrc.indexOf('\n];', start);
+const articleIds = start < 0 ? [] : [...articlesSrc.slice(start, end < 0 ? undefined : end).matchAll(/\n {2}\{\s*\n?\s*id: '([^']+)'/g)].map((m) => m[1]);
 const products = ALL_PRODUCTS.filter((p) => p?.id && p?.name && !isTeenProduct(p));
 const urls = [...new Set([
   ...STATIC,

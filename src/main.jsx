@@ -296,8 +296,8 @@ class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: 600, margin: '2rem auto' }}>
-          <h1>Something went wrong</h1>
-          <p style={{ color: '#666' }}>Please reload the page and try again.</p>
+          <h1>This page didn’t load</h1>
+          <p style={{ color: '#666' }}>ayna hit an error. Reload the page to try again.</p>
           <button type="button" onClick={() => window.location.reload()} style={{ padding: '0.5rem 1rem', marginTop: '1rem' }}>
             Reload
           </button>

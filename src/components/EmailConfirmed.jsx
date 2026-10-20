@@ -58,7 +58,7 @@ export default function EmailConfirmed({ onAuthenticated }) {
           <path d="M4 11l5 5L18 6" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </div>
-      <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: 0 }}>Email confirmed!</h2>
+      <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: 0 }}>Your email is confirmed.</h2>
       <p style={{ color: 'var(--color-text-muted, #666)', maxWidth: '340px', lineHeight: 1.6, margin: 0 }}>
         This page is only for older confirmation links. New ayna signups verify with the code sent by email. Return to ayna and enter your verification code, or request a new code from the sign-in screen.
       </p>

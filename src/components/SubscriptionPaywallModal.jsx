@@ -58,10 +58,10 @@ export default function SubscriptionPaywallModal({ onClose, featureName = 'this 
             textTransform: 'uppercase', letterSpacing: '0.05em',
             marginBottom: '1rem',
           }}>
-            Early Access
+            Early access
           </div>
           <h2 style={{ fontSize: '1.6rem', marginBottom: '0.75rem', color: 'var(--color-text-main)' }}>
-            Unlock ayna Premium
+            Get ayna Premium
           </h2>
           <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
             ayna can only afford to offer {featureName} to paying users. {featureDescription} is

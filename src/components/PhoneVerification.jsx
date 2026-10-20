@@ -41,7 +41,7 @@ const ERROR_MESSAGES = {
 };
 
 function friendlyError(code) {
-  return ERROR_MESSAGES[code] || 'Something went wrong. Please try again.';
+  return ERROR_MESSAGES[code] || 'We couldn’t verify your phone just now. Check the number and try again.';
 }
 
 export default function PhoneVerification({ userSession, onVerified, onCancel }) {

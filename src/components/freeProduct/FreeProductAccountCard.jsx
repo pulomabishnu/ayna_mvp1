@@ -41,7 +41,7 @@ export default function FreeProductAccountCard({ onOpen }) {
   return (
     <section className="fpc" aria-labelledby="fpc-h">
       <div className="fpc__body">
-        <span className="fpc__tag">{status.eligible ? 'Unlocked' : 'Free, on us'}</span>
+        <span className="fpc__tag">{status.eligible ? 'Earned' : 'Free, on us'}</span>
         <h2 id="fpc-h">{status.eligible ? 'Your free product is ready' : 'Claim a free product'}</h2>
         <p>
           {status.eligible

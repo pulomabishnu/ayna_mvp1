@@ -125,7 +125,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   const CONTEXT_COPY = {
     saved: { title: 'Looking for your favorites?', line: 'Sign in to see the products you saved, all in one place.' },
     ecosystem: { title: 'Your ecosystem lives here', line: 'Sign in to see your shelves, or build one with a short quiz.' },
-    feature: { title: feature ? `An account unlocks ${feature}` : 'This needs an account', line: 'Take the short quiz to start, or sign in if you already have an account.' },
+    feature: { title: feature ? `Sign in to use ${feature}` : 'This needs an account', line: 'Take the short quiz to start, or sign in if you already have an account.' },
     login: { title: 'Sign in', line: 'Welcome to ayna. New here? Start with the quiz.' },
   };
   const ctxCopy = !isSignup ? CONTEXT_COPY[context] : null;
@@ -270,7 +270,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         onAuthenticated?.(data.user || data.session.user, data.session);
       }
     } catch (err) {
-      setError(err.message || 'Something went wrong. Please try again.');
+      setError(err.message || 'We couldn’t sign you in. Check your email and password, then try again.');
     } finally {
       setLoading(false);
     }
@@ -573,7 +573,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
           // exactly like a hang rather than a config gap.
           // (Public copy: no env var names on a live page.)
           <p style={styles.configWarning}>
-            Sign-in isn't configured on this device: the connection is unavailable. Please try again later.
+            Sign-in isn't available on this device right now because ayna can't reach its sign-in service. Check your connection and reopen the app.
           </p>
         )}
 

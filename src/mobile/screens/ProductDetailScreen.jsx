@@ -117,7 +117,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
       } else if (e?.code === 'weekly_limit_reached') {
         setError("You've used your free chats for this week. They reset weekly.");
       } else {
-        setError(e?.message || 'Something went wrong. Try again in a moment.');
+        setError(e?.message || 'ayna couldn’t answer just now. Check your connection and ask again in a moment.');
       }
       setMessages(nextMessages); // keep the question visible even though it failed
     } finally {
