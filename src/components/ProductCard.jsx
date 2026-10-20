@@ -47,61 +47,55 @@ export default function ProductCard({
   // Long "check the retailer" notes ran past the card edge; say it short.
   const price = /check (the )?retailer|varies by retailer/i.test(String(rawPrice.main || '')) ? { main: 'Price at retailer', sub: '' } : rawPrice;
   const Link = isMine ? 'div' : 'a';
+  // One anatomy everywhere (docs/design-direction.md, "Product card"):
+  // white tile → brand → name (2 lines) → what it is + labels → price → rating.
+  const kind = !isMine && shownBrand ? String(categoryLabel).replace(/^[^\w]+\s*/, '') : '';
   return (
-    <article className={`ayna-discover-card ayna-browse-card${inEcosystem ? ' is-in-eco' : ''} ${className}`.trim()} style={style}>
+    <article className={`ay-product-card${inEcosystem ? ' is-in-eco' : ''} ${className}`.trim()} style={style}>
       <Link
-        className={`ayna-browse-card__link${isMine ? ' is-static' : ''}`}
+        className={`ay-product-card__link${isMine ? ' is-static' : ''}`}
         {...(isMine ? {} : {
           href: productHref(product),
           onClick: (e) => {
             if (!isPlainLeftClick(e)) return;
             e.preventDefault();
             // The star line is the way to the reviews: the page opens on Reviews.
-            if (e.target?.closest?.('.ay-card-trust__rating')) requestProductTab('reviews');
+            if (e.target?.closest?.('.ay-product-card__rating')) requestProductTab('reviews');
             onOpen?.(product);
           },
         })}
       >
-        <div className="ayna-discover-card__tile">
+        <div className="ay-product-card__tile">
           {tile || <ProductTileImage product={product} alt={productImageAlt(product)} letterNode={<ProductImageFallback />} />}
         </div>
-        <div className="ayna-discover-card__body">
-          <div className="ayna-browse-card__labels">
-            {isDeposit && <span className="ay-card-preorder">Pre-order</span>}
-            <span className="ayna-discover-card__category">{isMine ? categoryLabel : (shownBrand || categoryLabel)}</span>
-            {labels}
+        <div className="ay-product-card__body">
+          <div className="ay-product-card__top">
+            {isDeposit && <span className="ay-product-card__badge is-pill">Pre-order</span>}
+            <span className="ay-product-card__brand">{isMine ? categoryLabel : (shownBrand || categoryLabel)}</span>
           </div>
-          {/* Brand sits in the eyebrow, so a leading brand is trimmed from
-              the name ("Love Wellness Bye Bye Bloat" → "Bye Bye Bloat"). */}
+          {/* Brand sits above, so a leading brand is trimmed from the name
+              ("Love Wellness Bye Bye Bloat" → "Bye Bye Bloat"). */}
+          <h3 className="ay-product-card__name" title={product.name}>{shownBrand ? displayName(product) : product.name}</h3>
+          {(kind || labels) && <p className="ay-product-card__kind">{kind && <span>{kind}</span>}{labels}</p>}
           {/* Match and ownership read as text, never over the product photo. */}
           {((matchPercent != null && matchPercent > 0) || inEcosystem) && (
-            <span className="ay-card-match">
-              {matchPercent != null && matchPercent > 0 && <MatchPill percent={matchPercent} size="sm" className="ayna-browse-card__pill" label={matchLabel || `${Math.round(matchPercent)}% match`} />}
-              {inEcosystem && <span className="ay-card-match__eco">✓ In your ecosystem</span>}
+            <span className="ay-product-card__match">
+              {matchPercent != null && matchPercent > 0 && <MatchPill percent={matchPercent} size="sm" className="ay-product-card__pill" label={matchLabel || `${Math.round(matchPercent)}% match`} />}
+              {inEcosystem && <span className="ay-product-card__eco">✓ In your ecosystem</span>}
             </span>
           )}
-          <h3 className="ayna-discover-card__name">{shownBrand ? displayName(product) : product.name}</h3>
-          {/* What it is, in a few words, when the brand took the eyebrow slot. */}
-          {!isMine && shownBrand && <span className="ay-card-kind">{String(categoryLabel).replace(/^[^\w]+\s*/, '')}</span>}
-          <span className={`ayna-discover-card__price${price.main === 'Price at retailer' ? ' is-unknown' : ''}`}>{price.main}{price.sub && (/^list\s+\$/i.test(price.sub)
-            ? (() => { const [was, ...rest] = price.sub.replace(/^list\s+/i, '').split(/\s+·\s+/); return <small><span className="sr-only">List price </span><s>{was}</s>{rest.length > 0 && <span className="ay-card-unit">{rest.join(' · ')}</span>}</small>; })()
+          <span className={`ay-product-card__price${price.main === 'Price at retailer' ? ' is-unknown' : ''}`}>{price.main}{price.sub && (/^list\s+\$/i.test(price.sub)
+            ? (() => { const [was, ...rest] = price.sub.replace(/^list\s+/i, '').split(/\s+·\s+/); return <small><span className="sr-only">List price </span><s>{was}</s>{rest.length > 0 && <span> {rest.join(' · ')}</span>}</small>; })()
             : <small>{price.sub}</small>)}</span>
-          {(() => {
-            // Cards stay simple: the research count lives on the product page.
-            const hasRating = rating && Number.isFinite(rating.value) && rating.count > 0;
-            if (!hasRating) return null;
-            return (
-              <span className="ay-card-trust">
-                {hasRating && <span className="ay-card-trust__rating is-link" data-reviews-link="true"><span aria-hidden="true">★</span> <span className="sr-only">Rated </span>{formatAverage(rating.value)}<span className="sr-only"> out of 5</span> · <u>{rating.count} review{rating.count === 1 ? '' : 's'}</u></span>}
-              </span>
-            );
-          })()}
+          {rating && Number.isFinite(rating.value) && rating.count > 0 && (
+            <span className="ay-product-card__rating" data-reviews-link="true"><span aria-hidden="true">★</span> <span className="sr-only">Rated </span>{formatAverage(rating.value)}<span className="sr-only"> out of 5</span> · <u>{rating.count} review{rating.count === 1 ? '' : 's'}</u></span>
+          )}
         </div>
       </Link>
       {onToggleSaved && (
         <button
           type="button"
-          className={`ayna-browse-card__wishlist ${isSaved ? 'is-saved' : ''}`}
+          className="ay-product-card__heart"
           aria-label={isSaved ? `Remove ${product.name} from Saved` : `Save ${product.name}`}
           aria-pressed={isSaved}
           onClick={() => onToggleSaved(product)}
@@ -109,7 +103,7 @@ export default function ProductCard({
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART} /></svg>
         </button>
       )}
-      {action && <div className="ayna-browse-card__action">{action}</div>}
+      {action && <div className="ay-product-card__action">{action}</div>}
     </article>
   );
 }

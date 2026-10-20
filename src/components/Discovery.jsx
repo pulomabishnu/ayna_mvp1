@@ -1722,12 +1722,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     <p className="ayna-browse__searching" role="status">Searching more stores…</p>
                     <div className="ayna-browse__grid ayna-browse__grid--skeleton">
                         {Array.from({ length: 8 }, (_, i) => (
-                            <div key={i} className="ayna-discover-card ayna-browse-card is-skeleton" aria-hidden="true">
-                                <div className="ayna-discover-card__tile skeleton-shimmer" />
-                                <div className="ayna-discover-card__body">
-                                    <span className="ay-skel-line" style={{ width: '40%' }} />
-                                    <span className="ay-skel-line is-lg" style={{ width: '85%' }} />
-                                    <span className="ay-skel-line" style={{ width: '30%' }} />
+                            <div key={i} className="ay-product-card is-skeleton" aria-hidden="true">
+                                <div className="ay-product-card__tile skeleton-shimmer" />
+                                <div className="ay-product-card__body">
+                                    <span className="ay-product-card__line is-short" />
+                                    <span className="ay-product-card__line" />
+                                    <span className="ay-product-card__line is-short" />
                                 </div>
                             </div>
                         ))}
@@ -1780,9 +1780,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                 : { source: 'browse', position: idx })}
                             onToggleSaved={onToggleSaved}
                             labels={<>
-                                {isSponsoredItem(item) && <span className="ayna-browse-card__sponsored">Sponsored</span>}
-                                {!isSponsoredItem(item) && isPartnerBrandItem(item) && <span className="ayna-browse-card__partner">ayna partner</span>}
-                                {eligibilityLabel && <span className="ayna-browse-card__eligibility">{eligibilityLabel}</span>}
+                                {isSponsoredItem(item) && <span className="ay-product-card__tag">Sponsored</span>}
+                                {!isSponsoredItem(item) && isPartnerBrandItem(item) && <span className="ay-product-card__tag">ayna partner</span>}
+                                {eligibilityLabel && <span className="ay-product-card__tag">{eligibilityLabel}</span>}
                             </>}
                             tile={cardImageSrc && (resolvedItemImage !== undefined || !isPlaceholderProductImage(cardImageSrc, item.type === 'digital')) ? (
                                 <>
@@ -1799,7 +1799,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                             if (fallback) fallback.style.display = 'flex';
                                         }}
                                     />
-                                    <span className="ayna-discover-card__letter" style={{ display: 'none', position: 'absolute', inset: 0 }}>
+                                    <span className="ay-product-card__fallback" style={{ display: 'none', position: 'absolute', inset: 0 }}>
                                         <ProductImageFallback />
                                     </span>
                                 </>
