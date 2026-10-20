@@ -212,8 +212,8 @@ export default function AskAynaModal({
                 border: m.role === 'user' ? 0 : '2px solid var(--ayna-heading)',
                 borderRadius: m.role === 'user' ? '18px 18px 6px 18px' : '18px 18px 18px 6px',
                 padding: '11px 14px',
-                fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
-                lineHeight: 1.5,
+                fontWeight: 400, fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
+                lineHeight: 1.45,
                 whiteSpace: 'pre-wrap',
               }}
             >
@@ -225,8 +225,8 @@ export default function AskAynaModal({
                 style={{
                   marginTop: 6,
                   fontFamily: "var(--ayna-font-ui)",
-                  fontWeight: 600,
-                  fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))',
+                  fontWeight: 500,
+                  fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
                   color: 'var(--ayna-accent-dark)',
                   cursor: 'pointer',
                   textDecoration: 'underline',
@@ -247,7 +247,7 @@ export default function AskAynaModal({
       </div>
 
       {sendError && (
-        <div style={{ padding: '0 20px 8px', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>{sendError}</div>
+        <div style={{ padding: '0 20px 8px', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>{sendError}</div>
       )}
 
       <form
@@ -287,8 +287,8 @@ export default function AskAynaModal({
             background: 'var(--ayna-cta-bg)',
             color: 'var(--ayna-cta-text)',
             fontFamily: "var(--ayna-font-ui)",
-            fontWeight: 600,
-            fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
+            fontWeight: 500,
+            fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
             cursor: 'pointer',
             opacity: sending || !input.trim() || session === undefined ? 0.5 : 1,
           }}

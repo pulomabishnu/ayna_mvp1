@@ -61,7 +61,7 @@ export default function OrbHero({ showYou = true }) {
         }}
       >
         {showYou && (
-          <div style={{ fontFamily: "var(--ayna-font-display)", fontStyle: 'italic', fontSize: 'calc(28px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>
+          <div style={{ fontFamily: "var(--ayna-font-display)", fontStyle: 'italic', fontWeight: 400, lineHeight: 1.15, fontSize: 'calc(28px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>
             you
           </div>
         )}
@@ -70,7 +70,7 @@ export default function OrbHero({ showYou = true }) {
         <div key={chip.label} className="ayna-orbiter" style={{ animationDelay: chip.delay }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, background: 'var(--ayna-surface)', borderRadius: 99, padding: '10px 16px', boxShadow: '0 10px 26px rgba(36,27,56,.3)', whiteSpace: 'nowrap' }}>
             <div style={{ width: 8, height: 8, borderRadius: 99, background: '#F7BADD', flex: 'none' }} />
-            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--ayna-heading)' }}>{chip.label}</div>
+            <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 500, color: 'var(--ayna-heading)' }}>{chip.label}</div>
           </div>
         </div>
       ))}

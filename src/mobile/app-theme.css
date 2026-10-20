@@ -152,8 +152,8 @@
 
 /* ---------- type roles ---------- */
 .ayna-mobile.ayna-mobile :is(h1, h2, h3) { font-family: var(--f-display); font-weight: 400; letter-spacing: -0.005em; color: var(--r-ink); }
-.ayna-mobile.ayna-mobile h1 { font-size: calc(34px * var(--ayna-text-scale, 1)); line-height: 1.08; }
-.ayna-mobile.ayna-mobile h2 { font-size: calc(24px * var(--ayna-text-scale, 1)); line-height: 1.15; }
-.ayna-mobile.ayna-mobile h3 { font-size: calc(19px * var(--ayna-text-scale, 1)); line-height: 1.2; }
+.ayna-mobile.ayna-mobile h1 { font-size: calc(28px * var(--ayna-text-scale, 1)); font-weight: 400; line-height: 1.15; }
+.ayna-mobile.ayna-mobile h2 { font-size: calc(22px * var(--ayna-text-scale, 1)); font-weight: 400; line-height: 1.15; }
+.ayna-mobile.ayna-mobile h3 { font-size: calc(22px * var(--ayna-text-scale, 1)); font-weight: 400; line-height: 1.15; }
 .ayna-mobile.ayna-mobile :is(p, li, label, input, textarea, select, button) { font-family: var(--f-ui); }
 .ayna-mobile.ayna-mobile .ayna-shared-wordmark { font-family: var(--f-logo) !important; font-weight: 800 !important; letter-spacing: -0.04em; color: var(--r-ink) !important; }

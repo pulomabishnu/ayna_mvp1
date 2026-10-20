@@ -19,7 +19,7 @@
   background: var(--b-rose) !important; color: var(--b-espresso) !important;
   border: 2px solid var(--b-espresso) !important; box-shadow: var(--r-shadow-sm) !important;
   border-radius: 999px !important; min-height: 40px !important; padding: 0 14px 0 10px !important;
-  font: 600 14px/1 var(--f-ui) !important;
+  font: 500 13px/1 var(--f-ui) !important;
 }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-header-ask-orb { background: var(--b-butter) !important; border: 2px solid var(--b-espresso) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-shared-header-action {
@@ -44,7 +44,7 @@
   min-height: 52px !important; border-radius: 20px !important; padding: 4px 0 !important;
   display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; gap: 3px !important;
 }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button span { font: 600 11px/1 var(--f-ui) !important; letter-spacing: 0 !important; color: inherit !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button span { font: 500 11.5px/1 var(--f-ui) !important; letter-spacing: 0 !important; color: inherit !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-active:not(.is-center) { background: var(--b-rose) !important; color: var(--b-espresso) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button svg { animation: none !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center { background: transparent !important; color: rgba(255, 237, 172, .78) !important; }
