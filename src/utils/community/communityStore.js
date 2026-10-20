@@ -46,7 +46,7 @@ export function friendlyError(error) {
   if (error?.code === '23505') return 'That already exists.';
   if (error?.code === '23503') return "That product isn't in the ayna catalog.";
   if (/row-level security|permission denied/i.test(msg)) return "You don't have access to do that.";
-  return 'Something went wrong. Please try again.';
+  return 'That didn’t save to the community. Check your connection and try again.';
 }
 
 /**

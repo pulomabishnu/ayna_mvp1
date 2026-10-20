@@ -76,7 +76,7 @@ export default function AuthConfirm({ onAuthenticated }) {
         </svg>
       </div>
 
-      <h2 style={heading}>Your account has been confirmed!</h2>
+      <h2 style={heading}>Your account is confirmed.</h2>
 
       <p style={muted}>
         Your email is verified and your ayna account is ready to go.

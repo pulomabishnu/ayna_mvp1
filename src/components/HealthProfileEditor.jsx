@@ -126,7 +126,7 @@ export default function HealthProfileEditor({ currentProfile, onSave, onCancel, 
       }
       onSave?.(mapIntakeToLegacyQuizProfile(normalized));
     } catch {
-      setSaveMessage('Profile updated locally, but cloud save failed.');
+      setSaveMessage('Saved on this device, but not to your account. Check your connection and save again.');
       onSave?.(mapIntakeToLegacyQuizProfile(normalized));
     } finally {
       setSaving(false);
@@ -137,7 +137,7 @@ export default function HealthProfileEditor({ currentProfile, onSave, onCancel, 
     <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '920px' }}>
       <div className="card" style={{ padding: '1rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-          <h2 style={{ margin: 0, fontSize: '1.45rem' }}>Update Health Profile</h2>
+          <h2 style={{ margin: 0, fontSize: '1.45rem' }}>Update your health profile</h2>
           <button type="button" className="btn btn-outline" onClick={onCancel}>
             Back to Ecosystem
           </button>

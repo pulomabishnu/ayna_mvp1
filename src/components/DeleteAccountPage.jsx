@@ -333,7 +333,7 @@ export default function DeleteAccountPage({ onBack }) {
             {!reauthMethod && (
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <button type="button" className="btn btn-primary" onClick={() => setStep('confirm')}>
-                  Continue
+                  Next: confirm deletion
                 </button>
               </div>
             )}

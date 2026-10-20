@@ -22,6 +22,7 @@ import { firstSentence } from './pdp/sentences';
 import ProductEvidence, { ProductSafety } from './pdp/ProductEvidence';
 import { galleryImages, retailerLinks, similarProducts, sameNeedProducts, productJsonLd, breadcrumbJsonLd } from './pdp/commerce';
 import GalleryThumbs from './pdp/GalleryThumbs';
+import { productImageAlt } from '../utils/seoMeta';
 import ComparePanel from './pdp/ComparePanel';
 import Breadcrumbs from './pdp/Breadcrumbs';
 import useJsonLd from './pdp/useJsonLd';
@@ -109,7 +110,7 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
       } else if (e?.code === 'weekly_limit_reached') {
         setError('You’ve used your free chats for this week. They reset weekly.');
       } else {
-        setError(e?.message || 'Something went wrong. Try again in a moment.');
+        setError(e?.message || 'ayna couldn’t answer just now. Check your connection and ask again in a moment.');
       }
       setMessages(nextMessages); // keep her question visible even though it failed
     } finally {
@@ -550,7 +551,8 @@ export default function ProductModal({
     return { compare, more, personal: Boolean(quizResults) && more.some((p) => p._match) };
   }, [product, ecosystemProducts, quizResults, healthProfile, matchOpts]);
 
-  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://www.aynahealth.co';
+  // Always the production address, so a preview deploy never claims its own URLs in the JSON-LD.
+  const origin = 'https://www.aynahealth.co';
   useJsonLd('ay-pdp-jsonld', product ? [
     productJsonLd(product, { origin, buyUrl, aynaRating, ratingCount }),
     breadcrumbJsonLd(product, { origin }),
@@ -764,7 +766,7 @@ export default function ProductModal({
             <img
               key={heroImageSrc}
               src={heroImageSrc}
-              alt={displayName}
+              alt={productImageAlt({ ...product, name: displayName }, photo, images.length)}
               onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
               style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
             />
@@ -773,7 +775,7 @@ export default function ProductModal({
           <ProductImageFallback />
         )}
       </div>
-      <GalleryThumbs images={images} index={photo} onSelect={setPhoto} name={product.name} />
+      <GalleryThumbs images={images} index={photo} onSelect={setPhoto} name={product.name} product={product} />
     </div>
   );
 

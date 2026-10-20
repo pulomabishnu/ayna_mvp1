@@ -26,7 +26,7 @@ const lazyView = (loader, fallback) => {
   };
 };
 const WebIntake = lazyView(() => import('./components/WebIntake'));
-const WebCommunity = lazyView(() => import('./components/WebCommunity'), <ViewSkeleton label="Loading Community" cards={3} />);
+const WebCommunity = lazyView(() => import('./components/WebCommunity'), <ViewSkeleton label="Loading community" cards={3} />);
 // Full-screen overlay after the quiz: keep the page behind it visible rather
 // than flashing a page skeleton under the overlay while the chunk loads.
 const WebWrapped = lazyView(() => import('./components/WebWrapped'), null);
@@ -96,6 +96,7 @@ import posthog from 'posthog-js';
 import { identifyAccount } from './utils/analyticsIdentity';
 import { tagInternalUserIfNeeded } from './utils/posthogInternal';
 import { productHref, productRouteKey, parseProductIdFromPath } from './utils/productRoute';
+import { productSeoTitle, productSeoDescription } from './utils/seoMeta';
 import { INTAKE_DRAFT_KEY, getIntakeSteps, reconstructIntakeFromSnapshot } from './mobile/data/intakeModel';
 import './styles/flow.css';
 import './styles/web-neon-dark.css';
@@ -169,20 +170,20 @@ const VIEW_TO_PATH = {
 // Friendly document.title per view'welcome'/'hero' and any view not
 // listed here fall back to the site's base title (see the title effect).
 const VIEW_TITLES = {
-  quiz: 'Get matched', ecosystem: 'My Ecosystem', discovery: 'Shop', you: 'You', community: 'Community',
-  waitlist: 'Partner brands', recommendations: 'Your Recommendations', articles: 'Library', screenings: 'Screenings',
-  omitted: 'Omitted Products', comparison: 'Compare Products', recalls: 'Recalls',
-  'doctor-prep': 'Appointment Prep', 'profile-edit': 'Edit Profile',
-  'phone-verify': 'Verify Phone', tracked: 'Tracked Products', 'delete-account': 'Delete Account', 'health-data': 'Health data',
+  quiz: 'Get matched', ecosystem: 'My ecosystem', discovery: 'Shop', you: 'You', community: 'Community',
+  waitlist: 'Partner brands', recommendations: 'Your recommendations', articles: 'Library', screenings: 'Screenings',
+  omitted: 'Omitted products', comparison: 'Compare products', recalls: 'Recalls',
+  'doctor-prep': 'Appointment prep', 'profile-edit': 'Edit profile',
+  'phone-verify': 'Verify phone', tracked: 'Tracked products', 'delete-account': 'Delete account', 'health-data': 'Health data',
   'privacy-policy': 'Privacy Policy', 'consumer-health-data': 'Consumer Health Data Privacy Notice', 'terms-of-use': 'Terms of Use',
-  'how-we-make-money': 'How We Make Money', 'how-it-works': 'How It Works',
-  about: 'About', contact: 'Contact', 'not-found': 'Page Not Found',
-  'campus-resources': 'Campus Resources',
-  'admin-reviews': 'All Reviews',
+  'how-we-make-money': 'How we make money', 'how-it-works': 'How it works',
+  about: 'About', contact: 'Contact', 'not-found': 'Page not found',
+  'campus-resources': 'Campus resources',
+  'admin-reviews': 'All reviews',
   'admin-research': 'Product research',
-  'free-product': 'Your Free Product',
-  'free-product-reward': 'Your Free Product',
-  'admin-campaign': 'Free Product Campaign',
+  'free-product': 'Your free product',
+  'free-product-reward': 'Your free product',
+  'admin-campaign': 'Free product campaign',
 };
 
 const DEFAULT_DESCRIPTION = "Personalized women's health product recommendations, matched to your body and backed by real research, doctor input, and other women's experiences.";
@@ -1935,21 +1936,21 @@ function App() {
     const base = "ayna | Personalized Women's Health Product Recommendations";
     if (currentView === 'product') {
       document.title = displayedProduct?.name
-        ? `${displayedProduct.name} | ayna`
-        : (productStillResolving ? 'Loading… | ayna' : 'Product Not Found | ayna');
+        ? productSeoTitle(displayedProduct)
+        : (productStillResolving ? 'Loading… | ayna' : 'Product not found | ayna');
       // A product sets its own description, canonical and share card, so it never
       // inherits the page before it (an article's description used to stick).
       if (displayedProduct?.name) {
-        setCanonical(window.location.pathname);
-        const brandName = String(displayedProduct.brand || '').trim();
-        const summary = String(displayedProduct.summary || '').replace(/\s+/g, ' ').trim();
-        const lead = summary ? (summary.match(/^(.{20,200}?[.!?])(\s|$)/)?.[1] || summary.slice(0, 200)) : '';
-        setMetaDescription(lead ? `${displayedProduct.name}${brandName && !displayedProduct.name.toLowerCase().startsWith(brandName.toLowerCase()) ? ` by ${brandName}` : ''}: ${lead}` : `${displayedProduct.name} on ayna: price, evidence, safety notes and how it fits you.`);
-        setShareCard({ title: `${displayedProduct.name} | ayna`, image: displayedProduct.image });
+        // Same title, description and canonical address the prerendered page has (src/utils/seoMeta.js).
+        setCanonical(productHref(displayedProduct) || window.location.pathname);
+        setMetaDescription(productSeoDescription(displayedProduct));
+        setShareCard({ title: productSeoTitle(displayedProduct), image: displayedProduct.image });
       }
       return;
     }
     setCanonical(window.location.pathname);
+    // The prerendered read's Article JSON-LD only belongs on that read.
+    if (currentView !== 'articles' || !selectedArticleId) document.getElementById('ay-read-jsonld')?.remove();
     const label = VIEW_TITLES[currentView];
     document.title = label ? `${label} | ayna` : base;
     setMetaDescription(VIEW_DESCRIPTIONS[currentView] || DEFAULT_DESCRIPTION);
@@ -1961,7 +1962,7 @@ function App() {
       import('./components/Articles').then((m) => {
         const a = (m.ARTICLES || []).find((x) => x.id === selectedArticleId);
         if (cancelled || !a) return;
-        document.title = `${a.title} | Library | ayna`;
+        document.title = `${a.title} | ayna Library`;
         if (a.teaser) setMetaDescription(a.teaser);
         setShareCard({ title: document.title, image: a.image });
       }).catch(() => {});

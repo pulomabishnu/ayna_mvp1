@@ -40,7 +40,7 @@ export default function QuizConnectScreen({ authUser, onQuizConnectContinue, onQ
       </div>
       <footer className="ay-qc-foot">
         {connected && <p role="status">{health.connected.length === 1 ? '1 source connected' : `${health.connected.length} sources connected`}</p>}
-        <button type="button" className={connected ? 'ay-qc-primary' : 'ay-qc-skip'} onClick={onQuizConnectContinue}>{connected ? 'Continue' : 'Skip for now'}</button>
+        <button type="button" className={connected ? 'ay-qc-primary' : 'ay-qc-skip'} onClick={onQuizConnectContinue}>{connected ? 'See my plan' : 'Skip for now'}</button>
       </footer>
     </main>
   );

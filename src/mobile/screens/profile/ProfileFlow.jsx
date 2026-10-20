@@ -702,7 +702,7 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
             <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>Loading startups…</div>
           )}
           {loadState === 'error' && (
-            <EmptyState compact art="offline" tone="butter" title="Startups aren’t loading" body="Try again in a moment." />
+            <EmptyState compact art="offline" tone="butter" title="Startups aren’t loading" body="We couldn’t reach the startup list. Check your connection and reopen this page." />
           )}
           {loadState === 'ready' && filtered.length === 0 && (
             <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>No startups match that filter yet.</div>
@@ -824,7 +824,7 @@ const PHONE_ERROR_MESSAGES = {
 };
 
 function friendlyPhoneError(code) {
-  return PHONE_ERROR_MESSAGES[code] || 'Something went wrong. Please try again.';
+  return PHONE_ERROR_MESSAGES[code] || 'We couldn’t verify your phone just now. Check the number and try again.';
 }
 
 const RESEND_COOLDOWN_SECONDS = 30;
@@ -1455,7 +1455,7 @@ const SMS_ERRORS = {
   texts_stopped: 'You replied STOP. Text START to ayna first, then try again.',
   phone_not_verified: 'Verify your number first.',
 };
-const smsError = (e) => SMS_ERRORS[e?.code] || 'Something went wrong. Try again.';
+const smsError = (e) => SMS_ERRORS[e?.code] || 'We couldn’t update text alerts. Check your connection and try again.';
 const SMS_PREF_ROWS = [
   ['reminders', 'Reminders', 'Restock and routine reminders you set up.'],
   ['orders', 'Order updates', 'When an order ships or needs you.'],
@@ -2251,7 +2251,7 @@ function ManageDataScreen({ onBack }) {
                 Download as JSON
               </div>
               <div onClick={handleCopy} style={{ flex: 1, textAlign: 'center', padding: '13px 0', borderRadius: 99, border: '1px solid var(--ayna-border)', color: 'var(--ayna-heading)', fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', cursor: 'pointer' }}>
-                {copied ? 'Copied!' : 'Copy raw data'}
+                {copied ? 'Raw data copied' : 'Copy raw data'}
               </div>
             </div>
 
@@ -2475,7 +2475,7 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
           )}
         </div>
         <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.5, marginTop: 9, padding: '0 4px' }}>
-          Phone verification unlocks text alerts as a delivery channel, your email{googleIdentity ? ' or Google login' : ''} is what signs you in either way.
+          Verify your phone to get alerts by text. You still sign in with your email{googleIdentity ? ' or Google login' : ''}.
         </div>
 
         <div style={{ margin: '24px 0 11px', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>About you</div>
@@ -2676,7 +2676,7 @@ const PASSWORD_ERROR_MESSAGES = {
 };
 
 function friendlyPasswordError(code) {
-  return PASSWORD_ERROR_MESSAGES[code] || 'Something went wrong. Please try again.';
+  return PASSWORD_ERROR_MESSAGES[code] || 'We couldn’t change your password. Check your connection and try again.';
 }
 
 // Real Supabase auth calls, not a mock form: the current-password field is

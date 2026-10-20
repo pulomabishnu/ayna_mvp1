@@ -366,7 +366,7 @@ export default function BrowseScreen({
         })
         .catch((e) => {
           if (cancelled || e?.name === 'AbortError') return;
-          setAiState({ query: searchTermRaw, loading: false, suggestions: [], error: 'Could not load suggestions.' });
+          setAiState({ query: searchTermRaw, loading: false, suggestions: [], error: 'Couldn’t load suggestions. Check your connection, or search by product or brand name.' });
         });
     }, 600);
     return () => {

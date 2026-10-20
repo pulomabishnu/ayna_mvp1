@@ -31,7 +31,7 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
         {[0, 1].map((k) => <ul key={k}>{names.map((n) => <li key={n}>{n}<span>{'★'}</span></li>)}</ul>)}
       </div>
     </div>
-    <section className="ay-land-actions" aria-label="Get started">
+    <section className="ay-land-actions" aria-label="Start ayna">
       <SlideToStart onComplete={onStartQuiz} />
       <div className="ay-land-links"><button type="button" onClick={onBrowse}>Just browsing</button><button type="button" onClick={onAboutAyna}>About us</button></div>
     </section>

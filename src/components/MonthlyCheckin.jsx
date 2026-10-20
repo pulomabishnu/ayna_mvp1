@@ -253,7 +253,7 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
                 style={{ width: '100%', flexShrink: 0 }}
                 onClick={handleSingleNext}
               >
-                Continue →
+                Next question →
               </button>
             )}
           </>
@@ -290,7 +290,7 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
               disabled={multiSelections.size === 0}
               onClick={handleMultiConfirm}
             >
-              Continue →
+              Save my focus areas →
             </button>
           </>
         )}

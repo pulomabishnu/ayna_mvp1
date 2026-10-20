@@ -103,7 +103,7 @@ export default function About({ onBack, onExplore, onStart }) {
     <InfoPage photos={['robe-pickles', 'lilies', 'pink-stripe-floor']}
       eyebrow="About ayna"
       title={<>We built the place we wished we could turn to.</>}
-      lede="Women’s wellness discovery, shaped around you."
+      lede="Women’s wellness products matched to your needs, with the research and reviews beside them."
       onBack={onBack}
     >
       <InfoSection
@@ -122,7 +122,7 @@ export default function About({ onBack, onExplore, onStart }) {
         </ol>
       </InfoSection>
 
-      <InfoSection eyebrow="Our story" title="Different stories. One shared question.">
+      <InfoSection eyebrow="Our story" title="Three of us, one question: why is this so hard to find?">
         <div className="ay-info-story">
           <div className="ay-info-card ay-info-card--pad ay-info-story__text">
             <p className="ay-info__body">
@@ -157,7 +157,7 @@ export default function About({ onBack, onExplore, onStart }) {
       {/* The icon + title + line ×3 block was cut: the landing's "Your counter, decoded" says it better. */}
       <InfoSection
         eyebrow="Meet the founders"
-        title="Three founders. A shared reason to build."
+        title="The people building ayna."
         intro="We’re Puloma, Eliz and Ameera: three women who met at Cornell and wanted a better starting point for women navigating wellness products."
       >
         <ul className="ay-info-grid ay-info-grid--3 ay-info-founders">
@@ -178,7 +178,7 @@ export default function About({ onBack, onExplore, onStart }) {
         </ul>
       </InfoSection>
 
-      <InfoSection eyebrow="Advisors" title="Guided by real expertise.">
+      <InfoSection eyebrow="Advisors" title="Advised by physicians and health-industry operators.">
         <ul className="ay-info-advisors" id="advisors">
           {ADVISORS.map((advisor) => (
             <li key={advisor.name} className="ay-info-advisor">

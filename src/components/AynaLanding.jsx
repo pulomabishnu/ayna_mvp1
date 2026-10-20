@@ -362,10 +362,10 @@ function FilterPanel({ f, set, productTypes, ecosystem = false, onClear }) {
         <span>ayna</span>
         <select value={f.ayna} onChange={(e) => set('ayna', e.target.value)}>
           <option value="all">Any</option>
-          {ecosystem && <option value="best-match">Best Match</option>}
-          <option value="clinician">Clinician Backed</option>
-          <option value="community">Community Favorite</option>
-          {ecosystem && <option value="ecosystem">In My Ecosystem</option>}
+          {ecosystem && <option value="best-match">Best match</option>}
+          <option value="clinician">Clinician backed</option>
+          <option value="community">Community favorite</option>
+          {ecosystem && <option value="ecosystem">In my ecosystem</option>}
         </select>
       </label>
       <label>
@@ -373,10 +373,10 @@ function FilterPanel({ f, set, productTypes, ecosystem = false, onClear }) {
         <select value={f.preference} onChange={(e) => set('preference', e.target.value)}>
           <option value="all">Any</option>
           <option value="organic">Organic</option>
-          <option value="fragrance-free">Fragrance Free</option>
-          <option value="sensitive-skin">Sensitive Skin</option>
+          <option value="fragrance-free">Fragrance free</option>
+          <option value="sensitive-skin">Sensitive skin</option>
           <option value="vegan">Vegan</option>
-          <option value="cruelty-free">Cruelty Free</option>
+          <option value="cruelty-free">Cruelty free</option>
           <option value="reusable">Reusable</option>
         </select>
       </label>
@@ -386,8 +386,8 @@ function FilterPanel({ f, set, productTypes, ecosystem = false, onClear }) {
           <option value="all">Any</option>
           <option value="reusable">Reusable</option>
           <option value="recyclable">Recyclable</option>
-          <option value="low-waste">Low Waste</option>
-          <option value="packaging">Sustainable Packaging</option>
+          <option value="low-waste">Low waste</option>
+          <option value="packaging">Sustainable packaging</option>
         </select>
       </label>
       <label>
@@ -412,12 +412,12 @@ function FilterPanel({ f, set, productTypes, ecosystem = false, onClear }) {
         <span>Eligibility</span>
         <select value={f.eligibility} onChange={(e) => set('eligibility', e.target.value)}>
           <option value="all">Any</option>
-          <option value="fsa-hsa">FSA/HSA Eligible</option>
-          <option value="fsa">FSA Eligible</option>
-          <option value="hsa">HSA Eligible</option>
+          <option value="fsa-hsa">FSA/HSA eligible</option>
+          <option value="fsa">FSA eligible</option>
+          <option value="hsa">HSA eligible</option>
         </select>
       </label>
-      <button type="button" onClick={onClear}>Clear</button>
+      <button type="button" onClick={onClear}>Clear filters</button>
     </div>
   );
 }

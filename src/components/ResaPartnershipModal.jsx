@@ -66,7 +66,7 @@ export default function ResaPartnershipModal({ onClose }) {
             {RESA_WAITLIST_CTA} →
           </a>
           <a className="resa-modal__secondary" href={RESA_SITE_URL} target="_blank" rel="noopener noreferrer">
-            Learn more at resa-labs.com
+            Read about Resa at resa-labs.com
           </a>
         </div>
       </div>

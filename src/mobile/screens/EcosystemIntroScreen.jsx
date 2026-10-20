@@ -86,7 +86,7 @@ export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount
 
       {/* Continue resumes the quiz draft where she left off (IntakeScreen reads it), or starts fresh. */}
       <div className="ayna-ecosystem-start-actions ay-intro-actions">
-        <SlideToContinue onComplete={onStartQuiz} label="Continue" hint={hasIntakeDraft ? 'where you left off' : 'slide to start'} />
+        <SlideToContinue onComplete={onStartQuiz} label={hasIntakeDraft ? 'Finish the quiz' : 'Start the quiz'} hint={hasIntakeDraft ? 'where you left off' : 'slide to start'} />
         {!authUser && <p className="ay-intro-signin">Already have an account? <button type="button" onClick={onAlreadyHaveAccount}>Sign in</button></p>}
       </div>
     </div>

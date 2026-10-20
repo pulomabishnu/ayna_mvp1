@@ -259,7 +259,7 @@ export default function SigninScreen({
       else onAuthenticated(firstName.trim() || undefined);
     } catch (e) {
       if (e.code === 'email_already_exists') setMode('signin');
-      setError(e.message || 'Something went wrong. Please try again.');
+      setError(e.message || 'We couldn’t sign you in. Check your connection and try again.');
     } finally {
       setLoading(false);
     }
@@ -273,7 +273,7 @@ export default function SigninScreen({
       await onSignIn({ email: email.trim(), password });
       onAuthenticated();
     } catch (e) {
-      setError(e.message || 'Something went wrong. Please try again.');
+      setError(e.message || 'We couldn’t sign you in. Check your connection and try again.');
     } finally {
       setLoading(false);
     }
@@ -335,7 +335,7 @@ export default function SigninScreen({
     setResendMsg('');
     try {
       await onResendConfirmation(email.trim());
-      setResendMsg('Sent! Check your inbox (and spam folder) again in a minute.');
+      setResendMsg('Sent. Check your inbox (and spam folder) again in a minute.');
     } catch (e) {
       setResendMsg(e.message || 'Could not resend right now, try again in a moment.');
     } finally {

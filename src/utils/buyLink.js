@@ -9,10 +9,10 @@
  *    product is in Ayna's Amazon catalog. Manufacturer/retailer pages are
  *    only the fallback for products Amazon doesn't carry for us.
  */
-import { CATALOG_CORRECTIONS } from '../data/catalogCorrections';
-import { PRODUCT_BUY_URLS } from '../data/productBuyUrls';
-import { amazonAffiliateUrlForAsin, getAmazonAffiliateUrlForProduct } from '../data/productAffiliateUrls';
-import { isPartnerBrandItem } from './partnerBrands';
+import { CATALOG_CORRECTIONS } from '../data/catalogCorrections.js';
+import { PRODUCT_BUY_URLS } from '../data/productBuyUrls.js';
+import { amazonAffiliateUrlForAsin, getAmazonAffiliateUrlForProduct } from '../data/productAffiliateUrls.js';
+import { isPartnerBrandItem } from './partnerBrands.js';
 
 function hasRealPath(url) {
   try {
