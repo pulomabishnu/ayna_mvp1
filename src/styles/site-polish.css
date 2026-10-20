@@ -143,3 +143,10 @@ html body .app-container.app-container.app-container.app-container.app-container
 html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-info__head:is(.ay3-band--sky, .ay3-band--rose, #ay-polish-none) :is(.ay-info__title, .ay-info__lede, .ay-info__eyebrow, .ay-info__back, #ay-polish-none) { color: #3e2723 !important; -webkit-text-fill-color: #3e2723 !important; opacity: 1 !important; }
 /* Long reads (How we make money, Privacy, Terms): contents list starts on the page edge, under the title. */
 html body .app-container.app-container.app-container.app-container .ay-info--toc .ay-info__layout { justify-content: start !important; }
+
+/* Shop: one 24px gap between the toolbar and the grid (was ~80px from
+   stacked paddings plus an empty "applied filters" row). */
+html body .app-container .ayna-browse__toolbar { padding-bottom: 0 !important; margin-bottom: 24px !important; }
+html body .app-container .ayna-browse__applied:empty { display: none !important; }
+html body .app-container .ayna-browse__applied { margin-bottom: 16px !important; }
+html body .app-container .ayna-browse__grid { padding-top: 0 !important; }
