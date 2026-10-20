@@ -81,12 +81,53 @@ export function toggleLifeStageSelection(current = [], value) {
   return selectLifeStage(list.filter((item) => !LIFE_STAGE_EXCLUSIVE.includes(item)), value);
 }
 
+const REGULAR = 'I get periods regularly';
+const IRREGULAR = 'My periods are irregular';
+const NO_PERIODS = 'I do not currently get periods';
+const PERI = 'I am in perimenopause';
+const ensureStage = (list, value) => (list.includes(value) ? list : selectLifeStage(list, value));
+
+/**
+ * Keep the life-stage picks and the perimenopause follow-up in agreement.
+ * Regular (or irregular) periods next to Perimenopause answers the
+ * follow-up for her; un-picking that period stage clears the answer it set.
+ */
+export function syncPerimenopausePeriods(intake) {
+  const stages = Array.isArray(intake.lifeStageSelections) ? intake.lifeStageSelections : [];
+  if (!stages.includes(PERI)) return intake;
+  const answer = intake.perimenopauseLastPeriod || '';
+  let next = answer;
+  if (stages.includes(REGULAR)) next = PERI_STILL_REGULAR;
+  else if (stages.includes(IRREGULAR)) next = PERI_IRREGULAR;
+  else if (answer === PERI_STILL_REGULAR || answer === PERI_IRREGULAR) next = '';
+  return next === answer ? intake : { ...intake, perimenopauseLastPeriod: next };
+}
+
+/** Answer the perimenopause follow-up; the period stage it implies is picked too. */
+export function setPerimenopausePeriods(intake, value) {
+  const stages = getLifeStages(intake).filter((item) => !LIFE_STAGE_EXCLUSIVE.includes(item));
+  const implied = { [PERI_STILL_REGULAR]: REGULAR, [PERI_IRREGULAR]: IRREGULAR, [PERI_NONE_3_12]: NO_PERIODS, [PERI_NONE_12]: NO_PERIODS }[value];
+  let nextStages = stages;
+  if (implied) nextStages = ensureStage(stages, implied);
+  else if (stages.includes(REGULAR) || stages.includes(IRREGULAR)) nextStages = stages.filter((item) => item !== REGULAR && item !== IRREGULAR);
+  if (!nextStages.includes(PERI)) nextStages = ensureStage(nextStages, PERI);
+  return { ...intake, perimenopauseLastPeriod: value, lifeStageSelections: nextStages, lifeStage: nextStages[0] || '' };
+}
+
 export const PERIOD_FLOW = ['Very light', 'Light', 'Moderate', 'Heavy', 'Very heavy', 'It varies', 'I do not currently get periods', 'Not sure'];
 export const PERIOD_PAIN = ['None', 'Mild', 'Moderate', 'Severe', 'Very severe', 'It varies', 'Not sure'];
 export const UTI_FREQUENCY = ['This is the first time', 'Rarely', 'A few times a year', 'About monthly', 'More than once a month', 'I am experiencing them right now', 'Not sure'];
 export const POSTPARTUM_TIMING = ['Less than 6 weeks ago', '6 weeks–3 months ago', '3–6 months ago', '6–12 months ago', 'More than 12 months ago'];
 export const PREGNANCY_TRIMESTER = ['First trimester', 'Second trimester', 'Third trimester', 'Not sure', 'Prefer not to say'];
-export const PERIMENOPAUSE_LAST_PERIOD = ['Within the past 3 months', '3–6 months ago', '6–12 months ago', 'More than 12 months ago', "I'm not sure", 'Prefer not to say'];
+// Perimenopause follow-up. Periods can still be regular in perimenopause,
+// so the answer describes her periods now, not only a last-period date.
+// Saved as perimenopauseLastPeriod (same field as before). Older saved
+// answers ('Within the past 3 months', '3–6 months ago', ...) stay valid.
+export const PERI_STILL_REGULAR = 'Still regular';
+export const PERI_IRREGULAR = 'Irregular or skipping';
+export const PERI_NONE_3_12 = 'None for 3 to 12 months';
+export const PERI_NONE_12 = 'None for over 12 months';
+export const PERIMENOPAUSE_LAST_PERIOD = [PERI_STILL_REGULAR, PERI_IRREGULAR, PERI_NONE_3_12, PERI_NONE_12, "I'm not sure", 'Prefer not to say'];
 export const TTC_DURATION = ['Not trying yet', 'Less than 6 months', '6–12 months', 'More than 12 months', 'Prefer not to say'];
 export const MEDICATION_STATUS = ['Yes', 'No', "I'm not sure", 'Prefer not to say'];
 export const ALLERGY_STATUS = ['Yes', 'No', "I'm not sure", 'Prefer not to say'];
@@ -95,7 +136,7 @@ export const BREASTFEEDING_STATUS = ['Yes', 'No', 'Prefer not to say'];
 // Follow-up question copy, shared so the app and the website ask the same thing.
 export const FOLLOWUP_QUESTIONS = {
   breastfeedingStatus: 'Are you breastfeeding or pumping?',
-  perimenopauseLastPeriod: 'When was your last period?',
+  perimenopauseLastPeriod: 'How are your periods now?',
   largePurchaseFrequency: 'How often are you comfortable making $75+ purchases?',
 };
 
@@ -469,7 +510,16 @@ export function buildSnapshot(intake) {
     .map((v) => CONDITION_TO_LEGACY[v] || v.toLowerCase());
   if (intake.diagnosisSelections.includes('Other / not listed') && intake.conditionOtherText.trim()) conditions.push(intake.conditionOtherText.trim().toLowerCase());
 
-  const menstrualCycle = {
+  // Her period pattern comes from the period stage she picked, wherever it
+  // sits in the list, so "Regular periods + Perimenopause" still reads as
+  // regular (not irregular_perimenopause).
+  const periAnswer = isPerimenopauseRelevant(intake) ? intake.perimenopauseLastPeriod : '';
+  const periodPattern = realLifeStages.includes('I am pregnant') ? 'no'
+    : realLifeStages.includes(REGULAR) || periAnswer === PERI_STILL_REGULAR ? 'yes'
+      : realLifeStages.includes(IRREGULAR) || periAnswer === PERI_IRREGULAR ? (realLifeStages.includes(PERI) ? 'irregular_perimenopause' : 'irregular')
+        : realLifeStages.includes(NO_PERIODS) ? 'no'
+          : '';
+  const menstrualCycle = periodPattern || {
     'I get periods regularly': 'yes',
     'My periods are irregular': 'irregular',
     'I do not currently get periods': 'no',
@@ -816,7 +866,7 @@ export function getIntakeSteps(intake) {
   return [
     // Required minimum
     req({ id: 'age', section: 'core', title: 'Your age', type: 'age', info: 'We use your age to skip products that are not meant for you, like menopause supplements in your 20s. Type it, tap plus or minus, or slide the ruler.' }),
-    req({ id: 'lifeStage', section: 'core', title: 'Your life stage', type: 'lifeStage', info: 'Pick every stage that fits right now. It changes what we show, for example pregnancy-safe picks only, or midlife support. Not sure, or rather not say? Those count too.' }),
+    req({ id: 'lifeStage', section: 'core', title: 'Your life stage', subtitle: 'Pick all that fit', type: 'lifeStage', info: 'Pick every stage that fits right now. You can be in perimenopause and still have regular periods. It changes what we show, for example pregnancy-safe picks only, or midlife support. Not sure, or rather not say? Those count too.' }),
     req({ id: 'support', section: 'support', title: 'What needs support?', type: 'support', info: 'Pick everything you want help with. Each one becomes its own shelf of products in your Ecosystem. Use the tabs or search to find more. "Nothing right now" counts too.' }),
     ...(flowRequired(intake) ? [req(flowStep)] : []),
     ...(painRequired(intake) ? [req({ id: 'periodPain', section: 'support', title: 'Your period pain', type: 'pain', info: 'How much cramps or pain usually affect your day. Higher pain moves heat, TENS and pain relief options up your list.' })] : []),
@@ -860,4 +910,26 @@ export function splitIntakeSteps(intake) {
 export function firstUnansweredStepId(intake) {
   const missing = getIntakeSteps(intake).find((s) => s.required && !isStepAnswered(s.id, intake));
   return missing ? missing.id : CHECKPOINT_STEP;
+}
+
+/** Optional questions: how many there are and how many are still open. */
+export function optionalProgress(intake) {
+  const optional = splitIntakeSteps(intake).optional;
+  const answered = optional.filter((s) => isStepAnswered(s.id, intake)).length;
+  return { total: optional.length, answered, remaining: optional.length - answered };
+}
+
+/**
+ * Where "Make my matches more personal" opens: the first optional question
+ * she has not answered or skipped (where she left off), else the first one
+ * still unanswered, else the first optional question. A required question
+ * still missing an answer comes first.
+ */
+export function firstOptionalResumeStepId(intake) {
+  const missingRequired = firstUnansweredStepId(intake);
+  if (missingRequired !== CHECKPOINT_STEP) return missingRequired;
+  const optional = splitIntakeSteps(intake).optional;
+  const skipped = intake.skippedSteps || [];
+  const open = optional.filter((s) => !isStepAnswered(s.id, intake));
+  return (open.find((s) => !skipped.includes(s.id)) || open[0] || optional[0])?.id || CHECKPOINT_STEP;
 }

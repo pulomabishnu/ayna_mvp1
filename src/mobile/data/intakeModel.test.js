@@ -3,7 +3,8 @@ import {
   AVOID_GROUPS, AVOID_INGREDIENTS, AVOID_PAIRS, EMPTY, LEGACY_CONCERN_BY_ITEM, PREFERENCE_MAP, SUPPORT_GROUPS,
   asksBreastfeedingOnTiming, buildSnapshot, getIntakeSteps, reconstructIntakeFromSnapshot, ttcDurationOptions,
 } from './intakeModel.js';
-import { CONCERN_AREAS } from '../../utils/healthIntake.js';
+import { CONCERN_AREAS, mapIntakeToLegacyQuizProfile } from '../../utils/healthIntake.js';
+import { getSelectedNeeds } from '../../data/products.js';
 
 const intake = (patch) => ({ ...EMPTY, ...patch });
 const stepIds = (i) => getIntakeSteps(i).map((s) => s.id);
@@ -85,6 +86,7 @@ import {
   CHECKPOINT_STEP, FSA_HSA, LIFE_STAGE_EXCLUSIVE, MEDICATION_STATUS, ALLERGY_STATUS, URGENT_STATUS, PRODUCT_FORMATS, AVOID_LABELS,
   firstUnansweredStepId, getAnswerStates, isStepAnswered, markSkipped, minimumComplete, requiredReady, splitIntakeSteps,
   toggleLifeStageSelection,
+  firstOptionalResumeStepId, getLifeStages, optionalProgress, setPerimenopausePeriods, syncPerimenopausePeriods,
 } from './intakeModel.js';
 
 const requiredIds = (i) => splitIntakeSteps(intake(i)).required.map((s) => s.id);
@@ -255,5 +257,59 @@ describe('optional answers (spec)', () => {
     expect(states.pregnancyTrimester).toBe('not_asked');
     expect(isStepAnswered('recommendationCount', intake({}))).toBe(false);
     expect(isStepAnswered('recommendationCount', intake({ recommendationCountTouched: true }))).toBe(true);
+  });
+});
+
+describe('perimenopause with regular periods (focus group, Oct 19)', () => {
+  it('lets Regular periods and Perimenopause be picked together and answers the follow-up', () => {
+    let state = intake({ age: '39' });
+    const pick = (s, v) => syncPerimenopausePeriods({ ...s, lifeStageSelections: toggleLifeStageSelection(getLifeStages(s), v) });
+    state = pick(state, 'I get periods regularly');
+    state = pick(state, 'I am in perimenopause');
+    expect(state.lifeStageSelections).toEqual(['I get periods regularly', 'I am in perimenopause']);
+    expect(state.perimenopauseLastPeriod).toBe('Still regular');
+    expect(requiredReady('lifeStage', state)).toBe(true);
+    // Un-picking Regular clears the answer it set, so nothing contradicts.
+    state = pick(state, 'I get periods regularly');
+    expect(state.perimenopauseLastPeriod).toBe('');
+  });
+
+  it('"Still regular" in the follow-up also picks Regular periods; a no-period answer drops it', () => {
+    const peri = intake({ lifeStageSelections: ['I am in perimenopause'], lifeStage: 'I am in perimenopause' });
+    const regular = setPerimenopausePeriods(peri, 'Still regular');
+    expect(regular.lifeStageSelections).toEqual(['I am in perimenopause', 'I get periods regularly']);
+    const none = setPerimenopausePeriods(regular, 'None for 3 to 12 months');
+    expect(none.lifeStageSelections).toEqual(['I am in perimenopause', 'I do not currently get periods']);
+    const unsure = setPerimenopausePeriods(regular, "I'm not sure");
+    expect(unsure.lifeStageSelections).toEqual(['I am in perimenopause']);
+  });
+
+  it('saves a shape matching still reads: both stages, regular cycle, menopause support need', () => {
+    const snap = buildSnapshot(intake({ ...MINIMUM, lifeStageSelections: ['I am in perimenopause', 'I get periods regularly'], lifeStage: 'I am in perimenopause', perimenopauseLastPeriod: 'Still regular' }));
+    expect(snap.lifeStageSelections).toEqual(['I am in perimenopause', 'I get periods regularly']);
+    expect(snap.lifeStage).toBe('I am in perimenopause');
+    expect(snap.perimenopauseLastPeriod).toBe('Still regular');
+    expect(snap.menstrualCycle).toBe('yes');
+    const profile = mapIntakeToLegacyQuizProfile(snap);
+    expect(profile.frustrations).toContain('Menopause symptoms');
+    expect(profile.fullHealthIntake.lifeStageSelections).toContain('I get periods regularly');
+    expect(getSelectedNeeds(profile).length).toBeGreaterThan(0);
+    // Older saved answers keep working.
+    const legacy = buildSnapshot(intake({ lifeStageSelections: ['I am in perimenopause'], perimenopauseLastPeriod: '3–6 months ago' }));
+    expect(legacy.menstrualCycle).toBe('irregular_perimenopause');
+    expect(legacy.answerStates.perimenopauseLastPeriod).toBe('answered');
+  });
+});
+
+describe('optional questions after results', () => {
+  it('counts the open optional questions and resumes where she left off', () => {
+    const base = intake(MINIMUM);
+    const { total, remaining } = optionalProgress(base);
+    expect(remaining).toBe(total);
+    expect(firstOptionalResumeStepId(base)).toBe('zip');
+    const later = { ...markSkipped(base, 'zip'), productHistory: [{ name: 'LOLA', stopReasons: [] }] };
+    expect(optionalProgress(later).remaining).toBe(total - 1);
+    expect(firstOptionalResumeStepId(later)).toBe(splitIntakeSteps(later).optional.map((s) => s.id).find((id) => !['zip', 'products'].includes(id)));
+    expect(firstOptionalResumeStepId(intake({}))).toBe('age');
   });
 });

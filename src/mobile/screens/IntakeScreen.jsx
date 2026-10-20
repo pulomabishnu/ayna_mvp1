@@ -20,6 +20,10 @@ import {
   MEDICATION_STATUS,
   URGENT_STATUS,
   firstUnansweredStepId,
+  firstOptionalResumeStepId,
+  optionalProgress,
+  setPerimenopausePeriods,
+  syncPerimenopausePeriods,
   isStepAnswered,
   markSkipped,
   splitIntakeSteps,
@@ -539,10 +543,12 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
 /* --------------------------------- Main screen --------------------------------- */
 
 
-export default function IntakeScreen({ onBack, onComplete, onDraftChange, initialSnapshot = null, startAtBeginning = false, introEnabled = true }) {
+export default function IntakeScreen({ onBack, onComplete, onDraftChange, initialSnapshot = null, startAtBeginning = false, startAtOptional = false, introEnabled = true }) {
   const [savedDraft] = useState(() => !initialSnapshot && !startAtBeginning ? readIntakeDraft() : null);
+  // Opened from "Make my matches more personal" (Ecosystem): straight into the optional questions.
+  const [enteredAtOptional] = useState(() => Boolean(startAtOptional && initialSnapshot && !savedDraft));
   const [intake, setIntake] = useState(() => savedDraft ? { ...EMPTY, ...savedDraft.intake } : reconstructIntakeFromSnapshot(initialSnapshot));
-  const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || savedDraft?.stepId || (startAtBeginning || !initialSnapshot ? 'age' : firstUnansweredStepId(reconstructIntakeFromSnapshot(initialSnapshot))));
+  const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || savedDraft?.stepId || (startAtOptional && initialSnapshot ? firstOptionalResumeStepId(reconstructIntakeFromSnapshot(initialSnapshot)) : startAtBeginning || !initialSnapshot ? 'age' : firstUnansweredStepId(reconstructIntakeFromSnapshot(initialSnapshot))));
   const [search, setSearch] = useState('');
   // Computed once, from how things stood when this resume started (not
   // re-derived as answers change), so a step's flag clears only by actually
@@ -611,7 +617,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   });
   const toggleLifeStage = (value) => setIntake((prev) => {
     const next = toggleLifeStageSelection(getLifeStages(prev), value);
-    return { ...prev, lifeStageSelections: next, lifeStage: next.find((v) => !LIFE_STAGE_EXCLUSIVE.includes(v)) || '' };
+    return syncPerimenopausePeriods({ ...prev, lifeStageSelections: next, lifeStage: next.find((v) => !LIFE_STAGE_EXCLUSIVE.includes(v)) || '' });
   });
   const addCustomSelection = (key, raw, exclusiveValues = []) => {
     const value = String(raw || '').trim().replace(/\s+/g, ' ').slice(0, 80);
@@ -634,6 +640,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   const goBack = () => {
     if (atCheckpoint) { goTo(requiredSteps[requiredSteps.length - 1].id, 'back'); return; }
     if (currentIndex > 0) goTo(visibleSteps[currentIndex - 1].id, 'back');
+    else if (phase === 'optional' && enteredAtOptional && onBack) onBack();
     else if (phase === 'optional') goTo(CHECKPOINT_STEP, 'back');
     else if (onBack) onBack();
   };
@@ -659,7 +666,8 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   };
 
   const selectedLifeStages = getLifeStages(intake);
-  const showMidlifeFirst = intake.age !== '' && Number(intake.age) >= 40;
+  // Perimenopause often starts in the late 30s, so midlife stages move up from 35.
+  const showMidlifeFirst = intake.age !== '' && Number(intake.age) >= 35;
   const lifeStageOptions = showMidlifeFirst
     ? [...MIDLIFE_LIFE_STAGES, ...LIFE_STAGES.filter((item) => !MIDLIFE_LIFE_STAGES.includes(item))]
     : LIFE_STAGES;
@@ -671,7 +679,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
 
     if (step.type === 'lifeStage') return (
       <>
-        {showMidlifeFirst && <p className="ip-hint">Midlife stages moved up. Pick only what fits.</p>}
+        {showMidlifeFirst && <p className="ip-hint">Midlife stages moved up. You can pick Perimenopause and Regular periods together.</p>}
         <SearchableChoices items={lifeStageOptions} selected={selectedLifeStages} onToggle={toggleLifeStage} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('lifeStageSelections', value)} placeholder="Search life stages" layout="grid" labels={LIFE_STAGE_LABELS} glyphs={LIFE_STAGE_GLYPHS} searchable={false} />
         <div className="ip-gap"><ChipList items={LIFE_STAGE_EXCLUSIVE} selected={selectedLifeStages} onToggle={toggleLifeStage} muted={LIFE_STAGE_EXCLUSIVE} compact /></div>
         {selectedLifeStages.includes('I am postpartum') && (
@@ -683,7 +691,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         {selectedLifeStages.includes('I am in perimenopause') && (
           <div className="ip-followup">
             <strong>{FOLLOWUP_QUESTIONS.perimenopauseLastPeriod}</strong>
-            <ChipList items={PERIMENOPAUSE_LAST_PERIOD} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => set('perimenopauseLastPeriod', v)} compact />
+            <ChipList items={intake.perimenopauseLastPeriod && !PERIMENOPAUSE_LAST_PERIOD.includes(intake.perimenopauseLastPeriod) ? [...PERIMENOPAUSE_LAST_PERIOD, intake.perimenopauseLastPeriod] : PERIMENOPAUSE_LAST_PERIOD} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => setIntake((prev) => setPerimenopausePeriods(prev, v))} compact />
           </div>
         )}
       </>
@@ -879,6 +887,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   }
 
   if (atCheckpoint) {
+    const remainingOptional = optionalProgress(intake).remaining;
     const careFirst = intake.safetyConcern === 'Yes';
     return (
       <div className="ayna-play-intake ip-tone--mint ip-checkpoint" data-section="checkpoint" data-step={CHECKPOINT_STEP} data-direction={direction}>
@@ -899,7 +908,10 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
             <h1 className="ip-title">Your first matches are ready</h1>
             <p className="ip-subtitle">{careFirst ? 'You said something may be urgent, so your results start with ways to reach care.' : 'That’s enough for safe, personal picks.'}</p>
             {careFirst && <div className="ip-care-now" role="note"><b>If this is an emergency, call 911.</b> <span>If you're thinking about harming yourself, call or text 988.</span> <span>Your results open with clinician and urgent care options.</span></div>}
-            <p className="ip-checkpoint-more">Want them even closer? {optionalSteps.length} quick extras, all optional. Skip any of them.</p>
+            {remainingOptional > 0 && <div className="ip-checkpoint-more">
+              <strong>Want closer matches?</strong>
+              <p>Answer {remainingOptional} more quick question{remainingOptional === 1 ? '' : 's'} anytime. They are optional, and you can start them later from your Ecosystem.</p>
+            </div>}
           </div>
         </div>
         <footer className="ip-foot ip-foot--checkpoint">
@@ -907,7 +919,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
             <span>See my results</span>
             <i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></i>
           </button>
-          <button type="button" className="ip-more" onClick={() => goTo(optionalSteps[0].id, 'forward')} disabled={!optionalSteps.length}>Make my matches more personal</button>
+          {remainingOptional > 0 && <button type="button" className="ip-more" onClick={() => goTo(firstOptionalResumeStepId(intake), 'forward')}>Answer {remainingOptional} more now</button>}
         </footer>
       </div>
     );
@@ -926,7 +938,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
           </button>
           {/* Later questions depend on earlier answers, so the total can grow mid-quiz.
               Show a fill bar for progress instead of a "02/08" total that shifts. */}
-          <span className="ip-count ip-count--plain">{phase === 'optional' ? 'Optional' : 'Question'} {countedIndex + 1}</span>
+          <span className="ip-count ip-count--plain">{phase === 'optional' ? `Optional ${countedIndex + 1} of ${countedSteps.length}` : `Question ${countedIndex + 1}`}</span>
           {step.optional ? <button type="button" className="ip-skip" onClick={skipStep}>Skip</button> : <span className="ip-skip-spacer" />}
         </div>
         <div className="ip-progress ip-progress--fill" role="progressbar" aria-label="Quiz progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(((countedIndex + 1) / Math.max(1, countedSteps.length)) * 100)}>
