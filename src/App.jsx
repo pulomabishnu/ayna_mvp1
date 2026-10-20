@@ -2498,7 +2498,7 @@ function App() {
         {/* Ecosystem: "Products | Dashboard" at the top, like the app's Ecosystem
             screen. Dashboard is the same WebHealth element /health renders. */}
         {currentView === 'ecosystem' && (
-          <EcosystemViewTabs dashboard={webHealth}>
+          <EcosystemViewTabs dashboard={webHealth} onHero={!!user && !(dataLoading && Object.keys(myProducts).length === 0)}>
         {currentView === 'ecosystem' && dataLoading && Object.keys(myProducts).length === 0 && (
           <ViewSkeleton
             label="Loading your ecosystem"

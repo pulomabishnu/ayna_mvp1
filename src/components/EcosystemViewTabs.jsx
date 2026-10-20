@@ -7,6 +7,8 @@ import '../styles/eco-view-tabs.css';
  * it was; Dashboard is the website health dashboard (WebHealth, passed in so
  * it is the same component /health renders). The choice lives in the URL
  * (?view=dashboard) so a link can open the dashboard directly.
+ * onHero: the Products view opens with the espresso hero (signed in with
+ * shelves), so the switch sits on that hero's background.
  */
 const TABS = [['products', 'Products'], ['dashboard', 'Dashboard']];
 
@@ -14,7 +16,7 @@ function readEcoView() {
   try { return new URLSearchParams(window.location.search).get('view') === 'dashboard' ? 'dashboard' : 'products'; } catch { return 'products'; }
 }
 
-export default function EcosystemViewTabs({ dashboard, children }) {
+export default function EcosystemViewTabs({ dashboard, onHero = false, children }) {
   const [view, setView] = useState(readEcoView);
   const tabRefs = useRef({});
 
@@ -47,7 +49,9 @@ export default function EcosystemViewTabs({ dashboard, children }) {
 
   return (
     <>
-      <div className="ay-ecoview">
+      {/* Over the Products hero the strip takes the hero's espresso, so the
+          switch reads as the top of that block rather than a band above it. */}
+      <div className={`ay-ecoview${onHero && view === 'products' ? ' ay-ecoview--onhero' : ''}`}>
         <div className="ay-ecoview__tabs" role="tablist" aria-label="Ecosystem view" onKeyDown={onKeyDown}>
           {TABS.map(([id, label]) => (
             <button
