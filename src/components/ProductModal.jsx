@@ -900,6 +900,8 @@ export default function ProductModal({
           </div>
 
           <div className="pdp-head__detail pdp-h2">
+            {/* Everything to decide and buy, in one card beside the photo. */}
+            <div id="ay-buycard" className="ay-buycard">
             {aynaRating != null && ratingCount > 0 && (
               <button type="button" className="pdp-hero-rating" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'reviews' }))}>
                 <span className="pdp-hero-rating__stars" aria-hidden="true">{[1, 2, 3, 4, 5].map((n) => <span key={n} className={n <= Math.round(aynaRating) ? 'is-on' : undefined}>★</span>)}</span>
@@ -959,7 +961,6 @@ export default function ProductModal({
 
             <section className="ay-story ay-story--buy" aria-labelledby="ay-buy-h">
               <h2 id="ay-buy-h">Buy</h2>
-              {actionButtons}
               {/* One line: the single most important thing to know, then the full Safety section. */}
               {topWarning && (
                 <p className="ay-buy__warn" role="note">
@@ -968,7 +969,9 @@ export default function ProductModal({
                   <button type="button" className="pdp-textlink" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'details' }))}>All safety info</button>
                 </p>
               )}
+              {actionButtons}
             </section>
+            </div>
 
             {/* How well it fits you sits right after Buy, in the same column. */}
             <div className="pdp-head__fit">
@@ -1005,7 +1008,7 @@ export default function ProductModal({
         </div>
 
         <div className="pdp-below pdp-below--glance">
-          <div className="pdp-read">
+          <div className="pdp-read ay-box">
             <PhoneFold id="pdp-askshare" title="Ask or share" line="Ask ayna about your situation, or write a review if you have tried it.">
             <div className="pdp-pair">
               <ProductAsk productName={displayName} onAsk={onAskAyna} />
@@ -1030,9 +1033,11 @@ export default function ProductModal({
 
 
           {(
-            <PhoneFold id="pdp-compare" title="Compare with similar" line={suggestions.compare.length ? `Side by side with ${suggestions.compare.slice(0, 2).map((p) => p.name).join(' and ')}.` : 'Pick products to compare side by side.'}>
-              <ComparePanel product={product} others={suggestions.compare} onOpen={(p) => onOpenProduct && onOpenProduct(p)} matchFor={matchFor} renderThumb={compareThumb} />
-            </PhoneFold>
+            <div className="pdp-comparebox ay-box">
+              <PhoneFold id="pdp-compare" title="Compare with similar" line={suggestions.compare.length ? `Side by side with ${suggestions.compare.slice(0, 2).map((p) => p.name).join(' and ')}.` : 'Pick products to compare side by side.'}>
+                <ComparePanel product={product} others={suggestions.compare} onOpen={(p) => onOpenProduct && onOpenProduct(p)} matchFor={matchFor} renderThumb={compareThumb} />
+              </PhoneFold>
+            </div>
           )}
 
           {suggestions.more.length > 0 && (

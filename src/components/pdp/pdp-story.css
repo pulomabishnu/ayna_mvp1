@@ -408,7 +408,7 @@ html body .app-container.app-container.app-container.app-container.app-container
   html body .app-container.app-container.app-container .pdp-page .pdp-below > .pdp-suggest { margin-top: 32px !important; }
   /* The fixed Buy and tab bars need room at the very end only (the footer has it), not under the page. */
   html body .app-container.app-container.app-container:has(.pdp-sticky) main { padding-bottom: 0 !important; }
-  html body .app-container.app-container:has(.ay-tabbar):has(.pdp-sticky) .site-footer { padding-bottom: 168px !important; }
+  html body .app-container.app-container:has(.ay-tabbar):has(.pdp-sticky) .site-footer { padding-bottom: 152px !important; }
   html body .app-container .mockup-page.pdp-page-wrap { padding-bottom: 0 !important; }
 }
 html body .app-container[data-theme='brand-dark'] .ay-ps-sec.is-fold { border-color: rgba(255, 237, 172, .45) !important; }
@@ -675,3 +675,269 @@ html body .app-container .ay-pt-flow .ay-src { margin: 0 !important; }
 html body .app-container.app-container.app-container.app-container .ay-pt-flow :is(.ay-ps-timeline, .ay-tabs__steps) { margin: 12px 0 24px !important; }
 html body .app-container[data-theme='brand-dark'] #ay-pt .ay-src :is(a, span, h4) { color: #ffedac !important; }
 html body .app-container[data-theme='brand-dark'] #ay-pt .ay-src :is(ul, li) { border-color: rgba(255, 237, 172, .45) !important; }
+
+/* ======================================================================
+   Boxed layout (Oct 20, founder review: "text looks scattered; put it in
+   boxes; less scrolling"). Every group of text sits in one soft rounded box
+   on the page colour: the buy card beside the photo, one At a glance card,
+   one tab panel, and What it is / Compare / Ask or share each in their own.
+   Spacing: 24px between blocks on phones, 32px on desktop, 16px inside a
+   box, 12px between boxes. Selectors key on the page's ids so they win over
+   the older class stacks without adding more of them.
+   ====================================================================== */
+html body .pdp-page:has(#ay-tabs) {
+  --bx-ink: #3e2723; --bx-line: #3e2723; --bx-fill: rgba(62, 39, 35, .07); --bx-gap: 32px; --bx-pad: 24px;
+}
+@media (max-width: 899px) { html body .pdp-page:has(#ay-tabs) { --bx-gap: 24px; --bx-pad: 16px; } }
+html body [data-theme='brand-dark'] .pdp-page:has(#ay-tabs) { --bx-ink: #ffedac; --bx-line: rgba(255, 237, 172, .75); --bx-fill: rgba(255, 237, 172, .1); }
+
+/* The outer boxes. */
+html body .pdp-page:has(#ay-tabs) :is(.ay-box, .ay-gcard, #ay-pt .ay-pt__panel) {
+  box-sizing: border-box; min-width: 0; margin: 0 !important; padding: var(--bx-pad) !important;
+  border: 1.5px solid var(--bx-line) !important; border-radius: 24px !important; background: transparent !important; color: var(--bx-ink);
+}
+
+/* ---------- Hero: photo left, the buy card right (stacked on phones) ---------- */
+html body .pdp-page:has(#ay-tabs) .pdp-head.pdp-head--story { gap: 16px 32px !important; align-items: start !important; padding-bottom: 0 !important; margin-bottom: 0 !important; }
+html body .pdp-page:has(#ay-tabs) .pdp-head--story .pdp-head__detail { display: flex !important; flex-direction: column !important; gap: 12px !important; margin: 0 !important; padding: 0 !important; }
+html body .pdp-page:has(#ay-tabs) .pdp-head--story .pdp-head__media { margin: 0 !important; }
+html body .pdp-page:has(#ay-tabs) .pdp-head--story .pdp-head__tile { border-radius: 24px !important; }
+@media (max-width: 899px) {
+  html body .pdp-page:has(#ay-tabs) .pdp-head--story .pdp-head__tile { height: 280px !important; }
+  html body .pdp-page:has(#ay-tabs) .pdp-head--story .pdp-head__media img { max-height: 248px !important; }
+  html body .pdp-page:has(#ay-tabs) .pdp-head--story .ay-thumbs { margin-top: 8px !important; }
+  html body .pdp-page:has(#ay-tabs) .pdp-head--story .ay-thumbs button { width: 52px; height: 52px; }
+}
+html body .pdp-page:has(#ay-tabs) #ay-buycard {
+  display: flex; flex-direction: column; gap: 10px; box-sizing: border-box; margin: 0 !important; padding: var(--bx-pad);
+  border-radius: 24px; background: #f7badd; color: #3e2723;
+}
+html body .pdp-page:has(#ay-tabs) #ay-buycard > *, html body .pdp-page:has(#ay-tabs) #ay-buycard .ay-story--buy > * { margin: 0 !important; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard :is(h1, h2, h3, p, span, small, b, label, li, a:not(.pdp-btn--buy), button:not(.pdp-btn--buy)) { color: #3e2723 !important; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-hero-rating { min-height: 32px; margin: 0 !important; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-head__eyebrow { margin: 0 0 -6px !important; font: 600 var(--ay-fs-secondary)/1.3 var(--ay-sans) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-head__name { margin: 0 !important; font-size: clamp(28px, 3.2vw, 40px) !important; line-height: 1.1 !important; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-lead { margin: 0 !important; max-width: 52ch; font: 400 var(--ay-fs-secondary)/1.5 var(--ay-sans) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-h2-price { display: flex !important; flex-wrap: wrap; align-items: baseline; gap: 2px 10px !important; margin: 0 !important; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-h2-price__main { font-size: 28px !important; line-height: 1.1 !important; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-h2-price__line { flex-basis: 100%; font: 500 var(--ay-fs-caption)/1.4 var(--ay-sans) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-quick li { font: 500 var(--ay-fs-caption)/1.4 var(--ay-sans) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .ay-story--buy { display: grid !important; gap: 10px !important; margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-buybox { display: grid !important; gap: 10px !important; margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-buybox > * { margin: 0 !important; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-variant { margin: 0 !important; font: 600 var(--ay-fs-secondary)/1.3 var(--ay-sans) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-variant select { min-height: 44px; margin-top: 4px !important; padding: 0 12px !important; border: 1.5px solid #3e2723 !important; border-radius: 12px !important; background: #fff !important; color: #3e2723 !important; font: 500 16px/1.2 var(--ay-sans) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-variant small { margin-top: 4px !important; font: 400 var(--ay-fs-caption)/1.4 var(--ay-sans) !important; }
+/* Buy and Save side by side. */
+html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-actions__primary { display: grid !important; grid-template-columns: minmax(0, 1fr) auto !important; gap: 8px !important; margin: 0 !important; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-actions__primary > * { width: 100% !important; min-height: 48px !important; margin: 0 !important; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-actions__primary .pdp-btn--buy { background: #3e2723 !important; border-color: #3e2723 !important; color: #ffedac !important; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-actions__primary .pdp-btn--buy * { color: #ffedac !important; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-actions__eco { width: auto !important; padding: 0 20px !important; border: 2px solid #3e2723 !important; background: transparent !important; color: #3e2723 !important; }
+/* The commission line closes the card, small. */
+html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-buybox > .pdp-commission { order: 20; font: 500 var(--ay-fs-caption)/1.4 var(--ay-sans) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-buybox > .pdp-partner-note { order: 21; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .ay-buy__warn { display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; padding: 10px 12px !important; border: 0 !important; border-radius: 14px !important; background: rgba(255, 255, 255, .45) !important; font: 500 var(--ay-fs-caption)/1.4 var(--ay-sans) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .ay-buy__warn svg { flex: none; width: 16px; height: 16px; fill: none; stroke: #3e2723; stroke-width: 2; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .ay-buy__warn > span { flex: 1 1 200px; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .ay-retailers a { border-color: #3e2723 !important; }
+/* The fit line follows the card. */
+html body .pdp-page:has(#ay-tabs) .pdp-head__fit { margin: 0 !important; padding: 0 4px !important; border: 0 !important; }
+html body .pdp-page:has(#ay-tabs) .pdp-head__fit:empty { display: none; }
+html body .pdp-page:has(#ay-tabs) .pdp-head__fit .ay-fitline button { min-height: 36px !important; }
+
+/* ---------- Story and below: one rhythm ---------- */
+html body .pdp-page:has(#ay-tabs) .pdp-story { margin: var(--bx-gap) auto 0 !important; }
+html body .pdp-page:has(#ay-tabs) #ay-tabs { display: grid !important; gap: var(--bx-gap) !important; }
+html body .pdp-page:has(#ay-tabs) .pdp-below { display: grid !important; gap: var(--bx-gap) !important; margin: var(--bx-gap) 0 0 !important; padding: 0 0 var(--bx-gap) !important; border: 0 !important; }
+html body .pdp-page:has(#ay-tabs) .pdp-below > * { margin: 0 !important; max-width: none !important; }
+html body .pdp-page:has(#ay-tabs) .pdp-below > .ay-box { padding: var(--bx-pad) !important; }
+
+/* ---------- At a glance: one card ---------- */
+html body .pdp-page:has(#ay-tabs) .ay-ps-glance { display: grid; gap: 12px; margin: 0 !important; }
+html body .pdp-page:has(#ay-tabs) .ay-gcard { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr) !important; gap: 12px !important; align-items: stretch !important; }
+@media (max-width: 760px) { html body .pdp-page:has(#ay-tabs) .ay-gcard { grid-template-columns: minmax(0, 1fr) !important; } }
+/* The evidence level: the card's one dark block. */
+html body .pdp-page:has(#ay-tabs) .ay-gcard .ay-ps-ev { align-content: start; gap: 8px !important; padding: 16px !important; border: 0 !important; border-radius: 16px !important; background: #3e2723 !important; color: #ffedac !important; }
+html body .pdp-page:has(#ay-tabs) .ay-gcard .ay-ps-ev :is(span, b) { color: #ffedac !important; }
+html body .pdp-page:has(#ay-tabs) .ay-gcard .ay-ps-ev .ay-ico { stroke: #ffedac; }
+html body .pdp-page:has(#ay-tabs) .ay-gcard .ay-ps-ev__word { font: 400 24px/1.15 var(--ay-serif) !important; }
+html body .pdp-page:has(#ay-tabs) .ay-gcard .ay-ps-ev__for { margin: -4px 0 4px !important; font: 500 var(--ay-fs-secondary)/1.4 var(--ay-sans) !important; }
+html body .pdp-page:has(#ay-tabs) .ay-gcard .ay-ps-scale i { border-color: #ffedac !important; }
+html body .pdp-page:has(#ay-tabs) .ay-gcard .ay-ps-scale i.is-on { background: #ffedac !important; }
+html body .pdp-page:has(#ay-tabs) .ay-gcard .ay-ps-scale__ends { margin-top: -2px; }
+html body .pdp-page:has(#ay-tabs) .ay-gcard .ay-ps-mix { display: grid !important; grid-template-columns: 1fr 1fr; gap: 6px 12px !important; margin-top: 4px; padding-top: 10px !important; border-top: 1px solid rgba(255, 237, 172, .35) !important; }
+html body .pdp-page:has(#ay-tabs) .ay-gcard .ay-ps-mix__item { font: 400 var(--ay-fs-caption)/1.3 var(--ay-sans) !important; gap: 6px !important; }
+html body .pdp-page:has(#ay-tabs) .ay-gcard .ay-ps-mix__item .ay-ico { width: 16px; height: 16px; }
+html body .pdp-page:has(#ay-tabs) .ay-gcard .ay-ps-glance__go { margin-top: 4px; font: 600 var(--ay-fs-secondary)/1.3 var(--ay-sans) !important; text-decoration: underline; text-underline-offset: 4px; }
+/* The facts: small boxes, two to a row; a long one takes the row. */
+html body .pdp-page:has(#ay-tabs) .ay-gmini { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; align-content: start; margin: 0; padding: 0; list-style: none; }
+html body .pdp-page:has(#ay-tabs) .ay-gmini__item { min-width: 0; margin: 0; }
+html body .pdp-page:has(#ay-tabs) .ay-gmini__item.is-wide { grid-column: 1 / -1; }
+html body .pdp-page:has(#ay-tabs) .ay-gmini__in {
+  all: unset; box-sizing: border-box; display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; align-items: start;
+  width: 100%; height: 100%; min-height: 44px; padding: 12px; border-radius: 16px; background: var(--bx-fill); color: var(--bx-ink);
+}
+html body .pdp-page:has(#ay-tabs) button.ay-gmini__in { cursor: pointer; }
+html body .pdp-page:has(#ay-tabs) button.ay-gmini__in:hover b { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+html body .pdp-page:has(#ay-tabs) .ay-gmini__in:focus-visible { outline: 3px solid #769ebe; outline-offset: 2px; }
+html body .pdp-page:has(#ay-tabs) .ay-gmini__in .ay-ico { margin-top: 1px; color: var(--bx-ink); }
+html body .pdp-page:has(#ay-tabs) .ay-gmini__text { display: grid; gap: 2px; min-width: 0; }
+html body .pdp-page:has(#ay-tabs) .ay-gmini__text :is(small, b, span) { color: var(--bx-ink) !important; }
+html body .pdp-page:has(#ay-tabs) .ay-gmini__text small { font: 500 var(--ay-fs-caption)/1.3 var(--ay-sans); }
+html body .pdp-page:has(#ay-tabs) .ay-gmini__text b { font: 600 var(--ay-fs-secondary)/1.4 var(--ay-sans); overflow-wrap: anywhere; }
+html body .pdp-page:has(#ay-tabs) .ay-gmini__item.is-wide .ay-gmini__text b { font-weight: 500; }
+html body .pdp-page:has(#ay-tabs) .ay-gmini__note { font: 400 var(--ay-fs-caption)/1.35 var(--ay-sans); }
+html body .pdp-page:has(#ay-tabs) .ay-gmini__item.is-safety .ay-gmini__in { background: #f7badd; }
+html body .pdp-page:has(#ay-tabs) .ay-gmini__item.is-safety :is(.ay-gmini__text small, .ay-gmini__text b, .ay-gmini__text span, .ay-ico) { color: #3e2723 !important; }
+/* Phones: the safety line is in the glance card, so not again under Buy. */
+@media (max-width: 760px) { html body .pdp-page:has(.ay-gmini__item.is-safety) #ay-buycard .ay-buy__warn { display: none !important; } }
+/* Dark: the evidence block turns butter on the espresso page. */
+html body [data-theme='brand-dark'] .pdp-page:has(#ay-tabs) .ay-gcard .ay-ps-ev { background: #ffedac !important; }
+html body [data-theme='brand-dark'] .pdp-page:has(#ay-tabs) .ay-gcard .ay-ps-ev :is(span, b) { color: #3e2723 !important; }
+html body [data-theme='brand-dark'] .pdp-page:has(#ay-tabs) .ay-gcard .ay-ps-scale i { border-color: #3e2723 !important; }
+html body [data-theme='brand-dark'] .pdp-page:has(#ay-tabs) .ay-gcard .ay-ps-scale i.is-on { background: #3e2723 !important; }
+html body [data-theme='brand-dark'] .pdp-page:has(#ay-tabs) .ay-gcard .ay-ps-mix { border-top-color: rgba(62, 39, 35, .3) !important; }
+
+/* ---------- Tabs: a centred row over one panel box ---------- */
+html body .pdp-page:has(#ay-tabs) #ay-pt { display: grid !important; gap: 12px !important; margin: 0 !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt__bar { margin: 0 !important; padding: 0 !important; border: 0 !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt__bar::before, html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt__bar::after { width: 28px; border-radius: 99px; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt__list { justify-content: safe center; gap: 4px !important; padding: 0 !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt__list::after { display: none; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt__tab {
+  min-height: 44px !important; padding: 0 16px !important; border: 1.5px solid transparent !important; border-radius: 99px !important;
+  background: transparent !important; color: var(--bx-ink) !important; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans) !important;
+}
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt__tab:not(.is-on) { border-color: var(--bx-line) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt__tab.is-on { background: var(--bx-ink) !important; border-color: var(--bx-ink) !important; color: #ffedac !important; }
+html body [data-theme='brand-dark'] .pdp-page:has(#ay-tabs) #ay-pt .ay-pt__tab.is-on { color: #3e2723 !important; }
+html body [data-theme='brand-dark'] .pdp-page:has(#ay-tabs) #ay-pt .ay-pt__tab.is-on .ay-pt__count { background: #3e2723 !important; color: #ffedac !important; }
+@media (max-width: 760px) {
+  html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt__bar { margin: 0 -16px !important; }
+  html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt__list { padding: 0 16px !important; scroll-padding-inline: 16px; }
+}
+/* The panel: the box itself. Takeaway, then sources, then the longer notes behind one link. */
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt__panel { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; gap: 16px !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt__panel[hidden] { display: none !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt__lead { max-width: 70ch; font: 600 var(--ay-fs-body)/1.5 var(--ay-sans) !important; color: var(--bx-ink) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt__lead-label { margin: 0 0 -12px !important; font: 500 var(--ay-fs-caption)/1.3 var(--ay-sans) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt__panel > * { margin: 0 !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt :is(.ay-pt-group, .ay-pt-text, .ay-pt-notes) { gap: 8px !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt-group__h { font: 600 var(--ay-fs-secondary)/1.3 var(--ay-sans) !important; color: var(--bx-ink) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt-text :is(p, .ay-ev__body) { font: 400 var(--ay-fs-secondary)/1.55 var(--ay-sans) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt-notes { display: grid; justify-items: start; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt-notes__body { display: grid; gap: 12px; width: 100%; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt-notes__body[hidden] { display: none; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-ev__morebtn { min-height: 36px !important; }
+/* Source cards: soft boxes, two or three to a row on desktop. */
+html body .pdp-page:has(#ay-tabs) #ay-pt :is(.ay-pt-cards, .ay-pt-reviews .cr-product-reviews) { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)) !important; gap: 12px !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt-card { gap: 6px !important; padding: 16px !important; border: 0 !important; border-radius: 16px !important; background: var(--bx-fill) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt-card[hidden] { display: none !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt-card__title { font: 600 var(--ay-fs-body)/1.35 var(--ay-sans) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt :is(.ay-pt-card__text, .ay-pt-card__why) { font: 400 var(--ay-fs-caption)/1.45 var(--ay-sans) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt-reviews .cr-product-reviews a { border: 0 !important; border-radius: 16px !important; background: var(--bx-fill) !important; }
+/* Phones: the cards scroll sideways in a snap row (the next one peeks in) instead of stacking. */
+@media (max-width: 760px) {
+  html body .pdp-page:has(#ay-tabs) #ay-pt :is(.ay-pt-cards, .ay-pt-reviews .cr-product-reviews) {
+    display: flex !important; gap: 8px !important; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none;
+    margin: 0 calc(-1 * var(--bx-pad)) !important; padding: 0 var(--bx-pad) 2px !important; scroll-padding-inline: var(--bx-pad);
+  }
+  html body .pdp-page:has(#ay-tabs) #ay-pt :is(.ay-pt-cards, .ay-pt-reviews .cr-product-reviews)::-webkit-scrollbar { display: none; }
+  html body .pdp-page:has(#ay-tabs) #ay-pt :is(.ay-pt-cards, .ay-pt-reviews .cr-product-reviews) > li { flex: 0 0 82%; scroll-snap-align: start; }
+  html body .pdp-page:has(#ay-tabs) #ay-pt :is(.ay-pt-cards, .ay-pt-reviews .cr-product-reviews) > li:only-child { flex-basis: 100%; }
+}
+/* ayna's note and the safety alert: pink boxes. */
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt-callout, html body .pdp-page:has(#ay-tabs) #ay-pt .ay-safety__alert { padding: 12px 16px !important; border-radius: 16px !important; }
+/* Label rows (Safety, Details): soft boxes, two to a row on desktop, no hairlines. */
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pd__rows { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 8px !important; max-width: none !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pd__rows > div { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; gap: 2px !important; padding: 12px !important; border: 0 !important; border-radius: 16px !important; background: var(--bx-fill) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pd__rows dt { font: 600 var(--ay-fs-caption)/1.3 var(--ay-sans) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pd__rows dd { font: 400 var(--ay-fs-secondary)/1.45 var(--ay-sans) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-urgent { padding: 12px 16px !important; border: 0 !important; border-radius: 16px !important; background: var(--bx-fill) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-safety { gap: 12px !important; max-width: none !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-ps-doc { margin: 0 !important; padding: 12px 16px; border-radius: 16px; background: var(--bx-fill); }
+html body .pdp-page:has(#ay-tabs) #ay-pt :is(.ay-safety__list li, .ay-ps-doc li) { font: 400 var(--ay-fs-secondary)/1.5 var(--ay-sans) !important; }
+/* Source lists: small boxes instead of hairline rows. */
+html body .pdp-page:has(#ay-tabs) :is(#ay-pt, .ay-ps-sec) .ay-src { margin: 0 !important; }
+html body .pdp-page:has(#ay-tabs) :is(#ay-pt, .ay-ps-sec) .ay-src ul { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 8px; border: 0 !important; }
+html body .pdp-page:has(#ay-tabs) :is(#ay-pt, .ay-ps-sec) .ay-src li { border: 0 !important; }
+html body .pdp-page:has(#ay-tabs) :is(#ay-pt, .ay-ps-sec) .ay-src li[hidden] { display: none !important; }
+html body .pdp-page:has(#ay-tabs) :is(#ay-pt, .ay-ps-sec) .ay-src__card { height: 100% !important; box-sizing: border-box; padding: 10px 12px !important; border-radius: 14px !important; background: var(--bx-fill) !important; }
+html body .pdp-page:has(#ay-tabs) :is(#ay-pt, .ay-ps-sec) .ay-src__title { font: 600 var(--ay-fs-secondary)/1.35 var(--ay-sans) !important; }
+html body .pdp-page:has(#ay-tabs) :is(#ay-pt, .ay-ps-sec) .ay-src__pub { font: 500 var(--ay-fs-caption)/1.3 var(--ay-sans) !important; }
+html body .pdp-page:has(#ay-tabs) :is(#ay-pt, .ay-ps-sec) .ay-src__h { margin: 0 0 8px !important; font: 600 var(--ay-fs-secondary)/1.3 var(--ay-sans) !important; }
+/* How to use and Details: tighter flow. */
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt-flow .ay-part__h { margin: 16px 0 8px !important; font: 600 var(--ay-fs-body)/1.3 var(--ay-sans) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt-flow > .ay-part__h:first-child, html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt-flow .ay-part__h.is-first { margin-top: 0 !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt-flow :is(.ay-ev__body, p) { font: 400 var(--ay-fs-secondary)/1.55 var(--ay-sans) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt-flow :is(.ay-ps-timeline, .ay-tabs__steps) { margin: 8px 0 16px !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-ps-timeline li { padding: 6px 0 !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-ps-timeline span { font: 400 var(--ay-fs-secondary)/1.5 var(--ay-sans) !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-ps-timeline li:not(:last-child)::after { top: 38px; bottom: -6px; }
+
+/* ---------- What it is, What's inside (sections), Compare, Ask or share: their own boxes ---------- */
+html body .pdp-page:has(#ay-tabs) .ay-ps-sec.ay-box { gap: 12px !important; border-top: 1.5px solid var(--bx-line) !important; border-bottom: 1.5px solid var(--bx-line) !important; }
+html body .pdp-page:has(#ay-tabs) .ay-ps-sec.ay-box > .ay-ps-h { font-size: 24px !important; }
+html body .pdp-page:has(#ay-tabs) .ay-ps-sec.ay-box .ay-ps-secbody { display: grid; gap: 12px; padding: 0 !important; }
+html body .pdp-page:has(#ay-tabs) .ay-ps-sec.ay-box .ay-ps-secbody[hidden] { display: none; }
+html body .pdp-page:has(#ay-tabs) .ay-ps-sec.ay-box.is-fold:not(.is-open) .ay-ps-secbody { display: none; }
+html body .pdp-page:has(#ay-tabs) .ay-ps-sec.ay-box.is-open .ay-ps-fold { margin-bottom: 4px !important; }
+html body .pdp-page:has(#ay-tabs) .ay-ps-about { gap: 24px !important; }
+html body .pdp-page:has(#ay-tabs) .ay-ps-about__text :is(p, .ay-ev__body) { margin: 0 0 8px !important; font-size: var(--ay-fs-secondary) !important; }
+html body .pdp-page:has(#ay-tabs) .ay-ps-art { width: 112px; height: 112px; }
+html body .pdp-page:has(#ay-tabs) .ay-ps-about { grid-template-columns: minmax(0, 1fr) 112px; }
+@media (max-width: 700px) { html body .pdp-page:has(#ay-tabs) .ay-ps-about { grid-template-columns: 1fr; } }
+html body .pdp-page:has(#ay-tabs) .ay-ps-for { margin: 0 !important; padding: 12px 16px; border-radius: 16px; background: var(--bx-fill); gap: 8px 32px !important; }
+html body .pdp-page:has(#ay-tabs) .ay-ps-for h3 { font-size: 22px !important; }
+html body .pdp-page:has(#ay-tabs) .ay-ps-stars li { padding: 4px 0 4px 26px !important; border: 0 !important; font-size: var(--ay-fs-secondary) !important; }
+html body .pdp-page:has(#ay-tabs) .ay-ps-stars li::before { top: 4px !important; }
+html body .pdp-page:has(#ay-tabs) .ay-ps-for .ay-ev__by { margin: 4px 0 0 !important; font-size: var(--ay-fs-secondary) !important; }
+/* Folded rows on phones sit inside their box: no hairlines, the box is the edge. */
+html body .pdp-page:has(#ay-tabs) .ay-box .ay-ps-sec.is-fold, html body .pdp-page:has(#ay-tabs) .ay-ps-sec.ay-box.is-fold { margin: 0 !important; }
+html body .pdp-page:has(#ay-tabs) .ay-box .ay-ps-sec.is-fold { border: 0 !important; padding: 0 !important; }
+html body .pdp-page:has(#ay-tabs) .ay-ps-fold button { min-height: 44px !important; padding: 0 !important; }
+html body .pdp-page:has(#ay-tabs) .ay-ps-fold__title { font-size: 22px !important; }
+html body .pdp-page:has(#ay-tabs) .ay-ps-fold__line { font-size: var(--ay-fs-caption) !important; }
+html body .pdp-page:has(#ay-tabs) .ay-box .ay-ps-sec.is-fold > [id$='-body']:not([hidden]) { margin-top: 12px; }
+html body .pdp-page:has(#ay-tabs) .pdp-read.ay-box .pdp-pair { gap: 12px 32px !important; margin: 0 !important; }
+html body .pdp-page:has(#ay-tabs) .pdp-comparebox .ay-compare { gap: 12px; }
+html body .pdp-page:has(#ay-tabs) .pdp-comparebox .ay-compare__scroll { border-radius: 16px; }
+
+/* ---------- You may also like: a plain horizontal row, no band ---------- */
+html body .pdp-page:has(#ay-tabs) .pdp-suggest.pdp-suggest { display: grid; gap: 12px; margin: 0 !important; padding: 0 !important; background: none !important; color: var(--bx-ink); }
+html body .pdp-page:has(#ay-tabs) .pdp-suggest.pdp-suggest::before, html body .pdp-page:has(#ay-tabs) .pdp-suggest.pdp-suggest::after { display: none !important; }
+html body .pdp-page:has(#ay-tabs) .pdp-suggest :is(.ay-pdp-sechead h2, .ay-pdp-sechead p) { color: var(--bx-ink) !important; }
+html body .pdp-page:has(#ay-tabs) .pdp-suggest .ay-pdp-sechead p { font: 400 var(--ay-fs-secondary)/1.45 var(--ay-sans) !important; }
+html body .pdp-page:has(#ay-tabs) .pdp-suggest .pdp-suggest__grid { display: flex !important; gap: 12px !important; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin: 0 !important; padding: 0 0 4px !important; }
+html body .pdp-page:has(#ay-tabs) .pdp-suggest .pdp-suggest__grid::-webkit-scrollbar { display: none; }
+html body .pdp-page:has(#ay-tabs) .pdp-suggest .pdp-suggest__grid > * { flex: 0 0 calc((100% - 36px) / 4); min-width: 0; scroll-snap-align: start; }
+@media (max-width: 760px) {
+  html body .pdp-page:has(#ay-tabs) .pdp-suggest .pdp-suggest__grid { margin-right: -16px !important; padding-right: 16px !important; scroll-padding-inline: 0; }
+  html body .pdp-page:has(#ay-tabs) .pdp-suggest .pdp-suggest__grid > * { flex: 0 0 44%; }
+}
+html body .pdp-page:has(#ay-tabs) .pdp-suggest.pdp-suggest { border-image: none !important; }
+/* Fixes after the first screenshot pass. */
+html body .pdp-page:has(#ay-tabs) #ay-buycard .ay-story--buy > .ay-buy__warn { order: -1; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-btn--buy { padding: 0 16px !important; white-space: nowrap; font-size: var(--ay-fs-body) !important; }
+html body .pdp-page:has(#ay-tabs) .ay-gcard .ay-ps-ev { display: flex !important; flex-direction: column; }
+html body .pdp-page:has(#ay-tabs) .ay-gcard .ay-ps-glance__go { margin-top: auto !important; padding-top: 4px; }
+html body .pdp-page:has(#ay-tabs) .pdp-read .pdp-pair { padding: 0 !important; border: 0 !important; }
+html body .pdp-page:has(#ay-tabs) .ay-ps-art { display: none !important; }
+html body .pdp-page:has(#ay-tabs) .ay-ps-about:not(.is-solo) { display: block !important; }
+@media (min-width: 761px) {
+  html body .pdp-page:has(#ay-tabs) #ay-ps-overview .ay-ps-secbody:has(.ay-ps-for) { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); align-items: start; }
+  html body .pdp-page:has(#ay-tabs) #ay-ps-overview .ay-ps-about.is-solo + .ay-ps-for { grid-column: 1 / -1; }
+  html body .pdp-page:has(#ay-tabs) .ay-ps-for { grid-template-columns: minmax(0, 1fr) !important; }
+}
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt__lead.is-quoted { font-weight: 400 !important; }
+@media (max-width: 760px) {
+  html body .pdp-page:has(#ay-tabs) .pdp-head--story .pdp-head__tile { height: 240px !important; }
+  html body .pdp-page:has(#ay-tabs) .pdp-head--story .pdp-head__media img { max-height: 212px !important; }
+  html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt__lead { font-size: 15px !important; }
+  html body .pdp-page:has(#ay-tabs) .ay-gcard .ay-ps-ev { padding: 14px !important; }
+  html body .pdp-page:has(#ay-tabs) .pdp-suggest .pdp-suggest__grid > * { flex-basis: 40%; }
+}
+html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pd__rows > div { align-content: start !important; }
+html body [data-theme='brand-dark'] .pdp-page:has(#ay-tabs) .ay-gcard .ay-ps-ev .ay-ico { stroke: #3e2723 !important; }
+html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-head__eyebrow { color: #3e2723 !important; }

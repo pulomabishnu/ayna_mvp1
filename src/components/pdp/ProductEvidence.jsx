@@ -77,7 +77,7 @@ function cleanTitle(title, publisher) {
 }
 
 function Links({ items, label, compact = false }) {
-  // Long lists show the first two, then "See all".
+  // Long lists show the first three, then "See all".
   const [all, setAll] = useState(false);
   if (!items.length) return null;
   // Every source is in the page from the start (search engines index it); the rest are hidden until "See all".
@@ -87,7 +87,7 @@ function Links({ items, label, compact = false }) {
       {label && <h4 className="ay-src__h">{label}{items.length > 3 ? ` (${items.length})` : ''}</h4>}
       <ul>
         {items.map((s, i) => (
-          <li key={s.url} hidden={folded && i >= 2}>
+          <li key={s.url} hidden={folded && i >= 3}>
             <a href={s.url} target="_blank" rel="noopener noreferrer" className="ay-src__card">
               <span className="ay-src__text">
                 <span className="ay-src__pub">{[s.publisher, s.year].filter(Boolean).join(', ')}</span>
@@ -115,7 +115,7 @@ function studyType(s) {
 }
 
 /** Each source as its own card: who said it, what it is, the finding in plain words, and a link (the whole card opens it). */
-function SourceCards({ items, label, kind = 'source', fold = 6 }) {
+function SourceCards({ items, label, kind = 'source', fold = 3 }) {
   const [all, setAll] = useState(false);
   if (!items.length) return null;
   const folded = !all && items.length > fold;
@@ -137,7 +137,22 @@ function SourceCards({ items, label, kind = 'source', fold = 6 }) {
           );
         })}
       </ul>
-      {items.length > fold && <button type="button" className="ay-ev__morebtn" aria-expanded={all} onClick={() => setAll((v) => !v)}>{all ? 'Show fewer' : `See all ${items.length}`}</button>}
+      {items.length > fold && <button type="button" className="ay-ev__morebtn" aria-expanded={all} onClick={() => setAll((v) => !v)}>{all ? 'Show fewer' : `See all ${items.length} sources`}</button>}
+    </div>
+  );
+}
+
+/**
+ * The longer notes behind one link, so a panel reads as takeaway, then
+ * sources. The text is in the page from the start (indexed), just hidden.
+ */
+function NoteFold({ children, label = 'Read the full note' }) {
+  const [open, setOpen] = useState(false);
+  const id = React.useId();
+  return (
+    <div className="ay-pt-notes">
+      <div id={id} className="ay-pt-notes__body" hidden={!open}>{children}</div>
+      <button type="button" className="ay-ev__morebtn" aria-expanded={open} aria-controls={id} onClick={() => setOpen((v) => !v)}>{open ? 'Show less' : label}</button>
     </div>
   );
 }
@@ -498,24 +513,22 @@ export default function ProductEvidence({ product: baseProduct, safetyLead = '',
       {works.items.length > 0 && <p className="ay-ev__by"><b>Works with:</b> {works.items.map((t, i) => <React.Fragment key={t}>{i > 0 && ', '}{t === 'ayna' && works.ayna ? <a href="/health-data" title={`Connect ${works.ayna.name} in Health data`}>ayna</a> : t}</React.Fragment>)}</p>}
     </> },
     (d.clinician || d.clinicalNote || thingsRaised || d.clinicalLinks.length) && { id: 'clinical', label: 'Clinical opinion', body: <>
-      {(d.clinician || d.clinicalNote || d.attribution) && (
-        <div className="ay-pt-text">
-          {d.clinician && <ShortThenFull short={d.clinicianShort} full={d.clinician} />}
-          {d.clinicalNote && <ShortThenFull full={d.clinicalNote} />}
-          {(d.attribution || d.clinicalNote) && <p className="ay-ev__by">{[d.attribution, d.clinicalNote && 'The added context comes from the clinical guidance in the sources below.'].filter(Boolean).join(' ')}</p>}
-        </div>
-      )}
-      {thingsRaised && <div className="ay-pt-callout"><h3 className="ay-pt-callout__h">ayna’s note</h3><ShortThenFull full={thingsRaised} /></div>}
-      {d.clinicalSummary && <div className="ay-pt-text"><ShortThenFull full={d.clinicalSummary} /></div>}
       <SourceCards items={d.clinicalLinks} label="What clinicians and health bodies say" />
+      {(paraList(d.clinician, takeaway(d.clinicianShort || d.clinician)).length > 0 || d.clinicalNote || d.attribution || thingsRaised || d.clinicalSummary) && (
+        <NoteFold>
+          {(d.clinician || d.clinicalNote || d.attribution) && (
+            <div className="ay-pt-text">
+              {d.clinician && <Paras text={d.clinician} />}
+              {d.clinicalNote && <Paras text={d.clinicalNote} />}
+              {(d.attribution || d.clinicalNote) && <p className="ay-ev__by">{[d.attribution, d.clinicalNote && 'The added context comes from the clinical guidance in the sources.'].filter(Boolean).join(' ')}</p>}
+            </div>
+          )}
+          {thingsRaised && <div className="ay-pt-callout"><h3 className="ay-pt-callout__h">ayna’s note</h3><Paras text={thingsRaised} /></div>}
+          {d.clinicalSummary && <div className="ay-pt-text"><Paras text={d.clinicalSummary} /></div>}
+        </NoteFold>
+      )}
     </> },
     (graded.length || science.rest || d.scienceSummary || d.studies.length) && { id: 'science', label: 'Scientific literature', body: <>
-      {(science.rest || d.scienceSummary) && (
-        <div className="ay-pt-text">
-          {science.rest && <ShortThenFull full={science.rest} />}
-          {d.scienceSummary && <ShortThenFull full={d.scienceSummary} />}
-        </div>
-      )}
       {/* Ingredients have their own section (What's inside and why it works). */}
       <SourceCards items={d.studies} kind="study" label="Studies and reviews" />
       {graded.length > 0 && (
@@ -538,6 +551,14 @@ export default function ProductEvidence({ product: baseProduct, safetyLead = '',
           <p className="ay-ev__by">Graded from clinical guidelines, systematic reviews and government health sources. Strong means guidelines back this kind of product for this need; limited means little or no good evidence.</p>
         </div>
       )}
+      {[science.rest, d.scienceSummary].some((t) => paraList(t, takeaway(science.rest || d.scienceSummary)).length > 0) && (
+        <NoteFold>
+          <div className="ay-pt-text">
+            {science.rest && <Paras text={science.rest} />}
+            {d.scienceSummary && <Paras text={d.scienceSummary} />}
+          </div>
+        </NoteFold>
+      )}
     </> },
     // Same test ProductSafety uses, so an empty Safety section never shows.
     safety && (glance?.alert || d.warnings.length || d.pregnancy || d.fdaRaw || d.sideEffects || d.allergens || d.avoidIf.length || (!d.isDigital && recall && recall.status !== 'unknown')) && { id: 'safety', label: 'Safety', body: safety },
@@ -552,11 +573,13 @@ export default function ProductEvidence({ product: baseProduct, safetyLead = '',
       )}
       {(communityText || d.communitySummary) && (
         <div className="ay-pt-text">
-          {communityText && <ShortThenFull full={communityText} />}
-          {d.communitySummary && <ShortThenFull full={d.communitySummary} />}
-          {d.ratingNote && <p className="ay-ev__by">{d.ratingNote}</p>}
-          {d.incentivized.length > 0 && <p className="ay-ev__by">Reviews on {d.incentivized.join(', ')} may include incentivized reviews.</p>}
           <p className="ay-ev__by">Online reviews and posts are people’s experiences, not clinical evidence.</p>
+          <NoteFold label="Read what people say">
+            {communityText && <Paras text={communityText} />}
+            {d.communitySummary && <Paras text={d.communitySummary} />}
+            {d.ratingNote && <p className="ay-ev__by">{d.ratingNote}</p>}
+            {d.incentivized.length > 0 && <p className="ay-ev__by">Reviews on {d.incentivized.join(', ')} may include incentivized reviews.</p>}
+          </NoteFold>
         </div>
       )}
       {!(communityText || d.communitySummary) && (d.ratingNote || d.incentivized.length > 0) && (
@@ -677,13 +700,32 @@ export default function ProductEvidence({ product: baseProduct, safetyLead = '',
   const activeTab = tabs.some((t) => t.id === tab) ? tab : (tabs[0]?.id || '');
 
   const fold = { isPhone, secOpen, onOpen: goTo, onClose: () => setSecOpen(null) };
+  // At a glance: one card. Who it's for, Safety and How to use (each opens its tab), then the fact tiles,
+  // as small boxes two to a row; a long line takes the whole row.
+  const miniItems = (() => {
+    const out = [
+      whoLine && { id: 'who', icon: 'person', label: 'Who it’s for', main: whoLine, go: 'overview' },
+      safetyLine && byId.safety && { id: 'safety', icon: 'shield', label: 'Safety', main: safetyLine, go: 'safety' },
+      howLine && byId.how && { id: 'how', icon: 'steps', label: 'How to use', main: howLine, go: 'how-to-use' },
+      ...tiles.map((t) => ({ id: t.id, icon: t.icon, label: t.label, main: t.main, note: t.note })),
+    ].filter(Boolean).map((m) => ({ ...m, wide: String(m.main).length + String(m.note || '').length > 32 }));
+    // An odd box out at the end of a run of half-width boxes takes the whole row.
+    let run = 0;
+    out.forEach((m, i) => {
+      if (m.wide) { run = 0; return; }
+      run += 1;
+      const next = out[i + 1];
+      if (run % 2 === 1 && (!next || next.wide)) m.wide = true;
+    });
+    return out;
+  })();
 
   return (
     <TermsCtx.Provider value={plan}>
     <div id="ay-tabs" className="ay-ps">
       <section className="ay-ps-glance" aria-labelledby="ay-ps-glance-h">
         <h2 id="ay-ps-glance-h" className="ay-ps-glance__h">At a glance</h2>
-        <div className="ay-ps-glance__grid">
+        <div className="ay-ps-glance__grid ay-gcard">
           {(level > 0 || mix.length > 0) && (
             <button type="button" className="ay-ps-ev" onClick={() => goTo(tabs.some((t) => t.id === 'literature') ? 'literature' : 'evidence')}>
               {level > 0 && <>
@@ -702,21 +744,21 @@ export default function ProductEvidence({ product: baseProduct, safetyLead = '',
               <span className="ay-ps-glance__go">See the evidence <PdpIcon name="arrow" size={18} /></span>
             </button>
           )}
-          <ul className="ay-ps-gl">
-            {whoLine && <li><button type="button" onClick={() => goTo('overview')}><PdpIcon name="person" /><span><small>Who it’s for</small>{whoLine}</span></button></li>}
-            {safetyLine && byId.safety && <li className="is-safety"><button type="button" onClick={() => goTo('safety')}><PdpIcon name="shield" /><span><small>Safety</small>{safetyLine}</span></button></li>}
-            {howLine && byId.how && <li><button type="button" onClick={() => goTo('how-to-use')}><PdpIcon name="steps" /><span><small>How to use</small>{howLine}</span></button></li>}
-          </ul>
-          {tiles.length > 0 && (
-            <ul className="ay-ps-tiles">
-              {tiles.map((t) => (
-                <li key={t.id}>
-                  <PdpIcon name={t.icon} />
-                  <span className="ay-ps-tiles__text">
-                    <small>{t.label}</small>
-                    <b>{t.main}</b>
-                    {t.note && <span className="ay-ps-tiles__note">{t.note}</span>}
-                  </span>
+          {miniItems.length > 0 && (
+            <ul className="ay-gmini">
+              {miniItems.map((m) => (
+                <li key={m.id} className={`ay-gmini__item${m.wide ? ' is-wide' : ''}${m.id === 'safety' ? ' is-safety' : ''}`}>
+                  {m.go ? (
+                    <button type="button" className="ay-gmini__in" onClick={() => goTo(m.go)}>
+                      <PdpIcon name={m.icon} size={20} />
+                      <span className="ay-gmini__text"><small>{m.label}</small><b>{m.main}</b>{m.note && <span className="ay-gmini__note">{m.note}</span>}</span>
+                    </button>
+                  ) : (
+                    <div className="ay-gmini__in">
+                      <PdpIcon name={m.icon} size={20} />
+                      <span className="ay-gmini__text"><small>{m.label}</small><b>{m.main}</b>{m.note && <span className="ay-gmini__note">{m.note}</span>}</span>
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>
@@ -784,7 +826,7 @@ function Sec({ id, title, line, children, fold }) {
   const { isPhone, secOpen, onOpen, onClose } = fold;
   const folded = isPhone && secOpen !== id;
   return (
-    <section id={`ay-ps-${id}`} className={`ay-ps-sec${isPhone ? ' is-fold' : ''}${folded ? '' : ' is-open'}`} aria-labelledby={`ay-ps-${id}-h`}>
+    <section id={`ay-ps-${id}`} className={`ay-ps-sec ay-box${isPhone ? ' is-fold' : ''}${folded ? '' : ' is-open'}`} aria-labelledby={`ay-ps-${id}-h`}>
       {isPhone ? (
         <h2 id={`ay-ps-${id}-h`} className="ay-ps-fold">
           <button type="button" aria-expanded={!folded} aria-controls={`ay-ps-${id}-body`} onClick={() => { if (folded) onOpen(id); else onClose(); }}>
