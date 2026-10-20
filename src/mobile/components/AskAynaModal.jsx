@@ -73,6 +73,7 @@ export default function AskAynaModal({
   onViewRecommendations,
   onRequireAuth,
   seed = null,
+  onClose = null,
 }) {
   const [messages, setMessages] = useState(chatHistory.length > 0 ? chatHistory : buildWelcome(name));
   const [input, setInput] = useState('');
@@ -221,6 +222,7 @@ export default function AskAynaModal({
         <div style={{ flex: 1 }}>
           <h1 className="ay-ask-title">Ask ayna</h1>
         </div>
+        {onClose && <button type="button" className="ay-ask-done" onClick={onClose}>Done</button>}
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -229,9 +231,9 @@ export default function AskAynaModal({
             <div
               style={{
                 maxWidth: '85%',
-                background: m.role === 'user' ? 'var(--ayna-heading)' : 'transparent',
+                background: m.role === 'user' ? 'var(--ayna-heading)' : 'var(--d-group, transparent)',
                 color: m.role === 'user' ? 'var(--ayna-bg)' : 'var(--ayna-text)',
-                border: m.role === 'user' ? 0 : '2px solid var(--ayna-heading)',
+                border: 0,
                 borderRadius: m.role === 'user' ? '18px 18px 6px 18px' : '18px 18px 18px 6px',
                 padding: '11px 14px',
                 fontWeight: 400, fontSize: 'calc(15px * var(--ayna-text-scale, 1))',

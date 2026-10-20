@@ -40,7 +40,7 @@ export default function PlanScreen({
         </ol>
       </header>
       <div className="ay-qc-copy">
-        <h1>Your <em>plan.</em></h1>
+        <h1>Your plan</h1>
         <p>{planProducts.length ? planIntro(planProducts) : 'Your answers are in. Here is what we have so far.'}</p>
       </div>
 

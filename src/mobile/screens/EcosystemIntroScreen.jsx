@@ -72,14 +72,14 @@ export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount
     <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
     <div className="ayna-ecosystem-start-scroll ay-intro-body">
       <header className="ay-intro-head">
-        <h1>{hasIntakeDraft ? <>Your Ecosystem is <em>taking shape.</em></> : <>Make it <em>yours.</em></>}</h1>
+        <h1>{hasIntakeDraft ? 'Your Ecosystem is taking shape' : 'Make it yours'}</h1>
         <p>{hasIntakeDraft ? 'Pick up where you left off.' : 'A few questions in three parts.'}</p>
       </header>
 
       <ol className="ay-intro-steps" aria-label="What shapes your Ecosystem">
         {PARTS.map((part, i) => (
           <li key={part.key} className={i % 2 ? 'is-rose' : 'is-sky'}>
-            <span className="ay-intro-burst" aria-hidden="true"><b>{i + 1}</b></span>
+            <span className="ay-intro-num" aria-hidden="true">{i + 1}</span>
             <span><strong>{part.label}</strong><small>{part.note}</small></span>
           </li>
         ))}

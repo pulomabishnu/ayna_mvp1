@@ -111,7 +111,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
         {active === 'intro' && <>
           <Stamp id="ayw-stamp" className="ayw-stamp" />
           <p className="ayw-kicker">Your ecosystem is ready</p>
-          <h1 className="ayw-title">Your ayna,<br /><em>wrapped.</em></h1>
+          <h1 className="ayw-title">Your ayna,<br />wrapped</h1>
           <div className="ayw-stat-row">
             <div><strong>{myProducts.length}</strong><span>{myProducts.length === 1 ? 'pick' : 'picks'}</span></div>
             {areaCount || topAreas.length ? <div><strong>{areaCount || topAreas.length}</strong><span>{(areaCount || topAreas.length) === 1 ? 'area' : 'areas'}</span></div> : needCount > 0 && <div><strong>{needCount}</strong><span>{needCount === 1 ? 'need' : 'needs'}</span></div>}
@@ -182,7 +182,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
 
         {active === 'empty' && <>
           <p className="ayw-kicker">Your next chapter</p>
-          <h1 className="ayw-title">Still<br /><em>exploring.</em></h1>
+          <h1 className="ayw-title">Still<br />exploring</h1>
           <p className="ayw-foot">No strong match yet.</p>
           <div className="ayw-actions">
             <button className="ayw-cta" type="button" onClick={onGoBrowse}>Explore products<i aria-hidden="true">→</i></button>

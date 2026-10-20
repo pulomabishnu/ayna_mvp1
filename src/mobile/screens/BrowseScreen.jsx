@@ -26,6 +26,7 @@ const FILTER_FIELDS = [
   ['sustainability', 'Sustainability', [['all', 'Any'], ['reusable', 'Reusable'], ['recyclable', 'Recyclable'], ['low-waste', 'Low waste'], ['packaging', 'Sustainable packaging']]],
   ['lifeStage', 'Life stage', [['all', 'Any'], ['fertility', 'Fertility'], ['pregnancy', 'Pregnancy'], ['postpartum', 'Postpartum'], ['perimenopause', 'Perimenopause'], ['menopause', 'Menopause']]],
 ];
+const SORT_LABELS = { rating: 'Highest rated', 'price-asc': 'Price: low to high', 'price-desc': 'Price: high to low' };
 const EMPTY_FILTERS = Object.fromEntries(FILTER_FIELDS.map(([key]) => [key, 'all']));
 const PRICE_VALUE = (item) => {
   const raw = String(item.price || item.priceDisplay || '');
@@ -376,6 +377,9 @@ export default function BrowseScreen({
     };
   }, [searchTermRaw, searchScored.length, activeGroup]);
 
+  // Applied filters, shown as removable chips under the toolbar.
+  const activeFilters = FILTER_FIELDS.filter(([key]) => filters[key] !== 'all').map(([key, , options]) => [key, (options.find(([value]) => value === filters[key]) || [])[1] || CATEGORY_LABELS[filters[key]] || String(filters[key]).replaceAll('-', ' ')]);
+  const activeFilterCount = activeFilters.length;
   const matchingReads = searchTermRaw.length >= 2 ? searchArticles(searchTermRaw, articles) : [];
   // SearchAssist above already says "No results for 'xyz'" in this case;
   // the grid's own empty line would say it a second time.
@@ -398,28 +402,34 @@ export default function BrowseScreen({
 
       <div className="ayna-fresh-browse-heading ayna-shop-heading">
         <div className="ay-shop-titlebar"><h1>Shop</h1>{hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}</div>
+        <p className="ay-shop-note">Some links earn ayna a commission. It never changes your matches.</p>
         <SearchBar placeholder="Search products or brands" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }} onPick={(s) => setSearchValue(s.query)} />
       </div>
       {searchTermRaw.length >= 2 && <SearchAssist variant="app" query={searchTermRaw} resultCount={searchScored.length} onUse={setSearchValue} />}
 
       {mode === 'products' && (
-        <CategoryNav groups={MACRO_GROUPS} active={activeGroup} onSelect={setActiveGroup} action={
-          <button ref={filterButtonRef} className="ayna-shop-filter-toggle" type="button" aria-label="Filters" aria-expanded={showFilters} onClick={() => setShowFilters((value) => !value)}>
-            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 7h16M4 17h16" /><circle cx="9" cy="7" r="2.5" fill="var(--ayna-bg)" /><circle cx="15" cy="17" r="2.5" fill="var(--ayna-bg)" /></svg>
-            {Object.values(filters).filter((value) => value !== 'all').length > 0 && <span>{Object.values(filters).filter((value) => value !== 'all').length}</span>}
-          </button>
-        } />
-      )}
-      {mode === 'products' && !searchValue.trim() && (
-        <button type="button" className="ay-discover-cta" onClick={() => setShowDeck(true)}>
-          <svg className="ay-discover-fan" viewBox="0 0 56 44" aria-hidden="true">
-            <rect className="c1" x="6" y="6" width="22" height="30" rx="5" transform="rotate(-12 17 21)" />
-            <rect className="c2" x="17" y="5" width="22" height="30" rx="5" />
-            <rect className="c3" x="28" y="6" width="22" height="30" rx="5" transform="rotate(12 39 21)" />
-          </svg>
-          <span className="ay-discover-copy"><strong>Swipe to discover</strong><small>Right to save, left to skip</small></span>
-          <span className="ay-discover-go" aria-hidden="true">→</span>
-        </button>
+        <CategoryNav groups={MACRO_GROUPS} active={activeGroup} onSelect={setActiveGroup} action={<>
+          <div className="ay-shop-toolbar">
+            <button ref={filterButtonRef} className="ayna-shop-filter-toggle" type="button" aria-expanded={showFilters} onClick={() => setShowFilters((value) => !value)}>
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 7h16M4 17h16" /><circle cx="9" cy="7" r="2.5" fill="var(--ayna-bg)" /><circle cx="15" cy="17" r="2.5" fill="var(--ayna-bg)" /></svg>
+              Filters
+              {activeFilterCount > 0 && <span aria-label={`${activeFilterCount} on`}>{activeFilterCount}</span>}
+            </button>
+            <p className="ay-shop-count" role="status">{filtered.length} {filtered.length === 1 ? 'product' : 'products'}</p>
+            {!searchValue.trim() && <button type="button" className="ay-discover-cta" aria-label="Swipe to discover: right to save, left to skip" onClick={() => setShowDeck(true)}>
+              <svg className="ay-discover-fan" viewBox="0 0 56 44" aria-hidden="true">
+                <rect className="c1" x="6" y="6" width="22" height="30" rx="5" transform="rotate(-12 17 21)" />
+                <rect className="c2" x="17" y="5" width="22" height="30" rx="5" />
+                <rect className="c3" x="28" y="6" width="22" height="30" rx="5" transform="rotate(12 39 21)" />
+              </svg>
+              <span className="ay-discover-copy"><strong>Swipe</strong></span>
+            </button>}
+          </div>
+          {(activeFilters.length > 0 || sortBy !== 'default') && <div className="ay-shop-applied" role="group" aria-label="Filters on">
+            {sortBy !== 'default' && <button type="button" className="ayna-shop-category" aria-pressed="true" onClick={() => setSortBy('default')} aria-label={`Remove sort: ${SORT_LABELS[sortBy]}`}>{SORT_LABELS[sortBy]}<span aria-hidden="true">×</span></button>}
+            {activeFilters.map(([key, text]) => <button key={key} type="button" className="ayna-shop-category" aria-pressed="true" onClick={() => setFilters((current) => ({ ...current, [key]: 'all' }))} aria-label={`Remove filter: ${text}`}>{text}<span aria-hidden="true">×</span></button>)}
+          </div>}
+        </>} />
       )}
       {showDeck && <DiscoverDeck products={filtered} quizAnswers={authUser ? quizAnswers : null} savedProducts={savedProducts} onToggleSaved={onToggleSaved} onOpenProduct={(product) => { setShowDeck(false); onOpenProduct?.(product); }} onClose={() => setShowDeck(false)} />}
       {mode === 'products' && <>
@@ -458,14 +468,14 @@ export default function BrowseScreen({
             </>
           ) : searchTermRaw.length >= 2 && aiState.loading ? (
             <>
-              <div style={{ padding: '0 20px 14px', fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
+              <div className="ay-shop-meta">
                 Searching beyond our catalog…
               </div>
               <PixelateGrid />
             </>
           ) : searchTermRaw.length >= 2 && aiState.query === searchTermRaw && aiState.suggestions.length > 0 ? (
             <>
-              <div style={{ padding: '0 20px 14px', fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
+              <div className="ay-shop-meta">
                 Not in our catalog yet, found via AI search
               </div>
               <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`ai-${filterKey}`} products={aiState.suggestions} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
