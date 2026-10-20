@@ -19,12 +19,12 @@ function when(iso) {
  * The product page's community reviews: stars, a short excerpt and a link to
  * the full review (and its replies) in Community.
  */
-export default function ProductCommunityReviews({ productId, rows = null, onOpenReview = null, heading = 'Reviews in Community' }) {
+export default function ProductCommunityReviews({ productId, rows = null, onOpenReview = null, heading = 'Reviews in Community', initial = SHOWN }) {
   const live = useProductReviews(rows ? null : productId);
   const reviews = rows || live;
   const [all, setAll] = useState(false);
   if (!reviews.length) return null;
-  const shown = all ? reviews : reviews.slice(0, SHOWN);
+  const shown = all ? reviews : reviews.slice(0, initial);
   const open = (e, id) => {
     if (!onOpenReview || e.metaKey || e.ctrlKey || e.shiftKey || e.button > 0) return;
     e.preventDefault();
@@ -44,6 +44,6 @@ export default function ProductCommunityReviews({ productId, rows = null, onOpen
         </li>;
       })}
     </ul>
-    {reviews.length > SHOWN && <button type="button" className="cr-review-link" aria-expanded={all} onClick={() => setAll((v) => !v)}>{all ? 'Show fewer reviews' : `Show all ${reviews.length} reviews`}</button>}
+    {reviews.length > initial && <button type="button" className="cr-review-link" aria-expanded={all} onClick={() => setAll((v) => !v)}>{all ? 'Show fewer reviews' : `See all ${reviews.length} reviews`}</button>}
   </section>;
 }

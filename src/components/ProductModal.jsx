@@ -22,8 +22,11 @@ import { firstSentence } from './pdp/sentences';
 import ProductEvidence, { ProductSafety } from './pdp/ProductEvidence';
 import { galleryImages, retailerLinks, similarProducts, sameNeedProducts, productJsonLd, breadcrumbJsonLd } from './pdp/commerce';
 import GalleryThumbs from './pdp/GalleryThumbs';
+import { useProductReviews } from './pdp/useProductReviews';
+import { summarizeReviewRows } from '../utils/community/reviewRatings.js';
 import { productImageAlt } from '../utils/seoMeta';
 import ComparePanel from './pdp/ComparePanel';
+import PhoneFold from './pdp/PhoneFold';
 import Breadcrumbs from './pdp/Breadcrumbs';
 import useJsonLd from './pdp/useJsonLd';
 import { resolveBuyUrl, isAmazonUrl, buyGoesToAmazonListing } from '../utils/buyLink';
@@ -36,6 +39,7 @@ import posthog from 'posthog-js';
 import '../styles/audit-pdp.css';
 import '../styles/verify-content.css';
 import './pdp/pdp.css';
+import './pdp/pdp-story.css';
 
 /**
  * Product Q&A, for a user who doesn't know what a product actually IS (a
@@ -510,8 +514,13 @@ export default function ProductModal({
   );
   // Only ratings real people left on ayna. The catalog's userRating has no
   // count or source behind it, so it is not shown.
-  const aynaRating = getAynaRating(product, aynaData);
-  const ratingCount = getAynaRatingCount(aynaData);
+  const storedRating = getAynaRating(product, aynaData);
+  const storedCount = getAynaRatingCount(aynaData);
+  // The live community reviews win when there are any (same rule as the Reviews section).
+  const liveReviewRows = useProductReviews(product?.id);
+  const liveStats = liveReviewRows.length ? summarizeReviewRows(liveReviewRows)[product?.id] : null;
+  const aynaRating = liveStats ? liveStats.average : storedRating;
+  const ratingCount = liveStats ? liveStats.count : storedCount;
 
   const glance = useMemo(
     () => buildGlance(product, { details: matchDetails, aynaData, aynaRating }),
@@ -881,13 +890,25 @@ export default function ProductModal({
           </div>
         </div>
 
-        <div className="pdp-head ay3-simple pdp-head--tabs" ref={boardRef}>
+        <div className="pdp-head ay3-simple pdp-head--tabs pdp-head--story" ref={boardRef}>
           <div className="pdp-head__media">
             {galleryTile}
           </div>
 
           <div className="pdp-head__detail pdp-h2">
-            {brand && !String(displayName || '').toLowerCase().startsWith(String(brand).toLowerCase()) && <div className="pdp-head__eyebrow">{brand}</div>}
+            {aynaRating != null && ratingCount > 0 && (
+              <button type="button" className="pdp-hero-rating" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'reviews' }))}>
+                <span className="pdp-hero-rating__stars" aria-hidden="true">{[1, 2, 3, 4, 5].map((n) => <span key={n} className={n <= Math.round(aynaRating) ? 'is-on' : undefined}>★</span>)}</span>
+                <span><b>{aynaRating.toFixed(1)}</b> ({ratingCount} {ratingCount === 1 ? 'review' : 'reviews'})</span>
+                <span className="sr-only">, go to reviews</span>
+              </button>
+            )}
+            {(() => {
+              const showBrand = brand && !String(displayName || '').toLowerCase().startsWith(String(brand).toLowerCase());
+              const cat = CATEGORY_LABELS?.[product.category] || '';
+              const bits = [showBrand ? brand : '', cat].filter(Boolean);
+              return bits.length ? <div className="pdp-head__eyebrow">{bits.join(' · ')}</div> : null;
+            })()}
             <h1 className="pdp-head__name">{displayName}</h1>
             {(() => {
               const raw = String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '').replace(/\s*—\s*/g, ', ').trim();
@@ -961,9 +982,11 @@ export default function ProductModal({
             {/* "Good to know" is gone: its chips repeated FSA/HSA and listed claims the page says it hasn't checked. */}
 
           </div>
-          {/* The research, as tabs, in the first screen: under the photo on desktop, after Buy on phone. */}
-          <div className="pdp-head__info">
-            <ProductEvidence product={product} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} recall={recall} heroLine={firstSentence(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '').replace(/\s*—\s*/g, ', ').trim(), { min: 20, max: 240 })} safety={<ProductSafety product={product} glance={glance} recall={recall} alertText={glance?.alert || ''} />} extraRows={(() => {
+        </div>
+
+        {/* Everything about the product, as stacked sections with a pill nav: the evidence reads without tabs. */}
+        <div className="pdp-story">
+          <ProductEvidence product={product} image={images[0] || ''} safetyLead={topWarning} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} recall={recall} heroLine={firstSentence(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '').replace(/\s*—\s*/g, ', ').trim(), { min: 20, max: 240 })} safety={<ProductSafety product={product} glance={glance} recall={recall} alertText={glance?.alert || ''} />} extraRows={(() => {
             const pp = getPassport(product);
             const checked = pp?.pricing?.price?.verified_at;
             let seller = '';
@@ -974,11 +997,11 @@ export default function ProductModal({
               { label: 'Price check', value: d && !Number.isNaN(d.getTime()) && price.known && !price.isPlaceholder ? `Checked ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : '' },
             ];
           })()} />
-          </div>
         </div>
 
         <div className="pdp-below pdp-below--glance">
           <div className="pdp-read">
+            <PhoneFold id="pdp-askshare" title="Ask or share" line="Ask ayna about your situation, or write a review if you have tried it.">
             <div className="pdp-pair">
               <ProductAsk productName={displayName} onAsk={onAskAyna} />
               {onCommunityAction && (
@@ -996,12 +1019,15 @@ export default function ProductModal({
                 </section>
               )}
             </div>
+            </PhoneFold>
           </div>
 
 
 
           {(
-            <ComparePanel product={product} others={suggestions.compare} onOpen={(p) => onOpenProduct && onOpenProduct(p)} matchFor={matchFor} renderThumb={compareThumb} />
+            <PhoneFold id="pdp-compare" title="Compare with similar" line={suggestions.compare.length ? `Side by side with ${suggestions.compare.slice(0, 2).map((p) => p.name).join(' and ')}.` : 'Pick products to compare side by side.'}>
+              <ComparePanel product={product} others={suggestions.compare} onOpen={(p) => onOpenProduct && onOpenProduct(p)} matchFor={matchFor} renderThumb={compareThumb} />
+            </PhoneFold>
           )}
 
           {suggestions.more.length > 0 && (
