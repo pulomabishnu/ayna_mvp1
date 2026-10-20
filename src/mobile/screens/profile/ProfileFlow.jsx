@@ -21,6 +21,8 @@ import { fetchSmsStatus, startSmsVerify, checkSmsVerify, saveSmsPrefs, removeSms
 import { fetchDataExport, requestAccountDeletion } from '../../utils/dataExportApi.js';
 import { OPEN_SOURCE_PACKAGES, summarizeLicenses } from '../../data/openSourceLicenses.js';
 import LegalFooter from '../../components/LegalFooter.jsx';
+import InlineError from '../../../components/InlineError.jsx';
+import { clearError, errorSummary, firstErrorKey, revealField, warnHaptic } from '../../../utils/formErrors.js';
 import HealthConnectionsScreen from './HealthConnectionsScreen.jsx';
 import HealthInsightsScreen from './HealthInsightsScreen.jsx';
 import { ALL_PRODUCTS, getSelectedNeeds } from '../../../data/products.js';
@@ -1667,6 +1669,9 @@ function TextMessagesScreen({ onBack, authUser }) {
   const [agreed, setAgreed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  // Required-field errors on the number step (shown inline, not by
+  // disabling Send code, so she can tap it and see what's missing).
+  const [fieldErrors, setFieldErrors] = useState({});
   const load = () => {
     setLoadError('');
     fetchSmsStatus().then(setStatus).catch((e) => setLoadError(smsError(e)));
@@ -1676,7 +1681,22 @@ function TextMessagesScreen({ onBack, authUser }) {
     setBusy(true); setError('');
     try { await fn(); } catch (e) { setError(smsError(e)); } finally { setBusy(false); }
   };
-  const send = () => run(async () => { await startSmsVerify(phone.trim()); setSent(true); });
+  const SMS_IDS = { phone: 'ay-sms-phone', agree: 'ay-sms-agree' };
+  const send = () => {
+    const next = {};
+    if (phone.replace(/\D/g, '').length < 10) next.phone = phone.trim() ? 'Check your number. It needs all 10 digits, like (555) 555-0123.' : 'Add your mobile number.';
+    if (!agreed) next.agree = 'Tick this box to agree to get texts from ayna.';
+    setFieldErrors(next);
+    const first = firstErrorKey(next, ['phone', 'agree']);
+    if (first) {
+      setError('');
+      warnHaptic();
+      window.requestAnimationFrame(() => revealField(document.getElementById(SMS_IDS[first])));
+      return;
+    }
+    run(async () => { await startSmsVerify(phone.trim()); setSent(true); });
+  };
+  const smsSummary = errorSummary(fieldErrors, [], 'get a code');
   const verify = () => run(async () => {
     await checkSmsVerify(phone.trim(), code.trim());
     setSent(false); setCode('');
@@ -1702,12 +1722,20 @@ function TextMessagesScreen({ onBack, authUser }) {
         <p className="ay-sms-muted">Reminders, order updates and a way to text ayna. You choose which ones.</p>
         {!sent ? <>
           <label htmlFor="ay-sms-phone">Mobile number</label>
-          <input id="ay-sms-phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="(555) 555-0123" value={phone} onChange={(e) => setPhone(e.target.value)} />
-          <label className="ay-sms-agree">
-            <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} />
+          <input id="ay-sms-phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="(555) 555-0123" value={phone}
+            className={fieldErrors.phone ? 'is-invalid' : undefined}
+            aria-invalid={fieldErrors.phone ? true : undefined} aria-describedby={fieldErrors.phone ? 'ay-sms-phone-err' : undefined}
+            onChange={(e) => { setPhone(e.target.value); setFieldErrors((prev) => clearError(prev, 'phone')); }} />
+          <InlineError id="ay-sms-phone-err">{fieldErrors.phone}</InlineError>
+          <label className={`ay-sms-agree${fieldErrors.agree ? ' ay-check-invalid' : ''}`}>
+            <input id="ay-sms-agree" type="checkbox" checked={agreed}
+              aria-invalid={fieldErrors.agree ? true : undefined} aria-describedby={fieldErrors.agree ? 'ay-sms-agree-err' : undefined}
+              onChange={(e) => { setAgreed(e.target.checked); setFieldErrors((prev) => clearError(prev, 'agree')); }} />
             <span>I agree to get texts from ayna at this number, including reminders, order updates and replies when I text ayna. Msg &amp; data rates may apply. Message frequency varies. Reply STOP to opt out, HELP for help. See our <a href="https://www.aynahealth.co/terms-of-use" target="_blank" rel="noopener noreferrer">Terms</a> and <a href="https://www.aynahealth.co/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</span>
           </label>
-          <button type="button" className="ay-qc-primary" disabled={busy || !agreed || phone.replace(/\D/g, '').length < 10} onClick={send}>{busy ? 'Sending…' : 'Send code'}</button>
+          <InlineError id="ay-sms-agree-err">{fieldErrors.agree}</InlineError>
+          <InlineError className="ay-inline-err--summary">{smsSummary}</InlineError>
+          <button type="button" className="ay-qc-primary" disabled={busy} onClick={send}>{busy ? 'Sending…' : 'Send code'}</button>
         </> : <>
           <label htmlFor="ay-sms-code">Code we texted to {phone}</label>
           <input id="ay-sms-code" inputMode="numeric" autoComplete="one-time-code" maxLength={8} value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} />

@@ -7,6 +7,8 @@ import { productImageOverride } from '../../data/productImageOverrides.js';
 import { HEARD_ABOUT_OPTIONS, HEARD_ABOUT_OTHER_MAX, heardAboutMetadata } from '../../utils/heardAbout.js';
 import { stashPendingSignupMeta } from '../../utils/pendingConsent.js';
 import { setRememberMe } from '../../utils/supabaseClient.js';
+import { clearError, errorSummary, firstErrorKey, revealField, warnHaptic } from '../../utils/formErrors.js';
+import InlineError from '../../components/InlineError.jsx';
 import '../auth.css';
 import '../../styles/flow.css';
 
@@ -26,9 +28,23 @@ const CONSENT_ITEMS = [
   'ayna provides wellness information, not medical advice or a substitute for care from a qualified healthcare provider.',
 ];
 
-function Field({ label, icon, children }) {
+// What to do when each box above is left unticked (plain, one per box; the
+// legal wording above stays as it is).
+const CONSENT_ERRORS = [
+  'Tick this box to confirm what you share is self-reported, not a clinical record.',
+  'Tick this box to agree that an external AI service may process your wellness data.',
+  'Tick this box to confirm ayna gives wellness information, not medical advice.',
+];
+const CONSENT_KEYS = CONSENT_ITEMS.map((_, i) => `consent${i}`);
+// Screen order, so the first miss is the one we scroll to.
+const ERROR_ORDER = ['firstName', 'email', 'password', 'heardAbout', ...CONSENT_KEYS];
+const FIELD_IDS = { firstName: 'ay-auth-first', email: 'ay-auth-email', password: 'ay-auth-password', heardAbout: 'ay-auth-heard', ...Object.fromEntries(CONSENT_KEYS.map((k, i) => [k, `ay-auth-consent-${i}`])) };
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const errId = (key) => `${FIELD_IDS[key]}-err`;
+
+function Field({ label, icon, invalid = false, children }) {
   return (
-    <label className="ayna-fresh-auth-field"
+    <label className={`ayna-fresh-auth-field${invalid ? ' is-invalid' : ''}`}
       style={{
         background: 'var(--ayna-surface)',
         borderRadius: 14,
@@ -206,6 +222,9 @@ export default function SigninScreen({
   const [googleLoading, setGoogleLoading] = useState(false);
   const [appleLoading, setAppleLoading] = useState(false);
   const [error, setError] = useState('');
+  // Per-field required errors, shown inline under each field or box.
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [summaryAction, setSummaryAction] = useState('create your account');
   const [resending, setResending] = useState(false);
   const [resendMsg, setResendMsg] = useState('');
 
@@ -236,18 +255,50 @@ export default function SigninScreen({
     return () => window.removeEventListener('ayna:native-oauth-error', onOAuthError);
   }, []);
 
-  const allConsented = checked.every(Boolean);
-  const toggleCheck = (i) => setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v)));
+  const toggleCheck = (i) => {
+    setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v)));
+    setFieldErrors((prev) => clearError(prev, CONSENT_KEYS[i]));
+  };
+  const clearField = (key) => setFieldErrors((prev) => clearError(prev, key));
+  const invalidProps = (key) => ({
+    id: FIELD_IDS[key],
+    'aria-invalid': fieldErrors[key] ? true : undefined,
+    'aria-describedby': fieldErrors[key] ? errId(key) : undefined,
+  });
+
+  // Checks the required fields for this tap. `fields` limits it to the
+  // ones that apply (Google/Apple sign-up only needs heard-about + boxes).
+  // On a miss: inline messages, scroll + focus the first, warning haptic.
+  const validateRequired = (fields, action) => {
+    const next = {};
+    const want = (k) => fields.includes(k);
+    if (want('firstName') && !firstName.trim()) next.firstName = 'Add your first name.';
+    if (want('email')) {
+      if (!email.trim()) next.email = 'Add your email.';
+      else if (!EMAIL_RE.test(email.trim())) next.email = 'Check your email. It needs an @ and a domain, like you@email.com.';
+    }
+    if (want('password')) {
+      if (!password) next.password = mode === 'signup' ? 'Add a password.' : 'Add your password.';
+      else if (mode === 'signup' && password.length < 8) next.password = 'Use at least 8 characters for your password.';
+    }
+    if (want('heardAbout') && !isHeardAboutAnswered(heardAbout)) next.heardAbout = 'Choose where you heard about ayna.';
+    CONSENT_KEYS.forEach((k, i) => { if (want(k) && !checked[i]) next[k] = CONSENT_ERRORS[i]; });
+    setFieldErrors(next);
+    setSummaryAction(action);
+    const first = firstErrorKey(next, ERROR_ORDER);
+    if (!first) return true;
+    setError('');
+    warnHaptic();
+    // After React paints the messages, so centring accounts for them.
+    window.requestAnimationFrame(() => revealField(document.getElementById(FIELD_IDS[first])));
+    return false;
+  };
+  const SIGNUP_FIELDS = ['firstName', 'email', 'password', 'heardAbout', ...CONSENT_KEYS];
+  const SOCIAL_SIGNUP_FIELDS = ['heardAbout', ...CONSENT_KEYS];
+  const summary = errorSummary(fieldErrors, CONSENT_KEYS, summaryAction);
 
   const handleSignUp = async () => {
-    if (!isHeardAboutAnswered(heardAbout)) {
-      setError('Tell us where you heard about ayna.');
-      return;
-    }
-    if (!allConsented) {
-      setError('Please agree to the three statements above before creating your account.');
-      return;
-    }
+    if (!validateRequired(SIGNUP_FIELDS, 'create your account')) return;
     setError('');
     setLoading(true);
     // Signup always persists the new session (the Remember me choice is a
@@ -266,6 +317,7 @@ export default function SigninScreen({
   };
 
   const handleSignIn = async () => {
+    if (!validateRequired(['email', 'password'], 'sign in')) return;
     setError('');
     setLoading(true);
     setRememberMe(rememberMe);
@@ -284,14 +336,7 @@ export default function SigninScreen({
     // statements above only render in signup mode, so this is the one place
     // stopping Google from creating a real account with none of them agreed
     // to. Signing in with an existing account needs no re-consent.
-    if (mode === 'signup' && !isHeardAboutAnswered(heardAbout)) {
-      setError('Tell us where you heard about ayna.');
-      return;
-    }
-    if (mode === 'signup' && !allConsented) {
-      setError('Please agree to the three statements above before continuing.');
-      return;
-    }
+    if (mode === 'signup' && !validateRequired(SOCIAL_SIGNUP_FIELDS, 'continue')) return;
     setError('');
     stashPendingSignupMeta(mode === 'signup' ? heardAboutMetadata(heardAbout, heardOther) : null);
     // Before the OAuth redirect: the flag must already be set when the
@@ -309,14 +354,7 @@ export default function SigninScreen({
 
   const handleApple = async () => {
     // Same gates as handleGoogle above.
-    if (mode === 'signup' && !isHeardAboutAnswered(heardAbout)) {
-      setError('Tell us where you heard about ayna.');
-      return;
-    }
-    if (mode === 'signup' && !allConsented) {
-      setError('Please agree to the three statements above before continuing.');
-      return;
-    }
+    if (mode === 'signup' && !validateRequired(SOCIAL_SIGNUP_FIELDS, 'continue')) return;
     setError('');
     stashPendingSignupMeta(mode === 'signup' ? heardAboutMetadata(heardAbout, heardOther) : null);
     setRememberMe(mode === 'signup' ? true : rememberMe);
@@ -405,40 +443,52 @@ export default function SigninScreen({
 
           <div className="ay-auth-form">
           {mode === 'signup' && (
-            <Field label="First name" icon={PersonIcon}>
-              <input type="text" autoComplete="given-name" placeholder="Your first name" value={firstName} onChange={(e) => setFirstName(e.target.value)} style={inputStyle} />
-            </Field>
+            <>
+              <Field label="First name" icon={PersonIcon} invalid={Boolean(fieldErrors.firstName)}>
+                <input type="text" autoComplete="given-name" placeholder="Your first name" value={firstName} onChange={(e) => { setFirstName(e.target.value); clearField('firstName'); }} style={inputStyle} {...invalidProps('firstName')} />
+              </Field>
+              <InlineError id={errId('firstName')}>{fieldErrors.firstName}</InlineError>
+            </>
           )}
 
-          <Field label="Email" icon={EmailIcon}>
-            <input type="email" autoComplete="email" placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle} />
+          <Field label="Email" icon={EmailIcon} invalid={Boolean(fieldErrors.email)}>
+            <input type="email" autoComplete="email" placeholder="you@email.com" value={email} onChange={(e) => { setEmail(e.target.value); clearField('email'); }} style={inputStyle} {...invalidProps('email')} />
           </Field>
+          <InlineError id={errId('email')}>{fieldErrors.email}</InlineError>
 
-          <Field label="Password" icon={LockIcon}>
-            <input type="password" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} style={inputStyle} />
+          <Field label="Password" icon={LockIcon} invalid={Boolean(fieldErrors.password)}>
+            <input type="password" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} placeholder="••••••••" value={password} onChange={(e) => { setPassword(e.target.value); clearField('password'); }} style={inputStyle} {...invalidProps('password')} />
           </Field>
+          <InlineError id={errId('password')}>{fieldErrors.password}</InlineError>
 
           {mode === 'signup' && (
             <div className="ay-auth-heard">
               <label className="ay-auth-heard-label" htmlFor="ay-auth-heard">Where did you hear about us?</label>
-              <select id="ay-auth-heard" value={heardAbout} onChange={(e) => setHeardAbout(e.target.value)} className={heardAbout ? '' : 'is-empty'}>
+              <select value={heardAbout} onChange={(e) => { setHeardAbout(e.target.value); clearField('heardAbout'); }} className={`${heardAbout ? '' : 'is-empty'}${fieldErrors.heardAbout ? ' is-invalid' : ''}`} {...invalidProps('heardAbout')}>
                 <option value="">Choose one</option>
                 {HEARD_ABOUT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
               {heardAbout === 'other' && (
                 <input type="text" aria-label="Where you heard about us" placeholder="Tell us where" maxLength={HEARD_ABOUT_OTHER_MAX} value={heardOther} onChange={(e) => setHeardOther(e.target.value)} autoComplete="off" />
               )}
+              <InlineError id={errId('heardAbout')}>{fieldErrors.heardAbout}</InlineError>
             </div>
           )}
 
           {mode === 'signup' && (
             <div className="ay-auth-consent">
-              {CONSENT_ITEMS.map((text, i) => (
-                <label key={i} style={{ display: 'flex', gap: 10, cursor: 'pointer', alignItems: 'flex-start' }}>
-                  <input type="checkbox" checked={checked[i]} onChange={() => toggleCheck(i)} style={{ width: 18, height: 18, flex: 'none', marginTop: 1, accentColor: '#F7BADD' }} />
-                  <span className="ay-auth-consent-text">{text}</span>
-                </label>
-              ))}
+              {CONSENT_ITEMS.map((text, i) => {
+                const key = CONSENT_KEYS[i];
+                return (
+                  <div key={i} className="ay-auth-consent-item">
+                    <label className={`ay-auth-consent-row${fieldErrors[key] ? ' ay-check-invalid' : ''}`}>
+                      <input type="checkbox" checked={checked[i]} onChange={() => toggleCheck(i)} {...invalidProps(key)} />
+                      <span className="ay-auth-consent-text">{text}</span>
+                    </label>
+                    <InlineError id={errId(key)}>{fieldErrors[key]}</InlineError>
+                  </div>
+                );
+              })}
             </div>
           )}
 
@@ -455,6 +505,7 @@ export default function SigninScreen({
           )}
 
           {error && <div className="ay-auth-error" role="alert">{error}</div>}
+          <InlineError className="ay-inline-err--summary">{summary}</InlineError>
 
 
             {mode === 'signup' ? (
@@ -482,6 +533,7 @@ export default function SigninScreen({
 
           <button type="button" className="ayna-fresh-auth-switch ay-auth-link" onClick={() => {
             setError('');
+            setFieldErrors({});
             if (mode === 'signup') setMode('signin');
             else if (canSignUp) setMode('signup');
             else onStartEcosystem?.();

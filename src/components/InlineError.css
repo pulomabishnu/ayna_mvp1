@@ -1,0 +1,40 @@
+/* Inline required-field errors (app + website sign-up). Brand colours only:
+   no red. The message is espresso (butter in dark) with a line icon; the
+   field or checkbox row it belongs to gets a pink fill (is-invalid). */
+.ay-inline-err.ay-inline-err {
+  display: flex; align-items: flex-start; gap: 8px;
+  margin: 4px 0 0 !important; padding: 0 !important;
+  color: var(--ay-ink, #3e2723) !important;
+  font: 600 13px/1.4 var(--ay-font-ui, 'DM Sans'), system-ui, sans-serif !important;
+  text-align: left;
+}
+.ay-inline-err.ay-inline-err svg { flex: none; width: 16px; height: 16px; margin-top: 1px; stroke: currentColor !important; opacity: 1 !important; }
+.ay-inline-err.ay-inline-err span { color: inherit !important; font: inherit !important; opacity: 1 !important; }
+
+/* Summary by the submit button when more than one thing is missing. */
+.ay-inline-err.ay-inline-err--summary { justify-content: center; margin: 0 !important; text-align: center; }
+
+/* A checkbox row in its error state: pink fill, espresso text in both themes. */
+.ay-check-invalid.ay-check-invalid {
+  background: #f7badd !important; color: #3e2723 !important;
+  border-radius: 12px; padding: 12px !important; margin: 0 -12px !important;
+  scroll-margin: 96px;
+}
+.ay-check-invalid.ay-check-invalid > span,
+.ay-check-invalid.ay-check-invalid a { color: #3e2723 !important; }
+.ay-check-invalid.ay-check-invalid + .ay-inline-err { margin-top: 0 !important; }
+@media (prefers-reduced-motion: no-preference) {
+  .ay-check-invalid.ay-check-invalid { transition: background-color .15s ease; }
+}
+
+/* Website auth card (AuthGate + ConsentGate): required inputs and selects
+   left empty get the same pink fill + espresso outline. */
+html body .app-container .ay-auth-card :is(input:not([type='checkbox']), select)[aria-invalid='true'] {
+  background-color: #f7badd !important; border: 2px solid #3e2723 !important; color: #3e2723 !important;
+}
+html body .app-container .ay-auth-card .ay-auth-check-item { display: grid; gap: 4px; }
+html body .app-container .ay-auth-card .ay-auth-check { min-height: 44px; align-content: start; }
+html body .app-container .ay-auth-card .ay-auth-check.ay-check-invalid { margin: 0 -12px !important; color: #3e2723 !important; }
+html body .app-container .ay-auth-card .ay-auth-check.ay-check-invalid input { border-color: #3e2723 !important; background: #fffcf5 !important; outline: 2px solid #3e2723; outline-offset: 1px; }
+html body .app-container .ay-auth-card .ay-inline-err { color: #3e2723 !important; }
+html body .app-container .ay-auth-card :is(input, select, .ay-auth-check) { scroll-margin: 96px; }
