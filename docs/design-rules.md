@@ -51,3 +51,18 @@ decision below is made once, here, so screens don't drift toward generic
 1. Check light and dark at 390px and 320px, with the notch simulated.
 2. Run the squint test: does anything look like a template? Remove the default.
 3. Check against this file: colours, caps, nested cards, shadows, spacing scale.
+
+## Feel (what makes it hand-made, not generated)
+
+- Show the real thing: real product photos, her real numbers, real names on reviews. No stock people, no placeholder copy.
+- One specific line beats three generic ones. Cover the logo: if a sentence would work for a competitor, rewrite it.
+- Break the symmetry once per screen: one bigger card, one off-grid element. Not three identical cards in a row.
+- Few text sizes, each with one job: 34 (big number), 28 to 30 (screen title), 22 (section), 15 (body), 13 (label), 11.5 (caption).
+- One obvious next step per screen; secondary actions stay quiet.
+- Every tap answers instantly: pressed state, haptic on confirm (native), skeleton or optimistic update while loading.
+- Animate only what explains a change (a sheet opening, a card expanding). No fade-up on every section.
+- Selected states use fill or weight, never colour alone.
+- Empty, loading and error states are designed, each with one clear action and a human sentence.
+- Test with long names, long product titles, 320px, largest text size and dark mode before calling it done.
+
+Sources: Fountain Institute, "7 Signs a UI Has Been Vibe Coded"; 21st.dev, "How to make your website not look AI generated"; codemyspec, "vibe-coded websites look the same"; vp0, "What makes an app look professional"; Kree8 app UX cheatsheet; Baymard Institute product page research.
