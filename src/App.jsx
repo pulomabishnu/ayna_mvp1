@@ -113,6 +113,7 @@ import NewAccountStart from './components/NewAccountStart';
 import { markOAuthSource, takeOAuthSource, shouldOfferEcosystemStart } from './utils/oauthNewAccount';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './components/EcosystemBubbles';
 import EcosystemPreview from './components/v3/EcosystemPreview';
+import EcosystemViewTabs from './components/EcosystemViewTabs';
 import { clearPersonalStorage } from './utils/clearPersonalStorage';
 import { toast } from './utils/toast';
 import { setDarkAccentSwap } from './utils/darkAccentSwap.js';
@@ -468,7 +469,9 @@ function App() {
     const initialUrl = (currentView === 'auth-callback' || currentView === 'campus-resources' || currentView === 'free-product' || currentView === 'free-product-reward')
       ? `${path}${window.location.search}${window.location.hash}`
       : currentView === 'waitlist' && /^#brand-[a-z0-9-]+$/.test(window.location.hash) ? `${path}${window.location.hash}`
-      : communityQ ? `${path}?q=${encodeURIComponent(communityQ)}` : path;
+      : communityQ ? `${path}?q=${encodeURIComponent(communityQ)}`
+      // Ecosystem keeps ?view=dashboard so a link can open its Dashboard tab.
+      : currentView === 'ecosystem' && new URLSearchParams(window.location.search).get('view') === 'dashboard' ? `${path}?view=dashboard` : path;
     window.history.replaceState({ view: currentView, productId: productRouteId }, '', initialUrl);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -2025,6 +2028,19 @@ function App() {
     }
   };
 
+  // The website health dashboard: its own page (/health) and the Dashboard
+  // tab on Ecosystem render this same element.
+  const webHealth = (
+    <WebHealth
+      user={user}
+      health={health}
+      onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+      onOpenConnections={() => {
+        if (user) { setCurrentView('health-data'); return; }
+        setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true);
+      }}
+    />
+  );
 
   return (
     <div className="app-container" data-theme={themeAttr} data-view={currentView}>
@@ -2331,17 +2347,7 @@ function App() {
         {currentView === 'delete-account' && (
           <DeleteAccountPage onBack={() => setCurrentView('you')} />
         )}
-        {currentView === 'health' && (
-          <WebHealth
-            user={user}
-            health={health}
-            onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
-            onOpenConnections={() => {
-              if (user) { setCurrentView('health-data'); return; }
-              setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true);
-            }}
-          />
-        )}
+        {currentView === 'health' && webHealth}
         {currentView === 'health-data' && user && (
           <WebHealthData
             user={user}
@@ -2489,6 +2495,10 @@ function App() {
             else setCurrentView('welcome');
           }} />
         )}
+        {/* Ecosystem: "Products | Dashboard" at the top, like the app's Ecosystem
+            screen. Dashboard is the same WebHealth element /health renders. */}
+        {currentView === 'ecosystem' && (
+          <EcosystemViewTabs dashboard={webHealth}>
         {currentView === 'ecosystem' && dataLoading && Object.keys(myProducts).length === 0 && (
           <ViewSkeleton
             label="Loading your ecosystem"
@@ -2568,6 +2578,8 @@ function App() {
             )}
           />
           </Suspense>
+        )}
+          </EcosystemViewTabs>
         )}
         {(currentView === 'discovery' || (currentView === 'product' && discoveryKeepAliveRef.current)) && (
           <div style={currentView === 'discovery' ? undefined : { display: 'none' }}>

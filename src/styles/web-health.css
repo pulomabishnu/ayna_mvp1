@@ -25,7 +25,7 @@
   font-family: var(--ay-sans);
   box-sizing: border-box;
 }
-.app-container[data-theme='dark'] .ay-wh.ay-wh {
+.app-container:is([data-theme='dark'], [data-theme='brand-dark']) .ay-wh.ay-wh {
   --wh-ink: #ffedac;
   --wh-bg: #3e2723;
   --wh-soft: rgba(255, 237, 172, .78);
@@ -109,6 +109,8 @@ html body .app-container main .ay-wh.ay-wh .ay-bn-hello h2 { font-size: var(--ay
 .app-container .ay-wh.ay-wh .ay-bn-legend .is-follicular i { background: #ffedac; box-shadow: inset 0 0 0 1.5px #3e2723; }
 .app-container .ay-wh.ay-wh .ay-bn-legend .is-ovulation i { background: #769ebe; }
 .app-container .ay-wh.ay-wh .ay-bn-legend .is-luteal i { background: #3e2723; }
+/* Dark: the luteal segment and dot get a butter outline so they show on espresso (as in the app). */
+.app-container:is([data-theme='dark'], [data-theme='brand-dark']) .ay-wh.ay-wh :is(.ay-bn-phasebar .is-luteal, .ay-bn-legend .is-luteal i) { background: transparent; box-shadow: inset 0 0 0 1.5px #ffedac; }
 .app-container .ay-wh.ay-wh .ay-bn-phases > p { max-width: 70ch; font: 500 var(--ay-fs-secondary)/1.5 var(--ay-sans); color: var(--wh-ink); }
 
 /* metric cards */

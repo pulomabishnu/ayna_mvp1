@@ -2235,7 +2235,7 @@ html body .app-container:not([data-theme='dark']) .eco3-details__body { margin: 
   html body .app-container:not([data-theme='dark']) .eco3-details__item summary { padding: 0 !important; }
   html body .app-container:not([data-theme='dark']) .eco3-details__sms, html body .app-container:not([data-theme='dark']) .eco3-details__resa { grid-template-areas: 'ic title close' 'ic note note' 'ic act act'; row-gap: 8px; }
   .app-container .eco3-tool-ic { width: 40px; height: 40px; }
-  html body .app-container:not([data-theme='dark']) .eco3-details__title { font-size: var(--ay-fs-card) !important; font-weight: 600 !important; }
+  html body .app-container:not([data-theme='dark']) .eco3-details__title { font-size: var(--ay-fs-card) !important; font-weight: 600 !important; font-family: var(--ay-sans) !important; }
   html body .app-container:not([data-theme='dark']) .eco3-details__body { margin-left: 0 !important; }
 }
 /* ---- Saved: polaroids on the page, no box ---- */
@@ -5554,7 +5554,7 @@ html body .app-container.app-container.app-container.app-container .wyou > .wyou
    drops its plank lower), and short shelf names fit without an ellipsis. */
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .ay-shelves__small > .ay-shelf { display: flex; flex-direction: column; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .ay-shelves__small > .ay-shelf > .ay-shelf__rowwrap { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-end; }
-html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .ay-shelves__small .ay-shelf__name { font-size: var(--ay-fs-card) !important; font-weight: 600 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .ay-shelves__small .ay-shelf__name { font-size: var(--ay-fs-card) !important; font-weight: 600 !important; font-family: var(--ay-sans) !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .ay-shelves__small > .ay-shelf > .ay-shelf__rowwrap > .ay-shelf__row { flex: 1 1 auto; align-items: stretch !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .ay-shelves__small .ay-shelf__row > li { display: flex; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .ay-shelves__small .ay-shelf__row > li > .ayna-browse-card { height: auto; flex: 1 1 auto; }

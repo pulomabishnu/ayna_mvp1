@@ -713,7 +713,7 @@ export default function ProductEvidence({ product: baseProduct, image = '', safe
                 )}
                 {byId.science && <button type="button" className="ay-ps-btn" onClick={() => openBand('science')}>See the research<Chevron /></button>}
               </div>
-              {image && <div className="ay-ps-spot__photo"><img src={image} alt="" loading="lazy" onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }} /></div>}
+              {image && <div className="ay-ps-spot__photo"><img src={image} alt="" loading="lazy" ref={(el) => { if (el && el.complete && !el.naturalWidth) el.parentElement.style.display = 'none'; }} onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }} /></div>}
             </div>
           )}
           <ol className="ay-ps-bands">
