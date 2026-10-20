@@ -4,6 +4,7 @@ const RESEARCH_BY_PRODUCT = NEED_MAP_RESEARCH.reduce((m, r) => { if (!m.has(r.pr
 import PLAIN from '../../data/matching/plainRationales.js';
 const GRADE_WORDS = { A: 'Strong evidence', B: 'Some evidence', C: 'Limited evidence' };
 import UrgentSigns from './UrgentSigns.jsx';
+import PdpIcon from './PdpIcon.jsx';
 import { urgentSignsFor } from '../../utils/urgentSigns';
 import { splitSentences } from './sentences';
 import { isCredible } from './credible';
@@ -74,12 +75,15 @@ function cleanTitle(title, publisher) {
 }
 
 function Links({ items, label, compact = false }) {
+  // Long lists show the first two, then "See all".
+  const [all, setAll] = useState(false);
   if (!items.length) return null;
+  const shown = all || items.length <= 3 ? items : items.slice(0, 2);
   return (
     <div className={`ay-src${compact ? ' is-compact' : ''}`}>
-      {label && <h4 className="ay-src__h">{label}</h4>}
+      {label && <h4 className="ay-src__h">{label}{items.length > 3 ? ` (${items.length})` : ''}</h4>}
       <ul>
-        {items.map((s) => (
+        {shown.map((s) => (
           <li key={s.url}>
             <a href={s.url} target="_blank" rel="noopener noreferrer" className="ay-src__card">
               <span className="ay-src__text">
@@ -94,6 +98,7 @@ function Links({ items, label, compact = false }) {
           </li>
         ))}
       </ul>
+      {items.length > 3 && <button type="button" className="ay-ev__morebtn" aria-expanded={all} onClick={() => setAll((v) => !v)}>{all ? 'Show fewer' : `See all ${items.length} sources`}</button>}
     </div>
   );
 }
@@ -278,6 +283,16 @@ function labelParts(label) {
 /** The key line of a band: its first sentence, kept whole unless very long. */
 const takeaway = (t) => { const x = sentences(noDash(String(t || '')))[0] || ''; return x.length > 200 ? `${x.slice(0, 190).replace(/\s+\S*$/, '')}…` : x; };
 
+/** A small icon for a how-to step, only when the step's own words make it obvious. */
+function stepIcon(text) {
+  const t = String(text || '').toLowerCase();
+  if (/\b(wash|rinse|clean|boil|steriliz|sanitiz)/.test(t)) return 'drop';
+  if (/\bhours?\b/.test(t)) return 'clock';
+  if (/\b(remove|take (it )?out|empty|pull)/.test(t)) return 'out';
+  if (/\b(insert|apply|dab|fold|place|put)/.test(t)) return 'in';
+  return '';
+}
+
 export default function ProductEvidence({ product: baseProduct, image = '', safetyLead = '', glance = null, aynaData = null, aynaRating: aynaRatingProp = null, ratingCount: ratingCountProp = 0, rateControls = null, safety = null, recall = null, heroLine = '', extraRows = [], onOpenReview = null }) {
   // Research the team approved in /admin/research fills any empty section.
   const product = useApprovedResearch(baseProduct);
@@ -288,25 +303,41 @@ export default function ProductEvidence({ product: baseProduct, image = '', safe
   const liveStats = reviewRows.length ? summarizeReviewRows(reviewRows)[baseProduct?.id] : null;
   const aynaRating = liveStats ? liveStats.average : aynaRatingProp;
   const ratingCount = liveStats ? liveStats.count : ratingCountProp;
-  // The evidence bands (clinicians, research, safety, how to use, details):
-  // the first starts open, the key line of each is always visible in its row.
-  const [open, setOpen] = useState(() => new Set(['clinical']));
+  // Phones (<= 760px): every section folds to a one-line row with its takeaway,
+  // one open at a time (Baymard: collapsed sections suit long mobile pages when
+  // the summary shows). Desktop keeps everything open with the sticky nav.
+  const PHONE = '(max-width: 760px)';
+  const [isPhone, setIsPhone] = useState(() => typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia(PHONE).matches);
+  useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return undefined;
+    const mq = window.matchMedia(PHONE);
+    const on = () => setIsPhone(mq.matches);
+    mq.addEventListener?.('change', on);
+    return () => mq.removeEventListener?.('change', on);
+  }, []);
+  const [secOpen, setSecOpen] = useState(null);
+  // The evidence rows: on desktop the first starts open; on phones all start folded.
+  const [open, setOpen] = useState(() => (typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia(PHONE).matches ? new Set() : new Set(['clinical'])));
   const [ingPick, setIngPick] = useState(0);
   const [activeNav, setActiveNav] = useState('overview');
+  const SECTION_IDS = ['overview', 'inside', 'evidence', 'reviews'];
   const goTo = (id) => {
-    window.requestAnimationFrame(() => {
+    const sec = SECTION_IDS.includes(id) ? id : 'evidence';
+    setSecOpen(sec);
+    window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
       const el = document.getElementById(`ay-ps-${id}`);
       if (!el) return;
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+    }));
   };
   const openBand = (id) => {
-    setOpen((cur) => new Set([...cur, id]));
+    setOpen((cur) => (window.matchMedia?.(PHONE).matches ? new Set([id]) : new Set([...cur, id])));
     goTo(id);
   };
   useEffect(() => {
     // A product card's star line opens the page straight on Reviews.
     if (takeProductTab() === 'reviews') goTo('reviews');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     // "All safety info" under Buy (and the old tab ids) open the matching band.
@@ -442,7 +473,7 @@ export default function ProductEvidence({ product: baseProduct, image = '', safe
           {breakdown.map((b) => <li key={b.n}><span>{b.n} ★</span><i><s style={{ width: `${Math.round((b.c / memberRatingCount) * 100)}%` }} /></i><span>{b.c}</span></li>)}
         </ul>
       )}
-      <ProductCommunityReviews productId={baseProduct?.id} rows={reviewRows} onOpenReview={onOpenReview} />
+      <ProductCommunityReviews productId={baseProduct?.id} rows={reviewRows} onOpenReview={onOpenReview} initial={2} />
       {communityText && <ShortThenFull full={communityText} />}
       {d.communitySummary && <ShortThenFull full={d.communitySummary} />}
       {d.ratingNote && <p className="ay-ev__by">{d.ratingNote}</p>}
@@ -455,7 +486,7 @@ export default function ProductEvidence({ product: baseProduct, image = '', safe
     </> },
     d.how && { id: 'how', label: 'How to use', body: <>
       {d.how.intro && <Paras text={d.how.intro} />}
-      <ol className="ay-tabs__steps">{d.how.steps.map((st, i) => <li key={st}><b aria-hidden="true">{String(i + 1).padStart(2, '0')}</b><span>{st}</span></li>)}</ol>
+      <ol className="ay-tabs__steps ay-ps-timeline">{d.how.steps.map((st, i) => { const ic = stepIcon(st); return <li key={st}><b aria-hidden="true">{i + 1}</b><span>{ic && <PdpIcon name={ic} size={20} className="ay-ps-timeline__ico" />}{st}</span></li>; })}</ol>
       <Links items={howLinks} label="Source" compact />
     </> },
     (d.ingredientsText || showMaterials || hasRows || brandSays || d.badges.length || d.evidenceStrength) && { id: 'details', label: 'Details', body: <>
@@ -509,16 +540,33 @@ export default function ProductEvidence({ product: baseProduct, image = '', safe
       {byId.sources && <><h3 className="ay-part__h">Sources{allSources.length ? ` (${allSources.length})` : ''}</h3>{byId.sources.body}</>}
     </> },
   ].filter(Boolean);
-  const toggleBand = (id) => setOpen((cur) => { const n = new Set(cur); if (n.has(id)) n.delete(id); else n.add(id); return n; });
+  const toggleBand = (id) => setOpen((cur) => { const n = new Set(isPhone ? [...cur].filter((x) => x === id) : cur); if (n.has(id)) n.delete(id); else n.add(id); return n; });
 
-  // Up to three real facts from the record (never "Not on file").
-  const factRow = (glance?.facts || [])
-    .filter((f) => !f.unknown && f.value)
-    .filter((f) => ['format', 'size', 'fsa', 'fda', 'platform'].includes(f.id))
-    .filter((f) => f.id !== 'fsa' || f.value === 'Eligible')
-    .filter((f) => String(f.value).length <= 48)
-    .slice(0, 3)
-    .map((f) => ({ id: f.id, label: f.id === 'fsa' ? 'FSA/HSA' : f.label, value: f.id === 'fsa' ? 'Eligible' : noDash(f.value) }));
+  // At a glance: fact tiles from the record only (never "Not on file").
+  const factOf = (id) => (glance?.facts || []).find((f) => f.id === id && !f.unknown && f.value);
+  const howText = d.how ? [d.how.intro, ...d.how.steps].filter(Boolean).join(' ') : '';
+  const wear = howText.match(/\b(?:up to|every|for up to|for)\s+\d+(?:\s*(?:to|-|–)\s*\d+)?\s*hours?\b/i);
+  const tiles = [
+    factOf('format') && { id: 'format', icon: 'format', label: 'Format', value: noDash(factOf('format').value) },
+    factOf('size') && String(factOf('size').value).length <= 60 && { id: 'size', icon: 'size', label: 'Size or count', value: noDash(factOf('size').value) },
+    factOf('fsa')?.value === 'Eligible' && { id: 'fsa', icon: 'card', label: 'FSA/HSA', value: 'Eligible' },
+    factOf('perunit') && { id: 'perunit', icon: 'tag', label: 'Price per unit', value: noDash(factOf('perunit').value) },
+    wear && { id: 'wear', icon: 'clock', label: 'From the instructions', value: wear[0].replace(/^./, (c) => c.toUpperCase()), jump: 'how' },
+  ].filter(Boolean).slice(0, 4);
+
+  // Evidence strength on a three-step scale, from ayna's own grade (or the level on file).
+  const level = topGrade ? ({ A: 3, B: 2, C: 1 })[topGrade.grade] || 0
+    : /strong/i.test(d.evidenceStrength) ? 3 : /moderate|some/i.test(d.evidenceStrength) ? 2 : /limited|weak|low|insufficient/i.test(d.evidenceStrength) ? 1 : 0;
+  const levelWord = ['', 'Limited evidence', 'Some evidence', 'Strong evidence'][level];
+  const levelFor = topGrade ? `for ${needPhrase(topGrade.need)}` : '';
+  // The sources on file, grouped by kind and counted.
+  const MIX = [
+    { id: 'research', icon: 'paper', one: 'study or review', many: 'studies and reviews', types: ['product_study', 'ingredient_research'] },
+    { id: 'clinical', icon: 'stethoscope', one: 'clinical guideline', many: 'clinical guidelines', types: ['clinical_guideline', 'expert_guidance'] },
+    { id: 'regulatory', icon: 'regulator', one: 'regulator page', many: 'regulator pages', types: ['regulatory'] },
+    { id: 'community', icon: 'community', one: 'community source', many: 'community sources', types: ['community'] },
+  ];
+  const mix = MIX.map((m) => ({ ...m, n: allSources.filter((x) => m.types.includes(x.type)).length })).filter((m) => m.n > 0);
 
   // The evidence spotlight: only real numbers (sources on file), never study results.
   const bigNumbers = [
@@ -530,6 +578,10 @@ export default function ProductEvidence({ product: baseProduct, image = '', safe
 
   const ing = d.ingredients[Math.min(ingPick, Math.max(d.ingredients.length - 1, 0))];
   const hasWho = d.who.length > 0 || helps.length > 0 || d.avoidIf.length > 0 || d.platform || d.integrations.length > 0;
+  const whoLine = d.who[0] ? noDash(d.who[0]) : helps.length ? `Helps with ${helps.join(', ').toLowerCase()}.` : '';
+  const reviewLine = aynaRating != null && ratingCount > 0 ? `★ ${aynaRating.toFixed(1)} from ${plural(ratingCount, 'ayna member review')}.`
+    : d.brandRating ? `★ ${d.brandRating.value} from ${d.brandRating.count} reviews, as reported by the brand.`
+      : takeaway(communityText || d.communitySummary) || 'No reviews yet. Tried it? Be the first.';
   const nav = [
     { id: 'overview', label: 'Overview' },
     d.ingredients.length > 0 && { id: 'inside', label: 'Ingredients' },
@@ -538,28 +590,63 @@ export default function ProductEvidence({ product: baseProduct, image = '', safe
   ].filter(Boolean);
   const pad = (n) => String(n).padStart(2, '0');
 
+  const fold = { isPhone, secOpen, onOpen: goTo, onClose: () => setSecOpen(null) };
+
   return (
     <TermsCtx.Provider value={plan}>
     <div id="ay-tabs" className="ay-ps">
-      <nav className="ay-ps-nav" aria-label="On this page">
-        <ul>
-          {nav.map((n) => (
-            <li key={n.id}>
-              <a href={`#ay-ps-${n.id}`} className={activeNav === n.id ? 'is-on' : undefined} aria-current={activeNav === n.id ? 'true' : undefined} onClick={(e) => { e.preventDefault(); setActiveNav(n.id); goTo(n.id); }}>{n.label}</a>
-            </li>
-          ))}
-        </ul>
-      </nav>
+      <section className="ay-ps-glance" aria-labelledby="ay-ps-glance-h">
+        <h2 id="ay-ps-glance-h" className="ay-ps-glance__h">At a glance</h2>
+        <div className="ay-ps-glance__grid">
+          {(level > 0 || mix.length > 0) && (
+            <button type="button" className="ay-ps-ev" onClick={() => (bands.length ? goTo('evidence') : null)}>
+              {level > 0 && <>
+                <span className="ay-ps-ev__word">{levelWord}{levelFor && <span> {levelFor}</span>}</span>
+                <span className="ay-ps-scale" role="img" aria-label={`${levelWord}, ${level} of 3`}>
+                  {[1, 2, 3].map((n) => <i key={n} className={n <= level ? 'is-on' : undefined} />)}
+                </span>
+                <span className="ay-ps-scale__ends" aria-hidden="true"><span>Limited</span><span>Some</span><span>Strong</span></span>
+              </>}
+              {mix.length > 0 && (
+                <span className="ay-ps-mix">
+                  {mix.map((m) => <span key={m.id} className="ay-ps-mix__item"><PdpIcon name={m.icon} size={20} /><b>{m.n}</b> {m.n === 1 ? m.one : m.many}</span>)}
+                </span>
+              )}
+              <span className="ay-ps-glance__go">See the evidence <PdpIcon name="arrow" size={18} /></span>
+            </button>
+          )}
+          <ul className="ay-ps-gl">
+            {whoLine && <li><button type="button" onClick={() => goTo('overview')}><PdpIcon name="person" /><span><small>Who it’s for</small>{whoLine}</span></button></li>}
+            {safetyLine && byId.safety && <li className="is-safety"><button type="button" onClick={() => openBand('safety')}><PdpIcon name="shield" /><span><small>Safety</small>{safetyLine}</span></button></li>}
+            {howLine && byId.how && <li><button type="button" onClick={() => openBand('how')}><PdpIcon name="steps" /><span><small>How to use</small>{howLine}</span></button></li>}
+          </ul>
+          {tiles.length > 0 && (
+            <ul className="ay-ps-tiles">
+              {tiles.map((t) => (
+                <li key={t.id}>
+                  <PdpIcon name={t.icon} />
+                  <b>{t.value}</b>
+                  <small>{t.label}</small>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </section>
 
-      <section id="ay-ps-overview" className="ay-ps-sec" aria-labelledby="ay-ps-overview-h">
-        <h2 id="ay-ps-overview-h" className="ay-ps-h">What it is</h2>
-        {factRow.length > 0 && (
-          <ol className="ay-ps-facts" aria-label="Key facts">
-            {factRow.map((f, i) => (
-              <li key={f.id}><span className="ay-ps-facts__n" aria-hidden="true">{i + 1}</span><span><small>{f.label}</small><b>{f.value}</b></span></li>
+      {!isPhone && (
+        <nav className="ay-ps-nav" aria-label="On this page">
+          <ul>
+            {nav.map((n) => (
+              <li key={n.id}>
+                <a href={`#ay-ps-${n.id}`} className={activeNav === n.id ? 'is-on' : undefined} aria-current={activeNav === n.id ? 'true' : undefined} onClick={(e) => { e.preventDefault(); setActiveNav(n.id); goTo(n.id); }}>{n.label}</a>
+              </li>
             ))}
-          </ol>
-        )}
+          </ul>
+        </nav>
+      )}
+
+      <Sec fold={fold} id="overview" title="What it is" line={takeaway(summaryText) || whoLine}>
         <div className={`ay-ps-about${summaryText ? '' : ' is-solo'}`}>
           {summaryText && (
             <div className="ay-ps-about__text">
@@ -579,11 +666,10 @@ export default function ProductEvidence({ product: baseProduct, image = '', safe
             </div>
           </div>
         )}
-      </section>
+      </Sec>
 
       {d.ingredients.length > 0 && (
-        <section id="ay-ps-inside" className="ay-ps-sec" aria-labelledby="ay-ps-inside-h">
-          <h2 id="ay-ps-inside-h" className="ay-ps-h">What’s inside and why it works</h2>
+        <Sec fold={fold} id="inside" title="What’s inside and why it works" line={d.ingredients.slice(0, 4).map((x) => x.name).join(', ') + (d.ingredients.length > 4 ? ` and ${d.ingredients.length - 4} more` : '')}>
           <p className="ay-ps-sub">Tap an ingredient to see what it does and where that comes from.</p>
           <ul className="ay-ps-chips">
             {d.ingredients.map((x, i) => (
@@ -599,15 +685,14 @@ export default function ProductEvidence({ product: baseProduct, image = '', safe
               {ing.links.length > 0 && <Links items={ing.links} label={ing.links.length === 1 ? 'Source' : 'Sources'} compact />}
             </div>
           )}
-          {d.ingredientNote && <p className="ay-ev__by ay-ps-center">{d.ingredientNote}</p>}
-        </section>
+          {d.ingredientNote && <p className="ay-ev__by">{d.ingredientNote}</p>}
+        </Sec>
       )}
 
       {bands.length > 0 && (
-        <section id="ay-ps-evidence" className="ay-ps-sec" aria-labelledby="ay-ps-evidence-h">
-          <h2 id="ay-ps-evidence-h" className="ay-ps-h">What the evidence says</h2>
-          <p className="ay-ps-sub">The short answer is on each row. Open one for the full notes and sources.</p>
-          {showSpot && (
+        <Sec fold={fold} id="evidence" title="What the evidence says" line={spotHeadline}>
+          {!isPhone && <p className="ay-ps-sub">The short answer is on each row. Open one for the full notes and sources.</p>}
+          {showSpot && !isPhone && (
             <div className="ay-ps-spot">
               <div className="ay-ps-spot__text">
                 <p className="ay-ps-spot__kicker">ayna’s evidence check</p>
@@ -649,17 +734,36 @@ export default function ProductEvidence({ product: baseProduct, image = '', safe
               );
             })}
           </ol>
-        </section>
+        </Sec>
       )}
 
-      <section id="ay-ps-reviews" className="ay-ps-sec ay-ps-reviews" aria-labelledby="ay-ps-reviews-h">
-        <h2 id="ay-ps-reviews-h" className="ay-ps-h">What people say</h2>
-        {byId.reviews.body}
-      </section>
+      <Sec fold={fold} id="reviews" title="What people say" line={reviewLine}>
+        <div className="ay-ps-reviews">{byId.reviews.body}</div>
+      </Sec>
     </div>
     </TermsCtx.Provider>
   );
 }
+
+// One section: a plain heading on desktop; on phones a one-line row (title, takeaway, chevron).
+function Sec({ id, title, line, children, fold }) {
+  const { isPhone, secOpen, onOpen, onClose } = fold;
+  const folded = isPhone && secOpen !== id;
+  return (
+    <section id={`ay-ps-${id}`} className={`ay-ps-sec${isPhone ? ' is-fold' : ''}${folded ? '' : ' is-open'}`} aria-labelledby={`ay-ps-${id}-h`}>
+      {isPhone ? (
+        <h2 id={`ay-ps-${id}-h`} className="ay-ps-fold">
+          <button type="button" aria-expanded={!folded} aria-controls={`ay-ps-${id}-body`} onClick={() => { if (folded) onOpen(id); else onClose(); }}>
+            <span className="ay-ps-fold__main"><span className="ay-ps-fold__title">{title}</span>{line && <span className="ay-ps-fold__line">{line}</span>}</span>
+            <PdpIcon name="chevron" className="ay-ps-fold__chev" />
+          </button>
+        </h2>
+      ) : <h2 id={`ay-ps-${id}-h`} className="ay-ps-h">{title}</h2>}
+      <div id={`ay-ps-${id}-body`} className="ay-ps-secbody" hidden={folded}>{children}</div>
+    </section>
+  );
+}
+
 
 /** Chevron used on every "open" control. */
 function Chevron() {
@@ -695,7 +799,16 @@ export function ProductSafety({ product, recall = null, alertText = '', glance =
   return (
     <div id="ay-sec-safety" className="ay-safety">
       {alertText && <div className="ay-safety__alert" role="note"><ShortThenFull full={noDash(alertText)} /></div>}
-      {(d.warnings.length > 0 || d.pregnancy) && <ul className="ay-safety__list">{d.pregnancy && <li>Pregnancy: {d.pregnancy}</li>}{d.warnings.map((w) => <li key={w}>{w}</li>)}</ul>}
+      {/* Warnings that send her to a clinician first get their own short list. */}
+      {(() => {
+        const DOC = /\b(doctor|provider|clinician|gyn(a)?ecologist|ob\/?gyn|physician|pharmacist|midwife|lactation|consult|talk to|ask your)\b/i;
+        const doc = [...(d.pregnancy && DOC.test(d.pregnancy) ? [`Pregnancy: ${d.pregnancy}`] : []), ...d.warnings.filter((w) => DOC.test(w))];
+        const rest = [...(d.pregnancy && !DOC.test(d.pregnancy) ? [`Pregnancy: ${d.pregnancy}`] : []), ...d.warnings.filter((w) => !DOC.test(w))];
+        return <>
+          {doc.length > 0 && <div className="ay-ps-doc"><h4><PdpIcon name="stethoscope" size={20} />Check with a clinician first</h4><ul>{doc.map((w) => <li key={w}>{w}</li>)}</ul></div>}
+          {rest.length > 0 && <ul className="ay-safety__list">{rest.map((w) => <li key={w}>{w}</li>)}</ul>}
+        </>;
+      })()}
       <dl className="ay-pd__rows">
         {!d.isDigital && d.fdaRaw && <div><dt>FDA status</dt><dd>{d.fda?.label ? <><b>{d.fda.label}.</b> </> : null}{fmtDate(d.fdaRaw)}</dd></div>}
         {d.sideEffects && <div><dt>{d.isDigital ? 'Things to know' : 'Possible side effects'}</dt><dd>{d.sideEffects}</dd></div>}

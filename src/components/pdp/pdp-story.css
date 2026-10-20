@@ -283,3 +283,114 @@ html body .app-container[data-theme='brand-dark'] .ay-ps-band.is-safety .ay-ps-b
 html body .app-container.app-container.app-container[data-theme='brand-dark'] .ay-ps-band.is-safety :is(h3, h4, p, li, dt, dd, span, a, b, strong, em, small, button):not(.zz) { color: #3e2723 !important; }
 html body .app-container.app-container.app-container[data-theme='brand-dark'] .ay-ps-band.is-safety.is-open .ay-ps-band__go:not(.zz), html body .app-container.app-container.app-container[data-theme='brand-dark'] .ay-ps-band.is-safety.is-open .ay-ps-band__go:not(.zz) * { color: #ffedac !important; }
 html body .app-container.app-container[data-theme='brand-dark'] .ay-ps-band.is-safety :is(.ay-src ul, .ay-src li, .ay-pd__rows > div, .ay-urgent) { border-color: rgba(62, 39, 35, .3) !important; }
+
+/* ---------- Icons ---------- */
+html body .app-container .ay-ico { flex: none; display: inline-block; vertical-align: middle; }
+
+/* ---------- At a glance (right under the hero) ---------- */
+html body .app-container .ay-ps-glance { display: grid; gap: 16px; }
+html body .app-container .ay-ps-glance__h { margin: 0; color: #3e2723; font: 400 30px/1.1 'DM Serif Display', Georgia, serif !important; letter-spacing: 0 !important; }
+html body .app-container .ay-ps-glance__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 16px 32px; align-items: start; }
+html body .app-container .ay-ps-ev {
+  all: unset; box-sizing: border-box; display: grid; gap: 12px; padding: 24px; border: 1.5px solid #3e2723; border-radius: 24px; color: #3e2723; cursor: pointer;
+}
+html body .app-container .ay-ps-ev:hover .ay-ps-glance__go { text-decoration: underline; text-underline-offset: 4px; }
+html body .app-container .ay-ps-ev:focus-visible { outline: 3px solid #769ebe; outline-offset: 3px; }
+html body .app-container .ay-ps-ev__word { font: 400 26px/1.2 'DM Serif Display', Georgia, serif; }
+html body .app-container .ay-ps-ev__word span { font: 400 17px/1.4 'DM Sans', sans-serif; }
+html body .app-container .ay-ps-scale { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+html body .app-container .ay-ps-scale i { height: 10px; border-radius: 99px; border: 1.5px solid #3e2723; }
+html body .app-container .ay-ps-scale i.is-on { background: #3e2723; }
+html body .app-container .ay-ps-scale__ends { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: -6px; font: 400 13px/1.3 'DM Sans', sans-serif; }
+html body .app-container .ay-ps-mix { display: grid; gap: 8px; padding-top: 12px; border-top: 1px solid rgba(62, 39, 35, .3); }
+html body .app-container .ay-ps-mix__item { display: flex; align-items: center; gap: 8px; font: 400 15px/1.35 'DM Sans', sans-serif; }
+html body .app-container .ay-ps-mix__item b { font-weight: 700; }
+html body .app-container .ay-ps-glance__go { display: inline-flex; align-items: center; gap: 6px; font: 600 15px/1.3 'DM Sans', sans-serif; }
+
+html body .app-container .ay-ps-gl { display: grid; margin: 0; padding: 0; list-style: none; }
+html body .app-container .ay-ps-gl li { border-bottom: 1px solid rgba(62, 39, 35, .3); }
+html body .app-container .ay-ps-gl li:first-child { border-top: 1px solid rgba(62, 39, 35, .3); }
+html body .app-container .ay-ps-gl button { all: unset; box-sizing: border-box; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; align-items: start; width: 100%; min-height: 44px; padding: 14px 0; color: #3e2723; cursor: pointer; font: 400 16px/1.45 'DM Sans', sans-serif; }
+html body .app-container .ay-ps-gl button .ay-ico { width: 40px; height: 40px; padding: 9px; border-radius: 50%; box-sizing: border-box; border: 1.5px solid #3e2723; }
+html body .app-container .ay-ps-gl li.is-safety button .ay-ico { border-color: #f7badd; background: #f7badd; }
+html body .app-container .ay-ps-gl small { display: block; margin-bottom: 2px; font: 600 14px/1.3 'DM Sans', sans-serif; }
+html body .app-container .ay-ps-gl button:hover > span { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+html body .app-container .ay-ps-gl button:focus-visible { outline: 3px solid #769ebe; outline-offset: 2px; }
+
+html body .app-container .ay-ps-tiles { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+html body .app-container .ay-ps-tiles li { display: grid; gap: 4px; align-content: start; padding: 12px 16px 12px 0; }
+html body .app-container .ay-ps-tiles li + li { padding-left: 16px; border-left: 1px solid rgba(62, 39, 35, .3); }
+html body .app-container .ay-ps-tiles b { font: 600 16px/1.3 'DM Sans', sans-serif; }
+html body .app-container .ay-ps-tiles small { font: 400 13px/1.3 'DM Sans', sans-serif; }
+@media (max-width: 760px) {
+  html body .app-container .ay-ps-glance__grid { grid-template-columns: 1fr; gap: 12px; }
+  html body .app-container .ay-ps-ev { padding: 18px; gap: 10px; }
+  html body .app-container .ay-ps-ev__word { font-size: 22px; }
+  html body .app-container .ay-ps-mix { grid-template-columns: 1fr 1fr; gap: 6px 12px; }
+  html body .app-container .ay-ps-mix__item { font-size: 14px; }
+  html body .app-container .ay-ps-tiles { grid-template-columns: 1fr 1fr; border-top: 1px solid rgba(62, 39, 35, .3); }
+  html body .app-container .ay-ps-tiles li, html body .app-container .ay-ps-tiles li + li { padding: 12px 8px 12px 0; border-left: 0; border-bottom: 1px solid rgba(62, 39, 35, .3); }
+  html body .app-container .ay-ps-tiles li:nth-child(even) { padding-left: 12px; border-left: 1px solid rgba(62, 39, 35, .3); }
+}
+
+/* ---------- Phone: sections fold to one-line rows ---------- */
+@media (max-width: 760px) {
+  html body .app-container .ay-ps { gap: 0; }
+  html body .app-container .ay-ps-glance { margin-bottom: 24px; }
+  html body .app-container .ay-ps-sec.is-fold { gap: 0; border-top: 1.5px solid #3e2723; }
+  html body .app-container .ay-ps-sec.is-fold:last-child { border-bottom: 1.5px solid #3e2723; }
+  html body .app-container .ay-ps-secbody { display: grid; gap: 20px; padding-bottom: 28px; }
+  html body .app-container .ay-ps-secbody[hidden] { display: none; }
+}
+html body .app-container .ay-ps-fold { margin: 0; font: inherit !important; }
+html body .app-container .ay-ps-fold button { all: unset; box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) 24px; gap: 12px; align-items: center; width: 100%; min-height: 56px; padding: 16px 0; color: #3e2723; cursor: pointer; }
+html body .app-container .ay-ps-fold button:focus-visible { outline: 3px solid #769ebe; outline-offset: 2px; }
+html body .app-container .ay-ps-fold__main { display: grid; gap: 4px; min-width: 0; }
+html body .app-container .ay-ps-fold__title { font: 400 22px/1.2 'DM Serif Display', Georgia, serif; }
+html body .app-container .ay-ps-fold__line { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font: 400 15px/1.45 'DM Sans', sans-serif; }
+html body .app-container .ay-ps-sec.is-open .ay-ps-fold__line { display: block; -webkit-line-clamp: unset; }
+html body .app-container .ay-ps-fold__chev { transition: transform 200ms ease; }
+html body .app-container .ay-ps-sec.is-open .ay-ps-fold__chev { transform: rotate(180deg); }
+/* The compare fold sits on its own: give it the same hairlines. */
+html body .app-container .pdp-below .ay-ps-sec.is-fold { border-top: 1.5px solid #3e2723; border-bottom: 1.5px solid #3e2723; }
+@media (max-width: 760px) {
+  html body .app-container .ay-ps-band__h button { min-height: 0; padding: 18px 0; }
+  html body .app-container .ay-ps-band__title { font-size: 22px; }
+  html body .app-container .ay-ps-band__line { font-size: 15px; }
+  html body .app-container .ay-ps-band__go { min-height: 40px; }
+}
+
+/* ---------- How to use: a numbered timeline ---------- */
+html body .app-container .ay-ps .ay-ps-timeline { position: relative; }
+html body .app-container .ay-ps .ay-ps-timeline li { grid-template-columns: 32px minmax(0, 1fr); gap: 14px; align-items: start; padding: 10px 0; border-top: 0; position: relative; }
+html body .app-container .ay-ps .ay-ps-timeline li:not(:last-child)::after { content: ''; position: absolute; left: 15px; top: 42px; bottom: -10px; width: 1.5px; background: #3e2723; }
+html body .app-container.app-container .ay-ps .ay-ps-timeline b { display: grid !important; place-items: center; width: 32px !important; height: 32px !important; border: 1.5px solid #3e2723 !important; border-radius: 50%; font: 600 14px/1 'DM Sans', sans-serif !important; }
+html body .app-container .ay-ps .ay-ps-timeline span { display: block; padding-top: 5px; }
+html body .app-container .ay-ps .ay-ps-timeline__ico { float: left; margin: 0 8px 0 0; }
+
+/* ---------- Safety: check with a clinician first ---------- */
+html body .app-container .ay-ps-doc { margin: 0 0 16px; }
+html body .app-container .ay-ps-doc h4 { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; font: 600 16px/1.3 'DM Sans', sans-serif; }
+html body .app-container .ay-ps-doc ul { margin: 0; padding: 0 0 0 28px; }
+html body .app-container .ay-ps-doc li { padding: 3px 0; font: 400 16px/1.55 'DM Sans', sans-serif; }
+
+/* ---------- Compare: one dot per source on file ---------- */
+html body .app-container .ay-compare__dots { display: flex; flex-wrap: wrap; gap: 3px; margin: 0 0 6px; }
+html body .app-container .ay-compare__dots i { width: 8px; height: 8px; border-radius: 50%; background: #3e2723; }
+html body .app-container .ay-compare__dots small { font: 600 12px/8px 'DM Sans', sans-serif; }
+
+/* ---------- Dark theme for the new parts ---------- */
+html body .app-container[data-theme='brand-dark'] :is(.ay-ps-ev, .ay-ps-gl button .ay-ico, .ay-ps-scale i, .ay-ps .ay-ps-timeline b) { border-color: #ffedac !important; }
+html body .app-container[data-theme='brand-dark'] .ay-ps-scale i.is-on { background: #ffedac; }
+html body .app-container[data-theme='brand-dark'] .ay-ps .ay-ps-timeline li:not(:last-child)::after { background: #ffedac; }
+html body .app-container[data-theme='brand-dark'] :is(.ay-ps-gl li, .ay-ps-mix, .ay-ps-tiles, .ay-ps-tiles li, .ay-ps-sec.is-fold) { border-color: rgba(255, 237, 172, .45) !important; }
+html body .app-container[data-theme='brand-dark'] .ay-ps-gl li.is-safety button .ay-ico { border-color: #f7badd !important; color: #3e2723; }
+html body .app-container[data-theme='brand-dark'] .ay-ps-fold button, html body .app-container[data-theme='brand-dark'] .ay-ps-ev, html body .app-container[data-theme='brand-dark'] .ay-ps-gl button { color: #ffedac; }
+html body .app-container[data-theme='brand-dark'] .ay-compare__dots i { background: currentColor; }
+@media (max-width: 760px) {
+  /* The glance block right below repeats the safety note, so phones show it once. */
+  html body .app-container .pdp-page:has(.ay-ps-gl .is-safety) .ay-buy__warn { display: none !important; }
+  html body .app-container .pdp-page .pdp-below { padding-top: 16px !important; }
+  html body .app-container .pdp-page .pdp-read .ay-ps-sec.is-fold { border-bottom: 0; }
+}
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ps-band__body .ay-safety__list { background: none !important; border: 0 !important; box-shadow: none !important; }

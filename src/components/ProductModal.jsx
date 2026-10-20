@@ -25,6 +25,7 @@ import GalleryThumbs from './pdp/GalleryThumbs';
 import { useProductReviews } from './pdp/useProductReviews';
 import { summarizeReviewRows } from '../utils/community/reviewRatings.js';
 import ComparePanel from './pdp/ComparePanel';
+import PhoneFold from './pdp/PhoneFold';
 import Breadcrumbs from './pdp/Breadcrumbs';
 import useJsonLd from './pdp/useJsonLd';
 import { resolveBuyUrl, isAmazonUrl, buyGoesToAmazonListing } from '../utils/buyLink';
@@ -998,6 +999,7 @@ export default function ProductModal({
 
         <div className="pdp-below pdp-below--glance">
           <div className="pdp-read">
+            <PhoneFold id="pdp-askshare" title="Ask or share" line="Ask ayna about your situation, or write a review if you have tried it.">
             <div className="pdp-pair">
               <ProductAsk productName={displayName} onAsk={onAskAyna} />
               {onCommunityAction && (
@@ -1015,12 +1017,15 @@ export default function ProductModal({
                 </section>
               )}
             </div>
+            </PhoneFold>
           </div>
 
 
 
           {(
-            <ComparePanel product={product} others={suggestions.compare} onOpen={(p) => onOpenProduct && onOpenProduct(p)} matchFor={matchFor} renderThumb={compareThumb} />
+            <PhoneFold id="pdp-compare" title="Compare with similar" line={suggestions.compare.length ? `Side by side with ${suggestions.compare.slice(0, 2).map((p) => p.name).join(' and ')}.` : 'Pick products to compare side by side.'}>
+              <ComparePanel product={product} others={suggestions.compare} onOpen={(p) => onOpenProduct && onOpenProduct(p)} matchFor={matchFor} renderThumb={compareThumb} />
+            </PhoneFold>
           )}
 
           {suggestions.more.length > 0 && (
