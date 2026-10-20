@@ -89,7 +89,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
   const ask = async (question) => {
     const q = String(question || '').trim();
     if (!q || sending) return;
-    if (!session?.access_token) { onRequireAuth?.('Ask Ayna'); return; }
+    if (!session?.access_token) { onRequireAuth?.('Ask ayna'); return; }
     setError('');
     setInput('');
     const nextMessages = [...messages, { role: 'user', text: q }];
@@ -116,7 +116,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
       setMessages((prev) => [...prev, { role: 'assistant', text: data.answer }]);
     } catch (e) {
       if (e?.code === 'not_signed_in') {
-        onRequireAuth?.('Ask Ayna');
+        onRequireAuth?.('Ask ayna');
       } else if (e?.code === 'weekly_limit_reached') {
         setError("You've used your free chats for this week. They reset weekly.");
       } else {

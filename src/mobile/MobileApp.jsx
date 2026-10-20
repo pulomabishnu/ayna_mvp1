@@ -904,7 +904,7 @@ export default function MobileApp() {
     onAlreadyHaveAccount: () => openAuth('signin'),
     onAboutAyna: () => setOverlay({ type: 'about' }),
     onOpenWhyMatch: (p) => setOverlay({ type: 'why-match', item: p }),
-    onAskAyna: () => authUser ? setAskAynaOpen(true) : requestAuth('Ask Ayna', () => { setScreen(screen); setAskAynaOpen(true); }),
+    onAskAyna: () => authUser ? setAskAynaOpen(true) : requestAuth('Ask ayna', () => { setScreen(screen); setAskAynaOpen(true); }),
     onBack: () => {
       if (['building', 'reveal', 'connect'].includes(screen)) {
         resumeQuizAtLastStep();
@@ -1167,7 +1167,7 @@ export default function MobileApp() {
             }}
             onStartQuiz={() => { returnProductRef.current = overlay.item || null; setOverlay(null); setIntakeMode(hasEcosystem ? 'add' : 'new'); setEditingHealthProfile(hasEcosystem); setScreen('quiz'); }}
             authUser={authUser}
-            onRequireAuth={(feature) => requestAuth(feature || 'Ask Ayna', () => { setScreen(screen); setOverlay({ type: 'product', item: overlay.item }); })}
+            onRequireAuth={(feature) => requestAuth(feature || 'Ask ayna', () => { setScreen(screen); setOverlay({ type: 'product', item: overlay.item }); })}
             quizAnswers={authUser ? effectiveQuizAnswers : null}
             ecosystemProducts={myProducts}
             onOpenProduct={(item) => setOverlay({ type: 'product', item })}
@@ -1258,7 +1258,7 @@ export default function MobileApp() {
         name={resolvedName}
         onNavigateToDiscovery={() => { setAskAynaOpen(false); setScreen('browse'); }}
         onViewRecommendations={() => { setAskAynaOpen(false); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
-        onRequireAuth={(feature) => requestAuth(feature || 'Ask Ayna', () => { setScreen(screen); setAskAynaOpen(true); })}
+        onRequireAuth={(feature) => requestAuth(feature || 'Ask ayna', () => { setScreen(screen); setAskAynaOpen(true); })}
       />
     </div>
   );
