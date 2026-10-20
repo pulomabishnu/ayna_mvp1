@@ -1,5 +1,6 @@
 /* global process */
-// Anonymous "Suggest a product" / "Suggest a read" box (Shop + Library, web and app).
+// Anonymous "Suggest a product" / "Suggest a read" box (Shop + Library, web and app),
+// and Community's "Suggest a topic" sheet (kind 'topic').
 // Stores ONLY the suggestion text: no user id, name, email or IP is ever written.
 // Table + insert-only RLS: supabase/migrations/20261013120000_suggestions.sql.
 import { createClient } from '@supabase/supabase-js';
@@ -7,7 +8,7 @@ import { getClientIp, rateLimit } from './_rateLimit.js';
 import { checkCommunityText } from '../src/utils/communityRules.js';
 import { sendTeamAlert } from './_twilio.js';
 
-const CONTEXTS = new Set(['shop', 'shop-empty', 'library', 'app-shop', 'app-library']);
+const CONTEXTS = new Set(['shop', 'shop-empty', 'library', 'app-shop', 'app-library', 'community', 'app-community']);
 
 export function clean(value, max) {
   if (typeof value !== 'string') return '';
@@ -30,7 +31,7 @@ export function cleanLink(value) {
 
 /** Validates a request body. Returns { row } or { error }. Exported for tests. */
 export function buildSuggestionRow(body = {}) {
-  const kind = body.kind === 'read' ? 'read' : body.kind === 'product' ? 'product' : '';
+  const kind = ['read', 'product', 'topic'].includes(body.kind) ? body.kind : '';
   if (!kind) return { error: 'Choose product or read.' };
   const context = CONTEXTS.has(body.context) ? body.context : null;
   const platform = body.platform === 'app' ? 'app' : 'web';
@@ -40,6 +41,12 @@ export function buildSuggestionRow(body = {}) {
     const link = cleanLink(body.link);
     if (link === null) return { error: 'That link does not look right.' };
     return { row: { kind, product_name: productName, link: link || null, reason: clean(body.reason, 500) || null, topic: null, context, platform } };
+  }
+  if (kind === 'topic') {
+    // A Community topic: a short name plus an optional "why".
+    const name = clean(body.topic, 60);
+    if (name.length < 2) return { error: 'Add the topic name.' };
+    return { row: { kind, product_name: null, link: null, reason: clean(body.reason, 500) || null, topic: name, context, platform } };
   }
   const topic = clean(body.topic, 300);
   if (topic.length < 3) return { error: 'Tell us the topic or question.' };
@@ -53,10 +60,14 @@ export const TEAM_EMAILS = () => (process.env.SUGGESTION_EMAILS ? process.env.SU
 const escHtml = (t) => String(t || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 export function suggestionEmail(row) {
   const isProduct = row.kind === 'product';
-  const subject = isProduct ? `New product suggestion: ${row.product_name}` : `New read suggestion: ${row.topic.slice(0, 60)}`;
+  const isTopic = row.kind === 'topic';
+  const subject = isProduct ? `New product suggestion: ${row.product_name}`
+    : isTopic ? `New Community topic suggestion: ${row.topic.slice(0, 60)}`
+      : `New read suggestion: ${row.topic.slice(0, 60)}`;
   const lines = isProduct
     ? [['Product', row.product_name], ['Link', row.link], ['Why', row.reason]]
-    : [['Topic', row.topic]];
+    : isTopic ? [['Community topic', row.topic], ['Why', row.reason]]
+      : [['Topic', row.topic]];
   lines.push(['From', `${row.context || 'unknown page'} (${row.platform})`]);
   const shown = lines.filter(([, v]) => v);
   return {
@@ -71,9 +82,9 @@ export function suggestionEmail(row) {
 
 /** One-line team text for a suggestion. No identity, just what was typed, trimmed. */
 export function suggestionTextLine(row) {
-  return row.kind === 'product'
-    ? `new product suggestion: ${String(row.product_name || '').slice(0, 80)}`
-    : `new read suggestion: ${String(row.topic || '').slice(0, 80)}`;
+  if (row.kind === 'product') return `new product suggestion: ${String(row.product_name || '').slice(0, 80)}`;
+  if (row.kind === 'topic') return `new community topic suggestion: ${String(row.topic || '').slice(0, 80)}`;
+  return `new read suggestion: ${String(row.topic || '').slice(0, 80)}`;
 }
 
 // Single-message send, the same Resend call the contact form uses.

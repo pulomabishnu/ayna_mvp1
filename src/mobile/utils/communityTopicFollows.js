@@ -45,7 +45,8 @@ const NEED_TOPICS = [
 ];
 
 const LIFE_STAGE_TOPICS = [
-  [/menopaus|hot flash/i, 'menopause'],
+  [/perimenopaus/i, 'perimenopause'],
+  [/(^|[^i])menopaus|postmenopaus|hot flash/i, 'menopause'],
   [/postpartum|after birth|breastfeed/i, 'postpartum'],
   [/pregnan/i, 'pregnancy'],
   [/trying to conceive|\bttc\b|fertility|get pregnant/i, 'fertility'],

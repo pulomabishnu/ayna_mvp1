@@ -1,3 +1,4 @@
+/* global process */
 import { describe, it, expect } from 'vitest';
 import { buildSuggestionRow, cleanLink } from './suggestions.js';
 
@@ -49,5 +50,25 @@ describe('sendSuggestionEmail', () => {
     const ok = await sendSuggestionEmail({ to: [] }, async () => ({ ok: false, status: 403, text: async () => 'domain not verified' }));
     expect(ok).toBe(false);
     if (prev === undefined) delete process.env.RESEND_API_KEY; else process.env.RESEND_API_KEY = prev;
+  });
+});
+
+import { suggestionTextLine } from './suggestions.js';
+describe('Community topic suggestions', () => {
+  it('builds a topic row with an optional why, and no identity', () => {
+    const { row } = buildSuggestionRow({ kind: 'topic', topic: '  Adenomyosis ', reason: 'Nothing for it yet', context: 'app-community', platform: 'app', userId: 'abc' });
+    expect(row).toEqual({ kind: 'topic', product_name: null, link: null, reason: 'Nothing for it yet', topic: 'Adenomyosis', context: 'app-community', platform: 'app' });
+    expect(buildSuggestionRow({ kind: 'topic', topic: 'x' }).error).toBeTruthy();
+    expect(buildSuggestionRow({ kind: 'topic', topic: 'Long COVID' }).row.reason).toBe(null);
+  });
+  it('emails and texts the team with the topic name', () => {
+    const row = buildSuggestionRow({ kind: 'topic', topic: 'Adenomyosis', reason: 'No pod <yet>', context: 'app-community', platform: 'app' }).row;
+    const e = suggestionEmail(row);
+    expect(e.to).toEqual(TEAM_EMAILS());
+    expect(e.subject).toBe('New Community topic suggestion: Adenomyosis');
+    expect(e.text).toMatch(/Community topic: Adenomyosis/);
+    expect(e.text).toMatch(/Why: No pod <yet>/);
+    expect(e.html).not.toMatch(/<yet>/);
+    expect(suggestionTextLine(row)).toBe('new community topic suggestion: Adenomyosis');
   });
 });

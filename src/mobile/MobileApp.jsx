@@ -245,6 +245,21 @@ export default function MobileApp() {
   const authReturnScreenRef = useRef('landing');
   const authResumeRef = useRef(null);
   const [communitySeed, setCommunitySeed] = useState(null);
+  // Shared playlist invite (?join-playlist=<code>): keep the code through
+  // sign-in, drop it from the address bar, and open Community, which joins.
+  useEffect(() => {
+    let code = null;
+    try { code = communityStore.parsePlaylistInviteCode(new URLSearchParams(window.location.search).get('join-playlist')); } catch { code = null; }
+    if (!code) return;
+    try { sessionStorage.setItem('ayna_pending_playlist_invite', code); } catch { /* storage blocked: join still runs this session */ }
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('join-playlist');
+      window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
+    } catch { /* leave the URL */ }
+    setCommunitySeed({ token: Date.now() });
+    setScreen('community');
+  }, []);
   const swipeStart = useRef(null);
   const handleMainTouchStart = (event) => {
     if (overlay || !['browse', 'eco'].includes(screen) || event.touches.length !== 1) return;
