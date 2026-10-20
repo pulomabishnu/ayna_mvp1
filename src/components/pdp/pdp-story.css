@@ -394,3 +394,24 @@ html body .app-container[data-theme='brand-dark'] .ay-compare__dots i { backgrou
   html body .app-container .pdp-page .pdp-read .ay-ps-sec.is-fold { border-bottom: 0; }
 }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ps-band__body .ay-safety__list { background: none !important; border: 0 !important; box-shadow: none !important; }
+
+/* ---------- Phone spacing: one rhythm (rows 16px padding, one hairline, sections 32px apart) ---------- */
+@media (max-width: 760px) {
+  html body .app-container.app-container.app-container .pdp-page .pdp-head.pdp-head--story { padding-bottom: 0 !important; }
+  html body .app-container .pdp-story { margin-top: 32px !important; }
+  html body .app-container .ay-ps-glance { margin-bottom: 32px; }
+  html body .app-container .ay-ps-fold button { min-height: 56px; padding: 16px 0; }
+  /* The folded rows read as one list: a hairline above each, one below the last. */
+  html body .app-container .ay-ps-sec.is-fold { border-top: 1px solid #3e2723 !important; border-bottom: 0 !important; margin: 0 !important; }
+  html body .app-container .ay-ps-sec.is-fold:last-child { border-bottom: 0 !important; }
+  html body .app-container.app-container.app-container .pdp-page .pdp-below { padding: 0 !important; gap: 0 !important; }
+  html body .app-container.app-container.app-container .pdp-page .pdp-below > * { margin-top: 0 !important; }
+  html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .pdp-page .pdp-below > .pdp-read.pdp-read { margin: 0 auto !important; padding: 0 !important; }
+  html body .app-container.app-container.app-container .pdp-page .pdp-below > .ay-ps-sec.is-fold { border-bottom: 1px solid #3e2723 !important; }
+  html body .app-container.app-container.app-container .pdp-page .pdp-below > .pdp-suggest { margin-top: 32px !important; }
+  /* The fixed Buy and tab bars need room at the very end only (the footer has it), not under the page. */
+  html body .app-container.app-container.app-container:has(.pdp-sticky) main { padding-bottom: 0 !important; }
+  html body .app-container.app-container:has(.ay-tabbar):has(.pdp-sticky) .site-footer { padding-bottom: 168px !important; }
+  html body .app-container .mockup-page.pdp-page-wrap { padding-bottom: 0 !important; }
+}
+html body .app-container[data-theme='brand-dark'] .ay-ps-sec.is-fold { border-color: rgba(255, 237, 172, .45) !important; }
