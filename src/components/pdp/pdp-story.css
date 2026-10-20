@@ -566,7 +566,7 @@ html body .app-container .ay-pt .ay-ev__stf { display: grid; gap: 4px; justify-i
 /* A group of cards with its own small heading. */
 html body .app-container .ay-pt-group { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
 html body .app-container.app-container.app-container .ay-pt-group__h { margin: 0; color: #3e2723; font: 600 var(--ay-fs-card)/1.3 var(--ay-sans) !important; letter-spacing: 0 !important; text-transform: none !important; }
-html body .app-container .ay-pt-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
+html body .app-container .ay-pt-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
 html body .app-container .ay-pt-card {
   position: relative; display: flex; flex-direction: column; gap: 8px; min-width: 0; margin: 0; padding: 16px;
   border: 1.5px solid #3e2723; border-radius: 22px; background: transparent; color: #3e2723;
@@ -598,7 +598,7 @@ html body .app-container .ay-pt-callout :is(p, .ay-ev__body) { margin: 0; font: 
 html body .app-container .ay-pt-reviews:empty { display: none; }
 html body .app-container .ay-pt-reviews .cr-product-reviews-wrap { display: grid; gap: 12px; }
 html body .app-container.app-container.app-container .ay-pt-reviews .ay-part__h { margin: 0 !important; font: 600 var(--ay-fs-card)/1.3 var(--ay-sans) !important; text-transform: none !important; letter-spacing: 0 !important; }
-html body .app-container.app-container.app-container .ay-pt-reviews .cr-product-reviews { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
+html body .app-container.app-container.app-container .ay-pt-reviews .cr-product-reviews { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
 html body .app-container.app-container.app-container .ay-pt-reviews .cr-product-reviews li { margin: 0; border: 0; }
 html body .app-container.app-container.app-container .ay-pt-reviews .cr-product-reviews a { display: grid; gap: 8px; height: 100%; box-sizing: border-box; padding: 16px; border: 1.5px solid #3e2723; border-radius: 22px; background: transparent; color: #3e2723; text-decoration: none; }
 html body .app-container .ay-pt-reviews .cr-product-reviews p { margin: 0; font: 400 var(--ay-fs-body)/1.55 var(--ay-sans); }
