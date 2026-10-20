@@ -242,13 +242,24 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
           } catch (err) { console.warn('[ayna health] failed', name, err?.message || err); throw Object.assign(err || new Error(name), { step: err?.step || name }); }
           finally { clearTimeout(timer); console.info('[ayna health] done', name); }
         };
-        await step('permission', requestHealthAccess(selected), 180000);
-        await step('save_connection', connectDeviceSource(apiSource, selected, Capacitor.getPlatform()), 30000);
-        await step('refresh', refresh(), 30000);
-        const out = await step('sync', syncPhoneSource({ force: true }), 90000);
-        setMessage(out.empty
-          ? `Connected. No data came through yet. If you turned permissions off in the ${source.name} sheet, or there's no data for what you picked, ayna won't see anything. ${source.platform === 'ios' ? 'You can change this in the Health app under your picture, Privacy, Apps, ayna.' : ''}`
-          : 'Connected. Your data is syncing.');
+        await step('permission', requestHealthAccess(selected), 200000);
+        // Saving the connection: one automatic retry for a flaky network.
+        try { await step('save_connection', connectDeviceSource(apiSource, selected, Capacitor.getPlatform()), 30000); }
+        catch (first) {
+          if (first instanceof HealthApiError && first.status && first.status < 500 && first.status !== 0) throw first;
+          await step('save_connection', connectDeviceSource(apiSource, selected, Capacitor.getPlatform()), 30000);
+        }
+        // Connected. Reloading the list and reading her data happen in the
+        // background, so the button never waits on them.
+        setMessage('Connected. Your data is syncing now. Your trends show in Ecosystem, Dashboard.');
+        step('refresh', refresh(), 30000)
+          .then(() => step('sync', syncPhoneSource({ force: true }), 120000))
+          .then((out) => {
+            if (out?.empty) setMessage(`Connected. No data came through yet. If you turned permissions off in the ${source.name} sheet, or there's no data for what you picked, ayna won't see anything. ${source.platform === 'ios' ? 'You can change this in the Health app under your picture, Privacy, Apps, ayna.' : ''}`);
+            else if (out && !out.skipped) setMessage('Connected and synced. Your trends show in Ecosystem, Dashboard.');
+            return refresh();
+          })
+          .catch(() => setMessage('Connected. Reading your data is taking a while; tap Sync now in a minute.'));
       }
     } catch (e) {
       const stepMsg = {
