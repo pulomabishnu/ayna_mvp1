@@ -4470,69 +4470,8 @@ html body .app-container .lv .lv-partners__reveal .lv-ticker { flex: 1; }
    One card under the product: a row of tabs, one panel. Nothing to scroll
    past; each tab opens with the short version and "Read more". */
 html body .app-container .pdp-page--glance .pdp-read { margin-top: 40px !important; }
-html body .app-container .ay-tabs { scroll-margin-top: 96px; }
-html body .app-container .ay-tabs__bar { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
-html body .app-container .ay-tabs__tab { min-height: 44px; padding: 0 18px; border: 2px solid #3e2723; border-radius: 99px; background: transparent; color: #3e2723; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); cursor: pointer; }
-html body .app-container .ay-tabs__tab:hover { background: #f7badd; }
-html body .app-container .ay-tabs__tab.is-on { background: #3e2723; color: #ffedac; }
-html body .app-container .ay-tabs__tab:focus-visible { outline: 3px solid #769ebe; outline-offset: 2px; }
-html body .app-container .ay-tabs__panel { --rule: #3e2723; min-height: 260px; padding: 32px 36px; border: 2px solid #3e2723; border-radius: 20px; background: #ffedac; color: #3e2723; box-shadow: 5px 5px 0 #3e2723; }
-html body .app-container .ay-tabs__panel.is-clinical { --rule: #769ebe; }
-html body .app-container .ay-tabs__panel.is-science { --rule: #f7badd; }
-html body .app-container .ay-tabs__panel > *, html body .app-container .ay-tabs__panel .ay-tabs__block > * { max-width: 70ch; }
-html body .app-container .ay-tabs__panel > .ay-ev__body:first-of-type, html body .app-container .ay-tabs__panel > .ay-ev2__badge + .ay-ev__body { padding-left: 18px; border-left: 4px solid var(--rule); font-size: var(--ay-fs-body) !important; line-height: 1.55 !important; }
-html body .app-container .ay-tabs__panel .ay-ev__body { margin: 0 0 14px; font: 400 var(--ay-fs-body)/1.55 var(--ay-sans); color: inherit; }
-html body .app-container .ay-tabs__panel .ay-ev__by { margin: 12px 0 0; font: 500 var(--ay-fs-secondary)/1.55 var(--ay-sans); }
-html body .app-container .ay-tabs__panel .ay-ev__by a { color: inherit; font-weight: 600; }
-html body .app-container .ay-tabs__panel .ay-ev2__badge { display: inline-flex; align-items: center; margin: 0 0 14px; min-height: 26px; padding: 0 10px; border: 1.5px solid #3e2723; border-radius: 99px; background: transparent; font: 600 var(--ay-fs-caption)/1 var(--ay-sans); }
-html body .app-container .ay-tabs__panel .ay-ev2__badge::before { content: ''; width: 8px; height: 8px; margin-right: 6px; border-radius: 50%; border: 1px solid #3e2723; background: #769ebe; }
-html body .app-container .ay-tabs__panel .ay-ev2__badge.is-brand::before { background: #f7badd; }
-html body .app-container .ay-tabs__panel h3, html body .app-container .ay-tabs__panel .ay-ev2__sub, html body .app-container .ay-tabs__panel .ay-ev__links-h { margin: 26px 0 10px !important; font: 600 var(--ay-fs-secondary)/1.3 var(--ay-sans) !important; color: inherit !important; text-transform: none !important; letter-spacing: 0 !important; }
-html body .app-container .ay-tabs__panel > h3:first-child, html body .app-container .ay-tabs__panel > .ay-ev2__sub:first-child { margin-top: 0 !important; }
-html body .app-container .ay-tabs__list { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
-html body .app-container .ay-tabs__list li { position: relative; padding-left: 26px; font: 400 var(--ay-fs-body)/1.55 var(--ay-sans); }
-html body .app-container .ay-tabs__list li::before { content: ''; position: absolute; left: 4px; top: .6em; width: 10px; height: 10px; border-radius: 50%; background: #f7badd; border: 1.5px solid #3e2723; }
-html body .app-container .ay-tabs__chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
-html body .app-container .ay-tabs__chips li { padding: 6px 12px; border: 1.5px solid #3e2723; border-radius: 99px; font: 600 var(--ay-fs-secondary)/1.2 var(--ay-sans); background: #ffedac; }
-html body .app-container .ay-tabs__steps { margin: 4px 0 0; padding: 0; list-style: none; display: grid; gap: 14px; }
-html body .app-container .ay-tabs__steps li { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 14px; align-items: start; font: 400 var(--ay-fs-body)/1.55 var(--ay-sans); }
-html body .app-container .ay-tabs__steps b { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #3e2723; color: #ffedac; font: 600 var(--ay-fs-card)/1 var(--ay-sans); }
-html body .app-container .ay-tabs__panel .ay-ev__more { margin: 0 0 0 22px; }
-html body .app-container .ay-tabs__panel .ay-ev__rating { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; margin: 0 0 12px; font: 400 var(--ay-fs-body)/1.55 var(--ay-sans); }
-html body .app-container .ay-tabs__panel .ay-ev__rating b { font: 400 var(--ay-fs-title)/1.1 var(--ay-serif); letter-spacing: -0.01em; }
-html body .app-container .ay-tabs__panel .ay-ev__rating a { color: inherit; }
-html body .app-container .ay-tabs__panel .ay-ev__links ul { margin: 0; padding: 0; list-style: none; border-top: 1.5px solid #3e2723; }
-html body .app-container .ay-tabs__panel .ay-ev__links li { padding: 12px 0; border-bottom: 1.5px solid #3e2723; }
-html body .app-container .ay-tabs__panel .ay-ev__links li:last-child { border-bottom: 0; }
-html body .app-container .ay-tabs__panel .ay-ev__links a { display: flex; flex-direction: column; gap: 2px; color: inherit; text-decoration: none; }
-html body .app-container .ay-tabs__panel .ay-ev__pub { font: 600 var(--ay-fs-caption)/1.3 var(--ay-sans); }
-html body .app-container .ay-tabs__panel .ay-ev__title { font: 600 var(--ay-fs-body)/1.55 var(--ay-sans); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #3e2723; }
-html body .app-container .ay-tabs__panel .ay-ev__links li p { margin: 4px 0 0; font: 400 var(--ay-fs-body)/1.55 var(--ay-sans); }
-html body .app-container .ay-tabs__panel .ay-safety { margin: 0 0 6px; padding: 18px 20px; border-radius: 14px; background: #f7badd; display: block; border: 0; }
-html body .app-container .ay-tabs__panel .ay-safety h3 { margin: 0 0 10px !important; font: 400 var(--ay-fs-section)/1.2 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
-html body .app-container .ay-tabs__panel .ay-safety .ay-safety__list { background: none !important; padding: 0 0 0 20px !important; }
-html body .app-container .ay-tabs__panel .ay-pd__rows { margin: 0; border-top: 1.5px solid #3e2723; }
-html body .app-container .ay-tabs__panel .ay-pd__rows > div { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 14px; padding: 10px 0; border-bottom: 1.5px solid #3e2723; }
-html body .app-container .ay-tabs__panel .ay-pd__rows dt { font: 600 var(--ay-fs-secondary)/1.4 var(--ay-sans); }
-html body .app-container .ay-tabs__panel .ay-pd__rows dd { margin: 0; font: 400 var(--ay-fs-body)/1.55 var(--ay-sans); }
-html body .app-container .ay-tabs__panel .ay-pd__rows small { display: block; font-size: var(--ay-fs-caption); }
 @media (max-width: 760px) {
-  html body .app-container .ay-tabs__bar { flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px 12px; padding: 2px 16px 6px; scrollbar-width: none; }
-  html body .app-container .ay-tabs__tab { flex: none; }
-  html body .app-container .ay-tabs__panel { padding: 20px 18px; box-shadow: 4px 4px 0 #3e2723; }
-  html body .app-container .ay-tabs__panel > .ay-ev__body:first-of-type { font-size: var(--ay-fs-body) !important; }
-  html body .app-container .ay-tabs__panel .ay-pd__rows > div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
 }
-html body .app-container[data-theme='brand-dark'] .ay-tabs__tab { border-color: #ffedac; color: #ffedac; }
-html body .app-container[data-theme='brand-dark'] .ay-tabs__tab.is-on { background: #ffedac; color: #3e2723; }
-html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__panel, html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__panel :is(h3, p, li, a, span, b, strong, small, dt, dd, blockquote, summary) { color: #3e2723 !important; }
-html body .app-container[data-theme='brand-dark'] .ay-tabs__panel { border-color: #ffedac; box-shadow: 5px 5px 0 #ffedac; }
-html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__steps b { color: #ffedac !important; }
-html body .app-container.app-container .ay-tabs__panel .ay-ev__links li { margin: 0 !important; padding: 12px 0 !important; border: 0 !important; border-bottom: 1.5px solid #3e2723 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; }
-html body .app-container.app-container .ay-tabs__panel .ay-ev__links li:last-child { border-bottom: 0 !important; }
-html body .app-container .ay-tabs__panel .ay-ev__links { max-width: 70ch; }
-@media (min-width: 761px) { html body .app-container .ay-tabs__bar { gap: 6px; } html body .app-container .ay-tabs__tab { padding: 0 14px; font-size: var(--ay-fs-secondary); } }
-@media (min-width: 900px) { html body .app-container .ay-tabs__panel .ay-ev__links ul { display: grid; grid-template-columns: 1fr 1fr; column-gap: 32px; } html body .app-container.app-container .ay-tabs__panel .ay-ev__links li:nth-last-child(2):nth-child(odd) { border-bottom: 0 !important; } html body .app-container .ay-tabs__panel .ay-ev__links { max-width: none; } }
 /* Your counter, decoded: one photo, numbers scattered on it. */
 html body .app-container .lv .lv-cnt { position: relative; align-self: start; aspect-ratio: 4 / 5; border: 2px solid #3e2723; border-radius: 22px; overflow: hidden; box-shadow: 6px 6px 0 #3e2723; }
 html body .app-container .lv .lv-cnt img { display: block; width: 100%; height: 100%; object-fit: cover; }
@@ -4550,35 +4489,13 @@ html body .app-container .lv .lv-partners--peek .lv-ticker { width: 100% !import
 @media (hover: none) { html body .app-container .lv .lv-partners--peek .lv-partners__h { transform: none; } }
 @media (prefers-reduced-motion: reduce) { html body .app-container .lv .lv-partners--peek .lv-partners__h { transition: none; } }
 html body .app-container .lv .lv-cnt { aspect-ratio: 1 / 1; max-height: 620px; }
-html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__panel .ay-gloss { color: #3e2723 !important; border-color: #3e2723 !important; }
 
 /* ===== Product page v4 (Oct 15): side tabs on desktop, accordion on phones =====
    Research (Baymard): horizontal tab rows get missed and wrap on small screens.
    So: every section name always visible in a left rail, one reading panel on
    the right; on phones each section opens in place. One card style for the
    whole page: 2px espresso line, 20px corners, 4px offset shadow. */
-html body .app-container.app-container.app-container.app-container .ay-tabs { --ay-line: #3e2723; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 28px; align-items: start; }
-html body .app-container.app-container.app-container.app-container .ay-tabs__nav { position: sticky; top: 96px; }
-html body .app-container.app-container.app-container.app-container .ay-tabs__navh { margin: 0 0 10px; padding: 0 14px; font: 600 var(--ay-fs-secondary)/1.2 var(--ay-sans); letter-spacing: normal; text-transform: none; color: #3e2723; }
-html body .app-container.app-container.app-container.app-container .ay-tabs__nav ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
-html body .app-container.app-container.app-container.app-container .ay-tabs__tab { display: flex; align-items: center; width: 100%; min-height: 46px; padding: 0 14px; border: 0 !important; border-radius: 12px; background: transparent; color: #3e2723; font: 600 var(--ay-fs-secondary)/1.25 var(--ay-sans); text-align: left; cursor: pointer; transition: background .15s ease; }
-html body .app-container.app-container.app-container.app-container .ay-tabs__tab:hover { background: #f7badd; }
-html body .app-container.app-container.app-container.app-container .ay-tabs__tab.is-on { background: #3e2723; color: #ffedac; }
-html body .app-container.app-container.app-container.app-container .ay-tabs__tab:focus-visible, html body .app-container.app-container.app-container.app-container .ay-tabs__acc:focus-visible { outline: 3px solid #769ebe; outline-offset: 2px; }
-html body .app-container.app-container.app-container.app-container .ay-tabs__acc { display: none; }
-html body .app-container.app-container.app-container.app-container .ay-tabs__panel { min-height: 420px; padding: 36px 44px 40px; border: 2px solid #3e2723; border-radius: 20px; background: #ffedac; box-shadow: 4px 4px 0 #3e2723; }
-html body .app-container.app-container.app-container.app-container .ay-tabs__head { margin: 0 0 22px; padding: 0 0 18px; border-bottom: 1.5px solid #3e2723; }
-html body .app-container.app-container.app-container.app-container .ay-tabs__head h2 { margin: 0 !important; font: 400 var(--ay-fs-title)/1.1 var(--ay-serif) !important; color: #3e2723 !important; letter-spacing: -0.01em !important; text-transform: none !important; }
-html body .app-container.app-container.app-container.app-container .ay-tabs__head p { margin: 8px 0 0 !important; font: 400 var(--ay-fs-body)/1.55 var(--ay-sans) !important; color: #3e2723 !important; max-width: 60ch; }
-html body .app-container.app-container.app-container.app-container .ay-tabs__panel > .ay-tabs__head + .ay-ev__body, html body .app-container.app-container.app-container.app-container .ay-tabs__panel > .ay-ev2__badge + .ay-ev__body { padding-left: 18px; border-left: 4px solid var(--rule); font-size: var(--ay-fs-body) !important; line-height: 1.55 !important; }
-html body .app-container.app-container.app-container.app-container .ay-tabs__panel > .ay-ev__body, html body .app-container.app-container.app-container.app-container .ay-tabs__panel > details, html body .app-container.app-container.app-container.app-container .ay-tabs__panel > .ay-ev__by { max-width: 68ch; }
 /* Read more sits flush with the text, not floating. */
-html body .app-container.app-container.app-container.app-container .ay-tabs__panel .ay-ev__more { margin: 0 0 4px 22px; }
-html body .app-container.app-container.app-container.app-container .ay-tabs__panel .ay-ev__more > summary { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 14px; border: 1.5px solid #3e2723; border-radius: 99px; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); cursor: pointer; list-style: none; text-decoration: none; }
-html body .app-container.app-container.app-container.app-container .ay-tabs__panel .ay-ev__more > summary::-webkit-details-marker { display: none; }
-html body .app-container.app-container.app-container.app-container .ay-tabs__panel .ay-ev__more > summary:hover { background: #f7badd; }
-html body .app-container.app-container.app-container.app-container .ay-tabs__panel .ay-ev__more[open] > summary { margin-bottom: 14px; }
-html body .app-container.app-container.app-container.app-container .ay-tabs__panel .ay-tabs__block { margin-top: 28px; }
 /* Ask ayna + Tried it?: two equal cards in one row. */
 html body .app-container.app-container.app-container.app-container .pdp-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 40px; align-items: stretch; }
 html body .app-container.app-container.app-container.app-container .pdp-pair > section { margin: 0 !important; padding: 26px 28px !important; border: 2px solid #3e2723 !important; border-radius: 20px !important; box-shadow: 4px 4px 0 #3e2723 !important; transform: none !important; display: flex !important; flex-direction: column; align-items: flex-start; gap: 14px; }
@@ -4594,36 +4511,13 @@ html body .app-container.app-container.app-container.app-container .pdp-pair :is
 html body .app-container.app-container.app-container.app-container .pdp-pair :is(.ay-ask__qs button, .pdp-community-actions__grid button:not(.is-primary)):hover { background: #ffedac !important; }
 html body .app-container.app-container.app-container.app-container .pdp-pair .pdp-community-actions__grid { order: 2; }
 @media (max-width: 899px) {
-  html body .app-container.app-container.app-container.app-container .ay-tabs { display: block; border-top: 2px solid #3e2723; }
-  html body .app-container.app-container.app-container.app-container .ay-tabs__nav { display: none; }
-  html body .app-container.app-container.app-container.app-container .ay-tabs__acc { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 58px; padding: 0 4px; border: 0; border-bottom: 2px solid #3e2723; background: transparent; color: #3e2723; font: 400 var(--ay-fs-section)/1.2 var(--ay-serif); text-align: left; cursor: pointer; letter-spacing: -0.01em; }
-  html body .app-container.app-container.app-container.app-container .ay-tabs__acc i { position: relative; flex: none; width: 30px; height: 30px; border: 2px solid #3e2723; border-radius: 50%; }
-  html body .app-container.app-container.app-container.app-container .ay-tabs__acc i::before, html body .app-container.app-container.app-container.app-container .ay-tabs__acc i::after { content: ''; position: absolute; left: 50%; top: 50%; width: 12px; height: 2px; background: currentColor; transform: translate(-50%, -50%); transition: transform .2s ease; }
-  html body .app-container.app-container.app-container.app-container .ay-tabs__acc i::after { transform: translate(-50%, -50%) rotate(90deg); }
-  html body .app-container.app-container.app-container.app-container .ay-tabs__acc.is-on i { background: #3e2723; color: #ffedac; }
-  html body .app-container.app-container.app-container.app-container .ay-tabs__acc.is-on i::after { transform: translate(-50%, -50%) rotate(0deg); }
-  html body .app-container.app-container.app-container.app-container .ay-tabs.is-collapsed .ay-tabs__panel { display: none; }
-  html body .app-container.app-container.app-container.app-container .ay-tabs__panel { min-height: 0; margin: 0; padding: 18px 4px 26px; border: 0; border-bottom: 2px solid #3e2723; border-radius: 0; background: transparent; box-shadow: none; }
-  html body .app-container.app-container.app-container.app-container .ay-tabs__head { display: none; }
-  html body .app-container.app-container.app-container.app-container .ay-tabs__head + .ay-ev__body, html body .app-container.app-container.app-container.app-container .ay-tabs__panel > .ay-ev2__badge + .ay-ev__body { font-size: var(--ay-fs-body) !important; }
   html body .app-container.app-container.app-container.app-container .pdp-pair { grid-template-columns: 1fr; gap: 18px; margin-top: 28px; }
   html body .app-container.app-container.app-container.app-container .pdp-pair > section { padding: 20px !important; }
 }
-@media (prefers-reduced-motion: reduce) { html body .app-container .ay-tabs__acc i::before, html body .app-container .ay-tabs__acc i::after, html body .app-container .ay-tabs__tab { transition: none; } }
 /* Dark mode: the rail and accordion lines turn butter; the reading panel stays cream. */
-html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__navh, html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__tab { color: #ffedac; }
-html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__tab.is-on { background: #ffedac; color: #3e2723; }
-html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__tab:hover:not(.is-on) { background: #f7badd; }
-html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__panel { box-shadow: 4px 4px 0 #ffedac; border-color: #ffedac; }
 html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-pair > section { border-color: #ffedac !important; box-shadow: 4px 4px 0 #ffedac !important; background: #ffedac !important; }
 html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-pair > section :is(h2, h3, p, span) { color: #3e2723 !important; }
 @media (max-width: 899px) {
-  html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs { border-top-color: #ffedac; }
-  html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__acc { color: #ffedac; border-bottom-color: #ffedac; }
-  html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__acc i { border-color: #ffedac; }
-  html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__acc.is-on i { background: #ffedac; color: #3e2723; }
-  html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__panel, html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__panel :is(h3, p, li, a, span, b, strong, small, dt, dd, blockquote, summary) { color: #ffedac !important; }
-  html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__panel { border-bottom-color: #ffedac; box-shadow: none; }
 }
 /* Solid brand colours for the two cards (tints went muddy on butter). */
 html body .app-container.app-container.app-container.app-container .pdp-pair > .ay-story--ask { background: #769ebe !important; }
@@ -4633,9 +4527,6 @@ html body .app-container.app-container.app-container.app-container .pdp-pair .ay
 html body .app-container .pdp-page--glance .pdp-below--glance:has(> .pdp-suggest:last-child) { padding-bottom: 0 !important; }
 html body .app-container .pdp-page-wrap:has(.pdp-suggest) { padding-bottom: 0 !important; }
 html body .app-container main:has(.pdp-page-wrap .pdp-suggest) + footer, html body .app-container main:has(.pdp-page-wrap .pdp-suggest) ~ footer { margin-top: 0 !important; }
-html body .app-container.app-container.app-container.app-container .ay-tabs__panel .ay-safety__alert { margin: 0 0 16px; }
-html body .app-container.app-container.app-container.app-container .ay-tabs__panel .ay-safety__alert .ay-ev__body { font: 400 var(--ay-fs-body)/1.55 var(--ay-sans) !important; padding: 0 !important; border: 0 !important; }
-html body .app-container.app-container.app-container.app-container .ay-tabs__panel .ay-safety__alert .ay-ev__more { margin-left: 0; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-page--glance .pdp-pair > section :is(h2, h3, p, span:not(.ay-ask__orb)) { color: #3e2723 !important; }
 /* ===== Sub-tabs inside a section + source cards (Oct 15, v5) ===== */
 html body .app-container.app-container.app-container.app-container .ay-sub { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 24px; padding: 5px; width: max-content; max-width: 100%; border: 1.5px solid #3e2723; border-radius: 99px; background: #ffedac; }
@@ -4702,10 +4593,6 @@ html body .app-container.app-container.app-container.app-container .pdp-page--gl
 html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-page--glance :is(.ay-crumbs, .ay-crumbs li, .pdp-head, .pdp-head__media) { color: #ffedac; }
 html body .app-container .pdp-page--glance { --ay-ink-soft: #3e2723; }
 html body .app-container[data-theme='brand-dark'] .pdp-page--glance { --ay-ink-soft: #ffedac; }
-html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__panel .ay-pd__rows, html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__panel .ay-pd__rows > div { border-color: #3e2723 !important; }
-@media (max-width: 899px) { html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__panel .ay-pd__rows, html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__panel .ay-pd__rows > div { border-color: #ffedac !important; } }
-@media (min-width: 900px) { html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-page--glance .ay-tabs__panel .ay-pd__rows, html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-page--glance .ay-tabs__panel .ay-pd__rows > div { border-color: #3e2723 !important; } }
-@media (max-width: 899px) { html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-page--glance .ay-tabs__panel .ay-pd__rows, html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-page--glance .ay-tabs__panel .ay-pd__rows > div { border-color: #ffedac !important; } }
 /* ===== /admin/research (team only) ===== */
 html body .app-container .arp { max-width: 980px; margin: 0 auto; padding-block: 32px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); color: #3e2723; font: 400 var(--ay-fs-body)/1.55 var(--ay-sans); }
 html body .app-container .arp h1 { margin: 18px 0 8px; font: 400 var(--ay-fs-title)/1.1 var(--ay-serif); color: #3e2723; letter-spacing: -0.01em; }
@@ -4792,11 +4679,9 @@ html body .app-container.app-container.app-container.app-container .ay-ev__moreb
 html body .app-container.app-container.app-container.app-container .ay-sub__panel .ay-ev__stf + .ay-ev__stf, html body .app-container.app-container.app-container.app-container .ay-sub__panel .ay-ev__stf + .ay-ev__body { margin-top: 18px; }
 @media (max-width: 899px) { html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ev__morebtn { color: #ffedac !important; border-color: #ffedac; } }
 /* Section parts stacked (no sub-tabs): Pass 6 audit, research one click away. */
-html body .app-container.app-container.app-container.app-container .ay-tabs__panel { min-height: 0; }
 html body .app-container.app-container.app-container.app-container .ay-part + .ay-part { margin-top: 30px; padding-top: 24px; border-top: 1.5px solid #3e2723; }
 html body .app-container.app-container.app-container.app-container .ay-part__h { margin: 0 0 14px !important; font: 400 var(--ay-fs-section)/1.2 var(--ay-serif) !important; color: #3e2723 !important; letter-spacing: -0.01em !important; text-transform: none !important; }
 html body .app-container.app-container.app-container.app-container .ay-part > .ay-ev2__sub:first-child, html body .app-container.app-container.app-container.app-container .ay-part > h3:first-child:not(.ay-part__h) { margin-top: 0 !important; }
-html body .app-container.app-container.app-container.app-container .ay-part > .ay-ev2__badge + .ay-ev__stf > .ay-ev__body:first-child, html body .app-container.app-container.app-container.app-container .ay-tabs__panel > .ay-ev__stf:first-child > .ay-ev__body:first-child { padding-left: 18px; border-left: 4px solid var(--rule); font-size: var(--ay-fs-body) !important; line-height: 1.55 !important; }
 html body .app-container.app-container.app-container.app-container .ay-part .ay-ev__body { max-width: 68ch; }
 html body .app-container.app-container.app-container.app-container .ay-part .ay-ev__stf + .ay-ev__stf, html body .app-container.app-container.app-container.app-container .ay-part .ay-ev__stf + .ay-ev__body { margin-top: 18px; }
 html body .app-container.app-container.app-container.app-container .ay-part.is-safety .ay-safety > h3:first-child { display: none; }
@@ -4987,7 +4872,6 @@ html body .app-container.app-container.app-container.app-container.app-container
 html body .app-container.app-container.app-container.app-container.app-container .ay-sec__b > * + * { margin-top: 12px; }
 html body .app-container.app-container.app-container.app-container.app-container .ay-sec .ay-part__h { margin: 28px 0 8px !important; font: 600 var(--ay-fs-card)/1.3 var(--ay-sans) !important; }
 html body .app-container.app-container.app-container.app-container.app-container .ay-sec .ay-part__h.is-first { margin-top: 0 !important; }
-html body .app-container.app-container.app-container.app-container.app-container .ay-sec .ay-ev__body, html body .app-container.app-container.app-container.app-container.app-container .ay-sec .ay-tabs__list li, html body .app-container.app-container.app-container.app-container.app-container .ay-sec .ay-tabs__steps li { font-size: var(--ay-fs-body) !important; line-height: 1.55 !important; }
 html body .app-container.app-container.app-container.app-container.app-container .ay-sec .ay-ev__by { font-size: var(--ay-fs-secondary) !important; line-height: 1.45 !important; }
 html body .app-container.app-container.app-container.app-container.app-container .ay-sec .ay-safety { padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; }
 html body .app-container.app-container.app-container.app-container.app-container .ay-sec .ay-safety .ay-pd__rows, html body .app-container.app-container.app-container.app-container.app-container .ay-sec .ay-pd__rows { border: 0 !important; background: none !important; box-shadow: none !important; }
@@ -5113,12 +4997,9 @@ html body .app-container.app-container.app-container.app-container.app-container
 /* Dark mode for the stacked product sections: cream text on espresso, except the pink safety box. */
 html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-stack :is(p, li, dt, dd, span, a, strong, b, em, h3, h4, blockquote, small, button, summary):not(.ay-ev2__badge):not(.ay-ev2__badge *) { color: #ffedac !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-stack :is(.ay-safety__list, .ay-safety__alert) :is(li, p, span, a, strong, b, em, button) { color: #3e2723 !important; }
-html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-stack .ay-tabs__steps li b { background: #ffedac !important; color: #3e2723 !important; }
-html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-stack .ay-tabs__list li::before { background: #f7badd !important; border-color: #ffedac !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-stack .ay-ev__quote { border-color: #ffedac !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-stack .ay-ev2__ingr li { border-color: rgba(255, 237, 172, .3) !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-stack .ay-src__card:not(.zz):not(.zz) { background: none !important; }
-html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-stack ol.ay-tabs__steps li > b:not(.zz):not(.zz):not(.zz) { background: #ffedac !important; color: #3e2723 !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-buybox .pdp-textlink:not(.zz) { color: #ffedac !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-stack .ay-unknown :is(h3, li, p, span):not(.zz):not(.zz):not(.zz) { color: #3e2723 !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-stack .ay-safety :is(.ay-src, .ay-src *, .ay-pd__rows *):not(.zz):not(.zz):not(.zz) { color: #ffedac !important; }
@@ -5247,7 +5128,6 @@ html body .app-container.app-container.app-container.app-container.app-container
 html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-itabs__panel .ay-safety__list { margin: 0 0 16px !important; padding: 12px 14px 12px 32px !important; border: 0 !important; border-left: 4px solid #3e2723 !important; border-radius: 0 !important; background: #f7badd !important; color: #3e2723 !important; box-shadow: none !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-itabs__panel .ay-pd__rows { border: 0 !important; background: none !important; box-shadow: none !important; margin: 0; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-itabs__panel .ay-pd__rows > div { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 12px; padding: 10px 0 !important; border-bottom: 1px solid rgba(62, 39, 35, .25) !important; background: none !important; }
-html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-itabs__panel .ay-tabs__list { margin: 0; padding-left: 0; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container .pdp-below.pdp-below--glance .pdp-read { padding-top: 0 !important; }
 @media (max-width: 899px) {
   html body .app-container.app-container.app-container.app-container.app-container.app-container .pdp-head.pdp-head--tabs { grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: "media" "detail" "info" !important; gap: 20px !important; }
@@ -5265,7 +5145,6 @@ html body .app-container.app-container.app-container.app-container.app-container
 html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-itabs__panel .ay-glance li:first-child button span:not(.zz):not(.zz) { color: #3e2723 !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-itabs__panel .ay-ev2__ingr > li { background: #3e2723 !important; border-color: #ffedac !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-itabs__panel :is(.ay-safety__list, .ay-safety__alert) :is(li, p, span, a, strong, b, em, button):not(.zz):not(.zz) { color: #3e2723 !important; }
-html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-itabs__panel ol.ay-tabs__steps li > b:not(.zz):not(.zz) { background: #ffedac !important; color: #3e2723 !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-itabs__panel .ay-unknown :is(h3, li, p, span):not(.zz):not(.zz) { color: #3e2723 !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-itabs__panel .ay-src__card, html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-itabs__panel .ay-pd__rows > div { border-bottom-color: rgba(255, 237, 172, .3) !important; }
 @media (min-width: 900px) {

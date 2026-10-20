@@ -4,6 +4,7 @@ const PAGE_SIZE = typeof window !== 'undefined' && window.matchMedia?.('(max-wid
 import { createPortal } from 'react-dom';
 import SuggestBox from './SuggestBox';
 import './Discovery.css';
+import './shop-page.css';
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct, isTeenProduct } from '../data/products.js';
 import { behaviorFrom, matchBadge } from '../utils/matchDisplay';
 import { loadProductCatalog } from '../utils/productCatalog';
@@ -1558,20 +1559,19 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const activeFilterCount = [priceFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, typeFilter].filter((v) => v && v !== 'all').length + (categoryFilter !== 'all' && !submittedQuery ? 1 : 0);
 
     return (
-        <section className="container ayna-browse" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
-            <div className="ay3-band ay3-band--rose ay3-shophero">
-            <div className="ayna-browse__heading ay3-withpile">
-                <div>
-                    <h1 className="ay3-title">Shop by <em>need.</em></h1>
+        <section className="ayshop">
+            <div className="ay-container">
+            <div className="ayshop__top">
+            <header className="ayshop__head">
+                    <h1 className="ay-h1">Shop by need</h1>
                     {/* One disclosure for the whole page instead of a pill on every card (S09). */}
-                    <p className="ayna-browse__disclosure">
+                    <p className="ayshop__note">
                         Some links earn ayna a commission. It never changes your matches.{' '}
                         <a href="/how-we-make-money" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); setCurrentView?.('how-we-make-money'); }}>How we make money</a>
                     </p>
-                </div>
-            </div>
+            </header>
 
-            <form onSubmit={handleSmartSearch} className="ayna-browse__search">
+            <form onSubmit={handleSmartSearch} className="ayshop__search">
                 <SmartSearchInput
                     type="search"
                     suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 7 }}
@@ -1604,25 +1604,26 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     placeholder={searchPlaceholder}
                     aria-label="Search products"
                 />
-                <svg className="ayna-browse__search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
+                <svg className="ayshop__search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
             </form>
             {submittedQuery && filtered.length > 0 && <SearchAssist query={submittedQuery} resultCount={filtered.length} showTries={false} onUse={(text) => runSearch(text)} />}
             {submittedQuery && categoryFilter !== 'all' && (
-                <div className="ayna-browse__inferred">
-                    <button type="button" onClick={() => setCategoryFilter('all')} aria-label={`Remove ${CATEGORY_LABELS[categoryFilter] || categoryFilter} filter`}>
+                <div className="ayshop__inferred">
+                    <button type="button" className="ay-chip is-on" onClick={() => setCategoryFilter('all')} aria-label={`Remove ${CATEGORY_LABELS[categoryFilter] || categoryFilter} filter`}>
                         {CATEGORY_LABELS[categoryFilter] || categoryFilter.replace(/-/g, ' ')} <span aria-hidden="true">×</span>
                     </button>
                 </div>
             )}
 
-            <div className="ay-catrow">
-            <button type="button" className="ay-catrow__arrow is-back" aria-label="Scroll categories back" onClick={(e) => e.currentTarget.parentElement.querySelector('.ayna-browse__categories')?.scrollBy({ left: -360, behavior: 'smooth' })}>←</button>
-            <div className="ayna-browse__categories" aria-label="Product categories" ref={edgeFadeRef}>
+            <div className="ayshop__cats">
+            <button type="button" className="ayshop__arrow is-back" aria-label="Scroll categories back" onClick={(e) => e.currentTarget.parentElement.querySelector('.ayshop__chips')?.scrollBy({ left: -360, behavior: 'smooth' })}>←</button>
+            <div className="ay-chip-row ayshop__chips" role="group" aria-label="Product categories" ref={edgeFadeRef}>
                 {availableMacroGroups.map((group) => (
                     <button
                         key={group.id}
                         type="button"
-                        className={macroGroup === group.id && !(group.id === 'all' && submittedQuery) ? 'is-active' : ''}
+                        className="ay-chip"
+                        aria-pressed={macroGroup === group.id && !(group.id === 'all' && submittedQuery)}
                         onClick={() => {
                             setMacroGroup(group.id);
                             setCategoryFilter('all');
@@ -1637,22 +1638,23 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     </button>
                 ))}
             </div>
-            <button type="button" className="ay-catrow__arrow is-next" aria-label="Scroll categories forward" onClick={(e) => e.currentTarget.parentElement.querySelector('.ayna-browse__categories')?.scrollBy({ left: 360, behavior: 'smooth' })}>→</button>
+            <button type="button" className="ayshop__arrow is-next" aria-label="Scroll categories forward" onClick={(e) => e.currentTarget.parentElement.querySelector('.ayshop__chips')?.scrollBy({ left: 360, behavior: 'smooth' })}>→</button>
             </div>
             </div>
 
-            <div className="ayna-browse__toolbar">
-                <div className="ayna-browse__toolbar-left">
-                    <button type="button" className={`ayna-browse__filter-button${activeFilterCount ? ' is-active' : ''}${showFilters ? ' is-open' : ''}`} onClick={() => setShowFilters((v) => !v)} aria-expanded={showFilters}>
+            <div className="ayshop__toolbar">
+                <div className="ayshop__toolbar-left">
+                    <button type="button" className={`ay-btn ay-btn--secondary ayshop__filters${activeFilterCount ? ' is-active' : ''}${showFilters ? ' is-open' : ''}`} onClick={() => setShowFilters((v) => !v)} aria-expanded={showFilters}>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg>
                         Filters{activeFilterCount ? ` · ${activeFilterCount}` : ''}
                     </button>
                     {!user && (
-                        <button type="button" className="ayna-browse__personalize-cta" onClick={() => onRequirePersonalizeAuth?.()}>See my matches →</button>
+                        <button type="button" className="ay-btn ay-btn--text ayshop__matches" onClick={() => onRequirePersonalizeAuth?.()}>See my matches →</button>
                     )}
                     {hasProfileForSort && personalizedSwitch}
                 </div>
                 {/* "Best match" is a sort (first, and the default once she has a profile), not a separate switch. */}
-                <label className="ayna-browse__sort">
+                <label className="ayshop__sort">
                     <span>Sort</span>
                     <select
                         value={hasProfileForSort && personalizationFilter && sortBy === 'default' ? 'best' : sortBy}
@@ -1681,13 +1683,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 const LABELS = { 'under-25': 'Under $25', '25-50': '$25–49', '50-100': '$50–99', '100-plus': '$100+', subscription: 'Subscription or membership', 'fsa-hsa': 'FSA/HSA eligible', fsa: 'FSA', hsa: 'HSA', 'fragrance-free': 'Fragrance-free', 'sensitive-skin': 'Sensitive skin', vegan: 'Vegan', 'cruelty-free': 'Cruelty-free', organic: 'Organic', 'clean-ingredients': 'Paraben or chlorine free', reusable: 'Reusable', recyclable: 'Recyclable', 'low-waste': 'Low waste', packaging: 'Sustainable packaging', clinician: 'Clinician backed', community: 'Community favorite', 'best-match': 'Best matches', ecosystem: 'In my ecosystem', fertility: 'Trying to conceive', pregnancy: 'Pregnant', postpartum: 'Postpartum', perimenopause: 'Perimenopause and menopause', menopause: 'Menopause', period: 'Period years', products: 'Products', services: 'Apps & services' };
                 const applied = [[typeFilter, setTypeFilter], [priceFilter, setPriceFilter], [eligibilityFilter, setEligibilityFilter], [lifeStageFilter, setLifeStageFilter], [preferenceFilter, setPreferenceFilter], [sustainabilityFilter, setSustainabilityFilter], [aynaFilter, setAynaFilter]].filter(([v]) => v && v !== 'all');
                 return (
-                    <div className="ayna-browse__applied" role="status">
-                        <span className="ayna-browse__count">{submittedQuery ? ((shownCount ?? catalogShown) === 0 ? '\u00a0' : `${shownCount ?? catalogShown} result${(shownCount ?? catalogShown) === 1 ? '' : 's'} for “${submittedQuery}”`) : applied.length > 0 || (categoryFilter && categoryFilter !== 'all') || macroGroup !== 'all' ? `Showing ${shownCount ?? catalogShown} of ${combined.filter((it) => !isTeenProduct(it)).length}` : shownCount == null ? '\u00a0' : shownCount > visibleCount ? `Showing ${visibleCount} of ${shownCount} products` : (shownCount === 1 ? '1 product' : `${shownCount} products`)}</span>
+                    <div className="ayshop__applied" role="status">
+                        <span className="ayshop__count">{submittedQuery ? ((shownCount ?? catalogShown) === 0 ? '\u00a0' : `${shownCount ?? catalogShown} result${(shownCount ?? catalogShown) === 1 ? '' : 's'} for “${submittedQuery}”`) : applied.length > 0 || (categoryFilter && categoryFilter !== 'all') || macroGroup !== 'all' ? `Showing ${shownCount ?? catalogShown} of ${combined.filter((it) => !isTeenProduct(it)).length}` : shownCount == null ? '\u00a0' : shownCount > visibleCount ? `Showing ${visibleCount} of ${shownCount} products` : (shownCount === 1 ? '1 product' : `${shownCount} products`)}</span>
                         {/* Partner placement is disclosed by each card's 'ayna partner' label and the header line (Oct 16: no extra note). */}
                         {applied.map(([v, set]) => (
-                            <button key={v} type="button" className="ayna-browse__chip-x" onClick={() => set('all')} aria-label={`Remove filter ${LABELS[v] || v}`}>{LABELS[v] || v} <span aria-hidden="true">×</span></button>
+                            <button key={v} type="button" className="ay-chip is-on" onClick={() => set('all')} aria-label={`Remove filter ${LABELS[v] || v}`}>{LABELS[v] || v} <span aria-hidden="true">×</span></button>
                         ))}
-                        {applied.length > 0 && <button type="button" className="ayna-browse__clearall" onClick={clearSheetFilters}>Clear all</button>}
+                        {applied.length > 0 && <button type="button" className="ay-btn ay-btn--text ayshop__clear" onClick={clearSheetFilters}>Clear all</button>}
                     </div>
                 );
             })()}
@@ -1719,8 +1721,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 wait on a real LLM search, not an instant lookup. */}
             {searchSubmitted && aiLoading && gridItems.length === 0 && (
                 <>
-                    <p className="ayna-browse__searching" role="status">Searching more stores…</p>
-                    <div className="ayna-browse__grid ayna-browse__grid--skeleton">
+                    <p className="ayshop__searching" role="status">Searching more stores…</p>
+                    <div className="ay-product-grid ayshop__grid">
                         {Array.from({ length: 8 }, (_, i) => (
                             <div key={i} className="ay-product-card is-skeleton" aria-hidden="true">
                                 <div className="ay-product-card__tile skeleton-shimmer" />
@@ -1738,7 +1740,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             {/* Product Grid */}
             {(!searchSubmitted || !aiLoading || gridItems.length > 0) && (
             <>
-            <div className={`ayna-browse__grid${gridSettled ? ' is-settled' : ''}`}>
+            <div className={`ay-product-grid ayshop__grid${gridSettled ? ' is-settled' : ''}`}>
                 {gridItems.slice(0, visibleCount).map((item, idx) => {
                     // A defined (even empty-string) resolvedImages[item.id] came back
                     // from the server's type-aware /api/product-image resolution
@@ -1762,7 +1764,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     return (
                         <React.Fragment key={item.id}>
                         {idx === firstWebIndex && (
-                            <div className="ayna-browse__divider" role="separator">
+                            <div className="ayshop__divider" role="separator">
                                 <strong>From around the web</strong>
                                 <span>Found live by ayna. Prices and details are checked less often.</span>
                             </div>
@@ -1814,25 +1816,24 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 })}
             </div>
             {gridItems.length === 0 && !(searchSubmitted && aiLoading) && (
-                <div className="ayna-browse__empty">
-                    <p><strong>{submittedQuery ? `Nothing for “${submittedQuery}”.` : 'Nothing here with these filters.'}</strong></p>
-                    <div className="ayna-browse__empty-actions">
+                <div className="ayshop__empty">
+                    <h2 className="ay-h2">{submittedQuery ? `Nothing for “${submittedQuery}”.` : 'Nothing here with these filters.'}</h2>
+                    <div className="ayshop__empty-actions">
                         {availableMacroGroups.filter((g) => g.id !== 'all' && g.id !== macroGroup).slice(0, 3).map((g) => (
-                            <button key={g.id} type="button" onClick={() => { clearBrowseFilters(); setMacroGroup(g.id); }}>{g.label}</button>
+                            <button key={g.id} type="button" className="ay-chip" onClick={() => { clearBrowseFilters(); setMacroGroup(g.id); }}>{g.label}</button>
                         ))}
-                        {submittedQuery && onAsk && <button type="button" className="is-dark" onClick={() => onAsk(submittedQuery)}>Ask ayna about “{submittedQuery}”</button>}
-                        {activeFilterCount > 0 && <button type="button" onClick={clearBrowseFilters}>Clear filters</button>}
+                        {submittedQuery && onAsk && <button type="button" className="ay-btn ay-btn--primary" onClick={() => onAsk(submittedQuery)}>Ask ayna about “{submittedQuery}”</button>}
+                        {activeFilterCount > 0 && <button type="button" className="ay-btn ay-btn--secondary" onClick={clearBrowseFilters}>Clear filters</button>}
                     </div>
                     <SuggestBox context="shop-empty" prefill={submittedQuery} className="ayna-browse__suggest" />
                 </div>
             )}
             {gridItems.length > visibleCount ? (
-                <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+                <div className="ayshop__more">
                     <button
                         type="button"
-                        className="btn btn-outline"
+                        className="ay-btn ay-btn--secondary"
                         onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-                        style={{ padding: '0.7rem 1.75rem' }}
                     >
                         Load more
                     </button>
@@ -1842,12 +1843,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 // background, show a disabled, clearly-labeled state instead of
                 // "Load more" just disappearing (which would look broken) or being
                 // clickable and double-firing a request.
-                <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+                <div className="ayshop__more">
                     <button
                         type="button"
-                        className="btn btn-outline"
+                        className="ay-btn ay-btn--secondary"
                         disabled
-                        style={{ padding: '0.7rem 1.75rem', opacity: 0.7, cursor: 'default' }}
                     >
                         Finding more…
                     </button>
@@ -1861,7 +1861,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 // dryRoundStreakRef) vs. the fetch itself kept failing/rate-
                 // limiting (browseAiErrorCode), the latter is NOT "we
                 // checked and this is everything," it's "we couldn't check."
-                <p style={{ textAlign: 'center', marginTop: '2rem', color: 'var(--color-text-muted)', fontSize: 14 }}>
+                <p className="ayshop__end">
                     {browseAiErrorCode === 'rate_limited'
                         ? "Couldn't check for more right now. Too many searches recently, try again in a bit."
                         : browseAiErrorCode
@@ -1874,22 +1874,15 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
             {/* Related searches */}
             {searchSubmitted && !aiLoading && aiRelatedSearches.length > 0 && (
-                <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center' }}>
+                <div className="ayshop__related">
+                    <h2 className="ayshop__related-h">Related searches</h2>
+                    <div className="ay-chip-row">
                         {aiRelatedSearches.map((term) => (
                             <button
                                 key={term}
                                 type="button"
+                                className="ay-chip"
                                 onClick={() => { setSearchQuery(term); setSubmittedQuery(term); setSearchSubmitted(true); runAiSearch(term, categoryFilter, symptomFilter); }}
-                                style={{
-                                    padding: '0.4rem 0.9rem',
-                                    borderRadius: 'var(--radius-pill)',
-                                    border: '1px solid var(--color-border)',
-                                    background: 'var(--color-surface-soft)',
-                                    color: 'var(--color-text-main)',
-                                    fontSize: 14,
-                                    cursor: 'pointer',
-                                }}
                             >
                                 {term}
                             </button>
@@ -1949,8 +1942,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             )}
 
             {gridItems.length > 0 && !(searchSubmitted && aiLoading) && (
-                <SuggestBox context="shop" prefill={submittedQuery} className="ayna-browse__suggest" />
+                <SuggestBox context="shop" prefill={submittedQuery} className="ayna-browse__suggest ayshop__suggest" />
             )}
+            </div>
         </section>
     );
 }

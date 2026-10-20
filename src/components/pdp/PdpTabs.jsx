@@ -42,8 +42,8 @@ export default function PdpTabs({ tabs, active, onChange, label, labelId }) {
 
   return (
     <>
-      <div className="ay-pt__bar">
-        <div className="ay-pt__list" role="tablist" aria-labelledby={labelId} aria-label={labelId ? undefined : label} ref={listRef} onKeyDown={onKeyDown}>
+      <div className="ay-tabs ayp-tabs__bar">
+        <div className="ay-tabs__list" role="tablist" aria-labelledby={labelId} aria-label={labelId ? undefined : label} ref={listRef} onKeyDown={onKeyDown}>
           {tabs.map((t) => {
             const on = t.id === active;
             return (
@@ -56,11 +56,11 @@ export default function PdpTabs({ tabs, active, onChange, label, labelId }) {
                 aria-selected={on}
                 aria-controls={`ay-panel-${t.id}`}
                 tabIndex={on ? 0 : -1}
-                className={`ay-pt__tab${on ? ' is-on' : ''}${t.tone ? ` is-${t.tone}` : ''}`}
+                className={`ay-tabs__tab${on ? ' is-on' : ''}${t.tone ? ` is-${t.tone}` : ''}`}
                 onClick={() => choose(t.id)}
               >
                 {t.label}
-                {t.count > 0 && <span className="ay-pt__count">{t.count}</span>}
+                {t.count > 0 && <span className="ay-tabs__count">{t.count}</span>}
               </button>
             );
           })}
@@ -74,10 +74,10 @@ export default function PdpTabs({ tabs, active, onChange, label, labelId }) {
           aria-labelledby={`ay-tab-${t.id}`}
           tabIndex={0}
           hidden={t.id !== active}
-          className={`ay-pt__panel is-${t.id}`}
+          className={`ay-tabs__panel ayp-panel is-${t.id}`}
         >
-          {t.lead && t.leadLabel && <p className="ay-pt__lead-label">{t.leadLabel}</p>}
-          {t.lead && <p className={t.leadLabel ? 'ay-pt__lead is-quoted' : 'ay-pt__lead'}>{t.lead}</p>}
+          {t.lead && t.leadLabel && <p className="ayp-panel__leadlabel">{t.leadLabel}</p>}
+          {t.lead && <p className={t.leadLabel ? 'ayp-panel__lead is-quoted' : 'ayp-panel__lead'}>{t.lead}</p>}
           {t.body}
         </div>
       ))}
