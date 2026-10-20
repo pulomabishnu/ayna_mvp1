@@ -648,6 +648,7 @@ export default function MobileApp() {
   // "Add to ecosystem" from a product detail overlay, was previously wired
   // to nothing (ProductDetailScreen called onAddToEcosystem, but MobileApp
   // never passed it), so the button did nothing at all.
+  const ecoNudgeShownRef = useRef(false);
   const handleAddToEcosystem = (product) => {
     if (!product?.id) return;
 
@@ -680,7 +681,14 @@ export default function MobileApp() {
         ? prev.myProducts
         : [...prev.myProducts, ecosystemProduct],
       hasEcosystem: true,
+      // Signed out: kept on this phone (same as guest saves) and flagged so
+      // the account load on sign-in uploads it instead of replacing it.
+      ...(authUser ? {} : { pendingIntakeSync: true }),
     }));
+    if (!authUser && !ecoNudgeShownRef.current) {
+      ecoNudgeShownRef.current = true;
+      setSaveNudge('eco');
+    }
 
     const supabase = getSupabaseClient();
     if (authUser && supabase) {
@@ -1062,7 +1070,7 @@ export default function MobileApp() {
       />}
       {saveNudge && !authUser && (
         <div className="ay-save-nudge" role="status">
-          <span>Saved on this phone. Sign in to keep your saves on every device.</span>
+          <span>{saveNudge === 'eco' ? 'Added to your Ecosystem on this phone. Sign in to keep it on every device.' : 'Saved on this phone. Sign in to keep your saves on every device.'}</span>
           <button type="button" onClick={() => { setSaveNudge(false); openAuth('signin'); }}>Sign in</button>
           <button type="button" className="ay-save-nudge-x" aria-label="Dismiss" onClick={() => setSaveNudge(false)}>×</button>
         </div>

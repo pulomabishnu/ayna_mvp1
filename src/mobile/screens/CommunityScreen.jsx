@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import EmptyState from '../components/EmptyState.jsx';
 import MobileHeader from '../components/MobileHeader.jsx';
 import ProductImage from '../components/ProductImage.jsx';
@@ -6,7 +6,8 @@ import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { getGuestClient, getGuestId, ensureGuestSession } from '../../utils/community/guestClient.js';
 import * as community from '../../utils/community/communityStore.js';
 import { rankForYou, postProductIds } from '../../utils/community/ranking.js';
-import { extractHashtagTopics, suggestHashtags, suggestTopicsForProducts } from '../../utils/community/topics.js';
+import { extractHashtagTopics, suggestHashtags, suggestTopicsForProducts, COMMUNITY_TOPICS, topicLabel } from '../../utils/community/topics.js';
+import { useFollowedTopics } from '../utils/communityTopicFollows.js';
 import { uploadCommunityImage, deleteCommunityImage, checkImageFile, MAX_POST_PHOTOS, publicMediaUrl } from '../../utils/community/imageUpload.js';
 import { CATEGORY_LABELS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../../data/products.js';
 import { scoreSearchMatch } from '../../utils/search/index.js';
@@ -110,10 +111,49 @@ function ProductPicker({ products, value, onChange }) {
   </div>;
 }
 
+// Follow or unfollow topics. Followed topics become pods above the feed.
+function TopicSheet({ followed, onToggle, onClose }) {
+  const sheetRef = useRef(null);
+  const doneRef = useRef(null);
+  useEffect(() => {
+    const opener = document.activeElement;
+    doneRef.current?.focus();
+    const onKey = (event) => {
+      if (event.key === 'Escape') { event.preventDefault(); onClose(); return; }
+      if (event.key !== 'Tab') return;
+      const focusable = [...(sheetRef.current?.querySelectorAll('button:not(:disabled)') || [])];
+      if (focusable.length < 2) return;
+      if (event.shiftKey && document.activeElement === focusable[0]) { event.preventDefault(); focusable.at(-1).focus(); }
+      else if (!event.shiftKey && document.activeElement === focusable.at(-1)) { event.preventDefault(); focusable[0].focus(); }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => { window.removeEventListener('keydown', onKey); opener?.focus?.(); };
+  }, [onClose]);
+  return <div className="am-sheet-backdrop" onClick={onClose}>
+    <div ref={sheetRef} className="am-sheet am-topic-sheet" role="dialog" aria-modal="true" aria-labelledby="am-topic-sheet-title" onClick={(e) => e.stopPropagation()}>
+      <div className="am-sheet-head am-topic-sheet-head"><h2 id="am-topic-sheet-title">Your topics</h2><button ref={doneRef} type="button" onClick={onClose}>Done</button></div>
+      <p>Follow topics to see their posts in My topics. Change them any time.</p>
+      <div className="am-topic-grid">{COMMUNITY_TOPICS.map((t) => { const on = followed.includes(t.key); return <button type="button" key={t.key} aria-pressed={on} className={on ? 'is-on' : ''} onClick={() => onToggle(t.key)}><span aria-hidden="true">{on ? '✓' : '+'}</span>{t.label}</button>; })}</div>
+    </div>
+  </div>;
+}
+
 export default function CommunityScreen({ authUser, products = [], articles = null, quizAnswers, headerInitial, onOpenProduct, onOpenArticle, onGoBrowse, onGoEco, onOpenSaved, onOpenProfile, onRequireAuth, seedKind, seedProductId, seedPlaylistId, seedPostId }) {
   const supabase = authUser ? getSupabaseClient() : (getGuestClient() || getSupabaseClient());
   const productsById = useMemo(() => new Map(products.map((p) => [String(p.id), p])), [products]);
   const [tab, setTab] = useState('for-you');
+  // Topic pods: followed topics (defaults from her quiz), saved on this device.
+  const [followedTopics, toggleTopic] = useFollowedTopics(authUser?.id, quizAnswers);
+  const followedKey = followedTopics.join(',');
+  const [topicScopeChoice, setTopicScope] = useState(null); // 'mine' | 'all' | topic key
+  const [topicSheetOpen, setTopicSheetOpen] = useState(false);
+  const closeTopicSheet = useCallback(() => setTopicSheetOpen(false), []);
+  const topicScope = topicScopeChoice === 'mine' && !followedTopics.length ? 'all'
+    : topicScopeChoice && topicScopeChoice !== 'mine' && topicScopeChoice !== 'all' && !followedTopics.includes(topicScopeChoice) ? (followedTopics.length ? 'mine' : 'all')
+    : topicScopeChoice || (followedTopics.length ? 'mine' : 'all');
+  const topicsTab = tab === 'for-you' || tab === 'question' || tab === 'review';
+  const scopedTopics = !topicsTab || topicScope === 'all' ? null : topicScope === 'mine' ? followedKey.split(',').filter(Boolean) : [topicScope];
+  const scopedTopicsKey = scopedTopics ? scopedTopics.join(',') : '';
   const [posts, setPosts] = useState([]);
   const [playlists, setPlaylists] = useState([]);
   const [playlistSection, setPlaylistSection] = useState('recent');
@@ -259,19 +299,19 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
         const rows = await community.listPlaylists(supabase, { section: playlistSection });
         if (active) { setPlaylists(rows); setPosts([]); setCursor(null); }
       } else {
-        const rows = await community.listFeedPosts(supabase, { kind: tab === 'question' || tab === 'review' ? tab : null, authorIds: tab === 'following' ? followingIds : null });
+        const rows = await community.listFeedPosts(supabase, { kind: tab === 'question' || tab === 'review' ? tab : null, authorIds: tab === 'following' ? followingIds : null, topics: scopedTopicsKey ? scopedTopicsKey.split(',') : null });
         if (active) { setPosts(tab === 'for-you' ? rankForYou(rows, { matchFor: (id) => { const p = productsById.get(String(id)); return p && quizAnswers ? getProfileMatchPercentForProduct(p, quizAnswers) : null; }, followingIds: new Set(followingIds) }) : rows); setCursor(rows.length === community.PAGE_SIZE ? community.nextCursor(rows, 'recent') : null); }
       }
     };
     run().catch((e) => { if (active) notifyError(e); }).finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
-  }, [supabase, tab, page, search, refresh, followingIds, productsById, quizAnswers, playlistSection]);
+  }, [supabase, tab, page, search, refresh, followingIds, productsById, quizAnswers, playlistSection, scopedTopicsKey]);
 
   const loadMore = async () => {
     if (!cursor || loading) return;
     setLoading(true);
     try {
-      const rows = await community.listFeedPosts(supabase, { kind: tab === 'question' || tab === 'review' ? tab : null, authorIds: tab === 'following' ? followingIds : null, cursor });
+      const rows = await community.listFeedPosts(supabase, { kind: tab === 'question' || tab === 'review' ? tab : null, authorIds: tab === 'following' ? followingIds : null, topics: scopedTopicsKey ? scopedTopicsKey.split(',') : null, cursor });
       setPosts((prev) => [...prev, ...(tab === 'for-you' ? rankForYou(rows, { matchFor: (id) => { const p = productsById.get(String(id)); return p && quizAnswers ? getProfileMatchPercentForProduct(p, quizAnswers) : null; } }) : rows)]);
       setCursor(rows.length === community.PAGE_SIZE ? community.nextCursor(rows, 'recent') : null);
     } catch (e) { notifyError(e); } finally { setLoading(false); }
@@ -639,10 +679,17 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
           {!searchResults.people.length && !searchResults.posts.length && !searchResults.playlists.length && <EmptyState compact art="search" tone="mint" title="No results" body="Try a name, topic, or playlist." />}
         </>}</div> : <>
           <div className="am-tabs" role="tablist" aria-label="Community sections">{TABS.map(([key, label]) => <button type="button" role="tab" aria-selected={tab === key} key={key} className={tab === key ? 'is-active' : ''} onClick={() => key === 'following' && !authUser ? requireAccount('your following feed') : setTab(key)}>{label}</button>)}</div>
+          {topicsTab && <div className="am-pods" role="group" aria-label="Filter posts by topic">
+            {followedTopics.length > 0 && <button type="button" className="am-pod" aria-pressed={topicScope === 'mine'} onClick={() => setTopicScope('mine')}>My topics</button>}
+            <button type="button" className="am-pod" aria-pressed={topicScope === 'all'} onClick={() => setTopicScope('all')}>All</button>
+            {followedTopics.map((key) => <button type="button" key={key} className="am-pod" aria-pressed={topicScope === key} onClick={() => setTopicScope(topicScope === key ? 'mine' : key)}>{topicLabel(key)}</button>)}
+            <button type="button" className="am-pod is-edit" onClick={() => setTopicSheetOpen(true)}>{followedTopics.length ? 'Edit topics' : '+ Follow topics'}</button>
+          </div>}
+          {topicsTab && scopedTopics && posts.length === 0 && !loading && <div className="am-community-empty-slot"><EmptyState art="chat" tone="pink" title={topicScope === 'mine' ? 'Nothing in your topics yet' : `No ${topicLabel(topicScope)} posts yet`} body="New posts tagged with these topics show up here." actionLabel="See all posts" onAction={() => setTopicScope('all')} /></div>}
           {tab === 'announcements' && <Announcements supabase={supabase} user={authUser} products={products} productsById={productsById} articles={articles} teamBadges={teamBadges} variant="app" onOpenProduct={onOpenProduct} onOpenPlaylist={openPlaylistById} onOpenArticle={onOpenArticle} onOpenProfile={openProfile} onRequireAuth={requireAccount} onShowRules={openRules} />}
-          {tab === 'for-you' && posts.length === 0 && !loading && <div className="am-community-empty-slot"><EmptyState art="chat" tone="pink" title="No posts yet" body="Be the first to post." actionLabel={authUser ? 'Post' : 'See questions'} onAction={() => authUser ? openCompose('post') : setTab('question')} /></div>}
+          {tab === 'for-you' && !scopedTopics && posts.length === 0 && !loading && <div className="am-community-empty-slot"><EmptyState art="chat" tone="pink" title="No posts yet" body="Be the first to post." actionLabel={authUser ? 'Post' : 'See questions'} onAction={() => authUser ? openCompose('post') : setTab('question')} /></div>}
           {tab === 'for-you' && posts.length > 0 && <button type="button" className="am-share-prompt" onClick={() => openCompose('post')}><CommunityAvatar name={profile?.display_name || 'You'} path={profile?.avatar_url} /><span>Share with the community</span><span className="am-share-plus"><CommunityIcon name="plus" size={18} /></span></button>}
-          {tab === 'playlists' ? <><div className="am-list-heading"><h2>{playlistSection === 'mine' ? 'My playlists' : playlistSection === 'friends' ? 'Shared by friends' : 'Made by the community'}</h2><button type="button" onClick={() => openCompose('playlist')}>Create playlist</button></div><div className="am-playlist-switch"><button type="button" aria-pressed={playlistSection === 'recent'} onClick={() => setPlaylistSection('recent')}>Community</button><button type="button" aria-pressed={playlistSection === 'friends'} onClick={() => authUser ? setPlaylistSection('friends') : requireAccount('friends-only playlists')}>Friends</button><button type="button" aria-pressed={playlistSection === 'mine'} onClick={() => authUser ? setPlaylistSection('mine') : requireAccount('your playlists')}>My playlists</button></div><ul className="am-playlist-rows">{playlists.map((p) => <li key={p.id}><button type="button" className="am-playlist-row" onClick={() => openPlaylist(p)}><PlaylistThumb playlist={p} productsById={productsById} /><span className="am-playlist-row-copy"><strong>{p.title}</strong><small>{p.item_count || 0} {(p.item_count || 0) === 1 ? 'product' : 'products'} · by {p.owner_display_name || 'ayna community'}</small></span><span className="am-playlist-row-go" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 6 6 6-6 6" /></svg></span></button></li>)}</ul>{!loading && playlists.length === 0 && renderEmpty()}</> : <>{posts.map(renderPost)}{!loading && posts.length === 0 && tab !== 'for-you' && tab !== 'announcements' && renderEmpty()}{cursor && <button type="button" className="am-more" disabled={loading} onClick={loadMore}>Show more posts</button>}</>}
+          {tab === 'playlists' ? <><div className="am-list-heading"><h2>{playlistSection === 'mine' ? 'My playlists' : playlistSection === 'friends' ? 'Shared by friends' : 'Made by the community'}</h2><button type="button" onClick={() => openCompose('playlist')}>Create playlist</button></div><div className="am-playlist-switch"><button type="button" aria-pressed={playlistSection === 'recent'} onClick={() => setPlaylistSection('recent')}>Community</button><button type="button" aria-pressed={playlistSection === 'friends'} onClick={() => authUser ? setPlaylistSection('friends') : requireAccount('friends-only playlists')}>Friends</button><button type="button" aria-pressed={playlistSection === 'mine'} onClick={() => authUser ? setPlaylistSection('mine') : requireAccount('your playlists')}>My playlists</button></div><ul className="am-playlist-rows">{playlists.map((p) => <li key={p.id}><button type="button" className="am-playlist-row" onClick={() => openPlaylist(p)}><PlaylistThumb playlist={p} productsById={productsById} /><span className="am-playlist-row-copy"><strong>{p.title}</strong><small>{p.item_count || 0} {(p.item_count || 0) === 1 ? 'product' : 'products'} · by {p.owner_display_name || 'ayna community'}</small></span><span className="am-playlist-row-go" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 6 6 6-6 6" /></svg></span></button></li>)}</ul>{!loading && playlists.length === 0 && renderEmpty()}</> : <>{posts.map(renderPost)}{!loading && posts.length === 0 && tab !== 'for-you' && tab !== 'announcements' && !(topicsTab && scopedTopics) && renderEmpty()}{cursor && <button type="button" className="am-more" disabled={loading} onClick={loadMore}>Show more posts</button>}</>}
           {loading && <p className="am-empty">Loading…</p>}
           <button type="button" className="am-rules-foot" onClick={openRules}>Community rules</button>
         </>}
@@ -671,6 +718,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       <button type="button" className="am-primary" disabled={busy || !editProfileName.trim() || !editProfileHandle.trim() || breaksCommunityRules(editProfileName, editProfileBio)} onClick={saveProfileEdit}>{busy ? 'Saving…' : 'Save profile'}</button>
     </div></div>}
     {deletePlaylistTarget && <div className="am-sheet-backdrop" onClick={() => setDeletePlaylistTarget(null)}><div className="am-sheet" role="dialog" aria-modal="true" aria-label="Delete playlist" onClick={(e) => e.stopPropagation()}><div className="am-sheet-head"><h2>Delete playlist?</h2><button type="button" aria-label="Close" onClick={() => setDeletePlaylistTarget(null)}>×</button></div><p className="am-detail-copy">This removes the playlist and its product list. This cannot be undone.</p><button type="button" className="am-primary" disabled={busy} onClick={confirmDeletePlaylist}>{busy ? 'Deleting…' : 'Delete playlist'}</button><button type="button" className="am-secondary" onClick={() => setDeletePlaylistTarget(null)}>Cancel</button></div></div>}
+    {topicSheetOpen && <TopicSheet followed={followedTopics} onToggle={toggleTopic} onClose={closeTopicSheet} />}
     {deleteTarget && <div className="am-sheet-backdrop" onClick={() => setDeleteTarget(null)}><div className="am-sheet" role="dialog" aria-modal="true" aria-label="Delete post" onClick={(e) => e.stopPropagation()}><div className="am-sheet-head"><h2>Delete post?</h2><button type="button" onClick={() => setDeleteTarget(null)}>×</button></div><p className="am-detail-copy">This will remove your post and its replies from Community.</p><button type="button" className="am-primary" disabled={busy} onClick={confirmDelete}>{busy ? 'Deleting…' : 'Delete post'}</button><button type="button" className="am-secondary" onClick={() => setDeleteTarget(null)}>Cancel</button></div></div>}
     {editPost && <div className="am-sheet-backdrop" onClick={() => setEditPost(null)}><div className="am-sheet am-compose-sheet" role="dialog" aria-modal="true" aria-label={editPost.kind === 'review' ? 'Edit review' : 'Edit post'} onClick={(e) => e.stopPropagation()}>
       <div className="am-sheet-head"><h2>{editPost.kind === 'review' ? 'Edit review' : 'Edit post'}</h2><button type="button" aria-label="Close" onClick={() => setEditPost(null)}>×</button></div>

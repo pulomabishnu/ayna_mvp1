@@ -45,8 +45,8 @@ const PAGE_SIZE = 20;
 
 function PersonalizedToggle({ on, disabled, onClick }) {
   return (
-    <button type="button" className="ay-for-me" role="switch" aria-checked={on} aria-label="Personalized products" disabled={disabled} onClick={onClick}>
-      <span>For me</span>
+    <button type="button" className="ay-for-me" role="switch" aria-checked={on} aria-label="Show my matches only" disabled={disabled} onClick={onClick}>
+      <span>My matches only</span>
       <i aria-hidden="true"><b /></i>
     </button>
   );
@@ -282,10 +282,12 @@ export default function BrowseScreen({
   // itself found nothing in the catalog", not "this narrower filtered view
   // happens to be empty because of an unrelated active filter".
   const searchScored = filtered;
-  if (personalized && hasProfile) {
-    const personalizedIds = new Set(getPersonalizedProductIds(quizAnswers, null, matchOpts));
-    filtered = filtered.filter((p) => personalizedIds.has(p.id));
-  }
+  // "My matches only" narrows browsing to her matches. A typed search must
+  // still find every catalog product (focus group: Resa Rhythm Bracelet was
+  // hidden, so she assumed it did not exist), so non-matches that fit the
+  // search are kept aside and shown below as a labelled "More results" group.
+  const narrowToMatches = personalized && hasProfile;
+  const personalizedIds = narrowToMatches ? new Set(getPersonalizedProductIds(quizAnswers, null, matchOpts)) : null;
   if (activeGroup !== 'all') {
     filtered = filtered.filter((p) => itemMatchesMacroGroup(p, activeGroup));
   }
@@ -333,6 +335,11 @@ export default function BrowseScreen({
   // quiz answers).
   if (sortBy === 'default' && !searchTermRaw && !(personalized && hasProfile) && !rankByProfile) {
     filtered = [...filtered].sort((a, b) => (isPartnerBrandItem(b) ? 1 : 0) - (isPartnerBrandItem(a) ? 1 : 0));
+  }
+  let moreResults = [];
+  if (narrowToMatches) {
+    if (searchTermRaw) moreResults = filtered.filter((p) => !personalizedIds.has(p.id));
+    filtered = filtered.filter((p) => personalizedIds.has(p.id));
   }
   const filterKey = `${searchTerm}|${personalized}|${activeGroup}|${JSON.stringify(filters)}|${sortBy}`;
 
@@ -434,8 +441,21 @@ export default function BrowseScreen({
           after its Reads section. */}
       {mode === 'products' ? (
         <>
-          {filtered.length > 0 ? (
-            <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />
+          {filtered.length > 0 || moreResults.length > 0 ? (
+            <>
+              {moreResults.length > 0 && (
+                <p className="ay-shop-results-note" role="status">
+                  {filtered.length > 0 ? 'Your matches first. ' : 'None of your matches fit this search. '}
+                  Showing everything else that does too.
+                </p>
+              )}
+              {filtered.length > 0 && moreResults.length > 0 && <h2 className="ay-shop-results-label">Your matches</h2>}
+              {filtered.length > 0 && <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />}
+              {moreResults.length > 0 && <>
+                <h2 className="ay-shop-results-label">More results</h2>
+                <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`more-${filterKey}`} products={moreResults} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
+              </>}
+            </>
           ) : searchTermRaw.length >= 2 && aiState.loading ? (
             <>
               <div style={{ padding: '0 20px 14px', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
@@ -455,7 +475,8 @@ export default function BrowseScreen({
               No products match.
             </div>
           )}
-          {!(searchTermRaw.length >= 2 && aiState.loading) && (
+          {/* "Can't find it?" only when the typed search found nothing in the catalog. */}
+          {!(searchTermRaw.length >= 2 && aiState.loading) && !(searchTermRaw && searchScored.length > 0) && (
             <div className="ay-app-suggest-wrap">
               <SuggestBox variant="app" context="app-shop" prefill={searchTermRaw} />
             </div>

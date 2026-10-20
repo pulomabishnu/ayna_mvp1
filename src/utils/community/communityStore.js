@@ -121,7 +121,7 @@ export async function getProfileStats(supabase, userId) {
  *              null author_id in the view, so they can never match this filter.
  *   sort: 'recent' | 'helpful'
  */
-export async function listFeedPosts(supabase, { kind = null, authorIds = null, productId = null, topic = null, mineOnly = false, savedOnly = false, sort = 'recent', cursor = null, limit = PAGE_SIZE } = {}) {
+export async function listFeedPosts(supabase, { kind = null, authorIds = null, productId = null, topic = null, topics = null, mineOnly = false, savedOnly = false, sort = 'recent', cursor = null, limit = PAGE_SIZE } = {}) {
   if (authorIds && authorIds.length === 0) return [];
   let q = supabase.from('community_feed_posts').select('*');
   if (kind) q = q.eq('kind', kind);
@@ -131,6 +131,8 @@ export async function listFeedPosts(supabase, { kind = null, authorIds = null, p
     q = q.or(`product_id.eq.${safeId},tagged_product_ids.cs.{${safeId}}`);
   }
   if (topic) q = q.contains('topics', [topic]);
+  // Any of these topics (followed topic pods in the app).
+  if (Array.isArray(topics) && topics.length) q = q.overlaps('topics', topics.map((t) => String(t).replace(/[^a-z0-9-]/gi, '')).filter(Boolean));
   if (mineOnly) q = q.eq('is_mine', true);
   if (savedOnly) q = q.eq('viewer_saved', true);
   if (sort === 'helpful') {

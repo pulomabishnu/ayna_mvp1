@@ -14,6 +14,7 @@ import { matchLine } from '../../data/passport/content.js';
 import { buildGlance, perUnitLabel } from '../../components/pdp/glance.js';
 import { galleryImages, retailerLinks, similarProducts, sameNeedProducts } from '../../components/pdp/commerce.js';
 import GalleryThumbs from '../../components/pdp/GalleryThumbs.jsx';
+import ImageZoomViewer from '../components/ImageZoomViewer.jsx';
 import ComparePanel from '../../components/pdp/ComparePanel.jsx';
 import { jumpTo } from '../../components/pdp/jump.js';
 import LegalFooter from '../components/LegalFooter.jsx';
@@ -238,6 +239,7 @@ export default function ProductDetailScreen({
   // instead of closing straight through to whatever screen sits underneath.
   const [showWhyMatch, setShowWhyMatch] = useState(false);
   const [photo, setPhoto] = useState(0);
+  const [zoomOpen, setZoomOpen] = useState(false);
 
   // Reset per-product UI state on product switch, this screen can receive
   // a new `product` prop without unmounting (MobileApp doesn't key it).
@@ -249,6 +251,7 @@ export default function ProductDetailScreen({
     setSeenProductId(product?.id);
     setPartnerOpen(false);
     setPhoto(0);
+    setZoomOpen(false);
   }
 
   // Bottom of the page, same as the website: close alternatives in a
@@ -378,6 +381,11 @@ export default function ProductDetailScreen({
             }}
           >
             <ProductImage key={shownImage} product={product} src={shownImage} alt={name} allowBrandLogo={product?.type === 'digital'} />
+            {images.length > 0 && (
+              <button type="button" className="ay-pdp-zoom-open" aria-label={`View ${name} photo full screen`} onClick={() => setZoomOpen(true)}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m20 20-4.2-4.2M11 8.5v5M8.5 11h5" /></svg>
+              </button>
+            )}
           </div>
         </div>
         {images.length > 1 && <div className="ay-pdp-thumbs"><GalleryThumbs images={images} index={photo} onSelect={setPhoto} name={name} /></div>}
@@ -492,6 +500,7 @@ export default function ProductDetailScreen({
         )}
         <LegalFooter />
       </div>
+      {zoomOpen && images.length > 0 && <ImageZoomViewer images={images} startIndex={Math.min(photo, images.length - 1)} name={name} onClose={() => setZoomOpen(false)} />}
 
       <div className="ayna-product-purchase-bar ay-pdp-bar" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '12px 20px max(20px, env(safe-area-inset-bottom))', background: 'var(--ayna-surface)', borderTop: '1px solid var(--ayna-border)', display: 'flex', gap: 8, alignItems: 'center' }}>
         <button
