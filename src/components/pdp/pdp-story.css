@@ -831,7 +831,7 @@ html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt-notes__body { display: grid; gap
 html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt-notes__body[hidden] { display: none; }
 html body .pdp-page:has(#ay-tabs) #ay-pt .ay-ev__morebtn { min-height: 36px !important; }
 /* Source cards: soft boxes, two or three to a row on desktop. */
-html body .pdp-page:has(#ay-tabs) #ay-pt :is(.ay-pt-cards, .ay-pt-reviews .cr-product-reviews) { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)) !important; gap: 12px !important; }
+html body .pdp-page:has(#ay-tabs) #ay-pt :is(.ay-pt-cards, .ay-pt-reviews .cr-product-reviews) { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)) !important; gap: 12px !important; }
 html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt-card { gap: 6px !important; padding: 16px !important; border: 0 !important; border-radius: 16px !important; background: var(--bx-fill) !important; }
 html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt-card[hidden] { display: none !important; }
 html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt-card__title { font: 600 var(--ay-fs-body)/1.35 var(--ay-sans) !important; }
