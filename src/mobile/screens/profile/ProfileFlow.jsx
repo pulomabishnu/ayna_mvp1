@@ -2999,7 +2999,7 @@ function PasswordScreen({ onBack, authUser }) {
           {!isRecovery && (
             <div>
               <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 500, color: 'var(--ayna-text-muted)', marginBottom: 7 }}>Current password</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, border: '1px solid var(--ayna-border)', borderRadius: 12, background: 'var(--ayna-bg-alt)', padding: '13px 14px' }}>
+              <div className="ay-pw-field" style={{ display: 'flex', alignItems: 'center', gap: 10, border: '1px solid var(--ayna-border)', borderRadius: 12, background: 'var(--ayna-bg-alt)', padding: '13px 14px' }}>
                 <input
                   type={showCurrent ? 'text' : 'password'}
                   value={current}
@@ -3012,7 +3012,7 @@ function PasswordScreen({ onBack, authUser }) {
           )}
           <div>
             <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 500, color: 'var(--ayna-text-muted)', marginBottom: 7 }}>New password</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, border: '1px solid var(--ayna-border)', borderRadius: 12, background: 'var(--ayna-bg-alt)', padding: '13px 14px' }}>
+            <div className="ay-pw-field" style={{ display: 'flex', alignItems: 'center', gap: 10, border: '1px solid var(--ayna-border)', borderRadius: 12, background: 'var(--ayna-bg-alt)', padding: '13px 14px' }}>
               <input
                 type={showNext ? 'text' : 'password'}
                 value={next}
@@ -3115,17 +3115,17 @@ function HowItWorksScreen({ onBack }) {
   const steps = [
     {
       n: '01', title: 'You tell us', body: 'Stage of life, goals, sensitivities, city.',
-      content: <div style={{ marginTop: 14, background: 'var(--ayna-chip-bg)', borderRadius: 13, padding: '13px 14px', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Postpartum · 8 weeks · sensitive skin · NYC</div>,
+      content: <div style={{ marginTop: 12, borderTop: '1px solid var(--d-hair)', padding: '12px 0 0', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Postpartum · 8 weeks · sensitive skin · NYC</div>,
     },
     {
       n: '02', title: 'We scan the market', body: 'Everything pulled in, then cut down.',
       content: (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 14 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', background: 'var(--ayna-chip-bg)', borderRadius: 13, padding: '13px 14px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', marginTop: 12 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderTop: '1px solid var(--d-hair)', padding: '10px 0' }}>
             <div style={{ fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Pulled in</div>
             <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 400, lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>3,140</div>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', background: 'var(--ayna-chip-bg)', borderRadius: 13, padding: '13px 14px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderTop: '1px solid var(--d-hair)', padding: '10px 0' }}>
             <div style={{ fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Relevant to you</div>
             <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 400, lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>212</div>
           </div>
@@ -3137,18 +3137,18 @@ function HowItWorksScreen({ onBack }) {
       content: (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 14 }}>
           {['NIH research', 'ACOG guidance', 'CDC data'].map((t) => (
-            <div key={t} style={{ background: 'var(--ayna-chip-bg)', borderRadius: 99, padding: '9px 14px', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{t}</div>
+            <div key={t} style={{ border: '1.5px solid var(--ayna-heading)', borderRadius: 99, padding: '7px 12px', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{t}</div>
           ))}
-          <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 99, padding: '8px 14px', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>Fails → dropped</div>
+          <div style={{ border: '1.5px dashed var(--ayna-border)', borderRadius: 99, padding: '7px 12px', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>Fails → dropped</div>
         </div>
       ),
     },
     {
       n: '04', title: 'Your ecosystem', body: "What's left is ranked, with the reason attached.",
       content: (
-        <div style={{ marginTop: 14, background: '#3e2723', borderRadius: 16, padding: '17px 17px 18px' }}>
-          <div style={{ fontFamily: "var(--ayna-font-display)", fontWeight: 400, fontSize: 'calc(28px * var(--ayna-text-scale, 1))', color: 'var(--ay-butter)', lineHeight: 1.15 }}>14</div>
-          <div style={{ fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.45, color: 'rgba(255,237,172,.9)', marginTop: 5 }}>products, each with its match reason</div>
+        <div style={{ marginTop: 12, borderTop: '1px solid var(--d-hair)', padding: '12px 0 0' }}>
+          <div style={{ fontFamily: "var(--ayna-font-display)", fontWeight: 400, fontSize: 'calc(28px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', lineHeight: 1.15 }}>14</div>
+          <div style={{ fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.45, color: 'var(--ayna-text-muted)', marginTop: 5 }}>products, each with its match reason</div>
         </div>
       ),
     },
@@ -3166,7 +3166,7 @@ function HowItWorksScreen({ onBack }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {steps.map((step) => (
             <div key={step.n} style={{ background: 'var(--d-group)', border: 0, borderRadius: 20, padding: '18px 18px 19px' }}>
-              <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>STEP {step.n}</div>
+              <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>Step {Number(step.n)}</div>
               <div style={{ fontFamily: "var(--ayna-font-display)", fontWeight: 400, lineHeight: 1.15, fontSize: 'calc(22px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', margin: '7px 0 5px' }}>{step.title}</div>
               <div style={{ fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>{step.body}</div>
               {step.content}
