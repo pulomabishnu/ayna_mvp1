@@ -358,6 +358,8 @@ export default function MobileApp() {
   // place (via the same draft the quiz already resumes from), and back from
   // the sign-up screen that follows Wrapped lands on Wrapped's last slide.
   const [resumeQuizDraft, setResumeQuizDraft] = useState(false);
+  // "Make my matches more personal" opens the quiz at her next optional question.
+  const [intakeAtOptional, setIntakeAtOptional] = useState(false);
   const [revealAtEnd, setRevealAtEnd] = useState(false);
   const lastIntakeModeRef = useRef('new');
   // "Get matched" on a product page: after the quiz, land back on that product with her match.
@@ -381,6 +383,9 @@ export default function MobileApp() {
   useEffect(() => {
     if (screen !== 'quiz' && resumeQuizDraft) Promise.resolve().then(() => setResumeQuizDraft(false));
   }, [screen, resumeQuizDraft]);
+  useEffect(() => {
+    if (screen !== 'quiz' && intakeAtOptional) Promise.resolve().then(() => setIntakeAtOptional(false));
+  }, [screen, intakeAtOptional]);
   const resumeQuizAtLastStep = () => {
     // From the quiz-end steps, go back into the answers she just gave (not yet saved).
     const fromPending = Boolean(session.pendingQuiz?.answers);
@@ -859,7 +864,8 @@ export default function MobileApp() {
       if (screen === 'plan') { setScreen('connect'); return; }
       setScreen(screen === 'quiz' ? (hasEcosystem ? 'eco' : 'ecointro') : screen === 'ecointro' ? 'landing' : screen === 'eco' ? 'browse' : hasEcosystem ? 'eco' : 'landing');
     },
-    onRetake: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
+    onRetake: () => { setIntakeMode('add'); setIntakeAtOptional(false); setEditingHealthProfile(true); setScreen('quiz'); },
+    onPersonalize: () => { setIntakeMode('add'); setIntakeAtOptional(true); setEditingHealthProfile(true); setScreen('quiz'); },
     onRequestEcosystemReset: () => setResetDialogOpen(true),
     onUpdateHealth: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
     onEditProfile: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
@@ -868,6 +874,7 @@ export default function MobileApp() {
       updateSession({ pendingQuiz: { answers: quizAnswers, mode: intakeMode } });
       setPlanAddedGoals({});
       setResumeQuizDraft(false);
+      setIntakeAtOptional(false);
       setIntakeMode('new');
       setScreen(authUser && health.connected.length ? 'plan' : 'connect');
     },
@@ -1025,8 +1032,9 @@ export default function MobileApp() {
         hasIntakeDraft={hasIntakeDraft && !hasEcosystem}
         onDraftChange={setHasIntakeDraft}
         initialSnapshot={editingHealthProfile && !resumeQuizDraft ? lastQuizAnswers?.fullHealthIntake || null : null}
-        startAtBeginning={intakeMode === 'add' && !resumeQuizDraft}
-        introEnabled={!resumeQuizDraft}
+        startAtBeginning={intakeMode === 'add' && !resumeQuizDraft && !intakeAtOptional}
+        startAtOptional={intakeAtOptional && !resumeQuizDraft}
+        introEnabled={!resumeQuizDraft && !intakeAtOptional}
         revealStartAtEnd={revealAtEnd}
         ecosystemNotice={ecosystemNotice}
         name={resolvedName}
