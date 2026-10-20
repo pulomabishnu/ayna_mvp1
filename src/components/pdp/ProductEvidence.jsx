@@ -275,10 +275,10 @@ function labelParts(label) {
   return m ? { publisher: m[1].trim(), title: m[2].trim() } : { publisher: '', title: String(label || '').trim() };
 }
 
-/** The first sentence, cut to about 110 characters for the glance cards. */
-const firstLine = (t) => { const x = sentences(String(t || ''))[0] || ''; return x.length > 120 ? `${x.slice(0, 110).replace(/\s+\S*$/, '')}…` : x; };
+/** The key line of a band: its first sentence, kept whole unless very long. */
+const takeaway = (t) => { const x = sentences(noDash(String(t || '')))[0] || ''; return x.length > 200 ? `${x.slice(0, 190).replace(/\s+\S*$/, '')}…` : x; };
 
-export default function ProductEvidence({ product: baseProduct, glance = null, aynaData = null, aynaRating: aynaRatingProp = null, ratingCount: ratingCountProp = 0, rateControls = null, safety = null, recall = null, heroLine = '', extraRows = [], onOpenReview = null }) {
+export default function ProductEvidence({ product: baseProduct, image = '', safetyLead = '', glance = null, aynaData = null, aynaRating: aynaRatingProp = null, ratingCount: ratingCountProp = 0, rateControls = null, safety = null, recall = null, heroLine = '', extraRows = [], onOpenReview = null }) {
   // Research the team approved in /admin/research fills any empty section.
   const product = useApprovedResearch(baseProduct);
   const d = useEvidence(product, aynaData);
@@ -288,29 +288,48 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const liveStats = reviewRows.length ? summarizeReviewRows(reviewRows)[baseProduct?.id] : null;
   const aynaRating = liveStats ? liveStats.average : aynaRatingProp;
   const ratingCount = liveStats ? liveStats.count : ratingCountProp;
-  // Phone: sections fold, Clinical opinion and Safety start open. Desktop: always open.
-  // A product card's star line opens the page straight on Reviews.
-  const [tab, setTab] = useState(() => takeProductTab() || 'overview');
-  const [allIngredients, setAllIngredients] = useState(false);
-  // "All safety info" under Buy opens the Safety tab.
-  const pickTab = (id) => {
-    setTab(id);
+  // The evidence bands (clinicians, research, safety, how to use, details):
+  // the first starts open, the key line of each is always visible in its row.
+  const [open, setOpen] = useState(() => new Set(['clinical']));
+  const [ingPick, setIngPick] = useState(0);
+  const [activeNav, setActiveNav] = useState('overview');
+  const goTo = (id) => {
     window.requestAnimationFrame(() => {
-      const el = document.getElementById('ay-tabs');
-      if (el && (el.getBoundingClientRect().top < 70 || el.getBoundingClientRect().top > window.innerHeight - 120)) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const el = document.getElementById(`ay-ps-${id}`);
+      if (!el) return;
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   };
+  const openBand = (id) => {
+    setOpen((cur) => new Set([...cur, id]));
+    goTo(id);
+  };
   useEffect(() => {
-    if (tab !== 'reviews') return;
-    window.requestAnimationFrame(() => document.getElementById('ay-tabs')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
-    // Only on arrival from a card's review link.
+    // A product card's star line opens the page straight on Reviews.
+    if (takeProductTab() === 'reviews') goTo('reviews');
+  }, []);
+  useEffect(() => {
+    // "All safety info" under Buy (and the old tab ids) open the matching band.
+    const on = (e) => {
+      const id = e.detail === 'details' || !e.detail ? 'safety' : e.detail;
+      if (['overview', 'inside', 'evidence', 'reviews'].includes(id)) goTo(id);
+      else openBand(id);
+    };
+    window.addEventListener('ay-open-tab', on);
+    return () => window.removeEventListener('ay-open-tab', on);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
-    const on = (e) => pickTab(e.detail === 'details' || !e.detail ? 'safety' : e.detail);
-    window.addEventListener('ay-open-tab', on);
-    return () => window.removeEventListener('ay-open-tab', on);
-  }, []);
+    // The pill nav fills the pill of the section being read.
+    if (typeof IntersectionObserver === 'undefined') return undefined;
+    const els = ['overview', 'inside', 'evidence', 'reviews'].map((id) => document.getElementById(`ay-ps-${id}`)).filter(Boolean);
+    const io = new IntersectionObserver((entries) => {
+      const seen = entries.filter((e) => e.isIntersecting).sort((x, y) => x.boundingClientRect.top - y.boundingClientRect.top)[0];
+      if (seen) setActiveNav(seen.target.id.replace('ay-ps-', ''));
+    }, { rootMargin: '-140px 0px -55% 0px' });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [baseProduct?.id]);
   if (!d) return null;
 
   const brandSlug = String(d.brand).toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -319,7 +338,6 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   // Retailer lists are off the page (team call, Oct 16: buying goes through ayna); apps keep 'Where to get it'.
   const facts = (glance?.facts || []).filter((f) => !f.unknown && !['inside', 'fda'].includes(f.id) && !(f.id === 'where' && !d.isDigital));
   const allSources = glance?.sources || [];
-  const shownIngredients = allIngredients ? d.ingredients : d.ingredients.slice(0, 3);
 
   // A one-line "Holds 30 mL. Up to 12 hours." is specs, not science: it goes in Details.
   const bottomIsSpecs = Boolean(d.bottomLine) && d.bottomLine.length < 160 && !/stud|trial|evidence|research|review|shown|found|data|clinical/i.test(d.bottomLine);
@@ -392,20 +410,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     (graded.length || science.rest || d.scienceSummary || d.ingredients.length || d.studies.length) && { id: 'science', label: 'What the research says', body: <>
       {science.rest && <ShortThenFull full={science.rest} />}
       {d.scienceSummary && <ShortThenFull full={d.scienceSummary} />}
-      {d.ingredients.length > 0 && <>
-        <h3 className="ay-part__h">Ingredients</h3>
-        <ul className="ay-ev2__ingr">
-          {shownIngredients.map((i) => (
-            <li key={i.name}>
-              <strong>{i.name}</strong>
-              {i.text && <p>{withTerms(i.text, plan)}</p>}
-              {i.links.length > 0 && <Links items={i.links} compact />}
-            </li>
-          ))}
-        </ul>
-        {d.ingredients.length > 3 && <button type="button" className="ay-ev__morebtn" aria-expanded={allIngredients} onClick={() => setAllIngredients((v) => !v)}>{allIngredients ? 'Show fewer' : `Show all ${d.ingredients.length} ingredients`}</button>}
-        {d.ingredientNote && <p className="ay-ev__by">{d.ingredientNote}</p>}
-      </>}
+      {/* Ingredients have their own section (What's inside and why it works). */}
       {d.studies.length > 0 && <Links items={d.studies} label="Studies" />}
       {graded.length > 0 && <>
         <h3 className="ay-part__h">ayna’s evidence check</h3>
@@ -442,7 +447,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     </> },
     d.how && { id: 'how', label: 'How to use', body: <>
       {d.how.intro && <Paras text={d.how.intro} />}
-      <ol className="ay-tabs__steps">{d.how.steps.map((st, i) => <li key={st}><b aria-hidden="true">{i + 1}</b><span>{st}</span></li>)}</ol>
+      <ol className="ay-tabs__steps">{d.how.steps.map((st, i) => <li key={st}><b aria-hidden="true">{String(i + 1).padStart(2, '0')}</b><span>{st}</span></li>)}</ol>
       <Links items={howLinks} label="Source" compact />
     </> },
     (d.ingredientsText || showMaterials || hasRows || brandSays || d.badges.length || d.evidenceStrength) && { id: 'details', label: 'Details', body: <>
@@ -475,64 +480,195 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     </> },
   ].filter(Boolean);
 
-  // "At a glance": one line per section from what is on file, each a jump link (not sticky).
-  const glanceTiles = [
-    sections.some((x) => x.id === 'clinical') && { id: 'clinical', label: 'Clinical opinion', tag: '', text: firstLine(d.clinicianShort || d.clinician || d.clinicalNote) },
-    sections.some((x) => x.id === 'science') && { id: 'science', label: 'Research', tag: '', text: (() => { const n = researchSourceCount(baseProduct); return n ? `${plural(n, 'research source')} on file` : firstLine(science.rest); })() },
-    sections.some((x) => x.id === 'safety') && { id: 'safety', label: 'Safety', tag: d.warnings.length ? plural(d.warnings.length, 'note') : '', text: firstLine(glance?.alert || d.warnings.find((w) => !/^(wash|rinse|boil|clean|store|keep it|dry|sanitize|sterili[sz]e|empty)\b/i.test(w)) || d.warnings[0] || d.sideEffects || (d.fdaRaw && `FDA: ${d.fda?.label || d.fdaRaw}`)) },
-    { id: 'reviews', label: 'Reviews', tag: aynaRating != null && ratingCount > 0 ? `★ ${aynaRating.toFixed(1)} from ayna members` : d.brandRating ? `★ ${d.brandRating.value}, brand-reported` : communityText || d.communitySummary ? 'What people say online' : 'None yet', text: communityText || d.communitySummary ? firstLine(communityText || d.communitySummary) : 'No reviews yet. Tried it? Be the first.' },
-  ].filter(Boolean);
-
   const byId = Object.fromEntries(sections.map((x) => [x.id, x]));
-  // Tabs, one section at a time, no second layer. Overview first: the glance cards open the others.
-  const tabs = [
-    { id: 'overview', label: 'Overview', body: <>
-      {glanceTiles.length > 1 && (
-        <ul className="ay-glance">
-          {glanceTiles.map((t) => (
-            <li key={t.id}>
-              <button type="button" onClick={() => pickTab(t.id)}>
-                <span className="ay-glance__label">{t.label}</span>
-                {t.tag && <span className="ay-glance__tag">{t.tag}</span>}
-                {t.text && <span className="ay-glance__text">{t.text}</span>}
-                <span className="ay-glance__go" aria-hidden="true">→</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-      {byId.what && <><h3 className="ay-part__h">What it is</h3>{byId.what.body}</>}
-      {byId.who && <><h3 className="ay-part__h">Who it’s for</h3>{byId.who.body}</>}
-    </> },
-    ...['clinical', 'science', 'safety', 'reviews', 'how'].map((id) => byId[id] && { id, label: id === 'science' ? 'Research' : id === 'clinical' ? 'Clinical' : byId[id].label, body: byId[id].body }),
-    // Sources close the Details tab (seven tabs fit on one line).
-    (byId.details || byId.sources) && { id: 'details', label: 'Details', body: <>
+  const researchCount = researchSourceCount(baseProduct);
+  const SAFE_TIP = /^(wash|rinse|boil|clean|store|keep it|dry|sanitize|sterili[sz]e|empty)\b/i;
+  const safetyLine = takeaway(safetyLead || glance?.alert || d.warnings.find((w) => !SAFE_TIP.test(w)) || d.warnings[0] || d.sideEffects || (d.fdaRaw && `FDA status: ${d.fda?.label || d.fdaRaw}.`));
+  const topGrade = graded.find((g) => g.strength !== 'none');
+  const gradeLine = topGrade ? `${GRADE_WORDS[topGrade.grade]} for ${needPhrase(topGrade.need)}.` : '';
+  const researchLine = takeaway(science.rest || d.scienceSummary) || gradeLine || (researchCount ? `${plural(researchCount, 'research source')} on file. Open it to read them.` : '');
+  const clinicalLine = takeaway(d.clinicianShort || d.clinician || d.clinicalNote || d.clinicalSummary);
+  const howLine = d.how ? takeaway(d.how.intro || d.how.steps[0]) : '';
+
+  // Numbered evidence bands, in the order people look for them.
+  const bands = [
+    byId.clinical && { id: 'clinical', tab: 'Clinician', title: 'What clinicians say', line: clinicalLine, count: d.clinicalLinks.length, note: d.independent ? '' : 'From the brand', more: 'Read the evidence', body: byId.clinical.body },
+    byId.science && { id: 'science', tab: 'Research', title: 'What the research says', line: researchLine, count: researchCount || d.studies.length, more: 'Read the research', body: byId.science.body },
+    byId.safety && { id: 'safety', tab: 'Safety', title: 'Safety', line: safetyLine || 'See the safety checks on file.', count: d.safetyLinks.length, note: recall?.status === 'past' ? 'Recall on file' : '', more: 'See all safety info', body: byId.safety.body },
+    byId.how && { id: 'how', tab: 'How to', title: 'How to use it', line: howLine, count: 0, stepsCount: d.how.steps.length, more: 'See the steps', body: byId.how.body },
+    (byId.details || byId.sources) && { id: 'details', tab: 'Details', title: 'Details and sources', line: allSources.length ? `What's in it, size and price, and all ${plural(allSources.length, 'source')} we checked.` : 'What it is made of, size and price.', count: 0, more: 'See the details', body: <>
       {byId.details?.body}
       {byId.sources && <><h3 className="ay-part__h">Sources{allSources.length ? ` (${allSources.length})` : ''}</h3>{byId.sources.body}</>}
     </> },
   ].filter(Boolean);
-  const cur = tabs.find((t) => t.id === tab) || tabs[0];
-  const keyNav = (e) => {
-    const i = tabs.findIndex((t) => t.id === cur.id);
-    const n = e.key === 'ArrowRight' ? tabs[(i + 1) % tabs.length] : e.key === 'ArrowLeft' ? tabs[(i - 1 + tabs.length) % tabs.length] : e.key === 'Home' ? tabs[0] : e.key === 'End' ? tabs[tabs.length - 1] : null;
-    if (!n) return;
-    e.preventDefault(); setTab(n.id);
-    window.requestAnimationFrame(() => document.getElementById(`ay-tab-${n.id}`)?.focus());
-  };
+  const toggleBand = (id) => setOpen((cur) => { const n = new Set(cur); if (n.has(id)) n.delete(id); else n.add(id); return n; });
+
+  // Up to three real facts from the record (never "Not on file").
+  const factRow = (glance?.facts || [])
+    .filter((f) => !f.unknown && f.value)
+    .filter((f) => ['format', 'size', 'fsa', 'fda', 'platform'].includes(f.id))
+    .filter((f) => f.id !== 'fsa' || f.value === 'Eligible')
+    .filter((f) => String(f.value).length <= 48)
+    .slice(0, 3)
+    .map((f) => ({ id: f.id, label: f.id === 'fsa' ? 'FSA/HSA' : f.label, value: f.id === 'fsa' ? 'Eligible' : noDash(f.value) }));
+
+  // The evidence spotlight: only real numbers (sources on file), never study results.
+  const bigNumbers = [
+    researchCount > 0 && { n: researchCount, text: researchCount === 1 ? 'research source ayna checked' : 'research sources ayna checked' },
+    d.clinicalLinks.length > 0 && { n: d.clinicalLinks.length, text: d.clinicalLinks.length === 1 ? 'clinical guidance source' : 'clinical guidance sources' },
+  ].filter(Boolean);
+  const spotHeadline = gradeLine || researchLine || clinicalLine;
+  const showSpot = Boolean(spotHeadline) && (bigNumbers.length > 0 || Boolean(gradeLine));
+
+  const ing = d.ingredients[Math.min(ingPick, Math.max(d.ingredients.length - 1, 0))];
+  const hasWho = d.who.length > 0 || helps.length > 0 || d.avoidIf.length > 0 || d.platform || d.integrations.length > 0;
+  const nav = [
+    { id: 'overview', label: 'Overview' },
+    d.ingredients.length > 0 && { id: 'inside', label: 'Ingredients' },
+    bands.length > 0 && { id: 'evidence', label: 'Evidence' },
+    { id: 'reviews', label: aynaRating != null && ratingCount > 0 ? `Reviews (${ratingCount})` : 'Reviews' },
+  ].filter(Boolean);
+  const pad = (n) => String(n).padStart(2, '0');
 
   return (
     <TermsCtx.Provider value={plan}>
-    <div id="ay-tabs" className="ay-itabs">
-      <div className="ay-itabs__bar" role="tablist" aria-label="About this product">
-        {tabs.map((t) => (
-          <button key={t.id} type="button" role="tab" id={`ay-tab-${t.id}`} aria-selected={t.id === cur.id} aria-controls="ay-tabpanel" tabIndex={t.id === cur.id ? 0 : -1} className={t.id === cur.id ? 'is-on' : undefined} onClick={() => setTab(t.id)} onKeyDown={keyNav}>{t.label}</button>
-        ))}
-      </div>
-      <div className={`ay-itabs__panel is-${cur.id}`} id="ay-tabpanel" role="tabpanel" aria-labelledby={`ay-tab-${cur.id}`} tabIndex={0}>
-        {cur.body}
-      </div>
+    <div id="ay-tabs" className="ay-ps">
+      <nav className="ay-ps-nav" aria-label="On this page">
+        <ul>
+          {nav.map((n) => (
+            <li key={n.id}>
+              <a href={`#ay-ps-${n.id}`} className={activeNav === n.id ? 'is-on' : undefined} aria-current={activeNav === n.id ? 'true' : undefined} onClick={(e) => { e.preventDefault(); setActiveNav(n.id); goTo(n.id); }}>{n.label}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <section id="ay-ps-overview" className="ay-ps-sec" aria-labelledby="ay-ps-overview-h">
+        <h2 id="ay-ps-overview-h" className="ay-ps-h">What it is</h2>
+        {factRow.length > 0 && (
+          <ol className="ay-ps-facts" aria-label="Key facts">
+            {factRow.map((f, i) => (
+              <li key={f.id}><span className="ay-ps-facts__n" aria-hidden="true">{i + 1}</span><span><small>{f.label}</small><b>{f.value}</b></span></li>
+            ))}
+          </ol>
+        )}
+        <div className={`ay-ps-about${summaryText ? '' : ' is-solo'}`}>
+          {summaryText && (
+            <div className="ay-ps-about__text">
+              {byId.what.body}
+            </div>
+          )}
+          {summaryText && <LineArt />}
+        </div>
+        {hasWho && (
+          <div className="ay-ps-for">
+            <span className="ay-ps-tab">Who it’s for</span>
+            <h3>This is for you if</h3>
+            {d.who.length > 0 && <ul className="ay-ps-stars">{d.who.map((w) => <li key={w}>{withTerms(w, plan)}</li>)}</ul>}
+            {helps.length > 0 && <p className="ay-ev__by"><b>Helps with:</b> {helps.join(', ')}</p>}
+            {d.avoidIf.length > 0 && <p className="ay-ev__by"><b>Skip it if you react to:</b> {d.avoidIf.join(', ')}</p>}
+            {(d.platform || d.integrations.length > 0) && <p className="ay-ev__by"><b>Works with:</b> {[d.platform, ...d.integrations].filter(Boolean).join(', ')}</p>}
+          </div>
+        )}
+      </section>
+
+      {d.ingredients.length > 0 && (
+        <section id="ay-ps-inside" className="ay-ps-sec" aria-labelledby="ay-ps-inside-h">
+          <h2 id="ay-ps-inside-h" className="ay-ps-h">What’s inside and why it works</h2>
+          <p className="ay-ps-sub">Tap an ingredient to see what it does and where that comes from.</p>
+          <ul className="ay-ps-chips">
+            {d.ingredients.map((x, i) => (
+              <li key={x.name}>
+                <button type="button" aria-pressed={i === ingPick} aria-controls="ay-ps-ing" className={i === ingPick ? 'is-on' : undefined} onClick={() => setIngPick(i)}>{x.name}</button>
+              </li>
+            ))}
+          </ul>
+          {ing && (
+            <div id="ay-ps-ing" className="ay-ps-ing" aria-live="polite">
+              <h3>{ing.name}</h3>
+              {ing.text ? <p>{withTerms(ing.text, plan)}</p> : <p>No explanation on file yet.</p>}
+              {ing.links.length > 0 && <Links items={ing.links} label={ing.links.length === 1 ? 'Source' : 'Sources'} compact />}
+            </div>
+          )}
+          {d.ingredientNote && <p className="ay-ev__by ay-ps-center">{d.ingredientNote}</p>}
+        </section>
+      )}
+
+      {bands.length > 0 && (
+        <section id="ay-ps-evidence" className="ay-ps-sec" aria-labelledby="ay-ps-evidence-h">
+          <h2 id="ay-ps-evidence-h" className="ay-ps-h">What the evidence says</h2>
+          <p className="ay-ps-sub">The short answer is on each row. Open one for the full notes and sources.</p>
+          {showSpot && (
+            <div className="ay-ps-spot">
+              <div className="ay-ps-spot__text">
+                <span className="ay-ps-pill">ayna’s evidence check</span>
+                <p className="ay-ps-spot__h">{spotHeadline}</p>
+                {bigNumbers.length > 0 && (
+                  <dl className="ay-ps-spot__nums">
+                    {bigNumbers.map((b) => <div key={b.text}><dt>{b.n}</dt><dd>{b.text}</dd></div>)}
+                  </dl>
+                )}
+                {byId.science && <button type="button" className="ay-ps-btn" onClick={() => openBand('science')}>See the research<Chevron /></button>}
+              </div>
+              {image && <div className="ay-ps-spot__photo"><img src={image} alt="" loading="lazy" onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }} /></div>}
+            </div>
+          )}
+          <ol className="ay-ps-bands">
+            {bands.map((b, i) => {
+              const isOpen = open.has(b.id);
+              const meta = [b.count > 0 && plural(b.count, 'source'), b.stepsCount > 0 && plural(b.stepsCount, 'step'), b.note].filter(Boolean);
+              return (
+                <li key={b.id} id={`ay-ps-${b.id}`} className={`ay-ps-band is-${b.id}${isOpen ? ' is-open' : ''}`}>
+                  <span className="ay-ps-tab" aria-hidden="true">{b.tab}</span>
+                  <h3 className="ay-ps-band__h">
+                    <button type="button" aria-expanded={isOpen} aria-controls={`ay-ps-${b.id}-body`} onClick={() => toggleBand(b.id)}>
+                      <span className="ay-ps-band__num" aria-hidden="true">({pad(i + 1)})</span>
+                      <span className="ay-ps-band__main">
+                        <span className="ay-ps-band__title">{b.title}</span>
+                        {b.line && <span className="ay-ps-band__line">{b.line}</span>}
+                        {meta.length > 0 && <span className="ay-ps-band__meta">{meta.join(' · ')}</span>}
+                      </span>
+                      <span className="ay-ps-band__go">
+                        <span>{isOpen ? 'Close' : b.more}</span>
+                        <Chevron />
+                      </span>
+                    </button>
+                  </h3>
+                  <div id={`ay-ps-${b.id}-body`} className="ay-ps-band__body" hidden={!isOpen}>
+                    {b.body}
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+      )}
+
+      <section id="ay-ps-reviews" className="ay-ps-sec ay-ps-reviews" aria-labelledby="ay-ps-reviews-h">
+        <h2 id="ay-ps-reviews-h" className="ay-ps-h">What people say</h2>
+        {byId.reviews.body}
+      </section>
     </div>
     </TermsCtx.Provider>
+  );
+}
+
+/** Chevron used on every "open" control. */
+function Chevron() {
+  return <svg className="ay-ps-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>;
+}
+
+/** A small line drawing beside "What it is" (decoration only). */
+function LineArt() {
+  return (
+    <svg className="ay-ps-art" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+      <circle cx="100" cy="100" r="78" className="ay-ps-art__sun" />
+      <path d="M100 168c0-38 0-70 0-96" />
+      <path d="M100 120c-22-4-40-20-44-46 26 2 42 20 44 46Z" />
+      <path d="M100 98c20-6 36-22 38-46-24 4-38 22-38 46Z" />
+      <path d="M100 150c-14-2-26-12-30-28 18 2 28 12 30 28Z" />
+      <path d="M62 170h76" />
+    </svg>
   );
 }
 

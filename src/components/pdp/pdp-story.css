@@ -1,0 +1,267 @@
+/* Website product page, story layout (2026-10 redesign).
+   Hero: photo left, details right. Below: a sticky pill nav, then stacked
+   sections (What it is, What's inside, What the evidence says, What people
+   say). Evidence sits in numbered bands: the key line is always visible in
+   the row, opening one only adds the full notes and sources.
+   Brand colours only: butter #ffedac, espresso #3e2723, sky #769ebe,
+   pink #f7badd. White only behind product photos.
+   DM Serif Display 400 for large headings, DM Sans for everything else. */
+
+/* ---------- Hero: two columns, the research moves below ---------- */
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .pdp-head.pdp-head--tabs.pdp-head--story {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) !important;
+  grid-template-areas: "media detail" !important;
+  gap: 32px 56px !important;
+}
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .pdp-head--story .pdp-head__media :is(.pdp-gallery, .pdp-photo, figure) { max-height: none !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .pdp-head--story .pdp-head__tile { height: 460px !important; aspect-ratio: auto !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .pdp-head--story .pdp-head__media img { max-height: 420px !important; }
+@media (max-width: 899px) {
+  html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .pdp-head.pdp-head--tabs.pdp-head--story { grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: "media" "detail" !important; gap: 20px !important; }
+  html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .pdp-head--story .pdp-head__tile { height: 320px !important; }
+  html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .pdp-head--story .pdp-head__media img { max-height: 280px !important; }
+}
+
+/* Star rating + review count above the name (real ayna reviews only). */
+html body .app-container .pdp-hero-rating {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin: 0 0 4px; padding: 0;
+  border: 0; background: none; color: #3e2723; cursor: pointer;
+  font: 500 15px/1.3 'DM Sans', sans-serif !important; text-decoration: underline; text-decoration-color: rgba(62, 39, 35, .35); text-underline-offset: 4px;
+}
+html body .app-container .pdp-hero-rating:hover { text-decoration-color: #3e2723; }
+html body .app-container .pdp-hero-rating:focus-visible { outline: 3px solid #769ebe; outline-offset: 2px; border-radius: 8px; }
+html body .app-container .pdp-hero-rating__stars { letter-spacing: 1px; font-size: 17px; color: rgba(62, 39, 35, .25); }
+html body .app-container .pdp-hero-rating__stars .is-on { color: #3e2723; }
+
+/* ---------- Story wrapper ---------- */
+html body .app-container .pdp-story { max-width: 1120px; margin: 56px auto 0; padding: 0; min-width: 0; }
+@media (max-width: 899px) { html body .app-container .pdp-story { margin-top: 32px; } }
+
+html body .app-container .ay-ps { --ay-ps-top: 140px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 72px; min-width: 0; color: #3e2723; font: 400 16px/1.6 'DM Sans', sans-serif; }
+@media (max-width: 767px) { html body .app-container .ay-ps { --ay-ps-top: 0px; } }
+@media (max-width: 600px) { html body .app-container .ay-ps { gap: 56px; } }
+
+/* ---------- Sticky pill nav ---------- */
+html body .app-container .ay-ps-nav {
+  position: sticky; top: var(--ay-ps-top, 72px); z-index: 40;
+  margin: 0 -16px -40px; padding: 10px 16px;
+  background: #ffedac; border-bottom: 1.5px solid rgba(62, 39, 35, .14);
+}
+html body .app-container .ay-ps-nav ul { display: flex; gap: 8px; margin: 0 auto; padding: 0; max-width: 1120px; list-style: none; overflow-x: auto; scrollbar-width: none; }
+html body .app-container .ay-ps-nav ul::-webkit-scrollbar { display: none; }
+html body .app-container .ay-ps-nav a {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1.5px solid #3e2723; border-radius: 999px;
+  background: transparent; color: #3e2723; white-space: nowrap; text-decoration: none !important;
+  font: 600 15px/1 'DM Sans', sans-serif !important;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+html body .app-container .ay-ps-nav a:hover { background: #f7badd; }
+html body .app-container .ay-ps-nav a.is-on { background: #3e2723; color: #ffedac; }
+html body .app-container .ay-ps-nav a:focus-visible { outline: 3px solid #769ebe; outline-offset: 2px; }
+
+/* ---------- Sections ---------- */
+html body .app-container .ay-ps-sec { display: grid; gap: 24px; min-width: 0; scroll-margin-top: calc(var(--ay-ps-top, 72px) + 76px); }
+html body .app-container .ay-ps-sec > .ay-ps-h {
+  margin: 0; text-align: center; color: #3e2723;
+  font: 400 clamp(34px, 1.4rem + 1.8vw, 48px)/1.08 'DM Serif Display', Georgia, serif !important; letter-spacing: -.01em !important;
+}
+html body .app-container .ay-ps-sub { margin: -12px auto 0; max-width: 56ch; text-align: center; color: #3e2723; font: 400 16px/1.5 'DM Sans', sans-serif; }
+html body .app-container .ay-ps-center { text-align: center; }
+
+/* Numbered facts row (only facts on file). */
+html body .app-container .ay-ps-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
+html body .app-container .ay-ps-facts li { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border: 1.5px solid #3e2723; border-radius: 18px; }
+html body .app-container .ay-ps-facts__n { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #769ebe; color: #3e2723; font: 700 16px/1 'DM Sans', sans-serif; }
+html body .app-container .ay-ps-facts small { display: block; font: 600 13px/1.3 'DM Sans', sans-serif; letter-spacing: .04em; text-transform: uppercase; }
+html body .app-container .ay-ps-facts b { display: block; font: 700 17px/1.35 'DM Sans', sans-serif; }
+
+/* What it is: text beside a line drawing. */
+html body .app-container .ay-ps-about { display: grid; grid-template-columns: minmax(0, 1fr) 180px; gap: 40px; align-items: center; }
+html body .app-container .ay-ps-about.is-solo { display: none; }
+html body .app-container .ay-ps-about__text :is(p, .ay-ev__body) { margin: 0 0 12px; max-width: 64ch; font: 400 18px/1.65 'DM Sans', sans-serif !important; color: #3e2723; }
+html body .app-container .ay-ps-art { width: 180px; height: 180px; fill: none; stroke: #3e2723; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+html body .app-container .ay-ps-art__sun { fill: #f7badd; stroke: none; }
+@media (max-width: 700px) {
+  html body .app-container .ay-ps-about { grid-template-columns: 1fr; gap: 16px; }
+  html body .app-container .ay-ps-art { display: none; }
+}
+
+/* Folder-tab label that sticks up from a card's top-left. */
+html body .app-container .ay-ps-tab {
+  position: absolute; left: 20px; top: 0; transform: translateY(-100%);
+  padding: 6px 16px 4px; border-radius: 12px 12px 0 0; background: inherit; color: #3e2723;
+  font: 700 12px/1.2 'DM Sans', sans-serif; letter-spacing: .08em; text-transform: uppercase;
+}
+
+/* "This is for you if" card, ticket notches on both sides. */
+html body .app-container .ay-ps-for {
+  position: relative; margin-top: 28px; padding: 28px 32px; border-radius: 22px; background: #f7badd;
+  -webkit-mask: radial-gradient(circle 14px at 0 50%, transparent 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 14px at 100% 50%, transparent 98%, #000) right / 51% 100% no-repeat;
+          mask: radial-gradient(circle 14px at 0 50%, transparent 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 14px at 100% 50%, transparent 98%, #000) right / 51% 100% no-repeat;
+}
+/* The mask would clip the folder tab, so the "for" card shows its label inline. */
+html body .app-container .ay-ps-for > .ay-ps-tab { position: static; transform: none; display: inline-block; margin-bottom: 8px; padding: 6px 14px; border-radius: 999px; background: #ffedac; }
+html body .app-container .ay-ps-for h3 { margin: 0 0 12px; color: #3e2723; font: 400 30px/1.15 'DM Serif Display', Georgia, serif !important; }
+html body .app-container .ay-ps-stars { display: grid; gap: 10px; margin: 0 0 8px; padding: 0; list-style: none; }
+html body .app-container .ay-ps-stars li { position: relative; padding-left: 30px; font: 400 17px/1.5 'DM Sans', sans-serif; }
+html body .app-container .ay-ps-stars li::before { content: '✦'; position: absolute; left: 4px; top: 0; font-size: 16px; }
+html body .app-container .ay-ps-for .ay-ev__by { margin: 8px 0 0; font: 400 15px/1.5 'DM Sans', sans-serif !important; color: #3e2723 !important; }
+@media (max-width: 600px) { html body .app-container .ay-ps-for { padding: 24px 22px; } }
+
+/* ---------- Ingredient chips ---------- */
+html body .app-container .ay-ps-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 0; padding: 0; list-style: none; }
+html body .app-container .ay-ps-chips button {
+  min-height: 44px; padding: 0 18px; border: 1.5px solid #3e2723; border-radius: 999px; background: transparent; color: #3e2723; cursor: pointer;
+  font: 600 15px/1.2 'DM Sans', sans-serif !important;
+}
+html body .app-container .ay-ps-chips button:hover { background: #f7badd; }
+html body .app-container .ay-ps-chips button.is-on { background: #3e2723; color: #ffedac; }
+html body .app-container .ay-ps-chips button:focus-visible { outline: 3px solid #769ebe; outline-offset: 2px; }
+html body .app-container .ay-ps-ing { max-width: 760px; width: 100%; margin: 0 auto; padding: 24px 28px; border: 1.5px solid #3e2723; border-radius: 22px; background: #ffedac; }
+html body .app-container .ay-ps-ing h3 { margin: 0 0 8px; font: 400 28px/1.15 'DM Serif Display', Georgia, serif !important; color: #3e2723; }
+html body .app-container .ay-ps-ing p { margin: 0 0 12px; font: 400 17px/1.6 'DM Sans', sans-serif; }
+
+/* ---------- Evidence spotlight (colour block) ---------- */
+html body .app-container .ay-ps-spot { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); overflow: hidden; border-radius: 28px; background: #3e2723; color: #ffedac; }
+html body .app-container .ay-ps-spot__text { display: grid; gap: 20px; align-content: center; padding: 40px 44px; }
+html body .app-container .ay-ps-pill { justify-self: start; padding: 6px 14px; border-radius: 999px; background: #f7badd; color: #3e2723; font: 700 13px/1.2 'DM Sans', sans-serif; letter-spacing: .04em; }
+html body .app-container .ay-ps-spot__h { margin: 0; color: #ffedac; font: 400 clamp(26px, 1rem + 1.4vw, 36px)/1.2 'DM Serif Display', Georgia, serif !important; }
+html body .app-container .ay-ps-spot__nums { display: flex; flex-wrap: wrap; gap: 20px 48px; margin: 0; }
+html body .app-container .ay-ps-spot__nums div { display: grid; gap: 2px; }
+html body .app-container .ay-ps-spot__nums dt { color: #f7badd; font: 400 64px/1 'DM Serif Display', Georgia, serif; }
+html body .app-container .ay-ps-spot__nums dd { margin: 0; max-width: 18ch; color: #ffedac; font: 500 15px/1.4 'DM Sans', sans-serif; }
+html body .app-container .ay-ps-spot__photo { display: grid; place-items: center; padding: 28px; background: #fff; }
+html body .app-container .ay-ps-spot__photo img { width: 100%; max-width: 320px; max-height: 320px; object-fit: contain; }
+html body .app-container .ay-ps-btn {
+  justify-self: start; display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 22px; border: 0; border-radius: 999px;
+  background: #ffedac; color: #3e2723; cursor: pointer; font: 700 16px/1 'DM Sans', sans-serif !important;
+}
+html body .app-container .ay-ps-btn:hover { background: #f7badd; }
+html body .app-container .ay-ps-btn:focus-visible { outline: 3px solid #769ebe; outline-offset: 3px; }
+html body .app-container .ay-ps-chev { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform 200ms ease; }
+@media (max-width: 760px) {
+  html body .app-container .ay-ps-spot { grid-template-columns: 1fr; }
+  html body .app-container .ay-ps-spot__text { padding: 28px 24px; }
+  html body .app-container .ay-ps-spot__photo { order: -1; padding: 20px; }
+  html body .app-container .ay-ps-spot__photo img { max-height: 180px; }
+  html body .app-container .ay-ps-spot__nums dt { font-size: 52px; }
+}
+
+/* ---------- Numbered evidence bands (accordion) ---------- */
+html body .app-container .ay-ps-bands { display: grid; gap: 40px; margin: 16px 0 0; padding: 0; list-style: none; }
+html body .app-container .ay-ps-band { position: relative; border-radius: 0 24px 24px 24px; background: #f7badd; color: #3e2723; scroll-margin-top: calc(var(--ay-ps-top, 72px) + 96px); transition: transform 160ms ease, box-shadow 160ms ease; }
+html body .app-container .ay-ps-band.is-science, html body .app-container .ay-ps-band.is-details { background: #769ebe; }
+html body .app-container .ay-ps-band.is-safety { background: #ffedac; box-shadow: inset 0 0 0 2px #3e2723; }
+html body .app-container .ay-ps-band.is-safety > .ay-ps-tab { box-shadow: inset 2px 2px 0 #3e2723, inset -2px 0 0 #3e2723; }
+html body .app-container .ay-ps-band > .ay-ps-tab { left: 0; }
+html body .app-container .ay-ps-band__h { margin: 0; font: inherit !important; }
+html body .app-container .ay-ps-band__h button {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px 20px; align-items: center; width: 100%;
+  min-height: 88px; padding: 22px 28px; border: 0; border-radius: inherit; background: transparent; color: #3e2723; text-align: left; cursor: pointer;
+}
+html body .app-container .ay-ps-band__h button:focus-visible { outline: 3px solid #3e2723; outline-offset: 3px; }
+html body .app-container .ay-ps-band__num { align-self: start; padding-top: 6px; font: 600 16px/1 'DM Sans', sans-serif; letter-spacing: .04em; }
+html body .app-container .ay-ps-band__main { display: grid; gap: 6px; min-width: 0; }
+html body .app-container .ay-ps-band__title { font: 400 clamp(26px, 1rem + 1vw, 32px)/1.15 'DM Serif Display', Georgia, serif; }
+html body .app-container .ay-ps-band__line { max-width: 68ch; font: 500 17px/1.5 'DM Sans', sans-serif; }
+html body .app-container .ay-ps-band__meta { font: 600 13px/1.3 'DM Sans', sans-serif; letter-spacing: .04em; text-transform: uppercase; }
+html body .app-container .ay-ps-band__go {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: 999px; background: #3e2723; color: #ffedac;
+  white-space: nowrap; font: 700 15px/1 'DM Sans', sans-serif;
+}
+html body .app-container .ay-ps-band.is-open .ay-ps-band__go .ay-ps-chev { transform: rotate(180deg); }
+@media (hover: hover) {
+  html body .app-container .ay-ps-band:not(.is-open):hover { transform: translateY(-3px); box-shadow: 0 10px 0 -2px rgba(62, 39, 35, .18); }
+  html body .app-container .ay-ps-band.is-safety:not(.is-open):hover { box-shadow: inset 0 0 0 2px #3e2723, 0 10px 0 -2px rgba(62, 39, 35, .18); }
+  html body .app-container .ay-ps-band__h button:hover .ay-ps-band__go { background: #ffedac; color: #3e2723; box-shadow: inset 0 0 0 2px #3e2723; }
+}
+html body .app-container .ay-ps-band__body { margin: 0 16px 16px; padding: 24px 28px; border-radius: 18px; background: #ffedac; color: #3e2723; box-shadow: inset 0 0 0 1.5px #3e2723; }
+html body .app-container .ay-ps-band.is-safety .ay-ps-band__body { margin-top: 0; box-shadow: none; padding-top: 4px; }
+html body .app-container .ay-ps-band__body[hidden] { display: none; }
+html body .app-container .ay-ps-band__body :is(.ay-ev__body, p) { font-size: 16px; line-height: 1.6; }
+@media (max-width: 700px) {
+  html body .app-container .ay-ps-band__h button { grid-template-columns: minmax(0, 1fr); padding: 20px 20px; gap: 10px; }
+  html body .app-container .ay-ps-band__num { padding-top: 0; }
+  html body .app-container .ay-ps-band__go { justify-self: start; }
+  html body .app-container .ay-ps-band__body { margin: 0 8px 8px; padding: 20px 18px; }
+}
+
+/* How to use: numbered rows. */
+html body .app-container .ay-ps .ay-tabs__steps { display: grid; gap: 0; margin: 8px 0 16px; padding: 0; list-style: none; }
+html body .app-container .ay-ps .ay-tabs__steps li { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 12px; align-items: baseline; padding: 14px 0; border-top: 1.5px solid rgba(62, 39, 35, .2); }
+html body .app-container .ay-ps .ay-tabs__steps li:first-child { border-top: 0; }
+html body .app-container .ay-ps .ay-tabs__steps b { width: auto !important; height: auto !important; background: none !important; color: #3e2723 !important; font: 400 32px/1 'DM Serif Display', Georgia, serif !important; }
+html body .app-container .ay-ps .ay-tabs__steps span { font: 400 16px/1.55 'DM Sans', sans-serif; }
+
+/* ---------- Reviews: short star cards in a grid ---------- */
+html body .app-container .ay-ps-reviews { text-align: left; }
+html body .app-container .ay-ps-reviews .ay-ev__rating { margin: 0; text-align: center; font: 500 18px/1.4 'DM Sans', sans-serif; }
+html body .app-container .ay-ps-reviews .ay-ev__rating b { font-weight: 700; }
+html body .app-container .ay-ps-reviews .cr-product-reviews { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; }
+html body .app-container .ay-ps-reviews .cr-product-reviews li { margin: 0; }
+html body .app-container .ay-ps-reviews .cr-product-reviews a { display: grid; gap: 10px; height: 100%; padding: 20px; border: 1.5px solid #3e2723; border-radius: 20px; background: #ffedac; color: #3e2723; text-decoration: none; }
+html body .app-container .ay-ps-reviews .cr-product-reviews a:hover { background: #f7badd; }
+html body .app-container .ay-ps-reviews .cr-product-reviews a:focus-visible { outline: 3px solid #769ebe; outline-offset: 2px; }
+html body .app-container .ay-ps-reviews .cr-product-reviews p { margin: 0; font: 400 16px/1.5 'DM Sans', sans-serif; }
+html body .app-container .ay-ps-reviews .cr-product-reviews small { font: 500 13px/1.4 'DM Sans', sans-serif; }
+html body .app-container .ay-ps-reviews .ay-ev__body { max-width: 70ch; }
+html body .app-container .ay-ps-reviews .ay-part__h { font: 400 26px/1.2 'DM Serif Display', Georgia, serif !important; margin: 16px 0 8px; }
+
+/* Shared: "Read more" buttons inside the story read as pressable pills. */
+html body .app-container .ay-ps .ay-ev__morebtn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border: 1.5px solid #3e2723; border-radius: 999px; background: transparent; color: #3e2723; font: 600 14px/1 'DM Sans', sans-serif !important; cursor: pointer; text-decoration: none !important; }
+html body .app-container .ay-ps .ay-ev__morebtn:hover { background: #f7badd; }
+
+/* ---------- You may also like: a horizontal card row on phones ---------- */
+@media (max-width: 760px) {
+  html body .app-container .pdp-page .pdp-suggest__grid { display: flex !important; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; margin-right: -16px; padding-right: 16px; }
+  html body .app-container .pdp-page .pdp-suggest__grid > * { flex: 0 0 72%; scroll-snap-align: start; }
+}
+
+/* Source cards: no icon column on this page. */
+html body .app-container .ay-ps .ay-src__card, html body .app-container .ay-ps .ay-src.is-compact .ay-src__card { grid-template-columns: minmax(0, 1fr) 20px !important; background: #ffedac; }
+html body .app-container .ay-ps .ay-src__card:hover { background: #f7badd; }
+html body .app-container .ay-ps .ay-src__pub { font: 700 12px/1.3 'DM Sans', sans-serif; letter-spacing: .06em; text-transform: uppercase; }
+html body .app-container .ay-ps .ay-src__title { font: 600 15px/1.4 'DM Sans', sans-serif; }
+html body .app-container .ay-ps .ay-src__h { margin: 0 0 8px; font: 700 13px/1.3 'DM Sans', sans-serif; letter-spacing: .06em; text-transform: uppercase; }
+
+/* Inside an open band (the notes and sources). */
+html body .app-container .ay-ps-band__body > * + * { margin-top: 12px; }
+html body .app-container .ay-ps-band__body .ay-part__h { margin: 24px 0 8px !important; color: #3e2723; font: 400 24px/1.2 'DM Serif Display', Georgia, serif !important; }
+html body .app-container .ay-ps-band__body .ay-ev__by { color: #3e2723 !important; font: 400 14px/1.5 'DM Sans', sans-serif !important; }
+html body .app-container .ay-ps-band__body .ay-safety { display: block !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; }
+html body .app-container .ay-ps-band__body .ay-safety__alert { padding: 14px 16px; border-radius: 14px; background: #f7badd; }
+html body .app-container .ay-ps-band__body .ay-safety__list { margin: 0 0 16px !important; padding: 12px 14px 12px 32px !important; border: 0 !important; border-left: 4px solid #3e2723 !important; border-radius: 0 !important; background: #f7badd !important; }
+html body .app-container .ay-ps-band__body .ay-pd__rows { margin: 0; border: 0 !important; background: none !important; box-shadow: none !important; }
+html body .app-container .ay-ps-band__body .ay-pd__rows > div { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 12px; padding: 12px 0 !important; border-bottom: 1px solid rgba(62, 39, 35, .25) !important; background: none !important; }
+html body .app-container .ay-ps-band__body .ay-pd__rows dt { font: 700 14px/1.4 'DM Sans', sans-serif; }
+html body .app-container .ay-ps-band__body .ay-pd__rows dd { margin: 0; font: 400 15px/1.5 'DM Sans', sans-serif; }
+html body .app-container .ay-ps-band__body .ay-src ul { display: grid; gap: 8px; }
+@media (max-width: 600px) { html body .app-container .ay-ps-band__body .ay-pd__rows > div { grid-template-columns: 1fr; gap: 2px; } }
+html body .app-container .ay-ps-reviews > :not(h2) { width: 100%; max-width: 820px; justify-self: center; margin-left: auto; margin-right: auto; }
+html body .app-container .ay-ps > * { min-width: 0; }
+@media (max-width: 600px) {
+  html body .app-container .ay-ps-nav { padding: 8px 16px; }
+  html body .app-container .ay-ps-nav ul { gap: 6px; }
+  html body .app-container .ay-ps-nav a { padding: 0 10px; font-size: 14px !important; }
+}
+
+/* Dark theme: what sits on the page background turns butter; the coloured cards keep espresso text. */
+html body .app-container[data-theme='brand-dark'] .ay-ps { color: #ffedac; }
+html body .app-container[data-theme='brand-dark'] :is(.ay-ps-sec > .ay-ps-h, .ay-ps-sub, .ay-ps-about__text :is(p, .ay-ev__body), .ay-ps-reviews > :not(.cr-product-reviews-wrap) :is(p, b, span, h3, h4), .ay-ps-reviews > p, .ay-ps-center) { color: #ffedac !important; }
+html body .app-container[data-theme='brand-dark'] .ay-ps-facts li { border-color: #ffedac; color: #ffedac; }
+html body .app-container[data-theme='brand-dark'] .ay-ps-art { stroke: #ffedac; }
+html body .app-container[data-theme='brand-dark'] .ay-ps-art__sun { fill: #769ebe; }
+html body .app-container[data-theme='brand-dark'] .ay-ps-nav { background: #3e2723; border-bottom-color: rgba(255, 237, 172, .3); }
+html body .app-container[data-theme='brand-dark'] .ay-ps-nav a { border-color: #ffedac; color: #ffedac; }
+html body .app-container[data-theme='brand-dark'] .ay-ps-nav a:hover { background: transparent; text-decoration: underline !important; }
+html body .app-container[data-theme='brand-dark'] .ay-ps-nav a.is-on { background: #ffedac; color: #3e2723; }
+html body .app-container[data-theme='brand-dark'] .ay-ps-chips button { border-color: #ffedac; color: #ffedac; }
+html body .app-container[data-theme='brand-dark'] .ay-ps-chips button:hover { background: transparent; text-decoration: underline; }
+html body .app-container[data-theme='brand-dark'] .ay-ps-chips button.is-on { background: #ffedac; color: #3e2723; }
+html body .app-container[data-theme='brand-dark'] .ay-ps-spot { box-shadow: inset 0 0 0 2px #ffedac; }
+html body .app-container[data-theme='brand-dark'] :is(.ay-ps-band, .ay-ps-ing, .ay-ps-for, .cr-product-reviews) :is(p, li, dt, dd, span, a, strong, b, em, h3, h4, small, blockquote):not(.ay-ps-band__go):not(.ay-ps-band__go *) { color: #3e2723 !important; }
+html body .app-container[data-theme='brand-dark'] .ay-ps-band__go, html body .app-container[data-theme='brand-dark'] .ay-ps-band__go * { color: #ffedac !important; }
+html body .app-container[data-theme='brand-dark'] .ay-ps .ay-ev__morebtn { border-color: currentColor; }
+html body .app-container.app-container[data-theme='brand-dark'] .ay-ps .ay-src__card, html body .app-container.app-container[data-theme='brand-dark'] .ay-ps .ay-src__card * { color: #3e2723 !important; }
+html body .app-container.app-container.app-container[data-theme='brand-dark'] .ay-ps-reviews .ay-src__h:not(.zz):not(.zz) { color: #ffedac !important; }
+html body .app-container.app-container[data-theme='brand-dark'] .ay-ps-reviews .ay-ev__morebtn:not(.zz) { color: #ffedac !important; border-color: #ffedac; }
