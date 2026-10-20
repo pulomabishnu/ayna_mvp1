@@ -941,3 +941,10 @@ html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pt__lead.is-quoted { font-weight: 4
 html body .pdp-page:has(#ay-tabs) #ay-pt .ay-pd__rows > div { align-content: start !important; }
 html body [data-theme='brand-dark'] .pdp-page:has(#ay-tabs) .ay-gcard .ay-ps-ev .ay-ico { stroke: #3e2723 !important; }
 html body .pdp-page:has(#ay-tabs) #ay-buycard .pdp-head__eyebrow { color: #3e2723 !important; }
+
+/* ayna's summary: full write-up, always open, first thing after the buy box. */
+html body .app-container .ay-ps-summary { display: grid; gap: 12px; margin: 0 0 24px; padding: 20px; border: 2px solid #3e2723; border-radius: 24px; background: #ffedac; color: #3e2723; }
+html body .app-container .ay-ps-summary__h { margin: 0; font: 400 var(--ay-fs-section, 24px)/1.15 var(--ay-serif) !important; color: inherit; }
+html body .app-container .ay-ps-summary .ay-ev__body { margin: 0; max-width: 70ch; font: 400 var(--ay-fs-body, 16px)/1.55 var(--ay-sans) !important; color: inherit; }
+html body .app-container[data-theme='brand-dark'] .ay-ps-summary { background: #3e2723; border-color: #ffedac; color: #ffedac; }
+@media (min-width: 761px) { html body .app-container .ay-ps-summary { margin-bottom: 32px; padding: 24px 28px; } }

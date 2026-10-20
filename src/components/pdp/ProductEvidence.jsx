@@ -723,6 +723,14 @@ export default function ProductEvidence({ product: baseProduct, safetyLead = '',
   return (
     <TermsCtx.Provider value={plan}>
     <div id="ay-tabs" className="ay-ps">
+      {/* ayna's own write-up of the product, in full and always open: it's the
+          first thing to read, so it never hides behind a fold. */}
+      {d.aynaSummary && (
+        <section className="ay-ps-summary ay-box" aria-labelledby="ay-ps-summary-h">
+          <h2 id="ay-ps-summary-h" className="ay-ps-summary__h">ayna’s summary</h2>
+          <Paras text={[d.aynaSummary, d.aynaDetail].filter(Boolean).join('\n\n')} />
+        </section>
+      )}
       <section className="ay-ps-glance" aria-labelledby="ay-ps-glance-h">
         <h2 id="ay-ps-glance-h" className="ay-ps-glance__h">At a glance</h2>
         <div className="ay-ps-glance__grid ay-gcard">
@@ -773,16 +781,8 @@ export default function ProductEvidence({ product: baseProduct, safetyLead = '',
         </section>
       )}
 
-      <Sec fold={fold} id="overview" title="What it is" line={takeaway(summaryText) || whoLine}>
-        <div className={`ay-ps-about${summaryText ? '' : ' is-solo'}`}>
-          {summaryText && (
-            <div className="ay-ps-about__text">
-              {byId.what.body}
-            </div>
-          )}
-          {summaryText && <LineArt />}
-        </div>
-        {hasWho && (
+      {hasWho && <Sec fold={fold} id="overview" title="Who it’s for" line={whoLine}>
+        {(
           <div className="ay-ps-for">
             <h3>This is for you if</h3>
             <div className="ay-ps-for__list">
@@ -793,7 +793,7 @@ export default function ProductEvidence({ product: baseProduct, safetyLead = '',
             </div>
           </div>
         )}
-      </Sec>
+      </Sec>}
 
       {d.ingredients.length > 0 && (
         <Sec fold={fold} id="inside" title="What’s inside and why it works" line={d.ingredients.slice(0, 4).map((x) => x.name).join(', ') + (d.ingredients.length > 4 ? ` and ${d.ingredients.length - 4} more` : '')}>
