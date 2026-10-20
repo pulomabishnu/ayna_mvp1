@@ -1,0 +1,109 @@
+/* Shared Ask ayna answers: the Share control under a reply and the /a/<slug> page.
+   Brand colours only (docs/design-rules.md). */
+
+.ay-share-answer, .ay-sa {
+  --sa-ink: #3e2723;
+  --sa-bg: #ffedac;
+  --sa-pink: #f7badd;
+  --sa-line: rgba(62, 39, 35, 0.18);
+  --sa-nav: 0px; /* fixed bottom tab bar on phones, set below */
+}
+@media (max-width: 767px) {
+  .ay-sa { --sa-nav: calc(80px + env(safe-area-inset-bottom)); }
+}
+:root[data-ay-theme='brand-dark'] .ay-sa,
+:root[data-ay-theme='brand-dark'] .ay-share-answer,
+[data-theme='dark'] .ay-share-answer {
+  --sa-ink: #ffedac;
+  --sa-bg: #3e2723;
+  --sa-line: rgba(255, 237, 172, 0.24);
+}
+
+/* ---------- Share control under a reply ---------- */
+.ay-share-answer { margin-top: 8px; font-family: 'DM Sans', system-ui, sans-serif; color: var(--sa-ink); }
+.ay-share-answer__row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.ay-share-answer__btn {
+  min-height: 36px; padding: 0 14px; border-radius: 99px;
+  border: 1.5px solid currentColor; background: transparent; color: inherit;
+  font: 600 13px/1 'DM Sans', system-ui, sans-serif; cursor: pointer;
+}
+.ay-share-answer__btn.is-primary { background: var(--sa-ink); color: var(--sa-bg); border-color: var(--sa-ink); }
+.ay-share-answer__btn.is-quiet { border-color: transparent; text-decoration: underline; text-underline-offset: 3px; padding: 0 4px; }
+.ay-share-answer__btn:disabled { opacity: 0.55; cursor: default; }
+.ay-share-answer__btn:active:not(:disabled) { transform: translateY(1px); }
+.ay-share-answer__confirm p { margin: 0 0 8px; font-size: 13px; line-height: 1.4; }
+.ay-share-answer__status { font-size: 12.5px; }
+@media (pointer: coarse) { .ay-share-answer__btn { min-height: 44px; } }
+
+/* ---------- Public page /a/<slug> ---------- */
+.app-container:not([data-theme='dark'])[data-view='shared-answer'] { --ay-page: #ffedac; }
+.ay-sa {
+  box-sizing: border-box; width: 100%; max-width: 680px; margin: 0 auto;
+  padding: 32px 16px calc(48px + var(--sa-nav)); color: var(--sa-ink); font-family: 'DM Sans', system-ui, sans-serif;
+}
+.ay-sa__title {
+  margin: 0 0 24px; font: 400 30px/1.12 'DM Serif Display', Georgia, serif; letter-spacing: -0.01em; color: var(--sa-ink);
+}
+.ay-sa__lede { margin: -12px 0 24px; font-size: 15px; line-height: 1.5; }
+.ay-sa__qa { padding: 0 0 24px; border-bottom: 1px solid var(--sa-line); }
+.ay-sa__question {
+  margin: 0 0 16px; padding: 12px 16px; border-radius: 22px 22px 22px 6px;
+  background: var(--sa-ink); color: var(--sa-bg); font-size: 16px; font-weight: 600; line-height: 1.4;
+  width: fit-content; max-width: 100%; overflow-wrap: anywhere;
+}
+.ay-sa__answer { font-size: 15px; line-height: 1.6; overflow-wrap: anywhere; }
+.ay-sa__answer p { margin: 0 0 12px; }
+.ay-sa__answer ul, .ay-sa__answer ol { margin: 0 0 12px; padding-left: 20px; }
+.ay-sa .ay-sa__sources h2, html body .app-container.app-container .ay-sa .ay-sa__sources h2 { margin: 16px 0 8px; font: 600 15px/1.3 'DM Sans', system-ui, sans-serif !important; letter-spacing: 0 !important; color: inherit; }
+.ay-sa__sources ol { margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.5; }
+.ay-sa__sources a { color: inherit; text-underline-offset: 3px; overflow-wrap: anywhere; }
+.ay-sa__disclaimer { margin: 16px 0 0; font-size: 12px; opacity: 0.8; }
+
+.ay-sa__owner { display: flex; align-items: center; gap: 12px; padding: 24px 0 0; }
+.ay-sa__avatar {
+  flex: none; width: 48px; height: 48px; border-radius: 50%; overflow: hidden;
+  display: grid; place-items: center; background: var(--sa-pink); color: #3e2723;
+  font: 400 22px/1 'DM Serif Display', Georgia, serif;
+}
+.ay-sa__avatar img { width: 100%; height: 100%; object-fit: cover; }
+.ay-sa__who { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.ay-sa__who strong { font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ay-sa__who span { font-size: 13px; opacity: 0.8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.ay-sa__primary, .ay-sa__ghost {
+  min-height: 44px; padding: 0 20px; border-radius: 99px; cursor: pointer;
+  font: 600 15px/1 'DM Sans', system-ui, sans-serif; border: 2px solid var(--sa-ink);
+}
+.ay-sa__primary { background: var(--sa-ink); color: var(--sa-bg); }
+.ay-sa__primary.is-feature { box-shadow: 3px 3px 0 var(--sa-pink); }
+.ay-sa__ghost { flex: none; background: transparent; color: var(--sa-ink); }
+.ay-sa__ghost.is-done { border-color: transparent; background: var(--sa-line); }
+.ay-sa__ghost:disabled { cursor: default; }
+.ay-sa__primary:active, .ay-sa__ghost:active:not(:disabled) { transform: translateY(1px); }
+.ay-sa__link {
+  background: none; border: 0; padding: 12px 0; color: var(--sa-ink); cursor: pointer;
+  font: 600 15px/1 'DM Sans', system-ui, sans-serif; text-decoration: underline; text-underline-offset: 3px;
+}
+.ay-sa__error { margin: 12px 0 0; font-size: 13px; }
+
+.ay-sa__prompt {
+  margin: 16px 0 0; padding: 18px; border-radius: 24px; background: var(--sa-pink); color: #3e2723;
+  scroll-margin-top: 88px;
+  scroll-margin-bottom: calc(var(--sa-nav) + 16px);
+}
+.ay-sa__prompt .ay-sa__primary { background: #3e2723; color: #ffedac; border-color: #3e2723; }
+.ay-sa__prompt .ay-sa__ghost { color: #3e2723; border-color: #3e2723; }
+.ay-sa__prompt .ay-sa__link { color: #3e2723; padding-bottom: 0; }
+.ay-sa__prompt-title, html body .app-container.app-container .ay-sa .ay-sa__prompt-title { margin: 0 0 4px; font: 400 22px/1.2 'DM Serif Display', Georgia, serif !important; letter-spacing: -0.01em !important; }
+.ay-sa__prompt-line { margin: 0 0 16px; font-size: 15px; }
+.ay-sa__row { display: flex; flex-wrap: wrap; gap: 12px; }
+
+.ay-sa__ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 32px; }
+
+.ay-sa__skeleton { height: 36px; max-width: 420px; border-radius: 12px; background: var(--sa-line); margin-bottom: 16px; }
+.ay-sa__skeleton.is-short { height: 120px; max-width: none; }
+
+@media (min-width: 900px) {
+  .ay-sa { padding-top: 48px; }
+  .ay-sa__title { font-size: 34px; }
+}

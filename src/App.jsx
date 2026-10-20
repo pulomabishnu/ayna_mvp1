@@ -55,11 +55,15 @@ const Articles = React.lazy(() => import('./components/Articles'));
 // Internal, read-only product passport audit (dev, or ?internal=1 opt-in).
 const ProductAudit = React.lazy(() => import('./components/ProductAudit'));
 const CampusResources = React.lazy(() => import('./components/CampusResources'));
+// Public page for a shared Ask ayna answer: /a/<slug>.
+const SharedAnswerPage = React.lazy(() => import('./components/SharedAnswerPage'));
 import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, hasStatedLifeStage, matchEngine, getSelectedNeeds } from './data/products.js';
 import { behaviorFrom } from './utils/matchDisplay';
 import WebHealthData from './components/WebHealthData';
 import { useHealthData } from './mobile/hooks/useHealthData.js';
 import { captureReferralFromUrl } from './utils/badges';
+import { slugFromPath } from './utils/sharedAnswer.js';
+import { readPendingFriend } from './utils/shareAnswerClient.js';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
 const Screenings = lazyView(() => import('./components/Screenings'));
 import { useScrollPosition } from './hooks/useScrollPosition';
@@ -261,6 +265,7 @@ function communityPostFromPath(path) {
   return m ? m[1] : null;
 }
 function viewFromSubPath(path) {
+  if (slugFromPath(path)) return 'shared-answer';
   if (articleIdFromPath(path)) return 'articles';
   if (communityHandleFromPath(path) || communityPostFromPath(path)) return 'community';
   return null;
@@ -443,6 +448,12 @@ function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const openSharedAnswer = useCallback((slug) => {
+    const path = `/a/${slug}`;
+    currentViewRef.current = 'shared-answer';
+    setCurrentViewRaw('shared-answer');
+    if (window.location.pathname !== path) window.history.replaceState({ view: 'shared-answer' }, '', path);
+  }, []);
   const handleBackFromStandalonePage = useCallback(() => {
     if (inAppPushCountRef.current > 0) window.history.back();
     else setCurrentView('welcome', { replace: true });
@@ -580,6 +591,8 @@ function App() {
   const [consentGateOpen, setConsentGateOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authFeature, setAuthFeature] = useState('');
+  // Shared answer page (/a/<slug>): Sign up or Sign in, from its Add friend prompt.
+  const [shareAuthMode, setShareAuthMode] = useState('signup');
   const [pendingAction, setPendingAction] = useState(null);
   // Ref mirrors pendingAction so onAuthStateChange (async callback) can read it synchronously
   const pendingActionRef = useRef(null);
@@ -771,7 +784,7 @@ function App() {
       'privacy-policy', 'consumer-health-data', 'terms-of-use', 'confirmed', 'auth-callback', 'auth-confirm',
       'welcome', 'hero', 'quiz', 'discovery', 'product', 'waitlist', 'articles', 'you', 'community',
       'how-it-works', 'how-we-make-money', 'campus-resources', 'about', 'contact', 'waitlist', 'not-found', 'ecosystem',
-      'free-product', 'free-product-reward', 'health',
+      'free-product', 'free-product-reward', 'health', 'shared-answer',
     ];
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       // A different account (or none) must never reuse the previous account's cached intake.
@@ -1069,6 +1082,10 @@ function App() {
       window.setTimeout(() => {
         document.getElementById('ayna-wishlist')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 400);
+    } else if (pendingAction === 'share-friend') {
+      // Back to the shared answer she was on; the page sends the friend request.
+      const pending = readPendingFriend();
+      if (pending?.slug) openSharedAnswer(pending.slug);
     } else if (pendingAction === 'delete-account') {
       // Returning from the Google re-confirmation redirect the delete-account
       // page kicks off before it lets someone delete a Google-linked account.
@@ -2466,7 +2483,10 @@ function App() {
         {currentView === 'confirmed' && (
           <EmailConfirmed onAuthenticated={(user) => {
             setUser(user);
-            setCurrentView('welcome');
+            // Signed up from a shared answer's Add friend: go back there to send it.
+            const pending = readPendingFriend();
+            if (pending?.slug) openSharedAnswer(pending.slug);
+            else setCurrentView('welcome');
           }} />
         )}
         {currentView === 'ecosystem' && dataLoading && Object.keys(myProducts).length === 0 && (
@@ -2783,6 +2803,22 @@ function App() {
             <ProductAudit />
           </Suspense>
         )}
+        {currentView === 'shared-answer' && (
+          <Suspense fallback={<ViewLoadingFallback />}>
+            <SharedAnswerPage
+              slug={slugFromPath(window.location.pathname)}
+              user={user}
+              session={userSession}
+              onRequireAuth={(mode) => {
+                setShareAuthMode(mode === 'signin' ? 'signin' : 'signup');
+                setPendingAction('share-friend'); pendingActionRef.current = 'share-friend';
+                setShowAuthModal(true);
+              }}
+              onAskOwn={() => openAsk()}
+              onHome={() => setCurrentView('welcome')}
+            />
+          </Suspense>
+        )}
         {currentView === 'not-found' && (
           <NotFoundState
             title="Page not found"
@@ -2848,7 +2884,8 @@ function App() {
             } : null}
             // Create account exists only in the save step after the quiz (Wrapped).
             // Everywhere else: sign in, or "Build your ecosystem" to start the quiz.
-            allowSignup={pendingAction === 'quiz-complete'}
+            allowSignup={pendingAction === 'quiz-complete' || pendingAction === 'share-friend'}
+            initialMode={pendingAction === 'share-friend' ? shareAuthMode : undefined}
             onStartEcosystem={() => { setShowAuthModal(false); setPendingAction(null); pendingActionRef.current = null; setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
             context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : pendingAction === 'saved' ? 'saved' : pendingAction === 'ecosystem' ? 'ecosystem' : pendingAction === 'feature' ? 'feature' : undefined}
             feature={authFeature}
