@@ -27,6 +27,14 @@ export function formatPrice(item) {
   const moreSizes = sizes.length > 1 && /\$/.test(sizes[1]) ? sizes.slice(1).join(' · ') : '';
   if (moreSizes) text = sizes[0];
 
+  // "$12 for 100 softgels" / "$25-40 for 300-500 g": the price is the main
+  // line, the size moves to the second line, so cards just show the price.
+  const forSize = text.match(/^((?:About\s+)?[$€£][\d.,]+(?:–[$€£]?[\d.,]+)?)\s+for\s+(.+)$/i);
+  if (forSize) {
+    text = forSize[1];
+    sub = forSize[2];
+  }
+
   // Parenthetical detail -> second line
   const paren = text.match(/^(.*?)\s*\(([^()]+)\)\s*(.*)$/);
   if (paren) {
@@ -51,6 +59,19 @@ export function formatPrice(item) {
 
   if (/€/.test(text) && !/\$/.test(text)) sub = ['EU price', sub].filter(Boolean).join(' · ');
   if (/^free\b/i.test(text) && text.length > 4) { sub = [text.slice(4).trim(), sub].filter(Boolean).join(' · '); text = 'Free'; }
+
+  // Retailer-only notes are not prices.
+  if (/^(check|see)\b.*\b(retailer|amazon|price)/i.test(text) || /^see amazon$/i.test(text)) { text = 'Price at retailer'; }
+  if (/^varies\b/i.test(text)) { sub = [text, sub].filter(Boolean).join(' · '); text = 'Price varies'; }
+
+  // Cards show just the price. Anything after the price token ("per pair",
+  // "on Amazon", "one-time purchase", "+ $6/month", "monitor + strips") moves
+  // to the second line, word for word.
+  const lead = text.match(/^((?:About\s+)?[$€£][\d,]+(?:\.\d+)?(?:–[$€£]?[\d,]+(?:\.\d+)?)?(?:\s*\/\s*(?:mo|month|visit|session|year|yr|week|wk)\b)?)(?![\d./]|,\d)(?:,?\s+(.+))?$/i);
+  if (lead && lead[2]) {
+    text = lead[1];
+    sub = [lead[2].replace(/^[,·]\s*/, ''), sub].filter(Boolean).join(' · ');
+  }
 
   if (moreSizes) sub = [sub, moreSizes].filter(Boolean).join(' · ');
   return { main: text, sub };
