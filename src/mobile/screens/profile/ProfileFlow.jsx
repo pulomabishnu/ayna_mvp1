@@ -3478,6 +3478,7 @@ export default function ProfileFlow({
   savedCount = 0,
   quizAnswers = null,
   myProducts = [],
+  matchProducts = [],
   savedProducts = {},
   onViewAlternative,
   onBrowse,
@@ -3686,6 +3687,9 @@ export default function ProfileFlow({
           <HealthInsightsScreen
             authUser={authUser}
             selectedNeedIds={selectedNeedIds}
+            products={myProducts}
+            matches={matchProducts}
+            onOpenProduct={onOpenProduct}
             onConnect={() => pushScreen('healthData')}
             onAddGoal={onAddGoal}
             onOpenRoutine={onOpenRoutine ? () => { onClose(); onOpenRoutine(); } : undefined}

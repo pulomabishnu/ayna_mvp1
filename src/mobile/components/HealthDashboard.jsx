@@ -1,4 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
+import { AskContext } from '../askContext.js';
+import { dashboardContext } from '../utils/dashboardAsk.js';
 import { SOURCE_NAMES } from '../data/healthConnections.js';
 import { buildDashboard, formatMetric, isFlat, RANGES } from '../../health/dashboard.js';
 import { localToday, useHealthData } from '../hooks/useHealthData.js';
@@ -73,7 +75,8 @@ function CycleHero({ cycle, estimate }) {
 }
 
 
-export default function HealthDashboard({ authUser, userName = '', selectedNeedIds = [], onConnect, onAddGoal, onOpenRoutine, onSignIn }) {
+export default function HealthDashboard({ authUser, userName = '', selectedNeedIds = [], onConnect, onAddGoal, onOpenRoutine, onSignIn, products = [], matches = [], onOpenProduct }) {
+  const openAsk = useContext(AskContext);
   const health = useHealthData(authUser?.id || null, selectedNeedIds);
   const [range, setRange] = useState('month');
   const [added, setAdded] = useState({});
@@ -150,6 +153,10 @@ export default function HealthDashboard({ authUser, userName = '', selectedNeedI
               ready={ready}
               today={today}
               onOpenArea={setView}
+              products={products}
+              matches={matches}
+              onOpenProduct={onOpenProduct}
+              onAsk={openAsk ? (question) => openAsk({ question, context: dashboardContext({ cycle: week.cycle?.cycleDay ? week.cycle : null, estimate, ready, products }) }) : undefined}
             />
           )}
           <section aria-labelledby="ay-hd-pinned" className="ay-hd-pinsec">

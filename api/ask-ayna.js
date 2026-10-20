@@ -36,7 +36,7 @@ const PROFILE_CATEGORIES = `
 - productsToAvoid: specific ingredients/materials she wants avoided in recommendations (e.g. "Essential oils", "Fragrance / scented products", "Latex", "Synthetic materials")
 - preference: ONE overall priority if she stated one ("Organic/Natural only", "Lower cost", "Comfort/Convenience", "Privacy & data security", "Sustainability/Zero-waste"), null if none stated`;
 
-function buildPrompt({ message, profileSummary, historyText }) {
+function buildPrompt({ message, profileSummary, historyText, screenContext = '' }) {
   return `You are Ayna, a knowledgeable and warm women's health assistant inside the Ayna app. Answer the user's message directly and helpfully.
 
 RULES:
@@ -46,13 +46,13 @@ RULES:
 - If anything in her message sounds like it could be urgent (severe or worsening pain, heavy or prolonged bleeding, signs of infection like fever, fainting, or anything she describes as sudden/severe), say so directly and tell her to seek medical care promptly, before anything else in your answer.
 - Never fabricate specific studies, statistics, or product facts you don't actually know.
 - If discussing protein or muscle-preservation needs, collagen supplements/powder are not a complete protein and should not be recommended as someone's primary or sole protein source — note that and point to complete protein sources (e.g. whey, eggs, legumes, meat/fish) for muscle maintenance, even if collagen still comes up as a supporting option for skin/joint support.
-- Do NOT name specific brands or products and do NOT include any links or URLs. Product picks only come from Ayna's reviewed catalog, which the app shows her itself — describe the TYPE of product instead and use browseIntent.
+- Do NOT name specific brands or products and do NOT include any links or URLs. Product picks only come from Ayna's reviewed catalog, which the app shows her itself — describe the TYPE of product instead and use browseIntent. The one exception: products listed below as already in her Ecosystem may be referred to by name when she asks about her own products.
 - If she asks how to browse or find products (e.g. "show me pads", "I need supplements for cramps"), tell her what you're doing for her in the answer AND set "browseIntent" (see JSON shape) so the app can actually take her there.
 
 SEPARATELY, decide whether this message reveals something worth remembering in her health profile, a real stated concern, sensitivity, avoidance, or priority, not just a passing question. Only include a category below if she clearly stated something new; leave arrays empty / preference null otherwise. Do not invent something she didn't say.
 ${PROFILE_CATEGORIES}
 
-${profileSummary ? `HER CURRENT PROFILE (don't re-add anything already listed):\n${profileSummary}\n` : ''}${historyText ? `RECENT CONVERSATION:\n${historyText}\n` : ''}
+${profileSummary ? `HER CURRENT PROFILE (don't re-add anything already listed):\n${profileSummary}\n` : ''}${screenContext ? `WHAT SHE IS LOOKING AT IN THE APP (her own data, compared with her own usual; use it to answer, describe it plainly, never diagnose from it):\n${screenContext}\n` : ''}${historyText ? `RECENT CONVERSATION:\n${historyText}\n` : ''}
 HER MESSAGE: ${message}
 
 Return ONLY valid JSON, exactly this shape, no markdown code fences:
@@ -92,7 +92,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'invalid_json' });
   }
 
-  const { message, profileSummary, chatHistory, conversationId } = body || {};
+  const { message, profileSummary, chatHistory, conversationId, screenContext } = body || {};
   if (!message || typeof message !== 'string' || !message.trim()) {
     return res.status(400).json({ error: 'message is required' });
   }
@@ -119,6 +119,7 @@ export default async function handler(req, res) {
     message: clamp(message, 500),
     profileSummary: typeof profileSummary === 'string' ? profileSummary.slice(0, 2000) : '',
     historyText,
+    screenContext: typeof screenContext === 'string' ? screenContext.slice(0, 1500) : '',
   });
   const order = parseProviderOrder('AI_INSIGHTS_PROVIDER_ORDER', 'anthropic,openai,gemini');
 

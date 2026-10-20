@@ -72,6 +72,7 @@ export default function AskAynaModal({
   onNavigateToDiscovery,
   onViewRecommendations,
   onRequireAuth,
+  seed = null,
 }) {
   const [messages, setMessages] = useState(chatHistory.length > 0 ? chatHistory : buildWelcome(name));
   const [input, setInput] = useState('');
@@ -79,6 +80,10 @@ export default function AskAynaModal({
   const [sendError, setSendError] = useState('');
   const [session, setSession] = useState(undefined); // undefined = still checking
   const [hasOpened, setHasOpened] = useState(open);
+  // What she was looking at when she asked (e.g. her dashboard week), sent
+  // along with this conversation's questions.
+  const [screenContext, setScreenContext] = useState('');
+  const seedDone = useRef(null);
   const bottomRef = useRef(null);
 
   useEffect(() => {
@@ -103,17 +108,24 @@ export default function AskAynaModal({
     if (open) setHasOpened(true);
   }, [open]);
 
+  // A suggested question (from the dashboard): ask it once the sign-in check
+  // is done. Signed out, it waits in the box so nothing is lost.
+  useEffect(() => {
+    if (!open || !seed || seedDone.current === seed.id || session === undefined || sending) return;
+    seedDone.current = seed.id;
+    setScreenContext(seed.context || '');
+    if (session?.access_token) send(seed.question, seed.context || '');
+    else setInput(seed.question);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, seed, session]);
+
   useEffect(() => {
     if (open) bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     // Reopening preserves the existing scroll position.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
-  if (!enabled || (!open && !hasOpened)) return null;
-
-  const handleSend = async (e) => {
-    e.preventDefault();
-    const msg = input.trim();
+  const send = async (msg, context = screenContext) => {
     if (!msg || sending) return;
     if (!session?.access_token) { onRequireAuth?.('Ask ayna'); return; }
     setInput('');
@@ -133,6 +145,7 @@ export default function AskAynaModal({
           message: msg,
           profileSummary: summarizeProfile(profile || {}),
           chatHistory: messages.slice(-6),
+          ...(context ? { screenContext: context } : {}),
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -171,6 +184,13 @@ export default function AskAynaModal({
       setSending(false);
     }
   };
+
+  const handleSend = (e) => {
+    e.preventDefault();
+    send(input.trim());
+  };
+
+  if (!enabled || (!open && !hasOpened)) return null;
 
   return (
     <div

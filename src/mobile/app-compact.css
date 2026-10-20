@@ -1,0 +1,246 @@
+/* Compact pass (founder feedback: "way too big"): one product card, snap-row shelves,
+   a one-row quiz nudge, and a tighter, more useful dashboard. Loaded last; the
+   repeated root matches the specificity of the older override layers. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile {
+  --cx-ink: #3e2723;
+  --cx-soft: rgba(62, 39, 35, .66);
+  --cx-line: rgba(62, 39, 35, .16);
+  --cx-card: rgba(255, 255, 255, .34);
+  --cx-ui: 'DM Sans', system-ui, sans-serif;
+  --cx-serif: 'DM Serif Display', Georgia, serif;
+
+  &[data-theme='dark'] {
+    --cx-ink: #ffedac;
+    --cx-soft: rgba(255, 237, 172, .72);
+    --cx-line: rgba(255, 237, 172, .22);
+    --cx-card: rgba(255, 237, 172, .06);
+  }
+
+  /* ---------- Compact product card (Shop, Ecosystem, search, Saved) ---------- */
+  .ay-pc {
+    position: relative; display: flex; flex-direction: column; box-sizing: border-box;
+    width: 100%; min-width: 0; height: 100%; margin: 0; padding: 6px;
+    border: 1.5px solid var(--cx-ink); border-radius: 20px; background: var(--cx-card);
+    color: var(--cx-ink); box-shadow: none; transition: transform .12s var(--ay-ease, ease);
+  }
+  .ay-pc:active { transform: scale(.98); }
+  .ay-pc-main {
+    display: flex; flex-direction: column; flex: 1; width: 100%; min-width: 0; margin: 0; padding: 0;
+    border: 0; background: none; color: inherit; text-align: left; cursor: pointer; font: inherit;
+    box-shadow: none; border-radius: 14px; min-height: 0;
+  }
+  .ay-pc-main:focus-visible { outline: 3px solid #769ebe; outline-offset: 2px; }
+  .ay-pc-photo {
+    position: relative; display: block; width: 100%; aspect-ratio: 1 / 1; overflow: hidden;
+    border-radius: 14px; background: #ffffff;
+  }
+  .ay-pc-photo img { position: absolute; inset: 8%; width: 84% !important; height: 84% !important; object-fit: contain; mix-blend-mode: multiply; }
+  .ay-pc-partner {
+    position: absolute; left: 6px; bottom: 6px; padding: 1px 7px; border-radius: 99px;
+    background: rgba(255, 237, 172, .9); color: #3e2723; font: 500 11.5px/16px var(--cx-ui);
+  }
+  .ay-pc-copy { display: grid; gap: 2px; padding: 8px 6px 4px; min-width: 0; }
+  .ay-pc-brand {
+    display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+    font: 500 calc(13px * var(--ayna-text-scale, 1))/1.3 var(--cx-ui); color: var(--cx-soft);
+    letter-spacing: 0; text-transform: none;
+  }
+  .ay-pc-name {
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    height: 2.6em; font: 600 calc(15px * var(--ayna-text-scale, 1))/1.3 var(--cx-ui); color: var(--cx-ink);
+    letter-spacing: 0; margin: 0;
+  }
+  .ay-pc-price { display: block; margin-top: 2px; }
+  .ay-pc-price b {
+    display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+    font: 600 calc(13px * var(--ayna-text-scale, 1))/1.3 var(--cx-ui); color: var(--cx-ink);
+  }
+  .ay-pc-price b.is-muted { font-weight: 500; color: var(--cx-soft); }
+  .ay-pc-save {
+    position: absolute; top: 10px; right: 10px; z-index: 2; display: grid; place-items: center;
+    width: 32px; height: 32px; min-width: 32px; min-height: 32px; padding: 0; margin: 0;
+    border: 0; border-radius: 99px; background: rgba(255, 255, 255, .86); color: #3e2723; box-shadow: none;
+  }
+  /* 32px visual, 44px tap area */
+  .ay-pc-save::before { content: ''; position: absolute; inset: -6px; }
+  .ay-pc-save svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+  .ay-pc-save.is-on svg { fill: #f7badd; stroke: #3e2723; }
+  .ay-pc-match { position: absolute !important; top: 10px; left: 10px; z-index: 2; }
+
+  /* Grids that hold the compact card: equal heights per row. */
+  .ayna-editorial-product-grid:not(.is-list-layout) {
+    display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important; align-items: stretch !important;
+  }
+  .ayna-editorial-product-grid:not(.is-list-layout) > * { min-width: 0; height: auto; }
+  /* The old card's offset shadow needed extra room on the right; the new one doesn't. */
+  .ayna-fresh-browse-screen .ayna-editorial-product-grid:not(.is-list-layout) { padding-left: 20px !important; padding-right: 20px !important; }
+
+  /* ---------- Horizontal snap row (Ecosystem shelves, For this phase) ---------- */
+  .ay-shelf2-row {
+    display: flex; gap: 12px; align-items: stretch;
+    margin: 0 -20px; padding: 2px 20px 4px; overflow-x: auto; overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory; scroll-padding-inline: 20px; scrollbar-width: none;
+  }
+  .ay-shelf2-row::-webkit-scrollbar { display: none; }
+  .ay-shelf2-row > * { flex: 0 0 140px; scroll-snap-align: start; min-width: 0; }
+  .ay-shelf2-row > .ay-shelf2-slot { flex-basis: 96px; }
+  .ay-shelf2-pick { display: grid; grid-template-rows: 1fr auto; gap: 4px; }
+  .ay-shelf2-pick > button {
+    min-height: 44px; margin: 0; padding: 0 4px; border: 0; background: none; box-shadow: none;
+    color: var(--cx-ink); font: 600 calc(13px * var(--ayna-text-scale, 1))/1.2 var(--cx-ui); text-align: left;
+    text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px;
+  }
+  .ay-shelf2-slot {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    margin: 0; padding: 8px; box-sizing: border-box;
+    border: 1.5px dashed var(--cx-soft); border-radius: 20px; background: none; box-shadow: none;
+    color: var(--cx-soft); font: 500 calc(13px * var(--ayna-text-scale, 1))/1.3 var(--cx-ui);
+  }
+  .ay-shelf2-slot > span {
+    display: grid; place-items: center; width: 32px; height: 32px; border-radius: 99px;
+    border: 1.5px solid var(--cx-ink); color: var(--cx-ink); font: 400 20px/1 var(--cx-ui);
+  }
+
+  /* ---------- Ecosystem shelves ---------- */
+  .ay-shelf2 { margin: 0 0 24px; padding: 0 20px; background: none; border: 0; box-shadow: none; }
+  .ay-shelf2-head { display: flex; align-items: center; gap: 8px; min-height: 44px; margin: 0 0 4px; }
+  .ay-shelf2-dot { flex: none; width: 10px; height: 10px; border-radius: 99px; background: var(--area-tone, #f7badd); box-shadow: inset 0 0 0 1.5px var(--cx-ink); }
+  .ay-shelf2-head h2 {
+    flex: 0 1 auto; min-width: 0; margin: 0; padding: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+    font: 600 calc(17px * var(--ayna-text-scale, 1))/1.25 var(--cx-ui) !important; color: var(--cx-ink) !important;
+    letter-spacing: 0 !important; background: none !important; border: 0 !important; box-shadow: none !important;
+  }
+  .ay-shelf2-count { flex: none; font: 500 calc(13px * var(--ayna-text-scale, 1))/1 var(--cx-ui); color: var(--cx-soft); }
+  .ay-shelf2-add {
+    flex: none; margin: 0 0 0 auto; min-height: 44px; padding: 0 2px; border: 0; background: none; box-shadow: none;
+    color: var(--cx-ink); font: 600 calc(15px * var(--ayna-text-scale, 1))/1 var(--cx-ui); white-space: nowrap;
+  }
+  .ay-shelf2-note { margin: 0 0 8px; font: 500 calc(13px * var(--ayna-text-scale, 1))/1.35 var(--cx-ui); color: var(--cx-soft); }
+  .ay-shelf2-empty { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border: 1.5px dashed var(--cx-line); border-radius: 20px; }
+  .ay-shelf2-empty p { margin: 0; font: 400 calc(15px * var(--ayna-text-scale, 1))/1.4 var(--cx-ui); color: var(--cx-soft); }
+  .ay-shelf2-empty button { flex: none; min-height: 44px; border: 0; background: none; color: var(--cx-ink); font: 600 calc(15px * var(--ayna-text-scale, 1))/1 var(--cx-ui); }
+
+  /* ---------- Optional quiz nudge: one compact row ---------- */
+  .ay-nudge {
+    position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 8px;
+    margin: 24px 0 0; padding: 12px 8px 12px 16px; box-sizing: border-box; max-height: none;
+    border: 1px solid rgba(255, 237, 172, .22); border-radius: 22px; background: rgba(255, 237, 172, .08);
+    color: #ffedac; box-shadow: none;
+  }
+  .ay-nudge-text { min-width: 0; }
+  .ay-nudge h2 {
+    margin: 0; text-wrap: balance;
+    font: 600 calc(17px * var(--ayna-text-scale, 1))/1.3 var(--cx-ui) !important; color: #ffedac !important; letter-spacing: 0 !important;
+  }
+  .ay-nudge p { margin: 2px 0 0; font: 400 calc(13px * var(--ayna-text-scale, 1))/1.35 var(--cx-ui); color: rgba(255, 237, 172, .74); }
+  .ay-nudge-go {
+    min-height: 44px; margin: 0; padding: 0 18px; border: 0; border-radius: 99px; background: #f7badd; color: #3e2723;
+    font: 600 calc(15px * var(--ayna-text-scale, 1))/1 var(--cx-ui); box-shadow: none; white-space: nowrap;
+  }
+  .ay-nudge-more { display: grid; place-items: center; width: 36px; min-width: 36px; height: 44px; margin: 0; padding: 0; border: 0; background: none; color: #ffedac; box-shadow: none; }
+  .ay-nudge-more svg { width: 20px; height: 20px; fill: currentColor; }
+  .ay-nudge-menu {
+    position: absolute; right: 8px; top: calc(100% + 6px); z-index: 5; padding: 4px; border-radius: 16px;
+    background: #ffedac; box-shadow: 0 0 0 1.5px #3e2723;
+  }
+  .ay-nudge-menu button { min-height: 44px; padding: 0 14px; border: 0; background: none; color: #3e2723; font: 500 calc(15px * var(--ayna-text-scale, 1))/1 var(--cx-ui); white-space: nowrap; }
+
+  /* ---------- Dashboard: Ask ayna about your week ---------- */
+  .ay-askweek {
+    display: grid; gap: 8px; margin: 0; padding: 16px; box-sizing: border-box;
+    border: 1.5px solid var(--cx-ink); border-radius: 22px; background: var(--cx-card); color: var(--cx-ink);
+  }
+  .ay-askweek h3 { display: flex; align-items: center; gap: 8px; margin: 0; font: 600 calc(17px * var(--ayna-text-scale, 1))/1.3 var(--cx-ui) !important; color: var(--cx-ink) !important; letter-spacing: 0 !important; }
+  .ay-askweek h3 svg { flex: none; width: 22px; height: 22px; padding: 3px; box-sizing: border-box; border-radius: 99px; background: #f7badd; fill: #3e2723; }
+  .ay-askweek > p { margin: 0; font: 400 calc(15px * var(--ayna-text-scale, 1))/1.45 var(--cx-ui); color: var(--cx-ink); }
+  .ay-askweek ul { display: grid; margin: 0; padding: 0; list-style: none; }
+  .ay-askweek li { border-top: 1px solid var(--cx-line); }
+  .ay-askweek li button {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 44px;
+    margin: 0; padding: 8px 0; border: 0; background: none; color: var(--cx-ink); text-align: left; box-shadow: none;
+    font: 500 calc(15px * var(--ayna-text-scale, 1))/1.35 var(--cx-ui);
+  }
+  .ay-askweek li button svg { flex: none; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .ay-askweek li button:active { opacity: .6; }
+
+  /* ---------- Dashboard: For this phase ---------- */
+  .ay-phasepicks { display: grid; gap: 8px; margin: 0; }
+  .ay-phasepicks h3 { margin: 0; font: 600 calc(17px * var(--ayna-text-scale, 1))/1.3 var(--cx-ui) !important; color: var(--cx-ink) !important; letter-spacing: 0 !important; }
+  .ay-phasepicks-group { display: grid; gap: 8px; }
+  .ay-phasepicks-group > p { margin: 0; font: 500 calc(13px * var(--ayna-text-scale, 1))/1.35 var(--cx-ui); color: var(--cx-soft); }
+  @media (max-width: 360px) {
+    .ay-nudge { grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto; row-gap: 0; padding-right: 12px; }
+    .ay-nudge-text { grid-row: 1 / 3; grid-column: 1; }
+    .ay-nudge-more { grid-row: 1; grid-column: 2; justify-self: end; height: 36px; margin: -6px -4px 0 0; }
+    .ay-nudge-go { grid-row: 2; grid-column: 2; align-self: end; padding: 0 16px; }
+    .ay-nudge-go:only-of-type { grid-row: 1 / 3; align-self: center; }
+  }
+
+  /* Sticky chip row on the dashboard: one solid block, no strip for content to show through. */
+  .ay-hc-scroll:has(> .ay-hd) { padding-top: 0 !important; }
+  .ay-set-page .ay-set-head { background: var(--ayna-bg) !important; }
+  .ay-hd-areas { border-bottom: 1px solid var(--cx-line) !important; margin-bottom: 0 !important; }
+  .ay-eco-routine .ay-hd-areas { padding-top: max(4px, env(safe-area-inset-top)) !important; }
+
+  /* ---------- Dashboard: tighter scale ---------- */
+  .ay-hd { gap: 16px !important; }
+  .ay-hd-areas { padding-top: 4px !important; padding-bottom: 8px !important; }
+  .ay-hd-areas button { min-height: 44px; padding: 0 14px !important; border-width: 1.5px !important; }
+  .ay-bn { gap: 12px !important; margin: 0 !important; }
+  .ay-bn-hello { padding: 0 !important; }
+  .ay-bn-cycle, .ay-bn-card > button { padding: 16px !important; border-radius: 22px !important; }
+  .ay-bn-shape { width: 72px !important; height: 72px !important; opacity: .12 !important; }
+  .ay-bn-cycle { grid-template-columns: minmax(0, 1fr) 88px !important; min-height: 0 !important; gap: 12px !important; }
+  .ay-bn-ring { width: 88px !important; height: 88px !important; }
+  .ay-bn-big { margin-top: 0 !important; font: 600 calc(28px * var(--ayna-text-scale, 1))/1.15 var(--cx-ui) !important; letter-spacing: -.01em !important; }
+  .ay-bn-label { font: 500 calc(13px * var(--ayna-text-scale, 1))/1.3 var(--cx-ui) !important; margin-bottom: 4px; }
+  .ay-bn-phase { margin-top: 2px !important; font: 500 calc(15px * var(--ayna-text-scale, 1))/1.3 var(--cx-ui) !important; }
+  .ay-bn-per { margin-top: 2px !important; font: 500 calc(13px * var(--ayna-text-scale, 1))/1.3 var(--cx-ui) !important; opacity: .78; }
+  .ay-bn-vs { margin-top: 4px !important; font: 500 calc(13px * var(--ayna-text-scale, 1))/1.35 var(--cx-ui) !important; }
+  .ay-bn-stats { gap: 4px 12px !important; margin-top: 12px !important; }
+  .ay-bn-stats > span { padding-top: 4px !important; border-top-width: 1.5px !important; }
+  .ay-bn-stats b { font: 600 calc(13px * var(--ayna-text-scale, 1))/1.25 var(--cx-ui) !important; }
+  .ay-bn-stats small { font: 500 calc(11.5px * var(--ayna-text-scale, 1))/1.25 var(--cx-ui) !important; }
+  .ay-bn-card:not(.is-wide) .ay-bn-stats b { font-size: calc(11.5px * var(--ayna-text-scale, 1)) !important; font-weight: 600 !important; }
+  .ay-bn-card > button { min-height: 0 !important; }
+  .ay-bn-card .ay-bn-label { min-height: 0 !important; }
+  .ay-bn-bars, .ay-bn-line { height: 36px !important; padding-top: 12px !important; }
+  .ay-bn-card.is-wide .ay-bn-line { height: 44px !important; }
+  .ay-bn-phases { padding: 16px !important; border-width: 1.5px !important; }
+  .ay-bn-phasebar { height: 12px !important; margin: 4px 0 12px !important; }
+  .ay-bn-today { top: -6px !important; bottom: -6px !important; border-left-style: solid !important; }
+  .ay-bn-legend { margin: 0 0 8px !important; }
+  .ay-bn-phases p { font: 400 calc(13px * var(--ayna-text-scale, 1))/1.45 var(--cx-ui) !important; color: var(--cx-soft) !important; }
+  .ay-bn-timeline { padding: 16px !important; border-radius: 22px !important; }
+  .ay-bn-timeline h3 { margin: 0 0 8px !important; font: 600 calc(17px * var(--ayna-text-scale, 1))/1.3 var(--cx-ui) !important; }
+  .ay-bn-timeline ol { gap: 8px !important; }
+  .ay-bn-timeline li { grid-template-columns: 40px 1fr !important; gap: 8px !important; }
+  .ay-bn-tl-date b { font: 600 calc(17px * var(--ayna-text-scale, 1))/1.2 var(--cx-ui) !important; }
+  .ay-bn-tl-card { padding: 10px 12px !important; border-radius: 16px !important; gap: 2px !important; }
+  .ay-bn-tl-card b { font-weight: 600 !important; }
+  .ay-hd-lines li { padding: 12px 16px 16px !important; grid-template-columns: 36px 1fr !important; }
+  .ay-hd-lines li::before { font: 600 calc(17px * var(--ayna-text-scale, 1))/1.3 var(--cx-ui) !important; }
+  .ay-hd-lines li b { font-size: calc(15px * var(--ayna-text-scale, 1)) !important; }
+  .ay-hd-lines li span { font-size: calc(13px * var(--ayna-text-scale, 1)) !important; }
+
+  /* ---------- You: This week ---------- */
+  .ay-you-week { gap: 12px !important; padding: 16px !important; border-radius: 22px !important; }
+  .ay-you-week-nums { gap: 12px !important; }
+  .ay-you-week-nums b { font: 600 calc(28px * var(--ayna-text-scale, 1))/1.15 var(--cx-ui) !important; letter-spacing: -.01em !important; }
+  .ay-you-week-nums small { font: 500 calc(13px * var(--ayna-text-scale, 1))/1.3 var(--cx-ui) !important; }
+  .ay-you-week-foot { min-height: 44px; padding-top: 4px !important; font: 600 calc(15px * var(--ayna-text-scale, 1))/1.3 var(--cx-ui) !important; }
+  .ay-you-bars { height: 64px !important; gap: 8px !important; }
+  .ay-you-bar { gap: 6px !important; }
+  .ay-you-bar > i { max-width: 16px !important; border-radius: 6px !important; }
+
+  /* You: Recently, the same compact card */
+  .ay-you-recent li { width: 140px !important; }
+  .ay-you-recent button {
+    height: 100%; align-content: start; gap: 2px !important; padding: 6px 6px 10px !important; box-sizing: border-box;
+    border: 1.5px solid var(--cx-ink) !important; border-radius: 20px !important; background: var(--cx-card) !important;
+  }
+  .ay-you-thumb { width: 100% !important; height: auto !important; aspect-ratio: 1 / 1; border-radius: 14px !important; margin-bottom: 6px; }
+  .ay-you-recent-title { padding: 0 6px; font: 600 calc(15px * var(--ayna-text-scale, 1))/1.3 var(--cx-ui) !important; height: 2.6em; color: var(--cx-ink) !important; }
+  .ay-you-recent small { padding: 0 6px; font: 500 calc(13px * var(--ayna-text-scale, 1))/1.3 var(--cx-ui) !important; color: var(--cx-soft) !important; opacity: 1 !important; }
+}
