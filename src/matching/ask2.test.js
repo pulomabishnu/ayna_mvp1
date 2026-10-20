@@ -434,7 +434,10 @@ describe('B. signals, recency, contradictions, behavior', () => {
     const pill = scoreProductForNeed(P('p-magnesium-glycinate'), up, 'pain.menstrual_cramp');
     const heat = scoreProductForNeed(P('p-thermacare'), up, 'pain.menstrual_cramp');
     expect(pill.dimensions.values.format).toBe(1);
-    expect(heat.dimensions.values.format).toBeLessThan(1);
+    // A pill preference does not apply to a heat wrap (a different kind of
+    // product, no pill version of it); since Oct 19 it only ranks pills
+    // against other swallowed formats, so it is left out, not scored 0.4.
+    expect(heat.dimensions.values.format).toBeNull();
     expect(heat.score).toBeGreaterThan(pill.score);
   });
 });

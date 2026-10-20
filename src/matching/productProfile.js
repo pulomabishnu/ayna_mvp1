@@ -69,6 +69,15 @@ export const BROAD_MARKETING = /hormone balance|hormonal balance|balance (your )
 
 export const PERIOD_CATEGORIES = new Set(['pad', 'tampon', 'cup', 'disc', 'period-underwear']);
 
+// Relevance rules whose claim only holds for someone who menstruates: period
+// products, cycle trackers and ovulation/fertility tests. CYCLE_TRACKING_RULES
+// are the ones that need an actual cycle to track (not just bleeding).
+export const CYCLE_DEPENDENT_RULES = new Set([
+  'period_product', 'period_high_capacity', 'period_regular_capacity_heavy', 'period_light_capacity',
+  'period_underwear_light', 'period_other_light', 'cup_steamer', 'cramp_period_product', 'cycle_tracker', 'fertility_testing',
+]);
+export const CYCLE_TRACKING_RULES = new Set(['cycle_tracker', 'fertility_testing']);
+
 // Copy that denies a property ("hormone-free") or uses a keyword in an
 // unrelated sense. Stripped before relevance matching (same idea as
 // NEGATED_CONCERN_PHRASES in src/data/products.js).

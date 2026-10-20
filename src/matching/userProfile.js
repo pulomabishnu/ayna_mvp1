@@ -398,7 +398,22 @@ export function buildUserProfile(intakeInput, options = {}) {
 
   let flow = Object.prototype.hasOwnProperty.call(FLOW_BY_OPTION, intake.periodFlow) ? FLOW_BY_OPTION[intake.periodFlow] : null;
   if (!flow && intake.flowLevel) flow = LEGACY_FLOW[String(intake.flowLevel).toLowerCase()] || null;
-  const pain = PAIN_INTENSITY[intake.periodPain] ?? null;
+  // Whether she currently menstruates, from explicit answers only (never age):
+  //   'none'   menopause, post-menopause, pregnant, or "No (Menopause)": no cycle
+  //   'paused' no periods right now (stage or flow answer), cause not stated,
+  //            or a last period more than 12 months ago
+  //   null     menstruates, or unknown. Perimenopause alone never implies
+  //            irregular or absent periods, and any period stage or a real
+  //            flow answer keeps this null.
+  const legacyCycle = String(intake.menstrualCycle || '').toLowerCase();
+  const reportsPeriods = lifeStages.some((st) => st === 'regular_periods' || st === 'irregular_periods')
+    || (flow && flow !== 'no_periods') || ['yes', 'irregular', 'irregular_perimenopause'].includes(legacyCycle);
+  let menstruation = null;
+  if (!reportsPeriods) {
+    if (lifeStages.some((st) => ['menopause', 'postmenopause', 'pregnant'].includes(st)) || legacyCycle === 'no_menopause') menstruation = 'none';
+    else if (lifeStages.includes('no_periods') || flow === 'no_periods' || legacyCycle === 'no' || intake.perimenopauseLastPeriod === 'More than 12 months ago') menstruation = 'paused';
+  }
+  const pain =PAIN_INTENSITY[intake.periodPain] ?? null;
   const utiFrequency = UTI_FREQUENCY_BY_OPTION[intake.utiFrequency] ?? null;
   let postpartumTiming = POSTPARTUM_TIMING_BY_OPTION[intake.postpartumTiming] ?? null;
   // Postpartum timing is an explicit answer about elapsed time; it advances
@@ -778,6 +793,7 @@ export function buildUserProfile(intakeInput, options = {}) {
       compatibility: { combos, conflictingStages: [...conflictingStages], ageStageFlags },
       confidenceFlags,
       flow,
+      menstruation,
       painIntensity: pain ? pain.value : null,
       painVaries: Boolean(pain?.lowConfidence),
       utiFrequency,

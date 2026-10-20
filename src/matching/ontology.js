@@ -338,6 +338,15 @@ export function needKind(needId) { return NEED_POLICY[canonicalNeedId(needId)]?.
 export const URINARY_UTI_NEEDS = new Set(['urinary.burning', 'urinary.frequency', 'urinary.urgency', 'urinary.recurrent_uti']);
 // Needs whose products are menstrual products, where flow characteristics apply.
 export const MENSTRUAL_PRODUCT_NEEDS = new Set(['period.product_support', 'period.heavy', 'period.light', 'cycle.spotting']);
+
+// Needs whose meaning presumes a menstrual cycle (periods, the cycle itself,
+// ovulation and conception). Selecting one is how someone who does not
+// currently menstruate still asks for period or cycle products on purpose.
+const CYCLE_PREMISED_EXTRA = new Set(['pain.menstrual_cramp', 'pain.cycle_headache', 'mood.pmdd', 'mood.cycle_related', 'bloating.cycle_related']);
+export function isCyclePremisedNeed(needId) {
+  const id = String(needId || '');
+  return id.startsWith('period.') || id.startsWith('cycle.') || id.startsWith('fertility.') || CYCLE_PREMISED_EXTRA.has(id);
+}
 export const POSTPARTUM_NEEDS = new Set(['postpartum.recovery', 'postpartum.lactation', 'postpartum.body_skin', 'pain.postpartum']);
 
 // ─── Conditions (clinician diagnosed) ──────────────────────────────────────
