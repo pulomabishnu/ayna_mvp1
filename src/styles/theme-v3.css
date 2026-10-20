@@ -2708,11 +2708,21 @@ html body .app-container .ayna-ask-panel { top: max(88px, env(safe-area-inset-to
 .app-container .ay-tabbar { display: none; }
 @media (max-width: 767px) {
   .app-container .ay-tabbar { position: fixed; z-index: 60; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(5, 1fr); align-items: end; padding: 6px 6px calc(6px + env(safe-area-inset-bottom)); border-top: 2px solid var(--ay-ink); background: #ffedac; }
-  .app-container .ay-tabbar > :is(a, button) { display: grid; justify-items: center; gap: 3px; min-height: 52px; padding: 6px 2px 4px; border: 0; background: none; color: var(--ay-ink); font: 500 var(--ay-fs-caption)/1.1 var(--ay-sans); text-decoration: none; cursor: pointer; }
-  .app-container .ay-tabbar svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-  .app-container .ay-tabbar > .is-on { font-weight: 600; }
-  .app-container .ay-tabbar > .is-on svg { fill: #f7badd; }
-  .app-container .ay-tabbar__orb { display: grid; place-items: center; width: 48px; height: 48px; margin-top: -24px; border: 2px solid var(--ay-ink); border-radius: 50%; background: #f7badd; font: 400 var(--ay-fs-section)/1.1 var(--ay-serif); box-shadow: 0 3px 0 var(--ay-ink); letter-spacing: -0.01em; }
+  /* Phone tab bar: six equal columns, every item built the same way (a 40px icon slot, then
+     the label). Icons are 22px and share one centre line; labels share one baseline and one
+     weight. Selected = espresso pill behind the icon (no weight change, so nothing shifts).
+     Ask's pink circle is the same 40px as the slot, not bigger. */
+  html body .app-container .ay-tabbar { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; align-items: stretch !important; padding: 6px 8px calc(6px + env(safe-area-inset-bottom)) !important; }
+  html body .app-container .ay-tabbar > :is(a, button) { display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: flex-start !important; gap: 4px !important; min-width: 0 !important; min-height: 60px !important; margin: 0 !important; padding: 2px 0 4px !important; border: 0 !important; background: none !important; color: var(--ay-ink) !important; font: 500 11.5px/14px var(--ay-sans) !important; letter-spacing: 0 !important; text-decoration: none !important; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  html body .app-container .ay-tabbar .ay-tabbar__icon { display: grid !important; place-items: center !important; flex: none !important; width: 52px !important; height: 40px !important; margin: 0 !important; padding: 0 !important; border: 0 !important; border-radius: 99px !important; background: none !important; box-shadow: none !important; transition: background-color .15s ease; }
+  html body .app-container .ay-tabbar .ay-tabbar__icon svg { display: block !important; width: 22px !important; height: 22px !important; margin: 0 !important; fill: none !important; stroke: currentColor !important; stroke-width: 1.8 !important; stroke-linecap: round; stroke-linejoin: round; transform: none !important; }
+  html body .app-container .ay-tabbar > .is-on .ay-tabbar__icon { height: 32px !important; margin-block: 4px !important; background: var(--ay-ink) !important; color: #ffedac !important; }
+  html body .app-container .ay-tabbar .ay-tabbar__orb { width: 40px !important; height: 40px !important; border: 2px solid var(--ay-ink) !important; border-radius: 50% !important; background: #f7badd !important; color: var(--ay-ink) !important; }
+  html body .app-container .ay-tabbar .ay-tabbar__orb svg { fill: currentColor !important; stroke: none !important; }
+  html body .app-container .ay-tabbar .ay-tabbar__label { display: block !important; flex: none !important; max-width: none !important; overflow: visible !important; white-space: nowrap !important; font: inherit !important; }
+  html body .app-container .ay-tabbar > :is(a, button):active .ay-tabbar__icon:not(.ay-tabbar__orb) { background: rgba(62, 39, 35, .1) !important; }
+  html body .app-container .ay-tabbar > .is-on:active .ay-tabbar__icon { background: var(--ay-ink) !important; }
+  @media (max-width: 359px) { html body .app-container .ay-tabbar { padding-inline: 0 !important; } html body .app-container .ay-tabbar > :is(a, button) { letter-spacing: -0.02em !important; } html body .app-container .ay-tabbar .ay-tabbar__icon:not(.ay-tabbar__orb) { width: 46px !important; } }
   html body .app-container :is(.ayna-ask-dock, .ayna-ask-tab) { display: none !important; }
   html body .app-container { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
   html body .app-container .ayna-ask-panel { bottom: calc(76px + env(safe-area-inset-bottom)) !important; }
@@ -3489,16 +3499,10 @@ html body .app-container .site-footer :is(a, button) { display: inline-flex; ali
 @media (max-width: 767px) { html body .app-container .mobile-menu-btn { display: none !important; } }
 /* Phone tab bar: six stops (Shop, Ecosystem, Ask, Library, Community, You), 12px labels; the product Buy bar sits above it instead of covering it. */
 @media (max-width: 767px) {
-  html body .app-container .ay-tabbar.is-six { grid-template-columns: repeat(6, 1fr); padding-inline: 2px; }
-  html body .app-container .ay-tabbar.is-six > :is(a, button) { font-size: var(--ay-fs-caption) !important; letter-spacing: -.01em; min-width: 0; }
-  html body .app-container .ay-tabbar.is-six > :is(a, button) span { overflow: hidden; text-overflow: clip; white-space: nowrap; max-width: 100%; }
-  html body .app-container .ay-tabbar.is-six .ay-tabbar__orb { width: 44px; height: 44px; margin-top: -22px; }
   html body .app-container:has(.ay-tabbar) .pdp-sticky { bottom: calc(66px + env(safe-area-inset-bottom)) !important; z-index: 59 !important; }
   html body .app-container:has(.ay-tabbar):has(.pdp-sticky) main { padding-bottom: 160px !important; }
 }
 @media (max-width: 767px) {
-  html body .app-container .ay-tabbar.is-six > :is(a, button) { padding-inline: 0 !important; font-weight: 500 !important; letter-spacing: -.03em !important; }
-  html body .app-container .ay-tabbar.is-six > .is-on { font-weight: 600 !important; }
   html body .app-container .pdp-buybox .pdp-actions__primary, html body .app-container .pdp-buybox :is(.pdp-actions__row, .pdp-actions__btns) { flex-direction: column !important; align-items: stretch !important; }
   html body .app-container .pdp-buybox .pdp-btn { width: 100% !important; justify-content: center; white-space: normal; }
 }
@@ -5703,17 +5707,6 @@ html body .app-container.app-container.app-container.app-container.app-container
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ev2__grade.ay-ev2__grade:not(.zz) { color: #3e2723 !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-h2-price__unit.pdp-h2-price__unit:not(.zz) { color: #ffedac !important; }
 
-/* Phone tab bar (Oct 19): every tab is the same shape (a 40px icon row, then
-   the label), so all six labels share one baseline. Ask keeps its pink orb,
-   now inside the bar instead of poking out over the line. */
-@media (max-width: 720px) {
-  html body .app-container .ay-tabbar { align-items: stretch !important; }
-  html body .app-container .ay-tabbar > :is(a, button) { grid-template-rows: 40px auto !important; align-content: end !important; justify-items: center !important; gap: 2px !important; min-height: 60px !important; padding: 4px 0 4px !important; }
-  html body .app-container .ay-tabbar > :is(a, button) > svg { align-self: center !important; }
-  html body .app-container .ay-tabbar .ay-tabbar__orb,
-  html body .app-container .ay-tabbar.is-six .ay-tabbar__orb { align-self: center !important; width: 38px !important; height: 38px !important; margin: 0 !important; border: 2px solid var(--ay-ink) !important; box-shadow: none !important; font-size: var(--ay-fs-body) !important; font-family: var(--ay-sans) !important; }
-}
-
 /* Typography pass: body copy sits at line-height 1.55, and bold text is
    DM Sans 600 (the heaviest weight loaded), never the browser's 700. */
 .app-container { line-height: 1.55; }
@@ -5728,5 +5721,3 @@ html body .app-container:not([data-theme='dark']) .ayna-browse-card .ayna-discov
   html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-cover { padding: 10px 3px !important; }
   html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-cover strong { letter-spacing: -0.01em !important; overflow-wrap: normal; }
 }
-/* Phone tab bar: a long label ("Community" in 600 when selected) gets its full width instead of spilling. */
-html body .app-container .ay-tabbar.is-six { grid-template-columns: repeat(6, minmax(max-content, 1fr)) !important; }
