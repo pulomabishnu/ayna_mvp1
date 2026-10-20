@@ -664,7 +664,7 @@ export default function ProductEvidence({ product: baseProduct, safetyLead = '',
   const detailsLine = allSources.length ? `What's in it, size and price, and all ${plural(allSources.length, 'source')} we checked.` : 'What it is made of, size and price.';
   // The tabs, in the order people look for them. A tab shows only when it has something real in it.
   const tabs = [
-    byId.clinical && { id: 'clinical', label: 'Clinical opinion', lead: clinicalLine, body: byId.clinical.body },
+    byId.clinical && { id: 'clinical', label: 'Clinical opinion', lead: clinicalLine, leadLabel: d.independent ? null : `What ${d.brand || 'the brand'} says`, body: byId.clinical.body },
     byId.science && { id: 'literature', label: 'Scientific literature', lead: researchLine, body: byId.science.body },
     hasReviews && { id: 'reviews', label: 'Reviews', count: aynaRating != null && ratingCount > 0 ? ratingCount : 0, lead: reviewLine, body: byId.reviews.body },
     byId.safety && { id: 'safety', label: 'Safety', lead: safetyLine, body: byId.safety.body },

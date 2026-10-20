@@ -76,7 +76,8 @@ export default function PdpTabs({ tabs, active, onChange, label, labelId }) {
           hidden={t.id !== active}
           className={`ay-pt__panel is-${t.id}`}
         >
-          {t.lead && <p className="ay-pt__lead">{t.lead}</p>}
+          {t.lead && t.leadLabel && <p className="ay-pt__lead-label">{t.leadLabel}</p>}
+          {t.lead && <p className={t.leadLabel ? 'ay-pt__lead is-quoted' : 'ay-pt__lead'}>{t.lead}</p>}
           {t.body}
         </div>
       ))}

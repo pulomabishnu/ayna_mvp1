@@ -554,6 +554,9 @@ html body .app-container .ay-pt__panel { display: grid; grid-template-columns: m
 html body .app-container .ay-pt__panel[hidden] { display: none; }
 html body .app-container .ay-pt__panel:focus-visible { outline: 3px solid #769ebe; outline-offset: 4px; border-radius: 8px; }
 html body .app-container.app-container.app-container .ay-pt__lead { margin: 0; max-width: 62ch; color: #3e2723; font: 600 var(--ay-fs-card)/1.45 var(--ay-sans) !important; letter-spacing: 0; }
+html body .app-container.app-container.app-container .ay-pt__lead-label { margin: 0 0 -8px; color: #3e2723; font: 600 var(--ay-fs-secondary)/1.4 var(--ay-sans) !important; }
+html body .app-container.app-container.app-container .ay-pt__lead.is-quoted { font-weight: 400 !important; }
+html body .app-container.app-container.app-container[data-theme='brand-dark'] .ay-pt__lead-label { color: #ffedac !important; }
 html body .app-container .ay-pt-text:empty, html body .app-container .ay-pt-text:not(:has(p, button)) { display: none; }
 html body .app-container .ay-pt-text { display: grid; gap: 12px; max-width: 70ch; }
 html body .app-container .ay-pt-text :is(p, .ay-ev__body) { margin: 0; font: 400 var(--ay-fs-body)/1.6 var(--ay-sans); }
