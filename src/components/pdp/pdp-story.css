@@ -424,3 +424,98 @@ html body .app-container.app-container.app-container[data-theme='brand-dark'] .a
 html body .app-container.app-container.app-container[data-theme='brand-dark'] .ay-compare__search input::placeholder { color: rgba(62, 39, 35, .72) !important; opacity: 1; }
 /* No photo (it failed to load): the evidence card takes the full width. */
 html body .app-container .ay-ps-spot:has(> .ay-ps-spot__photo[style*='none']) { grid-template-columns: minmax(0, 1fr); }
+
+/* ======================================================================
+   Product page polish (Oct 20): one 32px rhythm, rows that read as one unit,
+   facts on clean lines, one Buy on screen at a time.
+   ====================================================================== */
+/* Hero → At a glance: 32px, and the fit prompt is the last line of the buy column. */
+@media (min-width: 900px) {
+  html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .pdp-page .pdp-head.pdp-head--story { padding-bottom: 0 !important; }
+  html body .app-container.app-container.app-container.app-container .pdp-story { margin-top: 32px !important; }
+}
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .pdp-page--glance .pdp-head__fit { margin-top: 0 !important; padding-top: 0 !important; border-top: 0 !important; gap: 8px; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .pdp-page--glance .pdp-head__fit:has(.ay-story--match) { padding-top: 16px !important; border-top: 1px solid rgba(62, 39, 35, .3) !important; }
+html body .app-container.app-container.app-container.app-container .pdp-head__fit .ay-fitline { justify-content: flex-start; gap: 4px 8px; margin: 0; font: 500 var(--ay-fs-secondary)/1.4 var(--ay-sans); }
+html body .app-container.app-container.app-container.app-container .pdp-head__fit .ay-fitline button { min-height: 44px; padding: 0; border: 0; border-radius: 0; background: none; color: inherit; font: 600 var(--ay-fs-secondary)/1.4 var(--ay-sans); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+html body .app-container.app-container.app-container.app-container .pdp-head__fit .ay-fitline button:hover { text-decoration-thickness: 2px; }
+html body .app-container.app-container.app-container.app-container .pdp-head__fit .ay-fitline button:focus-visible { outline: 3px solid #769ebe; outline-offset: 2px; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-head__fit .ay-fitline button { background: none !important; color: #ffedac !important; }
+
+/* Purchase facts: one per line, no "A · B" strings. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container .pdp-page .pdp-quick { display: grid !important; gap: 2px !important; margin: 0 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container .pdp-page .pdp-quick li::before { display: none !important; content: none !important; }
+html body .app-container .pdp-page .pdp-h2-price .pdp-h2-price__line { display: block; }
+html body .app-container .pdp-options__note { display: block; font-weight: 500; }
+
+/* At a glance: the evidence word on its own line, the condition under it as a label. */
+html body .app-container .ay-ps-ev__word { display: block; }
+html body .app-container .ay-ps-ev__for { display: block; margin-top: -6px; font: 500 var(--ay-fs-body)/1.4 var(--ay-sans); }
+
+/* Fact tiles: label, short value, then the detail on a small line. */
+html body .app-container.app-container .ay-ps-tiles li { grid-template-columns: 24px minmax(0, 1fr); align-items: start; gap: 12px; }
+html body .app-container .ay-ps-tiles__text { display: grid; gap: 2px; min-width: 0; }
+html body .app-container.app-container .ay-ps-tiles small { order: 0; font: 500 var(--ay-fs-caption)/1.3 var(--ay-sans); }
+html body .app-container.app-container .ay-ps-tiles b { font: 600 var(--ay-fs-card)/1.25 var(--ay-sans); }
+html body .app-container .ay-ps-tiles__note { font: 400 var(--ay-fs-secondary)/1.4 var(--ay-sans); }
+@media (max-width: 760px) {
+  /* Phones: the tiles continue the list above (icon, then text), one hairline under each, no half rules. */
+  html body .app-container.app-container.app-container .ay-ps-tiles { grid-template-columns: 1fr; margin-top: -12px; border-top: 0; }
+  html body .app-container.app-container.app-container .ay-ps-tiles li,
+  html body .app-container.app-container.app-container .ay-ps-tiles li + li,
+  html body .app-container.app-container.app-container .ay-ps-tiles li:nth-child(even) { grid-template-columns: 40px minmax(0, 1fr); padding: 14px 0; border-left: 0; border-top: 0; border-bottom: 1px solid rgba(62, 39, 35, .3); }
+  html body .app-container .ay-ps-tiles li > .ay-ico { justify-self: center; margin-top: 2px; }
+}
+
+/* Folded rows on phones: the whole short takeaway, no "...". */
+html body .app-container.app-container .ay-ps-fold__line { display: block; -webkit-line-clamp: unset; overflow: visible; }
+
+/* Evidence rows: no numbers; title and text sit on the content column; one round chevron
+   at the right edge, level with the title, and the whole row is the button. */
+html body .app-container.app-container .ay-ps-band__h button { grid-template-columns: minmax(0, 1fr) 40px; gap: 8px 24px; align-items: start; min-height: 0; padding: 24px 0; }
+html body .app-container.app-container .ay-ps-band__go { justify-content: center; width: 40px; height: 40px; min-height: 0; margin-top: -4px; padding: 0; border-radius: 50%; }
+html body .app-container.app-container .ay-ps-band__body { padding: 0 64px 32px 0; }
+html body .app-container.app-container .ay-ps-band.is-safety { margin: 12px -24px; padding: 0 24px; }
+html body .app-container.app-container .ay-ps-band.is-safety .ay-ps-band__h button { padding: 24px 0; }
+html body .app-container.app-container .ay-ps-band.is-safety .ay-ps-band__body { padding: 0 64px 28px 0; }
+@media (max-width: 700px) {
+  html body .app-container.app-container.app-container .ay-ps-band__h button { grid-template-columns: minmax(0, 1fr) 40px; gap: 6px 16px; padding: 20px 0; }
+  html body .app-container.app-container.app-container .ay-ps-band__go { justify-self: end; margin-top: -6px; }
+  html body .app-container.app-container.app-container .ay-ps-band__body { padding: 0 0 24px; }
+  html body .app-container.app-container.app-container .ay-ps-band.is-safety { margin: 12px -12px; padding: 0 12px; }
+  html body .app-container.app-container.app-container .ay-ps-band.is-safety .ay-ps-band__h button { padding: 20px 0; }
+  html body .app-container.app-container.app-container .ay-ps-band.is-safety .ay-ps-band__body { padding: 0 0 20px; }
+}
+
+/* One Buy on screen: on phones the bottom bar steps aside while the in-page Buy is visible. */
+@media (max-width: 767px) {
+  html body .app-container.app-container.app-container.app-container.app-container .pdp-sticky { transform: translateY(16px); opacity: 0; visibility: hidden; pointer-events: none; transition: transform .18s ease-out, opacity .18s ease-out, visibility 0s linear .18s; }
+  html body .app-container.app-container.app-container.app-container.app-container .pdp-sticky.is-away { transform: none; opacity: 1; visibility: visible; pointer-events: auto; transition: transform .18s ease-out, opacity .18s ease-out, visibility 0s linear 0s; }
+}
+@media (prefers-reduced-motion: reduce) { html body .app-container.app-container.app-container.app-container.app-container.app-container .pdp-sticky { transition: none !important; } }
+@media (max-width: 760px) {
+  /* The folded rows below start with their own hairline: no second rule under the last tile. */
+  html body .app-container.app-container.app-container.app-container .ay-ps-tiles li:last-child { border-bottom: 0; }
+}
+
+/* ---------- Dark: hero text that was espresso on espresso, a quiet Save, and the phone buy bar ---------- */
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-head--story .pdp-head__eyebrow { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-buybox .pdp-variant { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-buybox .pdp-actions__eco:not(.zz) { border: 2px solid #ffedac !important; background: transparent !important; color: #ffedac !important; }
+@media (max-width: 767px) {
+  html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-sticky { background: #3e2723 !important; border-top-color: #ffedac !important; }
+  html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-sticky .pdp-sticky__price { color: #ffedac !important; }
+  html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-sticky a.pdp-btn:not(.zz) { background: #ffedac !important; }
+  html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-sticky .pdp-actions__heart { border-color: #ffedac !important; color: #ffedac !important; background: transparent !important; }
+}
+/* The buy block follows the purchase facts at the column's own gap (its heading is for screen readers only). */
+html body .app-container.app-container.app-container.app-container.app-container.app-container .pdp-head--story .ay-story--buy > h2 { margin: 0 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container .pdp-head--story .ay-story--buy > .pdp-buybox { margin-top: 0 !important; }
+/* What it is: the text starts at the top of its row, beside the drawing. */
+html body .app-container.app-container .ay-ps-about { align-items: start; }
+/* The row's title shares a line with its chevron; the summary under it uses the full width. */
+html body .app-container.app-container.app-container .ay-ps-band__main { display: contents; }
+html body .app-container.app-container.app-container .ay-ps-band__title { grid-column: 1; grid-row: 1; align-self: center; }
+html body .app-container.app-container.app-container .ay-ps-band__go { grid-column: 2; grid-row: 1; align-self: center; margin-top: 0; }
+html body .app-container.app-container.app-container .ay-ps-band__line, html body .app-container.app-container.app-container .ay-ps-band__meta { grid-column: 1 / -1; }
+html body .app-container.app-container.app-container .ay-ps-band__h button { row-gap: 6px; }

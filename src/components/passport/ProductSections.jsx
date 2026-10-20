@@ -537,7 +537,7 @@ export function ProductMatch({ glance, matchPercent, fallback = '', onShowWhy, o
           <span className="ay-match__big is-none">No match</span>
         </button>
         <div className="ay-match__body">
-          <h2 id="ay-match-h">How it compares to <em>your needs.</em></h2>
+          <h2 id="ay-match-h">How it compares to your needs</h2>
           <ul className="ay-match__reasons">{(exclusions.length ? exclusions.slice(0, 3) : ['Not one of the needs you told us about.']).map((r) => <li key={r} className="is-miss"><span className="sr-only">Counts against: </span>{r}</li>)}</ul>
           <div className="ay-match__links"><button type="button" onClick={onShowWhy}>See the breakdown</button><a href="/how-it-works">How we match</a></div>
         </div>
@@ -560,7 +560,7 @@ export function ProductMatch({ glance, matchPercent, fallback = '', onShowWhy, o
   const lines = reasons.length ? reasons : (fallback ? [fallback] : []);
   // The heading follows the score: a 7% match is never "Why it fits you".
   const band = matchPercent >= 70 ? 'strong' : matchPercent >= 50 ? 'some' : 'weak';
-  const heading = band === 'strong' ? <>Why it fits <em>you.</em></> : band === 'some' ? <>How it fits <em>you.</em></> : <>How it compares to <em>your needs.</em></>;
+  const heading = band === 'strong' ? <>Why it fits you</> : band === 'some' ? <>How it fits you</> : <>How it compares to your needs</>;
   // A reason that counts against the product gets a –, never a ✓.
   const isMiss = (t) => /\b(above|over|outside|not|no|doesn.t|does not|isn.t|missing|lower|less|unknown|can.t|cannot|without)\b/i.test(t);
   return (
@@ -622,7 +622,7 @@ export function ProductTrust({ glance, aynaRating = null, ratingCount = 0, extra
   const totalSources = glance.sources.length;
   return (
     <section className="ay-story ay-story--trust" aria-labelledby="ay-trust-h">
-      <h2 id="ay-trust-h">Can you <em>trust it?</em></h2>
+      <h2 id="ay-trust-h">Can you trust it?</h2>
       <div className="ay-trust">
         <article className="ay-trust__card is-reviews">
           <header><h3>Reviews</h3>{aynaRating != null && ratingCount > 0 && <span className="ay-trust__rating"><b>★ {aynaRating.toFixed(1)}</b> · {ratingCount} ayna member review{ratingCount === 1 ? '' : 's'}</span>}</header>

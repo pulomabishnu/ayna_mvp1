@@ -6,7 +6,7 @@ const GRADE_WORDS = { A: 'Strong evidence', B: 'Some evidence', C: 'Limited evid
 import UrgentSigns from './UrgentSigns.jsx';
 import PdpIcon from './PdpIcon.jsx';
 import { urgentSignsFor } from '../../utils/urgentSigns';
-import { splitSentences } from './sentences';
+import { splitSentences, stripLead, shortLine, splitNote } from './sentences';
 import { isCredible } from './credible';
 import { useApprovedResearch } from '../../utils/approvedResearch';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -89,7 +89,7 @@ function Links({ items, label, compact = false }) {
           <li key={s.url} hidden={folded && i >= 2}>
             <a href={s.url} target="_blank" rel="noopener noreferrer" className="ay-src__card">
               <span className="ay-src__text">
-                <span className="ay-src__pub">{[s.publisher, s.year].filter(Boolean).join(' · ')}</span>
+                <span className="ay-src__pub">{[s.publisher, s.year].filter(Boolean).join(', ')}</span>
                 <span className="ay-src__title">{cleanTitle(s.title, s.publisher)}</span>
                 {!compact && s.summary && <span className="ay-src__sum">{s.summary}</span>}
                 {!compact && s.why && <span className="ay-src__why">Why it’s here: {s.why}</span>}
@@ -141,9 +141,13 @@ function withTerms(text, plan) {
   return out;
 }
 const TermsCtx = React.createContext(null);
+// Inside an open evidence row: the row's own summary line, so the body never repeats it.
+const LeadCtx = React.createContext('');
+const paraList = (text, lead) => String(text || '').split(/\n{2,}/).map((p) => stripLead(p.trim(), lead)).filter(Boolean);
 function Paras({ text }) {
   const used = React.useContext(TermsCtx);
-  return String(text).split(/\n{2,}/).map((p) => p.trim()).filter(Boolean).map((p) => <p key={p.slice(0, 48)} className="ay-ev__body">{withTerms(p, used)}</p>);
+  const lead = React.useContext(LeadCtx);
+  return paraList(text, lead).map((p) => <p key={p.slice(0, 48)} className="ay-ev__body">{withTerms(p, used)}</p>);
 }
 
 /**
@@ -154,8 +158,18 @@ function Paras({ text }) {
 function ShortThenFull({ short, full }) {
   const [open, setOpen] = useState(false);
   const id = React.useId();
+  const rowLead = React.useContext(LeadCtx);
   const lead = short || sentences(full).slice(0, 2).join(' ');
   if (!full || full.length <= lead.length + 40) return <Paras text={full || lead} />;
+  // The row already shows the whole short version: only the full note is left, one tap away.
+  if (!paraList(lead, rowLead).length) {
+    return (
+      <div className="ay-ev__stf">
+        <div id={id} hidden={!open}><Paras text={full} /></div>
+        <button type="button" className="ay-ev__morebtn" aria-expanded={open} aria-controls={id} onClick={() => setOpen((v) => !v)}>{open ? 'Show less' : 'Read the full note'}</button>
+      </div>
+    );
+  }
   return (
     <div className="ay-ev__stf">
       <div hidden={open}><Paras text={lead} /></div>
@@ -289,7 +303,7 @@ function labelParts(label) {
 }
 
 /** The key line of a band: its first sentence, kept whole unless very long. */
-const takeaway = (t) => { const x = sentences(noDash(String(t || '')))[0] || ''; return x.length > 200 ? `${x.slice(0, 190).replace(/\s+\S*$/, '')}…` : x; };
+const takeaway = (t) => shortLine(noDash(String(t || '')), 220);
 
 /** A small icon for a how-to step, only when the step's own words make it obvious. */
 function stepIcon(text) {
@@ -517,7 +531,7 @@ export default function ProductEvidence({ product: baseProduct, image = '', safe
       {(brandSays || d.badges.length > 0) && <>
         <h3 className="ay-part__h">What the brand says</h3>
         {brandSays && <p className="ay-ev__body">{brandSays}</p>}
-        {d.badges.length > 0 && <p className="ay-ev__body">{d.badges.join(' · ')}</p>}
+        {d.badges.length > 0 && <p className="ay-ev__body">{d.badges.join(', ')}</p>}
         <p className="ay-ev__by">The brand’s own claims, labels and awards. Not checked by ayna.</p>
       </>}
       {d.evidenceStrength && <p className="ay-ev__by">Evidence level on file: {d.evidenceStrength}</p>}
@@ -538,7 +552,7 @@ export default function ProductEvidence({ product: baseProduct, image = '', safe
   const clinicalLine = takeaway(d.clinicianShort || d.clinician || d.clinicalNote || d.clinicalSummary);
   const howLine = d.how ? takeaway(d.how.intro && !/:\s*$/.test(d.how.intro) ? d.how.intro : d.how.steps[0]) : '';
 
-  // Numbered evidence bands, in the order people look for them.
+  // Evidence rows, in the order people look for them.
   const bands = [
     byId.clinical && { id: 'clinical', title: 'What clinicians say', line: clinicalLine, count: d.clinicalLinks.length, note: d.independent ? '' : 'From the brand', more: 'Read the evidence', body: byId.clinical.body },
     byId.science && { id: 'science', title: 'What the research says', line: researchLine, count: researchCount || d.studies.length, more: 'Read the research', body: byId.science.body },
@@ -561,7 +575,15 @@ export default function ProductEvidence({ product: baseProduct, image = '', safe
     factOf('fsa')?.value === 'Eligible' && { id: 'fsa', icon: 'card', label: 'FSA/HSA', value: 'Eligible' },
     factOf('perunit') && { id: 'perunit', icon: 'tag', label: 'Price per unit', value: noDash(factOf('perunit').value) },
     wear && { id: 'wear', icon: 'clock', label: 'From the instructions', value: wear[0].replace(/^./, (c) => c.toUpperCase()), jump: 'how' },
-  ].filter(Boolean).slice(0, 4);
+  ].filter(Boolean).slice(0, 4).map((t) => {
+    // A short bold value, and its detail on a small line: "60 capsules" + "1 daily, or 2 before sex";
+    // "Intimate Care · cream" becomes "Cream" + "Intimate Care".
+    const cap = (x) => String(x || '').replace(/^./, (c) => c.toUpperCase());
+    const dot = String(t.value).split(/\s+·\s+/);
+    if (dot.length > 1) return { ...t, main: cap(dot[dot.length - 1]), note: cap(dot.slice(0, -1).join(', ')) };
+    const sp = splitNote(t.value);
+    return { ...t, main: sp.value, note: cap(sp.note) };
+  });
 
   // Evidence strength on a three-step scale, from ayna's own grade (or the level on file).
   const level = topGrade ? ({ A: 3, B: 2, C: 1 })[topGrade.grade] || 0
@@ -597,7 +619,6 @@ export default function ProductEvidence({ product: baseProduct, image = '', safe
     bands.length > 0 && { id: 'evidence', label: 'Evidence' },
     { id: 'reviews', label: aynaRating != null && ratingCount > 0 ? `Reviews (${ratingCount})` : 'Reviews' },
   ].filter(Boolean);
-  const pad = (n) => String(n).padStart(2, '0');
 
   const fold = { isPhone, secOpen, onOpen: goTo, onClose: () => setSecOpen(null) };
 
@@ -610,7 +631,8 @@ export default function ProductEvidence({ product: baseProduct, image = '', safe
           {(level > 0 || mix.length > 0) && (
             <button type="button" className="ay-ps-ev" onClick={() => (bands.length ? goTo('evidence') : null)}>
               {level > 0 && <>
-                <span className="ay-ps-ev__word">{levelWord}{levelFor && <span> {levelFor}</span>}</span>
+                <span className="ay-ps-ev__word">{levelWord}</span>
+                {levelFor && <span className="ay-ps-ev__for">{levelFor.replace(/^./, (c) => c.toUpperCase())}</span>}
                 <span className="ay-ps-scale" role="img" aria-label={`${levelWord}, ${level} of 3`}>
                   {[1, 2, 3].map((n) => <i key={n} className={n <= level ? 'is-on' : undefined} />)}
                 </span>
@@ -634,8 +656,11 @@ export default function ProductEvidence({ product: baseProduct, image = '', safe
               {tiles.map((t) => (
                 <li key={t.id}>
                   <PdpIcon name={t.icon} />
-                  <b>{t.value}</b>
-                  <small>{t.label}</small>
+                  <span className="ay-ps-tiles__text">
+                    <small>{t.label}</small>
+                    <b>{t.main}</b>
+                    {t.note && <span className="ay-ps-tiles__note">{t.note}</span>}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -717,27 +742,26 @@ export default function ProductEvidence({ product: baseProduct, image = '', safe
             </div>
           )}
           <ol className="ay-ps-bands">
-            {bands.map((b, i) => {
+            {bands.map((b) => {
               const isOpen = open.has(b.id);
-              const meta = [b.count > 0 && plural(b.count, 'source'), b.stepsCount > 0 && plural(b.stepsCount, 'step'), b.note].filter(Boolean);
+              const meta = [b.count > 0 && plural(b.count, 'source'), b.stepsCount > 0 && plural(b.stepsCount, 'step'), b.note].filter(Boolean).map((x, i) => (i ? x.replace(/^./, (c) => c.toLowerCase()) : x));
               return (
                 <li key={b.id} id={`ay-ps-${b.id}`} className={`ay-ps-band is-${b.id}${isOpen ? ' is-open' : ''}`}>
                   <h3 className="ay-ps-band__h">
                     <button type="button" aria-expanded={isOpen} aria-controls={`ay-ps-${b.id}-body`} onClick={() => toggleBand(b.id)}>
-                      <span className="ay-ps-band__num" aria-hidden="true">({pad(i + 1)})</span>
                       <span className="ay-ps-band__main">
                         <span className="ay-ps-band__title">{b.title}</span>
                         {b.line && <span className="ay-ps-band__line">{b.line}</span>}
-                        {meta.length > 0 && <span className="ay-ps-band__meta">{meta.join(' · ')}</span>}
+                        {meta.length > 0 && <span className="ay-ps-band__meta">{meta.join(', ')}</span>}
                       </span>
-                      <span className="ay-ps-band__go">
-                        <span>{isOpen ? 'Close' : b.more}</span>
+                      <span className="ay-ps-band__go" title={isOpen ? 'Close' : b.more}>
+                        <span className="sr-only">{isOpen ? 'Close' : b.more}</span>
                         <Chevron />
                       </span>
                     </button>
                   </h3>
                   <div id={`ay-ps-${b.id}-body`} className="ay-ps-band__body" hidden={!isOpen}>
-                    {b.body}
+                    <LeadCtx.Provider value={b.line || ''}>{b.body}</LeadCtx.Provider>
                   </div>
                 </li>
               );
@@ -763,7 +787,7 @@ function Sec({ id, title, line, children, fold }) {
       {isPhone ? (
         <h2 id={`ay-ps-${id}-h`} className="ay-ps-fold">
           <button type="button" aria-expanded={!folded} aria-controls={`ay-ps-${id}-body`} onClick={() => { if (folded) onOpen(id); else onClose(); }}>
-            <span className="ay-ps-fold__main"><span className="ay-ps-fold__title">{title}</span>{line && <span className="ay-ps-fold__line">{line}</span>}</span>
+            <span className="ay-ps-fold__main"><span className="ay-ps-fold__title">{title}</span>{line && <span className="ay-ps-fold__line">{shortLine(line)}</span>}</span>
             <PdpIcon name="chevron" className="ay-ps-fold__chev" />
           </button>
         </h2>

@@ -39,7 +39,7 @@ export default function ProductCommunityReviews({ productId, rows = null, onOpen
           <a href={`/community/p/${r.id}`} onClick={(e) => open(e, r.id)}>
             <RatingStars value={r.rating} size={15} />
             {r.body && <p>{excerpt(r.body)}</p>}
-            <small>{who}{when(r.created_at) ? ` · ${when(r.created_at)}` : ''}{r.edited_at ? ' · edited' : ''} · Read in Community</small>
+            <small>{who}{when(r.created_at) ? `, ${when(r.created_at)}` : ''}{r.edited_at ? ' (edited)' : ''}. Read in Community</small>
           </a>
         </li>;
       })}

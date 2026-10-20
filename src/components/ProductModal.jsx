@@ -3,7 +3,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useResearch } from '../data/researchLoader';
 import { ProductImageFallback } from './ProductTileImage';
 import ProductCard from './ProductCard';
-import { ALL_PRODUCTS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct, CATEGORY_LABELS } from '../data/products.js';
+import { ALL_PRODUCTS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../data/products.js';
 import { exclusionLines } from '../utils/matchDisplay';
 import '../styles/match-ui.css';
 import { getAynaRating, getAynaRatingCount } from '../data/aynaReviews';
@@ -421,12 +421,16 @@ export default function ProductModal({
   const displayName = String(choice.displayName || product?.name || '').replace(/\s*\u2014\s*/g, ', ');
   const [showWhy, setShowWhy] = useState(false);
   const [showDisclosure, setShowDisclosure] = useState(false);
-  // Desktop: a slim buy bar slides in once the main Buy button scrolls away (product page audit).
+  // One Buy on screen at a time: the sticky buy bar (bottom on phones, under
+  // the header on desktop) shows only while the in-page Buy button is out of
+  // view, above or below. The margins leave out the fixed bars that would
+  // cover the in-page button.
   const [buyAway, setBuyAway] = useState(false);
   useEffect(() => {
-    const el = document.querySelector('.pdp-buybox');
+    const el = document.querySelector('.pdp-buybox .pdp-actions__primary') || document.querySelector('.pdp-buybox');
     if (!el || typeof IntersectionObserver === 'undefined') return undefined;
-    const io = new IntersectionObserver(([e]) => setBuyAway(!e.isIntersecting && e.boundingClientRect.top < 0));
+    const phone = typeof window.matchMedia === 'function' && window.matchMedia(MOBILE_QUERY).matches;
+    const io = new IntersectionObserver(([e]) => setBuyAway(!e.isIntersecting), { rootMargin: phone ? '0px 0px -140px 0px' : '-140px 0px 0px 0px' });
     io.observe(el);
     return () => io.disconnect();
   }, [product?.id]);
@@ -668,7 +672,7 @@ export default function ProductModal({
           const shown = labels.slice(0, 6);
           return (
             <div className="pdp-options">
-              <p className="pdp-options__h">{kind}{sizeChosenOnAmazon ? <span> · pick yours on Amazon</span> : null}</p>
+              <p className="pdp-options__h">{kind}{sizeChosenOnAmazon ? <span className="pdp-options__note">Pick yours on Amazon.</span> : null}</p>
               <ul className="pdp-options__chips">
                 {shown.map((l) => <li key={l}>{l}</li>)}
                 {labels.length > shown.length && <li className="is-more">+{labels.length - shown.length} more</li>}
@@ -905,9 +909,8 @@ export default function ProductModal({
             )}
             {(() => {
               const showBrand = brand && !String(displayName || '').toLowerCase().startsWith(String(brand).toLowerCase());
-              const cat = CATEGORY_LABELS?.[product.category] || '';
-              const bits = [showBrand ? brand : '', cat].filter(Boolean);
-              return bits.length ? <div className="pdp-head__eyebrow">{bits.join(' · ')}</div> : null;
+              // Brand only: the category is already in the breadcrumbs.
+              return showBrand ? <div className="pdp-head__eyebrow">{brand}</div> : null;
             })()}
             <h1 className="pdp-head__name">{displayName}</h1>
             {(() => {
@@ -930,7 +933,8 @@ export default function ProductModal({
                   <div className="pdp-h2-price">
                     {price.known && <span className="pdp-h2-price__main" style={price.isPlaceholder ? { fontSize: 16 } : undefined}>{price.main}</span>}
                     {perUnit && !program && <span className="pdp-h2-price__unit">{perUnit}</span>}
-                    {price.known && price.sub && <small>{price.sub}</small>}
+                    {/* "starter kit · or $84.15/mo subscription" reads as one line per fact. */}
+                    {price.known && price.sub && String(price.sub).split(/\s+·\s+/).filter(Boolean).map((t) => <small key={t} className="pdp-h2-price__line">{t.replace(/^./, (c) => c.toUpperCase())}</small>)}
                   </div>
                 )}
                 {rx && <p className="pdp-rx">{product.requiresPrescription ? `Requires a prescription from ${brand || product.brand || 'the provider'}’s clinicians.` : `Can include prescription support from ${brand || product.brand || 'the provider'}’s clinicians, if you qualify.`}</p>}
@@ -945,7 +949,8 @@ export default function ProductModal({
                 size?.text && size.text.length <= 40 && !String(price.sub || '').toLowerCase().includes(size.text.toLowerCase()) ? size.text : null,
                 fsa && fsa.value === 'Eligible' ? 'FSA/HSA eligible' : null,
                 // A one-time "3-month program" is not a subscription; only recurring billing is.
-                /\/month|per month|subscription|\/mo\b|per year|\/year|monthly|annually/i.test(priceText) ? 'Subscription' : null,
+                // Said once: not again when the price line already names the subscription.
+                /\/month|per month|subscription|\/mo\b|per year|\/year|monthly|annually/i.test(priceText) && !/subscri/i.test(price.sub || '') ? 'Subscription' : null,
                 product.type === 'digital' ? 'At home, online' : null,
                 product.requiresPrescription ? 'Prescription required' : null,
               ].filter(Boolean);
@@ -1033,7 +1038,7 @@ export default function ProductModal({
           {suggestions.more.length > 0 && (
             <section className="pdp-suggest pdp-suggest--glance ay3-band ay3-band--ink ay3-scallop ay3-edge-top" aria-labelledby="pdp-more-h">
               <div className="ay-pdp-sechead">
-                <h2 id="pdp-more-h">You may also <em>like.</em></h2>
+                <h2 id="pdp-more-h">You may also like</h2>
                 <p>{suggestions.personal ? 'For the same need, ordered by how well each fits you.' : 'For the same need, from other parts of the shop.'}</p>
               </div>
               <div className="pdp-suggest__grid">{suggestions.more.map(suggestionCard)}</div>
@@ -1043,7 +1048,7 @@ export default function ProductModal({
         </div>
       </div>
 
-      {/* Sticky Buy bar: always on phones; on desktop only once the main Buy button is off screen. */}
+      {/* Sticky Buy bar: only while the in-page Buy button is off screen, so the page never shows Buy twice. */}
       <aside className={`pdp-sticky${buyAway ? ' is-away' : ''}`} aria-label="Buy" data-away={buyAway ? '1' : '0'}>
         <span className="pdp-sticky__name">{displayName}</span>
         {priceText && <span className="pdp-sticky__price">{price.known ? price.main : priceText}</span>}
