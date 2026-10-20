@@ -232,16 +232,32 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
       }
       if (source.availability === 'device') {
         if (storeState && !storeState.available) { setError(storeMessage(storeState.reason, source)); return; }
-        await requestHealthAccess(selected);
-        await connectDeviceSource(apiSource, selected, Capacitor.getPlatform());
-        await refresh();
-        const out = await syncPhoneSource({ force: true });
+        // Each step has a time limit and logs where it is, so a stuck step shows a
+        // clear message (and a line in the Xcode console) instead of spinning forever.
+        const step = async (name, p, ms) => {
+          console.info('[ayna health] start', name);
+          let timer;
+          try {
+            return await Promise.race([p, new Promise((_, rej) => { timer = setTimeout(() => rej(Object.assign(new Error(`timeout:${name}`), { step: name })), ms); })]);
+          } catch (err) { console.warn('[ayna health] failed', name, err?.message || err); throw Object.assign(err || new Error(name), { step: err?.step || name }); }
+          finally { clearTimeout(timer); console.info('[ayna health] done', name); }
+        };
+        await step('permission', requestHealthAccess(selected), 180000);
+        await step('save_connection', connectDeviceSource(apiSource, selected, Capacitor.getPlatform()), 30000);
+        await step('refresh', refresh(), 30000);
+        const out = await step('sync', syncPhoneSource({ force: true }), 90000);
         setMessage(out.empty
           ? `Connected. No data came through yet. If you turned permissions off in the ${source.name} sheet, or there's no data for what you picked, ayna won't see anything. ${source.platform === 'ios' ? 'You can change this in the Health app under your picture, Privacy, Apps, ayna.' : ''}`
           : 'Connected. Your data is syncing.');
       }
     } catch (e) {
-      setError(e instanceof HealthApiError ? errorText(e) : 'The permission sheet was closed or failed. Nothing was shared.');
+      const stepMsg = {
+        permission: `The ${source.name} permission sheet didn't finish. Try again, and if no sheet appears, open the Health app, tap your picture, Privacy, Apps, and check ayna.`,
+        save_connection: 'Your phone gave access, but ayna couldn’t save the connection. Check your internet and try again.',
+        refresh: 'Connected, but your connections list didn’t reload. Pull down or reopen this screen.',
+        sync: 'Connected, but reading your data took too long. Tap Sync now in a minute.',
+      };
+      setError(e instanceof HealthApiError ? errorText(e) : (stepMsg[e?.step] || 'The permission sheet was closed or failed. Nothing was shared.'));
     } finally { setBusy(false); }
   };
 

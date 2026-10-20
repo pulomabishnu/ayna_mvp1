@@ -168,7 +168,9 @@ export async function readDailyHealth(categories, { days = 90 } = {}) {
   const startIso = start.toISOString();
   const endIso = end.toISOString();
   const jobs = [];
-  const quiet = (p) => p.catch(() => []); // one missing permission never sinks the whole sync
+  // One missing permission, or one type the phone never answers, never sinks the whole sync.
+  const quiet = (p) => Promise.race([p, new Promise((resolve) => setTimeout(() => { console.warn('[ayna health] read timed out'); resolve([]); }, 25000))])
+    .catch((err) => { console.warn('[ayna health] read failed', err?.message || err); return []; });
 
   if (has('sleep_minutes')) jobs.push(quiet(Health.readSamples({ dataType: 'sleep', startDate: startIso, endDate: endIso, limit: 10000, ascending: true }).then((r) => sleepRows(r?.samples, fallback))));
   if (has('steps')) jobs.push(quiet(aggregated('steps', 'steps', startIso, endIso, 'sum', fallback, Math.round)));
