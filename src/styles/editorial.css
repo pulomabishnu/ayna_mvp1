@@ -502,7 +502,7 @@
 .ed .ed-dash__go > span { display: inline-flex; }
 /* Consumer health data notice (HTML read from public/consumer-health-data.html) */
 .app-container .ed .ay-chd .updated { font: 500 14px/1.4 var(--ed-sans); color: var(--ed-text-2); margin-bottom: 20px; }
-.app-container .ed .ay-chd .callout { background: var(--ed-group); border-radius: 20px; padding: 20px 24px; margin: 0 0 40px; font: 400 var(--ed-body)/1.55 var(--ed-sans); }
+.app-container .ed .ay-chd .callout { background: var(--ed-group); border: 0 !important; border-radius: 20px; padding: 20px 24px; margin: 0 0 40px; font: 400 var(--ed-body)/1.55 var(--ed-sans); }
 .app-container .ed .ay-chd h2 { margin-top: 40px; }
 .app-container .ed .ay-chd table { display: block; overflow-x: auto; }
 .app-container .ed .ed-prose > section:first-of-type { margin-top: 40px; }
@@ -545,3 +545,6 @@ html body .app-container.app-container .cr-page .cr-emergency { border: 0 !impor
 .app-container .ed .ay-btn svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .ed .ed-shelf > li { min-width: 0; }
 .ed :is(.ed-evidence__copy, .ed-news, .ed-sky__copy, .ed-us__copy, .ed-final__copy, .ed-invest__copy) { align-items: flex-start; }
+.app-container.app-container .ed .ed-field :is(input, textarea) { background: transparent !important; color: var(--ed-text) !important; border: 1.5px solid var(--ed-outline) !important; border-radius: 12px !important; }
+html body .app-container.app-container[data-theme='brand-dark'] .ed .ed-field :is(input, textarea) { background: transparent !important; color: #ffedac !important; border-color: #ffedac !important; }
+html body .app-container.app-container[data-theme='brand-dark'] .ed .ed-field :is(input, textarea)::placeholder { color: rgba(255, 237, 172, .7) !important; }

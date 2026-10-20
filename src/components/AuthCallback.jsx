@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getSupabaseClient, getWebGoogleOAuthClient } from '../utils/supabaseClient';
 import { flushPendingConsent } from '../utils/pendingConsent.js';
+import { EdState } from './editorial/EdPage';
 
 export default function AuthCallback({ onAuthenticated }) {
   const [status, setStatus] = useState('loading');
