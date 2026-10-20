@@ -117,8 +117,8 @@ const circle = {
 
 const heading = {
   margin: 0,
-  fontSize: '1.6rem',
-  fontWeight: 700,
+  fontSize: 'var(--ay-fs-section)',
+  fontWeight: 600,
   color: '#171717',
 };
 
@@ -136,7 +136,7 @@ const button = {
   background: '#FF7417',
   color: '#FFFFFF',
   padding: '14px 28px',
-  fontSize: '16px',
+  fontSize: 16,
   fontWeight: 600,
   cursor: 'pointer',
 };

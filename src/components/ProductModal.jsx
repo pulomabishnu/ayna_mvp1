@@ -152,7 +152,7 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
                 color: m.role === 'user' ? 'var(--ay-paper)' : 'inherit',
                 borderRadius: '12px',
                 padding: '0.55rem 0.8rem',
-                fontSize: '0.9rem',
+                fontSize: 14,
                 lineHeight: 1.5,
                 whiteSpace: 'pre-wrap',
               }}
@@ -161,14 +161,14 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
             </div>
           ))}
           {sending && (
-            <div style={{ alignSelf: 'flex-start', fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+            <div style={{ alignSelf: 'flex-start', fontSize: 14, color: 'var(--color-text-muted)' }}>
               ayna is thinking…
             </div>
           )}
         </div>
       )}
       {error && (
-        <p style={{ color: 'var(--color-danger, #b3261e)', fontSize: '0.85rem', margin: 0 }}>{error}</p>
+        <p style={{ color: 'var(--color-danger, #b3261e)', fontSize: 14, margin: 0 }}>{error}</p>
       )}
       <form
         onSubmit={(e) => { e.preventDefault(); ask(input); }}
@@ -182,7 +182,7 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
           disabled={sending || session === undefined}
           style={{
             flex: 1, padding: '0.6rem 0.85rem', borderRadius: 'var(--radius-md)',
-            border: '1px solid var(--color-border)', fontSize: '0.9rem', background: 'var(--color-surface)',
+            border: '1px solid var(--color-border)', fontSize: 14, background: 'var(--color-surface)',
           }}
         />
         <button type="submit" className="pdp-btn pdp-btn--navy" disabled={sending || !input.trim() || session === undefined}>
@@ -239,7 +239,7 @@ function ImageLightbox({ src, alt, onClose }) {
           position: 'absolute', top: '1.25rem', right: '1.5rem',
           background: 'rgba(255,255,255,0.12)', border: 'none', color: '#fff',
           width: '2.25rem', height: '2.25rem', borderRadius: '50%',
-          fontSize: '1.25rem', lineHeight: 1, cursor: 'pointer',
+          fontSize: 'var(--ay-fs-section)', lineHeight: 1, cursor: 'pointer',
         }}
       >
         ×
@@ -669,7 +669,7 @@ export default function ProductModal({
         })()
       )}
       {choice.hasVariants && variantsMatter && (
-        <label className="pdp-variant" style={{ display: 'block', width: '100%', marginBottom: '0.8rem', fontSize: '0.9rem' }}>
+        <label className="pdp-variant" style={{ display: 'block', width: '100%', marginBottom: '0.8rem', fontSize: 14 }}>
           Size / option
           <select
             aria-label="Size / option"
@@ -843,7 +843,7 @@ export default function ProductModal({
   const sectionExtras = {
     // Links backing the safety note (product.safetyNoteSources, from main).
     safety: safetySources.length > 0 ? (
-      <ul className="pdp-safety-alert__sources" style={{ margin: '0.5rem 0 0', paddingLeft: '1.1rem', fontSize: '0.8125rem', lineHeight: 1.5 }}>
+      <ul className="pdp-safety-alert__sources" style={{ margin: '0.5rem 0 0', paddingLeft: '1.1rem', fontSize: 12.5, lineHeight: 1.5 }}>
         {safetySources.map((src) => (
           <li key={src.url}>
             <a href={src.url} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>
@@ -907,7 +907,7 @@ export default function ProductModal({
               return <>
                 {(price.known || (perUnit && !program)) && (
                   <div className="pdp-h2-price">
-                    {price.known && <span className="pdp-h2-price__main" style={price.isPlaceholder ? { fontSize: '1rem' } : undefined}>{price.main}</span>}
+                    {price.known && <span className="pdp-h2-price__main" style={price.isPlaceholder ? { fontSize: 16 } : undefined}>{price.main}</span>}
                     {perUnit && !program && <span className="pdp-h2-price__unit">{perUnit}</span>}
                     {price.known && price.sub && <small>{price.sub}</small>}
                   </div>

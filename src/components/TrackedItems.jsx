@@ -43,32 +43,32 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                     color: 'var(--color-primary-hover)',
                     padding: '0.5rem 1rem',
                     borderRadius: 'var(--radius-pill)',
-                    fontSize: '0.875rem',
+                    fontSize: 14,
                     fontWeight: '600',
                     marginBottom: '1rem',
                     display: 'inline-block'
                 }}>
                     My Account
                 </div>
-                <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Your <em>dashboard.</em></h2>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '1.25rem' }}>
+                <h2 style={{ fontSize: 'var(--ay-fs-title)', marginBottom: '1rem' }}>Your <em>dashboard.</em></h2>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--ay-fs-section)' }}>
                     Everything in one place: your products, health and wearable data, and care options.
                 </p>
                 {/* Hidden products. Prominent so users can find it */}
                 {onViewOmitted && (
                     <div style={{ marginTop: '1.5rem' }}>
-                        <button type="button" className="btn btn-outline" style={{ padding: '0.6rem 1.25rem', fontSize: '1rem', fontWeight: '600' }} onClick={onViewOmitted}>
+                        <button type="button" className="btn btn-outline" style={{ padding: '0.6rem 1.25rem', fontSize: 16, fontWeight: '600' }} onClick={onViewOmitted}>
                             View hidden products {Object.keys(omittedProducts).length > 0 && `(${Object.keys(omittedProducts).length})`}
                         </button>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '0.5rem' }}>Products you hid from recommendations. View or restore them anytime.</p>
+                        <p style={{ fontSize: 14, color: 'var(--color-text-muted)', marginTop: '0.5rem' }}>Products you hid from recommendations. View or restore them anytime.</p>
                     </div>
                 )}
             </div>
 
             {/* Profile: Zip code for nearby stores */}
             <div style={{ maxWidth: '800px', margin: '0 auto 3rem' }}>
-                <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem' }}>Profile</h3>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1rem' }}>
+                <h3 style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '0.75rem' }}>Profile</h3>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: 16, marginBottom: '1rem' }}>
                     Add your zip code to see if nearby stores have these products in stock (in-store and online, when we have that data).
                 </p>
                 <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -84,14 +84,14 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                             padding: '0.6rem 1rem',
                             borderRadius: 'var(--radius-md)',
                             border: '1px solid var(--color-border)',
-                            fontSize: '1rem',
+                            fontSize: 16,
                             outline: 'none'
                         }}
                     />
                     <button type="button" className="btn btn-primary" style={{ padding: '0.6rem 1.25rem' }} onClick={handleSaveZip}>
                         Save
                     </button>
-                    {userZipCode && <span style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>Saved: {userZipCode}</span>}
+                    {userZipCode && <span style={{ fontSize: 14, color: 'var(--color-text-muted)' }}>Saved: {userZipCode}</span>}
                 </div>
             </div>
 
@@ -110,10 +110,10 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
             {/* Recommendations from your check-in. Always visible under account when check-in was done */}
             {checkinRecs.length > 0 && (
                 <div style={{ maxWidth: '800px', margin: '0 auto 3rem' }}>
-                    <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <h3 style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         Recommendations from your check-in
                     </h3>
-                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1rem' }}>
+                    <p style={{ color: 'var(--color-text-muted)', fontSize: 16, marginBottom: '1rem' }}>
                         These match your latest check-in and tracker data. Not sure if you did a check-in? You can always see your latest recommendations here. Each product links to the same listing in Search.
                     </p>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -145,20 +145,20 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                                     </div>
                                     <div style={{ flexGrow: 1, minWidth: 0 }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.25rem' }}>
-                                            <h4 style={{ fontSize: '1rem', fontWeight: '600' }}>{product.name}</h4>
+                                            <h4 style={{ fontSize: 16, fontWeight: '600' }}>{product.name}</h4>
                                             {product.outOfBusiness && (
-                                                <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>
+                                                <span style={{ fontSize: 12.5, fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>
                                             )}
-                                            <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>{CATEGORY_LABELS[product.category] || product.category}</span>
+                                            <span style={{ fontSize: 12.5, color: 'var(--color-text-muted)', textTransform: 'none' }}>{CATEGORY_LABELS[product.category] || product.category}</span>
                                             {inEcosystem && (
-                                                <span style={{ fontSize: '0.7rem', fontWeight: '600', color: 'var(--color-primary)', background: 'var(--color-secondary-fade)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>
+                                                <span style={{ fontSize: 12.5, fontWeight: '600', color: 'var(--color-primary)', background: 'var(--color-secondary-fade)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>
                                                     In your ecosystem
                                                 </span>
                                             )}
                                         </div>
-                                        <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', lineHeight: 1.4 }}>{reason}</p>
+                                        <p style={{ fontSize: 14, color: 'var(--color-text-muted)', lineHeight: 1.4 }}>{reason}</p>
                                     </div>
-                                    {onOpenProduct && <span style={{ flexShrink: 0, color: 'var(--color-primary)', fontSize: '0.9rem' }}>View →</span>}
+                                    {onOpenProduct && <span style={{ flexShrink: 0, color: 'var(--color-primary)', fontSize: 14 }}>View →</span>}
                                 </div>
                             );
                         })}
@@ -168,17 +168,17 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
 
             {/* Hidden (omitted) products. Also linked from header above */}
             <div style={{ maxWidth: '800px', margin: '0 auto 3rem' }}>
-                <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <h3 style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     Hidden products
                     {Object.keys(omittedProducts).length > 0 && (
-                        <span style={{ background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)', padding: '0.1rem 0.6rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem', fontWeight: '600' }}>{Object.keys(omittedProducts).length}</span>
+                        <span style={{ background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)', padding: '0.1rem 0.6rem', borderRadius: 'var(--radius-pill)', fontSize: 12.5, fontWeight: '600' }}>{Object.keys(omittedProducts).length}</span>
                     )}
                 </h3>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1rem' }}>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: 14, marginBottom: '1rem' }}>
                     Products you chose to hide won't appear in Search or Recommendations. You can view and restore them anytime.
                 </p>
                 {onViewOmitted && (
-                    <button type="button" className="btn btn-outline" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }} onClick={onViewOmitted}>
+                    <button type="button" className="btn btn-outline" style={{ padding: '0.5rem 1rem', fontSize: 14 }} onClick={onViewOmitted}>
                         {Object.keys(omittedProducts).length > 0 ? `View hidden products (${Object.keys(omittedProducts).length})` : 'View hidden products'}
                     </button>
                 )}
@@ -186,7 +186,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
 
             {totalItems === 0 ? (
                 <div style={{ textAlign: 'center', padding: '4rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--color-border)' }}>
-                    <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--color-text-muted)' }}>Nothing tracked yet.</h3>
+                    <h3 style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '1rem', color: 'var(--color-text-muted)' }}>Nothing tracked yet.</h3>
                     <p style={{ color: 'var(--color-text-muted)' }}>Take the quiz to get recommendations you can track, or join startup waitlists to save your spot.</p>
                 </div>
             ) : (
@@ -195,11 +195,11 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                     {/* Safety Tracked Products */}
                     {trackedList.length > 0 && (
                         <div>
-                            <h3 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <h3 style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                 Safety Recall Monitoring
-                                <span style={{ background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)', padding: '0.1rem 0.6rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem', fontWeight: '600' }}>{trackedList.length}</span>
+                                <span style={{ background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)', padding: '0.1rem 0.6rem', borderRadius: 'var(--radius-pill)', fontSize: 12.5, fontWeight: '600' }}>{trackedList.length}</span>
                             </h3>
-                            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
+                            <p style={{ color: 'var(--color-text-muted)', fontSize: 14, marginBottom: '1.25rem' }}>
                                 We'll notify you right away if these products have safety issues or get recalled.
                             </p>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -209,18 +209,18 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                                             <ImgOrInitial item={product} size={72} />
                                         </div>
                                         <div style={{ flexGrow: 1 }}>
-                                            <span style={{ color: 'var(--color-primary)', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase' }}>Active Tracking</span>
-                                            <h4 style={{ fontSize: '1.1rem', marginBottom: '0.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                            <span style={{ color: 'var(--color-primary)', fontSize: 12.5, fontWeight: '600', textTransform: 'none' }}>Active Tracking</span>
+                                            <h4 style={{ fontSize: 16, marginBottom: '0.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                                                 {product.name}
                                                 {product.outOfBusiness && (
-                                                    <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>
+                                                    <span style={{ fontSize: 12.5, fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>
                                                 )}
                                             </h4>
-                                            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>{product.type}</p>
+                                            <p style={{ color: 'var(--color-text-muted)', fontSize: 14 }}>{product.type}</p>
                                         </div>
                                         <div style={{ textAlign: 'right', flexShrink: 0 }}>
                                             <span style={{ display: 'inline-block', width: '8px', height: '8px', backgroundColor: 'var(--color-primary)', borderRadius: '50%', marginRight: '6px' }}></span>
-                                            <span style={{ fontSize: '0.875rem', fontWeight: '500' }}>Safe</span>
+                                            <span style={{ fontSize: 14, fontWeight: '500' }}>Safe</span>
                                         </div>
                                     </div>
                                 ))}
@@ -231,11 +231,11 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                     {/* Joined Waitlists */}
                     {joinedList.length > 0 && (
                         <div>
-                            <h3 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <h3 style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                 Waitlists Joined
-                                <span style={{ background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)', padding: '0.1rem 0.6rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem', fontWeight: '600' }}>{joinedList.length}</span>
+                                <span style={{ background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)', padding: '0.1rem 0.6rem', borderRadius: 'var(--radius-pill)', fontSize: 12.5, fontWeight: '600' }}>{joinedList.length}</span>
                             </h3>
-                            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
+                            <p style={{ color: 'var(--color-text-muted)', fontSize: 14, marginBottom: '1.25rem' }}>
                                 You're on the list. We'll email you when these products launch.
                             </p>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -245,13 +245,13 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                                             <ImgOrInitial item={startup} size={72} />
                                         </div>
                                         <div style={{ flexGrow: 1 }}>
-                                            <span style={{ color: 'var(--color-primary)', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase' }}>Early Access</span>
-                                            <h4 style={{ fontSize: '1.1rem', marginBottom: '0.15rem' }}>{startup.name}</h4>
-                                            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>{startup.tagline}</p>
+                                            <span style={{ color: 'var(--color-primary)', fontSize: 12.5, fontWeight: '600', textTransform: 'none' }}>Early Access</span>
+                                            <h4 style={{ fontSize: 16, marginBottom: '0.15rem' }}>{startup.name}</h4>
+                                            <p style={{ color: 'var(--color-text-muted)', fontSize: 14 }}>{startup.tagline}</p>
                                         </div>
                                         <button
                                             className="btn btn-outline"
-                                            style={{ flexShrink: 0, padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+                                            style={{ flexShrink: 0, padding: '0.5rem 1rem', fontSize: 14 }}
                                             onClick={onViewWaitlist}
                                         >
                                             View

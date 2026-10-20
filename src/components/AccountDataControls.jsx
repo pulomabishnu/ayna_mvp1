@@ -81,8 +81,8 @@ export default function AccountDataControls({ onOpenDeleteAccount }) {
 
   return (
     <div style={{ marginTop: '1.5rem', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', background: 'var(--color-surface-soft)' }}>
-      <div style={{ fontWeight: 700, marginBottom: '0.25rem' }}>Your data & privacy</div>
-      <p style={{ margin: '0 0 0.85rem', color: 'var(--color-text-muted)', fontSize: '0.9rem', lineHeight: 1.5 }}>
+      <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>Your data & privacy</div>
+      <p style={{ margin: '0 0 0.85rem', color: 'var(--color-text-muted)', fontSize: 14, lineHeight: 1.5 }}>
         Control usage analytics, download a copy of the account data ayna stores, or permanently delete your account and user-linked data.
       </p>
 
@@ -90,7 +90,7 @@ export default function AccountDataControls({ onOpenDeleteAccount }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', justifyContent: 'space-between', flexWrap: 'wrap' }}>
           <div style={{ minWidth: '220px', flex: 1 }}>
             <div style={{ fontWeight: 600 }}>Usage analytics</div>
-            <div style={{ color: 'var(--color-text-muted)', fontSize: '0.82rem', lineHeight: 1.45, marginTop: '0.2rem' }}>
+            <div style={{ color: 'var(--color-text-muted)', fontSize: 12.5, lineHeight: 1.45, marginTop: '0.2rem' }}>
               Helps us understand which screens and products are useful. Raw health-search text, account email and direct health-account identifiers are excluded from PostHog analytics, and session recording is off.
               {gpcEnabled ? ' Your browser is sending Global Privacy Control, so analytics remain off.' : ''}
             </div>
@@ -125,7 +125,7 @@ export default function AccountDataControls({ onOpenDeleteAccount }) {
         </button>
       </div>
 
-      {message && <p role="status" style={{ margin: '0.75rem 0 0', color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>{message}</p>}
+      {message && <p role="status" style={{ margin: '0.75rem 0 0', color: 'var(--color-text-muted)', fontSize: 14 }}>{message}</p>}
     </div>
   );
 }

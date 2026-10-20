@@ -2041,7 +2041,7 @@ function App() {
             role="alert"
             style={{
               background: '#FEF2F2', borderBottom: '1px solid #FECACA',
-              color: '#991B1B', padding: '0.7rem 1rem', fontSize: '0.85rem',
+              color: '#991B1B', padding: '0.7rem 1rem', fontSize: 14,
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
             }}
           >
@@ -2050,7 +2050,7 @@ function App() {
               type="button"
               onClick={() => setSaveError(null)}
               aria-label="Dismiss"
-              style={{ background: 'none', border: 'none', color: '#991B1B', cursor: 'pointer', fontWeight: 700, fontSize: '1rem', lineHeight: 1 }}
+              style={{ background: 'none', border: 'none', color: '#991B1B', cursor: 'pointer', fontWeight: 600, fontSize: 16, lineHeight: 1 }}
             >×</button>
           </div>
         )}

@@ -656,8 +656,8 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
               onClick={(e) => e.stopPropagation()}
               style={{ width: '100%', maxWidth: '420px', background: '#fff', borderRadius: '20px', padding: '2rem', boxShadow: '0 18px 50px rgba(28, 25, 23, 0.18)', textAlign: 'center' }}
             >
-              <div style={{ color: '#f97316', fontWeight: 700, fontSize: '0.85rem', letterSpacing: '0.04em', marginBottom: '0.75rem' }}>ayna</div>
-              <h2 id="phone-coming-soon-title" style={{ margin: '0 0 0.75rem', fontSize: '1.4rem', color: '#1c1917' }}>
+              <div style={{ color: '#f97316', fontWeight: 600, fontSize: 14, letterSpacing: '0.04em', marginBottom: '0.75rem' }}>ayna</div>
+              <h2 id="phone-coming-soon-title" style={{ margin: '0 0 0.75rem', fontSize: 'var(--ay-fs-section)', color: '#1c1917' }}>
                 Phone sign-up is coming soon
               </h2>
               <p style={{ margin: '0 0 1.5rem', color: '#57534e', lineHeight: 1.6 }}>
@@ -666,7 +666,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
               <button
                 type="button"
                 onClick={() => setShowPhoneNotice(false)}
-                style={{ width: '100%', border: 'none', borderRadius: '12px', padding: '0.9rem 1rem', background: '#f97316', color: '#fff', fontWeight: 700, fontSize: '1rem', cursor: 'pointer' }}
+                style={{ width: '100%', border: 'none', borderRadius: '12px', padding: '0.9rem 1rem', background: '#f97316', color: '#fff', fontWeight: 600, fontSize: 16, cursor: 'pointer' }}
               >
                 Continue with email
               </button>
@@ -873,7 +873,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
                 type="button"
                 className="ay-auth-show"
                 onClick={() => setShowPassword(v => !v)}
-                style={{ position: 'absolute', right: '0.65rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', fontSize: '0.85rem', padding: '0.25rem', lineHeight: 1 }}
+                style={{ position: 'absolute', right: '0.65rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', fontSize: 14, padding: '0.25rem', lineHeight: 1 }}
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? 'Hide' : 'Show'}
@@ -1214,7 +1214,7 @@ const styles = {
     background: 'rgba(255,255,255,0.7)',
     border: '1px solid #E7E0D4',
     borderRadius: '50%',
-    fontSize: '1.35rem',
+    fontSize: 'var(--ay-fs-section)',
     color: 'var(--color-text-main)',
     cursor: 'pointer',
     lineHeight: 1,
@@ -1222,8 +1222,8 @@ const styles = {
     zIndex: 2,
   },
   logo: {
-    fontFamily: 'var(--font-serif)',
-    fontSize: '1.9rem',
+    fontFamily: 'var(--ay-serif)',
+    fontSize: 'var(--ay-fs-title)',
     fontWeight: '500',
     color: '#281B3D',
     textAlign: 'center',
@@ -1231,14 +1231,14 @@ const styles = {
     fontStyle: 'italic',
   },
   tagline: {
-    fontSize: '0.875rem',
+    fontSize: 14,
     color: '#6E6275',
     textAlign: 'center',
     margin: '-0.15rem 1.5rem 0.25rem',
     lineHeight: 1.45,
   },
   configWarning: {
-    fontSize: '0.78rem',
+    fontSize: 12.5,
     color: '#92400E',
     background: '#FEF3C7',
     border: '1px solid #FDE68A',
@@ -1258,7 +1258,7 @@ const styles = {
   toggleBtn: {
     flex: 1,
     padding: '0.55rem 0',
-    fontSize: '0.85rem',
+    fontSize: 14,
     fontWeight: '500',
     border: 'none',
     borderRadius: 'var(--radius-pill)',
@@ -1266,7 +1266,7 @@ const styles = {
     color: 'var(--color-text-muted)',
     cursor: 'pointer',
     transition: 'var(--transition-fast)',
-    fontFamily: 'var(--font-body)',
+    fontFamily: 'var(--ay-sans)',
   },
   toggleBtnActive: {
     background: '#FFFFFF',
@@ -1282,13 +1282,13 @@ const styles = {
   input: {
     width: '100%',
     padding: '0.78rem 0.9rem',
-    fontSize: '0.9rem',
+    fontSize: 14,
     border: '1.4px solid #E7E0D4',
     borderRadius: '12px',
     background: '#FFFFFF',
     color: '#2C2333',
     outline: 'none',
-    fontFamily: 'var(--font-body)',
+    fontFamily: 'var(--ay-sans)',
     transition: 'border-color var(--transition-fast)',
   },
   inputDisabled: {
@@ -1314,10 +1314,10 @@ const styles = {
     border: 'none',
     padding: '0.15rem 0',
     color: '#281B3D',
-    fontSize: '0.8rem',
+    fontSize: 12.5,
     fontWeight: '600',
     cursor: 'pointer',
-    fontFamily: 'var(--font-body)',
+    fontFamily: 'var(--ay-sans)',
   },
 
   consentDetails: {
@@ -1342,12 +1342,12 @@ const styles = {
     cursor: 'pointer',
   },
   consentText: {
-    fontSize: '0.74rem',
+    fontSize: 12.5,
     color: 'var(--color-text-muted)',
     lineHeight: 1.4,
   },
   legalNotice: {
-    fontSize: '0.72rem',
+    fontSize: 12.5,
     color: 'var(--color-text-muted)',
     lineHeight: 1.45,
     margin: '-0.1rem 0 0',
@@ -1359,7 +1359,7 @@ const styles = {
   },
   primaryBtn: {
     padding: '0.82rem',
-    fontSize: '0.9rem',
+    fontSize: 14,
     fontWeight: '600',
     background: '#E4B25E',
     color: '#1E1430',
@@ -1368,20 +1368,20 @@ const styles = {
     cursor: 'pointer',
     transition: 'background var(--transition-fast)',
     marginTop: '0.25rem',
-    fontFamily: 'var(--font-body)',
+    fontFamily: 'var(--ay-sans)',
   },
   primaryBtnDisabled: {
     opacity: 0.45,
     cursor: 'not-allowed',
   },
   error: {
-    fontSize: '0.8rem',
+    fontSize: 12.5,
     color: '#B91C1C',
     margin: 0,
     lineHeight: 1.4,
   },
   success: {
-    fontSize: '0.8rem',
+    fontSize: 12.5,
     color: '#15803D',
     margin: 0,
     lineHeight: 1.4,
@@ -1398,7 +1398,7 @@ const styles = {
     display: 'block',
   },
   dividerText: {
-    fontSize: '0.75rem',
+    fontSize: 12.5,
     color: 'var(--color-text-muted)',
   },
   oauthRow: {
@@ -1411,7 +1411,7 @@ const styles = {
     justifyContent: 'center',
     gap: '0.4rem',
     padding: '0.7rem 0.35rem',
-    fontSize: '0.76rem',
+    fontSize: 12.5,
     fontWeight: '500',
     background: '#FFFFFF',
     color: '#2C2333',
@@ -1419,7 +1419,7 @@ const styles = {
     borderRadius: '12px',
     cursor: 'pointer',
     transition: 'background var(--transition-fast)',
-    fontFamily: 'var(--font-body)',
+    fontFamily: 'var(--ay-sans)',
     textAlign: 'center',
     // No forced nowrap: at the narrowest phone widths the card itself is
     // narrower than 2*(button content), so keeping nowrap here overflowed
@@ -1433,7 +1433,7 @@ const styles = {
     cursor: 'not-allowed',
   },
   fine: {
-    fontSize: '13px',
+    fontSize: 12.5,
     color: 'var(--color-text-muted)',
     textAlign: 'center',
     lineHeight: 1.45,
@@ -1443,11 +1443,11 @@ const styles = {
     background: 'none',
     border: 'none',
     color: 'var(--color-text-muted)',
-    fontSize: '0.78rem',
+    fontSize: 12.5,
     cursor: 'pointer',
     textDecoration: 'underline',
     textAlign: 'center',
     padding: '0.25rem',
-    fontFamily: 'var(--font-body)',
+    fontFamily: 'var(--ay-sans)',
   },
 };

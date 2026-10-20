@@ -11,20 +11,20 @@
   border-radius: 999px;
   background: var(--ay-ink, #1d1a2b);
   color: var(--ay-paper, #fffcf5);
-  font-family: var(--ay-font-ui, 'DM Sans', system-ui, sans-serif);
+  font-family: var(--ay-sans);
   line-height: 1;
   white-space: nowrap;
   text-decoration: none;
   box-shadow: none;
 }
-.ay-match-pill strong { font-weight: 800; letter-spacing: -.02em; color: inherit; }
+.ay-match-pill strong { font-weight: 600; letter-spacing: -.02em; color: inherit; }
 .ay-match-pill span { font-weight: 500; opacity: .78; color: inherit; text-transform: none; letter-spacing: 0; }
 .ay-match-pill.is-sm { padding: 6px 10px; }
-.ay-match-pill.is-sm strong { font-size: 13px; }
-.ay-match-pill.is-sm span { font-size: 12px; }
+.ay-match-pill.is-sm strong { font-size: var(--ay-fs-caption); }
+.ay-match-pill.is-sm span { font-size: var(--ay-fs-caption); }
 .ay-match-pill.is-md { padding: 8px 14px; }
-.ay-match-pill.is-md strong { font-size: 18px; }
-.ay-match-pill.is-md span { font-size: 15px; }
+.ay-match-pill.is-md strong { font-size: var(--ay-fs-card); font-weight: 600; }
+.ay-match-pill.is-md span { font-size: var(--ay-fs-body); }
 button.ay-match-pill { cursor: pointer; transition: transform 150ms ease, box-shadow 150ms ease; }
 button.ay-match-pill::after { content: ''; position: absolute; inset: -8px -4px; } /* 44px tap area */
 button.ay-match-pill:hover { transform: translateY(-1px); }

@@ -70,7 +70,7 @@
   margin-top: 24px;
   text-align: center;
   color: var(--color-text-muted, #6b6880);
-  font-size: 0.9rem;
+  font-size: var(--ay-fs-secondary);
 }
 
 .ay-skel__status .ay-skel__retry {

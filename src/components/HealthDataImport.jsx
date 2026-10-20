@@ -145,94 +145,94 @@ export default function HealthDataImport({ onUpdate }) {
 
   return (
     <div id="health-data-import" style={{ maxWidth: '800px', margin: '0 auto 3rem', padding: '1.5rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', scrollMarginTop: '1rem' }}>
-      <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Health data import</h3>
-      <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem', lineHeight: 1.55, marginBottom: '1.25rem' }}>
+      <h3 style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '0.5rem' }}>Health data import</h3>
+      <p style={{ color: 'var(--color-text-muted)', fontSize: 16, lineHeight: 1.55, marginBottom: '1.25rem' }}>
         Connect EHR exports, manual conditions, and wearable summaries so your ecosystem ranking matches what you share with your care team. Raw Apple Health and FHIR files are parsed locally in this browser and are not uploaded. The summaries and health details you choose to save may be used by ayna and its AI providers when you request personalized AI features. We never sell health data.
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
         <div style={{ padding: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
           <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>Apple Health</p>
-          <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', lineHeight: 1.5, marginBottom: '0.75rem' }}>
+          <p style={{ fontSize: 14, color: 'var(--color-text-muted)', lineHeight: 1.5, marginBottom: '0.75rem' }}>
             ayna doesn’t have a phone app, so we can’t read Apple Health directly off your device. Instead: open the <strong>Health app → your profile picture (top right) → Export All Health Data</strong>, then unzip the download to find <strong>export.xml</strong> and upload it below. We parse steps, sleep, heart rate, and cycle tracking data locally in your browser. The raw file is not sent to our servers.
           </p>
-          <label style={{ fontSize: '0.9rem', cursor: 'pointer', display: 'inline-block' }}>
-            <span className="btn btn-outline" style={{ padding: '0.45rem 1rem', fontSize: '0.85rem' }}>Choose export.xml</span>
+          <label style={{ fontSize: 14, cursor: 'pointer', display: 'inline-block' }}>
+            <span className="btn btn-outline" style={{ padding: '0.45rem 1rem', fontSize: 14 }}>Choose export.xml</span>
             <input type="file" accept=".xml,text/xml,application/xml" onChange={handleAppleHealthFile} style={{ display: 'none' }} />
           </label>
-          {appleHealthError && <p style={{ color: '#b91c1c', fontSize: '0.85rem', marginTop: '0.5rem' }}>{appleHealthError}</p>}
+          {appleHealthError && <p style={{ color: '#b91c1c', fontSize: 14, marginTop: '0.5rem' }}>{appleHealthError}</p>}
           {appleHealthSummary && !appleHealthError && (
-            <p style={{ fontSize: '0.85rem', color: 'var(--color-primary)', marginTop: '0.5rem' }}>Parsed and saved below. {appleHealthSummary}</p>
+            <p style={{ fontSize: 14, color: 'var(--color-primary)', marginTop: '0.5rem' }}>Parsed and saved below. {appleHealthSummary}</p>
           )}
         </div>
         <div style={{ padding: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
           <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>Google Fit &amp; other apps</p>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.9rem' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: 14 }}>
             <input type="checkbox" checked={googleFit} onChange={(e) => setGoogleFit(e.target.checked)} />
             I use Google Fit, Apple Watch, Oura, or similar. I’ll paste a short summary below (sleep, steps, cycle estimates).
           </label>
         </div>
         <div style={{ padding: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
           <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>Electronic health record (FHIR)</p>
-          <p style={{ fontSize: '0.88rem', color: 'var(--color-text-muted)', lineHeight: 1.5, marginBottom: '0.75rem' }}>
+          <p style={{ fontSize: 14, color: 'var(--color-text-muted)', lineHeight: 1.5, marginBottom: '0.75rem' }}>
             Many Epic / MyChart portals offer a <strong>Download my data</strong> export as a FHIR JSON bundle. Upload it here. We parse conditions and medication statements locally in your browser; the raw file is not sent to our servers.
           </p>
-          <label style={{ fontSize: '0.9rem', cursor: 'pointer', display: 'inline-block' }}>
-            <span className="btn btn-outline" style={{ padding: '0.45rem 1rem', fontSize: '0.85rem' }}>Choose FHIR JSON file</span>
+          <label style={{ fontSize: 14, cursor: 'pointer', display: 'inline-block' }}>
+            <span className="btn btn-outline" style={{ padding: '0.45rem 1rem', fontSize: 14 }}>Choose FHIR JSON file</span>
             <input type="file" accept=".json,application/json" onChange={handleFhirFile} style={{ display: 'none' }} />
           </label>
-          {fhirError && <p style={{ color: '#b91c1c', fontSize: '0.85rem', marginTop: '0.5rem' }}>{fhirError}</p>}
+          {fhirError && <p style={{ color: '#b91c1c', fontSize: 14, marginTop: '0.5rem' }}>{fhirError}</p>}
           {fhirConnected && !fhirError && (
-            <p style={{ fontSize: '0.85rem', color: 'var(--color-primary)', marginTop: '0.5rem' }}>FHIR summary saved. It can improve ranking and may be included as context when you request personalized AI features.</p>
+            <p style={{ fontSize: 14, color: 'var(--color-primary)', marginTop: '0.5rem' }}>FHIR summary saved. It can improve ranking and may be included as context when you request personalized AI features.</p>
           )}
         </div>
       </div>
 
-      <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.35rem', fontSize: '0.9rem' }}>Conditions (one per line or comma-separated)</label>
+      <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.35rem', fontSize: 14 }}>Conditions (one per line or comma-separated)</label>
       <textarea
         value={conditions}
         onChange={(e) => setConditions(e.target.value)}
         rows={3}
-        style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', marginBottom: '1rem', fontSize: '0.9rem' }}
+        style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', marginBottom: '1rem', fontSize: 14 }}
         placeholder="e.g. endometriosis, iron deficiency anemia"
       />
 
-      <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.35rem', fontSize: '0.9rem' }}>Medications &amp; supplements</label>
+      <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.35rem', fontSize: 14 }}>Medications &amp; supplements</label>
       <textarea
         value={medications}
         onChange={(e) => setMedications(e.target.value)}
         rows={3}
-        style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', marginBottom: '1rem', fontSize: '0.9rem' }}
+        style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', marginBottom: '1rem', fontSize: 14 }}
         placeholder="e.g. levothyroxine 50 mcg, magnesium glycinate"
       />
 
-      <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.35rem', fontSize: '0.9rem' }}>Allergies</label>
+      <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.35rem', fontSize: 14 }}>Allergies</label>
       <textarea
         value={allergies}
         onChange={(e) => setAllergies(e.target.value)}
         rows={2}
-        style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', marginBottom: '1rem', fontSize: '0.9rem' }}
+        style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', marginBottom: '1rem', fontSize: 14 }}
         placeholder="e.g. latex, penicillin"
       />
 
-      <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.35rem', fontSize: '0.9rem' }}>Freeform notes (cycle length, symptoms, app exports)</label>
+      <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.35rem', fontSize: 14 }}>Freeform notes (cycle length, symptoms, app exports)</label>
       <textarea
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
         rows={3}
-        style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', marginBottom: '1rem', fontSize: '0.9rem' }}
+        style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', marginBottom: '1rem', fontSize: 14 }}
         placeholder="Anything else ayna should weigh when ranking products for you."
       />
 
-      <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.35rem', fontSize: '0.9rem' }}>Wearable &amp; activity summary (optional)</label>
-      <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem', lineHeight: 1.5 }}>
+      <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.35rem', fontSize: 14 }}>Wearable &amp; activity summary (optional)</label>
+      <p style={{ fontSize: 14, color: 'var(--color-text-muted)', marginBottom: '0.5rem', lineHeight: 1.5 }}>
         Paste averages or trends from Apple Health, Google Fit, Oura, Garmin, etc. (e.g. sleep 6.5h/night, 7k steps, resting HR 62). Used with your quiz and chat to tune recommendations. The summary is saved locally and may be sent with your request when a personalized AI feature needs that context.
       </p>
       <textarea
         value={wearableText}
         onChange={(e) => setWearableText(e.target.value)}
         rows={3}
-        style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', marginBottom: '1rem', fontSize: '0.9rem' }}
+        style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', marginBottom: '1rem', fontSize: 14 }}
         placeholder="e.g. Last 30 days: avg sleep 6h20m; cycle app predicts period ±2 days; walking 8k steps/day."
       />
 
@@ -241,7 +241,7 @@ export default function HealthDataImport({ onUpdate }) {
           Save to this browser
         </button>
         {savedAt && (
-          <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+          <span style={{ fontSize: 14, color: 'var(--color-text-muted)' }}>
             Last saved {new Date(savedAt).toLocaleString()}
           </span>
         )}

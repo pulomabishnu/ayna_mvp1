@@ -62,12 +62,12 @@ export default function AdminReviewsPage({ onBack }) {
     finally { setLoadingMore(false); }
   };
   const cardStyle = { padding: '0.9rem 1rem', marginBottom: '0.75rem' };
-  const metaStyle = { color: 'var(--color-text-muted)', fontSize: '0.82rem', margin: '0 0 0.5rem' };
+  const metaStyle = { color: 'var(--color-text-muted)', fontSize: 12.5, margin: '0 0 0.5rem' };
 
   return (
     <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '760px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-        <h2 style={{ margin: 0, fontSize: '1.45rem' }}>Anonymous feedback</h2>
+        <h2 style={{ margin: 0, fontSize: 'var(--ay-fs-section)' }}>Anonymous feedback</h2>
         <button type="button" className="btn btn-outline" onClick={onBack}>Back</button>
       </div>
 
@@ -99,12 +99,12 @@ export default function AdminReviewsPage({ onBack }) {
 
       {status === 'ok' && results.map((row) => (
         <div key={row.id} className="card" style={cardStyle}>
-          <p style={{ margin: '0 0 0.2rem', fontWeight: 700 }}>
+          <p style={{ margin: '0 0 0.2rem', fontWeight: 600 }}>
             {row.kind === 'purchase' ? `${row.answer === 'yes' ? 'Purchased' : 'Did not purchase'}: ${row.productName}` : `Ayna review${row.rating != null ? ` — ${row.rating}★` : ''}`}
             {row.variant ? ` — ${row.variant}` : ''}
           </p>
-          {row.feedback && <p style={{ margin: '0 0 0.3rem', fontSize: '0.92rem' }}>{row.feedback}</p>}
-          <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--color-text-muted)' }}>
+          {row.feedback && <p style={{ margin: '0 0 0.3rem', fontSize: 14 }}>{row.feedback}</p>}
+          <p style={{ margin: 0, fontSize: 12.5, color: 'var(--color-text-muted)' }}>
             {row.kind === 'survey' ? (row.heardAboutUs ? `Heard about us: ${row.heardAboutUs}` : 'Referral not provided') : 'Self-reported retailer visit'}
             {row.submittedAt ? ` — ${new Date(`${row.submittedAt.slice(0, 10)}T12:00:00`).toLocaleDateString()}` : ''}
           </p>

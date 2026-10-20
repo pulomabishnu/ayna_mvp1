@@ -198,7 +198,7 @@ export default function Recommendations({
                     style={{
                         position: 'absolute', top: '0.5rem', right: '0.5rem', zIndex: 5,
                         background: 'rgba(255,255,255,0.8)', border: 'none', borderRadius: '50%',
-                        width: '24px', height: '24px', cursor: 'pointer', fontSize: '0.8rem',
+                        width: '24px', height: '24px', cursor: 'pointer', fontSize: 12.5,
                         display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-muted)'
                     }}
                     title="Don't recommend this again"
@@ -215,7 +215,7 @@ export default function Recommendations({
                         position: 'absolute', top: '0.75rem', left: '0.75rem',
                         background: product.type === 'physical' ? 'var(--color-surface-contrast)' : 'var(--color-primary)',
                         color: 'white', padding: '0.25rem 0.75rem', borderRadius: 'var(--radius-pill)',
-                        fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase'
+                        fontSize: 12.5, fontWeight: '600', textTransform: 'none'
                     }}>
                         {product.type === 'physical' ? 'Physical' : 'Digital'}
                     </span>
@@ -223,7 +223,7 @@ export default function Recommendations({
                         <span style={{
                             position: 'absolute', top: '0.75rem', right: '2.5rem',
                             background: 'var(--color-primary)', color: 'white', padding: '0.25rem 0.6rem',
-                            borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '600'
+                            borderRadius: 'var(--radius-pill)', fontSize: 12.5, fontWeight: '600'
                         }}>
                             Tracked
                         </span>
@@ -232,7 +232,7 @@ export default function Recommendations({
                         <span style={{
                             position: 'absolute', bottom: '0.75rem', left: '0.75rem',
                             background: 'var(--color-text-muted)', color: 'white', padding: '0.25rem 0.6rem',
-                            borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '600'
+                            borderRadius: 'var(--radius-pill)', fontSize: 12.5, fontWeight: '600'
                         }}>
                             No longer sold
                         </span>
@@ -241,7 +241,7 @@ export default function Recommendations({
                         <span style={{
                             position: 'absolute', bottom: '0.75rem', right: '0.75rem',
                             background: '#DCFCE7', color: '#166534', padding: '0.25rem 0.6rem',
-                            borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '700'
+                            borderRadius: 'var(--radius-pill)', fontSize: 12.5, fontWeight: 600
                         }}>
                             Independent clinician verified
                         </span>
@@ -250,7 +250,7 @@ export default function Recommendations({
                         <span style={{
                             position: 'absolute', bottom: '0.75rem', right: '0.75rem',
                             background: '#FEF3C7', color: '#92400E', padding: '0.25rem 0.6rem',
-                            borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '700'
+                            borderRadius: 'var(--radius-pill)', fontSize: 12.5, fontWeight: 600
                         }}>
                             No independent clinician opinion yet
                         </span>
@@ -258,43 +258,43 @@ export default function Recommendations({
                 </div>
 
                 <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                    <h3 style={{ fontSize: '1.2rem', marginBottom: '0.35rem' }}>{product.name}</h3>
-                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '0.75rem', lineHeight: '1.45' }}>{product.summary}</p>
+                    <h3 style={{ fontSize: 16, marginBottom: '0.35rem' }}>{product.name}</h3>
+                    <p style={{ color: 'var(--color-text-muted)', fontSize: 14, marginBottom: '0.75rem', lineHeight: '1.45' }}>{product.summary}</p>
 
                     {whyItWorks && (
-                        <p style={{ fontSize: '0.85rem', color: 'var(--color-primary-hover)', fontWeight: '500', marginBottom: '0.5rem', lineHeight: 1.4 }}>
+                        <p style={{ fontSize: 14, color: 'var(--color-primary-hover)', fontWeight: '500', marginBottom: '0.5rem', lineHeight: 1.4 }}>
                             {whyItWorks}
                         </p>
                     )}
                     {considerations && (
-                        <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem', lineHeight: 1.4, fontStyle: 'italic' }}>
+                        <p style={{ fontSize: 12.5, color: 'var(--color-text-muted)', marginBottom: '0.75rem', lineHeight: 1.4, fontStyle: 'italic' }}>
                             {considerations}
                         </p>
                     )}
 
                     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
                         {product.safety?.recalls && !hasFlaggedRecall(product.safety.recalls) && (
-                            <span style={{ fontSize: '0.75rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No recall alert</span>
+                            <span style={{ fontSize: 12.5, background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No recall alert</span>
                         )}
                         {product.safety?.recalls && hasFlaggedRecall(product.safety.recalls) && (
-                            <span style={{ fontSize: '0.75rem', background: '#F8F9FA', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>Safety note</span>
+                            <span style={{ fontSize: 12.5, background: '#F8F9FA', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>Safety note</span>
                         )}
                         {product.privacy?.sellsData?.includes('\u274C') && (
-                            <span style={{ fontSize: '0.75rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No data selling</span>
+                            <span style={{ fontSize: 12.5, background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No data selling</span>
                         )}
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', marginTop: 'auto' }}>
-                        <span style={{ fontSize: '1rem', fontWeight: '600', color: 'var(--color-text-main)' }}>
+                        <span style={{ fontSize: 16, fontWeight: '600', color: 'var(--color-text-main)' }}>
                             {product.price}
                             {perUnitPrice && (
-                                <span style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: 'var(--color-text-muted)' }}>
+                                <span style={{ display: 'block', fontSize: 12.5, fontWeight: '500', color: 'var(--color-text-muted)' }}>
                                     {perUnitPrice}
                                 </span>
                             )}
                         </span>
                         <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                            <button className="btn btn-outline" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} onClick={() => toggleMyProduct(product)}>
+                            <button className="btn btn-outline" style={{ padding: '0.4rem 0.8rem', fontSize: 12.5 }} onClick={() => toggleMyProduct(product)}>
                                 {isInEcosystem ? 'Added' : '+ Add'}
                             </button>
                             {buyUrl && (
@@ -303,12 +303,12 @@ export default function Recommendations({
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="btn btn-outline"
-                                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
+                                    style={{ padding: '0.4rem 0.8rem', fontSize: 12.5, textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
                                 >
                                     Buy ↗
                                 </a>
                             )}
-                            <button className="btn btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} onClick={() => onOpenProduct(product, { source: 'recommendation' })}>
+                            <button className="btn btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: 12.5 }} onClick={() => onOpenProduct(product, { source: 'recommendation' })}>
                                 Details
                             </button>
                         </div>
@@ -325,27 +325,27 @@ export default function Recommendations({
             <div className="ay3-pagehead ay3-band ay3-band--rose ay3-torn ay3-edge-bottom" style={{ textAlign: 'center', margin: '0 auto var(--spacing-lg)' }}>
                 <div style={{
                     background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)',
-                    padding: '0.5rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.875rem',
+                    padding: '0.5rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: 14,
                     fontWeight: '600', marginBottom: '1rem', display: 'inline-block'
                 }}>
                     Your personalized ecosystem
                 </div>
-                <h2 style={{ fontSize: '2.25rem', marginBottom: '0.75rem' }}>Products picked <em>for you.</em></h2>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>
+                <h2 style={{ fontSize: 'var(--ay-fs-title)', marginBottom: '0.75rem' }}>Products picked <em>for you.</em></h2>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: 16 }}>
                     {results?.frustrations?.length > 0
                         ? <>We picked these using your quiz answers (<strong>{results.frustrations.join(', ')}</strong>), your chat messages, any medical records you've uploaded, and wearable data from My Account.</>
                         : "We picked these using your quiz answers, chat messages, uploaded medical records, and wearable data. Once you add them under My Account."
                     }
                 </p>
                 {inferTagsFromHealthProfile(healthProfile).length > 0 && (
-                    <p style={{ color: 'var(--color-primary)', fontSize: '0.95rem', marginTop: '0.75rem', lineHeight: 1.5 }}>
+                    <p style={{ color: 'var(--color-primary)', fontSize: 16, marginTop: '0.75rem', lineHeight: 1.5 }}>
                         We're also using your uploaded health info. Conditions, medications, medical records, or wearable data. To help pick these. This isn't a diagnosis, just extra information to help find a better fit.
                     </p>
                 )}
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginTop: '0.5rem' }}>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: 14, marginTop: '0.5rem' }}>
                     We never sell your data. The "For [concern]" picks below come from our reviewed catalog. The picks above come from your own health profile, so always double check with a doctor before you decide.
                 </p>
-                <p style={{ color: 'var(--color-primary)', fontSize: '0.9rem', marginTop: '0.5rem', fontWeight: '500' }}>
+                <p style={{ color: 'var(--color-primary)', fontSize: 14, marginTop: '0.5rem', fontWeight: '500' }}>
                     Forgot something? Use the chat button to speak or type more. We’ll refresh your ecosystem.
                 </p>
                 <div style={{ marginTop: '1.25rem' }}>
@@ -370,20 +370,20 @@ export default function Recommendations({
             {results?.fullHealthIntake && Object.keys(results.fullHealthIntake).length > 0 && !llmLoading && llmError && (
                 <div style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', textAlign: 'center', padding: '2rem', color: '#b42318', background: '#fef3f2', borderRadius: 'var(--radius-lg)', border: '1px solid #fecdca' }}>
                     <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>We couldn't load your picks</p>
-                    <p style={{ fontSize: '0.9rem' }}>{llmError}</p>
+                    <p style={{ fontSize: 14 }}>{llmError}</p>
                 </div>
             )}
 
             {results?.fullHealthIntake && Object.keys(results.fullHealthIntake).length > 0 && !llmLoading && !llmError && tiered.length === 0 && (
                 <div style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', textAlign: 'center', padding: '2rem', color: 'var(--color-text-muted)' }}>
-                    <p style={{ fontSize: '0.95rem' }}>We couldn't find picks for you. Try refreshing the page, or tell us more in chat.</p>
+                    <p style={{ fontSize: 16 }}>We couldn't find picks for you. Try refreshing the page, or tell us more in chat.</p>
                 </div>
             )}
 
             {!llmLoading && !llmError && tiered.length > 0 && (
                 <div style={{ maxWidth: '980px', margin: '0 auto var(--spacing-xl)', display: 'grid', gap: '1rem' }}>
-                    <h3 style={{ fontSize: '1.35rem', marginBottom: '0.4rem' }}>Picks for you</h3>
-                    <p style={{ margin: '0 0 0.45rem', fontSize: '0.82rem', color: 'var(--color-text-muted)', lineHeight: 1.45 }}>
+                    <h3 style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '0.4rem' }}>Picks for you</h3>
+                    <p style={{ margin: '0 0 0.45rem', fontSize: 12.5, color: 'var(--color-text-muted)', lineHeight: 1.45 }}>
                         These picks come from what you told us and what ayna has learned so far. Not from our regular product list. Always check with a doctor and the brand before you buy.
                     </p>
                     {tiered.map((entry) => (
@@ -404,8 +404,8 @@ export default function Recommendations({
                                     textAlign: 'left',
                                 }}
                             >
-                                <span style={{ fontWeight: '700' }}>{entry.concern}</span>
-                                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
+                                <span style={{ fontWeight: 600 }}>{entry.concern}</span>
+                                <span style={{ fontSize: 12.5, color: 'var(--color-text-muted)' }}>
                                     {expandedConcern === entry.concern ? '▼' : '▶'}
                                 </span>
                             </button>
@@ -433,31 +433,31 @@ export default function Recommendations({
                                                         padding: 0,
                                                     }}
                                                 >
-                                                    <span style={{ fontSize: '0.92rem', fontWeight: '600' }}>{subcategoryLabel}</span>
-                                                    <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{openSubcategory ? '▼' : '▶'}</span>
+                                                    <span style={{ fontSize: 14, fontWeight: '600' }}>{subcategoryLabel}</span>
+                                                    <span style={{ fontSize: 12.5, color: 'var(--color-text-muted)' }}>{openSubcategory ? '▼' : '▶'}</span>
                                                 </button>
                                                 {openSubcategory && (
                                                     <div style={{ marginTop: '0.6rem' }}>
-                                                        <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', fontWeight: '700' }}>Top pick</div>
+                                                        <div style={{ fontSize: 12.5, color: 'var(--color-text-muted)', fontWeight: 600 }}>Top pick</div>
                                                         <button
                                                             type="button"
-                                                            style={{ marginTop: '0.25rem', background: 'none', border: 'none', padding: 0, color: 'var(--color-primary)', fontWeight: '700', cursor: 'pointer' }}
+                                                            style={{ marginTop: '0.25rem', background: 'none', border: 'none', padding: 0, color: 'var(--color-primary)', fontWeight: 600, cursor: 'pointer' }}
                                                             onClick={() => onOpenProduct(tier.product, { source: 'recommendation' })}
                                                         >
                                                             {tier.product.name}
                                                         </button>
-                                                        <p style={{ fontSize: '0.82rem', marginTop: '0.3rem', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
+                                                        <p style={{ fontSize: 12.5, marginTop: '0.3rem', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
                                                             <strong>Match:</strong>{' '}
                                                             {tier.matchExplanation || tier.product?.whyItWorks || 'Picked based on what you told us about your health.'}
                                                         </p>
                                                         {tier.safetyFlags?.length > 0 && (
-                                                            <p style={{ fontSize: '0.82rem', marginTop: '0.25rem', color: '#b42318' }}>
+                                                            <p style={{ fontSize: 12.5, marginTop: '0.25rem', color: '#b42318' }}>
                                                                 Safety: {tier.safetyFlags.join(' ')}
                                                             </p>
                                                         )}
                                                         {Array.isArray(tier.alternatives) && tier.alternatives.length > 0 && (
                                                             <div style={{ marginTop: '0.45rem' }}>
-                                                                <p style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', margin: '0 0 0.3rem' }}>
+                                                                <p style={{ fontSize: 12.5, color: 'var(--color-text-muted)', margin: '0 0 0.3rem' }}>
                                                                     {tier.alternatives.length === 1 ? 'Other option' : 'Other options'}
                                                                 </p>
                                                                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }}>
@@ -466,7 +466,7 @@ export default function Recommendations({
                                                                             key={alt.id}
                                                                             type="button"
                                                                             className="btn btn-outline"
-                                                                            style={{ padding: '0.25rem 0.55rem', fontSize: '0.75rem' }}
+                                                                            style={{ padding: '0.25rem 0.55rem', fontSize: 12.5 }}
                                                                             onClick={() => onOpenProduct(alt, { source: 'recommendation' })}
                                                                         >
                                                                             {alt.name}
@@ -483,7 +483,7 @@ export default function Recommendations({
                                 </div>
                             )}
                             {entry.notes?.length > 0 && (
-                                <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: 0 }}>
+                                <p style={{ fontSize: 14, color: 'var(--color-text-muted)', marginBottom: 0 }}>
                                     {entry.notes.join(' ')} This recommendation may help with symptom support and should be confirmed with a provider.
                                 </p>
                             )}
@@ -494,7 +494,7 @@ export default function Recommendations({
 
             {/* Filters: dropdowns for Type and Category */}
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: 'var(--spacing-lg)', alignItems: 'center' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: 14, color: 'var(--color-text-muted)' }}>
                     Type
                     <select
                         value={typeFilter}
@@ -505,7 +505,7 @@ export default function Recommendations({
                             border: '1px solid var(--color-border)',
                             background: 'var(--color-surface-soft)',
                             color: 'var(--color-text-main)',
-                            fontSize: '0.9rem',
+                            fontSize: 14,
                             cursor: 'pointer',
                             minWidth: '140px'
                         }}
@@ -515,7 +515,7 @@ export default function Recommendations({
                         ))}
                     </select>
                 </label>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: 14, color: 'var(--color-text-muted)' }}>
                     Category
                     <select
                         value={categoryFilter}
@@ -526,7 +526,7 @@ export default function Recommendations({
                             border: '1px solid var(--color-border)',
                             background: 'var(--color-surface-soft)',
                             color: 'var(--color-text-main)',
-                            fontSize: '0.9rem',
+                            fontSize: 14,
                             cursor: 'pointer',
                             minWidth: '180px'
                         }}
@@ -538,7 +538,7 @@ export default function Recommendations({
                 </label>
             </div>
             {(categoryFilter !== 'all' || typeFilter !== 'all') && (
-                <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1rem' }}>
+                <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: 14, marginBottom: '1rem' }}>
                     Showing {displayedSections.reduce((n, s) => n + s.products.length, 0)} product{displayedSections.reduce((n, s) => n + s.products.length, 0) !== 1 ? 's' : ''}
                 </p>
             )}
@@ -546,10 +546,10 @@ export default function Recommendations({
             {/* Clinical workflow: e.g. For Recurrent UTIs → Prevent, Test, Treat, Get care */}
             {workflowWithFilter.length > 0 && workflowWithFilter.map((wf) => (
                 <div key={wf.frustration} style={{ maxWidth: '900px', margin: '0 auto var(--spacing-xl)' }}>
-                    <h3 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', color: 'var(--color-text-main)' }}>
+                    <h3 style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '0.5rem', color: 'var(--color-text-main)' }}>
                         For {wf.frustrationLabel}
                     </h3>
-                    <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', marginBottom: '1rem', lineHeight: 1.5 }}>
+                    <p style={{ fontSize: 16, color: 'var(--color-text-muted)', marginBottom: '1rem', lineHeight: 1.5 }}>
                         These picks follow a simple path: prevent it, test at home, treat or manage it, and get care if you need it.
                     </p>
                     {wf.steps.map((step) => {
@@ -570,14 +570,14 @@ export default function Recommendations({
                                         display: 'flex',
                                         justifyContent: 'space-between',
                                         alignItems: 'center',
-                                        fontSize: '1rem',
+                                        fontSize: 16,
                                         fontWeight: '600',
                                         color: 'var(--color-text-main)'
                                     }}
                                 >
                                     <span>{step.stepLabel}</span>
-                                    <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: '500' }}>{step.products.length} product{step.products.length !== 1 ? 's' : ''}</span>
-                                    <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{open ? '▼' : '▶'}</span>
+                                    <span style={{ fontSize: 14, color: 'var(--color-text-muted)', fontWeight: '500' }}>{step.products.length} product{step.products.length !== 1 ? 's' : ''}</span>
+                                    <span style={{ fontSize: 12.5, color: 'var(--color-text-muted)' }}>{open ? '▼' : '▶'}</span>
                                 </button>
                                 {open && (
                                     <div style={{ padding: '0 1.25rem 1.25rem', borderTop: '1px solid var(--color-border)' }}>
@@ -595,10 +595,10 @@ export default function Recommendations({
             {/* Recommended articles */}
             {onViewArticle && recommendedArticles.length > 0 && (
               <div style={{ maxWidth: '800px', margin: '0 auto var(--spacing-xl)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <h3 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <h3 style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   Recommended articles
                 </h3>
-                <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
+                <p style={{ fontSize: 14, color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
                   Health reads that match your focus areas.
                 </p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -615,12 +615,12 @@ export default function Recommendations({
                         gap: '0.5rem',
                       }}
                     >
-                      <div style={{ fontWeight: '600', fontSize: '1.05rem', color: 'var(--color-text-main)' }}>{art.title}</div>
-                      <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', lineHeight: 1.5, margin: 0 }}>{art.teaser}</p>
+                      <div style={{ fontWeight: '600', fontSize: 'var(--ay-fs-card)', color: 'var(--color-text-main)' }}>{art.title}</div>
+                      <p style={{ fontSize: 14, color: 'var(--color-text-muted)', lineHeight: 1.5, margin: 0 }}>{art.teaser}</p>
                       <button
                         type="button"
                         className="btn btn-outline"
-                        style={{ alignSelf: 'flex-start', padding: '0.4rem 0.9rem', fontSize: '0.85rem' }}
+                        style={{ alignSelf: 'flex-start', padding: '0.4rem 0.9rem', fontSize: 14 }}
                         onClick={() => onViewArticle(art.id)}
                       >
                         Read article
@@ -634,7 +634,7 @@ export default function Recommendations({
             {/* Recommendations by category. Collapsible sections */}
             {displayedSections.length > 0 && (
                 <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-                    <h3 style={{ fontSize: '1.35rem', marginBottom: '1rem', color: 'var(--color-text-main)' }}>
+                    <h3 style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '1rem', color: 'var(--color-text-main)' }}>
                         More for you by category
                     </h3>
                     {displayedSections.map(({ category, label, products }) => {
@@ -655,18 +655,18 @@ export default function Recommendations({
                                         display: 'flex',
                                         justifyContent: 'space-between',
                                         alignItems: 'center',
-                                        fontSize: '1rem',
+                                        fontSize: 16,
                                         fontWeight: '600',
                                         color: 'var(--color-text-main)'
                                     }}
                                 >
                                     <span>{label}</span>
-                                    <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: '500' }}>{products.length} product{products.length !== 1 ? 's' : ''}</span>
-                                    <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{open ? '▼' : '▶'}</span>
+                                    <span style={{ fontSize: 14, color: 'var(--color-text-muted)', fontWeight: '500' }}>{products.length} product{products.length !== 1 ? 's' : ''}</span>
+                                    <span style={{ fontSize: 12.5, color: 'var(--color-text-muted)' }}>{open ? '▼' : '▶'}</span>
                                 </button>
                                 {open && (
                                     <div style={{ padding: '0 1.25rem 1.25rem', borderTop: '1px solid var(--color-border)' }}>
-                                        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
+                                        <p style={{ fontSize: 14, color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
                                             {products.length === 1 ? '1 product' : `${products.length} products`} in this category that match your profile.
                                         </p>
                                         <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
@@ -681,7 +681,7 @@ export default function Recommendations({
             )}
 
             {Object.keys(omittedProducts).length > 0 && (
-                <p style={{ textAlign: 'center', marginTop: 'var(--spacing-lg)', fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
+                <p style={{ textAlign: 'center', marginTop: 'var(--spacing-lg)', fontSize: 12.5, color: 'var(--color-text-muted)' }}>
                     Note: {Object.keys(omittedProducts).length} products are hidden based on your preference.
                 </p>
             )}
