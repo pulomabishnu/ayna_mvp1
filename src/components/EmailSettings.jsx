@@ -35,38 +35,40 @@ export default function EmailSettings({ user }) {
   const disabled = loading || !available;
 
   return (
-    <section className="wyou-card is-email" id="wyou-email" aria-labelledby="wyou-email-h">
-      <div className="wyou-card-head"><h2 id="wyou-email-h">Email settings</h2>{note && <span role="status">{note}</span>}</div>
-      <p className="wyou-muted">Emails about your account, like sign-in links and password resets, always send.</p>
-      {!loading && !available && <p className="wyou-note" role="status">Email settings aren't available right now.</p>}
-      <ul className="wyou-email">
+    <section className="wy-sec" id="wyou-email" aria-labelledby="wyou-email-h">
+      <div className="wy-sec__head"><h2 className="ay-group__title" id="wyou-email-h">Email settings</h2>{note && <span className="wy-count" role="status">{note}</span>}</div>
+      <ul className="ay-group wy-rows wy-email">
         {EMAIL_GROUPS.map((g) => {
           const on = !off && prefs[g.id];
           const freqKey = `${g.id}Freq`;
           return (
-            <li key={g.id} className={on ? 'is-on' : ''}>
-              <div className="wyou-email__text">
-                <strong id={`em-${g.id}`}>{g.label}</strong>
-                <small>{g.help}</small>
+            <li key={g.id} className="ay-group__row wy-row">
+              <span className="ay-group__text">
+                <span className="ay-group__value" id={`em-${g.id}`}>{g.label}</span>
+                <span className="ay-group__note">{g.help}</span>
                 {g.freq && on && (
-                  <span className="wyou-seg wyou-email__freq" role="group" aria-label={`How often: ${g.label}`}>
+                  <span className="wy-seg" role="group" aria-label={`How often: ${g.label}`}>
                     {[['weekly', 'Weekly roundup'], ['instant', 'As it happens']].map(([v, l]) => (
-                      <button key={v} type="button" aria-pressed={prefs[freqKey] === v} disabled={disabled} onClick={() => save({ ...prefs, [freqKey]: v }, off)}>{l}</button>
+                      <button key={v} type="button" className="ay-chip" aria-pressed={prefs[freqKey] === v} disabled={disabled} onClick={() => save({ ...prefs, [freqKey]: v }, off)}>{l}</button>
                     ))}
                   </span>
                 )}
-              </div>
-              <button type="button" role="switch" aria-checked={Boolean(on)} aria-labelledby={`em-${g.id}`} className="wyou-switch" disabled={disabled}
-                onClick={() => save({ ...prefs, [g.id]: !on }, off && !on ? false : off)}>
-                <span aria-hidden="true" />
-              </button>
+              </span>
+              <span className="ay-group__end">
+                <button type="button" role="switch" aria-checked={Boolean(on)} aria-labelledby={`em-${g.id}`} className="wy-switch" disabled={disabled}
+                  onClick={() => save({ ...prefs, [g.id]: !on }, off && !on ? false : off)}>
+                  <span aria-hidden="true" />
+                </button>
+              </span>
             </li>
           );
         })}
       </ul>
-      <div className="wyou-actions">
+      <p className="wy-foot">Emails about your account, like sign-in links and password resets, always send.</p>
+      {!loading && !available && <p className="wy-foot" role="status">Email settings aren't available right now.</p>}
+      <div className="wy-actions">
         {teamMemberForEmail(user?.email) && (
-          <button type="button" className="wyou-btn is-ghost" onClick={async () => {
+          <button type="button" className="ay-btn ay-btn--secondary cm-small" onClick={async () => {
             setNote('Sending…');
             try {
               const { data } = await getSupabaseClient().auth.getSession();
@@ -77,8 +79,8 @@ export default function EmailSettings({ user }) {
           }}>Send me a test email</button>
         )}
         {off
-          ? <button type="button" className="wyou-btn is-ghost" disabled={disabled} onClick={() => save(prefs, false)}>Turn emails back on</button>
-          : <button type="button" className="wyou-link-danger" disabled={disabled} onClick={() => save(prefs, true)}>Turn off all emails</button>}
+          ? <button type="button" className="ay-btn ay-btn--secondary cm-small" disabled={disabled} onClick={() => save(prefs, false)}>Turn emails back on</button>
+          : <button type="button" className="ct-link" disabled={disabled} onClick={() => save(prefs, true)}>Turn off all emails</button>}
       </div>
     </section>
   );

@@ -2299,6 +2299,12 @@ function App() {
         )}
         {currentView === 'you' && (
           <WebYou
+            onOpenCommunity={(to) => {
+              if (to?.username) setCommunityHandle(to.username);
+              else setCommunitySeed({ kind: to?.kind || null, token: Date.now() });
+              setCurrentView('community');
+            }}
+            onOpenArticle={(a) => { setSelectedArticleId(a.id); setCurrentView('articles'); }}
             onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
             user={user}
             quizResults={quizResults}
