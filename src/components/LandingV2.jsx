@@ -384,7 +384,7 @@ function Invest() {
     <section ref={ref} className="lv-sec lv-invest" aria-labelledby="lv-invest-title">
       <div className="lv-invest__card">
         <div className="lv-invest__copy">
-          <h2 id="lv-invest-title">Own a piece of <em>ayna</em>.</h2>
+          <h2 id="lv-invest-title">Own a piece of ayna.</h2>
           <p className="lv-invest__body">ayna is built with the women who use it. We're planning a community round on Wefunder so you can back what we're building. {INVEST_TERMS}</p>
           <a className="lv-btn lv-btn--ink" href={WEFUNDER_URL} target="_blank" rel="noopener" onClick={() => trackInvestClick('landing')}>
             Reserve your spot on Wefunder<span className="lv-sr"> (opens in a new tab)</span><Arrow />
