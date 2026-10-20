@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { FEEDBACK_CAMPAIGN, setFeedbackOwner, readPurchaseQueue, writePurchaseQueue, updatePurchase, readyPurchase, removePurchase, sendFeedback } from '../utils/feedbackClient';
+
+import './feedbackPrompts.css';
 
 const REFERRALS = ['TikTok', 'Instagram', 'LinkedIn', 'Google / search', 'Friend / word of mouth', 'Event / conference', 'Brand / partner', 'Other'];
 const SAFE_VIEWS = new Set(['welcome', 'hero', 'ecosystem', 'discovery', 'articles', 'product']);
@@ -45,7 +48,7 @@ function FeedbackDialog({ prompt, onClose }) {
       {done ? <><p>Your anonymous answer was saved.</p><button type="button" className="v6-survey-submit" onClick={onClose}>Done</button></> : <>
         <p className="v6-survey-sub">{prompt.kind === 'purchase' ? `${prompt.name}${prompt.variant ? ` — ${prompt.variant}` : ''}` : 'A quick, optional check-in.'}</p>
         {prompt.kind !== 'purchase' && <p className="v6-survey-sub">Answers aren’t linked to your account. Please leave out personal details.</p>}
-        {prompt.kind === 'purchase' ? <div className="v6-survey-actions">
+        {prompt.kind === 'purchase' ? <div className="v6-survey-actions v6-survey-choice">
           <button type="button" className="v6-survey-submit" disabled={busy} onClick={() => submit('yes')}>Yes</button>
           <button type="button" className="v6-survey-skip" disabled={busy} onClick={() => submit('no')}>No</button>
         </div> : <>
@@ -130,5 +133,6 @@ export default function FeedbackPrompts({ user, authLoading, currentView }) {
     if (prompt?.kind === 'purchase') removePurchase(prompt.id);
     setPrompt(null); active.current = false;
   };
-  return prompt ? <FeedbackDialog key={prompt.receipt} prompt={prompt} onClose={close} /> : null;
+  // Rendered into <body> so no transformed page wrapper can pull the fixed backdrop off-centre.
+  return prompt ? createPortal(<FeedbackDialog key={prompt.receipt} prompt={prompt} onClose={close} />, document.body) : null;
 }
