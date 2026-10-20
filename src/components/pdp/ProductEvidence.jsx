@@ -320,15 +320,23 @@ export default function ProductEvidence({ product: baseProduct, image = '', safe
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
-    // The pill nav fills the pill of the section being read.
-    if (typeof IntersectionObserver === 'undefined') return undefined;
-    const els = ['overview', 'inside', 'evidence', 'reviews'].map((id) => document.getElementById(`ay-ps-${id}`)).filter(Boolean);
-    const io = new IntersectionObserver((entries) => {
-      const seen = entries.filter((e) => e.isIntersecting).sort((x, y) => x.boundingClientRect.top - y.boundingClientRect.top)[0];
-      if (seen) setActiveNav(seen.target.id.replace('ay-ps-', ''));
-    }, { rootMargin: '-140px 0px -55% 0px' });
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    // The pill nav fills the pill of the section being read: the last one whose top has passed the nav.
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const nav = document.querySelector('.ay-ps-nav');
+      const line = (nav ? nav.getBoundingClientRect().bottom : 0) + 24;
+      let cur = 'overview';
+      ['overview', 'inside', 'evidence', 'reviews'].forEach((id) => {
+        const el = document.getElementById(`ay-ps-${id}`);
+        if (el && el.getBoundingClientRect().top <= line) cur = id;
+      });
+      setActiveNav(cur);
+    };
+    const onScroll = () => { if (!raf) raf = window.requestAnimationFrame(update); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    update();
+    return () => { window.removeEventListener('scroll', onScroll); if (raf) window.cancelAnimationFrame(raf); };
   }, [baseProduct?.id]);
   if (!d) return null;
 
@@ -488,15 +496,15 @@ export default function ProductEvidence({ product: baseProduct, image = '', safe
   const gradeLine = topGrade ? `${GRADE_WORDS[topGrade.grade]} for ${needPhrase(topGrade.need)}.` : '';
   const researchLine = takeaway(science.rest || d.scienceSummary) || gradeLine || (researchCount ? `${plural(researchCount, 'research source')} on file. Open it to read them.` : '');
   const clinicalLine = takeaway(d.clinicianShort || d.clinician || d.clinicalNote || d.clinicalSummary);
-  const howLine = d.how ? takeaway(d.how.intro || d.how.steps[0]) : '';
+  const howLine = d.how ? takeaway(d.how.intro && !/:\s*$/.test(d.how.intro) ? d.how.intro : d.how.steps[0]) : '';
 
   // Numbered evidence bands, in the order people look for them.
   const bands = [
-    byId.clinical && { id: 'clinical', tab: 'Clinician', title: 'What clinicians say', line: clinicalLine, count: d.clinicalLinks.length, note: d.independent ? '' : 'From the brand', more: 'Read the evidence', body: byId.clinical.body },
-    byId.science && { id: 'science', tab: 'Research', title: 'What the research says', line: researchLine, count: researchCount || d.studies.length, more: 'Read the research', body: byId.science.body },
-    byId.safety && { id: 'safety', tab: 'Safety', title: 'Safety', line: safetyLine || 'See the safety checks on file.', count: d.safetyLinks.length, note: recall?.status === 'past' ? 'Recall on file' : '', more: 'See all safety info', body: byId.safety.body },
-    byId.how && { id: 'how', tab: 'How to', title: 'How to use it', line: howLine, count: 0, stepsCount: d.how.steps.length, more: 'See the steps', body: byId.how.body },
-    (byId.details || byId.sources) && { id: 'details', tab: 'Details', title: 'Details and sources', line: allSources.length ? `What's in it, size and price, and all ${plural(allSources.length, 'source')} we checked.` : 'What it is made of, size and price.', count: 0, more: 'See the details', body: <>
+    byId.clinical && { id: 'clinical', title: 'What clinicians say', line: clinicalLine, count: d.clinicalLinks.length, note: d.independent ? '' : 'From the brand', more: 'Read the evidence', body: byId.clinical.body },
+    byId.science && { id: 'science', title: 'What the research says', line: researchLine, count: researchCount || d.studies.length, more: 'Read the research', body: byId.science.body },
+    byId.safety && { id: 'safety', title: 'Safety', line: safetyLine || 'See the safety checks on file.', count: d.safetyLinks.length, note: recall?.status === 'past' ? 'Recall on file' : '', more: 'See all safety info', body: byId.safety.body },
+    byId.how && { id: 'how', title: 'How to use it', line: howLine, count: 0, stepsCount: d.how.steps.length, more: 'See the steps', body: byId.how.body },
+    (byId.details || byId.sources) && { id: 'details', title: 'Details and sources', line: allSources.length ? `What's in it, size and price, and all ${plural(allSources.length, 'source')} we checked.` : 'What it is made of, size and price.', count: 0, more: 'See the details', body: <>
       {byId.details?.body}
       {byId.sources && <><h3 className="ay-part__h">Sources{allSources.length ? ` (${allSources.length})` : ''}</h3>{byId.sources.body}</>}
     </> },
@@ -562,12 +570,13 @@ export default function ProductEvidence({ product: baseProduct, image = '', safe
         </div>
         {hasWho && (
           <div className="ay-ps-for">
-            <span className="ay-ps-tab">Who it’s for</span>
             <h3>This is for you if</h3>
-            {d.who.length > 0 && <ul className="ay-ps-stars">{d.who.map((w) => <li key={w}>{withTerms(w, plan)}</li>)}</ul>}
-            {helps.length > 0 && <p className="ay-ev__by"><b>Helps with:</b> {helps.join(', ')}</p>}
-            {d.avoidIf.length > 0 && <p className="ay-ev__by"><b>Skip it if you react to:</b> {d.avoidIf.join(', ')}</p>}
-            {(d.platform || d.integrations.length > 0) && <p className="ay-ev__by"><b>Works with:</b> {[d.platform, ...d.integrations].filter(Boolean).join(', ')}</p>}
+            <div className="ay-ps-for__list">
+              {d.who.length > 0 && <ul className="ay-ps-stars">{d.who.map((w) => <li key={w}>{withTerms(w, plan)}</li>)}</ul>}
+              {helps.length > 0 && <p className="ay-ev__by"><b>Helps with:</b> {helps.join(', ')}</p>}
+              {d.avoidIf.length > 0 && <p className="ay-ev__by"><b>Skip it if you react to:</b> {d.avoidIf.join(', ')}</p>}
+              {(d.platform || d.integrations.length > 0) && <p className="ay-ev__by"><b>Works with:</b> {[d.platform, ...d.integrations].filter(Boolean).join(', ')}</p>}
+            </div>
           </div>
         )}
       </section>
@@ -601,7 +610,7 @@ export default function ProductEvidence({ product: baseProduct, image = '', safe
           {showSpot && (
             <div className="ay-ps-spot">
               <div className="ay-ps-spot__text">
-                <span className="ay-ps-pill">ayna’s evidence check</span>
+                <p className="ay-ps-spot__kicker">ayna’s evidence check</p>
                 <p className="ay-ps-spot__h">{spotHeadline}</p>
                 {bigNumbers.length > 0 && (
                   <dl className="ay-ps-spot__nums">
@@ -619,7 +628,6 @@ export default function ProductEvidence({ product: baseProduct, image = '', safe
               const meta = [b.count > 0 && plural(b.count, 'source'), b.stepsCount > 0 && plural(b.stepsCount, 'step'), b.note].filter(Boolean);
               return (
                 <li key={b.id} id={`ay-ps-${b.id}`} className={`ay-ps-band is-${b.id}${isOpen ? ' is-open' : ''}`}>
-                  <span className="ay-ps-tab" aria-hidden="true">{b.tab}</span>
                   <h3 className="ay-ps-band__h">
                     <button type="button" aria-expanded={isOpen} aria-controls={`ay-ps-${b.id}-body`} onClick={() => toggleBand(b.id)}>
                       <span className="ay-ps-band__num" aria-hidden="true">({pad(i + 1)})</span>
