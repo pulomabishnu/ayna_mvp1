@@ -195,7 +195,7 @@ export default function About({ onBack, onExplore, onStart }) {
         </div>}
       </EdBlock>
 
-      <section className="ed-block ed-group ed-closer" aria-labelledby="ed-about-closer">
+      <section className="ed-block ay-group is-padded ed-closer" aria-labelledby="ed-about-closer">
         <div>
           <h2 id="ed-about-closer" className="ed-h2">A place to return to as your needs change.</h2>
           <p className="ed-body">
@@ -205,8 +205,8 @@ export default function About({ onBack, onExplore, onStart }) {
         </div>
         {(onStart || onExplore) && (
           <div className="ed-closer__cta">
-            {onStart && <button type="button" className="ed-btn ed-btn--primary" onClick={() => onStart()}>See my matches</button>}
-            {onExplore && <button type="button" className="ed-btn ed-btn--secondary" onClick={() => onExplore()}>Browse the Shop</button>}
+            {onStart && <button type="button" className="ay-btn ay-btn--primary" onClick={() => onStart()}>See my matches</button>}
+            {onExplore && <button type="button" className="ay-btn ay-btn--secondary" onClick={() => onExplore()}>Browse the Shop</button>}
           </div>
         )}
       </section>

@@ -61,7 +61,7 @@ export default function AuthConfirm({ onAuthenticated }) {
   return (
     <EdState
       title="Your account is confirmed."
-      actions={<button type="button" className="ed-btn ed-btn--primary" onClick={() => onAuthenticated(confirmedUser)}>Continue to ayna</button>}
+      actions={<button type="button" className="ay-btn ay-btn--primary" onClick={() => onAuthenticated(confirmedUser)}>Continue to ayna</button>}
     >
       <p className="ed-lead">
         Your email is verified and your ayna account is ready to go.

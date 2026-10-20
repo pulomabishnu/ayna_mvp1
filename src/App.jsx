@@ -360,7 +360,7 @@ function NotFoundState({ title, subtitle, ctaLabel, onCta, onSearch, searchPlace
             </form>
           )}
           <div className="ed-state__actions">
-            <button type="button" className={onSearch ? 'ed-link' : 'ed-btn ed-btn--primary'} onClick={onCta}>{ctaLabel}</button>
+            <button type="button" className={onSearch ? 'ay-btn ay-btn--text' : 'ay-btn ay-btn--primary'} onClick={onCta}>{ctaLabel}</button>
           </div>
         </div>
       </div>

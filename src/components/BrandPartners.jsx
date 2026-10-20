@@ -256,13 +256,13 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onBrowse
               <h2 className="ed-h2">{partner.brand}{partner.prelaunch && <> <span className="ed-badge" style={{ verticalAlign: 'middle' }}>Pre-launch · Waitlist</span></>}</h2>
               <p className="ed-body" style={{ marginTop: 6 }}>{partner.blurb}</p>
               <p className="ed-brandpanel__links">
-                {partner.waitlistUrl && <a className="ed-link" href={partner.waitlistUrl} target="_blank" rel="noopener noreferrer">{partner.waitlistCta || 'Join the waitlist'} →</a>}
-                <a className="ed-link" href={`/shop?q=${encodeURIComponent(partner.brand)}`} onClick={(e) => {
+                {partner.waitlistUrl && <a className="ay-btn ay-btn--text" href={partner.waitlistUrl} target="_blank" rel="noopener noreferrer">{partner.waitlistCta || 'Join the waitlist'} →</a>}
+                <a className="ay-btn ay-btn--text" href={`/shop?q=${encodeURIComponent(partner.brand)}`} onClick={(e) => {
                   if (!onBrowseBrand || !isPlainLeftClick(e)) return;
                   e.preventDefault();
                   onBrowseBrand(partner.brand);
                 }}>See {partner.brand} in Shop →</a>
-                <button type="button" className="ed-link" onClick={() => { setOpen(null); document.getElementById(slug(partner.brand))?.querySelector('button')?.focus(); }}>Back to brands ↑</button>
+                <button type="button" className="ay-btn ay-btn--text" onClick={() => { setOpen(null); document.getElementById(slug(partner.brand))?.querySelector('button')?.focus(); }}>Back to brands ↑</button>
               </p>
             </div>
           </header>

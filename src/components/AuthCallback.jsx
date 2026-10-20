@@ -248,7 +248,7 @@ function PasswordRecoveryForm({ done, onDone }) {
         </div>
         {err && <p id="ed-pw-err" className="ed-err" role="alert">{err}</p>}
         <div>
-          <button type="submit" className="ed-btn ed-btn--primary" disabled={saving}>{saving ? 'Saving…' : 'Save new password'}</button>
+          <button type="submit" className="ay-btn ay-btn--primary" disabled={saving}>{saving ? 'Saving…' : 'Save new password'}</button>
         </div>
       </form>
     </EdState>

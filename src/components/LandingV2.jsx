@@ -1,14 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { BASICS_PRODUCTS } from '../data/basicsProducts.js';
 import { productsForNeed } from './landingNeeds';
-import { productHref, isPlainLeftClick } from '../utils/productRoute';
+import { isPlainLeftClick } from '../utils/productRoute';
 import { isPartnerBrandItem, PARTNER_BRANDS } from '../utils/partnerBrands';
 import { getWeeklyTrendingLineup } from '../utils/trendingLineup';
 import { ALL_PRODUCTS, MACRO_GROUPS } from '../data/products';
 import { getDailyFact } from '../data/welcomeSlides.js';
-import { formatPrice } from '../utils/formatPrice';
+import ProductCard from './ProductCard';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
-import { useLatestAnnouncement } from './LandingStories';
+import { useLatestAnnouncement } from '../hooks/useLatestAnnouncement';
 import { WEFUNDER_URL, INVEST_TERMS, TTW_DISCLAIMER, INVEST_RISK, trackInvestClick } from '../data/invest';
 import '../styles/editorial.css';
 
@@ -85,8 +85,8 @@ function Search({ onSearch }) {
 
 function Hero({ onStartQuiz, onSearch, personal = null, banner = null }) {
   const cta = personal && (personal.ecoCount > 0 || personal.hasQuiz)
-    ? <Go className="ed-btn ed-btn--primary" href="/ecosystem" onGo={personal.onOpenEcosystem}>Open my ecosystem<Arrow /></Go>
-    : banner || <Go className="ed-btn ed-btn--primary" href="/quiz" onGo={onStartQuiz}>See my matches<Arrow /></Go>;
+    ? <Go className="ay-btn ay-btn--primary" href="/ecosystem" onGo={personal.onOpenEcosystem}>Open my ecosystem<Arrow /></Go>
+    : banner || <Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>See my matches<Arrow /></Go>;
   return (
     <section className="ed-wrap ed-hero" aria-labelledby="ed-hero-title">
       <div className="ed-hero__copy">
@@ -131,22 +131,11 @@ function Brands({ onViewWaitlist }) {
 function Shelf({ products, onOpenProduct, label }) {
   return (
     <ul className="ed-shelf" aria-label={label}>
-      {products.map((p) => {
-        const price = formatPrice(p).main;
-        return (
-          <li key={p.id}>
-            <a className="ed-prod" href={productHref(p.id)} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onOpenProduct?.(p); }}>
-              <span className="ed-prod__tile">
-                <img src={p.image} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} />
-                {isPartnerBrandItem(p) && <span className="ed-prod__badge" title="A partner brand ayna has reviewed">ayna partner</span>}
-              </span>
-              {p.brand && <span className="ed-prod__brand">{p.brand}</span>}
-              <span className="ed-prod__name">{p.name}</span>
-              {/\$/.test(price) && <span className="ed-prod__price">{price}</span>}
-            </a>
-          </li>
-        );
-      })}
+      {products.map((p) => (
+        <li key={p.id}>
+          <ProductCard product={p} onOpen={onOpenProduct} labels={isPartnerBrandItem(p) ? <span className="ed-partner">ayna partner</span> : null} />
+        </li>
+      ))}
     </ul>
   );
 }
@@ -175,7 +164,7 @@ function Picks({ onOpenProduct, onViewDiscovery, picks = null }) {
       <header className="ed-head">
         <h2 id="ed-picks-title" className="ed-h2">{mine ? 'Top picks for your needs' : 'This week’s picks'}</h2>
         <span className="ed-head__count">{items.length} products</span>
-        <Go className="ed-link ed-head__all" href="/shop" onGo={() => onViewDiscovery?.('')}>See the Shop<Arrow /></Go>
+        <Go className="ay-btn ay-btn--text ed-head__all" href="/shop" onGo={() => onViewDiscovery?.('')}>See the Shop<Arrow /></Go>
       </header>
       <Shelf products={items} onOpenProduct={onOpenProduct} label={mine ? 'Top picks for your needs' : 'This week’s picks'} />
     </section>
@@ -240,13 +229,13 @@ function ShopBand({ onOpenProduct, onViewDiscovery }) {
           <span className="ed-head__count">{need.pool.length} {need.label} products</span>
         </header>
         <div className="ed-chiprow" role="group" aria-label="Choose a need">
-          {shownNeeds.map((n) => (<button key={n.id} type="button" className="ed-chip" aria-pressed={n.id === need.id} onClick={() => setId(n.id)}>{n.label}</button>))}
-          {needs.length > CHIP_MAX && <button type="button" className="ed-chip" aria-expanded={allChips} onClick={() => setAllChips((v) => !v)}>{allChips ? 'Fewer' : `More (${needs.length - CHIP_MAX})`}</button>}
+          {shownNeeds.map((n) => (<button key={n.id} type="button" className="ay-chip" aria-pressed={n.id === need.id} onClick={() => setId(n.id)}>{n.label}</button>))}
+          {needs.length > CHIP_MAX && <button type="button" className="ay-chip" aria-expanded={allChips} onClick={() => setAllChips((v) => !v)}>{allChips ? 'Fewer' : `More (${needs.length - CHIP_MAX})`}</button>}
         </div>
         <div key={need.id}><Shelf products={four} onOpenProduct={onOpenProduct} label={`${need.label} products`} /></div>
         <div className="ed-band__foot">
-          <Go className="ed-btn ed-btn--secondary" href="/shop" onGo={() => onViewDiscovery?.(need.group ? { initialMacroGroup: need.group } : '')}>See all {need.label} products</Go>
-          <Go className="ed-link" href="/shop" onGo={() => onViewDiscovery?.('')}>Browse the whole Shop</Go>
+          <Go className="ay-btn ay-btn--secondary" href="/shop" onGo={() => onViewDiscovery?.(need.group ? { initialMacroGroup: need.group } : '')}>See all {need.label} products</Go>
+          <Go className="ay-btn ay-btn--text" href="/shop" onGo={() => onViewDiscovery?.('')}>Browse the whole Shop</Go>
         </div>
       </div>
       <Strip />
@@ -275,7 +264,7 @@ function How({ onViewHowItWorks }) {
     <section className="ed-wrap ed-sec" aria-labelledby="ed-how-title">
       <header className="ed-head">
         <h2 id="ed-how-title" className="ed-h2">How it works</h2>
-        <Go className="ed-link ed-head__all" href="/how-it-works" onGo={onViewHowItWorks}>The full method<Arrow /></Go>
+        <Go className="ay-btn ay-btn--text ed-head__all" href="/how-it-works" onGo={onViewHowItWorks}>The full method<Arrow /></Go>
       </header>
       <ol className="ed-steps">
         {STEPS.map((st, i) => (
@@ -304,14 +293,16 @@ function Evidence({ onViewArticles }) {
         <div className="ed-evidence__copy">
           <h2 id="ed-ev-title" className="ed-h2">How strong is the evidence? We show you.</h2>
           <p className="ed-body">Product pages grade the research on the same three-step scale, next to the sources we read. Unsupported claims are labeled, not upgraded into facts.</p>
-          <Go className="ed-link" href="/library" onGo={onViewArticles}>Read our sources<Arrow /></Go>
+          <Go className="ay-btn ay-btn--text" href="/library" onGo={onViewArticles}>Read our sources<Arrow /></Go>
         </div>
-        <div className="ed-group">
+        <div className="ay-group is-padded">
           <ul className="ed-rows" aria-label="The three evidence levels">
             {LEVELS.map((l) => (
               <li key={l.n} className="ed-level">
-                <span className="ed-meter" role="img" aria-label={`${l.word}, ${l.n} of 3`}>{[1, 2, 3].map((b) => <i key={b} className={b <= l.n ? 'is-on' : undefined} />)}</span>
-                <span className="ed-rowtitle">{l.word}</span>
+                <span className="ay-meter" data-level={l.n}>
+                  <span className="ay-meter__word">{l.word}</span>
+                  <span className="ay-meter__bars" role="img" aria-label={`${l.n} of 3`}>{[1, 2, 3].map((b) => <i key={b} />)}</span>
+                </span>
                 <span className="ed-level__note">{l.note}</span>
               </li>
             ))}
@@ -336,11 +327,11 @@ function Reads({ onViewArticle, onViewArticles }) {
     <section className="ed-wrap ed-sec" aria-labelledby="ed-reads-title">
       <header className="ed-head">
         <h2 id="ed-reads-title" className="ed-h2">Short reads, real sources.</h2>
-        <a className="ed-link ed-head__all" href="/library" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onViewArticles?.(); }}>Open the Library<Arrow /></a>
+        <a className="ay-btn ay-btn--text ed-head__all" href="/library" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onViewArticles?.(); }}>Open the Library<Arrow /></a>
       </header>
       <div className={fact ? 'ed-reads' : undefined}>
         {fact && (
-          <aside className="ed-group ed-word" aria-label="Word of the day">
+          <aside className="ay-group is-padded ed-word" aria-label="Word of the day">
             <span className="ed-meta">Word of the day</span>
             <strong className="ed-word__term">{fact.term}</strong>
             <p>{fact.text}</p>
@@ -376,14 +367,14 @@ function Community({ onViewCommunity, posts = [] }) {
         <div className="ed-sky__copy">
           <h2 id="ed-comm-title" className="ed-h2">Real talk about what women actually use.</h2>
           <p className="ed-body">Reviews, questions and routines from the ayna community, in one place. Ask questions, review what you use and share playlists with women who get it.</p>
-          <Go className="ed-btn ed-btn--secondary" href="/community" onGo={onViewCommunity}>Read reviews</Go>
+          <Go className="ay-btn ay-btn--secondary" href="/community" onGo={onViewCommunity}>Read reviews</Go>
         </div>
         <div>
           <article className="ed-news" aria-labelledby="ed-news-title">
             <span className="ed-news__label">ayna news</span>
             <h3 id="ed-news-title" className="ed-h3">{news ? news.title : 'ayna Community is open.'}</h3>
             <p className="ed-body">{news ? news.body : 'Ask questions, review what you use and share playlists with women who get it.'}</p>
-            <Go className="ed-link" href="/community" onGo={onViewCommunity}>{news ? 'Read it in Community' : 'See Community'}<Arrow /></Go>
+            <Go className="ay-btn ay-btn--text" href="/community" onGo={onViewCommunity}>{news ? 'Read it in Community' : 'See Community'}<Arrow /></Go>
           </article>
           {posts.length > 0 && (
             <ul className="ed-posts" aria-label="From the Powder Room">
@@ -420,14 +411,14 @@ function Us({ onViewAbout }) {
         <div className="ed-us__copy">
           <h2 id="ed-us-title" className="ed-h2">Built by three women who wanted better answers.</h2>
           <p className="ed-body">We met at Cornell, bringing different experiences to the same question: why does understanding our options require so much searching?</p>
-          <Go className="ed-btn ed-btn--secondary" href="/about" onGo={onViewAbout}>Meet us</Go>
+          <Go className="ay-btn ay-btn--secondary" href="/about" onGo={onViewAbout}>Meet us</Go>
         </div>
       </div>
-      <div className="ed-group ed-invest" aria-labelledby="ed-invest-title" role="region">
+      <div className="ay-group is-padded ed-invest" aria-labelledby="ed-invest-title" role="region">
         <div className="ed-invest__copy">
           <h2 id="ed-invest-title" className="ed-h2">Own a piece of ayna.</h2>
           <p className="ed-body">ayna is built with the women who use it. We're planning a community round on Wefunder so you can back what we're building. {INVEST_TERMS}</p>
-          <a className="ed-btn ed-btn--primary" href={WEFUNDER_URL} target="_blank" rel="noopener" onClick={() => trackInvestClick('landing')}>
+          <a className="ay-btn ay-btn--primary" href={WEFUNDER_URL} target="_blank" rel="noopener" onClick={() => trackInvestClick('landing')}>
             Reserve your spot on Wefunder<span className="ed-sr"> (opens in a new tab)</span><Arrow />
           </a>
           <div className="ed-invest__legal">
@@ -450,8 +441,8 @@ function Final({ onStartQuiz, onViewDiscovery }) {
           <h2 id="ed-start-title" className="ed-h1">Start with six questions.</h2>
           <p className="ed-lead">Then a shop matched to you.</p>
           <div className="ed-final__cta">
-            <Go className="ed-btn ed-btn--primary" href="/quiz" onGo={onStartQuiz}>See my matches<Arrow /></Go>
-            <Go className="ed-link" href="/shop" onGo={() => onViewDiscovery?.('')}>Browse the Shop</Go>
+            <Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>See my matches<Arrow /></Go>
+            <Go className="ay-btn ay-btn--text" href="/shop" onGo={() => onViewDiscovery?.('')}>Browse the Shop</Go>
           </div>
         </div>
         <img src="/landing/banner-bath-phone.webp" alt="A woman in a face mask relaxing in a pink tiled bath, scrolling her phone, products along the ledge" loading="lazy" width="960" height="400" />

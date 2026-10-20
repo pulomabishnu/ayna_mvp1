@@ -91,7 +91,7 @@ export default function Contact({ onBack, user = null }) {
       onBack={onBack}
       photo="curlers-call"
     >
-      <form onSubmit={submit} noValidate className="ed-group ed-form" aria-label="Contact the ayna team" style={{ maxWidth: 760 }}>
+      <form onSubmit={submit} noValidate className="ay-group is-padded ed-form" aria-label="Contact the ayna team" style={{ maxWidth: 760 }}>
         <div className="ed-hp" aria-hidden="true">
           <label>
             Website
@@ -116,7 +116,7 @@ export default function Contact({ onBack, user = null }) {
           <legend>What can we help with?</legend>
           <div className="ed-chiprow ed-chiprow--wrap" role="radiogroup" aria-label="Topic">
             {REASONS.map((reason, i) => (
-              <button key={reason} id={`contact-reason-${i}`} type="button" role="radio" aria-checked={form.reason === reason} className="ed-chip"
+              <button key={reason} id={`contact-reason-${i}`} type="button" role="radio" aria-checked={form.reason === reason} className="ay-chip"
                 onClick={() => { setForm((c) => ({ ...c, reason })); setFieldErrors((cur) => ({ ...cur, reason: undefined })); }}>{LABELS[reason] || reason}</button>
             ))}
           </div>
@@ -137,7 +137,7 @@ export default function Contact({ onBack, user = null }) {
         )}
 
         <div>
-          <button type="submit" className="ed-btn ed-btn--primary" disabled={status === 'sending'}>
+          <button type="submit" className="ay-btn ay-btn--primary" disabled={status === 'sending'}>
             {status === 'sending' ? 'Sending…' : 'Send message'}
           </button>
         </div>

@@ -46,7 +46,7 @@ export default function HowWeMakeMoney({ onBack }) {
             photo="bag-tubes"
             toc
         >
-            <div className="ed-group ed-keyline">
+            <div className="ay-group is-padded ed-keyline">
                 <h2>Partnerships never change your matches</h2>
                 <p>
                     Partnerships and affiliate links help support ayna. They can affect visibility in general Browse when clearly labeled, but they do not decide your personalized match score or recommendation order.

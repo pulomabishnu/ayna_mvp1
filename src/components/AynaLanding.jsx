@@ -615,7 +615,7 @@ function WelcomeBack({ heroBanner = null, user, myProducts, recommendedProductId
   // Her dashboard row: one Group in three parts (next step, saved, a read).
   const slot = (
     <section className="ed-wrap" aria-label="Your ayna">
-      <div className="ed-group ed-dash">
+      <div className="ay-group is-padded ed-dash">
         {nextArea ? (
           <button type="button" className="ed-dash__part" onClick={() => onViewDiscovery?.({ initialMacroGroup: nextArea.id })}>
             <span className="ed-dash__label">Your next step</span>

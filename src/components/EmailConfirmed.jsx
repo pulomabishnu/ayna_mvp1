@@ -51,7 +51,7 @@ export default function EmailConfirmed({ onAuthenticated }) {
   return (
     <EdState
       title="Your email is confirmed."
-      actions={confirmedUser ? <button type="button" className="ed-btn ed-btn--primary" onClick={() => onAuthenticated(confirmedUser)}>Continue in this browser</button> : null}
+      actions={confirmedUser ? <button type="button" className="ay-btn ay-btn--primary" onClick={() => onAuthenticated(confirmedUser)}>Continue in this browser</button> : null}
     >
       <p className="ed-lead">
         This page is only for older confirmation links. New ayna signups verify with the code sent by email. Return to ayna and enter your verification code, or request a new code from the sign-in screen.

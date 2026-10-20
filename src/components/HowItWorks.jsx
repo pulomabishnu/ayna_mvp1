@@ -63,7 +63,7 @@ export default function HowItWorks({ onBack, onViewSources }) {
       </EdBlock>
 
       <EdBlock title="From the whole catalog to your short list.">
-        <div className="ed-group"><HowItWorksFunnel /></div>
+        <div className="ay-group is-padded"><HowItWorksFunnel /></div>
       </EdBlock>
 
       <EdBlock title="Relevant, not paid-first.">
@@ -91,7 +91,7 @@ export default function HowItWorks({ onBack, onViewSources }) {
             include published guidance, clinician-authored sources or clearly labeled brand-provided clinician claims;
             it does not mean every product has been independently reviewed by an ayna clinician.
           </p>
-          <p style={{ marginTop: 20 }}><button type="button" className="ed-btn ed-btn--primary" onClick={openSources}>Read our sources</button></p>
+          <p style={{ marginTop: 20 }}><button type="button" className="ay-btn ay-btn--primary" onClick={openSources}>Read our sources</button></p>
         </div>
       </EdBlock>
     </EdPage>
