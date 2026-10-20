@@ -1,0 +1,484 @@
+/* =====================================================================
+   ayna system (website). One source for tokens and shared components.
+   Built from docs/design-direction.md. Imported once, last, in App.jsx.
+   Everything is scoped under .app-container, so the phone app
+   (src/mobile, .ayna-mobile) is never touched.
+
+   Dark mode: .app-container[data-theme='brand-dark'] swaps the tokens;
+   components read only tokens, so they follow automatically.
+
+   ---------------------------------------------------------------------
+   TOKENS (custom properties on .app-container)
+     Colour   --ay-page, --ay-group, --ay-text, --ay-text-2, --ay-hairline,
+              --ay-outline, --ay-feature-bg, --ay-feature-fg, --ay-tile-bg,
+              --ay-alert-bg, --ay-alert-fg, --ay-chart, --ay-focus
+     Type     --ay-type-display, -h1, -h2, -h3, -row, -body, -meta, -caption
+              (desktop values, phone values under 768px)
+     Space    --ay-s4 ... --ay-s96 (the 4/8/12/16/20/24/32/40/48/64/80/96 scale)
+              --ay-section (80 / 48), --ay-groupgap (32 / 24),
+              --ay-headgap (16 / 12), --ay-inset (24 / 16), --ay-rowgap (12)
+     Radius   --ay-r-group 20, --ay-r-card 16, --ay-r-feature 24, --ay-r-tile 12
+     Layout   --ay-container 1240px, --ay-margin (64 / 40 / 24 / 20),
+              --ay-gutter-grid (24 / 16), --ay-reading 680px
+
+   SURFACES (the only four; see "Surfaces" in the direction doc)
+     page            the butter background, no class needed
+     .ay-group       a set of related facts. Deeper butter, radius 20, no
+                     border, no shadow. Holds .ay-group__row rows divided by
+                     hairlines. Never put cards or boxes inside it.
+       .ay-group__title    optional 14/600 label above the group (outside it)
+       .ay-group__row      one row: icon 20 (line, no container), label
+                           13/500, value 16/600, optional note 14/400.
+         .ay-group__icon / __label / __value / __note / __end (chevron, action)
+       .ay-group__row--link  row that is a link or button (hover tint, 44px+)
+     .ay-card        object card for repeated things (products, sources,
+                     posts, reads). 1.5px outline, radius 16, page colour.
+       .ay-card--link   whole card is clickable (hover lifts the outline)
+     .ay-feature     the one dark block per screen. Espresso, butter text,
+                     radius 24. In dark mode it flips to butter on espresso.
+
+   LAYOUT
+     .ay-container   max 1240 centred, page margins per breakpoint
+     .ay-section     vertical rhythm between sections (80 / 48)
+     .ay-section__head   H2 + count + "See all" on one line
+     .ay-prose       reading column (680px), body type, paragraph spacing
+     .ay-h1 .ay-h2 .ay-h3 .ay-meta .ay-caption   type roles as classes
+     .ay-num         tabular figures for prices and counts
+
+   CONTROLS
+     .ay-btn         base button (sentence case, 44px+ target)
+       .ay-btn--primary    espresso fill, butter text, 52px, 3px offset shadow
+       .ay-btn--secondary  1.5px outline, 48px
+       .ay-btn--text       underlined text link, no box
+       .ay-btn--block      full width
+     .ay-tabs        underline tabs for parallel views
+       .ay-tabs__list   the tablist row (scrolls sideways on phones, edge fade)
+       .ay-tabs__tab    one tab; [aria-selected=true] or .is-on = selected
+                        (600 weight + 3px underline, never colour alone)
+       .ay-tabs__count  small count after a label
+       .ay-tabs__panel  the panel under the row
+     .ay-chip        filter chip, 36px tall (44px hit area), outline;
+                     [aria-pressed=true] / .is-on = pink fill + check
+       .ay-chip-row     a row of chips, scrolls sideways on phones
+     .ay-alert       pink note for safety / alerts only (icon + text)
+     .ay-badge-text  one small text badge (Pre-order, Partner): no pill
+                     unless .ay-badge-text--pill (badges are allowed pills)
+
+   OBJECTS
+     .ay-shelf       Spotify-style titled row
+       .ay-shelf__head  H2 + .ay-shelf__count + .ay-shelf__all on one line
+       .ay-shelf__row   horizontal snap row of cards (~2.3 visible on phone,
+                        4 to 5 on desktop). Children are list items.
+     .ay-product-grid   4-col desktop / 3-col tablet / 2-col phone grid
+     .ay-product-card   one anatomy everywhere (ProductCard.jsx):
+       __tile    white square tile, photo contained, 16px padding
+       __heart   36px save button, top right on the tile
+       __brand   13/500      __name  16/600, 2 lines      __kind  13/500 meta
+       __price   14/600 tabular (+ <small> unit, <s> list price)
+       __badge   at most one text badge          __match  match line
+       __rating  star line (links to reviews)
+     .ay-source-card    a source or study: __pub (publisher 13/500) and
+                        __type (Review / Trial / Guideline, as text) on one
+                        line, __title 16/600, __finding 15/400, __go link
+     .ay-source-grid    sources in a grid (desktop) / shelf (phone)
+     .ay-meter       the evidence meter: three bars + word.
+       .ay-meter__bars > i (.is-on), .ay-meter__word, .ay-meter__ends
+       data-level="1|2|3"  sets how many bars are on (or use .is-on)
+
+   SITE CHROME
+     .ay-nav*        site header (logo, text links, Saved, account)
+     .ay-foot*       site footer (brand + three columns, one left edge)
+     .ay-tabbar      phone bottom nav, 6 even columns (kept from before)
+
+   Rules this file enforces: sentence case, no uppercase eyebrows, no
+   shadows except the primary button, serif only at 20px and up, white
+   only behind product photos, 44px targets, visible focus, reduced motion.
+   ===================================================================== */
+
+/* ---------- tokens ---------- */
+.app-container {
+  --ay-page: #ffedac;
+  --ay-group: #f6e3a1;
+  --ay-text: #3e2723;
+  --ay-text-2: rgba(62, 39, 35, .78);
+  --ay-hairline: rgba(62, 39, 35, .15);
+  --ay-outline: #3e2723;
+  --ay-feature-bg: #3e2723;
+  --ay-feature-fg: #ffedac;
+  --ay-tile-bg: #ffffff;
+  --ay-alert-bg: #f7badd;
+  --ay-alert-fg: #3e2723;
+  --ay-chart: #769ebe;
+  --ay-focus: #3e2723;
+  --ay-hover: rgba(62, 39, 35, .06);
+  --ay-group-hover: rgba(62, 39, 35, .05);
+
+  --ay-sans-stack: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --ay-serif-stack: 'DM Serif Display', Georgia, serif;
+
+  --ay-type-display: 64px;
+  --ay-type-h1: 44px;
+  --ay-type-h2: 30px;
+  --ay-type-h3: 22px;
+  --ay-type-row: 17px;
+  --ay-type-body: 17px;
+  --ay-type-meta: 14px;
+  --ay-type-caption: 13px;
+
+  --ay-s4: 4px; --ay-s8: 8px; --ay-s12: 12px; --ay-s16: 16px; --ay-s20: 20px;
+  --ay-s24: 24px; --ay-s32: 32px; --ay-s40: 40px; --ay-s48: 48px; --ay-s64: 64px;
+  --ay-s80: 80px; --ay-s96: 96px;
+  --ay-section: 80px;
+  --ay-groupgap: 32px;
+  --ay-headgap: 16px;
+  --ay-inset: 24px;
+  --ay-rowgap: 12px;
+
+  --ay-r-group: 20px;
+  --ay-r-card: 16px;
+  --ay-r-feature: 24px;
+  --ay-r-tile: 12px;
+
+  --ay-container: 1240px;
+  --ay-margin: 64px;
+  --ay-gutter-grid: 24px;
+  --ay-reading: 680px;
+  --ay-press-shadow: 3px 3px 0 #3e2723;
+}
+@media (max-width: 1279px) { .app-container { --ay-margin: 40px; } }
+@media (max-width: 1023px) { .app-container { --ay-margin: 24px; } }
+@media (max-width: 767px) {
+  .app-container {
+    --ay-margin: 20px;
+    --ay-gutter-grid: 16px;
+    --ay-type-display: 40px;
+    --ay-type-h1: 30px;
+    --ay-type-h2: 24px;
+    --ay-type-h3: 20px;
+    --ay-type-row: 16px;
+    --ay-type-body: 16px;
+    --ay-type-caption: 12.5px;
+    --ay-section: 48px;
+    --ay-groupgap: 24px;
+    --ay-headgap: 12px;
+    --ay-inset: 16px;
+  }
+}
+.app-container[data-theme='brand-dark'] {
+  --ay-page: #3e2723;
+  --ay-group: #4a312c;
+  --ay-text: #ffedac;
+  --ay-text-2: rgba(255, 237, 172, .8);
+  --ay-hairline: rgba(255, 237, 172, .18);
+  --ay-outline: #ffedac;
+  --ay-feature-bg: #ffedac;
+  --ay-feature-fg: #3e2723;
+  --ay-focus: #ffedac;
+  --ay-hover: rgba(255, 237, 172, .07);
+  --ay-group-hover: rgba(255, 237, 172, .06);
+  --ay-press-shadow: 3px 3px 0 #ffedac;
+}
+
+/* ---------- type roles ---------- */
+.app-container.app-container .ay-h1 { margin: 0; font: 400 var(--ay-type-h1)/1.08 var(--ay-serif-stack) !important; letter-spacing: -.01em !important; color: var(--ay-text); text-wrap: balance; }
+.app-container.app-container .ay-h2 { margin: 0; font: 400 var(--ay-type-h2)/1.15 var(--ay-serif-stack) !important; letter-spacing: -.005em !important; color: var(--ay-text); text-wrap: balance; }
+.app-container.app-container .ay-h3 { margin: 0; font: 400 var(--ay-type-h3)/1.2 var(--ay-serif-stack) !important; letter-spacing: 0 !important; color: var(--ay-text); }
+.app-container.app-container .ay-rowtitle { margin: 0; font: 600 var(--ay-type-row)/1.3 var(--ay-sans-stack) !important; letter-spacing: 0 !important; color: var(--ay-text); }
+.app-container.app-container .ay-body { font: 400 var(--ay-type-body)/1.55 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .ay-meta { font: 500 var(--ay-type-meta)/1.45 var(--ay-sans-stack); color: var(--ay-text-2); }
+.app-container.app-container .ay-caption { font: 500 var(--ay-type-caption)/1.45 var(--ay-sans-stack); color: var(--ay-text-2); }
+.app-container.app-container .ay-num { font-variant-numeric: tabular-nums; }
+
+/* ---------- layout ---------- */
+.app-container.app-container .ay-container { width: 100%; max-width: calc(var(--ay-container) + 2 * var(--ay-margin)); margin-inline: auto; padding-inline: var(--ay-margin); box-sizing: border-box; }
+.app-container.app-container .ay-section { margin-block-start: var(--ay-section); }
+.app-container.app-container .ay-section__head { display: flex; align-items: baseline; gap: var(--ay-s12); flex-wrap: wrap; margin: 0 0 var(--ay-headgap); }
+.app-container.app-container .ay-section__head > :is(h2, h3) { margin: 0; }
+.app-container.app-container .ay-section__sub { margin: var(--ay-s4) 0 0; flex-basis: 100%; font: 400 var(--ay-type-meta)/1.5 var(--ay-sans-stack); color: var(--ay-text-2); }
+.app-container.app-container .ay-prose { max-width: var(--ay-reading); }
+.app-container.app-container .ay-prose p { margin: 0 0 var(--ay-s16); font: 400 var(--ay-type-body)/1.55 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .ay-prose p:last-child { margin-bottom: 0; }
+
+/* ---------- Group ---------- */
+.app-container.app-container .ay-group__title { margin: 0 0 var(--ay-s8); font: 600 14px/1.3 var(--ay-sans-stack) !important; letter-spacing: 0 !important; color: var(--ay-text); }
+.app-container.app-container .ay-group { background: var(--ay-group); color: var(--ay-text); border: 0; border-radius: var(--ay-r-group); box-shadow: none; padding: var(--ay-s8) var(--ay-inset); }
+.app-container.app-container .ay-group.is-padded { padding: var(--ay-inset); }
+.app-container.app-container .ay-group__rows { list-style: none; margin: 0; padding: 0; }
+.app-container.app-container .ay-group__row { display: grid; grid-template-columns: auto 1fr auto; align-items: start; column-gap: var(--ay-s12); padding: var(--ay-s12) 0; border-top: 1px solid var(--ay-hairline); min-height: 44px; box-sizing: border-box; }
+.app-container.app-container .ay-group__row:first-child { border-top: 0; }
+.app-container.app-container .ay-group__row:not(:has(.ay-group__icon)) { grid-template-columns: 1fr auto; }
+.app-container.app-container .ay-group__icon { width: 20px; height: 20px; margin-top: 2px; color: var(--ay-text); flex: none; }
+.app-container.app-container .ay-group__icon svg { width: 20px; height: 20px; display: block; }
+.app-container.app-container .ay-group__text { display: grid; gap: 2px; min-width: 0; }
+.app-container.app-container .ay-group__label { font: 500 13px/1.35 var(--ay-sans-stack); color: var(--ay-text-2); }
+.app-container.app-container .ay-group__value { font: 600 16px/1.35 var(--ay-sans-stack); color: var(--ay-text); overflow-wrap: anywhere; }
+.app-container.app-container .ay-group__note { font: 400 14px/1.45 var(--ay-sans-stack); color: var(--ay-text-2); }
+.app-container.app-container .ay-group__end { align-self: center; color: var(--ay-text-2); }
+.app-container.app-container .ay-group__row--link { cursor: pointer; text-decoration: none; color: inherit; width: 100%; background: none; border-left: 0; border-right: 0; border-bottom: 0; text-align: left; font: inherit; margin: 0; border-radius: 0; }
+.app-container.app-container .ay-group__row--link:first-child { border-top: 0; }
+.app-container.app-container .ay-group__row--link:hover { background: var(--ay-group-hover); }
+
+/* ---------- Object card ---------- */
+.app-container.app-container .ay-card { background: var(--ay-page); color: var(--ay-text); border: 1.5px solid var(--ay-outline); border-radius: var(--ay-r-card); box-shadow: none; padding: var(--ay-inset); box-sizing: border-box; }
+.app-container.app-container .ay-card--link { cursor: pointer; text-decoration: none; transition: background-color .15s; }
+.app-container.app-container .ay-card--link:hover { background: var(--ay-hover); }
+
+/* ---------- Feature ---------- */
+.app-container.app-container .ay-feature { background: var(--ay-feature-bg); color: var(--ay-feature-fg); border: 0; border-radius: var(--ay-r-feature); box-shadow: none; padding: var(--ay-s32); }
+.app-container.app-container .ay-feature :is(h1, h2, h3, h4, p, li, span, small, b, strong, a) { color: inherit; }
+@media (max-width: 767px) { .app-container.app-container .ay-feature { padding: var(--ay-s24); } }
+
+/* ---------- buttons ---------- */
+.app-container.app-container .ay-btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--ay-s8); min-height: 44px; padding: 0 var(--ay-s24); border-radius: 999px; font: 600 16px/1.2 var(--ay-sans-stack) !important; letter-spacing: 0 !important; text-transform: none !important; text-decoration: none; cursor: pointer; box-sizing: border-box; transition: transform .1s, box-shadow .1s, background-color .15s; white-space: nowrap; }
+.app-container.app-container .ay-btn svg { width: 18px; height: 18px; flex: none; }
+.app-container.app-container .ay-btn--primary { min-height: 52px; background: var(--ay-feature-bg) !important; color: var(--ay-feature-fg) !important; border: 1.5px solid var(--ay-feature-bg) !important; box-shadow: var(--ay-press-shadow) !important; }
+.app-container.app-container[data-theme='brand-dark'] .ay-btn--primary { box-shadow: 3px 3px 0 #f7badd !important; }
+.app-container.app-container .ay-btn--primary:hover { filter: brightness(1.12); }
+.app-container.app-container .ay-btn--primary:active { transform: translate(1px, 1px); box-shadow: 0 0 0 transparent !important; }
+.app-container.app-container .ay-btn--secondary { min-height: 48px; background: transparent !important; color: var(--ay-text) !important; border: 1.5px solid var(--ay-outline) !important; box-shadow: none !important; }
+.app-container.app-container .ay-btn--secondary:hover { background: var(--ay-hover) !important; }
+.app-container.app-container .ay-btn--secondary.is-on { background: var(--ay-alert-bg) !important; color: #3e2723 !important; border-color: var(--ay-outline) !important; }
+.app-container.app-container .ay-btn--text { min-height: 44px; padding: 0; background: none !important; border: 0 !important; box-shadow: none !important; color: var(--ay-text) !important; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; font-weight: 600 !important; }
+.app-container.app-container .ay-btn--block { width: 100%; }
+.app-container.app-container .ay-btn[disabled], .app-container.app-container .ay-btn[aria-disabled='true'] { opacity: .45; cursor: not-allowed; box-shadow: none !important; }
+
+/* ---------- underline tabs ---------- */
+.app-container.app-container .ay-tabs { position: relative; }
+.app-container.app-container .ay-tabs__list { display: flex; gap: var(--ay-s24); overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--ay-hairline); scroll-snap-type: x proximity; -webkit-mask-image: none; }
+.app-container.app-container .ay-tabs__list::-webkit-scrollbar { display: none; }
+.app-container.app-container .ay-tabs__tab { position: relative; flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 48px; padding: 0 2px; margin: 0; background: none !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; color: var(--ay-text-2) !important; font: 500 16px/1.2 var(--ay-sans-stack) !important; letter-spacing: 0 !important; text-transform: none !important; cursor: pointer; white-space: nowrap; scroll-snap-align: start; }
+.app-container.app-container .ay-tabs__tab::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 3px; border-radius: 3px 3px 0 0; background: transparent; }
+.app-container.app-container .ay-tabs__tab:hover { color: var(--ay-text) !important; }
+.app-container.app-container .ay-tabs__tab:is([aria-selected='true'], .is-on) { color: var(--ay-text) !important; font-weight: 600 !important; }
+.app-container.app-container .ay-tabs__tab:is([aria-selected='true'], .is-on)::after { background: var(--ay-text); }
+.app-container.app-container .ay-tabs__count { font: 600 13px/1 var(--ay-sans-stack); color: var(--ay-text-2); font-variant-numeric: tabular-nums; }
+.app-container.app-container .ay-tabs__panel { padding-top: var(--ay-s24); }
+.app-container.app-container .ay-tabs__panel:focus-visible { outline-offset: 6px; }
+@media (max-width: 767px) {
+  .app-container.app-container .ay-tabs__list { gap: var(--ay-s20); margin-inline: calc(-1 * var(--ay-margin)); padding-inline: var(--ay-margin); scroll-padding-inline: var(--ay-margin); -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 28px), transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 28px), transparent 100%); }
+  .app-container.app-container .ay-tabs__tab { font-size: 15px !important; }
+}
+
+/* ---------- filter chips ---------- */
+.app-container.app-container .ay-chip-row { display: flex; flex-wrap: wrap; gap: var(--ay-s8); margin: 0; padding: 4px 0; list-style: none; }
+@media (max-width: 767px) {
+  .app-container.app-container .ay-chip-row { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: calc(-1 * var(--ay-margin)); padding-inline: var(--ay-margin); }
+  .app-container.app-container .ay-chip-row::-webkit-scrollbar { display: none; }
+}
+.app-container.app-container .ay-chip { position: relative; flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 36px; height: 36px; padding: 0 14px; border: 1.5px solid var(--ay-outline) !important; border-radius: 999px !important; background: transparent !important; color: var(--ay-text) !important; box-shadow: none !important; font: 500 14px/1 var(--ay-sans-stack) !important; letter-spacing: 0 !important; text-transform: none !important; cursor: pointer; white-space: nowrap; text-decoration: none; }
+.app-container.app-container .ay-chip::after { content: ''; position: absolute; inset: -4px 0; }
+.app-container.app-container .ay-chip:hover { background: var(--ay-hover) !important; }
+.app-container.app-container .ay-chip:is([aria-pressed='true'], [aria-selected='true'], [aria-checked='true'], .is-on) { background: var(--ay-alert-bg) !important; color: #3e2723 !important; border-color: #3e2723 !important; font-weight: 600 !important; }
+.app-container.app-container .ay-chip:is([aria-pressed='true'], [aria-selected='true'], [aria-checked='true'], .is-on)::before { content: ''; width: 12px; height: 12px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 12.5 9.5 18 20 6' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 12.5 9.5 18 20 6' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; }
+.app-container.app-container .ay-chip__x { font-size: 16px; line-height: 1; opacity: .8; }
+.app-container.app-container .ay-chip__count { font-variant-numeric: tabular-nums; opacity: .8; }
+
+/* ---------- alert (pink: safety only) ---------- */
+.app-container.app-container .ay-alert { display: grid; grid-template-columns: 20px 1fr; gap: var(--ay-s12); align-items: start; padding: var(--ay-s12) var(--ay-s16); border-radius: var(--ay-r-card); background: var(--ay-alert-bg); color: var(--ay-alert-fg); font: 500 15px/1.45 var(--ay-sans-stack); }
+.app-container.app-container .ay-alert :is(p, span, b, strong, a, button) { color: var(--ay-alert-fg) !important; }
+.app-container.app-container .ay-alert svg { width: 20px; height: 20px; margin-top: 1px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- small text badge ---------- */
+.app-container.app-container .ay-badge-text { display: inline-flex; align-items: center; gap: 4px; font: 600 12.5px/1.2 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .ay-badge-text--pill { padding: 3px 9px; border-radius: 999px; background: var(--ay-alert-bg); color: #3e2723; }
+
+/* ---------- shelf (Spotify pattern) ---------- */
+.app-container.app-container .ay-shelf { position: relative; }
+.app-container.app-container .ay-shelf + .ay-shelf { margin-top: var(--ay-groupgap); }
+.app-container.app-container .ay-shelf__head { display: flex; align-items: baseline; gap: var(--ay-s12); margin: 0 0 var(--ay-headgap); }
+.app-container.app-container .ay-shelf__head > :is(h2, h3) { margin: 0; min-width: 0; }
+.app-container.app-container .ay-shelf__count { font: 500 14px/1 var(--ay-sans-stack); color: var(--ay-text-2); font-variant-numeric: tabular-nums; }
+.app-container.app-container .ay-shelf__all { margin-left: auto; min-height: 44px; display: inline-flex; align-items: center; padding: 0; border: 0; background: none; color: var(--ay-text); font: 600 15px/1 var(--ay-sans-stack); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; white-space: nowrap; }
+.app-container.app-container .ay-shelf__row { --ay-shelf-n: 4.6; display: flex; gap: var(--ay-s16); margin: 0; padding: 4px 0 var(--ay-s8); list-style: none; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; }
+.app-container.app-container .ay-shelf__row::-webkit-scrollbar { display: none; }
+.app-container.app-container .ay-shelf__row > * { flex: 0 0 calc((100% - (var(--ay-shelf-n) - 1) * var(--ay-s16)) / var(--ay-shelf-n)); min-width: 0; scroll-snap-align: start; }
+@media (max-width: 1023px) { .app-container.app-container .ay-shelf__row { --ay-shelf-n: 3.3; } }
+@media (max-width: 767px) {
+  .app-container.app-container .ay-shelf__row { --ay-shelf-n: 2.3; gap: var(--ay-s12); margin-inline: calc(-1 * var(--ay-margin)); padding-inline: var(--ay-margin); scroll-padding-inline: var(--ay-margin); }
+  .app-container.app-container .ay-shelf__row > * { flex-basis: calc((100% - 2 * var(--ay-margin) - 1.3 * var(--ay-s12)) / 2.3); }
+}
+
+/* ---------- product grid + product card ---------- */
+.app-container.app-container .ay-product-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--ay-s32) var(--ay-gutter-grid); margin: 0; padding: 0; list-style: none; }
+@media (max-width: 1023px) { .app-container.app-container .ay-product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 767px) { .app-container.app-container .ay-product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--ay-s24) var(--ay-s12); } }
+
+.app-container.app-container .ay-product-card { position: relative; display: flex; flex-direction: column; min-width: 0; height: 100%; margin: 0; padding: 0; background: none !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; color: var(--ay-text); transform: none !important; }
+.app-container.app-container .ay-product-card__link { display: flex; flex-direction: column; gap: 0; height: 100%; color: inherit !important; text-decoration: none !important; border-radius: var(--ay-r-card); }
+.app-container.app-container .ay-product-card__tile { position: relative; aspect-ratio: 1 / 1; padding: 16px; border: 1.5px solid #3e2723; border-radius: var(--ay-r-card); background: var(--ay-tile-bg) !important; overflow: hidden; box-sizing: border-box; display: grid; place-items: center; }
+.app-container.app-container .ay-product-card__tile :is(img, picture) { width: 100% !important; height: 100% !important; object-fit: contain !important; display: block; border-radius: 0 !important; background: transparent !important; transition: transform .25s; }
+.app-container.app-container .ay-product-card__link:hover .ay-product-card__tile img { transform: scale(1.03); }
+.app-container.app-container .ay-product-card__tile > * { max-width: 100%; max-height: 100%; }
+.app-container.app-container .ay-product-card__body { display: flex; flex-direction: column; gap: 2px; padding: var(--ay-s12) 2px 0; min-width: 0; flex: 1; }
+.app-container.app-container .ay-product-card__top { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-height: 18px; }
+.app-container.app-container .ay-product-card__brand { font: 500 13px/1.35 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; letter-spacing: 0 !important; text-transform: none !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.app-container.app-container .ay-product-card__badge { font: 600 12.5px/1.35 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .ay-product-card__badge::before { content: '·'; margin-right: 6px; color: var(--ay-text-2); font-weight: 500; }
+.app-container.app-container .ay-product-card__badge.is-first::before { content: none; }
+.app-container.app-container .ay-product-card__badge.is-pill { padding: 2px 8px; border-radius: 999px; background: var(--ay-alert-bg); color: #3e2723; }
+.app-container.app-container .ay-product-card__badge.is-pill::before { content: none; }
+.app-container.app-container .ay-product-card__name { margin: 0 !important; font: 600 16px/1.3 var(--ay-sans-stack) !important; letter-spacing: 0 !important; color: var(--ay-text) !important; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-wrap: pretty; }
+.app-container.app-container .ay-product-card__kind { font: 500 13px/1.35 var(--ay-sans-stack); color: var(--ay-text-2); }
+.app-container.app-container .ay-product-card__match { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font: 600 13px/1.3 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .ay-product-card__price { margin-top: auto; padding-top: 6px; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 6px; font: 600 14px/1.35 var(--ay-sans-stack) !important; color: var(--ay-text) !important; font-variant-numeric: tabular-nums; }
+.app-container.app-container .ay-product-card__price small { font: 500 13px/1.35 var(--ay-sans-stack); color: var(--ay-text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.app-container.app-container .ay-product-card__price s { margin-right: 4px; }
+.app-container.app-container .ay-product-card__price.is-unknown { font-weight: 500 !important; color: var(--ay-text-2) !important; }
+.app-container.app-container .ay-product-card__rating { font: 500 13px/1.35 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .ay-product-card__rating u { text-underline-offset: 2px; }
+.app-container.app-container .ay-product-card__heart { position: absolute; top: 8px; right: 8px; z-index: 2; width: 36px !important; height: 36px !important; min-width: 0 !important; min-height: 0 !important; padding: 0 !important; display: grid; place-items: center; border-radius: 50% !important; border: 1.5px solid #3e2723 !important; background: #ffffff !important; color: #3e2723 !important; box-shadow: none !important; cursor: pointer; }
+.app-container.app-container .ay-product-card__heart::after { content: ''; position: absolute; inset: -4px; }
+.app-container.app-container .ay-product-card__heart svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
+.app-container.app-container .ay-product-card__heart[aria-pressed='true'] { background: #f7badd !important; }
+.app-container.app-container .ay-product-card__heart[aria-pressed='true'] svg { fill: #3e2723; }
+.app-container.app-container .ay-product-card__action { margin-top: var(--ay-s8); }
+.app-container.app-container .ay-product-card.is-skeleton .ay-product-card__tile { border-color: var(--ay-hairline); background: var(--ay-group) !important; }
+.app-container.app-container .ay-product-card__line { display: block; height: 12px; margin-top: 8px; border-radius: 6px; background: var(--ay-group); }
+.app-container.app-container .ay-product-card__line.is-short { width: 55%; }
+/* the tile never goes dark: the outline stays espresso on white in both themes */
+.app-container.app-container[data-theme='brand-dark'] .ay-product-card__tile { border-color: #ffedac; }
+
+/* ---------- source card ---------- */
+.app-container.app-container .ay-source-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--ay-s16); margin: 0; padding: 0; list-style: none; }
+@media (max-width: 767px) {
+  .app-container.app-container .ay-source-grid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; gap: var(--ay-s12); margin-inline: calc(-1 * var(--ay-margin)); padding: 2px var(--ay-margin) var(--ay-s8); scroll-padding-inline: var(--ay-margin); }
+  .app-container.app-container .ay-source-grid::-webkit-scrollbar { display: none; }
+  .app-container.app-container .ay-source-grid > * { flex: 0 0 82%; scroll-snap-align: start; }
+  .app-container.app-container .ay-source-grid > :only-child { flex-basis: 100%; }
+  .app-container.app-container .ay-source-grid.is-stack { display: grid; overflow: visible; margin-inline: 0; padding-inline: 0; }
+}
+.app-container.app-container .ay-source-card { position: relative; display: flex; flex-direction: column; gap: 6px; padding: var(--ay-s16) var(--ay-s20) var(--ay-s12); background: var(--ay-page); border: 1.5px solid var(--ay-outline); border-radius: var(--ay-r-card); color: var(--ay-text); min-width: 0; box-sizing: border-box; }
+.app-container.app-container .ay-source-card[hidden] { display: none !important; }
+.app-container.app-container .ay-source-card__meta { display: flex; flex-wrap: wrap; gap: 4px 10px; margin: 0; font: 500 13px/1.35 var(--ay-sans-stack); color: var(--ay-text-2); }
+.app-container.app-container .ay-source-card__pub { color: var(--ay-text); font-weight: 600; }
+.app-container.app-container .ay-source-card__type::before { content: '·'; margin-right: 10px; }
+.app-container.app-container .ay-source-card__title { margin: 0 !important; font: 600 16px/1.35 var(--ay-sans-stack) !important; letter-spacing: 0 !important; color: var(--ay-text) !important; }
+.app-container.app-container .ay-source-card__finding { margin: 0; font: 400 15px/1.5 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .ay-source-card__why { margin: 0; font: 400 14px/1.45 var(--ay-sans-stack); color: var(--ay-text-2); }
+.app-container.app-container .ay-source-card__go { margin-top: auto; padding-top: 4px; min-height: 44px; display: inline-flex; align-items: center; align-self: flex-start; color: var(--ay-text) !important; font: 600 14px/1 var(--ay-sans-stack); text-decoration: underline; text-underline-offset: 3px; }
+.app-container.app-container .ay-source-card__go::after { content: ''; position: absolute; inset: 0; border-radius: var(--ay-r-card); }
+.app-container.app-container .ay-source-card:has(.ay-source-card__go:hover) { background: var(--ay-hover); }
+.app-container.app-container .ay-source-card__go:focus-visible { outline: none !important; }
+.app-container.app-container .ay-source-card:has(.ay-source-card__go:focus-visible) { outline: 3px solid var(--ay-focus); outline-offset: 2px; }
+
+/* ---------- evidence meter ---------- */
+.app-container.app-container .ay-meter { display: grid; gap: 6px; min-width: 0; }
+.app-container.app-container .ay-meter__word { font: 600 16px/1.3 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .ay-meter__bars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; max-width: 220px; }
+.app-container.app-container .ay-meter__bars > i { display: block; height: 8px; border-radius: 4px; border: 1.5px solid var(--ay-text); background: transparent; box-sizing: border-box; }
+.app-container.app-container .ay-meter__bars > i.is-on,
+.app-container.app-container .ay-meter[data-level='1'] .ay-meter__bars > i:nth-child(-n+1),
+.app-container.app-container .ay-meter[data-level='2'] .ay-meter__bars > i:nth-child(-n+2),
+.app-container.app-container .ay-meter[data-level='3'] .ay-meter__bars > i:nth-child(-n+3) { background: var(--ay-text); }
+.app-container.app-container .ay-meter__ends { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; max-width: 220px; font: 500 12.5px/1.2 var(--ay-sans-stack); color: var(--ay-text-2); }
+
+/* ---------- focus + motion ---------- */
+.app-container.app-container :is(.ay-btn, .ay-chip, .ay-tabs__tab, .ay-group__row--link, .ay-card--link, .ay-product-card__link, .ay-product-card__heart, .ay-shelf__all, .ay-nav a, .ay-nav button, .ay-foot a, .ay-foot button):focus-visible { outline: 3px solid var(--ay-focus) !important; outline-offset: 2px !important; box-shadow: none; }
+.app-container.app-container .ay-product-card__heart:focus-visible { outline-color: #3e2723 !important; }
+@media (prefers-reduced-motion: reduce) {
+  .app-container.app-container :is(.ay-btn, .ay-product-card__tile img, .ay-card--link) { transition: none !important; }
+  .app-container.app-container .ay-product-card__link:hover .ay-product-card__tile img { transform: none; }
+}
+
+/* =====================================================================
+   SITE HEADER (.ay-nav). One header on every website page: butter
+   background, a hairline under it, logo left, four text links with an
+   underline for the current page, Saved and account on the right.
+   ===================================================================== */
+.app-container.app-container .app-nav-wrap { position: sticky; top: 0; z-index: 1000; background: var(--ay-page) !important; border-bottom: 1px solid var(--ay-hairline); }
+.app-container.app-container .app-nav-wrap .ay-nav { display: flex !important; align-items: center; gap: var(--ay-s24); width: 100%; max-width: calc(var(--ay-container) + 2 * var(--ay-margin)); height: 68px; margin: 0 auto !important; padding: 0 var(--ay-margin) !important; box-sizing: border-box; background: transparent !important; border: 0 !important; box-shadow: none !important; position: relative !important; inset: auto !important; transform: none !important; border-radius: 0 !important; }
+.app-container.app-container .ay-nav__logo { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--ay-text) !important; font: 800 28px/1 'Bricolage Grotesque', var(--ay-sans-stack) !important; letter-spacing: -.04em !important; text-decoration: none !important; }
+.app-container.app-container .ay-nav__beta { padding: 2px 7px; border-radius: 999px; background: var(--ay-alert-bg); color: #3e2723 !important; font: 600 12px/1.2 var(--ay-sans-stack) !important; letter-spacing: 0 !important; transform: translateY(-1px); }
+.app-container.app-container .ay-nav__links { display: flex; align-items: stretch; gap: var(--ay-s4); height: 100%; margin-left: var(--ay-s16); }
+.app-container.app-container .ay-nav__link { position: relative; display: inline-flex; align-items: center; gap: 8px; padding: 0 12px; color: var(--ay-text-2) !important; font: 500 16px/1 var(--ay-sans-stack) !important; letter-spacing: 0 !important; text-decoration: none !important; background: none !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; white-space: nowrap; }
+.app-container.app-container .ay-nav__link:hover { color: var(--ay-text) !important; }
+.app-container.app-container .ay-nav__link::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: -1px; height: 3px; border-radius: 3px 3px 0 0; background: transparent; }
+.app-container.app-container .ay-nav__link[aria-current='page'] { color: var(--ay-text) !important; font-weight: 600 !important; }
+.app-container.app-container .ay-nav__link[aria-current='page']::after { background: var(--ay-text); }
+.app-container.app-container .ay-nav__start { padding: 2px 8px; border-radius: 999px; background: var(--ay-alert-bg); color: #3e2723 !important; font: 600 12px/1.2 var(--ay-sans-stack) !important; }
+.app-container.app-container .ay-nav__exit { color: var(--ay-text) !important; font: 500 14px/1.3 var(--ay-sans-stack) !important; text-decoration: underline !important; text-underline-offset: 3px; }
+.app-container.app-container .ay-nav__exit span { color: var(--ay-text-2); }
+.app-container.app-container .ay-nav__actions { display: flex; align-items: center; gap: var(--ay-s12); margin-left: auto; }
+.app-container.app-container .ay-nav__icon { position: relative; display: grid !important; place-items: center; width: 44px !important; height: 44px !important; padding: 0 !important; border-radius: 50% !important; border: 1.5px solid var(--ay-outline) !important; background: transparent !important; color: var(--ay-text) !important; box-shadow: none !important; transform: none !important; }
+.app-container.app-container .ay-nav__icon:hover { background: var(--ay-hover) !important; }
+.app-container.app-container .ay-nav__icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.app-container.app-container .ay-nav__icon .ay-badge.is-corner { position: absolute; top: -4px; right: -4px; }
+.app-container.app-container .ay-nav__icon .ay-avatar__text { font: 600 15px/1 var(--ay-sans-stack); }
+.app-container.app-container .ay-nav__account { position: relative; }
+.app-container.app-container .ay-nav__login { min-height: 44px !important; height: 44px; padding: 0 20px !important; border-radius: 999px !important; border: 1.5px solid var(--ay-feature-bg) !important; background: var(--ay-feature-bg) !important; color: var(--ay-feature-fg) !important; font: 600 15px/1 var(--ay-sans-stack) !important; box-shadow: none !important; cursor: pointer; }
+.app-container.app-container .ay-nav__login :is(span) { color: inherit !important; }
+.app-container.app-container .ay-nav__menu-btn { display: none !important; }
+.app-container.app-container .ay-nav .nav-account-menu { position: absolute; top: calc(100% + 8px); right: 0; z-index: 1100; display: grid; min-width: 220px; padding: 6px; border: 1.5px solid var(--ay-outline); border-radius: var(--ay-r-card); background: var(--ay-page); box-shadow: none; }
+.app-container.app-container .ay-nav .nav-account-menu > :is(a, button) { display: flex; align-items: center; min-height: 44px; padding: 0 12px; border: 0; border-radius: 10px; background: none; color: var(--ay-text) !important; font: 500 15px/1.2 var(--ay-sans-stack); text-align: left; text-decoration: none; cursor: pointer; }
+.app-container.app-container .ay-nav .nav-account-menu > :is(a, button):hover { background: var(--ay-group); }
+.app-container.app-container .ay-nav .nav-account-menu > .is-quiet { color: var(--ay-text-2) !important; border-top: 1px solid var(--ay-hairline); border-radius: 0 0 10px 10px; }
+@media (max-width: 899px) {
+  .app-container.app-container .app-nav-wrap .ay-nav { height: 60px; gap: var(--ay-s12); }
+  .app-container.app-container .ay-nav__links, .app-container.app-container .ay-nav__account { display: none !important; }
+  .app-container.app-container .ay-nav__menu-btn { display: grid !important; }
+  .app-container.app-container .ay-nav__logo { font-size: 26px !important; }
+}
+/* The bottom tab bar carries the main links on phones; the drawer has the rest. */
+.app-container.app-container .mobile-nav-drawer { position: fixed; inset: 0; z-index: 3500; background: rgba(62, 39, 35, .4); }
+.app-container.app-container .mobile-nav-sheet { position: absolute; top: 0; right: 0; bottom: 0; width: min(340px, 86vw); padding: calc(env(safe-area-inset-top) + 64px) var(--ay-s20) var(--ay-s24); background: var(--ay-page) !important; border-left: 1.5px solid var(--ay-outline); display: flex; flex-direction: column; gap: 0; overflow-y: auto; box-sizing: border-box; }
+.app-container.app-container .mobile-nav-sheet .mobile-nav-close { position: absolute; top: calc(env(safe-area-inset-top) + 10px); right: 12px; width: 44px; height: 44px; display: grid; place-items: center; border: 0; background: none; color: var(--ay-text); }
+.app-container.app-container .mobile-nav-sheet .mobile-nav-close svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.app-container.app-container .mobile-nav-sheet .mobile-drawer-item { display: flex !important; align-items: center; gap: 8px; min-height: 52px; padding: 0 !important; border: 0 !important; border-bottom: 1px solid var(--ay-hairline) !important; border-radius: 0 !important; background: none !important; color: var(--ay-text) !important; font: 500 18px/1.2 var(--ay-sans-stack) !important; text-align: left; text-decoration: none !important; box-shadow: none !important; }
+.app-container.app-container .mobile-nav-sheet .mobile-drawer-item.is-active { font-weight: 600 !important; text-decoration: underline !important; text-underline-offset: 4px; text-decoration-thickness: 2px; }
+.app-container.app-container .mobile-nav-sheet .mobile-drawer-item.is-quiet { color: var(--ay-text-2) !important; }
+
+/* =====================================================================
+   SITE FOOTER (.ay-foot). Brand + three link columns on one grid, then
+   the copyright line and the legal row, all on the same left edge.
+   ===================================================================== */
+.app-container.app-container footer.ay-foot { margin-top: var(--ay-section); padding: var(--ay-s48) 0 calc(var(--ay-s32) + env(safe-area-inset-bottom)); background: var(--ay-page) !important; color: var(--ay-text) !important; border-top: 1px solid var(--ay-hairline) !important; box-shadow: none !important; }
+.app-container.app-container .ay-foot__inner { width: 100%; max-width: calc(var(--ay-container) + 2 * var(--ay-margin)); margin: 0 auto; padding: 0 var(--ay-margin); box-sizing: border-box; }
+.app-container.app-container .ay-foot__grid { display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); gap: var(--ay-s32) var(--ay-gutter-grid); align-items: start; }
+.app-container.app-container .ay-foot__logo { margin: 0 0 var(--ay-s12); color: var(--ay-text) !important; font: 800 30px/1 'Bricolage Grotesque', var(--ay-sans-stack) !important; letter-spacing: -.04em !important; }
+.app-container.app-container .ay-foot__blurb { margin: 0; max-width: 34ch; font: 400 15px/1.5 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; }
+.app-container.app-container .ay-foot__col { display: grid; gap: 0; align-content: start; }
+.app-container.app-container .ay-foot__title { margin: 0 0 var(--ay-s8); font: 600 14px/1.3 var(--ay-sans-stack) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--ay-text) !important; }
+.app-container.app-container .ay-foot__link { display: inline-flex; align-items: center; min-height: 36px; color: var(--ay-text-2) !important; font: 500 15px/1.3 var(--ay-sans-stack) !important; text-decoration: none !important; }
+.app-container.app-container .ay-foot__link:hover { color: var(--ay-text) !important; text-decoration: underline !important; text-underline-offset: 3px; }
+.app-container.app-container .ay-foot__base { display: flex; flex-wrap: wrap; gap: var(--ay-s8) var(--ay-s24); margin-top: var(--ay-s40); padding-top: var(--ay-s20); border-top: 1px solid var(--ay-hairline); font: 500 14px/1.4 var(--ay-sans-stack); color: var(--ay-text-2); }
+.app-container.app-container .ay-foot__base > span { color: var(--ay-text-2) !important; }
+.app-container.app-container .ay-foot__legal { display: grid; gap: var(--ay-s12); margin-top: var(--ay-s16); }
+.app-container.app-container .ay-foot__legaltext { margin: 0; max-width: 90ch; font: 400 13px/1.55 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; }
+.app-container.app-container .ay-foot__legaltext strong { color: var(--ay-text) !important; font-weight: 600; }
+.app-container.app-container .ay-foot__legallinks { display: flex; flex-wrap: wrap; gap: 0 var(--ay-s20); align-items: center; }
+.app-container.app-container .ay-foot__legallinks :is(a, button), .app-container.app-container .ay-foot .ay-footer-analytics, .app-container.app-container .ay-foot .ay-footer-legal__link { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; color: var(--ay-text) !important; font: 500 13px/1.3 var(--ay-sans-stack) !important; text-decoration: underline !important; text-underline-offset: 3px; text-transform: none !important; letter-spacing: 0 !important; cursor: pointer; }
+.app-container.app-container .ay-foot .ay-footer-analytics { text-decoration: none !important; color: var(--ay-text-2) !important; }
+@media (max-width: 899px) {
+  .app-container.app-container .ay-foot__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .app-container.app-container .ay-foot__brand { grid-column: 1 / -1; }
+}
+@media (max-width: 767px) {
+  .app-container.app-container footer.ay-foot { padding-top: var(--ay-s40); padding-bottom: calc(var(--ay-s24) + 84px + env(safe-area-inset-bottom)); }
+  .app-container.app-container .ay-foot__link { min-height: 40px; }
+}
+
+/* =====================================================================
+   PHONE BOTTOM NAV (.ay-tabbar). Six even columns (is-six) under 768px, 24px
+   icons, 11.5px labels, selected = pink pill behind the icon + 600 label.
+   ===================================================================== */
+@media (max-width: 767px) {
+  html body .app-container.app-container nav.ay-tabbar { position: fixed !important; left: 0 !important; right: 0 !important; bottom: 0 !important; z-index: 1200; display: grid !important; grid-template-columns: repeat(5, minmax(0, 1fr)) !important; align-items: stretch; gap: 0 !important; height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 6px 6px calc(6px + env(safe-area-inset-bottom)) !important; background: var(--ay-page) !important; border: 0 !important; border-top: 1px solid var(--ay-hairline) !important; border-radius: 0 !important; box-shadow: none !important; transform: none !important; width: auto !important; max-width: none !important; }
+  html body .app-container.app-container nav.ay-tabbar.is-six { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; }
+  html body .app-container.app-container nav.ay-tabbar > :is(a, button) { display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: flex-start !important; gap: 3px !important; min-width: 0 !important; width: auto !important; min-height: 52px !important; height: auto !important; padding: 2px 0 0 !important; margin: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: var(--ay-text-2) !important; text-decoration: none !important; transform: none !important; }
+  html body .app-container.app-container nav.ay-tabbar .ay-tabbar__icon { display: grid !important; place-items: center !important; width: 52px !important; max-width: 100%; height: 30px !important; border-radius: 999px !important; background: transparent !important; border: 0 !important; box-shadow: none !important; color: inherit !important; margin: 0 !important; transform: none !important; }
+  html body .app-container.app-container nav.ay-tabbar .ay-tabbar__icon svg { width: 24px !important; height: 24px !important; fill: none !important; stroke: currentColor !important; stroke-width: 1.7 !important; stroke-linecap: round; stroke-linejoin: round; }
+  html body .app-container.app-container nav.ay-tabbar .ay-tabbar__label { display: block !important; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 500 11.5px/1.2 var(--ay-sans-stack) !important; letter-spacing: 0 !important; color: inherit !important; text-transform: none !important; }
+  html body .app-container.app-container nav.ay-tabbar > :is(a, button):is([aria-current='page'], .is-active, .is-on) { color: var(--ay-text) !important; }
+  html body .app-container.app-container nav.ay-tabbar > :is(a, button):is([aria-current='page'], .is-active, .is-on) .ay-tabbar__icon { background: var(--ay-alert-bg) !important; color: #3e2723 !important; }
+  html body .app-container.app-container nav.ay-tabbar > :is(a, button):is([aria-current='page'], .is-active, .is-on) .ay-tabbar__label { font-weight: 600 !important; }
+  html body .app-container.app-container nav.ay-tabbar .ay-tabbar__orb { background: transparent !important; border: 0 !important; }
+  html body .app-container.app-container nav.ay-tabbar .ay-tabbar__orb svg { fill: none !important; }
+  html body .app-container.app-container nav.ay-tabbar > :is(a, button):focus-visible { outline: 3px solid var(--ay-focus) !important; outline-offset: -3px !important; border-radius: 12px !important; }
+}
+@media (min-width: 768px) { html body .app-container.app-container nav.ay-tabbar { display: none !important; } }
+.app-container.app-container .ay-nav__dot { position: absolute; top: 0; right: 0; width: 11px; height: 11px; border-radius: 50%; background: #f7badd; border: 2px solid var(--ay-page); }
+.app-container.app-container .ay-product-card__kind { display: flex; flex-wrap: wrap; gap: 0 6px; margin: 2px 0 0; }
+.app-container.app-container .ay-product-card__kind > * + *::before { content: '·'; margin-right: 6px; }
+.app-container.app-container .ay-product-card__tag { color: var(--ay-text); font-weight: 600; }
+.app-container.app-container .ay-product-card__eco { font-weight: 600; }
+.app-container.app-container .ay-product-card__name { min-height: calc(2 * 1.3em); }

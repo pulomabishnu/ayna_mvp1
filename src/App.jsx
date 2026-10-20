@@ -111,6 +111,7 @@ import './styles/web-neon-dark.css';
 import './styles/web-density.css';
 import './styles/theme-v3.css';
 import './styles/site-polish.css';
+import './styles/ayna-system.css';
 import NewAccountStart from './components/NewAccountStart';
 import { markOAuthSource, takeOAuthSource, shouldOfferEcosystemStart } from './utils/oauthNewAccount';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './components/EcosystemBubbles';
@@ -2088,50 +2089,49 @@ function App() {
         <a className="ay-skip" href="#ay-content">Skip to content</a>
         <div className="app-nav-wrap">
         <nav
-          className={`app-nav ${navOnGradient ? `app-nav--landing${navGradientVariant}` : 'app-nav--cream'}${isScrolled ? ' app-nav--scrolled' : ''}`}
+          className={`ay-nav${isScrolled ? ' is-scrolled' : ''}`}
+          data-on-gradient={navOnGradient ? navGradientVariant || 'yes' : undefined}
           aria-label="Primary"
         >
-          <div className="app-nav__brand">
-            <a className="app-nav__logo" href="/" aria-label="ayna home" {...linkProps(navigateHome)}>
-              ayna
-              <span className="app-nav__beta-badge">beta</span>
-            </a>
-          </div>
+          <a className="ay-nav__logo" href="/" aria-label="ayna home" {...linkProps(navigateHome)}>
+            ayna
+            <span className="ay-nav__beta">beta</span>
+          </a>
 
           {/* Shop and My Ecosystem lead (filled pills); Library and Community follow, quieter. Real links (G02). */}
-          <div className="app-nav__links desktop-only">
-            <a href="/shop" className={`app-nav__tab app-nav__tab--main ${['discovery', 'hero', 'product'].includes(currentView) ? 'app-nav__tab--active' : ''}`} aria-current={currentView === 'discovery' ? 'page' : undefined} {...linkProps(() => handleViewDiscovery(''))}>Shop</a>
-            <a href="/ecosystem" className={`app-nav__tab app-nav__tab--main app-nav__tab--eco ${!user && !authLoading ? 'is-start' : ''} ${ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'app-nav__tab--active' : ''}`} aria-current={ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'page' : undefined} {...linkProps(() => handleViewEcosystem())}>
-              {!user && !authLoading && <span className="app-nav__start" aria-hidden="true">Start here</span>}
+          {/* Four text links, underline on the current page (no pills). */}
+          <div className="ay-nav__links">
+            <a href="/shop" className="ay-nav__link" aria-current={['discovery', 'product'].includes(currentView) ? 'page' : undefined} {...linkProps(() => handleViewDiscovery(''))}>Shop</a>
+            <a href="/ecosystem" className="ay-nav__link" aria-current={ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'page' : undefined} {...linkProps(() => handleViewEcosystem())}>
               My Ecosystem
+              {!user && !authLoading && <span className="ay-nav__start">Start here</span>}
             </a>
-            <span className="app-nav__divider" aria-hidden="true" />
-            <a href="/library" className={`app-nav__tab app-nav__tab--quiet ${currentView === 'articles' ? 'app-nav__tab--active' : ''}`} aria-current={currentView === 'articles' ? 'page' : undefined} {...linkProps(() => { setSelectedArticleId(null); setCurrentView('articles'); })}>Library</a>
-            <a href="/community" className={`app-nav__tab app-nav__tab--quiet ${currentView === 'community' ? 'app-nav__tab--active' : ''}`} aria-current={currentView === 'community' ? 'page' : undefined} {...linkProps(() => setCurrentView('community'))}>Community</a>
+            <a href="/library" className="ay-nav__link" aria-current={currentView === 'articles' ? 'page' : undefined} {...linkProps(() => { setSelectedArticleId(null); setCurrentView('articles'); })}>Library</a>
+            <a href="/community" className="ay-nav__link" aria-current={currentView === 'community' ? 'page' : undefined} {...linkProps(() => setCurrentView('community'))}>Community</a>
           </div>
 
           {currentView === 'quiz' && (
-            <a href="/" className="app-nav__exitquiz" {...linkProps(navigateHome)}>Exit <span>· answers saved on this device</span></a>
+            <a href="/" className="ay-nav__exit" {...linkProps(navigateHome)}>Exit <span>· answers saved on this device</span></a>
           )}
-          <div className="app-nav__actions">
+          <div className="ay-nav__actions">
             <a
               href="/ecosystem"
-              className="app-nav__circle app-nav__circle--wishlist"
+              className="ay-nav__icon app-nav__circle--wishlist"
               {...linkProps(handleViewWishlist)}
               aria-label={`Saved products${user && savedCount ? `, ${savedCount}` : ''}`}
               data-tip={user ? 'Saved products' : 'Saved products · sign in'}
             >
-              <svg viewBox="0 0 24 24" aria-hidden="true" className="app-nav__wishlist-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" />
               </svg>
               {user && savedCount > 0 && <span className="ay-badge is-corner">{savedCount}</span>}
             </a>
-            <div ref={accountMenuRef} className="app-nav__account desktop-only">
+            <div ref={accountMenuRef} className="ay-nav__account">
               {user ? (
                 // Avatar opens a small account menu: profile, health profile, saved, log out.
                 <button
                   type="button"
-                  className="app-nav__circle app-nav__circle--account app-nav__circle--avatar ay-avatar"
+                  className="ay-nav__icon ay-avatar"
                   aria-label="Your account"
                   aria-haspopup="menu"
                   aria-expanded={showAccountMenu}
@@ -2139,16 +2139,16 @@ function App() {
                   onClick={() => setShowAccountMenu((v) => !v)}
                 >
                   <span className="ay-avatar__text">{accountInitials}</span>
-                  {checkinDue && <span className="app-nav__circle-dot" aria-hidden />}
+                  {checkinDue && <span className="ay-nav__dot" aria-hidden />}
                 </button>
               ) : (
                 <button
                   type="button"
-                  className="app-nav__circle app-nav__circle--account ay-login"
+                  className="ay-nav__login"
                   onClick={() => { setShowAccountMenu(false); setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
                   aria-label="Log in"
                 >
-                  <span className="ay-login-text">Log in</span>
+                  Log in
                 </button>
               )}
               {showAccountMenu && user && (
@@ -2170,7 +2170,8 @@ function App() {
             </div>
             {/* Hamburger, mobile only, on the right with Saved (MW03) */}
             <button
-              className="mobile-menu-btn"
+              type="button"
+              className="ay-nav__icon ay-nav__menu-btn"
               aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={mobileMenuOpen}
               onClick={() => setMobileMenuOpen(v => !v)}
