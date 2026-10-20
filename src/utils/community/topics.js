@@ -22,9 +22,10 @@ export const COMMUNITY_TOPICS = [
   { key: 'fertility', label: 'Fertility', tags: ['fertility'] },
   { key: 'pregnancy', label: 'Pregnancy', tags: ['pregnancy'] },
   { key: 'postpartum', label: 'Postpartum', tags: ['postpartum'] },
+  { key: 'perimenopause', label: 'Perimenopause', tags: ['perimenopause'] },
   { key: 'menopause', label: 'Menopause', tags: ['menopause', 'perimenopause'] },
   { key: 'vaginal-health', label: 'Vaginal health', tags: ['vaginal-health'] },
-  { key: 'uti', label: 'UTIs', tags: ['uti', 'uti-prevention', 'urinary'] },
+  { key: 'uti', label: 'UTIs and BV', tags: ['uti', 'uti-prevention', 'urinary', 'bv'] },
   { key: 'sexual-health', label: 'Sexual health', tags: ['sexual-health'] },
   { key: 'contraception', label: 'Birth control', tags: ['contraception'] },
   { key: 'pelvic-floor', label: 'Pelvic floor', tags: ['pelvic-floor', 'bladder-leaks', 'bladder-leak-protection', 'incontinence'] },
@@ -70,8 +71,8 @@ export function suggestTopicsForProducts(products = []) {
 const squash = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 const HASHTAG_ALIASES = {
   period: 'periods', cramp: 'cramps', endo: 'endometriosis', hormone: 'hormones', acne: 'acne', skin: 'acne',
-  pregnant: 'pregnancy', ttc: 'fertility', ivf: 'fertility', perimenopause: 'menopause', peri: 'menopause',
-  meno: 'menopause', uti: 'uti', bc: 'contraception', birthcontrol: 'contraception', pill: 'contraception',
+  pregnant: 'pregnancy', ttc: 'fertility', ivf: 'fertility', peri: 'perimenopause',
+  meno: 'menopause', uti: 'uti', utis: 'uti', bv: 'uti', bacterialvaginosis: 'uti', bc: 'contraception', birthcontrol: 'contraception', pill: 'contraception',
   mentalhealth: 'mental-health', mood: 'mental-health', anxiety: 'mental-health', energy: 'sleep',
   pelvicfloor: 'pelvic-floor', bones: 'bone-health', gym: 'fitness', workout: 'fitness', student: 'college',
   cheap: 'budget', budgetfriendly: 'budget',

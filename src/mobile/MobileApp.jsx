@@ -245,6 +245,21 @@ export default function MobileApp() {
   const authReturnScreenRef = useRef('landing');
   const authResumeRef = useRef(null);
   const [communitySeed, setCommunitySeed] = useState(null);
+  // Shared playlist invite (?join-playlist=<code>): keep the code through
+  // sign-in, drop it from the address bar, and open Community, which joins.
+  useEffect(() => {
+    let code = null;
+    try { code = communityStore.parsePlaylistInviteCode(new URLSearchParams(window.location.search).get('join-playlist')); } catch { code = null; }
+    if (!code) return;
+    try { sessionStorage.setItem('ayna_pending_playlist_invite', code); } catch { /* storage blocked: join still runs this session */ }
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('join-playlist');
+      window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
+    } catch { /* leave the URL */ }
+    setCommunitySeed({ token: Date.now() });
+    setScreen('community');
+  }, []);
   const swipeStart = useRef(null);
   const handleMainTouchStart = (event) => {
     if (overlay || !['browse', 'eco'].includes(screen) || event.touches.length !== 1) return;
@@ -653,6 +668,7 @@ export default function MobileApp() {
   // "Add to ecosystem" from a product detail overlay, was previously wired
   // to nothing (ProductDetailScreen called onAddToEcosystem, but MobileApp
   // never passed it), so the button did nothing at all.
+  const ecoNudgeShownRef = useRef(false);
   const handleAddToEcosystem = (product) => {
     if (!product?.id) return;
 
@@ -685,7 +701,14 @@ export default function MobileApp() {
         ? prev.myProducts
         : [...prev.myProducts, ecosystemProduct],
       hasEcosystem: true,
+      // Signed out: kept on this phone (same as guest saves) and flagged so
+      // the account load on sign-in uploads it instead of replacing it.
+      ...(authUser ? {} : { pendingIntakeSync: true }),
     }));
+    if (!authUser && !ecoNudgeShownRef.current) {
+      ecoNudgeShownRef.current = true;
+      setSaveNudge('eco');
+    }
 
     const supabase = getSupabaseClient();
     if (authUser && supabase) {
@@ -1070,7 +1093,7 @@ export default function MobileApp() {
       />}
       {saveNudge && !authUser && (
         <div className="ay-save-nudge" role="status">
-          <span>Saved on this phone. Sign in to keep your saves on every device.</span>
+          <span>{saveNudge === 'eco' ? 'Added to your Ecosystem on this phone. Sign in to keep it on every device.' : 'Saved on this phone. Sign in to keep your saves on every device.'}</span>
           <button type="button" onClick={() => { setSaveNudge(false); openAuth('signin'); }}>Sign in</button>
           <button type="button" className="ay-save-nudge-x" aria-label="Dismiss" onClick={() => setSaveNudge(false)}>×</button>
         </div>
