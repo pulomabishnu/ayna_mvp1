@@ -1,5 +1,4 @@
 import { getSupabaseClient } from './supabaseClient';
-export const FEEDBACK_CAMPAIGN = '2026-09-26';
 const PENDING_KEY = 'ayna_retailer_returns_v1';
 let activeOwner = null;
 let memoryQueue = [];

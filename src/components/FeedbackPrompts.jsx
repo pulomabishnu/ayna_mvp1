@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FEEDBACK_CAMPAIGN, setFeedbackOwner, readPurchaseQueue, writePurchaseQueue, updatePurchase, readyPurchase, removePurchase, sendFeedback } from '../utils/feedbackClient';
+import { createPortal } from 'react-dom';
+import { setFeedbackOwner, readPurchaseQueue, writePurchaseQueue, updatePurchase, readyPurchase, removePurchase, sendFeedback } from '../utils/feedbackClient';
 
+import './feedbackPrompts.css';
+
+const SURVEY_CHECKED_KEY = 'ayna_survey_checked_v2';
 const REFERRALS = ['TikTok', 'Instagram', 'LinkedIn', 'Google / search', 'Friend / word of mouth', 'Event / conference', 'Brand / partner', 'Other'];
 const SAFE_VIEWS = new Set(['welcome', 'hero', 'ecosystem', 'discovery', 'articles', 'product']);
 function competingDialog() { return Boolean(document.querySelector('[aria-modal="true"], .v6-account-step, .v6-verify-backdrop')); }
@@ -65,9 +69,7 @@ export default function FeedbackPrompts({ user, authLoading, currentView }) {
   const [prompt, setPrompt] = useState(null);
   const active = useRef(false);
   const view = useRef(currentView);
-  const surveyReceipt = useRef(null);
   useEffect(() => { view.current = currentView; }, [currentView]);
-  const checked = useRef(new Set());
   useEffect(() => {
     if (!authLoading) {
       const owner = user?.id || null;
@@ -85,7 +87,7 @@ export default function FeedbackPrompts({ user, authLoading, currentView }) {
       if (!row) return;
       active.current = true;
       updatePurchase(row.id, { prompted: true });
-      setPrompt({ ...row, kind: 'purchase' });
+      setPrompt({ ...row, kind: 'purchase', view: currentView });
     };
     const visibility = () => document.visibilityState === 'hidden' ? departure() : showPurchase();
     window.addEventListener('blur', departure);
@@ -102,33 +104,41 @@ export default function FeedbackPrompts({ user, authLoading, currentView }) {
       window.removeEventListener('ayna-purchase-ready', showPurchase);
     };
   }, [currentView]);
+  // Ask once per login: right after sign-in (or opening the site signed in), as
+  // soon as nothing else is on screen. The server only grants a claim if the
+  // account hasn't been asked in two weeks, and the claim is spent the moment
+  // the popup shows, so closing or navigating away never brings it back.
   useEffect(() => {
     if (authLoading || !user?.id) return;
-    const key = `${FEEDBACK_CAMPAIGN}:${user.id}`;
+    const key = `${SURVEY_CHECKED_KEY}:${user.id}`;
+    try { if (sessionStorage.getItem(key)) return; } catch { /* Tab storage may be disabled. */ }
     let cancelled = false;
+    let claiming = false;
     const timer = setInterval(async () => {
-      if (cancelled || !SAFE_VIEWS.has(view.current) || document.visibilityState !== 'visible' || active.current || competingDialog() || readPurchaseQueue().length) return;
-      if (surveyReceipt.current) {
-        active.current = true;
-        setPrompt({ kind: 'survey', receipt: surveyReceipt.current });
-        surveyReceipt.current = null;
-        return;
-      }
-      if (checked.current.has(key)) return;
-      checked.current.add(key);
-      active.current = true;
+      if (cancelled || claiming || !SAFE_VIEWS.has(view.current) || document.visibilityState !== 'visible' || active.current || competingDialog() || readPurchaseQueue().length) return;
+      clearInterval(timer);
+      claiming = true;
       try {
         const result = await sendFeedback({ action: 'claim-survey' }, true);
-        if (!cancelled && result.claimed) surveyReceipt.current = result.receipt;
+        try { sessionStorage.setItem(key, '1'); } catch { /* Tab storage may be disabled. */ }
+        if (!cancelled && result.claimed && !active.current) {
+          active.current = true;
+          setPrompt({ kind: 'survey', receipt: result.receipt, view: view.current });
+        }
       } catch {
-        // If the survey service is down, ask once per visit, not every 8 seconds.
-      } finally { active.current = false; }
-    }, 8000);
+        // If the survey service is down, skip this login rather than retrying.
+      }
+    }, 1000);
     return () => { cancelled = true; clearInterval(timer); };
   }, [user?.id, authLoading]);
-  const close = () => {
-    if (prompt?.kind === 'purchase') removePurchase(prompt.id);
-    setPrompt(null); active.current = false;
-  };
-  return prompt ? <FeedbackDialog key={prompt.receipt} prompt={prompt} onClose={close} /> : null;
+  // Leaving the page the popup opened on counts as dismissing it.
+  if (prompt && prompt.view !== currentView) setPrompt(null);
+  const shown = useRef(null);
+  useEffect(() => {
+    if (!prompt && shown.current?.kind === 'purchase') removePurchase(shown.current.id);
+    if (!prompt) active.current = false;
+    shown.current = prompt;
+  }, [prompt]);
+  const close = () => setPrompt(null);
+  return prompt ? createPortal(<FeedbackDialog key={prompt.receipt} prompt={prompt} onClose={close} />, document.body) : null;
 }

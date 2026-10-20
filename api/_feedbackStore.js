@@ -20,10 +20,17 @@ function secret() {
 }
 function digest(value) { return createHmac('sha256', secret()).update(`feedback:${value}`).digest('hex'); }
 
-// Only a permanent, campaign-specific yes/no marker is linked to an account.
-// It never holds a response ID, answer, receipt, product or submission timestamp.
+export const SURVEY_INTERVAL_SEC = 14 * 24 * 60 * 60;
+// Only a yes/no "asked recently" marker is linked to an account, and it expires
+// after two weeks so the survey can be offered again. It never holds a response
+// ID, answer, receipt, product or submission timestamp.
 export async function claimSurvey(userId, store = feedbackStore()) {
-  return (await store.set(`${prefix()}:shown:${SURVEY_CAMPAIGN}:${digest(userId)}`, 1, { nx: true })) === 'OK';
+  const id = digest(userId);
+  const claimed = (await store.set(`${prefix()}:asked:${id}`, 1, { nx: true, ex: SURVEY_INTERVAL_SEC })) === 'OK';
+  // Accounts asked under the old once-ever marker have no date, so wait two
+  // weeks from now before asking them again.
+  if (claimed && await store.del(`${prefix()}:shown:${SURVEY_CAMPAIGN}:${id}`)) return false;
+  return claimed;
 }
 export function issueReceipt(kind, product = null) {
   const payload = {
