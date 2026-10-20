@@ -386,7 +386,7 @@
    background, a hairline under it, logo left, four text links with an
    underline for the current page, Saved and account on the right.
    ===================================================================== */
-.app-container.app-container .app-nav-wrap { position: sticky; top: 0; z-index: 1000; background: var(--ay-page) !important; border-bottom: 1px solid var(--ay-hairline); }
+.app-container.app-container .app-nav-wrap { position: sticky !important; top: 0 !important; z-index: 1000; margin: 0 !important; padding-top: env(safe-area-inset-top, 0px) !important; transform: none !important; translate: none !important; background: var(--ay-page) !important; border-bottom: 1px solid var(--ay-hairline); }
 .app-container.app-container .app-nav-wrap .ay-nav { display: flex !important; align-items: center; gap: var(--ay-s24); width: 100%; max-width: calc(var(--ay-container) + 2 * var(--ay-margin)); height: 68px; margin: 0 auto !important; padding: 0 var(--ay-margin) !important; box-sizing: border-box; background: transparent !important; border: 0 !important; box-shadow: none !important; position: relative !important; inset: auto !important; transform: none !important; border-radius: 0 !important; }
 .app-container.app-container .ay-nav__logo { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--ay-text) !important; font: 800 28px/1 'Bricolage Grotesque', var(--ay-sans-stack) !important; letter-spacing: -.04em !important; text-decoration: none !important; }
 .app-container.app-container .ay-nav__beta { padding: 2px 7px; border-radius: 999px; background: var(--ay-alert-bg); color: #3e2723 !important; font: 600 12px/1.2 var(--ay-sans-stack) !important; letter-spacing: 0 !important; transform: translateY(-1px); }
@@ -468,7 +468,7 @@
   html body .app-container.app-container nav.ay-tabbar > :is(a, button) { display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: flex-start !important; gap: 3px !important; min-width: 0 !important; width: auto !important; min-height: 52px !important; height: auto !important; padding: 2px 0 0 !important; margin: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: var(--ay-text-2) !important; text-decoration: none !important; transform: none !important; }
   html body .app-container.app-container nav.ay-tabbar .ay-tabbar__icon { display: grid !important; place-items: center !important; width: 52px !important; max-width: 100%; height: 30px !important; border-radius: 999px !important; background: transparent !important; border: 0 !important; box-shadow: none !important; color: inherit !important; margin: 0 !important; transform: none !important; }
   html body .app-container.app-container nav.ay-tabbar .ay-tabbar__icon svg { width: 24px !important; height: 24px !important; fill: none !important; stroke: currentColor !important; stroke-width: 1.7 !important; stroke-linecap: round; stroke-linejoin: round; }
-  html body .app-container.app-container nav.ay-tabbar .ay-tabbar__label { display: block !important; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 500 11.5px/1.2 var(--ay-sans-stack) !important; letter-spacing: 0 !important; color: inherit !important; text-transform: none !important; }
+  html body .app-container.app-container nav.ay-tabbar .ay-tabbar__label { display: block !important; width: 100%; text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 500 11.5px/1.2 var(--ay-sans-stack) !important; letter-spacing: 0 !important; color: inherit !important; text-transform: none !important; }
   html body .app-container.app-container nav.ay-tabbar > :is(a, button):is([aria-current='page'], .is-active, .is-on) { color: var(--ay-text) !important; }
   html body .app-container.app-container nav.ay-tabbar > :is(a, button):is([aria-current='page'], .is-active, .is-on) .ay-tabbar__icon { background: var(--ay-alert-bg) !important; color: #3e2723 !important; }
   html body .app-container.app-container nav.ay-tabbar > :is(a, button):is([aria-current='page'], .is-active, .is-on) .ay-tabbar__label { font-weight: 600 !important; }
@@ -484,3 +484,10 @@
 .app-container.app-container .ay-product-card__eco { font-weight: 600; }
 .app-container.app-container .ay-product-card__kind { margin-top: auto; padding-top: 4px; }
 .app-container.app-container .ay-product-card__kind ~ .ay-product-card__price { margin-top: 0; padding-top: 2px; }
+@media (max-width: 359px) { html body .app-container.app-container nav.ay-tabbar { padding-inline: 2px !important; } html body .app-container.app-container nav.ay-tabbar .ay-tabbar__label { letter-spacing: -0.03em !important; } html body .app-container.app-container nav.ay-tabbar .ay-tabbar__icon { width: 44px !important; } }
+/* [hidden] always wins over component display rules */
+.app-container.app-container [hidden] { display: none !important; }
+/* The header is pinned at the very top with nothing above it. Smooth page
+   scrolling is off for reduced motion (it also left a blank band above the
+   sticky header in mid-scroll captures). */
+@media (prefers-reduced-motion: reduce) { html:has(.app-container) { scroll-behavior: auto !important; } }

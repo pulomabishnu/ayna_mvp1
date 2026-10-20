@@ -313,8 +313,10 @@ html body .app-container.app-container.app-container .ayp-toast { display: inlin
   html body .app-container.app-container.app-container .ayp-buy { padding-top: 0; }
   html body .app-container.app-container.app-container .ayp-buy__name { max-width: none; }
   html body .app-container.app-container.app-container .ayp-price__main { font-size: 24px !important; }
-  html body .app-container.app-container.app-container .ayp-buy__actions .ayp-buy__main { flex-basis: 100%; max-width: none; }
-  html body .app-container.app-container.app-container .ayp-buy__actions .ay-btn--secondary { flex: 1 1 100%; }
+  html body .app-container.app-container.app-container .ayp-buy__actions { flex-wrap: nowrap; }
+  html body .app-container.app-container.app-container .ayp-buy__actions .ayp-buy__main { flex: 1 1 auto; min-width: 0; max-width: none; white-space: normal; text-align: center; padding-inline: 16px; }
+  html body .app-container.app-container.app-container .ayp-buy__actions .ay-btn--secondary { flex: 0 0 auto; padding-inline: 16px; }
+  html body .app-container.app-container.app-container .ayp-buy__actions .ayp-buy__eco { flex: 0 1 auto; white-space: normal; }
   html body .app-container.app-container.app-container .ayp-tabs .ay-tabs { top: 60px; }
   html body .app-container.app-container.app-container .ayp-panel__lead { margin-bottom: var(--ay-s16); }
   html body .app-container.app-container.app-container .ayp-rows > div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
@@ -339,4 +341,18 @@ html body .app-container.app-container.app-container .ayp-top .ay-crumbs li { fl
 html body .app-container.app-container.app-container .ayp-top .ay-crumbs li:last-child { flex: 0 1 auto; min-width: 0; }
 @media (max-width: 767px) {
   html body .app-container.app-container.app-container .ayp { padding-bottom: 0; }
+}
+/* At a glance: short facts sit two to a row (Format | Size, wear time) */
+html body .app-container.app-container.app-container .ayp-glance .ay-group__rows { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--ay-s16); }
+html body .app-container.app-container.app-container .ayp-glance .ay-group__rows > li.is-wide { grid-column: 1 / -1; }
+html body .app-container.app-container.app-container .ayp-glance .ay-group__rows > li { border-top: 1px solid var(--ay-hairline); }
+html body .app-container.app-container.app-container .ayp-glance .ay-group__rows > li:first-child { border-top: 0; }
+html body .app-container.app-container.app-container .ayp-glance .ay-group__rows > li > .ay-group__row { border-top: 0 !important; }
+html body .app-container.app-container.app-container .ayp-glance li.is-half .ay-group__row { grid-template-columns: auto 1fr; }
+html body .app-container.app-container.app-container .ayp-glance li.is-half .ay-group__row > span:last-child:empty { display: none; }
+@media (max-width: 767px) {
+  html body .app-container.app-container.app-container .ayp .ay-section { margin-top: var(--ay-s40); }
+  html body .app-container.app-container.app-container .ayp-gallery__tile { aspect-ratio: 3 / 2; }
+  html body .app-container.app-container.app-container .ayp-fit { margin-top: var(--ay-s16); padding-top: var(--ay-s12); }
+  html body .app-container.app-container.app-container .ayp-glance .ay-group__row { padding-block: var(--ay-s12); }
 }

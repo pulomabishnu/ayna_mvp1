@@ -727,7 +727,7 @@ export default function ProductEvidence({ product: baseProduct, safetyLead = '',
       {m.go ? <span className="ay-group__end" aria-hidden="true"><PdpIcon name="chevron" size={18} className="ayp-chev-right" /></span> : <span />}
     </>;
     return (
-      <li key={m.id}>
+      <li key={m.id} className={m.go || m.wide ? 'is-wide' : 'is-half'}>
         {m.go
           ? <button type="button" className={`ay-group__row ay-group__row--link${m.id === 'safety' ? ' is-safety' : ''}`} onClick={() => goTo(m.go)}>{inner}</button>
           : <div className="ay-group__row">{inner}</div>}
@@ -752,7 +752,7 @@ export default function ProductEvidence({ product: baseProduct, safetyLead = '',
             <div className="ay-group ayp-glance">
               <ul className="ay-group__rows">
                 {(level > 0 || mix.length > 0) && (
-                  <li>
+                  <li className="is-wide">
                     <button type="button" className="ay-group__row ay-group__row--link ayp-glance__ev" onClick={() => goTo(tabs.some((t) => t.id === 'literature') ? 'literature' : 'evidence')}>
                       <span className="ay-group__icon"><PdpIcon name="paper" size={20} /></span>
                       <span className="ay-group__text">
