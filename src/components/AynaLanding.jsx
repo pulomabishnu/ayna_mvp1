@@ -519,7 +519,7 @@ function ShopSection({ title, chips, filter, setFilter, filters, setFilters, pro
 /* Logged in                                                           */
 /* ------------------------------------------------------------------ */
 
-function WelcomeBack({ heroBanner = null, user, myProducts, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onViewCommunity, onViewArticles, onViewArticle, onViewAbout, onOpenProduct, initialCategory = null, savedProducts = {}, quizResults = null, healthProfile = null, matchOpts = null }) {
+function WelcomeBack({ heroBanner = null, user, myProducts, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onViewCommunity, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onViewHowItWorks, onOpenProduct, initialCategory = null, savedProducts = {}, quizResults = null, healthProfile = null, matchOpts = null }) {
   const name = displayNameFromUser(user) || 'there';
   const [filter] = useCategoryParam(initialCategory);
   const personalize = true;
@@ -612,89 +612,66 @@ function WelcomeBack({ heroBanner = null, user, myProducts, recommendedProductId
     } catch { /* private mode */ }
   }, [showingMatches, shownProducts, seenAtLoad]);
 
+  // Her dashboard row: one Group in three parts (next step, saved, a read).
   const slot = (
-    <div className="lx lx-personal">
-      <div className="mockup-page lx-dash">
+    <section className="ed-wrap" aria-label="Your ayna">
+      <div className="ay-group is-padded ed-dash">
         {nextArea ? (
-          <button type="button" className="lx-dash__card lx-dash__card--next" onClick={() => onViewDiscovery?.({ initialMacroGroup: nextArea.id })}>
-            <span className="lx-dash__label">Your next step</span>
-            <strong>{nextAreaPicks.length ? `Your matches in ${nextArea.label}` : `Start your ${nextArea.label} shelf`}</strong>
+          <button type="button" className="ed-dash__part" onClick={() => onViewDiscovery?.({ initialMacroGroup: nextArea.id })}>
+            <span className="ed-dash__label">Your next step</span>
+            <strong className="ed-dash__title">{nextAreaPicks.length ? `Your matches in ${nextArea.label}` : `Start your ${nextArea.label} shelf`}</strong>
             {nextAreaPicks.length > 0 ? (
-              <ul className="lx-dash__thumbs" aria-hidden="true">
+              <ul className="ed-dash__thumbs" aria-hidden="true">
                 {nextAreaPicks.map((p) => <li key={p.id}><span><ProductTileImage product={p} /></span></li>)}
               </ul>
-            ) : <span className="lx-dash__body">Nothing on your shelves for {nextArea.label.toLowerCase()} yet. See what fits you.</span>}
-            <span className="lx-dash__go">Browse {nextArea.label} <Arrow /></span>
+            ) : <span className="ed-dash__body">Nothing on your shelves for {nextArea.label.toLowerCase()} yet. See what fits you.</span>}
+            <span className="ed-dash__go">Browse {nextArea.label} <Arrow /></span>
           </button>
         ) : (
-          <button type="button" className="lx-dash__card lx-dash__card--next" onClick={() => onViewEcosystem?.()}>
-            <span className="lx-dash__label">Your next step</span>
-            <strong>{picks > 0 ? `Check your ${picks} product${picks === 1 ? '' : 's'}` : 'See your matches'}</strong>
-            <span className="lx-dash__go">Open my ecosystem <Arrow /></span>
+          <button type="button" className="ed-dash__part" onClick={() => onViewEcosystem?.()}>
+            <span className="ed-dash__label">Your next step</span>
+            <strong className="ed-dash__title">{picks > 0 ? `Check your ${picks} product${picks === 1 ? '' : 's'}` : 'See your matches'}</strong>
+            <span className="ed-dash__go">Open my ecosystem <Arrow /></span>
           </button>
         )}
-        <div className="lx-dash__card">
-          <span className="lx-dash__label">Saved</span>
+        <div className="ed-dash__part">
+          <span className="ed-dash__label">Saved</span>
           {savedList.length > 0 ? (
             <>
-              <strong>{savedList.length} saved for later</strong>
-              <ul className="lx-dash__thumbs">
+              <strong className="ed-dash__title">{savedList.length} saved for later</strong>
+              <ul className="ed-dash__thumbs">
                 {savedList.slice(0, 4).map((p) => (
                   <li key={p.id}><button type="button" onClick={() => onOpenProduct?.(p)} aria-label={`${p.brand ? `${p.brand} ` : ''}${p.name}`}><ProductTileImage product={p} /></button></li>
                 ))}
               </ul>
-              <button type="button" className="lx-dash__go" onClick={() => onViewEcosystem?.()}>See all saved <Arrow /></button>
+              <button type="button" className="ed-dash__go" onClick={() => onViewEcosystem?.()}>See all saved <Arrow /></button>
             </>
           ) : (
             <>
-              <strong>Nothing saved yet</strong>
-              <span className="lx-dash__body">Tap the heart on anything in the Shop to keep it here.</span>
-              <button type="button" className="lx-dash__go" onClick={() => onViewDiscovery?.('')}>Go to the Shop <Arrow /></button>
+              <strong className="ed-dash__title">Nothing saved yet</strong>
+              <span className="ed-dash__body">Tap the heart on anything in the Shop to keep it here.</span>
+              <button type="button" className="ed-dash__go" onClick={() => onViewDiscovery?.('')}>Go to the Shop <Arrow /></button>
             </>
           )}
         </div>
         {read ? (
-          <a className="lx-dash__card" href={`/library/${read.id}`} onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); if (onViewArticle) onViewArticle(read.id); else onViewArticles?.(); }}>
-            <span className="lx-dash__label">A read for you</span>
-            <strong>{read.title}</strong>
-            <span className="lx-dash__body">{read.teaser}</span>
-            <span className="lx-dash__go">Read it <Arrow /></span>
+          <a className="ed-dash__part" href={`/library/${read.id}`} onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); if (onViewArticle) onViewArticle(read.id); else onViewArticles?.(); }}>
+            <span className="ed-dash__label">A read for you</span>
+            <strong className="ed-dash__title">{read.title}</strong>
+            <span className="ed-dash__body">{read.teaser}</span>
+            <span className="ed-dash__go">Read it <Arrow /></span>
           </a>
         ) : (
-          <button type="button" className="lx-dash__card" onClick={() => onViewArticles?.()}>
-            <span className="lx-dash__label">Library</span>
-            <strong>Short reads, real sources</strong>
-            <span className="lx-dash__body">Answer the quiz and we will pick the read that fits you.</span>
-            <span className="lx-dash__go">Open the Library <Arrow /></span>
+          <button type="button" className="ed-dash__part" onClick={() => onViewArticles?.()}>
+            <span className="ed-dash__label">Library</span>
+            <strong className="ed-dash__title">Short reads, real sources</strong>
+            <span className="ed-dash__body">Answer the quiz and we will pick the read that fits you.</span>
+            <span className="ed-dash__go">Open the Library <Arrow /></span>
           </button>
         )}
       </div>
-    </div>
+    </section>
   );
-  const tail = posts.length > 0 ? (
-    <div className="lx lx-personal">
-        <section className="lx-powder mockup-page" aria-labelledby="lx-powder-h">
-          <div className="lx-powder__head">
-            <h2 id="lx-powder-h">From the <em>Powder Room.</em></h2>
-            {onViewCommunity && <button type="button" className="lx-today__link" onClick={onViewCommunity}>See all</button>}
-          </div>
-          <ul className="lx-powder__list">
-            {posts.slice(0, 2).map((post) => {
-              const anon = post.is_anonymous || !post.author_id;
-              const who = anon ? 'Anonymous' : post.author_display_name || post.author_username || 'Community member';
-              return (
-                <li key={post.id}>
-                  <button type="button" className="lx-post" onClick={() => onViewCommunity?.()}>
-                    <span className="lx-post__meta">{post.kind === 'question' ? 'Question' : post.kind === 'review' ? 'Review' : 'Post'} · {who}</span>
-                    <span className="lx-post__body">{post.body}</span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-    </div>
-  ) : null;
   return (
     <div className="mockup-landing mockup-landing--first mockup-landing--returning">
       <LandingV2
@@ -705,10 +682,12 @@ function WelcomeBack({ heroBanner = null, user, myProducts, recommendedProductId
         onViewArticle={onViewArticle}
         onViewAbout={onViewAbout}
         onViewCommunity={onViewCommunity}
+        onViewWaitlist={onViewWaitlist}
+        onViewHowItWorks={onViewHowItWorks}
         onSearch={(q) => onViewDiscovery?.(discoveryTargetFor(q))}
         personal={{ name, ecoCount: picks, hasQuiz: Boolean(quizResults), onOpenEcosystem: onViewEcosystem, dashboard: Boolean(picks > 0 || quizResults), topPicks: showingMatches ? shownProducts : null }}
         personalSlot={(picks > 0 || quizResults) ? slot : null}
-        personalTail={(picks > 0 || quizResults) ? tail : null}
+        communityPosts={(picks > 0 || quizResults) ? posts : []}
         heroBanner={heroBanner}
       />
     </div>
@@ -719,7 +698,7 @@ function WelcomeBack({ heroBanner = null, user, myProducts, recommendedProductId
 /* Logged out                                                          */
 /* ------------------------------------------------------------------ */
 
-function FirstVisitLanding({ heroBanner = null, onStartQuiz, onViewCommunity, onViewArticles, onViewArticle, onViewAbout, onViewDiscovery, onOpenProduct }) {
+function FirstVisitLanding({ heroBanner = null, onStartQuiz, onViewCommunity, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onViewHowItWorks, onViewDiscovery, onOpenProduct }) {
   return (
     <div className="mockup-landing mockup-landing--first">
       <LandingV2
@@ -730,6 +709,8 @@ function FirstVisitLanding({ heroBanner = null, onStartQuiz, onViewCommunity, on
         onViewArticle={onViewArticle}
         onViewAbout={onViewAbout}
         onViewCommunity={onViewCommunity}
+        onViewWaitlist={onViewWaitlist}
+        onViewHowItWorks={onViewHowItWorks}
         onSearch={(q) => onViewDiscovery?.(discoveryTargetFor(q))}
         heroBanner={heroBanner}
       />
@@ -746,6 +727,8 @@ export default function AynaLanding({
   onViewArticle,
   onViewAbout,
   onViewCommunity,
+  onViewWaitlist,
+  onViewHowItWorks,
   user,
   myProducts,
   recommendedProductIds = [],
@@ -777,6 +760,8 @@ export default function AynaLanding({
         onViewArticles={onViewArticles}
         onViewArticle={onViewArticle}
         onViewAbout={onViewAbout}
+        onViewWaitlist={onViewWaitlist}
+        onViewHowItWorks={onViewHowItWorks}
         onOpenProduct={onOpenProduct}
         initialCategory={initialCategory}
         quizResults={quizResults}
@@ -793,6 +778,8 @@ export default function AynaLanding({
       onViewArticles={onViewArticles}
       onViewArticle={onViewArticle}
       onViewAbout={onViewAbout}
+      onViewWaitlist={onViewWaitlist}
+      onViewHowItWorks={onViewHowItWorks}
       onViewCommunity={onViewCommunity}
       onViewDiscovery={onViewDiscovery}
       onOpenProduct={onOpenProduct}

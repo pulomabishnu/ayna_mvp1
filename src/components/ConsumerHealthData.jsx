@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { InfoPage } from './InfoPage';
+import { EdPage } from './editorial/EdPage';
 
 /**
  * The Consumer Health Data Privacy Notice inside the site's own layout
@@ -43,12 +43,10 @@ export default function ConsumerHealthData({ onBack }) {
     return () => { live = false; };
   }, []);
   return (
-    <InfoPage eyebrow="Legal" title="Consumer Health Data Privacy Notice" onBack={onBack} width="read" toc={false}>
-      <div className="ay-info-card ay-info-card--pad ay-info-legal ay-chd">
-        {html ? <div dangerouslySetInnerHTML={{ __html: html }} />
-          : failed ? <p>This notice didn’t load. <a href="/consumer-health-data.html">Open the notice on its own page</a>.</p>
-            : <p aria-busy="true">Loading…</p>}
-      </div>
-    </InfoPage>
+    <EdPage title="Consumer health data privacy notice" onBack={onBack} toc tocKey={html ? 'ready' : 'wait'}>
+      {html ? <div className="ay-chd" dangerouslySetInnerHTML={{ __html: html }} />
+        : failed ? <p>This notice didn’t load. <a href="/consumer-health-data.html">Open the notice on its own page</a>.</p>
+          : <p aria-busy="true">Loading…</p>}
+    </EdPage>
   );
 }
