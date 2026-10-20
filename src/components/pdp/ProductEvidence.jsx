@@ -78,13 +78,14 @@ function Links({ items, label, compact = false }) {
   // Long lists show the first two, then "See all".
   const [all, setAll] = useState(false);
   if (!items.length) return null;
-  const shown = all || items.length <= 3 ? items : items.slice(0, 2);
+  // Every source is in the page from the start (search engines index it); the rest are hidden until "See all".
+  const folded = !all && items.length > 3;
   return (
     <div className={`ay-src${compact ? ' is-compact' : ''}`}>
       {label && <h4 className="ay-src__h">{label}{items.length > 3 ? ` (${items.length})` : ''}</h4>}
       <ul>
-        {shown.map((s) => (
-          <li key={s.url}>
+        {items.map((s, i) => (
+          <li key={s.url} hidden={folded && i >= 2}>
             <a href={s.url} target="_blank" rel="noopener noreferrer" className="ay-src__card">
               <span className="ay-src__text">
                 <span className="ay-src__pub">{[s.publisher, s.year].filter(Boolean).join(' · ')}</span>
@@ -144,15 +145,21 @@ function Paras({ text }) {
   return String(text).split(/\n{2,}/).map((p) => p.trim()).filter(Boolean).map((p) => <p key={p.slice(0, 48)} className="ay-ev__body">{withTerms(p, used)}</p>);
 }
 
-/** Short version first; the full text one tap away (it replaces the short one, nothing is hidden). */
+/**
+ * Short version first; the full text one tap away (it replaces the short one).
+ * Both are in the page from the start, so the full text is indexed and
+ * nothing is fetched on tap.
+ */
 function ShortThenFull({ short, full }) {
   const [open, setOpen] = useState(false);
+  const id = React.useId();
   const lead = short || sentences(full).slice(0, 2).join(' ');
   if (!full || full.length <= lead.length + 40) return <Paras text={full || lead} />;
   return (
     <div className="ay-ev__stf">
-      <Paras text={open ? full : lead} />
-      <button type="button" className="ay-ev__morebtn" aria-expanded={open} onClick={() => setOpen((v) => !v)}>{open ? 'Show less' : 'Read more'}</button>
+      <div hidden={open}><Paras text={lead} /></div>
+      <div id={id} hidden={!open}><Paras text={full} /></div>
+      <button type="button" className="ay-ev__morebtn" aria-expanded={open} aria-controls={id} onClick={() => setOpen((v) => !v)}>{open ? 'Show less' : 'Read the full note'}</button>
     </div>
   );
 }
