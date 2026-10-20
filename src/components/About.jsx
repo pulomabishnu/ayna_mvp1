@@ -36,8 +36,8 @@ const ADVISORS = [
   { name: 'Albert Charles', title: 'Co-Founder, Gorges Ventures', photo: '/advisors/albert-charles.png', linkedin: 'https://www.linkedin.com/in/albert-charles-6800a41a1/' },
   { name: 'Erika Demonsant', title: 'Healthcare Consultant, Huron', photo: '/advisors/erika-demonsant.png', linkedin: 'https://www.linkedin.com/in/erikalacey/' },
   { name: 'Pamela Nasr', title: 'Product Lead, Benchling', photo: '/advisors/pamela-nasr.png', linkedin: 'https://www.linkedin.com/in/pamelatnasr/' },
-  { name: 'Nishtha Kaushik', title: 'Advisor', photo: '/advisors/nishtha-kaushik.jpg', linkedin: 'https://www.linkedin.com/in/nkaushik29/' },
-  { name: 'Navneet Kaur', title: 'Advisor', photo: '/advisors/navneet-kaur.jpg', linkedin: 'https://www.linkedin.com/in/navneet-kaur-80109b227' },
+  { name: 'Nishtha Kaushik', title: 'Ex-Amazon Marketing', photo: '/advisors/nishtha-kaushik.jpg', linkedin: 'https://www.linkedin.com/in/nkaushik29/' },
+  { name: 'Navneet Kaur', title: 'TechThrive Ventures', photo: '/advisors/navneet-kaur.jpg', linkedin: 'https://www.linkedin.com/in/navneet-kaur-80109b227' },
   // No LinkedIn found; links her Houston Methodist physician profile instead.
   { name: 'Dr. Anuja Vyas', title: 'Board-Certified OB/GYN, Advisor', photo: '/advisors/anuja-vyas.jpg', linkedin: 'https://www.houstonmethodist.org/doctor/anuja-vyas/', linkLabel: 'Profile' },
 ];

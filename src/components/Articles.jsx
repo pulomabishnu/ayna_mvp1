@@ -903,7 +903,7 @@ const DESIGNED_READS = {
 };
 
 /* The read featured at the top of the Library, with a "New" sticker. */
-const FEATURED_READ = { id: 'postpartum-stretch-marks', by: 'Geena Yousry, MS1' };
+const FEATURED_READ = { id: 'postpartum-stretch-marks', by: 'Geena Yousry, MS1', reviewedBy: 'Dr. Anuja Vyas, Board-Certified OBGYN' };
 
 function FeaturedRead({ onOpen }) {
   const art = ARTICLES.find((a) => a.id === FEATURED_READ.id);
@@ -918,7 +918,7 @@ function FeaturedRead({ onOpen }) {
         <small className="ay-lib-feature__kicker"><span className="sr-only">New. </span>Featured read · {sectionOf(art.id)?.label}</small>
         <strong className="ay-lib-feature__title">{lead}{rest && <> <em>{rest}</em></>}</strong>
         <span className="ay-lib-feature__teaser">{art.teaser}</span>
-        <span className="ay-lib-feature__by">By {FEATURED_READ.by} · {minutesFor(art)} min read</span>
+        <span className="ay-lib-feature__by">By {FEATURED_READ.by} · Reviewed by {FEATURED_READ.reviewedBy} · {minutesFor(art)} min read</span>
         <span className="ay-lib-feature__cta">Read it <span aria-hidden="true">→</span></span>
       </span>
     </a>
