@@ -107,7 +107,6 @@ function MetricCard({ chart, tone, wide, onOpen }) {
           {stats(chart).map((s) => <span key={s.k}><b>{s.v}</b><small>{s.k}</small></span>)}
         </span>
         {wide ? <Line points={chart.points} usual={chart.usual} /> : <Bars points={chart.points} />}
-        <span className={`ay-bn-word${chart.delta == null || isFlat(chart.metric, chart.delta) ? ' is-flat' : ''}`}>{word}</span>
       </button>
     </li>
   );
