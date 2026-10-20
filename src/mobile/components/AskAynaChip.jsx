@@ -218,8 +218,8 @@ export default function AskAynaChip({ onClick, viewKey }) {
       {!isCompact && <span
         style={{
           color: '#FFEDAC',
-          fontSize: 'calc(12px * var(--ayna-text-scale, 1))',
-          fontWeight: 600,
+          fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
+          fontWeight: 500,
           whiteSpace: 'nowrap',
           overflow: 'hidden',
           maxWidth: isCompact ? 0 : 100,
@@ -229,8 +229,8 @@ export default function AskAynaChip({ onClick, viewKey }) {
       >
         Ask Ayna
       </span>}
-      {!isCompact && <button type="button" aria-label="Move Ask Ayna to screen edge" onPointerDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); setManualDock(true); setCompact(true); }} style={{ border: 0, background: 'transparent', color: '#FFEDAC', padding: '0 1px', fontSize: 18, lineHeight: 1, cursor: 'pointer' }}>{dockLeft ? '‹' : '›'}</button>}
-      {isCompact && <span aria-hidden="true" style={{ width: DOCK_HANDLE_WIDTH, textAlign: 'center', color: '#FFEDAC', fontSize: 17, lineHeight: 1 }}>{dockLeft ? '›' : '‹'}</span>}
+      {!isCompact && <button type="button" aria-label="Move Ask Ayna to screen edge" onPointerDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); setManualDock(true); setCompact(true); }} style={{ border: 0, background: 'transparent', color: '#FFEDAC', padding: '0 1px', fontWeight: 600, fontSize: 'calc(17px * var(--ayna-text-scale, 1))', lineHeight: 1, cursor: 'pointer' }}>{dockLeft ? '‹' : '›'}</button>}
+      {isCompact && <span aria-hidden="true" style={{ width: DOCK_HANDLE_WIDTH, textAlign: 'center', color: '#FFEDAC', fontWeight: 400, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', lineHeight: 1.45 }}>{dockLeft ? '›' : '‹'}</span>}
     </div>
   );
 }

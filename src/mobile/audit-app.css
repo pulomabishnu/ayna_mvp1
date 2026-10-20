@@ -52,7 +52,7 @@
   width: 100% !important;
   height: 16px !important;
   overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-  font: 600 12px/16px var(--ay-font-ui) !important;
+  font: 500 13px/16px var(--ay-font-ui) !important;
   letter-spacing: 0 !important;
   text-transform: none !important;
   text-align: left !important;
@@ -71,7 +71,7 @@
   min-height: 2.5em !important;
   margin: 0 !important;
   overflow: hidden !important;
-  font: 700 15px/1.25 var(--ay-font-ui) !important;
+  font: 600 17px/1.25 var(--ay-font-ui) !important;
   text-align: left !important;
   color: var(--ay-ink) !important;
 }
@@ -84,18 +84,18 @@
   padding: 0 !important;
 }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot b {
-  font: 700 15px/1.2 var(--ay-font-ui) !important;
+  font: 600 17px/1.2 var(--ay-font-ui) !important;
   color: var(--ay-ink) !important;
   opacity: 1;
 }
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot b.is-muted { font-weight: 600 !important; font-size: 13px !important; color: var(--ay-ink-soft) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot b.is-muted { font-weight: 500 !important; font-size: 13px !important; color: var(--ay-ink-soft) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-card-price-sub {
   order: 3;
   display: block;
   width: 100%;
   height: 16px;
   overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-  font: 500 12px/16px var(--ay-font-ui);
+  font: 500 13px/16px var(--ay-font-ui);
   color: var(--ay-ink-soft);
   text-align: left;
 }
@@ -145,7 +145,7 @@
 /* ===== AP06 Ecosystem: rows under "More" open/close, so they get a chevron ===== */
 .ayna-mobile.ayna-mobile .ayna-cabinet-more summary { list-style: none; gap: 12px; }
 .ayna-mobile.ayna-mobile .ayna-cabinet-more summary::-webkit-details-marker { display: none; }
-.ayna-mobile.ayna-mobile .ayna-cabinet-more summary span { margin-left: auto; font: 600 12px/1 var(--ay-font-ui); color: var(--ay-ink-soft); }
+.ayna-mobile.ayna-mobile .ayna-cabinet-more summary span { margin-left: auto; font: 500 13px/1 var(--ay-font-ui); color: var(--ay-ink-soft); }
 .ayna-mobile.ayna-mobile .ayna-cabinet-more summary::after {
   content: ''; flex: none; width: 8px; height: 8px; margin: 0 4px 4px 0;
   border-right: 2px solid var(--ay-ink); border-bottom: 2px solid var(--ay-ink);
@@ -172,10 +172,10 @@
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center:active .ay-nav-center { transform: translateY(2px); }
 /* Labels: 12px (11px only on very narrow phones) */
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button,
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button span { font-size: 12px !important; letter-spacing: -.01em !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button span { font-size: 13px !important; font-weight: 500 !important; letter-spacing: -.01em !important; }
 @media (max-width: 360px) {
   .ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button,
-  .ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button span { font-size: 11px !important; }
+  .ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button span { font-size: 11.5px !important; font-weight: 500 !important; }
 }
 
 /* ===== AP07 You: standard header above the hero (no close button); keep the stickers clear of the name ===== */
@@ -230,7 +230,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads { margin-top: 48px !important; padding-bottom: 32px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-shelf-care { margin-bottom: 8px; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-cabinet-section-head { margin-bottom: 8px !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-cabinet-section-head h2 { font-size: 24px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-cabinet-section-head h2 { font-size: 22px !important; line-height: 1.15 !important; font-weight: 400 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact {
   display: grid !important; grid-template-columns: minmax(0, 1fr) 32px; align-items: center; gap: 16px;
   min-height: 72px; padding: 16px 0 !important; justify-items: stretch; text-align: left !important; border: 0 !important; border-bottom: 1px solid var(--ay-line, rgba(62, 39, 35, .1)) !important;
@@ -245,11 +245,11 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l6 6-6 6'/%3E%3C/svg%3E");
 }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact .ayna-editorial-read-copy { display: grid !important; justify-content: stretch !important; justify-items: start; gap: 4px; width: 100%; padding: 0 !important; text-align: left !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact small { margin: 0 !important; font: 600 13px/1.2 var(--ay-font-ui) !important; color: var(--ay-ink-soft) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact strong { max-width: none !important; margin: 0 !important; font: 700 17px/1.25 var(--ay-font-ui) !important; letter-spacing: -.01em !important; color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact small { margin: 0 !important; font: 500 13px/1.2 var(--ay-font-ui) !important; color: var(--ay-ink-soft) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact strong { max-width: none !important; margin: 0 !important; font: 600 17px/1.25 var(--ay-font-ui) !important; letter-spacing: -.01em !important; color: var(--ay-ink) !important; }
 
 /* App swipe deck percent: the one ink match pill. */
-.ayna-mobile .ay-deck-meta em { display: inline-flex; align-items: baseline; padding: 5px 10px; border-radius: 99px; background: var(--ay-ink, #3e2723); color: var(--ay-paper, #ffffff); font-style: normal; font-weight: 700; font-size: 12px; line-height: 1; }
+.ayna-mobile .ay-deck-meta em { display: inline-flex; align-items: baseline; padding: 5px 10px; border-radius: 99px; background: var(--ay-ink, #3e2723); color: var(--ay-paper, #ffffff); font-style: normal; font-weight: 500; font-size: 13px; line-height: 1; }
 
 /* Shop deck "Get matched" CTA: centered pill, not a floating left button. */
 .ayna-mobile .ayna-figma-discover-cta { display: flex; justify-content: center; padding: 16px 20px; }

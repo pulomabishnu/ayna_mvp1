@@ -57,7 +57,7 @@ decision below is made once, here, so screens don't drift toward generic
 - Show the real thing: real product photos, her real numbers, real names on reviews. No stock people, no placeholder copy.
 - One specific line beats three generic ones. Cover the logo: if a sentence would work for a competitor, rewrite it.
 - Break the symmetry once per screen: one bigger card, one off-grid element. Not three identical cards in a row.
-- Few text sizes, each with one job: 34 (big number), 28 to 30 (screen title), 22 (section), 15 (body), 13 (label), 11.5 (caption).
+- Few text sizes, each with one job (app): 28 screen title (DM Serif Display 400, one per screen), 22 section heading (DM Serif Display 400; never serif below 22), 30 the single big number in a card (DM Sans 600, -0.01em, one or two per screen), 17 card/row titles and primary buttons (DM Sans 600), 15 body (DM Sans 400, line-height 1.45), 13 labels and meta (DM Sans 500), 11.5 captions, chart axes and tab bar (DM Sans 500, nothing smaller). DM Sans weights 400/500/600 only; headings line-height 1.15. Text inputs stay 16 so iOS does not zoom.
 - One obvious next step per screen; secondary actions stay quiet.
 - Every tap answers instantly: pressed state, haptic on confirm (native), skeleton or optimistic update while loading.
 - Animate only what explains a change (a sheet opening, a card expanding). No fade-up on every section.

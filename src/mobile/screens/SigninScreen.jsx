@@ -58,7 +58,7 @@ function Field({ label, icon, invalid = false, children }) {
     >
       {icon}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <span style={{ display: 'block', fontFamily: "var(--ayna-font-ui)", fontSize: 12, fontWeight: 700, color: 'var(--ayna-text-muted)' }}>{label}</span>
+        <span style={{ display: 'block', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 500, color: 'var(--ayna-text-muted)' }}>{label}</span>
         {children}
       </div>
     </label>
@@ -69,7 +69,7 @@ function Field({ label, icon, invalid = false, children }) {
 // font-size is under 16px, then doesn't reliably zoom back out, the
 // max() floor keeps that from firing without changing the size at any
 // --ayna-text-scale setting that was already >= 16px.
-const inputStyle = { border: 'none', outline: 'none', background: 'transparent', fontFamily: "var(--ayna-font-ui)", fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))', color: 'var(--ayna-heading)', width: '100%', padding: '3px 0 0' };
+const inputStyle = { border: 'none', outline: 'none', background: 'transparent', fontFamily: "var(--ayna-font-ui)", fontWeight: 400, lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', width: '100%', padding: '3px 0 0' };
 
 const EmailIcon = (
   <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--ayna-border)" strokeWidth="1.75" style={{ flex: 'none' }}>
@@ -103,7 +103,7 @@ function PrimaryButton({ onClick, disabled, children }) {
         borderRadius: 14,
         fontFamily: "var(--ayna-font-ui)",
         fontWeight: 600,
-        fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
+        fontSize: 'calc(17px * var(--ayna-text-scale, 1))',
         cursor: disabled ? 'not-allowed' : 'pointer',
         display: 'flex',
         alignItems: 'center',
@@ -129,8 +129,8 @@ function GoogleButton({ onClick, disabled }) {
         padding: 15,
         borderRadius: 14,
         fontFamily: "var(--ayna-font-ui)",
-        fontWeight: 500,
-        fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
+        fontWeight: 400,
+        lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
         cursor: disabled ? 'not-allowed' : 'pointer',
         opacity: disabled ? 0.6 : 1,
         display: 'flex',
@@ -162,8 +162,8 @@ function AppleButton({ onClick, disabled }) {
         padding: 15,
         borderRadius: 14,
         fontFamily: "var(--ayna-font-ui)",
-        fontWeight: 500,
-        fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
+        fontWeight: 400,
+        lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
         cursor: disabled ? 'not-allowed' : 'pointer',
         opacity: disabled ? 0.6 : 1,
         display: 'flex',
@@ -500,7 +500,7 @@ export default function SigninScreen({
                 onChange={(e) => setRememberMeChecked(e.target.checked)}
                 style={{ width: 18, height: 18, flex: 'none', margin: 0, accentColor: 'var(--ay-ink, #3e2723)' }}
               />
-              <span style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontWeight: 500, color: 'var(--ay-ink, #3e2723)' }}>Remember me</span>
+              <span style={{ fontFamily: "var(--ayna-font-ui)", lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', fontWeight: 400, color: 'var(--ay-ink, #3e2723)' }}>Remember me</span>
             </label>
           )}
 
@@ -546,7 +546,7 @@ export default function SigninScreen({
               <rect x="5" y="11" width="14" height="10" rx="2.5" />
               <path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3" />
             </svg>
-            <span style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '.6px' }}>Encrypted. Never sold.</span>
+            <span style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', letterSpacing: '.6px' }}>Encrypted. Never sold.</span>
           </div>
         </>
       )}

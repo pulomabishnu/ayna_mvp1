@@ -21,13 +21,13 @@ export default function EcosystemResetDialog({ open, busy, onCancel, onConfirm }
           else if (!event.shiftKey && document.activeElement === buttons.at(-1)) { event.preventDefault(); buttons[0].focus(); }
         }
       }} style={{ width: 'min(360px,calc(100% - 36px))', padding: 22, borderRadius: 12, background: 'var(--ayna-bg)', color: 'var(--ayna-text)', border: '1px solid var(--ayna-border)' }}>
-        <h2 id="ayna-reset-title" style={{ fontFamily: "var(--ayna-font-display)", fontSize: 25, lineHeight: 1.2, color: 'var(--ayna-heading)', margin: '0 0 10px' }}>Reset your Ecosystem?</h2>
-        <p id="ayna-reset-description" style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--ayna-text-muted)', margin: '0 0 18px' }}>
+        <h2 id="ayna-reset-title" style={{ fontFamily: "var(--ayna-font-display)", fontWeight: 400, fontSize: 'calc(22px * var(--ayna-text-scale, 1))', lineHeight: 1.15, color: 'var(--ayna-heading)', margin: '0 0 10px' }}>Reset your Ecosystem?</h2>
+        <p id="ayna-reset-description" style={{ fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'var(--ayna-text-muted)', margin: '0 0 18px' }}>
           Clears your Ecosystem, its product tracking, and intake answers. Saved products, check-ins, and your account stay.
         </p>
         <div style={{ display: 'flex', gap: 9 }}>
           <button type="button" disabled={busy} onClick={onCancel} style={{ flex: 1, minHeight: 48, border: '1px solid var(--ayna-border)', borderRadius: 12, padding: 12, background: 'transparent', color: 'var(--ayna-heading)', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
-          <button type="button" disabled={busy} onClick={onConfirm} style={{ flex: 1, minHeight: 48, border: 0, borderRadius: 12, padding: 12, background: 'var(--ayna-heading)', color: '#FFEDAC', fontWeight: 700, cursor: busy ? 'wait' : 'pointer' }}>{busy ? 'Resetting…' : 'Reset'}</button>
+          <button type="button" disabled={busy} onClick={onConfirm} style={{ flex: 1, minHeight: 48, border: 0, borderRadius: 12, padding: 12, background: 'var(--ayna-heading)', color: '#FFEDAC', fontWeight: 600, cursor: busy ? 'wait' : 'pointer' }}>{busy ? 'Resetting…' : 'Reset'}</button>
         </div>
       </section>
     </div>

@@ -139,7 +139,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
                 disabled={sending}
                 key={s}
                 onClick={() => ask(s)}
-                style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 500, minHeight: 44, border: 0, padding: '8px 13px', borderRadius: 99, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-text-muted)', cursor: 'pointer' }}
+                style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 500, minHeight: 44, border: 0, padding: '8px 13px', borderRadius: 99, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-text-muted)', cursor: 'pointer' }}
               >
                 {s}
               </button>
@@ -160,19 +160,19 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
                 color: m.role === 'user' ? 'var(--ayna-cta-text)' : 'var(--ayna-text)',
                 borderRadius: 14,
                 padding: '10px 13px',
-                fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))',
-                lineHeight: 1.5,
+                fontWeight: 400, fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
+                lineHeight: 1.45,
                 whiteSpace: 'pre-wrap',
               }}
             >
               {m.role === 'assistant' ? renderMarkdownLite(m.text) : m.text}
             </div>
           ))}
-          {sending && <div style={{ alignSelf: 'flex-start', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>Ayna is thinking…</div>}
+          {sending && <div style={{ alignSelf: 'flex-start', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>Ayna is thinking…</div>}
         </div>
       )}
 
-      {error && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', lineHeight: 1.5 }}>{error}</div>}
+      {error && <div style={{ fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', lineHeight: 1.5 }}>{error}</div>}
 
       <form onSubmit={(e) => { e.preventDefault(); ask(input); }} style={{ display: 'flex', gap: 8 }}>
         <input
@@ -193,8 +193,8 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
             background: 'var(--ayna-cta-bg)',
             color: 'var(--ayna-cta-text)',
             fontFamily: "var(--ayna-font-ui)",
-            fontWeight: 600,
-            fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))',
+            fontWeight: 500,
+            fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
             cursor: 'pointer',
             opacity: sending || !input.trim() || session === undefined ? 0.5 : 1,
           }}
@@ -282,7 +282,7 @@ export default function ProductDetailScreen({
 
   if (!product) {
     return (
-      <div style={{ padding: 40, textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
+      <div style={{ padding: 40, textAlign: 'center', color: 'var(--ayna-text-muted)', fontWeight: 400, lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))' }}>
         No product selected.
       </div>
     );
@@ -481,7 +481,7 @@ export default function ProductDetailScreen({
 
         {reads.length > 0 && (
           <div className="ay-pdp-reads">
-            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', marginBottom: 12 }}>Reads</div>
+            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', marginBottom: 12 }}>Reads</div>
             {reads.map((r) => (
               <div
                 key={r.id || r.title}
@@ -498,8 +498,8 @@ export default function ProductDetailScreen({
                   cursor: r.onClick ? 'pointer' : 'default',
                 }}
               >
-                <div style={{ flex: 1, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.4, fontWeight: 500 }}>{r.title}</div>
-                {r.mins && <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', whiteSpace: 'nowrap' }}>{r.mins}</div>}
+                <div style={{ flex: 1, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', lineHeight: 1.45, fontWeight: 400 }}>{r.title}</div>
+                {r.mins && <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', whiteSpace: 'nowrap' }}>{r.mins}</div>}
               </div>
             ))}
           </div>
@@ -537,7 +537,7 @@ export default function ProductDetailScreen({
             cursor: 'pointer',
             fontFamily: "var(--ayna-font-ui)",
             fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
-            fontWeight: 600,
+            fontWeight: 500,
             background: isInEcosystem ? 'var(--ayna-chip-bg)' : 'var(--ayna-surface)',
             color: 'var(--ayna-heading)',
             border: '1px solid ' + (isInEcosystem ? 'var(--ayna-accent-dark)' : 'var(--ayna-border)'),
@@ -561,7 +561,7 @@ export default function ProductDetailScreen({
               padding: '15px 0',
               fontFamily: "var(--ayna-font-ui)",
               fontWeight: 600,
-              fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))',
+              fontSize: 'calc(17px * var(--ayna-text-scale, 1))',
               boxShadow: '0 14px 26px -14px rgba(36,42,82,.7)',
               textDecoration: 'none',
             }}
@@ -579,7 +579,7 @@ export default function ProductDetailScreen({
               padding: '15px 0',
               fontFamily: "var(--ayna-font-ui)",
               fontWeight: 600,
-              fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))',
+              fontSize: 'calc(17px * var(--ayna-text-scale, 1))',
             }}
           >
             <span className="ayna-seller-unavailable">No shop link</span>
