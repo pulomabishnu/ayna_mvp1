@@ -1149,6 +1149,7 @@ export default function MobileApp() {
             onAddToEcosystem={() => handleAddToEcosystem(overlay.item)}
             isOmitted={!!omittedProducts[overlay.item?.id]}
             onToggleOmit={() => handleToggleOmit(overlay.item)}
+            onOpenHealthData={() => { if (authUser) setOverlay({ type: 'profile', screen: 'healthData' }); else requestAuth('health data', () => setOverlay({ type: 'profile', screen: 'healthData' })); }}
             matchOpts={matchOpts}
             onOpenReview={(postId) => { setCommunitySeed({ postId, token: Date.now() }); setOverlay(null); setScreen('community'); }}
             onCommunityAction={(kind) => {

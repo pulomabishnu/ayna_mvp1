@@ -14,6 +14,7 @@ import { humanPublisher } from './glance';
 import { normalizeFdaStatus } from '../../utils/fdaStatus';
 import { getPassport } from '../../data/passport';
 import { fmtDate } from './fmtDate';
+import { worksWith } from '../../utils/aynaIntegrations';
 import { researchSourceCount } from './commerce';
 import GlossaryTerm from '../GlossaryTerm';
 import { findHardTerms, planGlossaryTerms } from '../../data/glossary';
@@ -282,6 +283,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   // Research the team approved in /admin/research fills any empty section.
   const product = useApprovedResearch(baseProduct);
   const d = useEvidence(product, aynaData);
+  const works = worksWith(product);
   // Community reviews of this product, live: the average and count below are
   // worked out from these rows, so an edited or deleted review updates them.
   const reviewRows = useProductReviews(baseProduct?.id);
@@ -375,11 +377,11 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
 
   const sections = [
     summaryText && { id: 'what', label: 'What it is', body: <ShortThenFull full={summaryText} /> },
-    (d.who.length || helps.length || d.avoidIf.length || d.platform || d.integrations.length) && { id: 'who', label: 'Who it’s for', body: <>
+    (d.who.length || helps.length || d.avoidIf.length || works.items.length) && { id: 'who', label: 'Who it’s for', body: <>
       {d.who.length > 0 && <ul className="ay-tabs__list">{d.who.map((w) => <li key={w}>{withTerms(w, plan)}</li>)}</ul>}
       {helps.length > 0 && <p className="ay-ev__by"><b>Helps with:</b> {helps.join(', ')}</p>}
       {d.avoidIf.length > 0 && <p className="ay-ev__by"><b>Skip it if you react to:</b> {d.avoidIf.join(', ')}</p>}
-      {(d.platform || d.integrations.length > 0) && <p className="ay-ev__by"><b>Works with:</b> {[d.platform, ...d.integrations].filter(Boolean).join(', ')}</p>}
+      {works.items.length > 0 && <p className="ay-ev__by"><b>Works with:</b> {works.items.map((t, i) => <React.Fragment key={t}>{i > 0 && ', '}{t === 'ayna' && works.ayna ? <a href="/health-data" title={`Connect ${works.ayna.name} in Health data`}>ayna</a> : t}</React.Fragment>)}</p>}
     </> },
     (d.clinician || d.clinicalNote || thingsRaised || d.clinicalLinks.length) && { id: 'clinical', label: 'Clinical opinion', body: <>
       {d.clinician && <ShortThenFull short={d.clinicianShort} full={d.clinician} />}

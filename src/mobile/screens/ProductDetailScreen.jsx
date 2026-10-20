@@ -30,8 +30,10 @@ import ProductCommunityReviews from '../../components/pdp/ProductCommunityReview
 import { useProductReviews } from '../../components/pdp/useProductReviews.js';
 import { RatingStars } from '../../components/community/RatingStars.jsx';
 import { summarizeReviewRows, formatAverage } from '../../utils/community/reviewRatings.js';
+import { worksWith } from '../../utils/aynaIntegrations.js';
 import '../pdp.css';
 import '../eco-needs.css';
+import '../pdp-polish.css';
 
 function toneFor(product) {
   const functions = product?.healthFunctions || [];
@@ -227,6 +229,8 @@ export default function ProductDetailScreen({
   matchOpts,
   isOmitted = false,
   onToggleOmit,
+  // "ayna" in Works with opens You > Health data.
+  onOpenHealthData = null,
 }) {
   // Live community reviews: the average and count come from these rows, so
   // an edited or deleted review changes them on the next read.
@@ -348,6 +352,7 @@ export default function ProductDetailScreen({
     } catch { /* clipboard unavailable, nothing more we can do */ }
   };
 
+  const works = worksWith(product);
   const tone = toneFor(product);
   const shownName = displayName(product);
   const perUnit = perUnitLabel(product);
@@ -356,8 +361,8 @@ export default function ProductDetailScreen({
   const hasDisplayPrice = shownPrice.main !== 'Price at retailer';
 
   return (
-    <div className="ayna-fresh-product-detail ay-pdp" style={{ flex: 1, minWidth: 0, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--ayna-bg)', color: 'var(--ayna-text)' }}>
-      <div key={product.id} style={{ flex: 1, overflowY: 'auto', animation: 'ay-page .25s ease-out', paddingBottom: 104 }}>
+    <div id="ay-pdp" className="ayna-fresh-product-detail ay-pdp" style={{ flex: 1, minWidth: 0, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--ayna-bg)', color: 'var(--ayna-text)' }}>
+      <div key={product.id} className="ay-pdp-scroll" style={{ flex: 1, overflowY: 'auto', animation: 'ay-page .25s ease-out' }}>
         <div className="ay-pdp-top">
           <button type="button" className="ay-pdp-round" onClick={onBack} aria-label="Back to products">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
@@ -404,6 +409,7 @@ export default function ProductDetailScreen({
           </div>}
           {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && quizAnswers && <button type="button" className="ay-pdp-fitnote" onClick={openWhyMatch}>{matchDetails.matchStatus === 'excluded' ? (exclusions[0] || 'Not a fit right now') : 'No clear match'} <span aria-hidden="true">→</span></button>}
           {matchDetails.matchStatus === 'no-profile' && <button type="button" className="ayna-figma-guest-match" onClick={onStartQuiz}>Get matched</button>}
+          {onToggleOmit && <div className="ay-pdp-omit"><button type="button" onClick={onToggleOmit} aria-pressed={isOmitted}>{isOmitted ? 'Undo “Not for me”' : 'Not for me'}</button>{isOmitted && <small>Hidden from your matches.</small>}</div>}
           {glance?.alert && <SafetyFlag />}
           {retailers.length > 0 && (
             <div className="ay-retailers">
@@ -432,6 +438,7 @@ export default function ProductDetailScreen({
             onXref={openProductByName}
             extras={{ match: <button type="button" className="ay-psec-action" onClick={openWhyMatch}>See the full breakdown</button> }}
             extraNav={[{ id: 'ask', label: 'Ask ayna' }, ...(related.compare.length ? [{ id: 'compare', label: 'Compare' }] : [])]}
+            worksWith={works.items.length ? { ...works, onOpenAyna: onOpenHealthData } : null}
           />
 
           <section className="ay-pdp-askcard" id="ay-sec-ask" tabIndex={-1} aria-labelledby="ay-pdp-ask-h">
@@ -452,7 +459,6 @@ export default function ProductDetailScreen({
             />
           )}
 
-          {onToggleOmit && <div className="ay-pdp-omit"><button type="button" onClick={onToggleOmit} aria-pressed={isOmitted}>{isOmitted ? 'Undo “Not for me”' : 'Not for me'}</button>{isOmitted && <small>Hidden from your matches.</small>}</div>}
         </div>
 
         {related.more.length > 0 && <section className="ayna-cabinet-collection ay-pdp-related" aria-labelledby="ay-pdp-related-more">
@@ -474,8 +480,8 @@ export default function ProductDetailScreen({
         </section>}
 
         {reads.length > 0 && (
-          <div style={{ padding: '22px var(--ay-gutter, 20px) 34px' }}>
-            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', marginBottom: 10 }}>Reads</div>
+          <div className="ay-pdp-reads">
+            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', marginBottom: 12 }}>Reads</div>
             {reads.map((r) => (
               <div
                 key={r.id || r.title}

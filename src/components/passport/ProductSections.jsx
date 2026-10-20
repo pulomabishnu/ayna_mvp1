@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { GlossaryText } from '../GlossaryTerm';
 import { LONG_TEXT, NOT_ON_FILE } from '../pdp/glance';
 import { jumpTo } from '../pdp/jump';
+import { useEdgeFade } from '../pdp/useEdgeFade';
 
 /** Tabs open their dropdown, then scroll to it. */
 const openSection = (id) => { try { window.dispatchEvent(new CustomEvent('ay-open-section', { detail: id })); } catch { /* ignore */ } };
@@ -336,10 +337,17 @@ function brandLine(text) {
     .replace(/\.\.$/, '.');
 }
 
-export default function ProductSections({ glance, extras = {}, extraNav = [], onXref = null }) {
+/**
+ * worksWith  { items: string[], ayna: { name } | null, onOpenAyna } from
+ *            worksWith() in src/utils/aynaIntegrations.js; replaces the
+ *            "Available on" fact (the platforms are its first items).
+ */
+export default function ProductSections({ glance, extras = {}, extraNav = [], onXref = null, worksWith = null }) {
   const plan = glance?.glossary || {};
   const [tab, setTab] = useState('glance');
   const [sub, setSub] = useState({});
+  const tabsRef = useRef(null);
+  useEdgeFade(tabsRef, [glance]);
   // A link anywhere on the page (a fact, a [n] footnote) opens the tab that holds it.
   useEffect(() => {
     const on = (e) => {
@@ -350,9 +358,24 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
     return () => window.removeEventListener('ay-open-section', on);
   }, [glance]);
   if (!glance) return null;
-  const { what, who, facts, sources } = glance;
+  const { what, who, sources } = glance;
   const secs = splitSections(glance.sections);
   const nav = [...glance.nav, ...extraNav];
+  // "Works with" takes the place of "Available on" (it starts with the same platforms).
+  const worksRow = worksWith?.items?.length ? { id: 'works', label: 'Works with', works: true } : null;
+  const facts = worksRow
+    ? (glance.facts.some((f) => f.id === 'platform')
+      ? glance.facts.map((f) => (f.id === 'platform' ? worksRow : f))
+      : glance.facts.flatMap((f, i) => (i === 0 ? [f, worksRow] : [f])))
+    : glance.facts;
+  const worksValue = worksRow && worksWith.items.map((t, i) => (
+    <React.Fragment key={t}>
+      {i > 0 && ', '}
+      {t === 'ayna' && worksWith.ayna && worksWith.onOpenAyna
+        ? <button type="button" className="ay-gl-inlinelink" onClick={worksWith.onOpenAyna} aria-label={`ayna: connect ${worksWith.ayna.name} in Health data`}>ayna</button>
+        : t}
+    </React.Fragment>
+  ));
 
   const tabs = [
     { id: 'glance', label: 'Overview', tone: 'butter' },
@@ -384,7 +407,7 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
   return (
     <section className="ay-glance is-stacked" id="ay-sec-glance" tabIndex={-1} aria-label="Product information">
       <nav className="ay-glance__nav" aria-label="Product information">
-        <ul role="tablist">
+        <ul role="tablist" ref={tabsRef}>
           {tabs.map((t) => (
             <li key={t.id} role="presentation">
               <button type="button" role="tab" id={`ay-tab-${t.id}`} aria-selected={active === t.id} aria-controls={`ay-panel-${t.id}`} className={active === t.id ? 'is-active' : undefined} onClick={() => choose(t.id)}>{t.label}</button>
@@ -397,10 +420,8 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
         const heading = t.id === 'glance' ? 'Overview' : t.id === 'sources' ? 'Where this comes from' : t.label;
         return (
           <div key={t.id} className="ay-glance__panel is-tab" id={`ay-panel-${t.id}`} role="tabpanel" aria-labelledby={`ay-tab-${t.id}`} data-tone={t.tone}>
-            <div className="ay-glance__panelhead">
-              <h2 className="ay-glance__srh">{heading}</h2>
-              {t.id === 'glance' && sources.length > 0 && <button type="button" className="ay-glance__chip" onClick={() => choose('sources')}>{sources.length} source{sources.length === 1 ? '' : 's'}</button>}
-            </div>
+            {/* The source count lives on the Sources tab itself, so the heading is for screen readers only. */}
+            <h2 className="ay-glance__srh sr-only">{heading}</h2>
             {t.id === 'glance' && (
       <div className="ay-glance__top">
         <div className="ay-glance__what">
@@ -421,20 +442,14 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
               {who.items.length > 0 && who.helps.length > 0 && <ul className="ay-gl-chips is-fit">{who.helps.map((t) => <li key={t}>{t}</li>)}</ul>}
             </div>
           )}
-          {!glance.verified && (
-            <p className="ay-glance__caveat">
-              {glance.researched
-                ? 'Dated details were checked against the sources listed.'
-                : 'From ayna’s catalog. We have not checked these details against the label yet.'}
-            </p>
-          )}
         </div>
+        <div className="ay-glance__factcard">
         <dl className="ay-glance__facts" aria-label="Key facts">
           {[...facts].sort((a, b) => Number(!!a.unknown) - Number(!!b.unknown)).map((f) => (
             <div key={f.id} className={f.unknown ? 'is-unknown' : undefined}>
               <dt>{f.label}</dt>
               <dd>
-                {f.jump && !f.unknown
+                {f.works ? worksValue : f.jump && !f.unknown
                   ? <a href={`#ay-sec-${f.jump}`} onClick={(e) => { e.preventDefault(); jumpOpen(f.jump, `ay-sec-${f.jump}`); }}>{f.value}</a>
                   : f.value}
                 <Refs refs={f.refs} sources={sources} />
@@ -443,6 +458,14 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
             </div>
           ))}
         </dl>
+        {!glance.verified && (
+          <p className="ay-glance__caveat">
+            {glance.researched
+              ? 'Dated details were checked against the sources listed.'
+              : 'From ayna’s catalog. We have not checked these details against the label yet.'}
+          </p>
+        )}
+        </div>
       </div>
             )}
             {group && groupBody(group)}
