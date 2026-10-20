@@ -171,6 +171,7 @@ function Invest() {
             Invest on Wefunder<Arrow /><span className="lv-sr"> (opens in a new tab)</span>
           </a>
         </div>
+        <img className="lv-invest__img" src="/landing/laundry-duo.webp" alt="Two friends in curlers reading magazines together on a laundry room floor" loading="lazy" width="736" height="981" />
         <p className="lv-invest__legal">{TESTING_WATERS_NOTICE}</p>
       </div>
     </section>

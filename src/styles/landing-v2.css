@@ -585,17 +585,22 @@ html.ay-motion-paused .lv *, html.ay-motion-paused .lv *::before, html.ay-motion
 /* Home: soft text and the selected "why" row use brand alphas (were #5a4540 and #fde3ef). */
 .app-container .lv { --ink-2: rgba(62, 39, 35, .8) !important; --pink-soft: rgba(247, 186, 221, .5) !important; }
 /* ---------- invest: Wefunder community round (Oct 20) ---------- */
-.app-container .lv .lv-invest__card { display: grid; gap: 24px; padding: var(--pad); background: var(--skyb); }
-.app-container .lv .lv-invest__copy { display: grid; justify-items: start; gap: 16px; max-width: 720px; padding: var(--pad); border: var(--bw) solid var(--ink); border-radius: var(--r-md); background: var(--paper); }
+.app-container .lv .lv-invest__card { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 24px 32px; align-items: stretch; padding: var(--pad); background: var(--skyb); }
+.app-container .lv .lv-invest__img { width: 100%; height: 100%; min-height: 0; max-height: 460px; object-fit: cover; object-position: 50% 40%; border: var(--bw) solid var(--ink); border-radius: var(--r-md); filter: sepia(.14) saturate(.9) contrast(1.06); }
+.app-container .lv .lv-invest__legal { grid-column: 1 / -1; }
+.app-container .lv .lv-invest__copy { display: grid; justify-items: start; gap: 16px; align-content: center; padding: var(--pad); border: var(--bw) solid var(--ink); border-radius: var(--r-md); background: var(--paper); }
 .app-container .lv .lv-invest__copy > p:not(.lv-script) { max-width: 52ch; color: var(--ink-2); }
 .app-container .lv .lv-invest__perks { display: flex; flex-wrap: wrap; gap: 12px; margin: 8px 0; }
 .app-container .lv .lv-invest__perks li { display: grid; gap: 2px; min-width: 132px; padding: 12px 16px; border: var(--bw) solid var(--ink); border-radius: var(--r-md); background: var(--butter); }
-.app-container .lv .lv-invest__perks li:nth-child(2) { background: var(--rose); }
+.app-container .lv .lv-invest__perks li { background: var(--rose) !important; }
+.app-container .lv .lv-invest__perks li:nth-child(2) { background: var(--sky) !important; }
+.app-container .lv .lv-invest__perks li:nth-child(3) { background: var(--butter) !important; }
 .app-container .lv .lv-invest__perks b { font: 400 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em; }
 .app-container .lv .lv-invest__perks span { font: 500 var(--ay-fs-secondary)/1.3 var(--ay-sans); }
 .app-container .lv .lv-invest__legal { max-width: 96ch; color: var(--ink); font: 400 var(--ay-fs-caption)/1.5 var(--ay-sans); }
 @media (max-width: 767px) {
-  .app-container .lv .lv-invest__card { padding: 16px; gap: 16px; }
+  .app-container .lv .lv-invest__card { grid-template-columns: minmax(0, 1fr); padding: 16px; gap: 16px; }
+  .app-container .lv .lv-invest__img { max-height: 240px; }
   .app-container .lv .lv-invest__copy { padding: 24px 20px; }
   .app-container .lv .lv-invest__perks li { flex: 1 1 120px; min-width: 0; }
   .app-container .lv .lv-invest .lv-btn { width: 100%; }
