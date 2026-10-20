@@ -81,6 +81,14 @@
   ],
   "rewrites": [
     {
+      "source": "/a/:slug([A-Za-z0-9]{10})",
+      "destination": "/api/share-answer?slug=:slug&format=html"
+    },
+    {
+      "source": "/a/:rest*",
+      "destination": "/index.html"
+    },
+    {
       "source": "/ingest/static/:path(.*)",
       "destination": "https://us-assets.i.posthog.com/static/:path"
     },

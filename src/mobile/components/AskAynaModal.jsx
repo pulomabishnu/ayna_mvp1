@@ -5,6 +5,8 @@ const ASK_STARTERS = ['What helps with cramps?', 'Is this safe with my birth con
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 import { apiUrl } from '../../utils/apiUrl.js';
+import ShareAnswerButton from '../../components/ShareAnswerButton.jsx';
+import { questionForAnswer } from '../../utils/sharedAnswer.js';
 
 /**
  * Mobile port of ProfileChatbot's merge/summary logic
@@ -219,6 +221,21 @@ export default function AskAynaModal({
             >
               {m.role === 'assistant' ? renderMarkdownLite(m.text) : m.text}
             </div>
+            {m.role === 'assistant' && questionForAnswer(messages, i) && (
+              <ShareAnswerButton
+                question={questionForAnswer(messages, i)}
+                answer={m.text}
+                sources={m.sources || []}
+                share={m.share || null}
+                onShareChange={(share) => {
+                  const next = messages.map((x, j) => (j === i ? { ...x, share } : x));
+                  setMessages(next);
+                  onChatHistoryUpdate?.(next);
+                }}
+                session={session}
+                surface="app"
+              />
+            )}
             {m.showViewRecommendations && onViewRecommendations && (
               <div
                 onClick={onViewRecommendations}
