@@ -209,29 +209,31 @@ function ArticleProducts({ articleId, quizResults, healthProfile, onOpenProduct 
     window.addEventListener('resize', read);
     return () => { el.removeEventListener('scroll', read); window.removeEventListener('resize', read); };
   }, [items.length]);
-  if (items.length === 0) return note ? <section className="ay-lib-products"><p className="ay-lib-products__note">{note}</p></section> : null;
+  if (items.length === 0) return note ? <section className="ct-products"><p className="ay-alert ct-products__note"><span aria-hidden="true">!</span><span>{note}</span></p></section> : null;
   const page = (dir) => { const el = rowRef.current; if (el) el.scrollBy({ left: dir * el.clientWidth * 0.85, behavior: 'smooth' }); };
   return (
-    <section className="ay-lib-products" aria-labelledby="ay-lib-products-h">
-      <div className="ay-lib-products__head">
-        <h3 id="ay-lib-products-h">Products for this topic</h3>
-        <p className="ay-lib-products__disc">Products, not medical advice. Some links earn ayna a commission. It never changes what we show.</p>
-        <div className="ay-lib-products__nav">
+    <section className="ct-products ay-shelf" aria-labelledby="ay-lib-products-h">
+      <div className="ct-shelf__head">
+        <h2 id="ay-lib-products-h">Products for this topic</h2>
+        <span className="ct-shelf__count">{items.length}</span>
+        <div className="ct-shelf__nav">
           <button type="button" onClick={() => page(-1)} disabled={edge.start} aria-label="Previous products">←</button>
           <button type="button" onClick={() => page(1)} disabled={edge.end} aria-label="More products">→</button>
         </div>
       </div>
-      {note && <p className="ay-lib-products__note">{note}</p>}
-      <div className="ay-lib-products__grid" ref={rowRef}>
+      <p className="ct-products__disc">Products, not medical advice. Some links earn ayna a commission. It never changes what we show.</p>
+      {note && <p className="ay-alert ct-products__note"><span aria-hidden="true">!</span><span>{note}</span></p>}
+      <ul className="ay-shelf__row ct-products__row" ref={rowRef}>
         {items.map(({ product, why }) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onOpen={onOpenProduct}
-            labels={why ? <span className="ay-lib-why">{why}</span> : null}
-          />
+          <li key={product.id}>
+            <ProductCard
+              product={product}
+              onOpen={onOpenProduct}
+              labels={why ? <span className="ay-lib-why">{why}</span> : null}
+            />
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   );
 }
@@ -242,9 +244,9 @@ const Chevron = () => (
 
 function CareRow({ title, children, open = false }) {
   return (
-    <details className="ay-lib-row" open={open}>
+    <details className="ct-care__row" open={open}>
       <summary><span>{title}</span><Chevron /></summary>
-      <div className="ay-lib-row__body">{children}</div>
+      <div className="ct-care__body">{children}</div>
     </details>
   );
 }
@@ -258,8 +260,9 @@ function TelehealthSuggestions({ articleId, onOpenProduct }) {
   const platforms = useMemo(() => getRelevantTelehealth(articleId).filter((t) => !/planned parenthood/i.test(t.name || '')), [articleId]);
 
   return (
-    <section className="ay-lib-care" aria-labelledby="ay-lib-care-h">
-      <h2 id="ay-lib-care-h" className="ay-lib-care__h">Can&apos;t reach your doctor?</h2>
+    <section className="ct-care" aria-labelledby="ay-lib-care-h">
+      <h2 id="ay-lib-care-h" className="ay-h3">Can&apos;t reach your doctor?</h2>
+      <div className="ay-group">
 
       <CareRow title="Nurse line (insurer)" open>
         <p>Many plans offer a 24/7 nurse line for symptom guidance and when to seek care. Check your insurance card or member portal for the number.</p>
@@ -299,6 +302,7 @@ function TelehealthSuggestions({ articleId, onOpenProduct }) {
           </ul>
         </CareRow>
       )}
+      </div>
     </section>
   );
 }
@@ -908,18 +912,15 @@ const FEATURED_READ = { id: 'postpartum-stretch-marks', by: 'Geena Yousry, MS1' 
 function FeaturedRead({ onOpen }) {
   const art = ARTICLES.find((a) => a.id === FEATURED_READ.id);
   if (!art) return null;
-  const cut = art.title.indexOf('? ');
-  const [lead, rest] = cut > 0 ? [art.title.slice(0, cut + 1), art.title.slice(cut + 2)] : [art.title, ''];
   return (
-    <a href={`/library/${art.id}`} className="ay-lib-feature" onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); onOpen(art.id); }}>
-      <span className="ay-lib-feature__new" aria-hidden="true">New</span>
-      <img className="ay-lib-feature__img" src={art.image} alt="" width="794" height="798" />
-      <span className="ay-lib-feature__text">
-        <small className="ay-lib-feature__kicker"><span className="sr-only">New. </span>Featured read · {sectionOf(art.id)?.label}</small>
-        <strong className="ay-lib-feature__title">{lead}{rest && <> <em>{rest}</em></>}</strong>
-        <span className="ay-lib-feature__teaser">{art.teaser}</span>
-        <span className="ay-lib-feature__by">By {FEATURED_READ.by} · {minutesFor(art)} min read</span>
-        <span className="ay-lib-feature__cta">Read it <span aria-hidden="true">→</span></span>
+    <a href={`/library/${art.id}`} className="ct-feature ay-feature" onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); onOpen(art.id); }}>
+      <span className="ct-feature__img"><img src={art.image} alt="" width="794" height="798" /></span>
+      <span className="ct-feature__text">
+        <span className="ct-feature__kicker"><span className="ct-badge">New</span> Featured read · {sectionOf(art.id)?.label}</span>
+        <strong className="ct-feature__title">{art.title}</strong>
+        <span className="ct-feature__teaser">{art.teaser}</span>
+        <span className="ct-feature__by">By {FEATURED_READ.by} · {minutesFor(art)} min read</span>
+        <span className="ct-feature__cta">Read it <span aria-hidden="true">→</span></span>
       </span>
     </a>
   );
@@ -937,6 +938,30 @@ function ArticleCover({ art, large = false }) {
   return <TopicCover id={art.id} title={art.title} />;
 }
 
+/* One source card per cited page: publisher (before the dash), the page's
+   title, and where it opens. Text comes straight from the read. */
+function SourceCards({ items }) {
+  const cards = items.filter(React.isValidElement).map((li, i) => {
+    const parts = React.Children.toArray(li.props.children);
+    const link = parts.find((x) => React.isValidElement(x) && x.type === 'a');
+    const label = link ? textOf(link.props.children).trim() : textOf(parts).trim();
+    const lead = parts.filter((x) => x !== link).map((x) => textOf(x)).join('').trim();
+    const m = /^(.+?)\s+[–-]\s+(.+)$/.exec(label);
+    const pub = m && m[1].length <= 24 ? m[1] : null;
+    const title = pub ? m[2] : (lead || label);
+    let host = '';
+    try { host = link ? new URL(link.props.href).hostname.replace(/^www\./, '') : ''; } catch { /* not a URL */ }
+    return (
+      <li key={i} className="ay-source-card">
+        <p className="ay-source-card__meta">{pub ? <span className="ay-source-card__pub">{pub}</span> : host && <span className="ay-source-card__pub">{host}</span>}</p>
+        <p className="ay-source-card__title">{title}</p>
+        {link && <a className="ay-source-card__go" href={link.props.href} target="_blank" rel="noopener noreferrer">{lead ? label : 'Read the source'} <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>}
+      </li>
+    );
+  });
+  return <ul className="ay-source-grid ct-sources">{cards}</ul>;
+}
+
 /* Bold lead-ins ("When to seek care:") become real H2 subheadings, so the
    read can be skimmed and screen readers get structure. */
 function withHeadings(body) {
@@ -944,6 +969,11 @@ function withHeadings(body) {
   if (!kids.length) return body;
   const out = [];
   kids.forEach((el, i) => {
+    // The sources list becomes source cards (publisher, title, link); the words stay the same.
+    if (React.isValidElement(el) && el.type === 'ul' && el.props.className === 'ay-lib-sources') {
+      out.push(<SourceCards key={`s-${i}`} items={React.Children.toArray(el.props.children)} />);
+      return;
+    }
     if (React.isValidElement(el) && el.type === 'p') {
       const parts = React.Children.toArray(el.props.children);
       const lead = parts[0];
@@ -951,7 +981,7 @@ function withHeadings(body) {
         const text = React.Children.toArray(lead.props.children).join('').trim();
         if (/:$/.test(text) && text.length < 70) {
           const label = text.replace(/:$/, '').replace(/\s*\(from [^)]*\)\s*$/i, '');
-          out.push(<h2 key={`h-${i}`} className="ay-lib-h2">{label}</h2>);
+          out.push(<h2 key={`h-${i}`} id={/^(sources|references)$/i.test(label) ? 'ct-sources' : undefined} className="ct-h2">{label}</h2>);
           const rest = parts.slice(1);
           const hasText = rest.some((r) => (typeof r === 'string' ? r.trim() : true));
           if (hasText) out.push(<p key={`p-${i}`}>{rest.map((r) => (typeof r === 'string' ? r.replace(/^\s+/, '') : r))}</p>);
@@ -964,19 +994,17 @@ function withHeadings(body) {
   return <>{out}</>;
 }
 
-function renderArticleCard(art, setSelectedId, progress = 0) {
+function renderArticleCard(art, setSelectedId, progress = 0, showTopic = true) {
   // A real link: open in a new tab, copy the address, see where it goes.
+  const mins = minutesFor(art);
   return (
-    <a href={`/library/${art.id}`} className="ay-web-lib-card ay-lib-card" onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); setSelectedId(art.id); }}>
-      <span className="ay3-clip__mast" aria-hidden="true"><span>ayna library</span><span>{minutesFor(art)} min</span></span>
-      <ArticleCover art={art} />
-      <h3>{art.title}</h3>
-      <p>{art.teaser}</p>
-      <span className="ay-lib-card__foot" data-min={minutesFor(art) > 3 ? `${minutesFor(art)} min read ·` : undefined}>
-        <span className="ay-lib-card__tags">
-          <span className="ay-lib-tag">{sectionOf(art.id)?.label || 'Health'}</span>
-        </span>
-        <span className="ay-lib-card__src">{art.source}</span>
+    <a href={`/library/${art.id}`} className="ct-read" onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); setSelectedId(art.id); }}>
+      <span className="ct-read__cover"><ArticleCover art={art} /></span>
+      <span className="ct-read__body">
+        <span className="ct-read__meta">{showTopic ? `${sectionOf(art.id)?.label || 'Health'} · ` : ''}{mins} min read</span>
+        <strong className="ct-read__title">{art.title}</strong>
+        <span className="ct-read__teaser">{art.teaser}</span>
+        <span className="ct-read__src"><span className="sr-only">Sources: </span>{art.source}</span>
         <ReadState value={progress} />
       </span>
     </a>
@@ -1082,11 +1110,10 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   const selected = ARTICLES.find((a) => a.id === selectedId);
   // Opening a read un-crumples the page; closing crumples it back before the
   // shelf returns. Reduced motion skips the delay.
-  const [closing, setClosing] = useState(false);
   const closeRead = () => {
     const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     // No crumple animation: reads open and close straight away (Pass 7 audit).
-    void reduce; void setClosing;
+    void reduce;
     setSelectedId(null);
   };
 
@@ -1190,21 +1217,22 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
     return () => ro.disconnect();
   }, [selected]);
 
-  const [barSmall, setBarSmall] = React.useState(false);
-  React.useEffect(() => {
-    const on = () => setBarSmall(window.scrollY > 320);
-    on();
-    window.addEventListener('scroll', on, { passive: true });
-    return () => window.removeEventListener('scroll', on);
-  }, []);
+  // A to Z: open beside the shelves on wide screens, folded on phones.
+  const [azOpen, setAzOpen] = React.useState(() => typeof window === 'undefined' || !window.matchMedia || window.matchMedia('(min-width: 1024px)').matches);
   const open = (id) => setSelectedId(id);
   const card = (a) => <li key={a.id}>{renderArticleCard(a, open, progressOf(a))}</li>;
-  const shelf = (id, label, items) => items.length > 0 && <div key={id} id={`lib-${id}`} className="ay-web-lib-cat ay-wiki-sec">
-    <h2><span>{label}</span>{id === 'keep' && finished > 0
-      ? <span className="ay-lib-total is-inline" aria-label={`${finished} of ${ARTICLES.length} finished`}><span>{finished}/{ARTICLES.length} read</span><ProgressBar value={finished / ARTICLES.length} /></span>
-      : <small>{items.length} read{items.length === 1 ? '' : 's'}</small>}</h2>
-    <ul className="ay-web-lib-grid ay-lib-shelf">{items.map(card)}</ul>
-  </div>;
+  const sectionCard = (a) => <li key={a.id}>{renderArticleCard(a, open, progressOf(a), false)}</li>;
+  // Spotify pattern: titled shelf, count, a row of read cards (scrolls sideways on phones).
+  const shelf = (id, label, items, extra = null) => items.length > 0 && <section key={id} id={`lib-${id}`} className="ct-shelf" aria-labelledby={`lib-${id}-h`}>
+    <div className="ct-shelf__head">
+      <h2 id={`lib-${id}-h`}>{label}</h2>
+      {id === 'keep' && finished > 0
+        ? <span className="ct-shelf__count ay-lib-total" aria-label={`${finished} of ${ARTICLES.length} finished`}><span>{finished}/{ARTICLES.length} read</span><ProgressBar value={finished / ARTICLES.length} /></span>
+        : <span className="ct-shelf__count">{items.length} read{items.length === 1 ? '' : 's'}</span>}
+      {extra}
+    </div>
+    <ul className="ct-shelf__row">{items.map(rows.some((r) => r.id === id) ? sectionCard : card)}</ul>
+  </section>;
 
   if (selected && DESIGNED_READS[selected.id]) {
     const Designed = DESIGNED_READS[selected.id].Component;
@@ -1216,45 +1244,51 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
     const next = nextInSection(selected.id);
     const done = progressOf(selected) >= 1;
     const label = done ? 'Finished' : scrolled > 0.02 ? `${Math.round(scrolled * 100)}% read` : `${minutesFor(selected)} min read`;
+    const related = ARTICLES.filter((a) => a.id !== selected.id && (a.tags || []).some((t) => (selected.tags || []).includes(t))).slice(0, 4);
+    const sec = sectionOf(selected.id);
     return (
-      <section className="container animate-fade-in-up ay-web-library ay-lib-reading">
+      <section className="ct ct-read-page ay-container">
         {/* A thin reading line under the header, not a second sticky bar. */}
-        <div className="ay-lib-line" ref={statusRef} role="progressbar" aria-label="Reading progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round((done ? 1 : scrolled) * 100)} aria-valuetext={label}>
+        <div className="ct-line" ref={statusRef} role="progressbar" aria-label="Reading progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round((done ? 1 : scrolled) * 100)} aria-valuetext={label}>
           <span style={{ width: `${Math.round((done ? 1 : scrolled) * 100)}%` }} />
         </div>
-        <button type="button" className="ay-lib-backlink" onClick={closeRead}><span aria-hidden="true">←</span> Library</button>
-        <article key={selected.id} className={`ay-web-lib-article ay3-paper${closing ? ' is-crumpling' : ''}`}>
-          <h1 className="ay-article-title">{selected.title}</h1>
-          <div className="ay-lib-article__tags">
-            <span className="ay-lib-tag">{sectionOf(selected.id)?.label || 'Health'}</span>
-          </div>
-          {/* Category once (the tag above), sources once in full at the end; this line jumps there. */}
-          <button type="button" className="ay-lib-article__src ay-lib-article__srclink" onClick={() => bodyRef.current?.querySelector('.ay-lib-sources')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>Sources: {selected.source} <span aria-hidden="true">↓</span></button>
-          <ArticleCover art={selected} large />
-          <div className="article-body" ref={bodyRef}>
-            {withHeadings(selected.body)}
-          </div>
-
-          <TelehealthSuggestions articleId={selected.id} onOpenProduct={onOpenProduct} />
-          {next && <button type="button" className="ay-web-next-read" onClick={() => open(next.article.id)}>
-            <small>{next.label}</small><strong>{next.article.title}</strong><span aria-hidden="true">→</span>
-          </button>}
-        </article>
-        {/* Shopping sits outside the medical read, labelled as products. */}
-        <div className="ay-lib-products-wrap">
-          <ArticleProducts articleId={selected.id} quizResults={quizResults} healthProfile={healthProfile} onOpenProduct={onOpenProduct} />
+        <nav className="ct-crumbs" aria-label="Breadcrumb">
+          <button type="button" className="ct-back" onClick={closeRead}><span aria-hidden="true">←</span> Library</button>
+          {sec && <><span aria-hidden="true">/</span><button type="button" className="ct-crumb" onClick={() => { closeRead(); setTopic(sec.id); }}>{sec.label}</button></>}
+        </nav>
+        <div className="ct-read-layout">
+          <article key={selected.id} className="ct-article">
+            <header className="ct-article__head">
+              <p className="ct-article__meta">{sec?.label || 'Health'} · {minutesFor(selected)} min read{done ? ' · Finished' : ''}</p>
+              <h1 className="ay-h1">{selected.title}</h1>
+              <p className="ct-article__teaser">{selected.teaser}</p>
+              {/* Category once (above), sources once in full at the end; this line jumps there. */}
+              <p className="ct-byline">Checked against {selected.source}. <button type="button" className="ct-link" onClick={() => document.getElementById('ct-sources')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>See the sources <span aria-hidden="true">↓</span></button></p>
+            </header>
+            <ArticleCover art={selected} large />
+            <div className="ct-prose" ref={bodyRef}>
+              {withHeadings(selected.body)}
+            </div>
+            <TelehealthSuggestions articleId={selected.id} onOpenProduct={onOpenProduct} />
+          </article>
+          <aside className="ct-read-side" aria-label="About this read">
+            <p className="ay-group__title">About this read</p>
+            <ul className="ay-group ay-group__rows">
+              <li className="ay-group__row"><span className="ay-group__text"><span className="ay-group__label">Topic</span><span className="ay-group__value">{sec?.label || 'Health'}</span></span></li>
+              <li className="ay-group__row"><span className="ay-group__text"><span className="ay-group__label">Read time</span><span className="ay-group__value">{label}</span></span></li>
+              <li className="ay-group__row"><span className="ay-group__text"><span className="ay-group__label">Checked against</span><span className="ay-group__value">{selected.source}</span></span></li>
+            </ul>
+            {(next || related.length > 0) && <>
+              <p className="ay-group__title ct-side-gap">Read next</p>
+              <ul className="ay-group ay-group__rows">
+                {next && <li><button type="button" className="ay-group__row ay-group__row--link" onClick={() => open(next.article.id)}><span className="ay-group__text"><span className="ay-group__label">{next.label}</span><span className="ay-group__value">{next.article.title}</span></span><span className="ay-group__end" aria-hidden="true">→</span></button></li>}
+                {related.filter((a) => a.id !== next?.article.id).map((a) => <li key={a.id}><button type="button" className="ay-group__row ay-group__row--link" onClick={() => open(a.id)}><span className="ay-group__text"><span className="ay-group__label">Related read</span><span className="ay-group__value">{a.title}</span></span><span className="ay-group__end" aria-hidden="true">→</span></button></li>)}
+              </ul>
+            </>}
+          </aside>
         </div>
-        <aside className={`ay3-infobox${closing ? ' is-crumpling' : ''}`} aria-label="About this read">
-                    {(() => {
-            const related = ARTICLES.filter((a) => a.id !== selected.id && (a.tags || []).some((t) => (selected.tags || []).includes(t))).slice(0, 4);
-            return related.length > 0 && (
-              <div className="ay3-infobox__rel">
-                <p className="ay3-libside__title">Related reads</p>
-                <ul>{related.map((a) => <li key={a.id}><button type="button" onClick={() => open(a.id)}>{a.title}</button></li>)}</ul>
-              </div>
-            );
-          })()}
-        </aside>
+        {/* Shopping sits outside the medical read, labelled as products. */}
+        <ArticleProducts articleId={selected.id} quizResults={quizResults} healthProfile={healthProfile} onOpenProduct={onOpenProduct} />
       </section>
     );
   }
@@ -1265,83 +1299,81 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   const shown = q.length >= 2 ? searchArticles(query, ARTICLES).filter(inTopic) : null;
   if (q.length >= 2) {
     const results = shown;
-    body = results.length ? <ul className="ay-web-lib-grid">{results.map(card)}</ul> : (
-      <div className="ay-lib-zero" role="status">
-        <p className="ay-lib-zero__h">Nothing for “{query.trim()}” yet.</p>
+    body = results.length ? <ul className="ct-read-grid">{results.map(card)}</ul> : (
+      <div className="ct-zero ay-group is-padded" role="status">
+        <p className="ct-zero__h">Nothing for “{query.trim()}” yet.</p>
         <p>Try a topic:</p>
-        <div className="ay-lib-zero__chips">{rows.slice(0, 3).map((r) => <button type="button" key={r.id} onClick={() => { setQuery(''); setTopic(r.id); }}>{r.label}</button>)}</div>
-        <div className="ay-lib-zero__actions">
-          {onAsk && <button type="button" className="ay-lib-zero__ask" onClick={() => onAsk(query.trim())}>Ask ayna about {query.trim()}</button>}
-          <button type="button" className="ay-lib-zero__req" onClick={() => document.querySelector('.ay-web-lib-suggest')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>Request a read</button>
+        <div className="ay-chip-row">{rows.slice(0, 3).map((r) => <button type="button" className="ay-chip" key={r.id} onClick={() => { setQuery(''); setTopic(r.id); }}>{r.label}</button>)}</div>
+        <div className="ct-zero__actions">
+          {onAsk && <button type="button" className="ay-btn ay-btn--primary" onClick={() => onAsk(query.trim())}>Ask ayna about {query.trim()}</button>}
+          <button type="button" className="ay-btn ay-btn--secondary" onClick={() => document.querySelector('.ct-suggest')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>Request a read</button>
         </div>
       </div>
     );
   } else if (topic !== 'all') {
     const items = topic === 'foryou' ? forYou : (rows.find((r) => r.id === topic)?.items || []);
-    body = <ul className="ay-web-lib-grid">{items.map(card)}</ul>;
+    body = <ul className="ct-read-grid">{items.map(card)}</ul>;
   } else {
+    // Say why these are "for you", in her words from the quiz.
+    const said = [...new Set([...(quizResults?.fullHealthIntake?.supportSelections || []), ...(quizResults?.frustrations || [])].map((x) => String(x).trim()).filter(Boolean))].slice(0, 3);
     body = <>
       <FeaturedRead onOpen={open} />
       {shelf('keep', 'Keep reading', keepReading)}
-      {hasProfile ? <>{shelf('foryou', 'Top 3 for you', forYou.slice(0, 3))}{(() => {
-        // Say why these are "for you", in her words from the quiz.
-        const said = [...new Set([...(quizResults?.fullHealthIntake?.supportSelections || []), ...(quizResults?.frustrations || [])].map((x) => String(x).trim()).filter(Boolean))].slice(0, 3);
-        return said.length && forYou.length ? <p className="ay-lib-foryou-why">Based on what you told us: {said.map((x) => x.toLowerCase()).join(', ')}.</p> : null;
-      })()}{forYou.length > 3 && <p className="ay-lib-more-row"><button type="button" className="ay-lib-more" onClick={() => setTopic('foryou')}>All {forYou.length} for you</button></p>}</> : <a className="ay-lib-personalize" href="/quiz">See my matches <span aria-hidden="true">→</span></a>}
+      {hasProfile ? <>
+        {shelf('foryou', 'Top 3 for you', forYou.slice(0, 3), forYou.length > 3 ? <button type="button" className="ct-shelf__all" onClick={() => setTopic('foryou')}>All {forYou.length} for you</button> : null)}
+        {said.length > 0 && forYou.length > 0 && <p className="ct-foryou-why">Based on what you told us: {said.map((x) => x.toLowerCase()).join(', ')}.</p>}
+      </> : <p className="ct-personal"><span>Get reads picked for what you told us.</span> <a className="ay-btn ay-btn--secondary" href="/quiz">See my matches <span aria-hidden="true">→</span></a></p>}
       {rows.map((r) => shelf(r.id, r.label, r.items))}
     </>;
   }
+  const azList = [...(shown || ARTICLES.filter(inTopic))].sort((a, b) => a.title.localeCompare(b.title));
 
   return (
-    <section className="container animate-fade-in-up ay-web-library is-wiki">
+    <section className="ct ct-lib ay-container">
       {missingRead && (
-        <div className="ay-lib-404" role="alert">
-          <p className="ay-lib-404__code">404</p>
+        <div className="ct-404 ay-group is-padded" role="alert">
+          <p className="ct-404__code">404</p>
           <h2>We couldn’t find that read.</h2>
           <p>It may have moved, or the link may be wrong.</p>
-          <a href="/library" className="ay-lib-404__btn" onClick={(e) => { e.preventDefault(); onArticleChange?.(null); }}>See all reads</a>
+          <a href="/library" className="ay-btn ay-btn--primary" onClick={(e) => { e.preventDefault(); onArticleChange?.(null); }}>See all reads</a>
         </div>
       )}
-      <header className="ay-wiki-top">
-        <div className="ay-wiki-top__text">
-          <p className="ay3-kicker">The ayna library</p>
-          <h1 className="ay3-title">Short reads, <em>real sources.</em></h1>
-          <p className="ay-wiki-top__sub">Plain-language reads on women&apos;s health, each one checked against clinical sources.</p>
+      <header className="ct-lib__top">
+        <div className="ct-lib__title">
+          <h1 className="ay-h1">Short reads, real sources.</h1>
+          <p className="ct-lede">Plain-language reads on women&apos;s health, each one checked against clinical sources.</p>
         </div>
-      </header>
-      <div className={`ay-wiki-bar${barSmall ? ' is-small' : ''}`}>
-        <label className="ay-web-lib-search">
+        <label className="ct-search">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
           <SmartSearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder={libPlaceholder} aria-label="Search reads" />
         </label>
-        {<div className="ay-web-lib-filter ay-lib-chips" role="group" aria-label="Topics">
-          {topics.map(([id, label]) => <button type="button" key={id} className={topic === id ? 'is-on' : ''} aria-pressed={topic === id} onClick={() => setTopic(id)}>{label}</button>)}
-        </div>}
+      </header>
+      <div className="ay-chip-row ct-lib__chips" role="group" aria-label="Topics">
+        {topics.map(([id, label]) => <button type="button" key={id} className="ay-chip" aria-pressed={topic === id} onClick={() => setTopic(id)}>{label}</button>)}
       </div>
       {q.length >= 2 && <SearchAssist query={query} resultCount={searchArticles(query, ARTICLES).length} onUse={setQuery} />}
-      <div className="ay3-libgrid">
-        <aside className="ay3-libside" aria-label="Library index">
-          <nav className="ay3-libside__box">
-            <p className="ay3-libside__title">A to Z</p>
-            <ul className="ay3-az">
-              {[...(shown || ARTICLES.filter(inTopic))].sort((a, b) => a.title.localeCompare(b.title)).map((a, i, arr) => {
+      <div className="ct-lib__grid">
+        <div className="ct-lib__main">{body}</div>
+        <aside className="ct-lib__side" aria-label="Library index">
+          <details className="ct-az" open={azOpen} onToggle={(e) => setAzOpen(e.currentTarget.open)}>
+            <summary><span className="ct-az__title">A to Z</span><span className="ct-az__n">{azList.length} read{azList.length === 1 ? '' : 's'}</span></summary>
+            <ul className="ct-az__list">
+              {azList.map((a, i, arr) => {
                 const letter = a.title[0].toUpperCase();
                 const first = i === 0 || arr[i - 1].title[0].toUpperCase() !== letter;
                 return (
-                  <li key={a.id} data-letter={first ? letter : undefined}>
+                  <li key={a.id}>
+                    <span className="ct-az__letter" aria-hidden="true">{first ? letter : ''}</span>
                     <button type="button" onClick={() => open(a.id)}>{a.title}</button>
-                    {progressOf(a) >= 1 && <span className="ay3-az__done" aria-label="Finished">✓</span>}
+                    {progressOf(a) >= 1 && <span className="ct-az__done" aria-label="Finished">✓</span>}
                   </li>
                 );
               })}
             </ul>
-          </nav>
+          </details>
         </aside>
-        <div className="ay3-libmain">
-      {body}
-        </div>
       </div>
-      <SuggestBox mode="read" context="library" className="ay-web-lib-suggest" />
+      <SuggestBox mode="read" context="library" className="ct-suggest" />
     </section>
   );
 }
