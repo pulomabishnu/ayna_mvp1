@@ -93,7 +93,8 @@
 .lv-tiles li { min-width: 0; }
 .lv-tiles a { display: grid; gap: 12px; color: inherit; text-decoration: none; }
 .lv-tile__img { position: relative; display: grid; place-items: center; aspect-ratio: 1; border: var(--bw) solid var(--ink); border-radius: var(--r-md); background: var(--white); transition: transform var(--m-med) var(--ease); }
-.lv-tile__img img { width: 100%; height: 100%; padding: 10%; object-fit: contain; }
+/* Absolute so the 10% padding resolves against the tile (in a grid cell it resolved against the 640px photo and shrank it to a dot). */
+.lv-tile__img img { position: absolute; inset: 0; width: 100%; height: 100%; padding: 10%; object-fit: contain; }
 .lv-tiles a:hover .lv-tile__img { transform: translateY(-6px) rotate(-1deg); }
 .lv-tiles a:focus-visible { outline-offset: 6px; border-radius: var(--r-md); }
 .lv-tile__row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }

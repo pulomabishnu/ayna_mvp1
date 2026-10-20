@@ -319,7 +319,7 @@ function Reads({ onViewArticle, onViewArticles }) {
               <span className="lv-reads2__img"><img src={r.src} alt={r.alt} loading="lazy" /></span>
               <strong>{r.title}</strong>
               <span className="lv-reads2__teaser">{r.teaser}</span>
-              <small>Sources: {r.source}</small>
+              <small>Sources: {String(r.source || '').replace(/\s*·\s*/g, ', ')}</small>
             </a>
           </li>
         ))}

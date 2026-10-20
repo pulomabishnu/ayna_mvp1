@@ -26,7 +26,7 @@ const PRINCIPLES = [
   { title: 'Matched to you', body: 'Your profile shapes what you see.' },
   { title: 'Evidence-aware', body: 'Research and guidance add context.' },
   { title: 'Clinician + community', body: 'Two kinds of experience, side by side.' },
-  { title: 'Never pay-to-match', body: 'Sponsorship is never a match input.' },
+  { title: 'Never pay\u2011to\u2011match', body: 'Sponsorship is never a match input.' },
 ];
 
 

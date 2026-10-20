@@ -1,0 +1,145 @@
+/* Website polish pass (Oct 20): one grid, calm headings, cards that line up.
+   Loaded last from App.jsx. Scoped to .app-container, which only the website
+   renders (the app under /mobile-preview never sees these rules). The product
+   page (pdp-*) is deliberately left alone. */
+
+/* ---- Type: no orphan words, no one-word italic/colour accents ---- */
+html body .app-container :is(h1, h2, h3) { text-wrap: balance; }
+html body .app-container :is(p, li, dd, figcaption) { text-wrap: pretty; }
+html body .app-container :is(h1, h2, h3, #ay-polish-none):not([class*="pdp"] *) :is(em, i, #ay-polish-none),
+html body .app-container :is(.ay-lib-feature__title, #ay-polish-none) :is(em, #ay-polish-none) {
+  font-style: normal !important;
+  color: inherit !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+/* ---- The espresso offset shadow is an accent: not on every repeated card ---- */
+html body .app-container.app-container.app-container :is(
+  .ayna-browse-card, .ayna-browse-card__link, .ayna-discover-card,
+  .lv-tiles a, .lv-tile__img, .lv-cnt__n,
+  .ay-lib-cover, .ay-web-lib-card__img,
+  .ay-info-advisor, .ay-info-founder, .ay-info-step, .ay-info-card--pad, .ay-info__toc,
+  .wq-tile, .ay-web-next-read, .ay3-infobox,
+  .wc-post, .wc-search, .wc-mod, .ay-shelf__menu > summary,
+  .ays-list, .ay-suggest.is-web
+):not([class*='pdp']) { box-shadow: none !important; }
+html body .app-container.app-container.app-container :is(input[type='search'], input[type='text'], input[type='email'], input[type='password'], textarea, select):not([class*='pdp']) { box-shadow: none !important; }
+/* Community: the side tabs are a quiet list, not a stack of shadowed buttons. */
+html body .app-container.app-container.app-container :is(.wc-nav, .wc-tabs, .wc-side) :is(button, a) { box-shadow: none !important; }
+
+/* ---- Product cards (Shop, Ecosystem, reads): every row lines up across a row of cards ---- */
+html body .app-container.app-container .ayna-browse-card { display: flex !important; flex-direction: column !important; }
+html body .app-container.app-container.app-container.app-container .ayna-browse-card .ayna-browse-card__link { display: flex !important; flex-direction: column !important; flex: 1 1 auto !important; justify-content: flex-start !important; }
+html body .app-container.app-container.app-container.app-container .ayna-browse-card .ayna-discover-card__tile { margin-bottom: 0 !important; flex: none !important; }
+html body .app-container.app-container.app-container.app-container .ayna-browse-card .ayna-discover-card__body { flex: 1 1 auto !important; justify-content: flex-start !important; }
+html body .app-container.app-container .ayna-browse-card .ay-card-kind { margin-top: auto !important; padding-top: 8px; }
+html body .app-container.app-container .ayna-browse-card .ayna-discover-card__name { display: block !important; -webkit-line-clamp: unset !important; line-clamp: unset !important; overflow: visible !important; text-overflow: clip !important; max-height: none !important; }
+/* The save heart sits on the photo's top-right corner, so names, prices and
+   price notes get the card's full width (it used to cover "Price at retailer"). */
+html body .app-container.app-container.app-container .ayna-browse-card .ayna-browse-card__wishlist { top: 20px !important; right: 20px !important; bottom: auto !important; width: 40px !important; height: 40px !important; min-width: 40px !important; }
+html body .app-container.app-container.app-container .ayna-browse-card .ayna-browse-card__wishlist::after { content: ""; position: absolute; inset: -4px; }
+@media (max-width: 640px) { html body .app-container.app-container.app-container .ayna-browse-card .ayna-browse-card__wishlist { top: 18px !important; right: 18px !important; } }
+html body .app-container.app-container.app-container .ayna-browse-card .ayna-discover-card__price { display: block !important; max-width: 100% !important; }
+/* Price notes ("or $180/year, 14-day free trial") get two full-width lines under
+   the price instead of one cut-off line beside it. */
+html body .app-container.app-container.app-container .ayna-browse-card .ayna-discover-card__price small {
+  display: -webkit-box !important; -webkit-box-orient: vertical !important; -webkit-line-clamp: 2 !important; line-clamp: 2 !important;
+  margin: 2px 0 0 !important; white-space: normal !important; overflow: hidden !important; text-overflow: clip !important; max-width: none !important; overflow-wrap: normal !important;
+}
+
+/* ---- Library ---- */
+html body .app-container.app-container.app-container.app-container.app-container .ay3-az li[data-letter] { padding-top: 30px !important; }
+html body .app-container.app-container.app-container.app-container.app-container .ay3-az li[data-letter]::before { line-height: 24px !important; }
+html body .app-container.app-container.app-container.app-container.app-container .ay-lib-card p { -webkit-line-clamp: unset !important; line-clamp: unset !important; display: block !important; overflow: visible !important; max-height: none !important; }
+html body .app-container.app-container.app-container.app-container.app-container .ay-lib-card__foot { margin-top: 12px !important; padding-top: 0 !important; display: flex !important; flex-wrap: wrap !important; align-items: baseline !important; align-content: flex-start !important; gap: 2px 10px !important; }
+html body .app-container.app-container.app-container.app-container.app-container .ay-lib-card__src { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; max-width: none !important; }
+
+/* ---- Info pages (About, How it works, How we make money, Contact, Privacy, Terms):
+   one grid. Header band and body start on the same left edge as the logo. ---- */
+html body .app-container.app-container.app-container.app-container .ay-info { max-width: 1680px !important; margin-inline: auto !important; padding-inline: clamp(20px, 3vw, 48px) !important; --ay-info-gutter: clamp(20px, 3vw, 48px); }
+html body .app-container.app-container.app-container.app-container .ay-info .ay-info__head { margin-inline: 0 !important; }
+html body .app-container.app-container.app-container.app-container .ay-info .ay-info__head-main { margin-inline: 0 !important; text-align: left !important; }
+html body .app-container.app-container.app-container.app-container .ay-info .ay-info-contact { margin-inline: 0 !important; }
+
+/* ---- Sign-in modal: never taller than the screen; it scrolls inside itself ---- */
+html body .app-container .ay-auth-card { max-height: calc(100dvh - 32px) !important; overflow-y: auto !important; overscroll-behavior: contain; }
+html body .app-container.app-container.app-container.app-container.app-container .ay-info .ay-info__head.ay3-infohero:not(.ay3-withpile):not(.ay-info__head--split) { align-items: flex-start !important; }
+/* Heart now lives on the photo, so the price row no longer reserves room for it. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container .ayna-browse-card :is(.ayna-discover-card__price, .ay-card-trust) { padding-right: 0 !important; width: auto !important; }
+
+/* ---- Footer on phones: two columns of links, 44px rows with no extra gap
+   (it was one long column with 60px between links). ---- */
+@media (max-width: 640px) {
+  html body .app-container.app-container.app-container .site-footer__columns.ay-footer__columns { grid-template-columns: 1fr 1fr !important; column-gap: 16px !important; row-gap: 24px !important; }
+  html body .app-container.app-container.app-container .site-footer__columns .ay-footer__brand { grid-column: 1 / -1 !important; }
+  html body .app-container.app-container.app-container .ay-footer-col__links { gap: 0 !important; }
+  html body .app-container.app-container.app-container .ay-footer-col__links .ay-footer-link { min-height: 44px !important; display: flex !important; align-items: center !important; }
+}
+
+/* ---- Community: the header band no longer leaves a dead gap above the tabs ---- */
+html body .app-container.app-container.app-container section.wc > .wc-head { margin-bottom: 32px !important; }
+@media (max-width: 767px) {
+  html body .app-container.app-container.app-container section.wc > .wc-head { padding-top: 32px !important; padding-bottom: 24px !important; margin-bottom: 16px !important; }
+}
+
+/* ---- Contact: the airmail card kept 116px empty at the top for a stamp that no
+   longer shows; it starts with the form now, on the page's left edge. ---- */
+html body .app-container.app-container.app-container.app-container.app-container .ay-info-contact > form:last-child { padding-top: 40px !important; margin-inline: 0 !important; }
+
+/* ---- One page-title size everywhere (Shop, Library, Community and the info
+   pages were 40 vs 56 on desktop, 30 vs 40 on phones) and one phone gutter
+   (20px, the header's) for info pages and the footer. ---- */
+html body .app-container.app-container.app-container main .ay-info :is(.ay-info__title, #ay-polish-none) { font-size: 40px !important; line-height: 1.12 !important; }
+@media (max-width: 767px) { html body .app-container.app-container.app-container main .ay-info :is(.ay-info__title, #ay-polish-none) { font-size: 30px !important; } }
+html body .app-container.app-container.app-container.app-container .site-footer.ay-footer > * { padding-left: clamp(20px, 3vw, 48px) !important; padding-right: clamp(20px, 3vw, 48px) !important; }
+
+/* ---- You ---- */
+/* One fill for the member card (the 68% sky / butter split read as a rendering bug). */
+html body .app-container.app-container.app-container.app-container.app-container:not([data-theme='dark']) .wyou-hero { background: #769ebe !important; }
+/* Count tiles: the ticket notches cut holes in the border with nothing drawn there. */
+html body .app-container.app-container.app-container.app-container.app-container .wyou-stats > * { -webkit-mask-image: none !important; mask-image: none !important; }
+/* "0 of 19 placed" and its note: readable line height, note on its own line. */
+html body .app-container.app-container.app-container.app-container.app-container .wyou-card-head > span { line-height: 1.4 !important; }
+html body .app-container.app-container.app-container.app-container.app-container .wyou-card-head .wyou-sub { display: block !important; margin-top: 2px !important; line-height: 1.4 !important; }
+
+/* ---- One phone gutter (20px, same as the header logo) on the pages that used 16 ---- */
+@media (max-width: 767px) {
+  html body .app-container.app-container.app-container.app-container.app-container :is(.cr-wrap, .ay-sa, .ay-ecoprev, .wq-page) { padding-left: 20px !important; padding-right: 20px !important; }
+}
+/* Info page intros: full-strength ink (the faded lede on pink was hard to read). */
+html body .app-container.app-container.app-container.app-container:not([data-theme='brand-dark']) .ay-info .ay-info__lede { color: #3e2723 !important; opacity: 1 !important; }
+
+/* ---- Space above the footer: section padding + main padding + footer margin
+   stacked to ~250px of empty page. One section's own padding plus 48px now. ---- */
+html body .app-container.app-container.app-container.app-container:not(:has(.pdp-sticky, [class*='pdp'])) > main { padding-bottom: 0 !important; }
+html body .app-container.app-container.app-container.app-container .site-footer { margin-top: 48px !important; }
+html body .app-container.app-container.app-container.app-container :is(.cr-page, .ay-404, .wq-page) { min-height: 0 !important; }
+html body .app-container.app-container.app-container.app-container :is(.ay-ecoprev, .cr-page) { padding-bottom: 48px !important; }
+/* 404: the pinned flyer stays inside the page edges on phones. */
+@media (max-width: 767px) {
+  html body .app-container.app-container.app-container.app-container .mockup-page.ay-404 { margin: 24px 20px 0 !important; max-width: calc(100% - 40px) !important; overflow: hidden; }
+}
+
+/* ---- Home: sections sit on the site grid (they were inset 80px on desktop,
+   16px on phones, against the header's 38 / 20). ---- */
+html body .app-container.app-container.app-container.app-container .lv :is(.lv-sec, .lv-purpose) { padding-left: clamp(20px, 3vw, 48px) !important; padding-right: clamp(20px, 3vw, 48px) !important; }
+@media (max-width: 767px) { html body .app-container.app-container.app-container.app-container .lv .lv-why.lv-why--grid { padding-left: 0 !important; padding-right: 0 !important; } }
+/* Home kickers ("what ayna actually is", "ayna news", "who we are"): a quiet sans
+   line above the heading instead of a second, italic serif heading. */
+html body .app-container.app-container.app-container.app-container :is(.lv-script, .lst__kicker) { font-family: var(--ay-sans) !important; font-style: normal !important; font-weight: 500 !important; font-size: 15px !important; line-height: 1.4 !important; letter-spacing: 0 !important; margin-bottom: 8px !important; }
+/* Home picks: flat cards like the Shop's. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container .lv li > :is(figure, a) { box-shadow: none !important; }
+/* Community: posts on a plain card (the ruled-paper lines ran through the text at
+   a different rhythm and made every line look misaligned); a shorter header. */
+html body .app-container.app-container.app-container.app-container .wc-post { background-image: none !important; }
+@media (min-width: 768px) {
+  html body .app-container.app-container.app-container section.wc > .wc-head { padding-top: 40px !important; padding-bottom: 40px !important; }
+}
+/* You, dark: ink on the light cards (the name, its date and the Your health note were cream or white on pink/butter). */
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .wyou-hero :is(h1, small, .wyou-who) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .wyou-health, html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .wyou-health * { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .wyou-quickbtn { border: 2px solid #ffedac !important; }
+/* Info page header bands in dark: ink on the sky/pink band (cream on sky was ~2:1). */
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-info__head:is(.ay3-band--sky, .ay3-band--rose, #ay-polish-none) :is(.ay-info__title, .ay-info__lede, .ay-info__eyebrow, .ay-info__back, #ay-polish-none) { color: #3e2723 !important; -webkit-text-fill-color: #3e2723 !important; opacity: 1 !important; }
+/* Long reads (How we make money, Privacy, Terms): contents list starts on the page edge, under the title. */
+html body .app-container.app-container.app-container.app-container .ay-info--toc .ay-info__layout { justify-content: start !important; }
