@@ -944,6 +944,7 @@ export default function MyEcosystem({
     onRedoQuiz,
     onResetEcosystem,
     onEditHealthProfile,
+    quizSlot = null,
     quizResults = null,
     healthProfile = null,
     userZipCode = '',
@@ -2050,6 +2051,8 @@ export default function MyEcosystem({
                         </details>
                     </div>
                 </header>
+
+                {quizSlot}
 
                 {careFirst && (
                     <section className="eco3-carefirst" aria-labelledby="eco3-carefirst-title">

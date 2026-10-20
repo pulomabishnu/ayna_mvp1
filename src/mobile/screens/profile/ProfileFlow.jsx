@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import FinishQuizCard from '../../../components/FinishQuizCard.jsx';
 import { Capacitor } from '@capacitor/core';
 import { getSupabaseClient } from '../../../utils/supabaseClient.js';
 import { apiUrl } from '../../../utils/apiUrl.js';
@@ -262,7 +263,7 @@ function useCommunityAvatar(userId) {
   return avatar.userId === userId ? avatar.path : null;
 }
 
-function ProfileHub({ shopperProfile, authUserId, myProducts = [], quizAnswers = null, onOpen, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin }) {
+function ProfileHub({ shopperProfile, authUserId, myProducts = [], quizAnswers = null, onOpen, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin, quizDraft = null, onResumeQuiz, onStartOverQuiz }) {
   const avatarPath = useCommunityAvatar(authUserId);
   const [avatarFailed, setAvatarFailed] = useState(false);
   const showPhoto = avatarPath && !avatarFailed;
@@ -310,6 +311,8 @@ function ProfileHub({ shopperProfile, authUserId, myProducts = [], quizAnswers =
         <button type="button" className="ayna-profile-progress" onClick={onEditProfile} aria-label="Edit health profile"><span>Health profile</span><span>{profileFilledPct}%</span><i aria-hidden="true" style={{ '--profile-progress': `${profileFilledPct}%` }} /></button>
         <span className="ay-hub-shapes" aria-hidden="true"><i /><i /><i /></span>
       </div>
+
+      {quizDraft && onResumeQuiz && <div className="ay-hub-finish" style={{ padding: '0 20px' }}><FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} /></div>}
 
       {shopperProfile && <ShopperCard profile={shopperProfile} />}
 
@@ -3264,6 +3267,9 @@ export default function ProfileFlow({
   onAddGoal,
   onOpenRoutine,
   onOpenMonthlyCheckin,
+  quizDraft = null,
+  onResumeQuiz,
+  onStartOverQuiz,
   personalizeWithData = true,
   onPersonalizeWithDataChange,
   askAynaHistoryCount = 0,
@@ -3313,6 +3319,9 @@ export default function ProfileFlow({
         onOpenEcosystem={onGoEcosystem ? () => { onClose(); onGoEcosystem(); } : undefined}
         onOpenSaved={onOpenSaved ? () => { onClose(); onOpenSaved(); } : undefined}
         onOpenMonthlyCheckin={onOpenMonthlyCheckin ? () => { onClose(); onOpenMonthlyCheckin(); } : undefined}
+        quizDraft={quizDraft}
+        onResumeQuiz={onResumeQuiz}
+        onStartOverQuiz={onStartOverQuiz}
       />
     );
   } else if (screen === 'shopper') {

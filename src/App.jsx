@@ -98,7 +98,9 @@ import { identifyAccount } from './utils/analyticsIdentity';
 import { tagInternalUserIfNeeded } from './utils/posthogInternal';
 import { productHref, productRouteKey, parseProductIdFromPath } from './utils/productRoute';
 import { productSeoTitle, productSeoDescription } from './utils/seoMeta';
-import { INTAKE_DRAFT_KEY, getIntakeSteps, reconstructIntakeFromSnapshot } from './mobile/data/intakeModel';
+import { INTAKE_DRAFT_KEY, getIntakeSteps, optionalProgress, reconstructIntakeFromSnapshot } from './mobile/data/intakeModel';
+import { clearIntakeDraft, readDraftProgress } from './mobile/data/quizDraftProgress';
+import FinishQuizCard, { MorePersonalCard } from './components/FinishQuizCard';
 import './styles/flow.css';
 import './styles/web-neon-dark.css';
 import './styles/web-density.css';
@@ -612,6 +614,9 @@ function App() {
   // Bumped by "Build your ecosystem" in the sign-in modal so the quiz restarts
   // (with its intro) even when the modal opened on top of the quiz itself.
   const [quizRun, setQuizRun] = useState(0);
+  // "Make my matches more personal": the profile editor opens at the first open optional question.
+  const [editAtOptional, setEditAtOptional] = useState(false);
+  useEffect(() => { if (currentView !== 'profile-edit') setEditAtOptional(false); }, [currentView]);
   const [askOpenSignal, setAskOpenSignal] = useState(0);
   const [askPrefill, setAskPrefill] = useState('');
   // Opens Ask ayna, optionally with a question typed in (Shop's empty state).
@@ -1338,6 +1343,19 @@ function App() {
   const handleStartQuiz = () => setCurrentView('quiz');
   // Redo the quiz from the first question (not a resumed draft).
   const handleRedoQuiz = () => { setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); };
+  // "Finish your quiz": resume the draft at its exact step, or clear it and start at question 1.
+  // Drafts are kept per device (the server only stores finished answers).
+  const handleResumeQuiz = () => { setQuizResume(true); setCurrentView('quiz'); };
+  const handleStartQuizOver = () => { clearIntakeDraft(); handleRedoQuiz(); };
+  const handlePersonalizeQuiz = () => { setEditAtOptional(true); setCurrentView('profile-edit'); };
+  const webQuizDraft = !quizResults && !authLoading && !dataLoading && !['quiz', 'profile-edit'].includes(currentView) ? readDraftProgress({ surface: 'web' }) : null;
+  const finishQuizCard = (compact = false) => (webQuizDraft ? <FinishQuizCard variant="web" compact={compact} progress={webQuizDraft} onContinue={handleResumeQuiz} onStartOver={handleStartQuizOver} /> : null);
+  let webOptionalRemaining = 0;
+  if (quizResults?.fullHealthIntake && !webQuizDraft) {
+    try { webOptionalRemaining = optionalProgress(reconstructIntakeFromSnapshot(quizResults.fullHealthIntake)).remaining; } catch { webOptionalRemaining = 0; }
+  }
+  // One quiz card at a time: an unfinished quiz first, else the optional questions.
+  const ecosystemQuizCard = webQuizDraft ? finishQuizCard() : (user && webOptionalRemaining > 0 ? <MorePersonalCard remaining={webOptionalRemaining} onAnswer={handlePersonalizeQuiz} /> : null);
   // Same reset as the app: clears her Ecosystem, its tracking and her quiz
   // answers after she confirms. Saved products, check-ins and the account stay.
   const handleResetEcosystem = async () => {
@@ -2182,6 +2200,7 @@ function App() {
             quizResults={quizResults}
             healthProfile={healthProfile}
             matchOpts={matchOpts}
+            heroBanner={finishQuizCard(true)}
           />
         )}
         {guestPreview && !guestPreview.done && !user && (
@@ -2266,6 +2285,7 @@ function App() {
             healthConnectedCount={health.connected.length}
             theme={themeMode}
             onThemeChange={setThemeMode}
+            quizSlot={finishQuizCard()}
           />
         )}
         {currentView === 'quiz' && (
@@ -2284,7 +2304,8 @@ function App() {
         {currentView === 'profile-edit' && (
           // Same as the app: editing your profile reopens the quiz with your answers filled in.
           <WebIntake
-            key="profile-edit"
+            key={editAtOptional ? 'profile-edit-optional' : 'profile-edit'}
+            startAtOptional={editAtOptional}
             initialSnapshot={quizResults?.fullHealthIntake || null}
             onComplete={handleHealthProfileEditorSave}
             onBrowseLibrary={handleViewArticles}
@@ -2462,6 +2483,7 @@ function App() {
             ecosystem" headers stacked on the same page. MyEcosystem now
             renders both combined (board 2a), so this toggle is gone rather
             than becoming a third, redundant copy. */}
+        {currentView === 'ecosystem' && !user && !authLoading && ecosystemQuizCard && <div className="mockup-page fq-web-slot">{ecosystemQuizCard}</div>}
         {currentView === 'ecosystem' && !user && !authLoading && (
           <EcosystemPreview
             products={ALL_PRODUCTS}
@@ -2480,6 +2502,7 @@ function App() {
         {currentView === 'ecosystem' && user && (
           <Suspense fallback={<ViewLoadingFallback />}>
           <MyEcosystem
+            quizSlot={ecosystemQuizCard}
             matchOpts={matchOpts}
             myProducts={myProducts}
             ecosystemOrder={ecosystemOrder}
