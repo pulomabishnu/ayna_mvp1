@@ -9,14 +9,17 @@ import { isPartnerBrandItem, getPartnerDisclosureText } from '../../utils/partne
 import WhyMatchScreen from './WhyMatchScreen.jsx';
 import { exclusionLines } from '../../utils/matchDisplay.js';
 import MatchPill from '../../components/MatchPill.jsx';
-import ProductSections from '../../components/passport/ProductSections.jsx';
+import ProductEvidence, { ProductSafety } from '../../components/pdp/ProductEvidence.jsx';
+import { firstSentence } from '../../components/pdp/sentences.js';
+import { getPassport } from '../../data/passport';
+import { recallFacts } from '../../utils/productFacts.js';
 import { matchLine } from '../../data/passport/content.js';
 import { buildGlance, perUnitLabel } from '../../components/pdp/glance.js';
 import { galleryImages, retailerLinks, similarProducts, sameNeedProducts } from '../../components/pdp/commerce.js';
 import GalleryThumbs from '../../components/pdp/GalleryThumbs.jsx';
 import ImageZoomViewer from '../components/ImageZoomViewer.jsx';
 import ComparePanel from '../../components/pdp/ComparePanel.jsx';
-import { jumpTo } from '../../components/pdp/jump.js';
+import { worksWith } from '../../utils/aynaIntegrations.js';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
 import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
@@ -26,11 +29,6 @@ import { productHref } from '../../utils/productRoute.js';
 import { HEART_PATH } from '../utils/heart.js';
 import { formatPrice } from '../../utils/formatPrice.js';
 import { displayName } from '../utils/displayName.js';
-import ProductCommunityReviews from '../../components/pdp/ProductCommunityReviews.jsx';
-import { useProductReviews } from '../../components/pdp/useProductReviews.js';
-import { RatingStars } from '../../components/community/RatingStars.jsx';
-import { summarizeReviewRows, formatAverage } from '../../utils/community/reviewRatings.js';
-import { worksWith } from '../../utils/aynaIntegrations.js';
 import '../pdp.css';
 import '../eco-needs.css';
 import '../pdp-polish.css';
@@ -44,12 +42,14 @@ function toneFor(product) {
   return 'pink';
 }
 
-/** One line in the header; the full note lives in the Safety section. */
-function SafetyFlag() {
+/** The one safety line next to Buy (pink, the alert colour); Safety tab has the rest. */
+function SafetyFlag({ text }) {
   return (
-    <button type="button" className="ay-pdp-safetyflag" onClick={() => jumpTo('ay-sec-safety')}>
-      <span aria-hidden="true" className="ay-safety-mark">!</span><strong>Safety note on file</strong><span>See it</span>
-    </button>
+    <div className="ay-pdp-safetyflag" role="note">
+      <span aria-hidden="true" className="ay-safety-mark">!</span>
+      <p>{text || 'Safety note on file.'}</p>
+      <button type="button" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'safety' }))}>All safety info</button>
+    </div>
   );
 }
 
@@ -232,10 +232,6 @@ export default function ProductDetailScreen({
   // "ayna" in Works with opens You > Health data.
   onOpenHealthData = null,
 }) {
-  // Live community reviews: the average and count come from these rows, so
-  // an edited or deleted review changes them on the next read.
-  const reviewRows = useProductReviews(product?.id);
-  const reviewStats = reviewRows.length ? summarizeReviewRows(reviewRows)[product?.id] : null;
   const [partnerOpen, setPartnerOpen] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
   // Rendered locally (not through MobileApp's shared `overlay` state, which
@@ -317,24 +313,43 @@ export default function ProductDetailScreen({
   } = product;
 
   const categoryLabel = CATEGORY_LABELS[category] || (category ? category.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : '');
-  const eyebrowLine = [categoryLabel, brand && String(brand).trim().toLowerCase() !== String(name || '').trim().toLowerCase() ? brand : null].filter(Boolean).join(' · ');
   const buyUrl = getBuyUrl(product);
   const isPartner = isPartnerBrandItem(product);
   const partnerDisclosure = getPartnerDisclosureText(product);
-  const glanceRaw = buildGlance(product, { details: quizAnswers ? matchDetails : null, whyMatched });
-  // On the app the Overview tab already shows the full Ingredients section, so the
-  // short "Ingredients or materials" fact above it would repeat the same list.
-  const glance = glanceRaw && Array.isArray(glanceRaw.facts) && (glanceRaw.sections || []).some((sec) => sec.id === 'inside')
-    ? { ...glanceRaw, facts: glanceRaw.facts.filter((f) => f.id !== 'inside') }
-    : glanceRaw;
+  // Same information architecture as the website's product page
+  // (components/pdp/ProductEvidence): ayna's summary, At a glance, then the
+  // Clinical opinion / Scientific literature / Reviews / Safety / How to use /
+  // Details tabs with their source cards.
+  const glance = buildGlance(product, { details: quizAnswers ? matchDetails : null, whyMatched });
+  const brandLine = brand && String(brand).trim().toLowerCase() !== String(name || '').trim().toLowerCase() ? brand : categoryLabel;
+  const heroLine = firstSentence(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '').replace(/\s*—\s*/g, ', ').trim(), { min: 20, max: 240 });
+  // One recall answer for the page (utils/productFacts), as on the website.
+  const recall = (() => {
+    const live = getPassport(product)?.recall;
+    if (live?.status === 'recalled') return { status: 'past', label: 'Active recall found', detail: '' };
+    return recallFacts(product);
+  })();
+  // The one caution that sits next to Buy, in plain words from the record (same rule as the website).
+  const topWarning = (() => {
+    const first = (t) => {
+      const one = firstSentence(t, { min: 8, max: 400 }).replace(/\s*—\s*/g, ', ').trim();
+      const colon = one.indexOf(':');
+      if (one.length > 100 && colon > 8 && colon <= 70) return `${one.slice(0, colon)}.`;
+      return one.length > 120 ? firstSentence(one, { max: 120 }) : one;
+    };
+    if (recall.status === 'past' || recall.status === 'note') return first(recall.detail || recall.label);
+    if (glance?.alert) return first(glance.alert);
+    const preg = getPassport(product)?.safety?.pregnancy;
+    const pv = preg?.known && !preg.notApplicable ? (Array.isArray(preg.value) ? preg.value.join(', ') : String(preg.value || '')) : '';
+    if (pv && /not|avoid|consult|ask|doctor|clinician|don.t|do not|unsafe|caution/i.test(pv)) return `Pregnancy: ${firstSentence(pv, { min: 8, max: 200 })}`.replace(/^Pregnancy:\s*Brand:\s*(.*?)\.?$/i, 'Pregnancy: $1 (per the brand).');
+    const TIP = /^(wash|rinse|boil|clean|store|keep it|dry|sanitize|sterili[sz]e|empty)\b/i;
+    const w = (product.warnings || []).find((x) => x && !TIP.test(String(x).trim()));
+    return w ? first(w) : '';
+  })();
   const images = galleryImages(product);
   const shownImage = images[Math.min(photo, Math.max(images.length - 1, 0))] || image;
   const retailers = retailerLinks(product, buyUrl);
   const matchFor = quizAnswers ? (p) => { const d = getProductMatchDetailsForProduct(p, quizAnswers, null, matchOpts); return d?.matchStatus === 'scored' ? d.percent : null; } : null;
-  const openProductByName = (target) => {
-    const found = ALL_PRODUCTS.find((p) => String(p?.name || '').toLowerCase() === String(target || '').toLowerCase());
-    if (found && onOpenProduct) onOpenProduct(found);
-  };
 
   const handleShare = async () => {
     const origin = /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname)
@@ -396,8 +411,9 @@ export default function ProductDetailScreen({
         {images.length > 1 && <div className="ay-pdp-thumbs"><GalleryThumbs images={images} index={photo} onSelect={setPhoto} name={name} /></div>}
 
         <div className="ayna-fresh-detail-title ay-pdp-title ay-pdp-head2">
-          {eyebrowLine && <div className="ay-pdp-eyebrow">{eyebrowLine}</div>}
+          {brandLine && <div className="ay-pdp-eyebrow">{brandLine}</div>}
           <h1>{shownName}</h1>
+          {heroLine && <p className="ay-pdp-lede">{heroLine}</p>}
           {(price || perUnit) && <div className="ay-pdp-price">
             {price && <span className={hasDisplayPrice ? 'is-price' : 'is-note'}>{shownPrice.main}</span>}
             {perUnit && <small className="is-unit">{perUnit}</small>}
@@ -410,7 +426,8 @@ export default function ProductDetailScreen({
           {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && quizAnswers && <button type="button" className="ay-pdp-fitnote" onClick={openWhyMatch}>{matchDetails.matchStatus === 'excluded' ? (exclusions[0] || 'Not a fit right now') : 'No clear match'} <span aria-hidden="true">→</span></button>}
           {matchDetails.matchStatus === 'no-profile' && <button type="button" className="ayna-figma-guest-match" onClick={onStartQuiz}>Get matched</button>}
           {onToggleOmit && <div className="ay-pdp-omit"><button type="button" onClick={onToggleOmit} aria-pressed={isOmitted}>{isOmitted ? 'Undo “Not for me”' : 'Not for me'}</button>{isOmitted && <small>Hidden from your matches.</small>}</div>}
-          {glance?.alert && <SafetyFlag />}
+          {topWarning && <SafetyFlag text={topWarning} />}
+          {works.ayna && onOpenHealthData && <button type="button" className="ay-pdp-works" onClick={onOpenHealthData}>Works with ayna: connect {works.ayna.name} in Health data <span aria-hidden="true">→</span></button>}
           {retailers.length > 0 && (
             <div className="ay-retailers">
               <span id="ay-pdp-also-at">Also at</span>
@@ -419,26 +436,27 @@ export default function ProductDetailScreen({
               </ul>
             </div>
           )}
+          {isPartner ? (
+            <div className="ayna-figma-partner-disclosure">
+              <button type="button" onClick={() => setPartnerOpen((v) => !v)} aria-expanded={partnerOpen}>
+                <span>Partner</span><span>{partnerOpen ? 'Hide disclosure' : 'We may earn a commission'}</span><span aria-hidden="true">{partnerOpen ? '−' : '+'}</span>
+              </button>
+              {partnerOpen && <div className="ayna-figma-partner-copy">{partnerDisclosure}<a href="https://www.aynahealth.co/startups" target="_blank" rel="noopener noreferrer">Read about our brand partnerships →</a></div>}
+            </div>
+          ) : buyUrl && <p className="ay-pdp-commission">Some links earn ayna a commission. It never changes your matches.</p>}
         </div>
 
-        {isPartner && (
-          <div className="ayna-figma-partner-disclosure">
-            <button type="button" onClick={() => setPartnerOpen((v) => !v)} aria-expanded={partnerOpen}>
-              <span>Partner</span><span>{partnerOpen ? 'Hide disclosure' : 'We may earn a commission'}</span><span aria-hidden="true">{partnerOpen ? '−' : '+'}</span>
-            </button>
-            {partnerOpen && <div className="ayna-figma-partner-copy">{partnerDisclosure}<a href="https://www.aynahealth.co/startups" target="_blank" rel="noopener noreferrer">Read about our brand partnerships →</a></div>}
-          </div>
-        )}
-
-
         <div className="ay-pdp-passport">
-          <ProductSections
+          <ProductEvidence
             key={product.id}
+            product={product}
+            image={images[0] || ''}
+            safetyLead={topWarning}
             glance={glance}
-            onXref={openProductByName}
-            extras={{ match: <button type="button" className="ay-psec-action" onClick={openWhyMatch}>See the full breakdown</button> }}
-            extraNav={[{ id: 'ask', label: 'Ask ayna' }, ...(related.compare.length ? [{ id: 'compare', label: 'Compare' }] : [])]}
-            worksWith={works.items.length ? { ...works, onOpenAyna: onOpenHealthData } : null}
+            recall={recall}
+            heroLine={heroLine}
+            onOpenReview={onOpenReview}
+            safety={<ProductSafety product={product} glance={glance} recall={recall} alertText={glance?.alert || ''} />}
           />
 
           <section className="ay-pdp-askcard" id="ay-sec-ask" tabIndex={-1} aria-labelledby="ay-pdp-ask-h">
@@ -463,14 +481,9 @@ export default function ProductDetailScreen({
 
         {related.more.length > 0 && <section className="ayna-cabinet-collection ay-pdp-related" aria-labelledby="ay-pdp-related-more">
           <div className="ay-pdp-sechead"><h2 id="ay-pdp-related-more">You may also like</h2><p>{related.personal ? 'Picks that fit your profile.' : 'For the same needs, from other parts of the shop.'}</p></div>
-          <div className="ayna-editorial-product-grid">{related.more.map((p) => <ProductCard key={p.id} product={p} quizAnswers={quizAnswers} onClick={() => onOpenProduct(p)} />)}</div>
+          <div className="ay-shelf2-row">{related.more.map((p) => <ProductCard key={p.id} product={p} quizAnswers={quizAnswers} onClick={() => onOpenProduct(p)} />)}</div>
         </section>}
 
-        {reviewStats && <section className="ay-pdp-community-actions ay-pdp-reviews" aria-labelledby="ay-pdp-reviews-h" id="ay-pdp-reviews">
-          <div className="ay-pdp-community-head"><svg viewBox="0 0 24 24" aria-hidden="true">{PANEL_ICONS.community}</svg><h2 id="ay-pdp-reviews-h">Reviews</h2></div>
-          <p className="ay-pdp-reviews__sum"><span aria-hidden="true"><RatingStars value={Math.round(reviewStats.average)} size={16} /></span> <b>{formatAverage(reviewStats.average)}</b> from {reviewStats.count} {reviewStats.count === 1 ? 'review' : 'reviews'}</p>
-          <ProductCommunityReviews productId={product?.id} rows={reviewRows} onOpenReview={onOpenReview} heading="What ayna members say" />
-        </section>}
 
         {onCommunityAction && <section className="ay-pdp-community-actions" aria-label="Community">
           <div className="ay-pdp-community-head"><svg viewBox="0 0 24 24" aria-hidden="true">{PANEL_ICONS.community}</svg><h2>Community</h2></div>
@@ -480,29 +493,19 @@ export default function ProductDetailScreen({
         </section>}
 
         {reads.length > 0 && (
-          <div className="ay-pdp-reads">
-            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', marginBottom: 12 }}>Reads</div>
-            {reads.map((r) => (
-              <div
-                key={r.id || r.title}
-                onClick={r.onClick}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 12,
-                  background: 'var(--ayna-surface)',
-                  border: '1px solid var(--ayna-border)',
-                  borderRadius: 16,
-                  padding: '13px 15px',
-                  marginBottom: 8,
-                  cursor: r.onClick ? 'pointer' : 'default',
-                }}
-              >
-                <div style={{ flex: 1, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', lineHeight: 1.45, fontWeight: 400 }}>{r.title}</div>
-                {r.mins && <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', whiteSpace: 'nowrap' }}>{r.mins}</div>}
-              </div>
-            ))}
-          </div>
+          <section className="ay-pdp-reads" aria-labelledby="ay-pdp-reads-h">
+            <h2 id="ay-pdp-reads-h">Reads</h2>
+            <ul className="ay-group">
+              {reads.map((r) => (
+                <li key={r.id || r.title}>
+                  <button type="button" onClick={r.onClick} disabled={!r.onClick}>
+                    <span>{r.title}</span>
+                    {r.mins && <small>{r.mins}</small>}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
         )}
         <LegalFooter />
       </div>

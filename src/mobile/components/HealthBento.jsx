@@ -20,33 +20,6 @@ const daysBetween = (a, b) => Math.round((Date.parse(`${b}T12:00:00Z`) - Date.pa
 
 const TONES = ['sky', 'ink', 'butter', 'pink'];
 
-function Shape({ kind }) {
-  // Soft decorative shapes, one per tone, like the reference. Purely visual.
-  if (kind === 'heart') return <svg className="ay-bn-shape" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 88 C20 66 6 50 6 32 C6 18 17 8 30 8 C39 8 46 13 50 20 C54 13 61 8 70 8 C83 8 94 18 94 32 C94 50 80 66 50 88Z" /></svg>;
-  if (kind === 'moon') return <svg className="ay-bn-shape" viewBox="0 0 100 100" aria-hidden="true"><path d="M64 6 A46 46 0 1 0 94 70 A38 38 0 1 1 64 6Z" /></svg>;
-  if (kind === 'star') return <svg className="ay-bn-shape" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 2 L60 30 L90 18 L74 46 L98 64 L66 68 L70 98 L50 76 L30 98 L34 68 L2 64 L26 46 L10 18 L40 30Z" /></svg>;
-  return <svg className="ay-bn-shape" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 8 H92 L50 92Z" /></svg>;
-}
-const SHAPE = { sky: 'moon', ink: 'star', pink: 'heart', butter: 'tri' };
-
-/** Last 14 days as bars; today's bar solid, the rest soft. */
-function Bars({ points }) {
-  const pts = points.slice(-14);
-  const vals = pts.map((p) => p.value).filter((v) => v != null);
-  if (vals.length < 2) return null;
-  const hi = Math.max(...vals) || 1;
-  const w = 100 / pts.length;
-  return (
-    <svg className="ay-bn-bars" viewBox="0 0 100 44" preserveAspectRatio="none" aria-hidden="true">
-      {pts.map((p, i) => {
-        if (p.value == null) return <rect key={p.day} x={i * w + w * 0.3} y={40} width={w * 0.4} height={2} rx={1} className="is-gap" />;
-        const h = Math.max(3, (p.value / hi) * 40);
-        return <rect key={p.day} x={i * w + w * 0.22} y={42 - h} width={w * 0.56} height={h} rx={w * 0.28} className={i === pts.length - 1 ? 'is-now' : ''} />;
-      })}
-    </svg>
-  );
-}
-
 /** Smooth line over the last 14 days with a dashed marker on the latest day. */
 function Line({ points, usual }) {
   const pts = points.slice(-14).filter((p) => p.value != null);
@@ -100,7 +73,6 @@ function MetricCard({ chart, tone, wide, onOpen }) {
   return (
     <li className={`ay-bn-card is-${tone}${wide ? ' is-wide' : ''}`}>
       <button type="button" onClick={onOpen} aria-label={`${chart.label}: ${big} ${per}, ${word.toLowerCase()} than usual. Open charts.`}>
-        <Shape kind={SHAPE[tone]} />
         <span className="ay-bn-label">{chart.label}</span>
         <span className="ay-bn-big">{big}</span>
         <span className="ay-bn-per">{per}</span>
@@ -108,7 +80,7 @@ function MetricCard({ chart, tone, wide, onOpen }) {
         <span className="ay-bn-stats">
           {stats(chart).map((s) => <span key={s.k}><b>{s.v}</b><small>{s.k}</small></span>)}
         </span>
-        {wide ? <Line points={chart.points} usual={chart.usual} /> : <Bars points={chart.points} />}
+        <Line points={chart.points} usual={chart.usual} />
       </button>
     </li>
   );
@@ -206,14 +178,17 @@ function PhaseProducts({ groups, onOpenProduct }) {
   return (
     <section className="ay-phasepicks" aria-labelledby="ay-phasepicks-title">
       <h3 id="ay-phasepicks-title">For this phase</h3>
-      {groups.map((g) => (
-        <div key={g.reason} className="ay-phasepicks-group">
-          <p>{g.reason}</p>
-          <div className="ay-shelf2-row">
-            {g.products.map((p) => <ProductCard key={p.id} product={p} onClick={() => onOpenProduct?.(p)} />)}
+      {/* One row to scroll; each reason labels the cards it explains. */}
+      <div className="ay-phasepicks-row">
+        {groups.map((g) => (
+          <div key={g.reason} className="ay-phasepicks-group" style={{ '--n': g.products.length }}>
+            <p>{g.reason}</p>
+            <div className="ay-phasepicks-cards">
+              {g.products.map((p) => <ProductCard key={p.id} product={p} onClick={() => onOpenProduct?.(p)} />)}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </section>
   );
 }
@@ -237,15 +212,15 @@ export default function HealthBento({ name, week, cycle, estimate, pinnedCharts,
       {cycle?.cycleDay && <CycleCard cycle={cycle} estimate={estimate} onOpen={() => onOpenArea('cycle')} />}
       {cycle?.cycleDay && <PhaseStrip cycle={cycle} />}
 
-      <PhaseProducts groups={picks} onOpenProduct={onOpenProduct} />
-
       {pinnedCharts.length > 0 && (
         <ul className="ay-bn-grid" aria-label="Your pinned numbers">
           {pinnedCharts.map((c, i) => (
-            <MetricCard key={c.metric} chart={c} tone={TONES[i % TONES.length]} wide={i === 2 || (i === pinnedCharts.length - 1 && i % 2 === 0)} onOpen={() => onOpenArea(c.group)} />
+            <MetricCard key={c.metric} chart={c} tone={TONES[i % TONES.length]} wide={i === pinnedCharts.length - 1 && i % 2 === 0} onOpen={() => onOpenArea(c.group)} />
           ))}
         </ul>
       )}
+
+      <PhaseProducts groups={picks} onOpenProduct={onOpenProduct} />
 
       {coming.length > 0 && (
         <section className="ay-bn-timeline" aria-labelledby="ay-bn-tl">

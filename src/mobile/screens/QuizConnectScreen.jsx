@@ -24,7 +24,7 @@ export default function QuizConnectScreen({ authUser, onQuizConnectContinue, onQ
       </header>
       {!selected && (
         <div className="ay-qc-copy">
-          <h1>Connect your <em>health data.</em></h1>
+          <h1>Connect your health data</h1>
           <p>Bring in sleep, cycle, heart and activity from the apps you already use. ayna compares it with your own usual to sharpen your matches and build your routine. You choose what to share. Brands never see it.</p>
         </div>
       )}

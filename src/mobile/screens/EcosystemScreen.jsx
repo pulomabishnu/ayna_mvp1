@@ -180,16 +180,11 @@ export default function EcosystemScreen({
     {careBlock}
 
     <section className="ayna-cabinet-stage ay-eco-hero" aria-labelledby="ayna-cabinet-title">
-      <h1 id="ayna-cabinet-title">Your <em>Ecosystem.</em></h1>
-      {currentProducts.length > 0 && <ul className="ay-eco-stickers" aria-label="Your Ecosystem at a glance">
-        <li className="is-rose"><b>{currentProducts.length}</b><span>{currentProducts.length === 1 ? 'product' : 'products'}</span></li>
-        <li className="is-sky"><b>{ringGroups.length}</b><span>{ringGroups.length === 1 ? 'shelf' : 'shelves'}</span></li>
-      </ul>}
-      {currentProducts.length > 0 && onReplayStory && (
-        <div className="ay-eco-actions">
-          <button type="button" className="ay-eco-replay" onClick={onReplayStory}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>Replay Wrapped</button>
-        </div>
-      )}
+      <h1 id="ayna-cabinet-title">Your Ecosystem</h1>
+      {currentProducts.length > 0 && <div className="ay-eco-meta">
+        <p className="ay-eco-stats" aria-label="Your Ecosystem at a glance"><b>{currentProducts.length}</b> {currentProducts.length === 1 ? 'product' : 'products'}<span aria-hidden="true"> · </span><b>{ringGroups.length}</b> {ringGroups.length === 1 ? 'shelf' : 'shelves'}</p>
+        {onReplayStory && <button type="button" className="ay-eco-replay" onClick={onReplayStory}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>Replay Wrapped</button>}
+      </div>}
       {!hasAnything && !quizDraft && <EmptyState compact art="spark" tone="mint" title="No matches yet" body="Update your answers below or browse the shop." actionLabel="Shop" onAction={onBrowse} />}
       {/* One quiz card at a time: an unfinished quiz first, else the optional questions. */}
       {quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
@@ -217,10 +212,9 @@ export default function EcosystemScreen({
         const shown = section.products.length ? section.products : section.picks || [];
         return <section key={section.key} id={`ayna-area-${section.key}`} className={`ay-shelf2${empty ? ' is-empty-shelf' : ''}`} style={{ '--area-tone': toneFor(section), '--area-ink': toneFor(section) === '#3E2723' ? '#FFEDAC' : '#3E2723' }} aria-labelledby={`ayna-area-title-${section.key}`}>
           <div className="ay-shelf2-head">
-            <i className="ay-shelf2-dot" aria-hidden="true" />
             <h2 id={`ayna-area-title-${section.key}`}>{section.label}</h2>
             {shown.length > 0 && <span className="ay-shelf2-count" aria-label={`${shown.length} on this shelf`}>{shown.length}</span>}
-            <button type="button" className="ay-shelf2-add" onClick={() => onBrowse?.(shortNeedLabel(section.label))} aria-label={`Add to ${section.label}`}>+ Add</button>
+            <button type="button" className="ay-shelf2-add" onClick={() => onBrowse?.(shortNeedLabel(section.label))} aria-label={`Add to ${section.label}`}>Add</button>
           </div>
           {shelf && shelf.shortBy > 0 && shelf.picks.length > 0 && <p className="ay-shelf2-note">{onlyNote(shelf.picks.length, section.phrase)}</p>}
           {empty && <div className="ay-shelf2-empty">

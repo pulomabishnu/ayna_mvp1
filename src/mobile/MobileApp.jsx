@@ -78,6 +78,8 @@ import './app-landing.css';
 import './app-health.css';
 import './app-ux-fixes.css';
 import './app-compact.css';
+// Design direction (docs/design-direction.md): loaded last, outranks the layers above.
+import './app-direction.css';
 import './keyboardModality.js';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
@@ -1265,6 +1267,7 @@ export default function MobileApp() {
         chatHistory={askAynaHistory}
         onChatHistoryUpdate={setAskAynaHistory}
         name={resolvedName}
+        onClose={() => setAskAynaOpen(false)}
         onNavigateToDiscovery={() => { setAskAynaOpen(false); setScreen('browse'); }}
         onViewRecommendations={() => { setAskAynaOpen(false); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
         onRequireAuth={(feature) => requestAuth(feature || 'Ask ayna', () => { setScreen(screen); setAskAynaOpen(true); })}

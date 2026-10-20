@@ -16,6 +16,23 @@ function ReadState({ value = 0 }) {
   </span>;
 }
 
+// Sentence case for topic names ("Hormonal Health" -> "Hormonal health"); acronyms stay.
+const sentence = (label) => String(label || '').split(' ').map((w, i) => (i === 0 || /^[A-Z0-9&]{2,}$/.test(w) ? w : w.toLowerCase())).join(' ');
+
+/** The one featured read (the Feature surface): where she left off, else her top pick. */
+function FeaturedRead({ article, label, progress, onOpen }) {
+  if (!article) return null;
+  return <section className="ay-lib-feature" aria-labelledby="ay-lib-feature-title">
+    <p className="ay-lib-feature__label">{label}</p>
+    <h2 id="ay-lib-feature-title">{article.title}</h2>
+    {article.teaser && <p className="ay-lib-feature__teaser">{article.teaser}</p>}
+    <div className="ay-lib-feature__foot">
+      <button type="button" onClick={() => onOpen?.(article)}>{progress > 0 && progress < 1 ? 'Keep reading' : 'Read it'}</button>
+      {article.source && <small>From {article.source}</small>}
+    </div>
+  </section>;
+}
+
 export default function LibraryScreen({ articles = [], quizAnswers = null, lastQuizAnswers = null, readProgress = {}, onOpenArticle, onOpenSaved, onStartQuiz }) {
   const [query, setQuery] = useState('');
   const [topic, setTopic] = useState('all');
@@ -27,14 +44,16 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
   const progressOf = (a) => readProgress[a.id] || 0;
   const finished = articles.filter((a) => progressOf(a) >= 1).length;
   const keepReading = articles.filter((a) => progressOf(a) > 0 && progressOf(a) < 1);
-  const topics = [['all', 'All'], ...(hasProfile && forYou.length ? [['foryou', 'For you']] : []), ...rows.map((r) => [r.id, r.label])];
+  const topics = [['all', 'All'], ...(hasProfile && forYou.length ? [['foryou', 'For you']] : []), ...rows.map((r) => [r.id, sentence(r.label)])];
+  const featured = keepReading[0] || (hasProfile && forYou[0]) || articles[0] || null;
+  const featuredLabel = keepReading[0] ? 'Pick up where you left off' : hasProfile && forYou[0] ? 'Top pick for you' : 'Start here';
 
   const tile = (a, small = false) => <div className={`ay-lib-item${small ? ' is-small' : ''}`} key={a.id}>
     <LibraryCard article={a} fullWidth={!small} onClick={() => onOpenArticle?.(a)} />
     <ReadState value={progressOf(a)} />
   </div>;
   const row = (id, label, items, extra) => items.length > 0 && <section className="ay-lib-section" key={id}>
-    <div className="ay-lib-row-head"><h2>{label}</h2>{extra}</div>
+    <div className="ay-lib-row-head"><h2>{sentence(label)}</h2><span className="ay-lib-count">{items.length}</span>{extra}</div>
     <div className="ay-lib-scroll">{items.map((a) => tile(a, true))}</div>
   </section>;
 
@@ -47,7 +66,8 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
     body = <div className="ay-lib-grid">{items.map((a) => tile(a))}</div>;
   } else {
     body = <>
-      {row('keep', 'Keep reading', keepReading)}
+      <FeaturedRead article={featured} label={featuredLabel} progress={featured ? progressOf(featured) : 0} onOpen={onOpenArticle} />
+      {row('keep', 'Keep reading', keepReading.filter((a) => a !== featured))}
       {hasProfile ? row('foryou', 'For you', forYou) : canAskForQuiz && onStartQuiz && <button type="button" className="ay-lib-match" onClick={onStartQuiz}>Get reads for you <span aria-hidden="true">→</span></button>}
       {rows.map((r) => row(r.id, r.label, r.items))}
     </>;
