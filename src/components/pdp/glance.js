@@ -19,6 +19,7 @@ import { whyMatch, confidenceNotes, exclusionLines, isClaimBlocked, MIN_BADGE_SC
 import { planGlossaryTerms } from '../../data/glossary.js';
 import { brandOf } from '../../mobile/data/brandFallback.js';
 import { getAynaRatingCount } from '../../data/aynaReviews.js';
+import { HOST_ACRONYMS } from '../../utils/verificationLinks.js';
 
 export const NOT_ON_FILE = 'Not on file';
 const GENERIC_USES = new Set(['supplement', 'telehealth']);
@@ -192,6 +193,8 @@ export function humanPublisher(raw) {
   if (/^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(t)) {
     const parts = t.split('.');
     const core = parts.length > 2 ? parts[parts.length - 2] : parts[0];
+    // Organisations known by their initials keep them ("doaj.org" is DOAJ, not Doaj).
+    if (HOST_ACRONYMS.has(core.toLowerCase())) return core.toUpperCase();
     return core.charAt(0).toUpperCase() + core.slice(1);
   }
   return t;
