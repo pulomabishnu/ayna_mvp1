@@ -1030,6 +1030,7 @@ export default function MobileApp() {
         seedProductId={communitySeed?.productId}
         seedPlaylistId={communitySeed?.playlistId}
         seedPostId={communitySeed?.postId}
+        seedUsername={communitySeed?.username}
         onGoBrowse={() => { setBrowseQuery(''); setScreen('browse'); }}
         initialSearch={screen === 'browse' ? browseQuery : ''}
         onGoLibrary={() => setScreen('library')}
@@ -1208,6 +1209,10 @@ export default function MobileApp() {
           onAddGoal={handleAddGoal}
           onOpenRoutine={() => { setEcoTab('dashboard'); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
           onOpenMonthlyCheckin={() => setScreen('checkin')}
+          readProgress={readProgress}
+          onOpenProduct={(product) => setOverlay({ type: 'product', item: product })}
+          onOpenArticle={(article) => { setReadArticleIds((ids) => ids.includes(article.id) ? ids : [...ids, article.id]); setOverlay({ type: 'article', item: article }); }}
+          onOpenCommunity={(seed) => { setOverlay(null); setCommunitySeed({ ...seed, token: Date.now() }); setScreen('community'); }}
         />
         </AskContext.Provider>
       )}

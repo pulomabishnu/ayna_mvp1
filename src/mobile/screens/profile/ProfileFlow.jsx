@@ -27,7 +27,12 @@ import './about-scrapbook.css';
 import { buildShopperProfile } from '../../utils/shopperProfile.js';
 import BadgesPanel from '../../../components/BadgesPanel.jsx';
 import ShopperCard from '../../components/ShopperCard.jsx';
-import { getMyCommunityProfile } from '../../../utils/community/communityStore.js';
+import { getMyCommunityProfile, getProfileStats, listPlaylists } from '../../../utils/community/communityStore.js';
+import ProductImage from '../../components/ProductImage.jsx';
+import { ARTICLES } from '../../../components/Articles.jsx';
+import { buildDashboard, formatMetric } from '../../../health/dashboard.js';
+import { estimatePhase } from '../../../health/phase.js';
+import { localToday, useHealthData } from '../../hooks/useHealthData.js';
 import { publicMediaUrl } from '../../../utils/community/imageUpload.js';
 
 const IS_NATIVE_APP = Capacitor.isNativePlatform();
@@ -94,9 +99,9 @@ const HUB_ICONS = {
   saved: <><path d="M12 19.5s-7-4.3-7-9.3A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.2c0 5-7 9.3-7 9.3Z" /></>,
   checkin: <><rect x="4" y="5" width="16" height="15" rx="2.5" /><path d="M8 3v4M16 3v4M4 10h16M9 14.5l2 2 4-4" /></>,
   healthData: <><path d="M3 12h4l2-5 4 10 2-5h6" /></>,
-  shopper: <><circle cx="12" cy="12" r="8" /><path d="M12 7.5V12l3 2" /></>,
+  shopper: <><path d="M6 9h12l-1 11H7L6 9Z" /><path d="M9.5 9V7a2.5 2.5 0 0 1 5 0v2" /></>,
   startups: <><path d="M12 3.5l2.2 5.3 5.3 2.2-5.3 2.2L12 18.5l-2.2-5.3L4.5 11l5.3-2.2Z" /><path d="M18.5 17.5l.8 1.7 1.7.8-1.7.8-.8 1.7-.8-1.7-1.7-.8 1.7-.8Z" /></>,
-  settings: <><path d="M4 7h9M17 7h3M4 17h3M11 17h9" /><circle cx="15" cy="7" r="2" /><circle cx="9" cy="17" r="2" /></>,
+  badges: <><circle cx="12" cy="9.5" r="5.5" /><path d="M8.8 14 7.5 21l4.5-2.5 4.5 2.5-1.3-7" /></>,
 };
 
 function AccountIcon({ type }) {
@@ -247,113 +252,299 @@ function ToggleRow({ title, sub, on, onClick, first }) {
 
 /* ---------------------------- Profile hub ---------------------------- */
 
-/** The Community profile photo, if the person has set one. Falls back to the initial. */
-function useCommunityAvatar(userId) {
-  const [avatar, setAvatar] = useState({ userId: null, path: null });
+/**
+ * Her Community profile (photo, @handle), follower counts and her own
+ * playlists. Each piece is optional: anything that fails or doesn't exist
+ * yet just doesn't render.
+ */
+function useMyCommunity(userId) {
+  const [data, setData] = useState({ userId: null, profile: null, stats: null, playlists: [] });
   useEffect(() => {
     const supabase = getSupabaseClient();
     if (!supabase || !userId) return undefined;
     let cancelled = false;
-    getMyCommunityProfile(supabase, userId)
-      .then((profile) => { if (!cancelled) setAvatar({ userId, path: profile?.avatar_url || null }); })
-      .catch(() => {});
+    (async () => {
+      const profile = await getMyCommunityProfile(supabase, userId).catch(() => null);
+      if (cancelled) return;
+      setData({ userId, profile, stats: null, playlists: [] });
+      if (!profile) return;
+      const [stats, playlists] = await Promise.allSettled([
+        getProfileStats(supabase, userId),
+        listPlaylists(supabase, { section: 'mine', limit: HUB_PLAYLIST_LIMIT + 1 }),
+      ]);
+      if (cancelled) return;
+      setData({
+        userId,
+        profile,
+        stats: stats.status === 'fulfilled' ? stats.value : null,
+        playlists: playlists.status === 'fulfilled' ? playlists.value || [] : [],
+      });
+    })();
     return () => { cancelled = true; };
   }, [userId]);
-  return avatar.userId === userId ? avatar.path : null;
+  return data.userId === userId ? data : { profile: null, stats: null, playlists: [] };
 }
 
-function ProfileHub({ shopperProfile, authUserId, myProducts = [], quizAnswers = null, onOpen, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin }) {
-  const avatarPath = useCommunityAvatar(authUserId);
-  const [avatarFailed, setAvatarFailed] = useState(false);
-  const showPhoto = avatarPath && !avatarFailed;
+const HUB_PLAYLIST_LIMIT = 5;
+const RECENT_LIMIT = 10;
+const READ_DONE = 0.95;
+const DAY_MS = 86400000;
+
+/** "Today", "Yesterday", "3 days ago", then a date. Only for real timestamps. */
+function relativeDay(iso) {
+  const t = Date.parse(iso || '');
+  if (!Number.isFinite(t)) return '';
+  const start = (d) => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x.getTime(); };
+  const days = Math.round((start(Date.now()) - start(t)) / DAY_MS);
+  if (days < 0) return '';
+  if (days === 0) return 'Today';
+  if (days === 1) return 'Yesterday';
+  if (days < 7) return `${days} days ago`;
+  return new Date(t).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+const CATALOG_BY_ID = new Map(ALL_PRODUCTS.map((p) => [p.id, p]));
+
+/**
+ * Her recent things: products in her Ecosystem, products she saved, reads she
+ * finished. Only Ecosystem products she added herself carry a date (addedAt);
+ * nothing else stores one, so those show without "x days ago".
+ */
+function buildRecent({ myProducts = [], savedProducts = {}, readProgress = {} }) {
+  const eco = [...myProducts].reverse().filter((p) => p?.id).map((p) => ({ key: `eco-${p.id}`, kind: 'eco', label: 'In your Ecosystem', product: p, title: p.name, at: p.addedAt || null }));
+  const ecoIds = new Set(myProducts.map((p) => p?.id));
+  const saved = Object.values(savedProducts || {}).reverse()
+    .filter((p) => p?.id && !ecoIds.has(p.id))
+    .map((p) => { const full = { ...(CATALOG_BY_ID.get(p.id) || {}), ...p }; return { key: `saved-${p.id}`, kind: 'saved', label: 'Saved', product: full, title: full.name, at: null }; });
+  const reads = Object.entries(readProgress || {})
+    .filter(([, v]) => v >= READ_DONE)
+    .map(([id]) => ARTICLES.find((a) => a.id === id))
+    .filter(Boolean)
+    .reverse()
+    .map((a) => ({ key: `read-${a.id}`, kind: 'read', label: 'Read', article: a, title: a.title, at: null }));
+  // Dated items first, newest first; then the rest, taking turns between lists.
+  const dated = eco.filter((i) => i.at).sort((a, b) => Date.parse(b.at) - Date.parse(a.at));
+  const lists = [eco.filter((i) => !i.at), saved, reads];
+  const rest = [];
+  for (let i = 0; rest.length < RECENT_LIMIT && lists.some((l) => l.length > i); i += 1) {
+    for (const l of lists) if (l[i]) rest.push(l[i]);
+  }
+  return [...dated, ...rest].filter((i) => i.title).slice(0, RECENT_LIMIT);
+}
+
+const fmtCount = (n) => Number(n || 0).toLocaleString('en-US');
+const localIso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const WEEK_METRICS = ['sleep_minutes', 'steps', 'active_energy_kcal', 'workout_minutes'];
+const SIDE_METRICS = ['readiness_score', 'resting_hr_bpm', 'sleep_minutes', 'steps'];
+const METRIC_PER = { sleep_minutes: 'Sleep a night', steps: 'Steps a day', active_energy_kcal: 'Active energy a day', workout_minutes: 'Workouts a day', readiness_score: 'Readiness', resting_hr_bpm: 'Resting heart rate' };
+const showMetric = (c) => (c.metric === 'steps' ? fmtCount(Math.round(c.week)) : formatMetric(c.metric, c.week));
+
+/** Seven days ending today. Days with no data stay as a short stub, never an invented bar. */
+function WeekBars({ chart, today }) {
+  const byDay = new Map(chart.points.map((p) => [p.day, p.value]));
+  const end = new Date(`${today}T12:00:00`);
+  const days = Array.from({ length: 7 }, (_, i) => { const d = new Date(end); d.setDate(end.getDate() - 6 + i); return d; });
+  const values = days.map((d) => byDay.get(localIso(d)) ?? null);
+  const hi = Math.max(...values.filter((v) => v != null), 0) || 1;
   return (
-    <div className="ayna-fresh-profile-hub" style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
-      <MobileHeader onOpenSaved={onOpenSaved} />
-      <div
-        className="ayna-fresh-profile-hero"
-        style={{
-          position: 'relative',
-          padding: 'max(24px, env(safe-area-inset-top)) 22px 26px',
-          overflow: 'hidden',
-          flex: 'none',
-        }}
-      >
-        {/* You is a tab root: the standard header (above) replaces the old close button.
-            This empty first child keeps the hero's positional styles (div:nth-child) intact. */}
-        <div aria-hidden="true" style={{ display: 'none' }} />
-        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 14, marginTop: 24 }}>
-          <div
-            style={{
-              width: 66,
-              height: 66,
-              borderRadius: 99,
-              flex: 'none',
-              background: 'var(--ayna-figma-mint)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontFamily: "var(--ayna-font-display)",
-              fontSize: 'calc(26px * var(--ayna-text-scale, 1))',
-              color: 'var(--ayna-heading)',
-              boxShadow: 'none',
-              overflow: 'hidden',
-            }}
-            className={showPhoto ? 'ay-hub-avatar has-photo' : 'ay-hub-avatar'}
-          >
-            {showPhoto ? <img src={publicMediaUrl(avatarPath)} alt="" onError={() => setAvatarFailed(true)} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} /> : initial}
-          </div>
-          <div style={{ minWidth: 0 }}>
-            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 700, letterSpacing: '-.04em', fontSize: 'calc(27px * var(--ayna-text-scale, 1))', lineHeight: 1.15 }}>{name}</div>
-            {memberSince && <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: 'var(--ayna-text-muted)', marginTop: 5 }}>{memberSince}</div>}
-          </div>
+    <div className="ay-you-bars" aria-hidden="true">
+      {days.map((d, i) => {
+        const v = values[i];
+        return (
+          <span key={localIso(d)} className={`ay-you-bar${i === 6 ? ' is-today' : ''}${v == null ? ' is-empty' : ''}`}>
+            <i style={{ height: v == null ? '4px' : `${Math.max(8, (v / hi) * 100)}%` }} />
+            <small>{d.toLocaleDateString('en-US', { weekday: 'narrow' })}</small>
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
+/** "This week": her cycle day and one or two real metrics, or a locked card. */
+function ThisWeek({ authUserId, onOpenDashboard, onConnect }) {
+  const health = useHealthData(authUserId || null);
+  const today = localToday();
+  const week = useMemo(() => buildDashboard(health.insightRows || [], { days: 7, today }), [health.insightRows, today]);
+  const month = useMemo(() => buildDashboard(health.insightRows || [], { days: 30, today }), [health.insightRows, today]);
+  const charts = week.groups.flatMap((g) => g.charts).filter((c) => c.week != null);
+  const barChart = WEEK_METRICS.map((m) => charts.find((c) => c.metric === m)).find(Boolean) || null;
+  const cycle = month.cycle?.cycleDay ? month.cycle : null;
+  const phase = cycle ? estimatePhase(cycle) : null;
+  const side = cycle ? null : SIDE_METRICS.map((m) => charts.find((c) => c.metric === m && c.metric !== barChart?.metric)).find(Boolean) || null;
+
+  const heading = <h2 className="ay-you-h2" id="ay-you-week">This week</h2>;
+  if (authUserId && (health.status === 'loading' || health.status === 'idle') && !health.loadedAt) {
+    return <section className="ay-you-section" aria-labelledby="ay-you-week">{heading}<div className="ay-you-week is-loading" role="status">Loading your week</div></section>;
+  }
+  if (!cycle && !barChart && !side) {
+    return (
+      <section className="ay-you-section" aria-labelledby="ay-you-week">
+        {heading}
+        <div className="ay-you-locked">
+          <svg className="ay-you-locked-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6" /></svg>
+          <p>Your health dashboard lives here. Connect Apple Health to see your week.</p>
+          <button type="button" className="ay-you-btn" onClick={onConnect}>Connect</button>
         </div>
-        <button type="button" className="ayna-profile-progress" onClick={onEditProfile} aria-label="Edit health profile"><span>Health profile</span><span>{profileFilledPct}%</span><i aria-hidden="true" style={{ '--profile-progress': `${profileFilledPct}%` }} /></button>
-        <span className="ay-hub-shapes" aria-hidden="true"><i /><i /><i /></span>
-      </div>
+      </section>
+    );
+  }
+  const first = cycle
+    ? { value: `Day ${cycle.cycleDay}`, label: phase ? (phase.id === 'ovulation' ? 'Around ovulation' : phase.name) : 'Of your cycle' }
+    : side ? { value: showMetric(side), label: METRIC_PER[side.metric] } : null;
+  const second = barChart ? { value: showMetric(barChart), label: METRIC_PER[barChart.metric] } : null;
+  const summary = [first && `${first.value}, ${first.label}`, second && `${second.value}, ${second.label}`].filter(Boolean).join('. ');
+  return (
+    <section className="ay-you-section" aria-labelledby="ay-you-week">
+      {heading}
+      <button type="button" className="ay-you-week" onClick={onOpenDashboard} aria-label={`${summary}. Open your health dashboard.`}>
+        <span className="ay-you-week-nums">
+          {first && <span><b>{first.value}</b><small>{first.label}</small></span>}
+          {second && <span><b>{second.value}</b><small>{second.label}</small></span>}
+        </span>
+        {barChart && <WeekBars chart={barChart} today={today} />}
+        <span className="ay-you-week-foot">Open your health dashboard<ChevronIcon /></span>
+      </button>
+    </section>
+  );
+}
 
-      {shopperProfile && <ShopperCard profile={shopperProfile} />}
+function RecentThumb({ item }) {
+  if (item.article) return <span className="ay-you-thumb is-read"><img src={item.article.image} alt="" loading="lazy" /></span>;
+  const p = item.product;
+  return <span className="ay-you-thumb"><ProductImage product={p} src={p.image || p.imageUrl || p.images?.[0]} alt="" allowBrandLogo={p.type === 'digital'} style={{ objectFit: 'contain' }} /></span>;
+}
 
-      <BadgesPanel userId={authUserId} myProducts={myProducts} quizAnswers={quizAnswers} variant="app" />
+const COVER_TONES = ['is-sky', 'is-pink'];
+function PlaylistCover({ playlist }) {
+  if (playlist.cover_url) return <span className="ay-you-cover"><img src={publicMediaUrl(playlist.cover_url)} alt="" loading="lazy" /></span>;
+  const picks = (playlist.preview_product_ids || []).map((id) => CATALOG_BY_ID.get(String(id))).filter(Boolean).slice(0, 4);
+  if (picks.length) {
+    return (
+      <span className={`ay-you-cover is-mosaic is-${picks.length}`}>
+        {picks.map((p) => <span key={p.id}><ProductImage product={p} src={p.image || p.imageUrl || p.images?.[0]} alt="" allowBrandLogo={p.type === 'digital'} style={{ objectFit: 'contain' }} /></span>)}
+      </span>
+    );
+  }
+  const title = String(playlist.title || 'ayna').trim();
+  const tone = COVER_TONES[[...title].reduce((n, c) => n + c.charCodeAt(0), 0) % COVER_TONES.length];
+  return <span className={`ay-you-cover is-letter ${tone}`}><b>{(title[0] || 'a').toUpperCase()}</b></span>;
+}
 
-      <div className="ayna-fresh-profile-menu" style={{ flex: 1, padding: '22px 20px 26px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+const pickWord = (n) => `${fmtCount(n)} ${n === 1 ? 'product' : 'products'}`;
 
-        {[
-          { key: 'ecosystem', title: `Ecosystem · ${ecosystemCount}`, onClick: onOpenEcosystem },
-          { key: 'saved', title: `Saved · ${savedCount}`, onClick: onOpenSaved },
-          { key: 'checkin', title: 'Check-ins', sub: "What's changed since last time", onClick: onOpenMonthlyCheckin },
-          { key: 'healthData', title: 'Health', sub: 'Your charts, trends and connected apps', onClick: () => onOpen('healthInsights') },
-          { key: 'shopper', title: 'Routine', sub: 'Alerts, routine, brand affinity', badge: shopperAlertsCount > 0 ? `${shopperAlertsCount} new` : null },
-          { key: 'startups', title: 'Startups', sub: 'Emerging brands worth backing' },
-          { key: 'settings', title: 'Settings', sub: IS_NATIVE_APP ? 'Preferences, notifications and privacy' : 'Preferences, account and privacy' },
-        ].map((row) => (
-          <button
-            type="button"
-            key={row.key}
-            onClick={row.onClick || (() => onOpen(row.key))}
-            style={{
-              width: '100%', textAlign: 'left', fontFamily: 'var(--ayna-font-ui)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 14,
-              background: 'var(--ayna-surface)',
-              border: '1px solid var(--ayna-border)',
-              borderRadius: 14,
-              padding: 16,
-              cursor: 'pointer',
-            }}
-          >
-            <div className="ay-hub-icon" style={{ width: 42, height: 42, borderRadius: 14, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg className="ay-hub-svg" viewBox="0 0 24 24" aria-hidden="true">{HUB_ICONS[row.key]}</svg>
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 600, fontSize: 'calc(15.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{row.title}</div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 'none' }}>
-              {row.badge && <div className="ay-hub-badge" style={{ background: 'var(--ayna-accent)', color: '#231A12', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '.5px', padding: '3px 7px', borderRadius: 99 }}>{row.badge}</div>}
-              <ChevronIcon />
-            </div>
+function ProfileHub({ authUserId, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, myProducts, savedProducts, readProgress, onOpen, onOpenSettings, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin, onOpenProduct, onOpenArticle, onOpenCommunity }) {
+  const { profile, stats, playlists } = useMyCommunity(authUserId);
+  const [avatarFailed, setAvatarFailed] = useState(false);
+  const showPhoto = profile?.avatar_url && !avatarFailed;
+  const recent = useMemo(() => buildRecent({ myProducts, savedProducts, readProgress }), [myProducts, savedProducts, readProgress]);
+  const shownPlaylists = playlists.slice(0, HUB_PLAYLIST_LIMIT);
+  const openMyProfile = profile?.username && onOpenCommunity ? () => onOpenCommunity({ username: profile.username }) : null;
+  const signedIn = !!authUserId;
+
+  const rows = [
+    onOpenEcosystem && { key: 'ecosystem', title: 'Ecosystem', value: fmtCount(ecosystemCount), onClick: onOpenEcosystem },
+    onOpenSaved && { key: 'saved', title: 'Saved', value: fmtCount(savedCount), onClick: onOpenSaved },
+    { key: 'shopper', title: 'Shopper profile', value: shopperAlertsCount > 0 ? `${shopperAlertsCount} ${shopperAlertsCount === 1 ? 'alert' : 'alerts'}` : '', onClick: () => onOpen('shopper') },
+    onOpenMonthlyCheckin && { key: 'checkin', title: 'Monthly check-in', onClick: onOpenMonthlyCheckin },
+    { key: 'healthData', title: 'Health data', onClick: () => onOpen('healthData') },
+    signedIn && { key: 'badges', title: 'Badges', onClick: () => onOpen('badges') },
+    { key: 'startups', title: 'Startups', onClick: () => onOpen('startups') },
+  ].filter(Boolean);
+
+  return (
+    <div className="ayna-fresh-profile-hub ay-you" style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+      <MobileHeader onOpenSettings={onOpenSettings} />
+      <header className="ay-you-head">
+        <div className="ay-you-id">
+          <span className={`ay-you-avatar${showPhoto ? ' has-photo' : ''}`} aria-hidden="true">
+            {showPhoto ? <img src={publicMediaUrl(profile.avatar_url)} alt="" onError={() => setAvatarFailed(true)} /> : initial}
+          </span>
+          <span className="ay-you-names">
+            <h1>{name}</h1>
+            {profile?.username ? <span>@{profile.username}</span> : memberSince ? <span>{memberSince}</span> : null}
+          </span>
+        </div>
+        {stats && openMyProfile && (
+          <button type="button" className="ay-you-counts" onClick={openMyProfile} aria-label={`${fmtCount(stats.followers)} followers, ${fmtCount(stats.following)} following. Open your Community profile.`}>
+            <span><b>{fmtCount(stats.followers)}</b> {stats.followers === 1 ? 'follower' : 'followers'}</span>
+            <span><b>{fmtCount(stats.following)}</b> following</span>
+            {!stats.followers && !stats.following && stats.friends > 0 && <span><b>{fmtCount(stats.friends)}</b> {stats.friends === 1 ? 'friend' : 'friends'}</span>}
           </button>
-        ))}
+        )}
+        {signedIn && (
+          <button type="button" className="ay-you-progress" onClick={onEditProfile} aria-label={`Health profile ${profileFilledPct}% filled in. Edit health profile.`}>
+            <span>Health profile {profileFilledPct}%</span>
+            <i aria-hidden="true"><i style={{ width: `${profileFilledPct}%` }} /></i>
+          </button>
+        )}
+      </header>
+
+      <div className="ay-you-body">
+        {!signedIn && <SignedOutCard>Sign in to keep your Ecosystem, saved products and health data together, on any phone.</SignedOutCard>}
+
+        <ThisWeek authUserId={authUserId} onOpenDashboard={() => onOpen('healthInsights')} onConnect={() => onOpen('healthData')} />
+
+        {recent.length > 0 && (
+          <section className="ay-you-section" aria-labelledby="ay-you-recent">
+            <h2 className="ay-you-h2" id="ay-you-recent">Recently</h2>
+            <ul className="ay-you-recent">
+              {recent.map((item) => {
+                const when = relativeDay(item.at);
+                const open = item.article ? onOpenArticle && (() => onOpenArticle(item.article)) : onOpenProduct && (() => onOpenProduct(item.product));
+                return (
+                  <li key={item.key}>
+                    <button type="button" onClick={open || undefined} disabled={!open}>
+                      <RecentThumb item={item} />
+                      <span className="ay-you-recent-title">{item.title}</span>
+                      <small>{item.label}{when && <><br />{when}</>}</small>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
+
+        {shownPlaylists.length > 0 && (
+          <section className="ay-you-section" aria-labelledby="ay-you-playlists">
+            <div className="ay-you-h2-row">
+              <h2 className="ay-you-h2" id="ay-you-playlists">Your playlists</h2>
+              {playlists.length > HUB_PLAYLIST_LIMIT && openMyProfile && <button type="button" className="ay-you-link" onClick={openMyProfile}>See all</button>}
+            </div>
+            <ul className="ay-you-playlists">
+              {shownPlaylists.map((pl) => (
+                <li key={pl.id}>
+                  <button type="button" onClick={onOpenCommunity ? () => onOpenCommunity({ playlistId: pl.id }) : undefined}>
+                    <PlaylistCover playlist={pl} />
+                    <span className="ay-you-pl-title">{pl.title}</span>
+                    <small>{pickWord(pl.item_count || 0)}</small>
+                  </button>
+                </li>
+              ))}
+              {onOpenCommunity && (
+                <li>
+                  <button type="button" className="ay-you-pl-new" onClick={() => onOpenCommunity({ kind: 'playlist' })}>
+                    <span className="ay-you-cover is-new"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></span>
+                    <span className="ay-you-pl-title">New playlist</span>
+                  </button>
+                </li>
+              )}
+            </ul>
+            {openMyProfile && <button type="button" className="ay-you-posts" onClick={openMyProfile}>Your reviews and posts<ChevronIcon /></button>}
+          </section>
+        )}
+
+        <nav className="ay-you-section ay-you-list" aria-label="More in You">
+          {rows.map((row) => (
+            <button type="button" key={row.key} className="ay-you-row" onClick={row.onClick}>
+              <svg className="ay-you-row-icon" viewBox="0 0 24 24" aria-hidden="true">{HUB_ICONS[row.key]}</svg>
+              <span className="ay-you-row-title">{row.title}</span>
+              {row.value && <span className="ay-you-row-value">{row.value}</span>}
+              <ChevronIcon />
+            </button>
+          ))}
+        </nav>
       </div>
       <LegalFooter />
     </div>
@@ -362,7 +553,7 @@ function ProfileHub({ shopperProfile, authUserId, myProducts = [], quizAnswers =
 
 /* ------------------------- Shopper Profile ------------------------- */
 
-function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProducts = {}, onViewAlternative, onBrowse }) {
+function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProducts = {}, onViewAlternative, onBrowse, shopperProfile = null }) {
   const [dismissedAlerts, setDismissedAlerts] = useState([]);
   const [activeBucket, setActiveBucket] = useState('morning');
   const { routineMap, setProductBucket, removeFromRoutine } = useRoutine();
@@ -381,8 +572,9 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
 
   return (
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-      <BackHeader title="Routine" onBack={onBack} />
+      <BackHeader title="Shopper profile" onBack={onBack} />
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 30px', display: 'flex', flexDirection: 'column', gap: 24 }}>
+        {shopperProfile && <ShopperCard profile={shopperProfile} />}
 
         <div>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 11 }}>
@@ -3271,6 +3463,10 @@ export default function ProfileFlow({
   textSizeIndex = 1,
   onTextSizeChange,
   initialScreen = null,
+  readProgress = {},
+  onOpenProduct,
+  onOpenArticle,
+  onOpenCommunity,
 }) {
   // A real back-navigation stack rather than a static single-parent map
   // several screens (Preferences/Notifications, in particular) are now
@@ -3296,12 +3492,7 @@ export default function ProfileFlow({
   if (screen === 'hub') {
     body = (
       <ProfileHub
-        shopperProfile={buildShopperProfile(quizAnswers?.fullHealthIntake, myProducts)}
         authUserId={authUser?.id}
-        myProducts={myProducts}
-        quizAnswers={quizAnswers}
-        onOpen={pushScreen}
-        onClose={onClose}
         name={name}
         initial={initial}
         memberSince={authUser?.created_at ? formatMemberSince(authUser.created_at) : ''}
@@ -3309,11 +3500,28 @@ export default function ProfileFlow({
         savedCount={savedCount}
         profileFilledPct={profileFilledPct}
         shopperAlertsCount={shopperAlertsCount}
+        myProducts={myProducts}
+        savedProducts={savedProducts}
+        readProgress={readProgress}
+        onOpen={pushScreen}
+        onOpenSettings={() => pushScreen('settings')}
         onEditProfile={onEditProfile ? () => { onClose(); onEditProfile(); } : undefined}
         onOpenEcosystem={onGoEcosystem ? () => { onClose(); onGoEcosystem(); } : undefined}
         onOpenSaved={onOpenSaved ? () => { onClose(); onOpenSaved(); } : undefined}
         onOpenMonthlyCheckin={onOpenMonthlyCheckin ? () => { onClose(); onOpenMonthlyCheckin(); } : undefined}
+        onOpenProduct={onOpenProduct}
+        onOpenArticle={onOpenArticle}
+        onOpenCommunity={onOpenCommunity}
       />
+    );
+  } else if (screen === 'badges') {
+    body = (
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+        <BackHeader title="Badges" onBack={goBack} />
+        <div className="ay-you-badges">
+          <BadgesPanel userId={authUser?.id} myProducts={myProducts} quizAnswers={quizAnswers} variant="app" />
+        </div>
+      </div>
     );
   } else if (screen === 'shopper') {
     body = (
@@ -3324,6 +3532,7 @@ export default function ProfileFlow({
         savedProducts={savedProducts}
         onViewAlternative={onViewAlternative ? (product) => { onClose(); onViewAlternative(product); } : undefined}
         onBrowse={onBrowse ? () => { onClose(); onBrowse(); } : undefined}
+        shopperProfile={buildShopperProfile(quizAnswers?.fullHealthIntake, myProducts)}
       />
     );
   } else if (screen === 'startups') {
