@@ -72,7 +72,7 @@ function Glance({ profile, products, quizResults }) {
   const shelves = [...counts.entries()].sort((a, b) => b[1] - a[1]);
   return <section className="wyou-card wyou-glance" aria-labelledby="wyou-glance-h">
     <div className="wyou-card-head"><h2 id="wyou-glance-h">At a glance</h2></div>
-    {shelves.length > 0 && <p className="wyou-glance__shelves"><b>Your shelves:</b> {shelves.map(([k, n]) => `${k} ${n}`).join(' · ')}</p>}
+    {shelves.length > 0 && <p className="wyou-glance__shelves"><b>Your shelves:</b> {shelves.map(([k, n]) => `${k} ${n}`).join(', ')}</p>}
     {rows.length > 0 && <dl className="wyou-glance__facts">{rows.map((r) => <div key={r.key}><dt>{r.label}</dt><dd>{r.value}</dd></div>)}</dl>}
   </section>;
 }
