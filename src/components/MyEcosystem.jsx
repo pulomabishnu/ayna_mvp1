@@ -1979,14 +1979,14 @@ export default function MyEcosystem({
 
     return (
         <>
-            <section className="eco3 mockup-page animate-fade-in-up" aria-labelledby="eco3-title">
+            <section id="ayeco" className="eco3 ayeco" aria-labelledby="eco3-title">
+            <div className="ay-container">
                 {/* Oct 2026 redesign: the website version of the app's
                     Ecosystem screen. Header + search, the ring overview, then
                     one section per area of care using the Shop card. */}
-                <header className="eco3-head ay3-band ay3-band--stripes ay3-zigzag ay3-edge-bottom ay3-ecohero">
+                <header className="eco3-head ayeco__head">
                     <div className="eco3-head__text">
-                        <p className="ay3-kicker">My ecosystem</p>
-                        <h1 id="eco3-title">Your <em>ecosystem.</em></h1>
+                        <h1 id="eco3-title" className="ay-h1">Your ecosystem</h1>
                         <p className="eco3-head__sub">
                             {llmLoading && myProductList.length === 0 ? 'Building your matches…' : myProductList.length === 0 ? 'No picks yet' : (
                                 <>
@@ -2011,7 +2011,7 @@ export default function MyEcosystem({
                             needShelves.length > 0 && { n: `${coveredNeeds}/${needShelves.length}`, l: 'needs covered', tone: coveredNeeds === needShelves.length ? 'is-done' : 'is-gap', href: '#eco3-needs-title' },
                         ].filter(Boolean);
                         return (
-                            <ul className="eco3-stats" aria-label="Your ecosystem in numbers">
+                            <ul className="eco3-stats ayeco__stats" aria-label="Your ecosystem in numbers">
                                 {stats.map((st) => (
                                     <li key={st.l} className={st.tone || undefined}>
                                         {st.href ? (
@@ -2022,12 +2022,12 @@ export default function MyEcosystem({
                             </ul>
                         );
                     })()}
-                    <div className="eco3-actions" role="group" aria-label="Ecosystem actions">
-                        <button type="button" className="eco3-pill eco3-pill--ink" onClick={() => setShowAddModal(true)}>+ Add a product</button>
-                        {typeof onRedoQuiz === 'function' && <button type="button" className="eco3-pill" onClick={onRedoQuiz}>Redo quiz</button>}
+                    <div className="eco3-actions ayeco__actions" role="group" aria-label="Ecosystem actions">
+                        <button type="button" className="ay-btn ay-btn--primary" onClick={() => setShowAddModal(true)}>+ Add a product</button>
+                        {typeof onRedoQuiz === 'function' && <button type="button" className="ay-btn ay-btn--secondary" onClick={onRedoQuiz}>Redo quiz</button>}
                         {/* One primary action; the rest live in More (Pass 7: four equal buttons said nothing about where to start). */}
                         <details className="eco3-more">
-                            <summary className="eco3-pill">More</summary>
+                            <summary className="ay-btn ay-btn--secondary">More</summary>
                             <div className="eco3-more__menu" role="menu">
                                 {typeof onEditHealthProfile === 'function' && (
                                     <button type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; onEditHealthProfile(); }}>Update my answers</button>
@@ -2147,9 +2147,9 @@ export default function MyEcosystem({
                             <p className="eco3-empty__body">Answer a few questions or pick things from the Shop.</p>
                             <div className="eco3-empty__actions">
                                 {typeof onBuildEcosystem === 'function' && (
-                                    <button type="button" className="eco3-pill eco3-pill--ink" onClick={onBuildEcosystem}>See my matches</button>
+                                    <button type="button" className="ay-btn ay-btn--primary" onClick={onBuildEcosystem}>See my matches</button>
                                 )}
-                                <button type="button" className="eco3-pill" onClick={() => searchShop('')}>Go to Shop</button>
+                                <button type="button" className="ay-btn ay-btn--secondary" onClick={() => searchShop('')}>Go to Shop</button>
                             </div>
                         </div>
                     )
@@ -2190,20 +2190,20 @@ export default function MyEcosystem({
                                 <span className="eco3-addrow__label">Add a shelf</span>
                                 <div className="eco3-addrow__chips">
                                     {gapAreas.map((area) => (
-                                        <button key={area.key} type="button" className="eco3-chip" onClick={() => onGoToSearch(exploreAreaOptions(area))}>
+                                        <button key={area.key} type="button" className="ay-chip" onClick={() => onGoToSearch(exploreAreaOptions(area))}>
                                             + {area.label}
                                         </button>
                                     ))}
                                 </div>
                             </div>
                         )}
-                        <button type="button" className="eco3-pill" onClick={() => setShowAddModal(true)}>+ Add something you already use</button>
+                        <button type="button" className="ay-btn ay-btn--secondary" onClick={() => setShowAddModal(true)}>+ Add something you already use</button>
                     </div>
                 )}
 
                 {!ecoQueryTrimmed && needShelves.length > 0 && (
                     <section className="eco3-gaps" aria-labelledby="eco3-needs-title">
-                        <header className="eco3-sechead"><h2 className="eco3-shelves__title" id="eco3-needs-title">Fill the <em>gaps.</em></h2></header>
+                        <header className="eco3-sechead"><h2 className="eco3-shelves__title ay-h2" id="eco3-needs-title">Fill the gaps</h2></header>
                         <NeedsStrip
                             needs={[...needShelves].sort((a, b) => Number(!a.picks.length) - Number(!b.picks.length)).map((shelf) => ({
                                 id: shelf.needId,
@@ -2242,7 +2242,7 @@ export default function MyEcosystem({
 
                 <div className="eco3-extras">
                 <div className="eco3-extras__tools">
-                <header className="eco3-sechead"><h2 className="eco3-shelves__title" id="eco3-tools-title">Your <em>tools.</em></h2></header>
+                <header className="eco3-sechead"><h2 className="eco3-shelves__title ay-h2" id="eco3-tools-title">Your tools</h2></header>
                 <div className="eco3-details">
                     {SHOW_SMS_ON_ECOSYSTEM && smsCardShown && (
                         <div className="eco3-details__card eco3-details__sms">
@@ -2355,6 +2355,7 @@ export default function MyEcosystem({
                     </div>
                 )}
 
+            </div>
             </section>
 
             {showAddModal && (

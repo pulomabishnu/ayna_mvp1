@@ -404,7 +404,7 @@
 .app-container.app-container .ay-nav__icon:hover { background: var(--ay-hover) !important; }
 .app-container.app-container .ay-nav__icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .app-container.app-container .ay-nav__icon .ay-badge.is-corner { position: absolute; top: -4px; right: -4px; }
-.app-container.app-container .ay-nav__icon .ay-avatar__text { font: 600 15px/1 var(--ay-sans-stack); }
+.app-container.app-container .ay-nav__icon .ay-avatar__text { font: 600 15px/1 var(--ay-sans-stack) !important; color: var(--ay-text) !important; }
 .app-container.app-container .ay-nav__account { position: relative; }
 .app-container.app-container .ay-nav__login { min-height: 44px !important; height: 44px; padding: 0 20px !important; border-radius: 999px !important; border: 1.5px solid var(--ay-feature-bg) !important; background: var(--ay-feature-bg) !important; color: var(--ay-feature-fg) !important; font: 600 15px/1 var(--ay-sans-stack) !important; box-shadow: none !important; cursor: pointer; }
 .app-container.app-container .ay-nav__login :is(span) { color: inherit !important; }

@@ -293,3 +293,17 @@ html body .app-container main .ay-wh.ay-wh .ay-wh-lockpanel h2 { max-width: 22ch
 @media (max-width: 639px) {
   .app-container .ay-wh.ay-wh .ay-bn-legend { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 12px; }
 }
+
+/* Oct 20 redo: the locked "Join the beta" panel is the page's one Feature
+   block (espresso, butter text, radius 24, no shadow); it flips in dark mode. */
+html body .app-container.app-container .ay-wh.ay-wh .ay-wh-lockpanel { border: 0 !important; border-radius: var(--ay-r-feature, 24px) !important; background: var(--ay-feature-bg, #3e2723) !important; color: var(--ay-feature-fg, #ffedac) !important; box-shadow: none !important; padding: 40px 32px !important; }
+html body .app-container.app-container main .ay-wh.ay-wh .ay-wh-lockpanel :is(h2, p, figcaption, span) { color: var(--ay-feature-fg, #ffedac) !important; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-wh-lockpanel > p { font: 400 16px/1.5 var(--ay-sans) !important; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-wh-lockpanel .ay-wh-btn { min-height: 48px; background: var(--ay-feature-fg, #ffedac) !important; border: 1.5px solid var(--ay-feature-fg, #ffedac) !important; color: var(--ay-feature-bg, #3e2723) !important; box-shadow: 3px 3px 0 #f7badd !important; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-wh-lockpanel .ay-wh-btn.is-quiet { background: transparent !important; color: var(--ay-feature-fg, #ffedac) !important; box-shadow: none !important; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-wh-lockpanel .ay-wh-locknote { border-top-color: rgba(255, 237, 172, .25) !important; opacity: .9; }
+html body .app-container.app-container[data-theme='brand-dark'] .ay-wh.ay-wh .ay-wh-lockpanel .ay-wh-locknote { border-top-color: rgba(62, 39, 35, .2) !important; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-wh-pro { border-color: var(--ay-feature-fg, #ffedac) !important; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-wh-pro, html body .app-container.app-container .ay-wh.ay-wh .ay-wh-lockicon svg { color: var(--ay-feature-fg, #ffedac); }
+html body .app-container.app-container .ay-wh.ay-wh .ay-wh-lockicon svg { stroke: #3e2723 !important; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-wh-qr img { padding: 8px; background: #ffffff; box-shadow: none !important; box-sizing: content-box; }

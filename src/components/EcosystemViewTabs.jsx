@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import '../styles/eco-view-tabs.css';
+import '../styles/eco-page.css';
 
 /**
  * Website Ecosystem: a "Products | Dashboard" switch at the top of the page,
@@ -51,8 +52,8 @@ export default function EcosystemViewTabs({ dashboard, onHero = false, children 
     <>
       {/* Over the Products hero the strip takes the hero's espresso, so the
           switch reads as the top of that block rather than a band above it. */}
-      <div className={`ay-ecoview${onHero && view === 'products' ? ' ay-ecoview--onhero' : ''}`}>
-        <div className="ay-ecoview__tabs" role="tablist" aria-label="Ecosystem view" onKeyDown={onKeyDown}>
+      <div className={`ay-container ay-tabs ay-ecoview2${onHero && view === 'products' ? ' is-onhero' : ''}`}>
+        <div className="ay-tabs__list" role="tablist" aria-label="Ecosystem view" onKeyDown={onKeyDown}>
           {TABS.map(([id, label]) => (
             <button
               key={id}
@@ -63,7 +64,7 @@ export default function EcosystemViewTabs({ dashboard, onHero = false, children 
               aria-selected={view === id}
               aria-controls="ay-ecoview-panel"
               tabIndex={view === id ? 0 : -1}
-              className={view === id ? 'is-on' : undefined}
+              className={`ay-tabs__tab${view === id ? ' is-on' : ''}`}
               onClick={() => choose(id)}
             >
               {label}
@@ -71,7 +72,7 @@ export default function EcosystemViewTabs({ dashboard, onHero = false, children 
           ))}
         </div>
       </div>
-      <div id="ay-ecoview-panel" className="ay-ecoview__panel" role="tabpanel" aria-labelledby={`ay-ecoview-tab-${view}`}>
+      <div id="ay-ecoview-panel" className="ay-ecoview2__panel" role="tabpanel" aria-labelledby={`ay-ecoview-tab-${view}`}>
         {view === 'dashboard' ? dashboard : children}
       </div>
     </>

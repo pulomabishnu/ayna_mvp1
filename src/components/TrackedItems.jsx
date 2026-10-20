@@ -3,6 +3,7 @@ import HealthDataImport from './HealthDataImport';
 import CareNearYouPanel from './CareNearYouPanel';
 import { getCheckinRecommendations, CATEGORY_LABELS } from '../data/products.js';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
+import '../styles/compare-page.css';
 
 function ImgOrInitial({ item, size }) {
     return (
@@ -35,234 +36,152 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
         onZipCodeChange?.(z);
     };
 
+    const hiddenCount = Object.keys(omittedProducts).length;
     return (
-        <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
-            <div className="ay3-pagehead ay3-band ay3-band--sky ay3-zigzag ay3-edge-bottom" style={{ textAlign: 'center', margin: '0 auto var(--spacing-xl)' }}>
-                <div style={{
-                    background: 'var(--color-secondary-fade)',
-                    color: 'var(--color-primary-hover)',
-                    padding: '0.5rem 1rem',
-                    borderRadius: 'var(--radius-pill)',
-                    fontSize: 14,
-                    fontWeight: '600',
-                    marginBottom: '1rem',
-                    display: 'inline-block'
-                }}>
-                    My Account
-                </div>
-                <h2 style={{ fontSize: 'var(--ay-fs-title)', marginBottom: '1rem' }}>Your <em>dashboard.</em></h2>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--ay-fs-section)' }}>
+        <section className="ay-container aytrk">
+            <header className="aytrk__head">
+                <h1 className="ay-h1">Your dashboard</h1>
+                <p className="aytrk__lede">
                     Everything in one place: your products, health and wearable data, and care options.
                 </p>
-                {/* Hidden products. Prominent so users can find it */}
-                {onViewOmitted && (
-                    <div style={{ marginTop: '1.5rem' }}>
-                        <button type="button" className="btn btn-outline" style={{ padding: '0.6rem 1.25rem', fontSize: 16, fontWeight: '600' }} onClick={onViewOmitted}>
-                            View hidden products {Object.keys(omittedProducts).length > 0 && `(${Object.keys(omittedProducts).length})`}
-                        </button>
-                        <p style={{ fontSize: 14, color: 'var(--color-text-muted)', marginTop: '0.5rem' }}>Products you hid from recommendations. View or restore them anytime.</p>
-                    </div>
-                )}
-            </div>
+            </header>
 
             {/* Profile: Zip code for nearby stores */}
-            <div style={{ maxWidth: '800px', margin: '0 auto 3rem' }}>
-                <h3 style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '0.75rem' }}>Profile</h3>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: 16, marginBottom: '1rem' }}>
+            <section className="aytrk__sec" aria-labelledby="aytrk-profile-h">
+                <h2 id="aytrk-profile-h" className="ay-h2">Profile</h2>
+                <p className="aytrk__line">
                     Add your zip code to see if nearby stores have these products in stock (in-store and online, when we have that data).
                 </p>
-                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                <div className="aytrk__zip">
+                    <label className="sr-only" htmlFor="aytrk-zip">ZIP code</label>
                     <input
+                        id="aytrk-zip"
                         type="text"
                         inputMode="numeric"
                         maxLength={5}
                         placeholder="ZIP code"
                         value={zipInput}
                         onChange={(e) => setZipInput(e.target.value.replace(/\D/g, '').slice(0, 5))}
-                        style={{
-                            width: '120px',
-                            padding: '0.6rem 1rem',
-                            borderRadius: 'var(--radius-md)',
-                            border: '1px solid var(--color-border)',
-                            fontSize: 16,
-                            outline: 'none'
-                        }}
                     />
-                    <button type="button" className="btn btn-primary" style={{ padding: '0.6rem 1.25rem' }} onClick={handleSaveZip}>
+                    <button type="button" className="ay-btn ay-btn--primary" onClick={handleSaveZip}>
                         Save
                     </button>
-                    {userZipCode && <span style={{ fontSize: 14, color: 'var(--color-text-muted)' }}>Saved: {userZipCode}</span>}
+                    {userZipCode && <span className="aytrk__saved">Saved: {userZipCode}</span>}
                 </div>
+            </section>
+
+            <div className="aytrk__panel"><HealthDataImport onUpdate={onHealthProfileUpdate} /></div>
+
+            <div className="aytrk__panel">
+                <CareNearYouPanel
+                    quizResults={quizResults}
+                    healthProfile={healthProfile}
+                    userZipCode={userZipCode}
+                    onZipCodeChange={onZipCodeChange}
+                    onOpenProduct={onOpenProduct}
+                    onEditHealthProfile={onEditHealthProfile}
+                    compact
+                />
             </div>
-
-            <HealthDataImport onUpdate={onHealthProfileUpdate} />
-
-            <CareNearYouPanel
-                quizResults={quizResults}
-                healthProfile={healthProfile}
-                userZipCode={userZipCode}
-                onZipCodeChange={onZipCodeChange}
-                onOpenProduct={onOpenProduct}
-                onEditHealthProfile={onEditHealthProfile}
-                compact
-            />
 
             {/* Recommendations from your check-in. Always visible under account when check-in was done */}
             {checkinRecs.length > 0 && (
-                <div style={{ maxWidth: '800px', margin: '0 auto 3rem' }}>
-                    <h3 style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        Recommendations from your check-in
-                    </h3>
-                    <p style={{ color: 'var(--color-text-muted)', fontSize: 16, marginBottom: '1rem' }}>
+                <section className="aytrk__sec" aria-labelledby="aytrk-recs-h">
+                    <h2 id="aytrk-recs-h" className="ay-h2">Recommendations from your check-in</h2>
+                    <p className="aytrk__line">
                         These match your latest check-in and tracker data. Not sure if you did a check-in? You can always see your latest recommendations here. Each product links to the same listing in Search.
                     </p>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    <ul className="ay-group ay-group__rows aytrk__rows">
                         {checkinRecs.map(({ product, reason }) => {
                             const inEcosystem = myProducts && myProducts[product.id];
                             return (
-                                <div
-                                    key={product.id}
-                                    role="button"
-                                    tabIndex={0}
-                                    onClick={() => onOpenProduct?.(product)}
-                                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpenProduct?.(product); } }}
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '1rem',
-                                        padding: '1rem 1.25rem',
-                                        background: 'var(--color-surface-soft)',
-                                        border: '1px solid var(--color-border)',
-                                        borderRadius: 'var(--radius-md)',
-                                        cursor: onOpenProduct ? 'pointer' : 'default',
-                                        transition: 'all 0.2s ease'
-                                    }}
-                                    onMouseEnter={(e) => onOpenProduct && (e.currentTarget.style.borderColor = 'var(--color-primary)', e.currentTarget.style.background = 'var(--color-secondary-fade)')}
-                                    onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--color-border)', e.currentTarget.style.background = 'var(--color-surface-soft)')}
-                                >
-                                    <div style={{ width: '56px', height: '56px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
-                                        <ImgOrInitial item={product} size={56} />
-                                    </div>
-                                    <div style={{ flexGrow: 1, minWidth: 0 }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.25rem' }}>
-                                            <h4 style={{ fontSize: 16, fontWeight: '600' }}>{product.name}</h4>
-                                            {product.outOfBusiness && (
-                                                <span style={{ fontSize: 12.5, fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>
-                                            )}
-                                            <span style={{ fontSize: 12.5, color: 'var(--color-text-muted)', textTransform: 'none' }}>{CATEGORY_LABELS[product.category] || product.category}</span>
-                                            {inEcosystem && (
-                                                <span style={{ fontSize: 12.5, fontWeight: '600', color: 'var(--color-primary)', background: 'var(--color-secondary-fade)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>
-                                                    In your ecosystem
-                                                </span>
-                                            )}
-                                        </div>
-                                        <p style={{ fontSize: 14, color: 'var(--color-text-muted)', lineHeight: 1.4 }}>{reason}</p>
-                                    </div>
-                                    {onOpenProduct && <span style={{ flexShrink: 0, color: 'var(--color-primary)', fontSize: 14 }}>View →</span>}
-                                </div>
+                                <li key={product.id}>
+                                    <button type="button" className="ay-group__row ay-group__row--link aytrk__row" onClick={() => onOpenProduct?.(product)} disabled={!onOpenProduct}>
+                                        <span className="aytrk__thumb"><ImgOrInitial item={product} size={56} /></span>
+                                        <span className="ay-group__text">
+                                            <span className="ay-group__label">
+                                                {CATEGORY_LABELS[product.category] || product.category}
+                                                {product.outOfBusiness && ' · No longer sold'}
+                                                {inEcosystem && ' · In your ecosystem'}
+                                            </span>
+                                            <span className="ay-group__value">{product.name}</span>
+                                            <span className="ay-group__note">{reason}</span>
+                                        </span>
+                                        {onOpenProduct && <span className="ay-group__end">View →</span>}
+                                    </button>
+                                </li>
                             );
                         })}
-                    </div>
-                </div>
+                    </ul>
+                </section>
             )}
 
-            {/* Hidden (omitted) products. Also linked from header above */}
-            <div style={{ maxWidth: '800px', margin: '0 auto 3rem' }}>
-                <h3 style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    Hidden products
-                    {Object.keys(omittedProducts).length > 0 && (
-                        <span style={{ background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)', padding: '0.1rem 0.6rem', borderRadius: 'var(--radius-pill)', fontSize: 12.5, fontWeight: '600' }}>{Object.keys(omittedProducts).length}</span>
-                    )}
-                </h3>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: 14, marginBottom: '1rem' }}>
-                    Products you chose to hide won't appear in Search or Recommendations. You can view and restore them anytime.
+            {/* Hidden (omitted) products */}
+            <section className="aytrk__sec" aria-labelledby="aytrk-hidden-h">
+                <h2 id="aytrk-hidden-h" className="ay-h2">Hidden products{hiddenCount > 0 && <span className="aytrk__count"> {hiddenCount}</span>}</h2>
+                <p className="aytrk__line">
+                    Products you chose to hide won&apos;t appear in Search or Recommendations. You can view and restore them anytime.
                 </p>
                 {onViewOmitted && (
-                    <button type="button" className="btn btn-outline" style={{ padding: '0.5rem 1rem', fontSize: 14 }} onClick={onViewOmitted}>
-                        {Object.keys(omittedProducts).length > 0 ? `View hidden products (${Object.keys(omittedProducts).length})` : 'View hidden products'}
+                    <button type="button" className="ay-btn ay-btn--secondary" onClick={onViewOmitted}>
+                        {hiddenCount > 0 ? `View hidden products (${hiddenCount})` : 'View hidden products'}
                     </button>
                 )}
-            </div>
+            </section>
 
             {totalItems === 0 ? (
-                <div style={{ textAlign: 'center', padding: '4rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--color-border)' }}>
-                    <h3 style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '1rem', color: 'var(--color-text-muted)' }}>Nothing tracked yet.</h3>
-                    <p style={{ color: 'var(--color-text-muted)' }}>Take the quiz to get recommendations you can track, or join startup waitlists to save your spot.</p>
-                </div>
+                <section className="aytrk__sec ay-group is-padded aytrk__empty">
+                    <h2 className="ay-h3">Nothing tracked yet.</h2>
+                    <p>Take the quiz to get recommendations you can track, or join startup waitlists to save your spot.</p>
+                </section>
             ) : (
-                <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '3rem' }}>
-
+                <>
                     {/* Safety Tracked Products */}
                     {trackedList.length > 0 && (
-                        <div>
-                            <h3 style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                Safety Recall Monitoring
-                                <span style={{ background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)', padding: '0.1rem 0.6rem', borderRadius: 'var(--radius-pill)', fontSize: 12.5, fontWeight: '600' }}>{trackedList.length}</span>
-                            </h3>
-                            <p style={{ color: 'var(--color-text-muted)', fontSize: 14, marginBottom: '1.25rem' }}>
-                                We'll notify you right away if these products have safety issues or get recalled.
+                        <section className="aytrk__sec" aria-labelledby="aytrk-tracked-h">
+                            <h2 id="aytrk-tracked-h" className="ay-h2">Safety recall monitoring <span className="aytrk__count">{trackedList.length}</span></h2>
+                            <p className="aytrk__line">
+                                We&apos;ll notify you right away if these products have safety issues or get recalled.
                             </p>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                {trackedList.map((product, idx) => (
-                                    <div key={product.id} className={`card stagger-${idx + 1}`} style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', animation: 'fadeInUp 0.6s backwards' }}>
-                                        <div style={{ width: '72px', height: '72px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
-                                            <ImgOrInitial item={product} size={72} />
-                                        </div>
-                                        <div style={{ flexGrow: 1 }}>
-                                            <span style={{ color: 'var(--color-primary)', fontSize: 12.5, fontWeight: '600', textTransform: 'none' }}>Active Tracking</span>
-                                            <h4 style={{ fontSize: 16, marginBottom: '0.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                                {product.name}
-                                                {product.outOfBusiness && (
-                                                    <span style={{ fontSize: 12.5, fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>
-                                                )}
-                                            </h4>
-                                            <p style={{ color: 'var(--color-text-muted)', fontSize: 14 }}>{product.type}</p>
-                                        </div>
-                                        <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                                            <span style={{ display: 'inline-block', width: '8px', height: '8px', backgroundColor: 'var(--color-primary)', borderRadius: '50%', marginRight: '6px' }}></span>
-                                            <span style={{ fontSize: 14, fontWeight: '500' }}>Safe</span>
-                                        </div>
-                                    </div>
+                            <ul className="ay-group ay-group__rows aytrk__rows">
+                                {trackedList.map((product) => (
+                                    <li key={product.id} className="ay-group__row aytrk__row">
+                                        <span className="aytrk__thumb"><ImgOrInitial item={product} size={56} /></span>
+                                        <span className="ay-group__text">
+                                            <span className="ay-group__label">Active tracking{product.outOfBusiness && ' · No longer sold'}</span>
+                                            <span className="ay-group__value">{product.name}</span>
+                                            <span className="ay-group__note">{product.type}</span>
+                                        </span>
+                                        <span className="ay-group__end aytrk__status"><i aria-hidden="true" />Safe</span>
+                                    </li>
                                 ))}
-                            </div>
-                        </div>
+                            </ul>
+                        </section>
                     )}
 
                     {/* Joined Waitlists */}
                     {joinedList.length > 0 && (
-                        <div>
-                            <h3 style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                Waitlists Joined
-                                <span style={{ background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)', padding: '0.1rem 0.6rem', borderRadius: 'var(--radius-pill)', fontSize: 12.5, fontWeight: '600' }}>{joinedList.length}</span>
-                            </h3>
-                            <p style={{ color: 'var(--color-text-muted)', fontSize: 14, marginBottom: '1.25rem' }}>
-                                You're on the list. We'll email you when these products launch.
+                        <section className="aytrk__sec" aria-labelledby="aytrk-wait-h">
+                            <h2 id="aytrk-wait-h" className="ay-h2">Waitlists joined <span className="aytrk__count">{joinedList.length}</span></h2>
+                            <p className="aytrk__line">
+                                You&apos;re on the list. We&apos;ll email you when these products launch.
                             </p>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                {joinedList.map((startup, idx) => (
-                                    <div key={startup.id} className={`card stagger-${idx + 1}`} style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', animation: 'fadeInUp 0.6s backwards', borderLeft: '3px solid var(--color-primary)' }}>
-                                        <div style={{ width: '72px', height: '72px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
-                                            <ImgOrInitial item={startup} size={72} />
-                                        </div>
-                                        <div style={{ flexGrow: 1 }}>
-                                            <span style={{ color: 'var(--color-primary)', fontSize: 12.5, fontWeight: '600', textTransform: 'none' }}>Early Access</span>
-                                            <h4 style={{ fontSize: 16, marginBottom: '0.15rem' }}>{startup.name}</h4>
-                                            <p style={{ color: 'var(--color-text-muted)', fontSize: 14 }}>{startup.tagline}</p>
-                                        </div>
-                                        <button
-                                            className="btn btn-outline"
-                                            style={{ flexShrink: 0, padding: '0.5rem 1rem', fontSize: 14 }}
-                                            onClick={onViewWaitlist}
-                                        >
-                                            View
-                                        </button>
-                                    </div>
+                            <ul className="ay-group ay-group__rows aytrk__rows">
+                                {joinedList.map((startup) => (
+                                    <li key={startup.id} className="ay-group__row aytrk__row">
+                                        <span className="aytrk__thumb"><ImgOrInitial item={startup} size={56} /></span>
+                                        <span className="ay-group__text">
+                                            <span className="ay-group__label">Early access</span>
+                                            <span className="ay-group__value">{startup.name}</span>
+                                            <span className="ay-group__note">{startup.tagline}</span>
+                                        </span>
+                                        <button type="button" className="ay-btn ay-btn--secondary aytrk__view" onClick={onViewWaitlist}>View</button>
+                                    </li>
                                 ))}
-                            </div>
-                        </div>
+                            </ul>
+                        </section>
                     )}
-
-                </div>
+                </>
             )}
         </section>
     );
