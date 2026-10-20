@@ -144,9 +144,9 @@ html body .app-container.app-container.app-container.app-container.app-container
 /* Long reads (How we make money, Privacy, Terms): contents list starts on the page edge, under the title. */
 html body .app-container.app-container.app-container.app-container .ay-info--toc .ay-info__layout { justify-content: start !important; }
 
-/* Shop: one 24px gap between the toolbar and the grid (was ~80px from
+/* Shop: toolbar, product count, grid at 16/12px (was ~80px from
    stacked paddings plus an empty "applied filters" row). */
-html body .app-container .ayna-browse__toolbar { padding-bottom: 0 !important; margin-bottom: 24px !important; }
+html body .app-container .ayna-browse__toolbar { padding-bottom: 0 !important; margin-bottom: 16px !important; }
 html body .app-container .ayna-browse__applied:empty { display: none !important; }
-html body .app-container .ayna-browse__applied { margin-bottom: 16px !important; }
+html body .app-container .ayna-browse__applied { margin-bottom: 12px !important; }
 html body .app-container .ayna-browse__grid { padding-top: 0 !important; }
