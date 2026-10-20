@@ -361,6 +361,8 @@ installScrollMemory();
 
 function App() {
   const [currentView, setCurrentViewRaw] = useState(getInitialView);
+  // app_error reports which screen it happened on (production builds minify component names).
+  useEffect(() => { try { window.__aynaView = currentView; } catch { /* no window */ } }, [currentView]);
   // Only meaningful when currentView === 'product', the :id segment of
   // /product/:id. Kept separate from currentView (rather than encoded into
   // it) so VIEW_TO_PATH/PATH_TO_VIEW stay simple static maps for every other

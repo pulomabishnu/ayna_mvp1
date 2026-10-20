@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import posthog from 'posthog-js';
 import { WEFUNDER_URL, MIN_INVESTMENT, TESTING_WATERS_NOTICE } from '../data/investRound';
+import { useRecommendationViews } from '../utils/recommendationAnalytics';
 import { BASICS_PRODUCTS } from '../data/basicsProducts.js';
 import { productsForNeed } from './landingNeeds';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
@@ -226,6 +227,8 @@ function Trending({ onOpenProduct, onViewDiscovery, picks = null }) {
   }, [picks]);
   const items = personal && personal.length >= 2 ? personal.slice(0, 4) : weekly;
   const ref = useReveal();
+  // recommendation_viewed for her top picks (not the weekly picks everyone sees).
+  useRecommendationViews(personal && personal.length >= 2 ? items : null, 'home_top_picks');
   if (items.length < 2) return null;
   return (
     <section ref={ref} className="lv-sec" aria-labelledby="lv-trend-title">

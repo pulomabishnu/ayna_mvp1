@@ -58,6 +58,7 @@ import { loadPhoneNumberForUser } from '../utils/phoneNumberStore';
 // SMS opt-in moved to You → Account (a phone signup didn't belong in the middle of a health dashboard).
 const SHOW_SMS_ON_ECOSYSTEM = false;
 import posthog from 'posthog-js';
+import { useRecommendationViews } from '../utils/recommendationAnalytics';
 
 // Ecosystem products are stored as a full snapshot of the product object at
 // the moment they're added (toggleMyProduct in App.jsx), not a live ID
@@ -1721,7 +1722,8 @@ export default function MyEcosystem({
         }).map((p) => ({ ...p, llmGenerated: true }));
         if (!vetted.length) return;
         onBuildEcosystemFromLlm(vetted);
-        posthog.capture('recommendation_viewed', { concernCount: recommendedProductsForDisplay.length });
+        // Was logged as recommendation_viewed; it is the auto-build, not a view.
+        posthog.capture('ecosystem_auto_built', { productCount: vetted.length, sectionCount: recommendedProductsForDisplay.length });
     }, [recommendedProductsForDisplay, onBuildEcosystemFromLlm, llmTiered, recommendationRefreshNonce, completedGenerationNonce, llmLoading, quizResults, healthProfile]);
 
     // Bounded worker pool, mirrors the fix already applied to Discovery.jsx.
@@ -1803,6 +1805,18 @@ export default function MyEcosystem({
         setEcosystemAltMiniKey(key);
         if (key) setEcosystemCompareOpen({});
     }, []);
+
+    // recommendation_viewed: ayna's picks on her shelves (AI picks and the
+    // instant picks from her answers), in shelf order. Products she added
+    // herself are not recommendations. The old "Recommended for you" panel
+    // (recommendedSection) is no longer rendered, which is why views stopped.
+    const shelfRecommendedProducts = useMemo(() => {
+        if (ecoQueryTrimmed) return [];
+        return visibleAreaGroups
+            .flatMap((g) => g.products || [])
+            .filter((p) => p?.llmGenerated === true || p?.intakeGenerated === true);
+    }, [visibleAreaGroups, ecoQueryTrimmed]);
+    useRecommendationViews(shelfRecommendedProducts, 'ecosystem_shelves');
 
     const handleSwapFromRecommendedCard = useCallback((cardKey, oldProductId, newProduct) => {
         if (!cardKey || !newProduct?.id) return;

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { trackApp } from '../utils/appAnalytics.js';
 import { PANEL_ICONS } from '../components/pdpIcons.jsx';
 import { ALL_PRODUCTS, CATEGORY_LABELS, getProductMatchDetailsForProduct } from '../../data/products.js';
 import ProductCard from '../components/ProductCard.jsx';
@@ -552,6 +553,7 @@ export default function ProductDetailScreen({
             href={buyUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: 'product_detail' })}
             style={{
               flex: 1,
               textAlign: 'center',

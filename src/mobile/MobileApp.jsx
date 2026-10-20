@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { trackApp, appScreenName } from './utils/appAnalytics.js';
+import { useRecommendationViews } from '../utils/recommendationAnalytics.js';
 import './mobile.css';
 import './editorial.css';
 import './fresh.css';
@@ -228,6 +230,26 @@ export default function MobileApp() {
   // scroll pagination) is exactly as the user left it, not reset to a
   // fresh mount. Closing the overlay just reveals it again.
   const [overlay, setOverlay] = useState(() => { const t = import.meta.env.DEV && new URLSearchParams(window.location.search).get('overlay'); return t ? { type: t } : null; }); // { type: 'product' | 'article', item }
+  // PostHog: one $screen per screen or overlay (the "Mobile App (TestFlight)"
+  // dashboard breaks down by $screen_name), and a product open, logged the
+  // same way as the website's product_card_opened. window.__aynaView lets an
+  // app_error say which screen it happened on.
+  const overlayType = overlay?.type || null;
+  const overlayProductId = overlay?.type === 'product' ? overlay?.item?.id || null : null;
+  const overlayProductCategory = overlay?.type === 'product' ? overlay?.item?.category || null : null;
+  useEffect(() => {
+    const name = appScreenName(screen, overlayType);
+    try { window.__aynaView = name; } catch { /* no window */ }
+    trackApp('$screen', { $screen_name: name });
+  }, [screen, overlayType]);
+  // recommendation_viewed: the products ayna matched to her needs (seeded with
+  // a needId), on her Ecosystem screen, in shelf order.
+  const ecoRecommended = screen === 'eco' && !overlayType ? myProducts.filter((p) => p?.needId) : null;
+  useRecommendationViews(ecoRecommended, 'app_ecosystem');
+  useEffect(() => {
+    if (!overlayProductId) return;
+    trackApp('product_card_opened', { productId: overlayProductId, category: overlayProductCategory });
+  }, [overlayProductId, overlayProductCategory]);
   const [readArticleIds, setReadArticleIds] = useState([]);
   // How far each read has been scrolled (0–1). Per-device convenience, so localStorage is fine.
   const [readProgress, setReadProgress] = useState(() => { try { return JSON.parse(localStorage.getItem('ayna_read_progress_v1') || '{}') || {}; } catch { return {}; } });
@@ -692,6 +714,7 @@ export default function MobileApp() {
       return;
     }
 
+    trackApp('product_added', { productId: product.id, category: product.category, type: product.type });
     const area = resolveEcosystemProductArea(product, REAL_ECOSYSTEM_AREAS);
     const ecosystemProduct = {
       ...product,
@@ -920,6 +943,10 @@ export default function MobileApp() {
     onEditProfile: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
     onComplete: (quizAnswers) => {
       // Not saved as her answers yet: first the optional health step, then her plan.
+      trackApp('intake_completed', {
+        concernsCount: Array.isArray(quizAnswers?.primaryConcerns) ? quizAnswers.primaryConcerns.length : 0,
+        mode: intakeMode,
+      });
       updateSession({ pendingQuiz: { answers: quizAnswers, mode: intakeMode } });
       setPlanAddedGoals({});
       setResumeQuizDraft(false);

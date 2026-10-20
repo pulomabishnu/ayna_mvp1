@@ -1,6 +1,7 @@
 import posthog from 'posthog-js';
 import { filterProductListToCatalog } from './catalogIntegrity';
 import { getAppSessionId } from './conversationId';
+import { redactErrorMessage } from './errorAnalytics';
 
 /**
  * Calls /api/search-suggestions (Claude on the server). Same-origin on
@@ -101,6 +102,9 @@ export async function fetchSearchSuggestions(opts) {
   const dislikedProducts = typeof opts?.dislikedProducts === 'string' ? opts.dislikedProducts : '';
   const maxResults = typeof opts?.maxResults === 'number' ? opts.maxResults : 20;
   const analyticsBase = baseAnalyticsProps({ query, category, personalized });
+  // Which screen asked (PostHog `component` on ai_search_failed), e.g.
+  // 'discovery', 'product_page', 'app_browse'. $pathname comes from posthog-js.
+  const component = String(opts?.source || 'smart_search').slice(0, 48);
 
   // Don't cache personalized results, they're user-specific
   const cacheKey = personalized ? null : sessionCacheKey(query, category, symptom, maxResults);
@@ -122,19 +126,32 @@ export async function fetchSearchSuggestions(opts) {
     }
   }
 
-  const res = await fetch(apiUrl('/api/search-suggestions'), {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, category, symptom, personalized, profileSummary, dislikedProducts, maxResults, conversationId: getAppSessionId() }),
-    signal: opts?.signal,
-  });
+  let res;
+  try {
+    res = await fetch(apiUrl('/api/search-suggestions'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, category, symptom, personalized, profileSummary, dislikedProducts, maxResults, conversationId: getAppSessionId() }),
+      signal: opts?.signal,
+    });
+  } catch (err) {
+    // Network failures (offline, DNS, CORS) never reached the server, so they
+    // were invisible before. A cancelled request is not a failure.
+    if (err?.name !== 'AbortError') {
+      captureSearchAnalytics('ai_search_failed', {
+        ...analyticsBase, component, code: 'network_error', status: 0,
+        errorMessage: redactErrorMessage(err?.message),
+      });
+    }
+    throw err;
+  }
 
   const data = await res.json().catch(() => ({}));
 
   if (res.status === 401) {
     // AI search is gated to signed-in users on this deployment. Not an error
     // state, Discovery still shows catalog results.
-    captureSearchAnalytics('ai_search_failed', { ...analyticsBase, code: 'auth_required', status: 401 });
+    captureSearchAnalytics('ai_search_failed', { ...analyticsBase, component, code: 'auth_required', status: 401, errorMessage: 'sign-in required' });
     return {
       suggestions: [],
       querySummary: '',
@@ -144,7 +161,7 @@ export async function fetchSearchSuggestions(opts) {
   }
 
   if (res.status === 429) {
-    captureSearchAnalytics('ai_search_failed', { ...analyticsBase, code: 'rate_limited', status: 429 });
+    captureSearchAnalytics('ai_search_failed', { ...analyticsBase, component, code: 'rate_limited', status: 429, errorMessage: 'rate limited' });
     return {
       suggestions: [],
       querySummary: '',
@@ -154,7 +171,7 @@ export async function fetchSearchSuggestions(opts) {
   }
 
   if (res.status === 503 && (data?.error === 'no_anthropic_key' || data?.error === 'no_ai_provider')) {
-    captureSearchAnalytics('ai_search_failed', { ...analyticsBase, code: 'no_ai_provider', status: 503 });
+    captureSearchAnalytics('ai_search_failed', { ...analyticsBase, component, code: 'no_ai_provider', status: 503, errorMessage: 'no AI provider configured' });
     return {
       suggestions: [],
       querySummary: '',
@@ -173,8 +190,12 @@ export async function fetchSearchSuggestions(opts) {
           : 'Could not load suggestions.';
     captureSearchAnalytics('ai_search_failed', {
       ...analyticsBase,
+      component,
       code: raw || 'request_failed',
       status: res.status,
+      // What the server said, redacted (no query text). A 500 with no JSON
+      // body is Vercel's own crash page, so say so.
+      errorMessage: redactErrorMessage(data?.detail || data?.message || raw || (res.status >= 500 ? 'server error with no JSON body' : `HTTP ${res.status}`)),
     });
     return {
       suggestions: [],

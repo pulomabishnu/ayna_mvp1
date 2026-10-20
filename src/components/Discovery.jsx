@@ -1170,6 +1170,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         const { profileSummary, dislikedProducts, dislikedTerms } = buildAiProfileContext(personalizationFilter, quizResults);
         try {
             const { suggestions, querySummary, relatedSearches, error } = await fetchSearchSuggestions({
+                source: 'discovery_search',
                 query, category, symptom, signal: ac.signal,
                 personalized: personalizationFilter,
                 profileSummary,
@@ -1247,6 +1248,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         const { profileSummary, dislikedProducts, dislikedTerms } = buildAiProfileContext(personalizationFilter, quizResults);
         try {
             const { suggestions, code: fetchErrorCode } = await fetchSearchSuggestions({
+                source: 'discovery_live',
                 query: queryText,
                 category: categoryFilter !== 'all' ? categoryFilter : undefined,
                 symptom: isTypedSearchContinuation ? symptomFilter : undefined,
