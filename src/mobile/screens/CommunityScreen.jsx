@@ -184,7 +184,7 @@ const PENDING_INVITE_KEY = 'ayna_pending_playlist_invite';
 const readPendingInvite = () => { try { return sessionStorage.getItem(PENDING_INVITE_KEY) || ''; } catch { return ''; } };
 const clearPendingInvite = () => { try { sessionStorage.removeItem(PENDING_INVITE_KEY); } catch { /* storage blocked */ } };
 
-export default function CommunityScreen({ authUser, products = [], articles = null, quizAnswers, headerInitial, onOpenProduct, onOpenArticle, onGoBrowse, onGoEco, onOpenSaved, onOpenProfile, onRequireAuth, seedKind, seedProductId, seedPlaylistId, seedPostId }) {
+export default function CommunityScreen({ authUser, products = [], articles = null, quizAnswers, headerInitial, onOpenProduct, onOpenArticle, onGoBrowse, onGoEco, onOpenSaved, onOpenProfile, onRequireAuth, seedKind, seedProductId, seedPlaylistId, seedPostId, seedUsername }) {
   const supabase = authUser ? getSupabaseClient() : (getGuestClient() || getSupabaseClient());
   const productsById = useMemo(() => new Map(products.map((p) => [String(p.id), p])), [products]);
   const [tab, setTab] = useState('for-you');
@@ -436,6 +436,11 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     if (seedPlaylistId && supabase) openPlaylistById(seedPlaylistId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seedPlaylistId]);
+  // Opened from You -> Your reviews and posts: her own profile page.
+  useEffect(() => {
+    if (seedUsername && supabase) openProfile(seedUsername);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seedUsername]);
   // Opened from a shared playlist invite link (MobileApp keeps the code
   // through sign-in in sessionStorage).
   const inviteAsked = useRef(false);
