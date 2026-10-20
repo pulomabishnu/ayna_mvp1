@@ -356,3 +356,11 @@ html body .app-container.app-container.app-container .ayp-glance li.is-half .ay-
   html body .app-container.app-container.app-container .ayp-fit { margin-top: var(--ay-s16); padding-top: var(--ay-s12); }
   html body .app-container.app-container.app-container .ayp-glance .ay-group__row { padding-block: var(--ay-s12); }
 }
+/* Compare table: same surfaces in both themes (beats the older dark-mode butter table) */
+html body .app-container #ay-sec-compare table { background: none !important; color: var(--ay-text) !important; border: 0 !important; border-radius: 0 !important; }
+html body .app-container #ay-sec-compare :is(th, td, td *, th *):not(button) { color: var(--ay-text) !important; }
+html body .app-container #ay-sec-compare tbody th, html body .app-container #ay-sec-compare tbody tr > td:not(.is-this) { color: var(--ay-text-2) !important; background: none !important; }
+html body .app-container #ay-sec-compare tbody tr > td:not(.is-this) { color: var(--ay-text) !important; }
+html body .app-container #ay-sec-compare :is(td, th).is-this { background: var(--ay-group) !important; }
+html body .app-container #ay-sec-compare .ay-compare__name button { color: var(--ay-text) !important; }
+html body .app-container #ay-sec-compare .ay-compare__name button.ay-compare__x, html body .app-container #ay-sec-compare td.is-unknown { color: var(--ay-text-2) !important; }

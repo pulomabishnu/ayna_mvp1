@@ -183,3 +183,8 @@ html body .app-container #ayeco .ay-needs__tag.is-on::before { position: static 
 html body .app-container #ayeco .eco3-addrow, html body .app-container #ayeco .eco3-addrow__shelf { text-align: left !important; justify-content: flex-start !important; }
 @media (max-width: 767px) { html body .app-container #ayeco .eco3-addrow { flex-direction: column; align-items: flex-start !important; } }
 html body .app-container #ayeco .ay-shelf[style*='--shelf-tab'] .ay-shelf__name::before { display: block !important; }
+html body .app-container #ayeco .ay-shelf__menu > summary { background: none !important; border: 0 !important; box-shadow: none !important; color: var(--ay-text) !important; }
+html body .app-container #ayeco .ay-shelf__menu > summary:hover { background: var(--ay-group) !important; }
+html body .app-container #ayeco .eco3-search input[type='search'] { color: var(--ay-text) !important; }
+html body .app-container #ayeco .eco3-search input[type='search']::placeholder { color: var(--ay-text-2) !important; opacity: 1; }
+html body .app-container #ayeco .eco3-search .ayna-browse__search-icon { top: 0 !important; bottom: 0 !important; margin: auto 0 !important; }
