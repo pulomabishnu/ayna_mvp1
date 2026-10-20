@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
+import { EdState } from './editorial/EdPage';
 
 export default function AuthConfirm({ onAuthenticated }) {
   const [status, setStatus] = useState('loading');
@@ -43,100 +44,28 @@ export default function AuthConfirm({ onAuthenticated }) {
   }, []);
 
   if (status === 'loading') {
-    return (
-      <div style={wrap}>
-        <p style={muted}>Confirming your email…</p>
-      </div>
-    );
+    return <EdState busy><p className="ed-lead">Confirming your email…</p></EdState>;
   }
 
   if (status === 'error') {
     return (
-      <div style={wrap}>
-        <h2 style={heading}>Confirmation link unavailable</h2>
-        <p style={muted}>
+      <EdState title="Confirmation link unavailable" tone="error">
+        <p className="ed-lead">
           This confirmation link may be invalid or expired. Please return to ayna
           and request a new confirmation email.
         </p>
-      </div>
+      </EdState>
     );
   }
 
   return (
-    <div style={wrap}>
-      <div style={circle}>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M5 12.5l4.5 4.5L19 7.5"
-            stroke="white"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </div>
-
-      <h2 style={heading}>Your account is confirmed.</h2>
-
-      <p style={muted}>
+    <EdState
+      title="Your account is confirmed."
+      actions={<button type="button" className="ed-btn ed-btn--primary" onClick={() => onAuthenticated(confirmedUser)}>Continue to ayna</button>}
+    >
+      <p className="ed-lead">
         Your email is verified and your ayna account is ready to go.
       </p>
-
-      <button
-        type="button"
-        onClick={() => onAuthenticated(confirmedUser)}
-        style={button}
-      >
-        Continue to ayna
-      </button>
-    </div>
+    </EdState>
   );
 }
-
-const wrap = {
-  minHeight: '100dvh',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: '1.25rem',
-  padding: '2rem',
-  textAlign: 'center',
-  background: '#fff',
-};
-
-const circle = {
-  width: '3.5rem',
-  height: '3.5rem',
-  borderRadius: '50%',
-  background: '#FF7417',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-
-const heading = {
-  margin: 0,
-  fontSize: 'var(--ay-fs-section)',
-  fontWeight: 600,
-  color: '#171717',
-};
-
-const muted = {
-  margin: 0,
-  color: '#626262',
-  maxWidth: '380px',
-  lineHeight: 1.6,
-};
-
-const button = {
-  marginTop: '0.5rem',
-  border: 0,
-  borderRadius: '10px',
-  background: '#FF7417',
-  color: '#FFFFFF',
-  padding: '14px 28px',
-  fontSize: 16,
-  fontWeight: 600,
-  cursor: 'pointer',
-};

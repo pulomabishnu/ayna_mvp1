@@ -19,29 +19,28 @@ export default function HowItWorksFunnel() {
   ];
   const max = STAGES[0].value;
   return (
-    <figure className="ay-info-funnel">
-      <span className="ay-info-example">Example</span>
+    <figure className="ed-funnel">
       <div
-        className="ay-info-funnel__rows"
+        className="ed-funnel__rows"
         role="img"
         aria-label={`Sample profile: ${STAGES[0].value} products in the catalog, ${STAGES[1].value} matched, ${STAGES[2].value} strong matches`}
       >
         {STAGES.map((stage) => {
           const pct = (stage.value / max) * 100;
           return (
-            <div key={stage.label} className="ay-info-funnel__row" aria-hidden="true">
-              <div className="ay-info-funnel__text">
+            <div key={stage.label} className="ed-funnel__row" aria-hidden="true">
+              <div className="ed-funnel__text">
                 <strong>{stage.value.toLocaleString()}</strong>
                 <span>{stage.label}</span>
               </div>
-              <div className="ay-info-funnel__track">
-                <div className="ay-info-funnel__bar" style={{ width: `max(6px, ${pct.toFixed(2)}%)` }} />
+              <div className="ed-funnel__track">
+                <div className="ed-funnel__bar" style={{ width: `max(6px, ${pct.toFixed(2)}%)` }} />
               </div>
             </div>
           );
         })}
       </div>
-      <figcaption className="ay-info-funnel__note">A sample profile, run live on today's catalog. Bars drawn to scale.</figcaption>
+      <figcaption className="ed-caption">Example: a sample profile, run live on today's catalog. Bars drawn to scale.</figcaption>
     </figure>
   );
 }

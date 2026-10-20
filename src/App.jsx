@@ -91,6 +91,7 @@ import TermsOfUse from './components/TermsOfUse';
 import AuthCallback from './components/AuthCallback';
 import AuthConfirm from './components/AuthConfirm';
 import EmailConfirmed from './components/EmailConfirmed';
+import './styles/editorial.css';
 import { getSupabaseClient } from './utils/supabaseClient';
 import { clearGeneratedPicksForUser, isGeneratedPick, loadEcosystemForUser, upsertProductState, upsertProductsBatch, removeGeneratedProductsFromEcosystem, clearEcosystemForUser } from './utils/ecosystemStore';
 import { loadSavedProducts, persistSavedProducts, clearSavedProducts, loadSavedForUser, setSavedForUser } from './utils/savedProductsStore';
@@ -341,18 +342,27 @@ function ViewLoadingFallback() {
  */
 function NotFoundState({ title, subtitle, ctaLabel, onCta, onSearch, searchPlaceholder = 'Search the shop' }) {
   return (
-    <div className="mockup-page ay-404">
-      <span className="ay-404__badge" aria-hidden="true">404</span>
-      <h1>{title}</h1>
-      <p>{subtitle}</p>
-      {onSearch && (
-        <form className="ay-404__search" role="search" onSubmit={(e) => { e.preventDefault(); const q = String(new FormData(e.currentTarget).get('q') || '').trim(); onSearch(q); }}>
-          <label className="sr-only" htmlFor="ay-404-q">{searchPlaceholder}</label>
-          <input id="ay-404-q" name="q" type="search" placeholder={searchPlaceholder} autoComplete="off" />
-          <button type="submit" className="btn btn-navy">Search</button>
-        </form>
-      )}
-      <button type="button" className={onSearch ? 'ay-404__alt' : 'btn btn-navy'} onClick={onCta}>{ctaLabel}</button>
+    <div className="ed">
+      <div className="ed-wrap">
+        <div className="ed-state">
+          <p className="ed-state__mark">Error 404</p>
+          <h1 className="ed-h1">{title}</h1>
+          <p className="ed-lead">{subtitle}</p>
+          {onSearch && (
+            <form className="ed-search" role="search" onSubmit={(e) => { e.preventDefault(); const q = String(new FormData(e.currentTarget).get('q') || '').trim(); onSearch(q); }}>
+              <label>
+                <span className="ed-sr">{searchPlaceholder}</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
+                <input id="ay-404-q" name="q" type="search" placeholder={searchPlaceholder} autoComplete="off" />
+              </label>
+              <button type="submit" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg></button>
+            </form>
+          )}
+          <div className="ed-state__actions">
+            <button type="button" className={onSearch ? 'ed-link' : 'ed-btn ed-btn--primary'} onClick={onCta}>{ctaLabel}</button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -2221,6 +2231,8 @@ function App() {
             onViewArticle={handleViewArticle}
             onViewAbout={handleViewAbout}
             onViewCommunity={() => setCurrentView('community')}
+            onViewWaitlist={() => setCurrentView('waitlist')}
+            onViewHowItWorks={handleViewHowItWorks}
             user={user}
             myProducts={myProducts}
             savedProducts={savedProducts}

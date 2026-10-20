@@ -31,7 +31,7 @@ function shortSummary(body, max = 170) {
   return stop > 60 ? cut.slice(0, stop + 1) : `${cut.replace(/\s+\S*$/, '')}…`;
 }
 
-function useLatestAnnouncement() {
+export function useLatestAnnouncement() {
   const [item, setItem] = useState(null);
   useEffect(() => {
     let live = true;

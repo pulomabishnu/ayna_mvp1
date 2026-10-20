@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { apiUrl } from '../utils/apiUrl.js';
-import { InfoPage } from './InfoPage';
+import { EdPage } from './editorial/EdPage';
 
 // Values the server accepts (api/contact.js); LABELS is how they read here.
 const LABELS = { 'Help & Support': 'Help and support', 'Feedback or Feature Request': 'Feedback or an idea', 'Press & Media': 'Press and media' };
@@ -41,7 +41,7 @@ export default function Contact({ onBack, user = null }) {
     if (fieldErrors[field]) setFieldErrors((cur) => ({ ...cur, [field]: undefined }));
   };
   const errProps = (field) => (fieldErrors[field] ? { 'aria-invalid': true, 'aria-describedby': `contact-${field}-err` } : {});
-  const Err = ({ field }) => (fieldErrors[field] ? <p id={`contact-${field}-err`} className="ay-info-field__err">{fieldErrors[field]}</p> : null);
+  const Err = ({ field }) => (fieldErrors[field] ? <p id={`contact-${field}-err`} className="ed-err">{fieldErrors[field]}</p> : null);
 
   const submit = async (event) => {
     event.preventDefault();
@@ -85,63 +85,63 @@ export default function Contact({ onBack, user = null }) {
   };
 
   return (
-    <InfoPage photos={['curlers-call', 'pajamas-overhead', 'laundry-duo']}
-      eyebrow="Contact"
+    <EdPage
       title="How can we help?"
       lede="Send us a note and we'll make sure it reaches the right person on the ayna team."
       onBack={onBack}
+      photo="curlers-call"
     >
-      <div className="ay-info-contact">
-        <form onSubmit={submit} noValidate className="ay-info-card ay-info-card--pad ay-info-form">
-          <div className="ay-info-form__hp" aria-hidden="true">
-            <label>
-              Website
-              <input type="text" tabIndex="-1" autoComplete="off" value={form.companyWebsite} onChange={update('companyWebsite')} />
-            </label>
+      <form onSubmit={submit} noValidate className="ed-group ed-form" aria-label="Contact the ayna team" style={{ maxWidth: 760 }}>
+        <div className="ed-hp" aria-hidden="true">
+          <label>
+            Website
+            <input type="text" tabIndex="-1" autoComplete="off" value={form.companyWebsite} onChange={update('companyWebsite')} />
+          </label>
+        </div>
+
+        <div className="ed-form__row">
+          <div className="ed-field">
+            <label htmlFor="contact-name">Name</label>
+            <input id="contact-name" type="text" required maxLength={100} autoComplete="name" value={form.name} onChange={update('name')} placeholder="Your name" {...errProps('name')} />
+            <Err field="name" />
           </div>
-
-          <div className="ay-info-form__row">
-            <div className="ay-info-field">
-              <label htmlFor="contact-name">Name</label>
-              <input id="contact-name" type="text" required maxLength={100} autoComplete="name" value={form.name} onChange={update('name')} placeholder="Your name" {...errProps('name')} />
-              <Err field="name" />
-            </div>
-            <div className="ay-info-field">
-              <label htmlFor="contact-email">Email</label>
-              <input id="contact-email" type="email" required maxLength={200} autoComplete="email" value={form.email} onChange={update('email')} placeholder="you@example.com" {...errProps('email')} />
-              <Err field="email" />
-            </div>
+          <div className="ed-field">
+            <label htmlFor="contact-email">Email</label>
+            <input id="contact-email" type="email" required maxLength={200} autoComplete="email" value={form.email} onChange={update('email')} placeholder="you@example.com" {...errProps('email')} />
+            <Err field="email" />
           </div>
+        </div>
 
-          <fieldset className="ay-info-field ay-contact-topicset" {...errProps('reason')}>
-            <legend>What can we help with?</legend>
-            <div className="ay-contact-chips" role="radiogroup" aria-label="Topic">
-              {REASONS.map((reason, i) => (
-                <button key={reason} id={`contact-reason-${i}`} type="button" role="radio" aria-checked={form.reason === reason} className={form.reason === reason ? 'is-on' : ''}
-                  onClick={() => { setForm((c) => ({ ...c, reason })); setFieldErrors((cur) => ({ ...cur, reason: undefined })); }}>{LABELS[reason] || reason}</button>
-              ))}
-            </div>
-            <Err field="reason" />
-          </fieldset>
-
-          <div className="ay-info-field">
-            <label htmlFor="contact-message">Message</label>
-            <textarea id="contact-message" required minLength={10} maxLength={5000} rows={7} value={form.message} onChange={update('message')} placeholder="Tell us how we can help." {...errProps('message')} />
-            <Err field="message" />
+        <fieldset className="ed-field" {...errProps('reason')}>
+          <legend>What can we help with?</legend>
+          <div className="ed-chiprow ed-chiprow--wrap" role="radiogroup" aria-label="Topic">
+            {REASONS.map((reason, i) => (
+              <button key={reason} id={`contact-reason-${i}`} type="button" role="radio" aria-checked={form.reason === reason} className="ed-chip"
+                onClick={() => { setForm((c) => ({ ...c, reason })); setFieldErrors((cur) => ({ ...cur, reason: undefined })); }}>{LABELS[reason] || reason}</button>
+            ))}
           </div>
+          <Err field="reason" />
+        </fieldset>
 
-          {status === 'sent' && (
-            <div role="status" className="ay-info-notice ay-info-notice--ok">Thanks. Your message has been sent to the ayna team.</div>
-          )}
-          {error && (
-            <div role="alert" className="ay-info-notice ay-info-notice--err">{error}</div>
-          )}
+        <div className="ed-field">
+          <label htmlFor="contact-message">Message</label>
+          <textarea id="contact-message" required minLength={10} maxLength={5000} rows={7} value={form.message} onChange={update('message')} placeholder="Tell us how we can help." {...errProps('message')} />
+          <Err field="message" />
+        </div>
 
-          <button type="submit" className="ay-info-btn ay-info-btn--block" disabled={status === 'sending'}>
+        {status === 'sent' && (
+          <div role="status" className="ed-notice ed-notice--ok">Thanks. Your message has been sent to the ayna team.</div>
+        )}
+        {error && (
+          <div role="alert" className="ed-notice ed-notice--err">{error}</div>
+        )}
+
+        <div>
+          <button type="submit" className="ed-btn ed-btn--primary" disabled={status === 'sending'}>
             {status === 'sending' ? 'Sending…' : 'Send message'}
           </button>
-        </form>
-      </div>
-    </InfoPage>
+        </div>
+      </form>
+    </EdPage>
   );
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
+import { EdState } from './editorial/EdPage';
 
 export default function EmailConfirmed({ onAuthenticated }) {
   const [status, setStatus] = useState('loading');
@@ -44,38 +45,17 @@ export default function EmailConfirmed({ onAuthenticated }) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (status === 'loading') {
-    return (
-      <div style={wrap}>
-        <p style={{ color: 'var(--color-text-muted, #666)' }}>Confirming your email…</p>
-      </div>
-    );
+    return <EdState busy><p className="ed-lead">Confirming your email…</p></EdState>;
   }
 
   return (
-    <div style={wrap}>
-      <div style={circle}>
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <path d="M4 11l5 5L18 6" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      </div>
-      <h2 style={{ fontSize: 'var(--ay-fs-section)', fontWeight: 600, margin: 0 }}>Your email is confirmed.</h2>
-      <p style={{ color: 'var(--color-text-muted, #666)', maxWidth: '340px', lineHeight: 1.6, margin: 0 }}>
+    <EdState
+      title="Your email is confirmed."
+      actions={confirmedUser ? <button type="button" className="ed-btn ed-btn--primary" onClick={() => onAuthenticated(confirmedUser)}>Continue in this browser</button> : null}
+    >
+      <p className="ed-lead">
         This page is only for older confirmation links. New ayna signups verify with the code sent by email. Return to ayna and enter your verification code, or request a new code from the sign-in screen.
       </p>
-      {confirmedUser && <button type="button" className="btn btn-primary" onClick={() => onAuthenticated(confirmedUser)}>Continue in this browser</button>}
-    </div>
+    </EdState>
   );
 }
-
-const wrap = {
-  minHeight: '100dvh', display: 'flex', flexDirection: 'column',
-  alignItems: 'center', justifyContent: 'center',
-  gap: '1.25rem', padding: '2rem', textAlign: 'center',
-  background: 'var(--color-bg, #fff)',
-};
-
-const circle = {
-  width: '3.5rem', height: '3.5rem', borderRadius: '50%',
-  background: 'var(--color-primary, #7C3AED)',
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-};
