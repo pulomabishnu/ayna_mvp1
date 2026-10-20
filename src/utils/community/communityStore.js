@@ -30,6 +30,12 @@ const FRIENDLY_ERRORS = {
   community_media_not_found: "That photo didn't finish uploading. Try again.",
   community_guest_unavailable: "Posting without an account isn't available right now. Log in to post.",
   community_rules_violation: 'This breaks our community rules. Remove contact info, links or promo and try again.',
+  community_collaborator_not_friend: 'You can add friends as collaborators. Share the invite link with anyone else.',
+  community_collaborator_is_owner: 'You already own this playlist.',
+  community_collaborators_full: 'A playlist can have up to 20 collaborators.',
+  community_not_playlist_owner: 'Only the playlist owner can do that.',
+  community_invite_invalid: "That invite link doesn't work anymore. Ask for a new one.",
+  community_playlist_unavailable: "This playlist isn't available anymore.",
 };
 
 export function friendlyError(error) {
@@ -40,7 +46,19 @@ export function friendlyError(error) {
   if (error?.code === '23505') return 'That already exists.';
   if (error?.code === '23503') return "That product isn't in the ayna catalog.";
   if (/row-level security|permission denied/i.test(msg)) return "You don't have access to do that.";
-  return 'Something went wrong. Please try again.';
+  return 'That didn’t save to the community. Check your connection and try again.';
+}
+
+/**
+ * True when an error means a table, column or function is not in the
+ * database yet (a migration that hasn't been run). Callers use it to hide a
+ * feature instead of showing an error.
+ */
+export function isMissingSchemaError(error) {
+  if (!error) return false;
+  const code = String(error.code || '');
+  if (['42P01', '42703', '42883', 'PGRST200', 'PGRST202', 'PGRST204', 'PGRST205'].includes(code)) return true;
+  return /does not exist|schema cache|could not find the (table|function|column)/i.test(String(error.message || ''));
 }
 
 function check({ data, error }) {
@@ -99,6 +117,12 @@ export async function getProfileByUsername(supabase, username) {
   return check(await supabase.from('community_profiles').select('*').eq('username', String(username).toLowerCase()).maybeSingle());
 }
 
+/** "@Maya.k " -> "maya.k", or '' when it can't be a username. */
+export function normalizeHandle(value) {
+  const handle = String(value || '').trim().replace(/^@+/, '').toLowerCase();
+  return /^[a-z0-9_.]{3,24}$/.test(handle) ? handle : '';
+}
+
 export async function getProfilesByIds(supabase, ids) {
   const unique = [...new Set((ids || []).filter(Boolean))];
   if (!unique.length) return new Map();
@@ -121,7 +145,7 @@ export async function getProfileStats(supabase, userId) {
  *              null author_id in the view, so they can never match this filter.
  *   sort: 'recent' | 'helpful'
  */
-export async function listFeedPosts(supabase, { kind = null, authorIds = null, productId = null, topic = null, mineOnly = false, savedOnly = false, sort = 'recent', cursor = null, limit = PAGE_SIZE } = {}) {
+export async function listFeedPosts(supabase, { kind = null, authorIds = null, productId = null, topic = null, topics = null, mineOnly = false, savedOnly = false, sort = 'recent', cursor = null, limit = PAGE_SIZE } = {}) {
   if (authorIds && authorIds.length === 0) return [];
   let q = supabase.from('community_feed_posts').select('*');
   if (kind) q = q.eq('kind', kind);
@@ -131,6 +155,8 @@ export async function listFeedPosts(supabase, { kind = null, authorIds = null, p
     q = q.or(`product_id.eq.${safeId},tagged_product_ids.cs.{${safeId}}`);
   }
   if (topic) q = q.contains('topics', [topic]);
+  // Any of these topics (followed topic pods in the app).
+  if (Array.isArray(topics) && topics.length) q = q.overlaps('topics', topics.map((t) => String(t).replace(/[^a-z0-9-]/gi, '')).filter(Boolean));
   if (mineOnly) q = q.eq('is_mine', true);
   if (savedOnly) q = q.eq('viewer_saved', true);
   if (sort === 'helpful') {
@@ -356,8 +382,17 @@ export async function setBlocked(supabase, userId, targetId, on) {
 /** section: 'recent' | 'popular' | 'friends' | 'mine' | 'saved' | 'owner' */
 export async function listPlaylists(supabase, { section = 'recent', ownerIds = null, limit = 20, offset = 0 } = {}) {
   let q = supabase.from('community_feed_playlists').select('*');
-  if (section === 'mine') q = q.eq('is_mine', true);
-  else if (section === 'saved') q = q.eq('viewer_saved', true);
+  if (section === 'mine') {
+    // Playlists she owns plus ones she collaborates on. Before the
+    // collaborators migration the view has no is_collaborator column, so
+    // fall back to owned playlists only.
+    const order = (query) => query.order('updated_at', { ascending: false }).range(offset, offset + limit - 1);
+    const both = await order(supabase.from('community_feed_playlists').select('*').or('is_mine.eq.true,is_collaborator.eq.true'));
+    if (!both.error) return both.data || [];
+    if (!isMissingSchemaError(both.error)) throw both.error;
+    return check(await order(supabase.from('community_feed_playlists').select('*').eq('is_mine', true))) || [];
+  }
+  if (section === 'saved') q = q.eq('viewer_saved', true);
   else if (section === 'friends') q = q.eq('visibility', 'friends').gt('item_count', 0);
   else if (ownerIds) {
     if (!ownerIds.length) return [];
@@ -373,8 +408,103 @@ export async function getPlaylist(supabase, playlistId) {
 }
 
 export async function listPlaylistItems(supabase, playlistId) {
-  return check(await supabase.from('community_playlist_items').select('product_id, note, position, added_at')
-    .eq('playlist_id', playlistId).order('position').order('added_at').limit(60)) || [];
+  const run = (cols) => supabase.from('community_playlist_items').select(cols)
+    .eq('playlist_id', playlistId).order('position').order('added_at').limit(60);
+  // added_by arrives with the collaborators migration.
+  const withAuthor = await run('product_id, note, position, added_at, added_by');
+  if (!withAuthor.error) return withAuthor.data || [];
+  if (!isMissingSchemaError(withAuthor.error)) throw withAuthor.error;
+  return check(await run('product_id, note, position, added_at')) || [];
+}
+
+// ── Collaborative playlists ────────────────────────────────────────────────
+// supabase/community_friends_playlists_2026-10-20.sql. Every function here
+// reports { available: false } (or returns null) before that migration runs,
+// so the screen can hide the feature instead of erroring.
+
+/** { available, rows: [{ user_id, role, added_at }] } */
+export async function listPlaylistCollaborators(supabase, playlistId) {
+  const { data, error } = await supabase.from('community_playlist_collaborators')
+    .select('user_id, role, added_at').eq('playlist_id', playlistId).order('added_at').limit(50);
+  if (error) {
+    if (isMissingSchemaError(error)) return { available: false, rows: [] };
+    throw error;
+  }
+  return { available: true, rows: data || [] };
+}
+
+export async function addPlaylistCollaborator(supabase, playlistId, userId) {
+  const { error } = await supabase.from('community_playlist_collaborators').insert({ playlist_id: playlistId, user_id: userId });
+  if (error && error.code !== '23505') throw error;
+}
+
+/** Owner removing someone, or a collaborator leaving (userId = herself). */
+export async function removePlaylistCollaborator(supabase, playlistId, userId) {
+  check(await supabase.from('community_playlist_collaborators').delete().eq('playlist_id', playlistId).eq('user_id', userId));
+}
+
+/** Owner only. The playlist's invite code (made on first use), or null before the migration. */
+export async function getPlaylistInviteCode(supabase, playlistId, { rotate = false } = {}) {
+  const { data, error } = await supabase.rpc('community_playlist_invite_code', { pid: playlistId, rotate });
+  if (error) {
+    if (isMissingSchemaError(error)) return null;
+    throw error;
+  }
+  return typeof data === 'string' ? data : null;
+}
+
+const INVITE_CODE_RE = /^[a-z0-9]{16,40}$/;
+
+/** A code from a pasted link or the code itself, or null. */
+export function parsePlaylistInviteCode(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return null;
+  let code = raw;
+  if (/[/?=]/.test(raw)) {
+    try { code = new URL(raw, 'https://www.aynahealth.co').searchParams.get('join-playlist') || ''; } catch { return null; }
+  }
+  code = code.toLowerCase();
+  return INVITE_CODE_RE.test(code) ? code : null;
+}
+
+/**
+ * The link she shares. Opens the app view on the web; the native app is
+ * handed the same ?join-playlist= code (MobileApp reads it on load).
+ */
+export function playlistInviteLink(code, origin) {
+  const clean = parsePlaylistInviteCode(code);
+  if (!clean) return null;
+  let base = origin;
+  if (!base) {
+    const native = typeof window !== 'undefined' && window.Capacitor?.isNativePlatform?.();
+    const host = typeof window !== 'undefined' ? window.location.hostname || '' : '';
+    base = native || !host || host === 'aynahealth.co' || host.endsWith('.aynahealth.co') ? 'https://www.aynahealth.co' : window.location.origin;
+  }
+  return `${String(base).replace(/\/+$/, '')}/mobile-preview?join-playlist=${clean}`;
+}
+
+/**
+ * Join from an invite code. Returns { ok: true, playlistId } or
+ * { ok: false, reason: 'invalid' | 'unavailable' | 'signin', message }.
+ */
+export async function joinPlaylistByCode(supabase, code) {
+  const clean = parsePlaylistInviteCode(code);
+  if (!clean) return { ok: false, reason: 'invalid', message: FRIENDLY_ERRORS.community_invite_invalid };
+  const { data, error } = await supabase.rpc('join_playlist_by_code', { code: clean });
+  if (error) {
+    if (isMissingSchemaError(error)) return { ok: false, reason: 'unavailable', message: "Shared playlists aren't switched on yet." };
+    if (String(error.message || '').includes('community_guest_unavailable')) return { ok: false, reason: 'signin', message: 'Sign in to join this playlist.' };
+    if (String(error.message || '').includes('community_invite_invalid')) return { ok: false, reason: 'invalid', message: FRIENDLY_ERRORS.community_invite_invalid };
+    throw error;
+  }
+  return data ? { ok: true, playlistId: data } : { ok: false, reason: 'invalid', message: FRIENDLY_ERRORS.community_invite_invalid };
+}
+
+/** Can this viewer add and remove products? */
+export function canEditPlaylist(playlist, userId, collaborators = []) {
+  if (!playlist || !userId) return false;
+  if (playlist.owner_id === userId) return true;
+  return Boolean(playlist.is_collaborator) || (collaborators || []).some((c) => c.user_id === userId);
 }
 
 export async function createPlaylist(supabase, userId, { title, description = '', visibility = 'public', coverUrl = null }) {

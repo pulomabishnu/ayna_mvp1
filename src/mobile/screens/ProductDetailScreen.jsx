@@ -14,6 +14,7 @@ import { matchLine } from '../../data/passport/content.js';
 import { buildGlance, perUnitLabel } from '../../components/pdp/glance.js';
 import { galleryImages, retailerLinks, similarProducts, sameNeedProducts } from '../../components/pdp/commerce.js';
 import GalleryThumbs from '../../components/pdp/GalleryThumbs.jsx';
+import ImageZoomViewer from '../components/ImageZoomViewer.jsx';
 import ComparePanel from '../../components/pdp/ComparePanel.jsx';
 import { jumpTo } from '../../components/pdp/jump.js';
 import LegalFooter from '../components/LegalFooter.jsx';
@@ -29,8 +30,10 @@ import ProductCommunityReviews from '../../components/pdp/ProductCommunityReview
 import { useProductReviews } from '../../components/pdp/useProductReviews.js';
 import { RatingStars } from '../../components/community/RatingStars.jsx';
 import { summarizeReviewRows, formatAverage } from '../../utils/community/reviewRatings.js';
+import { worksWith } from '../../utils/aynaIntegrations.js';
 import '../pdp.css';
 import '../eco-needs.css';
+import '../pdp-polish.css';
 
 function toneFor(product) {
   const functions = product?.healthFunctions || [];
@@ -86,7 +89,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
   const ask = async (question) => {
     const q = String(question || '').trim();
     if (!q || sending) return;
-    if (!session?.access_token) { onRequireAuth?.('Ask Ayna'); return; }
+    if (!session?.access_token) { onRequireAuth?.('Ask ayna'); return; }
     setError('');
     setInput('');
     const nextMessages = [...messages, { role: 'user', text: q }];
@@ -113,11 +116,11 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
       setMessages((prev) => [...prev, { role: 'assistant', text: data.answer }]);
     } catch (e) {
       if (e?.code === 'not_signed_in') {
-        onRequireAuth?.('Ask Ayna');
+        onRequireAuth?.('Ask ayna');
       } else if (e?.code === 'weekly_limit_reached') {
         setError("You've used your free chats for this week. They reset weekly.");
       } else {
-        setError(e?.message || 'Something went wrong. Try again in a moment.');
+        setError(e?.message || 'ayna couldn’t answer just now. Check your connection and ask again in a moment.');
       }
       setMessages(nextMessages); // keep the question visible even though it failed
     } finally {
@@ -136,7 +139,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
                 disabled={sending}
                 key={s}
                 onClick={() => ask(s)}
-                style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 500, minHeight: 44, border: 0, padding: '8px 13px', borderRadius: 99, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-text-muted)', cursor: 'pointer' }}
+                style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 500, minHeight: 44, border: 0, padding: '8px 13px', borderRadius: 99, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-text-muted)', cursor: 'pointer' }}
               >
                 {s}
               </button>
@@ -157,19 +160,19 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
                 color: m.role === 'user' ? 'var(--ayna-cta-text)' : 'var(--ayna-text)',
                 borderRadius: 14,
                 padding: '10px 13px',
-                fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))',
-                lineHeight: 1.5,
+                fontWeight: 400, fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
+                lineHeight: 1.45,
                 whiteSpace: 'pre-wrap',
               }}
             >
               {m.role === 'assistant' ? renderMarkdownLite(m.text) : m.text}
             </div>
           ))}
-          {sending && <div style={{ alignSelf: 'flex-start', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>Ayna is thinking…</div>}
+          {sending && <div style={{ alignSelf: 'flex-start', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>Ayna is thinking…</div>}
         </div>
       )}
 
-      {error && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', lineHeight: 1.5 }}>{error}</div>}
+      {error && <div style={{ fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', lineHeight: 1.5 }}>{error}</div>}
 
       <form onSubmit={(e) => { e.preventDefault(); ask(input); }} style={{ display: 'flex', gap: 8 }}>
         <input
@@ -190,8 +193,8 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
             background: 'var(--ayna-cta-bg)',
             color: 'var(--ayna-cta-text)',
             fontFamily: "var(--ayna-font-ui)",
-            fontWeight: 600,
-            fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))',
+            fontWeight: 500,
+            fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
             cursor: 'pointer',
             opacity: sending || !input.trim() || session === undefined ? 0.5 : 1,
           }}
@@ -226,6 +229,8 @@ export default function ProductDetailScreen({
   matchOpts,
   isOmitted = false,
   onToggleOmit,
+  // "ayna" in Works with opens You > Health data.
+  onOpenHealthData = null,
 }) {
   // Live community reviews: the average and count come from these rows, so
   // an edited or deleted review changes them on the next read.
@@ -238,6 +243,7 @@ export default function ProductDetailScreen({
   // instead of closing straight through to whatever screen sits underneath.
   const [showWhyMatch, setShowWhyMatch] = useState(false);
   const [photo, setPhoto] = useState(0);
+  const [zoomOpen, setZoomOpen] = useState(false);
 
   // Reset per-product UI state on product switch, this screen can receive
   // a new `product` prop without unmounting (MobileApp doesn't key it).
@@ -249,6 +255,7 @@ export default function ProductDetailScreen({
     setSeenProductId(product?.id);
     setPartnerOpen(false);
     setPhoto(0);
+    setZoomOpen(false);
   }
 
   // Bottom of the page, same as the website: close alternatives in a
@@ -275,7 +282,7 @@ export default function ProductDetailScreen({
 
   if (!product) {
     return (
-      <div style={{ padding: 40, textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
+      <div style={{ padding: 40, textAlign: 'center', color: 'var(--ayna-text-muted)', fontWeight: 400, lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))' }}>
         No product selected.
       </div>
     );
@@ -345,6 +352,7 @@ export default function ProductDetailScreen({
     } catch { /* clipboard unavailable, nothing more we can do */ }
   };
 
+  const works = worksWith(product);
   const tone = toneFor(product);
   const shownName = displayName(product);
   const perUnit = perUnitLabel(product);
@@ -353,8 +361,8 @@ export default function ProductDetailScreen({
   const hasDisplayPrice = shownPrice.main !== 'Price at retailer';
 
   return (
-    <div className="ayna-fresh-product-detail ay-pdp" style={{ flex: 1, minWidth: 0, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--ayna-bg)', color: 'var(--ayna-text)' }}>
-      <div key={product.id} style={{ flex: 1, overflowY: 'auto', animation: 'ay-page .25s ease-out', paddingBottom: 104 }}>
+    <div id="ay-pdp" className="ayna-fresh-product-detail ay-pdp" style={{ flex: 1, minWidth: 0, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--ayna-bg)', color: 'var(--ayna-text)' }}>
+      <div key={product.id} className="ay-pdp-scroll" style={{ flex: 1, overflowY: 'auto', animation: 'ay-page .25s ease-out' }}>
         <div className="ay-pdp-top">
           <button type="button" className="ay-pdp-round" onClick={onBack} aria-label="Back to products">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
@@ -378,6 +386,11 @@ export default function ProductDetailScreen({
             }}
           >
             <ProductImage key={shownImage} product={product} src={shownImage} alt={name} allowBrandLogo={product?.type === 'digital'} />
+            {images.length > 0 && (
+              <button type="button" className="ay-pdp-zoom-open" aria-label={`View ${name} photo full screen`} onClick={() => setZoomOpen(true)}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m20 20-4.2-4.2M11 8.5v5M8.5 11h5" /></svg>
+              </button>
+            )}
           </div>
         </div>
         {images.length > 1 && <div className="ay-pdp-thumbs"><GalleryThumbs images={images} index={photo} onSelect={setPhoto} name={name} /></div>}
@@ -396,6 +409,7 @@ export default function ProductDetailScreen({
           </div>}
           {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && quizAnswers && <button type="button" className="ay-pdp-fitnote" onClick={openWhyMatch}>{matchDetails.matchStatus === 'excluded' ? (exclusions[0] || 'Not a fit right now') : 'No clear match'} <span aria-hidden="true">→</span></button>}
           {matchDetails.matchStatus === 'no-profile' && <button type="button" className="ayna-figma-guest-match" onClick={onStartQuiz}>Get matched</button>}
+          {onToggleOmit && <div className="ay-pdp-omit"><button type="button" onClick={onToggleOmit} aria-pressed={isOmitted}>{isOmitted ? 'Undo “Not for me”' : 'Not for me'}</button>{isOmitted && <small>Hidden from your matches.</small>}</div>}
           {glance?.alert && <SafetyFlag />}
           {retailers.length > 0 && (
             <div className="ay-retailers">
@@ -424,6 +438,7 @@ export default function ProductDetailScreen({
             onXref={openProductByName}
             extras={{ match: <button type="button" className="ay-psec-action" onClick={openWhyMatch}>See the full breakdown</button> }}
             extraNav={[{ id: 'ask', label: 'Ask ayna' }, ...(related.compare.length ? [{ id: 'compare', label: 'Compare' }] : [])]}
+            worksWith={works.items.length ? { ...works, onOpenAyna: onOpenHealthData } : null}
           />
 
           <section className="ay-pdp-askcard" id="ay-sec-ask" tabIndex={-1} aria-labelledby="ay-pdp-ask-h">
@@ -444,7 +459,6 @@ export default function ProductDetailScreen({
             />
           )}
 
-          {onToggleOmit && <div className="ay-pdp-omit"><button type="button" onClick={onToggleOmit} aria-pressed={isOmitted}>{isOmitted ? 'Undo “Not for me”' : 'Not for me'}</button>{isOmitted && <small>Hidden from your matches.</small>}</div>}
         </div>
 
         {related.more.length > 0 && <section className="ayna-cabinet-collection ay-pdp-related" aria-labelledby="ay-pdp-related-more">
@@ -466,8 +480,8 @@ export default function ProductDetailScreen({
         </section>}
 
         {reads.length > 0 && (
-          <div style={{ padding: '22px var(--ay-gutter, 20px) 34px' }}>
-            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', marginBottom: 10 }}>Reads</div>
+          <div className="ay-pdp-reads">
+            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', marginBottom: 12 }}>Reads</div>
             {reads.map((r) => (
               <div
                 key={r.id || r.title}
@@ -484,14 +498,15 @@ export default function ProductDetailScreen({
                   cursor: r.onClick ? 'pointer' : 'default',
                 }}
               >
-                <div style={{ flex: 1, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.4, fontWeight: 500 }}>{r.title}</div>
-                {r.mins && <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', whiteSpace: 'nowrap' }}>{r.mins}</div>}
+                <div style={{ flex: 1, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', lineHeight: 1.45, fontWeight: 400 }}>{r.title}</div>
+                {r.mins && <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', whiteSpace: 'nowrap' }}>{r.mins}</div>}
               </div>
             ))}
           </div>
         )}
         <LegalFooter />
       </div>
+      {zoomOpen && images.length > 0 && <ImageZoomViewer images={images} startIndex={Math.min(photo, images.length - 1)} name={name} onClose={() => setZoomOpen(false)} />}
 
       <div className="ayna-product-purchase-bar ay-pdp-bar" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '12px 20px max(20px, env(safe-area-inset-bottom))', background: 'var(--ayna-surface)', borderTop: '1px solid var(--ayna-border)', display: 'flex', gap: 8, alignItems: 'center' }}>
         <button
@@ -522,7 +537,7 @@ export default function ProductDetailScreen({
             cursor: 'pointer',
             fontFamily: "var(--ayna-font-ui)",
             fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
-            fontWeight: 600,
+            fontWeight: 500,
             background: isInEcosystem ? 'var(--ayna-chip-bg)' : 'var(--ayna-surface)',
             color: 'var(--ayna-heading)',
             border: '1px solid ' + (isInEcosystem ? 'var(--ayna-accent-dark)' : 'var(--ayna-border)'),
@@ -546,7 +561,7 @@ export default function ProductDetailScreen({
               padding: '15px 0',
               fontFamily: "var(--ayna-font-ui)",
               fontWeight: 600,
-              fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))',
+              fontSize: 'calc(17px * var(--ayna-text-scale, 1))',
               boxShadow: '0 14px 26px -14px rgba(36,42,82,.7)',
               textDecoration: 'none',
             }}
@@ -564,7 +579,7 @@ export default function ProductDetailScreen({
               padding: '15px 0',
               fontFamily: "var(--ayna-font-ui)",
               fontWeight: 600,
-              fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))',
+              fontSize: 'calc(17px * var(--ayna-text-scale, 1))',
             }}
           >
             <span className="ayna-seller-unavailable">No shop link</span>

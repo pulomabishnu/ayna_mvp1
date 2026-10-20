@@ -228,7 +228,7 @@ function ProductTile({ product, aspectRatio = 1, radius = 10, badge, showHeart }
         )}
         {badge && (
           <span style={{
-            font: "500 9px 'DM Sans', monospace",
+            font: "500 var(--ay-fs-caption) var(--ay-sans)",
             letterSpacing: '0.08em',
             background: 'rgba(255,255,255,0.9)',
             padding: '5px 9px',
@@ -259,7 +259,7 @@ function ShopGrid({ items, onOpenProduct }) {
         >
           <ProductTile product={product} badge={badge} />
           <div style={{
-            font: "500 9.5px 'DM Sans', monospace",
+            font: "500 var(--ay-fs-caption) var(--ay-sans)",
             letterSpacing: '0.1em',
             color: '#C0761F',
             marginTop: '12px',
@@ -267,13 +267,13 @@ function ShopGrid({ items, onOpenProduct }) {
             {label}
           </div>
           <div style={{
-            font: "400 16px/1.3 'Playfair Display', serif",
+            font: "600 var(--ay-fs-card)/1.3 var(--ay-sans)",
             marginTop: '4px',
             color: '#171429',
           }}>
             {product.name}
           </div>
-          <div style={{ fontSize: '12.5px', color: '#6f6880', marginTop: '3px' }}>
+          <div style={{ fontSize: 12.5, color: '#6f6880', marginTop: '3px' }}>
             {product.price}
           </div>
         </button>
@@ -468,7 +468,7 @@ function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommend
               )}
             </h1>
             <p style={{
-              fontSize: '16px',
+              fontSize: 16,
               lineHeight: 1.55,
               color: 'rgba(244,240,250,0.78)',
               maxWidth: '420px',
@@ -492,7 +492,7 @@ function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommend
 
           <button type="button" className="ayna-landing-ecocard" onClick={onViewEcosystem}>
             <div style={{
-              font: "500 10px 'DM Sans', monospace",
+              font: "500 var(--ay-fs-caption) var(--ay-sans)",
               letterSpacing: '0.1em',
               color: 'rgba(244,240,250,0.6)',
             }}>
@@ -513,8 +513,8 @@ function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommend
                     borderBottom: i === areas.length - 1 ? 'none' : '1px solid rgba(244,240,250,0.14)',
                   }}
                 >
-                  <span style={{ font: "400 15px 'Playfair Display', serif" }}>{a.label}</span>
-                  <span style={{ fontSize: '11.5px', color: '#F0A84B' }}>
+                  <span style={{ font: "500 var(--ay-fs-secondary) var(--ay-sans)" }}>{a.label}</span>
+                  <span style={{ fontSize: 12.5, color: '#F0A84B' }}>
                     {a.count} {a.count === 1 ? 'pick' : 'picks'}
                   </span>
                 </div>
@@ -648,10 +648,10 @@ function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommend
                   onClick={() => onOpenProduct?.(product)}
                 >
                   <ProductTile product={product} aspectRatio={1.1} badge={badge} />
-                  <div style={{ font: "400 15px/1.3 'Playfair Display', serif", marginTop: '10px', color: '#171429' }}>
+                  <div style={{ font: "500 var(--ay-fs-secondary)/1.3 var(--ay-sans)", marginTop: '10px', color: '#171429' }}>
                     {product.name}
                   </div>
-                  <div style={{ fontSize: '12px', color: '#6f6880', marginTop: '3px' }}>{product.price}</div>
+                  <div style={{ fontSize: 12.5, color: '#6f6880', marginTop: '3px' }}>{product.price}</div>
                 </button>
               );
             })}
@@ -828,7 +828,7 @@ function FirstVisitLanding({ onLogIn, onStartQuiz, onViewDiscovery, onOpenProduc
               <button type="button" className="ayna-landing-filter-toggle" onClick={() => setShowShopFilters((value) => !value)} aria-expanded={showShopFilters}>
                 Filters
               </button>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '11px', fontSize: '12.5px', color: '#6f6880' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '11px', fontSize: 12.5, color: '#6f6880' }}>
                 Personalize
                 <Toggle
                   on={personalize}

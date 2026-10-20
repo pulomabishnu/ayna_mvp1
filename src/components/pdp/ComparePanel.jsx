@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
+import { useEdgeFade } from './useEdgeFade';
 import { ALL_PRODUCTS } from '../../data/products';
 import { compareRows } from './commerce';
 import { NOT_ON_FILE } from './glance';
@@ -21,6 +22,8 @@ export default function ComparePanel({ product, others = [], onOpen, matchFor = 
   const suggestions = others.filter((o) => !picked.includes(o.id)).slice(0, 5);
   const add = (p) => { setPicked((cur) => [...cur.filter((id) => id !== p.id), p.id].slice(-3)); setQ(''); };
   const remove = (id) => setPicked((cur) => cur.filter((x) => x !== id));
+  const scrollRef = useRef(null);
+  useEdgeFade(scrollRef, [picked.join(','), product?.id]);
   if (!product) return null;
   return (
     <section className="ay-compare" id="ay-sec-compare" tabIndex={-1} aria-labelledby="ay-compare-h">
@@ -39,7 +42,7 @@ export default function ComparePanel({ product, others = [], onOpen, matchFor = 
           <div className="ay-compare__sugg"><span>Related:</span>{suggestions.map((p) => <button key={p.id} type="button" onClick={() => add(p)}>+ {p.name}</button>)}</div>
         )}
       </div>
-      {cols.length < 2 || !rows.length ? <p className="ay-compare__empty">Pick a product above to compare.</p> : <div className="ay-compare__scroll" role="region" aria-labelledby="ay-compare-h" tabIndex={0}>
+      {cols.length < 2 || !rows.length ? <p className="ay-compare__empty">Pick a product above to compare.</p> : <div className="ay-compare__frame"><div className="ay-compare__scroll" ref={scrollRef} role="region" aria-labelledby="ay-compare-h" tabIndex={0}>
         <table>
           <thead>
             <tr>
@@ -63,7 +66,7 @@ export default function ComparePanel({ product, others = [], onOpen, matchFor = 
             ))}
           </tbody>
         </table>
-      </div>}
+      </div></div>}
     </section>
   );
 }

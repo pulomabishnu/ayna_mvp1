@@ -65,7 +65,7 @@ describe('commerce', () => {
     // product that still states a plain price.
     const p = { ...byId('p-cora-organic-pads'), price: '$10 for 32' };
     const rows = compareRows([p, ...similarProducts(p)]);
-    expect(rows.find((r) => r.label === 'Price').values[0]).toBe('$10 for 32');
+    expect(rows.find((r) => r.label === 'Price').values[0]).toBe('$10');
     rows.forEach((r) => expect(r.values.every((v) => v === NOT_ON_FILE)).toBe(false));
   });
 

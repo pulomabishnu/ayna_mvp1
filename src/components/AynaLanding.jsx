@@ -362,10 +362,10 @@ function FilterPanel({ f, set, productTypes, ecosystem = false, onClear }) {
         <span>ayna</span>
         <select value={f.ayna} onChange={(e) => set('ayna', e.target.value)}>
           <option value="all">Any</option>
-          {ecosystem && <option value="best-match">Best Match</option>}
-          <option value="clinician">Clinician Backed</option>
-          <option value="community">Community Favorite</option>
-          {ecosystem && <option value="ecosystem">In My Ecosystem</option>}
+          {ecosystem && <option value="best-match">Best match</option>}
+          <option value="clinician">Clinician backed</option>
+          <option value="community">Community favorite</option>
+          {ecosystem && <option value="ecosystem">In my ecosystem</option>}
         </select>
       </label>
       <label>
@@ -373,10 +373,10 @@ function FilterPanel({ f, set, productTypes, ecosystem = false, onClear }) {
         <select value={f.preference} onChange={(e) => set('preference', e.target.value)}>
           <option value="all">Any</option>
           <option value="organic">Organic</option>
-          <option value="fragrance-free">Fragrance Free</option>
-          <option value="sensitive-skin">Sensitive Skin</option>
+          <option value="fragrance-free">Fragrance free</option>
+          <option value="sensitive-skin">Sensitive skin</option>
           <option value="vegan">Vegan</option>
-          <option value="cruelty-free">Cruelty Free</option>
+          <option value="cruelty-free">Cruelty free</option>
           <option value="reusable">Reusable</option>
         </select>
       </label>
@@ -386,8 +386,8 @@ function FilterPanel({ f, set, productTypes, ecosystem = false, onClear }) {
           <option value="all">Any</option>
           <option value="reusable">Reusable</option>
           <option value="recyclable">Recyclable</option>
-          <option value="low-waste">Low Waste</option>
-          <option value="packaging">Sustainable Packaging</option>
+          <option value="low-waste">Low waste</option>
+          <option value="packaging">Sustainable packaging</option>
         </select>
       </label>
       <label>
@@ -412,12 +412,12 @@ function FilterPanel({ f, set, productTypes, ecosystem = false, onClear }) {
         <span>Eligibility</span>
         <select value={f.eligibility} onChange={(e) => set('eligibility', e.target.value)}>
           <option value="all">Any</option>
-          <option value="fsa-hsa">FSA/HSA Eligible</option>
-          <option value="fsa">FSA Eligible</option>
-          <option value="hsa">HSA Eligible</option>
+          <option value="fsa-hsa">FSA/HSA eligible</option>
+          <option value="fsa">FSA eligible</option>
+          <option value="hsa">HSA eligible</option>
         </select>
       </label>
-      <button type="button" onClick={onClear}>Clear</button>
+      <button type="button" onClick={onClear}>Clear filters</button>
     </div>
   );
 }
@@ -519,7 +519,7 @@ function ShopSection({ title, chips, filter, setFilter, filters, setFilters, pro
 /* Logged in                                                           */
 /* ------------------------------------------------------------------ */
 
-function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onViewCommunity, onViewArticles, onViewArticle, onViewAbout, onOpenProduct, initialCategory = null, savedProducts = {}, quizResults = null, healthProfile = null, matchOpts = null }) {
+function WelcomeBack({ heroBanner = null, user, myProducts, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onViewCommunity, onViewArticles, onViewArticle, onViewAbout, onOpenProduct, initialCategory = null, savedProducts = {}, quizResults = null, healthProfile = null, matchOpts = null }) {
   const name = displayNameFromUser(user) || 'there';
   const [filter] = useCategoryParam(initialCategory);
   const personalize = true;
@@ -709,6 +709,7 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
         personal={{ name, ecoCount: picks, hasQuiz: Boolean(quizResults), onOpenEcosystem: onViewEcosystem, dashboard: Boolean(picks > 0 || quizResults), topPicks: showingMatches ? shownProducts : null }}
         personalSlot={(picks > 0 || quizResults) ? slot : null}
         personalTail={(picks > 0 || quizResults) ? tail : null}
+        heroBanner={heroBanner}
       />
     </div>
   );
@@ -718,7 +719,7 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
 /* Logged out                                                          */
 /* ------------------------------------------------------------------ */
 
-function FirstVisitLanding({ onStartQuiz, onViewCommunity, onViewArticles, onViewArticle, onViewAbout, onViewDiscovery, onOpenProduct }) {
+function FirstVisitLanding({ heroBanner = null, onStartQuiz, onViewCommunity, onViewArticles, onViewArticle, onViewAbout, onViewDiscovery, onOpenProduct }) {
   return (
     <div className="mockup-landing mockup-landing--first">
       <LandingV2
@@ -730,6 +731,7 @@ function FirstVisitLanding({ onStartQuiz, onViewCommunity, onViewArticles, onVie
         onViewAbout={onViewAbout}
         onViewCommunity={onViewCommunity}
         onSearch={(q) => onViewDiscovery?.(discoveryTargetFor(q))}
+        heroBanner={heroBanner}
       />
     </div>
   );
@@ -754,6 +756,7 @@ export default function AynaLanding({
   quizResults = null,
   healthProfile = null,
   matchOpts = null,
+  heroBanner = null,
 }) {
   // HI01: hold a skeleton until the session and profile resolve, so a
   // returning user never sees the new-visitor page flash first.
@@ -761,6 +764,7 @@ export default function AynaLanding({
   if (user) {
     return (
       <WelcomeBack
+        heroBanner={heroBanner}
         user={user}
         myProducts={myProducts}
         savedProducts={savedProducts}
@@ -784,6 +788,7 @@ export default function AynaLanding({
 
   return (
     <FirstVisitLanding
+      heroBanner={heroBanner}
       onStartQuiz={onStartQuiz}
       onViewArticles={onViewArticles}
       onViewArticle={onViewArticle}

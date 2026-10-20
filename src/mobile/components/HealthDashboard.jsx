@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 import { SOURCE_NAMES } from '../data/healthConnections.js';
-import { buildDashboard, formatMetric, isFlat, RANGES, trendWord } from '../../health/dashboard.js';
+import { buildDashboard, formatMetric, isFlat, RANGES } from '../../health/dashboard.js';
 import { localToday, useHealthData } from '../hooks/useHealthData.js';
 import HealthChart, { CycleRing, Spark } from './HealthChart.jsx';
+import HealthBento from './HealthBento.jsx';
 import { estimatePhase, PHASE_SOURCES } from '../../health/phase.js';
 import '../screens/profile/health-connections.css';
 
@@ -27,7 +28,6 @@ function loadLayout() {
 }
 function saveLayout(v) { try { localStorage.setItem(LAYOUT_KEY, JSON.stringify(v)); } catch { /* storage blocked: layout lasts this visit */ } }
 
-const perDay = (metric) => (metric === 'sleep_minutes' ? 'A night, this week' : metric === 'temp_deviation_c' ? 'This week' : 'A day, this week');
 const SUGGEST_LABEL = { 'sleep.trouble': 'sleep', 'cycle.irregular': 'irregular cycles', 'energy.fatigue': 'low energy' };
 
 /** This week against her usual, with both numbers, so the change matches what it compares. */
@@ -73,7 +73,7 @@ function CycleHero({ cycle, estimate }) {
 }
 
 
-export default function HealthDashboard({ authUser, selectedNeedIds = [], onConnect, onAddGoal, onOpenRoutine, onSignIn }) {
+export default function HealthDashboard({ authUser, userName = '', selectedNeedIds = [], onConnect, onAddGoal, onOpenRoutine, onSignIn }) {
   const health = useHealthData(authUser?.id || null, selectedNeedIds);
   const [range, setRange] = useState('month');
   const [added, setAdded] = useState({});
@@ -130,56 +130,7 @@ export default function HealthDashboard({ authUser, selectedNeedIds = [], onConn
   const area = areas.some((a) => a.id === view) ? view : 'summary';
   const save = (next) => { setLayout(next); saveLayout(next); };
   const togglePin = (id) => save({ ...layout, pins: pinned.includes(id) ? pinned.filter((x) => x !== id) : [...pinned, id], main: mainId });
-  const makeMain = (id) => save({ pins: pinned.includes(id) ? pinned : [id, ...pinned], main: id });
   const itemById = Object.fromEntries(items.map((i) => [i.id, i]));
-  const phase = week.cycle ? estimatePhase(week.cycle) : null;
-
-  const mainCard = () => {
-    const it = itemById[mainId];
-    if (!it) return null;
-    if (it.id === 'cycle') return <CycleHero cycle={week.cycle} estimate={estimate} />;
-    const c = it.chart;
-    return (
-      <article className="ay-hd-card is-main">
-        <header>
-          <span className="ay-hd-tile-label">{c.label}</span>
-          <p className="ay-hd-main-num">{formatMetric(c.metric, c.week ?? c.avg)}</p>
-          <small className="ay-hd-per">{c.week != null ? perDay(c.metric) : `Average, last ${days} days`}</small>
-          <Delta metric={c.metric} delta={c.delta} />
-        </header>
-        <HealthChart chart={c} />
-      </article>
-    );
-  };
-
-  const tile = (id) => {
-    const it = itemById[id];
-    if (!it) return null;
-    if (id === 'cycle') {
-      return (
-        <li key="cycle" className="is-cycle-tile">
-          <button type="button" onClick={() => setView('cycle')}>
-            <span className="ay-hd-tile-label">Cycle</span>
-            <b>Day {week.cycle.cycleDay}</b>
-            <span className="ay-hd-word">{phase ? (phase.id === 'ovulation' ? 'Ovulation window' : phase.name.replace(' phase', '')) : 'Cycle'}</span>
-          </button>
-        </li>
-      );
-    }
-    const c = it.chart;
-    const word = trendWord(c.metric, c.delta);
-    return (
-      <li key={id} className={`is-${word.toLowerCase()}`}>
-        <button type="button" onClick={() => setView(it.group)}>
-          <span className="ay-hd-tile-label">{c.label}</span>
-          <b>{c.metric === 'steps' ? Math.round(c.week ?? c.avg).toLocaleString('en-US') : formatMetric(c.metric, c.week ?? c.avg)}</b>
-          <small className="ay-hd-per">{c.week != null ? perDay(c.metric) : 'Average'}</small>
-          <Spark points={c.points.slice(-14)} />
-          <span className="ay-hd-word">{word}</span>
-        </button>
-      </li>
-    );
-  };
 
   return (
     <div className="ay-hd">
@@ -189,28 +140,34 @@ export default function HealthDashboard({ authUser, selectedNeedIds = [], onConn
 
       {area === 'summary' && (
         <>
-          {mainCard()}
-          <section aria-labelledby="ay-hd-pinned">
+          {!editing && (
+            <HealthBento
+              name={(userName || authUser?.user_metadata?.first_name || authUser?.user_metadata?.name || '').split(' ')[0]}
+              week={week}
+              cycle={week.cycle?.cycleDay ? week.cycle : null}
+              estimate={estimate}
+              pinnedCharts={pinned.filter((id) => id !== 'cycle').map((id) => itemById[id]?.chart && { ...itemById[id].chart, group: itemById[id].group }).filter(Boolean)}
+              ready={ready}
+              today={today}
+              onOpenArea={setView}
+            />
+          )}
+          <section aria-labelledby="ay-hd-pinned" className="ay-hd-pinsec">
             <div className="ay-hd-pinhead">
-              <h2 id="ay-hd-pinned" className="ay-hd-h2">Pinned</h2>
+              <h2 id="ay-hd-pinned" className="ay-hd-h2">{editing ? 'Choose what shows first' : 'Customize'}</h2>
               <button type="button" className="ay-hd-edit" aria-expanded={editing} onClick={() => setEditing((v) => !v)}>{editing ? 'Done' : 'Edit'}</button>
             </div>
-            {editing ? (
+            {editing && (
               <ul className="ay-hd-editlist" aria-label="Choose what shows here">
                 {items.map((it) => (
                   <li key={it.id}>
                     <span>{it.label}</span>
-                    <button type="button" className={`ay-hd-mainpick${mainId === it.id ? ' is-on' : ''}`} aria-pressed={mainId === it.id} onClick={() => makeMain(it.id)}>{mainId === it.id ? 'Main' : 'Make main'}</button>
-                    <button type="button" role="switch" aria-checked={pinned.includes(it.id)} aria-label={`Pin ${it.label}`} className="ay-hc-switch" onClick={() => togglePin(it.id)}><span /></button>
+                    <button type="button" role="switch" aria-checked={pinned.includes(it.id)} aria-label={`Show ${it.label}`} className="ay-hc-switch" onClick={() => togglePin(it.id)}><span /></button>
                   </li>
                 ))}
               </ul>
-            ) : (
-              pinned.filter((id) => id !== mainId).length > 0
-                ? <ul className="ay-hd-tiles">{pinned.filter((id) => id !== mainId).map((id) => tile(id))}</ul>
-                : <p className="ay-hd-small">Nothing pinned yet. Tap Edit to pin what you want to see first.</p>
             )}
-            {!editing && <p className="ay-hd-small">Last 7 days compared with the 4 weeks before. Tap a tile for its charts.</p>}
+            {!editing && <p className="ay-hd-small">Last 7 days next to your usual. Tap a card for its charts.</p>}
           </section>
 
           {ready.length > 0 && (

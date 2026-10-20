@@ -14,7 +14,7 @@ export default function Disclaimer({ compact = false, style = {}, showSources = 
 
   if (compact) {
     return (
-      <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', lineHeight: 1.4, margin: 0, ...style }}>
+      <p style={{ fontSize: 12.5, color: 'var(--color-text-muted)', lineHeight: 1.4, margin: 0, ...style }}>
         {text}{privacyLink}
         {showSources && BASELINE_SOURCES && <><br /><span style={{ marginTop: '0.35rem', display: 'inline-block' }}>{BASELINE_SOURCES}</span></>}
       </p>
@@ -29,10 +29,10 @@ export default function Disclaimer({ compact = false, style = {}, showSources = 
       marginTop: '1.5rem',
       ...style
     }}>
-      <p style={{ fontSize: '0.8rem', color: 'var(--color-text-main)', lineHeight: 1.5, margin: 0, fontWeight: 500 }}>
+      <p style={{ fontSize: 12.5, color: 'var(--color-text-main)', lineHeight: 1.5, margin: 0, fontWeight: 500 }}>
         <strong>Disclaimer:</strong> {text}{privacyLink}
       </p>
-      {showSources && BASELINE_SOURCES && <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', lineHeight: 1.45, margin: '0.75rem 0 0', fontWeight: 500 }}>{BASELINE_SOURCES}</p>}
+      {showSources && BASELINE_SOURCES && <p style={{ fontSize: 12.5, color: 'var(--color-text-muted)', lineHeight: 1.45, margin: '0.75rem 0 0', fontWeight: 500 }}>{BASELINE_SOURCES}</p>}
     </div>
   );
 }

@@ -2,10 +2,11 @@ import RotatingProducts from '../components/RotatingProducts.jsx';
 import SlideToStart from '../components/SlideToStart.jsx';
 import { PARTNER_BRANDS } from '../../utils/partnerBrands';
 import '../landing.css';
+import FinishQuizCard from '../../components/FinishQuizCard.jsx';
 
 // The feature reel (what the app does) on the website's hero parts: stamp,
 // serif headline with the pink italic word, brand ticker. No photographs.
-export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAccount, onAboutAyna }) {
+export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAccount, onAboutAyna, quizDraft = null, onResumeQuiz, onStartOverQuiz }) {
   const names = PARTNER_BRANDS.map((b) => b.name);
   return <main className="ay-land">
     <section className="ay-land-hero" aria-labelledby="ay-land-title">
@@ -31,8 +32,10 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
         {[0, 1].map((k) => <ul key={k}>{names.map((n) => <li key={n}>{n}<span>{'★'}</span></li>)}</ul>)}
       </div>
     </div>
-    <section className="ay-land-actions" aria-label="Get started">
-      <SlideToStart onComplete={onStartQuiz} />
+    <section className="ay-land-actions" aria-label="Start ayna">
+      {quizDraft && onResumeQuiz
+        ? <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} className="ay-land-finish" />
+        : <SlideToStart onComplete={onStartQuiz} />}
       <div className="ay-land-links"><button type="button" onClick={onBrowse}>Just browsing</button><button type="button" onClick={onAboutAyna}>About us</button></div>
     </section>
   </main>;

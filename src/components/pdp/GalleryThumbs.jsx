@@ -1,11 +1,12 @@
 import React from 'react';
 import './pdp.css';
+import { productImageAlt } from '../../utils/seoMeta.js';
 
 /**
  * Thumbnail strip under the main product photo (website + app). Cover is
  * always first. Renders nothing for a single photo.
  */
-export default function GalleryThumbs({ images = [], index = 0, onSelect, name = 'Product' }) {
+export default function GalleryThumbs({ images = [], index = 0, onSelect, name = 'Product', product = null }) {
   if (images.length < 2) return null;
   return (
     <ul className="ay-thumbs" aria-label={`${name} photos`}>
@@ -18,7 +19,7 @@ export default function GalleryThumbs({ images = [], index = 0, onSelect, name =
             aria-current={i === index ? 'true' : undefined}
             onClick={() => onSelect(i)}
           >
-            <img src={src} alt="" loading="lazy" onError={(e) => { e.currentTarget.closest('li').style.display = 'none'; }} />
+            <img src={src} alt={product ? productImageAlt(product, i, images.length) : ''} loading="lazy" onError={(e) => { e.currentTarget.closest('li').style.display = 'none'; }} />
           </button>
         </li>
       ))}

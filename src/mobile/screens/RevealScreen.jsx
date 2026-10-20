@@ -190,7 +190,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
           </div>
         </>}
       </div>
-      {!last && <div className="ayw-hint" aria-hidden="true">Tap to continue</div>}
+      {!last && <div className="ayw-hint" aria-hidden="true">Tap for the next card</div>}
       <div className="ayw-toast" role="status" aria-live="polite">{shareState && <span>{shareState}</span>}</div>
     </main>
   );

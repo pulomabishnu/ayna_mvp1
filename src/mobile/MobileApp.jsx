@@ -31,6 +31,8 @@ import { fetchNotificationPreferences } from './utils/notificationPreferencesApi
 import { ECOSYSTEM_AREAS as AREA_LABELS } from './data/ecosystemAreas.js';
 import { getNextArticle } from './utils/nextArticle.js';
 import { INTAKE_DRAFT_KEY, getIntakeSteps, isStepAnswered, reconstructIntakeFromSnapshot } from './data/intakeModel.js';
+import { clearIntakeDraft, readDraftProgress } from './data/quizDraftProgress.js';
+import FinishQuizCard from '../components/FinishQuizCard.jsx';
 import MobileTabBar from './components/MobileTabBar.jsx';
 import AskAynaModal from './components/AskAynaModal.jsx';
 import ProfileFlow, { AboutAynaScreen } from './screens/profile/ProfileFlow.jsx';
@@ -245,6 +247,21 @@ export default function MobileApp() {
   const authReturnScreenRef = useRef('landing');
   const authResumeRef = useRef(null);
   const [communitySeed, setCommunitySeed] = useState(null);
+  // Shared playlist invite (?join-playlist=<code>): keep the code through
+  // sign-in, drop it from the address bar, and open Community, which joins.
+  useEffect(() => {
+    let code = null;
+    try { code = communityStore.parsePlaylistInviteCode(new URLSearchParams(window.location.search).get('join-playlist')); } catch { code = null; }
+    if (!code) return;
+    try { sessionStorage.setItem('ayna_pending_playlist_invite', code); } catch { /* storage blocked: join still runs this session */ }
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('join-playlist');
+      window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
+    } catch { /* leave the URL */ }
+    setCommunitySeed({ token: Date.now() });
+    setScreen('community');
+  }, []);
   const swipeStart = useRef(null);
   const handleMainTouchStart = (event) => {
     if (overlay || !['browse', 'eco'].includes(screen) || event.touches.length !== 1) return;
@@ -358,6 +375,8 @@ export default function MobileApp() {
   // place (via the same draft the quiz already resumes from), and back from
   // the sign-up screen that follows Wrapped lands on Wrapped's last slide.
   const [resumeQuizDraft, setResumeQuizDraft] = useState(false);
+  // "Make my matches more personal" opens the quiz at her next optional question.
+  const [intakeAtOptional, setIntakeAtOptional] = useState(false);
   const [revealAtEnd, setRevealAtEnd] = useState(false);
   const lastIntakeModeRef = useRef('new');
   // "Get matched" on a product page: after the quiz, land back on that product with her match.
@@ -381,6 +400,9 @@ export default function MobileApp() {
   useEffect(() => {
     if (screen !== 'quiz' && resumeQuizDraft) Promise.resolve().then(() => setResumeQuizDraft(false));
   }, [screen, resumeQuizDraft]);
+  useEffect(() => {
+    if (screen !== 'quiz' && intakeAtOptional) Promise.resolve().then(() => setIntakeAtOptional(false));
+  }, [screen, intakeAtOptional]);
   const resumeQuizAtLastStep = () => {
     // From the quiz-end steps, go back into the answers she just gave (not yet saved).
     const fromPending = Boolean(session.pendingQuiz?.answers);
@@ -648,6 +670,7 @@ export default function MobileApp() {
   // "Add to ecosystem" from a product detail overlay, was previously wired
   // to nothing (ProductDetailScreen called onAddToEcosystem, but MobileApp
   // never passed it), so the button did nothing at all.
+  const ecoNudgeShownRef = useRef(false);
   const handleAddToEcosystem = (product) => {
     if (!product?.id) return;
 
@@ -680,7 +703,14 @@ export default function MobileApp() {
         ? prev.myProducts
         : [...prev.myProducts, ecosystemProduct],
       hasEcosystem: true,
+      // Signed out: kept on this phone (same as guest saves) and flagged so
+      // the account load on sign-in uploads it instead of replacing it.
+      ...(authUser ? {} : { pendingIntakeSync: true }),
     }));
+    if (!authUser && !ecoNudgeShownRef.current) {
+      ecoNudgeShownRef.current = true;
+      setSaveNudge('eco');
+    }
 
     const supabase = getSupabaseClient();
     if (authUser && supabase) {
@@ -810,7 +840,31 @@ export default function MobileApp() {
     return { playlist, added, missed: productIds.length - added };
   };
 
+  // An unfinished quiz (draft saved, no finished answers yet): where she
+  // stands, for the "Finish your quiz" card. Drafts live on this device.
+  const quizDraft = hasIntakeDraft && !lastQuizAnswers?.fullHealthIntake && screen !== 'quiz' ? readDraftProgress() : null;
+  const resumeQuiz = () => {
+    setOverlay(null);
+    setIntakeMode(hasEcosystem ? 'add' : 'new');
+    setIntakeAtOptional(false);
+    setEditingHealthProfile(false);
+    setResumeQuizDraft(true);
+    setScreen('quiz');
+  };
+  const startQuizOver = () => {
+    clearIntakeDraft();
+    setHasIntakeDraft(false);
+    setOverlay(null);
+    setIntakeMode(hasEcosystem ? 'add' : 'new');
+    setIntakeAtOptional(false);
+    setEditingHealthProfile(false);
+    setResumeQuizDraft(false);
+    setScreen('quiz');
+  };
   const nav = {
+    quizDraft,
+    onResumeQuiz: resumeQuiz,
+    onStartOverQuiz: startQuizOver,
     // Night mode is a persistent user preference (Preferences screen), it
     // stays on everywhere until turned off there, so navigation must never
     // force it back to light.
@@ -850,7 +904,7 @@ export default function MobileApp() {
     onAlreadyHaveAccount: () => openAuth('signin'),
     onAboutAyna: () => setOverlay({ type: 'about' }),
     onOpenWhyMatch: (p) => setOverlay({ type: 'why-match', item: p }),
-    onAskAyna: () => authUser ? setAskAynaOpen(true) : requestAuth('Ask Ayna', () => { setScreen(screen); setAskAynaOpen(true); }),
+    onAskAyna: () => authUser ? setAskAynaOpen(true) : requestAuth('Ask ayna', () => { setScreen(screen); setAskAynaOpen(true); }),
     onBack: () => {
       if (['building', 'reveal', 'connect'].includes(screen)) {
         resumeQuizAtLastStep();
@@ -859,7 +913,8 @@ export default function MobileApp() {
       if (screen === 'plan') { setScreen('connect'); return; }
       setScreen(screen === 'quiz' ? (hasEcosystem ? 'eco' : 'ecointro') : screen === 'ecointro' ? 'landing' : screen === 'eco' ? 'browse' : hasEcosystem ? 'eco' : 'landing');
     },
-    onRetake: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
+    onRetake: () => { setIntakeMode('add'); setIntakeAtOptional(false); setEditingHealthProfile(true); setScreen('quiz'); },
+    onPersonalize: () => { setIntakeMode('add'); setIntakeAtOptional(true); setEditingHealthProfile(true); setScreen('quiz'); },
     onRequestEcosystemReset: () => setResetDialogOpen(true),
     onUpdateHealth: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
     onEditProfile: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
@@ -868,6 +923,7 @@ export default function MobileApp() {
       updateSession({ pendingQuiz: { answers: quizAnswers, mode: intakeMode } });
       setPlanAddedGoals({});
       setResumeQuizDraft(false);
+      setIntakeAtOptional(false);
       setIntakeMode('new');
       setScreen(authUser && health.connected.length ? 'plan' : 'connect');
     },
@@ -987,7 +1043,7 @@ export default function MobileApp() {
         : ['eco', 'ecointro'].includes(screen) ? 'home' : null;
 
   if (authLoading || (authUser?.id && !DEV_HEALTH_DEMO && loadedAccountId !== authUser.id)) {
-    return <div className="ayna-mobile" data-theme={resolvedTheme} style={{ display: 'grid', placeItems: 'center', minHeight: '100dvh', background: 'var(--ayna-bg)' }} role="status" aria-live="polite"><div style={{ textAlign: 'center', color: 'var(--ayna-heading)' }}><div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 34 }}>ayna</div><p style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 14 }}>Opening your Ecosystem…</p></div></div>;
+    return <div className="ayna-mobile" data-theme={resolvedTheme} style={{ display: 'grid', placeItems: 'center', minHeight: '100dvh', background: 'var(--ayna-bg)' }} role="status" aria-live="polite"><div style={{ textAlign: 'center', color: 'var(--ayna-heading)' }}><div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 34 }}>ayna</div><p style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 400, lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))' }}>Opening your Ecosystem…</p></div></div>;
   }
 
   return (
@@ -1000,6 +1056,7 @@ export default function MobileApp() {
         seedProductId={communitySeed?.productId}
         seedPlaylistId={communitySeed?.playlistId}
         seedPostId={communitySeed?.postId}
+        seedUsername={communitySeed?.username}
         onGoBrowse={() => { setBrowseQuery(''); setScreen('browse'); }}
         initialSearch={screen === 'browse' ? browseQuery : ''}
         onGoLibrary={() => setScreen('library')}
@@ -1025,8 +1082,9 @@ export default function MobileApp() {
         hasIntakeDraft={hasIntakeDraft && !hasEcosystem}
         onDraftChange={setHasIntakeDraft}
         initialSnapshot={editingHealthProfile && !resumeQuizDraft ? lastQuizAnswers?.fullHealthIntake || null : null}
-        startAtBeginning={intakeMode === 'add' && !resumeQuizDraft}
-        introEnabled={!resumeQuizDraft}
+        startAtBeginning={intakeMode === 'add' && !resumeQuizDraft && !intakeAtOptional && editingHealthProfile}
+        startAtOptional={intakeAtOptional && !resumeQuizDraft}
+        introEnabled={!resumeQuizDraft && !intakeAtOptional}
         revealStartAtEnd={revealAtEnd}
         ecosystemNotice={ecosystemNotice}
         name={resolvedName}
@@ -1062,7 +1120,7 @@ export default function MobileApp() {
       />}
       {saveNudge && !authUser && (
         <div className="ay-save-nudge" role="status">
-          <span>Saved on this phone. Sign in to keep your saves on every device.</span>
+          <span>{saveNudge === 'eco' ? 'Added to your Ecosystem on this phone. Sign in to keep it on every device.' : 'Saved on this phone. Sign in to keep your saves on every device.'}</span>
           <button type="button" onClick={() => { setSaveNudge(false); openAuth('signin'); }}>Sign in</button>
           <button type="button" className="ay-save-nudge-x" aria-label="Dismiss" onClick={() => setSaveNudge(false)}>×</button>
         </div>
@@ -1074,7 +1132,8 @@ export default function MobileApp() {
             <button type="button" className="ayna-profile-auth-close" aria-label="Close" onClick={() => { setOverlay(null); setAuthPrompt(null); authResumeRef.current = null; }}>×</button>
             <h2 id="ayna-profile-auth-title">{authPrompt ? `Sign in for ${authPrompt.feature}` : 'Sign in to ayna'}</h2>
             <button type="button" className="ayna-profile-auth-primary" onClick={() => openAuth('signin', !!authPrompt)}>Sign in</button>
-            <button type="button" className="ayna-profile-auth-new" onClick={startEcosystemFlow}>{hasEcosystem ? <>New here? <b>Save your Ecosystem to an account</b></> : <>Don’t have an account? <b>Build your Ecosystem</b></>}</button>
+            {!authPrompt && quizDraft && <FinishQuizCard progress={quizDraft} onContinue={resumeQuiz} onStartOver={startQuizOver} />}
+            {!(quizDraft && !authPrompt) && <button type="button" className="ayna-profile-auth-new" onClick={startEcosystemFlow}>{hasEcosystem ? <>New here? <b>Save your Ecosystem to an account</b></> : <>Don’t have an account? <b>Build your Ecosystem</b></>}</button>}
           </section>
         </div>
       )}
@@ -1090,6 +1149,7 @@ export default function MobileApp() {
             onAddToEcosystem={() => handleAddToEcosystem(overlay.item)}
             isOmitted={!!omittedProducts[overlay.item?.id]}
             onToggleOmit={() => handleToggleOmit(overlay.item)}
+            onOpenHealthData={() => { if (authUser) setOverlay({ type: 'profile', screen: 'healthData' }); else requestAuth('health data', () => setOverlay({ type: 'profile', screen: 'healthData' })); }}
             matchOpts={matchOpts}
             onOpenReview={(postId) => { setCommunitySeed({ postId, token: Date.now() }); setOverlay(null); setScreen('community'); }}
             onCommunityAction={(kind) => {
@@ -1107,7 +1167,7 @@ export default function MobileApp() {
             }}
             onStartQuiz={() => { returnProductRef.current = overlay.item || null; setOverlay(null); setIntakeMode(hasEcosystem ? 'add' : 'new'); setEditingHealthProfile(hasEcosystem); setScreen('quiz'); }}
             authUser={authUser}
-            onRequireAuth={(feature) => requestAuth(feature || 'Ask Ayna', () => { setScreen(screen); setOverlay({ type: 'product', item: overlay.item }); })}
+            onRequireAuth={(feature) => requestAuth(feature || 'Ask ayna', () => { setScreen(screen); setOverlay({ type: 'product', item: overlay.item }); })}
             quizAnswers={authUser ? effectiveQuizAnswers : null}
             ecosystemProducts={myProducts}
             onOpenProduct={(item) => setOverlay({ type: 'product', item })}
@@ -1174,9 +1234,16 @@ export default function MobileApp() {
           textSizeIndex={textSizeIndex}
           onTextSizeChange={setTextSizeIndex}
           onEditProfile={() => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); }}
+          quizDraft={quizDraft}
+          onResumeQuiz={resumeQuiz}
+          onStartOverQuiz={startQuizOver}
           onAddGoal={handleAddGoal}
           onOpenRoutine={() => { setEcoTab('dashboard'); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
           onOpenMonthlyCheckin={() => setScreen('checkin')}
+          readProgress={readProgress}
+          onOpenProduct={(product) => setOverlay({ type: 'product', item: product })}
+          onOpenArticle={(article) => { setReadArticleIds((ids) => ids.includes(article.id) ? ids : [...ids, article.id]); setOverlay({ type: 'article', item: article }); }}
+          onOpenCommunity={(seed) => { setOverlay(null); setCommunitySeed({ ...seed, token: Date.now() }); setScreen('community'); }}
         />
         </AskContext.Provider>
       )}
@@ -1191,7 +1258,7 @@ export default function MobileApp() {
         name={resolvedName}
         onNavigateToDiscovery={() => { setAskAynaOpen(false); setScreen('browse'); }}
         onViewRecommendations={() => { setAskAynaOpen(false); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
-        onRequireAuth={(feature) => requestAuth(feature || 'Ask Ayna', () => { setScreen(screen); setAskAynaOpen(true); })}
+        onRequireAuth={(feature) => requestAuth(feature || 'Ask ayna', () => { setScreen(screen); setAskAynaOpen(true); })}
       />
     </div>
   );

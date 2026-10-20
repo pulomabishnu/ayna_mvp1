@@ -4,6 +4,8 @@ import { useEscapeToClose } from '../utils/useEscapeToClose';
 import { CONSENT_VERSION, stashPendingConsent, stashPendingSignupMeta } from '../utils/pendingConsent.js';
 import { pendingReferralMeta } from '../utils/freeProductCampaign.js';
 import { HEARD_ABOUT_OPTIONS, HEARD_ABOUT_OTHER_MAX, heardAboutMetadata } from '../utils/heardAbout.js';
+import { clearError, errorSummary, firstErrorKey, revealField, warnHaptic } from '../utils/formErrors.js';
+import InlineError from './InlineError.jsx';
 import '../styles/audit-qya.css';
 import './AuthGate.css';
 
@@ -15,7 +17,7 @@ function Field({ id, label, error, children }) {
   return <div className="ay-auth-field">
     <label htmlFor={id}>{label}</label>
     {children}
-    {error && <p id={`${id}-err`} className="ay-auth-err" role="alert">{error}</p>}
+    <InlineError id={`${id}-err`}>{error}</InlineError>
   </div>;
 }
 
@@ -30,6 +32,33 @@ const CONSENT_ITEMS = [
   'When I intentionally use an AI-powered feature, limited relevant wellness context may be processed by an external AI provider to generate my requested response. ayna minimizes the context sent, protects it in transit, and does not sell it.',
   'ayna provides wellness information, not medical advice or a substitute for care from a qualified healthcare provider. I confirm that I am at least 18 years old.',
 ];
+
+// What to do when each box above is left unticked, one plain line per box
+// (the legal wording above is unchanged).
+const CONSENT_ERRORS = [
+  'Tick this box to confirm what you share is self-reported, not a clinical record.',
+  'Tick this box to agree to how AI features may process your wellness context.',
+  'Tick this box to confirm ayna isn’t medical advice and that you’re 18 or older.',
+];
+const CONSENT_KEYS = CONSENT_ITEMS.map((_, i) => `consent${i}`);
+// Screen order, so the first miss is the one scrolled to and focused.
+const ERROR_ORDER = ['firstName', 'email', 'password', 'heardAbout', ...CONSENT_KEYS];
+const FIELD_IDS = { firstName: 'auth-firstName', email: 'auth-email', password: 'auth-password', heardAbout: 'auth-heard', ...Object.fromEntries(CONSENT_KEYS.map((k, i) => [k, `auth-consent-${i}`])) };
+
+/** Missing consent boxes as field errors keyed consent0..2. */
+function consentErrors(checked) {
+  const out = {};
+  CONSENT_KEYS.forEach((k, i) => { if (!checked[i]) out[k] = CONSENT_ERRORS[i]; });
+  return out;
+}
+
+/** Scrolls to and focuses the first field in `errors` (inside `root`). */
+function revealFirstError(errors, root) {
+  const first = firstErrorKey(errors, ERROR_ORDER);
+  if (!first) return;
+  warnHaptic();
+  window.requestAnimationFrame(() => revealField((root || document).querySelector(`#${FIELD_IDS[first]}`)));
+}
 
 const AGE_REQUIREMENT_VERSION = '18plus-v1';
 
@@ -77,6 +106,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   const [appleLoading, setAppleLoading] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
+  const [summaryAction, setSummaryAction] = useState('create your account');
   const [successMsg, setSuccessMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [checked, setChecked] = useState([false, false, false]);
@@ -119,13 +149,12 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   const [phoneCode, setPhoneCode] = useState('');
 
   const supabase = getSupabaseClient();
-  const allConsented = checked.every(Boolean);
   const isSignup = allowSignup && mode === 'signup';
   // Why we are asking, when the user came from a specific door (Saved heart, My Ecosystem).
   const CONTEXT_COPY = {
     saved: { title: 'Looking for your favorites?', line: 'Sign in to see the products you saved, all in one place.' },
     ecosystem: { title: 'Your ecosystem lives here', line: 'Sign in to see your shelves, or build one with a short quiz.' },
-    feature: { title: feature ? `An account unlocks ${feature}` : 'This needs an account', line: 'Take the short quiz to start, or sign in if you already have an account.' },
+    feature: { title: feature ? `Sign in to use ${feature}` : 'This needs an account', line: 'Take the short quiz to start, or sign in if you already have an account.' },
     login: { title: 'Sign in', line: 'Welcome to ayna. New here? Start with the quiz.' },
   };
   const ctxCopy = !isSignup ? CONTEXT_COPY[context] : null;
@@ -167,7 +196,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   // Health-data consent stays explicit: one checkbox per statement.
   const toggleCheck = (i) => {
     setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v)));
-    setFieldErrors((prev) => (prev.consent ? { ...prev, consent: '' } : prev));
+    setFieldErrors((prev) => clearError(prev, CONSENT_KEYS[i]));
   };
   const clearFieldError = (key) => setFieldErrors((prev) => (prev[key] ? { ...prev, [key]: '' } : prev));
   const fieldProps = (key) => ({
@@ -178,12 +207,14 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
     const next = {};
     if (isSignup && !firstName.trim()) next.firstName = 'Add your first name.';
     if (!email.trim()) next.email = 'Add your email.';
-    else if (!EMAIL_RE.test(email.trim())) next.email = 'That email doesn’t look right.';
-    if (!password) next.password = 'Add your password.';
-    else if (isSignup && password.length < 8) next.password = 'Use at least 8 characters.';
-    if (isSignup && !isHeardAboutAnswered(heardAbout)) next.heardAbout = 'Tell us where you heard about ayna.';
-    if (isSignup && !allConsented) next.consent = 'Please tick all three to continue.';
+    else if (!EMAIL_RE.test(email.trim())) next.email = 'Check your email. It needs an @ and a domain, like you@email.com.';
+    if (!password) next.password = isSignup ? 'Add a password.' : 'Add your password.';
+    else if (isSignup && password.length < 8) next.password = 'Use at least 8 characters for your password.';
+    if (isSignup && !isHeardAboutAnswered(heardAbout)) next.heardAbout = 'Choose where you heard about ayna.';
+    if (isSignup) Object.assign(next, consentErrors(checked));
     setFieldErrors(next);
+    setSummaryAction(isSignup ? 'create your account' : 'sign in');
+    revealFirstError(next, cardRef.current);
     return Object.values(next).every((v) => !v);
   };
 
@@ -193,10 +224,13 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   const signupPrereqsOk = () => {
     if (!isSignup) return true;
     const next = {};
-    if (!isHeardAboutAnswered(heardAbout)) next.heardAbout = 'Tell us where you heard about ayna.';
-    if (!allConsented) next.consent = 'Please tick all three to continue.';
+    if (!isHeardAboutAnswered(heardAbout)) next.heardAbout = 'Choose where you heard about ayna.';
+    Object.assign(next, consentErrors(checked));
+    // Only what this path needs, so stale email/password messages don't linger.
+    setFieldErrors(next);
+    setSummaryAction('continue');
     if (Object.keys(next).length) {
-      setFieldErrors((prev) => ({ ...prev, ...next }));
+      revealFirstError(next, cardRef.current);
       return false;
     }
     return true;
@@ -270,7 +304,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         onAuthenticated?.(data.user || data.session.user, data.session);
       }
     } catch (err) {
-      setError(err.message || 'Something went wrong. Please try again.');
+      setError(err.message || 'We couldn’t sign you in. Check your email and password, then try again.');
     } finally {
       setLoading(false);
     }
@@ -507,7 +541,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
     justifyContent: 'center',
     overflowY: 'auto',
     // Ink at 60% over everything, header included (audit AU04).
-    background: 'rgba(29, 26, 43, 0.6)',
+    background: 'rgba(62, 39, 35, 0.6)',
     zIndex: 1700,
     padding: '96px 16px 24px',
   } : embedded ? {
@@ -573,7 +607,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
           // exactly like a hang rather than a config gap.
           // (Public copy: no env var names on a live page.)
           <p style={styles.configWarning}>
-            Sign-in isn't configured on this device: the connection is unavailable. Please try again later.
+            Sign-in isn't available on this device right now because ayna can't reach its sign-in service. Check your connection and reopen the app.
           </p>
         )}
 
@@ -622,8 +656,8 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
               onClick={(e) => e.stopPropagation()}
               style={{ width: '100%', maxWidth: '420px', background: '#fff', borderRadius: '20px', padding: '2rem', boxShadow: '0 18px 50px rgba(28, 25, 23, 0.18)', textAlign: 'center' }}
             >
-              <div style={{ color: '#f97316', fontWeight: 700, fontSize: '0.85rem', letterSpacing: '0.04em', marginBottom: '0.75rem' }}>ayna</div>
-              <h2 id="phone-coming-soon-title" style={{ margin: '0 0 0.75rem', fontSize: '1.4rem', color: '#1c1917' }}>
+              <div style={{ color: '#f97316', fontWeight: 600, fontSize: 14, letterSpacing: '0.04em', marginBottom: '0.75rem' }}>ayna</div>
+              <h2 id="phone-coming-soon-title" style={{ margin: '0 0 0.75rem', fontSize: 'var(--ay-fs-section)', color: '#1c1917' }}>
                 Phone sign-up is coming soon
               </h2>
               <p style={{ margin: '0 0 1.5rem', color: '#57534e', lineHeight: 1.6 }}>
@@ -632,7 +666,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
               <button
                 type="button"
                 onClick={() => setShowPhoneNotice(false)}
-                style={{ width: '100%', border: 'none', borderRadius: '12px', padding: '0.9rem 1rem', background: '#f97316', color: '#fff', fontWeight: 700, fontSize: '1rem', cursor: 'pointer' }}
+                style={{ width: '100%', border: 'none', borderRadius: '12px', padding: '0.9rem 1rem', background: '#f97316', color: '#fff', fontWeight: 600, fontSize: 16, cursor: 'pointer' }}
               >
                 Continue with email
               </button>
@@ -681,7 +715,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
             <div className="ay-auth-field">
               <label htmlFor="auth-reset-email">Email</label>
               <input id="auth-reset-email" type="email" autoComplete="email" value={email} onChange={(e) => { setEmail(e.target.value); clearFieldError('email'); }} {...fieldProps('email')} />
-              {fieldErrors.email && <p id="auth-email-err" className="ay-auth-err" role="alert">{fieldErrors.email}</p>}
+              <InlineError id="auth-email-err">{fieldErrors.email}</InlineError>
             </div>
             {error && <p className="ay-auth-err" role="alert">{error}</p>}
             {successMsg && <p className="ay-auth-ok" role="status">{successMsg}</p>}
@@ -707,8 +741,8 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               required
-              disabled={!allConsented || phoneStep === 'code'}
-              style={{ ...styles.input, ...((!allConsented || phoneStep === 'code') ? styles.inputDisabled : {}) }}
+              disabled={phoneStep === 'code'}
+              style={{ ...styles.input, ...(phoneStep === 'code' ? styles.inputDisabled : {}) }}
               autoComplete="given-name"
               maxLength={50}
             />
@@ -722,8 +756,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 required
-                disabled={!allConsented}
-                style={{ ...styles.input, ...(!allConsented ? styles.inputDisabled : {}) }}
+                style={styles.input}
                 autoComplete="tel"
               />
             ) : (
@@ -840,7 +873,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
                 type="button"
                 className="ay-auth-show"
                 onClick={() => setShowPassword(v => !v)}
-                style={{ position: 'absolute', right: '0.65rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', fontSize: '0.85rem', padding: '0.25rem', lineHeight: 1 }}
+                style={{ position: 'absolute', right: '0.65rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', fontSize: 14, padding: '0.25rem', lineHeight: 1 }}
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? 'Hide' : 'Show'}
@@ -876,7 +909,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
                 name="heardAbout"
                 value={heardAbout}
                 onChange={(e) => { setHeardAbout(e.target.value); clearFieldError('heardAbout'); }}
-                className={heardAbout ? '' : 'is-empty'}
+                className={`${heardAbout ? '' : 'is-empty'}${fieldErrors.heardAbout ? ' is-invalid' : ''}`}
                 aria-invalid={fieldErrors.heardAbout ? true : undefined}
                 aria-describedby={fieldErrors.heardAbout ? 'auth-heard-err' : undefined}
               >
@@ -887,31 +920,39 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
                 <input id="auth-heard-other" name="heardAboutOther" type="text" aria-label="Where you heard about us" placeholder="Tell us where" maxLength={HEARD_ABOUT_OTHER_MAX}
                   value={heardOther} onChange={(e) => setHeardOther(e.target.value)} style={styles.input} autoComplete="off" />
               )}
-              {fieldErrors.heardAbout && <p id="auth-heard-err" className="ay-auth-err" role="alert">{fieldErrors.heardAbout}</p>}
+              <InlineError id="auth-heard-err">{fieldErrors.heardAbout}</InlineError>
             </div>
           )}
           {isSignup && (
-            <fieldset className="ay-auth-consent" aria-describedby={fieldErrors.consent ? 'auth-consent-err' : undefined}>
+            <fieldset className="ay-auth-consent">
               <legend>How we handle your data</legend>
-              {CONSENT_ITEMS.map((text, i) => (
-                <label key={text} className="ay-auth-check">
-                  <input
-                    type="checkbox"
-                    name={`consent-${i + 1}`}
-                    checked={checked[i]}
-                    onChange={() => toggleCheck(i)}
-                    aria-invalid={fieldErrors.consent && !checked[i] ? true : undefined}
-                  />
-                  <span>{text}</span>
-                </label>
-              ))}
-              {fieldErrors.consent && <p id="auth-consent-err" className="ay-auth-err" role="alert">{fieldErrors.consent}</p>}
+              {CONSENT_ITEMS.map((text, i) => {
+                const key = CONSENT_KEYS[i];
+                return (
+                  <div key={text} className="ay-auth-check-item">
+                    <label className={`ay-auth-check${fieldErrors[key] ? ' ay-check-invalid' : ''}`}>
+                      <input
+                        id={FIELD_IDS[key]}
+                        type="checkbox"
+                        name={`consent-${i + 1}`}
+                        checked={checked[i]}
+                        onChange={() => toggleCheck(i)}
+                        aria-invalid={fieldErrors[key] ? true : undefined}
+                        aria-describedby={fieldErrors[key] ? `${FIELD_IDS[key]}-err` : undefined}
+                      />
+                      <span>{text}</span>
+                    </label>
+                    <InlineError id={`${FIELD_IDS[key]}-err`}>{fieldErrors[key]}</InlineError>
+                  </div>
+                );
+              })}
             </fieldset>
           )}
             </>
           )}
 
           {error && <p style={styles.error}>{error}</p>}
+          <InlineError className="ay-inline-err--summary">{errorSummary(fieldErrors, CONSENT_KEYS, summaryAction)}</InlineError>
           {successMsg && <p style={styles.success}>{successMsg}</p>}
           {needsConfirmation && authMethod === 'email' && emailSignupStep !== 'code' && (
             <p style={{ ...styles.error, color: 'var(--color-text-muted)' }}>
@@ -1008,11 +1049,21 @@ export function ConsentGate({ onAgreed, onDecline }) {
   const [heardOther, setHeardOther] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
-  const allChecked = checked.every(Boolean);
+  const [fieldErrors, setFieldErrors] = useState({});
+  const gateRef = useRef(null);
+  const gateId = (key) => `consent-gate-${key}`;
 
   const submit = async () => {
-    if (!isHeardAboutAnswered(heardAbout)) { setError('Tell us where you heard about ayna.'); return; }
-    if (!allChecked) { setError('Please tick all three to continue.'); return; }
+    const next = consentErrors(checked);
+    if (!isHeardAboutAnswered(heardAbout)) next.heardAbout = 'Choose where you heard about ayna.';
+    setFieldErrors(next);
+    const first = firstErrorKey(next, ['heardAbout', ...CONSENT_KEYS]);
+    if (first) {
+      setError('');
+      warnHaptic();
+      window.requestAnimationFrame(() => revealField(gateRef.current?.querySelector(`#${gateId(first)}`)));
+      return;
+    }
     const supabase = getSupabaseClient();
     if (!supabase) { setError('Sign-in is unavailable right now. Please try again later.'); return; }
     setSaving(true);
@@ -1042,16 +1093,20 @@ export function ConsentGate({ onAgreed, onDecline }) {
       aria-labelledby="ay-consent-gate-title"
       style={{
         position: 'fixed', inset: 0, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', overflowY: 'auto',
-        background: 'rgba(29, 26, 43, 0.6)', zIndex: 1710, padding: '96px 16px 24px',
+        background: 'rgba(62, 39, 35, 0.6)', zIndex: 1710, padding: '96px 16px 24px',
       }}
     >
-      <div className="ay-auth-card" style={styles.card}>
+      <div className="ay-auth-card" style={styles.card} ref={gateRef}>
         <div className="ay-auth-logo" style={styles.logo}>ayna</div>
         <p id="ay-consent-gate-title" className="ay-auth-tagline" style={styles.tagline}>One more step. Please confirm the following to finish setting up your account.</p>
         <div style={styles.form}>
           <div className="ay-auth-field ay-auth-heard">
-            <label htmlFor="consent-gate-heard">Where did you hear about us?</label>
-            <select id="consent-gate-heard" name="heardAbout" value={heardAbout} onChange={(e) => { setHeardAbout(e.target.value); setError(''); }} className={heardAbout ? '' : 'is-empty'}>
+            <label htmlFor="consent-gate-heardAbout">Where did you hear about us?</label>
+            <select id="consent-gate-heardAbout" name="heardAbout" value={heardAbout}
+              onChange={(e) => { setHeardAbout(e.target.value); setError(''); setFieldErrors((prev) => clearError(prev, 'heardAbout')); }}
+              className={`${heardAbout ? '' : 'is-empty'}${fieldErrors.heardAbout ? ' is-invalid' : ''}`}
+              aria-invalid={fieldErrors.heardAbout ? true : undefined}
+              aria-describedby={fieldErrors.heardAbout ? 'consent-gate-heardAbout-err' : undefined}>
               <option value="">Choose one</option>
               {HEARD_ABOUT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
             </select>
@@ -1059,28 +1114,39 @@ export function ConsentGate({ onAgreed, onDecline }) {
               <input name="heardAboutOther" type="text" aria-label="Where you heard about us" placeholder="Tell us where" maxLength={HEARD_ABOUT_OTHER_MAX}
                 value={heardOther} onChange={(e) => setHeardOther(e.target.value)} style={styles.input} autoComplete="off" />
             )}
+            <InlineError id="consent-gate-heardAbout-err">{fieldErrors.heardAbout}</InlineError>
           </div>
           <fieldset className="ay-auth-consent">
             <legend>How we handle your data</legend>
-            {CONSENT_ITEMS.map((text, i) => (
-              <label key={text} className="ay-auth-check">
-                <input
-                  type="checkbox"
-                  name={`consent-gate-${i + 1}`}
-                  checked={checked[i]}
-                  onChange={() => { setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v))); setError(''); }}
-                />
-                <span>{text}</span>
-              </label>
-            ))}
+            {CONSENT_ITEMS.map((text, i) => {
+              const key = CONSENT_KEYS[i];
+              return (
+                <div key={text} className="ay-auth-check-item">
+                  <label className={`ay-auth-check${fieldErrors[key] ? ' ay-check-invalid' : ''}`}>
+                    <input
+                      id={gateId(key)}
+                      type="checkbox"
+                      name={`consent-gate-${i + 1}`}
+                      checked={checked[i]}
+                      aria-invalid={fieldErrors[key] ? true : undefined}
+                      aria-describedby={fieldErrors[key] ? `${gateId(key)}-err` : undefined}
+                      onChange={() => { setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v))); setError(''); setFieldErrors((prev) => clearError(prev, key)); }}
+                    />
+                    <span>{text}</span>
+                  </label>
+                  <InlineError id={`${gateId(key)}-err`}>{fieldErrors[key]}</InlineError>
+                </div>
+              );
+            })}
           </fieldset>
           {error && <p className="ay-auth-err" role="alert">{error}</p>}
+          <InlineError className="ay-inline-err--summary">{errorSummary(fieldErrors, CONSENT_KEYS, 'finish setting up your account')}</InlineError>
           <button
             type="button"
             className="ay-auth-submit"
             onClick={submit}
             disabled={saving}
-            style={{ ...styles.primaryBtn, ...(!allChecked || saving ? styles.primaryBtnDisabled : {}) }}
+            style={{ ...styles.primaryBtn, ...(saving ? styles.primaryBtnDisabled : {}) }}
           >
             {saving ? 'Saving…' : 'Agree and continue'}
           </button>
@@ -1148,7 +1214,7 @@ const styles = {
     background: 'rgba(255,255,255,0.7)',
     border: '1px solid #E7E0D4',
     borderRadius: '50%',
-    fontSize: '1.35rem',
+    fontSize: 'var(--ay-fs-section)',
     color: 'var(--color-text-main)',
     cursor: 'pointer',
     lineHeight: 1,
@@ -1156,8 +1222,8 @@ const styles = {
     zIndex: 2,
   },
   logo: {
-    fontFamily: 'var(--font-serif)',
-    fontSize: '1.9rem',
+    fontFamily: 'var(--ay-serif)',
+    fontSize: 'var(--ay-fs-title)',
     fontWeight: '500',
     color: '#281B3D',
     textAlign: 'center',
@@ -1165,17 +1231,17 @@ const styles = {
     fontStyle: 'italic',
   },
   tagline: {
-    fontSize: '0.875rem',
+    fontSize: 14,
     color: '#6E6275',
     textAlign: 'center',
     margin: '-0.15rem 1.5rem 0.25rem',
     lineHeight: 1.45,
   },
   configWarning: {
-    fontSize: '0.78rem',
-    color: '#92400E',
-    background: '#FEF3C7',
-    border: '1px solid #FDE68A',
+    fontSize: 12.5,
+    color: '#3e2723',
+    background: 'rgba(247, 186, 221, 0.45)',
+    border: '1px solid #f7badd',
     borderRadius: 'var(--radius-sm)',
     padding: '0.6rem 0.75rem',
     lineHeight: 1.45,
@@ -1192,7 +1258,7 @@ const styles = {
   toggleBtn: {
     flex: 1,
     padding: '0.55rem 0',
-    fontSize: '0.85rem',
+    fontSize: 14,
     fontWeight: '500',
     border: 'none',
     borderRadius: 'var(--radius-pill)',
@@ -1200,7 +1266,7 @@ const styles = {
     color: 'var(--color-text-muted)',
     cursor: 'pointer',
     transition: 'var(--transition-fast)',
-    fontFamily: 'var(--font-body)',
+    fontFamily: 'var(--ay-sans)',
   },
   toggleBtnActive: {
     background: '#FFFFFF',
@@ -1216,13 +1282,13 @@ const styles = {
   input: {
     width: '100%',
     padding: '0.78rem 0.9rem',
-    fontSize: '0.9rem',
+    fontSize: 14,
     border: '1.4px solid #E7E0D4',
     borderRadius: '12px',
     background: '#FFFFFF',
     color: '#2C2333',
     outline: 'none',
-    fontFamily: 'var(--font-body)',
+    fontFamily: 'var(--ay-sans)',
     transition: 'border-color var(--transition-fast)',
   },
   inputDisabled: {
@@ -1248,10 +1314,10 @@ const styles = {
     border: 'none',
     padding: '0.15rem 0',
     color: '#281B3D',
-    fontSize: '0.8rem',
+    fontSize: 12.5,
     fontWeight: '600',
     cursor: 'pointer',
-    fontFamily: 'var(--font-body)',
+    fontFamily: 'var(--ay-sans)',
   },
 
   consentDetails: {
@@ -1276,12 +1342,12 @@ const styles = {
     cursor: 'pointer',
   },
   consentText: {
-    fontSize: '0.74rem',
+    fontSize: 12.5,
     color: 'var(--color-text-muted)',
     lineHeight: 1.4,
   },
   legalNotice: {
-    fontSize: '0.72rem',
+    fontSize: 12.5,
     color: 'var(--color-text-muted)',
     lineHeight: 1.45,
     margin: '-0.1rem 0 0',
@@ -1293,7 +1359,7 @@ const styles = {
   },
   primaryBtn: {
     padding: '0.82rem',
-    fontSize: '0.9rem',
+    fontSize: 14,
     fontWeight: '600',
     background: '#E4B25E',
     color: '#1E1430',
@@ -1302,20 +1368,20 @@ const styles = {
     cursor: 'pointer',
     transition: 'background var(--transition-fast)',
     marginTop: '0.25rem',
-    fontFamily: 'var(--font-body)',
+    fontFamily: 'var(--ay-sans)',
   },
   primaryBtnDisabled: {
     opacity: 0.45,
     cursor: 'not-allowed',
   },
   error: {
-    fontSize: '0.8rem',
+    fontSize: 12.5,
     color: '#B91C1C',
     margin: 0,
     lineHeight: 1.4,
   },
   success: {
-    fontSize: '0.8rem',
+    fontSize: 12.5,
     color: '#15803D',
     margin: 0,
     lineHeight: 1.4,
@@ -1332,7 +1398,7 @@ const styles = {
     display: 'block',
   },
   dividerText: {
-    fontSize: '0.75rem',
+    fontSize: 12.5,
     color: 'var(--color-text-muted)',
   },
   oauthRow: {
@@ -1345,7 +1411,7 @@ const styles = {
     justifyContent: 'center',
     gap: '0.4rem',
     padding: '0.7rem 0.35rem',
-    fontSize: '0.76rem',
+    fontSize: 12.5,
     fontWeight: '500',
     background: '#FFFFFF',
     color: '#2C2333',
@@ -1353,7 +1419,7 @@ const styles = {
     borderRadius: '12px',
     cursor: 'pointer',
     transition: 'background var(--transition-fast)',
-    fontFamily: 'var(--font-body)',
+    fontFamily: 'var(--ay-sans)',
     textAlign: 'center',
     // No forced nowrap: at the narrowest phone widths the card itself is
     // narrower than 2*(button content), so keeping nowrap here overflowed
@@ -1367,7 +1433,7 @@ const styles = {
     cursor: 'not-allowed',
   },
   fine: {
-    fontSize: '13px',
+    fontSize: 12.5,
     color: 'var(--color-text-muted)',
     textAlign: 'center',
     lineHeight: 1.45,
@@ -1377,11 +1443,11 @@ const styles = {
     background: 'none',
     border: 'none',
     color: 'var(--color-text-muted)',
-    fontSize: '0.78rem',
+    fontSize: 12.5,
     cursor: 'pointer',
     textDecoration: 'underline',
     textAlign: 'center',
     padding: '0.25rem',
-    fontFamily: 'var(--font-body)',
+    fontFamily: 'var(--ay-sans)',
   },
 };

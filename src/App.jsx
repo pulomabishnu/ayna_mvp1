@@ -26,11 +26,12 @@ const lazyView = (loader, fallback) => {
   };
 };
 const WebIntake = lazyView(() => import('./components/WebIntake'));
-const WebCommunity = lazyView(() => import('./components/WebCommunity'), <ViewSkeleton label="Loading Community" cards={3} />);
+const WebCommunity = lazyView(() => import('./components/WebCommunity'), <ViewSkeleton label="Loading community" cards={3} />);
 // Full-screen overlay after the quiz: keep the page behind it visible rather
 // than flashing a page skeleton under the overlay while the chunk loads.
 const WebWrapped = lazyView(() => import('./components/WebWrapped'), null);
 const DeleteAccountPage = lazyView(() => import('./components/DeleteAccountPage'));
+const WebHealth = lazyView(() => import('./components/WebHealth'));
 const AdminReviewsPage = lazyView(() => import('./components/AdminReviewsPage'));
 const AdminResearchPage = lazyView(() => import('./components/AdminResearchPage'));
 const FreeProductPage = lazyView(() => import('./components/freeProduct/FreeProductPage'));
@@ -54,11 +55,15 @@ const Articles = React.lazy(() => import('./components/Articles'));
 // Internal, read-only product passport audit (dev, or ?internal=1 opt-in).
 const ProductAudit = React.lazy(() => import('./components/ProductAudit'));
 const CampusResources = React.lazy(() => import('./components/CampusResources'));
+// Public page for a shared Ask ayna answer: /a/<slug>.
+const SharedAnswerPage = React.lazy(() => import('./components/SharedAnswerPage'));
 import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, hasStatedLifeStage, matchEngine, getSelectedNeeds } from './data/products.js';
 import { behaviorFrom } from './utils/matchDisplay';
 import WebHealthData from './components/WebHealthData';
 import { useHealthData } from './mobile/hooks/useHealthData.js';
 import { captureReferralFromUrl } from './utils/badges';
+import { slugFromPath } from './utils/sharedAnswer.js';
+import { readPendingFriend } from './utils/shareAnswerClient.js';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
 const Screenings = lazyView(() => import('./components/Screenings'));
 import { useScrollPosition } from './hooks/useScrollPosition';
@@ -96,7 +101,10 @@ import posthog from 'posthog-js';
 import { identifyAccount } from './utils/analyticsIdentity';
 import { tagInternalUserIfNeeded } from './utils/posthogInternal';
 import { productHref, productRouteKey, parseProductIdFromPath } from './utils/productRoute';
-import { INTAKE_DRAFT_KEY, getIntakeSteps, reconstructIntakeFromSnapshot } from './mobile/data/intakeModel';
+import { productSeoTitle, productSeoDescription } from './utils/seoMeta';
+import { INTAKE_DRAFT_KEY, getIntakeSteps, optionalProgress, reconstructIntakeFromSnapshot } from './mobile/data/intakeModel';
+import { clearIntakeDraft, readDraftProgress } from './mobile/data/quizDraftProgress';
+import FinishQuizCard, { MorePersonalCard } from './components/FinishQuizCard';
 import './styles/flow.css';
 import './styles/web-neon-dark.css';
 import './styles/web-density.css';
@@ -143,7 +151,7 @@ const VIEW_TO_PATH = {
   articles: '/library', screenings: '/screenings', omitted: '/omitted',
   comparison: '/comparison', recalls: '/recalls',
   'doctor-prep': '/appointment-prep', 'profile-edit': '/profile', 'phone-verify': '/text-ayna', tracked: '/tracked',
-  'delete-account': '/delete-account', 'health-data': '/health-data',
+  'delete-account': '/delete-account', 'health-data': '/health-data', health: '/health',
   'privacy-policy': '/privacy-policy',
   'consumer-health-data': '/consumer-health-data',
   'terms-of-use': '/terms-of-use',
@@ -169,20 +177,20 @@ const VIEW_TO_PATH = {
 // Friendly document.title per view'welcome'/'hero' and any view not
 // listed here fall back to the site's base title (see the title effect).
 const VIEW_TITLES = {
-  quiz: 'Get matched', ecosystem: 'My Ecosystem', discovery: 'Shop', you: 'You', community: 'Community',
-  waitlist: 'Partner brands', recommendations: 'Your Recommendations', articles: 'Library', screenings: 'Screenings',
-  omitted: 'Omitted Products', comparison: 'Compare Products', recalls: 'Recalls',
-  'doctor-prep': 'Appointment Prep', 'profile-edit': 'Edit Profile',
-  'phone-verify': 'Verify Phone', tracked: 'Tracked Products', 'delete-account': 'Delete Account', 'health-data': 'Health data',
+  quiz: 'Get matched', ecosystem: 'My ecosystem', discovery: 'Shop', you: 'You', community: 'Community',
+  waitlist: 'Partner brands', recommendations: 'Your recommendations', articles: 'Library', screenings: 'Screenings',
+  omitted: 'Omitted products', comparison: 'Compare products', recalls: 'Recalls',
+  'doctor-prep': 'Appointment prep', 'profile-edit': 'Edit profile',
+  'phone-verify': 'Verify phone', tracked: 'Tracked products', 'delete-account': 'Delete account', 'health-data': 'Health data', health: 'Your health',
   'privacy-policy': 'Privacy Policy', 'consumer-health-data': 'Consumer Health Data Privacy Notice', 'terms-of-use': 'Terms of Use',
-  'how-we-make-money': 'How We Make Money', 'how-it-works': 'How It Works',
-  about: 'About', contact: 'Contact', 'not-found': 'Page Not Found',
-  'campus-resources': 'Campus Resources',
-  'admin-reviews': 'All Reviews',
+  'how-we-make-money': 'How we make money', 'how-it-works': 'How it works',
+  about: 'About', contact: 'Contact', 'not-found': 'Page not found',
+  'campus-resources': 'Campus resources',
+  'admin-reviews': 'All reviews',
   'admin-research': 'Product research',
-  'free-product': 'Your Free Product',
-  'free-product-reward': 'Your Free Product',
-  'admin-campaign': 'Free Product Campaign',
+  'free-product': 'Your free product',
+  'free-product-reward': 'Your free product',
+  'admin-campaign': 'Free product campaign',
 };
 
 const DEFAULT_DESCRIPTION = "Personalized women's health product recommendations, matched to your body and backed by real research, doctor input, and other women's experiences.";
@@ -257,6 +265,7 @@ function communityPostFromPath(path) {
   return m ? m[1] : null;
 }
 function viewFromSubPath(path) {
+  if (slugFromPath(path)) return 'shared-answer';
   if (articleIdFromPath(path)) return 'articles';
   if (communityHandleFromPath(path) || communityPostFromPath(path)) return 'community';
   return null;
@@ -439,6 +448,12 @@ function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const openSharedAnswer = useCallback((slug) => {
+    const path = `/a/${slug}`;
+    currentViewRef.current = 'shared-answer';
+    setCurrentViewRaw('shared-answer');
+    if (window.location.pathname !== path) window.history.replaceState({ view: 'shared-answer' }, '', path);
+  }, []);
   const handleBackFromStandalonePage = useCallback(() => {
     if (inAppPushCountRef.current > 0) window.history.back();
     else setCurrentView('welcome', { replace: true });
@@ -576,6 +591,8 @@ function App() {
   const [consentGateOpen, setConsentGateOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authFeature, setAuthFeature] = useState('');
+  // Shared answer page (/a/<slug>): Sign up or Sign in, from its Add friend prompt.
+  const [shareAuthMode, setShareAuthMode] = useState('signup');
   const [pendingAction, setPendingAction] = useState(null);
   // Ref mirrors pendingAction so onAuthStateChange (async callback) can read it synchronously
   const pendingActionRef = useRef(null);
@@ -610,6 +627,9 @@ function App() {
   // Bumped by "Build your ecosystem" in the sign-in modal so the quiz restarts
   // (with its intro) even when the modal opened on top of the quiz itself.
   const [quizRun, setQuizRun] = useState(0);
+  // "Make my matches more personal": the profile editor opens at the first open optional question.
+  const [editAtOptional, setEditAtOptional] = useState(false);
+  useEffect(() => { if (currentView !== 'profile-edit') setEditAtOptional(false); }, [currentView]);
   const [askOpenSignal, setAskOpenSignal] = useState(0);
   const [askPrefill, setAskPrefill] = useState('');
   // Opens Ask ayna, optionally with a question typed in (Shop's empty state).
@@ -764,7 +784,7 @@ function App() {
       'privacy-policy', 'consumer-health-data', 'terms-of-use', 'confirmed', 'auth-callback', 'auth-confirm',
       'welcome', 'hero', 'quiz', 'discovery', 'product', 'waitlist', 'articles', 'you', 'community',
       'how-it-works', 'how-we-make-money', 'campus-resources', 'about', 'contact', 'waitlist', 'not-found', 'ecosystem',
-      'free-product', 'free-product-reward',
+      'free-product', 'free-product-reward', 'health', 'shared-answer',
     ];
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       // A different account (or none) must never reuse the previous account's cached intake.
@@ -1062,6 +1082,10 @@ function App() {
       window.setTimeout(() => {
         document.getElementById('ayna-wishlist')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 400);
+    } else if (pendingAction === 'share-friend') {
+      // Back to the shared answer she was on; the page sends the friend request.
+      const pending = readPendingFriend();
+      if (pending?.slug) openSharedAnswer(pending.slug);
     } else if (pendingAction === 'delete-account') {
       // Returning from the Google re-confirmation redirect the delete-account
       // page kicks off before it lets someone delete a Google-linked account.
@@ -1336,6 +1360,19 @@ function App() {
   const handleStartQuiz = () => setCurrentView('quiz');
   // Redo the quiz from the first question (not a resumed draft).
   const handleRedoQuiz = () => { setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); };
+  // "Finish your quiz": resume the draft at its exact step, or clear it and start at question 1.
+  // Drafts are kept per device (the server only stores finished answers).
+  const handleResumeQuiz = () => { setQuizResume(true); setCurrentView('quiz'); };
+  const handleStartQuizOver = () => { clearIntakeDraft(); handleRedoQuiz(); };
+  const handlePersonalizeQuiz = () => { setEditAtOptional(true); setCurrentView('profile-edit'); };
+  const webQuizDraft = !quizResults && !authLoading && !dataLoading && !['quiz', 'profile-edit'].includes(currentView) ? readDraftProgress({ surface: 'web' }) : null;
+  const finishQuizCard = (compact = false) => (webQuizDraft ? <FinishQuizCard variant="web" compact={compact} progress={webQuizDraft} onContinue={handleResumeQuiz} onStartOver={handleStartQuizOver} /> : null);
+  let webOptionalRemaining = 0;
+  if (quizResults?.fullHealthIntake && !webQuizDraft) {
+    try { webOptionalRemaining = optionalProgress(reconstructIntakeFromSnapshot(quizResults.fullHealthIntake)).remaining; } catch { webOptionalRemaining = 0; }
+  }
+  // One quiz card at a time: an unfinished quiz first, else the optional questions.
+  const ecosystemQuizCard = webQuizDraft ? finishQuizCard() : (user && webOptionalRemaining > 0 ? <MorePersonalCard remaining={webOptionalRemaining} onAnswer={handlePersonalizeQuiz} /> : null);
   // Same reset as the app: clears her Ecosystem, its tracking and her quiz
   // answers after she confirms. Saved products, check-ins and the account stay.
   const handleResetEcosystem = async () => {
@@ -1935,21 +1972,21 @@ function App() {
     const base = "ayna | Personalized Women's Health Product Recommendations";
     if (currentView === 'product') {
       document.title = displayedProduct?.name
-        ? `${displayedProduct.name} | ayna`
-        : (productStillResolving ? 'Loading… | ayna' : 'Product Not Found | ayna');
+        ? productSeoTitle(displayedProduct)
+        : (productStillResolving ? 'Loading… | ayna' : 'Product not found | ayna');
       // A product sets its own description, canonical and share card, so it never
       // inherits the page before it (an article's description used to stick).
       if (displayedProduct?.name) {
-        setCanonical(window.location.pathname);
-        const brandName = String(displayedProduct.brand || '').trim();
-        const summary = String(displayedProduct.summary || '').replace(/\s+/g, ' ').trim();
-        const lead = summary ? (summary.match(/^(.{20,200}?[.!?])(\s|$)/)?.[1] || summary.slice(0, 200)) : '';
-        setMetaDescription(lead ? `${displayedProduct.name}${brandName && !displayedProduct.name.toLowerCase().startsWith(brandName.toLowerCase()) ? ` by ${brandName}` : ''}: ${lead}` : `${displayedProduct.name} on ayna: price, evidence, safety notes and how it fits you.`);
-        setShareCard({ title: `${displayedProduct.name} | ayna`, image: displayedProduct.image });
+        // Same title, description and canonical address the prerendered page has (src/utils/seoMeta.js).
+        setCanonical(productHref(displayedProduct) || window.location.pathname);
+        setMetaDescription(productSeoDescription(displayedProduct));
+        setShareCard({ title: productSeoTitle(displayedProduct), image: displayedProduct.image });
       }
       return;
     }
     setCanonical(window.location.pathname);
+    // The prerendered read's Article JSON-LD only belongs on that read.
+    if (currentView !== 'articles' || !selectedArticleId) document.getElementById('ay-read-jsonld')?.remove();
     const label = VIEW_TITLES[currentView];
     document.title = label ? `${label} | ayna` : base;
     setMetaDescription(VIEW_DESCRIPTIONS[currentView] || DEFAULT_DESCRIPTION);
@@ -1961,7 +1998,7 @@ function App() {
       import('./components/Articles').then((m) => {
         const a = (m.ARTICLES || []).find((x) => x.id === selectedArticleId);
         if (cancelled || !a) return;
-        document.title = `${a.title} | Library | ayna`;
+        document.title = `${a.title} | ayna Library`;
         if (a.teaser) setMetaDescription(a.teaser);
         setShareCard({ title: document.title, image: a.image });
       }).catch(() => {});
@@ -2004,7 +2041,7 @@ function App() {
             role="alert"
             style={{
               background: '#FEF2F2', borderBottom: '1px solid #FECACA',
-              color: '#991B1B', padding: '0.7rem 1rem', fontSize: '0.85rem',
+              color: '#991B1B', padding: '0.7rem 1rem', fontSize: 14,
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
             }}
           >
@@ -2013,7 +2050,7 @@ function App() {
               type="button"
               onClick={() => setSaveError(null)}
               aria-label="Dismiss"
-              style={{ background: 'none', border: 'none', color: '#991B1B', cursor: 'pointer', fontWeight: 700, fontSize: '1rem', lineHeight: 1 }}
+              style={{ background: 'none', border: 'none', color: '#991B1B', cursor: 'pointer', fontWeight: 600, fontSize: 16, lineHeight: 1 }}
             >×</button>
           </div>
         )}
@@ -2090,6 +2127,7 @@ function App() {
               {showAccountMenu && user && (
                 <div className="nav-account-menu" role="menu">
                   <a role="menuitem" href="/you" {...linkProps(() => { setShowAccountMenu(false); setCurrentView('you'); })}>Your profile</a>
+                  <a role="menuitem" href="/health" {...linkProps(() => { setShowAccountMenu(false); setCurrentView('health'); })}>Your health</a>
                   <button type="button" role="menuitem" onClick={() => { setShowAccountMenu(false); handleOpenHealthProfileEditor(); }}>Health profile</button>
                   <a role="menuitem" href="/ecosystem" {...linkProps(() => { setShowAccountMenu(false); handleViewWishlist(); })}>Saved products</a>
                   <a role="menuitem" href="/you" {...linkProps(() => { setShowAccountMenu(false); setCurrentView('you'); window.setTimeout(() => document.getElementById('wyou-account')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 250); })}>Account settings</a>
@@ -2131,6 +2169,7 @@ function App() {
                 ['ecosystem', '/ecosystem', 'My Ecosystem', () => handleViewEcosystem()],
                 ['articles', '/library', 'Library', () => { setSelectedArticleId(null); setCurrentView('articles'); }],
                 ['community', '/community', 'Community', () => setCurrentView('community')],
+                ['health', '/health', 'Your health', () => setCurrentView('health')],
                 ...(user ? [['you', '/you', 'You', () => setCurrentView('you')]] : []),
               ].map(([view, href, label, go]) => (
                 <a key={view} href={href} className={`mobile-drawer-item${(view === 'ecosystem' ? ECOSYSTEM_NAV_VIEWS.includes(currentView) : currentView === view) ? ' is-active' : ''}`} {...linkProps(() => { go(); setMobileMenuOpen(false); })}>
@@ -2178,6 +2217,7 @@ function App() {
             quizResults={quizResults}
             healthProfile={healthProfile}
             matchOpts={matchOpts}
+            heroBanner={finishQuizCard(true)}
           />
         )}
         {guestPreview && !guestPreview.done && !user && (
@@ -2257,10 +2297,12 @@ function App() {
             onSignOut={handleSignOut}
             onDeleteAccount={handleOpenDeleteAccount}
             onOpenHealthData={() => setCurrentView('health-data')}
+            onOpenHealth={() => setCurrentView('health')}
             healthSummary={health.insights.sections.find((sec) => sec.status === 'ready') || null}
             healthConnectedCount={health.connected.length}
             theme={themeMode}
             onThemeChange={setThemeMode}
+            quizSlot={finishQuizCard()}
           />
         )}
         {currentView === 'quiz' && (
@@ -2279,7 +2321,8 @@ function App() {
         {currentView === 'profile-edit' && (
           // Same as the app: editing your profile reopens the quiz with your answers filled in.
           <WebIntake
-            key="profile-edit"
+            key={editAtOptional ? 'profile-edit-optional' : 'profile-edit'}
+            startAtOptional={editAtOptional}
             initialSnapshot={quizResults?.fullHealthIntake || null}
             onComplete={handleHealthProfileEditorSave}
             onBrowseLibrary={handleViewArticles}
@@ -2287,6 +2330,17 @@ function App() {
         )}
         {currentView === 'delete-account' && (
           <DeleteAccountPage onBack={() => setCurrentView('you')} />
+        )}
+        {currentView === 'health' && (
+          <WebHealth
+            user={user}
+            health={health}
+            onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+            onOpenConnections={() => {
+              if (user) { setCurrentView('health-data'); return; }
+              setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true);
+            }}
+          />
         )}
         {currentView === 'health-data' && user && (
           <WebHealthData
@@ -2429,7 +2483,10 @@ function App() {
         {currentView === 'confirmed' && (
           <EmailConfirmed onAuthenticated={(user) => {
             setUser(user);
-            setCurrentView('welcome');
+            // Signed up from a shared answer's Add friend: go back there to send it.
+            const pending = readPendingFriend();
+            if (pending?.slug) openSharedAnswer(pending.slug);
+            else setCurrentView('welcome');
           }} />
         )}
         {currentView === 'ecosystem' && dataLoading && Object.keys(myProducts).length === 0 && (
@@ -2446,6 +2503,7 @@ function App() {
             ecosystem" headers stacked on the same page. MyEcosystem now
             renders both combined (board 2a), so this toggle is gone rather
             than becoming a third, redundant copy. */}
+        {currentView === 'ecosystem' && !user && !authLoading && ecosystemQuizCard && <div className="mockup-page fq-web-slot">{ecosystemQuizCard}</div>}
         {currentView === 'ecosystem' && !user && !authLoading && (
           <EcosystemPreview
             products={ALL_PRODUCTS}
@@ -2464,6 +2522,7 @@ function App() {
         {currentView === 'ecosystem' && user && (
           <Suspense fallback={<ViewLoadingFallback />}>
           <MyEcosystem
+            quizSlot={ecosystemQuizCard}
             matchOpts={matchOpts}
             myProducts={myProducts}
             ecosystemOrder={ecosystemOrder}
@@ -2744,6 +2803,22 @@ function App() {
             <ProductAudit />
           </Suspense>
         )}
+        {currentView === 'shared-answer' && (
+          <Suspense fallback={<ViewLoadingFallback />}>
+            <SharedAnswerPage
+              slug={slugFromPath(window.location.pathname)}
+              user={user}
+              session={userSession}
+              onRequireAuth={(mode) => {
+                setShareAuthMode(mode === 'signin' ? 'signin' : 'signup');
+                setPendingAction('share-friend'); pendingActionRef.current = 'share-friend';
+                setShowAuthModal(true);
+              }}
+              onAskOwn={() => openAsk()}
+              onHome={() => setCurrentView('welcome')}
+            />
+          </Suspense>
+        )}
         {currentView === 'not-found' && (
           <NotFoundState
             title="Page not found"
@@ -2809,7 +2884,8 @@ function App() {
             } : null}
             // Create account exists only in the save step after the quiz (Wrapped).
             // Everywhere else: sign in, or "Build your ecosystem" to start the quiz.
-            allowSignup={pendingAction === 'quiz-complete'}
+            allowSignup={pendingAction === 'quiz-complete' || pendingAction === 'share-friend'}
+            initialMode={pendingAction === 'share-friend' ? shareAuthMode : undefined}
             onStartEcosystem={() => { setShowAuthModal(false); setPendingAction(null); pendingActionRef.current = null; setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
             context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : pendingAction === 'saved' ? 'saved' : pendingAction === 'ecosystem' ? 'ecosystem' : pendingAction === 'feature' ? 'feature' : undefined}
             feature={authFeature}

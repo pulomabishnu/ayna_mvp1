@@ -1,0 +1,68 @@
+# ayna design rules
+
+Read this before building or changing any screen (app or website). Every
+decision below is made once, here, so screens don't drift toward generic
+"AI-built" defaults.
+
+## Colour (only these)
+
+| Role | Hex | Use |
+| --- | --- | --- |
+| Butter | `#ffedac` | Page background (light), text on espresso |
+| Espresso | `#3e2723` | Text, primary buttons, one dark feature card per screen |
+| Sky | `#769ebe` | Secondary accent: charts, one highlight per section |
+| Pink | `#f7badd` | Warm accent: cycle, safety notes, the one card that matters most |
+
+- White only behind product photos.
+- One accent per section. A section is not a rainbow: pick sky or pink, not both, unless the colour encodes data (cycle phases, chart series).
+- No gradients, glows, or coloured shadows.
+
+## Type
+
+- DM Serif Display, weight 400, for headings 22px and up only.
+- DM Sans for everything else.
+- Sentence case everywhere. No ALL CAPS labels, no tracked-out eyebrows.
+- Hierarchy comes from size and weight, not from extra labels.
+
+## Spacing (8 pt scale)
+
+- Only 4, 8, 12, 16, 24, 32, 48. Inside a card: 16 or 18. Between cards: 12. Between sections: 32.
+- Inner spacing is never larger than the spacing around the element.
+- Respect the notch and home bar: `env(safe-area-inset-top/bottom)` on every header, sheet and fixed bar.
+- Tap targets at least 44px.
+
+## Shape and depth
+
+- Radius: 22 to 26px for cards, 99px for pills and buttons. Not everything is a card.
+- The espresso offset shadow (`3px 3px 0`) is a brand accent: at most one or two elements per screen, never on every card.
+- No cards inside cards. Group with whitespace, hairlines and type instead.
+- No coloured left borders or side tabs on blocks.
+
+## Content
+
+- Real data only. A card shows only when its data exists. Never invent numbers, quotes, reviews, prices or claims.
+- Plain, specific words. No "unlock", "empower", "seamless", "transform".
+- No em dashes in visible text.
+- Status pills only when they carry a state the text doesn't already say.
+- Icons: one line-icon set. No emoji as icons.
+
+## Before shipping a screen
+
+1. Check light and dark at 390px and 320px, with the notch simulated.
+2. Run the squint test: does anything look like a template? Remove the default.
+3. Check against this file: colours, caps, nested cards, shadows, spacing scale.
+
+## Feel (what makes it hand-made, not generated)
+
+- Show the real thing: real product photos, her real numbers, real names on reviews. No stock people, no placeholder copy.
+- One specific line beats three generic ones. Cover the logo: if a sentence would work for a competitor, rewrite it.
+- Break the symmetry once per screen: one bigger card, one off-grid element. Not three identical cards in a row.
+- Few text sizes, each with one job (app): 28 screen title (DM Serif Display 400, one per screen), 22 section heading (DM Serif Display 400; never serif below 22), 30 the single big number in a card (DM Sans 600, -0.01em, one or two per screen), 17 card/row titles and primary buttons (DM Sans 600), 15 body (DM Sans 400, line-height 1.45), 13 labels and meta (DM Sans 500), 11.5 captions, chart axes and tab bar (DM Sans 500, nothing smaller). DM Sans weights 400/500/600 only; headings line-height 1.15. Text inputs stay 16 so iOS does not zoom.
+- One obvious next step per screen; secondary actions stay quiet.
+- Every tap answers instantly: pressed state, haptic on confirm (native), skeleton or optimistic update while loading.
+- Animate only what explains a change (a sheet opening, a card expanding). No fade-up on every section.
+- Selected states use fill or weight, never colour alone.
+- Empty, loading and error states are designed, each with one clear action and a human sentence.
+- Test with long names, long product titles, 320px, largest text size and dark mode before calling it done.
+
+Sources: Fountain Institute, "7 Signs a UI Has Been Vibe Coded"; 21st.dev, "How to make your website not look AI generated"; codemyspec, "vibe-coded websites look the same"; vp0, "What makes an app look professional"; Kree8 app UX cheatsheet; Baymard Institute product page research.

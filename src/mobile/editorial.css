@@ -47,7 +47,8 @@
 .ayna-mobile[data-screen='landing'] .ayna-bottom-nav button,
 .ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button {
   color: var(--ayna-text-muted);
-  font-size: 11px;
+  font-size: 11.5px;
+  font-weight: 500;
   gap: 3px;
 }
 .ayna-mobile .ayna-bottom-nav button.is-active,
@@ -77,12 +78,12 @@
 .ayna-editorial-product-grid > * { min-width: 0; }
 .ayna-editorial-read { width: 100%; min-height: 132px; display: grid; grid-template-columns: minmax(0,1fr) 104px; gap: 14px; padding: 13px 0; border: 0; border-bottom: 1px solid var(--ayna-border); background: transparent; color: var(--ayna-text); text-align: left; cursor: pointer; }
 .ayna-editorial-read-copy { min-width: 0; display: flex; flex-direction: column; justify-content: center; }
-.ayna-editorial-read-copy small { margin-bottom: 7px; text-transform: uppercase; font: 700 10px var(--ayna-font-ui); letter-spacing: .08em; }
-.ayna-editorial-read-copy strong { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; font: 700 16px/1.2 var(--ayna-font-ui); letter-spacing: -.02em; }
-.ayna-editorial-read-copy > span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin-top: 6px; color: var(--ayna-text-muted); font: 12px/1.35 var(--ayna-font-ui); }
+.ayna-editorial-read-copy small { margin-bottom: 7px; text-transform: uppercase; font: 500 11.5px var(--ayna-font-ui); letter-spacing: .08em; }
+.ayna-editorial-read-copy strong { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; font: 600 17px/1.2 var(--ayna-font-ui); letter-spacing: -.02em; }
+.ayna-editorial-read-copy > span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin-top: 6px; color: var(--ayna-text-muted); font: 500 13px/1.35 var(--ayna-font-ui); }
 .ayna-editorial-read-image { height: 106px; overflow: hidden; background: #e9ded0; display: grid; place-items: center; }
 .ayna-editorial-read-image img { width: 100%; height: 100%; object-fit: cover; }
-.ayna-editorial-read-image > span { color: #3e2723; font: italic 24px var(--ayna-font-display); }
+.ayna-editorial-read-image > span { color: #3e2723; font: italic 400 22px/1.15 var(--ayna-font-display); }
 @media (max-height: 680px) { .ayna-editorial-welcome-photo { min-height: 30vh; } .ayna-editorial-welcome-content { padding-top: 18px; } }
 
 /* Rebrand entry points: art-directed type and real Ayna photography. */
@@ -93,7 +94,7 @@
 
 /* Shared chrome: no glass, no shadows, visible active state and tap targets. */
 .ayna-mobile .ayna-bottom-nav { box-shadow: none; }
-.ayna-mobile .ayna-bottom-nav button { min-height: 52px; font-weight: 700; }
+.ayna-mobile .ayna-bottom-nav button { min-height: 52px; font-weight: 600; }
 .ayna-mobile .ayna-bottom-nav button.is-active,
 .ayna-mobile[data-screen='landing'] .ayna-bottom-nav button.is-active,
 .ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button.is-active { color: #3e2723; }

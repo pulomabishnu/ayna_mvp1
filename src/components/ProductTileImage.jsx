@@ -36,9 +36,10 @@ export function ProductImageFallback({ compact = false, style, className }) {
       <span
         aria-hidden="true"
         style={{
-          fontFamily: "'DM Sans', 'DM Sans', sans-serif",
+          // The faint wordmark placeholder uses the logo face, like the header logo.
+          fontFamily: 'var(--ay-font-logo)',
           fontWeight: 800,
-          letterSpacing: '-0.06em',
+          letterSpacing: '-0.03em',
           fontSize: compact ? '0.95rem' : '1.6rem',
           color: 'var(--color-primary)',
           opacity: 0.16,

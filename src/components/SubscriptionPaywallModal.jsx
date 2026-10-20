@@ -40,7 +40,7 @@ export default function SubscriptionPaywallModal({ onClose, featureName = 'this 
           style={{
             position: 'absolute', top: '1rem', right: '1rem',
             background: 'none', border: 'none', cursor: 'pointer',
-            fontSize: '1.25rem', color: 'var(--color-text-muted)',
+            fontSize: 'var(--ay-fs-section)', color: 'var(--color-text-muted)',
             lineHeight: 1, padding: '0.25rem',
           }}
         >
@@ -54,20 +54,20 @@ export default function SubscriptionPaywallModal({ onClose, featureName = 'this 
             color: 'var(--color-primary)',
             padding: '0.4rem 1rem',
             borderRadius: 'var(--radius-pill)',
-            fontSize: '0.8rem', fontWeight: '700',
-            textTransform: 'uppercase', letterSpacing: '0.05em',
+            fontSize: 12.5, fontWeight: 600,
+            textTransform: 'none', letterSpacing: 'normal',
             marginBottom: '1rem',
           }}>
-            Early Access
+            Early access
           </div>
-          <h2 style={{ fontSize: '1.6rem', marginBottom: '0.75rem', color: 'var(--color-text-main)' }}>
-            Unlock ayna Premium
+          <h2 style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '0.75rem', color: 'var(--color-text-main)' }}>
+            Get ayna Premium
           </h2>
-          <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
+          <p style={{ fontSize: 16, color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
             ayna can only afford to offer {featureName} to paying users. {featureDescription} is
             costly to build and maintain.
           </p>
-          <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: 1.6, marginTop: '0.75rem' }}>
+          <p style={{ fontSize: 16, color: 'var(--color-text-muted)', lineHeight: 1.6, marginTop: '0.75rem' }}>
             As an early user, we&apos;re offering a <strong>lifetime discount</strong>. {' '}
             <strong>subscribe now to lock in this price forever.</strong>
           </p>
@@ -89,8 +89,8 @@ export default function SubscriptionPaywallModal({ onClose, featureName = 'this 
             onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--color-primary)'}
             onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--color-border)'}
           >
-            <div style={{ fontSize: '1.75rem', fontWeight: '800', color: 'var(--color-text-main)' }}>{MONTHLY_PRICE}</div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>per month</div>
+            <div style={{ fontSize: 'var(--ay-fs-section)', fontWeight: 600, color: 'var(--color-text-main)' }}>{MONTHLY_PRICE}</div>
+            <div style={{ fontSize: 14, color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>per month</div>
           </a>
 
           <a
@@ -110,16 +110,16 @@ export default function SubscriptionPaywallModal({ onClose, featureName = 'this 
               position: 'absolute', top: '-0.6rem', left: '50%', transform: 'translateX(-50%)',
               background: 'var(--color-primary)', color: 'white',
               padding: '0.15rem 0.6rem', borderRadius: 'var(--radius-pill)',
-              fontSize: '0.7rem', fontWeight: '700', whiteSpace: 'nowrap',
+              fontSize: 12.5, fontWeight: 600, whiteSpace: 'nowrap',
             }}>
               {ANNUAL_SAVINGS}
             </div>
-            <div style={{ fontSize: '1.75rem', fontWeight: '800', color: 'var(--color-text-main)' }}>{ANNUAL_PRICE}</div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>per year</div>
+            <div style={{ fontSize: 'var(--ay-fs-section)', fontWeight: 600, color: 'var(--color-text-main)' }}>{ANNUAL_PRICE}</div>
+            <div style={{ fontSize: 14, color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>per year</div>
           </a>
         </div>
 
-        <p style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
+        <p style={{ textAlign: 'center', fontSize: 12.5, color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
           Click a plan to email us and get started. Feature is currently in development. Your
           early-user price is locked in forever once you subscribe.
         </p>

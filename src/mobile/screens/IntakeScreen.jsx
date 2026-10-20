@@ -20,6 +20,10 @@ import {
   MEDICATION_STATUS,
   URGENT_STATUS,
   firstUnansweredStepId,
+  firstOptionalResumeStepId,
+  optionalProgress,
+  setPerimenopausePeriods,
+  syncPerimenopausePeriods,
   isStepAnswered,
   markSkipped,
   splitIntakeSteps,
@@ -481,8 +485,8 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
           </button>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: LABEL_GOLD }}>About you</div>
-            <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '.8px', color: MUTED, marginTop: 2 }}>Quiz paused</div>
+            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: LABEL_GOLD }}>About you</div>
+            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', letterSpacing: '.8px', color: MUTED, marginTop: 2 }}>Quiz paused</div>
           </div>
         </div>
       </div>
@@ -492,43 +496,43 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
           <div style={{ width: 54, height: 54, borderRadius: 99, background: CARD_BG, border: '1.5px solid ' + WARNING_BORDER_SOFT, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 20px -10px rgba(180,64,42,.3)' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={WARNING_BORDER} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l8 4v5c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V7l8-4z" /><path d="M12 10v3.5" /><path d="M12 16.5h.01" /></svg>
           </div>
-          <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: LABEL_GOLD, marginTop: 20 }}>Age requirement</div>
-          <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(31px * var(--ayna-text-scale, 1))', lineHeight: 1.12, color: INK, marginTop: 9 }}>We can't take you through the quiz</div>
-          <p style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: BODY_TEXT, margin: '12px 0 0' }}>
+          <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: LABEL_GOLD, marginTop: 20 }}>Age requirement</div>
+          <div style={{ fontFamily: "var(--ayna-font-display)", fontWeight: 400, fontSize: 'calc(28px * var(--ayna-text-scale, 1))', lineHeight: 1.15, color: INK, marginTop: 9 }}>We can't take you through the quiz</div>
+          <p style={{ fontFamily: 'var(--ayna-font-ui)', fontWeight: 400, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', lineHeight: 1.45, color: BODY_TEXT, margin: '12px 0 0' }}>
             ayna is built for people 18 and over. Because the quiz leads to supplement and product guidance, we don't create profiles for minors. That's a conversation for a parent, guardian or clinician who knows your history.
           </p>
         </div>
 
         <div style={{ padding: '26px 24px 30px' }}>
-          <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: INK }}>What you can do now</div>
+          <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: INK }}>What you can do now</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 13 }}>
             {whatYouCanDo.map(([num, title, body]) => (
               <div key={num} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '15px 16px', borderRadius: 18, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
-                <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(17px * var(--ayna-text-scale, 1))', color: LABEL_GOLD, flex: 'none', lineHeight: 1.1 }}>{num}</div>
+                <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 400, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: LABEL_GOLD, flex: 'none', lineHeight: 1.45 }}>{num}</div>
                 <div>
-                  <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK }}>{title}</div>
-                  <div style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT, marginTop: 3 }}>{body}</div>
+                  <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: INK }}>{title}</div>
+                  <div style={{ fontFamily: 'var(--ayna-font-ui)', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT, marginTop: 3 }}>{body}</div>
                 </div>
               </div>
             ))}
           </div>
 
           <div style={{ marginTop: 22, padding: '15px 16px', borderRadius: 18, background: CARD_BG, border: '1px solid ' + ROW_BORDER }}>
-            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: INK }}>Entered the wrong age?</div>
-            <div style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT, marginTop: 4 }}>Go back one screen and change it. Nothing has been saved yet.</div>
+            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: INK }}>Entered the wrong age?</div>
+            <div style={{ fontFamily: 'var(--ayna-font-ui)', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT, marginTop: 4 }}>Go back one screen and change it. Nothing has been saved yet.</div>
           </div>
 
-          <p style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(11px * var(--ayna-text-scale, 1))', lineHeight: 1.55, color: MUTED, margin: '16px 0 0' }}>
+          <p style={{ fontFamily: 'var(--ayna-font-ui)', fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', lineHeight: 1.55, color: MUTED, margin: '16px 0 0' }}>
             If you're in immediate distress, contact a local emergency service or a crisis line rather than waiting on an answer here.
           </p>
         </div>
       </div>
 
       <div style={{ flex: 'none', padding: '14px 20px max(20px, env(safe-area-inset-bottom))', borderTop: '1px solid ' + ROW_BORDER, background: CARD_BG }}>
-        <button type="button" className="ayna-intake-control" onClick={onBrowseLibrary} style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', textAlign: 'center', padding: 15, borderRadius: 99, cursor: 'pointer', background: NAVY, color: '#FFEDAC', boxShadow: '0 14px 28px -14px rgba(36,42,82,.65)' }}>
+        <button type="button" className="ayna-intake-control" onClick={onBrowseLibrary} style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(17px * var(--ayna-text-scale, 1))', textAlign: 'center', padding: 15, borderRadius: 99, cursor: 'pointer', background: NAVY, color: '#FFEDAC', boxShadow: '0 14px 28px -14px rgba(36,42,82,.65)' }}>
           Browse the reading library
         </button>
-        <button type="button" className="ayna-intake-control" onClick={onChangeAge} style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', textAlign: 'center', padding: 14, borderRadius: 99, cursor: 'pointer', color: NAVY, border: '1.5px solid ' + NAVY, marginTop: 9 }}>
+        <button type="button" className="ayna-intake-control" onClick={onChangeAge} style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(17px * var(--ayna-text-scale, 1))', textAlign: 'center', padding: 14, borderRadius: 99, cursor: 'pointer', color: NAVY, border: '1.5px solid ' + NAVY, marginTop: 9 }}>
           Change my age
         </button>
       </div>
@@ -539,10 +543,12 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
 /* --------------------------------- Main screen --------------------------------- */
 
 
-export default function IntakeScreen({ onBack, onComplete, onDraftChange, initialSnapshot = null, startAtBeginning = false, introEnabled = true }) {
+export default function IntakeScreen({ onBack, onComplete, onDraftChange, initialSnapshot = null, startAtBeginning = false, startAtOptional = false, introEnabled = true }) {
   const [savedDraft] = useState(() => !initialSnapshot && !startAtBeginning ? readIntakeDraft() : null);
+  // Opened from "Make my matches more personal" (Ecosystem): straight into the optional questions.
+  const [enteredAtOptional] = useState(() => Boolean(startAtOptional && initialSnapshot && !savedDraft));
   const [intake, setIntake] = useState(() => savedDraft ? { ...EMPTY, ...savedDraft.intake } : reconstructIntakeFromSnapshot(initialSnapshot));
-  const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || savedDraft?.stepId || (startAtBeginning || !initialSnapshot ? 'age' : firstUnansweredStepId(reconstructIntakeFromSnapshot(initialSnapshot))));
+  const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || savedDraft?.stepId || (startAtOptional && initialSnapshot ? firstOptionalResumeStepId(reconstructIntakeFromSnapshot(initialSnapshot)) : startAtBeginning || !initialSnapshot ? 'age' : firstUnansweredStepId(reconstructIntakeFromSnapshot(initialSnapshot))));
   const [search, setSearch] = useState('');
   // Computed once, from how things stood when this resume started (not
   // re-derived as answers change), so a step's flag clears only by actually
@@ -611,7 +617,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   });
   const toggleLifeStage = (value) => setIntake((prev) => {
     const next = toggleLifeStageSelection(getLifeStages(prev), value);
-    return { ...prev, lifeStageSelections: next, lifeStage: next.find((v) => !LIFE_STAGE_EXCLUSIVE.includes(v)) || '' };
+    return syncPerimenopausePeriods({ ...prev, lifeStageSelections: next, lifeStage: next.find((v) => !LIFE_STAGE_EXCLUSIVE.includes(v)) || '' });
   });
   const addCustomSelection = (key, raw, exclusiveValues = []) => {
     const value = String(raw || '').trim().replace(/\s+/g, ' ').slice(0, 80);
@@ -634,6 +640,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   const goBack = () => {
     if (atCheckpoint) { goTo(requiredSteps[requiredSteps.length - 1].id, 'back'); return; }
     if (currentIndex > 0) goTo(visibleSteps[currentIndex - 1].id, 'back');
+    else if (phase === 'optional' && enteredAtOptional && onBack) onBack();
     else if (phase === 'optional') goTo(CHECKPOINT_STEP, 'back');
     else if (onBack) onBack();
   };
@@ -659,7 +666,8 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   };
 
   const selectedLifeStages = getLifeStages(intake);
-  const showMidlifeFirst = intake.age !== '' && Number(intake.age) >= 40;
+  // Perimenopause often starts in the late 30s, so midlife stages move up from 35.
+  const showMidlifeFirst = intake.age !== '' && Number(intake.age) >= 35;
   const lifeStageOptions = showMidlifeFirst
     ? [...MIDLIFE_LIFE_STAGES, ...LIFE_STAGES.filter((item) => !MIDLIFE_LIFE_STAGES.includes(item))]
     : LIFE_STAGES;
@@ -671,7 +679,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
 
     if (step.type === 'lifeStage') return (
       <>
-        {showMidlifeFirst && <p className="ip-hint">Midlife stages moved up. Pick only what fits.</p>}
+        {showMidlifeFirst && <p className="ip-hint">Midlife stages moved up. You can pick Perimenopause and Regular periods together.</p>}
         <SearchableChoices items={lifeStageOptions} selected={selectedLifeStages} onToggle={toggleLifeStage} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('lifeStageSelections', value)} placeholder="Search life stages" layout="grid" labels={LIFE_STAGE_LABELS} glyphs={LIFE_STAGE_GLYPHS} searchable={false} />
         <div className="ip-gap"><ChipList items={LIFE_STAGE_EXCLUSIVE} selected={selectedLifeStages} onToggle={toggleLifeStage} muted={LIFE_STAGE_EXCLUSIVE} compact /></div>
         {selectedLifeStages.includes('I am postpartum') && (
@@ -683,7 +691,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         {selectedLifeStages.includes('I am in perimenopause') && (
           <div className="ip-followup">
             <strong>{FOLLOWUP_QUESTIONS.perimenopauseLastPeriod}</strong>
-            <ChipList items={PERIMENOPAUSE_LAST_PERIOD} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => set('perimenopauseLastPeriod', v)} compact />
+            <ChipList items={intake.perimenopauseLastPeriod && !PERIMENOPAUSE_LAST_PERIOD.includes(intake.perimenopauseLastPeriod) ? [...PERIMENOPAUSE_LAST_PERIOD, intake.perimenopauseLastPeriod] : PERIMENOPAUSE_LAST_PERIOD} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => setIntake((prev) => setPerimenopausePeriods(prev, v))} compact />
           </div>
         )}
       </>
@@ -879,6 +887,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   }
 
   if (atCheckpoint) {
+    const remainingOptional = optionalProgress(intake).remaining;
     const careFirst = intake.safetyConcern === 'Yes';
     return (
       <div className="ayna-play-intake ip-tone--mint ip-checkpoint" data-section="checkpoint" data-step={CHECKPOINT_STEP} data-direction={direction}>
@@ -899,7 +908,10 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
             <h1 className="ip-title">Your first matches are ready</h1>
             <p className="ip-subtitle">{careFirst ? 'You said something may be urgent, so your results start with ways to reach care.' : 'That’s enough for safe, personal picks.'}</p>
             {careFirst && <div className="ip-care-now" role="note"><b>If this is an emergency, call 911.</b> <span>If you're thinking about harming yourself, call or text 988.</span> <span>Your results open with clinician and urgent care options.</span></div>}
-            <p className="ip-checkpoint-more">Want them even closer? {optionalSteps.length} quick extras, all optional. Skip any of them.</p>
+            {remainingOptional > 0 && <div className="ip-checkpoint-more">
+              <strong>Want closer matches?</strong>
+              <p>Answer {remainingOptional} more quick question{remainingOptional === 1 ? '' : 's'} anytime. They are optional, and you can start them later from your Ecosystem.</p>
+            </div>}
           </div>
         </div>
         <footer className="ip-foot ip-foot--checkpoint">
@@ -907,7 +919,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
             <span>See my results</span>
             <i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></i>
           </button>
-          <button type="button" className="ip-more" onClick={() => goTo(optionalSteps[0].id, 'forward')} disabled={!optionalSteps.length}>Make my matches more personal</button>
+          {remainingOptional > 0 && <button type="button" className="ip-more" onClick={() => goTo(firstOptionalResumeStepId(intake), 'forward')}>Answer {remainingOptional} more now</button>}
         </footer>
       </div>
     );
@@ -926,7 +938,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
           </button>
           {/* Later questions depend on earlier answers, so the total can grow mid-quiz.
               Show a fill bar for progress instead of a "02/08" total that shifts. */}
-          <span className="ip-count ip-count--plain">{phase === 'optional' ? 'Optional' : 'Question'} {countedIndex + 1}</span>
+          <span className="ip-count ip-count--plain">{phase === 'optional' ? `Optional ${countedIndex + 1} of ${countedSteps.length}` : `Question ${countedIndex + 1}`}</span>
           {step.optional ? <button type="button" className="ip-skip" onClick={skipStep}>Skip</button> : <span className="ip-skip-spacer" />}
         </div>
         <div className="ip-progress ip-progress--fill" role="progressbar" aria-label="Quiz progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(((countedIndex + 1) / Math.max(1, countedSteps.length)) * 100)}>

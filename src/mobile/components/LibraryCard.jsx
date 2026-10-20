@@ -86,7 +86,7 @@ export default function LibraryCard({ article, onClick, fullWidth = false }) {
             style={{
               position: 'relative',
               fontFamily: "var(--ayna-font-ui)",
-              fontSize: 'calc(7.5px * var(--ayna-text-scale, 1))',
+              fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))',
               letterSpacing: '.7px',
               textTransform: 'uppercase',
               color: image ? '#FFEDAC' : 'rgba(41,37,36,.45)',
@@ -99,7 +99,7 @@ export default function LibraryCard({ article, onClick, fullWidth = false }) {
           </span>
         )}
       </div>
-      <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.25, marginTop: 9, textWrap: 'pretty' }}>
+      <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.25, marginTop: 9, textWrap: 'pretty' }}>
         {title}
       </div>
     </button>

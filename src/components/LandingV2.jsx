@@ -100,7 +100,7 @@ function Search({ onSearch }) {
   );
 }
 
-function Hero({ onStartQuiz, onSearch, personal = null }) {
+function Hero({ onStartQuiz, onSearch, personal = null, banner = null }) {
   return (
     <section className="lv-hero" aria-labelledby="lv-hero-title">
       {/* Members get the same photo hero with their name (team call, Oct 16). */}
@@ -113,11 +113,11 @@ function Hero({ onStartQuiz, onSearch, personal = null }) {
           <p>{personal.ecoCount > 0 ? `${personal.ecoCount} product${personal.ecoCount === 1 ? '' : 's'} in your ecosystem.` : 'Health products matched to your body.'}</p>
           {personal.ecoCount > 0 || personal.hasQuiz
             ? <Go className="lv-btn lv-btn--butter" href="/ecosystem" onGo={personal.onOpenEcosystem}>Open my ecosystem<Arrow /></Go>
-            : <Go className="lv-btn lv-btn--butter" href="/quiz" onGo={onStartQuiz}>See my matches<Arrow /></Go>}
+            : banner || <Go className="lv-btn lv-btn--butter" href="/quiz" onGo={onStartQuiz}>See my matches<Arrow /></Go>}
         </> : <>
           <h1 id="lv-hero-title">Build your <em>ecosystem.</em></h1>
           <p>Health products matched to your body.</p>
-          <Go className="lv-btn lv-btn--butter" href="/quiz" onGo={onStartQuiz}>See my matches<Arrow /></Go>
+          {banner || <Go className="lv-btn lv-btn--butter" href="/quiz" onGo={onStartQuiz}>See my matches<Arrow /></Go>}
         </>}
         <Search onSearch={onSearch} />
       </div>
@@ -391,13 +391,13 @@ function PartnersTop({ onViewWaitlist }) {
 /* ---------- page ---------- */
 // `personal` (signed in): the same page with a welcome-back hero, and
 // `personalSlot` (her next step, top picks, Powder Room) right under it.
-export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onViewCommunity, onSearch, personal = null, personalSlot = null, personalTail = null }) {
+export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onViewCommunity, onSearch, personal = null, personalSlot = null, personalTail = null, heroBanner = null }) {
   // One motion control for the whole site: the footer's "Pause motion".
   const paused = useMotionPaused();
   return (
     <div className={`lv${paused ? ' is-paused' : ''}`}>
       <div className="lv-wrap">
-        <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} personal={personal} />
+        <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} personal={personal} banner={heroBanner} />
         {/* Members: the same page, with their own cards under the hero and their top picks in place of the week's picks. */}
         {personal?.dashboard ? personalSlot : <PartnersTop onViewWaitlist={onViewWaitlist} />}
         {!personal?.dashboard && personalSlot}

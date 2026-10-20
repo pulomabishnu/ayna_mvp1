@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap');
-
 @layer canva-minimal {
 
 /* Important declarations in this layer take precedence over older unlayered
@@ -18,8 +16,8 @@
   --canva-control: #242A52 !important;
   --canva-control-text: #FFFCF9 !important;
   --canva-line: rgba(41, 37, 36, .14) !important;
-  --canva-serif: 'Playfair Display', Georgia, serif !important;
-  --canva-sans: 'DM Sans', system-ui, sans-serif !important;
+  --canva-serif: var(--ay-serif) !important;
+  --canva-sans: var(--ay-sans) !important;
   --v6-light-gradient: var(--canva-cream) !important;
   --v6-dark-gradient: var(--canva-navy) !important;
   --mockup-hero-gradient: var(--canva-navy) !important;
@@ -29,9 +27,9 @@
   --v6-plum: var(--canva-plum) !important;
   --v6-terracotta: var(--canva-terra) !important;
   --v6-border: var(--canva-line) !important;
-  --font-body: var(--canva-sans) !important;
-  --font-heading: var(--canva-serif) !important;
-  --font-serif: var(--canva-serif) !important;
+  --font-body: var(--ay-sans) !important;
+  --font-heading: var(--ay-serif) !important;
+  --font-serif: var(--ay-serif) !important;
   --v6-serif: var(--canva-serif) !important;
   --v6-sans: var(--canva-sans) !important;
   --v6-mono: var(--canva-sans) !important;
@@ -58,7 +56,7 @@ html, body, #root, .app-container, .v6-home-shell, .ayna-browse,
 .articles-page, .article-page, .article-body, .about-page, .hiw {
   background: var(--canva-cream) !important;
   color: var(--canva-ink) !important;
-  font-family: var(--canva-sans) !important;
+  font-family: var(--ay-sans) !important;
 }
 
 /* Retire decorative effects from earlier skins, including their dark variants. */
@@ -79,7 +77,7 @@ h1, h2, h3, .serif, .article-title, .pdp-head__name,
   font-weight: 500 !important;
   letter-spacing: -.03em !important;
 }
-button, input, select, textarea { font-family: var(--canva-sans) !important; }
+button, input, select, textarea { font-family: var(--ay-sans) !important; }
 .v6-home-hero h1, .v6-cabinet-copy h2, .v6-section-head h2,
 .ayna-browse__heading h1, .pdp-head__name, .v6-eco-copy h1 {
   color: var(--canva-ink) !important;
@@ -95,7 +93,7 @@ button, input, select, textarea { font-family: var(--canva-sans) !important; }
   color: var(--canva-muted) !important;
 }
 .v6-eyebrow, .v6-eco-kicker, .hiw-kicker {
-  font-family: var(--canva-sans) !important;
+  font-family: var(--ay-sans) !important;
   color: var(--canva-terra) !important;
 }
 .v6-scribble { color: var(--canva-terra) !important; }
@@ -383,7 +381,7 @@ html body .v6-home-search input { border: 0 !important; }
   border: 1px solid rgba(255,252,249,.35) !important;
   background: rgba(36,42,82,.3) !important;
   color: #FFFCF9 !important;
-  font-size: 12px !important;
+  font-size: var(--ay-fs-caption) !important;
   line-height: 1.25 !important;
   white-space: nowrap !important;
   animation: canva-chip-in 280ms ease both !important;

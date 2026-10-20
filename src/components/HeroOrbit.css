@@ -16,8 +16,8 @@
   box-shadow: 5px 5px 0 #fffcf5;
   animation: orbitBreathe 4.5s ease-in-out infinite;
 }
-.hero-orbit__you { font: 800 clamp(30px, 3.4vw, 48px)/.9 'DM Sans', 'DM Sans', sans-serif; letter-spacing: -.06em; }
-.hero-orbit__hint { font: 600 12px/1.2 'DM Sans', sans-serif; opacity: .7; }
+.hero-orbit__you { font: 400 var(--ay-fs-display)/1.1 var(--ay-serif); letter-spacing: -0.01em; }
+.hero-orbit__hint { font: 600 var(--ay-fs-caption)/1.2 var(--ay-sans); opacity: .7; }
 .hero-orbit__spin { position: absolute; inset: 0; animation: orbitSpin 48s linear infinite; }
 .hero-orbit:hover .hero-orbit__spin, .hero-orbit:hover .hero-orbit__bubble, .hero-orbit:focus-within .hero-orbit__spin, .hero-orbit:focus-within .hero-orbit__bubble { animation-play-state: paused; }
 .hero-orbit__seat {
@@ -29,7 +29,7 @@
   translate: -50% -50%;
   min-height: 44px; padding: 0 18px;
   border: 2px solid #1d1a2b; border-radius: 99px; background: #fffcf5; color: #1d1a2b;
-  font: 700 15px/1 'DM Sans', sans-serif; white-space: nowrap; cursor: pointer;
+  font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); white-space: nowrap; cursor: pointer;
   box-shadow: 3px 3px 0 #1d1a2b;
   animation: orbitCounter 48s linear infinite;
   transition: box-shadow .15s, scale .15s;
@@ -53,11 +53,11 @@
 
 @media (max-width: 900px) {
   .hero-orbit { --size: min(360px, 86vw); }
-  .hero-orbit__bubble { min-height: 36px; padding: 0 12px; font-size: 13px; }
+  .hero-orbit__bubble { min-height: 36px; padding: 0 12px; font-size: var(--ay-fs-caption); }
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-orbit__spin, .hero-orbit__bubble, .hero-orbit__centre, .hero-orbit__spark { animation: none; }
 }
-.hero-orbit__bubble small { display: inline-grid; place-items: center; min-width: 22px; height: 22px; margin-left: 8px; padding: 0 6px; border-radius: 99px; background: #1d1a2b; color: #fffcf5; font: 700 12px/1 'DM Sans', sans-serif; }
+.hero-orbit__bubble small { display: inline-grid; place-items: center; min-width: 22px; height: 22px; margin-left: 8px; padding: 0 6px; border-radius: 99px; background: #1d1a2b; color: #fffcf5; font: 600 var(--ay-fs-caption)/1 var(--ay-sans); }
 .hero-orbit__bubble.is-add { border-style: dashed; background: transparent; box-shadow: none; }
 .hero-orbit--compact { --size: min(420px, 34vw); }

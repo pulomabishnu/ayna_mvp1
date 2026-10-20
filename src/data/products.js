@@ -1669,6 +1669,9 @@ function engineIntake(quizAnswers, healthProfile) {
     const conditions = [...asStringArray(healthProfile.conditions), ...asStringArray(healthProfile.fhirSummary?.conditions)];
     const meds = [...asStringArray(healthProfile.medications), ...asStringArray(healthProfile.fhirSummary?.medications)];
     const allergies = asStringArray(healthProfile.allergies);
+    // Health profile "Menstrual cycle" answer (e.g. "No (Menopause)"): tells the
+    // engine whether she menstruates when the quiz did not say.
+    if (healthProfile.menstrualCycle && !intake.menstrualCycle) intake.menstrualCycle = healthProfile.menstrualCycle;
     if (conditions.length) intake.conditionOtherText = [String(intake.conditionOtherText || ''), ...conditions].filter((s) => s.trim()).join('; ');
     if (meds.length && intake.takesCurrent !== 'No') {
         intake.currentMedicationItems = [...new Set([...asStringArray(intake.currentMedicationItems), ...meds])];

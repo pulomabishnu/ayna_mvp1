@@ -157,7 +157,8 @@ export function pendingReferralMeta() {
   try {
     const pending = JSON.parse(window.localStorage.getItem('ayna_pending_ref_v1') || 'null');
     if (!pending?.code || !/^[a-z0-9]{6,20}$/.test(pending.code) || !(Date.now() - pending.at <= 30 * 864e5)) return {};
-    return { referred_by: pending.code, referred_at: new Date().toISOString() };
+    const viaShare = /^[A-Za-z0-9]{10}$/.test(String(pending.slug || '')) ? { referred_via_share: pending.slug } : {};
+    return { referred_by: pending.code, referred_at: new Date().toISOString(), ...viaShare };
   } catch {
     return {};
   }

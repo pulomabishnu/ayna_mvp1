@@ -84,17 +84,25 @@ export async function attachPendingReferral(supabase) {
     safeDel(PENDING_REF_KEY);
     return false;
   }
+  // Opened from a shared answer (/a/<slug>): credit that link too.
+  const viaShare = code === pending.code && /^[A-Za-z0-9]{10}$/.test(String(pending.slug || '')) ? pending.slug : null;
   if (!meta.referred_by) {
     try {
-      await supabase.auth.updateUser({ data: { referred_by: code, referred_at: new Date().toISOString() } });
+      await supabase.auth.updateUser({ data: { referred_by: code, referred_at: new Date().toISOString(), ...(viaShare ? { referred_via_share: viaShare } : {}) } });
     } catch { /* the insert below is what counts */ }
   }
   try {
-    const { error } = await supabase.from('referrals').insert({ referred_user_id: user.id, referrer_code: code });
+    let { error } = await supabase.from('referrals').insert({ referred_user_id: user.id, referrer_code: code, ...(viaShare ? { via_share_slug: viaShare } : {}) });
+    // Before shared_answers_2026-10-20.sql adds the column: record the referral without it.
+    if (error && viaShare && (error.code === 'PGRST204' || /via_share_slug/.test(error.message || ''))) {
+      ({ error } = await supabase.from('referrals').insert({ referred_user_id: user.id, referrer_code: code }));
+    }
     // 42501: the policy said no (account older than 7 days, own code). That is final.
     if (error && error.code === '42501') { safeDel(PENDING_REF_KEY); return false; }
     if (error && !isDuplicate(error)) return false; // keep the code; try again next time
     if (!error) { try { posthog.capture('campaign_referral_signup_completed'); } catch { /* ignore */ } }
+    // The trigger may have written the row first (duplicate): still a share sign-up.
+    if (viaShare && (!error || isDuplicate(error))) { try { posthog.capture('shared_answer_signup', { slug: viaShare }); } catch { /* ignore */ } }
   } catch {
     return false;
   }

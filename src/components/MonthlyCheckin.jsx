@@ -187,10 +187,10 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
         onClick={onClose}
       >
         <div ref={trapRef} className="card animate-fade-in-up ay-checkin" role="dialog" aria-modal="true" aria-labelledby="ay-checkin-done" style={{ maxWidth: '520px', width: '100%', padding: '2rem' }} onClick={e => e.stopPropagation()}>
-          <h2 id="ay-checkin-done" style={{ fontSize: '1.5rem', marginBottom: '0.75rem' }}>{title}</h2>
+          <h2 id="ay-checkin-done" style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '0.75rem' }}>{title}</h2>
           <p style={{ color: 'var(--color-text-muted)', marginBottom: '1rem' }}>{message}</p>
           {tips.length > 0 && (
-            <ul style={{ paddingLeft: '1.25rem', marginBottom: '1.5rem', fontSize: '0.95rem', lineHeight: 1.6 }}>
+            <ul style={{ paddingLeft: '1.25rem', marginBottom: '1.5rem', fontSize: 16, lineHeight: 1.6 }}>
               {tips.map((t, i) => <li key={i} title={findGlossaryTermInText(t) || undefined}>{t}</li>)}
             </ul>
           )}
@@ -214,11 +214,11 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
         <div style={{ flexShrink: 0 }}>
           {/* A one-question check-in doesn't need wizard chrome; later steps just say where she is. */}
           {steps.length > 1 && stepIndex > 0 && (
-            <p style={{ fontSize: '0.8rem', marginBottom: '0.75rem' }}>Step {stepIndex + 1} of {steps.length}</p>
+            <p style={{ fontSize: 12.5, marginBottom: '0.75rem' }}>Step {stepIndex + 1} of {steps.length}</p>
           )}
 
-          <h2 id="ay-checkin-q" style={{ fontSize: '1.35rem', margin: '0 2.5rem 0.5rem', textAlign: 'center' }}>{step.question}</h2>
-          {step.subtitle && <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1.25rem' }}>{step.subtitle}</p>}
+          <h2 id="ay-checkin-q" style={{ fontSize: 'var(--ay-fs-section)', margin: '0 2.5rem 0.5rem', textAlign: 'center' }}>{step.question}</h2>
+          {step.subtitle && <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: 16, marginBottom: '1.25rem' }}>{step.subtitle}</p>}
         </div>
 
         {step.type === 'single' && (
@@ -234,7 +234,7 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
                     style={{
                       justifyContent: 'flex-start',
                       padding: '0.85rem 1.25rem',
-                      fontSize: '0.95rem',
+                      fontSize: 16,
                       flexShrink: 0,
                       borderColor: isSelected ? 'var(--color-primary)' : 'var(--color-border)',
                       backgroundColor: isSelected ? 'var(--color-secondary-fade)' : 'transparent',
@@ -253,7 +253,7 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
                 style={{ width: '100%', flexShrink: 0 }}
                 onClick={handleSingleNext}
               >
-                Continue →
+                Next question →
               </button>
             )}
           </>
@@ -270,7 +270,7 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
                     type="button"
                     className="btn btn-outline"
                     style={{
-                      justifyContent: 'flex-start', padding: '0.85rem 1.25rem', fontSize: '0.95rem',
+                      justifyContent: 'flex-start', padding: '0.85rem 1.25rem', fontSize: 16,
                       flexShrink: 0,
                       borderColor: isSelected ? 'var(--color-primary)' : 'var(--color-border)',
                       backgroundColor: isSelected ? 'var(--color-secondary-fade)' : 'transparent',
@@ -290,7 +290,7 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
               disabled={multiSelections.size === 0}
               onClick={handleMultiConfirm}
             >
-              Continue →
+              Save my focus areas →
             </button>
           </>
         )}
@@ -298,11 +298,11 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
         {step.type === 'screening' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div>
-              <label style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', display: 'block', marginBottom: '0.35rem' }}>Sexually active?</label>
+              <label style={{ fontSize: 14, color: 'var(--color-text-muted)', display: 'block', marginBottom: '0.35rem' }}>Sexually active?</label>
               <select
                 value={screeningValues.sexuallyActive}
                 onChange={e => setScreeningValues(s => ({ ...s, sexuallyActive: e.target.value }))}
-                style={{ width: '100%', padding: '0.6rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: '1rem' }}
+                style={{ width: '100%', padding: '0.6rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 16 }}
               >
                 <option value="">Select</option>
                 <option value="Yes">Yes</option>
@@ -311,11 +311,11 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
               </select>
             </div>
             <div>
-              <label style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', display: 'block', marginBottom: '0.35rem' }} title={findGlossaryTermInText('STI screening')}>Last STI screening?</label>
+              <label style={{ fontSize: 14, color: 'var(--color-text-muted)', display: 'block', marginBottom: '0.35rem' }} title={findGlossaryTermInText('STI screening')}>Last STI screening?</label>
               <select
                 value={screeningValues.lastSTI}
                 onChange={e => setScreeningValues(s => ({ ...s, lastSTI: e.target.value }))}
-                style={{ width: '100%', padding: '0.6rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: '1rem' }}
+                style={{ width: '100%', padding: '0.6rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 16 }}
               >
                 <option value="">Select</option>
                 <option value="Within 6 months">Within 6 months</option>
@@ -325,11 +325,11 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
               </select>
             </div>
             <div>
-              <label style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', display: 'block', marginBottom: '0.35rem' }} title={findGlossaryTermInText('Pap smear')}>Last Pap smear?</label>
+              <label style={{ fontSize: 14, color: 'var(--color-text-muted)', display: 'block', marginBottom: '0.35rem' }} title={findGlossaryTermInText('Pap smear')}>Last Pap smear?</label>
               <select
                 value={screeningValues.lastPap}
                 onChange={e => setScreeningValues(s => ({ ...s, lastPap: e.target.value }))}
-                style={{ width: '100%', padding: '0.6rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: '1rem' }}
+                style={{ width: '100%', padding: '0.6rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 16 }}
               >
                 <option value="">Select</option>
                 <option value="Within 1 year">Within 1 year</option>

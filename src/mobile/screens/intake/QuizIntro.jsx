@@ -73,7 +73,7 @@ export default function QuizIntro({ variant = 'app', enabled = true }) {
       <div className="qi-card" onClick={(e) => e.stopPropagation()} style={{ '--qi-dur': `${DURATION_MS}ms` }}>
         <div className="qi-top">
           <span className="qi-tag">Quick tip</span>
-          <button type="button" className="qi-skip" ref={skipRef} onClick={close}>{manual ? 'Got it' : 'Skip'}</button>
+          <button type="button" className="qi-skip" onClick={close}>Skip</button>
         </div>
         <h2 className="qi-title" id="qi-title">Two helpers</h2>
 
@@ -112,6 +112,7 @@ export default function QuizIntro({ variant = 'app', enabled = true }) {
           />
           <span>Don’t show again</span>
         </label>
+        <button type="button" className="qi-go" ref={skipRef} onClick={close}>Got it</button>
 
         {!manual && <span className="qi-timer" aria-hidden="true"><i /></span>}
       </div>

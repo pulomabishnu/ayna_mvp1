@@ -46,7 +46,7 @@ const ERRORS = {
   provider_not_configured: "This connection isn't switched on yet. We're finishing setup with the provider.",
   rate_limited: 'Too many tries. Give it a few minutes.',
 };
-const errorText = (e) => ERRORS[e?.code] || 'Something went wrong. Try again.';
+const errorText = (e) => ERRORS[e?.code] || 'We couldn’t reach your health data. Check your connection and try again.';
 
 /* --------------------------------- List ---------------------------------- */
 function SourceList({ connections, records, onOpen, onOpenInsights, hasInsights, signedIn, onSignIn, onRefresh, compact = false }) {

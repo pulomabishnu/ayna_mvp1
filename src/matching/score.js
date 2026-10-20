@@ -32,8 +32,8 @@
 // ZIP never enters this score. FSA/HSA never enters this score (tie-break only).
 
 import { conditionRulesFor } from './conditionRules.js';
-import { NEED_BY_ID, needPhrase, canonicalNeedId, CONDITION_PATHWAYS, CONDITION_SUPPORT_NEED, URINARY_UTI_NEEDS, MENSTRUAL_PRODUCT_NEEDS, ATTRIBUTE_PHRASE, LIFE_STAGE_BY_ID, CONTEXTS } from './ontology.js';
-import { buildProductProfile, normalizeBrand, CONTEXT_BONUS, productSimilarity } from './productProfile.js';
+import { NEED_BY_ID, needPhrase, canonicalNeedId, CONDITION_PATHWAYS, CONDITION_SUPPORT_NEED, URINARY_UTI_NEEDS, MENSTRUAL_PRODUCT_NEEDS, ATTRIBUTE_PHRASE, LIFE_STAGE_BY_ID, CONTEXTS, isCyclePremisedNeed } from './ontology.js';
+import { buildProductProfile, normalizeBrand, CONTEXT_BONUS, productSimilarity, CYCLE_DEPENDENT_RULES, CYCLE_TRACKING_RULES } from './productProfile.js';
 import { checkMedicationInteractions, INTERACTION_TABLE } from './medications.js';
 import { normalizeName } from './userProfile.js';
 
@@ -551,6 +551,27 @@ export function resolveRelevance(pp, up, needId) {
   return { base, relationship: relationshipOf(level), contextUsed, contextualOnly, entry, needsContext: hasUnmetContextual ? entry.contextual.flatMap((c) => c.requires) : null };
 }
 
+/**
+ * True when this product's relevance to the need rests on a menstrual cycle
+ * she told us she does not have right now (physiology.menstruation).
+ * - Any cycle-dependent relevance on a need that does not presume a cycle
+ *   (an ovulation test for "hormone-related symptoms") is dropped.
+ * - With no cycle at all (menopause, post-menopause, pregnancy), cycle
+ *   trackers and ovulation tests are dropped for cycle needs too, unless she
+ *   explicitly asked for fertility or ovulation support.
+ * - Period products stay for period needs she explicitly selected (bleeding
+ *   still needs products; the contradiction lowers confidence and care
+ *   notes cover it).
+ */
+export function notMenstruatingBlock(rel, up, needId) {
+  const m = up.physiology?.menstruation;
+  if (!m || !(rel.base > 0)) return false;
+  const rule = rel.contextUsed?.rule || rel.entry?.rule;
+  if (!CYCLE_DEPENDENT_RULES.has(rule)) return false;
+  if (!isCyclePremisedNeed(needId)) return true;
+  return m === 'none' && CYCLE_TRACKING_RULES.has(rule) && !String(needId).startsWith('fertility.');
+}
+
 function relationshipOf(score) {
   if (score >= 1) return 'direct';
   if (score >= 0.8) return 'strong';
@@ -662,6 +683,14 @@ function contextDimension(pp, up) {
   return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
 }
 
+// Format families for preference matching (formats people choose between).
+// Formats with no family (apps, tests, garments) have no format alternative.
+export const FORMAT_FAMILY = {
+  pill_capsule: 'ingested', gummy: 'ingested', powder: 'ingested', drink_tea: 'ingested',
+  topical: 'external', patch: 'external', suppository: 'external', device: 'external',
+  period_care: 'period_care',
+};
+
 function formatDimension(pp, up, notes, explanations) {
   const sh = up.shopping;
   if (sh.formats.strict.length && !pp.formats.some((f) => sh.formats.strict.includes(f))) notes.filtered = 'format_strict';
@@ -678,7 +707,14 @@ function formatDimension(pp, up, notes, explanations) {
   let value = null;
   if (sh.formats.preferred.length) {
     const hit = pp.formats.some((f) => sh.formats.preferred.includes(f));
-    value = hit ? 1 : 0.4;
+    // A preferred format only competes with formats of the same kind: tea
+    // over pills, a patch over a cream or a device. It does not apply to a
+    // different kind of product (there is no tea version of a pad, an acne
+    // cream or an app), so a tea preference never pushes her real best
+    // matches for other needs off the Ecosystem.
+    const preferredFamilies = new Set(sh.formats.preferred.map((f) => FORMAT_FAMILY[f]).filter(Boolean));
+    if (hit) value = 1;
+    else if (pp.formats.some((f) => preferredFamilies.has(FORMAT_FAMILY[f]))) value = 0.4;
     if (hit) explanations.push('In a format you prefer');
   } else if (!sh.formats.explicitNoPreference) {
     // Soft preference learned from what worked / what she stopped (weight 0.5 equivalent).
@@ -978,9 +1014,13 @@ export function scoreProductForNeed(productOrProfile, up, needIdIn, opts = {}) {
 
   // Relevance (with explicit contexts only).
   const rel = resolveRelevance(pp, up, needId);
-  const base = rel.base;
+  // She does not menstruate now: relevance that only holds for someone who
+  // does (period products, cycle trackers, ovulation tests) does not count.
+  const cycleBlocked = notMenstruatingBlock(rel, up, needId);
+  if (cycleBlocked) notes.filtered = 'not_menstruating';
+  const base = cycleBlocked ? 0 : rel.base;
   const health = healthComponent(pp, up, need, base, notes);
-  const relationship = rel.relationship;
+  const relationship = cycleBlocked ? 'unrelated' : rel.relationship;
   const focus = focusFactor(pp, needId);
   const R = base > 0 ? RELEVANCE_SCALE * health * (0.9 + 0.1 * focus) : 0;
 

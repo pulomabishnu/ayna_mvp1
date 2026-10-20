@@ -3,6 +3,8 @@ import { useSpeechToText } from '../hooks/useSpeechToText';
 import SearchMicButton from './SearchMicButton';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
+import ShareAnswerButton from './ShareAnswerButton.jsx';
+import { questionForAnswer } from '../utils/sharedAnswer.js';
 import { getAppSessionId } from '../utils/conversationId';
 
 /** Merges a profileUpdate the backend returned into the current profile, deduping against what's already there. */
@@ -468,6 +470,17 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
                   }`}
                 >
                   {m.role === 'assistant' ? renderMarkdownLite(m.text) : m.text}
+                  {m.role === 'assistant' && !m.failed && !m.starters && questionForAnswer(messages, i) && (
+                    <ShareAnswerButton
+                      question={questionForAnswer(messages, i)}
+                      answer={m.text}
+                      sources={m.sources || []}
+                      share={m.share || null}
+                      onShareChange={(share) => updateMessage(i, { share })}
+                      session={session}
+                      surface="web"
+                    />
+                  )}
                   {m.failed && (
                     <div className="ayna-ask-actions">
                       <button type="button" className="is-primary" onClick={() => sendText(m.question, i)}>Retry</button>

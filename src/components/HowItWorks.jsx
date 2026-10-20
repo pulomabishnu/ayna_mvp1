@@ -16,7 +16,7 @@ export default function HowItWorks({ onBack, onViewSources }) {
   return (
     <InfoPage photos={['blue-sink', 'pink-tile-shelf', 'sink-tea']} tone="sky"
       eyebrow="How it works"
-      title="No mystery box."
+      title="How ayna picks your matches."
       lede="ayna compares products with the health profile and preferences you choose to share, then adds cited research, clinical guidance, safety information and community context where available."
       onBack={onBack}
       width="wide"
@@ -71,7 +71,7 @@ export default function HowItWorks({ onBack, onViewSources }) {
         </ol>
       </InfoSection>
 
-      <InfoSection eyebrow="The funnel" title="Broad in. Focused out.">
+      <InfoSection eyebrow="The funnel" title="From the whole catalog to your short list.">
         <div className="ay-info-card ay-info-card--pad">
           <HowItWorksFunnel />
         </div>

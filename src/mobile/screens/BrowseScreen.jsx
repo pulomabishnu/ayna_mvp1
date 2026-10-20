@@ -45,8 +45,8 @@ const PAGE_SIZE = 20;
 
 function PersonalizedToggle({ on, disabled, onClick }) {
   return (
-    <button type="button" className="ay-for-me" role="switch" aria-checked={on} aria-label="Personalized products" disabled={disabled} onClick={onClick}>
-      <span>For me</span>
+    <button type="button" className="ay-for-me" role="switch" aria-checked={on} aria-label="Show my matches only" disabled={disabled} onClick={onClick}>
+      <span>My matches only</span>
       <i aria-hidden="true"><b /></i>
     </button>
   );
@@ -282,10 +282,12 @@ export default function BrowseScreen({
   // itself found nothing in the catalog", not "this narrower filtered view
   // happens to be empty because of an unrelated active filter".
   const searchScored = filtered;
-  if (personalized && hasProfile) {
-    const personalizedIds = new Set(getPersonalizedProductIds(quizAnswers, null, matchOpts));
-    filtered = filtered.filter((p) => personalizedIds.has(p.id));
-  }
+  // "My matches only" narrows browsing to her matches. A typed search must
+  // still find every catalog product (focus group: Resa Rhythm Bracelet was
+  // hidden, so she assumed it did not exist), so non-matches that fit the
+  // search are kept aside and shown below as a labelled "More results" group.
+  const narrowToMatches = personalized && hasProfile;
+  const personalizedIds = narrowToMatches ? new Set(getPersonalizedProductIds(quizAnswers, null, matchOpts)) : null;
   if (activeGroup !== 'all') {
     filtered = filtered.filter((p) => itemMatchesMacroGroup(p, activeGroup));
   }
@@ -334,6 +336,11 @@ export default function BrowseScreen({
   if (sortBy === 'default' && !searchTermRaw && !(personalized && hasProfile) && !rankByProfile) {
     filtered = [...filtered].sort((a, b) => (isPartnerBrandItem(b) ? 1 : 0) - (isPartnerBrandItem(a) ? 1 : 0));
   }
+  let moreResults = [];
+  if (narrowToMatches) {
+    if (searchTermRaw) moreResults = filtered.filter((p) => !personalizedIds.has(p.id));
+    filtered = filtered.filter((p) => personalizedIds.has(p.id));
+  }
   const filterKey = `${searchTerm}|${personalized}|${activeGroup}|${JSON.stringify(filters)}|${sortBy}`;
 
   useEffect(() => {
@@ -359,7 +366,7 @@ export default function BrowseScreen({
         })
         .catch((e) => {
           if (cancelled || e?.name === 'AbortError') return;
-          setAiState({ query: searchTermRaw, loading: false, suggestions: [], error: 'Could not load suggestions.' });
+          setAiState({ query: searchTermRaw, loading: false, suggestions: [], error: 'Couldn’t load suggestions. Check your connection, or search by product or brand name.' });
         });
     }, 600);
     return () => {
@@ -434,28 +441,42 @@ export default function BrowseScreen({
           after its Reads section. */}
       {mode === 'products' ? (
         <>
-          {filtered.length > 0 ? (
-            <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />
+          {filtered.length > 0 || moreResults.length > 0 ? (
+            <>
+              {moreResults.length > 0 && (
+                <p className="ay-shop-results-note" role="status">
+                  {filtered.length > 0 ? 'Your matches first. ' : 'None of your matches fit this search. '}
+                  Showing everything else that does too.
+                </p>
+              )}
+              {filtered.length > 0 && moreResults.length > 0 && <h2 className="ay-shop-results-label">Your matches</h2>}
+              {filtered.length > 0 && <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />}
+              {moreResults.length > 0 && <>
+                <h2 className="ay-shop-results-label">More results</h2>
+                <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`more-${filterKey}`} products={moreResults} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
+              </>}
+            </>
           ) : searchTermRaw.length >= 2 && aiState.loading ? (
             <>
-              <div style={{ padding: '0 20px 14px', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
+              <div style={{ padding: '0 20px 14px', fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
                 Searching beyond our catalog…
               </div>
               <PixelateGrid />
             </>
           ) : searchTermRaw.length >= 2 && aiState.query === searchTermRaw && aiState.suggestions.length > 0 ? (
             <>
-              <div style={{ padding: '0 20px 14px', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
+              <div style={{ padding: '0 20px 14px', fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
                 Not in our catalog yet, found via AI search
               </div>
               <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`ai-${filterKey}`} products={aiState.suggestions} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
             </>
           ) : assistSaysNoResults ? null : (
-            <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
+            <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontWeight: 400, lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))' }}>
               No products match.
             </div>
           )}
-          {!(searchTermRaw.length >= 2 && aiState.loading) && (
+          {/* "Can't find it?" only when the typed search found nothing in the catalog. */}
+          {!(searchTermRaw.length >= 2 && aiState.loading) && !(searchTermRaw && searchScored.length > 0) && (
             <div className="ay-app-suggest-wrap">
               <SuggestBox variant="app" context="app-shop" prefill={searchTermRaw} />
             </div>
@@ -465,7 +486,7 @@ export default function BrowseScreen({
               margin: '22px 20px 0',
               textAlign: 'center',
               fontFamily: "var(--ayna-font-ui)",
-              fontSize: 'calc(12px * var(--ayna-text-scale, 1))',
+              fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
               color: 'var(--ayna-text-faint)',
             }}
           >
@@ -473,7 +494,7 @@ export default function BrowseScreen({
           </div>
           {matchingReads.length > 0 && <section style={{ marginTop: 25 }} aria-label="Related reads">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '0 20px 12px' }}>
-              <strong style={{ fontSize: 18, color: 'var(--ayna-text)' }}>Learn about this</strong>
+              <strong style={{ fontWeight: 600, fontSize: 'calc(17px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Learn about this</strong>
               <button type="button" onClick={() => onGoLibrary?.()} style={{ border: 0, background: 'transparent', color: 'var(--ayna-accent-dark)', fontWeight: 600 }}>Library →</button>
             </div>
             <div style={{ display: 'flex', gap: 12, overflowX: 'auto', padding: '0 20px 6px' }}>

@@ -41,9 +41,9 @@ function FeedbackDialog({ prompt, onClose }) {
   return <div className="v6-survey-backdrop ph-no-capture ph-mask" data-ph-no-capture="true" onKeyDown={onKeyDown}>
     <div ref={card} className="v6-survey-card" role="dialog" aria-modal="true" aria-labelledby="feedback-title">
       <button type="button" className="v6-survey-close" aria-label="Close feedback" disabled={busy} onClick={onClose}>✕</button>
-      <h2 id="feedback-title">{done ? 'Thank you!' : prompt.kind === 'purchase' ? 'Did you buy this item?' : 'How are you liking ayna?'}</h2>
+      <h2 id="feedback-title">{done ? 'Thanks for answering.' : prompt.kind === 'purchase' ? 'Did you buy this item?' : 'How are you liking ayna?'}</h2>
       {done ? <><p>Your anonymous answer was saved.</p><button type="button" className="v6-survey-submit" onClick={onClose}>Done</button></> : <>
-        <p className="v6-survey-sub">{prompt.kind === 'purchase' ? `${prompt.name}${prompt.variant ? ` — ${prompt.variant}` : ''}` : 'A quick, optional check-in.'}</p>
+        <p className="v6-survey-sub">{prompt.kind === 'purchase' ? `${prompt.name}${prompt.variant ? `, ${prompt.variant}` : ''}` : 'A quick, optional check-in.'}</p>
         {prompt.kind !== 'purchase' && <p className="v6-survey-sub">Answers aren’t linked to your account. Please leave out personal details.</p>}
         {prompt.kind === 'purchase' ? <div className="v6-survey-actions">
           <button type="button" className="v6-survey-submit" disabled={busy} onClick={() => submit('yes')}>Yes</button>

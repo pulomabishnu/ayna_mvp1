@@ -296,8 +296,8 @@ class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: 600, margin: '2rem auto' }}>
-          <h1>Something went wrong</h1>
-          <p style={{ color: '#666' }}>Please reload the page and try again.</p>
+          <h1>This page didn’t load</h1>
+          <p style={{ color: '#666' }}>ayna hit an error. Reload the page to try again.</p>
           <button type="button" onClick={() => window.location.reload()} style={{ padding: '0.5rem 1rem', marginTop: '1rem' }}>
             Reload
           </button>
@@ -323,6 +323,25 @@ if (isMobilePreview) {
   } catch { /* fonts are progressive */ }
 }
 
+// Native app: shop and article links open in an in-app browser sheet
+// (SFSafariViewController / Custom Tabs) instead of leaving ayna, so people
+// don't lose their place (focus group, Oct 19). Done once, for every external
+// link, so no screen can forget it.
+if (Capacitor.isNativePlatform()) {
+  document.addEventListener('click', (event) => {
+    if (event.defaultPrevented || event.button !== 0) return;
+    const a = event.target?.closest?.('a[href]');
+    if (!a) return;
+    let url;
+    try { url = new URL(a.getAttribute('href'), window.location.href); } catch { return; }
+    if (!/^https?:$/.test(url.protocol) || url.origin === window.location.origin) return;
+    event.preventDefault();
+    import('@capacitor/browser')
+      .then(({ Browser }) => Browser.open({ url: url.toString(), presentationStyle: 'popover' }))
+      .catch(() => { window.open(url.toString(), '_blank'); });
+  }, true);
+}
+
 // Lock pinch-zoom in the native app only. The WKWebView has no browser chrome
 // to reset an accidental pinch, so once someone zooms in there is no way
 // back to 100% and the whole layout stays broken, this is the "you can
@@ -338,12 +357,18 @@ if (Capacitor.isNativePlatform()) {
   }
 }
 
+// While the app code loads: the page colour of the theme she picked (espresso in dark,
+// butter in light), so there is no off-white flash before the first screen.
+function mobileLoadingBackground() {
+  try { return localStorage.getItem('ayna_mobile_theme_v1') === 'dark' ? '#3e2723' : '#ffedac'; } catch { return '#ffedac'; }
+}
+
 installNoEmDash(document.body)
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ErrorBoundary>
       {isMobilePreview ? (
-        <React.Suspense fallback={<div style={{ minHeight: '100vh', background: '#fffcf5' }} />}>
+        <React.Suspense fallback={<div style={{ minHeight: '100vh', background: mobileLoadingBackground() }} />}>
           <MobileApp />
         </React.Suspense>
       ) : <App />}

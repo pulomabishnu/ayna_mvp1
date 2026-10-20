@@ -44,17 +44,17 @@ export default function CareNearYouPanel({
       {/* Compact (inside My Ecosystem's "Care near you" card): the card
           already carries the title and frame, so no second box or heading. */}
       {!compact && (
-        <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem', color: 'var(--color-text-main)' }}>
+        <h3 style={{ fontSize: 16, marginBottom: '0.5rem', color: 'var(--color-text-main)' }}>
           Care near you &amp; telehealth
         </h3>
       )}
-      <p style={{ fontSize: '0.92rem', color: 'var(--color-text-muted)', lineHeight: 1.55, marginBottom: '1rem' }}>
+      <p style={{ fontSize: 14, color: 'var(--color-text-muted)', lineHeight: 1.55, marginBottom: '1rem' }}>
         {bundle.intro}
       </p>
 
       {onZipCodeChange && (
         <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', alignItems: 'center', marginBottom: '1.25rem' }}>
-          <label style={{ fontSize: '0.88rem', fontWeight: '600', color: 'var(--color-text-main)' }}>US zip (for local finders)</label>
+          <label style={{ fontSize: 14, fontWeight: '600', color: 'var(--color-text-main)' }}>US zip (for local finders)</label>
           <input
             type="text"
             inputMode="numeric"
@@ -67,14 +67,14 @@ export default function CareNearYouPanel({
               padding: '0.45rem 0.75rem',
               borderRadius: 'var(--radius-md)',
               border: '1px solid var(--color-border)',
-              fontSize: '0.95rem',
+              fontSize: 16,
             }}
           />
-          <button type="button" className="btn btn-outline" style={{ padding: '0.45rem 1rem', fontSize: '0.88rem' }} onClick={saveZip}>
+          <button type="button" className="btn btn-outline" style={{ padding: '0.45rem 1rem', fontSize: 14 }} onClick={saveZip}>
             Save zip
           </button>
           {(userZipCode || zipInput) && (
-            <span style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)' }}>
+            <span style={{ fontSize: 12.5, color: 'var(--color-text-muted)' }}>
               Searching near <strong>{(userZipCode || zipInput).slice(0, 5)}</strong>. These links share this ZIP with the outside finder you open.
             </span>
           )}
@@ -82,7 +82,7 @@ export default function CareNearYouPanel({
       )}
 
       {(insuranceLabel || onEditHealthProfile) && (
-        <p style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)', marginTop: '-0.5rem', marginBottom: '1.25rem' }}>
+        <p style={{ fontSize: 12.5, color: 'var(--color-text-muted)', marginTop: '-0.5rem', marginBottom: '1.25rem' }}>
           {insuranceLabel
             ? <>Insurance on file: <strong>{insuranceLabel}</strong>. Confirm coverage directly with any clinic or telehealth service before booking.</>
             : 'No insurance on file yet. Add it to your health profile so it\'s here when you need it.'}
@@ -100,31 +100,31 @@ export default function CareNearYouPanel({
 
       <div style={{ display: 'grid', gap: '1.25rem', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}>
         <div>
-          <h4 style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--color-primary)', marginBottom: '0.5rem' }}>
+          <h4 style={{ fontSize: 12.5, textTransform: 'none', letterSpacing: 'normal', color: 'var(--color-primary)', marginBottom: '0.5rem' }}>
             In-person &amp; community clinics
           </h4>
-          <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.9rem', lineHeight: 1.55, color: 'var(--color-text-main)' }}>
+          <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: 14, lineHeight: 1.55, color: 'var(--color-text-main)' }}>
             {bundle.clinicLinks.map((link) => (
               <li key={link.href} style={{ marginBottom: '0.5rem' }}>
                 <a href={link.href} target="_blank" rel="noopener noreferrer" style={{ fontWeight: '600', color: 'var(--color-primary)' }}>
                   {link.label} ↗
                 </a>
-                <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{link.hint}</div>
+                <div style={{ fontSize: 12.5, color: 'var(--color-text-muted)' }}>{link.hint}</div>
               </li>
             ))}
           </ul>
         </div>
         <div>
-          <h4 style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--color-primary)', marginBottom: '0.5rem' }}>
+          <h4 style={{ fontSize: 12.5, textTransform: 'none', letterSpacing: 'normal', color: 'var(--color-primary)', marginBottom: '0.5rem' }}>
             Education &amp; virtual care context
           </h4>
-          <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.9rem', lineHeight: 1.55, color: 'var(--color-text-main)' }}>
+          <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: 14, lineHeight: 1.55, color: 'var(--color-text-main)' }}>
             {bundle.telehealthLinks.filter((link) => !/hhs\.gov/.test(link.href)).map((link) => (
               <li key={link.href} style={{ marginBottom: '0.5rem' }}>
                 <a href={link.href} target="_blank" rel="noopener noreferrer" style={{ fontWeight: '600', color: 'var(--color-primary)' }}>
                   {link.label} ↗
                 </a>
-                <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{link.hint}</div>
+                <div style={{ fontSize: 12.5, color: 'var(--color-text-muted)' }}>{link.hint}</div>
               </li>
             ))}
           </ul>
@@ -133,7 +133,7 @@ export default function CareNearYouPanel({
 
       {bundle.catalogTelehealth.length > 0 && onOpenProduct && (
         <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid var(--color-border)' }}>
-          <h4 style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>
+          <h4 style={{ fontSize: 12.5, textTransform: 'none', letterSpacing: 'normal', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>
             Virtual care in our catalog, matched to you when possible
           </h4>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
@@ -142,7 +142,7 @@ export default function CareNearYouPanel({
                 key={p.id}
                 type="button"
                 className="btn btn-outline"
-                style={{ fontSize: '0.82rem', padding: '0.35rem 0.75rem' }}
+                style={{ fontSize: 12.5, padding: '0.35rem 0.75rem' }}
                 onClick={() => onOpenProduct(p)}
               >
                 {p.name}
@@ -154,7 +154,7 @@ export default function CareNearYouPanel({
 
       {/* Privacy explainer is background reading, not a place to find a clinician: a footnote, not a link in the list. */}
       {bundle.telehealthLinks.some((link) => /hhs\.gov/.test(link.href)) && (
-        <p className="care-near-panel__foot" style={{ marginTop: '1rem', fontSize: '0.8rem' }}>
+        <p className="care-near-panel__foot" style={{ marginTop: '1rem', fontSize: 12.5 }}>
           How your health information can be used in virtual visits:{' '}
           <a href={bundle.telehealthLinks.find((link) => /hhs\.gov/.test(link.href)).href} target="_blank" rel="noopener noreferrer">HHS on HIPAA ↗</a>
         </p>

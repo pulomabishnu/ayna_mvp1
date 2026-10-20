@@ -11,7 +11,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-mark { font: 800 30px/1 var(--f-logo) !important; letter-spacing: -0.05em !important; color: var(--b-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-top button {
   color: var(--b-espresso) !important; background: var(--b-butter) !important; text-decoration: none !important;
-  min-height: 40px !important; padding: 0 16px !important; border-radius: 999px !important; font: 700 14px/1 var(--f-ui) !important;
+  min-height: 40px !important; padding: 0 16px !important; border-radius: 999px !important; font: 500 13px/1 var(--f-ui) !important;
 }
 /* the demo sits on a white card, like a phone screen inside the phone */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-reel { padding: 20px 20px 8px !important; }
@@ -24,10 +24,10 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel { height: 300px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-copy { padding: 8px 24px 0 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-copy h1 {
-  font: 400 calc(clamp(38px, 10.5vw, 46px) * var(--ayna-text-scale, 1))/1.02 var(--f-display) !important;
+  font: 400 calc(28px * var(--ayna-text-scale, 1))/1.15 var(--f-display) !important;
   letter-spacing: -0.01em !important; color: var(--b-butter) !important;
 }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-copy p { color: var(--b-butter) !important; opacity: .72 !important; font: 500 15px/1.4 var(--f-ui) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-copy p { color: var(--b-butter) !important; opacity: .72 !important; font: 400 15px/1.45 var(--f-ui) !important; }
 /* actions live on a butter sheet with the site's scalloped edge */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-actions {
   position: relative; margin-top: 28px !important;
@@ -42,11 +42,11 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover .ayna-slide-start-handle { background: var(--b-rose) !important; color: var(--b-espresso) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover .ayna-slide-start-fill { background: var(--b-rose) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover .ayna-slide-start-label { color: var(--b-butter) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-actions > div button { color: var(--b-espresso) !important; font: 600 15px/1 var(--f-ui) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-actions > div button { color: var(--b-espresso) !important; font: 600 17px/1 var(--f-ui) !important; }
 
 /* ---------- Ecosystem: title first, shelves swipe sideways ---------- */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero { display: flex !important; flex-direction: column !important; gap: 14px !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero h1 { margin: 6px 0 0 !important; font-size: calc(36px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero h1 { margin: 6px 0 0 !important; font-size: calc(28px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 400 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-cover { order: 3; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-play { background: var(--b-espresso) !important; color: var(--b-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-area-collection, .ayna-cabinet-collection) .ayna-editorial-product-grid {
@@ -57,8 +57,8 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-area-collection, .ayna-cabinet-collection) .ayna-editorial-product-grid::-webkit-scrollbar { display: none; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-area-collection, .ayna-cabinet-collection) .ayna-editorial-product-grid > * { scroll-snap-align: start; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head { border: 2px solid var(--b-espresso) !important; border-radius: var(--r-radius-m) !important; box-shadow: var(--r-shadow) !important; padding: 10px 12px !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; color: var(--b-espresso) !important; font-size: calc(22px * var(--ayna-text-scale, 1)) !important; display: flex !important; align-items: center; gap: 10px; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 small { margin: 0 !important; font: 700 12px/1 var(--f-ui) !important; background: var(--b-white) !important; color: var(--b-espresso) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; color: var(--b-espresso) !important; font-size: calc(22px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 400 !important; display: flex !important; align-items: center; gap: 10px; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 small { margin: 0 !important; font: 500 13px/1 var(--f-ui) !important; background: var(--b-white) !important; color: var(--b-espresso) !important; }
 
 /* ---------- labels: sentence case, no shouting ---------- */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ay-pdp-section-label, [class*='eyebrow'], [class*='kicker'], dt, .ay-spec dt, [class*='label']) { text-transform: none !important; letter-spacing: 0 !important; }
@@ -80,11 +80,11 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance__nav button {
   min-height: 38px !important; padding: 0 16px !important; white-space: nowrap !important;
   border: 2px solid var(--r-line-strong) !important; border-radius: 999px !important; box-shadow: none !important;
-  background: transparent !important; color: var(--r-ink) !important; font: 600 14px/1 var(--f-ui) !important;
+  background: transparent !important; color: var(--r-ink) !important; font: 500 13px/1 var(--f-ui) !important;
 }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance__nav button.is-on { background: var(--r-action) !important; color: var(--r-on-action) !important; border-color: var(--r-action) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-gl-label { text-transform: none !important; letter-spacing: 0 !important; font: 700 13px/1.2 var(--f-ui) !important; color: var(--r-ink-2) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance__facts dt { text-transform: none !important; letter-spacing: 0 !important; font: 700 13px/1.2 var(--f-ui) !important; color: var(--r-ink-2) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-gl-label { text-transform: none !important; letter-spacing: 0 !important; font: 500 13px/1.2 var(--f-ui) !important; color: var(--r-ink-2) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance__facts dt { text-transform: none !important; letter-spacing: 0 !important; font: 500 13px/1.2 var(--f-ui) !important; color: var(--r-ink-2) !important; }
 
 /* ---------- Profile ("You"): calm header, no floating shapes ---------- */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile [class*='profile'] :is([class*='blob'], [class*='shape'], [class*='sparkle'], [class*='deco']) { display: none !important; }
@@ -117,8 +117,8 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake.ip-tone--butter { --ip-deep: var(--b-rose); --ip-select: var(--b-rose); }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake [class*='count'], .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake [class*='progress'] span { font-family: var(--f-ui) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake { --ip-bg: var(--r-canvas) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ip-count, .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ip-count i { font: 700 14px/1 var(--f-ui) !important; font-style: normal !important; font-variant-numeric: tabular-nums; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme="dark"] .qi.qi--app { background: rgba(31, 19, 16, .6) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ip-count, .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ip-count i { font: 500 13px/1 var(--f-ui) !important; font-style: normal !important; font-variant-numeric: tabular-nums; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme="dark"] .qi.qi--app { background: rgba(46, 28, 24, .7) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-suggest__icon { color: var(--r-ink) !important; }
 
 /* product photos always sit on plain white */
@@ -127,7 +127,7 @@
 
 /* ---------- Swipe deck: an espresso stage, the card is the light ---------- */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck { background: var(--b-espresso) !important; color: var(--b-butter) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-head strong { font: 400 24px/1 var(--f-display) !important; color: var(--b-butter) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-head strong { font: 400 22px/1.15 var(--f-display) !important; color: var(--b-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-head span { color: var(--b-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-close { background: var(--b-butter) !important; color: var(--b-espresso) !important; border-color: var(--b-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-card { background: var(--b-butter) !important; border-color: var(--b-butter) !important; box-shadow: 6px 6px 0 var(--b-rose) !important; color: var(--b-espresso) !important; }
@@ -139,7 +139,7 @@
 
 /* Swipe-to-discover entry: a small window onto the espresso deck */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-cta { background: var(--b-espresso) !important; color: var(--b-butter) !important; border: 2px solid var(--b-espresso) !important; box-shadow: 4px 4px 0 var(--b-rose) !important; border-radius: var(--r-radius-m) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-copy strong { font: 400 22px/1 var(--f-display) !important; color: var(--b-butter) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-copy strong { font: 400 22px/1.15 var(--f-display) !important; color: var(--b-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-go { background: var(--b-rose) !important; color: var(--b-espresso) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-art i { border-color: var(--b-espresso) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-cta:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--b-rose) !important; }

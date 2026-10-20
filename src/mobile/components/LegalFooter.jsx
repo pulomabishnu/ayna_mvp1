@@ -38,7 +38,7 @@ export default function LegalFooter({ variant = 'default' }) {
     <div
       className="ay-legal"
       style={{
-        fontSize: 'calc(11px * var(--ayna-text-scale, 1))',
+        fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))',
         lineHeight: 2,
         color: light ? 'rgba(255,249,242,.62)' : 'var(--ayna-text-faint)',
         textAlign: 'center',

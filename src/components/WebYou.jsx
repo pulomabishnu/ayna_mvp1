@@ -103,7 +103,7 @@ function Routine({ products }) {
   </section>;
 }
 
-export default function WebYou({ user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenProduct, onOpenPhoneVerify, onSignOut, onDeleteAccount, onStartQuiz, onSignIn, theme = 'light', onThemeChange, onOpenFreeProduct, onOpenHealthData, healthSummary = null, healthConnectedCount = 0 }) {
+export default function WebYou({ user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenProduct, onOpenPhoneVerify, onSignOut, onDeleteAccount, onStartQuiz, onSignIn, theme = 'light', onThemeChange, onOpenFreeProduct, onOpenHealthData, onOpenHealth, healthSummary = null, healthConnectedCount = 0, quizSlot = null }) {
   const products = useMemo(() => Object.values(myProducts || {}).filter(Boolean), [myProducts]);
   const consumables = useMemo(() => products.filter(isConsumable), [products]);
   const intake = quizResults?.fullHealthIntake || null;
@@ -189,7 +189,7 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
   };
 
   if (!user) {
-    return <section className="wyou"><div className="wyou-card wyou-signedout"><h1>You</h1><p>Your profile, safety alerts and settings live here once you have an account.</p><div className="wyou-signedout__doors"><button type="button" className="wyou-btn" onClick={onStartQuiz}>New here? See my matches</button>{onSignIn && <button type="button" className="wyou-btn is-ghost" onClick={onSignIn}>Sign in</button>}</div></div></section>;
+    return <section className="wyou">{quizSlot}<div className="wyou-card wyou-signedout"><h1>You</h1><p>Your profile, safety alerts and settings live here once you have an account.</p><div className="wyou-signedout__doors">{!quizSlot && <button type="button" className="wyou-btn" onClick={onStartQuiz}>New here? See my matches</button>}{onSignIn && <button type="button" className="wyou-btn is-ghost" onClick={onSignIn}>Sign in</button>}</div></div></section>;
   }
 
   const initial = avatarInitials(user, (name || 'Y').charAt(0).toUpperCase());
@@ -202,6 +202,8 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
       </button>
       <span className="wyou-shapes" aria-hidden="true"><i /><i /><i /></span>
     </header>
+
+    {quizSlot}
 
     {(() => {
       const TIER = { recall: [0, 'Recall'], sensitivity: [1, 'Your sensitivity'], accuracy: [2, 'Accuracy note'], note: [3, 'FYI'] };
@@ -256,13 +258,14 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
           </div>
         </nav>
 
-        {onOpenHealthData && <button type="button" className="wyou-card wyou-health" onClick={onOpenHealthData}>
+        {(onOpenHealth || onOpenHealthData) && <button type="button" className="wyou-card wyou-health" onClick={onOpenHealth || onOpenHealthData}>
           <span>
-            <h2>Health data</h2>
+            <h2>{onOpenHealth ? 'Your health' : 'Health data'}</h2>
             <small>{healthSummary ? `${healthSummary.title}: ${healthSummary.headline}` : healthConnectedCount ? 'Connected. Your trends appear after about two weeks of data.' : 'Connect Apple Health, Oura or upload a file, and see your sleep, cycle and activity trends.'}</small>
           </span>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
         </button>}
+        {onOpenHealth && onOpenHealthData && <button type="button" className="wyou-health-manage" onClick={onOpenHealthData}>Manage connected apps and uploads</button>}
 
 
         {consumables.length > 0 && <Routine products={consumables} />}

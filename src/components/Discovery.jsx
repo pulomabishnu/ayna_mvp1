@@ -1861,7 +1861,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 // dryRoundStreakRef) vs. the fetch itself kept failing/rate-
                 // limiting (browseAiErrorCode), the latter is NOT "we
                 // checked and this is everything," it's "we couldn't check."
-                <p style={{ textAlign: 'center', marginTop: '2rem', color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
+                <p style={{ textAlign: 'center', marginTop: '2rem', color: 'var(--color-text-muted)', fontSize: 14 }}>
                     {browseAiErrorCode === 'rate_limited'
                         ? "Couldn't check for more right now. Too many searches recently, try again in a bit."
                         : browseAiErrorCode
@@ -1887,7 +1887,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                     border: '1px solid var(--color-border)',
                                     background: 'var(--color-surface-soft)',
                                     color: 'var(--color-text-main)',
-                                    fontSize: '0.85rem',
+                                    fontSize: 14,
                                     cursor: 'pointer',
                                 }}
                             >
@@ -1900,14 +1900,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
             {(dsldLoading || dsldProducts.length > 0) && (
                 <div style={{ marginTop: '2rem' }}>
-                    <h3 style={{ fontSize: '1.1rem', marginBottom: '0.25rem', color: 'var(--color-text-main)' }}>
+                    <h3 style={{ fontSize: 16, marginBottom: '0.25rem', color: 'var(--color-text-main)' }}>
                         Verified Supplements from the <GlossaryTerm term="NIH" />
                     </h3>
-                    <p style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)', marginBottom: '1.25rem' }}>
+                    <p style={{ fontSize: 12.5, color: 'var(--color-text-muted)', marginBottom: '1.25rem' }}>
                         These supplement labels were checked against the government's official database.
                     </p>
                     {dsldLoading && (
-                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Checking the government database…</p>
+                        <p style={{ fontSize: 14, color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Checking the government database…</p>
                     )}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.25rem' }}>
                         {dsldProducts.map((product, dsldIdx) => (
@@ -1918,25 +1918,25 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                     ) : (
                                         <ProductImageFallback />
                                     )}
-                                    <span style={{ position: 'absolute', top: '0.5rem', left: '0.5rem', background: '#DCFCE7', color: '#166534', padding: '0.2rem 0.55rem', borderRadius: 'var(--radius-pill)', fontSize: '0.68rem', fontWeight: '700' }}>
+                                    <span style={{ position: 'absolute', top: '0.5rem', left: '0.5rem', background: '#DCFCE7', color: '#166534', padding: '0.2rem 0.55rem', borderRadius: 'var(--radius-pill)', fontSize: 12.5, fontWeight: 600 }}>
                                         NIH verified
                                     </span>
                                 </div>
                                 <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                                    {product.brand && <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', fontWeight: '600', marginBottom: '0.15rem' }}>{product.brand}</div>}
-                                    <h4 style={{ fontSize: '0.95rem', margin: '0 0 0.35rem', lineHeight: 1.3 }}>{product.name}</h4>
-                                    <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem', lineHeight: 1.4, flexGrow: 1 }}>{product.summary}</p>
+                                    {product.brand && <div style={{ fontSize: 12.5, color: 'var(--color-text-muted)', fontWeight: '600', marginBottom: '0.15rem' }}>{product.brand}</div>}
+                                    <h4 style={{ fontSize: 16, margin: '0 0 0.35rem', lineHeight: 1.3 }}>{product.name}</h4>
+                                    <p style={{ fontSize: 12.5, color: 'var(--color-text-muted)', marginBottom: '0.5rem', lineHeight: 1.4, flexGrow: 1 }}>{product.summary}</p>
                                     {product.url && (
-                                        <a href={product.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.72rem', color: 'var(--color-primary)', marginBottom: '0.5rem', display: 'inline-block' }}>
+                                        <a href={product.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12.5, color: 'var(--color-primary)', marginBottom: '0.5rem', display: 'inline-block' }}>
                                             View NIH label →
                                         </a>
                                     )}
                                     <div style={{ display: 'flex', gap: '0.4rem', marginTop: 'auto' }}>
-                                        <button className="btn btn-outline" style={{ padding: '0.35rem 0.7rem', fontSize: '0.78rem', flex: 1 }}
+                                        <button className="btn btn-outline" style={{ padding: '0.35rem 0.7rem', fontSize: 12.5, flex: 1 }}
                                             onClick={() => onToggleProduct && onToggleProduct(product)}>
                                             {myProducts?.[product.id] ? 'Added' : 'Add'}
                                         </button>
-                                        <button className="btn btn-primary" style={{ padding: '0.35rem 0.7rem', fontSize: '0.78rem', flex: 1 }}
+                                        <button className="btn btn-primary" style={{ padding: '0.35rem 0.7rem', fontSize: 12.5, flex: 1 }}
                                             onClick={() => onOpenProduct && onOpenProduct(product, { source: 'search_results', searchQuery: submittedQuery, position: dsldIdx })}>
                                             Details
                                         </button>

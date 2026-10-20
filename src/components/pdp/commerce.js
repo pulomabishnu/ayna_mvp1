@@ -12,6 +12,7 @@ import { isPlaceholderProductImage } from '../../utils/resolveProductImage.js';
 import { brandOf } from '../../mobile/data/brandFallback.js';
 import { recallFacts } from '../../utils/productFacts.js';
 import { categoryLabel, ingredientHeadline, perUnitLabel, sizeCount, NOT_ON_FILE, buildGlance } from './glance.js';
+import { productHref } from '../../utils/productRoute.js';
 
 // ---------------------------------------------------------------------------
 // Gallery
@@ -246,7 +247,8 @@ export function productJsonLd(product, { origin = 'https://www.aynahealth.co', b
   const images = galleryImages(product).map((s) => absolute(s, origin)).filter(Boolean);
   const brand = brandOf(product);
   const price = offerPrice(product);
-  const pageUrl = url || `${origin.replace(/\/$/, '')}/product/${encodeURIComponent(product.id)}`;
+  // The canonical address (name slug), the same one the page's <link rel="canonical"> uses.
+  const pageUrl = url || `${origin.replace(/\/$/, '')}${productHref(product)}`;
   const data = {
     '@context': 'https://schema.org',
     '@type': 'Product',

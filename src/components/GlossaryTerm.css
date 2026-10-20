@@ -33,12 +33,12 @@
   background: var(--ay-paper, #fffcf5);
   color: var(--ay-ink, #1d1a2b);
   box-shadow: var(--ay-shadow, 3px 3px 0 #1d1a2b);
-  font-family: var(--ay-font-ui, 'DM Sans', system-ui, sans-serif);
+  font-family: var(--ay-sans);
   text-align: left;
   animation: ayGlossIn 150ms ease-out both;
 }
 .ay-gloss-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-.ay-gloss-card__head strong { padding-top: 8px; font: 800 18px/1.2 var(--ay-font-display, 'DM Sans', sans-serif); letter-spacing: -.01em; }
+.ay-gloss-card__head strong { padding-top: 8px; font: 600 var(--ay-fs-card)/1.2 var(--ay-sans); letter-spacing: -.01em; }
 .ay-gloss-card__x {
   flex: none;
   display: grid;
@@ -55,9 +55,9 @@
 }
 .ay-gloss-card__x svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.25; stroke-linecap: round; }
 .ay-gloss-card__x:hover { background: var(--ay-cream, #faf8f1); }
-.ay-gloss-card p { margin: 4px 0 0; font: 400 15px/1.5 var(--ay-font-ui, 'DM Sans', system-ui, sans-serif); }
+.ay-gloss-card p { margin: 4px 0 0; font: 400 var(--ay-fs-body)/1.55 var(--ay-sans); }
 .ay-gloss-card .ay-gloss-card__long { margin-top: 12px; }
-.ay-gloss-card .ay-gloss-card__related { margin-top: 8px; color: var(--ay-ink-soft, rgba(29, 26, 43, .62)); font-size: 14px; }
+.ay-gloss-card .ay-gloss-card__related { margin-top: 8px; color: var(--ay-ink-soft, rgba(29, 26, 43, .62)); font-size: var(--ay-fs-secondary); }
 .ay-gloss-card__more {
   display: inline-flex;
   align-items: center;
@@ -67,12 +67,12 @@
   border: 0;
   background: none;
   color: inherit;
-  font: 700 14px/1 var(--ay-font-ui, 'DM Sans', system-ui, sans-serif);
+  font: 600 var(--ay-fs-secondary)/1 var(--ay-sans);
   text-decoration: underline;
   text-underline-offset: 3px;
   cursor: pointer;
 }
-.ay-gloss-card small { display: block; margin-top: 8px; color: var(--ay-ink-soft, rgba(29, 26, 43, .62)); font: 500 12px/1.4 var(--ay-font-ui, 'DM Sans', system-ui, sans-serif); }
+.ay-gloss-card small { display: block; margin-top: 8px; color: var(--ay-ink-soft, rgba(29, 26, 43, .62)); font: 500 var(--ay-fs-caption)/1.4 var(--ay-sans); }
 
 /* Phones: a small bottom sheet. */
 .ay-gloss-scrim { position: fixed; inset: 0; z-index: 5999; background: rgba(20, 16, 30, .32); animation: ayGlossFade 150ms ease-out both; }

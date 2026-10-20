@@ -42,18 +42,18 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                 ← Back to Ecosystem
             </button>
             <div className="ay3-pagehead ay3-band ay3-band--rose ay3-torn ay3-edge-bottom" style={{ textAlign: 'center', marginBottom: '4rem' }}>
-                <div style={{ display: 'inline-block', padding: '0.4rem 1rem', background: 'var(--color-primary-fade)', color: 'var(--color-primary)', borderRadius: 'var(--radius-pill)', fontSize: '0.85rem', fontWeight: '600', marginBottom: '1rem' }}>
+                <div style={{ display: 'inline-block', padding: '0.4rem 1rem', background: 'var(--color-primary-fade)', color: 'var(--color-primary)', borderRadius: 'var(--radius-pill)', fontSize: 14, fontWeight: '600', marginBottom: '1rem' }}>
                     Appointment Prep Tool
                 </div>
-                <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Get ready for your <em>appointment.</em></h2>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>A one-page summary of what you told ayna and the products you use. Bring it to your <GlossaryTerm term="OB/GYN">OB-GYN</GlossaryTerm> or primary care visit.</p>
+                <h2 style={{ fontSize: 'var(--ay-fs-title)', marginBottom: '1rem' }}>Get ready for your <em>appointment.</em></h2>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: 16 }}>A one-page summary of what you told ayna and the products you use. Bring it to your <GlossaryTerm term="OB/GYN">OB-GYN</GlossaryTerm> or primary care visit.</p>
             </div>
 
             <div className="card dp-summary" style={{ padding: '3rem', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-md)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '2.5rem', borderBottom: '2px solid var(--color-bg)', pb: '1.5rem' }}>
                     <div>
-                        <h1 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '0.25rem', color: 'var(--color-primary)' }}>ayna Health Summary</h1>
-                        <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Generated on {new Date().toLocaleDateString()}</p>
+                        <h1 style={{ fontSize: 'var(--ay-fs-section)', fontWeight: 600, marginBottom: '0.25rem', color: 'var(--color-primary)' }}>ayna health summary</h1>
+                        <p style={{ color: 'var(--color-text-muted)', fontSize: 14 }}>Generated on {new Date().toLocaleDateString()}</p>
                     </div>
                     <button className="btn btn-outline dp-noprint" onClick={() => window.print()}>Print summary</button>
                 </div>
@@ -82,13 +82,13 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                 </div>
 
                 <div style={{ marginBottom: '3rem' }}>
-                    <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '1rem', letterSpacing: '0.05em' }}>Products I use ({ecosystemStats})</h4>
+                    <h4 style={{ fontSize: 12.5, color: 'var(--color-text-muted)', textTransform: 'none', marginBottom: '1rem', letterSpacing: 'normal' }}>Products I use ({ecosystemStats})</h4>
                     <div style={{ background: 'var(--color-bg)', padding: '1.5rem', borderRadius: 'var(--radius-md)' }}>
                         <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             {products.map(p => (
                                 <li key={p.id} style={{ background: 'white', border: '1px solid var(--color-border)', padding: '0.75rem 1rem', borderRadius: 'var(--radius-sm)' }}>
-                                    <strong style={{ fontSize: '0.95rem', display: 'block', marginBottom: '0.35rem' }}>{p.name}</strong>
-                                    <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+                                    <strong style={{ fontSize: 16, display: 'block', marginBottom: '0.35rem' }}>{p.name}</strong>
+                                    <span style={{ fontSize: 14, color: 'var(--color-text-muted)' }}>
                                         {isService(p) ? <strong style={{ color: 'var(--color-text-main)' }}>Care service</strong> : <>
                                         <strong style={{ color: 'var(--color-text-main)' }}>Main ingredients:</strong>{' '}
                                         {p.ingredients || 'Not listed, check the product label or brand website for the full ingredient list.'}</>}
@@ -102,29 +102,29 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                                 <ul>{shared.map(([a, names]) => <li key={a}>{names.length} products contain {a}: {names.join(', ')}</li>)}</ul>
                             </div>
                         )}
-                        <p style={{ marginTop: '1rem', fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+                        <p style={{ marginTop: '1rem', fontSize: 14, color: 'var(--color-text-muted)' }}>
                             *Sharing this list helps your doctor spot things that might cause irritation or not mix well with other products you take.
                         </p>
                     </div>
                 </div>
 
                 <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '2rem' }}>
-                    <h4 style={{ fontSize: '1rem', fontWeight: '700', marginBottom: '1rem' }}>Questions to ask</h4>
+                    <h4 style={{ fontSize: 16, fontWeight: 600, marginBottom: '1rem' }}>Questions to ask</h4>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         {questions.map((q) => (
                             <div key={q} style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: 'var(--color-surface-soft)', padding: '1rem', borderRadius: 'var(--radius-sm)', borderLeft: '4px solid var(--color-primary)' }}>
-                                <p style={{ fontSize: '0.95rem' }}>“{q}”</p>
+                                <p style={{ fontSize: 16 }}>“{q}”</p>
                             </div>
                         ))}
                         {userChatMessages.length > 0 && (
                             <>
-                                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: '0.5rem', marginBottom: '0.25rem' }}>Based on what you shared with ayna</p>
+                                <p style={{ fontSize: 12.5, color: 'var(--color-text-muted)', marginTop: '0.5rem', marginBottom: '0.25rem' }}>Based on what you shared with ayna</p>
                                 {userChatMessages.slice(0, 5).map((text, i) => (
                                     <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', background: 'var(--color-primary-fade)', padding: '1rem', borderRadius: 'var(--radius-sm)', borderLeft: '4px solid var(--color-primary)' }}>
                                         <div>
-                                            <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>You told ayna:</p>
-                                            <blockquote style={{ margin: '0 0 0.5rem', paddingLeft: '0.75rem', borderLeft: '3px solid var(--color-primary)', fontSize: '0.9rem', color: 'var(--color-text-main)' }}>{text.length > 120 ? text.slice(0, 120) + '…' : text}</blockquote>
-                                            <p style={{ fontSize: '0.95rem', fontWeight: '500' }}>You could ask your provider: "I shared this with my health app. Can we talk about whether it affects my care, or anything I should follow up on?"</p>
+                                            <p style={{ fontSize: 14, color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>You told ayna:</p>
+                                            <blockquote style={{ margin: '0 0 0.5rem', paddingLeft: '0.75rem', borderLeft: '3px solid var(--color-primary)', fontSize: 14, color: 'var(--color-text-main)' }}>{text.length > 120 ? text.slice(0, 120) + '…' : text}</blockquote>
+                                            <p style={{ fontSize: 14, fontWeight: '500' }}>You could ask your provider: "I shared this with my health app. Can we talk about whether it affects my care, or anything I should follow up on?"</p>
                                         </div>
                                     </div>
                                 ))}
@@ -134,7 +134,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                 </div>
             </div>
 
-            <div style={{ marginTop: '2rem', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
+            <div style={{ marginTop: '2rem', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: 14 }}>
                 <p>ayna gives information only. It is not a medical device. Always check health facts with your doctor or nurse.</p>
             </div>
         </div>

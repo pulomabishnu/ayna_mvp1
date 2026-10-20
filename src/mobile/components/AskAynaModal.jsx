@@ -5,6 +5,8 @@ const ASK_STARTERS = ['What helps with cramps?', 'Is this safe with my birth con
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 import { apiUrl } from '../../utils/apiUrl.js';
+import ShareAnswerButton from '../../components/ShareAnswerButton.jsx';
+import { questionForAnswer } from '../../utils/sharedAnswer.js';
 
 /**
  * Mobile port of ProfileChatbot's merge/summary logic
@@ -113,7 +115,7 @@ export default function AskAynaModal({
     e.preventDefault();
     const msg = input.trim();
     if (!msg || sending) return;
-    if (!session?.access_token) { onRequireAuth?.('Ask Ayna'); return; }
+    if (!session?.access_token) { onRequireAuth?.('Ask ayna'); return; }
     setInput('');
     setSendError('');
     const userMsg = { role: 'user', text: msg };
@@ -159,11 +161,11 @@ export default function AskAynaModal({
       onChatHistoryUpdate?.(newMessages);
     } catch (err) {
       if (err?.code === 'not_signed_in') {
-        onRequireAuth?.('Ask Ayna');
+        onRequireAuth?.('Ask ayna');
       } else if (err?.code === 'weekly_limit_reached') {
         setSendError("You've used your free chats for this week. They reset weekly.");
       } else {
-        setSendError(err?.message || 'Something went wrong. Try again in a moment.');
+        setSendError(err?.message || 'ayna couldn’t answer just now. Check your connection and ask again in a moment.');
       }
     } finally {
       setSending(false);
@@ -183,7 +185,7 @@ export default function AskAynaModal({
         flexDirection: 'column',
       }}
     >
-      <div className="ayna-ask-drawer-content" role="dialog" aria-label="Ask Ayna" aria-modal={open ? true : undefined} aria-hidden={!open} inert={!open ? true : undefined}>
+      <div className="ayna-ask-drawer-content" role="dialog" aria-label="Ask ayna" aria-modal={open ? true : undefined} aria-hidden={!open} inert={!open ? true : undefined}>
       <div
         style={{
           paddingTop: 'max(20px, env(safe-area-inset-top))',
@@ -212,21 +214,36 @@ export default function AskAynaModal({
                 border: m.role === 'user' ? 0 : '2px solid var(--ayna-heading)',
                 borderRadius: m.role === 'user' ? '18px 18px 6px 18px' : '18px 18px 18px 6px',
                 padding: '11px 14px',
-                fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
-                lineHeight: 1.5,
+                fontWeight: 400, fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
+                lineHeight: 1.45,
                 whiteSpace: 'pre-wrap',
               }}
             >
               {m.role === 'assistant' ? renderMarkdownLite(m.text) : m.text}
             </div>
+            {m.role === 'assistant' && questionForAnswer(messages, i) && (
+              <ShareAnswerButton
+                question={questionForAnswer(messages, i)}
+                answer={m.text}
+                sources={m.sources || []}
+                share={m.share || null}
+                onShareChange={(share) => {
+                  const next = messages.map((x, j) => (j === i ? { ...x, share } : x));
+                  setMessages(next);
+                  onChatHistoryUpdate?.(next);
+                }}
+                session={session}
+                surface="app"
+              />
+            )}
             {m.showViewRecommendations && onViewRecommendations && (
               <div
                 onClick={onViewRecommendations}
                 style={{
                   marginTop: 6,
                   fontFamily: "var(--ayna-font-ui)",
-                  fontWeight: 600,
-                  fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))',
+                  fontWeight: 500,
+                  fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
                   color: 'var(--ayna-accent-dark)',
                   cursor: 'pointer',
                   textDecoration: 'underline',
@@ -247,7 +264,7 @@ export default function AskAynaModal({
       </div>
 
       {sendError && (
-        <div style={{ padding: '0 20px 8px', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>{sendError}</div>
+        <div style={{ padding: '0 20px 8px', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>{sendError}</div>
       )}
 
       <form
@@ -262,9 +279,10 @@ export default function AskAynaModal({
       >
         <input
           type="text"
+          className="ay-ask-input"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={session === undefined ? 'Loading…' : 'Ask Ayna anything…'}
+          placeholder={session === undefined ? 'Loading…' : 'Ask ayna anything…'}
           disabled={sending || session === undefined}
           style={{
             flex: 1,
@@ -287,8 +305,8 @@ export default function AskAynaModal({
             background: 'var(--ayna-cta-bg)',
             color: 'var(--ayna-cta-text)',
             fontFamily: "var(--ayna-font-ui)",
-            fontWeight: 600,
-            fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
+            fontWeight: 500,
+            fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
             cursor: 'pointer',
             opacity: sending || !input.trim() || session === undefined ? 0.5 : 1,
           }}
