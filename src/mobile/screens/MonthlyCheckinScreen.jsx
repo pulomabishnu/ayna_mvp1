@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { haptic } from '../../utils/haptics.js';
 import { mapIntakeToLegacyQuizProfile } from '../../utils/healthIntake.js';
 import { ChipList, LevelMeter } from '../components/intake/IntakeControls.jsx';
 import '../intake-play.css';
@@ -82,9 +83,9 @@ const UTI_OPTIONS = [
 const RECS_OPTIONS = [
   ['not_tried', 'Haven’t tried them yet', 'We will hold off on new suggestions'],
   ['helped', 'Helped', 'More like these, and we will keep the dose steady'],
-  ['didnt_help', 'Didn’t help', 'We will try a different mechanism, not a different brand'],
+  ['didnt_help', 'Didn’t help', 'Next time we’ll suggest a different kind of product, not just another brand'],
   ['worse', 'Made things worse', 'We will pull them and flag the ingredient'],
-  ['na', 'N/A, didn’t get any recs', 'Nothing to score'],
+  ['na', 'I didn’t get any picks', 'Nothing to score'],
 ];
 const MEDICATION_OPTIONS = [
   ['no_changes', 'No changes', 'Same as last month'],
@@ -313,6 +314,7 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
     }
     setSaving(false);
     setComplete(true);
+    haptic('success');
     // Small delay so the completion state is visible before the ecosystem
     // rebuild takes over the screen, matches the deliberate pause the
     // intake quiz's own reveal step already has.
@@ -397,19 +399,19 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
       )}
 
       {stepId === 'flow' && (
-        <StepShell stepKey={stepId} tag="Shown because · a period symptom" title="How was your flow this month?" subtitle={fullHealthIntake?.periodFlow ? `Last time you said ${fullHealthIntake.periodFlow.toLowerCase()}.` : undefined} footer={footer}>
+        <StepShell stepKey={stepId} tag="Because you mentioned a period symptom" title="How was your flow this month?" subtitle={fullHealthIntake?.periodFlow ? `Last time you said ${fullHealthIntake.periodFlow.toLowerCase()}.` : undefined} footer={footer}>
           <ScaleSelector options={FLOW_OPTIONS} value={answers.flow} onChange={(v) => set('flow', v)} />
         </StepShell>
       )}
 
       {stepId === 'pain' && (
-        <StepShell stepKey={stepId} tag="Shown because · cramps" title="How was your pain this month?" subtitle={fullHealthIntake?.periodPain ? `Last time you said ${fullHealthIntake.periodPain.toLowerCase()}.` : undefined} footer={footer}>
+        <StepShell stepKey={stepId} tag="Because you said cramps" title="How was your pain this month?" subtitle={fullHealthIntake?.periodPain ? `Last time you said ${fullHealthIntake.periodPain.toLowerCase()}.` : undefined} footer={footer}>
           <ScaleSelector options={PAIN_OPTIONS} value={answers.pain} onChange={(v) => set('pain', v)} />
         </StepShell>
       )}
 
       {stepId === 'uti' && (
-        <StepShell stepKey={stepId} tag="Shown because · recurrent UTIs" title="Any UTI, BV, or yeast symptoms this month?" footer={footer}>
+        <StepShell stepKey={stepId} tag="Because you mentioned UTIs" title="Any UTI, BV, or yeast symptoms this month?" footer={footer}>
           {UTI_OPTIONS.map(([value, label]) => (
             <OptionCard key={value} selected={answers.utiStatus === value} title={label} onClick={() => set('utiStatus', value)} />
           ))}
@@ -503,8 +505,8 @@ function Header({ onBack, label, progress, stepText }) {
 function CompletionCard({ month, justFinished }) {
   return (
     <div className="ip-done">
-      <div className="ip-done-stamp" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" /></svg></div>
-      <h1 className="ip-title">{justFinished ? `${monthLabel(month)}, logged.` : `${monthLabel(month)} is done.`}</h1>
+      <div className={`ip-done-stamp${justFinished ? ' ay-dot-fill' : ''}`} aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" /></svg></div>
+      <h1 className="ip-title">{justFinished ? `${monthLabel(month)} is logged` : `${monthLabel(month)} is done`}</h1>
       <p className="ip-subtitle">{justFinished ? 'Your matches update overnight.' : 'See you next month.'}</p>
     </div>
   );

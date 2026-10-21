@@ -132,7 +132,7 @@
   z-index: 1;
   offset-path: path("M 340,150 A 170,112 0 1,1 0,150 A 170,112 0 1,1 340,150");
   offset-rotate: 0deg;
-  animation: ay-orbit-path 34s linear infinite;
+  animation: ay-orbit-path 34s linear 1;
 }
 
 /* Universal tap feedback, targets the inline cursor:pointer every

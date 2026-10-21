@@ -106,9 +106,9 @@
    rest → bookmark pops (saved) → card swipes off fast → next card rises from the deck. No lingering ghost. */
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-stage { overflow: hidden; margin-inline: calc(-1 * var(--lp-gutter)); padding-inline: var(--lp-gutter); }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck .c1 { background: var(--ay-butter); rotate: -9deg; }
-.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck .c2 { background: var(--ay-mint); rotate: 5deg; animation: lp-deck-lift 3s var(--ay-ease) infinite; }
-.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck .c3 { background: var(--ay-paper); box-shadow: 0 4px 0 var(--ay-ink); animation: lp-swipe 3s var(--ay-ease) infinite; will-change: transform, opacity; }
-.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck .c3 svg { width: 52px; height: 52px; fill: var(--ay-paper); stroke: var(--ay-ink); stroke-width: 1.8; animation: lp-save 3s var(--ay-ease) infinite; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck .c2 { background: var(--ay-mint); rotate: 5deg; animation: lp-deck-lift 3s var(--ay-ease) 1; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck .c3 { background: var(--ay-paper); box-shadow: 0 4px 0 var(--ay-ink); animation: lp-swipe 3s var(--ay-ease) 1; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck .c3 svg { width: 52px; height: 52px; fill: var(--ay-paper); stroke: var(--ay-ink); stroke-width: 1.75; animation: lp-save 3s var(--ay-ease) 1; }
 @keyframes lp-swipe {
   0%, 38% { transform: none; opacity: 1; }
   56% { transform: translateX(160%) rotate(22deg); opacity: 1; }
@@ -146,7 +146,7 @@
 .ayna-mobile.ayna-mobile .ay-cover-art i:nth-child(1) { right: 30% !important; top: 72px !important; width: 16px !important; height: 16px !important; }
 .ayna-mobile.ayna-mobile .ay-cover-art i:nth-child(2) { display: none !important; }
 /* Stars: a loose constellation around the edges, varied size/colour, staggered twinkle, never over controls */
-.ayna-mobile.ayna-mobile .ay-cover-stars i { display: block !important; position: absolute; border: 0 !important; border-radius: 0 !important; clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); background: var(--ay-butter) !important; animation: lp-twinkle 3.6s ease-in-out infinite; }
+.ayna-mobile.ayna-mobile .ay-cover-stars i { display: block !important; position: absolute; border: 0 !important; border-radius: 0 !important; clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); background: var(--ay-butter) !important; }
 .ayna-mobile.ayna-mobile .ay-cover-stars i:nth-child(1) { left: auto !important; right: 30% !important; top: 70px !important; width: 18px !important; height: 18px !important; animation-delay: 0s; }
 .ayna-mobile.ayna-mobile .ay-cover-stars i:nth-child(2) { display: block !important; left: 6px !important; right: auto !important; top: 30% !important; width: 14px !important; height: 14px !important; background: var(--ay-paper) !important; animation-delay: -1.2s; }
 .ayna-mobile.ayna-mobile .ay-cover-stars i:nth-child(3) { right: 5px !important; left: auto !important; top: 47% !important; width: 22px !important; height: 22px !important; animation-delay: -2.1s; }

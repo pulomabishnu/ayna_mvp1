@@ -65,7 +65,7 @@
 .ayna-mobile .ayna-saved-empty { min-height:0; padding:100px 18px 0; }
 .ayna-mobile .ayna-saved-empty-stage { display:none!important; }
 .ayna-mobile .ayna-saved-empty-stage::after { display:none; }
-.ayna-mobile .ayna-saved-empty-stage svg { position:relative; z-index:1; width:130px; height:150px; transform:rotate(-9deg); animation:ayna-story-orbit 3s ease-in-out infinite alternate; }
+.ayna-mobile .ayna-saved-empty-stage svg { position:relative; z-index:1; width:130px; height:150px; transform:rotate(-9deg); }
 .ayna-mobile .ayna-saved-empty-stage span { position:absolute; right:15%; top:23%; display:block; width:72px; height:72px; border:0; border-radius:50%; background:var(--ayna-reference-yellow); }
 .ayna-mobile .ayna-saved-empty h2 { max-width:250px; color:var(--ayna-reference-ink); font-size:28px; font-weight:400; line-height:1.15; }
 .ayna-mobile .ayna-saved-empty>button { background:var(--ayna-reference-ink); color:#fff; border-radius:999px; }
@@ -186,10 +186,10 @@
 .ayna-mobile .am-profile-empty { min-height:110px; display:grid; place-items:center; text-align:center; margin:0; color:var(--ayna-text-muted); font:500 13px/1.4 var(--ayna-font-ui); }
 /* A consistent interaction rhythm keeps the playful screens feeling considered. */
 .ayna-mobile :is(button,a,[role='tab']) { -webkit-tap-highlight-color:transparent; }
-.ayna-mobile :is(.ayna-bottom-nav button,.am-tabs button,.am-primary,.am-secondary,.am-empty-state>button,.ayna-slide-start,.ayna-shop-filter-toggle,.ayna-fresh-product-card) { transition:transform .22s cubic-bezier(.2,.8,.2,1),background-color .22s ease,color .22s ease,border-color .22s ease,opacity .22s ease; }
+.ayna-mobile :is(.ayna-bottom-nav button,.am-tabs button,.am-primary,.am-secondary,.am-empty-state>button,.ayna-slide-start,.ayna-shop-filter-toggle,.ayna-fresh-product-card) { transition:transform .22s var(--ease-out),background-color .22s ease,color .22s ease,border-color .22s ease,opacity .22s ease; }
 .ayna-mobile :is(.ayna-bottom-nav button,.am-tabs button,.am-primary,.am-secondary,.am-empty-state>button,.ayna-slide-start,.ayna-shop-filter-toggle,.ayna-fresh-product-card):active { transform:scale(.97); }
 .ayna-mobile :is(button,a,input,textarea,select):focus-visible { outline:2px solid var(--ayna-reference-ink); outline-offset:3px; }
-.ayna-mobile .am-subpage { animation:ayna-ui-arrive .34s cubic-bezier(.2,.8,.2,1) both; }
+.ayna-mobile .am-subpage { animation:ayna-ui-arrive .34s var(--ease-out) both; }
 .ayna-mobile .am-tabs button.is-active { border-bottom-color:var(--ayna-reference-ink); }
 @keyframes ayna-ui-arrive { from { opacity:0; transform:translateY(9px); } to { opacity:1; transform:translateY(0); } }
 @keyframes ayna-quiz-enter { from { opacity:0; transform:translateY(17px); } to { opacity:1; transform:translateY(0); } }

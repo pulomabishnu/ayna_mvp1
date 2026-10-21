@@ -100,3 +100,19 @@ describe('/api/sms-reminders', () => {
     expect(textsTo().some((t) => /period/.test(t.Body))).toBe(false);
   });
 });
+
+describe('claimReminderDay (double-send guard)', () => {
+  it('returns false when the unique index rejects a second claim for the same day', async () => {
+    const { claimReminderDay } = await import('./_smsStore.js');
+    const inserts = [];
+    const admin = { from: () => ({ insert: async (row) => {
+      const dup = inserts.some((r) => r.user_id === row.user_id && r.detail.day === row.detail.day);
+      inserts.push(row);
+      return { error: dup ? { code: '23505', message: 'duplicate key' } : null };
+    } }) };
+    expect(await claimReminderDay(admin, 'u1', '2026-10-20', 'period')).toBe(true);
+    expect(await claimReminderDay(admin, 'u1', '2026-10-20', 'period')).toBe(false);
+    expect(await claimReminderDay(admin, 'u1', '2026-10-21', 'period')).toBe(true);
+    expect(inserts[0]).toMatchObject({ kind: 'reminder', detail: { type: 'period', day: '2026-10-20' } });
+  });
+});

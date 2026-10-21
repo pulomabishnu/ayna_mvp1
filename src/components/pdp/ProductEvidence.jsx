@@ -84,6 +84,30 @@ function Paras({ list, leadIn = false, className = '' }) {
   });
 }
 
+/**
+ * On phones, long multi-part text reads as a sideways shelf of cards (swipe or
+ * use the arrows), so the page doesn't run on for screens. Every word stays in
+ * the page; on wider screens it's ordinary paragraphs.
+ */
+function ReadShelf({ list, label, leadIn = false, min = 3 }) {
+  const ref = useRef(null);
+  if (!list?.length) return null;
+  if (list.length < min) return <div className="ayq-prose"><Paras list={list} leadIn={leadIn} /></div>;
+  const move = (dir) => { const el = ref.current; if (el) el.scrollBy({ left: dir * el.clientWidth * 0.86, behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); };
+  return (
+    <div className="ayq-readshelf">
+      <div className="ayq-readshelf__bar">
+        <span className="ayq-readshelf__hint">{list.length} parts. Swipe to read on.</span>
+        <span className="ayq-readshelf__btns">
+          <button type="button" aria-label={`Previous part of ${label}`} onClick={() => move(-1)}><PdpIcon name="chevron" size={18} className="ayq-rot-l" /></button>
+          <button type="button" aria-label={`Next part of ${label}`} onClick={() => move(1)}><PdpIcon name="chevron" size={18} className="ayq-rot-r" /></button>
+        </span>
+      </div>
+      <div className="ayq-prose ayq-readshelf__track" ref={ref} tabIndex={0} role="region" aria-label={label}><Paras list={list} leadIn={leadIn} /></div>
+    </div>
+  );
+}
+
 function Bullets({ items, tone = '' }) {
   if (!items?.length) return null;
   return <ul className={`ayq-bullets${tone ? ` is-${tone}` : ''}`}>{items.map((t, i) => <li key={`${i}-${String(t).slice(0, 20)}`}><Tx>{t}</Tx></li>)}</ul>;
@@ -368,8 +392,8 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     <div className="ayq-cols">
       <div className="ayq-main">
         {ex.attribution && <p className="ayq-byline"><b>Who wrote this:</b> <Tx>{ex.attribution}</Tx></p>}
-        {ex.opinion.length > 0 && <div className="ayq-prose"><Paras list={ex.opinion} leadIn /></div>}
-        {ex.note.length > 0 && <Folder id="ayq-more-clinical" title="More clinical context" icon="stethoscope"><Paras list={ex.note} /><p className="ayq-meta">From the clinical guidance in the sources.</p></Folder>}
+        {ex.opinion.length > 0 && <ReadShelf list={ex.opinion} label="The full expert view" leadIn />}
+        {ex.note.length > 0 && <Folder id="ayq-more-clinical" title="More clinical context" icon="stethoscope"><ReadShelf list={ex.note} label="More clinical context" /><p className="ayq-meta">From the clinical guidance in the sources.</p></Folder>}
         {ex.sourceSummary && (
           <Folder id="ayq-clin-sum" title="What the linked sources say">
             <p className="ayq-p"><Tx>{ex.sourceSummary.text}</Tx></p>
@@ -397,7 +421,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       )}
       <div className="ayq-cols">
         <div className="ayq-main">
-          {rs.summary.length > 0 && <><h4 className="ayq-subh">In short</h4><div className="ayq-prose"><Paras list={rs.summary} /></div></>}
+          {rs.summary.length > 0 && <><h4 className="ayq-subh">In short</h4><ReadShelf list={rs.summary} label="Research in short" /></>}
           {rs.sourceSummary && <><h4 className="ayq-subh">What the linked research says</h4><p className="ayq-p"><Tx>{rs.sourceSummary}</Tx></p></>}
           {rs.evidenceStrength && <p className="ayq-meta">Evidence level on file: {rs.evidenceStrength}</p>}
         </div>
@@ -428,7 +452,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       {rs.ingredients.length > 0 && (
         <div className="ayq-ings">
           <h4 className="ayq-subh">{rs.ingredientsAreTopics ? 'Point by point' : 'Ingredient by ingredient'} <span className="ayq-count">{rs.ingredients.length}</span></h4>
-          <ul className="ayq-inggrid">
+          <ul className="ayq-inggrid" tabIndex={0} aria-label="Ingredient notes">
             {rs.ingredients.map((i) => (
               <li key={i.name} className="ayq-ing">
                 <h5 className="ayq-ing__name">{i.name}</h5>
@@ -466,7 +490,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
         {(rv.text.length > 0 || rv.sourceSummary) && (
           <>
             <h4 className="ayq-subh">What people say online</h4>
-            <div className="ayq-prose"><Paras list={rv.text} />{rv.sourceSummary && <p className="ayq-p"><Tx>{rv.sourceSummary}</Tx></p>}</div>
+            <ReadShelf list={rv.text} label="What people say online" />{rv.sourceSummary && <p className="ayq-p"><Tx>{rv.sourceSummary}</Tx></p>}
             <p className="ayq-meta">Online reviews and posts are people’s experiences, not clinical evidence.</p>
           </>
         )}
@@ -621,21 +645,21 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const researchCount = new Set([...ex.sources, ...rs.studies, ...rs.ingredients.flatMap((i) => i.links)].filter((l) => l.kind.tier === 'credible').map((l) => l.url)).size;
   const previews = [
     tabs.some((t) => t.id === 'literature') && (rs.negative.length
-      ? { id: 'literature', icon: 'paper', label: 'Research', num: String(rs.negative.length), caption: rs.negative.length === 1 ? 'study found no clear benefit' : 'studies found no clear benefit', tone: 'alert' }
+      ? { id: 'literature', icon: 'paper', label: 'Research', num: String(rs.negative.length), caption: rs.negative.length === 1 ? 'study found no clear benefit' : 'studies found no clear benefit', short: 'no benefit found', tone: 'alert' }
       : researchCount
-        ? { id: 'literature', icon: 'paper', label: 'Research', num: String(researchCount), caption: `${researchCount === 1 ? 'study or health-body source' : 'studies and health-body sources'}${levelWord ? `. ${levelWord}` : ''}` }
-        : { id: 'literature', icon: 'paper', label: 'Research', caption: levelWord || (rs.ingredients.length ? plural(rs.ingredients.length, rs.ingredientsAreTopics ? 'topic' : 'ingredient') + ' explained' : 'What the research says') }),
+        ? { id: 'literature', icon: 'paper', label: 'Research', num: String(researchCount), caption: `${researchCount === 1 ? 'study or health-body source' : 'studies and health-body sources'}${levelWord ? `. ${levelWord}` : ''}`, short: 'sources' }
+        : { id: 'literature', icon: 'paper', label: 'Research', caption: levelWord || (rs.ingredients.length ? plural(rs.ingredients.length, rs.ingredientsAreTopics ? 'topic' : 'ingredient') + ' explained' : 'What the research says'), short: levelWord ? levelWord.replace(' evidence', '') : 'Read it' }),
     tabs.some((t) => t.id === 'safety') && (sf.alert.length
-      ? { id: 'safety', icon: 'shield', label: 'Safety', caption: alertHead || 'Safety note on file', tone: 'alert' }
+      ? { id: 'safety', icon: 'shield', label: 'Safety', caption: alertHead || 'Safety note on file', short: 'Note on file', tone: 'alert' }
       : sf.warnings.length
-        ? { id: 'safety', icon: 'shield', label: 'Safety', num: String(sf.warnings.length), caption: sf.warnings.length === 1 ? 'thing to check first' : 'things to check first' }
-        : { id: 'safety', icon: 'shield', label: 'Safety', caption: 'Label and regulator facts' }),
+        ? { id: 'safety', icon: 'shield', label: 'Safety', num: String(sf.warnings.length), caption: sf.warnings.length === 1 ? 'thing to check first' : 'things to check first', short: 'to check' }
+        : { id: 'safety', icon: 'shield', label: 'Safety', caption: 'Label and regulator facts', short: 'Label facts' }),
     tabs.some((t) => t.id === 'reviews') && (hasMemberRating
-      ? { id: 'reviews', icon: 'community', label: 'Reviews', num: aynaRating.toFixed(1), caption: `from ${plural(ratingCount, 'ayna member')}` }
+      ? { id: 'reviews', icon: 'community', label: 'Reviews', num: aynaRating.toFixed(1), caption: `from ${plural(ratingCount, 'ayna member')}`, short: 'members' }
       : rv.brandRating
-        ? { id: 'reviews', icon: 'community', label: 'Reviews', num: rv.brandRating.value, caption: `from ${rv.brandRating.count} online reviews, not verified` }
-        : { id: 'reviews', icon: 'community', label: 'Reviews', caption: rv.text.length ? 'What people say online' : 'No reviews yet' }),
-    tabs.some((t) => t.id === 'how-to-use') && m.how && { id: 'how-to-use', icon: 'steps', label: 'How to use', num: String(m.how.steps.length), caption: m.how.steps.length === 1 ? 'step' : 'steps' },
+        ? { id: 'reviews', icon: 'community', label: 'Reviews', num: rv.brandRating.value, caption: `from ${rv.brandRating.count} online reviews, not verified`, short: 'online' }
+        : { id: 'reviews', icon: 'community', label: 'Reviews', caption: rv.text.length ? 'What people say online' : 'No reviews yet', short: rv.text.length ? 'Online' : 'None yet' }),
+    tabs.some((t) => t.id === 'how-to-use') && m.how && { id: 'how-to-use', icon: 'steps', label: 'How to use', num: String(m.how.steps.length), caption: m.how.steps.length === 1 ? 'step' : 'steps', short: m.how.steps.length === 1 ? 'step' : 'steps' },
   ].filter(Boolean);
 
   const whoBlock = (m.who.length > 0 || (glance?.who?.helps || []).length > 0) && (
@@ -686,7 +710,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
               {previews.map((p) => (
                 <button key={p.id} type="button" className={`ayq-preview${p.tone ? ` is-${p.tone}` : ''}`} onClick={() => goTo(p.id)}>
                   <span className="ayq-preview__top"><PdpIcon name={p.icon} size={18} /><span>{p.label}</span></span>
-                  <span className="ayq-preview__main">{p.num && <b className="ayq-preview__num">{p.num}</b>}<span>{p.caption}</span></span>
+                  <span className="ayq-preview__main">{p.num && <b className="ayq-preview__num">{p.num}</b>}<span className="ayq-preview__cap">{p.caption}</span><span className="ayq-preview__short" aria-hidden="true">{p.short}</span></span>
                   <span className="ayq-preview__go" aria-hidden="true"><PdpIcon name="arrow" size={18} /></span>
                 </button>
               ))}
@@ -708,7 +732,8 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
           </section>
         )}
 
-        <ProductPeopleSay productId={baseProduct?.id} reviews={reviewRows} onSeeAll={() => goTo('reviews')} onWriteReview={onWriteReview} onOpenPost={onOpenReview} hasOnline={Boolean(rv.text.length || rv.brandRating || rv.online.length || rv.elsewhere.length)} />
+        {/* Member reviews where she scrolls: only when there are some (the empty version repeated 'Tried it?'). */}
+        {reviewRows.length > 0 && <ProductPeopleSay productId={baseProduct?.id} reviews={reviewRows} onSeeAll={() => goTo('reviews')} onWriteReview={onWriteReview} onOpenPost={onOpenReview} hasOnline={Boolean(rv.text.length || rv.brandRating || rv.online.length || rv.elsewhere.length)} />}
       </div>
     </TermsCtx.Provider>
   );

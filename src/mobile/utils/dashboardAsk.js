@@ -86,7 +86,7 @@ export function dashboardContext({ cycle = null, estimate = null, ready = [], pr
     lines.push(`${s.title}: ${s.headline || ''}${s.change?.text ? `. ${s.change.text}` : ''}.`.replace(/\.\./g, '.'));
   });
   if (products.length) {
-    lines.push(`Products in her Ecosystem: ${products.slice(0, 10).map((p) => `${displayName(p)}${brandOf(p) ? ` by ${brandOf(p)}` : ''} (${String(p.category || 'product').replace(/-/g, ' ')})`).join('; ')}.`);
+    lines.push(`Products in her ecosystem: ${products.slice(0, 10).map((p) => `${displayName(p)}${brandOf(p) ? ` by ${brandOf(p)}` : ''} (${String(p.category || 'product').replace(/-/g, ' ')})`).join('; ')}.`);
   }
   return lines.join('\n');
 }

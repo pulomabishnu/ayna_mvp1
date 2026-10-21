@@ -2,6 +2,7 @@ import React, { useEffect, useId, useRef, useState } from 'react';
 import { apiUrl } from '../utils/apiUrl';
 import { checkCommunityText, CRISIS_LINE } from '../utils/communityRules';
 import '../styles/suggest.css';
+import { fetchWithTimeout } from '../utils/network.js';
 
 // Anonymous "Suggest a product" / "Suggest a read" box, shared by the website
 // (Shop, Library) and the app (Browse, Library). Sends only the suggestion text
@@ -20,7 +21,7 @@ const readQueue = () => { try { const q = JSON.parse(localStorage.getItem(QUEUE_
 const writeQueue = (q) => { try { localStorage.setItem(QUEUE_KEY, JSON.stringify(q.slice(-5))); } catch { /* private mode */ } };
 
 async function postSuggestion(payload) {
-  const res = await fetch(apiUrl('/api/suggestions'), {
+  const res = await fetchWithTimeout(apiUrl('/api/suggestions'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'omit',

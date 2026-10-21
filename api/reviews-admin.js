@@ -1,6 +1,6 @@
-/* global process */
 import { listFeedback } from './_feedbackStore.js';
 import { verifyUser } from './_usageLimit.js';
+import { isAdminUser } from './_admin.js';
 
 function setPrivateResponseHeaders(res) {
   res.setHeader('Cache-Control', 'private, no-store, max-age=0');
@@ -9,17 +9,7 @@ function setPrivateResponseHeaders(res) {
   res.setHeader('Content-Security-Policy', "default-src 'none'");
 }
 
-// Comma-separated allowlist, e.g. "ameera@ayna.com,puloma@ayna.com,eliz@ayna.com".
-// Set in Vercel project env vars — never hardcoded, so the list can change
-// without a deploy. No env var set means no one gets in (fail closed).
-function isAdminEmail(email) {
-  if (!email) return false;
-  const allow = String(process.env.ADMIN_EMAILS || '')
-    .split(',')
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
-  return allow.includes(String(email).trim().toLowerCase());
-}
+// Admin = confirmed account on ADMIN_EMAILS (api/_admin.js). Fail closed.
 
 // Team/test accounts whose reviews are hidden from this admin page and left
 // out of every count it shows. Read-time filter only: the stored reviews are
@@ -57,7 +47,7 @@ export default async function handler(req, res) {
     });
   }
 
-  if (!isAdminEmail(user.email)) {
+  if (!isAdminUser(user)) {
     return res.status(403).json({ error: 'forbidden' });
   }
 

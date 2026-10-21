@@ -46,7 +46,7 @@ const isConsumable = (p) => {
 };
 
 /* At a glance: what she told us, in a few facts, and her shelves by the same
-   names My Ecosystem uses. No personality label (she never asked for one). */
+   names My ecosystem uses. No personality label (she never asked for one). */
 /* Badges are gone from the website until the app ships (a badge for an app
    people can't get, and points for a health profile, didn't fit). The invite
    link stays. No network calls: the link is built from her account id. */
@@ -154,7 +154,7 @@ function relativeDay(iso) {
 /* Same as the app's "Recently": Ecosystem products (dated ones first), saved
    products and finished reads, taking turns. Only real dates are shown. */
 function buildRecent(products, savedProducts, progress, articles) {
-  const eco = [...products].reverse().filter((p) => p?.id).map((p) => ({ key: `eco-${p.id}`, label: 'In your Ecosystem', product: { ...(PRODUCT_BY_ID.get(p.id) || {}), ...p }, at: p.addedAt || null }));
+  const eco = [...products].reverse().filter((p) => p?.id).map((p) => ({ key: `eco-${p.id}`, label: 'In your ecosystem', product: { ...(PRODUCT_BY_ID.get(p.id) || {}), ...p }, at: p.addedAt || null }));
   const ecoIds = new Set(products.map((p) => p?.id));
   const saved = Object.values(savedProducts || {}).filter(Boolean).reverse().filter((p) => p?.id && !ecoIds.has(p.id))
     .map((p) => ({ key: `saved-${p.id}`, label: 'Saved', product: { ...(PRODUCT_BY_ID.get(p.id) || {}), ...p }, at: null }));

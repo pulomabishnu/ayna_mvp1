@@ -1,3 +1,4 @@
+import { haptic } from '../utils/haptics.js';
 import '../styles/ask-home.css';
 
 /**
@@ -58,7 +59,7 @@ export default function AskHome({ name = '', intro = '', note = '', tiles = [], 
       <ul className="ay-askh-tiles" data-count={tiles.length}>
         {tiles.map((t, i) => (
           <li key={t.label} className={`is-${t.tone || 'group'}${i === 0 ? ' is-tall' : ''}`} style={{ '--i': i }}>
-            <button type="button" onClick={() => onPick(t.question)}>
+            <button type="button" onClick={() => { haptic('selection'); onPick(t.question); }}>
               <span className="ay-askh-icon"><AskIcon name={t.icon} /></span>
               {t.isNew && <span className="ay-askh-new">New</span>}
               <span className="ay-askh-tile-label">{t.label}</span>

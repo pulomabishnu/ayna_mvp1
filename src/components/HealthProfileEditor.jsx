@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { CheckIcon } from './icons/UiIcons.jsx';
 import {
   CONCERN_AREAS,
   INSURANCE_TYPES,
@@ -212,7 +213,7 @@ export default function HealthProfileEditor({ currentProfile, onSave, onCancel, 
                     cursor: 'pointer',
                   }}
                 >
-                  {selected ? '✓ ' : ''}{concern}
+                  {selected && <CheckIcon size={14} />}{concern}
                 </button>
               );
             })}
@@ -279,9 +280,9 @@ export default function HealthProfileEditor({ currentProfile, onSave, onCancel, 
 
         {onOpenPhoneVerify && (
           <div style={{ marginTop: '1.25rem', padding: '0.85rem', borderRadius: 'var(--radius-md)', background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)' }}>
-            <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>Text Ayna</div>
+            <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>Text ayna</div>
             <p style={{ margin: '0 0 0.5rem', color: 'var(--color-text-muted)', fontSize: 14 }}>
-              Verify your phone number to get personalized health texts from Ayna anytime.
+              Verify your phone number to get personalized health texts from ayna anytime.
             </p>
             <button type="button" className="btn btn-outline" onClick={onOpenPhoneVerify}>
               Set up texting

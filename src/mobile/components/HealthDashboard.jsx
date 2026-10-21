@@ -28,7 +28,7 @@ export default function HealthDashboard({ authUser, userName = '', selectedNeedI
     return (
       <div className="ay-hd-empty">
         <CycleRing cycleDay={null} avgLength={28} periodLength={0} />
-        <h2>Your health, in one place</h2>
+        <h2>Your sleep, cycle and heart, side by side</h2>
         <p>Sign in to connect your apps and wearables. Your cycle, sleep, heart and activity show up here, compared with your own usual.</p>
         {onSignIn && <button type="button" className="ay-qc-primary" onClick={onSignIn}>Sign in</button>}
       </div>
@@ -45,7 +45,7 @@ export default function HealthDashboard({ authUser, userName = '', selectedNeedI
   if (week.empty && !sections.length) {
     return (
       <div className="ay-wx-empty">
-        <h2>Your health, in one place</h2>
+        <h2>Your sleep, cycle and heart, side by side</h2>
         <p>Connect an app or wearable, or upload a file. Your cycle, sleep, heart and activity show up here, compared with your own usual.</p>
         {/* Still useful before any data: her goals matched to her products, from the quiz. */}
         <HealthStarter needIds={selectedNeedIds} products={products} matches={matches} onOpenProduct={onOpenProduct} onConnect={onConnect} />

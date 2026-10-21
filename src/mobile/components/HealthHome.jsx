@@ -8,6 +8,7 @@ import { phaseCompare, normalRanges, goalsCovered, effectChecks, aynaAdds } from
 import { SOURCE_NAMES } from '../data/healthConnections.js';
 import { askStats, weekQuestions, weekSummary } from '../utils/dashboardAsk.js';
 import ProductImage from './ProductImage.jsx';
+import { haptic } from '../../utils/haptics.js';
 import HealthChart, { CycleRing } from './HealthChart.jsx';
 import { Line, PhaseStrip, SourceLink, PhaseCompare, NormalRanges, GoalsCovered, WeekPicks, Meter } from './HealthBento.jsx';
 import '../../styles/week-explained.css';
@@ -203,7 +204,7 @@ function GoalRings({ goals, onOpen }) {
         {onOpen && <button type="button" className="ay-hh-link" onClick={onOpen}>See products</button>}
       </div>
       <div className="ay-hh-goals-body">
-        <div className="ay-hh-rings" role="img" aria-label={`${covered} of ${goals.length} goals covered by products in your Ecosystem`}>
+        <div className="ay-hh-rings" role="img" aria-label={`${covered} of ${goals.length} goals covered by products in your ecosystem`}>
           <svg viewBox="0 0 104 104" aria-hidden="true">
             {rings.map((g) => {
               const C = 2 * Math.PI * g.r;
@@ -331,11 +332,13 @@ export default function HealthHome({
     ...(hasProductsTab ? [{ id: 'products', label: 'Products' }] : []),
   ];
   const current = tabs.some((t) => t.id === tab) ? tab : 'summary';
+  const pickTab = (id) => { if (id !== current) haptic('selection'); setTab(id); };
   const open = (id) => {
+    haptic('selection');
     setTab(id);
     window.requestAnimationFrame(() => topRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' }));
   };
-  const add = (needId) => { if (onAddGoal?.(needId)) setAdded((a) => ({ ...a, [needId]: true })); };
+  const add = (needId) => { if (onAddGoal?.(needId)) { haptic('success'); setAdded((a) => ({ ...a, [needId]: true })); } };
 
   let ti = 0;
   const tiles = [];
@@ -535,7 +538,7 @@ export default function HealthHome({
         <p>{fmtLongDay(today)}</p>
         <h2>{hello}{name ? `, ${name}` : ''}</h2>
       </header>
-      <div className="ay-hh-areas"><Tabs tabs={tabs} value={current} onChange={setTab} label="Health areas" idBase="ay-hh-area" className="is-areas" /></div>
+      <div className="ay-hh-areas"><Tabs tabs={tabs} value={current} onChange={pickTab} label="Health areas" idBase="ay-hh-area" className="is-areas" /></div>
       <div className="ay-hh-panel" role="tabpanel" id="ay-hh-area-panel" aria-labelledby={`ay-hh-area-tab-${current}`} key={current}>
         {current === 'summary' && summary}
         {current === 'cycle' && cycleTab}

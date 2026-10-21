@@ -41,7 +41,7 @@ export default function CareNearYouPanel({
         border: '1px solid var(--color-border)',
       }}
     >
-      {/* Compact (inside My Ecosystem's "Care near you" card): the card
+      {/* Compact (inside My ecosystem's "Care near you" card): the card
           already carries the title and frame, so no second box or heading. */}
       {!compact && (
         <h3 style={{ fontSize: 16, marginBottom: '0.5rem', color: 'var(--color-text-main)' }}>

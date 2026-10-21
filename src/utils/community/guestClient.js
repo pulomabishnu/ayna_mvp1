@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { supabaseFetch } from '../network.js';
 
 /**
  * Guest identity for Community (people using ayna without an account).
@@ -28,6 +29,7 @@ export function getGuestClient() {
   if (!url || !anonKey) return null;
   try {
     guestClient = createClient(url, anonKey, {
+      global: { fetch: supabaseFetch },
       auth: {
         storageKey: STORAGE_KEY,
         persistSession: true,

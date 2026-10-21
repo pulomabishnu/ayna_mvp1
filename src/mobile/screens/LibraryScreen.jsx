@@ -7,6 +7,8 @@ import SuggestBox from '../../components/SuggestBox.jsx';
 import SearchAssist from '../../components/search/SearchAssist.jsx';
 import { searchArticles } from '../../utils/search/index.js';
 import '../library.css';
+import { sentenceCase as sentence } from '../../utils/sentenceCase.js';
+// Sentence case for topic names ("Hormonal Health" -> "Hormonal health"); acronyms stay.
 
 function ReadState({ value = 0 }) {
   const done = value >= 1;
@@ -16,8 +18,6 @@ function ReadState({ value = 0 }) {
   </span>;
 }
 
-// Sentence case for topic names ("Hormonal Health" -> "Hormonal health"); acronyms stay.
-const sentence = (label) => String(label || '').split(' ').map((w, i) => (i === 0 || /^[A-Z0-9&]{2,}$/.test(w) ? w : w.toLowerCase())).join(' ');
 
 /** The one featured read (the Feature surface): where she left off, else her top pick. */
 function FeaturedRead({ article, label, progress, onOpen }) {
@@ -74,9 +74,9 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
   }
 
   return <main className="ay-lib">
-    <MobileHeader onOpenSaved={onOpenSaved} />
+    <MobileHeader onOpenSaved={onOpenSaved} title="Library" titleFor="ay-lib-title" />
     <header className="ay-lib-head">
-      <div className="ay-lib-title"><h1>Library</h1>
+      <div className="ay-lib-title"><h1 id="ay-lib-title">Library</h1>
         <span className="ay-lib-total"><i aria-hidden="true" style={{ '--p': `${articles.length ? Math.round((finished / articles.length) * 100) : 0}%` }} />{finished} of {articles.length} read</span>
       </div>
       <SearchBar placeholder="Search reads" ariaLabel="Search reads" value={query} onChange={(e) => setQuery(e.target.value)} />

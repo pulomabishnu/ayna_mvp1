@@ -1,4 +1,5 @@
 import { getSupabaseClient } from './supabaseClient';
+import { fetchWithTimeout } from './network.js';
 export const FEEDBACK_CAMPAIGN = '2026-09-26';
 const PENDING_KEY = 'ayna_retailer_returns_v1';
 let activeOwner = null;
@@ -13,7 +14,7 @@ export async function sendFeedback(body, authenticated = false) {
     if (!token) throw new Error('Sign in required');
     headers.Authorization = `Bearer ${token}`;
   }
-  const response = await fetch('/api/feedback', { method: 'POST', headers, body: JSON.stringify(body), keepalive: true });
+  const response = await fetchWithTimeout('/api/feedback', { method: 'POST', headers, body: JSON.stringify(body), keepalive: true });
   if (!response.ok) throw new Error('Could not save. Please try again.');
   return response.json();
 }

@@ -2,7 +2,7 @@
    panel (.ayna-ask-panel). From the Cooper reference (cefbab0a): hello line,
    a bento of question tiles with one "New" badge, recent questions with
    coloured icon squares, a small stat card inside answers, and one
-   curved-text ribbon as the page's only seal. ayna inks, matte with grain,
+   curved-text ribbon as the page's only seal. ayna inks, matte (shared grain in styles/finish.css), motion from styles/motion.css,
    1.5px espresso outlines, no gloss or glow. */
 
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) :is(.ay-askh, .ay-askh-stats) {
@@ -10,8 +10,6 @@
   --k-group: var(--d-group, var(--ay-group, #f6e3a1)); --k-hair: var(--d-hair, var(--ay-hairline, rgba(62, 39, 35, .15)));
   --k-page: var(--d-page, var(--ay-page, #ffedac));
   --k-display: var(--ay-app-heading, var(--ay-heading, 'ayna Display', serif)); --k-sans: 'Figtree', system-ui, sans-serif;
-  --k-ease: cubic-bezier(0.16, 1, 0.3, 1);
-  --k-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .24 0 0 0 0 .15 0 0 0 0 .14 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh { position: relative; display: grid; gap: 20px; min-width: 0; color: var(--k-ink); font-family: var(--k-sans); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh * { box-sizing: border-box; }
@@ -19,7 +17,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh :is(button):focus-visible { outline: 3px solid var(--k-ink) !important; outline-offset: 2px !important; }
 
 /* the seal: a pink band with curved text across the top corner */
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-ribbon { display: block; width: calc(100% + 40px); max-width: none; height: auto; margin: -6px -20px -14px; overflow: hidden; pointer-events: none; animation: ay-askh-ribbon 520ms var(--k-ease) both; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-ribbon { display: block; width: calc(100% + 40px); max-width: none; height: auto; margin: -6px -20px -14px; overflow: hidden; pointer-events: none; animation: ay-askh-ribbon var(--t-delight) var(--ease-out) both; }
 @keyframes ay-askh-ribbon { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: none; } }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-ribbon #ay-askh-wave { fill: none; stroke: none; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-ribbon .ay-askh-band { fill: none; stroke: #f7badd; stroke-width: 22; stroke-linecap: butt; }
@@ -31,12 +29,11 @@
 
 /* bento of tiles: one tall, two stacked, one wide */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles > li { min-width: 0; animation: ay-askh-settle 320ms var(--k-ease) both; animation-delay: calc(var(--i, 0) * 45ms); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles > li { min-width: 0; animation: ay-askh-settle var(--t-push) var(--ease-out) both; animation-delay: calc(var(--i, 0) * var(--stagger, 45ms)); }
 @keyframes ay-askh-settle { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles > li.is-tall { grid-row: span 2; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles[data-count='4'] > li:nth-child(4) { grid-column: 1 / -1; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles button { position: relative; isolation: isolate; overflow: hidden; display: flex !important; flex-direction: column !important; align-items: flex-start !important; justify-content: flex-start; gap: 4px; width: 100%; height: 100%; min-height: 104px; margin: 0 !important; padding: 14px !important; border: 1.5px solid #3e2723 !important; border-radius: 20px !important; color: #3e2723 !important; text-align: left !important; box-shadow: none !important; cursor: pointer; transition: transform 160ms var(--k-ease); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles button::after { content: ''; position: absolute; inset: 0; z-index: -1; background-image: var(--k-grain); opacity: .12; pointer-events: none; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles button { position: relative; isolation: isolate; overflow: hidden; display: flex !important; flex-direction: column !important; align-items: flex-start !important; justify-content: flex-start; gap: 4px; width: 100%; height: 100%; min-height: 104px; margin: 0 !important; padding: 14px !important; border: 1.5px solid #3e2723 !important; border-radius: 20px !important; color: #3e2723 !important; text-align: left !important; box-shadow: none !important; cursor: pointer; transition: transform var(--t-fast) var(--ease-out); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles button:hover { transform: translateY(-2px); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles button:active { transform: translateY(1px); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles .is-pink button { background: #f7badd !important; }

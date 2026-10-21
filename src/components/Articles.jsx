@@ -720,7 +720,7 @@ const ARTICLES = [
         </ul>
         <p>These are product examples, not independently tested rankings.</p>
         <blockquote style={{ margin: '1rem 0', paddingLeft: '1rem', borderLeft: '3px solid var(--color-primary)' }}>
-          <p><strong>✦ From our clinical experts</strong></p>
+          <p><strong>From our clinical experts</strong></p>
           <p>The combination of tissue massage along, above, and below the c-section scar with a good product - whether prescription or not - and regular application of silicone scar tape is the best defense against not only stretch marks but also painful or lumpy scars.</p>
         </blockquote>
 
@@ -1014,12 +1014,12 @@ function renderArticleCard(art, setSelectedId, progress = 0, showTopic = true) {
 // One taxonomy: every read lives in exactly one section, and the read's own
 // header, the filter chips and "Next in …" all use it.
 const ARTICLE_CATEGORIES = [
-  { id: 'menstrual', label: 'Menstrual Health', articleIds: ['heavy-bleeding', 'period-pain-when-to-seek-care', 'fibroids', 'iron-deficiency-anemia'] },
-  { id: 'hormonal', label: 'Hormonal Health', articleIds: ['pcos-basics', 'menopause-basics', 'pmdd', 'hormonal-birth-control'] },
-  { id: 'chronic', label: 'Chronic & Pelvic Conditions', articleIds: ['endometriosis-basics', 'pelvic-floor-dysfunction', 'ovarian-cysts'] },
-  { id: 'vaginal-urinary', label: 'Vaginal & Urinary Health', articleIds: ['intimate-wash', 'uti-prevention', 'yeast-infection-basics', 'bacterial-vaginosis'] },
+  { id: 'menstrual', label: 'Menstrual health', articleIds: ['heavy-bleeding', 'period-pain-when-to-seek-care', 'fibroids', 'iron-deficiency-anemia'] },
+  { id: 'hormonal', label: 'Hormonal health', articleIds: ['pcos-basics', 'menopause-basics', 'pmdd', 'hormonal-birth-control'] },
+  { id: 'chronic', label: 'Chronic and pelvic conditions', articleIds: ['endometriosis-basics', 'pelvic-floor-dysfunction', 'ovarian-cysts'] },
+  { id: 'vaginal-urinary', label: 'Vaginal and urinary health', articleIds: ['intimate-wash', 'uti-prevention', 'yeast-infection-basics', 'bacterial-vaginosis'] },
 
-  { id: 'postpartum', label: 'Pregnancy & Postpartum', articleIds: ['postpartum-stretch-marks'] },
+  { id: 'postpartum', label: 'Pregnancy and postpartum', articleIds: ['postpartum-stretch-marks'] },
 ];
 const sectionOf = (id) => ARTICLE_CATEGORIES.find((c) => c.articleIds.includes(id)) || null;
 // Next read: the next one in the same section, looping (never a funnel to one page).
@@ -1340,7 +1340,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
       )}
       <header className="ct-lib__top ay-pagehead ay-band ay-band--pink">
         <div className="ct-lib__title">
-          <h1 className="ay-h1">Short reads, real sources.</h1>
+          <h1 className="ay-h1">Quick reads about your body</h1>
           <p className="ct-lede">Plain-language reads on women&apos;s health, each one checked against clinical sources.</p>
         </div>
         <label className="ct-search">

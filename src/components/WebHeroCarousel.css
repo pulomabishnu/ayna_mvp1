@@ -110,7 +110,7 @@
 .app-container .whc-controls { display: flex; gap: 8px; }
 .app-container .whc .whc-btn { display: grid; place-items: center; width: 48px; height: 48px; min-height: 0; padding: 0; border: 2px solid var(--ink); border-radius: 50%; background: var(--paper); color: var(--ink); box-shadow: 2px 2px 0 var(--ink); cursor: pointer; }
 .app-container .whc .whc-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-.app-container .whc .whc-btn svg .is-fill { fill: currentColor; stroke-width: 1.5; }
+.app-container .whc .whc-btn svg .is-fill { fill: currentColor; stroke-width: 1.75; }
 .app-container .whc .whc-btn:active { transform: translate(2px, 2px); box-shadow: none; }
 .app-container .whc .whc-btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 

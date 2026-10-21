@@ -2,9 +2,9 @@
    docs/design-direction.md + scratchpad INSPO_BOARD.md "Dashboard / You overview":
    greeting -> one hero (the Feature) -> coloured tiles -> ring -> list with
    status pills, then detail in underline tabs instead of one long scroll.
-   Matte and grainy: flat brand inks, a fine paper grain on the hero and
-   tiles, no gloss, blur or glow. Shadows only on the primary button.
-   Motion (ANTI_VIBE_GUIDE section 4): one orchestrated moment (the goal
+   Matte: flat brand inks under the shared film grain (styles/finish.css),
+   no gloss, blur or glow. Shadows only on the primary button.
+   Motion uses the shared tokens in styles/motion.css: one orchestrated moment (the goal
    rings draw once and the tiles settle in, 45ms stagger); tabs cross-fade
    in 120ms; everything off under reduced motion.
    Selectors start with the same :is() as week-explained.css so they outrank
@@ -13,9 +13,6 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh {
   --hh-page: var(--d-page, var(--ay-page, #ffedac));
   --hh-pink: #f7badd; --hh-sky: #769ebe; --hh-butter: #ffedac; --hh-espresso: #3e2723;
-  --hh-ease: cubic-bezier(0.16, 1, 0.3, 1); --hh-swap: cubic-bezier(0.65, 0, 0.35, 1);
-  --hh-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .24 0 0 0 0 .15 0 0 0 0 .14 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  --hh-grain-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .93 0 0 0 0 .67 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; min-width: 0; color: var(--x-ink); font-family: var(--x-sans);
 }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh * { box-sizing: border-box; }
@@ -32,11 +29,11 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-areas { position: sticky; top: 0; z-index: 3; margin: 0 calc(var(--x-gutter) * -1) 16px !important; padding: 0 0 0 var(--x-gutter) !important; background: var(--hh-page); border-bottom: 1px solid var(--x-hair); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tabs.is-areas { display: flex; gap: 20px; margin: 0 !important; padding: 0 !important; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tabs.is-areas::-webkit-scrollbar { display: none; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tabs.is-areas button { flex: none; min-height: 44px; margin: 0 !important; padding: 0 !important; border: 0 !important; border-bottom: 3px solid transparent !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: var(--x-soft) !important; font: 500 15px/1 var(--x-sans) !important; cursor: pointer; transition: color 160ms var(--hh-swap), border-color 160ms var(--hh-swap); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tabs.is-areas button { flex: none; min-height: 44px; margin: 0 !important; padding: 0 !important; border: 0 !important; border-bottom: 3px solid transparent !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: var(--x-soft) !important; font: 500 15px/1 var(--x-sans) !important; cursor: pointer; transition: color var(--t-fast) var(--ease-in-out), border-color var(--t-fast) var(--ease-in-out); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tabs.is-areas button.is-on { color: var(--x-ink) !important; font-weight: 600 !important; border-bottom-color: var(--x-ink) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tabs.is-areas button:last-child { margin-right: 24px !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tabs.is-areas button:focus-visible { outline-offset: -3px !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-panel { animation: ay-hh-fade 120ms var(--hh-swap) both; min-width: 0; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-panel { animation: ay-hh-fade var(--t-fast) var(--ease-in-out) both; min-width: 0; }
 @keyframes ay-hh-fade { from { opacity: 0; } to { opacity: 1; } }
 
 /* ---------- summary layout ---------- */
@@ -50,7 +47,6 @@
 
 /* ---------- hero (the one Feature) ---------- */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero { position: relative; isolation: isolate; overflow: hidden; display: grid; gap: 12px; padding: 20px !important; border-radius: 24px !important; background: var(--x-feature) !important; color: var(--x-on) !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero::after { content: ''; position: absolute; inset: 0; z-index: -1; background-image: var(--hh-grain-light); opacity: .16; pointer-events: none; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero-top { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero-head { display: grid; gap: 6px; min-width: 0; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) :is(.ay-hh-hero h3, main .ay-hh-hero h3) { font: 700 calc(24px * var(--x-scale))/1.1 var(--x-serif) !important; letter-spacing: -0.02em !important; color: var(--x-on) !important; }
@@ -69,13 +65,13 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero-ring .ay-hd-ring-tick.is-past { fill: var(--x-on-2); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero-ring .ay-hd-ring-today { fill: var(--x-on); stroke: var(--x-feature); stroke-width: 3; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tabs.is-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tabs.is-chips button { min-height: 36px; margin: 0 !important; padding: 0 14px !important; border: 1.5px solid var(--x-on-hair) !important; border-radius: 999px !important; background: transparent !important; box-shadow: none !important; color: var(--x-on) !important; font: 600 14px/1 var(--x-sans) !important; cursor: pointer; transition: background-color 160ms var(--hh-swap), color 160ms var(--hh-swap), border-color 160ms var(--hh-swap); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tabs.is-chips button { min-height: 36px; margin: 0 !important; padding: 0 14px !important; border: 1.5px solid var(--x-on-hair) !important; border-radius: 999px !important; background: transparent !important; box-shadow: none !important; color: var(--x-on) !important; font: 600 14px/1 var(--x-sans) !important; cursor: pointer; transition: background-color var(--t-fast) var(--ease-in-out), color var(--t-fast) var(--ease-in-out), border-color var(--t-fast) var(--ease-in-out); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tabs.is-chips button.is-on { background: var(--hh-pink) !important; border-color: var(--hh-pink) !important; color: var(--hh-espresso) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tabs.is-chips button:focus-visible { outline-color: var(--x-on) !important; }
 /* a 44px hit area around the 36px chip */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tabs.is-chips button { position: relative; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tabs.is-chips button::before { content: ''; position: absolute; inset: -4px -2px; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-insight { display: grid; gap: 4px; min-height: 0; animation: ay-hh-in 240ms var(--hh-ease) both; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-insight { display: grid; gap: 4px; min-height: 0; animation: ay-hh-in var(--t-base) var(--ease-out) both; }
 @keyframes ay-hh-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-k { font: 600 13px/1.3 var(--x-sans) !important; color: var(--x-on-2) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-insight > p { font: 400 calc(16px * var(--x-scale))/1.5 var(--x-sans) !important; color: var(--x-on) !important; max-width: 62ch; }
@@ -105,10 +101,9 @@
 
 /* ---------- tiles ---------- */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tile { min-width: 0; animation: ay-hh-settle 320ms var(--hh-ease) both; animation-delay: calc(var(--i, 0) * 45ms); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tile { min-width: 0; animation: ay-hh-settle var(--t-push) var(--ease-out) both; animation-delay: calc(var(--i, 0) * var(--stagger, 45ms)); }
 @keyframes ay-hh-settle { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tile > button { position: relative; isolation: isolate; overflow: hidden; display: flex !important; flex-direction: column !important; align-items: flex-start !important; gap: 2px; width: 100%; height: 100%; min-height: 148px; margin: 0 !important; padding: 14px 14px 12px !important; border: 1.5px solid var(--hh-espresso) !important; border-radius: 20px !important; color: var(--hh-espresso) !important; text-align: left !important; box-shadow: none !important; cursor: pointer; transition: transform 160ms var(--hh-ease); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tile > button::after { content: ''; position: absolute; inset: 0; z-index: -1; background-image: var(--hh-grain); opacity: .12; pointer-events: none; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tile > button { position: relative; isolation: isolate; overflow: hidden; display: flex !important; flex-direction: column !important; align-items: flex-start !important; gap: 2px; width: 100%; height: 100%; min-height: 148px; margin: 0 !important; padding: 14px 14px 12px !important; border: 1.5px solid var(--hh-espresso) !important; border-radius: 20px !important; color: var(--hh-espresso) !important; text-align: left !important; box-shadow: none !important; cursor: pointer; transition: transform var(--t-fast) var(--ease-out); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tile > button:hover { transform: translateY(-2px); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tile > button:active { transform: translateY(1px); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tile.is-pink > button { background: var(--hh-pink) !important; }
@@ -149,7 +144,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-rings b { font: 700 19px/1 var(--x-serif); letter-spacing: -0.02em; color: var(--x-ink); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-rings small { font: 600 10.5px/1.2 var(--x-sans); color: var(--x-soft); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-ring-track { fill: none; stroke: var(--x-hair); stroke-width: 6; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-ring-arc { fill: none; stroke-width: 6; stroke-linecap: round; animation: ay-hh-draw 700ms var(--hh-ease) 120ms both; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-ring-arc { fill: none; stroke-width: 6; stroke-linecap: round; animation: ay-hh-draw var(--t-delight) var(--ease-out) 120ms both; }
 @keyframes ay-hh-draw { from { stroke-dashoffset: var(--c); } to { stroke-dashoffset: 0; } }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .is-pink > .ay-hh-ring-arc { stroke: var(--hh-pink); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .is-sky > .ay-hh-ring-arc { stroke: var(--hh-sky); }
@@ -190,7 +185,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-suggest { display: grid; gap: 10px; padding: 16px !important; border-radius: 20px; background: var(--x-group); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-suggest-item { display: grid; gap: 10px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-suggest-item p { font: 400 calc(15px * var(--x-scale))/1.45 var(--x-sans) !important; color: var(--x-ink) !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-btn { justify-self: start; min-height: 48px; margin: 0 !important; padding: 0 20px !important; border: 1.5px solid var(--x-ink) !important; border-radius: 999px !important; background: var(--x-ink) !important; color: var(--hh-page) !important; box-shadow: 3px 3px 0 var(--hh-pink) !important; font: 600 15px/1 var(--x-sans) !important; cursor: pointer; transition: transform 110ms var(--hh-ease), box-shadow 110ms var(--hh-ease); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-btn { justify-self: start; min-height: 48px; margin: 0 !important; padding: 0 20px !important; border: 1.5px solid var(--x-ink) !important; border-radius: 999px !important; background: var(--x-ink) !important; color: var(--hh-page) !important; box-shadow: 3px 3px 0 var(--hh-pink) !important; font: 600 15px/1 var(--x-sans) !important; cursor: pointer; transition: transform var(--t-press) var(--ease-out), box-shadow var(--t-press) var(--ease-out); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-btn:active { transform: translate(1px, 1px); box-shadow: 0 0 0 var(--hh-pink) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-added { font: 600 14px/1.4 var(--x-sans) !important; color: var(--x-ink) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-askweek ul { margin-top: 6px !important; }
@@ -201,7 +196,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-fold { margin: 0 !important; padding: 0 !important; border: 0 !important; border-top: 1px solid var(--x-hair) !important; background: none !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-fold > summary { display: flex !important; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; min-height: 52px; padding: 8px 28px 8px 0 !important; position: relative; list-style: none; cursor: pointer; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-fold > summary::-webkit-details-marker { display: none; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-fold > summary::after { content: ''; position: absolute; right: 6px; top: 50%; width: 8px; height: 8px; margin-top: -6px; border-right: 1.5px solid var(--x-ink); border-bottom: 1.5px solid var(--x-ink); transform: rotate(45deg); transition: transform 160ms var(--hh-swap); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-fold > summary::after { content: ''; position: absolute; right: 6px; top: 50%; width: 8px; height: 8px; margin-top: -6px; border-right: 1.5px solid var(--x-ink); border-bottom: 1.5px solid var(--x-ink); transform: rotate(45deg); transition: transform var(--t-fast) var(--ease-in-out); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-fold[open] > summary::after { transform: rotate(-135deg); margin-top: -2px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-fold > summary small { font: 500 13px/1.3 var(--x-sans); color: var(--x-soft); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-fold ul { display: grid; gap: 0; }
@@ -218,7 +213,7 @@
 /* ---------- detail tabs ---------- */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-detailhead { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-range { display: inline-flex; gap: 2px; padding: 3px; border: 1.5px solid var(--x-ink); border-radius: 999px; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-range button { min-height: 36px; min-width: 64px; margin: 0 !important; padding: 0 12px !important; border: 0 !important; border-radius: 999px !important; background: transparent !important; box-shadow: none !important; color: var(--x-ink) !important; font: 600 13px/1 var(--x-sans) !important; cursor: pointer; transition: background-color 160ms var(--hh-swap), color 160ms var(--hh-swap); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-range button { min-height: 36px; min-width: 64px; margin: 0 !important; padding: 0 12px !important; border: 0 !important; border-radius: 999px !important; background: transparent !important; box-shadow: none !important; color: var(--x-ink) !important; font: 600 13px/1 var(--x-sans) !important; cursor: pointer; transition: background-color var(--t-fast) var(--ease-in-out), color var(--t-fast) var(--ease-in-out); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-range button.is-on { background: var(--x-ink) !important; color: var(--hh-page) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-chart { display: grid; gap: 8px; padding: 16px !important; border-radius: 20px !important; background: var(--x-group) !important; min-width: 0; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-chart header { display: grid; gap: 2px; }
@@ -314,10 +309,6 @@
 :is(#ay, html body) .app-container[data-theme='brand-dark'] .ay-wh.ay-wh .ay-hh-tile:is(.is-butter, .is-group, .is-paper) > button { background: var(--x-group) !important; color: var(--x-ink) !important; border-color: var(--x-ink) !important; }
 .ayna-mobile:is(#ay, .ayna-mobile)[data-theme='dark'] .ay-hh-tile:is(.is-butter, .is-group, .is-paper) .ay-hh-mini i,
 :is(#ay, html body) .app-container[data-theme='brand-dark'] .ay-wh.ay-wh .ay-hh-tile:is(.is-butter, .is-group, .is-paper) .ay-hh-mini i { border-color: var(--x-ink); }
-.ayna-mobile:is(#ay, .ayna-mobile)[data-theme='dark'] .ay-hh-tile > button::after,
-:is(#ay, html body) .app-container[data-theme='brand-dark'] .ay-wh.ay-wh .ay-hh-tile > button::after { opacity: .08; }
-.ayna-mobile:is(#ay, .ayna-mobile)[data-theme='dark'] .ay-hh-hero::after,
-:is(#ay, html body) .app-container[data-theme='brand-dark'] .ay-wh.ay-wh .ay-hh-hero::after { background-image: var(--hh-grain); opacity: .14; }
 .ayna-mobile:is(#ay, .ayna-mobile)[data-theme='dark'] .ay-hh-date,
 :is(#ay, html body) .app-container[data-theme='brand-dark'] .ay-wh.ay-wh .ay-hh-date { border-color: var(--x-ink); }
 .ayna-mobile:is(#ay, .ayna-mobile)[data-theme='dark'] .is-butter > .ay-hh-date,

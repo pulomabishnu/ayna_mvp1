@@ -1495,6 +1495,23 @@ function App() {
     setCurrentView('discovery');
   };
   const handleViewHowWeMakeMoney = () => setCurrentView('how-we-make-money');
+  // Cmd/Ctrl+K focuses the search on this page, or opens the Shop search.
+  const viewDiscoveryRef = useRef(handleViewDiscovery);
+  viewDiscoveryRef.current = handleViewDiscovery;
+  useEffect(() => {
+    const onKey = (e) => {
+      if (!(e.metaKey || e.ctrlKey) || e.altKey || e.shiftKey || String(e.key).toLowerCase() !== 'k') return;
+      e.preventDefault();
+      const focusSearch = () => {
+        const input = [...document.querySelectorAll('input[type="search"], [role="search"] input')].find((el) => el.offsetParent !== null);
+        if (input) { input.focus(); input.select?.(); return true; }
+        return false;
+      };
+      if (!focusSearch()) { viewDiscoveryRef.current(''); window.setTimeout(focusSearch, 350); }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
   const handleViewHowItWorks = () => setCurrentView('how-it-works');
   const handleViewAbout = () => setCurrentView('about');
   const handleViewContact = () => setCurrentView('contact');
@@ -2220,7 +2237,7 @@ function App() {
               </button>
               {[
                 ['discovery', '/shop', 'Shop', () => handleViewDiscovery('')],
-                ['ecosystem', '/ecosystem', 'My Ecosystem', () => handleViewEcosystem()],
+                ['ecosystem', '/ecosystem', 'My ecosystem', () => handleViewEcosystem()],
                 ['articles', '/library', 'Library', () => { setSelectedArticleId(null); setCurrentView('articles'); }],
                 ['community', '/community', 'Community', () => setCurrentView('community')],
                 ['health', '/health', 'Your health', () => setCurrentView('health')],
@@ -2376,7 +2393,7 @@ function App() {
           <div className="ay-flow-editbar">
             <button type="button" className="ay-flow-back" onClick={handleExitProfileEdit}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
-              {profileEditFromRef.current === 'ecosystem' ? 'Back to Ecosystem' : 'Back'}
+              {profileEditFromRef.current === 'ecosystem' ? 'Back to my ecosystem' : 'Back'}
             </button>
             <span>Nothing changes until you finish.</span>
           </div>

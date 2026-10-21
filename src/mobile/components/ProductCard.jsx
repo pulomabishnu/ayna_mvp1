@@ -11,6 +11,7 @@ import { formatPrice } from '../../utils/formatPrice.js';
 import { HEART_PATH } from '../utils/heart.js';
 import { matchBadge } from '../../utils/matchDisplay.js';
 import MatchPill from '../../components/MatchPill.jsx';
+import { saveFeedback } from '../../utils/feedback.js';
 import HealthBackedBadge from '../../components/health/HealthBackedBadge.jsx';
 
 export default function ProductCard({ product, onClick, variant = 'grid', quizAnswers = null, isSaved = false, onToggleSaved, onOpenWhyMatch, matchOpts, needId = null }) {
@@ -64,7 +65,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
           </span>
         </button>
         {showMatch && <MatchPill percent={badge.percent ?? match.percent} size="sm" className="ay-pc-match" label={`${badge.label}. Why this match for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}
-        {onToggleSaved && <button type="button" className={`ay-pc-save${isSaved ? ' is-on' : ''}`} aria-label={isSaved ? `Remove ${name} from Saved` : `Save ${name}`} aria-pressed={isSaved} onClick={() => onToggleSaved(product)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></button>}
+        {onToggleSaved && <button type="button" className={`ay-pc-save${isSaved ? ' is-on' : ''}`} aria-label={isSaved ? `Remove ${name} from Saved` : `Save ${name}`} aria-pressed={isSaved} onClick={(e) => { saveFeedback(e, !isSaved); onToggleSaved(product); }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></button>}
       </article>
     );
   }
@@ -87,12 +88,12 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
       </span>
       </button>
       {showMatch && <MatchPill percent={badge.percent ?? match.percent} size="sm" className="ayna-fresh-match-badge ayna-match-action" label={`${badge.label}. Why this match for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}
-      {onToggleSaved && <button type="button" className="ayna-card-save" aria-label={isSaved ? `Remove ${name} from Saved` : `Save ${name}`} aria-pressed={isSaved} onClick={() => onToggleSaved(product)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></button>}
+      {onToggleSaved && <button type="button" className="ayna-card-save" aria-label={isSaved ? `Remove ${name} from Saved` : `Save ${name}`} aria-pressed={isSaved} onClick={(e) => { saveFeedback(e, !isSaved); onToggleSaved(product); }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></button>}
       {isList && <div className="ayna-fresh-product-actions">
-        <button type="button" onClick={onClick}>Details <span aria-hidden="true">→</span></button>
-        {buyUrl && <a href={buyUrl} target="_blank" rel="noopener noreferrer sponsored" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: 'product_card' })} aria-label={`Shop ${name} on the seller's site`}>{isService ? 'Explore care' : 'Shop'} <span aria-hidden="true">↗</span></a>}
+        <button type="button" onClick={onClick}>Details</button>
+        {buyUrl && <a href={buyUrl} target="_blank" rel="noopener noreferrer sponsored" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: 'product_card' })} aria-label={`Shop ${name} on the seller's site`}>{isService ? 'See care options' : 'Shop'} <span aria-hidden="true">↗</span></a>}
       </div>}
-      {isList && buyUrl && <small className="ayna-fresh-product-seller-note">{isPartner ? 'Partner link · ' : ''}Opens seller site</small>}
+      {isList && buyUrl && <small className="ayna-fresh-product-seller-note">{isPartner ? 'Partner link. ' : ''}Opens the seller’s site</small>}
     </article>
   );
 }
