@@ -2903,11 +2903,12 @@
   "product": "p-ob-procomfort-mini-32",
   "need": "period.light",
   "strength": "primary",
-  "grade": "A",
-  "rationale": "FDA advises the lowest absorbency tampon that works, which on light days is a mini/light tampon; Mayo suggests liners as the lower-TSS-risk alternative on light days.",
-  "source_url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
-  "reviewer": "research",
-  "reviewed": "2026-10-17"
+  "grade": "B",
+  "rationale": "Light-absorbency tampons suit light days; FDA advises using the lowest absorbency you need, which lowers toxic shock syndrome risk.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21",
+  "added": true
  },
  {
   "product": "p-honeypot-pad",
@@ -2973,11 +2974,12 @@
   "product": "p-ob-procomfort-mini-16",
   "need": "period.light",
   "strength": "primary",
-  "grade": "A",
-  "rationale": "FDA advises the lowest absorbency tampon that works, which on light days is a mini/light tampon; Mayo suggests liners as the lower-TSS-risk alternative on light days.",
-  "source_url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
-  "reviewer": "research",
-  "reviewed": "2026-10-17"
+  "grade": "B",
+  "rationale": "Light-absorbency tampons suit light days; FDA advises using the lowest absorbency you need, which lowers toxic shock syndrome risk.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21",
+  "added": true
  },
  {
   "product": "p-rael-liners",
@@ -8648,5 +8650,192 @@
   "source_url": "https://ods.od.nih.gov/factsheets/VitaminB6-HealthProfessional/",
   "reviewer": "research-audit",
   "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-goodbug-gut-balance",
+  "need": "digestive.diarrhea",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Ingredient-level: probiotics taken with antibiotics lower the risk of antibiotic-associated diarrhea (moderate certainty, NCCIH). Box lists L. rhamnosus GG and B. lactis BB-12, but the page's ingredient list names other strains. Not for other causes of diarrhea.",
+  "source_url": "https://www.nccih.nih.gov/health/probiotics-usefulness-and-safety",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21",
+  "added": true
+ },
+ {
+  "product": "p-momotaro-daily-probiotic",
+  "need": "digestive.diarrhea",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Ingredient-level: probiotics taken during antibiotics lower the risk of antibiotic-associated diarrhea (moderate certainty, NCCIH), but the best strain and dose are unclear. Multi-strain blend incl. L. rhamnosus. Not for other causes of diarrhea.",
+  "source_url": "https://www.nccih.nih.gov/health/probiotics-usefulness-and-safety",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21",
+  "added": true
+ },
+ {
+  "product": "p-probiotics-women",
+  "need": "digestive.diarrhea",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Ingredient-level: probiotics taken during antibiotics lower the risk of antibiotic-associated diarrhea (moderate certainty, NCCIH). Strains for this product are not listed, so fit is uncertain. Not for other causes of diarrhea.",
+  "source_url": "https://www.nccih.nih.gov/health/probiotics-usefulness-and-safety",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21",
+  "added": true
+ },
+ {
+  "product": "p-spearmint-pcos",
+  "need": "hair.excess",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Limited evidence: one small 30-day RCT in women with PCOS found spearmint tea twice daily lowered testosterone, but objective hirsutism scores did not change. Not a substitute for guideline care (pill, antiandrogen, laser).",
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/19585478",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21",
+  "added": true
+ },
+ {
+  "product": "p-inositol-wholesome",
+  "need": "hair.excess",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Limited evidence: meta-analyses in PCOS show inositol improves androgen levels and SHBG (low certainty); a direct benefit on excess hair is not established. Guideline care for hirsutism is the pill, antiandrogens and laser.",
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/41757236/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21",
+  "added": true
+ },
+ {
+  "product": "d-connect-pelvic-floor-fitness",
+  "need": "metabolic.weight",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Physical activity plus diet change is the evidence-based basis of weight management (ODS). This program offers strength, HIIT and mobility workouts; evidence is for exercise in general, not this program.",
+  "source_url": "https://ods.od.nih.gov/factsheets/weightloss-HealthProfessional/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21",
+  "added": true
+ },
+ {
+  "product": "p-advil-ibuprofen-200",
+  "need": "condition_support.fibroids",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Mayo Clinic lists OTC NSAIDs such as ibuprofen to ease fibroid pain; they do not reduce fibroid bleeding or size.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/uterine-fibroids/diagnosis-treatment/drc-20354294",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21",
+  "added": true
+ },
+ {
+  "product": "p-aleve-naproxen-220",
+  "need": "condition_support.fibroids",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Mayo Clinic lists OTC NSAIDs such as naproxen to ease fibroid pain; they do not reduce fibroid bleeding or size.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/uterine-fibroids/diagnosis-treatment/drc-20354294",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21",
+  "added": true
+ },
+ {
+  "product": "p-advil-ibuprofen-200",
+  "need": "cycle.breast_tenderness",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "NHS and Mayo Clinic recommend OTC pain relief such as ibuprofen for cyclical breast pain, alongside a well-fitting supportive bra.",
+  "source_url": "https://www.nhs.uk/conditions/breast-pain/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21",
+  "added": true
+ },
+ {
+  "product": "p-aleve-naproxen-220",
+  "need": "cycle.breast_tenderness",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "NHS and Mayo Clinic recommend OTC NSAID pain relief for cyclical breast pain, alongside a well-fitting supportive bra. Evidence is for the drug class.",
+  "source_url": "https://www.nhs.uk/conditions/breast-pain/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21",
+  "added": true
+ },
+ {
+  "product": "p-flo-gummies",
+  "need": "cycle.breast_tenderness",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Ingredient-level and limited: chasteberry has some trial evidence for premenstrual breast pain that needs better studies (NCCIH). This blend's chasteberry dose is not compared to studied doses.",
+  "source_url": "https://www.nccih.nih.gov/health/chasteberry",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21",
+  "added": true
+ },
+ {
+  "product": "d-connect-pelvic-floor-fitness",
+  "need": "bone.health",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Regular weight-bearing and strength exercise helps protect bone (Mayo Clinic). This program includes strength training; evidence is for exercise in general, not this program.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/menopause/diagnosis-treatment/drc-20353401",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21",
+  "added": true
+ },
+ {
+  "product": "p-goodbug-gut-balance",
+  "need": "digestive.constipation",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Ingredient-level, mixed evidence: probiotics, especially B. lactis strains, show some benefit for adult constipation (NCCIH). Box lists B. lactis BB-12 but the ingredient list differs. Fiber and osmotic laxatives come first.",
+  "source_url": "https://www.nccih.nih.gov/health/probiotics-usefulness-and-safety",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21",
+  "added": true
+ },
+ {
+  "product": "p-momotaro-daily-probiotic",
+  "need": "digestive.constipation",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Ingredient-level, mixed evidence: probiotics, especially B. lactis strains, show some benefit for adult constipation (NCCIH). Contains B. lactis among 10 strains. Fiber and osmotic laxatives come first.",
+  "source_url": "https://www.nccih.nih.gov/health/probiotics-usefulness-and-safety",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21",
+  "added": true
+ },
+ {
+  "product": "p-magnesium-glycinate",
+  "need": "pain.cycle_headache",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Ingredient-level: AAN and AHS consider magnesium probably effective for migraine prevention (ODS), but studied doses exceed the 350 mg supplement limit and need clinician oversight. This product gives 200 mg.",
+  "source_url": "https://ods.od.nih.gov/factsheets/Magnesium-HealthProfessional/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21",
+  "added": true
+ },
+ {
+  "product": "p-advil-ibuprofen-200",
+  "need": "pain.postpartum",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "NHS lists paracetamol and ibuprofen for perineal pain after birth; ibuprofen is thought safe while breastfeeding but check with a midwife, GP or pharmacist first. Avoid aspirin.",
+  "source_url": "https://www.nhs.uk/pregnancy/labour-and-birth/episiotomy-and-perineal-tears/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21",
+  "added": true
+ },
+ {
+  "product": "d-connect-pelvic-floor-fitness",
+  "need": "pain.postpartum",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "NHS advises pelvic floor exercises to help healing after a tear or episiotomy. This program is pelvic-floor informed; evidence is for the exercises, not this program. Start once your clinician clears you.",
+  "source_url": "https://www.nhs.uk/pregnancy/labour-and-birth/episiotomy-and-perineal-tears/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21",
+  "added": true
  }
 ]

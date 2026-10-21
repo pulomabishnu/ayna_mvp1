@@ -30,15 +30,18 @@ describe('search vocabulary is linked correctly', () => {
       expect(got.sort(), t.term).toEqual([...t.needs].sort());
     }
   });
-  // Re-enabled once the catalog gap review lands (task 6).
-  it.skip('every need a term can point to has at least one product in the catalog', () => {
+  // Needs the catalog has no safe, evidence-backed product for yet (catalog
+  // gap review 2026-10-21): the shelf shows its empty state and care info.
+  // Adding a need here needs a reason; removing one means the gap is filled.
+  const KNOWN_EMPTY = ['digestive.nausea', 'bloating.pregnancy_related'];
+  it('every need a term can point to has a product, apart from known catalog gaps', () => {
     const covered = new Set();
     for (const p of ALL_PRODUCTS) {
       const pp = buildProductProfile(p);
       for (const [id, rel] of Object.entries(pp.health_need_relevance || {})) if ((rel.score || 0) > 0 || (rel.contextual || []).length) covered.add(id);
     }
     const missing = [...new Set(SYMPTOM_TERMS.flatMap((t) => t.needs))].filter((id) => !covered.has(id));
-    expect(missing).toEqual([]);
+    expect(missing.filter((id) => !KNOWN_EMPTY.includes(id))).toEqual([]);
   });
 });
 
