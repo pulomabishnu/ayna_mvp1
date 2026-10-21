@@ -113,8 +113,13 @@ export function similarProducts(product, { pool = ALL_PRODUCTS, limit = 3, exclu
   if (!product) return [];
   const skip = new Set([product.id, ...exclude]);
   const brand = brandOf(product).toLowerCase();
+  // A sunscreen is compared with sunscreens, not acne washes from the same "skincare" category:
+  // when the product has a specific tag, a candidate must share one.
+  const GENERIC = new Set(['skin', 'hair', 'vegan', 'organic', 'comfort', 'cost', 'privacy', 'safety-concern', 'cruelty-free', 'natural', 'budget', 'fsa', 'hsa', 'clean', 'sensitive']);
+  const specific = (product.tags || []).filter((t) => !GENERIC.has(String(t).toLowerCase()));
   const scored = pool
     .filter((p) => p && p.id && p.name && !skip.has(p.id) && p.category === product.category && p.type === product.type)
+    .filter((p) => !specific.length || (p.tags || []).some((t) => specific.includes(t)))
     .map((p) => {
       let s = overlap(p.healthFunctions, product.healthFunctions) * 3 + overlap(p.tags, product.tags) * 2;
       if (brandOf(p).toLowerCase() !== brand) s += 2;
