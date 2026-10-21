@@ -13,6 +13,8 @@ const FEATURED_READ_ID = 'postpartum-stretch-marks';
 
 function ReadState({ value = 0 }) {
   const done = value >= 1;
+  // Nothing for an unread read: "Unread" under every tile was noise (deep round 2).
+  if (!(value > 0)) return null;
   return <span className={`ay-lib-state${done ? ' is-done' : value > 0 ? ' is-mid' : ''}`}>
     <i aria-hidden="true"><b style={{ width: `${Math.round(value * 100)}%` }} /></i>
     <small>{done ? 'Finished' : value > 0 ? `${Math.round(value * 100)}%` : 'Unread'}</small>
