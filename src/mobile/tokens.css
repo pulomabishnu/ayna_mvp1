@@ -501,3 +501,8 @@
   border-color: var(--ayna-chip-border) !important;
   color: #ffedac !important;
 }
+
+/* Sentence case everywhere, no uppercase tracked eyebrows (REDO_BRIEF hard
+   rule, docs/terminology.md, walkthrough P1-11). One override here rather
+   than in each of the stylesheets that set them. */
+.ayna-mobile :is(.ayna-editorial-read-copy small, .ay-care-first__eyebrow, .ayna-settings-scroll h2, .ayna-slide-start-label span, .ayna-context-you small, .ayna-ecosystem-chart-center span, .ayna-story-product-name span, .ay-reel-head, .ay-reel-score span, .ayna-fresh-product-category) { text-transform: none !important; letter-spacing: 0 !important; }

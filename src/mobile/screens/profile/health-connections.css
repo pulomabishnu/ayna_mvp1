@@ -175,11 +175,21 @@ button.ay-hc-row:active { background: var(--ay-cream); }
   --ay-shadow: 3px 3px 0 var(--ay-ink); --ay-gutter: 0px;
   max-width: 720px; margin: 0 auto; padding: 28px 20px 64px; color: var(--ay-ink);
 }
-[data-theme='dark'] .ay-hc-web {
+[data-theme='dark'] .ay-hc-web, .app-container[data-theme='brand-dark'] .ay-hc-web {
   --ay-ink: #ffedac; --ay-ink-soft: rgba(255, 237, 172, .78); --ay-ink-faint: rgba(255, 237, 172, .2);
   --ay-paper: #3e2723; --ay-cream: #2e1c18; --ay-line: rgba(255, 237, 172, .2); --ay-alert: #f7badd;
 }
-.ay-hc-web-head { display: flex; align-items: center; gap: 12px; margin: 0 0 18px; }
+.ay-hc-web-head { display: grid; justify-items: start; gap: 4px; margin: 0 0 18px; }
+/* Search on the website: the app's rules live under .ayna-mobile, so the
+   field gets its own copy here (without it the icon's circle rendered as a
+   190px black disc, walkthrough P0-1). */
+.ay-hc-web .ay-hc-search { position: relative; display: flex; align-items: center; margin: 0 0 18px; }
+.ay-hc-web .ay-hc-search svg { position: absolute; left: 16px; width: 20px; height: 20px; fill: none; stroke: var(--ay-ink); stroke-width: 2; stroke-linecap: round; pointer-events: none; }
+.ay-hc-web .ay-hc-search input { box-sizing: border-box; width: 100%; min-height: 50px; padding: 0 48px 0 46px; border: 1.5px solid var(--ay-ink); border-radius: 999px; background: transparent; color: var(--ay-ink); font: 500 16px/1.2 var(--ay-font-ui); -webkit-appearance: none; appearance: none; }
+.ay-hc-web .ay-hc-search input::placeholder { color: var(--ay-ink-soft); opacity: 1; }
+.ay-hc-web .ay-hc-search input::-webkit-search-cancel-button { display: none; }
+.ay-hc-web .ay-hc-search input:focus-visible { outline: 3px solid var(--ay-ink); outline-offset: 2px; }
+.ay-hc-web .ay-hc-search button { position: absolute; right: 4px; width: 44px; height: 44px; border: 0; border-radius: 50%; background: transparent; color: var(--ay-ink); font: 600 20px/1 var(--ay-font-ui); cursor: pointer; }
 .ay-hc-web-head h1 { margin: 0; color: var(--ay-ink); font: 400 28px/1.15 var(--ay-font-display); letter-spacing: -.01em; }
 .ay-hc-web-back { width: 42px; height: 42px; display: grid; place-items: center; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); cursor: pointer; }
 .ay-hc-web-back svg { width: 18px; height: 18px; fill: none; stroke: var(--ay-ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
@@ -189,3 +199,4 @@ button.ay-hc-row:active { background: var(--ay-cream); }
 .wyou-health > span { flex: 1; display: grid; gap: 4px; }
 .wyou-health small { opacity: .75; }
 .wyou-health-manage { justify-self: start; min-height: 44px; margin-top: -12px; padding: 0 4px; border: 0; background: none; color: var(--ay-ink); font: 500 13px/1.2 var(--ay-font-ui); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.ay-hc-web .ay-sl-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

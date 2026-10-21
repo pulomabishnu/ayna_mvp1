@@ -1256,6 +1256,7 @@ function PreferencesScreen({
   theme,
   onToggleTheme,
   onOpenChannels,
+  onOpenHealthData,
   personalizeWithData,
   onPersonalizeWithDataChange,
   askAynaHistoryCount,
@@ -1407,7 +1408,8 @@ function PreferencesScreen({
         <SectionLabel>AI & personalization</SectionLabel>
         {loadState === 'ready' && prefs && <div style={{ background: 'var(--d-group)', border: 0, borderRadius: 20, padding: '4px 18px' }}>
           <ToggleRow first title="Personalize with my data" sub="Your quiz answers, cycle logs and connected health data shape your matches and Ask ayna replies. Off: none of it is used." on={personalizeWithData} onClick={handlePersonalizeToggle} />
-          <ToggleRow title="Use my health data in my matches" sub={!personalizeWithData ? 'Turn on Personalize with my data first.' : healthPref.on ? 'Sleep and cycle trends from apps like Apple Health can move picks up inside goals you chose. Never a new goal, never past safety, never shared with brands.' : 'Off. Matches use only your answers. Your health data still shows in your insights.'} on={personalizeWithData && healthPref.on} onClick={() => { if (personalizeWithData) healthPref.set(!healthPref.on).then((ok) => { if (!ok) showToast(friendlyPreferencesError('save_failed')); }); }} />
+          {/* One setting in one place (walkthrough P1-19): the switch lives in Health data; this row says where it stands and goes there. */}
+          <DrillRow title="Health data in your matches" sub={!personalizeWithData ? 'Off while Personalize with my data is off. Change it in Health data.' : `${healthPref.on ? 'On' : 'Off'}. Change it in Health data.`} onClick={onOpenHealthData} />
         </div>}
 
         {/* Clearing Ask Ayna history is purely local (in-memory chat state in
@@ -1911,18 +1913,18 @@ function LegalScreen({ onBack, onOpenConsumerHealthData, onOpenOpenSourceLicense
         <div style={{ margin: '4px 0 11px', fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-accent-dark)' }}>Policies</div>
         <div style={{ background: 'var(--d-group)', border: 0, borderRadius: 20, padding: '0 18px' }}>
           <AccountRow
-            title="Privacy Policy"
+            title="Privacy policy"
             sub="How we collect, use and protect your information."
             borderTop={false}
             onClick={() => window.open(PRIVACY_POLICY_URL, '_blank', 'noopener,noreferrer')}
           />
           <AccountRow
-            title="Terms of Service"
+            title="Terms of use"
             sub="The rules for using ayna."
             onClick={() => window.open(TERMS_URL, '_blank', 'noopener,noreferrer')}
           />
           <AccountRow
-            title="Consumer Health Data Policy"
+            title="Consumer health data privacy notice"
             sub="Required under Washington's MHMDA."
             onClick={onOpenConsumerHealthData}
           />
@@ -2005,7 +2007,7 @@ function NumberedCard({ n, title, children }) {
 function ConsumerHealthDataPolicyScreen({ onBack }) {
   return (
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-      <BackHeader title="Health data policy" onBack={onBack} />
+      <BackHeader title="Consumer health data notice" onBack={onBack} />
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '6px 20px 30px' }}>
         <div style={{ background: 'var(--d-group)', position: 'relative', overflow: 'hidden', border: 0, borderRadius: 20, padding: 20 }}>
           <div style={{ position: 'absolute', right: -30, top: -34, width: 110, height: 110, borderRadius: 99, background: 'rgba(255,237,172,.4)' }} />
@@ -3622,6 +3624,7 @@ export default function ProfileFlow({
         theme={theme}
         onToggleTheme={onToggleTheme}
         onOpenChannels={() => pushScreen('channels')}
+        onOpenHealthData={() => pushScreen('healthData')}
         personalizeWithData={personalizeWithData}
         onPersonalizeWithDataChange={onPersonalizeWithDataChange}
         askAynaHistoryCount={askAynaHistoryCount}

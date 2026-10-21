@@ -117,6 +117,7 @@ import './styles/theme-v3.css';
 import './styles/site-polish.css';
 import './styles/ayna-system.css';
 import './styles/content.css';
+import './styles/chrome.css';
 import NewAccountStart from './components/NewAccountStart';
 import { markOAuthSource, takeOAuthSource, shouldOfferEcosystemStart } from './utils/oauthNewAccount';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './components/EcosystemBubbles';
@@ -127,9 +128,20 @@ import { toast } from './utils/toast';
 import { setDarkAccentSwap } from './utils/darkAccentSwap.js';
 import { recordProductView } from './utils/recentActivity';
 import GlobalToast from './components/v3/GlobalToast';
+import { MAIN_TABS, TabIcon, AskMark } from './components/nav/tabs.jsx';
 import { loadProductReviewStats, mergeReviewBuckets, REVIEWS_CHANGED_EVENT } from './utils/community/reviewRatings.js';
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
+/** Which views light up each phone tab (MAIN_TABS keys). */
+const WEB_TAB_VIEWS = {
+  library: ['articles'],
+  browse: ['discovery', 'product'],
+  home: ECOSYSTEM_NAV_VIEWS,
+  community: ['community'],
+  profile: ['you', 'health', 'health-data', 'delete-account', 'text-ayna', 'tracked'],
+};
+/** Focused flows: a minimal header (logo · Exit), no tab bar, no footer (P1-28). */
+const FOCUSED_FLOW_VIEWS = ['quiz', 'profile-edit'];
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
 const GRADIENT_NAV_VIEWS = ['welcome', 'hero', 'about', 'how-it-works'];
 
@@ -186,12 +198,12 @@ const VIEW_TO_PATH = {
 // Friendly document.title per view'welcome'/'hero' and any view not
 // listed here fall back to the site's base title (see the title effect).
 const VIEW_TITLES = {
-  quiz: 'Get matched', ecosystem: 'My ecosystem', discovery: 'Shop', you: 'You', community: 'Community',
+  quiz: 'Get matched', ecosystem: 'Your ecosystem', discovery: 'Shop', you: 'You', community: 'Community',
   waitlist: 'Partner brands', recommendations: 'Your recommendations', articles: 'Library', screenings: 'Screenings',
   omitted: 'Omitted products', comparison: 'Compare products', recalls: 'Recalls',
-  'doctor-prep': 'Appointment prep', 'profile-edit': 'Edit profile',
+  'doctor-prep': 'Appointment prep', 'profile-edit': 'Edit my answers',
   'phone-verify': 'Verify phone', tracked: 'Tracked products', 'delete-account': 'Delete account', 'health-data': 'Health data', health: 'Your health',
-  'privacy-policy': 'Privacy Policy', 'consumer-health-data': 'Consumer Health Data Privacy Notice', 'terms-of-use': 'Terms of Use',
+  'privacy-policy': 'Privacy policy', 'consumer-health-data': 'Consumer health data privacy notice', 'terms-of-use': 'Terms of use',
   'how-we-make-money': 'How we make money', 'how-it-works': 'How it works',
   about: 'About', contact: 'Contact', 'not-found': 'Page not found',
   'campus-resources': 'Campus resources',
@@ -346,7 +358,7 @@ function ViewLoadingFallback() {
  * live, 2026-08-24 bug bash). Same component now backs both, instead of a
  * one-off block duplicated just for products.
  */
-function NotFoundState({ title, subtitle, ctaLabel, onCta, onSearch, searchPlaceholder = 'Search the shop' }) {
+function NotFoundState({ title, subtitle, ctaLabel, onCta, onSearch, searchPlaceholder = 'Search the Shop', links = null }) {
   return (
     <div className="ed">
       <div className="ed-wrap">
@@ -363,6 +375,12 @@ function NotFoundState({ title, subtitle, ctaLabel, onCta, onSearch, searchPlace
               </label>
               <button type="submit" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg></button>
             </form>
+          )}
+          {links && links.length > 0 && (
+            <nav className="ed-state__links" aria-label="Popular pages">
+              <p>Popular pages</p>
+              <ul>{links.map((l) => <li key={l.href}><a href={l.href} onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); l.go(); }}>{l.label}</a></li>)}</ul>
+            </nav>
           )}
           <div className="ed-state__actions">
             <button type="button" className={onSearch ? 'ay-btn ay-btn--text' : 'ay-btn ay-btn--primary'} onClick={onCta}>{ctaLabel}</button>
@@ -700,33 +718,6 @@ function App() {
     );
   }, [reportSaveFailure]);
   const accountMenuRef = useRef(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  // Phone menu: focus moves into the sheet, Tab stays inside it, Escape
-  // closes it, and focus returns to the menu button afterwards.
-  useEffect(() => {
-    if (!mobileMenuOpen) return undefined;
-    const opener = document.activeElement;
-    const sheet = () => document.querySelector('.mobile-nav-sheet');
-    const focusables = () => [...(sheet()?.querySelectorAll('a[href], button:not([disabled])') || [])];
-    const raf = window.requestAnimationFrame(() => (focusables()[1] || focusables()[0])?.focus());
-    const onKey = (e) => {
-      if (e.key === 'Escape') { e.preventDefault(); setMobileMenuOpen(false); return; }
-      if (e.key !== 'Tab') return;
-      const list = focusables();
-      if (!list.length) return;
-      const first = list[0]; const last = list[list.length - 1];
-      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-    };
-    document.addEventListener('keydown', onKey);
-    return () => {
-      window.cancelAnimationFrame(raf);
-      document.removeEventListener('keydown', onKey);
-      const btn = document.querySelector('.mobile-menu-btn');
-      if (btn && (!document.activeElement || document.activeElement === document.body || sheet()?.contains(document.activeElement))) btn.focus();
-      else if (opener && opener.isConnected && opener === btn) btn.focus();
-    };
-  }, [mobileMenuOpen]);
   const scrollY = useScrollPosition();
 
   const hasHealthImport = useMemo(() => hasHealthProfileSignals(healthProfile), [healthProfile]);
@@ -1420,7 +1411,7 @@ function App() {
     setTrackedProducts({});
     setOmittedProducts({});
     setQuizResults(null);
-    toast('Your Ecosystem is reset.');
+    toast('Your ecosystem is reset.');
     handleRedoQuiz();
   };
   const handleOpenHealthProfileEditor = () => setCurrentView('profile-edit');
@@ -2155,7 +2146,7 @@ function App() {
       {/* The header sits outside <main> so it stays pinned over the footer too. */}
         <div className="app-nav-wrap">
         <nav
-          className={`ay-nav${isScrolled ? ' is-scrolled' : ''}`}
+          className={`ay-nav${isScrolled ? ' is-scrolled' : ''}${FOCUSED_FLOW_VIEWS.includes(currentView) ? ' is-focused' : ''}`}
           data-on-gradient={navOnGradient ? navGradientVariant || 'yes' : undefined}
           aria-label="Primary"
         >
@@ -2169,7 +2160,7 @@ function App() {
           <div className="ay-nav__links">
             <a href="/shop" className="ay-nav__link" aria-current={['discovery', 'product'].includes(currentView) ? 'page' : undefined} {...linkProps(() => handleViewDiscovery(''))}>Shop</a>
             <a href="/ecosystem" className="ay-nav__link" aria-current={ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'page' : undefined} {...linkProps(() => handleViewEcosystem())}>
-              My Ecosystem
+              My ecosystem
               {!user && !authLoading && <span className="ay-nav__start">Start here</span>}
             </a>
             <a href="/library" className="ay-nav__link" aria-current={currentView === 'articles' ? 'page' : undefined} {...linkProps(() => { setSelectedArticleId(null); setCurrentView('articles'); })}>Library</a>
@@ -2179,7 +2170,16 @@ function App() {
           {currentView === 'quiz' && (
             <a href="/" className="ay-nav__exit" aria-label="Exit the quiz" {...linkProps(navigateHome)}>Exit</a>
           )}
+          {currentView === 'profile-edit' && (
+            <button type="button" className="ay-nav__exit" aria-label="Exit without saving" onClick={handleExitProfileEdit}>Exit</button>
+          )}
           <div className="ay-nav__actions">
+            {/* Phone: Ask ayna sits in the header, as in the app (one tab set, P1-7). */}
+            {!FOCUSED_FLOW_VIEWS.includes(currentView) && currentView !== 'campus-resources' && (
+              <button type="button" className="ay-nav__ask" onClick={() => openAsk('')}>
+                <span className="ay-nav__ask-orb" aria-hidden="true"><AskMark /></span>Ask ayna
+              </button>
+            )}
             <a
               href="/ecosystem"
               className="ay-nav__icon app-nav__circle--wishlist"
@@ -2234,56 +2234,9 @@ function App() {
                 </div>
               )}
             </div>
-            {/* Hamburger, mobile only, on the right with Saved (MW03) */}
-            <button
-              type="button"
-              className="ay-nav__icon ay-nav__menu-btn"
-              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
-              aria-expanded={mobileMenuOpen}
-              onClick={() => setMobileMenuOpen(v => !v)}
-            >
-              {mobileMenuOpen ? (
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
-              ) : (
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
-              )}
-            </button>
           </div>
         </nav>
 
-        {/* Mobile menu: full-height sheet with backdrop (MW02). Delete account lives only in You → Account (MW01). */}
-        {mobileMenuOpen && (
-          <div className="mobile-nav-drawer" onClick={() => setMobileMenuOpen(false)}>
-            <div className="mobile-nav-sheet" role="dialog" aria-modal="true" aria-label="Menu" onClick={(e) => e.stopPropagation()}>
-              <button type="button" className="mobile-nav-close" aria-label="Close menu" onClick={() => setMobileMenuOpen(false)}>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
-              </button>
-              {[
-                ['discovery', '/shop', 'Shop', () => handleViewDiscovery('')],
-                ['ecosystem', '/ecosystem', 'My ecosystem', () => handleViewEcosystem()],
-                ['articles', '/library', 'Library', () => { setSelectedArticleId(null); setCurrentView('articles'); }],
-                ['community', '/community', 'Community', () => setCurrentView('community')],
-                ['health', '/health', 'Your health', () => setCurrentView('health')],
-                ...(user ? [['you', '/you', 'You', () => setCurrentView('you')]] : []),
-              ].map(([view, href, label, go]) => (
-                <a key={view} href={href} className={`mobile-drawer-item${(view === 'ecosystem' ? ECOSYSTEM_NAV_VIEWS.includes(currentView) : currentView === view) ? ' is-active' : ''}`} {...linkProps(() => { go(); setMobileMenuOpen(false); })}>
-                  {label}
-                </a>
-              ))}
-              <a href="/ecosystem" className="mobile-drawer-item" {...linkProps(() => { handleViewWishlist(); setMobileMenuOpen(false); })}>
-                Saved {user && savedCount > 0 && <span className="ay-badge">{savedCount}</span>}
-              </a>
-              {user ? (
-                <button className="mobile-drawer-item is-quiet" onClick={() => { handleSignOut(); setMobileMenuOpen(false); }}>Log out</button>
-              ) : (
-                <>
-                  <button className="mobile-drawer-item" onClick={() => { setCurrentView('quiz'); setMobileMenuOpen(false); }}>Build your ecosystem</button>
-                  <button className="mobile-drawer-item is-quiet" onClick={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); setMobileMenuOpen(false); }}>Log in</button>
-                </>
-              )}
-            </div>
-          </div>
-        )}
         </div>
       <main data-view={currentView}>
         <div id="ay-content" tabIndex={-1} />
@@ -2415,17 +2368,16 @@ function App() {
 
         {currentView === 'profile-edit' && (
           <div className="ay-flow-editbar">
-            <button type="button" className="ay-flow-back" onClick={handleExitProfileEdit}>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
-              {profileEditFromRef.current === 'ecosystem' ? 'Back to my ecosystem' : 'Back'}
-            </button>
-            <span>Nothing changes until you finish.</span>
+            <span>Editing your answers. Nothing changes until you finish; Exit leaves them as they were.</span>
           </div>
         )}
-        {currentView === 'profile-edit' && (
+        {currentView === 'profile-edit' && (authLoading || dataLoading) && <ViewLoadingFallback />}
+        {currentView === 'profile-edit' && !authLoading && !dataLoading && (
           // Same as the app: editing your profile reopens the quiz with your answers filled in.
+          // WebIntake reads its snapshot once, so it waits for the saved answers on a cold
+          // load of /profile and remounts if they arrive later (P1-29).
           <WebIntake
-            key={editAtStep ? `profile-edit-${editAtStep}` : editAtOptional ? 'profile-edit-optional' : 'profile-edit'}
+            key={`${editAtStep ? `profile-edit-${editAtStep}` : editAtOptional ? 'profile-edit-optional' : 'profile-edit'}${quizResults?.fullHealthIntake ? '-filled' : '-empty'}`}
             startAtOptional={editAtOptional}
             startAtStep={editAtStep}
             initialSnapshot={quizResults?.fullHealthIntake || null}
@@ -2476,8 +2428,10 @@ function App() {
         )}
         {currentView === 'recommendations' && (
           <Recommendations
+            onBack={() => handleViewEcosystem()}
+            onAsk={(q) => openAsk(q)}
             results={quizResults}
-            onRetake={handleStartQuiz}
+            onRetake={() => setCurrentView(quizResults ? 'profile-edit' : 'quiz')}
             trackedProducts={trackedProducts}
             toggleTrackProduct={toggleTrackProduct}
             myProducts={myProducts}
@@ -2492,6 +2446,7 @@ function App() {
         )}
         {currentView === 'tracked' && (
           <TrackedItems
+            onBack={() => setCurrentView('you')}
             trackedProducts={trackedProducts}
             joinedWaitlists={joinedWaitlists}
             onViewWaitlist={handleViewWaitlist}
@@ -2711,16 +2666,17 @@ function App() {
           </div>
         )}
         {currentView === 'screenings' && (
-          <Screenings checkinData={checkinData} onNavigate={setCurrentView} onOpenProduct={handleOpenProduct} />
+          <Screenings checkinData={checkinData} onNavigate={setCurrentView} onOpenProduct={handleOpenProduct} onOpenCheckin={() => setShowCheckin(true)} onBack={() => handleViewEcosystem()} />
         )}
         {currentView === 'omitted' && (
-          <OmittedProducts omittedProducts={omittedProducts} toggleOmitProduct={toggleOmitProduct} />
+          <OmittedProducts omittedProducts={omittedProducts} toggleOmitProduct={toggleOmitProduct} onBack={() => handleViewEcosystem()} onBrowse={() => handleViewDiscovery('')} />
         )}
         {currentView === 'recalls' && (
-          <Recalls trackedProducts={trackedProducts} myProducts={myProducts} />
+          <Recalls trackedProducts={trackedProducts} myProducts={myProducts} onBack={() => handleViewEcosystem()} />
         )}
         {currentView === 'comparison' && (
           <Comparison
+            onBack={() => handleViewEcosystem()}
             compareList={compareList}
             onRemove={toggleCompare}
             onClear={() => setCompareList([])}
@@ -2788,33 +2744,24 @@ function App() {
           />
         )}
 
-        {currentView !== 'quiz' && currentView !== 'campus-resources' && (
-          <nav className="ay-tabbar is-six" aria-label="Main, phone">
-            {/* Same four sections as the desktop nav, plus Ask and You (Home is the logo). */}
-            <a href="/shop" className={['discovery', 'product'].includes(currentView) ? 'is-on' : ''} {...linkProps(() => handleViewDiscovery(''))}>
-              <span className="ay-tabbar__icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2" /></svg></span><span className="ay-tabbar__label">Shop</span>
-            </a>
-            <a href="/ecosystem" className={ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'is-on' : ''} {...linkProps(() => handleViewEcosystem())}>
-              <span className="ay-tabbar__icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2" /><path d="M4 10h16M4 15h16" /></svg></span><span className="ay-tabbar__label">Ecosystem</span>
-            </a>
-            <button type="button" className="ay-tabbar__ask" onClick={() => openAsk('')}>
-              <span className="ay-tabbar__icon ay-tabbar__orb" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z" /></svg></span><span className="ay-tabbar__label">Ask</span>
-            </button>
-            <a href="/library" className={currentView === 'articles' ? 'is-on' : ''} {...linkProps(() => setCurrentView('articles'))}>
-              <span className="ay-tabbar__icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H5zM19 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z" /></svg></span><span className="ay-tabbar__label">Library</span>
-            </a>
-            <a href="/community" className={currentView === 'community' ? 'is-on' : ''} {...linkProps(() => setCurrentView('community'))}>
-              <span className="ay-tabbar__icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z" /></svg></span><span className="ay-tabbar__label">Community</span>
-            </a>
-            {user ? (
-              <a href="/you" className={currentView === 'you' ? 'is-on' : ''} {...linkProps(() => setCurrentView('you'))}>
-                <span className="ay-tabbar__icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" /></svg></span><span className="ay-tabbar__label">You</span>
-              </a>
-            ) : (
-              <button type="button" onClick={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}>
-                <span className="ay-tabbar__icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" /></svg></span><span className="ay-tabbar__label">Log in</span>
-              </button>
-            )}
+        {!FOCUSED_FLOW_VIEWS.includes(currentView) && currentView !== 'campus-resources' && (
+          <nav className="ay-tabbar ay-tabbar--main" aria-label="Main navigation">
+            {/* The app's tab bar, same order, names and icons (src/components/nav/tabs.jsx). */}
+            {MAIN_TABS.map((t) => {
+              const on = WEB_TAB_VIEWS[t.key].includes(currentView);
+              const go = {
+                library: () => { setSelectedArticleId(null); setCurrentView('articles'); },
+                browse: () => handleViewDiscovery(''),
+                home: () => handleViewEcosystem(),
+                community: () => setCurrentView('community'),
+                profile: () => setCurrentView('you'),
+              }[t.key];
+              return (
+                <a key={t.key} href={t.href} className={`${on ? 'is-on' : ''}${t.center ? ' is-center' : ''}`} aria-current={on ? 'page' : undefined} {...linkProps(go)}>
+                  <span className="ay-tabbar__icon" aria-hidden="true"><TabIcon kind={t.key} on={on} /></span><span className="ay-tabbar__label">{t.label}</span>
+                </a>
+              );
+            })}
           </nav>
         )}
 
@@ -2928,6 +2875,12 @@ function App() {
             subtitle="That link may be broken, or the page may have moved."
             ctaLabel="Go to homepage"
             onCta={() => setCurrentView('welcome')}
+            onSearch={(q) => handleViewDiscovery(q)}
+            links={[
+              { href: '/shop', label: 'Shop', go: () => handleViewDiscovery('') },
+              { href: '/quiz', label: 'See my matches', go: () => setCurrentView('quiz') },
+              { href: '/library', label: 'Library', go: () => { setSelectedArticleId(null); setCurrentView('articles'); } },
+            ]}
           />
         )}
 
@@ -2935,7 +2888,10 @@ function App() {
           <div className="ay-hpu" role="dialog" aria-modal="true" aria-labelledby="ayna-health-profile-update-title">
             <div className="ay-hpu__card">
               <p className="ay-hpu__eyebrow">Health profile update</p>
-              <h2 id="ayna-health-profile-update-title">{accountFirstName(user) ? `Hi ${accountFirstName(user)},` : 'Hi,'}</h2>
+              <button type="button" className="ay-hpu__close" aria-label="Close and keep my current profile" onClick={handleKeepCurrentHealthProfile}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+              </button>
+              <h2 id="ayna-health-profile-update-title">{accountFirstName(user) ? `Hi ${accountFirstName(user)}` : 'Hi'}</h2>
               <p className="ay-hpu__body">
                 We’ve updated our health profile to make personalization more useful.
                 You can redo it now, or keep your current profile exactly as it is.
@@ -3024,7 +2980,7 @@ function App() {
           />
         )}
       </main>
-      <SiteFooter
+      {!FOCUSED_FLOW_VIEWS.includes(currentView) && <SiteFooter
           onViewHowItWorks={handleViewHowItWorks}
           onViewAbout={handleViewAbout}
           onViewContact={handleViewContact}
@@ -3033,12 +2989,13 @@ function App() {
           onViewArticles={handleViewArticles}
           onViewPrivacyPolicy={() => setCurrentView('privacy-policy')}
           onViewTermsOfUse={() => setCurrentView('terms-of-use')}
+          onViewConsumerHealthData={() => setCurrentView('consumer-health-data')}
         onViewHowWeMakeMoney={handleViewHowWeMakeMoney}
         onViewEcosystem={() => handleViewEcosystem()}
         onViewCommunity={() => setCurrentView('community')}
-      />
+      />}
       {/* Floating Ask pill comes after the page and footer in the DOM, so it is the last stop when tabbing, not the first. */}
-      {currentView !== 'quiz' && currentView !== 'campus-resources' && (
+      {!FOCUSED_FLOW_VIEWS.includes(currentView) && currentView !== 'campus-resources' && (
         <ProfileChatbot
           onRequireAuth={(feature) => { setAuthFeature(typeof feature === 'string' ? feature : ''); setPendingAction(typeof feature === 'string' && feature ? 'feature' : 'login'); pendingActionRef.current = typeof feature === 'string' && feature ? 'feature' : 'login'; setShowAuthModal(true); }}
           openSignal={askOpenSignal}

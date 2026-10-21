@@ -253,12 +253,12 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
         }
         // Connected. Reloading the list and reading her data happen in the
         // background, so the button never waits on them.
-        setMessage('Connected. Your data is syncing now. Your trends show in Ecosystem, Dashboard.');
+        setMessage('Connected. Your data is syncing now. Your trends show on the Dashboard tab of your ecosystem.');
         step('refresh', refresh(), 30000)
           .then(() => step('sync', syncPhoneSource({ force: true }), 120000))
           .then((out) => {
             if (out?.empty) setMessage(`Connected. No data came through yet. If you turned permissions off in the ${source.name} sheet, or there's no data for what you picked, ayna won't see anything. ${source.platform === 'ios' ? 'You can change this in the Health app under your picture, Privacy, Apps, ayna.' : ''}`);
-            else if (out && !out.skipped) setMessage('Connected and synced. Your trends show in Ecosystem, Dashboard.');
+            else if (out && !out.skipped) setMessage('Connected and synced. Your trends show on the Dashboard tab of your ecosystem.');
             return refresh();
           })
           .catch(() => setMessage('Connected. Reading your data is taking a while; tap Sync now in a minute.'));

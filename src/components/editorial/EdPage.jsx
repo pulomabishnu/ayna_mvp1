@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import '../../styles/editorial.css';
 import { PHOTOS } from '../v3/photos.js';
 import { Seal } from '../personality/Bits.jsx';
+import BackLink from '../nav/BackLink.jsx';
 
 /**
  * Editorial shell for the footer and info pages (design direction, "Footer
@@ -35,7 +36,7 @@ function useContents(rootRef, enabled, refreshKey) {
  * header with a scalloped edge, and `frame` ('polaroid' | 'flower' | 'frame')
  * for the photo; `seal` puts the "Matched to you" seal on the photo.
  * Utility pages (legal, contact, forms) leave them off and stay calm. */
-export function EdPage({ title, lede, kicker, updated, onBack, photo, aside, toc = false, tocKey, className = '', tone = null, frame = null, caption = null, seal = false, children }) {
+export function EdPage({ title, lede, kicker, updated, onBack, backLabel = 'Back', photo, aside, toc = false, tocKey, className = '', tone = null, frame = null, caption = null, seal = false, children }) {
   const bodyRef = useRef(null);
   const [items, active] = useContents(bodyRef, toc, tocKey);
   const go = (e, id) => {
@@ -65,7 +66,7 @@ export function EdPage({ title, lede, kicker, updated, onBack, photo, aside, toc
         <header className={`ed-page__head${side ? '' : ' ed-page__head--plain'}${tone ? ' ed-page__head--band' : ''}`}>
           <div className="ed-page__titles">
             {onBack && (
-              <button type="button" className="ed-page__back" onClick={onBack}><span aria-hidden="true">←</span> Back</button>
+              <BackLink className="ed-page__back" label={backLabel} onClick={onBack} />
             )}
             {kicker && <p className="ed-page__kicker">{kicker}</p>}
             <h1 className="ed-h1">{title}</h1>

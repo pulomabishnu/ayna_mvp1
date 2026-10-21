@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react';
+import BackLink from './nav/BackLink.jsx';
 import { createPortal } from 'react-dom';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { getGuestClient, getGuestId, ensureGuestSession } from '../utils/community/guestClient.js';
@@ -1269,7 +1270,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
 
   return <section className="ct cm ay-container">
     <header className={`cm-head${page ? ' is-page' : ' ay-pagehead ay-band ay-band--sky'}`}>
-      {page ? <button type="button" className="ct-back cm-back" onClick={closePage}><span aria-hidden="true">←</span> {page.type === 'post' ? 'Back to feed' : 'Community'}</button>
+      {page ? <BackLink className="cm-back" label="Community" href="/community" onClick={closePage} />
         : <div className="cm-head__title"><h1 className="ay-h1">Ask, review, share.</h1><p className="ct-lede">Real talk between women, about the products we actually use.</p></div>}
       <div className="cm-head__actions">
         <label className="ct-search cm-search"><Icon name="search" size={20} /><input ref={searchRef} value={search} onChange={(e) => { setSearch(e.target.value); setSearchResults(null); if (page) closePage(); }} placeholder="Search people, posts, playlists" aria-label="Search community" aria-keyshortcuts={isMac ? 'Meta+K' : 'Control+K'} />{search ? <button type="button" className="cm-search__clear" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); searchRef.current?.focus(); }}>×</button> : <kbd className="cm-kbd" aria-hidden="true">{isMac ? '⌘K' : 'Ctrl K'}</kbd>}</label>

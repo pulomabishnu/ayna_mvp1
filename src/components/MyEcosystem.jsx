@@ -603,7 +603,7 @@ function IntakeRecAltMini({ alt, myProducts, onToggleProduct, onOpenProduct, res
                     {alt.brand && <div style={{ fontSize: 12.5, color: 'var(--color-text-muted)' }}>{alt.brand}</div>}
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', marginTop: '0.45rem' }}>
                         <button type="button" className="btn btn-outline" style={{ padding: '0.3rem 0.55rem', fontSize: 12.5 }} onClick={() => onToggleProduct(alt)}>
-                            {inEco ? <><CheckIcon size={16} className="is-lead" />In ecosystem</> : <><PlusIcon size={16} className="is-lead" />Add to Ecosystem</>}
+                            {inEco ? <><CheckIcon size={16} className="is-lead" />In ecosystem</> : <><PlusIcon size={16} className="is-lead" />Add to your ecosystem</>}
                         </button>
                         <button type="button" className="btn btn-primary" style={{ padding: '0.3rem 0.55rem', fontSize: 12.5 }} onClick={() => onOpenProduct(alt, { source: 'recommendation' })}>
                             Details

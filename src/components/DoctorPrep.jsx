@@ -1,5 +1,6 @@
 import React from 'react';
 import GlossaryTerm from './GlossaryTerm';
+import AccountHead from './nav/AccountHead.jsx';
 import { getCareProfile } from '../utils/careProfile';
 import { findSharedActives, isService } from '../utils/sharedActives';
 
@@ -30,29 +31,17 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
     const userChatMessages = (chatHistory || []).filter(m => m.role === 'user').map(m => (m.text || '').trim()).filter(Boolean);
 
     return (
-        <div className="container animate-fade-in" style={{ padding: 'var(--spacing-lg) var(--spacing-md)', maxWidth: '900px' }}>
-            <button
-                onClick={onBack}
-                style={{
-                    background: 'none', border: 'none', color: 'var(--color-primary)',
-                    cursor: 'pointer', fontWeight: '600', marginBottom: '1rem',
-                    display: 'flex', alignItems: 'center', gap: '0.5rem'
-                }}
-            >
-                ← Back to Ecosystem
-            </button>
-            <div className="ay3-pagehead ay3-band ay3-band--rose ay3-torn ay3-edge-bottom" style={{ textAlign: 'center', marginBottom: '4rem' }}>
-                <div style={{ display: 'inline-block', padding: '0.4rem 1rem', background: 'var(--color-primary-fade)', color: 'var(--color-primary)', borderRadius: 'var(--radius-pill)', fontSize: 14, fontWeight: '600', marginBottom: '1rem' }}>
-                    Appointment Prep Tool
-                </div>
-                <h2 style={{ fontSize: 'var(--ay-fs-title)', marginBottom: '1rem' }}>Get ready for your <em>appointment.</em></h2>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: 16 }}>A one-page summary of what you told ayna and the products you use. Bring it to your <GlossaryTerm term="OB/GYN">OB-GYN</GlossaryTerm> or primary care visit.</p>
+        <div className="container ay-acct-page animate-fade-in" style={{ padding: 'var(--spacing-lg) var(--spacing-md)', maxWidth: '900px' }}>
+            <div className="dp-noprint">
+                <AccountHead title="Appointment prep" back={onBack ? { label: 'Your ecosystem', href: '/ecosystem', onClick: onBack } : null}>
+                    <p>A one-page summary of what you told ayna and the products you use. Bring it to your <GlossaryTerm term="OB/GYN">OB-GYN</GlossaryTerm> or primary care visit.</p>
+                </AccountHead>
             </div>
 
             <div className="card dp-summary" style={{ padding: '3rem', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-md)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '2.5rem', borderBottom: '2px solid var(--color-bg)', pb: '1.5rem' }}>
                     <div>
-                        <h1 style={{ fontSize: 'var(--ay-fs-section)', fontWeight: 600, marginBottom: '0.25rem', color: 'var(--color-primary)' }}>ayna health summary</h1>
+                        <h2 style={{ fontSize: 'var(--ay-fs-section)', fontWeight: 600, marginBottom: '0.25rem', color: 'var(--color-primary)' }}>ayna health summary</h2>
                         <p style={{ color: 'var(--color-text-muted)', fontSize: 14 }}>Generated on {new Date().toLocaleDateString()}</p>
                     </div>
                     <button className="btn btn-outline dp-noprint" onClick={() => window.print()}>Print summary</button>

@@ -4,37 +4,46 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="index,follow" />
-  <title>Consumer Health Data Privacy Notice | ayna</title>
+  <title>Consumer health data privacy notice | ayna</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,700&display=swap" rel="stylesheet" />
   <link rel="canonical" href="https://www.aynahealth.co/consumer-health-data.html" />
   <style>
-    /* Same look as the rest of ayna: butter page, espresso ink, Bricolage + Figtree. */
-    :root { color-scheme: light; --ink:#3e2723; --muted:#3e2723; --page:#ffedac; --rose:#f7badd; --sky:#769ebe; --line:rgba(62,39,35,.25); }
+    /* Print and no-JavaScript fallback. The in-site page (/consumer-health-data)
+       reads this file's <main> and shows it in ayna's own layout. Same tokens
+       as the site: butter page, espresso ink, dark mode, sentence case. */
+    :root { color-scheme: light dark; --ink:#3e2723; --page:#ffedac; --group:#f6e3a1; --line:rgba(62,39,35,.15); }
+    @media (prefers-color-scheme: dark) { :root { --ink:#ffedac; --page:#3e2723; --group:#4a312c; --line:rgba(255,237,172,.2); } }
     * { box-sizing: border-box; }
-    body { margin:0; background:var(--page); color:var(--ink); font-family:"Figtree",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:17px; line-height:1.65; }
-    main { width:min(900px,calc(100% - 32px)); margin:40px auto 80px; background:var(--page); border:2px solid var(--ink); border-radius:16px; padding:clamp(24px,5vw,48px); box-shadow:6px 6px 0 var(--ink); }
-    h1,h2 { font-family:"Bricolage Grotesque",Georgia,serif; font-weight:400; line-height:1.15; color:var(--ink); }
-    h1 { font-size:clamp(2rem,5vw,3rem); margin:.4rem 0 .6rem; }
-    h2 { font-size:1.5rem; margin:2.2rem 0 .6rem; }
-    p,li { color:var(--muted); }
-    a { color:var(--ink); text-decoration-thickness:2px; text-underline-offset:3px; }
-    .eyebrow { font-family:"Bricolage Grotesque",Georgia,serif; font-style:italic; font-size:1.15rem; letter-spacing:0; text-transform:lowercase; font-weight:400; color:var(--ink); }
-    .updated { font-size:.95rem; color:var(--muted); }
-    .callout { margin:1.5rem 0; padding:1rem 1.1rem; border:2px solid var(--ink); border-radius:12px; background:var(--rose); }
-    .back { display:inline-flex; align-items:center; gap:6px; margin-bottom:1rem; padding:6px 14px; border:2px solid var(--ink); border-radius:99px; text-decoration:none; font-weight:700; background:var(--page); }
-    table { width:100%; border-collapse:collapse; margin:.8rem 0 1.4rem; }
-    th,td { text-align:left; vertical-align:top; border-top:1.5px solid var(--line); padding:.8rem .7rem; color:var(--muted); }
-    th { color:var(--ink); font-weight:700; }
-    @media (max-width:650px) { table,thead,tbody,tr,th,td { display:block; } th { padding-bottom:.15rem; } td { border-top:0; padding-top:0; } tr { border-top:1.5px solid var(--line); padding:.55rem 0; } }
+    body { margin:0; background:var(--page); color:var(--ink); font-family:"Figtree",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:16px; line-height:1.6; }
+    .site { display:flex; align-items:center; gap:16px; width:min(720px,calc(100% - 40px)); margin:0 auto; min-height:64px; border-bottom:1px solid var(--line); }
+    .site a { color:var(--ink); }
+    .logo { font:800 26px/1 "Bricolage Grotesque",system-ui,sans-serif; letter-spacing:-.04em; text-decoration:none; }
+    main { width:min(720px,calc(100% - 40px)); margin:32px auto 80px; }
+    h1,h2 { font-family:"Bricolage Grotesque",system-ui,sans-serif; font-weight:700; letter-spacing:-.02em; line-height:1.12; color:var(--ink); }
+    h1 { font-size:clamp(30px,5vw,44px); margin:0 0 12px; }
+    h2 { font-size:24px; margin:40px 0 12px; }
+    p,li { margin:0 0 12px; }
+    a { color:var(--ink); text-decoration-thickness:1.5px; text-underline-offset:3px; }
+    .back, .eyebrow { display:none; }
+    .updated { font-size:14px; font-weight:600; }
+    .callout { margin:16px 0 0; padding:20px 24px; border-radius:20px; background:var(--group); }
+    table { width:100%; border-collapse:collapse; margin:8px 0 16px; border-radius:20px; background:var(--group); overflow:hidden; }
+    thead { display:none; }
+    td { text-align:left; vertical-align:top; padding:12px 16px; font-size:15px; }
+    tr + tr td { border-top:1px solid var(--line); }
+    td:first-child { width:30%; font-weight:600; }
+    @media (max-width:650px) { table,tbody,tr,td { display:block; width:auto; } td:first-child { padding-bottom:2px; } td + td { padding-top:0; border-top:0 !important; } }
+    @media print { :root { --ink:#000; --page:#fff; --group:#fff; } .site { display:none; } table { border:1px solid #999; } }
   </style>
 </head>
 <body>
+<header class="site"><a class="logo" href="/">ayna</a><a href="/consumer-health-data">Open this notice in ayna</a></header>
 <main>
   <a class="back" href="/">← ayna home</a>
   <div class="eyebrow">Consumer health data privacy</div>
-  <h1>Consumer Health Data Privacy Notice</h1>
+  <h1>Consumer health data privacy notice</h1>
   <p class="updated"><strong>Effective September 12, 2026</strong></p>
   <p>This notice explains how ayna collects, uses, shares, secures, and lets you control consumer health data. It supplements our general <a href="/privacy-policy">Privacy Policy</a>. It is intended to provide the health-data disclosures and rights required where consumer-health-data laws apply.</p>
 

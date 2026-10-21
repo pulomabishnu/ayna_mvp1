@@ -755,7 +755,7 @@ export default function MobileApp() {
         }).catch((error) => console.warn('[Ayna] mobile ecosystem remove sync failed:', error));
         delete ecosystemFlagsRef.current.trackedProducts[product.id];
       }
-      toast('Removed from your Ecosystem', { label: 'Undo', onClick: () => addToEcosystemRef.current?.(product) });
+      toast('Removed from your ecosystem', { label: 'Undo', onClick: () => addToEcosystemRef.current?.(product) });
       return;
     }
 
@@ -781,7 +781,7 @@ export default function MobileApp() {
       ecoNudgeShownRef.current = true;
       setSaveNudge('eco');
     } else {
-      toast('Added to your Ecosystem');
+      toast('Added to your ecosystem');
     }
 
     const supabase = getSupabaseClient();

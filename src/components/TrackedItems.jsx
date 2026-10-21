@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import BackLink from './nav/BackLink.jsx';
 import HealthDataImport from './HealthDataImport';
 import CareNearYouPanel from './CareNearYouPanel';
 import { getCheckinRecommendations, CATEGORY_LABELS } from '../data/products.js';
@@ -17,7 +18,7 @@ function ImgOrInitial({ item, size }) {
     );
 }
 
-export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewWaitlist, userZipCode, onZipCodeChange, checkinData, quizResults, myProducts = {}, onOpenProduct, omittedProducts = {}, onViewOmitted, onHealthProfileUpdate, healthProfile = null, onEditHealthProfile }) {
+export default function TrackedItems({ onBack = null, trackedProducts, joinedWaitlists, onViewWaitlist, userZipCode, onZipCodeChange, checkinData, quizResults, myProducts = {}, onOpenProduct, omittedProducts = {}, onViewOmitted, onHealthProfileUpdate, healthProfile = null, onEditHealthProfile }) {
     const trackedList = Object.values(trackedProducts);
     const joinedList = Object.values(joinedWaitlists);
     const totalItems = trackedList.length + joinedList.length;
@@ -41,7 +42,8 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
     return (
         <section className="ay-container aytrk">
             <header className="aytrk__head">
-                <h1 className="ay-h1">Your dashboard</h1>
+                {onBack && <BackLink label="You" href="/you" onClick={onBack} />}
+                <h1 className="ay-h1">Tracked products</h1>
                 <p className="aytrk__lede">
                     Your products, health and wearable data, and care options, side by side.
                 </p>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import BackLink from './nav/BackLink.jsx';
 import posthog from 'posthog-js';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { deleteAllSavedRecordsOnDevice } from '../health/records.js';
@@ -219,7 +220,7 @@ export default function DeleteAccountPage({ onBack }) {
 
   return (
     <section className="ct dl ay-container">
-      <button type="button" className="ct-back" onClick={onBack} disabled={busy || reauthBusy}><span aria-hidden="true">←</span> Back to You</button>
+      <BackLink label="You" onClick={onBack} disabled={busy || reauthBusy} />
       <h1 className="ay-h1">Delete your account</h1>
       <div className="ay-alert dl-warn"><span aria-hidden="true">!</span><p>
           This permanently deletes your ayna account, health intake, imported health profile, ecosystem, saved/tracked/hidden products, reviews, learning memory, phone/SMS records, notification preferences, and other account-linked data. Active-tab ayna caches on this browser are cleared too. This cannot be undone.
