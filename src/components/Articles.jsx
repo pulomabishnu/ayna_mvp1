@@ -773,7 +773,7 @@ const ARTICLES = [
         <p><strong>What to shop</strong></p>
         <p>Hydrating skincare for intact skin and professionally recommended aftercare. For the microneedling itself, prioritize a qualified provider over an at-home device. But after talking with your provider, an at home device I would suggest:</p>
         <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
-          <li>ORA Body Microneedle Roller System</li>
+          <li><a href="https://beautyora.com/products/ora-body-microneedle-roller-system-anti-wrinkles-stretch-marks-scars-cellulite?variant=16216632131650" target="_blank" rel="noopener noreferrer">ORA Body Microneedle Roller System</a></li>
         </ul>
 
         <h2 className="ay-lib-h2">05 · Laser treatments</h2>
