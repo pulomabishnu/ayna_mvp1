@@ -160,9 +160,8 @@ function Invest() {
     <section ref={ref} id="invest" className="lv-sec lv-invest" aria-labelledby="lv-invest-title">
       <div className="lv-invest__card lv-card">
         <div className="lv-invest__copy">
-          <p className="lv-script">invest in ayna</p>
-          <h2 id="lv-invest-title">Own a piece of <em>ayna</em>.</h2>
-          <p>We&rsquo;re building ayna with a community of women who care about health. Join our community round on Wefunder.</p>
+          <p id="lv-invest-title" className="lv-script">invest in ayna</p>
+          <p>We&rsquo;re so excited to extend an opportunity for you to invest in ayna, whether you&rsquo;re one of our earliest ayna users or a part of the greater community passionate about ayna&rsquo;s work to expand the future of women&rsquo;s health. Join our community round and learn more on Wefunder.</p>
           <ul className="lv-invest__perks">
             <li><b>{MIN_INVESTMENT}</b><span>minimum investment</span></li>
             <li><b>Free</b><span>ayna goodies</span></li>
