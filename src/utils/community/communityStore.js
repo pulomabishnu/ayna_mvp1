@@ -262,6 +262,24 @@ export async function listProductReviews(supabase, productId, { limit = 50 } = {
     .order('created_at', { ascending: false }).order('id', { ascending: false }).limit(limit)) || [];
 }
 
+/**
+ * Community posts that are not reviews (questions, posts) and tag this
+ * product, newest first, for the product page's "From the community".
+ * Reviews show as reviews, so they are left out here. A post tags a product
+ * through community_post_products, which the community_feed_posts view
+ * exposes as tagged_product_ids. If that column is missing (an older view),
+ * only product_id is matched.
+ */
+export async function listProductMentions(supabase, productId, { limit = 6 } = {}) {
+  const safeId = String(productId || '').replace(/[^A-Za-z0-9_-]/g, '');
+  if (!supabase || !safeId) return [];
+  const base = () => supabase.from('community_feed_posts').select('*').neq('kind', 'review');
+  const order = (q) => q.order('created_at', { ascending: false }).order('id', { ascending: false }).limit(limit);
+  let res = await order(base().or(`product_id.eq.${safeId},tagged_product_ids.cs.{${safeId}}`));
+  if (res.error && isMissingSchemaError(res.error)) res = await order(base().eq('product_id', safeId));
+  return (check(res) || []).filter((r) => r?.kind !== 'review');
+}
+
 // ── Comments ────────────────────────────────────────────────────────────────
 
 export async function listComments(supabase, postId) {

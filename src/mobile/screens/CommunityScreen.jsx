@@ -27,6 +27,8 @@ import { RatingStars, RatingPicker } from '../../components/community/RatingStar
 import { normalizeRating } from '../../utils/community/reviewRatings.js';
 import { useTeamBadges } from '../../components/community/useTeamBadges.js';
 import Announcements from '../../components/community/Announcements.jsx';
+import { PostStats, LikersList } from '../../components/community/PostEngagement.jsx';
+import { usePostEngagement } from '../../components/community/usePostEngagement.js';
 import { breaksCommunityRules } from '../../utils/communityRules.js';
 import { useSheetViewport, backdropTap } from '../../components/community/useSheetViewport.js';
 import { useComposerDraft } from '../../components/community/useComposerDraft.js';
@@ -274,7 +276,11 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
   const teamBadges = useTeamBadges(supabase, authUser);
   const badgeFor = (authorId, anon = false) => (!anon && authorId ? teamBadges.get(authorId) || null : null);
   const openRules = () => setShowRules(true);
-  const sheetOpen = Boolean(compose || editingPlaylist || editingProfile || reportPost || deleteTarget || deletePlaylistTarget || editPost || showRules || suggestOpen || collabSheetOpen);
+  // Views and the latest likers for every post on screen (hidden until the migration runs).
+  const shownPosts = useMemo(() => [...posts, ...profilePosts, ...(searchResults?.posts || []), ...(page?.type === 'post' && details?.id ? [details] : [])], [posts, profilePosts, searchResults, page, details]);
+  const engagement = usePostEngagement({ supabase, posts: shownPosts, userId: authUser?.id || null, refreshKey: refresh });
+  const [likersPost, setLikersPost] = useState(null);
+  const sheetOpen = Boolean(compose || editingPlaylist || editingProfile || reportPost || deleteTarget || deletePlaylistTarget || editPost || showRules || suggestOpen || collabSheetOpen || likersPost);
   useSheetViewport(sheetOpen || topicSheetOpen);
   const escapeRef = useRef(null);
   // Focus moves into a sheet once, when it opens. Re-running this on every
@@ -672,8 +678,8 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
   };
   escapeRef.current = () => {
     if (showRules) { setShowRules(false); return; }
-    if (editingPlaylist || editingProfile || reportPost || deleteTarget || deletePlaylistTarget || editPost || suggestOpen || collabSheetOpen) {
-      setEditingPlaylist(false); setEditingProfile(false); setReportPost(null); setDeleteTarget(null); setDeletePlaylistTarget(null); setEditPost(null); setSuggestOpen(false); setCollabSheetOpen(false);
+    if (editingPlaylist || editingProfile || reportPost || deleteTarget || deletePlaylistTarget || editPost || suggestOpen || collabSheetOpen || likersPost) {
+      setEditingPlaylist(false); setEditingProfile(false); setReportPost(null); setDeleteTarget(null); setDeletePlaylistTarget(null); setEditPost(null); setSuggestOpen(false); setCollabSheetOpen(false); setLikersPost(null);
       return;
     }
     if (compose) requestCloseCompose();
@@ -842,7 +848,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     const kind = POST_KINDS[post.kind] ? post.kind : 'post';
     const helpful = Number(post.helpful_count) || 0;
     const replies = Number(post.comment_count) || 0;
-    return <article className={`am-card am-post-card is-${kind}`} key={post.id}>
+    return <article ref={engagement.trackView(post.id)} className={`am-card am-post-card is-${kind}`} key={post.id}>
       <div className="am-post-head">
         <CommunityAvatar name={authorName} path={!anon ? profileById.get(post.author_id)?.avatar_url : null} anonymous={anon} />
         <div className="am-author-copy">
@@ -859,6 +865,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       <button type="button" className="am-postbody" onClick={() => openPost(post)}>{post.body}</button>
       {(post.media || []).length > 0 && <button type="button" className="am-photo-grid" onClick={() => openPost(post)} aria-label="Open post photos">{post.media.slice(0, 4).map((photo) => <img key={photo.path} src={publicMediaUrl(photo.path)} alt="" loading="lazy" />)}</button>}
       {postProductIds(post).slice(0, 1).map((id) => <ProductMention key={id} productId={id} productsById={productsById} quizAnswers={quizAnswers} onOpenProduct={onOpenProduct} />)}
+      <PostStats post={post} engagement={engagement} variant="app" likeNoun={kind === 'post' ? 'liked this' : 'found this helpful'} onOpenLikers={setLikersPost} />
       <div className="am-actions">
         <button type="button" aria-pressed={Boolean(post.viewer_found_helpful)} onClick={() => togglePost(post, 'helpful')}><CommunityIcon name="heart" size={17} /><span>{post.kind === 'post' ? 'Like' : 'Helpful'}{helpful ? ` ${helpful}` : ''}</span></button>
         <button type="button" onClick={() => openPost(post)}><CommunityIcon name="comment" size={17} /><span>Reply{replies ? ` ${replies}` : ''}</span></button>
@@ -991,6 +998,15 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       <button type="button" className="am-primary" disabled={busy || !editProfileName.trim() || !editProfileHandle.trim() || breaksCommunityRules(editProfileName, editProfileBio)} onClick={saveProfileEdit}>{busy ? 'Saving…' : 'Save profile'}</button>
     </div></div>}
     {deletePlaylistTarget && <div className="am-sheet-backdrop" {...backdropTap(() => setDeletePlaylistTarget(null))}><div className="am-sheet" role="dialog" aria-modal="true" aria-label="Delete playlist" onClick={(e) => e.stopPropagation()}><div className="am-sheet-head"><h2>Delete playlist?</h2><button type="button" aria-label="Close" onClick={() => setDeletePlaylistTarget(null)}>×</button></div><p className="am-detail-copy">This removes the playlist and its product list. This cannot be undone.</p><button type="button" className="am-primary" disabled={busy} onClick={confirmDeletePlaylist}>{busy ? 'Deleting…' : 'Delete playlist'}</button><button type="button" className="am-secondary" onClick={() => setDeletePlaylistTarget(null)}>Cancel</button></div></div>}
+    {likersPost && <div className="am-sheet-backdrop" {...backdropTap(() => setLikersPost(null))}><div className="am-sheet am-likers-sheet" role="dialog" aria-modal="true" aria-labelledby="am-likers-title" onClick={(e) => e.stopPropagation()}>
+      <div className="am-sheet-head"><h2 id="am-likers-title">{likersPost.kind === 'post' ? 'Liked by' : 'Found this helpful'}</h2><button type="button" aria-label="Close" onClick={() => setLikersPost(null)}>×</button></div>
+      <LikersList supabase={supabase} post={likersPost} user={authUser} friendships={friendships} refreshKey={refresh} variant="app"
+        onRequireAuth={(f) => { setLikersPost(null); requireAccount(f); }}
+        onOpenProfile={(handle) => { setLikersPost(null); openProfile(handle); }}
+        onAddFriend={async (l) => { try { await community.sendFriendRequest(supabase, authUser.id, l.userId); setRefresh((v) => v + 1); } catch (e) { notifyError(e); throw e; } }}
+        onAcceptFriend={async (l) => { const fs = community.friendshipState(friendships, authUser.id, l.userId); if (!fs.row) return; try { await community.acceptFriendRequest(supabase, fs.row.id); setRefresh((v) => v + 1); } catch (e) { notifyError(e); throw e; } }} />
+      <p className="ay-likers-note">Who viewed a post is never shown.</p>
+    </div></div>}
     {topicSheetOpen && <TopicSheet followed={followedTopics} onToggle={toggleTopic} onClose={closeTopicSheet} onSuggest={openSuggestTopic} />}
     {suggestOpen && <SuggestTopicSheet onClose={() => setSuggestOpen(false)} onShowRules={openRules} onSent={() => { setSuggestOpen(false); setNotice('Thanks. The team reads every suggestion.'); }} />}
     {collabSheetOpen && details && page?.type === 'playlist' && <div className="am-sheet-backdrop" {...backdropTap(() => setCollabSheetOpen(false))}><div className="am-sheet am-compose-sheet am-collab-sheet" role="dialog" aria-modal="true" aria-labelledby="am-collab-title" onClick={(e) => e.stopPropagation()}>

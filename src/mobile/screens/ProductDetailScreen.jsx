@@ -458,6 +458,7 @@ export default function ProductDetailScreen({
             recall={recall}
             heroLine={heroLine}
             onOpenReview={onOpenReview}
+            onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null}
             safety={<ProductSafety product={product} glance={glance} recall={recall} alertText={glance?.alert || ''} />}
           />
 
