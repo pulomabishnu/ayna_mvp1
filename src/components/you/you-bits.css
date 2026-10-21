@@ -1,0 +1,81 @@
+/* You pieces (website .app-container and app .ayna-mobile).
+   Radii: 10 small, 16 card, 999 pill. Outline + 3px offset on tappable things. */
+.app-container, .ayna-mobile { --yb-ink: var(--ay-text, #3e2723); --yb-line: var(--ay-outline, #3e2723); --yb-page: var(--ay-page, #ffedac); --yb-group: var(--ay-group, #f6e3a1); --yb-font: var(--ay-sans-stack, 'Figtree', system-ui, sans-serif); --yb-display: var(--ay-heading, 'ayna Display', 'Bricolage Grotesque', sans-serif); }
+.ayna-mobile { --yb-ink: var(--ayna-heading, #3e2723); --yb-line: var(--ayna-heading, #3e2723); --yb-page: var(--ayna-bg, #ffedac); --yb-group: #f6e3a1; --yb-font: var(--ayna-font-ui, 'Figtree', system-ui, sans-serif); --yb-display: var(--ay-app-heading, 'ayna Display', 'Bricolage Grotesque', sans-serif); }
+.ayna-mobile[data-theme='dark'] { --yb-group: #4a312c; }
+
+/* ---- Outlined stat boxes ---- */
+.ay-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.app-container .ay-stat, .ayna-mobile .ay-stat {
+  display: grid; justify-items: start; gap: 2px; width: 100%; min-height: 72px; margin: 0; padding: 12px 14px; box-sizing: border-box; text-align: left;
+  border: 1.5px solid var(--yb-line) !important; border-radius: 16px !important; background: var(--yb-page) !important; color: var(--yb-ink) !important;
+  box-shadow: 3px 3px 0 var(--yb-line) !important; cursor: pointer; transition: transform var(--t-press) var(--ease-pop), box-shadow var(--t-press) var(--ease-out);
+}
+.app-container .ay-stat:disabled, .ayna-mobile .ay-stat:disabled { cursor: default; box-shadow: none !important; }
+.ay-stat b { font: 700 28px/1 var(--yb-display); letter-spacing: -.02em; font-variant-numeric: tabular-nums; min-height: 28px; }
+.ay-stat span:not(.ay-skel) { font: 500 14px/1.3 var(--yb-font); opacity: .8; }
+.ay-stat__skel { display: block; width: 32px; height: 26px; border-radius: 8px; }
+@media (hover: hover) and (pointer: fine) { .app-container .ay-stat:not(:disabled):hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--yb-line) !important; } }
+.app-container .ay-stat:not(:disabled):active, .ayna-mobile .ay-stat:not(:disabled):active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--yb-line) !important; }
+.ay-stat:focus-visible { outline: 3px solid var(--yb-ink); outline-offset: 3px; }
+
+/* ---- Segmented pill tab bar ---- */
+.ay-ptabs { position: relative; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); padding: 4px; border: 1.5px solid var(--yb-line); border-radius: 999px; background: var(--yb-group); }
+.ay-ptabs__thumb { position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) / var(--n)); border-radius: 999px; background: #f7badd; border: 1.5px solid #3e2723; box-sizing: border-box; transform: translateX(calc(var(--i) * 100%)); transition: transform var(--t-base) var(--ease-out); }
+.app-container .ay-ptabs > button, .ayna-mobile .ay-ptabs > button { position: relative; z-index: 1; min-height: 40px; margin: 0; padding: 0 10px; border: 0 !important; border-radius: 999px !important; background: none !important; box-shadow: none !important; color: var(--yb-ink) !important; font: 600 15px/1 var(--yb-font) !important; cursor: pointer; white-space: nowrap; }
+.app-container .ay-ptabs > button[aria-selected='true'], .ayna-mobile .ay-ptabs > button[aria-selected='true'] { color: #3e2723 !important; }
+.ay-ptabs > button:focus-visible { outline: 3px solid var(--yb-ink); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .ay-ptabs__thumb { transition: none; } }
+
+/* ---- Arch photo frame ---- */
+.ay-arch { display: inline-grid; place-items: center; flex: none; width: 76px; height: 92px; overflow: hidden; border: 1.5px solid var(--yb-line); border-radius: 999px 999px 14px 14px; background: #f7badd; color: #3e2723; box-shadow: 3px 3px 0 var(--yb-line); font: 700 30px/1 var(--yb-display); }
+.ay-arch img { width: 100%; height: 100%; object-fit: cover; }
+.ay-arch.has-photo { background: #fff; }
+
+/* ---- House blend ---- */
+.ay-blend { color: var(--yb-ink); }
+.ay-blend__h { margin: 0 0 4px !important; font: 600 17px/1.3 var(--yb-font) !important; color: inherit !important; }
+.ay-blend__sub { margin: 0 0 12px; font: 400 14px/1.45 var(--yb-font); opacity: .8; }
+.ay-blend__rows { display: grid; gap: 18px; margin: 0; padding: 16px; list-style: none; border-radius: 20px; background: var(--yb-group); }
+.ay-blend__ends { display: flex; justify-content: space-between; gap: 12px; font: 600 15px/1.2 var(--yb-font); }
+.ay-blend__row input[type='range'] { -webkit-appearance: none; appearance: none; display: block; width: 100%; height: 36px; margin: 2px 0 0; padding: 0; background: transparent; cursor: pointer; --tone: #f7badd; }
+.ay-blend__row.is-sky input { --tone: #769ebe; }
+.ay-blend__row.is-butter input { --tone: #ffedac; }
+.ay-blend__row input[type='range']:disabled { cursor: default; }
+.ay-blend__row input[type='range']::-webkit-slider-runnable-track { height: 2px; border-radius: 2px; background: var(--yb-line); }
+.ay-blend__row input[type='range']::-moz-range-track { height: 2px; border-radius: 2px; background: var(--yb-line); }
+.ay-blend__row input[type='range']::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; margin-top: -13px; border-radius: 50%; border: 1.5px solid #3e2723; background: var(--tone); box-shadow: 2px 2px 0 #3e2723; transition: transform var(--t-press) var(--ease-pop); }
+.ay-blend__row input[type='range']::-moz-range-thumb { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid #3e2723; background: var(--tone); box-shadow: 2px 2px 0 #3e2723; }
+.ay-blend__row input[type='range']:active::-webkit-slider-thumb { transform: scale(.94); }
+.ay-blend__row.is-unset input[type='range']::-webkit-slider-thumb { background: transparent; border-style: dashed; box-shadow: none; }
+.ay-blend__row.is-unset input[type='range']::-moz-range-thumb { background: transparent; border-style: dashed; box-shadow: none; }
+.ay-blend__row input[type='range']:focus-visible { outline: 3px solid var(--yb-ink); outline-offset: 4px; border-radius: 10px; }
+.ay-blend__now { margin: 0; font: 400 14px/1.4 var(--yb-font); }
+.ay-blend__now b { font-weight: 600; }
+.ay-blend__now span { opacity: .75; }
+
+/* Web You page placement */
+.app-container .wy .wy-stats { max-width: 600px; margin: 20px 0 28px; }
+.app-container .wy .ay-ptabs { max-width: 520px; margin: 0 0 28px; }
+@media (max-width: 719px) {
+  .app-container .wy .wy-stats { margin: 16px 0 20px; gap: 8px; }
+  .app-container .wy .ay-stat { min-height: 64px; padding: 10px 12px; }
+  .app-container .wy .ay-stat b { font-size: 24px; }
+  .app-container .wy .ay-ptabs { margin-bottom: 20px; }
+  .app-container .wy .ay-arch { width: 64px; height: 78px; font-size: 26px; }
+}
+
+/* App You hub placement */
+.ayna-mobile .ay-you-stats { margin: 10px var(--d-gutter, 20px) 0; }
+.ayna-mobile .ay-you-tabs { margin: 16px var(--d-gutter, 20px) 4px; }
+.ayna-mobile .ay-you-arch { width: 60px; height: 74px; font-size: 26px; }
+.ayna-mobile .ay-stat b { font-size: calc(24px * var(--ayna-text-scale, 1)); }
+.ayna-mobile .ay-stat span:not(.ay-skel) { font-size: calc(13px * var(--ayna-text-scale, 1)); }
+.ayna-mobile .ay-blend { margin: 0 0 8px; }
+.ayna-mobile .ay-blend__h { font-size: calc(17px * var(--ayna-text-scale, 1)) !important; }
+/* The app's global field styles reach range inputs; pin the slider down. */
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-blend__row input[type='range'], .app-container .ay-blend__row input[type='range'] { height: 36px !important; min-height: 36px !important; margin: 4px 0 2px !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; accent-color: auto; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-blend__row input[type='range']::-webkit-slider-thumb { width: 28px; height: 28px; margin-top: -13px; border: 1.5px solid #3e2723; background: var(--tone); box-shadow: 2px 2px 0 #3e2723; }
+.ayna-mobile[data-theme='dark'] .ay-blend__row input[type='range']::-webkit-slider-runnable-track { background: #ffedac; }
+.ayna-mobile[data-theme='dark'] .ay-blend__row input[type='range']::-webkit-slider-thumb { border-color: #ffedac; box-shadow: 2px 2px 0 #ffedac; }
+.ayna-mobile .ay-you-tabs + .ay-you-body { padding-top: 12px; }

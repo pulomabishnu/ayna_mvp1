@@ -22,6 +22,9 @@ import { estimatePhase } from '../health/phase.js';
 import { localToday, useHealthData } from '../mobile/hooks/useHealthData.js';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import RelativeTime from './ui/RelativeTime.jsx';
+import { StatBoxes, PillTabs, ArchAvatar, HouseBlend } from './you/YouBits.jsx';
+import usePersistentState from '../hooks/usePersistentState.js';
+import useCheckinCount from '../hooks/useCheckinCount.js';
 
 // The app's "You" tab, built for the website: profile progress, your shelf
 // (charts from real data), badges, routine + safety alerts, and account
@@ -225,8 +228,11 @@ function PlaylistCover({ playlist }) {
 
 const Chev = () => <svg className="wy-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>;
 
-export default function WebYou({ onOpenCommunity, onOpenArticle, user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenProduct, onOpenPhoneVerify, onSignOut, onDeleteAccount, onStartQuiz, onSignIn, theme = 'light', onThemeChange, onOpenFreeProduct, onOpenHealthData, onOpenHealth, healthSummary = null, healthConnectedCount = 0, quizSlot = null }) {
+export default function WebYou({ onUpdateIntake = null, onOpenCommunity, onOpenArticle, user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenProduct, onOpenPhoneVerify, onSignOut, onDeleteAccount, onStartQuiz, onSignIn, theme = 'light', onThemeChange, onOpenFreeProduct, onOpenHealthData, onOpenHealth, healthSummary = null, healthConnectedCount = 0, quizSlot = null }) {
   const products = useMemo(() => Object.values(myProducts || {}).filter(Boolean), [myProducts]);
+  // The open tab survives a refresh.
+  const [tab, setTab] = usePersistentState('you:tab', 'overview');
+  const checkinCount = useCheckinCount(user?.id);
   const consumables = useMemo(() => products.filter(isConsumable), [products]);
   const intake = quizResults?.fullHealthIntake || null;
   const pct = getProfileCompletionPct(intake);
@@ -356,7 +362,7 @@ export default function WebYou({ onOpenCommunity, onOpenArticle, user, quizResul
 
   return <section className="ct wy ay-container">
     <header className="wy-head">
-      <span className={`wy-avatar${cp?.avatar_url && !avatarFailed ? ' has-photo' : ''}`} aria-hidden="true">{cp?.avatar_url && !avatarFailed ? <img src={publicMediaUrl(cp.avatar_url)} alt="" onError={() => setAvatarFailed(true)} /> : initial}</span>
+      <ArchAvatar className="wy-arch" src={cp?.avatar_url && !avatarFailed ? publicMediaUrl(cp.avatar_url) : ''} initial={initial} onError={() => setAvatarFailed(true)} />
       <div className="wy-who">
         <h1 className="ay-h1">{name || 'You'}</h1>
         <p className="wy-who__meta">{[cp?.username ? `@${cp.username}` : null, memberSince(user.created_at)].filter(Boolean).join(' · ')}</p>
@@ -371,10 +377,18 @@ export default function WebYou({ onOpenCommunity, onOpenArticle, user, quizResul
         <span className="wy-progress__go">{pct >= 100 ? 'Review answers' : 'Finish it'} <span aria-hidden="true">→</span></span>
       </button>
     </header>
+    <StatBoxes className="wy-stats" items={[
+      { key: 'picks', label: products.length === 1 ? 'Pick' : 'Picks', value: fmtCount(products.length), onClick: onOpenEcosystem },
+      { key: 'saved', label: 'Saved', value: fmtCount(savedCount), onClick: onOpenSaved },
+      { key: 'checkins', label: checkinCount === 1 ? 'Check-in' : 'Check-ins', value: checkinCount == null ? null : fmtCount(checkinCount), onClick: onOpenCheckin },
+    ]} />
 
     {quizSlot}
 
-    <div className="wy-grid">
+    <PillTabs label="Your page" idBase="wy-tab" active={tab} onChange={setTab} tabs={[{ id: 'overview', label: 'Overview' }, { id: 'blend', label: 'Your blend' }, { id: 'settings', label: 'Settings' }]} />
+
+    <div id="wy-tab-panel" role="tabpanel" aria-labelledby={`wy-tab-${tab}`} className={`wy-grid is-${tab}`}>
+      {tab === 'overview' && <>
       <div className="wy-col">
         <section className="wy-sec" aria-labelledby="wy-safety-h">
           <div className="wy-sec__head"><h2 className="ay-group__title" id="wy-safety-h">Safety alerts</h2><span className="wy-count">{activeAlerts ? `${activeAlerts} to check` : 'Nothing urgent'}{fyi > 0 ? ` · ${fyi} FYI` : ''}</span></div>
@@ -418,15 +432,8 @@ export default function WebYou({ onOpenCommunity, onOpenArticle, user, quizResul
           </ul>
         </section>}
 
-        {shopper ? <Glance profile={shopper} products={products} quizResults={quizResults} /> : <section className="wy-sec"><h2 className="ay-group__title">At a glance</h2><div className="ay-group is-padded wy-week is-empty"><p className="wy-note">Take the quiz to see it.</p><button type="button" className="ay-btn ay-btn--secondary cm-small" onClick={onStartQuiz}>Take the quiz</button></div></section>}
 
-        {consumables.length > 0 && <Routine products={consumables} />}
 
-        {/* The per-type counts repeated "Your shelves" in At a glance (audit), so only the interest chips stay. */}
-        {affinity.length > 0 && <section className="wy-sec" aria-labelledby="wy-into-h">
-          <h2 className="ay-group__title" id="wy-into-h">What you’re into</h2>
-          <ul className="ay-group wy-into">{affinity.map((a) => <li key={a.tag}><span>{a.label}</span><span className="wy-into__bar" aria-hidden="true"><i style={{ width: `${Math.max(4, Math.min(100, a.score))}%` }} /></span><b>{a.score}%</b></li>)}</ul>
-        </section>}
       </div>
 
       <div className="wy-col">
@@ -434,24 +441,38 @@ export default function WebYou({ onOpenCommunity, onOpenArticle, user, quizResul
         <section className="wy-sec" aria-labelledby="wy-things-h">
           <h2 className="ay-group__title" id="wy-things-h">Your things</h2>
           <ul className="ay-group wy-rows">
-            {linkRow('eco', 'Ecosystem', fmtCount(products.length), onOpenEcosystem)}
-            {linkRow('saved', 'Saved', fmtCount(savedCount), onOpenSaved)}
-            {linkRow('checkin', 'Log how this month went', null, onOpenCheckin)}
             {linkRow('health', onOpenHealth ? 'Your health' : 'Health data', null, onOpenHealth || onOpenHealthData, healthSummary ? `${healthSummary.title}: ${healthSummary.headline}` : healthConnectedCount ? 'Connected. Your trends appear after about two weeks of data.' : 'Connect Apple Health, Oura or upload a file, and see your sleep, cycle and activity trends.')}
             {onOpenHealth && linkRow('manage', 'Manage connected apps and uploads', null, onOpenHealthData)}
             {linkRow('community', 'Community profile', cp?.username ? `@${cp.username}` : null, openMyProfile)}
           </ul>
         </section>
 
+
+        <InviteCard userId={user.id} />
+
+
+      </div>
+      </>}
+      {tab === 'blend' && <>
+      <div className="wy-col">
+        <HouseBlend className="wy-sec" intake={intake} onSave={onUpdateIntake} />
+        {shopper ? <Glance profile={shopper} products={products} quizResults={quizResults} /> : <section className="wy-sec"><h2 className="ay-group__title">At a glance</h2><div className="ay-group is-padded wy-week is-empty"><p className="wy-note">Take the quiz to see it.</p><button type="button" className="ay-btn ay-btn--secondary cm-small" onClick={onStartQuiz}>Take the quiz</button></div></section>}
+      </div>
+      <div className="wy-col">
+        {consumables.length > 0 && <Routine products={consumables} />}
+        {/* The per-type counts repeated "Your shelves" in At a glance (audit), so only the interest chips stay. */}
+        {affinity.length > 0 && <section className="wy-sec" aria-labelledby="wy-into-h">
+          <h2 className="ay-group__title" id="wy-into-h">What you’re into</h2>
+          <ul className="ay-group wy-into">{affinity.map((a) => <li key={a.tag}><span>{a.label}</span><span className="wy-into__bar" aria-hidden="true"><i style={{ width: `${Math.max(4, Math.min(100, a.score))}%` }} /></span><b>{a.score}%</b></li>)}</ul>
+        </section>}
         <section className="wy-sec" aria-labelledby="wy-hmatch-h">
           <h2 className="ay-group__title" id="wy-hmatch-h">Health data in your matches</h2>
           <div className="ay-group is-padded"><HealthMatchToggle userId={user.id} /></div>
         </section>
-
-        <InviteCard userId={user.id} />
-
-        <EmailSettings user={user} />
-
+      </div>
+      </>}
+      {tab === 'settings' && <>
+      <div className="wy-col">
         <section className="wy-sec" id="wyou-account" aria-labelledby="wy-account-h">
           <div className="wy-sec__head"><h2 className="ay-group__title" id="wy-account-h">Account</h2>{note && <span className="wy-count" role="status">{note}</span>}</div>
           <div className="ay-group wy-rows">
@@ -472,6 +493,10 @@ export default function WebYou({ onOpenCommunity, onOpenArticle, user, quizResul
           </div>
         </section>
       </div>
+      <div className="wy-col">
+        <EmailSettings user={user} />
+      </div>
+      </>}
     </div>
   </section>;
 }

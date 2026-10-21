@@ -45,3 +45,7 @@
 /* ---- Pointer only on things that do something ---- */
 .app-container button:disabled, .ayna-mobile button:disabled { cursor: default; }
 .ay-skel-card { background: var(--ayna-surface, var(--ay-page)); border: 1px solid var(--ayna-border, rgba(62,39,35,.15)); border-radius: 16px; padding: 10px; }
+.ayna-mobile[data-theme='dark'] .ay-gtoast.is-app .ay-gtoast__card { background: #ffedac; color: #3e2723; border-color: #ffedac; }
+.ayna-mobile[data-theme='dark'] .ay-gtoast.is-app .ay-gtoast__card button { border-color: #3e2723; color: #3e2723; }
+.app-container[data-theme='brand-dark'] .ay-gtoast__card { background: #ffedac; color: #3e2723; border-color: #ffedac; }
+.app-container[data-theme='brand-dark'] .ay-gtoast__card button { border-color: #3e2723; color: #3e2723; }

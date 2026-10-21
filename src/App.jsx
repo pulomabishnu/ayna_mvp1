@@ -1622,6 +1622,21 @@ function App() {
     setShowWrapped(true);
   };
 
+  // One quiz answer changed in place (You > Your blend): same save path as the
+  // monthly check-in; matches re-rank from the new answers. Rolls back and
+  // returns false if neither the server nor the device copy saved.
+  const handleUpdateIntake = async (nextIntake) => {
+    if (!nextIntake) return false;
+    const previous = quizResults;
+    setQuizResults(mapIntakeToLegacyQuizProfile(nextIntake));
+    try {
+      const r = await saveHealthIntakeForCurrentUser(nextIntake);
+      if (r?.saved || r?.localSaved) return true;
+    } catch { /* falls through to the rollback */ }
+    setQuizResults(previous);
+    return false;
+  };
+
   const handleHealthProfileEditorSave = async (updatedResults) => {
     if (!updatedResults) {
       setCurrentView('ecosystem');
@@ -2358,6 +2373,7 @@ function App() {
         )}
         {currentView === 'you' && (
           <WebYou
+            onUpdateIntake={user ? handleUpdateIntake : null}
             onOpenCommunity={(to) => {
               if (to?.username) setCommunityHandle(to.username);
               else setCommunitySeed({ kind: to?.kind || null, token: Date.now() });

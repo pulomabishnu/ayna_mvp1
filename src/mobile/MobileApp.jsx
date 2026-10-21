@@ -798,6 +798,20 @@ export default function MobileApp() {
     }
   };
 
+  // One quiz answer changed in place (You > Your blend). Same save path as the
+  // quiz; matches re-rank from the new answers. Rolls back if nothing saved.
+  const handleUpdateIntake = async (nextIntake) => {
+    if (!nextIntake) return false;
+    const previous = lastQuizAnswers;
+    updateSession({ lastQuizAnswers: mapIntakeToLegacyQuizProfile(nextIntake) });
+    try {
+      const r = await saveHealthIntakeForCurrentUser(nextIntake);
+      if (r?.saved || r?.localSaved) return true;
+    } catch { /* rolled back below */ }
+    updateSession({ lastQuizAnswers: previous });
+    return false;
+  };
+
   // Undo in a toast runs after later renders, so it calls the latest handler.
   const addToEcosystemRef = useRef(null);
   addToEcosystemRef.current = handleAddToEcosystem;
@@ -1294,6 +1308,7 @@ export default function MobileApp() {
       {overlay?.type === 'profile' && (
         <AskContext.Provider value={nav.onAskAyna}>
         <ProfileFlow
+          onUpdateIntake={authUser ? handleUpdateIntake : null}
           key={overlay.screen || 'hub'}
           initialScreen={overlay.screen || null}
           onClose={() => setOverlay(null)}

@@ -45,6 +45,8 @@ import ConfirmButton from '../../../components/ui/ConfirmButton.jsx';
 import { maskedChange, formatUsPhone } from '../../../utils/inputMask.js';
 import usePersistentState from '../../../hooks/usePersistentState.js';
 import CharRing from '../../../components/ui/CharRing.jsx';
+import { StatBoxes, PillTabs, ArchAvatar, HouseBlend } from '../../../components/you/YouBits.jsx';
+import useCheckinCount from '../../../hooks/useCheckinCount.js';
 import { isOverLimit } from '../../../utils/charLimit.js';
 
 const IS_NATIVE_APP = Capacitor.isNativePlatform();
@@ -452,7 +454,7 @@ function greetingForNow(date = new Date()) {
   return h < 5 ? 'Hi' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
 }
 
-function ProfileHub({ authUserId, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, myProducts, savedProducts, readProgress, onOpen, onOpenSettings, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin, onOpenProduct, onOpenArticle, onOpenCommunity, quizDraft = null, onResumeQuiz, onStartOverQuiz }) {
+function ProfileHub({ intake = null, onUpdateIntake = null, authUserId, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, myProducts, savedProducts, readProgress, onOpen, onOpenSettings, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin, onOpenProduct, onOpenArticle, onOpenCommunity, quizDraft = null, onResumeQuiz, onStartOverQuiz }) {
   const { profile, stats, playlists } = useMyCommunity(authUserId);
   const [avatarFailed, setAvatarFailed] = useState(false);
   const showPhoto = profile?.avatar_url && !avatarFailed;
@@ -460,12 +462,15 @@ function ProfileHub({ authUserId, name, initial, memberSince, ecosystemCount, sa
   const shownPlaylists = playlists.slice(0, HUB_PLAYLIST_LIMIT);
   const openMyProfile = profile?.username && onOpenCommunity ? () => onOpenCommunity({ username: profile.username }) : null;
   const signedIn = !!authUserId;
+  const checkinCount = useCheckinCount(authUserId);
+  // The open tab survives the app being closed.
+  const [tab, setTab] = usePersistentState('app-you:tab', 'overview');
+  const showBlend = signedIn && !!intake;
+  const activeTab = showBlend ? tab : 'overview';
 
+  // Ecosystem, Saved and the check-in are the stat boxes now (no repeated counts).
   const rows = [
-    onOpenEcosystem && { key: 'ecosystem', title: 'Ecosystem', value: fmtCount(ecosystemCount), onClick: onOpenEcosystem },
-    onOpenSaved && { key: 'saved', title: 'Saved', value: fmtCount(savedCount), onClick: onOpenSaved },
     { key: 'shopper', title: 'Shopper profile', value: shopperAlertsCount > 0 ? `${shopperAlertsCount} ${shopperAlertsCount === 1 ? 'alert' : 'alerts'}` : '', onClick: () => onOpen('shopper') },
-    onOpenMonthlyCheckin && { key: 'checkin', title: 'Monthly check-in', onClick: onOpenMonthlyCheckin },
     { key: 'healthData', title: 'Health data', onClick: () => onOpen('healthData') },
     signedIn && { key: 'badges', title: 'Badges', onClick: () => onOpen('badges') },
     { key: 'startups', title: 'Startups', onClick: () => onOpen('startups') },
@@ -476,9 +481,7 @@ function ProfileHub({ authUserId, name, initial, memberSince, ecosystemCount, sa
       <MobileHeader onOpenSettings={onOpenSettings} />
       <header className="ay-you-head">
         <div className="ay-you-id">
-          <span className={`ay-you-avatar${showPhoto ? ' has-photo' : ''}`} aria-hidden="true">
-            {showPhoto ? <img src={publicMediaUrl(profile.avatar_url)} alt="" onError={() => setAvatarFailed(true)} /> : initial}
-          </span>
+          <ArchAvatar className="ay-you-arch" src={showPhoto ? publicMediaUrl(profile.avatar_url) : ''} initial={initial} onError={() => setAvatarFailed(true)} />
           <span className="ay-you-names">
             <h1><span className="ay-you-hello">{greetingForNow()},</span> {name}</h1>
             {profile?.username ? <span>@{profile.username}</span> : memberSince ? <span>{memberSince}</span> : null}
@@ -499,7 +502,29 @@ function ProfileHub({ authUserId, name, initial, memberSince, ecosystemCount, sa
         )}
       </header>
 
-      <div className="ay-you-body">
+      {signedIn && <StatBoxes className="ay-you-stats" items={[
+        { key: 'picks', label: ecosystemCount === 1 ? 'Pick' : 'Picks', value: fmtCount(ecosystemCount), onClick: onOpenEcosystem },
+        { key: 'saved', label: 'Saved', value: fmtCount(savedCount), onClick: onOpenSaved },
+        { key: 'checkins', label: checkinCount === 1 ? 'Check-in' : 'Check-ins', value: checkinCount == null ? null : fmtCount(checkinCount), onClick: onOpenMonthlyCheckin },
+      ]} />}
+      {showBlend && <div className="ay-you-tabs"><PillTabs label="You" idBase="ay-you-tab" active={activeTab} onChange={setTab} tabs={[{ id: 'overview', label: 'Overview' }, { id: 'blend', label: 'Your blend' }]} /></div>}
+
+      {activeTab === 'blend' ? <div className="ay-you-body" id="ay-you-tab-panel" role="tabpanel" aria-labelledby="ay-you-tab-blend">
+        <HouseBlend intake={intake} onSave={onUpdateIntake} />
+        <nav className="ay-you-section ay-you-list" aria-label="More about your answers">
+          <button type="button" className="ay-you-row" onClick={() => onOpen('shopper')}>
+            <svg className="ay-you-row-icon" viewBox="0 0 24 24" aria-hidden="true">{HUB_ICONS.shopper}</svg>
+            <span className="ay-you-row-title">Shopper profile</span>
+            {shopperAlertsCount > 0 && <span className="ay-you-row-value">{shopperAlertsCount} {shopperAlertsCount === 1 ? 'alert' : 'alerts'}</span>}
+            <ChevronIcon />
+          </button>
+          <button type="button" className="ay-you-row" onClick={onEditProfile}>
+            <svg className="ay-you-row-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4" /></svg>
+            <span className="ay-you-row-title">All your quiz answers</span>
+            <ChevronIcon />
+          </button>
+        </nav>
+      </div> : <div className="ay-you-body" {...(showBlend ? { id: 'ay-you-tab-panel', role: 'tabpanel', 'aria-labelledby': 'ay-you-tab-overview' } : {})}>
         {!signedIn && <SignedOutCard>Sign in to keep your ecosystem, saved products and health data together, on any phone.</SignedOutCard>}
 
         {quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
@@ -566,7 +591,7 @@ function ProfileHub({ authUserId, name, initial, memberSince, ecosystemCount, sa
             </button>
           ))}
         </nav>
-      </div>
+      </div>}
       <LegalFooter />
     </div>
   );
@@ -3478,6 +3503,7 @@ function ContactScreen({ onBack }) {
 /* ------------------------------- Orchestrator ------------------------------- */
 
 export default function ProfileFlow({
+  onUpdateIntake = null,
   onClose,
   theme,
   onToggleTheme,
@@ -3539,6 +3565,8 @@ export default function ProfileFlow({
   if (screen === 'hub') {
     body = (
       <ProfileHub
+        intake={quizAnswers?.fullHealthIntake || null}
+        onUpdateIntake={onUpdateIntake}
         authUserId={authUser?.id}
         name={name}
         initial={initial}
