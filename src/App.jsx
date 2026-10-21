@@ -2086,8 +2086,8 @@ function App() {
         <GlobalToast />
         <EcosystemGenerationBar intakeFingerprint={ecosystemIntakeFingerprint} onViewEcosystem={handleViewEcosystem} hasEcosystem={ecosystemCount > 0} />
       </div>
-      <main data-view={currentView}>
-        <a className="ay-skip" href="#ay-content">Skip to content</a>
+      <a className="ay-skip" href="#ay-content">Skip to content</a>
+      {/* The header sits outside <main> so it stays pinned over the footer too. */}
         <div className="app-nav-wrap">
         <nav
           className={`ay-nav${isScrolled ? ' is-scrolled' : ''}`}
@@ -2112,7 +2112,7 @@ function App() {
           </div>
 
           {currentView === 'quiz' && (
-            <a href="/" className="ay-nav__exit" {...linkProps(navigateHome)}>Exit <span>· answers saved on this device</span></a>
+            <a href="/" className="ay-nav__exit" aria-label="Exit the quiz" {...linkProps(navigateHome)}>Exit</a>
           )}
           <div className="ay-nav__actions">
             <a
@@ -2220,6 +2220,7 @@ function App() {
           </div>
         )}
         </div>
+      <main data-view={currentView}>
         <div id="ay-content" tabIndex={-1} />
 
         {(currentView === 'welcome' || currentView === 'hero') && (

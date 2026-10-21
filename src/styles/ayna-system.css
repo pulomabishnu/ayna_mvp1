@@ -274,7 +274,7 @@
 .app-container.app-container .ay-chip__count { font-variant-numeric: tabular-nums; opacity: .8; }
 
 /* ---------- alert (pink: safety only) ---------- */
-.app-container.app-container .ay-alert { display: grid; grid-template-columns: 20px 1fr; gap: var(--ay-s12); align-items: start; padding: var(--ay-s12) var(--ay-s16); border-radius: var(--ay-r-card); background: var(--ay-alert-bg); color: var(--ay-alert-fg); font: 500 15px/1.45 var(--ay-sans-stack); }
+.app-container.app-container .ay-alert { display: grid; grid-template-columns: 20px 1fr; gap: var(--ay-s12); align-items: start; padding: var(--ay-s12) var(--ay-s16); border-radius: var(--ay-r-card); background: #f7badd; color: var(--ay-alert-fg); font: 500 15px/1.45 var(--ay-sans-stack); }
 .app-container.app-container .ay-alert :is(p, span, b, strong, a, button) { color: var(--ay-alert-fg) !important; }
 .app-container.app-container .ay-alert svg { width: 20px; height: 20px; margin-top: 1px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
@@ -397,8 +397,7 @@
 .app-container.app-container .ay-nav__link[aria-current='page'] { color: var(--ay-text) !important; font-weight: 600 !important; }
 .app-container.app-container .ay-nav__link[aria-current='page']::after { background: var(--ay-text); }
 .app-container.app-container .ay-nav__start { padding: 2px 8px; border-radius: 999px; background: var(--ay-alert-bg); color: #3e2723 !important; font: 600 12px/1.2 var(--ay-sans-stack) !important; }
-.app-container.app-container .ay-nav__exit { color: var(--ay-text) !important; font: 500 14px/1.3 var(--ay-sans-stack) !important; text-decoration: underline !important; text-underline-offset: 3px; }
-.app-container.app-container .ay-nav__exit span { color: var(--ay-text-2); }
+.app-container.app-container .ay-nav__exit { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 8px; color: var(--ay-text) !important; font: 600 15px/1 var(--ay-sans-stack) !important; text-decoration: underline !important; text-underline-offset: 3px; white-space: nowrap; flex: none; }
 .app-container.app-container .ay-nav__actions { display: flex; align-items: center; gap: var(--ay-s12); margin-left: auto; }
 .app-container.app-container .ay-nav__icon { position: relative; display: grid !important; place-items: center; width: 44px !important; height: 44px !important; padding: 0 !important; border-radius: 50% !important; border: 1.5px solid var(--ay-outline) !important; background: transparent !important; color: var(--ay-text) !important; box-shadow: none !important; transform: none !important; }
 .app-container.app-container .ay-nav__icon:hover { background: var(--ay-hover) !important; }

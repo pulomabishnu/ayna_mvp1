@@ -631,6 +631,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
         {index === 0 && phase === 'core' ? <span className="qz-round is-spacer" aria-hidden="true" /> : <button type="button" className="qz-round" aria-label="Previous question" onClick={back}>←</button>}
         <div className="qz-progress" aria-hidden="true">{Array.from({ length: shownTotal }, (_, i) => <span key={i} className={i + 1 < shownIndex ? 'is-done' : i + 1 === shownIndex ? 'is-now' : ''} />)}</div>
         <span className="qz-count" aria-label={`${phase === 'more' ? 'Optional question' : 'Question'} ${shownIndex} of ${shownTotal}`}>{shownIndex}<i>/{shownTotal}</i></span>
+        {!initialSnapshot && <p className="qz-saved-note">Answers are saved on this device</p>}
       </header>
 
       <div className="qz-label-row">

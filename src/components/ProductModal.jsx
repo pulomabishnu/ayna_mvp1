@@ -486,7 +486,10 @@ export default function ProductModal({
   const variantImage = choice.variant ? (choice.image || '') : null;
   const galleryList = variantImage != null ? (variantImage ? [variantImage] : []) : galleryImages(product);
   const images = galleryList.length ? galleryList : (variantImage == null && resolvedImageUrl ? [resolvedImageUrl] : []);
-  const heroImageSrc = images[Math.min(photo, Math.max(images.length - 1, 0))] || '';
+  const heroImageSrcRaw = images[Math.min(photo, Math.max(images.length - 1, 0))] || '';
+  // A photo that fails to load shows the ayna placeholder tile, never an empty white box.
+  const [failedHero, setFailedHero] = useState('');
+  const heroImageSrc = heroImageSrcRaw && failedHero !== heroImageSrcRaw ? heroImageSrcRaw : '';
 
   const explicitMatchPercent = useMemo(() => getRealMatchPercent(product), [product]);
   const profileMatchPercent = useMemo(
@@ -777,7 +780,7 @@ export default function ProductModal({
               key={heroImageSrc}
               src={heroImageSrc}
               alt={productImageAlt({ ...product, name: displayName }, photo, images.length)}
-              onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
+              onError={(e) => handleImageErrorWithRetry(e, () => { setFailedHero(heroImageSrcRaw); })}
             />
           </button>
         ) : (
@@ -956,7 +959,7 @@ export default function ProductModal({
               {topWarning && (
                 <div className="ay-alert ayp-buy__warn" role="note">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 21h20L12 3Z" /><path d="M12 10v5M12 18v.5" /></svg>
-                  <p>{topWarning} <button type="button" className="ayp-textlink" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'details' }))}>All safety info</button></p>
+                  <p>{topWarning} <button type="button" className="ayp-textlink" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'safety' }))}>All safety info</button></p>
                 </div>
               )}
               {actionButtons}

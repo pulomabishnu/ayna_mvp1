@@ -3,6 +3,7 @@ import HealthDataImport from './HealthDataImport';
 import CareNearYouPanel from './CareNearYouPanel';
 import { getCheckinRecommendations, CATEGORY_LABELS } from '../data/products.js';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
+import { hasFlaggedRecall } from '../utils/productSafetyAlert';
 import '../styles/compare-page.css';
 
 function ImgOrInitial({ item, size }) {
@@ -152,7 +153,10 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                                             <span className="ay-group__value">{product.name}</span>
                                             <span className="ay-group__note">{product.type}</span>
                                         </span>
-                                        <span className="ay-group__end aytrk__status"><i aria-hidden="true" />Safe</span>
+                                        {/* Says only what was checked: the recall notes on file for this product. */}
+                                        {hasFlaggedRecall(product.safety?.recalls)
+                                            ? <span className="ay-group__end aytrk__status is-recall"><i aria-hidden="true" />Recall on file</span>
+                                            : <span className="ay-group__end aytrk__status"><i aria-hidden="true" />No recall on file</span>}
                                     </li>
                                 ))}
                             </ul>

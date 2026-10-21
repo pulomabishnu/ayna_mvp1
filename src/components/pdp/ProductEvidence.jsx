@@ -705,7 +705,9 @@ export default function ProductEvidence({ product: baseProduct, safetyLead = '',
   const miniItems = (() => {
     const out = [
       whoLine && { id: 'who', icon: 'person', label: 'Who it’s for', main: whoLine, go: 'overview' },
-      safetyLine && byId.safety && { id: 'safety', icon: 'shield', label: 'Safety', main: safetyLine, go: 'safety' },
+      // The safety line already shows as the pink alert by Buy (safetyLead), so the row
+      // points to the Safety tab instead of repeating the sentence.
+      safetyLine && byId.safety && { id: 'safety', icon: 'shield', label: 'Safety', main: safetyLead ? 'See safety notes' : safetyLine, go: 'safety' },
       howLine && byId.how && { id: 'how', icon: 'steps', label: 'How to use', main: howLine, go: 'how-to-use' },
       ...tiles.map((t) => ({ id: t.id, icon: t.icon, label: t.label, main: t.main, note: t.note })),
     ].filter(Boolean).map((m) => ({ ...m, wide: String(m.main).length + String(m.note || '').length > 32 }));

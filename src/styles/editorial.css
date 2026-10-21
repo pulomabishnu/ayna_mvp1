@@ -452,6 +452,8 @@
 .ed .ed-notice { padding: 12px 14px; border-radius: 12px; font: 500 15px/1.45 var(--ed-sans); }
 .ed .ed-notice--ok { background: var(--ed-page); border: 1.5px solid var(--ed-outline); }
 .ed .ed-notice--err { background: #f7badd; color: #3e2723; }
+.app-container .ed .ed-small { font: 500 14px/1.5 var(--ed-sans); color: var(--ed-text-2); max-width: 60ch; }
+.ed .ed-btnrow { display: flex; flex-wrap: wrap; gap: 12px; }
 .ed .ed-hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 .ed .ed-contact__aside { display: grid; gap: 0; }
 .ed .ed-contact__aside > div { padding-block: 16px; border-top: 1px solid var(--ed-hairline); display: grid; gap: 4px; }

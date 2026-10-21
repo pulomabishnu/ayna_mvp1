@@ -75,7 +75,7 @@
 .app-container .ay-flow-editbar > * { position: absolute; top: 24px; }
 .app-container .ay-flow-editbar { --fb-gutter: max(16px, calc((100% - 760px) / 2)); }
 .app-container .ay-flow-editbar .ay-flow-back { left: var(--fb-gutter); }
-.app-container .ay-flow-editbar > span { right: var(--fb-gutter); top: 36px; font: 600 13px/1 'DM Sans', system-ui, sans-serif; color: #1d1a2b; opacity: .7; }
+.app-container .ay-flow-editbar > span { right: var(--fb-gutter); top: 36px; font: 600 13px/1 'DM Sans', system-ui, sans-serif; color: var(--ay-text-2, rgba(62, 39, 35, .75)); font-weight: 500; }
 .app-container .ay-flow-editbar + .wq-page { padding-top: 96px; }
 .ay-flow-back, .ay-flow-auth-back {
   min-height: 40px; display: inline-flex; align-items: center; gap: 8px; padding: 0 16px 0 12px;
