@@ -1570,5 +1570,35 @@
   "by": "Ameera",
   "what": "p-goodbug-good-down-there.communityReview",
   "note": "PCOS renamed PMOS everywhere (Lancet, May 2026); Ameera asked in chat Oct 20"
+ },
+ {
+  "at": "2026-10-21T20:49:49.568Z",
+  "by": "Ameera",
+  "what": "p-uqora-control.effectiveness",
+  "note": "Ameera approved in chat Oct 21 (\"The copy OKs: Clue, Uqora, LOLA, and the postpartum title\"); 2024 JAMA Intern Med D-mannose trial (doi:10.1001/jamainternmed.2024.0264) found no benefit vs placebo"
+ },
+ {
+  "at": "2026-10-21T20:49:49.944Z",
+  "by": "Ameera",
+  "what": "p-uqora-control.doctorOpinion",
+  "note": "Ameera approved in chat Oct 21 (\"The copy OKs: Clue, Uqora, LOLA, and the postpartum title\"); 2024 JAMA Intern Med D-mannose trial (doi:10.1001/jamainternmed.2024.0264) found no benefit vs placebo"
+ },
+ {
+  "at": "2026-10-21T20:49:50.494Z",
+  "by": "Ameera",
+  "what": "p-uqora-control.badges",
+  "note": "Ameera approved in chat Oct 21 (\"The copy OKs: Clue, Uqora, LOLA, and the postpartum title\"); 2024 JAMA Intern Med D-mannose trial (doi:10.1001/jamainternmed.2024.0264) found no benefit vs placebo"
+ },
+ {
+  "at": "2026-10-21T20:49:50.903Z",
+  "by": "Ameera",
+  "what": "p-lola-tampon.safety.fdaStatus",
+  "note": "Ameera approved in chat Oct 21 (\"The copy OKs: Clue, Uqora, LOLA, and the postpartum title\"); LOLA says 510(k) cleared, FDA records checked"
+ },
+ {
+  "at": "2026-10-21T20:50:00.000Z",
+  "by": "Ameera",
+  "what": "d-clue.privacy (dataStorage, sellsData, hipaa, keyPolicy)",
+  "note": "Ameera approved in chat Oct 21 (\"The copy OKs: Clue, Uqora, LOLA, and the postpartum title\"); grammar only: \"provider current\" to \"provider's current\" in the shared privacy-review text (src/data/catalogEvidence.js). privacy is not a locked field, logged for the record."
  }
 ]

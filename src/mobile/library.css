@@ -31,7 +31,7 @@
 .ayna-mobile[data-theme='dark'] .ay-lib-progress i::after { background: var(--ayna-heading, #fff); }
 
 /* Article reading status, sticky at the top of the article */
-.ay-read-status { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 12px; padding: 10px var(--ay-gutter); background: var(--ay-cream); border-bottom: 1px solid var(--ay-line); }
+.ay-read-status { display: flex; align-items: center; gap: 12px; padding: 10px var(--ay-gutter); background: var(--ay-cream); border-bottom: 1px solid var(--ay-line); }
 .ay-read-status-bar { flex: 1; height: 6px; border-radius: 99px; background: var(--ay-tile); overflow: hidden; }
 .ay-read-status-bar i { display: block; height: 100%; border-radius: inherit; background: var(--ay-ink); transition: width .15s linear; }
 .ay-read-status-label { flex: none; min-width: 72px; text-align: right; font: 500 13px/1 var(--ay-font-ui); color: var(--ay-ink); }

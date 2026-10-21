@@ -91,6 +91,10 @@ import GlobalToast from '../components/v3/GlobalToast.jsx';
 import { toast } from '../utils/toast.js';
 // Motion moments (sheets, push, tab fade) and app-wide press states; last so it wins.
 import './app-motion.css';
+// Deep round 2 (Oct 21): native-feel fixes. Own file so it doesn't collide with
+// the stylesheet consolidation on style/consolidate; loaded last.
+import './app-polish-2.css';
+import OfflineBanner from './components/OfflineBanner.jsx';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
 // accountMonogram, Hero.jsx's displayNameFromUser, EcosystemBubbles.jsx,
@@ -1009,7 +1013,7 @@ export default function MobileApp() {
         resumeQuizAtLastStep();
         return;
       }
-      if (screen === 'plan') { setScreen('connect'); return; }
+      if (screen === 'plan') { setScreen(session.pendingQuiz?.fromCheckin ? (hasEcosystem ? 'eco' : 'ecointro') : 'connect'); return; }
       setScreen(screen === 'quiz' ? (hasEcosystem ? 'eco' : 'ecointro') : screen === 'ecointro' ? 'landing' : screen === 'eco' ? 'browse' : hasEcosystem ? 'eco' : 'landing');
     },
     onRetake: () => { setIntakeMode('add'); setIntakeAtOptional(false); setEditingHealthProfile(true); setScreen('quiz'); },
@@ -1030,6 +1034,18 @@ export default function MobileApp() {
       setIntakeAtOptional(false);
       setIntakeMode('new');
       setScreen(authUser && health.connected.length ? 'plan' : 'connect');
+    },
+    // Monthly check-in: she already has an account and an ecosystem, so it
+    // goes straight to her updated plan instead of back through the
+    // onboarding "Connect your health data" step (deep round 2).
+    onCheckinComplete: (quizAnswers) => {
+      trackApp('intake_completed', { concernsCount: Array.isArray(quizAnswers?.primaryConcerns) ? quizAnswers.primaryConcerns.length : 0, mode: 'checkin' });
+      updateSession({ pendingQuiz: { answers: quizAnswers, mode: 'add', fromCheckin: true } });
+      setPlanAddedGoals({});
+      setResumeQuizDraft(false);
+      setIntakeAtOptional(false);
+      setIntakeMode('new');
+      setScreen('plan');
     },
     onQuizConnectContinue: () => setScreen('plan'),
     onQuizConnectSignIn: () => { authResumeRef.current = null; authReturnScreenRef.current = 'connect'; setAuthMode('signup'); setScreen('signin'); },
@@ -1132,7 +1148,9 @@ export default function MobileApp() {
     hasEcosystem,
   };
 
-  const showTabBar = !['landing', 'quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan'].includes(screen) && (!overlay || ['profile', 'profile-auth'].includes(overlay.type));
+  const showTabBar = !['landing', 'quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan'].includes(screen) && (!overlay || ['profile', 'profile-auth', 'product', 'article', 'why-match'].includes(overlay.type));
+  // Deep round 2: the tab bar stays on drilled-in screens (product, read, why
+  // this match), as in iOS; tapping a tab pops back to that tab's root.
   // Reads ranked from her app answers (personalReads.js): matching reads
   // first, reads for another life stage (e.g. menopause at 24) last.
   const rankedEcosystemReads = rankReadsForProfile(ARTICLES, effectiveQuizAnswers);
@@ -1156,6 +1174,7 @@ export default function MobileApp() {
       <Screen
         key={screen === 'community' ? communitySeed?.token || 'community' : screen === 'signin' ? `signin-${authMode}` : screen === 'browse' && browseQuery ? `browse-${browseQuery}` : screen}
         {...nav}
+        {...(screen === 'checkin' ? { onComplete: nav.onCheckinComplete } : {})}
         seedKind={communitySeed?.kind}
         seedProductId={communitySeed?.productId}
         seedPlaylistId={communitySeed?.playlistId}
@@ -1378,6 +1397,7 @@ export default function MobileApp() {
         onViewRecommendations={() => { setAskAynaOpen(false); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
         onRequireAuth={(feature) => requestAuth(feature || 'Ask ayna', () => { setScreen(screen); setAskAynaOpen(true); })}
       />
+      <OfflineBanner rootRef={rootRef} />
       <GlobalToast variant="app" />
     </div>
   );

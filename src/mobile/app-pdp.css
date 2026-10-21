@@ -106,7 +106,7 @@
 
 /* ---------- tabs ---------- */
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayp-ev .ayp-tabs { padding: 0 !important; }
-.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayp-ev .ay-tabs { position: sticky !important; top: 0; z-index: 3; margin: 0 !important; padding: 0 !important; border: 0 !important; background: var(--d-page) !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayp-ev .ay-tabs { position: relative !important; margin: 0 !important; padding: 0 !important; border: 0 !important; background: var(--d-page) !important; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayp-ev .ay-tabs__list { display: flex !important; flex-wrap: nowrap !important; gap: 20px !important; margin: 0 !important; padding: 0 var(--d-gutter) !important; overflow-x: auto !important; overflow-y: hidden; scrollbar-width: none; scroll-padding-inline: var(--d-gutter); border: 0 !important; border-bottom: 1px solid var(--d-hair) !important; background: none !important; list-style: none !important; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayp-ev .ay-tabs__list::-webkit-scrollbar { display: none; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayp-ev .ay-tabs[data-more-end] .ay-tabs__list { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 32px), transparent); }

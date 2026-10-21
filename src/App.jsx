@@ -48,6 +48,7 @@ const DeleteAccountPage = lazyView(() => import('./components/DeleteAccountPage'
 const WebHealth = lazyView(() => import('./components/WebHealth'));
 const AdminReviewsPage = lazyView(() => import('./components/AdminReviewsPage'));
 const AdminResearchPage = lazyView(() => import('./components/AdminResearchPage'));
+const AdminTopicsPage = lazyView(() => import('./components/AdminTopicsPage'));
 const FreeProductPage = lazyView(() => import('./components/freeProduct/FreeProductPage'));
 const CampaignAdminPage = lazyView(() => import('./components/CampaignAdminPage'));
 const PhoneVerification = lazyView(() => import('./components/PhoneVerification'));
@@ -96,6 +97,7 @@ import { readPendingFriend } from './utils/shareAnswerClient.js';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
 const Screenings = lazyView(() => import('./components/Screenings'));
 import { useScrollPosition } from './hooks/useScrollPosition';
+import { useHeaderScroll } from './hooks/useHeaderScroll';
 import { enrichLlmProductForDiscovery } from './utils/enrichLlmProductForDiscovery';
 import ProfileChatbot from './components/ProfileChatbot';
 import { loadHealthProfile, hasHealthProfileSignals } from './utils/healthDataProfile.js';
@@ -205,6 +207,8 @@ const VIEW_TO_PATH = {
   'admin-reviews': '/admin/reviews',
   // Same: api/research-product checks ADMIN_EMAILS.
   'admin-research': '/admin/research',
+  // Same: api/community-topics-admin checks ADMIN_EMAILS.
+  'admin-topics': '/admin/topics',
   // Free product campaign (feedback + 3 verified friends). Server decides everything: api/campaign.js.
   'free-product': '/free-product',
   'free-product-reward': '/free-product/reward',
@@ -224,6 +228,7 @@ const VIEW_TITLES = {
   'campus-resources': 'Campus resources',
   'admin-reviews': 'All reviews',
   'admin-research': 'Product research',
+  'admin-topics': 'Community topics',
   'free-product': 'Your free product',
   'free-product-reward': 'Your free product',
   'admin-campaign': 'Free product campaign',
@@ -764,6 +769,7 @@ function App() {
   }, [reportSaveFailure]);
   const accountMenuRef = useRef(null);
   const scrollY = useScrollPosition();
+  const headerScroll = useHeaderScroll();
 
   const hasHealthImport = useMemo(() => hasHealthProfileSignals(healthProfile), [healthProfile]);
   const hasStatedQuizLifeStage = useMemo(() => hasStatedLifeStage(quizResults), [quizResults]);
@@ -2172,7 +2178,7 @@ function App() {
   );
 
   return (
-    <div className="app-container" data-theme={themeAttr} data-view={currentView}>
+    <div className="app-container" data-theme={themeAttr} data-view={currentView} data-scroll-end={headerScroll.atEnd ? '1' : undefined}>
       {/* Shared fixed stacking wrapper for top-of-viewport status rows, so the
           save-error banner and the ecosystem-generation bar stack instead of
           overlapping if both are showing at once, neither sets its own
@@ -2203,8 +2209,9 @@ function App() {
         <EcosystemGenerationBar intakeFingerprint={ecosystemIntakeFingerprint} onViewEcosystem={handleViewEcosystem} hasEcosystem={ecosystemCount > 0} />
       </div>
       <a className="ay-skip" href="#ay-content">Skip to content</a>
-      {/* The header sits outside <main> so it stays pinned over the footer too. */}
-        <div className="app-nav-wrap">
+      {/* The header sits outside <main>. It slides away while scrolling down and
+          comes back on any scroll up; its hairline shows only with content under it. */}
+        <div className={`app-nav-wrap${headerScroll.scrolled ? ' is-scrolled' : ''}${headerScroll.away ? ' is-away' : ''}`}>
         <nav
           className={`ay-nav${isScrolled ? ' is-scrolled' : ''}${FOCUSED_FLOW_VIEWS.includes(currentView) ? ' is-focused' : ''}`}
           data-on-gradient={navOnGradient ? navGradientVariant || 'yes' : undefined}
@@ -2475,6 +2482,9 @@ function App() {
         )}
         {currentView === 'admin-campaign' && (
           <CampaignAdminPage onBack={handleBackFromStandalonePage} />
+        )}
+        {currentView === 'admin-topics' && (
+          <AdminTopicsPage onBack={handleBackFromStandalonePage} />
         )}
         {currentView === 'admin-research' && (
           <AdminResearchPage onBack={handleBackFromStandalonePage} />

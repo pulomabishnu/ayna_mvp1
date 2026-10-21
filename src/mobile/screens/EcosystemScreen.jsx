@@ -62,7 +62,6 @@ export default function EcosystemScreen({
 }) {
   const rootRef = useRef(null);
   const titleRef = useRef(null);
-  const [collapsed, setCollapsed] = useState(false);
   const [sheet, setSheet] = useState(false);
   // This month's check-in: due until she has done it (signed in only).
   const [checkinDue, setCheckinDue] = useState(false);
@@ -78,14 +77,6 @@ export default function EcosystemScreen({
   const news = useLatestAnnouncement();
   // Shelves rise in once, card by card, the first time they scroll into view.
   useRevealOnce(rootRef, '.eco-app-shelf, .ayna-cabinet-reads, .ay-eco-shop, .eco-app-list-wrap');
-  // Large title → small title bar (iOS), watched against the screen's own scroller.
-  useEffect(() => {
-    const el = titleRef.current;
-    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
-    const io = new IntersectionObserver(([e]) => setCollapsed(!e.isIntersecting && e.boundingClientRect.top < 80), { root: rootRef.current, threshold: 0 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
   useEffect(() => {
     if (!sheet) return undefined;
     const onKey = (e) => { if (e.key === 'Escape') setSheet(false); };
@@ -270,10 +261,6 @@ export default function EcosystemScreen({
   const showTabs = myProducts.length > 0 && onEcoTab;
 
   return <div ref={rootRef} className={`ayna-fresh-ecosystem ayna-cabinet-home eco-app${careFirst ? ' is-care-first' : ''}`}>
-    {/* iOS large title: a small title fades into a bar at the top once the big one scrolls away. */}
-    <div className={`eco-app-nav${collapsed ? ' is-on' : ''}`} aria-hidden={!collapsed}>
-      <div className="eco-app-nav__bar"><span>Your ecosystem</span></div>
-    </div>
     <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
     <div className="eco-awning eco-awning--app" aria-hidden="true" />
 
@@ -323,7 +310,7 @@ export default function EcosystemScreen({
 
     {ecoTab === 'dashboard' && myProducts.length > 0 ? <div className="ay-eco-routine">
       <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} hormonalBC={usesHormonalBC(quizAnswers)} products={myProducts} matches={suggestedEcosystemProducts} onOpenProduct={onOpenProduct} onConnect={onConnectHealth} onAddGoal={onAddGoal} onSignIn={() => onRequireAuth?.('health data')} />
-      <Routine products={myProducts} insights={healthInsights} onOpenProduct={onOpenProduct} budget={budgetMax(quizAnswers)} />
+      <Routine folded products={myProducts} insights={healthInsights} onOpenProduct={onOpenProduct} budget={budgetMax(quizAnswers)} />
       {checkin}
     </div> : <>
     {chipSections.length > 1 && !q && <div className="eco-app-chips" role="group" aria-label="Show a shelf">

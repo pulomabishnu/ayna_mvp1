@@ -316,7 +316,7 @@ const ARTICLES = [
   {
     id: 'intimate-wash',
     image: '/articles/intimate-wash.webp',
-    title: 'Intimate Washes',
+    title: 'Intimate washes',
     source: 'UpToDate, ACOG, CDC',
     tags: ['Gynecology', 'Vulvovaginal health'],
     teaser: 'Why the vagina is self-cleaning, when to use (or skip) cleansers, and what OB-GYNs recommend for external care.',
@@ -343,7 +343,7 @@ const ARTICLES = [
   {
     id: 'heavy-bleeding',
     image: '/landing/articles-heavy-bleeding-satin.webp',
-    title: 'Heavy Menstrual Bleeding',
+    title: 'Heavy menstrual bleeding',
     source: 'UpToDate, ACOG, CDC',
     tags: ['Menstrual health', 'Clinical guidance'],
     teaser: 'What counts as heavy bleeding, possible causes, when to seek care, and how it’s evaluated and treated.',
@@ -637,7 +637,7 @@ const ARTICLES = [
   {
     id: 'postpartum-stretch-marks',
     image: '/articles/postpartum-stretch-marks/glitter.webp',
-    title: 'Can You Actually Improve Postpartum Stretch Marks and Scars? I Looked at the Research Behind 5 MOST Popular Treatments',
+    title: 'Can you improve postpartum stretch marks? What the research says about 5 popular treatments',
     source: 'Geena Yousry, MS1 · Cochrane, Dermatologic Surgery, Actas Dermo-Sifiliográficas',
     tags: ['Postpartum', 'Skin'],
     teaser: 'From viral belly oils to prescription retinoids, here’s what actually works, what’s mostly marketing, and what the research says.',

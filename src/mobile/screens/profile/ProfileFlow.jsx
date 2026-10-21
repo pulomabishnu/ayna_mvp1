@@ -1,3 +1,4 @@
+import { useEdgeSwipeBack } from '../../hooks/useEdgeSwipeBack.js';
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import FinishQuizCard from '../../../components/FinishQuizCard.jsx';
 import { Capacitor } from '@capacitor/core';
@@ -946,7 +947,9 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
             <EmptyState compact art="offline" tone="butter" title="Startups aren’t loading" body="We couldn’t reach the startup list. Check your connection and reopen this page." />
           )}
           {loadState === 'ready' && filtered.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>No startups match that filter yet.</div>
+            (filter === 'all'
+              ? <EmptyState compact art="search" tone="butter" title="No new brands right now" body="New early-stage brands show up here as they’re added." />
+              : <EmptyState compact art="search" tone="butter" title="None with that filter yet" body="Try All to see every new brand." actionLabel="Show all" onAction={() => setFilter('all')} />)
           )}
 
           {filtered.map((s) => {
@@ -2020,7 +2023,7 @@ function ConsumerHealthDataPolicyScreen({ onBack }) {
           <div style={{ position: 'relative', fontFamily: "var(--ayna-font-display)", fontWeight: 400, fontSize: 'calc(22px * var(--ayna-text-scale, 1))', lineHeight: 1.15, marginTop: 13, color: 'var(--ayna-heading)' }}>Your health answers stay yours.</div>
           <div style={{ position: 'relative', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'var(--ayna-text-muted)', marginTop: 8 }}>We never sell them, and we never trade them for advertising. Here is the whole picture, in plain words.</div>
           <div style={{ position: 'relative', display: 'inline-flex', gap: 6, marginTop: 13 }}>
-            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', borderRadius: 99, padding: '5px 10px' }}>Effective 10 Sep 2026</div>
+            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', borderRadius: 99, padding: '5px 10px' }}>Effective 12 Sep 2026</div>
             <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', borderRadius: 99, padding: '5px 10px' }}>WA MHMDA</div>
           </div>
         </div>
@@ -2911,7 +2914,7 @@ function DeleteAccountScreen({ onBack, onSignOut, onClose }) {
 
         {errorMsg && <div style={{ color: 'var(--ayna-heading)', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', marginTop: 10 }}>{errorMsg}</div>}
 
-        <button type="button" className="ay-plain-btn"
+        <button type="button" className="ay-plain-btn ay-danger-btn" aria-disabled={!canSubmit || undefined}
           onClick={handleSubmit}
           style={{
             marginTop: 20,
@@ -3057,6 +3060,8 @@ function PasswordScreen({ onBack, authUser }) {
                   type={showCurrent ? 'text' : 'password'}
                   value={current}
                   onChange={(e) => setCurrent(e.target.value)}
+                  aria-label="Current password"
+                  autoComplete="current-password"
                   style={{ flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'none', fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))', color: 'var(--ayna-text)' }}
                 />
                 <button type="button" className="ay-plain-btn" onClick={() => setShowCurrent((v) => !v)} style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 500, color: 'var(--ayna-brown)', cursor: 'pointer', flex: 'none' }}>{showCurrent ? 'Hide' : 'Show'}</button>
@@ -3071,6 +3076,8 @@ function PasswordScreen({ onBack, authUser }) {
                 value={next}
                 onChange={(e) => setNext(e.target.value)}
                 placeholder="At least 8 characters"
+                aria-label="New password"
+                autoComplete="new-password"
                 style={{ flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'none', fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))', color: 'var(--ayna-text)' }}
               />
               <button type="button" className="ay-plain-btn" onClick={() => setShowNext((v) => !v)} style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 500, color: 'var(--ayna-brown)', cursor: 'pointer', flex: 'none' }}>{showNext ? 'Hide' : 'Show'}</button>
@@ -3095,6 +3102,8 @@ function PasswordScreen({ onBack, authUser }) {
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
               placeholder="Re-enter it"
+              aria-label="Confirm new password"
+              autoComplete="new-password"
               style={{ width: '100%', boxSizing: 'border-box', border: '1px solid var(--ayna-border)', borderRadius: 12, background: 'var(--ayna-bg-alt)', padding: '13px 14px', fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))', color: 'var(--ayna-text)', outline: 'none' }}
             />
           </div>
@@ -3582,6 +3591,8 @@ export default function ProfileFlow({
   const initial = (name || 'Y').trim().charAt(0).toUpperCase() || 'Y';
 
   const goBack = () => setScreenStack((stack) => (stack.length > 1 ? stack.slice(0, -1) : stack));
+  // Edge swipe back through the stack, like every pushed screen in iOS.
+  const swipeBack = useEdgeSwipeBack(goBack, screenStack.length > 1);
 
   const profileFilledPct = getProfileCompletionPct(quizAnswers?.fullHealthIntake || quizAnswers);
   const selectedNeedIds = useMemo(() => { try { return quizAnswers ? getSelectedNeeds(quizAnswers).map((n) => n.id) : []; } catch { return []; } }, [quizAnswers]);
@@ -3776,7 +3787,7 @@ export default function ProfileFlow({
           replays the entrance animation, without the key, only the overlay's
           own first mount would ever animate, since `body` swapping alone
           doesn't restart a running CSS animation. */}
-      <div key={screen} className="ay-set-page" data-page={screen} style={{ flex: 1, minWidth: 0, display: 'flex', animation: 'ay-page .22s ease-out' }}>
+      <div key={screen} className="ay-set-page" data-page={screen} {...swipeBack} style={{ flex: 1, minWidth: 0, display: 'flex', animation: 'ay-page .22s ease-out' }}>
         <SignInContext.Provider value={onSignIn || null}>{body}</SignInContext.Provider>
       </div>
     </div>

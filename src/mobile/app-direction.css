@@ -465,7 +465,7 @@
    underline tabs over the panel, source cards as a shelf, then Ask, Compare,
    You may also like. */
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp { background: var(--d-page) !important; color: var(--d-ink) !important; }
-.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-scroll { padding-bottom: calc(96px + env(safe-area-inset-bottom)) !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-scroll { padding-bottom: calc(16px + env(safe-area-inset-bottom)) !important; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-top { display: flex !important; align-items: center !important; justify-content: space-between !important; padding: max(8px, env(safe-area-inset-top)) var(--d-gutter) 0 !important; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-round { width: 44px !important; height: 44px !important; border: 1.5px solid var(--d-ink) !important; border-radius: 99px !important; background: transparent !important; color: var(--d-ink) !important; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-hero { margin: 8px var(--d-gutter) 0 !important; padding: 0 !important; border: 1.5px solid #3e2723 !important; border-radius: 20px !important; background: #ffffff !important; overflow: hidden !important; }

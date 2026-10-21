@@ -401,6 +401,27 @@ export default function ProductDetailScreen({
   const storesOnFile = !shopAction ? [...new Set((product.whereToBuy || []).map((w) => String(w).trim()).filter(Boolean))].map((w) => (/^app store$/i.test(w) ? 'the App Store' : w)) : [];
   const andList = (xs) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`);
 
+  // One dark pill: price, save, ecosystem, buy. In the page under the price,
+  // not pinned to the bottom (founder: nothing stays put while the page
+  // scrolls; deep round 2).
+  const buyBar = (
+    <div className="ayq-bar">
+      <div className="ayq-bar__pill">
+        {barPrice && <span className="ayq-bar__price">{barPrice}</span>}
+        <button type="button" className="ayq-bar__icon" onClick={onToggleSaved} aria-label={isSaved ? 'Remove from Saved' : 'Save'} aria-pressed={isSaved}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill={isSaved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={HEART_PATH} /></svg>
+        </button>
+        {/* No store link: never a dead primary (same rule as the website's
+            product page). Her own site if we know it, else "Add to ecosystem"
+            takes the primary slot and the page says where it is sold. */}
+        <button type="button" className={`ayq-bar__eco${isInEcosystem ? ' is-on' : ''}${shopAction ? '' : ' is-primary'}`} aria-pressed={isInEcosystem} aria-label={isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'} onClick={onAddToEcosystem}>
+          {isInEcosystem ? 'In ecosystem' : shopAction ? '+ Ecosystem' : '+ Add to ecosystem'}
+        </button>
+        {shopAction && <a className="ayq-bar__buy" href={shopAction.href} target="_blank" rel="noopener noreferrer" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: shopAction.placement })}>{shopAction.label}<span className="sr-only"> {shopAction.sr}</span></a>}
+      </div>
+    </div>
+  );
+
   return (
     <div id="ay-pdp" className="ayna-fresh-product-detail ay-pdp" style={{ flex: 1, minWidth: 0, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--ayna-bg)', color: 'var(--ayna-text)' }}>
       <div key={product.id} className="ay-pdp-scroll" style={{ flex: 1, overflowY: 'auto', animation: 'ay-page .25s ease-out' }}>
@@ -458,6 +479,7 @@ export default function ProductDetailScreen({
           </div>}
           {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && quizAnswers && <button type="button" className="ay-pdp-fitnote" onClick={openWhyMatch}>{matchDetails.matchStatus === 'excluded' ? (exclusions[0] || 'Not a fit right now') : 'No clear match'}</button>}
           {matchDetails.matchStatus === 'no-profile' && <button type="button" className="ayna-figma-guest-match" onClick={onStartQuiz}>Get matched</button>}
+          {buyBar}
           {onToggleOmit && <div className="ay-pdp-omit"><button type="button" onClick={onToggleOmit} aria-pressed={isOmitted}>{isOmitted ? 'Undo “Not for me”' : 'Not for me'}</button>{isOmitted && <small>Hidden from your matches.</small>}</div>}
           {topWarning && <SafetyFlag text={topWarning} />}
           {works.ayna && onOpenHealthData && <button type="button" className="ay-pdp-works" onClick={onOpenHealthData}>Works with ayna: connect {works.ayna.name} in Health data</button>}
@@ -469,6 +491,23 @@ export default function ProductDetailScreen({
               </ul>
             </div>
           )}
+          {/* One dark pill: price, save, ecosystem, buy. In the page flow, under the
+              price (founder, Oct 21: nothing stays on screen while the page scrolls). */}
+          <div className="ayq-bar">
+            <div className="ayq-bar__pill">
+              {barPrice && <span className="ayq-bar__price">{barPrice}</span>}
+              <button type="button" className="ayq-bar__icon" onClick={onToggleSaved} aria-label={isSaved ? 'Remove from Saved' : 'Save'} aria-pressed={isSaved}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill={isSaved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={HEART_PATH} /></svg>
+              </button>
+              {/* No store link: never a dead primary (same rule as the website's
+                  product page). Her own site if we know it, else "Add to ecosystem"
+                  takes the primary slot and the page says where it is sold. */}
+              <button type="button" className={`ayq-bar__eco${isInEcosystem ? ' is-on' : ''}${shopAction ? '' : ' is-primary'}`} aria-pressed={isInEcosystem} aria-label={isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'} onClick={onAddToEcosystem}>
+                {isInEcosystem ? 'In ecosystem' : shopAction ? '+ Ecosystem' : '+ Add to ecosystem'}
+              </button>
+              {shopAction && <a className="ayq-bar__buy" href={shopAction.href} target="_blank" rel="noopener noreferrer" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: shopAction.placement })}>{shopAction.label}<span className="sr-only"> {shopAction.sr}</span></a>}
+            </div>
+          </div>
           {isPartner ? (
             <div className="ayna-figma-partner-disclosure">
               <button type="button" onClick={() => setPartnerOpen((v) => !v)} aria-expanded={partnerOpen}>
@@ -544,23 +583,6 @@ export default function ProductDetailScreen({
         <LegalFooter />
       </div>
       {zoomOpen && images.length > 0 && <ImageZoomViewer images={images} startIndex={Math.min(photo, images.length - 1)} name={name} onClose={() => setZoomOpen(false)} />}
-
-      {/* One dark pill: price, save, ecosystem, buy. */}
-      <div className="ayq-bar">
-        <div className="ayq-bar__pill">
-          {barPrice && <span className="ayq-bar__price">{barPrice}</span>}
-          <button type="button" className="ayq-bar__icon" onClick={onToggleSaved} aria-label={isSaved ? 'Remove from Saved' : 'Save'} aria-pressed={isSaved}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill={isSaved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={HEART_PATH} /></svg>
-          </button>
-          {/* No store link: never a dead primary (same rule as the website's
-              product page). Her own site if we know it, else "Add to ecosystem"
-              takes the primary slot and the page says where it is sold. */}
-          <button type="button" className={`ayq-bar__eco${isInEcosystem ? ' is-on' : ''}${shopAction ? '' : ' is-primary'}`} aria-pressed={isInEcosystem} aria-label={isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'} onClick={onAddToEcosystem}>
-            {isInEcosystem ? 'In ecosystem' : shopAction ? '+ Ecosystem' : '+ Add to ecosystem'}
-          </button>
-          {shopAction && <a className="ayq-bar__buy" href={shopAction.href} target="_blank" rel="noopener noreferrer" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: shopAction.placement })}>{shopAction.label}<span className="sr-only"> {shopAction.sr}</span></a>}
-        </div>
-      </div>
     </div>
   );
 }

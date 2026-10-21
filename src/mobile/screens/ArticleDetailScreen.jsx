@@ -1,6 +1,6 @@
 import TopicCover from '../../components/v3/TopicCover.jsx';
 import { hasTeamCover } from '../../data/readCovers.js';
-import { Children, isValidElement, useRef, useState } from 'react';
+import { Children, isValidElement, useEffect, useRef, useState } from 'react';
 import LegalFooter from '../components/LegalFooter.jsx';
 import './article-detail.css';
 
@@ -48,6 +48,19 @@ function splitBodyAndSources(body) {
 export default function ArticleDetailScreen({ article, onBack, nextRead, onNext, onProgress, savedProgress = 0 }) {
   const scrollRef = useRef(null);
   const [progress, setProgress] = useState(0);
+  // Read time from the words actually on screen: many bodies are components
+  // whose text isn't in props, so the static estimate said "1 min" for
+  // every read (deep round 2).
+  const [measuredMinutes, setMeasuredMinutes] = useState(0);
+  const articleId = article?.id;
+  useEffect(() => {
+    const el = scrollRef.current?.querySelector('.ay-article-body');
+    if (!el) return undefined;
+    const words = (el.innerText || el.textContent || '').trim().split(/\s+/).filter(Boolean).length;
+    if (!words) return undefined;
+    const frame = window.requestAnimationFrame(() => setMeasuredMinutes(Math.max(1, Math.round(words / 200))));
+    return () => window.cancelAnimationFrame(frame);
+  }, [articleId]);
 
   if (!article) {
     return (
@@ -58,7 +71,7 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
   }
 
   const { title, source, tags = [], teaser, body, image } = article;
-  const readMinutes = estimateReadMinutes(body);
+  const readMinutes = measuredMinutes || estimateReadMinutes(body);
   const { mainBody, sourceLinks } = splitBodyAndSources(body);
   const shown = Math.max(progress >= 0.95 ? 1 : progress, savedProgress);
 
@@ -79,7 +92,7 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
 
   return (
     <div className="ayna-fresh-article" ref={scrollRef} onScroll={handleScroll} style={{ flex: 1, overflowY: 'auto', background: 'var(--ayna-bg)', animation: 'ay-page .25s ease-out' }}>
-      {/* Progress and the back arrow stay on screen while she scrolls. */}
+      {/* Progress and the back arrow scroll with the article (nothing stays on screen while the page scrolls). */}
       <div className="ay-read-sticky">
         <div className={`ay-read-status${shown >= 1 ? ' is-done' : ''}`} role="progressbar" aria-label="Reading progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(shown * 100)}>
           <span className="ay-read-status-bar"><i style={{ width: `${shown * 100}%` }} /></span>

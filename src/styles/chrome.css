@@ -5,25 +5,25 @@
    Loaded last (after content.css). Tokens only; see design-direction.md.
    ===================================================================== */
 
-/* ---------- Header: Ask ayna pill (phone and small tablet, like the app) ---------- */
-.app-container.app-container .ay-nav__ask { display: none; }
+/* ---------- Header: Ask ayna pill (every width, like the app) ----------
+   The floating Ask pill is gone (founder, Oct 21: nothing floats over the page);
+   Ask lives in the header on desktop too. */
+.app-container.app-container .ay-nav__ask {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px 0 6px;
+  border: 1.5px solid var(--ay-outline); border-radius: 999px; background: transparent;
+  color: var(--ay-text); font: 600 15px/1 var(--ay-sans-stack); white-space: nowrap; cursor: pointer;
+  transition: transform var(--t-press, 110ms) var(--ease-pop, ease-out), background-color var(--t-fast, 160ms) var(--ease-out, ease-out);
+}
+.app-container.app-container .ay-nav__ask:hover { background: var(--ay-hover); }
+.app-container.app-container .ay-nav__ask:active { transform: scale(.97); }
+.app-container.app-container .ay-nav__ask:focus-visible { outline: 3px solid var(--ay-focus) !important; outline-offset: 2px !important; }
+.app-container.app-container .ay-nav__ask-orb { display: grid; place-items: center; width: 32px; height: 32px; border: 1.5px solid var(--ay-outline); border-radius: 50%; background: var(--ay-alert-bg); color: #3e2723; }
+.app-container.app-container .ay-nav__ask-orb svg { width: 16px; height: 16px; }
+html body .app-container .ayna-ask-dock, html body .app-container .ayna-ask-tab { display: none !important; }
 @media (max-width: 899px) {
-  .app-container.app-container .ay-nav__ask {
-    display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px 0 6px;
-    border: 1.5px solid var(--ay-outline); border-radius: 999px; background: transparent;
-    color: var(--ay-text); font: 600 15px/1 var(--ay-sans-stack); white-space: nowrap; cursor: pointer;
-    transition: transform var(--t-press, 110ms) var(--ease-pop, ease-out), background-color var(--t-fast, 160ms) var(--ease-out, ease-out);
-  }
-  .app-container.app-container .ay-nav__ask:hover { background: var(--ay-hover); }
-  .app-container.app-container .ay-nav__ask:active { transform: scale(.97); }
-  .app-container.app-container .ay-nav__ask:focus-visible { outline: 3px solid var(--ay-focus) !important; outline-offset: 2px !important; }
-  .app-container.app-container .ay-nav__ask-orb { display: grid; place-items: center; width: 32px; height: 32px; border: 1.5px solid var(--ay-outline); border-radius: 50%; background: var(--ay-alert-bg); color: #3e2723; }
-  .app-container.app-container .ay-nav__ask-orb svg { width: 16px; height: 16px; }
   .app-container.app-container .ay-nav__actions { gap: var(--ay-s8); }
   /* "beta" stays on desktop; on phones the header carries logo · Ask · Saved, as in the app. */
   .app-container.app-container .ay-nav__beta { display: none; }
-  /* The floating Ask pill is replaced by the header pill below 900px. */
-  html body .app-container .ayna-ask-dock, html body .app-container .ayna-ask-tab { display: none !important; }
 }
 @media (max-width: 339px) {
   .app-container.app-container .ay-nav__ask { padding-right: 12px; font-size: 14px; }
