@@ -1,34 +1,14 @@
 {
- "generated_at": "2026-10-21T09:19:02.559Z",
+ "generated_at": "2026-10-21T09:54:30.167Z",
  "site": "https://www.aynahealth.co",
  "external": [
   {
-   "url": "https://plannedparenthooddirect.org/",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://www.plannedparenthood.org/planned-parenthood-direct",
-   "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://www.nichd.nih.gov/health/topics/menopause",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://www.nichd.nih.gov/health/topics/menopause",
-   "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://health.columbia.edu/content/individual-counseling",
+   "url": "https://www.depend.com/en-us/incontinence-products/women/silhouette-classic-underwear",
    "files": [
     "candidates"
    ],
    "status": 403,
-   "final_url": "https://health.columbia.edu/content/individual-counseling",
+   "final_url": "https://www.depend.com/en-us/incontinence-products/women/silhouette-classic-underwear",
    "state": "blocked",
    "via": "browser",
    "captcha": false,
@@ -36,14 +16,14 @@
    "fetch_status": 403,
    "wayback": {
     "status": "200",
-    "timestamp": "20260329214227",
-    "url": "http://web.archive.org/web/20260329214227/https://www.health.columbia.edu/content/individual-counseling"
+    "timestamp": "20251010153711",
+    "url": "http://web.archive.org/web/20251010153711/https://www.depend.com/en-us/incontinence-products/women/silhouette-classic-underwear"
    }
   }
  ],
  "internal": [],
  "summary": {
-  "external": 3,
+  "external": 1,
   "external_broken": 0,
   "external_unverified": 1,
   "internal": 0,

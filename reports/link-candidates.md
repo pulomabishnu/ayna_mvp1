@@ -1,8 +1,8 @@
-# Link audit 2026-10-21T09:19:02.559Z
+# Link audit 2026-10-21T09:54:30.167Z
 
 ```
 {
- "external": 3,
+ "external": 1,
  "external_broken": 0,
  "external_unverified": 1,
  "internal": 0,
@@ -18,4 +18,4 @@
 ## Broken images on pages
 
 ## Could not verify (bot blocked)
-- 403 https://health.columbia.edu/content/individual-counseling
+- 403 https://www.depend.com/en-us/incontinence-products/women/silhouette-classic-underwear
