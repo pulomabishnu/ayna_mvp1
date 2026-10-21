@@ -44,7 +44,7 @@ const sentences = (t) => splitSentences(t);
 const normText = (t) => String(t || '').toLowerCase().replace(/[“”"‘’'`]/g, '').replace(/[^a-z0-9%]+/g, ' ').trim();
 
 /** Paragraphs from team text; a very long paragraph is split every few sentences (no words change). */
-export function paragraphs(text, max = 520) {
+export function paragraphs(text, max = 360) {
   const out = [];
   String(text || '').split(/\n{2,}/).map((p) => noDash(p.trim())).filter(Boolean).forEach((p) => {
     if (p.length <= max) { out.push(p); return; }
