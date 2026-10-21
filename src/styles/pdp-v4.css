@@ -252,3 +252,26 @@ html body .app-container:not([data-theme='brand-dark']) #pdp-v4 .ay-glance > li.
   #pdp-v4 .pdp-actions__primary .pdp-actions__eco { max-width: none; }
   #pdp-v4 .pdp-head__name { font-size: 34px !important; }
 }
+
+/* "When to get help now": a butter card with espresso type in both modes
+   (the page's default text colour made it butter on butter in dark mode). */
+#pdp-v4 .ay-urgent { display: grid !important; gap: 12px; margin: 0 !important; padding: 22px 24px !important; border: 0 !important; border-radius: 26px !important; background: var(--v-butter) !important; box-shadow: none !important; }
+#pdp-v4 .ay-urgent :is(h3, p, li, b, strong, span, a, ul) { color: var(--v-ink) !important; }
+#pdp-v4 .ay-urgent__h { margin: 0 !important; font: 400 24px/1.2 'DM Serif Display', Georgia, serif !important; }
+#pdp-v4 .ay-urgent__list { display: grid !important; gap: 14px !important; margin: 0 !important; padding: 0 !important; list-style: none !important; }
+#pdp-v4 .ay-urgent__list > li { margin: 0 !important; padding: 0 0 14px !important; border-bottom: 1.5px solid rgba(62, 39, 35, .2); }
+#pdp-v4 .ay-urgent__list > li:last-child { padding-bottom: 0 !important; border-bottom: 0; }
+#pdp-v4 .ay-urgent__what { margin: 0 0 6px !important; font: 400 16px/1.55 'DM Sans', sans-serif !important; }
+#pdp-v4 .ay-urgent__signs { margin: 0 0 6px !important; padding-left: 20px !important; font: 500 15px/1.5 'DM Sans', sans-serif !important; }
+#pdp-v4 .ay-urgent__src { font: 600 14px/1.4 'DM Sans', sans-serif !important; text-decoration: underline !important; }
+#pdp-v4 .ay-urgent__note { margin: 0 !important; font: 600 15px/1.45 'DM Sans', sans-serif !important; }
+
+/* Spacing: every block in a tab sits 24px from the next, whatever older
+   layers set on it. */
+#pdp-v4 .ay-safety { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; gap: 24px !important; }
+#pdp-v4 .ay-safety > *, #pdp-v4 .ay-itabs__panel > * > * { margin-top: 0 !important; margin-bottom: 0 !important; }
+
+/* Size / option picker, in the design's colours. */
+#pdp-v4 .pdp-variant { display: grid !important; gap: 8px; margin: 0 0 4px !important; padding: 0 !important; border: 0 !important; background: none !important; color: var(--v-fg) !important; font: 700 13px/1.2 'DM Sans', sans-serif !important; letter-spacing: .06em; text-transform: uppercase; }
+#pdp-v4 .pdp-variant select { margin: 0 !important; min-height: 50px; padding: 0 16px !important; border: 2px solid var(--v-fg) !important; border-radius: 16px !important; background: var(--v-butter) !important; color: var(--v-ink) !important; font: 500 16px/1.2 'DM Sans', sans-serif !important; letter-spacing: normal; text-transform: none; }
+#pdp-v4 .pdp-variant small { margin: 0 !important; color: var(--v-fg) !important; opacity: .85; font: 400 13px/1.45 'DM Sans', sans-serif !important; letter-spacing: normal; text-transform: none; }
