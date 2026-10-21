@@ -442,7 +442,7 @@
    pager is four dot buttons (44px hit areas), no autoplay, no pause button. */
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-reel-cover.has-photo { position: relative; overflow: hidden; width: 40px; height: 40px; background: #fff !important; border-radius: 10px !important; }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-reel-cover.has-photo img { position: absolute; inset: 3px; width: calc(100% - 6px); height: calc(100% - 6px); object-fit: contain; }
-.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-reel-deck .c3 { position: relative; overflow: hidden; background: #fff !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-reel-deck .c3 { overflow: hidden; background: #fff !important; }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-reel-deck__photo { position: absolute; inset: 12px 12px 40px; }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-reel-deck__photo img { width: 100%; height: 100%; object-fit: contain; }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-reel-deck .c3 > svg { position: absolute; right: 10px; bottom: 10px; width: 24px; height: 24px; }
@@ -452,3 +452,15 @@
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-reel-progress.is-dots .is-now i { width: 22px; border-radius: 99px; background: #ffedac !important; }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-reel-progress.is-dots i::after { content: none !important; }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-reel-progress.is-dots button:focus-visible { outline: 3px solid #f7badd; outline-offset: -6px; border-radius: 12px; }
+/* The bottom band stays butter in both themes, so its button and note keep
+   espresso ink in dark mode too (they were butter on butter, invisible). */
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] .ay-land .ay-land-start { background: #3e2723; color: #ffedac; border-color: #3e2723; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] .ay-land .ay-land-start-note { color: #3e2723; }
+/* Short phones (iPhone SE, 640-700px tall): the reel starts below the logo row instead of under it. */
+@media (max-height: 700px) {
+  .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-land-hero { padding-top: 84px !important; }
+  .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-land-reel .ay-cover-widget .ay-reel { height: 262px !important; }
+  .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-reel-foot { margin-top: -6px !important; }
+  .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-land-copy h1 { font-size: 32px !important; }
+  .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-reel-track { min-height: 0 !important; padding-top: 6px !important; padding-bottom: 6px !important; }
+}

@@ -60,7 +60,7 @@ function AskArt() {
 
 function DiscoverArt() {
   return <div className="ay-reel-deck">
-    <span className="c1" /><span className="c2" /><span className="c3"><span className="ay-reel-deck__photo"><Thumb id="p-thermacare" /></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></span>
+    <span className="c1" /><span className="c2" /><span className="c3"><div className="ay-reel-deck__photo"><Thumb id="p-thermacare" /></div><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></span>
   </div>;
 }
 
