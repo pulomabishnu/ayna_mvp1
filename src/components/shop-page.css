@@ -102,3 +102,7 @@ html body .app-container.app-container.app-container .ayshop__matches.is-phone {
   html body .app-container.app-container.app-container .ayshop__inferred { margin-top: 4px; }
 }
 html body .app-container.app-container.app-container[data-theme='brand-dark'] .ayshop__find { background: var(--ay-page, #3e2723); }
+@media (max-width: 767px) {
+  html body .app-container.app-container.app-container .ayshop__find { display: flex !important; flex-wrap: nowrap !important; grid-template-columns: none; }
+  html body .app-container.app-container.app-container .ayshop__find .ayshop__search { flex: 1 1 0% !important; width: auto; }
+}

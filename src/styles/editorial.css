@@ -960,3 +960,9 @@ html body .app-container .ed .ed-prose > :is(section, .ed-psec) :is(h2, h3) { co
   .ed .ed-invest > :last-child:not(.ed-invest__copy) { grid-column: 2; grid-row: 1; align-self: stretch; }
   .ed .ed-invest > :last-child:not(.ed-invest__copy) img { height: 100%; max-height: 420px; }
 }
+@media (max-width: 359px) {
+  .ed .ed-familiar__quote { font-size: 17px; }
+  .ed .ed-familiar__q a { padding: 12px; }
+  .ed .ed-familiar__go { font-size: 13px; gap: 4px; }
+  .ed .ed-familiar__go svg { width: 14px; height: 14px; }
+}

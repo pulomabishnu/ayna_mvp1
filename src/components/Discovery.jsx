@@ -527,6 +527,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const catalogReady = useCatalogReady();
     const searchReady = useSearchReady();
     const ready = catalogReady && searchReady;
+    // Browsing without a query needs only the catalog: the grid paints as soon
+    // as it arrives instead of also waiting for the search engine's index
+    // (about 0.3s on a throttled phone, the Shop's LCP path once its first
+    // products sit on the first screen). Anything typed still waits for both.
+    const gridReady = catalogReady && (searchReady || !(initialSearch || '').trim());
     const memo = (key, fallback) => (!arrivedWithIntent && shopMemo.v[key] !== undefined ? shopMemo.v[key] : fallback);
 
     const [macroGroup, setMacroGroup] = useState(() => {
@@ -674,6 +679,17 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // itself anyway.
     const MAX_BROWSE_AI_ROUNDS = 10;
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+    // LCP (final layout pass): the first products are on the first screen of a
+    // phone now, so the grid's first paint is only its first 6 cards; the rest
+    // of the page follows once the browser is idle (same list, nothing reorders).
+    const [firstPaintCap, setFirstPaintCap] = useState(6);
+    useEffect(() => {
+        if (!gridReady || firstPaintCap === Infinity) return undefined;
+        // After the first cards' photos have had a moment to paint (idle, or 0.6s at most).
+        const ric = window.requestIdleCallback ? window.requestIdleCallback(() => setFirstPaintCap(Infinity), { timeout: 600 }) : null;
+        const t = ric == null ? window.setTimeout(() => setFirstPaintCap(Infinity), 400) : null;
+        return () => { if (ric != null) window.cancelIdleCallback(ric); if (t != null) window.clearTimeout(t); };
+    }, [gridReady, firstPaintCap]);
     const recommendedRank = useMemo(() => new Map((recommendedProductIds || []).map((id, index) => [id, index])), [recommendedProductIds]);
 
     // AI-discovered products (api/discover-products.js), human-approved only
@@ -748,7 +764,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     }, [initialPadFlow, initialPadPreference, initialPadUseCase]);
 
     const combined = useMemo(() => {
-        if (!ready) return [];
+        if (!gridReady) return [];
         // Ayna doesn't sell or dispense prescriptions, so prescription-only items
         // (birth control requiring an Rx, HRT patches/inserts, etc.) never show as
         // shoppable products here, searching what they treat (e.g. "hormone
@@ -767,7 +783,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         // just stamp isStartup like the other two sources for consistent shape.
         const discovered = filterPrescriptionCareGate(discoveredProducts).map(p => ({ ...p, isStartup: false }));
         return [...products, ...releasedAsProducts, ...discovered];
-    }, [discoveredProducts, ready]);
+    }, [discoveredProducts, gridReady]);
 
     // Behavior signals for the matching engine (saved, Not for me, in her
     // ecosystem). Memoized: the engine caches profiles by this object.
@@ -801,8 +817,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
     const availableMacroGroups = useMemo(
         // Before the catalog arrives, every area (each has products), so the tab row never jumps.
-        () => (ready ? MACRO_GROUPS.filter((group) => group.id === 'all' || combined.some((item) => itemMatchesMacroGroup(item, group.id))) : MACRO_GROUPS),
-        [combined, ready]
+        () => (gridReady ? MACRO_GROUPS.filter((group) => group.id === 'all' || combined.some((item) => itemMatchesMacroGroup(item, group.id))) : MACRO_GROUPS),
+        [combined, gridReady]
     );
 
 
@@ -1753,7 +1769,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 const applied = [[typeFilter, setTypeFilter], [priceFilter, setPriceFilter], [eligibilityFilter, setEligibilityFilter], [lifeStageFilter, setLifeStageFilter], [preferenceFilter, setPreferenceFilter], [sustainabilityFilter, setSustainabilityFilter], [aynaFilter, setAynaFilter]].filter(([v]) => v && v !== 'all');
                 return (
                     <div className="ayshop__applied" role="status">
-                        <span className="ayshop__count">{!ready ? '\u00a0' : submittedQuery ? ((shownCount ?? catalogShown) === 0 ? '\u00a0' : `${shownCount ?? catalogShown} result${(shownCount ?? catalogShown) === 1 ? '' : 's'} for “${submittedQuery}”`) : applied.length > 0 || (categoryFilter && categoryFilter !== 'all') || macroGroup !== 'all' ? `Showing ${shownCount ?? catalogShown} of ${combined.filter((it) => !isTeenProduct(it)).length}` : shownCount == null ? '\u00a0' : shownCount > visibleCount ? `Showing ${visibleCount} of ${shownCount} products` : (shownCount === 1 ? '1 product' : `${shownCount} products`)}</span>
+                        <span className="ayshop__count">{!gridReady ? '\u00a0' : submittedQuery ? ((shownCount ?? catalogShown) === 0 ? '\u00a0' : `${shownCount ?? catalogShown} result${(shownCount ?? catalogShown) === 1 ? '' : 's'} for “${submittedQuery}”`) : applied.length > 0 || (categoryFilter && categoryFilter !== 'all') || macroGroup !== 'all' ? `Showing ${shownCount ?? catalogShown} of ${combined.filter((it) => !isTeenProduct(it)).length}` : shownCount == null ? '\u00a0' : shownCount > visibleCount ? `Showing ${visibleCount} of ${shownCount} products` : (shownCount === 1 ? '1 product' : `${shownCount} products`)}</span>
                         {/* Partner placement is disclosed by each card's 'ayna partner' label and the header line (Oct 16: no extra note). */}
                         {applied.map(([v, set]) => (
                             <button key={v} type="button" className="ay-chip is-on" onClick={() => set('all')} aria-label={`Remove filter ${LABELS[v] || v}`}>{LABELS[v] || v} <span aria-hidden="true">×</span></button>
@@ -1809,7 +1825,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             )}
 
             {/* Until the catalog arrives (first moment of a visit), cards hold their place. */}
-            {!ready && (
+            {!gridReady && (
                 <div className="ay-product-grid ayshop__grid" role="status" aria-label="Loading products">
                     {Array.from({ length: 8 }, (_, i) => (
                         <div key={i} className="ay-product-card is-skeleton" aria-hidden="true">
@@ -1825,10 +1841,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             )}
 
             {/* Product Grid */}
-            {ready && (!searchSubmitted || !aiLoading || gridItems.length > 0) && (
+            {gridReady && (!searchSubmitted || !aiLoading || gridItems.length > 0) && (
             <>
             <div id="ayshop-grid" role="tabpanel" aria-label={submittedQuery ? `Results for ${submittedQuery}` : (availableMacroGroups.find((g) => g.id === macroGroup)?.label || 'All products')} className={`ay-product-grid ayshop__grid${gridSettled ? ' is-settled' : ''}`}>
-                {gridItems.slice(0, visibleCount).map((item, idx) => {
+                {gridItems.slice(0, Math.min(visibleCount, firstPaintCap)).map((item, idx) => {
                     // A defined (even empty-string) resolvedImages[item.id] came back
                     // from the server's type-aware /api/product-image resolution
                     // trust it as-is below rather than re-running it through
@@ -1905,7 +1921,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     );
                 })}
             </div>
-            {ready && gridItems.length === 0 && !(searchSubmitted && aiLoading) && (
+            {gridReady && gridItems.length === 0 && !(searchSubmitted && aiLoading) && (
                 <div className="ayshop__empty">
                     <h2 className="ay-h2">{submittedQuery ? `Nothing for “${submittedQuery}”.` : 'Nothing here with these filters.'}</h2>
                     <div className="ayshop__empty-actions">

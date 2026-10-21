@@ -111,7 +111,14 @@ const routeLinks = (name, { cssRel = 'preload' } = {}) => {
   ].join('\n  ');
 };
 const withHead = (html, extra) => (extra ? html.replace('</head>', () => `  ${extra}\n</head>`) : html);
-const SHOP_PRELOAD = routeLinks('Discovery');
+// Shop on a phone shows its first products on the first screen (final layout
+// pass, P1-3), so the catalog chunk is that page's LCP path: it starts with the
+// HTML instead of after the entry has run (it was 1.5s late on a throttled phone).
+const CATALOG_CHUNK = ASSETS.find((f) => /^products-[\w-]+\.js$/.test(f));
+// The Shop grid also waits for the search engine (utils/search/index.js, its own
+// index-*.js chunk that imports the catalog), so it starts with the HTML too.
+const SEARCH_CHUNK = CATALOG_CHUNK && ASSETS.find((f) => { if (!/^index-[\w-]+\.js$/.test(f)) return false; try { const head = fs.readFileSync(new URL(`assets/${f}`, DIST), 'utf8').slice(0, 3000); return head.includes(`from"./${CATALOG_CHUNK}"`) && head.includes('naturalLanguageSearch'); } catch { return false; } });
+const SHOP_PRELOAD = [routeLinks('Discovery'), ...[CATALOG_CHUNK, SEARCH_CHUNK].filter(Boolean).map((f) => `<link rel="modulepreload" crossorigin href="/assets/${f}" />`)].join('\n  ');
 // Product pages paint their hero before the page code runs (ProductHeroPreview),
 // so the product page styles apply from the start (about 37KB, beside index.css).
 const PDP_PRELOAD = routeLinks('ProductModal', { cssRel: 'stylesheet' });

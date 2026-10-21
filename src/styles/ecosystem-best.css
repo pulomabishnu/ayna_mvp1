@@ -343,3 +343,10 @@ html body .app-container.app-container #ayeco .eco-rail__stripx:focus-visible { 
   html body .app-container.app-container #ayeco .eco-rail__striptext { display: flex !important; align-items: baseline; gap: 6px !important; white-space: nowrap; overflow: hidden; }
   html body .app-container.app-container #ayeco .eco-rail__striptext span { min-width: 0; }
 }
+html body .app-container.app-container #ayeco .eco3-more__dots { display: none; width: 22px; height: 22px; fill: currentColor; stroke: none; }
+@media (max-width: 767px) {
+  html body .app-container.app-container #ayeco .eco3-stickybar .eco3-more__sum { width: 48px; padding: 0 !important; justify-content: center; }
+  html body .app-container.app-container #ayeco .eco3-stickybar .eco3-more__sum::after { display: none !important; }
+  html body .app-container.app-container #ayeco .eco3-more__word { display: none; }
+  html body .app-container.app-container #ayeco .eco3-more__dots { display: block; }
+}

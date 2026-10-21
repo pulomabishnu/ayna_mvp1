@@ -2128,7 +2128,7 @@ export default function MyEcosystem({
                         {typeof onRedoQuiz === 'function' && <button type="button" className="ay-btn ay-btn--secondary eco-redo" onClick={onRedoQuiz}>Redo quiz</button>}
                         {/* One primary action; the rest live in More (Pass 7: four equal buttons said nothing about where to start). */}
                         <details className="eco3-more">
-                            <summary className="ay-btn ay-btn--secondary">More</summary>
+                            <summary className="ay-btn ay-btn--secondary eco3-more__sum" aria-label="More actions"><span className="eco3-more__word">More</span><svg className="eco3-more__dots" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6" /><circle cx="12" cy="12" r="1.6" /><circle cx="19" cy="12" r="1.6" /></svg></summary>
                             <div className="eco3-more__menu" role="menu">
                                 {typeof onRedoQuiz === 'function' && (
                                     <button type="button" role="menuitem" className="eco-more-redo" onClick={(e) => { e.currentTarget.closest('details').open = false; onRedoQuiz(); }}>Redo quiz</button>
