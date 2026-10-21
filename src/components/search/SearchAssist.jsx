@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { analyzeSearch, searchFallbacks } from '../../utils/search/index.js';
+// Lazy wrappers: the engine (and the catalog it reads) loads after first paint.
+import { analyzeSearch, searchFallbacks, useSearchReady } from '../../utils/search/lazy.js';
 import './smart-search.css';
 
 /**
@@ -15,7 +16,8 @@ import './smart-search.css';
  */
 export default function SearchAssist({ query = '', onUse, resultCount = null, variant = 'web', className = '', tryLabel = 'Try', showTries = true }) {
   const q = String(query || '').trim();
-  const a = useMemo(() => (q.length >= 2 ? analyzeSearch(q) : null), [q]);
+  const ready = useSearchReady();
+  const a = useMemo(() => (q.length >= 2 ? analyzeSearch(q) : null), [q, ready]);
   // Things to try only when nothing was found: with results on screen, one quiet line is enough.
   const tries = useMemo(() => (a && a.unknown.length && !a.didYouMean && resultCount === 0 && showTries ? searchFallbacks(q, 4) : []), [a, q, resultCount, showTries]);
   if (!a) return null;

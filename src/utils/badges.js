@@ -18,7 +18,7 @@
  *                      until it is applied the badge shows as locked, 0/3.
  */
 import posthog from 'posthog-js';
-import { getEcosystemSeedFromQuiz, getProductMatchDetailsForProduct } from '../data/products.js';
+import { getEcosystemSeedFromQuiz, getProductMatchDetailsForProduct } from '../data/catalog.js';
 
 const PENDING_REF_KEY = 'ayna_pending_ref_v1';
 const APP_KEY = 'ayna_app_signed_in_v1';

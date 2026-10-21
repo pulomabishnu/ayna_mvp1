@@ -15,7 +15,9 @@ import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import WhyMatchPanel from './WhyMatchPanel';
 import MatchPill from './MatchPill';
 import { matchLine, priceParts } from '../data/passport/content';
-import { buildGlance, perUnitLabel, sizeCount } from './pdp/glance';
+import { buildGlance, perUnitLabel } from './pdp/glance';
+import { heroPriceView } from './pdp/heroPrice';
+import HeroPrice from './pdp/HeroPrice';
 import { getPassport } from '../data/passport';
 import { ProductMatch, ProductAsk } from './passport/ProductSections';
 import { firstSentence } from './pdp/sentences';
@@ -399,6 +401,17 @@ export default function ProductModal({
 }) {
   // Research loads on demand on the product page only (data/researchLoader.js).
   const { product, loaded: researchLoaded } = useResearchState(catalogProduct);
+  // Two steps on a page's first render: the hero (photo, name, price, Buy)
+  // paints first, then the match engine, the compare table and the
+  // suggestions (about half a second on a throttled phone) fill in right after
+  // it. Moving between products keeps everything in one step.
+  const [settled, setSettled] = useState(false);
+  useEffect(() => {
+    if (settled) return undefined;
+    let timer = 0;
+    const frame = requestAnimationFrame(() => { timer = setTimeout(() => setSettled(true), 0); });
+    return () => { cancelAnimationFrame(frame); clearTimeout(timer); };
+  }, [settled]);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   // Size / pack options (product.variants): Buy now, photo, name and price
   // follow the chosen option.
@@ -482,16 +495,16 @@ export default function ProductModal({
 
   const explicitMatchPercent = useMemo(() => getRealMatchPercent(product), [product]);
   const profileMatchPercent = useMemo(
-    () => getProfileMatchPercentForProduct(product, quizResults, healthProfile, matchOpts),
-    [product, quizResults, healthProfile, matchOpts]
+    () => (settled ? getProfileMatchPercentForProduct(product, quizResults, healthProfile, matchOpts) : null),
+    [product, quizResults, healthProfile, matchOpts, settled]
   );
   const matchPercent = profileMatchPercent ?? explicitMatchPercent;
   // The engine's per-need view feeds the one-line "what it matches" and the
   // "Why ayna matched it to you" section. Raw per-need numbers are never
   // shown in the header.
   const matchDetails = useMemo(
-    () => (quizResults ? getProductMatchDetailsForProduct(product, quizResults, healthProfile, matchOpts) : null),
-    [product, quizResults, healthProfile, matchOpts]
+    () => (quizResults && settled ? getProductMatchDetailsForProduct(product, quizResults, healthProfile, matchOpts) : null),
+    [product, quizResults, healthProfile, matchOpts, settled]
   );
   const matchExclusions = matchDetails?.matchStatus === 'excluded' ? exclusionLines(matchDetails) : [];
   const headMatchLine = useMemo(() => matchLine(matchDetails), [matchDetails]);
@@ -528,7 +541,7 @@ export default function ProductModal({
   // that fit this person (when they have a profile) or things for the same
   // need from other categories.
   const suggestions = useMemo(() => {
-    if (!product) return { compare: [], more: [] };
+    if (!product || !settled) return { compare: [], more: [] };
     const owned = new Set((ecosystemProducts || []).map((p) => p?.id).filter(Boolean));
     // Suggestions are photo cards: products without a real photo are left out (same rule as the app).
     const pool = ALL_PRODUCTS.filter((p) => p && p.id && p.name && p.id !== product.id && galleryImages(p).length > 0);
@@ -556,7 +569,7 @@ export default function ProductModal({
       more = [...more, ...sameNeed.filter((p) => !have.has(p.id)).slice(0, 4 - more.length)];
     }
     return { compare, more, personal: Boolean(quizResults) && more.some((p) => p._match) };
-  }, [product, ecosystemProducts, quizResults, healthProfile, matchOpts]);
+  }, [product, ecosystemProducts, quizResults, healthProfile, matchOpts, settled]);
 
   // Always the production address, so a preview deploy never claims its own URLs in the JSON-LD.
   const origin = 'https://www.aynahealth.co';
@@ -913,42 +926,7 @@ export default function ProductModal({
               return lead ? <p className="ayp-buy__lead">{lead}</p> : null;
             })()}
 
-            {(() => {
-              // A deposit isn't a price; programs, services and subscriptions have no "per unit".
-              const raw = String(product.price || '');
-              const deposit = /deposit/i.test(raw) ? (raw.match(/\$\s?\d[\d,.]*/) || [''])[0] : '';
-              const program = product.type === 'digital' || product.category === 'telehealth' || product.requiresPrescription || /program|month|subscription|\/mo\b|year/i.test(raw);
-              const rx = product.requiresPrescription || /\brx\b|prescription/i.test(`${product.name} ${product.summary || ''}`) && product.category === 'telehealth';
-              const size = sizeCount(product);
-              const fsa = (glance?.facts || []).find((f) => f.id === 'fsa' && !f.unknown);
-              const priceAll = `${product.price || ''} ${price.sub || ''}`;
-              const quick = [
-                // Long pack lists live once, in Buy; the header keeps short ones.
-                size?.text && size.text.length <= 40 && !String(price.sub || '').toLowerCase().includes(size.text.toLowerCase()) ? size.text : null,
-                fsa && fsa.value === 'Eligible' ? 'FSA/HSA eligible' : null,
-                // A one-time "3-month program" is not a subscription; only recurring billing is.
-                /\/month|per month|subscription|\/mo\b|per year|\/year|monthly|annually/i.test(priceAll) && !/subscri/i.test(price.sub || '') ? 'Subscription' : null,
-                product.type === 'digital' ? 'At home, online' : null,
-                product.requiresPrescription ? 'Prescription required' : null,
-              ].filter(Boolean);
-              if (deposit) {
-                return <div className="ayp-price"><span className="ayp-price__main">Coming soon</span><span className="ay-badge-text ay-badge-text--pill">Pre-order</span><p className="ayp-price__notes">Join the waitlist ({deposit} deposit)</p></div>;
-              }
-              const notes = [
-                perUnit && !program ? perUnit : null,
-                ...(price.known && price.sub ? String(price.sub).split(/\s+·\s+/).filter(Boolean).map((t) => t.replace(/^./, (c) => c.toUpperCase())) : []),
-                ...quick,
-              ].filter(Boolean);
-              return <>
-                {(price.known || notes.length > 0) && (
-                  <div className="ayp-price">
-                    {price.known && <span className={`ayp-price__main${price.isPlaceholder ? ' is-placeholder' : ''}`}>{price.main}</span>}
-                    {notes.length > 0 && <ul className="ayp-price__notes">{notes.map((t) => <li key={t}>{t}</li>)}</ul>}
-                  </div>
-                )}
-                {rx && <p className="ayp-buy__rx">{product.requiresPrescription ? `Requires a prescription from ${brand || product.brand || 'the provider'}’s clinicians.` : `Can include prescription support from ${brand || product.brand || 'the provider'}’s clinicians, if you qualify.`}</p>}
-              </>;
-            })()}
+            <HeroPrice view={heroPriceView(product, { price, perUnit, glance, brand })} />
 
             <section className="ayp-buy__section" aria-labelledby="ay-buy-h">
               <h2 id="ay-buy-h" className="sr-only">Buy</h2>
@@ -964,7 +942,8 @@ export default function ProductModal({
 
             {/* How well it fits you sits right after Buy, in the same column. */}
             <div className="ayp-fit">
-              <ProductMatch glance={glance} matchPercent={matchPercent} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz ? onStartQuiz : null} hasProfile={Boolean(quizResults)} exclusions={matchExclusions} health={matchDetails?.healthData ? { section: matchDetails.healthData.section, tracker: ['tracker', 'wearable'].includes(String(product?.category || '').toLowerCase()) } : null} />
+              {/* With a profile, her match fills in a moment after the hero (settled above). */}
+              {!settled && (quizResults || healthProfile) ? <div className="ay-skel__bar is-sub ayp-fit__skel" role="status" aria-label="Checking your match" /> : <ProductMatch glance={glance} matchPercent={matchPercent} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz ? onStartQuiz : null} hasProfile={Boolean(quizResults)} exclusions={matchExclusions} health={matchDetails?.healthData ? { section: matchDetails.healthData.section, tracker: ['tracker', 'wearable'].includes(String(product?.category || '').toLowerCase()) } : null} />}
               {!(matchPercent > 0) && !matchExclusions.length && isInEcosystem && (
                 <p className="ayp-fit__note">In your ecosystem</p>
               )}
@@ -992,11 +971,11 @@ export default function ProductModal({
         })()} />
 
         {/* Compare, then Ask or share side by side on desktop. */}
-        <section className="ay-section ayp-compare" aria-label="Compare with similar">
+        {settled && <section className="ay-section ayp-compare" aria-label="Compare with similar">
           <PhoneFold id="pdp-compare" title="Compare with similar" line={suggestions.compare.length ? `Side by side with ${suggestions.compare.slice(0, 2).map((p) => p.name).join(' and ')}.` : 'Pick products to compare side by side.'}>
             <ComparePanel product={product} others={suggestions.compare} onOpen={(p) => onOpenProduct && onOpenProduct(p)} matchFor={matchFor} renderThumb={compareThumb} />
           </PhoneFold>
-        </section>
+        </section>}
 
         <section className="ay-section ayp-askshare" aria-label="Ask or share">
           <PhoneFold id="pdp-askshare" title="Ask or share" line="Ask ayna about your situation, or write a review if you have tried it.">

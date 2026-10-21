@@ -4,10 +4,11 @@ import ProductCard from './ProductCard';
 import SuggestBox from './SuggestBox';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import SearchAssist from './search/SearchAssist.jsx';
-import { searchArticles } from '../utils/search/index.js';
+// Lazy: the search engine and the catalog load after first paint, the reads list doesn't need them.
+import { searchArticles, useSearchReady } from '../utils/search/lazy.js';
 import '../styles/audit-library.css';
 import '../styles/verify-content.css';
-import { ALL_PRODUCTS, getPersonalizedProductIds } from '../data/products.js';
+import { ALL_PRODUCTS, getPersonalizedProductIds, useCatalogReady } from '../data/catalog.js';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile.js';
 import { RELEASED_STARTUPS } from '../data/startups';
 import { buildLibrary } from '../mobile/utils/personalReads.js';
@@ -180,6 +181,7 @@ const CARE_FIRST = new Set(['menopause-basics', 'pmdd', 'endometriosis-basics', 
 const MENOPAUSE_RE = /menopaus|perimenopaus|hot[- ]?flash|night sweat|vaginal dryness/i;
 
 function ArticleProducts({ articleId, quizResults, healthProfile, onOpenProduct }) {
+  const catalogReady = useCatalogReady();
   const items = useMemo(() => {
     let list = getArticleProducts(articleId, quizResults, healthProfile);
     const care = (x) => x.product.category === 'telehealth' || x.product.type === 'digital';
@@ -197,7 +199,7 @@ function ArticleProducts({ articleId, quizResults, healthProfile, onOpenProduct 
       if (articleId === 'pcos-basics' && /proov/i.test(x.product.name)) return { ...x, why: 'For PMOS when trying to conceive' };
       return x;
     });
-  }, [articleId, quizResults, healthProfile]);
+  }, [articleId, quizResults, healthProfile, catalogReady]);
   const note = ROW_NOTES[articleId];
   const rowRef = React.useRef(null);
   const [edge, setEdge] = React.useState({ start: true, end: true });
@@ -258,7 +260,8 @@ const ExtLink = ({ href, children }) => (
 
 function TelehealthSuggestions({ articleId, onOpenProduct }) {
   // Planned Parenthood already has its own row; don't list it twice.
-  const platforms = useMemo(() => getRelevantTelehealth(articleId).filter((t) => !/planned parenthood/i.test(t.name || '')), [articleId]);
+  const catalogReady = useCatalogReady();
+  const platforms = useMemo(() => getRelevantTelehealth(articleId).filter((t) => !/planned parenthood/i.test(t.name || '')), [articleId, catalogReady]);
 
   return (
     <section className="ct-care" aria-labelledby="ay-lib-care-h">
@@ -1104,6 +1107,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   // A broken read link says so (it used to quietly show the whole list at the wrong address).
   const missingRead = Boolean(initialArticleId) && !validId(initialArticleId) && !selectedId;
   const [query, setQuery] = useState('');
+  useSearchReady(); // typed searches re-run when the engine arrives (it loads after first paint)
   const libPlaceholder = useRotatingPlaceholder(LIB_SEARCH_EXAMPLES, { prefix: 'Try: ', fallback: 'Search reads', enabled: !query });
   const [topic, setTopic] = useState('all');
   const [progress, setProgress] = useState(() => loadReadProgress(userId));

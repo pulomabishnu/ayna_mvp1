@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ALL_PRODUCTS, getProductById } from '../data/products.js';
+import { ALL_PRODUCTS, getProductById } from '../data/catalog.js';
 import { applyCatalogCorrections } from '../data/catalogCorrections';
 import { resolveProductImage, isPlaceholderProductImage, safeProductImageSrc } from '../utils/resolveProductImage';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
@@ -79,9 +79,16 @@ export function ProductImageFallback({ compact = false, style, className, produc
 // class of bug turned up in the Wishlist (SavedForLater.jsx) showing a
 // letter avatar for a product whose real photo was already resolved and
 // correctly displayed one section above it on the same page.
-const CATALOG_BY_NORMALIZED_NAME = new Map(
-  ALL_PRODUCTS.map((p) => [String(p.name || '').trim().toLowerCase(), p]).filter(([name]) => name)
-);
+// Built on first use from whichever catalog is loaded (data/catalog.js loads it after first paint).
+let catalogByName = null;
+let catalogByNameSource = null;
+const catalogProductByName = (name) => {
+  if (catalogByNameSource !== ALL_PRODUCTS) {
+    catalogByName = new Map(ALL_PRODUCTS.map((p) => [String(p.name || '').trim().toLowerCase(), p]).filter(([n]) => n));
+    catalogByNameSource = ALL_PRODUCTS;
+  }
+  return catalogByName.get(name);
+};
 
 /**
  * Synchronous best-effort lookup against the curated static catalog, by id
@@ -100,7 +107,7 @@ export function resolveCatalogProductImage(product) {
   if (byId) return applyCatalogCorrections(byId).image || '';
   const corrected = applyCatalogCorrections(product);
   if (corrected !== product) return corrected.image || '';
-  const byName = CATALOG_BY_NORMALIZED_NAME.get(String(product?.name || '').trim().toLowerCase());
+  const byName = catalogProductByName(String(product?.name || '').trim().toLowerCase());
   if (byName && productImageOverride(byName)) return productImageOverride(byName);
   if (byName && !isPlaceholderProductImage(byName.image, byName.type === 'digital' || allowBrandLogo)) return byName.image;
   return product?.image;

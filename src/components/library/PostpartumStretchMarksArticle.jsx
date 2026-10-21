@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import BackLink from '../nav/BackLink.jsx';
 import { createPortal } from 'react-dom';
-import { ALL_PRODUCTS } from '../../data/products';
+import { ALL_PRODUCTS, useCatalogReady } from '../../data/catalog.js';
 import { productHref, isPlainLeftClick } from '../../utils/productRoute.js';
 
 /*
@@ -48,6 +48,7 @@ const PILL_STYLE = { padding: '9px 14px', borderRadius: '99px', background: 'var
 
 function Pill({ name }) {
   const onOpenProduct = useContext(OpenProductContext);
+  useCatalogReady(); // the product link appears once the catalog has loaded
   const product = PICK_IDS[name] ? ALL_PRODUCTS.find((p) => p.id === PICK_IDS[name]) : null;
   if (!product) return <span className="ay-geena__pill" style={PILL_STYLE}>{name}</span>;
   return (

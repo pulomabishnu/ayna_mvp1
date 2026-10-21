@@ -2,12 +2,11 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { sentenceCase } from '../utils/sentenceCase.js';
 import { TESTING_WATERS_NOTICE } from '../data/investRound';
 import { useRecommendationViews } from '../utils/recommendationAnalytics';
-import { BASICS_PRODUCTS } from '../data/basicsProducts.js';
 import { productsForNeed } from './landingNeeds';
 import { isPlainLeftClick, productHref } from '../utils/productRoute';
 import { isPartnerBrandItem, PARTNER_BRANDS } from '../utils/partnerBrands';
 import { getWeeklyTrendingLineup } from '../utils/trendingLineup';
-import { ALL_PRODUCTS, MACRO_GROUPS } from '../data/products';
+import { ALL_PRODUCTS, MACRO_GROUPS, basicsProductIds, useCatalogReady } from '../data/catalog.js';
 import { getDailyFact } from '../data/welcomeSlides.js';
 import ProductCard from './ProductCard';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
@@ -32,7 +31,6 @@ import Photo from './ui/Photo.jsx';
 
 // Plain words first (5-second test, P2-4): what people actually type.
 const SEARCH_HINTS = ['bad cramps', 'heavy flow overnight', 'organic pads', 'UTI burning', 'vaginal dryness', 'pelvic floor', 'night sweats', 'leaking when I sneeze', 'sleep and stress', 'menopause', 'itchy down there', 'hormonal acne', 'trying to conceive', 'PMOS support', 'postpartum pads'];
-const BASICS_IDS = new Set(BASICS_PRODUCTS.map((p) => p.id));
 const NEEDS_PHOTO = (p) => !/tampon tribe|herau|r[eè]sa/i.test(`${p?.brand || ''} ${p?.name || ''}`);
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
@@ -145,6 +143,18 @@ function Shelf({ products, onOpenProduct, label }) {
   );
 }
 
+// Holds a shelf's place while the catalog loads (same heading, four card-sized blocks).
+function ShelfPlaceholder({ title, titleId }) {
+  return (
+    <section className="ed-wrap ed-sec" aria-labelledby={titleId} aria-busy="true">
+      <header className="ed-head"><h2 id={titleId} className="ed-h2">{title}</h2></header>
+      <ul className="ed-shelf" aria-hidden="true">
+        {[0, 1, 2, 3].map((i) => <li key={i}><div className="ay-skel__card ed-shelf__skel" /></li>)}
+      </ul>
+    </section>
+  );
+}
+
 // Core needs lead (periods, intimate care, menopause, pelvic floor); creams, sleep and gadgets come after.
 const CORE = /pad|tampon|cup|disc|period|intimate|vaginal|menopause|pelvic|uti|cramp|fertility|postpartum|pregnan/i;
 function weeklyLineup() {
@@ -155,17 +165,22 @@ function weeklyLineup() {
 }
 function Picks({ onOpenProduct, onViewDiscovery, picks = null }) {
   // The first four products a new visitor sees: everyday picks, not sex tech.
-  const weekly = useMemo(() => weeklyLineup().slice(0, 4), []);
+  // The catalog loads after first paint (data/catalog.js): until then the
+  // shelf keeps its place with placeholder cards.
+  const ready = useCatalogReady();
+  const weekly = useMemo(() => (ready ? weeklyLineup().slice(0, 4) : []), [ready]);
   // Member picks: only products with a real photo, drugstore basics last.
   const personal = useMemo(() => {
     if (!picks) return null;
     const shown = picks.filter((p) => p?.image && NEEDS_PHOTO(p));
-    return [...shown.filter((p) => !BASICS_IDS.has(p.id)), ...shown.filter((p) => BASICS_IDS.has(p.id))];
-  }, [picks]);
+    const basics = basicsProductIds();
+    return [...shown.filter((p) => !basics.has(p.id)), ...shown.filter((p) => basics.has(p.id))];
+  }, [picks, ready]);
   const mine = personal && personal.length >= 2;
   const items = mine ? personal.slice(0, 4) : weekly;
   // recommendation_viewed for her top picks (not the weekly picks everyone sees).
   useRecommendationViews(mine ? items : null, 'home_top_picks');
+  if (!ready && !mine) return <ShelfPlaceholder title="This week’s picks" />;
   if (items.length < 2) return null;
   return (
     <section className="ed-wrap ed-sec" aria-labelledby="ed-picks-title">
@@ -220,6 +235,7 @@ function Familiar({ onSearch, onStartQuiz }) {
 /* ---------- one plain statement, with real products around it ---------- */
 function Statement({ onOpenProduct }) {
   const reveal = useReveal('home-statement');
+  const ready = useCatalogReady();
   // The next four of this week's picks (the first four are in the shelf above),
   // our own product photos first.
   const cut = useMemo(() => {
@@ -229,7 +245,7 @@ function Statement({ onOpenProduct }) {
     const core = ALL_PRODUCTS.filter((p) => local(p) && CORE.test(`${p.category} ${(p.healthFunctions || []).join(' ')}`));
     const own = [...weekly, ...core.filter((p) => !weekly.includes(p))];
     return own.length >= 4 ? own.slice(0, 4) : [];
-  }, []);
+  }, [ready]);
   // Die-cut product stickers: each one opens that product.
   const sticker = (p, i) => (
     <a key={p.id} href={productHref(p)} className={`ed-statement__sticker is-${i}`} aria-label={`${p.brand ? `${p.brand} ` : ''}${p.name}`} onClick={(e) => { if (!onOpenProduct || !isPlainLeftClick(e)) return; e.preventDefault(); onOpenProduct(p); }}>
@@ -247,15 +263,17 @@ function Statement({ onOpenProduct }) {
 
 /* ---------- shop by need: the dark band, then the photo strip ---------- */
 function ShopBand({ onOpenProduct, onViewDiscovery }) {
+  const ready = useCatalogReady();
   const needs = useMemo(() => MACRO_GROUPS.filter((g) => g.id !== 'all')
     .map((g) => ({ id: g.id, label: sentenceCase(g.label), group: g.id }))
     .map((n) => ({ ...n, pool: productsForNeed(n).filter(NEEDS_PHOTO).sort((a, b) => Number(isPartnerBrandItem(b)) - Number(isPartnerBrandItem(a))) }))
-    .filter((n) => n.pool.length >= 2), []);
+    .filter((n) => n.pool.length >= 2), [ready]);
   const [id, setId] = useState(needs[0]?.id);
   const [allChips, setAllChips] = useState(false);
   const need = needs.find((n) => n.id === id) || needs[0];
   const CHIP_MAX = 7;
   const shownNeeds = allChips ? needs : needs.slice(0, CHIP_MAX).concat(needs.slice(CHIP_MAX).filter((n) => n.id === id));
+  if (!need && !ready) return <section className="ed-band ed-scallop" aria-labelledby="ed-shop-title"><ShelfPlaceholder title="Shop by need" titleId="ed-shop-title" /><Strip /></section>;
   if (!need) return null;
   const partner = need.pool.filter((p) => isPartnerBrandItem(p)).slice(0, 1);
   const rest = need.pool.filter((p) => !isPartnerBrandItem(p));

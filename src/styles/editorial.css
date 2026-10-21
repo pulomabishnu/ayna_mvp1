@@ -550,6 +550,8 @@ html body .app-container.app-container .cr-page .cr-emergency { border: 0 !impor
 .ed .ed-partner:not(:first-child)::before { content: '·'; margin: 0 6px; font-weight: 500; color: var(--ay-text-2); }
 .app-container .ed .ay-btn svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .ed .ed-shelf > li { min-width: 0; }
+/* Placeholder card while the catalog loads (LandingV2 ShelfPlaceholder): about a product card's height. */
+.ed .ed-shelf__skel { height: auto; aspect-ratio: 3 / 4.6; }
 .ed :is(.ed-evidence__copy, .ed-news, .ed-sky__copy, .ed-us__copy, .ed-final__copy, .ed-invest__copy) { align-items: flex-start; }
 .app-container.app-container .ed .ed-field :is(input, textarea) { background: transparent !important; color: var(--ed-text) !important; border: 1.5px solid var(--ed-outline) !important; border-radius: 12px !important; }
 html body .app-container.app-container[data-theme='brand-dark'] .ed .ed-field :is(input, textarea) { background: transparent !important; color: #ffedac !important; border-color: #ffedac !important; }

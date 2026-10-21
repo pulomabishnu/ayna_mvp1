@@ -1,4 +1,6 @@
-import { ALL_PRODUCTS, isTeenProduct } from '../../data/products.js';
+// The catalog loads after first paint (data/catalog.js): until then the stickers
+// show their labels in an empty frame, and the photos fill in when it lands.
+import { ALL_PRODUCTS, isTeenProduct } from '../../data/catalog.js';
 
 // Shop by need: the die-cut sticker row. Each sticker is a need from the quiz
 // (mobile/data/intakeModel.js SUPPORT_GROUPS), in the words people use, and
@@ -25,6 +27,7 @@ const local = (p) => String(p?.image || '').startsWith('/') && !p.hidden && !isT
 let cache = null;
 export function needStickers() {
   if (cache) return cache;
+  if (!ALL_PRODUCTS.length) return NEED_STICKERS.map((n) => ({ ...n, image: '', productName: '' }));
   const used = new Set();
   const pool = ALL_PRODUCTS.filter(local);
   cache = NEED_STICKERS.map((n) => {

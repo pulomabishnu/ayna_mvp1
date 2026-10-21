@@ -1,13 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { BASICS_PRODUCTS } from '../data/basicsProducts.js';
 import PartnerStrip from './PartnerStrip';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import * as communityStore from '../utils/community/communityStore.js';
 import { matchBadge } from '../utils/matchDisplay';
-import { getProductMatchDetailsForProduct } from '../data/products.js';
 import '../styles/eco-redesign.css';
 import '../styles/landing.css';
-import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, itemMatchesMacroGroup } from '../data/products.js';
+// The catalog loads after first paint (data/catalog.js); WelcomeBack re-renders when it lands.
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, itemMatchesMacroGroup, getProductMatchDetailsForProduct, basicsProductIds, useCatalogReady } from '../data/catalog.js';
 import ProductCard from './ProductCard';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import { edgeFadeRef } from '../utils/edgeFade';
@@ -16,8 +15,6 @@ import { pickReadForYou } from '../data/readPicks.js';
 import ProductTileImage from './ProductTileImage';
 import { getVerificationLinks } from '../utils/verificationLinks';
 
-// Drugstore basics (Advil, Aleve, Monistat...) come after curated and partner picks.
-const BASICS_IDS = new Set(BASICS_PRODUCTS.map((p) => p.id));
 
 /**
  * Website home, laid out by the design rulebook (/tmp figma RULEBOOK §14):
@@ -524,6 +521,7 @@ function WelcomeBack({ heroBanner = null, user, myProducts, recommendedProductId
   const [filter] = useCategoryParam(initialCategory);
   const personalize = true;
   const filters = NO_FILTERS;
+  const ready = useCatalogReady();
 
   const ownedIds = useMemo(() => new Set(Object.keys(myProducts || {})), [myProducts]);
   const recommendedIds = useMemo(() => new Set(recommendedProductIds || []), [recommendedProductIds]);
@@ -534,6 +532,8 @@ function WelcomeBack({ heroBanner = null, user, myProducts, recommendedProductId
     let list = ALL_PRODUCTS.filter((p) => p?.id && p?.name && !ownedIds.has(p.id) && matchesShopFilter(p, filter));
     list = applyFilters(list, filters, { ownedIds, recommendedIds });
     if (personalize && quizResults) {
+      // Drugstore basics (Advil, Aleve, Monistat...) come after curated and partner picks.
+      const BASICS_IDS = basicsProductIds();
       // Top picks by the same match % the cards show; nothing under 70% is
       // called "for your needs".
       const scored = list.map((p) => ({ p, m: matchBadge(getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts))?.percent ?? 0 }))
@@ -553,7 +553,7 @@ function WelcomeBack({ heroBanner = null, user, myProducts, recommendedProductId
       list = [...list].sort((a, b) => score(b) - score(a));
     }
     return list.slice(0, 4);
-  }, [filter, filters, personalize, ownedIds, recommendedIds, ownedCategories, quizResults, healthProfile, matchOpts]);
+  }, [filter, filters, personalize, ownedIds, recommendedIds, ownedCategories, quizResults, healthProfile, matchOpts, ready]);
 
   // HI03: the one next step. A random empty core area, picked once per page load
   // (seed fixed at mount so it does not flicker when her shelf changes).
@@ -581,7 +581,7 @@ function WelcomeBack({ heroBanner = null, user, myProducts, recommendedProductId
       if (g) return g;
     }
     return empty.length ? empty[Math.floor(nextSeed * empty.length)] : null;
-  }, [myProducts, nextSeed, recommendedProductIds]);
+  }, [myProducts, nextSeed, recommendedProductIds, ready]);
   const picks = Object.keys(myProducts || {}).length;
 
   // Signed in, Home is the landing page (same layout and story) with her own
@@ -592,13 +592,13 @@ function WelcomeBack({ heroBanner = null, user, myProducts, recommendedProductId
     const byId = new Map(ALL_PRODUCTS.map((p) => [p.id, p]));
     // Saved is "for later": anything already on her shelves isn't repeated here.
     return Object.keys(savedProducts || {}).filter((id) => !myProducts?.[id]).map((id) => byId.get(id) || (savedProducts[id]?.id ? savedProducts[id] : null)).filter(Boolean);
-  }, [savedProducts, myProducts]);
+  }, [savedProducts, myProducts, ready]);
   // A peek at her matches in the next-step area, so that card is never empty.
   const nextAreaPicks = useMemo(() => {
     if (!nextArea) return [];
     const byId = new Map(ALL_PRODUCTS.map((p) => [p.id, p]));
     return (recommendedProductIds || []).map((id) => byId.get(id)).filter((p) => p && itemMatchesMacroGroup(p, nextArea.id)).slice(0, 4);
-  }, [nextArea, recommendedProductIds]);
+  }, [nextArea, recommendedProductIds, ready]);
   // "New since your last visit": matches she has not been shown on Home before.
   const SEEN_KEY = 'ayna_home_seen_matches_v1';
   const [seenAtLoad] = useState(() => { try { const v = JSON.parse(localStorage.getItem(SEEN_KEY) || 'null'); return Array.isArray(v) ? new Set(v) : null; } catch { return null; } });

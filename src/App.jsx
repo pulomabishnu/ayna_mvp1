@@ -10,14 +10,30 @@ import { useWebTheme } from './utils/useWebTheme';
 import OmittedProducts from './components/OmittedProducts';
 import ViewSkeleton from './components/skeletons/ViewSkeleton';
 import { markPerf } from './utils/perfTimings';
+import ProductHeroPreview from './components/pdp/ProductHeroPreview';
+import { productSeedFor } from './utils/productSeed';
+
+// React.lazy that renders without a placeholder once its chunk has loaded.
+// The page being opened starts its chunk at once (its prerendered HTML already
+// preloads it), so the first render can show the page itself instead of a
+// placeholder and then a second style and layout pass (perf). React.lazy
+// accepts any thenable, and one that resolves synchronously never suspends.
+const START_PATH = typeof window !== 'undefined' ? window.location.pathname.replace(/\/+$/, '') : '';
+function routeLazy(loader, startNow = false) {
+  let mod = null;
+  let pending = null;
+  const load = () => (pending ||= loader().then((m) => { mod = m; return m; }, (err) => { pending = null; throw err; }));
+  if (startNow) load().catch(() => {});
+  return React.lazy(() => (mod ? { then: (resolve) => resolve(mod) } : load()));
+}
 
 // lazyView: React.lazy plus a built-in Suspense boundary, so converting an
 // eager view to a lazy one does not require touching its render site. Each
 // of these is a whole screen gated behind currentView; keeping them out of
 // the entry chunk means first paint does not pay for the quiz, Community,
 // admin tools or the post-quiz reveal.
-const lazyView = (loader, fallback) => {
-  const Lazy = React.lazy(loader);
+const lazyView = (loader, fallback, startNow = false) => {
+  const Lazy = routeLazy(loader, startNow);
   const fb = fallback === undefined ? <ViewSkeleton /> : fallback;
   return function LazyViewBoundary(props) {
     return <Suspense fallback={fb}><Lazy {...props} /></Suspense>;
@@ -45,7 +61,7 @@ const Recalls = lazyView(() => import('./components/Recalls'));
 const WebYou = lazyView(() => import('./components/WebYou'));
 const MonthlyCheckin = lazyView(() => import('./components/MonthlyCheckin'));
 const WebHealthData = lazyView(() => import('./components/WebHealthData'));
-const ProductModal = lazyView(() => import('./components/ProductModal'), <ViewSkeleton label="Loading the product" />);
+const ProductModal = lazyView(() => import('./components/ProductModal'), <ProductLoading fallback={<ViewSkeleton label="Loading the product" />} />, START_PATH.startsWith('/product/'));
 const PrivacyPolicy = lazyView(() => import('./components/PrivacyPolicy'));
 const ConsumerHealthData = lazyView(() => import('./components/ConsumerHealthData'));
 const HowWeMakeMoney = lazyView(() => import('./components/HowWeMakeMoney'));
@@ -57,20 +73,19 @@ const AuthConfirm = lazyView(() => import('./components/AuthConfirm'));
 const EmailConfirmed = lazyView(() => import('./components/EmailConfirmed'));
 // Lazy: each of these pulls in src/data/startups.js (~1700 lines), deferring
 // them until the user actually navigates there keeps that out of the main
-// bundle. products.js itself is still eager (App.jsx needs getRecommendations/
-// getEcosystemSeedFromQuiz synchronously), so this doesn't fix everything,
-// but it's the safe part of the fix available without a bigger refactor of
-// how this file computes recommendations.
+// bundle. products.js itself now loads after first paint too (data/catalog.js).
 const BrandPartners = React.lazy(() => import('./components/BrandPartners'));
-const MyEcosystem = React.lazy(() => import('./components/MyEcosystem'));
-const Discovery = React.lazy(() => import('./components/Discovery'));
-const Articles = React.lazy(() => import('./components/Articles'));
+const MyEcosystem = routeLazy(() => import('./components/MyEcosystem'), /^\/(my-)?ecosystem$/.test(START_PATH));
+const Discovery = routeLazy(() => import('./components/Discovery'), /^\/(shop|discovery)$/.test(START_PATH));
+const Articles = routeLazy(() => import('./components/Articles'), /^\/library(\/|$)/.test(START_PATH));
 // Internal, read-only product passport audit (dev, or ?internal=1 opt-in).
 const ProductAudit = React.lazy(() => import('./components/ProductAudit'));
 const CampusResources = React.lazy(() => import('./components/CampusResources'));
 // Public page for a shared Ask ayna answer: /a/<slug>.
 const SharedAnswerPage = React.lazy(() => import('./components/SharedAnswerPage'));
-import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, hasStatedLifeStage, matchEngine, getSelectedNeeds } from './data/products.js';
+// The catalog (products, research, matching) loads after first paint as its
+// own chunk; App re-renders when it lands (data/catalog.js, catalogReady below).
+import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, hasStatedLifeStage, matchEngine, getSelectedNeeds, useCatalogReady, isCatalogReady, loadCatalog } from './data/catalog.js';
 import { behaviorFrom } from './utils/matchDisplay';
 import { useHealthData } from './mobile/hooks/useHealthData.js';
 import { useHealthMatchPref } from './health/matchPref.js';
@@ -350,6 +365,14 @@ function ViewLoadingFallback() {
   return <ViewSkeleton label="Loading" cards={3} lines={2} />;
 }
 
+// First visit to a product page: its hero (from the prerendered page's seed)
+// paints while the catalog and the product page code load; anywhere else, the
+// usual placeholder.
+function ProductLoading({ fallback, onPainted = null }) {
+  const seed = productSeedFor(typeof window !== 'undefined' ? window.location.pathname : '');
+  return seed ? <ProductHeroPreview seed={seed} onPainted={onPainted} /> : fallback;
+}
+
 /**
  * Shared "nothing here" state, a bad product link already showed a proper,
  * on-brand empty state (centered serif heading, muted subtext, single navy
@@ -596,7 +619,16 @@ function App() {
 
   const [aynaReviews, setAynaReviews] = useState({});
   const [healthProfile, setHealthProfile] = useState(() => loadHealthProfile());
-  const [savedProducts, setSavedProducts] = useState(() => loadSavedProducts());
+  // Saved products are checked against the catalog, which loads after first
+  // paint: until it has, start empty and restore them the moment it lands.
+  const catalogReady = useCatalogReady();
+  const [savedProducts, setSavedProducts] = useState(() => (isCatalogReady() ? loadSavedProducts() : {}));
+  const savedRestoredRef = useRef(isCatalogReady());
+  useEffect(() => {
+    if (!catalogReady || savedRestoredRef.current) return;
+    savedRestoredRef.current = true;
+    setSavedProducts((prev) => ({ ...loadSavedProducts(), ...prev }));
+  }, [catalogReady]);
   const [ecosystemSeedMeta, setEcosystemSeedMeta] = useState({});
   const [user, setUser] = useState(null);
   const [userSession, setUserSession] = useState(null);
@@ -962,8 +994,11 @@ function App() {
       if (saved) {
         // Merge rather than replace: anything saved while signed out on this
         // device should survive signing in.
+        // The device's list, if the catalog-load restore above hasn't run yet.
+        let local = {};
+        if (!savedRestoredRef.current) { savedRestoredRef.current = true; local = loadSavedProducts(); }
         setSavedProducts((prev) => {
-          const merged = { ...prev, ...saved };
+          const merged = { ...local, ...prev, ...saved };
           persistSavedProducts(merged);
           return merged;
         });
@@ -1040,6 +1075,8 @@ function App() {
       // Stay on welcome so they can navigate themselves.
       return;
     }
+    // Her matches come from the catalog: on a fresh page load wait for it.
+    if (pendingAction === 'quiz-complete' && pendingQuizResults && !catalogReady) return;
     setShowAuthModal(false);
     if (pendingAction === 'quiz-complete' && pendingQuizResults) {
       setQuizResults(pendingQuizResults);
@@ -1109,7 +1146,7 @@ function App() {
       setCurrentView('delete-account');
     }
     setPendingAction(null); pendingActionRef.current = null;
-  }, [user, pendingAction]);
+  }, [user, pendingAction, catalogReady]);
 
   // Google/Apple from a sign-in form (not the post-quiz save) can create a
   // brand-new empty account. Once her saved data has loaded, offer the quiz
@@ -1223,7 +1260,7 @@ function App() {
   // matching only: never Browse ranking, partner placement or ads.
   const healthNeedIds = useMemo(() => {
     try { return quizResults ? getSelectedNeeds(quizResults).map((n) => n.id) : []; } catch { return []; }
-  }, [quizResults]);
+  }, [quizResults, catalogReady]);
   const health = useHealthData(user?.id || null, healthNeedIds);
   // Her switch (You, Health data): "Use my health data in my matches". Shared with the app.
   const healthInMatches = useHealthMatchPref(user?.id || null).on;
@@ -1238,7 +1275,7 @@ function App() {
   const recommendedProductIds = useMemo(() => {
     if (!hasCompletedPersonalization) return [];
     return getPersonalizedProductIds(quizResults || null, healthProfile, matchOpts);
-  }, [quizResults, healthProfile, hasCompletedPersonalization, matchOpts]);
+  }, [quizResults, healthProfile, hasCompletedPersonalization, matchOpts, catalogReady]);
 
   // Categories this person actually matches on, in match order, the landing
   // Shop's Personalize toggle sorts by these.
@@ -1249,7 +1286,7 @@ function App() {
       if (p.category && !seen.includes(p.category)) seen.push(p.category);
     });
     return seen;
-  }, [quizResults, healthProfile, hasCompletedPersonalization]);
+  }, [quizResults, healthProfile, hasCompletedPersonalization, catalogReady]);
 
   React.useEffect(() => {
     try {
@@ -1564,6 +1601,7 @@ function App() {
   };
 
   const handleQuizComplete = async (results) => {
+    await loadCatalog(); // her matches come from the catalog (already loaded by the quiz page)
     const completedResults = {
       ...results,
       personalizationCompleted: true,
@@ -1637,6 +1675,7 @@ function App() {
       setCurrentView('ecosystem');
       return;
     }
+    await loadCatalog(); // her matches come from the catalog
     setQuizResults(updatedResults);
     const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(updatedResults, healthProfile);
     setEcosystemSeedMeta(seedMeta);
@@ -1973,7 +2012,7 @@ function App() {
 
     if (!raw) return null;
     return raw.llmGenerated ? enrichLlmProductForDiscovery(raw) : raw;
-  }, [productRouteId, lastClickedProduct, myProducts, savedProducts, trackedProducts, omittedProducts]);
+  }, [productRouteId, lastClickedProduct, myProducts, savedProducts, trackedProducts, omittedProducts, catalogReady]);
   useEffect(() => {
     let cancelled = false;
     const controller = new AbortController();
@@ -1986,6 +2025,8 @@ function App() {
       || resolvedProduct
       || authLoading
       || dataLoading
+      // Not in the catalog is only known once the catalog has loaded.
+      || !catalogReady
     ) {
       setPublicRouteProductLoading(false);
       return () => {
@@ -2024,12 +2065,18 @@ function App() {
       cancelled = true;
       controller.abort();
     };
-  }, [currentView, productRouteId, resolvedProduct, authLoading, dataLoading]);
+  }, [currentView, productRouteId, resolvedProduct, authLoading, dataLoading, catalogReady]);
 
   const displayedProduct = resolvedProduct || publicRouteProduct;
 
   const productStillResolving = !displayedProduct
-    && (authLoading || dataLoading || publicRouteProductLoading);
+    && (authLoading || dataLoading || publicRouteProductLoading || !catalogReady);
+  // A first visit to a product page paints its hero from the page's seed
+  // (ProductHeroPreview); the full page takes over once that hero has actually
+  // been on screen, not in the same moment the catalog lands.
+  const [heroShown, setHeroShown] = useState(false);
+  const markHeroShown = useCallback(() => setHeroShown(true), []);
+  const heroPending = !heroShown && currentView === 'product' && Boolean(productSeedFor(window.location.pathname));
 
   // Every route showed the identical generic <title> from index.html, no
   // way to tell tabs apart, bookmark a specific page, or get a useful link
@@ -2782,7 +2829,7 @@ function App() {
           />
         )}
         {currentView === 'product' && (
-          displayedProduct ? (
+          displayedProduct && !heroPending ? (
             // Keying by id forces a clean remount when navigating from one
             // product's page straight to another's, every internal tab,
             // the Summary/Evidence toggle, and the chat thread reset to that
@@ -2835,8 +2882,8 @@ function App() {
               }}
               searchOrigin={lastOpenOrigin?.productId === displayedProduct.id ? lastOpenOrigin : null}
             />
-          ) : productStillResolving ? (
-            <ViewLoadingFallback />
+          ) : productStillResolving || displayedProduct ? (
+            <ProductLoading fallback={<ViewLoadingFallback />} onPainted={markHeroShown} />
           ) : (
             <NotFoundState
               title="Product not found"
