@@ -11,6 +11,7 @@ import { chipsFor, followUpRequestFields } from '../utils/askFollowUps.js';
 import { fetchWithTimeout, isNetworkError } from '../utils/network.js';
 import AskHome, { AskStatCard } from './AskHome.jsx';
 import { recentQuestions } from '../utils/askRecent.js';
+import { mayAutoFocus } from '../utils/delightRuntime.js';
 
 /** Merges a profileUpdate the backend returned into the current profile, deduping against what's already there. */
 function mergeProfileUpdate(currentProfile, update) {
@@ -112,6 +113,13 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
   const bottomRef = useRef(null);
   const formRef = useRef(null);
   const inputRef = useRef(null);
+  // Opened by a click or a tap on Ask: the question box takes focus. Never on
+  // load, and on phones only after a tap (utils/delightRuntime.js, autofocus rules).
+  useEffect(() => {
+    if (!open || !mayAutoFocus()) return undefined;
+    const id = requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
+    return () => cancelAnimationFrame(id);
+  }, [open]);
   // Reads she could be pointed to, ranked for her. Articles is a lazy chunk
   // on the website, so it loads only once the panel is opened.
   const [reads, setReads] = useState([]);

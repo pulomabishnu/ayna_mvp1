@@ -118,6 +118,7 @@ import { clearGeneratedPicksForUser, isGeneratedPick, loadEcosystemForUser, upse
 import { loadSavedProducts, persistSavedProducts, clearSavedProducts, loadSavedForUser, setSavedForUser } from './utils/savedProductsStore';
 import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/learningMemoryStore';
 import { loadReviewsForUser, upsertProductReviews } from './utils/reviewsStore';
+import { growTransition } from './utils/viewTransition.js';
 import { clearCachedLlmRecommendations, fingerprintIntake } from './utils/fetchLlmRecommendations';
 import posthog from 'posthog-js';
 import { identifyAccount } from './utils/analyticsIdentity';
@@ -1990,8 +1991,12 @@ function App() {
       position: meta.position,
     });
     setLastOpenOrigin(source === 'search_results' ? { productId: p.id, source, searchQuery: meta.searchQuery } : null);
-    setLastClickedProduct(p);
-    navigateToProduct(p);
+    // The tapped card's photo grows into the product page's photo (View
+    // Transitions where supported, else the page's usual fade).
+    growTransition(() => {
+      setLastClickedProduct(p);
+      navigateToProduct(p);
+    }, { target: 'product', from: 'img' });
   };
 
   // Resolves the product for the current /product/:id route. Checked in order:

@@ -38,7 +38,9 @@ import { apiUrl } from '../utils/apiUrl';
 import { fetchWithTimeout } from '../utils/network.js';
 import { relTime, fullTime, pickMemberQuote, PROMPTS, isOnlyStarter, sharePost, applyToggle, faceTone } from '../utils/community/notes.js';
 import { CharRing, DefaultFace, PromptIcon } from './community/notesKit.jsx';
-import { useNow } from './community/useNow.js';
+import { useMinuteNow as useNow } from '../utils/relativeTime.js';
+import { growTransition } from '../utils/viewTransition.js';
+import { autofocusTarget } from '../utils/delightRuntime.js';
 import './community/community-web.css';
 // Topics started by members (docs/community-user-topics.md). Hidden until the migration runs.
 import TopicPage from './community/topics/TopicPage.jsx';
@@ -124,10 +126,6 @@ function Check({ checked, onChange, children }) {
     <span className="cm-check-text">{children}</span>
   </label>;
 }
-function Counter({ length, max }) {
-  if (length < max * 0.8) return null;
-  return <small className={`cm-counter${length >= max ? ' is-max' : ''}`} aria-live="polite">{length} / {max}</small>;
-}
 function SkeletonPost({ i = 0 }) {
   return <div className="cm-skel-post" style={{ '--i': i }} aria-hidden="true"><div className="cm-skel-row"><span className="cm-skel-dot" /><span className="cm-skel-line is-short" /></div><span className="cm-skel-line" /><span className="cm-skel-line is-mid" /><span className="cm-skel-line is-tiny" /></div>;
 }
@@ -205,7 +203,9 @@ function Sheet({ title, onClose, children, className = '', overlay = null }) {
     const opener = document.activeElement;
     const node = ref.current;
     const wrap = wrapRef.current;
-    const first = node?.querySelector('[data-autofocus]') || node?.querySelector(FOCUSABLE);
+    // The main field only after a person opened the sheet (on phones, a tap on
+    // a text action): utils/delightRuntime.js, autofocus rules.
+    const first = autofocusTarget(node, FOCUSABLE);
     (first || node)?.focus({ preventScroll: true });
     const onKey = (e) => {
       const all = document.querySelectorAll('.cm-sheet-backdrop');
@@ -486,7 +486,8 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     } catch (e) { notifyError(e); } finally { setLoading(false); }
   };
   const openPost = async (post) => {
-    setPage({ type: 'post', id: post.id }); setDetails(post); setError(''); window.scrollTo(0, 0);
+    // The tapped note grows into the open post (utils/viewTransition.js).
+    growTransition(() => { setPage({ type: 'post', id: post.id }); setDetails(post); setError(''); window.scrollTo(0, 0); }, { target: 'post' });
     try { setComments(await community.listComments(supabase, post.id)); } catch (e) { notifyError(e); }
   };
   const openPlaylist = async (pl) => {
@@ -881,7 +882,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     const media = post.media || [];
     const long = !full && String(post.body || '').length > 360;
     const replyWord = kind === 'question' ? 'Answer' : 'Reply';
-    return <article ref={engagement.trackView(post.id)} className={`cm-post cm-note is-${kind}${full ? ' is-full' : ''}`} style={{ '--i': Math.min(i, 6) }} data-kind={kind} key={post.id}>
+    return <article ref={engagement.trackView(post.id)} className={`cm-post cm-note is-${kind}${full ? ' is-full' : ''}`} style={{ '--i': Math.min(i, 6) }} data-kind={kind} data-vt-target={full ? 'post' : undefined} key={post.id}>
       {kind === 'review' && <span className="cm-tape" aria-hidden="true" />}
       {kind === 'question' && <span className="cm-ear">Question</span>}
       <header className="cm-post-head">
@@ -1174,7 +1175,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         <h3>Edit profile</h3>
         <label className="cm-field"><span>Display name</span><RuleField as="input" value={editName} maxLength={50} onChange={(e) => setEditName(e.target.value)} required onShowRules={openRules} /></label>
         <label className="cm-field"><span>Username</span><input value={editHandle} maxLength={24} autoCapitalize="none" onChange={(e) => setEditHandle(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))} required /></label>
-        <label className="cm-field"><span>Bio</span><RuleField autoGrow minRows={2} value={editBio} maxLength={BIO_MAX} onChange={(e) => setEditBio(e.target.value)} placeholder="A little about you" onShowRules={openRules} /><Counter length={editBio.length} max={BIO_MAX} /></label>
+        <label className="cm-field"><span>Bio</span><RuleField autoGrow minRows={2} value={editBio} maxLength={BIO_MAX} onChange={(e) => setEditBio(e.target.value)} placeholder="A little about you" onShowRules={openRules} /><CharRing length={editBio.length} max={BIO_MAX} className="ay-ring cm-ring is-reply" /></label>
         <div className="cm-row"><button type="submit" className="ay-btn ay-btn--primary" disabled={busy || !editName.trim() || !editHandle.trim() || breaksCommunityRules(editName, editBio)}>{busy ? 'Saving…' : 'Save'}</button><button type="button" className="ay-btn ay-btn--secondary" onClick={() => setEditingProfile(false)}>Cancel</button></div>
       </form>}
       {!own && user && (() => {
@@ -1401,7 +1402,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       {topicState === 'sent' ? <><p className="cm-muted">Thanks. The team reads every suggestion.</p><button type="button" className="ay-btn ay-btn--primary" data-autofocus onClick={() => { setSuggestTopic(false); setTopicState('idle'); setTopicName(''); setTopicWhy(''); }}>Done</button></> : <>
         <p className="cm-muted">Tell us which topic you want in Community. The team reads every one.</p>
         <section className="cm-group"><label className="cm-label" htmlFor="cm-topic-name">Topic name</label><RuleField as="input" id="cm-topic-name" data-autofocus value={topicName} maxLength={60} onChange={(e) => setTopicName(e.target.value)} placeholder="e.g. Adenomyosis" onShowRules={openRules} /></section>
-        <section className="cm-group"><label className="cm-label" htmlFor="cm-topic-why">Why <small>Optional</small></label><RuleField id="cm-topic-why" value={topicWhy} maxLength={500} onChange={(e) => setTopicWhy(e.target.value)} placeholder="What would you want to talk about there?" onShowRules={openRules} /></section>
+        <section className="cm-group"><label className="cm-label" htmlFor="cm-topic-why">Why <small>Optional</small></label><RuleField id="cm-topic-why" value={topicWhy} maxLength={500} onChange={(e) => setTopicWhy(e.target.value)} placeholder="What would you want to talk about there?" onShowRules={openRules} /><CharRing length={topicWhy.length} max={500} className="ay-ring cm-ring is-reply" /></section>
         {topicState === 'error' && <p className="cm-error" role="alert">That didn’t send. Try again in a moment.</p>}
         <div className="cm-compose-actions"><button type="button" className="ay-btn ay-btn--primary" disabled={topicState === 'sending' || topicName.trim().length < 2 || breaksCommunityRules(topicName, topicWhy)} onClick={async () => {
           setTopicState('sending');
@@ -1433,6 +1434,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         <div className="cm-rating" role="radiogroup" aria-labelledby="cm-edit-rating-label">{[1, 2, 3, 4, 5].map((n) => <button type="button" key={n} role="radio" aria-checked={editRating === n} aria-label={`${n} ${n === 1 ? 'star' : 'stars'}`} className={editRating && n <= editRating ? 'is-on' : ''} onClick={() => setEditRating(n)}><Star on={Boolean(editRating) && n <= editRating} size={28} /></button>)}</div>
       </section>}
       <RuleField autoGrow minRows={4} value={editBody} maxLength={POST_MAX} onChange={(e) => setEditBody(e.target.value)} onShowRules={openRules} aria-label={editPost.kind === 'review' ? 'Your review' : 'Your post'} />
+      <CharRing length={editBody.length} max={POST_MAX} className="ay-ring cm-ring is-reply" />
       <div className="cm-compose-foot"><button type="button" className="ay-btn ay-btn--primary" disabled={busy || !editBody.trim() || breaksCommunityRules(editBody) || (editPost.kind === 'review' && !normalizeRating(editRating))} onClick={async () => {
         setBusy(true);
         try {

@@ -65,11 +65,19 @@ export function maskedChange(event, format) {
   }
   // A leading "+1" counts its 1 as a digit in both strings, so it lines up.
   const before = digitsOf(raw.slice(0, caret)).length;
+  // The caret sat after a separator (e.g. a digit deleted right after ") "):
+  // keep it after the separator in the new string too, not before it.
+  const afterSeparator = before > 0 && /\D$/.test(raw.slice(0, caret));
   const next = format(raw);
   if (next !== el.value) {
     el.value = next;
     if (document.activeElement === el) {
-      const pos = caretAfterDigits(next, before);
+      let pos = caretAfterDigits(next, before);
+      if (afterSeparator) {
+        let p = pos;
+        while (p < next.length && /\D/.test(next[p])) p += 1;
+        if (p < next.length) pos = p;
+      }
       try { el.setSelectionRange(pos, pos); } catch { /* type=tel supports it; ignore others */ }
     }
   }

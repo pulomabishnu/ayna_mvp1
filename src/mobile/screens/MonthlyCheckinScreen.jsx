@@ -4,6 +4,7 @@ import { mapIntakeToLegacyQuizProfile } from '../../utils/healthIntake.js';
 import { ChipList, LevelMeter } from '../components/intake/IntakeControls.jsx';
 import '../intake-play.css';
 import { loadMonthlyCheckinStatus, saveMonthlyCheckin, monthKey } from '../../utils/monthlyCheckinStore.js';
+import CharRing from '../../components/ui/CharRing.jsx';
 
 // Uses the same play system as the intake (intake-play.css): one tone per
 // step, calm paper for medications and safety.
@@ -473,14 +474,16 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
 
       {stepId === 'notes' && (
         <StepShell stepKey={stepId} title="Anything else?" subtitle="Optional" footer={footer}>
-          <textarea
-            value={answers.notes}
-            onChange={(e) => set('notes', e.target.value.slice(0, 600))}
-            placeholder="Your notes" aria-label="Additional check-in notes"
-            rows={5}
-            className="ip-note"
-          />
-          <div className="ip-counter">{answers.notes.length} / 600</div>
+          <span className="ay-charfield">
+            <textarea
+              value={answers.notes}
+              onChange={(e) => set('notes', e.target.value.slice(0, 600))}
+              placeholder="Your notes" aria-label="Additional check-in notes"
+              rows={5}
+              className="ip-note"
+            />
+            <CharRing value={answers.notes} max={600} />
+          </span>
         </StepShell>
       )}
     </div>
