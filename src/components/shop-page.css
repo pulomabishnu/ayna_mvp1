@@ -84,7 +84,7 @@ html body .app-container.app-container.app-container .ayshop__matches.is-phone {
   html body .app-container.app-container.app-container .ayshop__note { font-size: 13px !important; line-height: 1.4 !important; }
   html body .app-container.app-container.app-container .ayshop__head .ayshop__needs { margin-top: 8px; }
   html body .app-container.app-container.app-container .ayshop__head .ayshop__seal { width: 64px; height: 64px; top: 12px; }
-  html body .app-container.app-container.app-container .ayshop__find { position: sticky; top: 61px; z-index: 20; display: flex; gap: 8px; align-items: center; margin: 0 calc(-1 * var(--ay-gutter, 20px)); padding: 8px var(--ay-gutter, 20px); background: var(--ay-page, #ffedac); }
+  html body .app-container.app-container.app-container .ayshop__find { display: flex; gap: 8px; align-items: center; margin: 0 calc(-1 * var(--ay-gutter, 20px)); padding: 8px var(--ay-gutter, 20px); background: var(--ay-page, #ffedac); }
   html body .app-container.app-container.app-container .ayshop__find .ayshop__search { flex: 1 1 auto; min-width: 0; }
   html body .app-container.app-container.app-container .ayshop__search input[type='search'] { height: 48px; min-height: 48px; }
   html body .app-container.app-container.app-container .ayshop__search-icon { top: 24px; }

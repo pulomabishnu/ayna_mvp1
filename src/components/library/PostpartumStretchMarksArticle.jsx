@@ -121,7 +121,6 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
-  const progressPct = `${(p * 100).toFixed(1)}%`;
   const readLabel = p >= 0.97 ? 'Finished' : p > 0.02 ? `${Math.round(p * 100)}% read` : '12 min read';
   const refsLabel = refsOpen ? 'Hide' : `Show all ${REFS.length}`;
   const toggleRefs = () => setRefsOpen((o) => !o);
@@ -145,7 +144,7 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
     <ShadowPage fallback={fallback}>
     <style>{SCOPED_CSS}</style>
     <div className={`ay-geena${dark ? '' : ' is-light'}`} style={{ minHeight: "100vh", background: "var(--g-bg)", color: "var(--g-fg)" }}>
-      <div style={{ position: "fixed", top: "0", left: "0", right: "0", height: "5px", zIndex: "20", background: "rgba(var(--g-fg-rgb), .15)" }}><div style={{ height: "100%", background: "#f7badd", width: `${progressPct}` }}></div></div>
+      {/* No fixed reading-progress bar (founder, Oct 21: nothing stays on screen while the page scrolls). */}
 
   
 
@@ -183,7 +182,7 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%,240px),1fr))", gap: "56px", alignItems: "start" }}>
       
-            <aside style={{ position: "sticky", top: "28px", display: "grid", gap: "14px", maxWidth: "260px" }}>
+            <aside style={{ display: "grid", gap: "14px", maxWidth: "260px" }}>
               <span style={{ font: "600 13px/1.4 'Figtree'", color: "var(--g-pink)" }}>In this article</span>
               <nav style={{ display: "grid", gap: "4px" }}>
                 <a href="#basics" onClick={jump} style={{ padding: "8px 0", font: "500 15px/1.35 'Figtree'", textDecoration: "none", borderBottom: "1px solid rgba(var(--g-fg-rgb), .25)" }}>The difference is more than skin deep</a>

@@ -55,8 +55,8 @@ html body .app-container.app-container.app-container.app-container {
   /* ---------- layout: folder rail | feed | side ---------- */
   .cm-layout { display: grid; grid-template-columns: 188px minmax(0, 1fr) 300px; gap: var(--ay-s32); align-items: start; }
   .cm-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--ay-s16); min-width: 0; align-content: start; }
-  .cm-side { position: sticky; top: 96px; display: grid; gap: var(--ay-s24); min-width: 0; }
-  .cm-rail { position: sticky; top: 96px; display: grid; gap: var(--ay-s24); min-width: 0; }
+  .cm-side { display: grid; gap: var(--ay-s24); min-width: 0; }
+  .cm-rail { display: grid; gap: var(--ay-s24); min-width: 0; }
 
   /* folder tabs: index dividers on the left, the open one pulled out in pink */
   .cm-folders { display: grid; gap: 6px; }

@@ -774,7 +774,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       return;
     }
     setPosted({ id: saved.result?.id || null, text: kind === 'question' ? 'Your question is posted.' : kind === 'review' ? 'Your review is posted.' : 'Your post is live.' });
-    screenRef.current?.querySelector('.am-scroll')?.scrollTo({ top: 0, behavior: 'smooth' });
+    screenRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
   };
   const viewPosted = async () => {
     const id = posted?.id; setPosted(null);

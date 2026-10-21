@@ -424,21 +424,6 @@ export default function ProductModal({
   const displayName = String(choice.displayName || product?.name || '').replace(/\s*\u2014\s*/g, ', ');
   const [showWhy, setShowWhy] = useState(false);
   const [showDisclosure, setShowDisclosure] = useState(false);
-  // One Buy on screen at a time: the sticky buy bar (bottom on phones, under
-  // the header on desktop) shows only after the in-page Buy button has
-  // scrolled up out of view. The margins leave out the fixed bars that would
-  // cover the in-page button.
-  const [buyAway, setBuyAway] = useState(false);
-  useEffect(() => {
-    const el = document.querySelector('.ayp-buy__actions') || document.querySelector('.ayp-buy__box');
-    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
-    const phone = typeof window.matchMedia === 'function' && window.matchMedia(MOBILE_QUERY).matches;
-    // P1-5: only once the in-page Buy has scrolled up and away (never on load
-    // while it is still below the fold).
-    const io = new IntersectionObserver(([e]) => setBuyAway(!e.isIntersecting && e.boundingClientRect.bottom < (e.rootBounds ? e.rootBounds.top : 0) + 1), { rootMargin: phone ? '-60px 0px -140px 0px' : '-140px 0px 0px 0px' });
-    io.observe(el);
-    return () => io.disconnect();
-  }, [product?.id]);
   const [photo, setPhoto] = useState(0);
   const [toast, setToast] = useState('');
   const toastTimer = useRef(0);
@@ -590,7 +575,6 @@ export default function ProductModal({
     : basePrice;
   // "Per unit" only when the units are the same thing (not a bundle or kit of different products).
   const perUnit = choice.hasVariants || /\b(bundle|kit|set|starter)\b/i.test(String(product?.name || '')) ? '' : perUnitLabel(product);
-  const priceText = product.price || product.stage || '';
   const brand = glance?.brand && glance.brand.toLowerCase() !== String(product.name).toLowerCase() ? glance.brand : '';
   // eslint-disable-next-line no-unused-vars
   const openProductByName = (name) => {
@@ -902,7 +886,7 @@ export default function ProductModal({
           </button>
         </div>
 
-        {/* Gallery left (sticky), everything to decide and buy on the right. No box around it. */}
+        {/* Gallery left, everything to decide and buy on the right. No box around it. */}
         <div className="ayp-hero" ref={boardRef}>
           <div className="ayp-hero__media">
             {galleryTile}
@@ -959,8 +943,18 @@ export default function ProductModal({
           </div>
         </div>
 
-        {/* ayna's summary + At a glance, then the tabs (Clinical opinion, Scientific literature, Reviews, Safety, How to use, Details). */}
-        <ProductEvidence loading={!researchLoaded} product={product} image={images[0] || ''} safetyLead={topWarning} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null} recall={recall} heroLine={firstSentence(noDash(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '')), { min: 20, max: 420 })} extraRows={(() => {
+        {/* ayna's summary + At a glance, then the tabs (Clinical opinion, Scientific literature, Reviews, Safety, How to use, Details).
+            No sticky buy bar: on phones one Buy row follows the summary, in the page flow. */}
+        <ProductEvidence afterOverview={buyUrl ? (
+          <div className="ayp-buyline">
+            {buyButton('ayp-buyline__buy')}
+            {onToggleSaved && (
+              <button type="button" className="ayp-buyline__heart" aria-pressed={isSaved} aria-label={isSaved ? 'Saved' : 'Save'} onClick={() => onToggleSaved(product)}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg>
+              </button>
+            )}
+          </div>
+        ) : null} loading={!researchLoaded} product={product} image={images[0] || ''} safetyLead={topWarning} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null} recall={recall} heroLine={firstSentence(noDash(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '')), { min: 20, max: 420 })} extraRows={(() => {
           const pp = getPassport(product);
           const checked = pp?.pricing?.price?.verified_at;
           let seller = '';
@@ -1010,20 +1004,6 @@ export default function ProductModal({
           </section>
         )}
       </div>
-
-      {/* Sticky Buy bar: only while the in-page Buy button is off screen, so the page never shows Buy twice. */}
-      <aside className={`ayp-sticky${buyAway ? ' is-away' : ''}`} aria-label="Buy" data-away={buyAway ? '1' : '0'}>
-        <div className="ayp-sticky__in">
-          <span className="ayp-sticky__name">{displayName}</span>
-          {priceText && <span className="ayp-sticky__price">{price.known ? price.main : priceText}</span>}
-          {buyButton('ayp-sticky__buy')}
-          {onToggleSaved && (
-            <button type="button" className="ayp-sticky__heart" aria-pressed={isSaved} aria-label={isSaved ? 'Saved' : 'Save'} onClick={() => onToggleSaved(product)}>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg>
-            </button>
-          )}
-        </div>
-      </aside>
 
       <p className="ayp-toast-region" role="status" aria-live="polite">{toast && <span className="ayp-toast">{toast}</span>}</p>
 
