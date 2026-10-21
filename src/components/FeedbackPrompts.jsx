@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FEEDBACK_CAMPAIGN, setFeedbackOwner, readPurchaseQueue, writePurchaseQueue, updatePurchase, readyPurchase, removePurchase, sendFeedback } from '../utils/feedbackClient';
 
 const REFERRALS = ['TikTok', 'Instagram', 'LinkedIn', 'Google / search', 'Friend / word of mouth', 'Event / conference', 'Brand / partner', 'Other'];
+const PURCHASE_PROMPTS_ON = false;
 const SAFE_VIEWS = new Set(['welcome', 'hero', 'ecosystem', 'discovery', 'articles', 'product']);
 function competingDialog() { return Boolean(document.querySelector('[aria-modal="true"], .v6-account-step, .v6-verify-backdrop')); }
 
@@ -80,6 +81,8 @@ export default function FeedbackPrompts({ user, authLoading, currentView }) {
       writePurchaseQueue(readPurchaseQueue().map(row => ({ ...row, departed: true })));
     };
     const showPurchase = () => {
+      // Purchase check-ins ("Did you buy this item?") are off (founder, Oct 20).
+      if (!PURCHASE_PROMPTS_ON) return;
       if (document.visibilityState !== 'visible' || !document.hasFocus() || active.current || competingDialog() || !SAFE_VIEWS.has(currentView)) return;
       const row = readyPurchase(readPurchaseQueue());
       if (!row) return;

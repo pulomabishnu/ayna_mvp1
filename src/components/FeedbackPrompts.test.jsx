@@ -32,7 +32,8 @@ describe('feedback popup lifecycle', () => {
     await tick(16000);
     expect(host.textContent).toContain('How are you liking ayna?');
   });
-  it('retains the return prompt when browser tab storage is disabled', async () => {
+  // Purchase check-ins are switched off (founder, Oct 20); these stay for if they come back.
+  it.skip('retains the return prompt when browser tab storage is disabled', async () => {
     vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => { throw new Error('storage disabled'); });
     vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('storage disabled'); });
     await mount();
@@ -41,7 +42,7 @@ describe('feedback popup lifecycle', () => {
     expect(host.textContent).toContain('Did you buy this item?');
     await click(host.querySelector('[aria-label="Close feedback"]'));
   });
-  it('does not prompt on a product click until the user leaves and returns, then saves Yes once', async () => {
+  it.skip('does not prompt on a product click until the user leaves and returns, then saves Yes once', async () => {
     await mount();
     await act(async () => recordRetailerVisit({ id: 'pads', name: 'Pads' }));
     await tick(2000);
@@ -56,14 +57,14 @@ describe('feedback popup lifecycle', () => {
     expect(host.querySelector('[role="dialog"]')).toBeNull();
     expect(readPurchaseQueue()).toHaveLength(0);
   });
-  it('allows X without recording a purchase answer', async () => {
+  it.skip('allows X without recording a purchase answer', async () => {
     await mount();
     await act(async () => recordRetailerVisit({ id: 'pads', name: 'Pads' }));
     await act(async () => { window.dispatchEvent(new Event('blur')); window.dispatchEvent(new Event('focus')); });
     await click(host.querySelector('[aria-label="Close feedback"]'));
     expect(fetchMock.mock.calls.map(c => JSON.parse(c[1].body)).some(b => b.action === 'submit')).toBe(false);
   });
-  it('keeps No available for retry on a failed save instead of claiming success', async () => {
+  it.skip('keeps No available for retry on a failed save instead of claiming success', async () => {
     await mount();
     await act(async () => recordRetailerVisit({ id: 'pads', name: 'Pads' }));
     await act(async () => { window.dispatchEvent(new Event('blur')); window.dispatchEvent(new Event('focus')); });
