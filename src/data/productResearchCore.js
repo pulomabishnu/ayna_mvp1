@@ -3060,7 +3060,7 @@ export const PRODUCT_RESEARCH_CORE = {
         "Reapply as often as you like.",
         "Replace the cap and store the tube at room temperature."
       ],
-      "sourceUrl": "https://www.re-spin.com/products/mini-let-s-spin™-intimacy-gel",
+      "sourceUrl": "https://www.re-spin.com/products/mini-let-s-spin%E2%84%A2-intimacy-gel",
       "sourceLabel": "Ulta: Joylux LET'S SPIN Intimacy Gel"
     },
     "effectiveness": "ayna didn't find a published study of this gel, so this is about the product type. In a 2018 trial of 302 postmenopausal women, a nonprescription vaginal moisturizer, low-dose vaginal estrogen, and a plain placebo gel all eased dryness and pain with sex about equally over 12 weeks. Small trials of hyaluronic acid vaginal gels found them roughly as helpful as estrogen for dryness, though those trials had real limitations.",

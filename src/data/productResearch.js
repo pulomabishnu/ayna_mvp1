@@ -5904,7 +5904,7 @@ export const PRODUCT_RESEARCH = {
         "Reapply as often as you like.",
         "Replace the cap and store the tube at room temperature."
       ],
-      "sourceUrl": "https://www.re-spin.com/products/mini-let-s-spin™-intimacy-gel",
+      "sourceUrl": "https://www.re-spin.com/products/mini-let-s-spin%E2%84%A2-intimacy-gel",
       "sourceLabel": "Ulta: Joylux LET'S SPIN Intimacy Gel"
     },
     "scienceSources": [
@@ -9161,9 +9161,9 @@ export const PRODUCT_RESEARCH = {
     "clinicalNote": "Your body needs to cool down a little to fall and stay asleep, and a warm room makes hot flashes (sudden waves of heat, often with sweating) more likely. That is why common advice for night sweats is a cool room, a fan, and fewer blankets. A bed that cools itself is a high-tech take on the same idea. The one published study of the Pod was run by Eight Sleep and did not focus on perimenopause or night sweats, so its benefit for those symptoms specifically hasn't been tested.",
     "clinicalNoteSources": [
       {
-        "url": "https://www.uofmhealth.org/health-library/hw228097",
-        "label": "University of Michigan Health (Healthwise): Hot Flashes and Menopause",
-        "summary": "Hot flashes are more likely in a warm environment; suggests keeping the room cool, using a fan, and sleeping with fewer blankets."
+        "url": "https://www.mayoclinic.org/diseases-conditions/hot-flashes/diagnosis-treatment/drc-20352795",
+        "label": "Mayo Clinic: Hot flashes, diagnosis and treatment",
+        "summary": "Self-care tips include dressing in layers and using a fan, air conditioning or a cooler room, though Mayo notes the evidence for these steps is limited."
       },
       {
         "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11048088/",

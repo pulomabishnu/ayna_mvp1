@@ -33,7 +33,7 @@ export const columbia = {
       "id": "columbia-cps",
       "name": "Counseling and Psychological Services (CPS)",
       "category": "mental-health",
-      "sourceUrl": "https://www.health.columbia.edu/content/counseling-and-psychological-services",
+      "sourceUrl": "https://www.health.columbia.edu/content/individual-counseling",
       "sourceLabel": "Columbia Health: Counseling and Psychological Services",
       "lastVerified": "2026-10-01",
       "description": "Counseling, consultation and crisis intervention for Morningside and Manhattanville. The page lists a 24/7 crisis line at this number.",
@@ -41,7 +41,7 @@ export const columbia = {
       "phone": "212-854-2878",
       "phoneLabel": "24/7 crisis line",
       "hours": "24/7 crisis line",
-      "website": "https://www.health.columbia.edu/content/counseling-and-psychological-services"
+      "website": "https://www.health.columbia.edu/content/individual-counseling"
     },
     {
       "id": "columbia-medical",

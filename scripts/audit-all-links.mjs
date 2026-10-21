@@ -48,7 +48,7 @@ const NOT_LINKS = [
   /google\.serper\.dev/, /api\.stripe\.com/, /hooks\.slack\.com/, /api\.twilio\.com/, /eutils\.ncbi\.nlm\.nih\.gov\/entrez\/eutils\/?$/,
   // OAuth/API endpoints, preconnect hosts and placeholders: not pages a person opens.
   /\/oauth\/|\/oauth2\/|\/auth\/(token|revoke)\b|api\.prod\.whoop\.com|api\.ouraring\.com|\/developer$|brand-domain\.com/, /^https?:\/\/fonts\.(googleapis|gstatic)\.com\/?$/,
-  /\$\{/, /[{}<>`]/, /\/\.\.\.$/, /^https?:\/\/[^/.]+$/,
+  /\$\{/, /[{}<>`]/, /\/articles\/PMC$/, /\/\.\.\.$/, /^https?:\/\/[^/.]+$/,
 ];
 const isLink = (u) => !NOT_LINKS.some((re) => re.test(u));
 

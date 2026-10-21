@@ -6738,7 +6738,7 @@ export default [
   "strength": "none",
   "grade": "C",
   "rationale": "Peer chat does not provide prenatal care or folic acid, which are what prenatal support evidence covers.",
-  "source_url": "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf",
+  "source_url": "https://www.cdc.gov/folic-acid/about/index.html",
   "reviewer": "research-audit",
   "reviewed": "2026-10-21"
  },
@@ -6878,7 +6878,7 @@ export default [
   "strength": "none",
   "grade": "C",
   "rationale": "A belly oil is a skin product, not prenatal support; prenatal evidence centers on folic acid and prenatal care.",
-  "source_url": "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf",
+  "source_url": "https://www.cdc.gov/folic-acid/about/index.html",
   "reviewer": "research-audit",
   "reviewed": "2026-10-21"
  },
@@ -6908,7 +6908,7 @@ export default [
   "strength": "none",
   "grade": "C",
   "rationale": "A body pillow targets pregnancy sleep and back discomfort, not prenatal nutrition or care; it fits pregnancy discomfort instead.",
-  "source_url": "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf",
+  "source_url": "https://www.cdc.gov/folic-acid/about/index.html",
   "reviewer": "research-audit",
   "reviewed": "2026-10-21"
  },
