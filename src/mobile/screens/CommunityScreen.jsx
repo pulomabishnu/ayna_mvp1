@@ -28,6 +28,9 @@ import { normalizeRating } from '../../utils/community/reviewRatings.js';
 import { useTeamBadges } from '../../components/community/useTeamBadges.js';
 import Announcements from '../../components/community/Announcements.jsx';
 import { breaksCommunityRules } from '../../utils/communityRules.js';
+import { useSheetViewport, backdropTap } from '../../components/community/useSheetViewport.js';
+import { useComposerDraft } from '../../components/community/useComposerDraft.js';
+import { draftKey, photosFromDraft, submitDraft } from '../../utils/community/composerDraft.js';
 import './community-mobile.css';
 import '../community-play.css';
 import { displayName } from '../utils/displayName.js';
@@ -134,7 +137,7 @@ function TopicSheet({ followed, onToggle, onClose, onSuggest }) {
     window.addEventListener('keydown', onKey);
     return () => { window.removeEventListener('keydown', onKey); opener?.focus?.(); };
   }, [onClose]);
-  return <div className="am-sheet-backdrop" onClick={onClose}>
+  return <div className="am-sheet-backdrop" {...backdropTap(onClose)}>
     <div ref={sheetRef} className="am-sheet am-topic-sheet" role="dialog" aria-modal="true" aria-labelledby="am-topic-sheet-title" onClick={(e) => e.stopPropagation()}>
       <div className="am-sheet-head am-topic-sheet-head"><h2 id="am-topic-sheet-title">Your topics</h2><button ref={doneRef} type="button" onClick={onClose}>Done</button></div>
       <p>Follow topics to see their posts in My topics. Change them any time.</p>
@@ -168,7 +171,7 @@ function SuggestTopicSheet({ onClose, onSent, onShowRules }) {
     try { await sendTopicSuggestion({ name: name.trim(), why: why.trim() }); onSent(); }
     catch (e) { setProblem(e.message); } finally { setSending(false); }
   };
-  return <div className="am-sheet-backdrop" onClick={onClose}><div className="am-sheet am-compose-sheet am-suggest-sheet" role="dialog" aria-modal="true" aria-labelledby="am-suggest-title" onClick={(e) => e.stopPropagation()}>
+  return <div className="am-sheet-backdrop" {...backdropTap(onClose)}><div className="am-sheet am-compose-sheet am-suggest-sheet" role="dialog" aria-modal="true" aria-labelledby="am-suggest-title" onClick={(e) => e.stopPropagation()}>
     <div className="am-sheet-head"><h2 id="am-suggest-title">Suggest a topic</h2><button type="button" aria-label="Close" onClick={onClose}>×</button></div>
     <p className="am-detail-copy">Tell us which topic you want in Community. The team reads every one.</p>
     <label className="am-field-label" htmlFor="am-suggest-name">Topic name</label>
@@ -272,31 +275,41 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
   const badgeFor = (authorId, anon = false) => (!anon && authorId ? teamBadges.get(authorId) || null : null);
   const openRules = () => setShowRules(true);
   const sheetOpen = Boolean(compose || editingPlaylist || editingProfile || reportPost || deleteTarget || deletePlaylistTarget || editPost || showRules || suggestOpen || collabSheetOpen);
+  useSheetViewport(sheetOpen || topicSheetOpen);
+  const escapeRef = useRef(null);
+  // Focus moves into a sheet once, when it opens. Re-running this on every
+  // change used to send focus (and the scroll position) back to the top of
+  // the composer whenever the rules sheet opened or closed.
   useEffect(() => {
-    if (!sheetOpen) return;
+    if (!sheetOpen) return undefined;
     const previous = document.activeElement;
-    const sheets = screenRef.current?.querySelectorAll('.am-sheet');
-    const sheet = sheets?.[sheets.length - 1];
-    if (!sheet) return;
-    const controls = () => [...sheet.querySelectorAll('button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled), a[href], [tabindex="0"]')].filter((node) => node.getClientRects().length);
-    controls()[0]?.focus();
+    const topSheet = () => { const all = screenRef.current?.querySelectorAll('.am-sheet, .am-discard'); return all?.[all.length - 1] || null; };
+    const controls = (sheet) => [...sheet.querySelectorAll('button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled), a[href], [tabindex="0"]')].filter((node) => node.getClientRects().length);
+    const first = topSheet();
+    if (first) controls(first)[0]?.focus({ preventScroll: true });
     const handleKey = (event) => {
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        if (showRules) { setShowRules(false); return; }
-        setCompose(null); setEditingPlaylist(false); setEditingProfile(false); setReportPost(null); setDeleteTarget(null); setDeletePlaylistTarget(null); setEditPost(null); setSuggestOpen(false); setCollabSheetOpen(false);
-      }
+      if (event.key === 'Escape') { event.preventDefault(); escapeRef.current?.(); return; }
       if (event.key !== 'Tab') return;
-      const nodes = controls();
-      const first = nodes[0]; const last = nodes[nodes.length - 1];
-      if (!first) return;
-      if (!sheet.contains(document.activeElement) || (event.shiftKey && document.activeElement === first) || (!event.shiftKey && document.activeElement === last)) {
-        event.preventDefault(); (event.shiftKey ? last : first).focus();
+      const sheet = topSheet();
+      if (!sheet) return;
+      const nodes = controls(sheet);
+      const head = nodes[0]; const last = nodes[nodes.length - 1];
+      if (!head) return;
+      if (!sheet.contains(document.activeElement) || (event.shiftKey && document.activeElement === head) || (!event.shiftKey && document.activeElement === last)) {
+        event.preventDefault(); (event.shiftKey ? last : head).focus();
       }
     };
     document.addEventListener('keydown', handleKey);
-    return () => { document.removeEventListener('keydown', handleKey); if (previous?.isConnected) previous.focus(); };
-  }, [sheetOpen, showRules, suggestOpen, collabSheetOpen]);
+    return () => { document.removeEventListener('keydown', handleKey); if (previous?.isConnected) previous.focus({ preventScroll: true }); };
+  }, [sheetOpen]);
+
+  useEffect(() => {
+    if (!showRules && !suggestOpen && !collabSheetOpen) return undefined;
+    const previous = document.activeElement;
+    const all = screenRef.current?.querySelectorAll('.am-sheet');
+    all?.[all.length - 1]?.querySelector('button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled)')?.focus({ preventScroll: true });
+    return () => { if (previous?.isConnected) previous.focus({ preventScroll: true }); };
+  }, [showRules, suggestOpen, collabSheetOpen]);
 
   useEffect(() => {
     if (!postMenuId) return undefined;
@@ -620,6 +633,52 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     } catch (e) { notifyError(e); } finally { setBusy(false); }
   };
 
+  // Drafts: saved on this device as she types, so a stray tap, the app going
+  // to the background or a failed post never loses it. Closing with words or
+  // photos in the composer asks first; the draft is cleared only on Discard
+  // or after the post has saved.
+  const [confirmDiscard, setConfirmDiscard] = useState(false);
+  const [posted, setPosted] = useState(null); // { id, text } after a post saves
+  useEffect(() => { if (!posted) return undefined; const t = window.setTimeout(() => setPosted(null), 8000); return () => window.clearTimeout(t); }, [posted]);
+  const resetComposer = () => {
+    setBody(''); setProductId(seedProductId || null); setAnonymous(false); setPhotos([]); setRating(5);
+    setPlaylistTitle(''); setPlaylistVisibility('public'); setCoverMode('color'); setCoverText(''); setCoverPhoto(null); setSelectedFriendIds([]); setError('');
+  };
+  const composeDirty = Boolean(body.trim() || playlistTitle.trim() || photos.length || coverPhoto);
+  const draftStoreKey = draftKey('app', authUser?.id || 'guest');
+  const { clear: clearStoredDraft } = useComposerDraft({
+    key: draftStoreKey,
+    enabled: true,
+    draft: { kind: compose || 'post', body, productId, rating, anonymous, playlistTitle, friendIds: selectedFriendIds, photos },
+    restore: (d) => {
+      if (body.trim() || playlistTitle.trim()) return;
+      if (seedProductId && d.productId && String(d.productId) !== String(seedProductId)) return;
+      setBody(d.body); setPlaylistTitle(d.playlistTitle); setAnonymous(d.anonymous); setSelectedFriendIds(d.friendIds);
+      if (d.productId) setProductId(d.productId);
+      if (d.rating) setRating(d.rating);
+      if (d.photos.length) setPhotos(photosFromDraft(d.photos));
+    },
+  });
+  useEffect(() => {
+    if (!confirmDiscard) return;
+    screenRef.current?.querySelector('.am-discard .am-primary')?.focus({ preventScroll: true });
+  }, [confirmDiscard]);
+  const discardCompose = () => { setConfirmDiscard(false); resetComposer(); clearStoredDraft(); setCompose(null); };
+  const requestCloseCompose = () => {
+    if (busy) return; // never close while a post is on its way
+    if (confirmDiscard) { setConfirmDiscard(false); return; }
+    if (composeDirty) { setConfirmDiscard(true); return; }
+    discardCompose();
+  };
+  escapeRef.current = () => {
+    if (showRules) { setShowRules(false); return; }
+    if (editingPlaylist || editingProfile || reportPost || deleteTarget || deletePlaylistTarget || editPost || suggestOpen || collabSheetOpen) {
+      setEditingPlaylist(false); setEditingProfile(false); setReportPost(null); setDeleteTarget(null); setDeletePlaylistTarget(null); setEditPost(null); setSuggestOpen(false); setCollabSheetOpen(false);
+      return;
+    }
+    if (compose) requestCloseCompose();
+  };
+
   const submit = async () => {
     if (busy) return;
     if (compose === 'playlist' ? !playlistTitle.trim() : compose !== 'recommend' && !body.trim()) return;
@@ -629,44 +688,70 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     if (!authUser && (compose === 'review' || compose === 'playlist' || compose === 'recommend')) { requireAccount(compose === 'review' ? 'reviews' : compose === 'playlist' ? 'playlists' : 'friend recommendations'); return; }
     if (authUser && !profile) { setError('Set up your community profile first.'); return; }
     setBusy(true); setError('');
-    try {
-      const client = authUser ? supabase : getGuestClient();
-      const userId = authUser?.id || await ensureGuestSession();
-      if (compose === 'recommend') {
-        await community.sendRecommendations(client, userId, productId, selectedFriendIds, body);
-        setCompose(null); setBody(''); setProductId(null); setSelectedFriendIds([]); setNotice('Recommendation sent to your friend.');
-      } else if (compose === 'playlist') {
-        let uploadedCover;
-        try {
-          if (coverMode === 'photo' && !coverPhoto) throw new Error('Choose a cover photo first.');
-          const coverFile = coverMode === 'photo' ? coverPhoto : await makePlaylistCoverFile(coverText || playlistTitle, coverColor);
-          uploadedCover = await uploadCommunityImage(client, coverFile, { folder: 'covers', userId });
-          const result = await community.createPlaylist(client, userId, { title: playlistTitle, visibility: playlistVisibility, coverUrl: uploadedCover.url });
-          if (productId) {
-            try { await community.addToPlaylist(client, result.id, productId); } catch { setNotice('Playlist created, but the product could not be added.'); }
-          }
-          setCompose(null); setPlaylistTitle(''); setPlaylistVisibility('public'); setProductId(null); setCoverMode('color'); setCoverText(''); setCoverPhoto(null); setTab('playlists'); setRefresh((v) => v + 1); await openPlaylist(result);
-        } catch (error) {
-          if (uploadedCover) await deleteCommunityImage(client, uploadedCover.path);
-          throw error;
+    const kind = compose;
+    // Step 1: save. Only this decides success; on a failure the composer
+    // stays open with everything she wrote and an inline error.
+    let client = null;
+    const saved = await submitDraft({
+      key: draftStoreKey,
+      save: async () => {
+        client = authUser ? supabase : getGuestClient();
+        const userId = authUser?.id || await ensureGuestSession();
+        if (kind === 'recommend') {
+          await community.sendRecommendations(client, userId, productId, selectedFriendIds, body);
+          return null;
         }
-      } else {
+        if (kind === 'playlist') {
+          let uploadedCover;
+          try {
+            if (coverMode === 'photo' && !coverPhoto) throw new Error('Choose a cover photo first.');
+            const coverFile = coverMode === 'photo' ? coverPhoto : await makePlaylistCoverFile(coverText || playlistTitle, coverColor);
+            uploadedCover = await uploadCommunityImage(client, coverFile, { folder: 'covers', userId });
+            const result = await community.createPlaylist(client, userId, { title: playlistTitle, visibility: playlistVisibility, coverUrl: uploadedCover.url });
+            let productAdded = true;
+            if (productId) { try { await community.addToPlaylist(client, result.id, productId); } catch { productAdded = false; } }
+            return { result, productAdded };
+          } catch (error) {
+            if (uploadedCover) await deleteCommunityImage(client, uploadedCover.path);
+            throw error;
+          }
+        }
         const product = productsById.get(String(productId));
         const topics = [...new Set([...extractHashtagTopics(body), ...suggestTopicsForProducts(product ? [product] : [])])].slice(0, 5);
         const media = [];
-        let result;
         try {
           for (const photo of photos) media.push(await uploadCommunityImage(client, photo, { folder: 'posts' }));
-          result = await community.createPost(client, userId, { kind: compose, body, topics, media, isAnonymous: !authUser || anonymous, productId: compose === 'review' ? productId : null, rating: compose === 'review' ? rating : null, taggedProductIds: compose === 'review' || !productId ? [] : [productId] });
+          return await community.createPost(client, userId, { kind, body, topics, media, isAnonymous: !authUser || anonymous, productId: kind === 'review' ? productId : null, rating: kind === 'review' ? rating : null, taggedProductIds: kind === 'review' || !productId ? [] : [productId] });
         } catch (e) {
-          await Promise.all(media.map((item) => deleteCommunityImage(client, item.path)));
+          await Promise.all(media.map((item) => deleteCommunityImage(client, item.path).catch(() => {})));
           throw e;
         }
-        setCompose(null); setBody(''); setProductId(null); setAnonymous(false); setPhotos([]); setRefresh((v) => v + 1);
-        const post = await community.getFeedPost(client, result.id);
-        if (post) await openPost(post);
-      }
-    } catch (e) { notifyError(e); } finally { setBusy(false); }
+      },
+    });
+    setBusy(false);
+    if (!saved.ok) {
+      // Errors thrown before the network (a missing cover photo) carry their own words.
+      setError(saved.error?.message === 'Choose a cover photo first.' ? saved.error.message : community.friendlyError(saved.error));
+      return;
+    }
+    // Step 2: it's saved. Close, confirm, refresh. Nothing here can turn a
+    // saved post into an error.
+    setConfirmDiscard(false); resetComposer(); clearStoredDraft(); setCompose(null); setRefresh((v) => v + 1);
+    if (kind === 'recommend') { setNotice('Recommendation sent to your friend.'); return; }
+    if (kind === 'playlist') {
+      const { result, productAdded } = saved.result;
+      if (!productAdded) setNotice('Playlist created, but the product could not be added.');
+      setTab('playlists');
+      try { await openPlaylist(result); } catch { /* saved; the list will show it */ }
+      return;
+    }
+    setPosted({ id: saved.result?.id || null, text: kind === 'question' ? 'Your question is posted.' : kind === 'review' ? 'Your review is posted.' : 'Your post is live.' });
+    screenRef.current?.querySelector('.am-scroll')?.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  const viewPosted = async () => {
+    const id = posted?.id; setPosted(null);
+    if (!id) return;
+    try { const post = await community.getFeedPost(authUser ? supabase : getGuestClient(), id); if (post) await openPost(post); } catch { /* it's in the feed */ }
   };
 
   const submitComment = async () => {
@@ -798,7 +883,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     <MobileHeader activeTab="community" initial={headerInitial} onGoBrowse={onGoBrowse} onGoEco={onGoEco} onGoCommunity={() => {}} onOpenSaved={onOpenSaved} onOpenProfile={onOpenProfile} />
     <div className="am-scroll">
       {!page && <div className="am-top"><div className="am-title"><h1>Community</h1></div><div className="am-top-actions"><button type="button" className="am-icon-button" onClick={() => authUser ? (profile ? openProfile(profile.username) : setNotice('Create your community profile below.')) : requireAccount('your Community profile')} aria-label="Community profile"><CommunityAvatar name={profile?.display_name || 'You'} path={profile?.avatar_url} /></button><button type="button" className="am-icon-button" onClick={openFriends} aria-label="Friends"><CommunityIcon name="people" /></button><button type="button" className="am-icon-button" onClick={openNotifications} aria-label="Notifications"><CommunityIcon name="bell" /></button></div></div>}
-      {error && <p className="am-error" role="alert">{error}</p>}{notice && <p className="am-notice" role="status">{notice}</p>}
+      {error && <p className="am-error" role="alert">{error}</p>}{notice && <p className="am-notice" role="status">{notice}</p>}{posted && <p className="am-notice am-posted" role="status">{posted.text}{posted.id && <button type="button" className="am-posted-view" onClick={viewPosted}>View post</button>}</p>}
       {page ? <div className="am-subpage" key={`${page.type}-${page.id || 'current'}`}>
         <div className="am-subpage-header"><button type="button" className="am-back" onClick={closePage} aria-label="Back to Community"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6" /></svg></button><span className="am-subpage-title">{({ playlist: 'Playlist', profile: 'Profile', notifications: 'Updates', post: 'Post', friends: 'Friends' })[page.type] || 'Community'}</span></div>
         {!details && <p className="am-empty" role="status">Loading…</p>}
@@ -883,7 +968,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
         </>}
       </>}
     </div>
-    {editingPlaylist && <div className="am-sheet-backdrop" onClick={() => setEditingPlaylist(false)}><div className="am-sheet am-compose-sheet" role="dialog" aria-modal="true" aria-label="Edit playlist" onClick={(e) => e.stopPropagation()}>
+    {editingPlaylist && <div className="am-sheet-backdrop" {...backdropTap(() => setEditingPlaylist(false))}><div className="am-sheet am-compose-sheet" role="dialog" aria-modal="true" aria-label="Edit playlist" onClick={(e) => e.stopPropagation()}>
       <div className="am-sheet-head"><h2>Edit playlist</h2><button type="button" aria-label="Close" onClick={() => setEditingPlaylist(false)}>×</button></div>
       <label className="am-field-label" htmlFor="am-edit-playlist-title">Playlist name</label><RuleField as="input" id="am-edit-playlist-title" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} onShowRules={openRules} />
       <label className="am-field-label" htmlFor="am-edit-playlist-description">Description</label><RuleField id="am-edit-playlist-description" value={editDescription} onChange={(e) => setEditDescription(e.target.value)} placeholder="What is this collection for?" onShowRules={openRules} />
@@ -891,7 +976,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       <PlaylistCoverPicker title={editTitle} mode={editCoverMode} onMode={setEditCoverMode} color={editCoverColor} onColor={setEditCoverColor} text={editCoverText} onText={setEditCoverText} photo={editCoverPhoto} onPhoto={setEditCoverPhoto} existingCoverUrl={publicMediaUrl(details?.cover_url)} />
       <button type="button" className="am-primary" disabled={busy || !editTitle.trim() || breaksCommunityRules(editTitle, editDescription)} onClick={savePlaylist}>{busy ? 'Saving…' : 'Save changes'}</button>
     </div></div>}
-    {editingProfile && <div className="am-sheet-backdrop" onClick={() => setEditingProfile(false)}><div className="am-sheet am-compose-sheet" role="dialog" aria-modal="true" aria-label="Edit community profile" onClick={(e) => e.stopPropagation()}>
+    {editingProfile && <div className="am-sheet-backdrop" {...backdropTap(() => setEditingProfile(false))}><div className="am-sheet am-compose-sheet" role="dialog" aria-modal="true" aria-label="Edit community profile" onClick={(e) => e.stopPropagation()}>
       <div className="am-sheet-head"><h2>Edit profile</h2><button type="button" aria-label="Close" onClick={() => setEditingProfile(false)}>×</button></div>
       <p className="am-detail-copy">This is your public Community profile. Your health answers stay private.</p>
       <label className="am-field-label" htmlFor="am-profile-display-name">Display name</label>
@@ -905,10 +990,10 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       {error && <p className="am-error" role="alert">{error}</p>}
       <button type="button" className="am-primary" disabled={busy || !editProfileName.trim() || !editProfileHandle.trim() || breaksCommunityRules(editProfileName, editProfileBio)} onClick={saveProfileEdit}>{busy ? 'Saving…' : 'Save profile'}</button>
     </div></div>}
-    {deletePlaylistTarget && <div className="am-sheet-backdrop" onClick={() => setDeletePlaylistTarget(null)}><div className="am-sheet" role="dialog" aria-modal="true" aria-label="Delete playlist" onClick={(e) => e.stopPropagation()}><div className="am-sheet-head"><h2>Delete playlist?</h2><button type="button" aria-label="Close" onClick={() => setDeletePlaylistTarget(null)}>×</button></div><p className="am-detail-copy">This removes the playlist and its product list. This cannot be undone.</p><button type="button" className="am-primary" disabled={busy} onClick={confirmDeletePlaylist}>{busy ? 'Deleting…' : 'Delete playlist'}</button><button type="button" className="am-secondary" onClick={() => setDeletePlaylistTarget(null)}>Cancel</button></div></div>}
+    {deletePlaylistTarget && <div className="am-sheet-backdrop" {...backdropTap(() => setDeletePlaylistTarget(null))}><div className="am-sheet" role="dialog" aria-modal="true" aria-label="Delete playlist" onClick={(e) => e.stopPropagation()}><div className="am-sheet-head"><h2>Delete playlist?</h2><button type="button" aria-label="Close" onClick={() => setDeletePlaylistTarget(null)}>×</button></div><p className="am-detail-copy">This removes the playlist and its product list. This cannot be undone.</p><button type="button" className="am-primary" disabled={busy} onClick={confirmDeletePlaylist}>{busy ? 'Deleting…' : 'Delete playlist'}</button><button type="button" className="am-secondary" onClick={() => setDeletePlaylistTarget(null)}>Cancel</button></div></div>}
     {topicSheetOpen && <TopicSheet followed={followedTopics} onToggle={toggleTopic} onClose={closeTopicSheet} onSuggest={openSuggestTopic} />}
     {suggestOpen && <SuggestTopicSheet onClose={() => setSuggestOpen(false)} onShowRules={openRules} onSent={() => { setSuggestOpen(false); setNotice('Thanks. The team reads every suggestion.'); }} />}
-    {collabSheetOpen && details && page?.type === 'playlist' && <div className="am-sheet-backdrop" onClick={() => setCollabSheetOpen(false)}><div className="am-sheet am-compose-sheet am-collab-sheet" role="dialog" aria-modal="true" aria-labelledby="am-collab-title" onClick={(e) => e.stopPropagation()}>
+    {collabSheetOpen && details && page?.type === 'playlist' && <div className="am-sheet-backdrop" {...backdropTap(() => setCollabSheetOpen(false))}><div className="am-sheet am-compose-sheet am-collab-sheet" role="dialog" aria-modal="true" aria-labelledby="am-collab-title" onClick={(e) => e.stopPropagation()}>
       <div className="am-sheet-head"><h2 id="am-collab-title">Collaborators</h2><button type="button" aria-label="Close" onClick={() => setCollabSheetOpen(false)}>×</button></div>
       <p className="am-detail-copy">Collaborators can add and remove products. Only you can change the name, cover and who can see it.</p>
       {collab.rows.length > 0 && <div className="am-collab-list">{collab.rows.map((r) => { const p = profileById.get(r.user_id); return <div className="am-friend-row" key={r.user_id}><span className="am-friend-open"><CommunityAvatar name={p?.display_name || 'Member'} path={p?.avatar_url} /><span><strong>{p?.display_name || 'Community member'}</strong>{p?.username && <small>@{p.username}</small>}</span></span><button type="button" className="am-secondary" disabled={busy} onClick={() => removeCollaborator(r.user_id)}>Remove</button></div>; })}</div>}
@@ -920,8 +1005,8 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       <button type="button" className="am-primary" disabled={busy} onClick={shareInviteLink}>{inviteLink ? 'Share the link again' : 'Share invite link'}</button>
       {error && <p className="am-error" role="alert">{error}</p>}
     </div></div>}
-    {deleteTarget && <div className="am-sheet-backdrop" onClick={() => setDeleteTarget(null)}><div className="am-sheet" role="dialog" aria-modal="true" aria-label="Delete post" onClick={(e) => e.stopPropagation()}><div className="am-sheet-head"><h2>Delete post?</h2><button type="button" onClick={() => setDeleteTarget(null)}>×</button></div><p className="am-detail-copy">This will remove your post and its replies from Community.</p><button type="button" className="am-primary" disabled={busy} onClick={confirmDelete}>{busy ? 'Deleting…' : 'Delete post'}</button><button type="button" className="am-secondary" onClick={() => setDeleteTarget(null)}>Cancel</button></div></div>}
-    {editPost && <div className="am-sheet-backdrop" onClick={() => setEditPost(null)}><div className="am-sheet am-compose-sheet" role="dialog" aria-modal="true" aria-label={editPost.kind === 'review' ? 'Edit review' : 'Edit post'} onClick={(e) => e.stopPropagation()}>
+    {deleteTarget && <div className="am-sheet-backdrop" {...backdropTap(() => setDeleteTarget(null))}><div className="am-sheet" role="dialog" aria-modal="true" aria-label="Delete post" onClick={(e) => e.stopPropagation()}><div className="am-sheet-head"><h2>Delete post?</h2><button type="button" onClick={() => setDeleteTarget(null)}>×</button></div><p className="am-detail-copy">This will remove your post and its replies from Community.</p><button type="button" className="am-primary" disabled={busy} onClick={confirmDelete}>{busy ? 'Deleting…' : 'Delete post'}</button><button type="button" className="am-secondary" onClick={() => setDeleteTarget(null)}>Cancel</button></div></div>}
+    {editPost && <div className="am-sheet-backdrop" {...backdropTap(() => setEditPost(null))}><div className="am-sheet am-compose-sheet" role="dialog" aria-modal="true" aria-label={editPost.kind === 'review' ? 'Edit review' : 'Edit post'} onClick={(e) => e.stopPropagation()}>
       <div className="am-sheet-head"><h2>{editPost.kind === 'review' ? 'Edit review' : 'Edit post'}</h2><button type="button" aria-label="Close" onClick={() => setEditPost(null)}>×</button></div>
       {editPost.kind === 'review' && <div className="am-rating"><span id="am-edit-rating-label">Your rating</span><RatingPicker value={editRating} onChange={setEditRating} label="Your rating" /></div>}
       <label className="am-field-label" htmlFor="am-edit-text">{editPost.kind === 'review' ? 'Your experience' : 'Your post'}</label>
@@ -929,9 +1014,9 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       {error && <p className="am-error" role="alert">{error}</p>}
       <button type="button" className="am-primary am-submit" disabled={busy || !editBody.trim() || breaksCommunityRules(editBody) || (editPost.kind === 'review' && !normalizeRating(editRating))} onClick={saveEdit}>{busy ? 'Saving…' : 'Save changes'}</button>
     </div></div>}
-    {reportPost && <div className="am-sheet-backdrop" onClick={() => setReportPost(null)}><div className="am-sheet" role="dialog" aria-modal="true" aria-label="Report post" onClick={(e) => e.stopPropagation()}><div className="am-sheet-head"><h2>Report post</h2><button type="button" onClick={() => setReportPost(null)}>×</button></div><p className="am-detail-copy">Tell us what needs review.</p><select value={reportReason} onChange={(e) => setReportReason(e.target.value)}><option value="misinformation">Health misinformation</option><option value="harassment">Harassment</option><option value="spam">Spam</option><option value="other">Something else</option></select><button type="button" className="am-primary" disabled={busy} onClick={submitReport}>Send report</button></div></div>}
-    {compose && <div className="am-sheet-backdrop" onClick={() => setCompose(null)}><div className="am-sheet am-compose-sheet" role="dialog" aria-modal="true" aria-label="Create in Community" onClick={(e) => e.stopPropagation()}>
-      <div className="am-sheet-head"><div><h2>{({ post: 'New post', question: 'Ask a question', review: 'Write a review', playlist: 'Create a playlist', recommend: 'Recommend a product' })[compose]}</h2></div><button type="button" aria-label="Close" onClick={() => setCompose(null)}>×</button></div>
+    {reportPost && <div className="am-sheet-backdrop" {...backdropTap(() => setReportPost(null))}><div className="am-sheet" role="dialog" aria-modal="true" aria-label="Report post" onClick={(e) => e.stopPropagation()}><div className="am-sheet-head"><h2>Report post</h2><button type="button" onClick={() => setReportPost(null)}>×</button></div><p className="am-detail-copy">Tell us what needs review.</p><select value={reportReason} onChange={(e) => setReportReason(e.target.value)}><option value="misinformation">Health misinformation</option><option value="harassment">Harassment</option><option value="spam">Spam</option><option value="other">Something else</option></select><button type="button" className="am-primary" disabled={busy} onClick={submitReport}>Send report</button></div></div>}
+    {compose && <div className="am-sheet-backdrop" {...backdropTap(requestCloseCompose)}><div className="am-sheet am-compose-sheet" role="dialog" aria-modal="true" aria-label="Create in Community" onClick={(e) => e.stopPropagation()}>
+      <div className="am-sheet-head"><div><h2>{({ post: 'New post', question: 'Ask a question', review: 'Write a review', playlist: 'Create a playlist', recommend: 'Recommend a product' })[compose]}</h2></div><button type="button" aria-label="Close" onClick={requestCloseCompose}>×</button></div>
       <div className="am-type-row" aria-label="What would you like to share?">{[['post','Post'],['question','Question'],['review','Review'],['playlist','Playlist'],['recommend','Recommend']].map(([kind,label]) => <button type="button" key={kind} className={compose === kind ? 'is-active' : ''} aria-pressed={compose === kind} onClick={() => { if (!authUser && ['review','playlist','recommend'].includes(kind)) { requireAccount(kind === 'review' ? 'reviews' : kind === 'playlist' ? 'playlists' : 'friend recommendations'); return; } setCompose(kind); setError(''); }}>{label}</button>)}</div>
       {compose === 'playlist' ? <><label className="am-field-label" htmlFor="am-playlist-name">Playlist name</label><RuleField as="input" id="am-playlist-name" value={playlistTitle} onChange={(e) => setPlaylistTitle(e.target.value)} placeholder="e.g. My everyday essentials" onShowRules={openRules} /><PlaylistAudiencePicker id="am-new-playlist-visibility" value={playlistVisibility} onChange={setPlaylistVisibility} /><PlaylistCoverPicker title={playlistTitle} mode={coverMode} onMode={setCoverMode} color={coverColor} onColor={setCoverColor} text={coverText} onText={setCoverText} photo={coverPhoto} onPhoto={setCoverPhoto} /></> : <><label className="am-field-label" htmlFor="am-post-text">{compose === 'question' ? 'Your question' : compose === 'review' ? 'Your experience' : compose === 'recommend' ? 'A note to your friends' : 'Your post'}</label><RuleField id="am-post-text" value={body} onChange={(e) => setBody(e.target.value)} onShowRules={openRules} placeholder={compose === 'question' ? 'What would you like to ask? Add #topics if helpful.' : compose === 'review' ? 'How was it for you?' : compose === 'recommend' ? 'Add a note (optional)' : 'What’s on your mind? Add #topics if helpful.'} />{hashtagSuggestions.length > 0 && <div className="am-hashtags" aria-label="Suggested hashtags">{hashtagSuggestions.map((tag) => <button type="button" key={tag.key} onClick={() => setBody((text) => text.replace(/#(?:[A-Za-z][\w-]*)?$/, `${tag.tag} `))}>{tag.tag}</button>)}</div>}</>}
       {compose === 'review' && <div className="am-rating" role="radiogroup" aria-label="Your rating"><span>Your rating</span><div className="am-stars">{[1, 2, 3, 4, 5].map((n) => <button type="button" key={n} role="radio" aria-checked={rating === n} aria-label={`${n} out of 5`} className={n <= rating ? 'is-on' : ''} onClick={() => setRating(n)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9L12 3.5Z" /></svg></button>)}</div></div>}
@@ -942,8 +1027,13 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       {error && <p className="am-error" role="alert">{error}</p>}
       <button type="button" className="am-rules-link" onClick={openRules}>Community rules</button>
       <button type="button" className={`am-primary am-submit${compose === 'playlist' ? ' am-submit-static' : ''}`} disabled={busy || (compose === 'playlist' ? breaksCommunityRules(playlistTitle) : breaksCommunityRules(body))} onClick={submit}>{busy ? 'Sharing…' : compose === 'playlist' ? 'Create playlist' : compose === 'recommend' ? 'Send recommendation' : compose === 'question' ? 'Ask question' : compose === 'review' ? 'Post review' : 'Share post'}</button>
-    </div></div>}
-    {showRules && <div className="am-sheet-backdrop am-rules-backdrop" onClick={() => setShowRules(false)}><div className="am-sheet am-rules-sheet" role="dialog" aria-modal="true" aria-label="Community rules" onClick={(e) => e.stopPropagation()}>
+    </div>{confirmDiscard && <div className="am-discard-layer" onClick={(e) => { e.stopPropagation(); if (e.target === e.currentTarget) setConfirmDiscard(false); }}><div className="am-discard" role="alertdialog" aria-modal="true" aria-labelledby="am-discard-title" aria-describedby="am-discard-copy">
+      <h3 id="am-discard-title">Discard this {compose === 'playlist' ? 'playlist' : compose === 'review' ? 'review' : compose === 'question' ? 'question' : compose === 'recommend' ? 'recommendation' : 'post'}?</h3>
+      <p id="am-discard-copy">What you wrote will be deleted.</p>
+      <button type="button" className="am-primary" onClick={() => setConfirmDiscard(false)}>Keep editing</button>
+      <button type="button" className="am-secondary" onClick={discardCompose}>Discard</button>
+    </div></div>}</div>}
+    {showRules && <div className="am-sheet-backdrop am-rules-backdrop" {...backdropTap(() => setShowRules(false))}><div className="am-sheet am-rules-sheet" role="dialog" aria-modal="true" aria-label="Community rules" onClick={(e) => e.stopPropagation()}>
       <div className="am-sheet-head"><h2>Community rules</h2><button type="button" aria-label="Close" onClick={() => setShowRules(false)}>×</button></div>
       <CommunityRulesList />
       <button type="button" className="am-primary" onClick={() => setShowRules(false)}>Got it</button>
