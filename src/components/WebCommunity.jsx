@@ -34,6 +34,10 @@ import { markPerf } from '../utils/perfTimings';
 import { normalizeRating, ratingLabel } from '../utils/community/reviewRatings.js';
 import '../styles/verify-content.css';
 import { apiUrl } from '../utils/apiUrl';
+import { relTime, fullTime, pickMemberQuote, PROMPTS, isOnlyStarter, sharePost, applyToggle, faceTone } from '../utils/community/notes.js';
+import { CharRing, DefaultFace, PromptIcon } from './community/notesKit.jsx';
+import { useNow } from './community/useNow.js';
+import './community/community-web.css';
 
 // The app's Community, built for the website. Same data and rules (shared
 // community store, ranking, topics, guest posting). Three columns on wide
@@ -51,6 +55,15 @@ async function newAnnouncementsFor(supabase, userId) {
 }
 
 const TABS = [['for-you', 'For you'], ['following', 'Following'], ['question', 'Questions'], ['review', 'Reviews'], ['playlists', 'Playlists'], ['announcements', 'Announcements']];
+// One line icon per feed, drawn on the folder tabs.
+const TAB_ICONS = {
+  'for-you': <path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.3 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10Z" />,
+  following: <><circle cx="9" cy="8.5" r="3.2" /><path d="M3 19.5c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5" /><path d="M16 5.5a3.2 3.2 0 0 1 0 6M18 14.5c1.9.7 3 2.5 3 5" /></>,
+  question: <><circle cx="12" cy="12" r="8.5" /><path d="M9.6 9.6a2.5 2.5 0 1 1 3.6 2.2c-.8.4-1.2 1-1.2 1.8v.4" /><path d="M12 16.8v.1" /></>,
+  review: <path d="M12 4.2l2.3 4.7 5.2.8-3.8 3.6.9 5.1-4.6-2.4-4.6 2.4.9-5.1-3.8-3.6 5.2-.8z" />,
+  playlists: <><path d="M4 6.5h11M4 11.5h11M4 16.5h7" /><circle cx="17.5" cy="16.5" r="2.5" /><path d="M20 16.5V7l-2.5 1" /></>,
+  announcements: <><path d="M4 10v4h3l6 4V6L7 10H4Z" /><path d="M16.5 9a4 4 0 0 1 0 6" /></>,
+};
 const VERB = { post: 'Post', question: 'Ask', review: 'Review', playlist: 'Playlist', recommend: 'Recommend' };
 const KIND_TITLES = { post: 'New post', question: 'Ask a question', review: 'Write a review', playlist: 'Create a playlist', recommend: 'Recommend a product' };
 const COVER_COLORS = ['#1D1A2B', '#B9C2F4', '#F7BADD', '#BDEBD6', '#F7E78E'];
@@ -60,16 +73,14 @@ const COMMENT_MAX = 1000;
 const BIO_MAX = 160;
 const SUGGESTED_MAX = 5;
 const PROFILE_LIST_MAX = 30;
-const KIND_TAG = { question: 'Question', review: 'Review', post: 'Post', playlist: 'Playlist' };
 const SIDE_MAX = 3;
 const TOPICS_MAX = 8;
 const loadArticles = () => import('./Articles.jsx').then((m) => m.ARTICLES || []);
-const timeLabel = (v) => (v ? new Date(v).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '');
 
 function Avatar({ name, path, anonymous = false, size = 40 }) {
   const [failed, setFailed] = useState(false);
-  const initials = anonymous ? 'A' : String(name || 'A').split(/\s+/).filter(Boolean).map((p) => p[0]).slice(0, 2).join('').toUpperCase();
-  return <span className="cm-avatar" style={{ width: size, height: size, fontSize: Math.max(14, Math.round(size * 0.32)) }} aria-hidden="true">{path && !failed ? <img src={publicMediaUrl(path)} alt="" onError={() => setFailed(true)} /> : initials}</span>;
+  const photo = path && !failed && !anonymous;
+  return <span className={`cm-avatar is-${photo ? 'photo' : faceTone(name, anonymous)}`} style={{ width: size, height: size, fontSize: Math.max(13, Math.round(size * 0.34)) }} aria-hidden="true">{photo ? <img src={publicMediaUrl(path)} alt="" onError={() => setFailed(true)} /> : <DefaultFace name={name} anonymous={anonymous} />}</span>;
 }
 
 const ICONS = {
@@ -82,6 +93,8 @@ const ICONS = {
   check: <path d="m5 12.5 4.5 4.5L19 7.5" />,
   close: <path d="M6 6l12 12M18 6 6 18" />,
   more: <><circle cx="5" cy="12" r="1.2" /><circle cx="12" cy="12" r="1.2" /><circle cx="19" cy="12" r="1.2" /></>,
+  share: <><path d="M12 15V3.5" /><path d="m7.5 8 4.5-4.5L16.5 8" /><path d="M5 12.5V19a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19v-6.5" /></>,
+  search: <><circle cx="11" cy="11" r="7" /><path d="m16 16 4.5 4.5" /></>,
 };
 function Icon({ name, size = 18 }) {
   return <svg className="cm-icon" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{ICONS[name]}</svg>;
@@ -105,8 +118,8 @@ function Counter({ length, max }) {
   if (length < max * 0.8) return null;
   return <small className={`cm-counter${length >= max ? ' is-max' : ''}`} aria-live="polite">{length} / {max}</small>;
 }
-function SkeletonPost() {
-  return <div className="cm-skel-post" aria-hidden="true"><div className="cm-skel-row"><span className="cm-skel-dot" /><span className="cm-skel-line is-short" /></div><span className="cm-skel-line" /><span className="cm-skel-line is-mid" /></div>;
+function SkeletonPost({ i = 0 }) {
+  return <div className="cm-skel-post" style={{ '--i': i }} aria-hidden="true"><div className="cm-skel-row"><span className="cm-skel-dot" /><span className="cm-skel-line is-short" /></div><span className="cm-skel-line" /><span className="cm-skel-line is-mid" /><span className="cm-skel-line is-tiny" /></div>;
 }
 function SkeletonPlaylists() {
   return <div className="cm-pl-grid" aria-hidden="true">{[0, 1, 2, 3].map((i) => <div key={i} className="cm-skel-pl"><span className="cm-skel-cover" /><span className="cm-skel-line is-mid" /><span className="cm-skel-line is-short" /></div>)}</div>;
@@ -131,9 +144,6 @@ function Mention({ productId, productsById, quizResults, onOpenProduct, hideView
   </button>;
 }
 
-function Tag({ kind }) {
-  return <span className={`cm-tag is-${kind in KIND_TAG ? kind : 'post'}`}>{KIND_TAG[kind] || KIND_TAG.post}</span>;
-}
 
 // Playlist cover: the uploaded cover, or up to four product photos on white tiles.
 function PlaylistCover({ playlist, productsById, big = false }) {
@@ -215,6 +225,16 @@ function Sheet({ title, onClose, children, className = '', overlay = null }) {
 export default function WebCommunity({ user, products = [], quizResults = null, myProducts = null, onOpenProduct, onOpenArticle, onRequireAuth, seedKind = null, seedProductId = null, seedRating = null, initialProfileHandle = null, onProfileChange, initialPostId = null, onPostChange, composeOnly = false, onDone }) {
   const supabase = user ? getSupabaseClient() : (getGuestClient() || getSupabaseClient());
   const productsById = useMemo(() => new Map(products.map((p) => [String(p.id), p])), [products]);
+  // Relative times ("5m", "Yesterday") refresh every minute.
+  const now = useNow();
+  const timeLabel = (v) => relTime(v, now);
+  // A prompt tile ("Unpopular opinion: ") puts a starter in the composer.
+  const [starter, setStarter] = useState('');
+  // Delete is two taps in the post menu: "Delete post", then "Tap again to delete".
+  const [armedDelete, setArmedDelete] = useState(null);
+  useEffect(() => { if (!armedDelete) return undefined; const t = window.setTimeout(() => setArmedDelete(null), 4000); return () => window.clearTimeout(t); }, [armedDelete]);
+  // Bumped after a Helpful tap so the faces row reloads without reloading the feed.
+  const [engageTick, setEngageTick] = useState(0);
   // ?tab=announcements (links from emails) opens that feed.
   const [tab, setTab] = useState(() => { try { const t = new URLSearchParams(window.location.search).get('tab'); return TABS.some(([k]) => k === t) ? t : 'for-you'; } catch { return 'for-you'; } });
   const [posts, setPosts] = useState([]);
@@ -277,7 +297,6 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const [refresh, setRefresh] = useState(0);
   const [reportPost, setReportPost] = useState(null);
   const [reportReason, setReportReason] = useState('misinformation');
-  const [deleteTarget, setDeleteTarget] = useState(null);
   const [editPost, setEditPost] = useState(null);
   const [editBody, setEditBody] = useState('');
   const [editRating, setEditRating] = useState(0);
@@ -322,15 +341,16 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const openRules = () => setShowRules(true);
   // Views and "found this helpful" faces for every post on screen (hidden until the migration runs).
   const shownPosts = useMemo(() => [...posts, ...profilePosts, ...(searchResults?.posts || []), ...(page?.type === 'post' && details?.id ? [details] : [])], [posts, profilePosts, searchResults, page, details]);
-  const engagement = usePostEngagement({ supabase, posts: shownPosts, userId: user?.id || null, refreshKey: refresh });
+  const engagement = usePostEngagement({ supabase, posts: shownPosts, userId: user?.id || null, refreshKey: `${refresh}:${engageTick}` });
   const [likersPost, setLikersPost] = useState(null);
 
   const notifyError = (e) => setError(community.friendlyError(e));
   const requireAccount = (feature = 'this feature') => onRequireAuth?.(feature);
   const closePage = () => { setPage(null); setDetails(null); setComments([]); setItems([]); setError(''); setEditingProfile(false); setProfileStats(null); };
-  const openCompose = (kind = 'post') => {
+  const openCompose = (kind = 'post', prompt = null) => {
     // Posting in a health community needs an account (no anonymous guest posts).
     if (!user) { requireAccount(kind === 'review' ? 'reviews' : kind === 'playlist' ? 'playlists' : kind === 'recommend' ? 'friend recommendations' : 'posting'); return; }
+    if (prompt?.starter && isOnlyStarter(body, starter)) { setBody(prompt.starter); setStarter(prompt.starter); }
     setCompose(kind); setError('');
   };
   // Names for the Following empty state.
@@ -416,6 +436,22 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     community.listPlaylists(supabase, { section: 'recent', limit: 6 }).then((rows) => { if (active) setSidePlaylists(rows || []); }).catch(() => {});
     return () => { active = false; };
   }, [supabase, composeOnly, refresh]);
+
+  // ⌘K (Ctrl K elsewhere) jumps to Community search.
+  const searchRef = useRef(null);
+  const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent || '');
+  useEffect(() => {
+    if (composeOnly) return undefined;
+    const onKey = (e) => {
+      if (!(e.metaKey || e.ctrlKey) || e.altKey || String(e.key).toLowerCase() !== 'k') return;
+      if (document.querySelector('.cm-sheet-backdrop')) return;
+      e.preventDefault();
+      searchRef.current?.focus();
+      searchRef.current?.select();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [composeOnly]);
 
   // The post "…" menu closes on outside click or Escape.
   useEffect(() => {
@@ -545,10 +581,10 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   // or after the post has saved.
   const [confirmDiscard, setConfirmDiscard] = useState(false);
   const resetComposer = () => {
-    setBody(''); setProductId(seedProductId); setAnonymous(false); setPhotos([]); setRating(normalizeRating(seedRating) || null);
+    setBody(''); setStarter(''); setProductId(seedProductId); setAnonymous(false); setPhotos([]); setRating(normalizeRating(seedRating) || null);
     setPlaylistTitle(''); setPlaylistVisibility('public'); setCoverPhoto(null); setSelectedFriendIds([]); setError('');
   };
-  const composeDirty = Boolean(body.trim() || playlistTitle.trim() || photos.length || coverPhoto);
+  const composeDirty = Boolean(!isOnlyStarter(body, starter) || playlistTitle.trim() || photos.length || coverPhoto);
   const draftStoreKey = user ? draftKey('web', user.id, composeOnly ? `pdp-${seedKind || 'post'}-${seedProductId || ''}` : '') : null;
   const { clear: clearStoredDraft } = useComposerDraft({
     key: draftStoreKey,
@@ -566,6 +602,13 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   useEffect(() => {
     if (confirmDiscard) document.querySelector('.cm-discard .ay-btn--primary')?.focus({ preventScroll: true });
   }, [confirmDiscard]);
+  // Opening the composer with words in it (a prompt starter or a saved draft)
+  // puts the caret at the end, so she keeps typing after "Unpopular opinion: ".
+  useEffect(() => {
+    if (!compose) return undefined;
+    const t = window.setTimeout(() => { const el = document.getElementById('cm-compose-body'); if (el && document.activeElement === el) { const n = el.value.length; el.setSelectionRange(n, n); } }, 30);
+    return () => window.clearTimeout(t);
+  }, [compose]);
   const discardCompose = () => { setConfirmDiscard(false); resetComposer(); clearStoredDraft(); closeCompose(); };
   const requestCloseCompose = () => {
     if (busy) return; // never close while a post is on its way
@@ -645,23 +688,44 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       setComments(await community.listComments(client, details.id)); setCommentBody(''); setReplyTo(null); setProductId(null); setShowTagPicker(false);
     } catch (e) { notifyError(e); } finally { setBusy(false); }
   };
+  // Helpful and Save change on screen at once, everywhere the post shows, and
+  // roll back with a toast if the server says no.
+  const patchPost = (id, fn) => {
+    const map = (list) => list.map((p) => (p.id === id ? fn(p) : p));
+    setPosts(map); setProfilePosts(map);
+    setSearchResults((r) => (r ? { ...r, posts: map(r.posts || []) } : r));
+    setDetails((d) => (d && d.id === id && page?.type === 'post' ? fn(d) : d));
+  };
+  const inFlight = useRef(new Set());
   const togglePost = async (post, kind) => {
     if (!user) { requireAccount(kind === 'save' ? 'saved posts' : 'reactions'); return; }
+    const key = `${kind}:${post.id}`;
+    if (inFlight.current.has(key)) return;
+    const on = !post[kind === 'save' ? 'viewer_saved' : 'viewer_found_helpful'];
+    inFlight.current.add(key);
+    patchPost(post.id, (p) => applyToggle(p, kind, on));
     try {
-      const on = !post[kind === 'save' ? 'viewer_saved' : 'viewer_found_helpful'];
       if (kind === 'save') await community.setSaved(supabase, user.id, post.id, on);
       else await community.setHelpful(supabase, user.id, { postId: post.id }, on);
-      setRefresh((v) => v + 1);
-      if (page?.type === 'post') setDetails(await community.getFeedPost(supabase, post.id));
-    } catch (e) { notifyError(e); }
+      if (kind === 'save') toast(on ? 'Saved' : 'Removed from saved');
+      else setEngageTick((v) => v + 1);
+    } catch {
+      patchPost(post.id, (p) => applyToggle(p, kind, !on));
+      toast(kind === 'save' ? 'Couldn’t save that. Try again.' : 'Couldn’t mark that helpful. Try again.');
+    } finally { inFlight.current.delete(key); }
+  };
+  const share = async (post) => {
+    const r = await sharePost(post);
+    if (r === 'copied') toast('Link copied');
+    else if (r === 'failed') toast('Couldn’t copy the link');
   };
   // Delete waits 5 seconds with an Undo before it really happens.
   const pendingDelete = useRef(null);
-  const confirmDelete = async () => {
-    if (!deleteTarget || busy) return;
-    const target = deleteTarget;
-    setDeleteTarget(null); setError('');
+  const confirmDelete = async (target) => {
+    if (!target || busy) return;
+    setArmedDelete(null); setMenuId(null); setError('');
     setPosts((prev) => prev.filter((p) => p.id !== target.id));
+    setProfilePosts((prev) => prev.filter((p) => p.id !== target.id));
     if (page?.type === 'post' && page.id === target.id) closePage();
     const timer = window.setTimeout(async () => {
       pendingDelete.current = null;
@@ -769,43 +833,56 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     if (compose !== 'playlist' && body.length > bodyMax) return `Keep it under ${bodyMax} characters.`;
     return '';
   })();
-  const composeEmpty = compose === 'playlist' ? !playlistTitle.trim() : compose !== 'recommend' && !body.trim();
+  const composeEmpty = compose === 'playlist' ? !playlistTitle.trim() : compose !== 'recommend' && isOnlyStarter(body, starter);
   const composeBlocked = compose === 'playlist' ? breaksCommunityRules(playlistTitle) : breaksCommunityRules(body);
 
   const hashtagMatch = body.match(/(?:^|\s)#([A-Za-z][\w-]*)?$/);
   const hashtagSuggestions = hashtagMatch ? suggestHashtags(hashtagMatch[1] || '', 6) : [];
 
-  const renderPost = (post, full = false) => {
+  const popIcon = (e) => { const b = e.currentTarget; b.classList.remove('is-pop'); void b.offsetWidth; b.classList.add('is-pop'); };
+  const renderPost = (post, full = false, i = 0) => {
     const anon = post.is_anonymous || !post.author_id;
     const name = anon ? 'Anonymous' : post.author_display_name || post.author_username || 'Community member';
     const menuOpen = menuId === post.id;
+    const armed = armedDelete === post.id;
     const helpful = Number(post.helpful_count) || 0;
     const replies = Number(post.comment_count) || 0;
-    return <article ref={engagement.trackView(post.id)} className={`cm-post ay-card${full ? ' is-full' : ''}`} data-kind={post.kind || 'post'} key={post.id}>
+    const kind = post.kind === 'question' || post.kind === 'review' ? post.kind : 'post';
+    const media = post.media || [];
+    const long = !full && String(post.body || '').length > 360;
+    const replyWord = kind === 'question' ? 'Answer' : 'Reply';
+    return <article ref={engagement.trackView(post.id)} className={`cm-post cm-note is-${kind}${full ? ' is-full' : ''}`} style={{ '--i': Math.min(i, 6) }} data-kind={kind} key={post.id}>
+      {kind === 'review' && <span className="cm-tape" aria-hidden="true" />}
+      {kind === 'question' && <span className="cm-ear">Question</span>}
       <header className="cm-post-head">
-        <Avatar size={36} name={name} path={!anon ? profileById.get(post.author_id)?.avatar_url : null} anonymous={anon} />
+        <Avatar size={40} name={name} path={!anon ? profileById.get(post.author_id)?.avatar_url : null} anonymous={anon} />
         <div className="cm-post-who">
           {anon || !post.author_username ? <strong>{name}</strong> : <button type="button" className="cm-name" onClick={() => openProfile(post.author_username)}>{name}</button>}
-          {/* One label for staff: "ayna team · CMO" (was check + title + pill). */}
-          <span className="cm-post-meta"><TeamTag title={badgeFor(post.author_id, anon)} />{post.kind && post.kind !== 'post' && <Tag kind={post.kind} />}<time dateTime={post.created_at || undefined}>{timeLabel(post.created_at)}</time></span>
+          <span className="cm-post-meta"><TeamTag title={badgeFor(post.author_id, anon)} />{kind === 'review' && <span className="ay-sr">Review</span>}<time dateTime={post.created_at || undefined} title={fullTime(post.created_at)}>{timeLabel(post.created_at)}</time>{post.edited_at && <span>Edited</span>}</span>
         </div>
         <div className="cm-menu-wrap">
-          <button type="button" className="cm-more" aria-label={`More options for ${name}'s post`} aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => setMenuId(menuOpen ? null : post.id)}><Icon name="more" size={18} /></button>
+          <button type="button" className="cm-more" aria-label={`More options for ${name}'s post`} aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => { setArmedDelete(null); setMenuId(menuOpen ? null : post.id); }}><Icon name="more" size={18} /></button>
           {menuOpen && <div className="cm-menu" role="menu">
             {post.is_mine && user && <button type="button" role="menuitem" onClick={() => { setMenuId(null); setEditPost(post); setEditBody(post.body || ''); setEditRating(normalizeRating(post.rating)); }}>{post.kind === 'review' ? 'Edit review' : 'Edit post'}</button>}
-            <button type="button" role="menuitem" onClick={() => { setMenuId(null); if (post.is_mine) setDeleteTarget(post); else setReportPost(post); }}>{post.is_mine ? 'Delete post' : 'Report post'}</button>
+            <button type="button" role="menuitem" onClick={() => { setMenuId(null); share(post); }}>Copy link</button>
+            {post.is_mine ? <button type="button" role="menuitem" className={armed ? 'is-armed' : undefined} aria-live="polite" disabled={busy} onClick={() => (armed ? confirmDelete(post) : setArmedDelete(post.id))}>{armed ? 'Tap again to delete' : 'Delete post'}</button>
+              : <button type="button" role="menuitem" onClick={() => { setMenuId(null); setReportPost(post); }}>Report post</button>}
           </div>}
         </div>
       </header>
-      {post.kind === 'review' && <Stars value={post.rating} size={15} />}
-      {full ? <p className="cm-body">{post.body}</p> : <button type="button" className="cm-body" onClick={() => openPost(post)}>{post.body}</button>}
-      {(post.media || []).length > 0 && <div className="cm-photos">{post.media.slice(0, 4).map((m) => <img key={m.path} src={publicMediaUrl(m.path)} alt="" loading="lazy" />)}</div>}
+      {kind === 'review' && <div className="cm-review-stars"><Stars value={post.rating} size={20} /><span aria-hidden="true">{normalizeRating(post.rating) ? `${normalizeRating(post.rating)} of 5` : ''}</span></div>}
+      {full ? <p className="cm-body">{post.body}</p> : <button type="button" className={`cm-body${long ? ' is-clamped' : ''}`} onClick={() => openPost(post)}>{post.body}</button>}
+      {long && <button type="button" className="cm-readmore" onClick={() => openPost(post)}>Read the rest</button>}
+      {media.length > 0 && <div className={`cm-photos n-${Math.min(media.length, 4)}`}>{media.slice(0, 4).map((m, k) => (full
+        ? <span key={m.path} className="cm-polaroid" style={{ '--tilt': `${k % 2 ? 1.2 : -1.2}deg` }}><img src={publicMediaUrl(m.path)} alt="" loading="lazy" /></span>
+        : <button type="button" key={m.path} className="cm-polaroid" style={{ '--tilt': `${k % 2 ? 1.2 : -1.2}deg` }} onClick={() => openPost(post)} aria-label={`Open ${name}'s post, photo ${k + 1}`}><img src={publicMediaUrl(m.path)} alt="" loading="lazy" /></button>))}</div>}
       {postProductIds(post).slice(0, 1).map((id) => <Mention key={id} productId={id} productsById={productsById} quizResults={quizResults} onOpenProduct={onOpenProduct} />)}
       <PostStats post={post} engagement={engagement} onOpenLikers={setLikersPost} />
       <footer className="cm-actions">
-        <button type="button" aria-pressed={Boolean(post.viewer_found_helpful)} aria-label={`Helpful${helpful ? `, ${helpful}` : ''}`} title="Helpful" onClick={() => togglePost(post, 'helpful')}><Icon name="thumb" size={17} /><span aria-hidden="true">{helpful ? `Helpful ${helpful}` : 'Helpful'}</span></button>
-        <button type="button" aria-label={`Reply${replies ? `, ${replies} replies` : ''}`} title="Reply" onClick={() => openPost(post)}><Icon name="comment" size={17} /><span aria-hidden="true">{replies ? `Reply ${replies}` : 'Reply'}</span></button>
-        <button type="button" className="cm-save" aria-pressed={Boolean(post.viewer_saved)} aria-label={post.viewer_saved ? 'Saved' : 'Save'} title={post.viewer_saved ? 'Saved' : 'Save'} onClick={() => togglePost(post, 'save')}><Icon name="heart" size={17} /><span aria-hidden="true">{post.viewer_saved ? 'Saved' : 'Save'}</span></button>
+        <button type="button" className="cm-act-helpful" aria-pressed={Boolean(post.viewer_found_helpful)} aria-label={`Helpful${helpful ? `, ${helpful}` : ''}`} onClick={(e) => { if (user && !post.viewer_found_helpful) popIcon(e); togglePost(post, 'helpful'); }}><Icon name="thumb" size={18} /><span aria-hidden="true">Helpful{helpful ? <b>{helpful}</b> : null}</span></button>
+        <button type="button" aria-label={`${replyWord}${replies ? `, ${replies} ${kind === 'question' ? (replies === 1 ? 'answer' : 'answers') : (replies === 1 ? 'reply' : 'replies')}` : ''}`} onClick={() => openPost(post)}><Icon name="comment" size={18} /><span aria-hidden="true">{replyWord}{replies ? <b>{replies}</b> : null}</span></button>
+        <button type="button" aria-label="Share" onClick={() => share(post)}><Icon name="share" size={18} /><span aria-hidden="true">Share</span></button>
+        <button type="button" className="cm-save" aria-pressed={Boolean(post.viewer_saved)} aria-label={post.viewer_saved ? 'Saved' : 'Save'} onClick={(e) => { if (user && !post.viewer_saved) popIcon(e); togglePost(post, 'save'); }}><Icon name="bookmark" size={18} /><span aria-hidden="true">{post.viewer_saved ? 'Saved' : 'Save'}</span></button>
       </footer>
     </article>;
   };
@@ -868,7 +945,6 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         <section className="cm-group">
           <label className="cm-label" htmlFor="cm-compose-body">{composeLabel}</label>
           <RuleField id="cm-compose-body" autoGrow data-autofocus={compose !== 'review' || undefined} minRows={4} value={body} maxLength={bodyMax} onChange={(e) => setBody(e.target.value)} placeholder={compose === 'question' ? 'What would you like to ask? Add #topics if helpful.' : compose === 'review' ? 'How was it for you?' : compose === 'recommend' ? 'Add a note (optional)' : 'What’s on your mind? Add #topics if helpful.'} onShowRules={openRules} />
-          <Counter length={body.length} max={bodyMax} />
           {compose === 'question' && (() => {
             // Before she asks, show questions already asked that share her words.
             const words = body.toLowerCase().match(/[a-z]{4,}/g) || [];
@@ -902,6 +978,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         {error && <p className="cm-error" role="alert">{error}</p>}
         <div className="cm-compose-actions">
           <button type="button" className="ct-link cm-link cm-rules-link" onClick={openRules}>Community rules</button>
+          {compose !== 'playlist' && <CharRing length={body.length} max={bodyMax} className="ay-ring cm-ring" />}
           <button type="button" className="ay-btn ay-btn--primary" disabled={busy || composeEmpty || Boolean(composeIssue) || composeBlocked} onClick={submit}>{busy ? 'Sharing…' : compose === 'playlist' ? 'Create playlist' : compose === 'recommend' ? 'Send recommendation' : compose === 'question' ? 'Ask question' : compose === 'review' ? 'Post review' : 'Share post'}</button>
         </div>
       </div>
@@ -934,12 +1011,37 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const REPLY_BOX = <div className="cm-reply">
         {replyTo && <button type="button" className="ct-link cm-link" onClick={() => setReplyTo(null)}>Replying to a comment · cancel</button>}
         <RuleField autoGrow minRows={3} value={commentBody} maxLength={COMMENT_MAX} onChange={(e) => setCommentBody(e.target.value)} placeholder="Add to the conversation" aria-label="Your reply" onShowRules={openRules} />
-        <Counter length={commentBody.length} max={COMMENT_MAX} />
+        <CharRing length={commentBody.length} max={COMMENT_MAX} className="ay-ring cm-ring is-reply" />
         {showTagPicker || productId ? <Picker products={products} value={productId} onChange={setProductId} placeholder="Search a product to tag" /> : <button type="button" className="ct-link cm-link cm-tag-link" onClick={() => setShowTagPicker(true)}>+ Tag a product</button>}
         {user && <Check checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)}>Reply anonymously</Check>}
         <button type="button" className="ay-btn ay-btn--primary" disabled={busy || !commentBody.trim() || breaksCommunityRules(commentBody)} onClick={submitComment}>Post reply</button>
       </div>;
   const replyEmpty = <p className="cm-muted">No replies yet.</p>;
+
+  const visiblePosts = posts.filter((p) => !isBlocked(p.author_id));
+  // One big member quote, only from real posts other members found helpful.
+  const memberQuote = pickMemberQuote(visiblePosts, { isBlocked });
+  // Inline (phones), the quote sits a few notes away from the post it quotes.
+  const quotedAt = memberQuote ? visiblePosts.findIndex((p) => p.id === memberQuote.post.id) : -1;
+  const quoteSlot = quotedAt >= 0 && quotedAt <= 5 ? quotedAt + 4 : 2;
+  const quoteBlock = (where) => {
+    if (!memberQuote) return null;
+    const q = memberQuote.post;
+    const anon = q.is_anonymous || !q.author_id;
+    const who = anon ? 'A member' : q.author_display_name || q.author_username || 'A member';
+    const product = postProductIds(q).map((id) => productsById.get(String(id))).find(Boolean);
+    const n = Number(q.helpful_count) || 0;
+    return <figure className={`cm-quote ${where}`}>
+      <span className="cm-quote__label">Said in Community</span>
+      <blockquote><button type="button" onClick={() => openPost(q)}><mark>{memberQuote.lead}</mark>{memberQuote.rest ? ` ${memberQuote.rest}` : ''}</button></blockquote>
+      <figcaption><strong>{who}</strong>{product ? <span>on {product.name}</span> : null}<span>{n} found this helpful</span></figcaption>
+    </figure>;
+  };
+  const peopleBlock = (where) => {
+    const list = user ? suggestedPeople.slice(0, SIDE_MAX) : [];
+    if (!list.length) return null;
+    return <section className={`cm-mod cm-people-mod ${where}`}><div className="cm-mod__head"><h2>People to follow</h2></div><ul className="ay-group cm-mod__list">{list.map((p) => <li key={p.user_id} className="cm-mod-person"><button type="button" className="cm-suggest-who" onClick={() => openProfile(p.username)}><Avatar size={32} name={p.display_name || p.username} path={p.avatar_url} /><span><strong>{p.display_name || p.username}</strong><small>@{p.username}</small><TeamTag title={badgeFor(p.user_id)} /></span></button><button type="button" className="ay-btn ay-btn--secondary cm-small" onClick={() => toggleFollow(p.user_id)}>Follow</button></li>)}</ul></section>;
+  };
 
   let main;
   if (page?.type === 'post' && details) {
@@ -1100,18 +1202,22 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
           <strong>{pinnedAnn.title}</strong>
           <span className="cm-pinned-ann__go">Read the announcement <span aria-hidden="true">→</span></span>
         </button>}
-        {/* Reading is open to everyone; the share box is for members (logged out there's a Join card). */}
-        {user && <div className="cm-composer ay-group">
-          <div className="cm-composer__top">
-            <Avatar size={36} name={profile?.display_name || 'You'} path={profile?.avatar_url} anonymous={!profile} />
-            <button type="button" className="cm-share" onClick={() => openCompose(tab === 'question' ? 'question' : tab === 'review' ? 'review' : 'post')}>{tab === 'question' ? 'Ask the community a question' : tab === 'review' ? 'Review a product you’ve tried' : 'Share with the community'}</button>
-          </div>
-          <div className="cm-composer-kinds" role="group" aria-label="Or start a">
-            {Object.keys(KIND_TITLES).map((k) => <button type="button" key={k} className={`is-${k}`} onClick={() => openCompose(k)}>{VERB[k] || k}</button>)}
-          </div>
-        </div>}
-        {/* For you is every post; team news lives in its own Announcements tab (Oct 16). */}
-        {firstLoad ? <div className="cm-skel-list" aria-busy="true" aria-label="Loading posts"><SkeletonPost /><SkeletonPost /><SkeletonPost /></div> : posts.filter((p) => !isBlocked(p.author_id)).map((p) => renderPost(p))}
+        {/* Start a post: one line to write, and prompt tiles on For you (visitors get sent to sign in). */}
+        {tab !== 'following' && <section className="cm-start" aria-label="Start a post">
+          {user && <button type="button" className="cm-start__line" onClick={() => openCompose(tab === 'question' ? 'question' : tab === 'review' ? 'review' : 'post')}>
+            <Avatar size={36} name={profile?.display_name || 'You'} path={profile?.avatar_url} />
+            <span>{tab === 'question' ? 'Ask the community a question' : tab === 'review' ? 'Review a product you’ve tried' : 'Share with the community'}</span>
+            <span className="cm-start__plus" aria-hidden="true"><Icon name="plus" size={18} /></span>
+          </button>}
+          {tab === 'for-you' && <div className="cm-prompts">{PROMPTS.map((pr, i) => <button type="button" key={pr.key} className={`cm-prompt is-${pr.tone}`} style={{ '--i': i }} onClick={() => openCompose(pr.kind, pr)}>
+            <PromptIcon name={pr.icon} size={22} /><span><strong>{pr.title}</strong><small>{pr.hint}</small></span>
+          </button>)}</div>}
+        </section>}
+        {firstLoad ? <div className="cm-skel-list" aria-busy="true" aria-label="Loading posts"><SkeletonPost /><SkeletonPost i={1} /><SkeletonPost i={2} /></div> : visiblePosts.map((p, i) => <Fragment key={p.id}>
+          {renderPost(p, false, i)}
+          {i === quoteSlot && tab === 'for-you' && quoteBlock('is-inline')}
+          {i === 5 && tab === 'for-you' && peopleBlock('is-inline')}
+        </Fragment>)}
         {!loading && posts.length === 0 && (tab === 'following' ? <div className="cm-empty">
           {(() => {
             const named = followingIds.map((id) => profileById.get(id)).filter(Boolean).slice(0, 3);
@@ -1150,24 +1256,40 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   })();
   const questionsSide = sideQuestions.filter((q) => !(page?.type === 'post' && page.id === q.id)).slice(0, SIDE_MAX);
   const playlistsSide = page?.type === 'playlist' ? [] : sidePlaylists.slice(0, SIDE_MAX);
-  // People to follow is for members (a visitor can't follow anyone yet); visitors get the questions.
-  const peopleSide = user ? suggestedPeople.slice(0, SIDE_MAX) : [];
+
+  const tabList = <div className="cm-folders" role="tablist" aria-label="Community feeds">{TABS.map(([k, l]) => <button type="button" role="tab" key={k} aria-selected={onFeed && tab === k} className={`cm-folder is-${k}`} onClick={() => switchTab(k)}>
+    <svg className="cm-folder__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{TAB_ICONS[k]}</svg>
+    <span>{l}</span>{k === 'announcements' && newAnns.length > 0 && <b className="cm-folder__new">{newAnns.length} new</b>}
+  </button>)}</div>;
+  const topicChips = (where) => <div className={`cm-topicset ${where}`}>
+    {topics.map((t) => <button type="button" className="cm-topic" key={t} onClick={() => { if (page) closePage(); setSearch(t); setSearchResults(null); }}>#{t}</button>)}
+    <button type="button" className="cm-topic is-suggest" onClick={() => setSuggestTopic(true)}><Icon name="plus" size={14} />Suggest a topic</button>
+  </div>;
 
   return <section className="ct cm ay-container">
-    <header className={`cm-head${page ? '' : ' ay-pagehead ay-band ay-band--sky'}`}>
+    <header className={`cm-head${page ? ' is-page' : ' ay-pagehead ay-band ay-band--sky'}`}>
       {page ? <button type="button" className="ct-back cm-back" onClick={closePage}><span aria-hidden="true">←</span> {page.type === 'post' ? 'Back to feed' : 'Community'}</button>
         : <div className="cm-head__title"><h1 className="ay-h1">Ask, review, share.</h1><p className="ct-lede">Real talk between women, about the products we actually use.</p></div>}
       <div className="cm-head__actions">
-        <label className="ct-search cm-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16 16 4.5 4.5" /></svg><input value={search} onChange={(e) => { setSearch(e.target.value); setSearchResults(null); if (page) closePage(); }} placeholder="Search people, posts, playlists" aria-label="Search community" />{search && <button type="button" className="cm-search__clear" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); }}>×</button>}</label>
+        <label className="ct-search cm-search"><Icon name="search" size={20} /><input ref={searchRef} value={search} onChange={(e) => { setSearch(e.target.value); setSearchResults(null); if (page) closePage(); }} placeholder="Search people, posts, playlists" aria-label="Search community" aria-keyshortcuts={isMac ? 'Meta+K' : 'Control+K'} />{search ? <button type="button" className="cm-search__clear" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); searchRef.current?.focus(); }}>×</button> : <kbd className="cm-kbd" aria-hidden="true">{isMac ? '⌘K' : 'Ctrl K'}</kbd>}</label>
         {user && <button type="button" className="cm-iconbtn cm-bell" onClick={openUpdates} aria-label={unreadCount + newAnns.length ? `Updates, ${unreadCount + newAnns.length} new` : 'Updates'}><Icon name="bell" size={20} />{unreadCount + newAnns.length > 0 && <span className="cm-bell-dot" aria-hidden="true">{unreadCount + newAnns.length > 9 ? '9+' : unreadCount + newAnns.length}</span>}</button>}
-        {user && <button type="button" className="cm-iconbtn cm-head-me" onClick={openMe} aria-label={profile ? 'Your Community profile' : 'Set up your Community profile'}><Avatar size={40} name={profile?.display_name || 'You'} path={profile?.avatar_url} anonymous={!profile} /></button>}
+        {user && <button type="button" className="cm-iconbtn cm-head-me" onClick={openMe} aria-label={profile ? 'Your Community profile' : 'Set up your Community profile'}><Avatar size={44} name={profile?.display_name || 'You'} path={profile?.avatar_url} /></button>}
       </div>
     </header>
-    {page?.type !== 'profile' && <div className="ay-tabs cm-tabs"><div className="ay-tabs__list" role="tablist" aria-label="Community feeds">{TABS.map(([k, l]) => <button type="button" role="tab" key={k} aria-selected={onFeed && tab === k} className="ay-tabs__tab" onClick={() => switchTab(k)}>{l}{k === 'announcements' && newAnns.length > 0 && <span className="ct-badge cm-tab-new">{newAnns.length} new</span>}</button>)}</div></div>}
     {error && <p className="cm-error" role="alert">{error}</p>}
     {notice && <p className="cm-notice" role="status">{notice}</p>}
-    <div className="cm-layout">
+    <div className={`cm-layout${page?.type === 'profile' ? ' is-profile' : ''}`}>
+      <nav className="cm-rail" aria-label="Community">
+        {tabList}
+        <div className="cm-rail__more">
+          {user && profile && <button type="button" className="cm-me" onClick={() => openProfile(profile.username)}><Avatar size={36} name={profile.display_name || 'You'} path={profile.avatar_url} /><span><strong>{profile.display_name || 'You'}</strong><small>@{profile.username}</small></span></button>}
+          <h2 className="cm-rail__h">Topics</h2>
+          {topicChips('is-rail')}
+          <button type="button" className="ct-link cm-rules-btn" onClick={openRules}>Community rules</button>
+        </div>
+      </nav>
       <div className="cm-main">
+        {onFeed && topics.length > 0 && tab !== 'announcements' && tab !== 'playlists' && topicChips('is-row')}
         {user && !profile && profileChecked ? <div className="ay-group is-padded cm-join"><h2 className="ay-h3">Join the community</h2><p className="cm-muted">Pick a name people will see. Your health answers stay private.</p>
           <div className="cm-join__fields">
             <RuleField as="input" value={profileName} maxLength={50} onChange={(e) => setProfileName(e.target.value)} placeholder="Display name" aria-label="Display name" onShowRules={openRules} />
@@ -1176,17 +1298,13 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
           <button type="button" className="ay-btn ay-btn--primary" disabled={busy || !profileName.trim() || !profileHandle.trim() || breaksCommunityRules(profileName, profileHandle)} onClick={saveProfile}>Create profile</button></div>
           : !user && onFeed ? <div className="cm-guest"><p><strong>Join the conversation.</strong> Reading is open to everyone. An account lets you post, reply and follow people.</p><button type="button" className="ay-btn ay-btn--primary" onClick={() => requireAccount('posting in Community')}>Join or sign in</button></div> : null}
         {main}
+        <button type="button" className="ct-link cm-rules-foot" onClick={openRules}>Community rules</button>
       </div>
       <aside className="cm-side" aria-label="More from Community">
-        {user && profile && <div className="cm-me"><Avatar size={40} name={profile.display_name || 'You'} path={profile.avatar_url} /><div><strong>{profile.display_name || 'You'}</strong><small>@{profile.username}</small></div><button type="button" className="ct-link" onClick={() => openProfile(profile.username)}>View profile</button></div>}
-        {questionsSide.length > 0 && <section className="cm-mod"><div className="cm-mod__head"><h2>Recent questions</h2>{!(onFeed && tab === 'question') && <button type="button" className="ct-shelf__all" onClick={() => switchTab('question')}>All</button>}</div><ul className="ay-group cm-mod__list">{questionsSide.map((q) => <li key={q.id}><button type="button" className="cm-mod-q" onClick={() => openPost(q)}><span>{q.body}</span><small>{Number(q.comment_count) ? `${q.comment_count} ${Number(q.comment_count) === 1 ? 'reply' : 'replies'}` : 'No replies yet'}</small></button></li>)}</ul></section>}
+        {onFeed && tab === 'for-you' && quoteBlock('is-side')}
+        {questionsSide.length > 0 && <section className="cm-mod"><div className="cm-mod__head"><h2>Recent questions</h2>{!(onFeed && tab === 'question') && <button type="button" className="ct-shelf__all" onClick={() => switchTab('question')}>All</button>}</div><ul className="ay-group cm-mod__list">{questionsSide.map((q) => <li key={q.id}><button type="button" className="cm-mod-q" onClick={() => openPost(q)}><span>{q.body}</span><small>{Number(q.comment_count) ? `${q.comment_count} ${Number(q.comment_count) === 1 ? 'answer' : 'answers'}` : 'No answers yet'}</small></button></li>)}</ul></section>}
         {playlistsSide.length > 0 && <section className="cm-mod"><div className="cm-mod__head"><h2>Playlists</h2>{!(onFeed && tab === 'playlists') && <button type="button" className="ct-shelf__all" onClick={() => switchTab('playlists')}>All</button>}</div><ul className="ay-group cm-mod__list">{playlistsSide.map((p) => <li key={p.id}><button type="button" className="cm-mod-pl" onClick={() => openPlaylist(p)}><PlaylistCover playlist={p} productsById={productsById} /><span><strong>{p.title}</strong><small>{p.item_count || 0} {(p.item_count || 0) === 1 ? 'product' : 'products'} · {p.owner_display_name || 'ayna community'}</small></span></button></li>)}</ul></section>}
-        {peopleSide.length > 0 && <section className="cm-mod"><div className="cm-mod__head"><h2>People to follow</h2></div><ul className="ay-group cm-mod__list">{peopleSide.map((p) => <li key={p.user_id} className="cm-mod-person"><button type="button" className="cm-suggest-who" onClick={() => openProfile(p.username)}><Avatar size={32} name={p.display_name || p.username} path={p.avatar_url} /><span><strong>{p.display_name || p.username}</strong><small>@{p.username}</small><TeamTag title={badgeFor(p.user_id)} /></span></button><button type="button" className="ay-btn ay-btn--secondary cm-small" onClick={() => toggleFollow(p.user_id)}>Follow</button></li>)}</ul></section>}
-        <section className="cm-mod"><div className="cm-mod__head"><h2>Topics</h2></div>
-          {topics.length > 0 && <div className="ay-chip-row cm-topics">{topics.map((t) => <button type="button" className="ay-chip" key={t} onClick={() => { if (page) closePage(); setSearch(t); setSearchResults(null); }}>#{t}</button>)}</div>}
-          <p className="cm-suggest-topic"><span>Missing a topic?</span> <button type="button" className="ct-link" onClick={() => setSuggestTopic(true)}>Suggest a topic</button></p>
-        </section>
-        <button type="button" className="ct-link cm-rules-btn" onClick={openRules}>Community rules</button>
+        {peopleBlock('is-side')}
       </aside>
     </div>
 
@@ -1280,7 +1398,6 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         } catch (e) { notifyError(e); } finally { setBusy(false); }
       }}>{busy ? 'Saving…' : 'Save changes'}</button></div>
     </Sheet>}
-    {deleteTarget && <Sheet title="Delete post?" onClose={() => setDeleteTarget(null)}><p className="cm-muted">This removes your post and its replies.</p><button type="button" className="ay-btn ay-btn--primary" disabled={busy} onClick={confirmDelete}>{busy ? 'Deleting…' : 'Delete post'}</button></Sheet>}
     {reportUser && <Sheet title={`Report ${reportUser.display_name || reportUser.username}`} onClose={() => setReportUser(null)}><select data-autofocus value={reportReason} onChange={(e) => setReportReason(e.target.value)} aria-label="Reason"><option value="harassment">Harassment</option><option value="spam">Spam</option><option value="impersonation">Pretending to be someone</option><option value="misinformation">Health misinformation</option><option value="other">Something else</option></select><button type="button" className="ay-btn ay-btn--primary" disabled={busy} onClick={submitUserReport}>Send report</button></Sheet>}
     {blockTarget && <Sheet title={`Block ${blockTarget.display_name || blockTarget.username}?`} onClose={() => setBlockTarget(null)}><p className="cm-muted">Their posts will be hidden from your feeds and search, and you’ll stop following them. You can unblock from their profile.</p><div className="cm-row"><button type="button" className="ay-btn ay-btn--primary" data-autofocus disabled={busy} onClick={() => setBlock(blockTarget, true)}>Block</button><button type="button" className="ay-btn ay-btn--secondary" onClick={() => setBlockTarget(null)}>Cancel</button></div></Sheet>}
     {reportPost && <Sheet title="Report post" onClose={() => setReportPost(null)}><select data-autofocus value={reportReason} onChange={(e) => setReportReason(e.target.value)} aria-label="Reason"><option value="misinformation">Health misinformation</option><option value="harassment">Harassment</option><option value="spam">Spam</option><option value="other">Something else</option></select><button type="button" className="ay-btn ay-btn--primary" disabled={busy} onClick={submitReport}>Send report</button></Sheet>}
