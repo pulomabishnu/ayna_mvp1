@@ -40,6 +40,14 @@ import { relTime, fullTime, pickMemberQuote, PROMPTS, isOnlyStarter, sharePost, 
 import { CharRing, DefaultFace, PromptIcon } from './community/notesKit.jsx';
 import { useNow } from './community/useNow.js';
 import './community/community-web.css';
+// Topics started by members (docs/community-user-topics.md). Hidden until the migration runs.
+import TopicPage from './community/topics/TopicPage.jsx';
+import TopicDirectory from './community/topics/TopicDirectory.jsx';
+import TopicEditor from './community/topics/TopicEditor.jsx';
+import { MyTopicRows, PostInPicker } from './community/topics/TopicBits.jsx';
+import { useUserTopics } from './community/topics/useUserTopics.js';
+import { joinTopicByCode, parseTopicInviteCode } from '../utils/community/userTopics.js';
+import './community/topics/user-topics.css';
 
 // The app's Community, built for the website. Same data and rules (shared
 // community store, ranking, topics, guest posting). Three columns on wide
@@ -336,6 +344,9 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const [topicName, setTopicName] = useState('');
   const [topicWhy, setTopicWhy] = useState('');
   const [topicState, setTopicState] = useState('idle');
+  const userTopics = useUserTopics(supabase, user);
+  const [startTopic, setStartTopic] = useState(false);
+  const [postTopicId, setPostTopicId] = useState(null);
   const coverPreview = useMemo(() => (coverPhoto ? URL.createObjectURL(coverPhoto) : null), [coverPhoto]);
   useEffect(() => () => { if (coverPreview) URL.revokeObjectURL(coverPreview); }, [coverPreview]);
   const teamBadges = useTeamBadges(supabase, user);
@@ -485,6 +496,23 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     try { setItems(await community.listPlaylistItems(supabase, pl.id)); } catch (e) { if (!pl.preview_product_ids?.length) notifyError(e); }
     if (user) community.listPlaylistCollaborators(supabase, pl.id).then(setCollab).catch(() => {});
   };
+  const openTopic = (t) => { if (!t?.id) return; setPage({ type: 'topic', id: t.id }); setDetails(null); setError(''); setSearch(''); setSearchResults(null); window.scrollTo(0, 0); };
+  const openTopics = () => { setPage({ type: 'topics', id: 'all' }); setDetails(null); setError(''); setSearch(''); setSearchResults(null); window.scrollTo(0, 0); };
+  // ?join-topic=<code> (an invite link someone shared): join, then open the topic.
+  useEffect(() => {
+    if (!supabase || !userTopics.available) return undefined;
+    let code = null;
+    try { code = parseTopicInviteCode(new URLSearchParams(window.location.search).get('join-topic')); } catch { /* no URL */ }
+    if (!code) return undefined;
+    if (!user) { requireAccount('joining this topic'); return undefined; }
+    let active = true;
+    joinTopicByCode(supabase, code).then((res) => {
+      if (!active) return;
+      try { const url = new URL(window.location.href); url.searchParams.delete('join-topic'); window.history.replaceState(window.history.state, '', url); } catch { /* keep the URL */ }
+      if (res.ok) { userTopics.reload(); openTopic({ id: res.topicId }); toast('Joined'); } else setError(res.message);
+    }).catch((e) => { if (active) notifyError(e); });
+    return () => { active = false; };
+  }, [supabase, user, userTopics.available]); // eslint-disable-line react-hooks/exhaustive-deps
   const openPlaylistById = async (id) => {
     try { const pl = await community.getPlaylist(supabase, id); if (pl) await openPlaylist(pl); else setError('This playlist isn’t available anymore.'); } catch (e) { notifyError(e); }
   };
@@ -584,7 +612,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const [confirmDiscard, setConfirmDiscard] = useState(false);
   const resetComposer = () => {
     setBody(''); setStarter(''); setProductId(seedProductId); setAnonymous(false); setPhotos([]); setRating(normalizeRating(seedRating) || null);
-    setPlaylistTitle(''); setPlaylistVisibility('public'); setCoverPhoto(null); setSelectedFriendIds([]); setError('');
+    setPlaylistTitle(''); setPlaylistVisibility('public'); setCoverPhoto(null); setSelectedFriendIds([]); setError(''); setPostTopicId(null);
   };
   const composeDirty = Boolean(!isOnlyStarter(body, starter) || playlistTitle.trim() || photos.length || coverPhoto);
   const draftStoreKey = user ? draftKey('web', user.id, composeOnly ? `pdp-${seedKind || 'post'}-${seedProductId || ''}` : '') : null;
@@ -655,7 +683,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         const media = [];
         try {
           for (const photo of photos) media.push(await uploadCommunityImage(client, photo, { folder: 'posts' }));
-          return await community.createPost(client, userId, { kind, body, topics, media, isAnonymous: anonymous, productId: kind === 'review' ? productId : null, rating: kind === 'review' ? rating : null, taggedProductIds: kind === 'review' || !productId ? [] : [productId] });
+          return await community.createPost(client, userId, { kind, body, topics, media, isAnonymous: anonymous, productId: kind === 'review' ? productId : null, rating: kind === 'review' ? rating : null, taggedProductIds: kind === 'review' || !productId ? [] : [productId], topicId: kind === 'review' ? null : postTopicId });
         } catch (e) { await Promise.all(media.map((m) => deleteCommunityImage(client, m.path).catch(() => {}))); throw e; }
       },
     });
@@ -944,6 +972,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
           <h3 className="cm-label" id="cm-rating-label">Your rating</h3>
           <div className="cm-rating" role="radiogroup" aria-labelledby="cm-rating-label">{[1, 2, 3, 4, 5].map((n) => <button type="button" key={n} role="radio" aria-checked={rating === n} aria-label={`${n} ${n === 1 ? 'star' : 'stars'}`} className={rating && n <= rating ? 'is-on' : ''} onClick={() => setRating(n)}><Star on={Boolean(rating) && n <= rating} size={28} /></button>)}</div>
         </section>}
+        {userTopics.available && compose !== 'review' && compose !== 'recommend' && <PostInPicker id="cm-post-in" topics={userTopics.mine} value={postTopicId} onChange={setPostTopicId} />}
         <section className="cm-group">
           <label className="cm-label" htmlFor="cm-compose-body">{composeLabel}</label>
           <RuleField id="cm-compose-body" autoGrow data-autofocus={compose !== 'review' || undefined} minRows={4} value={body} maxLength={bodyMax} onChange={(e) => setBody(e.target.value)} placeholder={compose === 'question' ? 'What would you like to ask? Add #topics if helpful.' : compose === 'review' ? 'How was it for you?' : compose === 'recommend' ? 'Add a note (optional)' : 'What’s on your mind? Add #topics if helpful.'} onShowRules={openRules} />
@@ -991,7 +1020,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     if (!user) return null;
     return <>
       {!doneLabel && composeSheet}
-      {showRules && <Sheet title="Community rules" onClose={() => setShowRules(false)} className="cm-rules-sheet"><CommunityRulesList /><button type="button" className="ay-btn ay-btn--primary" onClick={() => setShowRules(false)}>Got it</button></Sheet>}
+    {showRules && <Sheet title="Community rules" onClose={() => setShowRules(false)} className="cm-rules-sheet"><CommunityRulesList /><button type="button" className="ay-btn ay-btn--primary" onClick={() => setShowRules(false)}>Got it</button></Sheet>}
       {doneLabel && createPortal(<div className="cm-sheet-backdrop cm-done-backdrop" onClick={() => onDone?.()}><div className="cm-done" role="status" aria-live="polite"><span className="cm-done-mark" aria-hidden="true"><Icon name="check" size={22} /></span><strong>{doneLabel}</strong></div></div>, document.querySelector('.app-container') || document.body)}
     </>;
   }
@@ -1109,6 +1138,13 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       </section>}
       {mine && <div className="cm-pl-owner"><button type="button" className="ct-link is-danger" disabled={busy} onClick={deletePl}>Delete playlist</button></div>}
     </section>;
+  } else if (page?.type === 'topic') {
+    main = <TopicPage variant="web" supabase={supabase} user={user} topicId={page.id} refreshKey={refresh} renderPost={(p, i) => renderPost(p, false, i)}
+      onCompose={(t) => { setPostTopicId(t.id); openCompose('post'); }} onRequireAuth={requireAccount} onShowRules={openRules}
+      onDeleted={openTopics} onTopicsChanged={userTopics.reload} toast={toast} />;
+  } else if (page?.type === 'topics') {
+    main = <TopicDirectory variant="web" supabase={supabase} user={user} refreshKey={refresh} onOpen={openTopic} onCreate={() => setStartTopic(true)}
+      onSuggest={() => setSuggestTopic(true)} onRequireAuth={requireAccount} onTopicsChanged={userTopics.reload} />;
   } else if (page?.type === 'profile') {
     const own = Boolean(user && details && (details.user_id === user.id || (profile && details.user_id === profile.user_id)));
     const countLabel = (n) => (n >= PROFILE_LIST_MAX ? `${PROFILE_LIST_MAX}+` : String(n));
@@ -1265,6 +1301,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   </button>)}</div>;
   const topicChips = (where) => <div className={`cm-topicset ${where}`}>
     {topics.map((t) => <button type="button" className="cm-topic" key={t} onClick={() => { if (page) closePage(); setSearch(t); setSearchResults(null); }}>#{t}</button>)}
+    {userTopics.available && where === 'is-row' && <button type="button" className="cm-topic" onClick={openTopics}>Topics by members</button>}
     <button type="button" className="cm-topic is-suggest" onClick={() => setSuggestTopic(true)}><Icon name="plus" size={14} />Suggest a topic</button>
   </div>;
 
@@ -1287,11 +1324,19 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
           {user && profile && <button type="button" className="cm-me" onClick={() => openProfile(profile.username)}><Avatar size={36} name={profile.display_name || 'You'} path={profile.avatar_url} /><span><strong>{profile.display_name || 'You'}</strong><small>@{profile.username}</small></span></button>}
           <h2 className="cm-rail__h">Topics</h2>
           {topicChips('is-rail')}
+          {userTopics.available && <div className="ut-rail">
+            <h2 className="cm-rail__h">Topics by members</h2>
+            <MyTopicRows topics={userTopics.mine} activeId={page?.type === 'topic' ? page.id : null} onOpen={openTopic} />
+            <div className="ut-rail__links">
+              <button type="button" className="ct-link" onClick={openTopics}>Browse topics</button>
+              <button type="button" className="ct-link" onClick={() => (user ? setStartTopic(true) : requireAccount('starting a topic'))}>Start a topic</button>
+            </div>
+          </div>}
           <button type="button" className="ct-link cm-rules-btn" onClick={openRules}>Community rules</button>
         </div>
       </nav>
       <div className="cm-main">
-        {onFeed && topics.length > 0 && tab !== 'announcements' && tab !== 'playlists' && topicChips('is-row')}
+        {onFeed && (topics.length > 0 || userTopics.available) && tab !== 'announcements' && tab !== 'playlists' && topicChips('is-row')}
         {user && !profile && profileChecked ? <div className="ay-group is-padded cm-join"><h2 className="ay-h3">Join the community</h2><p className="cm-muted">Pick a name people will see. Your health answers stay private.</p>
           <div className="cm-join__fields">
             <RuleField as="input" value={profileName} maxLength={50} onChange={(e) => setProfileName(e.target.value)} placeholder="Display name" aria-label="Display name" onShowRules={openRules} />
@@ -1349,6 +1394,8 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         })()
         : <p className="cm-muted">You’re all caught up.</p>}
     </Sheet>}
+    {startTopic && <TopicEditor variant="web" supabase={supabase} user={user} onShowRules={openRules} onClose={() => setStartTopic(false)}
+      onSaved={(t) => { setStartTopic(false); userTopics.reload(); toast(t?.status === 'pending' ? 'Topic started. It shows in Community once the ayna team has checked it.' : 'Topic started'); if (t?.id) openTopic(t); }} />}
     {showRules && <Sheet title="Community rules" onClose={() => setShowRules(false)} className="cm-rules-sheet"><CommunityRulesList /><button type="button" className="ay-btn ay-btn--primary" onClick={() => setShowRules(false)}>Got it</button></Sheet>}
     {suggestTopic && <Sheet title="Suggest a topic" onClose={() => { setSuggestTopic(false); setTopicState('idle'); }}>
       {topicState === 'sent' ? <><p className="cm-muted">Thanks. The team reads every suggestion.</p><button type="button" className="ay-btn ay-btn--primary" data-autofocus onClick={() => { setSuggestTopic(false); setTopicState('idle'); setTopicName(''); setTopicWhy(''); }}>Done</button></> : <>

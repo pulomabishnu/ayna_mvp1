@@ -185,7 +185,7 @@ export async function getFeedPost(supabase, postId) {
   return check(await supabase.from('community_feed_posts').select('*').eq('id', postId).maybeSingle());
 }
 
-export async function createPost(supabase, userId, { kind, body, topics = [], isAnonymous = false, productId = null, rating = null, wouldRecommend = null, photoUrl = null, taggedProductIds = [], media = [] }) {
+export async function createPost(supabase, userId, { kind, body, topics = [], isAnonymous = false, productId = null, rating = null, wouldRecommend = null, photoUrl = null, taggedProductIds = [], media = [], topicId = null }) {
   const row = {
     author_id: userId,
     kind,
@@ -194,6 +194,9 @@ export async function createPost(supabase, userId, { kind, body, topics = [], is
     is_anonymous: Boolean(isAnonymous),
     photo_url: photoUrl || null,
   };
+  // A user-created topic (supabase/community_user_topics_2026-10-21.sql). Only
+  // sent when one is picked, so posting works before that migration runs.
+  if (topicId) row.topic_id = topicId;
   if (kind === 'review') {
     // The database only accepts 1 to 5 here; a missing or odd value would
     // otherwise save a review with no stars to show.

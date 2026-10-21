@@ -48,6 +48,7 @@ const DeleteAccountPage = lazyView(() => import('./components/DeleteAccountPage'
 const WebHealth = lazyView(() => import('./components/WebHealth'));
 const AdminReviewsPage = lazyView(() => import('./components/AdminReviewsPage'));
 const AdminResearchPage = lazyView(() => import('./components/AdminResearchPage'));
+const AdminTopicsPage = lazyView(() => import('./components/AdminTopicsPage'));
 const FreeProductPage = lazyView(() => import('./components/freeProduct/FreeProductPage'));
 const CampaignAdminPage = lazyView(() => import('./components/CampaignAdminPage'));
 const PhoneVerification = lazyView(() => import('./components/PhoneVerification'));
@@ -205,6 +206,8 @@ const VIEW_TO_PATH = {
   'admin-reviews': '/admin/reviews',
   // Same: api/research-product checks ADMIN_EMAILS.
   'admin-research': '/admin/research',
+  // Same: api/community-topics-admin checks ADMIN_EMAILS.
+  'admin-topics': '/admin/topics',
   // Free product campaign (feedback + 3 verified friends). Server decides everything: api/campaign.js.
   'free-product': '/free-product',
   'free-product-reward': '/free-product/reward',
@@ -224,6 +227,7 @@ const VIEW_TITLES = {
   'campus-resources': 'Campus resources',
   'admin-reviews': 'All reviews',
   'admin-research': 'Product research',
+  'admin-topics': 'Community topics',
   'free-product': 'Your free product',
   'free-product-reward': 'Your free product',
   'admin-campaign': 'Free product campaign',
@@ -2475,6 +2479,9 @@ function App() {
         )}
         {currentView === 'admin-campaign' && (
           <CampaignAdminPage onBack={handleBackFromStandalonePage} />
+        )}
+        {currentView === 'admin-topics' && (
+          <AdminTopicsPage onBack={handleBackFromStandalonePage} />
         )}
         {currentView === 'admin-research' && (
           <AdminResearchPage onBack={handleBackFromStandalonePage} />

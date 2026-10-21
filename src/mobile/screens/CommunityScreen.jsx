@@ -1,6 +1,7 @@
-// Topics here are the curated ayna list (src/utils/community/topics.js).
-// User-created topics are designed but deliberately not built yet: see
-// docs/community-user-topics.md for the plan and when to turn them on.
+// Topic pods here are the curated ayna list (src/utils/community/topics.js).
+// Topics started by members live in src/components/community/topics/ (shared
+// with the website); they stay hidden until their migration runs. See
+// docs/community-user-topics.md.
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { apiUrl } from '../../utils/apiUrl';
 import EmptyState from '../components/EmptyState.jsx';
@@ -42,6 +43,12 @@ import { CharRing, DefaultFace, PromptIcon } from '../../components/community/no
 import { useNow } from '../../components/community/useNow.js';
 import { displayName } from '../utils/displayName.js';
 import { fetchWithTimeout } from '../../utils/network.js';
+import TopicPage from '../../components/community/topics/TopicPage.jsx';
+import TopicDirectory from '../../components/community/topics/TopicDirectory.jsx';
+import TopicEditor from '../../components/community/topics/TopicEditor.jsx';
+import { PostInPicker } from '../../components/community/topics/TopicBits.jsx';
+import { useUserTopics } from '../../components/community/topics/useUserTopics.js';
+import '../../components/community/topics/user-topics.css';
 
 const TABS = [ ['for-you', 'For you'], ['following', 'Following'], ['question', 'Questions'], ['review', 'Reviews'], ['playlists', 'Playlists'], ['announcements', 'Announcements'] ];
 const POST_KINDS = { question: 'Question', review: 'Review', post: 'Post' };
@@ -214,6 +221,9 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
   const [topicScopeChoice, setTopicScope] = useState(null); // 'mine' | 'all' | topic key
   const [topicSheetOpen, setTopicSheetOpen] = useState(false);
   const [suggestOpen, setSuggestOpen] = useState(false);
+  const userTopics = useUserTopics(supabase, authUser);
+  const [startTopic, setStartTopic] = useState(false);
+  const [postTopicId, setPostTopicId] = useState(null);
   const [friendHandle, setFriendHandle] = useState('');
   const [friendshipProfiles, setFriendshipProfiles] = useState(new Map());
   // Collaborative playlists. available: false until the migration has run.
@@ -546,6 +556,8 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     catch (e) { notifyError(e); } finally { setBusy(false); }
   };
 
+  const openTopic = (t) => { if (!t?.id) return; setPage({ type: 'topic', id: t.id }); setDetails(true); setError(''); screenRef.current?.querySelector('.am-scroll')?.scrollTo?.(0, 0); };
+  const openTopics = () => { setPage({ type: 'topics', id: 'all' }); setDetails(true); setError(''); };
   const openProfile = async (username) => {
     if (!username) return;
     setPage({ type: 'profile', id: username }); setDetails(null); setProfilePosts([]); setProfilePlaylists([]); setError('');
@@ -664,7 +676,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
   useEffect(() => { if (!posted) return undefined; const t = window.setTimeout(() => setPosted(null), 8000); return () => window.clearTimeout(t); }, [posted]);
   const resetComposer = () => {
     setBody(''); setStarter(''); setProductId(seedProductId || null); setAnonymous(false); setPhotos([]); setRating(5);
-    setPlaylistTitle(''); setPlaylistVisibility('public'); setCoverMode('color'); setCoverText(''); setCoverPhoto(null); setSelectedFriendIds([]); setError('');
+    setPlaylistTitle(''); setPlaylistVisibility('public'); setCoverMode('color'); setCoverText(''); setCoverPhoto(null); setSelectedFriendIds([]); setError(''); setPostTopicId(null);
   };
   const composeDirty = Boolean(!isOnlyStarter(body, starter) || playlistTitle.trim() || photos.length || coverPhoto);
   const draftStoreKey = draftKey('app', authUser?.id || 'guest');
@@ -749,7 +761,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
         const media = [];
         try {
           for (const photo of photos) media.push(await uploadCommunityImage(client, photo, { folder: 'posts' }));
-          return await community.createPost(client, userId, { kind, body, topics, media, isAnonymous: !authUser || anonymous, productId: kind === 'review' ? productId : null, rating: kind === 'review' ? rating : null, taggedProductIds: kind === 'review' || !productId ? [] : [productId] });
+          return await community.createPost(client, userId, { kind, body, topics, media, isAnonymous: !authUser || anonymous, productId: kind === 'review' ? productId : null, rating: kind === 'review' ? rating : null, taggedProductIds: kind === 'review' || !productId ? [] : [productId], topicId: kind === 'review' ? null : postTopicId });
         } catch (e) {
           await Promise.all(media.map((item) => deleteCommunityImage(client, item.path).catch(() => {})));
           throw e;
@@ -968,9 +980,14 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       {!page && <div className="am-top"><div className="am-title"><h1>Community</h1></div><div className="am-top-actions"><button type="button" className="am-icon-button" onClick={() => authUser ? (profile ? openProfile(profile.username) : setNotice('Create your community profile below.')) : requireAccount('your Community profile')} aria-label="Community profile"><CommunityAvatar name={profile?.display_name || 'You'} path={profile?.avatar_url} /></button><button type="button" className="am-icon-button" onClick={openNotifications} aria-label="Notifications"><CommunityIcon name="bell" /></button></div></div>}
       {error && <p className="am-error" role="alert">{error}</p>}{notice && <p className="am-notice" role="status">{notice}</p>}{posted && <p className="am-notice am-posted" role="status">{posted.text}{posted.id && <button type="button" className="am-posted-view" onClick={viewPosted}>View post</button>}</p>}
       {page ? <div className="am-subpage" key={`${page.type}-${page.id || 'current'}`}>
-        <div className="am-subpage-header"><button type="button" className="am-back" onClick={closePage} aria-label="Back to Community"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6" /></svg></button><span className="am-subpage-title">{({ playlist: 'Playlist', profile: 'Profile', notifications: 'Updates', post: 'Post', friends: 'Friends' })[page.type] || 'Community'}</span></div>
+        <div className="am-subpage-header"><button type="button" className="am-back" onClick={closePage} aria-label="Back to Community"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6" /></svg></button><span className="am-subpage-title">{({ playlist: 'Playlist', profile: 'Profile', notifications: 'Updates', post: 'Post', friends: 'Friends', topic: 'Topic', topics: 'Topics by members' })[page.type] || 'Community'}</span></div>
         {!details && <p className="am-empty" role="status">Loading…</p>}
         {page.type === 'post' && details && <>{renderPost(details)}<h2 className="am-section">Replies</h2>{comments.map((c) => <div className="am-comment" key={c.id}><div className="am-meta"><div className="am-author"><CommunityAvatar name={c.author_display_name || c.author_username} path={!c.is_anonymous && c.author_id ? profileById.get(c.author_id)?.avatar_url : null} anonymous={c.is_anonymous || !c.author_id} /><span>{c.is_anonymous || !c.author_id ? 'Anonymous' : c.author_display_name || c.author_username}</span><VerifiedBadge title={badgeFor(c.author_id, c.is_anonymous)} compact /></div><span>{timeLabel(c.created_at)}</span></div><p>{c.body}</p>{c.product_id && <ProductMention productId={c.product_id} productsById={productsById} quizAnswers={quizAnswers} matchOpts={matchOpts} onOpenProduct={onOpenProduct} />}<button type="button" onClick={() => setReplyTo(c.id)}>Reply</button></div>)}<div className="am-compose-inline">{replyTo && <button type="button" onClick={() => setReplyTo(null)}>Replying · cancel</button>}<RuleField value={commentBody} onChange={(e) => setCommentBody(e.target.value)} placeholder="Add to the conversation" aria-label="Your reply" onShowRules={openRules} /><ProductPicker products={products} value={productId} onChange={setProductId} /><button type="button" className="am-primary" disabled={busy || !commentBody.trim() || breaksCommunityRules(commentBody)} onClick={submitComment}>Post reply</button></div></>}
+        {page.type === 'topic' && <TopicPage variant="app" supabase={supabase} user={authUser} topicId={page.id} refreshKey={refresh} renderPost={(p, i) => renderPost(p, i)}
+          onCompose={(t) => { setPostTopicId(t.id); openCompose('post'); }} onRequireAuth={requireAccount} onShowRules={openRules}
+          onDeleted={() => openTopics()} onTopicsChanged={userTopics.reload} toast={setNotice} />}
+        {page.type === 'topics' && <TopicDirectory variant="app" supabase={supabase} user={authUser} refreshKey={refresh} onOpen={(t) => openTopic(t)} onCreate={() => setStartTopic(true)}
+          onSuggest={openSuggestTopic} onRequireAuth={requireAccount} onTopicsChanged={userTopics.reload} />}
         {page.type === 'playlist' && details && <section className="am-playlist-detail">
           <div className="am-playlist-detail-hero">{details.cover_url ? <img className="am-cover-detail" src={publicMediaUrl(details.cover_url)} alt="Playlist cover" /> : <span className="am-mosaic" aria-hidden="true">{[0, 1, 2, 3].map((slot) => { const product = productsById.get(String(items[slot]?.product_id)); return <span key={slot} className={`am-mosaic-tile is-${slot}`}>{product && <ProductImage product={product} src={product.image || product.imageUrl || product.images?.[0]} alt="" allowBrandLogo={product.type === 'digital'} style={{ objectFit: 'contain' }} />}</span>; })}</span>}<div className="am-playlist-detail-copy"><small>{details.item_count ?? items.length} {(details.item_count ?? items.length) === 1 ? 'pick' : 'picks'}{collab.rows.length > 0 && <span className="am-collab-label">Collaborative</span>}</small><h2 className="am-detail-title">{details.title}</h2>{details.description && <p className="am-detail-copy">{details.description}</p>}</div></div>
           {authUser?.id === details.owner_id && <div className="am-playlist-owner-actions">
@@ -1039,6 +1056,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
             <button type="button" className="am-pod" aria-pressed={topicScope === 'all'} onClick={() => setTopicScope('all')}>All</button>
             {followedTopics.map((key) => <button type="button" key={key} className="am-pod" aria-pressed={topicScope === key} onClick={() => setTopicScope(topicScope === key ? 'mine' : key)}>{topicLabel(key)}</button>)}
             <button type="button" className="am-pod is-edit" onClick={() => setTopicSheetOpen(true)}>{followedTopics.length ? 'Edit topics' : '+ Follow topics'}</button>
+            {userTopics.available && <button type="button" className="am-pod" onClick={() => openTopics()}>Topics by members</button>}
             <button type="button" className="am-pod is-suggest" onClick={openSuggestTopic}>Suggest a topic</button>
           </div>}
           {tab === 'for-you' && <div className="am-start">
@@ -1114,6 +1132,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       <div className="am-type-row" aria-label="What would you like to share?">{[['post','Post'],['question','Question'],['review','Review'],['playlist','Playlist'],['recommend','Recommend']].map(([kind,label]) => <button type="button" key={kind} className={compose === kind ? 'is-active' : ''} aria-pressed={compose === kind} onClick={() => { if (!authUser && ['review','playlist','recommend'].includes(kind)) { requireAccount(kind === 'review' ? 'reviews' : kind === 'playlist' ? 'playlists' : 'friend recommendations'); return; } setCompose(kind); setError(''); }}>{label}</button>)}</div>
       {compose === 'playlist' ? <><label className="am-field-label" htmlFor="am-playlist-name">Playlist name</label><RuleField as="input" id="am-playlist-name" value={playlistTitle} onChange={(e) => setPlaylistTitle(e.target.value)} placeholder="e.g. My everyday essentials" onShowRules={openRules} /><PlaylistAudiencePicker id="am-new-playlist-visibility" value={playlistVisibility} onChange={setPlaylistVisibility} /><PlaylistCoverPicker title={playlistTitle} mode={coverMode} onMode={setCoverMode} color={coverColor} onColor={setCoverColor} text={coverText} onText={setCoverText} photo={coverPhoto} onPhoto={setCoverPhoto} /></> : <><label className="am-field-label" htmlFor="am-post-text">{compose === 'question' ? 'Your question' : compose === 'review' ? 'Your experience' : compose === 'recommend' ? 'A note to your friends' : 'Your post'}</label><RuleField id="am-post-text" value={body} maxLength={POST_MAX} onChange={(e) => setBody(e.target.value)} onShowRules={openRules} placeholder={compose === 'question' ? 'What would you like to ask? Add #topics if helpful.' : compose === 'review' ? 'How was it for you?' : compose === 'recommend' ? 'Add a note (optional)' : 'What’s on your mind? Add #topics if helpful.'} /><CharRing length={body.length} max={POST_MAX} className="ay-ring am-ring" />{hashtagSuggestions.length > 0 && <div className="am-hashtags" aria-label="Suggested hashtags">{hashtagSuggestions.map((tag) => <button type="button" key={tag.key} onClick={() => setBody((text) => text.replace(/#(?:[A-Za-z][\w-]*)?$/, `${tag.tag} `))}>{tag.tag}</button>)}</div>}</>}
       {compose === 'review' && <div className="am-rating" role="radiogroup" aria-label="Your rating"><span>Your rating</span><div className="am-stars">{[1, 2, 3, 4, 5].map((n) => <button type="button" key={n} role="radio" aria-checked={rating === n} aria-label={`${n} out of 5`} className={n <= rating ? 'is-on' : ''} onClick={() => setRating(n)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9L12 3.5Z" /></svg></button>)}</div></div>}
+      {userTopics.available && compose !== 'review' && compose !== 'recommend' && compose !== 'playlist' && <PostInPicker id="am-post-in" className="is-app" topics={userTopics.mine} value={postTopicId} onChange={setPostTopicId} />}
       <ProductPicker products={products} value={productId} onChange={setProductId} />
       {compose !== 'playlist' && compose !== 'recommend' && <label className="am-photo-input"><strong>Add photos</strong><span>Up to 4 images</span><span className="am-photo-cta">Choose photos</span><input type="file" accept="image/*" multiple onChange={(e) => { try { const files = Array.from(e.target.files || []).slice(0, MAX_POST_PHOTOS); files.forEach(checkImageFile); setPhotos(files); setError(''); } catch (error) { setError(error.message); } }} />{photos.length > 0 && <small>{photos.map((file) => file.name).join(', ')}</small>}</label>}
       {compose === 'recommend' && <div className="am-friends"><strong>Send to friends</strong>{friendProfiles.length ? friendProfiles.map((friend) => <label key={friend.user_id}><input type="checkbox" checked={selectedFriendIds.includes(friend.user_id)} onChange={(e) => setSelectedFriendIds((ids) => e.target.checked ? [...ids, friend.user_id] : ids.filter((id) => id !== friend.user_id))} /> {friend.display_name || friend.username}</label>) : <p>Add friends in Community profiles first.</p>}</div>}
@@ -1127,6 +1146,8 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       <button type="button" className="am-primary" onClick={() => setConfirmDiscard(false)}>Keep editing</button>
       <button type="button" className="am-secondary" onClick={discardCompose}>Discard</button>
     </div></div>}</div>}
+    {startTopic && <TopicEditor variant="app" supabase={supabase} user={authUser} onShowRules={openRules} onClose={() => setStartTopic(false)}
+      onSaved={(t) => { setStartTopic(false); userTopics.reload(); setNotice(t?.status === 'pending' ? 'Topic started. It shows in Community once the ayna team has checked it.' : 'Topic started.'); if (t?.id) openTopic(t); }} />}
     {showRules && <div className="am-sheet-backdrop am-rules-backdrop" {...backdropTap(() => setShowRules(false))}><div className="am-sheet am-rules-sheet" role="dialog" aria-modal="true" aria-label="Community rules" onClick={(e) => e.stopPropagation()}>
       <div className="am-sheet-head"><h2>Community rules</h2><button type="button" aria-label="Close" onClick={() => setShowRules(false)}>×</button></div>
       <CommunityRulesList />
