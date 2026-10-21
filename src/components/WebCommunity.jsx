@@ -15,6 +15,9 @@ import SmartSearchInput from './search/SmartSearchInput.jsx';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { customProductId, customProductName } from '../utils/customProductTag.js';
 import { RuleField, CommunityRulesList } from './community/RuleField.jsx';
+import { useSheetViewport, backdropTap } from './community/useSheetViewport.js';
+import { useComposerDraft } from './community/useComposerDraft.js';
+import { draftKey, photosFromDraft, submitDraft } from '../utils/community/composerDraft.js';
 // One label for staff everywhere (posts, replies, profiles, people lists): "ayna team · CMO".
 function TeamTag({ title }) {
   if (!title) return null;
@@ -166,36 +169,45 @@ const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([t
 // Modal dialog: labelled by its title, focus moves in on open (to [data-autofocus]
 // when present), Tab stays inside, Escape closes, focus returns on close.
 // Rendered inside .app-container so it picks up the site tokens and dark mode.
-function Sheet({ title, onClose, children, className = '' }) {
+// Only the topmost sheet answers keys, so Escape in the rules sheet never
+// closes the composer under it. `onClose` is a request: the composer uses it
+// to ask before throwing a draft away. `overlay` renders above the sheet
+// (the "Discard this post?" card) and shares its focus trap.
+function Sheet({ title, onClose, children, className = '', overlay = null }) {
   const ref = useRef(null);
+  const wrapRef = useRef(null);
   const titleId = useId();
   const closeRef = useRef(onClose);
   useEffect(() => { closeRef.current = onClose; }, [onClose]);
   useEffect(() => {
     const opener = document.activeElement;
     const node = ref.current;
+    const wrap = wrapRef.current;
     const first = node?.querySelector('[data-autofocus]') || node?.querySelector(FOCUSABLE);
-    (first || node)?.focus();
+    (first || node)?.focus({ preventScroll: true });
     const onKey = (e) => {
+      const all = document.querySelectorAll('.cm-sheet-backdrop');
+      if (all[all.length - 1] !== wrap) return;
       if (e.key === 'Escape') { e.stopPropagation(); closeRef.current(); return; }
-      if (e.key !== 'Tab' || !node) return;
-      const items = [...node.querySelectorAll(FOCUSABLE)].filter((el) => el.offsetParent !== null || el === document.activeElement);
+      if (e.key !== 'Tab' || !wrap) return;
+      const items = [...wrap.querySelectorAll(FOCUSABLE)].filter((el) => el.offsetParent !== null || el === document.activeElement);
       if (!items.length) { e.preventDefault(); return; }
       const a = items[0];
       const z = items[items.length - 1];
-      if (e.shiftKey && (document.activeElement === a || !node.contains(document.activeElement))) { e.preventDefault(); z.focus(); }
-      else if (!e.shiftKey && (document.activeElement === z || !node.contains(document.activeElement))) { e.preventDefault(); a.focus(); }
+      if (e.shiftKey && (document.activeElement === a || !wrap.contains(document.activeElement))) { e.preventDefault(); z.focus(); }
+      else if (!e.shiftKey && (document.activeElement === z || !wrap.contains(document.activeElement))) { e.preventDefault(); a.focus(); }
     };
     document.addEventListener('keydown', onKey);
     return () => {
       document.removeEventListener('keydown', onKey);
-      if (opener && typeof opener.focus === 'function' && document.contains(opener)) opener.focus();
+      if (opener && typeof opener.focus === 'function' && document.contains(opener)) opener.focus({ preventScroll: true });
     };
   }, []);
+  useSheetViewport(true);
   const host = document.querySelector('.app-container') || document.body;
-  return createPortal(<div className="cm-sheet-backdrop" onClick={onClose}><div ref={ref} tabIndex={-1} className={`cm-sheet${className ? ` ${className}` : ''}`} role="dialog" aria-modal="true" aria-labelledby={titleId} onClick={(e) => e.stopPropagation()}>
+  return createPortal(<div ref={wrapRef} className="cm-sheet-backdrop" {...backdropTap(onClose)}><div ref={ref} tabIndex={-1} className={`cm-sheet${className ? ` ${className}` : ''}`} role="dialog" aria-modal="true" aria-labelledby={titleId} onClick={(e) => e.stopPropagation()}>
     <header><h2 id={titleId}>{title}</h2><button type="button" className="cm-sheet-close" aria-label="Close" onClick={onClose}><Icon name="close" size={18} /></button></header>{children}
-  </div></div>, host);
+  </div>{overlay}</div>, host);
 }
 
 export default function WebCommunity({ user, products = [], quizResults = null, myProducts = null, onOpenProduct, onOpenArticle, onRequireAuth, seedKind = null, seedProductId = null, seedRating = null, initialProfileHandle = null, onProfileChange, initialPostId = null, onPostChange, composeOnly = false, onDone }) {
@@ -521,6 +533,41 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   }, [composeOnly, user]); // eslint-disable-line react-hooks/exhaustive-deps
   const closeCompose = () => { if (composeOnly) onDone?.(); else setCompose(null); };
 
+  // Drafts: what she writes is saved on this device as she types, so a stray
+  // tap, a reload or a failed post never loses it. Closing with words or
+  // photos in the composer asks first; the draft is cleared only on Discard
+  // or after the post has saved.
+  const [confirmDiscard, setConfirmDiscard] = useState(false);
+  const resetComposer = () => {
+    setBody(''); setProductId(seedProductId); setAnonymous(false); setPhotos([]); setRating(normalizeRating(seedRating) || null);
+    setPlaylistTitle(''); setPlaylistVisibility('public'); setCoverPhoto(null); setSelectedFriendIds([]); setError('');
+  };
+  const composeDirty = Boolean(body.trim() || playlistTitle.trim() || photos.length || coverPhoto);
+  const draftStoreKey = user ? draftKey('web', user.id, composeOnly ? `pdp-${seedKind || 'post'}-${seedProductId || ''}` : '') : null;
+  const { clear: clearStoredDraft } = useComposerDraft({
+    key: draftStoreKey,
+    enabled: Boolean(user),
+    draft: { kind: compose || 'post', body, productId, rating, anonymous, playlistTitle, friendIds: selectedFriendIds, photos },
+    restore: (d) => {
+      if (body.trim() || playlistTitle.trim()) return;
+      if (seedProductId && d.productId && String(d.productId) !== String(seedProductId)) return;
+      setBody(d.body); setPlaylistTitle(d.playlistTitle); setAnonymous(d.anonymous); setSelectedFriendIds(d.friendIds);
+      if (d.productId) setProductId(d.productId);
+      if (d.rating) setRating(d.rating);
+      if (d.photos.length) setPhotos(photosFromDraft(d.photos));
+    },
+  });
+  useEffect(() => {
+    if (confirmDiscard) document.querySelector('.cm-discard .ay-btn--primary')?.focus({ preventScroll: true });
+  }, [confirmDiscard]);
+  const discardCompose = () => { setConfirmDiscard(false); resetComposer(); clearStoredDraft(); closeCompose(); };
+  const requestCloseCompose = () => {
+    if (busy) return; // never close while a post is on its way
+    if (confirmDiscard) { setConfirmDiscard(false); return; }
+    if (composeDirty) { setConfirmDiscard(true); return; }
+    discardCompose();
+  };
+
   const submit = async () => {
     if (busy) return;
     if (!user) { requireAccount('posting'); return; }
@@ -529,38 +576,57 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     if (compose === 'recommend' && (!productId || !selectedFriendIds.length)) { setError('Choose a product and at least one friend.'); return; }
     if (user && !profile) { setError('Set up your community profile first.'); return; }
     setBusy(true); setError('');
-    try {
-      const client = user ? supabase : getGuestClient();
-      const userId = user?.id || await ensureGuestSession();
-      if (compose === 'recommend') {
-        await community.sendRecommendations(client, userId, productId, selectedFriendIds, body);
-        setCompose(null); setBody(''); setProductId(null); setSelectedFriendIds([]);
-        if (composeOnly) finishCompose('Sent'); else setNotice('Recommendation sent.');
-      } else if (compose === 'playlist') {
-        let cover;
-        try {
-          const file = coverPhoto || await makePlaylistCoverFile(playlistTitle, coverColor);
-          cover = await uploadCommunityImage(client, file, { folder: 'covers', userId });
-          const result = await community.createPlaylist(client, userId, { title: playlistTitle, visibility: playlistVisibility, coverUrl: cover.url });
-          if (productId) { try { await community.addToPlaylist(client, result.id, productId); } catch { setNotice('Playlist created, but the product could not be added.'); } }
-          setCompose(null); setPlaylistTitle(''); setPlaylistVisibility('public'); setProductId(null); setCoverPhoto(null);
-          if (composeOnly) finishCompose('Playlist created'); else { setTab('playlists'); setRefresh((v) => v + 1); await openPlaylist(result); }
-        } catch (e) { if (cover) await deleteCommunityImage(client, cover.path); throw e; }
-      } else {
+    const kind = compose;
+    const client = supabase;
+    const userId = user.id;
+    // Step 1: save. Only this decides success; on a failure the composer
+    // stays open with everything she wrote and an inline error.
+    const saved = await submitDraft({
+      key: draftStoreKey,
+      save: async () => {
+        if (kind === 'recommend') {
+          await community.sendRecommendations(client, userId, productId, selectedFriendIds, body);
+          return null;
+        }
+        if (kind === 'playlist') {
+          let cover;
+          try {
+            const file = coverPhoto || await makePlaylistCoverFile(playlistTitle, coverColor);
+            cover = await uploadCommunityImage(client, file, { folder: 'covers', userId });
+            const result = await community.createPlaylist(client, userId, { title: playlistTitle, visibility: playlistVisibility, coverUrl: cover.url });
+            let productAdded = true;
+            if (productId) { try { await community.addToPlaylist(client, result.id, productId); } catch { productAdded = false; } }
+            return { result, productAdded };
+          } catch (e) { if (cover) await deleteCommunityImage(client, cover.path); throw e; }
+        }
         const product = productsById.get(String(productId));
         const topics = [...new Set([...extractHashtagTopics(body), ...suggestTopicsForProducts(product ? [product] : [])])].slice(0, 5);
         const media = [];
-        let result;
         try {
           for (const photo of photos) media.push(await uploadCommunityImage(client, photo, { folder: 'posts' }));
-          result = await community.createPost(client, userId, { kind: compose, body, topics, media, isAnonymous: !user || anonymous, productId: compose === 'review' ? productId : null, rating: compose === 'review' ? rating : null, taggedProductIds: compose === 'review' || !productId ? [] : [productId] });
-        } catch (e) { await Promise.all(media.map((m) => deleteCommunityImage(client, m.path))); throw e; }
-        setCompose(null); setBody(''); setProductId(null); setAnonymous(false); setPhotos([]); setRating(null); setRefresh((v) => v + 1);
-        if (composeOnly) { finishCompose('Posted'); return; }
-        const post = await community.getFeedPost(client, result.id);
-        if (post) await openPost(post);
-      }
-    } catch (e) { notifyError(e); } finally { setBusy(false); }
+          return await community.createPost(client, userId, { kind, body, topics, media, isAnonymous: anonymous, productId: kind === 'review' ? productId : null, rating: kind === 'review' ? rating : null, taggedProductIds: kind === 'review' || !productId ? [] : [productId] });
+        } catch (e) { await Promise.all(media.map((m) => deleteCommunityImage(client, m.path).catch(() => {}))); throw e; }
+      },
+    });
+    setBusy(false);
+    if (!saved.ok) { notifyError(saved.error); return; }
+    // Step 2: it's saved. Close, confirm, and refresh. Nothing here can turn
+    // a saved post into an error.
+    setConfirmDiscard(false); resetComposer(); clearStoredDraft(); setCompose(null); setRefresh((v) => v + 1);
+    if (kind === 'recommend') { if (composeOnly) finishCompose('Sent'); else setNotice('Recommendation sent.'); return; }
+    if (kind === 'playlist') {
+      const { result, productAdded } = saved.result;
+      if (composeOnly) { finishCompose('Playlist created'); return; }
+      if (!productAdded) setNotice('Playlist created, but the product could not be added.');
+      setTab('playlists');
+      try { await openPlaylist(result); } catch { /* the playlist is saved; the list will show it */ }
+      return;
+    }
+    if (composeOnly) { finishCompose(kind === 'review' ? 'Review posted' : 'Posted'); return; }
+    const postId = saved.result?.id;
+    toast(kind === 'question' ? 'Question posted' : kind === 'review' ? 'Review posted' : 'Posted', postId ? { label: 'View', onClick: async () => {
+      try { const post = await community.getFeedPost(client, postId); if (post) await openPost(post); } catch { /* still in the feed */ }
+    } } : null);
   };
   const submitComment = async () => {
     if (!user) { requireAccount('replying'); return; }
@@ -742,7 +808,18 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   </button>;
 
   const composeLabel = compose === 'question' ? 'Your question' : compose === 'review' ? 'Your review' : compose === 'recommend' ? 'Note to your friends' : 'Your post';
-  const composeSheet = compose && <Sheet title={KIND_TITLES[compose]} onClose={closeCompose} className="cm-compose">
+  const discardNoun = compose === 'playlist' ? 'playlist' : compose === 'review' ? 'review' : compose === 'question' ? 'question' : compose === 'recommend' ? 'recommendation' : 'post';
+  const discardCard = confirmDiscard && <div className="cm-discard-layer" onClick={(e) => { if (e.target === e.currentTarget) setConfirmDiscard(false); }}>
+    <div className="cm-discard" role="alertdialog" aria-modal="true" aria-labelledby="cm-discard-title" aria-describedby="cm-discard-copy">
+      <h3 id="cm-discard-title">Discard this {discardNoun}?</h3>
+      <p id="cm-discard-copy" className="cm-muted">What you wrote will be deleted.</p>
+      <div className="cm-discard-actions">
+        <button type="button" className="ay-btn ay-btn--primary" onClick={() => setConfirmDiscard(false)}>Keep editing</button>
+        <button type="button" className="ay-btn ay-btn--secondary" onClick={discardCompose}>Discard</button>
+      </div>
+    </div>
+  </div>;
+  const composeSheet = compose && <Sheet title={KIND_TITLES[compose]} onClose={requestCloseCompose} className="cm-compose" overlay={discardCard}>
       <div className="cm-seg cm-kinds" role="group" aria-label="What are you sharing?">{Object.keys(KIND_TITLES).map((k) => <button type="button" key={k} aria-pressed={compose === k} onClick={() => openCompose(k)}>{VERB[k] || k}</button>)}</div>
       {composeOnly && user && profileChecked && !profile && <div className="cm-card cm-join"><h3>Pick a name first</h3><p className="cm-muted">Your health answers stay private.</p>
         <RuleField as="input" value={profileName} maxLength={50} onChange={(e) => setProfileName(e.target.value)} placeholder="Display name" aria-label="Display name" onShowRules={openRules} />
