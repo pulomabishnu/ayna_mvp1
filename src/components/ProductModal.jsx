@@ -15,7 +15,7 @@ import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import WhyMatchPanel from './WhyMatchPanel';
 import MatchPill from './MatchPill';
 import { matchLine, priceParts } from '../data/passport/content';
-import { buildGlance, perUnitLabel, sizeCount } from './pdp/glance';
+import { buildGlance, categoryLabel, perUnitLabel, sizeCount } from './pdp/glance';
 import { getPassport } from '../data/passport';
 import { ProductMatch, ProductAsk } from './passport/ProductSections';
 import { firstSentence } from './pdp/sentences';
@@ -36,6 +36,7 @@ import posthog from 'posthog-js';
 import '../styles/audit-pdp.css';
 import '../styles/verify-content.css';
 import './pdp/pdp.css';
+import '../styles/pdp-v4.css';
 
 /**
  * Product Q&A, for a user who doesn't know what a product actually IS (a
@@ -860,7 +861,7 @@ export default function ProductModal({
   };
 
   return (
-    <div className="mockup-page pdp-page-wrap">
+    <div className="mockup-page pdp-page-wrap" id="pdp-v4">
       <div className="pdp-page pdp-page--glance">
 
         {showWhy && <WhyMatchPanel product={product} quizResults={quizResults} healthProfile={healthProfile} matchOpts={matchOpts} onClose={() => setShowWhy(false)} onUpdateHealth={() => { window.location.href = '/quiz'; }} />}
@@ -887,7 +888,11 @@ export default function ProductModal({
           </div>
 
           <div className="pdp-head__detail pdp-h2">
-            {brand && !String(displayName || '').toLowerCase().startsWith(String(brand).toLowerCase()) && <div className="pdp-head__eyebrow">{brand}</div>}
+            {(() => {
+              // Brand · category tag above the name (the Neycher page design).
+              const tag = [brand || product.brand, categoryLabel(product)].filter(Boolean).join(' · ');
+              return tag ? <div className="pdp-head__eyebrow pdp-tag">{tag}</div> : null;
+            })()}
             <h1 className="pdp-head__name">{displayName}</h1>
             {(() => {
               const raw = String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '').replace(/\s*—\s*/g, ', ').trim();
@@ -936,11 +941,13 @@ export default function ProductModal({
               {actionButtons}
               {/* One line: the single most important thing to know, then the full Safety section. */}
               {topWarning && (
-                <p className="ay-buy__warn" role="note">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 21h20L12 3Z" /><path d="M12 10v5M12 18v.5" /></svg>
-                  <span>{topWarning}</span>
-                  <button type="button" className="pdp-textlink" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'details' }))}>All safety info</button>
-                </p>
+                <div className="ay-buy__warn" role="note">
+                  <span className="ay-buy__bang" aria-hidden="true">!</span>
+                  <span className="ay-buy__warntext">
+                    <span>{topWarning}</span>
+                    <button type="button" className="pdp-textlink" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'details' }))}>All safety info</button>
+                  </span>
+                </div>
               )}
             </section>
 

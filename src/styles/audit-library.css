@@ -153,3 +153,9 @@ html body .app-container .ay-lib-feature .sr-only { position: absolute; width: 1
   html body .app-container .ay-lib-feature { grid-template-columns: 1fr; gap: 18px; padding: 18px; }
   html body .app-container .ay-lib-feature__img { aspect-ratio: auto; }
 }
+
+/* A to Z: the section letter sits on its own line above its first read
+   (it was drawn on top of the title). */
+html body .app-container .is-wiki .ay3-az li[data-letter] { display: flex !important; flex-direction: column; align-items: stretch; padding-top: 0 !important; }
+html body .app-container .is-wiki .ay3-az li[data-letter]::before { position: static !important; display: block; margin: 12px 0 2px 8px !important; }
+html body .app-container .is-wiki .ay3-az li[data-letter]:first-child::before { margin-top: 4px !important; }
