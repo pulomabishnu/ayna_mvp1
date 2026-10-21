@@ -3,8 +3,8 @@
    so light and dark follow each surface's own theme.
    Devices (docs/design-direction.md, INSPO_BOARD.md "Product page"):
    the espresso "short answer" card, At a glance as a bento of tinted tiles,
-   stat previews with one real number each, a numbered "who it's for" list,
-   folder tabs over one sheet (segmented pills on phones), folder-tab headers
+   a numbered "who it's for" list, one row of section chips with a summary
+   card per section (swipe rail on phones, bento on wide screens), folder-tab headers
    for boxed parts, and one source card style (a shelf on phones). */
 
 .ayq {
@@ -75,10 +75,9 @@
 .ayq-over > * { min-width: 0; }
 .ayq-bottom { grid-column: 1 / span 7; }
 .ayq-glance { grid-column: 8 / span 5; grid-row: 1; }
-.ayq-previews { grid-column: 1 / -1; }
 .ayq-what { grid-column: 1 / span 7; }
 .ayq-who { grid-column: 8 / span 5; }
-.ayq-over:not(:has(.ayq-glance)) :is(.ayq-bottom, .ayq-previews, .ayq-what) { grid-column: 1 / -1; }
+.ayq-over:not(:has(.ayq-glance)) :is(.ayq-bottom, .ayq-what) { grid-column: 1 / -1; }
 @media (max-width: 1023px) {
   .ayq-over { grid-template-columns: minmax(0, 1fr); gap: 16px; margin-top: 40px; }
   .ayq-over > * { grid-column: 1 / -1 !important; grid-row: auto !important; }
@@ -119,19 +118,6 @@
 .ayq.ayq .ayq-meter[data-level='2'] .ayq-meter__bars i:nth-child(-n+2),
 .ayq.ayq .ayq-meter[data-level='3'] .ayq-meter__bars i { background: var(--q-line); }
 
-/* Stat previews: one real number, one line, jumps to its tab. */
-.ayq.ayq .ayq-previews { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
-.ayq.ayq .ayq-preview { position: relative; display: grid; align-content: start; gap: 8px; min-height: 132px; padding: 16px 16px 40px; border: 1.5px solid var(--q-line); border-radius: 20px; background: var(--q-page); color: var(--q-ink); text-align: left; transition: background-color 160ms cubic-bezier(.16, 1, .3, 1); }
-.ayq.ayq .ayq-preview:hover { background: var(--q-group); }
-.ayq.ayq .ayq-preview.is-alert { border-color: transparent; background: var(--q-pink); color: #3e2723; }
-.ayq.ayq .ayq-preview__top { display: flex; align-items: center; gap: 6px; font: 600 calc(14px * var(--q-scale))/1.2 var(--q-sans); }
-.ayq.ayq .ayq-preview__main { display: grid; gap: 2px; font: 400 calc(14px * var(--q-scale))/1.4 var(--q-sans); }
-.ayq.ayq .ayq-preview__num { font: 700 calc(40px * var(--q-scale))/1 var(--q-head); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
-.ayq.ayq .ayq-preview__go { position: absolute; right: 14px; bottom: 12px; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--q-ink); color: var(--q-page); }
-.ayq.ayq .ayq-preview.is-alert .ayq-preview__go { background: #3e2723; color: #f7badd; }
-.ayq.ayq .ayq-preview:active { transform: scale(.98); }
-@media (max-width: 760px) { .ayq.ayq .ayq-previews { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .ayq.ayq .ayq-preview { min-height: 120px; } .ayq.ayq .ayq-preview__num { font-size: calc(34px * var(--q-scale)); } }
-
 /* Who it's for: a numbered pill list. */
 .ayq.ayq .ayq-checks { display: grid; gap: 10px; }
 .ayq.ayq .ayq-checks > li { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 12px; align-items: start; padding: 12px 14px; border-radius: 20px; background: var(--q-group); font: 400 var(--q-body)/1.5 var(--q-sans); }
@@ -139,25 +125,10 @@
 .ayq.ayq .ayq-checks > li:nth-child(2) .ayq-checks__n { background: var(--q-pink); color: #3e2723; }
 .ayq.ayq .ayq-checks > li:nth-child(3) .ayq-checks__n { background: #769ebe; color: #fff; }
 
-/* ---------- 2. Tabs: folder tabs over one sheet (wide), segmented pills (phones) ---------- */
-.ayq-tabsec { margin-top: 64px; padding: 0 var(--q-gut); scroll-margin-top: calc(var(--q-top) + 8px); }
-@media (max-width: 760px) { .ayq-tabsec { margin-top: 48px; } }
-.ayq.ayq .ayq-tabsbar { padding-top: 8px; background: var(--q-page); }
-.ayq.ayq .ayq-tabs { display: flex; gap: 6px; align-items: flex-end; }
-.ayq.ayq .ayq-tab { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 20px; border: 1.5px solid var(--q-hair); border-bottom: 0; border-radius: 16px 16px 0 0; background: var(--q-page); color: var(--q-ink2); font: 500 calc(16px * var(--q-scale))/1.2 var(--q-sans); white-space: nowrap; transition: background-color 160ms cubic-bezier(.16, 1, .3, 1), color 160ms; }
-.ayq.ayq .ayq-tab:hover { color: var(--q-ink); background: color-mix(in srgb, var(--q-group) 50%, var(--q-page)); }
-.ayq.ayq .ayq-tab.is-on { min-height: 54px; border-color: transparent; background: var(--q-group); color: var(--q-ink); font-weight: 700; }
-.ayq.ayq .ayq-tab.is-alert:not(.is-on) { background: color-mix(in srgb, var(--q-pink) 45%, var(--q-page)); color: var(--q-ink); }
+/* ---------- 2. Tab panels (the chips and summary cards are at the end of this sheet) ---------- */
 .ayq.ayq .ayq-panel { padding: 36px; border-radius: 0 24px 24px 24px; background: var(--q-group); }
 .ayq.ayq .ayq-panel:focus-visible { outline: 3px solid var(--q-line); outline-offset: 2px; }
-@media (max-width: 1023px) { .ayq.ayq .ayq-tab { padding: 0 14px; font-size: calc(15px * var(--q-scale)); } .ayq.ayq .ayq-tab .ay-ico { display: none; } }
 @media (max-width: 760px) {
-  .ayq.ayq .ayq-tabsbar { margin: 0 calc(-1 * var(--q-gut)); padding: 8px var(--q-gut) 10px; border-bottom: 1px solid var(--q-hair); }
-  .ayq.ayq .ayq-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding: 4px; border-radius: 20px; background: var(--q-group); }
-  .ayq.ayq .ayq-tabs.is-4, .ayq.ayq .ayq-tabs.is-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .ayq.ayq .ayq-tab { justify-content: center; min-height: 44px !important; padding: 0 6px; border: 0; border-radius: 16px; background: transparent; font-size: calc(14.5px * var(--q-scale)); }
-  .ayq.ayq .ayq-tab.is-on { background: var(--q-ink); color: var(--q-page); }
-  .ayq.ayq .ayq-tab.is-alert:not(.is-on) { background: var(--q-pink); color: #3e2723; }
   .ayq.ayq .ayq-panel { margin: 16px calc(-1 * var(--q-gut)) 0; padding: 4px var(--q-gut) 8px; border-radius: 0; background: transparent; }
 }
 
@@ -406,8 +377,6 @@ html body .app-container .ayq-badges.is-web { margin-top: 14px; }
 
 /* Tap-to-define words take the colour of the text around them (also on the Feature card and pink notes). */
 html body .app-container.app-container.app-container .ayq.ayq.ayq .ay-gloss.ay-gloss:not(.zz), .ayq.ayq .ay-gloss { color: inherit !important; -webkit-text-fill-color: currentColor !important; text-decoration-color: currentColor !important; }
-.ayq.ayq .ayq-tab.is-on { background: var(--q-group) !important; color: var(--q-ink) !important; }
-@media (max-width: 760px) { .ayq.ayq .ayq-tab.is-on { background: var(--q-ink) !important; color: var(--q-page) !important; } }
 /* App photo zoom: one espresso circle (two older rules drew a ring around an offset dot). */
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__tile .ay-pdp-zoom-open { inset: auto 10px 10px auto !important; width: 44px !important; height: 44px !important; display: grid !important; place-items: center !important; padding: 0 !important; border: 0 !important; border-radius: 99px !important; background: #3e2723 !important; color: #ffedac !important; box-shadow: none !important; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__tile .ay-pdp-zoom-open svg { width: 20px !important; height: 20px !important; margin: 0 !important; padding: 0 !important; border-radius: 0 !important; background: none !important; color: inherit !important; }
@@ -423,7 +392,6 @@ html body .app-container.app-container.app-container .ayq.ayq.ayq .ay-gloss.ay-g
   .ayq.ayq .ayq-h3 { margin-bottom: 10px !important; font-size: calc(21px * var(--q-scale)) !important; }
   .ayq-over { margin-top: 28px; gap: 12px; }
   .ayq-what, .ayq-who { margin-top: 8px; }
-  .ayq-tabsec { margin-top: 28px; }
   .ayq > .ayp-wps { margin-top: 36px; }
 
   /* The short answer */
@@ -443,12 +411,6 @@ html body .app-container.app-container.app-container .ayq.ayq.ayq .ay-gloss.ay-g
   .ayq.ayq .ayq-tiles__label { padding: 0; border: 0; font-size: calc(12.5px * var(--q-scale)); }
   .ayq.ayq .ayq-tiles__value { font-size: calc(15px * var(--q-scale)); }
 
-  /* Previews: compact 2 x 2 */
-  .ayq.ayq .ayq-previews { gap: 8px; }
-  .ayq.ayq .ayq-preview { min-height: 0; gap: 4px; padding: 12px 44px 12px 12px; }
-  .ayq.ayq .ayq-preview__num { font-size: calc(26px * var(--q-scale)); }
-  .ayq.ayq .ayq-preview__main { font-size: calc(13px * var(--q-scale)); line-height: 1.3; }
-  .ayq.ayq .ayq-preview__go { right: 10px; bottom: auto; top: 10px; width: 26px; height: 26px; }
 
   /* Who it's for: a plain numbered list */
   .ayq.ayq .ayq-checks { gap: 0; }
@@ -456,8 +418,6 @@ html body .app-container.app-container.app-container .ayq.ayq.ayq .ay-gloss.ay-g
   .ayq.ayq .ayq-checks > li:last-child { border-bottom: 0; }
   .ayq.ayq .ayq-checks__n { width: 24px; height: 24px; font-size: calc(13px * var(--q-scale)); }
 
-  /* Tabs */
-  .ayq.ayq .ayq-tab { min-height: 40px !important; }
   .ayq.ayq .ayq-panel { margin-top: 12px; }
   .ayq.ayq .ayq-byline { margin-bottom: 12px !important; }
   .ayq.ayq .ayq-cols { gap: 20px; }
@@ -488,21 +448,6 @@ html body .app-container.app-container.app-container .ayq.ayq.ayq .ay-gloss.ay-g
   .ayq.ayq .ayq-other { margin-top: 16px; }
   .ayq.ayq .ayq-linklist a { padding: 9px 0; }
 }
-/* Phones: the four previews sit in one row; the number and the section name say enough, the long caption is for wider screens. */
-@media (max-width: 760px) {
-  .ayq.ayq .ayq-previews { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
-  .ayq.ayq .ayq-preview { padding: 10px 8px 10px; border-width: 1.5px; border-radius: 16px; gap: 2px; justify-items: start; }
-  .ayq.ayq .ayq-preview__top { gap: 4px; font-size: calc(12px * var(--q-scale)); }
-  .ayq.ayq .ayq-preview__top .ay-ico { display: none; }
-  .ayq.ayq .ayq-preview__go { display: none; }
-  .ayq.ayq .ayq-preview__num { font-size: calc(24px * var(--q-scale)); }
-  .ayq.ayq .ayq-preview__cap { font-size: calc(11.5px * var(--q-scale)); line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-}
-.ayq.ayq .ayq-preview__short { display: none; }
-@media (max-width: 760px) {
-  .ayq.ayq .ayq-preview__cap { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  .ayq.ayq .ayq-preview__short { display: block; font: 500 calc(12px * var(--q-scale))/1.25 var(--q-sans); }
-}
 /* Phones: the fact badges sit on the stamp's corner instead of taking their own row. */
 @media (max-width: 760px) {
   html body .app-container .ayp-gallery { position: relative; }
@@ -520,26 +465,6 @@ html body .app-container.app-container.app-container .ayq.ayq.ayq .ay-gloss.ay-g
 .ayq.ayq .ayq-about .ayq-prose { max-width: 68ch; }
 @media (max-width: 760px) { .ayq.ayq .ayq-about .ayq-who { margin-top: 16px; } }
 
-/* Close-out (Oct 21, P1-5): phones get ONE sideways-scrolling row of underline
-   tabs (design-direction.md: "Scroll sideways on phones with an edge fade"),
-   not a 2-row pill grid. The edge with more tabs past it fades (.has-left /
-   .has-right set by SegTabs), and the row's end padding keeps the next label
-   half visible. Selected: espresso text 600 + 3px underline. */
-@media (max-width: 760px) {
-  .ayq.ayq.ayq .ayq-tabsbar { padding: 4px 0 0; margin: 0 calc(-1 * var(--q-gut)); border-bottom: 1px solid var(--q-hair); }
-  .ayq.ayq.ayq .ayq-tabs { display: flex; flex-wrap: nowrap; gap: 0; padding: 0 var(--q-gut); border-radius: 0; background: transparent; overflow-x: auto; overscroll-behavior-x: contain; scroll-padding-inline: var(--q-gut); scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-  .ayq.ayq.ayq .ayq-tabs::-webkit-scrollbar { display: none; }
-  .ayq.ayq.ayq .ayq-tabs::after { content: ''; flex: 0 0 8px; }
-  .ayq.ayq.ayq .ayq-tabsbar.has-right .ayq-tabs { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 44px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 44px), transparent); }
-  .ayq.ayq.ayq .ayq-tabsbar.has-left .ayq-tabs { -webkit-mask-image: linear-gradient(to right, transparent, #000 44px); mask-image: linear-gradient(to right, transparent, #000 44px); }
-  .ayq.ayq.ayq .ayq-tabsbar.has-left.has-right .ayq-tabs { -webkit-mask-image: linear-gradient(to right, transparent, #000 44px, #000 calc(100% - 44px), transparent); mask-image: linear-gradient(to right, transparent, #000 44px, #000 calc(100% - 44px), transparent); }
-  .ayq.ayq.ayq .ayq-tab, .ayq.ayq.ayq .ayq-tab.is-on, .ayq.ayq.ayq .ayq-tab.is-alert:not(.is-on) { flex: none; justify-content: flex-start; min-height: 44px !important; padding: 0 12px; border: 0; border-radius: 0; background: transparent !important; color: var(--q-ink2) !important; font: 500 calc(15px * var(--q-scale))/1.2 var(--q-sans); }
-  .ayq.ayq.ayq .ayq-tab:first-child { padding-left: 0; }
-  /* The underline is a background bar, not a box-shadow: the app's matte rule removes every shadow. */
-  .ayq.ayq.ayq .ayq-tab.is-on { color: var(--q-ink) !important; font-weight: 600 !important; background: linear-gradient(var(--q-ink), var(--q-ink)) left bottom / 100% 3px no-repeat !important; }
-  .ayq.ayq.ayq .ayq-tab.is-alert:not(.is-on)::after { content: ''; width: 8px; height: 8px; margin-left: 6px; box-sizing: border-box; border-radius: 50%; background: #f7badd; border: 1.5px solid var(--q-ink); }
-}
-
 /* At a glance sizes itself to its own column, not the viewport: inside the
    product window (narrow column on a wide screen) the 2-up tiles were too
    narrow and labels ran into the next tile (founder screenshot, Oct 21). */
@@ -552,3 +477,81 @@ html body .app-container.app-container.app-container .ayq.ayq.ayq .ay-gloss.ay-g
   .ayq.ayq .ayq-tiles > li:last-child:nth-child(odd) { grid-column: auto; }
   .ayq.ayq .ayq-tiles__label { padding: 0; border: 0; }
 }
+
+/* ---------- Sections strip (Oct 21, founder: Eliz's mockup idea) ----------
+   Right under the hero: one row of section chips (the tabs: one line, scrolls
+   sideways, never wraps), then one summary card per section (one short line
+   and one number or label: a swipe rail on phones, a bento when there's room),
+   then the open panel. Air between the groups, tight inside them
+   (INSPO_BOARD.md spacing rules 2, 3, 5, 6). Brand colours only: butter page
+   and group, espresso ink, pink for the safety card and the selected chip. */
+.ayq { --q-bleed: var(--q-gut); }
+@media (max-width: 760px) { .ayq:not(.ayna-mobile .ayq) { --q-bleed: 20px; } }
+.ayq-tabsec { margin-top: 48px; padding: 0 var(--q-gut); scroll-margin-top: calc(var(--q-top) + 8px); }
+@media (max-width: 760px) { .ayq-tabsec { margin-top: 32px; } }
+.ayna-mobile .ayq-tabsec { margin-top: 28px; }
+
+/* Chips */
+.ayq.ayq .ayq-chips { position: relative; margin: 0 calc(-1 * var(--q-bleed)); padding: 0; background: var(--q-page); }
+.ayq.ayq .ayq-chips .ayq-tabs { display: flex; flex-wrap: nowrap; align-items: center; gap: 8px; padding: 4px var(--q-bleed); overflow-x: auto; overscroll-behavior-x: contain; scroll-padding-inline: var(--q-bleed); scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.ayq.ayq .ayq-chips .ayq-tabs::-webkit-scrollbar { display: none; }
+.ayq.ayq .ayq-chips .ayq-tabs::after { content: ''; flex: 0 0 1px; }
+.ayq.ayq .ayq-chips.has-right .ayq-tabs { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); }
+.ayq.ayq .ayq-chips.has-left .ayq-tabs { -webkit-mask-image: linear-gradient(to right, transparent, #000 40px); mask-image: linear-gradient(to right, transparent, #000 40px); }
+.ayq.ayq .ayq-chips.has-left.has-right .ayq-tabs { -webkit-mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent); }
+.ayq.ayq.ayq .ayq-chips .ayq-tab { flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; margin: 0; padding: 0 14px; border: 1.5px solid var(--q-line); border-radius: 999px; background: transparent; color: var(--q-ink); font: 500 calc(15px * var(--q-scale))/1 var(--q-sans); white-space: nowrap; transition: background-color var(--t-fast, 160ms) var(--ease-out, ease-out), transform var(--t-press, 110ms) var(--ease-out, ease-out); }
+.ayq.ayq.ayq .ayq-chips .ayq-tab:hover { background: var(--q-group); }
+.ayq.ayq.ayq .ayq-chips .ayq-tab:active { transform: scale(.97); }
+.ayq.ayq.ayq .ayq-chips .ayq-tab.is-on { border-color: var(--q-line); background: var(--q-pink); color: #3e2723; font-weight: 600; }
+.ayq.ayq.ayq .ayq-chips .ayq-tab.is-alert:not(.is-on)::after { content: ''; width: 8px; height: 8px; margin-left: 2px; box-sizing: border-box; border-radius: 50%; background: var(--q-pink); border: 1.5px solid var(--q-ink); }
+@media (max-width: 760px) { .ayq.ayq.ayq .ayq-chips .ayq-tab { min-height: 38px; padding: 0 12px; font-size: calc(14.5px * var(--q-scale)); } .ayq.ayq.ayq .ayq-chips .ayq-tab .ay-ico { display: none; } }
+
+/* Pinned variant (pdpFlags.js): flush under the site header / app top, same
+   colour as the page, a hairline only once content is under it. Never on
+   short phones, where it would crowd the Buy row and the tab bar. */
+.ayq.ayq .ayq-chips__sentinel { height: 1px; margin-bottom: -1px; }
+.ayq.ayq .ayq-chips.is-pinned { position: sticky; top: var(--q-top); z-index: 5; padding: 6px 0; }
+.ayq.ayq .ayq-chips.is-pinned.is-stuck { background: linear-gradient(var(--q-hair), var(--q-hair)) left bottom / 100% 1px no-repeat, var(--q-page); }
+@media (max-height: 699px) { .ayq.ayq .ayq-chips.is-pinned { position: relative; top: auto; } }
+.ayq.is-pinned .ayq-panels { scroll-margin-top: calc(var(--q-top) + 60px); }
+
+/* Summary cards */
+.ayq.ayq .ayq-cardswrap { container-type: inline-size; container-name: ayq-cards; margin-top: 12px; }
+.ayq.ayq .ayq-previews { display: flex; gap: 10px; margin: 0 calc(-1 * var(--q-bleed)); padding: 2px var(--q-bleed) 6px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--q-bleed); overscroll-behavior-x: contain; scrollbar-width: none; }
+.ayq.ayq .ayq-previews::-webkit-scrollbar { display: none; }
+.ayq.ayq .ayq-preview { position: relative; flex: 0 0 min(76%, 300px); display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-height: 132px; margin: 0; padding: 14px 52px 14px 16px; border: 1.5px solid var(--q-line); border-radius: 20px; background: var(--q-page); color: var(--q-ink); text-align: left; scroll-snap-align: start; transition: background-color var(--t-fast, 160ms) var(--ease-out, ease-out), transform var(--t-press, 110ms) var(--ease-out, ease-out); }
+.ayq.ayq .ayq-preview:hover { background: var(--q-group); }
+.ayq.ayq .ayq-preview:active { transform: scale(.98); }
+.ayq.ayq .ayq-preview.is-lead { border-color: transparent; background: var(--q-group); }
+.ayq.ayq .ayq-preview.is-lead:hover { border-color: var(--q-line); }
+.ayq.ayq .ayq-preview.is-alert { border-color: var(--q-line); background: var(--q-pink); color: #3e2723; }
+.ayq.ayq .ayq-preview.is-alert .ayq-preview__unit, .ayq.ayq .ayq-preview.is-alert .ayq-preview__credit { color: #3e2723; }
+.ayq.ayq .ayq-preview__top { display: inline-flex; align-items: center; gap: 6px; font: 600 calc(13.5px * var(--q-scale))/1.2 var(--q-sans); }
+.ayq.ayq .ayq-preview__stat { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; }
+.ayq.ayq .ayq-preview__num { font: 700 calc(30px * var(--q-scale))/1 var(--q-head); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.ayq.ayq .ayq-preview__num span { font-size: .7em; }
+.ayq.ayq .ayq-preview__word { font: 700 calc(22px * var(--q-scale))/1.1 var(--q-head); letter-spacing: -.02em; }
+.ayq.ayq .ayq-preview__unit { font: 500 calc(13.5px * var(--q-scale))/1.3 var(--q-sans); color: var(--q-ink2); }
+.ayq.ayq .ayq-preview__meter { margin: 0; }
+.ayq.ayq .ayq-preview__meter .ayq-meter__bars { width: 96px; }
+.ayq.ayq .ayq-preview__line { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font: 400 calc(14.5px * var(--q-scale))/1.4 var(--q-sans); }
+.ayq.ayq .ayq-preview.is-lead .ayq-preview__line { font-size: calc(16px * var(--q-scale)); font-weight: 500; }
+.ayq.ayq .ayq-preview__credit { margin-top: auto; font: 500 calc(12.5px * var(--q-scale))/1.35 var(--q-sans); color: var(--q-ink2); }
+.ayq.ayq .ayq-preview__go { position: absolute; right: 12px; bottom: 12px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--q-ink); color: var(--q-page); }
+.ayq.ayq .ayq-preview.is-alert .ayq-preview__go { background: #3e2723; color: #f7badd; }
+/* Wide (website desktop): a bento. The expert view and safety cards are wide, the rest small. */
+@container ayq-cards (min-width: 720px) {
+  .ayq.ayq .ayq-previews { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-flow: row dense; gap: 10px; margin: 0; padding: 0; overflow: visible; }
+  .ayq.ayq .ayq-preview { min-height: 120px; }
+  .ayq.ayq .ayq-preview:is(.is-clinical, .is-safety) { grid-column: span 2; }
+  .ayq.ayq .ayq-preview__line { -webkit-line-clamp: 2; }
+}
+
+/* Panels: 24px of air under the cards; Overview's own groups need no box around them. */
+.ayq.ayq .ayq-panels { margin-top: 24px; scroll-margin-top: calc(var(--q-top) + 8px); }
+.ayq.ayq .ayq-panel { border-radius: 24px; }
+.ayq.ayq .ayq-panel.is-overview { padding: 0; background: transparent; }
+.ayq.ayq .ayq-panel.is-overview .ayq-over { margin-top: 0; padding: 0; }
+@media (max-width: 760px) { .ayq.ayq .ayq-panels { margin-top: 20px; } .ayq.ayq .ayq-panel { margin-top: 0; } .ayq.ayq .ayq-panel.is-overview { margin: 0; } }
+.ayq-skel--tabs { margin-bottom: 12px; }
+.ayq-skel--row { margin-bottom: 24px; }

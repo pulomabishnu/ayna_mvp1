@@ -12,6 +12,7 @@ import { findHardTerms, planGlossaryTerms } from '../../data/glossary';
 import { splitNote } from './sentences';
 import { fmtDate } from './fmtDate';
 import { buildEvidence, noDash, linkKind, publisherOf, cleanTitle } from './evidenceModel';
+import { chipsMode } from './pdpFlags.js';
 import PdpIcon from './PdpIcon.jsx';
 import UrgentSigns from './UrgentSigns.jsx';
 import ProductCommunityReviews from './ProductCommunityReviews.jsx';
@@ -23,11 +24,14 @@ import './pdp-complete.css';
  * The inside of the product page (website and app): everything the team
  * wrote, grouped so it reads at a glance and nothing is lost.
  *
- * 1. Overview: the short answer (the team's bottom line), At a glance, one
- *    preview tile per section that jumps to it, what it is, who it's for.
- * 2. Sticky segmented tabs: Expert view, Research, Reviews, Safety, How to
- *    use, Details. Each panel is laid out in columns on wide screens, with
- *    sources on a shelf on phones. Every panel is in the HTML from the start.
+ * Right under the hero: one row of section chips (Overview, Expert view,
+ * Research, Reviews, Safety, How to use, Details; they are the tabs), then one
+ * summary card per section (a swipe rail on phones, a bento on wide screens):
+ * one short line and one number or label from that section's own data. A chip
+ * or card opens its tab. The Overview tab holds the short answer, At a glance,
+ * what it is and who it's for. Each panel is laid out in columns on wide
+ * screens, with sources on a shelf on phones. Every panel is in the HTML from
+ * the start. The chip row scrolls with the page unless pdpFlags.js pins it.
  *
  * The words are the team's (src/data); ayna's own additions
  * (src/data/pdpAdditions.js) are labelled as ayna's check with their source.
@@ -35,8 +39,7 @@ import './pdp-complete.css';
 
 const RESEARCH_BY_PRODUCT = NEED_MAP_RESEARCH.reduce((m, r) => { if (!m.has(r.product)) m.set(r.product, []); m.get(r.product).push(r); return m; }, new Map());
 const GRADE_WORDS = { A: 'Strong evidence', B: 'Some evidence', C: 'Limited evidence' };
-const TAB_IDS = ['clinical', 'literature', 'reviews', 'safety', 'how-to-use', 'details'];
-const PHONE = '(max-width: 760px)';
+const TAB_IDS = ['overview', 'clinical', 'literature', 'reviews', 'safety', 'how-to-use', 'details'];
 const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 const cap = (t) => String(t || '').replace(/^./, (c) => c.toUpperCase());
 // Justifications that only praise the publisher say nothing about the product.
@@ -218,14 +221,22 @@ function Rows({ rows }) {
 }
 
 // ---------------------------------------------------------------------------
-// Tabs (segmented: every tab visible on a phone, no sideways scroll)
+// Sections: one row of chips (the tabs), the summary cards, then the panels
 // ---------------------------------------------------------------------------
-function SegTabs({ tabs, active, onChange }) {
+/**
+ * The chips are the tab list: one line that scrolls sideways and never wraps.
+ * The summary cards sit between the chips and the open panel, so every
+ * section's first line is on screen without opening it. `pinned` (see
+ * pdpFlags.js) lets the chip row stay under the header while the panels are on
+ * screen; otherwise it scrolls away with the page.
+ */
+function SectionTabs({ tabs, active, onChange, strip = null, pinned = false }) {
   const listRef = useRef(null);
-  // Phones: the tabs are one sideways-scrolling row (underline tabs). The edge
-  // that still has tabs past it fades, and the next label stays half visible,
-  // so it's clear there is more (GitLab Pajamas / Material "scrollable tabs").
+  const barRef = useRef(null);
+  const sentinelRef = useRef(null);
+  // The edge that still has chips past it fades, so it's clear there is more.
   const [edges, setEdges] = useState({ left: false, right: false });
+  const [stuck, setStuck] = useState(false);
   useEffect(() => {
     const el = listRef.current;
     if (!el) return undefined;
@@ -241,13 +252,23 @@ function SegTabs({ tabs, active, onChange }) {
     window.addEventListener('resize', update);
     return () => { el.removeEventListener('scroll', update); window.removeEventListener('resize', update); };
   }, [tabs.length]);
+  // Pinned only: a hairline under the row once content scrolls under it.
+  useEffect(() => {
+    if (!pinned || typeof IntersectionObserver !== 'function') return undefined;
+    const s = sentinelRef.current; const bar = barRef.current;
+    if (!s || !bar) return undefined;
+    const top = parseFloat(window.getComputedStyle(bar).top) || 0;
+    const io = new IntersectionObserver(([e]) => setStuck(!e.isIntersecting && e.boundingClientRect.top < top + 1), { rootMargin: `-${Math.round(top)}px 0px 0px 0px`, threshold: 0 });
+    io.observe(s);
+    return () => io.disconnect();
+  }, [pinned]);
   useEffect(() => {
     const el = listRef.current;
     const tab = el?.querySelector(`[data-tab="${active}"]`);
     if (!el || !tab || el.scrollWidth <= el.clientWidth) return;
     const left = tab.getBoundingClientRect().left - el.getBoundingClientRect().left + el.scrollLeft;
     if (left < el.scrollLeft || left + tab.offsetWidth > el.scrollLeft + el.clientWidth) {
-      el.scrollTo({ left: Math.max(0, left - 24), behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      el.scrollTo({ left: Math.max(0, left - 24), behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
     }
   }, [active]);
   const choose = (id, focus) => {
@@ -263,34 +284,50 @@ function SegTabs({ tabs, active, onChange }) {
   };
   return (
     <>
-      <div className={`ayq-tabsbar${edges.left ? ' has-left' : ''}${edges.right ? ' has-right' : ''}`}>
-        <div className={`ayq-tabs is-${tabs.length}`} role="tablist" aria-label="Product details" ref={listRef} onKeyDown={onKeyDown}>
+      {pinned && <div ref={sentinelRef} className="ayq-chips__sentinel" aria-hidden="true" />}
+      <div ref={barRef} className={`ayq-tabsbar ayq-chips${pinned ? ' is-pinned' : ''}${stuck ? ' is-stuck' : ''}${edges.left ? ' has-left' : ''}${edges.right ? ' has-right' : ''}`}>
+        <div className={`ayq-tabs is-${tabs.length}`} role="tablist" aria-label="Product sections" ref={listRef} onKeyDown={onKeyDown}>
           {tabs.map((t) => {
             const on = t.id === active;
             return (
               <button key={t.id} type="button" role="tab" id={`ay-tab-${t.id}`} data-tab={t.id} aria-selected={on} aria-controls={`ay-panel-${t.id}`} tabIndex={on ? 0 : -1} className={`ayq-tab${on ? ' is-on' : ''}${t.tone ? ` is-${t.tone}` : ''}`} onClick={() => choose(t.id)}>
-                <PdpIcon name={t.icon} size={18} />
+                <PdpIcon name={t.icon} size={16} />
                 <span>{t.label}</span>
+                {t.tone === 'alert' && <span className="sr-only"> (safety note)</span>}
               </button>
             );
           })}
         </div>
       </div>
-      {tabs.map((t) => (
-        <div key={t.id} role="tabpanel" id={`ay-panel-${t.id}`} aria-labelledby={`ay-tab-${t.id}`} tabIndex={0} hidden={t.id !== active} className={`ayq-panel is-${t.id}`}>
-          <h3 className="sr-only">{t.label}</h3>
-          {t.body}
-        </div>
-      ))}
+      {strip}
+      <div id="ay-panels" className="ayq-panels">
+        {tabs.map((t) => (
+          <div key={t.id} role="tabpanel" id={`ay-panel-${t.id}`} aria-labelledby={`ay-tab-${t.id}`} tabIndex={0} hidden={t.id !== active} className={`ayq-panel is-${t.id}`}>
+            <h3 className="sr-only">{t.label}</h3>
+            {t.body}
+          </div>
+        ))}
+      </div>
     </>
   );
+}
+
+/** One short line for a summary card: the first sentence, cut at a word near `max`. */
+function oneLine(text, max = 90) {
+  const t = noDash(String(text || '')).replace(/\s+/g, ' ').trim();
+  if (!t) return '';
+  const first = (t.match(/^.+?[.!?](?=\s|$)/) || [t])[0];
+  if (first.length <= max) return first;
+  const cut = first.slice(0, max - 1);
+  return `${cut.slice(0, Math.max(cut.lastIndexOf(' '), 20)).replace(/[,;:]$/, '')}…`;
 }
 
 // ---------------------------------------------------------------------------
 // The page part
 // ---------------------------------------------------------------------------
-export default function ProductEvidence({ product: baseProduct, glance = null, aynaData = null, aynaRating: aynaRatingProp = null, ratingCount: ratingCountProp = 0, rateControls = null, heroLine = '', extraRows = [], onOpenReview = null, onWriteReview = null, fitSlot = null, afterOverview = null, loading = false }) {
+export default function ProductEvidence({ product: baseProduct, glance = null, aynaData = null, aynaRating: aynaRatingProp = null, ratingCount: ratingCountProp = 0, rateControls = null, heroLine = '', extraRows = [], onOpenReview = null, onWriteReview = null, fitSlot = null, afterOverview = null, safetyLead = '', loading = false }) {
   const product = useApprovedResearch(baseProduct);
+  const pinned = useMemo(() => chipsMode() === 'pinned', []);
   const m = useMemo(() => buildEvidence(product, { heroLine, glance }), [product, heroLine, glance]);
   const works = worksWith(product);
   const reviewRows = useProductReviews(baseProduct?.id);
@@ -298,14 +335,6 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const aynaRating = liveStats ? liveStats.average : aynaRatingProp;
   const ratingCount = liveStats ? liveStats.count : ratingCountProp;
 
-  const [isPhone, setIsPhone] = useState(() => typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia(PHONE).matches);
-  useEffect(() => {
-    if (typeof window.matchMedia !== 'function') return undefined;
-    const mq = window.matchMedia(PHONE);
-    const on = () => setIsPhone(mq.matches);
-    mq.addEventListener?.('change', on);
-    return () => mq.removeEventListener?.('change', on);
-  }, []);
   const [tab, setTab] = useState(() => {
     if (typeof window === 'undefined') return '';
     const h = window.location.hash.slice(1);
@@ -327,9 +356,18 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const ALIAS = { science: 'literature', evidence: 'literature', how: 'how-to-use', sources: 'details', overview: 'overview', inside: 'literature' };
   const goTo = (raw) => {
     const id = ALIAS[raw] || raw;
-    if (id === 'overview') { document.getElementById('ayq-who')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     chooseTab(id);
     scrollToTabs();
+  };
+  // A chip or card opens its tab; the page moves only when the panel's start is off screen.
+  const reveal = (id) => {
+    chooseTab(id);
+    window.requestAnimationFrame(() => {
+      const el = document.getElementById('ay-panels');
+      if (!el) return;
+      const top = el.getBoundingClientRect().top;
+      if (top < 0 || top > window.innerHeight * 0.7) scrollToTabs();
+    });
   };
   useEffect(() => {
     if (takeProductTab() === 'reviews') goTo('reviews');
@@ -365,8 +403,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     return (
       <div id="ay-tabs" className="ayq is-loading" aria-busy="true">
         <p className="sr-only" role="status">Loading the research for this product…</p>
-        <div className="ayq-over" aria-hidden="true"><div className="ayq-skel ayq-skel--bottom" /><div className="ayq-skel ayq-skel--glance" /><div className="ayq-skel ayq-skel--row" /></div>
-        <div className="ayq-tabsec" aria-hidden="true"><div className="ayq-skel ayq-skel--tabs" /><div className="ayq-skel ayq-skel--panel" /></div>
+        <div className="ayq-tabsec" aria-hidden="true"><div className="ayq-skel ayq-skel--tabs" /><div className="ayq-skel ayq-skel--row" /><div className="ayq-skel ayq-skel--panel" /></div>
       </div>
     );
   }
@@ -651,17 +688,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     </>
   );
 
-  const tabs = [
-    expertBody && { id: 'clinical', label: 'Expert view', icon: 'stethoscope', body: expertBody },
-    researchBody && { id: 'literature', label: 'Research', icon: 'paper', body: researchBody },
-    hasReviews && { id: 'reviews', label: 'Reviews', icon: 'community', body: reviewsBody },
-    safetyBody && { id: 'safety', label: 'Safety', icon: 'shield', tone: sf.alert.length ? 'alert' : '', body: safetyBody },
-    howBody && { id: 'how-to-use', label: 'How to use', icon: 'steps', body: howBody },
-    { id: 'details', label: 'Details', icon: 'format', body: detailsBody },
-  ].filter(Boolean);
-  const activeTab = tabs.some((t) => t.id === tab) ? tab : (tabs[0]?.id || '');
-
-  // ---- Overview: the short answer, at a glance, one preview per section --------
+  // ---- Overview: the short answer, at a glance, what it is and who it's for ----
   const shortList = ex.short;
   const alertHead = (() => {
     const t = sf.alert[0] || '';
@@ -669,27 +696,6 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     if (colon > 8 && colon <= 70) return `${t.slice(0, colon)}.`;
     return '';
   })();
-  // Each preview leads with one real number (studies on file, things to check, a rating, steps).
-  const researchCount = new Set([...ex.sources, ...rs.studies, ...rs.ingredients.flatMap((i) => i.links)].filter((l) => l.kind.tier === 'credible').map((l) => l.url)).size;
-  const previews = [
-    tabs.some((t) => t.id === 'literature') && (rs.negative.length
-      ? { id: 'literature', icon: 'paper', label: 'Research', num: String(rs.negative.length), caption: rs.negative.length === 1 ? 'study found no clear benefit' : 'studies found no clear benefit', short: 'no benefit found' }
-      : researchCount
-        ? { id: 'literature', icon: 'paper', label: 'Research', num: String(researchCount), caption: `${researchCount === 1 ? 'study or health-body source' : 'studies and health-body sources'}${levelWord ? `. ${levelWord}` : ''}`, short: 'sources' }
-        : { id: 'literature', icon: 'paper', label: 'Research', caption: levelWord || (rs.ingredients.length ? plural(rs.ingredients.length, rs.ingredientsAreTopics ? 'topic' : 'ingredient') + ' explained' : 'What the research says'), short: levelWord ? levelWord.replace(' evidence', '') : 'Read it' }),
-    tabs.some((t) => t.id === 'safety') && (sf.alert.length
-      ? { id: 'safety', icon: 'shield', label: 'Safety', caption: alertHead || 'Safety note on file', short: 'Note on file', tone: 'alert' }
-      : sf.warnings.length
-        ? { id: 'safety', icon: 'shield', label: 'Safety', num: String(sf.warnings.length), caption: sf.warnings.length === 1 ? 'thing to check first' : 'things to check first', short: 'to check' }
-        : { id: 'safety', icon: 'shield', label: 'Safety', caption: 'Label and regulator facts', short: 'Label facts' }),
-    tabs.some((t) => t.id === 'reviews') && (hasMemberRating
-      ? { id: 'reviews', icon: 'community', label: 'Reviews', num: aynaRating.toFixed(1), caption: `from ${plural(ratingCount, 'ayna member')}`, short: 'members' }
-      : rv.brandRating
-        ? { id: 'reviews', icon: 'community', label: 'Reviews', num: rv.brandRating.value, caption: `from ${rv.brandRating.count} online reviews, not verified`, short: 'online' }
-        : { id: 'reviews', icon: 'community', label: 'Reviews', caption: rv.text.length ? 'What people say online' : 'No reviews yet', short: rv.text.length ? 'Online' : 'None yet' }),
-    tabs.some((t) => t.id === 'how-to-use') && m.how && { id: 'how-to-use', icon: 'steps', label: 'How to use', num: String(m.how.steps.length), caption: m.how.steps.length === 1 ? 'step' : 'steps', short: m.how.steps.length === 1 ? 'step' : 'steps' },
-  ].filter(Boolean);
-
   // P1-5 / R2: "What it is" and "Who it's for" are one plain section with ONE
   // heading that names what's in it (no second "Who it's for" heading under
   // the first). Every team sentence still shows once, in one place.
@@ -703,68 +709,135 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     </div>
   );
 
+  // ---- Overview tab: the short answer, At a glance, what it is and who it's for ----
+  const overviewBody = (shortList.length > 0 || hasWhat || hasWho || level > 0 || tiles.length > 0 || afterOverview) ? (
+    <>
+      <section className="ayq-over" aria-label="Overview">
+        {shortList.length > 0 ? (
+          <article className="ayq-bottom" aria-labelledby="ayq-bottom-h">
+            <h2 id="ayq-bottom-h" className="ayq-bottom__h">The short answer</h2>
+            <ul className="ayq-bottom__list">{shortList.map((x) => <li key={x}><Tx>{x}</Tx></li>)}</ul>
+            {ex.attribution && <p className="ayq-bottom__by">{m.independent ? 'ayna’s summary of the research' : 'Summary of the research, with claims credited to the brand'}. <button type="button" onClick={() => goTo('clinical')}>Read the full expert view</button></p>}
+          </article>
+        ) : (hasWhat || hasWho) ? (
+          <article className="ayq-about" aria-labelledby="ayq-about-h">
+            <h2 id="ayq-about-h" className="ayq-h3">{aboutTitle}</h2>
+            {hasWhat && <div className="ayq-prose"><Paras list={m.summary} /></div>}
+            {whoBlock}
+          </article>
+        ) : null}
+
+        {(level > 0 || tiles.length > 0) && (
+          <div className="ayq-glance" aria-labelledby="ayq-glance-h">
+            <h2 id="ayq-glance-h" className="ayq-h3">At a glance</h2>
+            {level > 0 && (
+              <button type="button" className="ayq-glance__ev" onClick={() => goTo('literature')}>
+                <span className="ayq-meter" data-level={level}><span className="ayq-meter__word">{levelWord}{topGrade && <span className="ayq-meter__for"> for {needPhrase(topGrade.need)}</span>}</span><span className="ayq-meter__bars" role="img" aria-label={`${levelWord}, ${level} of 3`}><i /><i /><i /></span></span>
+                <span className="ayq-glance__go">See the research</span>
+              </button>
+            )}
+            {tiles.length > 0 && (
+              <ul className="ayq-tiles">
+                {tiles.map((t) => <li key={t.id}><PdpIcon name={t.icon} size={20} /><span><span className="ayq-tiles__label">{t.label}</span><span className="ayq-tiles__value">{t.main}</span>{t.note && <span className="ayq-tiles__note">{t.note}</span>}</span></li>)}
+              </ul>
+            )}
+            {fitSlot}
+          </div>
+        )}
+
+        {shortList.length > 0 && (hasWhat || hasWho) && (
+          <section className="ayq-what ayq-about" aria-labelledby="ayq-what-h">
+            <h2 id="ayq-what-h" className="ayq-h3">{aboutTitle}</h2>
+            {hasWhat && <div className="ayq-prose"><Paras list={m.summary} /></div>}
+            {whoBlock}
+          </section>
+        )}
+      </section>
+      {afterOverview}
+    </>
+  ) : null;
+
+  const tabs = [
+    overviewBody && { id: 'overview', label: 'Overview', icon: 'format', body: overviewBody },
+    expertBody && { id: 'clinical', label: 'Expert view', icon: 'stethoscope', body: expertBody },
+    researchBody && { id: 'literature', label: 'Research', icon: 'paper', body: researchBody },
+    hasReviews && { id: 'reviews', label: 'Reviews', icon: 'community', body: reviewsBody },
+    safetyBody && { id: 'safety', label: 'Safety', icon: 'shield', tone: sf.alert.length ? 'alert' : '', body: safetyBody },
+    howBody && { id: 'how-to-use', label: 'How to use', icon: 'steps', body: howBody },
+    { id: 'details', label: 'Details', icon: 'format', body: detailsBody },
+  ].filter(Boolean);
+  const activeTab = tabs.some((t) => t.id === tab) ? tab : (tabs[0]?.id || '');
+
+  // ---- Summary cards: one per section, one short line + one number or label ----
+  // Every word comes from the same data the tab shows; the full text is in the tab.
+  const researchCount = new Set([...ex.sources, ...rs.studies, ...rs.ingredients.flatMap((i) => i.links)].filter((l) => l.kind.tier === 'credible').map((l) => l.url)).size;
+  const has = (id) => tabs.some((t) => t.id === id);
+  const safetyCount = (sf.alert.length ? 1 : 0) + sf.warnings.length + sf.opinionAlerts.length;
+  const topSafety = oneLine(safetyLead || alertHead || sf.alert[0] || sf.warnings[0] || sf.opinionAlerts[0], 90);
+  const firstStep = m.how ? oneLine(m.how.steps[0] || m.how.intro, 80) : '';
+  const detailBits = [tiles.find((t) => t.id === 'size')?.main, tiles.find((t) => t.id === 'perunit')?.main, tiles.find((t) => t.id === 'fsa') && 'FSA/HSA eligible', dt.whereToBuy.length ? `Sold at ${dt.whereToBuy.slice(0, 2).join(', ')}` : ''].filter(Boolean);
+  const previews = [
+    has('clinical') && (ex.short[0] || ex.opinion[0]) && {
+      id: 'clinical', icon: 'stethoscope', label: 'Expert view', tone: 'lead',
+      line: oneLine(ex.short[0] || ex.opinion[0], 90),
+      credit: ex.attribution ? (m.independent ? 'ayna’s summary of the research' : 'Credited to the brand, not independent') : '',
+    },
+    has('literature') && (rs.negative.length
+      ? { id: 'literature', icon: 'paper', label: 'Research', num: String(rs.negative.length), unit: rs.negative.length === 1 ? 'study found no clear benefit' : 'studies found no clear benefit', line: levelWord ? `${levelWord}${topGrade ? ` for ${needPhrase(topGrade.need)}` : ''}` : '', level }
+      : { id: 'literature', icon: 'paper', label: 'Research', num: researchCount ? String(researchCount) : '', unit: researchCount ? (researchCount === 1 ? 'source on file' : 'sources on file') : '', line: levelWord ? `${levelWord}${topGrade ? ` for ${needPhrase(topGrade.need)}` : ''}` : (rs.ingredients.length ? `${plural(rs.ingredients.length, rs.ingredientsAreTopics ? 'topic' : 'ingredient')} explained` : 'What the research says'), level }),
+    has('safety') && {
+      id: 'safety', icon: 'shield', label: 'Safety', tone: sf.alert.length || safetyLead ? 'alert' : '',
+      num: safetyCount ? String(safetyCount) : '', unit: safetyCount ? (safetyCount === 1 ? 'note' : 'notes') : '',
+      line: topSafety || 'Label and regulator facts',
+    },
+    has('reviews') && (hasMemberRating
+      ? { id: 'reviews', icon: 'community', label: 'Reviews', num: aynaRating.toFixed(1), star: true, unit: `from ${plural(ratingCount, 'ayna member')}`, line: rv.text[0] ? oneLine(rv.text[0], 80) : '' }
+      : rv.brandRating
+        ? { id: 'reviews', icon: 'community', label: 'Reviews', num: String(rv.brandRating.value), star: true, unit: `from ${rv.brandRating.count} online reviews`, line: 'Reported by the brand or a retailer, not verified by ayna' }
+        : { id: 'reviews', icon: 'community', label: 'Reviews', word: rv.text.length ? 'Online' : 'None yet', line: rv.text.length ? oneLine(rv.text[0], 90) : 'No reviews yet. Tried it? You can be the first.' }),
+    has('how-to-use') && m.how && { id: 'how-to-use', icon: 'steps', label: 'How to use', num: String(m.how.steps.length), unit: m.how.steps.length === 1 ? 'step' : 'steps', line: firstStep },
+    has('details') && {
+      id: 'details', icon: 'format', label: 'Details',
+      word: tiles.find((t) => t.id === 'format')?.main || '',
+      num: tiles.find((t) => t.id === 'format') ? '' : (allSources.length ? String(allSources.length) : ''),
+      unit: tiles.find((t) => t.id === 'format') ? '' : (allSources.length ? 'sources checked' : ''),
+      line: oneLine(detailBits.join(' · '), 90) || (dt.ingredientsText ? (m.isDigital ? 'What’s included, size and price' : 'Ingredients, size and price') : 'Size, price and sources'),
+    },
+  ].filter(Boolean);
+
   return (
     <TermsCtx.Provider value={plan}>
-      <div id="ay-tabs" className="ayq">
-        <section className="ayq-over" aria-label="Overview">
-          {shortList.length > 0 ? (
-            <article className="ayq-bottom" aria-labelledby="ayq-bottom-h">
-              <h2 id="ayq-bottom-h" className="ayq-bottom__h">The short answer</h2>
-              <ul className="ayq-bottom__list">{shortList.map((s) => <li key={s}><Tx>{s}</Tx></li>)}</ul>
-              {ex.attribution && <p className="ayq-bottom__by">{m.independent ? 'ayna’s summary of the research' : 'Summary of the research, with claims credited to the brand'}. <button type="button" onClick={() => goTo('clinical')}>Read the full expert view</button></p>}
-            </article>
-          ) : (hasWhat || hasWho) ? (
-            <article className="ayq-about" aria-labelledby="ayq-about-h">
-              <h2 id="ayq-about-h" className="ayq-h3">{aboutTitle}</h2>
-              {hasWhat && <div className="ayq-prose"><Paras list={m.summary} /></div>}
-              {whoBlock}
-            </article>
-          ) : null}
-
-          {(level > 0 || tiles.length > 0) && (
-            <div className="ayq-glance" aria-labelledby="ayq-glance-h">
-              <h2 id="ayq-glance-h" className="ayq-h3">At a glance</h2>
-              {level > 0 && (
-                <button type="button" className="ayq-glance__ev" onClick={() => goTo('literature')}>
-                  <span className="ayq-meter" data-level={level}><span className="ayq-meter__word">{levelWord}{topGrade && <span className="ayq-meter__for"> for {needPhrase(topGrade.need)}</span>}</span><span className="ayq-meter__bars" role="img" aria-label={`${levelWord}, ${level} of 3`}><i /><i /><i /></span></span>
-                  <span className="ayq-glance__go">See the research</span>
-                </button>
-              )}
-              {tiles.length > 0 && (
-                <ul className="ayq-tiles">
-                  {tiles.map((t) => <li key={t.id}><PdpIcon name={t.icon} size={20} /><span><span className="ayq-tiles__label">{t.label}</span><span className="ayq-tiles__value">{t.main}</span>{t.note && <span className="ayq-tiles__note">{t.note}</span>}</span></li>)}
-                </ul>
-              )}
-              {fitSlot}
-            </div>
-          )}
-
-          {previews.length > 0 && (
-            <nav className="ayq-previews" aria-label="Jump to a section">
-              {previews.map((p) => (
-                <button key={p.id} type="button" className={`ayq-preview${p.tone ? ` is-${p.tone}` : ''}`} onClick={() => goTo(p.id)}>
-                  <span className="ayq-preview__top"><PdpIcon name={p.icon} size={18} /><span>{p.label}</span></span>
-                  <span className="ayq-preview__main">{p.num && <b className="ayq-preview__num">{p.num}</b>}<span className="ayq-preview__cap">{p.caption}</span><span className="ayq-preview__short" aria-hidden="true">{p.short}</span></span>
-                  <span className="ayq-preview__go" aria-hidden="true"><PdpIcon name="arrow" size={18} /></span>
-                </button>
-              ))}
-            </nav>
-          )}
-
-          {shortList.length > 0 && (hasWhat || hasWho) && (
-            <section className="ayq-what ayq-about" aria-labelledby="ayq-what-h">
-              <h2 id="ayq-what-h" className="ayq-h3">{aboutTitle}</h2>
-              {hasWhat && <div className="ayq-prose"><Paras list={m.summary} /></div>}
-              {whoBlock}
-            </section>
-          )}
-        </section>
-
-        {afterOverview}
-
+      <div id="ay-tabs" className={`ayq${pinned ? ' is-pinned' : ''}`}>
         {tabs.length > 0 && (
-          <section id="ay-pt" className="ayq-tabsec" aria-label="Expert view, research, reviews, safety, how to use and details">
-            <SegTabs tabs={tabs} active={activeTab} onChange={(id) => { chooseTab(id); if (isPhone) scrollToTabs(); }} />
+          <section id="ay-pt" className="ayq-tabsec" aria-label="Overview, expert view, research, reviews, safety, how to use and details">
+            <SectionTabs
+              tabs={tabs}
+              active={activeTab}
+              pinned={pinned}
+              onChange={reveal}
+              strip={previews.length > 0 && (
+                <div className="ayq-cardswrap">
+                  <nav className="ayq-previews" aria-label="Section summaries">
+                    {previews.map((p) => (
+                      <button key={p.id} type="button" data-sec={p.id} aria-current={p.id === activeTab ? 'true' : undefined} className={`ayq-preview is-${p.id}${p.tone ? ` is-${p.tone}` : ''}`} onClick={() => reveal(p.id)}>
+                        <span className="ayq-preview__top"><PdpIcon name={p.icon} size={16} /><span>{p.label}</span></span>
+                        {(p.num || p.word) && (
+                          <span className="ayq-preview__stat">
+                            {p.num && <b className="ayq-preview__num">{p.star && <span aria-hidden="true">★ </span>}{p.num}</b>}
+                            {!p.num && p.word && <b className="ayq-preview__word">{p.word}</b>}
+                            {p.unit && <span className="ayq-preview__unit">{p.unit}</span>}
+                          </span>
+                        )}
+                        {p.level > 0 && <span className="ayq-meter ayq-preview__meter" data-level={p.level} aria-hidden="true"><span className="ayq-meter__bars"><i /><i /><i /></span></span>}
+                        {p.line && <span className="ayq-preview__line">{p.line}</span>}
+                        {p.credit && <span className="ayq-preview__credit">{p.credit}</span>}
+                        <span className="ayq-preview__go"><span className="sr-only">Read more in {p.label}</span><PdpIcon name="arrow" size={16} /></span>
+                      </button>
+                    ))}
+                  </nav>
+                </div>
+              )}
+            />
           </section>
         )}
 
