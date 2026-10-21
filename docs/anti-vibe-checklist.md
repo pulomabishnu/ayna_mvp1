@@ -60,3 +60,13 @@ the biggest tell, more than any single element.
 7. No duplicate background jobs (double emails, double onboarding, double inserts); idempotent handlers.
 8. /admin and every admin API: nothing loads for logged-out users or normal users (server-side role check, not just hidden UI).
 Plus: rate limits on every serverless API that costs money (Ask ayna / LLM calls, email, SMS).
+
+## Shipping checklist additions (founder, Oct 21, "30 things" list)
+- docs/design-direction.md is our DESIGN.md: colours, spacing, radius, type, motion all come from it.
+- A real font pair (ayna Display + Figtree), one accent colour at a time per component, one icon set at one stroke width.
+- Density, not empty white space: show more useful information per screen (less scrolling), grouped clearly. Air between groups, not inside them.
+- One layout idea per page (one memorable composition), not five competing ones.
+- Answer first: lead with the point, cut preamble and adverbs, write like a person (humanizer pass on every string).
+- Real screenshots and photos, real testimonials only, privacy policy and terms linked and current.
+- Compress hero and lifestyle images (AVIF/WebP, correct sizes/srcset, lazy below the fold); consider a short muted hero video only if it loads fast and has a still fallback.
+- Polish pass before shipping: spacing, alignment, states, copy, a11y.
