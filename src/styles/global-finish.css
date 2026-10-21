@@ -1,0 +1,215 @@
+/* Consolidated 2026-10-21: these sheets were always imported back to back from main.jsx; same order, same cascade. */
+
+/* ===== was src/styles/motion.css ===== */
+/* ayna motion system (web and app). One set of curves and durations,
+   from the anti-vibe guide, section 4. Every file uses these instead of its
+   own cubic-bezier. Motion explains what happened; it never decorates.
+   src/mobile/tokens.css repeats the token block for the app. */
+:root {
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);     /* entrances, reveals, sheets in */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1); /* toggles, state swaps, tab icon fill */
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);       /* exits only, always shorter */
+  --ease-pop: cubic-bezier(0.34, 1.2, 0.64, 1);  /* delight only: heart, sticker drop */
+  --t-press: 110ms;
+  --t-fast: 160ms;
+  --t-base: 240ms;
+  --t-sheet: 360ms;
+  --t-sheet-out: 240ms;
+  --t-push: 320ms;
+  --t-delight: 520ms;
+  --stagger: 45ms;
+  /* 40% espresso behind sheets, never blur */
+  --sheet-dim: rgba(62, 39, 35, .4);
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --t-base: 1ms; --t-sheet: 1ms; --t-sheet-out: 1ms; --t-push: 1ms; --t-delight: 1ms; --stagger: 0ms; }
+  *, *::before, *::after { animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}
+
+/* ---- Pressed state: anything tappable answers within 100ms ---- */
+.ay-press { transition: transform var(--t-press) var(--ease-pop), background-color var(--t-fast) var(--ease-in-out); -webkit-tap-highlight-color: transparent; }
+.ay-press:active { transform: scale(.97); }
+
+/* ---- 1. Save (heart): fill and one 1 -> 1.18 -> 1 pop ---- */
+@keyframes ay-heart-pop { 0% { transform: scale(1); } 45% { transform: scale(1.18); } 100% { transform: scale(1); } }
+.ay-heart-pop svg, .ay-heart-pop.is-svg { animation: ay-heart-pop 320ms var(--ease-pop) both; }
+@keyframes ay-count-bump { 0% { transform: scale(1); } 50% { transform: scale(1.25); } 100% { transform: scale(1); } }
+.ay-count-bump { display: inline-block; animation: ay-count-bump 280ms var(--ease-pop) both; }
+
+/* ---- 2. Add: the button morphs to "Added" with a check ---- */
+@keyframes ay-morph-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.ay-added-morph { animation: ay-morph-in var(--t-fast) var(--ease-out) both; display: inline-flex; align-items: center; gap: 6px; }
+.ay-added-morph svg { width: 16px; height: 16px; flex: none; }
+/* the product thumbnail drops onto the tab that holds it */
+.ay-fly-thumb { position: fixed; z-index: 2147483001; width: 44px; height: 44px; border-radius: 12px; overflow: hidden; pointer-events: none; background: #fff; border: 2px solid #3e2723; }
+.ay-fly-thumb img { width: 100%; height: 100%; object-fit: contain; }
+
+/* ---- 3/4. Quiz: chip fill, step slide, thin progress ---- */
+@keyframes ay-step-in { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+@keyframes ay-step-back { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+.ay-step-in { animation: ay-step-in var(--t-base) var(--ease-out) both; }
+
+/* ---- 6. Sheets: grabber, drag to dismiss, 40% espresso dim ---- */
+@keyframes ay-sheet-in { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes ay-dim-in { from { opacity: 0; } to { opacity: 1; } }
+.ay-sheet-dim { background: var(--sheet-dim) !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; animation: ay-dim-in var(--t-base) var(--ease-out) both; }
+.ay-sheet-in { animation: ay-sheet-in var(--t-sheet) var(--ease-out) both; touch-action: pan-y; }
+.ay-sheet-grabber { display: block; width: 100%; height: 22px; margin: -8px 0 2px; padding: 0; border: 0; background: transparent; cursor: grab; touch-action: none; }
+.ay-sheet-grabber::before { content: ''; display: block; width: 36px; height: 5px; margin: var(--ay-s8) auto 0; border-radius: 3px; background: currentColor; opacity: .3; }
+.ay-sheet-grabber:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; border-radius: 8px; }
+
+/* ---- 7. Screen push (list -> detail) and tab cross-fade ---- */
+@keyframes ay-push-in { from { transform: translateX(100%); } to { transform: none; } }
+@keyframes ay-push-out { from { transform: none; } to { transform: translateX(100%); } }
+.ay-push-in { animation: ay-push-in var(--t-push) var(--ease-out) both; box-shadow: -8px 0 24px rgba(62, 39, 35, .12); }
+.ay-push-dragging { animation: none !important; transition: none !important; }
+.ay-push-settle { transition: transform var(--t-base) var(--ease-out); }
+@keyframes ay-tab-fade { from { opacity: 0; } to { opacity: 1; } }
+.ay-tab-fade { animation: ay-tab-fade 120ms linear both; }
+
+/* ---- 8. Empty-state sticker settles once, then stays still ---- */
+@keyframes ay-sticker-settle { from { transform: rotate(-6deg) scale(.96); opacity: .6; } to { transform: rotate(-3deg); opacity: 1; } }
+.ay-sticker-settle { animation: ay-sticker-settle 400ms var(--ease-pop) both; }
+
+/* ---- 9. Check-in complete: the month dot fills ---- */
+@keyframes ay-dot-fill { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
+.ay-dot-fill { animation: ay-dot-fill var(--t-delight) var(--ease-pop) both; }
+
+/* ---- Web scroll reveal: supporting visuals only, once ---- */
+.ay-reveal { opacity: 0; translate: 0 12px; transition: opacity 400ms var(--ease-out), translate 400ms var(--ease-out); }
+.ay-reveal.is-in { opacity: 1; translate: none; }
+html.ay-motion-paused .ay-reveal { opacity: 1; translate: none; transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  .ay-reveal { opacity: 1; translate: none; transition: none; }
+  .ay-push-in, .ay-sheet-in, .ay-step-in, .ay-dot-fill { animation-name: ay-tab-fade !important; animation-duration: 150ms !important; }
+  .ay-heart-pop svg, .ay-heart-pop.is-svg, .ay-count-bump, .ay-sticker-settle { animation: none !important; }
+  .ay-sticker-settle { transform: rotate(-3deg); }
+  .ay-press:active { transform: none; }
+}
+
+/* ---- UI line icons (components/icons/UiIcons.jsx) sit on the text line ---- */
+.ay-ui-icon { flex: none; display: inline-block; vertical-align: -0.2em; }
+.ay-product-card__eco, .pdp-safety-flag, .ay-sl-pl-open { display: inline-flex; align-items: center; gap: 6px; }
+
+/* ---- Web buttons press too (scale .97, spring back), never lift more than 2px on hover ---- */
+.app-container :is(.ay-btn, .ay-chip, .ed-familiar__q a) { transition-property: transform, background-color, color, border-color, box-shadow; transition-duration: var(--t-press), var(--t-fast), var(--t-fast), var(--t-fast), var(--t-fast); transition-timing-function: var(--ease-pop), var(--ease-in-out), var(--ease-in-out), var(--ease-in-out), var(--ease-in-out); }
+.app-container :is(.ay-btn, .ay-chip):active:not(:disabled) { transform: scale(.97); }
+@media (prefers-reduced-motion: reduce) { .app-container :is(.ay-btn, .ay-chip):active { transform: none; } }
+
+/* Keyboard hint (⌘K in the search field). Only where there's a keyboard and a mouse. */
+.ay-kbd { position: absolute; right: 64px; top: 50%; translate: 0 -50%; padding: 3px 7px; border: 1.5px solid currentColor; border-radius: 6px; font: 600 12px/1 'Figtree', system-ui, sans-serif; opacity: .7; pointer-events: none; }
+@media (hover: none), (pointer: coarse), (max-width: 767px) { .ay-kbd { display: none; } }
+
+/* ===== was src/styles/finish.css ===== */
+/* Finish: grainy, retro, matte (docs/design-direction.md, "Finish").
+   One film-grain layer for the website and the app, plus the matte rules.
+
+   Grain: a pre-rendered 160px noise tile (public/images/ayna-grain-*.png,
+   10KB, espresso specks on light, butter specks on dark) tiled on one fixed,
+   pointer-events:none pseudo-element. A static bitmap is decoded once and
+   composited by the GPU; we avoid an SVG feTurbulence background (re-rasterised
+   on zoom), animated grain, and mix-blend-mode on a fixed layer (blending the
+   whole viewport every scroll frame costs most on low-end Android and older
+   iPhones). Opacity is a token so it can be tuned in one place. Off for print
+   and for people who ask for reduced transparency. */
+:root {
+  --grain-light: url('/images/ayna-grain-light.png');
+  --grain-dark: url('/images/ayna-grain-dark.png');
+  --grain-opacity: .3;
+  --grain-opacity-dark: .2;
+}
+
+/* Website: the old SVG grain (light only) is replaced by this one. */
+html body:has(.app-container)::after {
+  content: ''; position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+  background: var(--grain-light) repeat 0 0 / 160px 160px !important;
+  opacity: var(--grain-opacity) !important; mix-blend-mode: normal !important;
+}
+html[data-ay-theme='dark'] body:has(.app-container)::after,
+html body:has(.app-container[data-theme='dark'])::after,
+html body:has(.app-container[data-theme='brand-dark'])::after {
+  background-image: var(--grain-dark) !important; opacity: var(--grain-opacity-dark) !important;
+}
+/* The app draws its own layer (inside .ayna-mobile), so the page one stays off there. */
+html body:has(.ayna-mobile)::after { display: none !important; }
+
+@media (prefers-reduced-transparency: reduce) { html body::after { display: none !important; } }
+@media print { html body::after { display: none !important; } }
+
+/* Matte: no glass. Backdrop blur only on the site header; sheets dim instead. */
+.app-container :is(*, *::before, *::after):not(.app-nav):not(.app-nav *) { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+
+/* Text selection in ayna pink with espresso text, both themes. */
+::selection { background: #f7badd; color: #3e2723; }
+
+/* P2-1 (final layout pass): photos wait on tinted paper (the img box's own
+   background), then settle in once loaded. Nothing is hidden before load. */
+.app-container img[data-ph] { background-color: #f6e3a1; }
+.app-container:is([data-theme='brand-dark'], [data-theme='dark']) img[data-ph] { background-color: #4a312c; }
+.app-container img[data-ph][data-loaded] { background-color: transparent; animation: ay-ph-in var(--t-base, 240ms) var(--ease-out, ease-out) both; }
+@keyframes ay-ph-in { from { opacity: .35; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .app-container img[data-ph][data-loaded] { animation: none; } }
+
+/* ===== was src/styles/delight.css ===== */
+/* Delight details shared by the website and the app
+   (docs/anti-vibe-checklist.md, "Delight details"). Tokens from motion.css.
+   Colours resolve to the site tokens (--ay-*) or the app tokens (--ayna-*). */
+
+.ay-sr, .ay-charring .sr-only, .ay-confirm .sr-only, .ayna-mobile .sr-only {
+  position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ---- Character-limit ring ---- */
+.ay-charfield { position: relative; display: block; width: 100%; }
+.ay-charfield > textarea { padding-bottom: var(--ay-s32) !important; }
+.ay-charring {
+  position: absolute; right: 10px; bottom: 8px; display: inline-flex; align-items: center; gap: 6px;
+  color: var(--ay-text, var(--ayna-text, #3e2723)); pointer-events: none;
+  font: 600 13px/1 var(--ay-sans-stack, var(--ayna-font-ui, 'Figtree', system-ui, sans-serif));
+  font-variant-numeric: tabular-nums;
+}
+.ay-charring svg { width: 20px; height: 20px; flex: none; }
+.ay-charring__track { fill: none; stroke: currentColor; stroke-width: 2.25; opacity: .18; }
+.ay-charring__fill { fill: none; stroke: currentColor; stroke-width: 2.25; stroke-linecap: round; transition: stroke-dashoffset var(--t-fast) var(--ease-out), stroke var(--t-fast) var(--ease-in-out); }
+.ay-charring.is-late .ay-charring__fill, .ay-charring.is-over .ay-charring__fill { stroke: #f7badd; }
+.ay-charring.is-late .ay-charring__track, .ay-charring.is-over .ay-charring__track { opacity: .35; }
+.ay-charring.is-over .ay-charring__n { background: #f7badd; color: #3e2723; border-radius: 999px; padding: 2px 6px; }
+
+/* ---- Two-step destructive confirm ---- */
+.ay-confirm.is-armed, button[data-armed='true'] {
+  background: #f7badd !important; color: #3e2723 !important; border-color: #3e2723 !important;
+}
+.ay-confirm.is-armed > span, button[data-armed='true'] > span { animation: ay-morph-in var(--t-fast) var(--ease-out) both; }
+
+/* ---- One skeleton timing everywhere (synced in utils/delightRuntime.js) ---- */
+@keyframes ay-skel { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+.ay-skel { background: var(--ay-group, var(--ayna-chip-bg, #f6e3a1)); border-radius: 10px; animation: ay-skel 1.4s var(--ease-in-out) infinite; }
+@media (prefers-reduced-motion: reduce) { .ay-skel { animation: none; opacity: .8; } }
+
+/* ---- App toast: above the tab bar, same ink card as the website ---- */
+.ayna-mobile ~ .ay-gtoast, .ay-gtoast.is-app { bottom: calc(96px + env(safe-area-inset-bottom)); width: calc(100% - 32px); max-width: 420px; }
+.ay-gtoast.is-app .ay-gtoast__card { justify-content: space-between; font-family: var(--ayna-font-ui, 'Figtree', system-ui, sans-serif); }
+
+/* ---- Spring press on web cards and tiles (buttons and chips already have it) ---- */
+.app-container :is(.ay-product-card, .ayshop__need, .ayshop__tab, .ay-blend__opt, .ed-familiar__q a):active { transform: scale(.97); transition: transform var(--t-press) var(--ease-pop); }
+@media (prefers-reduced-motion: reduce) { .app-container :is(.ay-product-card, .ayshop__need, .ayshop__tab, .ed-familiar__q a):active { transform: none; } }
+
+/* ---- Pointer only on things that do something ---- */
+.app-container button:disabled, .ayna-mobile button:disabled { cursor: default; }
+.ay-skel-card { background: var(--ayna-surface, var(--ay-page)); border: 1px solid var(--ayna-border, rgba(62,39,35,.15)); border-radius: var(--ay-r-card); padding: 10px; }
+.ayna-mobile[data-theme='dark'] .ay-gtoast.is-app .ay-gtoast__card { background: #ffedac; color: #3e2723; border-color: #ffedac; }
+.ayna-mobile[data-theme='dark'] .ay-gtoast.is-app .ay-gtoast__card button { border-color: #3e2723; color: #3e2723; }
+.app-container[data-theme='brand-dark'] .ay-gtoast__card { background: #ffedac; color: #3e2723; border-color: #ffedac; }
+.app-container[data-theme='brand-dark'] .ay-gtoast__card button { border-color: #3e2723; color: #3e2723; }
+/* Leading line icons in buttons and labels (components/icons/UiIcons.jsx). */
+.ay-ui-icon { flex: none; vertical-align: -0.22em; }
+.ay-ui-icon.is-lead { margin-inline-end: .35em; }
+
+/* Hover: lift 2-4px or a colour change, never a big scale (anti-vibe checklist,
+   Layout). Caps the older Ecosystem hovers that scaled up to 1.12 or lifted 8-10px. */
+html body .app-container.app-container .eco-bubble:hover { transform: translateY(-2px) !important; }
+html body .app-container.app-container .ay3-pile:hover .ay3-pile__hint { transform: rotate(-3deg) !important; }
+html body .app-container.app-container :is(.eco3-pick__add, .eco3-mini__add):hover { transform: none !important; }
+html body .app-container.app-container .eco3-cl.is-closed .eco3-cl__label:hover { transform: rotate(0) !important; }
+html body .app-container.app-container .lx .lx-shelf__item:hover .lx-shelf__img { transform: translateY(-3px) rotate(-1.2deg) !important; }

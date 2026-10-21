@@ -3,13 +3,7 @@ import { trackApp, appScreenName } from './utils/appAnalytics.js';
 import { useRecommendationViews } from '../utils/recommendationAnalytics.js';
 import './mobile.css';
 import './editorial.css';
-import './fresh.css';
-import './figma.css';
-import './cabinet.css';
-import './reference-system.css';
-import './tokens.css';
-import './app-play.css';
-import './no-focus-ring.css';
+import './app-base.css';
 import { ALL_PRODUCTS, getEcosystemAlternatives, getEcosystemSeedFromQuiz, filterPrescriptionCareGate, hydrateCatalogProduct, getSelectedNeeds } from '../data/products.js';
 import { RELEASED_STARTUPS } from '../data/startups.js';
 import { loadProductCatalog } from '../utils/productCatalog.js';
@@ -71,16 +65,7 @@ import './audit-app.css';
 // "A tiny bit smaller" density pass; after audit-app.css so it wins ties.
 import './app-density.css';
 // Brand theme (Oct 17): butter, espresso, sky, rose; imported last so it wins.
-import './app-theme.css';
-import './app-components.css';
-import './app-screens.css';
-import './app-web.css';
-import './app-design.css';
-import './app-polish.css';
-import './app-landing.css';
-import './app-health.css';
-import './app-ux-fixes.css';
-import './app-compact.css';
+import './app-system.css';
 // Design direction (docs/design-direction.md): loaded last, outranks the layers above.
 import './app-direction.css';
 import './keyboardModality.js';

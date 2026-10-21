@@ -4,9 +4,7 @@ import App from './App.jsx'
 import { Capacitor } from '@capacitor/core'
 import './styles/fonts.css'
 import './index.css'
-import './styles/motion.css'
-import './styles/finish.css'
-import './styles/delight.css'
+import './styles/global-finish.css';
 import { installDelight } from './utils/delightRuntime.js'
 import { markPerf } from './utils/perfTimings.js'
 

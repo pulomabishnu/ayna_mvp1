@@ -103,10 +103,7 @@ import { loadHealthProfileForCurrentUser, saveHealthProfileForCurrentUser } from
 import { forgetSharedIntake, loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser, clearHealthIntakeForCurrentUser } from './utils/healthIntakeStore';
 import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
 import AuthGate, { ConsentGate } from './components/AuthGate';
-import './finalAynaPolish.css';
-import './brand-v2.css';
-import './web-play.css';
-import './styles/verify-core.css';
+import './styles/web-base-layers.css';
 import { installScrollMemory, isRestoringScroll } from './utils/scrollMemory';
 import { avatarInitials } from './utils/avatarInitials';
 import AuthCallback from './components/AuthCallback';
@@ -126,13 +123,7 @@ import { INTAKE_DRAFT_KEY, getIntakeSteps, optionalProgress, reconstructIntakeFr
 import { clearIntakeDraft, readDraftProgress } from './mobile/data/quizDraftProgress';
 import FinishQuizCard, { MorePersonalCard } from './components/FinishQuizCard';
 import './styles/flow.css';
-import './styles/web-neon-dark.css';
-import './styles/web-density.css';
-import './styles/theme-v3.css';
-import './styles/site-polish.css';
-import './styles/ayna-system.css';
-import './styles/content.css';
-import './styles/chrome.css';
+import './styles/web-system.css';
 import NewAccountStart from './components/NewAccountStart';
 import { markOAuthSource, takeOAuthSource, shouldOfferEcosystemStart } from './utils/oauthNewAccount';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './components/EcosystemBubbles';

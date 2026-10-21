@@ -56,7 +56,7 @@ page must feel unmistakably ayna:
 
 ### Personality kit (Oct 21, built)
 
-Website primitives live in `src/styles/ayna-system.css` ("PERSONALITY"),
+Website primitives live in `src/styles/web-system.css (ayna-system section)` ("PERSONALITY"),
 decorations in `src/components/personality/Bits.jsx`; app equivalents in
 `src/mobile/app-direction.css` ("Personality").
 
@@ -228,7 +228,7 @@ profile lists. Tab bar: 5 equal columns, 24px icons, 11.5px labels, selected
 - **Grain.** One film-grain layer over the whole site and app: a pre-rendered
   160px noise tile (`public/images/ayna-grain-light.png`, espresso specks;
   `ayna-grain-dark.png`, butter specks), about 10KB each, tiled on one fixed,
-  `pointer-events: none` pseudo-element (`src/styles/finish.css` for the web,
+  `pointer-events: none` pseudo-element (`src/styles/global-finish.css (finish section)` for the web,
   `src/mobile/app-motion.css` for the app). Tune it with `--grain-opacity` and
   `--grain-opacity-dark`. Why a bitmap: it is decoded once and composited; an
   SVG `feTurbulence` background is re-rasterised on zoom, animated grain costs
@@ -247,7 +247,7 @@ profile lists. Tab bar: 5 equal columns, 24px icons, 11.5px labels, selected
 
 ## Motion (anti-vibe guide, section 4)
 
-Tokens live in `src/styles/motion.css` (web and app) and `src/mobile/tokens.css`:
+Tokens live in `src/styles/global-finish.css (motion section)` (web and app) and `src/mobile/app-base.css (tokens section)`:
 `--ease-out`, `--ease-in-out`, `--ease-exit`, `--ease-pop` (delight only, max
 overshoot 1.2), `--t-press` 110ms, `--t-fast` 160ms, `--t-base` 240ms,
 `--t-sheet` 360ms, `--t-push` 320ms, `--t-delight` 520ms, `--stagger` 45ms.
