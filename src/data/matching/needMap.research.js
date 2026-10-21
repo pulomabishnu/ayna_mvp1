@@ -5709,5 +5709,2945 @@ export default [
   "source_url": "https://menopause.org/wp-content/uploads/2024/09/Management_of_genitourinary_syndrome_of_menopause.97565-2.pdf",
   "reviewer": "research",
   "reviewed": "2026-10-17"
+ },
+ {
+  "product": "p-always-infinity",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A full-size pad absorbs light flow fine, but guidance names panty liners or mini pads as the best fit for light days. Evidence is about the product type, not this pad.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-rael-organic-pad",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A full-size pad absorbs light flow fine, but guidance names panty liners or mini pads as the best fit for light days. Evidence is about the product type, not this pad.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-honeypot-pad",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Higher-capacity pads help manage heavy flow, but heavy bleeding needs clinician evaluation; the pad does not treat it. Evidence is about pad type, not this product.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-honeypot-pad",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A full-size pad absorbs light flow fine, but guidance names panty liners or mini pads as the best fit for light days. Evidence is about the product type, not this pad.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-honeypot-pad",
+  "need": "pain.menstrual_cramp",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "No evidence that herbal-infused pads relieve cramps; guidance points to heat, NSAIDs and exercise. The lavender and mint scent is a comfort claim, not a treatment.",
+  "source_url": "https://www.nhs.uk/conditions/period-pain/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-lola-tampon",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Works for light flow only in the light or mini absorbency; FDA advises the lowest absorbency needed to lower TSS risk. Guidance is about tampons in general.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-saalt-cup",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A cup or disc collects any flow amount and is a reasonable option on light days, though liners or light period underwear are the more typical fit. Evidence is for the product type.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-natures-bounty-d3-125mcg",
+  "need": "bone.health",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Vitamin D supports calcium absorption and bone, but 5,000 IU exceeds the 4,000 IU adult upper limit and D alone without calcium has weak fracture evidence. Evidence is for the nutrient.",
+  "source_url": "https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-flex-disc",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A cup or disc collects any flow amount and is a reasonable option on light days, though liners or light period underwear are the more typical fit. Evidence is for the product type.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-thinx",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Higher-absorbency period underwear can help manage heavy flow, often as backup, but heavy bleeding needs clinician evaluation. Evidence is about the product type.",
+  "source_url": "https://health.clevelandclinic.org/does-period-underwear-work",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-magnesium-glycinate",
+  "need": "condition_support.endometriosis",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "No credible evidence that magnesium treats endometriosis; guidance lists NSAIDs and hormonal therapy. Magnesium has only weak evidence for ordinary period cramps.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/endometriosis/diagnosis-treatment/drc-20354661",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-magnesium-glycinate",
+  "need": "bloating.cycle_related",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Magnesium is listed among PMS supplements with limited evidence that may ease premenstrual fluid retention and bloating. Evidence is weak and about the nutrient, not this product.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/premenstrual-syndrome/diagnosis-treatment/drc-20376787",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-magnesium-glycinate",
+  "need": "bloating.unspecified",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Magnesium glycinate is not a bloating treatment; general bloating guidance favors diet review, selected probiotics and treating constipation. Glycinate is a low-laxative form.",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12606050/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-clue",
+  "need": "cycle.pms",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Guidance uses a symptom diary over 2 or more cycles to diagnose PMS, which a tracker supports; it does not relieve symptoms.",
+  "source_url": "https://www.nhs.uk/conditions/pre-menstrual-syndrome/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-clue",
+  "need": "mood.cycle_related",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Logging mood across cycles helps spot a pattern to bring to a clinician; the app does not treat mood changes.",
+  "source_url": "https://www.nimh.nih.gov/health/topics/women-and-mental-health",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-clue",
+  "need": "fertility.ttc",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "App-based fertile window estimates can help time sex, but calendar predictions are less reliable than urine LH tests, which have the stronger evidence.",
+  "source_url": "https://www.cochrane.org/evidence/CD011345_timed-intercourse-couples-trying-conceive",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-stardust",
+  "need": "cycle.pms",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Guidance uses a symptom diary over 2 or more cycles to diagnose PMS, which a tracker supports; it does not relieve symptoms. Lunar features have no evidence.",
+  "source_url": "https://www.nhs.uk/conditions/pre-menstrual-syndrome/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-stardust",
+  "need": "mood.cycle_related",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Logging mood across cycles helps spot a pattern to bring to a clinician; the app does not treat mood changes.",
+  "source_url": "https://www.nimh.nih.gov/health/topics/women-and-mental-health",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-stardust",
+  "need": "fertility.ttc",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "App-based fertile window estimates can help time sex, but calendar predictions are less reliable than urine LH tests, which have the stronger evidence.",
+  "source_url": "https://www.cochrane.org/evidence/CD011345_timed-intercourse-couples-trying-conceive",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-cystex",
+  "need": "urinary.urgency",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Sodium salicylate can briefly ease UTI discomfort and methenamine is antibacterial, but this does not treat an active UTI or non-infectious urgency. Should not delay care.",
+  "source_url": "https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-infection-uti-in-adults/treatment",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-cystex",
+  "need": "urinary.frequency",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "May ease UTI-related discomfort short term, but frequency from a UTI needs antibiotics and non-infectious frequency is managed with bladder training. Evidence is about the ingredients.",
+  "source_url": "https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-infection-uti-in-adults/treatment",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-cora-organic-pads",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A full-size pad absorbs light flow fine, but guidance names panty liners or mini pads as the best fit for light days. Evidence is about the product type, not this pad.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-cora-organic-tampons",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Works for light flow only in the light or mini absorbency; FDA advises the lowest absorbency needed to lower TSS risk. Guidance is about tampons in general.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-love-wellness-bloat",
+  "need": "pain.abdominal",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "May help mild digestive discomfort from gas or bloating, but enzyme blends have low evidence and abdominal pain needs evaluation for its cause. Evidence is for the ingredient type.",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12606050/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-love-wellness-bloat",
+  "need": "bloating.cycle_related",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Cycle-related bloating is tied to hormone shifts and fluid retention, not digestion; a digestive enzyme blend does not address that and enzymes have low evidence even for general bloating.",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12606050/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-estroven-mood",
+  "need": "cognition.concentration",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Ginkgo and other ingredients lack good evidence for focus in healthy adults; the product is a menopause mood blend, not a concentration aid.",
+  "source_url": "https://www.nccih.nih.gov/health/ginkgo",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-creatine-womens",
+  "need": "menopause.body_changes",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Creatine with resistance training increases strength and muscle size in women, which may help offset lean mass loss in midlife; it does not address other menopause changes. Evidence is for creatine generally.",
+  "source_url": "https://www.mayoclinic.org/drugs-supplements-creatine/art-20347591",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-creatine-womens",
+  "need": "cognition.concentration",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Evidence for creatine improving everyday concentration is limited and mostly from small trials under stress or sleep loss; its well supported use is strength. Evidence is for creatine generally.",
+  "source_url": "https://www.mayoclinic.org/drugs-supplements-creatine/art-20347591",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-hers",
+  "need": "mood.irritability",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Clinician care for anxiety or depression can address an underlying cause of irritability, but irritability is a symptom, not a target, and Hers is a broad telehealth brand.",
+  "source_url": "https://www.nimh.nih.gov/health/topics/women-and-mental-health",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-pomelo-care",
+  "need": "cycle.pms",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Pomelo is mainly pregnancy and postpartum virtual care, not a cycle tracker, so the engine rule is wrong; clinician access can still support PMS care such as SSRIs or hormonal options.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/premenstrual-syndrome/diagnosis-treatment/drc-20376787",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-pomelo-care",
+  "need": "mood.cycle_related",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Not a cycle tracker; it is maternity-focused virtual care with therapists. Clinician evaluation is the anchor for cycle-related mood, so access helps indirectly.",
+  "source_url": "https://www.acog.org/womens-health/experts-and-stories/the-latest/mood-changes-during-perimenopause-are-real-heres-what-to-know",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-pomelo-care",
+  "need": "mood.irritability",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Therapist and clinician access can address causes of irritability such as perinatal mood changes, but the service is mainly maternity care.",
+  "source_url": "https://www.nimh.nih.gov/health/topics/women-and-mental-health",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-lola-pad",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A full-size pad absorbs light flow fine, but guidance names panty liners or mini pads as the best fit for light days. Evidence is about the product type, not this pad.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-natracare-pad",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A full-size pad absorbs light flow fine, but guidance names panty liners or mini pads as the best fit for light days. Evidence is about the product type, not this pad.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-organyc-pad",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Higher-capacity pads help manage heavy flow, but heavy bleeding needs clinician evaluation; the pad does not treat it. Evidence is about pad type, not this product.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-organyc-pad",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A full-size pad absorbs light flow fine, but guidance names panty liners or mini pads as the best fit for light days. Evidence is about the product type, not this pad.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-veeda-pad",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Higher-capacity pads help manage heavy flow, but heavy bleeding needs clinician evaluation; the pad does not treat it. Evidence is about pad type, not this product.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-veeda-pad",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A full-size pad absorbs light flow fine, but guidance names panty liners or mini pads as the best fit for light days. Evidence is about the product type, not this pad.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-l-pad",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Higher-capacity pads help manage heavy flow, but heavy bleeding needs clinician evaluation; the pad does not treat it. Evidence is about pad type, not this product.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-l-pad",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A full-size pad absorbs light flow fine, but guidance names panty liners or mini pads as the best fit for light days. Evidence is about the product type, not this pad.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-tampax-pure",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Works for light flow only in the light or mini absorbency; FDA advises the lowest absorbency needed to lower TSS risk. Guidance is about tampons in general.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-natracare-tampon",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "A regular tampon alone is low capacity for heavy flow and would need frequent changes; heavy bleeding needs clinician evaluation.",
+  "source_url": "https://www.cdc.gov/female-blood-disorders/about/heavy-menstrual-bleeding.html",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-natracare-tampon",
+  "need": "period.light",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "This is a regular-absorbency tampon; FDA advises the lowest absorbency needed, so regular is more than light flow calls for and can raise TSS risk.",
+  "source_url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-organyc-tampon",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Only the super absorbency fits heavy flow, and FDA advises the lowest absorbency that works; heavy bleeding needs clinician evaluation.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-organyc-tampon",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Works for light flow only in the light or mini absorbency; FDA advises the lowest absorbency needed to lower TSS risk. Guidance is about tampons in general.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-diva-cup",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A cup or disc collects any flow amount and is a reasonable option on light days, though liners or light period underwear are the more typical fit. Evidence is for the product type.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-lunette-cup",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A cup or disc collects any flow amount and is a reasonable option on light days, though liners or light period underwear are the more typical fit. Evidence is for the product type.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-nixit",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A cup or disc collects any flow amount and is a reasonable option on light days, though liners or light period underwear are the more typical fit. Evidence is for the product type.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-cora-disc",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A cup or disc collects any flow amount and is a reasonable option on light days, though liners or light period underwear are the more typical fit. Evidence is for the product type.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-modibodi",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Standard-capacity period underwear can manage some flow, but heavy bleeding usually needs higher-capacity products or backup and a clinician check. It does not treat heavy periods.",
+  "source_url": "https://www.cdc.gov/female-blood-disorders/about/heavy-menstrual-bleeding.html",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-rubylove",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Standard-capacity period underwear can manage some flow, but heavy bleeding usually needs higher-capacity products or backup and a clinician check. It does not treat heavy periods.",
+  "source_url": "https://www.cdc.gov/female-blood-disorders/about/heavy-menstrual-bleeding.html",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-probiotics-women",
+  "need": "vaginal.discharge",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "A general oral probiotic does not treat the causes of abnormal discharge (BV, yeast, STIs). CDC states no studies support probiotics as BV therapy.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/bv.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-probiotics-women",
+  "need": "vaginal.odor",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "New odor usually points to BV or trichomoniasis, which need prescription treatment. CDC finds no evidence that probiotic products treat or prevent BV.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/bv.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-probiotics-women",
+  "need": "vaginal.bv",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "CDC treatment guidelines say no studies support probiotics or lactobacillus products as adjunct or replacement BV therapy. This is a general gut-focused blend.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/bv.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-probiotics-women",
+  "need": "vaginal.yeast",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Yeast infections are treated with azole antifungals. CDC guidance does not include oral probiotics, and this general blend is not a yeast treatment.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-probiotics-women",
+  "need": "urinary.recurrent_uti",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "The AUA recurrent UTI guideline recommends cranberry, vaginal estrogen, methenamine or antibiotic prophylaxis, not oral probiotics. Evidence for general probiotics here is weak.",
+  "source_url": "https://www.auanet.org/guidelines-and-quality/guidelines/recurrent-uti",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-zinc",
+  "need": "skin.hormonal",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "The 2024 AAD acne guideline supports prescription hormonal therapy for hormonal acne and recommends no supplement. Oral zinc evidence for acne is limited and this is a general zinc product.",
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/38300170/?dopt=Abstract",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-boric-acid",
+  "need": "vaginal.discharge",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Boric acid 600 mg has guideline support only for recurrent BV after antibiotics and recurrent non-albicans yeast. New or changed discharge needs evaluation first.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/bv.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-good-clean-love",
+  "need": "vaginal.irritation",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Vaginal moisturizers can ease irritation from menopause-related dryness, but not irritation from infection or contact irritants. Evidence for OTC moisturizers is limited.",
+  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-flo-gummies",
+  "need": "pain.abdominal",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Chasteberry, dong quai and B6 are aimed at PMS symptoms; none has evidence for general abdominal discomfort. Chasteberry evidence is mainly for breast tenderness.",
+  "source_url": "https://www.nccih.nih.gov/health/chasteberry",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-hum-flatter-me",
+  "need": "pain.abdominal",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Broad digestive-enzyme blends are not recommended for bloating or abdominal discomfort by the ESNM/UEG consensus. Evidence is about enzyme blends generally.",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12606050/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-hum-flatter-me",
+  "need": "bloating.cycle_related",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Cycle-related bloating is tied to hormone shifts, not digestion of food. Enzyme supplementation is not recommended for bloating per the ESNM/UEG consensus.",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12606050/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-thermacare",
+  "need": "pain.abdominal",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Heat is reasonable home care for lower abdominal discomfort once serious causes are ruled out. The product is made for period cramps, so this is an adjacent use.",
+  "source_url": "https://my.clevelandclinic.org/health/symptoms/12106-pelvic-pain",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-thermacare",
+  "need": "condition_support.adenomyosis",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Mayo Clinic lists heat (heating pad, warm bath) as self-care for adenomyosis pain. It relieves symptoms only and does not treat the condition.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/adenomyosis/diagnosis-treatment/drc-20369143",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-portable-heating",
+  "need": "pain.abdominal",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Heat is reasonable home care for lower abdominal discomfort once serious causes are ruled out. The product is made for period cramps, so this is an adjacent use.",
+  "source_url": "https://my.clevelandclinic.org/health/symptoms/12106-pelvic-pain",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-portable-heating",
+  "need": "condition_support.endometriosis",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Heat is first-line self-care for period pain, which suggests some relief for endometriosis cramps. Evidence is indirect and the condition needs NSAIDs or hormonal care.",
+  "source_url": "https://www.nhs.uk/conditions/period-pain/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-portable-heating",
+  "need": "condition_support.adenomyosis",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Mayo Clinic lists heat (heating pad, warm bath) as self-care for adenomyosis pain. It relieves symptoms only and does not treat the condition.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/adenomyosis/diagnosis-treatment/drc-20369143",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-viboos-heating-pad",
+  "need": "pain.abdominal",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Heat is reasonable home care for lower abdominal discomfort once serious causes are ruled out. The product is made for period cramps, so this is an adjacent use.",
+  "source_url": "https://my.clevelandclinic.org/health/symptoms/12106-pelvic-pain",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-viboos-heating-pad",
+  "need": "condition_support.endometriosis",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Heat is first-line self-care for period pain, which suggests some relief for endometriosis cramps. Evidence is indirect and the condition needs NSAIDs or hormonal care.",
+  "source_url": "https://www.nhs.uk/conditions/period-pain/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-viboos-heating-pad",
+  "need": "condition_support.adenomyosis",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Mayo Clinic lists heat (heating pad, warm bath) as self-care for adenomyosis pain. It relieves symptoms only and does not treat the condition.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/adenomyosis/diagnosis-treatment/drc-20369143",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-intimate-rose",
+  "need": "fitness.strength",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Vaginal dilators are for vaginismus and pelvic pain, not strength or fitness. They are not pelvic floor trainers and do not build muscle strength.",
+  "source_url": "https://ods.od.nih.gov/factsheets/ExerciseAndAthleticPerformance-HealthProfessional",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-honeypot-wash",
+  "need": "vaginal.odor",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "NHS advises avoiding vaginal washes and deodorizing products; new odor usually needs evaluation for BV or trichomoniasis.",
+  "source_url": "https://www.nhs.uk/conditions/bacterial-vaginosis/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-luna-wash",
+  "need": "vaginal.odor",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "NHS advises avoiding vaginal washes and deodorizing products; new odor usually needs evaluation for BV or trichomoniasis.",
+  "source_url": "https://www.nhs.uk/conditions/bacterial-vaginosis/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-natural-cycles",
+  "need": "cycle.pms",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A symptom diary across 2 or more cycles is the recommended way to confirm PMS. This app supports symptom logging but does not treat PMS; evidence is about diaries generally.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/premenstrual-syndrome/diagnosis-treatment/drc-20376787",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-natural-cycles",
+  "need": "mood.cycle_related",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Logging mood against cycle days can show a premenstrual pattern to bring to a clinician. It does not treat mood changes; evidence is indirect.",
+  "source_url": "https://www.nimh.nih.gov/health/topics/women-and-mental-health",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-ovia",
+  "need": "cycle.pms",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A symptom diary across 2 or more cycles is the recommended way to confirm PMS. This app supports symptom logging but does not treat PMS; evidence is about diaries generally.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/premenstrual-syndrome/diagnosis-treatment/drc-20376787",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-ovia",
+  "need": "mood.cycle_related",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Logging mood against cycle days can show a premenstrual pattern to bring to a clinician. It does not treat mood changes; evidence is indirect.",
+  "source_url": "https://www.nimh.nih.gov/health/topics/women-and-mental-health",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-glow",
+  "need": "cycle.pms",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A symptom diary across 2 or more cycles is the recommended way to confirm PMS. This app supports symptom logging but does not treat PMS; evidence is about diaries generally.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/premenstrual-syndrome/diagnosis-treatment/drc-20376787",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-glow",
+  "need": "mood.cycle_related",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Logging mood against cycle days can show a premenstrual pattern to bring to a clinician. It does not treat mood changes; evidence is indirect.",
+  "source_url": "https://www.nimh.nih.gov/health/topics/women-and-mental-health",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-betterhelp",
+  "need": "mood.pmdd",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Psychotherapy and CBT are part of PMDD care, but PMDD often needs medication and an ob-gyn or primary care evaluation, which this platform cannot prescribe.",
+  "source_url": "https://www.nimh.nih.gov/health/topics/women-and-mental-health",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-betterhelp",
+  "need": "mood.cycle_related",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Therapy can help cope with cycle-related mood changes, but clinician evaluation for PMS, PMDD or perimenopause is the anchor. Evidence for therapy alone here is indirect.",
+  "source_url": "https://www.nimh.nih.gov/health/topics/women-and-mental-health",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-headspace",
+  "need": "mood.low",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Mindfulness programs have moderate evidence for easing depressive symptoms, though much research is low quality. Persistent low mood needs clinician care; evidence is about mindfulness generally.",
+  "source_url": "https://www.nccih.nih.gov/health/meditation-and-mindfulness-effectiveness-and-safety",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-headspace",
+  "need": "mood.irritability",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Meditation may reduce stress, but no product type has direct evidence for irritability, which is often a sign of PMS, PMDD or perimenopause.",
+  "source_url": "https://www.nccih.nih.gov/health/meditation-and-mindfulness-effectiveness-and-safety",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-calm",
+  "need": "mood.low",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Mindfulness programs have moderate evidence for easing depressive symptoms, though much research is low quality. Persistent low mood needs clinician care; evidence is about mindfulness generally.",
+  "source_url": "https://www.nccih.nih.gov/health/meditation-and-mindfulness-effectiveness-and-safety",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-calm",
+  "need": "mood.irritability",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Meditation may reduce stress, but no product type has direct evidence for irritability, which is often a sign of PMS, PMDD or perimenopause.",
+  "source_url": "https://www.nccih.nih.gov/health/meditation-and-mindfulness-effectiveness-and-safety",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-initio",
+  "need": "cycle.pms",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "A symptom diary across 2 cycles helps confirm PMS. This device focuses on hormones or temperature with limited symptom logging, so support is indirect and it does not treat PMS.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/premenstrual-syndrome/diagnosis-treatment/drc-20376787",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-initio",
+  "need": "mood.cycle_related",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "A urine hormone fertility monitor is built for ovulation tracking, not mood. It does not log or address cycle-related mood changes in a useful way.",
+  "source_url": "https://www.nimh.nih.gov/health/topics/women-and-mental-health",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-oura",
+  "need": "cycle.pms",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "A symptom diary across 2 cycles helps confirm PMS. This device focuses on hormones or temperature with limited symptom logging, so support is indirect and it does not treat PMS.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/premenstrual-syndrome/diagnosis-treatment/drc-20376787",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-oura",
+  "need": "mood.cycle_related",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "A smart ring tracks sleep and temperature, not mood. It does not address cycle-related mood changes beyond indirect sleep data.",
+  "source_url": "https://www.nimh.nih.gov/health/topics/women-and-mental-health",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-oura",
+  "need": "fertility.ttc",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Temperature trends confirm ovulation after it happens, so timing help is limited. Cochrane evidence supporting timed intercourse is for urine LH tests, not wearables.",
+  "source_url": "https://www.cochrane.org/evidence/CD011345_timed-intercourse-couples-trying-conceive",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-oura",
+  "need": "energy.fatigue",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Tracking sleep and activity does not treat fatigue. Guidance is to check for causes like iron deficiency with a ferritin test.",
+  "source_url": "https://ods.od.nih.gov/factsheets/Iron-HealthProfessional/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-apple-health",
+  "need": "cycle.pms",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A symptom diary across 2 or more cycles is the recommended way to confirm PMS. This app supports symptom logging but does not treat PMS; evidence is about diaries generally.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/premenstrual-syndrome/diagnosis-treatment/drc-20376787",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-apple-health",
+  "need": "mood.cycle_related",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Logging mood against cycle days can show a premenstrual pattern to bring to a clinician. It does not treat mood changes; evidence is indirect.",
+  "source_url": "https://www.nimh.nih.gov/health/topics/women-and-mental-health",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-eight-sleep",
+  "need": "vasomotor.hot_flashes",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "The Menopause Society does not recommend cooling techniques as hot flash treatment because evidence is limited. A cooled bed is a nighttime comfort measure only.",
+  "source_url": "https://menopause.org/wp-content/uploads/press-release/nonhormone-therapy-position-statement-release.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-lansinoh-pads",
+  "need": "postpartum.recovery",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Nursing pads absorb breast milk leaks and belong under lactation support. They do nothing for perineal healing or other postpartum recovery needs.",
+  "source_url": "https://nice.org.uk/guidance/ng194/resources/postnatal-care-pdf-66142082148037",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-rituals-prenatal",
+  "need": "postpartum.lactation",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "CDC notes providers may recommend continuing a prenatal vitamin while breastfeeding. It supports maternal nutrition, not milk supply or latch problems.",
+  "source_url": "https://www.cdc.gov/breastfeeding-special-circumstances/hcp/diet-micronutrients/maternal-diet.html",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-belly-bandit",
+  "need": "pregnancy.prenatal",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "A belly support band is for pregnancy back and pelvic discomfort, a better fit for pregnancy discomfort. NHS advice supports belts only after physio input.",
+  "source_url": "https://www.stgeorges.nhs.uk/wp-content/uploads/2025/06/PHP_PGP.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-v-wash",
+  "need": "vaginal.odor",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "NHS advises avoiding vaginal washes and deodorizing products; new odor usually needs evaluation for BV or trichomoniasis. Tea tree oil can also irritate vulvar skin.",
+  "source_url": "https://www.nhs.uk/conditions/bacterial-vaginosis/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-sweet-spot-wipes",
+  "need": "vaginal.odor",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "NHS advises avoiding vaginal washes and deodorizing products; new odor usually needs evaluation for BV or trichomoniasis.",
+  "source_url": "https://www.nhs.uk/conditions/bacterial-vaginosis/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-kindra-lotion",
+  "need": "vaginal.irritation",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Moisturizers can ease menopause-related irritation, but oil-based products have weaker support and can irritate some people. It does not treat infection.",
+  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-citracal-bone-health",
+  "need": "mood.cycle_related",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Calcium around 1,200 mg/day has trial support for PMS symptoms including mood. The product is made for bone health, so this is a secondary use.",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6422848/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-peanut",
+  "need": "mood.low",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "A peer community app is not a treatment for low mood; persistent low mood calls for clinician care, therapy or evidence-based programs.",
+  "source_url": "https://www.nimh.nih.gov/health/topics/women-and-mental-health",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-peanut",
+  "need": "pregnancy.prenatal",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Peer chat does not provide prenatal care or folic acid, which are what prenatal support evidence covers.",
+  "source_url": "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-peanut",
+  "need": "postpartum.recovery",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "A social community app does not address physical postpartum recovery such as perineal care, bleeding or pelvic floor exercises.",
+  "source_url": "https://www.nhs.uk/pregnancy/labour-and-birth/your-body/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-peanut",
+  "need": "fertility.ttc",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Peer support does not help timing or conception; evidence supports LH tests, timed intercourse and folic acid.",
+  "source_url": "https://www.asrm.org/practice-guidance/practice-committee-documents/optimizing-natural-fertility-a-committee-opinion-2021",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-peanut",
+  "need": "menopause.body_changes",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Community chat does not treat menopause body changes; options are moisturizers, lubricants, vaginal estrogen and clinician care.",
+  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-bloom",
+  "need": "mood.pmdd",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "App-based CBT is a reasonable adjunct for PMDD mood symptoms (evidence is indirect, from internet CBT for anxiety); clinician care remains the core.",
+  "source_url": "https://www.cochrane.org/evidence/CD011565_internet-based-cognitive-behavioural-therapy-therapist-support-anxiety-adults-review-evidence",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-bloom",
+  "need": "mood.cycle_related",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Self-guided CBT may help mood coping, but evidence for cycle-related mood is indirect and clinician evaluation is the anchor.",
+  "source_url": "https://www.cochrane.org/evidence/CD011565_internet-based-cognitive-behavioural-therapy-therapist-support-anxiety-adults-review-evidence",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-intimina-lily",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A silicone cup can be used on light days, but liners, light period underwear or a light tampon are the better fit; low flow can make removal less comfortable.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-hello-disc",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Discs can be worn on light days, but liners or light period underwear fit light flow better and FDA groups discs with cups with little disc-specific evidence.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-saalt-disc",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Discs can be worn on light days, but liners or light period underwear fit light flow better and FDA groups discs with cups with little disc-specific evidence.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-knix-underwear",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Period underwear can manage heavier flow, often with backup, but only manages flow; heavy bleeding needs clinician evaluation.",
+  "source_url": "https://health.clevelandclinic.org/does-period-underwear-work",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-bambody-underwear",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Period underwear can manage heavier flow, often with backup, but only manages flow; heavy bleeding needs clinician evaluation.",
+  "source_url": "https://health.clevelandclinic.org/does-period-underwear-work",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-haakaa-pump",
+  "need": "postpartum.recovery",
+  "strength": "none",
+  "grade": "B",
+  "rationale": "A breast pump serves lactation, not physical postpartum recovery; it belongs under breastfeeding support.",
+  "source_url": "https://www.fda.gov/medical-devices/breast-pumps/choosing-breast-pump",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-silverette-cups",
+  "need": "postpartum.recovery",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Nipple cups target breastfeeding nipple soreness (unverified, grade C) and do not address postpartum recovery.",
+  "source_url": "https://www.fda.gov/medical-devices/breast-pumps/injury-and-infection",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-hatch-oil",
+  "need": "postpartum.body_skin",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "An emollient oil can ease dry or itchy skin, but Cochrane found no high-quality evidence topical preparations prevent stretch marks.",
+  "source_url": "https://www.cochrane.org/CD000066/PREG_topical-preparations-for-preventing-stretch-marks-in-pregnancy",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-hatch-oil",
+  "need": "pregnancy.prenatal",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "A belly oil is a skin product, not prenatal support; prenatal evidence centers on folic acid and prenatal care.",
+  "source_url": "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-willow-pump",
+  "need": "postpartum.recovery",
+  "strength": "none",
+  "grade": "B",
+  "rationale": "A wearable breast pump serves lactation, not physical postpartum recovery; it belongs under breastfeeding support.",
+  "source_url": "https://www.fda.gov/medical-devices/breast-pumps/choosing-breast-pump",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-boppy-pillow",
+  "need": "postpartum.recovery",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "A nursing pillow is a feeding positioning aid and does not address postpartum physical recovery.",
+  "source_url": "https://www.nhs.uk/pregnancy/labour-and-birth/your-body/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-snoogle-pillow",
+  "need": "pregnancy.prenatal",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "A body pillow targets pregnancy sleep and back discomfort, not prenatal nutrition or care; it fits pregnancy discomfort instead.",
+  "source_url": "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-gennev-care",
+  "need": "mood.irritability",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Menopause telehealth gives clinician evaluation for perimenopause-related irritability; it does not cover PMS, PMDD or other causes.",
+  "source_url": "https://www.acog.org/womens-health/experts-and-stories/the-latest/mood-changes-during-perimenopause-are-real-heres-what-to-know",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-kotex-security",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "A",
+  "rationale": "A regular thin pad absorbs light flow, though liners or mini pads are the closer match for light days and spotting.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-stayfree-ultra",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "A regular ultra-thin pad offers limited capacity for heavy flow; heavy bleeding needs overnight or super products plus a medical evaluation.",
+  "source_url": "https://www.cdc.gov/female-blood-disorders/about/heavy-menstrual-bleeding.html",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-stayfree-ultra",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "A",
+  "rationale": "A regular thin pad absorbs light flow, though liners or mini pads are the closer match for light days and spotting.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-seventh-gen-pad",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "A regular ultra-thin pad offers limited capacity for heavy flow; heavy bleeding needs overnight or super products plus a medical evaluation.",
+  "source_url": "https://www.cdc.gov/female-blood-disorders/about/heavy-menstrual-bleeding.html",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-seventh-gen-pad",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "A",
+  "rationale": "A regular thin pad absorbs light flow, though liners or mini pads are the closer match for light days and spotting.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-u-kotex-pad",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "A",
+  "rationale": "A regular thin pad absorbs light flow, though liners or mini pads are the closer match for light days and spotting.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-bodyform-pad",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "A",
+  "rationale": "A regular thin pad absorbs light flow, though liners or mini pads are the closer match for light days and spotting.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-rael-overnight",
+  "need": "period.light",
+  "strength": "none",
+  "grade": "B",
+  "rationale": "Extra-long overnight pads are built for heavy or overnight flow; for light periods liners or mini pads are the recommended fit.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-cora-overnight",
+  "need": "period.light",
+  "strength": "none",
+  "grade": "B",
+  "rationale": "Extra-long overnight pads are built for heavy or overnight flow; for light periods liners or mini pads are the recommended fit.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-playtex-sport",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Fits light periods only in a light or mini absorbency; FDA advises the lowest absorbency needed and liners are preferred on light days.",
+  "source_url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-kotex-tampon",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Fits light periods only in a light or mini absorbency; FDA advises the lowest absorbency needed and liners are preferred on light days.",
+  "source_url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-ob-tampon",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Fits light periods only in a light or mini absorbency; FDA advises the lowest absorbency needed and liners are preferred on light days.",
+  "source_url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-tampax-radiant",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Fits light periods only in a light or mini absorbency; FDA advises the lowest absorbency needed and liners are preferred on light days.",
+  "source_url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-seventh-gen-tampon",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Tampons can manage flow in higher absorbencies, which raise TSS risk; heavy periods need clinician evaluation, not just more absorbency.",
+  "source_url": "https://www.cdc.gov/female-blood-disorders/about/heavy-menstrual-bleeding.html",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-seventh-gen-tampon",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Fits light periods only in a light or mini absorbency; FDA advises the lowest absorbency needed and liners are preferred on light days.",
+  "source_url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-rael-tampon",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "A mixed-absorbency variety pack may not include a light size; light days are better served by liners or the lowest-absorbency tampon.",
+  "source_url": "https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-lena-cup",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A silicone cup can be used on light days, but liners, light period underwear or a light tampon are the better fit; low flow can make removal less comfortable.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-ruby-cup",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A silicone cup can be used on light days, but liners, light period underwear or a light tampon are the better fit; low flow can make removal less comfortable.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-organicup",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A silicone cup can be used on light days, but liners, light period underwear or a light tampon are the better fit; low flow can make removal less comfortable.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-femmycycle",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A silicone cup can be used on light days, but liners, light period underwear or a light tampon are the better fit; low flow can make removal less comfortable.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-flex-cup",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Reusable or disposable collection devices work at any flow, but liners, mini pads or light period underwear are the usual fit for light days. Evidence is about the product type, not this product.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-ziggy-disc",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Reusable or disposable collection devices work at any flow, but liners, mini pads or light period underwear are the usual fit for light days. Evidence is about the product type, not this product.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-lumma-disc",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Reusable or disposable collection devices work at any flow, but liners, mini pads or light period underwear are the usual fit for light days. Evidence is about the product type, not this product.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-softdisc",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Reusable or disposable collection devices work at any flow, but liners, mini pads or light period underwear are the usual fit for light days. Evidence is about the product type, not this product.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-period-nirvana-disc",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Reusable or disposable collection devices work at any flow, but liners, mini pads or light period underwear are the usual fit for light days. Evidence is about the product type, not this product.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-aisle-underwear",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Period underwear can manage heavier flow, often as backup to a cup or tampon; it manages flow only, and heavy periods still need a clinician check. Evidence is about the product type.",
+  "source_url": "https://health.clevelandclinic.org/does-period-underwear-work",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-period-co-underwear",
+  "need": "period.heavy",
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "Heavy-flow period underwear is a reasonable high-capacity option to manage flow; it does not treat the cause, so heavy periods still warrant evaluation. Evidence is about the product type.",
+  "source_url": "https://health.clevelandclinic.org/does-period-underwear-work",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-wuka-underwear",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Period underwear can manage heavier flow, often as backup to a cup or tampon; it manages flow only, and heavy periods still need a clinician check. Evidence is about the product type.",
+  "source_url": "https://health.clevelandclinic.org/does-period-underwear-work",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-tomboyx-period",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Period underwear can manage heavier flow, often as backup to a cup or tampon; it manages flow only, and heavy periods still need a clinician check. Evidence is about the product type.",
+  "source_url": "https://health.clevelandclinic.org/does-period-underwear-work",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-dear-kate-underwear",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Period underwear can manage heavier flow, often as backup to a cup or tampon; it manages flow only, and heavy periods still need a clinician check. Evidence is about the product type.",
+  "source_url": "https://health.clevelandclinic.org/does-period-underwear-work",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-proof-period",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Period underwear can manage heavier flow, often as backup to a cup or tampon; it manages flow only, and heavy periods still need a clinician check. Evidence is about the product type.",
+  "source_url": "https://health.clevelandclinic.org/does-period-underwear-work",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-hanes-period",
+  "need": "period.heavy",
+  "strength": "none",
+  "grade": "B",
+  "rationale": "This line is described as light to moderate absorbency, so it is not suited to heavy periods without other protection.",
+  "source_url": "https://health.clevelandclinic.org/does-period-underwear-work",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-winx-vaginal-health-test-treat",
+  "need": "sexual.sti",
+  "strength": "none",
+  "grade": "A",
+  "rationale": "A vaginal pH strip cannot detect chlamydia, gonorrhea or other STIs; STI concerns need NAAT testing or an FDA-authorized STI test.",
+  "source_url": "https://www.fda.gov/medical-devices/home-use-tests/vaginal-ph",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-winx-uti-pain-relief",
+  "need": "urinary.urgency",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Phenazopyridine eases UTI-related urgency for about 2 days but does not treat infection and does not help non-infectious urgency such as overactive bladder.",
+  "source_url": "https://www.ncbi.nlm.nih.gov/sites/books/NBK580545/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-winx-uti-pain-relief",
+  "need": "urinary.frequency",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Phenazopyridine can ease UTI-related frequency short term but treats no infection, and it does not address frequency from overactive bladder.",
+  "source_url": "https://www.ncbi.nlm.nih.gov/sites/books/NBK580545/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-winx-vaginal-probiotic",
+  "need": "vaginal.discharge",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Unusual discharge can come from BV, yeast or STIs that need diagnosis and specific treatment; an oral probiotic does not treat any of these.",
+  "source_url": "https://my.clevelandclinic.org/health/symptoms/4719-vaginal-discharge",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-winx-vaginal-probiotic",
+  "need": "vaginal.odor",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Odor is often BV; CDC says no studies support lactobacillus products as treatment or adjunct, so this is weak, ingredient-level support only.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/bv.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-winx-vaginal-probiotic",
+  "need": "vaginal.bv",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Marketed for vaginal flora, but CDC states no studies support probiotics as BV treatment or adjunct; BV needs prescription antibiotics.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/bv.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-winx-vaginal-probiotic",
+  "need": "vaginal.yeast",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Yeast infections are treated with azole antifungals; evidence for probiotics is limited and indirect, and this is not a treatment.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-neycher-vaginal-moisturizer",
+  "need": "vaginal.irritation",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Hyaluronic acid and polycarbophil moisturizers help irritation tied to menopausal dryness, but not infection-related itching; tea tree oil may itself irritate. Evidence is about the product type.",
+  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-neycher-odor-be-gone",
+  "need": "vaginal.irritation",
+  "strength": "none",
+  "grade": "B",
+  "rationale": "Boric acid is not a treatment for itching or irritation and can cause local burning; irritation is often yeast or contact irritation, which need other care.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-neycher-odor-be-gone",
+  "need": "vaginal.bv",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Boric acid has a role only after antibiotics in recurrent BV regimens at 600 mg; this 300 mg product with chlorhexidine is not a standalone BV treatment.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/bv.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-neycher-hydrobloom-gel",
+  "need": "vaginal.irritation",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Hyaluronic acid can soothe dryness-related irritation, but glycerin and botanical extracts in this gel may irritate sensitive vulvar tissue.",
+  "source_url": "https://menopause.org/wp-content/uploads/2024/09/Management_of_genitourinary_syndrome_of_menopause.97565-2.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-oboo-woosh-warming-wand",
+  "need": "menopause.body_changes",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "The Menopause Society lists regular sexual stimulation, including with a device, as a nonhormonal option for vaginal changes, but this is indirect support about the product type, not this product.",
+  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-oboo-nook",
+  "need": "menopause.body_changes",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "The Menopause Society lists regular sexual stimulation, including with a device, as a nonhormonal option for vaginal changes, but this is indirect support about the product type, not this product.",
+  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-oboo-smooch",
+  "need": "menopause.body_changes",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "The Menopause Society lists regular sexual stimulation, including with a device, as a nonhormonal option for vaginal changes, but this is indirect support about the product type, not this product.",
+  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-oboo-woo",
+  "need": "menopause.body_changes",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "The Menopause Society lists regular sexual stimulation, including with a device, as a nonhormonal option for vaginal changes, but this is indirect support about the product type, not this product.",
+  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-oboo-shoop",
+  "need": "menopause.body_changes",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "The Menopause Society lists regular sexual stimulation, including with a device, as a nonhormonal option for vaginal changes, but this is indirect support about the product type, not this product.",
+  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-oboo-oooh",
+  "need": "menopause.body_changes",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "The Menopause Society lists regular sexual stimulation, including with a device, as a nonhormonal option for vaginal changes, but this is indirect support about the product type, not this product.",
+  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-oboo-groove",
+  "need": "menopause.body_changes",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "The Menopause Society lists regular sexual stimulation, including with a device, as a nonhormonal option for vaginal changes, but this is indirect support about the product type, not this product.",
+  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-oboo-boom",
+  "need": "menopause.body_changes",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "The Menopause Society lists regular sexual stimulation, including with a device, as a nonhormonal option for vaginal changes, but this is indirect support about the product type, not this product.",
+  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-oboo-smooth-daily",
+  "need": "menopause.body_changes",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "A vulvar balm may help external dryness, but there is no good evidence for botanical balms and plant oils may raise infection risk; ingredients are not listed.",
+  "source_url": "https://menopause.org/wp-content/uploads/2024/09/Management_of_genitourinary_syndrome_of_menopause.97565-2.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-oboo-smooth-arousal",
+  "need": "sexual.libido",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "A cooling tingle balm does not address low desire; libido care centers on counseling, addressing dryness or pain, and Rx options, and cooling additives may irritate.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/low-sex-drive-in-women/diagnosis-treatment/drc-20374561",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-oboo-loob-daily",
+  "need": "vaginal.irritation",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A water-based moisturizer helps irritation from menopausal dryness but not infection-related itching. Evidence is about the product type.",
+  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-oboo-loob-arousal",
+  "need": "vaginal.irritation",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "A mint-cool tingle lubricant is not a remedy for itching or irritation, and cooling or warming additives are listed as possible irritants.",
+  "source_url": "https://menopause.org/wp-content/uploads/2024/09/Management_of_genitourinary_syndrome_of_menopause.97565-2.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-oboo-loob-arousal",
+  "need": "sexual.libido",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Lubricant can indirectly help desire when dryness makes sex uncomfortable, but it does not treat low libido and the cooling additive may irritate.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/low-sex-drive-in-women/diagnosis-treatment/drc-20374561",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-oboo-mood-drops",
+  "need": "menopause.body_changes",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "An herbal libido and stress tincture does not address menopause body changes, and most herbal menopause supplements lack evidence.",
+  "source_url": "https://www.nccih.nih.gov/health/menopausal-symptoms-in-depth",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-oboo-cool-spray",
+  "need": "vasomotor.night_sweats",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Cooling measures for hot flashes and night sweats are lifestyle advice with weak evidence. A handheld mist is aimed at daytime hot flashes more than night sweats, and the herbal claims are the brand's.",
+  "source_url": "https://menopause.org/patient-education/menopause-topics/hot-flashes",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-proov-complete",
+  "need": "cycle.irregular",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Urine LH and PdG tests can show whether ovulation happens, which is useful with irregular cycles, but they do not treat or explain irregularity; a clinician workup comes first. Evidence is for the test type.",
+  "source_url": "https://medlineplus.gov/ency/article/007062.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-proov-his-hers",
+  "need": "cycle.irregular",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Her ovulation tests can help check ovulation with irregular cycles, but the kit is built for couples trying to conceive and the sperm test is irrelevant to this need. Evidence is for the test type.",
+  "source_url": "https://medlineplus.gov/ency/article/007062.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-elitone",
+  "need": "postpartum.recovery",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Pelvic floor muscle training is recommended after birth and helps postpartum stress leaks; Elitone is an electrical stimulation aid for that training. Evidence is for pelvic floor training, not this device.",
+  "source_url": "https://www.cochrane.org/evidence/CD007471_pelvic-floor-muscle-training-preventing-and-treating-urinary-and-faecal-incontinence-antenatal",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-elitone-urge",
+  "need": "postpartum.recovery",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "This version targets overactive bladder, while postpartum leaks are mostly stress type. Pelvic floor training evidence after birth applies only indirectly to this device.",
+  "source_url": "https://www.cochrane.org/evidence/CD007471_pelvic-floor-muscle-training-preventing-and-treating-urinary-and-faecal-incontinence-antenatal",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-mypelvicbra-classic",
+  "need": "pregnancy.discomfort",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "External pelvic support garments may ease pelvic pressure in pregnancy, but evidence is limited and NHS physio advice says to ask a physiotherapist first. Evidence is for support belts generally.",
+  "source_url": "https://www.stgeorges.nhs.uk/wp-content/uploads/2025/06/PHP_PGP.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-mypelvicbra-classic",
+  "need": "pain.pelvic",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Made for pelvic pressure from prolapse, which is heaviness rather than pelvic pain in general. Pelvic pain needs evaluation for its cause; support is a comfort aid with weak evidence.",
+  "source_url": "https://mayoclinic.org/diseases-conditions/pelvic-organ-prolapse/diagnosis-treatment/drc-20562951?p=1",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-buni-rejuvenate-vulva-balm",
+  "need": "menopause.body_changes",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "An external vulva balm can ease vulvar dryness, one menopause change, but guidance favors regular vaginal moisturizers or vaginal estrogen. Botanical balms have weak evidence.",
+  "source_url": "https://menopause.org/wp-content/uploads/2024/09/Management_of_genitourinary_syndrome_of_menopause.97565-2.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-buni-rejuvenate-vulva-balm",
+  "need": "postpartum.body_skin",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Can soothe postpartum vulvar dryness, common while breastfeeding, but this need is mostly about stretch marks and skin. Evidence for vulvar balms is weak.",
+  "source_url": "https://menopause.org/wp-content/uploads/2024/09/Management_of_genitourinary_syndrome_of_menopause.97565-2.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-buni-rejuvenate-vulva-balm",
+  "need": "postpartum.recovery",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "May comfort external vulvar dryness or chafing after birth, but it is not a perineal wound treatment; postnatal guidance centers on hygiene, cooling and pain relief.",
+  "source_url": "https://nice.org.uk/guidance/ng194/resources/postnatal-care-pdf-66142082148037",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-buni-soothe-nipple-lip-balm",
+  "need": "postpartum.recovery",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Nipple balms are a comfort aid for sore nipples while nursing, which fits breastfeeding support better than general recovery. Evidence for nipple creams is limited.",
+  "source_url": "https://nice.org.uk/guidance/ng194/resources/postnatal-care-pdf-66142082148037",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-buni-soothe-nipple-lip-balm",
+  "need": "pregnancy.prenatal",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "A nipple and lip balm is not prenatal support; prenatal guidance centers on folic acid and prenatal care. Wrong match.",
+  "source_url": "https://www.cdc.gov/folic-acid/about/intake-and-sources.html",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-buni-transform-scar-body-oil",
+  "need": "postpartum.recovery",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Scar and stretch mark oils are cosmetic and no product reliably removes marks. It contains retinyl palmitate, a retinoid, so check with a clinician while breastfeeding. Better fit is postpartum skin changes.",
+  "source_url": "https://www.nhs.uk/conditions/stretch-marks/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-buni-bundle",
+  "need": "postpartum.recovery",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "The set offers comfort balms and a scar oil for after birth; evidence for these products is weak and none treat perineal healing. The scar oil contains a retinoid.",
+  "source_url": "https://www.aafp.org/pubs/afp/issues/2023/0200/skin-conditions-during-pregnancy/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-buni-bundle",
+  "need": "pregnancy.prenatal",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Not prenatal support, and the bundle's scar oil contains retinyl palmitate, a retinoid that guidance says to avoid in pregnancy. Should not be shown for pregnancy.",
+  "source_url": "https://www.aafp.org/pubs/afp/issues/2023/0200/skin-conditions-during-pregnancy/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-joylux-juicy-like-a-peach",
+  "need": "vaginal.irritation",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A regular vaginal moisturizer helps irritation caused by menopause or low-estrogen dryness, but not irritation from yeast, BV or skin conditions, which need diagnosis. Evidence is for the product type.",
+  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-joylux-lets-spin",
+  "need": "vaginal.irritation",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "This is an intimacy gel for comfort during sex; it may ease dryness-related irritation but is not a daily moisturizer and contains propanediol, which some sensitive users find irritating.",
+  "source_url": "https://menopause.org/wp-content/uploads/2024/09/Management_of_genitourinary_syndrome_of_menopause.97565-2.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-joylux-coldher",
+  "need": "vasomotor.night_sweats",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Cooling packs are among lifestyle measures for hot flashes and night sweats, with weak evidence. Bra inserts are better suited to daytime flashes than night sweats.",
+  "source_url": "https://menopause.org/patient-education/menopause-topics/hot-flashes",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-mypelvicbra-waistband-extenders",
+  "need": "postpartum.recovery",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "An accessory that only adds room to a Pelvic Bra; it does nothing on its own and should not be recommended as a recovery product.",
+  "source_url": "https://www.fda.gov/medical-devices/breast-pumps/injury-and-infection",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-mypelvicbra-classic-plus",
+  "need": "pregnancy.discomfort",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "External pelvic support may ease pelvic pressure in pregnancy, but evidence is limited and a physiotherapist should advise first. Evidence is for support belts generally.",
+  "source_url": "https://www.stgeorges.nhs.uk/wp-content/uploads/2025/06/PHP_PGP.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-mypelvicbra-classic-plus",
+  "need": "pain.pelvic",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Made for prolapse-related pressure rather than pelvic pain in general; pelvic pain needs its cause found. Support garments are a comfort aid with weak evidence.",
+  "source_url": "https://mayoclinic.org/diseases-conditions/pelvic-organ-prolapse/diagnosis-treatment/drc-20562951?p=1",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-mypelvicbra-sports",
+  "need": "pregnancy.discomfort",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "External pelvic support may ease pelvic pressure in pregnancy, but evidence is limited and a physiotherapist should advise first. This style is aimed at activity.",
+  "source_url": "https://www.stgeorges.nhs.uk/wp-content/uploads/2025/06/PHP_PGP.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-mypelvicbra-sports",
+  "need": "pain.pelvic",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Made for prolapse-related pressure during activity rather than pelvic pain in general. Evidence for support garments is weak.",
+  "source_url": "https://mayoclinic.org/diseases-conditions/pelvic-organ-prolapse/diagnosis-treatment/drc-20562951?p=1",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-sootheher-elaris-pod",
+  "need": "pain.abdominal",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "TENS reduces period cramp pain in a meta-analysis, which is lower abdominal pain, but it does not address other causes of abdominal discomfort. Evidence is for TENS, not this device.",
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/32917532/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-sootheher-elaris-pod",
+  "need": "condition_support.endometriosis",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "TENS may ease cramp pain, but the evidence is mainly in primary dysmenorrhea; endometriosis care centers on pain relievers, hormonal treatment and specialist care.",
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/32917532/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-sootheher-elaris-pod",
+  "need": "condition_support.adenomyosis",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "May ease cramp pain as a home measure alongside heat and NSAIDs; evidence is from primary dysmenorrhea and does not cover adenomyosis bleeding.",
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/32917532/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-gina-vaginal-moisturizing-glides",
+  "need": "vaginal.irritation",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Coconut oil can soothe dryness-related irritation, but oil-based products have weak evidence, can weaken latex condoms and may raise infection risk.",
+  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-gina-insertion-applicator-refills",
+  "need": "vaginal.dryness",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "An empty applicator refill for gina glides; it does nothing for dryness on its own and should not be a standalone recommendation.",
+  "source_url": "https://menopause.org/wp-content/uploads/2024/09/Management_of_genitourinary_syndrome_of_menopause.97565-2.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-gina-starter-kit",
+  "need": "vaginal.irritation",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Coconut oil suppositories can soothe dryness-related irritation, but oil-based products have weak evidence, can weaken latex condoms and may raise infection risk.",
+  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-goodbug-gut-balance",
+  "need": "pain.abdominal",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Selected probiotics have weak evidence for functional bloating and gut discomfort; this is a general gut supplement, not a fix for abdominal pain. Evidence is for probiotics generally.",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12606050/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-goodbug-gut-balance",
+  "need": "bloating.cycle_related",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "A gut probiotic may help digestive bloating, but cycle-related bloating is hormonal and evidence for probiotics there is indirect and weak.",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12606050/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-goodbug-good-to-glow",
+  "need": "vaginal.discharge",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "A skin and hair supplement with an oral probiotic; it does not address unusual discharge, which needs evaluation.",
+  "source_url": "https://my.clevelandclinic.org/health/symptoms/4719-vaginal-discharge",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-goodbug-good-to-glow",
+  "need": "vaginal.odor",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "A skin and hair supplement; it does not address vaginal odor, which usually needs evaluation for BV or trichomoniasis.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/bv.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-goodbug-good-to-glow",
+  "need": "vaginal.bv",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Not a BV treatment; BV is treated with prescription antibiotics and probiotic evidence for BV is weak even for vaginal strains.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/bv.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-goodbug-good-to-glow",
+  "need": "vaginal.yeast",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Not a yeast infection treatment; guidance recommends azole antifungals.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-alubri-vaginal-moisturizing-gel",
+  "need": "vaginal.irritation",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A hyaluronic acid vaginal moisturizer helps irritation from menopause or low-estrogen dryness, but not irritation from infection or skin conditions. Evidence is for the product type.",
+  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-alubri-intimate-serum",
+  "need": "postpartum.recovery",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "An external vulvar moisturizer may comfort vulvar dryness after birth, common while breastfeeding, but it is not a perineal healing product. Evidence is weak.",
+  "source_url": "https://menopause.org/wp-content/uploads/2024/09/Management_of_genitourinary_syndrome_of_menopause.97565-2.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-alubri-vulva-balm",
+  "need": "menopause.body_changes",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "An external vulva balm can ease vulvar dryness in menopause, but guidance favors vaginal moisturizers or vaginal estrogen. Evidence for external balms is weak.",
+  "source_url": "https://menopause.org/wp-content/uploads/2024/09/Management_of_genitourinary_syndrome_of_menopause.97565-2.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-alubri-vaginal-wellness-kit",
+  "need": "vaginal.irritation",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Includes a hyaluronic acid vaginal moisturizer, which helps dryness-related irritation but not infection. Evidence is for the product type.",
+  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-soonr",
+  "need": "cycle.pms",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Logging symptoms over at least two cycles helps confirm PMS, and the app tracks periods and symptoms, but it is built for preconception habits, not PMS.",
+  "source_url": "https://www.nhs.uk/conditions/pre-menstrual-syndrome/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-soonr",
+  "need": "mood.cycle_related",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "A couples' preconception habit app, not a mood or symptom tracker for cycle mood changes; cycle mood concerns are best taken to a clinician.",
+  "source_url": "https://www.nimh.nih.gov/health/topics/women-and-mental-health",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "d-soonr",
+  "need": "pregnancy.prenatal",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Supports preconception health habits such as supplements, which overlaps with prenatal planning, but it is not prenatal care. Evidence is indirect.",
+  "source_url": "https://www.cdc.gov/folic-acid/about/intake-and-sources.html",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-surearly-smart-ovulation-test",
+  "need": "cycle.irregular",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "LH plus progesterone marker tests can show whether ovulation occurs with irregular cycles, but they do not explain the cause; see a clinician. Evidence is for the test type.",
+  "source_url": "https://medlineplus.gov/ency/article/007062.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-surearly-smart-ovulation-test",
+  "need": "pregnancy.prenatal",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "An ovulation test is for trying to conceive and has no use once pregnant. Wrong match for prenatal support.",
+  "source_url": "https://medlineplus.gov/ency/article/007062.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-tampontribe-organic-tampons",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Tampons work for light days only in a light or mini absorbency; the listing does not confirm one. Use the lowest absorbency that works to limit TSS risk.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-tampontribe-organic-pads",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "The night pad is longer and higher capacity, which can help manage heavy flow, but heavy periods also need clinician evaluation. Evidence is for the product type.",
+  "source_url": "https://www.nice.org.uk/guidance/ng88/chapter/recommendations",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-tampontribe-organic-pads",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Works on light days, though liners or mini pads are the usual fit for light flow. Evidence is for the product type.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-tampontribe-reusable-pads",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Rated for medium flow, so it needs frequent changes on heavy days and fits heavy periods only loosely.",
+  "source_url": "https://www.nice.org.uk/guidance/ng88/chapter/recommendations",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-tampontribe-reusable-pads",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Medium-flow cloth pads work on light days but are more than light flow needs; liners are the usual fit.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-tampontribe-teen-pads",
+  "need": "period.heavy",
+  "strength": "none",
+  "grade": "B",
+  "rationale": "A small 7.2 inch teen pad is a regular day pad, not a high capacity or overnight product, so it is a poor match for heavy flow. Heavy flow guidance points to larger pads, cups or discs and a clinician check.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-tampontribe-teen-pads",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "A small unscented pad works on light days, though liners or mini pads fit light flow more closely. Evidence is general guidance on pad type, not this product.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-momotaro-daily-probiotic",
+  "need": "vaginal.discharge",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "This mixed Lactobacillus probiotic is sold for vaginal health, but unusual discharge needs testing, and CDC finds too little evidence that probiotics treat or prevent BV, a common cause. Evidence is about probiotics in general.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/bv.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-momotaro-daily-probiotic",
+  "need": "vaginal.odor",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Odor is most often from BV, which needs prescription treatment. Oral Lactobacillus probiotics are a weakly supported add on; evidence is about the product type, not this product.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/bv.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-momotaro-daily-probiotic",
+  "need": "vaginal.bv",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "CDC guidance says evidence is insufficient to recommend Lactobacillus probiotics for BV; antibiotics are first line. Some small trials of L. crispatus show modest benefit. Evidence is about the type.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/bv.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-momotaro-daily-probiotic",
+  "need": "vaginal.yeast",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Evidence that oral probiotics prevent or treat yeast infections is limited and inconsistent; azole antifungals are the proven option. Evidence is about the product type, not this product.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-momotaro-urinary-tract-supplement",
+  "need": "urinary.recurrent_uti",
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "Made for UTI prevention with cranberry and D-mannose. A Cochrane review and AUA guidance support cranberry for recurrent UTI; D-mannose evidence is weak and the PAC dose is not stated. Uva ursi is not for long term use.",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10108827/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-alubri-moisture-renewal-kit",
+  "need": "vaginal.dryness",
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "A hyaluronic acid vaginal gel plus vulvar balm made for dryness. The Menopause Society supports regular non hormonal moisturizers and hyaluronic acid gels; evidence is about the product type, not this kit.",
+  "source_url": "https://menopause.org/wp-content/uploads/2024/09/Management_of_genitourinary_syndrome_of_menopause.97565-2.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-alubri-moisture-renewal-kit",
+  "need": "pain.sexual",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Regular moisturizer use can ease pain from dryness during sex, per ACOG, but it does not address other causes of painful sex such as vaginismus or vulvodynia. Evidence is about the product type.",
+  "source_url": "https://www.acog.org/womens-health/experts-and-stories/the-latest/experiencing-vaginal-dryness-heres-what-you-need-to-know",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-alubri-moisture-renewal-kit",
+  "need": "menopause.body_changes",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "It treats vaginal dryness, one common menopause change (genitourinary syndrome), and the Menopause Society supports moisturizers for it. It does not address other menopause body changes.",
+  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-alubri-moisture-renewal-kit",
+  "need": "vaginal.irritation",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Moisturizers can ease irritation linked to menopausal dryness, but itching is often from infection or irritants that need other care. The botanical balm extracts have little evidence.",
+  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-tampontribe-tampons-bulk-buy",
+  "need": "period.product_support",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "Organic cotton tampons are a standard FDA regulated period product. FDA advises using the lowest absorbency needed and changing every 4 to 8 hours.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-tampontribe-tampons-bulk-buy",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Choosing super absorbency in the mix can help manage heavier flow, but heavy periods warrant a clinician check, and higher capacity options like cups may hold more.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-tampontribe-tampons-bulk-buy",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Fits light days only if the lowest absorbency is chosen; FDA advises the lowest absorbency needed to lower TSS risk, and liners may suit very light flow better.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-tampontribe-pads-bulk-buy",
+  "need": "period.product_support",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "Unscented disposable day and night pads are a standard FDA regulated period product.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-tampontribe-pads-bulk-buy",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "The night pads give more capacity for heavier flow, though they are ultrathin; heavy periods also warrant a clinician check. Evidence is general guidance on pad type.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-tampontribe-pads-bulk-buy",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Ultrathin day pads work for light flow; liners are an even closer fit. Evidence is general guidance on pad type.",
+  "source_url": "https://health.clevelandclinic.org/sanitary-pads",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-tampontribe-menstrual-cup",
+  "need": "period.product_support",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "A reusable menstrual cup is an FDA regulated period product. This one is TPE rather than the more common silicone; evidence is about cups in general.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-tampontribe-menstrual-cup",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Cups hold more fluid than most tampons, which helps manage heavy flow, but heavy periods still warrant a clinician check. Evidence is about cups in general.",
+  "source_url": "https://health.clevelandclinic.org/menstrual-cup",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-tampontribe-menstrual-cup",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "A cup can be used on light days, but removal can be less comfortable with little flow, and liners or light tampons fit light flow better.",
+  "source_url": "https://health.clevelandclinic.org/menstrual-cup",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-resa-rhythm-bracelet",
+  "need": "cycle.pms",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Tracking symptoms over 2 cycles is recommended to identify PMS, and this wearable logs cycle data, but it does not treat PMS and its sensor insights are not validated for it.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/premenstrual-syndrome/diagnosis-treatment/drc-20376787",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-resa-rhythm-bracelet",
+  "need": "mood.cycle_related",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Logging mood against the cycle can help a clinician spot a pattern, but the bracelet does not treat mood changes and its readouts are not validated for this.",
+  "source_url": "https://www.nimh.nih.gov/health/topics/women-and-mental-health",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-resa-rhythm-bracelet",
+  "need": "fertility.ttc",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Skin temperature can confirm ovulation after the fact, but this wellness bracelet is not cleared for fertility timing; urine LH test timed intercourse is the evidence based option.",
+  "source_url": "https://www.cochrane.org/evidence/CD011345_timed-intercourse-couples-trying-conceive",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-resa-rhythm-bracelet",
+  "need": "energy.fatigue",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Tracking heart rate, sleep and activity does not treat fatigue. Guidance for fatigue in women starts with checking for causes such as iron deficiency.",
+  "source_url": "https://ods.od.nih.gov/factsheets/Iron-HealthProfessional/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-goodbug-good-down-there",
+  "need": "vaginal.discharge",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "This Lactobacillus stick is sold for vaginal health, but unusual discharge needs testing, and CDC finds too little evidence that probiotics treat or prevent BV, a common cause. Evidence is about probiotics in general.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/bv.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-goodbug-good-down-there",
+  "need": "vaginal.odor",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Odor is most often from BV, which needs prescription treatment. Oral Lactobacillus probiotics are a weakly supported add on; evidence is about the product type, not this product.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/bv.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-goodbug-good-down-there",
+  "need": "vaginal.bv",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "CDC guidance says evidence is insufficient to recommend Lactobacillus probiotics for BV; antibiotics are first line. Some small trials of L. crispatus show modest benefit. Evidence is about the type.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/bv.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-goodbug-good-down-there",
+  "need": "vaginal.yeast",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Evidence that oral probiotics prevent or treat yeast infections is limited and inconsistent; azole antifungals are the proven option. Evidence is about the product type, not this product.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-goodbug-good-down-there",
+  "need": "urinary.recurrent_uti",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "It contains cranberry extract and D-mannose, and guidelines support cranberry for recurrent UTI prevention, but the PAC dose is not stated and the product is mainly a vaginal probiotic. Evidence is ingredient level.",
+  "source_url": "https://www.auanet.org/documents/Guidelines/PDF/2025%20Guidelines/rUTI%20Update/rUTI%202025%20Amendment%20Summary%20Final.pdf",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-cbb-perfect-ph-probiotic-gummies",
+  "need": "vaginal.discharge",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "The only probiotic is Bacillus coagulans, a gut spore former, not a vaginal Lactobacillus. Unusual discharge needs testing, and there is no credible evidence this gummy changes it.",
+  "source_url": "https://my.clevelandclinic.org/health/symptoms/4719-vaginal-discharge",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-cbb-perfect-ph-probiotic-gummies",
+  "need": "vaginal.odor",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Odor usually comes from BV, which needs prescription treatment. A Bacillus coagulans gummy has no credible evidence for vaginal odor.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/bv.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-cbb-perfect-ph-probiotic-gummies",
+  "need": "vaginal.bv",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "CDC finds probiotics unproven for BV. Bacillus coagulans has only small adjunct trials alongside antibiotics, so any benefit is uncertain. Evidence is about the strain, not this gummy.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/bv.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-cbb-perfect-ph-probiotic-gummies",
+  "need": "vaginal.yeast",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "No credible evidence that oral Bacillus coagulans prevents or treats vaginal yeast infections; azole antifungals are the proven option.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-hero-mighty-patch-original",
+  "need": "condition_support.pcos",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "A drug free hydrocolloid cover does not treat PCOS or its acne; PCOS skin care relies on active topical acne treatments or prescription options.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/pcos/diagnosis-treatment/drc-20353443",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-hero-mighty-patch-original",
+  "need": "skin.acne",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Hydrocolloid patches cover pimples and stop picking, with small studies showing less redness, but they contain no acne medicine and do not prevent breakouts.",
+  "source_url": "https://www.aad.org/public/diseases/acne/derm-treat/treat",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-hero-mighty-patch-original",
+  "need": "skin.hormonal",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "It can cover individual hormonal breakouts but does not treat the cause; hormonal acne responds to topical retinoids, benzoyl peroxide or prescription hormonal therapy.",
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/38300170/?dopt=Abstract",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-hero-pimple-correct",
+  "need": "condition_support.pcos",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Topical acne treatment is part of PCOS care for skin symptoms, and this 2% salicylic acid spot gel fits that role, but it does not address the underlying condition.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/pcos/diagnosis-treatment/drc-20353443",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-hero-pimple-correct",
+  "need": "skin.acne",
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "A 2% salicylic acid OTC acne spot gel. The AAD lists salicylic acid as an option, with weaker evidence than benzoyl peroxide or adapalene. Evidence is about the ingredient.",
+  "source_url": "https://www.aad.org/public/diseases/acne/derm-treat/treat",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-hero-pimple-correct",
+  "need": "skin.hormonal",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Salicylic acid can help mild hormonal breakouts, but hormonal acne often needs retinoids, benzoyl peroxide or prescription hormonal therapy. Evidence is about the ingredient.",
+  "source_url": "https://www.aad.org/public/diseases/acne/derm-treat/treat",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-hero-mighty-cleanser",
+  "need": "condition_support.pcos",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Topical acne treatment is part of PCOS care for skin symptoms, and this 2% salicylic acid face wash fits that role, but it does not address the underlying condition.",
+  "source_url": "https://www.mayoclinic.org/diseases-conditions/pcos/diagnosis-treatment/drc-20353443",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-hero-mighty-cleanser",
+  "need": "skin.acne",
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "A 2% salicylic acid OTC acne face wash. The AAD lists salicylic acid as an option, with weaker evidence than benzoyl peroxide or adapalene. Evidence is about the ingredient.",
+  "source_url": "https://www.aad.org/public/diseases/acne/derm-treat/treat",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-hero-mighty-cleanser",
+  "need": "skin.hormonal",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Salicylic acid can help mild hormonal breakouts, but hormonal acne often needs retinoids, benzoyl peroxide or prescription hormonal therapy. Evidence is about the ingredient.",
+  "source_url": "https://www.aad.org/public/diseases/acne/derm-treat/treat",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-arrae-mb-1",
+  "need": "vaginal.discharge",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "A metabolism and weight capsule whose only probiotic is the gut strain B. lactis; it is not made for vaginal health and has no evidence for this. Even vaginal Lactobacillus products are unproven per CDC.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/bv.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-arrae-mb-1",
+  "need": "vaginal.odor",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "A metabolism and weight capsule whose only probiotic is the gut strain B. lactis; it is not made for vaginal health and has no evidence for this. Even vaginal Lactobacillus products are unproven per CDC.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/bv.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-arrae-mb-1",
+  "need": "vaginal.bv",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "A metabolism and weight capsule whose only probiotic is the gut strain B. lactis; it is not made for vaginal health and has no evidence for this. Even vaginal Lactobacillus products are unproven per CDC.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/bv.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-arrae-mb-1",
+  "need": "vaginal.yeast",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "A metabolism and weight capsule whose only probiotic is the gut strain B. lactis; it is not made for vaginal health and has no evidence for this. Even vaginal Lactobacillus products are unproven per CDC.",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/bv.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-ob-original-multipack-40",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "The pack includes super and super plus absorbencies that help manage heavy flow, but heavy periods warrant a clinician check. FDA advises the lowest absorbency needed.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-ob-original-multipack-40",
+  "need": "period.light",
+  "strength": "none",
+  "grade": "B",
+  "rationale": "The multi pack has regular, super and super plus tampons, all above light absorbency. FDA advises the lowest absorbency needed to reduce TSS risk, so this is a poor fit for light flow.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-ob-original-ultra-40",
+  "need": "period.light",
+  "strength": "none",
+  "grade": "A",
+  "rationale": "Ultra tampons are high absorbency. FDA advises using the lowest absorbency needed because higher absorbency raises toxic shock syndrome risk, so they should not be shown for light periods.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-ob-original-regular-40",
+  "need": "period.heavy",
+  "strength": "none",
+  "grade": "B",
+  "rationale": "Regular absorbency is not a high capacity product; heavy flow is better served by super tampons, cups or overnight pads plus a clinician check.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-ob-original-regular-40",
+  "need": "period.light",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Regular is the lowest o.b. Original size, but it is above light absorbency; FDA advises the lowest absorbency needed, so light or mini tampons or liners fit better.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-ob-original-super-plus-40",
+  "need": "period.light",
+  "strength": "none",
+  "grade": "A",
+  "rationale": "Super Plus tampons are high absorbency. FDA advises using the lowest absorbency needed because higher absorbency raises toxic shock syndrome risk, so they should not be shown for light periods.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-ob-original-super-40",
+  "need": "period.light",
+  "strength": "none",
+  "grade": "A",
+  "rationale": "Super tampons are high absorbency. FDA advises using the lowest absorbency needed because higher absorbency raises toxic shock syndrome risk, so they should not be shown for light periods.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-ob-original-multipack-80",
+  "need": "period.heavy",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "The pack includes super and super plus absorbencies that help manage heavy flow, but heavy periods warrant a clinician check. FDA advises the lowest absorbency needed.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-ob-original-multipack-80",
+  "need": "period.light",
+  "strength": "none",
+  "grade": "B",
+  "rationale": "The multi pack has regular, super and super plus tampons, all above light absorbency. FDA advises the lowest absorbency needed to reduce TSS risk, so this is a poor fit for light flow.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-ob-procomfort-mini-32",
+  "need": "period.heavy",
+  "strength": "none",
+  "grade": "A",
+  "rationale": "These are mini tampons made for light days. Using a low absorbency tampon for heavy flow leads to leaks and frequent changes; this link should point to period.light instead.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-ob-procomfort-mini-16",
+  "need": "period.heavy",
+  "strength": "none",
+  "grade": "A",
+  "rationale": "These are mini tampons made for light days. Using a low absorbency tampon for heavy flow leads to leaks and frequent changes; this link should point to period.light instead.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-lim-method-bundle",
+  "need": "pregnancy.discomfort",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "A pelvic floor exercise kit from a pelvic floor therapist. Cochrane finds prenatal exercise may ease pregnancy back and pelvic pain, but this kit itself is untested; clear it with a prenatal clinician.",
+  "source_url": "https://www.cochrane.org/evidence/CD001139_interventions-preventing-and-treating-pelvic-and-back-pain-pregnancy",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-lim-method-bundle",
+  "need": "pregnancy.prenatal",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "Guided pelvic floor and core exercise can be part of pregnancy wellness, but prenatal support centers on folic acid and prenatal care. Evidence is about prenatal exercise, not this kit.",
+  "source_url": "https://www.cochrane.org/evidence/CD001139_interventions-preventing-and-treating-pelvic-and-back-pain-pregnancy",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-panoxyl-bpo-10-wash",
+  "need": "skin.hormonal",
+  "strength": "secondary",
+  "grade": "A",
+  "rationale": "Benzoyl peroxide is a guideline first line acne treatment and helps hormonal acne lesions, but it does not address the hormonal driver; persistent hormonal acne may need spironolactone or the pill.",
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/38300170/?dopt=Abstract",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-differin-adapalene-gel",
+  "need": "skin.hormonal",
+  "strength": "secondary",
+  "grade": "A",
+  "rationale": "Adapalene is a guideline first line acne treatment and helps hormonal acne lesions, but it does not address the hormonal driver; persistent hormonal acne may need spironolactone or the pill.",
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/38300170/?dopt=Abstract",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-metamucil-psyllium-orange",
+  "need": "bloating.cycle_related",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Cycle related bloating comes mostly from hormone driven fluid retention, not constipation; Psyllium fiber is a constipation treatment with no evidence for premenstrual bloating.",
+  "source_url": "https://ods.od.nih.gov/factsheets/VitaminB6-HealthProfessional/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-metamucil-psyllium-orange",
+  "need": "bloating.unspecified",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Psyllium fiber treats constipation, a common cause of bloating, per NIDDK, but does not help bloating from other causes and can add gas at first.",
+  "source_url": "https://www.niddk.nih.gov/health-information/digestive-diseases/constipation/treatment",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-miralax-peg-3350",
+  "need": "bloating.cycle_related",
+  "strength": "none",
+  "grade": "C",
+  "rationale": "Cycle related bloating comes mostly from hormone driven fluid retention, not constipation; PEG 3350 is a constipation treatment with no evidence for premenstrual bloating.",
+  "source_url": "https://ods.od.nih.gov/factsheets/VitaminB6-HealthProfessional/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-miralax-peg-3350",
+  "need": "bloating.unspecified",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "PEG 3350 treats constipation, a common cause of bloating, per NIDDK, but does not help bloating from other causes.",
+  "source_url": "https://www.niddk.nih.gov/health-information/digestive-diseases/constipation/treatment",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-easyhome-lh-strips-50",
+  "need": "cycle.irregular",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "LH strips can show whether and when you ovulate, which helps with irregular cycles, but they are harder to read when cycles vary or LH runs high as in PCOS. They do not diagnose the cause.",
+  "source_url": "https://medlineplus.gov/ency/article/007062.htm",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
+ },
+ {
+  "product": "p-rugby-vitamin-b6-25",
+  "need": "pregnancy.prenatal",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "Vitamin B6 is a supported option for pregnancy nausea, but it is not a prenatal vitamin and does not provide folic acid. It fits the nausea need more than general prenatal support.",
+  "source_url": "https://ods.od.nih.gov/factsheets/VitaminB6-HealthProfessional/",
+  "reviewer": "research-audit",
+  "reviewed": "2026-10-21"
  }
 ];
