@@ -397,3 +397,8 @@ html body .app-container .ayq-badges.is-web { margin-top: 14px; }
 .ayq-skel--tabs { height: 54px; width: 70%; margin-bottom: 8px; }
 .ayq-skel--panel { height: 480px; }
 @media (max-width: 1023px) { .ayq-skel--bottom, .ayq-skel--glance { grid-column: 1 / -1; } }
+
+/* Tap-to-define words take the colour of the text around them (also on the Feature card and pink notes). */
+html body .app-container.app-container.app-container .ayq.ayq.ayq .ay-gloss.ay-gloss:not(.zz), .ayq.ayq .ay-gloss { color: inherit !important; -webkit-text-fill-color: currentColor !important; text-decoration-color: currentColor !important; }
+.ayq.ayq .ayq-tab.is-on { background: var(--q-group) !important; color: var(--q-ink) !important; }
+@media (max-width: 760px) { .ayq.ayq .ayq-tab.is-on { background: var(--q-ink) !important; color: var(--q-page) !important; } }
