@@ -726,4 +726,24 @@ html body .app-container.app-container .ay-pagehead .ay-h1 { font-size: clamp(36
 .app-container.app-container footer.ay-foot::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 14px; border-block: 1.5px solid #3e2723; background: repeating-conic-gradient(#3e2723 0 25%, #f7badd 0 50%) 0 0 / 28px 28px; }
 .app-container.app-container[data-theme='brand-dark'] footer.ay-foot::before { border-color: #ffedac; background: repeating-conic-gradient(#ffedac 0 25%, #f7badd 0 50%) 0 0 / 28px 28px; }
 .app-container.app-container .ay-foot__logo { font-size: clamp(44px, 3vw + 30px, 72px) !important; }
-.app-container.app-container:has(.ed-home .ed-final.ay-band, .ed-closer--band:last-child) footer.ay-foot { margin-top: 0; }
+.app-container.app-container:has(.ed-home > .ed-final.ay-band:last-child, .ed-closer--band:last-child) footer.ay-foot { margin-top: 0; }
+
+/* Final layout pass (Oct 21, P1-4): one card anatomy, rows that line up.
+   brand (1 line) → name (2 lines reserved) → kind + one badge (1 line) →
+   match → price + unit (pinned to the bottom). Same on the app (.ay-pc). */
+.app-container.app-container .ay-product-card__name { min-height: calc(2 * 1.3em); }
+.app-container.app-container .ay-product-card__kind { display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important; align-items: center; gap: 6px !important; min-height: 22px; margin: 2px 0 0 !important; padding-top: 0 !important; overflow: hidden; white-space: nowrap; }
+.app-container.app-container .ay-product-card__kind > * { flex: none; }
+.app-container.app-container .ay-product-card__kindtext { flex: 0 1 auto !important; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.app-container.app-container .ay-product-card__kind .ay-product-card__tag::before { content: '·'; margin-right: 6px; color: var(--ay-text-2); font-weight: 500; }
+.app-container.app-container .ay-product-card__kind .ay-product-card__badge { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border: 1.5px solid currentColor; border-radius: 999px; font: 600 12px/1 var(--ay-sans-stack); color: var(--ay-text); background: transparent; }
+.app-container.app-container .ay-product-card__kind .ay-product-card__badge::before { content: none; }
+.app-container.app-container .ay-product-card__kind .ay-product-card__badge.is-alert { background: #f7badd; color: #3e2723; border-color: #3e2723; }
+.app-container.app-container .ay-product-card__match { margin-top: 4px; }
+.app-container.app-container .ay-product-card__kind ~ .ay-product-card__price { margin-top: auto !important; padding-top: 6px !important; flex-wrap: nowrap; }
+.app-container.app-container .ay-product-card__price small { min-width: 0; }
+.app-container.app-container .ay-product-card__tile:has(.ay-nophoto) { padding: 0; }
+.app-container.app-container .ay-product-card__fallback:has(.ay-nophoto) { display: block; }
+.app-container.app-container .ay-product-card__tile .ay-product-card__badge.is-tile { position: absolute; left: 8px; bottom: 8px; z-index: 1; display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border: 1.5px solid #3e2723; border-radius: 999px; background: #ffedac; color: #3e2723; font: 600 12px/1 var(--ay-sans-stack); max-width: calc(100% - 16px); white-space: nowrap; }
+.app-container.app-container .ay-product-card__tile .ay-product-card__badge.is-tile::before { content: none; }
+.app-container.app-container .ay-product-card__tile .ay-product-card__badge.is-alert { background: #f7badd; }

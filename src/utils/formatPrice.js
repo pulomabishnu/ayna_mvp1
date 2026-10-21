@@ -74,5 +74,30 @@ export function formatPrice(item) {
   }
 
   if (moreSizes) sub = [sub, moreSizes].filter(Boolean).join(' · ');
+  // A bare count ("$10 for 18") read as a rating on cards (P1-4): name the unit.
+  sub = labelBareCount(sub, item);
   return { main: text, sub };
+}
+
+// The unit a pack count is in, from the product's own name and category.
+const UNITS = [
+  [/liner/i, 'liners'], [/tampon/i, 'tampons'], [/\bpads?\b|pad\b|maxi|overnight/i, 'pads'], [/wipe/i, 'wipes'],
+  [/strip/i, 'strips'], [/\btests?\b|ovulation|pregnancy test/i, 'tests'], [/softgel/i, 'softgels'], [/gumm/i, 'gummies'],
+  [/capsule|caps\b/i, 'capsules'], [/tablet|caplet/i, 'tablets'], [/patch/i, 'patches'], [/condom/i, 'condoms'],
+  [/supposit|insert/i, 'inserts'], [/sachet|packet|stick/i, 'packets'],
+];
+function unitFor(item) {
+  const name = `${item?.name || ''}`;
+  const cat = `${item?.category || ''} ${item?.subcategory || ''}`;
+  for (const [re, unit] of UNITS) if (re.test(name)) return unit;
+  for (const [re, unit] of UNITS) if (re.test(cat)) return unit;
+  return '';
+}
+export function labelBareCount(sub, item) {
+  const parts = String(sub || '').split(' · ');
+  const m = parts[0].match(/^(\d[\d,]*(?:–\d[\d,]*)?)$/);
+  if (!m) return sub;
+  const unit = unitFor(item);
+  parts[0] = unit ? `${m[1]} ${unit}` : `pack of ${m[1]}`;
+  return parts.join(' · ');
 }

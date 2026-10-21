@@ -21,15 +21,19 @@ export function ProductImageFallback({ compact = false, style, className, produc
   // With a product: a designed tile (its initial in the logo face on a tint
   // picked from its name, brand under it) instead of a faint wordmark.
   if (product && !compact) {
+    // P1-4: a designed no-photo tile, not a letter avatar. It reads like the
+    // label on a plain pharmacy box: the brand in the logo face on a tint
+    // picked from its name, a hairline rule, then "Photo coming soon".
     const name = String(product.name || '').trim();
     const brand = String(product.brand || '').trim();
     const key = brand || name;
     const tint = FALLBACK_TINTS[[...key].reduce((n, c) => n + c.charCodeAt(0), 0) % FALLBACK_TINTS.length];
     return (
-      <div role="img" aria-label={name ? `No photo yet for ${name}` : 'Product image not found'} className={className}
-        style={{ width: '100%', height: '100%', display: 'grid', placeContent: 'center', justifyItems: 'center', gap: 8, padding: 12, boxSizing: 'border-box', background: tint, color: '#3e2723', textAlign: 'center', ...style }}>
-        <span aria-hidden="true" style={{ display: 'grid', placeItems: 'center', width: 64, height: 64, borderRadius: '50%', border: '1.5px solid #3e2723', background: '#ffedac', boxShadow: '2px 2px 0 #3e2723', font: "700 32px/1 'ayna Display', var(--ay-font-logo), sans-serif" }}>{(key.charAt(0) || 'a').toUpperCase()}</span>
-        {brand && <span aria-hidden="true" style={{ font: "600 13px/1.2 'Figtree', system-ui, sans-serif", maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{brand}</span>}
+      <div role="img" aria-label={name ? `No photo yet for ${name}` : 'Product image not found'} className={`ay-nophoto ${className || ''}`.trim()}
+        style={{ width: '100%', height: '100%', display: 'grid', alignContent: 'center', justifyItems: 'center', gap: 8, padding: 14, boxSizing: 'border-box', background: tint, color: '#3e2723', textAlign: 'center', ...style }}>
+        <span aria-hidden="true" style={{ font: "700 19px/1.05 'ayna Display', var(--ay-font-logo), sans-serif", letterSpacing: '-0.01em', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: '100%' }}>{key || 'ayna'}</span>
+        <span aria-hidden="true" style={{ width: 28, height: 1.5, background: '#3e2723' }} />
+        <span aria-hidden="true" style={{ font: "500 12.5px/1.2 'Figtree', system-ui, sans-serif" }}>Photo coming soon</span>
       </div>
     );
   }

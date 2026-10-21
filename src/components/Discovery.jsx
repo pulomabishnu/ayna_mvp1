@@ -131,10 +131,6 @@ function hasCommunitySupport(item, reviewBucket) {
     return (Number.isFinite(rating) && rating >= 4) || reviewCount > 0 || Boolean(item?.communityReview) || communityLinks.length > 0;
 }
 
-function isSponsoredItem(item) {
-    return item?.sponsored === true || item?.isSponsored === true || String(item?.placementType || '').toLowerCase() === 'sponsored';
-}
-
 function getExplicitMatchPercent(item) {
     const candidates = [
         item?.aynaMatch,
@@ -463,7 +459,7 @@ function buildAiProfileContext(personalizationFilter, quizResults) {
 /** Shop filters as a side sheet (bottom sheet on phones). Rendered into the
  * page shell so it sits above the Ask ayna dock and is never cut off by it.
  * Filters apply live; the footer button just closes and shows the count. */
-function FilterSheet({ groups, personalizedToggle, resultCount, activeCount, onClear, onClose }) {
+function FilterSheet({ groups, personalizedToggle, sort = null, resultCount, activeCount, onClear, onClose }) {
     const closeRef = useRef(null);
     const onCloseRef = useRef(onClose);
     useEffect(() => { onCloseRef.current = onClose; }, [onClose]);
@@ -489,6 +485,16 @@ function FilterSheet({ groups, personalizedToggle, resultCount, activeCount, onC
                 </header>
                 <div className="ay-shopfilters__body">
                     {personalizedToggle && <div className="ay-shopfilters__group is-mobile-only">{personalizedToggle}</div>}
+                    {sort && (
+                        <fieldset className="ay-shopfilters__group is-mobile-only">
+                            <legend>Sort</legend>
+                            <div className="ay-shopfilters__chips">
+                                {sort.choices.map(([v, l]) => (
+                                    <button key={v} type="button" className={sort.value === v ? 'is-on' : ''} aria-pressed={sort.value === v} onClick={() => sort.set(v)}>{l}</button>
+                                ))}
+                            </div>
+                        </fieldset>
+                    )}
                     {groups.filter((g) => g[3].length > 0).map(([label, value, set, options]) => (
                         <fieldset key={label} className="ay-shopfilters__group">
                             <legend>{label}</legend>
@@ -1612,6 +1618,22 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const sheetFilterCount = [typeFilter, priceFilter, eligibilityFilter, lifeStageFilter, preferenceFilter, sustainabilityFilter, aynaFilter].filter((v) => v && v !== 'all').length;
     const activeFilterCount = [priceFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, typeFilter].filter((v) => v && v !== 'all').length + (categoryFilter !== 'all' && !submittedQuery ? 1 : 0);
 
+    const sortValue = hasProfileForSort && personalizationFilter && sortBy === 'default' ? 'best' : sortBy;
+    const applySort = (v) => {
+        if (v === 'best' || v === 'default') {
+            const on = v === 'best';
+            setPersonalizationFilter(on);
+            setAiSuggestions([]);
+            setAiRelatedSearches([]);
+            try { localStorage.setItem(PERSONALIZED_KEY, on ? '1' : '0'); } catch { /* private mode */ }
+            setSortBy('default');
+        } else {
+            if (hasProfileForSort && !personalizationFilter) setPersonalizationFilter(true);
+            setSortBy(v);
+        }
+    };
+    const sortChoices = [...(hasProfileForSort ? [['best', 'Best match']] : []), ...SORT_OPTIONS.map((o) => [o.value, o.label])];
+
     return (
         <section className="ayshop">
             <div className="ay-container">
@@ -1626,6 +1648,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     </p>
                     <NeedStickers className="ayshop__needs" active={submittedQuery} onPick={(q) => { setSearchQuery(q); runSearch(q); }} />
             </header>
+            </div>
 
             <div className="ayshop__find">
             <form onSubmit={handleSmartSearch} className="ayshop__search" onFocus={() => setSearchFocused(true)} onBlur={() => setSearchFocused(false)}>
@@ -1664,6 +1687,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 <svg className="ayshop__search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
                 <KbdHint hidden={searchFocused || Boolean(searchQuery)} />
             </form>
+            {/* Phones (P1-3): Filters sits beside the search, so the search row is the
+                one sticky toolbar; quick chips, sort and Personalized live in the sheet. */}
+            <button type="button" className={`ayshop__barfilters${activeFilterCount ? ' is-active' : ''}`} onClick={() => setShowFilters((v) => !v)} aria-expanded={showFilters} aria-label={activeFilterCount ? `Filters and sort, ${activeFilterCount} on` : 'Filters and sort'}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg>
+                {activeFilterCount ? <span className="ayshop__barfilters-n">{activeFilterCount}</span> : null}
+            </button>
             <div className="ayshop__quick" role="group" aria-label="Quick filters">
                 {quickFilters.map(([label, value, current, set]) => (
                     <button key={label} type="button" className="ay-chip" aria-pressed={current === value} onClick={() => set(current === value ? 'all' : value)}>{label}</button>
@@ -1678,7 +1707,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     </button>
                 </div>
             )}
-            </div>
 
             <FolderTabs
                 tabs={availableMacroGroups.map((g) => ({ id: g.id, label: g.id === 'all' ? 'All' : sentenceCase(g.label) }))}
@@ -1711,21 +1739,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 <label className="ayshop__sort">
                     <span>Sort</span>
                     <select
-                        value={hasProfileForSort && personalizationFilter && sortBy === 'default' ? 'best' : sortBy}
-                        onChange={(e) => {
-                            const v = e.target.value;
-                            if (v === 'best' || v === 'default') {
-                                const on = v === 'best';
-                                setPersonalizationFilter(on);
-                                setAiSuggestions([]);
-                                setAiRelatedSearches([]);
-                                try { localStorage.setItem(PERSONALIZED_KEY, on ? '1' : '0'); } catch { /* private mode */ }
-                                setSortBy('default');
-                            } else {
-                                if (hasProfileForSort && !personalizationFilter) setPersonalizationFilter(true);
-                                setSortBy(v);
-                            }
-                        }}
+                        value={sortValue}
+                        onChange={(e) => applySort(e.target.value)}
                     >
                         {hasProfileForSort && <option value="best">Best match</option>}
                         {SORT_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
@@ -1744,6 +1759,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             <button key={v} type="button" className="ay-chip is-on" onClick={() => set('all')} aria-label={`Remove filter ${LABELS[v] || v}`}>{LABELS[v] || v} <span aria-hidden="true">×</span></button>
                         ))}
                         {applied.length > 0 && <button type="button" className="ay-btn ay-btn--text ayshop__clear" onClick={clearSheetFilters}>Clear all</button>}
+                        {!user && <button type="button" className="ay-btn ay-btn--text ayshop__matches is-phone" onClick={() => onRequirePersonalizeAuth?.()}>See my matches →</button>}
                     </div>
                 );
             })()}
@@ -1761,7 +1777,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         ['Sustainability', sustainabilityFilter, setSustainabilityFilter, [['reusable', 'Reusable'], ['recyclable', 'Recyclable'], ['low-waste', 'Low waste'], ['packaging', 'Sustainable packaging']].filter(([v]) => sustainabilityOptions.some((o) => o.value === v))],
                         ['Show only', aynaFilter, setAynaFilter, [['clinician', 'Clinician backed'], ['community', 'Community favorite'], ...(user ? [['ecosystem', 'In my ecosystem']] : [])]],
                     ]}
-                    personalizedToggle={null}
+                    personalizedToggle={hasProfileForSort ? personalizedSwitch : null}
+                    sort={{ value: sortValue, choices: sortChoices, set: applySort }}
                     resultCount={gridItems.length}
                     activeCount={sheetFilterCount}
                     onClear={clearSheetFilters}
@@ -1857,8 +1874,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                 : { source: 'browse', position: idx })}
                             onToggleSaved={onToggleSaved}
                             labels={<>
-                                {isSponsoredItem(item) && <span className="ay-product-card__tag">Sponsored</span>}
-                                {!isSponsoredItem(item) && isPartnerBrandItem(item) && <span className="ay-product-card__tag">ayna partner</span>}
                                 {eligibilityLabel && <span className="ay-product-card__tag">{eligibilityLabel}</span>}
                             </>}
                             tile={cardImageSrc && (resolvedItemImage !== undefined || !isPlaceholderProductImage(cardImageSrc, item.type === 'digital')) ? (
@@ -1877,13 +1892,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                         }}
                                     />
                                     <span className="ay-product-card__fallback" style={{ display: 'none', position: 'absolute', inset: 0 }}>
-                                        <ProductImageFallback />
+                                        <ProductImageFallback product={item} />
                                     </span>
                                 </>
                             ) : imageStillLoading ? (
                                 <div className="skeleton-shimmer" style={{ position: 'absolute', inset: 0 }} aria-hidden="true" />
                             ) : (
-                                <ProductImageFallback />
+                                <ProductImageFallback product={item} />
                             )}
                         />
                         </React.Fragment>

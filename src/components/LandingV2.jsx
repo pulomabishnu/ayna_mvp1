@@ -3,7 +3,7 @@ import { sentenceCase } from '../utils/sentenceCase.js';
 import { TESTING_WATERS_NOTICE } from '../data/investRound';
 import { useRecommendationViews } from '../utils/recommendationAnalytics';
 import { productsForNeed } from './landingNeeds';
-import { isPlainLeftClick, productHref } from '../utils/productRoute';
+import { isPlainLeftClick } from '../utils/productRoute';
 import { isPartnerBrandItem, PARTNER_BRANDS } from '../utils/partnerBrands';
 import { getWeeklyTrendingLineup } from '../utils/trendingLineup';
 import { ALL_PRODUCTS, MACRO_GROUPS, basicsProductIds, useCatalogReady } from '../data/catalog.js';
@@ -16,14 +16,18 @@ import '../styles/editorial.css';
 import { Seal, Ribbon, Envelope } from './personality/Bits.jsx';
 import { useReveal } from '../hooks/useReveal.js';
 import Photo from './ui/Photo.jsx';
+import { edgeFadeRef } from '../utils/edgeFade';
 
 /* The website home. Story order (design direction, "Homepage"):
- *   what   hero (display, See my matches, search), partner brands, this week's picks
- *   why    does this sound familiar (need tiles), one plain statement
- *   shop   shop by need (dark band) with the photo strip
- *   how    four steps
- *   proof  how we grade evidence, short reads, community (the sky band), who we are
- *   action invest in ayna, final call to action
+ *   what   hero (display, See my matches, search), partner brands,
+ *          shop band (this week's picks + shop by need, one dark band)
+ *   why    does this sound familiar (need tiles)
+ *   how    four steps + the one quiz call to action (sky band, closing letter)
+ *   proof  how we grade evidence (with the plain statement), reads, community (pink band)
+ *   action who we are + invest in ayna
+ * Final layout pass (Oct 21): 14 sections became 9; the photo strip and the
+ * floating product stickers went (both repeated what the shelves show), and
+ * the quiz is asked for twice (hero, closing letter), not four times.
  * Members get the same page with their name, their dashboard row and their picks.
  * Styles: src/styles/editorial.css (ed-*). Only supporting photos fade in on
  * scroll (useReveal, once); the brand ribbon is the one moving row and follows
@@ -40,16 +44,6 @@ const HERO = [
   { src: '/landing/bed-selfie.webp', alt: 'A woman lying on a bed taking a selfie, her routine laid out around her', pos: '50% 40%' },
 ];
 
-const STRIP = [
-  { src: '/landing/robe-vanity.webp', alt: 'A woman in a white robe at a marble vanity in a pink room' },
-  { src: '/landing/sink-flatlay.webp', alt: 'A sink full of brushes, makeup and hair tools, from above' },
-  { src: '/landing/laundry-duo.webp', alt: 'Two friends in curlers reading magazines on a laundry room floor' },
-  { src: '/landing/sink-heels-dryer.webp', alt: 'A vintage sink piled with a hair dryer, sunglasses and heels' },
-  { src: '/landing/pajamas-overhead.webp', alt: 'A woman in red striped pajamas on the phone, from above' },
-  { src: '/landing/vanity-hairdryer.webp', alt: 'A woman drying her hair at a crowded bedroom vanity' },
-  { src: '/landing/pad-thread-art.webp', alt: 'Red thread arranged over a white pad, as still life' },
-  { src: '/landing/bag-tubes.webp', alt: 'A vintage leather bag overflowing with colorful product tubes' },
-];
 
 const Arrow = () => (<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>);
 
@@ -131,12 +125,13 @@ function Brands({ onViewWaitlist }) {
 }
 
 /* ---------- product shelf: one card anatomy ---------- */
+// The card shows "ayna partner" itself (one small badge, once): no extra label here.
 function Shelf({ products, onOpenProduct, label }) {
   return (
     <ul className="ed-shelf" aria-label={label}>
       {products.map((p) => (
         <li key={p.id}>
-          <ProductCard product={p} onOpen={onOpenProduct} labels={isPartnerBrandItem(p) ? <span className="ed-partner">ayna partner</span> : null} />
+          <ProductCard product={p} onOpen={onOpenProduct} />
         </li>
       ))}
     </ul>
@@ -163,10 +158,14 @@ function weeklyLineup() {
   const core = list.filter((p) => CORE.test(`${p.category} ${(p.healthFunctions || []).join(' ')}`));
   return [...core, ...list.filter((p) => !core.includes(p))];
 }
-function Picks({ onOpenProduct, onViewDiscovery, picks = null }) {
-  // The first four products a new visitor sees: everyday picks, not sex tech.
-  // The catalog loads after first paint (data/catalog.js): until then the
-  // shelf keeps its place with placeholder cards.
+
+/* ---------- shop: this week's picks and shop by need, one dark band ----------
+   Final layout pass (P1-1): the picks shelf and the shop-by-need band showed
+   the same kind of row twice. They are one band now: the first tab is this
+   week's picks (or, signed in, her top picks), the rest are needs. Baymard
+   ("promoting product filters"): a single scrollable row of 2-3 visible
+   choices above the products, so the first product stays on screen. */
+function ShopBand({ onOpenProduct, onViewDiscovery, picks = null }) {
   const ready = useCatalogReady();
   const weekly = useMemo(() => (ready ? weeklyLineup().slice(0, 4) : []), [ready]);
   // Member picks: only products with a real photo, drugstore basics last.
@@ -176,20 +175,46 @@ function Picks({ onOpenProduct, onViewDiscovery, picks = null }) {
     const basics = basicsProductIds();
     return [...shown.filter((p) => !basics.has(p.id)), ...shown.filter((p) => basics.has(p.id))];
   }, [picks, ready]);
-  const mine = personal && personal.length >= 2;
-  const items = mine ? personal.slice(0, 4) : weekly;
+  const mine = Boolean(personal && personal.length >= 2);
+  const pickItems = mine ? personal.slice(0, 4) : weekly;
   // recommendation_viewed for her top picks (not the weekly picks everyone sees).
-  useRecommendationViews(mine ? items : null, 'home_top_picks');
-  if (!ready && !mine) return <ShelfPlaceholder title="This week’s picks" />;
-  if (items.length < 2) return null;
+  useRecommendationViews(mine ? pickItems : null, 'home_top_picks');
+  const needs = useMemo(() => MACRO_GROUPS.filter((g) => g.id !== 'all')
+    .map((g) => ({ id: g.id, label: sentenceCase(g.label), group: g.id }))
+    .map((n) => ({ ...n, pool: productsForNeed(n).filter(NEEDS_PHOTO).sort((a, b) => Number(isPartnerBrandItem(b)) - Number(isPartnerBrandItem(a))) }))
+    .filter((n) => n.pool.length >= 2), [ready]);
+  const picksTab = pickItems.length >= 2 ? { id: 'picks', label: mine ? 'Top picks for you' : 'This week’s picks', picks: true, pool: pickItems } : null;
+  const tabs = picksTab ? [picksTab, ...needs] : needs;
+  const [id, setId] = useState('picks');
+  const need = tabs.find((n) => n.id === id) || tabs[0];
+  if (!need && !ready) return <section className="ed-band ed-scallop" aria-labelledby="ed-shop-title"><ShelfPlaceholder title="Shop by need" titleId="ed-shop-title" /></section>;
+  if (!need) return null;
+  let four;
+  if (need.picks) four = need.pool;
+  else {
+    const partner = need.pool.filter((p) => isPartnerBrandItem(p)).slice(0, 1);
+    const rest = need.pool.filter((p) => !isPartnerBrandItem(p));
+    four = [...partner, ...rest].slice(0, 4).sort((a, b) => need.pool.indexOf(a) - need.pool.indexOf(b));
+  }
+  const count = need.picks ? `${four.length} products` : `${need.pool.length} ${need.label.toLowerCase()} products`;
   return (
-    <section className="ed-wrap ed-sec" aria-labelledby="ed-picks-title">
-      <header className="ed-head">
-        <h2 id="ed-picks-title" className="ed-h2">{mine ? 'Top picks for your needs' : 'This week’s picks'}</h2>
-        <span className="ed-head__count">{items.length} products</span>
-        <Go className="ay-btn ay-btn--text ed-head__all" href="/shop" onGo={() => onViewDiscovery?.('')}>See the Shop<Arrow /></Go>
-      </header>
-      <Shelf products={items} onOpenProduct={onOpenProduct} label={mine ? 'Top picks for your needs' : 'This week’s picks'} />
+    <section className="ed-band ed-scallop ed-shopband" aria-labelledby="ed-shop-title">
+      <div className="ed-wrap">
+        <header className="ed-head">
+          <h2 id="ed-shop-title" className="ed-h2">Shop by need</h2>
+          <span className="ed-head__count" aria-live="polite">{count}</span>
+        </header>
+        <div className="ed-chiprow ed-chiprow--scroll" role="group" aria-label="Choose picks or a need" ref={edgeFadeRef}>
+          {tabs.map((n) => (<button key={n.id} type="button" className="ay-chip" aria-pressed={n.id === need.id} onClick={() => setId(n.id)}>{n.label}</button>))}
+        </div>
+        <div key={need.id}><Shelf products={four} onOpenProduct={onOpenProduct} label={need.picks ? need.label : `${need.label} products`} /></div>
+        <div className="ed-band__foot">
+          {need.picks
+            ? <Go className="ay-btn ay-btn--secondary" href="/shop" onGo={() => onViewDiscovery?.('')}>See the Shop</Go>
+            : <Go className="ay-btn ay-btn--secondary" href="/shop" onGo={() => onViewDiscovery?.(need.group ? { initialMacroGroup: need.group } : '')}>See all {need.label.toLowerCase()} products</Go>}
+          {!need.picks && <Go className="ay-btn ay-btn--text" href="/shop" onGo={() => onViewDiscovery?.('')}>Browse the whole Shop</Go>}
+        </div>
+      </div>
     </section>
   );
 }
@@ -209,12 +234,11 @@ const FAMILIAR = [
   { photo: '/landing/robe-vanity.webp', alt: 'A woman in a white robe at a marble vanity in a pink room' },
   { q: 'Things feel dry down there.', need: 'Vaginal dryness', tone: 'pink' },
 ];
-function Familiar({ onSearch, onStartQuiz }) {
+function Familiar({ onSearch }) {
   return (
     <section className="ed-wrap ed-sec ed-familiar" aria-labelledby="ed-familiar-title">
       <header className="ed-familiar__head">
         <h2 id="ed-familiar-title" className="ed-h2">Does this sound <em>familiar</em>?</h2>
-        <Go className="ay-btn ay-btn--text" href="/quiz" onGo={onStartQuiz}>Answer six questions<Arrow /></Go>
       </header>
       <ul className="ed-familiar__grid">
         {FAMILIAR.map((t) => (
@@ -232,92 +256,12 @@ function Familiar({ onSearch, onStartQuiz }) {
   );
 }
 
-/* ---------- one plain statement, with real products around it ---------- */
-function Statement({ onOpenProduct }) {
-  const reveal = useReveal('home-statement');
-  const ready = useCatalogReady();
-  // The next four of this week's picks (the first four are in the shelf above),
-  // our own product photos first.
-  const cut = useMemo(() => {
-    // Only photos we host, so a slow or blocked retailer image never leaves a gap.
-    const local = (p) => String(p?.image || '').startsWith('/') && NEEDS_PHOTO(p) && !p.hidden;
-    const weekly = weeklyLineup().slice(4).filter(local);
-    const core = ALL_PRODUCTS.filter((p) => local(p) && CORE.test(`${p.category} ${(p.healthFunctions || []).join(' ')}`));
-    const own = [...weekly, ...core.filter((p) => !weekly.includes(p))];
-    return own.length >= 4 ? own.slice(0, 4) : [];
-  }, [ready]);
-  // Die-cut product stickers: each one opens that product.
-  const sticker = (p, i) => (
-    <a key={p.id} href={productHref(p)} className={`ed-statement__sticker is-${i}`} aria-label={`${p.brand ? `${p.brand} ` : ''}${p.name}`} onClick={(e) => { if (!onOpenProduct || !isPlainLeftClick(e)) return; e.preventDefault(); onOpenProduct(p); }}>
-      <img src={p.image} alt="" loading="lazy" decoding="async" width="120" height="120" onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }} />
-    </a>
-  );
-  return (
-    <section className="ed-statement" aria-labelledby="ed-statement-title">
-      <div className="ed-statement__stickers is-left">{cut.slice(0, 2).map(sticker)}</div>
-      <p id="ed-statement-title" className="ed-statement__line">ayna matches women’s health products to your answers, and shows <mark>the research beside each one</mark>.</p>
-      <div ref={reveal} className="ed-statement__stickers is-right">{cut.slice(2, 4).map((p, i) => sticker(p, i + 2))}</div>
-    </section>
-  );
-}
-
-/* ---------- shop by need: the dark band, then the photo strip ---------- */
-function ShopBand({ onOpenProduct, onViewDiscovery }) {
-  const ready = useCatalogReady();
-  const needs = useMemo(() => MACRO_GROUPS.filter((g) => g.id !== 'all')
-    .map((g) => ({ id: g.id, label: sentenceCase(g.label), group: g.id }))
-    .map((n) => ({ ...n, pool: productsForNeed(n).filter(NEEDS_PHOTO).sort((a, b) => Number(isPartnerBrandItem(b)) - Number(isPartnerBrandItem(a))) }))
-    .filter((n) => n.pool.length >= 2), [ready]);
-  const [id, setId] = useState(needs[0]?.id);
-  const [allChips, setAllChips] = useState(false);
-  const need = needs.find((n) => n.id === id) || needs[0];
-  const CHIP_MAX = 7;
-  const shownNeeds = allChips ? needs : needs.slice(0, CHIP_MAX).concat(needs.slice(CHIP_MAX).filter((n) => n.id === id));
-  if (!need && !ready) return <section className="ed-band ed-scallop" aria-labelledby="ed-shop-title"><ShelfPlaceholder title="Shop by need" titleId="ed-shop-title" /><Strip /></section>;
-  if (!need) return null;
-  const partner = need.pool.filter((p) => isPartnerBrandItem(p)).slice(0, 1);
-  const rest = need.pool.filter((p) => !isPartnerBrandItem(p));
-  const four = [...partner, ...rest].slice(0, 4).sort((a, b) => need.pool.indexOf(a) - need.pool.indexOf(b));
-  return (
-    <section className="ed-band ed-scallop" aria-labelledby="ed-shop-title">
-      <div className="ed-wrap">
-        <header className="ed-head">
-          <h2 id="ed-shop-title" className="ed-h2">Shop by need</h2>
-          <span className="ed-head__count">{need.pool.length} {need.label} products</span>
-        </header>
-        <div className="ed-chiprow" role="group" aria-label="Choose a need">
-          {shownNeeds.map((n) => (<button key={n.id} type="button" className="ay-chip" aria-pressed={n.id === need.id} onClick={() => setId(n.id)}>{n.label}</button>))}
-          {needs.length > CHIP_MAX && <button type="button" className="ay-chip" aria-expanded={allChips} onClick={() => setAllChips((v) => !v)}>{allChips ? 'Fewer' : `More (${needs.length - CHIP_MAX})`}</button>}
-        </div>
-        <div key={need.id}><Shelf products={four} onOpenProduct={onOpenProduct} label={`${need.label} products`} /></div>
-        <div className="ed-band__foot">
-          <Go className="ay-btn ay-btn--secondary" href="/shop" onGo={() => onViewDiscovery?.(need.group ? { initialMacroGroup: need.group } : '')}>See all {need.label} products</Go>
-          <Go className="ay-btn ay-btn--text" href="/shop" onGo={() => onViewDiscovery?.('')}>Browse the whole Shop</Go>
-        </div>
-      </div>
-      <Strip />
-    </section>
-  );
-}
-
-// A still row of photos you can scroll sideways (it used to slide on its own;
-// the brand ribbon is the page's one moving row).
-function Strip() {
-  return (
-    <div className="ed-strip ay-pinstripe" role="group" aria-label="Photographs from ayna" tabIndex={0}>
-      <div className="ed-strip__track">
-        <ul>{STRIP.map((p) => (<li key={p.src}><Photo src={p.src} alt={p.alt} sizes="(max-width: 720px) 62vw, 320px" loading="lazy" /></li>))}</ul>
-      </div>
-    </div>
-  );
-}
-
 /* ---------- how it works: these ARE a sequence ---------- */
 const STEPS = [
   { t: 'Answer six questions', d: 'About your body and what you avoid.', icon: 'chat', tone: '', src: '/landing/hiw-questions-cabinet.webp', alt: 'A woman in a white robe reaching into her bathroom cabinet', pos: '50% 35%' },
-  { t: 'We check the evidence', d: 'Across products, apps and care.', icon: 'book', tone: 'sky', src: '/landing/hiw-evidence-reading.webp', alt: 'Two friends in glasses reading a book together in front of bookshelves', pos: '50% 40%' },
+  { t: 'We check the evidence', d: 'Across products, apps and care.', icon: 'book', tone: 'butter', src: '/landing/hiw-evidence-reading.webp', alt: 'Two friends in glasses reading a book together in front of bookshelves', pos: '50% 40%' },
   { t: 'Get your ecosystem', d: 'Ranked for you.', icon: 'shelf', tone: 'espresso', src: '/landing/hiw-ecosystem-cabinet.webp', alt: 'A medicine cabinet with shelves full of skincare and beauty products', pos: '50% 50%' },
-  { t: 'You decide', d: 'Nothing is bought until you say so.', icon: 'hand', tone: 'butter', src: '/landing/hiw-decide-basket.webp', alt: 'Looking down at a red shopping basket of products between two sneakers', pos: '50% 45%' },
+  { t: 'You decide', d: 'Nothing is bought until you say so.', icon: 'hand', tone: '', src: '/landing/hiw-decide-basket.webp', alt: 'Looking down at a red shopping basket of products between two sneakers', pos: '50% 45%' },
 ];
 // The one scroll-driven sequence on the page: on desktop the four step photos
 // arrive one after another as the row scrolls in (45ms apart, once). Text never waits.
@@ -325,28 +269,45 @@ function StepPhoto({ step, i }) {
   const reveal = useReveal(`home-step-${i}`, { minWidth: 768, delay: i * 45 });
   return <figure ref={reveal} className="ed-step__img ay-frame"><Photo src={step.src} alt={step.alt} sizes="(max-width: 720px) 92vw, 320px" style={{ objectPosition: step.pos }} loading="lazy" /></figure>;
 }
-function How({ onViewHowItWorks }) {
+/* How it works and the one quiz call to action, on the sky band (P1-1:
+   the closing letter used to be its own section after the founders; the
+   quiz is explained right here, so the letter sits beside the steps). */
+function How({ onViewHowItWorks, onStartQuiz, onViewDiscovery, showStart = true }) {
   return (
-    <section className="ed-wrap ed-sec" aria-labelledby="ed-how-title">
-      <header className="ed-head">
-        <h2 id="ed-how-title" className="ed-h2">How it works</h2>
-        <Go className="ay-btn ay-btn--text ed-head__all" href="/how-it-works" onGo={onViewHowItWorks}>The full method<Arrow /></Go>
-      </header>
-      <ol className="ed-steps">
-        {STEPS.map((st, i) => (
-          <li key={st.t} className="ed-step ay-tabcard">
-            {/* One tabcard spec (P1-26): the strip carries the step's numeral once; no "Step n" label beside a second big number. */}
-            <span className={`ay-tabcard__strip ay-tabcard__strip--num${st.tone ? ` ay-tabcard__strip--${st.tone}` : ''}`} aria-hidden="true">{i + 1}</span>
-            <div className="ed-step__in">
-              <StepPhoto step={st} i={i} />
-              <div>
-                <h3 className="ed-rowtitle"><span className="ed-sr">Step {i + 1}: </span>{st.t}</h3>
-                <p>{st.d}</p>
-              </div>
+    <section className="ed-final ed-how ay-band ay-band--sky ay-band--grid ay-band--scallop" aria-labelledby="ed-how-title">
+      <div className="ed-wrap ed-how__in">
+        <div className="ed-how__steps">
+          <header className="ed-head">
+            <h2 id="ed-how-title" className="ed-h2">How it works</h2>
+            <Go className="ay-btn ay-btn--text ed-head__all" href="/how-it-works" onGo={onViewHowItWorks}>The full method<Arrow /></Go>
+          </header>
+          <ol className="ed-steps">
+            {STEPS.map((st, i) => (
+              <li key={st.t} className="ed-step ay-tabcard">
+                {/* One tabcard spec (P1-26): the strip carries the step's numeral once. */}
+                <span className={`ay-tabcard__strip ay-tabcard__strip--num${st.tone ? ` ay-tabcard__strip--${st.tone}` : ''}`} aria-hidden="true">{i + 1}</span>
+                <div className="ed-step__in">
+                  <StepPhoto step={st} i={i} />
+                  <div>
+                    <h3 className="ed-rowtitle"><span className="ed-sr">Step {i + 1}: </span>{st.t}</h3>
+                    <p>{st.d}</p>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+        {showStart && (
+          <Envelope className="ed-final__letter">
+            <h2 id="ed-start-title" className="ed-h1">Start with six questions.</h2>
+            <p className="ed-lead">Then a shop matched to you.</p>
+            <div className="ed-final__cta">
+              <Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>See my matches<Arrow /></Go>
+              <Go className="ay-btn ay-btn--text" href="/shop" onGo={() => onViewDiscovery?.('')}>Browse the Shop</Go>
             </div>
-          </li>
-        ))}
-      </ol>
+          </Envelope>
+        )}
+      </div>
     </section>
   );
 }
@@ -363,6 +324,7 @@ function Evidence({ onViewArticles }) {
       <div className="ed-evidence">
         <div className="ed-evidence__copy">
           <h2 id="ed-ev-title" className="ed-h2">Every product shows how strong its evidence is</h2>
+          <p className="ed-lead ed-evidence__lead">ayna matches women’s health products to your answers, and shows the research beside each one.</p>
           <p className="ed-body">Product pages grade the research on the same three-step scale, next to the sources we read. Unsupported claims are labeled, not upgraded into facts.</p>
           <Go className="ay-btn ay-btn--text" href="/library" onGo={onViewArticles}>Read our sources<Arrow /></Go>
         </div>
@@ -401,30 +363,30 @@ function Reads({ onViewArticle, onViewArticles }) {
         <h2 id="ed-reads-title" className="ed-h2">Quick reads about your body, with sources</h2>
         <a className="ay-btn ay-btn--text ed-head__all" href="/library" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onViewArticles?.(); }}>Open the Library<Arrow /></a>
       </header>
-      <div className={fact ? 'ed-reads' : undefined}>
+      <ul className={`ed-readrow${fact ? ' has-word' : ''}`}>
         {fact && (
-          <aside className="ay-group is-padded ed-word" aria-label="Word of the day">
-            <span className="ed-meta">Word of the day</span>
-            <strong className="ed-word__term">{fact.term}</strong>
-            <p>{fact.text}</p>
-            <small className="ed-caption" style={{ marginTop: 'auto' }}>From the ayna glossary. General information, not medical advice.</small>
-          </aside>
+          <li>
+            <aside className="ay-group is-padded ed-word" aria-label="Word of the day">
+              <span className="ed-meta">Word of the day</span>
+              <strong className="ed-word__term">{fact.term}</strong>
+              <p>{fact.text}</p>
+              <small className="ed-caption" style={{ marginTop: 'auto' }}>From the ayna glossary. General information, not medical advice.</small>
+            </aside>
+          </li>
         )}
-        <ul className="ed-readrow">
-          {LEAD_READS.map((r) => (
-            <li key={r.id}>
-              <a className="ed-card ed-read" href={`/library/${r.id}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); open(r.id); }}>
-                <span className="ed-read__img"><Photo src={r.src} alt={r.alt} sizes="(max-width: 720px) 80vw, 400px" loading="lazy" /></span>
-                <span className="ed-read__body">
-                  <strong className="ed-rowtitle">{r.title}</strong>
-                  <span className="ed-read__teaser">{r.teaser}</span>
-                  <small className="ed-read__src ed-caption">Sources: {String(r.source || '').replace(/\s*·\s*/g, ', ')}</small>
-                </span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
+        {LEAD_READS.map((r) => (
+          <li key={r.id}>
+            <a className="ed-card ed-read" href={`/library/${r.id}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); open(r.id); }}>
+              <span className="ed-read__img"><Photo src={r.src} alt={r.alt} sizes="(max-width: 720px) 80vw, 400px" loading="lazy" /></span>
+              <span className="ed-read__body">
+                <strong className="ed-rowtitle">{r.title}</strong>
+                <span className="ed-read__teaser">{r.teaser}</span>
+                <small className="ed-read__src ed-caption">Sources: {String(r.source || '').replace(/\s*·\s*/g, ', ')}</small>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
@@ -434,7 +396,7 @@ function Community({ onViewCommunity, posts = [] }) {
   const news = useLatestAnnouncement();
   const reveal = useReveal('home-community');
   return (
-    <section className="ed-sky ay-band ay-band--pink ay-band--scallop" aria-labelledby="ed-comm-title">
+    <section className="ed-sky ay-band ay-band--pink" aria-labelledby="ed-comm-title">
       <div className="ed-wrap ed-sky__grid">
         <figure ref={reveal} className="ed-sky__photo ay-polaroid" style={{ '--tilt': '-1.5deg' }}><Photo sizes="(max-width: 720px) 80vw, 420px" src="/landing/story-reviews-phones.webp" alt="Friends in a circle looking down at their phones, blue sky above" loading="lazy" /><figcaption>The ayna community</figcaption></figure>
         <div className="ed-sky__copy">
@@ -509,26 +471,6 @@ function Us({ onViewAbout }) {
   );
 }
 
-/* ---------- final call to action ---------- */
-function Final({ onStartQuiz, onViewDiscovery }) {
-  const reveal = useReveal('home-final');
-  return (
-    <section className="ed-final ay-band ay-band--sky ay-band--grid ay-band--scallop" aria-labelledby="ed-start-title">
-      <div className="ed-wrap ed-final__in">
-        <span ref={reveal} className="ay-frame ed-final__photo"><Photo sizes="(max-width: 720px) 92vw, 560px" src="/landing/banner-bath-phone.webp" alt="A woman in a face mask relaxing in a pink tiled bath, scrolling her phone, products along the ledge" loading="lazy" width="960" height="400" /></span>
-        <Envelope className="ed-final__letter">
-          <h2 id="ed-start-title" className="ed-h1">Start with six questions.</h2>
-          <p className="ed-lead">Then a shop matched to you.</p>
-          <div className="ed-final__cta">
-            <Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>See my matches<Arrow /></Go>
-            <Go className="ay-btn ay-btn--text" href="/shop" onGo={() => onViewDiscovery?.('')}>Browse the Shop</Go>
-          </div>
-        </Envelope>
-      </div>
-    </section>
-  );
-}
-
 /* ---------- page ---------- */
 // `personal` (signed in): the same page with a welcome-back hero, and
 // `personalSlot` (her dashboard row) right under it; `communityPosts` are
@@ -540,16 +482,13 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
       <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} personal={personal} banner={heroBanner} />
       {personal?.dashboard ? personalSlot : <Brands onViewWaitlist={onViewWaitlist} />}
       {!personal?.dashboard && personalSlot}
-      <Picks onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={personal?.topPicks || null} />
-      {!personal && <Familiar onSearch={onSearch} onStartQuiz={onStartQuiz} />}
-      <Statement onOpenProduct={onOpenProduct} />
-      <ShopBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
-      <How onViewHowItWorks={onViewHowItWorks} />
+      <ShopBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={personal?.topPicks || null} />
+      {!personal && <Familiar onSearch={onSearch} />}
+      <How onViewHowItWorks={onViewHowItWorks} onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} showStart={!(personal && personal.hasQuiz)} />
       <Evidence onViewArticles={onViewArticles} />
       <Reads onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
       <Community onViewCommunity={onViewCommunity} posts={communityPosts} />
       <Us onViewAbout={onViewAbout} />
-      {!(personal && personal.hasQuiz) && <Final onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />}
     </div>
   );
 }

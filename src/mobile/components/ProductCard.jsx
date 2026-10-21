@@ -13,6 +13,7 @@ import { matchBadge } from '../../utils/matchDisplay.js';
 import MatchPill from '../../components/MatchPill.jsx';
 import { saveFeedback } from '../../utils/feedback.js';
 import HealthBackedBadge from '../../components/health/HealthBackedBadge.jsx';
+import { cardKind, cardBadge, cardPrice } from '../../utils/productCardFacts.js';
 
 export default function ProductCard({ product, onClick, variant = 'grid', quizAnswers = null, isSaved = false, onToggleSaved, onOpenWhyMatch, matchOpts, needId = null }) {
   const { name, category, price, priceDisplay, image, imageUrl, images } = product || {};
@@ -52,17 +53,23 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   // app-wide. Its own class names so the older card rules don't reach it.
   if (!isList) {
     const showBrand = secondaryLabel && !brandRepeatsName;
+    // Same anatomy and words as the website card (src/utils/productCardFacts.js):
+    // tile + heart → brand → name (2 lines) → kind + one badge → price + unit → match.
+    const kind = cardKind(product);
+    const oneBadge = cardBadge(product);
+    const facts = cardPrice({ ...product, price: price || priceDisplay });
     return (
       <article className="ay-pc">
-        <button type="button" className="ay-pc-main" onClick={onClick} aria-label={`${name}, ${shownPrice.main}${shownPrice.sub ? ` ${shownPrice.sub}` : ''}${showMatch ? `, ${badge.label}` : ''}. View product details`}>
+        <button type="button" className="ay-pc-main" onClick={onClick} aria-label={`${name}, ${facts.main}${facts.sub ? ` ${facts.sub}` : ''}${oneBadge ? `, ${oneBadge}` : ''}${showMatch ? `, ${badge.label}` : ''}. View product details`}>
           <span className="ay-pc-photo">
             <ProductImage product={product} src={resolvedImage} alt="" allowBrandLogo={isService} style={{ objectFit: 'contain' }} />
-            {isPartner && <small className="ay-pc-partner">ayna partner</small>}
+            {oneBadge && <small className={`ay-pc-badge${oneBadge === 'Pre-order' ? ' is-alert' : ''}`}>{oneBadge}</small>}
           </span>
           <span className="ay-pc-copy">
             <small className="ay-pc-brand" aria-hidden={showBrand ? undefined : true}>{showBrand ? secondaryLabel : '\u00a0'}</small>
             <strong className="ay-pc-name">{brandRepeatsName ? name : displayName(product)}</strong>
-            <span className="ay-pc-price">{hasDisplayPrice ? <b>{shownPrice.main}</b> : <b className="is-muted">{shownPrice.main}</b>}</span>
+            <span className="ay-pc-kind" aria-hidden="true">{kind ? <span className="ay-pc-kindtext">{kind}</span> : '\u00a0'}</span>
+            <span className="ay-pc-price">{facts.main !== 'Price at retailer' ? <b>{facts.main}</b> : <b className="is-muted">{facts.main}</b>}{facts.sub && <small className="ay-pc-unit">{facts.sub}</small>}</span>
             {healthBacked && <HealthBackedBadge backed={healthBacked} className="ay-pc-hbadge" />}
           </span>
         </button>

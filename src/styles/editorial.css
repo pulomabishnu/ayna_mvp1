@@ -845,3 +845,118 @@ html body .app-container .ed .ed-prose > :is(section, .ed-psec) :is(h2, h3) { co
 .app-container .ed .ed-statement__sticker { transition: transform var(--t-fast) var(--ease-out); }
 @media (hover: hover) and (pointer: fine) { .app-container .ed a.ed-statement__sticker:hover { transform: translateY(-3px); } }
 .app-container .ed a.ed-statement__sticker:focus-visible { outline: 3px solid #3e2723; outline-offset: 4px; }
+
+/* =====================================================================
+   Final layout pass (Oct 21, P1-1): nine home sections, about six phone
+   screens. Shop band = picks + needs; How it works carries the closing
+   letter on the sky band; reads include the word of the day.
+   ===================================================================== */
+/* one scrolling row of tabs above the shelf (wraps on desktop) */
+.ed .ed-chiprow--scroll { display: flex; flex-wrap: nowrap; gap: 8px; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain; margin-inline: calc(-1 * var(--ed-margin)); padding: 2px var(--ed-margin) 6px; scroll-padding-inline: var(--ed-margin); }
+.ed .ed-chiprow--scroll::-webkit-scrollbar { display: none; }
+.ed .ed-chiprow--scroll > .ay-chip { flex: none; }
+@media (min-width: 1024px) { .ed .ed-chiprow--scroll { flex-wrap: wrap; overflow: visible; margin-inline: 0; padding-inline: 0; } }
+.ed .ed-shopband { padding-bottom: 48px; }
+.ed .ed-shopband .ed-chiprow { margin-bottom: 20px; }
+.ed .ed-shopband .ed-band__foot { margin-top: 24px; }
+@media (max-width: 767px) { .ed .ed-shopband { padding-bottom: 32px; } .ed .ed-shopband .ed-head { margin-bottom: 12px; } }
+
+/* Does this sound familiar: quote tiles a little shorter on phones */
+@media (max-width: 767px) {
+  .ed .ed-familiar__head { margin-bottom: 16px; }
+  .ed .ed-familiar__grid > li { aspect-ratio: 6 / 5; }
+  .ed .ed-familiar__q a { padding: 14px; gap: 8px; }
+  .ed .ed-familiar__quote { font-size: 19px; line-height: 1.12; }
+  .ed .ed-familiar__go { font-size: 14px; }
+}
+
+/* How it works + the closing letter, side by side on desktop */
+.ed .ed-how.ay-band { margin-top: var(--ed-section); margin-bottom: 0; }
+.ed .ed-how__in { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 48px; align-items: center; padding-block: 64px 72px; }
+.ed .ed-how__in:not(:has(.ay-envelope)) { grid-template-columns: 1fr; }
+.ed .ed-how .ed-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.ed .ed-how__in:not(:has(.ay-envelope)) .ed-steps { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.app-container .ed .ed-how .ed-step.ay-tabcard { background: #ffedac; color: #3e2723; border-color: #3e2723; }
+.app-container .ed .ed-how .ed-step.ay-tabcard :is(h3, p) { color: #3e2723; }
+.ed .ed-how .ed-step .ed-step__img { aspect-ratio: 16 / 9; }
+.ed .ed-how .ay-envelope { width: 100%; }
+@media (max-width: 1023px) { .ed .ed-how__in { grid-template-columns: 1fr; gap: 32px; } }
+@media (max-width: 767px) {
+  .ed .ed-how__in { padding-block: 44px 48px; gap: 28px; }
+  html body .app-container .ed .ed-how .ed-steps { gap: 10px !important; }
+  html body .app-container .ed .ed-how .ed-step.ay-tabcard .ed-step__in { padding: 8px 8px 10px; gap: 8px; }
+  .ed .ed-how .ay-tabcard__strip { min-height: 32px; }
+  .app-container .ed .ed-how .ay-envelope { padding-bottom: 56px; }
+  .app-container .ed .ed-how .ay-envelope__letter { padding: 24px 20px 72px; }
+  .app-container .ed .ed-how .ay-envelope__back { height: 150px; }
+  .app-container .ed .ed-how .ay-envelope__flap { height: 118px; }
+  .app-container .ed .ed-how .ay-envelope__seal { width: 52px; height: 52px; margin-left: -26px; bottom: 20px; }
+}
+
+/* Evidence: the plain statement leads the proof */
+.ed .ed-evidence__lead { margin: 0; }
+
+/* Reads: the word of the day is the first card in the row */
+.ed .ed-readrow.has-word { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.ed .ed-readrow > li { display: flex; }
+.ed .ed-readrow > li > * { flex: 1; }
+@media (max-width: 1023px) and (min-width: 768px) { .ed .ed-readrow.has-word { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Community band without a scallop (two scallops per page) */
+.ed .ed-sky.ay-band { margin-top: var(--ed-section); }
+
+/* Founders + invest: tighter on phones, all copy kept */
+@media (max-width: 767px) {
+  .ed .ed-us__photo.ay-folder { max-width: 300px; }
+  .ed .ed-us { gap: 12px; }
+  .ed .ed-invest { margin-top: 32px; }
+}
+@media (max-width: 767px) {
+  /* evidence levels side by side: three short columns instead of three stacked rows */
+  .ed .ed-evidence__group .ed-rows { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .ed .ed-evidence__group .ed-rows > li { border-top: 0; padding: 0; }
+  .ed .ed-evidence__group .ed-level { align-items: start; }
+  .ed .ed-evidence__group .ay-meter__word { font-size: 14px; line-height: 1.2; min-height: 2.4em; }
+  .ed .ed-evidence__group .ed-level__note { font-size: 13px; line-height: 1.35; }
+  .ed .ed-evidence__group.is-padded { padding: 24px 14px 16px; }
+  .ed .ed-evidence__srcs { margin-top: 12px; padding-top: 12px; }
+  .ed .ed-evidence__copy { gap: 12px; }
+  .ed .ed-evidence__lead { font-size: 18px; line-height: 1.35; }
+  /* reads follow the evidence closely: one proof story */
+  .ed .ed-evidence ~ * , .ed .ed-sec:has(.ed-evidence) + .ed-sec { padding-top: 40px; }
+  /* founders: the folder beside the heading, copy under both */
+  .ed .ed-us { display: grid; grid-template-columns: minmax(0, 46%) minmax(0, 1fr); grid-template-areas: 'ph h' 'p p' 'b b'; gap: 12px 14px; align-items: center; }
+  .ed .ed-us__copy { display: contents; }
+  .ed .ed-us__photo.ay-folder { grid-area: ph; margin: 0; max-width: none; padding-top: 18px; }
+  .ed .ed-us__copy > h2 { grid-area: h; font-size: 22px; }
+  .ed .ed-us__copy > p { grid-area: p; }
+  .ed .ed-us__copy > a { grid-area: b; justify-self: start; }
+  .app-container .ed .ed-us .ay-folder__photo { padding: 5px; }
+  .app-container .ed .ed-us .ay-folder__clip { width: 30px; height: 26px; margin-left: -15px; top: -12px; }
+  .app-container .ed .ed-us .ay-folder__pocket { margin-top: -30px; padding: 26px 6px 10px; -webkit-mask: radial-gradient(circle 18px at 50% 0, #0000 98%, #000); mask: radial-gradient(circle 18px at 50% 0, #0000 98%, #000); }
+  .app-container .ed .ed-us .ay-folder__pocket::before { width: 37px; height: 19px; margin-left: -18.5px; border-radius: 0 0 19px 19px; }
+  .app-container .ed .ed-us .ay-folder__title { font-size: 14px; line-height: 1.15; }
+  /* steps: shorter photos */
+  .ed .ed-how .ed-step .ed-step__img { aspect-ratio: 2 / 1; }
+  .ed .ed-how .ed-final__letter .ed-h1 { font-size: 28px; }
+}
+@media (max-width: 767px) {
+  html body .app-container .ed .ed-familiar__grid > li { aspect-ratio: 6 / 5; overflow: hidden; min-height: 0; }
+  html body .app-container .ed .ed-familiar__ph :is(picture, img) { display: block; width: 100%; height: 100%; object-fit: cover; }
+  html body .app-container .ed .ed-how .ed-step.ay-tabcard .ed-step__img { aspect-ratio: 2 / 1; }
+}
+@media (max-width: 767px) {
+  .ed .ed-how__in { padding-block: 36px 40px; gap: 24px; }
+  .app-container .ed .ed-how .ay-envelope { padding-bottom: 44px; }
+  .app-container .ed .ed-how .ay-envelope__letter { padding: 20px 16px 60px; }
+  .app-container .ed .ed-how .ay-envelope__back { height: 128px; }
+  .app-container .ed .ed-how .ay-envelope__flap { height: 100px; }
+  .app-container .ed .ed-how .ay-envelope__seal { width: 46px; height: 46px; margin-left: -23px; bottom: 14px; }
+  .app-container .ed .ed-how .ed-final__cta { margin-top: 14px; gap: 4px 16px; }
+  html body .app-container .ed .ed-how .ed-step.ay-tabcard p { font-size: 13.5px !important; }
+}
+@media (min-width: 768px) {
+  html body .app-container .ed .ed-how .ed-step.ay-tabcard .ed-step__img { aspect-ratio: 2 / 1; }
+  .ed .ed-invest > :last-child:not(.ed-invest__copy) { grid-column: 2; grid-row: 1; align-self: stretch; }
+  .ed .ed-invest > :last-child:not(.ed-invest__copy) img { height: 100%; max-height: 420px; }
+}

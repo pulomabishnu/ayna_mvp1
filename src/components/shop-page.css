@@ -67,3 +67,38 @@ html body .app-container.app-container.app-container .ayshop .ay-suggest { margi
   html body .app-container.app-container.app-container .ayshop__sort > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   html body .app-container.app-container.app-container .ayshop__applied { margin: var(--ay-s12) 0 var(--ay-s16); }
 }
+
+/* Final layout pass (Oct 21, P1-3): on phones the first product shows on the
+   first screen. Header band, then ONE sticky row (search + Filters), ONE
+   scrolling row of area tabs, the count, the grid. Quick chips, sort and
+   Personalized live in the Filters sheet (Baymard: promoted filters stay in
+   the sheet too; a sticky filter/sort bar keeps refining one tap away). */
+html body .app-container.app-container.app-container .ayshop__find { margin-top: var(--ay-s16); }
+html body .app-container.app-container.app-container .ayshop__barfilters { display: none; }
+html body .app-container.app-container.app-container .ayshop__matches.is-phone { display: none; }
+@media (max-width: 767px) {
+  html body .app-container.app-container.app-container .ayshop { padding-top: var(--ay-s8); }
+  html body .app-container.app-container.app-container .ayshop__top { padding-bottom: 0; gap: 0; }
+  html body .app-container.app-container.app-container .ayshop__head.ay-pagehead { padding-top: 16px !important; padding-bottom: 16px !important; margin-bottom: 20px !important; gap: 4px; }
+  html body .app-container.app-container.app-container .ayshop__head .ay-h1 { font-size: 30px !important; }
+  html body .app-container.app-container.app-container .ayshop__note { font-size: 13px !important; line-height: 1.4 !important; }
+  html body .app-container.app-container.app-container .ayshop__head .ayshop__needs { margin-top: 8px; }
+  html body .app-container.app-container.app-container .ayshop__head .ayshop__seal { width: 64px; height: 64px; top: 12px; }
+  html body .app-container.app-container.app-container .ayshop__find { position: sticky; top: 61px; z-index: 20; display: flex; gap: 8px; align-items: center; margin: 0 calc(-1 * var(--ay-gutter, 20px)); padding: 8px var(--ay-gutter, 20px); background: var(--ay-page, #ffedac); }
+  html body .app-container.app-container.app-container .ayshop__find .ayshop__search { flex: 1 1 auto; min-width: 0; }
+  html body .app-container.app-container.app-container .ayshop__search input[type='search'] { height: 48px; min-height: 48px; }
+  html body .app-container.app-container.app-container .ayshop__search-icon { top: 24px; }
+  html body .app-container.app-container.app-container .ayshop__quick { display: none; }
+  html body .app-container.app-container.app-container .ayshop__barfilters { position: relative; flex: none; display: grid; place-items: center; width: 48px; height: 48px; border: 1.5px solid var(--ay-outline); border-radius: 999px; background: var(--ay-page); color: var(--ay-text); cursor: pointer; }
+  html body .app-container.app-container.app-container .ayshop__barfilters.is-active { background: #f7badd; color: #3e2723; border-color: #3e2723; }
+  html body .app-container.app-container.app-container .ayshop__barfilters svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; }
+  html body .app-container.app-container.app-container .ayshop__barfilters-n { position: absolute; top: -4px; right: -4px; min-width: 20px; height: 20px; padding: 0 5px; box-sizing: border-box; border-radius: 10px; background: #3e2723; color: #ffedac; font: 600 12px/20px var(--ay-sans-stack); text-align: center; }
+  html body .app-container.app-container.app-container .ayshop__barfilters:focus-visible { outline: 3px solid var(--ay-focus); outline-offset: 2px; }
+  html body .app-container.app-container.app-container .ayshop .ay-folders { margin-top: 4px; padding-top: 6px; }
+  html body .app-container.app-container.app-container .ayshop .ay-folder-tab__peek { display: none; }
+  html body .app-container.app-container.app-container .ayshop__toolbar { display: none; }
+  html body .app-container.app-container.app-container .ayshop__applied { margin: var(--ay-s12) 0; justify-content: flex-start; }
+  html body .app-container.app-container.app-container .ayshop__matches.is-phone { display: inline-flex; margin-left: auto; min-height: 32px; padding: 0; }
+  html body .app-container.app-container.app-container .ayshop__inferred { margin-top: 4px; }
+}
+html body .app-container.app-container.app-container[data-theme='brand-dark'] .ayshop__find { background: var(--ay-page, #3e2723); }

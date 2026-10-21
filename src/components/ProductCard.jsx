@@ -1,8 +1,9 @@
 import React from 'react';
 import { CheckIcon } from './icons/UiIcons.jsx';
 import { CATEGORY_LABELS } from '../data/catalogTaxonomy.js';
+import { cardKind, cardBadge, cardPrice } from '../utils/productCardFacts.js';
+import { sentenceCase } from '../utils/sentenceCase.js';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
-import { formatPrice } from '../utils/formatPrice';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import MatchPill from './MatchPill';
 import { displayName } from '../mobile/utils/displayName.js';
@@ -40,20 +41,17 @@ export default function ProductCard({
   style,
 }) {
   if (!product) return null;
-  const categoryLabel = CATEGORY_LABELS[product.category] || (product.category ? String(product.category).replace(/-/g, ' ') : 'Product');
+  const categoryLabel = sentenceCase(CATEGORY_LABELS[product.category] || (product.category ? String(product.category).replace(/-/g, ' ') : 'Product'));
   const shownBrand = brandOf(product) || product.brand || '';
   // Something she added herself (not in the catalog yet): no page to open
   // and no facts to show, so the card says whose it is and stays put.
   const isMine = product.userAdded === true;
-  // A waitlist deposit is not a price: say what it is, same as the product page.
-  const isDeposit = /deposit/i.test(String(product.price || ''));
-  const rawPrice = isMine ? { main: 'Added by you', sub: '' } : isDeposit ? { main: 'Coming soon', sub: 'Waitlist' } : formatPrice(product);
-  // Long "check the retailer" notes ran past the card edge; say it short.
-  const price = /check (the )?retailer|varies by retailer/i.test(String(rawPrice.main || '')) ? { main: 'Price at retailer', sub: '' } : rawPrice;
+  // One anatomy everywhere (src/utils/productCardFacts.js, shared with the app card):
+  // white tile + heart → brand → name (2 lines) → kind + one badge → match → price + unit.
+  const price = cardPrice(product);
+  const badgeText = isMine ? '' : cardBadge(product);
   const Link = isMine ? 'div' : 'a';
-  // One anatomy everywhere (docs/design-direction.md, "Product card"):
-  // white tile → brand → name (2 lines) → what it is + labels → price → rating.
-  const kind = !isMine && shownBrand ? String(categoryLabel).replace(/^[^\w]+\s*/, '') : '';
+  const kind = !isMine && shownBrand ? cardKind(product) : '';
   return (
     <article className={`ay-product-card${inEcosystem ? ' is-in-eco' : ''} ${className}`.trim()} style={style}>
       <Link
@@ -71,16 +69,24 @@ export default function ProductCard({
       >
         <div className="ay-product-card__tile">
           {tile || <ProductTileImage product={product} alt={productImageAlt(product)} letterNode={<ProductImageFallback product={product} />} />}
+          {/* At most one badge, as a small sticker on the tile's corner (same on the app). */}
+          {badgeText && <span className={`ay-product-card__badge is-tile${badgeText === 'Pre-order' ? ' is-alert' : ''}`}>{badgeText}</span>}
         </div>
         <div className="ay-product-card__body">
           <div className="ay-product-card__top">
-            {isDeposit && <span className="ay-product-card__badge is-pill">Pre-order</span>}
             <span className="ay-product-card__brand">{isMine ? categoryLabel : (shownBrand || categoryLabel)}</span>
           </div>
           {/* Brand sits above, so a leading brand is trimmed from the name
               ("Love Wellness Bye Bye Bloat" → "Bye Bye Bloat"). */}
           <h3 className="ay-product-card__name" title={product.name}>{shownBrand ? displayName(product) : product.name}</h3>
-          {(kind || labels) && <p className="ay-product-card__kind">{kind && <span>{kind}</span>}{labels}</p>}
+          <p className="ay-product-card__kind">
+            {kind ? <span className="ay-product-card__kindtext">{kind}</span> : <span aria-hidden="true">{'\u00a0'}</span>}
+            {labels}
+          </p>
+          {badge}
+          <span className={`ay-product-card__price${price.main === 'Price at retailer' ? ' is-unknown' : ''}`}>{price.main}{price.sub && (/^list\s+\$/i.test(price.sub)
+            ? (() => { const [was, ...rest] = price.sub.replace(/^list\s+/i, '').split(/\s+·\s+/); return <small><span className="sr-only">List price </span><s>{was}</s>{rest.length > 0 && <span> {rest.join(' · ')}</span>}</small>; })()
+            : <small>{price.sub}</small>)}</span>
           {/* Match and ownership read as text, never over the product photo. */}
           {((matchPercent != null && matchPercent > 0) || inEcosystem) && (
             <span className="ay-product-card__match">
@@ -88,10 +94,6 @@ export default function ProductCard({
               {inEcosystem && <span className="ay-product-card__eco"><CheckIcon size={14} />In your ecosystem</span>}
             </span>
           )}
-          {badge}
-          <span className={`ay-product-card__price${price.main === 'Price at retailer' ? ' is-unknown' : ''}`}>{price.main}{price.sub && (/^list\s+\$/i.test(price.sub)
-            ? (() => { const [was, ...rest] = price.sub.replace(/^list\s+/i, '').split(/\s+·\s+/); return <small><span className="sr-only">List price </span><s>{was}</s>{rest.length > 0 && <span> {rest.join(' · ')}</span>}</small>; })()
-            : <small>{price.sub}</small>)}</span>
           {rating && Number.isFinite(rating.value) && rating.count > 0 && (
             <span className="ay-product-card__rating" data-reviews-link="true"><span aria-hidden="true">★</span> <span className="sr-only">Rated </span>{formatAverage(rating.value)}<span className="sr-only"> out of 5</span> · <u>{rating.count} review{rating.count === 1 ? '' : 's'}</u></span>
           )}

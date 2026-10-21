@@ -1061,3 +1061,20 @@
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-empty:not(.is-compact) .ay-btn:not(.is-ghost) { background: #3e2723 !important; color: #ffedac !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-empty:not(.is-compact) .ay-btn.is-ghost { color: #3e2723 !important; border-color: #3e2723 !important; }
 @media (prefers-reduced-motion: reduce) { .ayna-mobile:is(#ay,.ayna-mobile) .ay-empty-burst::before { animation: none !important; } }
+
+/* Final layout pass (Oct 21, P1-4): the app grid card has the website card's
+   anatomy. Kind + one badge in the copy (no pill over the photo), the unit
+   spelled out after the price, the match as a row under the price (it used
+   to sit over logos with a 25px target). Rows line up across a grid row. */
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-partner { display: none !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-brand { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-name { min-height: 2.5em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-kind { display: flex; align-items: center; gap: 6px; min-height: 22px; margin-top: 2px; overflow: hidden; white-space: nowrap; font: 500 calc(13px * var(--ayna-text-scale, 1))/1.3 var(--f-ui); color: var(--d-ink-2); }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-kindtext { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-badge { flex: none; display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border: 1.5px solid currentColor; border-radius: 999px; font: 600 12px/1 var(--f-ui); color: var(--d-ink); }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-badge.is-alert { background: #f7badd; color: #3e2723; border-color: #3e2723; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-price { display: flex; align-items: baseline; gap: 6px; min-width: 0; margin-top: 4px; white-space: nowrap; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-unit { min-width: 0; overflow: hidden; text-overflow: ellipsis; font: 500 calc(13px * var(--ayna-text-scale, 1))/1.3 var(--f-ui); color: var(--d-ink-2); }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-match { position: relative !important; top: auto !important; left: auto !important; align-self: flex-start; margin: 6px 0 0 2px; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-photo .ay-pc-badge { position: absolute; left: 8px; bottom: 8px; z-index: 1; height: 22px; padding: 0 8px; border-color: #3e2723; background: #ffedac; color: #3e2723; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-photo .ay-pc-badge.is-alert { background: #f7badd; }
