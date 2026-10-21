@@ -132,7 +132,8 @@
 .app-container.app-container .hm .hm-sticker .ay-product-card__price small { display: none; }
 .app-container.app-container .hm .hm-sticker .ay-product-card__body { padding: 16px 8px 0; }
 .app-container.app-container .hm .hm-sticker :is(.ay-product-card__brand, .ay-product-card__kind) { color: var(--hm-ink) !important; opacity: .82; }
-.app-container.app-container .hm .hm-sticker .ay-product-card__name { color: var(--hm-ink) !important; font-size: 17px !important; }
+.app-container.app-container .hm .hm-sticker .ay-product-card__name { color: var(--hm-ink) !important; font-size: 17px !important; line-height: 1.3 !important; display: -webkit-box !important; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; min-height: 2.6em; height: 2.6em; margin: 0 !important; }
+.app-container.app-container .hm .hm-sticker :is(.ay-product-card__brand, .ay-product-card__kind) { display: block; height: 1.35em; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .app-container .hm .hm-sticker__skel { aspect-ratio: 1; border-radius: 20px; background: rgba(255, 255, 255, .55); border: 1.5px solid rgba(62, 39, 35, .25); }
 .app-container .hm .hm-shop__foot { margin-top: 32px; }
 @media (max-width: 1023px) and (min-width: 768px) { .app-container .hm .hm-stickers { gap: 24px var(--hm-gut); } .app-container.app-container .hm .hm-sticker .ay-product-card__tile { padding: 12px; } }
@@ -140,7 +141,7 @@
   .app-container .hm .hm-chips { margin-bottom: 16px; }
   .app-container .hm .hm-stickers { display: flex; gap: var(--hm-gut); margin-inline: calc(-1 * var(--ay-margin)); padding: 8px var(--ay-margin) 12px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--ay-margin); scrollbar-width: none; }
   .app-container .hm .hm-stickers::-webkit-scrollbar { display: none; }
-  .app-container .hm .hm-stickers > li { flex: 0 0 calc((100% - 2 * var(--ay-margin) - 1.3 * var(--hm-gut)) / 2.3); scroll-snap-align: start; }
+  .app-container .hm .hm-stickers > li { flex: 0 0 calc((100% - 1.3 * var(--hm-gut)) / 2.3); scroll-snap-align: start; }
   .app-container.app-container .hm .hm-sticker .ay-product-card__tile { border-radius: 16px; padding: 10px; box-shadow: 3px 3px 0 var(--hm-ink); }
   .app-container.app-container .hm .hm-sticker .ay-product-card__body { padding: 12px 4px 0; }
   .app-container.app-container .hm .hm-sticker .ay-product-card__name { font-size: 15px !important; }
@@ -162,7 +163,7 @@
 @media (max-width: 767px) {
   /* two rows that swipe: column flow keeps the checkerboard (quote/photo alternate) */
   .app-container .hm .hm-familiar .hm-wrap { overflow: visible; }
-  .app-container .hm .hm-checker { grid-template-columns: none; grid-template-rows: repeat(2, auto); grid-auto-flow: column; grid-auto-columns: calc((100% - 2 * var(--ay-margin)) * .46); margin-inline: calc(-1 * var(--ay-margin)); padding-inline: var(--ay-margin); border: 0; border-radius: 0; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--ay-margin); scrollbar-width: none; }
+  .app-container .hm .hm-checker { grid-template-columns: none; grid-template-rows: repeat(2, auto); grid-auto-flow: column; grid-auto-columns: 46%; margin-inline: calc(-1 * var(--ay-margin)); padding-inline: var(--ay-margin); border: 0; border-radius: 0; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--ay-margin); scrollbar-width: none; }
   .app-container .hm .hm-checker::-webkit-scrollbar { display: none; }
   .app-container .hm .hm-checker > li { aspect-ratio: 1 / .86; scroll-snap-align: start; box-shadow: inset 0 0 0 .75px var(--ay-outline); }
   .app-container .hm .hm-checker > li:nth-child(1) { border-top-left-radius: var(--hm-r); }
@@ -182,7 +183,7 @@
 /* ---------- how it works: espresso band, huge coloured numerals ---------- */
 .app-container .hm .hm-how { --ay-press-shadow: 3px 3px 0 var(--hm-pink); }
 .app-container .hm .hm-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--hm-gut); }
-.app-container .hm .hm-step { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: 'ph ph' 'n text'; column-gap: 12px; align-items: start; }
+.app-container .hm .hm-step { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: 'ph ph' 'n text'; column-gap: 12px; align-items: start; align-content: start; }
 .app-container .hm .hm-step__ph { grid-area: ph; display: block; aspect-ratio: 4 / 5; border: 1.5px solid var(--hm-butter); border-radius: 20px; overflow: hidden; margin-bottom: 12px; }
 .app-container .hm .hm-step__ph :is(img, picture) { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 0 !important; }
 .app-container .hm .hm-step__n { grid-area: n; font: 700 clamp(84px, 8vw, 124px)/.78 var(--ay-heading); letter-spacing: -.06em; color: var(--hm-pink); margin-top: 2px; }
@@ -203,17 +204,19 @@
 @media (max-width: 767px) {
   .app-container .hm .hm-steps { display: flex; gap: var(--hm-gut); margin-inline: calc(-1 * var(--ay-margin)); padding: 0 var(--ay-margin); overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--ay-margin); scrollbar-width: none; }
   .app-container .hm .hm-steps::-webkit-scrollbar { display: none; }
-  .app-container .hm .hm-step { flex: 0 0 calc((100% - 2 * var(--ay-margin) - 1.2 * var(--hm-gut)) / 2.2); scroll-snap-align: start; column-gap: 6px; }
+  .app-container .hm .hm-step { flex: 0 0 calc((100% - 1.2 * var(--hm-gut)) / 2.2); min-width: 0; scroll-snap-align: start; grid-template-columns: 34px minmax(0, 1fr); column-gap: 6px; align-items: start; align-content: start; }
   .app-container .hm .hm-step__ph { aspect-ratio: 5 / 4; margin-bottom: 8px; border-radius: 16px; }
-  .app-container .hm .hm-step__n { font-size: 52px; }
+  .app-container .hm .hm-step__n { align-self: start; margin: 0; font-size: 46px; line-height: .74; }
+  .app-container .hm .hm-step__text { align-self: start; }
+  .app-container .hm .hm-step .hm-h3 { line-height: 1.05 !important; }
   .app-container .hm .hm-step .hm-h3 { font-size: 17px !important; }
   .app-container .hm .hm-step__text { gap: 2px; padding-top: 0; }
   .app-container .hm .hm-step__text p { font-size: 13.5px; line-height: 1.35; }
   .app-container .hm .hm-start { padding: 24px 16px 16px; gap: 12px; margin-top: 48px; }
   .app-container .hm .hm-start .hm-h2 { font-size: 28px !important; }
   .app-container .hm .hm-start .hm-lead { font-size: 16px !important; }
-  .app-container .hm .hm-start__cta { width: 100%; flex-wrap: nowrap; gap: 16px; }
-  .app-container .hm .hm-start__cta .ay-btn--text { padding: 0; }
+  .app-container .hm .hm-start__cta { width: 100%; flex-direction: column; align-items: flex-start; gap: 8px; }
+  .app-container .hm .hm-start__cta .ay-btn--text { padding: 0; min-height: 36px; }
 }
 
 /* ---------- proof: big numbers (Glossier-style callouts) + photo + levels ---------- */
