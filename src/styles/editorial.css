@@ -25,7 +25,7 @@
   --ed-sky: #769ebe;
   --ed-hover: var(--ay-hover, rgba(62, 39, 35, .06));
   --ed-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
-  --ed-serif: 'DM Serif Display', Georgia, serif;
+  --ed-serif: var(--ay-heading);
   --ed-display: 64px;
   --ed-h1: 44px;
   --ed-h2: 30px;
@@ -523,7 +523,7 @@
 
 /* ---------- Campus resources: editorial header, object-card resources ---------- */
 html body .app-container.app-container .cr-page .cr-edhead { padding: 40px 0 28px; margin-bottom: 24px; border-bottom: 1.5px solid #3e2723; background: transparent; }
-html body .app-container.app-container .cr-page .cr-edhead .cr-h1 { font: 400 44px/1.08 'DM Serif Display', Georgia, serif !important; letter-spacing: -.01em !important; margin: 0 0 12px; }
+html body .app-container.app-container .cr-page .cr-edhead .cr-h1 { font: 400 44px/1.08 var(--ay-heading) !important; letter-spacing: -.01em !important; margin: 0 0 12px; }
 html body .app-container.app-container .cr-page .cr-edhead .cr-sub { font: 400 19px/1.5 'DM Sans', sans-serif !important; margin: 0 0 8px; max-width: 46ch; }
 html body .app-container.app-container .cr-page .cr-edhead .cr-lede { font: 400 15px/1.55 'DM Sans', sans-serif !important; margin: 0; max-width: 62ch; }
 html body .app-container.app-container .cr-page :is(.cr-card, .cr-case) { border-width: 1.5px !important; border-radius: 16px !important; box-shadow: none !important; }
@@ -550,3 +550,216 @@ html body .app-container.app-container .cr-page .cr-emergency { border: 0 !impor
 .app-container.app-container .ed .ed-field :is(input, textarea) { background: transparent !important; color: var(--ed-text) !important; border: 1.5px solid var(--ed-outline) !important; border-radius: 12px !important; }
 html body .app-container.app-container[data-theme='brand-dark'] .ed .ed-field :is(input, textarea) { background: transparent !important; color: #ffedac !important; border-color: #ffedac !important; }
 html body .app-container.app-container[data-theme='brand-dark'] .ed .ed-field :is(input, textarea)::placeholder { color: rgba(255, 237, 172, .7) !important; }
+
+/* ======================================================================
+   HOMEPAGE PERSONALITY (Oct 21). AIDA order from the founder's "Live like
+   a Girlie" reference: attention (hero + seal, brand ribbon), interest
+   (for you if: the quiz's needs as notes on sky), desire (shop band, step
+   cards with coloured strips and line-icon stickers, community notes on
+   pink, founders polaroid), action (the letter on sky).
+   Primitives: src/styles/ayna-system.css "PERSONALITY".
+   ====================================================================== */
+.app-container .ed-home .ed-display { font-size: clamp(44px, 2.8vw + 34px, 78px) !important; line-height: .98 !important; letter-spacing: -.02em; }
+.app-container .ed-home .ed-h1 { font-size: clamp(32px, 1.6vw + 26px, 52px) !important; }
+.app-container .ed-home .ed-h2 { font-size: clamp(26px, 1vw + 22px, 36px) !important; }
+/* hero: three framed photos, the seal on the big one's corner */
+.ed .ed-hero__photos { position: relative; }
+.ed .ed-hero__ph { min-height: 0; }
+.ed .ed-hero__ph:first-child { grid-row: 1 / 3; }
+.ed .ed-hero__ph img { width: 100%; height: 100%; object-fit: cover; }
+.ed .ed-hero__seal { left: -40px; bottom: 36px; }
+@media (max-width: 767px) {
+  .ed .ed-hero__ph:first-child { grid-row: auto; }
+  .ed .ed-hero__ph { border-radius: 14px; }
+  .ed .ed-hero__seal { left: auto; right: -6px; bottom: auto; top: -54px; }
+}
+/* brand ribbon */
+.ed .ed-brands-band { margin-top: 8px; }
+/* for you if */
+.ed .ed-foryou { margin-top: calc(var(--ed-section) + 16px); padding-block: 56px 48px; }
+.ed .ed-foryou .ed-h1 { max-width: 20ch; }
+.ed .ed-foryou__notes { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 28px; margin: 36px 0 24px; padding: 0; }
+.app-container .ed .ed-foryou .ay-note { display: flex; flex-direction: column; justify-content: space-between; gap: 14px; min-height: 124px; height: 100%; color: #3e2723; text-decoration: none; }
+.ed .ed-foryou__q { font: 400 24px/1.15 var(--ed-serif); }
+.ed .ed-foryou__go { display: inline-flex; align-items: center; gap: 6px; font: 600 15px/1.2 var(--ed-sans); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
+.ed .ed-foryou__go svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+@media (max-width: 1023px) { .ed .ed-foryou__notes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 767px) {
+  .ed .ed-foryou { padding-block: 40px 32px; }
+  .ed .ed-foryou__notes { gap: 24px 14px; margin: 28px 0 16px; }
+  .app-container .ed .ed-foryou .ay-note { min-height: 108px; padding: 20px 14px 14px; }
+  .ed .ed-foryou__q { font-size: 20px; }
+}
+/* the next section after a band starts with its own top space */
+.ed .ed-foryou + .ed-sec { padding-top: calc(var(--ed-section) + 8px); }
+/* why photo framed */
+.ed .ed-why__photo.ay-frame { border-radius: 20px; }
+/* shop band: framed strip photos */
+.ed .ed-strip img { border: 1.5px solid #ffedac; }
+.app-container[data-theme='brand-dark'] .ed .ed-strip img { border-color: #3e2723; }
+/* how it works: step cards with coloured strips and stickers */
+.ed .ed-steps { gap: 28px 24px; }
+.ed .ed-step.ay-tabcard { padding: 0; }
+.ed .ed-step__in { display: flex; flex-direction: column; gap: 14px; padding: 16px 16px 20px; }
+.ed .ed-step .ed-step__img { margin: 0; border-radius: 14px; aspect-ratio: 4 / 3; }
+.ed .ed-step .ed-step__img img { width: 100%; height: 100%; object-fit: cover; }
+.ed .ed-step p { color: var(--ed-text); }
+.ed .ed-step .ed-step__n, .ed .ed-step .ed-step__badge { display: none !important; }
+@media (max-width: 767px) {
+  .ed .ed-steps { gap: 28px; }
+  .ed .ed-step { display: flex; border-top: 1.5px solid var(--ed-outline); padding-block: 0; }
+  .ed .ed-step:last-child { border-bottom: 1.5px solid var(--ed-outline); }
+  .ed .ed-step__in { flex-direction: row; align-items: center; gap: 14px; padding: 12px 14px 14px; }
+  .ed .ed-step .ed-step__img { flex: none; width: 84px; aspect-ratio: 1; border-radius: 12px; }
+  .ed .ed-step .ay-sticker { width: 44px; height: 44px; top: -12px; }
+  .ed .ed-step .ay-sticker svg { width: 22px; height: 22px; }
+}
+/* community on pink: polaroid photo, posts as taped notes */
+.ed .ed-sky.ay-band { margin-top: calc(var(--ed-section) + 16px); padding-block: 64px; }
+.ed .ed-sky.ay-band .ed-sky__photo { aspect-ratio: auto; overflow: visible; border-radius: 6px; }
+.ed .ed-sky.ay-band .ed-sky__photo img { aspect-ratio: 4 / 5; object-fit: cover; }
+.ed .ed-sky.ay-band .ed-news { border-top-color: #3e2723; }
+.ed .ed-sky.ay-band .ed-posts { gap: 24px; margin-top: 32px; }
+.app-container .ed .ed-sky.ay-band .ed-post.ay-note { padding: 22px 16px 14px; border-radius: 4px; background: #ffedac; }
+.app-container .ed .ed-sky.ay-band .ed-post.ay-note:hover { background: #ffedac; }
+.ed .ed-sky.ay-band .ed-post__body { font-weight: 400; }
+@media (max-width: 1023px) { .ed .ed-sky.ay-band .ed-sky__photo { display: none; } }
+@media (max-width: 767px) { .ed .ed-sky.ay-band { padding-block: 44px; } }
+/* founders polaroid */
+.ed .ed-us__photo { max-width: 520px; }
+.ed .ed-us .ed-us__photo img { aspect-ratio: 3 / 2; border-radius: 2px; }
+@media (max-width: 767px) { .ed .ed-us__photo { margin: 12px 8px 8px; } }
+/* final: the letter on sky */
+.ed .ed-final.ay-band { margin-top: calc(var(--ed-section) + 16px); background: #769ebe; color: #3e2723; }
+.app-container .ed .ed-final.ay-band :is(h2, p, a, span) { color: #3e2723; }
+.app-container .ed .ed-final.ay-band .ay-btn--primary { color: #ffedac !important; }
+.app-container .ed .ed-final.ay-band .ay-btn--primary :is(span, svg) { color: #ffedac; }
+.ed .ed-final.ay-band .ed-final__in { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); padding-block: 72px 80px; }
+.ed .ed-final__photo { aspect-ratio: 4 / 5; }
+.ed .ed-final__photo img { aspect-ratio: auto; height: 100%; border-radius: 0; }
+.ed .ed-final__letter .ed-lead { margin: 12px auto 0; }
+.ed .ed-final__letter .ed-final__cta { justify-content: center; margin-top: 20px; }
+@media (max-width: 767px) {
+  .ed .ed-final.ay-band .ed-final__in { grid-template-columns: 1fr; padding-block: 48px 56px; gap: 28px; }
+  .ed .ed-final__photo { aspect-ratio: 16 / 9; order: 2; }
+  .app-container .ed .ay-envelope__letter { margin: 0 12px; padding: 24px 18px 92px; }
+}
+/* brand dark: bands keep their colours (espresso ink); the page is espresso */
+.app-container[data-theme='brand-dark'] .ed .ed-foryou + .ed-sec, .app-container[data-theme='brand-dark'] .ed .ed-sky.ay-band { color: #3e2723; }
+.app-container .ed .ed-final.ay-band, .app-container[data-theme='brand-dark'] .ed .ed-final.ay-band { --ay-text: #3e2723; --ay-text-2: #3e2723; --ay-outline: #3e2723; --ay-hairline: rgba(62, 39, 35, .3); --ay-hover: rgba(62, 39, 35, .08); --ay-feature-bg: #3e2723; --ay-feature-fg: #ffedac; --ay-press-shadow: 3px 3px 0 #3e2723; --ay-focus: #3e2723; --ed-text: #3e2723; --ed-text-2: #3e2723; }
+.ed .ed-band .ed-strip { padding-bottom: 32px; }
+@media (max-width: 767px) {
+  .ed .ed-step.ay-tabcard { flex-direction: column; }
+  .ed .ed-hero__photos { margin-top: 12px; }
+  .ed .ed-hero__seal { right: -6px; top: -26px; width: 84px; height: 84px; }
+}
+.ed .ed-final.ay-band .ed-final__in { align-items: center; }
+.ed .ed-final__photo { aspect-ratio: 4 / 3; }
+
+/* ======================================================================
+   INFO PAGE PERSONALITY (About, How it works, How we make money, Partners).
+   EdPage tone=... : a full-bleed colour-block header with a scalloped
+   bottom edge, a big serif H1 and the photo in a playful frame. Legal and
+   form pages keep the calm header.
+   ====================================================================== */
+.ed-page.ed-page--toned { padding-top: 0; overflow-x: clip; }
+.ed .ed-page__band { padding-block: 40px 64px; margin-bottom: 16px; }
+.ed .ed-page__band .ed-page__head { border-bottom: 0; padding-bottom: 0; align-items: center; }
+.app-container .ed .ed-page__band .ed-h1 { font-size: clamp(36px, 2.2vw + 28px, 64px) !important; line-height: 1.02; letter-spacing: -.02em; }
+.app-container .ed .ed-page__band :is(.ed-lead, .ed-page__kicker, .ed-page__updated, .ed-page__back) { color: inherit; }
+.ed .ed-page__band .ed-page__back:hover { color: inherit; }
+.ed .ed-page__aside--polaroid, .ed .ed-page__aside--flower, .ed .ed-page__aside--frame { position: relative; display: flex; justify-content: center; }
+.ed .ed-page__polaroid { width: min(100%, 380px); }
+.ed .ed-page__polaroid img { aspect-ratio: 4 / 3; object-fit: cover; }
+.ed .ed-page__flowerwrap, .ed .ed-page__framewrap { position: relative; display: block; width: min(100%, 420px); }
+.ed .ed-page__flower { display: block; aspect-ratio: 1; }
+.ed .ed-page__frame { aspect-ratio: 4 / 3; border-radius: 24px; }
+.ed .ed-page__aside .ed-page__frame img, .ed .ed-page__aside .ed-page__flower img { aspect-ratio: auto; height: 100%; border-radius: 0; }
+.ed .ed-page__seal { left: -28px; bottom: 6%; }
+.app-container .ay-band--espresso .ay-frame { border-color: #ffedac; }
+@media (max-width: 1023px) {
+  .ed .ed-page__band { padding-block: 24px 48px; }
+  .ed .ed-page__flowerwrap { width: min(70%, 320px); }
+}
+@media (max-width: 767px) {
+  /* EdPage hides the photo on phones; toned pages keep a small framed one */
+  .ed.ed-page--toned .ed-page__aside { display: flex; }
+  .ed .ed-page__band .ed-page__head { gap: 28px; }
+  .ed .ed-page__flowerwrap { width: 64%; margin-inline: auto; }
+  .ed .ed-page__framewrap, .ed .ed-page__polaroid { width: 86%; }
+  .ed .ed-page__frame { aspect-ratio: 16 / 10; }
+  .ed .ed-page__seal { left: auto; right: -34%; bottom: -4px; }
+}
+/* About: principles as cards with coloured strips; team polaroid; closer band */
+.ed.ed-page--toned .ed-principles { gap: 20px; border-top: 0; margin-top: 28px; }
+.ed.ed-page--toned .ed-principles li { padding: 0 0 18px !important; border: 1.5px solid var(--ed-outline) !important; border-radius: 18px; overflow: hidden; gap: 8px; align-content: start; }
+.ed.ed-page--toned .ed-principles li > b { display: flex; align-items: center; min-height: 44px; padding: 0 16px; margin-bottom: 6px; background: #f7badd; color: #3e2723; border-bottom: 1.5px solid var(--ed-outline); font: 600 14px/1 var(--ed-sans); }
+.ed.ed-page--toned .ed-principles li > b::before { content: 'Principle '; white-space: pre; }
+.ed.ed-page--toned .ed-principles li:nth-child(4n+2) > b { background: #769ebe; }
+.ed.ed-page--toned .ed-principles li:nth-child(4n+3) > b { background: #3e2723; color: #ffedac; }
+.ed.ed-page--toned .ed-principles li:nth-child(4n+4) > b { background: #ffedac; }
+.ed.ed-page--toned .ed-principles li > :not(b) { padding-inline: 16px; }
+.app-container[data-theme='brand-dark'] .ed.ed-page--toned .ed-principles li:nth-child(4n+3) > b { background: #ffedac; color: #3e2723; }
+.app-container[data-theme='brand-dark'] .ed.ed-page--toned .ed-principles li:nth-child(4n+4) > b { background: #4a312c; color: #ffedac; }
+@media (max-width: 767px) { .ed.ed-page--toned .ed-principles { grid-template-columns: 1fr; gap: 14px; } .ed.ed-page--toned .ed-principles li:nth-child(even) { padding-left: 0 !important; border-left: 1.5px solid var(--ed-outline) !important; } }
+.ed .ed-story__polaroid { margin: 24px 12px 0; }
+.ed .ed-story .ed-story__polaroid img { aspect-ratio: 4 / 5; border-radius: 2px; }
+.ed .ed-closer--band { margin-top: calc(var(--ed-section) + 16px); padding-block: 56px; padding-inline: calc(50vw - 50%); border-radius: 0; }
+.ed .ed-block.ed-closer--band + * { margin-top: 0; }
+.ed-page--toned:has(.ed-closer--band) { padding-bottom: 0; }
+.ed-page--toned:has(.ed-closer--band) + footer.ay-foot, .app-container.app-container .ed-page--toned:has(.ed-closer--band) ~ footer.ay-foot { margin-top: 0; }
+/* How it works: the four steps as cards with coloured strips and line-icon stickers */
+.ed.ed-page--toned .ed-hiw { gap: 28px 20px; margin-top: 8px; }
+.ed.ed-page--toned .ed-hiw li { position: relative; padding: 0 16px 18px; border: 1.5px solid var(--ed-outline); border-radius: 18px; }
+.ed.ed-page--toned .ed-hiw__n { display: flex; align-items: center; min-height: 44px; margin: 0 -16px 6px; padding: 0 16px; background: #f7badd; color: #3e2723; border-bottom: 1.5px solid var(--ed-outline); border-radius: 16.5px 16.5px 0 0; font: 600 14px/1 var(--ed-sans) !important; }
+.ed.ed-page--toned .ed-hiw__n::before { content: 'Step '; white-space: pre; }
+.ed.ed-page--toned .ed-hiw li:nth-child(2) .ed-hiw__n { background: #769ebe; }
+.ed.ed-page--toned .ed-hiw li:nth-child(3) .ed-hiw__n { background: #3e2723; color: #ffedac; }
+.ed.ed-page--toned .ed-hiw li:nth-child(4) .ed-hiw__n { background: #ffedac; }
+.app-container[data-theme='brand-dark'] .ed.ed-page--toned .ed-hiw li:nth-child(3) .ed-hiw__n { background: #ffedac; color: #3e2723; }
+.app-container[data-theme='brand-dark'] .ed.ed-page--toned .ed-hiw li:nth-child(4) .ed-hiw__n { background: #4a312c; color: #ffedac; }
+.ed.ed-page--toned .ed-hiw li::after { content: ''; position: absolute; top: -16px; right: 14px; width: 50px; height: 50px; border-radius: 50%; border: 1.5px solid #3e2723; transform: rotate(8deg); background: var(--ic) center / 26px 26px no-repeat, #ffedac; }
+.ed.ed-page--toned .ed-hiw li:nth-child(1) { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233e2723' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 5h16v11H9l-5 4z'/%3E%3C/svg%3E"); }
+.ed.ed-page--toned .ed-hiw li:nth-child(2) { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233e2723' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 5h18l-7 8v6l-4-2v-4z'/%3E%3C/svg%3E"); }
+.ed.ed-page--toned .ed-hiw li:nth-child(3) { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233e2723' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 5c3-1 6-1 9 1v14c-3-2-6-2-9-1z'/%3E%3Cpath d='M21 5c-3-1-6-1-9 1v14c3-2 6-2 9-1z'/%3E%3C/svg%3E"); }
+.ed.ed-page--toned .ed-hiw li:nth-child(4) { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233e2723' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='3' width='16' height='18' rx='2'/%3E%3Cpath d='M4 12h16M9 7v2M15 16v2'/%3E%3C/svg%3E"); }
+.ed.ed-page--toned .ed-hiw p { color: var(--ed-text); }
+/* How we make money: the keyline statement as a pink note */
+.ed.ed-page--toned .ed-keyline { background: #f7badd; color: #3e2723; border: 1.5px solid #3e2723; border-radius: 18px; }
+.app-container .ed.ed-page--toned .ed-keyline :is(h2, p, a) { color: #3e2723; }
+/* founder pills (About) */
+.ed.ed-page--toned .ed-people { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.ed.ed-page--toned .ed-person { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'name photo' 'role photo' 'link photo'; align-items: center; gap: 2px 14px; min-height: 104px; padding: 12px 12px 12px 26px; border: 1.5px solid #3e2723; border-radius: 999px; background: #f7badd; color: #3e2723; }
+.ed.ed-page--toned .ed-person:nth-child(3n+2) { background: #769ebe; }
+.ed.ed-page--toned .ed-person:nth-child(3n+3) { background: #ffedac; }
+.app-container .ed.ed-page--toned .ed-person :is(h3, .ed-meta, a) { color: #3e2723 !important; }
+.ed.ed-page--toned .ed-person h3 { grid-area: name; align-self: end; }
+.ed.ed-page--toned .ed-person .ed-meta { grid-area: role; }
+.ed.ed-page--toned .ed-person a { grid-area: link; align-self: start; }
+.ed.ed-page--toned .ed-person :is(img, .ed-initials) { grid-area: photo; grid-row: 1 / 4; width: 80px !important; height: 80px; aspect-ratio: 1; margin: 0 !important; border-radius: 50% !important; border: 1.5px solid #3e2723; object-fit: cover; }
+@media (max-width: 1023px) { .ed.ed-page--toned .ed-people { grid-template-columns: 1fr; max-width: 560px; } }
+@media (max-width: 767px) { .ed.ed-page--toned .ed-person { border-top: 1.5px solid #3e2723; padding: 10px 10px 10px 22px; min-height: 92px; } .ed.ed-page--toned .ed-person :is(img, .ed-initials) { width: 70px !important; height: 70px; } }
+/* stamp frame in a header */
+.ed .ed-page__stamp { aspect-ratio: 4 / 5; width: min(100%, 360px); margin-inline: auto; transform: rotate(2deg); }
+@media (max-width: 767px) { .ed .ed-page__stamp { width: 62%; aspect-ratio: 4 / 4.4; } }
+/* homepage extras */
+.ed .ed-foryou__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; }
+.ed .ed-evidence__group { position: relative; }
+.ed .ed-evidence__oval { top: -20px; right: 18px; }
+.ed .ed-us__photo.ay-folder { max-width: 500px; width: 100%; margin: 0; }
+.ed .ed-us .ay-folder__photo img { aspect-ratio: 3 / 2; border-radius: 2px; }
+.ed .ed-strip.ay-pinstripe { padding-top: 24px; margin-top: 32px; }
+.app-container .ed :is(.ed-display, .ed-h1) { letter-spacing: -.025em !important; }
+@media (max-width: 767px) { .ed .ed-us__photo.ay-folder { margin: 8px auto 0; } .ed .ed-evidence__oval { top: -18px; right: 10px; } }
+@media (max-width: 767px) { .ed .ed-step.ay-tabcard { align-items: stretch; } }
+/* prose headings follow the theme (they were espresso on espresso in brand dark on How we make money) */
+html body .app-container .ed .ed-prose > :is(section, .ed-psec) :is(h2, h3) { color: var(--ed-text) !important; }
+/* one source of band colour, so brand dark's accent swap keeps band and scallop in step */
+.app-container .ed :is(.ed-sky, .ed-final, .ed-foryou).ay-band { background-color: var(--band) !important; }
+/* phones: the notes scroll sideways (less scrolling, same six needs) */
+@media (max-width: 767px) {
+  .ed .ed-foryou__notes { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; gap: 14px; margin-inline: calc(-1 * var(--ed-margin)); padding: 16px var(--ed-margin) 10px; scroll-padding-inline: var(--ed-margin); }
+  .ed .ed-foryou__notes::-webkit-scrollbar { display: none; }
+  .ed .ed-foryou__notes > li { flex: 0 0 46%; scroll-snap-align: start; }
+}
+@media (max-width: 767px) { .ed .ed-final__photo { aspect-ratio: 16 / 7; } }

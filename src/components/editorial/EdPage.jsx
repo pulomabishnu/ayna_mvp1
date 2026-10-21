@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '../../styles/editorial.css';
 import { PHOTOS } from '../v3/photos.js';
+import { Seal } from '../personality/Bits.jsx';
 
 /**
  * Editorial shell for the footer and info pages (design direction, "Footer
@@ -29,7 +30,12 @@ function useContents(rootRef, enabled, refreshKey) {
   return [items, active];
 }
 
-export function EdPage({ title, lede, kicker, updated, onBack, photo, aside, toc = false, tocKey, className = '', children }) {
+/* Marketing info pages (About, How it works, How we make money, Partners)
+ * pass `tone` ('pink' | 'sky' | 'espresso') for a full-bleed colour-block
+ * header with a scalloped edge, and `frame` ('polaroid' | 'flower' | 'frame')
+ * for the photo; `seal` puts the "Matched to you" seal on the photo.
+ * Utility pages (legal, contact, forms) leave them off and stay calm. */
+export function EdPage({ title, lede, kicker, updated, onBack, photo, aside, toc = false, tocKey, className = '', tone = null, frame = null, caption = null, seal = false, children }) {
   const bodyRef = useRef(null);
   const [items, active] = useContents(bodyRef, toc, tocKey);
   const go = (e, id) => {
@@ -40,7 +46,14 @@ export function EdPage({ title, lede, kicker, updated, onBack, photo, aside, toc
     try { window.history.replaceState(window.history.state, '', `#${id}`); } catch { /* ignore */ }
   };
   const ph = typeof photo === 'string' ? { src: `/landing/${photo}.webp`, alt: PHOTOS[photo] || '' } : photo;
-  const side = aside || (ph ? <img src={ph.src} alt={ph.alt} loading="eager" style={ph.pos ? { objectPosition: ph.pos } : undefined} /> : null);
+  const img = ph ? <img src={ph.src} alt={ph.alt} loading="eager" style={ph.pos ? { objectPosition: ph.pos } : undefined} /> : null;
+  const framed = !img ? null
+    : frame === 'polaroid' ? <figure className="ay-polaroid ed-page__polaroid" style={{ '--tilt': '1.8deg' }}>{img}{caption && <figcaption>{caption}</figcaption>}{seal && <Seal className="ed-page__seal" />}</figure>
+      : frame === 'flower' ? <span className="ed-page__flowerwrap"><span className="ay-flower ed-page__flower">{img}</span>{seal && <Seal className="ed-page__seal" />}</span>
+        : frame === 'stamp' ? <span className="ed-page__framewrap"><span className="ay-stamp ed-page__stamp">{img}</span>{seal && <Seal className="ed-page__seal" />}</span>
+        : frame === 'frame' ? <span className="ed-page__framewrap"><span className="ay-frame ed-page__frame">{img}</span>{seal && <Seal className="ed-page__seal" />}</span>
+          : img;
+  const side = aside || framed;
   const list = (
     <ol>
       {items.map((it) => (
@@ -48,10 +61,8 @@ export function EdPage({ title, lede, kicker, updated, onBack, photo, aside, toc
       ))}
     </ol>
   );
-  return (
-    <div className={`ed ed-page${className ? ` ${className}` : ''}`}>
-      <div className="ed-wrap">
-        <header className={`ed-page__head${side ? '' : ' ed-page__head--plain'}`}>
+  const head = (
+        <header className={`ed-page__head${side ? '' : ' ed-page__head--plain'}${tone ? ' ed-page__head--band' : ''}`}>
           <div className="ed-page__titles">
             {onBack && (
               <button type="button" className="ed-page__back" onClick={onBack}><span aria-hidden="true">←</span> Back</button>
@@ -61,8 +72,14 @@ export function EdPage({ title, lede, kicker, updated, onBack, photo, aside, toc
             {lede && <p className="ed-lead">{lede}</p>}
             {updated && <p className="ed-page__updated">{updated}</p>}
           </div>
-          {side && <div className="ed-page__aside">{side}</div>}
+          {side && <div className={`ed-page__aside${frame ? ` ed-page__aside--${frame}` : ''}`}>{side}</div>}
         </header>
+  );
+  return (
+    <div className={`ed ed-page${tone ? ' ed-page--toned' : ''}${className ? ` ${className}` : ''}`}>
+      {tone && <div className={`ay-band ay-band--${tone} ay-band--scallop-bottom ed-page__band`}><div className="ed-wrap">{head}</div></div>}
+      <div className="ed-wrap">
+        {!tone && head}
         <div className="ed-page__body">
           {toc ? (
             <div className="ed-page__layout">

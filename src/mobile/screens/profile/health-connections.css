@@ -170,7 +170,7 @@ button.ay-hc-row:active { background: var(--ay-cream); }
   --ay-ink: #3e2723; --ay-ink-soft: rgba(62, 39, 35, .72); --ay-ink-faint: rgba(62, 39, 35, .16);
   --ay-paper: #ffedac; --ay-cream: #ffedac; --ay-line: rgba(62, 39, 35, .16);
   --ay-peri: #769ebe; --ay-peri-deep: #769ebe; --ay-butter: #ffedac; --ay-pink: #f7badd; --ay-mint: #769ebe; --ay-alert: #3e2723;
-  --ay-font-display: 'DM Serif Display', Georgia, serif; --ay-font-ui: 'DM Sans', system-ui, sans-serif;
+  --ay-font-display: var(--ay-app-heading); --ay-font-ui: 'DM Sans', system-ui, sans-serif;
   --ay-ease: cubic-bezier(.2, .8, .2, 1); --ay-pop: cubic-bezier(.3, 1.5, .5, 1); --ay-dur-1: 140ms;
   --ay-shadow: 3px 3px 0 var(--ay-ink); --ay-gutter: 0px;
   max-width: 720px; margin: 0 auto; padding: 28px 20px 64px; color: var(--ay-ink);

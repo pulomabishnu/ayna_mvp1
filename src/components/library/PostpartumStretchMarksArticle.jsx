@@ -151,15 +151,15 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
         </div>
 
         <section style={{ display: "grid", gap: "22px", maxWidth: "900px" }}>
-          <h1 style={{ margin: "0", font: "400 clamp(38px,5.2vw,68px)/1.04 'DM Serif Display',Georgia,serif", letterSpacing: "-.01em", textWrap: "balance" }}>Can You Actually Improve Postpartum Stretch Marks and Scars? <em style={{ color: "var(--g-pink)" }}>I Looked at the Research Behind 5 MOST Popular Treatments</em></h1>
+          <h1 style={{ margin: "0", font: "400 clamp(38px,5.2vw,68px)/1.04 var(--ay-heading)", letterSpacing: "-.01em", textWrap: "balance" }}>Can You Actually Improve Postpartum Stretch Marks and Scars? <em style={{ color: "var(--g-pink)" }}>I Looked at the Research Behind 5 MOST Popular Treatments</em></h1>
           <p style={{ margin: "0", font: "400 clamp(19px,1.8vw,23px)/1.5 'DM Sans'", maxWidth: "56ch", textWrap: "pretty" }}>From viral belly oils to prescription retinoids, here's what actually works, what's mostly marketing, and what the research says.</p>
           <div style={{ display: "grid", gap: "14px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <span aria-hidden="true" style={{ display: "grid", placeItems: "center", flex: "none", width: "44px", height: "44px", borderRadius: "50%", background: "#f7badd", color: "#3e2723", font: "400 20px/1 'DM Serif Display',serif" }}>A</span>
+              <span aria-hidden="true" style={{ display: "grid", placeItems: "center", flex: "none", width: "44px", height: "44px", borderRadius: "50%", background: "#f7badd", color: "#3e2723", font: "400 20px/1 var(--ay-heading)" }}>A</span>
               <span style={{ display: "grid", gap: "4px" }}><span style={{ font: "700 12px/1 'DM Sans'", letterSpacing: ".08em", textTransform: "uppercase", color: "var(--g-pink)" }}>Reviewed by</span><strong style={{ font: "700 16px/1.3 'DM Sans'" }}>Dr. Anuja Vyas, Board-Certified OBGYN, Co-founder of <a href="/partners#brand-buni" style={{ textDecoration: "underline", textUnderlineOffset: "3px" }}>BUNI Body</a></strong></span>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <span aria-hidden="true" style={{ display: "grid", placeItems: "center", flex: "none", width: "44px", height: "44px", borderRadius: "50%", background: "#f7badd", color: "#3e2723", font: "400 20px/1 'DM Serif Display',serif" }}>G</span>
+              <span aria-hidden="true" style={{ display: "grid", placeItems: "center", flex: "none", width: "44px", height: "44px", borderRadius: "50%", background: "#f7badd", color: "#3e2723", font: "400 20px/1 var(--ay-heading)" }}>G</span>
               <span style={{ display: "grid", gap: "4px" }}><span style={{ font: "700 12px/1 'DM Sans'", letterSpacing: ".08em", textTransform: "uppercase", color: "var(--g-pink)" }}>Written by</span><strong style={{ font: "700 16px/1.3 'DM Sans'" }}>Geena Yousry, MS1, Medical Student</strong></span>
             </div>
           </div>
@@ -192,16 +192,16 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
           <article style={{ gridColumn: "span 2", display: "grid", gap: "56px", maxWidth: "700px", minWidth: "0", font: "400 19px/1.75 'DM Sans'" }}>
 
             <div style={{ display: "grid", gap: "22px" }}>
-              <p style={{ margin: "0", textWrap: "pretty" }}><span style={{ float: "left", margin: "6px 10px 0 0", font: "400 76px/.8 'DM Serif Display',serif", color: "var(--g-pink)" }}>I</span>f you've ever searched for the best stretch mark cream on Google or TikTok, you know the beauty industry has a product for practically everything - it's overstimulating as HECK. Belly oils promising smoother skin, collagen creams claiming to erase stretch marks, and serums that supposedly work miracles overnight.</p>
+              <p style={{ margin: "0", textWrap: "pretty" }}><span style={{ float: "left", margin: "6px 10px 0 0", font: "400 76px/.8 var(--ay-heading)", color: "var(--g-pink)" }}>I</span>f you've ever searched for the best stretch mark cream on Google or TikTok, you know the beauty industry has a product for practically everything - it's overstimulating as HECK. Belly oils promising smoother skin, collagen creams claiming to erase stretch marks, and serums that supposedly work miracles overnight.</p>
               <p style={{ margin: "0" }}>Some cost $10. Others cost $100. And somehow, they all seem to promise the same thing.</p>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%,240px),1fr))", gap: "24px", alignItems: "center", margin: "8px 0" }}>
                 <div style={{ aspectRatio: "244/224", borderRadius: "24px", overflow: "hidden", border: "2px solid var(--g-fg)", background: "rgba(var(--g-fg-rgb), .08)", transform: "rotate(-2deg)" }}><img src={IMG.reaction} alt="Reaction GIF" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /></div>
-                <p style={{ margin: "0", font: "400 clamp(34px,4vw,48px)/1.1 'DM Serif Display',serif", color: "var(--g-pink)" }}>PERO LIKE do they actually work?</p>
+                <p style={{ margin: "0", font: "400 clamp(34px,4vw,48px)/1.1 var(--ay-heading)", color: "var(--g-pink)" }}>PERO LIKE do they actually work?</p>
               </div>
               <p style={{ margin: "0", textWrap: "pretty" }}>As a medical student passionate about women's health, I decided to go down the PubMed rabbit hole so you wouldn't have to, digging through clinical research to separate the science from the skincare marketing. Because, while there's nothing wrong with a cute body oil, there's a difference between a product that makes your skin FEEL amazing and one that's actually been shown to improve stretch marks.</p>
               <div style={{ display: "grid", gap: "10px", padding: "26px 28px", borderRadius: "24px", background: "#f7badd", color: "#3e2723" }}>
                 <span style={{ font: "700 12px/1 'DM Sans'", letterSpacing: ".08em", textTransform: "uppercase" }}>A little reminder before I start</span>
-                <p style={{ margin: "0", font: "400 26px/1.25 'DM Serif Display',serif" }}>YOUR BODY DOESN'T NEED FIXING.</p>
+                <p style={{ margin: "0", font: "400 26px/1.25 var(--ay-heading)" }}>YOUR BODY DOESN'T NEED FIXING.</p>
                 <p style={{ margin: "0", font: "400 17px/1.65 'DM Sans'" }}>Stretchmarks and scars are completely normal. I have stretch marks myself, and I've never even been pregnant (TMI, I know). Whether you want to explore treatments or embrace them as they are, both are perfectly valid choices.</p>
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%,240px),1fr))", gap: "12px" }}>
@@ -213,27 +213,27 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
             </div>
 
             <section id="basics" style={{ display: "grid", gap: "20px", scrollMarginTop: "24px" }}>
-              <h2 style={{ margin: "0", font: "400 clamp(30px,3.2vw,40px)/1.1 'DM Serif Display',serif" }}>The Difference Is More Than Skin Deep</h2>
+              <h2 style={{ margin: "0", font: "400 clamp(30px,3.2vw,40px)/1.1 var(--ay-heading)" }}>The Difference Is More Than Skin Deep</h2>
               <p style={{ margin: "0" }}>Before we start filling our shopping carts, let's clear something up: not all postpartum marks are created equal.</p>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%,280px),1fr))", gap: "12px" }}>
                 <div style={{ display: "grid", gap: "10px", alignContent: "start", padding: "22px", borderRadius: "22px", background: "var(--g-butter)", color: "#3e2723" }}>
-                  <strong style={{ font: "400 24px/1.15 'DM Serif Display',serif" }}>Stretch marks</strong>
+                  <strong style={{ font: "400 24px/1.15 var(--ay-heading)" }}>Stretch marks</strong>
                   <span style={{ font: "400 16px/1.6 'DM Sans'" }}>Medically known as striae distensae, develop when changes in the skin's collagen and elastic-fiber network occur during pregnancy. They often start out pink, red, or purple (striae rubrae) before gradually becoming lighter, silvery, and slightly sunken (striae albae).</span>
                 </div>
                 <div style={{ display: "grid", gap: "10px", alignContent: "start", padding: "22px", borderRadius: "22px", background: "#769ebe", color: "#2a1a19" }}>
-                  <strong style={{ font: "400 24px/1.15 'DM Serif Display',serif" }}>C-section and perineal scars</strong>
+                  <strong style={{ font: "400 24px/1.15 var(--ay-heading)" }}>C-section and perineal scars</strong>
                   <span style={{ font: "400 16px/1.6 'DM Sans'" }}>Develop as the body repairs tissue following an incision or tear.</span>
                 </div>
               </div>
               <p style={{ margin: "0" }}>Stretch marks have scar-like features, but they aren't identical to surgical scars. And that matters, because the treatments that help one won't necessarily help the other.</p>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%,220px),1fr))", gap: "24px", alignItems: "center", marginTop: "12px" }}>
-                <p style={{ margin: "0", font: "400 italic clamp(34px,4vw,48px)/1.1 'DM Serif Display',serif", color: "var(--g-pink)" }}>Now…onto the options</p>
+                <p style={{ margin: "0", font: "400 italic clamp(34px,4vw,48px)/1.1 var(--ay-heading)", color: "var(--g-pink)" }}>Now…onto the options</p>
                 <div style={{ aspectRatio: "2/3", borderRadius: "24px", overflow: "hidden", border: "2px solid var(--g-fg)", background: "rgba(var(--g-fg-rgb), .08)", maxWidth: "260px", justifySelf: "center", width: "100%", transform: "rotate(2deg)" }}><img src={IMG.thumbs} alt="Thumbs-up photo" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /></div>
               </div>
             </section>
 
             <section id="t1" style={{ display: "grid", gap: "20px", scrollMarginTop: "24px" }}>
-              <div style={{ display: "grid", gap: "10px" }}><span style={{ font: "400 64px/.9 'DM Serif Display',serif", color: "var(--g-pink)" }}>01</span><h2 style={{ margin: "0", font: "400 clamp(30px,3.2vw,40px)/1.1 'DM Serif Display',serif", textWrap: "balance" }}>Prescription tretinoin</h2><p style={{ margin: "0", font: "600 18px/1.4 'DM Sans'" }}>Best-studied topical option for newer stretch marks</p></div>
+              <div style={{ display: "grid", gap: "10px" }}><span style={{ font: "400 64px/.9 var(--ay-heading)", color: "var(--g-pink)" }}>01</span><h2 style={{ margin: "0", font: "400 clamp(30px,3.2vw,40px)/1.1 var(--ay-heading)", textWrap: "balance" }}>Prescription tretinoin</h2><p style={{ margin: "0", font: "600 18px/1.4 'DM Sans'" }}>Best-studied topical option for newer stretch marks</p></div>
               <dl style={{ margin: "0", display: "grid", border: "2px solid var(--g-fg)", borderRadius: "20px", overflow: "hidden" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "minmax(110px,150px) 1fr", gap: "14px", padding: "14px 20px" }}><dt style={{ font: "700 13px/1.6 'DM Sans'", letterSpacing: ".06em", textTransform: "uppercase", color: "var(--g-pink)" }}>Best for</dt><dd style={{ margin: "0", font: "400 16px/1.55 'DM Sans'" }}>Newer red or purple stretch marks</dd></div>
                 <div style={{ display: "grid", gridTemplateColumns: "minmax(110px,150px) 1fr", gap: "14px", padding: "14px 20px", borderTop: "1.5px solid rgba(var(--g-fg-rgb), .3)" }}><dt style={{ font: "700 13px/1.6 'DM Sans'", letterSpacing: ".06em", textTransform: "uppercase", color: "var(--g-pink)" }}>The science</dt><dd style={{ margin: "0", font: "400 16px/1.55 'DM Sans'" }}>Encouraging, but based on relatively small studies</dd></div>
@@ -266,7 +266,7 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
             </section>
 
             <section id="t2" style={{ display: "grid", gap: "20px", scrollMarginTop: "24px" }}>
-              <div style={{ display: "grid", gap: "10px" }}><span style={{ font: "400 64px/.9 'DM Serif Display',serif", color: "var(--g-pink)" }}>02</span><h2 style={{ margin: "0", font: "400 clamp(30px,3.2vw,40px)/1.1 'DM Serif Display',serif", textWrap: "balance" }}>Silicone scar sheets</h2><p style={{ margin: "0", font: "600 18px/1.4 'DM Sans'" }}>Safest and best at-home option to consider for C-section scars</p></div>
+              <div style={{ display: "grid", gap: "10px" }}><span style={{ font: "400 64px/.9 var(--ay-heading)", color: "var(--g-pink)" }}>02</span><h2 style={{ margin: "0", font: "400 clamp(30px,3.2vw,40px)/1.1 var(--ay-heading)", textWrap: "balance" }}>Silicone scar sheets</h2><p style={{ margin: "0", font: "600 18px/1.4 'DM Sans'" }}>Safest and best at-home option to consider for C-section scars</p></div>
               <dl style={{ margin: "0", display: "grid", border: "2px solid var(--g-fg)", borderRadius: "20px", overflow: "hidden" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "minmax(110px,150px) 1fr", gap: "14px", padding: "14px 20px" }}><dt style={{ font: "700 13px/1.6 'DM Sans'", letterSpacing: ".06em", textTransform: "uppercase", color: "var(--g-pink)" }}>Best for</dt><dd style={{ margin: "0", font: "400 16px/1.55 'DM Sans'" }}>Fully healed C-section incisions</dd></div>
                 <div style={{ display: "grid", gridTemplateColumns: "minmax(110px,150px) 1fr", gap: "14px", padding: "14px 20px", borderTop: "1.5px solid rgba(var(--g-fg-rgb), .3)" }}><dt style={{ font: "700 13px/1.6 'DM Sans'", letterSpacing: ".06em", textTransform: "uppercase", color: "var(--g-pink)" }}>The science</dt><dd style={{ margin: "0", font: "400 16px/1.55 'DM Sans'" }}>Among the better-supported non-invasive scar treatments</dd></div>
@@ -290,13 +290,13 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
                 <p style={{ margin: "0", font: "400 italic 15px/1.55 'DM Sans'" }}>These are product examples, not independently tested rankings.</p>
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "44px 1fr", gap: "16px", alignItems: "start", padding: "22px 24px", borderRadius: "24px", background: "#769ebe", color: "#2a1a19" }}>
-                <span style={{ display: "grid", placeItems: "center", width: "44px", height: "44px", borderRadius: "50%", background: "#2a1a19", color: "#769ebe", font: "400 22px/1 'DM Serif Display',serif" }}>✦</span>
+                <span style={{ display: "grid", placeItems: "center", width: "44px", height: "44px", borderRadius: "50%", background: "#2a1a19", color: "#769ebe", font: "400 22px/1 var(--ay-heading)" }}>✦</span>
                 <div style={{ display: "grid", gap: "6px" }}><span style={{ font: "700 12px/1.4 'DM Sans'", letterSpacing: ".08em", textTransform: "uppercase" }}>From our clinical experts</span><p style={{ margin: "0", font: "500 17px/1.6 'DM Sans'" }}>The combination of tissue massage along, above, and below the c-section scar with a good product - whether prescription or not - and regular application of silicone scar tape is the best defense against not only stretch marks but also painful or lumpy scars.</p></div>
               </div>
             </section>
 
             <section id="t3" style={{ display: "grid", gap: "20px", scrollMarginTop: "24px" }}>
-              <div style={{ display: "grid", gap: "10px" }}><span style={{ font: "400 64px/.9 'DM Serif Display',serif", color: "var(--g-pink)" }}>03</span><h2 style={{ margin: "0", font: "400 clamp(30px,3.2vw,40px)/1.1 'DM Serif Display',serif", textWrap: "balance" }}>Belly oils, Centella, and hyaluronic acid</h2><p style={{ margin: "0", font: "600 18px/1.4 'DM Sans'" }}>Best for hydration (not miracles)</p></div>
+              <div style={{ display: "grid", gap: "10px" }}><span style={{ font: "400 64px/.9 var(--ay-heading)", color: "var(--g-pink)" }}>03</span><h2 style={{ margin: "0", font: "400 clamp(30px,3.2vw,40px)/1.1 var(--ay-heading)", textWrap: "balance" }}>Belly oils, Centella, and hyaluronic acid</h2><p style={{ margin: "0", font: "600 18px/1.4 'DM Sans'" }}>Best for hydration (not miracles)</p></div>
               <dl style={{ margin: "0", display: "grid", border: "2px solid var(--g-fg)", borderRadius: "20px", overflow: "hidden" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "minmax(110px,150px) 1fr", gap: "14px", padding: "14px 20px" }}><dt style={{ font: "700 13px/1.6 'DM Sans'", letterSpacing: ".06em", textTransform: "uppercase", color: "var(--g-pink)" }}>Best for</dt><dd style={{ margin: "0", font: "400 16px/1.55 'DM Sans'" }}>Dryness, itchiness, and keeping postpartum skin comfortable</dd></div>
                 <div style={{ display: "grid", gridTemplateColumns: "minmax(110px,150px) 1fr", gap: "14px", padding: "14px 20px", borderTop: "1.5px solid rgba(var(--g-fg-rgb), .3)" }}><dt style={{ font: "700 13px/1.6 'DM Sans'", letterSpacing: ".06em", textTransform: "uppercase", color: "var(--g-pink)" }}>The science</dt><dd style={{ margin: "0", font: "400 16px/1.55 'DM Sans'" }}>Good rationale for hydration; limited evidence for stretch-mark reduction</dd></div>
@@ -306,7 +306,7 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
               <p style={{ margin: "0" }}>Cocoa butter. Vitamin E. Olive oil. Botanical blends with beautiful packaging and even more beautiful promises.</p>
               <p style={{ margin: "0" }}>I have nothing against a good body oil. It sure makes my skin feel AMAZEEEE. But after looking at the literature, I think it's important to separate what these products actually do from what they're marketed to do.</p>
               <p style={{ margin: "0" }}>Clinical trials haven't consistently shown that cocoa butter or olive oil prevents pregnancy-related stretch marks. That doesn't mean they're useless. They can moisturize the skin, reduce dryness, and make a skincare routine feel a little more luxurious.</p>
-              <blockquote style={{ margin: "6px 0", padding: "0", font: "400 italic clamp(26px,2.8vw,32px)/1.25 'DM Serif Display',serif", color: "var(--g-pink)", textWrap: "balance" }}>It just means we shouldn't confuse hydration with structural skin remodeling.</blockquote>
+              <blockquote style={{ margin: "6px 0", padding: "0", font: "400 italic clamp(26px,2.8vw,32px)/1.25 var(--ay-heading)", color: "var(--g-pink)", textWrap: "balance" }}>It just means we shouldn't confuse hydration with structural skin remodeling.</blockquote>
               <p style={{ margin: "0" }}><strong>But what about Centella asiatica and hyaluronic acid?</strong></p>
               <p style={{ margin: "0" }}>These ingredients are a little more interesting from a research perspective.</p>
               <p style={{ margin: "0" }}>Hyaluronic acid helps attract and retain moisture, while Centella asiatica has been investigated for its potential effects on skin repair and collagen-related processes. Some studies of combination formulations have reported encouraging results.</p>
@@ -329,7 +329,7 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
             </section>
 
             <section id="t4" style={{ display: "grid", gap: "20px", scrollMarginTop: "24px" }}>
-              <div style={{ display: "grid", gap: "10px" }}><span style={{ font: "400 64px/.9 'DM Serif Display',serif", color: "var(--g-pink)" }}>04</span><h2 style={{ margin: "0", font: "400 clamp(30px,3.2vw,40px)/1.1 'DM Serif Display',serif", textWrap: "balance" }}>Microneedling</h2><p style={{ margin: "0", font: "600 18px/1.4 'DM Sans'" }}>Best for persistent stretch marks and texture</p></div>
+              <div style={{ display: "grid", gap: "10px" }}><span style={{ font: "400 64px/.9 var(--ay-heading)", color: "var(--g-pink)" }}>04</span><h2 style={{ margin: "0", font: "400 clamp(30px,3.2vw,40px)/1.1 var(--ay-heading)", textWrap: "balance" }}>Microneedling</h2><p style={{ margin: "0", font: "600 18px/1.4 'DM Sans'" }}>Best for persistent stretch marks and texture</p></div>
               <dl style={{ margin: "0", display: "grid", border: "2px solid var(--g-fg)", borderRadius: "20px", overflow: "hidden" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "minmax(110px,150px) 1fr", gap: "14px", padding: "14px 20px" }}><dt style={{ font: "700 13px/1.6 'DM Sans'", letterSpacing: ".06em", textTransform: "uppercase", color: "var(--g-pink)" }}>Best for</dt><dd style={{ margin: "0", font: "400 16px/1.55 'DM Sans'" }}>Stretch marks that haven't improved enough with topical skincare</dd></div>
                 <div style={{ display: "grid", gridTemplateColumns: "minmax(110px,150px) 1fr", gap: "14px", padding: "14px 20px", borderTop: "1.5px solid rgba(var(--g-fg-rgb), .3)" }}><dt style={{ font: "700 13px/1.6 'DM Sans'", letterSpacing: ".06em", textTransform: "uppercase", color: "var(--g-pink)" }}>The science</dt><dd style={{ margin: "0", font: "400 16px/1.55 'DM Sans'" }}>Promising clinical evidence for professional treatments</dd></div>
@@ -360,7 +360,7 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
             </section>
 
             <section id="t5" style={{ display: "grid", gap: "20px", scrollMarginTop: "24px" }}>
-              <div style={{ display: "grid", gap: "10px" }}><span style={{ font: "400 64px/.9 'DM Serif Display',serif", color: "var(--g-pink)" }}>05</span><h2 style={{ margin: "0", font: "400 clamp(30px,3.2vw,40px)/1.1 'DM Serif Display',serif", textWrap: "balance" }}>Laser treatments</h2><p style={{ margin: "0", font: "600 18px/1.4 'DM Sans'" }}>Best for targeted professional treatment</p></div>
+              <div style={{ display: "grid", gap: "10px" }}><span style={{ font: "400 64px/.9 var(--ay-heading)", color: "var(--g-pink)" }}>05</span><h2 style={{ margin: "0", font: "400 clamp(30px,3.2vw,40px)/1.1 var(--ay-heading)", textWrap: "balance" }}>Laser treatments</h2><p style={{ margin: "0", font: "600 18px/1.4 'DM Sans'" }}>Best for targeted professional treatment</p></div>
               <dl style={{ margin: "0", display: "grid", border: "2px solid var(--g-fg)", borderRadius: "20px", overflow: "hidden" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "minmax(110px,150px) 1fr", gap: "14px", padding: "14px 20px" }}><dt style={{ font: "700 13px/1.6 'DM Sans'", letterSpacing: ".06em", textTransform: "uppercase", color: "var(--g-pink)" }}>Best for</dt><dd style={{ margin: "0", font: "400 16px/1.55 'DM Sans'" }}>Persistent stretch marks, redness, or selected surgical scars</dd></div>
                 <div style={{ display: "grid", gridTemplateColumns: "minmax(110px,150px) 1fr", gap: "14px", padding: "14px 20px", borderTop: "1.5px solid rgba(var(--g-fg-rgb), .3)" }}><dt style={{ font: "700 13px/1.6 'DM Sans'", letterSpacing: ".06em", textTransform: "uppercase", color: "var(--g-pink)" }}>The science</dt><dd style={{ margin: "0", font: "400 16px/1.55 'DM Sans'" }}>Promising, with outcomes varying by device and skin type</dd></div>
@@ -386,7 +386,7 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
             </section>
 
             <section id="perineal" style={{ display: "grid", gap: "18px", padding: "30px", borderRadius: "28px", background: "var(--g-butter)", color: "#3e2723", scrollMarginTop: "24px" }}>
-              <h2 style={{ margin: "0", font: "400 clamp(28px,3vw,36px)/1.12 'DM Serif Display',serif", textWrap: "balance" }}>And what about perineal or episiotomy scars?</h2>
+              <h2 style={{ margin: "0", font: "400 clamp(28px,3vw,36px)/1.12 var(--ay-heading)", textWrap: "balance" }}>And what about perineal or episiotomy scars?</h2>
               <p style={{ margin: "0", font: "600 18px/1.6 'DM Sans'" }}>This is one area where I'd skip the beauty aisle altogether.</p>
               <p style={{ margin: "0", font: "400 17px/1.7 'DM Sans'" }}>Unlike abdominal stretch marks or C-section scars, perineal scars involve sensitive tissue, and treatment is often more about comfort and function than appearance.</p>
               <p style={{ margin: "0", font: "400 17px/1.7 'DM Sans'" }}>If you're experiencing persistent pain, tightness, discomfort during intercourse, or problems with healing, an OB-GYN or pelvic floor physical therapist can help assess what's going on.</p>
@@ -398,7 +398,7 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
                 <div style={{ aspectRatio: "880/1200", borderRadius: "24px", overflow: "hidden", border: "2px solid var(--g-fg)", background: "rgba(var(--g-fg-rgb), .08)", width: "min(100%,420px)" }}><img src={IMG.klimt} alt="Gustav Klimt, Hope II" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /></div>
                 <figcaption style={{ font: "400 14px/1.5 'DM Sans'" }}>Gustav Klimt, Hope II (1907–1908)</figcaption>
               </figure>
-              <h2 style={{ margin: "0", font: "400 clamp(30px,3.2vw,40px)/1.1 'DM Serif Display',serif", textWrap: "balance" }}>One last thing: Your skin isn't something you need to apologize for</h2>
+              <h2 style={{ margin: "0", font: "400 clamp(30px,3.2vw,40px)/1.1 var(--ay-heading)", textWrap: "balance" }}>One last thing: Your skin isn't something you need to apologize for</h2>
               <p style={{ margin: "0" }}>After looking through the research, here's what I hope you take away from this article: you don't need to spend hundreds of dollars trying to get rid of something that's completely normal.</p>
               <p style={{ margin: "0" }}>It's so easy to scroll through social media, see someone's seemingly flawless postpartum body, and start questioning your own. Suddenly, a stretch mark you've never thought twice about becomes something you feel pressured to fix.</p>
               <p style={{ margin: "0" }}>But a before-and-after picture doesn't tell you everything. Neither does a glowing review, a viral TikTok, or a product promising results that sound almost too good to be true. Your body has gone through an enormous amount of change. Give yourself some grace babe!!</p>
@@ -406,7 +406,7 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
               <p style={{ margin: "0" }}>And if you'd rather do absolutely nothing? That's just as valid.</p>
               <p style={{ margin: "0" }}>As someone studying medicine, I believe women deserve access to the science behind the products they're encouraged to buy (not just the marketing).</p>
               <div style={{ display: "grid", gap: "14px", padding: "32px 30px", borderRadius: "28px", background: "#f7badd", color: "#3e2723" }}>
-                <p style={{ margin: "0", font: "400 clamp(26px,2.8vw,34px)/1.2 'DM Serif Display',serif", textWrap: "balance" }}>But more than anything, I hope you remember this: you're beautiful as you are, stretch marks, scars and everything in between!</p>
+                <p style={{ margin: "0", font: "400 clamp(26px,2.8vw,34px)/1.2 var(--ay-heading)", textWrap: "balance" }}>But more than anything, I hope you remember this: you're beautiful as you are, stretch marks, scars and everything in between!</p>
                 <p style={{ margin: "0", font: "400 17px/1.65 'DM Sans'" }}>No cream, treatment, or internet trend gets to decide otherwise. So take care of yourself, be kind to your body, and please don't stress over a few lines on your skin. You've got enough on your plate queen.</p>
                 <span style={{ font: "700 15px/1 'DM Sans'" }}>Geena</span>
               </div>
@@ -414,7 +414,7 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
 
             <section id="refs" style={{ display: "grid", gap: "14px", paddingTop: "28px", borderTop: "1.5px solid var(--g-fg)", scrollMarginTop: "24px" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", flexWrap: "wrap" }}>
-                <h2 style={{ margin: "0", font: "400 28px/1.15 'DM Serif Display',serif" }}>References</h2>
+                <h2 style={{ margin: "0", font: "400 28px/1.15 var(--ay-heading)" }}>References</h2>
                 <button type="button" onClick={toggleRefs} style={{ minHeight: "44px", padding: "0 18px", borderRadius: "99px", border: "2px solid var(--g-fg)", background: "transparent", color: "var(--g-fg)", font: "700 15px/1 'DM Sans'", cursor: "pointer" }}>{refsLabel}</button>
               </div>
               {refsOpen && (

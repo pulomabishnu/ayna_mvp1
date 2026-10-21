@@ -39,24 +39,30 @@ function FeedbackDialog({ prompt, onClose }) {
     if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
     if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
   };
-  return <div className="v6-survey-backdrop ph-no-capture ph-mask" data-ph-no-capture="true" onKeyDown={onKeyDown}>
-    <div ref={card} className="v6-survey-card" role="dialog" aria-modal="true" aria-labelledby="feedback-title">
-      <button type="button" className="v6-survey-close" aria-label="Close feedback" disabled={busy} onClick={onClose}>✕</button>
-      <h2 id="feedback-title">{done ? 'Thanks for answering.' : prompt.kind === 'purchase' ? 'Did you buy this item?' : 'How are you liking ayna?'}</h2>
-      {done ? <><p>Your anonymous answer was saved.</p><button type="button" className="v6-survey-submit" onClick={onClose}>Done</button></> : <>
-        <p className="v6-survey-sub">{prompt.kind === 'purchase' ? `${prompt.name}${prompt.variant ? `, ${prompt.variant}` : ''}` : 'A quick, optional check-in.'}</p>
-        {prompt.kind !== 'purchase' && <p className="v6-survey-sub">Answers aren’t linked to your account. Please leave out personal details.</p>}
-        {prompt.kind === 'purchase' ? <div className="v6-survey-actions">
-          <button type="button" className="v6-survey-submit" disabled={busy} onClick={() => submit('yes')}>Yes</button>
-          <button type="button" className="v6-survey-skip" disabled={busy} onClick={() => submit('no')}>No</button>
+  const purchase = prompt.kind === 'purchase';
+  return <div className="v6-survey-backdrop ay-sheet-backdrop ph-no-capture ph-mask" data-ph-no-capture="true" onKeyDown={onKeyDown}>
+    <div ref={card} className="v6-survey-card ay-sheet" role="dialog" aria-modal="true" aria-labelledby="feedback-title">
+      <div className="ay-sheet__strip" aria-hidden="true"><span>{done ? 'Saved' : purchase ? 'Quick check-in' : 'Feedback'}</span></div>
+      <button type="button" className="v6-survey-close ay-sheet__close" aria-label="Close feedback" disabled={busy} onClick={onClose}>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+      </button>
+      <h2 id="feedback-title" className="ay-sheet__title">{done ? 'Thanks for answering.' : purchase ? 'Did you buy this item?' : 'How are you liking ayna?'}</h2>
+      {done ? <><p className="ay-sheet__sub">Your anonymous answer was saved.</p><div className="ay-sheet__actions"><button type="button" className="v6-survey-submit ay-btn ay-btn--primary" onClick={onClose}>Done</button></div></> : <>
+        <p className="v6-survey-sub ay-sheet__sub">{purchase ? `${prompt.name}${prompt.variant ? `, ${prompt.variant}` : ''}` : 'A quick, optional check-in.'}</p>
+        {!purchase && <p className="v6-survey-sub ay-sheet__note">Answers aren’t linked to your account. Please leave out personal details.</p>}
+        {purchase ? <div className="v6-survey-actions ay-sheet__actions">
+          <button type="button" className="v6-survey-submit ay-btn ay-btn--primary" disabled={busy} onClick={() => submit('yes')}>Yes</button>
+          <button type="button" className="v6-survey-skip ay-btn ay-btn--secondary" disabled={busy} onClick={() => submit('no')}>No</button>
         </div> : <>
-          <div className="v6-survey-stars" role="group" aria-label="Rate ayna from 1 to 5 stars">{[1, 2, 3, 4, 5].map(value => <button key={value} type="button" className={`v6-survey-star${value <= rating ? ' is-filled' : ''}`} aria-pressed={rating === value} aria-label={`${value} star${value === 1 ? '' : 's'}`} disabled={busy} onClick={() => setRating(value)}>★</button>)}</div>
-          <textarea className="v6-survey-textarea" aria-label="Optional feedback" maxLength={600} value={feedback} disabled={busy} onChange={e => setFeedback(e.target.value)} placeholder="Anything you want to tell us? (optional)" />
-          <select className="v6-account-input v6-survey-select" aria-label="How did you hear about us?" value={referral} disabled={busy} onChange={e => setReferral(e.target.value)}><option value="">How did you hear about us? (optional)</option>{REFERRALS.map(item => <option key={item}>{item}</option>)}</select>
-          {referral === 'Other' && <input className="v6-account-input" aria-label="Where did you hear about us?" maxLength={110} value={other} disabled={busy} onChange={e => setOther(e.target.value)} />}
-          <div className="v6-survey-actions"><button type="button" className="v6-survey-submit" disabled={busy || !rating} onClick={() => submit()}>Send feedback</button><button type="button" className="v6-survey-skip" disabled={busy} onClick={onClose}>Not now</button></div>
+          <div className="v6-survey-stars ay-stars" role="group" aria-label="Rate ayna from 1 to 5 stars">{[1, 2, 3, 4, 5].map(value => <button key={value} type="button" className={`v6-survey-star ay-stars__star${value <= rating ? ' is-filled' : ''}`} aria-pressed={rating === value} aria-label={`${value} star${value === 1 ? '' : 's'}`} disabled={busy} onClick={() => setRating(value)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.6 5.5 6 .8-4.4 4.1 1.1 5.9L12 16.6l-5.3 2.9 1.1-5.9-4.4-4.1 6-.8z" /></svg></button>)}</div>
+          <label className="ay-field-label" htmlFor="ay-survey-text">Anything you want to tell us? <span>(optional)</span></label>
+          <textarea id="ay-survey-text" className="v6-survey-textarea ay-field ay-field--area" maxLength={600} value={feedback} disabled={busy} onChange={e => setFeedback(e.target.value)} placeholder="What you like, what's missing" />
+          <label className="ay-field-label" htmlFor="ay-survey-heard">How did you hear about us? <span>(optional)</span></label>
+          <select id="ay-survey-heard" className="v6-account-input v6-survey-select ay-field ay-field--select" aria-label="How did you hear about us?" value={referral} disabled={busy} onChange={e => setReferral(e.target.value)}><option value="">How did you hear about us? (optional)</option>{REFERRALS.map(item => <option key={item}>{item}</option>)}</select>
+          {referral === 'Other' && <input className="v6-account-input ay-field" aria-label="Where did you hear about us?" placeholder="Where did you hear about us?" maxLength={110} value={other} disabled={busy} onChange={e => setOther(e.target.value)} />}
+          <div className="v6-survey-actions ay-sheet__actions"><button type="button" className="v6-survey-submit ay-btn ay-btn--primary" disabled={busy || !rating} onClick={() => submit()}>Send feedback</button><button type="button" className="v6-survey-skip ay-btn ay-btn--secondary" disabled={busy} onClick={onClose}>Not now</button></div>
         </>}
-        <p role="status" className="v6-survey-status">{busy ? 'Saving…' : error}</p>
+        <p role="status" className="v6-survey-status ay-sheet__status">{busy ? 'Saving…' : error}</p>
       </>}
     </div>
   </div>;

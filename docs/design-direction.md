@@ -54,6 +54,41 @@ page must feel unmistakably ayna:
   stay calm: personality lives on marketing pages, shelves, product headers,
   dashboard feature cards and empty states.
 
+### Personality kit (Oct 21, built)
+
+Website primitives live in `src/styles/ayna-system.css` ("PERSONALITY"),
+decorations in `src/components/personality/Bits.jsx`; app equivalents in
+`src/mobile/app-direction.css` ("Personality").
+
+- `.ay-band` (+ `--pink | --sky | --espresso | --butter`, `--scallop`,
+  `--scallop-bottom`, `--grid`, `--bleed`) sets the text tokens for AA:
+  espresso on butter/pink/sky, butter on espresso. In brand dark the
+  espresso band turns butter; the accent swap keeps band and scallop in step.
+- `.ay-pagehead` turns a page header into a full-bleed band (Shop espresso,
+  Library pink, Community sky). `EdPage tone=… frame=…` does the same for
+  About (pink, stamp frame), How it works (sky, flower frame, seal), How we
+  make money (espresso), Partners (pink). Legal and form pages stay calm.
+- Paper pieces: `.ay-note` (tape, folded corner, tilt ≤ 2°, small text only),
+  `.ay-polaroid`, `.ay-clip`, `.ay-folder` (stacked sheets, binder clip,
+  pocket with a half-circle cutout), `.ay-stamp` (perforated edge),
+  `.ay-flower` (four-petal frame), `.ay-envelope` (closing letter, wax seal).
+- Badges: `Seal` (round "matched to you", once per page), `.ay-oval`
+  (oval outline sticker with an asterisk), `.ay-toggle-pill` ("ON" motif),
+  `Sticker` (line icon in a circle on a card corner).
+- `.ay-tabcard` coloured header strips for cards that present steps,
+  principles or features; `.ay-checker` strip divider; `Ribbon` marquee
+  (one per page); `.ay-pinstripe` only behind photos, never body text.
+- Shared dialogs: `.ay-sheet` (centred card on desktop, bottom sheet on
+  phones, pink header strip), `.ay-field` / `.ay-field-label`, `.ay-stars`.
+- Headings: one family token. Website `--ay-heading` (index.css), app
+  `--ay-app-heading` (app-direction.css). Nothing else names the family.
+
+Homepage order follows AIDA: hero + seal, brand ribbon, picks, "ayna is for
+you if…" (the quiz's six common needs as notes on sky), why, shop band
+(espresso, pinstriped photo strip, checker edge), step cards, evidence (oval
+badge), reads, community on pink (polaroid, posts as notes), founders in a
+folder pocket, invest, closing letter on sky.
+
 ## Surfaces (this settles "boxes vs no boxes")
 
 The founder wants information grouped so it's easy to read. The master prompt

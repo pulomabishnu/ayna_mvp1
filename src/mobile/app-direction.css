@@ -6,6 +6,8 @@
    grouped lists for settings, Spotify shelves for products.
    The prefix .ayna-mobile:is(#ay, .ayna-mobile) carries ID weight on purpose:
    it outranks the older stacked-class layers without adding another one. */
+/* The ONE heading family token for the app. Every app heading reads it. */
+:root { --ay-app-heading: 'DM Serif Display', Georgia, serif; }
 /* ===== 0. Tokens: the four surfaces ===== */
 .ayna-mobile:is(#ay,.ayna-mobile) {
   --d-page: #ffedac;
@@ -1037,3 +1039,25 @@
 /* Signed-out card on settings screens: text and button share one left edge. */
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-signedout { display: grid !important; justify-items: start !important; gap: 16px !important; text-align: left !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-signedout p { margin: 0 !important; text-align: left !important; }
+
+/* ===== Personality (design direction, "Personality", Oct 21) =====
+   Colour-block headers with a scalloped edge on Ecosystem (pink) and You
+   (sky); empty states as a taped paper card on a checker strip. Text on the
+   bands is always espresso (AA on pink and sky), in light and dark. Settings,
+   forms and lists below stay calm. */
+.ayna-mobile:is(#ay,.ayna-mobile) :is(.ayna-cabinet-stage.ay-eco-hero, .ay-you-head) { --band: #f7badd; --d-ink: #3e2723; --d-ink-2: #3e2723; --d-hair: rgba(62, 39, 35, .3); --d-group: rgba(255, 237, 172, .6); --d-feature: #3e2723; --d-on-feature: #ffedac; position: relative; margin: 0 0 24px !important; padding: 12px var(--d-gutter) 28px !important; background: var(--band) !important; color: #3e2723 !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-you-head.ay-you-head { --band: #769ebe; background-image: linear-gradient(rgba(62, 39, 35, .08) 1px, transparent 1px), linear-gradient(90deg, rgba(62, 39, 35, .08) 1px, transparent 1px) !important; background-size: 44px 44px !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) :is(.ayna-cabinet-stage.ay-eco-hero, .ay-you-head)::after { content: '' !important; display: block !important; position: absolute; left: 0; right: 0; bottom: -15px; height: 16px; background: radial-gradient(circle at 12px 0, var(--band) 11.5px, transparent 12px) 0 0 / 24px 16px repeat-x !important; pointer-events: none; z-index: 1; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-eco-hero h1, .ayna-mobile:is(#ay,.ayna-mobile) .ay-you-names h1 { font: 400 calc(36px * var(--ayna-text-scale, 1))/1.02 var(--ay-app-heading) !important; letter-spacing: -.02em !important; color: #3e2723 !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) :is(.ay-eco-hero, .ay-you-head) :is(p, span, b, a, button) { color: #3e2723; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-you-head .ay-you-avatar { border: 1.5px solid #3e2723 !important; background: #ffedac !important; color: #3e2723 !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-you-head .ay-you-progress > i { background: rgba(255, 237, 172, .7) !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-you-head .ay-you-progress > i > i { background: #3e2723 !important; }
+/* empty states: a taped paper card, the burst sticker on its corner */
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-empty:not(.is-compact) { position: relative; margin: 40px var(--d-gutter) 24px !important; padding: 28px 20px 24px !important; background: #ffedac !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; border-radius: 6px !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-empty:not(.is-compact)::before { content: ''; position: absolute; top: -12px; left: 50%; width: 84px; height: 24px; margin-left: -42px; background: rgba(247, 186, 221, .75); border-inline: 2px dotted rgba(62, 39, 35, .35); transform: rotate(-3deg); }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-empty--sky:not(.is-compact)::before, .ayna-mobile:is(#ay,.ayna-mobile) .ay-empty--mint:not(.is-compact)::before { background: rgba(118, 158, 190, .6); }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-empty:not(.is-compact) :is(h2, p) { color: #3e2723 !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-empty:not(.is-compact) .ay-btn:not(.is-ghost) { background: #3e2723 !important; color: #ffedac !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-empty:not(.is-compact) .ay-btn.is-ghost { color: #3e2723 !important; border-color: #3e2723 !important; }
+@media (prefers-reduced-motion: reduce) { .ayna-mobile:is(#ay,.ayna-mobile) .ay-empty-burst::before { animation: none !important; } }

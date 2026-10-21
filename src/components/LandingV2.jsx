@@ -11,6 +11,7 @@ import SmartSearchInput from './search/SmartSearchInput.jsx';
 import { useLatestAnnouncement } from '../hooks/useLatestAnnouncement';
 import { WEFUNDER_URL, INVEST_TERMS, TTW_DISCLAIMER, INVEST_RISK, trackInvestClick } from '../data/invest';
 import '../styles/editorial.css';
+import { Seal, Ribbon, Sticker, Envelope } from './personality/Bits.jsx';
 
 /* The website home. Story order (design direction, "Homepage"):
  *   what   hero (display, See my matches, search), partner brands, this week's picks
@@ -101,7 +102,8 @@ function Hero({ onStartQuiz, onSearch, personal = null, banner = null }) {
         <Search onSearch={onSearch} />
       </div>
       <div className="ed-hero__photos">
-        {HERO.map((p, i) => (<img key={p.src} src={p.src} alt={p.alt} style={{ objectPosition: p.pos }} {...(i === 0 ? { fetchPriority: 'high' } : { loading: 'lazy' })} />))}
+        {HERO.map((p, i) => (<span key={p.src} className="ay-frame ed-hero__ph"><img src={p.src} alt={p.alt} style={{ objectPosition: p.pos }} {...(i === 0 ? { fetchPriority: 'high' } : { loading: 'lazy' })} /></span>))}
+        <Seal className="ed-hero__seal" />
       </div>
     </section>
   );
@@ -110,19 +112,14 @@ function Hero({ onStartQuiz, onSearch, personal = null, banner = null }) {
 /* ---------- partner brands, once ---------- */
 function Brands({ onViewWaitlist }) {
   const names = PARTNER_BRANDS.map((b) => b.name);
-  const row = (hidden) => (
-    <ul aria-hidden={hidden || undefined}>
-      {names.map((t, i) => <li key={`${t}-${i}`}>{t}</li>)}
-    </ul>
-  );
   return (
-    <section className="ed-wrap" aria-labelledby="ed-brands-title">
-      <div className="ed-brands">
-        <h2 id="ed-brands-title" className="ed-brands__label">
-          <a href="/partners" onClick={(e) => { if (!onViewWaitlist || !isPlainLeftClick(e)) return; e.preventDefault(); onViewWaitlist(); }}>Brands we work with <span aria-hidden="true">→</span></a>
-        </h2>
-        <div className="ed-ticker"><div className="ed-ticker__track">{row(false)}{row(true)}</div></div>
-      </div>
+    <section className="ed-brands-band" aria-labelledby="ed-brands-title">
+      <h2 id="ed-brands-title" className="ed-sr">Brands we work with</h2>
+      <Ribbon
+        items={names}
+        label="Partner brands"
+        tab={<a className="ay-ribbon__tab" href="/partners" onClick={(e) => { if (!onViewWaitlist || !isPlainLeftClick(e)) return; e.preventDefault(); onViewWaitlist(); }}>Brands we work with <span aria-hidden="true">&nbsp;→</span></a>}
+      />
     </section>
   );
 }
@@ -171,6 +168,35 @@ function Picks({ onOpenProduct, onViewDiscovery, picks = null }) {
   );
 }
 
+/* ---------- ayna is for you if: the quiz's common needs as paper notes ----------
+   Same six needs the quiz offers first (WebIntake.jsx COMMON_NEEDS). Each note
+   searches the Shop for that need. Sky band, notes tilt at most 2 degrees. */
+const FOR_YOU = ['Period product support', 'Cramps or period pain', 'Heavy periods', 'Vaginal dryness', 'Bladder leakage or incontinence', 'Trouble sleeping'];
+const TILTS = ['-1.6deg', '1.2deg', '-0.8deg', '1.8deg', '-1.2deg', '0.9deg'];
+function ForYou({ onSearch, onStartQuiz }) {
+  return (
+    <section className="ay-band ay-band--sky ay-band--grid ay-band--scallop ed-foryou" aria-labelledby="ed-foryou-title">
+      <div className="ed-wrap">
+        <div className="ed-foryou__head">
+          <h2 id="ed-foryou-title" className="ed-h1">ayna is for you if you’re looking for…</h2>
+          <span className="ay-toggle-pill" aria-hidden="true">Personalized <b>ON</b></span>
+        </div>
+        <ul className="ed-foryou__notes">
+          {FOR_YOU.map((t, i) => (
+            <li key={t}>
+              <a className={`ay-note${i % 3 === 1 ? ' ay-note--pink' : ''}${i % 2 ? ' ay-note--fold' : ''}`} style={{ '--tilt': TILTS[i] }} href={`/shop?q=${encodeURIComponent(t)}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onSearch?.(t); }}>
+                <span className="ed-foryou__q">“{t}”</span>
+                <span className="ed-foryou__go">See matches <Arrow /></span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <Go className="ay-btn ay-btn--text" href="/quiz" onGo={onStartQuiz}>Answer six questions<Arrow /></Go>
+      </div>
+    </section>
+  );
+}
+
 /* ---------- why: one counter photo, four parts ---------- */
 const WHY = [
   { t: 'Matched to your body', d: 'See how well each product fits you, based on what you tell us.' },
@@ -184,7 +210,7 @@ function Why() {
   return (
     <section className="ed-wrap ed-sec" aria-labelledby="ed-why-title">
       <div className="ed-why">
-        <figure className="ed-why__photo">
+        <figure className="ed-why__photo ay-frame">
           <img src="/landing/hiw-ecosystem-vanity.webp" alt="A marble bathroom vanity by candlelight, skincare and makeup laid out around the sink" loading="lazy" />
           {SPOTS.map(([left, top], i) => <span key={left} className="ed-why__spot" style={{ left, top }} aria-hidden="true">{i + 1}</span>)}
         </figure>
@@ -239,6 +265,7 @@ function ShopBand({ onOpenProduct, onViewDiscovery }) {
         </div>
       </div>
       <Strip />
+      <span className="ay-checker" aria-hidden="true" />
     </section>
   );
 }
@@ -249,15 +276,15 @@ function Strip() {
       {STRIP.map((p) => (<li key={p.src}><img src={p.src} alt={hidden ? '' : p.alt} loading="lazy" /></li>))}
     </ul>
   );
-  return <div className="ed-strip" role="group" aria-label="Photographs from ayna"><div className="ed-strip__track">{list(false)}{list(true)}</div></div>;
+  return <div className="ed-strip ay-pinstripe" role="group" aria-label="Photographs from ayna"><div className="ed-strip__track">{list(false)}{list(true)}</div></div>;
 }
 
 /* ---------- how it works: these ARE a sequence ---------- */
 const STEPS = [
-  { t: 'Answer six questions', d: 'About your body and what you avoid.', src: '/landing/hiw-questions-cabinet.webp', alt: 'A woman in a white robe reaching into her bathroom cabinet', pos: '50% 35%' },
-  { t: 'We check the evidence', d: 'Across products, apps and care.', src: '/landing/hiw-evidence-reading.webp', alt: 'Two friends in glasses reading a book together in front of bookshelves', pos: '50% 40%' },
-  { t: 'Get your ecosystem', d: 'Ranked for you.', src: '/landing/hiw-ecosystem-cabinet.webp', alt: 'A medicine cabinet with shelves full of skincare and beauty products', pos: '50% 50%' },
-  { t: 'You decide', d: 'Nothing is bought until you say so.', src: '/landing/hiw-decide-basket.webp', alt: 'Looking down at a red shopping basket of products between two sneakers', pos: '50% 45%' },
+  { t: 'Answer six questions', d: 'About your body and what you avoid.', icon: 'chat', tone: '', src: '/landing/hiw-questions-cabinet.webp', alt: 'A woman in a white robe reaching into her bathroom cabinet', pos: '50% 35%' },
+  { t: 'We check the evidence', d: 'Across products, apps and care.', icon: 'book', tone: 'sky', src: '/landing/hiw-evidence-reading.webp', alt: 'Two friends in glasses reading a book together in front of bookshelves', pos: '50% 40%' },
+  { t: 'Get your ecosystem', d: 'Ranked for you.', icon: 'shelf', tone: 'espresso', src: '/landing/hiw-ecosystem-cabinet.webp', alt: 'A medicine cabinet with shelves full of skincare and beauty products', pos: '50% 50%' },
+  { t: 'You decide', d: 'Nothing is bought until you say so.', icon: 'hand', tone: 'butter', src: '/landing/hiw-decide-basket.webp', alt: 'Looking down at a red shopping basket of products between two sneakers', pos: '50% 45%' },
 ];
 function How({ onViewHowItWorks }) {
   return (
@@ -268,11 +295,16 @@ function How({ onViewHowItWorks }) {
       </header>
       <ol className="ed-steps">
         {STEPS.map((st, i) => (
-          <li key={st.t} className="ed-step">
-            <figure className="ed-step__img"><img src={st.src} alt={st.alt} style={{ objectPosition: st.pos }} loading="lazy" /><span className="ed-step__badge" aria-hidden="true">{i + 1}</span></figure>
-            <span className="ed-step__n" aria-hidden="true">{i + 1}</span>
-            <h3 className="ed-rowtitle"><span className="ed-sr">Step {i + 1}: </span>{st.t}</h3>
-            <p>{st.d}</p>
+          <li key={st.t} className="ed-step ay-tabcard">
+            <span className={`ay-tabcard__strip${st.tone ? ` ay-tabcard__strip--${st.tone}` : ''}`} aria-hidden="true">Step {i + 1}</span>
+            <Sticker icon={st.icon} />
+            <div className="ed-step__in">
+              <figure className="ed-step__img ay-frame"><img src={st.src} alt={st.alt} style={{ objectPosition: st.pos }} loading="lazy" /></figure>
+              <div>
+                <h3 className="ed-rowtitle"><span className="ed-sr">Step {i + 1}: </span>{st.t}</h3>
+                <p>{st.d}</p>
+              </div>
+            </div>
           </li>
         ))}
       </ol>
@@ -295,7 +327,8 @@ function Evidence({ onViewArticles }) {
           <p className="ed-body">Product pages grade the research on the same three-step scale, next to the sources we read. Unsupported claims are labeled, not upgraded into facts.</p>
           <Go className="ay-btn ay-btn--text" href="/library" onGo={onViewArticles}>Read our sources<Arrow /></Go>
         </div>
-        <div className="ay-group is-padded">
+        <div className="ay-group is-padded ed-evidence__group">
+          <span className="ay-oval ed-evidence__oval" aria-hidden="true">Evidence checked</span>
           <ul className="ed-rows" aria-label="The three evidence levels">
             {LEVELS.map((l) => (
               <li key={l.n} className="ed-level">
@@ -361,9 +394,9 @@ function Reads({ onViewArticle, onViewArticles }) {
 function Community({ onViewCommunity, posts = [] }) {
   const news = useLatestAnnouncement();
   return (
-    <section className="ed-sky" aria-labelledby="ed-comm-title">
+    <section className="ed-sky ay-band ay-band--pink ay-band--scallop" aria-labelledby="ed-comm-title">
       <div className="ed-wrap ed-sky__grid">
-        <figure className="ed-sky__photo"><img src="/landing/story-reviews-phones.webp" alt="Friends in a circle looking down at their phones, blue sky above" loading="lazy" /></figure>
+        <figure className="ed-sky__photo ay-polaroid" style={{ '--tilt': '-1.5deg' }}><img src="/landing/story-reviews-phones.webp" alt="Friends in a circle looking down at their phones, blue sky above" loading="lazy" /><figcaption>The ayna community</figcaption></figure>
         <div className="ed-sky__copy">
           <h2 id="ed-comm-title" className="ed-h2">Real talk about what women actually use.</h2>
           <p className="ed-body">Reviews, questions and routines from the ayna community, in one place. Ask questions, review what you use and share playlists with women who get it.</p>
@@ -378,12 +411,12 @@ function Community({ onViewCommunity, posts = [] }) {
           </article>
           {posts.length > 0 && (
             <ul className="ed-posts" aria-label="From the Powder Room">
-              {posts.slice(0, 2).map((post) => {
+              {posts.slice(0, 2).map((post, i) => {
                 const anon = post.is_anonymous || !post.author_id;
                 const who = anon ? 'Anonymous' : post.author_display_name || post.author_username || 'Community member';
                 return (
                   <li key={post.id}>
-                    <button type="button" className="ed-post" onClick={() => onViewCommunity?.()}>
+                    <button type="button" className="ed-post ay-note" style={{ '--tilt': i ? '1deg' : '-1deg' }} onClick={() => onViewCommunity?.()}>
                       <span className="ed-post__meta">From the Powder Room · {post.kind === 'question' ? 'Question' : post.kind === 'review' ? 'Review' : 'Post'} · {who}</span>
                       <span className="ed-post__body">{post.body}</span>
                     </button>
@@ -404,9 +437,13 @@ function Us({ onViewAbout }) {
   return (
     <section className="ed-wrap ed-sec" aria-labelledby="ed-us-title">
       <div className="ed-us">
-        <figure>
-          <img src="/team/ayna-founders.jpg" alt="Puloma, Eliz and Ameera, ayna's founders, sitting together in Central Park" loading="lazy" width="1800" height="1198" />
-          <figcaption className="ed-caption">Puloma, Eliz &amp; Ameera</figcaption>
+        <figure className="ay-folder ed-us__photo">
+          <span className="ay-folder__sheet" aria-hidden="true" /><span className="ay-folder__sheet" aria-hidden="true" />
+          <span className="ay-folder__photo">
+            <span className="ay-folder__clip" aria-hidden="true"><svg viewBox="0 0 46 40"><path d="M5 16h36l-5 20H10z" /><path d="M14 16V5h18v11" /></svg></span>
+            <img src="/team/ayna-founders.jpg" alt="Puloma, Eliz and Ameera, ayna's founders, sitting together in Central Park" loading="lazy" width="1800" height="1198" />
+          </span>
+          <figcaption className="ay-folder__pocket"><span className="ay-folder__title">Puloma, Eliz &amp; Ameera</span></figcaption>
         </figure>
         <div className="ed-us__copy">
           <h2 id="ed-us-title" className="ed-h2">Built by three women who wanted better answers.</h2>
@@ -435,17 +472,17 @@ function Us({ onViewAbout }) {
 /* ---------- final call to action ---------- */
 function Final({ onStartQuiz, onViewDiscovery }) {
   return (
-    <section className="ed-final ed-scallop" aria-labelledby="ed-start-title">
+    <section className="ed-final ay-band ay-band--sky ay-band--grid ay-band--scallop" aria-labelledby="ed-start-title">
       <div className="ed-wrap ed-final__in">
-        <div className="ed-final__copy">
+        <span className="ay-frame ed-final__photo"><img src="/landing/banner-bath-phone.webp" alt="A woman in a face mask relaxing in a pink tiled bath, scrolling her phone, products along the ledge" loading="lazy" width="960" height="400" /></span>
+        <Envelope className="ed-final__letter">
           <h2 id="ed-start-title" className="ed-h1">Start with six questions.</h2>
           <p className="ed-lead">Then a shop matched to you.</p>
           <div className="ed-final__cta">
             <Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>See my matches<Arrow /></Go>
             <Go className="ay-btn ay-btn--text" href="/shop" onGo={() => onViewDiscovery?.('')}>Browse the Shop</Go>
           </div>
-        </div>
-        <img src="/landing/banner-bath-phone.webp" alt="A woman in a face mask relaxing in a pink tiled bath, scrolling her phone, products along the ledge" loading="lazy" width="960" height="400" />
+        </Envelope>
       </div>
     </section>
   );
@@ -463,6 +500,7 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
       {personal?.dashboard ? personalSlot : <Brands onViewWaitlist={onViewWaitlist} />}
       {!personal?.dashboard && personalSlot}
       <Picks onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={personal?.topPicks || null} />
+      {!personal && <ForYou onSearch={onSearch} onStartQuiz={onStartQuiz} />}
       <Why />
       <ShopBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
       <How onViewHowItWorks={onViewHowItWorks} />

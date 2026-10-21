@@ -4270,7 +4270,7 @@ html body .app-container .ay-ev2__jump button { min-height: 40px; padding: 0 16p
 html body .app-container .ay-ev2__jump button:hover { background: #f7badd; }
 html body .app-container .ay-ev2__sec { scroll-margin-top: 140px; padding: 24px 28px; border: 2px solid #3e2723; border-radius: 18px; background: #fff8dd; color: #3e2723; }
 html body .app-container .ay-ev2__head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 12px; }
-html body .app-container .pdp-page--glance .ay-ev2__head h2 { margin: 0 !important; font: 400 var(--pdp-h)/1.15 'DM Serif Display', serif !important; color: inherit !important; }
+html body .app-container .pdp-page--glance .ay-ev2__head h2 { margin: 0 !important; font: 400 var(--pdp-h)/1.15 var(--ay-heading) !important; color: inherit !important; }
 html body .app-container .ay-ev2__badge { display: inline-flex; align-items: center; min-height: 26px; padding: 0 10px; border: 1.5px solid #3e2723; border-radius: 99px; font: 600 var(--ay-fs-caption)/1 var(--ay-sans); }
 html body .app-container .ay-ev2__badge.is-indep { background: #769ebe; }
 html body .app-container .ay-ev2__badge.is-brand { background: #f7badd; }
@@ -4312,7 +4312,7 @@ html body .app-container .ay-ev2 .ay-ev__rating .ay-ev2__badge { margin-left: 6p
 html body .app-container .ay-pd__drawer { border-top: 2px solid #3e2723; border-bottom: 2px solid #3e2723; }
 html body .app-container .ay-pd__drawer > summary { display: flex; align-items: center; justify-content: space-between; min-height: 64px; cursor: pointer; list-style: none; }
 html body .app-container .ay-pd__drawer > summary::-webkit-details-marker { display: none; }
-html body .app-container .pdp-page--glance .ay-pd__drawer > summary h2 { margin: 0 !important; font: 400 var(--pdp-h)/1.15 'DM Serif Display', serif !important; }
+html body .app-container .pdp-page--glance .ay-pd__drawer > summary h2 { margin: 0 !important; font: 400 var(--pdp-h)/1.15 var(--ay-heading) !important; }
 html body .app-container .ay-pd__chev { display: grid; place-items: center; width: 36px; height: 36px; border: 2px solid #3e2723; border-radius: 50%; font: 600 var(--ay-fs-card)/1 var(--ay-sans); }
 html body .app-container .ay-pd__drawer[open] .ay-pd__chev { transform: rotate(45deg); }
 html body .app-container .ay-pd__body { display: grid; gap: 22px; padding: 4px 0 28px; }
@@ -4330,7 +4330,7 @@ html body .app-container .ay-pd__sources ol { margin: 8px 0 0; padding-left: 22p
 html body .app-container .ay-pd__sources a { color: inherit; font: 600 var(--ay-fs-secondary)/1.4 var(--ay-sans); }
 @media (max-width: 600px) { html body .app-container .ay-pd__rows > div { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
 /* Same section heading size everywhere below the top. */
-html body .app-container .pdp-page--glance .pdp-below :is(.ay-compare .ay-pdp-sechead h2, .pdp-suggest .ay-pdp-sechead h2, .pdp-community-actions > h3, .ay-story--ask h2, .ay-story--ask h3) { font: 400 var(--pdp-h)/1.15 'DM Serif Display', serif !important; }
+html body .app-container .pdp-page--glance .pdp-below :is(.ay-compare .ay-pdp-sechead h2, .pdp-suggest .ay-pdp-sechead h2, .pdp-community-actions > h3, .ay-story--ask h2, .ay-story--ask h3) { font: 400 var(--pdp-h)/1.15 var(--ay-heading) !important; }
 /* Dark mode. */
 html body .app-container[data-theme='brand-dark'] .ay-ev2__jump { background: #3e2723; border-color: #ffedac; }
 html body .app-container[data-theme='brand-dark'] .ay-ev2__jump button, html body .app-container[data-theme='brand-dark'] .ay-ev2__showall, html body .app-container[data-theme='brand-dark'] .ay-fitline { color: #ffedac; border-color: #ffedac; }
