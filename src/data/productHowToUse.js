@@ -439,7 +439,7 @@ const HOW_TO_BY_PRODUCT_ID = {
       },
       {
         label: 'DivaCup: Cleaning & care',
-        url: 'https://divacup.com/cleaning-your-menstrual-cup/',
+        url: 'https://divacup.com/cleaning-tips/',
         hint: 'Between-cycle cleaning and storage.',
       },
     ],

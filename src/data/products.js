@@ -815,7 +815,7 @@ export const DIGITAL_PRODUCTS = [
         badges: ['Menopause Focus', 'Symptom Tracking'],
         verificationLinks: {
             doctor: { links: [
-                { url: 'https://www.menopause.org/for-women/menopause-faqs-expert-answers-to-frequently-asked-questions-about-menopause', text: 'NAMS – Menopause FAQs', summary: 'Clinical guidance on menopause and perimenopause care.' }
+                { url: 'https://menopause.org/for-women/expert-answers-to-frequently-asked-questions-about-menopause', text: 'NAMS – Menopause FAQs', summary: 'Clinical guidance on menopause and perimenopause care.' }
             ] },
             scientific: { links: [
                 { url: 'https://pubmed.ncbi.nlm.nih.gov/24569618/', text: 'Diary of hot flashes reported upon occurrence: results of a randomized double-blind study of raloxifene, placebo, and paroxetine (Menopause, 2014)', summary: 'Research supports structured symptom diaries for measuring menopausal hot-flash frequency and severity. This evidence supports symptom tracking generally and is not specific to Balance.' },

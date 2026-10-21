@@ -125,18 +125,18 @@ const R = {
   'p-gennev-care': {
     ...head('needs_clinician_review', 'unknown', 'Checked Gennev plans page, How Gennev works page and privacy policy (updated Jan 1 2024). Catalog "$199/consult" is the doctor follow-up price; the initial doctor visit is $250 self-pay. Insurance in-network with Aetna, Anthem, UHC and others. Prescribes hormone therapy, so clinician review. Gennev says it is a HIPAA-covered provider; the website privacy policy uses advertising cookies (interest-based ads).'),
     corrections: [
-      { field: 'pricing.price', catalog: '$199/consult', source_says: 'Doctor initial visit $250, follow-up $199 (self-pay); dietitian $199 initial / $119 follow-up; insurance accepted', source_url: 'https://www.gennev.com/how-gennev-works' },
+      { field: 'pricing.price', catalog: '$199/consult', source_says: 'Doctor initial visit $250, follow-up $199 (self-pay); dietitian $199 initial / $119 follow-up; insurance accepted', source_url: 'https://gennev.com/learn/menopause-integrated-care/' },
     ],
     facts: {
-      'identity.purchase_url': f('https://www.gennev.com/how-gennev-works', 'Gennev plans page', 'https://www.gennev.com/how-gennev-works'),
+      'identity.purchase_url': f('https://gennev.com/learn/menopause-integrated-care/', 'Gennev plans page', 'https://gennev.com/learn/menopause-integrated-care/'),
       'identity.variant': f('Virtual menopause care: 30-minute visits with menopause-trained doctors, plus dietitians, health coaching and mental health care', 'How Gennev works', 'https://gennev.com/patients/how-gennev-works/'),
-      'pricing.price': f('Self-pay: doctor initial $250, follow-up $199; dietitian initial $199, follow-up $119. Insured: usual copay/deductible', 'Gennev plans page', 'https://www.gennev.com/how-gennev-works'),
-      'pricing.availability': f('Video visits in all 50 states; in-network with Aetna, Anthem, S&S Healthcare and United/UHC; Cigna, EmblemHealth and GHI out-of-network', 'Gennev plans page', 'https://www.gennev.com/how-gennev-works'),
-      'composition.ingredients': f('Telehealth service; doctors may prescribe hormone therapy or FDA-approved non-hormonal medications and recommend supplements', 'Gennev plans page', 'https://www.gennev.com/how-gennev-works'),
+      'pricing.price': f('Self-pay: doctor initial $250, follow-up $199; dietitian initial $199, follow-up $119. Insured: usual copay/deductible', 'Gennev plans page', 'https://gennev.com/learn/menopause-integrated-care/'),
+      'pricing.availability': f('Video visits in all 50 states; in-network with Aetna, Anthem, S&S Healthcare and United/UHC; Cigna, EmblemHealth and GHI out-of-network', 'Gennev plans page', 'https://gennev.com/learn/menopause-integrated-care/'),
+      'composition.ingredients': f('Telehealth service; doctors may prescribe hormone therapy or FDA-approved non-hormonal medications and recommend supplements', 'Gennev plans page', 'https://gennev.com/learn/menopause-integrated-care/'),
       'safety.privacy': f('Gennev says it is a healthcare provider that must comply with HIPAA; health information is covered by a separate Notice of Privacy Practices. Website policy: uses advertising cookies for interest-based ads (opt-out offered); does not currently disclose personal info to third parties for their direct marketing.', 'Gennev privacy policy (Jan 1 2024)', 'https://gennev.com/legal/privacy-policy'),
       'safety.regulatory_status': f('Telehealth medical practice with licensed, board-certified doctors (per brand)', 'How Gennev works', 'https://gennev.com/patients/how-gennev-works/'),
       'safety.medication_interactions': f('Prescriptions are made by a clinician after a health history questionnaire and visit; follow-ups review dosing (per brand). Share all medications with the doctor.', 'How Gennev works', 'https://gennev.com/patients/how-gennev-works/'),
-      'health.intended_use': f('Care for perimenopause through post-menopause symptoms: doctor visits, prescriptions (including HRT), nutrition and coaching', 'Gennev plans page', 'https://www.gennev.com/how-gennev-works'),
+      'health.intended_use': f('Care for perimenopause through post-menopause symptoms: doctor visits, prescriptions (including HRT), nutrition and coaching', 'Gennev plans page', 'https://gennev.com/learn/menopause-integrated-care/'),
     },
   },
   // ------------------------------------------------------------ sex tech
@@ -214,7 +214,7 @@ const R = {
       'safety.warnings': f(`Machine wash cold, gentle; no bleach, fabric softener, dryer heat or ironing. ${padWarnFda}`, 'Knix product page + FDA: Pads and Liners', 'https://knix.ca/products/super-leakproof-no-show-high-rise'),
       'safety.recalls': f('No recall found. Separate matter: Knix settled a $1.4M class action alleging its "PFAS-free" marketing was misleading (purchases 2020-2022).', 'Consumer Action lawsuit summary', 'https://www.consumer-action.org/lawsuits/article/knix-wear', 'regulatory'),
       ...padFda(),
-      'health.intended_use': f('Reusable absorbent underwear for periods and light bladder leaks', 'Knix product page (knix.ca)', 'https://knix.ca/products/leak-proof-high-rise'),
+      'health.intended_use': f('Reusable absorbent underwear for periods and light bladder leaks', 'Knix product page (knix.ca)', 'https://web.archive.org/web/20240124072054/https://knix.ca/products/leak-proof-high-rise'),
     },
   },
   'p-bambody-underwear': {

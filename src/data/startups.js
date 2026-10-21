@@ -17,7 +17,7 @@ export const STARTUPS = [
         stage: 'FDA-cleared, shipping soon',
         productReleased: false,
         spotsLeft: 340,
-        url: 'https://qvin.com/',
+        url: '',
         image: 'https://www.nonwovens-industry.com/wp-content/uploads/sites/11/2025/08/796_main-4.jpg'
     },
     {

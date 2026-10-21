@@ -1475,8 +1475,8 @@ export const PRODUCT_RESEARCH_CORE = {
         "Watch the intro video and do the first exercise on reshaping your thinking.",
         "Do a short guided session each day, and use the journal and check-ins to track how you feel."
       ],
-      "sourceUrl": "https://www.suicideandco.org/support-links/bloom-app",
-      "sourceLabel": "Suicide&Co: Bloom app overview"
+      "sourceUrl": null,
+      "sourceLabel": null
     },
     "warnings": [
       "An app may not replace a mental health professional.",
@@ -2356,8 +2356,8 @@ export const PRODUCT_RESEARCH_CORE = {
         "Skip fabric conditioner.",
         "Line dry or air dry, and don't tumble dry."
       ],
-      "sourceUrl": "https://wuka.co.uk/products/wuka-ultimate-midi-brief-heavy-overnight",
-      "sourceLabel": "WUKA: Ultimate Midi Brief, Heavy Overnight Flow"
+      "sourceUrl": null,
+      "sourceLabel": null
     },
     "warnings": [
       "Wear one pair for up to 8 hours at a time.",
@@ -3060,7 +3060,7 @@ export const PRODUCT_RESEARCH_CORE = {
         "Reapply as often as you like.",
         "Replace the cap and store the tube at room temperature."
       ],
-      "sourceUrl": "https://www.ulta.com/p/mini-lets-spin-intimacy-gel-pimprod2052232",
+      "sourceUrl": "https://www.re-spin.com/products/mini-let-s-spin™-intimacy-gel",
       "sourceLabel": "Ulta: Joylux LET'S SPIN Intimacy Gel"
     },
     "effectiveness": "ayna didn't find a published study of this gel, so this is about the product type. In a 2018 trial of 302 postmenopausal women, a nonprescription vaginal moisturizer, low-dose vaginal estrogen, and a plain placebo gel all eased dryness and pain with sex about equally over 12 weeks. Small trials of hyaluronic acid vaginal gels found them roughly as helpful as estrogen for dryness, though those trials had real limitations.",
@@ -4408,13 +4408,13 @@ export const PRODUCT_RESEARCH_CORE = {
       "No method works perfectly, so pregnancy can still happen even with correct use."
     ],
     "warningsSource": {
-      "url": "https://www.fda.gov/NewsEvents/Newsroom/PressAnnouncements/ucm616511.htm",
+      "url": "https://www.accessdata.fda.gov/cdrh_docs/reviews/DEN170052.pdf",
       "label": "FDA (2018): FDA allows marketing of first direct-to-consumer app for contraceptive use"
     },
     "effectiveness": "For this app specifically: in the studies FDA reviewed (15,570 women), about 1.8 in 100 got pregnant in a year with perfect use and 6.5 in 100 with typical use. A 2021 study of 5,879 US users found similar numbers: a typical-use rate of 6.2 and a perfect-use rate of 2.0 pregnancies per 100 women per year.",
     "effectivenessSources": [
       {
-        "url": "https://www.fda.gov/NewsEvents/Newsroom/PressAnnouncements/ucm616511.htm",
+        "url": "https://www.accessdata.fda.gov/cdrh_docs/reviews/DEN170052.pdf",
         "label": "FDA (2018): First direct-to-consumer app for contraceptive use",
         "summary": "Reports a 1.8% perfect-use and 6.5% typical-use yearly failure rate from clinical studies of 15,570 women."
       },
@@ -4787,8 +4787,8 @@ export const PRODUCT_RESEARCH_CORE = {
         "Throw the wipe in the trash rather than flushing it.",
         "Stop using it if a rash or discomfort develops."
       ],
-      "sourceUrl": "https://www.ulta.com/p/unscented-gentle-soothing-wipes-pimprod2007177",
-      "sourceLabel": "Ulta Beauty: SweetSpot Labs Gentle Soothing Wipes"
+      "sourceUrl": null,
+      "sourceLabel": null
     },
     "warnings": [
       "For external use only.",
@@ -4797,16 +4797,11 @@ export const PRODUCT_RESEARCH_CORE = {
       "Keep out of the reach and sight of children."
     ],
     "warningsSource": {
-      "url": "https://www.ulta.com/p/unscented-gentle-soothing-wipes-pimprod2007177",
+      "url": null,
       "label": "SweetSpot Labs Unscented Gentle Soothing Wipes label text (Ulta product listing)"
     },
     "communityReview": "Reviewers often say the wipes feel gentle and soothing, leave skin soft without drying it out, and are handy to carry. Common complaints are a scent some find strong or artificial, wipes that feel thin or dry, occasional irritation or burning, and a small count for the price.",
-    "communityReviewSources": [
-      {
-        "url": "https://www.ulta.com/p/unscented-gentle-soothing-wipes-pimprod2007177",
-        "label": "Ulta Beauty customer reviews: SweetSpot Labs Vanilla Blossom Gentle Soothing Wipes"
-      }
-    ]
+    "communityReviewSources": []
   },
   "p-kindra-lotion": {
     "whoItsFor": [
@@ -5122,7 +5117,7 @@ export const PRODUCT_RESEARCH_CORE = {
         "Take them off before you nurse.",
         "Don't combine them with other nipple creams or treatments."
       ],
-      "sourceUrl": "https://www.naturalresources-sf.com/products/silverette-silver-nursing-cups",
+      "sourceUrl": "https://jilliansdrawers.com/products/silverette-silver-nursing-cups",
       "sourceLabel": "Silverette Nursing Cups directions (Natural Resources)"
     },
     "warnings": [
@@ -5241,7 +5236,7 @@ export const PRODUCT_RESEARCH_CORE = {
       "Keep it away from heat and open flame."
     ],
     "warningsSource": {
-      "url": "https://well.ca/products/leachco-snoogle-chic-total-body-pillow_129572.html",
+      "url": "https://www.walmart.com/ip/37199687",
       "label": "Well.ca: Leachco Snoogle Chic Total Body Pillow (label safety precautions, retailer copy)"
     }
   },

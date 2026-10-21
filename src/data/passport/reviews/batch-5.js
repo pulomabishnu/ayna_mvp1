@@ -181,7 +181,6 @@ const WINX = {
   brand: 'https://hellowinx.com/products/uti-tests',
   retail: 'https://hannaford.com/groceries/product/winx-health-uti-test-treat-3-ct-box/370420',
   accel: 'https://buynow.accelpay.io/products/winx-health-uti-test-treat-instant-results-rx-access',
-  time: 'https://redesign.time.com/7094898/winx-health-uti-test-and-treat',
   aafp: 'https://aafp.org/afp/2006/0101/p129.html',
 };
 R['p-winx-uti-test-treat'] = {
@@ -200,7 +199,6 @@ R['p-winx-uti-test-treat'] = {
     'health.intended_use': f('At-home screening for a urinary tract infection with results in about 2 minutes; if positive, optional online doctor visit that may lead to a same-day prescription chosen by the physician', 'Winx product page + Hannaford box text', WINX.brand),
     'evidence.sources': f([
       { title: 'AAFP: Urine Dipstick for Diagnosing Urinary Tract Infection (2006)', url: WINX.aafp, evidence_type: 'clinical_guideline', supports: 'Dipstick accuracy in women (about 75% sensitive, 82% specific in symptomatic women); a negative result does not reliably rule out UTI' },
-      { title: 'TIME Best Inventions: Winx UTI Test + Treat', url: WINX.time, evidence_type: 'expert_guidance', supports: 'How the kit works; optional video visit costs about $15 extra' },
     ], 'AAFP + TIME', WINX.aafp, 'clinical_guidance'),
     'evidence.claims': f([
       { claim: 'Urine dipstick tests can screen for UTI in women', strength: 'moderate', evidence_type: 'clinical_guideline', source_url: WINX.aafp, product_specific: false },
@@ -630,7 +628,7 @@ R['p-always-discreet-boutique-liners'] = {
 // Period underwear (catalog entries are brand-level, no single variant)
 // ---------------------------------------------------------------------------
 const PU = {
-  wuka: 'https://wuka.co.uk/products/stretch-cotton-midi-brief-heavy',
+  wuka: 'https://web.archive.org/web/20250908030556/https://wuka.co.uk/products/stretch-cotton-midi-brief-heavy',
   tbxBlog: 'https://tomboyx.com/blogs/news/pfas-menstrual-underwear-and-the-measures-we-take',
   tbx: 'https://tomboyx.com/products/first-line-period-4-5-trunks-x-black',
   dk: 'https://www.dearkate.com/pages/faqs',

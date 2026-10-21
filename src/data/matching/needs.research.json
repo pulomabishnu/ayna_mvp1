@@ -1380,7 +1380,7 @@
     "grade": "B",
     "sources": [
      "https://www.reproductivefacts.org/news-and-publications/fact-sheets-and-infographics/ovulation-detection/",
-     "https://www.fda.gov/NewsEvents/Newsroom/PressAnnouncements/ucm616511.htm"
+     "https://www.accessdata.fda.gov/cdrh_docs/reviews/DEN170052.pdf"
     ]
    },
    {
@@ -1407,7 +1407,7 @@
   ],
   "caution": [
    "LH and saliva ovulation tests must not be used to prevent pregnancy (FDA https://www.fda.gov/medical-devices/home-use-tests/ovulation-urine-test)",
-   "Natural Cycles is not for people on hormonal birth control or for whom pregnancy would be high-risk (FDA https://www.fda.gov/NewsEvents/Newsroom/PressAnnouncements/ucm616511.htm)"
+   "Natural Cycles may not be right for people for whom pregnancy would be high-risk, and pregnancy risk is higher within 60 days of stopping hormonal birth control (FDA https://www.accessdata.fda.gov/cdrh_docs/reviews/DEN170052.pdf)"
   ],
   "see_a_clinician_if": [
    "no LH surge detected in 2 or more consecutive cycles, suggesting an ovulation problem (ASRM https://integration.reproductivefacts.org/globalassets/_rf/news-and-publications/bookletsfact-sheets/english-pdf/ovulation_detection_factsheet.pdf)",
@@ -4502,7 +4502,7 @@
     "type": "FDA-cleared contraception app (BBT-based)",
     "grade": "A",
     "sources": [
-     "https://www.fda.gov/NewsEvents/Newsroom/PressAnnouncements/ucm616511.htm",
+     "https://www.accessdata.fda.gov/cdrh_docs/reviews/DEN170052.pdf",
      "https://www.fda.gov/media/150299/download"
     ]
    },
@@ -4523,11 +4523,11 @@
   ],
   "caution": [
    "Combined pill/patch/ring require blood pressure evaluation before starting (CDC: https://www.cdc.gov/reproductivehealth/contraception/pdf/FP-and-Covid-19-Fact-Sheet_Final.pdf)",
-   "Contraception apps are not for those whose pregnancy would be high-risk, or those on hormonal methods (FDA: https://www.fda.gov/NewsEvents/Newsroom/PressAnnouncements/ucm616511.htm)",
+   "Contraception apps may not be right for those whose pregnancy would be high-risk, and are less reliable within 60 days of stopping hormonal methods (FDA: https://www.accessdata.fda.gov/cdrh_docs/reviews/DEN170052.pdf)",
    "Only condoms protect against STIs (FDA: https://www.fda.gov/media/150299/download)"
   ],
   "see_a_clinician_if": [
-   "Pregnancy would pose a serious health risk (FDA: https://www.fda.gov/NewsEvents/Newsroom/PressAnnouncements/ucm616511.htm)"
+   "Pregnancy would pose a serious health risk (FDA: https://www.accessdata.fda.gov/cdrh_docs/reviews/DEN170052.pdf)"
   ],
   "catalog_gaps": [
    "Condoms (external and internal)",
@@ -4569,7 +4569,7 @@
    }
   ],
   "caution": [
-   "Contraception apps and hormonal methods give no STI protection (FDA: https://www.fda.gov/NewsEvents/Newsroom/PressAnnouncements/ucm616511.htm)",
+   "Contraception apps and hormonal methods give no STI protection (FDA: https://www.accessdata.fda.gov/cdrh_docs/reviews/DEN170052.pdf)",
    "At-home STI tests are not a substitute for a healthcare visit (FDA: https://www.accessdata.fda.gov/cdrh_docs/reviews/DEN240020.pdf)"
   ],
   "see_a_clinician_if": [

@@ -18,7 +18,7 @@ export const indiana = {
       "id": "iu-cva",
       "name": "Office for Sexual Violence Prevention and Victim Advocacy (Confidential Victim Advocates)",
       "category": "confidential",
-      "sourceUrl": "https://studentaffairs.indiana.edu/health-safety/sexual-violence/index.html",
+      "sourceUrl": "https://studentlife.indiana.edu/care-advocacy/sexual-violence/index.html",
       "sourceLabel": "IU Student Affairs: Sexual Violence Support",
       "lastVerified": "2026-10-01",
       "description": "Support for IU Bloomington students affected by sexual assault, harassment, relationship violence, or stalking. Confidential victim advocates can help with safety, academic, and university concerns and with making a report if you choose.",
@@ -46,7 +46,7 @@ export const indiana = {
       "id": "iu-police",
       "name": "IU Police Department",
       "category": "safety",
-      "sourceUrl": "https://studentaffairs.indiana.edu/health-safety/sexual-violence/index.html",
+      "sourceUrl": "https://studentlife.indiana.edu/care-advocacy/sexual-violence/index.html",
       "sourceLabel": "IU Student Affairs: Sexual Violence Support",
       "lastVerified": "2026-10-01",
       "alsoIn": [

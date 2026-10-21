@@ -406,7 +406,7 @@ export default [
   "strength": "secondary",
   "grade": "C",
   "rationale": "Temperature/cycle logging can flag a late period but does not replace an hCG test or clinician evaluation.",
-  "source_url": "https://www.fda.gov/NewsEvents/Newsroom/PressAnnouncements/ucm616511.htm",
+  "source_url": "https://www.accessdata.fda.gov/cdrh_docs/reviews/DEN170052.pdf",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1226,7 +1226,7 @@ export default [
   "strength": "primary",
   "grade": "A",
   "rationale": "FDA-authorized (De Novo 2018) BBT-based algorithm that identifies fertile days; BBT confirms ovulation only after it happens.",
-  "source_url": "https://www.fda.gov/NewsEvents/Newsroom/PressAnnouncements/ucm616511.htm",
+  "source_url": "https://www.accessdata.fda.gov/cdrh_docs/reviews/DEN170052.pdf",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -5096,7 +5096,7 @@ export default [
   "strength": "primary",
   "grade": "A",
   "rationale": "FDA De Novo-authorized contraception app with 1.8% perfect-use and 6.5% typical-use failure in 15,570 women; no STI protection.",
-  "source_url": "https://www.fda.gov/NewsEvents/Newsroom/PressAnnouncements/ucm616511.htm",
+  "source_url": "https://www.accessdata.fda.gov/cdrh_docs/reviews/DEN170052.pdf",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },

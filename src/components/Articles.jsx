@@ -366,7 +366,7 @@ const ARTICLES = [
         <p><strong>When to seek care:</strong> Any bleeding after your periods have stopped for 12 months should always be checked. Also see a clinician if hot flashes, sleep problems or mood changes are getting in the way of daily life.</p>
         <p><strong>Sources:</strong></p>
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
-          <li><a href="https://www.menopause.org/for-women/menopause-faqs-expert-answers-to-frequently-asked-questions-about-menopause" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>NAMS – Menopause FAQs</a></li>
+          <li><a href="https://menopause.org/for-women/expert-answers-to-frequently-asked-questions-about-menopause" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>NAMS – Menopause FAQs</a></li>
           <li><a href="https://medlineplus.gov/hormonereplacementtherapy.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>MedlinePlus – Menopausal hormone therapy</a></li>
           <li><a href="https://www.acog.org/womens-health/faqs/the-menopause-years" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – The menopause years</a></li>
         </ul>
