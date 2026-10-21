@@ -45,11 +45,7 @@ html:not([data-ay-theme='dark']) body:has(.app-container:not([data-theme='dark']
 .app-container:not([data-theme='dark']) :is(h1, h2, h3) em { font-style: italic; }
 .app-container .app-nav.app-nav a.app-nav__logo, .app-container .site-footer .site-footer__logo { font-family: var(--ay-font-logo) !important; }
 
-/* vintage grain over everything, light theme only */
-html:not([data-ay-theme='dark']) body:has(.app-container:not([data-theme='dark']))::after {
-  content: ''; position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: .13;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .24 0 0 0 0 .15 0 0 0 0 .14 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
+/* vintage grain: one static tile for both themes, src/styles/finish.css */
 @media print { body::after { display: none !important; } }
 
 /* =====================================================================

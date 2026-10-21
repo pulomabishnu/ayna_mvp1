@@ -13,7 +13,7 @@
   --grain-light: url('/images/ayna-grain-light.png');
   --grain-dark: url('/images/ayna-grain-dark.png');
   --grain-opacity: .55;
-  --grain-opacity-dark: .45;
+  --grain-opacity-dark: .35;
 }
 
 /* Website: the old SVG grain (light only) is replaced by this one. */

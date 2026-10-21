@@ -82,10 +82,7 @@
 .ayna-mobile[data-screen='community'] { --ay-section: var(--ay-mint); }
 .ayna-mobile { --ay-gutter: 20px; }
 
-/* Paper grain over the whole app, subtle, never blocks taps */
-.ayna-mobile.ayna-mobile::after { background: url('/images/ayna-grain-mobile.svg') repeat !important; background-size: 180px 180px !important; opacity: .09 !important; mix-blend-mode: multiply !important; z-index: 2147483000 !important; pointer-events: none !important; }
-.ayna-mobile[data-theme='dark']::after { mix-blend-mode: screen !important; opacity: .06 !important; }
-@media (prefers-reduced-transparency: reduce) { .ayna-mobile.ayna-mobile::after { display: none; } }
+/* The app's film grain lives in app-motion.css (one layer, see src/styles/finish.css). */
 
 /* Dark mode: black canvas, white type, neon versions of the four accents. */
 .ayna-mobile[data-theme='dark'] {

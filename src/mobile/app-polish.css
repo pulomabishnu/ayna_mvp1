@@ -360,9 +360,6 @@ html body:has(.ayna-mobile[data-preview='true']) { background: #3e2723 !importan
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ay-shelf-head h2 { color: var(--area-ink, #3e2723) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-ecosystem-chart-segment[stroke='#3E2723'] { stroke: #ffedac; }
 
-/* website grain over the whole app (brand kit: light vintage grain) */
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile::after { display: block !important; content: ''; position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; opacity: .12;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .24 0 0 0 0 .15 0 0 0 0 .14 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-preview='true']::after { position: absolute; }
+/* website grain: moved to app-motion.css (one static tile, src/styles/finish.css) */
 @media print { .ayna-mobile::after { display: none !important; } }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-ecosystem-chart-swatch { box-shadow: 0 0 0 1.5px var(--r-line-strong) !important; }
