@@ -1059,7 +1059,7 @@ export default function MobileApp() {
     <div className="ayna-mobile" data-theme={resolvedTheme} data-screen={screen} data-preview={window.location.pathname === '/mobile-preview' ? 'true' : undefined} style={{ '--ayna-text-scale': textScale }} onTouchStart={handleMainTouchStart} onTouchEnd={handleMainTouchEnd}>
       <AskContext.Provider value={nav.onAskAyna}>
       <Screen
-        key={screen === 'community' ? communitySeed?.token || 'community' : screen === 'signin' ? `signin-${authMode}` : screen}
+        key={screen === 'community' ? communitySeed?.token || 'community' : screen === 'signin' ? `signin-${authMode}` : screen === 'browse' && browseQuery ? `browse-${browseQuery}` : screen}
         {...nav}
         seedKind={communitySeed?.kind}
         seedProductId={communitySeed?.productId}
@@ -1269,6 +1269,14 @@ export default function MobileApp() {
         name={resolvedName}
         onClose={() => setAskAynaOpen(false)}
         onNavigateToDiscovery={() => { setAskAynaOpen(false); setScreen('browse'); }}
+        products={myProducts}
+        reads={rankedEcosystemReads}
+        hasHealthData={!!authUser && health.connected.length > 0}
+        resolveProduct={(id) => myProducts.find((p) => String(p.id) === String(id)) || browseProducts.find((p) => String(p.id) === String(id)) || null}
+        onOpenProduct={(product) => { setAskAynaOpen(false); setOverlay({ type: 'product', item: product }); }}
+        onBrowse={(intent) => { setAskAynaOpen(false); setOverlay(null); setBrowseQuery(String(intent?.query || intent?.category || '').replace(/[-_]/g, ' ')); setScreen('browse'); }}
+        onOpenDashboard={hasEcosystem ? () => { setAskAynaOpen(false); setOverlay(null); setEcoTab('dashboard'); setScreen('eco'); } : null}
+        onOpenRead={(article) => { setAskAynaOpen(false); setReadArticleIds((ids) => ids.includes(article.id) ? ids : [...ids, article.id]); setOverlay({ type: 'article', item: article }); }}
         onViewRecommendations={() => { setAskAynaOpen(false); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
         onRequireAuth={(feature) => requestAuth(feature || 'Ask ayna', () => { setScreen(screen); setAskAynaOpen(true); })}
       />

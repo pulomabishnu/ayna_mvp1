@@ -7,6 +7,8 @@ import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 import { apiUrl } from '../../utils/apiUrl.js';
 import ShareAnswerButton from '../../components/ShareAnswerButton.jsx';
 import { questionForAnswer } from '../../utils/sharedAnswer.js';
+import AskFollowUps from '../../components/AskFollowUps.jsx';
+import { chipsFor, followUpRequestFields } from '../../utils/askFollowUps.js';
 
 /**
  * Mobile port of ProfileChatbot's merge/summary logic
@@ -69,11 +71,19 @@ export default function AskAynaModal({
   chatHistory = [],
   onChatHistoryUpdate,
   name,
-  onNavigateToDiscovery,
   onViewRecommendations,
   onRequireAuth,
   seed = null,
   onClose = null,
+  // Follow-ups: what she owns and can read, and where each chip goes.
+  products = [],
+  reads = [],
+  hasHealthData = false,
+  resolveProduct = null,
+  onOpenProduct = null,
+  onBrowse = null,
+  onOpenDashboard = null,
+  onOpenRead = null,
 }) {
   const [messages, setMessages] = useState(chatHistory.length > 0 ? chatHistory : buildWelcome(name));
   const [input, setInput] = useState('');
@@ -86,6 +96,7 @@ export default function AskAynaModal({
   const [screenContext, setScreenContext] = useState('');
   const seedDone = useRef(null);
   const bottomRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -121,7 +132,10 @@ export default function AskAynaModal({
   }, [open, seed, session]);
 
   useEffect(() => {
-    if (open) bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Scroll only the message list: scrollIntoView also scrolls every
+    // ancestor, which pushed the whole app shell up behind the sheet.
+    const list = bottomRef.current?.parentElement;
+    if (open && list) list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' });
     // Reopening preserves the existing scroll position.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
@@ -147,6 +161,7 @@ export default function AskAynaModal({
           profileSummary: summarizeProfile(profile || {}),
           chatHistory: messages.slice(-6),
           ...(context ? { screenContext: context } : {}),
+          ...followUpRequestFields({ products, reads, hasHealthData }),
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -154,7 +169,7 @@ export default function AskAynaModal({
       if (res.status === 429) throw Object.assign(new Error('weekly_limit_reached'), { code: 'weekly_limit_reached' });
       if (!res.ok || !data?.answer) throw new Error(data?.error || 'Could not get an answer right now.');
 
-      const newMessages = [...messagesWithUser, { role: 'assistant', text: data.answer }];
+      const newMessages = [...messagesWithUser, { role: 'assistant', text: data.answer, followUps: Array.isArray(data.followUps) ? data.followUps : [] }];
 
       const merged = mergeProfileUpdate(profile || {}, data.profileUpdate || {});
       if (merged) {
@@ -167,8 +182,12 @@ export default function AskAynaModal({
         newMessages.push({ role: 'system', text: `Updated your profile, ${parts.join(' · ')}.`, showViewRecommendations: true });
       }
 
-      if (data.browseIntent?.category && onNavigateToDiscovery) {
-        onNavigateToDiscovery();
+      // A browse suggestion is now a chip under the answer (she reads the
+      // answer first), not an automatic jump to Shop.
+      const last = newMessages[messagesWithUser.length];
+      if (data.browseIntent?.category && !last.followUps.some((f) => f.type === 'browse')) {
+        const cat = String(data.browseIntent.category).slice(0, 40);
+        last.followUps = [{ type: 'browse', intent: { category: cat }, label: `More ${cat.replace(/[-_]/g, ' ')}` }, ...last.followUps];
       }
 
       setMessages(newMessages);
@@ -184,6 +203,15 @@ export default function AskAynaModal({
     } finally {
       setSending(false);
     }
+  };
+
+  const runFollowUp = (f) => {
+    if (f.type === 'ask') { send(f.text); return; }
+    if (f.type === 'ask_else') { inputRef.current?.focus({ preventScroll: true }); return; }
+    if (f.type === 'open_product') { const p = resolveProduct?.(f.productId); if (p) onOpenProduct?.(p); return; }
+    if (f.type === 'browse') { onBrowse?.(f.intent || {}); return; }
+    if (f.type === 'open_dashboard') { onOpenDashboard?.(); return; }
+    if (f.type === 'open_library') { const a = reads.find((r) => r.id === f.articleId); if (a) onOpenRead?.(a); }
   };
 
   const handleSend = (e) => {
@@ -258,6 +286,16 @@ export default function AskAynaModal({
                 surface="app"
               />
             )}
+            {m.role === 'assistant' && questionForAnswer(messages, i) && (
+              <AskFollowUps
+                chips={chipsFor(m.followUps, {
+                  hasDashboard: !!onOpenDashboard,
+                  canOpen: (f) => (f.type === 'open_product' ? !!(onOpenProduct && resolveProduct?.(f.productId)) : !!(onOpenRead && reads.some((r) => r.id === f.articleId))),
+                })}
+                disabled={sending}
+                onAction={runFollowUp}
+              />
+            )}
             {m.showViewRecommendations && onViewRecommendations && (
               <div
                 onClick={onViewRecommendations}
@@ -300,6 +338,7 @@ export default function AskAynaModal({
         }}
       >
         <input
+          ref={inputRef}
           type="text"
           className="ay-ask-input"
           value={input}

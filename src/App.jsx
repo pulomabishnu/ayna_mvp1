@@ -1439,6 +1439,16 @@ function App() {
   const handleOpenDeleteAccount = () => setCurrentView('delete-account');
   const handleViewWaitlist = () => setCurrentView('waitlist');
   const handleViewEcosystem = () => setCurrentView('ecosystem');
+  // Ecosystem on its Dashboard tab (?view=dashboard, read by EcosystemViewTabs).
+  const handleViewEcosystemDashboard = () => {
+    const wasThere = currentViewRef.current === 'ecosystem';
+    setCurrentView('ecosystem');
+    try {
+      window.history.replaceState(window.history.state, '', `${VIEW_TO_PATH.ecosystem}?view=dashboard`);
+      // Already on Ecosystem: the tabs are mounted, so tell them the URL changed.
+      if (wasThere) window.dispatchEvent(new PopStateEvent('popstate', { state: window.history.state }));
+    } catch { /* history unavailable: Ecosystem opens on Products */ }
+  };
   const handleViewWishlist = () => {
     if (!user) {
       setPendingAction('saved');
@@ -2982,6 +2992,12 @@ function App() {
           disabled={false}
           onNavigateToDiscovery={handleViewDiscovery}
           onViewRecommendations={() => handleViewEcosystem()}
+          products={myProducts}
+          hasHealthData={!!user && health.connected.length > 0}
+          resolveProduct={(id) => myProducts[id] || Object.values(myProducts).find((p) => String(p?.id) === String(id)) || getProductById(id) || null}
+          onOpenProduct={(product) => handleOpenProduct(product, { source: 'ask_followup' })}
+          onOpenDashboard={user ? handleViewEcosystemDashboard : null}
+          onOpenRead={handleViewArticle}
         />
       )}
       {/* Outside the currentView switch on purpose — the same bar on every

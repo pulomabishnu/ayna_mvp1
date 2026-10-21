@@ -1,0 +1,59 @@
+/* Ask ayna follow-ups: outline chips under an answer (app sheet + website panel).
+   Chips are an allowed pill use (actions in a chip row). Brand colours only:
+   espresso outline on the page colour, pink fill on press. */
+.ay-followups {
+  --fu-ink: #3e2723;
+  --fu-bg: transparent;
+  --fu-press: #f7badd;
+  --fu-press-ink: #3e2723;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+  margin: 10px 0 2px;
+}
+/* The website panel stays butter in dark mode, so only the app sheet flips. */
+.ayna-mobile[data-theme='dark'] .ay-followups {
+  --fu-ink: #ffedac;
+  --fu-press: #f7badd;
+  --fu-press-ink: #3e2723;
+}
+.ay-followups .ay-followup.ay-followup {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  max-width: 100%;
+  margin: 0;
+  padding: 6px 14px;
+  border: 1.5px solid var(--fu-ink);
+  border-radius: 999px;
+  background: var(--fu-bg);
+  color: var(--fu-ink);
+  font: 600 14px/1.25 'DM Sans', var(--ayna-font-ui, system-ui), sans-serif;
+  letter-spacing: 0;
+  text-transform: none;
+  text-align: left;
+  box-shadow: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.ay-followups .ay-followup__label {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ay-followups .ay-followup__icon { flex: none; font-weight: 500; }
+.ay-followups .ay-followup.is-else { border-style: dashed; }
+.ay-followups .ay-followup:hover:not(:disabled) { background: color-mix(in srgb, var(--fu-ink) 8%, transparent); }
+.ay-followups .ay-followup:active:not(:disabled) { background: var(--fu-press); color: var(--fu-press-ink); border-color: var(--fu-press-ink); }
+.ay-followups .ay-followup:focus-visible { outline: 3px solid var(--fu-ink); outline-offset: 2px; }
+.ay-followups .ay-followup:disabled { opacity: 0.5; cursor: default; }
+@media (prefers-reduced-motion: reduce) {
+  .ay-followups .ay-followup { transition: none; }
+}
+/* Website dark: the Ask panel keeps its butter surface, so its Share
+   button keeps espresso ink too (it was inheriting butter and vanished). */
+.app-container[data-theme='brand-dark'] .ayna-ask-panel .ay-share-answer__btn { color: #3e2723 !important; border-color: #3e2723 !important; background: transparent !important; }
