@@ -5,7 +5,7 @@
  * "Not on file", and nothing here makes up ratings, stock or shipping.
  */
 import { ALL_PRODUCTS, HEALTH_FUNCTIONS } from '../../data/products.js';
-import { PRODUCT_IMAGE_OVERRIDES } from '../../data/productImageOverrides.js';
+import { PRODUCT_IMAGE_OVERRIDES, productImageOverride } from '../../data/productImageOverrides.js';
 import { getPassport } from '../../data/passport/index.js';
 import { priceParts, safetyAlertText } from '../../data/passport/content.js';
 import { isPlaceholderProductImage } from '../../utils/resolveProductImage.js';
@@ -36,7 +36,11 @@ export function galleryImages(product) {
     add(override.cover);
     (override.gallery || []).forEach(add);
   } else if (override) add(override);
-  add(product.image);
+  // An official replacement image (data/imageOverrides.js) stands in for the
+  // stored one, which was broken, low-res or the wrong product.
+  const official = override ? '' : productImageOverride(product);
+  if (official) add(official);
+  else add(product.image);
   (Array.isArray(product.gallery) ? product.gallery : []).forEach(add);
   (Array.isArray(product.images) ? product.images : []).forEach(add);
   return list;
