@@ -47,7 +47,7 @@ export const PRODUCT_BUY_URLS = {
   "p-d-mannose-now": "https://www.nowfoods.com/products/supplements/d-mannose-urinary-support-500-mg-veg-capsules",
   "p-dame-arc": "https://dame.com/products/arc",
   "p-dear-kate-underwear": "https://dearkate.com/collections/undies",
-  "p-depend-silhouette-underwear": "https://www.depend.com/en-us/incontinence-products/women/depend-silhouette-underwear",
+  "p-depend-silhouette-underwear": "https://www.depend.com/en-us/incontinence-products/women/silhouette-classic-underwear",
   "p-diva-cup": "https://shopdiva.com/collections/diva-cup-series",
   "p-elvie-trainer": "https://elvie.com/products/elvie-trainer",
   "p-estroven-mood": "https://estroven.com/products/menopause-relief-mood-memory-boost",
