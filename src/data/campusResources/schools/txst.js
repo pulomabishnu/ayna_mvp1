@@ -60,7 +60,7 @@ export const txst = {
       "id": "txst-health",
       "name": "Student Health Center",
       "category": "medical",
-      "sourceUrl": "https://www.healthcenter.txst.edu/after-hours/sexual-assault-resources.html",
+      "sourceUrl": "https://www.healthcenter.txst.edu/AFTER-HOURS/sexual-assault-resources",
       "sourceLabel": "Texas State Health Services: Sexual and Dating Violence Resources",
       "lastVerified": "2026-10-01",
       "description": "Medical care, sexual assault forensic exams and STI testing; anonymous STI and HIV testing listed.",

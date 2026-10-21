@@ -120,7 +120,7 @@ const PARTNERS = [
   },
   {
     brand: 'Elitone',
-    logo: 'https://thebreastfeedingshop.com/wp-content/uploads/2024/08/Elitone-Pelvic-Floor-Exerciser-1-scaled.webp',
+    logo: 'https://shop.elitone.com/wp-content/uploads/2024/09/HP-Hero-1200x1120-JPG.jpg',
     url: 'https://elitone.com/?af=aynahealth',
     blurb:
       'FDA-cleared external device for bladder leaks: a wearable gel pad, no insertion needed.',

@@ -540,7 +540,7 @@ export const LIFE_STAGE_PRIORS = [
   "need": "vaginal.bv",
   "rate": 0.292,
   "rate_text": "29.2% of women 14-49 have BV (NHANES 2001-2004); 84% no symptoms",
-  "source_url": "https://www.cdc.gov:443/std/bv/stats.htm"
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/17621244/"
  },
  {
   "stage": "25-34",
@@ -934,7 +934,7 @@ export const LIFE_STAGE_PRIORS = [
   "need": "vaginal.bv",
   "rate": 0.25,
   "rate_text": "BV prevalence 25% in pregnant women",
-  "source_url": "https://www.cdc.gov:443/std/bv/stats.htm"
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/17621244/"
  },
  {
   "stage": "pregnant",

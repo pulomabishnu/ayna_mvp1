@@ -40,13 +40,13 @@ export const uga = {
       "description": "Counseling at the University Health Center; listed among UGA’s confidential resources.",
       "confidentiality": "confidential",
       "phone": "706-542-2273",
-      "website": "https://healthcenter.uga.edu/who-should-i-talk-to/"
+      "website": "https://caps.uga.edu/caps/"
     },
     {
       "id": "uga-health-center",
       "name": "University Health Center",
       "category": "medical",
-      "sourceUrl": "https://healthcenter.uga.edu/who-should-i-talk-to/",
+      "sourceUrl": "https://caps.uga.edu/caps/",
       "sourceLabel": "UGA: Who Should I Talk To?",
       "lastVerified": "2026-10-01",
       "description": "Primary care clinics listed as confidential. 55 Carlton Street.",

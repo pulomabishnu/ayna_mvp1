@@ -630,7 +630,7 @@ R['p-always-discreet-boutique-liners'] = {
 // Period underwear (catalog entries are brand-level, no single variant)
 // ---------------------------------------------------------------------------
 const PU = {
-  wuka: 'https://wuka.co.uk/collections/all/products/stretch-cotton-midi-brief-heavy',
+  wuka: 'https://wuka.co.uk/products/stretch-cotton-midi-brief-heavy',
   tbxBlog: 'https://tomboyx.com/blogs/news/pfas-menstrual-underwear-and-the-measures-we-take',
   tbx: 'https://tomboyx.com/products/first-line-period-4-5-trunks-x-black',
   dk: 'https://www.dearkate.com/pages/faqs',

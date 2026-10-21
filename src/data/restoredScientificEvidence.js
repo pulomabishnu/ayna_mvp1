@@ -12,14 +12,7 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
       "justification": "The FDA is the federal authority for medical device safety in the US."
     }
   ],
-  "p-rael-organic-pad": [
-    {
-      "url": "https://www.consumerreports.org/health/menstrual-products/should-you-switch-to-organic-tampons-and-pads-a2599295540/",
-      "text": "Consumer Reports: Organic Period Care",
-      "summary": "Investigation into material safety and chemical testing of organic brands.",
-      "justification": "Consumer Reports is an independent non-profit that uses rigorous laboratory testing for product safety."
-    }
-  ],
+  "p-rael-organic-pad": [],
   "p-lola-tampon": [
     {
       "url": "https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely",
@@ -59,14 +52,7 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
       "summary": "FDA guidance recommends following menstrual-product instructions and appropriate hygiene. This is category-level guidance and does not establish steamers as superior to other manufacturer-recommended cleaning methods."
     }
   ],
-  "p-flex-disc": [
-    {
-      "url": "https://www.hopkinsmedicine.org/health/wellness-and-prevention/feminine-hygiene-products",
-      "text": "Johns Hopkins: Feminine Hygiene",
-      "summary": "Clinical context on internal collection devices and safety.",
-      "justification": "Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
-    }
-  ],
+  "p-flex-disc": [],
   "p-thinx": [
     {
       "url": "https://www.sgs.com/en/consumer-goods-retail/softlines-and-accessories",
@@ -149,14 +135,7 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
       "justification": "The FDA is the federal authority for medical device safety in the US."
     }
   ],
-  "p-natracare-pad": [
-    {
-      "url": "https://www.natracare.com/environmental-impact/",
-      "text": "Biodegradability Study",
-      "summary": "Independent verification that Natracare pads are 95-100% biodegradable and compostable.",
-      "justification": "Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
-    }
-  ],
+  "p-natracare-pad": [],
   "p-tampax-pure": [
     {
       "url": "https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely",
@@ -279,14 +258,7 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
       "justification": "Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
     }
   ],
-  "d-maven": [
-    {
-      "url": "https://www.prnewswire.com/news-releases/maven-clinic-unveils-clinical-research-institute-301955740.html",
-      "text": "Clinical Standards in Digital Health",
-      "summary": "Peer-reviewed publications examining the impact of virtual doula care and neonatal support on birth outcomes.",
-      "justification": "Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
-    }
-  ],
+  "d-maven": [],
   "d-tia": [
     {
       "url": "https://pubmed.ncbi.nlm.nih.gov/31977782/",
@@ -318,17 +290,10 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
       "justification": "Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
     }
   ],
-  "d-initio": [
-    {
-      "url": "https://www.fda.gov/medical-devices/510k-clearances-search",
-      "text": "FDA 510(k) Clearance",
-      "summary": "Official FDA documentation clearing Inito as a class II medical device for home hormone monitoring.",
-      "justification": "Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
-    }
-  ],
+  "d-initio": [],
   "d-oura": [
     {
-      "url": "https://ouraring.com/science",
+      "url": "https://ouraring.com/science-and-research",
       "text": "Oura Health Science",
       "summary": "Oura publishes research on temperature-based cycle tracking and its accuracy compared to clinical standards.",
       "justification": "Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
@@ -336,7 +301,7 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
   ],
   "d-apple-health": [
     {
-      "url": "https://www.apple.com/newsroom/2022/12/apple-womens-health-study-releases-new-preliminary-findings-on-period-cycles/",
+      "url": "https://www.apple.com/newsroom/2023/03/findings-from-apple-womens-health-study-advance-science-around-menstrual-cycles",
       "text": "Apple Women's Health Study",
       "summary": "Insights from one of the largest studies of its kind, run through the Apple Research app.",
       "justification": "Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
@@ -350,17 +315,10 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
       "justification": "Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
     }
   ],
-  "p-frida-mom-kit": [
-    {
-      "url": "https://www.acog.org/clinical/clinical-guidance/obstetric-care-consensus/articles/2018/05/postpartum-care-optimization",
-      "text": "ACOG Postpartum Optimization",
-      "summary": "The American College of Obstetricians and Gynecologists (ACOG) emphasizes the importance of postpartum support systems for physical recovery.",
-      "justification": "ACOG is the definitive clinical authority for obstetric care and recovery standards in the US. Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
-    }
-  ],
+  "p-frida-mom-kit": [],
   "p-rituals-prenatal": [
     {
-      "url": "https://ritual.com/science",
+      "url": "https://ritual.com/pages/clinical-study",
       "text": "Ritual Science Portal",
       "summary": "Ingredient sourcing, clinical trials, and forms like Methylfolate.",
       "justification": "Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."

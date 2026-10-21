@@ -70,7 +70,7 @@ export const unl = {
       "id": "unl-police",
       "name": "UNL Police Department",
       "category": "safety",
-      "sourceUrl": "https://www.unl.edu/equity/getting-help",
+      "sourceUrl": "https://equity.unl.edu/",
       "sourceLabel": "UNL: Finding Resources and Support",
       "lastVerified": "2026-10-01",
       "description": "Campus police; also reachable by text. Safe Walks and safety planning on request.",

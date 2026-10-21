@@ -809,12 +809,12 @@ const R = {
       'safety.recalls': f('No recall found (recall search, Oct 2026).', 'Web recall search', 'https://www.heb.com/product-detail/the-honey-pot-boric-acid-and-herbs-suppositories/5689050', 'retailer'),
       'health.intended_use': f('Vaginal suppository marketed for vaginal odor/pH balance support (brand claims)', 'H-E-B listing', 'https://www.heb.com/product-detail/the-honey-pot-boric-acid-and-herbs-suppositories/5689050', 'retailer'),
       'evidence.sources': f([
-        { title: 'CDC STI Treatment Guidelines: Vulvovaginal candidiasis', url: 'https://www.cdc.gov/stiapp/candidiasis.html', evidence_type: 'clinical_guideline', supports: '600 mg boric acid in a gelatin capsule vaginally once daily for 3 weeks for recurrent non-albicans yeast (about 70% eradication); not this herbal formulation' },
-      ], 'CDC', 'https://www.cdc.gov/stiapp/candidiasis.html', 'clinical_guidance'),
+        { title: 'CDC STI Treatment Guidelines: Vulvovaginal candidiasis', url: 'https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm', evidence_type: 'clinical_guideline', supports: '600 mg boric acid in a gelatin capsule vaginally once daily for 3 weeks for recurrent non-albicans yeast (about 70% eradication); not this herbal formulation' },
+      ], 'CDC', 'https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm', 'clinical_guidance'),
       'evidence.claims': f([
-        { claim: 'Boric acid (600 mg capsule) treats recurrent non-albicans yeast infection', strength: 'moderate', evidence_type: 'clinical_guideline', source_url: 'https://www.cdc.gov/stiapp/candidiasis.html', product_specific: false },
+        { claim: 'Boric acid (600 mg capsule) treats recurrent non-albicans yeast infection', strength: 'moderate', evidence_type: 'clinical_guideline', source_url: 'https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm', product_specific: false },
         { claim: 'This herbal boric acid suppository balances vaginal pH or odor', strength: 'none', evidence_type: 'manufacturer', source_url: 'https://www.heb.com/product-detail/the-honey-pot-boric-acid-and-herbs-suppositories/5689050', product_specific: true },
-      ], 'CDC + label', 'https://www.cdc.gov/stiapp/candidiasis.html', 'clinical_guidance'),
+      ], 'CDC + label', 'https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm', 'clinical_guidance'),
     },
   },
   'p-rituals-prenatal': {
@@ -1234,7 +1234,7 @@ const STRENGTH = {
   'p-cranberry-supplement': ['moderate for preventing recurrent UTI in women (Cochrane 2023, ingredient-level)', 'https://www.cochrane.org/CD001321/UTI_cranberry-for-preventing-urinary-tract-infections'],
   'p-azo-test': ['moderate: standard nitrite/leukocyte dipstick method; product accuracy data not seen', 'https://www.iherb.com/pr/azo-test-strips-urinary-tract-infection-test-3-self-testing-strips/14562'],
   'p-zinc': ['strong only for correcting low zinc intake (ingredient-level)', 'https://ods.od.nih.gov/factsheets/Zinc-HealthProfessional'],
-  'p-boric-acid': ['moderate for 600 mg boric acid capsules in recurrent non-albicans yeast (CDC); none for this herbal formulation', 'https://www.cdc.gov/stiapp/candidiasis.html'],
+  'p-boric-acid': ['moderate for 600 mg boric acid capsules in recurrent non-albicans yeast (CDC); none for this herbal formulation', 'https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm'],
   'p-rituals-prenatal': ['strong for prenatal folate (USPSTF, folic acid form); product not studied', 'https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/folic-acid-for-the-prevention-of-neural-tube-defects-preventive-medication?ds=1'],
   'p-flo-gummies': ['limited (ingredient-level, low doses)', 'https://www.nccih.nih.gov/health/chasteberry'],
   'p-hum-flatter-me': ['limited: no product-specific study found', 'https://www.vitacost.com/products/hum-nutrition-flatter-me-60-vegan-capsules-136402'],

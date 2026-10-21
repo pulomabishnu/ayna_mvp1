@@ -326,7 +326,7 @@ const ARTICLES = [
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.acog.org/womens-health/faqs/vulvovaginal-health" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Vulvovaginal Health</a></li>
           <li><a href="https://medlineplus.gov/vaginitis.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>MedlinePlus – Bacterial vaginosis</a></li>
-          <li><a href="https://www.cdc.gov/std/bv/default.htm" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>CDC – Bacterial vaginosis</a></li>
+          <li><a href="https://www.cdc.gov/std/treatment-guidelines/BV.htm" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>CDC – Bacterial vaginosis</a></li>
         </ul>
       </>
     ),
@@ -366,7 +366,7 @@ const ARTICLES = [
         <p><strong>When to seek care:</strong> Any bleeding after your periods have stopped for 12 months should always be checked. Also see a clinician if hot flashes, sleep problems or mood changes are getting in the way of daily life.</p>
         <p><strong>Sources:</strong></p>
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
-          <li><a href="https://www.menopause.org/for-women/menopause-faqs-women-s-midlife-health" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>NAMS – Menopause FAQs</a></li>
+          <li><a href="https://www.menopause.org/for-women/menopause-faqs-expert-answers-to-frequently-asked-questions-about-menopause" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>NAMS – Menopause FAQs</a></li>
           <li><a href="https://medlineplus.gov/hormonereplacementtherapy.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>MedlinePlus – Menopausal hormone therapy</a></li>
           <li><a href="https://www.acog.org/womens-health/faqs/the-menopause-years" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – The menopause years</a></li>
         </ul>
@@ -409,7 +409,6 @@ const ARTICLES = [
         <p><strong>Sources:</strong></p>
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://medlineplus.gov/ency/article/001511.htm" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>MedlinePlus – Vulvovaginal candidiasis</a></li>
-          <li><a href="https://www.cdc.gov/fungal/diseases/candidiasis/genital/index.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>CDC – Genital / vulvovaginal candidiasis</a></li>
           <li><a href="https://www.acog.org/womens-health/faqs/vulvovaginal-health" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Vulvovaginal health</a></li>
         </ul>
       </>
@@ -471,9 +470,8 @@ const ARTICLES = [
         <p><strong>When to seek care:</strong> Leaking urine or stool, pain with sex or tampon use, persistent pelvic pain, pressure or bulging, or difficulty emptying. Early evaluation can prevent worsening and improve quality of life.</p>
         <p><strong>Sources:</strong></p>
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
-          <li><a href="https://www.acog.org/womens-health/faqs/pelvic-floor-disorders" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Pelvic floor disorders</a></li>
+          <li><a href="https://womenshealth.gov/sites/default/files/documents/fact-sheet-pelvic-organ-prolapse.pdf" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Pelvic floor disorders</a></li>
           <li><a href="https://medlineplus.gov/ency/patientinstructions/000141.htm" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>MedlinePlus – Pelvic floor muscle training</a></li>
-          <li><a href="https://www.apta.org/your-practice/patient-populations/womens-health/pelvic-floor" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>APTA – Pelvic floor</a></li>
         </ul>
       </>
     ),
@@ -513,7 +511,7 @@ const ARTICLES = [
         <p><strong>When to seek care:</strong> Unusual discharge, odor, or irritation. Especially if symptoms don't improve with OTC treatments or keep coming back. BV during pregnancy needs treatment to reduce risk of complications.</p>
         <p><strong>Sources:</strong></p>
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
-          <li><a href="https://www.cdc.gov/std/bv/default.htm" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>CDC – Bacterial vaginosis</a></li>
+          <li><a href="https://www.cdc.gov/std/treatment-guidelines/BV.htm" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>CDC – Bacterial vaginosis</a></li>
           <li><a href="https://www.acog.org/womens-health/faqs/vulvovaginal-health" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Vulvovaginal health</a></li>
           <li><a href="https://medlineplus.gov/vaginitis.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>MedlinePlus – Bacterial vaginosis</a></li>
         </ul>
@@ -618,7 +616,6 @@ const ARTICLES = [
         <p><strong>When to seek care:</strong> To discuss which method is right for you, if you're experiencing side effects that affect your quality of life, or if you want to switch methods. Don't stop hormonal contraception abruptly without a plan.</p>
         <p><strong>Sources:</strong></p>
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
-          <li><a href="https://www.acog.org/womens-health/faqs/hormonal-birth-control" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Hormonal birth control</a></li>
           <li><a href="https://www.plannedparenthood.org/learn/birth-control" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Planned Parenthood – Birth control options</a></li>
           <li><a href="https://medlineplus.gov/birthcontrol.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>MedlinePlus – Hormonal birth control</a></li>
         </ul>

@@ -278,7 +278,7 @@ export const INTERACTION_TABLE = [
     message: "St. John's wort can make blood thinners like warfarin work less well. Don't combine them without your doctor's approval." },
   { medication_class: 'thyroid_hormone', product_ingredient: 'ashwagandha', verdict: 'caution', legacy_severity: 'medium', source: 'https://www.nccih.nih.gov/health/ashwagandha', reviewed_on: '2026-10-17', reviewer: 'research', needs_clinical_review: true,
     message: 'Ashwagandha may raise thyroid hormone levels. If you take thyroid medication, check with your doctor first.' },
-  { medication_class: 'anticoagulant', product_ingredient: 'fenugreek', verdict: 'caution', legacy_severity: 'medium', source: 'https://medlineplus.gov/druginfo/natural/733.html', reviewed_on: '2026-10-17', reviewer: 'research', needs_clinical_review: true,
+  { medication_class: 'anticoagulant', product_ingredient: 'fenugreek', verdict: 'caution', legacy_severity: 'medium', source: 'https://www.mskcc.org/cancer-care/integrative-medicine/herbs/fenugreek', reviewed_on: '2026-10-17', reviewer: 'research', needs_clinical_review: true,
     message: 'Fenugreek may slow blood clotting. If you take a blood thinner, check with your doctor first.' },
   { medication_class: 'anticoagulant', product_ingredient: 'omega3', verdict: 'caution', legacy_severity: 'medium', source: 'https://www.nccih.nih.gov/health/omega3-supplements-what-you-need-to-know', reviewed_on: '2026-10-17', reviewer: 'research', needs_clinical_review: true,
     message: 'Fish oil / omega-3 may slightly increase bleeding risk with blood thinners. Use under medical supervision.' },

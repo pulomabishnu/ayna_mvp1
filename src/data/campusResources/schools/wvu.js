@@ -66,7 +66,7 @@ export const wvu = {
       "lastVerified": "2026-10-01",
       "description": "Waives exam costs for WVU students and offers follow-up care for sexual violence with the Carruth Center.",
       "phone": "304-285-7200",
-      "website": "https://health.wvu.edu/student-health/student-health-faq/"
+      "website": "https://well.wvu.edu/resources/sexual-violence"
     },
     {
       "id": "wvu-title-ix-line",

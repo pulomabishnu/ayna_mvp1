@@ -120,7 +120,6 @@ export const PHYSICAL_PRODUCTS = [
                     { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=heavy+period+pad+review', text: 'TikTok: Heavy period pad reviews', summary: 'Short-form reviews comparing absorbency and comfort.' },
                     { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=always+infinity+pad+review', text: 'YouTube: Always Infinity reviews', summary: 'Longer reviews and comparisons with other pads.' },
                     { platform: 'instagram', url: 'https://www.instagram.com/always/', text: 'Always on Instagram', summary: 'Brand reels and posts; community engagement and product spotlights.' },
-                    { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=always%20infinity%20pad', text: 'Facebook: Always Infinity posts', summary: 'Public posts and group discussions about the product.' },
                 ]
             }
         }
@@ -177,7 +176,6 @@ export const PHYSICAL_PRODUCTS = [
                     { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=organic%20period%20pads', text: 'TikTok: Organic period pads', summary: 'Comparisons and recommendations for organic options.' },
                     { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=rael+pads+review', text: 'YouTube: Rael pads reviews', summary: 'In-depth reviews of Rael organic cotton pads.' },
                     { platform: 'instagram', url: 'https://www.instagram.com/rael/', text: 'Rael on Instagram', summary: 'Brand reels and community posts on clean period care.' },
-                    { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=rael%20pads', text: 'Facebook: Rael pads', summary: 'Group and public post discussions.' }
                 ]
             }
         }
@@ -237,7 +235,6 @@ export const PHYSICAL_PRODUCTS = [
                     { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=honey%20pot%20pads', text: 'TikTok: Honey Pot pads', summary: 'Short-form reviews on the herbal cooling effect and wear tests.' },
                     { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=honey+pot+herbal+pads+review', text: 'YouTube: Honey Pot reviews', summary: 'Longer reviews discussing sensation and effectiveness.' },
                     { platform: 'instagram', url: 'https://www.instagram.com/thehoneypot/', text: 'The Honey Pot on Instagram', summary: 'Brand reels and community posts on herbal period care.' },
-                    { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=honey%20pot%20pads', text: 'Facebook: Honey Pot pads', summary: 'Public and group discussions about the product.' }
                 ]
             }
         }
@@ -337,7 +334,6 @@ export const PHYSICAL_PRODUCTS = [
                 { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=LOLA%20tampons', text: 'TikTok: LOLA tampons', summary: 'Real-world testing and subscription unboxing.' },
                 { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=LOLA+organic+tampons+review', text: 'YouTube: LOLA tampons reviews', summary: 'Reviews of LOLA organic tampons and subscription.' },
                 { platform: 'instagram', url: 'https://www.instagram.com/mylola/', text: 'LOLA on Instagram', summary: 'Brand reels and community posts.' },
-                { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=LOLA%20tampons', text: 'Facebook: LOLA tampons', summary: 'Group and public discussions.' },
                 { platform: 'wirecutter', url: 'https://www.nytimes.com/wirecutter/reviews/best-tampons/', text: 'Wirecutter: Best Tampons', summary: 'NYT Wirecutter independent tampon testing and recommendations.' },
             ] }
         }
@@ -384,7 +380,6 @@ export const PHYSICAL_PRODUCTS = [
                 { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=saalt%20menstrual%20cup', text: 'TikTok: Saalt cup', summary: 'Instructional videos and beginner tips.' },
                 { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=saalt+menstrual+cup+review', text: 'YouTube: Saalt cup reviews', summary: 'In-depth reviews and how-to guides.' },
                 { platform: 'instagram', url: 'https://www.instagram.com/saalt_co/', text: 'Saalt on Instagram', summary: 'Brand reels and cup education.' },
-                { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=saalt%20menstrual%20cup', text: 'Facebook: Saalt cup', summary: 'Community discussions and tips.' },
                 { platform: 'wirecutter', url: 'https://www.nytimes.com/wirecutter/reviews/best-menstrual-cup/', text: 'Wirecutter: Best Menstrual Cups & Discs', summary: 'NYT Wirecutter testing of 50+ menstrual cups and discs. Saalt Disc is a top pick.' },
             ] }
         }
@@ -575,7 +570,6 @@ export const PHYSICAL_PRODUCTS = [
                 { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=flex%20disc%20review', text: 'TikTok: Flex disc', summary: 'Short-form reviews and mess-free period experiences.' },
                 { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=flex+disc+review', text: 'YouTube: Flex disc reviews', summary: 'Reviews and how-to for menstrual discs.' },
                 { platform: 'instagram', url: 'https://www.instagram.com/flexfits/', text: 'Flex on Instagram', summary: 'Brand reels and disc education.' },
-                { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=flex%20period%20disc', text: 'Facebook: Flex disc', summary: 'Group and public post discussions.' },
                 { platform: 'wirecutter', url: 'https://www.nytimes.com/wirecutter/reviews/best-menstrual-cup/', text: 'Wirecutter: Best Menstrual Cups & Discs', summary: 'NYT Wirecutter testing of 50+ menstrual cups and discs. Flex Reusable Disc recommended for heavier flows.' },
             ] }
         }
@@ -622,7 +616,6 @@ export const PHYSICAL_PRODUCTS = [
                 { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=thinx%20period%20underwear', text: 'TikTok: Thinx', summary: 'Style try-ons and absorbency tests.' },
                 { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=thinx+period+underwear+review', text: 'YouTube: Thinx reviews', summary: 'Reviews and comparisons of Thinx styles.' },
                 { platform: 'instagram', url: 'https://www.instagram.com/shethinx/', text: 'Thinx on Instagram', summary: 'Brand reels and period underwear content.' },
-                { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=thinx%20period%20underwear', text: 'Facebook: Thinx', summary: 'Community discussions and recommendations.' },
                 { platform: 'wirecutter', url: 'https://www.nytimes.com/wirecutter/reviews/best-period-underwear/', text: 'Wirecutter: Best Period Underwear', summary: 'NYT Wirecutter independent testing of 50+ styles across 25 brands, including PFAS analysis.' },
                 { platform: 'instyle', url: 'https://www.instyle.com/fashion/clothing/the-best-period-underwear', text: 'InStyle: Best Period Underwear', summary: 'InStyle tested and reviewed period underwear picks including Thinx.' },
             ] }
@@ -672,7 +665,6 @@ export const PHYSICAL_PRODUCTS = [
                     { platform: 'reddit', url: 'https://www.reddit.com/r/Supplements/search/?q=magnesium%20cramps&restrict_sr=1', text: 'Reddit r/Supplements: magnesium cramps', summary: 'Posts on magnesium for period cramps and sleep.' },
                     { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=magnesium%20period%20cramps', text: 'TikTok: Magnesium for cramps', summary: 'Short-form tips on magnesium and period pain.' },
                     { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=magnesium+glycinate+cramps', text: 'YouTube: Magnesium glycinate', summary: 'Explainer videos and supplement reviews.' },
-                    { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=magnesium%20period%20cramps', text: 'Facebook: Magnesium cramps', summary: 'Group discussions on supplements for cramps.' }
                 ]
             }
         }
@@ -713,7 +705,6 @@ export const PHYSICAL_PRODUCTS = [
                     { platform: 'reddit', url: 'https://www.reddit.com/r/TryingForABaby/search/?q=ubiquinol&restrict_sr=1', text: 'Reddit r/TryingForABaby: ubiquinol', summary: 'Posts on Ubiquinol/CoQ10 for fertility.' },
                     { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=ubiquinol%20fertility', text: 'TikTok: Ubiquinol fertility', summary: 'Short-form content on fertility supplements.' },
                     { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=ubiquinol+fertility+review', text: 'YouTube: Ubiquinol fertility', summary: 'Reviews and explainers on CoQ10 for TTC.' },
-                    { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=ubiquinol%20fertility', text: 'Facebook: Ubiquinol fertility', summary: 'Group discussions on fertility supplements.' }
                 ]
             }
         }
@@ -757,7 +748,6 @@ export const DIGITAL_PRODUCTS = [
                 { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=clue%20period%20tracker', text: 'TikTok: Clue tracker', summary: 'Short-form reviews and privacy-focused period app content.' },
                 { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=clue+period+tracker+review', text: 'YouTube: Clue app reviews', summary: 'Reviews and comparisons of period trackers including Clue.' },
                 { platform: 'instagram', url: 'https://www.instagram.com/clueapp/', text: 'Clue on Instagram', summary: 'Educational content and community; 1M+ followers.' },
-                { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=clue%20period%20tracker', text: 'Facebook: Clue tracker', summary: 'Group and public discussions on period apps.' },
                 { platform: 'wirecutter', url: 'https://www.nytimes.com/wirecutter/reviews/the-best-fitness-trackers/', text: 'Wirecutter: Best Fitness Trackers', summary: 'NYT Wirecutter testing of 52+ fitness trackers for accuracy and comfort.' },
             ] }
         }
@@ -787,7 +777,6 @@ export const DIGITAL_PRODUCTS = [
         verificationLinks: {
             doctor: { links: [
                 { url: 'https://stardust.app/privacy', text: 'Stardust Privacy Policy', summary: 'Detailed breakdown of their end-to-end encryption model.' },
-                { url: 'https://www.wired.com/story/period-tracking-apps-privacy/', text: 'Wired: Period App Privacy', summary: 'Analysis of Stardust security in the context of reproductive health privacy.' }
             ] },
             scientific: { links: [
                 { url: 'https://pubmed.ncbi.nlm.nih.gov/37697855/', text: 'Menstrual Cycle Tracking Apps: Medical and Data Privacy Scoring', summary: 'A peer-reviewed evaluation found substantial variation in medical quality and privacy practices across menstrual-tracking apps. This is category-level evidence and is not a clinical validation of Stardust.' }
@@ -798,7 +787,6 @@ export const DIGITAL_PRODUCTS = [
                 { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=stardust%20period%20tracker', text: 'TikTok: Stardust tracker', summary: 'Educational content on privacy and cycle tracking.' },
                 { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=stardust+period+tracker+review', text: 'YouTube: Stardust app reviews', summary: 'Reviews of privacy-first period trackers.' },
                 { platform: 'instagram', url: 'https://www.instagram.com/stardust.app/', text: 'Stardust on Instagram', summary: 'Brand content on encryption and cycle health.' },
-                { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=stardust%20period%20tracker', text: 'Facebook: Stardust tracker', summary: 'Community discussions on privacy-focused apps.' }
             ] }
         }
     },
@@ -827,7 +815,7 @@ export const DIGITAL_PRODUCTS = [
         badges: ['Menopause Focus', 'Symptom Tracking'],
         verificationLinks: {
             doctor: { links: [
-                { url: 'https://www.menopause.org/for-women/menopause-faqs-women-s-midlife-health', text: 'NAMS – Menopause FAQs', summary: 'Clinical guidance on menopause and perimenopause care.' }
+                { url: 'https://www.menopause.org/for-women/menopause-faqs-expert-answers-to-frequently-asked-questions-about-menopause', text: 'NAMS – Menopause FAQs', summary: 'Clinical guidance on menopause and perimenopause care.' }
             ] },
             scientific: { links: [
                 { url: 'https://pubmed.ncbi.nlm.nih.gov/24569618/', text: 'Diary of hot flashes reported upon occurrence: results of a randomized double-blind study of raloxifene, placebo, and paroxetine (Menopause, 2014)', summary: 'Research supports structured symptom diaries for measuring menopausal hot-flash frequency and severity. This evidence supports symptom tracking generally and is not specific to Balance.' },

@@ -110,7 +110,7 @@ export const ucin = {
       ],
       "hours": "Mon/Tue/Thu/Fri 8:30am–4:30pm; Wed 9:30am–4:30pm",
       "confidentialityNote": "UC lists it as confidential.",
-      "website": "https://www.uc.edu/uhs.html"
+      "website": "https://www.med.uc.edu/uhs"
     },
     {
       "id": "ucin-police",

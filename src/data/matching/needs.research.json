@@ -1435,7 +1435,7 @@
     "grade": "A",
     "sources": [
      "https://www.asrm.org/practice-guidance/practice-committee-documents/optimizing-natural-fertility-a-committee-opinion-2021",
-     "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf"
+     "https://www.cdc.gov/folic-acid/about/intake-and-sources.html"
     ]
    },
    {
@@ -1456,7 +1456,7 @@
     "type": "antioxidant supplements incl. CoQ10",
     "grade": "B",
     "sources": [
-     "https://www.cochrane.org/podcasts/10.1002/14651858.CD007807.pub4"
+     "https://www.cochrane.org/evidence/CD007807_antioxidants-female-subfertility"
     ]
    },
    {
@@ -1502,7 +1502,7 @@
     "type": "CoQ10 / antioxidant supplements",
     "grade": "B",
     "sources": [
-     "https://www.cochrane.org/podcasts/10.1002/14651858.CD007807.pub4"
+     "https://www.cochrane.org/evidence/CD007807_antioxidants-female-subfertility"
     ]
    },
    {
@@ -1522,7 +1522,7 @@
    }
   ],
   "caution": [
-   "Cochrane authors advise taking antioxidants other than prenatal-style combinations only on medical advice, especially with PMOS (https://www.cochrane.org/podcasts/10.1002/14651858.CD007807.pub4)"
+   "Cochrane authors advise taking antioxidants other than prenatal-style combinations only on medical advice, especially with PMOS (https://www.cochrane.org/evidence/CD007807_antioxidants-female-subfertility)"
   ],
   "see_a_clinician_if": [
    "12 months trying under 35, 6 months at 35+ (ASRM https://www.asrm.org/practice-guidance/practice-committee-documents/optimizing-natural-fertility-a-committee-opinion-2021)",
@@ -1541,30 +1541,30 @@
     "grade": "A",
     "sources": [
      "https://www.cochrane.org/evidence/CD007950_effects-and-safety-periconceptional-oral-folate-supplementation-preventing-birth-defects",
-     "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf"
+     "https://www.cdc.gov/folic-acid/about/intake-and-sources.html"
     ]
    },
    {
     "type": "prenatal vitamin with methylfolate (5-MTHF) only",
     "grade": "B",
     "sources": [
-     "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf"
+     "https://www.cdc.gov/folic-acid/about/intake-and-sources.html"
     ]
    },
    {
     "type": "prenatal care / telehealth access to clinicians",
     "grade": "C",
     "sources": [
-     "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf"
+     "https://www.cdc.gov/folic-acid/about/intake-and-sources.html"
     ]
    }
   ],
   "caution": [
-   "check the label: 'folate' does not mean folic acid; the folic acid amount is shown in parentheses on updated labels (CDC https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf)",
-   "higher doses (1,000-4,000 mcg) only on clinician advice, e.g. prior NTD pregnancy or certain antiseizure drugs (CDC https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf)"
+   "check the label: 'folate' does not mean folic acid; the folic acid amount is shown in parentheses on updated labels (CDC https://www.cdc.gov/folic-acid/about/intake-and-sources.html)",
+   "higher doses (1,000-4,000 mcg) only on clinician advice, e.g. prior NTD pregnancy or certain antiseizure drugs (CDC https://www.cdc.gov/folic-acid/about/intake-and-sources.html)"
   ],
   "see_a_clinician_if": [
-   "prior NTD-affected pregnancy, family history of NTDs, or antiseizure medication use (CDC https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf)"
+   "prior NTD-affected pregnancy, family history of NTDs, or antiseizure medication use (CDC https://www.cdc.gov/folic-acid/about/intake-and-sources.html)"
   ],
   "catalog_gaps": [
    "prenatal vitamin that uses folic acid (not only methylfolate)"
@@ -1608,7 +1608,7 @@
     "type": "prenatal vitamin with folic acid",
     "grade": "A",
     "sources": [
-     "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf"
+     "https://www.cdc.gov/folic-acid/about/intake-and-sources.html"
     ]
    }
   ],
@@ -3693,7 +3693,7 @@
     "grade": "A",
     "sources": [
      "https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-infection-uti-in-adults/treatment",
-     "https://www.auanet.org/guidelines/guidelines/recurrent-uti"
+     "https://www.auanet.org/guidelines-and-quality/guidelines/recurrent-uti"
     ]
    },
    {
@@ -3872,7 +3872,7 @@
     "type": "vaginal estrogen (peri/postmenopausal, Rx)",
     "grade": "A",
     "sources": [
-     "https://www.auanet.org/guidelines/guidelines/recurrent-uti",
+     "https://www.auanet.org/guidelines-and-quality/guidelines/recurrent-uti",
      "https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-infection-uti-in-adults/treatment"
     ]
    },
@@ -3888,7 +3888,7 @@
     "type": "low-dose antibiotic prophylaxis (Rx)",
     "grade": "A",
     "sources": [
-     "https://www.auanet.org/guidelines/guidelines/recurrent-uti",
+     "https://www.auanet.org/guidelines-and-quality/guidelines/recurrent-uti",
      "https://www.ncbi.nlm.nih.gov/books/NBK580158/"
     ]
    },
@@ -3903,7 +3903,7 @@
     "type": "urinalysis + culture each episode; self-start therapy for selected patients",
     "grade": "B",
     "sources": [
-     "https://www.auanet.org/guidelines/guidelines/recurrent-uti"
+     "https://www.auanet.org/guidelines-and-quality/guidelines/recurrent-uti"
     ]
    },
    {
@@ -4099,7 +4099,7 @@
     "type": "OTC topical azole antifungal (if recurrent familiar yeast symptoms)",
     "grade": "A",
     "sources": [
-     "https://www.cdc.gov/stiapp/candidiasis.html",
+     "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
      "https://www.acog.org/womens-health/experts-and-stories/the-latest/think-you-have-a-vaginal-infection-heres-what-you-need-to-know"
     ]
    },
@@ -4319,7 +4319,7 @@
     "type": "OTC topical azole antifungal (miconazole, clotrimazole, tioconazole)",
     "grade": "A",
     "sources": [
-     "https://www.cdc.gov/stiapp/candidiasis.html",
+     "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
      "https://www.mayoclinic.org/diseases-conditions/yeast-infection/diagnosis-treatment/drc-20379004"
     ]
    },
@@ -4327,14 +4327,14 @@
     "type": "oral fluconazole (Rx), incl. weekly maintenance for recurrent VVC",
     "grade": "A",
     "sources": [
-     "https://www.cdc.gov/stiapp/candidiasis.html"
+     "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm"
     ]
    },
    {
     "type": "vaginal boric acid 600 mg daily x 3 weeks for recurrent non-albicans VVC",
     "grade": "B",
     "sources": [
-     "https://www.cdc.gov/stiapp/candidiasis.html",
+     "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
      "https://pubmed.ncbi.nlm.nih.gov/21774671/"
     ]
    },
@@ -4354,14 +4354,14 @@
    }
   ],
   "caution": [
-   "Pregnancy: only 7-day topical azoles; fluconazole no longer recommended (CDC: https://www.cdc.gov/stiapp/candidiasis.html)",
+   "Pregnancy: only 7-day topical azoles; fluconazole no longer recommended (CDC: https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm)",
    "Boric acid: not recommended in pregnancy, may be fatal if swallowed, keep from children (Mayo Clinic: https://www.mayoclinic.org/diseases-conditions/yeast-infection/diagnosis-treatment/drc-20379004; Cleveland Clinic: https://my.clevelandclinic.org/health/drugs/19641-boric-acid-vaginal-suppository)"
   ],
   "see_a_clinician_if": [
    "First infection or unsure it is yeast (ACOG: https://www.acog.org/womens-health/experts-and-stories/the-latest/think-you-have-a-vaginal-infection-heres-what-you-need-to-know)",
    "No improvement within 72 hours of OTC treatment (ACOG: https://www.acog.org/womens-health/experts-and-stories/the-latest/think-you-have-a-vaginal-infection-heres-what-you-need-to-know)",
    "Symptoms return within two months (Mayo Clinic: https://www.mayoclinic.org/diseases-conditions/yeast-infection/diagnosis-treatment/drc-20379004)",
-   "Three or more episodes in a year (CDC: https://www.cdc.gov/stiapp/candidiasis.html)"
+   "Three or more episodes in a year (CDC: https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm)"
   ],
   "catalog_gaps": [
    "OTC topical azole antifungals (miconazole, clotrimazole, tioconazole)",

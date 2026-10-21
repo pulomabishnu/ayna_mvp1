@@ -29,8 +29,8 @@ export const northeastern = {
       "id": "neu-uhcs",
       "name": "University Health and Counseling Services (UHCS)",
       "category": "medical",
-      "sourceUrl": "https://www.northeastern.edu/uhcs/report-incident/",
-      "sourceLabel": "Northeastern: Support for Students Affected by Sexual Violence — UHCS",
+      "sourceUrl": "https://uhcs.northeastern.edu/",
+      "sourceLabel": "Northeastern: University Health and Counseling Services",
       "lastVerified": "2026-10-01",
       "description": "Confidential medical and behavioral health services. Do not email UHCS about urgent matters.",
       "alsoIn": [

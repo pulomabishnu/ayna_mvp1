@@ -45,7 +45,7 @@ describe('interaction table', () => {
   it('legacy rows keep their wording; research rows cite a credible source; all marked for review', () => {
     expect(INTERACTION_TABLE.length).toBeGreaterThan(0);
     for (const row of INTERACTION_TABLE.filter((r) => r.reviewer === 'research')) {
-      expect(row.source).toMatch(/^https:\/\/([a-z0-9-]+\.)*(nih\.gov|medlineplus\.gov|fda\.gov|mayoclinic\.org|clevelandclinic\.org|nhs\.uk|cdc\.gov)\//);
+      expect(row.source).toMatch(/^https:\/\/([a-z0-9-]+\.)*(nih\.gov|medlineplus\.gov|fda\.gov|mayoclinic\.org|clevelandclinic\.org|mskcc\.org|nhs\.uk|cdc\.gov)\//);
       expect(row.needs_clinical_review).toBe(true);
     }
     for (const row of INTERACTION_TABLE.filter((r) => r.reviewer !== 'research')) {

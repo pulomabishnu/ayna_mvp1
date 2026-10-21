@@ -449,7 +449,6 @@ export const CATALOG_CORRECTIONS = {
   },
   "d-menolabs": {
     "image": "",
-    "url": "https://apps.apple.com/us/app/menolife-menopause-tracker/id1494110596",
     "imageReviewStatus": "unavailable"
   },
   "p-lansinoh-pads": {

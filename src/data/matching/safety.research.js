@@ -67,9 +67,9 @@ export default [
   "product": "p-nature-made-folic-acid-400",
   "pregnancy": "ok",
   "breastfeeding": "ok",
-  "pregnancy_source": "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf",
-  "breastfeeding_source": "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf",
-  "source_url": "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf",
+  "pregnancy_source": "https://www.cdc.gov/folic-acid/about/intake-and-sources.html",
+  "breastfeeding_source": "https://www.cdc.gov/folic-acid/about/intake-and-sources.html",
+  "source_url": "https://www.cdc.gov/folic-acid/about/intake-and-sources.html",
   "reviewed": "2026-10-17"
  },
  {

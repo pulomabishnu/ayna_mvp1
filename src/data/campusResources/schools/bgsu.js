@@ -67,7 +67,7 @@ export const bgsu = {
       "confidentiality": "not-confidential",
       "phone": "419-372-7227",
       "email": "gvpes@bgsu.edu",
-      "website": "https://www.bgsu.edu/womens-center/resources-and-services/violence-prevention.html"
+      "website": "https://www.bgsu.edu/dean-of-students/interpersonal-relations.html"
     },
     {
       "id": "bgsu-title-ix",

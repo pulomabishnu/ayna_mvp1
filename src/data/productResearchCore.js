@@ -1193,7 +1193,7 @@ export const PRODUCT_RESEARCH_CORE = {
         "Do not fold or bunch the wrap, and do not wear it while sleeping.",
         "Check your skin often, and stop using it if you see burns or blisters."
       ],
-      "sourceUrl": "https://www.orderroombox.com/product/thermacare-heatwraps-menstrual-pain-therapy/",
+      "sourceUrl": "https://www.heb.com/product-detail/thermacare-menstrual-pain-therapy-heatwraps/10241521",
       "sourceLabel": "ThermaCare Menstrual HeatWraps label directions and warnings (retailer listing)"
     },
     "warnings": [
@@ -1203,7 +1203,7 @@ export const PRODUCT_RESEARCH_CORE = {
       "Each heat cell contains iron and can be harmful if swallowed; keep away from children and pets."
     ],
     "warningsSource": {
-      "url": "https://www.orderroombox.com/product/thermacare-heatwraps-menstrual-pain-therapy/",
+      "url": "https://www.heb.com/product-detail/thermacare-menstrual-pain-therapy-heatwraps/10241521",
       "label": "Retailer listing reproducing the ThermaCare Menstrual HeatWraps label"
     }
   },
@@ -1905,7 +1905,7 @@ export const PRODUCT_RESEARCH_CORE = {
         "Use tampons only during your period.",
         "If you get a sudden high fever, vomiting, diarrhea, dizziness or a sunburn-like rash, remove the tampon and get medical care right away."
       ],
-      "sourceUrl": "https://ob-tampons.com/what-is-toxic-shock-syndrome",
+      "sourceUrl": "https://www.ob-tampons.com/pages/tss",
       "sourceLabel": "o.b.: What is Toxic Shock Syndrome"
     },
     "warnings": [
@@ -2186,7 +2186,7 @@ export const PRODUCT_RESEARCH_CORE = {
         "To remove, wash your hands, hook a finger under the front rim, and pull it out level to avoid spills.",
         "Empty it into the toilet, rinse, and reinsert, keeping it in its case between periods."
       ],
-      "sourceUrl": "https://pureeros.com/products/ziggy-cup",
+      "sourceUrl": "https://www.lookfantastic.com/p/intimina-ziggy-cup-2-size-a/13761957",
       "sourceLabel": "Pure Eros: Intimina Ziggy Cup listing with directions"
     },
     "warnings": [
@@ -3060,7 +3060,7 @@ export const PRODUCT_RESEARCH_CORE = {
         "Reapply as often as you like.",
         "Replace the cap and store the tube at room temperature."
       ],
-      "sourceUrl": "https://www.ulta.com/p/p-pimprod2052232",
+      "sourceUrl": "https://www.ulta.com/p/mini-lets-spin-intimacy-gel-pimprod2052232",
       "sourceLabel": "Ulta: Joylux LET'S SPIN Intimacy Gel"
     },
     "effectiveness": "ayna didn't find a published study of this gel, so this is about the product type. In a 2018 trial of 302 postmenopausal women, a nonprescription vaginal moisturizer, low-dose vaginal estrogen, and a plain placebo gel all eased dryness and pain with sex about equally over 12 weeks. Small trials of hyaluronic acid vaginal gels found them roughly as helpful as estrogen for dryness, though those trials had real limitations.",
@@ -4587,7 +4587,7 @@ export const PRODUCT_RESEARCH_CORE = {
         "Set a temperature for each side in the app, or turn on Autopilot to adjust it overnight.",
         "Change the water every 2 to 3 months and clean the cover with a mild detergent."
       ],
-      "sourceUrl": "https://www.eightsleep.com/blog/answering-your-questions-about-the-pod",
+      "sourceUrl": "https://help.eightsleep.com/en_us/how-do-i-maintain-the-pod-HyWYigaKN.md",
       "sourceLabel": "Eight Sleep: Answering Your Questions About The Pod"
     },
     "effectiveness": "There is one study of this product. In 54 healthy adults sleeping at home, a week with the Pod turned on lowered sleeping heart rate slightly (about 1 beat per minute) and raised heart rate variability (HRV, a sign of recovery) by about 2 ms, and people rated their sleep better. Men who slept cooler gained about 14 minutes of deep sleep, but women's deep sleep did not change significantly (they gained some REM sleep instead). Most authors work for Eight Sleep, there was no comparison group, and it lasted only one week.",
@@ -4787,7 +4787,7 @@ export const PRODUCT_RESEARCH_CORE = {
         "Throw the wipe in the trash rather than flushing it.",
         "Stop using it if a rash or discomfort develops."
       ],
-      "sourceUrl": "https://www.ulta.com/p/p-xlsImpprod18141017",
+      "sourceUrl": "https://www.ulta.com/p/unscented-gentle-soothing-wipes-pimprod2007177",
       "sourceLabel": "Ulta Beauty: SweetSpot Labs Gentle Soothing Wipes"
     },
     "warnings": [
@@ -4803,7 +4803,7 @@ export const PRODUCT_RESEARCH_CORE = {
     "communityReview": "Reviewers often say the wipes feel gentle and soothing, leave skin soft without drying it out, and are handy to carry. Common complaints are a scent some find strong or artificial, wipes that feel thin or dry, occasional irritation or burning, and a small count for the price.",
     "communityReviewSources": [
       {
-        "url": "https://www.ulta.com/p/p-xlsImpprod18141017",
+        "url": "https://www.ulta.com/p/unscented-gentle-soothing-wipes-pimprod2007177",
         "label": "Ulta Beauty customer reviews: SweetSpot Labs Vanilla Blossom Gentle Soothing Wipes"
       }
     ]
@@ -5122,7 +5122,7 @@ export const PRODUCT_RESEARCH_CORE = {
         "Take them off before you nurse.",
         "Don't combine them with other nipple creams or treatments."
       ],
-      "sourceUrl": "https://www.naturalresources-sf.com/collections/breast-care/products/silverette-silver-nursing-cups",
+      "sourceUrl": "https://www.naturalresources-sf.com/products/silverette-silver-nursing-cups",
       "sourceLabel": "Silverette Nursing Cups directions (Natural Resources)"
     },
     "warnings": [
@@ -5380,8 +5380,8 @@ export const PRODUCT_RESEARCH_CORE = {
         "Wear sunscreen and limit sun exposure while using it and for a week after, since AHAs can raise sun sensitivity.",
         "Stop using it if you get a rash or discomfort, and keep it away from your eyes."
       ],
-      "sourceUrl": "https://www.ulta.com/p/p-xlsImpprod18651011",
-      "sourceLabel": "Ulta: SweetSpot Labs Buff & Brighten AHA/BHA Body Exfoliating Pads"
+      "sourceUrl": null,
+      "sourceLabel": null
     },
     "warnings": [
       "Wait 24 hours after shaving or waxing before you use a pad.",
@@ -5390,7 +5390,7 @@ export const PRODUCT_RESEARCH_CORE = {
       "Stop using it if you get a rash or discomfort, and if you're pregnant, check with your doctor before using AHA or BHA products."
     ],
     "warningsSource": {
-      "url": "https://www.ulta.com/p/p-xlsImpprod18651011",
+      "url": null,
       "label": "Ulta: SweetSpot Labs Buff & Brighten AHA/BHA Body Exfoliating Pads (brand product listing)"
     }
   },
@@ -5410,7 +5410,7 @@ export const PRODUCT_RESEARCH_CORE = {
         "Join from a computer if you can, using the link sent by text and email about 15 minutes before.",
         "Check your visit summary in the Gennev portal, fill any prescriptions, and book follow-ups or coaching sessions your doctor recommends."
       ],
-      "sourceUrl": "https://www.gennev.com/how-gennev-works",
+      "sourceUrl": "https://gennev.com/patients/how-gennev-works/",
       "sourceLabel": "Gennev: How Gennev Works"
     },
     "warnings": [

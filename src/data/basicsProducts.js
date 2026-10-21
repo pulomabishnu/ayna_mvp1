@@ -73,7 +73,7 @@ export const BASICS_PRODUCTS = [
   //  - Label (Bayer HealthCare LLC; uses, directions, ingredients): https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=00ef5b30-71d0-4cb4-84a3-48c67d1cea2a
   //  - Label warnings (ALEVE 220 mg, repackaged by R J General Corporation; Bayer page did not render warnings text):
   //    https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=46e7b298-9e19-49b6-be71-e4fdcb09a5d4
-  //  - Retail: https://www.target.com/p/aleve-tablets-with-naproxen-sodium-220mg-nsaid-pain-reliever-fever-reducer-50-count/-/A-93719226 (no image URL on page)
+  //  - Retail: https://giantfood.com/groceries/health-beauty/pain-fever/pain-fever-relief/naproxen-sodium/aleve-naproxen-sodium-pain-relief-fever-reducer-220-mg-tablets-50-ct-btl.html (no image URL on page)
   //  - Evidence: https://medlineplus.gov/periodpain.html
   {
     id: 'p-aleve-naproxen-220',
@@ -87,7 +87,7 @@ export const BASICS_PRODUCTS = [
     price: '$14.99 for 50 tablets at Target',
     userRating: 4.8,
     whereToBuy: ['Target'],
-    url: 'https://www.target.com/p/aleve-tablets-with-naproxen-sodium-220mg-nsaid-pain-reliever-fever-reducer-50-count/-/A-93719226',
+    url: 'https://giantfood.com/groceries/health-beauty/pain-fever/pain-fever-relief/naproxen-sodium/aleve-naproxen-sodium-pain-relief-fever-reducer-220-mg-tablets-50-ct-btl.html',
     image: '',
     summary: "Over-the-counter naproxen sodium 220 mg, a longer-acting NSAID. The label lists menstrual cramps among its uses. Adults take 1 tablet every 8 to 12 hours with a full glass of water (2 may be taken within the first hour for the first dose), and no more than 3 tablets in 24 hours.",
     safety: {
@@ -102,7 +102,7 @@ export const BASICS_PRODUCTS = [
     clinicianAttribution: ATTRIBUTION,
     doctorOpinion: "MedlinePlus lists NSAIDs such as naproxen for period pain, taken when symptoms start or when your period begins. Naproxen is dosed less often than ibuprofen, which some people find easier. The same cautions apply: avoid it with ulcers or other stomach problems, bleeding problems, liver disease or a true aspirin allergy, and see a clinician if cramps are severe, new after 25, or happen when you are not on your period. This is guidance about naproxen as a medicine, not a test of this brand.",
     communityReview: 'Target shows a 4.8 out of 5 rating from 568 reviews for this Aleve 50-count listing.',
-    communityReviewSourceUrl: 'https://www.target.com/p/aleve-tablets-with-naproxen-sodium-220mg-nsaid-pain-reliever-fever-reducer-50-count/-/A-93719226',
+    communityReviewSourceUrl: '',
     communityReviewSourceLabel: 'Target reviews',
     ingredients: 'Active: naproxen sodium 220 mg (naproxen 200 mg) (NSAID). Inactive: FD&C blue #2 lake, hypromellose, magnesium stearate, microcrystalline cellulose, polyethylene glycol, povidone, talc, titanium dioxide.',
     effectiveness: "Naproxen is one of the NSAIDs that clinical sources such as MedlinePlus recommend for menstrual cramps. Evidence is for the ingredient in general and does not validate this brand over generic naproxen sodium 220 mg.",
@@ -125,7 +125,7 @@ export const BASICS_PRODUCTS = [
         { url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=46e7b298-9e19-49b6-be71-e4fdcb09a5d4', text: 'DailyMed: Aleve 220 mg label warnings', summary: 'Full Aleve warning text, including the pregnancy warning about the last 3 months of pregnancy.' }
       ] },
       community: { links: [
-        { url: 'https://www.target.com/p/aleve-tablets-with-naproxen-sodium-220mg-nsaid-pain-reliever-fever-reducer-50-count/-/A-93719226', text: 'Target: Aleve 50 ct (4.8/5, 568 reviews)', summary: 'Retail listing with price and customer ratings.' }
+        { url: 'https://giantfood.com/groceries/health-beauty/pain-fever/pain-fever-relief/naproxen-sodium/aleve-naproxen-sodium-pain-relief-fever-reducer-220-mg-tablets-50-ct-btl.html', text: 'Target: Aleve 50 ct (4.8/5, 568 reviews)', summary: 'Retail listing with price and customer ratings.' }
       ] }
     }
   },

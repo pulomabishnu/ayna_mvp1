@@ -495,9 +495,9 @@ export const STAGE_SOURCES = {
   nichd_menopause: { url: 'https://www.nichd.nih.gov/health/topics/factsheets/menopause', label: 'NICHD (NIH): Menopause', says: 'Menopause typically occurs between 45 and 55; average age 51. Induced menopause follows removal of the ovaries, chemotherapy or hormone therapy for breast cancer.' },
   medlineplus_menopause: { url: 'https://medlineplus.gov/ency/article/000894.htm', label: 'MedlinePlus (NIH): Menopause', says: 'Menopause most often occurs between 45 and 55. Tell your provider about any bleeding that returns after 12 months with no period, even a small amount.' },
   nichd_poi: { url: 'https://www.nichd.nih.gov/health/topics/POI', label: 'NICHD (NIH): Primary ovarian insufficiency', says: 'POI is when the ovaries stop working normally before age 40; it can start as early as the teens. Many with POI still get irregular periods.' },
-  menopause_society_premature: { url: 'https://menopause.org/for-women/menopause-faqs-premature-early-and-induced-menopause', label: 'The Menopause Society: Premature, early and induced menopause', says: 'Premature menopause (natural or induced) is at 40 or younger, about 1 in 100 US women. Induced menopause follows ovary removal, chemotherapy, radiation or medicines.' },
+  menopause_society_premature: { url: 'https://menopause.org/patient-education/menopause-topics/premature-menopause', label: 'The Menopause Society: Premature, early and induced menopause', says: 'Premature menopause (natural or induced) is at 40 or younger, about 1 in 100 US women. Induced menopause follows ovary removal, chemotherapy, radiation or medicines.' },
   nhs_early_menopause: { url: 'https://www.nhs.uk/conditions/early-menopause/', label: 'NHS: Early menopause', says: 'Early menopause is periods stopping before 45; premature is before 40. It can happen naturally or after surgery, radiotherapy, chemotherapy or hormone medicines.' },
-  asrm_advanced_age: { url: 'https://asrm.org/globalassets/_asrm/practice-guidance/ethics-opinions/pdf/oocyte_or_embryo_donation_to_women_of_advanced_maternal_age_an_ethics_commitee_opinion.pdf', label: 'ASRM Ethics Committee: Oocyte or embryo donation to women of advanced reproductive age', says: 'Embryo transfer to women over 55 should generally be discouraged; many women 45 to 54 are reasonable candidates with a full medical evaluation.' },
+  asrm_advanced_age: { url: 'https://www.asrm.org/practice-guidance/ethics-opinions/assisted-reproduction-with-advancing-paternal-and-maternal-age-an-ethics-committee-opinion-2025/', label: 'ASRM Ethics Committee (2025): Assisted reproduction with advancing paternal and maternal age', says: 'Replaces the 2016 opinion. Pregnancy complications rise significantly over 45, are significantly higher at 50 or older, and higher again at 55 or older (pregnancy-induced hypertension 26% at 50 to 54 vs 60% at 55+ in a cited series). Sets no fixed age cutoff; clinics should strongly consider declining embryo transfer at very advanced ages.' },
 };
 
 // AGE BANDS (spec Q1). Age is a small prior only; it never infers periods,
@@ -536,7 +536,8 @@ export const AGE_STAGE_RULES = {
   // Perimenopause usually starts in the mid- to late 40s; some notice it in
   // their mid- to late 30s. Before 35 is outside that. [owh_basics]
   perimenopause: [{ kind: 'unusual', code: 'early_perimenopause', test: (age) => age < 35, sources: ['owh_basics'] }],
-  // ASRM discourages embryo transfer over 55. [asrm_advanced_age]
+  // ASRM (2025) sets no fixed cutoff; 55+ is the highest-risk group in the
+  // data it cites, so it only lowers confidence. [asrm_advanced_age]
   pregnant: [{ kind: 'unusual', code: 'pregnancy_over_55', test: (age) => age > 55, sources: ['asrm_advanced_age'] }],
   ttc: [{ kind: 'unusual', code: 'ttc_over_55', test: (age) => age > 55, sources: ['asrm_advanced_age'] }],
   postpartum: [{ kind: 'unusual', code: 'postpartum_over_55', test: (age) => age > 55, sources: ['asrm_advanced_age'] }],

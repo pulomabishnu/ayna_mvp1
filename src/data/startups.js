@@ -17,7 +17,7 @@ export const STARTUPS = [
         stage: 'FDA-cleared, shipping soon',
         productReleased: false,
         spotsLeft: 340,
-        url: 'https://www.qvin.com',
+        url: 'https://qvin.com/',
         image: 'https://www.nonwovens-industry.com/wp-content/uploads/sites/11/2025/08/796_main-4.jpg'
     },
     {
@@ -606,7 +606,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 410,
         url: 'https://perelel.com',
-        image: 'https://perelelhealth.com/cdn/shop/files/conception_-_29.png?v=1767981485&width=1000'
+        image: ''
     },
     {
         id: 's-needed',
@@ -1075,7 +1075,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 490,
         url: '#',
-        image: 'https://tampontribe.com/cdn/shop/products/DayPad_1_5e62dd02-77b1-4a5a-82a8-da422ea77d40.png?v=1679942637&width=1445'
+        image: ''
     },
     {
         id: 's-ivf-companion',

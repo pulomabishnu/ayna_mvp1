@@ -26,7 +26,7 @@ export default [
   "strength": "primary",
   "grade": "A",
   "rationale": "Short-course topical azoles treat uncomplicated vulvovaginal candidiasis.",
-  "source_url": "https://www.cdc.gov/stiapp/candidiasis.html",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -36,7 +36,7 @@ export default [
   "strength": "primary",
   "grade": "A",
   "rationale": "Topical clotrimazole is a recommended OTC regimen for uncomplicated yeast infection.",
-  "source_url": "https://www.cdc.gov/stiapp/candidiasis.html",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -96,7 +96,7 @@ export default [
   "strength": "primary",
   "grade": "A",
   "rationale": "400 mcg folic acid before conception prevents neural tube defects; folic acid is the proven form.",
-  "source_url": "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf",
+  "source_url": "https://www.cdc.gov/folic-acid/about/intake-and-sources.html",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -106,7 +106,7 @@ export default [
   "strength": "primary",
   "grade": "A",
   "rationale": "Folic acid 400 mcg daily is recommended before and in early pregnancy.",
-  "source_url": "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf",
+  "source_url": "https://www.cdc.gov/folic-acid/about/intake-and-sources.html",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1646,7 +1646,7 @@ export default [
   "strength": "primary",
   "grade": "B",
   "rationale": "A complete prenatal (DHA, iron, choline), but it uses methylfolate (5-MTHF), and CDC states only folic acid is proven in RCTs to prevent NTDs, so it was graded B rather than the draft A.",
-  "source_url": "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf",
+  "source_url": "https://www.cdc.gov/folic-acid/about/intake-and-sources.html",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1666,7 +1666,7 @@ export default [
   "strength": "primary",
   "grade": "B",
   "rationale": "Formulated for pregnancy, but users wanting proven NTD protection should confirm folic acid intake with their clinician (CDC).",
-  "source_url": "https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf",
+  "source_url": "https://www.cdc.gov/folic-acid/about/intake-and-sources.html",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1676,7 +1676,7 @@ export default [
   "strength": "secondary",
   "grade": "B",
   "rationale": "Cochrane (2020) found CoQ10 among antioxidants that improved clinical pregnancy in subfertile women, but the evidence is low quality, mostly from IVF/subfertile groups, and doses often exceed 100 mg.",
-  "source_url": "https://www.cochrane.org/podcasts/10.1002/14651858.CD007807.pub4",
+  "source_url": "https://www.cochrane.org/evidence/CD007807_antioxidants-female-subfertility",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1686,7 +1686,7 @@ export default [
   "strength": "secondary",
   "grade": "B",
   "rationale": "Low-quality evidence of better clinical pregnancy with CoQ10 in subfertile women; no evidence for fertile women trying naturally (ASRM: antioxidants have little evidence without ovulatory dysfunction).",
-  "source_url": "https://www.cochrane.org/podcasts/10.1002/14651858.CD007807.pub4",
+  "source_url": "https://www.cochrane.org/evidence/CD007807_antioxidants-female-subfertility",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -4666,7 +4666,7 @@ export default [
   "strength": "secondary",
   "grade": "B",
   "rationale": "Can provide treatment, but the AUA guideline asks for urinalysis and culture with each recurrent episode and lists self-start therapy only for selected patients.",
-  "source_url": "https://www.auanet.org/guidelines/guidelines/recurrent-uti",
+  "source_url": "https://www.auanet.org/guidelines-and-quality/guidelines/recurrent-uti",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -4706,7 +4706,7 @@ export default [
   "strength": "secondary",
   "grade": "B",
   "rationale": "Useful for self-monitoring, but the AUA guideline calls for urinalysis plus culture with each recurrent episode, so strips cannot replace clinical testing.",
-  "source_url": "https://www.auanet.org/guidelines/guidelines/recurrent-uti",
+  "source_url": "https://www.auanet.org/guidelines-and-quality/guidelines/recurrent-uti",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -4756,7 +4756,7 @@ export default [
   "strength": "secondary",
   "grade": "B",
   "rationale": "Supports a self-start style pathway the AUA allows for selected patients, but culture with each episode is still recommended.",
-  "source_url": "https://www.auanet.org/guidelines/guidelines/recurrent-uti",
+  "source_url": "https://www.auanet.org/guidelines-and-quality/guidelines/recurrent-uti",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -4846,7 +4846,7 @@ export default [
   "strength": "secondary",
   "grade": "B",
   "rationale": "Can treat episodes, but recurrent UTI care per AUA needs culture each episode and prevention planning (cranberry, vaginal estrogen, prophylaxis).",
-  "source_url": "https://www.auanet.org/guidelines/guidelines/recurrent-uti",
+  "source_url": "https://www.auanet.org/guidelines-and-quality/guidelines/recurrent-uti",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -5506,7 +5506,7 @@ export default [
   "strength": "secondary",
   "grade": "B",
   "rationale": "CDC indicates boric acid 600 mg vaginally daily for 3 weeks for recurrent non-albicans VVC (~70% eradication); first-line yeast treatment is azole antifungals.",
-  "source_url": "https://www.cdc.gov/stiapp/candidiasis.html",
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },

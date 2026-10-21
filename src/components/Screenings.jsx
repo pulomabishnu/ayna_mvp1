@@ -12,8 +12,7 @@ const TELEHEALTH_SERVICES = [
 // Guideline sources, every recommendation is backed by at least 3 sources
 const GUIDELINE_LINKS = {
     sti: [
-        { name: 'ACOG – STI screening', url: 'https://www.acog.org/womens-health/faqs/sexually-transmitted-infections' },
-        { name: 'CDC – STI guidelines', url: 'https://www.cdc.gov/std/prevention/default.htm' },
+        { name: 'CDC – STI guidelines', url: 'https://www.cdc.gov/std/prevention/' },
         { name: 'USPSTF – STI screening', url: 'https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/chlamydia-and-gonorrhea-screening' }
     ],
     pap: [

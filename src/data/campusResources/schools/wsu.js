@@ -29,13 +29,13 @@ export const wsu = {
       "phoneLabel": "ATVP (332-HELP)",
       "extraPhones": [
         {
-          "label": "24-hour crisis hotline",
+          "label": "Toll-free line",
           "number": "877-334-2887"
         }
       ],
       "hours": "24 hours a day",
       "confidentialityNote": "WSU pages describe ATVP services as free, immediate and confidential.",
-      "website": "http://atvp.org/index.shtml"
+      "website": "https://www.atvp.org/"
     },
     {
       "id": "wsu-caps",

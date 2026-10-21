@@ -2376,7 +2376,7 @@ export const PRODUCT_RESEARCH = {
         "Do not fold or bunch the wrap, and do not wear it while sleeping.",
         "Check your skin often, and stop using it if you see burns or blisters."
       ],
-      "sourceUrl": "https://www.orderroombox.com/product/thermacare-heatwraps-menstrual-pain-therapy/",
+      "sourceUrl": "https://www.heb.com/product-detail/thermacare-menstrual-pain-therapy-heatwraps/10241521",
       "sourceLabel": "ThermaCare Menstrual HeatWraps label directions and warnings (retailer listing)"
     },
     "clinicalSources": [
@@ -2416,7 +2416,7 @@ export const PRODUCT_RESEARCH = {
       "Each heat cell contains iron and can be harmful if swallowed; keep away from children and pets."
     ],
     "warningsSource": {
-      "url": "https://www.orderroombox.com/product/thermacare-heatwraps-menstrual-pain-therapy/",
+      "url": "https://www.heb.com/product-detail/thermacare-menstrual-pain-therapy-heatwraps/10241521",
       "label": "Retailer listing reproducing the ThermaCare Menstrual HeatWraps label"
     }
   },
@@ -3595,7 +3595,7 @@ export const PRODUCT_RESEARCH = {
         "Use tampons only during your period.",
         "If you get a sudden high fever, vomiting, diarrhea, dizziness or a sunburn-like rash, remove the tampon and get medical care right away."
       ],
-      "sourceUrl": "https://ob-tampons.com/what-is-toxic-shock-syndrome",
+      "sourceUrl": "https://www.ob-tampons.com/pages/tss",
       "sourceLabel": "o.b.: What is Toxic Shock Syndrome"
     },
     "scienceSources": [
@@ -4119,7 +4119,7 @@ export const PRODUCT_RESEARCH = {
         "To remove, wash your hands, hook a finger under the front rim, and pull it out level to avoid spills.",
         "Empty it into the toilet, rinse, and reinsert, keeping it in its case between periods."
       ],
-      "sourceUrl": "https://pureeros.com/products/ziggy-cup",
+      "sourceUrl": "https://www.lookfantastic.com/p/intimina-ziggy-cup-2-size-a/13761957",
       "sourceLabel": "Pure Eros: Intimina Ziggy Cup listing with directions"
     },
     "clinicalSources": [
@@ -5001,7 +5001,7 @@ export const PRODUCT_RESEARCH = {
         "summary": "In a prospective pilot study at a urogynecology clinic (53 of 79 women completed 3 months), regular vibrator use was linked to better desire, arousal, orgasm, satisfaction and overall sexual function scores, less pain with sex, and fewer bothersome prolapse symptoms, with no control group."
       },
       {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
+        "url": "https://kinseyinstitute.org/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
         "label": "Journal of Sexual Medicine (2009), Herbenick et al.: vibrator use by U.S. women (Kinsey Institute PDF)",
         "summary": "National survey of 2,056 women; 71.5% of vibrator users reported no side effects, and most reported side effects such as numbness were mild and short-lived."
       }
@@ -5060,7 +5060,7 @@ export const PRODUCT_RESEARCH = {
         "summary": "In a prospective pilot study at a urogynecology clinic (53 of 79 women completed 3 months), regular vibrator use was linked to better desire, arousal, orgasm, satisfaction and overall sexual function scores, less pain with sex, and fewer bothersome prolapse symptoms, with no control group."
       },
       {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
+        "url": "https://kinseyinstitute.org/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
         "label": "Journal of Sexual Medicine (2009), Herbenick et al.: vibrator use by U.S. women (Kinsey Institute PDF)",
         "summary": "National survey of 2,056 women; 71.5% of vibrator users reported no side effects, and most reported side effects such as numbness were mild and short-lived."
       }
@@ -5119,7 +5119,7 @@ export const PRODUCT_RESEARCH = {
         "summary": "In a prospective pilot study at a urogynecology clinic (53 of 79 women completed 3 months), regular vibrator use was linked to better desire, arousal, orgasm, satisfaction and overall sexual function scores, less pain with sex, and fewer bothersome prolapse symptoms, with no control group."
       },
       {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
+        "url": "https://kinseyinstitute.org/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
         "label": "Journal of Sexual Medicine (2009), Herbenick et al.: vibrator use by U.S. women (Kinsey Institute PDF)",
         "summary": "National survey of 2,056 women; 71.5% of vibrator users reported no side effects, and most reported side effects such as numbness were mild and short-lived."
       }
@@ -5229,7 +5229,7 @@ export const PRODUCT_RESEARCH = {
         "summary": "In a prospective pilot study at a urogynecology clinic (53 of 79 women completed 3 months), regular vibrator use was linked to better desire, arousal, orgasm, satisfaction and overall sexual function scores, less pain with sex, and fewer bothersome prolapse symptoms, with no control group."
       },
       {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
+        "url": "https://kinseyinstitute.org/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
         "label": "Journal of Sexual Medicine (2009), Herbenick et al.: vibrator use by U.S. women (Kinsey Institute PDF)",
         "summary": "National survey of 2,056 women; 71.5% of vibrator users reported no side effects, and most reported side effects such as numbness were mild and short-lived."
       }
@@ -5288,7 +5288,7 @@ export const PRODUCT_RESEARCH = {
         "summary": "In a prospective pilot study at a urogynecology clinic (53 of 79 women completed 3 months), regular vibrator use was linked to better desire, arousal, orgasm, satisfaction and overall sexual function scores, less pain with sex, and fewer bothersome prolapse symptoms, with no control group."
       },
       {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
+        "url": "https://kinseyinstitute.org/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
         "label": "Journal of Sexual Medicine (2009), Herbenick et al.: vibrator use by U.S. women (Kinsey Institute PDF)",
         "summary": "National survey of 2,056 women; 71.5% of vibrator users reported no side effects, and most reported side effects such as numbness were mild and short-lived."
       }
@@ -5348,7 +5348,7 @@ export const PRODUCT_RESEARCH = {
         "summary": "In a prospective pilot study at a urogynecology clinic (53 of 79 women completed 3 months), regular vibrator use was linked to better desire, arousal, orgasm, satisfaction and overall sexual function scores, less pain with sex, and fewer bothersome prolapse symptoms, with no control group."
       },
       {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
+        "url": "https://kinseyinstitute.org/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
         "label": "Journal of Sexual Medicine (2009), Herbenick et al.: vibrator use by U.S. women (Kinsey Institute PDF)",
         "summary": "National survey of 2,056 women; 71.5% of vibrator users reported no side effects, and most reported side effects such as numbness were mild and short-lived."
       }
@@ -5904,7 +5904,7 @@ export const PRODUCT_RESEARCH = {
         "Reapply as often as you like.",
         "Replace the cap and store the tube at room temperature."
       ],
-      "sourceUrl": "https://www.ulta.com/p/p-pimprod2052232",
+      "sourceUrl": "https://www.ulta.com/p/mini-lets-spin-intimacy-gel-pimprod2052232",
       "sourceLabel": "Ulta: Joylux LET'S SPIN Intimacy Gel"
     },
     "scienceSources": [
@@ -6410,7 +6410,7 @@ export const PRODUCT_RESEARCH = {
   "p-alubri-intimate-serum": {
     "clinicalSources": [
       {
-        "url": "https://leaflets.ekhuft.nhs.uk/general-care-of-vulval-skin/html",
+        "url": "https://leaflets.ekhuft.nhs.uk/general-care-of-vulval-skin",
         "label": "East Kent Hospitals (NHS): General care of vulval skin",
         "summary": "NHS patient guidance recommends a daily emollient on vulval skin, washing with a soap substitute, and avoiding soaps, wipes, douches and scented products that can irritate."
       },
@@ -6429,7 +6429,7 @@ export const PRODUCT_RESEARCH = {
         "summary": "Explains that topical hydrocortisone relieves redness, swelling and itching, should be applied as a thin film, and that you should stop and call your doctor if an over-the-counter product hasn't helped after 7 days."
       },
       {
-        "url": "https://leaflets.ekhuft.nhs.uk/general-care-of-vulval-skin/html",
+        "url": "https://leaflets.ekhuft.nhs.uk/general-care-of-vulval-skin",
         "label": "East Kent Hospitals (NHS): General care of vulval skin",
         "summary": "NHS patient guidance recommends a daily emollient on vulval skin, washing with a soap substitute, and avoiding soaps, wipes, douches and scented products that can irritate."
       },
@@ -6443,7 +6443,7 @@ export const PRODUCT_RESEARCH = {
   "p-alubri-vulva-balm": {
     "clinicalSources": [
       {
-        "url": "https://leaflets.ekhuft.nhs.uk/general-care-of-vulval-skin/html",
+        "url": "https://leaflets.ekhuft.nhs.uk/general-care-of-vulval-skin",
         "label": "East Kent Hospitals (NHS): General care of vulval skin",
         "summary": "NHS patient guidance recommends a daily emollient on vulval skin, washing with a soap substitute, and avoiding soaps, wipes, douches and scented products that can irritate."
       },
@@ -6467,7 +6467,7 @@ export const PRODUCT_RESEARCH = {
         "summary": "Says vaginal moisturizers used every day or every few days help keep vaginal tissues healthy, can be paired with a lubricant for sex, and that a clinician can offer prescription options if they aren't enough."
       },
       {
-        "url": "https://leaflets.ekhuft.nhs.uk/general-care-of-vulval-skin/html",
+        "url": "https://leaflets.ekhuft.nhs.uk/general-care-of-vulval-skin",
         "label": "East Kent Hospitals (NHS): General care of vulval skin",
         "summary": "NHS patient guidance recommends a daily emollient on vulval skin, washing with a soap substitute, and avoiding soaps, wipes, douches and scented products that can irritate."
       }
@@ -6476,7 +6476,7 @@ export const PRODUCT_RESEARCH = {
   "p-alubri-rejuvenate-restore-kit": {
     "clinicalSources": [
       {
-        "url": "https://leaflets.ekhuft.nhs.uk/general-care-of-vulval-skin/html",
+        "url": "https://leaflets.ekhuft.nhs.uk/general-care-of-vulval-skin",
         "label": "East Kent Hospitals (NHS): General care of vulval skin",
         "summary": "NHS patient guidance recommends a daily emollient on vulval skin, washing with a soap substitute, and avoiding soaps, wipes, douches and scented products that can irritate."
       },
@@ -6602,7 +6602,7 @@ export const PRODUCT_RESEARCH = {
         "summary": "Says pads are FDA-regulated medical devices, should be changed every few hours even on light days, and that you should stop using one and contact a provider if you get itching, rash, swelling or pain, since some people react to scents or added materials."
       },
       {
-        "url": "https://leaflets.ekhuft.nhs.uk/general-care-of-vulval-skin/html",
+        "url": "https://leaflets.ekhuft.nhs.uk/general-care-of-vulval-skin",
         "label": "East Kent Hospitals (NHS): General care of vulval skin",
         "summary": "For people with sensitive or irritated vulval skin, this NHS guidance advises against wearing panty liners every day and recommends loose cotton underwear and avoiding scented products."
       }
@@ -6610,11 +6610,6 @@ export const PRODUCT_RESEARCH = {
   },
   "p-tampontribe-reusable-pads": {
     "clinicalSources": [
-      {
-        "url": "https://www.gosh.nhs.uk/conditions-and-treatments/general-health-advice/period-products",
-        "label": "Great Ormond Street Hospital (NHS): Period products",
-        "summary": "NHS hospital patient guide that describes reusable pads as a cheaper alternative you use like a disposable pad, then rinse, wash and reuse, and notes plastic in many disposable pads."
-      },
       {
         "url": "https://www.mayoclinic.org/diseases-conditions/menorrhagia/symptoms-causes/syc-20352829",
         "label": "Mayo Clinic: Heavy menstrual bleeding",
@@ -6633,11 +6628,6 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.mayoclinic.org/diseases-conditions/menorrhagia/symptoms-causes/syc-20352829",
         "label": "Mayo Clinic: Heavy menstrual bleeding",
         "summary": "Lists signs of heavy bleeding, like soaking one or more pads an hour for several hours or waking at night to change protection, and says to see a doctor if that happens."
-      },
-      {
-        "url": "https://www.gosh.nhs.uk/conditions-and-treatments/general-health-advice/period-products",
-        "label": "Great Ormond Street Hospital (NHS): Period products",
-        "summary": "NHS hospital patient guide that describes reusable pads as a cheaper alternative you use like a disposable pad, then rinse, wash and reuse, and notes plastic in many disposable pads."
       }
     ]
   },
@@ -8480,7 +8470,7 @@ export const PRODUCT_RESEARCH = {
         "text": "CDC's treatment guidelines use 600 mg in a gelatin capsule, inserted vaginally once a day for 3 weeks, for yeast infections caused by non-albicans Candida (less common yeast species) that keep coming back. That is a specific, doctor-guided use, not routine prevention. This product is a blend of boric acid and herbs with no boric acid amount stated on the brand page, so it is not that regimen.",
         "citations": [
           {
-            "url": "https://www.cdc.gov/stiapp/candidiasis.html",
+            "url": "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
             "label": "CDC STI Treatment Guidelines: Candidiasis, Vulvovaginal"
           }
         ]
@@ -8499,7 +8489,7 @@ export const PRODUCT_RESEARCH = {
     "clinicalNote": "Boric acid has a real but narrow role. CDC guidelines use it for repeat yeast infections caused by less common yeast species, and a review in Clinical Infectious Diseases reported that most of these non-albicans infections can be treated with fluconazole or boric acid. On CDC's yeast infection page, boric acid appears only for that situation, and the review notes women who carry these yeasts without symptoms should skip treatment.",
     "clinicalNoteSources": [
       {
-        "url": "https://www.cdc.gov/stiapp/candidiasis.html",
+        "url": "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
         "label": "CDC STI Treatment Guidelines: Candidiasis, Vulvovaginal",
         "summary": "Recommends 600 mg vaginal boric acid daily for 3 weeks when non-albicans yeast infection recurs."
       },
@@ -9151,7 +9141,7 @@ export const PRODUCT_RESEARCH = {
         "Set a temperature for each side in the app, or turn on Autopilot to adjust it overnight.",
         "Change the water every 2 to 3 months and clean the cover with a mild detergent."
       ],
-      "sourceUrl": "https://www.eightsleep.com/blog/answering-your-questions-about-the-pod",
+      "sourceUrl": "https://help.eightsleep.com/en_us/how-do-i-maintain-the-pod-HyWYigaKN.md",
       "sourceLabel": "Eight Sleep: Answering Your Questions About The Pod"
     },
     "clinicalSources": [
@@ -9171,7 +9161,7 @@ export const PRODUCT_RESEARCH = {
     "clinicalNote": "Your body needs to cool down a little to fall and stay asleep, and a warm room makes hot flashes (sudden waves of heat, often with sweating) more likely. That is why common advice for night sweats is a cool room, a fan, and fewer blankets. A bed that cools itself is a high-tech take on the same idea. The one published study of the Pod was run by Eight Sleep and did not focus on perimenopause or night sweats, so its benefit for those symptoms specifically hasn't been tested.",
     "clinicalNoteSources": [
       {
-        "url": "https://uofmhealth.org/health-library/hw228097",
+        "url": "https://www.uofmhealth.org/health-library/hw228097",
         "label": "University of Michigan Health (Healthwise): Hot Flashes and Menopause",
         "summary": "Hot flashes are more likely in a warm environment; suggests keeping the room cool, using a fan, and sleeping with fewer blankets."
       },
@@ -9437,7 +9427,7 @@ export const PRODUCT_RESEARCH = {
     "clinicalNote": "Vibrator use is common: in a 2009 national survey of 2,056 US women, about half (52.5%) had used one. Women who had used one in the past month tended to report better desire, arousal, lubrication, and orgasm, though the survey can't show that the vibrator caused this. Most users (71.5%) never had side effects, and the ones reported, like brief numbness or irritation, were usually mild and rarely lasted a day or more. The study was funded by a condom maker, Church & Dwight.",
     "clinicalNoteSources": [
       {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
+        "url": "https://kinseyinstitute.org/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
         "label": "Journal of Sexual Medicine (2009), Herbenick et al.: Prevalence and characteristics of vibrator use by women in the United States",
         "summary": "52.5% of 2,056 women had used a vibrator; recent use was linked with better sexual function scores; side effects were uncommon and mostly short-lived."
       }
@@ -9542,13 +9532,13 @@ export const PRODUCT_RESEARCH = {
         "Throw the wipe in the trash rather than flushing it.",
         "Stop using it if a rash or discomfort develops."
       ],
-      "sourceUrl": "https://www.ulta.com/p/p-xlsImpprod18141017",
+      "sourceUrl": "https://www.ulta.com/p/unscented-gentle-soothing-wipes-pimprod2007177",
       "sourceLabel": "Ulta Beauty: SweetSpot Labs Gentle Soothing Wipes"
     },
     "communityReview": "Reviewers often say the wipes feel gentle and soothing, leave skin soft without drying it out, and are handy to carry. Common complaints are a scent some find strong or artificial, wipes that feel thin or dry, occasional irritation or burning, and a small count for the price.",
     "communityReviewSources": [
       {
-        "url": "https://www.ulta.com/p/p-xlsImpprod18141017",
+        "url": "https://www.ulta.com/p/unscented-gentle-soothing-wipes-pimprod2007177",
         "label": "Ulta Beauty customer reviews: SweetSpot Labs Vanilla Blossom Gentle Soothing Wipes"
       }
     ],
@@ -10132,7 +10122,7 @@ export const PRODUCT_RESEARCH = {
         "Take them off before you nurse.",
         "Don't combine them with other nipple creams or treatments."
       ],
-      "sourceUrl": "https://www.naturalresources-sf.com/collections/breast-care/products/silverette-silver-nursing-cups",
+      "sourceUrl": "https://www.naturalresources-sf.com/products/silverette-silver-nursing-cups",
       "sourceLabel": "Silverette Nursing Cups directions (Natural Resources)"
     },
     "clinicalSources": [
@@ -10365,7 +10355,7 @@ export const PRODUCT_RESEARCH = {
     },
     "scienceSources": [
       {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
+        "url": "https://kinseyinstitute.org/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
         "label": "Herbenick et al., Journal of Sexual Medicine 2009: vibrator use by women in the US (national survey)",
         "summary": "In a national survey of 2,056 women, about half had used a vibrator, users scored higher on most sexual function measures, and side effects like numbness or irritation were uncommon and usually brief (the survey was industry-funded and can't show cause and effect)."
       }
@@ -10373,7 +10363,7 @@ export const PRODUCT_RESEARCH = {
     "clinicalNote": "Vibrators are common: in a US national survey of 2,056 women, 52.5% had used one. Recent users scored higher on most measures of sexual function, like desire, arousal, lubrication and orgasm, though the survey can't show the vibrator caused that, and it was funded by a condom maker. Most users (71.5%) never had genital side effects; when they did, they were usually mild and short, like brief numbness or irritation. A hospital patient guide suggests starting on the lowest setting, using a water-based lube, and stopping if anything hurts.",
     "clinicalNoteSources": [
       {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
+        "url": "https://kinseyinstitute.org/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
         "label": "Journal of Sexual Medicine (2009): Prevalence and characteristics of vibrator use by women in the United States (Herbenick et al.)",
         "summary": "Nationally representative survey: 52.5% of women had used a vibrator, use was linked to better sexual function scores, and side effects were uncommon and mostly mild."
       }
@@ -10410,7 +10400,7 @@ export const PRODUCT_RESEARCH = {
     },
     "scienceSources": [
       {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
+        "url": "https://kinseyinstitute.org/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
         "label": "Herbenick et al., Journal of Sexual Medicine 2009: vibrator use by women in the US (national survey)",
         "summary": "In a national survey of 2,056 women, about half had used a vibrator, users scored higher on most sexual function measures, and side effects like numbness or irritation were uncommon and usually brief (the survey was industry-funded and can't show cause and effect)."
       }
@@ -10418,7 +10408,7 @@ export const PRODUCT_RESEARCH = {
     "clinicalNote": "Vibrators are common: in a US national survey of 2,056 women, 52.5% had used one. Recent users scored higher on most measures of sexual function, like desire, arousal, lubrication and orgasm, though the survey can't show the vibrator caused that, and it was funded by a condom maker. Most users (71.5%) never had genital side effects; when they did, they were usually mild and short, like brief numbness or irritation. We found no studies on sonic or air-pulse devices specifically. A hospital patient guide suggests starting on the lowest setting, using a water-based lube, and stopping if anything hurts.",
     "clinicalNoteSources": [
       {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
+        "url": "https://kinseyinstitute.org/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
         "label": "Journal of Sexual Medicine (2009): Prevalence and characteristics of vibrator use by women in the United States (Herbenick et al.)",
         "summary": "Nationally representative survey: 52.5% of women had used a vibrator, use was linked to better sexual function scores, and side effects were uncommon and mostly mild."
       }
@@ -10455,7 +10445,7 @@ export const PRODUCT_RESEARCH = {
     },
     "scienceSources": [
       {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
+        "url": "https://kinseyinstitute.org/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
         "label": "Herbenick et al., Journal of Sexual Medicine 2009: vibrator use by women in the US (national survey)",
         "summary": "In a national survey of 2,056 women, about half had used a vibrator, users scored higher on most sexual function measures, and side effects like numbness or irritation were uncommon and usually brief (the survey was industry-funded and can't show cause and effect)."
       }
@@ -10468,7 +10458,7 @@ export const PRODUCT_RESEARCH = {
         "summary": "In a prospective pilot study at a urogynecology clinic (53 of 79 women completed 3 months), regular vibrator use was linked to better desire, arousal, orgasm, satisfaction and overall sexual function scores, less pain with sex, and fewer bothersome prolapse symptoms, with no control group."
       },
       {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
+        "url": "https://kinseyinstitute.org/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
         "label": "Journal of Sexual Medicine (2009), Herbenick et al.: Prevalence and characteristics of vibrator use by women in the United States",
         "summary": "52.5% of 2,056 women had used a vibrator; 71.5% of users never had side effects, and those reported were mostly mild and brief."
       }
@@ -10550,8 +10540,8 @@ export const PRODUCT_RESEARCH = {
         "Wear sunscreen and limit sun exposure while using it and for a week after, since AHAs can raise sun sensitivity.",
         "Stop using it if you get a rash or discomfort, and keep it away from your eyes."
       ],
-      "sourceUrl": "https://www.ulta.com/p/p-xlsImpprod18651011",
-      "sourceLabel": "Ulta: SweetSpot Labs Buff & Brighten AHA/BHA Body Exfoliating Pads"
+      "sourceUrl": null,
+      "sourceLabel": null
     },
     "clinicalSources": [
       {
@@ -10619,7 +10609,7 @@ export const PRODUCT_RESEARCH = {
       "Stop using it if you get a rash or discomfort, and if you're pregnant, check with your doctor before using AHA or BHA products."
     ],
     "warningsSource": {
-      "url": "https://www.ulta.com/p/p-xlsImpprod18651011",
+      "url": null,
       "label": "Ulta: SweetSpot Labs Buff & Brighten AHA/BHA Body Exfoliating Pads (brand product listing)"
     }
   },
@@ -10639,7 +10629,7 @@ export const PRODUCT_RESEARCH = {
         "Join from a computer if you can, using the link sent by text and email about 15 minutes before.",
         "Check your visit summary in the Gennev portal, fill any prescriptions, and book follow-ups or coaching sessions your doctor recommends."
       ],
-      "sourceUrl": "https://www.gennev.com/how-gennev-works",
+      "sourceUrl": "https://gennev.com/patients/how-gennev-works/",
       "sourceLabel": "Gennev: How Gennev Works"
     },
     "clinicalSources": [

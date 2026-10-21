@@ -434,12 +434,12 @@ const HOW_TO_BY_PRODUCT_ID = {
     tutorialLinks: [
       {
         label: 'DivaCup: How to use (official)',
-        url: 'https://divacup.com/pages/how-to-use',
+        url: 'https://shopdiva.com/pages/how-to-use-a-diva-cup',
         hint: 'Brand diagrams and care.',
       },
       {
         label: 'DivaCup: Cleaning & care',
-        url: 'https://divacup.com/pages/care-cleaning',
+        url: 'https://divacup.com/cleaning-your-menstrual-cup/',
         hint: 'Between-cycle cleaning and storage.',
       },
     ],

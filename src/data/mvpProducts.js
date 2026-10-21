@@ -235,7 +235,7 @@ export const MVP_PHYSICAL = [
     userRating: 4.7,
     whereToBuy: ['Pharmacy with prescription'],
     requiresPrescription: true,
-    image: 'https://m.media-amazon.com/images/I/61-qjpBT8oL.jpg',
+    image: '',
     summary: 'Prescription medication that reduces heavy menstrual bleeding by helping blood clot. Non-hormonal.',
     safety: { fdaStatus: 'FDA-approved', materials: 'Tranexamic acid', recalls: 'No recalls.', allergens: 'Check Rx', sideEffects: 'Common: nausea, headache, or mild GI upset. Carries a rare but serious risk of blood clots. Tell your prescriber about any personal or family history of clotting disorders.' },
     clinicianOpinionSource: 'independent',
@@ -575,7 +575,7 @@ export const MVP_DIGITAL = [
     communityReview: 'Community discussions on Reddit note convenience and discrete access to medication.',
     effectiveness: 'Licensed clinicians; prescriptions same as in-person.',
     badges: ['Telehealth', 'Mental Health'],
-    verificationLinks: { doctor: { links: [{ url: 'https://www.apa.org/ptsd/guide', text: 'APA: Mental health treatment', summary: 'Clinical guidance on telehealth and mental health access.', justification: 'APA is the leading psychology association.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/mentalhealth/search/?q=hers&restrict_sr=1', text: 'Reddit r/mentalhealth', summary: 'Community discussions on Hers and telehealth.' }] } }
+    verificationLinks: { doctor: { links: [{ url: 'https://www.apa.org/members/your-growth/practice-management/telepsychology', text: 'APA: Mental health treatment', summary: 'Clinical guidance on telehealth and mental health access.', justification: 'APA is the leading psychology association.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/mentalhealth/search/?q=hers&restrict_sr=1', text: 'Reddit r/mentalhealth', summary: 'Community discussions on Hers and telehealth.' }] } }
   },
   {
     id: 'd-midi-health',

@@ -76,7 +76,7 @@ export default function Recalls({ myProducts = {} }) {
                                     Open the product to run a live FDA check, or{' '}
                                     <a
                                         className="ay-info-link"
-                                        href="https://www.accessdata.fda.gov/scripts/enforcement/enforce_rpt-Product-Tabs.cfm"
+                                        href="https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/enforcement-reports"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >

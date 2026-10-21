@@ -65,7 +65,7 @@ export const csuco = {
           "number": "970-491-7111"
         }
       ],
-      "website": "https://health.colostate.edu/make-a-counseling-appointment/"
+      "website": "https://health.colostate.edu/about-hn-mental-health-services/"
     },
     {
       "id": "csuco-sane",

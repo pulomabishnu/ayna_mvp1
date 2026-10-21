@@ -509,7 +509,7 @@ export const EXTENDED_DIGITAL = [
         communityReview: 'Community discussions on Reddit r/therapy note good therapist access but ongoing concerns about the FTC data settlement.',
         integrations: [], effectiveness: 'Convenient access to licensed therapists. Therapist quality varies. Check FTC privacy settlement.',
         verificationLinks: {
-            doctor: { links: [{ url: 'https://www.apa.org/ptsd/guide/online-therapy', text: 'APA: Guide to Online Therapy', summary: 'The American Psychological Association verifies the high efficacy of online therapy for managing general anxiety and depression.' }] },
+            doctor: { links: [{ url: 'https://www.apa.org/members/your-growth/practice-management/telepsychology/online-therapy', text: 'APA: Guide to Online Therapy', summary: 'The American Psychological Association verifies the high efficacy of online therapy for managing general anxiety and depression.' }] },
             scientific: { links: [{ url: 'https://www.jmir.org/2021/6/e27867/', text: 'JMIR Study on BetterHelp Efficacy', summary: 'Research showing that users of BetterHelp experienced a significant reduction in depression symptom severity within 3 months.' }] },
             community: { links: [{ url: 'https://www.reddit.com/r/therapy/search/?q=BetterHelp', text: 'Reddit Therapy Reviews', summary: 'Mixed but generally positive community feedback focusing on the accessibility and ease of switching therapists.' }] }
         }
