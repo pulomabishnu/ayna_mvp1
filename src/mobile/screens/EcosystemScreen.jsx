@@ -292,7 +292,6 @@ export default function EcosystemScreen({
     {careFirst && hasAnything && <p className="ay-care-first__after">Products, when you are ready</p>}
 
     <div className={careFirst ? 'ay-eco-secondary' : undefined}>
-      {seed && <HealthShapedNote shaped={seed.healthShaped} userId={authUser?.id || null} onConnect={onConnectHealth || onOpenHealthData} className="ay-eco-hsn" />}
       {visibleSections.map((section) => {
         const { shelf } = section;
         const empty = section.products.length === 0 && !(section.picks?.length);
@@ -318,7 +317,13 @@ export default function EcosystemScreen({
           </div>}
           {shelf?.care && !careFirst && <details className="ay-shelf-care"><summary>Care options for {section.phrase}</summary><CareLinks care={shelf.care} /></details>}
         </section>;
-      }).flatMap((node, index) => (index === 0 && careBanner ? [node, <div key="care-note" className="ay-carenote-slot">{careBanner}</div>] : [node]))}
+      }).flatMap((node, index) => (index === 0 ? [
+        node,
+        careBanner ? <div key="care-note" className="ay-carenote-slot">{careBanner}</div> : null,
+        // How her health data shaped the order (or the invite to connect): after the first shelf, so shelves lead.
+        seed ? <HealthShapedNote key="hsn" shaped={seed.healthShaped} userId={authUser?.id || null} onConnect={onConnectHealth || onOpenHealthData} className="ay-eco-hsn" /> : null,
+      ].filter(Boolean) : [node]))}
+      {visibleSections.length === 0 && seed && <HealthShapedNote shaped={seed.healthShaped} userId={authUser?.id || null} onConnect={onConnectHealth || onOpenHealthData} className="ay-eco-hsn" />}
       {visibleSections.length === 0 && careBanner}
 
       {worthALook.length > 0 && activeChip === 'all' && !q && <section className="ay-shelf2 eco-app-shelf eco-app-worth" style={{ '--area-tone': '#769EBE', '--area-ink': '#3E2723' }} aria-labelledby="ayna-cabinet-next-title">

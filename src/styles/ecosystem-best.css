@@ -314,7 +314,7 @@ html body .app-container.app-container #ayeco .eco-skel__row span:nth-child(3) {
 @keyframes eco-pulse { from { opacity: 1; } to { opacity: .5; } }
 html.ay-motion-paused body .app-container.app-container #ayeco .eco-skel__row span { animation: none !important; }
 @media (prefers-reduced-motion: reduce) { html body .app-container.app-container #ayeco .eco-skel__row span { animation: none !important; } }
-@media (max-width: 400px) {
+@media (max-width: 360px) {
   html body .app-container.app-container #ayeco .eco-stack__card > .eco-stack__cost { grid-column: 1 / -1 !important; grid-row: 3 !important; text-align: left; padding: 0; }
   html body .app-container.app-container #ayeco .ayeco__actions { flex-wrap: nowrap !important; gap: 10px !important; }
   html body .app-container.app-container #ayeco .ayeco__actions .ay-btn { padding: 0 16px !important; font-size: 15px !important; white-space: nowrap; }
