@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react';
 import { AskContext } from '../askContext.js';
-import { askStats, dashboardContext } from '../utils/dashboardAsk.js';
+import { dashboardContext } from '../utils/dashboardAsk.js';
 import { buildDashboard } from '../../health/dashboard.js';
 import { localToday, useHealthData } from '../hooks/useHealthData.js';
 import { CycleRing } from './HealthChart.jsx';
@@ -69,7 +69,7 @@ export default function HealthDashboard({ authUser, userName = '', selectedNeedI
         onOpenProduct={onOpenProduct}
         onAddGoal={onAddGoal}
         onOpenRoutine={onOpenRoutine}
-        onAsk={openAsk ? (question, extra) => openAsk({ question, context: dashboardContext({ cycle: week.cycle?.cycleDay ? week.cycle : null, estimate, ready, products, insights: extra?.insights || [] }), stats: askStats(week, estimate) }) : undefined}
+        onAsk={openAsk ? (question, extra) => openAsk({ question, context: dashboardContext({ cycle: week.cycle?.cycleDay ? week.cycle : null, estimate, ready, products, insights: extra?.insights || [] }), stats: extra?.stats || null }) : undefined}
         footer={<button type="button" className="ay-hc-ghost" onClick={onConnect}>Manage connected apps</button>}
         surface="app"
       />

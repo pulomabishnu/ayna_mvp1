@@ -6,7 +6,7 @@ import { weekPicks } from '../../health/weekPicks.js';
 import { comingUp } from '../../health/comingUp.js';
 import { phaseCompare, normalRanges, goalsCovered, effectChecks, aynaAdds } from '../../health/beyondNumbers.js';
 import { SOURCE_NAMES } from '../data/healthConnections.js';
-import { weekQuestions, weekSummary } from '../utils/dashboardAsk.js';
+import { askStats, weekQuestions, weekSummary } from '../utils/dashboardAsk.js';
 import ProductImage from './ProductImage.jsx';
 import HealthChart, { CycleRing } from './HealthChart.jsx';
 import { Line, PhaseStrip, SourceLink, PhaseCompare, NormalRanges, GoalsCovered, WeekPicks, Meter } from './HealthBento.jsx';
@@ -306,7 +306,7 @@ export default function HealthHome({
   const asked = new Set(insights.map((i) => i.question));
   const questions = weekQuestions({ insights: [], ctx, picks }).filter((q) => !asked.has(q));
   if (ranges && !ranges.allOk) questions.push('Is my cycle length something to ask a clinician about?');
-  const ask = onAsk ? (q) => onAsk(q, { insights }) : undefined;
+  const ask = onAsk ? (q) => onAsk(q, { insights, stats: askStats(week, estimate) }) : undefined;
 
   const hour = new Date().getHours();
   const hello = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';

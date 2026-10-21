@@ -941,7 +941,7 @@ export default function MobileApp() {
     // onAskAyna() opens the drawer; onAskAyna({ question, context }) also asks
     // that question with what she's looking at (e.g. her dashboard numbers).
     onAskAyna: (opts) => {
-      if (opts && typeof opts.question === 'string') setAskSeed({ id: Date.now(), question: opts.question, context: typeof opts.context === 'string' ? opts.context : '' });
+      if (opts && typeof opts.question === 'string') setAskSeed({ id: Date.now(), question: opts.question, context: typeof opts.context === 'string' ? opts.context : '', stats: Array.isArray(opts.stats) ? opts.stats.slice(0, 3) : null });
       if (authUser) setAskAynaOpen(true); else requestAuth('Ask ayna', () => { setScreen(screen); setAskAynaOpen(true); });
     },
     onBack: () => {

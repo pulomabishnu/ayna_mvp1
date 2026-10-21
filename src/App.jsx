@@ -653,12 +653,14 @@ function App() {
   const [editAtStep, setEditAtStep] = useState('');
   useEffect(() => { if (currentView !== 'profile-edit') { setEditAtOptional(false); setEditAtStep(''); } }, [currentView]);
   const [askOpenSignal, setAskOpenSignal] = useState(0);
+  const [askPrefillStats, setAskPrefillStats] = useState(null);
   const [askPrefill, setAskPrefill] = useState('');
   // Opens Ask ayna, optionally with a question typed in (Shop's empty state).
-  const openAsk = useCallback((text = '') => {
+  const openAsk = useCallback((text = '', stats = null) => {
     if (!user) { setAuthFeature('Ask ayna'); setPendingAction('feature'); pendingActionRef.current = 'feature'; setShowAuthModal(true); return; }
     if (!quizResults) { setCurrentView('quiz'); return; }
     setAskPrefill(text);
+    setAskPrefillStats(Array.isArray(stats) ? stats.slice(0, 3) : null);
     setAskOpenSignal((n) => n + 1);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, quizResults]);
@@ -2069,7 +2071,7 @@ function App() {
       needIds={healthNeedIds}
       hormonalBC={usesHormonalBC(quizResults)}
       onOpenProduct={(p) => handleOpenProduct(p, { source: 'health_dashboard' })}
-      onAsk={(q) => openAsk(q)}
+      onAsk={(q, extra) => openAsk(q, extra?.stats)}
       onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
       onOpenConnections={() => {
         if (user) { setCurrentView('health-data'); return; }
@@ -3000,6 +3002,7 @@ function App() {
           onRequireAuth={(feature) => { setAuthFeature(typeof feature === 'string' ? feature : ''); setPendingAction(typeof feature === 'string' && feature ? 'feature' : 'login'); pendingActionRef.current = typeof feature === 'string' && feature ? 'feature' : 'login'; setShowAuthModal(true); }}
           openSignal={askOpenSignal}
           prefill={askPrefill}
+          prefillStats={askPrefillStats}
           profile={quizResults}
           user={user}
           onProfileUpdate={setQuizResults}

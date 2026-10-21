@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 
-// Tapping a starter fills the box so the person can edit before asking.
-const ASK_STARTERS = ['What helps with cramps?', 'Is this safe with my birth control?', 'Explain my top match'];
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 import { apiUrl } from '../../utils/apiUrl.js';
@@ -9,6 +7,18 @@ import ShareAnswerButton from '../../components/ShareAnswerButton.jsx';
 import { questionForAnswer } from '../../utils/sharedAnswer.js';
 import AskFollowUps from '../../components/AskFollowUps.jsx';
 import { chipsFor, followUpRequestFields } from '../../utils/askFollowUps.js';
+import AskHome, { AskStatCard } from '../../components/AskHome.jsx';
+import { recentQuestions } from '../../utils/askRecent.js';
+
+// Ask ayna's first screen: tiles fill the box so she can edit before asking.
+function askTiles(hasHealthData) {
+  return [
+    { label: 'Ask about your week', sub: hasHealthData ? 'Read against your cycle' : 'Best with health data connected', question: 'What stands out in my health data this week?', icon: 'week', tone: 'pink', isNew: true },
+    { label: 'What helps with cramps?', question: 'What helps with cramps?', icon: 'cramps', tone: 'sky' },
+    { label: 'Is this safe with my birth control?', question: 'Is this safe with my birth control?', icon: 'safety', tone: 'group' },
+    { label: 'Explain my top match', sub: 'Why it fits you, with the evidence', question: 'Explain my top match', icon: 'match', tone: 'ink' },
+  ];
+}
 
 /**
  * Mobile port of ProfileChatbot's merge/summary logic
@@ -94,6 +104,10 @@ export default function AskAynaModal({
   // What she was looking at when she asked (e.g. her dashboard week), sent
   // along with this conversation's questions.
   const [screenContext, setScreenContext] = useState('');
+  // Home (tiles + recent questions) until she asks something.
+  const [home, setHome] = useState(true);
+  // Back on the home view: start at the top, not where the chat was scrolled.
+  useEffect(() => { if (home) bottomRef.current?.parentElement?.scrollTo({ top: 0 }); }, [home]);
   const seedDone = useRef(null);
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
@@ -126,7 +140,7 @@ export default function AskAynaModal({
     if (!open || !seed || seedDone.current === seed.id || session === undefined || sending) return;
     seedDone.current = seed.id;
     setScreenContext(seed.context || '');
-    if (session?.access_token) send(seed.question, seed.context || '');
+    if (session?.access_token) send(seed.question, seed.context || '', Array.isArray(seed.stats) ? seed.stats : null);
     else setInput(seed.question);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, seed, session]);
@@ -140,12 +154,13 @@ export default function AskAynaModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
-  const send = async (msg, context = screenContext) => {
+  const send = async (msg, context = screenContext, stats = null) => {
     if (!msg || sending) return;
     if (!session?.access_token) { onRequireAuth?.('Ask ayna'); return; }
     setInput('');
     setSendError('');
-    const userMsg = { role: 'user', text: msg };
+    setHome(false);
+    const userMsg = { role: 'user', text: msg, ...(stats?.length ? { stats } : {}) };
     const messagesWithUser = [...messages, userMsg];
     setMessages(messagesWithUser);
     setSending(true);
@@ -169,7 +184,7 @@ export default function AskAynaModal({
       if (res.status === 429) throw Object.assign(new Error('weekly_limit_reached'), { code: 'weekly_limit_reached' });
       if (!res.ok || !data?.answer) throw new Error(data?.error || 'Could not get an answer right now.');
 
-      const newMessages = [...messagesWithUser, { role: 'assistant', text: data.answer, followUps: Array.isArray(data.followUps) ? data.followUps : [] }];
+      const newMessages = [...messagesWithUser, { role: 'assistant', text: data.answer, followUps: Array.isArray(data.followUps) ? data.followUps : [], ...(stats?.length ? { stats } : {}) }];
 
       const merged = mergeProfileUpdate(profile || {}, data.profileUpdate || {});
       if (merged) {
@@ -247,15 +262,31 @@ export default function AskAynaModal({
           borderBottom: '1px solid var(--ayna-border)',
         }}
       >
+        {!home && (
+          <button type="button" className="ay-askh-homebtn" aria-label="Back to Ask ayna home" onClick={() => setHome(true)}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+          </button>
+        )}
         <div style={{ flex: 1 }}>
           <h1 className="ay-ask-title">Ask ayna</h1>
         </div>
         {onClose && <button type="button" className="ay-ask-done" onClick={onClose}>Done</button>}
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {messages.map((m, i) => (
+      <div className={home && !sending ? 'ay-askh-scroll' : undefined} style={{ flex: 1, overflowY: 'auto', padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {home && !sending && (
+          <AskHome
+            name={name ? String(name).split(' ')[0] : ''}
+            intro="Ask about a product, your week, or what to try. Not medical advice."
+            tiles={askTiles(hasHealthData)}
+            recent={recentQuestions(messages)}
+            onPick={(q) => { setInput(q); inputRef.current?.focus({ preventScroll: true }); }}
+            onContinue={messages.some((m) => m.role === 'user') ? () => setHome(false) : null}
+          />
+        )}
+        {!(home && !sending) && messages.map((m, i) => (
           <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
+            {m.role === 'assistant' && <AskStatCard stats={m.stats} />}
             <div
               style={{
                 maxWidth: '85%',
@@ -314,11 +345,6 @@ export default function AskAynaModal({
             )}
           </div>
         ))}
-        {!messages.some((m) => m.role === 'user') && !sending && (
-          <div className="ay-ask-starters" aria-label="Try asking">
-            {ASK_STARTERS.map((q, i) => <button type="button" key={q} className="ay-ask-starter" style={{ '--i': i }} onClick={() => setInput(q)}>{q}</button>)}
-          </div>
-        )}
         {sending && <div className="ay-typing" role="status" aria-label="ayna is thinking"><i /><i /><i /></div>}
         <div ref={bottomRef} />
       </div>
