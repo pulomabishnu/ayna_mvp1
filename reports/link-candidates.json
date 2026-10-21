@@ -1,409 +1,73 @@
 {
- "generated_at": "2026-10-21T07:26:21.028Z",
+ "generated_at": "2026-10-21T09:08:18.252Z",
  "site": "https://www.aynahealth.co",
  "external": [
   {
-   "url": "https://leaflets.ekhuft.nhs.uk/s3/leaflets/general-care-of-vulval-skin/6254896c-e1a7-4063-a2a1-68f84b36c76c.p1725019406.pdf",
+   "url": "https://www.health.columbia.edu/content/individual-counseling",
    "files": [
     "candidates"
    ],
-   "status": 200,
-   "error": "UNABLE_TO_VERIFY_LEAF_SIGNATURE",
-   "state": "ok",
-   "via": "browser",
-   "final_url": "https://leaflets.ekhuft.nhs.uk/s3/leaflets/general-care-of-vulval-skin/6254896c-e1a7-4063-a2a1-68f84b36c76c.p1725019406.pdf",
-   "captcha": false,
-   "title": "",
-   "fetch_status": 0
-  },
-  {
-   "url": "https://leaflets.ekhuft.nhs.uk/s3/assets/easysite-leaflets/vulval-skin-october-2021-a4.pdf",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "error": "UNABLE_TO_VERIFY_LEAF_SIGNATURE",
-   "state": "ok",
-   "via": "browser",
-   "final_url": "https://leaflets.ekhuft.nhs.uk/s3/assets/easysite-leaflets/vulval-skin-october-2021-a4.pdf",
-   "captcha": false,
-   "title": "",
-   "fetch_status": 0
-  },
-  {
-   "url": "https://wuka.co.uk/collections/plus-size/products/stretch-cotton-midi-brief-heavy",
-   "files": [
-    "candidates"
-   ],
-   "status": 404,
-   "final_url": "https://wuka.co.uk/collections/plus-size/products/stretch-cotton-midi-brief-heavy",
-   "state": "broken",
+   "status": 403,
+   "final_url": "https://www.health.columbia.edu/content/individual-counseling",
+   "state": "blocked",
    "via": "browser",
    "captcha": false,
-   "title": "404 Not Found – WUKA",
-   "fetch_status": 404,
-   "wayback": null
-  },
-  {
-   "url": "https://wuka.co.uk/collections/flash/products/stretch-cotton-midi-brief-heavy",
-   "files": [
-    "candidates"
-   ],
-   "status": 404,
-   "final_url": "https://wuka.co.uk/collections/flash/products/stretch-cotton-midi-brief-heavy",
-   "state": "broken",
-   "via": "browser",
-   "captcha": false,
-   "title": "404 Not Found – WUKA",
-   "fetch_status": 404,
-   "wayback": null
-  },
-  {
-   "url": "https://wuka.co.uk/collections/earth-day/products/stretch-cotton-midi-brief-heavy",
-   "files": [
-    "candidates"
-   ],
-   "status": 404,
-   "final_url": "https://wuka.co.uk/collections/earth-day/products/stretch-cotton-midi-brief-heavy",
-   "state": "broken",
-   "via": "browser",
-   "captcha": false,
-   "title": "404 Not Found – WUKA",
-   "fetch_status": 404,
+   "title": "Just a moment...",
+   "fetch_status": 403,
    "wayback": {
     "status": "200",
-    "timestamp": "20251005214057",
-    "url": "http://web.archive.org/web/20251005214057/https://wuka.co.uk/collections/earth-day/products/stretch-cotton-midi-brief-heavy"
+    "timestamp": "20260329214227",
+    "url": "http://web.archive.org/web/20260329214227/https://www.health.columbia.edu/content/individual-counseling"
    }
   },
   {
-   "url": "https://newsinfo.iu.edu/web/page/normal/10877.html",
+   "url": "https://www.cdc.gov/folic-acid/about/index.html",
    "files": [
     "candidates"
    ],
-   "status": 404,
-   "final_url": "https://newsinfo.iu.edu/web/page/normal/10877.html",
-   "state": "broken",
+   "status": 200,
+   "final_url": "https://www.cdc.gov/folic-acid/about/index.html",
+   "state": "ok",
    "via": "browser",
    "captcha": false,
-   "title": "404 Not Found",
-   "fetch_status": 404,
-   "wayback": {
-    "status": "200",
-    "timestamp": "20250424194633",
-    "url": "http://web.archive.org/web/20250424194633/https://newsinfo.iu.edu/web/page/normal/10877.html"
-   }
+   "title": "About Folic Acid | Folic Acid | CDC",
+   "fetch_status": 403
   },
   {
-   "url": "https://www.healthcenter.txst.edu/hps/sexual-assault-resources.html",
+   "url": "https://www.apa.org/topics/psychotherapy/online-therapy",
    "files": [
     "candidates"
    ],
    "status": 200,
-   "final_url": "https://www.healthcenter.txst.edu/public-health-information/sexual-assault-resources.html",
+   "final_url": "https://www.apa.org/topics/psychotherapy/online-therapy",
    "state": "ok",
    "via": "fetch"
   },
   {
-   "url": "https://www.healthcenter.txst.edu/public-health-information/sexual-assault-resources.html",
+   "url": "https://www.mayoclinic.org/diseases-conditions/hot-flashes/diagnosis-treatment/drc-20352795",
    "files": [
     "candidates"
    ],
    "status": 200,
-   "final_url": "https://www.healthcenter.txst.edu/public-health-information/sexual-assault-resources.html",
+   "final_url": "https://www.mayoclinic.org/diseases-conditions/hot-flashes/diagnosis-treatment/drc-20352795",
    "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://www.healthcenter.txstate.edu/AFTER-HOURS/sexual-assault-resources",
-   "files": [
-    "candidates"
-   ],
-   "status": 404,
-   "final_url": "https://www.healthcenter.txst.edu/after-hours/sexual-assault-resources.html",
-   "state": "broken",
    "via": "browser",
    "captcha": false,
-   "title": "Page Not Found - 404 : University Health Services : Texas State University",
-   "fetch_status": 404,
-   "wayback": {
-    "status": "200",
-    "timestamp": "20211206151535",
-    "url": "http://web.archive.org/web/20211206151535/https://www.healthcenter.txstate.edu/AFTER-HOURS/sexual-assault-resources"
-   }
+   "title": "Hot flashes - Diagnosis and treatment - Mayo Clinic",
+   "fetch_status": 403
   },
   {
-   "url": "https://jilliansdrawers.com/products/silverette-silver-nursing-cups",
+   "url": "https://tienda.fisaude.com/files/Product_Sheet_LWE_ES_EU_20170425%20(2).pdf",
    "files": [
     "candidates"
    ],
    "status": 200,
-   "final_url": "https://jilliansdrawers.com/products/silverette-silver-nursing-cups",
+   "final_url": "https://tienda.fisaude.com/files/Product_Sheet_LWE_ES_EU_20170425%20(2).pdf",
    "state": "ok",
    "via": "fetch"
   },
   {
-   "url": "https://pacifierkids.com/products/the-original-silverette-nursing-cups-regular-by-silverette",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://pacifierkids.com/products/the-original-silverette-nursing-cups-regular-by-silverette",
-   "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://www.walmart.com/ip/5403864942",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://www.walmart.com/blocked?url=L2lwLzU0MDM4NjQ5NDI=&uuid=b6dcdb71-cd20-11f1-bf8f-dcd4228e6e65&vid=&g=b",
-   "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://hannaford.com/groceries/health-beauty/pain-fever/urinary-pain-relief/winx-health-fast-acting-maximum-strength-uti-pain-relief-tablets-24-ct-box.html",
-   "files": [
-    "candidates"
-   ],
-   "status": 404,
-   "final_url": "https://hannaford.com/groceries/health-beauty/pain-fever/urinary-pain-relief/winx-health-fast-acting-maximum-strength-uti-pain-relief-tablets-24-ct-box.html",
-   "state": "broken",
-   "via": "browser",
-   "captcha": false,
-   "title": "Page not found | Hannaford",
-   "fetch_status": 404,
-   "wayback": null
-  },
-  {
-   "url": "https://hannaford.com/groceries/product/winx-health-fast-acting-maximum-strength-uti-pain-relief-tablets-24-ct-box/370421",
-   "files": [
-    "candidates"
-   ],
-   "status": 404,
-   "final_url": "https://hannaford.com/groceries/product/winx-health-fast-acting-maximum-strength-uti-pain-relief-tablets-24-ct-box/370421",
-   "state": "broken",
-   "via": "browser",
-   "captcha": false,
-   "title": "Page not found | Hannaford",
-   "fetch_status": 404,
-   "wayback": null
-  },
-  {
-   "url": "https://martinsfoods.com/groceries/health-beauty/pain-fever/urinary-pain-relief/winx-health-fast-acting-maximum-strength-uti-pain-relief-tablets-24-ct-box.html",
-   "files": [
-    "candidates"
-   ],
-   "status": 404,
-   "final_url": "https://martinsfoods.com/groceries/health-beauty/pain-fever/urinary-pain-relief/winx-health-fast-acting-maximum-strength-uti-pain-relief-tablets-24-ct-box.html",
-   "state": "broken",
-   "via": "browser",
-   "captcha": false,
-   "title": "Page not found | MARTIN'S",
-   "fetch_status": 404,
-   "wayback": null
-  },
-  {
-   "url": "https://studentlife.indiana.edu/health-well-being/sexual-violence/index.html",
-   "files": [
-    "candidates"
-   ],
-   "status": 404,
-   "final_url": "https://studentlife.indiana.edu/health-well-being/sexual-violence/index.html",
-   "state": "broken",
-   "via": "browser",
-   "captcha": false,
-   "title": "Page Not Found: Error: Office of Student Life: Indiana University Bloomington",
-   "fetch_status": 404,
-   "wayback": {
-    "status": "200",
-    "timestamp": "20240918182853",
-    "url": "http://web.archive.org/web/20240918182853/https://studentlife.indiana.edu/health-well-being/sexual-violence/index.html"
-   }
-  },
-  {
-   "url": "https://studentlife.indiana.edu/care-advocacy/sexual-violence/index.html",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://studentlife.indiana.edu/care-advocacy/sexual-violence/index.html",
-   "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://advocates.indiana.edu/care-advocacy/sexual-violence/index.html",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://advocates.indiana.edu/care-advocacy/sexual-violence/index.html",
-   "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://wellbeing.missouri.edu/medical-care-services/sexual-and-partner-violence",
-   "files": [
-    "candidates"
-   ],
-   "status": 404,
-   "final_url": "https://wellbeing.missouri.edu/medical-care-services/sexual-and-partner-violence",
-   "state": "broken",
-   "via": "browser",
-   "captcha": false,
-   "title": "Page not found - Student Health & Well-Being",
-   "fetch_status": 404,
-   "wayback": {
-    "status": "200",
-    "timestamp": "20260423001012",
-    "url": "http://web.archive.org/web/20260423001012/https://wellbeing.missouri.edu/medical-care-services/sexual-and-partner-violence/"
-   }
-  },
-  {
-   "url": "https://wellbeing.missouri.edu/case-management-support/",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://wellbeing.missouri.edu/case-management-support/",
-   "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://divacup.com/how-to-clean-a-menstrual-cup/",
-   "files": [
-    "candidates"
-   ],
-   "status": 404,
-   "final_url": "https://shopdiva.com/how-to-clean-a-menstrual-cup/",
-   "state": "broken",
-   "via": "browser",
-   "captcha": false,
-   "title": "404 Not Found – DIVA US",
-   "fetch_status": 404,
-   "wayback": {
-    "status": "200",
-    "timestamp": "20230409204512",
-    "url": "http://web.archive.org/web/20230409204512/https://divacup.com/how-to-clean-a-menstrual-cup/"
-   }
-  },
-  {
-   "url": "https://divacup.com/how-to-clean-your-menstrual-cup-divawash/",
-   "files": [
-    "candidates"
-   ],
-   "status": 404,
-   "final_url": "https://shopdiva.com/how-to-clean-your-menstrual-cup-divawash/",
-   "state": "broken",
-   "via": "browser",
-   "captcha": false,
-   "title": "404 Not Found – DIVA US",
-   "fetch_status": 404,
-   "wayback": {
-    "status": "200",
-    "timestamp": "20230128181234",
-    "url": "http://web.archive.org/web/20230128181234/https://divacup.com/how-to-clean-your-menstrual-cup-divawash/"
-   }
-  },
-  {
-   "url": "https://divacup.com/how-to-clean-your-menstrual-cup-without-running-water/",
-   "files": [
-    "candidates"
-   ],
-   "status": 404,
-   "final_url": "https://shopdiva.com/how-to-clean-your-menstrual-cup-without-running-water/",
-   "state": "broken",
-   "via": "browser",
-   "captcha": false,
-   "title": "404 Not Found – DIVA US",
-   "fetch_status": 404,
-   "wayback": {
-    "status": "200",
-    "timestamp": "20230128181430",
-    "url": "http://web.archive.org/web/20230128181430/https://divacup.com/how-to-clean-your-menstrual-cup-without-running-water/"
-   }
-  },
-  {
-   "url": "https://gennev.com/learn/menopause-integrated-care/",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://gennev.com/learn/menopause-integrated-care/",
-   "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://gennev.com/",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://gennev.com/",
-   "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://rsvp.missouri.edu/about",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://wellbeing.missouri.edu/about/",
-   "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://rsvp.missouri.edu/support-resources",
-   "files": [
-    "candidates"
-   ],
-   "status": 404,
-   "final_url": "https://wellbeing.missouri.edu/case-management-support/support-resources",
-   "state": "broken",
-   "via": "browser",
-   "captcha": false,
-   "title": "Page not found - Student Health & Well-Being",
-   "fetch_status": 404,
-   "wayback": {
-    "status": "200",
-    "timestamp": "20250718111622",
-    "url": "http://web.archive.org/web/20250718111622/https://rsvp.missouri.edu/support-resources/"
-   }
-  },
-  {
-   "url": "https://rsvp.missouri.edu",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://wellbeing.missouri.edu/case-management-support/",
-   "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://engage.missouri.edu/rsvpcenter/home",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://engage.missouri.edu/rsvpcenter/home",
-   "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://menopause.org/for-women/expert-answers-to-frequently-asked-questions-about-menopause",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://menopause.org/patient-education/menopause-topics",
-   "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://www.re-spin.com/products/mini-let-s-spin™-intimacy-gel",
+   "url": "https://www.re-spin.com/products/mini-let-s-spin%E2%84%A2-intimacy-gel",
    "files": [
     "candidates"
    ],
@@ -413,184 +77,52 @@
    "via": "fetch"
   },
   {
-   "url": "https://www.ulta.com/p/lets-spin-intimacy-gel-pimprod2048511",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://www.ulta.com/p/lets-spin-intimacy-gel-pimprod2048511",
-   "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://www.re-spin.com/products/let-s-spin-intimacy-gel",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://www.re-spin.com/products/let-s-spin-intimacy-gel",
-   "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://www.walmart.com/ip/37199687",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://www.walmart.com/blocked?url=L2lwLzM3MTk5Njg3&uuid=b80bb94a-cd20-11f1-ab54-701859223808&vid=&g=b",
-   "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://wuka.co.uk/collections/overnight/products/wuka-ultimate-midi-brief-heavy-overnight",
+   "url": "https://divacup.com/give-the-divacup-some-tlc/",
    "files": [
     "candidates"
    ],
    "status": 404,
-   "final_url": "https://wuka.co.uk/collections/overnight/products/wuka-ultimate-midi-brief-heavy-overnight",
+   "final_url": "https://shopdiva.com/give-the-divacup-some-tlc/",
    "state": "broken",
    "via": "browser",
    "captcha": false,
-   "title": "404 Not Found – WUKA",
+   "title": "404 Not Found – DIVA US",
    "fetch_status": 404,
    "wayback": {
     "status": "200",
-    "timestamp": "20250906232406",
-    "url": "http://web.archive.org/web/20250906232406/https://wuka.co.uk/collections/overnight/products/wuka-ultimate-midi-brief-heavy-overnight"
+    "timestamp": "20230925083639",
+    "url": "http://web.archive.org/web/20230925083639/https://divacup.com/give-the-divacup-some-tlc/"
    }
   },
   {
-   "url": "https://wuka.co.uk/collections/5-pack/products/wuka-ultimate-midi-brief-heavy-overnight",
-   "files": [
-    "candidates"
-   ],
-   "status": 404,
-   "final_url": "https://wuka.co.uk/collections/5-pack/products/wuka-ultimate-midi-brief-heavy-overnight",
-   "state": "broken",
-   "via": "browser",
-   "captcha": false,
-   "title": "404 Not Found – WUKA",
-   "fetch_status": 404,
-   "wayback": {
-    "status": "200",
-    "timestamp": "20230519063118",
-    "url": "http://web.archive.org/web/20230519063118/https://wuka.co.uk/collections/5-pack/products/wuka-ultimate-midi-brief-heavy-overnight"
-   }
-  },
-  {
-   "url": "https://ca.fullscript.com/catalog/products/organic-spearmint-tea",
-   "files": [
-    "candidates"
-   ],
-   "status": 404,
-   "final_url": "https://fullscript.com/en-CA/catalog",
-   "state": "broken",
-   "via": "browser",
-   "captcha": false,
-   "title": "Fullscript: Easily build supplement plans for optimal health",
-   "fetch_status": 404,
-   "wayback": null
-  },
-  {
-   "url": "https://www.wholefoodsmarket.com/product/traditional-medicinals-organic-spearmint-tea-b014uhixam",
+   "url": "https://divacup.com/products/model-2/",
    "files": [
     "candidates"
    ],
    "status": 200,
-   "final_url": "https://www.wholefoodsmarket.com/grocery/product/traditional-medicinals-organic-spearmint-tea-b014uhixam",
+   "final_url": "https://shopdiva.com/products/diva-cup-model-2",
    "state": "ok",
    "via": "fetch"
   },
   {
-   "url": "https://harristeeter.com/p/traditional-medicinals-organic-spearmint-tea/0003291700163",
-   "files": [
-    "candidates"
-   ],
-   "status": 403,
-   "final_url": "https://www.harristeeter.com/p/traditional-medicinals-organic-spearmint-tea/0003291700163",
-   "state": "blocked",
-   "via": "browser",
-   "captcha": true,
-   "title": "Access Denied",
-   "fetch_status": 403,
-   "wayback": {
-    "status": "200",
-    "timestamp": "20240625093843",
-    "url": "http://web.archive.org/web/20240625093843/https://www.harristeeter.com/p/traditional-medicinals-organic-spearmint-tea/0003291700163"
-   }
-  },
-  {
-   "url": "https://fullscript.com/catalog/products/organic-spearmint-tea",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://fullscript.com/catalog/products/organic-spearmint-tea",
-   "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://knix.ca/products/light-leakproof-no-show-high-rise-orchid",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://knix.ca/products/light-leakproof-no-show-high-rise",
-   "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://support.mavenclinic.com/hc/en-us/articles/34227140983955",
+   "url": "https://divacup.com/all-about-menstrual-cups-for-beginners/",
    "files": [
     "candidates"
    ],
    "status": 404,
-   "final_url": "https://support.mavenclinic.com/hc/en-us/articles/34227140983955",
+   "final_url": "https://shopdiva.com/all-about-menstrual-cups-for-beginners/",
    "state": "broken",
    "via": "browser",
    "captcha": false,
-   "title": "The page you were looking for doesn't exist – Maven Help Center",
-   "fetch_status": 404,
-   "wayback": null
-  },
-  {
-   "url": "https://support.mavenclinic.com/hc/en-us/articles/211977086-What-is-the-cost-of-a-Maven-video-appointment",
-   "files": [
-    "candidates"
-   ],
-   "status": 404,
-   "final_url": "https://support.mavenclinic.com/hc/en-us/articles/211977086-What-is-the-cost-of-a-Maven-video-appointment",
-   "state": "broken",
-   "via": "browser",
-   "captcha": false,
-   "title": "The page you were looking for doesn't exist – Maven Help Center",
-   "fetch_status": 404,
-   "wayback": {
-    "status": "200",
-    "timestamp": "20240811115119",
-    "url": "http://web.archive.org/web/20240811115119/https://support.mavenclinic.com/hc/en-us/articles/211977086-What-is-the-cost-of-a-Maven-video-appointment"
-   }
-  },
-  {
-   "url": "https://support.mavenclinic.com/hc/en-us/sections/202613086-Payment-and-Billing",
-   "files": [
-    "candidates"
-   ],
-   "status": 404,
-   "final_url": "https://support.mavenclinic.com/hc/en-us/sections/202613086-Payment-and-Billing",
-   "state": "broken",
-   "via": "browser",
-   "captcha": false,
-   "title": "The page you were looking for doesn't exist – Maven Help Center",
+   "title": "404 Not Found – DIVA US",
    "fetch_status": 404,
    "wayback": null
   }
  ],
  "internal": [],
  "summary": {
-  "external": 44,
-  "external_broken": 20,
+  "external": 9,
+  "external_broken": 2,
   "external_unverified": 1,
   "internal": 0,
   "internal_broken": 0,
