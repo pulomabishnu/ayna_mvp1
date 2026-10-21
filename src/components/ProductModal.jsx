@@ -1,6 +1,6 @@
 import { recallFacts } from '../utils/productFacts';
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { useResearch } from '../data/researchLoader';
+import { useResearchState } from '../data/researchLoader';
 import { ProductImageFallback } from './ProductTileImage';
 import ProductCard from './ProductCard';
 import { ALL_PRODUCTS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../data/products.js';
@@ -19,7 +19,8 @@ import { buildGlance, perUnitLabel, sizeCount } from './pdp/glance';
 import { getPassport } from '../data/passport';
 import { ProductMatch, ProductAsk } from './passport/ProductSections';
 import { firstSentence } from './pdp/sentences';
-import ProductEvidence, { ProductSafety } from './pdp/ProductEvidence';
+import ProductEvidence from './pdp/ProductEvidence';
+import { attributeBadges, noDash } from './pdp/evidenceModel';
 import { galleryImages, retailerLinks, similarProducts, sameNeedProducts, productJsonLd, breadcrumbJsonLd } from './pdp/commerce';
 import GalleryThumbs from './pdp/GalleryThumbs';
 import { useProductReviews } from './pdp/useProductReviews';
@@ -198,19 +199,6 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
         ayna’s answers are educational, not medical advice.
       </p>
     </div>
-  );
-}
-
-// A dense safety paragraph must never push Buy now below the fold, but the
-// flag itself must never be missable either (2026-08-24 bug bash). The
-// header shows one line that jumps to the full note in the Safety section.
-function SafetyFlag() {
-  return (
-    <button type="button" className="pdp-safety-flag" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'details' }))}>
-      <span aria-hidden="true">⚠️</span>
-      <strong>Safety note on file</strong>
-      <span>See it</span>
-    </button>
   );
 }
 
@@ -409,7 +397,7 @@ export default function ProductModal({
   onStartQuiz = null,
 }) {
   // Research loads on demand on the product page only (data/researchLoader.js).
-  const product = useResearch(catalogProduct);
+  const { product, loaded: researchLoaded } = useResearchState(catalogProduct);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   // Size / pack options (product.variants): Buy now, photo, name and price
   // follow the chosen option.
@@ -541,7 +529,8 @@ export default function ProductModal({
   const suggestions = useMemo(() => {
     if (!product) return { compare: [], more: [] };
     const owned = new Set((ecosystemProducts || []).map((p) => p?.id).filter(Boolean));
-    const pool = ALL_PRODUCTS.filter((p) => p && p.id && p.name && p.id !== product.id);
+    // Suggestions are photo cards: products without a real photo are left out (same rule as the app).
+    const pool = ALL_PRODUCTS.filter((p) => p && p.id && p.name && p.id !== product.id && galleryImages(p).length > 0);
     const compare = similarProducts(product, { pool, limit: 3 });
     const used = new Set([...compare.map((p) => p.id), ...owned]);
     let more = [];
@@ -768,6 +757,7 @@ export default function ProductModal({
 
   const galleryTile = (
     <div className="ayp-gallery">
+      <div className="ayq-stamp ayp-gallery__stamp">
       <div className="ayp-gallery__tile">
         {heroImageSrc ? (
           <button
@@ -787,6 +777,12 @@ export default function ProductModal({
           <ProductImageFallback />
         )}
       </div>
+      </div>
+      {(() => {
+        // Round badges beside the photo: only facts on file.
+        const b = attributeBadges(product, glance);
+        return b.length ? <ul className="ayq-badges is-web" aria-label="Facts about this product">{b.map((x) => <li key={x.id}><span>{x.label}</span>{x.note && <small>{x.note}</small>}</li>)}</ul> : null;
+      })()}
       <GalleryThumbs images={images} index={photo} onSelect={setPhoto} name={product.name} product={product} />
     </div>
   );
@@ -911,8 +907,8 @@ export default function ProductModal({
               </button>
             )}
             {(() => {
-              const raw = String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '').replace(/\s*—\s*/g, ', ').trim();
-              const lead = firstSentence(raw, { min: 20, max: 240 });
+              const raw = noDash(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, ''));
+              const lead = firstSentence(raw, { min: 20, max: 420 });
               return lead ? <p className="ayp-buy__lead">{lead}</p> : null;
             })()}
 
@@ -982,7 +978,7 @@ export default function ProductModal({
         </div>
 
         {/* ayna's summary + At a glance, then the tabs (Clinical opinion, Scientific literature, Reviews, Safety, How to use, Details). */}
-        <ProductEvidence product={product} image={images[0] || ''} safetyLead={topWarning} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null} recall={recall} heroLine={firstSentence(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '').replace(/\s*—\s*/g, ', ').trim(), { min: 20, max: 240 })} safety={<ProductSafety product={product} glance={glance} recall={recall} alertText={glance?.alert || ''} />} extraRows={(() => {
+        <ProductEvidence loading={!researchLoaded} product={product} image={images[0] || ''} safetyLead={topWarning} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null} recall={recall} heroLine={firstSentence(noDash(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '')), { min: 20, max: 420 })} extraRows={(() => {
           const pp = getPassport(product);
           const checked = pp?.pricing?.price?.verified_at;
           let seller = '';
