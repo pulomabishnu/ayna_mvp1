@@ -437,11 +437,6 @@ const HOW_TO_BY_PRODUCT_ID = {
         url: 'https://shopdiva.com/pages/how-to-use-a-diva-cup',
         hint: 'Brand diagrams and care.',
       },
-      {
-        label: 'DivaCup: Cleaning & care',
-        url: 'https://divacup.com/cleaning-tips/',
-        hint: 'Between-cycle cleaning and storage.',
-      },
     ],
     videoLinks: [
       { label: 'YouTube search: DivaCup insertion tutorial', url: ytSearch('DivaCup how to insert remove tutorial') },

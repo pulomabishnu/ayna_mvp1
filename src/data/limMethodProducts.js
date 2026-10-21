@@ -86,7 +86,7 @@ export const LIM_METHOD_PRODUCTS = [
         summary: 'Cited by LiM Method\'s own site. RCT in healthy pregnant women; general pelvic floor exercise evidence, not a test of this specific product.',
       },
       {
-        url: 'https://doi.org/10.1002/nau.22728',
+        url: 'https://pubmed.ncbi.nlm.nih.gov/25648223/',
         text: 'Kahyaoğlu Süt & Balkanlı Kaplan, Neurourol Urodyn 2016: Effect of pelvic floor muscle exercise on pelvic floor muscle activity and voiding functions during pregnancy and the postpartum period',
         summary: 'Also cited by LiM Method\'s own site. RCT (60 women) finding real benefit from pelvic floor muscle exercise during pregnancy/postpartum, general category evidence, not product-specific.',
       },

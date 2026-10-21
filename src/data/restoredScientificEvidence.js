@@ -23,7 +23,7 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
   ],
   "p-saalt-cup": [
     {
-      "url": "https://doi.org/10.1016/S2468-2667(19)30111-2",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31324419/",
       "text": "van Eijk et al., Lancet Public Health 2019: Menstrual cup use, leakage, acceptability, safety, and availability — a systematic review and meta-analysis",
       "summary": "The most extensive meta-analysis of menstrual cup safety and effectiveness published to date.",
       "justification": "Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
@@ -62,7 +62,7 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
   ],
   "d-clue": [
     {
-      "url": "https://doi.org/10.1038/s41746-019-0152-7",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6710244/",
       "text": "Bull et al., npj Digital Medicine 2019: Real-world menstrual cycle characteristics of more than 600,000 menstrual cycles",
       "summary": "Analyzed 612,613 menstrual cycles from 124,648 users of the Natural Cycles app (not this app). Average cycle length was 29.3 days, and cycles got shorter with age. This describes real-world cycle variation in general; it does not validate this app.",
       "justification": "Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
@@ -146,7 +146,7 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
   ],
   "p-diva-cup": [
     {
-      "url": "https://doi.org/10.1016/S2468-2667(19)30111-2",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31324419/",
       "text": "van Eijk et al., Lancet Public Health 2019: Menstrual cup use, leakage, acceptability, safety, and availability — a systematic review and meta-analysis",
       "summary": "The most extensive meta-analysis of menstrual cup safety and effectiveness published to date.",
       "justification": "The Lancet is one of the world's oldest and best-known general medical journals."
@@ -154,7 +154,7 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
   ],
   "p-lunette-cup": [
     {
-      "url": "https://doi.org/10.1016/S2468-2667(19)30111-2",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31324419/",
       "text": "van Eijk et al., Lancet Public Health 2019: Menstrual cup use, leakage, acceptability, safety, and availability — a systematic review and meta-analysis",
       "summary": "Meta-analysis of cup safety.",
       "justification": "Lancet. Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
@@ -244,7 +244,7 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
   ],
   "d-ovia": [
     {
-      "url": "https://doi.org/10.1038/s41746-019-0152-7",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6710244/",
       "text": "Bull et al., npj Digital Medicine 2019: Real-world menstrual cycle characteristics of more than 600,000 menstrual cycles",
       "summary": "Analyzed 612,613 menstrual cycles from 124,648 users of the Natural Cycles app (not this app). Average cycle length was 29.3 days, and cycles got shorter with age. This describes real-world cycle variation in general; it does not validate this app.",
       "justification": "Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
@@ -342,7 +342,7 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
   ],
   "p-intimina-lily": [
     {
-      "url": "https://doi.org/10.1016/S2468-2667(19)30111-2",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31324419/",
       "text": "van Eijk et al., Lancet Public Health 2019: Menstrual cup use, leakage, acceptability, safety, and availability — a systematic review and meta-analysis",
       "summary": "Meta-analysis of menstrual cup safety and effectiveness.",
       "justification": "Lancet is a leading peer-reviewed journal. Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
@@ -366,7 +366,7 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
   ],
   "p-lena-cup": [
     {
-      "url": "https://doi.org/10.1016/S2468-2667(19)30111-2",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31324419/",
       "text": "van Eijk et al., Lancet Public Health 2019: Menstrual cup use, leakage, acceptability, safety, and availability — a systematic review and meta-analysis",
       "summary": "Meta-analysis of cup safety and effectiveness.",
       "justification": "Lancet peer-reviewed. Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
@@ -374,7 +374,7 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
   ],
   "p-ruby-cup": [
     {
-      "url": "https://doi.org/10.1016/S2468-2667(19)30111-2",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31324419/",
       "text": "van Eijk et al., Lancet Public Health 2019: Menstrual cup use, leakage, acceptability, safety, and availability — a systematic review and meta-analysis",
       "summary": "Meta-analysis of cup safety and effectiveness.",
       "justification": "Lancet peer-reviewed. Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
@@ -382,7 +382,7 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
   ],
   "p-organicup": [
     {
-      "url": "https://doi.org/10.1016/S2468-2667(19)30111-2",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31324419/",
       "text": "van Eijk et al., Lancet Public Health 2019: Menstrual cup use, leakage, acceptability, safety, and availability — a systematic review and meta-analysis",
       "summary": "Meta-analysis of cup safety and effectiveness.",
       "justification": "Lancet peer-reviewed. Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
@@ -390,7 +390,7 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
   ],
   "p-femmycycle": [
     {
-      "url": "https://doi.org/10.1016/S2468-2667(19)30111-2",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31324419/",
       "text": "van Eijk et al., Lancet Public Health 2019: Menstrual cup use, leakage, acceptability, safety, and availability — a systematic review and meta-analysis",
       "summary": "Meta-analysis of cup safety and effectiveness.",
       "justification": "Lancet peer-reviewed. Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."

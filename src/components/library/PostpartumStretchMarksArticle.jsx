@@ -422,7 +422,7 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
                   {REFS.map(([text, doi], i) => (
                     <li key={i} style={{ display: "grid", gridTemplateColumns: "32px 1fr", gap: "10px", padding: "14px 0", borderBottom: "1px solid rgba(var(--g-fg-rgb), .25)", font: "400 15px/1.6 'DM Sans'" }}>
                       <span style={{ font: "700 14px/1.6 'DM Sans'", color: "var(--g-pink)" }}>{i + 1}</span>
-                      <span style={{ overflowWrap: "anywhere" }}>{text}{doi && <> <a href={`https://doi.org/${doi}`} target="_blank" rel="noopener noreferrer" style={{ fontWeight: "600" }}>doi:{doi} ↗</a></>}</span>
+                      <span style={{ overflowWrap: "anywhere" }}>{text}{doi && <> <a href={`https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(doi)}`} target="_blank" rel="noopener noreferrer" style={{ fontWeight: "600" }}>doi:{doi} ↗</a></>}</span>
                     </li>
                   ))}
                 </ol>
