@@ -779,7 +779,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         {['Yes', 'Not sure'].includes(intake.safetyConcern) && (
           <div className="ip-alert" role="note">
             <strong><span aria-hidden="true">!</span>Worth a closer look</strong>
-            <p>Some new or worsening symptoms need a clinician. ayna helps you discover products and doesn’t diagnose. If it feels urgent or severe, get care promptly.{intake.safetyConcern === 'Yes' ? ' We’ll show care options first.' : ''}</p>
+            <p>Some new or worsening symptoms need a clinician. ayna helps you find products and doesn’t diagnose. If it feels urgent or severe, get care promptly.{intake.safetyConcern === 'Yes' ? ' We’ll show care options first.' : ''}</p>
           </div>
         )}
       </>

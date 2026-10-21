@@ -3253,7 +3253,7 @@ export function AboutAynaScreen({ onBack }) {
         <section className="ayna-scrapbook__hero">
           <div className="ayna-scrapbook__tape" aria-hidden="true" />
           <span className="ayna-scrapbook__eyebrow">Hello from ayna</span>
-          <h1>Hi, we're <em>ayna</em>.</h1>
+          <h1>Hi, we're ayna.</h1>
           <p>Every body is different, so the right product is too. ayna shows you what fits yours, with the research beside it.</p>
           <div className="ayna-scrapbook__scribble" aria-hidden="true" />
         </section>

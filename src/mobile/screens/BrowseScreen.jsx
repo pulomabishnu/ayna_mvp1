@@ -420,7 +420,7 @@ export default function BrowseScreen({
               {activeFilterCount > 0 && <span aria-label={`${activeFilterCount} on`}>{activeFilterCount}</span>}
             </button>
             <p className="ay-shop-count" role="status">{filtered.length} {filtered.length === 1 ? 'product' : 'products'}</p>
-            {!searchValue.trim() && <button type="button" className="ay-discover-cta" aria-label="Swipe to discover: right to save, left to skip" onClick={() => setShowDeck(true)}>
+            {!searchValue.trim() && <button type="button" className="ay-discover-cta" aria-label="Swipe through products: right to save, left to skip" onClick={() => setShowDeck(true)}>
               <svg className="ay-discover-fan" viewBox="0 0 56 44" aria-hidden="true">
                 <rect className="c1" x="6" y="6" width="22" height="30" rx="5" transform="rotate(-12 17 21)" />
                 <rect className="c2" x="17" y="5" width="22" height="30" rx="5" />

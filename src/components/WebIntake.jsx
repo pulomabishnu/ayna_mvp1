@@ -503,7 +503,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
       case 'trustedBrands': return <Tokens values={intake.trustedBrands} onChange={(v) => set('trustedBrands', v)} placeholder="Type a brand" suggestions={BRAND_SUGGESTIONS} />;
       case 'safety': return <>
         <Rows options={URGENT_STATUS} value={intake.safetyConcern} onChange={(v) => set('safetyConcern', v)} />
-        {['Yes', 'Not sure'].includes(intake.safetyConcern) && <div className="qz-alert-card" role="note"><b>Worth a closer look</b><p>Some new or worsening symptoms need a clinician. ayna helps you discover products and doesn’t diagnose. If it feels urgent or severe, get care promptly.{intake.safetyConcern === 'Yes' ? ' We’ll show care options first.' : ''}</p><p className="qz-urgent">If you’re soaking a pad every hour, fainting, or in severe pain, <a href="tel:911">call 911</a> or go to urgent care.</p></div>}
+        {['Yes', 'Not sure'].includes(intake.safetyConcern) && <div className="qz-alert-card" role="note"><b>Worth a closer look</b><p>Some new or worsening symptoms need a clinician. ayna helps you find products and doesn’t diagnose. If it feels urgent or severe, get care promptly.{intake.safetyConcern === 'Yes' ? ' We’ll show care options first.' : ''}</p><p className="qz-urgent">If you’re soaking a pad every hour, fainting, or in severe pain, <a href="tel:911">call 911</a> or go to urgent care.</p></div>}
       </>;
       case 'formats': {
         const custom = intake.preferredFormats.filter((f) => !PRODUCT_FORMATS.includes(f));

@@ -14,15 +14,17 @@ function markSeen(id) {
   try { const s = seen(); s.add(id); sessionStorage.setItem(SEEN_KEY, JSON.stringify([...s])); } catch { /* storage blocked */ }
 }
 
-export function useReveal(id) {
+export function useReveal(id, { minWidth = 0, delay = 0 } = {}) {
   return useCallback((el) => {
     if (!el || typeof window === 'undefined' || typeof IntersectionObserver === 'undefined') return;
+    if (minWidth && window.innerWidth < minWidth) return;
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
     if (document.documentElement.classList.contains('ay-motion-paused')) return;
     if (seen().has(id)) return;
     // Already visible on load: leave it alone.
     if (el.getBoundingClientRect().top < window.innerHeight * 0.9) return;
     el.classList.add('ay-reveal');
+    if (delay) el.style.transitionDelay = `${delay}ms`;
     const io = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting) return;
       el.classList.add('is-in');
@@ -30,5 +32,5 @@ export function useReveal(id) {
       io.disconnect();
     }, { rootMargin: '0px 0px -10% 0px' });
     io.observe(el);
-  }, [id]);
+  }, [id, minWidth, delay]);
 }

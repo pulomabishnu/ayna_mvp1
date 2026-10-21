@@ -637,7 +637,7 @@ export default function ProductModal({
   // The verb matches what you're doing there: buy a thing, book care, start a trial.
   const priceSays = `${product.price || ''}`;
   const isCare = product.category === 'telehealth' || product.type === 'digital';
-  const verb = /free trial/i.test(priceSays) ? 'Start free trial' : product.category === 'telehealth' ? 'Book' : isCare ? 'Get started' : 'Buy';
+  const verb = /free trial/i.test(priceSays) ? 'Start free trial' : product.category === 'telehealth' ? 'Book' : isCare ? 'Sign up' : 'Buy';
   const buyLabel = sellerName && sellerName.length <= 32 ? `${verb} at ${sellerName}` : `${verb} with the seller`;
   const buyButton = (extraClass = '') => (buyUrl ? (
     <a

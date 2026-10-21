@@ -214,14 +214,22 @@ function Familiar({ onSearch, onStartQuiz }) {
 /* ---------- one plain statement, with real products around it ---------- */
 function Statement() {
   const reveal = useReveal('home-statement');
-  // The next four of this week's picks (the first four are in the shelf above).
-  const cut = useMemo(() => weeklyLineup().slice(4, 8), []);
+  // The next four of this week's picks (the first four are in the shelf above),
+  // our own product photos first.
+  const cut = useMemo(() => {
+    // Only photos we host, so a slow or blocked retailer image never leaves a gap.
+    const local = (p) => String(p?.image || '').startsWith('/') && NEEDS_PHOTO(p) && !p.hidden;
+    const weekly = weeklyLineup().slice(4).filter(local);
+    const core = ALL_PRODUCTS.filter((p) => local(p) && CORE.test(`${p.category} ${(p.healthFunctions || []).join(' ')}`));
+    const own = [...weekly, ...core.filter((p) => !weekly.includes(p))];
+    return own.length >= 4 ? own.slice(0, 4) : [];
+  }, []);
+  const sticker = (p, i) => <span key={p.id} className={`ed-statement__sticker is-${i}`}><img src={p.image} alt="" loading="lazy" onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }} /></span>;
   return (
     <section className="ed-statement" aria-labelledby="ed-statement-title">
-      <div ref={reveal} className="ed-statement__stickers" aria-hidden="true">
-        {cut.map((p, i) => <span key={p.id} className={`ed-statement__sticker is-${i}`}><img src={p.image} alt="" loading="lazy" onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }} /></span>)}
-      </div>
+      <div className="ed-statement__stickers is-left" aria-hidden="true">{cut.slice(0, 2).map(sticker)}</div>
       <p id="ed-statement-title" className="ed-statement__line">ayna matches women’s health products to your answers, and shows <mark>the research beside each one</mark>.</p>
+      <div ref={reveal} className="ed-statement__stickers is-right" aria-hidden="true">{cut.slice(2, 4).map((p, i) => sticker(p, i + 2))}</div>
     </section>
   );
 }
@@ -283,6 +291,12 @@ const STEPS = [
   { t: 'Get your ecosystem', d: 'Ranked for you.', icon: 'shelf', tone: 'espresso', src: '/landing/hiw-ecosystem-cabinet.webp', alt: 'A medicine cabinet with shelves full of skincare and beauty products', pos: '50% 50%' },
   { t: 'You decide', d: 'Nothing is bought until you say so.', icon: 'hand', tone: 'butter', src: '/landing/hiw-decide-basket.webp', alt: 'Looking down at a red shopping basket of products between two sneakers', pos: '50% 45%' },
 ];
+// The one scroll-driven sequence on the page: on desktop the four step photos
+// arrive one after another as the row scrolls in (45ms apart, once). Text never waits.
+function StepPhoto({ step, i }) {
+  const reveal = useReveal(`home-step-${i}`, { minWidth: 768, delay: i * 45 });
+  return <figure ref={reveal} className="ed-step__img ay-frame"><img src={step.src} alt={step.alt} style={{ objectPosition: step.pos }} loading="lazy" /></figure>;
+}
 function How({ onViewHowItWorks }) {
   return (
     <section className="ed-wrap ed-sec" aria-labelledby="ed-how-title">
@@ -296,7 +310,7 @@ function How({ onViewHowItWorks }) {
             <span className={`ay-tabcard__strip${st.tone ? ` ay-tabcard__strip--${st.tone}` : ''}`} aria-hidden="true">Step {i + 1}</span>
             <span className={`ed-step__big is-${i}`} aria-hidden="true">{i + 1}</span>
             <div className="ed-step__in">
-              <figure className="ed-step__img ay-frame"><img src={st.src} alt={st.alt} style={{ objectPosition: st.pos }} loading="lazy" /></figure>
+              <StepPhoto step={st} i={i} />
               <div>
                 <h3 className="ed-rowtitle"><span className="ed-sr">Step {i + 1}: </span>{st.t}</h3>
                 <p>{st.d}</p>

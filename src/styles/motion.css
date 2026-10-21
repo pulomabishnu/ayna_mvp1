@@ -98,4 +98,4 @@ html.ay-motion-paused .ay-reveal { opacity: 1; translate: none; transition: none
 
 /* Keyboard hint (⌘K in the search field). Only where there's a keyboard and a mouse. */
 .ay-kbd { position: absolute; right: 64px; top: 50%; translate: 0 -50%; padding: 3px 7px; border: 1.5px solid currentColor; border-radius: 6px; font: 600 12px/1 'Figtree', system-ui, sans-serif; opacity: .7; pointer-events: none; }
-@media (hover: none), (pointer: coarse) { .ay-kbd { display: none; } }
+@media (hover: none), (pointer: coarse), (max-width: 767px) { .ay-kbd { display: none; } }

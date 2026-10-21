@@ -157,3 +157,14 @@ select cron.schedule('purge-sms', '0 3 * * *',
 And once the catalog is confirmed serving from `/api/products`, follow the steps
 in the header of `src/utils/productCatalog.js` to drop the bundled fallback —
 roughly a 40% reduction in the JS bundle.
+
+## iOS app: native plugins (Oct 21)
+
+`@capacitor/haptics` was added for tap feedback (src/utils/haptics.js). After
+pulling, run `npm install` and then `npx cap sync ios` so the plugin is copied
+into the Xcode project, then build in Xcode as usual. The plugin needs no
+entry in `capacitor.config.json` and no Info.plist permission. The JS side
+reaches it through `registerPlugin('Haptics')`, so the website bundle does not
+include it and nothing happens on the web or in /mobile-preview. Push
+permission is now asked after the first save or add, not on launch
+(src/mobile/hooks/usePushNotifications.js).

@@ -799,22 +799,25 @@ html body .app-container .ed .ed-prose > :is(section, .ed-psec) :is(h2, h3) { co
   .ed .ed-familiar__go { font-size: 14px; }
 }
 
-/* The statement: one plain line, real products stuck around it */
-.ed .ed-statement { position: relative; max-width: 1080px; margin: var(--ed-section) auto 0; padding: 56px 20px; text-align: center; }
-.ed .ed-statement__line { position: relative; z-index: 1; max-width: 22ch; margin: 0 auto; font: 700 clamp(26px, 2vw + 18px, 44px)/1.15 var(--ed-serif); letter-spacing: -.015em; color: var(--ed-text); text-wrap: balance; }
+/* The statement: one plain line, real products stuck either side of it */
+.ed .ed-statement { display: grid; grid-template-columns: 1fr minmax(0, 640px) 1fr; align-items: center; gap: 32px; max-width: 1180px; margin: var(--ed-section) auto 0; padding: 24px 20px; text-align: center; }
+.ed .ed-statement__line { margin: 0; font: 700 clamp(26px, 2vw + 18px, 44px)/1.15 var(--ed-serif); letter-spacing: -.015em; color: var(--ed-text); text-wrap: balance; }
 .ed .ed-statement__line mark { color: inherit; background: linear-gradient(transparent 55%, #f7badd 55%, #f7badd 95%, transparent 95%); padding: 0 .08em; }
 .app-container[data-theme='brand-dark'] .ed .ed-statement__line mark, .app-container[data-theme='dark'] .ed .ed-statement__line mark { background: linear-gradient(transparent 55%, rgba(247, 186, 221, .45) 55%, rgba(247, 186, 221, .45) 95%, transparent 95%); }
-.ed .ed-statement__stickers { position: absolute; inset: 0; pointer-events: none; }
-.ed .ed-statement__sticker { position: absolute; width: 112px; height: 112px; padding: 8px; box-sizing: border-box; background: #fff; border: 1.5px solid #3e2723; border-radius: 22px; box-shadow: 4px 4px 0 #3e2723; }
+.ed .ed-statement__stickers { display: flex; justify-content: center; gap: 18px; pointer-events: none; }
+.ed .ed-statement__sticker { display: block; width: 120px; height: 120px; padding: 8px; box-sizing: border-box; background: #fff; border: 1.5px solid #3e2723; border-radius: 22px; box-shadow: 4px 4px 0 #3e2723; }
 .ed .ed-statement__sticker img { width: 100%; height: 100%; object-fit: contain; }
-.ed .ed-statement__sticker.is-0 { left: 2%; top: 4%; rotate: -8deg; }
-.ed .ed-statement__sticker.is-1 { right: 3%; top: 0; rotate: 7deg; }
-.ed .ed-statement__sticker.is-2 { left: 8%; bottom: 0; rotate: 5deg; }
-.ed .ed-statement__sticker.is-3 { right: 9%; bottom: 6%; rotate: -6deg; }
+.ed .ed-statement__sticker.is-0 { rotate: -8deg; translate: 0 -18px; }
+.ed .ed-statement__sticker.is-1 { rotate: 5deg; translate: 0 22px; }
+.ed .ed-statement__sticker.is-2 { rotate: -4deg; translate: 0 20px; }
+.ed .ed-statement__sticker.is-3 { rotate: 7deg; translate: 0 -16px; }
 @media (max-width: 900px) {
-  .ed .ed-statement { display: flex; flex-direction: column-reverse; gap: 20px; padding: 24px 20px 8px; }
-  .ed .ed-statement__stickers { position: static; display: flex; justify-content: center; gap: 10px; }
-  .ed .ed-statement__sticker { position: static; width: 72px; height: 72px; padding: 6px; border-radius: 16px; box-shadow: 3px 3px 0 #3e2723; }
+  .ed .ed-statement { grid-template-columns: 1fr 1fr; gap: 16px 10px; padding: 16px 20px 8px; }
+  .ed .ed-statement__line { grid-column: 1 / -1; grid-row: 1; }
+  .ed .ed-statement__stickers { gap: 10px; }
+  .ed .ed-statement__stickers.is-left { justify-content: flex-end; }
+  .ed .ed-statement__stickers.is-right { justify-content: flex-start; }
+  .ed .ed-statement__sticker { width: 72px; height: 72px; padding: 6px; border-radius: 16px; box-shadow: 3px 3px 0 #3e2723; translate: none !important; }
 }
 
 /* How it works: a big numeral per step (1 espresso, 2 pink, 3 sky, 4 espresso) */

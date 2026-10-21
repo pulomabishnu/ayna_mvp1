@@ -111,7 +111,7 @@ export default function SiteFooter({
         <div className="ay-foot__brand">
           <p className="ay-foot__logo">ayna</p>
           <p className="ay-foot__blurb">
-            Personalized women's health discovery. Matched to your body, your goals, your data.
+            Women's health products matched to your answers, with the research beside each one.
           </p>
         </div>
 

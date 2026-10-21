@@ -273,6 +273,13 @@ export default function MobileApp() {
   const closeAuthSheetNow = () => { setOverlay(null); setAuthPrompt(null); authResumeRef.current = null; };
   const authSheet = useSheetDrag(closeAuthSheetNow);
   const closeAuthSheet = () => authSheet.close();
+  const authSheetOpen = overlay?.type === 'profile-auth' || !!authPrompt;
+  useEffect(() => {
+    if (!authSheetOpen) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') closeAuthSheetNow(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  });
   // Tab switches cross-fade in 120ms (never slide); drill-ins push (PushLayer).
   const rootRef = useRef(null);
   const prevScreenRef = useRef(screen);
@@ -355,7 +362,7 @@ export default function MobileApp() {
   const handleToggleSaved = (product) => {
     const adding = !savedMap[product?.id];
     toggleSaved(product);
-    if (adding) savedHaptic();
+    if (adding) { savedHaptic(); markPushMoment(); }
     if (!authUser && adding && !saveNudgeShownRef.current) {
       saveNudgeShownRef.current = true;
       setSaveNudge(true);
@@ -376,10 +383,11 @@ export default function MobileApp() {
   );
   const { theme, resolvedTheme, setThemeMode } = useThemeMode();
   const [personalized, setPersonalized] = usePersonalizedFeed(authUser?.id);
-  // Requests push permission and registers this device on launch (iOS only
-  // for now); stores the token against authUser once both are available.
-  // Registration only, nothing sends a push yet.
-  usePushNotifications(authUser?.id);
+  // Push permission is asked in context: after her first save or add, never
+  // on launch (iOS only for now). Registration only, nothing sends a push yet.
+  const [askPush, setAskPush] = useState(() => { try { return localStorage.getItem('ayna_push_asked_v1') === '1'; } catch { return false; } });
+  const markPushMoment = () => { if (askPush) return; try { localStorage.setItem('ayna_push_asked_v1', '1'); } catch { /* storage blocked */ } setAskPush(true); };
+  usePushNotifications(authUser?.id, askPush);
   const { textSizeIndex, setTextSizeIndex, textScale } = useTextSize();
   const [askAynaOpen, setAskAynaOpen] = useState(() => !!(import.meta.env.DEV && new URLSearchParams(window.location.search).get('ask')));
   const [askAynaHistoryState, setAskAynaHistoryState] = useState({ userId: null, messages: [] });
@@ -723,6 +731,7 @@ export default function MobileApp() {
     };
 
     addedHaptic();
+    markPushMoment();
     updateSession((prev) => ({
       myProducts: prev.myProducts.some((p) => p.id === ecosystemProduct.id)
         ? prev.myProducts
