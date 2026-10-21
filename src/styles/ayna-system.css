@@ -478,7 +478,7 @@
 @media (min-width: 768px) { html body .app-container.app-container nav.ay-tabbar { display: none !important; } }
 .app-container.app-container .ay-nav__dot { position: absolute; top: 0; right: 0; width: 11px; height: 11px; border-radius: 50%; background: #f7badd; border: 2px solid var(--ay-page); }
 .app-container.app-container .ay-product-card__kind { display: flex; flex-wrap: wrap; gap: 0 6px; margin: 2px 0 0; }
-.app-container.app-container .ay-product-card__kind > * + *::before { content: '·'; margin-right: 6px; }
+.app-container.app-container .ay-product-card__kind { flex-direction: column; gap: 2px; }
 .app-container.app-container .ay-product-card__tag { color: var(--ay-text); font-weight: 600; }
 .app-container.app-container .ay-product-card__eco { font-weight: 600; }
 .app-container.app-container .ay-product-card__kind { margin-top: auto; padding-top: 4px; }
