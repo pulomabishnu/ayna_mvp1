@@ -12,6 +12,7 @@ import { ALL_PRODUCTS, getPersonalizedProductIds, useCatalogReady } from '../dat
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile.js';
 import { RELEASED_STARTUPS } from '../data/startups';
 import { buildLibrary } from '../mobile/utils/personalReads.js';
+import { READ_SECTION, READ_CREDITS, readPhoto } from '../data/readCovers.js';
 
 /** Article id → topic-specific tags. Products must have at least one of these to appear under the article. No broad tags (e.g. discomfort), only tags that match the article heading. */
 import { ARTICLE_TOPIC_TAGS, FRUSTRATION_TO_TAG } from '../data/readPicks.js';
@@ -894,14 +895,6 @@ export function getArticlesByProfileRelevance(quizAnswers, healthProfile = null)
 
 export { ARTICLES };
 
-/**
- * Website covers: every read gets a typographic cover (short topic word on a
- * token pastel) so the shelves stay in one palette. Website-only: the app
- * keeps its own art via ARTICLES.image. Add an id here only for art drawn in
- * the ayna palette and style.
- */
-import { TEAM_COVER_READS } from '../data/readCovers.js';
-const KEEP_ILLUSTRATION = TEAM_COVER_READS;
 
 /* Reads a writer designed as a full page (her own layout, colours and image
    placement). The website shows that page; ARTICLES keeps the plain text for
@@ -910,60 +903,115 @@ const DESIGNED_READS = {
   'postpartum-stretch-marks': { Component: PostpartumStretchMarksArticle, next: 'pelvic-floor-dysfunction' },
 };
 
-/* The read featured at the top of the Library, with a "New" sticker. */
-const FEATURED_READ = { id: 'postpartum-stretch-marks', by: 'Geena Yousry, MS1', reviewedBy: 'Dr. Anuja Vyas, Board-Certified OBGYN' };
-
-function FeaturedRead({ onOpen }) {
-  const art = ARTICLES.find((a) => a.id === FEATURED_READ.id);
-  if (!art) return null;
-  return (
-    <a href={`/library/${art.id}`} className="ct-feature ay-feature" onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); onOpen(art.id); }}>
-      <span className="ct-feature__img"><img src={art.image} alt="" width="794" height="798" /></span>
-      <span className="ct-feature__text">
-        <span className="ct-feature__kicker">Featured read · {sectionOf(art.id)?.label}</span>
-        <strong className="ct-feature__title">{art.title}</strong>
-        <span className="ct-feature__teaser">{art.teaser}</span>
-        <span className="ct-feature__by">By {FEATURED_READ.by} · Reviewed by {FEATURED_READ.reviewedBy} · {minutesFor(art)} min read</span>
-        <span className="ct-feature__cta">Read it <span aria-hidden="true">→</span></span>
-      </span>
-    </a>
-  );
-}
-import TopicCover from './v3/TopicCover.jsx';
+/* The read featured at the top of the Library. */
+const FEATURED_READ = { id: 'postpartum-stretch-marks', ...READ_CREDITS['postpartum-stretch-marks'] };
+import ReadCover from './library/ReadCover.jsx';
+import { textOf, minutesFor } from './library/readTime.js';
 import PostpartumStretchMarksArticle from './library/PostpartumStretchMarksArticle.jsx';
 import useRotatingPlaceholder from '../utils/useRotatingPlaceholder.js';
+import '../styles/library-v2.css';
 const LIB_SEARCH_EXAMPLES = ['heavy periods', 'PMOS', 'period pain', 'when to see a doctor', 'UTI', 'perimenopause', 'fibroids', 'endometriosis', 'yeast vs BV', 'pelvic floor', 'night sweats', 'missed period'];
 
-function ArticleCover({ art, large = false }) {
-  if (art.image && KEEP_ILLUSTRATION.has(art.id)) {
-    return <img className={large ? 'ay-web-lib-article__img' : 'ay-web-lib-card__img'} src={art.image} alt="" loading={large ? undefined : 'lazy'} />;
-  }
-  if (large) return null;
-  return <TopicCover id={art.id} title={art.title} />;
+const plainClick = (e) => !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0);
+
+/* One oval stamp per page (inspo a00214f5 / 1bed1ebe). Only on the featured
+   read, because only that read has a named clinician reviewer. */
+function ReviewedStamp() {
+  return (
+    <svg className="lb-stamp" viewBox="0 0 168 104" aria-hidden="true">
+      <ellipse cx="84" cy="52" rx="81" ry="49" className="lb-stamp__fill" />
+      <ellipse cx="84" cy="52" rx="73" ry="41" className="lb-stamp__ring" />
+      <text x="84" y="48" textAnchor="middle" className="lb-stamp__t">Clinician</text>
+      <text x="84" y="72" textAnchor="middle" className="lb-stamp__t">reviewed</text>
+    </svg>
+  );
 }
 
-/* One source card per cited page: publisher (before the dash), the page's
+/* Top of the Library as a bento (spacing rule 3): one big featured tile and
+   two small ones, each an outlined card with a hard offset shadow. Labels sit
+   on the card edge like the retro decks' folder tabs (rule 9). */
+function LibraryBento({ onOpen, pick = null, onAsk = null }) {
+  const art = ARTICLES.find((a) => a.id === FEATURED_READ.id);
+  if (!art) return null;
+  const go = (id) => (e) => { if (!plainClick(e)) return; e.preventDefault(); onOpen(id); };
+  return (
+    <div className="lb-bento">
+      <article className="lb-tile lb-feature" id="lib-featured" aria-labelledby="lb-feature-h">
+        <span className="lb-tab">Featured read</span>
+        <a href={`/library/${art.id}`} className="lb-feature__media" tabIndex={-1} aria-hidden="true" onClick={go(art.id)}>
+          <img src={readPhoto(art.id) || art.image} alt="" width="794" height="798" />
+        </a>
+        <ReviewedStamp />
+        <div className="lb-feature__text">
+          <p className="lb-feature__sec">{sectionOf(art.id)?.label} <span aria-hidden="true">·</span> {minutesFor(art)} min read</p>
+          <h2 id="lb-feature-h" className="lb-feature__title">
+            <a href={`/library/${art.id}`} onClick={go(art.id)}>{art.title}</a>
+          </h2>
+          <p className="lb-feature__teaser">{art.teaser}</p>
+          <dl className="lb-credits">
+            <div><dt>Written by</dt><dd>{FEATURED_READ.by}</dd></div>
+            <div><dt>Reviewed by</dt><dd>{FEATURED_READ.reviewedBy}</dd></div>
+          </dl>
+          <p className="lb-feature__go">
+            <a href={`/library/${art.id}`} className="lb-btn" onClick={go(art.id)}>Read it <span aria-hidden="true">→</span></a>
+          </p>
+        </div>
+      </article>
+      <div className="lb-bento__side">
+        {pick ? (
+          <a href={`/library/${pick.id}`} className="lb-tile lb-tile--pick" onClick={go(pick.id)}>
+            <span className="lb-tab">Top pick for you</span>
+            <span className="lb-tile__cover"><ReadCover article={pick} /></span>
+            <span className="lb-tile__body">
+              <strong className="lb-tile__title">{pick.title}</strong>
+              <span className="lb-tile__meta">{minutesFor(pick)} min read</span>
+            </span>
+          </a>
+        ) : (
+          <div className="lb-tile lb-tile--pink">
+            <span className="lb-tab">For you</span>
+            <p className="lb-tile__title">Get reads picked for what you told us.</p>
+            <a className="lb-btn lb-btn--small" href="/quiz">See my matches <span aria-hidden="true">→</span></a>
+          </div>
+        )}
+        <div className="lb-tile lb-tile--sky">
+          <span className="lb-tab">Can’t find it?</span>
+          <p className="lb-tile__title">Ask about anything, or tell us what to write next.</p>
+          <p className="lb-tile__actions">
+            {onAsk && <button type="button" className="lb-btn lb-btn--small" onClick={() => onAsk('')}>Ask ayna</button>}
+            <button type="button" className="lb-link" onClick={() => document.querySelector('.ct-suggest')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>Suggest a read</button>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* Sources as a numbered list at the end of the read: publisher, the page's
    title, and where it opens. Text comes straight from the read. */
-function SourceCards({ items }) {
-  const cards = items.filter(React.isValidElement).map((li, i) => {
+function SourceList({ items }) {
+  const rows = items.filter(React.isValidElement).map((li, i) => {
     const parts = React.Children.toArray(li.props.children);
     const link = parts.find((x) => React.isValidElement(x) && x.type === 'a');
-    const label = link ? textOf(link.props.children).trim() : textOf(parts).trim();
-    const lead = parts.filter((x) => x !== link).map((x) => textOf(x)).join('').trim();
+    const label = link ? textOf(link.props.children).replace(/\s+/g, ' ').trim() : textOf(parts).replace(/\s+/g, ' ').trim();
+    const lead = parts.filter((x) => x !== link).map((x) => textOf(x)).join('').replace(/\s+/g, ' ').trim();
     const m = /^(.+?)\s+[–-]\s+(.+)$/.exec(label);
     const pub = m && m[1].length <= 24 ? m[1] : null;
     const title = pub ? m[2] : (lead || label);
     let host = '';
     try { host = link ? new URL(link.props.href).hostname.replace(/^www\./, '') : ''; } catch { /* not a URL */ }
     return (
-      <li key={i} className="ay-source-card">
-        <p className="ay-source-card__meta">{pub ? <span className="ay-source-card__pub">{pub}</span> : host && <span className="ay-source-card__pub">{host}</span>}</p>
-        <p className="ay-source-card__title">{title}</p>
-        {link && <a className="ay-source-card__go" href={link.props.href} target="_blank" rel="noopener noreferrer">{lead ? label : 'Read the source'} <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>}
+      <li key={i} className="lb-src">
+        <span className="lb-src__n" aria-hidden="true">{i + 1}</span>
+        <span className="lb-src__body">
+          {(pub || host) && <span className="lb-src__pub">{pub || host}</span>}
+          <span className="lb-src__title">{title}</span>
+          {link && <a className="lb-src__go" href={link.props.href} target="_blank" rel="noopener noreferrer">{lead ? label : host || 'Read the source'} <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>}
+        </span>
       </li>
     );
   });
-  return <ul className="ay-source-grid ct-sources">{cards}</ul>;
+  return <ol className="lb-sources">{rows}</ol>;
 }
 
 /* Bold lead-ins ("When to seek care:") become real H2 subheadings, so the
@@ -973,9 +1021,8 @@ function withHeadings(body) {
   if (!kids.length) return body;
   const out = [];
   kids.forEach((el, i) => {
-    // The sources list becomes source cards (publisher, title, link); the words stay the same.
     if (React.isValidElement(el) && el.type === 'ul' && el.props.className === 'ay-lib-sources') {
-      out.push(<SourceCards key={`s-${i}`} items={React.Children.toArray(el.props.children)} />);
+      out.push(<SourceList key={`s-${i}`} items={React.Children.toArray(el.props.children)} />);
       return;
     }
     if (React.isValidElement(el) && el.type === 'p') {
@@ -985,10 +1032,17 @@ function withHeadings(body) {
         const text = React.Children.toArray(lead.props.children).join('').trim();
         if (/:$/.test(text) && text.length < 70) {
           const label = text.replace(/:$/, '').replace(/\s*\(from [^)]*\)\s*$/i, '');
-          out.push(<h2 key={`h-${i}`} id={/^(sources|references)$/i.test(label) ? 'ct-sources' : undefined} className="ct-h2">{label}</h2>);
+          const isSources = /^(sources|references)$/i.test(label);
+          const isCare = /^when to seek care$/i.test(label);
           const rest = parts.slice(1);
           const hasText = rest.some((r) => (typeof r === 'string' ? r.trim() : true));
-          if (hasText) out.push(<p key={`p-${i}`}>{rest.map((r) => (typeof r === 'string' ? r.replace(/^\s+/, '') : r))}</p>);
+          const restEl = hasText ? <p key={`p-${i}`}>{rest.map((r) => (typeof r === 'string' ? r.replace(/^\s+/, '') : r))}</p> : null;
+          if (isCare) {
+            out.push(<aside key={`c-${i}`} className="lb-care" aria-labelledby={`lb-care-${i}`}><h2 id={`lb-care-${i}`} className="lb-h2">{label}</h2>{restEl}</aside>);
+            return;
+          }
+          out.push(<h2 key={`h-${i}`} id={isSources ? 'ct-sources' : undefined} className={`lb-h2${isSources ? ' lb-h2--sources' : ''}`}>{label}</h2>);
+          if (restEl) out.push(restEl);
           return;
         }
       }
@@ -998,31 +1052,25 @@ function withHeadings(body) {
   return <>{out}</>;
 }
 
-function renderArticleCard(art, setSelectedId, progress = 0, showTopic = true) {
+function ReadCard({ art, onOpen, progress = 0 }) {
   // A real link: open in a new tab, copy the address, see where it goes.
-  const mins = minutesFor(art);
   return (
-    <a href={`/library/${art.id}`} className="ct-read" onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); setSelectedId(art.id); }}>
-      <span className="ct-read__cover"><ArticleCover art={art} /></span>
-      <span className="ct-read__body">
-        <span className="ct-read__meta">{showTopic ? `${sectionOf(art.id)?.label || 'Health'} · ` : ''}{mins} min read</span>
-        <strong className="ct-read__title">{art.title}</strong>
-        <span className="ct-read__teaser">{art.teaser}</span>
-        <span className="ct-read__src"><span className="sr-only">Sources: </span>{art.source}</span>
-        <ReadState value={progress} />
-      </span>
+    <a href={`/library/${art.id}`} className="lb-card" onClick={(e) => { if (!plainClick(e)) return; e.preventDefault(); onOpen(art.id); }}>
+      <ReadCover article={art} minutes={minutesFor(art)} />
+      <span className="lb-card__title">{art.title}</span>
+      <span className="lb-card__src"><span className="sr-only">Sources: </span>{art.source}</span>
+      <ReadState value={progress} />
     </a>
   );
 }
 
 // One taxonomy: every read lives in exactly one section, and the read's own
-// header, the filter chips and "Next in …" all use it.
+// header, the contents list and "Next in …" all use it.
 const ARTICLE_CATEGORIES = [
   { id: 'menstrual', label: 'Menstrual health', articleIds: ['heavy-bleeding', 'period-pain-when-to-seek-care', 'fibroids', 'iron-deficiency-anemia'] },
   { id: 'hormonal', label: 'Hormonal health', articleIds: ['pcos-basics', 'menopause-basics', 'pmdd', 'hormonal-birth-control'] },
   { id: 'chronic', label: 'Chronic and pelvic conditions', articleIds: ['endometriosis-basics', 'pelvic-floor-dysfunction', 'ovarian-cysts'] },
   { id: 'vaginal-urinary', label: 'Vaginal and urinary health', articleIds: ['intimate-wash', 'uti-prevention', 'yeast-infection-basics', 'bacterial-vaginosis'] },
-
   { id: 'postpartum', label: 'Pregnancy and postpartum', articleIds: ['postpartum-stretch-marks'] },
 ];
 const sectionOf = (id) => ARTICLE_CATEGORIES.find((c) => c.articleIds.includes(id)) || null;
@@ -1032,10 +1080,8 @@ function nextInSection(id) {
   if (!sec || sec.articleIds.length < 2) return null;
   const i = sec.articleIds.indexOf(id);
   const nextId = sec.articleIds[(i + 1) % sec.articleIds.length];
-  const article = ARTICLES.find((x) => x.id === nextId);
-  return article ? { article, label: `Next in ${sec.label}` } : null;
+  return ARTICLES.find((x) => x.id === nextId) || null;
 }
-
 
 const READ_PROGRESS_KEY = 'ayna_read_progress_v1';
 // Reading history is kept per account, so after logout (or on a shared
@@ -1061,40 +1107,22 @@ function loadReadProgress(userId) {
 // scrolled AND some time on the page (not a quick scroll to the bottom).
 const FINISH_MIN_MS = 45000;
 
-/** One progress style everywhere: mint fill on an ink outline + label. Unread reads get a small "New" tag instead of an empty bar. */
 function ProgressBar({ value = 0, className = '' }) {
   return <i className={`ay-lib-bar ${className}`.trim()} aria-hidden="true"><b style={{ width: `${Math.round(Math.min(1, value) * 100)}%` }} /></i>;
 }
 
 function ReadState({ value = 0 }) {
-  // Unread reads show nothing (a "New" tag on every read meant nothing).
+  // Unread reads show nothing.
   if (!(value > 0)) return null;
   const done = value >= 1;
-  return <span className="ay-lib-state">
+  return <span className="ay-lib-state lb-state">
     <ProgressBar value={value} />
     <small>{done ? 'Finished' : `${Math.round(value * 100)}% read`}</small>
   </span>;
 }
 
-// Read time from the article's real words (about 220 a minute), never a fixed number.
-function textOf(node) {
-  if (node == null || typeof node === 'boolean') return '';
-  if (typeof node === 'string' || typeof node === 'number') return ` ${node} `;
-  if (Array.isArray(node)) return node.map(textOf).join(' ');
-  if (React.isValidElement(node)) return textOf(node.props.children);
-  return '';
-}
-const MINUTES = new Map();
-function minutesFor(article) {
-  if (!article) return 1;
-  if (!MINUTES.has(article.id)) {
-    const words = textOf(article.body).split(/\s+/).filter(Boolean).length;
-    MINUTES.set(article.id, Math.max(1, Math.ceil(words / 220)));
-  }
-  return MINUTES.get(article.id);
-}
-
 const validId = (id) => (id && ARTICLES.some((a) => a.id === id) ? id : null);
+const pad2 = (n) => String(n).padStart(2, '0');
 
 /**
  * Website Library.
@@ -1110,21 +1138,14 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   useSearchReady(); // typed searches re-run when the engine arrives (it loads after first paint)
   const libPlaceholder = useRotatingPlaceholder(LIB_SEARCH_EXAMPLES, { prefix: 'Try: ', fallback: 'Search reads', enabled: !query });
   const [topic, setTopic] = useState('all');
+  const [jumpTo, setJumpTo] = useState(null);
   const [progress, setProgress] = useState(() => loadReadProgress(userId));
   React.useEffect(() => { setProgress(loadReadProgress(userId)); }, [userId]);
   const selected = ARTICLES.find((a) => a.id === selectedId);
-  // Opening a read un-crumples the page; closing crumples it back before the
-  // shelf returns. Reduced motion skips the delay.
-  const closeRead = () => {
-    const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    // No crumple animation: reads open and close straight away (Pass 7 audit).
-    void reduce;
-    setSelectedId(null);
-  };
+  const closeRead = () => setSelectedId(null);
 
   // Same personalised shelves as the app's Library: reads matched to the
   // quiz answers first, then each topic with no repeats.
-  // Same four sections signed in or out (only "For you" is added for members).
   const rows = useMemo(() => ARTICLE_CATEGORIES.map((c) => ({ id: c.id, label: c.label, items: c.articleIds.map((id) => ARTICLES.find((a) => a.id === id)).filter(Boolean) })), []);
   const { forYou, hasProfile } = useMemo(() => {
     const lib = buildLibrary(ARTICLES, quizResults);
@@ -1138,7 +1159,6 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   const progressOf = (a) => progress[a.id] || 0;
   const finished = ARTICLES.filter((a) => progressOf(a) >= 1).length;
   const keepReading = ARTICLES.filter((a) => progressOf(a) > 0 && progressOf(a) < 1);
-  const topics = [['all', 'All'], ...(hasProfile && forYou.length ? [['foryou', 'For you']] : []), ...rows.map((r) => [r.id, r.label])];
 
   // Follow the prop when it changes after mount (e.g. URL /library/:slug, back button).
   const firstProp = React.useRef(true);
@@ -1157,6 +1177,14 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
     changeCb.current?.(selectedId);
   }, [selectedId]);
 
+  // Back from a read to one topic: land on that topic's shelf.
+  React.useEffect(() => {
+    if (!jumpTo || selectedId) return;
+    const el = document.getElementById(jumpTo);
+    if (el) el.scrollIntoView({ block: 'start' });
+    setJumpTo(null);
+  }, [jumpTo, selectedId]);
+
   const record = React.useCallback((id, value) => setProgress((prev) => {
     const v = Math.round(Math.min(1, value) * 20) / 20;
     if (!id || (prev[id] || 0) >= v) return prev;
@@ -1168,11 +1196,9 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   // Reading progress: how far you've scrolled through the article body,
   // starting from 0 at the top (not how much happens to fit on screen).
   const bodyRef = React.useRef(null);
-  const [scrolled, setScrolled] = useState(0);
   React.useEffect(() => {
     if (!selected) return undefined;
     try { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); } catch { window.scrollTo(0, 0); }
-    setScrolled(0);
     // Only count scrolling the reader does (wheel, touch, keys, scrollbar),
     // so opening a read never jumps straight to "39% read" or "Finished".
     let engaged = false;
@@ -1185,7 +1211,6 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
       const bottom = el.getBoundingClientRect().bottom + window.scrollY;
       const total = bottom - window.innerHeight;
       const value = total <= 0 ? 1 : Math.min(1, Math.max(0, window.scrollY / total));
-      setScrolled(value);
       // Past 60% for 45 seconds counts as finished; before that, cap below 100%.
       maxValue = Math.max(maxValue, value);
       const longEnough = Date.now() - openedAt >= FINISH_MIN_MS;
@@ -1203,183 +1228,181 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
     };
   }, [selected, record]);
 
-  // Sticky read bar sits right under the sticky site header (if there is one).
-  const statusRef = React.useRef(null);
-  React.useEffect(() => {
-    if (!selected) return undefined;
-    const nav = document.querySelector('.app-nav-wrap');
-    const el = statusRef.current;
-    if (!el) return undefined;
-    const apply = () => {
-      const pos = nav ? getComputedStyle(nav).position : '';
-      const h = nav && (pos === 'sticky' || pos === 'fixed') ? Math.round(nav.getBoundingClientRect().height) : 0;
-      el.style.setProperty('--ay-lib-sticky-top', `${h}px`);
-    };
-    apply();
-    if (!nav || typeof ResizeObserver === 'undefined') return undefined;
-    const ro = new ResizeObserver(apply);
-    ro.observe(nav);
-    return () => ro.disconnect();
-  }, [selected]);
-
-  // A to Z: open beside the shelves on wide screens, folded on phones.
-  const [azOpen, setAzOpen] = React.useState(() => typeof window === 'undefined' || !window.matchMedia || window.matchMedia('(min-width: 1024px)').matches);
   const open = (id) => setSelectedId(id);
-  const card = (a) => <li key={a.id}>{renderArticleCard(a, open, progressOf(a))}</li>;
-  const sectionCard = (a) => <li key={a.id}>{renderArticleCard(a, open, progressOf(a), false)}</li>;
-  // Spotify pattern: titled shelf, count, a row of read cards (scrolls sideways on phones).
-  const shelf = (id, label, items, extra = null) => items.length > 0 && <section key={id} id={`lib-${id}`} className="ct-shelf" aria-labelledby={`lib-${id}-h`}>
-    <div className="ct-shelf__head">
-      <h2 id={`lib-${id}-h`}>{label}</h2>
-      {id === 'keep' && finished > 0
-        ? <span className="ct-shelf__count ay-lib-total" aria-label={`${finished} of ${ARTICLES.length} finished`}><span>{finished}/{ARTICLES.length} read</span><ProgressBar value={finished / ARTICLES.length} /></span>
-        : <span className="ct-shelf__count">{items.length} read{items.length === 1 ? '' : 's'}</span>}
-      {extra}
-    </div>
-    <ul className="ct-shelf__row">{items.map(rows.some((r) => r.id === id) ? sectionCard : card)}</ul>
-  </section>;
+  const cards = (items) => items.map((a) => <li key={a.id}><ReadCard art={a} onOpen={open} progress={progressOf(a)} /></li>);
 
   if (selected && DESIGNED_READS[selected.id]) {
     const Designed = DESIGNED_READS[selected.id].Component;
     const nextArticle = ARTICLES.find((a) => a.id === DESIGNED_READS[selected.id].next) || null;
-    return <Designed key={selected.id} onBack={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); closeRead(); }} nextArticle={nextArticle} onOpenNext={open} onOpenProduct={onOpenProduct} fallback={<article><h1>{selected.title}</h1>{withHeadings(selected.body)}</article>} />;
+    return <Designed key={selected.id} onBack={(e) => { if (!plainClick(e)) return; e.preventDefault(); closeRead(); }} nextArticle={nextArticle} onOpenNext={open} onOpenProduct={onOpenProduct} fallback={<article><h1>{selected.title}</h1>{withHeadings(selected.body)}</article>} />;
   }
 
   if (selected) {
     const next = nextInSection(selected.id);
     const done = progressOf(selected) >= 1;
-    const label = done ? 'Finished' : scrolled > 0.02 ? `${Math.round(scrolled * 100)}% read` : `${minutesFor(selected)} min read`;
-    const related = ARTICLES.filter((a) => a.id !== selected.id && (a.tags || []).some((t) => (selected.tags || []).includes(t))).slice(0, 4);
     const sec = sectionOf(selected.id);
+    const related = [
+      ...(next ? [next] : []),
+      ...ARTICLES.filter((a) => a.id !== selected.id && a.id !== next?.id && (a.tags || []).some((t) => (selected.tags || []).includes(t))),
+      ...(sec ? sec.articleIds.map((id) => ARTICLES.find((a) => a.id === id)).filter((a) => a && a.id !== selected.id) : []),
+    ].filter((a, i, arr) => arr.findIndex((x) => x.id === a.id) === i).slice(0, 4);
+    const tone = READ_SECTION[selected.id] || 'hormonal';
     return (
-      <section className="ct ct-read-page ay-container">
-        {/* A thin reading line under the header, not a second sticky bar. */}
-        <div className="ct-line" ref={statusRef} role="progressbar" aria-label="Reading progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round((done ? 1 : scrolled) * 100)} aria-valuetext={label}>
-          <span style={{ width: `${Math.round((done ? 1 : scrolled) * 100)}%` }} />
-        </div>
-        <nav className="ct-crumbs" aria-label="Breadcrumb">
-          <BackLink label="Library" href="/library" onClick={closeRead} />
-          {sec && <><span aria-hidden="true">/</span><button type="button" className="ct-crumb" onClick={() => { closeRead(); setTopic(sec.id); }}>{sec.label}</button></>}
-        </nav>
-        <div className="ct-read-layout">
-          <article key={selected.id} className="ct-article">
-            <header className="ct-article__head">
-              <p className="ct-article__meta">{sec?.label || 'Health'} · {minutesFor(selected)} min read{done ? ' · Finished' : ''}</p>
-              <h1 className="ay-h1">{selected.title}</h1>
-              <p className="ct-article__teaser">{selected.teaser}</p>
-              {/* Category once (above), sources once in full at the end; this line jumps there. */}
-              <p className="ct-byline">Checked against {selected.source}. <button type="button" className="ct-link" onClick={() => document.getElementById('ct-sources')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>See the sources <span aria-hidden="true">↓</span></button></p>
-            </header>
-            <ArticleCover art={selected} large />
-            <div className="ct-prose" ref={bodyRef}>
+      <section className="ct lb lb-read">
+        <header className={`lb-rhead lb-tone--${tone}`}>
+          <div className="lb-wrap lb-rhead__in">
+            <nav className="lb-crumbs" aria-label="Breadcrumb">
+              <BackLink label="Library" href="/library" onClick={closeRead} />
+              {sec && <><span aria-hidden="true">/</span><a href="/library" className="lb-crumb" onClick={(e) => { if (!plainClick(e)) return; e.preventDefault(); setJumpTo(`lib-${sec.id}`); closeRead(); }}>{sec.label}</a></>}
+            </nav>
+            <div className="lb-rhead__grid">
+              <div className="lb-rhead__text">
+                <h1 className="lb-rhead__title">{selected.title}</h1>
+                <p className="lb-rhead__teaser">{selected.teaser}</p>
+              </div>
+              <dl className="lb-facts">
+                <div><dt>Read time</dt><dd>{minutesFor(selected)} min{done ? ' · Finished' : ''}</dd></div>
+                <div><dt>Checked against</dt><dd>{selected.source}</dd></div>
+                <div className="lb-facts__go"><dd><a href="#ct-sources" className="lb-link" onClick={(e) => { e.preventDefault(); document.getElementById('ct-sources')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>See the sources <span aria-hidden="true">↓</span></a></dd></div>
+              </dl>
+            </div>
+          </div>
+        </header>
+        <div className="lb-wrap">
+          <article key={selected.id} className="lb-article" aria-label={selected.title}>
+            <div className="lb-prose" ref={bodyRef}>
               {withHeadings(selected.body)}
             </div>
             <TelehealthSuggestions articleId={selected.id} onOpenProduct={onOpenProduct} />
           </article>
-          <aside className="ct-read-side" aria-label="About this read">
-            <p className="ay-group__title">About this read</p>
-            <ul className="ay-group ay-group__rows">
-              <li className="ay-group__row"><span className="ay-group__text"><span className="ay-group__label">Topic</span><span className="ay-group__value">{sec?.label || 'Health'}</span></span></li>
-              <li className="ay-group__row"><span className="ay-group__text"><span className="ay-group__label">Read time</span><span className="ay-group__value">{label}</span></span></li>
-              <li className="ay-group__row"><span className="ay-group__text"><span className="ay-group__label">Checked against</span><span className="ay-group__value">{selected.source}</span></span></li>
-            </ul>
-            {(next || related.length > 0) && <>
-              <p className="ay-group__title ct-side-gap">Read next</p>
-              <ul className="ay-group ay-group__rows">
-                {next && <li><button type="button" className="ay-group__row ay-group__row--link" onClick={() => open(next.article.id)}><span className="ay-group__text"><span className="ay-group__label">{next.label}</span><span className="ay-group__value">{next.article.title}</span></span><span className="ay-group__end" aria-hidden="true">→</span></button></li>}
-                {related.filter((a) => a.id !== next?.article.id).map((a) => <li key={a.id}><button type="button" className="ay-group__row ay-group__row--link" onClick={() => open(a.id)}><span className="ay-group__text"><span className="ay-group__label">Related read</span><span className="ay-group__value">{a.title}</span></span><span className="ay-group__end" aria-hidden="true">→</span></button></li>)}
-              </ul>
-            </>}
-          </aside>
         </div>
+        {related.length > 0 && (
+          <div className="lb-band"><section className="lb-wrap lb-shelf lb-shelf--related" aria-labelledby="lb-related-h">
+            <header className="lb-shelf__head">
+              <h2 id="lb-related-h" className="lb-shelf__title">Read next</h2>
+              {next && sec && <span className="lb-shelf__sub">Next in {sec.label}</span>}
+            </header>
+            <ul className="lb-shelf__row">{cards(related)}</ul>
+          </section></div>
+        )}
         {/* Shopping sits outside the medical read, labelled as products. */}
-        <ArticleProducts articleId={selected.id} quizResults={quizResults} healthProfile={healthProfile} onOpenProduct={onOpenProduct} />
+        <div className="ay-container lb-products">
+          <ArticleProducts articleId={selected.id} quizResults={quizResults} healthProfile={healthProfile} onOpenProduct={onOpenProduct} />
+        </div>
       </section>
     );
   }
 
   const q = query.trim().toLowerCase();
+  const results = q.length >= 2 ? searchArticles(query, ARTICLES) : null;
+  const featuredSec = sectionOf(FEATURED_READ.id);
+  const shelfItems = (r) => r.items.filter((a) => a.id !== FEATURED_READ.id);
+  // Say why these are "for you", in her words from the quiz.
+  const said = [...new Set([...(quizResults?.fullHealthIntake?.supportSelections || []), ...(quizResults?.frustrations || [])].map((x) => String(x).trim()).filter(Boolean))].slice(0, 3);
+
+  const shelf = (key, title, items, { n = null, sub = null, extra = null, seeAll = null } = {}) => items.length > 0 && (
+    <section key={key} id={`lib-${key}`} className="lb-shelf" aria-labelledby={`lib-${key}-h`}>
+      <header className="lb-shelf__head">
+        {n && <span className="lb-shelf__n" aria-hidden="true">{n}</span>}
+        <h2 id={`lib-${key}-h`} className="lb-shelf__title">{title}</h2>
+        {sub && <span className="lb-shelf__sub">{sub}</span>}
+        {extra || (seeAll && <button type="button" className="lb-seeall" onClick={seeAll}>See all {items.length}</button>)}
+      </header>
+      <ul className="lb-shelf__row">{cards(items)}</ul>
+    </section>
+  );
+
   let body;
-  const inTopic = (a) => topic === 'all' || (topic === 'foryou' ? forYou.some((f) => f.id === a.id) : (rows.find((r) => r.id === topic)?.items || []).some((x) => x.id === a.id));
-  const shown = q.length >= 2 ? searchArticles(query, ARTICLES).filter(inTopic) : null;
-  if (q.length >= 2) {
-    const results = shown;
-    body = results.length ? <ul className="ct-read-grid">{results.map(card)}</ul> : (
-      <div className="ct-zero ay-group is-padded" role="status">
-        <p className="ct-zero__h">Nothing for “{query.trim()}” yet.</p>
+  if (results) {
+    body = results.length ? (
+      <section className="lb-shelf lb-shelf--grid" aria-labelledby="lib-results-h">
+        <header className="lb-shelf__head"><h2 id="lib-results-h" className="lb-shelf__title">Reads about “{query.trim()}”</h2><span className="lb-shelf__sub">{results.length} read{results.length === 1 ? '' : 's'}</span></header>
+        <ul className="lb-shelf__row">{cards(results)}</ul>
+      </section>
+    ) : (
+      <div className="lb-zero" role="status">
+        <p className="lb-zero__h">Nothing for “{query.trim()}” yet.</p>
         <p>Try a topic:</p>
-        <div className="ay-chip-row">{rows.slice(0, 3).map((r) => <button type="button" className="ay-chip" key={r.id} onClick={() => { setQuery(''); setTopic(r.id); }}>{r.label}</button>)}</div>
-        <div className="ct-zero__actions">
+        <div className="lb-zero__topics">{rows.slice(0, 3).map((r) => <button type="button" className="ay-chip" key={r.id} onClick={() => { setQuery(''); setJumpTo(`lib-${r.id}`); }}>{r.label}</button>)}</div>
+        <div className="lb-zero__actions">
           {onAsk && <button type="button" className="ay-btn ay-btn--primary" onClick={() => onAsk(query.trim())}>Ask ayna about {query.trim()}</button>}
           <button type="button" className="ay-btn ay-btn--secondary" onClick={() => document.querySelector('.ct-suggest')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>Request a read</button>
         </div>
       </div>
     );
   } else if (topic !== 'all') {
-    const items = topic === 'foryou' ? forYou : (rows.find((r) => r.id === topic)?.items || []);
-    body = <ul className="ct-read-grid">{items.map(card)}</ul>;
+    const topicRow = rows.find((r) => r.id === topic);
+    const items = topic === 'foryou' ? forYou : (topicRow?.items || []);
+    const label = topic === 'foryou' ? 'For you' : topicRow?.label || 'Reads';
+    body = <section className="lb-shelf lb-shelf--grid" aria-labelledby="lib-topic-h">
+      <header className="lb-shelf__head"><h2 id="lib-topic-h" className="lb-shelf__title">{label}</h2><span className="lb-shelf__sub">{items.length} read{items.length === 1 ? '' : 's'}</span><button type="button" className="lb-seeall" onClick={() => { setJumpTo(topic === 'foryou' ? 'lib-foryou' : `lib-${topic}`); setTopic('all'); }}>All reads</button></header>
+      <ul className="lb-shelf__row">{cards(items)}</ul>
+    </section>;
   } else {
-    // Say why these are "for you", in her words from the quiz.
-    const said = [...new Set([...(quizResults?.fullHealthIntake?.supportSelections || []), ...(quizResults?.frustrations || [])].map((x) => String(x).trim()).filter(Boolean))].slice(0, 3);
     body = <>
-      <FeaturedRead onOpen={open} />
-      {shelf('keep', 'Keep reading', keepReading)}
-      {hasProfile ? <>
-        {shelf('foryou', 'Top 3 for you', forYou.slice(0, 3), forYou.length > 3 ? <button type="button" className="ct-shelf__all" onClick={() => setTopic('foryou')}>All {forYou.length} for you</button> : null)}
-        {said.length > 0 && forYou.length > 0 && <p className="ct-foryou-why">Based on what you told us: {said.map((x) => x.toLowerCase()).join(', ')}.</p>}
-      </> : <p className="ct-personal"><span>Get reads picked for what you told us.</span> <a className="ay-btn ay-btn--secondary" href="/quiz">See my matches <span aria-hidden="true">→</span></a></p>}
+      <LibraryBento onOpen={open} pick={hasProfile ? forYou.find((a) => a.id !== FEATURED_READ.id) || null : null} onAsk={onAsk} />
+      {shelf('keep', 'Keep reading', keepReading, { sub: finished > 0 ? `${finished} of ${ARTICLES.length} finished` : null })}
+      {hasProfile && shelf('foryou', 'Top 3 for you', forYou.slice(0, 3), {
+        sub: said.length > 0 ? `Based on what you told us: ${said.map((x) => x.toLowerCase()).join(', ')}` : null,
+        extra: forYou.length > 3 ? <button type="button" className="lb-seeall" onClick={() => setTopic('foryou')}>See all {forYou.length}</button> : null,
+      })}
       {/* The featured read isn't repeated in its topic shelf (P1-25). */}
-      {rows.map((r) => shelf(r.id, r.label, r.items.filter((a) => a.id !== FEATURED_READ.id)))}
+      {rows.map((r, i) => shelf(r.id, r.label, shelfItems(r), { n: pad2(i + 1), seeAll: () => { setTopic(r.id); window.scrollTo({ top: 0 }); } }))}
     </>;
   }
-  const azList = [...(shown || ARTICLES.filter(inTopic))].sort((a, b) => a.title.localeCompare(b.title));
+
+  const jump = (e, target) => { e.preventDefault(); setQuery(''); setTopic('all'); setJumpTo(target); };
 
   return (
-    <section className="ct ct-lib ay-container">
+    <section className="ct lb lb-lib">
       {missingRead && (
-        <div className="ct-404 ay-group is-padded" role="alert">
+        <div className="lb-wrap"><div className="ct-404 ay-group is-padded" role="alert">
           <p className="ct-404__code">404</p>
           <h2>We couldn’t find that read.</h2>
           <p>It may have moved, or the link may be wrong.</p>
           <a href="/library" className="ay-btn ay-btn--primary" onClick={(e) => { e.preventDefault(); onArticleChange?.(null); }}>See all reads</a>
-        </div>
+        </div></div>
       )}
-      <header className="ct-lib__top ay-pagehead ay-band ay-band--pink">
-        <div className="ct-lib__title">
-          <h1 className="ay-h1">Quick reads about your body</h1>
-          <p className="ct-lede">Plain-language reads on women&apos;s health, each one checked against clinical sources.</p>
-        </div>
-        <label className="ct-search">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-          <SmartSearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder={libPlaceholder} aria-label="Search reads" />
-        </label>
-      </header>
-      <div className="ay-chip-row ct-lib__chips" role="group" aria-label="Topics">
-        {topics.map(([id, label]) => <button type="button" key={id} className="ay-chip" aria-pressed={topic === id} onClick={() => setTopic(id)}>{label}</button>)}
-      </div>
-      {q.length >= 2 && <SearchAssist query={query} resultCount={searchArticles(query, ARTICLES).length} onUse={setQuery} />}
-      <div className="ct-lib__grid">
-        <div className="ct-lib__main">{body}</div>
-        <aside className="ct-lib__side" aria-label="Library index">
-          <details className="ct-az" open={azOpen} onToggle={(e) => setAzOpen(e.currentTarget.open)}>
-            <summary><span className="ct-az__title">A to Z</span><span className="ct-az__n">{azList.length} read{azList.length === 1 ? '' : 's'}</span></summary>
-            <ul className="ct-az__list">
-              {azList.map((a, i, arr) => {
-                const letter = a.title[0].toUpperCase();
-                const first = i === 0 || arr[i - 1].title[0].toUpperCase() !== letter;
+      <header className="lb-top">
+        <div className="lb-wrap lb-top__grid">
+          <div className="lb-top__main">
+            <h1 className="lb-top__title">Quick reads about <span className="lb-hl">your body</span></h1>
+            <p className="lb-top__lede">Plain-language reads on women&apos;s health, each one checked against clinical sources.</p>
+            <label className="lb-search">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+              <SmartSearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder={libPlaceholder} aria-label="Search reads" />
+            </label>
+            {/* Phones: the contents as one scrolling line of chips, count inside each chip (rule 6). */}
+            <div className="lb-chips" role="group" aria-label="Topics">
+              {rows.map((r) => {
+                const target = shelfItems(r).length ? `lib-${r.id}` : 'lib-featured';
+                return <a key={r.id} className="lb-chip" href={`#${target}`} onClick={(e) => jump(e, target)}>{r.label} <span className="lb-chip__n">{r.items.length}</span></a>;
+              })}
+            </div>
+          </div>
+          <nav className="lb-toc" aria-labelledby="lb-toc-h">
+            <h2 id="lb-toc-h" className="lb-tab lb-toc__h">Contents <span className="lb-toc__total">{ARTICLES.length} reads</span></h2>
+            <ol className="lb-toc__list">
+              {rows.map((r, i) => {
+                const target = shelfItems(r).length ? `lib-${r.id}` : (r.id === featuredSec?.id ? 'lib-featured' : `lib-${r.id}`);
                 return (
-                  <li key={a.id}>
-                    <span className="ct-az__letter" aria-hidden="true">{first ? letter : ''}</span>
-                    <button type="button" onClick={() => open(a.id)}>{a.title}</button>
-                    {progressOf(a) >= 1 && <span className="ct-az__done" aria-label="Finished">✓</span>}
+                  <li key={r.id}>
+                    <a href={`#${target}`} onClick={(e) => jump(e, target)}>
+                      <span className="lb-toc__n">{pad2(i + 1)}</span>
+                      <span className="lb-toc__t">{r.label}</span>
+                      <span className="lb-toc__dots" aria-hidden="true" />
+                      <span className="lb-toc__c">{r.items.length} read{r.items.length === 1 ? '' : 's'}</span>
+                    </a>
                   </li>
                 );
               })}
-            </ul>
-          </details>
-        </aside>
-      </div>
-      <SuggestBox mode="read" context="library" className="ct-suggest" />
+            </ol>
+          </nav>
+        </div>
+      </header>
+      {results && <div className="lb-wrap"><SearchAssist query={query} resultCount={results.length} onUse={setQuery} /></div>}
+      <div className="lb-wrap lb-body">{body}</div>
+      <div className="lb-wrap"><SuggestBox mode="read" context="library" className="ct-suggest" /></div>
     </section>
   );
 }
