@@ -272,7 +272,7 @@ export default function EcosystemScreen({
   return <div ref={rootRef} className={`ayna-fresh-ecosystem ayna-cabinet-home eco-app${careFirst ? ' is-care-first' : ''}`}>
     {/* iOS large title: a small title fades into a bar at the top once the big one scrolls away. */}
     <div className={`eco-app-nav${collapsed ? ' is-on' : ''}`} aria-hidden={!collapsed}>
-      <div className="eco-app-nav__bar"><span>Your Ecosystem</span></div>
+      <div className="eco-app-nav__bar"><span>Your ecosystem</span></div>
     </div>
     <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
     <div className="eco-awning eco-awning--app" aria-hidden="true" />
@@ -281,11 +281,11 @@ export default function EcosystemScreen({
 
     <section className="eco-app-hero" aria-labelledby="ayna-cabinet-title">
       <div className="eco-app-titlerow">
-        <h1 id="ayna-cabinet-title" ref={titleRef}>Your Ecosystem</h1>
+        <h1 id="ayna-cabinet-title" ref={titleRef}>Your ecosystem</h1>
       </div>
       {currentProducts.length > 0 && <form className="eco-app-search" role="search" onSubmit={(e) => { e.preventDefault(); if (q && !anyMatch) onBrowse?.(query.trim()); }}>
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
-        <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search your Ecosystem" aria-label="Search your Ecosystem" />
+        <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search your ecosystem" aria-label="Search your ecosystem" />
       </form>}
       {/* One progress card (counts, needs covered, Wrapped) in place of the ring: the shelf counts live on the chips below. */}
       {/* Stacked-card summary (the one stamp lives on its corner): real counts, needs covered, Wrapped. */}
@@ -294,7 +294,7 @@ export default function EcosystemScreen({
         <div className="eco-app-stack__card">
           <span className="eco-oval"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9" /></svg>Matched to you</span>
           {/* Counted by utils/ecosystemCounts: the same numbers as Wrapped and the website. */}
-          <p className="eco-app-stack__nums" aria-label="Your Ecosystem at a glance"><span><b>{counts.products}</b>{counts.products === 1 ? 'product' : 'products'}</span></p>
+          <p className="eco-app-stack__nums" aria-label="Your ecosystem at a glance"><span><b>{counts.products}</b>{counts.products === 1 ? 'product' : 'products'}</span></p>
           {counts.needs > 0 && <>
             <p className="eco-app-stack__needs"><b>{counts.needsCovered} of {counts.needs}</b> {counts.needs === 1 ? 'need' : 'needs'} covered</p>
             <span className="eco-app-stack__bar" role="progressbar" aria-label={needsCoveredLine(counts)} aria-valuemin={0} aria-valuemax={counts.needs} aria-valuenow={counts.needsCovered}><i style={{ width: `${Math.max(4, Math.round((counts.needsCovered / counts.needs) * 100))}%` }} /></span>
@@ -330,7 +330,7 @@ export default function EcosystemScreen({
       <button type="button" aria-pressed={activeChip === 'all'} onClick={() => setChip('all')}>All</button>
       {chipSections.map((sct) => <button key={sct.key} type="button" aria-pressed={activeChip === sct.key} onClick={() => setChip(activeChip === sct.key ? 'all' : sct.key)}><i style={{ background: toneFor(sct) }} aria-hidden="true" />{shortNeedLabel(sct.label)}<small>{sct.products.length || sct.picks?.length || 0}</small></button>)}
     </div>}
-    {q && <p className="eco-app-found" role="status">{anyMatch ? `${matchCount} in your Ecosystem` : 'Nothing in your Ecosystem matches.'}{' '}<button type="button" onClick={() => onBrowse?.(query.trim())}>Search the Shop for “{query.trim()}”</button></p>}
+    {q && <p className="eco-app-found" role="status">{anyMatch ? `${matchCount} in your ecosystem` : 'Nothing in your ecosystem matches.'}{' '}<button type="button" onClick={() => onBrowse?.(query.trim())}>Search the Shop for “{query.trim()}”</button></p>}
     {careFirst && hasAnything && <p className="ay-care-first__after">Products, when you are ready</p>}
 
     <div className={careFirst ? 'ay-eco-secondary' : undefined}>
@@ -351,10 +351,10 @@ export default function EcosystemScreen({
             <p>No strong matches for {section.phrase} yet.</p>
             <button type="button" onClick={() => onBrowse?.(shortNeedLabel(section.label))}>Shop {shortNeedLabel(section.label).toLowerCase()}</button>
           </div>}
-          {!section.products.length && shown.length > 0 && <p className="ay-shelf2-note">Not in your Ecosystem yet</p>}
+          {!section.products.length && shown.length > 0 && <p className="ay-shelf2-note">Not in your ecosystem yet</p>}
           {shown.length > 0 && <div className="ay-shelf2-row">{shown.map((product) => section.products.length
             ? <ProductCard key={product.id} product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} isSaved={!!savedProducts[product.id]} onToggleSaved={onToggleSaved} />
-            : <div className="ay-shelf2-pick" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}><PlusIcon size={16} />Add to Ecosystem</button></div>)}
+            : <div className="ay-shelf2-pick" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}><PlusIcon size={16} />Add to your ecosystem</button></div>)}
             <button type="button" className="ay-shelf2-slot" onClick={() => onBrowse?.(shortNeedLabel(section.label))} aria-label={`Add a product to ${section.label}`}><PlusIcon size={20} />Add</button>
           </div>}
           {shelf?.care && !careFirst && <details className="ay-shelf-care"><summary>Care options for {section.phrase}</summary><CareLinks care={shelf.care} /></details>}
@@ -370,7 +370,7 @@ export default function EcosystemScreen({
 
       {worthALook.length > 0 && activeChip === 'all' && !q && <section className="ay-shelf2 eco-app-shelf eco-app-worth" style={{ '--area-tone': '#769EBE', '--area-ink': '#3E2723' }} aria-labelledby="ayna-cabinet-next-title">
         <div className="ay-shelf2-head"><h2 id="ayna-cabinet-next-title">Worth a look</h2><span className="ay-shelf2-count">{worthALook.length}</span></div>
-        <div className="ay-shelf2-row">{worthALook.map((product) => <div className="ay-shelf2-pick" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}><PlusIcon size={16} />Add to Ecosystem</button></div>)}</div>
+        <div className="ay-shelf2-row">{worthALook.map((product) => <div className="ay-shelf2-pick" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}><PlusIcon size={16} />Add to your ecosystem</button></div>)}</div>
       </section>}
     </div>
     </>}
@@ -379,11 +379,11 @@ export default function EcosystemScreen({
 
     {ecoTab !== 'dashboard' && myProducts.length > 0 && <div className="ay-eco-shop"><ShoppingList products={myProducts} insights={healthInsights} have={routineHave} onToggleHave={onToggleHave} onOpenProduct={onOpenProduct} onSavePlaylist={onSavePlaylist} onOpenPlaylist={onOpenPlaylist} budget={budgetMax(quizAnswers)} onRequireAuth={onRequireAuth} /></div>}
 
-    {ecoTab !== 'dashboard' && earlierProducts.length > 0 && <section className="ayna-cabinet-more" aria-label="Earlier picks"><details><summary>Earlier picks <span>{earlierProducts.length}</span></summary><p>Kept in your Ecosystem outside your current shortlist.</p><div className="ayna-editorial-product-grid">{earlierProducts.map((product) => <ProductCard key={product.id} product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} />)}</div></details></section>}
+    {ecoTab !== 'dashboard' && earlierProducts.length > 0 && <section className="ayna-cabinet-more" aria-label="Earlier picks"><details><summary>Earlier picks <span>{earlierProducts.length}</span></summary><p>Kept in your ecosystem outside your current shortlist.</p><div className="ayna-editorial-product-grid">{earlierProducts.map((product) => <ProductCard key={product.id} product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} />)}</div></details></section>}
 
     {/* Settings-style inset list: health, check-in, answers, reset. */}
     <section className="eco-app-list-wrap" aria-labelledby="ay-eco-manage-title">
-      <h2 id="ay-eco-manage-title" className="eco-app-list-h">Manage your Ecosystem</h2>
+      <h2 id="ay-eco-manage-title" className="eco-app-list-h">Manage your ecosystem</h2>
       <ul className="eco-app-list">
         {authUser && onOpenHealthData && ecoTab !== 'dashboard' && <li><button type="button" onClick={() => { if (onEcoTab && myProducts.length) { onEcoTab('dashboard'); scrollToTabs(); } else onOpenHealthData(); }}>
           <span className="eco-app-list__ic is-pink" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" /></svg></span>
@@ -399,7 +399,7 @@ export default function EcosystemScreen({
         </button></li>}
         <li><button type="button" className="is-destructive" onClick={onRequestEcosystemReset}>
           <span className="eco-app-list__ic is-ink" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4" /></svg></span>
-          <span className="eco-app-list__txt"><b>Reset Ecosystem</b></span>
+          <span className="eco-app-list__txt"><b>Reset your ecosystem</b></span>
         </button></li>
       </ul>
     </section>

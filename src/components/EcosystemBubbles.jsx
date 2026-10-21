@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, getProfileMatchLabelsForProduct } from '../data/products.js';
+import { sentenceCase } from '../utils/sentenceCase.js';
 
 // A product added to the ecosystem is stored as a frozen JSON snapshot
 // (user_ecosystems.product_data, see src/utils/ecosystemStore.js) taken at
@@ -101,7 +102,7 @@ const BUBBLE = 128;
  * own area here, so it's added back explicitly.
  */
 const AREAS = [
-  ...MACRO_GROUPS.filter((g) => g.id !== 'all').map((g) => ({ key: g.id, label: g.label, categories: g.categories })),
+  ...MACRO_GROUPS.filter((g) => g.id !== 'all').map((g) => ({ key: g.id, label: sentenceCase(g.label), categories: g.categories })),
   { key: 'care', label: 'Virtual care', categories: ['telehealth'] },
   // MACRO_GROUPS deliberately excludes the bare 'supplement' category from every
   // area (see its own comment: one flat "Supplements" chip would be useless for

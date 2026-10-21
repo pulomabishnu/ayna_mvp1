@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import BackLink from './nav/BackLink.jsx';
 import ProductCard from './ProductCard';
 import SuggestBox from './SuggestBox';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
@@ -916,7 +917,7 @@ function FeaturedRead({ onOpen }) {
     <a href={`/library/${art.id}`} className="ct-feature ay-feature" onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); onOpen(art.id); }}>
       <span className="ct-feature__img"><img src={art.image} alt="" width="794" height="798" /></span>
       <span className="ct-feature__text">
-        <span className="ct-feature__kicker"><span className="ct-badge">New</span> Featured read · {sectionOf(art.id)?.label}</span>
+        <span className="ct-feature__kicker">Featured read · {sectionOf(art.id)?.label}</span>
         <strong className="ct-feature__title">{art.title}</strong>
         <span className="ct-feature__teaser">{art.teaser}</span>
         <span className="ct-feature__by">By {FEATURED_READ.by} · Reviewed by {FEATURED_READ.reviewedBy} · {minutesFor(art)} min read</span>
@@ -1085,7 +1086,7 @@ function minutesFor(article) {
   if (!article) return 1;
   if (!MINUTES.has(article.id)) {
     const words = textOf(article.body).split(/\s+/).filter(Boolean).length;
-    MINUTES.set(article.id, Math.max(1, Math.round(words / 220)));
+    MINUTES.set(article.id, Math.max(1, Math.ceil(words / 220)));
   }
   return MINUTES.get(article.id);
 }
@@ -1253,7 +1254,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           <span style={{ width: `${Math.round((done ? 1 : scrolled) * 100)}%` }} />
         </div>
         <nav className="ct-crumbs" aria-label="Breadcrumb">
-          <button type="button" className="ct-back" onClick={closeRead}><span aria-hidden="true">←</span> Library</button>
+          <BackLink label="Library" href="/library" onClick={closeRead} />
           {sec && <><span aria-hidden="true">/</span><button type="button" className="ct-crumb" onClick={() => { closeRead(); setTopic(sec.id); }}>{sec.label}</button></>}
         </nav>
         <div className="ct-read-layout">
@@ -1323,7 +1324,8 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
         {shelf('foryou', 'Top 3 for you', forYou.slice(0, 3), forYou.length > 3 ? <button type="button" className="ct-shelf__all" onClick={() => setTopic('foryou')}>All {forYou.length} for you</button> : null)}
         {said.length > 0 && forYou.length > 0 && <p className="ct-foryou-why">Based on what you told us: {said.map((x) => x.toLowerCase()).join(', ')}.</p>}
       </> : <p className="ct-personal"><span>Get reads picked for what you told us.</span> <a className="ay-btn ay-btn--secondary" href="/quiz">See my matches <span aria-hidden="true">→</span></a></p>}
-      {rows.map((r) => shelf(r.id, r.label, r.items))}
+      {/* The featured read isn't repeated in its topic shelf (P1-25). */}
+      {rows.map((r) => shelf(r.id, r.label, r.items.filter((a) => a.id !== FEATURED_READ.id)))}
     </>;
   }
   const azList = [...(shown || ARTICLES.filter(inTopic))].sort((a, b) => a.title.localeCompare(b.title));

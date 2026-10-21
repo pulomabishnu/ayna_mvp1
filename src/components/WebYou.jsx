@@ -11,7 +11,7 @@ import { AnalyticsToggle } from './SiteFooter';
 import { findSharedActives } from '../utils/sharedActives';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
 import { inviteLinkFor } from '../utils/badges';
-import HealthMatchToggle from './health/HealthMatchToggle.jsx';
+import { useHealthMatchPref } from '../health/matchPref.js';
 import FreeProductAccountCard from './freeProduct/FreeProductAccountCard';
 import { getCareProfile } from '../utils/careProfile';
 import EmailSettings from './EmailSettings';
@@ -24,7 +24,7 @@ import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import RelativeTime from './ui/RelativeTime.jsx';
 import { StatBoxes, PillTabs, ArchAvatar, HouseBlend } from './you/YouBits.jsx';
 import usePersistentState from '../hooks/usePersistentState.js';
-import useCheckinCount, { checkinTile } from '../hooks/useCheckinCount.js';
+import { useCheckinCountStatus } from '../hooks/useCheckinCount.js';
 
 // The app's "You" tab, built for the website: profile progress, your shelf
 // (charts from real data), badges, routine + safety alerts, and account
@@ -228,12 +228,22 @@ function PlaylistCover({ playlist }) {
 
 const Chev = () => <svg className="wy-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>;
 
+function HealthMatchStatus({ userId, onOpen }) {
+  const pref = useHealthMatchPref(userId);
+  return (
+    <div className="ay-group is-padded wy-hmatch">
+      <p><b>{pref.on ? 'On' : 'Off'}.</b> {pref.on ? 'Trends from apps like Apple Health can move picks up inside goals you chose.' : 'Your matches use only your answers.'}</p>
+      {onOpen && <button type="button" className="ay-btn ay-btn--text" onClick={onOpen}>Change in Health data</button>}
+    </div>
+  );
+}
+
 export default function WebYou({ onUpdateIntake = null, onOpenCommunity, onOpenArticle, user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenProduct, onOpenPhoneVerify, onSignOut, onDeleteAccount, onStartQuiz, onSignIn, theme = 'light', onThemeChange, onOpenFreeProduct, onOpenHealthData, onOpenHealth, healthSummary = null, healthConnectedCount = 0, quizSlot = null }) {
   const products = useMemo(() => Object.values(myProducts || {}).filter(Boolean), [myProducts]);
   // The open tab survives a refresh.
   const [tab, setTab] = usePersistentState('you:tab', 'overview');
-  const checkins = useCheckinCount(user?.id);
-  const checkinCount = checkins.count;
+  const checkin = useCheckinCountStatus(user?.id);
+  const checkinCount = checkin.count;
   const consumables = useMemo(() => products.filter(isConsumable), [products]);
   const intake = quizResults?.fullHealthIntake || null;
   const pct = getProfileCompletionPct(intake);
@@ -384,7 +394,7 @@ export default function WebYou({ onUpdateIntake = null, onOpenCommunity, onOpenA
     <StatBoxes className="wy-stats" items={[
       { key: 'picks', label: products.length === 1 ? 'Pick' : 'Picks', value: fmtCount(products.length), onClick: onOpenEcosystem },
       { key: 'saved', label: 'Saved', value: fmtCount(savedCount), onClick: onOpenSaved },
-      { key: 'checkins', label: checkinCount === 1 ? 'Check-in' : 'Check-ins', ...checkinTile(checkins, fmtCount), onClick: onOpenCheckin },
+      { key: 'checkins', label: checkinCount === 1 ? 'Check-in' : 'Check-ins', value: checkinCount != null ? fmtCount(checkinCount) : checkin.settled ? '–' : null, onClick: onOpenCheckin },
     ]} />
 
     {quizSlot}
@@ -471,7 +481,8 @@ export default function WebYou({ onUpdateIntake = null, onOpenCommunity, onOpenA
         </section>}
         <section className="wy-sec" aria-labelledby="wy-hmatch-h">
           <h2 className="ay-group__title" id="wy-hmatch-h">Health data in your matches</h2>
-          <div className="ay-group is-padded"><HealthMatchToggle userId={user.id} /></div>
+          {/* One setting in one place (P1-19): the switch is on Health data; this row says where it stands. */}
+          <HealthMatchStatus userId={user.id} onOpen={onOpenHealthData} />
         </section>
       </div>
       </>}

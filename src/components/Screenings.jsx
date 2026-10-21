@@ -33,15 +33,16 @@ const GUIDELINE_LINKS = {
     ]
 };
 
-export default function Screenings({ checkinData, onNavigate }) {
+export default function Screenings({ checkinData, onNavigate, onOpenCheckin = null, onBack = null }) {
     if (!checkinData) {
         return (
-            <InfoPage tone="sky" eyebrow="Health maintenance" title="Recommended screenings" width="read">
+            <InfoPage eyebrow="Health maintenance" title="Recommended screenings" width="read" onBack={onBack}>
                 <div className="ay-info-card ay-info-card--pad ay-info-empty">
                     <h2 className="ay-info__h3">No check-in yet</h2>
                     <p className="ay-info__body">
-                        Do your <strong>Monthly Check-in</strong> to get screening and doctor visit tips based on your symptoms and history.
+                        Do your <strong>monthly check-in</strong> to get screening and doctor visit tips based on your symptoms and history.
                     </p>
+                    {onOpenCheckin && <button type="button" className="ay-btn ay-btn--primary" onClick={onOpenCheckin}>Check in now</button>}
                 </div>
             </InfoPage>
         );
@@ -111,7 +112,7 @@ export default function Screenings({ checkinData, onNavigate }) {
     }
 
     return (
-        <InfoPage tone="sky"
+        <InfoPage onBack={onBack}
             eyebrow="Health maintenance"
             title="Recommended screenings"
             lede="Care reminders based on your health data and recent check-ins."

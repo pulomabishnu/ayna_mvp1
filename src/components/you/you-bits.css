@@ -85,3 +85,6 @@
   .app-container .wy .ay-stat, .ayna-mobile .ay-stat { padding: 10px; }
   .ay-stat span:not(.ay-skel) { font-size: 12.5px !important; }
 }
+/* A loading number keeps the tile the same height as its neighbours (P1-16). */
+.ay-stat b.is-loading { display: flex; align-items: center; height: 28px; min-height: 28px; }
+.ay-stat b.is-loading .ay-stat__skel { height: 22px; }

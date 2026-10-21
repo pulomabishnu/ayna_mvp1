@@ -35,7 +35,7 @@ const CURATED_SAFETY_NOTES = [
     // Additional recalls can be layered in here as needed.
 ];
 
-export default function Recalls({ myProducts = {} }) {
+export default function Recalls({ myProducts = {}, onBack = null }) {
     const ecosystemList = Object.values(myProducts);
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -45,7 +45,7 @@ export default function Recalls({ myProducts = {} }) {
     );
 
     return (
-        <InfoPage tone="sky"
+        <InfoPage onBack={onBack}
             className="ay-recalls"
             eyebrow="Safety"
             title="Safety and recall center"

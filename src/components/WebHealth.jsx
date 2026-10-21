@@ -6,7 +6,6 @@ import { getProductById } from '../data/products.js';
 import { DEV_HEALTH_DEMO, DEV_HEALTH_DEMO_EMPTY, localToday } from '../mobile/hooks/useHealthData.js';
 import { HealthStarter } from '../mobile/components/HealthBento.jsx';
 import HealthHome from '../mobile/components/HealthHome.jsx';
-import { CycleRing } from '../mobile/components/HealthChart.jsx';
 import '../styles/web-health.css';
 
 /**
@@ -31,39 +30,38 @@ function LockIcon() {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="3" /><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" /></svg>;
 }
 
-/** A drawing of the dashboard's layout. No numbers: nothing here is anyone's data. */
-function LockedIllustration() {
-  const bars = [0.55, 0.7, 0.45, 0.8, 0.6, 0.75, 0.5, 0.65, 0.85, 0.6, 0.7, 0.9];
+/**
+ * What the dashboard shows, as plain rows (walkthrough P1-13: no blurred
+ * mock-up behind the card; the checklist bans ghost data). Words only:
+ * nothing here is anyone's data.
+ */
+const DASH_PARTS = [
+  { k: 'cycle', t: 'Cycle day and phase', d: 'Where you are in your cycle, and what usually comes next for you.', icon: <><circle cx="12" cy="12" r="8" /><path d="M12 4a8 8 0 0 1 8 8h-8z" /></> },
+  { k: 'sleep', t: 'Sleep', d: 'Last night and this week, next to your own usual.', icon: <path d="M19 14.5A7.5 7.5 0 0 1 9.5 5a7.5 7.5 0 1 0 9.5 9.5z" /> },
+  { k: 'heart', t: 'Resting heart rate', d: 'Day by day, so a change stands out.', icon: <path d="M3 12h4l2-4 4 8 2-4h6" /> },
+  { k: 'steps', t: 'Steps', d: 'Your daily movement against your own average.', icon: <><path d="M8 20c-1.7 0-3-1.6-3-4s1.3-5 3-5 3 2.6 3 5-1.3 4-3 4z" /><path d="M16 14c-1.7 0-3-1.6-3-4s1.3-5 3-5 3 2.6 3 5-1.3 4-3 4z" /></> },
+];
+function WhatItShows() {
   return (
-    <div className="ay-wh-ghost" aria-hidden="true">
-      <div className="ay-wh-ghost-hello"><i /><i /></div>
-      <div className="ay-wh-ghost-row">
-        <div className="ay-wh-ghost-cycle">
-          <span><i /><i /><i /></span>
-          <CycleRing cycleDay={null} avgLength={28} periodLength={5} />
-        </div>
-        <div className="ay-wh-ghost-coming"><i /><b /><b /><b /></div>
-      </div>
-      <div className="ay-wh-ghost-phase"><span className="is-period" /><span className="is-follicular" /><span className="is-ovulation" /><span className="is-luteal" /></div>
-      <div className="ay-wh-ghost-grid">
-        {['sky', 'ink', 'butter', 'pink'].map((tone, t) => (
-          <div key={tone} className={`is-${tone}`}>
-            <i /><i />
-            <svg viewBox="0 0 100 40" preserveAspectRatio="none">
-              {bars.map((h, i) => <rect key={i} x={i * 8.3 + 1.5} y={40 - ((h + t * 0.03) % 1) * 36} width="5" height={((h + t * 0.03) % 1) * 36} rx="2.5" />)}
-            </svg>
-          </div>
+    <section className="ay-wh-shows" aria-labelledby="ay-wh-shows-h">
+      <h2 id="ay-wh-shows-h" className="ay-wh-shows__title">What the dashboard shows</h2>
+      <ul className="ay-wh-shows__list">
+        {DASH_PARTS.map((p) => (
+          <li key={p.k}>
+            <svg viewBox="0 0 24 24" aria-hidden="true">{p.icon}</svg>
+            <span><b>{p.t}</b><small>{p.d}</small></span>
+          </li>
         ))}
-      </div>
-    </div>
+      </ul>
+      <p className="ay-wh-shows__note">Each one is compared only with your own usual. Never a diagnosis.</p>
+    </section>
   );
 }
 
 function Locked({ signedIn, connected, onSignIn, onOpenConnections }) {
   const waiting = signedIn && connected;
   return (
-    <div className="ay-wh-locked">
-      <LockedIllustration />
+    <div className="ay-wh-locked is-honest">
       <div className="ay-wh-lockpanel" role="region" aria-labelledby="ay-wh-lock-title">
         <span className="ay-wh-lockicon"><LockIcon /></span>
         {waiting ? (
@@ -76,9 +74,7 @@ function Locked({ signedIn, connected, onSignIn, onOpenConnections }) {
           </>
         ) : (
           <>
-            <span className="ay-wh-pro">ayna Pro</span>
             <h2 id="ay-wh-lock-title">Your health dashboard lives in the app</h2>
-            <p>Your cycle day and phase, sleep, resting heart rate and steps, each next to your own usual.</p>
             <p>It joins ayna Pro when the app launches. Beta testers use it free now.</p>
             <div className="ay-wh-lockjoin">
               <figure className="ay-wh-qr">
@@ -102,6 +98,7 @@ function Locked({ signedIn, connected, onSignIn, onOpenConnections }) {
           </>
         )}
       </div>
+      <WhatItShows />
     </div>
   );
 }

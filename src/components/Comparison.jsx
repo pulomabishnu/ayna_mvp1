@@ -1,25 +1,27 @@
 import React from 'react';
+import BackLink from './nav/BackLink.jsx';
 import GlossaryTerm from './GlossaryTerm';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import '../styles/compare-page.css';
 
-export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LABELS, myProducts = {}, onBrowseProducts, onAddToCompare }) {
+export default function Comparison({ onBack = null, compareList, onRemove, onClear, CATEGORY_LABELS, myProducts = {}, onBrowseProducts, onAddToCompare }) {
     const ecosystemList = Object.values(myProducts || {});
 
     if (compareList.length === 0) {
         return (
             <div className="ay-container aycmp">
                 <header className="aycmp__head">
+                    {onBack && <BackLink label="Your ecosystem" href="/ecosystem" onClick={onBack} />}
                     <h1 className="ay-h1">Side by side</h1>
                     <p className="aycmp__lede">
-                        Compare up to 3 products side-by-side: safety, ingredients, and expert opinions.
+                        Compare up to 3 products on safety, ingredients and expert opinions.
                     </p>
                 </header>
 
                 <div className="aycmp__start">
                     <section className="ay-group is-padded aycmp__opt" aria-labelledby="aycmp-shop-h">
                         <h2 id="aycmp-shop-h" className="ay-h3">Go to Shop</h2>
-                        <p>Search Discovery and add products from the full catalog.</p>
+                        <p>Search the Shop and add products from the full catalog.</p>
                         <button type="button" className="ay-btn ay-btn--primary" onClick={onBrowseProducts}>Go to Shop</button>
                     </section>
 
@@ -27,8 +29,8 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
                         <h2 id="aycmp-eco-h" className="ay-h3">Compare from your ecosystem</h2>
                         <p>
                             {ecosystemList.length > 0
-                                ? `Pick up to 3 from your ${ecosystemList.length} saved product(s).`
-                                : 'Add products to My ecosystem first, then compare them here.'}
+                                ? `Pick up to 3 from the ${ecosystemList.length} ${ecosystemList.length === 1 ? 'product' : 'products'} in your ecosystem.`
+                                : 'Add products to your ecosystem first, then compare them here.'}
                         </p>
                         {ecosystemList.length > 0 ? (
                             <>
@@ -88,6 +90,7 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
         <div className="ay-container aycmp">
             <header className="aycmp__head is-row">
                 <div>
+                    {onBack && <BackLink label="Your ecosystem" href="/ecosystem" onClick={onBack} />}
                     <h1 className="ay-h1">Side by side</h1>
                     <p className="aycmp__lede">See how they differ on safety, how well they work, and value.</p>
                 </div>

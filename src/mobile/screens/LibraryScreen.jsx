@@ -8,13 +8,14 @@ import SearchAssist from '../../components/search/SearchAssist.jsx';
 import { searchArticles } from '../../utils/search/index.js';
 import '../library.css';
 import { sentenceCase as sentence } from '../../utils/sentenceCase.js';
+const FEATURED_READ_ID = 'postpartum-stretch-marks';
 // Sentence case for topic names ("Hormonal Health" -> "Hormonal health"); acronyms stay.
 
 function ReadState({ value = 0 }) {
   const done = value >= 1;
   return <span className={`ay-lib-state${done ? ' is-done' : value > 0 ? ' is-mid' : ''}`}>
     <i aria-hidden="true"><b style={{ width: `${Math.round(value * 100)}%` }} /></i>
-    <small>{done ? 'Finished' : value > 0 ? `${Math.round(value * 100)}%` : 'New'}</small>
+    <small>{done ? 'Finished' : value > 0 ? `${Math.round(value * 100)}%` : 'Unread'}</small>
   </span>;
 }
 
@@ -45,7 +46,8 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
   const finished = articles.filter((a) => progressOf(a) >= 1).length;
   const keepReading = articles.filter((a) => progressOf(a) > 0 && progressOf(a) < 1);
   const topics = [['all', 'All'], ...(hasProfile && forYou.length ? [['foryou', 'For you']] : []), ...rows.map((r) => [r.id, sentence(r.label)])];
-  const featured = keepReading[0] || (hasProfile && forYou[0]) || articles[0] || null;
+  // Same editorial pick as the website's featured read when nothing personal applies (P1-25).
+  const featured = keepReading[0] || (hasProfile && forYou[0]) || articles.find((a) => a.id === FEATURED_READ_ID) || articles[0] || null;
   const featuredLabel = keepReading[0] ? 'Pick up where you left off' : hasProfile && forYou[0] ? 'Top pick for you' : 'Start here';
 
   const tile = (a, small = false) => <div className={`ay-lib-item${small ? ' is-small' : ''}`} key={a.id}>

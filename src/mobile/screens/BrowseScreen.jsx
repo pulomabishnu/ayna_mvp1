@@ -146,7 +146,7 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = n
           <Fragment key={p.id}>
             <ProductCard product={p} variant={layout} onClick={() => onOpenProduct && onOpenProduct(p)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} isSaved={!!savedProducts[p.id]} onToggleSaved={onToggleSaved} matchOpts={matchOpts} />
             {showOnboarding && index === Math.min(3, visibleProducts.length - 1) && <section className="ayna-figma-discover-cta"><button type="button" onClick={onStartQuiz}>Get matched <span aria-hidden="true">→</span></button></section>}
-            {onPickPhrase && index === 7 && <div className="ay-app-ribbon"><Ribbon items={FAMILIAR_PHRASES} label="Searches people make" onPick={onPickPhrase} tab={<span className="ay-ribbon__tab is-label">Sound familiar?</span>} className="ay-ribbon--pink" /></div>}
+            {onPickPhrase && index === 7 && <div className="ay-app-ribbon"><Ribbon items={FAMILIAR_PHRASES} label="Searches people make" onPick={onPickPhrase} tab={<span className="ay-ribbon__tab is-label">Does this sound familiar?</span>} className="ay-ribbon--pink" /></div>}
           </Fragment>
         ))}
         {loadingMore && !isList && (

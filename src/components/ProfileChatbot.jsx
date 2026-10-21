@@ -422,6 +422,8 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
         </div>
       )}
 
+      {/* Phones: the panel is a bottom sheet over a flat 40% scrim, like the app's Ask sheet (P1-24). */}
+      {open && <div className="ayna-ask-scrim" aria-hidden="true" onClick={() => setOpen(false)} />}
       {open && (
         <section className="ayna-ask-panel" aria-label="Ask ayna">
           <header className={`ayna-ask-panel__header${messages.length > 1 ? " is-compact" : ""}`}>

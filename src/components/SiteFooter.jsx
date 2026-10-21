@@ -15,7 +15,7 @@ import { WEFUNDER_URL, trackInvestClick } from '../data/invest';
  * The legal row is the ONE place the medical disclaimer appears on the
  * website (audit G21), and it carries the same items as the app's
  * LegalFooter (audit AP04): 18+ only, Privacy Policy, Consumer Health Data
- * Privacy (the standalone /consumer-health-data.html notice), Terms, How We
+ * Privacy notice (/consumer-health-data, the in-site page), Terms, How We
  * Make Money, and the usage-analytics switch.
  *
  * The analytics switch uses the same analyticsConsent helpers as the
@@ -94,6 +94,7 @@ export default function SiteFooter({
   onViewArticles,
   onViewPrivacyPolicy,
   onViewTermsOfUse,
+  onViewConsumerHealthData,
   onViewHowWeMakeMoney,
   onViewEcosystem,
   onViewCommunity,
@@ -151,7 +152,7 @@ export default function SiteFooter({
         </p>
         <nav className="ay-foot__legallinks" aria-label="Legal">
           <a className="ay-footer-legal__link" href="/privacy-policy" onClick={(e) => footerGo(e, onViewPrivacyPolicy)}>Privacy policy</a>
-          <a className="ay-footer-legal__link" href="/consumer-health-data">Consumer health data privacy</a>
+          <a className="ay-footer-legal__link" href="/consumer-health-data" onClick={(e) => footerGo(e, onViewConsumerHealthData)}>Consumer health data notice</a>
           <a className="ay-footer-legal__link" href="/terms-of-use" onClick={(e) => footerGo(e, onViewTermsOfUse)}>Terms of use</a>
           <a className="ay-footer-legal__link" href="/how-we-make-money" onClick={(e) => footerGo(e, onViewHowWeMakeMoney)}>How we make money</a>
           <AnalyticsToggle />

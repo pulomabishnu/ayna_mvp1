@@ -20,7 +20,7 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
       <div className="ay-land-copy">
         <div className="ay-land-stamp is-small" aria-hidden="true">
           <svg viewBox="0 0 200 200"><defs><path id="ay-land-stamp-path" d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1-148 0" /></defs>
-            <text><textPath href="#ay-land-stamp-path" textLength="455" lengthAdjust="spacing">MATCHED TO YOU {'★'} MATCHED TO YOU {'★'}</textPath></text></svg>
+            <text><textPath href="#ay-land-stamp-path" textLength="455" lengthAdjust="spacing">matched to you {'★'} matched to you {'★'}</textPath></text></svg>
           <span>you</span>
         </div>
         <h1 id="ay-land-title">Build your ecosystem</h1>

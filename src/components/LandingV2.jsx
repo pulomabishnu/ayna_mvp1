@@ -30,7 +30,8 @@ import Photo from './ui/Photo.jsx';
  * scroll (useReveal, once); the brand ribbon is the one moving row and follows
  * hover, focus, the footer's Pause motion and reduced motion. */
 
-const SEARCH_HINTS = ['organic pads', 'PMOS support', 'bad cramps', 'pelvic floor', 'night sweats', 'vaginal dryness', 'leaking when I sneeze', 'sleep and stress', 'UTI burning', 'heavy flow overnight', 'menopause', 'itchy down there', 'hormonal acne', 'trying to conceive', 'postpartum pads'];
+// Plain words first (5-second test, P2-4): what people actually type.
+const SEARCH_HINTS = ['bad cramps', 'heavy flow overnight', 'organic pads', 'UTI burning', 'vaginal dryness', 'pelvic floor', 'night sweats', 'leaking when I sneeze', 'sleep and stress', 'menopause', 'itchy down there', 'hormonal acne', 'trying to conceive', 'PMOS support', 'postpartum pads'];
 const BASICS_IDS = new Set(BASICS_PRODUCTS.map((p) => p.id));
 const NEEDS_PHOTO = (p) => !/tampon tribe|herau|r[eè]sa/i.test(`${p?.brand || ''} ${p?.name || ''}`);
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
@@ -316,8 +317,8 @@ function How({ onViewHowItWorks }) {
       <ol className="ed-steps">
         {STEPS.map((st, i) => (
           <li key={st.t} className="ed-step ay-tabcard">
-            <span className={`ay-tabcard__strip${st.tone ? ` ay-tabcard__strip--${st.tone}` : ''}`} aria-hidden="true">Step {i + 1}</span>
-            <span className={`ed-step__big is-${i}`} aria-hidden="true">{i + 1}</span>
+            {/* One tabcard spec (P1-26): the strip carries the step's numeral once; no "Step n" label beside a second big number. */}
+            <span className={`ay-tabcard__strip ay-tabcard__strip--num${st.tone ? ` ay-tabcard__strip--${st.tone}` : ''}`} aria-hidden="true">{i + 1}</span>
             <div className="ed-step__in">
               <StepPhoto step={st} i={i} />
               <div>

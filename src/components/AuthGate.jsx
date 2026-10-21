@@ -151,11 +151,21 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
 
   const supabase = getSupabaseClient();
   const isSignup = allowSignup && mode === 'signup';
+  // Per-feature sign-in titles that name the action (walkthrough P1-23,
+  // docs/terminology.md), not "Sign in to use posting".
+  const FEATURE_TITLES = {
+    posting: 'Sign in to post', reactions: 'Sign in to mark posts helpful', 'saved posts': 'Sign in to save posts',
+    reviews: 'Sign in to write a review', playlists: 'Sign in to make a playlist', 'friend recommendations': 'Sign in to recommend to a friend',
+    questions: 'Sign in to ask a question', Community: 'Sign in to join Community', 'Ask ayna': 'Sign in to ask ayna',
+    'appointment prep': 'Sign in to prepare for an appointment', 'recall alerts': 'Sign in to get recall alerts', comparisons: 'Sign in to compare products',
+    'your hidden products': 'Sign in to see your hidden products', 'your health profile': 'Sign in to edit your answers', 'ayna by text': 'Sign in to text ayna',
+    'screening reminders': 'Sign in to see screening reminders', 'account settings': 'Sign in to manage your account', 'health data': 'Sign in to connect health data',
+  };
   // Why we are asking, when the user came from a specific door (Saved heart, My ecosystem).
   const CONTEXT_COPY = {
     saved: { title: 'Looking for your favorites?', line: 'Sign in to see what you saved.' },
     ecosystem: { title: 'Your ecosystem lives here', line: 'Sign in to see your shelves, or build one with a short quiz.' },
-    feature: { title: feature ? `Sign in to use ${feature}` : 'This needs an account', line: 'Take the short quiz to start, or sign in if you already have an account.' },
+    feature: { title: feature ? (FEATURE_TITLES[feature] || `Sign in for ${feature}`) : 'This needs an account', line: 'Take the short quiz to start, or sign in if you already have an account.' },
     login: { title: 'Sign in', line: 'Welcome to ayna. New here? Start with the quiz.' },
   };
   const ctxCopy = !isSignup ? CONTEXT_COPY[context] : null;
@@ -595,7 +605,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
               <b>New here? See my matches</b>
               <span>A short quiz, then products matched to you</span>
             </button>
-            <p className="ay-auth-doors__or">Have an account? Sign in below</p>
+            <p className="ay-auth-doors__or">or sign in</p>
           </div>
         )}
 
@@ -998,11 +1008,11 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
           {isSignup && (
             <p className="ay-auth-legal">
               ayna accounts are for adults 18+. By creating an account you agree to our{' '}
-              <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+              <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy policy</a>
               {', '}
-              <a href="/consumer-health-data.html" target="_blank" rel="noopener noreferrer">Consumer Health Data Privacy Notice</a>
+              <a href="/consumer-health-data" target="_blank" rel="noopener noreferrer">Consumer health data privacy notice</a>
               {' '}and{' '}
-              <a href="/terms-of-use" target="_blank" rel="noopener noreferrer">Terms of Use</a>.
+              <a href="/terms-of-use" target="_blank" rel="noopener noreferrer">Terms of use</a>.
               {' '}
               {authMethod === 'email' ? (
                 <button type="button" className="ay-auth-linkbtn" onClick={() => setShowPhoneNotice(true)}>Use my phone number instead</button>
@@ -1153,11 +1163,11 @@ export function ConsentGate({ onAgreed, onDecline }) {
           </button>
           <p className="ay-auth-legal">
             ayna accounts are for adults 18+. By continuing you agree to our{' '}
-            <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+            <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy policy</a>
             {', '}
-            <a href="/consumer-health-data.html" target="_blank" rel="noopener noreferrer">Consumer Health Data Privacy Notice</a>
+            <a href="/consumer-health-data" target="_blank" rel="noopener noreferrer">Consumer health data privacy notice</a>
             {' '}and{' '}
-            <a href="/terms-of-use" target="_blank" rel="noopener noreferrer">Terms of Use</a>.
+            <a href="/terms-of-use" target="_blank" rel="noopener noreferrer">Terms of use</a>.
           </p>
         </div>
         <button type="button" onClick={onDecline} style={styles.skipBtn}>No thanks, sign me out</button>
