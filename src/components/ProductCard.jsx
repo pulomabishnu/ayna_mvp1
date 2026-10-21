@@ -32,6 +32,8 @@ export default function ProductCard({
   onOpen,
   onToggleSaved,
   action = null,
+  // Small line under the match, e.g. "Backed by your sleep data" (src/components/health).
+  badge = null,
   className = '',
   style,
 }) {
@@ -84,6 +86,7 @@ export default function ProductCard({
               {inEcosystem && <span className="ay-product-card__eco">✓ In your ecosystem</span>}
             </span>
           )}
+          {badge}
           <span className={`ay-product-card__price${price.main === 'Price at retailer' ? ' is-unknown' : ''}`}>{price.main}{price.sub && (/^list\s+\$/i.test(price.sub)
             ? (() => { const [was, ...rest] = price.sub.replace(/^list\s+/i, '').split(/\s+·\s+/); return <small><span className="sr-only">List price </span><s>{was}</s>{rest.length > 0 && <span> {rest.join(' · ')}</span>}</small>; })()
             : <small>{price.sub}</small>)}</span>

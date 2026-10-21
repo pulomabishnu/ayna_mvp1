@@ -22,6 +22,7 @@ import {
 import { getListingStatus as passportListingStatus } from './passport/index.js';
 import { needPhrase, canonicalNeedId, LIFE_STAGE_BY_ID, FORMAT_BY_ID, VALUE_BY_ID, ATTRIBUTE_PHRASE } from '../matching/ontology.js';
 import { buildEcosystemV2 } from '../matching/v2.js';
+import { shapeEcosystemWithHealth } from '../matching/healthShaping.js';
 import { getCareResourceBundle } from './careResources.js';
 import { withImageOverride } from './productImageOverrides.js';
 import { applyCatalogEvidence } from './catalogEvidence.js';
@@ -2188,14 +2189,19 @@ export function matchEngine() {
     } catch { return 'v2'; }
 }
 
+const categoryForId = (id) => { const p = getProductById(id); return p ? buildProductProfile(p)?.category : null; };
+
 function ecosystemFor(quizAnswers, healthProfile, opts = {}) {
     const up = userProfileFor(quizAnswers, healthProfile, opts);
     const engine = opts.engine || matchEngine();
-    const eco = (engine === 'v2' ? buildEcosystemV2 : buildEcosystem)(up, filterPrescriptionCareGate(ALL_PRODUCTS), {
+    const built = (engine === 'v2' ? buildEcosystemV2 : buildEcosystem)(up, filterPrescriptionCareGate(ALL_PRODUCTS), {
         getCareResourceBundle,
         ...(opts.picksPerNeed ? { picksPerNeed: opts.picksPerNeed } : {}),
         ...(opts.minTier ? { minTier: opts.minTier } : {}),
     });
+    // Connected health data re-orders within what the engine chose (both
+    // engines, website and app): src/matching/healthShaping.js.
+    const eco = shapeEcosystemWithHealth(built, up, { categoryFor: categoryForId });
     return { up, eco };
 }
 
@@ -2234,6 +2240,7 @@ export function getEcosystemSeedFromQuiz(quizAnswers, healthProfile = null, opts
             productId: r.productId, score: r.score, tier: r.tier, explanations: r.explanations, access: r.access,
             confidence: r.confidence, confidenceLevel: r.confidenceLevel, roles: r.roles || [], aboveNext: r.aboveNext || [],
             ...(r.v2 ? { v2: r.v2, alsoCovers: r.alsoCovers || [] } : {}),
+            ...(r.healthBacked ? { healthBacked: r.healthBacked } : {}),
         }));
         for (const r of shelf.picks) {
             const product = getProductById(r.productId);
@@ -2252,6 +2259,7 @@ export function getEcosystemSeedFromQuiz(quizAnswers, healthProfile = null, opts
                 score: r.score,
                 tier: r.tier,
                 careProminent: shelf.careProminent,
+                ...(r.healthBacked ? { healthBacked: r.healthBacked } : {}),
             };
         }
         return {
@@ -2270,10 +2278,14 @@ export function getEcosystemSeedFromQuiz(quizAnswers, healthProfile = null, opts
             careFirst: shelf.careFirst,
             careProminent: shelf.careProminent,
             care: shelf.care,
+            healthData: shelf.healthData || null,
         };
     });
     Object.defineProperty(seedMeta, 'shelves', { value: shelves, enumerable: false });
-    return { mergedProducts, seedMeta, shelves, careFirst: eco.careFirst, careProminent: eco.careProminent, care: eco.care, careFlags, picksPerNeed: eco.picksPerNeed, minScore: eco.minScore };
+    // What her connected health data changed (null when nothing): for the
+    // "Shaped by your health data" note (src/components/health/HealthShapedNote.jsx).
+    Object.defineProperty(seedMeta, 'healthShaped', { value: eco.healthShaped || null, enumerable: false });
+    return { mergedProducts, seedMeta, shelves, careFirst: eco.careFirst, careProminent: eco.careProminent, care: eco.care, careFlags, picksPerNeed: eco.picksPerNeed, minScore: eco.minScore, healthShaped: eco.healthShaped || null };
 }
 
 /**
