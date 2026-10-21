@@ -35,6 +35,7 @@ import { getNextArticle } from './utils/nextArticle.js';
 import { INTAKE_DRAFT_KEY, getIntakeSteps, isStepAnswered, reconstructIntakeFromSnapshot } from './data/intakeModel.js';
 import { clearIntakeDraft, readDraftProgress } from './data/quizDraftProgress.js';
 import FinishQuizCard from '../components/FinishQuizCard.jsx';
+import FeedbackPrompts from '../components/FeedbackPrompts.jsx';
 import MobileTabBar from './components/MobileTabBar.jsx';
 import AskAynaModal from './components/AskAynaModal.jsx';
 import ProfileFlow, { AboutAynaScreen } from './screens/profile/ProfileFlow.jsx';
@@ -228,6 +229,9 @@ function hasSavedIntakeDraft() {
     return draft?.version === 1 && !!draft.intake;
   } catch { return false; }
 }
+
+// Screens where the feedback survey may appear (never the quiz, sign-in or a sheet).
+const APP_FEEDBACK_SCREENS = new Set(['landing', 'eco', 'browse', 'library', 'saved']);
 
 export default function MobileApp() {
   const { session, update: updateSession, reset: resetSession } = useEcosystemSession();
@@ -1398,6 +1402,8 @@ export default function MobileApp() {
         onViewRecommendations={() => { setAskAynaOpen(false); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
         onRequireAuth={(feature) => requestAuth(feature || 'Ask ayna', () => { setScreen(screen); setAskAynaOpen(true); })}
       />
+      {/* Same 14-day feedback survey as the website, only on resting screens. */}
+      <FeedbackPrompts key={realAuthUser?.id || 'guest'} user={realAuthUser} authLoading={authLoading} currentView={overlayType || askAynaOpen ? 'busy' : screen} safeViews={APP_FEEDBACK_SCREENS} />
       <OfflineBanner rootRef={rootRef} />
       <GlobalToast variant="app" />
     </div>
