@@ -160,10 +160,10 @@ export const EXTENDED_PHYSICAL = [
         verificationLinks: {
             doctor: { links: [
                 { url: 'https://www.mayoclinic.org/diseases-conditions/bacterial-vaginosis/diagnosis-treatment/drc-20353485', text: 'Mayo Clinic: BV Treatment', summary: 'Medical overview of treatment for bacterial vaginosis.' },
-                { url: 'https://www.healthline.com/health/womens-health/boric-acid-suppositories-for-yeast-infection', text: 'Healthline: Boric Acid Suppositories', summary: 'Medically reviewed overview of boric-acid suppository use and safety.' }
+                { url: 'https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm', text: 'CDC: Vulvovaginal candidiasis treatment guidelines', summary: 'Medically reviewed overview of boric-acid suppository use and safety.' }
             ] },
             scientific: { links: [
-                { url: 'https://journals.lww.com/stdjournal/fulltext/2011/05000/the_use_of_boric_acid_for_recurrent_bacterial.10.aspx', text: 'Clinical Study on Boric Acid', summary: 'Published literature evaluating boric acid in recurrent vaginal conditions; category-level evidence rather than validation of this specific product.' },
+                { url: 'https://pubmed.ncbi.nlm.nih.gov/19704395/', text: 'Reichman et al., Sex Transm Dis (2009): Boric acid added to suppressive therapy for recurrent bacterial vaginosis', summary: 'Published literature evaluating boric acid in recurrent vaginal conditions; category-level evidence rather than validation of this specific product.' },
                 ] },
             community: { links: [
                 { url: 'https://www.reddit.com/r/WomensHealth/search/?q=boric+acid', text: 'Reddit r/WomensHealth', summary: 'Anecdotal community discussions about boric acid use for recurrent vaginal symptoms; experiences are not clinical evidence and outcomes vary.' },

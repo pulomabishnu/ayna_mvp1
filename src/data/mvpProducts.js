@@ -194,7 +194,7 @@ export const MVP_PHYSICAL = [
     ingredients: 'Myo-inositol, D-chiro inositol.',
     effectiveness: 'Evidence for specific clinical outcomes in PMOS is limited and uncertain; do not rely on it as fertility treatment.',
     badges: ['PMOS Focus'],
-    verificationLinks: { doctor: { links: [] }, scientific: { links: [{ url: 'https://academic.oup.com/jcem/article/108/10/2447/7242360', text: '2023 international guideline', summary: 'Guideline recommendations for inositol and other complementary therapies.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PCOS/search/?q=inositol&restrict_sr=1', text: 'Reddit r/PCOS: inositol', summary: 'Community discussions on inositol for PMOS.' }] } }
+    verificationLinks: { doctor: { links: [] }, scientific: { links: [{ url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10505534/', text: '2023 international guideline', summary: 'Guideline recommendations for inositol and other complementary therapies.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PCOS/search/?q=inositol&restrict_sr=1', text: 'Reddit r/PCOS: inositol', summary: 'Community discussions on inositol for PMOS.' }] } }
   },
   {
     id: 'p-spearmint-pcos',

@@ -1696,7 +1696,7 @@ export default [
   "strength": "secondary",
   "grade": "C",
   "rationale": "External, drug-free cold pad; perineal cooling trials reported no adverse effects, though harms were poorly studied and it is a postpartum product.",
-  "source_url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD006304.pub4",
+  "source_url": "https://www.cochrane.org/evidence/CD006304_local-cooling-relieving-pain-perineal-trauma-sustained-during-childbirth",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1706,7 +1706,7 @@ export default [
   "strength": "secondary",
   "grade": "C",
   "rationale": "External, drug-free cold pad; perineal cooling trials reported no adverse effects, though harms were poorly studied and it is a postpartum product.",
-  "source_url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD006304.pub4",
+  "source_url": "https://www.cochrane.org/evidence/CD006304_local-cooling-relieving-pain-perineal-trauma-sustained-during-childbirth",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1746,7 +1746,7 @@ export default [
   "strength": "primary",
   "grade": "B",
   "rationale": "Includes ice pads; Cochrane found cold pads may reduce perineal pain in the first hours to two days (very low to low certainty), best combined with pain relief.",
-  "source_url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD006304.pub4",
+  "source_url": "https://www.cochrane.org/evidence/CD006304_local-cooling-relieving-pain-perineal-trauma-sustained-during-childbirth",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1786,7 +1786,7 @@ export default [
   "strength": "primary",
   "grade": "B",
   "rationale": "Reusable cold gel pad; Cochrane found cold gel pads work about as well as ice for early perineal pain (very low to low certainty).",
-  "source_url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD006304.pub4",
+  "source_url": "https://www.cochrane.org/evidence/CD006304_local-cooling-relieving-pain-perineal-trauma-sustained-during-childbirth",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1796,7 +1796,7 @@ export default [
   "strength": "primary",
   "grade": "B",
   "rationale": "Reusable cold gel pad; Cochrane found cold gel pads work about as well as ice for early perineal pain (very low to low certainty).",
-  "source_url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD006304.pub4",
+  "source_url": "https://www.cochrane.org/evidence/CD006304_local-cooling-relieving-pain-perineal-trauma-sustained-during-childbirth",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -2636,7 +2636,7 @@ export default [
   "strength": "primary",
   "grade": "B",
   "rationale": "Cochrane 2024: high- and low-frequency TENS may reduce period pain vs placebo (low certainty); NHS lists TENS for period pain.",
-  "source_url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD013331.pub2/pdf/CDSR/CD013331/CD013331_abstract.pdf",
+  "source_url": "https://www.cochrane.org/evidence/CD013331_tens-electrical-nerve-stimulation-through-skin-effective-treatment-period-pain-and-does-it-cause",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -2676,7 +2676,7 @@ export default [
   "strength": "secondary",
   "grade": "B",
   "rationale": "Cochrane found very limited low-quality evidence that fish oil reduces period pain; evening primrose oil was not shown effective for menstrual pain and NCCIH draws no conclusion for omega-3 and cramps.",
-  "source_url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002124.pub2",
+  "source_url": "https://www.cochrane.org/evidence/CD002124_dietary-supplements-dysmenorrhoea",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -2786,7 +2786,7 @@ export default [
   "strength": "secondary",
   "grade": "B",
   "rationale": "Consumable for a TENS device; TENS may reduce period pain (Cochrane, low certainty) but the refills alone do nothing.",
-  "source_url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD013331.pub2/pdf/CDSR/CD013331/CD013331_abstract.pdf",
+  "source_url": "https://www.cochrane.org/evidence/CD013331_tens-electrical-nerve-stimulation-through-skin-effective-treatment-period-pain-and-does-it-cause",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },

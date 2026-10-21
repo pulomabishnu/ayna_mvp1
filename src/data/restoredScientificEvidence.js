@@ -26,12 +26,6 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
       "text": "FDA: Tampon Safety",
       "summary": "Federal safety standards for tampon absorption and materials.",
       "justification": "Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
-    },
-    {
-      "url": "https://www.healthline.com/health/womens-health/organic-tampons",
-      "text": "Healthline: Best Organic Tampons",
-      "summary": "Material analysis and safety for organic tampon brands.",
-      "justification": "Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
     }
   ],
   "p-saalt-cup": [
@@ -203,14 +197,6 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
       "justification": "PubMed peer-reviewed. Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
     }
   ],
-  "p-boric-acid": [
-    {
-      "url": "https://journals.lww.com/stdjournal/fulltext/2011/05000/the_use_of_boric_acid_for_recurrent_bacterial.10.aspx",
-      "text": "Clinical Study on Boric Acid",
-      "summary": "A study demonstrating the high success rate of boric acid in treating users with chronic vaginal infections.",
-      "justification": "Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
-    }
-  ],
   "p-flo-gummies": [
     {
       "url": "https://pubmed.ncbi.nlm.nih.gov/28237870/",
@@ -378,14 +364,6 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
       "text": "Ritual Science Portal",
       "summary": "Ingredient sourcing, clinical trials, and forms like Methylfolate.",
       "justification": "Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
-    }
-  ],
-  "p-maude-vibe": [
-    {
-      "url": "https://www.healthline.com/health/healthy-sex/sexual-health-benefits",
-      "text": "Medical Benefits of Sexual Health",
-      "summary": "Scientific overview of how sexual wellness contributes to reduced stress and better sleep.",
-      "justification": "Healthline is medically reviewed. Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
     }
   ],
   "p-sweet-spot-wipes": [

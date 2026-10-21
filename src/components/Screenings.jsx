@@ -23,7 +23,7 @@ const GUIDELINE_LINKS = {
     ],
     uti: [
         { name: 'CDC – Urinary tract infection', url: 'https://www.cdc.gov/antibiotic-use/uti.html' },
-        { name: 'UpToDate – UTIs (patient info)', url: 'https://www.uptodate.com/contents/urinary-tract-infections-in-adults-beyond-the-basics' },
+        { name: 'UpToDate – UTIs (patient info)', url: 'https://medlineplus.gov/urinarytractinfections.html' },
         { name: 'ACOG – Urinary tract health', url: 'https://www.acog.org/womens-health/faqs/urinary-tract-infections' }
     ],
     general: [

@@ -67,3 +67,16 @@ export const SCIENCE_KEYS = new Set([
   'citations', 'clinicalNoteSources', 'clinicalSources', 'scienceSources', 'effectivenessSources',
   'evidenceSources', 'scientificSources', 'literatureSources', 'sources',
 ]);
+
+// Site-wide: hosts that are journal publishers or commercial health-content
+// sites on .com. Any link to them anywhere in the site or app must be replaced
+// with the same paper's PubMed/PMC record or a .gov/.org page. Reviews of a
+// specific product (the founders' "review" exception) are listed explicitly.
+export const COMMERCIAL_HEALTH_HOSTS = /(^|\.)(uptodate|healthline|webmd|verywellhealth|verywellmind|verywellfamily|medicalnewstoday|everydayhealth|drugs|goodrx|statpearls|cureus|sciencedirect|onlinelibrary\.wiley|wiley|tandfonline|sagepub|springer|springeropen|biomedcentral|mdpi|mdpi-res|jamanetwork|bmj|thelancet|nature|oup|cochranelibrary|thieme-connect|lww|karger|mdedge|deepdyve|informahealthcare|researchgate|academia)\.com$/;
+export const ALLOWED_PRODUCT_REVIEWS = new Set([
+  'https://www.medicalnewstoday.com/articles/wisp-review',
+]);
+export function isCommercialHealthSource(url) {
+  if (ALLOWED_PRODUCT_REVIEWS.has(url)) return false;
+  return COMMERCIAL_HEALTH_HOSTS.test(hostOf(url));
+}

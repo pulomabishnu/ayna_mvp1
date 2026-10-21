@@ -4436,8 +4436,8 @@ export const BRAND_PRODUCTS = [
         clinicianAttribution: "ayna's summary of a 2024 Cochrane review and a systematic review and meta-analysis of TENS for period pain. Not a direct clinician quote.",
         doctorOpinion: 'TENS (transcutaneous electrical nerve stimulation) has real supportive evidence for reducing primary dysmenorrhea pain via the gate-control mechanism the brand describes; this does not independently establish that the Elaris Pod specifically matches published TENS study outcomes. A 2024 Cochrane review found both high- and low-frequency TENS may reduce period pain compared with placebo or no treatment, though the reviewers downgraded their certainty because of risk of bias in the underlying trials, and a separate 2024 meta-analysis (10 RCTs, 469 women) found a statistically significant effect but with very high heterogeneity between studies: real evidence for the modality, with genuine uncertainty about how much relief to expect from any one device.',
         doctorOpinionCitations: [
-            { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD013331.pub2/abstract', label: 'Cochrane: TENS for pain control in primary dysmenorrhea (2024)' },
-            { url: 'https://doi.org/10.1080/17581869.2026.2714978', label: 'Pain Management: TENS for primary dysmenorrhea, systematic review & meta-analysis' },
+            { url: 'https://www.cochrane.org/evidence/CD013331_tens-electrical-nerve-stimulation-through-skin-effective-treatment-period-pain-and-does-it-cause', label: 'Cochrane: TENS for pain control in primary dysmenorrhea (2024, plain-language summary)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/42568115/', label: 'Pain Management: TENS for primary dysmenorrhea, systematic review & meta-analysis' },
         ],
         whoItsFor: [
             'People looking for a drug-free, reusable option for period cramp pain alongside or instead of OTC pain relievers',
@@ -4450,8 +4450,8 @@ export const BRAND_PRODUCTS = [
         ],
         effectiveness: 'Positioned by the brand as fast-acting, drug-free cramp relief; no independently conducted clinical study of this specific device was found here. TENS as a pain-relief category has supportive evidence for dysmenorrhea.',
         scientificCitations: [
-            { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD013331.pub2/abstract', text: 'Cochrane: Transcutaneous electrical nerve stimulation (TENS) for pain control in women with primary dysmenorrhoea', summary: '2024 Cochrane review: both high- and low-frequency TENS may reduce pain vs. placebo/no treatment, though certainty was downgraded for risk of bias in the underlying trials.' },
-            { url: 'https://doi.org/10.1080/17581869.2026.2714978', text: 'Pain Management: Transcutaneous electrical nerve stimulation in the relief of primary dysmenorrhea, systematic review and meta-analysis', summary: '10 RCTs, 469 women: statistically significant reduction in pain intensity favoring TENS, with very high heterogeneity between studies.' },
+            { url: 'https://www.cochrane.org/evidence/CD013331_tens-electrical-nerve-stimulation-through-skin-effective-treatment-period-pain-and-does-it-cause', text: 'Cochrane: Transcutaneous electrical nerve stimulation (TENS) for pain control in women with primary dysmenorrhoea', summary: '2024 Cochrane review: both high- and low-frequency TENS may reduce pain vs. placebo/no treatment, though certainty was downgraded for risk of bias in the underlying trials.' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/42568115/', text: 'Pain Management: Transcutaneous electrical nerve stimulation in the relief of primary dysmenorrhea, systematic review and meta-analysis', summary: '10 RCTs, 469 women: statistically significant reduction in pain intensity favoring TENS, with very high heterogeneity between studies.' },
         ],
         integrations: [],
         badges: [],
@@ -5509,7 +5509,7 @@ export const BRAND_PRODUCTS = [
         doctorOpinion: 'Pippa\'s underlying idea (an internally worn object that gives the pelvic floor something to respond to during normal movement) sits in the same conceptual family as weighted vaginal cones, a pelvic-floor training method with real clinical backing. A Cochrane review found weighted vaginal cones are more effective than no treatment for stress urinary incontinence, and may work about as well as standard pelvic floor muscle training (Kegels), though the evidence that cones outperform standard PFMT specifically is inconclusive. Cones and Pippa aren\'t identical (cones rely on gravity and the sensation of "losing" a weight, while Pippa\'s spring relies on gentle conforming resistance) but the shared mechanism, internal proprioceptive/resistance feedback prompting a pelvic floor contraction, is a real, studied approach, not a novel unproven idea.',
         doctorOpinionShort: 'Conceptually similar to weighted vaginal cones, a pelvic-floor training method with real Cochrane-level evidence (better than no treatment, roughly comparable to standard Kegels), but Pippa\'s specific spring design hasn\'t itself been independently clinically trialed, even though its materials and manufacturing claims are reassuring on safety.',
         doctorOpinionCitations: [
-            { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002114.pub2/full', label: 'Cochrane: Weighted vaginal cones for urinary incontinence' },
+            { url: 'https://www.cochrane.org/evidence/CD002114_vaginal-weights-training-pelvic-floor-muscles-treat-urinary-incontinence-women', label: 'Cochrane: Weighted vaginal cones for urinary incontinence' },
         ],
         whoItsFor: [
             'People wanting a passive, no-routine-required way to engage the pelvic floor during everyday movement or exercise',
@@ -5536,7 +5536,7 @@ export const BRAND_PRODUCTS = [
         ingredients: 'High-purity biomedical-grade silicone resistance spring (light resistance in the Starter Kit); reusable applicator.',
         effectiveness: 'Works on the same general principle as weighted vaginal cones, a related device category with real Cochrane-level evidence for pelvic floor training.',
         scientificCitations: [
-            { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002114.pub2/full', text: 'Cochrane: Weighted vaginal cones for urinary incontinence', summary: 'Found weighted vaginal cones more effective than no active treatment for stress urinary incontinence, and possibly comparable to standard pelvic floor muscle training, the closest independently studied device category to Pippa\'s internal-resistance mechanism, though not identical to it.' },
+            { url: 'https://www.cochrane.org/evidence/CD002114_vaginal-weights-training-pelvic-floor-muscles-treat-urinary-incontinence-women', text: 'Cochrane: Weighted vaginal cones for urinary incontinence', summary: 'Found weighted vaginal cones more effective than no active treatment for stress urinary incontinence, and possibly comparable to standard pelvic floor muscle training, the closest independently studied device category to Pippa\'s internal-resistance mechanism, though not identical to it.' },
         ],
         integrations: [],
         badges: ['Female-Founded', 'Fast Company 2025 Innovation Award'],
@@ -5576,13 +5576,13 @@ export const BRAND_PRODUCTS = [
         doctorOpinion: 'Same underlying device category and evidence picture as the Pippa Starter Kit (see that entry for the fuller discussion of the related vaginal-cone research): this kit simply adds a medium-resistance spring so users can progress in resistance level as pelvic floor engagement builds, similar in concept to progressing to a heavier weighted cone in that literature.',
         doctorOpinionShort: 'Same evidence and caveats as the Pippa Starter Kit; this kit adds a medium-resistance spring for progression.',
         doctorOpinionCitations: [
-            { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002114.pub2/full', label: 'Cochrane: Weighted vaginal cones for urinary incontinence' },
+            { url: 'https://www.cochrane.org/evidence/CD002114_vaginal-weights-training-pelvic-floor-muscles-treat-urinary-incontinence-women', label: 'Cochrane: Weighted vaginal cones for urinary incontinence' },
         ],
         communityReview: 'See the Pippa Starter Kit entry: independent (non-brand) review volume for this specific kit is limited at time of writing.',
         ingredients: 'High-purity biomedical-grade silicone resistance springs (light and medium resistance); reusable applicator.',
         effectiveness: 'Same underlying evidence picture as the Starter Kit; the added medium-resistance spring is a progression option, not a separately studied variant.',
         scientificCitations: [
-            { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002114.pub2/full', text: 'Cochrane: Weighted vaginal cones for urinary incontinence', summary: 'Found weighted vaginal cones more effective than no active treatment for stress urinary incontinence, and possibly comparable to standard pelvic floor muscle training.' },
+            { url: 'https://www.cochrane.org/evidence/CD002114_vaginal-weights-training-pelvic-floor-muscles-treat-urinary-incontinence-women', text: 'Cochrane: Weighted vaginal cones for urinary incontinence', summary: 'Found weighted vaginal cones more effective than no active treatment for stress urinary incontinence, and possibly comparable to standard pelvic floor muscle training.' },
         ],
         integrations: [],
         badges: [],

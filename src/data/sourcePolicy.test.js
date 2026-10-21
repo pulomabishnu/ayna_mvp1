@@ -22,3 +22,20 @@ describe('source policy', () => {
     expect(bad.map((b) => `${b.path} ${b.url}`)).toEqual([]);
   });
 });
+
+describe('no journal-publisher or commercial health .com links anywhere', () => {
+  it('site and app files link only PubMed/PMC or .gov/.org for health information', async () => {
+    const fs = await import('node:fs');
+    const path = await import('node:path');
+    const { isCommercialHealthSource } = await import('./sourcePolicy.js');
+    const root = path.resolve(new URL('.', import.meta.url).pathname, '../..');
+    const files = [];
+    const walk = (d) => { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, e.name); if (e.isDirectory()) { if (e.name !== 'node_modules') walk(p); } else if (/\.(js|jsx|json)$/.test(e.name) && !/\.test\./.test(e.name)) files.push(p); } };
+    ['src', 'api'].forEach((d) => walk(path.join(root, d)));
+    const bad = [];
+    for (const f of files) for (const m of fs.readFileSync(f, 'utf8').matchAll(/https?:\/\/[^\s"'`)<>\]]+/g)) {
+      if (isCommercialHealthSource(m[0])) bad.push(`${path.relative(root, f)} ${m[0]}`);
+    }
+    expect(bad).toEqual([]);
+  });
+});

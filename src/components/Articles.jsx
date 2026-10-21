@@ -308,14 +308,14 @@ const ARTICLES = [
     id: 'intimate-wash',
     image: '/articles/intimate-wash.webp',
     title: 'Intimate Washes',
-    source: 'UpToDate, ACOG, CDC',
+    source: 'ACOG, CDC, MedlinePlus',
     tags: ['Gynecology', 'Vulvovaginal health'],
     teaser: 'Why the vagina is self-cleaning, when to use (or skip) cleansers, and what OB-GYNs recommend for external care.',
     body: (
       <>
         <p>The vagina is self-cleaning and maintains its own pH and bacterial balance. Douching is not recommended by major medical organizations and can increase the risk of bacterial vaginosis, yeast infection, and pelvic inflammatory disease. For the vulva (the external skin), warm water alone is often sufficient for daily hygiene.</p>
         <p>If you choose to use a cleanser, for example after exercise or for personal preference, clinicians advise selecting one that is fragrance-free, pH-balanced (around 3.5–4.5 for the vulvar area), and labeled for external use only. Avoid anything that goes inside the vagina, as well as scented soaps, body washes with strong surfactants, and vaginal deodorants or sprays.</p>
-        <p><strong>Key guidelines (from UpToDate, ACOG, and CDC):</strong></p>
+        <p><strong>Key guidelines (from ACOG, CDC and MedlinePlus):</strong></p>
         <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
           <li>Avoid douching, scented soaps, and vaginal deodorants.</li>
           <li>Cleanse the vulva gently with warm water or an unfragranced, mild soap substitute.</li>
@@ -325,7 +325,7 @@ const ARTICLES = [
         <p><strong>Sources:</strong></p>
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.acog.org/womens-health/faqs/vulvovaginal-health" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Vulvovaginal Health</a></li>
-          <li><a href="https://www.uptodate.com/contents/bacterial-vaginosis-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Bacterial vaginosis (patient education)</a></li>
+          <li><a href="https://medlineplus.gov/vaginitis.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>MedlinePlus – Bacterial vaginosis</a></li>
           <li><a href="https://www.cdc.gov/std/bv/default.htm" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>CDC – Bacterial vaginosis</a></li>
         </ul>
       </>
@@ -335,7 +335,7 @@ const ARTICLES = [
     id: 'heavy-bleeding',
     image: '/landing/articles-heavy-bleeding-satin.webp',
     title: 'Heavy Menstrual Bleeding',
-    source: 'UpToDate, ACOG, CDC',
+    source: 'ACOG, CDC, MedlinePlus',
     tags: ['Menstrual health', 'Clinical guidance'],
     teaser: 'What counts as heavy bleeding, possible causes, when to seek care, and how it’s evaluated and treated.',
     body: (
@@ -346,7 +346,7 @@ const ARTICLES = [
         <p><strong>Sources:</strong></p>
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Heavy Menstrual Bleeding</a></li>
-          <li><a href="https://www.uptodate.com/contents/abnormal-uterine-bleeding-in-adults-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Abnormal uterine bleeding (patient education)</a></li>
+          <li><a href="https://medlineplus.gov/vaginalbleeding.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>MedlinePlus – Abnormal uterine bleeding</a></li>
           <li><a href="https://www.cdc.gov/ncbddd/blooddisorders/women/menorrhagia.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>CDC – Heavy menstrual bleeding</a></li>
         </ul>
       </>
@@ -356,7 +356,7 @@ const ARTICLES = [
     id: 'menopause-basics',
     image: '/articles/menopause-basics.webp',
     title: 'Menopause & Perimenopause',
-    source: 'NAMS, UpToDate, ACOG',
+    source: 'NAMS, ACOG, MedlinePlus',
     tags: ['Menopause', 'Hormone therapy'],
     teaser: 'What perimenopause and menopause are, common symptoms, and how hormone therapy and lifestyle changes can help.',
     body: (
@@ -367,7 +367,7 @@ const ARTICLES = [
         <p><strong>Sources:</strong></p>
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.menopause.org/for-women/menopause-faqs-women-s-midlife-health" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>NAMS – Menopause FAQs</a></li>
-          <li><a href="https://www.uptodate.com/contents/menopausal-hormone-therapy-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Menopausal hormone therapy (patient education)</a></li>
+          <li><a href="https://medlineplus.gov/hormonereplacementtherapy.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>MedlinePlus – Menopausal hormone therapy</a></li>
           <li><a href="https://www.acog.org/womens-health/faqs/the-menopause-years" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – The menopause years</a></li>
         </ul>
       </>
@@ -377,7 +377,7 @@ const ARTICLES = [
     id: 'uti-prevention',
     image: '/articles/uti-prevention.webp',
     title: 'UTI Prevention',
-    source: 'UpToDate, NIH, CDC',
+    source: 'NIH, CDC, MedlinePlus',
     tags: ['Urinary health', 'Prevention'],
     teaser: 'Evidence-backed ways to reduce UTI risk and when to see a clinician for recurrent infections.',
     body: (
@@ -387,7 +387,7 @@ const ARTICLES = [
         <p><strong>When to seek care:</strong> Get care promptly for fever, chills, back or side pain, nausea or vomiting, blood in your urine, if you’re pregnant, or if symptoms don’t improve within a day or two. These can mean a kidney infection.</p>
         <p><strong>Sources:</strong></p>
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
-          <li><a href="https://www.uptodate.com/contents/urinary-tract-infections-in-adults-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – UTIs in adults (patient education)</a></li>
+          <li><a href="https://medlineplus.gov/urinarytractinfections.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>MedlinePlus – UTIs in adults</a></li>
           <li><a href="https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-infection-uti-in-adults" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>NIDDK/NIH – Bladder infection (UTI) in adults</a></li>
           <li><a href="https://www.cdc.gov/antibiotic-use/uti.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>CDC – Urinary tract infection</a></li>
         </ul>
@@ -398,7 +398,7 @@ const ARTICLES = [
     id: 'yeast-infection-basics',
     image: '/articles/yeast-infection-basics.webp',
     title: 'Yeast Infection Basics',
-    source: 'UpToDate, CDC, ACOG',
+    source: 'CDC, ACOG, MedlinePlus',
     tags: ['Vulvovaginal health', 'Infections'],
     teaser: 'What causes yeast infections, how to recognize them, when to treat at home vs. see a clinician, and how to prevent recurrence.',
     body: (
@@ -408,7 +408,7 @@ const ARTICLES = [
         <p><strong>When to seek care:</strong> See a clinician if it’s your first time, you’re pregnant, you get four or more infections a year, symptoms are severe, or they don’t clear after an over-the-counter treatment. Other infections can look similar.</p>
         <p><strong>Sources:</strong></p>
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
-          <li><a href="https://www.uptodate.com/contents/candidiasis-vulvovaginal-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Vulvovaginal candidiasis (patient education)</a></li>
+          <li><a href="https://medlineplus.gov/ency/article/001511.htm" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>MedlinePlus – Vulvovaginal candidiasis</a></li>
           <li><a href="https://www.cdc.gov/fungal/diseases/candidiasis/genital/index.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>CDC – Genital / vulvovaginal candidiasis</a></li>
           <li><a href="https://www.acog.org/womens-health/faqs/vulvovaginal-health" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Vulvovaginal health</a></li>
         </ul>
@@ -419,7 +419,7 @@ const ARTICLES = [
     id: 'period-pain-when-to-seek-care',
     image: '/landing/articles-period-pain-hotwater.webp',
     title: 'Period Pain: When to Seek Care',
-    source: 'ACOG, UpToDate, Mayo Clinic',
+    source: 'ACOG, Mayo Clinic, MedlinePlus',
     tags: ['Menstrual health', 'Pain'],
     teaser: 'Normal cramps vs. signs that something else may be going on, and what treatments and workups clinicians may suggest.',
     body: (
@@ -429,7 +429,7 @@ const ARTICLES = [
         <p><strong>Sources:</strong></p>
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.acog.org/womens-health/faqs/dysmenorrhea-painful-periods" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Dysmenorrhea (painful periods)</a></li>
-          <li><a href="https://www.uptodate.com/contents/dysmenorrhea-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Dysmenorrhea (patient education)</a></li>
+          <li><a href="https://medlineplus.gov/periodpain.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>MedlinePlus – Dysmenorrhea</a></li>
           <li><a href="https://www.mayoclinic.org/diseases-conditions/menstrual-cramps/symptoms-causes/syc-20374938" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Mayo Clinic – Menstrual cramps</a></li>
         </ul>
       </>
@@ -439,7 +439,7 @@ const ARTICLES = [
     id: 'pcos-basics',
     image: '/landing/articles-pcos-mirror.webp',
     title: 'PMOS: What It Is and How It\'s Managed',
-    source: 'ACOG, Endocrine Society, UpToDate',
+    source: 'ACOG, Endocrine Society, MedlinePlus',
     tags: ['Hormones', 'Reproductive health'],
     teaser: 'Polyendocrine metabolic ovarian syndrome explained. Diagnosis, symptoms, and evidence-based treatment options including lifestyle and medication.',
     body: (
@@ -452,7 +452,7 @@ const ARTICLES = [
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.acog.org/womens-health/faqs/polycystic-ovary-syndrome-pcos" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Polyendocrine metabolic ovarian syndrome (PMOS)</a></li>
           <li><a href="https://www.endocrine.org/patient-engagement/endocrine-library/pcos" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Endocrine Society – PMOS</a></li>
-          <li><a href="https://www.uptodate.com/contents/polycystic-ovary-syndrome-pcos-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – PMOS (patient education)</a></li>
+          <li><a href="https://medlineplus.gov/polycysticovarysyndrome.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>MedlinePlus – PMOS</a></li>
         </ul>
       </>
     ),
@@ -461,7 +461,7 @@ const ARTICLES = [
     id: 'pelvic-floor-dysfunction',
     image: '/articles/pelvic-floor-dysfunction.webp',
     title: 'Pelvic Floor Dysfunction',
-    source: 'ACOG, UpToDate, APTA',
+    source: 'ACOG, APTA, MedlinePlus',
     tags: ['Pelvic health', 'Physical therapy'],
     teaser: 'What the pelvic floor does, common symptoms of dysfunction, and how pelvic floor physical therapy and at-home tools can help.',
     body: (
@@ -472,7 +472,7 @@ const ARTICLES = [
         <p><strong>Sources:</strong></p>
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.acog.org/womens-health/faqs/pelvic-floor-disorders" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Pelvic floor disorders</a></li>
-          <li><a href="https://www.uptodate.com/contents/pelvic-floor-muscle-training-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Pelvic floor muscle training (patient education)</a></li>
+          <li><a href="https://medlineplus.gov/ency/patientinstructions/000141.htm" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>MedlinePlus – Pelvic floor muscle training</a></li>
           <li><a href="https://www.apta.org/your-practice/patient-populations/womens-health/pelvic-floor" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>APTA – Pelvic floor</a></li>
         </ul>
       </>
@@ -482,7 +482,7 @@ const ARTICLES = [
     id: 'endometriosis-basics',
     image: '/articles/endometriosis-basics.webp',
     title: 'Endometriosis: Symptoms, Diagnosis, and Care',
-    source: 'ACOG, EndoFound, UpToDate',
+    source: 'ACOG, EndoFound, MedlinePlus',
     tags: ['Chronic pain', 'Reproductive health'],
     teaser: 'What endometriosis is, how it\'s diagnosed, and treatment options. From pain management to surgery and fertility support.',
     body: (
@@ -494,7 +494,7 @@ const ARTICLES = [
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.acog.org/womens-health/faqs/endometriosis" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Endometriosis</a></li>
           <li><a href="https://www.endofound.org/endometriosis" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Endometriosis Foundation of America – Endometriosis</a></li>
-          <li><a href="https://www.uptodate.com/contents/endometriosis-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Endometriosis (patient education)</a></li>
+          <li><a href="https://medlineplus.gov/endometriosis.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>MedlinePlus – Endometriosis</a></li>
         </ul>
       </>
     ),
@@ -503,7 +503,7 @@ const ARTICLES = [
     id: 'bacterial-vaginosis',
     image: '/articles/bacterial-vaginosis.webp',
     title: 'Bacterial Vaginosis (BV)',
-    source: 'CDC, ACOG, UpToDate',
+    source: 'CDC, ACOG, MedlinePlus',
     tags: ['Vaginal health', 'Infections'],
     teaser: 'What causes BV, how it differs from a yeast infection, treatment options, and why it tends to recur.',
     body: (
@@ -515,7 +515,7 @@ const ARTICLES = [
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.cdc.gov/std/bv/default.htm" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>CDC – Bacterial vaginosis</a></li>
           <li><a href="https://www.acog.org/womens-health/faqs/vulvovaginal-health" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Vulvovaginal health</a></li>
-          <li><a href="https://www.uptodate.com/contents/bacterial-vaginosis-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Bacterial vaginosis (patient education)</a></li>
+          <li><a href="https://medlineplus.gov/vaginitis.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>MedlinePlus – Bacterial vaginosis</a></li>
         </ul>
       </>
     ),
@@ -524,7 +524,7 @@ const ARTICLES = [
     id: 'pmdd',
     image: '/articles/pmdd.webp',
     title: 'PMDD: Premenstrual Dysphoric Disorder',
-    source: 'ACOG, IAPMD, UpToDate',
+    source: 'ACOG, IAPMD, MedlinePlus',
     tags: ['Mental health', 'Hormonal health'],
     teaser: 'How PMDD differs from PMS, what causes it, and evidence-based treatments including SSRIs, hormonal options, and lifestyle support.',
     body: (
@@ -536,7 +536,7 @@ const ARTICLES = [
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.acog.org/womens-health/faqs/premenstrual-syndrome" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Premenstrual syndrome (PMS)</a></li>
           <li><a href="https://iapmd.org/about-pmdd" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>IAPMD – About PMDD</a></li>
-          <li><a href="https://www.uptodate.com/contents/premenstrual-syndrome-and-premenstrual-dysphoric-disorder-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – PMS and PMDD (patient education)</a></li>
+          <li><a href="https://medlineplus.gov/premenstrualsyndrome.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>MedlinePlus – PMS and PMDD</a></li>
         </ul>
       </>
     ),
@@ -545,7 +545,7 @@ const ARTICLES = [
     id: 'fibroids',
     image: '/articles/fibroids.webp',
     title: 'Uterine Fibroids',
-    source: 'ACOG, NIH, UpToDate',
+    source: 'ACOG, NIH, MedlinePlus',
     tags: ['Chronic conditions', 'Menstrual health'],
     teaser: 'What fibroids are, why they cause heavy bleeding and pain, and the range of treatment options from watchful waiting to surgery.',
     body: (
@@ -557,7 +557,7 @@ const ARTICLES = [
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.acog.org/womens-health/faqs/uterine-fibroids" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Uterine fibroids</a></li>
           <li><a href="https://www.nichd.nih.gov/health/topics/uterine" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>NIH/NICHD – Uterine fibroids</a></li>
-          <li><a href="https://www.uptodate.com/contents/uterine-fibroids-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Uterine fibroids (patient education)</a></li>
+          <li><a href="https://medlineplus.gov/uterinefibroids.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>MedlinePlus – Uterine fibroids</a></li>
         </ul>
       </>
     ),
@@ -566,7 +566,7 @@ const ARTICLES = [
     id: 'iron-deficiency-anemia',
     image: '/articles/iron-deficiency-anemia.webp',
     title: 'Iron Deficiency & Anemia from Heavy Periods',
-    source: 'ACOG, NIH, UpToDate',
+    source: 'ACOG, NIH, MedlinePlus',
     tags: ['Menstrual health', 'Nutrition'],
     teaser: 'How heavy periods deplete iron, symptoms to watch for, and how to address deficiency through diet, supplements, and treating the root cause.',
     body: (
@@ -578,7 +578,7 @@ const ARTICLES = [
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Heavy menstrual bleeding</a></li>
           <li><a href="https://www.nhlbi.nih.gov/health/anemia/iron-deficiency-anemia" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>NIH/NHLBI – Iron deficiency anemia</a></li>
-          <li><a href="https://www.uptodate.com/contents/iron-deficiency-anemia-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Iron deficiency anemia (patient education)</a></li>
+          <li><a href="https://medlineplus.gov/ency/article/000584.htm" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>MedlinePlus – Iron deficiency anemia</a></li>
         </ul>
       </>
     ),
@@ -587,7 +587,7 @@ const ARTICLES = [
     id: 'ovarian-cysts',
     image: '/articles/ovarian-cysts.webp',
     title: 'Ovarian Cysts',
-    source: 'ACOG, Mayo Clinic, UpToDate',
+    source: 'ACOG, Mayo Clinic, MedlinePlus',
     tags: ['Reproductive health', 'Pelvic health'],
     teaser: 'Most ovarian cysts are harmless and resolve on their own. Here\'s how to tell when monitoring is enough and when to seek care.',
     body: (
@@ -599,7 +599,7 @@ const ARTICLES = [
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.acog.org/womens-health/faqs/ovarian-cysts" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Ovarian cysts</a></li>
           <li><a href="https://www.mayoclinic.org/diseases-conditions/ovarian-cysts/symptoms-causes/syc-20353405" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Mayo Clinic – Ovarian cysts</a></li>
-          <li><a href="https://www.uptodate.com/contents/ovarian-cysts-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Ovarian cysts (patient education)</a></li>
+          <li><a href="https://medlineplus.gov/ovariancysts.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>MedlinePlus – Ovarian cysts</a></li>
         </ul>
       </>
     ),
@@ -608,7 +608,7 @@ const ARTICLES = [
     id: 'hormonal-birth-control',
     image: '/articles/hormonal-birth-control.webp',
     title: 'Hormonal Birth Control: Types, Benefits & Side Effects',
-    source: 'ACOG, Planned Parenthood, UpToDate',
+    source: 'ACOG, Planned Parenthood, MedlinePlus',
     tags: ['Contraception', 'Hormonal health'],
     teaser: 'A plain-language guide to pills, patches, rings, shots, implants, and hormonal IUDs. How they work, what side effects to expect, and how to choose.',
     body: (
@@ -620,7 +620,7 @@ const ARTICLES = [
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.acog.org/womens-health/faqs/hormonal-birth-control" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Hormonal birth control</a></li>
           <li><a href="https://www.plannedparenthood.org/learn/birth-control" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Planned Parenthood – Birth control options</a></li>
-          <li><a href="https://www.uptodate.com/contents/hormonal-methods-of-birth-control-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Hormonal birth control (patient education)</a></li>
+          <li><a href="https://medlineplus.gov/birthcontrol.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>MedlinePlus – Hormonal birth control</a></li>
         </ul>
       </>
     ),

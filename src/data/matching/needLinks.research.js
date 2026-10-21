@@ -6,7 +6,7 @@ export const COOCCURRENCE = [
   "rate": 0.95,
   "rate_text": "up to 95% of affected adults have oligo- or amenorrhea",
   "population": "adults with PMOS (ESHRE/ASRM consensus)",
-  "source_url": "https://academic.oup.com/humrep/article/27/1/14/718011",
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/22147920/",
   "from_kind": "condition"
  },
  {
@@ -15,7 +15,7 @@ export const COOCCURRENCE = [
   "rate": 0.7,
   "rate_text": "about 70% have hirsutism",
   "population": "women with PMOS (ESHRE/ASRM consensus)",
-  "source_url": "https://academic.oup.com/humrep/article/27/1/14/718011",
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/22147920/",
   "from_kind": "condition"
  },
  {
@@ -24,7 +24,7 @@ export const COOCCURRENCE = [
   "rate": 0.533,
   "rate_text": "53.3% (144 of 270)",
   "population": "women meeting Rotterdam PMOS criteria at a US referral clinic (n=276)",
-  "source_url": "https://jamanetwork.com/journals/jamadermatology/fullarticle/2475013",
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/26720591/",
   "from_kind": "condition"
  },
  {
@@ -33,7 +33,7 @@ export const COOCCURRENCE = [
   "rate": 0.612,
   "rate_text": "61.2% (164 of 268)",
   "population": "women meeting Rotterdam PMOS criteria at a US referral clinic (n=276)",
-  "source_url": "https://jamanetwork.com/journals/jamadermatology/fullarticle/2475013",
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/26720591/",
   "from_kind": "condition"
  },
  {
@@ -42,7 +42,7 @@ export const COOCCURRENCE = [
   "rate": 0.224,
   "rate_text": "22.4% had androgenic alopecia",
   "population": "women meeting Rotterdam PMOS criteria at a US referral clinic",
-  "source_url": "https://jamanetwork.com/journals/jamadermatology/fullarticle/2475013",
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/26720591/",
   "from_kind": "condition"
  },
  {
@@ -71,7 +71,7 @@ export const COOCCURRENCE = [
   "rate": 0.685,
   "rate_text": "61-76% considered obese (midpoint used)",
   "population": "women with PMOS in US and Australian studies",
-  "source_url": "https://academic.oup.com/humrep/article/27/1/14/718011",
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/22147920/",
   "from_kind": "condition"
  },
  {
@@ -111,7 +111,7 @@ export const COOCCURRENCE = [
   "rate": 0.859,
   "rate_text": "85.9% had dysmenorrhea with every period in the past 3 months",
   "population": "Australian survey, women with endometriosis (n=340)",
-  "source_url": "https://www.nature.com/articles/s41598-020-73389-2",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7529759/",
   "from_kind": "condition",
   "note": "self-selected survey sample"
  },
@@ -121,7 +121,7 @@ export const COOCCURRENCE = [
   "rate": 0.691,
   "rate_text": "69.1% had pelvic pain with or within 24 h after intercourse",
   "population": "Australian survey, women with endometriosis (n=340)",
-  "source_url": "https://www.nature.com/articles/s41598-020-73389-2",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7529759/",
   "from_kind": "condition"
  },
  {
@@ -158,7 +158,7 @@ export const COOCCURRENCE = [
   "rate": null,
   "rate_text": "depression incidence 47.7 vs 31.5 per 1,000 person-years; HR 1.48",
   "population": "US insured women 18-50 with vs without endometriosis (n=72,677 vs 147,251)",
-  "source_url": "https://academic.oup.com/aje/article/190/5/843/5979508",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8247611/",
   "from_kind": "condition"
  },
  {
@@ -167,7 +167,7 @@ export const COOCCURRENCE = [
   "rate": null,
   "rate_text": "anxiety incidence 57.1 vs 39.8 per 1,000 person-years; HR 1.38",
   "population": "US insured women 18-50 with vs without endometriosis",
-  "source_url": "https://academic.oup.com/aje/article/190/5/843/5979508",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8247611/",
   "from_kind": "condition"
  },
  {
@@ -345,7 +345,7 @@ export const COOCCURRENCE = [
   "rate": 0.521,
   "rate_text": "52.1% with severe hot flashes had at least 1 chronic insomnia symptom vs 12.9% with none (adj OR 2.7)",
   "population": "California women 35-65 with severe hot flashes (n=48)",
-  "source_url": "https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/410513",
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/16801508/",
   "note": "applies to severe hot flashes"
  },
  {
@@ -354,7 +354,7 @@ export const COOCCURRENCE = [
   "rate": 0.438,
   "rate_text": "43.8% met DSM-IV insomnia vs 10.5% without hot flashes",
   "population": "California women 35-65 with severe hot flashes",
-  "source_url": "https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/410513"
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/16801508/"
  },
  {
   "from": "vasomotor.hot_flashes",
@@ -395,7 +395,7 @@ export const COOCCURRENCE = [
   "rate": null,
   "rate_text": "incontinence more than once a month: adj OR 1.36 for UTI",
   "population": "postmenopausal women 55-75 (case-control, n=1,810)",
-  "source_url": "https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/216998"
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/15136308/"
  },
  {
   "from": "depression",
@@ -403,7 +403,7 @@ export const COOCCURRENCE = [
   "rate": 0.481,
   "rate_text": "48.1% of women with low desire had current depression vs 34.7% without (reverse direction)",
   "population": "US women 30-70 in relationships (n=1,944)",
-  "source_url": "https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/414363",
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/18625925/",
   "from_kind": "condition",
   "note": "reported as share of low-desire group who are depressed"
  },
@@ -413,7 +413,7 @@ export const COOCCURRENCE = [
   "rate": 0.206,
   "rate_text": "20.6% of women with HSDD had current depression vs 6.9% without",
   "population": "US women 30-70 in relationships",
-  "source_url": "https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/414363",
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/18625925/",
   "from_kind": "condition",
   "note": "share of HSDD group who are depressed"
  },
@@ -443,7 +443,7 @@ export const COOCCURRENCE = [
   "rate": null,
   "rate_text": "poor sleep associated with postpartum depression after adjustment; 57.7% of all postpartum women had poor sleep (PSQI>5)",
   "population": "Norwegian women 7 weeks postpartum (n=2,830)",
-  "source_url": "https://academic.oup.com/sleep/article-abstract/32/7/847/2679652?redirectedFrom=fulltext&login=false",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2704916/",
   "note": "postpartum context only"
  },
  {
@@ -452,7 +452,7 @@ export const COOCCURRENCE = [
   "rate": 0.31,
   "rate_text": "pooled 31% between 6 weeks and 12 months postpartum",
   "population": "postpartum women, 24 studies, n=35,064",
-  "source_url": "https://link.springer.com/10.1007/s00192-021-04877-w"
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8295150/"
  },
  {
   "from": "postpartum.recovery",
@@ -508,7 +508,7 @@ export const LIFE_STAGE_PRIORS = [
   "need": "anemia",
   "rate": 0.386,
   "rate_text": "38.6% of US females 12-21 had iron deficiency (ferritin <25); 6.3% iron-deficiency anemia",
-  "source_url": "https://jamanetwork.com/journals/jama/fullarticle/2806540",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10300696/",
   "need_kind": "condition",
   "note": "ages 12-21"
  },
@@ -656,7 +656,7 @@ export const LIFE_STAGE_PRIORS = [
   "need": "sexual.libido",
   "rate": 0.308,
   "rate_text": "low desire 30.8% at 30-39, 25.3% at 40-49; HSDD 8-9%",
-  "source_url": "https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/414363"
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/18625925/"
  },
  {
   "stage": "35-44",
@@ -693,7 +693,7 @@ export const LIFE_STAGE_PRIORS = [
   "need": "vasomotor.hot_flashes",
   "rate": 0.527,
   "rate_text": "pooled 52.65% of middle-aged women",
-  "source_url": "https://bmcpublichealth.biomedcentral.com/articles/10.1186/s12889-024-19280-5",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11220992/",
   "note": "global meta-analysis, 321 studies"
  },
  {
@@ -708,49 +708,49 @@ export const LIFE_STAGE_PRIORS = [
   "need": "pain.joint",
   "rate": 0.654,
   "rate_text": "pooled 65.4% joint and muscle discomfort",
-  "source_url": "https://bmcpublichealth.biomedcentral.com/articles/10.1186/s12889-024-19280-5"
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11220992/"
  },
  {
   "stage": "45-54",
   "need": "energy.fatigue",
   "rate": 0.641,
   "rate_text": "pooled 64.1% physical and mental exhaustion",
-  "source_url": "https://bmcpublichealth.biomedcentral.com/articles/10.1186/s12889-024-19280-5"
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11220992/"
  },
  {
   "stage": "45-54",
   "need": "mood.irritability",
   "rate": 0.544,
   "rate_text": "pooled 54.4% irritability",
-  "source_url": "https://bmcpublichealth.biomedcentral.com/articles/10.1186/s12889-024-19280-5"
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11220992/"
  },
  {
   "stage": "45-54",
   "need": "cognition.brain_fog",
   "rate": 0.544,
   "rate_text": "pooled 54.4% poor memory",
-  "source_url": "https://bmcpublichealth.biomedcentral.com/articles/10.1186/s12889-024-19280-5"
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11220992/"
  },
  {
   "stage": "45-54",
   "need": "cognition.concentration",
   "rate": 0.449,
   "rate_text": "pooled 44.9% difficulty concentrating",
-  "source_url": "https://bmcpublichealth.biomedcentral.com/articles/10.1186/s12889-024-19280-5"
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11220992/"
  },
  {
   "stage": "45-54",
   "need": "sleep.trouble",
   "rate": 0.519,
   "rate_text": "pooled 51.9% sleep problems",
-  "source_url": "https://bmcpublichealth.biomedcentral.com/articles/10.1186/s12889-024-19280-5"
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11220992/"
  },
  {
   "stage": "45-54",
   "need": "mood.general_anxiety",
   "rate": 0.505,
   "rate_text": "pooled 50.5% anxiety",
-  "source_url": "https://bmcpublichealth.biomedcentral.com/articles/10.1186/s12889-024-19280-5",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11220992/",
   "note": "symptom scales, not diagnoses"
  },
  {
@@ -758,7 +758,7 @@ export const LIFE_STAGE_PRIORS = [
   "need": "mood.low",
   "rate": 0.433,
   "rate_text": "pooled 43.3% depressive mood",
-  "source_url": "https://bmcpublichealth.biomedcentral.com/articles/10.1186/s12889-024-19280-5",
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11220992/",
   "note": "symptom scales; NHANES PHQ-9 depression in women 40-59 is 13.8%"
  },
  {
@@ -773,21 +773,21 @@ export const LIFE_STAGE_PRIORS = [
   "need": "sexual.libido",
   "rate": 0.455,
   "rate_text": "pooled 45.5% sexual problems",
-  "source_url": "https://bmcpublichealth.biomedcentral.com/articles/10.1186/s12889-024-19280-5"
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11220992/"
  },
  {
   "stage": "45-54",
   "need": "vaginal.dryness",
   "rate": 0.373,
   "rate_text": "pooled 37.3% vaginal dryness",
-  "source_url": "https://bmcpublichealth.biomedcentral.com/articles/10.1186/s12889-024-19280-5"
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11220992/"
  },
  {
   "stage": "45-54",
   "need": "urinary.frequency",
   "rate": 0.345,
   "rate_text": "pooled 34.5% urinary problems",
-  "source_url": "https://bmcpublichealth.biomedcentral.com/articles/10.1186/s12889-024-19280-5"
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11220992/"
  },
  {
   "stage": "45-54",
@@ -824,7 +824,7 @@ export const LIFE_STAGE_PRIORS = [
   "need": "sexual.libido",
   "rate": 0.378,
   "rate_text": "low desire 37.8% at 50-59",
-  "source_url": "https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/414363"
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/18625925/"
  },
  {
   "stage": "55+",
@@ -860,21 +860,21 @@ export const LIFE_STAGE_PRIORS = [
   "need": "sexual.libido",
   "rate": 0.607,
   "rate_text": "low desire 60.7% at 60-70; HSDD 5.8% (distress falls with age)",
-  "source_url": "https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/414363"
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/18625925/"
  },
  {
   "stage": "55+",
   "need": "urinary.recurrent_uti",
   "rate": 0.09,
   "rate_text": "annual UTI incidence among women over 50 is 9%",
-  "source_url": "https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/216998"
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/15136308/"
  },
  {
   "stage": "55+",
   "need": "urinary.incontinence",
   "rate": 0.476,
   "rate_text": "UI age-adjusted 47.6% (crude 63%) in women 20+, NHANES 2021-2023",
-  "source_url": "https://link.springer.com/article/10.1007/s00192-025-06280-1",
+  "source_url": "https://pubmed.ncbi.nlm.nih.gov/41081813/",
   "note": "all adult ages; rises with age; Medicare claims show 7-11% diagnosed at 65+"
  },
  {
@@ -963,14 +963,14 @@ export const LIFE_STAGE_PRIORS = [
   "need": "urinary.incontinence",
   "rate": 0.31,
   "rate_text": "pooled 31%; 24% at 6 weeks, 21% at 3 months, 32% at 12 months",
-  "source_url": "https://link.springer.com/10.1007/s00192-021-04877-w"
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8295150/"
  },
  {
   "stage": "postpartum",
   "need": "sleep.trouble",
   "rate": 0.577,
   "rate_text": "57.7% poor sleep at 7 weeks postpartum",
-  "source_url": "https://academic.oup.com/sleep/article-abstract/32/7/847/2679652?redirectedFrom=fulltext&login=false"
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2704916/"
  },
  {
   "stage": "postpartum",
