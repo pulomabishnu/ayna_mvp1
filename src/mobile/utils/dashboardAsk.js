@@ -1,3 +1,4 @@
+import { formatMetric } from '../../health/dashboard.js';
 import { estimatePhase } from '../../health/phase.js';
 import { brandOf } from '../data/brandFallback.js';
 import { displayName } from './displayName.js';
@@ -141,4 +142,17 @@ export function weekQuestions({ insights = [], ctx = {}, picks = [] } = {}) {
   if (picks.length) out.push('Which of my products fit this week?');
   if (ctx.phase) out.push(phaseQuestion(ctx.phase));
   return [...new Set(out)].slice(0, 3);
+}
+
+/** Her own numbers sent with a dashboard question, shown back as a small stat card in the answer. */
+export function askStats(week, estimate) {
+  const out = [];
+  if (week.cycle?.cycleDay) out.push({ label: 'Cycle day', value: String(week.cycle.cycleDay) });
+  const chart = (m) => week.groups.flatMap((g) => g.charts).find((c) => c.metric === m);
+  const sleep = chart('sleep_minutes');
+  if (sleep && (sleep.week ?? sleep.avg) != null) out.push({ label: 'Sleep a night, 7 days', value: formatMetric('sleep_minutes', sleep.week ?? sleep.avg) });
+  const hr = chart('resting_hr_bpm');
+  if (hr && (hr.week ?? hr.avg) != null) out.push({ label: 'Resting heart', value: formatMetric('resting_hr_bpm', hr.week ?? hr.avg) });
+  if (estimate?.day && out.length < 3) out.push({ label: 'Next period', value: fmtDay(estimate.day) });
+  return out.slice(0, 3);
 }
