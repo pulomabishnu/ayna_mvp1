@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { PlaylistIcon } from '../../components/icons/UiIcons.jsx';
+import { trackApp } from '../utils/appAnalytics.js';
 import PlaylistCoverPicker from './PlaylistCoverPicker.jsx';
 import PlaylistAudiencePicker from './PlaylistAudiencePicker.jsx';
 import { buildRoutine, buildShoppingList, overBudget } from '../../health/plan.js';
@@ -78,7 +79,7 @@ export function ShoppingList({ products, insights, have = {}, onToggleHave, onOp
                     {overBudget(product, budget) && <OverBudget />}
                     <small>{[price, where.length ? where.join(', ') : null].filter(Boolean).join(' · ')}</small>
                   </button>
-                  {buyUrl && !got && <a className="ay-sl-buy" href={buyUrl} target="_blank" rel="noopener noreferrer sponsored">Buy<span className="ay-sl-sr"> {product.name}</span></a>}
+                  {buyUrl && !got && <a className="ay-sl-buy" href={buyUrl} target="_blank" rel="noopener noreferrer sponsored" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: 'routine_plan' })}>Buy<span className="ay-sl-sr"> {product.name}</span></a>}
                 </li>
               );
             })}

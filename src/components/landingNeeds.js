@@ -9,7 +9,7 @@ export const hasPhoto = (p) => p?.image && !isPlaceholderProductImage(p.image, p
 
 export const NEEDS = [
   { id: 'period', label: 'Period care', group: 'period' },
-  { id: 'pcos', label: 'PCOS', keywords: ['pcos', 'inositol', 'spearmint'] },
+  { id: 'pcos', label: 'PMOS', keywords: ['pcos', 'pmos', 'inositol', 'spearmint'] },
   { id: 'vaginal', label: 'Vaginal health', group: 'intimate' },
   { id: 'uti', label: 'UTI support', keywords: ['uti', 'urinary', 'cranberry'] },
   { id: 'fertility', label: 'Fertility', group: 'fertility' },

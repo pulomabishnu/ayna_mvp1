@@ -91,7 +91,7 @@ const TAG_REASON = {
   'uti-prevention': 'UTI',
   'cramp-relief': 'Cramp relief',
   cramps: 'Cramps',
-  pcos: 'PCOS',
+  pcos: 'PMOS',
   irregular: 'Cycle tracking',
   'pelvic-floor': 'Pelvic floor',
   incontinence: 'Bladder leaks',
@@ -171,7 +171,7 @@ const ROW_NOTES = {
   'ovarian-cysts': 'Most cysts need no treatment. Sudden, severe pain needs care right away.',
   fibroids: 'Fibroids are diagnosed and treated by a clinician. These help with heavy bleeding in the meantime.',
   'heavy-bleeding': 'Products can make heavy periods easier to manage. They don’t treat the cause, so check in with a clinician too.',
-  'pcos-basics': 'PCOS care is led by a clinician. These are tracking and support tools, not treatment.',
+  'pcos-basics': 'PMOS care is led by a clinician. These are tracking and support tools, not treatment.',
   'menopause-basics': 'Talk to a clinician first about treatment options. The rest is support for common symptoms.',
 };
 const CARE_FIRST = new Set(['menopause-basics', 'pmdd', 'endometriosis-basics', 'fibroids', 'pcos-basics']);
@@ -193,7 +193,7 @@ function ArticleProducts({ articleId, quizResults, healthProfile, onOpenProduct 
     if (articleId === 'intimate-wash') list = list.filter((x) => /fragrance[- ]?free|unscented/i.test(`${x.product.name} ${(x.product.tags || []).join(' ')} ${x.product.summary || ''}`));
     return list.map((x) => {
       if (articleId === 'hormonal-birth-control' && /natural cycles/i.test(x.product.name)) return { ...x, why: 'Non-hormonal alternative' };
-      if (articleId === 'pcos-basics' && /proov/i.test(x.product.name)) return { ...x, why: 'For PCOS when trying to conceive' };
+      if (articleId === 'pcos-basics' && /proov/i.test(x.product.name)) return { ...x, why: 'For PMOS when trying to conceive' };
       return x;
     });
   }, [articleId, quizResults, healthProfile]);
@@ -442,21 +442,21 @@ const ARTICLES = [
   {
     id: 'pcos-basics',
     image: '/landing/articles-pcos-mirror.webp',
-    title: 'PCOS: What It Is and How It\'s Managed',
+    title: 'PMOS: What It Is and How It\'s Managed',
     source: 'ACOG, Endocrine Society, UpToDate',
     tags: ['Hormones', 'Reproductive health'],
-    teaser: 'Polycystic ovary syndrome explained. Diagnosis, symptoms, and evidence-based treatment options including lifestyle and medication.',
+    teaser: 'Polyendocrine metabolic ovarian syndrome explained. Diagnosis, symptoms, and evidence-based treatment options including lifestyle and medication.',
     body: (
       <>
-        <p>Polycystic ovary syndrome (PCOS) is a common hormonal condition that affects how the ovaries work. Diagnosis is based on criteria that may include irregular or absent periods, high androgen levels (e.g., excess hair growth, acne), and/or polycystic-appearing ovaries on ultrasound. Not everyone has all features; a clinician makes the diagnosis and rules out other conditions (e.g., thyroid, prolactin).</p>
+        <p>Polyendocrine metabolic ovarian syndrome (PMOS) is a common hormonal condition that affects how the ovaries work. Diagnosis is based on criteria that may include irregular or absent periods, high androgen levels (e.g., excess hair growth, acne), and/or polycystic-appearing ovaries on ultrasound. Not everyone has all features; a clinician makes the diagnosis and rules out other conditions (e.g., thyroid, prolactin).</p>
         <p>Management depends on your goals and symptoms. Options may include cycle regulation, support for insulin resistance, and treatment for acne or excess hair.</p>
         <p>Lifestyle changes such as balanced eating and regular movement can support metabolic health. If you are trying to conceive, a clinician may discuss ovulation induction or other fertility treatment.</p>
         <p><strong>When to seek care:</strong> Irregular periods, unexplained weight changes, severe acne or excess hair, or difficulty conceiving. Early diagnosis and treatment can reduce long-term risks (e.g., diabetes, cardiovascular).</p>
         <p><strong>Sources:</strong></p>
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
-          <li><a href="https://www.acog.org/womens-health/faqs/polycystic-ovary-syndrome-pcos" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Polycystic ovary syndrome (PCOS)</a></li>
-          <li><a href="https://www.endocrine.org/patient-engagement/endocrine-library/pcos" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Endocrine Society – PCOS</a></li>
-          <li><a href="https://www.uptodate.com/contents/polycystic-ovary-syndrome-pcos-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – PCOS (patient education)</a></li>
+          <li><a href="https://www.acog.org/womens-health/faqs/polycystic-ovary-syndrome-pcos" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Polyendocrine metabolic ovarian syndrome (PMOS)</a></li>
+          <li><a href="https://www.endocrine.org/patient-engagement/endocrine-library/pcos" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Endocrine Society – PMOS</a></li>
+          <li><a href="https://www.uptodate.com/contents/polycystic-ovary-syndrome-pcos-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – PMOS (patient education)</a></li>
         </ul>
       </>
     ),
@@ -597,7 +597,7 @@ const ARTICLES = [
     body: (
       <>
         <p>Ovarian cysts are fluid-filled sacs that develop on or within an ovary. Most are functional cysts. They form as a normal part of the menstrual cycle (e.g., a follicle that doesn't release an egg, or a corpus luteum that fills with fluid) and resolve on their own within a few cycles without treatment. They're often found incidentally on ultrasound and cause no symptoms.</p>
-        <p>When symptoms occur they can include pelvic aching or fullness, bloating, or pain with sex. A ruptured cyst can cause sudden, sharp pelvic pain. Ovarian torsion (twisting) is a medical emergency with sudden severe pain, nausea, and vomiting. Most simple cysts in premenopausal people are benign and managed with watchful waiting and repeat imaging. Complex cysts, cysts in postmenopausal people, or those causing symptoms may need further evaluation or surgical removal. Cysts associated with PCOS or endometriosis (endometriomas) are managed differently based on the underlying condition.</p>
+        <p>When symptoms occur they can include pelvic aching or fullness, bloating, or pain with sex. A ruptured cyst can cause sudden, sharp pelvic pain. Ovarian torsion (twisting) is a medical emergency with sudden severe pain, nausea, and vomiting. Most simple cysts in premenopausal people are benign and managed with watchful waiting and repeat imaging. Complex cysts, cysts in postmenopausal people, or those causing symptoms may need further evaluation or surgical removal. Cysts associated with PMOS or endometriosis (endometriomas) are managed differently based on the underlying condition.</p>
         <p><strong>When to seek care:</strong> Sudden severe pelvic pain, pain with fever or vomiting (emergency), persistent or worsening pelvic pain, or any new cyst found after menopause.</p>
         <p><strong>Sources:</strong></p>
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
@@ -618,7 +618,7 @@ const ARTICLES = [
     body: (
       <>
         <p>Hormonal contraceptives work primarily by preventing ovulation, thickening cervical mucus, or thinning the uterine lining. They come in many forms: combined estrogen-progestin methods (pill, patch, ring) and progestin-only methods (mini-pill, shot/Depo-Provera, hormonal IUD, implant). Effectiveness ranges from 91–99%+ with typical or perfect use. All require a prescription or clinical insertion.</p>
-        <p>Beyond contraception, hormonal methods are widely used to manage period pain, heavy bleeding, endometriosis, PCOS, acne, and PMDD. Side effects vary by method and person. Common ones include nausea, spotting, mood changes, and breast tenderness, most of which improve within a few months. Serious risks (e.g., blood clots with estrogen-containing methods) are rare but relevant for people who smoke, have certain migraines, or have a history of clotting. There is no single "best" method. The right choice depends on your health history, side effect tolerance, convenience needs, and whether you want a period.</p>
+        <p>Beyond contraception, hormonal methods are widely used to manage period pain, heavy bleeding, endometriosis, PMOS, acne, and PMDD. Side effects vary by method and person. Common ones include nausea, spotting, mood changes, and breast tenderness, most of which improve within a few months. Serious risks (e.g., blood clots with estrogen-containing methods) are rare but relevant for people who smoke, have certain migraines, or have a history of clotting. There is no single "best" method. The right choice depends on your health history, side effect tolerance, convenience needs, and whether you want a period.</p>
         <p><strong>When to seek care:</strong> To discuss which method is right for you, if you're experiencing side effects that affect your quality of life, or if you want to switch methods. Don't stop hormonal contraception abruptly without a plan.</p>
         <p><strong>Sources:</strong></p>
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
@@ -907,7 +907,7 @@ const DESIGNED_READS = {
 };
 
 /* The read featured at the top of the Library, with a "New" sticker. */
-const FEATURED_READ = { id: 'postpartum-stretch-marks', by: 'Geena Yousry, MS1' };
+const FEATURED_READ = { id: 'postpartum-stretch-marks', by: 'Geena Yousry, MS1', reviewedBy: 'Dr. Anuja Vyas, Board-Certified OBGYN' };
 
 function FeaturedRead({ onOpen }) {
   const art = ARTICLES.find((a) => a.id === FEATURED_READ.id);
@@ -919,7 +919,7 @@ function FeaturedRead({ onOpen }) {
         <span className="ct-feature__kicker"><span className="ct-badge">New</span> Featured read · {sectionOf(art.id)?.label}</span>
         <strong className="ct-feature__title">{art.title}</strong>
         <span className="ct-feature__teaser">{art.teaser}</span>
-        <span className="ct-feature__by">By {FEATURED_READ.by} · {minutesFor(art)} min read</span>
+        <span className="ct-feature__by">By {FEATURED_READ.by} · Reviewed by {FEATURED_READ.reviewedBy} · {minutesFor(art)} min read</span>
         <span className="ct-feature__cta">Read it <span aria-hidden="true">→</span></span>
       </span>
     </a>
@@ -928,7 +928,7 @@ function FeaturedRead({ onOpen }) {
 import TopicCover from './v3/TopicCover.jsx';
 import PostpartumStretchMarksArticle from './library/PostpartumStretchMarksArticle.jsx';
 import useRotatingPlaceholder from '../utils/useRotatingPlaceholder.js';
-const LIB_SEARCH_EXAMPLES = ['heavy periods', 'PCOS', 'period pain', 'when to see a doctor', 'UTI', 'perimenopause', 'fibroids', 'endometriosis', 'yeast vs BV', 'pelvic floor', 'night sweats', 'missed period'];
+const LIB_SEARCH_EXAMPLES = ['heavy periods', 'PMOS', 'period pain', 'when to see a doctor', 'UTI', 'perimenopause', 'fibroids', 'endometriosis', 'yeast vs BV', 'pelvic floor', 'night sweats', 'missed period'];
 
 function ArticleCover({ art, large = false }) {
   if (art.image && KEEP_ILLUSTRATION.has(art.id)) {

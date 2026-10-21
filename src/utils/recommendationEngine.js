@@ -75,10 +75,10 @@ function buildSubcategoryLabel(concern, tierType) {
     if (tierType === 'supplement') return 'Cycle Support';
     return 'Period Tracking & Telehealth';
   }
-  if (key.includes('pcos')) {
-    if (tierType === 'physical') return 'Daily PCOS Support Tools';
+  if (key.includes('pcos') || key.includes('pmos')) {
+    if (tierType === 'physical') return 'Daily PMOS Support Tools';
     if (tierType === 'supplement') return 'Hormone Balance Support';
-    return 'PCOS Digital & Telehealth Support';
+    return 'PMOS Digital & Telehealth Support';
   }
   if (key.includes('endometriosis')) {
     if (tierType === 'physical') return 'Pain & Flare Comfort';
@@ -340,7 +340,7 @@ function safetyNotes(product, intake) {
     notes.push('Contains materials that may be problematic for endometriosis (synthetic fragrance/dioxins/chlorine/BPA).');
   }
   if (conditions.includes('PCOS') && includesAny(safetyText, PCOS_HORMONE_FLAGS)) {
-    notes.push('Contains ingredients/materials with potential hormone-disrupting concerns for PCOS.');
+    notes.push('Contains ingredients/materials with potential hormone-disrupting concerns for PMOS.');
   }
   if (String(asArray(intake?.tryingToConceive)[0] || '').toLowerCase() === 'yes' && /ashwagandha|retinol|high-dose vitamin a/i.test(safetyText)) {
     notes.push('Trying to conceive: verify this supplement with a provider before use in preconception/pregnancy.');
@@ -352,7 +352,7 @@ function concernRelevanceScore(concern, intake) {
   let score = 0;
   const selected = selectedConcerns(intake);
   if (selected.includes(concern.key)) score += 20;
-  if ((intake?.conditions || []).includes('PCOS') && concern.tags.includes('pcos')) score += 8;
+  if (((intake?.conditions || []).includes('PCOS') || (intake?.conditions || []).includes('PMOS')) && concern.tags.includes('pcos')) score += 8;
   if ((intake?.conditions || []).includes('endometriosis') && concern.tags.includes('endometriosis')) score += 8;
   if (((intake?.conditions || []).includes('perimenopause') || (intake?.conditions || []).includes('menopause')) && concern.tags.includes('menopause')) score += 8;
   if (String(intake?.tryingToConceive || '').toLowerCase() === 'yes' && concern.tags.includes('fertility')) score += 7;

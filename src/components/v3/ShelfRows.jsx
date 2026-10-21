@@ -1,30 +1,14 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ProductCard from '../ProductCard';
 import { toast } from '../../utils/toast';
+import { loadCustom, saveCustom } from './shelfLayout.js';
 
 /* "Your shelves": one row per area of care, products as the same polaroid
    card used in the Shop, scrolling sideways with an Add tile at the end.
    Shelves can be renamed, recoloured, reordered and products moved; that
    layout is kept in this browser only and never touches her products. */
-// Kept per account (shelf names can be personal). The old browser-wide layout
-// moves to the first account that opens its shelves, so nobody loses theirs.
-const STORE = 'ayna.drawers.v1';
-const keyFor = (userId) => (userId ? `${STORE}:${userId}` : STORE);
-function loadCustom(userId) {
-  try {
-    const own = window.localStorage.getItem(keyFor(userId));
-    let raw = own;
-    if (!own && userId) {
-      raw = window.localStorage.getItem(STORE);
-      if (raw) { window.localStorage.setItem(keyFor(userId), raw); window.localStorage.removeItem(STORE); }
-    }
-    const v = JSON.parse(raw || '{}');
-    return v && typeof v === 'object' ? v : {};
-  } catch { return {}; }
-}
-function saveCustom(userId, v) {
-  try { window.localStorage.setItem(keyFor(userId), JSON.stringify(v)); } catch { /* private mode: this visit only */ }
-}
+// Folder-tab colours the shelves take in turn (until she paints one herself).
+const TONES = ['pink', 'sky', 'ink'];
 const PAINTS = [
   { id: 'butter', label: 'Butter', bg: '#ffedac' },
   { id: 'rose', label: 'Rose', bg: '#f7badd' },
@@ -91,7 +75,7 @@ export default function ShelfRows({ groups, onOpenProduct, onToggleProduct, onAd
   const [hintSeen, setHintSeen] = useState(() => { try { return localStorage.getItem('ayna_shelf_hint_seen') === '1'; } catch { return false; } });
   const hideHint = () => { setHintSeen(true); try { localStorage.setItem('ayna_shelf_hint_seen', '1'); } catch { /* ignore */ } };
   const drag = useRef(null);
-  const update = (fn) => setCustom((prev) => { const next = fn(prev); saveCustom(userId, next); return next; });
+  const update = (fn) => setCustom((prev) => { const next = fn(prev); saveCustom(userId, next); try { window.dispatchEvent(new Event('ay-shelves-changed')); } catch { /* ignore */ } return next; });
   const arranged = useMemo(() => {
     const keys = new Set(groups.map((g) => g.key));
     const moves = custom.moves || {};
@@ -147,6 +131,7 @@ export default function ShelfRows({ groups, onOpenProduct, onToggleProduct, onAd
             id={`eco-area-${group.key}`}
             className={`ay-shelf${small ? ' is-small' : ''}${pair ? ' is-pair' : ''}${dragOver === group.key ? ' is-drop' : ''}`}
             style={paint ? { '--shelf-tab': paint.bg } : undefined}
+            data-tone={paint ? `paint-${paint.id}` : TONES[arranged.indexOf(group) % TONES.length]}
             aria-labelledby={`eco-area-title-${group.key}`}
             onDragOver={(e) => { if (drag.current) { e.preventDefault(); if (dragOver !== group.key) setDragOver(group.key); } }}
             onDragLeave={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setDragOver(null); }}
@@ -194,9 +179,10 @@ export default function ShelfRows({ groups, onOpenProduct, onToggleProduct, onAd
               {onAddMore && group.key !== 'other' && <button type="button" className="ay-shelf__add" onClick={() => onAddMore(group)}>+ Add</button>}
             </header>
             <Row label={nameOf(group)}>
-              {group.products.map((p) => (
+              {group.products.map((p, idx) => (
                 <li
                   key={p.id}
+                  style={{ '--n': Math.min(idx, 5) }}
                   draggable
                   onDragStart={(e) => { drag.current = { type: 'product', id: p.id, from: group.key }; try { e.dataTransfer.setData('text/plain', p.id); } catch { /* ignore */ } }}
                   onDragEnd={() => { drag.current = null; setDragOver(null); }}

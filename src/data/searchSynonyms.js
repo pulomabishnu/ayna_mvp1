@@ -423,7 +423,7 @@ export const NEED_SHORT_LABELS = {
   'cycle.irregular': 'irregular cycles',
   'cycle.breast_tenderness': 'breast tenderness',
   'pain.cycle_headache': 'cycle headaches',
-  'condition_support.pcos': 'PCOS',
+  'condition_support.pcos': 'PMOS',
   'condition_support.endometriosis': 'endometriosis',
   'condition_support.fibroids': 'fibroids',
   'condition_support.adenomyosis': 'adenomyosis',

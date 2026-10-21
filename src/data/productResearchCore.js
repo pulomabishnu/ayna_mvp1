@@ -312,13 +312,13 @@ export const PRODUCT_RESEARCH_CORE = {
  },
  "p-inositol-wholesome": {
   "whoItsFor": [
-   "People with PCOS who want to try inositol after talking it through with their clinician, since the 2023 international guideline says it could be considered based on personal preference",
+   "People with PMOS who want to try inositol after talking it through with their clinician, since the 2023 international guideline says it could be considered based on personal preference",
    "Those who want the common 40:1 myo to D-chiro ratio in a capsule rather than a powder",
    "Anyone looking for the brand's stated goal: support for hormone levels, menstrual cycles and ovarian health",
    "Not the pick as a swap for metformin when hirsutism or central weight gain is the main concern: the guideline says metformin should be considered over inositol for those"
   ],
   "howToUse": {
-   "intro": "Per Wholesome Story's label directions and the 2023 international PCOS guideline:",
+   "intro": "Per Wholesome Story's label directions and the 2023 international guideline:",
    "steps": [
     "Take 4 capsules (1 serving) once a day, ideally with a meal.",
     "If your stomach is sensitive, split it into 2 capsules taken twice a day.",
@@ -340,18 +340,18 @@ export const PRODUCT_RESEARCH_CORE = {
  },
  "p-spearmint-pcos": {
   "whoItsFor": [
-   "People with PCOS who are curious about spearmint and want to try it alongside, not instead of, care from their clinician",
+   "People with PMOS who are curious about spearmint and want to try it alongside, not instead of, care from their clinician",
    "Anyone who wants a simple, caffeine-free organic herbal tea they can drink any time of day",
    "Those who prefer starting with a food-like option before considering supplements",
    "Not the pick as a treatment for hirsutism or irregular cycles on its own: evidence is preliminary and clinical benefit has not been established"
   ],
   "howToUse": {
-   "intro": "Per Traditional Medicinals' label directions and the 2023 international PCOS guideline:",
+   "intro": "Per Traditional Medicinals' label directions and the 2023 international guideline:",
    "steps": [
     "Pour 8 oz (240 ml) of freshly boiled water over 1 tea bag.",
     "Cover and steep for 5 to 10 minutes.",
     "Squeeze and remove the tea bag before drinking.",
-    "Let your clinician know you are using it if you're managing PCOS, as with any complementary therapy."
+    "Let your clinician know you are using it if you're managing PMOS, as with any complementary therapy."
    ],
    "sourceUrl": "https://fullscript.com/catalog/products/organic-spearmint-tea",
    "sourceLabel": "Traditional Medicinals Organic Spearmint label directions (Fullscript listing)"
@@ -4038,7 +4038,7 @@ export const PRODUCT_RESEARCH_CORE = {
   "whoItsFor": [
    "People who want a simple, single-ingredient evening primrose oil as a source of GLA",
    "Those who have read the evidence and still want to try it, knowing research hasn't shown clear benefit for PMS or breast pain",
-   "Not the pick as a treatment for PMS, PCOS, period pain or cyclical breast pain: a 2021 meta-analysis found it no better than placebo for breast pain",
+   "Not the pick as a treatment for PMS, PMOS, period pain or cyclical breast pain: a 2021 meta-analysis found it no better than placebo for breast pain",
    "Not the pick for anyone pregnant, nursing, on medication or managing a medical condition without first checking with a doctor, per the label"
   ],
   "howToUse": {
@@ -4067,7 +4067,7 @@ export const PRODUCT_RESEARCH_CORE = {
   "whoItsFor": [
    "People with PMS symptoms, especially breast tenderness, who want to try an herbal option and accept that the evidence is mixed",
    "Those willing to take it every day for a while, since Gaia says best results come from long-term use",
-   "Not the pick as a treatment for PCOS or period cramps, where vitex isn't established",
+   "Not the pick as a treatment for PMOS or period cramps, where vitex isn't established",
    "Not the pick during pregnancy or breastfeeding, per the label; check with your doctor first if you have a medical condition or take medication"
   ],
   "howToUse": {
@@ -4181,7 +4181,7 @@ export const PRODUCT_RESEARCH_CORE = {
   "whoItsFor": [
    "People whose clinician has identified a need for extra zinc, such as low intake from their diet",
    "Those who prefer a whole-food style zinc with added vitamin C and a small probiotic blend",
-   "Not the pick as a PCOS or acne treatment on its own: research on minerals for PCOS is still early and doses aren't settled",
+   "Not the pick as a PMOS or acne treatment on its own: research on minerals for PMOS is still early and doses aren't settled",
    "Not the pick for stacking with other zinc products: the 30 mg dose plus food can approach NIH's 40 mg daily upper limit"
   ],
   "howToUse": {

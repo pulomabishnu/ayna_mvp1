@@ -127,7 +127,7 @@ export default function SiteFooter({
         <FooterColumn title="Company">
           <a className="ay-foot__link" href="/about" onClick={(e) => footerGo(e, onViewAbout)}>About</a>
           <a className="ay-foot__link" href="/partners" onClick={(e) => footerGo(e, onViewWaitlist)}>Partner brands</a>
-          <a className="ay-foot__link" href={WEFUNDER_URL} target="_blank" rel="noopener" onClick={() => trackInvestClick('footer')}>Invest in ayna <span aria-hidden="true">↗</span><span className="sr-only"> (opens Wefunder in a new tab)</span></a>
+          <a className="ay-foot__link" href={WEFUNDER_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackInvestClick('footer')}>Invest in ayna <span aria-hidden="true">↗</span><span className="sr-only"> (opens Wefunder in a new tab)</span></a>
         </FooterColumn>
 
         <FooterColumn title="Get in touch">
@@ -147,6 +147,7 @@ export default function SiteFooter({
         <p className="ay-foot__legaltext">
           <strong>18+ only.</strong> ayna provides wellness information only, not medical advice. Always consult a
           qualified healthcare provider for medical decisions. We do not sell your personal health information.
+          {' '}Our Wefunder round is testing the waters under Regulation Crowdfunding: no money is accepted and a reservation involves no obligation until a Form C is filed.
         </p>
         <nav className="ay-foot__legallinks" aria-label="Legal">
           <a className="ay-footer-legal__link" href="/privacy-policy" onClick={(e) => footerGo(e, onViewPrivacyPolicy)}>Privacy policy</a>

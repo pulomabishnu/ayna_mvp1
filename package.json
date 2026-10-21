@@ -11,8 +11,11 @@
     "catalog:export": "node scripts/export-catalog.mjs",
     "catalog:check": "node scripts/export-catalog.mjs --check",
     "catalog:sql": "node scripts/export-catalog.mjs --brand",
+    "catalog:sync": "node scripts/export-catalog.mjs --sync",
     "preview": "vite preview",
-    "buyurls:update": "node scripts/update-product-buy-urls.mjs"
+    "buyurls:update": "node scripts/update-product-buy-urls.mjs",
+    "build:ios": "node scripts/check-posthog-key.mjs && npm run build && npx cap sync ios",
+    "build:android": "node scripts/check-posthog-key.mjs && npm run build && npx cap sync android"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.1",

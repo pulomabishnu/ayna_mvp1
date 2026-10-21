@@ -88,6 +88,11 @@ for each row execute function public.fallback_delivery_channel_on_unverify();
 alter table public.notification_preferences
   add column if not exists personalize_with_data_enabled boolean not null default true;
 
+-- "Use my health data in my matches" (Oct 21): her own switch for whether
+-- connected health data can re-order her matches (src/health/matchPref.js).
+alter table public.notification_preferences
+  add column if not exists health_data_in_matches_enabled boolean not null default true;
+
 alter table public.notification_preferences
   add column if not exists quiet_hours_enabled boolean not null default false;
 

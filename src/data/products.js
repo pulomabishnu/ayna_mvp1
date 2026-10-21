@@ -22,6 +22,7 @@ import {
 import { getListingStatus as passportListingStatus } from './passport/index.js';
 import { needPhrase, canonicalNeedId, LIFE_STAGE_BY_ID, FORMAT_BY_ID, VALUE_BY_ID, ATTRIBUTE_PHRASE } from '../matching/ontology.js';
 import { buildEcosystemV2 } from '../matching/v2.js';
+import { shapeEcosystemWithHealth } from '../matching/healthShaping.js';
 import { getCareResourceBundle } from './careResources.js';
 import { withImageOverride } from './productImageOverrides.js';
 import { applyCatalogEvidence } from './catalogEvidence.js';
@@ -43,7 +44,7 @@ export const HEALTH_FUNCTIONS = {
     'cramp-relief': { label: 'Cramp & Pain Relief', desc: 'Products that help manage period cramps and pain' },
     'leak-protection': { label: 'Leak Protection', desc: 'Backup products to prevent leaks and staining' },
     // ── Hormonal & reproductive health ───────────────────────────────────────
-    'pcos-management': { label: 'PCOS Management', desc: 'Supplements, apps and telehealth for PCOS' },
+    'pcos-management': { label: 'PMOS Management', desc: 'Supplements, apps and telehealth for PMOS' },
     'endometriosis': { label: 'Endometriosis Support', desc: 'Products and services for endometriosis management' },
     'hormone-balance': { label: 'Hormone Balance', desc: 'Products for hormonal bloating and regulation' },
     'fertility': { label: 'Fertility & Conception', desc: 'Products and services for fertility and TTC' },
@@ -454,7 +455,7 @@ export const PHYSICAL_PRODUCTS = [
             'Amazon': 'https://www.amazon.com/Natures-Bounty-Supplement-Supports-Softgels/dp/B002Y27LLS',
         },
         image: 'https://naturesbounty.com/cdn/shop/products/089377.png',
-        summary: '125 mcg (5,000 IU) vitamin D3 per softgel. This is above the usual adult upper limit of 4,000 IU per day; use this dose only with guidance from a clinician. PCOS alone does not establish a need for high-dose vitamin D.',
+        summary: '125 mcg (5,000 IU) vitamin D3 per softgel. This is above the usual adult upper limit of 4,000 IU per day; use this dose only with guidance from a clinician. PMOS alone does not establish a need for high-dose vitamin D.',
         safety: {
             fdaStatus: 'Dietary supplement',
             materials: 'Cholecalciferol (D3), soybean oil, gelatin, vegetable glycerin, corn oil. Non-GMO. Free from gluten, wheat, yeast, fish, artificial colors, flavors, and sweeteners.',
@@ -1128,7 +1129,7 @@ export const MACRO_GROUPS = [
     // healthFunctions below, not folded into the general keyword text blob, a substring scan
     // would otherwise let something like the unrelated 'fitness-cycle' healthFunction slug
     // falsely satisfy the 'cycle' keyword), and the keywords below.
-    { id: 'hormones', label: 'Hormones', categories: ['hormone-monitoring'], healthFunctions: ['hormone-balance'], keywords: ['pms', 'pcos', 'cycle', 'hormone', 'hormonal'] },
+    { id: 'hormones', label: 'Hormones', categories: ['hormone-monitoring'], healthFunctions: ['hormone-balance'], keywords: ['pms', 'pcos', 'pmos', 'cycle', 'hormone', 'hormonal'] },
     // Bare 'skin'/'moisturizer' catch vulvar/vulva-balm copy ("vulvar skin", "arousal
     // moisturizers") and an incontinence liner's "skin comfort formula" claim, all real
     // catalog phrasing, just not about the facial/body skincare this chip means. Those
@@ -2188,14 +2189,19 @@ export function matchEngine() {
     } catch { return 'v2'; }
 }
 
+const categoryForId = (id) => { const p = getProductById(id); return p ? buildProductProfile(p)?.category : null; };
+
 function ecosystemFor(quizAnswers, healthProfile, opts = {}) {
     const up = userProfileFor(quizAnswers, healthProfile, opts);
     const engine = opts.engine || matchEngine();
-    const eco = (engine === 'v2' ? buildEcosystemV2 : buildEcosystem)(up, filterPrescriptionCareGate(ALL_PRODUCTS), {
+    const built = (engine === 'v2' ? buildEcosystemV2 : buildEcosystem)(up, filterPrescriptionCareGate(ALL_PRODUCTS), {
         getCareResourceBundle,
         ...(opts.picksPerNeed ? { picksPerNeed: opts.picksPerNeed } : {}),
         ...(opts.minTier ? { minTier: opts.minTier } : {}),
     });
+    // Connected health data re-orders within what the engine chose (both
+    // engines, website and app): src/matching/healthShaping.js.
+    const eco = shapeEcosystemWithHealth(built, up, { categoryFor: categoryForId });
     return { up, eco };
 }
 
@@ -2234,6 +2240,7 @@ export function getEcosystemSeedFromQuiz(quizAnswers, healthProfile = null, opts
             productId: r.productId, score: r.score, tier: r.tier, explanations: r.explanations, access: r.access,
             confidence: r.confidence, confidenceLevel: r.confidenceLevel, roles: r.roles || [], aboveNext: r.aboveNext || [],
             ...(r.v2 ? { v2: r.v2, alsoCovers: r.alsoCovers || [] } : {}),
+            ...(r.healthBacked ? { healthBacked: r.healthBacked } : {}),
         }));
         for (const r of shelf.picks) {
             const product = getProductById(r.productId);
@@ -2252,6 +2259,7 @@ export function getEcosystemSeedFromQuiz(quizAnswers, healthProfile = null, opts
                 score: r.score,
                 tier: r.tier,
                 careProminent: shelf.careProminent,
+                ...(r.healthBacked ? { healthBacked: r.healthBacked } : {}),
             };
         }
         return {
@@ -2270,10 +2278,14 @@ export function getEcosystemSeedFromQuiz(quizAnswers, healthProfile = null, opts
             careFirst: shelf.careFirst,
             careProminent: shelf.careProminent,
             care: shelf.care,
+            healthData: shelf.healthData || null,
         };
     });
     Object.defineProperty(seedMeta, 'shelves', { value: shelves, enumerable: false });
-    return { mergedProducts, seedMeta, shelves, careFirst: eco.careFirst, careProminent: eco.careProminent, care: eco.care, careFlags, picksPerNeed: eco.picksPerNeed, minScore: eco.minScore };
+    // What her connected health data changed (null when nothing): for the
+    // "Shaped by your health data" note (src/components/health/HealthShapedNote.jsx).
+    Object.defineProperty(seedMeta, 'healthShaped', { value: eco.healthShaped || null, enumerable: false });
+    return { mergedProducts, seedMeta, shelves, careFirst: eco.careFirst, careProminent: eco.careProminent, care: eco.care, careFlags, picksPerNeed: eco.picksPerNeed, minScore: eco.minScore, healthShaped: eco.healthShaped || null };
 }
 
 /**
@@ -2484,7 +2496,7 @@ export const SIMILAR_PROFILES = {
         topProducts: ['d-clue', 'd-natural-cycles', 'p-vitex'],
     },
     'pcos': {
-        label: 'PCOS',
+        label: 'PMOS',
         topProducts: ['p-inositol-wholesome', 'p-spearmint-pcos', 'd-maven'],
     }
 };

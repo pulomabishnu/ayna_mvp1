@@ -61,6 +61,7 @@ import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProdu
 import { behaviorFrom } from './utils/matchDisplay';
 import WebHealthData from './components/WebHealthData';
 import { useHealthData } from './mobile/hooks/useHealthData.js';
+import { useHealthMatchPref } from './health/matchPref.js';
 import { usesHormonalBC } from './health/weekInsights.js';
 import { captureReferralFromUrl } from './utils/badges';
 import { slugFromPath } from './utils/sharedAnswer.js';
@@ -376,6 +377,8 @@ installScrollMemory();
 
 function App() {
   const [currentView, setCurrentViewRaw] = useState(getInitialView);
+  // app_error reports which screen it happened on (production builds minify component names).
+  useEffect(() => { try { window.__aynaView = currentView; } catch { /* no window */ } }, [currentView]);
   // Only meaningful when currentView === 'product', the :id segment of
   // /product/:id. Kept separate from currentView (rather than encoded into
   // it) so VIEW_TO_PATH/PATH_TO_VIEW stay simple static maps for every other
@@ -646,7 +649,9 @@ function App() {
   const [quizRun, setQuizRun] = useState(0);
   // "Make my matches more personal": the profile editor opens at the first open optional question.
   const [editAtOptional, setEditAtOptional] = useState(false);
-  useEffect(() => { if (currentView !== 'profile-edit') setEditAtOptional(false); }, [currentView]);
+  // "Update life stages" (Ecosystem): the profile editor opens on the life stage question.
+  const [editAtStep, setEditAtStep] = useState('');
+  useEffect(() => { if (currentView !== 'profile-edit') { setEditAtOptional(false); setEditAtStep(''); } }, [currentView]);
   const [askOpenSignal, setAskOpenSignal] = useState(0);
   const [askPrefill, setAskPrefill] = useState('');
   // Opens Ask ayna, optionally with a question typed in (Shop's empty state).
@@ -1225,12 +1230,14 @@ function App() {
     try { return quizResults ? getSelectedNeeds(quizResults).map((n) => n.id) : []; } catch { return []; }
   }, [quizResults]);
   const health = useHealthData(user?.id || null, healthNeedIds);
+  // Her switch (You, Health data): "Use my health data in my matches". Shared with the app.
+  const healthInMatches = useHealthMatchPref(user?.id || null).on;
   const matchOpts = useMemo(
     () => {
       const base = behaviorFrom({ saved: savedProducts, omitted: omittedProducts, inEcosystem: myProducts });
-      return health.matchContext ? { ...base, healthContext: health.matchContext } : base;
+      return healthInMatches && health.matchContext ? { ...base, healthContext: health.matchContext } : base;
     },
-    [savedProducts, omittedProducts, myProducts, health.matchContext]
+    [savedProducts, omittedProducts, myProducts, health.matchContext, healthInMatches]
   );
 
   const recommendedProductIds = useMemo(() => {
@@ -2392,8 +2399,9 @@ function App() {
         {currentView === 'profile-edit' && (
           // Same as the app: editing your profile reopens the quiz with your answers filled in.
           <WebIntake
-            key={editAtOptional ? 'profile-edit-optional' : 'profile-edit'}
+            key={editAtStep ? `profile-edit-${editAtStep}` : editAtOptional ? 'profile-edit-optional' : 'profile-edit'}
             startAtOptional={editAtOptional}
+            startAtStep={editAtStep}
             initialSnapshot={quizResults?.fullHealthIntake || null}
             onComplete={handleHealthProfileEditorSave}
             onBrowseLibrary={handleViewArticles}
@@ -2588,6 +2596,8 @@ function App() {
           <Suspense fallback={<ViewLoadingFallback />}>
           <MyEcosystem
             quizSlot={ecosystemQuizCard}
+            quizSlotKind={webQuizDraft ? 'finish' : 'personal'}
+            onFixLifeStages={() => { setEditAtStep('lifeStage'); setCurrentView('profile-edit'); }}
             matchOpts={matchOpts}
             myProducts={myProducts}
             ecosystemOrder={ecosystemOrder}

@@ -8,6 +8,7 @@
  *   - every email carries a one-click unsubscribe link (+ List-Unsubscribe headers)
  *   - brand look: butter #ffedac, espresso #3e2723, rose #f7badd, DM Serif Display / DM Sans
  */
+import { renamePcos } from '../src/utils/conditionRename.js';
 import crypto from 'node:crypto';
 
 export const SITE = 'https://www.aynahealth.co';
@@ -161,7 +162,13 @@ export async function sendBatch(emails, fetchImpl = fetch) {
   if (!key) throw new Error('RESEND_API_KEY is not configured');
   let sent = 0; let failed = 0;
   for (let i = 0; i < emails.length; i += 100) {
-    const chunk = emails.slice(i, i + 100);
+    // PCOS is now PMOS in everything people read (links are left as they are).
+    const chunk = emails.slice(i, i + 100).map((e) => ({
+      ...e,
+      ...(e.subject ? { subject: renamePcos(e.subject) } : {}),
+      ...(e.html ? { html: renamePcos(e.html) } : {}),
+      ...(e.text ? { text: renamePcos(e.text) } : {}),
+    }));
     const r = await fetchImpl('https://api.resend.com/emails/batch', {
       method: 'POST',
       headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },

@@ -544,12 +544,12 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
 /* --------------------------------- Main screen --------------------------------- */
 
 
-export default function IntakeScreen({ onBack, onComplete, onDraftChange, initialSnapshot = null, startAtBeginning = false, startAtOptional = false, introEnabled = true }) {
+export default function IntakeScreen({ onBack, onComplete, onDraftChange, initialSnapshot = null, startAtBeginning = false, startAtOptional = false, startAtStep = '', introEnabled = true }) {
   const [savedDraft] = useState(() => !initialSnapshot && !startAtBeginning ? readIntakeDraft() : null);
   // Opened from "Make my matches more personal" (Ecosystem): straight into the optional questions.
   const [enteredAtOptional] = useState(() => Boolean(startAtOptional && initialSnapshot && !savedDraft));
   const [intake, setIntake] = useState(() => savedDraft ? { ...EMPTY, ...savedDraft.intake } : reconstructIntakeFromSnapshot(initialSnapshot));
-  const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || savedDraft?.stepId || (startAtOptional && initialSnapshot ? firstOptionalResumeStepId(reconstructIntakeFromSnapshot(initialSnapshot)) : startAtBeginning || !initialSnapshot ? 'age' : firstUnansweredStepId(reconstructIntakeFromSnapshot(initialSnapshot))));
+  const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || (startAtStep && initialSnapshot ? startAtStep : null) || savedDraft?.stepId || (startAtOptional && initialSnapshot ? firstOptionalResumeStepId(reconstructIntakeFromSnapshot(initialSnapshot)) : startAtBeginning || !initialSnapshot ? 'age' : firstUnansweredStepId(reconstructIntakeFromSnapshot(initialSnapshot))));
   const [search, setSearch] = useState('');
   // Computed once, from how things stood when this resume started (not
   // re-derived as answers change), so a step's flag clears only by actually

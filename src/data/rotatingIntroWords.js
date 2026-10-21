@@ -4,7 +4,7 @@ export const ROTATING_INTRO_WORDS = [
   'OBGYN',
   'health wearable',
   'hot flash solution',
-  'PCOS lifestyle app',
+  'PMOS lifestyle app',
   'menstrual cup',
   'menopause specialist',
   'pelvic floor trainer',

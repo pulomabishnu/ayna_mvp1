@@ -111,7 +111,7 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
     {
       "url": "https://pubmed.ncbi.nlm.nih.gov/19585478/",
       "text": "Spearmint and androgens",
-      "summary": "Study on spearmint tea and testosterone in PCOS.",
+      "summary": "Study on spearmint tea and testosterone in PMOS.",
       "justification": "PubMed peer-reviewed. Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
     }
   ],

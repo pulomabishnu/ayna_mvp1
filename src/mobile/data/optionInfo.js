@@ -15,7 +15,7 @@ export const OPTION_INFO = {
   'Breast tenderness': 'Sore, swollen or sensitive breasts, often before your period.',
   'Cycle-related headaches or migraines': 'Headaches or migraines that tend to show up around your period or ovulation.',
   // Hormonal + reproductive
-  'PCOS support': 'Polycystic ovary syndrome. A hormone condition that can cause irregular periods, acne, extra hair growth and weight changes.',
+  'PCOS support': 'Polyendocrine metabolic ovarian syndrome. A hormone condition that can cause irregular periods, acne, extra hair growth and weight changes.',
   'Endometriosis support': 'Endometriosis is when tissue similar to the uterine lining grows outside the uterus, often causing strong pelvic pain.',
   'Fibroid-related concerns': 'Fibroids are non-cancerous growths in the uterus. They can cause heavy bleeding, pressure or frequent peeing.',
   'Adenomyosis-related concerns': 'Adenomyosis is when uterine lining tissue grows into the muscle wall of the uterus, which can cause heavy, painful periods.',
@@ -100,7 +100,7 @@ export const OPTION_INFO = {
   'I am post-menopause': 'It has been more than a year since your last period.',
 
   // Conditions
-  'PCOS': 'Polycystic ovary syndrome. A hormone condition with irregular periods and often acne or extra hair growth.',
+  'PCOS': 'Polyendocrine metabolic ovarian syndrome. A hormone condition with irregular periods and often acne or extra hair growth.',
   'Endometriosis': 'Tissue similar to the uterine lining grows outside the uterus, often causing pelvic pain.',
   'Fibroids': 'Non-cancerous growths in the uterus that can cause heavy bleeding or pressure.',
   'Adenomyosis': 'Uterine lining tissue grows into the uterus wall, causing heavy, painful periods.',
@@ -109,7 +109,7 @@ export const OPTION_INFO = {
   'Infertility': 'Not getting pregnant after 12 months of trying, or 6 months if you are over 35.',
   'Thyroid condition': 'An underactive or overactive thyroid gland, which affects energy, weight and periods.',
   'Diabetes': 'High blood sugar because the body does not make or use insulin well.',
-  'Insulin resistance': 'Your body does not respond well to insulin, which can raise blood sugar. Common with PCOS.',
+  'Insulin resistance': 'Your body does not respond well to insulin, which can raise blood sugar. Common with PMOS.',
   'High blood pressure': 'Blood pressure that stays above healthy levels. Some birth control is not recommended with it.',
   'Migraine with aura': 'Migraines with warning signs first, like flashing lights or blind spots. Estrogen birth control is usually avoided with it.',
   'Anemia or iron deficiency': 'Low iron or red blood cells, often from heavy periods. Can cause tiredness and dizziness.',
@@ -200,7 +200,7 @@ export const OPTION_INFO = {
   "I'm not sure": 'You do not remember when your last period was.',
   // Group headings
   'Period + cycle': 'Bleeding, cramps and anything that follows your cycle.',
-  'Hormonal + reproductive': 'Hormone conditions like PCOS, endometriosis and fibroids.',
+  'Hormonal + reproductive': 'Hormone conditions like PMOS, endometriosis and fibroids.',
   'Vaginal health': 'Dryness, itching, discharge, odor and infections.',
   'Urinary health': 'Peeing, bladder and UTI-type symptoms.',
   'Sexual + reproductive health': 'Comfort during sex, libido, birth control and STIs.',

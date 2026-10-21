@@ -12,6 +12,7 @@ import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
 import { scoreSearchMatch, correctedSearchQuery, searchArticles, analyzeSearch } from '../../utils/search/index.js';
 import SearchAssist from '../../components/search/SearchAssist.jsx';
 import { fetchSearchSuggestions } from '../../utils/fetchSearchSuggestions.js';
+import { trackApp } from '../utils/appAnalytics.js';
 import { stableShopOrder, rankShopForProfile } from '../utils/shopOrder.js';
 import { hasQuizAnswers } from '../utils/personalReads.js';
 import { useSheetDrag } from '../hooks/useSheetDrag.js';
@@ -285,6 +286,16 @@ export default function BrowseScreen({
   // itself found nothing in the catalog", not "this narrower filtered view
   // happens to be empty because of an unrelated active filter".
   const searchScored = filtered;
+  // PostHog: one search_performed once she stops typing (same event as the
+  // website; the query text itself is never sent, only its length).
+  const searchResultCount = searchScored.length;
+  useEffect(() => {
+    if (searchTermRaw.length < 2) return undefined;
+    const t = setTimeout(() => trackApp('search_performed', { queryLength: searchTermRaw.length, category: activeGroup, resultCount: searchResultCount }), 1200);
+    return () => clearTimeout(t);
+    // resultCount is read at fire time; re-running on it would double-count.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTermRaw, activeGroup]);
   // "My matches only" narrows browsing to her matches. A typed search must
   // still find every catalog product (focus group: Resa Rhythm Bracelet was
   // hidden, so she assumed it did not exist), so non-matches that fit the
@@ -358,6 +369,7 @@ export default function BrowseScreen({
     const timer = setTimeout(() => {
       setAiState({ query: searchTermRaw, loading: true, suggestions: [], error: null });
       fetchSearchSuggestions({
+        source: 'app_browse',
         query: correctedSearchQuery(searchTermRaw),
         category: activeGroup !== 'all' ? activeGroup : '',
         maxResults: 20,

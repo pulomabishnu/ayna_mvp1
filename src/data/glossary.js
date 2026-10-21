@@ -9,7 +9,10 @@ export const GLOSSARY = {
   // Diagnosed conditions (src/utils/healthIntake.js DIAGNOSED_CONDITIONS
   // these values are matched elsewhere in the app, so we explain them here
   // instead of renaming them)
-  'PCOS': 'A common hormone condition. It can cause irregular periods, acne, and extra hair growth.',
+  // PMOS is the new name for PCOS (Lancet, May 2026). Saved answers still say
+  // "PCOS" (shown as PMOS), so both keys explain it.
+  'PMOS': 'Polyendocrine metabolic ovarian syndrome. A common hormone condition. It can cause irregular periods, acne, and extra hair growth.',
+  'PCOS': 'Polyendocrine metabolic ovarian syndrome. A common hormone condition. It can cause irregular periods, acne, and extra hair growth.',
   'endometriosis': 'Tissue like the lining of the uterus grows outside it. This can cause bad pain, especially during your period.',
   'fibroids': 'Non-cancerous growths in or on the uterus. They can cause heavy periods or pelvic pain.',
   'adenomyosis': 'The uterus lining grows into the muscle wall of the uterus. This can cause heavy, painful periods.',
@@ -130,9 +133,9 @@ const entry = (term, short, opts = {}) => ({
 
 export const GLOSSARY_ENTRIES = [
   // Ingredient classes and actives
-  entry('Inositol', 'A sugar-like compound your body makes and also gets from food. Myo-inositol and D-chiro-inositol are the two forms most often studied for PCOS.', {
-    long: 'Inositol helps cells respond to insulin. Studies of inositol supplements in PCOS suggest possible benefits for cycle regularity and some metabolic markers, but results vary and many studies are small. As a supplement, the dose and quality depend on the brand.',
-    aliases: ['myo-inositol', 'd-chiro-inositol', 'd-chiro inositol', 'myo inositol'], related: ['PCOS', 'Clinically studied'],
+  entry('Inositol', 'A sugar-like compound your body makes and also gets from food. Myo-inositol and D-chiro-inositol are the two forms most often studied for PMOS.', {
+    long: 'Inositol helps cells respond to insulin. Studies of inositol supplements in PMOS suggest possible benefits for cycle regularity and some metabolic markers, but results vary and many studies are small. As a supplement, the dose and quality depend on the brand.',
+    aliases: ['myo-inositol', 'd-chiro-inositol', 'd-chiro inositol', 'myo inositol'], related: ['PMOS', 'Clinically studied'],
   }),
   entry('NSAID', 'Non-steroidal anti-inflammatory drug. Pain relievers like ibuprofen and naproxen that calm inflammation and the chemicals behind period cramps.', {
     long: 'NSAIDs lower prostaglandins, the chemicals that make the uterus cramp. They are not right for everyone: people with stomach ulcers or bleeding, kidney disease, some heart conditions, late pregnancy, or who take blood thinners should check with a clinician first.',
@@ -207,6 +210,17 @@ export const GLOSSARY_ENTRIES = [
   entry('Randomized controlled trial', 'A study where people are randomly given the real treatment or a comparison. It is one of the more reliable kinds of study.', { aliases: ['randomized', 'RCT', 'randomised controlled trial'] }),
   entry('Meta-analysis', 'A study that pools the results of many earlier studies to look for an overall answer.', { aliases: ['meta-analyses'] }),
   entry('In vitro', 'Done in a lab dish or test tube, not in people. Results may not carry over to the body.', { aliases: ['in-vitro'] }),
+  // Product page audit, Oct 21: words the product pages used without explaining them.
+  entry('Systematic review', 'A study that gathers the good studies on one question and weighs them together.', { aliases: ['systematic reviews'] }),
+  entry('Double-blind', 'Neither the people in a study nor the researchers know who got the real treatment, so expectations can’t sway the result.', { aliases: ['double blind'] }),
+  entry('TSST-1', 'Toxic shock syndrome toxin 1. A toxin some Staphylococcus aureus bacteria make. It causes most cases of toxic shock syndrome linked to tampons.', { caseSensitive: true, related: ['Toxic shock syndrome'] }),
+  entry('SPF', 'Sun protection factor. How well a sunscreen blocks the UVB rays that cause sunburn, when you apply the full amount it was tested with.', { caseSensitive: true }),
+  entry('Broad spectrum', 'A sunscreen that protects against both UVA and UVB rays.', { aliases: ['broad-spectrum'] }),
+  entry('PA++++', 'A UVA protection rating used in Asia. More plus signs mean more UVA protection, and four is the highest. It is not an FDA rating.', { caseSensitive: true }),
+  entry('CE-marked', 'Carries the CE mark, which says a product meets EU safety rules. It is a European mark, not an FDA review.', { aliases: ['CE marked', 'CE mark', 'CE-marking'] }),
+  entry('HIPAA', 'The US law that protects health information held by doctors, hospitals and health insurers. It usually doesn’t cover apps you use on your own.', { caseSensitive: true }),
+  entry('GDPR', 'The EU’s data protection law. It sets rules for how companies collect, use, share and delete personal data.', { caseSensitive: true }),
+  entry('Photoallergic', 'An allergic skin reaction that only happens when sunlight hits skin after something was put on it.', { aliases: ['photoallergic reaction', 'photoallergic reactions'] }),
 ];
 
 // The app's quiz glossary (src/mobile/data/glossary.js) and the site glossary

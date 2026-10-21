@@ -6,7 +6,8 @@ export const GLOSSARY = {
   'Post-menopause': 'The years after menopause.',
   PMS: 'Premenstrual syndrome. mood or body changes in the week or two before a period.',
   PMDD: 'Premenstrual dysphoric disorder. a severe form of PMS that strongly affects mood.',
-  PCOS: 'Polycystic ovary syndrome. a hormone condition that can cause irregular periods, acne or extra hair growth.',
+  PMOS: 'Polyendocrine metabolic ovarian syndrome. A hormone condition that can cause irregular periods, acne or extra hair growth.',
+  PCOS: 'Polyendocrine metabolic ovarian syndrome. A hormone condition that can cause irregular periods, acne or extra hair growth.',
   Endometriosis: 'Tissue like the uterine lining grows outside the uterus, often causing pelvic pain.',
   Adenomyosis: 'Uterine lining tissue grows into the muscle wall of the uterus, which can cause heavy, painful periods.',
   Fibroids: 'Non-cancerous growths in the uterus that can cause heavy bleeding or pressure.',
@@ -43,9 +44,14 @@ import { OPTION_INFO, OPTION_INFO_BY_STEP } from './optionInfo.js';
 /** Definition for a whole quiz option, or for the first hard word inside any text. */
 export function defineOption(text, stepType) {
   const t = String(text || '').replace(/\s+/g, ' ').trim();
-  const scoped = OPTION_INFO_BY_STEP[stepType]?.[t];
-  if (scoped) return { term: t, definition: scoped };
-  if (OPTION_INFO[t]) return { term: t, definition: OPTION_INFO[t] };
+  // On screen the option reads "PMOS support" (PCOS is now PMOS, Oct 20), but
+  // its saved value and definition key are still "PCOS support".
+  const saved = t.replace(/\bPMOS\b/g, 'PCOS');
+  for (const key of saved === t ? [t] : [t, saved]) {
+    const scoped = OPTION_INFO_BY_STEP[stepType]?.[key];
+    if (scoped) return { term: t, definition: scoped };
+    if (OPTION_INFO[key]) return { term: t, definition: OPTION_INFO[key] };
+  }
   return findTerm(t);
 }
 

@@ -235,7 +235,7 @@ export default [
   "need": "condition_support.pcos",
   "strength": "secondary",
   "grade": "B",
-  "rationale": "PCOS is managed with clinician-prescribed pill, metformin, spironolactone and fertility drugs, which a virtual OB-GYN can provide; diagnosis still needs blood tests and ultrasound.",
+  "rationale": "PMOS is managed with clinician-prescribed pill, metformin, spironolactone and fertility drugs, which a virtual OB-GYN can provide; diagnosis still needs blood tests and ultrasound.",
   "source_url": "https://www.mayoclinic.org/diseases-conditions/pcos/diagnosis-treatment/drc-20353443",
   "reviewer": "research",
   "reviewed": "2026-10-17"
@@ -4555,7 +4555,7 @@ export default [
   "need": "condition_support.pcos",
   "strength": "secondary",
   "grade": "B",
-  "rationale": "Mayo notes creams or gels may help PCOS acne, so benzoyl peroxide addresses one symptom but not PCOS itself.",
+  "rationale": "Mayo notes creams or gels may help PMOS acne, so benzoyl peroxide addresses one symptom but not PMOS itself.",
   "source_url": "https://www.mayoclinic.org/diseases-conditions/pcos/diagnosis-treatment/drc-20353443",
   "reviewer": "research",
   "reviewed": "2026-10-17"
@@ -4565,7 +4565,7 @@ export default [
   "need": "condition_support.pcos",
   "strength": "secondary",
   "grade": "B",
-  "rationale": "Mayo notes creams or gels may help PCOS acne, so a topical retinoid addresses one symptom; hormonal acne in PCOS often needs birth control pills or spironolactone.",
+  "rationale": "Mayo notes creams or gels may help PMOS acne, so a topical retinoid addresses one symptom; hormonal acne in PMOS often needs birth control pills or spironolactone.",
   "source_url": "https://www.mayoclinic.org/diseases-conditions/pcos/diagnosis-treatment/drc-20353443",
   "reviewer": "research",
   "reviewed": "2026-10-17"

@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { getProductMatchDetailsForProduct } from '../data/products.js';
 import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, whyMatch, BASED_ON_LINE } from '../utils/matchDisplay';
 import '../styles/match-ui.css';
+import HealthWhyLine from './health/HealthWhyLine.jsx';
 
 // "Why this match" from the app, for the website: the same match engine
 // output (getProductMatchDetailsForProduct), shown as a side panel.
@@ -11,7 +12,7 @@ import '../styles/match-ui.css';
 
 const GOAL = new Set(['primaryGoal', 'otherNeeds', 'periodFlow', 'periodPain', 'utiFrequency']);
 const PROFILE = new Set(['age', 'lifeStage', 'breastfeeding', 'postpartumTiming', 'pregnancyTrimester', 'perimenopauseLastPeriod', 'diagnoses', 'triedBefore']);
-const ACRONYM_RE = /\b(adhd|pcos|pmdd|pms|ibs|uti|utis|hrt|iud|bv|ivf)\b/gi;
+const ACRONYM_RE = /\b(adhd|pcos|pmos|pmdd|pms|ibs|uti|utis|hrt|iud|bv|ivf)\b/gi;
 const tidy = (t) => String(t || '').replace(ACRONYM_RE, (m) => (m.toLowerCase() === 'utis' ? 'UTIs' : m.toUpperCase()));
 const kind = (c) => (GOAL.has(c) ? 'Your needs' : PROFILE.has(c) ? 'Your profile' : 'Your preferences');
 const TONE = { excellent: 'is-strong', strong: 'is-good', exploratory: 'is-partial', browse: 'is-partial' };
@@ -54,6 +55,7 @@ export default function WhyMatchPanel({ product, quizResults, healthProfile = nu
         {onUpdateHealth && <button type="button" className="ay-why-cta" onClick={onUpdateHealth}>Update health profile</button>}
       </section>}
       {hasScore && reasonDetails.length > 0 && <section><h3>What matches</h3><ul className="ay-why-reasons">{reasonDetails.map((r, i) => <li key={`${r.component}-${i}`}><span>{kind(r.component)}</span><p>{tidy(r.text)}</p></li>)}</ul></section>}
+      {hasScore && <HealthWhyLine healthData={details.healthData} />}
       {hasScore && why.basedOn.length > 0 && <section><h3 className="ay-why-h-edit">Based on{onUpdateHealth && <button type="button" className="ay-why-edit" onClick={onUpdateHealth}>Edit</button>}</h3><ul className="ay-why-inputs">{why.basedOn.map((line) => <li key={line}>{tidy(line)}</li>)}</ul></section>}
       {hasScore && why.hint && <section className="ay-why-hint">
         <p>{why.hint}</p>

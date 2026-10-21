@@ -23,6 +23,7 @@ import { callWithFallback, parseProviderOrder } from './_llm.js';
 import { hashedSessionId, traceMessages } from './_prismTrace.js';
 import { ALL_PRODUCTS } from '../src/data/products.js';
 import { stripLinks } from './_catalogGrounding.js';
+import { renamePcos } from '../src/utils/conditionRename.js';
 import {
   SMS_DAILY_CHAT_LIMIT, countEventsToday, loadPrefsRow, logSmsEvent, prefsFromRow, rowFromPrefs, ALL_OFF,
 } from './_smsStore.js';
@@ -82,8 +83,10 @@ function escapeXml(str) {
     .replace(/>/g, '&gt;');
 }
 
+// Every text ayna sends goes through here, so the PMOS rename (PCOS is now
+// PMOS, Oct 20) covers AI answers and fixed replies alike.
 function twiml(message) {
-  return `<?xml version="1.0" encoding="UTF-8"?><Response><Message>${escapeXml(message)}</Message></Response>`;
+  return `<?xml version="1.0" encoding="UTF-8"?><Response><Message>${escapeXml(renamePcos(message))}</Message></Response>`;
 }
 
 function sendTwiml(res, message) {
@@ -307,7 +310,7 @@ export default async function handler(req, res) {
   // "YES" with no context.
   if (START_KEYWORDS.has(upper)) {
     const chatLine = prefs.chat
-      ? "Text me anytime, like 'what helps with PCOS bloating'."
+      ? "Text me anytime, like 'what helps with PMOS bloating'."
       : 'Choose which texts you get in the ayna app: You, Settings, Text messages.';
     if (!optedOut && !prefsRow?.stopped_at) {
       await logMessage(admin, userId, 'inbound', text);

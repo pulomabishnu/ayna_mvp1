@@ -38,7 +38,7 @@ const SHOP_FILTERS = [
   { key: 'sexual', label: 'Sexual Wellness', categories: ['sex-tech'], keywords: ['intimacy', 'lubricant', 'lube'] },
   { key: 'postpartum', label: 'Postpartum', categories: ['postpartum', 'pregnancy'], keywords: ['postpartum', 'nursing', 'lactation'] },
   { key: 'pelvic', label: 'Pelvic', categories: ['pelvic-floor', 'pelvic-floor-trainer', 'pelvic-floor-exerciser', 'pelvic-health', 'incontinence'], keywords: ['pelvic', 'kegel'] },
-  { key: 'hormones', label: 'Hormones', categories: ['supplement', 'hormone-monitoring'], keywords: ['pms', 'pcos', 'hormone', 'cycle'] },
+  { key: 'hormones', label: 'Hormones', categories: ['supplement', 'hormone-monitoring'], keywords: ['pms', 'pcos', 'pmos', 'hormone', 'cycle'] },
   { key: 'menopause', label: 'Menopause', categories: ['menopause'], keywords: ['menopause', 'perimenopause', 'hot flash'] },
   { key: 'fertility', label: 'Fertility', categories: ['fertility'], keywords: ['fertility', 'ovulation'] },
   { key: 'skin', label: 'Skin', categories: ['skin', 'skincare', 'body-care'], keywords: ['skin', 'spf', 'acne'] },
@@ -161,7 +161,7 @@ function discoveryTargetFor(text) {
   if (lower.includes('supplement')) {
     const opts = { query: q, initialCategory: 'supplement' };
     if (lower.includes('cramps')) opts.initialSymptom = 'cramps';
-    else if (lower.includes('pcos')) opts.initialSymptom = 'pcos';
+    else if (lower.includes('pcos') || lower.includes('pmos')) opts.initialSymptom = 'pcos';
     return opts;
   }
   if (lower.includes('pelvic floor')) {

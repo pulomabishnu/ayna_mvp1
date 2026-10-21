@@ -4,8 +4,7 @@ import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines,
 import '../match.css';
 import '../eco-needs.css';
 import '../../styles/match-ui.css';
-import { whyLine } from '../../health/matchContext.js';
-import { SOURCE_NAMES } from '../data/healthConnections.js';
+import HealthWhyLine from '../../components/health/HealthWhyLine.jsx';
 
 // Why this matches: what matched and the inputs it used. It never says why
 // she has a symptom; missing answers lower confidence, never the percent.
@@ -13,7 +12,7 @@ import { SOURCE_NAMES } from '../data/healthConnections.js';
 const GOAL_COMPONENTS = new Set(['primaryGoal', 'otherNeeds', 'periodFlow', 'periodPain', 'utiFrequency']);
 const PROFILE_COMPONENTS = new Set(['age', 'lifeStage', 'breastfeeding', 'postpartumTiming', 'pregnancyTrimester', 'perimenopauseLastPeriod', 'diagnoses', 'triedBefore']);
 
-const ACRONYMS = ['adhd', 'pcos', 'pmdd', 'pms', 'ibs', 'uti', 'utis', 'hrt', 'iud', 'bv', 'ivf'];
+const ACRONYMS = ['adhd', 'pcos', 'pmos', 'pmdd', 'pms', 'ibs', 'uti', 'utis', 'hrt', 'iud', 'bv', 'ivf'];
 const ACRONYM_RE = new RegExp(`\\b(${ACRONYMS.join('|')})\\b`, 'gi');
 /** Profile answers can arrive lowercase ("adhd"); show acronyms properly. */
 function tidy(text) {
@@ -30,8 +29,6 @@ const TONE = { excellent: 'is-strong', strong: 'is-good', exploratory: 'is-parti
 
 export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack, onUpdateHealth, onViewDetails }) {
   const details = getProductMatchDetailsForProduct(product, quizAnswers, null, matchOpts);
-  // Only set when connected health data supports a need she chose (src/health/matchContext.js).
-  const healthLine = whyLine(details?.healthData, (id) => SOURCE_NAMES[id] || id);
   const { percent, eligible, matchStatus, reasonDetails = [], considerations = [], unknowns = [], unmetNeeds = [], tier, access } = details;
   const hasScore = eligible !== false && matchStatus === 'scored' && Number.isFinite(percent) && percent > 0;
   const excluded = matchStatus === 'excluded' || eligible === false;
@@ -88,12 +85,8 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
             <ul className="ayna-match-reasons">{reasonDetails.map((reason, index) => <li key={`${reason.component}-${index}`}><span>{reasonKind(reason.component)}</span><p>{tidy(reason.text)}</p></li>)}</ul>
           </section>
         )}
-        {hasScore && healthLine && (
-          <section className="ayna-match-section ay-why-health">
-            <h2>Your health data</h2>
-            <p><b>{healthLine.text}.</b> {healthLine.detail}</p>
-          </section>
-        )}
+        {/* Only when connected health data backs the need this matches (src/health/matchContext.js). */}
+        {hasScore && <HealthWhyLine healthData={details?.healthData} as="h2" className="ayna-match-section ay-why-health" />}
         {hasScore && why.basedOn.length > 0 && (
           <section className="ayna-match-section">
             <h2>Based on</h2>

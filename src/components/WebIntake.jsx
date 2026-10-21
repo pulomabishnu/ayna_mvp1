@@ -260,7 +260,7 @@ function firstUnansweredStep(intake) {
   return id === 'lifeStage' ? 'age' : id;
 }
 
-export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot = null, startAtOptional = false }) {
+export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot = null, startAtOptional = false, startAtStep = '' }) {
   const [savedDraft] = useState(() => (initialSnapshot ? null : readIntakeDraft()));
   const [intake, setIntake] = useState(() => (savedDraft ? { ...EMPTY, ...savedDraft.intake } : reconstructIntakeFromSnapshot(initialSnapshot)));
   const [stepId, setStepId] = useState(() => {
@@ -268,9 +268,16 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
     if (!initialSnapshot) return 'age';
     // "Make my matches more personal": the first optional question still open.
     const resumed = reconstructIntakeFromSnapshot(initialSnapshot);
+    if (startAtStep) return startAtStep === 'lifeStage' ? 'age' : startAtStep;
     if (startAtOptional) { const id = firstOptionalResumeStepId(resumed); return id === 'lifeStage' ? 'age' : id; }
     return firstUnansweredStep(resumed);
   });
+  // Opened from "Update life stages": bring the life stage question into view.
+  useEffect(() => {
+    if (startAtStep !== 'lifeStage') return undefined;
+    const t = setTimeout(() => document.getElementById('qz-stage-q')?.scrollIntoView({ block: 'center', behavior: 'smooth' }), 250);
+    return () => clearTimeout(t);
+  }, [startAtStep]);
   const [search, setSearch] = useState('');
   const [infoOpen, setInfoOpen] = useState(false);
   const [glossary, setGlossary] = useState(null);

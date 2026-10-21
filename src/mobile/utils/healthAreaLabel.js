@@ -2,7 +2,7 @@
 export function healthAreaLabel(label = '') {
   const matches = [
     [/pregnan|prenatal/i, 'Pregnancy'], [/postpartum/i, 'Postpartum'], [/breastfeed|lactation/i, 'Breastfeeding'],
-    [/fibroid/i, 'Fibroids'], [/adenomyosis/i, 'Adenomyosis'], [/endometriosis/i, 'Endometriosis'], [/pcos/i, 'PCOS'],
+    [/fibroid/i, 'Fibroids'], [/adenomyosis/i, 'Adenomyosis'], [/endometriosis/i, 'Endometriosis'], [/pcos|pmos|polycystic|polyendocrine/i, 'PMOS'],
     [/fertility|conceive|ovulation/i, 'Fertility'], [/perimenopause/i, 'Perimenopause'], [/menopause|hot flash|night sweat/i, 'Menopause'],
     [/cramp|period pain/i, 'Cramps'], [/pelvic pain/i, 'Pelvic'], [/heavy periods|light periods/i, 'Flow'], [/period|cycle/i, 'Period'],
     [/vaginal|vulva|intimate|\bBV\b|yeast/i, 'Intimate'], [/urinary|urination|UTI|bladder/i, 'Urinary'],

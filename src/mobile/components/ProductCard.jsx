@@ -1,4 +1,5 @@
 import { getProductMatchDetailsForProduct } from '../../data/products.js';
+import { trackApp } from '../utils/appAnalytics.js';
 import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
 import { getVerificationLinks } from '../../utils/verificationLinks.js';
 import { getBuyUrl } from '../data/buyUrl.js';
@@ -11,6 +12,7 @@ import { HEART_PATH } from '../utils/heart.js';
 import { matchBadge } from '../../utils/matchDisplay.js';
 import MatchPill from '../../components/MatchPill.jsx';
 import { saveFeedback } from '../../utils/feedback.js';
+import HealthBackedBadge from '../../components/health/HealthBackedBadge.jsx';
 
 export default function ProductCard({ product, onClick, variant = 'grid', quizAnswers = null, isSaved = false, onToggleSaved, onOpenWhyMatch, matchOpts, needId = null }) {
   const { name, category, price, priceDisplay, image, imageUrl, images } = product || {};
@@ -26,6 +28,9 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   // Badge = best need score, only with a profile and 50+ ("82% for period cramps").
   const badge = matchBadge(match, { needId });
   const showMatch = Boolean(badge);
+  // "Backed by your sleep data": her connected data supports the need this card is shown for.
+  const backedBy = showMatch ? match?.needMatches?.find((m) => m.needId === (needId || match.needId))?.healthData : null;
+  const healthBacked = backedBy ? { section: backedBy.section, tracker: ['tracker', 'wearable'].includes(String(category || '').toLowerCase()) } : null;
   const relevantReason = match?.matchStatus === 'scored' && !showMatch
     ? match.reasonDetails?.find((reason) => ['primaryGoal', 'otherNeeds', 'periodFlow', 'periodPain', 'utiFrequency', 'diagnoses', 'lifeStage'].includes(reason.component))
     : null;
@@ -56,6 +61,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
             <small className="ay-pc-brand" aria-hidden={showBrand ? undefined : true}>{showBrand ? secondaryLabel : '\u00a0'}</small>
             <strong className="ay-pc-name">{brandRepeatsName ? name : displayName(product)}</strong>
             <span className="ay-pc-price">{hasDisplayPrice ? <b>{shownPrice.main}</b> : <b className="is-muted">{shownPrice.main}</b>}</span>
+            {healthBacked && <HealthBackedBadge backed={healthBacked} className="ay-pc-hbadge" />}
           </span>
         </button>
         {showMatch && <MatchPill percent={badge.percent ?? match.percent} size="sm" className="ay-pc-match" label={`${badge.label}. Why this match for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}
@@ -85,7 +91,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
       {onToggleSaved && <button type="button" className="ayna-card-save" aria-label={isSaved ? `Remove ${name} from Saved` : `Save ${name}`} aria-pressed={isSaved} onClick={(e) => { saveFeedback(e, !isSaved); onToggleSaved(product); }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></button>}
       {isList && <div className="ayna-fresh-product-actions">
         <button type="button" onClick={onClick}>Details</button>
-        {buyUrl && <a href={buyUrl} target="_blank" rel="noopener noreferrer sponsored" aria-label={`Shop ${name} on the seller's site`}>{isService ? 'See care options' : 'Shop'} <span aria-hidden="true">↗</span></a>}
+        {buyUrl && <a href={buyUrl} target="_blank" rel="noopener noreferrer sponsored" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: 'product_card' })} aria-label={`Shop ${name} on the seller's site`}>{isService ? 'See care options' : 'Shop'} <span aria-hidden="true">↗</span></a>}
       </div>}
       {isList && buyUrl && <small className="ayna-fresh-product-seller-note">{isPartner ? 'Partner link. ' : ''}Opens the seller’s site</small>}
     </article>

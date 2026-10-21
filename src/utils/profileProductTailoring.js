@@ -19,7 +19,7 @@ function getIngredientSafetyFlags(product, conditions = [], sensitivities = [], 
   const allerg = (product.safety?.allergens || '').toLowerCase();
   const combined = `${mat} ${allerg} ${(product.tags || []).join(' ').toLowerCase()}`;
   const normalizedConditions = (conditions || []).map((c) => String(c));
-  const hasPcos = normalizedConditions.some((c) => c.toLowerCase() === 'pcos');
+  const hasPcos = normalizedConditions.some((c) => ['pcos', 'pmos'].includes(c.toLowerCase()));
   const hasEndo = normalizedConditions.some((c) => c.toLowerCase() === 'endometriosis');
   const hasKnowledgeForHormoneConditions = !!(KNOWLEDGE_BY_CONDITION.endometriosis || KNOWLEDGE_BY_CONDITION.PCOS);
 
@@ -39,7 +39,7 @@ function getIngredientSafetyFlags(product, conditions = [], sensitivities = [], 
 
   if (hasPcos && hasKnowledgeForHormoneConditions) {
     if ((!isFragranceFree && /\bfragrance\b|\bperfume\b|\bparfum\b/.test(combined)) || /\bparaben\b|\bphthalate\b/.test(combined)) {
-      flags.push('**PCOS flag:** Contains potential endocrine disruptors (fragrance/parabens). Minimize EDC exposure with PCOS.');
+      flags.push('**PMOS flag:** Contains potential endocrine disruptors (fragrance/parabens). Minimize EDC exposure with PMOS.');
     }
   }
 

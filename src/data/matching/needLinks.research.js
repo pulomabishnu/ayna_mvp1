@@ -5,7 +5,7 @@ export const COOCCURRENCE = [
   "to": "cycle.irregular",
   "rate": 0.95,
   "rate_text": "up to 95% of affected adults have oligo- or amenorrhea",
-  "population": "adults with PCOS (ESHRE/ASRM consensus)",
+  "population": "adults with PMOS (ESHRE/ASRM consensus)",
   "source_url": "https://academic.oup.com/humrep/article/27/1/14/718011",
   "from_kind": "condition"
  },
@@ -14,7 +14,7 @@ export const COOCCURRENCE = [
   "to": "hair.excess",
   "rate": 0.7,
   "rate_text": "about 70% have hirsutism",
-  "population": "women with PCOS (ESHRE/ASRM consensus)",
+  "population": "women with PMOS (ESHRE/ASRM consensus)",
   "source_url": "https://academic.oup.com/humrep/article/27/1/14/718011",
   "from_kind": "condition"
  },
@@ -23,7 +23,7 @@ export const COOCCURRENCE = [
   "to": "hair.excess",
   "rate": 0.533,
   "rate_text": "53.3% (144 of 270)",
-  "population": "women meeting Rotterdam PCOS criteria at a US referral clinic (n=276)",
+  "population": "women meeting Rotterdam PMOS criteria at a US referral clinic (n=276)",
   "source_url": "https://jamanetwork.com/journals/jamadermatology/fullarticle/2475013",
   "from_kind": "condition"
  },
@@ -32,7 +32,7 @@ export const COOCCURRENCE = [
   "to": "skin.acne",
   "rate": 0.612,
   "rate_text": "61.2% (164 of 268)",
-  "population": "women meeting Rotterdam PCOS criteria at a US referral clinic (n=276)",
+  "population": "women meeting Rotterdam PMOS criteria at a US referral clinic (n=276)",
   "source_url": "https://jamanetwork.com/journals/jamadermatology/fullarticle/2475013",
   "from_kind": "condition"
  },
@@ -41,7 +41,7 @@ export const COOCCURRENCE = [
   "to": "hair.loss",
   "rate": 0.224,
   "rate_text": "22.4% had androgenic alopecia",
-  "population": "women meeting Rotterdam PCOS criteria at a US referral clinic",
+  "population": "women meeting Rotterdam PMOS criteria at a US referral clinic",
   "source_url": "https://jamanetwork.com/journals/jamadermatology/fullarticle/2475013",
   "from_kind": "condition"
  },
@@ -50,7 +50,7 @@ export const COOCCURRENCE = [
   "to": "insulin_resistance",
   "rate": 0.5,
   "rate_text": "more than one-half have insulin resistance",
-  "population": "women with PCOS (NICHD)",
+  "population": "women with PMOS (NICHD)",
   "source_url": "https://www.nichd.nih.gov/health/topics/pcos/conditioninfo/symptoms",
   "from_kind": "condition",
   "to_kind": "condition",
@@ -61,7 +61,7 @@ export const COOCCURRENCE = [
   "to": "metabolic.weight",
   "rate": 0.8,
   "rate_text": "about 4 out of 5 also have obesity",
-  "population": "women with PCOS (NICHD)",
+  "population": "women with PMOS (NICHD)",
   "source_url": "https://www.nichd.nih.gov/health/topics/pcos/conditioninfo/symptoms",
   "from_kind": "condition"
  },
@@ -70,7 +70,7 @@ export const COOCCURRENCE = [
   "to": "metabolic.weight",
   "rate": 0.685,
   "rate_text": "61-76% considered obese (midpoint used)",
-  "population": "women with PCOS in US and Australian studies",
+  "population": "women with PMOS in US and Australian studies",
   "source_url": "https://academic.oup.com/humrep/article/27/1/14/718011",
   "from_kind": "condition"
  },
@@ -79,7 +79,7 @@ export const COOCCURRENCE = [
   "to": "diabetes",
   "rate": 0.5,
   "rate_text": "more than one-half will have type 2 diabetes or prediabetes before their early 40s",
-  "population": "women with PCOS (NICHD)",
+  "population": "women with PMOS (NICHD)",
   "source_url": "https://www.nichd.nih.gov/health/topics/pcos/conditioninfo/symptoms",
   "from_kind": "condition",
   "to_kind": "condition",
@@ -90,7 +90,7 @@ export const COOCCURRENCE = [
   "to": "mood.low",
   "rate": 0.51,
   "rate_text": "pooled depression prevalence 51% (95% CI 43-59)",
-  "population": "reproductive-age women with PCOS, 40 studies in low- and middle-income countries",
+  "population": "reproductive-age women with PMOS, 40 studies in low- and middle-income countries",
   "source_url": "https://www.frontiersin.org/articles/10.3389/fgwh.2025.1688913/full",
   "from_kind": "condition",
   "note": "LMIC studies, low certainty; likely higher than US rates"
@@ -100,7 +100,7 @@ export const COOCCURRENCE = [
   "to": "mood.general_anxiety",
   "rate": 0.45,
   "rate_text": "pooled anxiety prevalence 45% (95% CI 36-54)",
-  "population": "reproductive-age women with PCOS, 40 studies in LMICs",
+  "population": "reproductive-age women with PMOS, 40 studies in LMICs",
   "source_url": "https://www.frontiersin.org/articles/10.3389/fgwh.2025.1688913/full",
   "from_kind": "condition",
   "note": "LMIC studies, low certainty"

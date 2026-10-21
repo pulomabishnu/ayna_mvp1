@@ -155,7 +155,7 @@ function discoveryTargetFor(text) {
   if (lower.includes('supplement')) {
     const opts = { query: q, initialCategory: 'supplement' };
     if (lower.includes('cramps')) opts.initialSymptom = 'cramps';
-    else if (lower.includes('pcos')) opts.initialSymptom = 'pcos';
+    else if (lower.includes('pcos') || lower.includes('pmos')) opts.initialSymptom = 'pcos';
     return opts;
   }
   if (lower.includes('pelvic floor')) {
