@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import posthog from 'posthog-js';
-import { WEFUNDER_URL, MIN_INVESTMENT, TESTING_WATERS_NOTICE } from '../data/investRound';
+import { WEFUNDER_URL, TESTING_WATERS_NOTICE } from '../data/investRound';
 import { useRecommendationViews } from '../utils/recommendationAnalytics';
 import { BASICS_PRODUCTS } from '../data/basicsProducts.js';
 import { productsForNeed } from './landingNeeds';
@@ -162,11 +162,6 @@ function Invest() {
         <div className="lv-invest__copy">
           <p id="lv-invest-title" className="lv-script">invest in ayna</p>
           <p>We&rsquo;re so excited to extend an opportunity for you to invest in ayna, whether you&rsquo;re one of our earliest ayna users or a part of the greater community passionate about ayna&rsquo;s work to expand the future of women&rsquo;s health. Join our community round and learn more on Wefunder.</p>
-          <ul className="lv-invest__perks">
-            <li><b>{MIN_INVESTMENT}</b><span>minimum investment</span></li>
-            <li><b>Free</b><span>ayna goodies</span></li>
-            <li><b>Perks</b><span>for investors</span></li>
-          </ul>
           <a className="lv-btn lv-btn--ink" href={WEFUNDER_URL} target="_blank" rel="noopener noreferrer" onClick={onClick}>
             Invest on Wefunder<Arrow /><span className="lv-sr"> (opens in a new tab)</span>
           </a>
