@@ -6,77 +6,77 @@ import { inferTagsFromHealthProfile } from '../utils/healthDataProfile.js';
 const ARTICLE_SUMMARIES = [
   {
     id: 'intimate-wash',
-    title: 'Intimate washes',
+    title: 'Intimate Washes',
     teaser: 'Why the vagina is self-cleaning, when to use (or skip) cleansers, and what OB-GYNs recommend for external care.',
   },
   {
     id: 'heavy-bleeding',
-    title: 'Heavy periods',
+    title: 'Heavy Menstrual Bleeding',
     teaser: 'What counts as heavy bleeding, possible causes, when to seek care, and how it’s evaluated and treated.',
   },
   {
     id: 'menopause-basics',
-    title: 'Menopause and perimenopause',
+    title: 'Menopause & Perimenopause',
     teaser: 'What perimenopause and menopause are, common symptoms, and how hormone therapy and lifestyle changes can help.',
   },
   {
     id: 'uti-prevention',
-    title: 'UTI prevention',
+    title: 'UTI Prevention',
     teaser: 'Evidence-backed ways to reduce UTI risk and when to see a clinician for recurrent infections.',
   },
   {
     id: 'yeast-infection-basics',
-    title: 'Yeast infection basics',
+    title: 'Yeast Infection Basics',
     teaser: 'What causes yeast infections, how to recognize them, when to treat at home vs. see a clinician, and how to prevent recurrence.',
   },
   {
     id: 'period-pain-when-to-seek-care',
-    title: 'Period pain: when to get checked',
+    title: 'Period Pain: When to Seek Care',
     teaser: 'Normal cramps vs. signs that something else may be going on, and what treatments and workups clinicians may suggest.',
   },
   {
     id: 'pcos-basics',
-    title: "PCOS: what it is and how it's treated",
+    title: "PCOS: What It Is and How It's Managed",
     teaser: 'Polycystic ovary syndrome explained. Diagnosis, symptoms, and evidence-based treatment options including lifestyle and medication.',
   },
   {
     id: 'pelvic-floor-dysfunction',
-    title: 'Pelvic floor problems',
+    title: 'Pelvic Floor Dysfunction',
     teaser: 'What the pelvic floor does, common symptoms of dysfunction, and how pelvic floor physical therapy and at-home tools can help.',
   },
   {
     id: 'endometriosis-basics',
-    title: 'Endometriosis: symptoms, diagnosis and care',
+    title: 'Endometriosis: Symptoms, Diagnosis, and Care',
     teaser: "What endometriosis is, how it's diagnosed, and treatment options. From pain management to surgery and fertility support.",
   },
   {
     id: 'bacterial-vaginosis',
-    title: 'Bacterial vaginosis (BV)',
+    title: 'Bacterial Vaginosis (BV)',
     teaser: 'What causes BV, how it differs from a yeast infection, treatment options, and why it tends to recur.',
   },
   {
     id: 'pmdd',
-    title: 'PMDD: premenstrual dysphoric disorder',
+    title: 'PMDD: Premenstrual Dysphoric Disorder',
     teaser: 'How PMDD differs from PMS, what causes it, and evidence-based treatments including SSRIs, hormonal options, and lifestyle support.',
   },
   {
     id: 'fibroids',
-    title: 'Uterine fibroids',
+    title: 'Uterine Fibroids',
     teaser: 'What fibroids are, why they cause heavy bleeding and pain, and the range of treatment options from watchful waiting to surgery.',
   },
   {
     id: 'iron-deficiency-anemia',
-    title: 'Iron deficiency and anemia from heavy periods',
+    title: 'Iron Deficiency & Anemia from Heavy Periods',
     teaser: 'How heavy periods deplete iron, symptoms to watch for, and how to address deficiency through diet, supplements, and treating the root cause.',
   },
   {
     id: 'ovarian-cysts',
-    title: 'Ovarian cysts',
+    title: 'Ovarian Cysts',
     teaser: "Most ovarian cysts are harmless and resolve on their own. Here's how to tell when monitoring is enough and when to seek care.",
   },
   {
     id: 'hormonal-birth-control',
-    title: 'Hormonal birth control: types, benefits and side effects',
+    title: 'Hormonal Birth Control: Types, Benefits & Side Effects',
     teaser: 'A plain-language guide to pills, patches, rings, shots, implants, and hormonal IUDs. How they work, what side effects to expect, and how to choose.',
   },
 ];

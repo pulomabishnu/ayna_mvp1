@@ -438,6 +438,12 @@ function PlaylistCover({ playlist }) {
 
 const pickWord = (n) => `${fmtCount(n)} ${n === 1 ? 'product' : 'products'}`;
 
+// Plain time-of-day greeting from the phone's clock.
+function greetingForNow(date = new Date()) {
+  const h = date.getHours();
+  return h < 5 ? 'Hi' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+}
+
 function ProfileHub({ authUserId, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, myProducts, savedProducts, readProgress, onOpen, onOpenSettings, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin, onOpenProduct, onOpenArticle, onOpenCommunity, quizDraft = null, onResumeQuiz, onStartOverQuiz }) {
   const { profile, stats, playlists } = useMyCommunity(authUserId);
   const [avatarFailed, setAvatarFailed] = useState(false);
@@ -466,7 +472,7 @@ function ProfileHub({ authUserId, name, initial, memberSince, ecosystemCount, sa
             {showPhoto ? <img src={publicMediaUrl(profile.avatar_url)} alt="" onError={() => setAvatarFailed(true)} /> : initial}
           </span>
           <span className="ay-you-names">
-            <h1>{name}</h1>
+            <h1><span className="ay-you-hello">{greetingForNow()},</span> {name}</h1>
             {profile?.username ? <span>@{profile.username}</span> : memberSince ? <span>{memberSince}</span> : null}
           </span>
         </div>
@@ -479,7 +485,7 @@ function ProfileHub({ authUserId, name, initial, memberSince, ecosystemCount, sa
         )}
         {signedIn && (
           <button type="button" className="ay-you-progress" onClick={onEditProfile} aria-label={`Health profile ${profileFilledPct}% filled in. Edit health profile.`}>
-            <span>Health profile {profileFilledPct}%</span>
+            <span>Health profile <b>{profileFilledPct}%</b> done</span>
             <i aria-hidden="true"><i style={{ width: `${profileFilledPct}%` }} /></i>
           </button>
         )}

@@ -24,7 +24,7 @@
 }
 
 /* ---- Pressed state: anything tappable answers within 100ms ---- */
-.ay-press { transition: transform var(--t-press) var(--ease-out), background-color var(--t-fast) var(--ease-in-out); -webkit-tap-highlight-color: transparent; }
+.ay-press { transition: transform var(--t-press) var(--ease-pop), background-color var(--t-fast) var(--ease-in-out); -webkit-tap-highlight-color: transparent; }
 .ay-press:active { transform: scale(.97); }
 
 /* ---- 1. Save (heart): fill and one 1 -> 1.18 -> 1 pop ---- */
@@ -90,3 +90,12 @@ html.ay-motion-paused .ay-reveal { opacity: 1; translate: none; transition: none
 /* ---- UI line icons (components/icons/UiIcons.jsx) sit on the text line ---- */
 .ay-ui-icon { flex: none; display: inline-block; vertical-align: -0.2em; }
 .ay-product-card__eco, .pdp-safety-flag, .ay-sl-pl-open { display: inline-flex; align-items: center; gap: 6px; }
+
+/* ---- Web buttons press too (scale .97, spring back), never lift more than 2px on hover ---- */
+.app-container :is(.ay-btn, .ay-chip, .ed-familiar__q a) { transition-property: transform, background-color, color, border-color, box-shadow; transition-duration: var(--t-press), var(--t-fast), var(--t-fast), var(--t-fast), var(--t-fast); transition-timing-function: var(--ease-pop), var(--ease-in-out), var(--ease-in-out), var(--ease-in-out), var(--ease-in-out); }
+.app-container :is(.ay-btn, .ay-chip):active:not(:disabled) { transform: scale(.97); }
+@media (prefers-reduced-motion: reduce) { .app-container :is(.ay-btn, .ay-chip):active { transform: none; } }
+
+/* Keyboard hint (⌘K in the search field). Only where there's a keyboard and a mouse. */
+.ay-kbd { position: absolute; right: 64px; top: 50%; translate: 0 -50%; padding: 3px 7px; border: 1.5px solid currentColor; border-radius: 6px; font: 600 12px/1 'Figtree', system-ui, sans-serif; opacity: .7; pointer-events: none; }
+@media (hover: none), (pointer: coarse) { .ay-kbd { display: none; } }

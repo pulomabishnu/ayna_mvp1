@@ -311,7 +311,7 @@ const ARTICLES = [
   {
     id: 'intimate-wash',
     image: '/articles/intimate-wash.webp',
-    title: 'Intimate washes',
+    title: 'Intimate Washes',
     source: 'UpToDate, ACOG, CDC',
     tags: ['Gynecology', 'Vulvovaginal health'],
     teaser: 'Why the vagina is self-cleaning, when to use (or skip) cleansers, and what OB-GYNs recommend for external care.',
@@ -338,7 +338,7 @@ const ARTICLES = [
   {
     id: 'heavy-bleeding',
     image: '/landing/articles-heavy-bleeding-satin.webp',
-    title: 'Heavy periods',
+    title: 'Heavy Menstrual Bleeding',
     source: 'UpToDate, ACOG, CDC',
     tags: ['Menstrual health', 'Clinical guidance'],
     teaser: 'What counts as heavy bleeding, possible causes, when to seek care, and how it’s evaluated and treated.',
@@ -359,7 +359,7 @@ const ARTICLES = [
   {
     id: 'menopause-basics',
     image: '/articles/menopause-basics.webp',
-    title: 'Menopause and perimenopause',
+    title: 'Menopause & Perimenopause',
     source: 'NAMS, UpToDate, ACOG',
     tags: ['Menopause', 'Hormone therapy'],
     teaser: 'What perimenopause and menopause are, common symptoms, and how hormone therapy and lifestyle changes can help.',
@@ -380,7 +380,7 @@ const ARTICLES = [
   {
     id: 'uti-prevention',
     image: '/articles/uti-prevention.webp',
-    title: 'UTI prevention',
+    title: 'UTI Prevention',
     source: 'UpToDate, NIH, CDC',
     tags: ['Urinary health', 'Prevention'],
     teaser: 'Evidence-backed ways to reduce UTI risk and when to see a clinician for recurrent infections.',
@@ -401,7 +401,7 @@ const ARTICLES = [
   {
     id: 'yeast-infection-basics',
     image: '/articles/yeast-infection-basics.webp',
-    title: 'Yeast infection basics',
+    title: 'Yeast Infection Basics',
     source: 'UpToDate, CDC, ACOG',
     tags: ['Vulvovaginal health', 'Infections'],
     teaser: 'What causes yeast infections, how to recognize them, when to treat at home vs. see a clinician, and how to prevent recurrence.',
@@ -422,7 +422,7 @@ const ARTICLES = [
   {
     id: 'period-pain-when-to-seek-care',
     image: '/landing/articles-period-pain-hotwater.webp',
-    title: 'Period pain: when to get checked',
+    title: 'Period Pain: When to Seek Care',
     source: 'ACOG, UpToDate, Mayo Clinic',
     tags: ['Menstrual health', 'Pain'],
     teaser: 'Normal cramps vs. signs that something else may be going on, and what treatments and workups clinicians may suggest.',
@@ -442,7 +442,7 @@ const ARTICLES = [
   {
     id: 'pcos-basics',
     image: '/landing/articles-pcos-mirror.webp',
-    title: 'PCOS: what it is and how it\'s treated',
+    title: 'PCOS: What It Is and How It\'s Managed',
     source: 'ACOG, Endocrine Society, UpToDate',
     tags: ['Hormones', 'Reproductive health'],
     teaser: 'Polycystic ovary syndrome explained. Diagnosis, symptoms, and evidence-based treatment options including lifestyle and medication.',
@@ -464,7 +464,7 @@ const ARTICLES = [
   {
     id: 'pelvic-floor-dysfunction',
     image: '/articles/pelvic-floor-dysfunction.webp',
-    title: 'Pelvic floor problems',
+    title: 'Pelvic Floor Dysfunction',
     source: 'ACOG, UpToDate, APTA',
     tags: ['Pelvic health', 'Physical therapy'],
     teaser: 'What the pelvic floor does, common symptoms of dysfunction, and how pelvic floor physical therapy and at-home tools can help.',
@@ -485,7 +485,7 @@ const ARTICLES = [
   {
     id: 'endometriosis-basics',
     image: '/articles/endometriosis-basics.webp',
-    title: 'Endometriosis: symptoms, diagnosis and care',
+    title: 'Endometriosis: Symptoms, Diagnosis, and Care',
     source: 'ACOG, EndoFound, UpToDate',
     tags: ['Chronic pain', 'Reproductive health'],
     teaser: 'What endometriosis is, how it\'s diagnosed, and treatment options. From pain management to surgery and fertility support.',
@@ -506,7 +506,7 @@ const ARTICLES = [
   {
     id: 'bacterial-vaginosis',
     image: '/articles/bacterial-vaginosis.webp',
-    title: 'Bacterial vaginosis (BV)',
+    title: 'Bacterial Vaginosis (BV)',
     source: 'CDC, ACOG, UpToDate',
     tags: ['Vaginal health', 'Infections'],
     teaser: 'What causes BV, how it differs from a yeast infection, treatment options, and why it tends to recur.',
@@ -527,7 +527,7 @@ const ARTICLES = [
   {
     id: 'pmdd',
     image: '/articles/pmdd.webp',
-    title: 'PMDD: premenstrual dysphoric disorder',
+    title: 'PMDD: Premenstrual Dysphoric Disorder',
     source: 'ACOG, IAPMD, UpToDate',
     tags: ['Mental health', 'Hormonal health'],
     teaser: 'How PMDD differs from PMS, what causes it, and evidence-based treatments including SSRIs, hormonal options, and lifestyle support.',
@@ -548,7 +548,7 @@ const ARTICLES = [
   {
     id: 'fibroids',
     image: '/articles/fibroids.webp',
-    title: 'Uterine fibroids',
+    title: 'Uterine Fibroids',
     source: 'ACOG, NIH, UpToDate',
     tags: ['Chronic conditions', 'Menstrual health'],
     teaser: 'What fibroids are, why they cause heavy bleeding and pain, and the range of treatment options from watchful waiting to surgery.',
@@ -569,7 +569,7 @@ const ARTICLES = [
   {
     id: 'iron-deficiency-anemia',
     image: '/articles/iron-deficiency-anemia.webp',
-    title: 'Iron deficiency and anemia from heavy periods',
+    title: 'Iron Deficiency & Anemia from Heavy Periods',
     source: 'ACOG, NIH, UpToDate',
     tags: ['Menstrual health', 'Nutrition'],
     teaser: 'How heavy periods deplete iron, symptoms to watch for, and how to address deficiency through diet, supplements, and treating the root cause.',
@@ -590,7 +590,7 @@ const ARTICLES = [
   {
     id: 'ovarian-cysts',
     image: '/articles/ovarian-cysts.webp',
-    title: 'Ovarian cysts',
+    title: 'Ovarian Cysts',
     source: 'ACOG, Mayo Clinic, UpToDate',
     tags: ['Reproductive health', 'Pelvic health'],
     teaser: 'Most ovarian cysts are harmless and resolve on their own. Here\'s how to tell when monitoring is enough and when to seek care.',
@@ -611,7 +611,7 @@ const ARTICLES = [
   {
     id: 'hormonal-birth-control',
     image: '/articles/hormonal-birth-control.webp',
-    title: 'Hormonal birth control: types, benefits and side effects',
+    title: 'Hormonal Birth Control: Types, Benefits & Side Effects',
     source: 'ACOG, Planned Parenthood, UpToDate',
     tags: ['Contraception', 'Hormonal health'],
     teaser: 'A plain-language guide to pills, patches, rings, shots, implants, and hormonal IUDs. How they work, what side effects to expect, and how to choose.',
@@ -632,7 +632,7 @@ const ARTICLES = [
   {
     id: 'postpartum-stretch-marks',
     image: '/articles/postpartum-stretch-marks/glitter.webp',
-    title: 'Can you actually improve postpartum stretch marks and scars? I looked at the research behind the 5 MOST popular treatments',
+    title: 'Can You Actually Improve Postpartum Stretch Marks and Scars? I Looked at the Research Behind 5 MOST Popular Treatments',
     source: 'Geena Yousry, MS1 · Cochrane, Dermatologic Surgery, Actas Dermo-Sifiliográficas',
     tags: ['Postpartum', 'Skin'],
     teaser: 'From viral belly oils to prescription retinoids, here’s what actually works, what’s mostly marketing, and what the research says.',

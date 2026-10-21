@@ -23,7 +23,8 @@
 
 /* ---- Pressed state for anything tappable (no grey tap flash) ---- */
 .ayna-mobile { -webkit-tap-highlight-color: transparent; }
-.ayna-mobile :is(button, a, [role='button'], summary):not(:disabled):not(.ay-sheet-grabber):not([aria-disabled='true']) { transition-property: transform, background-color, color, border-color, box-shadow, opacity; transition-duration: var(--t-press), var(--t-fast), var(--t-fast), var(--t-fast), var(--t-fast), var(--t-fast); transition-timing-function: var(--ease-out); }
+.ayna-mobile :is(button, a, [role='button'], summary):not(:disabled):not(.ay-sheet-grabber):not([aria-disabled='true']) { transition-property: transform, background-color, color, border-color, box-shadow, opacity; transition-duration: var(--t-press), var(--t-fast), var(--t-fast), var(--t-fast), var(--t-fast), var(--t-fast); transition-timing-function: var(--ease-pop), var(--ease-in-out), var(--ease-in-out), var(--ease-in-out), var(--ease-in-out), var(--ease-in-out); }
+/* Press: a quick .97 squeeze that settles back with a small spring (--ease-pop, max 1.2). */
 .ayna-mobile :is(button, a, [role='button']):not(:disabled):not(.ay-sheet-grabber):not(.ayna-slide-start-handle):active { transform: scale(.97); }
 /* Chrome text never selects or pops the iOS callout on long-press */
 .ayna-mobile :is(button, nav, header, .ayna-bottom-nav) { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
@@ -54,3 +55,16 @@
 .ayna-mobile .ay-plain-btn { -webkit-appearance: none; appearance: none; margin: 0; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: inherit; line-height: inherit; letter-spacing: inherit; cursor: pointer; }
 .ayna-mobile .ay-plain-btn.is-block { display: flex; width: 100%; text-align: left; }
 .ayna-mobile .ay-plain-btn:focus-visible { outline: 2px solid var(--ay-ink); outline-offset: 2px; }
+
+/* ---- Finish: one film-grain layer for the app (see src/styles/finish.css) ----
+   Replaces the two SVG grains layered by tokens.css and app-polish.css. */
+.ayna-mobile:is(#ay, .ayna-mobile)::after { display: block !important; content: ''; position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; background: var(--grain-light) repeat 0 0 / 160px 160px !important; opacity: var(--grain-opacity) !important; mix-blend-mode: normal !important; }
+.ayna-mobile:is(#ay, .ayna-mobile)[data-theme='dark']::after { background-image: var(--grain-dark) !important; opacity: var(--grain-opacity-dark) !important; }
+.ayna-mobile:is(#ay, .ayna-mobile)[data-preview='true']::after { position: absolute; }
+@media (prefers-reduced-transparency: reduce) { .ayna-mobile:is(#ay, .ayna-mobile)::after { display: none !important; } }
+/* Matte: blur only on the tab bar; sheets dim instead. */
+.ayna-mobile :is(*, *::before, *::after):not(.ayna-bottom-nav) { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+
+/* You: a plain greeting above the name; the name stays the big, heavy line. */
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-you-names h1 .ay-you-hello { display: block; margin-bottom: 4px; font: 500 calc(15px * var(--ayna-text-scale, 1))/1.2 var(--ay-font-ui) !important; letter-spacing: 0; color: inherit !important; opacity: .8; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-you-progress b { font-weight: 700; }

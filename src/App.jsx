@@ -1486,6 +1486,23 @@ function App() {
     setCurrentView('discovery');
   };
   const handleViewHowWeMakeMoney = () => setCurrentView('how-we-make-money');
+  // Cmd/Ctrl+K focuses the search on this page, or opens the Shop search.
+  const viewDiscoveryRef = useRef(handleViewDiscovery);
+  viewDiscoveryRef.current = handleViewDiscovery;
+  useEffect(() => {
+    const onKey = (e) => {
+      if (!(e.metaKey || e.ctrlKey) || e.altKey || e.shiftKey || String(e.key).toLowerCase() !== 'k') return;
+      e.preventDefault();
+      const focusSearch = () => {
+        const input = [...document.querySelectorAll('input[type="search"], [role="search"] input')].find((el) => el.offsetParent !== null);
+        if (input) { input.focus(); input.select?.(); return true; }
+        return false;
+      };
+      if (!focusSearch()) { viewDiscoveryRef.current(''); window.setTimeout(focusSearch, 350); }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
   const handleViewHowItWorks = () => setCurrentView('how-it-works');
   const handleViewAbout = () => setCurrentView('about');
   const handleViewContact = () => setCurrentView('contact');

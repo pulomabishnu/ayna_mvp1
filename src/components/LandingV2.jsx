@@ -17,7 +17,7 @@ import { useReveal } from '../hooks/useReveal.js';
 
 /* The website home. Story order (design direction, "Homepage"):
  *   what   hero (display, See my matches, search), partner brands, this week's picks
- *   why    your counter, decoded
+ *   why    does this sound familiar (need tiles), one plain statement
  *   shop   shop by need (dark band) with the photo strip
  *   how    four steps
  *   proof  how we grade evidence, short reads, community (the sky band), who we are
@@ -81,6 +81,7 @@ function Search({ onSearch }) {
           onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
         />
         {!q && <span className="ed-search__hint" aria-hidden="true">Search <b key={i}>{SEARCH_HINTS[i]}</b></span>}
+        {!q && !focused && <kbd className="ay-kbd" aria-hidden="true">{/Mac|iPhone|iPad/.test(typeof navigator !== 'undefined' ? navigator.platform || navigator.userAgent : '') ? '⌘K' : 'Ctrl K'}</kbd>}
       </label>
       <button type="submit" aria-label="Search"><Arrow /></button>
     </form>
@@ -225,42 +226,6 @@ function Statement() {
   );
 }
 
-/* ---------- why: one counter photo, four parts ---------- */
-const WHY = [
-  { t: 'Matched to your body', d: 'See how well each product fits you, based on what you tell us.' },
-  { t: 'Evidence beside each pick', d: 'What the research says, with sources, right next to the product.' },
-  { t: 'Real experiences', d: 'Posts from women who have actually used it.' },
-  { t: 'Your whole routine', d: 'Save what you use and see what fits next.' },
-];
-const SPOTS = [['27%', '24%'], ['74%', '40%'], ['20%', '66%'], ['88%', '56%']];
-
-function Why() {
-  const reveal = useReveal('home-why');
-  return (
-    <section className="ed-wrap ed-sec" aria-labelledby="ed-why-title">
-      <div className="ed-why">
-        <figure ref={reveal} className="ed-why__photo ay-frame">
-          <img src="/landing/hiw-ecosystem-vanity.webp" alt="A marble bathroom vanity by candlelight, skincare and makeup laid out around the sink" loading="lazy" />
-          {SPOTS.map(([left, top], i) => <span key={left} className="ed-why__spot" style={{ left, top }} aria-hidden="true">{i + 1}</span>)}
-        </figure>
-        <div>
-          <h2 id="ed-why-title" className="ed-h2">What ayna does</h2>
-          <p className="ed-meta" style={{ marginTop: 8 }}>The numbers on the photo match the list.</p>
-          <ol className="ed-why__list">
-            {WHY.map((w, i) => (
-              <li key={w.t}>
-                <span className="ed-why__n" aria-hidden="true">{i + 1}</span>
-                <h3 className="ed-rowtitle">{w.t}</h3>
-                <p>{w.d}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /* ---------- shop by need: the dark band, then the photo strip ---------- */
 function ShopBand({ onOpenProduct, onViewDiscovery }) {
   const needs = useMemo(() => MACRO_GROUPS.filter((g) => g.id !== 'all')
@@ -381,9 +346,9 @@ function Evidence({ onViewArticles }) {
 
 /* ---------- reads: today's word + the three reads that earn trust ---------- */
 const LEAD_READS = [
-  { id: 'heavy-bleeding', title: 'Heavy periods', teaser: 'What counts as heavy bleeding, possible causes, when to seek care, and how it’s evaluated.', source: 'UpToDate · ACOG · CDC', src: '/landing/articles-heavy-bleeding-satin.webp', alt: 'Pads and tampons scattered on red satin' },
-  { id: 'period-pain-when-to-seek-care', title: 'Period pain: when to get checked', teaser: 'Normal cramps vs. signs that something else may be going on, and what clinicians may suggest.', source: 'ACOG · UpToDate · Mayo Clinic', src: '/landing/articles-period-pain-hotwater.webp', alt: 'A woman in striped pajamas holding a hot water bottle' },
-  { id: 'pcos-basics', title: 'PCOS: what it is and how it’s treated', teaser: 'Diagnosis, symptoms, and evidence-based treatment, including lifestyle and medication.', source: 'ACOG · Endocrine Society · UpToDate', src: '/landing/articles-pcos-mirror.webp', alt: 'Red lips reflected in a small red compact mirror' },
+  { id: 'heavy-bleeding', title: 'Heavy Menstrual Bleeding', teaser: 'What counts as heavy bleeding, possible causes, when to seek care, and how it’s evaluated.', source: 'UpToDate · ACOG · CDC', src: '/landing/articles-heavy-bleeding-satin.webp', alt: 'Pads and tampons scattered on red satin' },
+  { id: 'period-pain-when-to-seek-care', title: 'Period Pain: When to Seek Care', teaser: 'Normal cramps vs. signs that something else may be going on, and what clinicians may suggest.', source: 'ACOG · UpToDate · Mayo Clinic', src: '/landing/articles-period-pain-hotwater.webp', alt: 'A woman in striped pajamas holding a hot water bottle' },
+  { id: 'pcos-basics', title: 'PCOS: What It Is and How It’s Managed', teaser: 'Diagnosis, symptoms, and evidence-based treatment, including lifestyle and medication.', source: 'ACOG · Endocrine Society · UpToDate', src: '/landing/articles-pcos-mirror.webp', alt: 'Red lips reflected in a small red compact mirror' },
 ];
 function Reads({ onViewArticle, onViewArticles }) {
   const fact = useMemo(() => { try { return getDailyFact(); } catch { return null; } }, []);
@@ -537,7 +502,6 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
       <Picks onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={personal?.topPicks || null} />
       {!personal && <Familiar onSearch={onSearch} onStartQuiz={onStartQuiz} />}
       <Statement />
-      <Why />
       <ShopBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
       <How onViewHowItWorks={onViewHowItWorks} />
       <Evidence onViewArticles={onViewArticles} />
