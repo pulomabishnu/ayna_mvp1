@@ -564,7 +564,8 @@ html body .app-container.app-container.app-container.app-container {
     .cm-side { grid-template-columns: minmax(0, 1fr); }
     .cm-post { padding: var(--ay-s12) var(--ay-s16) var(--ay-s4) !important; }
     .cm-composer { padding: var(--ay-s12) var(--ay-s16) var(--ay-s4) !important; }
-    .cm-composer-kinds { margin-left: 0; overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
+    .cm-composer-kinds { margin-left: 0; display: grid !important; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0 !important; }
+    .cm-composer-kinds button { padding: 0 2px !important; font-size: 13px !important; }
     .cm-join__fields { grid-template-columns: 1fr; }
     .cm-pl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .cm-pl-hero { grid-template-columns: 112px minmax(0, 1fr); gap: var(--ay-s16); align-items: center; }
