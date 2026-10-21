@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import '../styles/free-product.css';
 import { adminAction, getAdminOverview } from './freeProduct/campaignClient';
-import { FEEDBACK_QUESTIONS, FULFILLMENT_LABELS, REFERRAL_STATUS_LABELS } from '../utils/freeProductCampaign';
+import { FEEDBACK_QUESTIONS, FULFILLMENT_LABELS, REFERRAL_STATUS_LABELS, feedbackAsText, feedbackByQuestion } from '../utils/freeProductCampaign';
 
 /**
  * Internal view of the free product campaign: /admin/campaign. Not linked from
@@ -29,6 +29,50 @@ function downloadCsv(people) {
   a.download = `free-product-campaign-${new Date().toISOString().slice(0, 10)}.csv`;
   a.click();
   URL.revokeObjectURL(a.href);
+}
+
+/** Every answer, grouped by question, so the team can read them without opening people one by one. */
+function AllFeedback({ people }) {
+  const [tab, setTab] = useState(FEEDBACK_QUESTIONS[0].key);
+  const [search, setSearch] = useState('');
+  const [copied, setCopied] = useState(false);
+  const groups = feedbackByQuestion(people, { search });
+  const totals = Object.fromEntries(feedbackByQuestion(people).map((g) => [g.key, g.answers.length]));
+  const group = groups.find((g) => g.key === tab) || groups[0];
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(feedbackAsText(group)); setCopied(true); window.setTimeout(() => setCopied(false), 2000); } catch { /* clipboard blocked */ }
+  };
+  return (
+    <section className="fp-section" aria-labelledby="fp-allfb-h">
+      <div className="fp-section__head"><h2 id="fp-allfb-h">All feedback</h2><p>Every answer people wrote, newest first. Answers still being written are marked in progress.</p></div>
+      <div className="fp-panel fp-allfb">
+        <div className="fp-allfb__bar">
+          <div className="fp-allfb__tabs" role="tablist" aria-label="Question">
+            {FEEDBACK_QUESTIONS.map((q) => (
+              <button key={q.key} type="button" role="tab" aria-selected={tab === q.key} className={tab === q.key ? 'is-on' : ''} onClick={() => setTab(q.key)}>
+                {q.title} <span>{totals[q.key] || 0}</span>
+              </button>
+            ))}
+          </div>
+          <input type="search" className="fp-allfb__search" placeholder="Search answers or emails" aria-label="Search answers or emails" value={search} onChange={(e) => setSearch(e.target.value)} />
+        </div>
+        <p className="fp-allfb__q">{group.question}</p>
+        {group.answers.length ? (
+          <>
+            <ul className="fp-allfb__list">
+              {group.answers.map((a) => (
+                <li key={a.userId}>
+                  <p>{a.response}</p>
+                  <small>{a.email}{a.updatedAt ? ` · ${new Date(a.updatedAt).toLocaleString()}` : ''}{a.complete ? '' : ' · in progress'}</small>
+                </li>
+              ))}
+            </ul>
+            <button type="button" className="fp-btn is-ghost" onClick={copy}>{copied ? 'Copied' : `Copy all ${group.answers.length}`}</button>
+          </>
+        ) : <p className="fp-allfb__empty">{search ? 'No answers match.' : 'No answers yet.'}</p>}
+      </div>
+    </section>
+  );
 }
 
 export default function CampaignAdminPage({ onBack }) {
@@ -105,6 +149,8 @@ export default function CampaignAdminPage({ onBack }) {
           <li key={k} className="fp-step" style={{ padding: 16 }}><h2>{k}</h2><p className="fp-step__big">{v}</p></li>
         ))}
       </ul>
+
+      <AllFeedback people={data.people} />
 
       <section className="fp-section">
         <div className="fp-section__head"><h2>Reward pool</h2><p>Only these products can be won. A product with 0 left is never offered.</p></div>
