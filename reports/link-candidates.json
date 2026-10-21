@@ -1,14 +1,34 @@
 {
- "generated_at": "2026-10-21T09:08:18.252Z",
+ "generated_at": "2026-10-21T09:19:02.559Z",
  "site": "https://www.aynahealth.co",
  "external": [
   {
-   "url": "https://www.health.columbia.edu/content/individual-counseling",
+   "url": "https://plannedparenthooddirect.org/",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.plannedparenthood.org/planned-parenthood-direct",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://www.nichd.nih.gov/health/topics/menopause",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.nichd.nih.gov/health/topics/menopause",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://health.columbia.edu/content/individual-counseling",
    "files": [
     "candidates"
    ],
    "status": 403,
-   "final_url": "https://www.health.columbia.edu/content/individual-counseling",
+   "final_url": "https://health.columbia.edu/content/individual-counseling",
    "state": "blocked",
    "via": "browser",
    "captcha": false,
@@ -19,110 +39,12 @@
     "timestamp": "20260329214227",
     "url": "http://web.archive.org/web/20260329214227/https://www.health.columbia.edu/content/individual-counseling"
    }
-  },
-  {
-   "url": "https://www.cdc.gov/folic-acid/about/index.html",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://www.cdc.gov/folic-acid/about/index.html",
-   "state": "ok",
-   "via": "browser",
-   "captcha": false,
-   "title": "About Folic Acid | Folic Acid | CDC",
-   "fetch_status": 403
-  },
-  {
-   "url": "https://www.apa.org/topics/psychotherapy/online-therapy",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://www.apa.org/topics/psychotherapy/online-therapy",
-   "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://www.mayoclinic.org/diseases-conditions/hot-flashes/diagnosis-treatment/drc-20352795",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://www.mayoclinic.org/diseases-conditions/hot-flashes/diagnosis-treatment/drc-20352795",
-   "state": "ok",
-   "via": "browser",
-   "captcha": false,
-   "title": "Hot flashes - Diagnosis and treatment - Mayo Clinic",
-   "fetch_status": 403
-  },
-  {
-   "url": "https://tienda.fisaude.com/files/Product_Sheet_LWE_ES_EU_20170425%20(2).pdf",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://tienda.fisaude.com/files/Product_Sheet_LWE_ES_EU_20170425%20(2).pdf",
-   "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://www.re-spin.com/products/mini-let-s-spin%E2%84%A2-intimacy-gel",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://www.re-spin.com/products/mini-let-s-spin%E2%84%A2-intimacy-gel",
-   "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://divacup.com/give-the-divacup-some-tlc/",
-   "files": [
-    "candidates"
-   ],
-   "status": 404,
-   "final_url": "https://shopdiva.com/give-the-divacup-some-tlc/",
-   "state": "broken",
-   "via": "browser",
-   "captcha": false,
-   "title": "404 Not Found – DIVA US",
-   "fetch_status": 404,
-   "wayback": {
-    "status": "200",
-    "timestamp": "20230925083639",
-    "url": "http://web.archive.org/web/20230925083639/https://divacup.com/give-the-divacup-some-tlc/"
-   }
-  },
-  {
-   "url": "https://divacup.com/products/model-2/",
-   "files": [
-    "candidates"
-   ],
-   "status": 200,
-   "final_url": "https://shopdiva.com/products/diva-cup-model-2",
-   "state": "ok",
-   "via": "fetch"
-  },
-  {
-   "url": "https://divacup.com/all-about-menstrual-cups-for-beginners/",
-   "files": [
-    "candidates"
-   ],
-   "status": 404,
-   "final_url": "https://shopdiva.com/all-about-menstrual-cups-for-beginners/",
-   "state": "broken",
-   "via": "browser",
-   "captcha": false,
-   "title": "404 Not Found – DIVA US",
-   "fetch_status": 404,
-   "wayback": null
   }
  ],
  "internal": [],
  "summary": {
-  "external": 9,
-  "external_broken": 2,
+  "external": 3,
+  "external_broken": 0,
   "external_unverified": 1,
   "internal": 0,
   "internal_broken": 0,
