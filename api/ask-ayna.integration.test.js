@@ -78,6 +78,27 @@ describe('POST /api/ask-ayna', () => {
     expect(res.body.profileUpdate.frustrations).toEqual(['Painful cramps']);
   });
 
+  it('returns only whitelisted followUps', async () => {
+    globalThis.fetch = vi.fn(async () => anthropicOk(jsonReply({
+      answer: 'Heat helps, and the Elaris Pod in your Ecosystem is a solid option.',
+      followUps: [
+        { type: 'open_product', productId: 'p-sootheher-elaris-pod' },
+        { type: 'open_product', productId: 'p-invented' },
+        { type: 'open_url', url: 'https://x.example' },
+        { type: 'ask', text: 'What helps on day 2?' },
+        { type: 'open_dashboard' },
+      ],
+    })));
+    const res = mockRes();
+    await (await loadHandler())(mockReq({ body: { message: 'What helps during my period?', ecosystemProducts: [{ id: 'p-sootheher-elaris-pod', name: 'Elaris Pod' }] } }), res);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.followUps).toEqual([
+      { type: 'open_product', productId: 'p-sootheher-elaris-pod', label: 'Open Elaris Pod' },
+      { type: 'ask', text: 'What helps on day 2?', label: 'What helps on day 2?' },
+    ]);
+  });
+
   it('rejects a request with no message', async () => {
     const res = mockRes();
     await (await loadHandler())(mockReq({ body: {} }), res);

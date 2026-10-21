@@ -6,6 +6,8 @@ import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import ShareAnswerButton from './ShareAnswerButton.jsx';
 import { questionForAnswer } from '../utils/sharedAnswer.js';
 import { getAppSessionId } from '../utils/conversationId';
+import AskFollowUps from './AskFollowUps.jsx';
+import { chipsFor, followUpRequestFields } from '../utils/askFollowUps.js';
 
 /** Merges a profileUpdate the backend returned into the current profile, deduping against what's already there. */
 function mergeProfileUpdate(currentProfile, update) {
@@ -68,7 +70,7 @@ function buildWelcome() {
   }];
 }
 
-export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery, onViewRecommendations, openSignal = 0, prefill = '', onRequireAuth }) {
+export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery, onViewRecommendations, openSignal = 0, prefill = '', onRequireAuth, products = {}, hasHealthData = false, resolveProduct = null, onOpenProduct = null, onOpenDashboard = null, onOpenRead = null }) {
   const firstName = getFirstName(user);
   const [open, setOpen] = useState(false);
   // The header's Ask ayna button bumps openSignal to open the chat.
@@ -91,6 +93,10 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
   const [speaking, setSpeaking] = useState(false);
   const bottomRef = useRef(null);
   const formRef = useRef(null);
+  const inputRef = useRef(null);
+  // Reads she could be pointed to, ranked for her. Articles is a lazy chunk
+  // on the website, so it loads only once the panel is opened.
+  const [reads, setReads] = useState([]);
   const autoSubmitVoiceRef = useRef(false);
   const lastSpokenRef = useRef('');
   const speech = useSpeechToText();
@@ -279,6 +285,28 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     setSpeaking(false);
   }, [mode, open]);
 
+  useEffect(() => {
+    if (!open || reads.length) return undefined;
+    let cancelled = false;
+    Promise.all([import('./Articles.jsx'), import('../mobile/utils/personalReads.js')])
+      .then(([a, r]) => {
+        if (cancelled) return;
+        const ranked = r.rankReadsForProfile(a.ARTICLES || [], profile || {});
+        setReads(ranked.slice(0, 12).map((x) => ({ id: x.id, title: x.title })));
+      })
+      .catch(() => { /* reads unavailable: no read chips */ });
+    return () => { cancelled = true; };
+  }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const runFollowUp = (f) => {
+    if (f.type === 'ask') { sendText(f.text); return; }
+    if (f.type === 'ask_else') { inputRef.current?.focus({ preventScroll: true }); return; }
+    if (f.type === 'open_product') { const p = resolveProduct?.(f.productId); if (p) { setOpen(false); onOpenProduct?.(p); } return; }
+    if (f.type === 'browse') { setOpen(false); onNavigateToDiscovery?.({ initialCategory: f.intent?.category || null, query: f.intent?.category ? '' : (f.intent?.query || '') }); return; }
+    if (f.type === 'open_dashboard') { setOpen(false); onOpenDashboard?.(); return; }
+    if (f.type === 'open_library') { setOpen(false); onOpenRead?.(f.articleId); }
+  };
+
   const handleSend = (e) => { e.preventDefault(); sendText(input.trim()); };
   // retryOf: index of a failed-answer bubble to replace when retrying.
   const sendText = async (msg, retryOf = null) => {
@@ -302,6 +330,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
           profileSummary: summarizeProfile(profile || {}),
           chatHistory: messages.slice(-6),
           conversationId: getAppSessionId(),
+          ...followUpRequestFields({ products, reads, hasHealthData }),
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -309,7 +338,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
       if (res.status === 429) throw Object.assign(new Error('weekly_limit_reached'), { code: 'weekly_limit_reached' });
       if (!res.ok || !data?.answer) throw new Error(data?.error || 'Could not get an answer right now.');
 
-      const newMessages = [...messagesWithUser, { role: 'assistant', text: data.answer }];
+      const newMessages = [...messagesWithUser, { role: 'assistant', text: data.answer, followUps: Array.isArray(data.followUps) ? data.followUps : [] }];
 
       // Nothing happens without her tap: a profile change is OFFERED with
       // Add / Not now, and a browse suggestion is a button, never an
@@ -481,6 +510,16 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
                       surface="web"
                     />
                   )}
+                  {m.role === 'assistant' && !m.failed && !m.starters && questionForAnswer(messages, i) && (
+                    <AskFollowUps
+                      chips={chipsFor(m.followUps, {
+                        hasDashboard: !!onOpenDashboard,
+                        canOpen: (f) => (f.type === 'open_product' ? !!(onOpenProduct && resolveProduct?.(f.productId)) : !!(onOpenRead && reads.some((r) => r.id === f.articleId))),
+                      })}
+                      disabled={sending}
+                      onAction={runFollowUp}
+                    />
+                  )}
                   {m.failed && (
                     <div className="ayna-ask-actions">
                       <button type="button" className="is-primary" onClick={() => sendText(m.question, i)}>Retry</button>
@@ -511,6 +550,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
           <form ref={formRef} className="ayna-ask-panel__composer" onSubmit={handleSend}>
             <div className="ayna-ask-panel__inputrow">
               <input
+                ref={inputRef}
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
