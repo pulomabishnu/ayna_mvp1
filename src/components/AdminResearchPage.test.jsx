@@ -14,7 +14,8 @@ describe('AdminResearchPage', () => {
     globalThis.fetch = vi.fn(async () => ({ status: 200, json: async () => ({ drafts }) }));
     const { default: Page } = await import('./AdminResearchPage.jsx');
     const el = document.createElement('div'); document.body.appendChild(el);
-    await act(async () => { createRoot(el).render(<Page onBack={() => {}} />); });
+    const root = createRoot(el);
+    await act(async () => { root.render(<Page onBack={() => {}} />); });
     await act(async () => { await new Promise((r) => setTimeout(r, 20)); });
     const text = el.textContent;
     expect(text).toContain('Waiting for review (1)');
@@ -22,5 +23,8 @@ describe('AdminResearchPage', () => {
     expect(text).toContain('Approve');
     expect(text).toMatch(/Products with empty sections \(\d+\)/);
     expect(text).toContain('Research this product');
+    // Unmount so no React work is left scheduled after jsdom is torn down
+    // (it surfaced as an intermittent "window is not defined" in full runs).
+    await act(async () => { root.unmount(); });
   }, 20000);
 });
