@@ -9,6 +9,7 @@ import ShareAnswerButton from '../../components/ShareAnswerButton.jsx';
 import { questionForAnswer } from '../../utils/sharedAnswer.js';
 import AskFollowUps from '../../components/AskFollowUps.jsx';
 import { chipsFor, followUpRequestFields } from '../../utils/askFollowUps.js';
+import { fetchWithTimeout } from '../../utils/network.js';
 
 /**
  * Mobile port of ProfileChatbot's merge/summary logic
@@ -153,7 +154,7 @@ export default function AskAynaModal({
     try {
       const token = session?.access_token;
       if (!token) throw Object.assign(new Error('not_signed_in'), { code: 'not_signed_in' });
-      const res = await fetch(apiUrl('/api/ask-ayna'), {
+      const res = await fetchWithTimeout(apiUrl('/api/ask-ayna'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({

@@ -34,6 +34,7 @@ import { markPerf } from '../utils/perfTimings';
 import { normalizeRating, ratingLabel } from '../utils/community/reviewRatings.js';
 import '../styles/verify-content.css';
 import { apiUrl } from '../utils/apiUrl';
+import { fetchWithTimeout } from '../utils/network.js';
 
 // The app's Community, built for the website. Same data and rules (shared
 // community store, ranking, topics, guest posting). Three columns on wide
@@ -1240,7 +1241,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
           setTopicState('sending');
           // Same anonymous path as the app (api/suggestions.js, kind 'topic'): no name or account sent.
           try {
-            const res = await fetch(apiUrl('/api/suggestions'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'omit', body: JSON.stringify({ kind: 'topic', topic: topicName.trim(), reason: topicWhy.trim(), context: 'community', platform: 'web' }) });
+            const res = await fetchWithTimeout(apiUrl('/api/suggestions'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'omit', body: JSON.stringify({ kind: 'topic', topic: topicName.trim(), reason: topicWhy.trim(), context: 'community', platform: 'web' }) });
             setTopicState(res.ok ? 'sent' : 'error');
           } catch { setTopicState('error'); }
         }}>{topicState === 'sending' ? 'Sending…' : 'Send suggestion'}</button></div>

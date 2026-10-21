@@ -22,7 +22,7 @@ import { readMetrics } from './_healthStore.js';
 import { buildInsights } from '../src/health/insights.js';
 import { SITE } from './_email.js';
 import { isSmsConfigured, sendSms } from './_twilio.js';
-import { canText, countEventsToday, etDay, logSmsEvent, prefsFromRow } from './_smsStore.js';
+import { canText, claimReminderDay, countEventsToday, etDay, prefsFromRow } from './_smsStore.js';
 
 export const PERIOD_TEXT = `ayna: your next period may start in about 3 days. Restock your period products? ${SITE}/shop`;
 export const CHECKIN_TEXT = `ayna: your monthly check-in is ready. ${SITE}/you`;
@@ -90,8 +90,8 @@ export default async function handler(req, res) {
             if (await countEventsToday(admin, sub.user_id, 'reminder', now) > 0) { stats.skipped += 1; continue; }
             const pick = await pickReminder(admin, sub.user_id, prefsFromRow(sub), today);
             if (!pick) { stats.skipped += 1; continue; }
-            // Logged before sending, so a retry of this cron run can never double-text her.
-            await logSmsEvent(admin, sub.user_id, 'reminder', { type: pick.kind });
+            // Claimed before sending, so a retry or an overlapping run of this cron can never double-text her.
+            if (!(await claimReminderDay(admin, sub.user_id, today, pick.kind))) { stats.skipped += 1; continue; }
             const out = await sendSms(phone.phone_number, pick.body);
             if (out.ok) stats.sent += 1; else stats.failed += 1;
           } catch (e) {

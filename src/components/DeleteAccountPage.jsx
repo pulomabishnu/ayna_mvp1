@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import posthog from 'posthog-js';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { deleteAllSavedRecordsOnDevice } from '../health/records.js';
+import { fetchWithTimeout } from '../utils/network.js';
 
 const REASON_OPTIONS = [
   'Not what I expected',
@@ -189,7 +190,7 @@ export default function DeleteAccountPage({ onBack }) {
         });
       } catch { /* analytics unavailable */ }
 
-      const res = await fetch('/api/account-delete', {
+      const res = await fetchWithTimeout('/api/account-delete', {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,

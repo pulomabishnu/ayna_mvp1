@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { apiUrl } from '../utils/apiUrl.js';
 import { EdPage } from './editorial/EdPage';
+import { fetchWithTimeout } from '../utils/network.js';
 
 // Values the server accepts (api/contact.js); LABELS is how they read here.
 const LABELS = { 'Help & Support': 'Help and support', 'Feedback or Feature Request': 'Feedback or an idea', 'Press & Media': 'Press and media' };
@@ -55,7 +56,7 @@ export default function Contact({ onBack, user = null }) {
     setError('');
 
     try {
-      const response = await fetch(apiUrl('/api/contact'), {
+      const response = await fetchWithTimeout(apiUrl('/api/contact'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         // One field fewer: the subject line is the start of the message.

@@ -7,6 +7,7 @@
 // not create a session of its own.
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { apiUrl } from '../../utils/apiUrl.js';
+import { fetchWithTimeout } from '../../utils/network.js';
 
 export class NotSignedInError extends Error {
   constructor() {
@@ -25,7 +26,7 @@ async function getAccessToken() {
 async function authedFetch(path, options = {}) {
   const token = await getAccessToken();
   if (!token) throw new NotSignedInError();
-  const res = await fetch(apiUrl(path), {
+  const res = await fetchWithTimeout(apiUrl(path), {
     ...options,
     headers: {
       'Content-Type': 'application/json',

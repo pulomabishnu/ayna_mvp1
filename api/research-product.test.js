@@ -61,7 +61,7 @@ describe('admin gate', () => {
   afterEach(() => { restore?.(); globalThis.__mockAdmin = undefined; });
   function admin(email) {
     return {
-      auth: { getUser: vi.fn(async () => ({ data: { user: { id: 'u', email } }, error: null })) },
+      auth: { getUser: vi.fn(async () => ({ data: { user: { id: 'u', email, email_confirmed_at: '2026-10-01T00:00:00Z' } }, error: null })) },
       from: () => ({ select: () => ({ order: () => ({ limit: async () => ({ data: [], error: null }) }) }) }),
     };
   }

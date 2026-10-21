@@ -10,7 +10,7 @@
  *   POST { action: 'campaign', state: 'launch'|'pause'|'resume'|'end' }
  */
 import { verifyUser } from './_usageLimit.js';
-import { isAdminEmail, rpc, setPrivateHeaders } from './_campaign.js';
+import { isCampaignAdmin, rpc, setPrivateHeaders } from './_campaign.js';
 import { sendCampaignEmail, shippedEmail } from './_campaignEmail.js';
 import { CAMPAIGN_ID } from '../src/utils/freeProductCampaign.js';
 
@@ -31,7 +31,7 @@ export default async function handler(req, res) {
   const { user, error, admin } = await verifyUser(req);
   if (error === 'server_misconfigured' || error === 'auth_error') return res.status(503).json({ error: 'unavailable' });
   if (error || !user) return res.status(401).json({ error: 'auth_required' });
-  if (!isAdminEmail(user.email)) return res.status(403).json({ error: 'forbidden' });
+  if (!isCampaignAdmin(user)) return res.status(403).json({ error: 'forbidden' });
 
   try {
     if (req.method === 'GET') {

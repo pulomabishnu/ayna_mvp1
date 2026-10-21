@@ -10,6 +10,7 @@
  */
 import { getSupabaseClient } from './supabaseClient.js';
 import { apiUrl } from './apiUrl.js';
+import { fetchWithTimeout } from './network.js';
 
 export class SmsApiError extends Error {
   constructor(code, status) { super(code); this.code = code; this.status = status; }
@@ -27,7 +28,7 @@ async function call(method, body) {
   if (!t) throw new SmsApiError('not_signed_in', 401);
   let res;
   try {
-    res = await fetch(apiUrl(method === 'GET' ? '/api/sms?action=status' : '/api/sms'), {
+    res = await fetchWithTimeout(apiUrl(method === 'GET' ? '/api/sms?action=status' : '/api/sms'), {
       method,
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
       ...(body ? { body: JSON.stringify(body) } : {}),

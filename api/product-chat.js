@@ -6,6 +6,7 @@
 /* global process */
 import { loadGroundingCatalog, buildCatalogIndex, resolveCatalogProduct } from './_catalogGrounding.js';
 import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
+import { rateLimit } from './_rateLimit.js';
 import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
 import { callWithFallback, parseProviderOrder, stripDiagnosticLanguage } from './_llm.js';
 import { traceSessionId, traceMessages } from './_prismTrace.js';
@@ -141,6 +142,15 @@ export default async function handler(req, res) {
 
   const { user, error, admin } = await verifyUser(req);
   if (!user) return res.status(401).json({ error });
+
+  // Burst cap for EVERY account, premium included: the weekly quota below
+  // does not apply to premium, so without this one stolen or scripted
+  // premium session could run unlimited paid model calls.
+  const burst = await rateLimit(`product-chat:burst:${user.id}`, { max: 20, windowSec: 600 });
+  if (!burst.ok) {
+    res.setHeader('Retry-After', String(burst.retryAfterSec || 600));
+    return res.status(429).json({ error: 'rate_limited' });
+  }
 
   const isPremium = isPremiumUser(user);
   if (hasLegacyClientPremiumFlag(user)) {

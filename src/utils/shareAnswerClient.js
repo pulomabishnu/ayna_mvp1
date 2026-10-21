@@ -7,6 +7,7 @@ import posthog from 'posthog-js';
 import { apiUrl } from './apiUrl.js';
 import { isValidSlug, plainShareText, sharedAnswerUrl } from './sharedAnswer.js';
 import { shareAynaLink } from '../mobile/utils/shareLink.js';
+import { fetchWithTimeout } from './network.js';
 
 const PENDING_REF_KEY = 'ayna_pending_ref_v1'; // same key as badges.js / freeProductCampaign.js
 const PENDING_FRIEND_KEY = 'ayna_share_friend_v1';
@@ -20,7 +21,7 @@ const track = (event, props) => { try { posthog.capture(event, props); } catch {
 export const isRealAccount = (session) => Boolean(session?.access_token && session?.user && !session.user.is_anonymous);
 
 async function call(method, path, { token, body } = {}) {
-  const res = await fetch(apiUrl(path), {
+  const res = await fetchWithTimeout(apiUrl(path), {
     method,
     headers: { ...(body ? { 'Content-Type': 'application/json' } : {}), ...(token ? { Authorization: `Bearer ${token}` } : {}) },
     body: body ? JSON.stringify(body) : undefined,

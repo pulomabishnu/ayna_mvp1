@@ -72,11 +72,15 @@ export default async function handler(req, res) {
     // filters for legitimate emails containing punctuation and removes an
     // unnecessary filter-injection surface.
     const feedbackQueries = [admin.from('feedback').select('*').eq('user_id', user.id)];
-    if (user.email) feedbackQueries.push(admin.from('feedback').select('*').eq('email', user.email));
+    // Rows matched by email only once she has proven she owns that inbox;
+    // otherwise an unconfirmed sign-up with someone else's address could
+    // download that person's feedback.
+    const ownsEmail = Boolean(user.email && user.email_confirmed_at);
+    if (ownsEmail) feedbackQueries.push(admin.from('feedback').select('*').eq('email', user.email));
 
     const [feedbackResults, approvedResult] = await Promise.all([
       Promise.all(feedbackQueries),
-      user.email
+      ownsEmail
         ? admin.from('approved_users').select('email,approved_at').eq('email', user.email)
         : Promise.resolve({ data: [], error: null }),
     ]);

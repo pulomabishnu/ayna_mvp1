@@ -38,6 +38,7 @@ import { buildDashboard, formatMetric } from '../../../health/dashboard.js';
 import { estimatePhase } from '../../../health/phase.js';
 import { localToday, useHealthData } from '../../hooks/useHealthData.js';
 import { publicMediaUrl } from '../../../utils/community/imageUpload.js';
+import { fetchWithTimeout } from '../../../utils/network.js';
 
 const IS_NATIVE_APP = Capacitor.isNativePlatform();
 
@@ -864,7 +865,7 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch(apiUrl('/api/startups'))
+    fetchWithTimeout(apiUrl('/api/startups'))
       .then((res) => (res.ok ? res.json() : Promise.reject(new Error('bad response'))))
       .then((data) => {
         if (cancelled) return;
@@ -3364,7 +3365,7 @@ function ContactScreen({ onBack }) {
     setStatus('sending');
     setError('');
     try {
-      const res = await fetch(apiUrl('/api/contact'), {
+      const res = await fetchWithTimeout(apiUrl('/api/contact'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),

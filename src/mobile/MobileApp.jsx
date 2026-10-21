@@ -837,10 +837,8 @@ export default function MobileApp() {
       if (uploaded && !playlist) await deleteCommunityImage(supabase, uploaded.path).catch(() => {});
       throw new Error(error?.message && !/^\w+_\w+$/.test(error.message) ? error.message : 'The playlist could not be saved. Try again.');
     }
-    let added = 0;
-    for (const id of productIds) {
-      try { await communityStore.addToPlaylist(supabase, playlist.id, id); added += 1; } catch { /* counted below */ }
-    }
+    // One request for all products instead of one per product.
+    const added = await communityStore.addManyToPlaylist(supabase, playlist.id, productIds);
     return { playlist, added, missed: productIds.length - added };
   };
 

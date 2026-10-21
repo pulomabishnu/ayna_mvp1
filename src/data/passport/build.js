@@ -30,8 +30,18 @@ function sentencesMatching(text, re) {
     .filter((s) => s && re.test(s));
 }
 
+// Memoized: the same few hundred source URLs are parsed for every product on
+// the first Shop render (URL parsing was ~35% of buildPassport's time).
+const HOST_CACHE = new Map();
 function hostOf(url) {
-  try { return new URL(url).hostname.replace(/^www\./, '').toLowerCase(); } catch { return ''; }
+  const key = String(url ?? '');
+  let host = HOST_CACHE.get(key);
+  if (host === undefined) {
+    try { host = new URL(key).hostname.replace(/^www\./, '').toLowerCase(); } catch { host = ''; }
+    if (HOST_CACHE.size > 5000) HOST_CACHE.clear();
+    HOST_CACHE.set(key, host);
+  }
+  return host;
 }
 
 // ---------------------------------------------------------------------------

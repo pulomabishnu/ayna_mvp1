@@ -43,6 +43,8 @@ export function friendlyError(error) {
   for (const [code, text] of Object.entries(FRIENDLY_ERRORS)) {
     if (msg.includes(code)) return text;
   }
+  // src/utils/network.js: offline / timed out / unreachable already reads well.
+  if (error?.name === 'NetworkError' || /^NetworkError: /.test(msg)) return msg.replace(/^NetworkError: /, '');
   if (error?.code === '23505') return 'That already exists.';
   if (error?.code === '23503') return "That product isn't in the ayna catalog.";
   if (/row-level security|permission denied/i.test(msg)) return "You don't have access to do that.";
@@ -553,6 +555,27 @@ export async function addToPlaylist(supabase, playlistId, productId, note = null
     playlist_id: playlistId, product_id: productId, note: note || null, position: Date.now() % 2147483647,
   });
   if (error && error.code !== '23505') throw error;
+}
+
+/**
+ * Add several products in ONE request (was one insert per product). Already
+ * present products are skipped. If the batch is refused as a whole (e.g. the
+ * playlist size cap trigger), falls back to one-by-one so the ones that fit
+ * still land. Returns how many were added or already there.
+ */
+export async function addManyToPlaylist(supabase, playlistId, productIds) {
+  const ids = [...new Set((productIds || []).filter(Boolean))];
+  if (!ids.length) return 0;
+  const base = Date.now() % 2147483000;
+  const rows = ids.map((productId, i) => ({ playlist_id: playlistId, product_id: productId, note: null, position: base + i }));
+  const { error } = await supabase.from('community_playlist_items')
+    .upsert(rows, { onConflict: 'playlist_id,product_id', ignoreDuplicates: true });
+  if (!error) return ids.length;
+  let added = 0;
+  for (const id of ids) {
+    try { await addToPlaylist(supabase, playlistId, id); added += 1; } catch { /* counted by the caller */ }
+  }
+  return added;
 }
 
 export async function removeFromPlaylist(supabase, playlistId, productId) {
