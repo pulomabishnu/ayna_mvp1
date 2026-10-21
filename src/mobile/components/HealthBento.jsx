@@ -87,11 +87,20 @@ export function SourceLink({ source }) {
 export function AddsStrip({ items, intro = true }) {
   return (
     <section className="ay-wx-adds" aria-labelledby="ay-wx-adds-title">
-      <h3 id="ay-wx-adds-title">What ayna adds to Apple Health</h3>
-      {intro && <p className="ay-wx-adds-lead">Apple Health stores the numbers. ayna reads them against your cycle and tells you which of your products fit this week.</p>}
-      <ul>
-        {items.map((x) => <li key={x.id}><b>{x.label}</b><span>{x.text}</span></li>)}
-      </ul>
+      {/* A disclosure row, like iOS Settings: the facts open in place so the
+          dashboard isn't six screens long. */}
+      <details className="ay-fold">
+        <summary>
+          <span className="ay-fold__text">
+            <h3 id="ay-wx-adds-title">What ayna adds to Apple Health</h3>
+            {intro && <p className="ay-wx-adds-lead">Apple Health stores the numbers. ayna reads them against your cycle and tells you which of your products fit this week.</p>}
+          </span>
+          <svg className="ay-fold__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+        </summary>
+        <ul>
+          {items.map((x) => <li key={x.id}><b>{x.label}</b><span>{x.text}</span></li>)}
+        </ul>
+      </details>
     </section>
   );
 }

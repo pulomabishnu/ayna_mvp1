@@ -282,6 +282,10 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
   }, [periodRelevant, utiRelevant]);
 
   const stepId = steps[Math.min(stepIndex, steps.length - 1)];
+  // The counter's total only moves when she changes step: ticking a period
+  // symptom used to flip 02/08 to 02/06 under her finger.
+  const [shownTotal, setShownTotal] = useState({ at: stepIndex, n: steps.length });
+  if (shownTotal.at !== stepIndex) setShownTotal({ at: stepIndex, n: steps.length });
   const isLast = stepIndex >= steps.length - 1;
 
   const readyForNext = (() => {
@@ -369,7 +373,7 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
 
   return (
     <div className={`ayna-play-intake ip-tone--${CHECKIN_TONES[stepId] || 'peri'}`} data-step={stepId}>
-      <Header onBack={goBack} label="Monthly check-in" progress={(stepIndex + 1) / steps.length} stepText={`${stepIndex + 1}/${steps.length}`} />
+      <Header onBack={goBack} label="Monthly check-in" progress={(stepIndex + 1) / shownTotal.n} stepText={`${stepIndex + 1}/${shownTotal.n}`} />
 
       {stepId === 'lifeStage' && (
         <StepShell stepKey={stepId} title="Anything changed?" footer={footer}>

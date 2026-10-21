@@ -22,14 +22,10 @@ function Thumb({ product }) {
 
 const OverBudget = () => <span className="ay-rt-budget">Over your budget</span>;
 
-export function Routine({ products, insights, onOpenProduct, budget = null }) {
+export function Routine({ products, insights, onOpenProduct, budget = null, folded = false }) {
   const routine = useMemo(() => buildRoutine(products, insights), [products, insights]);
   if (!routine.slots.length) return null;
-  return (
-    <section className="ay-rt" aria-labelledby="ay-rt-title">
-      <h2 id="ay-rt-title">Your routine</h2>
-      <p className="ay-rt-lede">Where each of your matches fits in your week, with a how-to line from its own instructions.</p>
-      {routine.slots.map((slot) => (
+  const slots = routine.slots.map((slot) => (
         <div key={slot.id} className={`ay-rt-slot is-${slot.id}`}>
           <h3>{slot.title}</h3>
           {slot.note && <p className="ay-rt-note">{slot.note}</p>}
@@ -49,7 +45,30 @@ export function Routine({ products, insights, onOpenProduct, budget = null }) {
             ))}
           </ul>
         </div>
-      ))}
+      ));
+  const lede = <p className="ay-rt-lede">Where each of your matches fits in your week, with a how-to line from its own instructions.</p>;
+  // Folded (Ecosystem > Dashboard): one disclosure row, since the full routine
+  // is also on her plan and the dashboard was six screens long.
+  if (folded) return (
+    <section className="ay-rt is-folded" aria-labelledby="ay-rt-title">
+      <details className="ay-fold">
+        <summary>
+          <span className="ay-fold__text">
+            <h2 id="ay-rt-title">Your routine</h2>
+            <p className="ay-rt-lede">{routine.slots.map((x) => x.title).join(' · ')}</p>
+          </span>
+          <svg className="ay-fold__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+        </summary>
+        {lede}
+        {slots}
+      </details>
+    </section>
+  );
+  return (
+    <section className="ay-rt" aria-labelledby="ay-rt-title">
+      <h2 id="ay-rt-title">Your routine</h2>
+      {lede}
+      {slots}
     </section>
   );
 }

@@ -8,6 +8,7 @@ import { questionForAnswer } from '../../utils/sharedAnswer.js';
 import AskFollowUps from '../../components/AskFollowUps.jsx';
 import { chipsFor, followUpRequestFields } from '../../utils/askFollowUps.js';
 import { fetchWithTimeout } from '../../utils/network.js';
+import { haptic } from '../../utils/haptics.js';
 import { useSheetDrag } from '../hooks/useSheetDrag.js';
 import AskHome, { AskStatCard } from '../../components/AskHome.jsx';
 import { recentQuestions } from '../../utils/askRecent.js';
@@ -101,6 +102,9 @@ export default function AskAynaModal({
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState('');
+  // The question that didn't go through: put back in the field and offered as
+  // "Try again", so a dropped connection never loses what she typed.
+  const [failedMsg, setFailedMsg] = useState('');
   const [session, setSession] = useState(undefined); // undefined = still checking
   const [hasOpened, setHasOpened] = useState(open);
   // A bottom sheet: grabber, drag down to close (useSheetDrag).
@@ -164,6 +168,7 @@ export default function AskAynaModal({
     if (!session?.access_token) { onRequireAuth?.('Ask ayna'); return; }
     setInput('');
     setSendError('');
+    setFailedMsg('');
     setHome(false);
     const userMsg = { role: 'user', text: msg, ...(stats?.length ? { stats } : {}) };
     const messagesWithUser = [...messages, userMsg];
@@ -213,6 +218,13 @@ export default function AskAynaModal({
       setMessages(newMessages);
       onChatHistoryUpdate?.(newMessages);
     } catch (err) {
+      if (err?.code !== 'not_signed_in' && err?.code !== 'weekly_limit_reached') {
+        // Roll the unanswered question back out of the thread and keep it.
+        setMessages(messages);
+        setInput(msg);
+        setFailedMsg(msg);
+        haptic('warning');
+      }
       if (err?.code === 'not_signed_in') {
         onRequireAuth?.('Ask ayna');
       } else if (err?.code === 'weekly_limit_reached') {
@@ -334,7 +346,9 @@ export default function AskAynaModal({
               />
             )}
             {m.showViewRecommendations && onViewRecommendations && (
-              <div
+              <button
+                type="button"
+                className="ay-ask-viewrecs"
                 onClick={onViewRecommendations}
                 style={{
                   marginTop: 6,
@@ -347,7 +361,7 @@ export default function AskAynaModal({
                 }}
               >
                 View recommendations →
-              </div>
+              </button>
             )}
           </div>
         ))}
@@ -356,7 +370,10 @@ export default function AskAynaModal({
       </div>
 
       {sendError && (
-        <div style={{ padding: '0 20px 8px', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>{sendError}</div>
+        <div className="ay-ask-error" role="alert">
+          <span>{sendError}</span>
+          {failedMsg && <button type="button" onClick={() => { const q = failedMsg; setFailedMsg(''); send(q); }} disabled={sending}>Try again</button>}
+        </div>
       )}
 
       <form
