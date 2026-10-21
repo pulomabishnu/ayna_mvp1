@@ -1,7 +1,6 @@
 /* AuthGate: "Where did you hear about us?" (create account only). Same field
    look as the email/password inputs (audit-qya.css), with a chevron. */
 .ay-auth-heard > label { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
-.ay-auth-optional { color: var(--ay-ink-soft, rgba(29, 26, 43, .62)); font: 500 var(--ay-fs-caption)/1.2 var(--ay-sans); }
 .ay-auth-heard select {
   width: 100%; min-height: 48px; box-sizing: border-box; padding: 0 44px 0 14px;
   border: 2px solid var(--ay-ink, #1d1a2b); border-radius: 14px;

@@ -94,10 +94,6 @@
 
 .ayna-mobile a { color: var(--ayna-brown); text-decoration: none; }
 
-.ayna-mobile .font-serif { font-family: var(--ayna-font-display); }
-.ayna-mobile .font-sans { font-family: var(--ayna-font-ui); }
-.ayna-mobile .font-mono { font-family: var(--ayna-font-ui); }
-
 @keyframes ay-hero { from { opacity: 0; transform: scale(.93) translateY(16px); } to { opacity: 1; transform: none; } }
 @keyframes ay-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 @keyframes ay-pulse { 0% { transform: scale(.75); opacity: .55; } 100% { transform: scale(2.1); opacity: 0; } }
@@ -110,8 +106,6 @@
 @keyframes ay-swap2 { 0% { opacity: 0; transform: translateY(8px); } 14% { opacity: 1; transform: none; } 86% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-8px); } }
 @keyframes ay-page { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 @keyframes ay-bob { 0%, 100% { transform: translateY(4px); } 50% { transform: translateY(-4px); } }
-@media (prefers-reduced-motion: reduce) {
-}
 @keyframes ay-drift { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(14px,-18px) scale(1.09); } }
 @keyframes ay-skeleton { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
 @keyframes ay-pixelate { 0% { opacity: .15; filter: blur(6px) saturate(0); transform: scale(.94); } 60% { opacity: .7; filter: blur(2px) saturate(.6); transform: scale(.98); } 100% { opacity: 1; filter: blur(0) saturate(1); transform: scale(1); } }
@@ -169,9 +163,6 @@
 }
 
 /* Product detail screen's sticky tab rail, scrollable but no visible scrollbar. */
-.ay-pdp-rail::-webkit-scrollbar {
-  display: none;
-}
 
 /* App-wide navigation: one quiet, familiar bottom row on primary screens. */
 .ayna-mobile .ayna-bottom-nav {
@@ -227,12 +218,10 @@
   font-family: var(--ayna-font-ui);
 }
 .ayna-profile-auth-close { position: absolute; top: 14px; right: 18px; border: 0; background: none; color: #3e2723; font-size: 30px; letter-spacing: -0.01em; line-height: 1.15; font-weight: 600; cursor: pointer; }
-.ayna-profile-auth-eyebrow { color: #9a5c36; font-size: 11.5px; font-weight: 500; letter-spacing: .16em; }
 .ayna-profile-auth-sheet h2 { margin: 12px 0 8px; font: 400 28px/1.15 var(--ayna-font-display); }
 .ayna-profile-auth-sheet p { margin: 0 0 24px; line-height: 1.5; color: #56566e; }
-.ayna-profile-auth-primary, .ayna-profile-auth-secondary { display: block; width: 100%; padding: 15px; border-radius: 99px; font: 600 17px var(--ayna-font-ui); cursor: pointer; }
+.ayna-profile-auth-primary { display: block; width: 100%; padding: 15px; border-radius: 99px; font: 600 17px var(--ayna-font-ui); cursor: pointer; }
 .ayna-profile-auth-primary { border: 0; background: #F7BADD; color: #231a12; }
-.ayna-profile-auth-secondary { margin-top: 10px; border: 1px solid #3e2723; background: transparent; color: #3e2723; }
 
 /* Keep the browser preview at a readable phone width on a large display. */
 @media (min-width: 700px) {

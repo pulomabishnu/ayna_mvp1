@@ -34,7 +34,6 @@
   background: var(--ay-img-tile) !important;
   border: 0 !important;
 }
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-photo-placeholder-mark { color: var(--ay-img-ink); opacity: .22; }
 
 /* Text block: brand eyebrow (1 line) / title (2 lines reserved) / price / price detail (1 line reserved) */
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy {
@@ -180,29 +179,14 @@
 
 /* ===== AP07 You: standard header above the hero (no close button); keep the stickers clear of the name ===== */
 .ayna-mobile.ayna-mobile .ayna-fresh-profile-hub > .ayna-shared-header { flex: none; }
-.ayna-mobile.ayna-mobile .ayna-fresh-profile-hero .ay-hub-shapes i:nth-child(2) { top: 14px; right: 112px; }
 
 /* Product page: same plain white image tile as the cards (no pastel behind the photo) */
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-hero,
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-hero > div,
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-hero .ayna-fresh-photo-placeholder { background: var(--ay-img-tile) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-hero .ayna-fresh-photo-placeholder-mark { color: var(--ay-img-ink); opacity: .22; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-hero img { mix-blend-mode: normal !important; }
 
 /* Shop "Get matched" pill: ink button with paper text in both themes (was white on white in dark) */
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-figma-discover-cta button { background: var(--ay-ink) !important; color: var(--ay-paper) !important; }
 
 /* ===== Verify (asks): dark product page, dark ink on the pastel surfaces (white on butter was unreadable) ===== */
-.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-pdp-warn,
-.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-pdp-warn :is(strong, li, p, span),
-.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-pdp-tabs button[aria-selected='true'][data-tone],
-.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-pdp-sources button,
-.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-pdp-sources button :is(span, strong, small),
-.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-pdp-checks li,
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-src-more { color: var(--ay-img-ink) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-pdp-warn { border-color: var(--ay-img-ink) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-pdp-warn > button { background: var(--ay-img-ink) !important; border-color: var(--ay-img-ink) !important; color: #ffedac !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-pdp-card h2 { color: var(--ay-ink) !important; }
 /* Product page suggestions sit on the page gutter like the Ecosystem rows */
 .ayna-mobile.ayna-mobile .ay-pdp-related { margin-top: var(--ay-space-6, 24px) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-related > .ayna-cabinet-section-head { border: 0 !important; box-shadow: none !important; background: none !important; padding: 0 !important; }
@@ -215,9 +199,6 @@
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-auth .ay-auth-eco-thumbs > span { border-color: var(--ay-img-ink) !important; }
 
 /* ===== Verify (asks): You and quiz spacing snapped to the 8px grid ===== */
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-hero { padding-top: 24px !important; padding-bottom: 32px !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu { padding-bottom: 24px !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu button { padding-left: 16px !important; gap: 16px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-legal { padding-top: 24px !important; padding-bottom: 24px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-head { padding-top: 16px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-question { padding-top: 16px !important; }

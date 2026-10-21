@@ -33,8 +33,7 @@
 .wdeck-done div { display: flex; gap: 10px; margin-top: 6px; }
 .wdeck-done button { min-height: 44px; padding: 0 18px; border: 2px solid var(--ink); border-radius: 99px; background: var(--paper); color: var(--ink); font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); }
 .wdeck-done button.is-dark { background: var(--ink); color: var(--paper); }
-@media (prefers-reduced-motion: reduce) { .wdeck, .wdeck-card { animation: none; transition: none; } }
-.wdeck-why { display: block; margin-top: 6px; color: rgba(29,26,43,.7); font: 600 var(--ay-fs-caption)/1.3 var(--ay-sans); } .wdeck-hint kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 4px; border: 1.5px solid #1d1a2b; border-radius: 6px; background: #fffcf5; font: 600 var(--ay-fs-caption)/1 var(--ay-sans); }
+@media (prefers-reduced-motion: reduce) { .wdeck, .wdeck-card { animation: none; transition: none; } } .wdeck-hint kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 4px; border: 1.5px solid #1d1a2b; border-radius: 6px; background: #fffcf5; font: 600 var(--ay-fs-caption)/1 var(--ay-sans); }
 
 /* Card flip: front = product, back = why it fits */
 .wdeck-flip { position: relative; flex: 1; min-height: 0; display: grid; transform-style: preserve-3d; transform: perspective(1400px) rotateY(0deg); transition: transform .5s var(--ease-out); }

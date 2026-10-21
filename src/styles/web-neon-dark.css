@@ -109,15 +109,6 @@
 }
 
 /* Nav: active tab is the app's glowing butter pill. */
-.app-container.app-container.app-container[data-theme='dark'] .app-nav.app-nav .app-nav__tab--active {
-  background: var(--ay-neon-butter) !important;
-  border-color: var(--ay-neon-butter) !important;
-  color: var(--ay-neon-ink) !important;
-  box-shadow: 0 0 16px rgba(245, 255, 104, .34) !important;
-}
-.app-container.app-container.app-container[data-theme='dark'] .app-nav.app-nav .app-nav__tab:not(.app-nav__tab--active) { border-color: transparent !important; }
-.app-container.app-container.app-container[data-theme='dark'] .app-nav.app-nav .app-nav__tab:not(.app-nav__tab--active):hover { border-color: var(--ay-edge) !important; }
-.app-container.app-container.app-container[data-theme='dark'] .app-nav.app-nav .app-nav__beta-badge { background: var(--ay-neon-butter) !important; border-color: var(--ay-neon-butter) !important; color: var(--ay-neon-ink) !important; }
 
 /* Ask ayna launcher: neon butter pill, like the app header. */
 .app-container.app-container.app-container[data-theme='dark'] .ayna-ask-launcher {
@@ -152,17 +143,7 @@
 .app-container.app-container.app-container.app-container[data-theme='dark'] .ay-partner-btn { border-color: rgba(168, 181, 255, .5) !important; }
 
 /* Library cards live one per <li>: cycle the edge on the list item. */
-.app-container.app-container.app-container.app-container[data-theme='dark'] .ay-web-lib-grid > li:nth-child(4n + 1) .ay-web-lib-card { border-color: rgba(255, 120, 207, .65) !important; }
-.app-container.app-container.app-container.app-container[data-theme='dark'] .ay-web-lib-grid > li:nth-child(4n + 2) .ay-web-lib-card { border-color: rgba(105, 255, 193, .65) !important; }
-.app-container.app-container.app-container.app-container[data-theme='dark'] .ay-web-lib-grid > li:nth-child(4n + 3) .ay-web-lib-card { border-color: rgba(245, 255, 104, .6) !important; }
-.app-container.app-container.app-container.app-container[data-theme='dark'] .ay-web-lib-grid > li:nth-child(4n + 4) .ay-web-lib-card { border-color: rgba(168, 181, 255, .65) !important; }
 /* Ask ayna orb: white disc, dark star (as in the app). */
 .app-container.app-container.app-container[data-theme='dark'] .ayna-ask-launcher .ayna-ask-orb::before { background: #050506 !important; }
 
 /* Small add buttons: neon butter, dark ink. Next-step card: panel with butter edge. */
-.app-container.app-container.app-container[data-theme='dark'] .eco3-pick__add {
-  background: var(--ay-neon-butter) !important; border-color: var(--ay-neon-butter) !important; color: var(--ay-neon-ink) !important;
-}
-.app-container.app-container.app-container[data-theme='dark'] .eco3-next {
-  background: #101116 !important; border-color: rgba(245, 255, 104, .6) !important; box-shadow: 0 0 18px rgba(245, 255, 104, .1) !important;
-}

@@ -54,12 +54,6 @@ button.ay-hc-row:active { background: var(--ay-cream); }
 .ay-hc-switch[aria-checked='true'] span { transform: translateX(20px); }
 .ay-hc-switch:focus-visible { outline: 3px solid var(--ay-peri-deep); outline-offset: 2px; }
 
-.ay-hc-changes { padding: 8px 14px 12px; }
-.ay-hc-change { display: flex; gap: 8px; padding: 8px 0; border-top: 1px solid var(--ay-line); color: var(--ay-ink); font: 500 13px/1.4 var(--ay-font-ui); }
-.ay-hc-change:first-child { border-top: 0; }
-.ay-hc-change b { font-weight: 600; }
-.ay-hc-sample { display: block; margin-top: 6px; color: var(--ay-ink-soft); font: 500 11.5px/1.4 var(--ay-font-ui); }
-
 .ay-hc-primary, .ay-hc-danger, .ay-hc-ghost {
   width: 100%; min-height: 52px; border-radius: 99px; font: 600 17px/1 var(--ay-font-ui); cursor: pointer;
   transition: transform var(--ay-dur-1, .12s) var(--ay-ease);
@@ -136,31 +130,6 @@ button.ay-hc-row:active { background: var(--ay-cream); }
 .ay-hc-confirm > div:not(.ay-hc-stack) > button { flex: 1; }
 
 /* Insights */
-.ay-hi { display: grid; gap: 14px; }
-.ay-hi-card { padding: 16px 16px 14px; border: 1.5px solid var(--ay-ink); border-radius: 20px; background: var(--ay-paper); box-shadow: var(--ay-shadow); color: var(--ay-ink); }
-.ay-hi-card header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
-.ay-hi-card h2 { margin: 0; padding: 4px 10px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--hi-tone, var(--ay-butter)); color: var(--b-espresso); font: 500 13px/1 var(--ay-font-ui); letter-spacing: 0; }
-.ay-hi-card.is-sleep { --hi-tone: var(--ay-peri); }
-.ay-hi-card.is-cycle { --hi-tone: var(--ay-pink); }
-.ay-hi-card.is-recovery, .ay-hi-card.is-heart { --hi-tone: var(--ay-butter); }
-.ay-hi-card.is-activity { --hi-tone: var(--ay-mint); }
-.ay-hi-headline { margin: 8px 0 2px; font: 400 calc(22px * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display); letter-spacing: -.02em; }
-.ay-hi-change { margin: 0 0 8px; font: 500 13px/1.3 var(--ay-font-ui); }
-.ay-hi-change.is-flat { color: var(--ay-ink-soft); font-weight: 600; }
-.ay-hi-chart { margin: 6px 0 10px; }
-.ay-hi-chart svg { display: block; width: 100%; height: 56px; }
-.ay-hi-chart rect { fill: var(--ay-ink-faint); }
-.ay-hi-chart rect.is-last { fill: var(--ay-ink); }
-.ay-hi-chart figcaption { display: flex; justify-content: space-between; color: var(--ay-ink-soft); font: 500 11.5px/1 var(--ay-font-ui); }
-.ay-hi-explain, .ay-hi-affects, .ay-hi-estimate { margin: 6px 0 0; font: 400 15px/1.45 var(--ay-font-ui); }
-.ay-hi-estimate span { color: var(--ay-ink-soft); font-size: 13px; font-weight: 500; }
-.ay-hi-affects { padding: 8px 10px; border-radius: 12px; background: var(--ay-cream); }
-.ay-hi-from { margin: 10px 0 0; color: var(--ay-ink-soft); font: 500 13px/1.3 var(--ay-font-ui); }
-.ay-hi-suggest .ay-hc-note { margin: 0 0 10px; }
-.ay-eco-health { display: flex; align-items: center; gap: 12px; width: 100%; margin: 14px 0; padding: 14px 16px; border: 1.5px solid var(--ay-ink); border-radius: 18px; background: var(--ay-paper); box-shadow: var(--ay-shadow); color: var(--ay-ink); text-align: left; font-family: var(--ay-font-ui); cursor: pointer; }
-.ay-eco-health > span { flex: 1; display: grid; gap: 3px; }
-.ay-eco-health b { font: 600 17px/1.2 var(--ay-font-ui); }
-.ay-eco-health small { color: var(--ay-ink-soft); font: 500 13px/1.35 var(--ay-font-ui); }
 
 /* ---------- Website (You -> Health data at /health-data) ----------
    The app's tokens live on .ayna-mobile; the website page carries its own
@@ -191,12 +160,6 @@ button.ay-hc-row:active { background: var(--ay-cream); }
 .ay-hc-web .ay-hc-search input:focus-visible { outline: 3px solid var(--ay-ink); outline-offset: 2px; }
 .ay-hc-web .ay-hc-search button { position: absolute; right: 4px; width: 44px; height: 44px; border: 0; border-radius: 50%; background: transparent; color: var(--ay-ink); font: 600 20px/1 var(--ay-font-ui); cursor: pointer; }
 .ay-hc-web-head h1 { margin: 0; color: var(--ay-ink); font: 400 28px/1.15 var(--ay-font-display); letter-spacing: -.01em; }
-.ay-hc-web-back { width: 42px; height: 42px; display: grid; place-items: center; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); cursor: pointer; }
-.ay-hc-web-back svg { width: 18px; height: 18px; fill: none; stroke: var(--ay-ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .ay-hc-web .ay-hc-switch[aria-checked='true'] { background: #769ebe; }
 .ay-hc-switch:disabled { opacity: .5; cursor: default; }
-.wyou-health { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; cursor: pointer; }
-.wyou-health > span { flex: 1; display: grid; gap: 4px; }
-.wyou-health small { opacity: .75; }
-.wyou-health-manage { justify-self: start; min-height: 44px; margin-top: -12px; padding: 0 4px; border: 0; background: none; color: var(--ay-ink); font: 500 13px/1.2 var(--ay-font-ui); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .ay-hc-web .ay-sl-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

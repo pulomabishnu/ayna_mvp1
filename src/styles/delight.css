@@ -57,12 +57,6 @@
    Layout). Caps the older Ecosystem hovers that scaled up to 1.12 or lifted 8-10px. */
 html body .app-container.app-container .eco-bubble:hover { transform: translateY(-2px) !important; }
 html body .app-container.app-container .ay3-pile:hover .ay3-pile__hint { transform: rotate(-3deg) !important; }
-html body .app-container.app-container .eco3-slot:hover span { transform: none !important; }
-html body .app-container.app-container .eco3-pick:hover .eco3-pick__img img { transform: none !important; }
 html body .app-container.app-container :is(.eco3-pick__add, .eco3-mini__add):hover { transform: none !important; }
-html body .app-container.app-container .eco3-mini:hover { transform: rotate(0) translateY(-3px) !important; }
 html body .app-container.app-container .eco3-cl.is-closed .eco3-cl__label:hover { transform: rotate(0) !important; }
-html body .app-container.app-container .eco3-cat:hover { transform: rotate(0) translateY(-2px) !important; }
-html body .app-container.app-container .eco3-grid .ayna-discover-card.ayna-browse-card:hover { transform: translateY(-3px) !important; }
-html body .app-container.app-container .eco3-peek:hover .eco3-peek__card:nth-child(2) { transform: translateY(-4px) rotate(0) !important; }
 html body .app-container.app-container .lx .lx-shelf__item:hover .lx-shelf__img { transform: translateY(-3px) rotate(-1.2deg) !important; }

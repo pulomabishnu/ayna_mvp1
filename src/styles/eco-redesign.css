@@ -58,11 +58,6 @@
 .app-container .eco3-notice button { margin-left: 4px; padding: 0; border: 0; background: none; color: inherit; font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer; }
 
 /* ---------- Overview (ring + legend + next step) ---------- */
-.app-container .eco3-overview {
-  display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 32px; align-items: stretch;
-  margin: 32px 0 0; padding: 32px; border: 2px solid var(--ay-ink); border-radius: var(--ay-radius-lg);
-  background: var(--ay-paper); box-shadow: var(--ay-shadow);
-}
 .app-container .eco3-chart { display: grid; grid-template-columns: 216px minmax(0, 1fr); align-items: center; gap: 40px; min-width: 0; }
 .app-container .eco3-chart__ring { position: relative; width: 216px; aspect-ratio: 1; }
 .app-container .eco3-chart__ring svg { display: block; width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
@@ -86,12 +81,6 @@
 .app-container .eco3-chart__name { overflow: hidden; color: var(--ay-ink) !important; font: 600 var(--ay-fs-secondary)/1.2 var(--ay-sans) !important; text-overflow: ellipsis; white-space: nowrap; }
 .app-container .eco3-chart__legend strong { color: var(--ay-ink) !important; font: 400 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em; }
 
-.app-container .eco3-overview__side { display: flex; flex-direction: column; justify-content: center; gap: 16px; padding-left: 32px; border-left: 1px solid var(--ay-line); }
-.app-container .eco3-next { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 20px; border: 2px solid var(--ay-ink); border-radius: var(--ay-radius-md); background: var(--ay-butter); }
-.app-container .eco3-next__eyebrow { margin: 0 !important; color: var(--ay-ink) !important; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans) !important; letter-spacing: normal; text-transform: none; opacity: .72; }
-.app-container .eco3-next__title { margin: 0 0 8px !important; color: var(--ay-ink) !important; font: 400 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em; }
-.app-container .eco3-overview__cost { margin: 0 !important; color: var(--ay-ink-soft) !important; font: 600 var(--ay-fs-secondary)/1.4 var(--ay-sans) !important; }
-
 /* Empty state */
 .app-container .eco3-empty { margin: 32px 0 0; padding: 40px 32px; border: 2px dashed var(--ay-ink); border-radius: var(--ay-radius-lg); background: var(--ay-paper); text-align: center; }
 .app-container .eco3-empty__title { margin: 0 0 8px !important; color: var(--ay-ink) !important; font: 400 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em; }
@@ -99,45 +88,20 @@
 .app-container .eco3-empty__actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; }
 
 /* ---------- Area sections ---------- */
-.app-container .eco3-area { margin: 56px 0 0; scroll-margin-top: 96px; border-radius: var(--ay-radius-lg); }
-.app-container .eco3-area.is-arrived { animation: eco3-area-arrive 1.1s var(--ay-pop) both; }
 @keyframes eco3-area-arrive { 0% { transform: scale(.985); } 35% { transform: scale(1.008); box-shadow: 0 0 0 8px var(--area-color); } 100% { transform: none; box-shadow: 0 0 0 0 transparent; } }
 @media (prefers-reduced-motion: reduce) {
-  .app-container .eco3-area.is-arrived, .app-container .eco3-chart__segment { animation: none; }
+  .app-container .eco3-chart__segment { animation: none; }
 }
-.app-container .eco3-area__head { display: flex; align-items: center; gap: 12px; margin: 0 0 24px; padding: 0 0 16px; border-bottom: 2px solid var(--ay-ink); }
-.app-container .eco3-area__head h2 { display: flex; align-items: center; gap: 12px; margin: 0 !important; color: var(--ay-ink) !important; font: 400 var(--ay-fs-title)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
-.app-container .eco3-area__head h2 small {
-  display: inline-grid; place-items: center; width: 40px; height: 40px; border: 2px solid var(--ay-ink); border-radius: 50%;
-  background: var(--area-color, var(--ay-pink)); color: var(--ay-ink) !important; font: 500 var(--ay-fs-secondary)/1 var(--ay-sans) !important; letter-spacing: 0;
-}
-.app-container .eco3-area__count { display: inline-grid; place-items: center; min-width: 32px; height: 28px; padding: 0 8px; border-radius: 99px; background: var(--ay-tile); color: var(--ay-ink) !important; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans) !important; box-sizing: border-box; }
-.app-container .eco3-area__more { margin-left: auto; padding: 0; border: 0; background: none; color: var(--ay-ink) !important; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans) !important; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
-
-.app-container .eco3-grid { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 32px 24px !important; }
 
 /* Compact card actions under each Shop card: Swap, Why this?, and a round
    remove button. Phones: Swap + remove on one row, Why this? under it. */
-.app-container .eco3-card-actions { position: relative; z-index: 2; display: grid; grid-template-columns: auto minmax(0, 1fr) 32px; gap: 8px; margin-top: 8px; align-items: center; }
-.app-container .eco3-card-actions:not(:has(.eco3-card-actions__swap)) { grid-template-columns: minmax(0, 1fr) 32px; }
-.app-container .eco3-card-actions button {
-  min-height: 32px; padding: 0 12px; border: 2px solid var(--ay-ink); border-radius: 99px;
-  background: var(--ay-paper); color: var(--ay-ink) !important; font: 600 var(--ay-fs-caption)/1 var(--ay-sans) !important; cursor: pointer;
-  white-space: nowrap; transition: background .15s ease, border-color .15s ease;
-}
-.app-container .eco3-card-actions .eco3-card-actions__why { justify-self: start; }
-.app-container .eco3-card-actions button:hover { background: var(--ay-butter); }
-.app-container .eco3-card-actions .eco3-card-actions__remove { display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border-color: var(--ay-ink-faint); justify-self: end; }
 .app-container .eco3-card-actions__remove svg { width: 14px; height: 14px; fill: none; stroke: var(--ay-ink); stroke-width: 2.4; stroke-linecap: round; }
-.app-container .eco3-card-actions .eco3-card-actions__remove:hover { border-color: var(--ay-ink); background: var(--ay-pink); }
 
 /* ---------- Add a shelf + add existing ---------- */
 .app-container .eco3-addrow { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin: 56px 0 0; padding: 24px; border: 2px dashed var(--ay-ink-faint); border-radius: var(--ay-radius-lg); }
 .app-container .eco3-addrow__shelf { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; min-width: 0; }
 .app-container .eco3-addrow__label { color: var(--ay-ink) !important; font: 600 var(--ay-fs-card)/1 var(--ay-sans) !important; letter-spacing: -.02em; }
 .app-container .eco3-addrow__chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.app-container .eco3-chip { min-height: 36px; padding: 0 14px; border: 2px dashed var(--ay-ink); border-radius: 99px; background: transparent; color: var(--ay-ink) !important; font: 600 var(--ay-fs-caption)/1 var(--ay-sans) !important; cursor: pointer; transition: background .15s ease; }
-.app-container .eco3-chip:hover { background: var(--ay-mint); border-style: solid; }
 
 /* ---------- Details ---------- */
 .app-container .eco3-details { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; align-items: start; margin: 56px 0 0; }
@@ -148,8 +112,6 @@
 .app-container .eco3-details__hint { display: block; color: var(--ay-ink-soft) !important; font: 500 var(--ay-fs-secondary)/1.45 var(--ay-sans) !important; }
 .app-container .eco3-details__number { margin: 0 0 16px !important; color: var(--ay-ink) !important; font: 400 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
 .app-container .eco3-details__row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-.app-container .eco3-details__soon { margin: 16px 0 0 !important; color: var(--ay-ink-soft) !important; font: 500 var(--ay-fs-caption)/1.4 var(--ay-sans) !important; }
-.app-container .eco3-details__soon--solo { grid-column: 1 / -1; margin: 0 !important; }
 .app-container .eco3-details__close { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: transparent; color: var(--ay-ink) !important; font-size: var(--ay-fs-secondary); cursor: pointer; }
 .app-container .eco3-details__close:hover { background: var(--ay-paper); }
 .app-container .eco3-details__item summary { display: block; list-style: none; padding-right: 32px; cursor: pointer; position: relative; }
@@ -161,8 +123,6 @@
 
 /* ---------- Saved (SavedForLater, rendered by App after this page) ---------- */
 .app-container .eco-saved.mockup-page { padding-top: 24px !important; padding-bottom: 56px !important; }
-.app-container .eco-saved .eco3-area__head { display: flex !important; justify-content: flex-start !important; }
-.app-container .eco-saved .eco3-area__head h2 { font-size: var(--ay-fs-title) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
 .app-container .eco-saved .wishlist-empty { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 24px !important; border: 2px dashed var(--ay-ink-faint) !important; border-radius: var(--ay-radius-lg) !important; background: transparent !important; }
 .app-container .eco-saved .wishlist-empty p { margin: 0 !important; color: var(--ay-ink-soft) !important; font: 500 var(--ay-fs-secondary)/1.5 var(--ay-sans) !important; }
 .app-container .eco-saved .wishlist-empty .eco3-pill { text-decoration: none !important; color: var(--ay-ink) !important; }
@@ -172,9 +132,6 @@
 
 /* ---------- Responsive ---------- */
 @media (max-width: 1100px) {
-  .app-container .eco3-overview { grid-template-columns: minmax(0, 1fr); }
-  .app-container .eco3-overview__side { padding: 24px 0 0; border-left: 0; border-top: 1px solid var(--ay-line); flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; }
-  .app-container .eco3-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
   .app-container .eco3-details { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 720px) {
@@ -184,31 +141,17 @@
   .app-container .eco3-head__sub { margin-top: 8px !important; }
   .app-container .eco3-head > * { min-width: 0; }
   .app-container .eco3-actions .eco3-pill { min-height: 36px; padding: 0 14px !important; font-size: var(--ay-fs-caption) !important; }
-  .app-container .eco3-overview { margin-top: 24px; padding: 24px 16px; gap: 24px; }
   .app-container .eco3-chart { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 24px; }
   .app-container .eco3-chart__ring { width: 184px; }
   .app-container .eco3-chart__centre strong { font-size: var(--ay-fs-display) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
   .app-container .eco3-chart__legend { grid-template-columns: minmax(0, 1fr); width: 100%; }
   .app-container .eco3-chart__legend a { min-height: 48px; }
-  .app-container .eco3-overview__side { flex-direction: column; align-items: stretch; }
-  .app-container .eco3-next { align-items: stretch; }
-  .app-container .eco3-area { margin-top: 40px; }
-  .app-container .eco3-area__head h2 { font-size: var(--ay-fs-section) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
-  .app-container .eco3-area__head h2 small { width: 32px; height: 32px; font-size: var(--ay-fs-caption) !important; }
-  .app-container .eco3-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 24px 16px !important; }
-  .app-container .eco3-card-actions { grid-template-columns: minmax(0, 1fr) 32px; }
-  .app-container .eco3-card-actions .eco3-card-actions__swap { grid-column: 1; grid-row: 1; justify-self: start; }
-  .app-container .eco3-card-actions .eco3-card-actions__remove { grid-column: 2; grid-row: 1; }
-  .app-container .eco3-card-actions .eco3-card-actions__why { grid-column: 1 / -1; }
-  .app-container .eco3-card-actions:not(:has(.eco3-card-actions__swap)) .eco3-card-actions__why { grid-column: 1; grid-row: 1; }
-  .app-container .eco3-card-actions button { padding: 0 12px; font-size: var(--ay-fs-caption) !important; }
   .app-container .eco3-addrow { margin-top: 40px; padding: 16px; flex-direction: column; align-items: stretch; }
   .app-container .eco3-addrow__shelf { flex-direction: column; align-items: flex-start; gap: 12px; }
   .app-container .eco3-details { grid-template-columns: minmax(0, 1fr); gap: 16px; margin-top: 40px; }
   .app-container .eco3-details__card { padding: 20px; }
   .app-container .eco3-empty { padding: 32px 16px; }
 }
-.app-container .eco-saved .eco3-area__count { background: var(--ay-tile) !important; color: var(--ay-ink) !important; border: 0 !important; }
 
 /* Care near you panel inside its card */
 .app-container .eco3-details__item[open] { order: 3; }

@@ -195,7 +195,6 @@
 .app-container main .fp .fp-table :is(input, select) { min-height: 38px; padding: 0 8px; border: 1.5px solid var(--ay-ink); border-radius: 10px; background: var(--ay-product-tile, #fff); color: var(--ay-ink); }
 .app-container .fp-admin .fp-steps { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
 .app-container .fp-admin .fp-step { padding: 18px; }
-.app-container .fp-admin .fp-headrow { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: flex-end; }
 .app-container .fp-admin .fp-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
 
 /* Headings focused for screen readers never show a ring. */

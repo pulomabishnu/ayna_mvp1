@@ -1,7 +1,5 @@
 /* About Ayna: an editorial field guide in the new app language. */
 .ayna-scrapbook{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;background:#ffedac;color:#3e2723;font-family:var(--ayna-font-ui)}
-.ayna-scrapbook__header{flex:none;display:flex;align-items:center;justify-content:space-between;padding:max(17px,env(safe-area-inset-top)) 20px 15px;background:#ffedac;border-bottom:1px solid #3e2723;color:#3e2723;font-size:13px;font-weight:500}
-.ayna-scrapbook__header button{min-height:40px;padding:8px 13px;border:1px solid #3e2723;border-radius:12px;background:#ffedac;color:#3e2723;font:500 13px var(--ayna-font-ui);cursor:pointer}
 .ayna-scrapbook__scroll{flex:1;min-height:0;overflow-y:auto;padding:0 20px 32px}
 .ayna-scrapbook__scroll>section,.ayna-scrapbook__footer{max-width:520px;margin-left:auto;margin-right:auto}
 .ayna-scrapbook__eyebrow{display:block;color:#3e2723;text-transform:uppercase;letter-spacing:.12em;font:500 11.5px var(--ayna-font-ui)}

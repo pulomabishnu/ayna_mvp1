@@ -95,7 +95,6 @@
 .ayq.ayq .ayq-bottom__list > li::before { content: ''; position: absolute; left: 2px; top: .5em; width: 12px; height: 12px; border-radius: 50%; background: var(--q-pink); }
 .ayq.ayq .ayq-bottom__by { margin: 22px 0 0 !important; padding-top: 16px; border-top: 1px solid color-mix(in srgb, var(--q-ffg) 22%, transparent); font: 400 calc(14px * var(--q-scale))/1.5 var(--q-sans) !important; color: color-mix(in srgb, var(--q-ffg) 82%, transparent) !important; }
 .ayq.ayq .ayq-bottom__by button { padding: 0; border: 0; background: none; color: var(--q-ffg); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; min-height: 32px; }
-.ayq.ayq .ayq-bottom__prose .ayq-p { color: var(--q-ffg) !important; }
 @media (max-width: 760px) { .ayq.ayq .ayq-bottom { padding: 24px 20px; } .ayq.ayq .ayq-bottom__h { font-size: calc(26px * var(--q-scale)) !important; } .ayq.ayq .ayq-bottom__list > li { font-size: calc(17px * var(--q-scale)); } }
 
 /* At a glance: a bento of tinted tiles with pill captions. */

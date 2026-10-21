@@ -20,7 +20,6 @@
 .cr-result{width:100%;text-align:left;min-height:52px;padding:.75rem 1rem;border:1px solid rgba(41,37,36,.3);border-radius:12px;background:#FFFCF9;font:inherit;font-weight:600;color:#242A52;cursor:pointer;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .cr-result span{font-weight:400;color:#57504b}
 .cr-link{background:none;border:0;padding:0;font:inherit;color:#242A52;text-decoration:underline;cursor:pointer}
-.cr-change{display:block;margin:1.5rem 0 0;min-height:44px}
 .cr-unverified{background:#FFFCF9;border:1px solid rgba(41,37,36,.2);border-radius:12px;padding:1rem;margin-top:.75rem}
 .cr-unverified p{margin:.25rem 0}
 .cr-section{scroll-margin-top:96px}
@@ -54,7 +53,6 @@
 @media (max-width:420px){.cr-facts{grid-template-columns:1fr;gap:.1rem}.cr-facts dd{margin-bottom:.5rem}.cr-btn{width:100%}}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:auto}}
 /* No floating widgets on this sensitive page. */
-.v6-page-campus-resources .v6-ask-locked-fallback,.v6-page-campus-resources .ayna-ask-launcher{display:none!important}
 .cr-case p{margin:.6rem 0}
 .cr-card__name,.cr-case__heading{font-weight:600!important}
 .cr-h2,.cr-h3{line-height:1.2}

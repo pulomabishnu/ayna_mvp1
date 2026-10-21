@@ -99,8 +99,6 @@
 }
 
 /* Placements */
-.ayna-browse .ayna-browse__partners { margin: 24px 0 16px; }
-.ayna-mobile .ay-shop-partners { margin: 0 var(--ay-gutter, 16px) 24px; }
 
 /* Every tile in a row is the same height; a long brand name wraps inside the
    tile at a smaller size instead of making its tile taller than the others. */

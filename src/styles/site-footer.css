@@ -8,7 +8,6 @@
 }
 .app-container.app-container .site-footer :is(a, button, p, span, div, h2, h3, h4, li, strong, b) { color: var(--ay-ink) !important; }
 .app-container.app-container .site-footer :is(.site-footer__baseline, .site-footer__legal) { border-color: var(--ay-line) !important; }
-.app-container.app-container .site-footer .site-footer__columns :is(h2, h3, h4, [class*='heading'], [class*='title']) { color: var(--ay-ink-soft) !important; }
 .app-container.app-container[data-theme='dark'] .site-footer {
   background: rgba(9, 9, 13, .96) !important;
   color: #f4f2ff !important;
@@ -16,4 +15,3 @@
   box-shadow: 0 -6px 24px rgba(130, 148, 255, .1);
 }
 .app-container.app-container[data-theme='dark'] .site-footer :is(a, button, p, span, div, h2, h3, h4, li, strong, b) { color: #f4f2ff !important; }
-.app-container.app-container[data-theme='dark'] .site-footer .site-footer__columns :is(h2, h3, h4, [class*='heading'], [class*='title']) { color: rgba(244, 242, 255, .72) !important; }

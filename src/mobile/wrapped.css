@@ -45,12 +45,6 @@
 .ayw-foot { margin: 18px 0 0; font: 500 13px/1.4 var(--ay-font-ui); opacity: .75; }
 
 /* intro */
-.ayw-shapes { position: absolute; inset: 0; pointer-events: none; animation: none !important; }
-.ayw-shapes i { position: absolute; display: block; border: 2px solid var(--ay-paper); animation: ayw-float 6s ease-in-out 1; }
-.ayw-shapes i:nth-child(1) { width: 120px; height: 120px; right: -30px; top: 2%; border-radius: 50%; background: var(--ay-pink); }
-.ayw-shapes i:nth-child(2) { width: 90px; height: 140px; left: -24px; bottom: 6%; border-radius: 60px 60px 0 0; background: var(--ay-peri); animation-delay: -2s; }
-.ayw-shapes i:nth-child(3) { width: 70px; height: 70px; right: 18%; bottom: 14%; background: var(--ay-butter); clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); border: 0; animation-delay: -4s; }
-.ayw-shapes i:nth-child(4) { width: 54px; height: 54px; left: 12%; top: 10%; border-radius: 16px; background: var(--ay-mint); rotate: 12deg; animation-delay: -3s; }
 @keyframes ayw-float { 50% { transform: translateY(-12px) rotate(6deg); } }
 .ayw--intro .ayw-kicker, .ayw--intro .ayw-title, .ayw--intro .ayw-stat-row { position: relative; }
 .ayw-stat-row { display: flex; gap: 10px; margin-top: 30px; }

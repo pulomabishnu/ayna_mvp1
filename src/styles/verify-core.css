@@ -5,27 +5,20 @@
    100px tall. Reset it, and pin the Ecosystem count to the tab's corner so it
    never takes layout width (no reserved gap, no shift when it arrives). */
 .app-container .ay-badge { min-height: 0 !important; height: 20px !important; min-width: 20px !important; padding: 0 6px !important; gap: 0 !important; align-content: center !important; animation: none !important; border: 2px solid var(--ay-ink) !important; font: 600 var(--ay-fs-caption)/1 var(--ay-sans) !important; font-variant-numeric: tabular-nums; }
-.app-container .app-nav.app-nav a.app-nav__tab { position: relative; }
-.app-container .app-nav .app-nav__tab .ay-badge { position: absolute !important; top: -6px; right: -6px; box-shadow: 0 0 0 2px var(--ay-paper); }
 .app-container .app-nav .ay-badge.is-empty { display: none !important; }
 .app-container .app-nav .ay-badge.is-corner { top: -6px !important; right: -6px !important; }
 
 /* M5: centre the beta pill on the wordmark's x-height (measured 2.6px high) */
-.app-container .app-nav__logo .app-nav__beta-badge { transform: translateY(2.5px); }
 /* The landing header variant paints every span cream (!important); counts must stay ink on butter. */
 .app-container .app-nav .ay-badge, .app-container .mobile-nav-drawer .ay-badge { color: var(--ay-ink) !important; -webkit-text-fill-color: currentColor; background: var(--ay-butter) !important; font-family: var(--ay-sans) !important; }
 
 /* S12 / M11: titles reserve two lines (a 1.5em-tall eyebrow row is already fixed),
    so the main price line sits at the same height across a row; a unit or list
    price drops below it instead of pushing it up. */
-.app-container .ayna-browse-card .ayna-discover-card__name { min-height: 2.5em !important; }
-.app-container .ayna-browse-card .ayna-discover-card__price { margin-top: 0 !important; padding-top: 4px !important; }
-.app-container .ayna-browse-card__labels { height: 20px; min-height: 20px; overflow: hidden; }
 /* M3: one "lifted" shadow token (3px) for nav pill and card hover alike */
 .app-container :is(.ayna-landing-shop-card, .ayna-browse-card):hover { transform: translate(-2px, -2px) !important; box-shadow: var(--ay-shadow) !important; }
 
 /* S06: empty-state suggestion pills are buttons, not underlined links */
-.app-container .ayna-browse__empty-actions button { text-decoration: none !important; }
 
 /* E06: Saved uses the same section heading as Your shelves; count is the standard badge */
 .app-container .eco-saved__head { justify-content: flex-start !important; align-items: center !important; gap: 12px !important; }
@@ -48,8 +41,6 @@
 
 /* MW02: the sheet covered the header's X, so it gets its own 44px close target;
    G17: the Ask launcher hides while the menu is open. */
-.app-container .mobile-nav-close { position: absolute; top: 18px; right: 16px; width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); color: var(--ay-ink); cursor: pointer; }
-.app-container .mobile-nav-close svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
 body:has(.mobile-nav-drawer) .app-container :is(.ayna-ask-dock, .ayna-ask-tab) { display: none !important; }
 
 /* MW06: on phones Filters sits at the left edge, Personalize at the right */
@@ -72,24 +63,14 @@ body:has(.mobile-nav-drawer) .app-container :is(.ayna-ask-dock, .ayna-ask-tab) {
 .app-container [role='img'][aria-label='Product image not found'] { background: var(--ay-product-tile, var(--ay-paper)) !important; }
 
 /* M47: snap the ecosystem Details drawers to the type scale (12 / 14 / 16) */
-.app-container .eco2-details summary > span:not(.eco2-details__hint), .app-container .eco2-details summary strong { font-size: var(--ay-fs-body) !important; }
-.app-container .eco2-details .eco2-details__hint { font-size: var(--ay-fs-caption) !important; }
-.app-container .eco2-details__body :is(p, label, a, li, button, input, select) { font-size: var(--ay-fs-secondary) !important; }
-.app-container .eco2-details__body div:not(:has(*)) { font-size: var(--ay-fs-secondary) !important; }
-.app-container .eco2-details__body :is(h3, h4) { font-size: var(--ay-fs-body) !important; font-weight: 600 !important; font-family: var(--ay-sans) !important; letter-spacing: 0 !important; }
-.app-container .eco2-details__body :is(h3, h4, h5) { color: var(--ay-ink) !important; }
 
 /* E08: the refresh notice spans exactly the content column below it */
-.app-container .eco2-notice { max-width: 1100px; margin-left: auto !important; margin-right: auto !important; box-sizing: border-box; }
 
 /* Header is the same 82px on every page (Home used 90px, so the nav jumped 4px between pages) */
-.app-container .app-nav.app-nav--landing { padding-top: 20px !important; padding-bottom: 20px !important; }
 
 /* Article and product titles are now the page H1 (G19); keep their look */
-.app-container .ay-web-lib-article > h1.ay-article-title { font: 400 var(--ay-fs-display)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; color: var(--ay-ink) !important; }
 /* Footer text on the type scale */
 .app-container .site-footer :is(p, a, button, span, li) { font-size: var(--ay-fs-secondary); }
-.app-container .site-footer .site-footer__legal, .app-container .site-footer .site-footer__legal * { font-size: var(--ay-fs-caption) !important; }
 /* Ask ayna on the product page: compact orb so it can't cover the Community column */
 @media (min-width: 768px) {
   .app-container:has(.pdp-page) .ayna-ask-dock .ayna-ask-launcher__label { display: none !important; }
@@ -100,4 +81,3 @@ body:has(.mobile-nav-drawer) .app-container :is(.ayna-ask-dock, .ayna-ask-tab) {
   .app-container main { padding-bottom: 88px !important; }
 }
 /* Care near you headings: site display type, not Bricolage 400 */
-.app-container .eco2-details__body :is(h3, h4) { font-family: var(--ay-sans) !important; font-weight: 600 !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--ay-ink) !important; }

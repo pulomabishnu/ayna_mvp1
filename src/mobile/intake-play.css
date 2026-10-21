@@ -500,11 +500,6 @@
 .ip-age-input:focus { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 8px; }
 
 /* Avoid / should-be split */
-.ip-split { display: grid; gap: 16px; }
-.ip-split-group { display: grid; gap: 8px; }
-.ip-split-group > strong { justify-self: start; padding: 4px 10px; border: 1.5px solid var(--ay-ink); border-radius: 99px; font: 500 13px/1 var(--ay-font-ui); }
-.ip-split-group > strong.is-avoid { background: var(--ay-pink); }
-.ip-split-group > strong.is-want { background: var(--ay-mint); }
 
 /* FSA/HSA: "No" / "Not sure" centred under the cards */
 .ip-cards > .ip-chips { justify-content: center; }
@@ -603,7 +598,6 @@
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-alert strong,
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-alert p { color: #3e2723 !important; }
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-alert strong span { background: #3e2723 !important; color: var(--ay-butter) !important; }
-.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-split-group > strong,
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-tab[aria-selected='true'] b { color: #3e2723 !important; }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-add-row,
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-onfile { background: var(--ay-paper); color: #ffedac !important; }

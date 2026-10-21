@@ -23,8 +23,6 @@
 .ay-retailers svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 /* Ratings line (real ayna member ratings only). */
-.ay-pdp-rating { display: inline-flex; align-items: center; gap: 4px; margin: 0; color: var(--ay-ink); font: 600 var(--ay-fs-secondary)/1.3 var(--ay-sans); }
-.ay-pdp-rating span { color: var(--ay-ink-soft); font-weight: 500; }
 
 /* Breadcrumbs */
 .ay-crumbs ol { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin: 0; padding: 0; list-style: none; color: var(--ay-ink-soft); font: 500 var(--ay-fs-secondary)/1.4 var(--ay-sans); }
@@ -62,16 +60,6 @@ button.ay-compare__name:hover { text-decoration-color: currentColor; }
 
 
 /* Evidence grade per need (research grades). */
-.ay-ev2__grades { margin: 0 0 8px; padding: 0; list-style: none; display: grid; gap: 10px; }
-.ay-ev2__grades li { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; font: 400 var(--ay-fs-body)/1.55 var(--ay-sans); }
-.ay-ev2__grades a { color: inherit; text-decoration: underline; font-size: var(--ay-fs-caption); }
-.ay-ev2__grade { padding: 3px 9px; border: 1.5px solid #3e2723; border-radius: 99px; font: 600 var(--ay-fs-caption)/1.3 var(--ay-sans); white-space: nowrap; background: #ffedac; color: #3e2723; }
-.ay-ev2__grade.is-a { background: #769ebe; }
-.ay-ev2__grade.is-b { background: #f7badd; }
-.ay-ev2__grade.is-c, .ay-ev2__grade.is-none { background: transparent; }
-[data-theme='brand-dark'] .ay-ev2__grade.is-c, [data-theme='brand-dark'] .ay-ev2__grade.is-none { color: #ffedac; border-color: #ffedac; }
 
 /* Text kept in the page for search but folded until tapped (sources past the
    first two, the full version of a long note). */
-.ay-src li[hidden],
-.ay-ev__stf > [hidden] { display: none !important; }

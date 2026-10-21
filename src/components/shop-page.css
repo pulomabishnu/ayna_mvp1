@@ -20,9 +20,6 @@ html body .app-container.app-container.app-container .ayshop__search-icon { posi
 html body .app-container.app-container.app-container .ayshop__inferred { display: flex; gap: var(--ay-s8); }
 
 /* category chips: wrap on desktop, one sideways row on phones */
-html body .app-container.app-container.app-container .ayshop__cats { position: relative; display: flex; align-items: center; gap: var(--ay-s8); min-width: 0; }
-html body .app-container.app-container.app-container .ayshop__chips { flex: 1; min-width: 0; }
-html body .app-container.app-container.app-container .ayshop__arrow { display: none !important; }
 
 /* toolbar */
 html body .app-container.app-container.app-container .ayshop__toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--ay-s12) var(--ay-s16); margin-top: var(--ay-s20); }

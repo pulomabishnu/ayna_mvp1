@@ -13,8 +13,6 @@ body .ay-why-ring { background: conic-gradient(var(--ay-ink, #1d1a2b) var(--a), 
 body .ay-why-ring span { display: flex; align-items: baseline; justify-content: center; gap: 1px; background: var(--ay-paper, #fffcf5); color: var(--ay-ink, #1d1a2b); }
 body .ay-why-ring span { line-height: 62px; }
 .ay-why-tier { display: inline-block; margin-bottom: 8px; padding: 4px 10px; border: 1.5px solid var(--ay-ink, #1d1a2b); border-radius: 99px; background: var(--ay-paper, #fffcf5); font: 700 12px/1.2 var(--ay-font-ui, 'Figtree', sans-serif); }
-body .ay-why p.ay-why-access { margin: 8px 0 0; font-weight: 600; font-size: 13px; }
-.ay-why-access span { font-size: 9px; vertical-align: 2px; }
 .ay-why-notes { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 0; padding: 0; list-style: none; }
 .ay-why-notes li { padding: 6px 11px; border: 1.5px dashed var(--ay-ink, #1d1a2b); border-radius: 99px; font: 600 12.5px/1.2 var(--ay-font-ui, 'Figtree', sans-serif); }
 .ay-why-excluded { padding: 16px; border: 2px solid var(--ay-ink, #1d1a2b); border-radius: 18px; background: var(--ay-pink, #f7badd); }
@@ -65,45 +63,12 @@ body .ay-why-chips li { border-color: var(--ay-ink, #1d1a2b); }
 .app-container .eco3-carefirst h2 { margin: 0 0 10px !important; font: 800 clamp(26px, 2.4vw, 34px)/1.05 var(--ay-font-display) !important; letter-spacing: -.04em !important; color: var(--ay-ink) !important; }
 .app-container .eco3-carefirst__note { margin: 0 0 8px !important; max-width: 70ch; font: 500 15px/1.5 var(--ay-font-ui) !important; color: var(--ay-ink) !important; }
 .app-container .eco3-carefirst .care-near-panel { margin-top: 16px; padding: 16px; border: 2px solid var(--ay-ink); border-radius: var(--ay-radius-md); background: var(--ay-paper); }
-.app-container .eco3-carenote { display: grid; gap: 4px; margin: 20px 0 16px; padding: 14px 18px; border: 2px solid var(--ay-ink-faint); border-radius: var(--ay-radius-md); background: var(--ay-paper); color: var(--ay-ink); }
-.app-container .eco3-carenote.is-prominent { border-color: var(--ay-ink); border-left-width: 8px; border-left-color: var(--ay-pink); }
-.app-container .eco3-carenote p { margin: 0 !important; font: 500 14px/1.5 var(--ay-font-ui) !important; color: var(--ay-ink) !important; }
 .app-container .eco3-secondary { margin-top: 32px; padding-top: 8px; opacity: .88; }
 .app-container .eco3-secondary__label { margin: 0 !important; color: var(--ay-ink-soft) !important; font: 700 13px/1.2 var(--ay-font-ui) !important; letter-spacing: .06em; text-transform: uppercase; }
 
 /* ---------- Ecosystem: one row per need ---------- */
-.app-container .eco3-needs { margin: 40px 0 0; }
-.app-container .eco3-needs__head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 16px; margin: 0 0 16px; padding: 0 0 12px; border-bottom: 2px solid var(--ay-ink); }
-.app-container .eco3-needs__head h2 { margin: 0 !important; color: var(--ay-ink) !important; font: 800 clamp(26px, 2.4vw, 32px)/1 var(--ay-font-display) !important; letter-spacing: -.04em !important; }
-.app-container .eco3-needs__sub { color: var(--ay-ink-soft); font: 500 14px/1.3 var(--ay-font-ui); }
-.app-container .eco3-needs__list { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
-.app-container .eco3-need { display: grid; grid-template-columns: minmax(180px, 240px) minmax(0, 1fr); gap: 8px 24px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--ay-line); }
-.app-container .eco3-need__label { display: grid; gap: 4px; min-width: 0; }
-.app-container .eco3-need__label strong { color: var(--ay-ink); font: 800 19px/1.15 var(--ay-font-display); letter-spacing: -.02em; }
-.app-container .eco3-need__short { color: var(--ay-ink-soft); font: 600 13px/1.35 var(--ay-font-ui); }
-.app-container .eco3-need__picks { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 8px; min-width: 0; }
-.app-container .eco3-pick { display: flex; align-items: center; justify-content: space-between; gap: 4px; min-width: 0; padding: 4px 6px 4px 4px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); }
-.app-container .eco3-pick.is-owned { background: var(--ay-cream); }
-.app-container .eco3-pick__open { display: inline-flex; align-items: center; gap: 10px; min-width: 0; padding: 0 6px 0 0; border: 0; background: none; color: var(--ay-ink); text-align: left; cursor: pointer; }
-.app-container .eco3-pick__img { flex: none; width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: #fff; border: 1px solid var(--ay-line); }
-.app-container .eco3-pick__text { display: grid; gap: 2px; min-width: 0; }
-.app-container .eco3-pick__name { overflow: hidden; font: 700 13.5px/1.2 var(--ay-font-ui); text-overflow: ellipsis; white-space: nowrap; }
-.app-container .eco3-pick__score { color: var(--ay-ink-soft); font: 600 12px/1.2 var(--ay-font-ui); }
-.app-container .eco3-pick__score b { color: var(--ay-ink); font-weight: 800; }
-.app-container .eco3-pick__state { padding: 4px 10px; border-radius: 99px; background: var(--ay-mint); color: var(--ay-ink); font: 700 11.5px/1.2 var(--ay-font-ui); white-space: nowrap; }
-.app-container .eco3-pick__add { min-height: 32px; padding: 0 12px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-butter); color: var(--ay-ink); font: 700 12.5px/1 var(--ay-font-ui); cursor: pointer; white-space: nowrap; }
-.app-container .eco3-need__empty { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 10px 14px; border: 2px dashed var(--ay-ink-faint); border-radius: var(--ay-radius-md); color: var(--ay-ink-soft); font: 500 14px/1.4 var(--ay-font-ui); }
-.app-container .eco3-need__care { grid-column: 2; padding: 10px 14px; border: 1.5px solid var(--ay-ink-faint); border-radius: var(--ay-radius-md); color: var(--ay-ink); }
-.app-container .eco3-need__care summary { cursor: pointer; font: 700 13.5px/1.3 var(--ay-font-ui); }
-.app-container .eco3-need__care ul { display: grid; gap: 6px; margin: 10px 0 0; padding: 0; list-style: none; font: 500 13px/1.4 var(--ay-font-ui); }
-.app-container .eco3-need__care a { color: var(--ay-ink) !important; font-weight: 700; }
-.app-container .eco3-need__care span { color: var(--ay-ink-soft); }
 
 @media (max-width: 720px) {
-  .app-container .eco3-need { grid-template-columns: minmax(0, 1fr); }
-  .app-container .eco3-need__care { grid-column: 1; }
-  .app-container .eco3-pick { width: 100%; justify-content: space-between; border-radius: var(--ay-radius-md); }
-  .app-container .eco3-pick__name { max-width: none; white-space: normal; }
   .app-container .eco3-carefirst { padding: 18px; }
   .ay-need-rows li { grid-template-columns: minmax(0, 7.5em) minmax(0, 1fr) 2.2em; }
 }
@@ -112,10 +77,6 @@ body .ay-why-chips li { border-color: var(--ay-ink, #1d1a2b); }
    The badge stays unobtrusive until the card is hovered or focused. The old
    rule listened on the image tile, which the card link covers, so it never
    showed. Touch screens have no hover, so it is always shown there. */
-.app-container .ayna-browse-card:is(:hover, :focus-within) .ayna-browse-card__match { opacity: 1; transform: scale(1); }
-@media (hover: none) {
-  .app-container .ayna-browse-card .ayna-browse-card__match { opacity: 1; transform: none; }
-}
 
 /* ---------- Why this matches (ASK2): based-on line, inputs, profile hint, restricted ----------
    Website panel (.ay-why, tokens flip with the theme) and app screen

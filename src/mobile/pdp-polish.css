@@ -24,41 +24,13 @@
 
 /* ---------- Nothing hides behind the purchase bar ---------- */
 #ay-pdp .ay-pdp-scroll { padding-bottom: calc(var(--pdp-bar-h) + env(safe-area-inset-bottom, 0px) + 16px) !important; }
-#ay-pdp .ay-pdp-bar { display: flex !important; align-items: center !important; gap: 8px !important; padding: 12px var(--pdp-gutter) calc(12px + env(safe-area-inset-bottom, 0px)) !important; box-sizing: border-box; }
-#ay-pdp .ay-pdp-bar > * { box-sizing: border-box !important; margin: 0 !important; }
-#ay-pdp .ay-pdp-bar > button { flex: 0 0 auto !important; }
-#ay-pdp .ay-pdp-bar > button { height: 48px !important; min-height: 48px; }
-#ay-pdp .ay-pdp-bar > button[aria-label='Save'],
-#ay-pdp .ay-pdp-bar > button[aria-label='Remove from Saved'] { padding: 0 !important; }
-#ay-pdp .ay-pdp-bar > button[aria-label='Save'],
-#ay-pdp .ay-pdp-bar > button[aria-label='Remove from Saved'] { width: 48px !important; min-width: 48px !important; max-width: 48px !important; }
-#ay-pdp .ay-pdp-bar > a,
-#ay-pdp .ay-pdp-bar > div { min-width: 0; height: 48px; box-sizing: border-box; display: flex !important; align-items: center; justify-content: center; padding: 0 12px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-#ay-pdp .ay-pdp-bar > div > span { overflow: hidden; text-overflow: ellipsis; }
-#ay-pdp .ay-pdp-bar > :is(a, div) { flex: 1 1 0 !important; min-width: 0 !important; max-width: none !important; }
 /* No shop link: a quiet dashed placeholder, readable in both themes (no white slab). */
-#ay-pdp .ay-pdp-bar > div { background: transparent !important; border: 1.5px dashed var(--pdp-card-line) !important; box-shadow: none !important; opacity: 1 !important; color: var(--ay-ink) !important; }
-.ayna-mobile[data-theme='dark'] #ay-pdp .ay-pdp-bar > div { color: #ffedac !important; }
-#ay-pdp .ay-pdp-bar > div .ayna-seller-unavailable { color: inherit !important; opacity: .75; }
 /* 320px: every label fits on one line (heart 44 + eco + CTA within 288px). */
 @media (max-width: 359px) {
   #ay-pdp { --pdp-gutter: 16px; }
-  #ay-pdp .ay-pdp-bar { gap: 6px !important; }
-  #ay-pdp .ay-pdp-bar > button,
-  #ay-pdp .ay-pdp-bar > a,
-  #ay-pdp .ay-pdp-bar > div { height: 44px !important; min-height: 44px; }
-  #ay-pdp .ay-pdp-bar > button[aria-label='Save'],
-  #ay-pdp .ay-pdp-bar > button[aria-label='Remove from Saved'] { width: 44px !important; min-width: 44px !important; max-width: 44px !important; }
-  #ay-pdp .ay-pdp-bar > .ay-pdp-eco-btn { padding: 0 10px !important; font-size: 13px !important; font-weight: 500 !important; }
-  #ay-pdp .ay-pdp-bar > a,
-  #ay-pdp .ay-pdp-bar > div { padding: 0 6px !important; font-size: 13px !important; font-weight: 500 !important; }
 }
 
 /* ---------- Header: the quiet "Not for me" sits under the match ---------- */
-#ay-pdp .ay-pdp-head2 .ay-pdp-omit { display: flex !important; flex-wrap: wrap; align-items: center; justify-content: flex-start !important; gap: 4px 12px; margin: -8px 0 0 !important; }
-#ay-pdp .ay-pdp-head2 .ay-pdp-omit button { min-height: 44px !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: var(--ay-ink) !important; font: 500 13px/1.2 var(--ay-font-ui) !important; text-decoration: underline; text-decoration-color: var(--ay-line, currentColor); text-underline-offset: 4px; cursor: pointer; }
-#ay-pdp .ay-pdp-head2 .ay-pdp-omit button[aria-pressed='true'] { text-decoration-color: currentColor; }
-#ay-pdp .ay-pdp-head2 .ay-pdp-omit small { font-size: 13px; font-weight: 500; opacity: .72; }
 
 /* ---------- Sections: 32px apart ---------- */
 #ay-pdp .ay-pdp-passport { display: grid !important; gap: var(--pdp-gap-sec) !important; margin: var(--pdp-gap-sec) var(--pdp-gutter) 0 !important; }

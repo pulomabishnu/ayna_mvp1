@@ -3,13 +3,7 @@
    Text on pastel / neon fills is always the dark ink (#3e2723). */
 
 /* ---------- Product page: lead with the need ---------- */
-.ayna-mobile .ay-pdp-need { display: grid; gap: 8px; margin-top: 14px; }
-.ayna-mobile .ay-pdp-need__lead { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; justify-self: start; padding: 0; border: 0; background: transparent; color: var(--ay-ink); text-align: left; cursor: pointer; }
-.ayna-mobile .ay-pdp-need__lead strong { font: 400 22px/1.15 var(--ay-font-display, var(--ay-font-ui)); letter-spacing: -.03em; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; text-decoration-color: var(--ay-line); }
 .ayna-mobile :is(.ay-pdp-need__tier, .ay-match-tier) { display: inline-block; padding: 4px 10px; border-radius: 99px; background: var(--ay-mint); color: #3e2723; font: 500 13px/1.2 var(--ay-font-ui); }
-.ayna-mobile .ay-pdp-need__tier.is-strong { background: var(--ay-peri); }
-.ayna-mobile .ay-pdp-need__tier.is-exploratory { background: var(--ay-butter); }
-.ayna-mobile .ay-pdp-need__tier.is-browse { background: var(--ay-tile, var(--ayna-chip-bg)); color: var(--ay-ink); }
 .ayna-mobile .ay-pdp-need__rows { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
 .ayna-mobile .ay-pdp-need__rows li { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border: 1.5px solid var(--ay-ink); border-radius: 99px; color: var(--ay-ink); font: 500 13px/1.2 var(--ay-font-ui); }
 .ayna-mobile .ay-pdp-need__rows li b { font-weight: 600; }
@@ -17,10 +11,7 @@
 .ayna-mobile .ay-pdp-need__rows li.is-excellent { background: var(--ay-mint); border-color: #3e2723; color: #3e2723; }
 .ayna-mobile .ay-pdp-need__rows li.is-strong { background: var(--ay-peri); border-color: #3e2723; color: #3e2723; }
 .ayna-mobile .ay-pdp-need__rows li.is-exploratory { background: var(--ay-butter); border-color: #3e2723; color: #3e2723; }
-.ayna-mobile .ay-pdp-need__meta { display: flex; flex-wrap: wrap; gap: 6px; }
 .ayna-mobile :is(.ay-pdp-need__access, .ay-pdp-need__note) { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 99px; background: var(--ay-tile, var(--ayna-chip-bg)); color: var(--ay-ink); font: 500 13px/1.2 var(--ay-font-ui); }
-.ayna-mobile .ay-pdp-need__access::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--ay-mint); border: 1px solid #3e2723; }
-.ayna-mobile .ay-pdp-need__note { background: transparent; border: 1.5px dashed var(--ay-line); }
 .ayna-mobile .ay-pdp-omit { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 8px; }
 .ayna-mobile .ay-pdp-omit button { min-height: 40px; padding: 0 14px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 500 13px/1 var(--ay-font-ui); }
 .ayna-mobile .ay-pdp-omit small { color: var(--ay-ink-soft, var(--ay-ink)); font-size: 13px; font-weight: 500; }
@@ -87,7 +78,6 @@
 /* ---------- Ecosystem vertical rhythm (round 5, 8pt) ----------
    hero -> first shelf 32, shelf header -> cards 16, note -> cards 12,
    shelf -> shelf 40. Header: 12px inner padding, 12px between number and title. */
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-stage.ay-eco-hero { margin-bottom: 0 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-notice { margin: 16px 0 0 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-ecosystem > div > .ayna-area-collection:first-child { margin-top: 32px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head { min-height: 64px; margin: 0 0 16px !important; padding: 12px 16px 12px 12px !important; border-radius: 20px !important; }
@@ -98,4 +88,3 @@
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection + .ayna-area-collection { margin-top: 40px !important; }
 .ayna-mobile .ay-carenote-slot > .ay-carenote.ay-care-banner { margin: 32px var(--ay-gutter, 20px) 0; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-carenote-slot + .ayna-area-collection { margin-top: 40px !important; }
-.ayna-mobile[data-theme='dark'] .ayna-cabinet-suggestion > button { color: var(--ay-ink); border-bottom-color: var(--ay-line); }

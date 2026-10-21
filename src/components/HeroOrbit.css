@@ -60,4 +60,3 @@
 }
 .hero-orbit__bubble small { display: inline-grid; place-items: center; min-width: 22px; height: 22px; margin-left: 8px; padding: 0 6px; border-radius: 99px; background: #1d1a2b; color: #fffcf5; font: 600 var(--ay-fs-caption)/1 var(--ay-sans); }
 .hero-orbit__bubble.is-add { border-style: dashed; background: transparent; box-shadow: none; }
-.hero-orbit--compact { --size: min(420px, 34vw); }

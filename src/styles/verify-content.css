@@ -11,21 +11,6 @@
 /* Dark mode: ghost and pressed buttons stay outlined (web-play makes every .wc-btn a light pill). */
 .app-container[data-theme='dark'] :is(.wc-btn.is-ghost, .wc-btn[aria-pressed='true']) { background: var(--ay-paper) !important; color: var(--ay-ink) !important; }
 /* Profile hero on phones: avatar beside the name, left aligned. */
-@media (max-width: 900px) {
-  .app-container .wc-prof-hero { flex-direction: row !important; align-items: center !important; gap: 16px; }
-  .app-container .wc-prof-hero .wc-avatar { width: 64px !important; height: 64px !important; font-size: var(--ay-fs-section) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
-  .app-container .wc-prof-hero h1 { font-size: var(--ay-fs-title) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
-}
-@media (max-width: 560px) {
-  /* Feed tabs in one scrolling row instead of two wrapped rows. */
-  .app-container .wc-tabs { flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px; padding: 0 16px 4px; scrollbar-width: none; }
-  .app-container .wc-tabs::-webkit-scrollbar { display: none; }
-  .app-container .wc-tabs button { flex: none; }
-  /* Compact "me" card: one row. */
-  .app-container .wc-me { grid-template-columns: auto 1fr auto; padding: 12px 16px; }
-  .app-container .wc-me .wc-avatar { width: 40px !important; height: 40px !important; }
-  .app-container .wc-me .wc-link { grid-column: 3; justify-self: end; }
-}
 
 /* ---------- Product page: full app-style sections (all info visible) ---------- */
 .app-container .pdp-srcindex { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0 0 16px; }
@@ -72,8 +57,6 @@
   .app-container .pdp-facts > div { grid-template-columns: 1fr; gap: 4px; }
   .app-container .pdp-srcindex strong { font-size: var(--ay-fs-section); font-family: var(--ay-serif); font-weight: 400; letter-spacing: -0.01em; }
 }
-.app-container .ayna-browse-card h3.ayna-discover-card__name { margin: 0 !important; color: var(--ay-ink) !important; font: 600 var(--ay-fs-secondary)/1.25 var(--ay-sans) !important; letter-spacing: 0 !important; }
 .app-container .pdp-panel[data-tone] .pdp-panel__title { margin: 0 0 16px !important; padding: 12px 14px !important; border: 2px solid var(--ay-ink) !important; border-radius: 14px !important; }
 
 /* Round 5: website product card shows the ink "NN% match" pill (no ring, no tooltip). */
-.app-container .ayna-browse-card .ayna-browse-card__pill { position: absolute; top: 8px; left: 8px; z-index: 2; background: var(--ay-ink) !important; color: var(--ay-paper) !important; border: 0 !important; pointer-events: none; }

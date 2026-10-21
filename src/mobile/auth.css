@@ -6,11 +6,6 @@
 .ay-auth-head { position: relative; padding-right: 72px; }
 .ay-auth-head h1 { margin: 0; font: 400 calc(28px * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display); letter-spacing: -.045em; color: var(--ay-ink); text-wrap: balance; }
 .ay-auth-head p { margin: 8px 0 0; font: 400 15px/1.45 var(--ay-font-ui); opacity: .7; }
-.ay-auth-art { position: absolute; right: 0; top: 0; width: 64px; height: 64px; }
-.ay-auth-art i { position: absolute; display: block; border: 1.5px solid var(--ay-ink); }
-.ay-auth-art i:nth-child(1) { width: 40px; height: 40px; right: 0; top: 0; border-radius: 50%; background: var(--ay-butter); }
-.ay-auth-art i:nth-child(2) { width: 28px; height: 28px; left: 4px; top: 26px; border-radius: 8px; background: var(--ay-pink); rotate: -12deg; }
-.ay-auth-art i:nth-child(3) { width: 18px; height: 18px; right: 6px; top: 44px; border: 0; background: var(--ay-peri-ink, #3e2723); clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); }
 
 /* Form: fields and their button stay together */
 .ay-auth-form { display: grid; gap: 8px; margin-top: 32px; }

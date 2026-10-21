@@ -53,16 +53,12 @@
 
 /* Dark theme: lighten the blocks instead of darkening. */
 [data-ay-theme='dark'] .ay-skel__bar,
-[data-ay-theme='dark'] .ay-skel__card,
-.theme-dark .ay-skel__bar,
-.theme-dark .ay-skel__card {
+[data-ay-theme='dark'] .ay-skel__card {
   background: rgba(255, 252, 245, 0.1);
 }
 
 [data-ay-theme='dark'] .ay-skel__bar::after,
-[data-ay-theme='dark'] .ay-skel__card::after,
-.theme-dark .ay-skel__bar::after,
-.theme-dark .ay-skel__card::after {
+[data-ay-theme='dark'] .ay-skel__card::after {
   background: linear-gradient(90deg, transparent, rgba(255, 252, 245, 0.08), transparent);
 }
 
@@ -86,8 +82,7 @@
   cursor: pointer;
 }
 
-[data-ay-theme='dark'] .ay-skel__status .ay-skel__retry,
-.theme-dark .ay-skel__status .ay-skel__retry {
+[data-ay-theme='dark'] .ay-skel__status .ay-skel__retry {
   border-color: var(--ay-paper, #fffcf5);
   color: var(--ay-paper, #fffcf5);
 }

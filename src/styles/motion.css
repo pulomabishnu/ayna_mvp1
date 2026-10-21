@@ -45,7 +45,6 @@
 @keyframes ay-step-in { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
 @keyframes ay-step-back { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
 .ay-step-in { animation: ay-step-in var(--t-base) var(--ease-out) both; }
-.ay-step-back { animation: ay-step-back var(--t-base) var(--ease-out) both; }
 
 /* ---- 6. Sheets: grabber, drag to dismiss, 40% espresso dim ---- */
 @keyframes ay-sheet-in { from { transform: translateY(100%); } to { transform: none; } }
@@ -60,7 +59,6 @@
 @keyframes ay-push-in { from { transform: translateX(100%); } to { transform: none; } }
 @keyframes ay-push-out { from { transform: none; } to { transform: translateX(100%); } }
 .ay-push-in { animation: ay-push-in var(--t-push) var(--ease-out) both; box-shadow: -8px 0 24px rgba(62, 39, 35, .12); }
-.ay-push-out { animation: ay-push-out var(--t-sheet-out) var(--ease-exit) both; pointer-events: none; }
 .ay-push-dragging { animation: none !important; transition: none !important; }
 .ay-push-settle { transition: transform var(--t-base) var(--ease-out); }
 @keyframes ay-tab-fade { from { opacity: 0; } to { opacity: 1; } }
@@ -80,8 +78,7 @@
 html.ay-motion-paused .ay-reveal { opacity: 1; translate: none; transition: none; }
 @media (prefers-reduced-motion: reduce) {
   .ay-reveal { opacity: 1; translate: none; transition: none; }
-  .ay-push-in, .ay-sheet-in, .ay-step-in, .ay-step-back, .ay-dot-fill { animation-name: ay-tab-fade !important; animation-duration: 150ms !important; }
-  .ay-push-out { animation: none !important; opacity: 0; }
+  .ay-push-in, .ay-sheet-in, .ay-step-in, .ay-dot-fill { animation-name: ay-tab-fade !important; animation-duration: 150ms !important; }
   .ay-heart-pop svg, .ay-heart-pop.is-svg, .ay-count-bump, .ay-sticker-settle { animation: none !important; }
   .ay-sticker-settle { transform: rotate(-3deg); }
   .ay-press:active { transform: none; }

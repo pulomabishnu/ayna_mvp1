@@ -2,19 +2,7 @@
    app-theme.css and app-components.css. */
 
 /* ---------- Landing: espresso cover, live demo card, butter sheet ---------- */
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover {
-  background: var(--b-espresso) !important; color: var(--b-butter) !important;
-  padding: max(16px, env(safe-area-inset-top)) 0 0 !important; min-height: 100dvh;
-}
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-art { display: none !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-top { padding: 0 24px !important; display: flex; align-items: center; justify-content: space-between; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-mark { font: 800 30px/1 var(--f-logo) !important; letter-spacing: -0.05em !important; color: var(--b-butter) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-top button {
-  color: var(--b-espresso) !important; background: var(--b-butter) !important; text-decoration: none !important;
-  min-height: 40px !important; padding: 0 16px !important; border-radius: 999px !important; font: 500 13px/1 var(--f-ui) !important;
-}
 /* the demo sits on a white card, like a phone screen inside the phone */
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-reel { padding: 20px 20px 8px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-widget {
   background: var(--b-butter) !important; color: var(--b-espresso) !important;
   border-radius: 22px !important; padding: 18px 18px 14px !important;
@@ -29,26 +17,8 @@
 }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-copy p { color: var(--b-butter) !important; opacity: .72 !important; font: 400 15px/1.45 var(--f-ui) !important; }
 /* actions live on a butter sheet with the site's scalloped edge */
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-actions {
-  position: relative; margin-top: 28px !important;
-  background: var(--b-butter) !important; color: var(--b-espresso) !important;
-  padding: 26px 24px max(22px, env(safe-area-inset-bottom)) !important;
-}
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-actions::before {
-  content: ''; position: absolute; left: 0; right: 0; top: -13px; height: 14px;
-  background: radial-gradient(circle at 12px 14px, var(--b-butter) 12px, transparent 12.5px) 0 0 / 24px 14px repeat-x;
-}
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover .ayna-slide-start { background: var(--b-espresso) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover .ayna-slide-start-handle { background: var(--b-rose) !important; color: var(--b-espresso) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover .ayna-slide-start-fill { background: var(--b-rose) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover .ayna-slide-start-label { color: var(--b-butter) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-actions > div button { color: var(--b-espresso) !important; font: 600 17px/1 var(--f-ui) !important; }
 
 /* ---------- Ecosystem: title first, shelves swipe sideways ---------- */
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero { display: flex !important; flex-direction: column !important; gap: 14px !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero h1 { margin: 6px 0 0 !important; font-size: calc(28px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 400 !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-cover { order: 3; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-play { background: var(--b-espresso) !important; color: var(--b-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-area-collection, .ayna-cabinet-collection) .ayna-editorial-product-grid {
   display: grid !important; grid-auto-flow: column !important; grid-template-columns: none !important; grid-auto-columns: 46% !important;
   overflow-x: auto !important; scroll-snap-type: x mandatory; gap: 12px !important;
@@ -96,14 +66,11 @@
 }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] :is(.ayna-ecosystem-start, .ayna-cabinet-home, .ayna-figma-discover, .ayna-fresh-browse-screen, .ayna-fresh-ecosystem, .ayna-fresh-saved, .ayna-fresh-profile-hub, .ayna-fresh-product-detail, .ayna-fresh-article, .am-screen) { background-image: none !important; background-color: var(--r-canvas) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] :is(.ayna-cabinet-stage, .ay-eco-cover, .ayna-home-today, .ayna-saved-card, .ayna-saved-feature, .ayna-fresh-profile-menu > button, .am-playlist, .am-product) { box-shadow: none !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-cabinet-stage.ay-eco-hero { background: transparent !important; border: 0 !important; box-shadow: none !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-area-collection .ayna-cabinet-section-head { background: var(--area-tone, var(--b-sky)) !important; border-color: var(--b-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-header-ask-pill { background: var(--b-sky) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] :is(.ay-header-ask-pill, .ayna-shared-header-action) { border-color: var(--b-butter) !important; box-shadow: none !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-eco-play { background: var(--b-butter) !important; color: var(--b-espresso) !important; }
 
 /* the buy bar always sits above the page */
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-product-purchase-bar { z-index: 20 !important; background: var(--r-canvas) !important; border-top: 2px solid var(--r-line-strong) !important; }
 
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-editorial-product-grid > .ayna-fresh-product-card:nth-child(n),
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-product-card { border-color: rgba(255, 237, 172, .55) !important; }
@@ -140,9 +107,6 @@
 /* Swipe-to-discover entry: a small window onto the espresso deck */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-cta { background: var(--b-espresso) !important; color: var(--b-butter) !important; border: 2px solid var(--b-espresso) !important; box-shadow: 4px 4px 0 var(--b-rose) !important; border-radius: var(--r-radius-m) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-copy strong { font: 400 22px/1.15 var(--f-display) !important; color: var(--b-butter) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-go { background: var(--b-rose) !important; color: var(--b-espresso) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-art i { border-color: var(--b-espresso) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-cta:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--b-rose) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-discover-cta { background: var(--b-butter) !important; color: var(--b-espresso) !important; border-color: var(--b-butter) !important; box-shadow: 4px 4px 0 var(--b-sky) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-discover-copy strong { color: var(--b-espresso) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-discover-go { background: var(--b-sky) !important; }

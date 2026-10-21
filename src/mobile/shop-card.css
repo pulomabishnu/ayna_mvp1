@@ -38,12 +38,9 @@
 .ayna-mobile.ayna-mobile .ayna-shop-heading { padding: 8px var(--ay-gutter) 16px !important; }
 .ayna-mobile.ayna-mobile .ayna-shop-heading h1 { margin: 0 0 16px !important; }
 .ayna-mobile.ayna-mobile .ayna-shop-heading + div:not(.ayna-category-index) { margin: 0 0 16px !important; padding: 0 var(--ay-gutter) !important; }
-.ayna-mobile.ayna-mobile .ayna-shop-heading + div .ayna-fresh-mode-tab { min-height: 44px; padding: 0 0 2px !important; margin-right: 24px; }
-.ayna-mobile.ayna-mobile .ayna-shop-category-row { padding: 0 var(--ay-gutter) 16px !important; gap: 8px !important; align-items: center !important; }
 .ayna-mobile.ayna-mobile .ayna-shop-category { height: 40px !important; min-height: 40px !important; }
 .ayna-mobile.ayna-mobile .ayna-shop-filter-toggle { width: 40px !important; height: 40px !important; min-width: 40px !important; flex: none; border-radius: 50% !important; display: grid !important; place-items: center !important; }
 .ayna-mobile.ayna-mobile .ay-discover-cta { margin: 0 var(--ay-gutter) 24px !important; }
-.ayna-mobile.ayna-mobile .ayna-category-index .ayna-shop-category-row .ayna-shop-filter-toggle { border-radius: 999px !important; }
 /* "For me" (personalized) switch, light, same switch as Settings */
 .ay-for-me { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; margin-left: auto; padding: 0 6px 0 14px; border: 1.5px solid var(--ay-line); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 500 13px/1 var(--ay-font-ui); cursor: pointer; }
 .ay-for-me:disabled { opacity: .45; cursor: not-allowed; }

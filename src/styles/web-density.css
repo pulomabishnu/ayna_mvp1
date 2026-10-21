@@ -18,11 +18,7 @@
 .app-container.app-container .whc .whc-title--term { font-size: var(--ay-fs-display) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
 .app-container.app-container .whc .whc-chapters__label { font-size: var(--ay-fs-section); font-family: var(--ay-serif); font-weight: 400; letter-spacing: -0.01em; }
 /* Page titles: Shop / Library 56 -> 48, Ecosystem 64 -> 52, Community 40 -> 36 */
-.app-container.app-container .ayna-browse__heading h1,
-.app-container.app-container .ay-web-lib-head h1 { font-size: var(--ay-fs-display) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
 .app-container.app-container .eco3-head h1 { font-size: var(--ay-fs-display) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
-.app-container.app-container .wc3 .wc-head h1 { font-size: var(--ay-fs-title) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
-.app-container.app-container .ay-web-lib-cat > h2 { font-size: var(--ay-fs-section) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
 .app-container.app-container .eco-saved__head h2 { font-size: var(--ay-fs-title) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
 /* Product page title 48 -> 40 */
 .app-container.app-container .pdp-head__name { font-size: var(--ay-fs-title) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
@@ -42,12 +38,8 @@
 /* ---------- Nav: slightly tighter ---------- */
 @media (min-width: 901px) {
   .app-container.app-container .app-nav { padding-block: 16px; }
-  .app-container.app-container .app-nav.app-nav--landing { padding-top: 16px !important; padding-bottom: 16px !important; }
 }
-.app-container.app-container .app-nav.app-nav .app-nav__logo { font-size: 28px !important; }
-.app-container.app-container .app-nav.app-nav .app-nav__tab { padding: 0 14px !important; }
 
 /* ---------- Pills and chips: a touch less side padding (heights unchanged) ---------- */
 .app-container.app-container :is(.eco3-pill, .ayna-browse__filter-button, .ayna-browse__personalize-cta) { padding-inline: 14px !important; }
-.app-container.app-container .eco3-chip { padding-inline: 12px !important; }
 .app-container.app-container :is(.ay-web-lib-filter, .wc-tabs) > button { padding-inline: 14px !important; }

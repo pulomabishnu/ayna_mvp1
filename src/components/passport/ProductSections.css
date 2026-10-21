@@ -27,9 +27,6 @@
 .ay-glance :is(section, li, div, dl)[tabindex='-1']:focus { outline: none; }
 
 /* Head */
-.ay-glance__head { display: grid; gap: 4px; }
-.ay-glance__head h2 { font: 400 var(--ay-fs-title)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
-.ay-glance__head p { color: var(--ay-ink-soft); font: 500 var(--ay-fs-body)/1.55 var(--ay-sans); }
 
 /* Jump chips: a simple row at the top of the panel. Nothing here is sticky. */
 .ay-glance__nav ul { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
@@ -60,9 +57,6 @@
 .ay-glance .ay-glance__caveat { margin-top: 0 !important; padding-top: 0; color: var(--ay-ink-soft); font: 500 var(--ay-fs-secondary)/1.5 var(--ay-sans); }
 
 /* Sections: two even columns on wide panels, one on narrow. */
-.ay-glance__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 48px; align-items: start; }
-.ay-gl-col { display: grid; gap: 32px; min-width: 0; align-content: start; }
-.ay-gl-cell { min-width: 0; }
 .ay-gl-sec { display: grid; gap: 16px; min-width: 0; padding-top: 24px; border-top: 1.5px solid var(--ay-line); scroll-margin-top: 96px; border-radius: 0; }
 .ay-gl-sec__head { display: grid; justify-items: start; gap: 8px; }
 .ay-gl-sec__head h3 { font: 400 var(--ay-fs-section)/1.2 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
@@ -72,7 +66,6 @@
 .ay-gl-sec.is-brand .ay-gl-kind { background: transparent; border: 1.5px solid var(--ay-ink); color: var(--ay-ink); }
 .ay-gl-sec.is-unknown .ay-gl-kind { background: transparent; border: 1.5px dashed var(--ay-ink); color: var(--ay-ink); }
 .ay-gl-sec.is-match .ay-gl-kind { background: var(--ay-pink); }
-.ay-gl-sources .ay-gl-kind { background: var(--ay-cream); color: var(--ay-ink); border: 1.5px solid var(--ay-line); }
 
 /* Blocks */
 .ay-gl-block { display: grid; gap: 4px; min-width: 0; }
@@ -144,11 +137,8 @@
 /* Narrow panels (phones, the app): one column, same order. */
 @container ay-glance (max-width: 720px) {
   .ay-glance__top { grid-template-columns: minmax(0, 1fr); gap: 24px; }
-  .ay-glance__grid { display: flex; flex-direction: column; gap: 32px; }
-  .ay-gl-col { display: contents; }
   .ay-gl-srclist { grid-template-columns: minmax(0, 1fr); }
   .ay-gl-srclist li:nth-child(2) { border-top: 1px solid var(--ay-line); }
-  .ay-glance__head h2 { font-size: var(--ay-fs-section) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
 }
 @container ay-glance (max-width: 440px) {
   .ay-glance__nav { margin: 0 calc(-1 * var(--gl-pad)); }
@@ -170,9 +160,6 @@
 /* ---- Original product-page look (founder: "like how we had it on the app") ----
    Butter title bar, one column, and the key facts as a bordered label/value
    table (like Best for / Materials / Skip if), instead of a grid of tiles. */
-.ay-glance__head { padding: 12px 16px; border: 2px solid var(--ay-ink); border-radius: 14px; background: var(--ay-butter); }
-.ay-glance__head h2 { font: 400 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
-.ay-glance__head p { color: var(--ay-ink); font: 500 var(--ay-fs-secondary)/1.4 var(--ay-sans); }
 .ay-glance__top { grid-template-columns: minmax(0, 1fr) !important; gap: 24px !important; }
 .ay-glance__what { order: 1; }
 .ay-glance__facts { order: 2; display: block !important; border: 2px solid var(--ay-ink); border-radius: 14px; background: var(--ay-paper); overflow: hidden; }
@@ -203,8 +190,6 @@
 .ay-gl-sec__toggle:focus-visible { outline: 3px solid var(--ay-peri); outline-offset: 2px; }
 .ay-gl-sec__body { display: grid; gap: 16px; min-width: 0; }
 .ay-gl-sec__body[hidden] { display: none; }
-.ay-glance__grid { align-items: start; gap: 0 32px !important; }
-.ay-gl-col { gap: 16px !important; }
 @media (prefers-reduced-motion: reduce) { .ay-gl-sec__chev { transition: none; } }
 
 /* ---- Original product page: tab pills, one panel with a tone header (Oct 12 design) ---- */
@@ -218,13 +203,6 @@
 .ay-glance.is-tabbed .ay-glance__nav button.is-on { background: var(--ay-butter); box-shadow: 3px 3px 0 var(--ay-ink); }
 .ay-glance.is-tabbed .ay-glance__nav button:focus-visible { outline: 3px solid var(--ay-peri); outline-offset: 2px; }
 .ay-glance__panel { display: grid; gap: 20px; padding: 20px; border: 2px solid var(--ay-ink); border-radius: 18px; background: var(--ay-paper); box-shadow: 4px 4px 0 var(--ay-ink); min-width: 0; }
-.ay-glance__panelhead { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: -20px -20px 0; padding: 14px 20px; border-bottom: 2px solid var(--ay-ink); border-radius: 16px 16px 0 0; background: var(--ay-butter); }
-.ay-glance__panel[data-tone='peri'] .ay-glance__panelhead { background: var(--ay-peri); }
-.ay-glance__panel[data-tone='mint'] .ay-glance__panelhead { background: var(--ay-mint); }
-.ay-glance__panel[data-tone='pink'] .ay-glance__panelhead { background: var(--ay-pink); }
-.ay-glance__panel[data-tone='cream'] .ay-glance__panelhead { background: var(--ay-cream); }
-.ay-glance__panelhead h2 { margin: 0; font: 400 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; color: var(--ay-ink); }
-.ay-glance__chip { padding: 5px 10px; border: 1.5px solid var(--ay-ink); border-radius: 999px; background: var(--ay-paper); color: var(--ay-ink); font: 600 var(--ay-fs-caption)/1 var(--ay-sans); white-space: nowrap; }
 .ay-glance__panel .ay-gl-sec.is-bare { gap: 16px !important; }
 .ay-glance__panel .ay-gl-sec__body { gap: 16px; }
 .ay-glance.is-tabbed .ay-glance__nav button { white-space: nowrap; flex: none; }

@@ -754,7 +754,6 @@ html body .app-container.app-container[data-theme='brand-dark'] .ed .ed-field :i
 .ed .ed-evidence__oval { top: -20px; right: 18px; }
 .ed .ed-us__photo.ay-folder { max-width: 500px; width: 100%; margin: 0; }
 .ed .ed-us .ay-folder__photo img { aspect-ratio: 3 / 2; border-radius: 2px; }
-.ed .ed-strip.ay-pinstripe { padding-top: 24px; margin-top: 32px; }
 .app-container .ed :is(.ed-display, .ed-h1) { letter-spacing: -.025em !important; }
 @media (max-width: 767px) { .ed .ed-us__photo.ay-folder { margin: 8px auto 0; } .ed .ed-evidence__oval { top: -18px; right: 10px; } }
 @media (max-width: 767px) { .ed .ed-step.ay-tabcard { align-items: stretch; } }

@@ -170,10 +170,6 @@
 .app-container .pdp-page .pdp-below--passport .pdp-community-actions--flat { display: grid; gap: 16px; }
 .app-container .pdp-page .pdp-omit-link { justify-self: start; min-height: 44px; padding: 0; border: 0; background: none; color: var(--ay-ink-soft); font: 600 var(--ay-fs-secondary)/1.4 var(--ay-sans); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .app-container .pdp-page .pdp-rate { display: grid; gap: 8px; }
-.app-container .pdp-page .ay-psec h2 { font-size: inherit; }
-.app-container .pdp-page .ay-psec-introsec > h2 { font: 400 var(--ay-fs-section)/1.15 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
-.app-container .pdp-page .ay-psec-introsec.is-helps > h2 { font: 600 var(--ay-fs-body)/1.3 var(--ay-sans) !important; letter-spacing: 0 !important; }
-.app-container .pdp-page .ay-psec-item > h2 > button { min-height: 56px !important; }
 @media (max-width: 767px) {
   .app-container .pdp-page .pdp-h2-price__main { font-size: var(--ay-fs-section); font-family: var(--ay-serif); font-weight: 400; letter-spacing: -0.01em; }
   .app-container .pdp-page .pdp-below.pdp-below--passport { gap: 32px !important; }
