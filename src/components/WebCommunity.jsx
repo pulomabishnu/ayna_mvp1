@@ -26,6 +26,8 @@ function TeamTag({ title }) {
 import { toast } from '../utils/toast';
 import { useTeamBadges } from './community/useTeamBadges.js';
 import Announcements from './community/Announcements.jsx';
+import { PostStats, LikersList } from './community/PostEngagement.jsx';
+import { usePostEngagement } from './community/usePostEngagement.js';
 import { listAnnouncements } from '../utils/community/announcementsStore.js';
 import { breaksCommunityRules } from '../utils/communityRules.js';
 import { markPerf } from '../utils/perfTimings';
@@ -318,6 +320,10 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const teamBadges = useTeamBadges(supabase, user);
   const badgeFor = (authorId, anon = false) => (!anon && authorId ? teamBadges.get(authorId) || null : null);
   const openRules = () => setShowRules(true);
+  // Views and "found this helpful" faces for every post on screen (hidden until the migration runs).
+  const shownPosts = useMemo(() => [...posts, ...profilePosts, ...(searchResults?.posts || []), ...(page?.type === 'post' && details?.id ? [details] : [])], [posts, profilePosts, searchResults, page, details]);
+  const engagement = usePostEngagement({ supabase, posts: shownPosts, userId: user?.id || null, refreshKey: refresh });
+  const [likersPost, setLikersPost] = useState(null);
 
   const notifyError = (e) => setError(community.friendlyError(e));
   const requireAccount = (feature = 'this feature') => onRequireAuth?.(feature);
@@ -775,7 +781,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     const menuOpen = menuId === post.id;
     const helpful = Number(post.helpful_count) || 0;
     const replies = Number(post.comment_count) || 0;
-    return <article className={`cm-post ay-card${full ? ' is-full' : ''}`} data-kind={post.kind || 'post'} key={post.id}>
+    return <article ref={engagement.trackView(post.id)} className={`cm-post ay-card${full ? ' is-full' : ''}`} data-kind={post.kind || 'post'} key={post.id}>
       <header className="cm-post-head">
         <Avatar size={36} name={name} path={!anon ? profileById.get(post.author_id)?.avatar_url : null} anonymous={anon} />
         <div className="cm-post-who">
@@ -795,6 +801,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       {full ? <p className="cm-body">{post.body}</p> : <button type="button" className="cm-body" onClick={() => openPost(post)}>{post.body}</button>}
       {(post.media || []).length > 0 && <div className="cm-photos">{post.media.slice(0, 4).map((m) => <img key={m.path} src={publicMediaUrl(m.path)} alt="" loading="lazy" />)}</div>}
       {postProductIds(post).slice(0, 1).map((id) => <Mention key={id} productId={id} productsById={productsById} quizResults={quizResults} onOpenProduct={onOpenProduct} />)}
+      <PostStats post={post} engagement={engagement} onOpenLikers={setLikersPost} />
       <footer className="cm-actions">
         <button type="button" aria-pressed={Boolean(post.viewer_found_helpful)} aria-label={`Helpful${helpful ? `, ${helpful}` : ''}`} title="Helpful" onClick={() => togglePost(post, 'helpful')}><Icon name="thumb" size={17} /><span aria-hidden="true">{helpful ? `Helpful ${helpful}` : 'Helpful'}</span></button>
         <button type="button" aria-label={`Reply${replies ? `, ${replies} replies` : ''}`} title="Reply" onClick={() => openPost(post)}><Icon name="comment" size={17} /><span aria-hidden="true">{replies ? `Reply ${replies}` : 'Reply'}</span></button>
@@ -1238,6 +1245,14 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
           } catch { setTopicState('error'); }
         }}>{topicState === 'sending' ? 'Sending…' : 'Send suggestion'}</button></div>
       </>}
+    </Sheet>}
+    {likersPost && <Sheet title="Found this helpful" onClose={() => setLikersPost(null)} className="cm-people-sheet cm-likers-sheet">
+      <LikersList supabase={supabase} post={likersPost} user={user} friendships={friendships} refreshKey={refresh}
+        onRequireAuth={(f) => { setLikersPost(null); requireAccount(f); }}
+        onOpenProfile={(handle) => { setLikersPost(null); openProfile(handle); }}
+        onAddFriend={async (l) => { try { await community.sendFriendRequest(supabase, user.id, l.userId); setRefresh((v) => v + 1); } catch (e) { notifyError(e); throw e; } }}
+        onAcceptFriend={async (l) => { const fs = community.friendshipState(friendships, user.id, l.userId); if (!fs.row) return; try { await community.acceptFriendRequest(supabase, fs.row.id); setRefresh((v) => v + 1); } catch (e) { notifyError(e); throw e; } }} />
+      <p className="ay-likers-note">Who viewed a post is never shown.</p>
     </Sheet>}
     {peopleList && <Sheet title={peopleList.title} onClose={() => setPeopleList(null)} className="cm-people-sheet">
       {!peopleList.people ? <p className="cm-muted">Loading…</p> : peopleList.people.length === 0 ? <p className="cm-muted">{peopleList.title === 'Followers' ? 'No followers yet.' : 'Not following anyone yet.'}</p> : <ul className="cm-suggest">{peopleList.people.map((p) => <li key={p.user_id}>
