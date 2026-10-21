@@ -45,7 +45,7 @@ const PICK_IDS = {
 };
 const ORDINARY_URL = 'https://www.ulta.com/p/retinol-05-in-squalane-intermediate-retinol-serum-pimprod2007127';
 const NEMAH_URL = 'https://www.target.com/p/nemah-revitalizing-stretch-mark-cream-3-4-fl-oz/-/A-1004133786';
-const MEDERMA_URL = 'https://www.walmart.com/ip/Mederma-Stretch-Mark-Therapy-Prevention-Treatment-5-29-oz-150g/15111069';
+const MEDERMA_URL = 'https://www.amazon.com/dp/B08SSB2QDQ';
 const PICK_URLS = {
   'The Ordinary Retinol 0.5% in Squalane': ORDINARY_URL,
   'Nēmah Revitalizing Stretch Mark Cream': NEMAH_URL,

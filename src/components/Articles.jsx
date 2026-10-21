@@ -690,7 +690,7 @@ const ARTICLES = [
         <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
           <li><a href="https://www.ulta.com/p/retinol-05-in-squalane-intermediate-retinol-serum-pimprod2007127" target="_blank" rel="noopener noreferrer">The Ordinary Retinol 0.5% in Squalane</a></li>
           <li><a href="https://www.target.com/p/nemah-revitalizing-stretch-mark-cream-3-4-fl-oz/-/A-1004133786" target="_blank" rel="noopener noreferrer">Nēmah Stretch Mark Cream</a></li>
-          <li><a href="https://www.walmart.com/ip/Mederma-Stretch-Mark-Therapy-Prevention-Treatment-5-29-oz-150g/15111069" target="_blank" rel="noopener noreferrer">Mederma Stretch Marks Therapy</a></li>
+          <li><a href="https://www.amazon.com/dp/B08SSB2QDQ" target="_blank" rel="noopener noreferrer">Mederma Stretch Marks Therapy</a></li>
           <li><a href="/product/buni-transform-scar-body-treatment-oil">BUNI Transform Body and Scar Oil</a></li>
         </ul>
         <p>Remember these are alternatives but a prescription product may be the better option.</p>
