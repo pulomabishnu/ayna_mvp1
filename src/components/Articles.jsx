@@ -688,10 +688,10 @@ const ARTICLES = [
         <p>AND for my expecting mothers and breastfeeders, there's Nēmah Revitalizing Stretch Mark Cream and Mederma Stretch Marks Therapy, which are pregnancy-friendly options.</p>
         <p>After delivery, BUNI Transform Body and Scar Oil incorporates a milder retinoid (retinyl palmitate) with snail secretion filtrate to hydrate and reduce the appearance of stretch marks. This is safe during breastfeeding and the large roller ball design makes it especially appealing for quick application and scar massage.</p>
         <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
-          <li>The Ordinary Retinol 0.5% in Squalane</li>
-          <li>Nēmah Stretch Mark Cream</li>
-          <li>Mederma Stretch Marks Therapy</li>
-          <li>BUNI Transform Body and Scar Oil</li>
+          <li><a href="https://www.ulta.com/p/retinol-05-in-squalane-intermediate-retinol-serum-pimprod2007127" target="_blank" rel="noopener noreferrer">The Ordinary Retinol 0.5% in Squalane</a></li>
+          <li><a href="https://www.target.com/p/nemah-revitalizing-stretch-mark-cream-3-4-fl-oz/-/A-1004133786" target="_blank" rel="noopener noreferrer">Nēmah Stretch Mark Cream</a></li>
+          <li><a href="https://www.walmart.com/ip/Mederma-Stretch-Mark-Therapy-Prevention-Treatment-5-29-oz-150g/15111069" target="_blank" rel="noopener noreferrer">Mederma Stretch Marks Therapy</a></li>
+          <li><a href="/product/buni-transform-scar-body-treatment-oil">BUNI Transform Body and Scar Oil</a></li>
         </ul>
         <p>Remember these are alternatives but a prescription product may be the better option.</p>
 
@@ -710,9 +710,9 @@ const ARTICLES = [
         <p>One of the first at-home treatments worth discussing for a C-section scar. Only begin after the incision has fully closed and your clinician has cleared you to use it. Scar improvement generally takes consistent use over weeks to months.</p>
         <p><strong>Products worth looking at</strong></p>
         <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
-          <li>ScarAway Silicone Scar Sheets</li>
-          <li>Kelo-cote Silicone Scar Gel</li>
-          <li>La Roche-Posay Cicaplast Defense Gel Scar</li>
+          <li><a href="https://www.target.com/p/scaraway-clear-silicone-scar-sheets-6ct/-/A-81826383" target="_blank" rel="noopener noreferrer">ScarAway Silicone Scar Sheets</a></li>
+          <li><a href="https://theskinhut.shop/products/kelo-cote-silicone-scar-gel-15g?variant=56689415946613" target="_blank" rel="noopener noreferrer">Kelo-cote Silicone Scar Gel</a></li>
+          <li><a href="https://www.target.com/p/la-roche-posay-cicaplast-defense-gel-1-35oz/-/A-89209534" target="_blank" rel="noopener noreferrer">La Roche-Posay Cicaplast Defense Gel Scar</a></li>
         </ul>
         <p>These are product examples, not independently tested rankings.</p>
         <blockquote style={{ margin: '1rem 0', paddingLeft: '1rem', borderLeft: '3px solid var(--color-primary)' }}>
