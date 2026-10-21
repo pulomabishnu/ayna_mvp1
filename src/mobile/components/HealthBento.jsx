@@ -1,22 +1,33 @@
+import { useState } from 'react';
 import { formatMetric, isFlat, trendWord } from '../../health/dashboard.js';
 import { CycleRing } from './HealthChart.jsx';
 import { estimatePhase, PHASES } from '../../health/phase.js';
-import ProductCard from './ProductCard.jsx';
-import { weekSummary, suggestedQuestions, phasePicks } from '../utils/dashboardAsk.js';
+import ProductImage from './ProductImage.jsx';
+import { displayName } from '../utils/displayName.js';
+import { brandOf } from '../data/brandFallback.js';
+import { formatPrice } from '../../utils/formatPrice.js';
+import { weekQuestions } from '../utils/dashboardAsk.js';
+import { explainWeek, cycleLine } from '../../health/weekInsights.js';
+import { weekPicks, LEVEL_WORD, NEED_WORDS } from '../../health/weekPicks.js';
+import { comingUp } from '../../health/comingUp.js';
+import { SOURCE_NAMES } from '../data/healthConnections.js';
+import '../../styles/week-explained.css';
 
 /**
- * The Summary view of Your health as a bento grid (inspired by clinical
- * dashboards like Intelly: colour-blocked cards, one big number each, small
- * stats underneath, a glanceable chart, and a timeline of what's coming).
- * Every number comes from her own rows (src/health/dashboard.js). Nothing is
- * invented: a card only shows when there is data for it.
+ * The Summary view of Your health (app and website). Top to bottom:
+ * This week, explained (the one Feature: her numbers read against her cycle,
+ * src/health/weekInsights.js), What might help this week (her products for
+ * what this week implies, src/health/weekPicks.js), Ask ayna about your week,
+ * her cycle (Group), Coming up with what to expect (src/health/comingUp.js),
+ * then the metric tiles. This is the answer to "why not just Apple Health":
+ * Apple Health shows the numbers, ayna explains them against her cycle and
+ * connects them to her products and their evidence.
+ * Every number comes from her own rows. Nothing is invented: a block only
+ * shows when there is data for it.
  */
 
-const DAY = 86400000;
 const fmtDay = (iso) => new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
 const fmtWeekday = (iso) => new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' });
-const addDays = (iso, n) => new Date(Date.parse(`${iso}T12:00:00Z`) + n * DAY).toISOString().slice(0, 10);
-const daysBetween = (a, b) => Math.round((Date.parse(`${b}T12:00:00Z`) - Date.parse(`${a}T12:00:00Z`)) / DAY);
 
 const TONES = ['sky', 'ink', 'butter', 'pink'];
 
@@ -134,24 +145,6 @@ function PhaseStrip({ cycle }) {
   );
 }
 
-/** What's coming, from her own cycle estimate. Only real dates, only when we have them. */
-function upcoming(cycle, estimate, today) {
-  const out = [];
-  if (!cycle?.lastStart) return out;
-  const phase = estimatePhase(cycle);
-  if (phase?.windowStart && phase?.windowEnd) {
-    const ws = addDays(cycle.lastStart, phase.windowStart - 1);
-    const we = addDays(cycle.lastStart, phase.windowEnd - 1);
-    if (daysBetween(today, we) >= 0) out.push({ day: ws < today ? today : ws, title: 'Likely ovulation window', sub: `${fmtDay(ws)} to ${fmtDay(we)}. An estimate, not birth control.`, tone: 'sky' });
-  }
-  if (estimate?.day && daysBetween(today, estimate.day) >= 0) {
-    const pms = addDays(estimate.day, -5);
-    if (daysBetween(today, pms) >= 0) out.push({ day: pms, title: 'Restock before your period', sub: 'Your shopping list is in Products.', tone: 'butter' });
-    out.push({ day: estimate.day, title: 'Next period, estimated', sub: estimate.basis ? 'From your last cycles. Can be off by a few days.' : '', tone: 'pink' });
-  }
-  return out.sort((a, b) => a.day.localeCompare(b.day)).slice(0, 4);
-}
-
 const SPARK = 'M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.4z';
 
 /** A plain summary of her week and questions built from it; a tap asks ayna with her numbers attached. */
@@ -172,34 +165,111 @@ function AskWeek({ summary, questions, onAsk }) {
   );
 }
 
-/** Her products (then matches) for this point in her cycle, each group with one short reason. */
-function PhaseProducts({ groups, onOpenProduct }) {
-  if (!groups.length) return null;
+/** A source link that opens in a new tab. */
+function SourceLink({ source }) {
+  return <a href={source.url} target="_blank" rel="noopener noreferrer">{source.label}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a>;
+}
+
+/**
+ * "This week, explained": the one Feature block. Two or three sentences from
+ * her own numbers, each tied to her cycle or her own pattern, each with a
+ * "Why we say this" that shows the comparison and the source.
+ */
+function Explained({ insights, line }) {
+  if (!insights.length) return null;
+  const KEY = { heart: 'Heart', sleep: 'Sleep', temperature: 'Temperature', period: 'Cycle' };
   return (
-    <section className="ay-phasepicks" aria-labelledby="ay-phasepicks-title">
-      <h3 id="ay-phasepicks-title">For this phase</h3>
-      {/* One row to scroll; each reason labels the cards it explains. */}
-      <div className="ay-phasepicks-row">
-        {groups.map((g) => (
-          <div key={g.reason} className="ay-phasepicks-group" style={{ '--n': g.products.length }}>
-            <p>{g.reason}</p>
-            <div className="ay-phasepicks-cards">
-              {g.products.map((p) => <ProductCard key={p.id} product={p} onClick={() => onOpenProduct?.(p)} />)}
-            </div>
-          </div>
+    <section className="ay-wx-explain" aria-labelledby="ay-wx-explain-title">
+      <header>
+        <h3 id="ay-wx-explain-title">This week, explained</h3>
+        {line && <p className="ay-wx-cycle">{line}</p>}
+      </header>
+      <ul>
+        {insights.map((it) => (
+          <li key={it.id}>
+            <b className="ay-wx-k">{KEY[it.id] || it.id}</b>
+            <p>{it.text}</p>
+            <details>
+              <summary>Why we say this</summary>
+              <div className="ay-wx-why-body">
+                {it.basis && <p>{it.basis}</p>}
+                {it.sources.length > 0 && <p>Source{it.sources.length > 1 ? 's' : ''}: {it.sources.map((src, i) => <span key={src.url}>{i ? '; ' : ''}<SourceLink source={src} /></span>)}</p>}
+                {it.from?.length > 0 && <p>Your data: {it.from.map((x) => SOURCE_NAMES[x] || x).join(' and ')}.</p>}
+              </div>
+            </details>
+          </li>
         ))}
-      </div>
+      </ul>
+      <p className="ay-wx-foot">Compared only with your own last 4 weeks. Patterns, not a diagnosis.</p>
     </section>
   );
 }
 
-export default function HealthBento({ name, week, cycle, estimate, pinnedCharts, ready, today, onOpenArea, products = [], matches = [], onOpenProduct, onAsk }) {
-  const coming = upcoming(cycle, estimate, today);
+/** The honest one-liner on what ayna adds, shown until she dismisses it (kept on this device). */
+const WHY_KEY = 'ayna_dash_why_seen_v1';
+function WhyAyna() {
+  const [seen, setSeen] = useState(() => { try { return localStorage.getItem(WHY_KEY) === '1'; } catch { return false; } });
+  if (seen) return null;
+  const close = () => { setSeen(true); try { localStorage.setItem(WHY_KEY, '1'); } catch { /* storage blocked: hidden for this visit */ } };
+  return (
+    <aside className="ay-wx-why" aria-label="Why ayna and Apple Health">
+      <p><b>Why ayna and Apple Health.</b> Apple Health stores the numbers. ayna reads them against your cycle and tells you which of your products fit this week.</p>
+      <button type="button" onClick={close}>Got it</button>
+    </aside>
+  );
+}
+
+function Meter({ level, need }) {
+  if (!level) return null;
+  return (
+    <span className="ay-wx-meter" data-level={level}>
+      <span className="ay-wx-meter-bars" role="img" aria-label={`${LEVEL_WORD[level]}${need ? ` for ${need}` : ''}, ${level} of 3`}><i /><i /><i /></span>
+      <span className="ay-wx-meter-word">{LEVEL_WORD[level]}</span>
+    </span>
+  );
+}
+
+/**
+ * What might help this week: her products (then matches), each with the
+ * reason from her data and the product's evidence grade. One card anatomy
+ * (white tile, brand, name, price), the same in the app and on the website.
+ */
+function WeekPicks({ picks, onOpenProduct }) {
+  if (!picks.length) return null;
+  return (
+    <section className="ay-wx-picks" aria-labelledby="ay-wx-picks-title">
+      <h3 id="ay-wx-picks-title">What might help this week</h3>
+      <ul className="ay-wx-picks-row">
+        {picks.map((pk) => {
+          const p = pk.product;
+          const brand = brandOf(p);
+          const name = displayName(p);
+          const price = formatPrice({ ...p, price: p.price || p.priceDisplay });
+          return (
+            <li key={p.id} className="ay-wx-pick">
+              <button type="button" className="ay-wx-card" onClick={() => onOpenProduct?.(p)} aria-label={`${name}${brand ? ` by ${brand}` : ''}. ${pk.reason} View product details`}>
+                <span className="ay-wx-tile"><ProductImage product={p} src={p.image || p.imageUrl} alt="" style={{ objectFit: 'contain' }} /></span>
+                {brand && brand.toLowerCase() !== String(name).toLowerCase() && <small className="ay-wx-brand">{brand}</small>}
+                <strong className="ay-wx-name">{name}</strong>
+                {price.main !== 'Price at retailer' && <span className="ay-wx-price">{price.main}</span>}
+              </button>
+              <p className="ay-wx-reason">{pk.reason}</p>
+              <Meter level={pk.level} need={NEED_WORDS[pk.needId]} />
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
+
+export default function HealthBento({ name, cycle, estimate, pinnedCharts, today, onOpenArea, rows = [], needIds = [], hormonalBC = false, products = [], matches = [], onOpenProduct, onAsk }) {
+  const { insights, ctx } = explainWeek(rows, { today, cycle, estimate, hormonalBC });
+  const picks = weekPicks({ ctx, insights, needIds, products, matches });
+  const coming = comingUp(cycle, estimate, today, { hormonalBC, hasProducts: products.length > 0 });
   const hour = new Date().getHours();
   const hello = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
-  const summary = weekSummary(ready);
-  const questions = suggestedQuestions({ cycle, estimate, ready, products, today });
-  const picks = phasePicks({ cycle, estimate, ready, products, matches, today });
+  const questions = weekQuestions({ insights, ctx, picks });
 
   return (
     <div className="ay-bn">
@@ -207,20 +277,20 @@ export default function HealthBento({ name, week, cycle, estimate, pinnedCharts,
         <h2>{hello}{name ? `, ${name}` : ''}</h2>
       </header>
 
-      <AskWeek summary={summary} questions={questions} onAsk={onAsk} />
+      {(insights.length > 0 || picks.length > 0) && <WhyAyna />}
 
-      {cycle?.cycleDay && <CycleCard cycle={cycle} estimate={estimate} onOpen={() => onOpenArea('cycle')} />}
-      {cycle?.cycleDay && <PhaseStrip cycle={cycle} />}
+      <Explained insights={insights} line={cycleLine(cycle, ctx)} />
 
-      {pinnedCharts.length > 0 && (
-        <ul className="ay-bn-grid" aria-label="Your pinned numbers">
-          {pinnedCharts.map((c, i) => (
-            <MetricCard key={c.metric} chart={c} tone={TONES[i % TONES.length]} wide={i === pinnedCharts.length - 1 && i % 2 === 0} onOpen={() => onOpenArea(c.group)} />
-          ))}
-        </ul>
+      <WeekPicks picks={picks} onOpenProduct={onOpenProduct} />
+
+      <AskWeek summary={null} questions={questions} onAsk={onAsk ? (q) => onAsk(q, { insights }) : undefined} />
+
+      {cycle?.cycleDay && (
+        <div className="ay-bn-cyclegroup">
+          <CycleCard cycle={cycle} estimate={estimate} onOpen={() => onOpenArea('cycle')} />
+          <PhaseStrip cycle={cycle} />
+        </div>
       )}
-
-      <PhaseProducts groups={picks} onOpenProduct={onOpenProduct} />
 
       {coming.length > 0 && (
         <section className="ay-bn-timeline" aria-labelledby="ay-bn-tl">
@@ -229,13 +299,24 @@ export default function HealthBento({ name, week, cycle, estimate, pinnedCharts,
             {coming.map((e) => (
               <li key={e.title + e.day} className={`is-${e.tone}`}>
                 <span className="ay-bn-tl-date"><b>{fmtDay(e.day).split(' ')[1]}</b><small>{fmtWeekday(e.day)}</small></span>
-                <span className="ay-bn-tl-card"><b>{e.title}</b>{e.sub && <small>{e.sub}</small>}</span>
+                <span className="ay-bn-tl-card">
+                  <b>{e.title}</b>
+                  {e.sub && <small>{e.sub}</small>}
+                  {e.expect && <small className="ay-bn-tl-expect">{e.expect}{e.source && <> <SourceLink source={{ ...e.source, label: 'Source' }} /></>}</small>}
+                </span>
               </li>
             ))}
           </ol>
         </section>
       )}
-      {week?.empty === false && null}
+
+      {pinnedCharts.length > 0 && (
+        <ul className="ay-bn-grid" aria-label="Your pinned numbers">
+          {pinnedCharts.map((c, i) => (
+            <MetricCard key={c.metric} chart={c} tone={TONES[i % TONES.length]} wide={i === pinnedCharts.length - 1 && i % 2 === 0} onOpen={() => onOpenArea(c.group)} />
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

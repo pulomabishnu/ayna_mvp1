@@ -41,3 +41,15 @@ describe('For this phase', () => {
     expect(phasePicks({ cycle, products: [pad], today: '2026-10-20' })).toEqual([]);
   });
 });
+
+describe('Ask questions from "This week, explained"', () => {
+  it('asks about the insights first, then her products, then her phase', async () => {
+    const { weekQuestions } = await import('./dashboardAsk.js');
+    const insights = [{ question: 'Why is my resting heart rate higher this week?' }, { question: 'Why have I been sleeping less this week?' }, { question: 'What does a temperature rise after ovulation mean?' }];
+    expect(weekQuestions({ insights, ctx: { phase: { id: 'luteal' } }, picks: [{}] })).toEqual([
+      'Why is my resting heart rate higher this week?', 'Why have I been sleeping less this week?', 'Which of my products fit this week?',
+    ]);
+    expect(weekQuestions({ insights: [], ctx: { phase: { id: 'luteal' } }, picks: [] })).toEqual(['What helps in the luteal phase?']);
+    expect(weekQuestions({})).toEqual([]);
+  });
+});

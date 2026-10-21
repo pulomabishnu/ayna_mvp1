@@ -15,6 +15,7 @@ import { summarizeCareNotes, firstCareLink } from '../../utils/careSummary.js';
 import CareNote from '../../components/CareNote.jsx';
 import { Routine, ShoppingList } from '../components/RoutinePlan.jsx';
 import HealthDashboard from '../components/HealthDashboard.jsx';
+import { usesHormonalBC } from '../../health/weekInsights.js';
 import { budgetMax } from '../../health/plan.js';
 import { optionalProgress, reconstructIntakeFromSnapshot } from '../data/intakeModel.js';
 import '../eco-needs.css';
@@ -198,7 +199,7 @@ export default function EcosystemScreen({
 
 
     {ecoTab === 'dashboard' && myProducts.length > 0 ? <div className="ay-eco-routine">
-      <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} products={myProducts} matches={suggestedEcosystemProducts} onOpenProduct={onOpenProduct} onConnect={onConnectHealth} onAddGoal={onAddGoal} onSignIn={() => onRequireAuth?.('health data')} />
+      <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} hormonalBC={usesHormonalBC(quizAnswers)} products={myProducts} matches={suggestedEcosystemProducts} onOpenProduct={onOpenProduct} onConnect={onConnectHealth} onAddGoal={onAddGoal} onSignIn={() => onRequireAuth?.('health data')} />
       <Routine products={myProducts} insights={healthInsights} onOpenProduct={onOpenProduct} budget={budgetMax(quizAnswers)} />
       {checkin}
     </div> : <>

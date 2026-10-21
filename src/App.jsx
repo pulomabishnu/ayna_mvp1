@@ -61,6 +61,7 @@ import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProdu
 import { behaviorFrom } from './utils/matchDisplay';
 import WebHealthData from './components/WebHealthData';
 import { useHealthData } from './mobile/hooks/useHealthData.js';
+import { usesHormonalBC } from './health/weekInsights.js';
 import { captureReferralFromUrl } from './utils/badges';
 import { slugFromPath } from './utils/sharedAnswer.js';
 import { readPendingFriend } from './utils/shareAnswerClient.js';
@@ -2057,6 +2058,11 @@ function App() {
     <WebHealth
       user={user}
       health={health}
+      products={Object.values(myProducts)}
+      needIds={healthNeedIds}
+      hormonalBC={usesHormonalBC(quizResults)}
+      onOpenProduct={(p) => handleOpenProduct(p, { source: 'health_dashboard' })}
+      onAsk={(q) => openAsk(q)}
       onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
       onOpenConnections={() => {
         if (user) { setCurrentView('health-data'); return; }

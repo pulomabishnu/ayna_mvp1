@@ -74,9 +74,11 @@ export function suggestedQuestions({ cycle = null, estimate = null, ready = [], 
 }
 
 /** What the dashboard shows, as plain lines for Ask ayna. */
-export function dashboardContext({ cycle = null, estimate = null, ready = [], products = [] } = {}) {
+export function dashboardContext({ cycle = null, estimate = null, ready = [], products = [], insights = [] } = {}) {
   const phase = cycle?.cycleDay ? estimatePhase(cycle) : null;
   const lines = [];
+  // What "This week, explained" told her, so the answer starts from the same facts.
+  if (insights.length) lines.push(`This week, explained (compared with her own last 4 weeks): ${insights.map((i) => i.text).join(' ')}`);
   if (cycle?.cycleDay) lines.push(`Cycle: day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength} days` : ''}${phase ? `, ${phase.name.toLowerCase()} (an estimate from her logs)` : ''}.`);
   if (estimate?.day) lines.push(`Next period estimated around ${fmtDay(estimate.day)}.`);
   ready.filter((s) => METRIC_ORDER.includes(s.id)).forEach((s) => {
@@ -127,4 +129,16 @@ export function phasePicks({ cycle = null, estimate = null, ready = [], products
     if (count >= limit) break;
   }
   return groups;
+}
+
+/**
+ * Questions for "Ask ayna about your week", driven by "This week, explained":
+ * one per insight (in its order), then her products if any fit this week,
+ * then her phase. Up to three, each grounded in something on the screen.
+ */
+export function weekQuestions({ insights = [], ctx = {}, picks = [] } = {}) {
+  const out = insights.map((i) => i.question).filter(Boolean).slice(0, 2);
+  if (picks.length) out.push('Which of my products fit this week?');
+  if (ctx.phase) out.push(phaseQuestion(ctx.phase));
+  return [...new Set(out)].slice(0, 3);
 }

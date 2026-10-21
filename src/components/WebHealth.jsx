@@ -3,7 +3,8 @@ import { SOURCE_NAMES } from '../mobile/data/healthConnections.js';
 import { buildDashboard, formatMetric, isFlat, RANGES } from '../health/dashboard.js';
 import { buildInsights } from '../health/insights.js';
 import { estimatePhase, PHASE_SOURCES } from '../health/phase.js';
-import { DEV_DEMO_CONNECTIONS, devDemoRows } from '../health/devDemo.js';
+import { DEV_DEMO_CONNECTIONS, DEV_DEMO_MATCH_IDS, DEV_DEMO_NEEDS, DEV_DEMO_PRODUCT_IDS, devDemoRows } from '../health/devDemo.js';
+import { getProductById } from '../data/products.js';
 import { DEV_HEALTH_DEMO, localToday } from '../mobile/hooks/useHealthData.js';
 import HealthBento from '../mobile/components/HealthBento.jsx';
 import HealthChart, { CycleRing } from '../mobile/components/HealthChart.jsx';
@@ -115,7 +116,7 @@ function Locked({ signedIn, connected, onSignIn, onOpenConnections }) {
   );
 }
 
-export default function WebHealth({ user, health, onSignIn, onOpenConnections }) {
+export default function WebHealth({ user, health, products = [], needIds = [], hormonalBC = false, onOpenProduct, onAsk, onSignIn, onOpenConnections }) {
   // DEVELOPMENT ONLY (?healthdemo=1 on the local dev server, signed out):
   // the made-up demo rows from devDemo.js, so the unlocked layout can be
   // checked without an account. import.meta.env.DEV is false in production builds.
@@ -124,7 +125,11 @@ export default function WebHealth({ user, health, onSignIn, onOpenConnections })
   const demoData = useMemo(() => {
     if (!demo) return null;
     const rows = devDemoRows(today);
-    return { status: 'ready', insightRows: rows, connected: DEV_DEMO_CONNECTIONS, insights: buildInsights(rows, { today }) };
+    return {
+      status: 'ready', insightRows: rows, connected: DEV_DEMO_CONNECTIONS, insights: buildInsights(rows, { today }),
+      products: DEV_DEMO_PRODUCT_IDS.map(getProductById).filter(Boolean),
+      matches: DEV_DEMO_MATCH_IDS.map(getProductById).filter(Boolean),
+    };
   }, [demo, today]);
   const h = demoData || health || { status: 'idle', insightRows: [], connected: [], insights: { sections: [] } };
 
@@ -198,15 +203,21 @@ export default function WebHealth({ user, health, onSignIn, onOpenConnections })
     <section className="ay-wh" aria-labelledby="ay-wh-title">
       {header}
       <div className="ay-wh-bento" data-count={pinned.length} data-cycle={cycle ? 'yes' : 'no'}>
-        <HealthBento name={name} week={week} cycle={cycle} estimate={estimate} pinnedCharts={pinned} ready={ready} today={today} onOpenArea={openArea} />
+        <HealthBento
+          name={name} cycle={cycle} estimate={estimate} pinnedCharts={pinned} today={today} onOpenArea={openArea}
+          rows={rows} needIds={demo ? DEV_DEMO_NEEDS : needIds} hormonalBC={hormonalBC}
+          products={demoData?.products || products} matches={demoData?.matches || []}
+          onOpenProduct={onOpenProduct}
+          onAsk={onAsk}
+        />
       </div>
 
       {ready.length > 0 && (
-        <section className="ay-wh-week" aria-labelledby="ay-wh-week-title">
-          <div className="ay-wh-week-head">
+        <details className="ay-wh-week ay-hd-fold">
+          <summary className="ay-wh-week-head">
             <h2 id="ay-wh-week-title">Your week, in short</h2>
-            {sources.length > 0 && <p>From {sourceNames(sources)}. Trends, not diagnoses.</p>}
-          </div>
+            {sources.length > 0 && <p>Every area, one line each. From {sourceNames(sources)}. Trends, not diagnoses.</p>}
+          </summary>
           <ul className="ay-wh-lines">
             {ready.map((s) => (
               <li key={s.id}>
@@ -215,7 +226,7 @@ export default function WebHealth({ user, health, onSignIn, onOpenConnections })
               </li>
             ))}
           </ul>
-        </section>
+        </details>
       )}
 
       {areas.length > 0 && (
