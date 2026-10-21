@@ -5,6 +5,7 @@
  */
 import { getSupabaseClient } from '../utils/supabaseClient.js';
 import { apiUrl } from '../utils/apiUrl.js';
+import { fetchWithTimeout } from '../utils/network.js';
 
 export class HealthApiError extends Error {
   constructor(code, status) { super(code); this.code = code; this.status = status; }
@@ -22,7 +23,7 @@ async function call(path, { method = 'GET', body } = {}) {
   if (!t) throw new HealthApiError('not_signed_in', 401);
   let res;
   try {
-    res = await fetch(apiUrl(path), {
+    res = await fetchWithTimeout(apiUrl(path), {
       method,
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
       ...(body ? { body: JSON.stringify(body) } : {}),

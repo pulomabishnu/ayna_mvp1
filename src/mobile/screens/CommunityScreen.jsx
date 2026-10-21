@@ -36,6 +36,7 @@ import { draftKey, photosFromDraft, submitDraft } from '../../utils/community/co
 import './community-mobile.css';
 import '../community-play.css';
 import { displayName } from '../utils/displayName.js';
+import { fetchWithTimeout } from '../../utils/network.js';
 
 const TABS = [ ['for-you', 'For you'], ['following', 'Following'], ['question', 'Questions'], ['review', 'Reviews'], ['playlists', 'Playlists'], ['announcements', 'Announcements'] ];
 const POST_KINDS = { question: 'Question', review: 'Review', post: 'Post' };
@@ -152,7 +153,7 @@ function TopicSheet({ followed, onToggle, onClose, onSuggest }) {
 // "Suggest a topic": goes to the team through the same anonymous path as
 // Suggest a product (api/suggestions.js, kind 'topic'): email plus team text.
 async function sendTopicSuggestion({ name, why }) {
-  const res = await fetch(apiUrl('/api/suggestions'), {
+  const res = await fetchWithTimeout(apiUrl('/api/suggestions'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'omit',

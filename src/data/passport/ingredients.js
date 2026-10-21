@@ -154,8 +154,20 @@ export function canonicalizeIngredient(name) {
   return id;
 }
 
+// alias -> id, first ingredient wins (same answer the loop below gives for
+// an exact match), so exact names skip ~all the alias regexes.
+let EXACT_ALIAS = null;
+function exactAliasMap() {
+  if (EXACT_ALIAS) return EXACT_ALIAS;
+  EXACT_ALIAS = new Map();
+  for (const ing of INGREDIENTS) for (const a of ing.aliases) if (typeof a === 'string' && !EXACT_ALIAS.has(a)) EXACT_ALIAS.set(a, ing.id);
+  return EXACT_ALIAS;
+}
+
 function canonicalizeNormalized(n) {
   // Exact alias first, then the longest alias contained in the phrase.
+  const exact = exactAliasMap().get(n);
+  if (exact) return exact;
   let best = null;
   for (const ing of INGREDIENTS) {
     for (const a of ing.aliases) {

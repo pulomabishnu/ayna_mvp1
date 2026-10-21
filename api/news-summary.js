@@ -5,6 +5,7 @@
 // cached per announcement so the model runs once per post, not per visit.
 import { createClient } from '@supabase/supabase-js';
 import { callWithFallback, parseProviderOrder, noEmDash } from './_llm.js';
+import { getClientIp, rateLimit } from './_rateLimit.js';
 
 let _admin = null;
 function getAdmin() {
@@ -38,8 +39,9 @@ export function fallbackSummary(body, max = 170) {
 
 const cache = new Map(); // announcement id -> summary
 
-export async function summarize(a, { call = callWithFallback } = {}) {
+export async function summarize(a, { call = callWithFallback, allowModel = true } = {}) {
   if (cache.has(a.id)) return cache.get(a.id);
+  if (!allowModel) return { summary: fallbackSummary(a.body), ai: false };
   let summary = null;
   try {
     const { text } = await call(parseProviderOrder('AI_NEWS_PROVIDER_ORDER', 'anthropic,openai,gemini'), {
@@ -65,7 +67,11 @@ export default async function handler(req, res) {
   const { data, error } = await admin.from('community_announcements').select('id, title, body, created_at').order('created_at', { ascending: false }).limit(1);
   if (error || !data?.[0]) return res.status(200).json({ item: null });
   const a = data[0];
-  const { summary, ai } = await summarize(a);
+  // Public and unauthenticated: a cache-busting query string skips the CDN
+  // cache, so without a cap every request could be a paid model call.
+  const rl = await rateLimit(`news-summary:${getClientIp(req)}`, { max: 10, windowSec: 600 });
+  const global = rl.ok ? await rateLimit('news-summary:model', { max: 60, windowSec: 3600 }) : rl;
+  const { summary, ai } = await summarize(a, { allowModel: rl.ok && global.ok });
   res.setHeader('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=3600');
   return res.status(200).json({ item: { id: a.id, title: plainText(a.title).slice(0, 120), summary, ai, created_at: a.created_at } });
 }

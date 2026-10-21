@@ -8,6 +8,7 @@ import { questionForAnswer } from '../utils/sharedAnswer.js';
 import { getAppSessionId } from '../utils/conversationId';
 import AskFollowUps from './AskFollowUps.jsx';
 import { chipsFor, followUpRequestFields } from '../utils/askFollowUps.js';
+import { fetchWithTimeout, isNetworkError } from '../utils/network.js';
 
 /** Merges a profileUpdate the backend returned into the current profile, deduping against what's already there. */
 function mergeProfileUpdate(currentProfile, update) {
@@ -322,7 +323,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     try {
       const token = session?.access_token;
       if (!token) throw Object.assign(new Error('not_signed_in'), { code: 'not_signed_in' });
-      const res = await fetch('/api/ask-ayna', {
+      const res = await fetchWithTimeout('/api/ask-ayna', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
@@ -369,7 +370,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
         setSendError("You've used your free chats for this week. They reset weekly, or upgrade for unlimited.");
       } else {
         // The failure lives in the conversation, next to the question, with a way forward.
-        const failed = [...messagesWithUser, { role: 'assistant', failed: true, question: msg, text: 'I couldn’t answer that just now.' }];
+        const failed = [...messagesWithUser, { role: 'assistant', failed: true, question: msg, text: isNetworkError(err) ? err.message : 'I couldn’t answer that just now.' }];
         setMessages(failed);
       }
     } finally {

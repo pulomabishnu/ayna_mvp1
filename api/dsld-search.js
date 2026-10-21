@@ -1,7 +1,7 @@
-/* global process */
 // NIH Dietary Supplement Label Database (DSLD), free, no API key required
 // 200,000+ verified supplement labels with real ingredient data
 // Docs: https://api.ods.od.nih.gov/dsld/v9/docs
+import { getClientIp, rateLimit } from './_rateLimit.js';
 
 function slugify(s) {
   return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'unknown';
@@ -13,7 +13,10 @@ export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
   const { query, limit = '10' } = req.query;
-  if (!query || query.trim().length < 2) return res.status(400).json({ error: 'missing_query' });
+  if (typeof query !== 'string' || query.trim().length < 2) return res.status(400).json({ error: 'missing_query' });
+  if (query.length > 200) return res.status(400).json({ error: 'query_too_long' });
+  const rl = await rateLimit(`dsld:${getClientIp(req)}`, { max: 60, windowSec: 60 });
+  if (!rl.ok) return res.status(429).json({ error: 'rate_limited' });
 
   // Math.min alone capped the top but not the bottom: ?limit=-500 passed
   // straight through to NIH as size=-500 and 400'd, which was then masked
@@ -119,6 +122,6 @@ export default async function handler(req, res) {
     });
   } catch (e) {
     console.error('DSLD search error:', e.message);
-    return res.status(200).json({ products: [], source: 'NIH DSLD', error: e.message });
+    return res.status(200).json({ products: [], source: 'NIH DSLD', error: 'upstream_failed' });
   }
 }

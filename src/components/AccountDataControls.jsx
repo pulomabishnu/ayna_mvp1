@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import posthog from 'posthog-js';
 import { getSupabaseClient } from '../utils/supabaseClient';
+import { fetchWithTimeout } from '../utils/network.js';
 
 async function getAccessToken() {
   const supabase = getSupabaseClient();
@@ -58,7 +59,7 @@ export default function AccountDataControls({ onOpenDeleteAccount }) {
     setMessage('');
     try {
       const { token } = await getAccessToken();
-      const res = await fetch('/api/account-data', {
+      const res = await fetchWithTimeout('/api/account-data', {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error('Could not prepare your download. Please try again.');

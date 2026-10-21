@@ -36,6 +36,7 @@ import '../pdp.css';
 import '../eco-needs.css';
 import '../pdp-polish.css';
 import '../app-pdp.css';
+import { fetchWithTimeout } from '../../utils/network.js';
 
 function toneFor(product) {
   const functions = product?.healthFunctions || [];
@@ -102,7 +103,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
     try {
       const token = session?.access_token;
       if (!token) throw Object.assign(new Error('not_signed_in'), { code: 'not_signed_in' });
-      const res = await fetch(apiUrl('/api/product-chat'), {
+      const res = await fetchWithTimeout(apiUrl('/api/product-chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({

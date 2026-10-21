@@ -42,6 +42,7 @@ import '../styles/verify-content.css';
 import './pdp/pdp.css';
 import './pdp/pdp-story.css';
 import './pdp/pdp-page.css';
+import { fetchWithTimeout } from '../utils/network.js';
 
 /**
  * Product Q&A, for a user who doesn't know what a product actually IS (a
@@ -92,7 +93,7 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
     try {
       const token = session?.access_token;
       if (!token) throw Object.assign(new Error('not_signed_in'), { code: 'not_signed_in' });
-      const res = await fetch('/api/product-chat', {
+      const res = await fetchWithTimeout('/api/product-chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
