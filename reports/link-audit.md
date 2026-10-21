@@ -1,10 +1,10 @@
-# Link audit 2026-10-21T05:51:56.797Z
+# Link audit 2026-10-21T06:21:06.418Z
 
 ```
 {
- "external": 3732,
- "external_broken": 199,
- "external_unverified": 294,
+ "external": 3720,
+ "external_broken": 117,
+ "external_unverified": 307,
  "internal": 335,
  "internal_broken": 0,
  "broken_images_on_pages": 0
@@ -20,109 +20,57 @@
 - broken 404 https://www.acog.org/womens-health/faqs/hormonal-birth-control (src/components/Articles.jsx)
 - broken 404 https://thebreastfeedingshop.com/wp-content/uploads/2024/08/Elitone-Pelvic-Floor-Exerciser-1-scaled.webp (src/components/BrandPartners.jsx)
 - broken 404 https://www.accessdata.fda.gov/scripts/enforcement/enforce_rpt-Product-Tabs.cfm (src/components/Recalls.jsx)
-- broken 0 https://ppd.plannedparenthood.org (src/components/Screenings.jsx)
 - broken 404 https://www.acog.org/womens-health/faqs/sexually-transmitted-infections (src/components/Screenings.jsx)
 - broken 404 https://www.cdc.gov/std/prevention/default.htm (src/components/Screenings.jsx)
 - broken 404 https://www.target.com/p/aleve-tablets-with-naproxen-sodium-220mg-nsaid-pain-reliever-fever-reducer-50-count/-/A-93719226 (src/data/basicsProducts.js)
-- broken 404 https://www.fda.gov/drugs/drug-alerts-and-statements/limited-number-voluntary-recalls-initiated-after-fda-testing-acne-products-benzene-findings-show (src/data/basicsProducts.js)
-- broken 404 https://www.fda.gov/medical-devices/home-use-tests/ovulation-urine-test (src/data/basicsProducts.js, src/data/matching/needMap.research.js, src/data/matching/needMap.research.json, src/data/matching/needs.research.json, src/data/productResearch.js)
-- broken 404 https://www.fda.gov/news-events/press-announcements/fda-grants-marketing-authorization-first-home-test-chlamydia-gonorrhea-and-trichomoniasis (src/data/basicsProducts.js, src/data/matching/needMap.research.js, src/data/matching/needMap.research.json, src/data/matching/needs.research.json)
-- broken 404 https://www.fda.gov/medical-devices/home-use-tests/pregnancy (src/data/brands.js, src/data/catalogEvidence.js, src/data/matching/needMap.research.js, src/data/matching/needMap.research.json, src/data/matching/needs.research.json)
-- broken 400 https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfpmn/pmn.cfm?ID=K191462 (src/data/brands.js, src/data/passport/reviews/batch-2.js)
-- broken 404 https://www.fda.gov/drugs/understanding-over-counter-medicines/sunscreen-how-help-protect-your-skin-sun (src/data/brands.js)
-- broken 400 https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfpmn/pmn.cfm?ID=K200098 (src/data/brands.js)
-- broken 404 https://www.fda.gov/medical-devices/in-vitro-diagnostics/biotin-interference-troponin-lab-tests-assays-subject-biotin-interference (src/data/brands.js)
-- broken 404 https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-tampon-safety (src/data/brands.js, src/data/productResearch.js, src/data/productResearchCore.js)
-- broken 404 https://www.fda.gov/drugs/information-drug-class/homeopathic-products (src/data/brands.js)
-- broken 404 https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups (src/data/brands.js, src/data/matching/needMap.research.js, src/data/matching/needMap.research.json, src/data/matching/needs.research.json, src/data/matching/safety.research.js)
-- broken 404 https://www.fda.gov/cosmetics/cosmetic-ingredients/alpha-hydroxy-acids (src/data/brands.js, src/data/productResearch.js)
 - broken 404 https://www.bgsu.edu/womens-center/resources-and-services/violence-prevention.html (src/data/campusResources/schools/bgsu.js)
-- broken 404 https://www.health.columbia.edu/content/counseling-and-psychological-services (src/data/campusResources/schools/columbia.js)
 - broken 404 https://health.colostate.edu/make-a-counseling-appointment/ (src/data/campusResources/schools/csuco.js)
 - broken 404 https://sexual-respect.dartmouth.edu/reporting-support/title-ix-resources/confidential-resources (src/data/campusResources/schools/dartmouth.js)
 - broken 404 https://studentaffairs.indiana.edu/care-advocacy/sexual-violence/index.html (src/data/campusResources/schools/indiana.js)
 - broken 404 https://miamioh.edu/life-at-miami/health-well-being/harm-prevention-and-resolution/title-ix/title-ix-resources.html (src/data/campusResources/schools/miamioh.js)
 - broken 404 https://womenscenter.missouri.edu/relationship-sexual-violence-stalking/ (src/data/campusResources/schools/mizzou.js)
 - broken 404 https://wellbeing.missouri.edu/medical-care-services/sexual-and-partner-violence/ (src/data/campusResources/schools/mizzou.js)
-- broken 0 https://counseling.missouri.edu/ (src/data/campusResources/schools/mizzou.js)
-- broken 0 https://www.studentcounseling.msstate.edu (src/data/campusResources/schools/msstate.js)
-- broken 0 https://endrape.msu.edu/sexual-assault-healthcare-program/ (src/data/campusResources/schools/msu.js)
 - broken 404 https://www.northeastern.edu/uhcs/report-incident/ (src/data/campusResources/schools/northeastern.js)
-- broken 0 https://titleix.nd.edu/support-resources/ (src/data/campusResources/schools/notredame.js)
-- broken 0 https://titleix.nd.edu/title-ix-contacts/ (src/data/campusResources/schools/notredame.js)
 - broken 404 https://www.ohio.edu/civil-rights/confidential (src/data/campusResources/schools/ohiou.js)
-- broken 0 https://scs.tamu.edu/ (src/data/campusResources/schools/tamu.js)
-- broken 0 https://caps.tamu.edu/helpline/ (src/data/campusResources/schools/tamu.js)
 - broken 404 https://www.healthcenter.txst.edu/after-hours/sexual-assault-resources.html (src/data/campusResources/schools/txst.js)
-- broken 504 https://www.ourresilience.org (src/data/campusResources/schools/uchicago.js)
 - broken 404 https://www.uc.edu/uhs.html (src/data/campusResources/schools/ucin.js)
 - broken 404 https://healthcenter.uga.edu/who-should-i-talk-to/ (src/data/campusResources/schools/uga.js)
 - broken 404 https://www.unl.edu/equity/getting-help (src/data/campusResources/schools/unl.js)
 - broken 404 http://atvp.org/index.shtml (src/data/campusResources/schools/wsu.js)
 - broken 404 https://health.wvu.edu/student-health/student-health-faq/ (src/data/campusResources/schools/wvu.js)
 - broken 404 https://apps.apple.com/us/app/menolife-menopause-tracker/id1494110596 (src/data/catalogCorrections.js)
-- broken 404 https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use (src/data/catalogEvidence.js, src/data/matching/needs.research.json, src/data/matching/safety.research.js, src/data/matching/safety.research.json, src/data/productResearch.js)
-- broken 404 https://www.healthychildren.org/English/ages-stages/baby/breastfeeding/Pages/Positioning.aspx (src/data/categoryFillers.js)
 - broken 404 https://www.menopause.org/for-women/menopause-faqs-management-of-menopause-symptoms (src/data/categoryFillers.js)
-- broken 404 https://www.fda.gov/consumers/consumer-updates/spilling-beans-how-much-caffeine-too-much (src/data/matching/conditionRules.research.js)
-- broken 404 https://www.fda.gov/media/76636/download (src/data/matching/medInteractions.research.js)
 - broken 404 https://www.cdc.gov:443/std/bv/stats.htm (src/data/matching/needLinks.research.js)
 - broken 404 https://www.cdc.gov/stiapp/candidiasis.html (src/data/matching/needMap.research.js, src/data/matching/needMap.research.json, src/data/matching/needs.research.json, src/data/passport/reviews/batch-1.js, src/data/productResearch.js)
 - broken 404 https://www.cdc.gov/folic-acid/media/pdfs/cdc-presentation-folic-acid-best-tool-prevent-ntds-p.pdf (src/data/matching/needMap.research.js, src/data/matching/needMap.research.json, src/data/matching/needs.research.json, src/data/matching/safety.research.js, src/data/matching/safety.research.json)
-- broken 404 https://fda.gov/medicaldevices/productsandmedicalprocedures/invitrodiagnostics/homeusetests/ucm125824.htm (src/data/matching/needMap.research.js, src/data/matching/needMap.research.json, src/data/matching/needs.research.json)
 - broken 404 https://www.fda.gov/NewsEvents/Newsroom/PressAnnouncements/ucm616511.htm (src/data/matching/needMap.research.js, src/data/matching/needMap.research.json, src/data/matching/needs.research.json, src/data/productResearch.js, src/data/productResearchCore.js)
-- broken 404 https://www.fda.gov/medical-devices/breast-pumps/injury-and-infection (src/data/matching/needMap.research.js, src/data/matching/needMap.research.json, src/data/matching/needs.research.json)
-- broken 404 https://www.fda.gov/medical-devices/breast-pumps/types-breast-pumps (src/data/matching/needMap.research.js, src/data/matching/needMap.research.json, src/data/matching/needs.research.json)
-- broken 404 https://www.fda.gov/breast-pumps (src/data/matching/needMap.research.js, src/data/matching/needMap.research.json, src/data/matching/needs.research.json)
-- broken 404 https://www.fda.gov/medical-devices/products-and-medical-procedures/baby-products-sids-prevention-claims (src/data/matching/needMap.research.js, src/data/matching/needMap.research.json, src/data/matching/needs.research.json)
 - broken 410 https://www.cochrane.org/podcasts/10.1002/14651858.CD007807.pub4 (src/data/matching/needMap.research.js, src/data/matching/needMap.research.json, src/data/matching/needs.research.json)
-- broken 404 https://www.fda.gov/medical-devices/home-use-tests/menopause (src/data/matching/needMap.research.js, src/data/matching/needMap.research.json, src/data/matching/needs.research.json)
-- broken 404 https://www.fda.gov/forconsumers/consumerupdates/ucm612029.htm (src/data/matching/needMap.research.js, src/data/matching/needMap.research.json, src/data/matching/needs.research.json, src/data/passport/reviews/batch-5.js, src/data/productResearch.js)
-- broken 404 https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons (src/data/matching/needMap.research.js, src/data/matching/needMap.research.json, src/data/matching/needs.research.json, src/data/passport/reviews/batch-3.js, src/data/passport/reviews/batch-4.js)
-- broken 404 https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners (src/data/matching/needMap.research.js, src/data/matching/needMap.research.json, src/data/matching/needs.research.json, src/data/passport/reviews/batch-3.js, src/data/passport/reviews/batch-4.js)
 - broken 404 https://www.auanet.org/guidelines/guidelines/recurrent-uti (src/data/matching/needMap.research.js, src/data/matching/needMap.research.json, src/data/matching/needs.research.json)
-- broken 404 https://www.fda.gov/medical-devices/home-use-tests/vaginal-ph (src/data/matching/needMap.research.js, src/data/matching/needMap.research.json, src/data/matching/needs.research.json)
-- broken 404 https://www.fda.gov/medical-devices/home-use-tests/ovulation-saliva-test (src/data/matching/needs.research.json)
-- broken 404 https://www.fda.gov/medical-devices/breast-pumps/choosing-breast-pump (src/data/matching/needs.research.json)
-- broken 404 https://www.fda.gov/consumers/consumer-updates/what-know-when-buying-or-using-breast-pump (src/data/matching/needs.research.json, src/data/productResearch.js, src/data/productResearchCore.js)
-- broken 404 https://www.fda.gov/media/150299/download (src/data/matching/needs.research.json)
 - broken 404 https://m.media-amazon.com/images/I/61-qjpBT8oL.jpg (src/data/mvpProducts.js)
 - broken 404 https://www.apa.org/ptsd/guide (src/data/mvpProducts.js)
-- broken 404 https://www.fda.gov/drugs/drug-safety-and-availability/fda-warns-consumers-about-potential-health-risks-using-thorne-researchs-captomer-products (src/data/passport/reviews/batch-1.js)
 - broken 404 https://fullscript.com/en-CA/catalog/products/organic-spearmint-tea (src/data/passport/reviews/batch-1.js)
-- broken 404 https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/hims-hers-health-inc-dba-hers-716825-09092025 (src/data/passport/reviews/batch-1.js)
-- broken 404 https://www.fda.gov/Safety/Recalls/ucm575135.htm (src/data/passport/reviews/batch-1.js)
-- broken 0 https://glamglobal.co.uk/fr/products/o-positiv-flo-pms-gummie-vitamins-proactive-pms-relief-60-count (src/data/passport/reviews/batch-1.js)
 - broken 404 https://www.ulta.com/p/unscented-gentle-soothing-wipes-pimprod2007177 (src/data/passport/reviews/batch-1.js, src/data/productResearch.js, src/data/productResearchCore.js)
 - broken 404 https://giantfoodstores.com/groceries/health-beauty/pain-fever/urinary-pain-relief/winx-health-fast-acting-maximum-strength-uti-pain-relief-tablets-24-ct-box.html (src/data/passport/reviews/batch-2.js)
 - broken 404 https://hannaford.com/groceries/health-beauty/pain-fever/urinary-pain-relief/winx-health-fast-acting-maximum-strength-uti-pain-relief-tablets-24-ct-box.html (src/data/passport/reviews/batch-2.js)
 - broken 404 https://willowpump.com/products/willow-360-wearable-breast-pump (src/data/passport/reviews/batch-2.js, src/data/productBuyUrls.js)
-- broken 404 https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts (src/data/passport/reviews/batch-2.js)
 - broken 404 https://tienda.fisaude.com/files/Product_Sheet_LWE_ES_EU_20170425 (src/data/passport/reviews/batch-3.js)
-- broken 0 https://reddit.fabiomanganiello.com/r/menstrualcups/comments/fuilez/anyone_heard_of_the_june_cup (src/data/passport/reviews/batch-3.js)
+- broken 404 https://www.walmart.com/ip/LOLA-Heavy-Organic-Cotton-Pads-36-Count-Ultra-Thin-Pad-with-Wings-HSA-FSA-Approved/16001906674 (src/data/passport/reviews/batch-3.js)
 - broken 404 https://support.mavenclinic.com/hc/en-us/articles/34227140983955-How-much-does-an-appointment-cost (src/data/passport/reviews/batch-3.js)
-- broken 404 https://www.ftc.gov/news-events/news/press-releases/2023/07/ftc-gives-final-approval-order-banning-betterhelp-sharing-sensitive-health-data-advertising? (src/data/passport/reviews/batch-3.js, src/data/productResearch.js)
 - broken 404 https://gennev.com/plans (src/data/passport/reviews/batch-4.js)
 - broken 404 https://www.gennev.com/how-gennev-works (src/data/passport/reviews/batch-4.js, src/data/productResearch.js, src/data/productResearchCore.js)
 - broken 404 https://knix.ca/products/leak-proof-high-rise (src/data/passport/reviews/batch-4.js)
-- broken 404 https://www.fda.gov/safety/recalls/ucm628237.htm (src/data/passport/reviews/batch-4.js)
-- broken 404 https://period.co/products/the-boyshort-juniors (src/data/passport/reviews/batch-4.js)
 - broken 404 https://redesign.time.com/7094898/winx-health-uti-test-and-treat (src/data/passport/reviews/batch-5.js)
-- broken 404 https://www.fda.gov/safety/recalls/default.htm (src/data/passport/reviews/batch-5.js)
-- broken 0 https://oboomagic.com/products/woosh-warming-wand (src/data/passport/reviews/batch-5.js, src/data/productBuyUrls.js)
 - broken 404 https://wuka.co.uk/collections/all/products/stretch-cotton-midi-brief-heavy (src/data/passport/reviews/batch-5.js)
 - broken 404 https://www.alwaysdiscreet.com/en-us/incontinence-products/liners/boutique-liners (src/data/productBuyUrls.js)
 - broken 404 https://bambody.com/products/absorbent-panties (src/data/productBuyUrls.js)
 - broken 404 https://www.bodyform.co.uk/our-products/pads/ultra-towels (src/data/productBuyUrls.js)
-- broken 404 https://www.depend.com/en-us/incontinence-products/women/depend-silhouette-underwear (src/data/productBuyUrls.js)
 - broken 404 https://femmycycle.com/products/femmycycle-cup (src/data/productBuyUrls.js)
 - broken 404 https://www.haakaa.co.nz/products/haakaa-silicone-breast-pump-100ml (src/data/productBuyUrls.js)
 - broken 404 https://thehoneypot.co/products/sensitive-foam-wash (src/data/productBuyUrls.js)
 - broken 404 https://knix.com/collections/leakproof-period-underwear (src/data/productBuyUrls.js)
 - broken 404 https://getmaude.com/products/vibe-vibrator (src/data/productBuyUrls.js)
-- broken 404 https://mysteryvibe.com/products/crescendo-2 (src/data/productBuyUrls.js)
 - broken 404 https://www.ob-tampons.com/products/pro-comfort (src/data/productBuyUrls.js)
-- broken 0 https://playtexsport.com/products/tampons (src/data/productBuyUrls.js)
+- broken 404 https://www.poise.com/en-us/products/incontinence-pads/moderate-absorbency (src/data/productBuyUrls.js)
 - broken 404 https://www.getrael.com/products/organic-cotton-cover-panty-liners (src/data/productBuyUrls.js)
 - broken 404 https://www.getrael.com/products/organic-cotton-cover-pads-overnight (src/data/productBuyUrls.js)
 - broken 404 https://www.getrael.com/products/organic-cotton-tampons (src/data/productBuyUrls.js)
@@ -132,56 +80,40 @@
 - broken 404 https://tomboyx.com/collections/first-line-leakmarks (src/data/productBuyUrls.js)
 - broken 404 https://uberlube.com/products/uberlube-luxury-lubricant (src/data/productBuyUrls.js)
 - broken 404 https://www.veedausa.com/collections/pads (src/data/productBuyUrls.js)
-- broken 404 https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely (src/data/productHowToUse.js, src/data/products.js, src/data/productsExtended.js, src/data/restoredScientificEvidence.js)
-- broken 404 https://www.fda.gov/food/dietary-supplements (src/data/productHowToUse.js, src/utils/enrichLlmProductForDiscovery.js)
 - broken 404 https://divacup.com/pages/how-to-use (src/data/productHowToUse.js)
 - broken 404 https://divacup.com/pages/care-cleaning (src/data/productHowToUse.js)
-- broken 0 https://factor.niehs.nih.gov/2024/8/feature/3-feature-metals-in-tampons (src/data/productResearch.js)
-- broken 0 https://glamglobal.co.uk/products/o-positiv-flo-pms-gummie-vitamins-proactive-pms-relief-60-count (src/data/productResearch.js, src/data/productResearchCore.js)
-- broken 0 https://glamglobal.co.uk/fr/products/flatter-me-supplement-for-daily-bloating-18-full-spectrum-digestive-enzymes-to-support-food-breakdown-ginger-fennel-seed-peppermint-for-nutrient-absorption-30-day-supply (src/data/productResearch.js, src/data/productResearchCore.js)
 - broken 404 https://www.orderroombox.com/product/thermacare-heatwraps-menstrual-pain-therapy/ (src/data/productResearch.js, src/data/productResearchCore.js)
 - broken 404 https://www.suicideandco.org/support-links/bloom-app (src/data/productResearch.js, src/data/productResearchCore.js)
 - broken 404 https://ob-tampons.com/what-is-toxic-shock-syndrome (src/data/productResearch.js, src/data/productResearchCore.js)
 - broken 404 https://pureeros.com/products/ziggy-cup (src/data/productResearch.js, src/data/productResearchCore.js)
-- broken 400 https://pbis.instacart.com/products/17365289-softdisc-disposable-14-ea (src/data/productResearch.js, src/data/productResearchCore.js)
 - broken 404 https://wuka.co.uk/products/wuka-ultimate-midi-brief-heavy-overnight (src/data/productResearch.js, src/data/productResearchCore.js)
 - broken 404 https://KINSEYINSTITUTE.ORG/pdf/Herbenick (src/data/productResearch.js)
-- broken 0 https://seftonsexualhealth.nhs.uk/adult-safer-sex (src/data/productResearch.js, src/data/productResearchCore.js)
 - broken 404 https://www.ulta.com/p/p-pimprod2052232 (src/data/productResearch.js, src/data/productResearchCore.js)
 - broken 404 https://leaflets.ekhuft.nhs.uk/general-care-of-vulval-skin/html (src/data/productResearch.js)
 - broken 404 https://www.gosh.nhs.uk/conditions-and-treatments/general-health-advice/period-products (src/data/productResearch.js)
-- broken 404 https://www.fda.gov/ForConsumers/ConsumerUpdates/ucm612029.htm (src/data/productResearch.js, src/data/productResearchCore.js)
-- broken 404 https://consumer.ftc.gov/consumer-alerts/2021/01/does-your-health-app-protect-your-sensitive-info (src/data/productResearch.js, src/data/productResearchCore.js)
 - broken 404 https://www.eightsleep.com/blog/answering-your-questions-about-the-pod (src/data/productResearch.js, src/data/productResearchCore.js)
 - broken 404 https://uofmhealth.org/health-library/hw228097 (src/data/productResearch.js)
 - broken 404 https://www.ulta.com/p/p-xlsImpprod18141017 (src/data/productResearch.js, src/data/productResearchCore.js)
-- broken 404 https://www.ftc.gov/node/44492 (src/data/productResearch.js)
-- broken 404 https://www.fda.gov/ForConsumers/ConsumerUpdates/ucm335261.htm (src/data/productResearch.js)
 - broken 404 https://www.naturalresources-sf.com/collections/breast-care/products/silverette-silver-nursing-cups (src/data/productResearch.js, src/data/productResearchCore.js)
 - broken 404 https://well.ca/products/leachco-snoogle-chic-total-body-pillow_129572.html (src/data/productResearch.js, src/data/productResearchCore.js)
 - broken 404 https://KINSEYINSTITUTE.ORG/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf (src/data/productResearch.js)
 - broken 404 https://www.ulta.com/p/p-xlsImpprod18651011 (src/data/productResearch.js, src/data/productResearchCore.js)
-- broken 0 https://core-cms.cambridgecore.org/core/services/aop-cambridge-core/content/view/4C8D01FE5AF4A6A81965344B26FAB14D/S0007114502000958a.pdf/prebiotic-effects-of-inulin-and-oligofructose.pdf (src/data/productResearch.js)
-- broken 400 https://www.facebook.com/search/posts?q=always%20infinity%20pad (src/data/products.js)
-- broken 400 https://www.facebook.com/search/posts?q=rael%20pads (src/data/products.js)
-- broken 400 https://www.facebook.com/search/posts?q=honey%20pot%20pads (src/data/products.js)
-- broken 400 https://www.facebook.com/search/posts?q=LOLA%20tampons (src/data/products.js)
-- broken 400 https://www.facebook.com/search/posts?q=saalt%20menstrual%20cup (src/data/products.js)
-- broken 400 https://www.facebook.com/search/posts?q=flex%20period%20disc (src/data/products.js)
-- broken 400 https://www.facebook.com/search/posts?q=thinx%20period%20underwear (src/data/products.js)
-- broken 402 https://www.instyle.com/fashion/clothing/the-best-period-underwear (src/data/products.js, api/product-insights.js)
-- broken 400 https://www.facebook.com/search/posts?q=magnesium%20period%20cramps (src/data/products.js)
-- broken 400 https://www.facebook.com/search/posts?q=ubiquinol%20fertility (src/data/products.js)
-- broken 400 https://www.facebook.com/search/posts?q=clue%20period%20tracker (src/data/products.js)
+- broken 404 https://www.facebook.com/search/posts?q=always%20infinity%20pad (src/data/products.js)
+- broken 404 https://www.facebook.com/search/posts?q=rael%20pads (src/data/products.js)
+- broken 404 https://www.facebook.com/search/posts?q=honey%20pot%20pads (src/data/products.js)
+- broken 404 https://www.facebook.com/search/posts?q=LOLA%20tampons (src/data/products.js)
+- broken 404 https://www.facebook.com/search/posts?q=saalt%20menstrual%20cup (src/data/products.js)
+- broken 404 https://www.facebook.com/search/posts?q=flex%20period%20disc (src/data/products.js)
+- broken 404 https://www.facebook.com/search/posts?q=thinx%20period%20underwear (src/data/products.js)
+- broken 404 https://www.facebook.com/search/posts?q=magnesium%20period%20cramps (src/data/products.js)
+- broken 404 https://www.facebook.com/search/posts?q=ubiquinol%20fertility (src/data/products.js)
+- broken 404 https://www.facebook.com/search/posts?q=clue%20period%20tracker (src/data/products.js)
 - broken 404 https://www.wired.com/story/period-tracking-apps-privacy/ (src/data/products.js)
-- broken 400 https://www.facebook.com/search/posts?q=stardust%20period%20tracker (src/data/products.js)
-- broken 400 https://www.facebook.com/groups/pelvicfloorfriendly/ (src/data/productsExtended.js)
-- broken 404 https://www.apa.org/ptsd/guide/online-therapy (src/data/productsExtended.js)
-- broken 400 https://www.facebook.com/search/posts?q=ritual%20prenatal (src/data/productsExtended2.js)
-- broken 400 https://www.facebook.com/search/posts?q=maude%20vibe (src/data/productsExtended2.js)
+- broken 404 https://www.facebook.com/search/posts?q=stardust%20period%20tracker (src/data/products.js)
+- broken 404 https://www.facebook.com/search/posts?q=ritual%20prenatal (src/data/productsExtended2.js)
+- broken 404 https://www.facebook.com/search/posts?q=maude%20vibe (src/data/productsExtended2.js)
 - broken 404 https://www.acog.org/womens-health/faqs/mental-health (src/data/productsExtended2.js)
-- broken 404 https://www.apa.org/ptsd/guide/cognitive-behavioral (src/data/productsExtended2.js)
-- broken 400 https://www.facebook.com/search/posts?q=bloom%20cbt%20app (src/data/productsExtended2.js)
+- broken 404 https://www.facebook.com/search/posts?q=bloom%20cbt%20app (src/data/productsExtended2.js)
 - broken 404 https://www.consumerreports.org/health/menstrual-products/should-you-switch-to-organic-tampons-and-pads-a2599295540/ (src/data/restoredScientificEvidence.js)
 - broken 404 https://www.hopkinsmedicine.org/health/wellness-and-prevention/feminine-hygiene-products (src/data/restoredScientificEvidence.js)
 - broken 404 https://www.natracare.com/environmental-impact/ (src/data/restoredScientificEvidence.js)
@@ -192,25 +124,11 @@
 - broken 404 https://www.acog.org/clinical/clinical-guidance/obstetric-care-consensus/articles/2018/05/postpartum-care-optimization (src/data/restoredScientificEvidence.js)
 - broken 404 https://ritual.com/science (src/data/restoredScientificEvidence.js)
 - broken 404 https://www.qvin.com (src/data/startups.js)
-- broken 0 https://www.wild.ai (src/data/startups.js)
-- broken 0 https://app.myparla.com (src/data/startups.js)
-- broken 0 https://sweetapricity.com/cdn/shop/files/Vanilla_Marshmallow_Knockout.png?v=1726869291&width=1946 (src/data/startups.js)
-- broken 0 https://lisahealth.com (src/data/startups.js)
-- broken 0 https://astin.health (src/data/startups.js)
 - broken 404 https://perelelhealth.com/cdn/shop/files/conception_-_29.png?v=1767981485&width=1000 (src/data/startups.js)
 - broken 404 https://tampontribe.com/cdn/shop/products/DayPad_1_5e62dd02-77b1-4a5a-82a8-da422ea77d40.png?v=1679942637&width=1445 (src/data/startups.js)
-- broken 404 https://api.ouraring.com/v2/usercollection/ (src/health/providers/oura.js, api/_healthProviders.js)
 - broken 404 https://medlineplus.gov/druginfo/natural/733.html (src/matching/medications.js)
 - broken 404 https://menopause.org/for-women/menopause-faqs-premature-early-and-induced-menopause (src/matching/ontology.js)
 - soft_404 200 https://asrm.org/globalassets/_asrm/practice-guidance/ethics-opinions/pdf/oocyte_or_embryo_donation_to_women_of_advanced_maternal_age_an_ethics_commitee_opinion.pdf (src/matching/ontology.js)
-- broken 501 https://appleid.apple.com/auth/token (api/_appleSignIn.js)
-- broken 501 https://appleid.apple.com/auth/revoke (api/_appleSignIn.js)
-- broken 400 https://cloud.ouraring.com/oauth/authorize (api/_healthProviders.js)
-- broken 500 https://api.prod.whoop.com/oauth/oauth2/auth (api/_healthProviders.js)
-- broken 404 https://api.prod.whoop.com/developer (api/_healthProviders.js)
-- broken 0 https://brand-domain.com/product-page (api/discover-products.js)
-- broken 404 https://fonts.googleapis.com (public/consumer-health-data.html)
-- broken 404 https://fonts.gstatic.com (public/consumer-health-data.html)
 
 ## Broken internal pages
 
@@ -229,7 +147,7 @@
 - 403 https://doi.org/10.1097/DSS.0000000000001933
 - 403 https://doi.org/10.1097/DSS.0000000000002712
 - 403 https://doi.org/10.1111/iwj.13337
-- 403 https://www.amazon.com/gp/help/customer/display.html?nodeId=GKM69DUUYKQWKWX7
+- 0 https://ppd.plannedparenthood.org
 - 200 https://time.com/collections/best-inventions-2024/7094898/winx-health-uti-test-and-treat/
 - 403 https://www.reddit.com/r/UTI/search/?q=winx
 - 403 https://www.reddit.com/r/WomensHealth/search/?q=winx%20vaginal%20ph
@@ -255,21 +173,22 @@
 - 403 https://rainn.org/hotline
 - 403 https://rainn.org/learn-about-rainn/what-we-do/support-and-services/
 - 403 https://rainn.org
-- 403 https://www.american.edu/equity-titleix/help.cfm
-- 403 https://www.american.edu/equity-titleix/
 - 403 https://svsh.berkeley.edu/resource-information/247-urgent-support-care-line
 - 403 https://svsh.berkeley.edu/uc-berkeley-path-care-center-confidential
 - 403 https://sexualrespect.columbia.edu/how-to-get-help
-- 403 https://genderbasedmisconduct.columbia.edu/
-- 403 https://titleix.cornell.edu/
+- 403 https://www.health.columbia.edu/content/counseling-and-psychological-services
 - 403 https://cupolice.cornell.edu/
-- 503 https://titleix.colostate.edu/title-ix/reporting-options/
-- 503 https://titleix.colostate.edu/
 - 403 https://oie.duke.edu/areas/sexual-misconduct-title-ix/
 - 403 https://wellbeing.jhu.edu/youdecide/
-- 403 https://publicsafety.jhu.edu/contact-public-safety/
+- 403 https://oie.jhu.edu/confidential-resources/
 - 403 https://studentlife.umich.edu/node/176
-- 403 https://ecrt.umich.edu/about-us/contact-us/
+- 403 https://sapac.umich.edu/
+- 403 https://ecrt.umich.edu/reporting/
+- 0 https://counseling.missouri.edu/
+- 0 https://www.studentcounseling.msstate.edu
+- 0 https://endrape.msu.edu/sexual-assault-healthcare-program/
+- 0 https://titleix.nd.edu/support-resources/
+- 0 https://titleix.nd.edu/title-ix-contacts/
 - 405 https://www.nyu.edu/life/safety-health-wellness/sexual-and-relationship-respect/help-and-support/confidentiality-and-privacy.html
 - 405 https://www.nyu.edu/about/leadership-university-administration/office-of-the-president/office-of-the-provost/university-life/office-of-studentaffairs/student-health-center/cbh/center-for-sexual-and-relationship-respect-services.html
 - 405 https://www.nyu.edu/life/safety-health-wellness/sexual-and-relationship-respect/help-and-support.html
@@ -277,26 +196,29 @@
 - 405 https://www.nyu.edu/life/safety-health-wellness/campus-safety/contacting-campus-safetys-communications-center.html
 - 405 https://www.nyu.edu/life/safety-health-wellness/campus-safety.html
 - 405 https://www.nyu.edu/life/safety-health-wellness/campus-safety/victim-services.html
-- 403 https://sexualmisconduct.princeton.edu/resources-reporting/resources
 - 403 https://share.princeton.edu/
+- 403 https://uhs.princeton.edu/counseling-psychological-services
 - 403 https://share.princeton.edu/support-services/supportive-options
 - 403 https://uhs.princeton.edu/
 - 403 https://sexualmisconduct.princeton.edu/
+- 0 https://scs.tamu.edu/
+- 0 https://caps.tamu.edu/helpline/
 - 0 https://counseling.ttu.edu
 - 403 https://care.ucdavis.edu/support-for-survivors
 - 403 https://sexualviolence.ucdavis.edu/get-support
 - 403 https://www.publicsafety.upenn.edu/about/special-services/
-- 403 https://centerforcivilrights.upenn.edu/
 - 403 https://police.utexas.edu/contact
 - 403 https://cavcare.virginia.edu/node/751
 - 403 https://justreportit.virginia.edu/
 - 403 https://hub.williams.edu/oivpr/sexual-assault-prevention-response/24-7confidentialservices/intimate-violence-and-sexual-assault-survivor-support-ivsass-confidential-hotline/
 - 403 https://health.williams.edu/
 - 403 https://titleix.williams.edu/frequently-asked-questions-about-medical-care-after-sexual-assault/
+- 403 https://titleix.williams.edu/talk-to-someone/
 - 403 https://hub.williams.edu/css/
 - 403 https://smr.yale.edu/get-assistance-support/talk-someone
 - 405 https://www.nia.nih.gov/health/menopause
 - 403 https://d1vo8zfysxy97v.cloudfront.net/media/product/sf903__ve8382489c6ce9fb7f28cdddef00e6f1ece146591.png
+- 429 https://pubmed.ncbi.nlm.nih.gov/37842551/
 - 403 https://www.reddit.com/r/menstrualcups/search/?q=lily+cup
 - 403 https://www.reddit.com/r/menstrualcups/
 - 403 https://www.reddit.com/r/periods/search/?q=period+underwear&restrict_sr=1
@@ -320,12 +242,15 @@
 - 403 https://www.reddit.com/r/Menopause/search/?q=supplement&restrict_sr=1
 - 403 https://www.reddit.com/r/Menopause/search/?q=evernow&restrict_sr=1
 - 403 https://wefunder.com/ayna
+- 429 https://pubmed.ncbi.nlm.nih.gov/19932423/
+- 429 https://pubmed.ncbi.nlm.nih.gov/30761019/
 - 403 https://doi.org/10.1002/nau.22728
 - 403 https://www.heart.org/-/media/Files/Health-Topics/High-Blood-Pressure/BP-Raisers.pdf?sc_lang=en
 - 403 https://www.nice.org.uk/guidance/cg61/chapter/Key-priorities-for-implementation
 - 403 https://www.nice.org.uk/guidance/ng73/resources/endometriosis-diagnosis-and-management-pdf-1837632548293
 - 403 https://nice.org.uk/guidance/ng194/resources/postnatal-care-pdf-66142082148037
 - 403 https://www.nice.org.uk/guidance/ng88/chapter/recommendations
+- 503 https://www.mayoclinic.org/diseases-conditions/breast-pain/diagnosis-treatment/drc-20350426
 - 403 https://www.nice.org.uk/guidance/ng23/chapter/recommendations
 - 403 https://guysandstthomas.nhs.uk/health-information/hyperemesis-gravidarum
 - 403 https://www.reddit.com/r/periods/
@@ -355,12 +280,13 @@
 - 403 https://www.shoprite.com/product/natures-bounty-d3-rapid-release-softgels-125-mcg-5000-iu-150-count-id-00074312193774
 - 403 https://www.nowfoods.com/products/supplements/d-mannose-urinary-support-500-mg-veg-capsules
 - 403 https://recallcheck.net/brand/now-foods
+- 403 https://www.forhers.com
 - 429 https://www.pomelocare.com/privacy-policy
-- 403 https://www.nowfoods.com/products/supplements/evening-primrose-oil-1000-mg-vegan-formula-veggie-softgels?SKU=1542
 - 503 https://www.consumerlab.com/recalls/14908/nordic-naturals-zero-sugar-multivitamin-gummies-for-kids-recalled/
 - 200 https://www.iherb.com/pr/azo-test-strips-urinary-tract-infection-test-3-self-testing-strips/14562
 - 429 https://products.withsilver.app/cvs/758375-azo-urinary-tract-infection-uti-test-strips-clinically-tested-3ct
 - 403 https://www.fredmeyer.com/p/the-honey-pot-7-day-boric-acid-herbs-suppositories-applicator/0085166900858
+- 0 https://glamglobal.co.uk/fr/products/o-positiv-flo-pms-gummie-vitamins-proactive-pms-relief-60-count
 - 403 https://mars.1mg.com/otc/vwash-plus-expert-intimate-hygiene-otc126806
 - 200 https://kh.iherb.com/pr/ph-d-feminine-health-boric-acid-foam-wash-sensitive-6-fl-oz-177-ml/152146
 - 403 https://otclabels.com/lib/otc/otc-meds/stix-maximum-strength-urinary-pain-relief/
@@ -369,13 +295,13 @@
 - 429 https://products.withsilver.app/tcin/75664184-Rael-Organic-Cotton-Cover-Pads-Regular-14-Count
 - 403 https://www.marianos.com/p/honey-pot-100-organic-cotton-cover-cooling-herbal-infusion-heavy-flow-overnight-pads-16-count/0085166900860
 - 0 https://www-test.nurx.com/privacy-policy/
-- 403 https://www.mobihealthnews.com/news/midi-health-expands-womens-care-access-all-50-states
 - 403 https://www.shoprite.com/product/cora-100-organic-cotton-topsheet-the-peaceofmind-overnight-pad-28-count-id-00810042480643
 - 429 https://products.withsilver.app/asin/B06XKB611F-Veeda-UltraThin-Absorbent-Day-Pads-with-100-Natural-Cotton-Top-S
 - 429 https://products.withsilver.app/tcin/84743596-Tampax-Pure-Cotton-Tampons-Unscented-24-Count
 - 429 https://products.withsilver.app/tcin/84743593-Tampax-PURE-COTTON-22pack-11-Regular11-Super
 - 403 https://www.ethicalsuperstore.com/products/organyc/organyc-regular-tampons---pack-of-16/
-- 403 https://www.newegg.com/p/0JH-01C1-003P5
+- 0 https://reddit.fabiomanganiello.com/r/menstrualcups/comments/fuilez/anyone_heard_of_the_june_cup
+- 200 https://www.newegg.com/p/0JH-01C1-003P5
 - 403 https://www.freepeople.com/shop/maude-vibe/?color=004
 - 403 https://www.bloomingdales.com/shop/product/maude-vibe-personal-massager?ID=4016669
 - 403 https://www.consumer-action.org/lawsuits/article/knix-wear
@@ -386,30 +312,32 @@
 - 403 https://hsastore.com/flex-menstrual-cup-full-fit-includes-2-free-menstrual-discs/28072.html
 - 429 https://products.withsilver.app/dpci/14013693-ob-original-applicator-free-tampons-multi-pack-regular-super-super-plus-absorbency-40-ct
 - 403 https://blog.healthequity.com/cares-act-womens-health-and-menstrual-care
+- 0 https://oboomagic.com/products/woosh-warming-wand
 - 403 https://www.kroger.com/p/p/0003700088634
-- 403 https://www.calm.com
 - 429 https://www.pomelocare.com/getstarted
 - 0 https://www.always.com/en-us/shop-products/panty-liners
-- 403 https://www.nordic.com/products/omega-woman/
+- 403 https://www.depend.com/en-us/incontinence-products/women/depend-silhouette-underwear
 - 403 https://www.hanes.com/women/panties/period-underwear.html
-- 0 https://phdhealth.com/products/boric-acid-foam-wash
-- 403 https://www.poise.com/en-us/products/incontinence-pads/moderate-absorbency
+- 0 https://playtexsport.com/products/tampons
+- 0 https://factor.niehs.nih.gov/2024/8/feature/3-feature-metals-in-tampons
+- 403 https://www.forhers.com/blog/getting-weight-loss-medication-through-hers
 - 429 https://www.pomelocare.com/terms-of-service
-- 403 https://ca.iherb.com/pr/azo-test-strips-urinary-tract-infection-test-3-self-testing-strips/14562
-- 200 https://uk.iherb.com/pr/good-clean-love-restore-moisturizing-vaginal-gel-15-applications-2-fl-oz-59-ml/143638
+- 200 https://ca.iherb.com/pr/azo-test-strips-urinary-tract-infection-test-3-self-testing-strips/14562
+- 403 https://uk.iherb.com/pr/good-clean-love-restore-moisturizing-vaginal-gel-15-applications-2-fl-oz-59-ml/143638
+- 0 https://glamglobal.co.uk/products/o-positiv-flo-pms-gummie-vitamins-proactive-pms-relief-60-count
+- 0 https://glamglobal.co.uk/fr/products/flatter-me-supplement-for-daily-bloating-18-full-spectrum-digestive-enzymes-to-support-food-breakdown-ginger-fennel-seed-peppermint-for-nutrient-absorption-30-day-supply
 - 403 https://www.hopkinsmedicine.org/health/wellness-and-prevention/digestive-enzymes-and-digestive-enzyme-supplements?amp=true
-- 403 https://calm.com/terms
 - 403 https://www.influenster.com/reviews/u-by-kotex-cleanwear-ultra-thin-pads-with-wings
 - 403 https://www.apotea.se/femmycycle-normal
+- 400 https://pbis.instacart.com/products/17365289-softdisc-disposable-14-ea
 - 403 https://thingtesting.com/brands/aisle/reviews
 - 403 https://www.hanes.com/women/collections/period-underwear
+- 0 https://seftonsexualhealth.nhs.uk/adult-safer-sex
 - 403 https://www.nice.org.uk/guidance/QS143/chapter/quality-statement-1-diagnosing-perimenopause-and-menopause
 - 503 https://list.essentialmeds.org/recommendations/1397
 - 403 https://www.trustpilot.com/review/joylux.com?page=4
 - 403 https://au.trustpilot.com/review/joylux.com?page=3
-- 403 https://cm.depend.com/en-us/incontinence-products/women/silhouette-classic-underwear
 - 403 https://www.nice.org.uk/guidance/QS77/chapter/quality-statement-3-containment-products
-- 0 https://ri.conicet.gov.ar/handle/11336/163998
 - 403 https://nowfoods.com/supplements/d-mannose-500-mg-veg-capsules
 - 403 https://library.fabresearch.org/viewItem.php?id=15977
 - 403 https://www.nice.org.uk/advice/mib244/chapter/Clinical-and-technical-evidence
@@ -420,6 +348,7 @@
 - 403 https://www.superdrug.com/natural-pain-relief/health/womens-intimate-health-care/periods/menstrual-cups/intimina-menstrual-lily-cup-compact-a/p/mp-00440408
 - 403 https://www.therotherhamft.nhs.uk/node/691/printable/print
 - 403 https://www.superdrug.com/health/sexual-health/vibrators-adult-toys/vibrators/lelo-sona-cruise-clitoral-massager-cerise/p/mp-00120986
+- 0 https://core-cms.cambridgecore.org/core/services/aop-cambridge-core/content/view/4C8D01FE5AF4A6A81965344B26FAB14D/S0007114502000958a.pdf/prebiotic-effects-of-inulin-and-oligofructose.pdf
 - 403 https://www.reddit.com/r/periods/search/?q=always+infinity&restrict_sr=1
 - 403 https://www.reddit.com/r/WomensHealth/
 - 403 https://www.reddit.com/r/WomensHealth/search/?q=rael+pads&restrict_sr=1
@@ -492,8 +421,13 @@
 - 403 https://www.digitalhealth.net/2021/04/research-glow-conception-app/
 - 200 https://www.trustpilot.com/review/inne.io
 - 200 https://www.trustpilot.com/review/allarahealth.com
+- 0 https://www.wild.ai
 - 200 https://www.trustpilot.com/review/mavenclinic.com
+- 0 https://app.myparla.com
+- 0 https://sweetapricity.com/cdn/shop/files/Vanilla_Marshmallow_Knockout.png?v=1726869291&width=1946
 - 200 https://elektrahealth.com
+- 0 https://lisahealth.com
+- 0 https://astin.health
 - 200 https://www.trustpilot.com/review/pandiahealth.com
 - 0 https://dotlab.com
 - 0 https://perelel.com
@@ -506,8 +440,5 @@
 - 405 https://api.push.apple.com
 - 401 https://api.resend.com/emails
 - 401 https://api.resend.com/emails/batch
-- 405 https://api.ouraring.com/oauth/token
-- 405 https://api.ouraring.com/oauth/revoke
-- 405 https://api.prod.whoop.com/oauth/oauth2/token
 - 0 https://ayna.health
 - 0 https://ayna.health/quiz
