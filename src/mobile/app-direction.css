@@ -1077,6 +1077,8 @@
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-badge { flex: none; display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border: 1.5px solid currentColor; border-radius: 999px; font: 600 12px/1 var(--f-ui); color: var(--d-ink); }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-badge.is-alert { background: #f7badd; color: #3e2723; border-color: #3e2723; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-price { display: flex; align-items: baseline; gap: 6px; min-width: 0; margin-top: 4px; white-space: nowrap; }
+/* The price never shrinks; the size note beside it takes the ellipsis (was "$1…"). */
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-price b { flex: none; max-width: 100%; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-unit { min-width: 0; overflow: hidden; text-overflow: ellipsis; font: 500 calc(13px * var(--ayna-text-scale, 1))/1.3 var(--f-ui); color: var(--d-ink-2); }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-match { position: relative !important; top: auto !important; left: auto !important; align-self: flex-start; margin: 6px 0 0 2px; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-photo .ay-pc-badge { position: absolute; left: 8px; bottom: 8px; z-index: 1; height: 22px; padding: 0 8px; border-color: #3e2723; background: #ffedac; color: #3e2723; }
