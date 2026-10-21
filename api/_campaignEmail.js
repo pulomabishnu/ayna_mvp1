@@ -404,6 +404,21 @@ export function teamShippingAlert({ accountEmail, product, address = {}, updated
   });
 }
 
+/** Vinted check: prizes that sold on Vinted (or came back) and were updated in the pool. */
+export function teamVintedAlert({ changes = [], available = 0 }) {
+  const label = { available: 'available again', reserved: 'reserved on Vinted', sold: 'sold or removed on Vinted' };
+  const rows = changes.map((c) => [c.product || `Listing ${c.listingId}`, `${label[c.to] || c.to}${c.wonInCampaign ? ' (already won in the campaign, still ship it)' : ''} · vinted.com/items/${c.listingId}`]);
+  rows.push(['Vinted prize units still winnable', String(available)]);
+  const gone = changes.filter((c) => c.to !== 'available').length;
+  return teamMessage({
+    subject: gone ? `Vinted: ${gone} prize${gone === 1 ? '' : 's'} taken out of the free product pool` : 'Vinted: prizes back in the free product pool',
+    intro: gone
+      ? 'These Vinted listings are no longer for sale, so they can no longer be won.'
+      : 'These Vinted listings are for sale again, so they are back in the pool.',
+    rows,
+  });
+}
+
 /** Best effort: never throws, never blocks the person's request. */
 export async function sendTeamAlert(message, { fetchImpl = fetch } = {}) {
   if (!teamAlertsEnabled()) return { ok: false, skipped: true };

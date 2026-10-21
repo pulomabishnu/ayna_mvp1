@@ -8,14 +8,17 @@
  *   POST { action: 'add_product', inventoryTotal, productId }   adds a catalog product to the pool
  *   POST { action: 'add_product', inventoryTotal, brand, name, size?, category?, imageUrl?, productUrl? }  adds a reward-only item
  *   POST { action: 'campaign', state: 'launch'|'pause'|'resume'|'end' }
+ *   POST { action: 'vinted_list' }                              prizes that are Vinted listings, with status
+ *   POST { action: 'vinted', results: [{ listingId, status }] } available|reserved|sold; emails the team on a change
  */
 import { verifyUser } from './_usageLimit.js';
 import { isAdminEmail, rpc, setPrivateHeaders } from './_campaign.js';
-import { sendCampaignEmail, shippedEmail } from './_campaignEmail.js';
+import { sendCampaignEmail, sendTeamAlert, shippedEmail, teamVintedAlert } from './_campaignEmail.js';
 import { CAMPAIGN_ID } from '../src/utils/freeProductCampaign.js';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const STATUSES = new Set(['needs_shipping', 'preparing', 'shipped', 'delivered', 'canceled']);
+const VINTED_STATUSES = new Set(['available', 'reserved', 'sold']);
 
 function intIn(v, min, max) {
   const n = Number(v);
@@ -117,6 +120,27 @@ export default async function handler(req, res) {
       const { error: upErr } = await admin.from('reward_campaigns').update({ ...patch, updated_at: now }).eq('id', CAMPAIGN_ID);
       if (upErr) return res.status(409).json({ error: 'not_saved' });
       return res.status(200).json({ ok: true });
+    }
+
+    if (body.action === 'vinted_list') {
+      return res.status(200).json({ listings: (await rpc(admin, 'campaign_vinted_listings', { p_campaign: CAMPAIGN_ID })) || [] });
+    }
+
+    if (body.action === 'vinted') {
+      const raw = Array.isArray(body.results) ? body.results : null;
+      if (!raw || !raw.length || raw.length > 500) return res.status(400).json({ error: 'bad_request' });
+      const results = [];
+      for (const r of raw) {
+        const listingId = String(r?.listingId ?? '');
+        if (!/^\d{1,15}$/.test(listingId) || !VINTED_STATUSES.has(r?.status)) return res.status(400).json({ error: 'bad_request' });
+        results.push({ listingId: Number(listingId), status: r.status });
+      }
+      const summary = (await rpc(admin, 'campaign_vinted_apply', { p_campaign: CAMPAIGN_ID, p_results: results })) || {};
+      const changes = summary.changes || [];
+      if (changes.length) {
+        await sendTeamAlert(teamVintedAlert({ changes, checked: summary.checked || 0, available: summary.available || 0 })).catch(() => {});
+      }
+      return res.status(200).json({ ok: true, checked: summary.checked || 0, changes, available: summary.available ?? null });
     }
 
     return res.status(400).json({ error: 'bad_request' });

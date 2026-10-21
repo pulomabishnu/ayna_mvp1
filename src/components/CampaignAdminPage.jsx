@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import '../styles/free-product.css';
 import { adminAction, getAdminOverview } from './freeProduct/campaignClient';
-import { FEEDBACK_QUESTIONS, FULFILLMENT_LABELS, REFERRAL_STATUS_LABELS, feedbackAsText, feedbackByQuestion } from '../utils/freeProductCampaign';
+import { FEEDBACK_QUESTIONS, FULFILLMENT_LABELS, REFERRAL_STATUS_LABELS, feedbackAsText, feedbackByQuestion, vintedIdsFromText } from '../utils/freeProductCampaign';
 
 /**
  * Internal view of the free product campaign: /admin/campaign. Not linked from
@@ -70,6 +70,55 @@ function AllFeedback({ people }) {
             <button type="button" className="fp-btn is-ghost" onClick={copy}>{copied ? 'Copied' : `Copy all ${group.answers.length}`}</button>
           </>
         ) : <p className="fp-allfb__empty">{search ? 'No answers match.' : 'No answers yet.'}</p>}
+      </div>
+    </section>
+  );
+}
+
+/** Ameera's Vinted listings that are prizes. A sold listing can't be won. */
+const VINTED_LABELS = { available: 'For sale', reserved: 'Reserved', sold: 'Sold' };
+
+function VintedPrizes({ act }) {
+  const [rows, setRows] = useState(null);
+  const [paste, setPaste] = useState('');
+  const refresh = useCallback(() => adminAction({ action: 'vinted_list' }).then((r) => setRows(r.listings || []), () => setRows([])), []);
+  useEffect(() => { refresh(); }, [refresh]);
+  if (!rows || !rows.length) return null;
+  const mark = async (results, done) => { if (await act({ action: 'vinted', results }, done)) refresh(); };
+  const known = new Set(rows.map((r) => String(r.listing_id)));
+  const pasted = vintedIdsFromText(paste).filter((id) => known.has(id));
+  const forSale = rows.filter((r) => r.status === 'available' && !r.claimed).length;
+  return (
+    <section className="fp-section" aria-labelledby="fp-vinted-h">
+      <div className="fp-section__head">
+        <h2 id="fp-vinted-h">Vinted prizes</h2>
+        <p>{forSale} of {rows.length} listings can still be won. Checked daily; a listing marked sold leaves the pool (a unit already won stays won). Their units follow these listings, so change them here, not in the pool total.</p>
+      </div>
+      <div className="fp-panel" style={{ overflowX: 'auto' }}>
+        <form className="fp-additem" onSubmit={(e) => { e.preventDefault(); if (pasted.length) mark(pasted.map((id) => ({ listingId: id, status: 'sold' })), `Marked ${pasted.length} sold.`).then(() => setPaste('')); }}>
+          <label className="fp-field" style={{ gridColumn: '1 / -1' }}><span>Sold on Vinted? Paste the listing links or ids</span>
+            <textarea rows={2} value={paste} onChange={(e) => setPaste(e.target.value)} aria-label="Sold Vinted listing links or ids" />
+          </label>
+          <button type="submit" className="fp-btn is-ink" disabled={!pasted.length}>Mark {pasted.length || ''} sold</button>
+        </form>
+        <table className="fp-table">
+          <thead><tr><th>Product</th><th>Listing</th><th>On Vinted</th><th>Won</th><th>Last checked</th><th /></tr></thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.listing_id} data-vinted-listing={r.listing_id} data-vinted-status={r.status}>
+                <td><b>{r.product}</b></td>
+                <td><a href={`https://www.vinted.com/items/${r.listing_id}`} target="_blank" rel="noreferrer">{r.listing_id}</a></td>
+                <td>{VINTED_LABELS[r.status] || r.status}</td>
+                <td>{r.claimed ? 'Yes' : ''}</td>
+                <td>{r.last_checked_at ? new Date(r.last_checked_at).toLocaleDateString() : 'Not yet'}</td>
+                <td>
+                  {r.status !== 'sold' && <button type="button" className="fp-link" onClick={() => mark([{ listingId: String(r.listing_id), status: 'sold' }], 'Marked sold.')}>Mark sold</button>}
+                  {r.status !== 'available' && <button type="button" className="fp-link" onClick={() => mark([{ listingId: String(r.listing_id), status: 'available' }], 'Back in the pool.')}>For sale again</button>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </section>
   );
@@ -187,6 +236,8 @@ export default function CampaignAdminPage({ onBack }) {
           </form>
         </div>
       </section>
+
+      <VintedPrizes act={act} />
 
       <section className="fp-section">
         <div className="fp-section__head"><h2>People</h2><p>Sorted by verified friends. Shipping details are shown here only.</p></div>

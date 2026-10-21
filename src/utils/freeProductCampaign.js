@@ -261,3 +261,8 @@ export function feedbackAsText(group) {
   for (const a of group.answers) lines.push(`"${a.response}"`, `${a.email}${a.complete ? '' : ' (in progress)'}`, '');
   return lines.join('\n').trim();
 }
+
+/** Vinted listing ids from pasted links or ids ("vinted.com/items/10464820310-saza-..." -> "10464820310"). */
+export function vintedIdsFromText(text) {
+  return [...new Set(String(text || '').match(/\d{6,15}/g) || [])];
+}
