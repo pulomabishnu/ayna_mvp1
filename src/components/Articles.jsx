@@ -1039,6 +1039,7 @@ function renderArticleCard(art, setSelectedId, progress = 0) {
   );
 }
 
+const titleOf = (id) => ARTICLES.find((a) => a.id === id)?.title || id;
 // One taxonomy: every read lives in exactly one section, and the read's own
 // header, the filter chips and "Next in …" all use it.
 const ARTICLE_CATEGORIES = [
@@ -1046,9 +1047,11 @@ const ARTICLE_CATEGORIES = [
   { id: 'hormonal', label: 'Hormonal Health', articleIds: ['pcos-basics', 'menopause-basics', 'pmdd', 'hormonal-birth-control'] },
   { id: 'chronic', label: 'Chronic & Pelvic Conditions', articleIds: ['endometriosis-basics', 'pelvic-floor-dysfunction', 'ovarian-cysts'] },
   { id: 'vaginal-urinary', label: 'Vaginal & Urinary Health', articleIds: ['intimate-wash', 'uti-prevention', 'yeast-infection-basics', 'bacterial-vaginosis', 'genitourinary-syndrome-of-menopause'] },
-
   { id: 'postpartum', label: 'Pregnancy & Postpartum', articleIds: ['postpartum-stretch-marks'] },
-];
+]
+  // A to Z: sections by name, and the reads in each section by title (Eliz, 2026-10-21).
+  .map((c) => ({ ...c, articleIds: [...c.articleIds].sort((a, b) => titleOf(a).localeCompare(titleOf(b))) }))
+  .sort((a, b) => a.label.localeCompare(b.label));
 const sectionOf = (id) => ARTICLE_CATEGORIES.find((c) => c.articleIds.includes(id)) || null;
 // Next read: the next one in the same section, looping (never a funnel to one page).
 function nextInSection(id) {
