@@ -549,10 +549,16 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   // "At a glance": one line per section from what is on file, each a jump link (not sticky).
   const glanceTiles = [
     sections.some((x) => x.id === 'clinical') && { id: 'clinical', label: 'Clinical opinion', tag: '', text: firstLine(d.clinicianShort || d.clinician || d.clinicalNote) },
-    sections.some((x) => x.id === 'science') && { id: 'science', label: 'Research', tag: '', text: (() => { const n = researchSourceCount(baseProduct); return n ? `${plural(n, 'research source')} on file` : firstLine(science.rest); })() },
+    // The count comes from the sources on file; when those aren't loaded yet, from what the Research tab itself shows.
+    sections.some((x) => x.id === 'science') && { id: 'science', label: 'Research', tag: '', text: (() => {
+      const n = researchSourceCount(baseProduct) || d.studies.length;
+      if (n) return `${plural(n, 'research source')} on file`;
+      if (graded.length) return `${plural(graded.length, 'need')} graded in ayna’s evidence check`;
+      return firstLine(science.rest || d.scienceSummary) || (d.ingredients.length ? `${plural(d.ingredients.length, 'ingredient')} explained` : '');
+    })() },
     sections.some((x) => x.id === 'safety') && { id: 'safety', label: 'Safety', tag: d.warnings.length ? plural(d.warnings.length, 'note') : '', text: firstLine(glance?.alert || d.warnings.find((w) => !/^(wash|rinse|boil|clean|store|keep it|dry|sanitize|sterili[sz]e|empty)\b/i.test(w)) || d.warnings[0] || d.sideEffects || (d.fdaRaw && `FDA: ${d.fda?.label || d.fdaRaw}`)) },
     { id: 'reviews', label: 'Reviews', tag: aynaRating != null && ratingCount > 0 ? `★ ${aynaRating.toFixed(1)} from ayna members` : d.brandRating ? `★ ${d.brandRating.value}, brand-reported` : communityText || d.communitySummary ? 'What people say online' : 'None yet', text: communityText || d.communitySummary ? firstLine(communityText || d.communitySummary) : 'No reviews yet. Tried it? Be the first.' },
-  ].filter(Boolean);
+  ].filter((t) => t && (t.text || t.tag));
 
   const byId = Object.fromEntries(sections.map((x) => [x.id, x]));
   // Tabs, one section at a time, no second layer. Overview first: the glance cards open the others.
