@@ -5,6 +5,7 @@ import LibraryCard from '../components/LibraryCard.jsx';
 import ReadCover from '../../components/library/ReadCover.jsx';
 import { minutesFor } from '../../components/library/readTime.js';
 import { READ_CREDITS } from '../../data/readCovers.js';
+import { READ_SECTIONS } from '../../data/readSections.js';
 import { buildLibrary, hasQuizAnswers } from '../utils/personalReads.js';
 import SuggestBox from '../../components/SuggestBox.jsx';
 import SearchAssist from '../../components/search/SearchAssist.jsx';
@@ -46,12 +47,13 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
   const [query, setQuery] = useState('');
   const [topic, setTopic] = useState('all');
   const q = query.trim().toLowerCase();
-  const { forYou, rows, hasProfile } = buildLibrary(articles, quizAnswers);
+  const { forYou, hasProfile } = buildLibrary(articles, quizAnswers);
+  // Topics and their counts come from the one sections list the website uses.
+  const rows = READ_SECTIONS.map((sec) => ({ ...sec, items: sec.articleIds.map((id) => articles.find((a) => a.id === id)).filter(Boolean) })).filter((r) => r.items.length > 0);
   // "Get reads for you" only for someone with no answers yet. With answers
   // (or with personalization switched off) it must never restart the quiz.
   const canAskForQuiz = !hasQuizAnswers(quizAnswers) && !hasQuizAnswers(lastQuizAnswers);
   const progressOf = (a) => readProgress[a.id] || 0;
-  const finished = articles.filter((a) => progressOf(a) >= 1).length;
   const keepReading = articles.filter((a) => progressOf(a) > 0 && progressOf(a) < 1);
   const topics = [['all', 'All', articles.length], ...(hasProfile && forYou.length ? [['foryou', 'For you', forYou.length]] : []), ...rows.map((r) => [r.id, sentence(r.label), r.items.length])];
   // Same editorial pick as the website's featured read when nothing personal applies (P1-25).
@@ -78,8 +80,8 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
     body = <>
       <FeaturedRead article={featured} label={featuredLabel} progress={featured ? progressOf(featured) : 0} onOpen={onOpenArticle} />
       {row('keep', 'Keep reading', keepReading.filter((a) => a !== featured))}
-      {hasProfile ? row('foryou', 'For you', forYou.filter((a) => a !== featured), null, 'foryou') : canAskForQuiz && onStartQuiz && <button type="button" className="al-match" onClick={onStartQuiz}>Get reads for you <span aria-hidden="true">→</span></button>}
-      {rows.map((r) => row(r.id, r.label, r.items.filter((a) => a !== featured), null, r.id))}
+      {hasProfile ? row('foryou', 'For you', forYou, null, 'foryou') : canAskForQuiz && onStartQuiz && <button type="button" className="al-match" onClick={onStartQuiz}>Get reads for you <span aria-hidden="true">→</span></button>}
+      {rows.map((r) => row(r.id, r.label, r.items, null, r.id))}
     </>;
   }
 
@@ -88,12 +90,6 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
     <header className="al-top ay-lib-head">
       <h1 id="ay-lib-title" className="al-top__title">Library</h1>
       <p className="al-top__lede">Plain-language reads, each one checked against clinical sources.</p>
-      {/* Stat trio as three small outlined boxes (inspo 72419ae7) */}
-      <dl className="al-stats">
-        <div><dt>Reads</dt><dd>{articles.length}</dd></div>
-        <div><dt>Topics</dt><dd>{rows.length}</dd></div>
-        <div><dt>Finished</dt><dd>{finished}</dd></div>
-      </dl>
       <SearchBar placeholder="Search reads" ariaLabel="Search reads" value={query} onChange={(e) => setQuery(e.target.value)} />
     </header>
     {q.length >= 2 && <SearchAssist variant="app" query={query} resultCount={searchArticles(query, articles).length} onUse={setQuery} />}

@@ -13,6 +13,7 @@ import { inferTagsFromHealthProfile } from '../utils/healthDataProfile.js';
 import { RELEASED_STARTUPS } from '../data/startups';
 import { buildLibrary } from '../mobile/utils/personalReads.js';
 import { READ_SECTION, READ_CREDITS, readPhoto } from '../data/readCovers.js';
+import { READ_SECTIONS } from '../data/readSections.js';
 
 /** Article id → topic-specific tags. Products must have at least one of these to appear under the article. No broad tags (e.g. discomfort), only tags that match the article heading. */
 import { ARTICLE_TOPIC_TAGS, FRUSTRATION_TO_TAG } from '../data/readPicks.js';
@@ -1066,13 +1067,7 @@ function ReadCard({ art, onOpen, progress = 0 }) {
 
 // One taxonomy: every read lives in exactly one section, and the read's own
 // header, the contents list and "Next in …" all use it.
-const ARTICLE_CATEGORIES = [
-  { id: 'menstrual', label: 'Menstrual health', articleIds: ['heavy-bleeding', 'period-pain-when-to-seek-care', 'fibroids', 'iron-deficiency-anemia'] },
-  { id: 'hormonal', label: 'Hormonal health', articleIds: ['pcos-basics', 'menopause-basics', 'pmdd', 'hormonal-birth-control'] },
-  { id: 'chronic', label: 'Chronic and pelvic conditions', articleIds: ['endometriosis-basics', 'pelvic-floor-dysfunction', 'ovarian-cysts'] },
-  { id: 'vaginal-urinary', label: 'Vaginal and urinary health', articleIds: ['intimate-wash', 'uti-prevention', 'yeast-infection-basics', 'bacterial-vaginosis'] },
-  { id: 'postpartum', label: 'Pregnancy and postpartum', articleIds: ['postpartum-stretch-marks'] },
-];
+const ARTICLE_CATEGORIES = READ_SECTIONS;
 const sectionOf = (id) => ARTICLE_CATEGORIES.find((c) => c.articleIds.includes(id)) || null;
 // Next read: the next one in the same section, looping (never a funnel to one page).
 function nextInSection(id) {
@@ -1122,7 +1117,6 @@ function ReadState({ value = 0 }) {
 }
 
 const validId = (id) => (id && ARTICLES.some((a) => a.id === id) ? id : null);
-const pad2 = (n) => String(n).padStart(2, '0');
 
 /**
  * Website Library.
@@ -1295,15 +1289,13 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
 
   const q = query.trim().toLowerCase();
   const results = q.length >= 2 ? searchArticles(query, ARTICLES) : null;
-  const featuredSec = sectionOf(FEATURED_READ.id);
-  const shelfItems = (r) => r.items.filter((a) => a.id !== FEATURED_READ.id);
+  const shelfItems = (r) => r.items;
   // Say why these are "for you", in her words from the quiz.
   const said = [...new Set([...(quizResults?.fullHealthIntake?.supportSelections || []), ...(quizResults?.frustrations || [])].map((x) => String(x).trim()).filter(Boolean))].slice(0, 3);
 
-  const shelf = (key, title, items, { n = null, sub = null, extra = null, seeAll = null } = {}) => items.length > 0 && (
+  const shelf = (key, title, items, { sub = null, extra = null, seeAll = null } = {}) => items.length > 0 && (
     <section key={key} id={`lib-${key}`} className="lb-shelf" aria-labelledby={`lib-${key}-h`}>
       <header className="lb-shelf__head">
-        {n && <span className="lb-shelf__n" aria-hidden="true">{n}</span>}
         <h2 id={`lib-${key}-h`} className="lb-shelf__title">{title}</h2>
         {sub && <span className="lb-shelf__sub">{sub}</span>}
         {extra || (seeAll && <button type="button" className="lb-seeall" onClick={seeAll}>See all {items.length}</button>)}
@@ -1347,7 +1339,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
         extra: forYou.length > 3 ? <button type="button" className="lb-seeall" onClick={() => setTopic('foryou')}>See all {forYou.length}</button> : null,
       })}
       {/* The featured read isn't repeated in its topic shelf (P1-25). */}
-      {rows.map((r, i) => shelf(r.id, r.label, shelfItems(r), { n: pad2(i + 1), seeAll: () => { setTopic(r.id); window.scrollTo({ top: 0 }); } }))}
+      {rows.map((r) => shelf(r.id, r.label, shelfItems(r), { seeAll: () => { setTopic(r.id); window.scrollTo({ top: 0 }); } }))}
     </>;
   }
 
@@ -1375,7 +1367,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
             {/* Phones: the contents as one scrolling line of chips, count inside each chip (rule 6). */}
             <div className="lb-chips" role="group" aria-label="Topics">
               {rows.map((r) => {
-                const target = shelfItems(r).length ? `lib-${r.id}` : 'lib-featured';
+                const target = `lib-${r.id}`;
                 return <a key={r.id} className="lb-chip" href={`#${target}`} onClick={(e) => jump(e, target)}>{r.label} <span className="lb-chip__n">{r.items.length}</span></a>;
               })}
             </div>
@@ -1383,12 +1375,11 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           <nav className="lb-toc" aria-labelledby="lb-toc-h">
             <h2 id="lb-toc-h" className="lb-tab lb-toc__h">Contents <span className="lb-toc__total">{ARTICLES.length} reads</span></h2>
             <ol className="lb-toc__list">
-              {rows.map((r, i) => {
-                const target = shelfItems(r).length ? `lib-${r.id}` : (r.id === featuredSec?.id ? 'lib-featured' : `lib-${r.id}`);
+              {rows.map((r) => {
+                const target = `lib-${r.id}`;
                 return (
                   <li key={r.id}>
                     <a href={`#${target}`} onClick={(e) => jump(e, target)}>
-                      <span className="lb-toc__n">{pad2(i + 1)}</span>
                       <span className="lb-toc__t">{r.label}</span>
                       <span className="lb-toc__dots" aria-hidden="true" />
                       <span className="lb-toc__c">{r.items.length} read{r.items.length === 1 ? '' : 's'}</span>

@@ -14,10 +14,6 @@
   & .al-top { padding: 4px var(--d-gutter) 18px; }
   & .al-top__title { margin: 0 !important; font: 400 calc(44px * var(--ayna-text-scale, 1))/.92 var(--ay-app-heading) !important; letter-spacing: -.035em !important; color: var(--d-ink) !important; }
   & .al-top__lede { margin: 8px 0 12px; font: 400 15px/1.45 var(--f-ui, 'Figtree'), sans-serif; color: var(--d-ink-2); }
-  & .al-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0 0 12px; }
-  & .al-stats > div { display: grid; gap: 4px; padding: 8px 12px; border: 1.5px solid var(--d-ink); border-radius: 16px; }
-  & .al-stats dt { font: 500 12px/1.2 var(--f-ui, 'Figtree'), sans-serif; color: var(--d-ink-2); }
-  & .al-stats dd { margin: 0; font: 400 24px/1 var(--ay-app-heading); color: var(--d-ink); font-variant-numeric: tabular-nums; }
   & .al-top .ayna-fresh-search-wrap { padding: 0 !important; }
 
   & .al-topics { display: flex; gap: 8px; overflow-x: auto; padding: 0 var(--d-gutter) 24px; -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 32px), transparent); scroll-padding-inline: var(--d-gutter); scrollbar-width: none; }
@@ -30,7 +26,7 @@
   /* featured read: a pastel card with an espresso outline and a hard offset
      shadow, its label on the card edge (inspo 72419ae7, 1bed1ebe) */
   & .al-tab { position: absolute; left: 16px; top: 0; transform: translateY(calc(-100% + 1.5px)); display: inline-flex; align-items: center; height: 28px; padding: 0 12px; border: 1.5px solid #3e2723; border-bottom: 0; border-radius: 10px 10px 0 0; background: #3e2723; color: #ffedac; font: 600 13px/1 var(--f-ui, 'Figtree'), sans-serif; white-space: nowrap; box-sizing: border-box; }
-  & .al-feature { position: relative; display: grid; grid-template-columns: 40% minmax(0, 1fr); gap: 16px; align-items: center; margin: 32px var(--d-gutter) 40px; padding: 16px; border: 1.5px solid #3e2723; border-radius: 24px; background: var(--d-pink); color: #3e2723; filter: drop-shadow(4px 4px 0 #3e2723); }
+  & .al-feature { position: relative; display: grid; grid-template-columns: 40% minmax(0, 1fr); gap: 16px; align-items: center; margin: 32px var(--d-gutter) 28px; padding: 16px; border: 1.5px solid #3e2723; border-radius: 24px; background: var(--d-pink); color: #3e2723; filter: drop-shadow(4px 4px 0 #3e2723); }
   & .al-feature__cover { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: pointer; }
   & .al-feature__cover .rc { border-radius: 16px; }
   & .al-feature__text { display: grid; justify-items: start; gap: 8px; min-width: 0; }

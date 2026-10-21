@@ -15,7 +15,7 @@ html body .app-container.app-container.app-container.app-container .lb {
   --lb-sans: var(--ay-sans-stack, 'Figtree', system-ui, sans-serif);
   --lb-shadow: 4px 4px 0 var(--lb-esp);
   display: block; color: var(--ay-text); font-family: var(--lb-sans);
-  padding-bottom: 64px;
+  padding-bottom: 0;
 
   & h1, & h2, & h3 { text-transform: none !important; }
   & .lb-wrap { width: 100%; max-width: calc(var(--ay-container, 1240px) + 2 * var(--ay-margin, 64px)); margin-inline: auto; padding-inline: var(--ay-margin, 64px); box-sizing: border-box; }
@@ -162,6 +162,7 @@ html body .app-container.app-container.app-container.app-container .lb {
   & .lb-band :is(.lb-shelf__sub, .lb-card__src) { color: rgba(255, 237, 172, .78); }
   & .lb-band .rc { --rc-line: #ffedac; }
   & .lb-products { margin-top: 48px; }
+  &.lb-read { padding-bottom: 32px; }
 }
 
 /* dark: the site swaps pink and sky by itself; espresso surfaces lift off the page */

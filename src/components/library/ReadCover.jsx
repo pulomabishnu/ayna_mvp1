@@ -12,14 +12,17 @@ import './read-cover.css';
 
 const SECTION_SHORT = { menstrual: 'Menstrual', hormonal: 'Hormonal', pelvic: 'Pelvic', vaginal: 'Intimate health', postpartum: 'Postpartum' };
 
-// The short word on each cover (the topic at a glance, not the title).
+// The short name on each cover, taken from the read's own title so cover and
+// title always say the same thing.
 const WORD = {
-  'intimate-wash': 'Intimate care', 'heavy-bleeding': 'Heavy flow', 'menopause-basics': 'Menopause', 'uti-prevention': 'UTI',
-  'yeast-infection-basics': 'Yeast', 'period-pain-when-to-seek-care': 'Period pain', 'pcos-basics': 'PMOS',
-  'pelvic-floor-dysfunction': 'Pelvic floor', 'endometriosis-basics': 'Endo', 'bacterial-vaginosis': 'BV', pmdd: 'PMDD',
-  fibroids: 'Fibroids', 'iron-deficiency-anemia': 'Low iron', 'ovarian-cysts': 'Cysts', 'hormonal-birth-control': 'Birth control',
+  'intimate-wash': 'Intimate washes', 'heavy-bleeding': 'Heavy menstrual bleeding', 'menopause-basics': 'Menopause', 'uti-prevention': 'UTI prevention',
+  'yeast-infection-basics': 'Yeast infection', 'period-pain-when-to-seek-care': 'Period pain', 'pcos-basics': 'PMOS',
+  'pelvic-floor-dysfunction': 'Pelvic floor', 'endometriosis-basics': 'Endometriosis', 'bacterial-vaginosis': 'BV', pmdd: 'PMDD',
+  fibroids: 'Fibroids', 'iron-deficiency-anemia': 'Iron deficiency', 'ovarian-cysts': 'Ovarian cysts', 'hormonal-birth-control': 'Birth control',
   'postpartum-stretch-marks': 'Stretch marks',
 };
+// Long single words (Endometriosis) step the type down so they never break.
+const wordSize = (w) => { const n = Math.max(...String(w).split(/\s+/).map((x) => x.length)); return n >= 12 ? ' rc--w3' : n >= 10 ? ' rc--w2' : ''; };
 
 /* One line weight, round caps; drawn in the field's ink colour. */
 const SPOT = {
@@ -54,7 +57,7 @@ export default function ReadCover({ article, minutes, size = 'shelf', className 
   const section = READ_SECTION[id] || 'hormonal';
   const photo = readPhoto(id);
   return (
-    <span className={`rc rc--${section}${photo ? ' rc--photo' : ''} rc--${size} ${className}`.trim()} aria-hidden="true">
+    <span className={`rc rc--${section}${photo ? ' rc--photo' : ''} rc--${size}${wordSize(WORD[id] || title)} ${className}`.trim()} aria-hidden="true">
       {photo ? <img className="rc__photo" src={photo} alt="" loading="lazy" decoding="async" /> : <span className="rc__band" />}
       {!photo && SPOT[id] && <svg className="rc__spot" viewBox="0 0 48 48">{SPOT[id]}</svg>}
       <span className="rc__label">
