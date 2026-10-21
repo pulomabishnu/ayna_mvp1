@@ -37,6 +37,8 @@ export default function ProductCard({
   action = null,
   // Small line under the match, e.g. "Backed by your sleep data" (src/components/health).
   badge = null,
+  // false where the page already says every product is a partner's.
+  partnerMark = true,
   className = '',
   style,
 }) {
@@ -49,7 +51,7 @@ export default function ProductCard({
   // One anatomy everywhere (src/utils/productCardFacts.js, shared with the app card):
   // white tile + heart → brand → name (2 lines) → kind + one badge → match → price + unit.
   const price = cardPrice(product);
-  const badgeText = isMine ? '' : cardBadge(product);
+  const badgeText = isMine ? '' : cardBadge(product, { partner: partnerMark });
   const Link = isMine ? 'div' : 'a';
   const kind = !isMine && shownBrand ? cardKind(product) : '';
   return (
@@ -69,8 +71,6 @@ export default function ProductCard({
       >
         <div className="ay-product-card__tile">
           {tile || <ProductTileImage product={product} alt={productImageAlt(product)} letterNode={<ProductImageFallback product={product} />} />}
-          {/* At most one badge, as a small sticker on the tile's corner (same on the app). */}
-          {badgeText && <span className={`ay-product-card__badge is-tile${badgeText === 'Pre-order' ? ' is-alert' : ''}`}>{badgeText}</span>}
         </div>
         <div className="ay-product-card__body">
           <div className="ay-product-card__top">
@@ -80,7 +80,9 @@ export default function ProductCard({
               ("Love Wellness Bye Bye Bloat" → "Bye Bye Bloat"). */}
           <h3 className="ay-product-card__name" title={product.name}>{shownBrand ? displayName(product) : product.name}</h3>
           <p className="ay-product-card__kind">
-            {kind ? <span className="ay-product-card__kindtext">{kind}</span> : <span aria-hidden="true">{'\u00a0'}</span>}
+            {kind ? <span className="ay-product-card__kindtext">{kind}</span> : !badgeText && <span aria-hidden="true">{'\u00a0'}</span>}
+            {/* At most one mark, small text in the same place on every card (same on the app). */}
+            {badgeText && <span className={`ay-product-card__mark${badgeText === 'Pre-order' ? ' is-alert' : ''}`}>{badgeText}</span>}
             {labels}
           </p>
           {badge}

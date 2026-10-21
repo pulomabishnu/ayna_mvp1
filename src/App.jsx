@@ -442,6 +442,7 @@ function App() {
   // entry before the app even loads, making history.length > 1 true even
   // with zero in-app navigation.
   const inAppPushCountRef = useRef(0);
+  const viewOriginRef = useRef({});
   // Lets a product opened from Browse keep Browse mounted (hidden) behind it,
   // so clicking a card then going back doesn't blow away the personalization
   // toggle, filters, sort, or scroll position — see the Discovery render
@@ -460,6 +461,9 @@ function App() {
     // genuine departure from wherever Shop's kept-alive state came from, so
     // the next time Shop mounts it's a clean, fresh instance.
     discoveryKeepAliveRef.current = false;
+    // P1-8: remember where each page was opened from, so its back link can
+    // name that page ("Shop", "Home") instead of a bare "Back".
+    if (!replace && currentViewRef.current && currentViewRef.current !== view) viewOriginRef.current[view] = currentViewRef.current;
     currentViewRef.current = view;
     setCurrentViewRaw(view);
     if (view !== 'product') setProductRouteId(null);
@@ -519,6 +523,15 @@ function App() {
     if (inAppPushCountRef.current > 0) window.history.back();
     else setCurrentView('welcome', { replace: true });
   }, [setCurrentView]);
+  // The back link on a standalone page (legal, About, How it works…) names the
+  // page it returns to: the one it was opened from, or Home on a direct visit.
+  const standaloneBackLabel = (() => {
+    const from = inAppPushCountRef.current > 0 ? viewOriginRef.current[currentView] : 'welcome';
+    if (!from) return 'Back';
+    if (from === 'welcome' || from === 'hero') return 'Home';
+    if (from === 'product') return 'Product';
+    return VIEW_TITLES[from] || 'Back';
+  })();
   useEffect(() => {
     // A 404 keeps the URL she typed (it used to be rewritten to '/').
     const keepPath = currentView === 'not-found' || viewFromSubPath(window.location.pathname) === currentView;
@@ -2535,28 +2548,29 @@ function App() {
           </Suspense>
         )}
         {currentView === 'privacy-policy' && (
-          <PrivacyPolicy onBack={handleBackFromStandalonePage} />
+          <PrivacyPolicy onBack={handleBackFromStandalonePage} backLabel={standaloneBackLabel} />
         )}
         {currentView === 'consumer-health-data' && (
-          <ConsumerHealthData onBack={handleBackFromStandalonePage} />
+          <ConsumerHealthData onBack={handleBackFromStandalonePage} backLabel={standaloneBackLabel} />
         )}
         {currentView === 'terms-of-use' && (
-          <TermsOfUse onBack={handleBackFromStandalonePage} />
+          <TermsOfUse onBack={handleBackFromStandalonePage} backLabel={standaloneBackLabel} />
         )}
         {currentView === 'how-we-make-money' && (
-          <HowWeMakeMoney onBack={handleBackFromStandalonePage} />
+          <HowWeMakeMoney onBack={handleBackFromStandalonePage} backLabel={standaloneBackLabel} />
         )}
         {currentView === 'how-it-works' && (
           <HowItWorks
             onBack={handleBackFromStandalonePage}
+            backLabel={standaloneBackLabel}
             onViewSources={handleViewArticles}
           />
         )}
         {currentView === 'about' && (
-          <About onBack={handleBackFromStandalonePage} onExplore={() => handleViewDiscovery()} onStart={handleStartQuiz} />
+          <About onBack={handleBackFromStandalonePage} backLabel={standaloneBackLabel} onExplore={() => handleViewDiscovery()} onStart={handleStartQuiz} />
         )}
         {currentView === 'contact' && (
-          <Contact onBack={handleBackFromStandalonePage} user={user} />
+          <Contact onBack={handleBackFromStandalonePage} backLabel={standaloneBackLabel} user={user} />
         )}
         {currentView === 'campus-resources' && (
           <Suspense fallback={<ViewLoadingFallback />}>

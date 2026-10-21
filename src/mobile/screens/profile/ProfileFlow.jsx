@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import FinishQuizCard from '../../../components/FinishQuizCard.jsx';
 import { Capacitor } from '@capacitor/core';
 import { getSupabaseClient } from '../../../utils/supabaseClient.js';
@@ -3552,6 +3552,21 @@ export default function ProfileFlow({
   onOpenArticle,
   onOpenCommunity,
 }) {
+  // Close-out (Oct 21): the page behind this overlay (Settings, Legal,
+  // Preferences, Consumer health data…) must not scroll while it is open, or
+  // the Ecosystem's compact title bar slides up over the overlay's back row.
+  // Lock every scroller outside the overlay (the screens scroll themselves,
+  // not the document), and restore exactly what was there on close.
+  const overlayRef = useRef(null);
+  useEffect(() => {
+    const root = overlayRef.current;
+    if (typeof document === 'undefined') return undefined;
+    const locked = [document.documentElement, document.body, ...document.querySelectorAll('.ayna-mobile *')]
+      .filter((el) => el && (!root || !root.contains(el)) && (el === document.documentElement || el === document.body || (el.scrollHeight > el.clientHeight + 1 && /(auto|scroll)/.test(getComputedStyle(el).overflowY))))
+      .map((el) => [el, el.style.overflow]);
+    locked.forEach(([el]) => { el.style.overflow = 'hidden'; });
+    return () => locked.forEach(([el, prev]) => { el.style.overflow = prev; });
+  }, []);
   // A real back-navigation stack rather than a static single-parent map
   // several screens (Preferences/Notifications, in particular) are now
   // reachable from more than one place (ProfileHub's own row, and Settings'
@@ -3755,7 +3770,7 @@ export default function ProfileFlow({
   }
 
   return (
-    <div className="ayna-fresh-profile-overlay" style={{ position: 'fixed', inset: 0, bottom: 'var(--ayna-bottom-nav-height)', zIndex: 55, background: 'var(--ayna-bg)', display: 'flex' }}>
+    <div ref={overlayRef} className="ayna-fresh-profile-overlay" style={{ position: 'fixed', inset: 0, bottom: 'var(--ayna-bottom-nav-height)', zIndex: 70, background: 'var(--ayna-bg)', display: 'flex', overscrollBehavior: 'contain' }}>
       {/* Keyed on `screen` so each push/pop within this overlay (hub -> Shopper
           Profile -> Preferences -> Settings, etc.) remounts this wrapper and
           replays the entrance animation, without the key, only the overlay's

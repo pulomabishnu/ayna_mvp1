@@ -256,3 +256,65 @@ html body .app-container :is(.cm-name, .cm-rules-foot) { padding-block: 12px !im
    and section headings carry no accent. */
 html body .app-container .ed .ed-display em { background: none !important; }
 html body .app-container .ed .ed-h2 em { background: none !important; font-style: normal !important; padding: 0 !important; }
+
+/* ================= Close-out pass (Oct 21, RECHECK.md) ================= */
+
+/* R1: theme-v3 still forces espresso text on the old pink callout in dark mode.
+   The callout is a Group now (#4a312c in dark), so its text follows the theme. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ed .ay-chd .callout,
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ed .ay-chd .callout * { color: var(--ed-text, #ffedac) !important; }
+
+/* P1-4: one small card mark (Pre-order, Sponsored, ayna partner) as text at the
+   end of the kind line, never a sticker on the photo. A small pink dot leads it,
+   so it reads as a disclosure, not as part of the kind. Same on the app (.ay-pc-mark). */
+.app-container.app-container .ay-product-card__mark { flex: none !important; display: inline-flex; align-items: center; gap: 5px; font: 600 12.5px/1.3 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .ay-product-card__mark::before { content: ''; width: 9px; height: 9px; box-sizing: border-box; border-radius: 50%; background: #f7badd; border: 1.5px solid var(--ay-text); }
+.app-container.app-container .ay-product-card__kindtext + .ay-product-card__mark { margin-left: 2px; }
+
+/* P1-12: Appointment prep as three numbered steps on the page (no box in a box).
+   Facts sit in one Group as hairline rows; products are hairline rows, two
+   columns from 760px; questions are a numbered list. Print keeps .dp-summary. */
+.app-container.app-container .dp2 { max-width: 1040px; padding: var(--ay-s24) var(--ay-s20) var(--ay-s48) !important; }
+.app-container.app-container .dp2-sheet { display: grid; gap: var(--ay-s32); margin-top: var(--ay-s16); }
+.app-container.app-container .dp2-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--ay-s12) var(--ay-s16); padding-bottom: var(--ay-s16); border-bottom: 1.5px solid var(--ay-outline, #3e2723); }
+.app-container.app-container .dp2-title { margin: 0; font: 700 24px/1.15 var(--ay-heading) !important; letter-spacing: -.02em; color: var(--ay-text) !important; }
+.app-container.app-container .dp2-date { margin: 2px 0 0; font: 500 14px/1.4 var(--ay-sans-stack); color: var(--ay-text-2); }
+.app-container.app-container .dp2-print { min-height: 44px; }
+.app-container.app-container .dp2-step { display: grid; gap: var(--ay-s12); }
+.app-container.app-container .dp2-h { display: flex; align-items: center; gap: var(--ay-s12); margin: 0; font: 700 20px/1.2 var(--ay-heading) !important; letter-spacing: -.02em; color: var(--ay-text) !important; text-transform: none !important; }
+.app-container.app-container .dp2-n { display: grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--ay-text); color: var(--ay-page, #ffedac); font: 700 15px/1 var(--ay-heading); }
+.app-container.app-container .dp2-facts { display: grid; grid-template-columns: minmax(0, 1fr); margin: 0; padding: var(--ay-s4) var(--ay-s16); border-radius: 20px; background: var(--ay-group); }
+.app-container.app-container .dp2-fact { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: var(--ay-s12); padding: var(--ay-s12) 0; border-top: 1px solid var(--ay-hairline); }
+.app-container.app-container .dp2-fact:first-child { border-top: 0; }
+.app-container.app-container .dp2-fact dt { font: 500 14px/1.4 var(--ay-sans-stack); color: var(--ay-text-2); }
+.app-container.app-container .dp2-fact dd { margin: 0; font: 600 15px/1.45 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .dp2-products { display: grid; grid-template-columns: minmax(0, 1fr); margin: 0; padding: 0; list-style: none; }
+.app-container.app-container .dp2-products li { display: grid; gap: 2px; padding: var(--ay-s12) 0; border-top: 1px solid var(--ay-hairline); }
+.app-container.app-container .dp2-products strong { font: 600 16px/1.3 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .dp2-products span { font: 400 14px/1.45 var(--ay-sans-stack); color: var(--ay-text-2); }
+.app-container.app-container .dp2-products b { font-weight: 600; color: var(--ay-text); }
+.app-container.app-container .dp2-note { margin: 0; font: 500 14px/1.45 var(--ay-sans-stack); color: var(--ay-text-2); }
+.app-container.app-container .dp2-questions { display: grid; gap: 0; margin: 0; padding: 0 0 0 1.4em; }
+.app-container.app-container .dp2-questions li { padding: var(--ay-s8) 0 var(--ay-s8) 4px; font: 400 16px/1.5 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .dp2-questions li::marker { font-weight: 700; }
+.app-container.app-container .dp2-told { display: grid; gap: var(--ay-s12); margin: 0; padding: 0; list-style: none; }
+.app-container.app-container .dp2-told blockquote { margin: 2px 0 var(--ay-s4); padding-left: var(--ay-s12); border-left: 3px solid var(--ay-text); font: 400 14px/1.45 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .dp2-told p:not(.dp2-note) { margin: 0; font: 500 14px/1.45 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .dp2 .dp-shared { margin: 0; border-width: 1.5px; border-radius: 16px; }
+.app-container.app-container .dp2-foot { margin: var(--ay-s32) 0 0; font: 500 13px/1.45 var(--ay-sans-stack); color: var(--ay-text-2); }
+@media (min-width: 760px) {
+  .app-container.app-container .dp2-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--ay-s32); padding: var(--ay-s8) var(--ay-s24); }
+  .app-container.app-container .dp2-fact:nth-child(2) { border-top: 0; }
+  .app-container.app-container .dp2-products { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--ay-s32); }
+}
+
+/* P1-12: /tracked Health data import notice: one-line summary, full text in a disclosure. */
+.app-container.app-container .hdi-sum { margin: 0 0 var(--ay-s8); font: 500 16px/1.5 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .hdi-full { margin: 0 0 var(--ay-s20); }
+.app-container.app-container .hdi-full > summary { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; cursor: pointer; list-style: none; font: 600 15px/1.3 var(--ay-sans-stack); color: var(--ay-text); text-decoration: underline; text-underline-offset: 3px; }
+.app-container.app-container .hdi-full > summary::-webkit-details-marker { display: none; }
+.app-container.app-container .hdi-full > summary::after { content: ''; width: 8px; height: 8px; margin-left: 2px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: translateY(-2px) rotate(45deg); transition: transform var(--t-fast, 160ms) var(--ease-out, ease-out); }
+.app-container.app-container .hdi-full[open] > summary::after { transform: translateY(2px) rotate(-135deg); }
+.app-container.app-container .hdi-full > summary:focus-visible { outline: 3px solid var(--ay-focus); outline-offset: 2px; border-radius: 6px; }
+.app-container.app-container .hdi-full > p { margin: var(--ay-s4) 0 0; font: 400 15px/1.55 var(--ay-sans-stack); color: var(--ay-text-2); }
+@media (prefers-reduced-motion: reduce) { .app-container.app-container .hdi-full > summary::after { transition: none; } }

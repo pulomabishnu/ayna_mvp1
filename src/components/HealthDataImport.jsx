@@ -146,9 +146,14 @@ export default function HealthDataImport({ onUpdate }) {
   return (
     <div id="health-data-import" style={{ maxWidth: '800px', margin: '0 auto 3rem', padding: '1.5rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', scrollMarginTop: '1rem' }}>
       <h3 style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '0.5rem' }}>Health data import</h3>
-      <p style={{ color: 'var(--color-text-muted)', fontSize: 16, lineHeight: 1.55, marginBottom: '1.25rem' }}>
-        Connect EHR exports, manual conditions, and wearable summaries so your ecosystem ranking matches what you share with your care team. Raw Apple Health and FHIR files are parsed locally in this browser and are not uploaded. The summaries and health details you choose to save may be used by ayna and its AI providers when you request personalized AI features. We never sell health data.
-      </p>
+      {/* P1-12: the point first, the full notice (every word kept) one tap below. */}
+      <p className="hdi-sum">Raw files are read in this browser and not uploaded. We never sell health data.</p>
+      <details className="hdi-full">
+        <summary>How what you add is used</summary>
+        <p>
+          Connect EHR exports, manual conditions, and wearable summaries so your ecosystem ranking matches what you share with your care team. Raw Apple Health and FHIR files are parsed locally in this browser and are not uploaded. The summaries and health details you choose to save may be used by ayna and its AI providers when you request personalized AI features. We never sell health data.
+        </p>
+      </details>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
         <div style={{ padding: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>

@@ -760,3 +760,31 @@ html body .app-container.app-container.app-container.app-container {
 /* Community and Library sit on the plain page colour in both themes (an older
    rule drew grid paper on the community page in dark mode). */
 html body .app-container.app-container.app-container.app-container:is([data-view='community'], [data-view='articles'], [data-view='you'], [data-view='quiz'], [data-view='profile-edit'], [data-view='shared-answer'], [data-view='delete-account']) > main { background-image: none !important; background-color: var(--ay-page) !important; }
+
+/* ---------- Close-out (Oct 21, P1-28): quiz age is one slider ----------
+   Native <input type="range"> (keyboard: arrows, Page Up/Down, Home/End; tap
+   on the track jumps there), styled per the cross-browser range pattern
+   (appearance: none + ::-webkit-slider-runnable-track/thumb + ::-moz-range-*).
+   The value is printed big beside the label; − / + nudge by a year. */
+html body .app-container.app-container.app-container.app-container {
+  .qz-age.is-slider { grid-template-columns: minmax(0, 1fr); gap: 6px; padding: var(--ay-s16) var(--ay-s20) var(--ay-s12); }
+  .qz-age-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .qz-age-label { font: 600 15px/1.3 var(--ay-sans-stack) !important; color: var(--ay-text); }
+  .qz-age-out { font: 700 34px/1 var(--ay-heading) !important; letter-spacing: -.02em; color: var(--ay-text); font-variant-numeric: tabular-nums; }
+  .qz-age-out small { font: 500 15px/1 var(--ay-sans-stack); letter-spacing: 0; color: var(--ay-text-2); }
+  .qz-age-out.is-empty { font: 500 15px/1.3 var(--ay-sans-stack) !important; color: var(--ay-text-2); }
+  .qz-age.is-slider .qz-age-slide { grid-template-columns: 44px minmax(0, 1fr) 44px; gap: 10px; padding-top: 0; }
+  .qz-age-step { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1.5px solid var(--ay-outline); border-radius: 50%; background: var(--ay-page); color: var(--ay-text); font: 600 22px/1 var(--ay-sans-stack); cursor: pointer; }
+  .qz-age-step:disabled { opacity: .4; cursor: default; }
+  .qz-age.is-slider input[type='range'] { -webkit-appearance: none; appearance: none; width: 100%; height: 44px; margin: 0; background: transparent; cursor: pointer; }
+  .qz-age.is-slider input[type='range']::-webkit-slider-runnable-track { height: 10px; border: 1.5px solid var(--ay-outline); border-radius: 999px; background: linear-gradient(to right, var(--ay-text) var(--qz-fill, 0%), var(--ay-page) var(--qz-fill, 0%)); }
+  .qz-age.is-slider input[type='range']::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 30px; height: 30px; margin-top: -11.5px; border: 2px solid var(--ay-text); border-radius: 50%; background: #f7badd; box-shadow: 2px 2px 0 var(--ay-text); }
+  .qz-age.is-slider input[type='range']::-moz-range-track { height: 8px; border: 1.5px solid var(--ay-outline); border-radius: 999px; background: var(--ay-page); }
+  .qz-age.is-slider input[type='range']::-moz-range-progress { height: 8px; border-radius: 999px; background: var(--ay-text); }
+  .qz-age.is-slider input[type='range']::-moz-range-thumb { width: 26px; height: 26px; border: 2px solid var(--ay-text); border-radius: 50%; background: #f7badd; }
+  .qz-age.is-slider .qz-age-slide.is-empty input[type='range']::-webkit-slider-thumb { opacity: .45; background: var(--ay-page); box-shadow: none; }
+  .qz-age.is-slider .qz-age-slide.is-empty input[type='range']::-moz-range-thumb { opacity: .45; background: var(--ay-page); }
+  .qz-age.is-slider input[type='range']:focus-visible { outline: 3px solid var(--ay-focus) !important; outline-offset: 2px; border-radius: 12px; }
+  .qz-age-ends { display: flex; justify-content: space-between; margin: -6px 54px 0; font: 500 13px/1 var(--ay-sans-stack); color: var(--ay-text-2); }
+  .qz-age-under { justify-self: start; min-height: 32px; padding: 0; border: 0; background: none; color: var(--ay-text); font: 500 14px/1.2 var(--ay-sans-stack); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+}

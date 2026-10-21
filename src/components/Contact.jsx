@@ -15,7 +15,7 @@ const REASONS = [
   'Other',
 ];
 
-export default function Contact({ onBack, user = null }) {
+export default function Contact({ onBack, backLabel, user = null }) {
   // Signed in: name and email are already known.
   const known = { name: user?.user_metadata?.first_name || user?.user_metadata?.full_name || '', email: user?.email || '' };
   // The draft survives a refresh; it is forgotten once it sends.
@@ -94,7 +94,7 @@ export default function Contact({ onBack, user = null }) {
     <EdPage
       title="How can we help?"
       lede="Send us a note and we'll make sure it reaches the right person on the ayna team."
-      onBack={onBack}
+      onBack={onBack} backLabel={backLabel}
       photo="curlers-call"
     >
       <form onSubmit={submit} noValidate className="ay-group is-padded ed-form" aria-label="Contact the ayna team" style={{ maxWidth: 760 }}>

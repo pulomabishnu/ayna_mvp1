@@ -6,7 +6,7 @@ import { EdPage, EdBlock } from './editorial/EdPage';
 // What a personalized match is built from. Sponsorship is never one of them.
 const MATCH_INPUTS = ['Your profile', 'Published research', 'Clinical guidance + clinician input', 'Community experience'];
 
-export default function HowItWorks({ onBack, onViewSources }) {
+export default function HowItWorks({ onBack, backLabel, onViewSources }) {
   const funnel = getSampleFunnel();
   const openSources = () => {
     if (onViewSources) onViewSources();
@@ -17,7 +17,7 @@ export default function HowItWorks({ onBack, onViewSources }) {
     <EdPage
       title="How ayna picks your matches."
       lede="ayna compares products with the health profile and preferences you choose to share, then adds cited research, clinical guidance, safety information and community context where available."
-      onBack={onBack}
+      onBack={onBack} backLabel={backLabel}
       photo="blue-sink"
       tone="sky"
       frame="flower"

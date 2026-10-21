@@ -268,7 +268,7 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onBrowse
             </div>
           </header>
           {products.length > 0 && <div className="ed-brandpanel__grid">
-            {products.map((product) => <ProductCard key={product.id} product={product} onOpen={onOpenProduct} inEcosystem={Boolean(myProducts[product.id])} />)}
+            {products.map((product) => <ProductCard key={product.id} product={product} onOpen={onOpenProduct} inEcosystem={Boolean(myProducts[product.id])} partnerMark={false} />)}
           </div>}
         </>}
       </section>

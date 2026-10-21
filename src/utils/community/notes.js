@@ -125,7 +125,10 @@ export function avatarTone(name) {
 }
 
 /** Default-avatar tone class: 'anon' for anonymous, else a stable paper tone. */
-export const faceTone = (name, anonymous) => (anonymous ? 'anon' : avatarTone(name));
+// P1-22: one avatar style everywhere (website + app): the same pink paper
+// circle with an espresso outline; initials for members, ayna's asterisk for
+// anonymous posts. avatarTone stays for anything that still wants a tone.
+export const faceTone = (name, anonymous) => (anonymous ? 'anon' : 'pink');
 
 /** Apply a Helpful or Save toggle to a post object (optimistic update). */
 export function applyToggle(post, kind, on) {

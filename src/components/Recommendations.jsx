@@ -331,6 +331,8 @@ export default function Recommendations({
         );
     };
 
+    const hasOtherPicks = workflowWithFilter.length > 0 || displayedSections.some((sec) => (sec.products || []).length > 0);
+
     return (
         <section className="container ay-acct-page animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
 
@@ -373,7 +375,8 @@ export default function Recommendations({
                 </div>
             )}
 
-            {results?.fullHealthIntake && Object.keys(results.fullHealthIntake).length > 0 && !llmLoading && !llmError && tiered.length === 0 && (
+            {/* Only when nothing at all is picked: the category picks below count too. */}
+            {results?.fullHealthIntake && Object.keys(results.fullHealthIntake).length > 0 && !llmLoading && !llmError && tiered.length === 0 && !hasOtherPicks && (
                 <div style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', textAlign: 'center', padding: '2rem', color: 'var(--color-text-muted)' }}>
                     <p style={{ fontSize: 16 }}>We couldn't find picks for you. Try refreshing the page, or tell us more in chat.</p>
                 </div>

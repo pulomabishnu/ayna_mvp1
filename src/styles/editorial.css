@@ -966,3 +966,111 @@ html body .app-container .ed .ed-prose > :is(section, .ed-psec) :is(h2, h3) { co
   .ed .ed-familiar__go { font-size: 13px; gap: 4px; }
   .ed .ed-familiar__go svg { width: 14px; height: 14px; }
 }
+
+/* ---------- Close-out (Oct 21, P1-26): How it works steps as a real sequence ----------
+   Material steppers (m1 "Steppers"): vertical on narrow screens, horizontal when
+   there is room; numbered circles joined by a 1px connector, no cards. Phones:
+   circle in a 44px rail, the line runs down to the next circle. Desktop: four
+   columns, the line runs across to the next circle. Brand colours rotate on the
+   circles; the corner stickers and boxed cards are gone. */
+.ed.ed-page--toned .ed-hiw.ed-hiw { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; margin-top: 8px; padding: 0; counter-reset: none; }
+.ed.ed-page--toned .ed-hiw.ed-hiw li { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 16px; row-gap: 6px; align-content: start; padding: 0 0 28px; border: 0; border-radius: 0; background: none; }
+.ed.ed-page--toned .ed-hiw.ed-hiw li:last-child { padding-bottom: 0; }
+.ed.ed-page--toned .ed-hiw.ed-hiw li::after { content: none; display: none; }
+.ed.ed-page--toned .ed-hiw.ed-hiw li::before { content: ''; position: absolute; left: 21px; top: 48px; bottom: 4px; width: 1.5px; background: var(--ed-outline); }
+.ed.ed-page--toned .ed-hiw.ed-hiw li:last-child::before { content: none; }
+.ed.ed-page--toned .ed-hiw.ed-hiw .ed-hiw__n { grid-column: 1; grid-row: 1 / span 3; display: grid; place-items: center; align-self: start; width: 44px; height: 44px; min-height: 0; margin: 0; padding: 0; border: 1.5px solid var(--ed-outline); border-radius: 50%; font: 700 20px/1 var(--ay-heading, var(--ed-serif)); letter-spacing: -.02em; }
+.ed.ed-page--toned .ed-hiw.ed-hiw .ed-hiw__n::before { content: none; }
+.ed.ed-page--toned .ed-hiw.ed-hiw li > :not(.ed-hiw__n) { grid-column: 2; min-width: 0; }
+.ed.ed-page--toned .ed-hiw.ed-hiw .ed-rowtitle { margin: 9px 0 0; }
+.ed.ed-page--toned .ed-hiw.ed-hiw p { margin: 0; }
+.ed.ed-page--toned .ed-hiw.ed-hiw .ed-hiw__demo { margin-top: 4px; padding: 10px 0 0; border-top: 1px solid var(--ed-hairline); }
+@media (min-width: 900px) {
+  .ed.ed-page--toned .ed-hiw.ed-hiw { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 24px; }
+  .ed.ed-page--toned .ed-hiw.ed-hiw li { display: flex; flex-direction: column; gap: 8px; padding: 0; }
+  .ed.ed-page--toned .ed-hiw.ed-hiw li::before { left: 52px; right: -20px; top: 21px; bottom: auto; width: auto; height: 1.5px; }
+  .ed.ed-page--toned .ed-hiw.ed-hiw .ed-hiw__n { grid-row: auto; margin-bottom: 4px; }
+  .ed.ed-page--toned .ed-hiw.ed-hiw li > :not(.ed-hiw__n) { grid-column: 1; }
+  .ed.ed-page--toned .ed-hiw.ed-hiw .ed-rowtitle { margin-top: 0; }
+  .ed.ed-page--toned .ed-hiw.ed-hiw .ed-hiw__demo { margin-top: auto; }
+}
+
+/* ---------- Close-out (Oct 21, P1-1): homepage on phones, closer to five screens ----------
+   Nothing is cut: every heading, sentence, photo, the founders and the invest
+   block stay. What changes is air and repetition: 36px between sections
+   instead of 48-64, the closing letter becomes a short envelope (same words,
+   one quiz button), the "sound familiar" tiles and step photos are shorter,
+   the founders photo shows more of the three of them, and the footer drops
+   the blurb that repeats the hero. */
+@media (max-width: 767px) {
+  html body .app-container .ed.ed-home { --ed-section: 36px; }
+  html body .app-container .ed.ed-home .ed-band { margin-top: 28px; padding-top: 32px; }
+  html body .app-container .ed.ed-home .ed-shopband { padding-bottom: 24px; }
+  html body .app-container .ed.ed-home .ed-shopband .ed-band__foot { margin-top: 16px; }
+  html body .app-container .ed.ed-home .ed-familiar__head { margin-bottom: 12px; }
+  html body .app-container .ed.ed-home .ed-familiar__grid > li { aspect-ratio: 4 / 3; }
+  html body .app-container .ed.ed-home .ed-familiar__q a { padding: 12px 14px; }
+  html body .app-container .ed.ed-home .ed-how.ay-band { margin-top: 32px; }
+  html body .app-container .ed.ed-home .ed-how__in { padding-block: 36px 32px; gap: 20px; }
+  html body .app-container .ed.ed-home .ed-how .ed-step .ed-step__img { aspect-ratio: 5 / 2; }
+  html body .app-container .ed.ed-home .ed-how .ed-head { margin-bottom: 12px; }
+  html body .app-container .ed.ed-home .ed-how .ay-envelope { padding-bottom: 30px; }
+  html body .app-container .ed.ed-home .ed-how .ay-envelope__letter { margin: 0 14px; padding: 18px 16px 34px; }
+  html body .app-container .ed.ed-home .ed-how .ay-envelope__letter .ed-h1 { font-size: 26px; line-height: 1.08; }
+  html body .app-container .ed.ed-home .ed-how .ay-envelope__letter .ed-lead { margin-top: 6px; font-size: 17px; }
+  html body .app-container .ed.ed-home .ed-how .ay-envelope__letter .ed-final__cta { margin-top: 12px; gap: 4px 16px; }
+  html body .app-container .ed.ed-home .ed-how .ay-envelope__back { height: 72px; }
+  html body .app-container .ed.ed-home .ed-how .ay-envelope__flap { height: 56px; }
+  html body .app-container .ed.ed-home .ed-how .ay-envelope__seal { width: 40px; height: 40px; margin-left: -20px; bottom: 8px; }
+  html body .app-container .ed.ed-home .ed-how .ay-envelope__seal svg { width: 18px; height: 18px; }
+  html body .app-container .ed.ed-home .ed-sec { padding-top: 36px; }
+  html body .app-container .ed.ed-home .ed-evidence ~ *, html body .app-container .ed.ed-home .ed-sec:has(.ed-evidence) + .ed-sec { padding-top: 32px; }
+  html body .app-container .ed.ed-home .ed-head { margin-bottom: 12px; }
+  html body .app-container .ed.ed-home .ed-sky.ay-band { margin-top: 36px; padding-block: 32px; }
+  html body .app-container .ed.ed-home .ed-sky__grid { gap: 20px; }
+  html body .app-container .ed.ed-home .ed-invest { margin-top: 24px; }
+  html body .app-container .ed.ed-home .ed-invest.is-padded { padding: 18px 16px; gap: 14px; }
+  html body .app-container .ed.ed-home .ed-invest__copy { gap: 12px; }
+  html body .app-container .ed.ed-home .ed-invest__legal { padding-top: 12px; }
+  html body .app-container .ed.ed-home .ed-us .ay-folder__pocket { margin-top: -18px; padding: 18px 6px 8px; }
+  html body .app-container .ed.ed-home .ed-us .ay-folder__title { font-size: 13px; }
+  html body .app-container .ed-home.ed-home { padding-bottom: 0; }
+  .app-container.app-container:has(.ed-home) footer.ay-foot { margin-top: 32px; padding-top: 24px; }
+  .app-container.app-container:has(.ed-home) .ay-foot__blurb { display: none; }
+  .app-container.app-container:has(.ed-home) .ay-foot__grid { gap: var(--ay-s16) var(--ay-s12); }
+  .app-container.app-container:has(.ed-home) .ay-foot__base { margin-top: var(--ay-s16); }
+}
+@media (max-width: 767px) { html body .app-container .ed.ed-home .ed-sky__copy .ed-sky__cta { display: none; } html body .app-container .ed.ed-home .ed-news { padding-top: 14px; } }
+/* P1-1, second pass: the closing letter keeps its words and buttons but drops
+   the envelope pocket on phones (the quiz button already leads the page), reads
+   get shorter photos, and the footer's link rows sit a little closer (32px rows,
+   still above the 24px WCAG 2.5.8 target minimum). */
+@media (max-width: 767px) {
+  html body .app-container .ed.ed-home .ed-how .ay-envelope { padding-bottom: 0; }
+  html body .app-container .ed.ed-home .ed-how :is(.ay-envelope__back, .ay-envelope__flap, .ay-envelope__seal) { display: none; }
+  html body .app-container .ed.ed-home .ed-how .ay-envelope__letter { margin: 0; padding: 16px; border-radius: 16px; }
+  html body .app-container .ed.ed-home .ed-read__img { aspect-ratio: 2 / 1; }
+  html body .app-container .ed.ed-home .ed-familiar__quote { font-size: 18px; }
+  .app-container.app-container:has(.ed-home) .ay-foot__link { min-height: 32px; }
+  .app-container.app-container:has(.ed-home) :is(.ay-foot__legallinks :is(a, button), .ay-foot .ay-footer-legal__link) { min-height: 32px; }
+  .app-container.app-container:has(.ed-home) .ay-foot__title { margin-bottom: 2px; }
+}
+@media (max-width: 767px) {
+  /* "Sound familiar" rows are as tall as the quote, the photo fills its half. */
+  html body .app-container .ed.ed-home .ed-familiar__grid > li { aspect-ratio: auto; min-height: 112px; position: relative; }
+  html body .app-container .ed.ed-home .ed-familiar__ph :is(picture, img) { position: absolute; inset: 0; width: 100%; height: 100%; }
+  html body .app-container .ed.ed-home .ed-evidence__lead { font-size: 17px; }
+}
+
+/* P1-27: Invest block on desktop: the photo sits beside the copy and is as tall
+   as it (it used to drop into a second row under an empty right column, because
+   the <picture> wrapper is display: contents). Copy and photo unchanged. */
+@media (min-width: 768px) {
+  html body .app-container .ed .ed-invest { grid-template-columns: minmax(0, 1fr) minmax(260px, 34%); align-items: stretch; }
+  html body .app-container .ed .ed-invest > picture { display: block !important; position: relative; grid-column: 2; grid-row: 1; min-height: 300px; overflow: hidden; border-radius: 12px; border: 1.5px solid var(--ed-outline); }
+  html body .app-container .ed .ed-invest > picture img { position: absolute; inset: 0; width: 100%; height: 100%; max-height: none; object-fit: cover; object-position: 50% 45%; border-radius: 0; }
+  html body .app-container .ed .ed-invest__copy .ed-body { max-width: 62ch; }
+}
+/* Home step 3: the numeral on the espresso strip was espresso too. */
+html body .app-container .ed .ay-tabcard__strip--espresso { color: #ffedac !important; }
+html body .app-container[data-theme='brand-dark'] .ed .ay-tabcard__strip--espresso { color: #3e2723 !important; }

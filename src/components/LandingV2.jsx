@@ -402,7 +402,8 @@ function Community({ onViewCommunity, posts = [] }) {
         <div className="ed-sky__copy">
           <h2 id="ed-comm-title" className="ed-h2">Real talk about what women actually use.</h2>
           <p className="ed-body">Reviews, questions and routines from women who use these products. Ask a question, review what you use or share a playlist.</p>
-          <Go className="ay-btn ay-btn--secondary" href="/community" onGo={onViewCommunity}>Read reviews</Go>
+          {/* P1-1: one way into Community from this band (the news link below), not two. */}
+          <Go className="ay-btn ay-btn--secondary ed-sky__cta" href="/community" onGo={onViewCommunity}>Read reviews</Go>
         </div>
         <div>
           <article className="ed-news" aria-labelledby="ed-news-title">

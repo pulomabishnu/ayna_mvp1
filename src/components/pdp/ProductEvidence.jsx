@@ -222,6 +222,34 @@ function Rows({ rows }) {
 // ---------------------------------------------------------------------------
 function SegTabs({ tabs, active, onChange }) {
   const listRef = useRef(null);
+  // Phones: the tabs are one sideways-scrolling row (underline tabs). The edge
+  // that still has tabs past it fades, and the next label stays half visible,
+  // so it's clear there is more (GitLab Pajamas / Material "scrollable tabs").
+  const [edges, setEdges] = useState({ left: false, right: false });
+  useEffect(() => {
+    const el = listRef.current;
+    if (!el) return undefined;
+    const update = () => {
+      const max = el.scrollWidth - el.clientWidth;
+      setEdges((prev) => {
+        const next = { left: el.scrollLeft > 4, right: max > 4 && el.scrollLeft < max - 4 };
+        return prev.left === next.left && prev.right === next.right ? prev : next;
+      });
+    };
+    update();
+    el.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    return () => { el.removeEventListener('scroll', update); window.removeEventListener('resize', update); };
+  }, [tabs.length]);
+  useEffect(() => {
+    const el = listRef.current;
+    const tab = el?.querySelector(`[data-tab="${active}"]`);
+    if (!el || !tab || el.scrollWidth <= el.clientWidth) return;
+    const left = tab.getBoundingClientRect().left - el.getBoundingClientRect().left + el.scrollLeft;
+    if (left < el.scrollLeft || left + tab.offsetWidth > el.scrollLeft + el.clientWidth) {
+      el.scrollTo({ left: Math.max(0, left - 24), behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    }
+  }, [active]);
   const choose = (id, focus) => {
     onChange(id);
     if (focus) window.requestAnimationFrame(() => listRef.current?.querySelector(`[data-tab="${id}"]`)?.focus());
@@ -235,7 +263,7 @@ function SegTabs({ tabs, active, onChange }) {
   };
   return (
     <>
-      <div className="ayq-tabsbar">
+      <div className={`ayq-tabsbar${edges.left ? ' has-left' : ''}${edges.right ? ' has-right' : ''}`}>
         <div className={`ayq-tabs is-${tabs.length}`} role="tablist" aria-label="Product details" ref={listRef} onKeyDown={onKeyDown}>
           {tabs.map((t) => {
             const on = t.id === active;
@@ -662,14 +690,17 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     tabs.some((t) => t.id === 'how-to-use') && m.how && { id: 'how-to-use', icon: 'steps', label: 'How to use', num: String(m.how.steps.length), caption: m.how.steps.length === 1 ? 'step' : 'steps', short: m.how.steps.length === 1 ? 'step' : 'steps' },
   ].filter(Boolean);
 
-  // P1-5: "What it is" and "Who it's for" are one plain section (no Feature
-  // box): every team sentence once, read in one place under the buy column's lead.
-  const whoBlock = (m.who.length > 0 || (glance?.who?.helps || []).length > 0) && (
-    <section id="ayq-who" className="ayq-who" aria-labelledby="ayq-who-h">
-      <h3 id="ayq-who-h" className="ayq-h3">Who it’s for</h3>
-      <ol className="ayq-checks">{m.who.map((w, i) => <li key={w}><span className="ayq-checks__n" aria-hidden="true">{i + 1}</span><span><Tx>{w}</Tx></span></li>)}</ol>
+  // P1-5 / R2: "What it is" and "Who it's for" are one plain section with ONE
+  // heading that names what's in it (no second "Who it's for" heading under
+  // the first). Every team sentence still shows once, in one place.
+  const hasWho = m.who.length > 0 || (glance?.who?.helps || []).length > 0;
+  const hasWhat = m.summary.length > 0;
+  const aboutTitle = hasWhat && hasWho ? 'What it is and who it’s for' : hasWhat ? 'What it is' : 'Who it’s for';
+  const whoBlock = hasWho && (
+    <div id="ayq-who" className="ayq-who">
+      {m.who.length > 0 && <ol className="ayq-checks" aria-label="Who it’s for">{m.who.map((w, i) => <li key={w}><span className="ayq-checks__n" aria-hidden="true">{i + 1}</span><span><Tx>{w}</Tx></span></li>)}</ol>}
       {(glance?.who?.helps || []).length > 0 && <p className="ayq-meta"><b>Helps with:</b> {glance.who.helps.join(', ')}</p>}
-    </section>
+    </div>
   );
 
   return (
@@ -682,11 +713,11 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
               <ul className="ayq-bottom__list">{shortList.map((s) => <li key={s}><Tx>{s}</Tx></li>)}</ul>
               {ex.attribution && <p className="ayq-bottom__by">{m.independent ? 'ayna’s summary of the research' : 'Summary of the research, with claims credited to the brand'}. <button type="button" onClick={() => goTo('clinical')}>Read the full expert view</button></p>}
             </article>
-          ) : (m.summary.length > 0 || whoBlock) ? (
+          ) : (hasWhat || hasWho) ? (
             <article className="ayq-about" aria-labelledby="ayq-about-h">
-              <h2 id="ayq-about-h" className="ayq-h3">{m.summary.length > 0 ? 'What it is' : 'Who it’s for'}</h2>
-              {m.summary.length > 0 && <div className="ayq-prose"><Paras list={m.summary} /></div>}
-              {m.summary.length > 0 ? whoBlock : whoBlock && <div className="ayq-about__who">{whoBlock}</div>}
+              <h2 id="ayq-about-h" className="ayq-h3">{aboutTitle}</h2>
+              {hasWhat && <div className="ayq-prose"><Paras list={m.summary} /></div>}
+              {whoBlock}
             </article>
           ) : null}
 
@@ -720,10 +751,10 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
             </nav>
           )}
 
-          {shortList.length > 0 && (m.summary.length > 0 || whoBlock) && (
+          {shortList.length > 0 && (hasWhat || hasWho) && (
             <section className="ayq-what ayq-about" aria-labelledby="ayq-what-h">
-              {m.summary.length > 0 && <h2 id="ayq-what-h" className="ayq-h3">What it is</h2>}
-              {m.summary.length > 0 && <div className="ayq-prose"><Paras list={m.summary} /></div>}
+              <h2 id="ayq-what-h" className="ayq-h3">{aboutTitle}</h2>
+              {hasWhat && <div className="ayq-prose"><Paras list={m.summary} /></div>}
               {whoBlock}
             </section>
           )}

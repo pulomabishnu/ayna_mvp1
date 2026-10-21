@@ -99,12 +99,12 @@ function TeamPhoto() {
   );
 }
 
-export default function About({ onBack, onExplore, onStart }) {
+export default function About({ onBack, backLabel, onExplore, onStart }) {
   return (
     <EdPage
       title="We built the place we wished we could turn to."
       lede="Women’s wellness products matched to your needs, with the research and reviews beside them."
-      onBack={onBack}
+      onBack={onBack} backLabel={backLabel}
       photo="robe-pickles"
       tone="pink"
       frame="stamp"

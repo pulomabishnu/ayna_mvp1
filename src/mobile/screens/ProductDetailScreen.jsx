@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { trackApp } from '../utils/appAnalytics.js';
 import { PANEL_ICONS } from '../components/pdpIcons.jsx';
-import { ALL_PRODUCTS, CATEGORY_LABELS, getProductMatchDetailsForProduct } from '../../data/products.js';
+import { ALL_PRODUCTS, getProductMatchDetailsForProduct } from '../../data/products.js';
 import ProductCard from '../components/ProductCard.jsx';
 import { getBuyUrl } from '../data/buyUrl.js';
 import { matchPercentFor } from '../utils/matchScore.js';
@@ -33,6 +33,7 @@ import { productHref } from '../../utils/productRoute.js';
 import { HEART_PATH } from '../utils/heart.js';
 import { formatPrice } from '../../utils/formatPrice.js';
 import { displayName } from '../utils/displayName.js';
+import { cardKind } from '../../utils/productCardFacts.js';
 import '../pdp.css';
 import '../eco-needs.css';
 import '../pdp-polish.css';
@@ -321,7 +322,8 @@ export default function ProductDetailScreen({
     image,
   } = product;
 
-  const categoryLabel = CATEGORY_LABELS[category] || (category ? category.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : '');
+  // Sentence case at render (docs/terminology.md): the data keeps the team's casing.
+  const categoryLabel = cardKind({ category });
   const buyUrl = getBuyUrl(product);
   const isPartner = isPartnerBrandItem(product);
   const partnerDisclosure = getPartnerDisclosureText(product);

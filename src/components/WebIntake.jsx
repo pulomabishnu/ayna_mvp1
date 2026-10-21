@@ -119,24 +119,33 @@ function AddOwn({ placeholder, onAdd }) {
 }
 
 function AgeField({ value, onChange, underage, onOpenGate }) {
-  // Type it or slide it, like the app's dial (founder meeting note).
+  // P1-28: one control, the slider the founder asked for (no second text box).
+  // A native range input: arrow keys, Page Up/Down and Home/End move it, a tap
+  // anywhere on the track jumps there (WCAG 2.5.7 single-pointer alternative),
+  // and the big readout shows the value. − and + nudge it one year for anyone
+  // who finds dragging to an exact number hard.
   const n = Number.parseInt(value, 10);
   const set = Number.isFinite(n);
-  // The slider and the box never disagree: until she picks an age the slider has no thumb.
   const slider = set ? Math.min(80, Math.max(18, n)) : 18;
-  return <div className={`qz-age${underage ? ' is-under' : ''}`}>
-    <label className="qz-age-field">
-      <span>Your age</span>
-      <input type="text" inputMode="numeric" pattern="[0-9]*" autoComplete="off" name="age" aria-label="Your age in years" value={value} placeholder="e.g. 29" maxLength={2} aria-describedby={underage ? 'qz-age-alert' : undefined} aria-invalid={underage || undefined}
-        onChange={(e) => onChange(e.target.value.replace(/\D/g, '').slice(0, 2))} />
-      <small>years</small>
-    </label>
-    <div className={`qz-age-slide${set ? '' : ' is-empty'}`}>
-      <span aria-hidden="true">18</span>
-      <input type="range" min={18} max={80} step={1} value={slider} aria-label="Slide to pick your age" aria-valuetext={set ? (n >= 80 ? '80 or older' : `${n} years`) : 'Not set'} onChange={(e) => onChange(String(e.target.value))} />
-      <span aria-hidden="true">80+</span>
+  const label = set ? (n >= 80 ? '80 or older' : `${n}`) : 'Not set';
+  const nudge = (d) => onChange(String(Math.min(80, Math.max(18, (set ? slider : 17) + d))));
+  return <div className={`qz-age is-slider${underage ? ' is-under' : ''}`}>
+    <div className="qz-age-top">
+      <label className="qz-age-label" htmlFor="qz-age-range">Your age</label>
+      <output className={`qz-age-out${set ? '' : ' is-empty'}`} htmlFor="qz-age-range" aria-live="polite">{set ? <>{label}{n < 80 && <small> years</small>}</> : 'Slide to set'}</output>
     </div>
-    {underage && <p className="qz-alert" id="qz-age-alert">ayna is for people 18 and over. <button type="button" onClick={onOpenGate}>What you can do instead</button></p>}
+    <div className={`qz-age-slide${set ? '' : ' is-empty'}`}>
+      <button type="button" className="qz-age-step" aria-label="One year younger" onClick={() => nudge(-1)} disabled={set && slider <= 18}>−</button>
+      <input id="qz-age-range" type="range" min={18} max={80} step={1} value={slider} name="age"
+        aria-valuetext={set ? (n >= 80 ? '80 or older' : `${n} years`) : 'Not set'} aria-describedby={underage ? 'qz-age-alert' : 'qz-age-ends'} aria-invalid={underage || undefined}
+        style={{ '--qz-fill': `${((slider - 18) / 62) * 100}%` }}
+        onChange={(e) => onChange(String(e.target.value))} />
+      <button type="button" className="qz-age-step" aria-label="One year older" onClick={() => nudge(1)} disabled={set && slider >= 80}>+</button>
+    </div>
+    <p className="qz-age-ends" id="qz-age-ends"><span>18</span><span>80+</span></p>
+    {underage
+      ? <p className="qz-alert" id="qz-age-alert">ayna is for people 18 and over. <button type="button" onClick={onOpenGate}>What you can do instead</button></p>
+      : <button type="button" className="qz-age-under" onClick={onOpenGate}>Under 18?</button>}
   </div>;
 }
 

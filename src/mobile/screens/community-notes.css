@@ -119,3 +119,12 @@
 .ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-prompts .am-prompt small { white-space: nowrap; }
 .ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-prompts .am-start-line.is-compose { width: auto; background: var(--d-page); color: var(--d-ink); border-color: var(--d-ink); }
 .ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-prompts .am-start-line.is-compose > span:nth-child(2) { flex: none; }
+
+/* Close-out (P1-22): one avatar style. Anonymous uses the same pink circle and
+   outline as everyone else; the asterisk alone says "anonymous". */
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-face.is-anon,
+.ayna-mobile:is(#ay,.ayna-mobile)[data-theme='dark'] .am-screen .am-face.is-anon { background: #f7badd !important; color: #3e2723 !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-face.is-photo { background: #f7badd !important; }
+/* P1-22: the header keeps two actions (your profile, notifications); Friends
+   moved into your own profile, beside Edit profile and Change photo. */
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-profile-owner { grid-template-columns: repeat(3, minmax(0, 1fr)); }

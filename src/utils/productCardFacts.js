@@ -17,11 +17,17 @@ export function cardKind(product) {
   return raw ? sentenceCase(String(raw).replace(/^[^\w]+\s*/, '')) : '';
 }
 
-/** The single badge a card may carry: Pre-order, Sponsored or ayna partner (in that order). */
-export function cardBadge(product) {
+/**
+ * The single mark a card may carry: Pre-order, Sponsored or ayna partner (in
+ * that order). It is small text at the end of the kind line, in the same place
+ * on every card (the way Amazon and Etsy put "Sponsored" / "Ad" in the card's
+ * text, not as a sticker on the photo). `partner: false` drops "ayna partner"
+ * where the page already says every product is a partner's (Partners page).
+ */
+export function cardBadge(product, { partner = true } = {}) {
   if (/deposit/i.test(String(product?.price || ''))) return 'Pre-order';
   if (isSponsoredProduct(product)) return 'Sponsored';
-  if (isPartnerBrandItem(product)) return 'ayna partner';
+  if (partner && isPartnerBrandItem(product)) return 'ayna partner';
   return '';
 }
 

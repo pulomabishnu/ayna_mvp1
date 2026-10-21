@@ -63,12 +63,11 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         <button type="button" className="ay-pc-main" onClick={onClick} aria-label={`${name}, ${facts.main}${facts.sub ? ` ${facts.sub}` : ''}${oneBadge ? `, ${oneBadge}` : ''}${showMatch ? `, ${badge.label}` : ''}. View product details`}>
           <span className="ay-pc-photo">
             <ProductImage product={product} src={resolvedImage} alt="" allowBrandLogo={isService} style={{ objectFit: 'contain' }} />
-            {oneBadge && <small className={`ay-pc-badge${oneBadge === 'Pre-order' ? ' is-alert' : ''}`}>{oneBadge}</small>}
           </span>
           <span className="ay-pc-copy">
             <small className="ay-pc-brand" aria-hidden={showBrand ? undefined : true}>{showBrand ? secondaryLabel : '\u00a0'}</small>
             <strong className="ay-pc-name">{brandRepeatsName ? name : displayName(product)}</strong>
-            <span className="ay-pc-kind" aria-hidden="true">{kind ? <span className="ay-pc-kindtext">{kind}</span> : '\u00a0'}</span>
+            <span className="ay-pc-kind" aria-hidden="true">{kind && <span className="ay-pc-kindtext">{kind}</span>}{oneBadge && <span className={`ay-pc-mark${oneBadge === 'Pre-order' ? ' is-alert' : ''}`}>{oneBadge}</span>}{!kind && !oneBadge && '\u00a0'}</span>
             <span className="ay-pc-price">{facts.main !== 'Price at retailer' ? <b>{facts.main}</b> : <b className="is-muted">{facts.main}</b>}{facts.sub && <small className="ay-pc-unit">{facts.sub}</small>}</span>
             {healthBacked && <HealthBackedBadge backed={healthBacked} className="ay-pc-hbadge" />}
           </span>

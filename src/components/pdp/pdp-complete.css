@@ -519,3 +519,23 @@ html body .app-container.app-container.app-container .ayq.ayq.ayq .ay-gloss.ay-g
 .ayq.ayq .ayq-about .ayq-who { margin-top: 24px; grid-column: auto; }
 .ayq.ayq .ayq-about .ayq-prose { max-width: 68ch; }
 @media (max-width: 760px) { .ayq.ayq .ayq-about .ayq-who { margin-top: 16px; } }
+
+/* Close-out (Oct 21, P1-5): phones get ONE sideways-scrolling row of underline
+   tabs (design-direction.md: "Scroll sideways on phones with an edge fade"),
+   not a 2-row pill grid. The edge with more tabs past it fades (.has-left /
+   .has-right set by SegTabs), and the row's end padding keeps the next label
+   half visible. Selected: espresso text 600 + 3px underline. */
+@media (max-width: 760px) {
+  .ayq.ayq.ayq .ayq-tabsbar { padding: 4px 0 0; margin: 0 calc(-1 * var(--q-gut)); border-bottom: 1px solid var(--q-hair); }
+  .ayq.ayq.ayq .ayq-tabs { display: flex; flex-wrap: nowrap; gap: 0; padding: 0 var(--q-gut); border-radius: 0; background: transparent; overflow-x: auto; overscroll-behavior-x: contain; scroll-padding-inline: var(--q-gut); scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .ayq.ayq.ayq .ayq-tabs::-webkit-scrollbar { display: none; }
+  .ayq.ayq.ayq .ayq-tabs::after { content: ''; flex: 0 0 8px; }
+  .ayq.ayq.ayq .ayq-tabsbar.has-right .ayq-tabs { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 44px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 44px), transparent); }
+  .ayq.ayq.ayq .ayq-tabsbar.has-left .ayq-tabs { -webkit-mask-image: linear-gradient(to right, transparent, #000 44px); mask-image: linear-gradient(to right, transparent, #000 44px); }
+  .ayq.ayq.ayq .ayq-tabsbar.has-left.has-right .ayq-tabs { -webkit-mask-image: linear-gradient(to right, transparent, #000 44px, #000 calc(100% - 44px), transparent); mask-image: linear-gradient(to right, transparent, #000 44px, #000 calc(100% - 44px), transparent); }
+  .ayq.ayq.ayq .ayq-tab, .ayq.ayq.ayq .ayq-tab.is-on, .ayq.ayq.ayq .ayq-tab.is-alert:not(.is-on) { flex: none; justify-content: flex-start; min-height: 44px !important; padding: 0 12px; border: 0; border-radius: 0; background: transparent !important; color: var(--q-ink2) !important; font: 500 calc(15px * var(--q-scale))/1.2 var(--q-sans); }
+  .ayq.ayq.ayq .ayq-tab:first-child { padding-left: 0; }
+  /* The underline is a background bar, not a box-shadow: the app's matte rule removes every shadow. */
+  .ayq.ayq.ayq .ayq-tab.is-on { color: var(--q-ink) !important; font-weight: 600 !important; background: linear-gradient(var(--q-ink), var(--q-ink)) left bottom / 100% 3px no-repeat !important; }
+  .ayq.ayq.ayq .ayq-tab.is-alert:not(.is-on)::after { content: ''; width: 8px; height: 8px; margin-left: 6px; box-sizing: border-box; border-radius: 50%; background: #f7badd; border: 1.5px solid var(--q-ink); }
+}

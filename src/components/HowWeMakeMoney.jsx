@@ -37,12 +37,12 @@ const SECTIONS = [
     },
 ];
 
-export default function HowWeMakeMoney({ onBack }) {
+export default function HowWeMakeMoney({ onBack, backLabel }) {
     return (
         <EdPage
             title="How we make money"
             lede="Health-product recommendations and commercial relationships should be easy to tell apart. Here is how ayna handles both."
-            onBack={onBack}
+            onBack={onBack} backLabel={backLabel}
             photo="bag-tubes"
             tone="espresso"
             frame="frame"

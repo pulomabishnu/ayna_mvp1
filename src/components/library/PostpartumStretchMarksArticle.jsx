@@ -73,6 +73,13 @@ const SCOPED_CSS = `
 :host { all: initial; display: block; }
 .ay-geena { font-family: 'Figtree', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
 .ay-geena, .ay-geena * { box-sizing: border-box; }
+/* P1-8: the shared back control (BackLink), copied in because global CSS can't reach this shadow root. Same as src/styles/chrome.css .ay-backlink. */
+.ay-geena .ay-backlink { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; margin: 0 0 0 -6px; padding: 0 10px 0 2px; border: 0; border-radius: 10px; background: none; box-shadow: none; color: var(--g-fg); font: 600 15px/1.2 'Figtree', system-ui, sans-serif; text-decoration: none; cursor: pointer; }
+.ay-geena .ay-backlink svg { flex: none; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform var(--t-fast, 160ms) var(--ease-out, ease-out); }
+.ay-geena .ay-backlink:hover { background: rgba(var(--g-fg-rgb), .08); }
+.ay-geena .ay-backlink:hover svg { transform: translateX(-2px); }
+.ay-geena .ay-backlink:focus-visible { outline: 3px solid var(--g-fg); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .ay-geena .ay-backlink svg { transition: none; } }
 .ay-geena [id] { scroll-margin-top: 96px !important; }
 .ay-geena aside { top: 96px !important; }
 /* One column on phones: the contents list sits above the read instead of
