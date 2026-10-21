@@ -64,8 +64,8 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
     <LibraryCard article={a} fullWidth={!small} onClick={() => onOpenArticle?.(a)} />
     <ReadState value={progressOf(a)} />
   </div>;
-  const row = (id, label, items, extra = null, topicId = null) => items.length > 0 && <section className="al-shelf" key={id} aria-labelledby={`al-${id}-h`}>
-    <div className="al-shelf__head"><h2 id={`al-${id}-h`}>{sentence(label)}</h2>{extra || (topicId && <button type="button" className="al-seeall" onClick={() => setTopic(topicId)}>See all {items.length}</button>)}</div>
+  const row = (id, label, items, extra = null, topicId = null, total = items.length) => items.length > 0 && <section className="al-shelf" key={id} aria-labelledby={`al-${id}-h`}>
+    <div className="al-shelf__head"><h2 id={`al-${id}-h`}>{sentence(label)}</h2>{extra || (topicId && <button type="button" className="al-seeall" onClick={() => setTopic(topicId)}>See all {total}</button>)}</div>
     <div className="al-row">{items.map((a) => tile(a, true))}</div>
   </section>;
 
@@ -80,7 +80,7 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
     body = <>
       <FeaturedRead article={featured} label={featuredLabel} progress={featured ? progressOf(featured) : 0} onOpen={onOpenArticle} />
       {row('keep', 'Keep reading', keepReading.filter((a) => a !== featured))}
-      {hasProfile ? row('foryou', 'For you', forYou, null, 'foryou') : canAskForQuiz && onStartQuiz && <button type="button" className="al-match" onClick={onStartQuiz}>Get reads for you <span aria-hidden="true">→</span></button>}
+      {hasProfile ? row('foryou', 'For you', forYou.filter((a) => a !== featured), null, 'foryou', forYou.length) : canAskForQuiz && onStartQuiz && <button type="button" className="al-match" onClick={onStartQuiz}>Get reads for you <span aria-hidden="true">→</span></button>}
       {rows.map((r) => row(r.id, r.label, r.items, null, r.id))}
     </>;
   }
