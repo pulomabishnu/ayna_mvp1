@@ -402,3 +402,106 @@ html body .app-container .ayq-badges.is-web { margin-top: 14px; }
 html body .app-container.app-container.app-container .ayq.ayq.ayq .ay-gloss.ay-gloss:not(.zz), .ayq.ayq .ay-gloss { color: inherit !important; -webkit-text-fill-color: currentColor !important; text-decoration-color: currentColor !important; }
 .ayq.ayq .ayq-tab.is-on { background: var(--q-group) !important; color: var(--q-ink) !important; }
 @media (max-width: 760px) { .ayq.ayq .ayq-tab.is-on { background: var(--q-ink) !important; color: var(--q-page) !important; } }
+/* App photo zoom: one espresso circle (two older rules drew a ring around an offset dot). */
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__tile .ay-pdp-zoom-open { inset: auto 10px 10px auto !important; width: 44px !important; height: 44px !important; display: grid !important; place-items: center !important; padding: 0 !important; border: 0 !important; border-radius: 99px !important; background: #3e2723 !important; color: #ffedac !important; box-shadow: none !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__tile .ay-pdp-zoom-open svg { width: 20px !important; height: 20px !important; margin: 0 !important; padding: 0 !important; border-radius: 0 !important; background: none !important; color: inherit !important; }
+
+/* ---------- Phones: density, not empty space (docs/anti-vibe-checklist.md) ---------- */
+.ayq.ayq .ayq-readshelf__bar { display: none; }
+.ayq.ayq .ayq-rot-l { transform: rotate(90deg); }
+.ayq.ayq .ayq-rot-r { transform: rotate(-90deg); }
+@media (max-width: 760px) {
+  .ayq { --q-body: calc(15.5px * var(--q-scale)); }
+  .ayq.ayq .ayq-p { line-height: 1.5 !important; margin-bottom: 10px !important; }
+  .ayq.ayq .ayq-subh { margin: 20px 0 8px !important; font-size: calc(16.5px * var(--q-scale)) !important; }
+  .ayq.ayq .ayq-h3 { margin-bottom: 10px !important; font-size: calc(21px * var(--q-scale)) !important; }
+  .ayq-over { margin-top: 28px; gap: 12px; }
+  .ayq-what, .ayq-who { margin-top: 8px; }
+  .ayq-tabsec { margin-top: 28px; }
+  .ayq > .ayp-wps { margin-top: 36px; }
+
+  /* The short answer */
+  .ayq.ayq .ayq-bottom { padding: 20px 18px; }
+  .ayq.ayq .ayq-bottom__h { margin-bottom: 12px !important; font-size: calc(23px * var(--q-scale)) !important; }
+  .ayq.ayq .ayq-bottom__list { gap: 9px; }
+  .ayq.ayq .ayq-bottom__list > li { padding-left: 22px; font-size: calc(16px * var(--q-scale)); line-height: 1.45; }
+  .ayq.ayq .ayq-bottom__list > li::before { width: 9px; height: 9px; top: .55em; }
+  .ayq.ayq .ayq-bottom__by { margin-top: 14px !important; padding-top: 10px; }
+
+  /* At a glance: tight two-column facts */
+  .ayq.ayq .ayq-glance { padding: 16px 14px; }
+  .ayq.ayq .ayq-glance__ev { margin-bottom: 8px; padding: 12px; }
+  .ayq.ayq .ayq-tiles { gap: 8px; }
+  .ayq.ayq .ayq-tiles > li { padding: 10px 12px; gap: 4px; }
+  .ayq.ayq .ayq-tiles > li > span { gap: 3px; }
+  .ayq.ayq .ayq-tiles__label { padding: 0; border: 0; font-size: calc(12.5px * var(--q-scale)); }
+  .ayq.ayq .ayq-tiles__value { font-size: calc(15px * var(--q-scale)); }
+
+  /* Previews: compact 2 x 2 */
+  .ayq.ayq .ayq-previews { gap: 8px; }
+  .ayq.ayq .ayq-preview { min-height: 0; gap: 4px; padding: 12px 44px 12px 12px; }
+  .ayq.ayq .ayq-preview__num { font-size: calc(26px * var(--q-scale)); }
+  .ayq.ayq .ayq-preview__main { font-size: calc(13px * var(--q-scale)); line-height: 1.3; }
+  .ayq.ayq .ayq-preview__go { right: 10px; bottom: auto; top: 10px; width: 26px; height: 26px; }
+
+  /* Who it's for: a plain numbered list */
+  .ayq.ayq .ayq-checks { gap: 0; }
+  .ayq.ayq .ayq-checks > li { grid-template-columns: 24px minmax(0, 1fr); gap: 10px; padding: 9px 0; border-radius: 0; background: none; border-bottom: 1px solid var(--q-hair); line-height: 1.45; }
+  .ayq.ayq .ayq-checks > li:last-child { border-bottom: 0; }
+  .ayq.ayq .ayq-checks__n { width: 24px; height: 24px; font-size: calc(13px * var(--q-scale)); }
+
+  /* Tabs */
+  .ayq.ayq .ayq-tab { min-height: 40px !important; }
+  .ayq.ayq .ayq-panel { margin-top: 12px; }
+  .ayq.ayq .ayq-byline { margin-bottom: 12px !important; }
+  .ayq.ayq .ayq-cols { gap: 20px; }
+  .ayq.ayq .ayq-folder { margin-top: 16px; }
+  .ayq.ayq .ayq-folder__body { padding: 14px; }
+  .ayq.ayq .ayq-srcs, .ayq.ayq .ayq-ings, .ayq.ayq .ayq-index { margin-top: 20px; }
+  .ayq.ayq .ayq-src { padding: 12px 14px 10px; }
+
+  /* Long multi-part text: a sideways shelf of reading cards */
+  .ayq.ayq .ayq-readshelf__bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 0 8px; }
+  .ayq.ayq .ayq-readshelf__hint { font: 500 calc(13px * var(--q-scale))/1.3 var(--q-sans); color: var(--q-ink2); }
+  .ayq.ayq .ayq-readshelf__btns { display: flex; gap: 6px; }
+  .ayq.ayq .ayq-readshelf__btns button { display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 1.5px solid var(--q-line); border-radius: 99px; background: var(--q-page); color: var(--q-ink); }
+  .ayq.ayq .ayq-readshelf__track { display: flex; align-items: flex-start; gap: 10px; max-width: none; margin: 0 calc(-1 * var(--q-gut)); padding: 0 var(--q-gut) 8px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--q-gut); scrollbar-width: none; }
+  .ayq.ayq .ayq-readshelf__track::-webkit-scrollbar { display: none; }
+  .ayq.ayq .ayq-readshelf__track > .ayq-p { flex: 0 0 86%; margin: 0 !important; padding: 14px 16px; border-radius: 16px; background: var(--q-group); scroll-snap-align: start; box-sizing: border-box; }
+
+  /* Ingredient notes: a shelf too */
+  .ayq.ayq .ayq-inggrid { display: flex; gap: 10px; margin: 0 calc(-1 * var(--q-gut)); padding: 0 var(--q-gut) 8px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--q-gut); }
+  .ayq.ayq .ayq-inggrid > .ayq-ing { flex: 0 0 86%; padding: 14px 16px; scroll-snap-align: start; box-sizing: border-box; }
+  .ayq.ayq .ayq-inggrid > .ayq-ing:only-child { flex-basis: 100%; }
+}
+@media (max-width: 760px) {
+  .ayq.ayq .ayq-folder__body .ayq-readshelf__track { margin: 0 -14px; padding: 0 14px 6px; scroll-padding-inline: 14px; }
+  .ayq.ayq .ayq-folder__body .ayq-readshelf__track > .ayq-p { background: var(--q-page); }
+  .ayq.ayq .ayq-src__title { font-size: calc(15px * var(--q-scale)) !important; }
+  .ayq.ayq .ayq-src__finding { font-size: calc(14px * var(--q-scale)); line-height: 1.45; }
+  .ayq.ayq .ayq-other { margin-top: 16px; }
+  .ayq.ayq .ayq-linklist a { padding: 9px 0; }
+}
+/* Phones: the four previews sit in one row; the number and the section name say enough, the long caption is for wider screens. */
+@media (max-width: 760px) {
+  .ayq.ayq .ayq-previews { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .ayq.ayq .ayq-preview { padding: 10px 8px 10px; border-width: 1.5px; border-radius: 16px; gap: 2px; justify-items: start; }
+  .ayq.ayq .ayq-preview__top { gap: 4px; font-size: calc(12px * var(--q-scale)); }
+  .ayq.ayq .ayq-preview__top .ay-ico { display: none; }
+  .ayq.ayq .ayq-preview__go { display: none; }
+  .ayq.ayq .ayq-preview__num { font-size: calc(24px * var(--q-scale)); }
+  .ayq.ayq .ayq-preview__cap { font-size: calc(11.5px * var(--q-scale)); line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+}
+.ayq.ayq .ayq-preview__short { display: none; }
+@media (max-width: 760px) {
+  .ayq.ayq .ayq-preview__cap { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .ayq.ayq .ayq-preview__short { display: block; font: 500 calc(12px * var(--q-scale))/1.25 var(--q-sans); }
+}
+/* Phones: the fact badges sit on the stamp's corner instead of taking their own row. */
+@media (max-width: 760px) {
+  html body .app-container .ayp-gallery { position: relative; }
+  html body .app-container .ayq-badges.is-web { position: absolute; z-index: 2; top: 22px; right: 22px; margin: 0; flex-direction: column; gap: 6px; }
+  html body .app-container .ayq-badges.is-web > li { width: 60px; height: 60px; padding: 4px; }
+  html body .app-container .ayq-badges.is-web span { font-size: 10.5px !important; line-height: 1.1 !important; }
+  html body .app-container .ayq-badges.is-web small { font-size: 9px !important; line-height: 1.1 !important; }
+}
