@@ -136,3 +136,34 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-qc-foot { position: static !impo
    pinned here so none of them can come back. The community composer's Post
    button stays sticky: it lives inside a sheet, which the rule allows. */
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) :is(.ay-hd-areas, .ay-pt__bar, .ayp-ev .ay-tabs, .ay-glance__nav, .eco-app-float, .ay-read-status) { position: static !important; }
+/* Pushed You screens (Settings, Legal, Badges…): the back + title row used to
+   sit outside the scroller and stay put while the page moved under it. The
+   founder's rule is that only the tab bar stays, so the whole screen scrolls
+   as one: the column scrolls, the inner scroller just flows. */
+html body .ayna-mobile:is(#ay,.ayna-mobile) div:has(> .ay-set-head) { overflow-y: auto !important; overflow-x: hidden; min-height: 0; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) div:has(> .ay-set-head) > .ay-set-head ~ * { overflow: visible !important; flex-shrink: 0 !important; min-height: auto !important; }
+/* Dashboard disclosure rows ("What ayna adds to Apple Health", "Your routine"):
+   a native-feeling row with a chevron that turns; the content opens in place. */
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold > summary { list-style: none; display: flex; align-items: center; gap: 12px; min-height: 44px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold > summary::-webkit-details-marker { display: none; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold__text { flex: 1; min-width: 0; display: block; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold__text > :is(h2, h3) { margin: 0 !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold__text > p { margin: 4px 0 0 !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold__chev { flex: none; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: .7; transition: transform .22s cubic-bezier(.2,.8,.2,1); }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold[open] > summary .ay-fold__chev { transform: rotate(180deg); }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold[open] > summary { margin-bottom: 12px; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold > summary:focus-visible { outline: 2px solid var(--ayna-focus, currentColor); outline-offset: 4px; border-radius: 12px; }
+@media (prefers-reduced-motion: reduce) { html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold__chev { transition: none; } }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-rt.is-folded { display: block !important; padding: 16px !important; border-radius: 20px !important; background: color-mix(in srgb, currentColor 6%, transparent) !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-rt.is-folded .ay-fold__text > h2 { font-size: calc(22px * var(--ayna-text-scale, 1)) !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-rt.is-folded .ay-fold > :not(summary) + :not(summary) { margin-top: 14px; }
+/* Ecosystem on short phones (SE, 667pt): the count and "needs covered" share a
+   row so the first shelf product reaches the first screen. */
+@media (max-height: 720px) {
+  html body .ayna-mobile:is(#ay,.ayna-mobile) .eco-app-stack__card { display: grid !important; grid-template-columns: auto 1fr; column-gap: 18px; align-items: end; }
+  html body .ayna-mobile:is(#ay,.ayna-mobile) .eco-app-stack__card > :not(.eco-app-stack__nums, .eco-app-stack__needs, .eco-oval) { grid-column: 1 / -1; }
+  html body .ayna-mobile:is(#ay,.ayna-mobile) .eco-app-stack__card > .eco-app-stack__needs { margin-bottom: 4px !important; text-align: right; }
+  html body .ayna-mobile:is(#ay,.ayna-mobile) .eco-app-titlerow h1 { margin-bottom: 10px !important; }
+}
+/* Inside the folded routine card the time-of-day groups are plain sections (no card in a card). */
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-rt.is-folded .ay-rt-slot { background: none !important; box-shadow: none !important; border: 0 !important; padding-left: 0 !important; padding-right: 0 !important; }
