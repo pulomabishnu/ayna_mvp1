@@ -1,3 +1,4 @@
+import { haptic } from './haptics.js';
 /**
  * Shared helpers for required-field errors on the sign-up forms (app and
  * website). Founder feedback, 2026-10: tapping "Create my account" with a
@@ -55,17 +56,7 @@ export function revealField(el) {
   try { el.focus({ preventScroll: true }); } catch { el.focus?.(); }
 }
 
-/**
- * Warning haptic on native. @capacitor/haptics isn't a dependency of this
- * project yet, so this only fires if the plugin is registered on the native
- * side (Capacitor exposes it on window.Capacitor.Plugins); on the web and
- * without the plugin it does nothing.
- */
+/** Warning haptic on native (src/utils/haptics.js); nothing on the web. */
 export function warnHaptic() {
-  try {
-    const cap = typeof window !== 'undefined' ? window.Capacitor : null;
-    if (!cap?.isNativePlatform?.()) return;
-    const haptics = cap.Plugins?.Haptics;
-    haptics?.notification?.({ type: 'WARNING' })?.catch?.(() => {});
-  } catch { /* no haptics, no problem */ }
+  haptic('warning');
 }

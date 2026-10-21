@@ -120,7 +120,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
         </>}
 
         {active === 'focus' && <>
-          <p className="ayw-kicker">Your Ecosystem covers</p>
+          <p className="ayw-kicker">Your ecosystem covers</p>
           <ol className="ayw-ranks">
             {topAreas.slice(0, 3).map((area, i) => <li key={area} style={{ '--i': i }}><span>{i + 1}</span><strong>{area}</strong></li>)}
           </ol>
@@ -130,7 +130,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
           <p className="ayw-kicker">Your #1 match</p>
           <div className="ayw-arch">
             <div className="ayw-arch-clip"><ProductImage product={first} src={imageFor(first)} alt={first.name} allowBrandLogo={first.type === 'digital'} /></div>
-            {firstMatch && <span className="ayw-badge"><strong>{firstMatch}%</strong>match</span>}
+            {firstMatch && <span className="ayw-badge"><svg className="ayw-ring" viewBox="0 0 100 100" aria-hidden="true" style={{ '--ring-gap': 100 - Math.min(100, firstMatch) }}><circle cx="50" cy="50" r="48" pathLength="100" /></svg><strong>{firstMatch}%</strong>match</span>}
           </div>
           <div className="ayw-product">
             {first.brand && <span>{first.brand}</span>}
@@ -147,8 +147,8 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
         </>}
 
         {active === 'lineup' && <>
-          <p className="ayw-kicker">The lineup</p>
-          <h1 className="ayw-title ayw-title--sm">{myProducts.length} {myProducts.length === 1 ? 'pick' : 'picks'},<br />made for you.</h1>
+          <p className="ayw-kicker">Your picks</p>
+          <h1 className="ayw-title ayw-title--sm">{myProducts.length} {myProducts.length === 1 ? 'pick' : 'picks'} that fit<br />your answers</h1>
           <div className="ayw-grid">
             {products.map((product, i) => (
               <div key={product.id || i} className="ayw-tile" style={{ '--i': i }}>
@@ -169,7 +169,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
             </ul>
           </div>
           <div className="ayw-actions">
-            <button className="ayw-cta" type="button" onClick={onContinue}>{authUser ? 'Open my Ecosystem' : 'Save my Ecosystem'}<i aria-hidden="true">→</i></button>
+            <button className="ayw-cta" type="button" onClick={onContinue}>{authUser ? 'Open my ecosystem' : 'Save my ecosystem'}<i aria-hidden="true">→</i></button>
             <div className="ayw-secondary">
               <button className="ayw-link" type="button" onClick={share}>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13" /></svg>
@@ -181,11 +181,10 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
         </>}
 
         {active === 'empty' && <>
-          <p className="ayw-kicker">Your next chapter</p>
-          <h1 className="ayw-title">Still<br />exploring</h1>
-          <p className="ayw-foot">No strong match yet.</p>
+          <h1 className="ayw-title">No strong<br />match yet</h1>
+          <p className="ayw-foot">No strong match yet. Your answers didn’t point to one clear pick. The Shop is sorted by need.</p>
           <div className="ayw-actions">
-            <button className="ayw-cta" type="button" onClick={onGoBrowse}>Explore products<i aria-hidden="true">→</i></button>
+            <button className="ayw-cta" type="button" onClick={onGoBrowse}>Go to the Shop<i aria-hidden="true">→</i></button>
             <div><button className="ayw-link" type="button" onClick={onBack}>Edit answers</button></div>
           </div>
         </>}

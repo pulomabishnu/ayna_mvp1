@@ -14,13 +14,14 @@ import SearchAssist from '../../components/search/SearchAssist.jsx';
 import { fetchSearchSuggestions } from '../../utils/fetchSearchSuggestions.js';
 import { stableShopOrder, rankShopForProfile } from '../utils/shopOrder.js';
 import { hasQuizAnswers } from '../utils/personalReads.js';
+import { useSheetDrag } from '../hooks/useSheetDrag.js';
 
 
 const FILTER_FIELDS = [
   ['category', 'Product type', [['all', 'All products']]],
   ['price', 'Price', [['all', 'Any price'], ['under-25', 'Under $25'], ['25-50', '$25–$50'], ['50-100', '$50–$100'], ['100-plus', '$100+']]],
   ['rating', 'Rating', [['all', 'Any rating'], ['4-plus', '4+ stars']]],
-  ['ayna', 'Match & sources', [['all', 'Any'], ['best-match', 'Best match'], ['clinician', 'Clinician backed'], ['community', 'Community favorite'], ['ecosystem', 'In my Ecosystem']]],
+  ['ayna', 'Match & sources', [['all', 'Any'], ['best-match', 'Best match'], ['clinician', 'Clinician backed'], ['community', 'Community favorite'], ['ecosystem', 'In my ecosystem']]],
   ['preference', 'Preferences', [['all', 'Any'], ['fragrance-free', 'Fragrance free'], ['sensitive-skin', 'Sensitive skin'], ['vegan', 'Vegan'], ['cruelty-free', 'Cruelty free'], ['organic', 'Organic'], ['clean-ingredients', 'Clean ingredients']]],
   ['eligibility', 'Eligibility', [['all', 'Any'], ['fsa-hsa', 'FSA/HSA eligible'], ['fsa', 'FSA eligible'], ['hsa', 'HSA eligible']]],
   ['sustainability', 'Sustainability', [['all', 'Any'], ['reusable', 'Reusable'], ['recyclable', 'Recyclable'], ['low-waste', 'Low waste'], ['packaging', 'Sustainable packaging']]],
@@ -184,12 +185,12 @@ export default function BrowseScreen({
   onOpenWhyMatch,
   // Controlled from MobileApp.jsx (and persisted there) so the toggle
   // survives this screen unmounting when the user navigates away (e.g. to
-  // My Ecosystem) and back, it should stay on until the user explicitly
+  // My ecosystem) and back, it should stay on until the user explicitly
   // turns it off, not reset just because they left the tab.
   personalized: personalizedProp,
   onPersonalizedChange,
   onGoLibrary,
-  // Search to open with (an Ecosystem shelf's "Shop" link for one need).
+  // Search to open with (an ecosystem shelf's "Shop" link for one need).
   initialSearch = '',
 }) {
   const mode = 'products'; // Reads moved to the Library tab
@@ -209,6 +210,7 @@ export default function BrowseScreen({
   const filterButtonRef = useRef(null);
   const filterCloseRef = useRef(null);
   const filterSheetRef = useRef(null);
+  const { grabberProps: filterGrabber } = useSheetDrag(() => setShowFilters(false), filterSheetRef);
   useEffect(() => {
     if (!showFilters) return undefined;
     filterCloseRef.current?.focus();
@@ -398,10 +400,12 @@ export default function BrowseScreen({
         onGoCommunity={onGoCommunity}
         onToggleTheme={onToggleTheme}
         onOpenProfile={onOpenProfile}
+        title="Shop"
+        titleFor="ay-shop-title"
       />
 
       <div className="ayna-fresh-browse-heading ayna-shop-heading">
-        <div className="ay-shop-titlebar"><h1>Shop</h1>{hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}</div>
+        <div className="ay-shop-titlebar"><h1 id="ay-shop-title">Shop</h1>{hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}</div>
         <p className="ay-shop-note">Some links earn ayna a commission. It never changes your matches.</p>
         <SearchBar placeholder="Search products or brands" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }} onPick={(s) => setSearchValue(s.query)} />
       </div>
@@ -411,7 +415,7 @@ export default function BrowseScreen({
         <CategoryNav groups={MACRO_GROUPS} active={activeGroup} onSelect={setActiveGroup} action={<>
           <div className="ay-shop-toolbar">
             <button ref={filterButtonRef} className="ayna-shop-filter-toggle" type="button" aria-expanded={showFilters} onClick={() => setShowFilters((value) => !value)}>
-              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 7h16M4 17h16" /><circle cx="9" cy="7" r="2.5" fill="var(--ayna-bg)" /><circle cx="15" cy="17" r="2.5" fill="var(--ayna-bg)" /></svg>
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"><path d="M4 7h16M4 17h16" /><circle cx="9" cy="7" r="2.5" fill="var(--ayna-bg)" /><circle cx="15" cy="17" r="2.5" fill="var(--ayna-bg)" /></svg>
               Filters
               {activeFilterCount > 0 && <span aria-label={`${activeFilterCount} on`}>{activeFilterCount}</span>}
             </button>
@@ -435,6 +439,7 @@ export default function BrowseScreen({
       {mode === 'products' && <>
         {showFilters && <div className="ayna-shop-filter-backdrop" onClick={() => setShowFilters(false)}>
           <div ref={filterSheetRef} className="ayna-shop-filter-sheet" role="dialog" aria-modal="true" aria-label="Shop filters" onClick={(event) => event.stopPropagation()}>
+          <button {...filterGrabber} aria-label="Close filters" />
           <div className="ayna-shop-filter-head"><strong>Filters</strong><button ref={filterCloseRef} type="button" aria-label="Close filters" onClick={() => { setShowFilters(false); filterButtonRef.current?.focus(); }}>Close</button></div>
           <div className="ayna-shop-filter-fields">
           <label className="ay-field">Sort<select aria-label="Sort products" value={sortBy} onChange={(event) => setSortBy(event.target.value)}><option value="default">Featured</option><option value="rating">Highest rated</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option></select></label>

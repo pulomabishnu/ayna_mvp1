@@ -1,4 +1,5 @@
 import React from 'react';
+import { CheckIcon } from './icons/UiIcons.jsx';
 import { CATEGORY_LABELS } from '../data/products.js';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
 import { formatPrice } from '../utils/formatPrice';
@@ -7,6 +8,7 @@ import MatchPill from './MatchPill';
 import { displayName } from '../mobile/utils/displayName.js';
 import { requestProductTab, formatAverage } from '../utils/community/reviewRatings.js';
 import { brandOf } from '../mobile/data/brandFallback.js';
+import { saveFeedback } from '../utils/feedback.js';
 import '../styles/match-ui.css';
 import '../styles/verify-content.css';
 import { productImageAlt } from '../utils/seoMeta';
@@ -81,7 +83,7 @@ export default function ProductCard({
           {((matchPercent != null && matchPercent > 0) || inEcosystem) && (
             <span className="ay-product-card__match">
               {matchPercent != null && matchPercent > 0 && <MatchPill percent={matchPercent} size="sm" className="ay-product-card__pill" label={matchLabel || `${Math.round(matchPercent)}% match`} />}
-              {inEcosystem && <span className="ay-product-card__eco">✓ In your ecosystem</span>}
+              {inEcosystem && <span className="ay-product-card__eco"><CheckIcon size={14} />In your ecosystem</span>}
             </span>
           )}
           <span className={`ay-product-card__price${price.main === 'Price at retailer' ? ' is-unknown' : ''}`}>{price.main}{price.sub && (/^list\s+\$/i.test(price.sub)
@@ -98,7 +100,7 @@ export default function ProductCard({
           className="ay-product-card__heart"
           aria-label={isSaved ? `Remove ${product.name} from Saved` : `Save ${product.name}`}
           aria-pressed={isSaved}
-          onClick={() => onToggleSaved(product)}
+          onClick={(e) => { saveFeedback(e, !isSaved); onToggleSaved(product); }}
         >
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART} /></svg>
         </button>
