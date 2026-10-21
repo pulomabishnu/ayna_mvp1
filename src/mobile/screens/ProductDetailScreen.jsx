@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { dashToSentence } from '../../utils/dashToSentence.js';
 import { PANEL_ICONS } from '../components/pdpIcons.jsx';
 import { ALL_PRODUCTS, CATEGORY_LABELS, getProductMatchDetailsForProduct } from '../../data/products.js';
 import ProductCard from '../components/ProductCard.jsx';
@@ -169,7 +170,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
               {m.role === 'assistant' ? renderMarkdownLite(m.text) : m.text}
             </div>
           ))}
-          {sending && <div style={{ alignSelf: 'flex-start', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>Ayna is thinking…</div>}
+          {sending && <div style={{ alignSelf: 'flex-start', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>Looking into it…</div>}
         </div>
       )}
 
@@ -323,7 +324,7 @@ export default function ProductDetailScreen({
   // Details tabs with their source cards.
   const glance = buildGlance(product, { details: quizAnswers ? matchDetails : null, whyMatched });
   const brandLine = brand && String(brand).trim().toLowerCase() !== String(name || '').trim().toLowerCase() ? brand : categoryLabel;
-  const heroLine = firstSentence(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '').replace(/\s*—\s*/g, ', ').trim(), { min: 20, max: 240 });
+  const heroLine = firstSentence(dashToSentence(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '')).trim(), { min: 20, max: 240 });
   // One recall answer for the page (utils/productFacts), as on the website.
   const recall = (() => {
     const live = getPassport(product)?.recall;
@@ -333,7 +334,7 @@ export default function ProductDetailScreen({
   // The one caution that sits next to Buy, in plain words from the record (same rule as the website).
   const topWarning = (() => {
     const first = (t) => {
-      const one = firstSentence(t, { min: 8, max: 400 }).replace(/\s*—\s*/g, ', ').trim();
+      const one = dashToSentence(firstSentence(t, { min: 8, max: 400 })).trim();
       const colon = one.indexOf(':');
       if (one.length > 100 && colon > 8 && colon <= 70) return `${one.slice(0, colon)}.`;
       return one.length > 120 ? firstSentence(one, { max: 120 }) : one;
@@ -381,7 +382,7 @@ export default function ProductDetailScreen({
       <div key={product.id} className="ay-pdp-scroll" style={{ flex: 1, overflowY: 'auto', animation: 'ay-page .25s ease-out' }}>
         <div className="ay-pdp-top">
           <button type="button" className="ay-pdp-round" onClick={onBack} aria-label="Back to products">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
           </button>
           {shareCopied && <span className="ay-pdp-copied" role="status">Link copied</span>}
           <button type="button" className="ay-pdp-round" aria-label={`Share ${name} with a friend`} onClick={handleShare}>
@@ -442,7 +443,7 @@ export default function ProductDetailScreen({
               <button type="button" onClick={() => setPartnerOpen((v) => !v)} aria-expanded={partnerOpen}>
                 <span>Partner</span><span>{partnerOpen ? 'Hide disclosure' : 'We may earn a commission'}</span><span aria-hidden="true">{partnerOpen ? '−' : '+'}</span>
               </button>
-              {partnerOpen && <div className="ayna-figma-partner-copy">{partnerDisclosure}<a href="https://www.aynahealth.co/startups" target="_blank" rel="noopener noreferrer">Read about our brand partnerships →</a></div>}
+              {partnerOpen && <div className="ayna-figma-partner-copy">{partnerDisclosure}<a href="https://www.aynahealth.co/startups" target="_blank" rel="noopener noreferrer">Read about our brand partnerships</a></div>}
             </div>
           ) : buyUrl && <p className="ay-pdp-commission">Some links earn ayna a commission. It never changes your matches.</p>}
         </div>
@@ -520,7 +521,7 @@ export default function ProductDetailScreen({
           aria-pressed={isSaved}
           style={{ width: 50, height: 50, borderRadius: 99, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'var(--ayna-surface)', border: '1px solid ' + (isSaved ? 'var(--ayna-accent-dark)' : 'var(--ayna-border)') }}
         >
-          <svg width="19" height="19" viewBox="0 0 24 24" fill={isSaved ? 'var(--ayna-accent-dark)' : 'none'} stroke={isSaved ? 'var(--ayna-accent-dark)' : 'var(--ayna-heading)'} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill={isSaved ? 'var(--ayna-accent-dark)' : 'none'} stroke={isSaved ? 'var(--ayna-accent-dark)' : 'var(--ayna-heading)'} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
             <path d={HEART_PATH} />
           </svg>
         </button>

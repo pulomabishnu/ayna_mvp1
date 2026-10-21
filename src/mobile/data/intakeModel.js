@@ -867,7 +867,7 @@ export function getIntakeSteps(intake) {
     // Required minimum
     req({ id: 'age', section: 'core', title: 'Your age', type: 'age', info: 'We use your age to skip products that are not meant for you, like menopause supplements in your 20s. Type it, tap plus or minus, or slide the ruler.' }),
     req({ id: 'lifeStage', section: 'core', title: 'Your life stage', subtitle: 'Pick all that fit', type: 'lifeStage', info: 'Pick every stage that fits right now. You can be in perimenopause and still have regular periods. It changes what we show, for example pregnancy-safe picks only, or midlife support. Not sure, or rather not say? Those count too.' }),
-    req({ id: 'support', section: 'support', title: 'What needs support?', type: 'support', info: 'Pick everything you want help with. Each one becomes its own shelf of products in your Ecosystem. Use the tabs or search to find more. "Nothing right now" counts too.' }),
+    req({ id: 'support', section: 'support', title: 'What needs support?', type: 'support', info: 'Pick everything you want help with. Each one becomes its own shelf of products in your ecosystem. Use the tabs or search to find more. "Nothing right now" counts too.' }),
     ...(flowRequired(intake) ? [req(flowStep)] : []),
     ...(painRequired(intake) ? [req({ id: 'periodPain', section: 'support', title: 'Your period pain', type: 'pain', info: 'How much cramps or pain usually affect your day. Higher pain moves heat, TENS and pain relief options up your list.' })] : []),
     ...(ttcRequired(intake) ? [req(ttcStep)] : []),

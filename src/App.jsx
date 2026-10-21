@@ -2211,7 +2211,7 @@ function App() {
               </button>
               {[
                 ['discovery', '/shop', 'Shop', () => handleViewDiscovery('')],
-                ['ecosystem', '/ecosystem', 'My Ecosystem', () => handleViewEcosystem()],
+                ['ecosystem', '/ecosystem', 'My ecosystem', () => handleViewEcosystem()],
                 ['articles', '/library', 'Library', () => { setSelectedArticleId(null); setCurrentView('articles'); }],
                 ['community', '/community', 'Community', () => setCurrentView('community')],
                 ['health', '/health', 'Your health', () => setCurrentView('health')],
@@ -2367,7 +2367,7 @@ function App() {
           <div className="ay-flow-editbar">
             <button type="button" className="ay-flow-back" onClick={handleExitProfileEdit}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
-              {profileEditFromRef.current === 'ecosystem' ? 'Back to Ecosystem' : 'Back'}
+              {profileEditFromRef.current === 'ecosystem' ? 'Back to my ecosystem' : 'Back'}
             </button>
             <span>Nothing changes until you finish.</span>
           </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { CloseIcon } from './icons/UiIcons.jsx';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 
 const MONTHLY_PRICE = '$18';
@@ -44,7 +45,7 @@ export default function SubscriptionPaywallModal({ onClose, featureName = 'this 
             lineHeight: 1, padding: '0.25rem',
           }}
         >
-          ✕
+          <CloseIcon size={20} />
         </button>
 
         <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>

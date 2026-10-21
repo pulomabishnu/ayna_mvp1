@@ -118,7 +118,7 @@ function hasCommunitySupport(product) {
 
 /** Mirrors Discovery's "Ayna" match-quality filter, minus the quiz-derived
  * best-match ranking that only Discovery has access to, here "Best Match"
- * just means "already recommended to you," and "In My Ecosystem" is only
+ * just means "already recommended to you," and "In My ecosystem" is only
  * meaningful (and only passed) for the returning-user shop. */
 function matchesAyna(product, filter, { ownedIds, recommendedIds } = {}) {
   if (!filter || filter === 'all') return true;

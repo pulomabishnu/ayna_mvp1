@@ -150,9 +150,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
 
   const supabase = getSupabaseClient();
   const isSignup = allowSignup && mode === 'signup';
-  // Why we are asking, when the user came from a specific door (Saved heart, My Ecosystem).
+  // Why we are asking, when the user came from a specific door (Saved heart, My ecosystem).
   const CONTEXT_COPY = {
-    saved: { title: 'Looking for your favorites?', line: 'Sign in to see the products you saved, all in one place.' },
+    saved: { title: 'Looking for your favorites?', line: 'Sign in to see what you saved.' },
     ecosystem: { title: 'Your ecosystem lives here', line: 'Sign in to see your shelves, or build one with a short quiz.' },
     feature: { title: feature ? `Sign in to use ${feature}` : 'This needs an account', line: 'Take the short quiz to start, or sign in if you already have an account.' },
     login: { title: 'Sign in', line: 'Welcome to ayna. New here? Start with the quiz.' },

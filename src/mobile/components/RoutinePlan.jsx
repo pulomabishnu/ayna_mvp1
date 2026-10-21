@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { PlaylistIcon } from '../../components/icons/UiIcons.jsx';
 import PlaylistCoverPicker from './PlaylistCoverPicker.jsx';
 import PlaylistAudiencePicker from './PlaylistAudiencePicker.jsx';
 import { buildRoutine, buildShoppingList, overBudget } from '../../health/plan.js';
@@ -84,7 +85,7 @@ export function ShoppingList({ products, insights, have = {}, onToggleHave, onOp
           </ul>
         </div>
       ))}
-      {!onSavePlaylist && onRequireAuth && <button type="button" className="ay-sl-pl-open" onClick={() => onRequireAuth('playlists')}><span aria-hidden="true">♫</span>Sign in to save as a playlist</button>}
+      {!onSavePlaylist && onRequireAuth && <button type="button" className="ay-sl-pl-open" onClick={() => onRequireAuth('playlists')}><PlaylistIcon size={18} />Sign in to save as a playlist</button>}
       {onSavePlaylist && <SavePlaylist items={list.groups.flatMap((g) => g.items).map((it) => it.product)} have={have} onSave={onSavePlaylist} onOpen={onOpenPlaylist} />}
     </section>
   );
@@ -128,7 +129,7 @@ function SavePlaylist({ items, have, onSave, onOpen }) {
       </div>
     );
   }
-  if (!open) return <button type="button" className="ay-sl-pl-open" onClick={() => setOpen(true)}><span aria-hidden="true">♫</span>Save as a playlist</button>;
+  if (!open) return <button type="button" className="ay-sl-pl-open" onClick={() => setOpen(true)}><PlaylistIcon size={18} />Save as a playlist</button>;
   return (
     <div className="ay-sl-pl">
       <h3>Save as a playlist</h3>

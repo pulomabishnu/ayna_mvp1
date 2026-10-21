@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom';
+import { CloseIcon, HeartIcon } from './icons/UiIcons.jsx';
 import { useEffect, useRef, useState } from 'react';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { getProfileMatchPercentForProduct, getProfileMatchLabelsForProduct } from '../data/products.js';
@@ -112,9 +113,9 @@ export default function WebDiscoverDeck({ products = [], quizResults = null, sav
         </div>}
       </div>
       {current && <div className="wdeck-actions">
-        <button type="button" className="wdeck-round" onClick={() => act('skip')} aria-label="Skip">✕</button>
+        <button type="button" className="wdeck-round" onClick={() => act('skip')} aria-label="Skip"><CloseIcon size={22} /></button>
         <button type="button" className="wdeck-view" onClick={() => onOpenProduct?.(current.product)}>Details</button>
-        <button type="button" className="wdeck-round is-save" onClick={() => act('save')} aria-label="Save">♥</button>
+        <button type="button" className="wdeck-round is-save" onClick={() => act('save')} aria-label="Save"><HeartIcon size={22} filled /></button>
       </div>}
       {current && <p className="wdeck-hint"><kbd>←</kbd> Skip · <kbd>Space</kbd> Flip · <kbd>→</kbd> Save</p>}
     </div>

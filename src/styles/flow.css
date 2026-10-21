@@ -84,7 +84,7 @@
 }
 .ay-flow-back:hover, .ay-flow-auth-back:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 #1d1a2b; }
 .ay-flow-back:active, .ay-flow-auth-back:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #1d1a2b; }
-.ay-flow-back svg, .ay-flow-auth-back svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.ay-flow-back svg, .ay-flow-auth-back svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
 @media (max-width: 560px) {
   .app-container .ay-flow-editbar > * { top: 16px; }
   .app-container .ay-flow-editbar > span { display: none; }

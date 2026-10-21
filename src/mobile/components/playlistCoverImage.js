@@ -42,7 +42,7 @@ export async function makePlaylistCoverFile(text, color) {
   const visible = lines.slice(0, 4);
   visible.forEach((value, index) => ctx.fillText(value, 66, 390 + (index - (visible.length - 1) / 2) * 93, 670));
   ctx.font = '600 30px "Figtree", system-ui, sans-serif';
-  ctx.fillText('Curated by you', 66, 710);
+  ctx.fillText('Made by you', 66, 710);
   const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', .88));
   if (!blob) throw new Error('Could not make the cover. Please try again.');
   return new File([blob], 'ayna-playlist-cover.jpg', { type: 'image/jpeg' });

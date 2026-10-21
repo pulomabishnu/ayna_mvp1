@@ -1,4 +1,6 @@
 import { recallFacts } from '../utils/productFacts';
+import { WarningIcon } from './icons/UiIcons.jsx';
+import { dashToSentence } from '../utils/dashToSentence.js';
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useResearch } from '../data/researchLoader';
 import { ProductImageFallback } from './ProductTileImage';
@@ -167,7 +169,7 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
           ))}
           {sending && (
             <div style={{ alignSelf: 'flex-start', fontSize: 14, color: 'var(--color-text-muted)' }}>
-              ayna is thinking…
+              Looking into it…
             </div>
           )}
         </div>
@@ -207,7 +209,7 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
 function SafetyFlag() {
   return (
     <button type="button" className="pdp-safety-flag" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'details' }))}>
-      <span aria-hidden="true">⚠️</span>
+      <WarningIcon size={20} />
       <strong>Safety note on file</strong>
       <span>See it</span>
     </button>
@@ -615,7 +617,7 @@ export default function ProductModal({
   const topWarning = (() => {
     const first = (t) => {
       // A long note becomes its headline ("2021 lawsuit, later dropped"); the full story is in Details and safety.
-      const one = firstSentence(t, { min: 8, max: 400 }).replace(/\s*—\s*/g, ', ').trim();
+      const one = dashToSentence(firstSentence(t, { min: 8, max: 400 })).trim();
       const colon = one.indexOf(':');
       if (one.length > 100 && colon > 8 && colon <= 70) return `${one.slice(0, colon)}.`;
       return one.length > 120 ? firstSentence(one, { max: 120 }) : one;
@@ -720,7 +722,7 @@ export default function ProductModal({
             onClick={() => onAddToEcosystem(product)}
             title={isInEcosystem ? 'Remove from my ecosystem' : undefined}
           >
-            {isInEcosystem ? <><span className="ayp-eco__on">In my ecosystem ✓</span><span className="ayp-eco__off" aria-hidden="true">Remove</span></> : 'Add to my ecosystem'}
+            {isInEcosystem ? <><span className="ayp-eco__on">In my ecosystem</span><span className="ayp-eco__off" aria-hidden="true">Remove</span></> : 'Add to my ecosystem'}
           </button>
         )}
         {!user && onToggleSaved && (
@@ -911,7 +913,7 @@ export default function ProductModal({
               </button>
             )}
             {(() => {
-              const raw = String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '').replace(/\s*—\s*/g, ', ').trim();
+              const raw = dashToSentence(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '')).trim();
               const lead = firstSentence(raw, { min: 20, max: 240 });
               return lead ? <p className="ayp-buy__lead">{lead}</p> : null;
             })()}
