@@ -539,7 +539,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
             {sending && (
               <div className="ayna-ask-message ayna-ask-message--ayna ayna-ask-message--typing" role="status" aria-label="ayna is typing">
                 <span className="ayna-typing" aria-hidden="true"><i /><i /><i /></span>
-                {slow && <span className="ayna-typing__slow">Still thinking…</span>}
+                {slow && <span className="ayna-typing__slow">Still looking into it…</span>}
               </div>
             )}
 

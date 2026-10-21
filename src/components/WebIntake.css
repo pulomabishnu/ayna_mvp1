@@ -27,7 +27,7 @@
 
 /* chips */
 .wq-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.wq-chip { min-height: 44px; padding: 0 18px; border: 2px solid var(--ink); border-radius: 99px; background: var(--paper); color: var(--ink); font: 600 var(--ay-fs-secondary)/1.2 var(--ay-sans); transition: transform .15s cubic-bezier(.3,1.5,.5,1), background .15s; }
+.wq-chip { min-height: 44px; padding: 0 18px; border: 2px solid var(--ink); border-radius: 99px; background: var(--paper); color: var(--ink); font: 600 var(--ay-fs-secondary)/1.2 var(--ay-sans); transition: transform .15s var(--ease-out), background .15s; }
 .wq-chips.is-small .wq-chip { min-height: 38px; padding: 0 14px; font-size: var(--ay-fs-caption); }
 .wq-chip:hover { transform: translateY(-1px); }
 .wq-chip.is-on { background: var(--butter); box-shadow: 3px 3px 0 var(--ink); transform: translate(-1px, -1px); }

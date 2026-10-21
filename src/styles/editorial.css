@@ -151,7 +151,7 @@
 .ed .ed-brands__label span { margin-left: 6px; }
 .app-container .ed .ed-brands__label a { font: 600 15px/1.2 var(--ed-sans); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px; display: inline-flex; min-height: 44px; align-items: center; white-space: nowrap; }
 .ed .ed-ticker { flex: 1; min-width: 0; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 40px, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(90deg, transparent, #000 40px, #000 calc(100% - 40px), transparent); }
-.ed .ed-ticker__track { display: flex; width: max-content; animation: ed-marquee 60s linear infinite; }
+.ed .ed-ticker__track { display: flex; width: max-content; }
 .ed .ed-ticker ul { display: flex; list-style: none; }
 .ed .ed-ticker li { font: 500 20px/1 var(--ed-sans); padding-inline: 20px; white-space: nowrap; display: flex; align-items: center; gap: 40px; }
 .ed .ed-ticker li::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--ed-text); opacity: .5; margin-right: -20px; }
@@ -206,8 +206,12 @@
 .app-container .ed .ed-band :is(h2, h3, p, a, span, button) { color: inherit; }
 .ed .ed-band .ed-chiprow { margin-bottom: 24px; }
 .ed .ed-band__foot { display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: center; margin-top: 32px; }
-.ed .ed-strip { margin-top: 48px; overflow: hidden; padding-bottom: 24px; }
-.ed .ed-strip__track { display: flex; width: max-content; gap: 12px; animation: ed-marquee 80s linear infinite; }
+.ed .ed-strip { margin-top: 48px; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; scroll-snap-type: x proximity; padding-bottom: 24px; }
+.ed .ed-strip::-webkit-scrollbar { display: none; }
+.ed .ed-strip:focus-visible { outline: 2px solid currentColor; outline-offset: -4px; }
+.ed .ed-strip li { scroll-snap-align: start; }
+.ed .ed-strip ul { padding: 0 20px; }
+.ed .ed-strip__track { display: flex; width: max-content; gap: 12px; }
 .ed .ed-strip ul { display: flex; gap: 12px; list-style: none; }
 .ed .ed-strip li { width: 200px; height: 240px; flex: none; }
 .ed .ed-strip img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
@@ -763,3 +767,64 @@ html body .app-container .ed .ed-prose > :is(section, .ed-psec) :is(h2, h3) { co
   .ed .ed-foryou__notes > li { flex: 0 0 46%; scroll-snap-align: start; }
 }
 @media (max-width: 767px) { .ed .ed-final__photo { aspect-ratio: 16 / 7; } }
+
+/* =====================================================================
+   Homepage pass (Oct 21): accent word, "Does this sound familiar?"
+   checkerboard, the plain statement with product stickers, big step
+   numerals. Devices on this page: one seal (hero), one ribbon (brands),
+   colour-block tiles, a pink highlighter, big numerals.
+   ===================================================================== */
+/* One accent word per title, at most: slanted, with a pink highlighter swipe. */
+.app-container .ed :is(.ed-display, .ed-h2, .ed-h1) em { font-style: italic; background: linear-gradient(transparent 62%, #f7badd 62%, #f7badd 92%, transparent 92%); padding: 0 .06em; }
+.app-container[data-theme='brand-dark'] .ed :is(.ed-display, .ed-h2, .ed-h1) em,
+.app-container[data-theme='dark'] .ed :is(.ed-display, .ed-h2, .ed-h1) em { background: linear-gradient(transparent 62%, rgba(247, 186, 221, .45) 62%, rgba(247, 186, 221, .45) 92%, transparent 92%); }
+
+/* Does this sound familiar? */
+.ed .ed-familiar__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 24px; }
+.ed .ed-familiar__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border: 1.5px solid #3e2723; border-radius: 20px; overflow: hidden; }
+.ed .ed-familiar__grid > li { aspect-ratio: 1; min-width: 0; }
+.ed .ed-familiar__ph img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ed .ed-familiar__q a { display: flex; flex-direction: column; justify-content: space-between; gap: 16px; height: 100%; box-sizing: border-box; padding: 24px; text-decoration: none; color: inherit; transition: background-color var(--t-fast) var(--ease-in-out); }
+.ed .ed-familiar__q.is-pink a { background: #f7badd; color: #3e2723; }
+.ed .ed-familiar__q.is-ink a { background: #3e2723; color: #ffedac; }
+.ed .ed-familiar__quote { font: 700 clamp(20px, 1vw + 15px, 28px)/1.15 var(--ed-serif); letter-spacing: -.01em; text-wrap: balance; }
+.ed .ed-familiar__go { display: inline-flex; align-items: center; gap: 8px; font: 600 15px/1.2 var(--ed-sans); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+.ed .ed-familiar__go svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; transition: translate var(--t-fast) var(--ease-out); }
+@media (hover: hover) { .ed .ed-familiar__q a:hover .ed-familiar__go svg { translate: 4px 0; } }
+.ed .ed-familiar__q a:focus-visible { outline: 3px solid #3e2723; outline-offset: -6px; }
+.ed .ed-familiar__q.is-ink a:focus-visible { outline-color: #ffedac; }
+@media (max-width: 767px) {
+  .ed .ed-familiar__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); border-radius: 16px; }
+  .ed .ed-familiar__q a { padding: 16px; }
+  .ed .ed-familiar__go { font-size: 14px; }
+}
+
+/* The statement: one plain line, real products stuck either side of it */
+.ed .ed-statement { display: grid; grid-template-columns: 1fr minmax(0, 640px) 1fr; align-items: center; gap: 32px; max-width: 1180px; margin: var(--ed-section) auto 0; padding: 24px 20px; text-align: center; }
+.ed .ed-statement__line { margin: 0; font: 700 clamp(26px, 2vw + 18px, 44px)/1.15 var(--ed-serif); letter-spacing: -.015em; color: var(--ed-text); text-wrap: balance; }
+.ed .ed-statement__line mark { color: inherit; background: linear-gradient(transparent 55%, #f7badd 55%, #f7badd 95%, transparent 95%); padding: 0 .08em; }
+.app-container[data-theme='brand-dark'] .ed .ed-statement__line mark, .app-container[data-theme='dark'] .ed .ed-statement__line mark { background: linear-gradient(transparent 55%, rgba(247, 186, 221, .45) 55%, rgba(247, 186, 221, .45) 95%, transparent 95%); }
+.ed .ed-statement__stickers { display: flex; justify-content: center; gap: 18px; pointer-events: none; }
+.ed .ed-statement__sticker { display: block; width: 120px; height: 120px; padding: 8px; box-sizing: border-box; background: #fff; border: 1.5px solid #3e2723; border-radius: 22px; box-shadow: 4px 4px 0 #3e2723; }
+.ed .ed-statement__sticker img { width: 100%; height: 100%; object-fit: contain; }
+.ed .ed-statement__sticker.is-0 { rotate: -8deg; translate: 0 -18px; }
+.ed .ed-statement__sticker.is-1 { rotate: 5deg; translate: 0 22px; }
+.ed .ed-statement__sticker.is-2 { rotate: -4deg; translate: 0 20px; }
+.ed .ed-statement__sticker.is-3 { rotate: 7deg; translate: 0 -16px; }
+@media (max-width: 900px) {
+  .ed .ed-statement { grid-template-columns: 1fr 1fr; gap: 16px 10px; padding: 16px 20px 8px; }
+  .ed .ed-statement__line { grid-column: 1 / -1; grid-row: 1; }
+  .ed .ed-statement__stickers { gap: 10px; }
+  .ed .ed-statement__stickers.is-left { justify-content: flex-end; }
+  .ed .ed-statement__stickers.is-right { justify-content: flex-start; }
+  .ed .ed-statement__sticker { width: 72px; height: 72px; padding: 6px; border-radius: 16px; box-shadow: 3px 3px 0 #3e2723; translate: none !important; }
+}
+
+/* How it works: a big numeral per step (1 espresso, 2 pink, 3 sky, 4 espresso) */
+.ed .ed-step__big { position: absolute; z-index: 1; top: -26px; right: 14px; font: 700 72px/1 var(--ed-serif); letter-spacing: -.04em; color: #3e2723; -webkit-text-stroke: 1.5px #3e2723; pointer-events: none; }
+.ed .ed-step__big.is-1 { color: #f7badd; }
+.ed .ed-step__big.is-2 { color: #769ebe; }
+.app-container[data-theme='brand-dark'] .ed .ed-step__big, .app-container[data-theme='dark'] .ed .ed-step__big { -webkit-text-stroke-color: #ffedac; }
+.app-container[data-theme='brand-dark'] .ed .ed-step__big.is-0, .app-container[data-theme='brand-dark'] .ed .ed-step__big.is-3,
+.app-container[data-theme='dark'] .ed .ed-step__big.is-0, .app-container[data-theme='dark'] .ed .ed-step__big.is-3 { color: #ffedac; }
+@media (max-width: 767px) { .ed .ed-step__big { top: 50%; right: 10px; translate: 0 -50%; font-size: 44px; } }

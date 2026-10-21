@@ -26,7 +26,7 @@
 .wyou-signedout h1 { margin: 0; font: 400 var(--ay-fs-display)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
 
 /* shopper trading card */
-.wyou-shopper { border: 2px solid var(--ay-ink); border-radius: 24px; background: var(--ay-paper); box-shadow: var(--ay-shadow); overflow: hidden; animation: wyou-pop .45s cubic-bezier(.3,1.5,.5,1) both; }
+.wyou-shopper { border: 2px solid var(--ay-ink); border-radius: 24px; background: var(--ay-paper); box-shadow: var(--ay-shadow); overflow: hidden; animation: wyou-pop .45s var(--ease-out) both; }
 @keyframes wyou-pop { from { transform: translateY(12px) scale(.98); opacity: 0; } }
 .wyou-shopper header { position: relative; display: grid; gap: 6px; padding: 22px 22px 20px; border-bottom: 2px solid var(--ay-ink); background: var(--ay-mint); }
 .wyou-shopper.is-listener header { background: var(--ay-pink); } .wyou-shopper.is-curator header { background: var(--ay-butter); } .wyou-shopper.is-explorer header, .wyou-shopper.is-original header { background: var(--ay-peri); }
@@ -34,7 +34,7 @@
 .wyou-shopper header h2 { margin: 0; font: 400 var(--ay-fs-title)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
 .wyou-shopper header p { margin: 0; font: 600 var(--ay-fs-secondary)/1.3 var(--ay-sans); }
 .wyou-emblem { position: absolute; top: 18px; right: 18px; display: grid; place-items: center; width: 56px; height: 56px; border: 2px solid var(--ay-ink); border-radius: 16px; background: var(--ay-paper); box-shadow: var(--ay-shadow); rotate: 6deg; }
-.wyou-emblem svg { width: 28px; height: 28px; fill: none; stroke: var(--ay-ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.wyou-emblem svg { width: 28px; height: 28px; fill: none; stroke: var(--ay-ink); stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
 .wyou-charts { display: grid; grid-template-columns: 1fr; gap: 12px; padding: 16px 16px 0; }
 .wyou-shopper dl { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0; padding: 16px; }
 .wyou-shopper dl div { padding: 14px; border: 2px solid var(--ay-ink); border-radius: 16px; background: var(--ay-paper); }

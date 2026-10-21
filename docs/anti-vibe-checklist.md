@@ -70,3 +70,29 @@ Plus: rate limits on every serverless API that costs money (Ask ayna / LLM calls
 - Real screenshots and photos, real testimonials only, privacy policy and terms linked and current.
 - Compress hero and lifestyle images (AVIF/WebP, correct sizes/srcset, lazy below the fold); consider a short muted hero video only if it loads fast and has a still fallback.
 - Polish pass before shipping: spacing, alignment, states, copy, a11y.
+
+## Delight details (founder, Oct 21; decisions)
+Adopted (calm, specific, consistent with the motion tokens):
+- Presses: a quick `scale(.97)` that settles back on `--ease-pop` (max 1.2 overshoot). No linear fades.
+- Loading text in ayna's voice, specific and calm: "Looking into it…", "Finding your matches…", "Checking the research…", "Saving to your ecosystem…". Never jokes on health, safety or error screens.
+- Empty states: one sticker that settles once, one line that says what will appear, one action.
+- Optimistic UI for save, like, add and toggles: update at once, roll back with a plain message if the server fails.
+- Web: Cmd/Ctrl+K focuses the search (or opens the Shop search), with a small ⌘K hint in the field on devices with a keyboard; Esc closes sheets; a toast names the action ("Saved", "Added to your ecosystem").
+- Sheets and expanding cards grow from what was tapped (FLIP / View Transitions where supported, else a fade). Bottom sheets have a grabber you can drag.
+- Auto-focus the main input when a search, compose or Ask sheet opens, on phones only after the person tapped a text action (never on page load: no surprise keyboard).
+- Relative times ("Just now", "2m ago", "Yesterday"), refreshed every minute.
+- Toasts are named after the action, per the guide's naming rule.
+- Native elastic overscroll in the app; `overscroll-behavior` only where it stops the page behind a sheet from scrolling.
+- Phone and date inputs format as you type without moving the caret.
+- Character-limit ring on text areas with limits; shows the count near the limit, espresso then pink, never cuts text.
+- Destructive actions confirm in two steps ("Tap again to delete" for about 3 seconds, or an in-app confirm sheet). Never `window.confirm`.
+- One shared skeleton shimmer timing; static under reduced motion.
+- Time-of-day greeting from the local clock, plain ("Good morning, Ameera").
+- Haptics in the app: light on save, selection on quiz answers, success on add and check-in, warning on errors.
+- `::selection` in ayna pink with espresso text. Dark mode stays warm espresso, never `#000`.
+- Elevation: outline + hard offset shadow for raised/tappable things, flat 40% espresso scrim for overlays.
+- Grain: one static film-grain tile, subtle, never animated (see design-direction.md, Finish).
+
+Skipped on purpose: glows and neon accents, looping or cursor-reactive backgrounds, cursor-following shine, animated border beams, tilting hover effects, magnetic buttons, monospace data labels, ASCII art, input shake on errors (use colour, icon and message), "come back" tab-title tricks, sound effects by default (if ever, an opt-in Sounds toggle, off by default; haptics cover feedback in the app).
+
+Status on web/anti-vibe (Oct 21): done: press spring, loading copy ("Looking into it…"), empty-state sticker settle, Cmd/Ctrl+K with hint, bottom sheets with drag-to-dismiss and 40% scrim, haptics, time-of-day greeting on You, grain + matte layer, `::selection`. Not done yet: FLIP/View Transitions for expanding cards, relative-time refresh, phone/date input masks, character-limit ring, two-step destructive confirms everywhere, auto-focus rules per sheet.

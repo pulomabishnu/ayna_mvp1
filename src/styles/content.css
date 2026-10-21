@@ -68,7 +68,7 @@ html body .app-container.app-container.app-container.app-container {
   .ct-lib__top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 400px); align-items: end; gap: var(--ay-s16) var(--ay-s32); }
   .ct-lib__chips { margin-top: var(--ay-s20); }
   .ct-search { position: relative; display: flex; align-items: center; min-height: 48px; padding: 0 var(--ay-s16) 0 44px; border: 1.5px solid var(--ay-outline); border-radius: 999px; background: var(--ay-page); box-sizing: border-box; }
-  .ct-search > svg { position: absolute; left: 16px; width: 20px; height: 20px; fill: none; stroke: var(--ay-text); stroke-width: 1.8; stroke-linecap: round; }
+  .ct-search > svg { position: absolute; left: 16px; width: 20px; height: 20px; fill: none; stroke: var(--ay-text); stroke-width: 1.75; stroke-linecap: round; }
   .ct-search input { flex: 1; min-width: 0; height: 46px; padding: 0 !important; border: 0 !important; background: transparent !important; box-shadow: none !important; color: var(--ay-text) !important; font: 400 16px/1.2 var(--ay-sans-stack) !important; outline: none; }
   .ct-search :is(input, input:focus, input:focus-visible) { outline: none !important; border: 0 !important; box-shadow: none !important; }
   .ct-search > :not(svg) { flex: 1; min-width: 0; border: 0 !important; box-shadow: none !important; background: transparent !important; outline: none !important; }
@@ -668,7 +668,7 @@ html body .app-container.app-container.app-container.app-container {
   button.wy-week:hover .wy-week__go { text-decoration-thickness: 2px; }
   .wy-week.is-empty { grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; cursor: default; }
   .wy-week.is-empty:not(:has(svg)) { grid-template-columns: minmax(0, 1fr) auto; }
-  .wy-week__icon { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .wy-week__icon { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
   .wy-week__nums { display: flex; flex-wrap: wrap; gap: var(--ay-s32); }
   .wy-week__nums > span { display: grid; gap: 2px; }
   .wy-week__nums b { font: 600 28px/1.1 var(--ay-sans-stack); font-variant-numeric: tabular-nums; }
@@ -830,7 +830,7 @@ html body .app-container.app-container.app-container.app-container {
   .qz-follow { display: grid; gap: 8px; padding: var(--ay-s16); border-radius: var(--ay-r-group); background: var(--ay-group); }
   .qz-follow b { font: 600 15px/1.35 var(--ay-sans-stack); }
   .qz-search { position: relative; display: flex; align-items: center; min-height: 48px; padding: 0 12px 0 44px; border: 1.5px solid var(--ay-outline); border-radius: 999px; background: var(--ay-page); }
-  .qz-search > svg { position: absolute; left: 16px; width: 20px; height: 20px; fill: none; stroke: var(--ay-text); stroke-width: 1.8; stroke-linecap: round; }
+  .qz-search > svg { position: absolute; left: 16px; width: 20px; height: 20px; fill: none; stroke: var(--ay-text); stroke-width: 1.75; stroke-linecap: round; }
   .qz-search input { flex: 1; min-width: 0; height: 46px; padding: 0 !important; border: 0 !important; background: transparent !important; color: var(--ay-text) !important; font: 400 16px/1.2 var(--ay-sans-stack) !important; outline: none !important; box-shadow: none !important; }
   .qz-search > :not(svg):not(button) { flex: 1; min-width: 0; }
   .qz-search:focus-within { outline: 3px solid var(--ay-focus); outline-offset: 2px; }

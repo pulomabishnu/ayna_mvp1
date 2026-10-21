@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { sentenceCase } from '../utils/sentenceCase.js';
 import { TESTING_WATERS_NOTICE } from '../data/investRound';
 import { useRecommendationViews } from '../utils/recommendationAnalytics';
 import { BASICS_PRODUCTS } from '../data/basicsProducts.js';
@@ -13,18 +14,20 @@ import SmartSearchInput from './search/SmartSearchInput.jsx';
 import { useLatestAnnouncement } from '../hooks/useLatestAnnouncement';
 import { WEFUNDER_URL, trackInvestClick } from '../data/invest';
 import '../styles/editorial.css';
-import { Seal, Ribbon, Sticker, Envelope } from './personality/Bits.jsx';
+import { Seal, Ribbon, Envelope } from './personality/Bits.jsx';
+import { useReveal } from '../hooks/useReveal.js';
 
 /* The website home. Story order (design direction, "Homepage"):
  *   what   hero (display, See my matches, search), partner brands, this week's picks
- *   why    your counter, decoded
+ *   why    does this sound familiar (need tiles), one plain statement
  *   shop   shop by need (dark band) with the photo strip
  *   how    four steps
  *   proof  how we grade evidence, short reads, community (the sky band), who we are
  *   action invest in ayna, final call to action
  * Members get the same page with their name, their dashboard row and their picks.
- * Styles: src/styles/editorial.css (ed-*). Nothing animates on scroll; the two
- * moving rows follow the footer's Pause motion and reduced motion. */
+ * Styles: src/styles/editorial.css (ed-*). Only supporting photos fade in on
+ * scroll (useReveal, once); the brand ribbon is the one moving row and follows
+ * hover, focus, the footer's Pause motion and reduced motion. */
 
 const SEARCH_HINTS = ['organic pads', 'PMOS support', 'bad cramps', 'pelvic floor', 'night sweats', 'vaginal dryness', 'leaking when I sneeze', 'sleep and stress', 'UTI burning', 'heavy flow overnight', 'menopause', 'itchy down there', 'hormonal acne', 'trying to conceive', 'postpartum pads'];
 const BASICS_IDS = new Set(BASICS_PRODUCTS.map((p) => p.id));
@@ -80,6 +83,7 @@ function Search({ onSearch }) {
           onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
         />
         {!q && <span className="ed-search__hint" aria-hidden="true">Search <b key={i}>{SEARCH_HINTS[i]}</b></span>}
+        {!q && !focused && <kbd className="ay-kbd" aria-hidden="true">{/Mac|iPhone|iPad/.test(typeof navigator !== 'undefined' ? navigator.platform || navigator.userAgent : '') ? '⌘K' : 'Ctrl K'}</kbd>}
       </label>
       <button type="submit" aria-label="Search"><Arrow /></button>
     </form>
@@ -97,7 +101,7 @@ function Hero({ onStartQuiz, onSearch, personal = null, banner = null }) {
           <h1 id="ed-hero-title" className="ed-display">Welcome back, {personal.name}.</h1>
           <p className="ed-lead">{personal.ecoCount > 0 ? `${personal.ecoCount} product${personal.ecoCount === 1 ? '' : 's'} in your ecosystem.` : 'Health products matched to your body.'}</p>
         </> : <>
-          <h1 id="ed-hero-title" className="ed-display">Build your ecosystem.</h1>
+          <h1 id="ed-hero-title" className="ed-display">Build your <em>ecosystem</em>.</h1>
           <p className="ed-lead">Health products matched to your body.</p>
         </>}
         <div className="ed-hero__actions">{cta}</div>
@@ -141,14 +145,15 @@ function Shelf({ products, onOpenProduct, label }) {
 
 // Core needs lead (periods, intimate care, menopause, pelvic floor); creams, sleep and gadgets come after.
 const CORE = /pad|tampon|cup|disc|period|intimate|vaginal|menopause|pelvic|uti|cramp|fertility|postpartum|pregnan/i;
+function weeklyLineup() {
+  const list = getWeeklyTrendingLineup(ALL_PRODUCTS).map((x) => x.product)
+    .filter((p) => p?.image && NEEDS_PHOTO(p) && !/sex|intimacy|toy/i.test(String(p.category || '')) && !/\banal\b|vibrator|dildo|mouth tape/i.test(String(p.name || '')));
+  const core = list.filter((p) => CORE.test(`${p.category} ${(p.healthFunctions || []).join(' ')}`));
+  return [...core, ...list.filter((p) => !core.includes(p))];
+}
 function Picks({ onOpenProduct, onViewDiscovery, picks = null }) {
   // The first four products a new visitor sees: everyday picks, not sex tech.
-  const weekly = useMemo(() => {
-    const list = getWeeklyTrendingLineup(ALL_PRODUCTS).map((x) => x.product)
-      .filter((p) => p?.image && NEEDS_PHOTO(p) && !/sex|intimacy|toy/i.test(String(p.category || '')) && !/\banal\b|vibrator|dildo|mouth tape/i.test(String(p.name || '')));
-    const core = list.filter((p) => CORE.test(`${p.category} ${(p.healthFunctions || []).join(' ')}`));
-    return [...core, ...list.filter((p) => !core.includes(p))].slice(0, 4);
-  }, []);
+  const weekly = useMemo(() => weeklyLineup().slice(0, 4), []);
   // Member picks: only products with a real photo, drugstore basics last.
   const personal = useMemo(() => {
     if (!picks) return null;
@@ -172,66 +177,63 @@ function Picks({ onOpenProduct, onViewDiscovery, picks = null }) {
   );
 }
 
-/* ---------- ayna is for you if: the quiz's common needs as paper notes ----------
-   Same six needs the quiz offers first (WebIntake.jsx COMMON_NEEDS). Each note
-   searches the Shop for that need. Sky band, notes tilt at most 2 degrees. */
-const FOR_YOU = ['Period product support', 'Cramps or period pain', 'Heavy periods', 'Vaginal dryness', 'Bladder leakage or incontinence', 'Trouble sleeping'];
-const TILTS = ['-1.6deg', '1.2deg', '-0.8deg', '1.8deg', '-1.2deg', '0.9deg'];
-function ForYou({ onSearch, onStartQuiz }) {
+/* ---------- does this sound familiar? A checkerboard of real needs ----------
+   Quote tiles alternate with lifestyle photos (2 columns on phones, 4 on
+   desktop). Each quote is a common need from the quiz (WebIntake.jsx
+   COMMON_NEEDS), said the way people say it; it searches the Shop for that
+   need. These are prompts, not testimonials. */
+const FAMILIAR = [
+  { q: 'My cramps knock me out every month.', need: 'Cramps or period pain', tone: 'pink' },
+  { photo: '/landing/pajamas-overhead.webp', alt: 'A woman in red striped pajamas on the phone, from above' },
+  { photo: '/landing/sink-flatlay.webp', alt: 'A sink full of brushes, makeup and hair tools, from above' },
+  { q: 'I bleed through everything.', need: 'Heavy periods', tone: 'ink' },
+  { q: 'I leak a little when I sneeze.', need: 'Bladder leakage or incontinence', tone: 'ink' },
+  { photo: '/landing/curlers-call.webp', alt: 'A woman in hair curlers on a phone call' },
+  { photo: '/landing/robe-vanity.webp', alt: 'A woman in a white robe at a marble vanity in a pink room' },
+  { q: 'Things feel dry down there.', need: 'Vaginal dryness', tone: 'pink' },
+];
+function Familiar({ onSearch, onStartQuiz }) {
   return (
-    <section className="ay-band ay-band--sky ay-band--grid ay-band--scallop ed-foryou" aria-labelledby="ed-foryou-title">
-      <div className="ed-wrap">
-        <div className="ed-foryou__head">
-          <h2 id="ed-foryou-title" className="ed-h1">ayna is for you if you’re looking for…</h2>
-          <span className="ay-toggle-pill" aria-hidden="true">Personalized <b>ON</b></span>
-        </div>
-        <ul className="ed-foryou__notes">
-          {FOR_YOU.map((t, i) => (
-            <li key={t}>
-              <a className={`ay-note${i % 3 === 1 ? ' ay-note--pink' : ''}${i % 2 ? ' ay-note--fold' : ''}`} style={{ '--tilt': TILTS[i] }} href={`/shop?q=${encodeURIComponent(t)}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onSearch?.(t); }}>
-                <span className="ed-foryou__q">“{t}”</span>
-                <span className="ed-foryou__go">See matches <Arrow /></span>
-              </a>
-            </li>
-          ))}
-        </ul>
+    <section className="ed-wrap ed-sec ed-familiar" aria-labelledby="ed-familiar-title">
+      <header className="ed-familiar__head">
+        <h2 id="ed-familiar-title" className="ed-h2">Does this sound <em>familiar</em>?</h2>
         <Go className="ay-btn ay-btn--text" href="/quiz" onGo={onStartQuiz}>Answer six questions<Arrow /></Go>
-      </div>
+      </header>
+      <ul className="ed-familiar__grid">
+        {FAMILIAR.map((t) => (
+          <li key={t.q || t.photo} className={t.q ? `ed-familiar__q is-${t.tone}` : 'ed-familiar__ph'}>
+            {t.q ? (
+              <a href={`/shop?q=${encodeURIComponent(t.need)}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onSearch?.(t.need); }}>
+                <span className="ed-familiar__quote">“{t.q}”</span>
+                <span className="ed-familiar__go">See what helps <Arrow /></span>
+              </a>
+            ) : <img src={t.photo} alt={t.alt} loading="lazy" />}
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
 
-/* ---------- why: one counter photo, four parts ---------- */
-const WHY = [
-  { t: 'Matched to your body', d: 'See how well each product fits you, based on what you tell us.' },
-  { t: 'Evidence beside each pick', d: 'What the research says, with sources, right next to the product.' },
-  { t: 'Real experiences', d: 'Posts from women who have actually used it.' },
-  { t: 'Your whole routine', d: 'Save what you use and see what fits next.' },
-];
-const SPOTS = [['27%', '24%'], ['74%', '40%'], ['20%', '66%'], ['88%', '56%']];
-
-function Why() {
+/* ---------- one plain statement, with real products around it ---------- */
+function Statement() {
+  const reveal = useReveal('home-statement');
+  // The next four of this week's picks (the first four are in the shelf above),
+  // our own product photos first.
+  const cut = useMemo(() => {
+    // Only photos we host, so a slow or blocked retailer image never leaves a gap.
+    const local = (p) => String(p?.image || '').startsWith('/') && NEEDS_PHOTO(p) && !p.hidden;
+    const weekly = weeklyLineup().slice(4).filter(local);
+    const core = ALL_PRODUCTS.filter((p) => local(p) && CORE.test(`${p.category} ${(p.healthFunctions || []).join(' ')}`));
+    const own = [...weekly, ...core.filter((p) => !weekly.includes(p))];
+    return own.length >= 4 ? own.slice(0, 4) : [];
+  }, []);
+  const sticker = (p, i) => <span key={p.id} className={`ed-statement__sticker is-${i}`}><img src={p.image} alt="" loading="lazy" onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }} /></span>;
   return (
-    <section className="ed-wrap ed-sec" aria-labelledby="ed-why-title">
-      <div className="ed-why">
-        <figure className="ed-why__photo ay-frame">
-          <img src="/landing/hiw-ecosystem-vanity.webp" alt="A marble bathroom vanity by candlelight, skincare and makeup laid out around the sink" loading="lazy" />
-          {SPOTS.map(([left, top], i) => <span key={left} className="ed-why__spot" style={{ left, top }} aria-hidden="true">{i + 1}</span>)}
-        </figure>
-        <div>
-          <h2 id="ed-why-title" className="ed-h2">Your counter, decoded.</h2>
-          <p className="ed-meta" style={{ marginTop: 8 }}>What ayna actually is, in four parts.</p>
-          <ol className="ed-why__list">
-            {WHY.map((w, i) => (
-              <li key={w.t}>
-                <span className="ed-why__n" aria-hidden="true">{i + 1}</span>
-                <h3 className="ed-rowtitle">{w.t}</h3>
-                <p>{w.d}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </div>
+    <section className="ed-statement" aria-labelledby="ed-statement-title">
+      <div className="ed-statement__stickers is-left" aria-hidden="true">{cut.slice(0, 2).map(sticker)}</div>
+      <p id="ed-statement-title" className="ed-statement__line">ayna matches women’s health products to your answers, and shows <mark>the research beside each one</mark>.</p>
+      <div ref={reveal} className="ed-statement__stickers is-right" aria-hidden="true">{cut.slice(2, 4).map((p, i) => sticker(p, i + 2))}</div>
     </section>
   );
 }
@@ -239,7 +241,7 @@ function Why() {
 /* ---------- shop by need: the dark band, then the photo strip ---------- */
 function ShopBand({ onOpenProduct, onViewDiscovery }) {
   const needs = useMemo(() => MACRO_GROUPS.filter((g) => g.id !== 'all')
-    .map((g) => ({ id: g.id, label: g.label, group: g.id }))
+    .map((g) => ({ id: g.id, label: sentenceCase(g.label), group: g.id }))
     .map((n) => ({ ...n, pool: productsForNeed(n).filter(NEEDS_PHOTO).sort((a, b) => Number(isPartnerBrandItem(b)) - Number(isPartnerBrandItem(a))) }))
     .filter((n) => n.pool.length >= 2), []);
   const [id, setId] = useState(needs[0]?.id);
@@ -274,13 +276,16 @@ function ShopBand({ onOpenProduct, onViewDiscovery }) {
   );
 }
 
+// A still row of photos you can scroll sideways (it used to slide on its own;
+// the brand ribbon is the page's one moving row).
 function Strip() {
-  const list = (hidden) => (
-    <ul aria-hidden={hidden || undefined}>
-      {STRIP.map((p) => (<li key={p.src}><img src={p.src} alt={hidden ? '' : p.alt} loading="lazy" /></li>))}
-    </ul>
+  return (
+    <div className="ed-strip ay-pinstripe" role="group" aria-label="Photographs from ayna" tabIndex={0}>
+      <div className="ed-strip__track">
+        <ul>{STRIP.map((p) => (<li key={p.src}><img src={p.src} alt={p.alt} loading="lazy" /></li>))}</ul>
+      </div>
+    </div>
   );
-  return <div className="ed-strip ay-pinstripe" role="group" aria-label="Photographs from ayna"><div className="ed-strip__track">{list(false)}{list(true)}</div></div>;
 }
 
 /* ---------- how it works: these ARE a sequence ---------- */
@@ -290,6 +295,12 @@ const STEPS = [
   { t: 'Get your ecosystem', d: 'Ranked for you.', icon: 'shelf', tone: 'espresso', src: '/landing/hiw-ecosystem-cabinet.webp', alt: 'A medicine cabinet with shelves full of skincare and beauty products', pos: '50% 50%' },
   { t: 'You decide', d: 'Nothing is bought until you say so.', icon: 'hand', tone: 'butter', src: '/landing/hiw-decide-basket.webp', alt: 'Looking down at a red shopping basket of products between two sneakers', pos: '50% 45%' },
 ];
+// The one scroll-driven sequence on the page: on desktop the four step photos
+// arrive one after another as the row scrolls in (45ms apart, once). Text never waits.
+function StepPhoto({ step, i }) {
+  const reveal = useReveal(`home-step-${i}`, { minWidth: 768, delay: i * 45 });
+  return <figure ref={reveal} className="ed-step__img ay-frame"><img src={step.src} alt={step.alt} style={{ objectPosition: step.pos }} loading="lazy" /></figure>;
+}
 function How({ onViewHowItWorks }) {
   return (
     <section className="ed-wrap ed-sec" aria-labelledby="ed-how-title">
@@ -301,9 +312,9 @@ function How({ onViewHowItWorks }) {
         {STEPS.map((st, i) => (
           <li key={st.t} className="ed-step ay-tabcard">
             <span className={`ay-tabcard__strip${st.tone ? ` ay-tabcard__strip--${st.tone}` : ''}`} aria-hidden="true">Step {i + 1}</span>
-            <Sticker icon={st.icon} />
+            <span className={`ed-step__big is-${i}`} aria-hidden="true">{i + 1}</span>
             <div className="ed-step__in">
-              <figure className="ed-step__img ay-frame"><img src={st.src} alt={st.alt} style={{ objectPosition: st.pos }} loading="lazy" /></figure>
+              <StepPhoto step={st} i={i} />
               <div>
                 <h3 className="ed-rowtitle"><span className="ed-sr">Step {i + 1}: </span>{st.t}</h3>
                 <p>{st.d}</p>
@@ -327,7 +338,7 @@ function Evidence({ onViewArticles }) {
     <section className="ed-wrap ed-sec" aria-labelledby="ed-ev-title">
       <div className="ed-evidence">
         <div className="ed-evidence__copy">
-          <h2 id="ed-ev-title" className="ed-h2">How strong is the evidence? We show you.</h2>
+          <h2 id="ed-ev-title" className="ed-h2">Every product shows how strong its evidence is</h2>
           <p className="ed-body">Product pages grade the research on the same three-step scale, next to the sources we read. Unsupported claims are labeled, not upgraded into facts.</p>
           <Go className="ay-btn ay-btn--text" href="/library" onGo={onViewArticles}>Read our sources<Arrow /></Go>
         </div>
@@ -363,7 +374,7 @@ function Reads({ onViewArticle, onViewArticles }) {
   return (
     <section className="ed-wrap ed-sec" aria-labelledby="ed-reads-title">
       <header className="ed-head">
-        <h2 id="ed-reads-title" className="ed-h2">Short reads, real sources.</h2>
+        <h2 id="ed-reads-title" className="ed-h2">Quick reads about your body, with sources</h2>
         <a className="ay-btn ay-btn--text ed-head__all" href="/library" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onViewArticles?.(); }}>Open the Library<Arrow /></a>
       </header>
       <div className={fact ? 'ed-reads' : undefined}>
@@ -397,13 +408,14 @@ function Reads({ onViewArticle, onViewArticles }) {
 /* ---------- community: the one sky band (news, real talk, members' top posts) ---------- */
 function Community({ onViewCommunity, posts = [] }) {
   const news = useLatestAnnouncement();
+  const reveal = useReveal('home-community');
   return (
     <section className="ed-sky ay-band ay-band--pink ay-band--scallop" aria-labelledby="ed-comm-title">
       <div className="ed-wrap ed-sky__grid">
-        <figure className="ed-sky__photo ay-polaroid" style={{ '--tilt': '-1.5deg' }}><img src="/landing/story-reviews-phones.webp" alt="Friends in a circle looking down at their phones, blue sky above" loading="lazy" /><figcaption>The ayna community</figcaption></figure>
+        <figure ref={reveal} className="ed-sky__photo ay-polaroid" style={{ '--tilt': '-1.5deg' }}><img src="/landing/story-reviews-phones.webp" alt="Friends in a circle looking down at their phones, blue sky above" loading="lazy" /><figcaption>The ayna community</figcaption></figure>
         <div className="ed-sky__copy">
           <h2 id="ed-comm-title" className="ed-h2">Real talk about what women actually use.</h2>
-          <p className="ed-body">Reviews, questions and routines from the ayna community, in one place. Ask questions, review what you use and share playlists with women who get it.</p>
+          <p className="ed-body">Reviews, questions and routines from women who use these products. Ask a question, review what you use or share a playlist.</p>
           <Go className="ay-btn ay-btn--secondary" href="/community" onGo={onViewCommunity}>Read reviews</Go>
         </div>
         <div>
@@ -421,7 +433,7 @@ function Community({ onViewCommunity, posts = [] }) {
                 return (
                   <li key={post.id}>
                     <button type="button" className="ed-post ay-note" style={{ '--tilt': i ? '1deg' : '-1deg' }} onClick={() => onViewCommunity?.()}>
-                      <span className="ed-post__meta">From the Powder Room · {post.kind === 'question' ? 'Question' : post.kind === 'review' ? 'Review' : 'Post'} · {who}</span>
+                      <span className="ed-post__meta">{post.kind === 'question' ? 'Question' : post.kind === 'review' ? 'Review' : 'Post'} from {who}</span>
                       <span className="ed-post__body">{post.body}</span>
                     </button>
                   </li>
@@ -438,10 +450,11 @@ function Community({ onViewCommunity, posts = [] }) {
 /* ---------- who we are + the community round ----------
    Investment copy lives in src/data/invest.js. The disclaimer stays with the button. */
 function Us({ onViewAbout }) {
+  const reveal = useReveal('home-us');
   return (
     <section className="ed-wrap ed-sec" aria-labelledby="ed-us-title">
       <div className="ed-us">
-        <figure className="ay-folder ed-us__photo">
+        <figure ref={reveal} className="ay-folder ed-us__photo">
           <span className="ay-folder__sheet" aria-hidden="true" /><span className="ay-folder__sheet" aria-hidden="true" />
           <span className="ay-folder__photo">
             <span className="ay-folder__clip" aria-hidden="true"><svg viewBox="0 0 46 40"><path d="M5 16h36l-5 20H10z" /><path d="M14 16V5h18v11" /></svg></span>
@@ -474,10 +487,11 @@ function Us({ onViewAbout }) {
 
 /* ---------- final call to action ---------- */
 function Final({ onStartQuiz, onViewDiscovery }) {
+  const reveal = useReveal('home-final');
   return (
     <section className="ed-final ay-band ay-band--sky ay-band--grid ay-band--scallop" aria-labelledby="ed-start-title">
       <div className="ed-wrap ed-final__in">
-        <span className="ay-frame ed-final__photo"><img src="/landing/banner-bath-phone.webp" alt="A woman in a face mask relaxing in a pink tiled bath, scrolling her phone, products along the ledge" loading="lazy" width="960" height="400" /></span>
+        <span ref={reveal} className="ay-frame ed-final__photo"><img src="/landing/banner-bath-phone.webp" alt="A woman in a face mask relaxing in a pink tiled bath, scrolling her phone, products along the ledge" loading="lazy" width="960" height="400" /></span>
         <Envelope className="ed-final__letter">
           <h2 id="ed-start-title" className="ed-h1">Start with six questions.</h2>
           <p className="ed-lead">Then a shop matched to you.</p>
@@ -503,8 +517,8 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
       {personal?.dashboard ? personalSlot : <Brands onViewWaitlist={onViewWaitlist} />}
       {!personal?.dashboard && personalSlot}
       <Picks onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={personal?.topPicks || null} />
-      {!personal && <ForYou onSearch={onSearch} onStartQuiz={onStartQuiz} />}
-      <Why />
+      {!personal && <Familiar onSearch={onSearch} onStartQuiz={onStartQuiz} />}
+      <Statement />
       <ShopBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
       <How onViewHowItWorks={onViewHowItWorks} />
       <Evidence onViewArticles={onViewArticles} />

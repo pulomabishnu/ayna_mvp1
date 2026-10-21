@@ -1,11 +1,11 @@
 import RotatingProducts from '../components/RotatingProducts.jsx';
-import SlideToStart from '../components/SlideToStart.jsx';
 import { PARTNER_BRANDS } from '../../utils/partnerBrands';
 import '../landing.css';
 import FinishQuizCard from '../../components/FinishQuizCard.jsx';
 
 // The feature reel (what the app does) on the website's hero parts: stamp,
-// serif headline with the pink italic word, brand ticker. No photographs.
+// headline, a still brand row. One plain button starts the quiz (it used to
+// be slide-to-start, a hidden gesture; anti-vibe guide 5d).
 export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAccount, onAboutAyna, quizDraft = null, onResumeQuiz, onStartOverQuiz }) {
   const names = PARTNER_BRANDS.map((b) => b.name);
   return <main className="ay-land">
@@ -35,7 +35,10 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
     <section className="ay-land-actions" aria-label="Start ayna">
       {quizDraft && onResumeQuiz
         ? <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} className="ay-land-finish" />
-        : <SlideToStart onComplete={onStartQuiz} />}
+        : <>
+          <button type="button" className="ay-land-start" onClick={onStartQuiz}>Start the quiz<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
+          <p className="ay-land-start-note">Six quick questions, then your matches.</p>
+        </>}
       <div className="ay-land-links"><button type="button" onClick={onBrowse}>Just browsing</button><button type="button" onClick={onAboutAyna}>About us</button></div>
     </section>
   </main>;

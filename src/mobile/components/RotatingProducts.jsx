@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 // ayna does, each a full colour block with one big graphic. Numbers here are
 // illustrative UI (labelled as a preview), not anyone's real data.
 const FEATURES = [
-  { key: 'ecosystem', label: 'Your Ecosystem', tone: 'butter' },
+  { key: 'ecosystem', label: 'Your ecosystem', tone: 'butter' },
   { key: 'match', label: 'Your match', tone: 'pink' },
   { key: 'ask', label: 'Ask ayna', tone: 'mint' },
   { key: 'discover', label: 'Discover', tone: 'peri' },

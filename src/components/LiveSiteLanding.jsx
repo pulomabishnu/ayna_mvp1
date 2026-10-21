@@ -124,7 +124,7 @@ function productTypeOptions() {
 
 /** Mirrors Discovery's "Ayna" match-quality filter, minus the quiz-derived
  * best-match ranking that only Discovery has access to — here "Best Match"
- * just means "already recommended to you," and "In My Ecosystem" is only
+ * just means "already recommended to you," and "In My ecosystem" is only
  * meaningful (and only passed) for the returning-user shop. */
 function matchesAyna(product, filter, { ownedIds, recommendedIds } = {}) {
   if (!filter || filter === 'all') return true;
@@ -584,7 +584,7 @@ function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommend
                   <option value="best-match">Best Match</option>
                   <option value="clinician">Clinical Context</option>
                   <option value="community">Community Favorite</option>
-                  <option value="ecosystem">In My Ecosystem</option>
+                  <option value="ecosystem">In My ecosystem</option>
                 </select>
               </label>
               <label>

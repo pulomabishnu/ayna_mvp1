@@ -111,14 +111,14 @@ export default function SiteFooter({
         <div className="ay-foot__brand">
           <p className="ay-foot__logo">ayna</p>
           <p className="ay-foot__blurb">
-            Personalized women's health discovery. Matched to your body, your goals, your data.
+            Women's health products matched to your answers, with the research beside each one.
           </p>
         </div>
 
         <FooterColumn title="Explore">
           <a className="ay-foot__link" href="/how-it-works" onClick={(e) => footerGo(e, onViewHowItWorks)}>How it works</a>
           <a className="ay-foot__link" href="/shop" onClick={(e) => footerGo(e, () => onViewDiscovery?.(''))}>Shop</a>
-          <a className="ay-foot__link" href="/ecosystem" onClick={(e) => footerGo(e, onViewEcosystem)}>My Ecosystem</a>
+          <a className="ay-foot__link" href="/ecosystem" onClick={(e) => footerGo(e, onViewEcosystem)}>My ecosystem</a>
           <a className="ay-foot__link" href="/library" onClick={(e) => footerGo(e, onViewArticles)}>Library</a>
           <a className="ay-foot__link" href="/community" onClick={(e) => footerGo(e, onViewCommunity)}>Community</a>
           <a className="ay-foot__link" href="/campus-resources">Campus resources</a>

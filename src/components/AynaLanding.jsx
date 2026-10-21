@@ -118,7 +118,7 @@ function hasCommunitySupport(product) {
 
 /** Mirrors Discovery's "Ayna" match-quality filter, minus the quiz-derived
  * best-match ranking that only Discovery has access to, here "Best Match"
- * just means "already recommended to you," and "In My Ecosystem" is only
+ * just means "already recommended to you," and "In My ecosystem" is only
  * meaningful (and only passed) for the returning-user shop. */
 function matchesAyna(product, filter, { ownedIds, recommendedIds } = {}) {
   if (!filter || filter === 'all') return true;
@@ -664,7 +664,7 @@ function WelcomeBack({ heroBanner = null, user, myProducts, recommendedProductId
         ) : (
           <button type="button" className="ed-dash__part" onClick={() => onViewArticles?.()}>
             <span className="ed-dash__label">Library</span>
-            <strong className="ed-dash__title">Short reads, real sources</strong>
+            <strong className="ed-dash__title">Quick reads about your body</strong>
             <span className="ed-dash__body">Answer the quiz and we will pick the read that fits you.</span>
             <span className="ed-dash__go">Open the Library <Arrow /></span>
           </button>

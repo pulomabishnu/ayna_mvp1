@@ -28,7 +28,7 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
                         <p>
                             {ecosystemList.length > 0
                                 ? `Pick up to 3 from your ${ecosystemList.length} saved product(s).`
-                                : 'Add products to My Ecosystem first, then compare them here.'}
+                                : 'Add products to My ecosystem first, then compare them here.'}
                         </p>
                         {ecosystemList.length > 0 ? (
                             <>

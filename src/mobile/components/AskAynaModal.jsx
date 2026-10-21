@@ -10,6 +10,7 @@ import { questionForAnswer } from '../../utils/sharedAnswer.js';
 import AskFollowUps from '../../components/AskFollowUps.jsx';
 import { chipsFor, followUpRequestFields } from '../../utils/askFollowUps.js';
 import { fetchWithTimeout } from '../../utils/network.js';
+import { useSheetDrag } from '../hooks/useSheetDrag.js';
 
 /**
  * Mobile port of ProfileChatbot's merge/summary logic
@@ -92,6 +93,9 @@ export default function AskAynaModal({
   const [sendError, setSendError] = useState('');
   const [session, setSession] = useState(undefined); // undefined = still checking
   const [hasOpened, setHasOpened] = useState(open);
+  // A bottom sheet: grabber, drag down to close (useSheetDrag).
+  const { sheetRef, grabberProps } = useSheetDrag(onClose);
+  useEffect(() => { if (open && sheetRef.current) { sheetRef.current.style.transform = ''; sheetRef.current.style.transition = ''; } }, [open, sheetRef]);
   // What she was looking at when she asked (e.g. her dashboard week), sent
   // along with this conversation's questions.
   const [screenContext, setScreenContext] = useState('');
@@ -235,7 +239,8 @@ export default function AskAynaModal({
         flexDirection: 'column',
       }}
     >
-      <div className="ayna-ask-drawer-content" role="dialog" aria-label="Ask ayna" aria-modal={open ? true : undefined} aria-hidden={!open} inert={!open ? true : undefined}>
+      <div ref={sheetRef} className="ayna-ask-drawer-content" role="dialog" aria-label="Ask ayna" aria-modal={open ? true : undefined} aria-hidden={!open} inert={!open ? true : undefined}>
+      {onClose && <button {...grabberProps} aria-label="Close Ask ayna" />}
       <div
         style={{
           paddingTop: 'max(20px, env(safe-area-inset-top))',
@@ -320,7 +325,7 @@ export default function AskAynaModal({
             {ASK_STARTERS.map((q, i) => <button type="button" key={q} className="ay-ask-starter" style={{ '--i': i }} onClick={() => setInput(q)}>{q}</button>)}
           </div>
         )}
-        {sending && <div className="ay-typing" role="status" aria-label="ayna is thinking"><i /><i /><i /></div>}
+        {sending && <div className="ay-typing" role="status" aria-label="Looking into it"><i /><i /><i /></div>}
         <div ref={bottomRef} />
       </div>
 

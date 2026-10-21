@@ -11,7 +11,7 @@
   box-shadow: 4px 4px 0 var(--ay-ink, #1d1a2b); font-family: var(--ay-sans);
 }
 .ay-newacct__mark { display: grid; place-items: center; width: 56px; height: 56px; border: 2px solid #1d1a2b; border-radius: 50%; background: var(--ay-butter, #f7e78e); color: #1d1a2b; }
-.ay-newacct__mark svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+.ay-newacct__mark svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.75; }
 .ay-newacct__card h2 { margin: 0; font: 400 var(--ay-fs-section)/1.15 var(--ay-serif); letter-spacing: -0.01em; color: inherit; text-wrap: balance; }
 .ay-newacct__card p { margin: 0; max-width: 34ch; font: 400 var(--ay-fs-body)/1.55 var(--ay-sans); color: var(--ay-ink-soft, #4a4658); }
 .ay-newacct__primary {

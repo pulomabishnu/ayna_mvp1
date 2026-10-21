@@ -180,7 +180,7 @@ describe('what might help this week', () => {
   it('before a period: cramps and period products, hers first, each with a reason from her data', () => {
     const picks = weekPicks({ ctx: lutealCtx, insights: [sleepShort], needIds: ['pain.menstrual_cramp'], products: [lola, thermacare], matches: [magnesium] });
     expect(picks.map((p) => p.product.id)).toEqual(['p-thermacare', 'p-lola-tampon', 'p-magnesium-glycinate']);
-    expect(picks[0].reason).toBe('Your period is due in about 5 days. In your Ecosystem for cramps.');
+    expect(picks[0].reason).toBe('Your period is due in about 5 days. In your ecosystem for cramps.');
     expect(picks[2].reason).toBe("You've slept less than usual 5 of the last 7 nights. Matched to you for sleep.");
     expect(picks[2].owned).toBe(false);
   });

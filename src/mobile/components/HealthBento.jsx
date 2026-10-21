@@ -269,7 +269,7 @@ function NormalRanges({ data }) {
   );
 }
 
-/** Each goal from her quiz, with what in her Ecosystem is graded for it. */
+/** Each goal from her quiz, with what in her ecosystem is graded for it. */
 function GoalsCovered({ goals, effects = [], onOpenProduct, title = 'Your goals, covered' }) {
   if (!goals.length && !effects.length) return null;
   const item = (product, level, prefix) => (
@@ -286,7 +286,7 @@ function GoalsCovered({ goals, effects = [], onOpenProduct, title = 'Your goals,
           <li key={g.needId}>
             <span className="ay-wx-goal-label">{g.label}</span>
             {g.owned.map((o) => <div key={o.product.id}>{item(o.product, o.level, '')}</div>)}
-            {!g.owned.length && g.match && <div>{item(g.match.product, g.match.level, 'Not in your Ecosystem yet. Matched: ')}</div>}
+            {!g.owned.length && g.match && <div>{item(g.match.product, g.match.level, 'Not in your ecosystem yet. Matched: ')}</div>}
           </li>
         ))}
         {effects.map((e) => (

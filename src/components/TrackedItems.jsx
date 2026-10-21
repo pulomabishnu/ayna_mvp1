@@ -43,7 +43,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
             <header className="aytrk__head">
                 <h1 className="ay-h1">Your dashboard</h1>
                 <p className="aytrk__lede">
-                    Everything in one place: your products, health and wearable data, and care options.
+                    Your products, health and wearable data, and care options, side by side.
                 </p>
             </header>
 

@@ -221,6 +221,41 @@ titles 22 serif, screen titles 28 serif. Inset grouped lists for settings and
 profile lists. Tab bar: 5 equal columns, 24px icons, 11.5px labels, selected
 = pink pill behind the icon. Sheets for filters. Safe areas everywhere.
 
+## Finish: grainy, retro, matte (founder, Oct 21)
+
+"Kinda grainy and retro, use a grain filter over it, and it should be matte."
+
+- **Grain.** One film-grain layer over the whole site and app: a pre-rendered
+  160px noise tile (`public/images/ayna-grain-light.png`, espresso specks;
+  `ayna-grain-dark.png`, butter specks), about 10KB each, tiled on one fixed,
+  `pointer-events: none` pseudo-element (`src/styles/finish.css` for the web,
+  `src/mobile/app-motion.css` for the app). Tune it with `--grain-opacity` and
+  `--grain-opacity-dark`. Why a bitmap: it is decoded once and composited; an
+  SVG `feTurbulence` background is re-rasterised on zoom, animated grain costs
+  battery, and `mix-blend-mode` on a fixed full-screen layer makes the browser
+  blend the whole viewport on every scroll frame (worst on older iPhones and
+  low-end Android). Never animated. Off for print and under
+  `prefers-reduced-transparency`.
+- **Matte.** Flat ink fills, no glossy gradients, no glass. Backdrop blur only
+  on the site header and the app tab bar; sheets and dialogs dim the page with
+  a flat 40% espresso scrim (`--sheet-dim`) instead.
+- **Elevation.** No soft grey drop shadows and no glows. Raised or tappable
+  things get the outline plus the hard offset shadow (`3px 3px 0` espresso);
+  nothing else casts a shadow.
+- **Dark mode** stays warm espresso tints, never `#000`, and never neon.
+- **Selection** is ayna pink with espresso text in both themes.
+
+## Motion (anti-vibe guide, section 4)
+
+Tokens live in `src/styles/motion.css` (web and app) and `src/mobile/tokens.css`:
+`--ease-out`, `--ease-in-out`, `--ease-exit`, `--ease-pop` (delight only, max
+overshoot 1.2), `--t-press` 110ms, `--t-fast` 160ms, `--t-base` 240ms,
+`--t-sheet` 360ms, `--t-push` 320ms, `--t-delight` 520ms, `--stagger` 45ms.
+No file defines its own cubic-bezier. One moving loop per screen at most (the
+brand ribbon on the home page, which pauses on hover, focus, offscreen, the
+footer's Pause motion and reduced motion). Body text, prices, evidence and
+safety never move.
+
 ## Checks before anything ships
 
 Blur, grayscale, no-decoration, real-content (longest name, no image, zero

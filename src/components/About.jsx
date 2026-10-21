@@ -110,8 +110,8 @@ export default function About({ onBack, onExplore, onStart }) {
       frame="stamp"
     >
       <EdBlock
-        title="Your body. Your questions. A clearer place to start."
-        intro="ayna helps you discover women’s wellness products with your needs in mind. Explore product information, research and reviews in one place, so you can spend less time searching and more time understanding your options."
+        title="Find what fits your body, with the research right next to it."
+        intro="ayna matches women’s health products to your answers and puts the research and reviews beside each one, so you spend less time searching."
       >
         <ol className="ed-principles">
           {PRINCIPLES.map((p, i) => (
@@ -124,7 +124,7 @@ export default function About({ onBack, onExplore, onStart }) {
         </ol>
       </EdBlock>
 
-      <EdBlock title="Three of us, one question: why is this so hard to find?">
+      <EdBlock title="We kept asking the same thing: why is this so hard to find?">
         <div className="ed-story">
           <div className="ed-prose">
             <p>
@@ -141,7 +141,7 @@ export default function About({ onBack, onExplore, onStart }) {
               <em>why does understanding our options require so much searching?</em>
             </p>
             <p>
-              ayna grew out of that question. We’re building a place where women can explore wellness products,
+              ayna grew out of that question. We’re building a place where women can compare wellness products,
               understand the information behind them and find options that reflect their individual needs.
             </p>
             <div className="ed-pull">
@@ -157,8 +157,8 @@ export default function About({ onBack, onExplore, onStart }) {
       </EdBlock>
 
       <EdBlock
-        title="The people building ayna."
-        intro="We’re Puloma, Eliz and Ameera: three women who met at Cornell and wanted a better starting point for women navigating wellness products."
+        title="The people building ayna"
+        intro="We’re Puloma, Eliz and Ameera: three women who met at Cornell and wanted a better starting point for women trying to figure out wellness products."
       >
         <ul className="ed-people">
           {FOUNDERS.map((f) => (

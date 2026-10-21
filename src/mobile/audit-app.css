@@ -136,7 +136,7 @@
   transition: fill .18s var(--ay-ease);
 }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-card-save[aria-pressed='true'] { background: var(--ay-img-tile) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-card-save[aria-pressed='true'] svg { fill: var(--ay-pink) !important; animation: ip-pop .32s var(--ay-pop); }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-card-save[aria-pressed='true'] svg { fill: var(--ay-pink) !important; }
 @media (prefers-reduced-motion: reduce) { .ayna-mobile.ayna-mobile.ayna-mobile .ayna-card-save svg { animation: none !important; transition: none; } }
 
 /* Discover deck save button and landing reel: heart, not bookmark */

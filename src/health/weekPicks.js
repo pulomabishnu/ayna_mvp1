@@ -119,7 +119,7 @@ export function weekPicks({ ctx = {}, insights = [], needIds = [], products = []
       if (!best) continue;
       used.add(best.p.id);
       const word = NEED_WORDS[need.needId] || 'this';
-      picks.push({ product: best.p, needId: need.needId, owned: best.own, level: best.fit.level, reason: `${need.why}. ${best.own ? 'In your Ecosystem' : 'Matched to you'} for ${word}.` });
+      picks.push({ product: best.p, needId: need.needId, owned: best.own, level: best.fit.level, reason: `${need.why}. ${best.own ? 'In your ecosystem' : 'Matched to you'} for ${word}.` });
     }
   }
   // Show in need order, owned first within a need.
