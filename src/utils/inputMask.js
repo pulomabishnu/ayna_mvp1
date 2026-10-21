@@ -52,17 +52,27 @@ export function caretAfterDigits(formatted, n) {
  */
 export function maskedChange(event, format) {
   const el = event.target;
-  const raw = el.value;
-  const caret = el.selectionStart ?? raw.length;
+  let raw = el.value;
+  let caret = el.selectionStart ?? raw.length;
+  // Backspace that only removed a separator ("(", ")", " ", "-") would be put
+  // straight back by the formatter and feel stuck: delete the digit before it.
+  const deleting = event.nativeEvent?.inputType === 'deleteContentBackward';
+  const prev = el.dataset.maskPrev;
+  if (deleting && prev != null && digitsOf(prev) === digitsOf(raw)) {
+    let i = caret - 1;
+    while (i >= 0 && !/\d/.test(raw[i])) i -= 1;
+    if (i >= 0) { raw = raw.slice(0, i) + raw.slice(i + 1); caret = i; }
+  }
   // A leading "+1" counts its 1 as a digit in both strings, so it lines up.
   const before = digitsOf(raw.slice(0, caret)).length;
   const next = format(raw);
-  if (next !== raw) {
+  if (next !== el.value) {
     el.value = next;
     if (document.activeElement === el) {
       const pos = caretAfterDigits(next, before);
       try { el.setSelectionRange(pos, pos); } catch { /* type=tel supports it; ignore others */ }
     }
   }
+  el.dataset.maskPrev = next;
   return next;
 }

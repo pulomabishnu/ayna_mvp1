@@ -79,3 +79,8 @@
 .ayna-mobile[data-theme='dark'] .ay-blend__row input[type='range']::-webkit-slider-runnable-track { background: #ffedac; }
 .ayna-mobile[data-theme='dark'] .ay-blend__row input[type='range']::-webkit-slider-thumb { border-color: #ffedac; box-shadow: 2px 2px 0 #ffedac; }
 .ayna-mobile .ay-you-tabs + .ay-you-body { padding-top: 12px; }
+.ay-stat span:not(.ay-skel) { white-space: nowrap; }
+@media (max-width: 359px) {
+  .app-container .wy .ay-stat, .ayna-mobile .ay-stat { padding: 10px; }
+  .ay-stat span:not(.ay-skel) { font-size: 12.5px !important; }
+}

@@ -46,9 +46,11 @@ function growFrom(panel) {
     r = panel.getBoundingClientRect();
   }
   if (!r.width || !r.height) return;
-  // A phone bottom sheet (full width, on the bottom edge) slides up natively.
+  // Sheets keep their own slide: a phone bottom sheet (full width, on the
+  // bottom edge) or a full-height side panel. Only card-like dialogs grow.
   const bottomSheet = r.width >= vw * 0.9 && Math.abs(r.bottom - vh) < 4;
-  if (bottomSheet) return;
+  const sidePanel = r.height >= vh * 0.9 && (r.left <= 4 || Math.abs(r.right - vw) < 4);
+  if (bottomSheet || sidePanel) return;
   if (reduced()) {
     panel.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 150, easing: 'linear' });
     return;
