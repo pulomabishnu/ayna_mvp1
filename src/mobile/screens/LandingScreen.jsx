@@ -36,7 +36,7 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
       {quizDraft && onResumeQuiz
         ? <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} className="ay-land-finish" />
         : <>
-          <button type="button" className="ay-land-start" onClick={onStartQuiz}>Start the quiz<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
+          <button type="button" className="ay-land-start" onClick={onStartQuiz}>See my matches<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
           <p className="ay-land-start-note">Six quick questions, then your matches.</p>
         </>}
       <div className="ay-land-links"><button type="button" onClick={onBrowse}>Just browsing</button><button type="button" onClick={onAboutAyna}>About us</button></div>

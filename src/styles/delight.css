@@ -2,7 +2,7 @@
    (docs/anti-vibe-checklist.md, "Delight details"). Tokens from motion.css.
    Colours resolve to the site tokens (--ay-*) or the app tokens (--ayna-*). */
 
-.ay-sr, .ay-charring .sr-only, .ay-confirm .sr-only {
+.ay-sr, .ay-charring .sr-only, .ay-confirm .sr-only, .ayna-mobile .sr-only {
   position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
@@ -49,3 +49,6 @@
 .ayna-mobile[data-theme='dark'] .ay-gtoast.is-app .ay-gtoast__card button { border-color: #3e2723; color: #3e2723; }
 .app-container[data-theme='brand-dark'] .ay-gtoast__card { background: #ffedac; color: #3e2723; border-color: #ffedac; }
 .app-container[data-theme='brand-dark'] .ay-gtoast__card button { border-color: #3e2723; color: #3e2723; }
+/* Leading line icons in buttons and labels (components/icons/UiIcons.jsx). */
+.ay-ui-icon { flex: none; vertical-align: -0.22em; }
+.ay-ui-icon.is-lead { margin-inline-end: .35em; }

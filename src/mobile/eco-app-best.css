@@ -236,3 +236,14 @@ html.ay-motion-paused .ayna-mobile:is(#ay, .ayna-mobile) .eco-app :is(.eco-app-f
 .ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__back { border-color: #ffedac; }
 html.ay-motion-paused .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__bar i { animation: none !important; }
 @media (prefers-reduced-motion: reduce) { .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__bar i { animation: none !important; } }
+/* Pass 2: icon + label buttons (the text "+" glyphs became the shared PlusIcon). */
+.ayna-mobile .ay-shelf2-pick > button, .ayna-mobile .ay-shelf2-slot { display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.ayna-mobile .ay-shelf2-slot { flex-direction: column; }
+/* Pass 2: one primary action in thumb reach, "For you" beside it as the quiet choice. */
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-dock { display: flex; align-items: center; justify-content: center; gap: 10px; width: calc(100% - 40px); max-width: 420px; transform: translateY(-100%); pointer-events: none; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-dock button { transform: none; pointer-events: auto; animation: none; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-dock button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #f7badd !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-dock .eco-app-dock__primary { flex: 1; justify-content: center; min-height: 52px !important; padding: 0 20px !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-dock .eco-app-dock__for { flex: none; background: var(--ayna-bg, #ffedac) !important; color: var(--ayna-heading, #3e2723) !important; border-color: currentColor !important; box-shadow: none !important; min-height: 52px !important; }
+.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-dock .eco-app-dock__for { background: #3e2723 !important; color: #ffedac !important; }
+@media (prefers-reduced-motion: no-preference) { .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-dock { animation: ay-morph-in var(--t-base) var(--ease-out) both; } }

@@ -171,7 +171,7 @@ export default function EcosystemBubbles({
     // should instead be a single affordance to Browse and pick anything,
     // not the app pre-choosing which gaps look most fillable). Only shown
     // when there's an actual empty seat in the ring to put it in.
-    const addMoreSeat = { key: '__add-more__', label: '+ Add more', products: [], gap: true };
+    const addMoreSeat = { key: '__add-more__', label: 'Add more', products: [], gap: true };
     const seats = filledCapped.length < MAX_SATELLITES ? [...filledCapped, addMoreSeat] : filledCapped;
 
     return { seats, covered: filled.length };

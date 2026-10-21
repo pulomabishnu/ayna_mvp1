@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ProductCard from '../ProductCard';
 import { toast } from '../../utils/toast';
 import { loadCustom, saveCustom } from './shelfLayout.js';
+import { PlusIcon, CloseIcon, ChevronLeftIcon, ChevronRightIcon } from '../icons/UiIcons.jsx';
 
 /* "Your shelves": one row per area of care, products as the same polaroid
    card used in the Shop, scrolling sideways with an Add tile at the end.
@@ -33,8 +34,8 @@ function Row({ children, label }) {
       <ul className="ay-shelf__row" ref={ref} aria-label={label}>{children}</ul>
       {!(edge.start && edge.end) && (
         <div className="ay-shelf__nav">
-          <button type="button" onClick={() => page(-1)} disabled={edge.start} aria-label={`Scroll ${label} back`}>←</button>
-          <button type="button" onClick={() => page(1)} disabled={edge.end} aria-label={`Scroll ${label} forward`}>→</button>
+          <button type="button" onClick={() => page(-1)} disabled={edge.start} aria-label={`Scroll ${label} back`}><ChevronLeftIcon /></button>
+          <button type="button" onClick={() => page(1)} disabled={edge.end} aria-label={`Scroll ${label} forward`}><ChevronRightIcon /></button>
         </div>
       )}
     </div>
@@ -113,7 +114,7 @@ export default function ShelfRows({ groups, onOpenProduct, onToggleProduct, onAd
           {showHint && arranged.length > 1 && (
             <p className="ay-shelves__hint">
               <span aria-hidden="true">⋮⋮</span> Drag shelves to reorder. Use ⋯ on a product to move it.
-              <button type="button" className="ay-shelves__hintx" onClick={hideHint} aria-label="Dismiss tip">×</button>
+              <button type="button" className="ay-shelves__hintx" onClick={hideHint} aria-label="Dismiss tip"><CloseIcon size={18} /></button>
             </p>
           )}
           {isCustomised && <button type="button" className="ay-shelves__reset" onClick={() => update(() => ({}))}>Reset layout</button>}
@@ -176,7 +177,7 @@ export default function ShelfRows({ groups, onOpenProduct, onToggleProduct, onAd
                   ))}
                 </span>
               )}
-              {onAddMore && group.key !== 'other' && <button type="button" className="ay-shelf__add" onClick={() => onAddMore(group)}>+ Add</button>}
+              {onAddMore && group.key !== 'other' && <button type="button" className="ay-shelf__add" onClick={() => onAddMore(group)}><PlusIcon size={16} className="is-lead" />Add</button>}
             </header>
             <Row label={nameOf(group)}>
               {group.products.map((p, idx) => (

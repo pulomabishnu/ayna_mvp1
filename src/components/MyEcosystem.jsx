@@ -66,6 +66,7 @@ const SHOW_SMS_ON_ECOSYSTEM = false;
 import posthog from 'posthog-js';
 import { useRecommendationViews } from '../utils/recommendationAnalytics';
 import ConfirmButton from './ui/ConfirmButton.jsx';
+import { PlusIcon, CheckIcon, CloseIcon } from './icons/UiIcons.jsx';
 
 // Ecosystem products are stored as a full snapshot of the product object at
 // the moment they're added (toggleMyProduct in App.jsx), not a live ID
@@ -602,7 +603,7 @@ function IntakeRecAltMini({ alt, myProducts, onToggleProduct, onOpenProduct, res
                     {alt.brand && <div style={{ fontSize: 12.5, color: 'var(--color-text-muted)' }}>{alt.brand}</div>}
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', marginTop: '0.45rem' }}>
                         <button type="button" className="btn btn-outline" style={{ padding: '0.3rem 0.55rem', fontSize: 12.5 }} onClick={() => onToggleProduct(alt)}>
-                            {inEco ? '✓ In ecosystem' : '+ Add to Ecosystem'}
+                            {inEco ? <><CheckIcon size={16} className="is-lead" />In ecosystem</> : <><PlusIcon size={16} className="is-lead" />Add to Ecosystem</>}
                         </button>
                         <button type="button" className="btn btn-primary" style={{ padding: '0.3rem 0.55rem', fontSize: 12.5 }} onClick={() => onOpenProduct(alt, { source: 'recommendation' })}>
                             Details
@@ -681,7 +682,7 @@ function IntakeRecommendationsProductCard({
                         position: 'absolute', top: '0.45rem', right: '0.45rem',
                         background: 'var(--color-primary)', color: 'white', padding: '0.15rem 0.45rem',
                         borderRadius: 'var(--radius-pill)', fontSize: 12.5, fontWeight: '600',
-                    }}>✓ Tracked</span>
+                    }}><CheckIcon size={16} className="is-lead" />Tracked</span>
                 )}
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', alignItems: 'center', padding: '0.35rem 0.55rem', background: 'var(--color-bg)', borderBottom: '1px solid var(--color-border)' }}>
@@ -741,7 +742,7 @@ function IntakeRecommendationsProductCard({
                 </div>
                 <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginTop: 'auto' }}>
                     <button type="button" className="btn btn-outline" style={{ padding: '0.32rem 0.55rem', fontSize: 12.5 }} onClick={() => onToggleProduct(product)}>
-                        {isInEcosystem ? '✓ Added' : '+ Add'}
+                        {isInEcosystem ? <><CheckIcon size={16} className="is-lead" />Added</> : <><PlusIcon size={16} className="is-lead" />Add</>}
                     </button>
                     <button type="button" className="btn btn-outline" style={{ padding: '0.32rem 0.55rem', fontSize: 12.5 }} onClick={() => onToggleCompare(compareKey)}>
                         {compareOn ? 'Hide compare' : 'Compare'}
@@ -2069,7 +2070,7 @@ export default function MyEcosystem({
                         );
                     })()}
                     <div className="eco3-actions ayeco__actions" role="group" aria-label="Ecosystem actions">
-                        <button type="button" className="ay-btn ay-btn--primary" onClick={() => setShowAddModal(true)}>+ Add a product</button>
+                        <button type="button" className="ay-btn ay-btn--primary" onClick={() => setShowAddModal(true)}><PlusIcon size={16} className="is-lead" />Add a product</button>
                         {typeof onRedoQuiz === 'function' && <button type="button" className="ay-btn ay-btn--secondary eco-redo" onClick={onRedoQuiz}>Redo quiz</button>}
                         {/* One primary action; the rest live in More (Pass 7: four equal buttons said nothing about where to start). */}
                         <details className="eco3-more">
@@ -2267,7 +2268,7 @@ export default function MyEcosystem({
                                 </div>
                             </div>
                         )}
-                        <button type="button" className="ay-btn ay-btn--secondary" onClick={() => setShowAddModal(true)}>+ Add something you already use</button>
+                        <button type="button" className="ay-btn ay-btn--secondary" onClick={() => setShowAddModal(true)}><PlusIcon size={16} className="is-lead" />Add something you already use</button>
                     </div>
                 )}
 
@@ -2318,7 +2319,7 @@ export default function MyEcosystem({
                     {SHOW_SMS_ON_ECOSYSTEM && smsCardShown && (
                         <div className="eco3-details__card eco3-details__sms">
                             <span className="eco3-tool-ic is-sms" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z" /></svg></span>
-                            <button type="button" className="eco3-details__close" onClick={handleDismissSmsCard} aria-label="Dismiss">✕</button>
+                            <button type="button" className="eco3-details__close" onClick={handleDismissSmsCard} aria-label="Dismiss"><CloseIcon size={18} /></button>
                             {phoneNumberInfo?.is_verified ? (
                                 <>
                                     <p className="eco3-details__title">Text Ayna to get quick health answers</p>
@@ -2407,7 +2408,7 @@ export default function MyEcosystem({
                 {showMoreTools && (
                     <div className="eco2-sheet-overlay eco3-sheet-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowMoreTools(false); }}>
                         <div className="eco2-sheet eco3-sheet" role="dialog" aria-modal="true" aria-labelledby="eco3-sheet-title">
-                            <button type="button" className="eco2-sheet__close" onClick={() => setShowMoreTools(false)} aria-label="Close">✕</button>
+                            <button type="button" className="eco2-sheet__close" onClick={() => setShowMoreTools(false)} aria-label="Close"><CloseIcon size={18} /></button>
                             <p className="eco2-sidebar__eyebrow">More tools</p>
                             <h2 id="eco3-sheet-title" className="eco2-sheet__title">One thing you can do.</h2>
                             <button

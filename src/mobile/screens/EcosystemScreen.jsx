@@ -1,5 +1,7 @@
 import './profile/health-connections.css';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { AskContext } from '../askContext.js';
+import { loadMonthlyCheckinStatus } from '../../utils/monthlyCheckinStore.js';
 import EmptyState from '../components/EmptyState.jsx';
 import { healthAreaLabel } from '../utils/healthAreaLabel.js';
 import MobileHeader from '../components/MobileHeader.jsx';
@@ -24,6 +26,7 @@ import { useDismissed, useRevealOnce } from '../../components/eco/ecoMotion.js';
 import { useLatestAnnouncement } from '../../hooks/useLatestAnnouncement.js';
 import '../eco-app-best.css';
 import HealthShapedNote from '../../components/health/HealthShapedNote.jsx';
+import { PlusIcon } from '../../components/icons/UiIcons.jsx';
 
 const AREA_TONES = ['#F7BADD', '#769EBE', '#3E2723', '#F7BADD', '#769EBE', '#3E2723'];
 const MIN_SHELF_SCORE = 50;
@@ -61,6 +64,15 @@ export default function EcosystemScreen({
   const titleRef = useRef(null);
   const [collapsed, setCollapsed] = useState(false);
   const [sheet, setSheet] = useState(false);
+  const askAyna = useContext(AskContext);
+  // This month's check-in: due until she has done it (signed in only).
+  const [checkinDue, setCheckinDue] = useState(false);
+  useEffect(() => {
+    if (!authUser?.id) return undefined;
+    let live = true;
+    loadMonthlyCheckinStatus().then((st) => { if (live) setCheckinDue(!st?.thisMonthCheckin); }).catch(() => {});
+    return () => { live = false; };
+  }, [authUser?.id]);
   const [query, setQuery] = useState('');
   const [chip, setChip] = useState('all');
   const [gone, dismiss] = useDismissed('ayna_app_eco_for_closed_v1');
@@ -233,6 +245,10 @@ export default function EcosystemScreen({
   const needTotal = needSections.length;
   const needCovered = needSections.filter((sct) => sct.products.length > 0).length;
 
+  // The page's one primary action (thumb reach): check-in when this month's is due, else Ask ayna.
+  const primary = currentProducts.length === 0 || ecoTab === 'dashboard' ? null
+    : checkinDue && onOpenMonthlyCheckin ? { label: `Check in for ${new Date().toLocaleString('en-US', { month: 'long' })}`, onClick: onOpenMonthlyCheckin }
+      : askAyna ? { label: 'Ask ayna', onClick: () => askAyna() } : null;
   const chev = <svg className="eco-app-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>;
   const showTabs = myProducts.length > 0 && onEcoTab;
 
@@ -268,7 +284,7 @@ export default function EcosystemScreen({
           {onReplayStory && <button type="button" className="eco-app-replay" onClick={onReplayStory}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>Replay Wrapped</button>}
         </div>
       </div>}
-      {!hasAnything && !quizDraft && <EmptyState compact art="spark" tone="mint" title="No matches yet" body="Update your answers below or browse the shop." actionLabel="Shop" onAction={onBrowse} />}
+      {!hasAnything && !quizDraft && <EmptyState compact art="search" tone="mint" title="No matches yet" body="Update your answers below or browse the shop." actionLabel="Shop" onAction={onBrowse} />}
       {/* An unfinished quiz stays in view; everything else waits in "For you". */}
       {quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
       {ecosystemNotice && <p className="ayna-cabinet-notice" role="status">{ecosystemNotice}</p>}
@@ -307,13 +323,13 @@ export default function EcosystemScreen({
           {shelf && shelf.shortBy > 0 && shelf.picks.length > 0 && <p className="ay-shelf2-note">{onlyNote(shelf.picks.length, section.phrase)}</p>}
           {empty && <div className="ay-shelf2-empty">
             <p>No strong matches for {section.phrase} yet.</p>
-            <button type="button" onClick={() => onBrowse?.(shortNeedLabel(section.label))}>Shop {shortNeedLabel(section.label).toLowerCase()} <span aria-hidden="true">→</span></button>
+            <button type="button" onClick={() => onBrowse?.(shortNeedLabel(section.label))}>Shop {shortNeedLabel(section.label).toLowerCase()}</button>
           </div>}
           {!section.products.length && shown.length > 0 && <p className="ay-shelf2-note">Not in your Ecosystem yet</p>}
           {shown.length > 0 && <div className="ay-shelf2-row">{shown.map((product) => section.products.length
             ? <ProductCard key={product.id} product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} isSaved={!!savedProducts[product.id]} onToggleSaved={onToggleSaved} />
-            : <div className="ay-shelf2-pick" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}>+ Add to Ecosystem</button></div>)}
-            <button type="button" className="ay-shelf2-slot" onClick={() => onBrowse?.(shortNeedLabel(section.label))} aria-label={`Add a product to ${section.label}`}><span aria-hidden="true">+</span>Add</button>
+            : <div className="ay-shelf2-pick" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}><PlusIcon size={16} />Add to Ecosystem</button></div>)}
+            <button type="button" className="ay-shelf2-slot" onClick={() => onBrowse?.(shortNeedLabel(section.label))} aria-label={`Add a product to ${section.label}`}><PlusIcon size={20} />Add</button>
           </div>}
           {shelf?.care && !careFirst && <details className="ay-shelf-care"><summary>Care options for {section.phrase}</summary><CareLinks care={shelf.care} /></details>}
         </section>;
@@ -328,7 +344,7 @@ export default function EcosystemScreen({
 
       {worthALook.length > 0 && activeChip === 'all' && !q && <section className="ay-shelf2 eco-app-shelf eco-app-worth" style={{ '--area-tone': '#769EBE', '--area-ink': '#3E2723' }} aria-labelledby="ayna-cabinet-next-title">
         <div className="ay-shelf2-head"><h2 id="ayna-cabinet-next-title">Worth a look</h2><span className="ay-shelf2-count">{worthALook.length}</span></div>
-        <div className="ay-shelf2-row">{worthALook.map((product) => <div className="ay-shelf2-pick" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}>+ Add to Ecosystem</button></div>)}</div>
+        <div className="ay-shelf2-row">{worthALook.map((product) => <div className="ay-shelf2-pick" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}><PlusIcon size={16} />Add to Ecosystem</button></div>)}</div>
       </section>}
     </div>
     </>}
@@ -361,12 +377,17 @@ export default function EcosystemScreen({
         </button></li>
       </ul>
     </section>
-    {/* "For you" floats as one small pill near the thumb, never as banners above the shelves. */}
-    {forYou.length > 0 && !sheet && <div className="eco-app-float">
-      <button type="button" aria-haspopup="dialog" onClick={() => setSheet(true)}>
-        <span className="eco-app-float__count" aria-hidden="true">{forYou.length}</span>
-        {forYou.length === 1 ? '1 thing for you' : `${forYou.length} things for you`}
-      </button>
+    {/* One primary action in thumb reach: this month's check-in when it is due,
+        otherwise Ask ayna. "For you" sits beside it as the quiet second choice,
+        never as banners above the shelves. */}
+    {(primary || forYou.length > 0) && !sheet && <div className="eco-app-float">
+      <div className="eco-app-dock">
+        {forYou.length > 0 && <button type="button" className="eco-app-dock__for" aria-haspopup="dialog" onClick={() => setSheet(true)}>
+          <span className="eco-app-float__count" aria-hidden="true">{forYou.length}</span>
+          For you<span className="sr-only"> ({forYou.length})</span>
+        </button>}
+        {primary && <button type="button" className="eco-app-dock__primary" onClick={primary.onClick}>{primary.label}</button>}
+      </div>
     </div>}
     <LegalFooter />
 

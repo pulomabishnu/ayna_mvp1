@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ProductCard from '../ProductCard';
 import HealthBackedBadge from '../health/HealthBackedBadge.jsx';
+import { PlusIcon, ChevronLeftIcon, ChevronRightIcon } from '../icons/UiIcons.jsx';
 
 /* "Fill the gaps": the needs she picked that nothing on her shelves covers
    yet, as tags on one strip. Pick a tag to see ayna's strongest picks for
@@ -34,7 +35,7 @@ export default function NeedsStrip({ needs, isOwned, onOpenProduct, onToggleProd
         <p className="ay-needs__done">Every need you picked has something on a shelf.</p>
       ) : (
         <div className="ay-needs__row">
-          {!edge.start && <button type="button" className="ay-needs__arrow is-prev" onClick={() => page(-1)} aria-label="Scroll needs back">←</button>}
+          {!edge.start && <button type="button" className="ay-needs__arrow is-prev" onClick={() => page(-1)} aria-label="Scroll needs back"><ChevronLeftIcon /></button>}
           <ul className="ay-needs__tags" ref={rowRef} onScroll={measure} aria-label="Needs with nothing on a shelf yet">
             {gaps.map((n, i) => (
               <li key={n.id} style={{ '--r': `${[-2, 1.5, -1, 2, -.5][i % 5]}deg` }}>
@@ -45,7 +46,7 @@ export default function NeedsStrip({ needs, isOwned, onOpenProduct, onToggleProd
               </li>
             ))}
           </ul>
-          {!edge.end && <button type="button" className="ay-needs__arrow is-next" onClick={() => page(1)} aria-label="Scroll needs forward">→</button>}
+          {!edge.end && <button type="button" className="ay-needs__arrow is-next" onClick={() => page(1)} aria-label="Scroll needs forward"><ChevronRightIcon /></button>}
         </div>
       )}
       {covered.length > 0 && (
@@ -69,7 +70,7 @@ export default function NeedsStrip({ needs, isOwned, onOpenProduct, onToggleProd
                     badge={p.healthBacked ? <HealthBackedBadge backed={p.healthBacked} /> : null}
                     onOpen={onOpenProduct}
                     action={onToggleProduct && (
-                      <button type="button" className="ay-btn ay-btn--secondary ay-card-add" onClick={() => onToggleProduct(p.product)}>+ Add to my ecosystem</button>
+                      <button type="button" className="ay-btn ay-btn--secondary ay-card-add" onClick={() => onToggleProduct(p.product)}><PlusIcon size={16} className="is-lead" />Add to my ecosystem</button>
                     )}
                   />
                 </li>
