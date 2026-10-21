@@ -20,6 +20,20 @@
 import { detectIngredientKeys } from './medications.js';
 import { getPassport, OFF_SHELF_STATUSES } from '../data/passport/index.js';
 import SAFETY_RESEARCH from '../data/matching/safety.research.js';
+import NEED_MAP_RESEARCH from '../data/matching/needMap.research.js';
+
+// Sourced product x need research (credible sources only) overrides the
+// pattern rules in both directions: a sourced 'none' removes a link the rules
+// made (e.g. a dilator is not for bladder leaks), and a sourced 'primary' or
+// 'secondary' adds one the rules missed. Rules stay the default where no
+// research row exists.
+const RESEARCH_LINKS = new Map();
+for (const r of NEED_MAP_RESEARCH) {
+  const k = r.product;
+  if (!RESEARCH_LINKS.has(k)) RESEARCH_LINKS.set(k, []);
+  RESEARCH_LINKS.get(k).push(r);
+}
+const RESEARCH_LEVEL = { primary: 0.8, secondary: 0.55 };
 
 // Pregnancy / breastfeeding status from the evidence research (credible
 // sources only, scripts/merge-research.mjs). Used to TIGHTEN only: 'avoid'
@@ -1198,6 +1212,17 @@ export function buildProductProfile(product) {
     if (entry.score > cap) { entry.score = cap; entry.capped = true; }
     entry.contextual.forEach((c) => { if (c.level > cap) { c.level = cap; c.capped = true; } });
     entry.contextual = entry.contextual.filter((c) => c.level > entry.score);
+  }
+  for (const r of RESEARCH_LINKS.get(product.id) || []) {
+    const e = entryFor(r.need);
+    if (r.strength === 'none') {
+      // Sourced: this product does not address this need. The link goes.
+      Object.assign(e, { score: 0, contextual: [], rule: 'research_none', why: r.rationale, research: { strength: 'none', source_url: r.source_url } });
+    } else if (r.added === true && RESEARCH_LEVEL[r.strength] && e.score === 0 && !e.contextual.length) {
+      // Sourced link the rules missed (audit rows only). Never raises a link the
+      // rules made or capped on purpose: research grades those, v2 reads the grade.
+      Object.assign(e, { score: RESEARCH_LEVEL[r.strength], rule: 'research_link', why: r.rationale, research: { strength: r.strength, source_url: r.source_url } });
+    }
   }
 
   const brand = brandFor(product);
