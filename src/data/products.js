@@ -2087,6 +2087,9 @@ function careFlagsFor(up) {
     if (severePain) notes.push({ code: 'severe_pain', text: 'Severe period pain is worth raising with a clinician.' });
     if (veryHeavyFlow) notes.push({ code: 'very_heavy_flow', text: 'Very heavy periods are worth raising with a clinician.' });
     if (symptomCare.length) notes.push({ code: 'symptom_check', text: 'Some symptoms you chose are best checked by a clinician.' });
+    // Red-flag terms she picked or typed (lexicon care: 'check'), e.g. bleeding after sex or after menopause.
+    const careTerms = up.healthIntent.careTerms || [];
+    if (careTerms.length) notes.push({ code: 'care_terms', text: `${careTerms.length === 1 ? `"${careTerms[0]}" is` : 'Some things you shared are'} worth checking with a clinician. Products come second.` });
     if (up.safety.pregnant) notes.push({ code: 'pregnancy_unknown', text: 'Pregnancy safety is not confirmed for most products. Check new products with your clinician.' });
     if (up.safety.breastfeeding === 'yes') notes.push({ code: 'breastfeeding_unknown', text: 'Breastfeeding safety is not confirmed for most products. Check new products with your clinician.' });
     if (up.physiology.confidenceFlags.includes('needs_clarification')) notes.push({ code: 'stage_needs_clarification', text: stagePairNote(up) });
@@ -2100,7 +2103,7 @@ function careFlagsFor(up) {
     return {
         urgent: up.safety.urgent,
         careFirst: up.safety.careFirst,
-        careProminent: Boolean(up.safety.careProminent || utiRightNow || (utiFirstTime && utiNeed) || severePain || veryHeavyFlow || symptomCare.length),
+        careProminent: Boolean(up.safety.careProminent || utiRightNow || (utiFirstTime && utiNeed) || severePain || veryHeavyFlow || symptomCare.length || (up.healthIntent.careTerms || []).length),
         utiRightNow,
         utiFirstTime,
         severePain,

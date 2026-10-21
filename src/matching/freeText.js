@@ -11,7 +11,8 @@
 // exception is an explicit, first-person allergy statement naming a known
 // allergen ("I'm allergic to latex"), which is a statement, not a guess.
 
-import { canonicalize, normalizeText, confidenceBand } from './ontology.js';
+import { canonicalize, canonicalizeAll, normalizeText, confidenceBand } from './ontology.js';
+import { findMedicationsInText } from './medications.js';
 
 const FORMAT_WORDS = [
   { re: /\b(pills?|capsules?|tablets?|softgels?)\b/, id: 'pill_capsule' },
@@ -158,7 +159,11 @@ export function extractFreeText(text, options = {}) {
     if (m) items.push(item('negative_product_history', m[1].trim(), 'LOW', s));
 
     // Leave-out / should-be wishes in prose ("prefer no fragrance", "vegan please")
-    m = s.match(/\b(avoid|no|without|free of|prefer not)\b\s+(fragrance|dyes?|parabens?|sulfates?|phthalates?|latex|added sugar|artificial sweeteners?)\b/);
+    m = s.match(/\b(avoid|no|without|free of|prefer not|hate|do not (want|like)|nothing|not anything|cannot (use|stand|do))\b\s+(anything\s+|any\s+|products? with\s+)?(fragrance|dyes?|parabens?|sulfates?|phthalates?|latex|added sugar|artificial sweeteners?)\b/);
+    if (m) m = [m[0], m[1], m[5]];
+    if (!m && /\b(fragrance[- ]free|unscented|no scents?|nothing scented|anything scented|hate (the )?(smell of )?(scented|perfumed)|scented (stuff|things|products)( irritate| bother)?)\b/.test(s)) m = [s, 'no', 'fragrance'];
+    if (!m && /\b(dye[- ]free)\b/.test(s)) m = [s, 'no', 'dyes'];
+    if (!m && /\bparaben[- ]free\b/.test(s)) m = [s, 'no', 'parabens'];
     if (m) {
       const attr = { fragrance: 'fragrance', dye: 'dyes', dyes: 'dyes', paraben: 'parabens', parabens: 'parabens', sulfate: 'sulfates', sulfates: 'sulfates', phthalate: 'phthalates', phthalates: 'phthalates', latex: 'latex', 'added sugar': 'added_sugar', 'artificial sweetener': 'artificial_sweeteners', 'artificial sweeteners': 'artificial_sweeteners' }[m[2]];
       if (attr) items.push(item('leave_out_preference', attr, 'MEDIUM', s, { strength: 'cosmetic' }));
@@ -170,11 +175,25 @@ export function extractFreeText(text, options = {}) {
       }
     }
 
-    // Mentioned needs / life stage context via the ontology
-    const need = canonicalize(s, { kinds: ['need'] });
-    if (need.canonical_id && need.method === 'synonym_rule') {
+    // Mentioned needs: every one in the sentence, not just the first
+    // ("bloating before my period and acne on my jaw" = both). Negated
+    // mentions ("no cramps") are skipped by canonicalizeAll.
+    for (const need of canonicalizeAll(s, { kinds: ['need'] })) {
+      if (!['synonym_rule', 'lexicon', 'exact_option'].includes(need.method)) continue;
       const band = need.contextual_only || need.specificity === 'low' ? 'LOW' : confidenceBand(need.confidence);
-      items.push(item('mentioned_need', need.canonical_id, band, s, { canonical: need }));
+      for (const id of [need.canonical_id, ...(need.also || [])]) items.push(item('mentioned_need', id, band, s, { canonical: { ...need, canonical_id: id, raw_user_text: s }, care: need.care || null }));
+    }
+    // A diagnosis she names in the first person ("I have Hashimoto's",
+    // "diagnosed with endo"). A statement, like an explicit allergy. Never
+    // a guess: "maybe PCOS?" or "worried I have endo" is not a diagnosis.
+    if (/\b(i have|i ve got|i have got|i was diagnosed|i got diagnosed|diagnosed with|i live with|i am living with|i have been diagnosed)\b/.test(s)
+      && !/\b(maybe|might|could|think|wonder|worried|scared|afraid|not sure|suspect|possibly|probably|if i)\b/.test(s)) {
+      for (const c of canonicalizeAll(s, { kinds: ['condition'] })) if (c.confidence >= 0.9) items.push(item('explicit_condition', c.canonical_id, 'HIGH', s, { canonical: c }));
+    }
+    // Medicines and supplements she says she takes ("I'm on Lexapro"), for
+    // interaction checks. Stopped or past use is ignored.
+    if (/\b(i (am )?(take|taking|on)|i use|currently on|i started|prescribed)\b/.test(s) && !/\b(stopped|quit|used to|no longer|came off|went off)\b/.test(s)) {
+      for (const med of findMedicationsInText(s)) items.push(item('mentioned_medication', med, 'HIGH', s));
     }
     const stage = canonicalize(s, { kinds: ['life_stage'] });
     if (stage.canonical_id && stage.method === 'synonym_rule') {
@@ -225,7 +244,7 @@ export function summarizeFreeText(extraction) {
   const out = {
     format_dislikes: [], format_only: [], max_price: null, price_sensitivity: null, sensitivities: [], positive_product_history: [],
     inferred_preferences: [], explicit_allergies: [], reaction_history: [], leave_out: [], should_be: [], mentioned_needs: [],
-    reported_contexts: [], effort_sensitivity: null, stored: [], source: 'user_free_text',
+    reported_contexts: [], effort_sensitivity: null, explicit_conditions: [], mentioned_medications: [], care_terms: [], stored: [], source: 'user_free_text',
   };
   for (const it of extraction?.items || []) {
     if (it.confidence === 'LOW') { out.stored.push(it); continue; }
@@ -243,7 +262,9 @@ export function summarizeFreeText(extraction) {
       case 'reaction_history': out.reaction_history.push({ ...it.value, kind: it.field, weight: w }); break;
       case 'leave_out_preference': out.leave_out.push({ attr: it.value, strength: 'cosmetic', weight: w }); break;
       case 'should_be_preference': out.should_be.push({ id: it.value, weight: w }); break;
-      case 'mentioned_need': out.mentioned_needs.push({ id: it.value, weight: w, canonical: it.canonical }); break;
+      case 'mentioned_need': out.mentioned_needs.push({ id: it.value, weight: w, canonical: it.canonical }); if (it.care) out.care_terms.push(it.evidence); break;
+      case 'explicit_condition': out.explicit_conditions.push({ id: it.value, weight: w, evidence: it.evidence }); break;
+      case 'mentioned_medication': out.mentioned_medications.push({ raw: it.value, weight: w, evidence: it.evidence }); break;
       case 'reported_context': out.reported_contexts.push({ stage: it.value, weight: w, evidence: it.evidence }); break;
       case 'effort_sensitivity': out.effort_sensitivity = { value: it.value, weight: w }; break;
       default: out.stored.push(it);

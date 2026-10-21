@@ -11,6 +11,8 @@ import SmartSearchInput from '../../components/search/SmartSearchInput.jsx';
 import { rankSearchOptions as rankedSuggestions, matchesSearchOption } from '../../utils/search/index.js';
 import {
   ALLERGIES,
+  ALLERGY_SUGGESTIONS,
+  CONDITION_SEARCH_TERMS,
   ALLERGY_STATUS,
   AVOID_GROUPS,
   AVOID_LABELS,
@@ -47,6 +49,7 @@ import {
   LIFE_STAGE_LABELS,
   LIFE_STAGE_VALUE_BY_LABEL,
   MEDICATION_SUGGESTIONS,
+  MEDICATION_SEARCH_TERMS,
   MIDLIFE_LIFE_STAGES,
   PERIMENOPAUSE_LAST_PERIOD,
   PERIOD_FLOW,
@@ -202,10 +205,12 @@ function AddCustomChoice({ query, options, onAdd }) {
   return <button type="button" className="ip-chip is-dashed ip-add" onClick={() => onAdd(value)}>+ Add “{value}”</button>;
 }
 
-function SearchableChoices({ items, selected, onToggle, search, onSearch, onAdd, placeholder, layout = 'chips', icons, labels, glyphs, searchable = true }) {
+function SearchableChoices({ items, selected, onToggle, search, onSearch, onAdd, placeholder, layout = 'chips', icons, labels, glyphs, searchable = true, searchExtra = [] }) {
   const query = search.trim().toLowerCase();
-  const filtered = query ? items.filter((item) => matchesSearchOption(query, item) || matchesSearchOption(query, labels?.[item])) : items;
-  const custom = selected.filter((item) => !items.includes(item));
+  // While searching, also offer the wider vocabulary (lexicon.js), best match first.
+  const extra = query ? rankedSuggestions(query, searchExtra.filter((t) => !items.includes(t)), 12) : [];
+  const filtered = query ? [...items.filter((item) => matchesSearchOption(query, item) || matchesSearchOption(query, labels?.[item])), ...extra] : items;
+  const custom = selected.filter((item) => !items.includes(item) && !extra.includes(item));
   return <div className="ip-picker">
     {searchable && <SearchBar value={search} onChange={onSearch} placeholder={placeholder} />}
     <AddCustomChoice query={search} options={[...items, ...selected]} onAdd={onAdd} />
@@ -725,7 +730,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
 
     if (step.type === 'conditions') {
       return (
-        <SearchableChoices items={['None that I know of', 'Prefer not to say', ...CONDITIONS.filter((item) => !['None that I know of', 'Prefer not to say'].includes(item))]} selected={intake.diagnosisSelections} onToggle={(v) => toggleExclusive('diagnosisSelections', v, ['None that I know of', 'Prefer not to say'])} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('diagnosisSelections', value, ['None that I know of', 'Prefer not to say'])} placeholder="Search conditions" />
+        <SearchableChoices items={['None that I know of', 'Prefer not to say', ...CONDITIONS.filter((item) => !['None that I know of', 'Prefer not to say'].includes(item))]} selected={intake.diagnosisSelections} searchExtra={CONDITION_SEARCH_TERMS} onToggle={(v) => toggleExclusive('diagnosisSelections', v, ['None that I know of', 'Prefer not to say'])} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('diagnosisSelections', value, ['None that I know of', 'Prefer not to say'])} placeholder="Search conditions" />
       );
     }
 
@@ -738,7 +743,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         />
         {intake.allergyStatus === 'Yes' && (
           <div className="ip-gap">
-            <TokenInput values={intake.allergyItems} onChange={(v) => set('allergyItems', v)} placeholder="Allergy or sensitivity" suggestions={ALLERGIES} suggestionLimit={8} />
+            <TokenInput values={intake.allergyItems} onChange={(v) => set('allergyItems', v)} placeholder="Allergy or sensitivity" suggestions={ALLERGY_SUGGESTIONS} suggestionLimit={8} />
             {intake.allergyItems.length === 0 && <p className="ip-hint ip-hint--need">Add at least one, or pick No.</p>}
           </div>
         )}
@@ -750,7 +755,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         <Segmented options={MEDICATION_STATUS} value={intake.takesCurrent} onChange={(value) => setIntake((prev) => ({ ...prev, takesCurrent: value, currentMedicationItems: value === 'Yes' ? prev.currentMedicationItems : [] }))} />
         {intake.takesCurrent === 'Yes' && (
           <div className="ip-gap">
-            <TokenInput values={intake.currentMedicationItems} onChange={(v) => set('currentMedicationItems', v)} placeholder="Medicine or supplement" suggestions={MEDICATION_SUGGESTIONS} suggestionLimit={10} />
+            <TokenInput values={intake.currentMedicationItems} onChange={(v) => set('currentMedicationItems', v)} placeholder="Medicine or supplement" suggestions={MEDICATION_SEARCH_TERMS} suggestionLimit={10} />
             {intake.currentMedicationItems.length === 0 && <p className="ip-hint ip-hint--need">Add at least one, or pick No.</p>}
           </div>
         )}

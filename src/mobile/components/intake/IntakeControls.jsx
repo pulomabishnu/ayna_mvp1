@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { findTerm } from '../../data/glossary.js';
 import SmartSearchInput from '../../../components/search/SmartSearchInput.jsx';
-import { matchesSearchOption } from '../../../utils/search/index.js';
+import { matchesSearchOption, rankSearchOptions } from '../../../utils/search/index.js';
+import { SYMPTOM_SEARCH_TERMS } from '../../../matching/lexicon.js';
 
 // Game-style answer controls for the mobile intake. Every control keeps the
 // exact value contract of the widget it replaced (same option strings, same
@@ -394,11 +395,14 @@ export function TopicPicker({ groups, selected, onToggle, search, onSearch, onAd
   const [active, setActive] = useState(() => groups.find((g) => g.items.some((i) => selected.includes(i)))?.label || groups[0]?.label);
   const q = search.trim().toLowerCase();
   const known = groups.flatMap((g) => g.items);
+  // Searching also offers ~300 everyday and clinical symptom terms
+  // (lexicon.js); each maps to the precise needs it names.
+  const extra = q ? rankSearchOptions(q, SYMPTOM_SEARCH_TERMS.filter((t) => !known.includes(t)), 14) : [];
   const custom = selected.filter((item) => !known.includes(item));
-  const results = q ? known.filter((item) => matchesSearchOption(q, item)) : [];
+  const results = q ? [...new Set([...known.filter((item) => matchesSearchOption(q, item)), ...extra])] : [];
   const group = groups.find((g) => g.label === active) || groups[0];
   const value = search.trim().replace(/\s+/g, ' ');
-  const canAdd = value.length >= 2 && ![...known, ...selected].some((item) => item.toLowerCase() === value.toLowerCase());
+  const canAdd = value.length >= 2 && ![...known, ...selected, ...extra].some((item) => item.toLowerCase() === value.toLowerCase());
   return (
     <div className="ip-topics">
       <SearchField value={search} onChange={onSearch} placeholder="Search symptoms or goals" />

@@ -1,3 +1,4 @@
+import { lookupSymptomTerm, lookupConditionTerm, lookupAllergyTerm, SYMPTOM_TERMS, CONDITION_TERMS, normalizeTerm } from './lexicon.js';
 // ayna matching ontology.
 //
 // The single list of canonical ids the matching engine reasons about:
@@ -686,6 +687,27 @@ export const SYNONYM_RULES = [
   { re: /\bibs\b|irritable bowel|\bcrohn|\bcolitis\b|\bceliac\b/, kind: 'condition', id: 'ibs_digestive', confidence: 0.93 },
   { re: /\blupus\b|\bautoimmune\b|\brheumatoid\b/, kind: 'condition', id: 'autoimmune', confidence: 0.9 },
   // Health needs (sub-need level)
+  // Everyday phrasings people type (lexicon.js holds the pickable terms).
+  { re: /\bclots?\b|\bclotting\b.*\bperiod|\bperiod\b.*\bclots?\b/, kind: 'need', id: 'period.heavy', confidence: 0.9 },
+  { re: /\bperiods? (that )?(last(s|ing)?|go(es)? on( for)?) (like |about |almost |over |more than )?(8|9|10|11|12|13|14|eight|nine|ten|two weeks)\b/, kind: 'need', id: 'period.heavy', confidence: 0.9 },
+  { re: /\b(soak(ing|s)? through|change (my )?(pad|tampon) every hour)\b/, kind: 'need', id: 'period.heavy', confidence: 0.92 },
+  { re: /\b(pee|peeing|urinate|urinating)\b.{0,20}\b(at|during the) night\b|\bnocturia\b|\bwak(e|ing) up to (pee|use the bathroom)\b/, kind: 'need', id: 'urinary.frequency', confidence: 0.9 },
+  { re: /\b(jaw(line)?|chin)\b.{0,15}\b(acne|breakouts?|pimples?)\b|\b(acne|breakouts?|pimples?)\b.{0,20}\b(jaw(line)?|chin)\b/, kind: 'need', id: 'skin.acne', also: ['skin.hormonal'], confidence: 0.93 },
+  { re: /\bitchy\b.{0,15}\bdischarge\b|\bdischarge\b.{0,15}\bitch/, kind: 'need', id: 'vaginal.discharge', also: ['vaginal.irritation'], confidence: 0.93 },
+  { re: /\b(sore|cracked|bleeding|painful) nipples?\b|\bnipple (pain|soreness)\b/, kind: 'need', id: 'postpartum.lactation', confidence: 0.9 },
+  { re: /\b(milk supply|latch(ing)?|engorge|clogged duct|mastitis)\b/, kind: 'need', id: 'postpartum.lactation', confidence: 0.92 },
+  { re: /\b(stress|anxious|worried|overwhelmed) (all the time|constantly)\b|\bso stressed\b/, kind: 'need', id: 'mood.general_anxiety', confidence: 0.88 },
+  { re: /\b(can not|cannot|trouble|hard to) (fall|stay) asleep\b|\bwak(e|ing) up (at )?(2|3|4)( ?am)?\b/, kind: 'need', id: 'sleep.trouble', confidence: 0.93 },
+  { re: /\bmood swings?\b/, kind: 'need', id: 'mood.swings', confidence: 0.95 },
+  { re: /\birritab(le|ility)\b|\bshort[- ]tempered\b/, kind: 'need', id: 'mood.irritability', confidence: 0.9 },
+  { re: /\b(sore|tender|swollen) (breasts?|boobs?)\b|\bbreast (pain|tenderness)\b/, kind: 'need', id: 'cycle.breast_tenderness', confidence: 0.92 },
+  { re: /\bspotting\b/, kind: 'need', id: 'cycle.spotting', confidence: 0.92 },
+  { re: /\b(missed|skipped|no) periods?\b|\bhave not had (a|my) period\b/, kind: 'need', id: 'cycle.missed', confidence: 0.9 },
+  { re: /\b(weight gain|gaining weight|lose weight|losing weight|metabolism)\b/, kind: 'need', id: 'metabolic.weight', confidence: 0.88 },
+  { re: /\b(bone density|osteopenia|osteoporosis)\b/, kind: 'need', id: 'bone.health', confidence: 0.95 },
+  { re: /\bpelvic floor\b/, kind: 'need', id: 'urinary.incontinence', also: ['fitness.strength'], confidence: 0.85 },
+  { re: /\b(dry|itchy|flaky) skin\b/, kind: 'need', id: 'skin.hormonal', confidence: 0.8 },
+  { re: /\b(urgency|have to pee (all the time|constantly|so often)|pee (all the time|constantly|so often))\b/, kind: 'need', id: 'urinary.urgency', also: ['urinary.frequency'], confidence: 0.88 },
   { re: /\bhair (is )?(falling out|shedding|coming out)\b|\blosing (my )?hair\b|\bhair loss\b|\bthinning hair\b|\bhair thinning\b|\bbald(ing)? spots?\b/, kind: 'need', id: 'hair.loss', confidence: 0.96 },
   { re: /\bchin hair|facial hair|\bhirsut|\bexcess (body )?hair\b/, kind: 'need', id: 'hair.excess', confidence: 0.95 },
   { re: /\b(period |menstrual )?cramps?\b|\bperiod pain\b|\bdysmenorrh/, kind: 'need', id: 'pain.menstrual_cramp', confidence: 0.95 },
@@ -803,6 +825,17 @@ export function canonicalize(rawText, options = {}) {
   const exact = EXACT_OPTIONS.find((e) => e.norm === normalized && allowed(e.kind));
   if (exact) return { ...base, canonical_id: exact.id, kind: exact.kind, confidence: 1, method: 'exact_option' };
 
+  // Vocabulary terms (lexicon.js): exact picks from any search bar.
+  const sym = allowed('need') && lookupSymptomTerm(normalized);
+  if (sym) return { ...base, canonical_id: sym.needs[0], also: sym.needs.slice(1), care: sym.care || null, kind: 'need', confidence: 0.97, method: 'lexicon' };
+  // Diagnosis and allergy names: the hand-tuned synonym rules below keep
+  // priority; the vocabulary catches names they do not cover.
+  const ruleHit = (kind) => SYNONYM_RULES.some((r) => r.kind === kind && r.re.test(normalized));
+  const cond = allowed('condition') && !ruleHit('condition') && lookupConditionTerm(normalized);
+  if (cond) return { ...base, canonical_id: cond.id, kind: 'condition', confidence: 0.97, method: 'lexicon' };
+  const alg = allowed('allergen') && !ruleHit('allergen') && lookupAllergyTerm(normalized);
+  if (alg) return { ...base, canonical_id: alg.id, kind: 'allergen', confidence: 0.95, method: 'lexicon' };
+
   for (const rule of SYNONYM_RULES) {
     if (!allowed(rule.kind)) continue;
     if (rule.re.test(normalized)) {
@@ -813,6 +846,7 @@ export function canonicalize(rawText, options = {}) {
         confidence: rule.confidence,
         specificity: rule.specificity || 'normal',
         contextual_only: Boolean(rule.contextual_only),
+        also: rule.also || [],
         method: 'synonym_rule',
       };
     }
@@ -842,3 +876,72 @@ export function confidenceBand(confidence) {
   if (confidence >= 0.7) return 'MEDIUM';
   return 'LOW';
 }
+
+
+// ─── Every match in a piece of free text ────────────────────────────────────
+const NEGATION_BEFORE = /\b(no|not|never|without|none|zero|do not|did not|does not|dont|didnt|no longer|not really|stopped having|used to have)\s+(\w+\s+){0,3}$/;
+const MULTIWORD_LEXICON = SYMPTOM_TERMS.filter((t) => t.term.split(/\s+/).length >= 2)
+  .map((t) => ({ ...t, re: new RegExp(`\\b${normalizeTerm(t.term).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`) }));
+const MULTIWORD_CONDITIONS = CONDITION_TERMS.filter((t) => normalizeTerm(t.term).length >= 4)
+  .map((t) => ({ ...t, re: new RegExp(`\\b${normalizeTerm(t.term).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`) }));
+
+/** Split typed text into clauses ("cramps and acne, also I pee at night"). */
+export function splitClauses(raw) {
+  return String(raw ?? '').split(/[.!?;\n,]+|\s+(?:and|also|plus|but|as well as|along with|&)\s+/i)
+    .map((p) => normalizeText(p)).filter(Boolean);
+}
+
+/**
+ * Every need / condition / life stage / allergen a piece of typed text names,
+ * not just the first. Negated mentions ("no cramps", "not itchy") are
+ * skipped. Each hit keeps the clause it came from.
+ * @returns {Array<{ canonical_id, kind, confidence, also: string[], care: string|null, contextual_only: boolean, specificity: string, method: string, raw_user_text: string }>}
+ */
+export function canonicalizeAll(rawText, options = {}) {
+  const kinds = options.kinds ? new Set(options.kinds) : null;
+  const allowed = (kind) => !kinds || kinds.has(kind);
+  const out = [];
+  const seen = new Set();
+  const push = (hit) => {
+    const key = `${hit.kind}|${hit.canonical_id}`;
+    if (seen.has(key)) { const prev = out.find((h) => `${h.kind}|${h.canonical_id}` === key); if (prev) { const also = [...new Set([...(prev.also || []), ...(hit.also || [])])]; if (hit.confidence > prev.confidence) Object.assign(prev, hit); prev.also = also; prev.care = prev.care || hit.care || null; } return; }
+    seen.add(key); out.push(hit);
+  };
+  const negated = (clause, index) => NEGATION_BEFORE.test(clause.slice(0, index));
+  // Clauses first (so each hit keeps its own words), then the whole text for
+  // rules that span a comma ("my periods, which last 9 days").
+  for (const clause of [...splitClauses(rawText), normalizeText(rawText)]) {
+    if (!clause) continue;
+    const base = { raw_user_text: clause, normalized: clause, specificity: 'normal', contextual_only: false, also: [], care: null };
+    const whole = canonicalize(clause, options);
+    if (whole.canonical_id && ['exact_option', 'lexicon'].includes(whole.method)) { push({ ...base, ...whole, raw_user_text: clause }); continue; }
+    for (const rule of SYNONYM_RULES) {
+      if (!allowed(rule.kind)) continue;
+      const m = clause.match(rule.re);
+      if (!m || negated(clause, m.index)) continue;
+      push({ ...base, canonical_id: rule.id, kind: rule.kind, confidence: rule.confidence, specificity: rule.specificity || 'normal', contextual_only: Boolean(rule.contextual_only), also: rule.also || [], method: 'synonym_rule' });
+    }
+    if (allowed('need')) for (const t of MULTIWORD_LEXICON) {
+      const m = clause.match(t.re);
+      if (m && !negated(clause, m.index)) push({ ...base, canonical_id: t.needs[0], also: t.needs.slice(1), care: t.care || null, kind: 'need', confidence: 0.95, method: 'lexicon' });
+    }
+    if (allowed('condition')) for (const t of MULTIWORD_CONDITIONS) {
+      const m = clause.match(t.re);
+      if (m && !negated(clause, m.index)) push({ ...base, canonical_id: t.id, kind: 'condition', confidence: 0.95, method: 'lexicon' });
+    }
+  }
+  // A specific bloating need makes the generic one redundant.
+  if (out.some((h) => h.kind === 'need' && /^bloating\.(cycle_related|digestive|pregnancy_related)$/.test(h.canonical_id))) {
+    return out.filter((h) => h.canonical_id !== 'bloating.unspecified');
+  }
+  return out;
+}
+
+// Synonym rules plus every vocabulary term (lexicon.js), for search engines
+// that scan text against rules (shop, library, community, quiz lists).
+const termRe = (term) => new RegExp(`\\b${normalizeTerm(term).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`);
+export const LEXICON_RULES = [
+  ...SYMPTOM_TERMS.map((t) => ({ re: termRe(t.term), kind: 'need', id: t.needs[0], also: t.needs.slice(1), care: t.care || null, confidence: 0.95, lexicon: t.term })),
+  ...CONDITION_TERMS.filter((t) => normalizeTerm(t.term).length >= 3).map((t) => ({ re: termRe(t.term), kind: 'condition', id: t.id, confidence: 0.95, lexicon: t.term })),
+];
+export const SEARCH_RULES = [...LEXICON_RULES.filter((r) => r.lexicon.split(/\s+/).length >= 2), ...SYNONYM_RULES, ...LEXICON_RULES.filter((r) => r.lexicon.split(/\s+/).length < 2)];

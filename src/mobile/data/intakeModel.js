@@ -1,3 +1,5 @@
+import { MEDICATIONS } from '../../matching/medications.js';
+import { ALLERGY_SEARCH_TERMS } from '../../matching/lexicon.js';
 // The intake questions and answer logic, shared by the app's quiz
 // (src/mobile/screens/IntakeScreen.jsx) and the website's quiz
 // (src/components/WebIntake.jsx), so both always ask the same questions and
@@ -166,6 +168,13 @@ export const MEDICATION_SUGGESTIONS = [
   'Birth control pill', 'Yaz', 'Drospirenone/ethinyl estradiol', 'Hormonal IUD', 'Copper IUD',
   'Nexplanon', 'Depo-Provera', 'NuvaRing', 'Xulane patch',
 ];
+
+// Everything the medicine-interaction checker knows (generic and brand
+// names), so the suggestions match what the safety check can actually use.
+const capFirst = (x) => String(x || '').replace(/^./, (c) => c.toUpperCase());
+export const MEDICATION_SEARCH_TERMS = [...new Set([...MEDICATION_SUGGESTIONS, ...MEDICATIONS.flatMap((m) => [capFirst(m.generic), ...(m.brands || [])])].filter(Boolean))];
+export const ALLERGY_SUGGESTIONS = [...new Set([...ALLERGIES, ...ALLERGY_SEARCH_TERMS])];
+export { SYMPTOM_SEARCH_TERMS, CONDITION_SEARCH_TERMS } from '../../matching/lexicon.js';
 
 export const CATALOG_PRODUCT_NAMES = [...new Set((ALL_PRODUCTS || []).map((p) => p?.name).filter(Boolean))];
 export const CATALOG_BRANDS = [...new Set((ALL_PRODUCTS || []).flatMap((p) => [p?.brand, p?.brandName, p?.manufacturer, p?.company]).filter(Boolean))];

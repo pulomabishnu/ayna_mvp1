@@ -8,7 +8,8 @@
  */
 import { createSearchEngine, WEIGHT } from './engine.js';
 import { ALL_PRODUCTS, CATEGORY_LABELS } from '../../data/products.js';
-import { NEEDS, CONDITIONS, LIFE_STAGES, FORMATS, VALUES, ALLERGENS, LEAVE_OUT, SYNONYM_RULES, CONDITION_SUPPORT_NEED } from '../../matching/ontology.js';
+import { NEEDS, CONDITIONS, LIFE_STAGES, FORMATS, VALUES, ALLERGENS, LEAVE_OUT, SEARCH_RULES, CONDITION_SUPPORT_NEED } from '../../matching/ontology.js';
+import { SYMPTOM_TERMS, CONDITION_TERMS, ALLERGY_TERMS } from '../../matching/lexicon.js';
 import { MEDICATIONS } from '../../matching/medications.js';
 import { buildProductProfile } from '../../matching/productProfile.js';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../naturalLanguageSearch.js';
@@ -42,7 +43,11 @@ function registerCatalog(engine, products) {
 
 export function getSearchEngine() {
   if (ENGINE) return ENGINE;
-  const engine = createSearchEngine({ ontology: { rules: SYNONYM_RULES, conditionNeeds: CONDITION_SUPPORT_NEED } });
+  const engine = createSearchEngine({ ontology: { rules: SEARCH_RULES, conditionNeeds: CONDITION_SUPPORT_NEED } });
+  // Symptom, diagnosis and allergy vocabulary: recognised words, typo targets,
+  // and typeahead suggestions that search for the needs they name.
+  for (const list of [SYMPTOM_TERMS, CONDITION_TERMS, ALLERGY_TERMS]) for (const t of list) engine.addText(t.term, WEIGHT.ONTOLOGY);
+  engine.registerSuggestions('need', SYMPTOM_TERMS.map((t) => ({ label: t.term, query: t.term, needId: t.needs[0], weight: 1 })));
   for (const n of NEEDS) { engine.addText(n.option, WEIGHT.ONTOLOGY); engine.addText(n.phrase, WEIGHT.ONTOLOGY); }
   for (const list of [CONDITIONS, LIFE_STAGES, FORMATS, VALUES, ALLERGENS, LEAVE_OUT]) for (const x of list) { engine.addText(x.option, WEIGHT.ONTOLOGY); engine.addText(x.phrase, WEIGHT.ONTOLOGY); }
   for (const m of MEDICATIONS) { engine.addText(m.generic, WEIGHT.IDENTITY); engine.addText((m.brands || []).join(' '), WEIGHT.IDENTITY); }

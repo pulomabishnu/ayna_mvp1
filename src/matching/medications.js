@@ -334,3 +334,18 @@ export function checkMedicationInteractions(meds, productInfo) {
         : 'unknown';
   return { verdict, findings, unknownPairs };
 }
+
+
+/**
+ * Every known medicine or supplement named inside a sentence (brand, generic
+ * or alias), as the raw name to pass to normalizeMedication.
+ */
+export function findMedicationsInText(text) {
+  const t = ` ${normalizeText(text)} `;
+  const found = [];
+  for (const name of LOOKUP.keys()) {
+    if (name.length < 4) continue;
+    if (t.includes(` ${name} `) && !found.some((f) => f.includes(name) || name.includes(f))) found.push(name);
+  }
+  return found;
+}

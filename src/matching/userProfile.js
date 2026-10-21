@@ -18,7 +18,7 @@
 // say", or skipped, and the scorer treats each state differently.
 
 import {
-  needIdForOption, NON_NEED_OPTIONS, NEED_BY_ID, canonicalize, CONDITION_ID_BY_OPTION, CONDITION_ID_BY_LEGACY, NON_CONDITION_OPTIONS,
+  needIdForOption, NON_NEED_OPTIONS, NEED_BY_ID, canonicalize, canonicalizeAll, CONDITION_ID_BY_OPTION, CONDITION_ID_BY_LEGACY, NON_CONDITION_OPTIONS,
   LIFE_STAGE_ID_BY_OPTION, LIFE_STAGE_COMPATIBILITY, ageBandFor, ageStageFindings, FORMAT_ID_BY_OPTION, LEAVE_OUT_BY_OPTION,
   VALUE_ID_BY_OPTION, ALLERGEN_BY_OPTION, ALLERGEN_BY_ID, PCOS_REINFORCING_NEEDS, URINARY_UTI_NEEDS, MENSTRUAL_PRODUCT_NEEDS, POSTPARTUM_NEEDS,
   normalizeText, LEGACY_FRUSTRATION_NEEDS, LEGACY_CONCERN_NEEDS, LEGACY_SYMPTOM_NEEDS, LEGACY_PREFERENCE, LEGACY_SENSITIVITY_ALLERGEN,
@@ -280,7 +280,11 @@ export function buildUserProfile(intakeInput, options = {}) {
   const stale = (key) => answerAgeDays != null && answerAgeDays > RECENCY_RULES[key].staleAfterDays;
 
   // Free text first: several layers read it.
-  const freeTextSources = [intake.anythingElse].filter(Boolean);
+  // Everything she typed anywhere in the quiz is read: the closing note and
+  // every "Other / Something else" box (needs there are also read below).
+  const freeTextSources = [intake.anythingElse, intake.supportOtherText, intake.conditionOtherText, intake.lifeStageOther,
+    intake.formatOtherText, intake.avoidIngredientsOtherText, intake.allergyOtherText,
+    ...arr(intake.productHistory).map((h) => h?.stopOther)].map((t) => String(t || '').trim()).filter(Boolean);
   const freeText = summarizeFreeText(extractFreeText(freeTextSources.join('. '), { knownNames }));
 
   // ── Health intent ────────────────────────────────────────────────────
@@ -296,19 +300,28 @@ export function buildUserProfile(intakeInput, options = {}) {
   };
   const support = arr(intake.supportSelections);
   const nothingRightNow = support.includes('Nothing right now');
+  // A typed or searched term can name more than one need ("itchy discharge",
+  // "cramps and acne"): every need it names is added, each tagged with her
+  // own words. Red-flag terms (lexicon care: 'check') raise a care note.
+  const careTerms = [];
+  const addFromText = (text, source) => {
+    const hits = canonicalizeAll(text, { kinds: ['need'] }).filter((c) => c.confidence >= 0.7 && !c.contextual_only);
+    for (const c of hits) {
+      const raw = text.length > 40 && c.raw_user_text ? c.raw_user_text : text;
+      for (const id of [c.canonical_id, ...(c.also || [])]) addNeed(id, source, raw, c.confidence, { canonical: { ...c, canonical_id: id } });
+      if (c.care === 'check' && !careTerms.includes(text)) careTerms.push(text);
+    }
+    if (!hits.length) unresolvedNeeds.push(canonicalize(text, { kinds: ['need'] }));
+  };
   for (const option of support) {
     if (NON_NEED_OPTIONS.has(option)) continue;
     const id = needIdForOption(option);
     if (id) { addNeed(id, 'selected', option); continue; }
-    const c = canonicalize(option, { kinds: ['need'] });
-    if (c.canonical_id && c.confidence >= 0.7 && !c.contextual_only) addNeed(c.canonical_id, 'custom', option, c.confidence, { canonical: c });
-    else unresolvedNeeds.push(c);
+    addFromText(option, 'custom');
   }
   for (const text of splitList(intake.supportOtherText)) {
     if (support.includes(text)) continue;
-    const c = canonicalize(text, { kinds: ['need'] });
-    if (c.canonical_id && c.confidence >= 0.7 && !c.contextual_only) addNeed(c.canonical_id, 'custom', text, c.confidence, { canonical: c });
-    else unresolvedNeeds.push(c);
+    addFromText(text, 'custom');
   }
   // Older saved profiles: no current support answers, only the first quiz's
   // broad answers. Each maps to the specific needs it named (ontology tables).
@@ -328,6 +341,7 @@ export function buildUserProfile(intakeInput, options = {}) {
   for (const m of freeText.mentioned_needs) {
     if (m.weight >= 1) addNeed(m.id, 'free_text', m.canonical?.raw_user_text, m.canonical?.confidence ?? 0.9, { canonical: m.canonical });
   }
+  for (const t of freeText.care_terms) if (!careTerms.includes(t)) careTerms.push(t);
 
   // ── Conditions (explicit only) ───────────────────────────────────────
   // Only what she selected under "Diagnosed with?" (or typed there with high
@@ -356,6 +370,8 @@ export function buildUserProfile(intakeInput, options = {}) {
     const c = canonicalize(text, { kinds: ['condition'] });
     if (c.canonical_id && c.confidence >= 0.9) addCondition(c.canonical_id, 'custom', text, c.confidence);
   }
+  // A diagnosis she names in the first person anywhere she typed.
+  for (const c of freeText.explicit_conditions) addCondition(c.id, 'free_text', c.evidence, 0.95);
   const conditionIds = new Set(conditions.map((c) => c.id));
   const conditionsState = diagnosisSel.includes('Prefer not to say') && !conditions.length ? 'prefer_not'
     : diagnosisSel.includes('None that I know of') && !conditions.length ? 'explicit_no'
@@ -516,6 +532,11 @@ export function buildUserProfile(intakeInput, options = {}) {
   const takesCurrent = String(intake.takesCurrent || '');
   if (takesCurrent === 'Yes' || (!takesCurrent && arr(intake.currentMedicationItems).length)) {
     for (const raw of arr(intake.currentMedicationItems)) meds.push({ ...normalizeMedication(raw), source: 'selected' });
+  }
+  // Medicines she mentions taking anywhere she typed, for interaction checks.
+  for (const m of freeText.mentioned_medications) {
+    const med = normalizeMedication(m.raw);
+    if (med.recognized && !meds.some((x) => x.generic === med.generic)) meds.push({ ...med, source: 'free_text', evidence: m.evidence });
   }
   if (lifeStages.includes('hormonal_birth_control') && !meds.some((m) => m.all_classes.includes('hormonal_contraceptive'))) {
     meds.push({ ...normalizeMedication('hormonal contraceptive (unspecified)'), raw: 'Hormonal birth control (life stage)', source: 'life_stage' });
@@ -769,7 +790,7 @@ export function buildUserProfile(intakeInput, options = {}) {
     contradictions,
     contexts,
     recency,
-    healthIntent: { needs, unresolvedNeeds, nothingRightNow, reinforcement },
+    healthIntent: { needs, unresolvedNeeds, nothingRightNow, reinforcement, careTerms },
     safety: {
       pregnant,
       pregnancyStatus,

@@ -288,7 +288,7 @@ export function createSearchEngine(config = {}) {
     matchPhrases(text, NEED_PHRASES, (p) => TERM_NEEDS[p].forEach((id) => pushUnique(needs, id)));
     for (const rule of ontologyRules) {
       if (!rule.re.test(text)) continue;
-      if (rule.kind === 'need') pushUnique(needs, rule.id);
+      if (rule.kind === 'need') { pushUnique(needs, rule.id); (rule.also || []).forEach((id) => pushUnique(needs, id)); }
       else if (rule.kind === 'condition') pushUnique(needs, conditionNeeds[rule.id]);
       else if (rule.kind === 'life_stage') (LIFE_STAGE_NEEDS[rule.id] || []).forEach((id) => pushUnique(needs, id));
     }
