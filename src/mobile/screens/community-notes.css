@@ -100,7 +100,7 @@
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-ring.is-near svg { transform: scale(1.12); }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-ring.is-max { background: #f7badd; color: #3e2723; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-ring .ay-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-.ayna-mobile:is(#ay,.ayna-mobile) .am-ring { justify-self: end; align-self: center; }
+.ayna-mobile:is(#ay,.ayna-mobile) .am-ring { justify-self: end; align-self: flex-end; margin: -4px 2px 0 auto; }
 .ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-skel-list { display: grid; gap: 14px; }
 .ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-skel { display: grid; gap: 10px; padding: 16px; border: 1.5px dashed var(--d-hair); border-radius: 16px; animation: amn-pulse 900ms ease-in-out infinite alternate; animation-delay: calc(var(--i, 0) * 120ms); }
 .ayna-mobile:is(#ay,.ayna-mobile) .am-screen :is(.am-skel-dot, .am-skel-line) { display: block; background: var(--d-group); }

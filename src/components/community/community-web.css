@@ -54,7 +54,7 @@ html body .app-container.app-container.app-container.app-container {
 
   /* ---------- layout: folder rail | feed | side ---------- */
   .cm-layout { display: grid; grid-template-columns: 188px minmax(0, 1fr) 300px; gap: var(--ay-s32); align-items: start; }
-  .cm-main { display: grid; gap: var(--ay-s16); min-width: 0; align-content: start; }
+  .cm-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--ay-s16); min-width: 0; align-content: start; }
   .cm-side { position: sticky; top: 96px; display: grid; gap: var(--ay-s24); min-width: 0; }
   .cm-rail { position: sticky; top: 96px; display: grid; gap: var(--ay-s24); min-width: 0; }
 
@@ -109,7 +109,7 @@ html body .app-container.app-container.app-container.app-container {
   .cm-guest strong { font-weight: 600; }
 
   /* ---------- posts as paper notes ---------- */
-  .cm-note { position: relative; display: grid; gap: var(--ay-s12); padding: var(--ay-s16) var(--ay-s20) var(--ay-s4); border: 1.5px solid var(--ay-outline); border-radius: var(--ay-r-card); background-color: var(--ay-page); background-image: var(--cm-grain); color: var(--ay-text); animation: cm-in var(--cm-dur) var(--cm-ease) both; animation-delay: calc(var(--i, 0) * 45ms); }
+  .cm-note { position: relative; min-width: 0; display: grid; gap: var(--ay-s12); padding: var(--ay-s16) var(--ay-s20) var(--ay-s4); border: 1.5px solid var(--ay-outline); border-radius: var(--ay-r-card); background-color: var(--ay-page); background-image: var(--cm-grain); color: var(--ay-text); animation: cm-in var(--cm-dur) var(--cm-ease) both; animation-delay: calc(var(--i, 0) * 45ms); }
   .cm-note.is-question { margin-top: 12px; }
   .cm-note.is-full { animation: none; }
   .cm-ear { position: absolute; left: 18px; bottom: 100%; padding: 4px 12px 3px; border: 1.5px solid var(--ay-outline); border-bottom: 0; border-radius: 10px 10px 0 0; background: #769ebe; color: #3e2723; font: 600 12.5px/1.2 var(--ay-sans-stack); }
@@ -505,8 +505,8 @@ html body .app-container.app-container.app-container.app-container[data-theme='b
 }
 @media (max-width: 359px) {
   html body .app-container.app-container.app-container.app-container {
-    .cm-actions button > span { font-size: 13px; }
-    .cm-actions button { padding: 0 6px; gap: 4px; }
+    .cm-actions button { position: relative; padding: 0 8px; gap: 4px; }
+    .cm-actions button:is([aria-label='Share'], .cm-save) > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   }
 }
 @media (hover: none) {
