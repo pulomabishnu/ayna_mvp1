@@ -158,9 +158,18 @@ export function warmSearchEngine() {
     if (warmIndex >= ALL_PRODUCTS.length) { warmed = true; return; }
     schedule();
   }
-  schedule(true);
+  // Wait for the page to finish loading (plus a beat) before the first slice:
+  // building the engine is one ~300ms task on a throttled phone, and it used
+  // to land right after first paint, while hero and product photos decode.
+  let startTimer = null;
+  const begin = () => { startTimer = setTimeout(() => { startTimer = null; if (!cancelled) schedule(true); }, 2000); };
+  if (typeof document === 'undefined') schedule(true);
+  else if (document.readyState === 'complete') begin();
+  else window.addEventListener('load', begin, { once: true });
   return () => {
     cancelled = true;
+    if (startTimer != null) clearTimeout(startTimer);
+    window.removeEventListener?.('load', begin);
     if (handle == null) return;
     if (idle) window.cancelIdleCallback?.(handle); else clearTimeout(handle);
   };

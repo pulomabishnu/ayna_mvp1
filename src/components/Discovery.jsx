@@ -761,6 +761,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
     const combinedRelevance = useMemo(() => {
         const map = new Map();
+        // No answers and no health data: every score is null or 0, so skip the
+        // engine entirely (it built a passport for each of ~300 products, about
+        // 1.7s of a throttled phone's first Shop render).
+        if (!quizResults && !healthProfile) return map;
         combined.forEach((item) => {
             map.set(item.id, getProductRelevanceScore(item, quizResults, healthProfile, matchOpts));
         });

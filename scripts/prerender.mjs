@@ -72,8 +72,41 @@ function write(url, html) {
   fs.writeFileSync(file, html);
 }
 
+// Route chunks to fetch in parallel with the entry script (perf, pass 2):
+// without these, the Shop and product page code only starts downloading after
+// the entry has run. Found by the chunk name Vite gives each lazy import.
+const ASSETS = fs.existsSync(new URL('assets/', DIST)) ? fs.readdirSync(new URL('assets/', DIST)) : [];
+// A chunk plus the chunks it imports statically (read from its own import
+// lines), so the whole route arrives in one round trip instead of a waterfall.
+const staticDeps = (file, seen = new Set()) => {
+  if (seen.has(file)) return seen;
+  seen.add(file);
+  let code = '';
+  try { code = fs.readFileSync(new URL(`assets/${file}`, DIST), 'utf8').slice(0, 4000); } catch { return seen; }
+  for (const m of code.matchAll(/(?:import|from)\s*["']\.\/([\w.-]+\.js)["']/g)) if (!/^(index|vendor-)/.test(m[1])) staticDeps(m[1], seen);
+  return seen;
+};
+const chunkLinks = (name) => {
+  const own = ASSETS.filter((f) => f.startsWith(`${name}-`) && /\.(js|css)$/.test(f));
+  const js = new Set(own.filter((f) => f.endsWith('.js')).flatMap((f) => [...staticDeps(f)]));
+  return [...[...js].map((f) => `<link rel="modulepreload" crossorigin href="/assets/${f}" />`), ...own.filter((f) => f.endsWith('.css')).map((f) => `<link rel="preload" as="style" href="/assets/${f}" />`)].join('\n  ');
+};
+const withHead = (html, extra) => (extra ? html.replace('</head>', () => `  ${extra}\n</head>`) : html);
+const SHOP_PRELOAD = chunkLinks('Discovery');
+const PDP_PRELOAD = chunkLinks('ProductModal');
+
+// Home: the first hero photo starts with the HTML (the right width via imagesrcset).
+// dist/index.html is also the shell for routes without their own page, so it
+// is a small AVIF (about 27KB at phone width).
+{
+  const shellFile = new URL('index.html', DIST);
+  const heroPreload = '<link rel="preload" as="image" type="image/avif" fetchpriority="high" imagesrcset="/landing/tub-girls-480.avif 480w, /landing/tub-girls.avif 736w" imagesizes="(max-width: 720px) 46vw, 360px" />';
+  const html = fs.readFileSync(shellFile, 'utf8');
+  if (!html.includes('tub-girls-480.avif') && fs.existsSync(new URL('landing/tub-girls-480.avif', DIST))) fs.writeFileSync(shellFile, withHead(html, heroPreload));
+}
+
 let count = 0;
-for (const [url, [title, desc]] of Object.entries(PAGES)) { write(url, page(url, title, desc)); count += 1; }
+for (const [url, [title, desc]] of Object.entries(PAGES)) { write(url, withHead(page(url, title, desc), url === '/shop' ? SHOP_PRELOAD : '')); count += 1; }
 
 const absImage = (src) => (!src ? null : /^https?:/i.test(src) ? src : `${SITE}${src.startsWith('/') ? '' : '/'}${src}`);
 const asList = (v) => (Array.isArray(v) ? v : v ? [v] : []).map((x) => String(x ?? '').trim()).filter(Boolean);
@@ -112,7 +145,9 @@ for (const p of ALL_PRODUCTS) {
     productJsonLd(p, { origin: SITE, buyUrl, url: `${SITE}${url}` }),
     breadcrumbJsonLd(p, { origin: SITE }),
   ]);
-  write(url, page(url, title, description, { image: absImage(p.image), jsonLd, body: productBody(p, description) }));
+  // The product photo is the page's largest paint: fetch it with the entry, not after it.
+  const heroImg = typeof p.image === 'string' && p.image.startsWith('/') && !/\.svg$/i.test(p.image) ? `<link rel="preload" as="image" fetchpriority="high" href="${esc(p.image)}" />` : '';
+  write(url, withHead(page(url, title, description, { image: absImage(p.image), jsonLd, body: productBody(p, description) }), [PDP_PRELOAD, heroImg].filter(Boolean).join('\n  ')));
   count += 1;
 }
 const dupes = (m) => [...m.entries()].filter(([, ids]) => ids.length > 1);

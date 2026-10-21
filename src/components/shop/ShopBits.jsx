@@ -14,7 +14,7 @@ export function NeedStickers({ active = '', onPick, className = '' }) {
       {stickers.map((n, i) => (
         <li key={n.id} style={{ '--tilt': `${[-3, 2, -1.5, 3, -2.5, 1.5, -2, 2.5][i % 8]}deg` }}>
           <button type="button" className="ay-needsticker" aria-pressed={active.toLowerCase() === n.query.toLowerCase()} onClick={() => onPick?.(n.query)}>
-            <span className="ay-needsticker__die"><img src={n.image} alt="" width="160" height="160" loading="lazy" decoding="async" /></span>
+            <span className="ay-needsticker__die"><img src={n.image} alt="" width="160" height="160" loading={i < 5 ? "eager" : "lazy"} decoding="async" /></span>
             <span className="ay-needsticker__label">{n.label}</span>
           </button>
         </li>

@@ -16,6 +16,7 @@ import { WEFUNDER_URL, trackInvestClick } from '../data/invest';
 import '../styles/editorial.css';
 import { Seal, Ribbon, Envelope } from './personality/Bits.jsx';
 import { useReveal } from '../hooks/useReveal.js';
+import Photo from './ui/Photo.jsx';
 
 /* The website home. Story order (design direction, "Homepage"):
  *   what   hero (display, See my matches, search), partner brands, this week's picks
@@ -108,7 +109,7 @@ function Hero({ onStartQuiz, onSearch, personal = null, banner = null }) {
         <Search onSearch={onSearch} />
       </div>
       <div className="ed-hero__photos">
-        {HERO.map((p, i) => (<span key={p.src} className="ay-frame ed-hero__ph"><img src={p.src} alt={p.alt} style={{ objectPosition: p.pos }} {...(i === 0 ? { fetchPriority: 'high' } : { loading: 'lazy' })} /></span>))}
+        {HERO.map((p, i) => (<span key={p.src} className="ay-frame ed-hero__ph"><Photo src={p.src} alt={p.alt} sizes="(max-width: 720px) 46vw, 360px" style={{ objectPosition: p.pos }} {...(i === 0 ? { fetchPriority: 'high' } : { loading: 'lazy' })} /></span>))}
         <Seal className="ed-hero__seal" />
       </div>
     </section>
@@ -207,7 +208,7 @@ function Familiar({ onSearch, onStartQuiz }) {
                 <span className="ed-familiar__quote">“{t.q}”</span>
                 <span className="ed-familiar__go">See what helps <Arrow /></span>
               </a>
-            ) : <img src={t.photo} alt={t.alt} loading="lazy" />}
+            ) : <Photo src={t.photo} alt={t.alt} sizes="(max-width: 720px) 50vw, 300px" loading="lazy" />}
           </li>
         ))}
       </ul>
@@ -286,7 +287,7 @@ function Strip() {
   return (
     <div className="ed-strip ay-pinstripe" role="group" aria-label="Photographs from ayna" tabIndex={0}>
       <div className="ed-strip__track">
-        <ul>{STRIP.map((p) => (<li key={p.src}><img src={p.src} alt={p.alt} loading="lazy" /></li>))}</ul>
+        <ul>{STRIP.map((p) => (<li key={p.src}><Photo src={p.src} alt={p.alt} sizes="(max-width: 720px) 62vw, 320px" loading="lazy" /></li>))}</ul>
       </div>
     </div>
   );
@@ -303,7 +304,7 @@ const STEPS = [
 // arrive one after another as the row scrolls in (45ms apart, once). Text never waits.
 function StepPhoto({ step, i }) {
   const reveal = useReveal(`home-step-${i}`, { minWidth: 768, delay: i * 45 });
-  return <figure ref={reveal} className="ed-step__img ay-frame"><img src={step.src} alt={step.alt} style={{ objectPosition: step.pos }} loading="lazy" /></figure>;
+  return <figure ref={reveal} className="ed-step__img ay-frame"><Photo src={step.src} alt={step.alt} sizes="(max-width: 720px) 92vw, 320px" style={{ objectPosition: step.pos }} loading="lazy" /></figure>;
 }
 function How({ onViewHowItWorks }) {
   return (
@@ -394,7 +395,7 @@ function Reads({ onViewArticle, onViewArticles }) {
           {LEAD_READS.map((r) => (
             <li key={r.id}>
               <a className="ed-card ed-read" href={`/library/${r.id}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); open(r.id); }}>
-                <span className="ed-read__img"><img src={r.src} alt={r.alt} loading="lazy" /></span>
+                <span className="ed-read__img"><Photo src={r.src} alt={r.alt} sizes="(max-width: 720px) 80vw, 400px" loading="lazy" /></span>
                 <span className="ed-read__body">
                   <strong className="ed-rowtitle">{r.title}</strong>
                   <span className="ed-read__teaser">{r.teaser}</span>
@@ -416,7 +417,7 @@ function Community({ onViewCommunity, posts = [] }) {
   return (
     <section className="ed-sky ay-band ay-band--pink ay-band--scallop" aria-labelledby="ed-comm-title">
       <div className="ed-wrap ed-sky__grid">
-        <figure ref={reveal} className="ed-sky__photo ay-polaroid" style={{ '--tilt': '-1.5deg' }}><img src="/landing/story-reviews-phones.webp" alt="Friends in a circle looking down at their phones, blue sky above" loading="lazy" /><figcaption>The ayna community</figcaption></figure>
+        <figure ref={reveal} className="ed-sky__photo ay-polaroid" style={{ '--tilt': '-1.5deg' }}><Photo sizes="(max-width: 720px) 80vw, 420px" src="/landing/story-reviews-phones.webp" alt="Friends in a circle looking down at their phones, blue sky above" loading="lazy" /><figcaption>The ayna community</figcaption></figure>
         <div className="ed-sky__copy">
           <h2 id="ed-comm-title" className="ed-h2">Real talk about what women actually use.</h2>
           <p className="ed-body">Reviews, questions and routines from women who use these products. Ask a question, review what you use or share a playlist.</p>
@@ -462,7 +463,7 @@ function Us({ onViewAbout }) {
           <span className="ay-folder__sheet" aria-hidden="true" /><span className="ay-folder__sheet" aria-hidden="true" />
           <span className="ay-folder__photo">
             <span className="ay-folder__clip" aria-hidden="true"><svg viewBox="0 0 46 40"><path d="M5 16h36l-5 20H10z" /><path d="M14 16V5h18v11" /></svg></span>
-            <img src="/team/ayna-founders.jpg" alt="Puloma, Eliz and Ameera, ayna's founders, sitting together in Central Park" loading="lazy" width="1800" height="1198" />
+            <Photo sizes="(max-width: 720px) 92vw, 640px" src="/team/ayna-founders.jpg" alt="Puloma, Eliz and Ameera, ayna's founders, sitting together in Central Park" loading="lazy" width="1800" height="1198" />
           </span>
           <figcaption className="ay-folder__pocket"><span className="ay-folder__title">Puloma, Eliz &amp; Ameera</span></figcaption>
         </figure>
@@ -483,7 +484,7 @@ function Us({ onViewAbout }) {
             <p className="ed-caption">{TESTING_WATERS_NOTICE}</p>
           </div>
         </div>
-        <img src="/landing/laundry-duo.webp" alt="Two friends in curlers reading magazines together on a laundry room floor" loading="lazy" width="736" height="981" />
+        <Photo sizes="(max-width: 720px) 60vw, 360px" src="/landing/laundry-duo.webp" alt="Two friends in curlers reading magazines together on a laundry room floor" loading="lazy" width="736" height="981" />
       </div>
     </section>
   );
@@ -495,7 +496,7 @@ function Final({ onStartQuiz, onViewDiscovery }) {
   return (
     <section className="ed-final ay-band ay-band--sky ay-band--grid ay-band--scallop" aria-labelledby="ed-start-title">
       <div className="ed-wrap ed-final__in">
-        <span ref={reveal} className="ay-frame ed-final__photo"><img src="/landing/banner-bath-phone.webp" alt="A woman in a face mask relaxing in a pink tiled bath, scrolling her phone, products along the ledge" loading="lazy" width="960" height="400" /></span>
+        <span ref={reveal} className="ay-frame ed-final__photo"><Photo sizes="(max-width: 720px) 92vw, 560px" src="/landing/banner-bath-phone.webp" alt="A woman in a face mask relaxing in a pink tiled bath, scrolling her phone, products along the ledge" loading="lazy" width="960" height="400" /></span>
         <Envelope className="ed-final__letter">
           <h2 id="ed-start-title" className="ed-h1">Start with six questions.</h2>
           <p className="ed-lead">Then a shop matched to you.</p>

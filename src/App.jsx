@@ -6,9 +6,7 @@ import SiteFooter from './components/SiteFooter';
 import ConsentBanner from './components/ConsentBanner';
 import SavedForLater from './components/SavedForLater';
 import EcosystemGenerationBar from './components/EcosystemGenerationBar';
-import WebYou from './components/WebYou';
 import { useWebTheme } from './utils/useWebTheme';
-import MonthlyCheckin from './components/MonthlyCheckin';
 import OmittedProducts from './components/OmittedProducts';
 import ViewSkeleton from './components/skeletons/ViewSkeleton';
 import { markPerf } from './utils/perfTimings';
@@ -42,6 +40,21 @@ const TrackedItems = lazyView(() => import('./components/TrackedItems'));
 const Comparison = lazyView(() => import('./components/Comparison'));
 const DoctorPrep = lazyView(() => import('./components/DoctorPrep'));
 const Recalls = lazyView(() => import('./components/Recalls'));
+// Pass 2 (perf): pages that Home, Shop and first paint never need. The
+// product page chunk is preloaded on /product/* pages (scripts/prerender.mjs).
+const WebYou = lazyView(() => import('./components/WebYou'));
+const MonthlyCheckin = lazyView(() => import('./components/MonthlyCheckin'));
+const WebHealthData = lazyView(() => import('./components/WebHealthData'));
+const ProductModal = lazyView(() => import('./components/ProductModal'), <ViewSkeleton label="Loading the product" />);
+const PrivacyPolicy = lazyView(() => import('./components/PrivacyPolicy'));
+const ConsumerHealthData = lazyView(() => import('./components/ConsumerHealthData'));
+const HowWeMakeMoney = lazyView(() => import('./components/HowWeMakeMoney'));
+const HowItWorks = lazyView(() => import('./components/HowItWorks'));
+const About = lazyView(() => import('./components/About'));
+const Contact = lazyView(() => import('./components/Contact'));
+const TermsOfUse = lazyView(() => import('./components/TermsOfUse'));
+const AuthConfirm = lazyView(() => import('./components/AuthConfirm'));
+const EmailConfirmed = lazyView(() => import('./components/EmailConfirmed'));
 // Lazy: each of these pulls in src/data/startups.js (~1700 lines), deferring
 // them until the user actually navigates there keeps that out of the main
 // bundle. products.js itself is still eager (App.jsx needs getRecommendations/
@@ -59,7 +72,6 @@ const CampusResources = React.lazy(() => import('./components/CampusResources'))
 const SharedAnswerPage = React.lazy(() => import('./components/SharedAnswerPage'));
 import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, hasStatedLifeStage, matchEngine, getSelectedNeeds } from './data/products.js';
 import { behaviorFrom } from './utils/matchDisplay';
-import WebHealthData from './components/WebHealthData';
 import { useHealthData } from './mobile/hooks/useHealthData.js';
 import { useHealthMatchPref } from './health/matchPref.js';
 import { usesHormonalBC } from './health/weekInsights.js';
@@ -69,7 +81,6 @@ import { readPendingFriend } from './utils/shareAnswerClient.js';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
 const Screenings = lazyView(() => import('./components/Screenings'));
 import { useScrollPosition } from './hooks/useScrollPosition';
-import ProductModal from './components/ProductModal';
 import { enrichLlmProductForDiscovery } from './utils/enrichLlmProductForDiscovery';
 import ProfileChatbot from './components/ProfileChatbot';
 import { loadHealthProfile, hasHealthProfileSignals } from './utils/healthDataProfile.js';
@@ -77,22 +88,13 @@ import { loadHealthProfileForCurrentUser, saveHealthProfileForCurrentUser } from
 import { forgetSharedIntake, loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser, clearHealthIntakeForCurrentUser } from './utils/healthIntakeStore';
 import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
 import AuthGate, { ConsentGate } from './components/AuthGate';
-import PrivacyPolicy from './components/PrivacyPolicy';
-import ConsumerHealthData from './components/ConsumerHealthData';
-import HowWeMakeMoney from './components/HowWeMakeMoney';
-import HowItWorks from './components/HowItWorks';
-import About from './components/About';
-import Contact from './components/Contact';
 import './finalAynaPolish.css';
 import './brand-v2.css';
 import './web-play.css';
 import './styles/verify-core.css';
 import { installScrollMemory, isRestoringScroll } from './utils/scrollMemory';
 import { avatarInitials } from './utils/avatarInitials';
-import TermsOfUse from './components/TermsOfUse';
 import AuthCallback from './components/AuthCallback';
-import AuthConfirm from './components/AuthConfirm';
-import EmailConfirmed from './components/EmailConfirmed';
 import './styles/editorial.css';
 import { getSupabaseClient } from './utils/supabaseClient';
 import { clearGeneratedPicksForUser, isGeneratedPick, loadEcosystemForUser, upsertProductState, upsertProductsBatch, removeGeneratedProductsFromEcosystem, clearEcosystemForUser } from './utils/ecosystemStore';

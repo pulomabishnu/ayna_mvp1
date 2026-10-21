@@ -50,11 +50,11 @@ function lsWrite(key, url) {
 const NON_PRODUCT_IMAGE_PATTERN = /(?<![a-z])(?:logo|icon|badge|banner|header|sprite|placeholder|social[-_]?share|og[-_]?default)(?![a-z])/i;
 
 function isVectorAssetUrl(src) {
-  try {
-    return /\.svg(\?|$)/i.test(new URL(src).pathname);
-  } catch {
-    return /\.svg(\?|$)/i.test(src);
-  }
+  // Same answer as testing new URL(src).pathname, without the constructor:
+  // relative paths ("/products/...", most of the catalog) made it throw and
+  // catch on every call, ~280ms of a throttled phone's home render.
+  const path = String(src || '').split(/[?#]/)[0];
+  return /\.svg$/i.test(path);
 }
 
 /**
