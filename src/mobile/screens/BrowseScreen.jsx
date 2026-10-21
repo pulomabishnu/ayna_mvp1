@@ -16,6 +16,7 @@ import { fetchSearchSuggestions } from '../../utils/fetchSearchSuggestions.js';
 import { trackApp } from '../utils/appAnalytics.js';
 import { stableShopOrder, rankShopForProfile } from '../utils/shopOrder.js';
 import { hasQuizAnswers } from '../utils/personalReads.js';
+import { sortByBestMatch, bestMatchNeedsQuiz } from '../../utils/bestMatchSort.js';
 import { useSheetDrag } from '../hooks/useSheetDrag.js';
 import usePersistentState from '../../hooks/usePersistentState.js';
 import { NeedStickers } from '../../components/shop/ShopBits.jsx';
@@ -33,7 +34,7 @@ const FILTER_FIELDS = [
   ['sustainability', 'Sustainability', [['all', 'Any'], ['reusable', 'Reusable'], ['recyclable', 'Recyclable'], ['low-waste', 'Low waste'], ['packaging', 'Sustainable packaging']]],
   ['lifeStage', 'Life stage', [['all', 'Any'], ['fertility', 'Fertility'], ['pregnancy', 'Pregnancy'], ['postpartum', 'Postpartum'], ['perimenopause', 'Perimenopause'], ['menopause', 'Menopause']]],
 ];
-const SORT_LABELS = { rating: 'Highest rated', 'price-asc': 'Price: low to high', 'price-desc': 'Price: high to low' };
+const SORT_LABELS = { best: 'Best match', rating: 'Highest rated', 'price-asc': 'Price: low to high', 'price-desc': 'Price: high to low' };
 const EMPTY_FILTERS = Object.fromEntries(FILTER_FIELDS.map(([key]) => [key, 'all']));
 const PRICE_VALUE = (item) => {
   const raw = String(item.price || item.priceDisplay || '');
@@ -346,6 +347,14 @@ export default function BrowseScreen({
     return sortBy === 'price-asc' ? pa - pb : pb - pa;
   });
   if (sortBy === 'rating') filtered = [...filtered].sort((a, b) => (RATING_VALUE(b) ?? -1) - (RATING_VALUE(a) ?? -1));
+  // Best match: the match % on her cards, highest first. Signed out or no
+  // quiz yet, it keeps the Featured order and the quiz note shows instead.
+  const canSortByMatch = Boolean(authUser) && hasProfile;
+  const bestNeedsQuiz = bestMatchNeedsQuiz(sortBy, canSortByMatch);
+  const featuredOrder = sortBy === 'default' || bestNeedsQuiz;
+  if (sortBy === 'best' && canSortByMatch) {
+    filtered = sortByBestMatch(filtered, (product) => getProfileMatchPercentForProduct(product, quizAnswers, null, matchOpts));
+  }
   if (sortBy === 'default' && personalized && hasProfile && !searchTermRaw) {
     const matchScores = new Map(filtered.map((product) => [
       product.id,
@@ -359,7 +368,7 @@ export default function BrowseScreen({
   // page you browse freely, never placement inside an actual text search
   // or a personalized order (For You, or the default order once she has
   // quiz answers).
-  if (sortBy === 'default' && !searchTermRaw && !(personalized && hasProfile) && !rankByProfile) {
+  if (featuredOrder && !searchTermRaw && !(personalized && hasProfile) && !rankByProfile) {
     filtered = [...filtered].sort((a, b) => (isPartnerBrandItem(b) ? 1 : 0) - (isPartnerBrandItem(a) ? 1 : 0));
   }
   let moreResults = [];
@@ -367,6 +376,16 @@ export default function BrowseScreen({
     if (searchTermRaw) moreResults = filtered.filter((p) => !personalizedIds.has(p.id));
     filtered = filtered.filter((p) => personalizedIds.has(p.id));
   }
+  // Best match is always listed: first once she has a profile, last before.
+  const sortChoices = canSortByMatch
+    ? [['best', 'Best match'], ['default', 'Featured'], ['rating', 'Highest rated'], ['price-asc', 'Price: low to high'], ['price-desc', 'Price: high to low']]
+    : [['default', 'Featured'], ['rating', 'Highest rated'], ['price-asc', 'Price: low to high'], ['price-desc', 'Price: high to low'], ['best', 'Best match']];
+  const bestQuizNote = (
+    <p className="ay-shop-sortnote" role="status">
+      Take the 6-question quiz to sort by match.{' '}
+      <button type="button" onClick={() => { setShowFilters(false); onStartQuiz?.(); }}>Take the quiz</button>
+    </p>
+  );
   const filterKey = `${searchTerm}|${personalized}|${activeGroup}|${JSON.stringify(filters)}|${sortBy}`;
 
   useEffect(() => {
@@ -458,9 +477,10 @@ export default function BrowseScreen({
             </button>}
           </div>
           {(activeFilters.length > 0 || sortBy !== 'default') && <div className="ay-shop-applied" role="group" aria-label="Filters on">
-            {sortBy !== 'default' && <button type="button" className="ayna-shop-category" aria-pressed="true" onClick={() => setSortBy('default')} aria-label={`Remove sort: ${SORT_LABELS[sortBy]}`}>{SORT_LABELS[sortBy]}<span aria-hidden="true">×</span></button>}
+            {sortBy !== 'default' && SORT_LABELS[sortBy] && <button type="button" className="ayna-shop-category" aria-pressed="true" onClick={() => setSortBy('default')} aria-label={`Remove sort: ${SORT_LABELS[sortBy]}`}>{SORT_LABELS[sortBy]}<span aria-hidden="true">×</span></button>}
             {activeFilters.map(([key, text]) => <button key={key} type="button" className="ayna-shop-category" aria-pressed="true" onClick={() => setFilters((current) => ({ ...current, [key]: 'all' }))} aria-label={`Remove filter: ${text}`}>{text}<span aria-hidden="true">×</span></button>)}
           </div>}
+          {bestNeedsQuiz && !showFilters && bestQuizNote}
         </>} />
       )}
       {showDeck && <DiscoverDeck products={filtered} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} onOpenProduct={(product) => { setShowDeck(false); onOpenProduct?.(product); }} onClose={() => setShowDeck(false)} />}
@@ -471,7 +491,7 @@ export default function BrowseScreen({
           <div className="ayna-shop-filter-head"><strong>Filters</strong><button ref={filterCloseRef} type="button" aria-label="Close filters" onClick={() => { setShowFilters(false); filterButtonRef.current?.focus(); }}>Close</button></div>
           <div className="ayna-shop-filter-fields">
           {/* P2-15: the same filter control as the website's sheet: chip groups (selected = pink + check), tap again to clear. */}
-          <fieldset className="ay-chipgroup"><legend>Sort</legend><div className="ay-chipgroup__chips">{[['default', 'Featured'], ['rating', 'Highest rated'], ['price-asc', 'Price: low to high'], ['price-desc', 'Price: high to low']].map(([value, text]) => <button key={value} type="button" className="ay-chipgroup__chip" aria-pressed={sortBy === value} onClick={() => setSortBy(value)}>{text}</button>)}</div></fieldset>
+          <fieldset className="ay-chipgroup"><legend>Sort</legend><div className="ay-chipgroup__chips">{sortChoices.map(([value, text]) => <button key={value} type="button" className="ay-chipgroup__chip" aria-pressed={sortBy === value} onClick={() => setSortBy(value)}>{text}</button>)}</div>{bestNeedsQuiz && bestQuizNote}</fieldset>
           {FILTER_FIELDS.map(([key, label, options]) => (
             <fieldset key={key} className="ay-chipgroup"><legend>{label}</legend><div className="ay-chipgroup__chips">
               {(key === 'category' ? [...options, ...[...new Set(products.map((p) => p.category).filter(Boolean))].sort().map((category) => [category, sentenceCase(CATEGORY_LABELS[category] || category.replaceAll('-', ' '))])] : options).filter(([value]) => value !== 'all').map(([value, text]) => (

@@ -422,6 +422,9 @@
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-shop-applied .ayna-shop-category::before { content: none !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-shop-applied .ayna-shop-category span { font: 400 18px/1 var(--f-ui); margin-left: 2px; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-shop-applied { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 var(--d-gutter) 12px; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-shop-sortnote { margin: 0 !important; padding: 0 var(--d-gutter) 12px; font: 400 calc(14px * var(--ayna-text-scale, 1))/1.4 var(--f-ui) !important; color: var(--d-ink-2) !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-chipgroup .ay-shop-sortnote { clear: both; padding: 10px 0 0; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-shop-sortnote button { display: inline-flex; align-items: center; min-height: 44px; vertical-align: middle; margin: 0; padding: 0; border: 0; background: none; font: 600 calc(14px * var(--ayna-text-scale, 1))/1.4 var(--f-ui); color: var(--d-ink); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 
 /* toolbar: Filters, result count, Swipe */
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-shop-toolbar { display: flex; align-items: center; gap: 12px; padding: 12px var(--d-gutter) 12px; }

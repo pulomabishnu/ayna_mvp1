@@ -14,6 +14,7 @@ import './shop-page.css';
 // placeholder cards until both have arrived (`ready` below).
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct, isTeenProduct, useCatalogReady } from '../data/catalog.js';
 import { behaviorFrom, matchBadge } from '../utils/matchDisplay';
+import { sortByBestMatch, bestMatchNeedsQuiz } from '../utils/bestMatchSort.js';
 import { loadProductCatalog } from '../utils/productCatalog';
 import { scoreSearchMatch, correctedSearchQuery, useSearchReady } from '../utils/search/lazy.js';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
@@ -493,6 +494,7 @@ function FilterSheet({ groups, personalizedToggle, sort = null, resultCount, act
                                     <button key={v} type="button" className={sort.value === v ? 'is-on' : ''} aria-pressed={sort.value === v} onClick={() => sort.set(v)}>{l}</button>
                                 ))}
                             </div>
+                            {sort.note}
                         </fieldset>
                     )}
                     {groups.filter((g) => g[3].length > 0).map(([label, value, set, options]) => (
@@ -930,7 +932,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         // "Best match" (personalized on, with a profile) sorts by the same
         // match % the cards show, highest first, so the order never contradicts
         // the numbers.
-        const sortByShownMatch = sortBy === 'default' && personalizationFilter && Boolean(hasQuizFrustrations || hasHealthImport);
+        // 'best' is also saved as-is when picked before she had a profile; once
+        // she has one it sorts by match, until then it keeps the Featured order.
+        const sortByShownMatch = (sortBy === 'default' || sortBy === 'best') && personalizationFilter && Boolean(hasQuizFrustrations || hasHealthImport);
         const shownPct = sortByShownMatch ? new Map(list.map((it) => [it.id, matchBadge(getProductMatchDetailsForProduct(it, quizResults, healthProfile, matchOpts))?.percent ?? 0])) : null;
 
         // Price sorts compare like with like: products first, then apps and services
@@ -977,7 +981,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 return matchTieBreak(a, b);
             });
         } else if (sortByShownMatch) {
-            list = [...list].sort((a, b) => ((shownPct.get(b.id) ?? 0) - (shownPct.get(a.id) ?? 0)) || matchTieBreak(a, b));
+            list = sortByBestMatch(list, (it) => shownPct.get(it.id), matchTieBreak);
         } else {
             const browsingWithoutTextQuery = !scoreById;
             // Featured leads with one product per partner brand; the brand's other
@@ -1634,9 +1638,20 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const sheetFilterCount = [typeFilter, priceFilter, eligibilityFilter, lifeStageFilter, preferenceFilter, sustainabilityFilter, aynaFilter].filter((v) => v && v !== 'all').length;
     const activeFilterCount = [priceFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, typeFilter].filter((v) => v && v !== 'all').length + (categoryFilter !== 'all' && !submittedQuery ? 1 : 0);
 
-    const sortValue = hasProfileForSort && personalizationFilter && sortBy === 'default' ? 'best' : sortBy;
+    const sortValue = hasProfileForSort
+        ? (personalizationFilter && (sortBy === 'default' || sortBy === 'best') ? 'best' : (sortBy === 'best' ? 'default' : sortBy))
+        : sortBy;
+    // Best match is always listed. Without a profile there is nothing to match
+    // against, so picking it keeps the Featured order and shows the quiz note.
+    const bestNeedsQuiz = bestMatchNeedsQuiz(sortBy, hasProfileForSort);
+    const openMatchQuiz = () => {
+        if (!user && onRequirePersonalizeAuth) onRequirePersonalizeAuth();
+        else setCurrentView?.('quiz');
+    };
     const applySort = (v) => {
-        if (v === 'best' || v === 'default') {
+        if (!hasProfileForSort) {
+            setSortBy(v);
+        } else if (v === 'best' || v === 'default') {
             const on = v === 'best';
             setPersonalizationFilter(on);
             setAiSuggestions([]);
@@ -1648,7 +1663,15 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             setSortBy(v);
         }
     };
-    const sortChoices = [...(hasProfileForSort ? [['best', 'Best match']] : []), ...SORT_OPTIONS.map((o) => [o.value, o.label])];
+    const sortChoices = hasProfileForSort
+        ? [['best', 'Best match'], ...SORT_OPTIONS.map((o) => [o.value, o.label])]
+        : [...SORT_OPTIONS.map((o) => [o.value, o.label]), ['best', 'Best match']];
+    const bestQuizNote = bestNeedsQuiz ? (
+        <p className="ayshop__sortnote" role="status">
+            Take the 6-question quiz to sort by match.{' '}
+            <button type="button" className="ay-btn ay-btn--text" onClick={openMatchQuiz}>Take the quiz</button>
+        </p>
+    ) : null;
 
     return (
         <section className="ayshop">
@@ -1758,11 +1781,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         value={sortValue}
                         onChange={(e) => applySort(e.target.value)}
                     >
-                        {hasProfileForSort && <option value="best">Best match</option>}
-                        {SORT_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                        {sortChoices.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
                     </select>
                 </label>
             </div>
+            {bestQuizNote}
 
             {(() => {
                 const LABELS = { 'under-25': 'Under $25', '25-50': '$25–49', '50-100': '$50–99', '100-plus': '$100+', subscription: 'Subscription or membership', 'fsa-hsa': 'FSA/HSA eligible', fsa: 'FSA', hsa: 'HSA', 'fragrance-free': 'Fragrance-free', 'sensitive-skin': 'Sensitive skin', vegan: 'Vegan', 'cruelty-free': 'Cruelty-free', organic: 'Organic', 'clean-ingredients': 'Paraben or chlorine free', reusable: 'Reusable', recyclable: 'Recyclable', 'low-waste': 'Low waste', packaging: 'Sustainable packaging', clinician: 'Clinician backed', community: 'Community favorite', 'best-match': 'Best matches', ecosystem: 'In my ecosystem', fertility: 'Trying to conceive', pregnancy: 'Pregnant', postpartum: 'Postpartum', perimenopause: 'Perimenopause and menopause', menopause: 'Menopause', period: 'Period years', products: 'Products', services: 'Apps & services' };
@@ -1794,7 +1817,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         ['Show only', aynaFilter, setAynaFilter, [['clinician', 'Clinician backed'], ['community', 'Community favorite'], ...(user ? [['ecosystem', 'In my ecosystem']] : [])]],
                     ]}
                     personalizedToggle={hasProfileForSort ? personalizedSwitch : null}
-                    sort={{ value: sortValue, choices: sortChoices, set: applySort }}
+                    sort={{ value: sortValue, choices: sortChoices, set: applySort, note: bestQuizNote }}
                     resultCount={gridItems.length}
                     activeCount={sheetFilterCount}
                     onClear={clearSheetFilters}

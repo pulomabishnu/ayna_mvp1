@@ -34,6 +34,9 @@ html body .app-container.app-container.app-container .ayshop__matches { font-siz
 html body .app-container.app-container.app-container .ayshop__sort { display: inline-flex; align-items: center; gap: var(--ay-s8); margin: 0; font: 500 14px/1 var(--ay-sans-stack); color: var(--ay-text-2); }
 html body .app-container.app-container.app-container .ayshop__sort select { min-height: 44px; padding: 0 38px 0 14px; border: 1.5px solid var(--ay-outline) !important; border-radius: 999px !important; background: var(--ay-page) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6' fill='none' stroke='%233e2723' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") right 12px center / 16px no-repeat !important; -webkit-appearance: none; appearance: none; color: var(--ay-text) !important; font: 600 15px/1 var(--ay-sans-stack) !important; box-shadow: none !important; cursor: pointer; }
 html body .app-container.app-container.app-container[data-theme='brand-dark'] .ayshop__sort select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6' fill='none' stroke='%23ffedac' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") !important; }
+html body .app-container.app-container.app-container .ayshop__sortnote { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 0 var(--ay-s8); margin: var(--ay-s8) 0 0; font: 400 14px/1.4 var(--ay-sans-stack); color: var(--ay-text-2); text-align: right; }
+html body .app-container.app-container.app-container .ayshop__sortnote .ay-btn--text { min-height: 32px; padding: 0; font-size: 14px !important; text-decoration: underline; text-underline-offset: 3px; }
+html body .app-container.app-container.app-container .ay-shopfilters__group .ayshop__sortnote { justify-content: flex-start; text-align: left; margin-top: var(--ay-s12); }
 html body .app-container.app-container.app-container .ayshop__applied { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ay-s8) var(--ay-s12); margin: var(--ay-s16) 0 var(--ay-s24); min-height: 24px; }
 html body .app-container.app-container.app-container .ayshop__count { margin-right: var(--ay-s8); font: 500 14px/1.4 var(--ay-sans-stack); color: var(--ay-text-2); font-variant-numeric: tabular-nums; }
 html body .app-container.app-container.app-container .ayshop__clear { min-height: 36px !important; font-size: 14px !important; }
@@ -97,6 +100,7 @@ html body .app-container.app-container.app-container .ayshop__matches.is-phone {
   html body .app-container.app-container.app-container .ayshop .ay-folders { margin-top: 4px; padding-top: 6px; }
   html body .app-container.app-container.app-container .ayshop .ay-folder-tab__peek { display: none; }
   html body .app-container.app-container.app-container .ayshop__toolbar { display: none; }
+  html body .app-container.app-container.app-container .ayshop__sortnote { justify-content: flex-start; text-align: left; }
   html body .app-container.app-container.app-container .ayshop__applied { margin: var(--ay-s12) 0; justify-content: flex-start; }
   html body .app-container.app-container.app-container .ayshop__matches.is-phone { display: inline-flex; margin-left: auto; min-height: 32px; padding: 0; }
   html body .app-container.app-container.app-container .ayshop__inferred { margin-top: 4px; }
