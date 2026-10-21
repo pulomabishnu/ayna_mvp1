@@ -26,6 +26,34 @@ used often but never on every block:
 Not: a SaaS template, a pastel wellness template, everything-in-a-rounded-box,
 pills everywhere, one-word italic accents, stickers on every section.
 
+## Personality (founder, Oct 20: "where did all the colour and style go")
+
+The redo went too quiet. ayna is playful and bold, like the founder's
+Pinterest references (laha.com.au "hey Georgia" site: cream page, colour-block
+sections, chunky display headings, scalloped dividers, image-led cards with a
+coloured header strip, a sticker or two, a marquee ribbon; Glossier/Tower 28
+for the product page; bdy emails for tabs). Readability still wins, but every
+page must feel unmistakably ayna:
+
+- **Colour-block sections.** Pages alternate full-bleed bands: butter → pink
+  `#f7badd` → espresso → sky `#769ebe`, joined by the scallop edge. Use 2-4
+  bands per page; never two same-colour bands in a row.
+- **Coloured card headers.** Service/feature/shelf cards can carry a solid
+  colour strip or tab label (espresso, pink, sky) like the reference's
+  "What's included" tabs.
+- **Big expressive headings.** Display and H1 in DM Serif Display, large,
+  tight; one hand-feel accent per page is allowed as a sticker/badge (e.g. the
+  "Matched to you" seal), not as a one-word colour swap inside a heading.
+- **Stickers and seals.** The round "Matched to you" seal and small badges may
+  overlap a photo corner, max one per screen.
+- **Ribbon.** One marquee ribbon (brands or a phrase) per page, on a pink or
+  espresso band.
+- **Photos.** Real lifestyle photos in rounded frames with a thin espresso
+  outline; product photos on white tiles.
+- Quiet utility surfaces (settings, forms, checkout-like flows, legal text)
+  stay calm: personality lives on marketing pages, shelves, product headers,
+  dashboard feature cards and empty states.
+
 ## Surfaces (this settles "boxes vs no boxes")
 
 The founder wants information grouped so it's easy to read. The master prompt
