@@ -289,7 +289,7 @@ function SegTabs({ tabs, active, onChange }) {
 // ---------------------------------------------------------------------------
 // The page part
 // ---------------------------------------------------------------------------
-export default function ProductEvidence({ product: baseProduct, glance = null, aynaData = null, aynaRating: aynaRatingProp = null, ratingCount: ratingCountProp = 0, rateControls = null, heroLine = '', extraRows = [], onOpenReview = null, onWriteReview = null, fitSlot = null, loading = false }) {
+export default function ProductEvidence({ product: baseProduct, glance = null, aynaData = null, aynaRating: aynaRatingProp = null, ratingCount: ratingCountProp = 0, rateControls = null, heroLine = '', extraRows = [], onOpenReview = null, onWriteReview = null, fitSlot = null, afterOverview = null, loading = false }) {
   const product = useApprovedResearch(baseProduct);
   const m = useMemo(() => buildEvidence(product, { heroLine, glance }), [product, heroLine, glance]);
   const works = worksWith(product);
@@ -759,6 +759,8 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
             </section>
           )}
         </section>
+
+        {afterOverview}
 
         {tabs.length > 0 && (
           <section id="ay-pt" className="ayq-tabsec" aria-label="Expert view, research, reviews, safety, how to use and details">

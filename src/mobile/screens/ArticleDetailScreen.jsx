@@ -92,7 +92,7 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
 
   return (
     <div className="ayna-fresh-article" ref={scrollRef} onScroll={handleScroll} style={{ flex: 1, overflowY: 'auto', background: 'var(--ayna-bg)', animation: 'ay-page .25s ease-out' }}>
-      {/* Progress and the back arrow stay on screen while she scrolls. */}
+      {/* Progress and the back arrow scroll with the article (nothing stays on screen while the page scrolls). */}
       <div className="ay-read-sticky">
         <div className={`ay-read-status${shown >= 1 ? ' is-done' : ''}`} role="progressbar" aria-label="Reading progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(shown * 100)}>
           <span className="ay-read-status-bar"><i style={{ width: `${shown * 100}%` }} /></span>

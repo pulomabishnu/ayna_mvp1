@@ -205,7 +205,7 @@ html:not([data-ay-theme='dark']) body:has(.app-container:not([data-theme='dark']
 .app-container:not([data-theme='dark']) .ay-info__section-head .ay-info__eyebrow--sm { padding: 0 !important; border: 0 !important; background: none !important; font: 600 var(--ay-fs-secondary)/1.2 var(--ay-sans) !important; letter-spacing: normal !important; text-transform: none; color: var(--ay-ink-soft) !important; }
 /* reading pages: contents rail + one comfortable column */
 .app-container:not([data-theme='dark']) .ay-info--toc .ay-info__layout { display: grid; grid-template-columns: 260px minmax(0, 720px); gap: 56px; justify-content: center; align-items: start; }
-.app-container:not([data-theme='dark']) .ay-info__toc { position: sticky; top: 96px; padding: 20px; border: 2px solid var(--ay-ink); border-radius: 20px; background: var(--ay-paper); box-shadow: 4px 4px 0 var(--ay-ink); }
+.app-container:not([data-theme='dark']) .ay-info__toc { padding: 20px; border: 2px solid var(--ay-ink); border-radius: 20px; background: var(--ay-paper); box-shadow: 4px 4px 0 var(--ay-ink); }
 .app-container:not([data-theme='dark']) .ay-info__toc-title { margin: 0 0 12px; font: 600 var(--ay-fs-secondary)/1.2 var(--ay-sans); letter-spacing: normal; text-transform: none; }
 .app-container:not([data-theme='dark']) .ay-info__toc ol { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
 .app-container:not([data-theme='dark']) .ay-info__toc a { display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: center; padding: 6px 8px; border-radius: 12px; color: var(--ay-ink); font: 500 var(--ay-fs-secondary)/1.3 var(--ay-sans); text-decoration: none; transition: background .15s, transform .15s; }
@@ -319,7 +319,7 @@ html:not([data-ay-theme='dark']) body:has(.app-container:not([data-theme='dark']
 /* contents rail in the dark theme: same layout, dark tokens */
 .app-container[data-theme='dark'] .ay-info.ay-info--toc { max-width: min(1140px, 100%) !important; }
 .app-container[data-theme='dark'] .ay-info--toc .ay-info__layout { display: grid; grid-template-columns: 240px minmax(0, 720px); gap: 48px; justify-content: center; align-items: start; }
-.app-container[data-theme='dark'] .ay-info__toc { position: sticky; top: 96px; padding: 18px; border: 1px solid var(--ay-line); border-radius: 18px; background: var(--ay-paper); }
+.app-container[data-theme='dark'] .ay-info__toc { padding: 18px; border: 1px solid var(--ay-line); border-radius: 18px; background: var(--ay-paper); }
 .app-container[data-theme='dark'] .ay-info__toc-title { margin: 0 0 10px; color: var(--ay-ink-soft); font: 600 var(--ay-fs-secondary)/1.2 var(--ay-sans); letter-spacing: normal; text-transform: none; }
 .app-container[data-theme='dark'] .ay-info__toc ol { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; }
 .app-container[data-theme='dark'] .ay-info__toc a { display: grid; grid-template-columns: 24px 1fr; gap: 10px; padding: 6px 8px; border-radius: 10px; color: var(--ay-ink); font: 500 var(--ay-fs-secondary)/1.3 var(--ay-sans); text-decoration: none; }
@@ -1355,7 +1355,7 @@ html body .app-container:not([data-theme='dark']) .eco3-overview .eco3-overview_
    cabinet shelves that fill from the top, tidy card actions.
    ===================================================================== */
 /* jump bar */
-.app-container .eco3-jump { position: sticky; top: 80px; z-index: 20; display: flex; flex-wrap: wrap; gap: 8px; width: fit-content; margin: 0 auto 22px; padding: 8px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); box-shadow: 4px 4px 0 var(--ay-ink); }
+.app-container .eco3-jump { display: flex; flex-wrap: wrap; gap: 8px; width: fit-content; margin: 0 auto 22px; padding: 8px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); box-shadow: 4px 4px 0 var(--ay-ink); }
 .app-container .eco3-jump a { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px 8px 8px; border-radius: 99px; color: var(--ay-ink); font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); text-decoration: none; transition: background .15s, transform .15s; }
 .app-container .eco3-jump a b { display: grid; place-items: center; width: 24px; height: 24px; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-rose); font: 500 var(--ay-fs-secondary)/1 var(--ay-sans); }
 .app-container .eco3-jump a:nth-child(even) b { background: #769ebe; }
@@ -2347,7 +2347,7 @@ html body .app-container:not([data-theme='dark']) .eco3-extras .ay-saved, html b
 .app-container .ay-saved__nav { justify-content: center; }
 
 /* ---- One sticky bar under the hero: search spans the width, section links on the right ---- */
-.app-container:not([data-theme='dark']) .eco3-stickybar { position: sticky; top: 74px; z-index: 30; display: flex; align-items: center; gap: 12px; margin: -28px 0 40px; padding: 10px; border: 2px solid var(--ay-ink); border-radius: 99px; background: #ffedac; box-shadow: 4px 4px 0 var(--ay-ink); }
+.app-container:not([data-theme='dark']) .eco3-stickybar { display: flex; align-items: center; gap: 12px; margin: -28px 0 40px; padding: 10px; border: 2px solid var(--ay-ink); border-radius: 99px; background: #ffedac; box-shadow: 4px 4px 0 var(--ay-ink); }
 .app-container:not([data-theme='dark']) .eco3-stickybar .eco3-search { flex: 1 1 auto; min-width: 0; margin: 0 !important; }
 .app-container:not([data-theme='dark']) .eco3-stickybar .eco3-search input { height: 46px !important; border: 0 !important; border-radius: 99px !important; background: #fff !important; box-shadow: none !important; }
 .app-container:not([data-theme='dark']) .eco3-stickybar .eco3-jump { position: static; flex: none; margin: 0; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; width: auto; flex-wrap: nowrap; }

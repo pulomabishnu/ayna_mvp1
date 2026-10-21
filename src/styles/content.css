@@ -92,7 +92,7 @@ html body .app-container.app-container.app-container.app-container {
   .ct-personal { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--ay-s12) var(--ay-s16); margin: var(--ay-s24) 0 0; padding: var(--ay-s12) 0; border-top: 1px solid var(--ay-hairline); border-bottom: 1px solid var(--ay-hairline); font: 500 16px/1.4 var(--ay-sans-stack); color: var(--ay-text); }
   .ct-foryou-why { margin: var(--ay-s12) 0 0; font: 500 14px/1.45 var(--ay-sans-stack); color: var(--ay-text-2); }
 
-  .ct-az { position: sticky; top: 92px; border-radius: var(--ay-r-group); background: var(--ay-group); }
+  .ct-az { border-radius: var(--ay-r-group); background: var(--ay-group); }
   .ct-az > summary { display: flex; align-items: center; gap: 8px; min-height: 52px; padding: 0 var(--ay-s20); cursor: pointer; list-style: none; }
   .ct-az > summary::-webkit-details-marker { display: none; }
   .ct-az > summary::after { content: ''; width: 8px; height: 8px; margin-left: 4px; border-right: 2px solid var(--ay-text); border-bottom: 2px solid var(--ay-text); transform: rotate(45deg) translateY(-2px); transition: transform .15s; }
@@ -121,7 +121,7 @@ html body .app-container.app-container.app-container.app-container {
 
   /* ---------- read page ---------- */
   .ct-read-page { position: relative; padding-top: var(--ay-s24); padding-bottom: var(--ay-s24); }
-  .ct-line { position: sticky; top: var(--ay-lib-sticky-top, 0px); z-index: 20; height: 3px; margin: 0 calc(-1 * var(--ay-margin)); background: var(--ay-hairline); }
+  .ct-line { display: none; height: 3px; margin: 0 calc(-1 * var(--ay-margin)); background: var(--ay-hairline); }
   .ct-line > span { display: block; height: 100%; background: var(--ay-text); transition: width .2s linear; }
   .ct-crumbs { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; margin-top: var(--ay-s16); font: 500 14px/1.2 var(--ay-sans-stack); color: var(--ay-text-2); }
   .ct-back, .ct-crumb { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0; border: 0; background: none; color: var(--ay-text) !important; font: 600 15px/1 var(--ay-sans-stack) !important; cursor: pointer; }
@@ -164,7 +164,7 @@ html body .app-container.app-container.app-container.app-container {
   .ct-care__body a, .ct-care__body .ay-lib-row__link { color: var(--ay-text) !important; font-weight: 600 !important; text-decoration: underline; text-underline-offset: 3px; background: none; border: 0; padding: 0; cursor: pointer; font-size: 15px; }
   .ct-care__body .ay-lib-row__sub { display: block; color: var(--ay-text-2) !important; }
 
-  .ct-read-side { position: sticky; top: 96px; display: grid; gap: 0; }
+  .ct-read-side { display: grid; gap: 0; }
   .ct-read-side .ay-group { margin: 0; list-style: none; }
   .ct-read-side .ay-group > li:not(.ay-group__row) + li { border-top: 1px solid var(--ay-hairline); }
   .ct-read-side .ay-group__row--link { border-top: 0; padding-inline: 0; }
@@ -609,7 +609,7 @@ html body .app-container.app-container.app-container.app-container {
     .qz-tiles { grid-template-columns: minmax(0, 1fr); }
     .qz-age { grid-template-columns: minmax(0, 1fr); gap: 8px; }
     .qz-age-slide { padding-top: 0; }
-    .qz-foot { position: sticky; bottom: 0; padding-bottom: calc(var(--ay-s12) + env(safe-area-inset-bottom)) !important; z-index: 5; margin-inline: calc(-1 * var(--ay-margin)); padding: var(--ay-s12) var(--ay-margin); background: var(--ay-page); }
+    .qz-foot { padding-bottom: calc(var(--ay-s12) + env(safe-area-inset-bottom)) !important; margin-inline: calc(-1 * var(--ay-margin)); padding: var(--ay-s12) var(--ay-margin); background: var(--ay-page); }
     .qz-btn { min-height: 48px; padding: 0 22px; }
     div.qz-count { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .qz-scale-bars { gap: 6px; }

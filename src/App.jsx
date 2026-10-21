@@ -97,6 +97,7 @@ import { readPendingFriend } from './utils/shareAnswerClient.js';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
 const Screenings = lazyView(() => import('./components/Screenings'));
 import { useScrollPosition } from './hooks/useScrollPosition';
+import { useHeaderScroll } from './hooks/useHeaderScroll';
 import { enrichLlmProductForDiscovery } from './utils/enrichLlmProductForDiscovery';
 import ProfileChatbot from './components/ProfileChatbot';
 import { loadHealthProfile, hasHealthProfileSignals } from './utils/healthDataProfile.js';
@@ -768,6 +769,7 @@ function App() {
   }, [reportSaveFailure]);
   const accountMenuRef = useRef(null);
   const scrollY = useScrollPosition();
+  const headerScroll = useHeaderScroll();
 
   const hasHealthImport = useMemo(() => hasHealthProfileSignals(healthProfile), [healthProfile]);
   const hasStatedQuizLifeStage = useMemo(() => hasStatedLifeStage(quizResults), [quizResults]);
@@ -2176,7 +2178,7 @@ function App() {
   );
 
   return (
-    <div className="app-container" data-theme={themeAttr} data-view={currentView}>
+    <div className="app-container" data-theme={themeAttr} data-view={currentView} data-scroll-end={headerScroll.atEnd ? '1' : undefined}>
       {/* Shared fixed stacking wrapper for top-of-viewport status rows, so the
           save-error banner and the ecosystem-generation bar stack instead of
           overlapping if both are showing at once, neither sets its own
@@ -2207,8 +2209,9 @@ function App() {
         <EcosystemGenerationBar intakeFingerprint={ecosystemIntakeFingerprint} onViewEcosystem={handleViewEcosystem} hasEcosystem={ecosystemCount > 0} />
       </div>
       <a className="ay-skip" href="#ay-content">Skip to content</a>
-      {/* The header sits outside <main> so it stays pinned over the footer too. */}
-        <div className="app-nav-wrap">
+      {/* The header sits outside <main>. It slides away while scrolling down and
+          comes back on any scroll up; its hairline shows only with content under it. */}
+        <div className={`app-nav-wrap${headerScroll.scrolled ? ' is-scrolled' : ''}${headerScroll.away ? ' is-away' : ''}`}>
         <nav
           className={`ay-nav${isScrolled ? ' is-scrolled' : ''}${FOCUSED_FLOW_VIEWS.includes(currentView) ? ' is-focused' : ''}`}
           data-on-gradient={navOnGradient ? navGradientVariant || 'yes' : undefined}

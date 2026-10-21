@@ -50,7 +50,7 @@ html body .app-container.app-container.app-container .ayp-top__share { flex: non
 
 /* ---------- hero: gallery + buy column ---------- */
 html body .app-container.app-container.app-container .ayp-hero { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--ay-s48); align-items: start; }
-html body .app-container.app-container.app-container .ayp-hero__media { position: sticky; top: 92px; }
+html body .app-container.app-container.app-container .ayp-hero__media { position: relative; }
 html body .app-container.app-container.app-container .ayp-gallery { display: grid; gap: var(--ay-s12); }
 html body .app-container.app-container.app-container .ayp-gallery__tile { position: relative; aspect-ratio: 1 / 1; border: 1.5px solid #3e2723; border-radius: var(--ay-r-card); background: #ffffff; overflow: hidden; display: grid; place-items: center; }
 html body .app-container.app-container.app-container[data-theme='brand-dark'] .ayp-gallery__tile { border-color: #ffedac; }
@@ -146,7 +146,7 @@ html body .app-container.app-container.app-container .ayp-glance .ay-group__row.
 html body .app-container.app-container.app-container .ayp-glance .ay-group__icon svg { width: 20px; height: 20px; }
 
 /* ---------- tabs ---------- */
-html body .app-container.app-container.app-container .ayp-tabs .ay-tabs { position: sticky; top: 68px; z-index: 20; background: var(--ay-page); }
+html body .app-container.app-container.app-container .ayp-tabs .ay-tabs { background: var(--ay-page); }
 html body .app-container.app-container.app-container .ayp-panel { max-width: 100%; }
 html body .app-container.app-container.app-container .ayp-panel__leadlabel { margin: 0 0 4px; font: 500 14px/1.4 var(--ay-sans-stack); color: var(--ay-text-2); }
 html body .app-container.app-container.app-container .ayp-panel__lead { margin: 0 0 var(--ay-s24); max-width: var(--ay-reading); font: 600 var(--ay-type-row)/1.45 var(--ay-sans-stack) !important; color: var(--ay-text) !important; }
@@ -276,19 +276,19 @@ html body .app-container.app-container.app-container .ayp-more .ay-shelf__head {
 html body .app-container.app-container.app-container .ayp-more__line { margin: 0 0 var(--ay-headgap); font: 400 15px/1.5 var(--ay-sans-stack); color: var(--ay-text-2); }
 html body .app-container.app-container.app-container .ayp .ayp-more__row { --ay-shelf-n: 4; }
 
-/* ---------- sticky buy bar ---------- */
-html body .app-container.app-container.app-container .ayp-sticky { position: fixed; left: 0; right: 0; top: 68px; z-index: 900; background: var(--ay-page); border-bottom: 1px solid var(--ay-hairline); transform: translateY(-120%); visibility: hidden; transition: transform .2s ease, visibility 0s .2s; }
-html body .app-container.app-container.app-container .ayp-sticky.is-away { transform: none; visibility: visible; transition: transform .2s ease; }
-html body .app-container.app-container.app-container .ayp-sticky__in { display: flex; align-items: center; gap: var(--ay-s16); max-width: calc(var(--ay-container) + 2 * var(--ay-margin)); margin: 0 auto; padding: 10px var(--ay-margin); box-sizing: border-box; }
-html body .app-container.app-container.app-container .ayp-sticky__name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 600 16px/1.3 var(--ay-sans-stack); }
-html body .app-container.app-container.app-container .ayp-sticky__price { font: 600 16px/1 var(--ay-sans-stack); font-variant-numeric: tabular-nums; white-space: nowrap; }
-html body .app-container.app-container.app-container .ayp-sticky .ayp-sticky__buy { min-height: 44px; }
-html body .app-container.app-container.app-container .ayp-sticky__heart { flex: none; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1.5px solid var(--ay-outline); border-radius: 50%; background: transparent; color: var(--ay-text); cursor: pointer; }
-html body .app-container.app-container.app-container .ayp-sticky__heart svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; }
-html body .app-container.app-container.app-container .ayp-sticky__heart[aria-pressed='true'] { background: #f7badd; color: #3e2723; }
-html body .app-container.app-container.app-container .ayp-sticky__heart[aria-pressed='true'] svg { fill: currentColor; }
-/* the tabs stick under the buy bar while it shows */
-html body .app-container.app-container.app-container:has(.ayp-sticky.is-away) .ayp-tabs .ay-tabs { top: calc(68px + 65px); }
+/* ---------- Buy again, in the page flow (phones) ----------
+   No sticky buy bar (founder, Oct 21: nothing stays on screen while the page
+   scrolls). On phones one Buy row follows the summary; desktop keeps the Buy
+   beside the gallery. */
+html body .app-container.app-container.app-container .ayp-buyline { display: none; }
+@media (max-width: 767px) {
+  html body .app-container.app-container.app-container .ayp-buyline { display: flex; align-items: center; gap: var(--ay-s12); margin: var(--ay-s32) 0 0; }
+  html body .app-container.app-container.app-container .ayp-buyline .ayp-buyline__buy { flex: 1; min-width: 0; min-height: 48px; justify-content: center; }
+}
+html body .app-container.app-container.app-container .ayp-buyline__heart { flex: none; display: grid; place-items: center; width: 48px; height: 48px; padding: 0; border: 1.5px solid var(--ay-outline); border-radius: 50%; background: transparent; color: var(--ay-text); cursor: pointer; }
+html body .app-container.app-container.app-container .ayp-buyline__heart svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+html body .app-container.app-container.app-container .ayp-buyline__heart[aria-pressed='true'] { background: #f7badd; color: #3e2723; }
+html body .app-container.app-container.app-container .ayp-buyline__heart[aria-pressed='true'] svg { fill: currentColor; }
 
 html body .app-container.app-container.app-container .ayp-toast-region { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 3000; margin: 0; }
 html body .app-container.app-container.app-container .ayp-toast { display: inline-block; padding: 10px 18px; border-radius: 999px; background: var(--ay-feature-bg); color: var(--ay-feature-fg); font: 600 14px/1.2 var(--ay-sans-stack); }
@@ -309,7 +309,7 @@ html body .app-container.app-container.app-container .ayp-toast { display: inlin
   html body .app-container.app-container.app-container .ayp-top__share span { display: none; }
   html body .app-container.app-container.app-container .ayp-top__share { width: 44px; justify-content: center; }
   html body .app-container.app-container.app-container .ayp-hero { grid-template-columns: minmax(0, 1fr); gap: var(--ay-s20); }
-  html body .app-container.app-container.app-container .ayp-hero__media { position: static; }
+  html body .app-container.app-container.app-container .ayp-hero__media { position: relative; }
   html body .app-container.app-container.app-container .ayp-gallery { grid-template-columns: minmax(0, 1fr); }
   html body .app-container.app-container.app-container .ayp-gallery__tile { aspect-ratio: 4 / 3; }
   html body .app-container.app-container.app-container .ayp-gallery__zoom { padding: 20px; }
@@ -331,15 +331,9 @@ html body .app-container.app-container.app-container .ayp-toast { display: inlin
   html body .app-container.app-container.app-container .ayp-extra + .ayp-compare { margin-top: var(--ay-s32); }
   html body .app-container.app-container.app-container .ayp-extra + .ayp-compare .ayp-fold > button { border-top: 0; }
   html body .app-container.app-container.app-container .ayp .ayp-more__row { --ay-shelf-n: 2.3; }
-  /* phones: the buy bar sits on the bottom, above the tab bar */
-  html body .app-container.app-container.app-container .ayp-sticky { top: auto; bottom: calc(66px + env(safe-area-inset-bottom)); border-bottom: 0; border-top: 1px solid var(--ay-hairline); transform: translateY(140%); }
-  html body .app-container.app-container.app-container .ayp-sticky__in { padding: 8px var(--ay-margin); gap: var(--ay-s12); }
-  html body .app-container.app-container.app-container .ayp-sticky__name { display: none; }
-  html body .app-container.app-container.app-container .ayp-sticky .ayp-sticky__buy { flex: 1; min-height: 48px; }
-  html body .app-container.app-container.app-container:has(.ayp-sticky.is-away) .ayp-tabs .ay-tabs { top: 60px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  html body .app-container.app-container.app-container .ayp-sticky, html body .app-container.app-container.app-container .ayp-fold__chev { transition: none !important; }
+  html body .app-container.app-container.app-container .ayp-fold__chev { transition: none !important; }
 }
 html body .app-container.app-container.app-container .ayp-top .ay-crumbs li { flex: none; }
 html body .app-container.app-container.app-container .ayp-top .ay-crumbs li:last-child { flex: 0 1 auto; min-width: 0; }

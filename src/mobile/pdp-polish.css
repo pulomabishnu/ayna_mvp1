@@ -22,8 +22,8 @@
   --pdp-card-shadow: #769ebe;
 }
 
-/* ---------- Nothing hides behind the purchase bar ---------- */
-#ay-pdp .ay-pdp-scroll { padding-bottom: calc(var(--pdp-bar-h) + env(safe-area-inset-bottom, 0px) + 16px) !important; }
+/* ---------- The purchase pill is in the page flow: no bar to clear ---------- */
+#ay-pdp .ay-pdp-scroll { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 16px) !important; }
 #ay-pdp .ay-pdp-bar { display: flex !important; align-items: center !important; gap: 8px !important; padding: 12px var(--pdp-gutter) calc(12px + env(safe-area-inset-bottom, 0px)) !important; box-sizing: border-box; }
 #ay-pdp .ay-pdp-bar > * { box-sizing: border-box !important; margin: 0 !important; }
 #ay-pdp .ay-pdp-bar > button { flex: 0 0 auto !important; }
