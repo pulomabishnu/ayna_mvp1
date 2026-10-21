@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { formatMetric, isFlat, trendWord } from '../../health/dashboard.js';
 import { CycleRing } from './HealthChart.jsx';
 import { estimatePhase, PHASES } from '../../health/phase.js';
@@ -10,6 +9,7 @@ import { weekQuestions } from '../utils/dashboardAsk.js';
 import { explainWeek, cycleLine } from '../../health/weekInsights.js';
 import { weekPicks, LEVEL_WORD, NEED_WORDS } from '../../health/weekPicks.js';
 import { comingUp } from '../../health/comingUp.js';
+import { phaseCompare, normalRanges, goalsCovered, effectChecks, aynaAdds } from '../../health/beyondNumbers.js';
 import { SOURCE_NAMES } from '../data/healthConnections.js';
 import '../../styles/week-explained.css';
 
@@ -175,7 +175,7 @@ function SourceLink({ source }) {
  * her own numbers, each tied to her cycle or her own pattern, each with a
  * "Why we say this" that shows the comparison and the source.
  */
-function Explained({ insights, line }) {
+function Explained({ insights, line, onAsk }) {
   if (!insights.length) return null;
   const KEY = { heart: 'Heart', sleep: 'Sleep', temperature: 'Temperature', period: 'Cycle' };
   return (
@@ -189,6 +189,7 @@ function Explained({ insights, line }) {
           <li key={it.id}>
             <b className="ay-wx-k">{KEY[it.id] || it.id}</b>
             <p>{it.text}</p>
+            <div className="ay-wx-actions">
             <details>
               <summary>Why we say this</summary>
               <div className="ay-wx-why-body">
@@ -197,6 +198,8 @@ function Explained({ insights, line }) {
                 {it.from?.length > 0 && <p>Your data: {it.from.map((x) => SOURCE_NAMES[x] || x).join(' and ')}.</p>}
               </div>
             </details>
+            {onAsk && it.question && <button type="button" className="ay-wx-ask" onClick={() => onAsk(it.question)}>Ask ayna<span className="sr-only">: {it.question}</span></button>}
+            </div>
           </li>
         ))}
       </ul>
@@ -205,26 +208,127 @@ function Explained({ insights, line }) {
   );
 }
 
-/** The honest one-liner on what ayna adds, shown until she dismisses it (kept on this device). */
-const WHY_KEY = 'ayna_dash_why_seen_v1';
-function WhyAyna() {
-  const [seen, setSeen] = useState(() => { try { return localStorage.getItem(WHY_KEY) === '1'; } catch { return false; } });
-  if (seen) return null;
-  const close = () => { setSeen(true); try { localStorage.setItem(WHY_KEY, '1'); } catch { /* storage blocked: hidden for this visit */ } };
+/**
+ * What ayna adds to Apple Health: the founder's one line, then one sentence
+ * each for her data, evidence, products and community, with her own counts
+ * where they exist. Claims about ayna only, nothing about Apple beyond
+ * "stores the numbers".
+ */
+function AddsStrip({ items, intro = true }) {
   return (
-    <aside className="ay-wx-why" aria-label="Why ayna and Apple Health">
-      <p><b>Why ayna and Apple Health.</b> Apple Health stores the numbers. ayna reads them against your cycle and tells you which of your products fit this week.</p>
-      <button type="button" onClick={close}>Got it</button>
-    </aside>
+    <section className="ay-wx-adds" aria-labelledby="ay-wx-adds-title">
+      <h3 id="ay-wx-adds-title">What ayna adds to Apple Health</h3>
+      {intro && <p className="ay-wx-adds-lead">Apple Health stores the numbers. ayna reads them against your cycle and tells you which of your products fit this week.</p>}
+      <ul>
+        {items.map((x) => <li key={x.id}><b>{x.label}</b><span>{x.text}</span></li>)}
+      </ul>
+    </section>
   );
 }
 
-function Meter({ level, need }) {
+/** This phase so far against the same cycle days of her last cycles. */
+function PhaseCompare({ data }) {
+  if (!data) return null;
+  return (
+    <section className="ay-wx-group ay-wx-compare" aria-labelledby="ay-wx-compare-title">
+      <h3 id="ay-wx-compare-title">{data.title}</h3>
+      <table>
+        <thead><tr><th scope="col"><span className="sr-only">Measure</span></th><th scope="col">Now</th><th scope="col">Last {data.cycles}</th></tr></thead>
+        <tbody>
+          {data.rows.map((r) => (
+            <tr key={r.metric}>
+              <th scope="row">{r.label}<small>{r.word}</small></th>
+              <td>{r.now}</td>
+              <td>{r.usual}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="ay-wx-note">{data.note}</p>
+    </section>
+  );
+}
+
+/** Her cycle and period lengths next to the typical ranges, with the source. */
+function NormalRanges({ data }) {
+  if (!data) return null;
+  return (
+    <section className="ay-wx-group ay-wx-normal" aria-labelledby="ay-wx-normal-title">
+      <h3 id="ay-wx-normal-title">Is this normal?</h3>
+      <ul>
+        {data.rows.map((r) => (
+          <li key={r.id} className={r.ok ? 'is-ok' : 'is-out'}>
+            <span className="ay-wx-normal-label">{r.label}</span>
+            <b>{r.value}</b>
+            <small>{r.ok ? 'Typical' : 'Outside the typical range of'} {r.typical}</small>
+          </li>
+        ))}
+      </ul>
+      <p className="ay-wx-note">{data.note} Source: <SourceLink source={data.source} /></p>
+    </section>
+  );
+}
+
+/** Each goal from her quiz, with what in her Ecosystem is graded for it. */
+function GoalsCovered({ goals, effects = [], onOpenProduct, title = 'Your goals, covered' }) {
+  if (!goals.length && !effects.length) return null;
+  const item = (product, level, prefix) => (
+    <button type="button" className="ay-wx-goal-product" onClick={() => onOpenProduct?.(product)}>
+      <span>{prefix}{displayName(product)}</span>
+      <Meter level={level} short />
+    </button>
+  );
+  return (
+    <section className="ay-wx-group ay-wx-goals" aria-labelledby="ay-wx-goals-title">
+      <h3 id="ay-wx-goals-title">{title}</h3>
+      <ul>
+        {goals.map((g) => (
+          <li key={g.needId}>
+            <span className="ay-wx-goal-label">{g.label}</span>
+            {g.owned.map((o) => <div key={o.product.id}>{item(o.product, o.level, '')}</div>)}
+            {!g.owned.length && g.match && <div>{item(g.match.product, g.match.level, 'Not in your Ecosystem yet. Matched: ')}</div>}
+          </li>
+        ))}
+        {effects.map((e) => (
+          <li key={`fx-${e.product.id}`} className="is-effect">
+            <span className="ay-wx-goal-label">{displayName(e.product)}, before and since</span>
+            <p>{e.text}</p>
+            <p className="ay-wx-note">{e.caveat} <SourceLink source={e.sources[0]} /></p>
+          </li>
+        ))}
+      </ul>
+      <p className="ay-wx-note">Grades are ayna&rsquo;s reading of the research for that goal. Open a product for the studies.</p>
+    </section>
+  );
+}
+
+/**
+ * For someone with no connected health data yet: what ayna adds, her goals
+ * matched to her products (from the quiz alone), and how to connect.
+ */
+export function HealthStarter({ needIds = [], products = [], matches = [], onOpenProduct, onConnect, connectLabel = 'Connect health data' }) {
+  const goals = goalsCovered({ needIds, products, matches });
+  const adds = aynaAdds({ products, needIds });
+  return (
+    <div className="ay-bn ay-wx-starter">
+      <AddsStrip items={adds} />
+      <GoalsCovered goals={goals} onOpenProduct={onOpenProduct} title="Your goals, covered today" />
+      {onConnect && (
+        <div className="ay-wx-connect">
+          <p>Connect Apple Health, Health Connect or Oura and this page explains your week against your cycle: what changed, why it often does, and which of your products fit.</p>
+          <button type="button" className="ay-qc-primary ay-wx-connect-btn" onClick={onConnect}>{connectLabel}</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Meter({ level, need, short = false }) {
   if (!level) return null;
   return (
     <span className="ay-wx-meter" data-level={level}>
       <span className="ay-wx-meter-bars" role="img" aria-label={`${LEVEL_WORD[level]}${need ? ` for ${need}` : ''}, ${level} of 3`}><i /><i /><i /></span>
-      <span className="ay-wx-meter-word">{LEVEL_WORD[level]}</span>
+      <span className="ay-wx-meter-word">{short ? LEVEL_WORD[level].replace(' evidence', '') : LEVEL_WORD[level]}</span>
     </span>
   );
 }
@@ -267,9 +371,18 @@ export default function HealthBento({ name, cycle, estimate, pinnedCharts, today
   const { insights, ctx } = explainWeek(rows, { today, cycle, estimate, hormonalBC });
   const picks = weekPicks({ ctx, insights, needIds, products, matches });
   const coming = comingUp(cycle, estimate, today, { hormonalBC, hasProducts: products.length > 0 });
+  const compare = phaseCompare(rows, { today, cycle, hormonalBC });
+  const ranges = normalRanges(rows, { today, hormonalBC });
+  const goals = goalsCovered({ needIds, products, matches });
+  const effects = effectChecks(rows, { today, products });
+  const adds = aynaAdds({ insights, picks, products, needIds, phaseName: ctx.phase ? ctx.phase.name.toLowerCase() : null });
   const hour = new Date().getHours();
   const hello = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
-  const questions = weekQuestions({ insights, ctx, picks });
+  // Questions not already offered next to an insight.
+  const asked = new Set(insights.map((i) => i.question));
+  const questions = weekQuestions({ insights: [], ctx, picks }).filter((q) => !asked.has(q));
+  if (ranges && !ranges.allOk) questions.push('Is my cycle length something to ask a clinician about?');
+  const ask = onAsk ? (q) => onAsk(q, { insights }) : undefined;
 
   return (
     <div className="ay-bn">
@@ -277,13 +390,13 @@ export default function HealthBento({ name, cycle, estimate, pinnedCharts, today
         <h2>{hello}{name ? `, ${name}` : ''}</h2>
       </header>
 
-      {(insights.length > 0 || picks.length > 0) && <WhyAyna />}
+      <Explained insights={insights} line={cycleLine(cycle, ctx)} onAsk={ask} />
 
-      <Explained insights={insights} line={cycleLine(cycle, ctx)} />
+      <AddsStrip items={adds} />
 
       <WeekPicks picks={picks} onOpenProduct={onOpenProduct} />
 
-      <AskWeek summary={null} questions={questions} onAsk={onAsk ? (q) => onAsk(q, { insights }) : undefined} />
+      <PhaseCompare data={compare} />
 
       {cycle?.cycleDay && (
         <div className="ay-bn-cyclegroup">
@@ -309,6 +422,12 @@ export default function HealthBento({ name, cycle, estimate, pinnedCharts, today
           </ol>
         </section>
       )}
+
+      <NormalRanges data={ranges} />
+
+      <GoalsCovered goals={goals} effects={effects} onOpenProduct={onOpenProduct} />
+
+      <AskWeek summary={null} questions={questions.slice(0, 3)} onAsk={ask} />
 
       {pinnedCharts.length > 0 && (
         <ul className="ay-bn-grid" aria-label="Your pinned numbers">

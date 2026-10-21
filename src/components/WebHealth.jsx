@@ -3,10 +3,10 @@ import { SOURCE_NAMES } from '../mobile/data/healthConnections.js';
 import { buildDashboard, formatMetric, isFlat, RANGES } from '../health/dashboard.js';
 import { buildInsights } from '../health/insights.js';
 import { estimatePhase, PHASE_SOURCES } from '../health/phase.js';
-import { DEV_DEMO_CONNECTIONS, DEV_DEMO_MATCH_IDS, DEV_DEMO_NEEDS, DEV_DEMO_PRODUCT_IDS, devDemoRows } from '../health/devDemo.js';
+import { DEV_DEMO_CONNECTIONS, DEV_DEMO_MATCH_IDS, DEV_DEMO_NEEDS, DEV_DEMO_PRODUCT_IDS, devDemoAddedAt, devDemoRows } from '../health/devDemo.js';
 import { getProductById } from '../data/products.js';
-import { DEV_HEALTH_DEMO, localToday } from '../mobile/hooks/useHealthData.js';
-import HealthBento from '../mobile/components/HealthBento.jsx';
+import { DEV_HEALTH_DEMO, DEV_HEALTH_DEMO_EMPTY, localToday } from '../mobile/hooks/useHealthData.js';
+import HealthBento, { HealthStarter } from '../mobile/components/HealthBento.jsx';
 import HealthChart, { CycleRing } from '../mobile/components/HealthChart.jsx';
 import '../styles/web-health.css';
 
@@ -124,10 +124,10 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
   const today = localToday();
   const demoData = useMemo(() => {
     if (!demo) return null;
-    const rows = devDemoRows(today);
+    const rows = DEV_HEALTH_DEMO_EMPTY ? [] : devDemoRows(today);
     return {
-      status: 'ready', insightRows: rows, connected: DEV_DEMO_CONNECTIONS, insights: buildInsights(rows, { today }),
-      products: DEV_DEMO_PRODUCT_IDS.map(getProductById).filter(Boolean),
+      status: 'ready', insightRows: rows, connected: DEV_HEALTH_DEMO_EMPTY ? [] : DEV_DEMO_CONNECTIONS, insights: buildInsights(rows, { today }),
+      products: DEV_DEMO_PRODUCT_IDS.map(getProductById).filter(Boolean).map((p) => (devDemoAddedAt(today)[p.id] ? { ...p, addedAt: devDemoAddedAt(today)[p.id] } : p)),
       matches: DEV_DEMO_MATCH_IDS.map(getProductById).filter(Boolean),
     };
   }, [demo, today]);
@@ -181,6 +181,12 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
       <section className="ay-wh is-locked" aria-labelledby="ay-wh-title">
         {header}
         <Locked signedIn={signedIn} connected={(h.connected || []).length > 0} onSignIn={onSignIn} onOpenConnections={onOpenConnections} />
+        {/* Signed in without health data: her goals matched to her products still work from the quiz. */}
+        {signedIn && (needIds.length > 0 || products.length > 0 || demo) && (
+          <div className="ay-wh-starter">
+            <HealthStarter needIds={demo ? DEV_DEMO_NEEDS : needIds} products={demoData?.products || products} matches={demoData?.matches || []} onOpenProduct={onOpenProduct} />
+          </div>
+        )}
       </section>
     );
   }
