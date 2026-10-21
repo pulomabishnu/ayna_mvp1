@@ -1033,3 +1033,7 @@
 
 /* Settings: the first group label sits 16px under the screen title. */
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-label:first-child, .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-group:first-child h2 { margin-top: 16px !important; }
+
+/* Signed-out card on settings screens: text and button share one left edge. */
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-set-signedout { display: grid !important; justify-items: start !important; gap: 16px !important; text-align: left !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-set-signedout p { margin: 0 !important; text-align: left !important; }
