@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import '../styles/eco-view-tabs.css';
 import '../styles/eco-page.css';
+import '../styles/ecosystem-best.css';
+import { useSlidingInk } from './eco/ecoMotion';
 
 /**
  * Website Ecosystem: a "Products | Dashboard" switch at the top of the page,
@@ -20,6 +22,8 @@ function readEcoView() {
 export default function EcosystemViewTabs({ dashboard, onHero = false, children }) {
   const [view, setView] = useState(readEcoView);
   const tabRefs = useRef({});
+  const listRef = useRef(null);
+  const ink = useSlidingInk(listRef, view);
 
   // Back/Forward onto /ecosystem?view=… shows the matching view.
   useEffect(() => {
@@ -52,8 +56,11 @@ export default function EcosystemViewTabs({ dashboard, onHero = false, children 
     <>
       {/* Over the Products hero the strip takes the hero's espresso, so the
           switch reads as the top of that block rather than a band above it. */}
+      {/* The striped awning: the Ecosystem's own top band (sky and butter, scalloped). */}
+      <div className="eco-awning" aria-hidden="true" />
       <div className={`ay-container ay-tabs ay-ecoview2${onHero && view === 'products' ? ' is-onhero' : ''}`}>
-        <div className="ay-tabs__list" role="tablist" aria-label="Ecosystem view" onKeyDown={onKeyDown}>
+        <div className="ay-tabs__list eco-inklist" role="tablist" aria-label="Ecosystem view" onKeyDown={onKeyDown} ref={listRef}>
+          <span className="eco-ink" aria-hidden="true" style={ink} />
           {TABS.map(([id, label]) => (
             <button
               key={id}
@@ -62,6 +69,7 @@ export default function EcosystemViewTabs({ dashboard, onHero = false, children 
               role="tab"
               id={`ay-ecoview-tab-${id}`}
               aria-selected={view === id}
+              data-ink-on={view === id ? 'true' : undefined}
               aria-controls="ay-ecoview-panel"
               tabIndex={view === id ? 0 : -1}
               className={`ay-tabs__tab${view === id ? ' is-on' : ''}`}

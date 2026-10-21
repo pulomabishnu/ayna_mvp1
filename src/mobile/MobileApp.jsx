@@ -381,6 +381,8 @@ export default function MobileApp() {
   const [resumeQuizDraft, setResumeQuizDraft] = useState(false);
   // "Make my matches more personal" opens the quiz at her next optional question.
   const [intakeAtOptional, setIntakeAtOptional] = useState(false);
+  // "Update life stages" (Ecosystem): the quiz opens on the life stage question.
+  const [intakeAtStep, setIntakeAtStep] = useState('');
   const [revealAtEnd, setRevealAtEnd] = useState(false);
   const lastIntakeModeRef = useRef('new');
   // "Get matched" on a product page: after the quiz, land back on that product with her match.
@@ -406,7 +408,8 @@ export default function MobileApp() {
   }, [screen, resumeQuizDraft]);
   useEffect(() => {
     if (screen !== 'quiz' && intakeAtOptional) Promise.resolve().then(() => setIntakeAtOptional(false));
-  }, [screen, intakeAtOptional]);
+    if (screen !== 'quiz' && intakeAtStep) Promise.resolve().then(() => setIntakeAtStep(''));
+  }, [screen, intakeAtOptional, intakeAtStep]);
   const resumeQuizAtLastStep = () => {
     // From the quiz-end steps, go back into the answers she just gave (not yet saved).
     const fromPending = Boolean(session.pendingQuiz?.answers);
@@ -924,6 +927,7 @@ export default function MobileApp() {
     },
     onRetake: () => { setIntakeMode('add'); setIntakeAtOptional(false); setEditingHealthProfile(true); setScreen('quiz'); },
     onPersonalize: () => { setIntakeMode('add'); setIntakeAtOptional(true); setEditingHealthProfile(true); setScreen('quiz'); },
+    onFixLifeStages: () => { setIntakeMode('add'); setIntakeAtOptional(false); setIntakeAtStep('lifeStage'); setEditingHealthProfile(true); setScreen('quiz'); },
     onRequestEcosystemReset: () => setResetDialogOpen(true),
     onUpdateHealth: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
     onEditProfile: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
@@ -1093,7 +1097,8 @@ export default function MobileApp() {
         initialSnapshot={editingHealthProfile && !resumeQuizDraft ? lastQuizAnswers?.fullHealthIntake || null : null}
         startAtBeginning={intakeMode === 'add' && !resumeQuizDraft && !intakeAtOptional && editingHealthProfile}
         startAtOptional={intakeAtOptional && !resumeQuizDraft}
-        introEnabled={!resumeQuizDraft && !intakeAtOptional}
+        startAtStep={intakeAtStep && !resumeQuizDraft ? intakeAtStep : ''}
+        introEnabled={!resumeQuizDraft && !intakeAtOptional && !intakeAtStep}
         revealStartAtEnd={revealAtEnd}
         ecosystemNotice={ecosystemNotice}
         name={resolvedName}

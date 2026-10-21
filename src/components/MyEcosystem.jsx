@@ -5,6 +5,7 @@ import UrgentSigns from './pdp/UrgentSigns.jsx';
 import { urgentSignsForStages } from '../utils/urgentSigns';
 import NeedsStrip from './v3/NeedsStrip.jsx';
 import ShelfRows from './v3/ShelfRows.jsx';
+import { shelfIndex } from './v3/shelfLayout.js';
 import AddProductDialog from './v3/AddProductDialog.jsx';
 
 import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
@@ -29,6 +30,10 @@ import { summarizeCareNotes } from '../utils/careSummary';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
 import ProductCard from './ProductCard';
 import '../styles/eco-redesign.css';
+import EcoRail from './eco/EcoRail.jsx';
+import { useRevealOnce, useSlidingInk } from './eco/ecoMotion';
+import { lifeStageClash, STAGE_NOTE_CODE } from './eco/lifeStageFix';
+import '../styles/ecosystem-best.css';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
 import { generateTieredRecommendations } from '../utils/recommendationEngine';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
@@ -945,6 +950,8 @@ export default function MyEcosystem({
     onResetEcosystem,
     onEditHealthProfile,
     quizSlot = null,
+    quizSlotKind = 'personal',
+    onFixLifeStages,
     quizResults = null,
     healthProfile = null,
     userZipCode = '',
@@ -974,6 +981,12 @@ export default function MyEcosystem({
     const [showResaPartnership, setShowResaPartnership] = useState(false);
     // Scroll-spy for the sticky "On this page" links.
     const [jumpOn, setJumpOn] = useState('');
+    const jumpRef = useRef(null);
+    const jumpInk = useSlidingInk(jumpRef, jumpOn);
+    const ecoRootRef = useRef(null);
+    const [railShown, setRailShown] = useState(false);
+    // Shelves, gaps and tools ease in once, card by card, as they scroll into view.
+    useRevealOnce(ecoRootRef, '.ay-shelf, .eco3-gaps, .eco3-extras__tools, .eco3-extras__saved, .eco3-addrow');
     useEffect(() => {
         const ids = ['eco3-shelves-title', 'eco3-needs-title', 'eco3-tools-title', 'ayna-wishlist'];
         const on = () => {
@@ -1141,7 +1154,14 @@ export default function MyEcosystem({
     const careFlags = needSeed?.careFlags || null;
     const careFirst = Boolean(careFlags?.careFirst);
     const careNoteLines = careNotes(careFlags);
-    const careSummaryLines = useMemo(() => summarizeCareNotes(careFlags, { sayWhy: true }), [careFlags]);
+    // The engine's generic "some life stages do not usually go together" note
+    // is replaced by a clearer card that names the stages and opens the exact
+    // question (src/data copy is team-locked, so the data string stays as is).
+    const stageClash = useMemo(() => lifeStageClash(careFlags), [careFlags]);
+    const careSummaryLines = useMemo(() => summarizeCareNotes(
+        stageClash && careFlags ? { ...careFlags, notes: (careFlags.notes || []).filter((n) => n.code !== STAGE_NOTE_CODE) } : careFlags,
+        { sayWhy: true },
+    ), [careFlags, stageClash]);
     const relatedNeeds = useMemo(() => relatedNeedSuggestions(
         needShelves.map((x) => x.needId),
         (quizResults?.fullHealthIntake?.diagnoses || quizResults?.fullHealthIntake?.conditions || []).map((c) => CONDITION_ID_BY_OPTION[c] || String(c).toLowerCase()),
@@ -1212,6 +1232,15 @@ export default function MyEcosystem({
             .filter((g) => g.products.length > 0);
     }, [areaGroups, ecoQueryTrimmed]);
     const visibleMatchCount = visibleAreaGroups.reduce((n, g) => n + g.products.length, 0);
+    // "Your shelves" list in the side rail, in the order and names she gave them.
+    const [shelfTick, setShelfTick] = useState(0);
+    useEffect(() => {
+        const on = () => setShelfTick((n) => n + 1);
+        window.addEventListener('ay-shelves-changed', on);
+        return () => window.removeEventListener('ay-shelves-changed', on);
+    }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const shelfToc = useMemo(() => shelfIndex(visibleAreaGroups, user?.id || ''), [visibleAreaGroups, user?.id, shelfTick]);
     const searchShop = (q) => onGoToSearch?.(q ? { query: q } : '');
     const filteredProducts = useMemo(() => {
         const words = searchTerm.toLowerCase().trim().split(/\s+/).filter(Boolean);
@@ -1979,7 +2008,7 @@ export default function MyEcosystem({
 
     return (
         <>
-            <section id="ayeco" className="eco3 ayeco" aria-labelledby="eco3-title">
+            <section id="ayeco" ref={ecoRootRef} className="eco3 ayeco" aria-labelledby="eco3-title">
             <div className="ay-container">
                 {/* Oct 2026 redesign: the website version of the app's
                     Ecosystem screen. Header + search, the ring overview, then
@@ -1988,47 +2017,51 @@ export default function MyEcosystem({
                     <div className="eco3-head__text">
                         <h1 id="eco3-title" className="ay-h1">Your ecosystem</h1>
                         <p className="eco3-head__sub">
-                            {llmLoading && myProductList.length === 0 ? 'Building your matches…' : myProductList.length === 0 ? 'No picks yet' : (
-                                <>
-                                    {/* The counts are in the number tiles; the line keeps the monthly estimate. */}
-                                    {!(estimatedMonthlyTotal.counted > 0 && estimatedMonthlyTotal.total >= 1) && <>{myProductList.length} product{myProductList.length === 1 ? '' : 's'} on {areaGroups.length} {areaGroups.length === 1 ? 'shelf' : 'shelves'}</>}
-                                    {estimatedMonthlyTotal.counted > 0 && estimatedMonthlyTotal.total >= 1 && (
-                                        <details className="eco3-cost">
+                            {llmLoading && myProductList.length === 0 ? 'Building your matches…' : myProductList.length === 0 ? 'No picks yet' : 'Everything you use and what it is for, sorted onto shelves by need.'}
+                        </p>
+                    </div>
+                    {/* Stacked-card summary: the one stamp, her real numbers, needs covered and the monthly estimate. */}
+                    {myProductList.length > 0 && (() => {
+                        const coveredNeeds = needShelves.filter((sh) => (sh.picks || []).some((pk) => myProducts[pk.productId])).length;
+                        const showCost = estimatedMonthlyTotal.counted > 0 && estimatedMonthlyTotal.total >= 1;
+                        return (
+                            <div className="eco-stack">
+                                <span className="eco-stack__back" aria-hidden="true" />
+                                <div className="eco-stack__card">
+                                    <span className="eco-oval">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9" /></svg>
+                                        Matched to you
+                                    </span>
+                                    <ul className="eco3-stats ayeco__stats eco-stack__stats" aria-label="Your ecosystem in numbers">
+                                        <li><b>{myProductList.length}</b><span>{myProductList.length === 1 ? 'product' : 'products'}</span></li>
+                                        <li><b>{areaGroups.length}</b><span>{areaGroups.length === 1 ? 'shelf' : 'shelves'}</span></li>
+                                    </ul>
+                                    {needShelves.length > 0 && (
+                                        <a className="eco-stack__needs" href="#eco3-needs-title" onClick={(e) => { e.preventDefault(); document.getElementById('eco3-needs-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>
+                                            <span className="eco-stack__needsline"><b>{coveredNeeds} of {needShelves.length}</b> needs covered <span aria-hidden="true">→</span></span>
+                                            <span className="eco-stack__bar" role="progressbar" aria-label="Needs covered" aria-valuemin={0} aria-valuemax={needShelves.length} aria-valuenow={coveredNeeds}><i style={{ width: `${Math.max(4, Math.round((coveredNeeds / needShelves.length) * 100))}%` }} /></span>
+                                        </a>
+                                    )}
+                                    {showCost && (
+                                        <details className="eco3-cost eco-stack__cost">
                                             <summary>About ${estimatedMonthlyTotal.total.toFixed(0)}{estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? '+' : ''}/month</summary>
                                             <span>Estimated from the listed prices of {estimatedMonthlyTotal.counted} of your {estimatedMonthlyTotal.totalItems} products, spread over how long each usually lasts.{estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? ` ${estimatedMonthlyTotal.totalItems - estimatedMonthlyTotal.counted} without a listed price are not counted.` : ''} It is an estimate, not what you spend.</span>
                                         </details>
                                     )}
-                                </>
-                            )}
-                        </p>
-                    </div>
-                    {/* A few real numbers about her shelves (only what is known). */}
-                    {myProductList.length > 0 && (() => {
-                        const coveredNeeds = needShelves.filter((sh) => (sh.picks || []).some((pk) => myProducts[pk.productId])).length;
-                        const stats = [
-                            { n: myProductList.length, l: myProductList.length === 1 ? 'product' : 'products' },
-                            { n: areaGroups.length, l: areaGroups.length === 1 ? 'shelf' : 'shelves' },
-                            needShelves.length > 0 && { n: `${coveredNeeds}/${needShelves.length}`, l: 'needs covered', tone: coveredNeeds === needShelves.length ? 'is-done' : 'is-gap', href: '#eco3-needs-title' },
-                        ].filter(Boolean);
-                        return (
-                            <ul className="eco3-stats ayeco__stats" aria-label="Your ecosystem in numbers">
-                                {stats.map((st) => (
-                                    <li key={st.l} className={st.tone || undefined}>
-                                        {st.href ? (
-                                            <a href={st.href} onClick={(e) => { e.preventDefault(); document.getElementById('eco3-needs-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}><b>{st.n}</b><span>{st.l}</span></a>
-                                        ) : <><b>{st.n}</b><span>{st.l}</span></>}
-                                    </li>
-                                ))}
-                            </ul>
+                                </div>
+                            </div>
                         );
                     })()}
                     <div className="eco3-actions ayeco__actions" role="group" aria-label="Ecosystem actions">
                         <button type="button" className="ay-btn ay-btn--primary" onClick={() => setShowAddModal(true)}>+ Add a product</button>
-                        {typeof onRedoQuiz === 'function' && <button type="button" className="ay-btn ay-btn--secondary" onClick={onRedoQuiz}>Redo quiz</button>}
+                        {typeof onRedoQuiz === 'function' && <button type="button" className="ay-btn ay-btn--secondary eco-redo" onClick={onRedoQuiz}>Redo quiz</button>}
                         {/* One primary action; the rest live in More (Pass 7: four equal buttons said nothing about where to start). */}
                         <details className="eco3-more">
                             <summary className="ay-btn ay-btn--secondary">More</summary>
                             <div className="eco3-more__menu" role="menu">
+                                {typeof onRedoQuiz === 'function' && (
+                                    <button type="button" role="menuitem" className="eco-more-redo" onClick={(e) => { e.currentTarget.closest('details').open = false; onRedoQuiz(); }}>Redo quiz</button>
+                                )}
                                 {typeof onEditHealthProfile === 'function' && (
                                     <button type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; onEditHealthProfile(); }}>Update my answers</button>
                                 )}
@@ -2052,8 +2085,6 @@ export default function MyEcosystem({
                     </div>
                 </header>
 
-                {quizSlot}
-
                 {careFirst && (
                     <section className="eco3-carefirst" aria-labelledby="eco3-carefirst-title">
                         <p className="eco3-carefirst__eyebrow">Care first</p>
@@ -2071,6 +2102,16 @@ export default function MyEcosystem({
                     </section>
                 )}
 
+                <div className={`eco-body${railShown ? ' has-rail' : ''}`}>
+                <EcoRail
+                    clash={stageClash}
+                    onFixStages={typeof onFixLifeStages === 'function' ? onFixLifeStages : onEditHealthProfile}
+                    quizSlot={quizSlot}
+                    quizKey={quizSlotKind === 'finish' ? 'finish' : 'personal'}
+                    onShownChange={setRailShown}
+                    shelves={shelfToc}
+                />
+                <div className="eco-main">
                 <div className={careFirst ? 'eco3-secondary' : 'eco3-flow'}>
                 {careFirst && <p className="eco3-secondary__label">Products, when you are ready</p>}
                 <div className="eco3-stickybar">
@@ -2092,7 +2133,8 @@ export default function MyEcosystem({
                     />
                     <svg className="ayna-browse__search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
                 </form>
-                <nav className="eco3-jump" aria-label="On this page">
+                <nav className="eco3-jump" aria-label="On this page" ref={jumpRef}>
+                    <span className="eco-ink" aria-hidden="true" style={jumpInk} />
                     {/* Same order as the page; the section you're in is underlined. */}
                     {[
                         visibleAreaGroups.length > 0 && ['eco3-shelves-title', 'Shelves'],
@@ -2100,7 +2142,7 @@ export default function MyEcosystem({
                         ['eco3-tools-title', 'Tools'],
                         ['ayna-wishlist', 'Saved'],
                     ].filter(Boolean).map(([id, label]) => (
-                        <a key={id} href={`#${id}`} className={jumpOn === id ? 'is-on' : undefined} aria-current={jumpOn === id ? 'location' : undefined} onClick={(e) => { e.preventDefault(); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>{label}</a>
+                        <a key={id} href={`#${id}`} data-ink-on={jumpOn === id ? 'true' : undefined} className={jumpOn === id ? 'is-on' : undefined} aria-current={jumpOn === id ? 'location' : undefined} onClick={(e) => { e.preventDefault(); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>{label}</a>
                     ))}
                 </nav>
                 </div>
@@ -2140,6 +2182,17 @@ export default function MyEcosystem({
                     </div>
                 )}
 
+                {/* Skeleton shelves while her matches are being built. */}
+                {llmLoading && areaGroups.length === 0 && (
+                    <div className="eco-skel" aria-hidden="true">
+                        {[0, 1].map((i) => (
+                            <div key={i} className="eco-skel__shelf">
+                                <span className="eco-skel__tab" />
+                                <div className="eco-skel__row">{[0, 1, 2, 3, 4].map((j) => <span key={j} />)}</div>
+                            </div>
+                        ))}
+                    </div>
+                )}
                 {!ecoQueryTrimmed && (
                     areaGroups.length > 0 ? null : !llmLoading && (
                         <div className="eco3-empty">
@@ -2310,6 +2363,8 @@ export default function MyEcosystem({
                 </div>
                 </div>
                 {savedSlot && <div className="eco3-extras__saved">{savedSlot}</div>}
+                </div>
+                </div>
                 </div>
 
                 {showCareSheet && (

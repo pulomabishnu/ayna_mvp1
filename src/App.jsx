@@ -646,7 +646,9 @@ function App() {
   const [quizRun, setQuizRun] = useState(0);
   // "Make my matches more personal": the profile editor opens at the first open optional question.
   const [editAtOptional, setEditAtOptional] = useState(false);
-  useEffect(() => { if (currentView !== 'profile-edit') setEditAtOptional(false); }, [currentView]);
+  // "Update life stages" (Ecosystem): the profile editor opens on the life stage question.
+  const [editAtStep, setEditAtStep] = useState('');
+  useEffect(() => { if (currentView !== 'profile-edit') { setEditAtOptional(false); setEditAtStep(''); } }, [currentView]);
   const [askOpenSignal, setAskOpenSignal] = useState(0);
   const [askPrefill, setAskPrefill] = useState('');
   // Opens Ask ayna, optionally with a question typed in (Shop's empty state).
@@ -2375,8 +2377,9 @@ function App() {
         {currentView === 'profile-edit' && (
           // Same as the app: editing your profile reopens the quiz with your answers filled in.
           <WebIntake
-            key={editAtOptional ? 'profile-edit-optional' : 'profile-edit'}
+            key={editAtStep ? `profile-edit-${editAtStep}` : editAtOptional ? 'profile-edit-optional' : 'profile-edit'}
             startAtOptional={editAtOptional}
+            startAtStep={editAtStep}
             initialSnapshot={quizResults?.fullHealthIntake || null}
             onComplete={handleHealthProfileEditorSave}
             onBrowseLibrary={handleViewArticles}
@@ -2571,6 +2574,8 @@ function App() {
           <Suspense fallback={<ViewLoadingFallback />}>
           <MyEcosystem
             quizSlot={ecosystemQuizCard}
+            quizSlotKind={webQuizDraft ? 'finish' : 'personal'}
+            onFixLifeStages={() => { setEditAtStep('lifeStage'); setCurrentView('profile-edit'); }}
             matchOpts={matchOpts}
             myProducts={myProducts}
             ecosystemOrder={ecosystemOrder}
