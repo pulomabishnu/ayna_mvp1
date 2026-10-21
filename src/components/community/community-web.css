@@ -88,7 +88,7 @@ html body .app-container.app-container.app-container.app-container {
 
   /* ---------- start a post: one line + prompt tiles ---------- */
   .cm-start { display: grid; gap: var(--ay-s12); }
-  .cm-start__line { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 60px; padding: 8px 8px 8px 10px; border: 1.5px solid var(--ay-outline); border-radius: var(--ay-r-card); background-color: var(--ay-page); background-image: var(--cm-grain); color: var(--ay-text-2) !important; font: 400 16px/1.3 var(--ay-sans-stack) !important; text-align: left; cursor: text; box-sizing: border-box; }
+  .cm-start__line { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 60px; padding: 8px 8px 8px 10px; border: 1.5px solid var(--ay-outline); border-radius: var(--ay-r-card); background-color: var(--ay-page);  color: var(--ay-text-2) !important; font: 400 16px/1.3 var(--ay-sans-stack) !important; text-align: left; cursor: text; box-sizing: border-box; }
   .cm-start__line > span:nth-child(2) { flex: 1; min-width: 0; }
   .cm-start__line:hover { color: var(--ay-text) !important; }
   .cm-start__plus { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--ay-feature-bg); color: var(--ay-feature-fg); }
@@ -109,11 +109,11 @@ html body .app-container.app-container.app-container.app-container {
   .cm-guest strong { font-weight: 600; }
 
   /* ---------- posts as paper notes ---------- */
-  .cm-note { position: relative; min-width: 0; display: grid; gap: var(--ay-s12); padding: var(--ay-s16) var(--ay-s20) var(--ay-s4); border: 1.5px solid var(--ay-outline); border-radius: var(--ay-r-card); background-color: var(--ay-page); background-image: var(--cm-grain); color: var(--ay-text); animation: cm-in var(--cm-dur) var(--cm-ease) both; animation-delay: calc(var(--i, 0) * 45ms); }
+  .cm-note { position: relative; min-width: 0; display: grid; gap: var(--ay-s12); padding: var(--ay-s16) var(--ay-s20) var(--ay-s4); border: 1.5px solid var(--ay-outline); border-radius: var(--ay-r-card); background-color: var(--ay-page);  color: var(--ay-text); animation: cm-in var(--cm-dur) var(--cm-ease) both; animation-delay: calc(var(--i, 0) * 45ms); }
   .cm-note.is-question { margin-top: 12px; }
   .cm-note.is-full { animation: none; }
   .cm-ear { position: absolute; left: 18px; bottom: 100%; padding: 4px 12px 3px; border: 1.5px solid var(--ay-outline); border-bottom: 0; border-radius: 10px 10px 0 0; background: #769ebe; color: #3e2723; font: 600 12.5px/1.2 var(--ay-sans-stack); }
-  .cm-tape { position: absolute; top: -12px; right: 26px; width: 88px; height: 24px; background-color: rgba(247, 186, 221, .82); background-image: var(--cm-grain); border-inline: 2px dotted rgba(62, 39, 35, .4); transform: rotate(4deg); pointer-events: none; }
+  .cm-tape { position: absolute; top: -12px; right: 26px; width: 88px; height: 24px; background-color: rgba(247, 186, 221, .82);  border-inline: 2px dotted rgba(62, 39, 35, .4); transform: rotate(4deg); pointer-events: none; }
   .cm-post-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--ay-s12); }
   .cm-post-who { display: grid; gap: 1px; min-width: 0; }
   .cm-post-who > strong, .cm-name { justify-self: start; max-width: 100%; padding: 0; border: 0; background: none; color: var(--ay-text) !important; font: 600 16px/1.3 var(--ay-sans-stack) !important; text-align: left; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -141,7 +141,7 @@ html body .app-container.app-container.app-container.app-container {
 
   /* photos as polaroids, tilted a hair */
   .cm-photos { display: flex; flex-wrap: wrap; gap: 14px; padding: 4px 2px 6px; }
-  .cm-polaroid { display: block; flex: 0 1 calc(50% - 7px); max-width: 232px; padding: 7px 7px 22px; border: 1.5px solid var(--ay-outline); border-radius: 4px; background-color: var(--ay-page); background-image: var(--cm-grain); transform: rotate(var(--tilt, 0deg)); cursor: pointer; box-sizing: border-box; transition: transform var(--cm-dur) var(--cm-ease); }
+  .cm-polaroid { display: block; flex: 0 1 calc(50% - 7px); max-width: 232px; padding: 7px 7px 22px; border: 1.5px solid var(--ay-outline); border-radius: 4px; background-color: var(--ay-page);  transform: rotate(var(--tilt, 0deg)); cursor: pointer; box-sizing: border-box; transition: transform var(--cm-dur) var(--cm-ease); }
   .cm-photos.n-1 .cm-polaroid { flex-basis: 70%; max-width: 300px; }
   span.cm-polaroid { cursor: default; }
   button.cm-polaroid:hover { transform: rotate(0deg) translateY(-2px); }
@@ -206,7 +206,7 @@ html body .app-container.app-container.app-container.app-container {
 
   /* ---------- skeletons: notes that breathe while the feed loads ---------- */
   .cm-skel-list { display: grid; gap: var(--ay-s16); }
-  .cm-skel-post { display: grid; gap: 10px; padding: var(--ay-s20); border-radius: var(--ay-r-card); border: 1.5px dashed var(--ay-hairline); background-image: var(--cm-grain); animation: cm-pulse 900ms ease-in-out infinite alternate; animation-delay: calc(var(--i, 0) * 120ms); }
+  .cm-skel-post { display: grid; gap: 10px; padding: var(--ay-s20); border-radius: var(--ay-r-card); border: 1.5px dashed var(--ay-hairline);  animation: cm-pulse 900ms ease-in-out infinite alternate; animation-delay: calc(var(--i, 0) * 120ms); }
   .cm-skel-row { display: flex; align-items: center; gap: 12px; }
   .cm-skel-dot { width: 40px; height: 40px; border-radius: 50%; background: var(--ay-group); }
   .cm-skel-dot.is-big { width: 88px; height: 88px; }
