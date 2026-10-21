@@ -140,6 +140,63 @@ function Paras({ text }) {
   return String(text).split(/\n{2,}/).map((p) => p.trim()).filter(Boolean).map((p) => <p key={p.slice(0, 48)} className="ay-ev__body">{withTerms(p, used)}</p>);
 }
 
+/** An ingredient list split into its items (commas outside brackets), or null when it isn't a plain list. */
+function ingredientChips(text) {
+  const parts = []; let cur = ''; let depth = 0;
+  for (const ch of String(text || '')) {
+    if (ch === '(' || ch === '[') depth += 1;
+    if (ch === ')' || ch === ']') depth = Math.max(0, depth - 1);
+    if (ch === ',' && depth === 0) { parts.push(cur); cur = ''; } else cur += ch;
+  }
+  parts.push(cur);
+  const items = parts.map((x) => x.trim().replace(/\.$/, '')).filter(Boolean);
+  return items.length >= 3 && items.every((x) => x.length <= 70 && !/[.:;]\s/.test(x)) ? items : null;
+}
+
+/** The tab row: a box with Explore, "2 of 7", arrows, and a bar showing how far it's scrolled. */
+function TabExplorer({ tabs, cur, onPick, onKeyDown }) {
+  const rowRef = React.useRef(null);
+  const [m, setM] = useState({ sl: 0, sw: 1, cw: 1 });
+  const measure = () => { const r = rowRef.current; if (r) setM({ sl: r.scrollLeft, sw: r.scrollWidth, cw: r.clientWidth }); };
+  useEffect(() => {
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [tabs.length]);
+  const over = m.sw - m.cw > 4; const atStart = m.sl < 4; const atEnd = m.sl >= m.sw - m.cw - 4;
+  const step = (dir) => { const r = rowRef.current; if (r) r.scrollBy({ left: dir * Math.max(160, r.clientWidth * 0.6), behavior: 'smooth' }); };
+  const pick = (id) => {
+    onPick(id);
+    const r = rowRef.current; const b = r && r.querySelector(`#ay-tab-${id}`);
+    if (b) r.scrollTo({ left: b.offsetLeft - 24, behavior: 'smooth' });
+  };
+  const i = tabs.findIndex((t) => t.id === cur.id);
+  return (
+    <div className="ay-explore">
+      <div className="ay-explore__head">
+        <p className="ay-explore__label"><span>Explore</span><span>{i + 1} of {tabs.length}</span></p>
+        <div className="ay-explore__arrows">
+          <button type="button" aria-label="Scroll tabs left" className={over && !atStart ? '' : 'is-dim'} onClick={() => step(-1)}>←</button>
+          <button type="button" aria-label="Scroll tabs right" className={`is-next${over && !atEnd ? '' : ' is-dim'}`} onClick={() => step(1)}>→</button>
+        </div>
+      </div>
+      <div className={`ay-explore__rowwrap${over && !atStart ? ' fade-l' : ''}${over && !atEnd ? ' fade-r' : ''}`}>
+        <div className="ay-itabs__bar" role="tablist" aria-label="About this product" ref={rowRef} onScroll={measure}>
+          {tabs.map((t) => (
+            <button key={t.id} type="button" role="tab" id={`ay-tab-${t.id}`} aria-selected={t.id === cur.id} aria-controls="ay-tabpanel" tabIndex={t.id === cur.id ? 0 : -1} className={`is-${t.id}${t.id === cur.id ? ' is-on' : ''}`} onClick={() => pick(t.id)} onKeyDown={onKeyDown}><i aria-hidden="true" />{t.label}</button>
+          ))}
+        </div>
+      </div>
+      {over && (
+        <div className="ay-explore__foot">
+          <span className="ay-explore__track" aria-hidden="true"><b style={{ left: `${((m.sl / m.sw) * 100).toFixed(1)}%`, width: `${Math.min(100, (m.cw / m.sw) * 100).toFixed(1)}%` }} /></span>
+          <span className="ay-explore__hint">{atEnd ? '← Scroll back' : 'Scroll for more →'}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /** Short version first; the full text one tap away (it replaces the short one, nothing is hidden). */
 function ShortThenFull({ short, full }) {
   const [open, setOpen] = useState(false);
@@ -384,16 +441,19 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       {works.items.length > 0 && <p className="ay-ev__by"><b>Works with:</b> {works.items.map((t, i) => <React.Fragment key={t}>{i > 0 && ', '}{t === 'ayna' && works.ayna ? <a href="/health-data" title={`Connect ${works.ayna.name} in Health data`}>ayna</a> : t}</React.Fragment>)}</p>}
     </> },
     (d.clinician || d.clinicalNote || thingsRaised || d.clinicalLinks.length) && { id: 'clinical', label: 'Clinical opinion', body: <>
-      {d.clinician && <ShortThenFull short={d.clinicianShort} full={d.clinician} />}
+      {d.clinician && <div className="ay-box is-pink"><span className="ay-box__kicker">Clinical opinion</span><ShortThenFull short={d.clinicianShort} full={d.clinician} /></div>}
       {d.clinicalNote && <ShortThenFull full={d.clinicalNote} />}
       {(d.attribution || d.clinicalNote) && <p className="ay-ev__by">{[d.attribution, d.clinicalNote && 'The added context comes from the clinical guidance under its sources.'].filter(Boolean).join(' ')}</p>}
-      {thingsRaised && <><h3 className="ay-part__h">ayna’s note</h3><ShortThenFull full={thingsRaised} /></>}
+      {thingsRaised && <div className="ay-box is-butter"><h3 className="ay-part__h">ayna’s note</h3><ShortThenFull full={thingsRaised} /></div>}
       {d.clinicalSummary && <ShortThenFull full={d.clinicalSummary} />}
       <Links items={d.clinicalLinks} label="Sources" />
     </> },
     (graded.length || science.rest || d.scienceSummary || d.ingredients.length || d.studies.length) && { id: 'science', label: 'What the research says', body: <>
-      {science.rest && <ShortThenFull full={science.rest} />}
-      {d.scienceSummary && <ShortThenFull full={d.scienceSummary} />}
+      {(science.rest || d.scienceSummary) && <div className="ay-research-lead">
+        <span className="ay-box__kicker">What the research says</span>
+        {science.rest && <ShortThenFull full={science.rest} />}
+        {d.scienceSummary && <ShortThenFull full={d.scienceSummary} />}
+      </div>}
       {d.ingredients.length > 0 && <>
         <h3 className="ay-part__h">Ingredients</h3>
         <ul className="ay-ev2__ingr">
@@ -414,8 +474,12 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
         <ul className="ay-ev2__grades">
           {graded.map((g) => (
             <li key={g.need}>
-              <span className={`ay-ev2__grade is-${g.strength === 'none' ? 'none' : g.grade.toLowerCase()}`}>{g.strength === 'none' ? 'Not a fit' : GRADE_WORDS[g.grade]}</span>
-              <span><b>{needPhrase(g.need).replace(/^./, (c) => c.toUpperCase())}.</b> {noDash(PLAIN[`${g.product}|${g.need}`] || g.rationale)} <a href={g.source_url} target="_blank" rel="noopener noreferrer">Source: {humanPublisher(new URL(g.source_url).hostname.replace(/^www\./, '')) || hostLabel(g.source_url)}</a></span>
+              <span className="ay-ev2__gradehead">
+                <b className="ay-ev2__need">{needPhrase(g.need).replace(/^./, (c) => c.toUpperCase())}</b>
+                <span className={`ay-ev2__grade is-${g.strength === 'none' ? 'none' : g.grade.toLowerCase()}`}>{g.strength === 'none' ? 'Not a fit' : GRADE_WORDS[g.grade]}</span>
+              </span>
+              <span className="ay-ev2__bars" aria-hidden="true">{[0, 1, 2].map((k) => <i key={k} className={k < (g.strength === 'none' ? 0 : { A: 3, B: 2, C: 1 }[g.grade] || 0) ? 'is-on' : undefined} />)}</span>
+              <span className="ay-ev2__why">{noDash(PLAIN[`${g.product}|${g.need}`] || g.rationale)} <a href={g.source_url} target="_blank" rel="noopener noreferrer">Source: {humanPublisher(new URL(g.source_url).hostname.replace(/^www\./, '')) || hostLabel(g.source_url)}</a></span>
             </li>
           ))}
         </ul>
@@ -432,31 +496,36 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
         </ul>
       )}
       <ProductCommunityReviews productId={baseProduct?.id} rows={reviewRows} onOpenReview={onOpenReview} />
-      {communityText && <ShortThenFull full={communityText} />}
-      {d.communitySummary && <ShortThenFull full={d.communitySummary} />}
+      {(communityText || d.communitySummary) && <div className="ay-bubble">
+        {communityText && <ShortThenFull full={communityText} />}
+        {d.communitySummary && <ShortThenFull full={d.communitySummary} />}
+        <p className="ay-ev__by">Online reviews and posts are people’s experiences, not clinical evidence.</p>
+      </div>}
       {d.ratingNote && <p className="ay-ev__by">{d.ratingNote}</p>}
       {d.incentivized.length > 0 && <p className="ay-ev__by">Reviews on {d.incentivized.join(', ')} may include incentivized reviews.</p>}
-      {(communityText || d.communitySummary) && <p className="ay-ev__by">Online reviews and posts are people’s experiences, not clinical evidence.</p>}
       {d.memberReviews.length > 0 && <><h3 className="ay-part__h">From ayna members</h3>{d.memberReviews.map((r) => <blockquote key={r.slice(0, 40)} className="ay-ev__quote">{r}</blockquote>)}</>}
       {!ratingLine && !reviewRows.length && !communityText && !d.communitySummary && !d.memberReviews.length && <p className="ay-ev__body">No reviews yet.</p>}
       {rateControls}
       <Links items={[...onlineLinks, ...(d.brand ? [{ url: `https://www.trustpilot.com/search?query=${encodeURIComponent(d.brand)}`, title: `${d.brand} on Trustpilot`, publisher: 'Trustpilot' }] : [])]} label="Read more reviews online" />
     </> },
     d.how && { id: 'how', label: 'How to use', body: <>
-      {d.how.intro && <Paras text={d.how.intro} />}
-      <ol className="ay-tabs__steps">{d.how.steps.map((st, i) => <li key={st}><b aria-hidden="true">{i + 1}</b><span>{st}</span></li>)}</ol>
+      {d.how.intro && <div className="ay-box is-butter"><Paras text={d.how.intro} /></div>}
+      <div className="ay-box is-pink"><ol className="ay-tabs__steps">{d.how.steps.map((st, i) => <li key={st}><b aria-hidden="true">{i + 1}</b><span>{st}</span></li>)}</ol></div>
       <Links items={howLinks} label="Source" compact />
     </> },
     (d.ingredientsText || showMaterials || hasRows || brandSays || d.badges.length || d.evidenceStrength) && { id: 'details', label: 'Details', body: <>
       {(d.ingredientsText || showMaterials) && <>
         <h3 className="ay-part__h is-first">{d.isDigital ? 'What’s included' : 'What’s in it'}</h3>
-        {d.ingredientsText && <>{showMaterials && <h4 className="ay-ev2__sub">{d.isDigital ? 'Included' : 'Ingredients'}</h4>}<p className="ay-ev__body ay-pd__pre">{d.ingredientsText}</p></>}
-        {showMaterials && <>{d.ingredientsText && <h4 className="ay-ev2__sub">Materials</h4>}<p className="ay-ev__body">{d.materials}</p></>}
+        {d.ingredientsText && <>{showMaterials && <h4 className="ay-ev2__sub">{d.isDigital ? 'Included' : 'Ingredients'}</h4>}{(() => {
+          const chips = ingredientChips(d.ingredientsText);
+          return chips ? <ul className="ay-chips" aria-label={d.isDigital ? 'Included' : 'Ingredients'}>{chips.map((c, i) => <li key={`${c}-${i}`}>{c}</li>)}</ul> : <p className="ay-ev__body ay-pd__pre">{d.ingredientsText}</p>;
+        })()}</>}
+        {showMaterials && <div className="ay-box is-dashed">{d.ingredientsText && <h4 className="ay-ev2__sub">Materials</h4>}<p className="ay-ev__body">{d.materials}</p></div>}
       </>}
       {hasRows && <>
         <h3 className="ay-part__h">Size and price</h3>
         <dl className="ay-pd__rows">
-          {facts.map((f) => <div key={f.id}><dt>{f.label}</dt><dd>{f.value}{f.note ? <small>{fmtDate(f.note)}</small> : null}</dd></div>)}
+          {facts.map((f) => <div key={f.id} className={`is-${f.id}`}><dt>{f.label}</dt><dd>{f.value}{f.note ? <small>{fmtDate(f.note)}</small> : null}</dd></div>)}
           {extraRows.filter((r) => r && r.value).map((r) => <div key={r.label}><dt>{r.label}</dt><dd>{r.value}</dd></div>)}
           {bottomIsSpecs && <div><dt>Specs</dt><dd>{d.bottomLine}</dd></div>}
           {d.priceNote && <div><dt>Price note</dt><dd>{d.priceNote}</dd></div>}
@@ -492,7 +561,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       {glanceTiles.length > 1 && (
         <ul className="ay-glance">
           {glanceTiles.map((t) => (
-            <li key={t.id}>
+            <li key={t.id} className={`is-${t.id}`}>
               <button type="button" onClick={() => pickTab(t.id)}>
                 <span className="ay-glance__label">{t.label}</span>
                 {t.tag && <span className="ay-glance__tag">{t.tag}</span>}
@@ -503,8 +572,8 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
           ))}
         </ul>
       )}
-      {byId.what && <><h3 className="ay-part__h">What it is</h3>{byId.what.body}</>}
-      {byId.who && <><h3 className="ay-part__h">Who it’s for</h3>{byId.who.body}</>}
+      {byId.what && <div className="ay-ov-what"><h3 className="ay-part__h">What it is</h3>{byId.what.body}</div>}
+      {byId.who && <div className="ay-ov-who"><h3 className="ay-part__h">Who it’s for</h3>{byId.who.body}</div>}
     </> },
     ...['clinical', 'science', 'safety', 'reviews', 'how'].map((id) => byId[id] && { id, label: id === 'science' ? 'Research' : id === 'clinical' ? 'Clinical' : byId[id].label, body: byId[id].body }),
     // Sources close the Details tab (seven tabs fit on one line).
@@ -525,11 +594,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   return (
     <TermsCtx.Provider value={plan}>
     <div id="ay-tabs" className="ay-itabs">
-      <div className="ay-itabs__bar" role="tablist" aria-label="About this product">
-        {tabs.map((t) => (
-          <button key={t.id} type="button" role="tab" id={`ay-tab-${t.id}`} aria-selected={t.id === cur.id} aria-controls="ay-tabpanel" tabIndex={t.id === cur.id ? 0 : -1} className={t.id === cur.id ? 'is-on' : undefined} onClick={() => setTab(t.id)} onKeyDown={keyNav}>{t.label}</button>
-        ))}
-      </div>
+      <TabExplorer tabs={tabs} cur={cur} onPick={setTab} onKeyDown={keyNav} />
       <div className={`ay-itabs__panel is-${cur.id}`} id="ay-tabpanel" role="tabpanel" aria-labelledby={`ay-tab-${cur.id}`} tabIndex={0}>
         {cur.body}
       </div>

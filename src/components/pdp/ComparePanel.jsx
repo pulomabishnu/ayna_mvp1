@@ -61,7 +61,7 @@ export default function ComparePanel({ product, others = [], onOpen, matchFor = 
             {rows.map((r) => (
               <tr key={r.label}>
                 <th scope="row">{r.label}</th>
-                {r.values.map((v, i) => <td key={cols[i].id} className={`${i === 0 ? 'is-this' : ''}${v === NOT_ON_FILE ? ' is-unknown' : ''}`.trim() || undefined}>{v}</td>)}
+                {r.values.map((v, i) => <td key={cols[i].id} className={`${i === 0 ? 'is-this' : ''}${v === NOT_ON_FILE ? ' is-unknown' : ''}`.trim() || undefined}>{v === NOT_ON_FILE ? '' : v}</td>)}
               </tr>
             ))}
           </tbody>
