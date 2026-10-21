@@ -133,3 +133,11 @@ describe('admin: all feedback', () => {
     expect(t).not.toMatch(/—/);
   });
 });
+
+describe('vintedIdsFromText', () => {
+  it('pulls listing ids out of pasted links, once each', async () => {
+    const { vintedIdsFromText } = await import('./freeProductCampaign.js');
+    expect(vintedIdsFromText('https://www.vinted.com/items/10464820310-new-sealed-saza-150ml\n10452332267, 10464820310')).toEqual(['10464820310', '10452332267']);
+    expect(vintedIdsFromText('150ml 30')).toEqual([]);
+  });
+});

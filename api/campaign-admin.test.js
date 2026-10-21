@@ -84,3 +84,40 @@ describe('api/campaign-notify (cron)', () => {
     expect(res.statusCode).toBe(401);
   });
 });
+
+describe('api/campaign-admin vinted', () => {
+  const asAdmin = (admin) => verifyUser.mockResolvedValue({ user: { id: 'u', email: 'team@aynahealth.co' }, error: null, admin });
+
+  it('lists the Vinted listings', async () => {
+    const admin = mockSupabase({ rpcResults: { campaign_vinted_listings: { data: [{ listing_id: 1, status: 'available', claimed: false, product: 'A' }], error: null } } });
+    asAdmin(admin);
+    const res = mockRes();
+    await adminHandler(mockReq({ body: { action: 'vinted_list' } }), res);
+    expect(res.body.listings).toHaveLength(1);
+  });
+
+  it('rejects anything but available, reserved or sold', async () => {
+    asAdmin(mockSupabase());
+    for (const results of [[], [{ listingId: 1, status: 'unknown' }], [{ listingId: 'x', status: 'sold' }], 'sold']) {
+      const res = mockRes();
+      await adminHandler(mockReq({ body: { action: 'vinted', results } }), res);
+      expect(res.statusCode).toBe(400);
+    }
+  });
+
+  it('applies the check and emails the team when a prize sold', async () => {
+    vi.stubEnv('RESEND_API_KEY', 'k');
+    vi.stubEnv('CAMPAIGN_TEAM_EMAIL', 'team@aynahealth.co');
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue({ ok: true });
+    const admin = mockSupabase({ rpcResults: { campaign_vinted_apply: { data: { checked: 1, changes: [{ listingId: 2, from: 'available', to: 'sold', product: 'Olay Super Cream', wonInCampaign: false }], available: 40 }, error: null } } });
+    asAdmin(admin);
+    const res = mockRes();
+    await adminHandler(mockReq({ body: { action: 'vinted', results: [{ listingId: '2', status: 'sold' }] } }), res);
+    expect(res.statusCode).toBe(200);
+    expect(admin.rpcCalls[0].args.p_results).toEqual([{ listingId: 2, status: 'sold' }]);
+    const mail = JSON.parse(fetchSpy.mock.calls[0][1].body);
+    expect(mail.subject).toBe('Vinted: 1 prize taken out of the free product pool');
+    expect(mail.text).toContain('Olay Super Cream');
+    fetchSpy.mockRestore();
+  });
+});

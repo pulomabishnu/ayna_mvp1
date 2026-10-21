@@ -166,4 +166,47 @@ echo "   after re-run: $OUT2 (products|units), barrier cream claimed/total = $KE
 echo "   ok  49 products, 52 units, re-run is safe"
 
 echo
+echo "── Vinted prizes: units follow the listings, a won unit is never taken twice"
+run supabase/migrations/20261021120000_vinted_pool_sync.sql
+run supabase/migrations/20261021120000_vinted_pool_sync.sql
+q "delete from public.reward_claims; delete from public.reward_spins; update public.reward_products set is_active = false;" >/dev/null
+VP=$(q "insert into public.reward_products (campaign_id, name, brand, inventory_total) values ('$C', 'Glow Deep Serum', 'Beauty of Joseon', 0) returning id")
+q "insert into public.reward_vinted_listings (listing_id, reward_product_id) values (101, '$VP'), (102, '$VP');
+   select public.campaign_vinted_recount('$C');" >/dev/null
+T0=$(q "select inventory_total from public.reward_products where id = '$VP'")
+# Someone wins one: it is tied to a listing straight away.
+W=$(q "select public.test_make_eligible('$C', 'vinted-winner@example.com')"); SW=$(q "select public.campaign_spin('$C', '$W') ->> 'spinId'")
+CL=$(q "select coalesce(public.campaign_claim('$C', '$W', '$SW', 'vinted-key-000000001') ->> 'error', 'claimed')")
+TIED=$(q "select listing_id from public.reward_vinted_listings where claim_id is not null")
+# Ameera takes the won one off Vinted, and sells the other: nothing left, nothing double-counted.
+A1=$(q "select public.campaign_vinted_apply('$C', '[{\"listingId\":101,\"status\":\"sold\"},{\"listingId\":102,\"status\":\"sold\"}]'::jsonb) -> 'changes' -> 0 ->> 'wonInCampaign'")
+T1=$(q "select inventory_claimed || '/' || inventory_total from public.reward_products where id = '$VP'")
+# A blocked check ("unknown") changes nothing; a released reservation comes back.
+q "select public.campaign_vinted_apply('$C', '[{\"listingId\":102,\"status\":\"unknown\"}]'::jsonb)" >/dev/null
+T2=$(q "select inventory_total from public.reward_products where id = '$VP'")
+q "select public.campaign_vinted_apply('$C', '[{\"listingId\":102,\"status\":\"available\"}]'::jsonb)" >/dev/null
+T3=$(q "select inventory_claimed || '/' || inventory_total from public.reward_products where id = '$VP'")
+NOACCESS=$(q "set role authenticated; select has_function_privilege('public.campaign_vinted_apply(text, jsonb)', 'execute')::text; reset role;" | head -1)
+echo "   total=$T0 claim=$CL tied_to=$TIED won_flag=$A1 after_sold=$T1 after_unknown=$T2 after_back=$T3 browser_can_apply=$NOACCESS"
+[ "$T0" = 2 ] && [ "$CL" = claimed ] && [ "$TIED" = 101 ] && [ "$A1" = true ] && [ "$T1" = "1/1" ] && [ "$T2" = 1 ] && [ "$T3" = "1/2" ] && [ "$NOACCESS" = false ] \
+  || { echo "❌ Vinted test failed"; exit 1; }
+echo "   ok  sold listings leave the pool, won ones stay won, unknown changes nothing"
+
+echo
+echo "── Vinted seed: 42 listings, PR haul items reused, re-run is safe"
+q "delete from public.reward_vinted_listings; delete from public.reward_claims; delete from public.reward_spins; delete from public.reward_products where product_id is null;" >/dev/null
+psql -v ON_ERROR_STOP=1 -q -t -A -d "$DB" -f supabase/seed/free_product_pr_haul.sql >/dev/null
+BEFORE=$(q "select count(*) from public.reward_products where product_id is null")
+V1=$(psql -v ON_ERROR_STOP=1 -q -t -A -d "$DB" -f supabase/seed/free_product_vinted.sql | tail -1)
+q "update public.reward_vinted_listings set status = 'sold' where listing_id = 10464761615; select public.campaign_vinted_recount('$C');" >/dev/null
+V2=$(psql -v ON_ERROR_STOP=1 -q -t -A -d "$DB" -f supabase/seed/free_product_vinted.sql | tail -1)
+ADDED=$(( $(q "select count(*) from public.reward_products where product_id is null") - BEFORE ))
+MANYO=$(q "select inventory_total || ':' || (select count(*) from public.reward_vinted_listings l where l.reward_product_id = rp.id) from public.reward_products rp where brand = 'manyo' and name = 'Glutathione 7 Dark Spot Serum'")
+BOJ=$(q "select inventory_total from public.reward_products where name = 'Glow Deep Serum: Rice + Alpha-Arbutin'")
+echo "   first=$V1 rerun=$V2 new_products=$ADDED manyo(units:listings)=$MANYO glow_deep_units_after_one_sold=$BOJ"
+[ "$V1" = "41|42|42" ] && [ "$V2" = "41|42|41" ] && [ "$ADDED" = 39 ] && [ "$MANYO" = "1:1" ] && [ "$BOJ" = 1 ] \
+  || { echo "❌ Vinted seed test failed"; exit 1; }
+echo "   ok  41 prizes, 42 units; a sold listing stays sold on re-run"
+
+echo
 echo "✅ campaign SQL: behaviour and concurrency tests pass"
