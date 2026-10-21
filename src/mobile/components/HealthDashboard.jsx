@@ -5,7 +5,7 @@ import { SOURCE_NAMES } from '../data/healthConnections.js';
 import { buildDashboard, formatMetric, isFlat, RANGES } from '../../health/dashboard.js';
 import { localToday, useHealthData } from '../hooks/useHealthData.js';
 import HealthChart, { CycleRing, Spark } from './HealthChart.jsx';
-import HealthBento from './HealthBento.jsx';
+import HealthBento, { HealthStarter } from './HealthBento.jsx';
 import { estimatePhase, PHASE_SOURCES } from '../../health/phase.js';
 import '../screens/profile/health-connections.css';
 
@@ -106,11 +106,11 @@ export default function HealthDashboard({ authUser, userName = '', selectedNeedI
   if (health.status === 'loading') return <p className="ay-hc-intro" role="status">Loading your health data…</p>;
   if (dash.empty && !sections.length && week.empty) {
     return (
-      <div className="ay-hd-empty">
-        <CycleRing cycleDay={null} avgLength={28} periodLength={0} />
+      <div className="ay-wx-empty">
         <h2>Your health, in one place</h2>
         <p>Connect an app or wearable, or upload a file. Your cycle, sleep, heart and activity show up here, compared with your own usual.</p>
-        <button type="button" className="ay-qc-primary" onClick={onConnect}>Connect health data</button>
+        {/* Still useful before any data: her goals matched to her products, from the quiz. */}
+        <HealthStarter needIds={selectedNeedIds} products={products} matches={matches} onOpenProduct={onOpenProduct} onConnect={onConnect} />
       </div>
     );
   }
