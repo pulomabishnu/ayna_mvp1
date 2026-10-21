@@ -536,8 +536,8 @@ function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthP
                                         background: 'var(--color-bg)',
                                     }}
                                 >
-                                    {safeProductImageSrc(a.image, a.type === 'digital') ? (
-                                        <img src={safeProductImageSrc(a.image, a.type === 'digital')} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    {safeProductImageSrc(resolveCatalogProductImage(a), a.type === 'digital') ? (
+                                        <img src={safeProductImageSrc(resolveCatalogProductImage(a), a.type === 'digital')} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                     ) : (
                                         <ProductImageFallback compact />
                                     )}
