@@ -112,3 +112,10 @@
   .ayna-mobile:is(#ay,.ayna-mobile) .am-screen :is(.am-note, .am-prompt, .am-skel, .am-note-actions button.is-pop svg) { animation: none !important; }
   .ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-folder { transition: none; }
 }
+/* Composer + prompt tiles in one row (walkthrough P1-22), tiles sized to
+   their text so each hint fits on one line. */
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-start { margin: 0 0 12px; }
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-prompts .am-prompt { flex: 0 0 auto; width: auto; max-width: 280px; min-height: 60px; padding: 8px 14px 8px 10px; }
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-prompts .am-prompt small { white-space: nowrap; }
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-prompts .am-start-line.is-compose { width: auto; background: var(--d-page); color: var(--d-ink); border-color: var(--d-ink); }
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-prompts .am-start-line.is-compose > span:nth-child(2) { flex: none; }

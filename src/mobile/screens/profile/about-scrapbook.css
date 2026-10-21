@@ -65,3 +65,7 @@
 .ayna-scrapbook__advisor-copy{display:grid;gap:3px;min-width:0}
 .ayna-scrapbook__advisors strong{font-size:13px;font-weight:500;line-height:1.2}.ayna-scrapbook__advisors small{overflow-wrap:anywhere;font-size:11.5px;font-weight:500;line-height:1.3}
 .ayna-scrapbook__footer{margin-top:19px;padding:15px;border-radius:12px;background:#ffedac;color:#3e2723;text-align:center;font-size:13px;font-weight:500;line-height:1.4}
+/* "Matched to you" is a sticker, not a button (walkthrough P2-18): the oval
+   stamp from the Ecosystem card, tilted, with the asterisk. */
+.ayna-mobile .ayna-scrapbook__intro-stamp { display: inline-flex !important; align-items: center; gap: 6px; padding: 7px 13px !important; border: 1.5px solid #3e2723 !important; border-radius: 50% !important; background: #ffedac; color: #3e2723 !important; box-shadow: inset 0 0 0 3px #ffedac, inset 0 0 0 4.5px #3e2723; font: 600 12.5px/1 var(--f-ui, 'Figtree', sans-serif) !important; white-space: nowrap; transform: rotate(-6deg); cursor: default; pointer-events: none; }
+.ayna-mobile .ayna-scrapbook__intro-stamp svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; }

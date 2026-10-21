@@ -13,7 +13,8 @@ import { rankForYou, postProductIds } from '../../utils/community/ranking.js';
 import { extractHashtagTopics, suggestHashtags, suggestTopicsForProducts, COMMUNITY_TOPICS, topicLabel } from '../../utils/community/topics.js';
 import { useFollowedTopics } from '../utils/communityTopicFollows.js';
 import { uploadCommunityImage, deleteCommunityImage, checkImageFile, MAX_POST_PHOTOS, publicMediaUrl } from '../../utils/community/imageUpload.js';
-import { CATEGORY_LABELS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../../data/products.js';
+import { CATEGORY_LABELS } from '../../data/products.js';
+import { matchPercentFor } from '../utils/matchScore.js';
 import { scoreSearchMatch } from '../../utils/search/index.js';
 import { searchCommunityTolerant } from '../../utils/search/communitySearch.js';
 import SmartSearchInput from '../../components/search/SmartSearchInput.jsx';
@@ -69,7 +70,7 @@ function CommunityAvatar({ name, path, anonymous = false }) {
   </span>;
 }
 
-function ProductMention({ productId, productsById, quizAnswers, onOpenProduct }) {
+function ProductMention({ productId, productsById, quizAnswers, matchOpts, onOpenProduct }) {
   const product = productsById.get(String(productId));
   if (!product) {
     const customName = customProductName(String(productId || ''));
@@ -79,12 +80,12 @@ function ProductMention({ productId, productsById, quizAnswers, onOpenProduct })
       <span><strong>{customName}</strong><small>Not in the ayna catalog yet</small></span>
     </span>;
   }
-  const match = quizAnswers ? getProductMatchDetailsForProduct(product, quizAnswers) : null;
-  const showMatch = match?.matchStatus === 'scored' && Number.isFinite(match.percent);
+  const percent = quizAnswers ? matchPercentFor(product, quizAnswers, matchOpts) : null;
+  const showMatch = percent != null;
   return <button type="button" className="am-product" onClick={() => onOpenProduct(product)}>
     <span className="am-product-photo"><ProductImage product={product} src={product.image || product.imageUrl || product.images?.[0]} alt="" allowBrandLogo={product.type === 'digital'} style={{ objectFit: 'contain' }} /></span>
     <span><strong>{displayName(product)}</strong><small>{product.brand || 'ayna product'}</small></span>
-    <em>{showMatch ? `${match.percent}% match` : 'View'}</em>
+    <em>{showMatch ? `${percent}% match` : 'View'}</em>
   </button>;
 }
 
@@ -195,7 +196,7 @@ const PENDING_INVITE_KEY = 'ayna_pending_playlist_invite';
 const readPendingInvite = () => { try { return sessionStorage.getItem(PENDING_INVITE_KEY) || ''; } catch { return ''; } };
 const clearPendingInvite = () => { try { sessionStorage.removeItem(PENDING_INVITE_KEY); } catch { /* storage blocked */ } };
 
-export default function CommunityScreen({ authUser, products = [], articles = null, quizAnswers, headerInitial, onOpenProduct, onOpenArticle, onGoBrowse, onGoEco, onOpenSaved, onOpenProfile, onRequireAuth, seedKind, seedProductId, seedPlaylistId, seedPostId, seedUsername }) {
+export default function CommunityScreen({ authUser, products = [], articles = null, quizAnswers, matchOpts, headerInitial, onOpenProduct, onOpenArticle, onGoBrowse, onGoEco, onOpenSaved, onOpenProfile, onRequireAuth, seedKind, seedProductId, seedPlaylistId, seedPostId, seedUsername }) {
   const supabase = authUser ? getSupabaseClient() : (getGuestClient() || getSupabaseClient());
   const productsById = useMemo(() => new Map(products.map((p) => [String(p.id), p])), [products]);
   const [tab, setTab] = useState('for-you');
@@ -386,13 +387,14 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     if (tab === 'announcements') { setPosts([]); setCursor(null); setLoading(false); return; }
     let active = true;
     setLoading(true);
+    // Feed order only (never shown as a number), so it skips matchOpts and a save doesn't refetch the feed.
     const run = async () => {
       if (tab === 'playlists') {
         const rows = await community.listPlaylists(supabase, { section: playlistSection });
         if (active) { setPlaylists(rows); setPosts([]); setCursor(null); }
       } else {
         const rows = await community.listFeedPosts(supabase, { kind: tab === 'question' || tab === 'review' ? tab : null, authorIds: tab === 'following' ? followingIds : null, topics: scopedTopicsKey ? scopedTopicsKey.split(',') : null });
-        if (active) { setPosts(tab === 'for-you' ? rankForYou(rows, { matchFor: (id) => { const p = productsById.get(String(id)); return p && quizAnswers ? getProfileMatchPercentForProduct(p, quizAnswers) : null; }, followingIds: new Set(followingIds) }) : rows); setCursor(rows.length === community.PAGE_SIZE ? community.nextCursor(rows, 'recent') : null); }
+        if (active) { setPosts(tab === 'for-you' ? rankForYou(rows, { matchFor: (id) => { const p = productsById.get(String(id)); return p && quizAnswers ? matchPercentFor(p, quizAnswers) : null; }, followingIds: new Set(followingIds) }) : rows); setCursor(rows.length === community.PAGE_SIZE ? community.nextCursor(rows, 'recent') : null); }
       }
     };
     run().catch((e) => { if (active) notifyError(e); }).finally(() => { if (active) setLoading(false); });
@@ -404,7 +406,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     setLoading(true);
     try {
       const rows = await community.listFeedPosts(supabase, { kind: tab === 'question' || tab === 'review' ? tab : null, authorIds: tab === 'following' ? followingIds : null, topics: scopedTopicsKey ? scopedTopicsKey.split(',') : null, cursor });
-      setPosts((prev) => [...prev, ...(tab === 'for-you' ? rankForYou(rows, { matchFor: (id) => { const p = productsById.get(String(id)); return p && quizAnswers ? getProfileMatchPercentForProduct(p, quizAnswers) : null; } }) : rows)]);
+      setPosts((prev) => [...prev, ...(tab === 'for-you' ? rankForYou(rows, { matchFor: (id) => { const p = productsById.get(String(id)); return p && quizAnswers ? matchPercentFor(p, quizAnswers) : null; } }) : rows)]);
       setCursor(rows.length === community.PAGE_SIZE ? community.nextCursor(rows, 'recent') : null);
     } catch (e) { notifyError(e); } finally { setLoading(false); }
   };
@@ -920,7 +922,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       <button type="button" className={`am-note-body${long ? ' is-clamped' : ''}`} onClick={() => openPost(post)}>{post.body}</button>
       {long && <button type="button" className="am-readmore" onClick={() => openPost(post)}>Read the rest</button>}
       {media.length > 0 && <div className={`am-polaroids n-${Math.min(media.length, 4)}`}>{media.slice(0, 4).map((photo, k) => <button type="button" key={photo.path} className="am-polaroid" style={{ '--tilt': `${k % 2 ? 1.2 : -1.2}deg` }} onClick={() => openPost(post)} aria-label={`Open ${authorName}'s post, photo ${k + 1}`}><img src={publicMediaUrl(photo.path)} alt="" loading="lazy" /></button>)}</div>}
-      {postProductIds(post).slice(0, 1).map((id) => <ProductMention key={id} productId={id} productsById={productsById} quizAnswers={quizAnswers} onOpenProduct={onOpenProduct} />)}
+      {postProductIds(post).slice(0, 1).map((id) => <ProductMention key={id} productId={id} productsById={productsById} quizAnswers={quizAnswers} matchOpts={matchOpts} onOpenProduct={onOpenProduct} />)}
       <PostStats post={post} engagement={engagement} variant="app" likeNoun={kind === 'post' ? 'liked this' : 'found this helpful'} onOpenLikers={setLikersPost} />
       <div className="am-note-actions">
         <button type="button" className="am-act-like" aria-pressed={Boolean(post.viewer_found_helpful)} aria-label={`${likeWord}${helpful ? `, ${helpful}` : ''}`} onClick={(e) => { if (authUser && !post.viewer_found_helpful) popIcon(e); togglePost(post, 'helpful'); }}><CommunityIcon name="heart" size={18} /><span aria-hidden="true">{likeWord}{helpful ? <b>{helpful}</b> : null}</span></button>
@@ -968,7 +970,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       {page ? <div className="am-subpage" key={`${page.type}-${page.id || 'current'}`}>
         <div className="am-subpage-header"><button type="button" className="am-back" onClick={closePage} aria-label="Back to Community"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6" /></svg></button><span className="am-subpage-title">{({ playlist: 'Playlist', profile: 'Profile', notifications: 'Updates', post: 'Post', friends: 'Friends' })[page.type] || 'Community'}</span></div>
         {!details && <p className="am-empty" role="status">Loading…</p>}
-        {page.type === 'post' && details && <>{renderPost(details)}<h2 className="am-section">Replies</h2>{comments.map((c) => <div className="am-comment" key={c.id}><div className="am-meta"><div className="am-author"><CommunityAvatar name={c.author_display_name || c.author_username} path={!c.is_anonymous && c.author_id ? profileById.get(c.author_id)?.avatar_url : null} anonymous={c.is_anonymous || !c.author_id} /><span>{c.is_anonymous || !c.author_id ? 'Anonymous' : c.author_display_name || c.author_username}</span><VerifiedBadge title={badgeFor(c.author_id, c.is_anonymous)} compact /></div><span>{timeLabel(c.created_at)}</span></div><p>{c.body}</p>{c.product_id && <ProductMention productId={c.product_id} productsById={productsById} quizAnswers={quizAnswers} onOpenProduct={onOpenProduct} />}<button type="button" onClick={() => setReplyTo(c.id)}>Reply</button></div>)}<div className="am-compose-inline">{replyTo && <button type="button" onClick={() => setReplyTo(null)}>Replying · cancel</button>}<RuleField value={commentBody} onChange={(e) => setCommentBody(e.target.value)} placeholder="Add to the conversation" aria-label="Your reply" onShowRules={openRules} /><ProductPicker products={products} value={productId} onChange={setProductId} /><button type="button" className="am-primary" disabled={busy || !commentBody.trim() || breaksCommunityRules(commentBody)} onClick={submitComment}>Post reply</button></div></>}
+        {page.type === 'post' && details && <>{renderPost(details)}<h2 className="am-section">Replies</h2>{comments.map((c) => <div className="am-comment" key={c.id}><div className="am-meta"><div className="am-author"><CommunityAvatar name={c.author_display_name || c.author_username} path={!c.is_anonymous && c.author_id ? profileById.get(c.author_id)?.avatar_url : null} anonymous={c.is_anonymous || !c.author_id} /><span>{c.is_anonymous || !c.author_id ? 'Anonymous' : c.author_display_name || c.author_username}</span><VerifiedBadge title={badgeFor(c.author_id, c.is_anonymous)} compact /></div><span>{timeLabel(c.created_at)}</span></div><p>{c.body}</p>{c.product_id && <ProductMention productId={c.product_id} productsById={productsById} quizAnswers={quizAnswers} matchOpts={matchOpts} onOpenProduct={onOpenProduct} />}<button type="button" onClick={() => setReplyTo(c.id)}>Reply</button></div>)}<div className="am-compose-inline">{replyTo && <button type="button" onClick={() => setReplyTo(null)}>Replying · cancel</button>}<RuleField value={commentBody} onChange={(e) => setCommentBody(e.target.value)} placeholder="Add to the conversation" aria-label="Your reply" onShowRules={openRules} /><ProductPicker products={products} value={productId} onChange={setProductId} /><button type="button" className="am-primary" disabled={busy || !commentBody.trim() || breaksCommunityRules(commentBody)} onClick={submitComment}>Post reply</button></div></>}
         {page.type === 'playlist' && details && <section className="am-playlist-detail">
           <div className="am-playlist-detail-hero">{details.cover_url ? <img className="am-cover-detail" src={publicMediaUrl(details.cover_url)} alt="Playlist cover" /> : <span className="am-mosaic" aria-hidden="true">{[0, 1, 2, 3].map((slot) => { const product = productsById.get(String(items[slot]?.product_id)); return <span key={slot} className={`am-mosaic-tile is-${slot}`}>{product && <ProductImage product={product} src={product.image || product.imageUrl || product.images?.[0]} alt="" allowBrandLogo={product.type === 'digital'} style={{ objectFit: 'contain' }} />}</span>; })}</span>}<div className="am-playlist-detail-copy"><small>{details.item_count ?? items.length} {(details.item_count ?? items.length) === 1 ? 'pick' : 'picks'}{collab.rows.length > 0 && <span className="am-collab-label">Collaborative</span>}</small><h2 className="am-detail-title">{details.title}</h2>{details.description && <p className="am-detail-copy">{details.description}</p>}</div></div>
           {authUser?.id === details.owner_id && <div className="am-playlist-owner-actions">
@@ -986,7 +988,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
           </div>}
           <div className="am-playlist-section-heading"><span>Products</span><strong>{details.item_count ?? items.length}</strong></div>
           {items.map((item) => { const by = collab.rows.length && item.added_by ? profileById.get(item.added_by) : null; return <div className="am-playlist-item" key={item.product_id}>
-            <ProductMention productId={item.product_id} productsById={productsById} quizAnswers={quizAnswers} onOpenProduct={onOpenProduct} />
+            <ProductMention productId={item.product_id} productsById={productsById} quizAnswers={quizAnswers} matchOpts={matchOpts} onOpenProduct={onOpenProduct} />
             {by && <small className="am-item-by">Added by {item.added_by === authUser?.id ? 'you' : by.display_name || `@${by.username}`}</small>}
             {canEditItems && <button type="button" disabled={busy} onClick={() => removePlaylistProduct(item.product_id)}>Remove</button>}
           </div>; })}
@@ -1040,8 +1042,8 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
             <button type="button" className="am-pod is-suggest" onClick={openSuggestTopic}>Suggest a topic</button>
           </div>}
           {tab === 'for-you' && <div className="am-start">
-            <button type="button" className="am-start-line" onClick={() => openCompose('post')}><CommunityAvatar name={profile?.display_name || 'You'} path={profile?.avatar_url} /><span>Share with the community</span><span className="am-start-plus" aria-hidden="true"><CommunityIcon name="plus" size={18} /></span></button>
-            <div className="am-prompts">{PROMPTS.map((pr, i) => <button type="button" key={pr.key} className={`am-prompt is-${pr.tone}`} style={{ '--i': i }} onClick={() => openCompose(pr.kind, pr)}><PromptIcon name={pr.icon} size={20} /><span><strong>{pr.title}</strong><small>{pr.hint}</small></span></button>)}</div>
+            {/* One row of ways to start (walkthrough P1-22: the composer line and the prompt tiles were two stacked rows before the first post). */}
+            <div className="am-prompts"><button type="button" className="am-start-line am-prompt is-compose" onClick={() => openCompose('post')}><span className="am-start-plus" aria-hidden="true"><CommunityIcon name="plus" size={18} /></span><span><strong>Share with the community</strong><small>A tip, a win or a photo</small></span></button>{PROMPTS.map((pr, i) => <button type="button" key={pr.key} className={`am-prompt is-${pr.tone}`} style={{ '--i': i }} onClick={() => openCompose(pr.kind, pr)}><PromptIcon name={pr.icon} size={20} /><span><strong>{pr.title}</strong><small>{pr.hint}</small></span></button>)}</div>
           </div>}
           {topicsTab && scopedTopics && posts.length === 0 && !loading && <div className="am-community-empty-slot"><EmptyState art="chat" tone="pink" title={topicScope === 'mine' ? 'Nothing in your topics yet' : `No ${topicLabel(topicScope)} posts yet`} body="New posts tagged with these topics show up here." actionLabel="See all posts" onAction={() => setTopicScope('all')} /></div>}
           {tab === 'announcements' && <Announcements supabase={supabase} user={authUser} products={products} productsById={productsById} articles={articles} teamBadges={teamBadges} variant="app" onOpenProduct={onOpenProduct} onOpenPlaylist={openPlaylistById} onOpenArticle={onOpenArticle} onOpenProfile={openProfile} onRequireAuth={requireAccount} onShowRules={openRules} />}

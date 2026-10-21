@@ -1,4 +1,5 @@
 import SmartSearchInput from './search/SmartSearchInput.jsx';
+import { ecosystemCounts } from '../utils/ecosystemCounts.js';
 import { relatedNeedSuggestions } from '../matching/relatedNeeds';
 import { needPhrase, CONDITION_ID_BY_OPTION } from '../matching/ontology';
 import UrgentSigns from './pdp/UrgentSigns.jsx';
@@ -2039,7 +2040,9 @@ export default function MyEcosystem({
                     </div>
                     {/* Stacked-card summary: the one stamp, her real numbers, needs covered and the monthly estimate. */}
                     {myProductList.length > 0 && (() => {
-                        const coveredNeeds = needShelves.filter((sh) => (sh.picks || []).some((pk) => myProducts[pk.productId])).length;
+                        // One count for the app hero, Wrapped and this page (utils/ecosystemCounts).
+                        const counts = ecosystemCounts(myProductList, quizResults, { healthProfile, matchOpts });
+                        const coveredNeeds = counts.needsCovered;
                         const showCost = estimatedMonthlyTotal.counted > 0 && estimatedMonthlyTotal.total >= 1;
                         return (
                             <div className="eco-stack">
@@ -2050,13 +2053,13 @@ export default function MyEcosystem({
                                         Matched to you
                                     </span>
                                     <ul className="eco3-stats ayeco__stats eco-stack__stats" aria-label="Your ecosystem in numbers">
-                                        <li><b>{myProductList.length}</b><span>{myProductList.length === 1 ? 'product' : 'products'}</span></li>
+                                        <li><b>{counts.products}</b><span>{counts.products === 1 ? 'product' : 'products'}</span></li>
                                         <li><b>{areaGroups.length}</b><span>{areaGroups.length === 1 ? 'shelf' : 'shelves'}</span></li>
                                     </ul>
-                                    {needShelves.length > 0 && (
+                                    {counts.needs > 0 && (
                                         <a className="eco-stack__needs" href="#eco3-needs-title" onClick={(e) => { e.preventDefault(); document.getElementById('eco3-needs-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>
-                                            <span className="eco-stack__needsline"><b>{coveredNeeds} of {needShelves.length}</b> needs covered <span aria-hidden="true">→</span></span>
-                                            <span className="eco-stack__bar" role="progressbar" aria-label="Needs covered" aria-valuemin={0} aria-valuemax={needShelves.length} aria-valuenow={coveredNeeds}><i style={{ width: `${Math.max(4, Math.round((coveredNeeds / needShelves.length) * 100))}%` }} /></span>
+                                            <span className="eco-stack__needsline"><b>{coveredNeeds} of {counts.needs}</b> {counts.needs === 1 ? 'need' : 'needs'} covered <span aria-hidden="true">→</span></span>
+                                            <span className="eco-stack__bar" role="progressbar" aria-label="Needs covered" aria-valuemin={0} aria-valuemax={counts.needs} aria-valuenow={coveredNeeds}><i style={{ width: `${Math.max(4, Math.round((coveredNeeds / Math.max(1, counts.needs)) * 100))}%` }} /></span>
                                         </a>
                                     )}
                                     {showCost && (

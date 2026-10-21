@@ -1,6 +1,5 @@
 import './profile/health-connections.css';
-import { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { AskContext } from '../askContext.js';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { loadMonthlyCheckinStatus } from '../../utils/monthlyCheckinStore.js';
 import EmptyState from '../components/EmptyState.jsx';
 import { healthAreaLabel } from '../utils/healthAreaLabel.js';
@@ -27,6 +26,7 @@ import { useLatestAnnouncement } from '../../hooks/useLatestAnnouncement.js';
 import '../eco-app-best.css';
 import HealthShapedNote from '../../components/health/HealthShapedNote.jsx';
 import { PlusIcon } from '../../components/icons/UiIcons.jsx';
+import { ecosystemCounts, needsCoveredLine } from '../../utils/ecosystemCounts.js';
 
 const AREA_TONES = ['#F7BADD', '#769EBE', '#3E2723', '#F7BADD', '#769EBE', '#3E2723'];
 const MIN_SHELF_SCORE = 50;
@@ -58,13 +58,12 @@ export default function EcosystemScreen({
   onOpenHealthData, healthSummary = null, healthConnectedCount = 0,
   healthInsights = null, onAddGoal, ecoTab = 'products', onEcoTab, routineHave = {}, onToggleHave,
   onSavePlaylist, onOpenPlaylist, onConnectHealth, onRequireAuth, onPersonalize, lastQuizAnswers = null,
-  quizDraft = null, onResumeQuiz, onStartOverQuiz, onFixLifeStages,
+  quizDraft = null, onResumeQuiz, onStartOverQuiz, onFixLifeStages, onStartQuiz,
 }) {
   const rootRef = useRef(null);
   const titleRef = useRef(null);
   const [collapsed, setCollapsed] = useState(false);
   const [sheet, setSheet] = useState(false);
-  const askAyna = useContext(AskContext);
   // This month's check-in: due until she has done it (signed in only).
   const [checkinDue, setCheckinDue] = useState(false);
   useEffect(() => {
@@ -96,23 +95,39 @@ export default function EcosystemScreen({
   // Optional quiz questions still open (from her saved answers, even when
   // personalization is switched off).
   const savedIntake = (lastQuizAnswers || quizAnswers)?.fullHealthIntake || null;
+  const hasAnswers = Boolean(lastQuizAnswers || quizAnswers);
   const remainingOptional = useMemo(() => {
     if (!savedIntake) return 0;
     try { return optionalProgress(reconstructIntakeFromSnapshot(savedIntake)).remaining; } catch { return 0; }
   }, [savedIntake]);
   const goalIds = useMemo(() => (quizAnswers ? getSelectedNeeds(quizAnswers).map((n) => n.id) : []), [quizAnswers]);
   const scoreFor = (product, profile) => getProductMatchDetailsForProduct(product, profile, null, matchOpts);
-  const currentProducts = quizAnswers
+  const shortlist = quizAnswers
     ? selectEcosystemProducts(myProducts, quizAnswers, quizAnswers.fullHealthIntake?.recommendedProductsPerArea, scoreFor)
     : myProducts;
-  const currentIds = new Set(currentProducts.map((product) => product.id));
-  const earlierProducts = myProducts.filter((product) => !currentIds.has(product.id));
+  // The hero, Wrapped and the website count from one selector (utils/ecosystemCounts).
+  const counts = ecosystemCounts(myProducts, quizAnswers, { matchOpts });
 
   // Engine shelves: one per selected need (label, picks, shortBy, emptyReason),
   // plus care flags (care first when urgent = Yes, calm care notes otherwise).
   const seed = useMemo(() => (quizAnswers ? getEcosystemSeedFromQuiz(quizAnswers, null, matchOpts) : null), [quizAnswers, matchOpts]);
   const phraseById = useMemo(() => new Map((quizAnswers ? getSelectedNeeds(quizAnswers, null, matchOpts) : []).map((n) => [n.id, n.phrase])), [quizAnswers, matchOpts]);
   const shelves = seed?.shelves || [];
+  // A need the counts call covered never shows an empty shelf: if the shortlist
+  // left it empty, the product of hers that covers it joins that shelf.
+  const fits = (p, needId) => scoreFor(p, quizAnswers).needMatches?.some((m) => m.needId === needId && m.relevant && m.score >= MIN_SHELF_SCORE);
+  const shortIds = new Set(shortlist.map((product) => product.id));
+  const forcedShelf = new Map();
+  if (quizAnswers) {
+    shelves.forEach((sh) => {
+      if (!counts.coveredNeedIds.includes(sh.needId) || shortlist.some((p) => fits(p, sh.needId))) return;
+      const p = myProducts.find((x) => !shortIds.has(x.id) && !forcedShelf.has(x.id) && fits(x, sh.needId));
+      if (p) forcedShelf.set(p.id, sh.needId);
+    });
+  }
+  const currentProducts = forcedShelf.size ? [...shortlist, ...myProducts.filter((p) => forcedShelf.has(p.id))] : shortlist;
+  const currentIds = new Set(currentProducts.map((product) => product.id));
+  const earlierProducts = myProducts.filter((product) => !currentIds.has(product.id));
   const careFlags = seed?.careFlags || null;
   const careFirst = Boolean(careFlags?.careFirst);
   const notes = careNotes(careFlags);
@@ -125,7 +140,7 @@ export default function EcosystemScreen({
   const fallback = new Map();
   currentProducts.forEach((product) => {
     // The engine's own shelf first, else the best need it scores 50+ for.
-    const engineShelf = shelves.find((s) => s.productIds.includes(product.id));
+    const engineShelf = forcedShelf.has(product.id) ? shelves.find((s) => s.needId === forcedShelf.get(product.id)) : shelves.find((s) => s.productIds.includes(product.id));
     const details = !engineShelf && quizAnswers ? scoreFor(product, quizAnswers) : null;
     const needId = engineShelf?.needId || details?.needMatches?.find((m) => shelfIds.has(m.needId) && m.relevant && m.score >= MIN_SHELF_SCORE)?.needId;
     if (needId) {
@@ -241,14 +256,16 @@ export default function EcosystemScreen({
     .filter((sct) => !q || sct.products.length || sct.picks.length);
   const matchCount = q ? visibleSections.reduce((n, sct) => n + sct.products.length, 0) : 0;
   const anyMatch = !q || visibleSections.length > 0;
-  const needSections = sections.filter((sct) => sct.shelf);
-  const needTotal = needSections.length;
-  const needCovered = needSections.filter((sct) => sct.products.length > 0).length;
 
-  // The page's one primary action (thumb reach): check-in when this month's is due, else Ask ayna.
-  const primary = currentProducts.length === 0 || ecoTab === 'dashboard' ? null
-    : checkinDue && onOpenMonthlyCheckin ? { label: `Check in for ${new Date().toLocaleString('en-US', { month: 'long' })}`, onClick: onOpenMonthlyCheckin }
-      : askAyna ? { label: 'Ask ayna', onClick: () => askAyna() } : null;
+  // The page's one primary action: this month's check-in when it is due. It
+  // lives in the summary card with "For you", not in a bar floating over the
+  // shelves (walkthrough P1-15: the dock covered shelf names and dashboard
+  // text). Ask ayna stays in the header, so it is not repeated here.
+  const checkinLabel = `Check in for ${new Date().toLocaleString('en-US', { month: 'long' })}`;
+  const showCheckin = Boolean(checkinDue && onOpenMonthlyCheckin);
+  const forYouButton = forYou.length > 0 && <button type="button" className="eco-app-foryou" aria-haspopup="dialog" onClick={() => setSheet(true)}>
+    <span className="eco-app-foryou__count" aria-hidden="true">{forYou.length}</span>For you<span className="sr-only"> ({forYou.length})</span>
+  </button>;
   const chev = <svg className="eco-app-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>;
   const showTabs = myProducts.length > 0 && onEcoTab;
 
@@ -272,19 +289,28 @@ export default function EcosystemScreen({
       </form>}
       {/* One progress card (counts, needs covered, Wrapped) in place of the ring: the shelf counts live on the chips below. */}
       {/* Stacked-card summary (the one stamp lives on its corner): real counts, needs covered, Wrapped. */}
-      {currentProducts.length > 0 && <div className="eco-app-stack">
+      {myProducts.length > 0 && <div className="eco-app-stack">
         <span className="eco-app-stack__back" aria-hidden="true" />
         <div className="eco-app-stack__card">
           <span className="eco-oval"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9" /></svg>Matched to you</span>
-          <p className="eco-app-stack__nums" aria-label="Your Ecosystem at a glance"><span><b>{currentProducts.length}</b>{currentProducts.length === 1 ? 'product' : 'products'}</span><span><b>{ringGroups.length}</b>{ringGroups.length === 1 ? 'shelf' : 'shelves'}</span></p>
-          {needTotal > 0 && <>
-            <p className="eco-app-stack__needs"><b>{needCovered} of {needTotal}</b> needs have picks</p>
-            <span className="eco-app-stack__bar" role="progressbar" aria-label="Needs with picks" aria-valuemin={0} aria-valuemax={needTotal} aria-valuenow={needCovered}><i style={{ width: `${Math.max(4, Math.round((needCovered / needTotal) * 100))}%` }} /></span>
+          {/* Counted by utils/ecosystemCounts: the same numbers as Wrapped and the website. */}
+          <p className="eco-app-stack__nums" aria-label="Your Ecosystem at a glance"><span><b>{counts.products}</b>{counts.products === 1 ? 'product' : 'products'}</span></p>
+          {counts.needs > 0 && <>
+            <p className="eco-app-stack__needs"><b>{counts.needsCovered} of {counts.needs}</b> {counts.needs === 1 ? 'need' : 'needs'} covered</p>
+            <span className="eco-app-stack__bar" role="progressbar" aria-label={needsCoveredLine(counts)} aria-valuemin={0} aria-valuemax={counts.needs} aria-valuenow={counts.needsCovered}><i style={{ width: `${Math.max(4, Math.round((counts.needsCovered / counts.needs) * 100))}%` }} /></span>
           </>}
-          {onReplayStory && <button type="button" className="eco-app-replay" onClick={onReplayStory}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>Replay Wrapped</button>}
+          {showCheckin && <button type="button" className="eco-app-checkin" onClick={onOpenMonthlyCheckin}>{checkinLabel}</button>}
+          {(onReplayStory || forYouButton) && <div className="eco-app-stack__row">
+            {onReplayStory && <button type="button" className="eco-app-replay" onClick={onReplayStory}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>Replay Wrapped</button>}
+            {forYouButton}
+          </div>}
         </div>
       </div>}
-      {!hasAnything && !quizDraft && <EmptyState compact art="search" tone="mint" title="No matches yet" body="Update your answers below or browse the shop." actionLabel="Shop" onAction={onBrowse} />}
+      {myProducts.length === 0 && forYouButton && <div className="eco-app-stack__row is-loose">{forYouButton}</div>}
+      {/* Empty: one clear way in (the quiz), the Shop as the quiet second choice. */}
+      {!hasAnything && !quizDraft && (hasAnswers
+        ? <EmptyState compact art="search" tone="mint" title="No strong matches yet" body="Nothing in the catalog fits your answers well enough yet. Change an answer, or browse the Shop by need." actionLabel={onRetake ? 'Edit my answers' : undefined} onAction={onRetake} secondaryLabel="Browse the Shop" onSecondary={() => onBrowse?.()} />
+        : <EmptyState compact art="search" tone="mint" title="Nothing here yet" body="Answer six questions and your matches land here, on a shelf for each need." actionLabel={onStartQuiz ? 'See my matches' : undefined} onAction={onStartQuiz} secondaryLabel="Browse the Shop" onSecondary={() => onBrowse?.()} />)}
       {/* An unfinished quiz stays in view; everything else waits in "For you". */}
       {quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
       {ecosystemNotice && <p className="ayna-cabinet-notice" role="status">{ecosystemNotice}</p>}
@@ -377,18 +403,6 @@ export default function EcosystemScreen({
         </button></li>
       </ul>
     </section>
-    {/* One primary action in thumb reach: this month's check-in when it is due,
-        otherwise Ask ayna. "For you" sits beside it as the quiet second choice,
-        never as banners above the shelves. */}
-    {(primary || forYou.length > 0) && !sheet && <div className="eco-app-float">
-      <div className="eco-app-dock">
-        {forYou.length > 0 && <button type="button" className="eco-app-dock__for" aria-haspopup="dialog" onClick={() => setSheet(true)}>
-          <span className="eco-app-float__count" aria-hidden="true">{forYou.length}</span>
-          For you<span className="sr-only"> ({forYou.length})</span>
-        </button>}
-        {primary && <button type="button" className="eco-app-dock__primary" onClick={primary.onClick}>{primary.label}</button>}
-      </div>
-    </div>}
     <LegalFooter />
 
     {sheet && forYou.length > 0 && <div className="eco-app-sheet" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) setSheet(false); }}>

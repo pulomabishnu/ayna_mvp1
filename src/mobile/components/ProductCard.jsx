@@ -1,4 +1,4 @@
-import { getProductMatchDetailsForProduct } from '../../data/products.js';
+import { productMatch } from '../utils/matchScore.js';
 import { trackApp } from '../utils/appAnalytics.js';
 import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
 import { getVerificationLinks } from '../../utils/verificationLinks.js';
@@ -24,8 +24,10 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   const brandRepeatsName = shownBrand && String(name || '').trim().toLowerCase() === shownBrand.toLowerCase();
   // Brand only, never fall back to the category word ("Pad") in the brand slot.
   const secondaryLabel = shownBrand || '';
-  const match = quizAnswers ? getProductMatchDetailsForProduct(product, quizAnswers, null, needId ? { ...matchOpts, needId } : matchOpts) : null;
-  // Badge = best need score, only with a profile and 50+ ("82% for period cramps").
+  // One score per product everywhere (utils/matchScore): the shelf's needId only
+  // decides whether the label may name that need, never the number.
+  const match = productMatch(product, quizAnswers, matchOpts);
+  // Badge = her best need score, only with a profile and 50+ ("82% for period cramps").
   const badge = matchBadge(match, { needId });
   const showMatch = Boolean(badge);
   // "Backed by your sleep data": her connected data supports the need this card is shown for.
@@ -64,7 +66,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
             {healthBacked && <HealthBackedBadge backed={healthBacked} className="ay-pc-hbadge" />}
           </span>
         </button>
-        {showMatch && <MatchPill percent={badge.percent ?? match.percent} size="sm" className="ay-pc-match" label={`${badge.label}. Why this match for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}
+        {showMatch && <MatchPill percent={badge.percent} size="sm" className="ay-pc-match" label={`${badge.label}. Why this match for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}
         {onToggleSaved && <button type="button" className={`ay-pc-save${isSaved ? ' is-on' : ''}`} aria-label={isSaved ? `Remove ${name} from Saved` : `Save ${name}`} aria-pressed={isSaved} onClick={(e) => { saveFeedback(e, !isSaved); onToggleSaved(product); }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></button>}
       </article>
     );
@@ -87,7 +89,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         {contexts.length > 0 && <span className="ayna-fresh-product-context">{contexts.join(' · ')}</span>}
       </span>
       </button>
-      {showMatch && <MatchPill percent={badge.percent ?? match.percent} size="sm" className="ayna-fresh-match-badge ayna-match-action" label={`${badge.label}. Why this match for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}
+      {showMatch && <MatchPill percent={badge.percent} size="sm" className="ayna-fresh-match-badge ayna-match-action" label={`${badge.label}. Why this match for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}
       {onToggleSaved && <button type="button" className="ayna-card-save" aria-label={isSaved ? `Remove ${name} from Saved` : `Save ${name}`} aria-pressed={isSaved} onClick={(e) => { saveFeedback(e, !isSaved); onToggleSaved(product); }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></button>}
       {isList && <div className="ayna-fresh-product-actions">
         <button type="button" onClick={onClick}>Details</button>

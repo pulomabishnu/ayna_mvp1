@@ -6,7 +6,7 @@ import CategoryNav from '../components/CategoryNav.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
 import SuggestBox from '../../components/SuggestBox.jsx';
-import { getPersonalizedProductIds, getProfileMatchPercentForProduct, productSearchText, MACRO_GROUPS, itemMatchesMacroGroup, CATEGORY_LABELS } from '../../data/products.js';
+import { getPersonalizedProductIds, getProfileMatchPercentForProduct, productSearchText, MACRO_GROUPS, itemMatchesMacroGroup, CATEGORY_LABELS, isTeenProduct } from '../../data/products.js';
 import { getVerificationLinks } from '../../utils/verificationLinks.js';
 import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
 import { scoreSearchMatch, correctedSearchQuery, searchArticles, analyzeSearch } from '../../utils/search/index.js';
@@ -315,6 +315,8 @@ export default function BrowseScreen({
     filtered = filtered.filter((p) => itemMatchesMacroGroup(p, activeGroup));
   }
   filtered = filtered.filter((item) => {
+    // ayna is 18+: products made for teens are not listed (same rule as the website's Shop, so both count the same).
+    if (isTeenProduct(item)) return false;
     if (filters.category !== 'all' && item.category !== filters.category) return false;
     const price = PRICE_VALUE(item);
     if (filters.price === 'under-25' && !(price != null && price < 25)) return false;
@@ -460,7 +462,7 @@ export default function BrowseScreen({
           </div>}
         </>} />
       )}
-      {showDeck && <DiscoverDeck products={filtered} quizAnswers={authUser ? quizAnswers : null} savedProducts={savedProducts} onToggleSaved={onToggleSaved} onOpenProduct={(product) => { setShowDeck(false); onOpenProduct?.(product); }} onClose={() => setShowDeck(false)} />}
+      {showDeck && <DiscoverDeck products={filtered} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} onOpenProduct={(product) => { setShowDeck(false); onOpenProduct?.(product); }} onClose={() => setShowDeck(false)} />}
       {mode === 'products' && <>
         {showFilters && <div className="ayna-shop-filter-backdrop" onClick={() => setShowFilters(false)}>
           <div ref={filterSheetRef} className="ayna-shop-filter-sheet" role="dialog" aria-modal="true" aria-label="Shop filters" onClick={(event) => event.stopPropagation()}>

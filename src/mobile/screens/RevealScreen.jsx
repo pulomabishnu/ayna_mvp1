@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Stamp } from '../components/BrandBits.jsx';
 import ProductImage from '../components/ProductImage.jsx';
-import { getProfileMatchPercentForProduct } from '../../data/products.js';
+import { matchPercentFor } from '../utils/matchScore.js';
+import { ecosystemCounts } from '../../utils/ecosystemCounts.js';
 import IntakeSceneArt from '../components/intake/IntakeSceneArt.jsx';
 import '../wrapped.css';
 import { buildPersona } from '../utils/shopperProfile.js';
@@ -21,17 +22,22 @@ function imageFor(product) {
 }
 
 
-export default function RevealScreen({ myProducts = [], topAreas = [], onContinue, onBack, onGoBrowse, authUser, quizAnswers, lastQuizAnswers, revealStartAtEnd = false }) {
-  const products = myProducts.slice(0, 4);
-  const first = products[0];
-  const areaCount = new Set(myProducts.map((product) => product.areaKey).filter(Boolean)).size;
+export default function RevealScreen({ myProducts = [], topAreas = [], onContinue, onBack, onGoBrowse, authUser, quizAnswers, lastQuizAnswers, matchOpts, revealStartAtEnd = false }) {
   const answers = quizAnswers || lastQuizAnswers;
+  // "#1 match" is her highest-scoring product (same scorer as every card), not
+  // just the first one saved; ties keep her ecosystem's order.
+  const ranked = answers
+    ? myProducts.map((product, i) => ({ product, i, pct: matchPercentFor(product, answers, matchOpts) ?? -1 })).sort((a, b) => b.pct - a.pct || a.i - b.i).map((x) => x.product)
+    : myProducts;
+  const products = ranked.slice(0, 4);
+  const first = products[0];
+  // Same counts as the Ecosystem hero and the website (utils/ecosystemCounts).
+  const counts = ecosystemCounts(myProducts, answers, { matchOpts });
+  const productWord = counts.products === 1 ? 'product' : 'products';
   const intake = answers?.fullHealthIntake || null;
   const persona = buildPersona(intake);
-  const rawMatch = first && answers ? getProfileMatchPercentForProduct(first, answers) : null;
-  const firstMatch = Number.isFinite(rawMatch) && rawMatch > 0 ? Math.round(rawMatch) : null;
-  const supportCount = (intake?.supportSelections || []).filter((s) => s !== 'Nothing right now').length;
-  const needCount = supportCount || (answers?.supportSelections || []).filter((s) => s !== 'Nothing right now').length;
+  // Same scorer and inputs as the card and product page, so "#1 match 97%" here is 97% there too.
+  const firstMatch = first && answers ? matchPercentFor(first, answers, matchOpts) : null;
 
   const slides = products.length
     ? ['intro', ...(topAreas.length ? ['focus'] : []), 'match', ...(persona ? ['persona'] : []), 'lineup', 'finish']
@@ -113,9 +119,8 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
           <p className="ayw-kicker">Your ecosystem is ready</p>
           <h1 className="ayw-title">Your ayna,<br />wrapped</h1>
           <div className="ayw-stat-row">
-            <div><strong>{myProducts.length}</strong><span>{myProducts.length === 1 ? 'pick' : 'picks'}</span></div>
-            {areaCount || topAreas.length ? <div><strong>{areaCount || topAreas.length}</strong><span>{(areaCount || topAreas.length) === 1 ? 'area' : 'areas'}</span></div> : needCount > 0 && <div><strong>{needCount}</strong><span>{needCount === 1 ? 'need' : 'needs'}</span></div>}
-            {supportCount > 0 && <div><strong>{supportCount}</strong><span>{supportCount === 1 ? 'goal' : 'goals'}</span></div>}
+            <div><strong>{counts.products}</strong><span>{productWord}</span></div>
+            {counts.needs > 0 && <div><strong>{counts.needsCovered} of {counts.needs}</strong><span>{counts.needs === 1 ? 'need' : 'needs'} covered</span></div>}
           </div>
         </>}
 
@@ -148,7 +153,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
 
         {active === 'lineup' && <>
           <p className="ayw-kicker">Your picks</p>
-          <h1 className="ayw-title ayw-title--sm">{myProducts.length} {myProducts.length === 1 ? 'pick' : 'picks'} that fit<br />your answers</h1>
+          <h1 className="ayw-title ayw-title--sm">{counts.products} {productWord} that fit<br />your answers</h1>
           <div className="ayw-grid">
             {products.map((product, i) => (
               <div key={product.id || i} className="ayw-tile" style={{ '--i': i }}>
@@ -163,8 +168,9 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
             <span className="ayw-card-mark">ayna</span>
             <strong className="ayw-card-title">{persona?.title || 'My ecosystem'}</strong>
             <ul>
-              <li><span>Picks</span><b>{myProducts.length}</b></li>
-              {(topAreas.length > 0 || areaCount > 0) ? <li><span>Areas</span><b>{topAreas.slice(0, 2).join(', ') || areaCount}</b></li> : needCount > 0 && <li><span>Needs</span><b>{needCount}</b></li>}
+              <li><span>Products</span><b>{counts.products}</b></li>
+              {counts.needs > 0 && <li><span>Needs covered</span><b>{counts.needsCovered} of {counts.needs}</b></li>}
+              {topAreas.length > 0 && <li><span>Areas</span><b>{topAreas.slice(0, 2).join(', ')}</b></li>}
               {first && <li><span>#1 match</span><b>{first.name}</b></li>}
             </ul>
           </div>

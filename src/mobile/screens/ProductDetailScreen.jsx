@@ -4,6 +4,7 @@ import { PANEL_ICONS } from '../components/pdpIcons.jsx';
 import { ALL_PRODUCTS, CATEGORY_LABELS, getProductMatchDetailsForProduct } from '../../data/products.js';
 import ProductCard from '../components/ProductCard.jsx';
 import { getBuyUrl } from '../data/buyUrl.js';
+import { matchPercentFor } from '../utils/matchScore.js';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 import { isPartnerBrandItem, getPartnerDisclosureText } from '../../utils/partnerBrands.js';
@@ -305,7 +306,8 @@ export default function ProductDetailScreen({
   }
 
   const matchDetails = getProductMatchDetailsForProduct(product, quizAnswers, null, matchOpts);
-  const matchPercent = quizAnswers && matchDetails.matchStatus === 'scored' && Number.isFinite(matchDetails.percent) && matchDetails.percent > 0 ? matchDetails.percent : null;
+  // The same number as the Shop card, shelf and Swipe (utils/matchScore).
+  const matchPercent = quizAnswers ? matchPercentFor(product, quizAnswers, matchOpts) : null;
   // One pill + one short line. Per-need numbers live in the Why view only.
   const headLine = matchPercent != null ? matchLine(matchDetails) : '';
   const exclusions = quizAnswers && matchDetails.matchStatus === 'excluded' ? exclusionLines(matchDetails) : [];
@@ -356,7 +358,7 @@ export default function ProductDetailScreen({
   const images = galleryImages(product);
   const shownImage = images[Math.min(photo, Math.max(images.length - 1, 0))] || image;
   const retailers = retailerLinks(product, buyUrl);
-  const matchFor = quizAnswers ? (p) => { const d = getProductMatchDetailsForProduct(p, quizAnswers, null, matchOpts); return d?.matchStatus === 'scored' ? d.percent : null; } : null;
+  const matchFor = quizAnswers ? (p) => matchPercentFor(p, quizAnswers, matchOpts) : null;
 
   const handleShare = async () => {
     const origin = /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname)
@@ -387,6 +389,15 @@ export default function ProductDetailScreen({
   const variantLabels = (product.variants || []).map((v) => String(v?.label || '').replace(/\s*—\s*/g, ', ')).filter(Boolean);
   const variantKind = variantLabels.some((l) => /\d|\b(xs|s|m|l|xl|small|medium|large|regular|super|light|heavy|mini|plus|size|pack|count|oz|ml)\b/i.test(l)) ? 'Sizes' : 'Options';
   const barPrice = hasDisplayPrice && String(shownPrice.main).length <= 9 ? shownPrice.main : '';
+  // Where to buy without a verified product link: the brand's own site when the
+  // record names one (the website does the same), else the stores it lists.
+  const siteOnFile = !buyUrl ? (product.whereToBuy || []).map((w) => String(w).trim()).find((w) => /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(w)) : null;
+  const shopAction = buyUrl
+    ? { href: buyUrl, label: category === 'telehealth' ? 'Book' : product.type === 'digital' ? 'Get the app' : 'Shop', sr: '(opens the seller’s site)', placement: 'product_detail' }
+    : retailers[0] ? { href: retailers[0].url, label: 'Shop', sr: `at ${retailers[0].name} (opens the store’s site)`, placement: 'product_detail_retailer' }
+    : siteOnFile ? { href: `https://${siteOnFile.toLowerCase()}`, label: 'Visit site', sr: `(opens ${siteOnFile.toLowerCase()})`, placement: 'product_detail_site' } : null;
+  const storesOnFile = !shopAction ? [...new Set((product.whereToBuy || []).map((w) => String(w).trim()).filter(Boolean))].map((w) => (/^app store$/i.test(w) ? 'the App Store' : w)) : [];
+  const andList = (xs) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`);
 
   return (
     <div id="ay-pdp" className="ayna-fresh-product-detail ay-pdp" style={{ flex: 1, minWidth: 0, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--ayna-bg)', color: 'var(--ayna-text)' }}>
@@ -438,6 +449,7 @@ export default function ProductDetailScreen({
             {perUnit && <small className="is-unit">{perUnit}</small>}
             {price && shownPrice.sub && <small>{shownPrice.sub}</small>}
           </div>}
+          {!shopAction && <p className="ay-pdp-nolink">{storesOnFile.length ? `${product.type === 'digital' ? 'On' : 'Sold at'} ${andList(storesOnFile.slice(0, 4))}. We don’t have a direct link yet.` : 'We don’t have a store link for this yet.'}</p>}
           {matchPercent != null && <div className="ay-pdp-match">
             <MatchPill percent={matchPercent} onClick={openWhyMatch} label={`${matchPercent}% match${headLine ? `. ${headLine}` : ''}. See why`} />
             {headLine && <span>{headLine}</span>}
@@ -538,12 +550,13 @@ export default function ProductDetailScreen({
           <button type="button" className="ayq-bar__icon" onClick={onToggleSaved} aria-label={isSaved ? 'Remove from Saved' : 'Save'} aria-pressed={isSaved}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill={isSaved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={HEART_PATH} /></svg>
           </button>
-          <button type="button" className={`ayq-bar__eco${isInEcosystem ? ' is-on' : ''}`} aria-pressed={isInEcosystem} aria-label={isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'} onClick={onAddToEcosystem}>
-            {isInEcosystem ? 'In ecosystem' : '+ Ecosystem'}
+          {/* No store link: never a dead primary (same rule as the website's
+              product page). Her own site if we know it, else "Add to ecosystem"
+              takes the primary slot and the page says where it is sold. */}
+          <button type="button" className={`ayq-bar__eco${isInEcosystem ? ' is-on' : ''}${shopAction ? '' : ' is-primary'}`} aria-pressed={isInEcosystem} aria-label={isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'} onClick={onAddToEcosystem}>
+            {isInEcosystem ? 'In ecosystem' : shopAction ? '+ Ecosystem' : '+ Add to ecosystem'}
           </button>
-          {buyUrl
-            ? <a className="ayq-bar__buy" href={buyUrl} target="_blank" rel="noopener noreferrer" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: 'product_detail' })}>{category === 'telehealth' ? 'Book' : product.type === 'digital' ? 'Get the app' : 'Shop'}<span className="sr-only"> (opens the seller’s site)</span></a>
-            : <span className="ayq-bar__buy is-off ayna-seller-unavailable">No shop link</span>}
+          {shopAction && <a className="ayq-bar__buy" href={shopAction.href} target="_blank" rel="noopener noreferrer" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: shopAction.placement })}>{shopAction.label}<span className="sr-only"> {shopAction.sr}</span></a>}
         </div>
       </div>
     </div>

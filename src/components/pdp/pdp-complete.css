@@ -373,6 +373,12 @@ html body .app-container .ayq-badges.is-web { margin-top: 14px; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-bar__buy { flex: 1; display: grid; place-items: center; height: 44px; border-radius: 99px; background: #f7badd; color: #3e2723 !important; font: 700 calc(16px * var(--ayna-text-scale, 1))/1 var(--f-ui); text-decoration: none !important; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-bar__buy.is-off { background: rgba(255, 237, 172, .15); color: #ffedac !important; font-weight: 500; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp :is(.ayq-bar__icon, .ayq-bar__eco, .ayq-bar__buy):active { transform: scale(.97); }
+/* No store link (walkthrough P1-6): "Add to ecosystem" becomes the primary, never a dead "No shop link". */
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-bar__eco.is-primary { flex: 1; border-color: #f7badd; background: #f7badd; color: #3e2723; font-weight: 700; font-size: calc(16px * var(--ayna-text-scale, 1)); }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-bar__eco.is-primary.is-on { border-color: #ffedac; background: #ffedac; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-nolink { margin: 6px 0 10px !important; font: 500 calc(14px * var(--ayna-text-scale, 1))/1.45 var(--f-ui) !important; color: var(--d-ink-2) !important; }
+/* Size / unit next to the price (walkthrough P1-21: blank in dark, butter text on a white chip). One badge look in both themes. */
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-price small { padding: 3px 9px !important; border: 1.5px solid currentColor !important; border-radius: 999px !important; background: transparent !important; color: var(--d-ink) !important; opacity: 1 !important; }
 .ayq.ayq .ayq-tiles__label { white-space: nowrap; }
 @media (max-width: 760px) {
   .ayq.ayq .ayq-glance { padding: 20px 16px; }

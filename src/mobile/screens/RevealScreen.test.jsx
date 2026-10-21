@@ -14,7 +14,7 @@ describe('intake results preview', () => {
       onGoBrowse={noop}
     />);
     expect(html).toContain('Story 1 of 5');
-    expect(html).toContain('<strong>2</strong><span>picks</span>');
+    expect(html).toContain('<strong>2</strong><span>products</span>');
     expect(html).toContain('Your ecosystem is ready');
     expect(html).not.toContain('0 products');
   });

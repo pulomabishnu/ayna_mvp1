@@ -13,33 +13,55 @@ export function motionOff() {
 
 /* Shelves fade and rise in once, card by card, the first time each one
    scrolls into view. Uses a data attribute (React never rewrites it), and
-   only hides anything once the observer is running, so content can never
-   get stuck invisible. `selector` picks the blocks to reveal. */
+   only hides anything while an observer is running, so content can never
+   get stuck invisible:
+   - every run (StrictMode's double mount, a new selector or root) observes
+     again whatever is still waiting at '0', not only new elements;
+   - cleanup takes the root's data-eco-anim off, which is what the hiding CSS
+     keys on, so anything still waiting shows at once if no run follows;
+   - a block already on screen (or if the observer never answers) is shown
+     after a short grace period. `selector` picks the blocks to reveal. */
 export function useRevealOnce(rootRef, selector) {
   useEffect(() => {
     const root = rootRef.current;
     if (!root || typeof IntersectionObserver === 'undefined' || motionOff()) return undefined;
-    const seen = new WeakSet();
+    const show = (el) => el.setAttribute('data-eco-in', '1');
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
         if (!e.isIntersecting) return;
-        e.target.setAttribute('data-eco-in', '1');
+        show(e.target);
         io.unobserve(e.target);
       });
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    const watched = new WeakSet();
     const scan = () => {
       root.querySelectorAll(selector).forEach((el) => {
-        if (seen.has(el)) return;
-        seen.add(el);
-        // Already on screen at load: show at once with the stagger, no waiting.
-        if (!el.hasAttribute('data-eco-in')) { el.setAttribute('data-eco-in', '0'); io.observe(el); }
+        if (watched.has(el)) return;
+        const state = el.getAttribute('data-eco-in');
+        if (state === '1') return;
+        if (state !== '0') el.setAttribute('data-eco-in', '0');
+        watched.add(el);
+        io.observe(el);
       });
     };
     root.setAttribute('data-eco-anim', '1');
     scan();
     const mo = new MutationObserver(scan);
     mo.observe(root, { childList: true, subtree: true });
-    return () => { io.disconnect(); mo.disconnect(); };
+    // Safety net: anything in view that the observer has not answered for shows anyway.
+    const grace = setTimeout(() => {
+      const view = root.getBoundingClientRect();
+      root.querySelectorAll('[data-eco-in="0"]').forEach((el) => {
+        const r = el.getBoundingClientRect();
+        if (r.top < Math.min(view.bottom, window.innerHeight) && r.bottom > Math.max(view.top, 0)) show(el);
+      });
+    }, 1200);
+    return () => {
+      clearTimeout(grace);
+      io.disconnect();
+      mo.disconnect();
+      root.removeAttribute('data-eco-anim');
+    };
   }, [rootRef, selector]);
 }
 

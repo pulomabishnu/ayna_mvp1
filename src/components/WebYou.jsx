@@ -24,7 +24,7 @@ import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import RelativeTime from './ui/RelativeTime.jsx';
 import { StatBoxes, PillTabs, ArchAvatar, HouseBlend } from './you/YouBits.jsx';
 import usePersistentState from '../hooks/usePersistentState.js';
-import useCheckinCount from '../hooks/useCheckinCount.js';
+import useCheckinCount, { checkinTile } from '../hooks/useCheckinCount.js';
 
 // The app's "You" tab, built for the website: profile progress, your shelf
 // (charts from real data), badges, routine + safety alerts, and account
@@ -232,7 +232,8 @@ export default function WebYou({ onUpdateIntake = null, onOpenCommunity, onOpenA
   const products = useMemo(() => Object.values(myProducts || {}).filter(Boolean), [myProducts]);
   // The open tab survives a refresh.
   const [tab, setTab] = usePersistentState('you:tab', 'overview');
-  const checkinCount = useCheckinCount(user?.id);
+  const checkins = useCheckinCount(user?.id);
+  const checkinCount = checkins.count;
   const consumables = useMemo(() => products.filter(isConsumable), [products]);
   const intake = quizResults?.fullHealthIntake || null;
   const pct = getProfileCompletionPct(intake);
@@ -383,7 +384,7 @@ export default function WebYou({ onUpdateIntake = null, onOpenCommunity, onOpenA
     <StatBoxes className="wy-stats" items={[
       { key: 'picks', label: products.length === 1 ? 'Pick' : 'Picks', value: fmtCount(products.length), onClick: onOpenEcosystem },
       { key: 'saved', label: 'Saved', value: fmtCount(savedCount), onClick: onOpenSaved },
-      { key: 'checkins', label: checkinCount === 1 ? 'Check-in' : 'Check-ins', value: checkinCount == null ? null : fmtCount(checkinCount), onClick: onOpenCheckin },
+      { key: 'checkins', label: checkinCount === 1 ? 'Check-in' : 'Check-ins', ...checkinTile(checkins, fmtCount), onClick: onOpenCheckin },
     ]} />
 
     {quizSlot}

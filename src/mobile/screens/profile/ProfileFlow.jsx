@@ -46,7 +46,7 @@ import { maskedChange, formatUsPhone } from '../../../utils/inputMask.js';
 import usePersistentState from '../../../hooks/usePersistentState.js';
 import CharRing from '../../../components/ui/CharRing.jsx';
 import { StatBoxes, PillTabs, ArchAvatar, HouseBlend } from '../../../components/you/YouBits.jsx';
-import useCheckinCount from '../../../hooks/useCheckinCount.js';
+import useCheckinCount, { checkinTile } from '../../../hooks/useCheckinCount.js';
 import { isOverLimit } from '../../../utils/charLimit.js';
 
 const IS_NATIVE_APP = Capacitor.isNativePlatform();
@@ -462,7 +462,10 @@ function ProfileHub({ intake = null, onUpdateIntake = null, authUserId, name, in
   const shownPlaylists = playlists.slice(0, HUB_PLAYLIST_LIMIT);
   const openMyProfile = profile?.username && onOpenCommunity ? () => onOpenCommunity({ username: profile.username }) : null;
   const signedIn = !!authUserId;
-  const checkinCount = useCheckinCount(authUserId);
+  // No name yet: "Good morning" on its own and the designed default avatar, never "Y" for "You".
+  const realName = String(name || '').trim() && String(name).trim() !== 'You' ? String(name).trim() : '';
+  const checkins = useCheckinCount(authUserId);
+  const checkinCount = checkins.count;
   // The open tab survives the app being closed.
   const [tab, setTab] = usePersistentState('app-you:tab', 'overview');
   const showBlend = signedIn && !!intake;
@@ -481,9 +484,9 @@ function ProfileHub({ intake = null, onUpdateIntake = null, authUserId, name, in
       <MobileHeader onOpenSettings={onOpenSettings} />
       <header className="ay-you-head">
         <div className="ay-you-id">
-          <ArchAvatar className="ay-you-arch" src={showPhoto ? publicMediaUrl(profile.avatar_url) : ''} initial={initial} onError={() => setAvatarFailed(true)} />
+          <ArchAvatar className="ay-you-arch" src={showPhoto ? publicMediaUrl(profile.avatar_url) : ''} initial={realName ? initial : ''} onError={() => setAvatarFailed(true)} />
           <span className="ay-you-names">
-            <h1><span className="ay-you-hello">{greetingForNow()},</span> {name}</h1>
+            <h1>{realName ? <><span className="ay-you-hello">{greetingForNow()},</span> {realName}</> : <span className="ay-you-hello is-solo">{greetingForNow()}</span>}</h1>
             {profile?.username ? <span>@{profile.username}</span> : memberSince ? <span>{memberSince}</span> : null}
           </span>
         </div>
@@ -505,7 +508,7 @@ function ProfileHub({ intake = null, onUpdateIntake = null, authUserId, name, in
       {signedIn && <StatBoxes className="ay-you-stats" items={[
         { key: 'picks', label: ecosystemCount === 1 ? 'Pick' : 'Picks', value: fmtCount(ecosystemCount), onClick: onOpenEcosystem },
         { key: 'saved', label: 'Saved', value: fmtCount(savedCount), onClick: onOpenSaved },
-        { key: 'checkins', label: checkinCount === 1 ? 'Check-in' : 'Check-ins', value: checkinCount == null ? null : fmtCount(checkinCount), onClick: onOpenMonthlyCheckin },
+        { key: 'checkins', label: checkinCount === 1 ? 'Check-in' : 'Check-ins', ...checkinTile(checkins, fmtCount), onClick: onOpenMonthlyCheckin },
       ]} />}
       {showBlend && <div className="ay-you-tabs"><PillTabs label="You" idBase="ay-you-tab" active={activeTab} onChange={setTab} tabs={[{ id: 'overview', label: 'Overview' }, { id: 'blend', label: 'Your blend' }]} /></div>}
 
@@ -1936,7 +1939,7 @@ function LegalScreen({ onBack, onOpenConsumerHealthData, onOpenOpenSourceLicense
             borderTop={false}
             onClick={onOpenOpenSourceLicenses}
           />
-          <AccountRow title="Typefaces" sub="ayna Display, Figtree and Bricolage Grotesque, Google Fonts, SIL Open Font Licence." onClick={onOpenTypefaces} />
+          <AccountRow title="Typefaces" sub="ayna Display (Bricolage Grotesque) and Figtree, SIL Open Font Licence." onClick={onOpenTypefaces} />
           <AccountRow title="Research and data sources" sub="Where ayna's product and safety information comes from." onClick={onOpenResearchSources} />
         </div>
 
@@ -2194,22 +2197,28 @@ function OpenSourceLicensesScreen({ onBack }) {
 
 /* ---------------------------------- Typefaces ---------------------------------- */
 
-// The faces the mobile app actually renders (brand kit, Oct 2026).
+// The faces the app actually renders (src/styles/fonts.css, public/fonts and
+// index.html), checked Oct 21 2026 against each font's own licence file:
+// Bricolage Grotesque by Ateliers Triay (Mathieu Triay), Figtree by Erik
+// Kennedy, both SIL Open Font Licence 1.1.
 const TYPEFACES = [
   {
-    key: 'serif', name: 'ayna Display', role: 'Headlines and big moments',
-    designer: 'Colophon Foundry, for Google Fonts', weights: '400 and italic',
-    font: "'ayna Display','Figtree',sans-serif", size: 26,
+    key: 'display', name: 'ayna Display', role: 'Titles and big moments',
+    designer: 'Bricolage Grotesque by Ateliers Triay (Mathieu Triay)', weights: '700, with its optical size axis',
+    served: 'Built into the app, so titles work offline',
+    font: "var(--ay-app-heading, 'ayna Display'), sans-serif", size: 26,
   },
   {
-    key: 'sans', name: 'Figtree', role: 'Body copy and interface',
-    designer: 'Colophon Foundry, for Google Fonts', weights: '400, 500, 600, 700, 800',
-    font: "'Figtree',sans-serif", size: 21,
+    key: 'sans', name: 'Figtree', role: 'Body text and buttons',
+    designer: 'Erik Kennedy', weights: '300 to 900 (one variable file)',
+    served: 'Built into the app, so text works offline',
+    font: "'Figtree', sans-serif", size: 21,
   },
   {
-    key: 'bg', name: 'Bricolage Grotesque', role: 'The ayna wordmark',
-    designer: 'Mathieu Triay, for Google Fonts', weights: '800',
-    font: "'ayna Display',sans-serif", size: 22,
+    key: 'logo', name: 'Bricolage Grotesque', role: 'The ayna wordmark',
+    designer: 'Ateliers Triay (Mathieu Triay)', weights: '800',
+    served: 'Loaded from Google Fonts, for the logo only',
+    font: "'Bricolage Grotesque', var(--ay-app-heading, 'ayna Display'), sans-serif", size: 22,
   },
 ];
 
@@ -2234,7 +2243,7 @@ function TypefaceRow({ face, open, onToggle }) {
             Nothing reaches you unchecked.
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 14 }}>
-            {[['Designer', face.designer], ['Licence', 'SIL Open Font Licence 1.1'], ['Weights', face.weights]].map(([label, value]) => (
+            {[['Designer', face.designer], ['Licence', 'SIL Open Font Licence 1.1'], ['Weights', face.weights], ['Source', face.served]].map(([label, value]) => (
               <div key={label} style={{ display: 'flex', gap: 10, fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>
                 <div style={{ width: 64, flex: 'none', fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', paddingTop: 2 }}>{label}</div>
                 <div style={{ flex: 1, color: 'var(--ayna-text-muted)' }}>{value}</div>
@@ -2251,7 +2260,7 @@ function TypefaceRow({ face, open, onToggle }) {
 }
 
 function TypefacesScreen({ onBack }) {
-  const [openFace, setOpenFace] = useState({ pf: true });
+  const [openFace, setOpenFace] = useState({ display: true });
   return (
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
       <BackHeader title="Typefaces" onBack={onBack} />
@@ -2259,7 +2268,7 @@ function TypefacesScreen({ onBack }) {
         <div style={{ background: 'var(--d-group)', position: 'relative', overflow: 'hidden', border: 0, borderRadius: 20, padding: 20 }}>
           <div style={{ position: 'absolute', right: -30, top: -36, width: 116, height: 116, borderRadius: 99, background: 'rgba(255,237,172,.4)' }} />
           <div style={{ position: 'relative', fontFamily: "var(--ayna-font-display)", fontWeight: 400, fontSize: 'calc(28px * var(--ayna-text-scale, 1))', lineHeight: 1.15, color: 'var(--ayna-heading)' }}>Aa</div>
-          <div style={{ position: 'relative', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'var(--ayna-text-muted)', marginTop: 11, maxWidth: 250 }}>Three faces, all openly licensed under the SIL Open Font Licence.</div>
+          <div style={{ position: 'relative', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'var(--ayna-text-muted)', marginTop: 11, maxWidth: 250 }}>Two type families, both under the SIL Open Font Licence. ayna Display is Bricolage Grotesque, the face of our logo.</div>
         </div>
 
         {TYPEFACES.map((face) => (
@@ -2272,9 +2281,9 @@ function TypefacesScreen({ onBack }) {
         ))}
 
         <div style={{ background: 'var(--d-group)', marginTop: 16, border: 0, borderRadius: 20, padding: '16px 18px' }}>
-          <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-accent-dark)', marginBottom: 7 }}>Loaded via Google Fonts</div>
+          <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-accent-dark)', marginBottom: 7 }}>Built into the app</div>
           <div style={{ fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6 }}>
-            Served from Google's font CDN over HTTPS, the standard way Google Fonts are delivered, not bundled with the app itself.
+            ayna Display and Figtree ship inside the app, so nothing is fetched to show text. Only the logo's weight of Bricolage Grotesque loads from Google Fonts.
           </div>
         </div>
         <LegalFooter />
@@ -3297,7 +3306,7 @@ export function AboutAynaScreen({ onBack }) {
         <section className="ayna-scrapbook__paper ayna-scrapbook__paper--intro">
           <h2>What is ayna?</h2>
           <p>You tell us about your body, your goals and what you avoid. We match women's health products to your answers and show why each one may fit.</p>
-          <div className="ayna-scrapbook__intro-stamp">Matched to you</div>
+          <div className="ayna-scrapbook__intro-stamp" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9" /></svg>Matched to you</div>
         </section>
 
         <section className="ayna-scrapbook__team" aria-label="The people behind ayna">

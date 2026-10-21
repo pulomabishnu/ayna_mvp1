@@ -457,7 +457,7 @@ export default function SigninScreen({
           <InlineError id={errId('email')}>{fieldErrors.email}</InlineError>
 
           <Field label="Password" icon={LockIcon} invalid={Boolean(fieldErrors.password)}>
-            <input type="password" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} placeholder="••••••••" value={password} onChange={(e) => { setPassword(e.target.value); clearField('password'); }} style={inputStyle} {...invalidProps('password')} />
+            <input type="password" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} placeholder={mode === 'signup' ? 'At least 8 characters' : 'Your password'} value={password} onChange={(e) => { setPassword(e.target.value); clearField('password'); }} style={inputStyle} {...invalidProps('password')} />
           </Field>
           <InlineError id={errId('password')}>{fieldErrors.password}</InlineError>
 

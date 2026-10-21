@@ -67,6 +67,7 @@
 
 /* You: a plain greeting above the name; the name stays the big, heavy line. */
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-you-names h1 .ay-you-hello { display: block; margin-bottom: 4px; font: 500 calc(15px * var(--ayna-text-scale, 1))/1.2 var(--ay-font-ui) !important; letter-spacing: 0; color: inherit !important; opacity: .8; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-you-names h1 .ay-you-hello.is-solo { margin: 0; font: inherit !important; opacity: 1; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-you-progress b { font-weight: 700; }
 
 /* No-photo tile: initial in the logo face on a brand tint, brand name under it. */

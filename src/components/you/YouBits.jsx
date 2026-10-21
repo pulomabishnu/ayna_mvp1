@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { readBlend, applyBlend } from '../../utils/houseBlend.js';
 import { toast } from '../../utils/toast.js';
 import './you-bits.css';
+import { DefaultFace } from '../community/notesKit.jsx';
 
 /* Pieces for You (website and app). Board: 72419ae7 (outlined stat boxes,
    segmented pill tabs), Bordeaux arch frame, 007b85fd "house blend"
@@ -13,7 +14,7 @@ export function StatBoxes({ items, className = '' }) {
     <ul className={`ay-stats ${className}`} aria-label="Your numbers">
       {items.map((s) => (
         <li key={s.key}>
-          <button type="button" className="ay-stat" onClick={s.onClick} disabled={!s.onClick} aria-label={`${s.value == null ? 'Loading' : s.value} ${s.label}`}>
+          <button type="button" className="ay-stat" onClick={s.onClick} disabled={!s.onClick} aria-label={`${s.value == null ? 'Loading' : s.ariaValue || s.value} ${s.label}`}>
             <b className={s.value == null ? 'is-loading' : ''}>{s.value == null ? <span className="ay-skel ay-stat__skel" /> : s.value}</b>
             <span>{s.label}</span>
           </button>
@@ -46,10 +47,11 @@ export function PillTabs({ tabs, active, onChange, label, idBase = 'ay-ptab' }) 
 }
 
 /** Profile photo (or initials) in an arch frame. */
+// No photo and no name: ayna's designed default (the asterisk), not a letter.
 export function ArchAvatar({ src, initial, onError, className = '' }) {
   return (
     <span className={`ay-arch${src ? ' has-photo' : ''} ${className}`} aria-hidden="true">
-      {src ? <img src={src} alt="" onError={onError} /> : <span>{initial}</span>}
+      {src ? <img src={src} alt="" onError={onError} /> : initial ? <span>{initial}</span> : <DefaultFace anonymous />}
     </span>
   );
 }

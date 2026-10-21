@@ -31,6 +31,7 @@
 .ay-arch { display: inline-grid; place-items: center; flex: none; width: 76px; height: 92px; overflow: hidden; border: 1.5px solid var(--yb-line); border-radius: 999px 999px 16px 16px; background: #f7badd; color: #3e2723; box-shadow: 3px 3px 0 var(--yb-line); font: 700 30px/1 var(--yb-display); }
 .ay-arch img { width: 100%; height: 100%; object-fit: cover; }
 .ay-arch.has-photo { background: #fff; }
+.ay-arch .ay-face-ast { width: 44%; height: 44%; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; }
 
 /* ---- House blend ---- */
 .ay-blend { color: var(--yb-ink); }

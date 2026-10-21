@@ -1,9 +1,16 @@
 import { HEART_PATH } from '../utils/heart.js';
-import { useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
+import ProductImage from './ProductImage.jsx';
+import { getProductById } from '../../data/products.js';
 
 // Welcome-page feature reel. Four "now playing"-style cards, one per thing
 // ayna does, each a full colour block with one big graphic. Numbers here are
 // illustrative UI (labelled as a preview), not anyone's real data.
+// Manual, not auto-advancing (walkthrough P1-18): the brand ribbon below is
+// the screen's one moving loop (design-direction "Motion"), and auto-rotating
+// carousels move content away before people finish reading it (Nielsen Norman
+// Group, "Auto-forwarding carousels"; W3C APG carousel pattern). Tap the card,
+// swipe it, or use the dots.
 const FEATURES = [
   { key: 'ecosystem', label: 'Your ecosystem', tone: 'butter' },
   { key: 'match', label: 'Your match', tone: 'pink' },
@@ -11,11 +18,20 @@ const FEATURES = [
   { key: 'discover', label: 'Discover', tone: 'peri' },
 ];
 
+// Real catalog products on white tiles (the one place white appears), so the
+// rows read as shelves, not empty colour squares.
+const SHELF_PICKS = [['Period', 'pink', 'p-saalt-cup'], ['Pelvic care', 'mint', 'p-elvie-trainer'], ['Sleep', 'peri', 'p-magnumsolace-nighttime-magnesium-cream']];
+function Thumb({ id }) {
+  const product = getProductById(id);
+  if (!product) return null;
+  return <ProductImage product={product} src={product.image || product.imageUrl} alt="" style={{ objectFit: 'contain' }} />;
+}
+
 function EcosystemArt() {
   return <div className="ay-reel-eco">
-    {[['Period', 'pink'], ['Pelvic care', 'mint'], ['Sleep', 'peri']].map(([name, tone], i) => (
+    {SHELF_PICKS.map(([name, tone, id], i) => (
       <div key={name} className="ay-reel-track" style={{ '--i': i }}>
-        <span className={`ay-reel-cover is-${tone}`} />
+        <span className={`ay-reel-cover is-${tone} has-photo`}><Thumb id={id} /></span>
         <strong>{name}</strong>
         <span className="ay-reel-eq" aria-hidden="true"><i /><i /><i /></span>
       </div>
@@ -44,7 +60,7 @@ function AskArt() {
 
 function DiscoverArt() {
   return <div className="ay-reel-deck">
-    <span className="c1" /><span className="c2" /><span className="c3"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></span>
+    <span className="c1" /><span className="c2" /><span className="c3"><span className="ay-reel-deck__photo"><Thumb id="p-thermacare" /></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></span>
   </div>;
 }
 
@@ -52,31 +68,19 @@ const ART = { ecosystem: EcosystemArt, match: MatchArt, ask: AskArt, discover: D
 
 export default function RotatingProducts() {
   const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(() => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  useEffect(() => {
-    const query = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const update = () => setReducedMotion(query.matches);
-    query.addEventListener('change', update);
-    return () => query.removeEventListener('change', update);
-  }, []);
-  useEffect(() => {
-    if (paused || reducedMotion) return undefined;
-    const timer = window.setInterval(() => setIndex((value) => (value + 1) % FEATURES.length), 3000);
-    return () => window.clearInterval(timer);
-  }, [paused, reducedMotion]);
+  const touchX = useRef(null);
+  const go = (n) => setIndex(((n % FEATURES.length) + FEATURES.length) % FEATURES.length);
   const feature = FEATURES[index];
   const Art = ART[feature.key];
 
-  return <div className={`ay-reel is-${feature.tone}`} aria-label="ayna features preview" aria-live="off">
-    <div className="ay-reel-head"><span>{feature.label}</span><span>{String(index + 1).padStart(2, '0')}/04</span></div>
-    <button className="ay-reel-next" type="button" aria-label="Show next feature" onClick={() => setIndex((value) => (value + 1) % FEATURES.length)} />
+  return <div className={`ay-reel is-${feature.tone}`} role="group" aria-roledescription="carousel" aria-label="What ayna does"
+    onTouchStart={(e) => { touchX.current = e.touches[0]?.clientX ?? null; }}
+    onTouchEnd={(e) => { const start = touchX.current; touchX.current = null; if (start == null) return; const dx = (e.changedTouches[0]?.clientX ?? start) - start; if (Math.abs(dx) > 40) go(index + (dx < 0 ? 1 : -1)); }}>
+    <div className="ay-reel-head"><span aria-live="polite">{feature.label}</span><span>{String(index + 1).padStart(2, '0')}/04</span></div>
+    <button className="ay-reel-next" type="button" aria-label={`Next: ${FEATURES[(index + 1) % FEATURES.length].label}`} onClick={() => go(index + 1)} />
     <div className="ay-reel-stage" key={feature.key}><Art /></div>
     <div className="ay-reel-foot">
-      <div className="ay-reel-progress" aria-hidden="true">{FEATURES.map((item, step) => <i key={item.key} className={step < index ? 'is-done' : step === index ? 'is-now' : ''} style={step === index && !paused && !reducedMotion ? { '--dur': '3000ms' } : undefined} />)}</div>
-      {!reducedMotion && <button className="ay-reel-pause" type="button" aria-label={paused ? 'Play features' : 'Pause features'} onClick={() => setPaused((value) => !value)}>
-        {paused ? <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg> : <svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14" /></svg>}
-      </button>}
+      <div className="ay-reel-progress is-dots" role="group" aria-label="Choose a feature">{FEATURES.map((item, step) => <button key={item.key} type="button" aria-current={step === index ? 'true' : undefined} aria-label={`${item.label}, ${step + 1} of ${FEATURES.length}`} className={step === index ? 'is-now' : ''} onClick={() => go(step)}><i /></button>)}</div>
     </div>
   </div>;
 }

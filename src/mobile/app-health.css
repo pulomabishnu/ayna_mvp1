@@ -612,3 +612,7 @@
    the big cover on a read is a serif 400 heading, not a faux-bold serif. */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-app-cover strong { font-family: var(--f-ui) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ay-app-cover.is-hero, .ay-app-readcard.is-full .ay-app-cover) strong { font: 400 28px/1.15 var(--f-display) !important; letter-spacing: -.01em !important; }
+
+/* Health data search (walkthrough P2-10): one outline only. The field draws
+   its own pill; the wrapper's second border made it look clipped. */
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-hc-search.ay-hc-search { min-height: 0 !important; border: 0 !important; border-radius: 0 !important; }

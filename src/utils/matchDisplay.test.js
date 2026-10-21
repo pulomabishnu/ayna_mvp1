@@ -48,11 +48,14 @@ describe('matchDisplay', () => {
 });
 
 describe('matchDisplay ASK2', () => {
-  it('a shelf badge names the shelf need and its score', () => {
+  it('a shelf badge shows the product\u2019s one score and names the shelf need only when that score is the shelf need\u2019s', () => {
     const d = details();
-    expect(matchBadge(d, { needId: 'vaginal.dryness' })).toBe(null); // 41 is below the badge bar
+    // Dryness shelf, but the 82 comes from cramps: same 82, no other need named, no shelf-only number.
+    expect(matchBadge(d, { needId: 'vaginal.dryness' })).toMatchObject({ percent: 82, phrase: '', label: '82% match' });
+    // Cramps shelf: the 82 is the cramps score, so the label can say so.
+    expect(matchBadge(d, { needId: 'pain.menstrual_cramp' })).toMatchObject({ percent: 82, needId: 'pain.menstrual_cramp', label: '82% for period cramps' });
     const d2 = details({ needMatches: [...d.needMatches.slice(0, 1), { ...d.needMatches[1], score: 64, tier: 'exploratory' }] });
-    expect(matchBadge(d2, { needId: 'vaginal.dryness' })).toMatchObject({ percent: 64, needId: 'vaginal.dryness', label: '64% for vaginal dryness' });
+    expect(matchBadge(d2, { needId: 'vaginal.dryness' }).percent).toBe(82);
   });
 
   it('why view lists actual inputs and a soft profile hint only when confidence is limited', () => {
