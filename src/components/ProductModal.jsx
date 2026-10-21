@@ -967,7 +967,7 @@ export default function ProductModal({
 
             {/* How well it fits you sits right after Buy, in the same column. */}
             <div className="ayp-fit">
-              <ProductMatch glance={glance} matchPercent={matchPercent} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz ? onStartQuiz : null} hasProfile={Boolean(quizResults)} exclusions={matchExclusions} />
+              <ProductMatch glance={glance} matchPercent={matchPercent} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz ? onStartQuiz : null} hasProfile={Boolean(quizResults)} exclusions={matchExclusions} health={matchDetails?.healthData ? { section: matchDetails.healthData.section, tracker: ['tracker', 'wearable'].includes(String(product?.category || '').toLowerCase()) } : null} />
               {!(matchPercent > 0) && !matchExclusions.length && isInEcosystem && (
                 <p className="ayp-fit__note">In your ecosystem</p>
               )}

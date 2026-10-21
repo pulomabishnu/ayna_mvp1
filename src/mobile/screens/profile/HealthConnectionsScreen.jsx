@@ -13,6 +13,7 @@ import { setHealthFlash, syncCloudSource, syncPhoneSource, takeHealthFlash, useH
 import HealthUploadScreen from './HealthUploadScreen.jsx';
 import HealthRecordsScreen from './HealthRecordsScreen.jsx';
 import './health-connections.css';
+import HealthMatchToggle from '../../../components/health/HealthMatchToggle.jsx';
 
 /**
  * Health data (You -> Health data). Real connections only: a source is
@@ -49,7 +50,7 @@ const ERRORS = {
 const errorText = (e) => ERRORS[e?.code] || 'We couldn’t reach your health data. Check your connection and try again.';
 
 /* --------------------------------- List ---------------------------------- */
-function SourceList({ connections, records, onOpen, onOpenInsights, hasInsights, signedIn, onSignIn, onRefresh, compact = false }) {
+function SourceList({ connections, records, onOpen, onOpenInsights, hasInsights, signedIn, onSignIn, onRefresh, compact = false, userId = null }) {
   const [now] = useState(() => Date.now());
   const [query, setQuery] = useState('');
   const byId = Object.fromEntries(connections.map((c) => [c.source, c]));
@@ -59,6 +60,7 @@ function SourceList({ connections, records, onOpen, onOpenInsights, hasInsights,
   return (
     <>
       {!compact && <p className="ay-hc-intro">Bring your health data into ayna to sharpen your matches and see your trends. You choose what to share. Brands never see it.</p>}
+      {signedIn && !compact && <div className="ay-hc-matchpref"><HealthMatchToggle userId={userId} /></div>}
       {!signedIn && (
         <div className="ay-hc-note">Sign in to connect apps and upload data. <button type="button" className="ay-hc-link" onClick={onSignIn}>Sign in</button></div>
       )}
@@ -461,6 +463,7 @@ export default function HealthConnectionsScreen({ selectedId, onSelect, onBack, 
           onSignIn={onSignIn}
           onRefresh={health.refresh}
           compact={compact}
+          userId={authUser?.id || null}
         />
         {health.status === 'error' && signedIn && <p className="ay-hc-error" role="alert">{"Couldn't load your health data."} <button type="button" className="ay-hc-link" onClick={health.refresh}>Try again</button></p>}
       </>

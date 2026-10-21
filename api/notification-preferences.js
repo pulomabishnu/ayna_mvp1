@@ -21,6 +21,10 @@ const BOOLEAN_FIELDS = [
   'night_mode_enabled',
   'newsletter_enabled',
   'personalize_with_data_enabled',
+  // Added Oct 21 (supabase/notification_preferences.sql). Not in
+  // DEFAULT_PREFERENCES: the column's own default (true) fills new rows, so a
+  // database that has not run the ALTER yet still creates rows fine.
+  'health_data_in_matches_enabled',
   'quiet_hours_enabled',
 ];
 const TIME_HHMM = /^([01][0-9]|2[0-3]):[0-5][0-9]$/;
@@ -67,6 +71,8 @@ function toClientShape(row, phoneVerified) {
     newsletterEnabled: row.newsletter_enabled,
     deliveryChannel: row.delivery_channel,
     personalizeWithDataEnabled: row.personalize_with_data_enabled,
+    // Missing column (ALTER not run yet) reads as the default: on.
+    healthDataInMatchesEnabled: row.health_data_in_matches_enabled !== false,
     quietHoursEnabled: row.quiet_hours_enabled,
     quietHoursStart: row.quiet_hours_start,
     quietHoursEnd: row.quiet_hours_end,
@@ -206,6 +212,11 @@ export default async function handler(req, res) {
 
   if (updateError) {
     console.error('[notification-preferences] update error:', updateError.message);
+    // The health-data switch was added after launch: until the ALTER in
+    // supabase/notification_preferences.sql runs, say so instead of a vague failure.
+    if ('health_data_in_matches_enabled' in patch && /health_data_in_matches_enabled|42703|PGRST204/.test(`${updateError.code || ''} ${updateError.message || ''}`)) {
+      return res.status(503).json({ error: 'needs_migration' });
+    }
     return res.status(500).json({ error: 'save_failed' });
   }
 
