@@ -539,3 +539,16 @@ html body .app-container.app-container.app-container .ayq.ayq.ayq .ay-gloss.ay-g
   .ayq.ayq.ayq .ayq-tab.is-on { color: var(--q-ink) !important; font-weight: 600 !important; background: linear-gradient(var(--q-ink), var(--q-ink)) left bottom / 100% 3px no-repeat !important; }
   .ayq.ayq.ayq .ayq-tab.is-alert:not(.is-on)::after { content: ''; width: 8px; height: 8px; margin-left: 6px; box-sizing: border-box; border-radius: 50%; background: #f7badd; border: 1.5px solid var(--q-ink); }
 }
+
+/* At a glance sizes itself to its own column, not the viewport: inside the
+   product window (narrow column on a wide screen) the 2-up tiles were too
+   narrow and labels ran into the next tile (founder screenshot, Oct 21). */
+.ayq.ayq .ayq-glance { container-type: inline-size; container-name: ayq-glance; }
+.ayq.ayq .ayq-tiles__label { white-space: normal; overflow-wrap: anywhere; }
+@container ayq-glance (max-width: 460px) {
+  .ayq.ayq .ayq-tiles { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .ayq.ayq .ayq-tiles > li { grid-template-columns: auto minmax(0, 1fr); align-items: center; padding: 12px 14px; }
+  .ayq.ayq .ayq-tiles > li > .ay-ico { display: block; }
+  .ayq.ayq .ayq-tiles > li:last-child:nth-child(odd) { grid-column: auto; }
+  .ayq.ayq .ayq-tiles__label { padding: 0; border: 0; }
+}
