@@ -506,7 +506,7 @@
    .ay-sheet           page-colour card, 1.5px espresso outline, radius 24
      __strip    coloured header strip (pink) with a small label, like the
                 reference's "What's included" tabs. Decorative: aria-hidden.
-     __close    44px round outline close button
+     __close    40px round close button, 12px inside the card's corner
      __title    serif heading   __sub  16px body   __note  14px meta
      __actions  primary + secondary, 12px apart, wrap on narrow screens
    .ay-field           text input / select / textarea in the system style
@@ -516,9 +516,9 @@
    ===================================================================== */
 .ay-sheet-backdrop { position: fixed; inset: 0; z-index: 2000; display: grid; place-items: center; padding: 24px; background: rgba(62, 39, 35, .5); box-sizing: border-box; overflow-y: auto; animation: ay-sheet-fade .18s ease-out; }
 .app-container.app-container .ay-sheet { position: relative; width: min(100%, 480px); margin: 0; padding: 0 28px 24px; box-sizing: border-box; background: var(--ay-page) !important; color: var(--ay-text) !important; border: 1.5px solid var(--ay-outline) !important; border-radius: 24px !important; box-shadow: none !important; overflow: hidden; text-align: left; font: 400 16px/1.5 var(--ay-sans-stack); animation: ay-sheet-up .22s ease-out; }
-.app-container.app-container .ay-sheet__strip { display: flex; align-items: center; height: 48px; margin: 0 -28px 20px; padding: 0 28px; background: var(--ay-alert-bg); color: #3e2723; border-bottom: 1.5px solid var(--ay-outline); font: 600 14px/1 var(--ay-sans-stack); }
-.app-container.app-container .ay-sheet__close { position: absolute; top: 2px; right: 10px; display: grid; place-items: center; width: 44px; height: 44px; padding: 0 !important; border: 0 !important; border-radius: 50% !important; background: transparent !important; color: #3e2723 !important; cursor: pointer; box-shadow: none !important; }
-.app-container.app-container .ay-sheet__close svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.app-container.app-container .ay-sheet__strip { display: flex; align-items: center; height: var(--ay-s64); margin: 0 -28px 20px; padding: 0 calc(var(--ay-s12) * 2 + var(--ay-s40)) 0 28px; background: var(--ay-alert-bg); color: #3e2723; border-bottom: 1.5px solid var(--ay-outline); font: 600 14px/1 var(--ay-sans-stack); }
+.app-container.app-container .ay-sheet__close { position: absolute; top: var(--ay-s12); right: var(--ay-s12); display: grid; place-items: center; width: var(--ay-s40); height: var(--ay-s40); padding: 0 !important; border: 0 !important; border-radius: 50% !important; background: transparent !important; color: #3e2723 !important; cursor: pointer; box-shadow: none !important; }
+.app-container.app-container .ay-sheet__close svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 .app-container.app-container .ay-sheet__close:hover { background: rgba(62, 39, 35, .1) !important; }
 .app-container.app-container .ay-sheet__title { margin: 0 0 8px; font: 400 30px/1.12 var(--ay-serif-stack) !important; letter-spacing: -.01em !important; color: var(--ay-text) !important; text-transform: none !important; text-wrap: balance; }
 .app-container.app-container .ay-sheet__sub { margin: 0 0 4px; font: 400 16px/1.5 var(--ay-sans-stack) !important; color: var(--ay-text) !important; }
@@ -548,7 +548,7 @@
 @media (max-width: 599px) {
   .ay-sheet-backdrop { place-items: end stretch; padding: 0; }
   .app-container.app-container .ay-sheet { width: 100%; max-height: 92vh; overflow-y: auto; padding: 0 20px calc(20px + env(safe-area-inset-bottom)); border-radius: 24px 24px 0 0 !important; border-bottom: 0 !important; }
-  .app-container.app-container .ay-sheet__strip { margin: 0 -20px 16px; padding: 0 20px; }
+  .app-container.app-container .ay-sheet__strip { margin: 0 -20px 16px; padding: 0 calc(var(--ay-s12) * 2 + var(--ay-s40)) 0 20px; }
   .app-container.app-container .ay-sheet__title { font-size: 26px !important; }
 }
 @media (prefers-reduced-motion: reduce) { .ay-sheet-backdrop, .app-container.app-container .ay-sheet { animation: none; } .app-container.app-container .ay-stars__star { transition: none; } }
