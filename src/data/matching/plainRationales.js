@@ -23,7 +23,7 @@ export default {
  "p-proov-empower|hormonal.general": "Marketed for perimenopause, but no good source shows at-home urine hormone panels explain symptoms, and doctors usually check these hormones with a blood test.",
  "p-surearly-smart-ovulation-test|hormonal.general": "An established tool for timing ovulation, not for general hormone symptoms.",
  "p-proov-his-hers|hormonal.general": "A fertility and sperm test kit for couples that is not relevant to hormone symptoms.",
- "d-maven|condition_support.pcos": "PCOS is managed with prescription treatments a virtual OB-GYN can provide, but diagnosis still needs blood tests and an ultrasound.",
+ "d-maven|condition_support.pcos": "PMOS is managed with prescription treatments a virtual OB-GYN can provide, but diagnosis still needs blood tests and an ultrasound.",
  "p-inositol-wholesome|condition_support.pcos": "Studies suggest inositol may lower male-type hormones and improve insulin response, but the evidence is mostly low quality and fertility benefit is uncertain.",
  "p-spearmint-pcos|condition_support.pcos": "One small, short study showed lower testosterone and less self-reported unwanted hair, but not on a doctor's measure, so the evidence is mixed.",
  "p-thermacare|condition_support.endometriosis": "Mayo Clinic lists a heating pad as self-care to relax pelvic muscles with endometriosis, for symptom relief alongside other treatment.",

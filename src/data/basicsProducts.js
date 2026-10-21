@@ -335,7 +335,7 @@ export const BASICS_PRODUCTS = [
     },
     clinicianOpinionSource: 'independent',
     clinicianAttribution: ATTRIBUTION,
-    doctorOpinion: "The American Academy of Dermatology recommends benzoyl peroxide washes for blackheads, whiteheads, papules and pustules, and says to give treatment 6 to 8 weeks to work. FDA testing in 2025 found that most benzoyl peroxide acne products had undetectable or extremely low benzene, and a few recalled products did not include PanOxyl; the AAD advises storing these products cool and replacing them every 10 to 12 weeks. Hormonal or PCOS-related acne that does not respond is worth a clinician visit. This is guidance about benzoyl peroxide, not a test of this brand.",
+    doctorOpinion: "The American Academy of Dermatology recommends benzoyl peroxide washes for blackheads, whiteheads, papules and pustules, and says to give treatment 6 to 8 weeks to work. FDA testing in 2025 found that most benzoyl peroxide acne products had undetectable or extremely low benzene, and a few recalled products did not include PanOxyl; the AAD advises storing these products cool and replacing them every 10 to 12 weeks. Hormonal or PMOS-related acne that does not respond is worth a clinician visit. This is guidance about benzoyl peroxide, not a test of this brand.",
     communityReview: 'Target shows a 4.45 out of 5 rating from 1,694 reviews for this PanOxyl wash listing.',
     communityReviewSourceUrl: 'https://www.target.com/p/panoxyl-maximum-strength-antimicrobial-acne-foaming-wash-for-face-chest-and-back-with-10-benzoyl-peroxide-unscented-5-5oz/-/A-14984165',
     communityReviewSourceLabel: 'Target reviews',

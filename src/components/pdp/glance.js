@@ -327,7 +327,7 @@ export function buildGlance(product, ctx = {}) {
   const blocked = details?.blockedClaims || [];
   const fit = buildTypedTags(product).filter((t) => t.type === 'fit' && !isClaimBlocked(t.label, blocked)).map((t) => t.label);
   const uses = (product.healthFunctions || []).filter((id) => !GENERIC_USES.has(id)).map((id) => HEALTH_FUNCTIONS[id]?.label).filter(Boolean);
-  const tidy = (t) => { const l = String(t).toLowerCase().replace(/\b(pms|pmdd|pcos|ibs|uti|bv|hrt|iud|ivf|fsa|hsa)\b/g, (m) => m.toUpperCase()); return l.charAt(0).toUpperCase() + l.slice(1); };
+  const tidy = (t) => { const l = String(t).toLowerCase().replace(/\b(pms|pmdd|pcos|pmos|ibs|uti|bv|hrt|iud|ivf|fsa|hsa)\b/g, (m) => m.toUpperCase()); return l.charAt(0).toUpperCase() + l.slice(1); };
   const helps = [...new Set([...uses, ...fit].map(tidy))].slice(0, 6);
   const who = { items: whoItems, helps };
 

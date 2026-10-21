@@ -42,7 +42,7 @@ export const READ_SUMMARIES = {
   "uti-prevention": { title: "UTI Prevention", teaser: "Evidence-backed ways to reduce UTI risk and when to see a clinician for recurrent infections." },
   "yeast-infection-basics": { title: "Yeast Infection Basics", teaser: "What causes yeast infections, how to recognize them, when to treat at home vs. see a clinician, and how to prevent recurrence." },
   "period-pain-when-to-seek-care": { title: "Period Pain: When to Seek Care", teaser: "Normal cramps vs. signs that something else may be going on, and what treatments and workups clinicians may suggest." },
-  "pcos-basics": { title: "PCOS: What It Is and How It's Managed", teaser: "Polycystic ovary syndrome explained. Diagnosis, symptoms, and evidence-based treatment options including lifestyle and medication." },
+  "pcos-basics": { title: "PMOS: What It Is and How It's Managed", teaser: "Polyendocrine metabolic ovarian syndrome explained. Diagnosis, symptoms, and evidence-based treatment options including lifestyle and medication." },
   "pelvic-floor-dysfunction": { title: "Pelvic Floor Dysfunction", teaser: "What the pelvic floor does, common symptoms of dysfunction, and how pelvic floor physical therapy and at-home tools can help." },
   "endometriosis-basics": { title: "Endometriosis: Symptoms, Diagnosis, and Care", teaser: "What endometriosis is, how it's diagnosed, and treatment options. From pain management to surgery and fertility support." },
   "bacterial-vaginosis": { title: "Bacterial Vaginosis (BV)", teaser: "What causes BV, how it differs from a yeast infection, treatment options, and why it tends to recur." },

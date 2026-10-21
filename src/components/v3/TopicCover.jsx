@@ -9,7 +9,7 @@ const COVERS = {
   'uti-prevention': ['UTI', 'peri', 'glass'],
   'yeast-infection-basics': ['Yeast', 'ink', 'dots'],
   'period-pain-when-to-seek-care': ['Period pain', 'pink', 'bolt'],
-  'pcos-basics': ['PCOS', 'peri', 'ovary'],
+  'pcos-basics': ['PMOS', 'peri', 'ovary'],
   'pelvic-floor-dysfunction': ['Pelvic floor', 'ink', 'bowl'],
   'endometriosis-basics': ['Endo', 'pink', 'bloom'],
   'bacterial-vaginosis': ['BV', 'peri', 'bubbles'],

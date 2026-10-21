@@ -13,7 +13,7 @@
 export const COMMUNITY_TOPICS = [
   { key: 'periods', label: 'Periods', tags: ['menstrual-collection', 'heavy-flow', 'leaks', 'leak-protection', 'liner'], cycle: true },
   { key: 'cramps', label: 'Cramps', tags: ['cramps', 'cramp-relief'], cycle: true },
-  { key: 'pcos', label: 'PCOS', tags: ['pcos', 'pcos-management'] },
+  { key: 'pcos', label: 'PMOS', tags: ['pcos', 'pmos', 'pcos-management'] },
   { key: 'endometriosis', label: 'Endometriosis', tags: ['endometriosis'] },
   { key: 'hormones', label: 'Hormones', tags: ['hormone-balance', 'bloating', 'hormone-support'] },
   { key: 'cycle-tracking', label: 'Cycle tracking', tags: ['cycle-tracking', 'irregular'], cycle: true },

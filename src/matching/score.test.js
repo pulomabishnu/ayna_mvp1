@@ -367,7 +367,7 @@ describe('conditions', () => {
     const a = scoreProductForNeed(both, acneOnly, 'skin.acne');
     const b = scoreProductForNeed(both, pcosAcne, 'skin.acne');
     expect(b.score).toBeGreaterThan(a.score);
-    expect(b.explanations.join(' ')).toMatch(/your acne and the PCOS diagnosis you shared/);
+    expect(b.explanations.join(' ')).toMatch(/your acne and the PMOS diagnosis you shared/);
     // Step 2 change: p-zinc's catalog text says its PCOS benefit is NOT
     // established, so that sentence no longer counts as a PCOS mention and
     // zinc gets the diagnosis context only (no pathway claim).

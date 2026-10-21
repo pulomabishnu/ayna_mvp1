@@ -11,7 +11,7 @@ const RULES = [
   [/menopaus|hot flash|night sweat/, ['menopause']],
   [/\buti\b|urinat|urinary|bladder/, ['uti']],
   [/vaginal|\bbv\b|yeast|discharge|odor|itch/, ['vaginal-health', 'intimate-care']],
-  [/pcos|excess facial|polycystic/, ['pcos']],
+  [/pcos|pmos|excess facial|polycystic|polyendocrine/, ['pcos']],
   [/irregular|cycle-related|missed period/, ['irregular']],
   [/pelvic|pain .*during sex|incontinence|prolapse/, ['pelvic-floor', 'pelvic-health']],
   [/endometriosis|\bendo\b/, ['endometriosis']],

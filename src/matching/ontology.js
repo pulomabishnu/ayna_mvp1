@@ -233,7 +233,7 @@ export const CONTEXTS = {
   postpartum: { stages: ['postpartum'], needs: { 'postpartum.recovery': 0.7, 'postpartum.body_skin': 0.7, 'postpartum.lactation': 0.6, 'pain.postpartum': 0.7 }, freeText: ['postpartum'], phrase: 'postpartum' },
   breastfeeding: { stages: ['breastfeeding'], needs: { 'postpartum.lactation': 0.8 }, freeText: ['breastfeeding'], phrase: 'breastfeeding' },
   ttc: { stages: ['ttc'], needs: { 'fertility.ttc': 1 }, freeText: [], phrase: 'trying to conceive' },
-  pcos: { conditions: ['pcos'], needs: { 'condition_support.pcos': 0.5 }, freeText: [], phrase: 'PCOS' },
+  pcos: { conditions: ['pcos'], needs: { 'condition_support.pcos': 0.5 }, freeText: [], phrase: 'PMOS' },
   endometriosis: { conditions: ['endometriosis'], needs: { 'condition_support.endometriosis': 0.5 }, freeText: [], phrase: 'endometriosis' },
   anemia: { conditions: ['anemia'], needs: {}, freeText: [], phrase: 'iron deficiency' },
 };

@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { TESTING_WATERS_NOTICE } from '../data/investRound';
+import { useRecommendationViews } from '../utils/recommendationAnalytics';
 import { BASICS_PRODUCTS } from '../data/basicsProducts.js';
 import { productsForNeed } from './landingNeeds';
 import { isPlainLeftClick } from '../utils/productRoute';
@@ -9,7 +11,7 @@ import { getDailyFact } from '../data/welcomeSlides.js';
 import ProductCard from './ProductCard';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import { useLatestAnnouncement } from '../hooks/useLatestAnnouncement';
-import { WEFUNDER_URL, INVEST_TERMS, TTW_DISCLAIMER, INVEST_RISK, trackInvestClick } from '../data/invest';
+import { WEFUNDER_URL, trackInvestClick } from '../data/invest';
 import '../styles/editorial.css';
 import { Seal, Ribbon, Sticker, Envelope } from './personality/Bits.jsx';
 
@@ -24,7 +26,7 @@ import { Seal, Ribbon, Sticker, Envelope } from './personality/Bits.jsx';
  * Styles: src/styles/editorial.css (ed-*). Nothing animates on scroll; the two
  * moving rows follow the footer's Pause motion and reduced motion. */
 
-const SEARCH_HINTS = ['organic pads', 'PCOS support', 'bad cramps', 'pelvic floor', 'night sweats', 'vaginal dryness', 'leaking when I sneeze', 'sleep and stress', 'UTI burning', 'heavy flow overnight', 'menopause', 'itchy down there', 'hormonal acne', 'trying to conceive', 'postpartum pads'];
+const SEARCH_HINTS = ['organic pads', 'PMOS support', 'bad cramps', 'pelvic floor', 'night sweats', 'vaginal dryness', 'leaking when I sneeze', 'sleep and stress', 'UTI burning', 'heavy flow overnight', 'menopause', 'itchy down there', 'hormonal acne', 'trying to conceive', 'postpartum pads'];
 const BASICS_IDS = new Set(BASICS_PRODUCTS.map((p) => p.id));
 const NEEDS_PHOTO = (p) => !/tampon tribe|herau|r[eè]sa/i.test(`${p?.brand || ''} ${p?.name || ''}`);
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
@@ -155,6 +157,8 @@ function Picks({ onOpenProduct, onViewDiscovery, picks = null }) {
   }, [picks]);
   const mine = personal && personal.length >= 2;
   const items = mine ? personal.slice(0, 4) : weekly;
+  // recommendation_viewed for her top picks (not the weekly picks everyone sees).
+  useRecommendationViews(mine ? items : null, 'home_top_picks');
   if (items.length < 2) return null;
   return (
     <section className="ed-wrap ed-sec" aria-labelledby="ed-picks-title">
@@ -351,7 +355,7 @@ function Evidence({ onViewArticles }) {
 const LEAD_READS = [
   { id: 'heavy-bleeding', title: 'Heavy Menstrual Bleeding', teaser: 'What counts as heavy bleeding, possible causes, when to seek care, and how it’s evaluated.', source: 'UpToDate · ACOG · CDC', src: '/landing/articles-heavy-bleeding-satin.webp', alt: 'Pads and tampons scattered on red satin' },
   { id: 'period-pain-when-to-seek-care', title: 'Period Pain: When to Seek Care', teaser: 'Normal cramps vs. signs that something else may be going on, and what clinicians may suggest.', source: 'ACOG · UpToDate · Mayo Clinic', src: '/landing/articles-period-pain-hotwater.webp', alt: 'A woman in striped pajamas holding a hot water bottle' },
-  { id: 'pcos-basics', title: 'PCOS: What It Is and How It’s Managed', teaser: 'Diagnosis, symptoms, and evidence-based treatment, including lifestyle and medication.', source: 'ACOG · Endocrine Society · UpToDate', src: '/landing/articles-pcos-mirror.webp', alt: 'Red lips reflected in a small red compact mirror' },
+  { id: 'pcos-basics', title: 'PMOS: What It Is and How It’s Managed', teaser: 'Diagnosis, symptoms, and evidence-based treatment, including lifestyle and medication.', source: 'ACOG · Endocrine Society · UpToDate', src: '/landing/articles-pcos-mirror.webp', alt: 'Red lips reflected in a small red compact mirror' },
 ];
 function Reads({ onViewArticle, onViewArticles }) {
   const fact = useMemo(() => { try { return getDailyFact(); } catch { return null; } }, []);
@@ -453,17 +457,16 @@ function Us({ onViewAbout }) {
       </div>
       <div className="ay-group is-padded ed-invest" aria-labelledby="ed-invest-title" role="region">
         <div className="ed-invest__copy">
-          <h2 id="ed-invest-title" className="ed-h2">Own a piece of ayna.</h2>
-          <p className="ed-body">ayna is built with the women who use it. We're planning a community round on Wefunder so you can back what we're building. {INVEST_TERMS}</p>
-          <a className="ay-btn ay-btn--primary" href={WEFUNDER_URL} target="_blank" rel="noopener" onClick={() => trackInvestClick('landing')}>
-            Reserve your spot on Wefunder<span className="ed-sr"> (opens in a new tab)</span><Arrow />
+          <h2 id="ed-invest-title" className="ed-h2">Invest in ayna</h2>
+          <p className="ed-body">We&rsquo;re so excited to extend an opportunity for you to invest in ayna, whether you&rsquo;re one of our earliest ayna users or a part of the greater community passionate about ayna&rsquo;s work to expand the future of women&rsquo;s health. Join our community round and learn more on Wefunder.</p>
+          <a className="ay-btn ay-btn--primary" href={WEFUNDER_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackInvestClick('landing')}>
+            Invest on Wefunder<span className="ed-sr"> (opens in a new tab)</span><Arrow />
           </a>
           <div className="ed-invest__legal">
-            <p className="ed-caption">{TTW_DISCLAIMER}</p>
-            <p className="ed-caption">{INVEST_RISK}</p>
+            <p className="ed-caption">{TESTING_WATERS_NOTICE}</p>
           </div>
         </div>
-        <img src="/landing/pink-tile-shelf.webp" alt="A pink tiled bathroom ledge crowded with skincare bottles, a hairbrush and a hair dryer" loading="lazy" width="667" height="1000" />
+        <img src="/landing/laundry-duo.webp" alt="Two friends in curlers reading magazines together on a laundry room floor" loading="lazy" width="736" height="981" />
       </div>
     </section>
   );

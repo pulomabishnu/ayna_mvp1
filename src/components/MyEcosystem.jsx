@@ -59,6 +59,7 @@ import { loadPhoneNumberForUser } from '../utils/phoneNumberStore';
 // SMS opt-in moved to You → Account (a phone signup didn't belong in the middle of a health dashboard).
 const SHOW_SMS_ON_ECOSYSTEM = false;
 import posthog from 'posthog-js';
+import { useRecommendationViews } from '../utils/recommendationAnalytics';
 
 // Ecosystem products are stored as a full snapshot of the product object at
 // the moment they're added (toggleMyProduct in App.jsx), not a live ID
@@ -117,7 +118,7 @@ const CONCERN_LABEL_MAP = {
   'cramp and pain relief (devices, supplements, heat)': 'Cramp & Pain Relief',
   'hormone balance (supplements, lifestyle)': 'Hormone Balance',
   'hormonal bloating': 'Hormonal Bloating',
-  'pcos management (supplements, telehealth, apps)': 'PCOS Management',
+  'pcos management (supplements, telehealth, apps)': 'PMOS Management',
   'endometriosis management (supplements, devices, telehealth)': 'Endometriosis Support',
   'fertility and conception (supplements, trackers, telehealth)': 'Fertility & Conception',
   'uti support': 'UTI Support',
@@ -149,7 +150,7 @@ function normalizeConcernLabel(raw) {
   if (CONCERN_LABEL_MAP[key]) return CONCERN_LABEL_MAP[key];
   // Keyword fallback for LLM-embellished variants
   if (key.includes('routine') || key.includes('build my health') || key.includes('apps and services')) return 'Building a Health Routine';
-  if (key.includes('pcos') || key.includes('polycystic')) return 'PCOS Management';
+  if (key.includes('pcos') || key.includes('pmos') || key.includes('polycystic') || key.includes('polyendocrine')) return 'PMOS Management';
   if (key.includes('endometriosis') || key.includes('endo')) return 'Endometriosis Support';
   if (key.includes('hormone balance') || key.includes('hormonal bloating')) return 'Hormone Balance';
   if (key.includes('period care') || key.includes('menstrual')) return 'Period Care';
@@ -1722,7 +1723,8 @@ export default function MyEcosystem({
         }).map((p) => ({ ...p, llmGenerated: true }));
         if (!vetted.length) return;
         onBuildEcosystemFromLlm(vetted);
-        posthog.capture('recommendation_viewed', { concernCount: recommendedProductsForDisplay.length });
+        // Was logged as recommendation_viewed; it is the auto-build, not a view.
+        posthog.capture('ecosystem_auto_built', { productCount: vetted.length, sectionCount: recommendedProductsForDisplay.length });
     }, [recommendedProductsForDisplay, onBuildEcosystemFromLlm, llmTiered, recommendationRefreshNonce, completedGenerationNonce, llmLoading, quizResults, healthProfile]);
 
     // Bounded worker pool, mirrors the fix already applied to Discovery.jsx.
@@ -1804,6 +1806,18 @@ export default function MyEcosystem({
         setEcosystemAltMiniKey(key);
         if (key) setEcosystemCompareOpen({});
     }, []);
+
+    // recommendation_viewed: ayna's picks on her shelves (AI picks and the
+    // instant picks from her answers), in shelf order. Products she added
+    // herself are not recommendations. The old "Recommended for you" panel
+    // (recommendedSection) is no longer rendered, which is why views stopped.
+    const shelfRecommendedProducts = useMemo(() => {
+        if (ecoQueryTrimmed) return [];
+        return visibleAreaGroups
+            .flatMap((g) => g.products || [])
+            .filter((p) => p?.llmGenerated === true || p?.intakeGenerated === true);
+    }, [visibleAreaGroups, ecoQueryTrimmed]);
+    useRecommendationViews(shelfRecommendedProducts, 'ecosystem_shelves');
 
     const handleSwapFromRecommendedCard = useCallback((cardKey, oldProductId, newProduct) => {
         if (!cardKey || !newProduct?.id) return;

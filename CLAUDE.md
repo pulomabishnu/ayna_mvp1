@@ -84,3 +84,17 @@ asking, and Eliz had to redo work. Rules:
   <id>.<field> --by "<who>" --note "<why>"`. New products:
   `node scripts/team-copy-lock.mjs --add-new --by "<who>"`. Never run these
   to make a failing test pass on your own.
+
+## Analytics (PostHog) conventions (2026-10-20)
+
+- Every event carries `platform` (`web` / `ios_app` / `android_app`), set in `src/main.jsx`.
+  App events also carry `source: 'app'` (`src/mobile/utils/appAnalytics.js`).
+- Native builds fall back to the public `phc_` key (`src/utils/analyticsPlatform.js`), so a
+  TestFlight build can't ship with analytics off. Build with `npm run build:ios`.
+- Never send a property named `message` (before_send strips it): use `errorMessage`,
+  passed through `redactErrorMessage` (`src/utils/errorAnalytics.js`).
+- `recommendation_viewed` = one event per recommended product shown
+  (`productId`, `category`, `position`, `surface`) via `src/utils/recommendationAnalytics.js`.
+- Catalog brand / concerns for analytics: `npm run catalog:sync` writes
+  `supabase/seed/<date>_catalog_sync.sql` (insert-missing only, brand fills blanks only,
+  concerns from the research need map). A person runs it in the Supabase SQL Editor.

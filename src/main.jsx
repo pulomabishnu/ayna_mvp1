@@ -18,6 +18,8 @@ import posthog from 'posthog-js'
 import { getInternalIds, tagInternalUserIfNeeded } from './utils/posthogInternal'
 import { hasInternalBrowserMarker, tagFounderAnalyticsIfNeeded } from './utils/founderAnalytics'
 import { applyStoredConsent, getStoredConsent, isMandatoryGpcVisitor } from './utils/analyticsConsent'
+import { appErrorProperties } from './utils/errorAnalytics'
+import { analyticsPlatform, resolvePosthogKey } from './utils/analyticsPlatform'
 
 if (window.location.hostname === 'aynamvp1.vercel.app') {
   window.location.replace(
@@ -25,7 +27,11 @@ if (window.location.hostname === 'aynamvp1.vercel.app') {
   );
 }
 
-const POSTHOG_KEY = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
+// App builds are made on a laptop, not on Vercel, and a missing .env key
+// silently turned analytics off: the TestFlight app has never sent an event.
+// The native build falls back to the project's public key (the same phc_ key
+// every website visitor already downloads), so it can't be built without it.
+const POSTHOG_KEY = resolvePosthogKey(import.meta.env.VITE_PUBLIC_POSTHOG_KEY, Capacitor.isNativePlatform());
 // Default to the first-party /ingest proxy (see vercel.json rewrites) rather
 // than PostHog's own domain directly, ad blockers (uBlock, Brave, Safari's
 // tracking prevention) block requests to *.posthog.com/*.i.posthog.com by
@@ -45,6 +51,7 @@ const POSTHOG_HOST = Capacitor.isNativePlatform()
 // (27% of events in 90 days), so they stay off entirely.
 const ANALYTICS_HOST_ALLOWED = Capacitor.isNativePlatform()
   || (typeof window !== 'undefined' && /^(www\.)?aynahealth\.co$/i.test(window.location.hostname));
+const ANALYTICS_PLATFORM = analyticsPlatform(Capacitor.isNativePlatform(), Capacitor.getPlatform());
 const GPC_ENABLED = typeof navigator !== 'undefined' && navigator.globalPrivacyControl === true;
 const STORED_ANALYTICS_PREF = getStoredConsent();
 const ANALYTICS_ID_PREFIX = 'ayna_analytics_id_v1:';
@@ -156,7 +163,9 @@ function sanitizePosthogEvent(event) {
   // visitor looked for these resources.
   if (typeof window !== 'undefined' && /^\/campus-resources(\/|$)/.test(window.location.pathname)) return null;
   if (!event?.properties) return event;
-  return { ...event, properties: sanitizeAnalyticsObject(event.properties) };
+  // platform on every event, including the first pageview (which can be sent
+  // before the `loaded` register below takes effect).
+  return { ...event, properties: { platform: ANALYTICS_PLATFORM, ...sanitizeAnalyticsObject(event.properties) } };
 }
 
 if (!POSTHOG_KEY) {
@@ -230,8 +239,30 @@ if (!POSTHOG_KEY) {
       }
       tagFounderAnalyticsIfNeeded(ph);
       tagInternalUserIfNeeded(ph);
+      // Every event says where it came from, so app and website separate
+      // with one filter: platform = ios_app / android_app / web.
+      ph.register({ platform: ANALYTICS_PLATFORM });
+      if (Capacitor.isNativePlatform()) registerNativeAppAnalytics(ph);
     },
   });
+}
+
+// The app runs posthog-js inside its WebView, so the native SDK's lifecycle
+// events never existed. Send the same names ("Application Opened" etc.) and
+// $app_version / $app_build, which the TestFlight dashboard already uses.
+function registerNativeAppAnalytics(ph) {
+  import('@capacitor/app').then(async ({ App: CapApp }) => {
+    try {
+      const info = await CapApp.getInfo();
+      ph.register({ $app_version: info?.version || '', $app_build: info?.build || '' });
+    } catch { /* app info unavailable */ }
+    try { ph.capture('Application Opened', { from_background: false }); } catch { /* ignore */ }
+    try {
+      CapApp.addListener('appStateChange', ({ isActive }) => {
+        try { ph.capture(isActive ? 'Application Opened' : 'Application Backgrounded', isActive ? { from_background: true } : {}); } catch { /* ignore */ }
+      });
+    } catch { /* listener unavailable */ }
+  }).catch(() => { /* plugin missing in this build */ });
 }
 
 // Vite's lazy-loaded chunks are hashed per deploy. A tab left open across a
@@ -266,13 +297,15 @@ class ErrorBoundary extends React.Component {
     try { sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch { /* private mode */ }
   }
 
-  componentDidCatch(error) {
+  componentDidCatch(error, info) {
     console.error('App error:', error);
     try {
-      posthog.capture('app_error', {
-        errorName: String(error?.name || 'Error').slice(0, 64),
+      // What broke and where: redacted message, nearest component (or the
+      // current screen), code/status. $pathname comes from posthog-js.
+      posthog.capture('app_error', appErrorProperties(error, info, {
         isChunkLoadError: isChunkLoadError(error),
-      });
+        view: typeof window !== 'undefined' ? window.__aynaView : '',
+      }));
     } catch { /* analytics unavailable */ }
 
     if (!isChunkLoadError(error)) return;

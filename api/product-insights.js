@@ -113,7 +113,7 @@ Tailoring rules when reader context is present:
 ${brandBlock}${readerBlock}
 CLINICAL AUTHORITY SOURCES TO REFERENCE:
 Ground clinicalNarrative and scienceSummary in guidance from these organizations where relevant:
-- ACOG (American College of Obstetricians and Gynecologists) for OB/GYN conditions: menstrual health, PCOS, endometriosis, menopause, perimenopause, fertility, contraception, UTIs, pelvic floor
+- ACOG (American College of Obstetricians and Gynecologists) for OB/GYN conditions: menstrual health, PMOS, endometriosis, menopause, perimenopause, fertility, contraception, UTIs, pelvic floor
 - NIH Office of Dietary Supplements for all supplement categories, ingredient safety, evidence quality, dosing guidance
 - FDA for device and period care product regulatory standing
 - Cochrane Reviews for systematic review evidence on supplement and device categories

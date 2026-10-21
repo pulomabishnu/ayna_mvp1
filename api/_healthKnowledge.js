@@ -74,9 +74,9 @@ const LOCAL_REVIEWED_INDEX = [
   },
   {
     slug: 'pcos-basics',
-    topic: 'PCOS: What It Is and How It Is Managed',
-    aliases: ['pcos', 'polycystic ovary syndrome', 'polycystic ovarian syndrome', 'irregular ovulation', 'hyperandrogenism'],
-    summary: 'Polycystic ovary syndrome explained: diagnosis, symptoms, and evidence-based treatment options including lifestyle and medication.',
+    topic: 'PMOS: What It Is and How It Is Managed',
+    aliases: ['pmos', 'pcos', 'polyendocrine metabolic ovarian syndrome', 'polycystic ovary syndrome', 'polycystic ovarian syndrome', 'irregular ovulation', 'hyperandrogenism'],
+    summary: 'Polyendocrine metabolic ovarian syndrome explained: diagnosis, symptoms, and evidence-based treatment options including lifestyle and medication.',
     source_names: ['ACOG', 'Endocrine Society', 'UpToDate'],
     article_id: 'pcos-basics',
   },
@@ -149,7 +149,7 @@ const LOCAL_REVIEWED_INDEX = [
 const SENSITIVE_HEALTH_TERMS = [
   'period', 'menstrual', 'menstruation', 'bleeding', 'cramp', 'pelvic', 'vagina', 'vaginal', 'vulva', 'vulvar',
   'discharge', 'odor', 'itching', 'uti', 'urinary', 'bladder infection', 'yeast infection', 'bacterial vaginosis',
-  'pcos', 'polycystic', 'endometriosis', 'fibroid', 'ovarian cyst', 'pmdd', 'pms', 'menopause', 'perimenopause',
+  'pcos', 'pmos', 'polycystic', 'polyendocrine', 'endometriosis', 'fibroid', 'ovarian cyst', 'pmdd', 'pms', 'menopause', 'perimenopause',
   'fertility', 'infertility', 'trying to conceive', 'pregnan', 'postpartum', 'birth control', 'contraception',
   'hormone', 'sexual health', 'painful sex', 'dyspareunia', 'vaginismus', 'vulvodynia', 'iron deficiency', 'anemia',
   'symptom', 'diagnos', 'medication', 'allergy', 'reproductive', 'cycle', 'hot flash', 'night sweat',

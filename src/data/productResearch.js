@@ -527,13 +527,13 @@ export const PRODUCT_RESEARCH = {
   },
   "p-inositol-wholesome": {
     "whoItsFor": [
-      "People with PCOS who want to try inositol after talking it through with their clinician, since the 2023 international guideline says it could be considered based on personal preference",
+      "People with PMOS who want to try inositol after talking it through with their clinician, since the 2023 international guideline says it could be considered based on personal preference",
       "Those who want the common 40:1 myo to D-chiro ratio in a capsule rather than a powder",
       "Anyone looking for the brand's stated goal: support for hormone levels, menstrual cycles and ovarian health",
       "Not the pick as a swap for metformin when hirsutism or central weight gain is the main concern: the guideline says metformin should be considered over inositol for those"
     ],
     "howToUse": {
-      "intro": "Per Wholesome Story's label directions and the 2023 international PCOS guideline:",
+      "intro": "Per Wholesome Story's label directions and the 2023 international guideline:",
       "steps": [
         "Take 4 capsules (1 serving) once a day, ideally with a meal.",
         "If your stomach is sensitive, split it into 2 capsules taken twice a day.",
@@ -550,11 +550,11 @@ export const PRODUCT_RESEARCH = {
         "summary": "Inositol could be considered for metabolic measures based on personal preference, but it is experimental for fertility, no specific type, dose or ratio can be recommended, and its side effects and safety are not known."
       }
     ],
-    "clinicalNote": "The 2023 international PCOS guideline notes that inositol products can have limited regulation, with variable dose, quality and consistency, and that side effects and safety are not yet known. If you take it, tell your healthcare professional.",
+    "clinicalNote": "The 2023 international guideline notes that inositol products can have limited regulation, with variable dose, quality and consistency, and that side effects and safety are not yet known. If you take it, tell your healthcare professional.",
     "ingredientScience": [
       {
         "name": "Myo-inositol",
-        "text": "Myo-inositol is the main ingredient here (2,000 mg per 4-capsule serving). A 2024 review done for the international PCOS guideline found it may help some metabolic measures, but called the overall evidence for inositol in PCOS limited and inconclusive. It likely causes fewer stomach side effects than metformin, and those tend to be mild and pass on their own.",
+        "text": "Myo-inositol is the main ingredient here (2,000 mg per 4-capsule serving). A 2024 review done for the international guideline found it may help some metabolic measures, but called the overall evidence for inositol in PMOS limited and inconclusive. It likely causes fewer stomach side effects than metformin, and those tend to be mild and pass on their own.",
         "citations": [
           {
             "url": "https://digital.library.adelaide.edu.au/dspace/bitstream/2440/140526/2/hdl_140526.pdf",
@@ -585,18 +585,18 @@ export const PRODUCT_RESEARCH = {
   },
   "p-spearmint-pcos": {
     "whoItsFor": [
-      "People with PCOS who are curious about spearmint and want to try it alongside, not instead of, care from their clinician",
+      "People with PMOS who are curious about spearmint and want to try it alongside, not instead of, care from their clinician",
       "Anyone who wants a simple, caffeine-free organic herbal tea they can drink any time of day",
       "Those who prefer starting with a food-like option before considering supplements",
       "Not the pick as a treatment for hirsutism or irregular cycles on its own: evidence is preliminary and clinical benefit has not been established"
     ],
     "howToUse": {
-      "intro": "Per Traditional Medicinals' label directions and the 2023 international PCOS guideline:",
+      "intro": "Per Traditional Medicinals' label directions and the 2023 international guideline:",
       "steps": [
         "Pour 8 oz (240 ml) of freshly boiled water over 1 tea bag.",
         "Cover and steep for 5 to 10 minutes.",
         "Squeeze and remove the tea bag before drinking.",
-        "Let your clinician know you are using it if you're managing PCOS, as with any complementary therapy."
+        "Let your clinician know you are using it if you're managing PMOS, as with any complementary therapy."
       ],
       "sourceUrl": "https://fullscript.com/catalog/products/organic-spearmint-tea",
       "sourceLabel": "Traditional Medicinals Organic Spearmint label directions (Fullscript listing)"
@@ -605,10 +605,10 @@ export const PRODUCT_RESEARCH = {
       {
         "url": "https://academic.oup.com/humrep/article/38/9/1655/7241786",
         "label": "Recommendations from the 2023 International PCOS Guideline, Human Reproduction",
-        "summary": "Lifestyle care is recommended for everyone with PCOS, and people using complementary therapies are encouraged to tell their healthcare professional so choices can be discussed together."
+        "summary": "Lifestyle care is recommended for everyone with PMOS, and people using complementary therapies are encouraged to tell their healthcare professional so choices can be discussed together."
       }
     ],
-    "clinicalNote": "The main study behind spearmint tea for PCOS is a small randomized trial lasting just 30 days, where women drank spearmint tea or a placebo tea. Androgen levels (male-type hormones like testosterone) dropped in the spearmint group and women said they felt better about their hair growth, but the objective score for unwanted hair (the Ferriman-Gallwey score) did not change significantly. So it is an early signal on hormone levels, not proof that symptoms improve.",
+    "clinicalNote": "The main study behind spearmint tea for PMOS is a small randomized trial lasting just 30 days, where women drank spearmint tea or a placebo tea. Androgen levels (male-type hormones like testosterone) dropped in the spearmint group and women said they felt better about their hair growth, but the objective score for unwanted hair (the Ferriman-Gallwey score) did not change significantly. So it is an early signal on hormone levels, not proof that symptoms improve.",
     "clinicalNoteSources": [
       {
         "url": "https://www.endocrine-abstracts.org/ea/0015/ea0015p282",
@@ -2771,7 +2771,7 @@ export const PRODUCT_RESEARCH = {
       {
         "url": "https://www.mayoclinic.org/tests-procedures/basal-body-temperature/about/pac-20393026",
         "label": "Mayo Clinic: Basal body temperature for natural family planning",
-        "summary": "Resting temperature rises slightly after ovulation, but illness, medications, postpartum, breastfeeding, irregular cycles and PCOS can make readings unreliable, and about 1 in 4 typical users of fertility awareness methods get pregnant within a year."
+        "summary": "Resting temperature rises slightly after ovulation, but illness, medications, postpartum, breastfeeding, irregular cycles and PMOS can make readings unreliable, and about 1 in 4 typical users of fertility awareness methods get pregnant within a year."
       }
     ],
     "scienceSources": [
@@ -5750,7 +5750,7 @@ export const PRODUCT_RESEARCH = {
       {
         "url": "https://list.essentialmeds.org/recommendations/1397",
         "label": "WHO Essential Medicines List: Letrozole recommendation",
-        "summary": "Added letrozole for anovulatory infertility linked to PCOS or unexplained infertility, noting more live births than clomifene in PCOS and that this use is off-label in the US and EU."
+        "summary": "Added letrozole for anovulatory infertility linked to PMOS or unexplained infertility, noting more live births than clomifene in PMOS and that this use is off-label in the US and EU."
       }
     ]
   },
@@ -8139,7 +8139,7 @@ export const PRODUCT_RESEARCH = {
     "whoItsFor": [
       "People who want a simple, single-ingredient evening primrose oil as a source of GLA",
       "Those who have read the evidence and still want to try it, knowing research hasn't shown clear benefit for PMS or breast pain",
-      "Not the pick as a treatment for PMS, PCOS, period pain or cyclical breast pain: a 2021 meta-analysis found it no better than placebo for breast pain",
+      "Not the pick as a treatment for PMS, PMOS, period pain or cyclical breast pain: a 2021 meta-analysis found it no better than placebo for breast pain",
       "Not the pick for anyone pregnant, nursing, on medication or managing a medical condition without first checking with a doctor, per the label"
     ],
     "howToUse": {
@@ -8210,7 +8210,7 @@ export const PRODUCT_RESEARCH = {
     "whoItsFor": [
       "People with PMS symptoms, especially breast tenderness, who want to try an herbal option and accept that the evidence is mixed",
       "Those willing to take it every day for a while, since Gaia says best results come from long-term use",
-      "Not the pick as a treatment for PCOS or period cramps, where vitex isn't established",
+      "Not the pick as a treatment for PMOS or period cramps, where vitex isn't established",
       "Not the pick during pregnancy or breastfeeding, per the label; check with your doctor first if you have a medical condition or take medication"
     ],
     "howToUse": {
@@ -8463,7 +8463,7 @@ export const PRODUCT_RESEARCH = {
     "whoItsFor": [
       "People whose clinician has identified a need for extra zinc, such as low intake from their diet",
       "Those who prefer a whole-food style zinc with added vitamin C and a small probiotic blend",
-      "Not the pick as a PCOS or acne treatment on its own: research on minerals for PCOS is still early and doses aren't settled",
+      "Not the pick as a PMOS or acne treatment on its own: research on minerals for PMOS is still early and doses aren't settled",
       "Not the pick for stacking with other zinc products: the 30 mg dose plus food can approach NIH's 40 mg daily upper limit"
     ],
     "howToUse": {
@@ -8490,13 +8490,13 @@ export const PRODUCT_RESEARCH = {
       {
         "url": "https://doaj.org/article/03414eafa1304f57a0f963b2f3174fff",
         "label": "ElObeid et al., Metabolites (2022): The Impact of Mineral Supplementation on Polycystic Ovarian Syndrome",
-        "summary": "A review of trials on zinc, magnesium, selenium and chromium in PCOS reports some benefit for clinical and metabolic symptoms but says more studies are needed to set safe, effective doses."
+        "summary": "A review of trials on zinc, magnesium, selenium and chromium in PMOS reports some benefit for clinical and metabolic symptoms but says more studies are needed to set safe, effective doses."
       }
     ],
     "ingredientScience": [
       {
         "name": "Zinc (30 mg, from brown rice chelate)",
-        "text": "Zinc is needed for hundreds of enzymes, your immune system, making protein and DNA, and wound healing. Adult women need about 8 mg a day, so 30 mg is well above that but still under NIH's 40 mg daily upper limit (this counts zinc from all supplements). NIH's fact sheet does not list acne or PCOS as uses with evidence.",
+        "text": "Zinc is needed for hundreds of enzymes, your immune system, making protein and DNA, and wound healing. Adult women need about 8 mg a day, so 30 mg is well above that but still under NIH's 40 mg daily upper limit (this counts zinc from all supplements). NIH's fact sheet does not list acne or PMOS as uses with evidence.",
         "citations": [
           {
             "url": "https://ods.od.nih.gov/factsheets/Zinc-HealthProfessional",

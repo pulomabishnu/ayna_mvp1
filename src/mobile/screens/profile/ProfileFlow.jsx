@@ -3218,8 +3218,8 @@ const ADVISORS = [
   { name: 'Albert Charles', title: 'Co-Founder, Gorges Ventures', photo: '/advisors/albert-charles.png' },
   { name: 'Erika Demonsant', title: 'Healthcare Consultant, Huron', photo: '/advisors/erika-demonsant.png' },
   { name: 'Pamela Nasr', title: 'Product Lead, Benchling', photo: '/advisors/pamela-nasr.png' },
-  { name: 'Nishtha Kaushik', title: 'Advisor', photo: '/advisors/nishtha-kaushik.png' },
-  { name: 'Navneet Kaur', title: 'Advisor', photo: '/advisors/navneet-kaur.png' },
+  { name: 'Nishtha Kaushik', title: 'Ex-Amazon Marketing', photo: '/advisors/nishtha-kaushik.png' },
+  { name: 'Navneet Kaur', title: 'TechThrive Ventures', photo: '/advisors/navneet-kaur.png' },
 ];
 function advisorInitials(name) {
   return name.replace(/^Dr\.\s*/i, '').split(' ').filter(Boolean).map((w) => w[0]).slice(0, 2).join('').toUpperCase();

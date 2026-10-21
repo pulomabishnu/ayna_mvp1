@@ -1,7 +1,7 @@
 [
  {
   "id": "condition_support.pcos",
-  "summary": "PCOS (now also called PMOS by Mayo Clinic and NHS) is managed with lifestyle change (about 5% weight loss can improve symptoms; aerobic plus strength exercise for insulin resistance) and clinician-prescribed treatments: combined pill or cyclic progestin for cycles and endometrial protection, metformin, spironolactone or eflornithine for hair/acne, and letrozole or clomifene for fertility. Inositol has low-certainty evidence: an umbrella review of meta-analyses found improved androgens, SHBG and insulin resistance vs placebo and no clear difference vs metformin, while Cochrane found no clear fertility benefit (very low certainty). Spearmint tea has one small 30-day RCT showing lower testosterone but no change in objective hirsutism score. Ongoing monitoring of blood pressure, glucose, lipids, mood and sleep apnea is advised.",
+  "summary": "PMOS is managed with lifestyle change (about 5% weight loss can improve symptoms; aerobic plus strength exercise for insulin resistance) and clinician-prescribed treatments: combined pill or cyclic progestin for cycles and endometrial protection, metformin, spironolactone or eflornithine for hair/acne, and letrozole or clomifene for fertility. Inositol has low-certainty evidence: an umbrella review of meta-analyses found improved androgens, SHBG and insulin resistance vs placebo and no clear difference vs metformin, while Cochrane found no clear fertility benefit (very low certainty). Spearmint tea has one small 30-day RCT showing lower testosterone but no change in objective hirsutism score. Ongoing monitoring of blood pressure, glucose, lipids, mood and sleep apnea is advised.",
   "effective_types": [
    {
     "type": "lifestyle / weight-management program (diet + aerobic and strength exercise)",
@@ -77,10 +77,10 @@
    "Inositol evidence is mostly low/very-low quality; D-chiro-inositol alone warrants caution and combination products did not consistently beat myo-inositol alone (https://pubmed.ncbi.nlm.nih.gov/41757236/)",
    "Inositol harms are poorly reported in trials, so safety is unclear (https://www.cochrane.org/evidence/CD012378_inositol-women-polycystic-ovary-syndrome)",
    "Spearmint tea evidence is one 30-day trial of 42 women; it lowered testosterone but did not change objective hirsutism score (https://pubmed.ncbi.nlm.nih.gov/19585478)",
-   "Irregular cycles (common in PCOS) make home LH ovulation tests harder to interpret (https://medlineplus.gov/ency/article/007062.htm); PCOS can cause mildly elevated LH (https://my.clevelandclinic.org/health/body/22255-luteinizing-hormone)"
+   "Irregular cycles (common in PMOS) make home LH ovulation tests harder to interpret (https://medlineplus.gov/ency/article/007062.htm); PMOS can cause mildly elevated LH (https://my.clevelandclinic.org/health/body/22255-luteinizing-hormone)"
   ],
   "see_a_clinician_if": [
-   "You think you may have PCOS/PMOS, or symptoms affect everyday life, work or relationships (https://www.nhs.uk/conditions/polycystic-ovary-syndrome-pcos/diagnosis/)",
+   "You think you may have PMOS, or symptoms affect everyday life, work or relationships (https://www.nhs.uk/conditions/polycystic-ovary-syndrome-pcos/diagnosis/)",
    "You are diagnosed: ongoing checks of blood pressure, glucose tolerance, cholesterol/triglycerides, plus screening for depression, anxiety and sleep apnea are advised (https://www.mayoclinic.org/diseases-conditions/pcos/diagnosis-treatment/drc-20353443)",
    "Irregular or absent periods, since treatment protects the uterine lining and lowers endometrial cancer risk (https://www.mayoclinic.org/diseases-conditions/pcos/diagnosis-treatment/drc-20353443)",
    "Trying to conceive without success (fertility medicines such as letrozole are prescription) (https://www.mayoclinic.org/diseases-conditions/pcos/diagnosis-treatment/drc-20353443)"
@@ -89,7 +89,7 @@
    "structured lifestyle / weight-management or dietitian program (telehealth or app)",
    "myo-inositol-only supplement (umbrella review favored myo-inositol alone over combos)",
    "at-home hair removal tools/services for hirsutism",
-   "acne skin-care products (OTC) for PCOS-related acne",
+   "acne skin-care products (OTC) for PMOS-related acne",
    "mental health support / talking therapy service",
    "at-home metabolic screening tests (glucose/HbA1c, lipids) to support recommended monitoring"
   ]
@@ -343,7 +343,7 @@
  },
  {
   "id": "cycle.irregular",
-  "summary": "Normal cycles run 21 to 35 days; cycles outside that range or varying by more than about 9 days are irregular, with causes ranging from puberty, perimenopause, stress, weight change and contraception to PCOS, thyroid disease and primary ovarian insufficiency. The evidence-backed first step is recording period start/end dates (app or diary) and seeing a clinician for evaluation; no OTC product regulates cycles. Urine LH ovulation kits can help show whether/when ovulation occurs, but may miss the surge in irregular cycles, and temperature (BBT) methods are inaccurate with irregular cycles.",
+  "summary": "Normal cycles run 21 to 35 days; cycles outside that range or varying by more than about 9 days are irregular, with causes ranging from puberty, perimenopause, stress, weight change and contraception to PMOS, thyroid disease and primary ovarian insufficiency. The evidence-backed first step is recording period start/end dates (app or diary) and seeing a clinician for evaluation; no OTC product regulates cycles. Urine LH ovulation kits can help show whether/when ovulation occurs, but may miss the surge in irregular cycles, and temperature (BBT) methods are inaccurate with irregular cycles.",
   "effective_types": [
    {
     "type": "clinician evaluation (history, pelvic exam, hormone/thyroid tests, ultrasound), in person or via telehealth",
@@ -393,7 +393,7 @@
   ],
   "see_a_clinician_if": [
    "periods are irregular, or become very irregular after previously regular cycles (NHS; Cleveland Clinic)",
-   "irregular periods with weight gain, tiredness, facial hair growth, or oily/dry skin, possible PCOS/thyroid signs (NHS)",
+   "irregular periods with weight gain, tiredness, facial hair growth, or oily/dry skin, possible PMOS/thyroid signs (NHS)",
    "periods last longer than 7 days, bleeding between periods, or soaking a pad/tampon every hour for 2-3 hours (NHS; Cleveland Clinic)",
    "irregular periods and difficulty getting pregnant (NHS); no conception after 12 months if under 35 or 6 months if 35+ (Cleveland Clinic)",
    "severe pain or possible pregnancy (Cleveland Clinic)"
@@ -1088,7 +1088,7 @@
  },
  {
   "id": "hair.excess",
-  "summary": "The Endocrine Society guideline (2018) recommends testing for elevated androgens when hirsutism scores are abnormal, combined oral contraceptives as first line for most women not seeking fertility, adding an antiandrogen after 6 months if needed, and photoepilation (laser) or electrolysis for hair removal, with eflornithine cream as an add-on. Lifestyle change is advised for women with obesity and PCOS. No supplements are recommended (Mayo Clinic).",
+  "summary": "The Endocrine Society guideline (2018) recommends testing for elevated androgens when hirsutism scores are abnormal, combined oral contraceptives as first line for most women not seeking fertility, adding an antiandrogen after 6 months if needed, and photoepilation (laser) or electrolysis for hair removal, with eflornithine cream as an add-on. Lifestyle change is advised for women with obesity and PMOS. No supplements are recommended (Mayo Clinic).",
   "effective_types": [
    {
     "type": "combined oral contraceptive (Rx)",
@@ -1181,7 +1181,7 @@
    "OCPs raise clot, heart attack and blood pressure risks; screened before prescribing (AAD, https://www.aad.org/public/diseases/acne/derm-treat/hormonal-therapy)"
   ],
   "see_a_clinician_if": [
-   "Acne with excess hair, irregular periods or other signs of androgen excess, which may signal PCOS (Endocrine Society, https://www.endocrine.org/patient-engagement/endocrine-library/hirsutism)"
+   "Acne with excess hair, irregular periods or other signs of androgen excess, which may signal PMOS (Endocrine Society, https://www.endocrine.org/patient-engagement/endocrine-library/hirsutism)"
   ],
   "catalog_gaps": [
    "benzoyl peroxide",
@@ -1234,7 +1234,7 @@
   ],
   "see_a_clinician_if": [
    "Unexplained weight loss with digestive symptoms (NIDDK, https://www.niddk.nih.gov/health-information/digestive-diseases/gas-digestive-tract/symptoms-causes)",
-   "Weight concerns with hirsutism or irregular periods (possible PCOS) (Endocrine Society, https://www.endocrine.org/patient-engagement/endocrine-library/hirsutism)"
+   "Weight concerns with hirsutism or irregular periods (possible PMOS) (Endocrine Society, https://www.endocrine.org/patient-engagement/endocrine-library/hirsutism)"
   ],
   "catalog_gaps": [
    "clinician-supervised weight-management / telehealth program (type only)"
@@ -1522,7 +1522,7 @@
    }
   ],
   "caution": [
-   "Cochrane authors advise taking antioxidants other than prenatal-style combinations only on medical advice, especially with PCOS (https://www.cochrane.org/podcasts/10.1002/14651858.CD007807.pub4)"
+   "Cochrane authors advise taking antioxidants other than prenatal-style combinations only on medical advice, especially with PMOS (https://www.cochrane.org/podcasts/10.1002/14651858.CD007807.pub4)"
   ],
   "see_a_clinician_if": [
    "12 months trying under 35, 6 months at 35+ (ASRM https://www.asrm.org/practice-guidance/practice-committee-documents/optimizing-natural-fertility-a-committee-opinion-2021)",
@@ -3312,7 +3312,7 @@
  },
  {
   "id": "period.light",
-  "summary": "For light days or spotting, panty liners or mini pads are the best fit, and Mayo advises them over tampons to lower TSS risk. Period underwear alone often works too. If a tampon is used, pick the lowest (light/mini) absorbency. Light periods can be normal, but a consistent change (3 or more lighter-than-usual cycles) can reflect stress, weight loss, thyroid disease, PCOS, perimenopause or cervical stenosis and should be checked (Cleveland Clinic).",
+  "summary": "For light days or spotting, panty liners or mini pads are the best fit, and Mayo advises them over tampons to lower TSS risk. Period underwear alone often works too. If a tampon is used, pick the lowest (light/mini) absorbency. Light periods can be normal, but a consistent change (3 or more lighter-than-usual cycles) can reflect stress, weight loss, thyroid disease, PMOS, perimenopause or cervical stenosis and should be checked (Cleveland Clinic).",
   "effective_types": [
    {
     "type": "panty liners / mini pads",
@@ -3602,7 +3602,7 @@
  },
  {
   "id": "condition_support.pcos",
-  "summary": "Mayo Clinic says PCOS treatment manages symptoms with lifestyle changes and medicines; birth control pills and spironolactone reduce androgen-driven acne, and creams or gels may also help.",
+  "summary": "Mayo Clinic says PMOS treatment manages symptoms with lifestyle changes and medicines; birth control pills and spironolactone reduce androgen-driven acne, and creams or gels may also help.",
   "effective_types": [
    {
     "type": "topical acne treatment",

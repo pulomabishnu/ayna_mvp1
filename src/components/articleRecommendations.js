@@ -36,8 +36,8 @@ const ARTICLE_SUMMARIES = [
   },
   {
     id: 'pcos-basics',
-    title: "PCOS: What It Is and How It's Managed",
-    teaser: 'Polycystic ovary syndrome explained. Diagnosis, symptoms, and evidence-based treatment options including lifestyle and medication.',
+    title: "PMOS: What It Is and How It's Managed",
+    teaser: 'Polyendocrine metabolic ovarian syndrome explained. Diagnosis, symptoms, and evidence-based treatment options including lifestyle and medication.',
   },
   {
     id: 'pelvic-floor-dysfunction',

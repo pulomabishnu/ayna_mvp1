@@ -8,7 +8,7 @@ export const TEAM_PHOTO = '/team/ayna-founders.jpg';
 export const TEAM_CAPTION = 'Built by women who wanted better answers.';
 
 const FACT_TERMS = [
-  'PCOS', 'endometriosis', 'fibroids', 'adenomyosis', 'perimenopause', 'menopause',
+  'PMOS', 'endometriosis', 'fibroids', 'adenomyosis', 'perimenopause', 'menopause',
   'PMDD', 'vaginismus', 'vulvodynia', 'interstitial cystitis', 'ovarian cysts',
   'anemia / iron deficiency', 'UTI', 'Osteoporosis', 'BRCA1/BRCA2',
 ];

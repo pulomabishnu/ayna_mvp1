@@ -477,7 +477,7 @@ const REVIEWS = {
       'safety.medication_interactions': f('Ashwagandha may interact with thyroid, diabetes, blood pressure, sedative and immunosuppressant medicines (ODS). NCCIH advises talking to a provider before herbal products', 'NIH ODS Ashwagandha; NCCIH Chasteberry', 'https://ods.od.nih.gov/factsheets/Ashwagandha-Consumer/?print=1', 'regulatory'),
       'safety.side_effects': f('Vitex: nausea, stomach pain, diarrhea, headache, itching (NCCIH). Ashwagandha: stomach upset, drowsiness, rare liver injury (ODS)', 'NCCIH; NIH ODS', 'https://www.nccih.nih.gov/health/chasteberry', 'regulatory'),
       'safety.warnings': f(['Vitex may not be safe with breast, uterine or ovarian cancer (NCCIH).', 'No warnings printed on the Proov bundle pages.'], 'NCCIH Chasteberry; Proov product page', 'https://www.nccih.nih.gov/health/chasteberry', 'regulatory'),
-      'health.intended_use': f('Luteal-phase support bundle marketed to people trying to conceive, in perimenopause, with PCOS or postpartum (manufacturer information)', 'Proov product page', 'https://proovtest.com/products/balance-bundle'),
+      'health.intended_use': f('Luteal-phase support bundle marketed to people trying to conceive, in perimenopause, with PMOS or postpartum (manufacturer information)', 'Proov product page', 'https://proovtest.com/products/balance-bundle'),
       'evidence.claims': f([
         { claim: 'Vitex may ease PMS breast tenderness', strength: 'limited', evidence_type: 'ingredient_research', source_url: 'https://www.nccih.nih.gov/health/chasteberry', product_specific: false },
         { claim: 'Vitex helps fertility', strength: 'none', evidence_type: 'ingredient_research', source_url: 'https://www.nccih.nih.gov/health/chasteberry', product_specific: false },

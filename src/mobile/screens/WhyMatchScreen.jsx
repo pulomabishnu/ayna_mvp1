@@ -12,7 +12,7 @@ import HealthWhyLine from '../../components/health/HealthWhyLine.jsx';
 const GOAL_COMPONENTS = new Set(['primaryGoal', 'otherNeeds', 'periodFlow', 'periodPain', 'utiFrequency']);
 const PROFILE_COMPONENTS = new Set(['age', 'lifeStage', 'breastfeeding', 'postpartumTiming', 'pregnancyTrimester', 'perimenopauseLastPeriod', 'diagnoses', 'triedBefore']);
 
-const ACRONYMS = ['adhd', 'pcos', 'pmdd', 'pms', 'ibs', 'uti', 'utis', 'hrt', 'iud', 'bv', 'ivf'];
+const ACRONYMS = ['adhd', 'pcos', 'pmos', 'pmdd', 'pms', 'ibs', 'uti', 'utis', 'hrt', 'iud', 'bv', 'ivf'];
 const ACRONYM_RE = new RegExp(`\\b(${ACRONYMS.join('|')})\\b`, 'gi');
 /** Profile answers can arrive lowercase ("adhd"); show acronyms properly. */
 function tidy(text) {

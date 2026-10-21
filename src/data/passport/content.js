@@ -28,7 +28,7 @@ const clean = (v) => {
 const same = (a, b) => a && b && a.toLowerCase().replace(/[^a-z0-9]/g, '') === b.toLowerCase().replace(/[^a-z0-9]/g, '');
 const lowerFirst = (s) => (s && /^[A-Z][a-z]/.test(s) ? s.charAt(0).toLowerCase() + s.slice(1) : s);
 
-const ACRONYMS = { pcos: 'PCOS', ibs: 'IBS', uti: 'UTI', ivf: 'IVF', pms: 'PMS', pmdd: 'PMDD', hrt: 'HRT', iud: 'IUD', bv: 'BV', ob: 'OB' };
+const ACRONYMS = { pcos: 'PMOS', pmos: 'PMOS', ibs: 'IBS', uti: 'UTI', ivf: 'IVF', pms: 'PMS', pmdd: 'PMDD', hrt: 'HRT', iud: 'IUD', bv: 'BV', ob: 'OB' };
 export function humanizeTag(tag) {
   return String(tag || '').replace(/[-_]/g, ' ').toLowerCase().split(' ')
     .map((w, i) => ACRONYMS[w] || (i === 0 ? w.charAt(0).toUpperCase() + w.slice(1) : w)).join(' ');

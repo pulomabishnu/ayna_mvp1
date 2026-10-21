@@ -9,7 +9,10 @@ export const GLOSSARY = {
   // Diagnosed conditions (src/utils/healthIntake.js DIAGNOSED_CONDITIONS
   // these values are matched elsewhere in the app, so we explain them here
   // instead of renaming them)
-  'PCOS': 'A common hormone condition. It can cause irregular periods, acne, and extra hair growth.',
+  // PMOS is the new name for PCOS (Lancet, May 2026). Saved answers still say
+  // "PCOS" (shown as PMOS), so both keys explain it.
+  'PMOS': 'Polyendocrine metabolic ovarian syndrome. A common hormone condition. It can cause irregular periods, acne, and extra hair growth.',
+  'PCOS': 'Polyendocrine metabolic ovarian syndrome. A common hormone condition. It can cause irregular periods, acne, and extra hair growth.',
   'endometriosis': 'Tissue like the lining of the uterus grows outside it. This can cause bad pain, especially during your period.',
   'fibroids': 'Non-cancerous growths in or on the uterus. They can cause heavy periods or pelvic pain.',
   'adenomyosis': 'The uterus lining grows into the muscle wall of the uterus. This can cause heavy, painful periods.',
@@ -130,9 +133,9 @@ const entry = (term, short, opts = {}) => ({
 
 export const GLOSSARY_ENTRIES = [
   // Ingredient classes and actives
-  entry('Inositol', 'A sugar-like compound your body makes and also gets from food. Myo-inositol and D-chiro-inositol are the two forms most often studied for PCOS.', {
-    long: 'Inositol helps cells respond to insulin. Studies of inositol supplements in PCOS suggest possible benefits for cycle regularity and some metabolic markers, but results vary and many studies are small. As a supplement, the dose and quality depend on the brand.',
-    aliases: ['myo-inositol', 'd-chiro-inositol', 'd-chiro inositol', 'myo inositol'], related: ['PCOS', 'Clinically studied'],
+  entry('Inositol', 'A sugar-like compound your body makes and also gets from food. Myo-inositol and D-chiro-inositol are the two forms most often studied for PMOS.', {
+    long: 'Inositol helps cells respond to insulin. Studies of inositol supplements in PMOS suggest possible benefits for cycle regularity and some metabolic markers, but results vary and many studies are small. As a supplement, the dose and quality depend on the brand.',
+    aliases: ['myo-inositol', 'd-chiro-inositol', 'd-chiro inositol', 'myo inositol'], related: ['PMOS', 'Clinically studied'],
   }),
   entry('NSAID', 'Non-steroidal anti-inflammatory drug. Pain relievers like ibuprofen and naproxen that calm inflammation and the chemicals behind period cramps.', {
     long: 'NSAIDs lower prostaglandins, the chemicals that make the uterus cramp. They are not right for everyone: people with stomach ulcers or bleeding, kidney disease, some heart conditions, late pregnancy, or who take blood thinners should check with a clinician first.',

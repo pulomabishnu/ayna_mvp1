@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { trackRecommendationViews } from '../utils/recommendationAnalytics';
 import { getRecommendationExplanation, ALL_PRODUCTS, CATEGORY_LABELS, getRecommendationsGroupedByWorkflow } from '../data/products.js';
 import { getRecommendedArticles } from './Articles';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile.js';
@@ -175,7 +176,16 @@ export default function Recommendations({
         };
     }, [intakeFingerprint]);
 
+    // recommendation_viewed: every product card this page renders, in render
+    // order (collapsed sections render nothing, so only what she can see).
+    const shownRecommendationsRef = useRef([]);
+    shownRecommendationsRef.current = [];
+    useEffect(() => {
+        trackRecommendationViews(shownRecommendationsRef.current, 'recommendations_page');
+    });
+
     const renderProductCard = (product) => {
+        if (product?.id && !shownRecommendationsRef.current.some((p) => p.id === product.id)) shownRecommendationsRef.current.push(product);
         const isTracked = !!trackedProducts[product.id];
         const isInEcosystem = !!myProducts[product.id];
         const perUnitPrice = getPricePerUnitLabel(product);
