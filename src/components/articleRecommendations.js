@@ -6,12 +6,12 @@ import { inferTagsFromHealthProfile } from '../utils/healthDataProfile.js';
 const ARTICLE_SUMMARIES = [
   {
     id: 'intimate-wash',
-    title: 'Intimate Washes',
+    title: 'Intimate washes',
     teaser: 'Why the vagina is self-cleaning, when to use (or skip) cleansers, and what OB-GYNs recommend for external care.',
   },
   {
     id: 'heavy-bleeding',
-    title: 'Heavy Menstrual Bleeding',
+    title: 'Heavy menstrual bleeding',
     teaser: 'What counts as heavy bleeding, possible causes, when to seek care, and how it’s evaluated and treated.',
   },
   {

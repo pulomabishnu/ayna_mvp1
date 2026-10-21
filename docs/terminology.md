@@ -94,25 +94,23 @@ first.
 Found during the Oct 21 sweep. Wording that carries legal, compliance or
 authored meaning is left as is until a founder says yes.
 
-1. **Health data notice date.** The app's in-app summary (You > Legal >
-   Consumer health data notice) says "Effective 10 Sep 2026"; the notice
-   itself (`public/consumer-health-data.html`) says "Effective September
-   12, 2026". One of them is wrong.
-2. **SMS consent text** (`src/components/PhoneVerification.jsx`): "By texting
+1. **SMS consent text** (`src/components/PhoneVerification.jsx`): "By texting
    Ayna ... See our Terms of Service and Privacy Policy". Capital A and
    "Terms of Service" break this glossary, but the text may be the wording
    registered with the carrier (docs/twilio-sms.md). Change only together
    with the registration.
-3. **Legal bodies keep their own capitals.** Privacy policy, Terms of use
+2. **Legal bodies keep their own capitals.** Privacy policy, Terms of use
    and the notice mention "Consumer Health Data Privacy Notice" and "Privacy
    Policy" in Title Case inside the legal text. Only headings, links and
    page titles were sentence-cased. The Terms page title changed from "Terms
    of service" to "Terms of use" (the name its link and URL already used);
    the body says "these Terms" and was not touched.
-4. **Read titles in Title Case** (Library, `src/components/Articles.jsx`):
-   "Intimate Washes", "Heavy Menstrual Bleeding", and the postpartum read
-   "Can You Actually Improve Postpartum Stretch Marks and Scars? I Looked at
-   the Research Behind 5 MOST Popular Treatments" (8 lines on a phone; now
-   set smaller, words unchanged). Proposed: sentence case, and a shorter
-   H1 such as "Can you improve postpartum stretch marks? What the research
-   says about 5 popular treatments".
+
+## Resolved (Oct 21)
+
+- **Health data notice date:** both places say 12 September 2026, the
+  date the notice's authors wrote when it was published (commit 4dd480fb,
+  Sep 11, 2026). The in-app "10 Sep 2026" came from an earlier draft screen.
+- **Read titles:** "Intimate washes", "Heavy menstrual bleeding", and the
+  postpartum read is now "Can you improve postpartum stretch marks? What the
+  research says about 5 popular treatments" (URL unchanged).

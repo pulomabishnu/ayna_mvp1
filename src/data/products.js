@@ -241,7 +241,7 @@ export const PHYSICAL_PRODUCTS = [
         image: 'https://mylola.com/cdn/shop/files/four-lola-plastic-applicator-tampon-boxes.img.jpg?v=1753220344&width=1946',
         summary: '100% organic cotton tampon with a BPA-free compact applicator, from LOLA: founded in 2014 by Jordana Kier and Alex Friedman after one asked the other "have you ever wondered what\'s in a tampon?" and neither could find a real answer. LOLA was built around ingredient transparency: no synthetic fibers, fragrance, dyes, or chlorine-bleaching byproducts. Customizable subscription box.',
         safety: {
-            fdaStatus: 'FDA-registered',
+            fdaStatus: 'FDA-regulated Class II medical device (unscented menstrual tampon, product code HEB). LOLA says its tampons are FDA 510(k) cleared. FDA records list LOLA\'s company, ALYK, Inc., with tampon 510(k) clearances held by its manufacturers, such as K151170 (Tosama 100% organic cotton tampon), but ayna could not match a clearance number to this exact product.',
             materials: '100% organic cotton (tampon and string), BPA-free compact plastic applicator',
             recalls: '⚠️ 2021 lawsuit, later dropped: a proposed federal class action (Manson v. ALYK Inc., S.D.N.Y., No. 7:21-cv-05688) alleged LOLA tampons lack a protective outer coating and can unravel or shed cotton fibers inside the body during removal. The plaintiff voluntarily dismissed the case without prejudice on February 22, 2022, before any ruling or settlement, so the allegations were never proven or disproven in court. No recall has been issued.',
             allergens: 'Hypoallergenic, fragrance-free, dye-free',
