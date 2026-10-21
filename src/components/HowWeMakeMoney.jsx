@@ -44,6 +44,8 @@ export default function HowWeMakeMoney({ onBack }) {
             lede="Health-product recommendations and commercial relationships should be easy to tell apart. Here is how ayna handles both."
             onBack={onBack}
             photo="bag-tubes"
+            tone="espresso"
+            frame="frame"
             toc
         >
             <div className="ay-group is-padded ed-keyline">

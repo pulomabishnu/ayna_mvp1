@@ -42,7 +42,7 @@
   --r-radius-l: 22px;
   --r-gutter: 20px;
 
-  --f-display: 'DM Serif Display', Georgia, serif;
+  --f-display: var(--ay-app-heading);
   --f-ui: 'DM Sans', system-ui, sans-serif;
   --f-logo: 'Bricolage Grotesque', 'DM Sans', sans-serif;
 

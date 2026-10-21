@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import { Seal } from './personality/Bits.jsx';
 // 60 cards per load on desktop; 20 on phones, so the Shop isn't 22 screens long.
 const PAGE_SIZE = typeof window !== 'undefined' && window.matchMedia?.('(max-width: 700px)').matches ? 20 : 60;
 import { createPortal } from 'react-dom';
@@ -1562,8 +1563,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         <section className="ayshop">
             <div className="ay-container">
             <div className="ayshop__top">
-            <header className="ayshop__head">
+            <header className="ayshop__head ay-pagehead ay-band ay-band--espresso">
                     <h1 className="ay-h1">Shop by need</h1>
+                    <Seal className="ayshop__seal" />
                     {/* One disclosure for the whole page instead of a pill on every card (S09). */}
                     <p className="ayshop__note">
                         Some links earn ayna a commission. It never changes your matches.{' '}

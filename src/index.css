@@ -2,7 +2,8 @@
   /* Brand type: the only two families on the website. Every older font
      variable (--ay-font-display, --font-body, --display, --ui, ...) is an
      alias of one of these. DM Serif Display 400 is for headings 22px and up. */
-  --ay-serif: 'DM Serif Display', Georgia, serif;
+  --ay-heading: 'DM Serif Display', Georgia, serif; /* the ONE heading family token (website) */
+  --ay-serif: var(--ay-heading);
   --ay-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
 
   /* One type scale, fluid between 390px and 1280px wide. */

@@ -219,6 +219,7 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onBrowse
   const heroPicks = ORDERED.filter((pt) => !pt.prelaunch).map((pt) => ALL_PRODUCTS.find((x) => x.brand === pt.brand && /^\/(products|brands)\//.test(String(x.image || x.imageUrl || '')))).filter(Boolean).slice(0, 4);
   return (
     <EdPage
+      tone="pink"
       aside={heroPicks.length === 4 ? (
         <ul className="ed-tiles4" aria-label="Products from partner brands">
           {heroPicks.map((x) => <li key={x.id}><ProductTileImage product={x} alt={`${x.brand} ${x.name}`} /></li>)}

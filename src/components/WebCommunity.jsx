@@ -1070,7 +1070,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const peopleSide = user ? suggestedPeople.slice(0, SIDE_MAX) : [];
 
   return <section className="ct cm ay-container">
-    <header className="cm-head">
+    <header className={`cm-head${page ? '' : ' ay-pagehead ay-band ay-band--sky'}`}>
       {page ? <button type="button" className="ct-back cm-back" onClick={closePage}><span aria-hidden="true">←</span> {page.type === 'post' ? 'Back to feed' : 'Community'}</button>
         : <div className="cm-head__title"><h1 className="ay-h1">Ask, review, share.</h1><p className="ct-lede">Real talk between women, about the products we actually use.</p></div>}
       <div className="cm-head__actions">

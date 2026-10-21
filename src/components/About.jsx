@@ -1,5 +1,6 @@
 import React from 'react';
 import { EdPage, EdBlock } from './editorial/EdPage';
+import { Clip } from './personality/Bits.jsx';
 import { TEAM_CAPTION } from '../data/welcomeSlides.js';
 
 /**
@@ -90,9 +91,10 @@ function TeamPhoto() {
   const [failed, setFailed] = React.useState(false);
   if (failed) return null;
   return (
-    <figure>
+    <figure className="ay-polaroid ed-story__polaroid" style={{ '--tilt': '-1.5deg' }}>
+      <Clip />
       <img src={TEAM_PHOTO} alt="The ayna founding team" style={{ objectPosition: '50% 70%' }} loading="lazy" onError={() => setFailed(true)} />
-      <figcaption className="ed-caption">{TEAM_CAPTION}</figcaption>
+      <figcaption>{TEAM_CAPTION}</figcaption>
     </figure>
   );
 }
@@ -104,6 +106,8 @@ export default function About({ onBack, onExplore, onStart }) {
       lede="Women’s wellness products matched to your needs, with the research and reviews beside them."
       onBack={onBack}
       photo="robe-pickles"
+      tone="pink"
+      frame="stamp"
     >
       <EdBlock
         title="Your body. Your questions. A clearer place to start."
@@ -195,7 +199,7 @@ export default function About({ onBack, onExplore, onStart }) {
         </div>}
       </EdBlock>
 
-      <section className="ed-block ay-group is-padded ed-closer" aria-labelledby="ed-about-closer">
+      <section className="ed-block ay-band ay-band--espresso ay-band--bleed ay-band--scallop ed-closer ed-closer--band" aria-labelledby="ed-about-closer">
         <div>
           <h2 id="ed-about-closer" className="ed-h2">A place to return to as your needs change.</h2>
           <p className="ed-body">

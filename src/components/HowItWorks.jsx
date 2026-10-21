@@ -19,6 +19,9 @@ export default function HowItWorks({ onBack, onViewSources }) {
       lede="ayna compares products with the health profile and preferences you choose to share, then adds cited research, clinical guidance, safety information and community context where available."
       onBack={onBack}
       photo="blue-sink"
+      tone="sky"
+      frame="flower"
+      seal
     >
       <EdBlock title="Four steps, in order." intro="The numbers below are a sample profile run live on today's catalog, not your results.">
         <ol className="ed-hiw">

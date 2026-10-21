@@ -290,17 +290,19 @@ class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.recovering) {
-      return <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: 600, margin: '2rem auto', color: '#666' }}>Updating…</div>;
+      return <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '48px 20px', background: '#ffedac', color: '#3e2723', font: "500 16px/1.5 'DM Sans', system-ui, sans-serif", textAlign: 'center' }}>Updating…</div>;
     }
 
     if (this.state.hasError) {
       return (
-        <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: 600, margin: '2rem auto' }}>
-          <h1>This page didn’t load</h1>
-          <p style={{ color: '#666' }}>ayna hit an error. Reload the page to try again.</p>
-          <button type="button" onClick={() => window.location.reload()} style={{ padding: '0.5rem 1rem', marginTop: '1rem' }}>
+        <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '64px 20px', background: '#ffedac', color: '#3e2723', font: "400 16px/1.5 'DM Sans', system-ui, sans-serif" }}>
+          <div style={{ maxWidth: 560, margin: '0 auto' }}>
+          <h1 style={{ margin: '0 0 12px', font: "400 36px/1.1 var(--ay-heading, 'DM Serif Display', Georgia, serif)", letterSpacing: '-.01em' }}>This page didn’t load</h1>
+          <p style={{ margin: 0, color: 'rgba(62,39,35,.8)' }}>ayna hit an error. Reload the page to try again.</p>
+          <button type="button" onClick={() => window.location.reload()} style={{ marginTop: 24, minHeight: 52, padding: '0 28px', border: '1.5px solid #3e2723', borderRadius: 999, background: '#3e2723', color: '#ffedac', boxShadow: '3px 3px 0 #3e2723', font: "600 16px/1 'DM Sans', system-ui, sans-serif", cursor: 'pointer' }}>
             Reload
           </button>
+          </div>
         </div>
       );
     }
