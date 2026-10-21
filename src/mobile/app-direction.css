@@ -7,7 +7,7 @@
    The prefix .ayna-mobile:is(#ay, .ayna-mobile) carries ID weight on purpose:
    it outranks the older stacked-class layers without adding another one. */
 /* The ONE heading family token for the app. Every app heading reads it. */
-:root { --ay-app-heading: 'DM Serif Display', Georgia, serif; }
+:root { --ay-app-heading: 'ayna Display', 'Figtree', system-ui, sans-serif; }
 /* ===== 0. Tokens: the four surfaces ===== */
 .ayna-mobile:is(#ay,.ayna-mobile) {
   --d-page: #ffedac;

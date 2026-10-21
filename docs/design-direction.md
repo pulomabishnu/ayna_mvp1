@@ -108,7 +108,14 @@ except the one designated band on the homepage.
 
 Shadows: only the 3px espresso offset on primary buttons. Nothing else.
 
-## Type (DM Serif Display + DM Sans; Bricolage only in the logo)
+## Type (founder, Oct 20: titles in the logo face)
+
+Titles: `ayna Display` = Bricolage Grotesque (the logo face) pinned at 700 with its
+optical-size axis, self-hosted in public/fonts (src/styles/fonts.css). Body/UI:
+Figtree (warm, open; recommended Bricolage pairing per pimpmytype.com). The
+logo itself stays Bricolage 800. Tokens: `--ay-heading` (site), `--ay-app-heading`
+(app); body via `--ay-sans-stack`. Wherever this doc says Serif/Sans below,
+read ayna Display/Figtree.
 
 | Role | Desktop | Phone | Font |
 | --- | --- | --- | --- |
@@ -121,7 +128,7 @@ Shadows: only the 3px espresso offset on primary buttons. Nothing else.
 | Secondary / meta | 14 | 14 | Sans 500, espresso at 75% |
 | Caption / legal | 13 | 12.5 | Sans 500 |
 
-Serif never below 20px. Weights 400/500/600 only. Prices and numbers use
+Display face never below 18px; tighten tracking to about -0.02em on titles. Body weights 400/500/600. Prices and numbers use
 tabular figures. Left-align everything except short centred statements on
 the homepage.
 

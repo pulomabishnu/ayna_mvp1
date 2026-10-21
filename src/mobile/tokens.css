@@ -17,8 +17,8 @@
   --ay-mint-deep: #769ebe;
   --ay-alert: #b4402a;
   --ay-peri-ink: #3e2723; /* periwinkle dark enough for text */
-  --ay-font-display: 'Bricolage Grotesque', 'Poppins', system-ui, sans-serif;
-  --ay-font-ui: 'Poppins', system-ui, sans-serif;
+  --ay-font-display: 'ayna Display', 'Figtree', system-ui, sans-serif;
+  --ay-font-ui: 'Figtree', system-ui, sans-serif;
   --ay-ease: cubic-bezier(.2, .8, .2, 1);
   --ay-pop: cubic-bezier(.3, 1.5, .5, 1);
   --ay-shadow: 3px 3px 0 var(--ay-ink);

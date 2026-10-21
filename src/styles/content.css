@@ -396,7 +396,7 @@ html body .app-container.app-container.app-container.app-container {
   .cm-playlist-copy { display: grid; gap: 2px; }
   .cm-playlist-copy strong { font: 600 16px/1.3 var(--ay-sans-stack); }
   .cm-playlist-copy small { font: 500 13px/1.35 var(--ay-sans-stack); color: var(--ay-text-2); }
-  .cm-cover { position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: 1; border-radius: var(--ay-r-card); border: 1.5px solid #3e2723; background: #f6e3a1; overflow: hidden; color: #3e2723; font: 800 22px/1 'Bricolage Grotesque', var(--ay-sans-stack); box-sizing: border-box; }
+  .cm-cover { position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: 1; border-radius: var(--ay-r-card); border: 1.5px solid #3e2723; background: #f6e3a1; overflow: hidden; color: #3e2723; font: 800 22px/1 'ayna Display', var(--ay-sans-stack); box-sizing: border-box; }
   .cm-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .cm-cover.is-mosaic { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; place-items: stretch; gap: 1.5px; padding: 0; background: #3e2723; }
   .cm-cover-tile { position: relative; background: #fff; }
@@ -512,7 +512,7 @@ html body .app-container.app-container.app-container.app-container {
   .cm-upload { position: relative; cursor: pointer; }
   .cm-file { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
   .cm-cover-pick { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 16px; align-items: center; }
-  .cm-cover-preview { display: grid; place-items: center; width: 96px; height: 96px; border-radius: var(--ay-r-card); border: 1.5px solid #3e2723; overflow: hidden; padding: 8px; box-sizing: border-box; font: 800 16px/1.1 'Bricolage Grotesque', var(--ay-sans-stack); text-align: center; }
+  .cm-cover-preview { display: grid; place-items: center; width: 96px; height: 96px; border-radius: var(--ay-r-card); border: 1.5px solid #3e2723; overflow: hidden; padding: 8px; box-sizing: border-box; font: 800 16px/1.1 'ayna Display', var(--ay-sans-stack); text-align: center; }
   .cm-cover-preview img { width: 100%; height: 100%; object-fit: cover; }
   .cm-cover-opts { display: grid; gap: 10px; justify-items: start; }
   .cm-colors { display: flex; gap: 8px; }

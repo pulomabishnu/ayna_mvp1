@@ -24,7 +24,7 @@
   --ed-feature-fg: var(--ay-feature-fg, #ffedac);
   --ed-sky: #769ebe;
   --ed-hover: var(--ay-hover, rgba(62, 39, 35, .06));
-  --ed-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --ed-sans: 'Figtree', system-ui, -apple-system, sans-serif;
   --ed-serif: var(--ay-heading);
   --ed-display: 64px;
   --ed-h1: 44px;
@@ -524,8 +524,8 @@
 /* ---------- Campus resources: editorial header, object-card resources ---------- */
 html body .app-container.app-container .cr-page .cr-edhead { padding: 40px 0 28px; margin-bottom: 24px; border-bottom: 1.5px solid #3e2723; background: transparent; }
 html body .app-container.app-container .cr-page .cr-edhead .cr-h1 { font: 400 44px/1.08 var(--ay-heading) !important; letter-spacing: -.01em !important; margin: 0 0 12px; }
-html body .app-container.app-container .cr-page .cr-edhead .cr-sub { font: 400 19px/1.5 'DM Sans', sans-serif !important; margin: 0 0 8px; max-width: 46ch; }
-html body .app-container.app-container .cr-page .cr-edhead .cr-lede { font: 400 15px/1.55 'DM Sans', sans-serif !important; margin: 0; max-width: 62ch; }
+html body .app-container.app-container .cr-page .cr-edhead .cr-sub { font: 400 19px/1.5 'Figtree', sans-serif !important; margin: 0 0 8px; max-width: 46ch; }
+html body .app-container.app-container .cr-page .cr-edhead .cr-lede { font: 400 15px/1.55 'Figtree', sans-serif !important; margin: 0; max-width: 62ch; }
 html body .app-container.app-container .cr-page :is(.cr-card, .cr-case) { border-width: 1.5px !important; border-radius: 16px !important; box-shadow: none !important; }
 html body .app-container.app-container .cr-page .cr-emergency { border: 0 !important; border-radius: 16px !important; box-shadow: none !important; }
 @media (max-width: 767px) {

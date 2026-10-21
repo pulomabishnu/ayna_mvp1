@@ -6,7 +6,7 @@
 .ay-donut-track { fill: var(--ay-paper); stroke: var(--ay-ink); stroke-width: 7.6; }
 .ay-donut-seg { fill: none; stroke-width: 6; stroke-linecap: butt; animation: ay-donut-grow .9s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(.2s + var(--i) * .12s); }
 .ay-donut-num, .ay-donut-cap { rotate: 90deg; transform-origin: 21px 21px; text-anchor: middle; fill: var(--ay-ink); }
-.ay-donut-num { font: 500 11.5px/1 'DM Sans', system-ui, sans-serif; }
+.ay-donut-num { font: 500 11.5px/1 'Figtree', system-ui, sans-serif; }
 .ay-donut-cap { font: 500 11.5px/1 var(--ay-font-ui); opacity: .7; }
 .ay-donut ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .ay-donut li { display: flex; align-items: center; gap: 8px; font: 500 13px/1.2 var(--ay-font-ui); min-width: 0; animation: ay-shopper-tile .4s var(--ay-ease) both; animation-delay: calc(.4s + var(--i) * .08s); }

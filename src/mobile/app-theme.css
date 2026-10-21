@@ -1,6 +1,6 @@
 /* ayna app theme (Oct 17, 2026): the website's brand, built as an app.
-   Brand primitives: butter, espresso, sky, rose. Fonts: DM Serif Display for
-   titles only, DM Sans for everything you read or tap, Bricolage for the
+   Brand primitives: butter, espresso, sky, rose. Fonts: ayna Display for
+   titles only, Figtree for everything you read or tap, Bricolage for the
    wordmark only. Roles are named once here and every screen draws on them.
 
    App choices (not a copy of the site):
@@ -43,8 +43,8 @@
   --r-gutter: 20px;
 
   --f-display: var(--ay-app-heading);
-  --f-ui: 'DM Sans', system-ui, sans-serif;
-  --f-logo: 'Bricolage Grotesque', 'DM Sans', sans-serif;
+  --f-ui: 'Figtree', system-ui, sans-serif;
+  --f-logo: 'Bricolage Grotesque', 'Figtree', sans-serif;
 
   /* older tokens, mapped onto the roles so every existing screen follows */
   --ay-ink: var(--r-ink);

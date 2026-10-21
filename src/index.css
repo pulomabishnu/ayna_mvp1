@@ -1,10 +1,10 @@
 :root {
   /* Brand type: the only two families on the website. Every older font
      variable (--ay-font-display, --font-body, --display, --ui, ...) is an
-     alias of one of these. DM Serif Display 400 is for headings 22px and up. */
-  --ay-heading: 'DM Serif Display', Georgia, serif; /* the ONE heading family token (website) */
+     alias of one of these. ayna Display 400 is for headings 22px and up. */
+  --ay-heading: 'ayna Display', 'Figtree', system-ui, sans-serif; /* the ONE heading family token (website) */
   --ay-serif: var(--ay-heading);
-  --ay-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --ay-sans: 'Figtree', system-ui, -apple-system, sans-serif;
 
   /* One type scale, fluid between 390px and 1280px wide. */
   --ay-fs-display: clamp(40px, 32.989px + 1.7978vw, 56px); /* serif, one per page */
@@ -3129,7 +3129,7 @@ footer a[href*="career" i],
   --shadow-lg: 0 14px 40px rgba(26, 23, 20, 0.12);
 }
 
-/* Headings are Playfair at book weight, as on every board, not DM Sans 600. */
+/* Headings are Playfair at book weight, as on every board, not Figtree 600. */
 h1,
 h2,
 h3,
@@ -4043,8 +4043,8 @@ html[data-v6-site-theme='dark'] .resa-modal__logo {
 }
 
 /* ── About page (2026-10-05 redesign) ──────────────────────────────────
-   Values taken from the "About Us" design export: DM Serif Display headings,
-   DM Sans body, navy #242A52 ink, #5B5870 body copy, #D97A2B eyebrows.
+   Values taken from the "About Us" design export: ayna Display headings,
+   Figtree body, navy #242A52 ink, #5B5870 body copy, #D97A2B eyebrows.
    Selectors are prefixed with .ab so the older hiw-/about- overrides in the
    v6 stylesheets can't reach them. */
 .ab { background: #FBF8F4; }

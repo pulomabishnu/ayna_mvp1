@@ -1894,7 +1894,7 @@ function LegalScreen({ onBack, onOpenConsumerHealthData, onOpenOpenSourceLicense
             borderTop={false}
             onClick={onOpenOpenSourceLicenses}
           />
-          <AccountRow title="Typefaces" sub="DM Serif Display, DM Sans and Bricolage Grotesque, Google Fonts, SIL Open Font Licence." onClick={onOpenTypefaces} />
+          <AccountRow title="Typefaces" sub="ayna Display, Figtree and Bricolage Grotesque, Google Fonts, SIL Open Font Licence." onClick={onOpenTypefaces} />
           <AccountRow title="Research and data sources" sub="Where ayna's product and safety information comes from." onClick={onOpenResearchSources} />
         </div>
 
@@ -2155,19 +2155,19 @@ function OpenSourceLicensesScreen({ onBack }) {
 // The faces the mobile app actually renders (brand kit, Oct 2026).
 const TYPEFACES = [
   {
-    key: 'serif', name: 'DM Serif Display', role: 'Headlines and big moments',
+    key: 'serif', name: 'ayna Display', role: 'Headlines and big moments',
     designer: 'Colophon Foundry, for Google Fonts', weights: '400 and italic',
-    font: "'DM Serif Display',Georgia,serif", size: 26,
+    font: "'ayna Display','Figtree',sans-serif", size: 26,
   },
   {
-    key: 'sans', name: 'DM Sans', role: 'Body copy and interface',
+    key: 'sans', name: 'Figtree', role: 'Body copy and interface',
     designer: 'Colophon Foundry, for Google Fonts', weights: '400, 500, 600, 700, 800',
-    font: "'DM Sans',sans-serif", size: 21,
+    font: "'Figtree',sans-serif", size: 21,
   },
   {
     key: 'bg', name: 'Bricolage Grotesque', role: 'The ayna wordmark',
     designer: 'Mathieu Triay, for Google Fonts', weights: '800',
-    font: "'Bricolage Grotesque',sans-serif", size: 22,
+    font: "'ayna Display',sans-serif", size: 22,
   },
 ];
 

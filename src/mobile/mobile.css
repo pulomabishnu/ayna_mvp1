@@ -54,7 +54,7 @@
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
-  font-family: Inter, system-ui, sans-serif;
+  font-family: 'Figtree', system-ui, sans-serif;
   color: var(--ayna-text);
   background: var(--ayna-bg);
 }

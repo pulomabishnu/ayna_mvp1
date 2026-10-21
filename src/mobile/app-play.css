@@ -174,7 +174,7 @@
 .ayna-mobile .ay-discover-cta:hover .ay-discover-art i:nth-child(3) { rotate: 6deg; }
 .ay-discover-art i:nth-child(3) { transition: rotate var(--ay-dur-2) var(--ay-pop); }
 .ay-discover-copy { flex: 1; display: grid; gap: 2px; min-width: 0; }
-.ay-discover-copy strong { font: 600 17px/1.1 'DM Sans', system-ui, sans-serif; letter-spacing: -.02em; }
+.ay-discover-copy strong { font: 600 17px/1.1 'Figtree', system-ui, sans-serif; letter-spacing: -.02em; }
 .ay-discover-copy small { font: 500 13px/1.2 var(--ay-font-ui); color: var(--ay-ink-soft); }
 .ay-discover-go { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; background: var(--ay-ink); color: var(--ay-paper); font-weight: 600; }
 
@@ -217,7 +217,7 @@
 .ayna-mobile .ay-replay { display: flex; align-items: center; gap: var(--ay-space-3); width: 100%; margin: var(--ay-space-5) 0 var(--ay-space-2); padding: 12px; border: 0; border-radius: var(--ay-radius-lg); background: var(--ay-ink); color: var(--ay-paper); text-align: left; cursor: pointer; transition: transform var(--ay-dur-1) var(--ay-ease); }
 .ayna-mobile .ay-replay:active { transform: scale(.98); }
 .ay-replay > span:nth-child(2) { flex: 1; display: grid; gap: 3px; }
-.ay-replay strong { font: 600 17px/1.1 'DM Sans', system-ui, sans-serif; letter-spacing: -.02em; }
+.ay-replay strong { font: 600 17px/1.1 'Figtree', system-ui, sans-serif; letter-spacing: -.02em; }
 .ay-replay small { font: 500 13px/1 var(--ay-font-ui); opacity: .7; }
 .ay-replay-art { position: relative; display: block; width: 46px; height: 46px; flex: none; }
 .ay-replay-art i { position: absolute; display: block; width: 22px; height: 22px; border-radius: 50%; }
@@ -245,7 +245,7 @@
 .ayna-mobile .ayna-fresh-profile-menu > button:active { transform: scale(.98); }
 .ay-badges { padding: 20px 20px 0; }
 .ay-badges-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
-.ay-badges-head strong { font: 600 17px/1 'DM Sans', system-ui, sans-serif; letter-spacing: -.02em; color: var(--ay-ink); }
+.ay-badges-head strong { font: 600 17px/1 'Figtree', system-ui, sans-serif; letter-spacing: -.02em; color: var(--ay-ink); }
 .ay-badges-head span { font: 500 13px/1 var(--ay-font-ui); color: var(--ay-ink-soft); }
 .ay-badges ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
 .ay-badge { display: grid; justify-items: center; align-content:center; min-height:100px; gap: 5px; padding: 12px 8px 10px; border: 1.5px dashed var(--ay-line); border-radius: 16px; text-align: center; color: var(--ay-ink); animation: ay-screen-in var(--ay-dur-3) var(--ay-ease) both; animation-delay: calc(var(--i) * 60ms); }
@@ -302,7 +302,7 @@
 @keyframes ay-fan-b { 50% { rotate: -8deg; } }
 .ay-cover-badge { position: absolute; z-index: 2; right: -14px; top: -38px; width: 96px; height: 96px; animation: ip-spin 18s linear infinite; }
 .ay-cover-badge circle { fill: var(--ay-ink); }
-.ay-cover-badge text { font: 500 11.5px 'DM Sans', system-ui, sans-serif; letter-spacing: .05em; fill: var(--ay-paper); }
+.ay-cover-badge text { font: 500 11.5px 'Figtree', system-ui, sans-serif; letter-spacing: .05em; fill: var(--ay-paper); }
 .ay-cover-badge-star { fill: var(--ay-butter); }
 .ay-cover-card { position: relative; width: 100%; max-width: 360px; padding: 0; overflow: hidden; border: 2px solid var(--ay-ink); border-radius: 26px; background: var(--ay-paper); box-shadow: 6px 6px 0 var(--ay-ink); rotate: -1.5deg; }
 @media (prefers-reduced-motion: reduce) { .ay-cover-badge, .ay-cover-behind { animation: none; } }
@@ -343,7 +343,7 @@
 .ay-reel-cover { width: 34px; height: 34px; flex: none; border: 2px solid var(--ay-ink); border-radius: 8px; }
 .ay-reel-cover.is-pink { background: var(--ay-pink); } .ay-reel-cover.is-mint { background: var(--ay-mint); } .ay-reel-cover.is-peri { background: var(--ay-peri); }
 .ay-reel-track:first-child .ay-reel-cover { border-color: var(--ay-paper); }
-.ay-reel-track strong { flex: 1; font: 600 17px/1 'DM Sans', system-ui, sans-serif; letter-spacing: -.02em; }
+.ay-reel-track strong { flex: 1; font: 600 17px/1 'Figtree', system-ui, sans-serif; letter-spacing: -.02em; }
 .ay-reel-eq { display: flex; align-items: flex-end; gap: 3px; height: 16px; }
 .ay-reel-eq i { width: 4px; height: 100%; border-radius: 2px; background: currentColor; transform-origin: bottom; animation: ay-eq .9s ease-in-out infinite; }
 .ay-reel-eq i:nth-child(2) { animation-delay: -.3s; } .ay-reel-eq i:nth-child(3) { animation-delay: -.6s; }

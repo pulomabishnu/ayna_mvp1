@@ -12,8 +12,8 @@ export async function makePlaylistCoverFile(text, color) {
   const canvas = document.createElement('canvas');
   canvas.width = 800;
   canvas.height = 800;
-  // Brand type on the cover: DM Serif Display for the title, DM Sans for the small line.
-  try { await Promise.all([document.fonts?.load('76px "DM Serif Display"'), document.fonts?.load('600 30px "DM Sans"')]); } catch { /* falls back to Georgia */ }
+  // Brand type on the cover: ayna Display for the title, Figtree for the small line.
+  try { await Promise.all([document.fonts?.load('76px "ayna Display"'), document.fonts?.load('600 30px "Figtree"')]); } catch { /* falls back to Georgia */ }
   const ctx = canvas.getContext('2d');
   ctx.fillStyle = color;
   ctx.fillRect(0, 0, 800, 800);
@@ -27,9 +27,9 @@ export async function makePlaylistCoverFile(text, color) {
   }
   ctx.globalAlpha = 1;
   ctx.fillStyle = coverInk(color);
-  ctx.font = 'italic 48px "DM Serif Display", Georgia, serif';
+  ctx.font = 'italic 48px "ayna Display", Georgia, serif';
   ctx.fillText('ayna', 66, 98);
-  ctx.font = '76px "DM Serif Display", Georgia, serif';
+  ctx.font = '76px "ayna Display", Georgia, serif';
   const words = String(text || 'My playlist').trim().split(/\s+/);
   const lines = [];
   let line = '';
@@ -41,7 +41,7 @@ export async function makePlaylistCoverFile(text, color) {
   if (line) lines.push(line);
   const visible = lines.slice(0, 4);
   visible.forEach((value, index) => ctx.fillText(value, 66, 390 + (index - (visible.length - 1) / 2) * 93, 670));
-  ctx.font = '600 30px "DM Sans", system-ui, sans-serif';
+  ctx.font = '600 30px "Figtree", system-ui, sans-serif';
   ctx.fillText('Curated by you', 66, 710);
   const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', .88));
   if (!blob) throw new Error('Could not make the cover. Please try again.');

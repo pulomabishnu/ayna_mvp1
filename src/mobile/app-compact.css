@@ -6,7 +6,7 @@
   --cx-soft: rgba(62, 39, 35, .66);
   --cx-line: rgba(62, 39, 35, .16);
   --cx-card: rgba(255, 255, 255, .34);
-  --cx-ui: 'DM Sans', system-ui, sans-serif;
+  --cx-ui: 'Figtree', system-ui, sans-serif;
   --cx-serif: var(--ay-app-heading);
 
   &[data-theme='dark'] {

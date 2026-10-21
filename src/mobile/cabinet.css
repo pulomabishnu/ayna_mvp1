@@ -1,8 +1,8 @@
 /* Shared foundations and component styles for the existing mobile flows. */
 .ayna-mobile {
-  --ayna-font-display: 'Poppins',system-ui,sans-serif;
-  --ayna-font-ui: 'Poppins',system-ui,sans-serif;
-  --ayna-font-editorial: 'Lora',Georgia,serif;
+  --ayna-font-display: 'ayna Display','Figtree',system-ui,sans-serif;
+  --ayna-font-ui: 'Figtree',system-ui,sans-serif;
+  --ayna-font-editorial: 'ayna Display','Figtree',system-ui,sans-serif;
   --ayna-type-title:28px;
   --ayna-type-section:22px;
   --ayna-type-body:15px;
@@ -35,7 +35,7 @@
   font-family:var(--ayna-font-ui);
   background:#FCFBFB;
 }
-.ayna-mobile :is(button,input,select,textarea,[style*='DM Sans'],[style*='DM Mono'],[style*='Inter']) { font-family:var(--ayna-font-ui)!important; }
+.ayna-mobile :is(button,input,select,textarea,[style*='Figtree'],[style*='DM Mono'],[style*='Inter']) { font-family:var(--ayna-font-ui)!important; }
 .ayna-mobile :is(h1,h2,h3,[style*='Playfair Display']) { font-family:var(--ayna-font-display)!important; }
 .ayna-mobile :is(button,a,[role='button']) { -webkit-tap-highlight-color:transparent; }
 .ayna-mobile :is(button,a,[role='button']) { transition:transform 120ms ease,opacity 120ms ease; }
@@ -155,7 +155,7 @@
 .ayna-mobile .am-sheet { border-radius:24px 24px 0 0!important; }
 .ayna-mobile .ayna-fresh-auth { background:#FCFBFB!important; color:#3e2723!important; }
 .ayna-auth-campaign { position:relative; display:flex; align-items:center; justify-content:center; min-height:180px; margin:0 0 25px; overflow:hidden; background:#EEF0FD; }
-.ayna-auth-campaign>span { position:absolute; top:14px; left:15px; z-index:2; font:500 13px/1 'DM Sans', system-ui, sans-serif; }
+.ayna-auth-campaign>span { position:absolute; top:14px; left:15px; z-index:2; font:500 13px/1 'Figtree', system-ui, sans-serif; }
 .ayna-auth-campaign>div { position:relative; width:42%; height:145px; background:#fff; transform:rotate(-6deg); }
 .ayna-auth-campaign img { object-fit:contain!important; padding:6px!important; }
 .ayna-mobile .ayna-fresh-auth-back { border:0!important; background:transparent!important; color:#3e2723!important; padding-left:0!important; }
@@ -196,8 +196,8 @@
 
 /* Story-like intake scenes and the shared blue/lemon Ayna identity. */
 .ayna-mobile:not([data-theme='dark']) {
-  --ayna-font-display:'Poppins',system-ui,sans-serif;
-  --ayna-font-ui:'Poppins',system-ui,sans-serif;
+  --ayna-font-display:'ayna Display','Figtree',system-ui,sans-serif;
+  --ayna-font-ui:'Figtree',system-ui,sans-serif;
   --ayna-color-ink:#3e2723;
   --ayna-figma-ink:#3e2723;
   --ayna-figma-paper:#FCFBFB;
@@ -296,7 +296,7 @@
 .ayna-mobile .ayna-figma-discover .tone-lime { --product-halo:#FFF374; }
 .ayna-mobile .ayna-figma-discover .tone-pink { --product-halo:#F7BADD; }
 .ayna-mobile .ayna-figma-discover .ayna-fresh-product-image img { z-index:1; padding:2%!important; mix-blend-mode:multiply; -webkit-mask-image:radial-gradient(ellipse 92% 88% at center,#000 69%,transparent 100%); mask-image:radial-gradient(ellipse 92% 88% at center,#000 69%,transparent 100%); }
-.ayna-mobile .ayna-figma-discover .ayna-fresh-product-copy>strong { font:600 calc(17px * var(--ayna-text-scale, 1))/1.12 'DM Sans', system-ui, sans-serif!important; min-height:2.25em!important; margin-top:5px; }
+.ayna-mobile .ayna-figma-discover .ayna-fresh-product-copy>strong { font:600 calc(17px * var(--ayna-text-scale, 1))/1.12 'Figtree', system-ui, sans-serif!important; min-height:2.25em!important; margin-top:5px; }
 .ayna-mobile .ayna-figma-discover .ayna-fresh-product-category { display:flex; align-items:center; gap:5px; font-size:var(--shop-micro)!important; color:var(--ayna-text-muted)!important; text-transform:none!important; letter-spacing:0!important; min-height:14px; }
 .ayna-mobile .ayna-figma-discover .ayna-fresh-product-category:not(:empty)::before { content:''; flex:none; width:6px; height:6px; border-radius:50%; background:var(--product-halo,#F7BADD); }
 .ayna-mobile .ayna-figma-discover .ayna-fresh-product-category:empty { visibility:hidden; }
@@ -448,7 +448,7 @@
 .ayna-ecosystem-chart-legend a:hover,.ayna-ecosystem-chart-legend a:focus-visible { color:var(--ayna-accent-dark); transform:translateX(3px); }
 .ayna-ecosystem-chart-swatch { display:block; width:10px; height:10px; border-radius:50%; background:var(--area-color); }
 .ayna-ecosystem-chart-name { overflow:hidden; font:500 calc(13px * var(--ayna-text-scale, 1))/1.15 var(--ayna-font-ui); text-overflow:ellipsis; }
-.ayna-ecosystem-chart-legend strong { font:600 17px/1 'DM Sans', system-ui, sans-serif; }
+.ayna-ecosystem-chart-legend strong { font:600 17px/1 'Figtree', system-ui, sans-serif; }
 .ayna-mobile .ayna-cabinet-collection .ayna-fresh-product-card { display:flex!important; flex-direction:column; }
 .ayna-mobile .ayna-cabinet-collection .ayna-fresh-product-main { flex:1; }
 .ayna-mobile .ayna-cabinet-collection .ayna-fresh-product-image { background:transparent!important; border-radius:0!important; }
@@ -458,7 +458,7 @@
 .ayna-mobile .ayna-cabinet-collection .tone-pink { --product-halo:#F7BADD; }
 .ayna-mobile .ayna-cabinet-collection .ayna-fresh-product-image img { z-index:1; padding:2%!important; mix-blend-mode:multiply; -webkit-mask-image:radial-gradient(ellipse 92% 88% at center,#000 69%,transparent 100%); mask-image:radial-gradient(ellipse 92% 88% at center,#000 69%,transparent 100%); }
 .ayna-mobile[data-theme='dark'] .ayna-cabinet-collection .ayna-fresh-product-image img { mix-blend-mode:normal; }
-.ayna-mobile .ayna-cabinet-collection .ayna-fresh-product-copy>strong { font:600 calc(17px * var(--ayna-text-scale, 1))/1.14 'DM Sans', system-ui, sans-serif; }
+.ayna-mobile .ayna-cabinet-collection .ayna-fresh-product-copy>strong { font:600 calc(17px * var(--ayna-text-scale, 1))/1.14 'Figtree', system-ui, sans-serif; }
 .ayna-mobile .ayna-cabinet-collection .ayna-fresh-match-badge { position:static!important; display:flex!important; align-self:stretch; justify-content:flex-start; min-height:44px; margin-top:6px; padding:7px 0!important; border-top:1px solid var(--ayna-border)!important; border-radius:0!important; background:transparent!important; color:var(--ayna-heading)!important; }
 .ayna-mobile .ayna-cabinet-collection .ayna-fresh-match-badge strong { font:400 22px/1.15 var(--ayna-font-display); }
 .ayna-mobile .ayna-cabinet-collection .ayna-fresh-match-badge span { font-size:11.5px; font-weight: 500; }

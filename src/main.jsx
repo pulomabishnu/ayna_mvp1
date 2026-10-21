@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import { Capacitor } from '@capacitor/core'
+import './styles/fonts.css'
 import './index.css'
 import { markPerf } from './utils/perfTimings.js'
 
@@ -290,16 +291,16 @@ class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.recovering) {
-      return <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '48px 20px', background: '#ffedac', color: '#3e2723', font: "500 16px/1.5 'DM Sans', system-ui, sans-serif", textAlign: 'center' }}>Updating…</div>;
+      return <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '48px 20px', background: '#ffedac', color: '#3e2723', font: "500 16px/1.5 'Figtree', system-ui, sans-serif", textAlign: 'center' }}>Updating…</div>;
     }
 
     if (this.state.hasError) {
       return (
-        <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '64px 20px', background: '#ffedac', color: '#3e2723', font: "400 16px/1.5 'DM Sans', system-ui, sans-serif" }}>
+        <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '64px 20px', background: '#ffedac', color: '#3e2723', font: "400 16px/1.5 'Figtree', system-ui, sans-serif" }}>
           <div style={{ maxWidth: 560, margin: '0 auto' }}>
-          <h1 style={{ margin: '0 0 12px', font: "400 36px/1.1 var(--ay-heading, 'DM Serif Display', Georgia, serif)", letterSpacing: '-.01em' }}>This page didn’t load</h1>
+          <h1 style={{ margin: '0 0 12px', font: "400 36px/1.1 var(--ay-heading, 'ayna Display', 'Figtree', system-ui, sans-serif)", letterSpacing: '-.01em' }}>This page didn’t load</h1>
           <p style={{ margin: 0, color: 'rgba(62,39,35,.8)' }}>ayna hit an error. Reload the page to try again.</p>
-          <button type="button" onClick={() => window.location.reload()} style={{ marginTop: 24, minHeight: 52, padding: '0 28px', border: '1.5px solid #3e2723', borderRadius: 999, background: '#3e2723', color: '#ffedac', boxShadow: '3px 3px 0 #3e2723', font: "600 16px/1 'DM Sans', system-ui, sans-serif", cursor: 'pointer' }}>
+          <button type="button" onClick={() => window.location.reload()} style={{ marginTop: 24, minHeight: 52, padding: '0 28px', border: '1.5px solid #3e2723', borderRadius: 999, background: '#3e2723', color: '#ffedac', boxShadow: '3px 3px 0 #3e2723', font: "600 16px/1 'Figtree', system-ui, sans-serif", cursor: 'pointer' }}>
             Reload
           </button>
           </div>
@@ -320,7 +321,7 @@ if (isMobilePreview) {
   try {
     const l = document.createElement('link');
     l.rel = 'stylesheet';
-    l.href = 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Poppins:wght@400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,700&family=Archivo+Black&family=DM+Mono:wght@400;500&display=swap';
+    l.href = 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap';
     document.head.appendChild(l);
   } catch { /* fonts are progressive */ }
 }

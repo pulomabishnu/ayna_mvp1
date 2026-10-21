@@ -113,7 +113,7 @@
   --ay-hover: rgba(62, 39, 35, .06);
   --ay-group-hover: rgba(62, 39, 35, .05);
 
-  --ay-sans-stack: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --ay-sans-stack: 'Figtree', system-ui, -apple-system, sans-serif;
   --ay-serif-stack: var(--ay-heading);
 
   --ay-type-display: 64px;
@@ -618,7 +618,7 @@
 .app-container .ay-seal { position: absolute; z-index: 2; width: 116px; height: 116px; display: grid; place-items: center; border-radius: 50%; background: #f7badd; color: #3e2723; border: 1.5px solid #3e2723; pointer-events: none; }
 .app-container .ay-seal svg { position: absolute; inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); animation: ay-spin 28s linear infinite; }
 .app-container .ay-seal text { font: 600 12.5px var(--ay-sans-stack); letter-spacing: .06em; fill: #3e2723; }
-.app-container .ay-seal b { position: relative; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: #3e2723; color: #ffedac; font: 800 17px/1 'Bricolage Grotesque', var(--ay-sans-stack); letter-spacing: -.03em; }
+.app-container .ay-seal b { position: relative; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: #3e2723; color: #ffedac; font: 800 17px/1 'ayna Display', var(--ay-sans-stack); letter-spacing: -.03em; }
 @keyframes ay-spin { to { transform: rotate(360deg); } }
 
 .app-container .ay-frame { display: block; border: 1.5px solid #3e2723; border-radius: 20px; overflow: hidden; background: #f6e3a1; }

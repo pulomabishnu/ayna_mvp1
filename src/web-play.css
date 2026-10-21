@@ -1,6 +1,6 @@
 /* ayna website, app style.
    Same palette, type and shapes as the mobile app: ink + paper + four
-   pastels, Bricolage display type, 'DM Sans' UI type, 2px ink outlines,
+   pastels, Bricolage display type, 'Figtree' UI type, 2px ink outlines,
    rounded tiles and a small offset shadow. Loaded last, scoped to the
    desktop shell (.app-container) so the mobile app is untouched. */
 
@@ -68,7 +68,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 .app-container :is(input, textarea, select):focus { box-shadow: none !important; }
 .app-container :is(button, a):focus-visible { outline: 2px solid var(--ay-ink) !important; outline-offset: 2px; }
 
-/* Type: chunky display headings, everything else 'DM Sans' */
+/* Type: chunky display headings, everything else 'Figtree' */
 .app-container main :is(h1, h2) { font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; color: var(--ay-ink); }
 .app-container main h3 { font-family: var(--ay-sans) !important; letter-spacing: -.01em; color: var(--ay-ink); }
 .app-container main :is(p, li, label, span, small) { font-family: var(--ay-sans); }
@@ -371,7 +371,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 /* ---------- Sign-in modal ---------- */
 .ay-auth-card { border: 2px solid #1d1a2b !important; border-radius: 28px !important; background: #fffcf5 !important; box-shadow: 6px 6px 0 #1d1a2b !important; font-family: var(--ay-sans); }
 .ay-auth-card :is(input, button, p, a, span) { font-family: var(--ay-sans) !important; }
-.ay-auth-logo { color: #1d1a2b !important; font: 800 34px/1 'Bricolage Grotesque', 'DM Sans', sans-serif !important; font-style: normal !important; letter-spacing: -.085em !important; }
+.ay-auth-logo { color: #1d1a2b !important; font: 800 34px/1 'Bricolage Grotesque', 'Figtree', sans-serif !important; font-style: normal !important; letter-spacing: -.085em !important; }
 .ay-auth-card input { border: 2px solid #1d1a2b !important; border-radius: 14px !important; background: #fffcf5 !important; color: #1d1a2b !important; }
 .ay-auth-toggle { padding: 3px !important; border: 2px solid #1d1a2b !important; border-radius: 99px !important; background: #fffcf5 !important; }
 .ay-auth-toggle button { border: 0 !important; border-radius: 99px !important; background: transparent !important; color: #1d1a2b !important; font-weight: 600 !important; box-shadow: none !important; }

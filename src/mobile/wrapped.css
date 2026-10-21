@@ -22,7 +22,7 @@
 .ayw-progress span { flex: 1; height: 4px; border-radius: 4px; background: color-mix(in srgb, var(--w-fg) 22%, transparent); overflow: hidden; }
 .ayw-progress i { display: block; height: 100%; background: var(--w-fg); transition: width .08s linear; }
 .ayw-top { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
-.ayw-top > span { font: 500 13px/1 'DM Sans', system-ui, sans-serif; letter-spacing: -.01em; }
+.ayw-top > span { font: 500 13px/1 'Figtree', system-ui, sans-serif; letter-spacing: -.01em; }
 .ayw-top button { width: 40px; height: 40px; display: grid; place-items: center; border: 2px solid currentColor; border-radius: 50%; background: transparent; }
 .ayw-top svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .ayw-top button[aria-label='Play story'] svg { fill: currentColor; }
@@ -95,7 +95,7 @@
 /* finish */
 .ayw--finish .ayw-stage { gap: 30px; }
 .ayw-card { position: relative; margin-top: 8px; padding: 22px 20px 18px; border: 2.5px solid var(--ay-paper); border-radius: 28px; background: var(--ay-peri); color: var(--ay-ink); box-shadow: 7px 7px 0 var(--ay-pink); rotate: -2deg; }
-.ayw-card-mark { display: inline-block; padding: 6px 12px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-butter); font: 600 17px/1 'DM Sans', system-ui, sans-serif; letter-spacing: -.04em; }
+.ayw-card-mark { display: inline-block; padding: 6px 12px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-butter); font: 600 17px/1 'Figtree', system-ui, sans-serif; letter-spacing: -.04em; }
 .ayw-card-title { display: block; margin: 18px 0 14px; font: 400 28px/1.15 var(--ay-font-display); letter-spacing: -.05em; }
 .ayw-card ul { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
 .ayw-card li { display: flex; justify-content: space-between; gap: 14px; padding: 10px 0; border-top: 2px dashed rgba(62, 39, 35, .25); font: 500 13px/1.3 var(--ay-font-ui); }

@@ -257,7 +257,7 @@
 .ayna-match-gauge span {
   position: relative;
   z-index: 1;
-  font: 600 var(--gauge-font)/1 'DM Sans', system-ui, sans-serif;
+  font: 600 var(--gauge-font)/1 'Figtree', system-ui, sans-serif;
   color: var(--gauge-text);
 }
 

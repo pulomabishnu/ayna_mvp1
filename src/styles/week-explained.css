@@ -14,12 +14,12 @@
 .ayna-mobile :is(.ay-hd, .ay-bn) {
   --x-ink: var(--d-ink, #3e2723); --x-soft: var(--d-ink-2, rgba(62, 39, 35, .75)); --x-group: var(--d-group, #f6e3a1); --x-hair: var(--d-hair, rgba(62, 39, 35, .15));
   --x-feature: var(--d-feature, #3e2723); --x-on: var(--d-on-feature, #ffedac); --x-on-2: var(--d-on-feature-2, rgba(255, 237, 172, .78)); --x-on-hair: var(--d-feature-hair, rgba(255, 237, 172, .2));
-  --x-serif: var(--f-display, 'DM Serif Display', serif); --x-sans: var(--f-ui, 'DM Sans', sans-serif); --x-scale: var(--ayna-text-scale, 1); --x-gutter: var(--d-gutter, 20px);
+  --x-serif: var(--f-display, 'ayna Display', serif); --x-sans: var(--f-ui, 'Figtree', sans-serif); --x-scale: var(--ayna-text-scale, 1); --x-gutter: var(--d-gutter, 20px);
 }
 .app-container .ay-wh {
   --x-ink: var(--wh-ink, #3e2723); --x-soft: var(--wh-soft, rgba(62, 39, 35, .74)); --x-group: var(--ay-group, #f6e3a1); --x-hair: var(--ay-hairline, rgba(62, 39, 35, .15));
   --x-feature: var(--ay-feature-bg, #3e2723); --x-on: var(--ay-feature-fg, #ffedac); --x-on-2: color-mix(in srgb, var(--ay-feature-fg, #ffedac) 80%, transparent); --x-on-hair: color-mix(in srgb, var(--ay-feature-fg, #ffedac) 22%, transparent);
-  --x-serif: var(--ay-serif, 'DM Serif Display', serif); --x-sans: var(--ay-sans, 'DM Sans', sans-serif); --x-scale: 1; --x-gutter: clamp(16px, 4vw, 48px);
+  --x-serif: var(--ay-serif, 'ayna Display', serif); --x-sans: var(--ay-sans, 'Figtree', sans-serif); --x-scale: 1; --x-gutter: clamp(16px, 4vw, 48px);
 }
 
 /* The bento is one column on phones; children may shrink (long sentences, the scrolling shelf). */

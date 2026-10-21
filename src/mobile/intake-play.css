@@ -54,7 +54,7 @@
 .ip-round svg { width: 17px; height: 17px; fill: none; stroke: var(--ay-ink); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .ip-round:active { transform: scale(.92); }
 .ip-round:disabled { opacity: .35; cursor: default; }
-.ip-count { font: 600 17px/1 'DM Sans', system-ui, sans-serif; letter-spacing: -.02em; }
+.ip-count { font: 600 17px/1 'Figtree', system-ui, sans-serif; letter-spacing: -.02em; }
 .ip-count i { font-style: normal; opacity: .45; }
 .ip-skip { min-width: 44px; min-height: 40px; padding: 0 4px; border: 0; background: none; font: 500 13px/1 var(--ay-font-ui); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .ip-skip-spacer { width: 44px; }
@@ -130,7 +130,7 @@
 .ip-art-coins { width: 130px; height: 170px; right: -36px; bottom: 90px; }
 .ip-art-coins ellipse { stroke: var(--ay-ink); stroke-width: 2; fill: var(--ip-select); }
 .ip-art-rings { width: 340px; height: 340px; right: -150px; bottom: 30px; animation: ip-spin 60s linear infinite; }
-.ip-art-rings text { font: 600 17px 'DM Sans', system-ui, sans-serif; letter-spacing: .12em; fill: var(--ip-deep); }
+.ip-art-rings text { font: 600 17px 'Figtree', system-ui, sans-serif; letter-spacing: .12em; fill: var(--ip-deep); }
 
 /* ---------- chips ---------- */
 
@@ -252,7 +252,7 @@
 .ip-ticket::before, .ip-ticket::after { content: ''; position: absolute; top: calc(50% - 4px); width: 26px; height: 26px; translate: 0 -50%; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ip-bg); }
 .ip-ticket::before { left: -15px; clip-path: inset(-2px -2px -2px 50%); }
 .ip-ticket::after { right: -15px; clip-path: inset(-2px 50% -2px -2px); }
-.ip-ticket-top { display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 2px dashed var(--ay-ink-faint); font: 500 11.5px/1 'DM Sans', system-ui, sans-serif; letter-spacing: .14em; }
+.ip-ticket-top { display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 2px dashed var(--ay-ink-faint); font: 500 11.5px/1 'Figtree', system-ui, sans-serif; letter-spacing: .14em; }
 .ip-ticket-digits { display: flex; justify-content: center; gap: 7px; padding: 18px 0; }
 .ip-ticket-digits input {
   width: min(52px, 15vw); height: 66px; padding: 0; border: 2px solid var(--ay-ink); border-radius: 12px; outline: 0; background: var(--ip-bg);
@@ -430,7 +430,7 @@
 .ip-divider small { order: 2; padding: 4px 8px; border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper); font-size: 11.5px; font-weight: 500; letter-spacing: .04em; text-transform: none; }
 .ip-groups { display: grid; gap: 20px; }
 .ip-onfile { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding: 12px 14px; border: 1.5px dashed var(--ay-ink); border-radius: 16px; background: rgba(255, 252, 245, .6); font: 500 13px/1.35 var(--ay-font-ui); }
-.ip-onfile b { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border: 2px solid var(--ay-ink); border-radius: 12px; background: var(--ay-paper); font: 600 17px/1 'DM Sans', system-ui, sans-serif; }
+.ip-onfile b { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border: 2px solid var(--ay-ink); border-radius: 12px; background: var(--ay-paper); font: 600 17px/1 'Figtree', system-ui, sans-serif; }
 .ip-onfile small { display: block; margin-bottom: 3px; font: 500 13px/1.2 var(--ay-font-ui); color: var(--ay-ink-soft); }
 .ip-input { width: 100%; box-sizing: border-box; min-height: 52px; margin-top: 4px; padding: 0 16px; border: 1.5px solid var(--ay-ink); border-radius: 16px; outline: 0; background: var(--ay-paper); color: var(--ay-ink); font: 500 max(16px, calc(14px * var(--ayna-text-scale, 1))) var(--ay-font-ui); }
 .ip-counter { margin-top: 10px; text-align: right; font: 500 11.5px/1 var(--ay-font-ui); color: var(--ay-ink-soft); }

@@ -58,7 +58,7 @@
 .ayna-mobile .am-playlist-detail-copy small { color: var(--ay-ink-soft) !important; font: 500 13px/1 var(--ay-font-ui) !important; letter-spacing: 0 !important; text-transform: none !important; }
 .ayna-mobile .am-playlist-detail-copy .am-detail-title { margin: 6px 0 4px !important; font: 400 28px/1.15 var(--ay-font-display) !important; letter-spacing: -.04em !important; }
 .ayna-mobile .am-playlist-section-heading { display: flex; justify-content: space-between; align-items: baseline; margin: 8px 0 10px !important; }
-.ayna-mobile .am-playlist-section-heading span { font: 600 17px/1 'DM Sans', system-ui, sans-serif; text-transform: none !important; letter-spacing: -.02em !important; color: var(--ay-ink); }
+.ayna-mobile .am-playlist-section-heading span { font: 600 17px/1 'Figtree', system-ui, sans-serif; text-transform: none !important; letter-spacing: -.02em !important; color: var(--ay-ink); }
 .ayna-mobile .am-playlist-section-heading strong { min-width: 28px; height: 28px; display: grid; place-items: center; padding: 0 8px; border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper); font: 500 13px/1 var(--ay-font-ui); }
 .ayna-mobile .am-product { border: 1.5px solid var(--ay-line) !important; border-radius: 16px !important; background: var(--ay-paper) !important; transition: transform var(--ay-dur-1) var(--ay-ease); }
 .ayna-mobile .am-product:active { transform: scale(.98); }
@@ -81,7 +81,7 @@
 .ayna-mobile .am-profile-actions .am-primary { border: 1.5px solid var(--ay-ink) !important; background: var(--ay-ink) !important; color: var(--ay-paper) !important; }
 .ayna-mobile .am-profile-actions .am-secondary { border: 1.5px solid var(--ay-ink) !important; background: transparent !important; color: var(--ay-ink) !important; }
 .ayna-mobile .am-profile-actions :is(.am-primary, .am-secondary):active { transform: scale(.96); }
-.ayna-mobile .am-profile-detail h3, .ayna-mobile .am-profile-detail .am-section-label { font: 600 17px/1 'DM Sans', system-ui, sans-serif !important; text-transform: none !important; letter-spacing: -.02em !important; color: var(--ay-ink) !important; }
+.ayna-mobile .am-profile-detail h3, .ayna-mobile .am-profile-detail .am-section-label { font: 600 17px/1 'Figtree', system-ui, sans-serif !important; text-transform: none !important; letter-spacing: -.02em !important; color: var(--ay-ink) !important; }
 
 /* Reply composer stays inside the gutter. */
 .ayna-mobile .am-compose-inline { box-sizing: border-box; width: auto !important; max-width: 100%; }
@@ -93,7 +93,7 @@
 .ayna-mobile.ayna-mobile .am-sheet { grid-template-columns: minmax(0, 1fr); }
 .ayna-mobile.ayna-mobile .am-sheet > * { min-width: 0; }
 .ayna-mobile.ayna-mobile .am-audience input[type='radio'] { border-radius: 50% !important; padding: 0 !important; }
-.ayna-mobile.ayna-mobile .am-playlist-section-heading span { text-transform: none !important; letter-spacing: -.02em !important; font: 600 17px/1 'DM Sans', system-ui, sans-serif !important; color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile .am-playlist-section-heading span { text-transform: none !important; letter-spacing: -.02em !important; font: 600 17px/1 'Figtree', system-ui, sans-serif !important; color: var(--ay-ink) !important; }
 .ayna-mobile.ayna-mobile .am-playlist-item .am-product { grid-template-columns: 58px minmax(0, 1fr) auto !important; align-items: center; padding: 10px 12px 10px 10px !important; border: 1.5px solid var(--ay-line) !important; }
 .ayna-mobile.ayna-mobile .am-playlist-item .am-product .am-product-photo { grid-row: auto !important; border-radius: 12px !important; }
 .ayna-mobile.ayna-mobile .am-playlist-item .am-product > span:not(.am-product-photo) { grid-column: 2 !important; align-self: center !important; }
