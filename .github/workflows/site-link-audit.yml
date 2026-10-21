@@ -1,0 +1,54 @@
+name: Site link audit
+
+# Every link on the website and in the app: external URLs (buy links,
+# images, sources, socials) and every internal page rendered in headless
+# Chrome. Writes reports/link-audit.json and reports/link-audit.md and
+# commits them back to the branch that triggered the run.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [fix/age-stage-sourced-rules]
+    paths: ['.github/workflows/site-link-audit.yml', 'scripts/audit-all-links.mjs', 'reports/.rerun']
+  schedule:
+    - cron: "41 10 * * 1" # Mondays 10:41 UTC
+
+permissions:
+  contents: write
+
+concurrency:
+  group: site-link-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies (with Chrome for puppeteer)
+        run: npm ci --no-audit --no-fund
+      - name: Audit every link
+        run: node scripts/audit-all-links.mjs
+        env:
+          SITE: https://www.aynahealth.co
+      - name: Commit report to this branch
+        if: always() && github.event_name != 'schedule'
+        run: |
+          git config user.name "ayna link audit"
+          git config user.email "actions@users.noreply.github.com"
+          git add -f reports/link-audit.json reports/link-audit.md || exit 0
+          git diff --cached --quiet && exit 0
+          git commit -m "Link audit report [skip ci]"
+          git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin HEAD:"${GITHUB_REF_NAME}"
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-link-audit
+          path: reports/
+          retention-days: 30
