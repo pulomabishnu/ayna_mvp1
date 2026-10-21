@@ -140,7 +140,7 @@ html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wh-week.ay-hd-fold > s
 /* =====================================================================
    Round 2: what Apple Health doesn't do, near the top.
    ===================================================================== */
-.ayna-mobile :is(.ay-wx-empty) { --x-ink: var(--d-ink, #3e2723); --x-soft: var(--d-ink-2, rgba(62, 39, 35, .75)); --x-group: var(--d-group, #f6e3a1); --x-hair: var(--d-hair, rgba(62, 39, 35, .15)); --x-serif: var(--f-display, 'DM Serif Display', serif); --x-sans: var(--f-ui, 'DM Sans', sans-serif); --x-scale: var(--ayna-text-scale, 1); }
+.ayna-mobile :is(.ay-wx-empty) { --x-ink: var(--d-ink, #3e2723); --x-soft: var(--d-ink-2, rgba(62, 39, 35, .75)); --x-group: var(--d-group, #f6e3a1); --x-hair: var(--d-hair, rgba(62, 39, 35, .15)); --x-serif: var(--f-display, 'ayna Display', serif); --x-sans: var(--f-ui, 'Figtree', sans-serif); --x-scale: var(--ayna-text-scale, 1); }
 
 /* Feature: Why we say this + Ask ayna on one line */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-actions { display: flex; flex-wrap: wrap; align-items: flex-start; column-gap: 20px; }
