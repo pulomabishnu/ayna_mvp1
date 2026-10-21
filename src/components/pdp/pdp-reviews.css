@@ -2,7 +2,7 @@
    app. Own file so the global sheets (theme-v3, ayna-system, app-*) stay
    untouched. docs/design-direction.md: the summary is a Group (#f6e3a1, no
    border), each review and post is an object card (1.5px espresso border,
-   radius 16), DM Sans body, the heading uses .ay-h2 so the heading font token
+   radius 16), Figtree body, the heading uses .ay-h2 so the heading font token
    applies. Website colours come from --ay-* (ayna-system.css, dark under
    .app-container[data-theme='brand-dark']); the app's from --d-* (app-
    direction.css, dark under .ayna-mobile[data-theme='dark']). Both scopes
@@ -14,7 +14,7 @@
   --wps-group: var(--ay-group, #f6e3a1);
   --wps-page: var(--ay-page, #ffedac);
   --wps-line: var(--ay-hairline, rgba(62, 39, 35, .15));
-  --wps-ui: var(--ay-sans-stack, 'DM Sans', system-ui, sans-serif);
+  --wps-ui: var(--ay-sans-stack, 'Figtree', system-ui, sans-serif);
   --wps-btn-bg: var(--ay-feature-bg, #3e2723);
   --wps-btn-fg: var(--ay-feature-fg, #ffedac);
   --wps-shadow: var(--ay-press-shadow, 3px 3px 0 #3e2723);
@@ -28,7 +28,7 @@
   --wps-group: var(--d-group, #f6e3a1);
   --wps-page: var(--d-page, #ffedac);
   --wps-line: rgba(62, 39, 35, .15);
-  --wps-ui: var(--f-ui, 'DM Sans', system-ui, sans-serif);
+  --wps-ui: var(--f-ui, 'Figtree', system-ui, sans-serif);
   --wps-btn-bg: #3e2723;
   --wps-btn-fg: #ffedac;
   --wps-shadow: 3px 3px 0 #3e2723;
