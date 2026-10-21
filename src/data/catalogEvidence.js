@@ -315,10 +315,10 @@ function applyPrivacyReviewGuardrail(product) {
   return {
     ...product,
     privacy: {
-      dataStorage: 'Review the provider current privacy policy for data storage details.',
-      sellsData: 'Review the provider current privacy policy for data sharing and sale disclosures.',
-      hipaa: 'Review the provider current privacy notices for applicable privacy protections.',
-      keyPolicy: 'Privacy practices can change. Verify the provider current policy before sharing sensitive health information.'
+      dataStorage: 'Review the provider\'s current privacy policy for data storage details.',
+      sellsData: 'Review the provider\'s current privacy policy for data sharing and sale disclosures.',
+      hipaa: 'Review the provider\'s current privacy notices for applicable privacy protections.',
+      keyPolicy: 'Privacy practices can change. Verify the provider\'s current policy before sharing sensitive health information.'
     }
   };
 }
