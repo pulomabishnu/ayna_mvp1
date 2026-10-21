@@ -1340,7 +1340,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
       )}
       <header className="ct-lib__top ay-pagehead ay-band ay-band--pink">
         <div className="ct-lib__title">
-          <h1 className="ay-h1">Short reads, real sources.</h1>
+          <h1 className="ay-h1">Quick reads about your body</h1>
           <p className="ct-lede">Plain-language reads on women&apos;s health, each one checked against clinical sources.</p>
         </div>
         <label className="ct-search">

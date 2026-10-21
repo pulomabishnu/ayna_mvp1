@@ -664,7 +664,7 @@ function WelcomeBack({ heroBanner = null, user, myProducts, recommendedProductId
         ) : (
           <button type="button" className="ed-dash__part" onClick={() => onViewArticles?.()}>
             <span className="ed-dash__label">Library</span>
-            <strong className="ed-dash__title">Short reads, real sources</strong>
+            <strong className="ed-dash__title">Quick reads about your body</strong>
             <span className="ed-dash__body">Answer the quiz and we will pick the read that fits you.</span>
             <span className="ed-dash__go">Open the Library <Arrow /></span>
           </button>
