@@ -94,10 +94,13 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .am-author-line button::after { cont
 
 /* ---------- Text size (You > Appearance & preferences) ----------
    Most screens size text with calc(… * --ayna-text-scale); Community didn't,
-   so "Extra large" changed one line there. Zoom the parts that use fixed px
-   (posts, folder tabs, topic chips, start prompts, search). Zoom keeps the
+   so "Extra large" changed one line there; Shop's tabs and chips were fixed
+   too. Zoom the parts that use fixed px (posts, folder tabs, topic chips,
+   start prompts, search, Shop tabs and chips). Zoom keeps the
    layout in step with the text, the way Dynamic Type grows rows. */
 html body .ayna-mobile:is(#ay,.ayna-mobile) :is(.am-note, .am-folders, .am-pods, .am-prompts, .am-search, .am-list-row) { zoom: var(--ayna-text-scale, 1); }
+/* Shop: folder tabs, quick chips, Filters and Swipe (14-15px fixed). */
+html body .ayna-mobile:is(#ay,.ayna-mobile) :is(.ayna-category-index .ay-folders, .ay-app-quick, .ay-shop-toolbar > button) { zoom: var(--ayna-text-scale, 1); }
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
@@ -126,3 +129,10 @@ html body .ayna-mobile:is(#ay,.ayna-mobile):has(> .ayna-bottom-nav) .ayna-fresh-
 /* The tab bar: same paper as the page, no hairline or shadow (no seam). */
 html body .ayna-mobile:is(#ay,.ayna-mobile) .ayna-bottom-nav { border-top: 0 !important; box-shadow: none !important; background: var(--d-page, #ffedac) !important; }
 html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ayq-bar__pill { width: 100% !important; box-sizing: border-box; }
+/* Health data step and Your plan: the "Skip for now" / "See my matches" footer
+   was sticky with a hairline; it now ends the page like any other block. */
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-qc-foot { position: static !important; border-top: 0 !important; box-shadow: none !important; background: transparent !important; }
+/* Older sticky rules still on the books for app blocks (some unused today):
+   pinned here so none of them can come back. The community composer's Post
+   button stays sticky: it lives inside a sheet, which the rule allows. */
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) :is(.ay-hd-areas, .ay-pt__bar, .ayp-ev .ay-tabs, .ay-glance__nav, .eco-app-float, .ay-read-status) { position: static !important; }
