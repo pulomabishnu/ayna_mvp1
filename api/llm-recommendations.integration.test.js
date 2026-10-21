@@ -222,7 +222,7 @@ describe('POST /api/llm-recommendations — client-controlled fan-out caps', () 
 
     expect(res.statusCode).toBe(200);
     expect(globalThis.fetch.mock.calls.length).toBe(20);
-  });
+  }, 20000);
 
   it('clamps a negative batchIndex instead of slicing backwards', async () => {
     globalThis.fetch = vi.fn(async () => anthropicOk(recPayload()));

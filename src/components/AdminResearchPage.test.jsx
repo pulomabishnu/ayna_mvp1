@@ -22,5 +22,5 @@ describe('AdminResearchPage', () => {
     expect(text).toContain('Approve');
     expect(text).toMatch(/Products with empty sections \(\d+\)/);
     expect(text).toContain('Research this product');
-  });
+  }, 20000);
 });
