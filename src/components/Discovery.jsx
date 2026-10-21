@@ -532,9 +532,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // Freshly generated on every mount, Discovery unmounts/remounts on each navigation to it,
     // so this reshuffles the browsing grid's default order every time a user lands on the page,
     // without reshuffling mid-visit as filters/sort change.
-    // Audit B20: stable for the whole day (same order on every visit today), so a
-    // returning shopper doesn't lose her place; it still rotates daily for fairness.
-    const [shuffleSeed] = useState(() => `day-${new Date().toISOString().slice(0, 10)}`);
+    // A new order every time she opens Browse (Eliz, 2026-10-21), so she isn't
+    // shown the same products each visit. Partner brands keep their ranked spots
+    // at the top; which product each partner shows rotates with the same seed.
+    // Coming back from a product page keeps the order (App.jsx keeps the Shop
+    // mounted then), so she doesn't lose her place.
+    const [shuffleSeed] = useState(() => `visit-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`);
     // Personalization requires an actual account (quiz results / health import /
     // real recommendations all live behind login) -- never on for a logged-out
     // visitor, regardless of any of those other signals somehow being truthy.
