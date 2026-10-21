@@ -1,0 +1,56 @@
+/* App motion moments and touch basics (anti-vibe guide, sections 4 and 6).
+   Loaded last by MobileApp.jsx. Tokens live in tokens.css / styles/motion.css.
+   Kept to the selectors these moments need; no new override layers. */
+
+/* ---- Sheets: Ask ayna, sign in, Shop filters ----
+   Up from the bottom in 360ms, down in 240ms, 40% espresso behind, a real
+   grabber you can drag. */
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer { transform: none !important; background: var(--sheet-dim) !important; opacity: 0; transition: opacity var(--t-sheet-out) var(--ease-exit), visibility 0s var(--t-sheet-out) !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer[data-open='true'] { opacity: 1; transition: opacity var(--t-base) var(--ease-out) !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer .ayna-ask-drawer-content { transform: translateY(100%); transition: transform var(--t-sheet-out) var(--ease-exit); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer[data-open='true'] .ayna-ask-drawer-content { transform: none; transition: transform var(--t-sheet) var(--ease-out); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer-content > div:first-child::before { display: none !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer-content > .ay-sheet-grabber { flex: none; margin: 0; height: 24px; color: var(--ay-ink); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer-content > .ay-sheet-grabber + div { padding-top: 6px !important; }
+
+.ayna-mobile:is(#ay, .ayna-mobile) :is(.ayna-shop-filter-backdrop, .ayna-profile-auth-backdrop) { background: var(--sheet-dim) !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; animation: ay-dim-in var(--t-base) var(--ease-out) both; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-shop-filter-sheet { animation: ay-sheet-in var(--t-sheet) var(--ease-out) both !important; touch-action: pan-y; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-shop-filter-sheet::before { display: none !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-shop-filter-sheet > .ay-sheet-grabber,
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-profile-auth-sheet > .ay-sheet-grabber { position: absolute; top: 0; left: 50%; width: 88px; height: 24px; margin: 0 0 0 -44px; min-height: 0 !important; min-width: 0 !important; color: currentColor; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-shop-filter-sheet { position: relative; padding-top: 24px !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-profile-auth-close svg { display: block; margin: auto; }
+
+/* ---- Pressed state for anything tappable (no grey tap flash) ---- */
+.ayna-mobile { -webkit-tap-highlight-color: transparent; }
+.ayna-mobile :is(button, a, [role='button'], summary):not(:disabled):not(.ay-sheet-grabber):not([aria-disabled='true']) { transition-property: transform, background-color, color, border-color, box-shadow, opacity; transition-duration: var(--t-press), var(--t-fast), var(--t-fast), var(--t-fast), var(--t-fast), var(--t-fast); transition-timing-function: var(--ease-out); }
+.ayna-mobile :is(button, a, [role='button']):not(:disabled):not(.ay-sheet-grabber):not(.ayna-slide-start-handle):active { transform: scale(.97); }
+/* Chrome text never selects or pops the iOS callout on long-press */
+.ayna-mobile :is(button, nav, header, .ayna-bottom-nav) { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+/* Hover only where a mouse can hover: no sticky hover after a tap */
+@media (hover: none) { .ayna-mobile :is(button, a):hover { filter: none; } }
+
+/* ---- Heart pop on the card save buttons ---- */
+.ayna-mobile .ay-pc-save.ay-heart-pop svg, .ayna-mobile .ayna-card-save.ay-heart-pop svg { animation: ay-heart-pop 320ms var(--ease-pop) both; }
+
+/* ---- Added: the morph label inside the Saved screen button ---- */
+.ayna-mobile .ayna-saved-ecosystem-action .ay-added-morph svg { width: 16px; height: 16px; }
+
+/* ---- Landing: one plain start button (replaces slide-to-start) ---- */
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-land-start { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 60px; padding: 0 24px; border: 2px solid #3e2723; border-radius: 999px; background: #3e2723; color: #ffedac; font: 600 18px/1 var(--ay-font-ui); cursor: pointer; box-shadow: 4px 4px 0 #f7badd; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-land-start svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-land-start:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #f7badd; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-land-start-note { margin: 10px 0 0; text-align: center; font: 500 14px/1.4 var(--ay-font-ui); color: #3e2723; opacity: .8; }
+.ayna-mobile:is(#ay, .ayna-mobile)[data-theme='dark'] .ay-land-start { background: #ffedac; color: #3e2723; border-color: #ffedac; }
+.ayna-mobile:is(#ay, .ayna-mobile)[data-theme='dark'] .ay-land-start-note { color: #ffedac; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer .ayna-ask-drawer-content { transform: none; transition: none; }
+  .ayna-mobile :is(button, a, [role='button']):active { transform: none; }
+}
+
+/* ---- Former clickable <div>s, now real buttons (VoiceOver, keyboard) ----
+   Reset to look exactly as the div did; inline styles still win. */
+.ayna-mobile .ay-plain-btn { -webkit-appearance: none; appearance: none; margin: 0; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: inherit; line-height: inherit; letter-spacing: inherit; cursor: pointer; }
+.ayna-mobile .ay-plain-btn.is-block { display: flex; width: 100%; text-align: left; }
+.ayna-mobile .ay-plain-btn:focus-visible { outline: 2px solid var(--ay-ink); outline-offset: 2px; }

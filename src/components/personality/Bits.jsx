@@ -1,4 +1,4 @@
-import React, { useId } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 
 /* Decorative pieces for the personality layer (design direction,
  * "Personality"). Styles live in src/styles/ayna-system.css (.ay-seal,
@@ -53,13 +53,24 @@ export function LineIcon({ icon = 'spark' }) {
 /* The one marquee ribbon on a page. `tab` is an optional fixed label
  * (a link) on the left; `items` are real names or a short phrase. */
 export function Ribbon({ items, tab = null, label, className = '' }) {
+  // The page's one moving row. It stops while offscreen (and on hover, focus,
+  // the footer's Pause motion and reduced motion, in ayna-system.css).
+  const ref = useRef(null);
+  const [offscreen, setOffscreen] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
+    const io = new IntersectionObserver(([entry]) => setOffscreen(!entry.isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   const row = (hidden) => (
     <ul aria-hidden={hidden || undefined} aria-label={hidden ? undefined : label}>
       {items.map((t, i) => <li key={`${t}-${i}`}>{t}</li>)}
     </ul>
   );
   return (
-    <div className={`ay-ribbon ${className}`}>
+    <div ref={ref} className={`ay-ribbon${offscreen ? ' is-offscreen' : ''} ${className}`}>
       {tab}
       <div className="ay-ribbon__view"><div className="ay-ribbon__track">{row(false)}{row(true)}</div></div>
     </div>

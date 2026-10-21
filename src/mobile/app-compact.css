@@ -63,7 +63,7 @@
   }
   /* 32px visual, 44px tap area */
   .ay-pc-save::before { content: ''; position: absolute; inset: -6px; }
-  .ay-pc-save svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+  .ay-pc-save svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.75; }
   .ay-pc-save.is-on svg { fill: #f7badd; stroke: #3e2723; }
   .ay-pc-match { position: absolute !important; top: 10px; left: 10px; z-index: 2; }
 

@@ -31,12 +31,14 @@
 }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-land-stamp {
   position: absolute; top: 78px; right: 18px; width: 92px; height: 92px; display: grid; place-items: center;
-  border-radius: 50%; background: #769ebe; border: 2px solid #3e2723; animation: ay-land-spin 40s linear infinite;
+  border-radius: 50%; background: #769ebe; border: 2px solid #3e2723; animation: ay-land-settle 1.1s var(--ease-out) both;
 }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-land-stamp svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-land-stamp text { font: 700 17px 'Figtree', system-ui, sans-serif; fill: #3e2723; letter-spacing: .08em; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-land-stamp span { font: italic 400 22px/1.15 var(--ay-app-heading) !important; color: #3e2723; animation: ay-land-spin 40s linear infinite reverse; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-land-stamp span { font: italic 400 22px/1.15 var(--ay-app-heading) !important; color: #3e2723; }
 @keyframes ay-land-spin { to { transform: rotate(360deg); } }
+/* the stamp turns once on load, then stays put */
+@keyframes ay-land-settle { from { transform: rotate(-60deg); } to { transform: none; } }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-land-copy h1 {
   margin: 0; font: 400 28px/1.15 var(--ay-app-heading) !important; letter-spacing: -.01em;
   color: #ffedac !important; text-shadow: 0 2px 24px rgba(62, 39, 35, .5);
@@ -44,7 +46,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-land-copy h1 em { font-style: italic; color: #f7badd; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-land-copy p { margin: 12px 0 0; font: 400 15px/1.45 'Figtree', system-ui, sans-serif !important; color: #ffedac !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-land-ticker { flex: none; overflow: hidden; background: #3e2723; color: #ffedac; border-top: 2px solid #3e2723; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-land-ticker-track { display: flex; width: max-content; animation: ay-land-marq 60s linear infinite; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-land-ticker-track { display: flex; width: max-content; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-land-ticker ul { display: flex; flex: none; margin: 0; padding: 0; list-style: none; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-land-ticker li { display: flex; align-items: center; gap: 18px; padding-right: 18px; white-space: nowrap; font: 500 13px/38px 'Figtree', system-ui, sans-serif !important; letter-spacing: .02em; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-land-ticker li span { color: #f7badd; }
@@ -72,7 +74,7 @@
 }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-film::before { top: 4px; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-film::after { bottom: 4px; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-film-track { display: flex; width: max-content; animation: ay-land-marq 90s linear infinite; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-film-track { display: flex; width: max-content; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-film ul { display: flex; flex: none; gap: 4px; margin: 0; padding: 0 4px 0 0; list-style: none; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-film img { display: block; width: 132px; height: 168px; object-fit: cover; filter: sepia(.14) saturate(.9) contrast(1.06) brightness(.96); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-film.is-short img { width: 104px; height: 128px; }
@@ -109,9 +111,9 @@
 /* Empty states: a spinning website starburst sticker instead of the old tile art */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty-art { width: auto !important; height: auto !important; display: grid !important; place-items: center !important; margin: 0 auto 18px !important; background: none !important; border: 0 !important; box-shadow: none !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty-burst { position: relative; width: 104px; height: 104px; display: grid; place-items: center; isolation: isolate; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty-burst::before { content: ''; position: absolute; inset: 0; z-index: -1; background: #f7badd; clip-path: polygon(50.0% 0.0%, 59.1% 10.0%, 71.7% 5.0%, 75.6% 17.9%, 89.1% 18.8%, 86.9% 32.2%, 98.7% 38.9%, 91.0% 50.0%, 98.7% 61.1%, 86.9% 67.8%, 89.1% 81.2%, 75.6% 82.1%, 71.7% 95.0%, 59.1% 90.0%, 50.0% 100.0%, 40.9% 90.0%, 28.3% 95.0%, 24.4% 82.1%, 10.9% 81.2%, 13.1% 67.8%, 1.3% 61.1%, 9.0% 50.0%, 1.3% 38.9%, 13.1% 32.2%, 10.9% 18.8%, 24.4% 17.9%, 28.3% 5.0%, 40.9% 10.0%); animation: ay-land-spin 30s linear infinite; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty-burst::before { content: ''; position: absolute; inset: 0; z-index: -1; background: #f7badd; clip-path: polygon(50.0% 0.0%, 59.1% 10.0%, 71.7% 5.0%, 75.6% 17.9%, 89.1% 18.8%, 86.9% 32.2%, 98.7% 38.9%, 91.0% 50.0%, 98.7% 61.1%, 86.9% 67.8%, 89.1% 81.2%, 75.6% 82.1%, 71.7% 95.0%, 59.1% 90.0%, 50.0% 100.0%, 40.9% 90.0%, 28.3% 95.0%, 24.4% 82.1%, 10.9% 81.2%, 13.1% 67.8%, 1.3% 61.1%, 9.0% 50.0%, 1.3% 38.9%, 13.1% 32.2%, 10.9% 18.8%, 24.4% 17.9%, 28.3% 5.0%, 40.9% 10.0%); }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty-burst.is-sky::before { background: #769ebe; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty-burst svg { width: 38px; height: 38px; fill: none; stroke: #3e2723 !important; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty-burst svg { width: 38px; height: 38px; fill: none; stroke: #3e2723 !important; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty h2 { font: 400 28px/1.15 var(--ay-app-heading) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty.is-compact .ay-empty-burst { width: 76px; height: 76px; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty.is-compact .ay-empty-burst svg { width: 28px; height: 28px; }
@@ -165,7 +167,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-shelf-slot > span::before { content: ''; position: absolute; inset: 0; z-index: -1; background: #f7badd; clip-path: polygon(50.0% 0.0%, 59.1% 10.0%, 71.7% 5.0%, 75.6% 17.9%, 89.1% 18.8%, 86.9% 32.2%, 98.7% 38.9%, 91.0% 50.0%, 98.7% 61.1%, 86.9% 67.8%, 89.1% 81.2%, 75.6% 82.1%, 71.7% 95.0%, 59.1% 90.0%, 50.0% 100.0%, 40.9% 90.0%, 28.3% 95.0%, 24.4% 82.1%, 10.9% 81.2%, 13.1% 67.8%, 1.3% 61.1%, 9.0% 50.0%, 1.3% 38.9%, 13.1% 32.2%, 10.9% 18.8%, 24.4% 17.9%, 28.3% 5.0%, 40.9% 10.0%); }
 /* profile: stamp-style avatar, tiles with offset shadows, her photos under the band */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-hub-avatar:not(.has-photo) { position: relative; border: 0 !important; background: none !important; isolation: isolate; font-family: var(--ay-app-heading) !important; font-weight: 400 !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-hub-avatar:not(.has-photo)::before { content: ''; position: absolute; inset: -6px; z-index: -1; background: #f7badd; clip-path: polygon(50.0% 0.0%, 59.1% 10.0%, 71.7% 5.0%, 75.6% 17.9%, 89.1% 18.8%, 86.9% 32.2%, 98.7% 38.9%, 91.0% 50.0%, 98.7% 61.1%, 86.9% 67.8%, 89.1% 81.2%, 75.6% 82.1%, 71.7% 95.0%, 59.1% 90.0%, 50.0% 100.0%, 40.9% 90.0%, 28.3% 95.0%, 24.4% 82.1%, 10.9% 81.2%, 13.1% 67.8%, 1.3% 61.1%, 9.0% 50.0%, 1.3% 38.9%, 13.1% 32.2%, 10.9% 18.8%, 24.4% 17.9%, 28.3% 5.0%, 40.9% 10.0%); animation: ay-land-spin 40s linear infinite; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-hub-avatar:not(.has-photo)::before { content: ''; position: absolute; inset: -6px; z-index: -1; background: #f7badd; clip-path: polygon(50.0% 0.0%, 59.1% 10.0%, 71.7% 5.0%, 75.6% 17.9%, 89.1% 18.8%, 86.9% 32.2%, 98.7% 38.9%, 91.0% 50.0%, 98.7% 61.1%, 86.9% 67.8%, 89.1% 81.2%, 75.6% 82.1%, 71.7% 95.0%, 59.1% 90.0%, 50.0% 100.0%, 40.9% 90.0%, 28.3% 95.0%, 24.4% 82.1%, 10.9% 81.2%, 13.1% 67.8%, 1.3% 61.1%, 9.0% 50.0%, 1.3% 38.9%, 13.1% 32.2%, 10.9% 18.8%, 24.4% 17.9%, 28.3% 5.0%, 40.9% 10.0%); }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 12px !important; border: 0 !important; margin-top: 20px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; min-height: 104px !important; padding: 14px !important; border: 2px solid var(--r-line-strong) !important; border-radius: 18px !important; box-shadow: 4px 4px 0 var(--r-line-strong) !important; background: var(--r-canvas) !important; position: relative; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button:last-child { border-bottom: 2px solid var(--r-line-strong) !important; }

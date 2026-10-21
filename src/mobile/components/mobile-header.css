@@ -12,6 +12,14 @@
 .ayna-mobile .ay-header-actions .ay-header-saved:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--ay-ink) !important; }
 .ayna-mobile[data-theme='dark'] .ay-header-actions .ayna-shared-header-action.ay-header-saved {
   border-color: var(--ay-butter) !important; background: #3e2723 !important; color: #ffedac !important;
-  box-shadow: 0 0 14px rgba(255, 237, 172, .3) !important;
+  box-shadow: 2px 2px 0 rgba(255, 237, 172, .5) !important; /* matte: no glow */
 }
 @media (prefers-reduced-motion: reduce) { .ayna-mobile .ay-header-actions .ay-header-saved { transition: none; } }
+
+/* Collapsing large title: the wordmark and the 17pt title cross-fade. */
+.ayna-mobile .ayna-shared-header-leading { position: relative; }
+.ayna-mobile .ay-header-inline-title { position: absolute; left: 0; top: 50%; translate: 0 -50%; font: 700 17px/1.2 var(--ay-font-display, 'ayna Display', sans-serif); color: var(--ay-ink); white-space: nowrap; opacity: 0; transition: opacity var(--t-fast) var(--ease-in-out); pointer-events: none; }
+.ayna-mobile .ayna-shared-header-leading .ayna-shared-wordmark { transition: opacity var(--t-fast) var(--ease-in-out); }
+.ayna-mobile .ayna-shared-header.is-collapsed .ayna-shared-wordmark { opacity: 0; }
+.ayna-mobile .ayna-shared-header.is-collapsed .ay-header-inline-title { opacity: 1; }
+.ayna-mobile .ayna-shared-header-leading:has(> button) .ay-header-inline-title { left: 52px; }

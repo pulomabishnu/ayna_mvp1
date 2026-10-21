@@ -46,7 +46,7 @@
 
 /* intro */
 .ayw-shapes { position: absolute; inset: 0; pointer-events: none; animation: none !important; }
-.ayw-shapes i { position: absolute; display: block; border: 2px solid var(--ay-paper); animation: ayw-float 6s ease-in-out infinite; }
+.ayw-shapes i { position: absolute; display: block; border: 2px solid var(--ay-paper); animation: ayw-float 6s ease-in-out 1; }
 .ayw-shapes i:nth-child(1) { width: 120px; height: 120px; right: -30px; top: 2%; border-radius: 50%; background: var(--ay-pink); }
 .ayw-shapes i:nth-child(2) { width: 90px; height: 140px; left: -24px; bottom: 6%; border-radius: 60px 60px 0 0; background: var(--ay-peri); animation-delay: -2s; }
 .ayw-shapes i:nth-child(3) { width: 70px; height: 70px; right: 18%; bottom: 14%; background: var(--ay-butter); clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); border: 0; animation-delay: -4s; }
@@ -60,7 +60,7 @@
 
 /* focus */
 .ayw-ranks { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
-.ayw-ranks li { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 2px solid var(--ay-ink); border-radius: 22px; background: var(--ay-paper); box-shadow: var(--ay-shadow-lg); animation: ayw-up .55s var(--ay-ease) both; animation-delay: calc(.15s + var(--i) * .12s); }
+.ayw-ranks li { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 2px solid var(--ay-ink); border-radius: 22px; background: var(--ay-paper); box-shadow: var(--ay-shadow-lg); animation: ayw-up .45s var(--ease-out) both; animation-delay: calc(.15s + var(--i) * var(--stagger)); }
 .ayw-ranks li:first-child { background: var(--ay-butter); padding: 18px 14px; }
 .ayw-ranks span { width: 46px; height: 46px; flex: none; display: grid; place-items: center; border-radius: 50%; background: var(--ay-ink); color: var(--ay-paper); font: 400 22px/1.15 var(--ay-font-display); }
 .ayw-ranks strong { font: 400 28px/1.15 var(--ay-font-display); letter-spacing: -.04em; }
@@ -70,7 +70,12 @@
 .ayw-arch-clip { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; }
 .ayw-arch-clip > * { position: absolute; inset: 12% 10% 10%; width: auto !important; height: auto !important; }
 .ayw-arch img { width: 100% !important; height: 100% !important; object-fit: contain !important; }
-.ayw-badge { position: absolute; right: -16px; top: 18%; width: 86px; height: 86px; display: grid; place-content: center; text-align: center; border: 2.5px solid var(--ay-ink); border-radius: 50%; background: var(--ay-butter); font: 500 11.5px/1 var(--ay-font-ui); rotate: 10deg; animation: ayw-stamp .5s var(--ay-pop) .5s both; }
+.ayw-badge { position: absolute; right: -16px; top: 18%; width: 86px; height: 86px; display: grid; place-content: center; text-align: center; border: 2.5px solid var(--ay-ink); border-radius: 50%; background: var(--ay-butter); font: 500 11.5px/1 var(--ay-font-ui); rotate: 10deg; animation: ayw-stamp .45s var(--ease-pop) .55s both; }
+/* the match ring draws once around the badge (600ms), then stays */
+.ayw-ring { position: absolute; inset: -9px; width: calc(100% + 18px); height: calc(100% + 18px); rotate: -90deg; overflow: visible; pointer-events: none; }
+.ayw-ring circle { fill: none; stroke: var(--ay-ink); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 100; animation: ayw-ring-draw 600ms var(--ease-out) .6s forwards; }
+@keyframes ayw-ring-draw { to { stroke-dashoffset: var(--ring-gap, 0); } }
+@media (prefers-reduced-motion: reduce) { .ayw-ring circle { animation: none; stroke-dashoffset: var(--ring-gap, 0); } }
 .ayw-badge strong { display: block; font: 400 28px/1.15 var(--ay-font-display); letter-spacing: -.04em; }
 @keyframes ayw-stamp { from { scale: 1.8; opacity: 0; } to { scale: 1; opacity: 1; } }
 .ayw-product { margin-top: 22px; text-align: center; }
@@ -79,13 +84,13 @@
 
 /* persona */
 .ayw-facts { display: grid; gap: 10px; margin: 28px 0 0; }
-.ayw-facts div { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding: 14px 16px; border: 2px solid var(--ay-ink); border-radius: 18px; background: var(--ay-paper); animation: ayw-up .5s var(--ay-ease) both; animation-delay: calc(.2s + var(--i) * .1s); }
+.ayw-facts div { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding: 14px 16px; border: 2px solid var(--ay-ink); border-radius: 18px; background: var(--ay-paper); animation: ayw-up .45s var(--ease-out) both; animation-delay: calc(.2s + var(--i) * var(--stagger)); }
 .ayw-facts dt { font: 500 13px/1 var(--ay-font-ui);  opacity: .65; }
 .ayw-facts dd { margin: 0; font: 400 22px/1.15 var(--ay-font-display); letter-spacing: -.02em; text-align: right; }
 
 /* lineup */
 .ayw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; }
-.ayw-tile { position: relative; aspect-ratio: 1; border: 2px solid var(--ay-ink); border-radius: 22px; background: var(--ay-paper); overflow: hidden; rotate: calc((var(--i) - 1.5) * 2.5deg); animation: ayw-drop .55s var(--ay-pop) both; animation-delay: calc(.2s + var(--i) * .1s); }
+.ayw-tile { position: relative; aspect-ratio: 1; border: 2px solid var(--ay-ink); border-radius: 22px; background: var(--ay-paper); overflow: hidden; rotate: calc((var(--i) - 1.5) * 2.5deg); animation: ayw-drop .5s var(--ease-pop) both; animation-delay: calc(.2s + var(--i) * var(--stagger)); }
 .ayw-tile:nth-child(odd) { rotate: -2deg; }
 .ayw-tile:nth-child(even) { rotate: 2.5deg; }
 .ayw-tile > * { position: absolute !important; inset: 10px; width: auto !important; height: auto !important; }

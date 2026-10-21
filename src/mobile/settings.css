@@ -46,7 +46,7 @@
 .ayna-mobile .ay-set-card .ay-set-row:first-child { border-top: 0 !important; }
 .ayna-mobile .ay-set-card .ay-set-row:active { background: var(--ay-cream) !important; }
 .ay-set-icon { width: 36px; height: 36px; flex: none; display: grid; place-items: center; border: 1.5px solid var(--ay-ink); border-radius: 11px; background: var(--set-tone, var(--ay-butter)); }
-.ay-set-icon svg { width: 18px; height: 18px; fill: none; stroke: var(--ay-ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ay-set-icon svg { width: 18px; height: 18px; fill: none; stroke: var(--ay-ink); stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
 .ay-set-group.is-butter { --set-tone: var(--ay-butter); }
 .ay-set-group.is-pink { --set-tone: var(--ay-pink); }
 .ay-set-group.is-mint { --set-tone: var(--ay-mint); }
@@ -97,8 +97,8 @@
 .ay-startups-hero p { margin: 8px 0 0; font: 400 15px/1.45 var(--ay-font-ui); opacity: .8; }
 .ay-startups-art { position: absolute; right: 16px; top: 16px; width: 72px; height: 72px; }
 .ay-startups-art i { position: absolute; display: block; border: 1.5px solid var(--ay-ink); }
-.ay-startups-art i:nth-child(1) { width: 44px; height: 44px; right: 0; top: 0; border-radius: 50%; background: var(--ay-butter); animation: ay-startups-bob 4.5s ease-in-out infinite; }
-.ay-startups-art i:nth-child(2) { width: 30px; height: 30px; left: 4px; top: 30px; border-radius: 9px; background: var(--ay-pink); rotate: -12deg; animation: ay-startups-bob 4.5s ease-in-out -1.5s infinite; }
+.ay-startups-art i:nth-child(1) { width: 44px; height: 44px; right: 0; top: 0; border-radius: 50%; background: var(--ay-butter); }
+.ay-startups-art i:nth-child(2) { width: 30px; height: 30px; left: 4px; top: 30px; border-radius: 9px; background: var(--ay-pink); rotate: -12deg; }
 .ay-startups-art i:nth-child(3) { width: 20px; height: 20px; right: 6px; top: 50px; border: 0; background: var(--ay-paper); clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); }
 @keyframes ay-startups-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 @media (prefers-reduced-motion: reduce) { .ay-startups-art i { animation: none; } }
@@ -116,7 +116,7 @@
 .ayna-mobile.ayna-mobile .ayna-saved-header h1 small { background: var(--ay-pink) !important; color: var(--ay-ink) !important; border: 1.5px solid var(--ay-ink); }
 
 /* You → Shopper profile: trading-card style */
-.ay-shopper { --tone: var(--ay-peri); flex: none; margin: 20px var(--ay-gutter) 0; border: 1.5px solid var(--ay-ink); border-radius: 26px; background: var(--ay-paper); box-shadow: 0 5px 0 var(--ay-ink); color: var(--ay-ink); overflow: hidden; animation: ay-shopper-in .5s cubic-bezier(.34,1.56,.64,1) both; }
+.ay-shopper { --tone: var(--ay-peri); flex: none; margin: 20px var(--ay-gutter) 0; border: 1.5px solid var(--ay-ink); border-radius: 26px; background: var(--ay-paper); box-shadow: 0 5px 0 var(--ay-ink); color: var(--ay-ink); overflow: hidden; animation: ay-shopper-in .5s var(--ease-out) both; }
 .ay-shopper.is-researcher { --tone: var(--ay-mint); } .ay-shopper.is-listener { --tone: var(--ay-pink); }
 .ay-shopper.is-curator { --tone: var(--ay-butter); } .ay-shopper.is-explorer { --tone: var(--ay-peri); }
 .ay-shopper-head { position: relative; display: grid; grid-template-columns: 1fr auto; padding: 18px 18px 20px; background: var(--tone); border-bottom: 1.5px solid var(--ay-ink); overflow: hidden; }
@@ -124,14 +124,14 @@
 .ay-shopper-kicker { grid-column: 1; font: 500 13px/1 var(--ay-font-ui); opacity: .7; }
 .ay-shopper-head h2 { grid-column: 1; margin: 8px 0 4px; font: 400 calc(28px * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display); letter-spacing: -.045em; }
 .ay-shopper-head p { grid-column: 1; margin: 0; font: 500 13px/1.35 var(--ay-font-ui); }
-.ay-shopper-emblem { grid-column: 2; grid-row: 1 / span 3; align-self: center; width: 64px; height: 64px; display: grid; place-items: center; border: 1.5px solid var(--ay-ink); border-radius: 20px; background: var(--ay-paper); box-shadow: 0 3px 0 var(--ay-ink); rotate: 8deg; animation: ay-shopper-wobble 5s ease-in-out infinite; }
-.ay-shopper-emblem svg { width: 32px; height: 32px; fill: none; stroke: var(--ay-ink); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.ay-shopper-emblem { grid-column: 2; grid-row: 1 / span 3; align-self: center; width: 64px; height: 64px; display: grid; place-items: center; border: 1.5px solid var(--ay-ink); border-radius: 20px; background: var(--ay-paper); box-shadow: 0 3px 0 var(--ay-ink); rotate: 8deg; }
+.ay-shopper-emblem svg { width: 32px; height: 32px; fill: none; stroke: var(--ay-ink); stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
 .ay-shopper-shapes i { position: absolute; display: block; border: 1.5px solid var(--ay-ink); opacity: .25; }
 .ay-shopper-shapes i:nth-child(1) { width: 120px; height: 120px; right: -36px; bottom: -60px; border-radius: 50%; }
 .ay-shopper-shapes i:nth-child(2) { width: 18px; height: 18px; left: 52%; top: 14px; border: 0; opacity: .5; background: var(--ay-paper); clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); }
 .ay-shopper-shapes i:nth-child(3) { width: 10px; height: 10px; left: 62%; bottom: 18px; border-radius: 50%; background: var(--ay-ink); border: 0; opacity: .3; }
 .ay-shopper dl { margin: 0; padding: 14px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-.ay-shopper dl > div { position: relative; min-width: 0; padding: 12px; border: 1.5px solid var(--ay-ink); border-radius: 16px; box-shadow: 0 3px 0 var(--ay-ink); animation: ay-shopper-tile .45s cubic-bezier(.34,1.56,.64,1) both; animation-delay: calc(.15s + var(--i) * .07s); }
+.ay-shopper dl > div { position: relative; min-width: 0; padding: 12px; border: 1.5px solid var(--ay-ink); border-radius: 16px; box-shadow: 0 3px 0 var(--ay-ink); animation: ay-shopper-tile .45s var(--ease-out) both; animation-delay: calc(.15s + var(--i) * .07s); }
 .ay-shopper dl > div:nth-child(odd) { rotate: -1.2deg; } .ay-shopper dl > div:nth-child(even) { rotate: 1.2deg; }
 .ay-shopper dl > div:last-child:nth-child(odd) { grid-column: 1 / -1; rotate: -.6deg; }
 .ay-shopper .tone-pink { background: var(--ay-pink); } .ay-shopper .tone-mint { background: var(--ay-mint); }

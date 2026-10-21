@@ -1,0 +1,92 @@
+/* ayna motion system (web and app). One set of curves and durations,
+   from the anti-vibe guide, section 4. Every file uses these instead of its
+   own cubic-bezier. Motion explains what happened; it never decorates.
+   src/mobile/tokens.css repeats the token block for the app. */
+:root {
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);     /* entrances, reveals, sheets in */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1); /* toggles, state swaps, tab icon fill */
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);       /* exits only, always shorter */
+  --ease-pop: cubic-bezier(0.34, 1.2, 0.64, 1);  /* delight only: heart, sticker drop */
+  --t-press: 110ms;
+  --t-fast: 160ms;
+  --t-base: 240ms;
+  --t-sheet: 360ms;
+  --t-sheet-out: 240ms;
+  --t-push: 320ms;
+  --t-delight: 520ms;
+  --stagger: 45ms;
+  /* 40% espresso behind sheets, never blur */
+  --sheet-dim: rgba(62, 39, 35, .4);
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --t-base: 1ms; --t-sheet: 1ms; --t-sheet-out: 1ms; --t-push: 1ms; --t-delight: 1ms; --stagger: 0ms; }
+  *, *::before, *::after { animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}
+
+/* ---- Pressed state: anything tappable answers within 100ms ---- */
+.ay-press { transition: transform var(--t-press) var(--ease-out), background-color var(--t-fast) var(--ease-in-out); -webkit-tap-highlight-color: transparent; }
+.ay-press:active { transform: scale(.97); }
+
+/* ---- 1. Save (heart): fill and one 1 -> 1.18 -> 1 pop ---- */
+@keyframes ay-heart-pop { 0% { transform: scale(1); } 45% { transform: scale(1.18); } 100% { transform: scale(1); } }
+.ay-heart-pop svg, .ay-heart-pop.is-svg { animation: ay-heart-pop 320ms var(--ease-pop) both; }
+@keyframes ay-count-bump { 0% { transform: scale(1); } 50% { transform: scale(1.25); } 100% { transform: scale(1); } }
+.ay-count-bump { display: inline-block; animation: ay-count-bump 280ms var(--ease-pop) both; }
+
+/* ---- 2. Add: the button morphs to "Added" with a check ---- */
+@keyframes ay-morph-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.ay-added-morph { animation: ay-morph-in var(--t-fast) var(--ease-out) both; display: inline-flex; align-items: center; gap: 6px; }
+.ay-added-morph svg { width: 16px; height: 16px; flex: none; }
+/* the product thumbnail drops onto the tab that holds it */
+.ay-fly-thumb { position: fixed; z-index: 2147483001; width: 44px; height: 44px; border-radius: 12px; overflow: hidden; pointer-events: none; background: #fff; border: 2px solid #3e2723; }
+.ay-fly-thumb img { width: 100%; height: 100%; object-fit: contain; }
+
+/* ---- 3/4. Quiz: chip fill, step slide, thin progress ---- */
+@keyframes ay-step-in { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+@keyframes ay-step-back { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+.ay-step-in { animation: ay-step-in var(--t-base) var(--ease-out) both; }
+.ay-step-back { animation: ay-step-back var(--t-base) var(--ease-out) both; }
+
+/* ---- 6. Sheets: grabber, drag to dismiss, 40% espresso dim ---- */
+@keyframes ay-sheet-in { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes ay-dim-in { from { opacity: 0; } to { opacity: 1; } }
+.ay-sheet-dim { background: var(--sheet-dim) !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; animation: ay-dim-in var(--t-base) var(--ease-out) both; }
+.ay-sheet-in { animation: ay-sheet-in var(--t-sheet) var(--ease-out) both; touch-action: pan-y; }
+.ay-sheet-grabber { display: block; width: 100%; height: 22px; margin: -8px 0 2px; padding: 0; border: 0; background: transparent; cursor: grab; touch-action: none; }
+.ay-sheet-grabber::before { content: ''; display: block; width: 36px; height: 5px; margin: 8px auto 0; border-radius: 3px; background: currentColor; opacity: .3; }
+.ay-sheet-grabber:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; border-radius: 8px; }
+
+/* ---- 7. Screen push (list -> detail) and tab cross-fade ---- */
+@keyframes ay-push-in { from { transform: translateX(100%); } to { transform: none; } }
+@keyframes ay-push-out { from { transform: none; } to { transform: translateX(100%); } }
+.ay-push-in { animation: ay-push-in var(--t-push) var(--ease-out) both; box-shadow: -8px 0 24px rgba(62, 39, 35, .12); }
+.ay-push-out { animation: ay-push-out var(--t-sheet-out) var(--ease-exit) both; pointer-events: none; }
+.ay-push-dragging { animation: none !important; transition: none !important; }
+.ay-push-settle { transition: transform var(--t-base) var(--ease-out); }
+@keyframes ay-tab-fade { from { opacity: 0; } to { opacity: 1; } }
+.ay-tab-fade { animation: ay-tab-fade 120ms linear both; }
+
+/* ---- 8. Empty-state sticker settles once, then stays still ---- */
+@keyframes ay-sticker-settle { from { transform: rotate(-6deg) scale(.96); opacity: .6; } to { transform: rotate(-3deg); opacity: 1; } }
+.ay-sticker-settle { animation: ay-sticker-settle 400ms var(--ease-pop) both; }
+
+/* ---- 9. Check-in complete: the month dot fills ---- */
+@keyframes ay-dot-fill { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
+.ay-dot-fill { animation: ay-dot-fill var(--t-delight) var(--ease-pop) both; }
+
+/* ---- Web scroll reveal: supporting visuals only, once ---- */
+.ay-reveal { opacity: 0; translate: 0 12px; transition: opacity 400ms var(--ease-out), translate 400ms var(--ease-out); }
+.ay-reveal.is-in { opacity: 1; translate: none; }
+html.ay-motion-paused .ay-reveal { opacity: 1; translate: none; transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  .ay-reveal { opacity: 1; translate: none; transition: none; }
+  .ay-push-in, .ay-sheet-in, .ay-step-in, .ay-step-back, .ay-dot-fill { animation-name: ay-tab-fade !important; animation-duration: 150ms !important; }
+  .ay-push-out { animation: none !important; opacity: 0; }
+  .ay-heart-pop svg, .ay-heart-pop.is-svg, .ay-count-bump, .ay-sticker-settle { animation: none !important; }
+  .ay-sticker-settle { transform: rotate(-3deg); }
+  .ay-press:active { transform: none; }
+}
+
+/* ---- UI line icons (components/icons/UiIcons.jsx) sit on the text line ---- */
+.ay-ui-icon { flex: none; display: inline-block; vertical-align: -0.2em; }
+.ay-product-card__eco, .pdp-safety-flag, .ay-sl-pl-open { display: inline-flex; align-items: center; gap: 6px; }

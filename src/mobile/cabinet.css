@@ -49,7 +49,7 @@
 .ayna-shared-header-action { display:grid; place-items:center; flex:none; width:44px; height:44px; padding:0; border:1px solid var(--ayna-border); border-radius:50%; background:var(--ayna-surface); color:var(--ayna-text); cursor:pointer; }
 .ayna-mobile .ayna-bottom-nav { background:#FCFBFB!important; border-top:1px solid var(--ayna-border)!important; gap:2px; padding:5px 6px max(7px,env(safe-area-inset-bottom))!important; }
 .ayna-mobile .ayna-bottom-nav button { min-height:56px!important; gap:4px!important; padding:5px 0!important; border-radius:10px!important; background:transparent!important; color:#3e2723!important; font:500 11.5px/1 var(--ayna-font-ui)!important; letter-spacing:0; }
-.ayna-mobile .ayna-bottom-nav button svg { width:21px!important; height:21px!important; stroke:currentColor!important; transition:transform 180ms cubic-bezier(.2,.8,.2,1); }
+.ayna-mobile .ayna-bottom-nav button svg { width:21px!important; height:21px!important; stroke:currentColor!important; transition:transform 180ms var(--ease-out); }
 .ayna-mobile .ayna-bottom-nav button.is-active { background:#e1ede6!important; color:#3e2723!important; font-weight:600!important; }
 .ayna-mobile .ayna-bottom-nav button.is-active svg { transform:translateY(-2px); }
 .ayna-mobile .ayna-bottom-nav button.is-active::after { display:none!important; }
@@ -126,7 +126,7 @@
 }
 .ayna-shop-filter-backdrop { position:fixed; inset:0; z-index:400; display:flex; align-items:flex-end; background:rgba(22,18,42,.36); }
 .ayna-shop-filter-sheet { width:100%; max-height:min(83vh,760px); display:flex; flex-direction:column; padding:16px 18px max(14px,env(safe-area-inset-bottom)); border-radius:22px 22px 0 0; background:#FCFBFB; color:#3e2723; }
-.ayna-shop-filter-sheet { animation:ayna-sheet-rise 260ms cubic-bezier(.2,.8,.2,1) both; }
+.ayna-shop-filter-sheet { animation:ayna-sheet-rise 260ms var(--ease-out) both; }
 .ayna-shop-filter-head,.ayna-shop-filter-actions { display:flex; align-items:center; justify-content:space-between; gap:12px; }
 .ayna-shop-filter-head { padding-bottom:17px; border-bottom:1px solid var(--ayna-border); }
 .ayna-shop-filter-head strong { font:400 28px/1.15 var(--ayna-font-display); }
@@ -230,7 +230,7 @@
 .ayna-mobile .ayna-figma-discover .tone-pink .ayna-fresh-product-image { background:#eee1dc!important; }
 .ayna-mobile .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-category { letter-spacing:.06em; }
 .ayna-mobile .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy>strong { min-height:36px; }
-.ayna-mobile .ayna-figma-discover .ayna-editorial-product-grid>.ayna-fresh-product-card { animation:ayna-cabinet-arrive 320ms cubic-bezier(.2,.8,.2,1) both; }
+.ayna-mobile .ayna-figma-discover .ayna-editorial-product-grid>.ayna-fresh-product-card { animation:ayna-cabinet-arrive 320ms var(--ease-out) both; }
 .ayna-mobile .ayna-figma-discover .ayna-editorial-product-grid>.ayna-fresh-product-card:nth-child(2) { animation-delay:40ms; }
 .ayna-mobile .ayna-figma-discover .ayna-editorial-product-grid>.ayna-fresh-product-card:nth-child(3) { animation-delay:80ms; }
 .ayna-mobile .ayna-figma-discover .ayna-editorial-product-grid>.ayna-fresh-product-card:nth-child(4) { animation-delay:120ms; }
@@ -272,7 +272,7 @@
 @keyframes ayna-save-stamp { 50% { transform:scale(1.12); } }
 
 /* The entire conversation stays mounted and physically exits the viewport. */
-.ayna-ask-drawer { transform:translateX(100%); transition:transform 240ms cubic-bezier(.2,.8,.2,1); pointer-events:none; }
+.ayna-ask-drawer { transform:translateX(100%); transition:transform 240ms var(--ease-out); pointer-events:none; }
 .ayna-ask-drawer[data-open='true'] { transform:translateX(0); pointer-events:auto; }
 .ayna-ask-drawer-content { display:flex; flex-direction:column; height:100%; min-height:0; background:var(--ayna-bg); }
 .ayna-ask-drawer-content input { min-width:0; }
@@ -399,7 +399,7 @@
 .ayna-slide-start-fill { position:absolute; inset:0 auto 0 0; width:58px; border-radius:999px; background:var(--ayna-accent); opacity:.3; pointer-events:none; }
 .ayna-slide-start-label { position:absolute; inset:0 18px 0 74px; display:flex; align-items:center; justify-content:space-between; gap:8px; font:600 17px/1 var(--ayna-font-ui); pointer-events:none; }
 .ayna-slide-start-label span { font:500 11.5px/1 var(--ayna-font-ui); text-transform:uppercase; letter-spacing:.08em; opacity:.72; }
-.ayna-slide-start-handle { position:absolute; top:5px; left:5px; display:grid; place-items:center; width:54px; height:54px; padding:0; border:0; border-radius:50%; background:var(--ayna-color-pop); color:var(--ayna-color-ink); cursor:grab; touch-action:none; transition:transform 180ms cubic-bezier(.2,.8,.2,1); }
+.ayna-slide-start-handle { position:absolute; top:5px; left:5px; display:grid; place-items:center; width:54px; height:54px; padding:0; border:0; border-radius:50%; background:var(--ayna-color-pop); color:var(--ayna-color-ink); cursor:grab; touch-action:none; transition:transform 180ms var(--ease-out); }
 .ayna-slide-start-handle:active { cursor:grabbing; transition:none; }
 .ayna-slide-start-handle:focus-visible { outline:3px solid #fff; outline-offset:-5px; }
 .ayna-slide-start-handle svg { width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
@@ -482,7 +482,7 @@
 .ayna-feature-foot>div { display:flex; gap:4px; }
 .ayna-feature-foot i { width:15px; height:3px; background:#3e2723; opacity:.3; }
 .ayna-feature-foot i.is-active { opacity:1; }
-.ayna-feature-stage { position:absolute; inset:34px 14px 38px; display:grid; place-items:center; animation:ayna-feature-flip .42s cubic-bezier(.2,.8,.2,1) both; }
+.ayna-feature-stage { position:absolute; inset:34px 14px 38px; display:grid; place-items:center; animation:ayna-feature-flip .42s var(--ease-out) both; }
 .ayna-feature-next { position:absolute; inset:34px 0 49px; z-index:2; width:100%; border:0; background:transparent; cursor:pointer; }
 .ayna-feature-next:focus-visible { outline:3px solid #3e2723; outline-offset:-4px; }
 .ayna-feature-cabinet i:first-child { left:-6%; top:28%; }.ayna-feature-cabinet i:nth-child(2) { right:1%; top:-8%; background:#F7BADD; }.ayna-feature-cabinet i:nth-child(3) { right:0; bottom:0; background:#FCFBFB; }

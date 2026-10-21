@@ -6,7 +6,7 @@
   --display: var(--ay-serif); --ui: var(--ay-sans);
   --fs-hero: var(--ay-fs-display); --fs-h2: var(--ay-fs-display); --fs-h3: var(--ay-fs-section); --fs-lead: var(--ay-fs-body); --fs-body: var(--ay-fs-body); --fs-small: var(--ay-fs-secondary); --fs-label: var(--ay-fs-caption);
   --r-sm: 8px; --r-md: 16px; --r-lg: 24px; --bw: 2px; --shadow: 4px 4px 0 var(--ink);
-  --m-fast: 150ms; --m-med: 250ms; --m-slow: 400ms; --ease: cubic-bezier(.2,.9,.3,1.1);
+  --m-fast: 150ms; --m-med: 250ms; --m-slow: 400ms; --ease: var(--ease-out);
   --gut: 16px; --sec: 64px;
   color: var(--ink); background: var(--paper); font: 400 var(--ay-fs-body)/1.55 var(--ay-sans); overflow-x: clip;
 }
@@ -63,14 +63,14 @@
 .lv-hero h1 { font-size: var(--ay-fs-display); line-height: 1.1; text-shadow: 0 2px 24px rgba(22,22,22,.5); font-family: var(--ay-serif); font-weight: 400; letter-spacing: -0.01em; }
 .lv-hero h1 em { color: var(--butter); }
 .lv-hero__copy p { font: 500 var(--ay-fs-body)/1.55 var(--ay-sans); text-shadow: 0 1px 12px rgba(22,22,22,.6); }
-.lv-stamp { position: absolute; top: 20px; right: 20px; width: 112px; height: 112px; display: grid; place-items: center; border-radius: 50%; background: var(--pink); border: var(--bw) solid var(--ink); animation: lvSpin 40s linear infinite; }
+.lv-stamp { position: absolute; top: 20px; right: 20px; width: 112px; height: 112px; display: grid; place-items: center; border-radius: 50%; background: var(--pink); border: var(--bw) solid var(--ink); animation: ay-seal-settle 1.1s var(--ease-out) both; }
 .lv-stamp svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .lv-stamp text { font: 600 var(--ay-fs-card) var(--ay-sans); fill: var(--ink); letter-spacing: normal; }
-.lv-stamp span { font: italic 400 var(--ay-fs-section)/1.1 var(--ay-serif); color: var(--ink); animation: lvSpin 40s linear infinite reverse; letter-spacing: -0.01em; }
+.lv-stamp span { font: italic 400 var(--ay-fs-section)/1.1 var(--ay-serif); color: var(--ink); letter-spacing: -0.01em; }
 @keyframes lvSpin { to { transform: rotate(360deg); } }
 .lv-search { position: relative; width: min(100%, 460px); }
 .lv-search label { position: relative; display: block; height: 56px; }
-.lv-search label > svg { position: absolute; left: 20px; top: 50%; width: 20px; height: 20px; margin-top: -10px; fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; z-index: 2; pointer-events: none; }
+.lv-search label > svg { position: absolute; left: 20px; top: 50%; width: 20px; height: 20px; margin-top: -10px; fill: none; stroke: var(--ink); stroke-width: 1.75; stroke-linecap: round; z-index: 2; pointer-events: none; }
 .lv-search input { width: 100%; height: 56px; padding: 0 64px 0 52px; border: var(--bw) solid var(--ink); border-radius: 999px; background: var(--white); color: var(--ink); font: 500 var(--ay-fs-body)/1 var(--ay-sans); }
 .lv-search__hint { position: absolute; left: 52px; right: 64px; top: 0; bottom: 0; display: flex; align-items: center; gap: .3em; overflow: hidden; color: var(--ink-2); font: 500 var(--ay-fs-body)/1 var(--ay-sans); white-space: nowrap; pointer-events: none; }
 .lv-search__hint b { color: var(--ink); font-weight: 600; animation: lvIn var(--m-slow) var(--ease) both; }
@@ -125,7 +125,7 @@
 .lv-band__foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px 24px; margin-top: 48px; }
 .lv-band .lv-link { color: var(--paper); }
 .lv-strip { position: relative; overflow: hidden; border-radius: 0 0 var(--r-lg) var(--r-lg); background: var(--paper); }
-.lv-strip__track { display: flex; width: max-content; animation: lvMarq 140s linear infinite; }
+.lv-strip__track { display: flex; width: max-content; }
 .lv-strip__row { display: flex; flex: none; gap: 6px; padding-right: 6px; }
 .lv-strip__row li { flex: none; }
 .lv-strip__row img { width: auto; height: clamp(260px, 30vw, 440px); object-fit: cover; filter: sepia(.14) saturate(.9) contrast(1.06) brightness(.98); }
@@ -251,7 +251,7 @@
 .lv-why__stage { position: relative; aspect-ratio: 4 / 5; border: var(--bw) solid var(--ink); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow); background: var(--white); }
 .lv-why__stage > img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 45%; filter: sepia(.14) saturate(.9) contrast(1.06); }
 .lv-spot { position: absolute; z-index: 2; display: grid; place-items: center; width: 44px; height: 44px; margin: -22px 0 0 -22px; padding: 0; border: var(--bw) solid var(--ink); border-radius: 50%; background: var(--white); font: 600 var(--ay-fs-card)/1 var(--ay-sans) !important; color: var(--ink) !important; box-shadow: var(--shadow); transition: transform var(--m-med) var(--ease), background-color var(--m-med); }
-.lv-spot::after { content: ''; position: absolute; inset: -8px; border: var(--bw) solid var(--white); border-radius: 50%; opacity: .9; animation: lvPing 2.4s ease-out infinite; pointer-events: none; }
+.lv-spot::after { content: ''; position: absolute; inset: -8px; border: var(--bw) solid var(--white); border-radius: 50%; opacity: .9; animation: lvPing 2.4s ease-out 2; pointer-events: none; }
 .lv-spot:hover { transform: scale(1.12); background: var(--pink); }
 .lv-spot.is-on { background: var(--butter); transform: scale(1.18); }
 .lv-spot.is-on::after { animation: none; opacity: 0; }

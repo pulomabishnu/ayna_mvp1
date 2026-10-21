@@ -22,7 +22,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card .ayna-card-save {
   width: 44px !important; height: 44px !important; top: 8px !important; right: 8px !important; border: 0 !important; background: transparent !important; box-shadow: none !important;
 }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card .ayna-card-save svg { width: 24px !important; height: 24px !important; fill: rgba(255, 255, 255, .85); stroke: var(--b-espresso); stroke-width: 1.8; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card .ayna-card-save svg { width: 24px !important; height: 24px !important; fill: rgba(255, 255, 255, .85); stroke: var(--b-espresso); stroke-width: 1.75; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card .ayna-card-save[aria-pressed='true'] { background: transparent !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card .ayna-card-save[aria-pressed='true'] svg { fill: var(--b-rose); }
 /* partner: a meta line with a rose dot, as on the site */

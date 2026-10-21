@@ -16,7 +16,7 @@ html body .app-container.app-container.app-container .ayshop__search input[type=
 html body .app-container.app-container.app-container .ayshop__search input[type='search']::placeholder { color: var(--ay-text-2); opacity: 1; }
 html body .app-container.app-container.app-container .ayshop__search input[type='search']:focus-visible { outline: 3px solid var(--ay-focus) !important; outline-offset: 2px; }
 html body .app-container.app-container.app-container .ayshop__search .ays-mirror { padding-left: 48px !important; }
-html body .app-container.app-container.app-container .ayshop__search-icon { position: absolute; left: 18px; top: 26px; transform: translateY(-50%); width: 20px; height: 20px; fill: none; stroke: var(--ay-text); stroke-width: 1.8; stroke-linecap: round; pointer-events: none; z-index: 2; }
+html body .app-container.app-container.app-container .ayshop__search-icon { position: absolute; left: 18px; top: 26px; transform: translateY(-50%); width: 20px; height: 20px; fill: none; stroke: var(--ay-text); stroke-width: 1.75; stroke-linecap: round; pointer-events: none; z-index: 2; }
 html body .app-container.app-container.app-container .ayshop__inferred { display: flex; gap: var(--ay-s8); }
 
 /* category chips: wrap on desktop, one sideways row on phones */
@@ -28,7 +28,7 @@ html body .app-container.app-container.app-container .ayshop__arrow { display: n
 html body .app-container.app-container.app-container .ayshop__toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--ay-s12) var(--ay-s16); margin-top: var(--ay-s20); }
 html body .app-container.app-container.app-container .ayshop__toolbar-left { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ay-s8) var(--ay-s20); }
 html body .app-container.app-container.app-container .ayshop__filters { min-height: 44px !important; padding: 0 18px !important; font-size: 15px !important; }
-html body .app-container.app-container.app-container .ayshop__filters svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+html body .app-container.app-container.app-container .ayshop__filters svg { fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; }
 html body .app-container.app-container.app-container .ayshop__filters.is-active { background: var(--ay-alert-bg) !important; color: #3e2723 !important; }
 html body .app-container.app-container.app-container .ayshop__matches { font-size: 15px !important; }
 html body .app-container.app-container.app-container .ayshop__sort { display: inline-flex; align-items: center; gap: var(--ay-s8); margin: 0; font: 500 14px/1 var(--ay-sans-stack); color: var(--ay-text-2); }

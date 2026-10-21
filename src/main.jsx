@@ -4,6 +4,7 @@ import App from './App.jsx'
 import { Capacitor } from '@capacitor/core'
 import './styles/fonts.css'
 import './index.css'
+import './styles/motion.css'
 import { markPerf } from './utils/perfTimings.js'
 
 // The whole mobile app (src/mobile/**, ~1.6MB of source) was bundled into the
