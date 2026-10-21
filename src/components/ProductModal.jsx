@@ -185,7 +185,7 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={session === undefined ? 'Loading…' : 'Ask about this product…'}
+          placeholder={session === undefined ? 'One moment…' : 'Ask about this product…'}
           disabled={sending || session === undefined}
           style={{
             flex: 1, padding: '0.6rem 0.85rem', borderRadius: 'var(--radius-md)',

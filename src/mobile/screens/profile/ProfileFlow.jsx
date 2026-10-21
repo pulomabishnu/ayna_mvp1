@@ -40,6 +40,12 @@ import { estimatePhase } from '../../../health/phase.js';
 import { localToday, useHealthData } from '../../hooks/useHealthData.js';
 import { publicMediaUrl } from '../../../utils/community/imageUpload.js';
 import { fetchWithTimeout } from '../../../utils/network.js';
+import RelativeTime from '../../../components/ui/RelativeTime.jsx';
+import ConfirmButton from '../../../components/ui/ConfirmButton.jsx';
+import { maskedChange, formatUsPhone } from '../../../utils/inputMask.js';
+import usePersistentState from '../../../hooks/usePersistentState.js';
+import CharRing from '../../../components/ui/CharRing.jsx';
+import { isOverLimit } from '../../../utils/charLimit.js';
 
 const IS_NATIVE_APP = Capacitor.isNativePlatform();
 
@@ -382,7 +388,7 @@ function ThisWeek({ authUserId, onOpenDashboard, onConnect }) {
 
   const heading = <h2 className="ay-you-h2" id="ay-you-week">This week</h2>;
   if (authUserId && (health.status === 'loading' || health.status === 'idle') && !health.loadedAt) {
-    return <section className="ay-you-section" aria-labelledby="ay-you-week">{heading}<div className="ay-you-week is-loading" role="status">Loading your week</div></section>;
+    return <section className="ay-you-section" aria-labelledby="ay-you-week">{heading}<div className="ay-you-week is-loading" role="status">Getting your week…</div></section>;
   }
   if (!cycle && !barChart && !side) {
     return (
@@ -512,7 +518,7 @@ function ProfileHub({ authUserId, name, initial, memberSince, ecosystemCount, sa
                     <button type="button" onClick={open || undefined} disabled={!open}>
                       <RecentThumb item={item} />
                       <span className="ay-you-recent-title">{item.title}</span>
-                      <small>{item.label}{when && <><br />{when}</>}</small>
+                      <small>{item.label}{when && <><br /><RelativeTime at={item.at} /></>}</small>
                     </button>
                   </li>
                 );
@@ -906,7 +912,7 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {loadState === 'loading' && (
-            <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>Loading startups…</div>
+            <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>Finding new brands…</div>
           )}
           {loadState === 'error' && (
             <EmptyState compact art="offline" tone="butter" title="Startups aren’t loading" body="We couldn’t reach the startup list. Check your connection and reopen this page." />
@@ -1355,7 +1361,7 @@ function PreferencesScreen({
 
         {IS_NATIVE_APP && <SectionLabel>Notifications</SectionLabel>}
         {IS_NATIVE_APP && loadState === 'loading' && (
-          <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>Loading your preferences…</div>
+          <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>Getting your settings…</div>
         )}
         {IS_NATIVE_APP && loadState === 'signed_out' && (
           <SignedOutCard>Sign in to choose how ayna reaches you.</SignedOutCard>
@@ -1370,7 +1376,7 @@ function PreferencesScreen({
             <div style={{ background: 'var(--d-group)', border: 0, borderRadius: 20, padding: '4px 18px' }}>
               <ToggleRow first title="Notifications" sub="Recalls and safety flags on things you own." on={prefs.notificationsEnabled} onClick={() => patchField('notifications_enabled', !prefs.notificationsEnabled, 'notificationsEnabled')} />
               <ToggleRow title="Updates" sub="New matches and restocks, weekly digest." on={prefs.updatesEnabled} onClick={() => patchField('updates_enabled', !prefs.updatesEnabled, 'updatesEnabled')} />
-              <DrillRow title="Channels & quiet hours" sub={channelsSummary} onClick={onOpenChannels} />
+              <DrillRow title="Channels and quiet hours" sub={channelsSummary} onClick={onOpenChannels} />
             </div>
         )}
         <SectionLabel>AI & personalization</SectionLabel>
@@ -1533,10 +1539,10 @@ function ChannelsScreen({ onBack }) {
 
   return (
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-      <BackHeader title="Channels & quiet hours" onBack={onBack} />
+      <BackHeader title="Channels and quiet hours" onBack={onBack} />
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 30px' }}>
         {loadState === 'loading' && (
-          <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>Loading…</div>
+          <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>Getting your settings…</div>
         )}
         {loadState === 'signed_out' && (
           <SignedOutCard>Sign in to manage channels and quiet hours.</SignedOutCard>
@@ -1726,7 +1732,7 @@ function TextMessagesScreen({ onBack, authUser }) {
   let content;
   if (!authUser) content = <SignedOutCard>Sign in to get texts from ayna.</SignedOutCard>;
   else if (loadError) content = <div className="ay-sms-card"><p className="ay-hc-error" role="alert">{loadError}</p><button type="button" className="ay-qc-skip" onClick={load}>Try again</button></div>;
-  else if (!status) content = <p className="ay-sms-muted" role="status">Loading…</p>;
+  else if (!status) content = <p className="ay-sms-muted" role="status">Checking your text settings…</p>;
   else if (!status.configured) content = <div className="ay-sms-card"><h2>Text messages aren’t switched on yet</h2><p className="ay-sms-muted">We’re still setting up texts. Your notification settings in the app keep working in the meantime.</p></div>;
   else if (!status.verified) {
     content = (
@@ -1738,7 +1744,7 @@ function TextMessagesScreen({ onBack, authUser }) {
           <input id="ay-sms-phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="(555) 555-0123" value={phone}
             className={fieldErrors.phone ? 'is-invalid' : undefined}
             aria-invalid={fieldErrors.phone ? true : undefined} aria-describedby={fieldErrors.phone ? 'ay-sms-phone-err' : undefined}
-            onChange={(e) => { setPhone(e.target.value); setFieldErrors((prev) => clearError(prev, 'phone')); }} />
+            onChange={(e) => { setPhone(maskedChange(e, formatUsPhone)); setFieldErrors((prev) => clearError(prev, 'phone')); }} />
           <InlineError id="ay-sms-phone-err">{fieldErrors.phone}</InlineError>
           <label className={`ay-sms-agree${fieldErrors.agree ? ' ay-check-invalid' : ''}`}>
             <input id="ay-sms-agree" type="checkbox" checked={agreed}
@@ -1772,7 +1778,7 @@ function TextMessagesScreen({ onBack, authUser }) {
         {error && <p className="ay-hc-error" role="alert">{error}</p>}
       </div>
       {status.prefs?.chat && status.textNumber && !status.stopped && <p className="ay-sms-muted ay-sms-chat">Text ayna at <a href={`sms:${status.textNumber}`}>{status.textNumber}</a>.</p>}
-      <button type="button" className="ay-sms-remove" disabled={busy} onClick={remove}>Remove this number</button>
+      <ConfirmButton className="ay-sms-remove ay-confirm" disabled={busy} armedLabel="Tap again to remove this number" onConfirm={() => remove()}>Remove this number</ConfirmButton>
     </>;
   }
   return (
@@ -2465,7 +2471,7 @@ function ManageDataScreen({ onBack }) {
         </div>
 
         {loadState === 'loading' && (
-          <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>Loading your data…</div>
+          <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>Getting your data…</div>
         )}
 
         {loadState === 'signed_out' && (
@@ -3355,7 +3361,8 @@ const CONTACT_REASONS = ['Partnerships', 'Help & Support', 'Feedback or Feature 
 const CONTACT_LABELS = { 'Help & Support': 'Help and support', 'Feedback or Feature Request': 'Feedback or an idea', 'Press & Media': 'Press and media' };
 
 function ContactScreen({ onBack }) {
-  const [form, setForm] = useState({ name: '', email: '', reason: '', subject: '', message: '' });
+  // The draft survives the app being closed; forgotten once it sends.
+  const [form, setForm, forgetDraft] = usePersistentState('app-contact:draft', { name: '', email: '', reason: '', subject: '', message: '' });
   const [reasonOpen, setReasonOpen] = useState(false);
   const [status, setStatus] = useState('idle');
   const [error, setError] = useState('');
@@ -3375,6 +3382,7 @@ function ContactScreen({ onBack }) {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data?.error || 'We could not send your message. Please try again.');
       setStatus('sent');
+      forgetDraft();
       setForm({ name: '', email: '', reason: '', subject: '', message: '' });
     } catch (err) {
       setStatus('error');
@@ -3382,7 +3390,7 @@ function ContactScreen({ onBack }) {
     }
   };
 
-  const canSend = form.name.trim().length >= 2 && form.email.trim() && form.reason && form.subject.trim().length >= 2 && form.message.trim().length >= 10;
+  const canSend = form.name.trim().length >= 2 && form.email.trim() && form.reason && form.subject.trim().length >= 2 && form.message.trim().length >= 10 && !isOverLimit(form.message, 5000);
   const sendReady = canSend && status !== 'sending';
 
   const fieldStyle = { border: '1px solid var(--ayna-border)', borderRadius: 10, background: 'var(--ayna-surface)', padding: 14, fontWeight: 400, lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', width: '100%', boxSizing: 'border-box', outline: 'none', fontFamily: 'inherit' };
@@ -3432,7 +3440,7 @@ function ContactScreen({ onBack }) {
             </div>
             <div>
               <div style={labelStyle}>Message</div>
-              <textarea value={form.message} onChange={update('message')} placeholder="Tell us how we can help." rows={5} style={{ ...fieldStyle, resize: 'vertical', minHeight: 118, lineHeight: 1.5 }} />
+              <span className="ay-charfield"><textarea value={form.message} onChange={update('message')} placeholder="Tell us how we can help." rows={5} style={{ ...fieldStyle, resize: 'vertical', minHeight: 118, lineHeight: 1.5 }} aria-invalid={isOverLimit(form.message, 5000) || undefined} /><CharRing value={form.message} max={5000} /></span>
             </div>
           </div>
 

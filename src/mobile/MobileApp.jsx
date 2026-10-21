@@ -87,6 +87,8 @@ import './keyboardModality.js';
 import { savedHaptic, addedHaptic } from '../utils/feedback.js';
 import { useSheetDrag } from './hooks/useSheetDrag.js';
 import PushLayer from './components/PushLayer.jsx';
+import GlobalToast from '../components/v3/GlobalToast.jsx';
+import { toast } from '../utils/toast.js';
 // Motion moments (sheets, push, tab fade) and app-wide press states; last so it wins.
 import './app-motion.css';
 
@@ -389,6 +391,9 @@ export default function MobileApp() {
     if (!authUser && adding && !saveNudgeShownRef.current) {
       saveNudgeShownRef.current = true;
       setSaveNudge(true);
+    } else {
+      // A toast named after the action (the guest nudge says it instead, once).
+      toast(adding ? 'Saved' : 'Removed from Saved');
     }
   };
   useEffect(() => {
@@ -750,6 +755,7 @@ export default function MobileApp() {
         }).catch((error) => console.warn('[Ayna] mobile ecosystem remove sync failed:', error));
         delete ecosystemFlagsRef.current.trackedProducts[product.id];
       }
+      toast('Removed from your Ecosystem', { label: 'Undo', onClick: () => addToEcosystemRef.current?.(product) });
       return;
     }
 
@@ -774,6 +780,8 @@ export default function MobileApp() {
     if (!authUser && !ecoNudgeShownRef.current) {
       ecoNudgeShownRef.current = true;
       setSaveNudge('eco');
+    } else {
+      toast('Added to your Ecosystem');
     }
 
     const supabase = getSupabaseClient();
@@ -789,6 +797,10 @@ export default function MobileApp() {
       ecosystemFlagsRef.current.trackedProducts[ecosystemProduct.id] = ecosystemProduct;
     }
   };
+
+  // Undo in a toast runs after later renders, so it calls the latest handler.
+  const addToEcosystemRef = useRef(null);
+  addToEcosystemRef.current = handleAddToEcosystem;
 
   // "Not for me" (same as the website's toggleOmitProduct): hides the product
   // from every recommendation, seed and swap, and takes it out of the
@@ -1345,6 +1357,7 @@ export default function MobileApp() {
         onViewRecommendations={() => { setAskAynaOpen(false); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
         onRequireAuth={(feature) => requestAuth(feature || 'Ask ayna', () => { setScreen(screen); setAskAynaOpen(true); })}
       />
+      <GlobalToast variant="app" />
     </div>
   );
 }

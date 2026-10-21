@@ -46,7 +46,7 @@ export default function ConsumerHealthData({ onBack }) {
     <EdPage title="Consumer health data privacy notice" onBack={onBack} toc tocKey={html ? 'ready' : 'wait'}>
       {html ? <div className="ay-chd" dangerouslySetInnerHTML={{ __html: html }} />
         : failed ? <p>This notice didn’t load. <a href="/consumer-health-data.html">Open the notice on its own page</a>.</p>
-          : <p aria-busy="true">Loading…</p>}
+          : <p aria-busy="true">Getting the notice…</p>}
     </EdPage>
   );
 }

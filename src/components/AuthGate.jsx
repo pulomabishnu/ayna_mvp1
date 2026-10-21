@@ -8,6 +8,7 @@ import { clearError, errorSummary, firstErrorKey, revealField, warnHaptic } from
 import InlineError from './InlineError.jsx';
 import '../styles/audit-qya.css';
 import './AuthGate.css';
+import { maskedChange, formatUsPhone } from '../utils/inputMask.js';
 
 // One short line per tab (audit AU01).
 const SUBTITLES = { signup: 'Make your shop yours.', signin: 'Sign in to your ayna account.' };
@@ -754,7 +755,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
                 type="tel"
                 placeholder="Phone number"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                onChange={(e) => setPhoneNumber(maskedChange(e, formatUsPhone))}
                 required
                 style={styles.input}
                 autoComplete="tel"

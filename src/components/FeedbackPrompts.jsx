@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
+import CharRing from './ui/CharRing.jsx';
+import { isOverLimit } from '../utils/charLimit.js';
 import { FEEDBACK_CAMPAIGN, setFeedbackOwner, readPurchaseQueue, writePurchaseQueue, updatePurchase, readyPurchase, removePurchase, sendFeedback } from '../utils/feedbackClient';
 
 const REFERRALS = ['TikTok', 'Instagram', 'LinkedIn', 'Google / search', 'Friend / word of mouth', 'Event / conference', 'Brand / partner', 'Other'];
@@ -56,11 +58,11 @@ function FeedbackDialog({ prompt, onClose }) {
         </div> : <>
           <div className="v6-survey-stars ay-stars" role="group" aria-label="Rate ayna from 1 to 5 stars">{[1, 2, 3, 4, 5].map(value => <button key={value} type="button" className={`v6-survey-star ay-stars__star${value <= rating ? ' is-filled' : ''}`} aria-pressed={rating === value} aria-label={`${value} star${value === 1 ? '' : 's'}`} disabled={busy} onClick={() => setRating(value)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.6 5.5 6 .8-4.4 4.1 1.1 5.9L12 16.6l-5.3 2.9 1.1-5.9-4.4-4.1 6-.8z" /></svg></button>)}</div>
           <label className="ay-field-label" htmlFor="ay-survey-text">Anything you want to tell us? <span>(optional)</span></label>
-          <textarea id="ay-survey-text" className="v6-survey-textarea ay-field ay-field--area" maxLength={600} value={feedback} disabled={busy} onChange={e => setFeedback(e.target.value)} placeholder="What you like, what's missing" />
+          <span className="ay-charfield"><textarea id="ay-survey-text" className="v6-survey-textarea ay-field ay-field--area" value={feedback} disabled={busy} onChange={e => setFeedback(e.target.value)} placeholder="What you like, what's missing" aria-invalid={isOverLimit(feedback, 600) || undefined} /><CharRing value={feedback} max={600} /></span>
           <label className="ay-field-label" htmlFor="ay-survey-heard">How did you hear about us? <span>(optional)</span></label>
           <select id="ay-survey-heard" className="v6-account-input v6-survey-select ay-field ay-field--select" aria-label="How did you hear about us?" value={referral} disabled={busy} onChange={e => setReferral(e.target.value)}><option value="">How did you hear about us? (optional)</option>{REFERRALS.map(item => <option key={item}>{item}</option>)}</select>
           {referral === 'Other' && <input className="v6-account-input ay-field" aria-label="Where did you hear about us?" placeholder="Where did you hear about us?" maxLength={110} value={other} disabled={busy} onChange={e => setOther(e.target.value)} />}
-          <div className="v6-survey-actions ay-sheet__actions"><button type="button" className="v6-survey-submit ay-btn ay-btn--primary" disabled={busy || !rating} onClick={() => submit()}>Send feedback</button><button type="button" className="v6-survey-skip ay-btn ay-btn--secondary" disabled={busy} onClick={onClose}>Not now</button></div>
+          <div className="v6-survey-actions ay-sheet__actions"><button type="button" className="v6-survey-submit ay-btn ay-btn--primary" disabled={busy || !rating || isOverLimit(feedback, 600)} onClick={() => submit()}>Send feedback</button><button type="button" className="v6-survey-skip ay-btn ay-btn--secondary" disabled={busy} onClick={onClose}>Not now</button></div>
         </>}
         <p role="status" className="v6-survey-status ay-sheet__status">{busy ? 'Saving…' : error}</p>
       </>}

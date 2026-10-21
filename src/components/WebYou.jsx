@@ -21,6 +21,7 @@ import { buildDashboard, formatMetric } from '../health/dashboard.js';
 import { estimatePhase } from '../health/phase.js';
 import { localToday, useHealthData } from '../mobile/hooks/useHealthData.js';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
+import RelativeTime from './ui/RelativeTime.jsx';
 
 // The app's "You" tab, built for the website: profile progress, your shelf
 // (charts from real data), badges, routine + safety alerts, and account
@@ -186,7 +187,7 @@ function ThisWeek({ userId, onOpen, onConnect }) {
   const phase = cycle ? estimatePhase(cycle) : null;
   const side = cycle ? null : SIDE_METRICS.map((m) => charts.find((c) => c.metric === m && c.metric !== bar?.metric)).find(Boolean) || null;
   const head = <h2 className="ay-group__title" id="wy-week-h">This week</h2>;
-  if ((health.status === 'loading' || health.status === 'idle') && !health.loadedAt) return <section className="wy-sec" aria-labelledby="wy-week-h">{head}<div className="ay-group is-padded wy-week" role="status"><span className="wy-note">Loading your week</span></div></section>;
+  if ((health.status === 'loading' || health.status === 'idle') && !health.loadedAt) return <section className="wy-sec" aria-labelledby="wy-week-h">{head}<div className="ay-group is-padded wy-week" role="status"><span className="wy-note">Getting your week…</span></div></section>;
   if (!cycle && !bar && !side) {
     return <section className="wy-sec" aria-labelledby="wy-week-h">{head}
       <div className="ay-group is-padded wy-week is-empty">
@@ -397,12 +398,12 @@ export default function WebYou({ onOpenCommunity, onOpenArticle, user, quizResul
         {recent.length > 0 && <section className="wy-sec" aria-labelledby="wy-recent-h">
           <div className="wy-sec__head"><h2 className="ay-group__title" id="wy-recent-h">Recently</h2><span className="wy-count">{recent.length}</span></div>
           <ul className="wy-recent">{recent.map((item) => {
-            const when = relativeDay(item.at);
+            const when = item.at ? relativeDay(item.at) : '';
             const open = item.article ? onOpenArticle && (() => onOpenArticle(item.article)) : onOpenProduct && (() => onOpenProduct(item.product));
             return <li key={item.key}><button type="button" onClick={open || undefined} disabled={!open}>
               <span className="wy-recent__tile">{item.article ? <img src={item.article.image} alt="" loading="lazy" /> : <ProductTileImage product={item.product} imgStyle={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', padding: 10 }} letterNode={<ProductImageFallback style={{ position: 'absolute', inset: 0 }} />} />}</span>
               <span className="wy-recent__title">{item.article ? item.article.title : item.product.name}</span>
-              <small>{item.label}{when ? ` · ${when}` : ''}</small>
+              <small>{item.label}{when ? <>, <RelativeTime at={item.at} /></> : ''}</small>
             </button></li>;
           })}</ul>
         </section>}

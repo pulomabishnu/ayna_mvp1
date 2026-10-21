@@ -65,6 +65,7 @@ import { loadPhoneNumberForUser } from '../utils/phoneNumberStore';
 const SHOW_SMS_ON_ECOSYSTEM = false;
 import posthog from 'posthog-js';
 import { useRecommendationViews } from '../utils/recommendationAnalytics';
+import ConfirmButton from './ui/ConfirmButton.jsx';
 
 // Ecosystem products are stored as a full snapshot of the product object at
 // the moment they're added (toggleMyProduct in App.jsx), not a live ID
@@ -1902,7 +1903,7 @@ export default function MyEcosystem({
             )}
             {llmLoading && !llmLoadStartedAt && (
                 <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: 14, padding: '1.5rem' }}>
-                    Loading recommendations…
+                    Finding your matches…
                 </p>
             )}
             {llmError && !llmLoading && (
@@ -2087,13 +2088,14 @@ export default function MyEcosystem({
                                 {/* Partner news lives here, not among her tools (it read as an ad in a private space). */}
                                 <button type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; posthog.capture('resa_sync_chip_clicked'); setShowResaPartnership(true); }}>About our Rèsa partnership</button>
                                 {typeof onBuildEcosystem === 'function' && (
-                                    <button type="button" role="menuitem" onClick={(e) => {
-                                        e.currentTarget.closest('details').open = false;
-                                        if (!myProductList.length || window.confirm('Refresh your picks from your answers? Products you added yourself stay on your shelves.')) onBuildEcosystem();
-                                    }}>{myProductList.length ? 'Refresh picks from my answers (your shelves stay)' : 'Build my ecosystem'}</button>
+                                    myProductList.length ? (
+                                        <ConfirmButton role="menuitem" className="ay-confirm" armedLabel="Tap again to refresh. Products you added stay." onConfirm={(e) => { e.currentTarget.closest('details').open = false; onBuildEcosystem(); }}>Refresh picks from my answers (your shelves stay)</ConfirmButton>
+                                    ) : (
+                                        <button type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; onBuildEcosystem(); }}>Build my ecosystem</button>
+                                    )
                                 )}
                                 {typeof onResetEcosystem === 'function' && (
-                                    <button type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; onResetEcosystem(); }}>Reset my ecosystem</button>
+                                    <ConfirmButton role="menuitem" className="ay-confirm" armedLabel="Tap again to reset. Clears your ecosystem and answers." onConfirm={(e) => { e.currentTarget.closest('details').open = false; onResetEcosystem(); }}>Reset my ecosystem</ConfirmButton>
                                 )}
                             </div>
                         </details>

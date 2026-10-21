@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import usePersistentState from '../hooks/usePersistentState.js';
+import CharRing from './ui/CharRing.jsx';
 import { apiUrl } from '../utils/apiUrl.js';
 import { EdPage } from './editorial/EdPage';
 import { fetchWithTimeout } from '../utils/network.js';
@@ -16,14 +18,15 @@ const REASONS = [
 export default function Contact({ onBack, user = null }) {
   // Signed in: name and email are already known.
   const known = { name: user?.user_metadata?.first_name || user?.user_metadata?.full_name || '', email: user?.email || '' };
-  const [form, setForm] = useState({
+  // The draft survives a refresh; it is forgotten once it sends.
+  const [form, setForm, forgetDraft] = usePersistentState('contact:draft', () => ({
     name: known.name,
     email: known.email,
     reason: '',
     subject: '',
     message: '',
     companyWebsite: '',
-  });
+  }));
   const [status, setStatus] = useState('idle');
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
@@ -34,6 +37,7 @@ export default function Contact({ onBack, user = null }) {
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim())) e.email = 'That email doesn’t look right.';
     if (!f.reason) e.reason = 'Pick a topic.';
     if (f.message.trim().length < 10) e.message = 'Write at least a sentence (10 characters).';
+    else if (f.message.length > 5000) e.message = `That’s ${f.message.length - 5000} characters over the 5,000 limit. Trim it a little.`;
     return e;
   };
 
@@ -70,6 +74,7 @@ export default function Contact({ onBack, user = null }) {
       }
 
       setStatus('sent');
+      forgetDraft();
       setForm({
         name: known.name,
         email: known.email,
@@ -126,7 +131,7 @@ export default function Contact({ onBack, user = null }) {
 
         <div className="ed-field">
           <label htmlFor="contact-message">Message</label>
-          <textarea id="contact-message" required minLength={10} maxLength={5000} rows={7} value={form.message} onChange={update('message')} placeholder="Tell us how we can help." {...errProps('message')} />
+          <span className="ay-charfield"><textarea id="contact-message" required minLength={10} rows={7} value={form.message} onChange={update('message')} placeholder="Tell us how we can help." {...errProps('message')} /><CharRing value={form.message} max={5000} /></span>
           <Err field="message" />
         </div>
 

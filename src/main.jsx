@@ -6,6 +6,8 @@ import './styles/fonts.css'
 import './index.css'
 import './styles/motion.css'
 import './styles/finish.css'
+import './styles/delight.css'
+import { installDelight } from './utils/delightRuntime.js'
 import { markPerf } from './utils/perfTimings.js'
 
 // The whole mobile app (src/mobile/**, ~1.6MB of source) was bundled into the
@@ -16,6 +18,7 @@ import { markPerf } from './utils/perfTimings.js'
 const MobileApp = React.lazy(() => import('./mobile/MobileApp.jsx'))
 import './styles/search-focus.css'
 import { installNoEmDash } from './utils/noEmDashDom.js'
+installDelight()
 import posthog from 'posthog-js'
 import { getInternalIds, tagInternalUserIfNeeded } from './utils/posthogInternal'
 import { hasInternalBrowserMarker, tagFounderAnalyticsIfNeeded } from './utils/founderAnalytics'

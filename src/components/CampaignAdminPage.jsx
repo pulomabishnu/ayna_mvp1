@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import '../styles/free-product.css';
 import { adminAction, getAdminOverview } from './freeProduct/campaignClient';
 import { FEEDBACK_QUESTIONS, FULFILLMENT_LABELS, REFERRAL_STATUS_LABELS } from '../utils/freeProductCampaign';
+import ConfirmButton from './ui/ConfirmButton.jsx';
 
 /**
  * Internal view of the free product campaign: /admin/campaign. Not linked from
@@ -90,10 +91,10 @@ export default function CampaignAdminPage({ onBack }) {
           {c.starts_at ? `. Friends count if they joined after ${new Date(c.starts_at).toLocaleString()}.` : '. Nothing is visible to anyone until you launch.'}
         </p>
         <div className="fp-actions">
-          {!c.starts_at && <button type="button" className="fp-btn is-ink" onClick={() => { if (window.confirm('Launch now? Friends who join from this moment count.')) act({ action: 'campaign', state: 'launch' }); }}>Launch</button>}
+          {!c.starts_at && <ConfirmButton className="fp-btn is-ink ay-confirm" armedLabel="Tap again to launch now" onConfirm={() => act({ action: 'campaign', state: 'launch' })}>Launch</ConfirmButton>}
           {c.starts_at && live && <button type="button" className="fp-btn" onClick={() => act({ action: 'campaign', state: 'pause' })}>Pause</button>}
           {c.starts_at && !c.is_active && <button type="button" className="fp-btn" onClick={() => act({ action: 'campaign', state: 'resume' })}>Resume</button>}
-          {c.starts_at && !c.ends_at && <button type="button" className="fp-btn is-ghost" onClick={() => { if (window.confirm('End the campaign? No more spins or claims.')) act({ action: 'campaign', state: 'end' }); }}>End</button>}
+          {c.starts_at && !c.ends_at && <ConfirmButton className="fp-btn is-ghost ay-confirm" armedLabel="Tap again to end. No more spins or claims." onConfirm={() => act({ action: 'campaign', state: 'end' })}>End</ConfirmButton>}
           <button type="button" className="fp-btn is-ghost" onClick={() => downloadCsv(data.people)}>Export CSV</button>
           <button type="button" className="fp-btn is-ghost" onClick={onBack}>Back</button>
         </div>

@@ -1401,7 +1401,7 @@ function App() {
   // answers after she confirms. Saved products, check-ins and the account stay.
   const handleResetEcosystem = async () => {
     if (!user?.id) return;
-    if (!window.confirm('Reset your Ecosystem? This clears your Ecosystem, its product tracking and your quiz answers. Saved products, check-ins and your account stay.')) return;
+    // Confirmed on the button itself (two taps, components/ui/ConfirmButton.jsx), never window.confirm.
     const supabase = getSupabaseClient();
     try {
       if (supabase) await clearEcosystemForUser(supabase, user.id, { includeTracking: true });
@@ -1759,6 +1759,8 @@ function App() {
       return next;
     });
 
+    // A toast named after the action; a more specific one (a shelf's Undo) replaces it.
+    toast(wasIn ? 'Removed from your ecosystem' : 'Added to your ecosystem', wasIn ? { label: 'Undo', onClick: () => toggleMyProductRef.current?.(product) } : { label: 'See it', onClick: () => setCurrentView('ecosystem') });
     if (!wasIn) {
       const origin = lastOpenOrigin?.productId === product.id ? lastOpenOrigin : null;
       posthog.capture('product_added', {
@@ -1776,6 +1778,10 @@ function App() {
       }).catch(e => reportSaveFailure('Could not save that change', e));
     }
   };
+
+  // Undo in a toast runs after later renders, so it calls the latest handler.
+  const toggleMyProductRef = useRef(null);
+  toggleMyProductRef.current = toggleMyProduct;
 
   /** Save for later, the wishlist shown at the bottom of My Ecosystem. */
   const toggleSavedProduct = (product) => {

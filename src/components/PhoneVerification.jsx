@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { EdPage } from './editorial/EdPage';
+import { maskedChange, formatUsPhone } from '../utils/inputMask.js';
 
 const AYNA_SMS_NUMBER = import.meta.env.VITE_AYNA_SMS_NUMBER || '';
 
@@ -99,7 +100,7 @@ export default function PhoneVerification({ userSession, onVerified, onCancel })
                 autoComplete="tel"
                 placeholder="(555) 555-5555"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                onChange={(e) => setPhoneNumber(maskedChange(e, formatUsPhone))}
               />
             </div>
             <p className="ed-small">{CONSENT_TEXT}</p>

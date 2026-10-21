@@ -3,6 +3,8 @@ import posthog from 'posthog-js';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { deleteAllSavedRecordsOnDevice } from '../health/records.js';
 import { fetchWithTimeout } from '../utils/network.js';
+import CharRing from './ui/CharRing.jsx';
+import { isOverLimit } from '../utils/charLimit.js';
 
 const REASON_OPTIONS = [
   'Not what I expected',
@@ -353,14 +355,13 @@ export default function DeleteAccountPage({ onBack }) {
             {reason === 'Other' && (
               <label className="dl-field">
                 Tell us more (optional)
-                <textarea
+                <span className="ay-charfield"><textarea
                   rows={2}
                   value={reasonDetails}
                   onChange={(e) => setReasonDetails(e.target.value)}
                   disabled={busy}
-                  maxLength={600}
-                  
-                />
+                  aria-invalid={isOverLimit(reasonDetails, 600) || undefined}
+                /><CharRing value={reasonDetails} max={600} /></span>
               </label>
             )}
 
@@ -370,7 +371,7 @@ export default function DeleteAccountPage({ onBack }) {
               <button type="button" className="ay-btn ay-btn--secondary" onClick={onBack} disabled={busy}>
                 Cancel
               </button>
-              <button type="button" className="ay-btn ay-btn--primary dl-danger" onClick={handleDelete} disabled={busy}>
+              <button type="button" className="ay-btn ay-btn--primary dl-danger" onClick={handleDelete} disabled={busy || isOverLimit(reasonDetails, 600)}>
                 {busy ? 'Deleting…' : 'Permanently delete account'}
               </button>
             </div>

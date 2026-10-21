@@ -57,11 +57,12 @@ function PersonalizedToggle({ on, disabled, onClick }) {
 
 
 function SkeletonCard() {
+  // One shared skeleton timing (.ay-skel in styles/delight.css, synced by utils/delightRuntime.js).
   return (
-    <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 18, padding: 10 }}>
-      <div style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 13, background: 'var(--ayna-chip-bg)', animation: 'ay-skeleton 1.2s ease-in-out infinite' }} />
-      <div style={{ height: 12, width: '70%', background: 'var(--ayna-chip-bg)', borderRadius: 4, marginTop: 9, animation: 'ay-skeleton 1.2s ease-in-out infinite' }} />
-      <div style={{ height: 10, width: '40%', background: 'var(--ayna-chip-bg)', borderRadius: 4, marginTop: 6, animation: 'ay-skeleton 1.2s ease-in-out infinite' }} />
+    <div className="ay-skel-card" aria-hidden="true">
+      <div className="ay-skel" style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 13 }} />
+      <div className="ay-skel" style={{ height: 12, width: '70%', borderRadius: 4, marginTop: 9 }} />
+      <div className="ay-skel" style={{ height: 10, width: '40%', borderRadius: 4, marginTop: 6 }} />
     </div>
   );
 }
