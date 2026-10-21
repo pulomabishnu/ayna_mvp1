@@ -1,5 +1,5 @@
 import { avatarInitials } from '../utils/avatarInitials';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ALL_PRODUCTS } from '../data/products.js';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { buildShopperProfile } from '../mobile/utils/shopperProfile.js';
@@ -273,7 +273,10 @@ export default function WebYou({ onUpdateIntake = null, onOpenCommunity, onOpenA
   // late-arriving session (after a reload) shows the name instead of "Not set".
   const [savedName, setName] = useState('');
   const name = savedName || firstName(user);
-  const [nameDraft, setNameDraft] = useState(null);
+  // An open edit (name, email) survives a refresh, per account. Its field
+  // takes focus only when she just tapped Edit (no keyboard on page load).
+  const openedEditRef = useRef(false);
+  const [nameDraft, setNameDraft] = usePersistentState(user?.id ? `you:name-draft:${user.id}` : null, null);
   const [note, setNote] = useState('');
 
   const flash = (text) => { setNote(text); window.setTimeout(() => setNote(''), 2600); };
@@ -289,7 +292,7 @@ export default function WebYou({ onUpdateIntake = null, onOpenCommunity, onOpenA
   // Google and Apple accounts have no ayna password; checking every linked identity, not just the first.
   const providers = [user?.app_metadata?.provider, ...(user?.app_metadata?.providers || []), ...((user?.identities || []).map((i) => i?.provider))].filter(Boolean);
   const provider = providers.includes('email') ? 'email' : (providers.find((x) => x === 'google' || x === 'apple') || user?.app_metadata?.provider || 'email');
-  const [emailDraft, setEmailDraft] = useState(null);
+  const [emailDraft, setEmailDraft] = usePersistentState(user?.id ? `you:email-draft:${user.id}` : null, null);
   const changeEmail = async () => {
     const next = String(emailDraft || '').trim();
     if (!next) return;
@@ -476,10 +479,10 @@ export default function WebYou({ onUpdateIntake = null, onOpenCommunity, onOpenA
         <section className="wy-sec" id="wyou-account" aria-labelledby="wy-account-h">
           <div className="wy-sec__head"><h2 className="ay-group__title" id="wy-account-h">Account</h2>{note && <span className="wy-count" role="status">{note}</span>}</div>
           <div className="ay-group wy-rows">
-            {nameDraft === null ? row('name', 'Name', name || 'Not set', <button type="button" className="ct-link" onClick={() => setNameDraft(name)}>Edit</button>)
-              : <form className="ay-group__row wy-row wy-form" onSubmit={(e) => { e.preventDefault(); saveName(); }}><label className="ay-group__text"><span className="ay-group__label">Name</span><input autoFocus value={nameDraft} onChange={(e) => setNameDraft(e.target.value)} maxLength={40} aria-label="First name" /></label><span className="ay-group__end"><button type="submit" className="ct-link">Save</button></span></form>}
-            {emailDraft === null ? row('email', 'Email', <>{user.email}{provider === 'google' ? <small className="ay-group__note">Signed in with Google</small> : provider === 'apple' ? <small className="ay-group__note">Signed in with Apple</small> : null}</>, provider === 'email' && <button type="button" className="ct-link" onClick={() => setEmailDraft('')}>Change</button>)
-              : <form className="ay-group__row wy-row wy-form" onSubmit={(e) => { e.preventDefault(); changeEmail(); }}><label className="ay-group__text"><span className="ay-group__label">New email</span><input type="email" autoFocus value={emailDraft} onChange={(e) => setEmailDraft(e.target.value)} placeholder="New email" aria-label="New email" required /></label><span className="ay-group__end"><button type="submit" className="ct-link">Send link</button></span></form>}
+            {nameDraft === null ? row('name', 'Name', name || 'Not set', <button type="button" className="ct-link" onClick={() => { openedEditRef.current = true; setNameDraft(name); }}>Edit</button>)
+              : <form className="ay-group__row wy-row wy-form" onSubmit={(e) => { e.preventDefault(); saveName(); }}><label className="ay-group__text"><span className="ay-group__label">Name</span><input autoFocus={openedEditRef.current} value={nameDraft} onChange={(e) => setNameDraft(e.target.value)} maxLength={40} aria-label="First name" /></label><span className="ay-group__end"><button type="submit" className="ct-link">Save</button></span></form>}
+            {emailDraft === null ? row('email', 'Email', <>{user.email}{provider === 'google' ? <small className="ay-group__note">Signed in with Google</small> : provider === 'apple' ? <small className="ay-group__note">Signed in with Apple</small> : null}</>, provider === 'email' && <button type="button" className="ct-link" onClick={() => { openedEditRef.current = true; setEmailDraft(''); }}>Change</button>)
+              : <form className="ay-group__row wy-row wy-form" onSubmit={(e) => { e.preventDefault(); changeEmail(); }}><label className="ay-group__text"><span className="ay-group__label">New email</span><input type="email" autoFocus={openedEditRef.current} value={emailDraft} onChange={(e) => setEmailDraft(e.target.value)} placeholder="New email" aria-label="New email" required /></label><span className="ay-group__end"><button type="submit" className="ct-link">Send link</button></span></form>}
             {row('profile', 'Health profile', `${pct}% complete`, <button type="button" className="ct-link" onClick={onEditProfile}>Update</button>)}
             {provider === 'email' && row('password', 'Password', '••••••••', <button type="button" className="ct-link" onClick={resetPassword}>Send reset link</button>)}
             {onOpenPhoneVerify && row('text', 'Text ayna', <>Get quick answers by text<small className="ay-group__note">Optional. Add and verify your phone number.</small></>, <button type="button" className="ct-link" onClick={onOpenPhoneVerify}>Set up</button>)}
