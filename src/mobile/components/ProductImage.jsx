@@ -2,11 +2,18 @@ import { useEffect, useState } from 'react';
 import { safeProductImageSrc, resolveProductImage } from '../../utils/resolveProductImage.js';
 import { productImageOverride } from '../../data/productImageOverrides.js';
 
-function PhotoPlaceholder({ style }) {
+// No photo yet: a designed tile (the product's initial in the logo face on a
+// tint picked from its name, with the brand under it), never a blank logo.
+const TINTS = ['pink', 'butter', 'sky'];
+function PhotoPlaceholder({ style, product }) {
+  const name = String(product?.name || '').trim();
+  const brand = String(product?.brand || '').trim();
+  const initial = (brand || name).charAt(0).toUpperCase() || 'a';
+  const tint = TINTS[[...(brand || name)].reduce((n, c) => n + c.charCodeAt(0), 0) % TINTS.length];
   return (
-    <div className="ayna-fresh-photo-placeholder" role="img" aria-label="Product photo unavailable" style={{ position: 'absolute', inset: 0, ...style }}>
-      <span aria-hidden="true" className="ayna-fresh-photo-placeholder-shape" />
-      <span aria-hidden="true" className="ayna-fresh-photo-placeholder-mark">ayna</span>
+    <div className={`ayna-fresh-photo-placeholder ay-ph is-${tint}`} role="img" aria-label={name ? `No photo yet for ${name}` : 'Product photo unavailable'} style={{ position: 'absolute', inset: 0, ...style }}>
+      <span aria-hidden="true" className="ay-ph-initial">{initial}</span>
+      {brand && <span aria-hidden="true" className="ay-ph-brand">{brand}</span>}
     </div>
   );
 }
@@ -44,7 +51,7 @@ export default function ProductImage({ src, alt, allowBrandLogo = false, style, 
   const [erroredSrc, setErroredSrc] = useState(null);
 
   if (!safeSrc || erroredSrc === safeSrc) {
-    return <PhotoPlaceholder style={style} />;
+    return <PhotoPlaceholder style={style} product={product} />;
   }
   return (
     <img

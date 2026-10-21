@@ -70,7 +70,7 @@ export default function ProductCard({
         })}
       >
         <div className="ay-product-card__tile">
-          {tile || <ProductTileImage product={product} alt={productImageAlt(product)} letterNode={<ProductImageFallback />} />}
+          {tile || <ProductTileImage product={product} alt={productImageAlt(product)} letterNode={<ProductImageFallback product={product} />} />}
         </div>
         <div className="ay-product-card__body">
           <div className="ay-product-card__top">

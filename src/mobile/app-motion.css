@@ -68,3 +68,11 @@
 /* You: a plain greeting above the name; the name stays the big, heavy line. */
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-you-names h1 .ay-you-hello { display: block; margin-bottom: 4px; font: 500 calc(15px * var(--ayna-text-scale, 1))/1.2 var(--ay-font-ui) !important; letter-spacing: 0; color: inherit !important; opacity: .8; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-you-progress b { font-weight: 700; }
+
+/* No-photo tile: initial in the logo face on a brand tint, brand name under it. */
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-fresh-photo-placeholder.ay-ph { display: grid !important; place-content: center; justify-items: center; gap: 6px; padding: 10px; border: 0 !important; text-align: center; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-ph.is-pink { background: #f7badd !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-ph.is-butter { background: #f6e3a1 !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-ph.is-sky { background: #769ebe !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-ph-initial { display: grid; place-items: center; width: 56px; height: 56px; border: 1.5px solid #3e2723; border-radius: 50%; background: #ffedac; color: #3e2723; font: 700 28px/1 var(--ay-font-display, 'ayna Display', sans-serif); box-shadow: 2px 2px 0 #3e2723; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-ph-brand { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 600 12px/1.2 var(--ay-font-ui); color: #3e2723; }
