@@ -32,6 +32,7 @@ import { displayName } from '../utils/displayName.js';
 import '../pdp.css';
 import '../eco-needs.css';
 import '../pdp-polish.css';
+import '../app-pdp.css';
 
 function toneFor(product) {
   const functions = product?.healthFunctions || [];
