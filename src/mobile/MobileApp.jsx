@@ -59,6 +59,7 @@ import CommunityScreen from './screens/CommunityScreen.jsx';
 import QuizConnectScreen from './screens/QuizConnectScreen.jsx';
 import PlanScreen from './screens/PlanScreen.jsx';
 import { healthMatchContext } from '../health/matchContext.js';
+import { useHealthMatchPref } from '../health/matchPref.js';
 import { addNeedToAnswers } from '../matching/addNeed.js';
 import * as communityStore from '../utils/community/communityStore.js';
 import { uploadCommunityImage, deleteCommunityImage } from '../utils/community/imageUpload.js';
@@ -577,7 +578,10 @@ export default function MobileApp() {
     try { return effectiveQuizAnswers ? getSelectedNeeds(effectiveQuizAnswers).map((n) => n.id) : []; } catch { return []; }
   }, [effectiveQuizAnswers]);
   const health = useHealthData(authUser?.id || null, selectedNeedIds);
-  const healthContext = personalizeWithData ? health.matchContext : null;
+  // Her own switch for health data in matches (Preferences and Health data), shared with the website.
+  const healthInMatches = useHealthMatchPref(authUser?.id || null).on;
+  const healthDataOn = personalizeWithData && healthInMatches;
+  const healthContext = healthDataOn ? health.matchContext : null;
   // Apple Health Records she saved on this phone: allergies and medicines for
   // safety, conditions as context. Never sent anywhere.
   const healthRecords = personalizeWithData ? health.records : null;
@@ -602,8 +606,8 @@ export default function MobileApp() {
     try { return pendingAnswers ? getSelectedNeeds(pendingAnswers).map((n) => n.id) : []; } catch { return []; }
   }, [pendingAnswers]);
   const planHealthContext = useMemo(
-    () => (personalizeWithData && health.matchSignals?.length ? healthMatchContext(health.matchSignals, pendingNeedIds) : null),
-    [personalizeWithData, health.matchSignals, pendingNeedIds],
+    () => (healthDataOn && health.matchSignals?.length ? healthMatchContext(health.matchSignals, pendingNeedIds) : null),
+    [healthDataOn, health.matchSignals, pendingNeedIds],
   );
   // Same behavior inputs the quiz always seeded with ("Not for me" only), plus health context.
   const planBaseOpts = useMemo(() => behaviorFrom({ omitted: omittedProducts }), [omittedProducts]);
@@ -890,7 +894,7 @@ export default function MobileApp() {
     onOpenHealthData: () => { if (authUser) setOverlay({ type: 'profile', screen: health.insights.sections.length ? 'healthInsights' : 'healthData' }); else openProfile(); },
     healthSummary: authUser ? health.insights.sections.find((sec) => sec.status === 'ready') || null : null,
     healthConnectedCount: health.connected.length,
-    healthSuggestions: personalizeWithData && authUser ? health.matchContext?.suggestions || [] : [],
+    healthSuggestions: healthDataOn && authUser ? health.matchContext?.suggestions || [] : [],
     healthInsights: healthInsightsForPlan,
     onAddGoal: handleAddGoal,
     ecoTab,

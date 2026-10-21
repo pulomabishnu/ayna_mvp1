@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { getProductMatchDetailsForProduct } from '../data/products.js';
 import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, whyMatch, BASED_ON_LINE } from '../utils/matchDisplay';
 import '../styles/match-ui.css';
+import HealthWhyLine from './health/HealthWhyLine.jsx';
 
 // "Why this match" from the app, for the website: the same match engine
 // output (getProductMatchDetailsForProduct), shown as a side panel.
@@ -54,6 +55,7 @@ export default function WhyMatchPanel({ product, quizResults, healthProfile = nu
         {onUpdateHealth && <button type="button" className="ay-why-cta" onClick={onUpdateHealth}>Update health profile</button>}
       </section>}
       {hasScore && reasonDetails.length > 0 && <section><h3>What matches</h3><ul className="ay-why-reasons">{reasonDetails.map((r, i) => <li key={`${r.component}-${i}`}><span>{kind(r.component)}</span><p>{tidy(r.text)}</p></li>)}</ul></section>}
+      {hasScore && <HealthWhyLine healthData={details.healthData} />}
       {hasScore && why.basedOn.length > 0 && <section><h3 className="ay-why-h-edit">Based on{onUpdateHealth && <button type="button" className="ay-why-edit" onClick={onUpdateHealth}>Edit</button>}</h3><ul className="ay-why-inputs">{why.basedOn.map((line) => <li key={line}>{tidy(line)}</li>)}</ul></section>}
       {hasScore && why.hint && <section className="ay-why-hint">
         <p>{why.hint}</p>

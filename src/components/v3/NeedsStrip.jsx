@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ProductCard from '../ProductCard';
+import HealthBackedBadge from '../health/HealthBackedBadge.jsx';
 
 /* "Fill the gaps": the needs she picked that nothing on her shelves covers
    yet, as tags on one strip. Pick a tag to see ayna's strongest picks for
@@ -65,6 +66,7 @@ export default function NeedsStrip({ needs, isOwned, onOpenProduct, onToggleProd
                     product={p.product}
                     matchPercent={p.score}
                     matchLabel={`${p.score}% match for ${cur.phrase}`}
+                    badge={p.healthBacked ? <HealthBackedBadge backed={p.healthBacked} /> : null}
                     onOpen={onOpenProduct}
                     action={onToggleProduct && (
                       <button type="button" className="ay-btn ay-btn--secondary ay-card-add" onClick={() => onToggleProduct(p.product)}>+ Add to my ecosystem</button>

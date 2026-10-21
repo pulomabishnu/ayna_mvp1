@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import HealthBackedBadge from '../health/HealthBackedBadge.jsx';
 import { GlossaryText } from '../GlossaryTerm';
 import { LONG_TEXT, NOT_ON_FILE } from '../pdp/glance';
 import { jumpTo } from '../pdp/jump';
@@ -526,7 +527,7 @@ function MatchSeal({ children }) {
   );
 }
 
-export function ProductMatch({ glance, matchPercent, fallback = '', onShowWhy, onFindFit = null, hasProfile = false, exclusions = [] }) {
+export function ProductMatch({ glance, matchPercent, fallback = '', onShowWhy, onFindFit = null, hasProfile = false, exclusions = [], health = null }) {
   if (!glance) return null;
   // Signed in with a profile but no score (a partner bundle, an excluded item):
   // the block still shows, worded honestly, instead of disappearing.
@@ -570,6 +571,7 @@ export function ProductMatch({ glance, matchPercent, fallback = '', onShowWhy, o
       </button>
       <div className="ay-match__body">
         <h2 id="ay-match-h">{heading}</h2>
+        {health && <HealthBackedBadge backed={health} />}
         {lines.length > 0 && <ul className="ay-match__reasons">{lines.map((r) => <li key={r} className={isMiss(r) ? 'is-miss' : 'is-hit'}><span className="sr-only">{isMiss(r) ? 'Counts against: ' : 'Fits: '}</span>{r}</li>)}</ul>}
         <div className="ay-match__links">
           <button type="button" onClick={onShowWhy}>See the breakdown</button>

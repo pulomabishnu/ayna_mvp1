@@ -220,7 +220,8 @@ export function useHealthData(userId, selectedNeedIds = []) {
   const insightRows = useMemo(() => allRows.filter(usableForInsights), [allRows]);
   const insights = useMemo(() => buildInsights(insightRows, { today: localToday() }), [insightRows]);
   // Health Match only reads sources whose terms allow it (src/health/policy.js).
-  const matchSignals = useMemo(() => buildInsights(allRows.filter(usableForMatching), { today: localToday() }).signals, [allRows]);
+  // Trends plus timing facts (period due soon): both only ever strengthen a need she chose.
+  const matchSignals = useMemo(() => { const out = buildInsights(allRows.filter(usableForMatching), { today: localToday() }); return [...out.signals, ...(out.timing || [])]; }, [allRows]);
   const needKey = selectedNeedIds.join('|');
   const matchContext = useMemo(
     () => (matchSignals.length ? healthMatchContext(matchSignals, selectedNeedIds) : null),
