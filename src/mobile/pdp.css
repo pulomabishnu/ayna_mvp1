@@ -11,11 +11,11 @@
 .ay-pdp-title { padding: 20px var(--ay-gutter) 0; }
 .ay-pdp-eyebrow { font-size: 13px; font-weight: 500; color: var(--ay-ink); opacity: .62; }
 .ay-pdp-title h1 { margin: 6px 0 0; font-family: var(--ayna-font-ui); font-weight: 600; font-size: calc(30px * var(--ayna-text-scale, 1)); line-height: 1.15; letter-spacing: -0.01em; color: var(--ay-ink); text-wrap: balance; }
-.ay-pdp-price { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin-top: 10px; }
+.ay-pdp-price { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--ay-s4) 10px; margin-top: 10px; }
 .ay-pdp-price .is-price { font-size: 17px; font-weight: 600; color: var(--ay-ink); }
 .ay-pdp-price .is-note { font-size: 15px; line-height: 1.45; font-weight: 400; color: var(--ay-ink); opacity: .7; }
 .ay-pdp-price small { font-size: 13px; font-weight: 500; color: var(--ay-ink); background: var(--ay-tile); border-radius: 99px; padding: 3px 9px; }
-.ay-pdp-fitnote { display: inline-flex; gap: 6px; align-items: center; margin-top: 12px; min-height: 40px; padding: 0 14px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-butter); color: var(--ay-ink); font-weight: 500; font-size: 13px; cursor: pointer; }
+.ay-pdp-fitnote { display: inline-flex; gap: 6px; align-items: center; margin-top: var(--ay-s12); min-height: 40px; padding: 0 14px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-butter); color: var(--ay-ink); font-weight: 500; font-size: 13px; cursor: pointer; }
 
 /* At a glance */
 .ay-pdp-ask h2 { margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -.02em; color: var(--ay-ink); }
@@ -31,7 +31,7 @@
 .ay-pdp-who-n { width: 32px; height: 32px; flex: none; display: grid; place-items: center; border-radius: 50%; border: 1.5px solid var(--ay-ink); background: var(--ay-butter); color: var(--ay-ink); font-weight: 500; font-size: 13px; }
 
 /* Ask card */
-.ay-pdp-ask { margin-top: 8px; padding: 18px; border: 1.5px solid var(--ay-ink); border-radius: 22px; background: var(--ay-peri); }
+.ay-pdp-ask { margin-top: var(--ay-s8); padding: 18px; border: 1.5px solid var(--ay-ink); border-radius: 22px; background: var(--ay-peri); }
 .ay-pdp-ask button:not([type='submit']) { background: var(--ay-paper) !important; color: var(--ay-ink) !important; border: 1.5px solid var(--ay-ink) !important; font-weight: 500 !important; text-align: left; }
 .ay-pdp-ask input { border: 1.5px solid var(--ay-ink) !important; background: var(--ay-paper) !important; }
 .ay-pdp-ask button[type='submit'] { background: var(--ay-ink) !important; color: var(--ay-paper) !important; }
@@ -41,19 +41,19 @@
 
 /* Website-style tabs: scrollable pill row (labels are long) */
 
-.ay-pdp-panel { padding: 14px var(--ay-gutter) 0; display: grid; gap: 12px; }
+.ay-pdp-panel { padding: 14px var(--ay-gutter) 0; display: grid; gap: var(--ay-s12); }
 .ay-pdp-panel .ay-pdp-ask { margin-top: 0; }
 .ayna-mobile.ayna-mobile .ay-pdp .ayna-figma-partner-disclosure { margin: 14px var(--ay-gutter) 0 !important; border: 0 !important; background: transparent !important; }
 .ayna-mobile.ayna-mobile .ay-pdp .ayna-figma-partner-disclosure > button { padding: 0 !important; min-height: 36px; }
-.ayna-mobile.ayna-mobile .ay-pdp .ayna-figma-partner-copy { padding: 4px 0 0 !important; font-size: 13px; font-weight: 500; line-height: 1.5; }
+.ayna-mobile.ayna-mobile .ay-pdp .ayna-figma-partner-copy { padding: var(--ay-s4) 0 0 !important; font-size: 13px; font-weight: 500; line-height: 1.5; }
 
 /* ===== Evidence tabs as game cards ===== */
 /* Tabs: each carries its tone + icon; the selected one fills with its tone */
 
 /* Card */
-.ay-src-head { position: relative; display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--tone); border-bottom: 1.5px solid var(--ay-ink); }
+.ay-src-head { position: relative; display: flex; align-items: center; gap: var(--ay-s12); padding: 14px var(--ay-s16); background: var(--tone); border-bottom: 1.5px solid var(--ay-ink); }
 .ay-src-head::after { content: ''; position: absolute; right: -18px; top: -18px; width: 72px; height: 72px; border-radius: 50%; border: 1.5px solid var(--ay-ink); opacity: .18; }
-.ay-src-sticker { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border: 1.5px solid var(--ay-ink); border-radius: 12px; background: var(--ay-paper); rotate: -6deg; animation: ay-src-pop .45s cubic-bezier(.34,1.56,.64,1) .08s both; }
+.ay-src-sticker { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border: 1.5px solid var(--ay-ink); border-radius: var(--ay-r-tile); background: var(--ay-paper); rotate: -6deg; animation: ay-src-pop .45s cubic-bezier(.34,1.56,.64,1) .08s both; }
 .ay-src-sticker svg { width: 20px; height: 20px; fill: none; stroke: var(--ay-ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .ay-src-head h2 { flex: 1; margin: 0; font: 600 17px/1.15 var(--ay-font-ui); letter-spacing: -.02em; }
 .ay-src-count { flex: none; position: relative; z-index: 1; padding: 5px 10px; border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper); font: 500 13px/1 var(--ay-font-ui); }
@@ -64,8 +64,8 @@
 .ay-src-meta { margin: 0; font: 500 13px/1.4 var(--ay-font-ui); opacity: .65; }
 
 /* Link cards */
-.ay-src-links { list-style: none; padding: 0; display: grid; gap: 8px; }
-.ay-src-links a { display: grid; grid-template-columns: 36px minmax(0, 1fr) 20px; gap: 12px; align-items: center; padding: 10px 12px; border: 1.5px solid var(--ay-line); border-radius: 16px; background: var(--ay-cream); color: var(--ay-ink); text-decoration: none; transition: border-color .15s, transform .15s; }
+.ay-src-links { list-style: none; padding: 0; display: grid; gap: var(--ay-s8); }
+.ay-src-links a { display: grid; grid-template-columns: 36px minmax(0, 1fr) 20px; gap: var(--ay-s12); align-items: center; padding: 10px var(--ay-s12); border: 1.5px solid var(--ay-line); border-radius: var(--ay-r-card); background: var(--ay-cream); color: var(--ay-ink); text-decoration: none; transition: border-color .15s, transform .15s; }
 .ay-src-links a:active { transform: scale(.98); border-color: var(--ay-ink); }
 .ay-src-avatar { width: 36px; height: 36px; display: grid; place-items: center; border: 1.5px solid var(--ay-ink); border-radius: 50%; background: var(--tone); font: 500 13px/1 var(--ay-font-ui); }
 .ay-src-link-text { display: grid; gap: 2px; min-width: 0; }
@@ -81,12 +81,12 @@
 
 /* Community actions sit outside the Reviews source card. */
 
-.ay-pdp-community-actions { display: grid; gap: 12px; margin: 18px var(--ay-gutter, 20px) 0; padding: 16px; border: 2px solid var(--ay-ink); border-radius: 22px; background: var(--ay-pink); box-shadow: 3px 3px 0 var(--ay-ink); }
+.ay-pdp-community-actions { display: grid; gap: var(--ay-s12); margin: 18px var(--ay-gutter, 20px) 0; padding: var(--ay-s16); border: 2px solid var(--ay-ink); border-radius: 22px; background: var(--ay-pink); box-shadow: 3px 3px 0 var(--ay-ink); }
 .ay-pdp-community-head { display: flex; align-items: center; gap: 10px; }
 .ay-pdp-community-head svg { width: 22px; height: 22px; fill: none; stroke: var(--ay-ink); stroke-width: 1.8; stroke-linejoin: round; }
 .ay-pdp-community-head h2 { margin: 0; color: var(--ay-ink); font: 400 22px/1.15 var(--ay-font-display); letter-spacing: -.03em; }
-.ay-pdp-community-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.ay-pdp-community-grid button { min-height: 44px; padding: 8px 10px; border: 1.5px solid var(--ay-ink); border-radius: 14px; background: var(--ay-paper); color: var(--ay-ink); font: 500 13px/1.15 var(--ay-font-ui); cursor: pointer; }
+.ay-pdp-community-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ay-s8); }
+.ay-pdp-community-grid button { min-height: 44px; padding: var(--ay-s8) 10px; border: 1.5px solid var(--ay-ink); border-radius: 14px; background: var(--ay-paper); color: var(--ay-ink); font: 500 13px/1.15 var(--ay-font-ui); cursor: pointer; }
 .ay-pdp-community-grid button.is-primary { background: var(--ay-ink); color: var(--ay-paper); }
 .ay-pdp-community-grid button:active { transform: scale(.97); }
 
@@ -95,8 +95,8 @@
    reference-system.css whose bottom border curved with the inherited radius. */
 .ayna-mobile.ayna-mobile .ayna-figma-guest-match.ayna-figma-guest-match {
   position: static !important;
-  display: inline-flex !important; align-items: center; justify-content: center; gap: 8px;
-  width: auto; min-height: 44px; margin: 12px 0 0 !important; padding: 0 20px !important;
+  display: inline-flex !important; align-items: center; justify-content: center; gap: var(--ay-s8);
+  width: auto; min-height: 44px; margin: var(--ay-s12) 0 0 !important; padding: 0 var(--ay-s20) !important;
   border: 2px solid var(--ay-ink) !important; border-radius: 999px !important;
   background: var(--ay-paper) !important; color: var(--ay-ink) !important;
   box-shadow: 2px 2px 0 var(--ay-ink) !important;
@@ -112,30 +112,30 @@
 /* ---------- Round 5: calm header + passport sections ----------
    eyebrow, name, price (+ per unit), ONE match pill + one line, up to 4 facts.
    8pt rhythm: 8 / 16 / 24. */
-.ayna-mobile .ay-pdp-match { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.ayna-mobile .ay-pdp-match { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ay-s8) var(--ay-s12); }
 .ayna-mobile .ay-pdp-match > span { color: var(--ay-ink); opacity: .72; font: 400 15px/1.45 var(--ay-font-ui); }
 .ayna-mobile .ay-pdp-passport { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; margin: 32px var(--ay-gutter) 0; }
 .ayna-mobile .ay-pdp-passport .ay-psec-body p { font-size: calc(15px * var(--ayna-text-scale, 1)); line-height: 1.45; font-weight: 400; }
 .ayna-mobile .ay-pdp-passport .ay-pdp-omit { justify-content: flex-start; margin: 0; }
 .ayna-mobile .ay-pdp-passport .ay-pdp-omit button { min-height: 44px; }
-.ayna-mobile .ay-pdp .ay-pdp-ask { padding-top: 4px; }
+.ayna-mobile .ay-pdp .ay-pdp-ask { padding-top: var(--ay-s4); }
 
 /* ---------- Round 5b: "ayna at a glance" is the hero (same order as the website) ---------- */
 .ayna-mobile .ay-pdp-thumbs { padding: 0 var(--ay-gutter); }
 .ayna-mobile .ay-pdp-thumbs .ay-thumbs button { width: 56px; height: 56px; }
-.ayna-mobile .ay-pdp-safetyflag { justify-self: start; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border: 1.5px solid var(--ay-ink); border-radius: 999px; background: var(--ay-pink); color: var(--ay-ink); font: 400 15px/1.45 var(--ay-font-ui); cursor: pointer; }
+.ayna-mobile .ay-pdp-safetyflag { justify-self: start; display: inline-flex; align-items: center; gap: var(--ay-s8); min-height: 44px; padding: 0 var(--ay-s16); border: 1.5px solid var(--ay-ink); border-radius: 999px; background: var(--ay-pink); color: var(--ay-ink); font: 400 15px/1.45 var(--ay-font-ui); cursor: pointer; }
 .ayna-mobile[data-theme='dark'] .ay-pdp-safetyflag { color: #2e1c18; border-color: var(--ay-pink); }
 .ayna-mobile .ay-pdp-safetyflag strong { font-weight: 600; }
 .ayna-mobile .ay-pdp-safetyflag span:last-child { text-decoration: underline; text-underline-offset: 3px; }
-.ayna-mobile .ay-pdp-passport { gap: 48px; margin-top: 24px; }
+.ayna-mobile .ay-pdp-passport { gap: var(--ay-s48); margin-top: var(--ay-s24); }
 .ayna-mobile .ay-pdp-passport .ay-glance { --gl-pad: 16px; border-width: 1.5px; box-shadow: 0 3px 0 var(--ay-ink); }
 .ayna-mobile .ay-pdp-passport .ay-glance a { color: var(--ay-ink) !important; }
-.ayna-mobile .ay-pdp-askcard { display: grid; gap: 16px; min-width: 0; scroll-margin-top: 16px; }
+.ayna-mobile .ay-pdp-askcard { display: grid; gap: var(--ay-s16); min-width: 0; scroll-margin-top: 16px; }
 .ayna-mobile .ay-pdp-askcard:focus { outline: none; }
 .ayna-mobile .ay-pdp-askcard .ay-pdp-ask { margin: 0; }
 .ayna-mobile .ay-pdp-sechead h2 { font-size: 22px !important; line-height: 1.15 !important; font-weight: 400 !important; }
-.ayna-mobile .ay-pdp-related .ay-pdp-sechead { margin-bottom: 16px; }
-.ayna-mobile .ay-pdp-related { margin-top: 48px; }
+.ayna-mobile .ay-pdp-related .ay-pdp-sechead { margin-bottom: var(--ay-s16); }
+.ayna-mobile .ay-pdp-related { margin-top: var(--ay-s48); }
 .ayna-mobile .ay-compare { scroll-margin-top: 16px; }
 .ayna-mobile .ay-compare table { min-width: 520px; }
 .ayna-mobile .ay-compare :is(th, td) { font-size: 15px; line-height: 1.45; font-weight: 400; }

@@ -16,22 +16,22 @@
 }
 
 /* ---------- Share control under a reply ---------- */
-.ay-share-answer { margin-top: 8px; font-family: 'Figtree', system-ui, sans-serif; color: var(--sa-ink); }
-.ay-share-answer__row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.ay-share-answer { margin-top: var(--ay-s8); font-family: 'Figtree', system-ui, sans-serif; color: var(--sa-ink); }
+.ay-share-answer__row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ay-s8); }
 .ay-share-answer__btn {
   min-height: 36px; padding: 0 14px; border-radius: 99px;
   border: 1.5px solid currentColor; background: transparent; color: inherit;
   font: 600 13px/1 'Figtree', system-ui, sans-serif; cursor: pointer;
 }
 .ay-share-answer__btn.is-primary { background: var(--sa-ink); color: var(--sa-bg); border-color: var(--sa-ink); }
-.ay-share-answer__btn.is-quiet { border-color: transparent; text-decoration: underline; text-underline-offset: 3px; padding: 0 4px; }
+.ay-share-answer__btn.is-quiet { border-color: transparent; text-decoration: underline; text-underline-offset: 3px; padding: 0 var(--ay-s4); }
 .ay-share-answer__btn:disabled { opacity: 0.55; cursor: default; }
 .ay-share-answer__btn:active:not(:disabled) { transform: translateY(1px); }
-.ay-share-answer__confirm p { margin: 0 0 8px; font-size: 13px; line-height: 1.4; }
+.ay-share-answer__confirm p { margin: 0 0 var(--ay-s8); font-size: 13px; line-height: 1.4; }
 .ay-share-answer__status { font-size: 12.5px; }
 @media (pointer: coarse) { .ay-share-answer__btn { min-height: 44px; } }
 
 /* ---------- Public page /a/<slug> ---------- */
 .app-container:not([data-theme='dark'])[data-view='shared-answer'] { --ay-page: #ffedac; }
 
-.ay-sa__owner { display: flex; align-items: center; gap: 12px; padding: 24px 0 0; }
+.ay-sa__owner { display: flex; align-items: center; gap: var(--ay-s12); padding: var(--ay-s24) 0 0; }

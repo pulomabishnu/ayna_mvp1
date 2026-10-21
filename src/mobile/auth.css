@@ -1,28 +1,28 @@
 /* Sign in / sign up, head, form (fields + primary), or, social, switch, trust. 8pt grid, one left edge. */
 .ayna-mobile.ayna-mobile .ay-auth { background: var(--ay-cream) !important; color: var(--ay-ink) !important; padding: max(16px, env(safe-area-inset-top)) var(--ay-gutter) 32px !important; }
-.ayna-mobile.ayna-mobile .ay-auth-back { width: 44px; height: 44px; margin: 0 0 24px !important; padding: 0 !important; display: grid; place-items: center; border: 1.5px solid var(--ay-ink) !important; border-radius: 50% !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile .ay-auth-back { width: 44px; height: 44px; margin: 0 0 var(--ay-s24) !important; padding: 0 !important; display: grid; place-items: center; border: 1.5px solid var(--ay-ink) !important; border-radius: 50% !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; }
 
 /* Head with a small sticker cluster (no product photos here) */
 .ay-auth-head { position: relative; padding-right: 72px; }
 .ay-auth-head h1 { margin: 0; font: 400 calc(28px * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display); letter-spacing: -.045em; color: var(--ay-ink); text-wrap: balance; }
-.ay-auth-head p { margin: 8px 0 0; font: 400 15px/1.45 var(--ay-font-ui); opacity: .7; }
+.ay-auth-head p { margin: var(--ay-s8) 0 0; font: 400 15px/1.45 var(--ay-font-ui); opacity: .7; }
 
 /* Form: fields and their button stay together */
-.ay-auth-form { display: grid; gap: 8px; margin-top: 32px; }
-.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field { margin: 0 !important; min-height: 64px; padding: 10px 16px !important; border: 1.5px solid var(--ay-line) !important; border-radius: 16px !important; background: var(--ay-paper) !important; box-shadow: none !important; transition: border-color .15s; }
+.ay-auth-form { display: grid; gap: var(--ay-s8); margin-top: var(--ay-s32); }
+.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field { margin: 0 !important; min-height: 64px; padding: 10px var(--ay-s16) !important; border: 1.5px solid var(--ay-line) !important; border-radius: var(--ay-r-card) !important; background: var(--ay-paper) !important; box-shadow: none !important; transition: border-color .15s; }
 .ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field:focus-within { border-color: var(--ay-ink) !important; }
 .ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field svg { stroke: var(--ay-ink); opacity: .55; }
 .ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field span { color: var(--ay-ink) !important; font-size: 13px !important; font-weight: 500 !important; opacity: .7; }
 .ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field input { color: var(--ay-ink) !important; }
 .ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field input::placeholder { color: var(--ay-ink); opacity: .4; }
-.ay-auth-consent { display: grid; gap: 12px; margin: 8px 0; }
+.ay-auth-consent { display: grid; gap: var(--ay-s12); margin: var(--ay-s8) 0; }
 .ay-auth-consent label { align-items: flex-start; }
 .ayna-mobile.ayna-mobile .ay-auth-consent input[type='checkbox'] { accent-color: var(--ay-ink) !important; width: 20px !important; height: 20px !important; }
 .ay-auth-consent-text { font: 500 13px/1.45 var(--ay-font-ui); color: var(--ay-ink); }
 /* Consent rows: the whole row is the tap target (44px+). Error state comes
    from InlineError.css (.ay-check-invalid: pink fill, espresso text). */
-.ay-auth-consent-item { display: grid; gap: 4px; }
-.ay-auth-consent-row { display: flex; gap: 12px; align-items: flex-start; min-height: 44px; cursor: pointer; }
+.ay-auth-consent-item { display: grid; gap: var(--ay-s4); }
+.ay-auth-consent-row { display: flex; gap: var(--ay-s12); align-items: flex-start; min-height: 44px; cursor: pointer; }
 .ayna-mobile.ayna-mobile .ay-auth-consent-row input[type='checkbox'] { flex: none; margin: 1px 0 0; }
 .ayna-mobile.ayna-mobile .ay-check-invalid input[type='checkbox'] { accent-color: #3e2723 !important; outline: 2px solid #3e2723; outline-offset: 1px; border-radius: 4px; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-check-invalid .ay-auth-consent-text { color: #3e2723 !important; }
@@ -33,39 +33,39 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field.is-invalid svg { stroke: #3e2723; opacity: .8; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-auth-heard select.is-invalid { background-color: #f7badd !important; border: 2px solid #3e2723 !important; color: #3e2723 !important; }
 .ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field, .ayna-mobile.ayna-mobile .ay-auth-heard select { scroll-margin: 96px; }
-.ay-auth-error { padding: 10px 14px; border-radius: 12px; background: var(--ay-pink); color: var(--ay-ink); font: 500 13px/1.4 var(--ay-font-ui); }
-.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-primary { min-height: 56px; margin-top: 8px; padding: 0 20px !important; border-radius: 99px !important; background: var(--ay-ink) !important; color: var(--ay-paper) !important; font: 600 17px/1 var(--ay-font-ui) !important; }
+.ay-auth-error { padding: 10px 14px; border-radius: var(--ay-r-tile); background: var(--ay-pink); color: var(--ay-ink); font: 500 13px/1.4 var(--ay-font-ui); }
+.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-primary { min-height: 56px; margin-top: var(--ay-s8); padding: 0 var(--ay-s20) !important; border-radius: 99px !important; background: var(--ay-ink) !important; color: var(--ay-paper) !important; font: 600 17px/1 var(--ay-font-ui) !important; }
 .ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-primary svg { stroke: var(--ay-paper) !important; }
 .ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-primary:disabled { opacity: .55; }
 
 /* or */
-.ay-auth-or { display: flex; align-items: center; gap: 12px; margin: 24px 0; font: 500 13px/1 var(--ay-font-ui); opacity: .6; }
+.ay-auth-or { display: flex; align-items: center; gap: var(--ay-s12); margin: var(--ay-s24) 0; font: 500 13px/1 var(--ay-font-ui); opacity: .6; }
 .ay-auth-or::before, .ay-auth-or::after { content: ''; flex: 1; height: 1px; background: var(--ay-ink); opacity: .2; }
 
 /* Social */
-.ay-auth-social { display: grid; gap: 8px; }
-.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-social { min-height: 52px; padding: 0 20px !important; border: 1.5px solid var(--ay-line) !important; border-radius: 99px !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; font: 600 17px/1 var(--ay-font-ui) !important; }
+.ay-auth-social { display: grid; gap: var(--ay-s8); }
+.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-social { min-height: 52px; padding: 0 var(--ay-s20) !important; border: 1.5px solid var(--ay-line) !important; border-radius: 99px !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; font: 600 17px/1 var(--ay-font-ui) !important; }
 .ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-social svg path[fill='#FFFFFF'] { fill: var(--ay-ink); }
 
 /* Switch + trust + legal */
-.ay-auth-link { display: block; margin: 24px auto 0; min-height: 44px; padding: 0; border: 0; background: none; color: var(--ay-ink); font: 500 13px/1 var(--ay-font-ui); text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 5px; cursor: pointer; }
+.ay-auth-link { display: block; margin: var(--ay-s24) auto 0; min-height: 44px; padding: 0; border: 0; background: none; color: var(--ay-ink); font: 500 13px/1 var(--ay-font-ui); text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 5px; cursor: pointer; }
 .ay-auth-link:disabled { opacity: .5; cursor: default; }
-.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-trust { margin-top: 8px !important; opacity: .6 !important; color: var(--ay-ink); }
+.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-trust { margin-top: var(--ay-s8) !important; opacity: .6 !important; color: var(--ay-ink); }
 .ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-trust svg { stroke: var(--ay-ink); }
-.ayna-mobile.ayna-mobile .ay-auth .ay-legal { margin-top: 32px; }
+.ayna-mobile.ayna-mobile .ay-auth .ay-legal { margin-top: var(--ay-s32); }
 
 /* Check-email state */
-.ay-auth-check-title { margin-bottom: 8px; text-align: center; font: 400 calc(28px * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display); letter-spacing: -.04em; color: var(--ay-ink); }
-.ay-auth-check-copy { max-width: 32ch; margin: 0 auto 16px; text-align: center; font: 400 15px/1.45 var(--ay-font-ui); color: var(--ay-ink); opacity: .8; }
-.ay-auth-check-msg { margin-bottom: 8px; text-align: center; font: 500 13px/1.4 var(--ay-font-ui); color: var(--ay-ink); }
+.ay-auth-check-title { margin-bottom: var(--ay-s8); text-align: center; font: 400 calc(28px * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display); letter-spacing: -.04em; color: var(--ay-ink); }
+.ay-auth-check-copy { max-width: 32ch; margin: 0 auto var(--ay-s16); text-align: center; font: 400 15px/1.45 var(--ay-font-ui); color: var(--ay-ink); opacity: .8; }
+.ay-auth-check-msg { margin-bottom: var(--ay-s8); text-align: center; font: 500 13px/1.4 var(--ay-font-ui); color: var(--ay-ink); }
 .ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field > div:first-child:not(:last-child) { width: 22px !important; height: 22px !important; font: 500 11.5px/1 var(--ay-font-ui) !important; background: var(--ay-peri) !important; color: var(--ay-ink) !important; }
 .ay-auth-head { min-height: 64px; display: flex; align-items: center; }
 
 /* Post-quiz sign up: a small summary of the Ecosystem being saved */
 .ayna-mobile .ay-auth .ay-auth-head { flex-wrap: wrap; align-content: center; }
 .ayna-mobile .ay-auth .ay-auth-head h1 { flex: 1 1 100%; }
-.ayna-mobile .ay-auth .ay-auth-head p { flex: 1 1 100%; margin: 8px 0 0 !important; color: var(--ay-ink) !important; }
-.ayna-mobile .ay-auth .ay-auth-eco { display: flex !important; flex-direction: row !important; align-items: center !important; gap: 14px !important; width: auto !important; margin: 20px 0 4px !important; padding: 12px 14px !important; border: 1.5px solid var(--ay-ink) !important; border-radius: 20px !important; background: var(--ay-butter) !important; color: var(--ay-ink) !important; animation: ay-page .3s ease-out both; }
+.ayna-mobile .ay-auth .ay-auth-head p { flex: 1 1 100%; margin: var(--ay-s8) 0 0 !important; color: var(--ay-ink) !important; }
+.ayna-mobile .ay-auth .ay-auth-eco { display: flex !important; flex-direction: row !important; align-items: center !important; gap: 14px !important; width: auto !important; margin: var(--ay-s20) 0 var(--ay-s4) !important; padding: var(--ay-s12) 14px !important; border: 1.5px solid var(--ay-ink) !important; border-radius: var(--ay-r-group) !important; background: var(--ay-butter) !important; color: var(--ay-ink) !important; animation: ay-page .3s ease-out both; }
 .ayna-mobile .ay-auth .ay-auth-eco-thumbs { display: flex !important; flex: none; order: 0; }
 .ayna-mobile .ay-auth .ay-auth-eco-thumbs > span { position: relative; display: block !important; width: 46px !important; height: 46px !important; margin-left: -10px; border: 1.5px solid var(--ay-ink) !important; border-radius: 14px !important; background: var(--ay-pink) !important; overflow: hidden; }
 .ayna-mobile .ay-auth .ay-auth-eco-thumbs > span:first-child { margin-left: 0; }
@@ -79,15 +79,15 @@
 .ay-auth-link b { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 
 /* Auth sheet: sign in only; new people go build their Ecosystem first */
-.ayna-mobile .ayna-profile-auth-sheet .ayna-profile-auth-new { display: block; width: 100%; min-height: 44px; margin-top: 8px; padding: 8px 0; border: 0; background: none; color: var(--ay-ink, #3e2723); font: 400 15px/1.45 var(--ay-font-ui, 'Figtree'), sans-serif; text-align: center; cursor: pointer; }
+.ayna-mobile .ayna-profile-auth-sheet .ayna-profile-auth-new { display: block; width: 100%; min-height: 44px; margin-top: var(--ay-s8); padding: var(--ay-s8) 0; border: 0; background: none; color: var(--ay-ink, #3e2723); font: 400 15px/1.45 var(--ay-font-ui, 'Figtree'), sans-serif; text-align: center; cursor: pointer; }
 .ayna-mobile .ayna-profile-auth-sheet .ayna-profile-auth-new b { font-weight: 600; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
 .ayna-mobile .ayna-profile-auth-sheet .ayna-profile-auth-new:focus-visible { outline: 3px solid var(--ay-peri, #769ebe); outline-offset: 2px; border-radius: 8px; }
 
 /* "Where did you hear about us?" (sign up only, optional) */
-.ay-auth-heard { display: grid; gap: 8px; margin-top: 8px; }
-.ay-auth-heard-label { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font: 500 13px/1.2 var(--ay-font-ui); color: var(--ay-ink); }
+.ay-auth-heard { display: grid; gap: var(--ay-s8); margin-top: var(--ay-s8); }
+.ay-auth-heard-label { display: flex; align-items: baseline; justify-content: space-between; gap: var(--ay-s8); font: 500 13px/1.2 var(--ay-font-ui); color: var(--ay-ink); }
 .ay-auth-heard-label span { font-weight: 500; font-size: 13px; opacity: .66; }
-.ayna-mobile.ayna-mobile .ay-auth-heard :is(select, input) { width: 100%; min-height: 52px; box-sizing: border-box; padding: 0 16px; border: 1.5px solid var(--ay-line); border-radius: 16px; background-color: var(--ay-paper); color: var(--ay-ink); font: 500 16px/1.2 var(--ay-font-ui); outline: none; }
+.ayna-mobile.ayna-mobile .ay-auth-heard :is(select, input) { width: 100%; min-height: 52px; box-sizing: border-box; padding: 0 var(--ay-s16); border: 1.5px solid var(--ay-line); border-radius: var(--ay-r-card); background-color: var(--ay-paper); color: var(--ay-ink); font: 500 16px/1.2 var(--ay-font-ui); outline: none; }
 .ayna-mobile.ayna-mobile .ay-auth-heard select { padding-right: 44px; appearance: none; -webkit-appearance: none; cursor: pointer;
   background: var(--ay-paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231d1a2b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 16px center / 18px; }
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ay-auth-heard select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4f2ff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); }

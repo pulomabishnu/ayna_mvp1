@@ -11,9 +11,9 @@
 
 /* ===== AP02 Product card (grid): 2px ink border, white image tile, left-aligned text ===== */
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) {
-  padding: 8px 8px 12px !important;
+  padding: var(--ay-s8) var(--ay-s8) var(--ay-s12) !important;
   border: 2px solid var(--ay-ink) !important;
-  border-radius: 20px !important;
+  border-radius: var(--ay-r-group) !important;
   background: var(--ay-paper) !important;
   box-shadow: none !important;
 }
@@ -41,8 +41,8 @@
   flex-direction: column !important;
   align-items: stretch !important;
   justify-items: start !important;
-  gap: 4px !important;
-  padding: 12px 4px 0 !important;
+  gap: var(--ay-s4) !important;
+  padding: var(--ay-s12) var(--ay-s4) 0 !important;
   text-align: left !important;
 }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-card-brand {
@@ -79,7 +79,7 @@
   display: flex !important;
   justify-content: flex-start !important;
   width: 100% !important;
-  margin: 4px 0 0 !important;
+  margin: var(--ay-s4) 0 0 !important;
   padding: 0 !important;
 }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot b {
@@ -142,11 +142,11 @@
 .ayna-mobile .ay-deck-btn.is-save svg { fill: var(--ay-paper); stroke: var(--ay-ink); stroke-width: 2; stroke-linejoin: round; }
 
 /* ===== AP06 Ecosystem: rows under "More" open/close, so they get a chevron ===== */
-.ayna-mobile.ayna-mobile .ayna-cabinet-more summary { list-style: none; gap: 12px; }
+.ayna-mobile.ayna-mobile .ayna-cabinet-more summary { list-style: none; gap: var(--ay-s12); }
 .ayna-mobile.ayna-mobile .ayna-cabinet-more summary::-webkit-details-marker { display: none; }
 .ayna-mobile.ayna-mobile .ayna-cabinet-more summary span { margin-left: auto; font: 500 13px/1 var(--ay-font-ui); color: var(--ay-ink-soft); }
 .ayna-mobile.ayna-mobile .ayna-cabinet-more summary::after {
-  content: ''; flex: none; width: 8px; height: 8px; margin: 0 4px 4px 0;
+  content: ''; flex: none; width: 8px; height: 8px; margin: 0 var(--ay-s4) var(--ay-s4) 0;
   border-right: 2px solid var(--ay-ink); border-bottom: 2px solid var(--ay-ink);
   transform: rotate(45deg); transition: transform .2s var(--ay-ease);
 }
@@ -199,22 +199,22 @@
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-auth .ay-auth-eco-thumbs > span { border-color: var(--ay-img-ink) !important; }
 
 /* ===== Verify (asks): You and quiz spacing snapped to the 8px grid ===== */
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-legal { padding-top: 24px !important; padding-bottom: 24px !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-head { padding-top: 16px !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-question { padding-top: 16px !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-answer { margin-top: 16px !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-ruler { margin-top: 16px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-legal { padding-top: var(--ay-s24) !important; padding-bottom: var(--ay-s24) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-head { padding-top: var(--ay-s16) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-question { padding-top: var(--ay-s16) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-answer { margin-top: var(--ay-s16) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-ruler { margin-top: var(--ay-s16) !important; }
 
 /* ===== Shop agent (r5): Ecosystem "Read next" breathing room + cleaner list ===== */
 /* The last shelf's "Care options for ..." box (and the empty-state card) sat
    flush against the Read next heading: give the section its own 48px gap. */
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads { margin-top: 48px !important; padding-bottom: 32px !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-shelf-care { margin-bottom: 8px; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-cabinet-section-head { margin-bottom: 8px !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads { margin-top: var(--ay-s48) !important; padding-bottom: var(--ay-s32) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-shelf-care { margin-bottom: var(--ay-s8); }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-cabinet-section-head { margin-bottom: var(--ay-s8) !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-cabinet-section-head h2 { font-size: 22px !important; line-height: 1.15 !important; font-weight: 400 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact {
-  display: grid !important; grid-template-columns: minmax(0, 1fr) 32px; align-items: center; gap: 16px;
-  min-height: 72px; padding: 16px 0 !important; justify-items: stretch; text-align: left !important; border: 0 !important; border-bottom: 1px solid var(--ay-line, rgba(62, 39, 35, .1)) !important;
+  display: grid !important; grid-template-columns: minmax(0, 1fr) 32px; align-items: center; gap: var(--ay-s16);
+  min-height: 72px; padding: var(--ay-s16) 0 !important; justify-items: stretch; text-align: left !important; border: 0 !important; border-bottom: 1px solid var(--ay-line, rgba(62, 39, 35, .1)) !important;
   border-radius: 0 !important; background: transparent !important; box-shadow: none !important;
 }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact:last-child { border-bottom: 0 !important; }
@@ -225,7 +225,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-cabinet-reads .ayna-editorial-read.is-compact::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l6 6-6 6'/%3E%3C/svg%3E");
 }
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact .ayna-editorial-read-copy { display: grid !important; justify-content: stretch !important; justify-items: start; gap: 4px; width: 100%; padding: 0 !important; text-align: left !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact .ayna-editorial-read-copy { display: grid !important; justify-content: stretch !important; justify-items: start; gap: var(--ay-s4); width: 100%; padding: 0 !important; text-align: left !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact small { margin: 0 !important; font: 500 13px/1.2 var(--ay-font-ui) !important; color: var(--ay-ink-soft) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact strong { max-width: none !important; margin: 0 !important; font: 600 17px/1.25 var(--ay-font-ui) !important; letter-spacing: -.01em !important; color: var(--ay-ink) !important; }
 
@@ -233,5 +233,5 @@
 .ayna-mobile .ay-deck-meta em { display: inline-flex; align-items: baseline; padding: 5px 10px; border-radius: 99px; background: var(--ay-ink, #3e2723); color: var(--ay-paper, #ffffff); font-style: normal; font-weight: 500; font-size: 13px; line-height: 1; }
 
 /* Shop deck "Get matched" CTA: centered pill, not a floating left button. */
-.ayna-mobile .ayna-figma-discover-cta { display: flex; justify-content: center; padding: 16px 20px; }
-.ayna-mobile .ayna-figma-discover-cta button { width: 100%; max-width: 320px; padding: 0 20px; }
+.ayna-mobile .ayna-figma-discover-cta { display: flex; justify-content: center; padding: var(--ay-s16) var(--ay-s20); }
+.ayna-mobile .ayna-figma-discover-cta button { width: 100%; max-width: 320px; padding: 0 var(--ay-s20); }

@@ -12,10 +12,10 @@ html body .app-container.app-container.app-container .ayshop__note a { color: va
 
 /* search */
 html body .app-container.app-container.app-container .ayshop__search { position: relative; max-width: 680px; margin: 0; }
-html body .app-container.app-container.app-container .ayshop__search input[type='search'] { width: 100%; height: 52px; min-height: 52px; margin: 0; padding: 0 16px 0 48px !important; border: 1.5px solid var(--ay-outline) !important; border-radius: 999px !important; background: var(--ay-page) !important; color: var(--ay-text) !important; box-shadow: none !important; font: 500 16px/1.2 var(--ay-sans-stack) !important; box-sizing: border-box; }
+html body .app-container.app-container.app-container .ayshop__search input[type='search'] { width: 100%; height: 52px; min-height: 52px; margin: 0; padding: 0 var(--ay-s16) 0 var(--ay-s48) !important; border: 1.5px solid var(--ay-outline) !important; border-radius: 999px !important; background: var(--ay-page) !important; color: var(--ay-text) !important; box-shadow: none !important; font: 500 16px/1.2 var(--ay-sans-stack) !important; box-sizing: border-box; }
 html body .app-container.app-container.app-container .ayshop__search input[type='search']::placeholder { color: var(--ay-text-2); opacity: 1; }
 html body .app-container.app-container.app-container .ayshop__search input[type='search']:focus-visible { outline: 3px solid var(--ay-focus) !important; outline-offset: 2px; }
-html body .app-container.app-container.app-container .ayshop__search .ays-mirror { padding-left: 48px !important; }
+html body .app-container.app-container.app-container .ayshop__search .ays-mirror { padding-left: var(--ay-s48) !important; }
 html body .app-container.app-container.app-container .ayshop__search-icon { position: absolute; left: 18px; top: 26px; transform: translateY(-50%); width: 20px; height: 20px; fill: none; stroke: var(--ay-text); stroke-width: 1.75; stroke-linecap: round; pointer-events: none; z-index: 2; }
 html body .app-container.app-container.app-container .ayshop__inferred { display: flex; gap: var(--ay-s8); }
 
@@ -39,7 +39,7 @@ html body .app-container.app-container.app-container .ayshop__inferred .ay-chip.
 
 /* grid and states */
 html body .app-container.app-container.app-container .ayshop__grid { margin-bottom: var(--ay-s32); }
-html body .app-container.app-container.app-container .ayshop__divider { grid-column: 1 / -1; display: grid; gap: 4px; padding-top: var(--ay-s16); border-top: 1px solid var(--ay-hairline); }
+html body .app-container.app-container.app-container .ayshop__divider { grid-column: 1 / -1; display: grid; gap: var(--ay-s4); padding-top: var(--ay-s16); border-top: 1px solid var(--ay-hairline); }
 html body .app-container.app-container.app-container .ayshop__divider strong { font: 400 var(--ay-type-h3)/1.2 var(--ay-serif-stack); color: var(--ay-text); }
 html body .app-container.app-container.app-container .ayshop__divider span { font: 400 14px/1.45 var(--ay-sans-stack); color: var(--ay-text-2); }
 html body .app-container.app-container.app-container .ayshop__searching { margin: 0 0 var(--ay-s16); font: 500 15px/1.4 var(--ay-sans-stack); color: var(--ay-text-2); }
@@ -72,10 +72,10 @@ html body .app-container.app-container.app-container .ayshop__matches.is-phone {
 @media (max-width: 767px) {
   html body .app-container.app-container.app-container .ayshop { padding-top: var(--ay-s8); }
   html body .app-container.app-container.app-container .ayshop__top { padding-bottom: 0; gap: 0; }
-  html body .app-container.app-container.app-container .ayshop__head.ay-pagehead { padding-top: 16px !important; padding-bottom: 16px !important; margin-bottom: 20px !important; gap: 4px; }
+  html body .app-container.app-container.app-container .ayshop__head.ay-pagehead { padding-top: var(--ay-s16) !important; padding-bottom: var(--ay-s16) !important; margin-bottom: var(--ay-s20) !important; gap: var(--ay-s4); }
   html body .app-container.app-container.app-container .ayshop__head .ay-h1 { font-size: 30px !important; }
   html body .app-container.app-container.app-container .ayshop__note { font-size: 13px !important; line-height: 1.4 !important; }
-  html body .app-container.app-container.app-container .ayshop__head .ayshop__needs { margin-top: 8px; }
+  html body .app-container.app-container.app-container .ayshop__head .ayshop__needs { margin-top: var(--ay-s8); }
   html body .app-container.app-container.app-container .ayshop__head .ayshop__seal { width: 64px; height: 64px; top: 12px; }
   html body .app-container.app-container.app-container .ayshop__find { position: sticky; top: 61px; z-index: 20; display: flex; gap: 8px; align-items: center; margin: 0 calc(-1 * var(--ay-gutter, 20px)); padding: 8px var(--ay-gutter, 20px); background: var(--ay-page, #ffedac); }
   html body .app-container.app-container.app-container .ayshop__find .ayshop__search { min-width: 0; }
@@ -87,12 +87,12 @@ html body .app-container.app-container.app-container .ayshop__matches.is-phone {
   html body .app-container.app-container.app-container .ayshop__barfilters svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; }
   html body .app-container.app-container.app-container .ayshop__barfilters-n { position: absolute; top: -4px; right: -4px; min-width: 20px; height: 20px; padding: 0 5px; box-sizing: border-box; border-radius: 10px; background: #3e2723; color: #ffedac; font: 600 12px/20px var(--ay-sans-stack); text-align: center; }
   html body .app-container.app-container.app-container .ayshop__barfilters:focus-visible { outline: 3px solid var(--ay-focus); outline-offset: 2px; }
-  html body .app-container.app-container.app-container .ayshop .ay-folders { margin-top: 4px; padding-top: 6px; }
+  html body .app-container.app-container.app-container .ayshop .ay-folders { margin-top: var(--ay-s4); padding-top: 6px; }
   html body .app-container.app-container.app-container .ayshop .ay-folder-tab__peek { display: none; }
   html body .app-container.app-container.app-container .ayshop__toolbar { display: none; }
   html body .app-container.app-container.app-container .ayshop__applied { margin: var(--ay-s12) 0; justify-content: flex-start; }
   html body .app-container.app-container.app-container .ayshop__matches.is-phone { display: inline-flex; margin-left: auto; min-height: 32px; padding: 0; }
-  html body .app-container.app-container.app-container .ayshop__inferred { margin-top: 4px; }
+  html body .app-container.app-container.app-container .ayshop__inferred { margin-top: var(--ay-s4); }
 }
 html body .app-container.app-container.app-container[data-theme='brand-dark'] .ayshop__find { background: var(--ay-page, #3e2723); }
 @media (max-width: 767px) {

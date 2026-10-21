@@ -218,8 +218,8 @@
   font-family: var(--ayna-font-ui);
 }
 .ayna-profile-auth-close { position: absolute; top: 14px; right: 18px; border: 0; background: none; color: #3e2723; font-size: 30px; letter-spacing: -0.01em; line-height: 1.15; font-weight: 600; cursor: pointer; }
-.ayna-profile-auth-sheet h2 { margin: 12px 0 8px; font: 400 28px/1.15 var(--ayna-font-display); }
-.ayna-profile-auth-sheet p { margin: 0 0 24px; line-height: 1.5; color: #56566e; }
+.ayna-profile-auth-sheet h2 { margin: var(--ay-s12) 0 var(--ay-s8); font: 400 28px/1.15 var(--ayna-font-display); }
+.ayna-profile-auth-sheet p { margin: 0 0 var(--ay-s24); line-height: 1.5; color: #56566e; }
 .ayna-profile-auth-primary { display: block; width: 100%; padding: 15px; border-radius: 99px; font: 600 17px var(--ayna-font-ui); cursor: pointer; }
 .ayna-profile-auth-primary { border: 0; background: #F7BADD; color: #231a12; }
 

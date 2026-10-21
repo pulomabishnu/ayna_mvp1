@@ -10,7 +10,7 @@
   --ay-ink: #3e2723; --ay-paper: #ffffff;
 }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel { height: 300px !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-copy { padding: 8px 24px 0 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-copy { padding: var(--ay-s8) var(--ay-s24) 0 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-copy h1 {
   font: 400 calc(28px * var(--ayna-text-scale, 1))/1.15 var(--f-display) !important;
   letter-spacing: -0.01em !important; color: var(--b-butter) !important;
@@ -21,12 +21,12 @@
 /* ---------- Ecosystem: title first, shelves swipe sideways ---------- */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-area-collection, .ayna-cabinet-collection) .ayna-editorial-product-grid {
   display: grid !important; grid-auto-flow: column !important; grid-template-columns: none !important; grid-auto-columns: 46% !important;
-  overflow-x: auto !important; scroll-snap-type: x mandatory; gap: 12px !important;
+  overflow-x: auto !important; scroll-snap-type: x mandatory; gap: var(--ay-s12) !important;
   margin: 0 calc(-1 * var(--r-gutter)) !important; padding: 4px var(--r-gutter) 10px !important; scrollbar-width: none;
 }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-area-collection, .ayna-cabinet-collection) .ayna-editorial-product-grid::-webkit-scrollbar { display: none; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-area-collection, .ayna-cabinet-collection) .ayna-editorial-product-grid > * { scroll-snap-align: start; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head { border: 2px solid var(--b-espresso) !important; border-radius: var(--r-radius-m) !important; box-shadow: var(--r-shadow) !important; padding: 10px 12px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head { border: 2px solid var(--b-espresso) !important; border-radius: var(--r-radius-m) !important; box-shadow: var(--r-shadow) !important; padding: 10px var(--ay-s12) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; color: var(--b-espresso) !important; font-size: calc(22px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 400 !important; display: flex !important; align-items: center; gap: 10px; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 small { margin: 0 !important; font: 500 13px/1 var(--f-ui) !important; background: var(--b-white) !important; color: var(--b-espresso) !important; }
 
@@ -44,11 +44,11 @@
 
 /* ---------- Product page: tabs are a scrolling segmented row ---------- */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance__nav { position: relative !important; top: auto !important; bottom: auto !important; z-index: 1; background: var(--r-canvas) !important; padding: 10px 0 !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance__nav ul { display: flex !important; gap: 8px !important; overflow-x: auto !important; padding: 0 var(--r-gutter) !important; margin: 0 !important; scrollbar-width: none; flex-wrap: nowrap !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance__nav ul { display: flex !important; gap: var(--ay-s8) !important; overflow-x: auto !important; padding: 0 var(--r-gutter) !important; margin: 0 !important; scrollbar-width: none; flex-wrap: nowrap !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance__nav ul::-webkit-scrollbar { display: none; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance__nav li { flex: 0 0 auto !important; list-style: none; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance__nav button {
-  min-height: 38px !important; padding: 0 16px !important; white-space: nowrap !important;
+  min-height: 38px !important; padding: 0 var(--ay-s16) !important; white-space: nowrap !important;
   border: 2px solid var(--r-line-strong) !important; border-radius: 999px !important; box-shadow: none !important;
   background: transparent !important; color: var(--r-ink) !important; font: 500 13px/1 var(--f-ui) !important;
 }

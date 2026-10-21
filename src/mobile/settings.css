@@ -6,7 +6,7 @@
 .ayna-mobile[data-theme='dark'] .ay-set-page { background: transparent; }
 
 /* Header: round back button + bold page title on one row. */
-.ayna-mobile .ay-set-head { padding: max(16px, env(safe-area-inset-top)) var(--ay-gutter) 12px !important; gap: 12px !important; }
+.ayna-mobile .ay-set-head { padding: max(16px, env(safe-area-inset-top)) var(--ay-gutter) 12px !important; gap: var(--ay-s12) !important; }
 .ayna-mobile .ay-set-head > button { width: 42px !important; height: 42px !important; border: 1.5px solid var(--ay-ink) !important; background: var(--ay-paper) !important; transition: transform var(--ay-dur-1) var(--ay-ease); }
 .ayna-mobile .ay-set-head > button:active { transform: scale(.92); }
 .ayna-mobile .ay-set-head-title { margin: 0; font: 400 calc(22px * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display) !important; letter-spacing: -.035em !important; }
@@ -18,7 +18,7 @@
 .ay-set-page [style*='background: var(--ayna-surface)'][style*='border'],
 .ay-set-page [style*='background: rgb(255, 255, 255)'][style*='border-radius'],
 .ay-set-page [style*="background: #fff"] {
-  border: 1.5px solid var(--ay-line) !important; border-radius: 20px !important; background: var(--ay-paper) !important; box-shadow: none !important;
+  border: 1.5px solid var(--ay-line) !important; border-radius: var(--ay-r-group) !important; background: var(--ay-paper) !important; box-shadow: none !important;
 }
 
 /* Headings inside subpages: bold and tight. */
@@ -32,11 +32,11 @@
 
 /* ---------- Settings index ---------- */
 .ayna-mobile .ay-set-scroll { padding: 4px var(--ay-gutter) 24px !important; }
-.ayna-mobile .ay-set-group { margin: 12px 0 24px !important; animation: ay-screen-in var(--ay-dur-3) var(--ay-ease) both; }
+.ayna-mobile .ay-set-group { margin: var(--ay-s12) 0 var(--ay-s24) !important; animation: ay-screen-in var(--ay-dur-3) var(--ay-ease) both; }
 .ayna-mobile .ay-set-group:nth-of-type(2) { animation-delay: 60ms; }
 .ayna-mobile .ay-set-group:nth-of-type(3) { animation-delay: 120ms; }
 .ayna-mobile .ay-set-group h2 { margin: 0 0 10px !important; color: var(--ay-ink-soft) !important; font: 500 13px/1 var(--ay-font-ui) !important; letter-spacing: 0 !important; text-transform: none !important; }
-.ay-set-card { overflow: hidden; border: 1.5px solid var(--ay-ink); border-radius: 20px; background: var(--ay-paper); box-shadow: 3px 3px 0 var(--ay-ink); }
+.ay-set-card { overflow: hidden; border: 1.5px solid var(--ay-ink); border-radius: var(--ay-r-group); background: var(--ay-paper); box-shadow: 3px 3px 0 var(--ay-ink); }
 .ayna-mobile .ay-set-card .ay-set-row {
   display: flex !important; align-items: center !important; gap: 14px !important; width: 100%; min-height: 60px; box-sizing: border-box;
   padding: 10px 14px !important; margin: 0 !important; border: 0 !important; border-top: 1px solid var(--ay-line) !important; border-radius: 0 !important;
@@ -52,7 +52,7 @@
 .ay-set-group.is-mint { --set-tone: var(--ay-mint); }
 .ay-set-title { flex: 1; min-width: 0; font: 600 17px/1.2 var(--ay-font-ui); }
 .ay-set-row > svg:last-child { flex: none; opacity: .55; }
-.ayna-mobile .ay-set-session { width: 100%; min-height: 52px !important; margin: 8px 0 20px !important; border: 1.5px solid var(--ay-ink) !important; border-radius: 99px !important; background: var(--ay-ink) !important; color: var(--ay-paper) !important; font: 600 17px/1 var(--ay-font-ui) !important; text-align: center !important; }
+.ayna-mobile .ay-set-session { width: 100%; min-height: 52px !important; margin: var(--ay-s8) 0 var(--ay-s20) !important; border: 1.5px solid var(--ay-ink) !important; border-radius: 99px !important; background: var(--ay-ink) !important; color: var(--ay-paper) !important; font: 600 17px/1 var(--ay-font-ui) !important; text-align: center !important; }
 .ayna-mobile .ay-set-session.is-out { background: transparent !important; color: var(--ay-alert) !important; border-color: var(--ay-alert) !important; }
 
 /* ---------- Drill rows + switches used on other subpages ---------- */
@@ -72,7 +72,7 @@
 .ayna-mobile .ay-range:focus-visible { outline: 3px solid var(--ay-peri-deep); outline-offset: 4px; border-radius: 8px; }
 
 /* ---------- Signed-out state ---------- */
-.ay-set-signedout { display: grid; justify-items: center; gap: 12px; margin: 8px 0 16px; padding: 28px 20px 22px; border: 1.5px solid var(--ay-ink); border-radius: 22px; background: var(--ay-peri); text-align: center; box-shadow: 3px 3px 0 var(--ay-ink); }
+.ay-set-signedout { display: grid; justify-items: center; gap: var(--ay-s12); margin: var(--ay-s8) 0 var(--ay-s16); padding: 28px var(--ay-s20) 22px; border: 1.5px solid var(--ay-ink); border-radius: 22px; background: var(--ay-peri); text-align: center; box-shadow: 3px 3px 0 var(--ay-ink); }
 .ay-set-signedout p { margin: 0; max-width: 26ch; color: var(--ay-ink); font: 600 17px/1.3 var(--ay-font-ui); }
 .ay-set-signedout-art { position: relative; width: 56px; height: 44px; }
 .ay-set-signedout-art i { position: absolute; display: block; border: 1.5px solid var(--ay-ink); }
@@ -80,7 +80,7 @@
 .ay-set-signedout-art i:nth-child(2) { right: 0; top: 0; width: 30px; height: 30px; border-radius: 50%; background: var(--ay-pink); }
 
 /* ---------- Theme swatches ---------- */
-.ay-set-page button[aria-label$='theme'] > div:first-child { border-radius: 16px !important; }
+.ay-set-page button[aria-label$='theme'] > div:first-child { border-radius: var(--ay-r-card) !important; }
 .ay-set-page button[aria-label$='theme'][aria-pressed='true'] > div:first-child { border: 2px solid var(--ay-ink) !important; box-shadow: 3px 3px 0 var(--ay-ink); }
 
 @media (prefers-reduced-motion: reduce) {
@@ -92,9 +92,9 @@
 .ayna-scrapbook > .ay-set-head { flex: none; background: var(--ay-cream); }
 
 /* Startups: palette banner (not a dark slab) + real pill buttons */
-.ay-startups-hero { position: relative; margin-bottom: 16px; padding: 20px 96px 20px 20px; border: 1.5px solid var(--ay-ink); border-radius: 22px; background: var(--ay-peri); box-shadow: 0 4px 0 var(--ay-ink); color: var(--ay-ink); overflow: hidden; }
+.ay-startups-hero { position: relative; margin-bottom: var(--ay-s16); padding: var(--ay-s20) var(--ay-s96) var(--ay-s20) var(--ay-s20); border: 1.5px solid var(--ay-ink); border-radius: 22px; background: var(--ay-peri); box-shadow: 0 4px 0 var(--ay-ink); color: var(--ay-ink); overflow: hidden; }
 .ay-startups-hero h2 { margin: 0; font: 400 calc(22px * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display); letter-spacing: -.035em; }
-.ay-startups-hero p { margin: 8px 0 0; font: 400 15px/1.45 var(--ay-font-ui); opacity: .8; }
+.ay-startups-hero p { margin: var(--ay-s8) 0 0; font: 400 15px/1.45 var(--ay-font-ui); opacity: .8; }
 .ay-startups-art { position: absolute; right: 16px; top: 16px; width: 72px; height: 72px; }
 .ay-startups-art i { position: absolute; display: block; border: 1.5px solid var(--ay-ink); }
 .ay-startups-art i:nth-child(1) { width: 44px; height: 44px; right: 0; top: 0; border-radius: 50%; background: var(--ay-butter); }
@@ -102,9 +102,9 @@
 .ay-startups-art i:nth-child(3) { width: 20px; height: 20px; right: 6px; top: 50px; border: 0; background: var(--ay-paper); clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); }
 @keyframes ay-startups-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 @media (prefers-reduced-motion: reduce) { .ay-startups-art i { animation: none; } }
-.ay-startups-filters { display: flex; gap: 8px; overflow-x: auto; margin: 0 calc(-1 * var(--ay-gutter)) 16px; padding: 0 var(--ay-gutter) 2px; scrollbar-width: none; }
+.ay-startups-filters { display: flex; gap: var(--ay-s8); overflow-x: auto; margin: 0 calc(-1 * var(--ay-gutter)) 16px; padding: 0 var(--ay-gutter) 2px; scrollbar-width: none; }
 .ay-startups-filters::-webkit-scrollbar { display: none; }
-.ay-startups-filters button { flex: none; min-height: 40px; padding: 0 16px; border: 1.5px solid var(--ay-line); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 500 13px/1 var(--ay-font-ui); cursor: pointer; }
+.ay-startups-filters button { flex: none; min-height: 40px; padding: 0 var(--ay-s16); border: 1.5px solid var(--ay-line); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 500 13px/1 var(--ay-font-ui); cursor: pointer; }
 .ay-startups-filters button[aria-pressed='true'] { border-color: var(--ay-ink); background: var(--ay-ink); color: var(--ay-paper); }
 
 /* Routine: solid cards instead of dashed boxes; consistent text */

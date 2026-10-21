@@ -67,7 +67,7 @@
 .ayna-mobile .ayna-bottom-nav button { position: relative; }
 .ayna-mobile[data-theme="dark"] .ayna-bottom-nav button.is-active { color: #F7BADD; }
 
-.ayna-editorial-product-grid { column-gap: 12px !important; row-gap: 22px !important; }
+.ayna-editorial-product-grid { column-gap: var(--ay-s12) !important; row-gap: 22px !important; }
 .ayna-editorial-product-grid > * { min-width: 0; }
 .ayna-editorial-read { width: 100%; min-height: 132px; display: grid; grid-template-columns: minmax(0,1fr) 104px; gap: 14px; padding: 13px 0; border: 0; border-bottom: 1px solid var(--ayna-border); background: transparent; color: var(--ayna-text); text-align: left; cursor: pointer; }
 .ayna-editorial-read-copy { min-width: 0; display: flex; flex-direction: column; justify-content: center; }

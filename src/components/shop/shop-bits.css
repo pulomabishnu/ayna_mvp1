@@ -12,11 +12,11 @@
 .ayna-mobile[data-theme='dark'] { --sb-tab: #4a312c; }
 
 /* ---- Die-cut need stickers ---- */
-.ay-needstickers { display: flex; gap: 14px; margin: 20px 0 0; padding: 6px 4px 10px; list-style: none; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x proximity; -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 32px), transparent); }
+.ay-needstickers { display: flex; gap: 14px; margin: var(--ay-s20) 0 0; padding: 6px var(--ay-s4) 10px; list-style: none; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x proximity; -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 32px), transparent); }
 .ay-needstickers::-webkit-scrollbar { display: none; }
 .ay-needstickers > li { flex: none; scroll-snap-align: start; }
 .app-container .ay-needsticker, .ayna-mobile .ay-needsticker {
-  display: grid; justify-items: center; gap: 8px; min-width: 88px; padding: 4px 2px; margin: 0;
+  display: grid; justify-items: center; gap: var(--ay-s8); min-width: 88px; padding: var(--ay-s4) 2px; margin: 0;
   border: 0 !important; background: none !important; box-shadow: none !important; color: inherit !important;
   font: 600 14px/1.15 var(--ay-sans-stack, var(--ayna-font-ui, 'Figtree', system-ui, sans-serif)) !important;
   cursor: pointer; transform: rotate(var(--tilt, 0deg));
@@ -24,7 +24,7 @@
 }
 .ay-needsticker__die {
   display: block; width: 80px; height: 80px; padding: 5px; box-sizing: border-box;
-  background: #fff; border-radius: 16px; border: 1.5px solid #3e2723; box-shadow: 3px 3px 0 #3e2723;
+  background: #fff; border-radius: var(--ay-r-card); border: 1.5px solid #3e2723; box-shadow: 3px 3px 0 #3e2723;
 }
 .ay-needsticker__die img { display: block; width: 100%; height: 100%; object-fit: contain; border-radius: 10px; }
 /* The frame before its photo arrives (the catalog loads after first paint). */
@@ -41,11 +41,11 @@
 @media (prefers-reduced-motion: reduce) { .app-container .ay-needsticker, .ayna-mobile .ay-needsticker { transition: none; } }
 
 /* ---- Folder tabs on a rule ---- */
-.ay-folders { position: relative; display: flex; align-items: flex-end; gap: 4px; margin: 24px 0 0; padding: 26px 2px 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; border-bottom: 1.5px solid var(--sb-line); -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); }
+.ay-folders { position: relative; display: flex; align-items: flex-end; gap: var(--ay-s4); margin: var(--ay-s24) 0 0; padding: 26px 2px 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; border-bottom: 1.5px solid var(--sb-line); -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); }
 .ay-folders::-webkit-scrollbar { display: none; }
 .app-container .ay-folder-tab, .ayna-mobile .ay-folder-tab {
   position: relative; isolation: isolate; flex: none; display: inline-flex; align-items: center; gap: 6px;
-  min-height: 42px; margin: 0 0 -1.5px; padding: 0 16px 1.5px;
+  min-height: 42px; margin: 0 0 -1.5px; padding: 0 var(--ay-s16) 1.5px;
   border: 1.5px solid var(--sb-line) !important; border-bottom: 0 !important; border-radius: 10px 10px 0 0 !important;
   background: var(--sb-tab) !important; color: var(--sb-ink) !important; box-shadow: none !important;
   font: 600 14px/1 var(--ay-sans-stack, var(--ayna-font-ui, 'Figtree', system-ui, sans-serif)) !important; white-space: nowrap; cursor: pointer;
@@ -59,9 +59,9 @@
 .ay-folder-tab.is-on > span:last-child { padding-right: 34px; }
 
 /* ---- One row: search pill + quick filter chips ---- */
-.app-container .ayshop__find { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
+.app-container .ayshop__find { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ay-s12) var(--ay-s16); }
 .app-container .ayshop__find .ayshop__search { flex: 1 1 360px; max-width: 560px; }
-.app-container .ayshop__quick { display: flex; gap: 8px; min-width: 0; overflow-x: auto; scrollbar-width: none; padding: 4px 2px; }
+.app-container .ayshop__quick { display: flex; gap: var(--ay-s8); min-width: 0; overflow-x: auto; scrollbar-width: none; padding: var(--ay-s4) 2px; }
 .app-container .ayshop__quick::-webkit-scrollbar { display: none; }
 @media (max-width: 719px) {
   .app-container .ayshop__find { display: grid; gap: 10px; }
@@ -71,7 +71,7 @@
 .ay-kbd.ay-kbd--field { right: 16px; color: var(--sb-ink); }
 
 /* ---- "Does this sound familiar?" ribbon (pink, the page's one moving row) ---- */
-.app-container .ayshop__ribbon { grid-column: 1 / -1; margin: 4px 0; }
+.app-container .ayshop__ribbon { grid-column: 1 / -1; margin: var(--ay-s4) 0; }
 .app-container .ay-ribbon.ay-ribbon--pink, .ayna-mobile .ay-ribbon.ay-ribbon--pink { background: #f7badd; color: #3e2723; border: 1.5px solid #3e2723; border-radius: 10px; }
 .app-container .ay-ribbon--pink .ay-ribbon__tab.is-label { background: #3e2723; color: #ffedac !important; text-decoration: none; border-color: #3e2723; }
 .app-container .ay-ribbon--pink .ay-ribbon__track li::after { background: #3e2723; }
@@ -86,21 +86,21 @@
 @media (max-width: 767px) {
   .app-container .ayshop__head .ayshop__seal { top: 18px; margin-top: 0; }
   .app-container .ayshop__head .ayshop__needs { margin: 14px -84px 0 -4px; gap: 6px; }
-  .app-container .ayshop__head.ay-pagehead { padding-bottom: 24px !important; margin-bottom: 28px !important; }
-  .ay-needsticker__die { width: 64px; height: 64px; padding: 4px; border-radius: 16px; }
+  .app-container .ayshop__head.ay-pagehead { padding-bottom: var(--ay-s24) !important; margin-bottom: 28px !important; }
+  .ay-needsticker__die { width: 64px; height: 64px; padding: var(--ay-s4); border-radius: var(--ay-r-card); }
   .app-container .ay-needsticker { min-width: 76px; font-size: 13px !important; }
-  .ay-folders { margin-top: 8px; padding-top: 22px; }
+  .ay-folders { margin-top: var(--ay-s8); padding-top: 22px; }
 }
 
 /* ---- App: the same pieces inside the Shop tab ---- */
-.ayna-mobile .ay-app-needs { margin: 12px 0 4px; padding: 6px 2px 10px; gap: 4px; }
+.ayna-mobile .ay-app-needs { margin: var(--ay-s12) 0 var(--ay-s4); padding: 6px 2px 10px; gap: var(--ay-s4); }
 .ayna-mobile .ay-app-needs .ay-needsticker { min-width: 74px; font-size: calc(13px * var(--ayna-text-scale, 1)) !important; color: var(--ayna-heading) !important; }
-.ayna-mobile .ay-app-needs .ay-needsticker__die { width: 62px; height: 62px; padding: 4px; border-radius: 16px; }
+.ayna-mobile .ay-app-needs .ay-needsticker__die { width: 62px; height: 62px; padding: var(--ay-s4); border-radius: var(--ay-r-card); }
 .ayna-mobile[data-theme='dark'] .ay-needsticker__die { border-color: #ffedac; box-shadow: 3px 3px 0 #ffedac; }
-.ayna-mobile .ay-app-quick { display: flex; gap: 8px; margin: 10px -20px 0; padding: 2px 20px 4px; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 24px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 24px), transparent); }
+.ayna-mobile .ay-app-quick { display: flex; gap: var(--ay-s8); margin: 10px -20px 0; padding: 2px var(--ay-s20) var(--ay-s4); overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 24px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 24px), transparent); }
 .ayna-mobile .ay-app-quick::-webkit-scrollbar { display: none; }
 .ayna-mobile .ay-app-quick > button { flex: none; }
-.ayna-mobile .ayna-category-index .ay-folders { margin: 6px 20px 0; padding-top: 22px; }
+.ayna-mobile .ayna-category-index .ay-folders { margin: 6px var(--ay-s20) 0; padding-top: 22px; }
 .ayna-mobile[data-theme='dark'] .ay-folders { border-color: #ffedac; }
 .ayna-mobile[data-theme='dark'] .ay-folder-tab:not(.is-on) { border-color: #ffedac !important; color: #ffedac !important; }
 .ayna-mobile .ay-app-ribbon { grid-column: 1 / -1; margin: 6px 0; }

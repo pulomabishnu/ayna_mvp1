@@ -13,7 +13,7 @@ html body .app-container.app-container.app-container .aycmp__picks .ay-group__va
 html body .app-container.app-container.app-container .aycmp__picks .ay-group__end { font: 600 20px/1 var(--ay-sans-stack); color: var(--ay-text); }
 html body .app-container.app-container.app-container .aycmp__more { font: 500 13px/1.4 var(--ay-sans-stack); color: var(--ay-text-2); }
 html body .app-container.app-container.app-container .aycmp__add { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ay-s12); margin-bottom: var(--ay-s24); font: 500 14px/1 var(--ay-sans-stack); color: var(--ay-text-2); }
-html body .app-container.app-container.app-container .aycmp__select { min-height: 48px; padding: 0 14px; border: 1.5px solid var(--ay-outline); border-radius: 12px; background: var(--ay-page); color: var(--ay-text); font: 500 15px/1.2 var(--ay-sans-stack); }
+html body .app-container.app-container.app-container .aycmp__select { min-height: 48px; padding: 0 14px; border: 1.5px solid var(--ay-outline); border-radius: var(--ay-r-tile); background: var(--ay-page); color: var(--ay-text); font: 500 15px/1.2 var(--ay-sans-stack); }
 html body .app-container.app-container.app-container .aycmp__scroll { overflow-x: auto; margin-inline: calc(-1 * var(--ay-margin)); padding-inline: var(--ay-margin); }
 html body .app-container.app-container.app-container .aycmp__table { width: 100%; min-width: 620px; border-collapse: collapse; }
 html body .app-container.app-container.app-container .aycmp__table :is(th, td) { padding: var(--ay-s16) var(--ay-s16) var(--ay-s16) 0; border-top: 1px solid var(--ay-hairline); text-align: left; vertical-align: top; font: 400 15px/1.55 var(--ay-sans-stack); color: var(--ay-text); background: none; }
@@ -41,7 +41,7 @@ html body .app-container.app-container.app-container .aytrk__sec > h2 { margin: 
 html body .app-container.app-container.app-container .aytrk__line { margin: 0 0 var(--ay-s4); max-width: 68ch; font: 400 15px/1.5 var(--ay-sans-stack); color: var(--ay-text-2); }
 html body .app-container.app-container.app-container .aytrk__count { font: 500 16px/1 var(--ay-sans-stack); color: var(--ay-text-2); }
 html body .app-container.app-container.app-container .aytrk__zip { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ay-s12); }
-html body .app-container.app-container.app-container .aytrk__zip input { width: 140px; min-height: 52px; padding: 0 16px; border: 1.5px solid var(--ay-outline); border-radius: 12px; background: var(--ay-page); color: var(--ay-text); font: 500 16px/1 var(--ay-sans-stack); }
+html body .app-container.app-container.app-container .aytrk__zip input { width: 140px; min-height: 52px; padding: 0 var(--ay-s16); border: 1.5px solid var(--ay-outline); border-radius: var(--ay-r-tile); background: var(--ay-page); color: var(--ay-text); font: 500 16px/1 var(--ay-sans-stack); }
 html body .app-container.app-container.app-container .aytrk__saved { font: 500 14px/1.3 var(--ay-sans-stack); color: var(--ay-text-2); }
 html body .app-container.app-container.app-container .aytrk__panel { margin-top: var(--ay-s48); }
 html body .app-container.app-container.app-container .aytrk__rows { width: 100%; margin: 0; padding: var(--ay-s4) var(--ay-inset); list-style: none; box-sizing: border-box; }
@@ -55,7 +55,7 @@ html body .app-container.app-container.app-container .aytrk__status i { width: 8
 html body .app-container.app-container.app-container .aytrk__status { white-space: nowrap; font-weight: 500; }
 html body .app-container.app-container.app-container .aytrk__status.is-recall { font-weight: 600; }
 html body .app-container.app-container.app-container .aytrk__status.is-recall i { background: #f7badd; box-shadow: inset 0 0 0 1px #3e2723; }
-html body .app-container.app-container.app-container .aytrk__view { min-height: 40px !important; padding: 0 16px !important; font-size: 14px !important; }
+html body .app-container.app-container.app-container .aytrk__view { min-height: 40px !important; padding: 0 var(--ay-s16) !important; font-size: 14px !important; }
 html body .app-container.app-container.app-container .aytrk__empty { width: 100%; box-sizing: border-box; }
 html body .app-container.app-container.app-container .aytrk__empty h2 { margin: 0 !important; }
 html body .app-container.app-container.app-container .aytrk__empty p { margin: 0; color: var(--ay-text-2); }
@@ -65,7 +65,7 @@ html body .app-container.app-container.app-container .aytrk #health-data-import 
 html body .app-container.app-container.app-container .aytrk #health-data-import > p { max-width: 68ch; font-size: 15px !important; color: var(--ay-text-2) !important; }
 html body .app-container.app-container.app-container .aytrk #health-data-import > div:first-of-type { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: var(--ay-s16) !important; }
 html body .app-container.app-container.app-container .aytrk #health-data-import > div > div { padding: var(--ay-s20) !important; border: 0 !important; border-radius: var(--ay-r-group) !important; background: var(--ay-group) !important; box-shadow: none !important; }
-html body .app-container.app-container.app-container .aytrk #health-data-import :is(textarea, input[type='text']) { width: 100%; min-height: 48px; padding: 12px 14px !important; border: 1.5px solid var(--ay-outline) !important; border-radius: 12px !important; background: var(--ay-page) !important; color: var(--ay-text) !important; font: 400 16px/1.45 var(--ay-sans-stack) !important; box-sizing: border-box; }
+html body .app-container.app-container.app-container .aytrk #health-data-import :is(textarea, input[type='text']) { width: 100%; min-height: 48px; padding: var(--ay-s12) 14px !important; border: 1.5px solid var(--ay-outline) !important; border-radius: var(--ay-r-tile) !important; background: var(--ay-page) !important; color: var(--ay-text) !important; font: 400 16px/1.45 var(--ay-sans-stack) !important; box-sizing: border-box; }
 html body .app-container.app-container.app-container .aytrk #health-data-import label { color: var(--ay-text) !important; }
 html body .app-container.app-container.app-container .aytrk #health-data-import .btn { min-height: 44px; display: inline-flex; align-items: center; border: 1.5px solid var(--ay-outline) !important; border-radius: 999px !important; background: transparent !important; color: var(--ay-text) !important; box-shadow: none !important; font-weight: 600 !important; }
 html body .app-container.app-container.app-container .aytrk #health-data-import .btn-primary { background: var(--ay-feature-bg) !important; color: var(--ay-feature-fg) !important; box-shadow: var(--ay-press-shadow) !important; }

@@ -8,26 +8,26 @@
 .ayna-mobile .am-type-row::-webkit-scrollbar { display: none; }
 .ayna-mobile .am-type-row button { min-height: 38px; padding: 0 14px !important; border: 1.5px solid var(--ay-line) !important; background: transparent !important; color: var(--ay-ink) !important; font: 500 13px/1 var(--ay-font-ui) !important; transition: background-color var(--ay-dur-1); }
 .ayna-mobile .am-type-row button.is-active { background: var(--ay-ink) !important; border-color: var(--ay-ink) !important; color: var(--ay-paper) !important; }
-.ayna-mobile .am-sheet :is(textarea, input:not([type='radio']):not([type='checkbox']):not([type='file']):not(.am-product-search input)) { border: 1.5px solid var(--ay-line) !important; border-radius: 16px !important; background: var(--ay-paper) !important; font-size: max(16px, 15px) !important; }
+.ayna-mobile .am-sheet :is(textarea, input:not([type='radio']):not([type='checkbox']):not([type='file']):not(.am-product-search input)) { border: 1.5px solid var(--ay-line) !important; border-radius: var(--ay-r-card) !important; background: var(--ay-paper) !important; font-size: max(16px, 15px) !important; }
 .ayna-mobile .am-sheet :is(textarea, input):focus { border-color: var(--ay-ink) !important; outline: 0; }
 .ayna-mobile .am-sheet .am-field-label, .ayna-mobile .am-sheet legend { color: var(--ay-ink) !important; font: 500 13px/1.2 var(--ay-font-ui) !important; letter-spacing: 0 !important; text-transform: none !important; }
 .ayna-mobile .am-sheet .am-primary { min-height: 52px !important; border: 0 !important; border-radius: 99px !important; background: var(--ay-ink) !important; color: var(--ay-paper) !important; font: 600 17px/1 var(--ay-font-ui) !important; }
 .ayna-mobile .am-sheet .am-primary:disabled { opacity: .4; }
-.ayna-mobile .am-photo-input { border: 1.5px dashed var(--ay-ink) !important; border-radius: 16px !important; background: transparent !important; }
+.ayna-mobile .am-photo-input { border: 1.5px dashed var(--ay-ink) !important; border-radius: var(--ay-r-card) !important; background: transparent !important; }
 .ayna-mobile .am-photo-input .am-photo-cta { background: var(--ay-butter) !important; color: var(--ay-ink) !important; border: 1.5px solid var(--ay-ink); }
 
 /* Star rating */
-.am-rating { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.am-rating { display: flex; align-items: center; justify-content: space-between; gap: var(--ay-s12); }
 .am-rating > span { font: 500 13px/1.2 var(--ay-font-ui); color: var(--ay-ink); }
-.am-stars { display: flex; gap: 4px; }
+.am-stars { display: flex; gap: var(--ay-s4); }
 .am-stars button { width: 40px; height: 40px; display: grid; place-items: center; padding: 0; border: 0; background: none; cursor: pointer; transition: transform .2s var(--ay-pop); }
 .am-stars button:active { transform: scale(.85); }
 .am-stars svg { width: 28px; height: 28px; fill: var(--ay-paper); stroke: var(--ay-ink); stroke-width: 1.6; stroke-linejoin: round; transition: fill .15s; }
 .am-stars button.is-on svg { fill: var(--ay-ink); }
 
 /* Audience picker: card radios instead of browser radios */
-.ayna-mobile .am-audience { display: grid; gap: 8px; margin: 0; padding: 0; border: 0; }
-.ayna-mobile .am-audience label { display: flex !important; align-items: flex-start; gap: 12px; padding: 12px 14px !important; border: 1.5px solid var(--ay-line) !important; border-radius: 16px !important; background: var(--ay-paper) !important; cursor: pointer; transition: border-color .15s, background-color .15s; }
+.ayna-mobile .am-audience { display: grid; gap: var(--ay-s8); margin: 0; padding: 0; border: 0; }
+.ayna-mobile .am-audience label { display: flex !important; align-items: flex-start; gap: var(--ay-s12); padding: var(--ay-s12) 14px !important; border: 1.5px solid var(--ay-line) !important; border-radius: var(--ay-r-card) !important; background: var(--ay-paper) !important; cursor: pointer; transition: border-color .15s, background-color .15s; }
 .ayna-mobile .am-audience label.is-selected { border-color: var(--ay-ink) !important; background: var(--ay-mint) !important; }
 .ayna-mobile .am-audience input[type='radio'] { appearance: none; -webkit-appearance: none; flex: none; width: 20px; height: 20px; margin: 2px 0 0; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); transition: box-shadow .2s var(--ay-ease); }
 .ayna-mobile .am-audience input[type='radio']:checked { box-shadow: inset 0 0 0 4px var(--ay-paper), inset 0 0 0 10px var(--ay-ink); }
@@ -37,7 +37,7 @@
 /* Feed: share prompt sits in the gutter like everything else. */
 
 /* Subpages: same header as settings pages. */
-.ayna-mobile .am-subpage-header { justify-content: flex-start !important; gap: 12px !important; min-height: 56px !important; margin: 0 var(--ay-gutter); border-bottom: 0 !important; }
+.ayna-mobile .am-subpage-header { justify-content: flex-start !important; gap: var(--ay-s12) !important; min-height: 56px !important; margin: 0 var(--ay-gutter); border-bottom: 0 !important; }
 .ayna-mobile .am-subpage-header .am-back { width: 42px; height: 42px; justify-content: center; padding: 0 !important; border: 1.5px solid var(--ay-ink) !important; border-radius: 50%; background: var(--ay-paper) !important; color: var(--ay-ink) !important; }
 .ayna-mobile .am-subpage-header > .am-subpage-title { color: var(--ay-ink) !important; font: 400 22px/1.15 var(--ay-font-display) !important; letter-spacing: -.03em !important; }
 .ayna-mobile .am-subpage > :not(.am-subpage-header) { margin-left: var(--ay-gutter); margin-right: var(--ay-gutter); }
@@ -45,21 +45,21 @@
 .ayna-mobile .am-subpage .am-card { border: 1.5px solid var(--ay-line) !important; border-radius: 18px !important; background: var(--ay-paper) !important; }
 
 /* Playlist detail: mosaic cover + big title */
-.ayna-mobile .am-playlist-detail-hero { display: flex !important; align-items: flex-end; gap: 16px; padding: 12px 0 20px !important; border: 0 !important; background: transparent !important; }
-.am-mosaic { width: 128px; height: 128px; flex: none; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 3px; border: 1.5px solid var(--ay-ink); border-radius: 20px; background: var(--ay-ink); box-shadow: 4px 4px 0 var(--ay-pink); overflow: hidden; }
+.ayna-mobile .am-playlist-detail-hero { display: flex !important; align-items: flex-end; gap: var(--ay-s16); padding: var(--ay-s12) 0 var(--ay-s20) !important; border: 0 !important; background: transparent !important; }
+.am-mosaic { width: 128px; height: 128px; flex: none; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 3px; border: 1.5px solid var(--ay-ink); border-radius: var(--ay-r-group); background: var(--ay-ink); box-shadow: 4px 4px 0 var(--ay-pink); overflow: hidden; }
 .am-mosaic-tile { position: relative; border-radius: 14px; overflow: hidden; background: var(--ay-peri); }
 .am-mosaic-tile.is-1 { background: var(--ay-butter); } .am-mosaic-tile.is-2 { background: var(--ay-mint); } .am-mosaic-tile.is-3 { background: var(--ay-pink); }
 .am-mosaic-tile img { padding: 12%; mix-blend-mode: multiply; }
 .am-mosaic-tile .ayna-fresh-photo-placeholder { background: transparent !important; }
 .ayna-mobile .am-playlist-detail-copy small { color: var(--ay-ink-soft) !important; font: 500 13px/1 var(--ay-font-ui) !important; letter-spacing: 0 !important; text-transform: none !important; }
-.ayna-mobile .am-playlist-detail-copy .am-detail-title { margin: 6px 0 4px !important; font: 400 28px/1.15 var(--ay-font-display) !important; letter-spacing: -.04em !important; }
-.ayna-mobile .am-playlist-section-heading { display: flex; justify-content: space-between; align-items: baseline; margin: 8px 0 10px !important; }
+.ayna-mobile .am-playlist-detail-copy .am-detail-title { margin: 6px 0 var(--ay-s4) !important; font: 400 28px/1.15 var(--ay-font-display) !important; letter-spacing: -.04em !important; }
+.ayna-mobile .am-playlist-section-heading { display: flex; justify-content: space-between; align-items: baseline; margin: var(--ay-s8) 0 10px !important; }
 .ayna-mobile .am-playlist-section-heading span { font: 600 17px/1 'Figtree', system-ui, sans-serif; text-transform: none !important; letter-spacing: -.02em !important; color: var(--ay-ink); }
-.ayna-mobile .am-playlist-section-heading strong { min-width: 28px; height: 28px; display: grid; place-items: center; padding: 0 8px; border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper); font: 500 13px/1 var(--ay-font-ui); }
-.ayna-mobile .am-product { border: 1.5px solid var(--ay-line) !important; border-radius: 16px !important; background: var(--ay-paper) !important; transition: transform var(--ay-dur-1) var(--ay-ease); }
+.ayna-mobile .am-playlist-section-heading strong { min-width: 28px; height: 28px; display: grid; place-items: center; padding: 0 var(--ay-s8); border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper); font: 500 13px/1 var(--ay-font-ui); }
+.ayna-mobile .am-product { border: 1.5px solid var(--ay-line) !important; border-radius: var(--ay-r-card) !important; background: var(--ay-paper) !important; transition: transform var(--ay-dur-1) var(--ay-ease); }
 .ayna-mobile .am-product:active { transform: scale(.98); }
-.ayna-mobile .am-product em { padding: 6px 12px; border-radius: 99px; background: var(--ay-butter); color: var(--ay-ink) !important; font: 500 13px/1 var(--ay-font-ui) !important; font-style: normal !important; }
-.ayna-mobile .am-product-photo { border-radius: 12px !important; background: var(--ay-tile) !important; }
+.ayna-mobile .am-product em { padding: 6px var(--ay-s12); border-radius: 99px; background: var(--ay-butter); color: var(--ay-ink) !important; font: 500 13px/1 var(--ay-font-ui) !important; font-style: normal !important; }
+.ayna-mobile .am-product-photo { border-radius: var(--ay-r-tile) !important; background: var(--ay-tile) !important; }
 
 /* Playlist grid on the Playlists tab: two full-width columns. */
 .ayna-mobile .am-list-heading { margin: 8px var(--ay-gutter) 12px !important; align-items: center !important; }
@@ -68,7 +68,7 @@
 .ayna-mobile .am-playlist-switch { margin: 0 var(--ay-gutter) 14px !important; }
 
 /* Profile */
-.ayna-mobile .am-profile-hero { margin: 8px 0 12px !important; padding: 0 !important; }
+.ayna-mobile .am-profile-hero { margin: var(--ay-s8) 0 var(--ay-s12) !important; padding: 0 !important; }
 .ayna-mobile .am-profile-hero .am-avatar { border: 2px solid var(--ay-ink) !important; background: var(--ay-peri) !important; color: var(--ay-ink) !important; font: 400 28px/1.15 var(--ay-font-display) !important; }
 .ayna-mobile .am-profile-bio { padding: 0 !important; border: 0 !important; background: transparent !important; font: 400 15px/1.45 var(--ay-font-ui) !important; color: var(--ay-ink) !important; }
 .ayna-mobile .am-profile-actions { display: flex; gap: 10px; margin: 14px 0 22px; }
@@ -80,7 +80,7 @@
 
 /* Reply composer stays inside the gutter. */
 .ayna-mobile .am-compose-inline { box-sizing: border-box; width: auto !important; max-width: 100%; }
-.ayna-mobile .am-compose-inline textarea { width: 100% !important; box-sizing: border-box; border: 1.5px solid var(--ay-line) !important; border-radius: 16px !important; background: var(--ay-paper) !important; }
+.ayna-mobile .am-compose-inline textarea { width: 100% !important; box-sizing: border-box; border: 1.5px solid var(--ay-line) !important; border-radius: var(--ay-r-card) !important; background: var(--ay-paper) !important; }
 
 @media (prefers-reduced-motion: reduce) { .am-stars button, .ayna-mobile .am-product { transition: none; } }
 
@@ -89,8 +89,8 @@
 .ayna-mobile.ayna-mobile .am-sheet > * { min-width: 0; }
 .ayna-mobile.ayna-mobile .am-audience input[type='radio'] { border-radius: 50% !important; padding: 0 !important; }
 .ayna-mobile.ayna-mobile .am-playlist-section-heading span { text-transform: none !important; letter-spacing: -.02em !important; font: 600 17px/1 'Figtree', system-ui, sans-serif !important; color: var(--ay-ink) !important; }
-.ayna-mobile.ayna-mobile .am-playlist-item .am-product { grid-template-columns: 58px minmax(0, 1fr) auto !important; align-items: center; padding: 10px 12px 10px 10px !important; border: 1.5px solid var(--ay-line) !important; }
-.ayna-mobile.ayna-mobile .am-playlist-item .am-product .am-product-photo { grid-row: auto !important; border-radius: 12px !important; }
+.ayna-mobile.ayna-mobile .am-playlist-item .am-product { grid-template-columns: 58px minmax(0, 1fr) auto !important; align-items: center; padding: 10px var(--ay-s12) 10px 10px !important; border: 1.5px solid var(--ay-line) !important; }
+.ayna-mobile.ayna-mobile .am-playlist-item .am-product .am-product-photo { grid-row: auto !important; border-radius: var(--ay-r-tile) !important; }
 .ayna-mobile.ayna-mobile .am-playlist-item .am-product > span:not(.am-product-photo) { grid-column: 2 !important; align-self: center !important; }
 .ayna-mobile.ayna-mobile .am-playlist-item .am-product em { grid-column: 3 !important; grid-row: 1 !important; width: auto !important; justify-self: end; }
 .ayna-mobile .am-subpage .am-compose-inline, .ayna-mobile .am-subpage .am-comment { margin-left: 0; margin-right: 0; }
@@ -103,12 +103,12 @@
   width: 100%; max-width: 100%; box-sizing: border-box;
 }
 .am-product-search input { width: auto; flex: 1 1 auto; min-width: 0; }
-.am-sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; box-sizing: border-box; }
+.am-sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--ay-s12); width: 100%; box-sizing: border-box; }
 .am-sheet-head > button { flex: 0 0 40px; width: 40px; height: 40px; border-radius: 50%; padding: 0; display: grid; place-items: center; }
 .am-sheet-head h2 { min-width: 0; }
 .am-playlist-section-heading span { text-transform: none; letter-spacing: 0; }
 .ayna-mobile.ayna-mobile .am-product-search input { border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; padding: 0 !important; height: auto; outline: none; font-size: 16px !important; }
-.ayna-mobile .am-product-search { min-height: 52px; padding: 0 16px !important; gap: 10px; align-items: center; border: 1.5px solid var(--ay-line) !important; border-radius: 16px !important; background: var(--ay-paper) !important; }
+.ayna-mobile .am-product-search { min-height: 52px; padding: 0 var(--ay-s16) !important; gap: 10px; align-items: center; border: 1.5px solid var(--ay-line) !important; border-radius: var(--ay-r-card) !important; background: var(--ay-paper) !important; }
 .ayna-mobile .am-product-search svg { width: 18px; height: 18px; flex: none; }
 .am-product-search:focus-within { outline: 2px solid var(--ay-ink); outline-offset: 2px; }
 .am-picker > label, .am-sheet label > span:first-child { font-weight: 500; font-size: 13px; color: var(--ay-ink); }

@@ -20,13 +20,13 @@
 /* Profile hub: name 27 -> 24 (inline size, so !important) */
 
 /* ---------- Header: slightly tighter ---------- */
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-shared-header { min-height: 60px; padding-bottom: 8px; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-shared-header { min-height: 60px; padding-bottom: var(--ay-s8); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-shared-header .ayna-shared-wordmark { font-size: calc(25px * var(--ayna-text-scale, 1)); }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-header-ask-pill { padding-right: 12px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-header-ask-pill { padding-right: var(--ay-s12) !important; }
 
 /* ---------- Cards: one step tighter ---------- */
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-home-today { padding: 16px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-home-today { padding: var(--ay-s16) !important; }
 
 /* ---------- Pills: a touch less side padding (heights unchanged) ---------- */
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-shop-category { padding-inline: 12px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-shop-category { padding-inline: var(--ay-s12) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-topics button { padding-inline: 14px; }

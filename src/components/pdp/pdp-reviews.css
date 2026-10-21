@@ -46,7 +46,7 @@
 :is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps :is(p, ul, li) { margin: 0 !important; padding: 0 !important; list-style: none !important; letter-spacing: 0 !important; }
 
 /* Heading row: "What people say" + See all */
-:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; margin: 0 0 var(--wps-gap); }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--ay-s4) var(--ay-s16); margin: 0 0 var(--wps-gap); }
 :is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__head .ay-h2 { margin: 0 !important; }
 :is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__all {
   display: inline-flex; align-items: center; min-height: 44px; padding: 0;
@@ -56,17 +56,17 @@
 
 /* Summary (a Group) beside the cards on desktop; stacked on phones */
 :is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__grid { display: grid; grid-template-columns: minmax(260px, 320px) minmax(0, 1fr); gap: var(--wps-gap); align-items: start; }
-:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__summary { display: grid; gap: 12px; padding: 24px; border-radius: 20px; background: var(--wps-group); }
-:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__avg { display: flex !important; align-items: center; gap: 12px; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__summary { display: grid; gap: var(--ay-s12); padding: var(--ay-s24); border-radius: var(--ay-r-group); background: var(--wps-group); }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__avg { display: flex !important; align-items: center; gap: var(--ay-s12); }
 :is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__avg b { font: 600 40px/1 var(--wps-ui) !important; font-variant-numeric: tabular-nums; color: var(--wps-ink) !important; }
 :is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .cr-stars { color: var(--wps-ink) !important; }
 :is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__count { font: 500 14px/1.4 var(--wps-ui) !important; color: var(--wps-ink2) !important; }
-:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__bars { display: grid !important; gap: 8px; margin: 4px 0 0 !important; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__bars { display: grid !important; gap: var(--ay-s8); margin: var(--ay-s4) 0 0 !important; }
 :is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__bars li { display: grid !important; grid-template-columns: 30px 1fr 28px; align-items: center; gap: 10px; font: 500 13px/1 var(--wps-ui) !important; font-variant-numeric: tabular-nums; color: var(--wps-ink) !important; }
 :is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__bars i { display: block; height: 8px; border-radius: 4px; background: var(--wps-page); box-shadow: inset 0 0 0 1px var(--wps-line); overflow: hidden; }
 :is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__bars s { display: block; height: 100%; border-radius: 4px; background: var(--wps-ink); text-decoration: none; }
 :is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__barnum { text-align: right; }
-:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__cta { margin-top: 8px; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__cta { margin-top: var(--ay-s8); }
 
 /* Primary button: espresso fill + the 3px offset shadow */
 :is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__btn {
@@ -78,16 +78,16 @@
 :is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__btn:active { box-shadow: none !important; transform: translateY(1px); }
 
 /* Review cards and community posts: object cards */
-:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__cards { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr)); gap: 16px; }
-:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__posts { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 12px; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__cards { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr)); gap: var(--ay-s16); }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__posts { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: var(--ay-s12); }
 :is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps :is(.ayp-wps__card, .ayp-wps__post) {
-  display: flex; flex-direction: column; gap: 8px; height: 100%; box-sizing: border-box; padding: 16px;
-  border: 1.5px solid var(--wps-ink) !important; border-radius: 16px; background: transparent !important;
+  display: flex; flex-direction: column; gap: var(--ay-s8); height: 100%; box-sizing: border-box; padding: var(--ay-s16);
+  border: 1.5px solid var(--wps-ink) !important; border-radius: var(--ay-r-card); background: transparent !important;
   color: var(--wps-ink) !important; text-decoration: none !important;
 }
 :is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps :is(.ayp-wps__card, .ayp-wps__post):hover { background: var(--wps-group) !important; }
 :is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps :is(.ayp-wps__card, .ayp-wps__post, .ayp-wps__all, .ayp-wps__btn):focus-visible { outline: 3px solid var(--wps-focus) !important; outline-offset: 2px; }
-:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__cardtop { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__cardtop { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ay-s4) var(--ay-s12); }
 :is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__helpful { font: 500 13px/1.3 var(--wps-ui) !important; color: var(--wps-ink2) !important; }
 :is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__body {
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 5; overflow: hidden;
@@ -99,21 +99,21 @@
 :is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__kind { font: 600 13px/1.3 var(--wps-ui) !important; color: var(--wps-ink) !important; }
 
 /* No reviews yet: one line and the button, no empty box */
-:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__empty { display: grid; gap: 16px; justify-items: start; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__empty { display: grid; gap: var(--ay-s16); justify-items: start; }
 :is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__empty p { font: 400 17px/1.5 var(--wps-ui) !important; color: var(--wps-ink) !important; max-width: 60ch; }
-:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__emptyactions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__emptyactions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ay-s12) var(--ay-s24); }
 
 /* From the community */
-:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__mentions { margin-top: 32px; }
-:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__mentions .ayp-subh { margin: 0 0 4px !important; }
-:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__note { margin: 0 0 12px !important; font: 500 14px/1.45 var(--wps-ui) !important; color: var(--wps-ink2) !important; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__mentions { margin-top: var(--ay-s32); }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__mentions .ayp-subh { margin: 0 0 var(--ay-s4) !important; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__note { margin: 0 0 var(--ay-s12) !important; font: 500 14px/1.45 var(--wps-ui) !important; color: var(--wps-ink2) !important; }
 
 @media (max-width: 760px) {
   :is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__grid { grid-template-columns: minmax(0, 1fr); }
 }
 /* The app is always phone width. */
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp .ayp-wps .ayp-wps__grid { grid-template-columns: minmax(0, 1fr); }
-.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp .ayp-wps .ayp-wps__summary { padding: 16px; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp .ayp-wps .ayp-wps__summary { padding: var(--ay-s16); }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp .ayp-wps .ayp-wps__empty p { font-size: 16px !important; }
 @media (prefers-reduced-motion: reduce) {
   :is(html body .app-container.app-container.app-container, .ayna-mobile .ay-pdp) .ayp-wps .ayp-wps__btn:active { transform: none; }

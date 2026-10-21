@@ -18,7 +18,7 @@
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-match-badge {
   position: absolute !important; right: auto !important; bottom: auto !important;
   translate: none !important; transform: none !important; z-index: 3;
-  width: auto !important; height: 24px !important; min-height: 0 !important; min-width: 0 !important; padding: 0 8px !important;
+  width: auto !important; height: 24px !important; min-height: 0 !important; min-width: 0 !important; padding: 0 var(--ay-s8) !important;
   display: inline-flex !important; align-items: center !important; gap: 3px !important; border-radius: 99px !important; border: 0 !important;
   background: var(--ay-ink) !important; color: var(--ay-paper) !important; box-shadow: none !important;
 }
@@ -27,7 +27,7 @@
 .ayna-mobile.ayna-mobile .ayna-fresh-match-badge::before { content: ''; position: absolute; inset: -10px -4px; } /* 44px tap area */
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-card-save { position: absolute !important; left: auto !important; width: 32px !important; height: 32px !important; z-index: 3; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { width: 100%; }
-.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy { padding-bottom: 8px !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy { padding-bottom: var(--ay-s8) !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { justify-self: stretch !important; -webkit-box-align: center; text-align: center !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot { justify-self: stretch !important; width: 100% !important; justify-content: center !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy { grid-template-columns: minmax(0, 1fr) !important; justify-content: stretch !important; }
@@ -35,8 +35,8 @@
 
 /* Shop header rhythm (8pt): header → 8 → title → 16 → search → 16 → tabs/divider → 16 → chips → 16 → swipe card → 24 → grid */
 .ayna-mobile.ayna-mobile .ayna-shop-heading { padding: 8px var(--ay-gutter) 16px !important; }
-.ayna-mobile.ayna-mobile .ayna-shop-heading h1 { margin: 0 0 16px !important; }
-.ayna-mobile.ayna-mobile .ayna-shop-heading + div:not(.ayna-category-index) { margin: 0 0 16px !important; padding: 0 var(--ay-gutter) !important; }
+.ayna-mobile.ayna-mobile .ayna-shop-heading h1 { margin: 0 0 var(--ay-s16) !important; }
+.ayna-mobile.ayna-mobile .ayna-shop-heading + div:not(.ayna-category-index) { margin: 0 0 var(--ay-s16) !important; padding: 0 var(--ay-gutter) !important; }
 .ayna-mobile.ayna-mobile .ayna-shop-category { height: 40px !important; min-height: 40px !important; }
 .ayna-mobile.ayna-mobile .ayna-shop-filter-toggle { width: 40px !important; height: 40px !important; min-width: 40px !important; flex: none; border-radius: 50% !important; display: grid !important; place-items: center !important; }
 .ayna-mobile.ayna-mobile .ay-discover-cta { margin: 0 var(--ay-gutter) 24px !important; }
@@ -51,7 +51,7 @@
 
 /* ===== Product card as a rounded square: everything inside one box, fixed rows → every card the same height ===== */
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) {
-  padding: 8px 8px 12px !important; border: 1.5px solid var(--ay-line) !important; border-radius: 20px !important;
+  padding: var(--ay-s8) var(--ay-s8) var(--ay-s12) !important; border: 1.5px solid var(--ay-line) !important; border-radius: var(--ay-r-group) !important;
   background: var(--ay-paper) !important; box-shadow: none !important; transition: border-color .15s var(--ay-ease), transform .15s var(--ay-ease);
 }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list):active { transform: scale(.98); border-color: var(--ay-ink) !important; }
@@ -59,29 +59,29 @@
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-match-badge { top: 14px !important; left: 14px !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-card-save { top: 12px !important; right: 12px !important; }
 /* Text block: brand (1 line) / name (2 lines) / price (1 line), heights reserved */
-.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy { gap: 2px !important; padding: 12px 4px 0 !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy { gap: 2px !important; padding: var(--ay-s12) var(--ay-s4) 0 !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-card-brand { order: 0 !important; display: block; width: 100%; height: 16px; font: 500 13px/16px var(--ay-font-ui) !important; text-align: center; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-card-brand::after { content: none !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { order: 1 !important; min-height: 2.5em !important; height: 2.5em; }
-.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot { order: 2 !important; margin-top: 4px !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot { order: 2 !important; margin-top: var(--ay-s4) !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot b { font-size: 17px !important; font-weight: 600 !important; }
-.ayna-mobile.ayna-mobile .ayna-figma-discover .ayna-editorial-product-grid:not(.is-list-layout) { row-gap: 12px !important; column-gap: 12px !important; }
+.ayna-mobile.ayna-mobile .ayna-figma-discover .ayna-editorial-product-grid:not(.is-list-layout) { row-gap: var(--ay-s12) !important; column-gap: var(--ay-s12) !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) { box-sizing: border-box !important; width: 100% !important; min-width: 0 !important; margin: 0 !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { align-content: center !important; -webkit-box-pack: center; }
 /* For me switch: even insets, track sits 8px from the pill edge top/right/bottom; knob 3px inside the track */
-.ay-for-me { height: 40px; min-height: 40px; padding: 0 8px 0 16px; gap: 12px; box-sizing: border-box; font-size: 13px; font-weight: 500; }
+.ay-for-me { height: 40px; min-height: 40px; padding: 0 var(--ay-s8) 0 var(--ay-s16); gap: var(--ay-s12); box-sizing: border-box; font-size: 13px; font-weight: 500; }
 .ay-for-me i { width: 40px; height: 22px; box-sizing: border-box; border-width: 1.5px; }
 .ay-for-me i b { top: 50%; left: 3px; width: 14px; height: 14px; translate: 0 -50%; }
 .ay-for-me[aria-checked='true'] i b { transform: translateX(18px); }
 .ayna-mobile[data-theme='dark'] .ayna-fresh-product-card .ayna-card-save { color: #3e2723 !important; }
 .ayna-mobile[data-theme='dark'] .ayna-fresh-product-card .ayna-card-save svg { stroke: currentColor !important; }
 /* "For me" sits on the title line; one fewer row and divider */
-.ayna-mobile.ayna-mobile .ay-shop-titlebar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.ayna-mobile.ayna-mobile .ay-shop-titlebar { display: flex; align-items: center; justify-content: space-between; gap: var(--ay-s12); margin-bottom: var(--ay-s16); }
 .ayna-mobile.ayna-mobile .ay-shop-titlebar h1 { margin: 0 !important; }
 .ayna-mobile.ayna-mobile .ay-shop-titlebar .ay-for-me { margin-left: 0; }
-.ayna-mobile.ayna-mobile .ayna-shop-heading { padding-bottom: 16px !important; }
+.ayna-mobile.ayna-mobile .ayna-shop-heading { padding-bottom: var(--ay-s16) !important; }
 
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-shop-titlebar .ay-for-me { display: inline-flex !important; align-items: center !important; gap: 12px !important; flex: none; width: auto !important; height: 40px !important; min-height: 40px !important; padding: 0 8px 0 16px !important; border-radius: 99px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-shop-titlebar .ay-for-me { display: inline-flex !important; align-items: center !important; gap: var(--ay-s12) !important; flex: none; width: auto !important; height: 40px !important; min-height: 40px !important; padding: 0 var(--ay-s8) 0 var(--ay-s16) !important; border-radius: 99px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-shop-titlebar .ay-for-me i { position: relative !important; display: block !important; top: auto !important; left: auto !important; right: auto !important; bottom: auto !important; margin: 0 !important; inset: auto !important; flex: none; width: 40px !important; height: 22px !important; transform: none !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-shop-titlebar .ay-for-me i b { position: absolute !important; display: block !important; top: 50% !important; left: 3px !important; width: 14px !important; height: 14px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-shop-titlebar .ay-for-me i { clip-path: none !important; animation: none !important; border: 1.5px solid var(--ay-ink) !important; border-radius: 99px !important; background: var(--ay-tile) !important; opacity: 1 !important; rotate: none !important; scale: none !important; box-sizing: border-box !important; overflow: hidden; }

@@ -2,8 +2,8 @@
    no red. The message is espresso (butter in dark) with a line icon; the
    field or checkbox row it belongs to gets a pink fill (is-invalid). */
 .ay-inline-err.ay-inline-err {
-  display: flex; align-items: flex-start; gap: 8px;
-  margin: 4px 0 0 !important; padding: 0 !important;
+  display: flex; align-items: flex-start; gap: var(--ay-s8);
+  margin: var(--ay-s4) 0 0 !important; padding: 0 !important;
   color: var(--ay-ink, #3e2723) !important;
   font: 600 var(--ay-fs-caption)/1.4 var(--ay-sans) !important;
   text-align: left;
@@ -17,7 +17,7 @@
 /* A checkbox row in its error state: pink fill, espresso text in both themes. */
 .ay-check-invalid.ay-check-invalid {
   background: #f7badd !important; color: #3e2723 !important;
-  border-radius: 12px; padding: 12px !important; margin: 0 -12px !important;
+  border-radius: var(--ay-r-tile); padding: var(--ay-s12) !important; margin: 0 -12px !important;
   scroll-margin: 96px;
 }
 .ay-check-invalid.ay-check-invalid > span,
@@ -32,7 +32,7 @@
 html body .app-container .ay-auth-card :is(input:not([type='checkbox']), select)[aria-invalid='true'] {
   background-color: #f7badd !important; border: 2px solid #3e2723 !important; color: #3e2723 !important;
 }
-html body .app-container .ay-auth-card .ay-auth-check-item { display: grid; gap: 4px; }
+html body .app-container .ay-auth-card .ay-auth-check-item { display: grid; gap: var(--ay-s4); }
 html body .app-container .ay-auth-card .ay-auth-check { min-height: 44px; align-content: start; }
 html body .app-container .ay-auth-card .ay-auth-check.ay-check-invalid { margin: 0 -12px !important; color: #3e2723 !important; }
 html body .app-container .ay-auth-card .ay-auth-check.ay-check-invalid input { border-color: #3e2723 !important; background: #fffcf5 !important; outline: 2px solid #3e2723; outline-offset: 1px; }

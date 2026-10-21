@@ -14,7 +14,7 @@ html body .app-container.app-container.app-container .ayp .sr-only { position: a
 html body .app-container.app-container.app-container .ayp .ayp-textlink { display: inline; min-height: 0; padding: 0; margin: 0; border: 0; background: none; color: var(--ay-text) !important; font: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; cursor: pointer; }
 html body .app-container.app-container.app-container .ayp .ayp-p { margin: 0 0 var(--ay-s12); max-width: var(--ay-reading); font: 400 var(--ay-type-body)/1.55 var(--ay-sans-stack); color: var(--ay-text); }
 html body .app-container.app-container.app-container .ayp .ayp-p:last-child { margin-bottom: 0; }
-html body .app-container.app-container.app-container .ayp .ayp-subh { display: flex; align-items: center; gap: 8px; margin: var(--ay-s32) 0 var(--ay-s12); font: 600 var(--ay-type-row)/1.3 var(--ay-sans-stack) !important; letter-spacing: 0 !important; color: var(--ay-text) !important; }
+html body .app-container.app-container.app-container .ayp .ayp-subh { display: flex; align-items: center; gap: var(--ay-s8); margin: var(--ay-s32) 0 var(--ay-s12); font: 600 var(--ay-type-row)/1.3 var(--ay-sans-stack) !important; letter-spacing: 0 !important; color: var(--ay-text) !important; }
 html body .app-container.app-container.app-container .ayp .ayp-subh.is-first,
 html body .app-container.app-container.app-container .ayp :is(.ayp-flow, .ayp-safety, .ayp-sec__body, .ayp-for, .ayp-ing, .ayp-doc, .ayp-callout) > .ayp-subh:first-child { margin-top: 0; }
 
@@ -30,7 +30,7 @@ html body .app-container.app-container.app-container .ayp-top .ay-crumbs a { col
 html body .app-container.app-container.app-container .ayp-top__back { flex: none; display: grid; place-items: center; width: 44px; height: 44px; margin-left: -10px; padding: 0; border: 0; border-radius: 50%; background: none; color: var(--ay-text); cursor: pointer; }
 html body .app-container.app-container.app-container .ayp-top__back:hover { background: var(--ay-hover); }
 html body .app-container.app-container.app-container .ayp-top__back svg, html body .app-container.app-container.app-container .ayp-top__share svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-html body .app-container.app-container.app-container .ayp-top__share { flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 4px; border: 0; background: none; color: var(--ay-text); font: 600 15px/1 var(--ay-sans-stack); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+html body .app-container.app-container.app-container .ayp-top__share { flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 var(--ay-s4); border: 0; background: none; color: var(--ay-text); font: 600 15px/1 var(--ay-sans-stack); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 
 /* ---------- hero: gallery + buy column ---------- */
 html body .app-container.app-container.app-container .ayp-hero { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--ay-s48); align-items: start; }
@@ -38,7 +38,7 @@ html body .app-container.app-container.app-container .ayp-hero__media { position
 html body .app-container.app-container.app-container .ayp-gallery { display: grid; gap: var(--ay-s12); }
 html body .app-container.app-container.app-container .ayp-gallery__tile { position: relative; aspect-ratio: 1 / 1; border: 1.5px solid #3e2723; border-radius: var(--ay-r-card); background: #ffffff; overflow: hidden; display: grid; place-items: center; }
 html body .app-container.app-container.app-container[data-theme='brand-dark'] .ayp-gallery__tile { border-color: #ffedac; }
-html body .app-container.app-container.app-container .ayp-gallery__zoom { all: unset; display: block; width: 100%; height: 100%; padding: 32px; box-sizing: border-box; cursor: zoom-in; }
+html body .app-container.app-container.app-container .ayp-gallery__zoom { all: unset; display: block; width: 100%; height: 100%; padding: var(--ay-s32); box-sizing: border-box; cursor: zoom-in; }
 html body .app-container.app-container.app-container .ayp-gallery__zoom:focus-visible { outline: 3px solid var(--ay-focus); outline-offset: -6px; border-radius: var(--ay-r-card); }
 html body .app-container.app-container.app-container .ayp-gallery__zoom img { width: 100%; height: 100%; object-fit: contain; display: block; }
 html body .app-container.app-container.app-container .ayp-gallery .ay-thumbs { display: flex; gap: var(--ay-s8); margin: 0; padding: 0; list-style: none; overflow-x: auto; scrollbar-width: none; }
@@ -50,7 +50,7 @@ html body .app-container.app-container.app-container .ayp-gallery .ay-thumbs img
 html body .app-container.app-container.app-container .ayp-buy { display: flex; flex-direction: column; gap: 0; min-width: 0; padding-top: var(--ay-s8); background: none !important; border: 0 !important; box-shadow: none !important; }
 html body .app-container.app-container.app-container .ayp-buy__brand { margin: 0 0 var(--ay-s8); font: 600 15px/1.3 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; }
 html body .app-container.app-container.app-container .ayp-buy__name { margin: 0 !important; max-width: 20ch; overflow-wrap: anywhere; }
-html body .app-container.app-container.app-container .ayp-buy__rating { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-top: var(--ay-s4); padding: 0; border: 0; background: none; color: var(--ay-text); font: 500 14px/1.2 var(--ay-sans-stack); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+html body .app-container.app-container.app-container .ayp-buy__rating { align-self: flex-start; display: inline-flex; align-items: center; gap: var(--ay-s8); min-height: 44px; margin-top: var(--ay-s4); padding: 0; border: 0; background: none; color: var(--ay-text); font: 500 14px/1.2 var(--ay-sans-stack); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 html body .app-container.app-container.app-container .ayp-stars span { color: var(--ay-hairline); font-size: 15px; }
 html body .app-container.app-container.app-container .ayp-stars span.is-on { color: var(--ay-text); }
 html body .app-container.app-container.app-container .ayp-buy__lead { margin: var(--ay-s12) 0 0; max-width: 56ch; font: 400 var(--ay-type-body)/1.55 var(--ay-sans-stack) !important; color: var(--ay-text) !important; }
@@ -58,7 +58,7 @@ html body .app-container.app-container.app-container .ayp-price { display: flex;
 html body .app-container.app-container.app-container .ayp-price__main { font: 600 28px/1.1 var(--ay-sans-stack) !important; letter-spacing: -.01em; color: var(--ay-text); font-variant-numeric: tabular-nums; }
 html body .app-container.app-container.app-container .ayp-price__main.is-placeholder { font-size: 17px !important; font-weight: 600 !important; }
 html body .app-container.app-container.app-container .ayp-price__notes { display: flex; flex-wrap: wrap; gap: 2px 0; flex-basis: 100%; margin: 0; padding: 0; list-style: none; font: 500 14px/1.5 var(--ay-sans-stack); color: var(--ay-text-2); }
-html body .app-container.app-container.app-container .ayp-price__notes li + li::before { content: '·'; margin: 0 8px; }
+html body .app-container.app-container.app-container .ayp-price__notes li + li::before { content: '·'; margin: 0 var(--ay-s8); }
 html body .app-container.app-container.app-container .ayp-buy__rx { margin: var(--ay-s8) 0 0; font: 500 14px/1.5 var(--ay-sans-stack); color: var(--ay-text); }
 html body .app-container.app-container.app-container .ayp-buy__section { margin-top: var(--ay-s24); display: grid; gap: var(--ay-s16); }
 /* The Buy box's place in the first-paint hero (ProductHeroPreview), about a Buy button's height. */
@@ -72,7 +72,7 @@ html body .app-container.app-container.app-container .ayp-options__list li + li:
 html body .app-container.app-container.app-container .ayp-options__list li.is-more { color: var(--ay-text-2); }
 html body .app-container.app-container.app-container .ayp-variant { display: grid; gap: 6px; }
 html body .app-container.app-container.app-container .ayp-variant__label { font: 600 14px/1.3 var(--ay-sans-stack); color: var(--ay-text); }
-html body .app-container.app-container.app-container .ayp-variant select { width: 100%; max-width: 480px; min-height: 48px; padding: 0 40px 0 14px; border: 1.5px solid var(--ay-outline); border-radius: 12px; background: var(--ay-page) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6' fill='none' stroke='%233e2723' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") right 12px center / 18px no-repeat; -webkit-appearance: none; appearance: none; color: var(--ay-text); font: 500 16px/1.2 var(--ay-sans-stack); }
+html body .app-container.app-container.app-container .ayp-variant select { width: 100%; max-width: 480px; min-height: 48px; padding: 0 var(--ay-s40) 0 14px; border: 1.5px solid var(--ay-outline); border-radius: var(--ay-r-tile); background: var(--ay-page) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6' fill='none' stroke='%233e2723' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") right 12px center / 18px no-repeat; -webkit-appearance: none; appearance: none; color: var(--ay-text); font: 500 16px/1.2 var(--ay-sans-stack); }
 html body .app-container.app-container.app-container[data-theme='brand-dark'] .ayp-variant select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6' fill='none' stroke='%23ffedac' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"); }
 html body .app-container.app-container.app-container .ayp-variant small { max-width: 480px; font: 400 13px/1.45 var(--ay-sans-stack); color: var(--ay-text-2); }
 html body .app-container.app-container.app-container .ayp-buy__actions { display: flex; flex-wrap: wrap; gap: var(--ay-s12); align-items: center; }
@@ -89,7 +89,7 @@ html body .app-container.app-container.app-container .ayp-buy__fine .ayp-textlin
 html body .app-container.app-container.app-container .ayp-buy__disclosure { max-width: 60ch; }
 html body .app-container.app-container.app-container .ayp-fit { margin-top: var(--ay-s24); padding-top: var(--ay-s20); border-top: 1px solid var(--ay-hairline); display: grid; gap: var(--ay-s8); }
 /* Her match, for the moment before it fills in (ProductModal settled): about the match block's height. */
-html body .app-container.app-container.app-container .ayp-fit__skel { height: 72px; width: 100%; border-radius: 12px; }
+html body .app-container.app-container.app-container .ayp-fit__skel { height: 72px; width: 100%; border-radius: var(--ay-r-tile); }
 html body .app-container.app-container.app-container .ayp-fit__note { margin: 0; font: 600 14px/1.4 var(--ay-sans-stack); }
 html body .app-container.app-container.app-container .ayp-fit__omit { justify-self: start; min-height: 44px; font-weight: 500 !important; color: var(--ay-text-2) !important; }
 /* ProductMatch (passport/ProductSections.jsx) inside the buy column: plain, no box */
@@ -99,10 +99,10 @@ html body .app-container.app-container.app-container .ayp-fit .ay-match__big { f
 html body .app-container.app-container.app-container .ayp-fit .ay-match__big b { display: block; font: 600 20px/1 var(--ay-sans-stack); }
 html body .app-container.app-container.app-container .ayp-fit .ay-match__body { display: grid; gap: 6px; min-width: 0; }
 html body .app-container.app-container.app-container .ayp-fit .ay-match__body :is(h2, h3) { margin: 0 !important; font: 600 var(--ay-type-row)/1.3 var(--ay-sans-stack) !important; color: var(--ay-text) !important; }
-html body .app-container.app-container.app-container .ayp-fit .ay-match__reasons { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; font: 400 15px/1.45 var(--ay-sans-stack); color: var(--ay-text); }
+html body .app-container.app-container.app-container .ayp-fit .ay-match__reasons { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--ay-s4); font: 400 15px/1.45 var(--ay-sans-stack); color: var(--ay-text); }
 html body .app-container.app-container.app-container .ayp-fit .ay-match__links { display: flex; flex-wrap: wrap; gap: var(--ay-s16); }
 html body .app-container.app-container.app-container .ayp-fit .ay-match__links :is(a, button) { min-height: 40px; padding: 0; border: 0; background: none; color: var(--ay-text) !important; font: 600 14px/1 var(--ay-sans-stack); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
-html body .app-container.app-container.app-container .ayp-fit .ay-fitline { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font: 500 15px/1.4 var(--ay-sans-stack); color: var(--ay-text); }
+html body .app-container.app-container.app-container .ayp-fit .ay-fitline { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: var(--ay-s4) 10px; font: 500 15px/1.4 var(--ay-sans-stack); color: var(--ay-text); }
 html body .app-container.app-container.app-container .ayp-fit .ay-fitline :is(a, button) { min-height: 44px; display: inline-flex; align-items: center; padding: 0; border: 0; background: none !important; color: var(--ay-text) !important; font: 600 15px/1 var(--ay-sans-stack) !important; text-decoration: underline; text-underline-offset: 3px; box-shadow: none !important; cursor: pointer; }
 
 /* ---------- summary + At a glance band ---------- */
@@ -110,7 +110,7 @@ html body .app-container.app-container.app-container .ayp-fit .ay-fitline :is(a,
 /* ---------- tabs ---------- */
 html body .app-container.app-container.app-container .ayp-tabs .ay-tabs { position: sticky; top: 68px; z-index: 20; background: var(--ay-page); }
 html body .app-container.app-container.app-container .ayp-panel { max-width: 100%; }
-html body .app-container.app-container.app-container .ayp-panel__leadlabel { margin: 0 0 4px; font: 500 14px/1.4 var(--ay-sans-stack); color: var(--ay-text-2); }
+html body .app-container.app-container.app-container .ayp-panel__leadlabel { margin: 0 0 var(--ay-s4); font: 500 14px/1.4 var(--ay-sans-stack); color: var(--ay-text-2); }
 html body .app-container.app-container.app-container .ayp-panel__lead { margin: 0 0 var(--ay-s24); max-width: var(--ay-reading); font: 600 var(--ay-type-row)/1.45 var(--ay-sans-stack) !important; color: var(--ay-text) !important; }
 html body .app-container.app-container.app-container .ayp-panel__lead.is-quoted { font-weight: 500 !important; }
 /* urgent signs block and community reviews (shared components) sit flat on the page */
@@ -124,9 +124,9 @@ html body .app-container.app-container.app-container .ayp-compare .ay-compare { 
 html body .app-container.app-container.app-container .ayp-compare .ay-pdp-sechead { margin: 0 0 var(--ay-headgap); }
 html body .app-container.app-container.app-container .ayp-compare .ay-pdp-sechead h2 { margin: 0; font: 400 var(--ay-type-h2)/1.15 var(--ay-serif-stack) !important; color: var(--ay-text) !important; }
 html body .app-container.app-container.app-container .ayp-compare .ay-compare__pick { display: grid; gap: var(--ay-s12); margin-bottom: var(--ay-s16); max-width: 760px; }
-html body .app-container.app-container.app-container .ayp-compare .ay-compare__search input { width: 100%; max-width: 420px; min-height: 48px; padding: 0 14px; border: 1.5px solid var(--ay-outline) !important; border-radius: 12px !important; background: var(--ay-page) !important; color: var(--ay-text) !important; font: 500 16px/1.2 var(--ay-sans-stack) !important; box-shadow: none !important; }
-html body .app-container.app-container.app-container .ayp-compare .ay-compare__results { margin: 0; padding: 0; list-style: none; max-width: 420px; border: 1.5px solid var(--ay-outline); border-radius: 12px; overflow: hidden; }
-html body .app-container.app-container.app-container .ayp-compare .ay-compare__results button { display: block; width: 100%; min-height: 44px; padding: 8px 14px; border: 0; border-top: 1px solid var(--ay-hairline); background: var(--ay-page); color: var(--ay-text); font: 500 15px/1.3 var(--ay-sans-stack); text-align: left; cursor: pointer; }
+html body .app-container.app-container.app-container .ayp-compare .ay-compare__search input { width: 100%; max-width: 420px; min-height: 48px; padding: 0 14px; border: 1.5px solid var(--ay-outline) !important; border-radius: var(--ay-r-tile) !important; background: var(--ay-page) !important; color: var(--ay-text) !important; font: 500 16px/1.2 var(--ay-sans-stack) !important; box-shadow: none !important; }
+html body .app-container.app-container.app-container .ayp-compare .ay-compare__results { margin: 0; padding: 0; list-style: none; max-width: 420px; border: 1.5px solid var(--ay-outline); border-radius: var(--ay-r-tile); overflow: hidden; }
+html body .app-container.app-container.app-container .ayp-compare .ay-compare__results button { display: block; width: 100%; min-height: 44px; padding: var(--ay-s8) 14px; border: 0; border-top: 1px solid var(--ay-hairline); background: var(--ay-page); color: var(--ay-text); font: 500 15px/1.3 var(--ay-sans-stack); text-align: left; cursor: pointer; }
 html body .app-container.app-container.app-container .ayp-compare .ay-compare__results li:first-child button { border-top: 0; }
 html body .app-container.app-container.app-container .ayp-compare .ay-compare__sugg { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ay-s8); font: 500 14px/1.3 var(--ay-sans-stack); color: var(--ay-text-2); }
 html body .app-container.app-container.app-container .ayp-compare .ay-compare__sugg button { min-height: 36px; padding: 0 14px; border: 1.5px solid var(--ay-outline) !important; border-radius: 999px !important; background: transparent !important; color: var(--ay-text) !important; font: 500 14px/1 var(--ay-sans-stack) !important; box-shadow: none !important; cursor: pointer; }
@@ -137,17 +137,17 @@ html body .app-container.app-container.app-container .ayp-compare :is(th, td) { 
 html body .app-container.app-container.app-container .ayp-compare thead :is(th, td) { border-top: 0 !important; padding-bottom: var(--ay-s16); }
 html body .app-container.app-container.app-container .ayp-compare tbody th { width: 150px; font: 500 14px/1.45 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; }
 html body .app-container.app-container.app-container .ayp-compare thead th { width: auto; }
-html body .app-container.app-container.app-container .ayp-compare .ay-compare__thumb { display: block; width: 84px; height: 84px; margin-bottom: var(--ay-s8); padding: 8px; border: 1.5px solid #3e2723; border-radius: var(--ay-r-tile); background: #ffffff; box-sizing: border-box; }
+html body .app-container.app-container.app-container .ayp-compare .ay-compare__thumb { display: block; width: 84px; height: 84px; margin-bottom: var(--ay-s8); padding: var(--ay-s8); border: 1.5px solid #3e2723; border-radius: var(--ay-r-tile); background: #ffffff; box-sizing: border-box; }
 html body .app-container.app-container.app-container .ayp-compare .ay-compare__thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
-html body .app-container.app-container.app-container .ayp-compare .ay-compare__name { display: grid; gap: 4px; font: 600 15px/1.35 var(--ay-sans-stack) !important; color: var(--ay-text) !important; }
+html body .app-container.app-container.app-container .ayp-compare .ay-compare__name { display: grid; gap: var(--ay-s4); font: 600 15px/1.35 var(--ay-sans-stack) !important; color: var(--ay-text) !important; }
 html body .app-container.app-container.app-container .ayp-compare .ay-compare__name small { font: 500 13px/1.3 var(--ay-sans-stack); color: var(--ay-text-2); }
 html body .app-container.app-container.app-container .ayp-compare .ay-compare__name button { padding: 0; border: 0; background: none; color: var(--ay-text) !important; font: 600 15px/1.35 var(--ay-sans-stack) !important; text-align: left; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 html body .app-container.app-container.app-container .ayp-compare .ay-compare__name button.ay-compare__x { min-height: 32px; font: 500 13px/1 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; }
 html body .app-container.app-container.app-container .ayp-compare .ay-compare :is(td, th).is-this { background: var(--ay-group) !important; padding-left: var(--ay-s12); }
-html body .app-container.app-container.app-container .ayp-compare thead th.is-this { border-radius: 12px 12px 0 0; }
-html body .app-container.app-container.app-container .ayp-compare tbody tr:last-child td.is-this { border-radius: 0 0 12px 12px; }
+html body .app-container.app-container.app-container .ayp-compare thead th.is-this { border-radius: var(--ay-r-tile) var(--ay-r-tile) 0 0; }
+html body .app-container.app-container.app-container .ayp-compare tbody tr:last-child td.is-this { border-radius: 0 0 var(--ay-r-tile) var(--ay-r-tile); }
 html body .app-container.app-container.app-container .ayp-compare td.is-unknown { color: var(--ay-text-2) !important; }
-html body .app-container.app-container.app-container .ayp-compare .ay-compare__dots { display: flex; gap: 3px; margin-bottom: 4px; }
+html body .app-container.app-container.app-container .ayp-compare .ay-compare__dots { display: flex; gap: 3px; margin-bottom: var(--ay-s4); }
 html body .app-container.app-container.app-container .ayp-compare .ay-compare__dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--ay-chart); }
 html body .app-container.app-container.app-container .ayp-compare .ay-compare__empty { margin: 0; color: var(--ay-text-2); }
 
@@ -170,10 +170,10 @@ html body .app-container.app-container.app-container .ayp-rate__stars { display:
 html body .app-container.app-container.app-container .ayp-rate__star { width: 44px; height: 44px; padding: 0; border: 0; background: none; color: var(--ay-hairline); font-size: 26px; line-height: 1; cursor: pointer; }
 html body .app-container.app-container.app-container .ayp-rate__star.is-on { color: var(--ay-text); }
 html body .app-container.app-container.app-container .ayp-rate__row { display: flex; gap: var(--ay-s8); }
-html body .app-container.app-container.app-container .ayp-rate__row input { flex: 1; min-height: 48px; padding: 0 14px; border: 1.5px solid var(--ay-outline); border-radius: 12px; background: var(--ay-page); color: var(--ay-text); font: 400 16px/1.2 var(--ay-sans-stack); }
+html body .app-container.app-container.app-container .ayp-rate__row input { flex: 1; min-height: 48px; padding: 0 14px; border: 1.5px solid var(--ay-outline); border-radius: var(--ay-r-tile); background: var(--ay-page); color: var(--ay-text); font: 400 16px/1.2 var(--ay-sans-stack); }
 
 /* ---------- You may also like ---------- */
-html body .app-container.app-container.app-container .ayp-more .ay-shelf__head { margin-bottom: 4px; }
+html body .app-container.app-container.app-container .ayp-more .ay-shelf__head { margin-bottom: var(--ay-s4); }
 html body .app-container.app-container.app-container .ayp-more__line { margin: 0 0 var(--ay-headgap); font: 400 15px/1.5 var(--ay-sans-stack); color: var(--ay-text-2); }
 html body .app-container.app-container.app-container .ayp .ayp-more__row { --ay-shelf-n: 4; }
 
@@ -208,14 +208,14 @@ html body .app-container.app-container.app-container .ayp-toast { display: inlin
   html body .app-container.app-container.app-container .ayp-hero { grid-template-columns: minmax(0, 1fr); gap: var(--ay-s20); }
   html body .app-container.app-container.app-container .ayp-hero__media { position: static; }
   html body .app-container.app-container.app-container .ayp-gallery { grid-template-columns: minmax(0, 1fr); }
-  html body .app-container.app-container.app-container .ayp-gallery__zoom { padding: 20px; }
+  html body .app-container.app-container.app-container .ayp-gallery__zoom { padding: var(--ay-s20); }
   html body .app-container.app-container.app-container .ayp-gallery .ay-thumbs button { width: 52px; height: 52px; }
   html body .app-container.app-container.app-container .ayp-buy { padding-top: 0; }
   html body .app-container.app-container.app-container .ayp-buy__name { max-width: none; }
   html body .app-container.app-container.app-container .ayp-price__main { font-size: 24px !important; }
   html body .app-container.app-container.app-container .ayp-buy__actions { flex-wrap: nowrap; }
-  html body .app-container.app-container.app-container .ayp-buy__actions .ayp-buy__main { flex: 1 1 auto; min-width: 0; max-width: none; white-space: normal; text-align: center; padding-inline: 16px; }
-  html body .app-container.app-container.app-container .ayp-buy__actions .ay-btn--secondary { flex: 0 0 auto; padding-inline: 16px; }
+  html body .app-container.app-container.app-container .ayp-buy__actions .ayp-buy__main { flex: 1 1 auto; min-width: 0; max-width: none; white-space: normal; text-align: center; padding-inline: var(--ay-s16); }
+  html body .app-container.app-container.app-container .ayp-buy__actions .ay-btn--secondary { flex: 0 0 auto; padding-inline: var(--ay-s16); }
   html body .app-container.app-container.app-container .ayp-buy__actions .ayp-buy__eco { flex: 0 1 auto; white-space: normal; }
   html body .app-container.app-container.app-container .ayp-panel__lead { margin-bottom: var(--ay-s16); }
   html body .app-container.app-container.app-container .ayp-compare, html body .app-container.app-container.app-container .ayp-askshare { margin-top: 0; }

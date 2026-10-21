@@ -5,7 +5,7 @@
   box-sizing: border-box;
   display: inline-flex;
   align-items: baseline;
-  gap: 4px;
+  gap: var(--ay-s4);
   margin: 0;
   border: 0;
   border-radius: 999px;
@@ -22,7 +22,7 @@
 .ay-match-pill.is-sm { padding: 6px 10px; }
 .ay-match-pill.is-sm strong { font-size: var(--ay-fs-caption); }
 .ay-match-pill.is-sm span { font-size: var(--ay-fs-caption); }
-.ay-match-pill.is-md { padding: 8px 14px; }
+.ay-match-pill.is-md { padding: var(--ay-s8) 14px; }
 .ay-match-pill.is-md strong { font-size: var(--ay-fs-card); font-weight: 600; }
 .ay-match-pill.is-md span { font-size: var(--ay-fs-body); }
 button.ay-match-pill { cursor: pointer; transition: transform 150ms ease, box-shadow 150ms ease; }

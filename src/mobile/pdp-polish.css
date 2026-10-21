@@ -38,10 +38,10 @@
 #ay-pdp :is(.ay-pdp-related, .ay-pdp-community-actions, .ay-pdp-reads) { margin: var(--pdp-gap-sec) var(--pdp-gutter) 0 !important; }
 #ay-pdp .ay-pdp-related { padding: 0 !important; }
 #ay-pdp .ay-pdp-reads { padding: 0; }
-#ay-pdp .ay-legal { margin-top: 8px; } /* + its own 24px top padding = 32px */
+#ay-pdp .ay-legal { margin-top: var(--ay-s8); } /* + its own 24px top padding = 32px */
 
 /* Section heads: title, a 4px step to the line under it, 12px to the content. */
-#ay-pdp .ay-pdp-sechead { display: grid !important; gap: 4px !important; margin: 0 !important; }
+#ay-pdp .ay-pdp-sechead { display: grid !important; gap: var(--ay-s4) !important; margin: 0 !important; }
 #ay-pdp .ay-pdp-sechead > * { margin: 0 !important; }
 #ay-pdp :is(.ay-pdp-askcard, .ay-compare) { display: grid !important; gap: var(--pdp-gap-card) !important; }
 #ay-pdp .ay-pdp-related .ay-pdp-sechead { margin-bottom: var(--pdp-gap-card) !important; }
@@ -71,16 +71,16 @@
 #ay-pdp .ay-gl-card .ay-gl-sec__body { display: grid !important; gap: var(--pdp-gap-in) !important; }
 #ay-pdp .ay-gl-card .ay-gl-sec__body > * { margin-top: 0 !important; margin-bottom: 0 !important; }
 #ay-pdp :is(.ay-gl-card, .ay-glance__what > .ay-gl-block) :is(.ay-gl-block, .ay-gl-steps, .ay-gl-list, .ay-gl-chips, .ay-gl-note) { margin-top: 0 !important; margin-bottom: 0 !important; }
-#ay-pdp :is(.ay-gl-card, .ay-glance__what > .ay-gl-block) .ay-gl-block { display: grid !important; gap: 8px !important; }
+#ay-pdp :is(.ay-gl-card, .ay-glance__what > .ay-gl-block) .ay-gl-block { display: grid !important; gap: var(--ay-s8) !important; }
 #ay-pdp :is(.ay-gl-card, .ay-glance__what > .ay-gl-block) .ay-gl-label { margin: 0 !important; }
-#ay-pdp .ay-glance__what > .ay-gl-block { display: grid !important; gap: 8px !important; }
+#ay-pdp .ay-glance__what > .ay-gl-block { display: grid !important; gap: var(--ay-s8) !important; }
 #ay-pdp .ay-glance__what > .ay-gl-block > * { margin: 0 !important; }
-#ay-pdp .ay-gl-card .ay-gl-cardh { margin: 0 0 8px !important; }
+#ay-pdp .ay-gl-card .ay-gl-cardh { margin: 0 0 var(--ay-s8) !important; }
 
 /* ---------- Key facts: label and value columns line up ---------- */
-#ay-pdp .ay-glance__factcard { display: grid; gap: var(--pdp-gap-card); border: 1px solid var(--pdp-card-line); border-radius: 20px; background: var(--ay-paper); box-shadow: 3px 3px 0 var(--pdp-card-shadow); }
+#ay-pdp .ay-glance__factcard { display: grid; gap: var(--pdp-gap-card); border: 1px solid var(--pdp-card-line); border-radius: var(--ay-r-group); background: var(--ay-paper); box-shadow: 3px 3px 0 var(--pdp-card-shadow); }
 #ay-pdp .ay-glance.is-stacked .ay-glance__factcard .ay-glance__facts { display: block !important; margin: 0 !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; }
-#ay-pdp .ay-glance.is-stacked .ay-glance__facts > div { display: grid !important; grid-template-columns: 104px minmax(0, 1fr) !important; column-gap: 12px !important; row-gap: 4px !important; align-items: baseline !important; margin: 0 !important; padding: 12px 0 !important; border: 0 !important; border-bottom: 1px solid var(--ay-line) !important; border-radius: 0 !important; background: transparent !important; }
+#ay-pdp .ay-glance.is-stacked .ay-glance__facts > div { display: grid !important; grid-template-columns: 104px minmax(0, 1fr) !important; column-gap: var(--ay-s12) !important; row-gap: var(--ay-s4) !important; align-items: baseline !important; margin: 0 !important; padding: var(--ay-s12) 0 !important; border: 0 !important; border-bottom: 1px solid var(--ay-line) !important; border-radius: 0 !important; background: transparent !important; }
 #ay-pdp .ay-glance.is-stacked .ay-glance__facts > div:first-child { padding-top: 0 !important; }
 #ay-pdp .ay-glance.is-stacked .ay-glance__facts > div:last-child { padding-bottom: 0 !important; border-bottom: 0 !important; }
 #ay-pdp .ay-glance.is-stacked .ay-glance__facts dt { grid-column: 1; margin: 0 !important; font: 500 13px/1.4 var(--ay-font-ui) !important; color: var(--ay-ink-soft, var(--ay-ink)) !important; text-transform: none !important; letter-spacing: 0 !important; }
@@ -88,7 +88,7 @@
 #ay-pdp .ay-glance.is-stacked .ay-glance__facts > div.is-unknown dd { font-weight: 500 !important; color: var(--ay-ink-soft, var(--ay-ink)) !important; }
 #ay-pdp .ay-glance.is-stacked .ay-glance__facts small { grid-column: 2 !important; display: block; margin: 0 !important; font: 500 13px/1.45 var(--ay-font-ui) !important; color: var(--ay-ink-soft, var(--ay-ink)) !important; }
 #ay-pdp .ay-glance__factcard > .ay-glance__facts { order: 0 !important; }
-#ay-pdp .ay-glance__factcard .ay-glance__caveat { order: 1 !important;  margin: 0 !important; padding: 12px 0 0 !important; border-top: 1px solid var(--ay-line); font: 500 13px/1.45 var(--ay-font-ui) !important; color: var(--ay-ink-soft, var(--ay-ink)) !important; }
+#ay-pdp .ay-glance__factcard .ay-glance__caveat { order: 1 !important;  margin: 0 !important; padding: var(--ay-s12) 0 0 !important; border-top: 1px solid var(--ay-line); font: 500 13px/1.45 var(--ay-font-ui) !important; color: var(--ay-ink-soft, var(--ay-ink)) !important; }
 #ay-pdp .ay-gl-inlinelink { display: inline; min-height: 0; margin: 0; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 /* Narrow phones: the label goes above its value so long values get the full width. */
 @media (max-width: 374px) {
@@ -109,7 +109,7 @@
 #ay-pdp .ay-compare__frame::before { display: none; }
 #ay-pdp .ay-compare__scroll { overflow-x: auto !important; overscroll-behavior-x: contain; }
 #ay-pdp .ay-compare table { min-width: 0 !important; width: max-content !important; border-collapse: separate !important; border-spacing: 0; }
-#ay-pdp .ay-compare :is(th, td) { min-width: 0 !important; width: 140px; max-width: 160px; padding: 12px !important; }
+#ay-pdp .ay-compare :is(th, td) { min-width: 0 !important; width: 140px; max-width: 160px; padding: var(--ay-s12) !important; }
 #ay-pdp .ay-compare tbody th[scope='row'],
 #ay-pdp .ay-compare thead tr > td:first-child { position: sticky; left: 0; z-index: 2; width: 96px; max-width: 96px; background: var(--pdp-compare-bg, var(--ay-paper)) !important; box-shadow: 1px 0 0 var(--ay-line); }
 #ay-pdp .ay-compare tbody :is(th, td) { border-top: 1px solid var(--ay-line) !important; }

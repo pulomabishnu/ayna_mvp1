@@ -8,7 +8,7 @@
   --fu-press-ink: #3e2723;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--ay-s8);
   width: 100%;
   margin: 10px 0 2px;
 }
@@ -61,6 +61,6 @@
 /* Phones: compact chips so two fit per row instead of a tall stack. */
 @media (max-width: 480px) {
   .ay-followups { gap: 6px; }
-  .ay-followups .ay-followup.ay-followup { min-height: 36px; padding: 4px 12px; font-size: 13px !important; gap: 4px; }
+  .ay-followups .ay-followup.ay-followup { min-height: 36px; padding: var(--ay-s4) var(--ay-s12); font-size: 13px !important; gap: var(--ay-s4); }
   .ay-followups .ay-followup.ay-followup svg { width: 14px; height: 14px; }
 }

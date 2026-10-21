@@ -67,7 +67,7 @@ html body .app-container.app-container.app-container main .ay-info :is(.ay-info_
 
 /* ---- One phone gutter (20px, same as the header logo) on the pages that used 16 ---- */
 @media (max-width: 767px) {
-  html body .app-container.app-container.app-container.app-container.app-container :is(.cr-wrap, .ay-sa, .ay-ecoprev, .wq-page) { padding-left: 20px !important; padding-right: 20px !important; }
+  html body .app-container.app-container.app-container.app-container.app-container :is(.cr-wrap, .ay-sa, .ay-ecoprev, .wq-page) { padding-left: var(--ay-s20) !important; padding-right: var(--ay-s20) !important; }
 }
 /* Info page intros: full-strength ink (the faded lede on pink was hard to read). */
 html body .app-container.app-container.app-container.app-container:not([data-theme='brand-dark']) .ay-info .ay-info__lede { color: #3e2723 !important; opacity: 1 !important; }
@@ -75,9 +75,9 @@ html body .app-container.app-container.app-container.app-container:not([data-the
 /* ---- Space above the footer: section padding + main padding + footer margin
    stacked to ~250px of empty page. One section's own padding plus 48px now. ---- */
 html body .app-container.app-container.app-container.app-container:not(:has(.pdp-sticky, [class*='pdp'])) > main { padding-bottom: 0 !important; }
-html body .app-container.app-container.app-container.app-container .site-footer { margin-top: 48px !important; }
+html body .app-container.app-container.app-container.app-container .site-footer { margin-top: var(--ay-s48) !important; }
 html body .app-container.app-container.app-container.app-container :is(.cr-page, .ay-404, .wq-page) { min-height: 0 !important; }
-html body .app-container.app-container.app-container.app-container :is(.ay-ecoprev, .cr-page) { padding-bottom: 48px !important; }
+html body .app-container.app-container.app-container.app-container :is(.ay-ecoprev, .cr-page) { padding-bottom: var(--ay-s48) !important; }
 /* 404: the pinned flyer stays inside the page edges on phones. */
 
 /* ---- Home: sections sit on the site grid (they were inset 80px on desktop,
@@ -85,7 +85,7 @@ html body .app-container.app-container.app-container.app-container :is(.ay-ecopr
 html body .app-container.app-container.app-container.app-container .lv :is(.lv-sec, .lv-purpose) { padding-left: clamp(20px, 3vw, 48px) !important; padding-right: clamp(20px, 3vw, 48px) !important; }
 /* Home kickers ("what ayna actually is", "ayna news", "who we are"): a quiet sans
    line above the heading instead of a second, italic serif heading. */
-html body .app-container.app-container.app-container.app-container :is(.lv-script, .lst__kicker) { font-family: var(--ay-sans) !important; font-style: normal !important; font-weight: 500 !important; font-size: 15px !important; line-height: 1.4 !important; letter-spacing: 0 !important; margin-bottom: 8px !important; }
+html body .app-container.app-container.app-container.app-container :is(.lv-script, .lst__kicker) { font-family: var(--ay-sans) !important; font-style: normal !important; font-weight: 500 !important; font-size: 15px !important; line-height: 1.4 !important; letter-spacing: 0 !important; margin-bottom: var(--ay-s8) !important; }
 /* Home picks: flat cards like the Shop's. */
 html body .app-container.app-container.app-container.app-container.app-container.app-container .lv li > :is(figure, a) { box-shadow: none !important; }
 /* Community: posts on a plain card (the ruled-paper lines ran through the text at

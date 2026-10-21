@@ -3,7 +3,7 @@
 .ayna-mobile.ayna-mobile .ay-intro-body { display: flex !important; padding: 8px var(--ay-gutter) 24px !important; gap: 0 !important; }
 
 .ayna-mobile.ayna-mobile .ay-intro-head h1 { margin: 0; font: 400 calc(28px * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display) !important; letter-spacing: -.045em !important; color: var(--ay-ink) !important; }
-.ayna-mobile.ayna-mobile .ay-intro-head p { margin: 8px 0 0; font: 600 17px/1.4 var(--ay-font-ui); color: var(--ay-ink); opacity: .68; }
+.ayna-mobile.ayna-mobile .ay-intro-head p { margin: var(--ay-s8) 0 0; font: 600 17px/1.4 var(--ay-font-ui); color: var(--ay-ink); opacity: .68; }
 
 /* Middle group takes the free height; its content stays together and centred */
 @keyframes ay-intro-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
@@ -16,7 +16,7 @@
 /* Roomier diagram: smaller nodes, longer spokes; sized by width AND height so short phones never collide */
 @media (max-height: 720px) {
   .ay-intro-note { min-height: 0; font-size: 15px; line-height: 1.45; font-weight: 400; }
-  .ayna-mobile.ayna-mobile .ay-intro-head p { margin-top: 4px; }
+  .ayna-mobile.ayna-mobile .ay-intro-head p { margin-top: var(--ay-s4); }
 }
 
 /* ---- Motion: entrance, idle life, and feedback on tap (all off for reduced motion) ---- */
@@ -51,17 +51,17 @@
 @keyframes ay-intro-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 
 /* Slide to continue (welcome-screen control) + one sign-in line */
-.ayna-mobile.ayna-mobile .ay-intro-signin { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px; margin: 8px 0 0; font: 400 15px/1.45 var(--ay-font-ui); color: var(--ay-ink); }
-.ayna-mobile.ayna-mobile .ay-intro-signin button { min-height: 44px; padding: 0 4px; border: 0; background: none; color: var(--ay-ink) !important; font: 600 17px/1 var(--ay-font-ui) !important; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 5px; cursor: pointer; }
+.ayna-mobile.ayna-mobile .ay-intro-signin { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: var(--ay-s4); margin: var(--ay-s8) 0 0; font: 400 15px/1.45 var(--ay-font-ui); color: var(--ay-ink); }
+.ayna-mobile.ayna-mobile .ay-intro-signin button { min-height: 44px; padding: 0 var(--ay-s4); border: 0; background: none; color: var(--ay-ink) !important; font: 600 17px/1 var(--ay-font-ui) !important; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 5px; cursor: pointer; }
 /* cabinet.css styles every div/button in the actions row; undo that for the slider */
 
 /* Plain full-width start button (replaces slide-to-start). Primary: espresso
    fill + 3px pink offset, 56px, in thumb reach. */
-.ayna-mobile.ayna-mobile .ay-intro-start { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 56px; margin: 0; padding: 0 24px; border: 1.5px solid #3e2723 !important; border-radius: 999px !important; background: #3e2723 !important; color: #ffedac !important; box-shadow: 3px 3px 0 #f7badd !important; font: 600 calc(17px * var(--ayna-text-scale, 1))/1 var(--ay-font-ui, 'Figtree', system-ui, sans-serif) !important; cursor: pointer; }
+.ayna-mobile.ayna-mobile .ay-intro-start { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 56px; margin: 0; padding: 0 var(--ay-s24); border: 1.5px solid #3e2723 !important; border-radius: 999px !important; background: #3e2723 !important; color: #ffedac !important; box-shadow: 3px 3px 0 #f7badd !important; font: 600 calc(17px * var(--ayna-text-scale, 1))/1 var(--ay-font-ui, 'Figtree', system-ui, sans-serif) !important; cursor: pointer; }
 .ayna-mobile.ayna-mobile .ay-intro-start svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
 .ayna-mobile.ayna-mobile .ay-intro-start:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #f7badd !important; }
 .ayna-mobile.ayna-mobile .ay-intro-start:focus-visible { outline: 3px solid #3e2723; outline-offset: 3px; }
 .ayna-mobile[data-theme='dark'] .ay-intro-start { background: #ffedac !important; color: #3e2723 !important; border-color: #ffedac !important; }
 /* The start button sits low, in thumb reach. */
 .ayna-mobile.ayna-mobile .ay-intro-body { display: flex; flex-direction: column; min-height: calc(100dvh - 160px - env(safe-area-inset-bottom)); }
-.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-intro-body > .ay-intro-actions { margin-top: auto !important; padding-bottom: 24px !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-intro-body > .ay-intro-actions { margin-top: auto !important; padding-bottom: var(--ay-s24) !important; }

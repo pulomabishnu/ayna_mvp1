@@ -21,7 +21,7 @@
 /* S06: empty-state suggestion pills are buttons, not underlined links */
 
 /* E06: Saved uses the same section heading as Your shelves; count is the standard badge */
-.app-container .eco-saved__head { justify-content: flex-start !important; align-items: center !important; gap: 12px !important; }
+.app-container .eco-saved__head { justify-content: flex-start !important; align-items: center !important; gap: var(--ay-s12) !important; }
 .app-container .eco-saved__head h2 { font: 400 var(--ay-fs-title)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
 .app-container .eco-saved__count { min-width: 24px !important; height: 24px !important; padding: 0 7px !important; border: 2px solid var(--ay-ink) !important; background: var(--ay-butter) !important; color: var(--ay-ink) !important; font: 600 var(--ay-fs-caption)/1 var(--ay-sans) !important; font-variant-numeric: tabular-nums; }
 /* Ecosystem card: the product name is a text link, not a boxed button */

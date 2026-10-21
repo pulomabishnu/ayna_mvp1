@@ -38,7 +38,7 @@
 }
 .ayna-landing-headline span { color: var(--brand-lime); }
 .ayna-landing-eyebrow { color: var(--brand-lime); font: 600 var(--ay-fs-caption)/1 var(--ay-sans); letter-spacing: normal; }
-.ayna-landing-searchbar { width: min(100%, 590px); margin-top: 12px; padding: 5px 5px 5px 17px; border-radius: 10px; box-shadow: none; }
+.ayna-landing-searchbar { width: min(100%, 590px); margin-top: var(--ay-s12); padding: 5px 5px 5px 17px; border-radius: 10px; box-shadow: none; }
 .ayna-landing-searchbar:focus-within { box-shadow: 0 0 0 3px var(--brand-lime); }
 .ayna-landing-searchbar button { border-radius: 7px; background: var(--brand-lime); color: var(--brand-ink); font-weight: 600; }
 .ayna-landing-chips { justify-content: flex-start; }
@@ -46,7 +46,7 @@
 .ayna-landing-band { background: var(--brand-mint); border-bottom: 0; }
 .ayna-landing-band__inner { padding-top: 42px; padding-bottom: 42px; }
 .ayna-landing-band__copy { max-width: 560px; font: 400 var(--ay-fs-display)/1.1 var(--ay-serif); letter-spacing: -0.01em; }
-.ayna-landing-band__copy span { max-width: 420px; margin-top: 12px; color: var(--brand-ink); font-size: var(--ay-fs-body); font-weight: 500; letter-spacing: normal; }
+.ayna-landing-band__copy span { max-width: 420px; margin-top: var(--ay-s12); color: var(--brand-ink); font-size: var(--ay-fs-body); font-weight: 500; letter-spacing: normal; }
 .ayna-landing-btn { border-radius: 9px; font-family: var(--ay-sans); font-weight: 600; }
 .ayna-landing-btn--navy { background: var(--brand-blue); }
 .ayna-landing-shop { background: var(--brand-paper); padding-top: 58px; }
@@ -68,6 +68,6 @@
 @media (max-width: 600px) {
   .mockup-landing:not(.mockup-landing--returning) .ayna-landing-hero-col { padding-top: 38px; padding-bottom: 30px; }
   .mockup-landing:not(.mockup-landing--returning) .ayna-landing-headline { font-size: var(--ay-fs-display); font-family: var(--ay-serif); font-weight: 400; letter-spacing: -0.01em; }
-  .ayna-landing-band__inner { flex-direction: column; gap: 24px; }
+  .ayna-landing-band__inner { flex-direction: column; gap: var(--ay-s24); }
   .ayna-landing-shop-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
 }

@@ -13,12 +13,12 @@
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] { --hd-bar: var(--b-sky); --hd-on: var(--b-rose); }
 
 /* ---------- Dashboard ---------- */
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd { display: grid; padding-bottom: 8px; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd { display: grid; padding-bottom: var(--ay-s8); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-hd > .ay-hc-intro { margin: 0; }
 
 /* Chart */
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-chart { margin: 4px 0 0; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-readout { display: flex; align-items: baseline; gap: 8px; min-height: 20px; margin: 0 0 4px; color: var(--hd-ink); font: 500 calc(13px * var(--ayna-text-scale, 1))/1.2 var(--f-ui); }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-chart { margin: var(--ay-s4) 0 0; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-readout { display: flex; align-items: baseline; gap: var(--ay-s8); min-height: 20px; margin: 0 0 var(--ay-s4); color: var(--hd-ink); font: 500 calc(13px * var(--ayna-text-scale, 1))/1.2 var(--f-ui); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-readout span { color: var(--hd-soft); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-chart svg { display: block; width: 100%; height: auto; overflow: visible; border-bottom: 1.5px solid var(--hd-ink); touch-action: pan-y; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-chart svg:focus-visible { outline: 3px solid var(--b-sky); outline-offset: 4px; border-radius: 6px; }
@@ -29,7 +29,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-chart circle.is-on { fill: var(--hd-on); stroke-width: 1.75; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-usual { stroke: var(--hd-ink); stroke-width: 1.4; stroke-dasharray: 5 4; opacity: .7; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-hit { fill: transparent; cursor: pointer; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-chart figcaption { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 6px; color: var(--hd-soft); font: 500 calc(11.5px * var(--ayna-text-scale, 1))/1.2 var(--f-ui); }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-chart figcaption { display: flex; align-items: center; justify-content: space-between; gap: var(--ay-s8); margin-top: 6px; color: var(--hd-soft); font: 500 calc(11.5px * var(--ayna-text-scale, 1))/1.2 var(--f-ui); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-key { display: inline-flex; align-items: center; gap: 6px; color: var(--hd-ink); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-key i { width: 16px; border-top: 1.6px dashed var(--hd-ink); }
 
@@ -46,11 +46,11 @@
 
 /* ---------- Quiz-end steps (connect, plan) ---------- */
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-qc { display: flex; flex-direction: column; height: 100dvh; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; box-sizing: border-box; padding: calc(env(safe-area-inset-top, 0px) + 12px) var(--ay-gutter, 20px) 0; background: var(--ayna-bg); color: var(--hd-ink); }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-qc-top { display: flex; align-items: center; gap: 12px; margin: 0 0 18px; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-qc-top { display: flex; align-items: center; gap: var(--ay-s12); margin: 0 0 18px; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-qc-back { flex: none; width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 2px solid var(--hd-ink); border-radius: 99px; background: transparent; cursor: pointer; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-qc-back svg { width: 20px; height: 20px; fill: none; stroke: var(--hd-ink); stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-qc-steps { flex: 1; display: flex; gap: 6px; margin: 0; padding: 0; list-style: none; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-qc-steps li { flex: 1; min-width: 0; padding-top: 8px; border-top: 4px solid var(--hd-line); color: var(--hd-soft); font: 500 calc(11.5px * var(--ayna-text-scale, 1))/1.2 var(--f-ui); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-qc-steps li { flex: 1; min-width: 0; padding-top: var(--ay-s8); border-top: 4px solid var(--hd-line); color: var(--hd-soft); font: 500 calc(11.5px * var(--ayna-text-scale, 1))/1.2 var(--f-ui); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-qc-steps li.is-done { border-top-color: var(--hd-ink); color: var(--hd-ink); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-qc-steps li.is-on { border-top-color: var(--b-rose); color: var(--hd-ink); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-qc-copy { margin: 0 0 18px; }
@@ -75,34 +75,34 @@
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-head h2 { margin: 0; color: var(--hd-ink); font: 400 calc(22px * var(--ayna-text-scale, 1))/1.15 var(--f-display); letter-spacing: -.01em; }
 
 /* ---------- Routine ---------- */
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-rt { display: grid; gap: 12px; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-rt { display: grid; gap: var(--ay-s12); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-lede { margin: 0; color: var(--hd-soft); font: 500 calc(13px * var(--ayna-text-scale, 1))/1.5 var(--f-ui); }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-slot { padding: 14px 14px 6px; border: 2px solid var(--hd-ink); border-radius: 20px; background: var(--hd-card); box-shadow: var(--ay-shadow); }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-slot h3 { display: inline-block; margin: 0 0 8px; padding: 6px 12px; border: 2px solid var(--b-espresso); border-radius: 99px; background: var(--b-sky); color: var(--b-espresso); font: 500 calc(13px * var(--ayna-text-scale, 1))/1 var(--f-ui); }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-slot { padding: 14px 14px 6px; border: 2px solid var(--hd-ink); border-radius: var(--ay-r-group); background: var(--hd-card); box-shadow: var(--ay-shadow); }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-slot h3 { display: inline-block; margin: 0 0 var(--ay-s8); padding: 6px var(--ay-s12); border: 2px solid var(--b-espresso); border-radius: 99px; background: var(--b-sky); color: var(--b-espresso); font: 500 calc(13px * var(--ayna-text-scale, 1))/1 var(--f-ui); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-slot.is-period h3,
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-slot.is-night h3 { background: var(--b-rose); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-slot.is-asneeded h3 { background: var(--b-butter); }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-note { margin: 0 0 8px; color: var(--hd-ink); font: 500 calc(13px * var(--ayna-text-scale, 1))/1.45 var(--f-ui); }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-note { margin: 0 0 var(--ay-s8); color: var(--hd-ink); font: 500 calc(13px * var(--ayna-text-scale, 1))/1.45 var(--f-ui); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-slot ul,
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-sl ul { margin: 0; padding: 0; list-style: none; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-slot li + li { border-top: 1.5px solid var(--hd-line); }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-item { display: flex; align-items: flex-start; gap: 12px; width: 100%; padding: 10px 0; border: 0; background: transparent; color: var(--hd-ink); text-align: left; font-family: var(--f-ui); cursor: pointer; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-thumb { flex: none; width: 52px; height: 52px; display: grid; place-items: center; overflow: hidden; border: 1.5px solid var(--hd-ink); border-radius: 12px; background: #fff; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-item { display: flex; align-items: flex-start; gap: var(--ay-s12); width: 100%; padding: 10px 0; border: 0; background: transparent; color: var(--hd-ink); text-align: left; font-family: var(--f-ui); cursor: pointer; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-thumb { flex: none; width: 52px; height: 52px; display: grid; place-items: center; overflow: hidden; border: 1.5px solid var(--hd-ink); border-radius: var(--ay-r-tile); background: #fff; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-thumb img { width: 100%; height: 100%; object-fit: contain; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-thumb span { color: var(--b-espresso); font: 400 22px/1.15 var(--f-display); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-text { flex: 1; min-width: 0; display: grid; gap: 3px; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-text b { font: 600 calc(17px * var(--ayna-text-scale, 1))/1.3 var(--f-ui); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-how { font: 500 calc(13px * var(--ayna-text-scale, 1))/1.45 var(--f-ui); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-text small { color: var(--hd-soft); font: 500 calc(11.5px * var(--ayna-text-scale, 1))/1.3 var(--f-ui); }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-item:focus-visible { outline: 3px solid var(--b-sky); outline-offset: 2px; border-radius: 12px; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-item:focus-visible { outline: 3px solid var(--b-sky); outline-offset: 2px; border-radius: var(--ay-r-tile); }
 
 /* ---------- Shopping list ---------- */
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-sl { display: grid; gap: 12px; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-sl { display: grid; gap: var(--ay-s12); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-head span { color: var(--hd-ink); font: 500 calc(13px * var(--ayna-text-scale, 1))/1 var(--f-ui); white-space: nowrap; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-group { padding: 4px 14px; border: 2px solid var(--hd-ink); border-radius: 20px; background: var(--hd-card); box-shadow: var(--ay-shadow); }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-group { padding: var(--ay-s4) 14px; border: 2px solid var(--hd-ink); border-radius: var(--ay-r-group); background: var(--hd-card); box-shadow: var(--ay-shadow); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-group h3 { margin: 10px 0 2px; color: var(--hd-ink); font: 500 calc(13px * var(--ayna-text-scale, 1))/1.3 var(--f-ui); }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-sl li { display: flex; align-items: center; gap: 12px; min-height: 60px; border-top: 1.5px solid var(--hd-line); }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-sl li { display: flex; align-items: center; gap: var(--ay-s12); min-height: 60px; border-top: 1.5px solid var(--hd-line); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-sl li:first-child { border-top: 0; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-check { position: relative; flex: none; width: 44px; height: 44px; display: grid; place-items: center; margin-left: -8px; cursor: pointer; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-check input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
@@ -111,7 +111,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-sl-check input:checked + .ay-sl-box { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4 8-9' fill='none' stroke='%233e2723' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-check input:focus-visible + .ay-sl-box { outline: 3px solid var(--b-sky); outline-offset: 2px; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-name { flex: 1; min-width: 0; display: grid; gap: 2px; padding: 8px 0; border: 0; background: transparent; color: var(--hd-ink); text-align: left; font-family: var(--f-ui); cursor: pointer; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-name { flex: 1; min-width: 0; display: grid; gap: 2px; padding: var(--ay-s8) 0; border: 0; background: transparent; color: var(--hd-ink); text-align: left; font-family: var(--f-ui); cursor: pointer; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-name b { font: 500 calc(13px * var(--ayna-text-scale, 1))/1.3 var(--f-ui); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-name small { color: var(--hd-soft); font: 500 calc(13px * var(--ayna-text-scale, 1))/1.3 var(--f-ui); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-sl li.is-have .ay-sl-name b { text-decoration: line-through; text-decoration-thickness: 2px; }
@@ -139,13 +139,13 @@
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-ring-today { fill: var(--b-rose); stroke: var(--b-espresso); stroke-width: 3; }
 
 /* Tiles */
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-spark { display: block; width: 100%; height: 30px; margin: 6px 0 4px; overflow: visible; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-spark { display: block; width: 100%; height: 30px; margin: 6px 0 var(--ay-s4); overflow: visible; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-spark polyline { fill: none; stroke: var(--hd-ink); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-spark circle { fill: var(--b-rose); stroke: var(--hd-ink); stroke-width: 1.75; vector-effect: non-scaling-stroke; }
 
 /* Plain-word lines */
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-lines { display: grid; margin: 0; padding: 0; list-style: none; border: 2px solid var(--hd-ink); border-radius: 22px; background: var(--hd-card); box-shadow: var(--ay-shadow); overflow: hidden; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-lines li { position: relative; display: grid; gap: 3px; padding: 14px 16px 14px 42px; border-top: 1.5px solid var(--hd-line); color: var(--hd-ink); }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-lines li { position: relative; display: grid; gap: 3px; padding: 14px var(--ay-s16) 14px 42px; border-top: 1.5px solid var(--hd-line); color: var(--hd-ink); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-lines li:first-child { border-top: 0; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-lines li::before { content: ''; position: absolute; left: 16px; top: 17px; width: 14px; height: 14px; border: 2px solid var(--hd-ink); border-radius: 50%; background: var(--b-sky); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-lines li.is-cycle::before, .ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-lines li.is-heart::before { background: var(--b-rose); }
@@ -154,10 +154,10 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-lines small { color: var(--hd-soft) !important; font: 500 calc(13px * var(--ayna-text-scale, 1))/1.35 var(--f-ui) !important; }
 
 /* Charts */
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-more-body { display: grid; gap: 12px; padding: 0 10px 12px; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-more-body { display: grid; gap: var(--ay-s12); padding: 0 10px var(--ay-s12); }
 
 /* Empty */
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-empty { display: grid; justify-items: center; gap: 12px; padding: 18px 6px; text-align: center; color: var(--hd-ink); }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-empty { display: grid; justify-items: center; gap: var(--ay-s12); padding: 18px 6px; text-align: center; color: var(--hd-ink); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-empty .ay-hd-ring { width: 170px; height: 170px; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-empty h2 { margin: 6px 0 0 !important; font: 400 calc(28px * var(--ayna-text-scale, 1))/1.15 var(--f-display) !important; color: var(--hd-ink) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-empty p { max-width: 32ch; margin: 0 0 6px; font: 400 calc(15px * var(--ayna-text-scale, 1))/1.45 var(--f-ui); }
@@ -180,15 +180,15 @@
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-pl-open { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 54px; border: 2px solid var(--b-espresso); border-radius: 99px; background: var(--b-rose); box-shadow: var(--ay-shadow); color: var(--b-espresso); font: 600 calc(17px * var(--ayna-text-scale, 1))/1 var(--f-ui); cursor: pointer; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-pl-open span { font-size: 15px; line-height: 1.45; font-weight: 400; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-pl-open:focus-visible { outline: 3px solid var(--b-sky); outline-offset: 3px; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-pl { display: grid; gap: 12px; padding: 16px; border: 2px solid var(--hd-ink); border-radius: 22px; background: var(--hd-card); box-shadow: var(--ay-shadow); color: var(--hd-ink); }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-pl { display: grid; gap: var(--ay-s12); padding: var(--ay-s16); border: 2px solid var(--hd-ink); border-radius: 22px; background: var(--hd-card); box-shadow: var(--ay-shadow); color: var(--hd-ink); }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-pl h3 { margin: 0 !important; font: 400 calc(22px * var(--ayna-text-scale, 1))/1.15 var(--f-display) !important; color: var(--hd-ink) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-pl > label { color: var(--hd-ink) !important; font: 500 calc(13px * var(--ayna-text-scale, 1))/1 var(--f-ui) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-pl input#ay-sl-pl-title { box-sizing: border-box; width: 100%; min-height: 48px; padding: 10px 14px; border: 2px solid var(--hd-ink); border-radius: 14px; background: transparent; color: var(--hd-ink); font: 600 17px/1.2 var(--f-ui); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-pl input#ay-sl-pl-title:focus-visible { outline: 3px solid var(--b-sky); outline-offset: 2px; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-pl-which { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border: 2px solid var(--hd-ink); border-radius: 99px; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-pl-which { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ay-s4); padding: var(--ay-s4); border: 2px solid var(--hd-ink); border-radius: 99px; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-pl-which button { min-height: 40px; border: 0; border-radius: 99px; background: transparent; color: var(--hd-ink); font: 500 calc(13px * var(--ayna-text-scale, 1))/1 var(--f-ui); cursor: pointer; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-pl-which button.is-on { background: var(--hd-ink); color: var(--ayna-bg); }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-pl-row { display: grid; gap: 8px; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-pl-row { display: grid; gap: var(--ay-s8); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-pl.is-done p { margin: 0; font: 400 calc(15px * var(--ayna-text-scale, 1))/1.45 var(--f-ui); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-qc-primary:disabled { opacity: .5; box-shadow: none; cursor: default; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sl-pl .am-cover-mode button.is-active { background: var(--hd-ink) !important; color: var(--ayna-bg) !important; border-color: var(--hd-ink) !important; }
@@ -207,20 +207,20 @@
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-hc-search input::-webkit-search-cancel-button { display: none; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-hc-search input:focus-visible { outline: 3px solid var(--b-sky); outline-offset: 2px; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-hc-search button { position: absolute; right: 6px; width: 40px; height: 40px; border: 0; border-radius: 50%; background: transparent; color: var(--hd-ink) !important; font: 600 17px/1 var(--f-ui) !important; cursor: pointer; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-hc-nomatch { display: grid; gap: 12px; margin: 0 0 22px; padding: 16px; border: 2px dashed var(--hd-ink); border-radius: 20px; color: var(--hd-ink); }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-hc-nomatch { display: grid; gap: var(--ay-s12); margin: 0 0 22px; padding: var(--ay-s16); border: 2px dashed var(--hd-ink); border-radius: var(--ay-r-group); color: var(--hd-ink); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-hc-nomatch p { margin: 0; font: 400 calc(15px * var(--ayna-text-scale, 1))/1.45 var(--f-ui); }
 
 /* ---------- Product page: tabs, one part at a time, readable labels ---------- */
 .ayna-mobile .ay-glance__srh { position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important; clip: rect(0 0 0 0) !important; white-space: nowrap !important; margin: 0 !important; padding: 0 !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance__nav button { min-height: 42px !important; padding: 0 16px !important; font: 500 calc(13px * var(--ayna-text-scale, 1))/1 var(--f-ui) !important; white-space: nowrap !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-gl-label { color: var(--ayna-heading) !important; font: 500 calc(13px * var(--ayna-text-scale, 1))/1.3 var(--f-ui) !important; letter-spacing: 0 !important; text-transform: none !important; margin: 0 0 4px !important; opacity: 1 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance__nav button { min-height: 42px !important; padding: 0 var(--ay-s16) !important; font: 500 calc(13px * var(--ayna-text-scale, 1))/1 var(--f-ui) !important; white-space: nowrap !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-gl-label { color: var(--ayna-heading) !important; font: 500 calc(13px * var(--ayna-text-scale, 1))/1.3 var(--f-ui) !important; letter-spacing: 0 !important; text-transform: none !important; margin: 0 0 var(--ay-s4) !important; opacity: 1 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance__panel.is-tab p, .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance__panel.is-tab li { font-size: calc(15px * var(--ayna-text-scale, 1)) !important; font-weight: 400 !important; line-height: 1.45 !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance__panel.is-tab .ay-gl-block + .ay-gl-block { margin-top: 20px !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-gl-cardh { display: flex !important; align-items: center !important; gap: 8px !important; margin: 0 0 8px !important; color: var(--ayna-heading) !important; font: 400 calc(22px * var(--ayna-text-scale, 1))/1.15 var(--f-display) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance__panel.is-tab .ay-gl-block + .ay-gl-block { margin-top: var(--ay-s20) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-gl-cardh { display: flex !important; align-items: center !important; gap: var(--ay-s8) !important; margin: 0 0 var(--ay-s8) !important; color: var(--ayna-heading) !important; font: 400 calc(22px * var(--ayna-text-scale, 1))/1.15 var(--f-display) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-gl-card + .ay-gl-card { margin-top: 26px !important; padding-top: 22px !important; border-top: 2px solid var(--r-line) !important; }
 
 /* Shop: Swipe to discover banner (clear card, readable on both themes) */
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-cta { gap: 14px !important; border: 2px solid var(--b-espresso) !important; border-radius: 20px !important; background: var(--b-espresso) !important; color: var(--b-butter) !important; box-shadow: 4px 4px 0 var(--b-rose) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-cta { gap: 14px !important; border: 2px solid var(--b-espresso) !important; border-radius: var(--ay-r-group) !important; background: var(--b-espresso) !important; color: var(--b-butter) !important; box-shadow: 4px 4px 0 var(--b-rose) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-discover-cta { background: var(--b-butter) !important; color: var(--b-espresso) !important; border-color: var(--b-butter) !important; box-shadow: 4px 4px 0 var(--b-sky) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-copy strong { color: inherit !important; font: 400 calc(22px * var(--ayna-text-scale, 1))/1.15 var(--f-display) !important; letter-spacing: 0 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-copy small { display: block !important; color: inherit !important; opacity: .85; font: 500 calc(13px * var(--ayna-text-scale, 1))/1.3 var(--f-ui) !important; }
@@ -228,9 +228,9 @@
 /* Reads: the website's drawn topic covers (unless the team put in a picture) */
 .ayna-mobile .ay-app-readcard { display: flex; flex-direction: column; justify-content: flex-start; gap: 9px; width: 158px; flex-shrink: 0; padding: 0; border: 0; background: transparent; color: var(--ayna-heading); text-align: left; font: inherit; cursor: pointer; }
 .ayna-mobile .ay-app-readcard.is-full { width: 100%; }
-.ayna-mobile .ay-app-readcard:focus-visible { outline: 3px solid var(--b-sky); outline-offset: 3px; border-radius: 20px; }
+.ayna-mobile .ay-app-readcard:focus-visible { outline: 3px solid var(--b-sky); outline-offset: 3px; border-radius: var(--ay-r-group); }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-app-readcard__title { color: var(--ayna-heading) !important; font: 500 calc(13px * var(--ayna-text-scale, 1))/1.25 var(--f-ui) !important; text-wrap: pretty; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-app-cover { position: relative; display: flex !important; flex-direction: column; justify-content: space-between; box-sizing: border-box; width: 100%; height: 206px; padding: 16px; border: 2px solid var(--b-espresso) !important; border-radius: 20px !important; background: var(--b-sky) !important; color: var(--b-espresso) !important; overflow: hidden; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-app-cover { position: relative; display: flex !important; flex-direction: column; justify-content: space-between; box-sizing: border-box; width: 100%; height: 206px; padding: var(--ay-s16); border: 2px solid var(--b-espresso) !important; border-radius: var(--ay-r-group) !important; background: var(--b-sky) !important; color: var(--b-espresso) !important; overflow: hidden; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-app-cover.is-pink { background: var(--b-rose) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-app-cover.is-peri { background: var(--b-sky) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-app-cover.is-butter { background: var(--b-butter) !important; }
@@ -246,10 +246,10 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-app-cover.is-hero strong { font-size: 30px !important; letter-spacing: -0.01em !important; line-height: 1.15 !important; font-weight: 600 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-app-cover strong { font-size: 17px !important; font-weight: 600 !important; overflow-wrap: normal !important; word-break: normal !important; hyphens: none !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-app-readcard.is-full .ay-app-cover strong { font-size: 30px !important; letter-spacing: -0.01em !important; line-height: 1.15 !important; font-weight: 600 !important; }
-.ayna-mobile .ay-app-readhero { margin: 0 20px 18px !important; }
+.ayna-mobile .ay-app-readhero { margin: 0 var(--ay-s20) 18px !important; }
 
 /* Swipe to discover v2: fixed three-column layout that holds at every text size */
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-cta { display: grid !important; grid-template-columns: 56px minmax(0, 1fr) 38px !important; align-items: center !important; column-gap: 12px !important; min-height: 68px !important; padding: 10px 12px 10px 12px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-cta { display: grid !important; grid-template-columns: 56px minmax(0, 1fr) 38px !important; align-items: center !important; column-gap: var(--ay-s12) !important; min-height: 68px !important; padding: 10px var(--ay-s12) 10px var(--ay-s12) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-fan { display: block; width: 56px; height: 44px; overflow: visible; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-fan rect { stroke: var(--b-butter); stroke-width: 2.5; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-fan .c1 { fill: var(--b-sky); }
@@ -264,7 +264,7 @@
 /* ---------- Audit fixes (Oct 19): brand destructive text, tap targets, compare buttons ---------- */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-gl-more { min-height: 40px !important; display: inline-flex !important; align-items: center !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-compare__name button, .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-compare__results button, .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-compare__sugg button { color: var(--ayna-heading) !important; min-height: 40px; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-compare__x { display: inline-flex !important; align-items: center !important; min-height: 40px !important; padding: 0 4px !important; color: var(--ayna-heading) !important; font: 500 13px/1 var(--f-ui) !important; text-decoration: underline !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-compare__x { display: inline-flex !important; align-items: center !important; min-height: 40px !important; padding: 0 var(--ay-s4) !important; color: var(--ayna-heading) !important; font: 500 13px/1 var(--f-ui) !important; text-decoration: underline !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .am-cover-mode button, .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .am-cover-examples button { min-height: 44px !important; padding: 0 14px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-hc-textdanger { min-height: 44px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .am-cover-preview span { font: 400 22px/1.15 var(--f-display) !important; letter-spacing: 0 !important; font-style: normal !important; }
@@ -292,17 +292,17 @@
 /* Tiles are buttons now: tap to open that area's charts */
 
 /* Text messages (Settings) */
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms { padding: 8px 20px 140px !important; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-card { background: var(--ay-paper) !important; border: 1.5px solid var(--ay-ink) !important; box-shadow: 3px 3px 0 var(--ay-ink); border-radius: 20px; padding: 18px 18px !important; display: flex; flex-direction: column; gap: 10px; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms { padding: var(--ay-s8) var(--ay-s20) 140px !important; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-card { background: var(--ay-paper) !important; border: 1.5px solid var(--ay-ink) !important; box-shadow: 3px 3px 0 var(--ay-ink); border-radius: var(--ay-r-group); padding: 18px 18px !important; display: flex; flex-direction: column; gap: 10px; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-card h2 { font-family: var(--ay-app-heading) !important; font-weight: 400 !important; text-transform: none !important; letter-spacing: 0 !important; line-height: 1.15 !important; font-size: calc(22px * var(--ayna-text-scale, 1)) !important; margin: 0 !important; color: var(--ayna-heading) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-card label { font-weight: 500; font-size: calc(13px * var(--ayna-text-scale, 1)); color: var(--ayna-text); margin-top: 4px; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-card label { font-weight: 500; font-size: calc(13px * var(--ayna-text-scale, 1)); color: var(--ayna-text); margin-top: var(--ay-s4); }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-card input { min-height: 48px; border-radius: 14px; border: 1.5px solid var(--ayna-border); padding: 0 14px; font: inherit; font-size: 16px; background: transparent; color: var(--ayna-text); }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-card input:focus-visible { outline: 2px solid #769ebe; outline-offset: 2px; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-muted { margin: 0 !important; color: var(--ayna-text-muted) !important; font-size: calc(13px * var(--ayna-text-scale, 1)) !important; font-weight: 500 !important; line-height: 1.5 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-phone { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 0 !important; color: var(--ayna-text-muted) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-phone { display: flex; justify-content: space-between; align-items: baseline; gap: var(--ay-s12); margin: 0 !important; color: var(--ayna-text-muted) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-phone b { color: var(--ayna-heading); font-size: calc(17px * var(--ayna-text-scale, 1)); font-weight: 600; letter-spacing: 0.02em; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-note { margin: 0 !important; background: #f7badd !important; color: #3e2723 !important; border-radius: 12px; padding: 10px 12px !important; font-size: calc(13px * var(--ayna-text-scale, 1)) !important; font-weight: 500 !important; line-height: 1.45 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-note { margin: 0 !important; background: #f7badd !important; color: #3e2723 !important; border-radius: var(--ay-r-tile); padding: 10px var(--ay-s12) !important; font-size: calc(13px * var(--ayna-text-scale, 1)) !important; font-weight: 500 !important; line-height: 1.45 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-chat a { color: var(--ayna-heading); font-weight: 600; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-remove { align-self: center; min-height: 44px; background: none; border: 0; color: var(--r-danger, #3e2723); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms.is-stopped .ay-sms-prefs { opacity: 0.55; }
@@ -325,7 +325,7 @@
 /* Playlist audience: selected option was grey text on sky */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .am-audience label.is-selected { background: #f7badd !important; border-color: #3e2723 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .am-audience label.is-selected :is(strong, small) { color: #3e2723 !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-agree { display: flex; gap: 12px; align-items: flex-start; cursor: pointer; margin: 2px 0 4px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-agree { display: flex; gap: var(--ay-s12); align-items: flex-start; cursor: pointer; margin: 2px 0 var(--ay-s4) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-agree input { appearance: none; -webkit-appearance: none; flex: none; width: 24px; height: 24px; min-height: 24px !important; margin: 1px 0 0; padding: 0 !important; border: 2px solid var(--ay-ink) !important; border-radius: 7px !important; background: transparent; display: grid; place-items: center; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-agree span { color: var(--ayna-text) !important; font-size: calc(13px * var(--ayna-text-scale, 1)); font-weight: 500; line-height: 1.5; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-agree a { color: var(--ayna-heading) !important; font-weight: 600; text-decoration: underline; }
@@ -333,15 +333,15 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-sms-agree input:checked { background: #ffedac url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233e2723' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 16px no-repeat !important; }
 
 /* ---- Your health, Summary as a bento grid (2026-10-19) ---- */
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn { display: grid; gap: 12px; margin: 4px 0 8px; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-line { display: block; width: 100%; height: 46px; margin-top: auto; padding-top: 12px; overflow: visible; position: relative; z-index: 1; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn { display: grid; gap: var(--ay-s12); margin: var(--ay-s4) 0 var(--ay-s8); }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-line { display: block; width: 100%; height: 46px; margin-top: auto; padding-top: var(--ay-s12); overflow: visible; position: relative; z-index: 1; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-line path { fill: none; stroke: currentColor; stroke-width: 1.75; vector-effect: non-scaling-stroke; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-line .ay-bn-usual { stroke: currentColor; stroke-width: 1; stroke-dasharray: 3 3; opacity: .45; vector-effect: non-scaling-stroke; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-line .ay-bn-now { stroke: currentColor; stroke-width: 1; stroke-dasharray: 2 3; vector-effect: non-scaling-stroke; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-line circle { fill: currentColor; }
 /* Your week, in short: numbered stacked rows, alternating bands (course-module style) */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-lines { list-style: none !important; margin: 0 !important; padding: 0 !important; border: 0 !important; background: transparent !important; box-shadow: none !important; display: grid; gap: 0; counter-reset: wk; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-lines li { counter-increment: wk; position: relative; display: grid !important; grid-template-columns: 52px 1fr; column-gap: 12px; row-gap: 2px; padding: 16px 18px 18px !important; margin: 0 0 -14px !important; border: 0 !important; border-radius: 22px 22px 0 0 !important; color: #3e2723 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-lines li { counter-increment: wk; position: relative; display: grid !important; grid-template-columns: 52px 1fr; column-gap: var(--ay-s12); row-gap: 2px; padding: var(--ay-s16) 18px 18px !important; margin: 0 0 -14px !important; border: 0 !important; border-radius: 22px 22px 0 0 !important; color: #3e2723 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-lines li:last-child { border-radius: 22px !important; margin-bottom: 0 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-lines li:nth-child(4n+1) { background: #3e2723; color: #ffedac !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-lines li:nth-child(4n+2) { background: #f7badd; }
@@ -354,35 +354,35 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-hd-lines li small { font-size: calc(13px * var(--ayna-text-scale, 1)) !important; font-weight: 500 !important; opacity: .8; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-hd-lines li:nth-child(4n+1) { background: #ffedac; color: #3e2723 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-hd-lines li:nth-child(4n+4) { background: transparent; color: #ffedac !important; box-shadow: inset 0 0 0 1.5px #ffedac; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-phases { padding: 14px 16px 16px; border-radius: 22px; border: 1.5px solid var(--ayna-heading); }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-phases { padding: 14px var(--ay-s16) var(--ay-s16); border-radius: 22px; border: 1.5px solid var(--ayna-heading); }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-phasebar { position: relative; display: flex; gap: 3px; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-phasebar > span { display: grid; place-items: center; min-width: 0; overflow: hidden; color: #3e2723; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-phasebar > span small { font: 500 calc(11.5px * var(--ayna-text-scale, 1))/1 'Figtree', sans-serif !important; white-space: nowrap; overflow: hidden; text-overflow: clip; padding: 0 4px; color: inherit !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-phasebar > span small { font: 500 calc(11.5px * var(--ayna-text-scale, 1))/1 'Figtree', sans-serif !important; white-space: nowrap; overflow: hidden; text-overflow: clip; padding: 0 var(--ay-s4); color: inherit !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-phasebar .is-period { background: #f7badd; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-phasebar .is-follicular { background: #ffedac; box-shadow: inset 0 0 0 1.5px #3e2723; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-phasebar .is-ovulation { background: #769ebe; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-phasebar .is-luteal { background: #3e2723; color: #ffedac; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-phasebar .is-now { outline: 2.5px solid var(--ayna-heading); outline-offset: 2px; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-today { position: absolute; width: 0; border-left: 2px dashed var(--ayna-heading); }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-today b { position: absolute; top: -2px; left: 50%; transform: translateX(-50%); padding: 2px 8px; border-radius: 99px; background: var(--ayna-heading); color: var(--ayna-bg, #ffedac) !important; font: 500 11.5px/1.2 'Figtree', sans-serif !important; white-space: nowrap; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-today b { position: absolute; top: -2px; left: 50%; transform: translateX(-50%); padding: 2px var(--ay-s8); border-radius: 99px; background: var(--ayna-heading); color: var(--ayna-bg, #ffedac) !important; font: 500 11.5px/1.2 'Figtree', sans-serif !important; white-space: nowrap; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-phases p { margin: 0 !important; font: 400 calc(15px * var(--ayna-text-scale, 1))/1.45 'Figtree', sans-serif !important; color: var(--ayna-text) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-phases p b { color: var(--ayna-heading) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-bn-phasebar .is-luteal { background: #ffedac; color: #3e2723; box-shadow: inset 0 0 0 1.5px #ffedac; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-bn-phasebar .is-follicular { background: transparent; color: #ffedac; box-shadow: inset 0 0 0 1.5px #ffedac; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-phasebar { height: 18px !important; margin: 26px 0 12px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-phasebar { height: 18px !important; margin: 26px 0 var(--ay-s12) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-phasebar > span { border-radius: 99px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-phasebar .is-now { outline-width: 2px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-today { top: -24px !important; bottom: -4px !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-legend { list-style: none; margin: 0 0 12px !important; padding: 0 !important; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-legend { list-style: none; margin: 0 0 var(--ay-s12) !important; padding: 0 !important; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-legend li { display: grid; grid-template-columns: 10px 1fr; column-gap: 5px; align-items: center; margin: 0 !important; font: 500 calc(11.5px * var(--ayna-text-scale, 1))/1.2 'Figtree', sans-serif; color: var(--ayna-text) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-legend li.is-now { font-weight: 500; color: var(--ayna-heading) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-legend li i { width: 10px; height: 10px; border-radius: 50%; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-legend li small { grid-column: 2; font: 500 calc(11.5px * var(--ayna-text-scale, 1))/1.2 'Figtree', sans-serif !important; color: var(--ayna-text-muted) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-legend .is-period i { background: #f7badd; } .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-legend .is-follicular i { background: #ffedac; box-shadow: inset 0 0 0 1.5px #3e2723; } .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-legend .is-ovulation i { background: #769ebe; } .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-legend .is-luteal i { background: #3e2723; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-bn-legend .is-luteal i { background: #ffedac; } .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-bn-legend .is-follicular i { box-shadow: inset 0 0 0 1.5px #ffedac; background: transparent; }
-@media (max-width: 360px) { .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-legend { grid-template-columns: 1fr 1fr; row-gap: 8px; } }
+@media (max-width: 360px) { .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-bn-legend { grid-template-columns: 1fr 1fr; row-gap: var(--ay-s8); } }
 /* Text messages: required number + consent box error states (brand pink, espresso text, both themes). */
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-agree.ay-check-invalid { background: #f7badd !important; border-radius: 12px; padding: 12px !important; margin: 0 -6px !important; min-height: 44px; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-agree.ay-check-invalid { background: #f7badd !important; border-radius: var(--ay-r-tile); padding: var(--ay-s12) !important; margin: 0 -6px !important; min-height: 44px; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-agree.ay-check-invalid :is(span, a) { color: #3e2723 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-agree.ay-check-invalid input { border-color: #3e2723 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-sms-agree.ay-check-invalid input:checked { background-color: #3e2723 !important; }

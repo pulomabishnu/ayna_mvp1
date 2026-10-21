@@ -11,7 +11,7 @@
 .hero-orbit__ring--inner { width: 46%; height: 46%; border-style: solid; border-color: rgba(29, 26, 43, .14); }
 .hero-orbit__centre {
   position: absolute; inset: 0; margin: auto; width: 34%; height: 34%;
-  display: grid; place-content: center; gap: 4px; text-align: center;
+  display: grid; place-content: center; gap: var(--ay-s4); text-align: center;
   border: 2px solid #1d1a2b; border-radius: 50%; background: #1d1a2b; color: #fffcf5;
   box-shadow: 5px 5px 0 #fffcf5;
   /* still: no ambient loop (anti-vibe guide 1f) */
@@ -53,10 +53,10 @@
 
 @media (max-width: 900px) {
   .hero-orbit { --size: min(360px, 86vw); }
-  .hero-orbit__bubble { min-height: 36px; padding: 0 12px; font-size: var(--ay-fs-caption); }
+  .hero-orbit__bubble { min-height: 36px; padding: 0 var(--ay-s12); font-size: var(--ay-fs-caption); }
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-orbit__spin, .hero-orbit__bubble, .hero-orbit__centre, .hero-orbit__spark { animation: none; }
 }
-.hero-orbit__bubble small { display: inline-grid; place-items: center; min-width: 22px; height: 22px; margin-left: 8px; padding: 0 6px; border-radius: 99px; background: #1d1a2b; color: #fffcf5; font: 600 var(--ay-fs-caption)/1 var(--ay-sans); }
+.hero-orbit__bubble small { display: inline-grid; place-items: center; min-width: 22px; height: 22px; margin-left: var(--ay-s8); padding: 0 6px; border-radius: 99px; background: #1d1a2b; color: #fffcf5; font: 600 var(--ay-fs-caption)/1 var(--ay-sans); }
 .hero-orbit__bubble.is-add { border-style: dashed; background: transparent; box-shadow: none; }

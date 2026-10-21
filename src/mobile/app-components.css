@@ -41,7 +41,7 @@
 }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button {
   background: transparent !important; color: rgba(255, 237, 172, .78) !important;
-  min-height: 52px !important; border-radius: 20px !important; padding: 4px 0 !important;
+  min-height: 52px !important; border-radius: var(--ay-r-group) !important; padding: var(--ay-s4) 0 !important;
   display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; gap: 3px !important;
 }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button span { font: 500 11.5px/1 var(--f-ui) !important; letter-spacing: 0 !important; color: inherit !important; }
