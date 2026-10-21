@@ -4,6 +4,7 @@ import { needPhrase, CONDITION_ID_BY_OPTION } from '../matching/ontology';
 import UrgentSigns from './pdp/UrgentSigns.jsx';
 import { urgentSignsForStages } from '../utils/urgentSigns';
 import NeedsStrip from './v3/NeedsStrip.jsx';
+import HealthShapedNote from './health/HealthShapedNote.jsx';
 import ShelfRows from './v3/ShelfRows.jsx';
 import { shelfIndex } from './v3/shelfLayout.js';
 import AddProductDialog from './v3/AddProductDialog.jsx';
@@ -2257,6 +2258,7 @@ export default function MyEcosystem({
                 {!ecoQueryTrimmed && needShelves.length > 0 && (
                     <section className="eco3-gaps" aria-labelledby="eco3-needs-title">
                         <header className="eco3-sechead"><h2 className="eco3-shelves__title ay-h2" id="eco3-needs-title">Fill the gaps</h2></header>
+                        <HealthShapedNote shaped={needSeed?.healthShaped} userId={user?.id || null} />
                         <NeedsStrip
                             needs={[...needShelves].sort((a, b) => Number(!a.picks.length) - Number(!b.picks.length)).map((shelf) => ({
                                 id: shelf.needId,

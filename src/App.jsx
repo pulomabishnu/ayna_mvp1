@@ -61,6 +61,7 @@ import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProdu
 import { behaviorFrom } from './utils/matchDisplay';
 import WebHealthData from './components/WebHealthData';
 import { useHealthData } from './mobile/hooks/useHealthData.js';
+import { useHealthMatchPref } from './health/matchPref.js';
 import { usesHormonalBC } from './health/weekInsights.js';
 import { captureReferralFromUrl } from './utils/badges';
 import { slugFromPath } from './utils/sharedAnswer.js';
@@ -1227,12 +1228,14 @@ function App() {
     try { return quizResults ? getSelectedNeeds(quizResults).map((n) => n.id) : []; } catch { return []; }
   }, [quizResults]);
   const health = useHealthData(user?.id || null, healthNeedIds);
+  // Her switch (You, Health data): "Use my health data in my matches". Shared with the app.
+  const healthInMatches = useHealthMatchPref(user?.id || null).on;
   const matchOpts = useMemo(
     () => {
       const base = behaviorFrom({ saved: savedProducts, omitted: omittedProducts, inEcosystem: myProducts });
-      return health.matchContext ? { ...base, healthContext: health.matchContext } : base;
+      return healthInMatches && health.matchContext ? { ...base, healthContext: health.matchContext } : base;
     },
-    [savedProducts, omittedProducts, myProducts, health.matchContext]
+    [savedProducts, omittedProducts, myProducts, health.matchContext, healthInMatches]
   );
 
   const recommendedProductIds = useMemo(() => {

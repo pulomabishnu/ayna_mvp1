@@ -1,0 +1,146 @@
+/* Health data in matches: note, badge, switch, why line (website + app).
+   Brand colours only (docs/design-direction.md): butter, espresso, pink
+   (selected/alert strip), sky as a small accent on icons. Tokens come from
+   the website (.app-container --ay-*) or the app (.ayna-mobile --d-*). */
+
+.ay-hsn, .ay-hbadge, .ay-hmt, .ay-hwhy, .ay-hsn-sheet {
+  --hs-ink: var(--ay-text, #3e2723);
+  --hs-ink-2: var(--ay-text-2, rgba(62, 39, 35, .78));
+  --hs-page: var(--ay-page, #ffedac);
+  --hs-group: var(--ay-group, #f6e3a1);
+  --hs-hair: var(--ay-hairline, rgba(62, 39, 35, .15));
+  --hs-line: var(--ay-outline, #3e2723);
+  --hs-sky: #769ebe;
+  --hs-head: var(--ay-heading, 'ayna Display', 'Figtree', system-ui, sans-serif);
+  --hs-body: var(--ay-sans-stack, 'Figtree', system-ui, -apple-system, sans-serif);
+}
+.ayna-mobile :is(.ay-hsn, .ay-hbadge, .ay-hmt, .ay-hwhy, .ay-hsn-sheet) {
+  --hs-ink: var(--d-ink, #3e2723);
+  --hs-ink-2: var(--d-ink-2, rgba(62, 39, 35, .78));
+  --hs-page: var(--d-page, #ffedac);
+  --hs-group: var(--d-group, #f6e3a1);
+  --hs-hair: var(--d-hair, rgba(62, 39, 35, .15));
+  --hs-line: var(--d-ink, #3e2723);
+  --hs-head: var(--ay-app-heading, 'ayna Display', 'Figtree', system-ui, sans-serif);
+  --hs-body: 'Figtree', system-ui, -apple-system, sans-serif;
+}
+
+/* ---------------------------------- Note ---------------------------------- */
+.ay-hsn {
+  display: grid; gap: 10px; margin: 0 0 20px; padding: 16px 18px;
+  background: var(--hs-group); color: var(--hs-ink); border-radius: 20px;
+  font: 400 15px/1.5 var(--hs-body); box-sizing: border-box; max-width: 760px;
+}
+.ay-hsn__head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.ay-hsn__title {
+  display: inline-flex; align-items: center; gap: 8px; margin: 0;
+  font: 700 18px/1.2 var(--hs-head); letter-spacing: -.01em; color: var(--hs-ink);
+}
+.ay-hsn__icon { width: 20px; height: 20px; flex: none; fill: none; stroke: var(--hs-sky); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ay-hsn__srcs { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.ay-hsn__src {
+  display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px 3px 7px;
+  border: 1px solid var(--hs-line); border-radius: 999px; font: 600 12.5px/1.3 var(--hs-body);
+}
+.ay-hsn__src svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ay-hsn__changes { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.ay-hsn__changes li { padding-left: 14px; position: relative; }
+.ay-hsn__changes li::before { content: ''; position: absolute; left: 0; top: .62em; width: 6px; height: 6px; border-radius: 50%; background: var(--hs-sky); }
+.ay-hsn__changes b { font-weight: 600; }
+.ay-hsn__foot { display: flex; align-items: center; gap: 14px; }
+.ay-hsn__more { font: 500 13px/1.3 var(--hs-body); color: var(--hs-ink-2); }
+.ay-hsn__why, .ay-hsn__cta {
+  min-height: 36px; padding: 0 2px; border: 0; background: none; color: var(--hs-ink);
+  font: 600 14px/1 var(--hs-body); text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+}
+.ay-hsn__why:focus-visible, .ay-hsn__cta:focus-visible, .ay-hmt__switch:focus-visible, .ay-hsn-sheet__close:focus-visible { outline: 2px solid var(--hs-line); outline-offset: 2px; }
+.ay-hsn.is-quiet { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; padding: 10px 16px; }
+.ay-hsn__line { display: inline-flex; align-items: center; gap: 8px; margin: 0; font: 500 14px/1.4 var(--hs-body); }
+.ay-hsn.is-invite { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 20px; }
+.ay-hsn.is-invite .ay-hsn__body { flex: 1 1 280px; display: grid; gap: 4px; }
+.ay-hsn__text { margin: 0; color: var(--hs-ink-2); }
+.ay-hsn__cta {
+  min-height: 44px; padding: 0 18px; border: 1.5px solid var(--hs-line); border-radius: 999px;
+  text-decoration: none; white-space: nowrap;
+}
+
+/* ---------------------------------- Badge --------------------------------- */
+.ay-hbadge {
+  display: inline-flex; align-items: center; gap: 4px; max-width: 100%;
+  margin-top: 4px; padding: 2px 8px 2px 5px; border: 1px solid var(--hs-line); border-radius: 999px;
+  background: transparent; color: var(--hs-ink); font: 600 11.5px/1.35 var(--hs-body);
+  box-sizing: border-box; text-align: left;
+}
+/* Narrow cards: the badge wraps instead of cutting words off. */
+.ay-hbadge { white-space: normal; border-radius: 12px; justify-self: start; align-self: flex-start; width: fit-content; }
+.ay-hbadge__icon { width: 13px; height: 13px; flex: none; fill: none; stroke: var(--hs-sky); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* --------------------------------- Switch --------------------------------- */
+.ay-hmt { display: flex; align-items: flex-start; gap: 16px; padding: 14px 0; color: var(--hs-ink); font-family: var(--hs-body); }
+.ay-hmt__text { flex: 1; min-width: 0; display: grid; gap: 3px; }
+.ay-hmt__title { font: 600 16px/1.35 var(--hs-body); }
+.ay-hmt__sub { font: 400 14px/1.45 var(--hs-body); color: var(--hs-ink-2); }
+.ay-hmt__error { font: 500 13px/1.4 var(--hs-body); color: var(--hs-ink); background: #f7badd; color: #3e2723; border-radius: 8px; padding: 4px 8px; justify-self: start; }
+.ay-hmt__switch {
+  flex: none; display: inline-flex; align-items: center; gap: 8px; height: 36px; margin-top: 2px; padding: 0 4px 0 12px;
+  border: 1.5px solid var(--hs-line); border-radius: 999px; background: transparent; color: var(--hs-ink); cursor: pointer;
+  font: 700 12.5px/1 var(--hs-body); letter-spacing: .06em;
+}
+.ay-hmt__word { min-width: 26px; text-align: center; }
+.ay-hmt__knob { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--hs-line); background: var(--hs-page); box-sizing: border-box; }
+.ay-hmt__switch[aria-checked='true'] { background: var(--hs-ink); color: var(--hs-page); border-color: var(--hs-ink); }
+.ay-hmt__switch[aria-checked='true'] .ay-hmt__knob { background: #f7badd; border-color: #f7badd; }
+.ay-hmt__switch[aria-checked='false'] { flex-direction: row-reverse; padding: 0 12px 0 4px; }
+
+/* ------------------------------- Why sheet -------------------------------- */
+.ay-hsn-backdrop {
+  position: fixed; inset: 0; z-index: 2600; display: grid; place-items: center; padding: 24px;
+  background: rgba(62, 39, 35, .5); box-sizing: border-box; overflow-y: auto;
+}
+.ay-hsn-sheet {
+  position: relative; width: min(100%, 520px); max-height: calc(100dvh - 48px); overflow-y: auto;
+  padding: 0 24px 20px; box-sizing: border-box; background: var(--hs-page); color: var(--hs-ink);
+  border: 1.5px solid var(--hs-line); border-radius: 24px; font: 400 15px/1.5 var(--hs-body); text-align: left;
+}
+.ay-hsn-sheet__strip {
+  display: flex; align-items: center; gap: 8px; height: 46px; margin: 0 -24px 16px; padding: 0 56px 0 24px;
+  background: #f7badd; color: #3e2723; border-bottom: 1.5px solid var(--hs-line); font: 600 14px/1 var(--hs-body);
+}
+.ay-hsn-sheet__strip .ay-hsn__icon { stroke: #3e2723; }
+.ay-hsn-sheet__close {
+  position: absolute; top: 1px; right: 6px; width: 44px; height: 44px; display: grid; place-items: center;
+  border: 0; background: none; color: #3e2723; cursor: pointer;
+}
+.ay-hsn-sheet__close svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.ay-hsn-sheet__title { margin: 0 0 8px; font: 700 24px/1.15 var(--hs-head); letter-spacing: -.01em; }
+.ay-hsn-sheet section { padding: 12px 0; border-bottom: 1px solid var(--hs-hair); }
+.ay-hsn-sheet.ay-hsn-sheet h3 { margin: 0 0 8px; font: 600 15px/1.3 var(--hs-body); letter-spacing: 0; color: var(--hs-ink); }
+.ay-hsn-sheet ul { display: grid; gap: 8px; margin: 0; padding: 0 0 0 18px; }
+.ay-hsn-sheet__changes { list-style: none; padding-left: 0 !important; }
+.ay-hsn-sheet__changes small { display: block; color: var(--hs-ink-2); font-size: 13px; }
+.ay-hsn-sheet a { color: inherit; text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
+.ay-hsn-sheet__toggle { padding-bottom: 0; }
+@media (max-width: 640px) {
+  .ay-hsn-backdrop { place-items: end center; padding: 0; }
+  .ay-hsn-sheet { width: 100%; max-height: 88dvh; border-radius: 24px 24px 0 0; border-bottom: 0; padding: 0 16px 24px; }
+  .ay-hsn-sheet__strip { margin: 0 -16px 14px; padding-left: 16px; }
+  .ay-hsn { padding: 14px 16px; }
+}
+
+/* ------------------------------- Why line --------------------------------- */
+.ay-hwhy { color: var(--hs-ink); font-family: var(--hs-body); }
+.ay-hwhy__title { display: flex; align-items: center; gap: 8px; }
+.ay-hwhy__icon { width: 18px; height: 18px; flex: none; fill: none; stroke: var(--hs-sky); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ay-hwhy p { margin: 0; }
+.ay-hwhy a { color: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+
+/* The switch on the Health data screen (website /health-data and the app). */
+.ay-hc-matchpref { margin: 0 0 18px; padding: 0 16px; border-radius: 20px; background: var(--ay-group, #f6e3a1); }
+.ayna-mobile .ay-hc-matchpref { background: var(--d-group, #f6e3a1); }
+.ay-hc-matchpref .ay-hmt { padding: 14px 0; }
+
+/* App Ecosystem: the note sits in the page gutter like the shelves. */
+.ayna-mobile .ay-hsn.ay-eco-hsn { margin: 4px var(--d-gutter, 20px) 24px; }
+
+/* Site-wide heading colours must not win over the note's own ink (dark mode). */
+.ay-hsn .ay-hsn__title, .ay-hsn-sheet .ay-hsn-sheet__title, .ay-hwhy .ay-hwhy__title { color: var(--hs-ink) !important; }

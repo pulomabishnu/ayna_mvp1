@@ -32,8 +32,8 @@ export function devDemoRows(today = iso(Date.now())) {
     // Overnight temperature: about 0.3 °C higher from the day after ovulation (cycle day 15) to the period.
     add('temp_deviation_c', i, Math.round(((cycleDay(i) >= 15 ? 0.22 : -0.1) + wobble(i + 6, 2) / 100) * 100) / 100);
   }
-  // Period starts 23, 51 and 79 days ago, five days each.
-  for (const start of [23, 51, 79]) for (let d = 0; d < 5; d += 1) if (start - d >= 0) add('menstrual_flow', start - d, d < 2 ? 3 : 2);
+  // Period starts 23, 51, 79 and 107 days ago, five days each (four cycles of 28 days).
+  for (const start of [23, 51, 79, 107]) for (let d = 0; d < 5; d += 1) if (start - d >= 0) add('menstrual_flow', start - d, d < 2 ? 3 : 2);
   return rows;
 }
 
@@ -42,6 +42,8 @@ export const DEV_DEMO_CONNECTIONS = [
 ];
 
 /** Catalog ids for the demo Ecosystem on the website preview (signed out, ?healthdemo=1). */
-export const DEV_DEMO_PRODUCT_IDS = ['p-thermacare', 'p-lola-tampon', 'p-saalt-cup', 'p-good-clean-love', 'p-proov-complete'];
-export const DEV_DEMO_MATCH_IDS = ['p-magnesium-glycinate', 'p-advil-ibuprofen-200'];
+export const DEV_DEMO_PRODUCT_IDS = ['p-thermacare', 'p-lola-tampon', 'p-saalt-cup', 'p-good-clean-love', 'p-proov-complete', 'p-magnesium-glycinate'];
+export const DEV_DEMO_MATCH_IDS = ['p-advil-ibuprofen-200', 'p-neycher-vaginal-moisturizer'];
+/** Demo: she added the magnesium herself 6 days ago (so the before-and-since check has something to show). */
+export const devDemoAddedAt = (today = iso(Date.now())) => ({ 'p-magnesium-glycinate': iso(Date.parse(`${today}T00:00:00Z`) - 6 * DAY) });
 export const DEV_DEMO_NEEDS = ['pain.menstrual_cramp', 'period.heavy', 'vaginal.dryness'];

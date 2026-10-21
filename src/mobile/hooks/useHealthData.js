@@ -18,7 +18,9 @@ import { deleteSavedRecords, hasRecords, loadSavedRecords, saveRecords } from '.
 import { DEV_DEMO_CONNECTIONS, devDemoRows } from '../../health/devDemo.js';
 
 // DEVELOPMENT ONLY (?healthdemo=1 in the local preview): made-up rows so the screens can be checked. Off in production builds.
-export const DEV_HEALTH_DEMO = Boolean(import.meta.env.DEV && typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('healthdemo') === '1');
+export const DEV_HEALTH_DEMO = Boolean(import.meta.env.DEV && typeof window !== 'undefined' && ['1', 'empty'].includes(new URLSearchParams(window.location.search).get('healthdemo')));
+/** DEVELOPMENT ONLY (?healthdemo=empty): a demo account with no health data, to check the empty dashboard. */
+export const DEV_HEALTH_DEMO_EMPTY = DEV_HEALTH_DEMO && new URLSearchParams(window.location.search).get('healthdemo') === 'empty';
 
 const AUTO_SYNC_MS = 6 * 3600000;
 
@@ -106,7 +108,7 @@ export function loadHealthData(userId, { force = false } = {}) {
   set({ status: state.userId === userId && state.loadedAt ? 'refreshing' : 'loading', userId, error: null, records: state.userId === userId ? state.records : loadSavedRecords(userId) });
   const promise = (async () => {
     if (DEV_HEALTH_DEMO) {
-      set({ status: 'ready', connections: DEV_DEMO_CONNECTIONS, rows: devDemoRows(), live: {}, loadedAt: Date.now() });
+      set({ status: 'ready', connections: DEV_HEALTH_DEMO_EMPTY ? [] : DEV_DEMO_CONNECTIONS, rows: DEV_HEALTH_DEMO_EMPTY ? [] : devDemoRows(), live: {}, loadedAt: Date.now() });
       inflight = null;
       return;
     }
@@ -220,7 +222,8 @@ export function useHealthData(userId, selectedNeedIds = []) {
   const insightRows = useMemo(() => allRows.filter(usableForInsights), [allRows]);
   const insights = useMemo(() => buildInsights(insightRows, { today: localToday() }), [insightRows]);
   // Health Match only reads sources whose terms allow it (src/health/policy.js).
-  const matchSignals = useMemo(() => buildInsights(allRows.filter(usableForMatching), { today: localToday() }).signals, [allRows]);
+  // Trends plus timing facts (period due soon): both only ever strengthen a need she chose.
+  const matchSignals = useMemo(() => { const out = buildInsights(allRows.filter(usableForMatching), { today: localToday() }); return [...out.signals, ...(out.timing || [])]; }, [allRows]);
   const needKey = selectedNeedIds.join('|');
   const matchContext = useMemo(
     () => (matchSignals.length ? healthMatchContext(matchSignals, selectedNeedIds) : null),

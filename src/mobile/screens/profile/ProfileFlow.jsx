@@ -24,6 +24,7 @@ import LegalFooter from '../../components/LegalFooter.jsx';
 import InlineError from '../../../components/InlineError.jsx';
 import { clearError, errorSummary, firstErrorKey, revealField, warnHaptic } from '../../../utils/formErrors.js';
 import HealthConnectionsScreen from './HealthConnectionsScreen.jsx';
+import { useHealthMatchPref } from '../../../health/matchPref.js';
 import HealthInsightsScreen from './HealthInsightsScreen.jsx';
 import { usesHormonalBC } from '../../../health/weekInsights.js';
 import { ALL_PRODUCTS, getSelectedNeeds } from '../../../data/products.js';
@@ -1233,6 +1234,8 @@ function PreferencesScreen({
   const [awaitingConfirm, setAwaitingConfirm] = useState(false);
   const [newsletterConfirmed, setNewsletterConfirmed] = useState(loadNewsletterConfirmed);
   const [clearHistoryConfirm, setClearHistoryConfirm] = useState(false);
+  // Shared with MobileApp and the website (src/health/matchPref.js); MobileApp loads it for her account.
+  const healthPref = useHealthMatchPref();
 
   // Initial state is already 'loading', so the mount effect below doesn't
   // need to (and per the react-hooks lint rule, shouldn't) set it again
@@ -1365,7 +1368,8 @@ function PreferencesScreen({
         )}
         <SectionLabel>AI & personalization</SectionLabel>
         {loadState === 'ready' && prefs && <div style={{ background: 'var(--d-group)', border: 0, borderRadius: 20, padding: '4px 18px' }}>
-          <ToggleRow first title="Personalize with my data" sub="Your intake answers and cycle logs shape your matches and Ask ayna replies." on={personalizeWithData} onClick={handlePersonalizeToggle} />
+          <ToggleRow first title="Personalize with my data" sub="Your quiz answers, cycle logs and connected health data shape your matches and Ask ayna replies. Off: none of it is used." on={personalizeWithData} onClick={handlePersonalizeToggle} />
+          <ToggleRow title="Use my health data in my matches" sub={!personalizeWithData ? 'Turn on Personalize with my data first.' : healthPref.on ? 'Sleep and cycle trends from apps like Apple Health can move picks up inside goals you chose. Never a new goal, never past safety, never shared with brands.' : 'Off. Matches use only your answers. Your health data still shows in your insights.'} on={personalizeWithData && healthPref.on} onClick={() => { if (personalizeWithData) healthPref.set(!healthPref.on).then((ok) => { if (!ok) showToast(friendlyPreferencesError('save_failed')); }); }} />
         </div>}
 
         {/* Clearing Ask Ayna history is purely local (in-memory chat state in

@@ -342,3 +342,20 @@
 
 /* Product picker and mention percents use the one ink match pill. */
 .ayna-mobile .am-product em { display: inline-flex; align-items: baseline; gap: 3px; padding: 6px 10px; border-radius: 99px; background: var(--ay-ink, #3e2723); color: var(--ay-paper, #ffffff); font: 500 11.5px/1 var(--ay-font-ui); }
+
+/* Sheets: scrolling inside never moves the screen behind, and on a phone the
+   sheet sits inside the visible viewport so the keyboard never hides it or
+   the Post button. --ay-vv-* come from useSheetViewport. */
+.am-sheet, .am-sheet-backdrop { overscroll-behavior: contain; }
+.am-sheet { -webkit-overflow-scrolling: touch; }
+@media (max-width: 699px) {
+  .am-sheet-backdrop { top: var(--ay-vv-top, 0px); bottom: auto; height: var(--ay-vv-h, 100%); }
+  .am-sheet { max-height: min(86vh, calc(var(--ay-vv-h, 100dvh) - 24px)); }
+}
+.am-discard-layer { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; padding: 20px; background: rgba(62, 39, 35, .35); }
+.am-discard { box-sizing: border-box; display: grid; gap: 10px; width: min(340px, 100%); padding: 22px 20px 20px; border-radius: 22px; background: var(--ayna-bg); color: var(--ayna-text); }
+.am-discard h3 { margin: 0; font: 400 21px/1.2 var(--ayna-font-display); color: var(--ayna-heading); }
+.am-discard p { margin: 0 0 6px; font-size: 14px; color: var(--ayna-text); }
+.am-discard button { width: 100%; min-height: 48px; border-radius: 99px !important; box-shadow: none !important; }
+.am-posted { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.am-posted-view { flex: 0 0 auto; min-height: 36px; padding: 0 14px; border: 1.5px solid currentColor; border-radius: 99px; background: none; color: inherit; font: 600 13px/1 var(--ayna-font-ui); }

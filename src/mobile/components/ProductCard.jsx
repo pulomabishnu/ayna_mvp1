@@ -10,6 +10,7 @@ import { formatPrice } from '../../utils/formatPrice.js';
 import { HEART_PATH } from '../utils/heart.js';
 import { matchBadge } from '../../utils/matchDisplay.js';
 import MatchPill from '../../components/MatchPill.jsx';
+import HealthBackedBadge from '../../components/health/HealthBackedBadge.jsx';
 
 export default function ProductCard({ product, onClick, variant = 'grid', quizAnswers = null, isSaved = false, onToggleSaved, onOpenWhyMatch, matchOpts, needId = null }) {
   const { name, category, price, priceDisplay, image, imageUrl, images } = product || {};
@@ -25,6 +26,9 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   // Badge = best need score, only with a profile and 50+ ("82% for period cramps").
   const badge = matchBadge(match, { needId });
   const showMatch = Boolean(badge);
+  // "Backed by your sleep data": her connected data supports the need this card is shown for.
+  const backedBy = showMatch ? match?.needMatches?.find((m) => m.needId === (needId || match.needId))?.healthData : null;
+  const healthBacked = backedBy ? { section: backedBy.section, tracker: ['tracker', 'wearable'].includes(String(category || '').toLowerCase()) } : null;
   const relevantReason = match?.matchStatus === 'scored' && !showMatch
     ? match.reasonDetails?.find((reason) => ['primaryGoal', 'otherNeeds', 'periodFlow', 'periodPain', 'utiFrequency', 'diagnoses', 'lifeStage'].includes(reason.component))
     : null;
@@ -55,6 +59,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
             <small className="ay-pc-brand" aria-hidden={showBrand ? undefined : true}>{showBrand ? secondaryLabel : '\u00a0'}</small>
             <strong className="ay-pc-name">{brandRepeatsName ? name : displayName(product)}</strong>
             <span className="ay-pc-price">{hasDisplayPrice ? <b>{shownPrice.main}</b> : <b className="is-muted">{shownPrice.main}</b>}</span>
+            {healthBacked && <HealthBackedBadge backed={healthBacked} className="ay-pc-hbadge" />}
           </span>
         </button>
         {showMatch && <MatchPill percent={badge.percent ?? match.percent} size="sm" className="ay-pc-match" label={`${badge.label}. Why this match for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}

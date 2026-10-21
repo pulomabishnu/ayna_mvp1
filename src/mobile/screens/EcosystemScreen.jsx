@@ -23,6 +23,7 @@ import { lifeStageClash, STAGE_NOTE_CODE } from '../../components/eco/lifeStageF
 import { useDismissed, useRevealOnce } from '../../components/eco/ecoMotion.js';
 import { useLatestAnnouncement } from '../../hooks/useLatestAnnouncement.js';
 import '../eco-app-best.css';
+import HealthShapedNote from '../../components/health/HealthShapedNote.jsx';
 
 const AREA_TONES = ['#F7BADD', '#769EBE', '#3E2723', '#F7BADD', '#769EBE', '#3E2723'];
 const MIN_SHELF_SCORE = 50;
@@ -291,6 +292,7 @@ export default function EcosystemScreen({
     {careFirst && hasAnything && <p className="ay-care-first__after">Products, when you are ready</p>}
 
     <div className={careFirst ? 'ay-eco-secondary' : undefined}>
+      {seed && <HealthShapedNote shaped={seed.healthShaped} userId={authUser?.id || null} onConnect={onConnectHealth || onOpenHealthData} className="ay-eco-hsn" />}
       {visibleSections.map((section) => {
         const { shelf } = section;
         const empty = section.products.length === 0 && !(section.picks?.length);

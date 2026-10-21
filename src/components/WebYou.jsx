@@ -11,6 +11,7 @@ import { AnalyticsToggle } from './SiteFooter';
 import { findSharedActives } from '../utils/sharedActives';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
 import { inviteLinkFor } from '../utils/badges';
+import HealthMatchToggle from './health/HealthMatchToggle.jsx';
 import FreeProductAccountCard from './freeProduct/FreeProductAccountCard';
 import { getCareProfile } from '../utils/careProfile';
 import EmailSettings from './EmailSettings';
@@ -439,6 +440,11 @@ export default function WebYou({ onOpenCommunity, onOpenArticle, user, quizResul
             {onOpenHealth && linkRow('manage', 'Manage connected apps and uploads', null, onOpenHealthData)}
             {linkRow('community', 'Community profile', cp?.username ? `@${cp.username}` : null, openMyProfile)}
           </ul>
+        </section>
+
+        <section className="wy-sec" aria-labelledby="wy-hmatch-h">
+          <h2 className="ay-group__title" id="wy-hmatch-h">Health data in your matches</h2>
+          <div className="ay-group is-padded"><HealthMatchToggle userId={user.id} /></div>
         </section>
 
         <InviteCard userId={user.id} />
