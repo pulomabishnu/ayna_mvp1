@@ -54,6 +54,10 @@ const PICK_URLS = {
   'ScarAway Silicone Scar Sheets': 'https://www.target.com/p/scaraway-clear-silicone-scar-sheets-6ct/-/A-81826383',
   'Kelo-cote Silicone Scar Gel': 'https://theskinhut.shop/products/kelo-cote-silicone-scar-gel-15g?variant=56689415946613',
   'La Roche-Posay Cicaplast Defense Gel Scar': 'https://www.target.com/p/la-roche-posay-cicaplast-defense-gel-1-35oz/-/A-89209534',
+  'SKIN1004 Madagascar Centella Soothing Cream': 'https://www.skin1004.com/products/skin1004-madagascar-centella-soothing-cream',
+  'Cowshed Mother Stretch Mark Balm': 'https://www.cowshed.com/products/mother-stretch-mark-balm?variant=48672365314396',
+  'Summer Fridays Babymoon Belly Balm': 'https://summerfridays.com/products/babymoon-belly-balm',
+  'Earth Mama Belly Butter': 'https://www.target.com/p/earth-mama-belly-bundle-pregnancy-skincare-kit-20oz-2pk/-/A-94759979',
 };
 const OpenProductContext = createContext(null);
 const PILL_STYLE = { padding: '9px 14px', borderRadius: '99px', background: 'var(--g-butter)', color: '#3e2723', font: "700 14px/1 'DM Sans'" };

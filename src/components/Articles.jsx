@@ -741,11 +741,11 @@ const ARTICLES = [
         <p><strong>What to shop</strong></p>
         <p>A fragrance-free body moisturizer, a hyaluronic-acid body lotion, or a Centella-containing cream. Prioritize comfort, formulation, and price over dramatic stretch-mark claims.</p>
         <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
-          <li>TRANSFORM Scar &amp; Body Treatment Oil</li>
-          <li>SKIN1004 Madagascar Centella Soothing Cream</li>
-          <li>Cowshed Mother Stretch Mark Balm</li>
-          <li>Summer Fridays Babymoon Belly Balm</li>
-          <li>Earth Mama Belly Butter</li>
+          <li><a href="/product/buni-transform-scar-body-treatment-oil">TRANSFORM Scar &amp; Body Treatment Oil</a></li>
+          <li><a href="https://www.skin1004.com/products/skin1004-madagascar-centella-soothing-cream" target="_blank" rel="noopener noreferrer">SKIN1004 Madagascar Centella Soothing Cream</a></li>
+          <li><a href="https://www.cowshed.com/products/mother-stretch-mark-balm?variant=48672365314396" target="_blank" rel="noopener noreferrer">Cowshed Mother Stretch Mark Balm</a></li>
+          <li><a href="https://summerfridays.com/products/babymoon-belly-balm" target="_blank" rel="noopener noreferrer">Summer Fridays Babymoon Belly Balm</a></li>
+          <li><a href="https://www.target.com/p/earth-mama-belly-bundle-pregnancy-skincare-kit-20oz-2pk/-/A-94759979" target="_blank" rel="noopener noreferrer">Earth Mama Belly Butter</a></li>
         </ul>
 
         <h2 className="ay-lib-h2">04 · Microneedling</h2>
