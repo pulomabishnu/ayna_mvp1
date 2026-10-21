@@ -125,10 +125,10 @@ const PDP_PRELOAD = routeLinks('ProductModal', { cssRel: 'stylesheet' });
 
 // Home: the first hero photo starts with the HTML (the right width via imagesrcset).
 // dist/index.html is also the shell for routes without their own page, so it
-// is a small AVIF (about 20KB at 480w, 49KB at 736w).
+// is a small AVIF (15KB at 390w, 20KB at 480w, 49KB at 736w; the source is 736px).
 {
   const shellFile = new URL('index.html', DIST);
-  const heroPreload = '<link rel="preload" as="image" type="image/avif" fetchpriority="high" imagesrcset="/landing/pink-stripe-floor-480.avif 480w, /landing/pink-stripe-floor.avif 736w" imagesizes="(max-width: 767px) 60vw, 560px" />';
+  const heroPreload = '<link rel="preload" as="image" type="image/avif" fetchpriority="high" imagesrcset="/landing/pink-stripe-floor-390.avif 390w, /landing/pink-stripe-floor-480.avif 480w, /landing/pink-stripe-floor.avif 736w" imagesizes="(max-width: 767px) 68vw, (max-width: 1279px) 40vw, 460px" />';
   const html = fs.readFileSync(shellFile, 'utf8');
   if (!html.includes('pink-stripe-floor-480.avif') && fs.existsSync(new URL('landing/pink-stripe-floor-480.avif', DIST))) fs.writeFileSync(shellFile, withHead(html, heroPreload));
 }

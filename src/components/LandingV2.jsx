@@ -100,7 +100,7 @@ function Hero({ onStartQuiz, onSearch, personal = null, banner = null }) {
           <Search onSearch={onSearch} />
         </div>
         <div className="hm-hero__art">
-          <span className="hm-hero__main"><Photo src="/landing/pink-stripe-floor.webp" alt="A woman sitting on a pink striped bathroom floor, her products spread around her" sizes="(max-width: 767px) 60vw, 560px" fetchPriority="high" /></span>
+          <span className="hm-hero__main"><Photo src="/landing/pink-stripe-floor.webp" alt="A woman sitting on a pink striped bathroom floor, her products spread around her" sizes="(max-width: 767px) 68vw, (max-width: 1279px) 40vw, 460px" fetchPriority="high" /></span>
           <span className="hm-hero__card"><Photo src="/landing/robe-kiss.webp" alt="A woman in a striped robe blowing a kiss to the mirror light" sizes="(max-width: 767px) 36vw, 240px" loading="lazy" /></span>
           <Seal className="hm-hero__seal" />
         </div>
@@ -172,7 +172,7 @@ function ShopBand({ onOpenProduct, onViewDiscovery, picks = null }) {
       <div className="hm-wrap">
         <header className="hm-head">
           <h2 id="hm-shop-title" className="hm-h2">Shop by need</h2>
-          <Go className="ay-btn ay-btn--text hm-head__all" href="/shop" onGo={() => onViewDiscovery?.('')}>Browse the whole Shop<Arrow /></Go>
+          <Go className="ay-btn ay-btn--text hm-head__all" href="/shop" onGo={() => onViewDiscovery?.('')}><span className="hm-head__long">Browse the whole Shop</span><span className="hm-head__short">See all<span className="ed-sr"> products in the Shop</span></span><Arrow /></Go>
         </header>
         <div className="hm-chips" role="group" aria-label="Choose picks or a need" ref={edgeFadeRef}>
           {need ? tabs.map((n) => (<button key={n.id} type="button" className="ay-chip" aria-pressed={n.id === need.id} onClick={() => setId(n.id)}>{n.label}{!n.picks && <span className="ay-chip__count"><span className="ed-sr">, </span>{n.pool.length}<span className="ed-sr"> products</span></span>}</button>))
@@ -244,7 +244,7 @@ function How({ onViewHowItWorks, onStartQuiz, onViewDiscovery, showStart = true 
       <div className="hm-wrap">
         <header className="hm-head">
           <h2 id="hm-how-title" className="hm-h2">How it works</h2>
-          <Go className="ay-btn ay-btn--text hm-head__all" href="/how-it-works" onGo={onViewHowItWorks}>The full method<Arrow /></Go>
+          <Go className="ay-btn ay-btn--text hm-head__all" href="/how-it-works" onGo={onViewHowItWorks}><span className="hm-head__long">The full method</span><span className="hm-head__short">See all<span className="ed-sr"> of the method</span></span><Arrow /></Go>
         </header>
         <ol className="hm-steps">
           {STEPS.map((st, i) => (
@@ -359,7 +359,7 @@ function Reads({ onViewArticle, onViewArticles }) {
       <div className="hm-wrap">
         <header className="hm-head">
           <h2 id="hm-reads-title" className="hm-h2">Quick reads about your body, with sources</h2>
-          <a className="ay-btn ay-btn--text hm-head__all" href="/library" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onViewArticles?.(); }}>Open the Library<Arrow /></a>
+          <a className="ay-btn ay-btn--text hm-head__all" href="/library" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onViewArticles?.(); }}><span className="hm-head__long">Open the Library</span><span className="hm-head__short">See all<span className="ed-sr"> reads in the Library</span></span><Arrow /></a>
         </header>
         <ul className="hm-covers" ref={edgeFadeRef}>
           {fact && (
