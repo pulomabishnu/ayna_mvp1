@@ -31,6 +31,7 @@ const SITE = (process.env.SITE || 'https://www.aynahealth.co').replace(/\/$/, ''
 const doExternal = !args.includes('--internal');
 const doInternal = !args.includes('--external');
 const listOnly = args.includes('--list');
+const urlsFile = args.includes('--urls') ? args[args.indexOf('--urls') + 1] : null;
 
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36';
 const TIMEOUT_MS = 20000;
@@ -45,6 +46,8 @@ const NOT_LINKS = [
   /api\.anthropic\.com/, /api\.openai\.com/, /generativelanguage\.googleapis\.com/, /\.supabase\.co/,
   /(us|eu)\.i\.posthog\.com/, /(us|eu)-assets\.i\.posthog\.com/, /api\.fda\.gov\/(device|drug)\/[a-z0-9]+\.json$/,
   /google\.serper\.dev/, /api\.stripe\.com/, /hooks\.slack\.com/, /api\.twilio\.com/, /eutils\.ncbi\.nlm\.nih\.gov\/entrez\/eutils\/?$/,
+  // OAuth/API endpoints, preconnect hosts and placeholders: not pages a person opens.
+  /\/oauth\/|\/oauth2\/|\/auth\/(token|revoke)\b|api\.prod\.whoop\.com|api\.ouraring\.com|\/developer$|brand-domain\.com/, /^https?:\/\/fonts\.(googleapis|gstatic)\.com\/?$/,
   /\$\{/, /[{}<>`]/, /\/\.\.\.$/, /^https?:\/\/[^/.]+$/,
 ];
 const isLink = (u) => !NOT_LINKS.some((re) => re.test(u));
@@ -155,7 +158,7 @@ async function browserCheck(browser, url) {
     const captcha = /captcha|are you a robot|verify you are human|unusual traffic|access denied|press & hold/i.test(text);
     let state = status === 404 || status === 410 ? 'broken' : SOFT_404.test(text) ? 'soft_404' : status >= 200 && status < 400 ? 'ok' : 'blocked';
     if (state === 'ok' && captcha) state = 'blocked';
-    return { status, state, final_url: page.url(), captcha };
+    return { status, state, final_url: page.url(), captcha, title: (await page.title()).slice(0, 120) };
   } catch (e) {
     return { status: 0, state: 'blocked', error: String(e.message).slice(0, 120) };
   } finally { await page.close().catch(() => {}); }
@@ -179,11 +182,21 @@ async function internalCheck(browser, p) {
   } finally { await page.close().catch(() => {}); }
 }
 
+async function waybackLatest(url) {
+  try {
+    const res = await fetch(`https://archive.org/wayback/available?url=${encodeURIComponent(url)}&timestamp=20261021`, { headers: { 'user-agent': UA } });
+    const j = await res.json();
+    const snap = j?.archived_snapshots?.closest;
+    return snap ? { status: snap.status, timestamp: snap.timestamp, url: snap.url } : null;
+  } catch { return null; }
+}
+
 // ─── Run ────────────────────────────────────────────────────────────────────
 async function main() {
   const report = { generated_at: new Date().toISOString(), site: SITE, external: [], internal: [] };
-  const external = doExternal ? collectExternal() : [];
-  const internal = doInternal ? collectInternal() : [];
+  const external = urlsFile ? fs.readFileSync(urlsFile, 'utf8').split(/\n/).map((u) => u.trim()).filter(Boolean).map((url) => ({ url, files: ['candidates'] }))
+    : doExternal ? collectExternal() : [];
+  const internal = urlsFile ? [] : doInternal ? collectInternal() : [];
   if (listOnly) {
     external.forEach((e) => console.log(e.url));
     internal.forEach((p) => console.log(SITE + p));
@@ -191,20 +204,28 @@ async function main() {
     return;
   }
 
-  if (doExternal) {
+  if (doExternal || urlsFile) {
     console.log(`Checking ${external.length} external URLs`);
     const first = await pool(external, CONCURRENCY, async (e) => { const r = await fetchStatus(e.url); return { ...e, ...r, snippet: undefined, state: classify(r), via: 'fetch' }; });
-    const retry = first.filter((r) => r.state === 'blocked' || r.state === 'soft_404');
+    const retry = first.filter((r) => r.state !== 'ok');
     console.log(`Re-checking ${retry.length} in headless Chrome`);
     if (retry.length) {
       const browser = await launchBrowser();
-      await pool(retry, 3, async (r) => { await politeWait(r.url); Object.assign(r, await browserCheck(browser, r.url), { via: 'browser' }); });
+      await pool(retry, 3, async (r) => {
+        await politeWait(r.url);
+        const fetchStatus = r.status;
+        const b = await browserCheck(browser, r.url);
+        // A real browser that loads the page wins over a bot-blocked fetch.
+        Object.assign(r, b, { via: 'browser', fetch_status: fetchStatus });
+      });
       await browser.close();
     }
+    // Still not OK: what the Internet Archive last saw, as a second opinion.
+    for (const r of first.filter((x) => x.state !== 'ok')) r.wayback = await waybackLatest(r.url);
     report.external = first;
   }
 
-  if (doInternal) {
+  if (doInternal && !urlsFile) {
     console.log(`Rendering ${internal.length} internal pages on ${SITE}`);
     const browser = await launchBrowser();
     report.internal = await pool(internal, 4, (p) => internalCheck(browser, p));
@@ -218,7 +239,8 @@ async function main() {
   report.summary = { external: report.external.length, external_broken: bad.length, external_unverified: unverified.length, internal: report.internal.length, internal_broken: badPages.length, broken_images_on_pages: badImgs.length };
 
   fs.mkdirSync(path.join(root, 'reports'), { recursive: true });
-  fs.writeFileSync(path.join(root, 'reports/link-audit.json'), JSON.stringify(report, null, 1));
+  const outName = urlsFile ? 'link-candidates' : 'link-audit';
+  fs.writeFileSync(path.join(root, `reports/${outName}.json`), JSON.stringify(report, null, 1));
   const md = [
     `# Link audit ${report.generated_at}`, '', '```', JSON.stringify(report.summary, null, 1), '```', '',
     '## Broken external links', ...bad.map((r) => `- ${r.state} ${r.status} ${r.url} (${r.files.join(', ')})`), '',
@@ -226,7 +248,7 @@ async function main() {
     '## Broken images on pages', ...badImgs.map((r) => `- ${r.page}: ${r.src}`), '',
     '## Could not verify (bot blocked)', ...unverified.map((r) => `- ${r.status} ${r.url}`),
   ].join('\n');
-  fs.writeFileSync(path.join(root, 'reports/link-audit.md'), md);
+  fs.writeFileSync(path.join(root, `reports/${outName}.md`), md);
   console.log(JSON.stringify(report.summary));
 }
 
