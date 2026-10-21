@@ -79,6 +79,11 @@ const ARTICLE_SUMMARIES = [
     title: 'Hormonal Birth Control: Types, Benefits & Side Effects',
     teaser: 'A plain-language guide to pills, patches, rings, shots, implants, and hormonal IUDs. How they work, what side effects to expect, and how to choose.',
   },
+  {
+    id: 'genitourinary-syndrome-of-menopause',
+    title: 'What Is Vaginal Atrophy / Genitourinary Syndrome of Menopause (GSM)?',
+    teaser: 'Why falling estrogen causes GSM, its most common symptoms, and the treatments that help, from moisturizers and lubricants to vaginal estrogen.',
+  },
 ];
 
 const ARTICLE_FOCUS_TAGS = {
@@ -97,6 +102,7 @@ const ARTICLE_FOCUS_TAGS = {
   'iron-deficiency-anemia': ['heavy-flow'],
   'ovarian-cysts': ['cramps', 'pelvic-floor'],
   'hormonal-birth-control': ['irregular', 'cramps', 'pcos'],
+  'genitourinary-syndrome-of-menopause': ['menopause', 'vaginal-health', 'uti'],
 };
 
 const FRUSTRATION_TO_TAG = {

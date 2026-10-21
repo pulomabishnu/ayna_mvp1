@@ -835,6 +835,54 @@ const ARTICLES = [
       </>
     ),
   },
+  {
+    id: 'genitourinary-syndrome-of-menopause',
+    image: '/articles/gsm/estrogen-decline.webp',
+    title: 'What Is Vaginal Atrophy / Genitourinary Syndrome of Menopause (GSM)?',
+    source: 'Shruti Gajjar, MS1 · Mayo Clinic, AUA, Cleveland Clinic',
+    tags: ['Menopause', 'Vaginal & urinary health'],
+    teaser: 'Why falling estrogen causes GSM, its most common symptoms, and the treatments that help, from moisturizers and lubricants to vaginal estrogen.',
+    body: (
+      <>
+        <div style={{ marginBottom: '1rem' }}><em>Written by Shruti Gajjar, MS1, Medical Student. Reviewed by Dr. Anuja Vyas, Board-Certified OBGYN, Co-founder of <a href="/partners#brand-buni">BUNI Body</a>.</em></div>
+        <p>Genitourinary syndrome of menopause (GSM), previously called vaginal atrophy or atrophic vulvovaginitis, is a group of symptoms that occur in the genital and urinary areas when the body’s estrogen levels drop around and after menopause. A decline in estrogen can happen for many other reasons other than perimenopause and menopause, including during breastfeeding, after surgical removal of the ovaries, due to certain autoimmune (when the body’s immune system mistakenly attacks its own healthy cells and tissues) conditions or while taking medications that impact estrogen level (e.g. birth control or hormonal therapy for breast cancer).</p>
+        <figure style={{ margin: '0 0 1.5rem' }}>
+          <img src="/articles/gsm/estrogen-decline.webp" alt="Illustration of three women from younger to older, with fewer estrogen molecules around each and an arrow trending down" width="1400" height="933" style={{ width: '100%', maxWidth: 560, height: 'auto', borderRadius: 16, display: 'block' }} />
+        </figure>
+        <figure style={{ margin: '0 0 1.5rem' }}>
+          <img src="/articles/gsm/anatomy.webp" alt="Labeled diagram of the vulva, and a side view showing the bladder, urethra and vagina" width="1400" height="933" loading="lazy" style={{ width: '100%', maxWidth: 560, height: 'auto', borderRadius: 16, display: 'block' }} />
+        </figure>
+        <p>GSM affects tissues of the vulva (the outer genital area), the vagina, the urethra (the tube where urine passes through), and the bladder. Because these estrogen-related changes involve both the genital and urinary systems, we now call it genitourinary syndrome of menopause. This term is more representative of the range of affected tissues and related symptoms.</p>
+        <p>The most common symptoms of GSM include dryness and thinning of the vaginal walls (which can result in painful intercourse) and urinary urgency paired with recurrent urinary tract infections (UTIs). People diagnosed with GSM may also experience burning/itching in the vagina or vulva.</p>
+        <figure style={{ margin: '0 0 1.5rem' }}>
+          <img src="/articles/gsm/symptoms.webp" alt="Common symptoms of GSM, and the good news? Many symptoms are treatable. Vaginal dryness: less natural moisture, which can cause discomfort. Itching or irritation: the vaginal and vulvar tissues can become thinner and more sensitive. Discomfort during sex: tissues may be less elastic and more sensitive, leading to discomfort (dyspareunia). Urinary symptoms: can include urgency, frequency, or recurrent urinary tract infections (UTIs). Reduced lubrication: less natural lubrication can make sex less comfortable." width="1400" height="480" loading="lazy" style={{ width: '100%', height: 'auto', borderRadius: 16, display: 'block' }} />
+        </figure>
+        <p>While these symptoms undoubtedly cause discomfort and irritation, the good news is that GSM can be diagnosed with one physical exam, and a variety of treatment options are available. Your medical provider can diagnose GSM based on your symptoms and a pelvic exam to note any vaginal or vulvar changes. Some traditional treatment options include vaginal lubricants or moisturizers that can significantly improve vaginal dryness. Vaginal lubricants can be used during sex and are helpful in reducing some of the intercourse discomfort caused by GSM symptoms. Vaginal moisturizers also treat vaginal dryness, but are generally inserted every 1-3 days as the formulas are longer-acting. Vulvar skin protectants specially formulated for this area of the body are meant to treat external dryness and are also an important part of treating GSM. Explore our recommendations for vaginal lubricants and moisturizers as well as vulvar skin protectants <a href="/discovery?q=lubricant">here</a>.</p>
+        <figure style={{ margin: '0 0 1.5rem' }}>
+          <img src="/articles/gsm/lubricants.webp" alt="Illustration of a lubricant tube and pump bottle, with an arrow to moisturized vaginal tissue" width="784" height="502" loading="lazy" style={{ width: '100%', maxWidth: 480, height: 'auto', borderRadius: 16, display: 'block' }} />
+        </figure>
+        <figure style={{ margin: '0 0 1.5rem' }}>
+          <img src="/articles/gsm/vaginal-estrogen.webp" alt="Illustration of vaginal estrogen as a cream, a tablet and a ring, each going directly to the vaginal tissue" width="832" height="562" loading="lazy" style={{ width: '100%', maxWidth: 480, height: 'auto', borderRadius: 16, display: 'block' }} />
+        </figure>
+        <p>If symptoms continue to persist despite use of vaginal moisturizers and lubricants, your provider may recommend use of topical estrogen in the form of vaginal creams, tablets, or rings. These topical treatments alleviate the symptoms of GSM that are driven by estrogen decline by directly targeting the affected tissues with low dose estrogen. This is a more targeted approach than hormonal estrogen pills, systemic patches, or gels although these can be especially useful treatments for women who have other menopausal symptoms. These prescription medications increase estrogen levels throughout the whole body whereas topical vaginal preparations do not. This is an important distinction as some women may not be able to take systemic therapy but the vast majority of women can use locally acting topical options.</p>
+        <figure style={{ margin: '0 0 1.5rem' }}>
+          <img src="/articles/gsm/systemic-estrogen.webp" alt="Illustration of estrogen pills reaching the whole body, including the brain, heart, bones and vaginal tissue" width="1400" height="399" loading="lazy" style={{ width: '100%', height: 'auto', borderRadius: 16, display: 'block' }} />
+        </figure>
+        <p><strong>Eliminating the Stigma:</strong></p>
+        <figure style={{ margin: '0 0 1.5rem' }}>
+          <img src="/articles/gsm/talk-to-provider.webp" alt="Illustration of a worried woman, then the same woman smiling as she talks with her doctor" width="1400" height="933" loading="lazy" style={{ width: '100%', maxWidth: 560, height: 'auto', borderRadius: 16, display: 'block' }} />
+        </figure>
+        <p>GSM symptoms are not something that fade over time. In fact they usually worsen and require treatment for improvement. Despite GSM being fairly common and impacting roughly half or more of women after menopause, stigma around GSM can cause many women to feel uncomfortable in speaking with their providers about this highly treatable condition. If you are reading this article, and you feel that you may be experiencing symptoms of GSM, we encourage you to speak with your medical provider about it.</p>
+        <p><strong>When to seek care:</strong> Any vaginal bleeding after menopause (including bleeding after sex), as this always needs evaluation. Other notable symptoms include unusual vaginal discharge and any signs of fever, back or side pain, or blood in the urine. Symptoms that do not improve with over-the-counter moisturizers and lubricants should also be discussed with your provider. Remember, GSM often goes undiagnosed or untreated despite there being a variety of treatment options that can make you feel more comfortable. You know your body best and if something feels off—and if you are experiencing these symptoms—we would like to empower you to speak with your providers.</p>
+        <p><strong>Sources:</strong></p>
+        <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
+          <li><a href="https://www.mayoclinic.org/diseases-conditions/vaginal-atrophy/symptoms-causes/syc-20352288" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Mayo Clinic – Vaginal atrophy</a></li>
+          <li><a href="https://www.auanet.org/guidelines-and-quality/guidelines/genitourinary-syndrome-of-menopause" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>American Urological Association – Genitourinary Syndrome of Menopause</a></li>
+          <li><a href="https://my.clevelandclinic.org/health/diseases/15500-vaginal-atrophy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Cleveland Clinic – Vaginal atrophy</a></li>
+        </ul>
+      </>
+    ),
+  },
 ];
 
 /** Return articles relevant to quiz answers (for recommendations page). */
@@ -918,7 +966,7 @@ function FeaturedRead({ onOpen }) {
         <small className="ay-lib-feature__kicker"><span className="sr-only">New. </span>Featured read · {sectionOf(art.id)?.label}</small>
         <strong className="ay-lib-feature__title">{lead}{rest && <> <em>{rest}</em></>}</strong>
         <span className="ay-lib-feature__teaser">{art.teaser}</span>
-        <span className="ay-lib-feature__by">By {FEATURED_READ.by} · Reviewed by {FEATURED_READ.reviewedBy} · {minutesFor(art)} min read</span>
+        <span className="ay-lib-feature__by">By {FEATURED_READ.by} · {minutesFor(art)} min read<span style={{ display: 'block', marginTop: 4 }}>Reviewed by {FEATURED_READ.reviewedBy}</span></span>
         <span className="ay-lib-feature__cta">Read it <span aria-hidden="true">→</span></span>
       </span>
     </a>
@@ -989,7 +1037,7 @@ const ARTICLE_CATEGORIES = [
   { id: 'menstrual', label: 'Menstrual Health', articleIds: ['heavy-bleeding', 'period-pain-when-to-seek-care', 'fibroids', 'iron-deficiency-anemia'] },
   { id: 'hormonal', label: 'Hormonal Health', articleIds: ['pcos-basics', 'menopause-basics', 'pmdd', 'hormonal-birth-control'] },
   { id: 'chronic', label: 'Chronic & Pelvic Conditions', articleIds: ['endometriosis-basics', 'pelvic-floor-dysfunction', 'ovarian-cysts'] },
-  { id: 'vaginal-urinary', label: 'Vaginal & Urinary Health', articleIds: ['intimate-wash', 'uti-prevention', 'yeast-infection-basics', 'bacterial-vaginosis'] },
+  { id: 'vaginal-urinary', label: 'Vaginal & Urinary Health', articleIds: ['intimate-wash', 'uti-prevention', 'yeast-infection-basics', 'bacterial-vaginosis', 'genitourinary-syndrome-of-menopause'] },
 
   { id: 'postpartum', label: 'Pregnancy & Postpartum', articleIds: ['postpartum-stretch-marks'] },
 ];
