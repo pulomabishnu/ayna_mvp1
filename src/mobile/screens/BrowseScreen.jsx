@@ -16,6 +16,10 @@ import { trackApp } from '../utils/appAnalytics.js';
 import { stableShopOrder, rankShopForProfile } from '../utils/shopOrder.js';
 import { hasQuizAnswers } from '../utils/personalReads.js';
 import { useSheetDrag } from '../hooks/useSheetDrag.js';
+import usePersistentState from '../../hooks/usePersistentState.js';
+import { NeedStickers } from '../../components/shop/ShopBits.jsx';
+import { FAMILIAR_PHRASES } from '../../components/shop/shopNeeds.js';
+import { Ribbon } from '../../components/personality/Bits.jsx';
 
 
 const FILTER_FIELDS = [
@@ -101,7 +105,7 @@ function PixelateGrid({ count = 6 }) {
 // visibleCount naturally, instead of needing a manual reset that either
 // calls setState in an effect body or reads/writes a ref during render
 // (both flagged by this project's react-hooks lint rules).
-function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = null, onOpenWhyMatch, onStartQuiz, showOnboarding = false, savedProducts = {}, onToggleSaved, matchOpts }) {
+function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = null, onOpenWhyMatch, onStartQuiz, showOnboarding = false, savedProducts = {}, onToggleSaved, matchOpts, onPickPhrase = null }) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [loadingMore, setLoadingMore] = useState(false);
   const sentinelRef = useRef(null);
@@ -142,6 +146,7 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = n
           <Fragment key={p.id}>
             <ProductCard product={p} variant={layout} onClick={() => onOpenProduct && onOpenProduct(p)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} isSaved={!!savedProducts[p.id]} onToggleSaved={onToggleSaved} matchOpts={matchOpts} />
             {showOnboarding && index === Math.min(3, visibleProducts.length - 1) && <section className="ayna-figma-discover-cta"><button type="button" onClick={onStartQuiz}>Get matched <span aria-hidden="true">→</span></button></section>}
+            {onPickPhrase && index === 7 && <div className="ay-app-ribbon"><Ribbon items={FAMILIAR_PHRASES} label="Searches people make" onPick={onPickPhrase} tab={<span className="ay-ribbon__tab is-label">Sound familiar?</span>} className="ay-ribbon--pink" /></div>}
           </Fragment>
         ))}
         {loadingMore && !isList && (
@@ -206,7 +211,8 @@ export default function BrowseScreen({
     if (onPersonalizedChange) onPersonalizedChange(next);
     else setPersonalizedLocal(next);
   };
-  const [activeGroup, setActiveGroup] = useState('all');
+  // Area, filters and sort survive a refresh (usePersistentState, localStorage).
+  const [activeGroup, setActiveGroup] = usePersistentState('app-shop:area', 'all');
   const [showFilters, setShowFilters] = useState(false);
   const [showDeck, setShowDeck] = useState(false);
   const filterButtonRef = useRef(null);
@@ -231,8 +237,10 @@ export default function BrowseScreen({
     window.addEventListener('keydown', handleFilterKeys);
     return () => window.removeEventListener('keydown', handleFilterKeys);
   }, [showFilters]);
-  const [filters, setFilters] = useState(EMPTY_FILTERS);
-  const [sortBy, setSortBy] = useState('default');
+  const [storedFilters, setFilters] = usePersistentState('app-shop:filters', EMPTY_FILTERS);
+  const filters = { ...EMPTY_FILTERS, ...(storedFilters || {}) };
+  const [sortBy, setSortBy] = usePersistentState('app-shop:sort', 'default');
+  const quick = [['Under $25', 'price', 'under-25'], ['FSA/HSA eligible', 'eligibility', 'fsa-hsa'], ['Fragrance free', 'preference', 'fragrance-free'], ['Clinician backed', 'ayna', 'clinician']];
   const cardLayout = 'grid';
   // AI fallback for a typed search the local catalog scoring found nothing
   // for, same /api/search-suggestions the desktop Discovery page falls
@@ -420,7 +428,11 @@ export default function BrowseScreen({
       <div className="ayna-fresh-browse-heading ayna-shop-heading">
         <div className="ay-shop-titlebar"><h1 id="ay-shop-title">Shop</h1>{hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}</div>
         <p className="ay-shop-note">Some links earn ayna a commission. It never changes your matches.</p>
+        <NeedStickers className="ay-app-needs" active={searchValue} onPick={(q) => setSearchValue(q)} />
         <SearchBar placeholder="Search products or brands" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }} onPick={(s) => setSearchValue(s.query)} />
+        <div className="ay-app-quick" role="group" aria-label="Quick filters">
+          {quick.map(([label, key, value]) => <button key={key} type="button" className="ayna-shop-category" aria-pressed={filters[key] === value} onClick={() => setFilters((cur) => ({ ...EMPTY_FILTERS, ...(cur || {}), [key]: (cur || {})[key] === value ? 'all' : value }))}>{label}</button>)}
+        </div>
       </div>
       {searchTermRaw.length >= 2 && <SearchAssist variant="app" query={searchTermRaw} resultCount={searchScored.length} onUse={setSearchValue} />}
 
@@ -478,7 +490,7 @@ export default function BrowseScreen({
                 </p>
               )}
               {filtered.length > 0 && moreResults.length > 0 && <h2 className="ay-shop-results-label">Your matches</h2>}
-              {filtered.length > 0 && <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />}
+              {filtered.length > 0 && <ProductGrid onPickPhrase={!searchTermRaw && activeFilterCount === 0 ? (q) => { setSearchValue(q); document.querySelector('.ayna-shop-heading')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); } : null} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />}
               {moreResults.length > 0 && <>
                 <h2 className="ay-shop-results-label">More results</h2>
                 <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`more-${filterKey}`} products={moreResults} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />

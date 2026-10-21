@@ -1,5 +1,8 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { Seal } from './personality/Bits.jsx';
+import { Seal, Ribbon } from './personality/Bits.jsx';
+import { NeedStickers, FolderTabs, KbdHint } from './shop/ShopBits.jsx';
+import { FAMILIAR_PHRASES, needStickers } from './shop/shopNeeds.js';
+import { sentenceCase } from '../utils/sentenceCase.js';
 // 60 cards per load on desktop; 20 on phones, so the Shop isn't 22 screens long.
 const PAGE_SIZE = typeof window !== 'undefined' && window.matchMedia?.('(max-width: 700px)').matches ? 20 : 60;
 import { createPortal } from 'react-dom';
@@ -30,7 +33,6 @@ import { enrichLlmProductForDiscovery } from '../utils/enrichLlmProductForDiscov
 import { resolveProductImage, isPlaceholderProductImage, safeProductImageSrc } from '../utils/resolveProductImage';
 import { ProductImageFallback } from './ProductTileImage';
 import ProductCard from './ProductCard';
-import { edgeFadeRef } from '../utils/edgeFade';
 import posthog from 'posthog-js';
 import GlossaryTerm from './GlossaryTerm';
 import { isPlainLeftClick } from '../utils/productRoute';
@@ -350,9 +352,13 @@ function applyColdStartFloor(rankedList, pageSize) {
 
 // 'Highest rated' is hidden until cards show ratings (S18).
 const PERSONALIZED_KEY = 'ayna_shop_personalized_v1';
-// Filters she set herself, kept in memory for this page load only: leaving the
-// Shop and coming back keeps them, Clear or a refresh empties them (Oct 16).
+// Filters she set herself. Leaving the Shop and coming back keeps them, and
+// (founder, Oct 21: every selection survives refresh) so does a refresh: they
+// are mirrored to localStorage per account. Clear empties them.
 const shopMemo = { uid: null, v: {} };
+const SHOP_MEMO_KEY = 'ayna_shop_filters_v1:';
+const readShopMemo = (uid) => { try { return JSON.parse(localStorage.getItem(SHOP_MEMO_KEY + (uid || 'guest')) || '{}') || {}; } catch { return {}; } };
+const writeShopMemo = (uid, v) => { try { localStorage.setItem(SHOP_MEMO_KEY + (uid || 'guest'), JSON.stringify(v)); } catch { /* storage blocked */ } };
 const LIVE_SEARCH_TIMEOUT_MS = 25000;
 const SORT_OPTIONS = [
     // Label is swapped to "Best match" only when it really sorts by match (see render).
@@ -506,7 +512,7 @@ function FilterSheet({ groups, personalizedToggle, resultCount, activeCount, onC
 export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null, onAsk = null, matchOpts: matchOptsProp = null }) {
     // Arriving with an intent (a category link, a search) starts fresh; plain "Shop" restores her own filters.
     const memoUid = user?.id || '';
-    if (shopMemo.uid !== memoUid) { shopMemo.uid = memoUid; shopMemo.v = {}; }
+    if (shopMemo.uid !== memoUid) { shopMemo.uid = memoUid; shopMemo.v = readShopMemo(memoUid); }
     const arrivedWithIntent = Boolean(initialSearch || initialCategory || initialMacroGroup || initialPadFlow || initialPadPreference || initialPadUseCase || initialSymptom);
     const memo = (key, fallback) => (!arrivedWithIntent && shopMemo.v[key] !== undefined ? shopMemo.v[key] : fallback);
 
@@ -570,6 +576,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [symptomFilter] = useState(initialSymptom || 'all');
     useEffect(() => {
         shopMemo.v = { macroGroup, categoryFilter, typeFilter, sortBy, priceFilter, ratingFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, padFlowFilter, padPreferenceFilter, padUseCaseFilter };
+        writeShopMemo(shopMemo.uid, shopMemo.v);
     }, [macroGroup, categoryFilter, typeFilter, sortBy, priceFilter, ratingFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, padFlowFilter, padPreferenceFilter, padUseCaseFilter]);
     const [aiSuggestions, setAiSuggestions] = useState([]);
     const [, setAiQuerySummary] = useState('');
@@ -1500,6 +1507,21 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         runAiSearch(qFixed, searchCategory, symptomFilter);
     };
 
+    const [searchFocused, setSearchFocused] = useState(false);
+    // Quick filters beside the search (the same values as the Filters sheet).
+    const quickFilters = [
+        ['Under $25', 'under-25', priceFilter, setPriceFilter],
+        ['FSA/HSA eligible', 'fsa-hsa', eligibilityFilter, setEligibilityFilter],
+        ...(preferenceOptions.some((o) => o.value === 'fragrance-free') ? [['Fragrance-free', 'fragrance-free', preferenceFilter, setPreferenceFilter]] : []),
+        ['Clinician backed', 'clinician', aynaFilter, setAynaFilter],
+    ];
+    // The selected folder tab shows one real product from that area peeking out (one we host).
+    const folderPhoto = (id) => {
+        if (id === 'all') return needStickers()[0]?.image || '';
+        const p = combined.find((it) => String(it.image || '').startsWith('/') && !it.hidden && !isTeenProduct(it) && itemMatchesMacroGroup(it, id));
+        return p?.image || '';
+    };
+
     const handleSmartSearch = (e) => {
         e.preventDefault();
         runSearch(searchQuery);
@@ -1573,9 +1595,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         Some links earn ayna a commission. It never changes your matches.{' '}
                         <a href="/how-we-make-money" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); setCurrentView?.('how-we-make-money'); }}>How we make money</a>
                     </p>
+                    <NeedStickers className="ayshop__needs" active={submittedQuery} onPick={(q) => { setSearchQuery(q); runSearch(q); }} />
             </header>
 
-            <form onSubmit={handleSmartSearch} className="ayshop__search">
+            <div className="ayshop__find">
+            <form onSubmit={handleSmartSearch} className="ayshop__search" onFocus={() => setSearchFocused(true)} onBlur={() => setSearchFocused(false)}>
                 <SmartSearchInput
                     type="search"
                     suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 7 }}
@@ -1609,7 +1633,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     aria-label="Search products"
                 />
                 <svg className="ayshop__search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
+                <KbdHint hidden={searchFocused || Boolean(searchQuery)} />
             </form>
+            <div className="ayshop__quick" role="group" aria-label="Quick filters">
+                {quickFilters.map(([label, value, current, set]) => (
+                    <button key={label} type="button" className="ay-chip" aria-pressed={current === value} onClick={() => set(current === value ? 'all' : value)}>{label}</button>
+                ))}
+            </div>
+            </div>
             {submittedQuery && filtered.length > 0 && <SearchAssist query={submittedQuery} resultCount={filtered.length} showTries={false} onUse={(text) => runSearch(text)} />}
             {submittedQuery && categoryFilter !== 'all' && (
                 <div className="ayshop__inferred">
@@ -1618,34 +1649,24 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     </button>
                 </div>
             )}
-
-            <div className="ayshop__cats">
-            <button type="button" className="ayshop__arrow is-back" aria-label="Scroll categories back" onClick={(e) => e.currentTarget.parentElement.querySelector('.ayshop__chips')?.scrollBy({ left: -360, behavior: 'smooth' })}>←</button>
-            <div className="ay-chip-row ayshop__chips" role="group" aria-label="Product categories" ref={edgeFadeRef}>
-                {availableMacroGroups.map((group) => (
-                    <button
-                        key={group.id}
-                        type="button"
-                        className="ay-chip"
-                        aria-pressed={macroGroup === group.id && !(group.id === 'all' && submittedQuery)}
-                        onClick={() => {
-                            setMacroGroup(group.id);
-                            setCategoryFilter('all');
-                            setSubmittedQuery('');
-                            setSearchQuery('');
-                            setSearchSubmitted(false);
-                            setAiSuggestions([]);
-                            setAiRelatedSearches([]);
-                        }}
-                    >
-                        {group.label}
-                    </button>
-                ))}
-            </div>
-            <button type="button" className="ayshop__arrow is-next" aria-label="Scroll categories forward" onClick={(e) => e.currentTarget.parentElement.querySelector('.ayshop__chips')?.scrollBy({ left: 360, behavior: 'smooth' })}>→</button>
-            </div>
             </div>
 
+            <FolderTabs
+                tabs={availableMacroGroups.map((g) => ({ id: g.id, label: g.id === 'all' ? 'All' : sentenceCase(g.label) }))}
+                active={submittedQuery ? '' : macroGroup}
+                label="Shop areas"
+                panelId="ayshop-grid"
+                photoFor={folderPhoto}
+                onSelect={(id) => {
+                    setMacroGroup(id);
+                    setCategoryFilter('all');
+                    setSubmittedQuery('');
+                    setSearchQuery('');
+                    setSearchSubmitted(false);
+                    setAiSuggestions([]);
+                    setAiRelatedSearches([]);
+                }}
+            />
             <div className="ayshop__toolbar">
                 <div className="ayshop__toolbar-left">
                     <button type="button" className={`ay-btn ay-btn--secondary ayshop__filters${activeFilterCount ? ' is-active' : ''}${showFilters ? ' is-open' : ''}`} onClick={() => setShowFilters((v) => !v)} aria-expanded={showFilters}>
@@ -1744,7 +1765,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             {/* Product Grid */}
             {(!searchSubmitted || !aiLoading || gridItems.length > 0) && (
             <>
-            <div className={`ay-product-grid ayshop__grid${gridSettled ? ' is-settled' : ''}`}>
+            <div id="ayshop-grid" role="tabpanel" aria-label={submittedQuery ? `Results for ${submittedQuery}` : (availableMacroGroups.find((g) => g.id === macroGroup)?.label || 'All products')} className={`ay-product-grid ayshop__grid${gridSettled ? ' is-settled' : ''}`}>
                 {gridItems.slice(0, visibleCount).map((item, idx) => {
                     // A defined (even empty-string) resolvedImages[item.id] came back
                     // from the server's type-aware /api/product-image resolution
@@ -1767,6 +1788,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const isInEcosystem = !!myProducts[item.id];
                     return (
                         <React.Fragment key={item.id}>
+                        {idx === 8 && !submittedQuery && activeFilterCount === 0 && (
+                            <div className="ayshop__ribbon">
+                                <Ribbon items={FAMILIAR_PHRASES} label="Searches people make" onPick={(q) => { setSearchQuery(q); runSearch(q); window.scrollTo({ top: 0, behavior: 'smooth' }); }} tab={<span className="ay-ribbon__tab is-label">Does this sound familiar?</span>} className="ay-ribbon--pink" />
+                            </div>
+                        )}
                         {idx === firstWebIndex && (
                             <div className="ayshop__divider" role="separator">
                                 <strong>From around the web</strong>

@@ -52,7 +52,7 @@ export function LineIcon({ icon = 'spark' }) {
 
 /* The one marquee ribbon on a page. `tab` is an optional fixed label
  * (a link) on the left; `items` are real names or a short phrase. */
-export function Ribbon({ items, tab = null, label, className = '' }) {
+export function Ribbon({ items, tab = null, label, className = '', onPick = null }) {
   // The page's one moving row. It stops while offscreen (and on hover, focus,
   // the footer's Pause motion and reduced motion, in ayna-system.css).
   const ref = useRef(null);
@@ -64,9 +64,11 @@ export function Ribbon({ items, tab = null, label, className = '' }) {
     io.observe(el);
     return () => io.disconnect();
   }, []);
+  // With onPick each phrase is a button (the copy that loops is hidden from
+  // screen readers and the tab order).
   const row = (hidden) => (
     <ul aria-hidden={hidden || undefined} aria-label={hidden ? undefined : label}>
-      {items.map((t, i) => <li key={`${t}-${i}`}>{t}</li>)}
+      {items.map((t, i) => <li key={`${t}-${i}`}>{onPick ? <button type="button" className="ay-ribbon__pick" tabIndex={hidden ? -1 : undefined} onClick={() => onPick(t)}>{t}</button> : t}</li>)}
     </ul>
   );
   return (

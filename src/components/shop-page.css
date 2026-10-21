@@ -4,7 +4,7 @@
    Shared pieces (chips, buttons, product card, grid) live in ayna-system.css. */
 
 html body .app-container.app-container.app-container .ayshop { padding: var(--ay-s32) 0 0; color: var(--ay-text); background: none !important; }
-html body .app-container.app-container.app-container .ayshop__top { display: grid; gap: var(--ay-s16); padding-bottom: var(--ay-s24); border-bottom: 1px solid var(--ay-hairline); }
+html body .app-container.app-container.app-container .ayshop__top { display: grid; gap: var(--ay-s16); padding-bottom: 0; }
 html body .app-container.app-container.app-container .ayshop__head { display: grid; gap: var(--ay-s8); }
 html body .app-container.app-container.app-container .ayshop__head h1 { margin: 0 !important; }
 html body .app-container.app-container.app-container .ayshop__note { margin: 0; max-width: 64ch; font: 400 15px/1.5 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; }
