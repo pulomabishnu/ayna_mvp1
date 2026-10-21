@@ -772,7 +772,7 @@
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-head-title { margin: 0 !important; font: 400 calc(28px * var(--ayna-text-scale, 1))/1.1 var(--f-display) !important; letter-spacing: 0 !important; color: var(--d-ink) !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-scroll { padding: 0 var(--d-gutter) 24px !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-group { margin: 24px 0 0 !important; animation: none !important; }
-.ayna-mobile:is(#ay,.ayna-mobile) .ay-set-group h2, .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-label { margin: 0 0 8px !important; padding: 0 4px !important; font: 600 calc(14px * var(--ayna-text-scale, 1))/1.2 var(--f-ui) !important; color: var(--d-ink-2) !important; letter-spacing: 0 !important; text-transform: none !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-set-group h2, .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-label { margin: 32px 0 8px !important; padding: 0 4px !important; font: 600 calc(14px * var(--ayna-text-scale, 1))/1.2 var(--f-ui) !important; color: var(--d-ink-2) !important; letter-spacing: 0 !important; text-transform: none !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-card { padding: 0 16px !important; border: 0 !important; border-radius: 20px !important; background: var(--d-group) !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-card .ay-set-row { gap: 12px !important; min-height: 52px !important; padding: 0 !important; border-top: 1px solid var(--d-hair) !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-card .ay-set-row:first-child { border-top: 0 !important; }
@@ -1030,3 +1030,6 @@
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-auth-consent-row { padding: 10px 0 !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-auth-consent-text { line-height: 1.4 !important; }
 
+
+/* Settings: the first group label sits 16px under the screen title. */
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-set-label:first-child, .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-group:first-child h2 { margin-top: 16px !important; }
