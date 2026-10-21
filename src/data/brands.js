@@ -8716,7 +8716,7 @@ export const BRAND_PRODUCTS = [
             'Not a treatment for a UTI, BV or yeast infection (per The Good Bug). See a clinician for burning, unusual discharge, odor or fever.',
             'Contains sugar alcohols (sorbitol, xylitol), which can loosen stools in some people.',
         ],
-        communityReview: "The Good Bug's product page shows 4.3 out of 5 stars from 1,629 reviews. The first reviews shown talk about glowing skin, stronger nails and PCOS symptoms rather than vaginal or urinary health, so the reviews may be pooled across the brand's products. These are reviews on the brand's own site; no independent review data was found at time of writing.",
+        communityReview: "The Good Bug's product page shows 4.3 out of 5 stars from 1,629 reviews. The first reviews shown talk about glowing skin, stronger nails and PMOS symptoms rather than vaginal or urinary health, so the reviews may be pooled across the brand's products. These are reviews on the brand's own site; no independent review data was found at time of writing.",
         effectiveness: 'No study of this product was found. Cranberry products probably lower repeat UTIs in women prone to them; D-mannose did not in a 598-woman trial. The probiotic strains are not named, so their effect is unknown.',
         ingredientScienceNote: "These studies tested cranberry and D-mannose on their own, not this product. The page doesn't give amounts, so it isn't known whether a stick matches the doses studied.",
         ingredientScience: [

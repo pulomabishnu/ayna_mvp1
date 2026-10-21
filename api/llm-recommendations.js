@@ -124,7 +124,7 @@ function selectedConcerns(intake = {}) {
   const hasConcern = (substr) => [...concerns].some(c => c.toLowerCase().includes(substr));
 
   // 2. Derive from conditions
-  if (conditions.some(c => c.includes('pcos')) && !hasConcern('pcos'))
+  if (conditions.some(c => c.includes('pcos') || c.includes('pmos')) && !hasConcern('pcos'))
     concerns.add('PCOS management (supplements, telehealth, apps)');
   if (conditions.some(c => c.includes('endometriosis')) && !hasConcern('endometriosis'))
     concerns.add('Endometriosis management (supplements, devices, telehealth)');
@@ -688,7 +688,7 @@ PERSONALIZATION:
 
 PRODUCT SPECIFICITY RULES, critical for quality:
 - The physical product tier MUST be a health/wellness product specifically designed for this concern. Do NOT use generic consumer items (water bottles, blankets, heating pads for non-cramp concerns) or period collection products (pads, cups, tampons, period underwear) for any concern other than Period Care.
-- The telehealth/app tier MUST use the catalog platform most relevant to this specific concern (e.g. a PCOS-specific service only for PCOS). If no catalog telehealth/app fits, omit that tier.
+- The telehealth/app tier MUST use the catalog platform most relevant to this specific concern (e.g. a PMOS-specific service only for PMOS). If no catalog telehealth/app fits, omit that tier.
 - Do not recommend generic hydration (water bottles) or lifestyle items as health products. Every product must be a purpose-built health, wellness, or medical product.
 
 TASK: Generate recommendations for this ONE concern only: "${concern}"${concernFollowup ? `\nUser context: ${JSON.stringify(concernFollowup)}` : ''}

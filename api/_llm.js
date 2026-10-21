@@ -303,8 +303,21 @@ async function callGeminiUntraced({
  * rendered prompt, and `formatOutput(text)` to turn a JSON reply into the text
  * the user actually sees (the raw reply is kept in metadata); it is stripped before the provider request is built.
  */
+/**
+ * PCOS is now PMOS (Ameera, Oct 20 2026; The Lancet, May 2026). Every model
+ * call is told the new name for anything a person reads. Ids, tags, JSON keys
+ * and URLs stay exactly as given ("pcos" is still an internal id). The page
+ * text net (src/utils/noEmDashDom.js) and SMS replies rename any slip.
+ */
+export const PMOS_NAMING_NOTE = 'Naming: PCOS (polycystic ovary syndrome) was renamed PMOS (polyendocrine metabolic ovarian syndrome) in 2026. In any text a person will read, call it PMOS, never PCOS. Keep ids, tags, JSON keys, product names in quotes and URLs exactly as given.';
+export function withNamingNote(system) {
+  if (typeof system !== 'string' || !system.trim()) return PMOS_NAMING_NOTE;
+  return system.includes(PMOS_NAMING_NOTE) ? system : `${system}\n\n${PMOS_NAMING_NOTE}`;
+}
+
 function withPrismTrace(provider, fn, defaultModel) {
-  return async function traced({ trace, ...args } = {}) {
+  return async function traced({ trace, ...rawArgs } = {}) {
+    const args = { ...rawArgs, system: withNamingNote(rawArgs.system) };
     const started = Date.now();
     const base = {
       name: trace?.name,
@@ -312,7 +325,8 @@ function withPrismTrace(provider, fn, defaultModel) {
       messages: trace?.messages,
       provider,
       model: args.model || defaultModel(),
-      system: args.system,
+      // The route's own prompt (the naming note is appended to every call).
+      system: rawArgs.system,
       // trace.redact: health content (e.g. a screenshot of someone's health
       // app) must not be copied to the tracing service. The call is still
       // traced (route, model, latency, outcome), without the content.

@@ -144,7 +144,7 @@ export default function PhoneVerification({ userSession, onVerified, onCancel })
           <>
             <h2 className="ay-info__h3">You're all set</h2>
             {AYNA_SMS_NUMBER && <p className="ay-info-sms-number">{AYNA_SMS_NUMBER}</p>}
-            <p className="ay-info__body">Try texting: "what helps with PCOS bloating"</p>
+            <p className="ay-info__body">Try texting: "what helps with PMOS bloating"</p>
             <button type="button" className="ay-info-btn" onClick={onCancel}>Done</button>
           </>
         )}

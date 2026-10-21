@@ -9,9 +9,13 @@ import {
 } from '../data/knowledge/menstrualHealthKnowledge.js';
 
 // Score a knowledge document against a query using keyword overlap + topic boost
+// PCOS is now PMOS (Oct 20): saved answers may still say PCOS while the
+// knowledge text says PMOS, so both sides use one spelling before matching.
+const sameCondition = (t) => t.replace(/\bpcos\b/g, 'pmos').replace(/polycystic ovar(?:y|ian) syndrome/g, 'polyendocrine metabolic ovarian syndrome');
+
 function scoreDocument(query, docText) {
-  const q = query.toLowerCase();
-  const d = docText.toLowerCase();
+  const q = sameCondition(query.toLowerCase());
+  const d = sameCondition(docText.toLowerCase());
   const qWords = q.split(/\s+/).filter((w) => w.length > 3);
   let score = 0;
   for (const word of qWords) {

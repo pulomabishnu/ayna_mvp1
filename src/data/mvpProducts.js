@@ -185,16 +185,16 @@ export const MVP_PHYSICAL = [
     incentivizedReviewSites: [{ site: 'Amazon', source: 'RateBud analysis' }],
     whereToBuy: ['Amazon', 'WholesomeStory.com'],
     image: 'https://cdn.shopify.com/s/files/1/0412/0094/3266/files/Inositol_Front_Panel_V.A_Rev_1_3_25.png?v=1742858533',
-    summary: '40:1 ratio of myo-inositol and D-chiro-inositol. People use inositol for PCOS, but clinical benefits are uncertain. The 2023 international PCOS guideline considers inositol experimental for infertility.',
+    summary: '40:1 ratio of myo-inositol and D-chiro-inositol. People use inositol for PMOS, but clinical benefits are uncertain. The 2023 international guideline considers inositol experimental for infertility.',
     safety: { fdaStatus: 'Dietary supplement', materials: 'Inositols', recalls: 'No recalls.', allergens: 'Vegan', opinionAlerts: 'Generally positive reception on Reddit r/PCOS for cycle regularity.', sideEffects: 'Generally well tolerated at typical doses. Occasional mild nausea, gas, or headache reported, especially when starting.' },
     clinicianOpinionSource: 'independent',
     clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-    doctorOpinion: 'The international PCOS guideline says benefits are limited or uncertain and recommends discussing complementary therapies with a healthcare professional.',
+    doctorOpinion: 'The international guideline says benefits are limited or uncertain and recommends discussing complementary therapies with a healthcare professional.',
     communityReview: 'Community discussions on Reddit r/PCOS note cycle regularization after several months of use.',
     ingredients: 'Myo-inositol, D-chiro inositol.',
-    effectiveness: 'Evidence for specific clinical outcomes in PCOS is limited and uncertain; do not rely on it as fertility treatment.',
-    badges: ['PCOS Focus'],
-    verificationLinks: { doctor: { links: [] }, scientific: { links: [{ url: 'https://academic.oup.com/jcem/article/108/10/2447/7242360', text: '2023 international PCOS guideline', summary: 'Guideline recommendations for inositol and other complementary therapies.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PCOS/search/?q=inositol&restrict_sr=1', text: 'Reddit r/PCOS: inositol', summary: 'Community discussions on inositol for PCOS.' }] } }
+    effectiveness: 'Evidence for specific clinical outcomes in PMOS is limited and uncertain; do not rely on it as fertility treatment.',
+    badges: ['PMOS Focus'],
+    verificationLinks: { doctor: { links: [] }, scientific: { links: [{ url: 'https://academic.oup.com/jcem/article/108/10/2447/7242360', text: '2023 international guideline', summary: 'Guideline recommendations for inositol and other complementary therapies.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PCOS/search/?q=inositol&restrict_sr=1', text: 'Reddit r/PCOS: inositol', summary: 'Community discussions on inositol for PMOS.' }] } }
   },
   {
     id: 'p-spearmint-pcos',
@@ -210,16 +210,16 @@ export const MVP_PHYSICAL = [
     userRating: 4.2,
     whereToBuy: ['Amazon', 'Whole Foods', 'iHerb'],
     image: 'https://cdn.shopify.com/s/files/1/0506/7037/0997/files/Spearmint-CAN-FF-eng-P103350-01_2.png?v=1775664934',
-    summary: 'Caffeine-free spearmint tea. A small short-term study in PCOS found changes in androgen levels; clinical benefit has not been established.',
+    summary: 'Caffeine-free spearmint tea. A small short-term study in PMOS found changes in androgen levels; clinical benefit has not been established.',
     safety: { fdaStatus: 'Dietary supplement / food', materials: 'Spearmint', recalls: 'No recalls.', allergens: 'Mint family', sideEffects: 'Generally safe as a tea. Some people notice mild stomach upset. Spearmint may reduce milk supply. Best avoided while breastfeeding or trying to conceive without a clinician\'s guidance.' },
     clinicianOpinionSource: 'independent',
     clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-    doctorOpinion: 'Evidence for spearmint tea as a PCOS treatment is preliminary. Discuss persistent symptoms with a clinician.',
+    doctorOpinion: 'Evidence for spearmint tea as a PMOS treatment is preliminary. Discuss persistent symptoms with a clinician.',
     communityReview: 'Community discussions on Reddit r/PCOS note improvement in acne and hair growth with daily use.',
     ingredients: 'Spearmint leaf.',
     effectiveness: 'A small 30-day study measured androgen changes; it did not establish lasting symptom improvement.',
-    badges: ['PCOS Interest'],
-    verificationLinks: { doctor: { links: [] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/19585478/', text: 'Spearmint and androgens', summary: 'Study on spearmint tea and testosterone in PCOS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PCOS/search/?q=spearmint&restrict_sr=1', text: 'Reddit r/PCOS: spearmint', summary: 'Community discussions on spearmint for PCOS.' }] } }
+    badges: ['PMOS Interest'],
+    verificationLinks: { doctor: { links: [] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/19585478/', text: 'Spearmint and androgens', summary: 'Study on spearmint tea and testosterone in PMOS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PCOS/search/?q=spearmint&restrict_sr=1', text: 'Reddit r/PCOS: spearmint', summary: 'Community discussions on spearmint for PMOS.' }] } }
   },
   // ─── ENDOMETRIOSIS ───────────────────────────────────────
   {

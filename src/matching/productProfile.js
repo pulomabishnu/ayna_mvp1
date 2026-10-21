@@ -233,9 +233,9 @@ export const RELEVANCE_RULES = [
     when: (f) => f.cat === 'supplement' && (f.has('fertility') || f.fn('fertility')), set: { 'fertility.support': SECONDARY, 'fertility.ttc': SECONDARY } },
 
   // ── Hormonal conditions ────────────────────────────────────────────────
-  { id: 'pcos_tagged', why: 'Catalog marks this for PCOS.',
+  { id: 'pcos_tagged', why: 'Catalog marks this for PMOS.',
     when: (f) => f.has('pcos'), set: (f) => ({ 'condition_support.pcos': f.n(/inositol/) ? STRONG : SECONDARY, 'hormonal.general': WEAK }) },
-  { id: 'pcos_mentioned', why: 'Mentions PCOS without being made for it.',
+  { id: 'pcos_mentioned', why: 'Mentions PMOS without being made for it.',
     when: (f) => !f.has('pcos') && f.tc(/\bpcos\b/), set: { 'condition_support.pcos': ADJACENT } },
   { id: 'androgen_mention', why: 'Mentions androgen or excess hair research.',
     when: (f) => f.tc(/androgen|hirsut/), set: { 'hair.excess': ADJACENT } },

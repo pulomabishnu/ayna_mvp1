@@ -767,7 +767,7 @@ const R = {
   },
 
   'd-ovia': {
-    ...head('in_review', 'none_found', 'Checked App Store listing (Ovia Health by Labcorp; seller Ovuline, Inc.). Free; premium tools (coaching, birth control tracking, endometriosis, PCOS programs) through an employer or health plan. App Store label: location, identifiers, usage data and diagnostics used to track you; health, financial and sensitive info linked to you. Ovia privacy policy not reviewed. Not a medical device. No regulator action found.', SAFETY_DUE),
+    ...head('in_review', 'none_found', 'Checked App Store listing (Ovia Health by Labcorp; seller Ovuline, Inc.). Free; premium tools (coaching, birth control tracking, endometriosis, PMOS programs) through an employer or health plan. App Store label: location, identifiers, usage data and diagnostics used to track you; health, financial and sensitive info linked to you. Ovia privacy policy not reviewed. Not a medical device. No regulator action found.', SAFETY_DUE),
     facts: {
       'identity.brand': f('Ovia Health by Labcorp (Ovuline, Inc.)', 'App Store listing', 'https://apps.apple.com/app/570244389'),
       'identity.purchase_url': f('https://apps.apple.com/app/570244389', 'App Store listing', 'https://apps.apple.com/app/570244389'),

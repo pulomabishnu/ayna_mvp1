@@ -13,7 +13,7 @@ import { apiUrl } from './apiUrl.js';
 
 const HEALTH_ANALYTICS_TERMS = [
   'period', 'menstrual', 'bleeding', 'cramp', 'pelvic', 'vagina', 'vaginal', 'vulva', 'discharge', 'odor',
-  'itching', 'uti', 'urinary', 'yeast infection', 'bacterial vaginosis', 'pcos', 'polycystic', 'endometriosis',
+  'itching', 'uti', 'urinary', 'yeast infection', 'bacterial vaginosis', 'pcos', 'pmos', 'polycystic', 'polyendocrine', 'endometriosis',
   'fibroid', 'ovarian cyst', 'pmdd', 'pms', 'menopause', 'perimenopause', 'fertility', 'infertility', 'pregnan',
   'postpartum', 'birth control', 'contraception', 'hormone', 'sexual health', 'painful sex', 'vaginismus',
   'vulvodynia', 'iron deficiency', 'anemia', 'reproductive', 'cycle', 'hot flash', 'night sweat',

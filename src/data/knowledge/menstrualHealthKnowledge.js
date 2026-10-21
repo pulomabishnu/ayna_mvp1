@@ -15,7 +15,7 @@ export const CLINICAL_KNOWLEDGE = [
     topic: 'heavy menstrual bleeding',
     conditions: ['fibroids', 'adenomyosis', 'PCOS'],
     concerns: ['Period care', 'Cramp and pain relief'],
-    content: 'Heavy menstrual bleeding (HMB) is defined by ACOG as soaking a pad or tampon every hour for several consecutive hours, passing clots larger than a quarter, or bleeding lasting more than 7 days. HMB can indicate fibroids, adenomyosis, PCOS, or coagulopathy. Iron deficiency anemia is a common consequence. ACOG recommends evaluation for HMB, especially if it impacts quality of life.',
+    content: 'Heavy menstrual bleeding (HMB) is defined by ACOG as soaking a pad or tampon every hour for several consecutive hours, passing clots larger than a quarter, or bleeding lasting more than 7 days. HMB can indicate fibroids, adenomyosis, PMOS, or coagulopathy. Iron deficiency anemia is a common consequence. ACOG recommends evaluation for HMB, especially if it impacts quality of life.',
   },
   {
     topic: 'period products safety organic',
@@ -50,28 +50,28 @@ export const CLINICAL_KNOWLEDGE = [
   },
   // -- PCOS -----------------------------------------------------------------
   {
-    topic: 'PCOS polycystic ovary syndrome management',
+    topic: 'PMOS polyendocrine metabolic ovarian syndrome management',
     conditions: ['PCOS'],
-    concerns: ['PCOS management', 'Hormone balance', 'Skin and hair'],
-    content: 'PCOS is the most common hormonal disorder in reproductive-age women, affecting 8-13% per ACOG. Diagnostic criteria (Rotterdam) require 2 of 3: irregular ovulation, clinical/biochemical hyperandrogenism, polycystic ovaries on ultrasound. ACOG first-line management is lifestyle: low-glycemic diet, regular aerobic exercise, weight management if applicable. Hormonal contraceptives for menstrual regulation and androgen-related symptoms. Metformin for insulin resistance. Annual metabolic screening recommended.',
+    concerns: ['PMOS management', 'Hormone balance', 'Skin and hair'],
+    content: 'PMOS is the most common hormonal disorder in reproductive-age women, affecting 8-13% per ACOG. Diagnostic criteria (Rotterdam) require 2 of 3: irregular ovulation, clinical/biochemical hyperandrogenism, polycystic ovaries on ultrasound. ACOG first-line management is lifestyle: low-glycemic diet, regular aerobic exercise, weight management if applicable. Hormonal contraceptives for menstrual regulation and androgen-related symptoms. Metformin for insulin resistance. Annual metabolic screening recommended.',
   },
   {
-    topic: 'PCOS supplements inositol',
+    topic: 'PMOS supplements inositol',
     conditions: ['PCOS'],
-    concerns: ['PCOS management', 'Hormone balance', 'Fertility and conception'],
-    content: 'Myo-inositol and d-chiro-inositol (in a 40:1 ratio) have the most robust evidence among supplements for PCOS. Multiple RCTs show improvements in insulin sensitivity, menstrual regularity, and ovulation rates. NIH ODS recognizes inositol as metabolically active in insulin signaling. Typical dose: 4g myo-inositol + 100mg d-chiro-inositol daily. Ovasitol is a well-studied branded combination. Consistent with ACOG guidance on insulin sensitization in PCOS.',
+    concerns: ['PMOS management', 'Hormone balance', 'Fertility and conception'],
+    content: 'Myo-inositol and d-chiro-inositol (in a 40:1 ratio) have the most robust evidence among supplements for PMOS. Multiple RCTs show improvements in insulin sensitivity, menstrual regularity, and ovulation rates. NIH ODS recognizes inositol as metabolically active in insulin signaling. Typical dose: 4g myo-inositol + 100mg d-chiro-inositol daily. Ovasitol is a well-studied branded combination. Consistent with ACOG guidance on insulin sensitization in PMOS.',
   },
   {
-    topic: 'PCOS spearmint hormonal acne',
+    topic: 'PMOS spearmint hormonal acne',
     conditions: ['PCOS'],
-    concerns: ['PCOS management', 'Skin and hair', 'Hormone balance'],
-    content: 'Spearmint tea has small RCT evidence showing reduction in free testosterone in women with PCOS-related hirsutism. Two cups daily studied in trials. Not a replacement for clinical treatment but a commonly used adjunct. NIH ODS notes limited but promising evidence. Consistent with ACOG acknowledgment of complementary approaches in PCOS management.',
+    concerns: ['PMOS management', 'Skin and hair', 'Hormone balance'],
+    content: 'Spearmint tea has small RCT evidence showing reduction in free testosterone in women with PMOS-related hirsutism. Two cups daily studied in trials. Not a replacement for clinical treatment but a commonly used adjunct. NIH ODS notes limited but promising evidence. Consistent with ACOG acknowledgment of complementary approaches in PMOS management.',
   },
   {
-    topic: 'PCOS endocrine disruptors ingredients to avoid',
+    topic: 'PMOS endocrine disruptors ingredients to avoid',
     conditions: ['PCOS'],
-    concerns: ['PCOS management', 'Period care', 'Skin and hair'],
-    content: 'People with PCOS should be cautious about endocrine-disrupting chemicals (EDCs) in personal care and period products. Key EDCs to avoid: BPA (plastics, some applicators), phthalates (fragrances), parabens (preservatives in cosmetics), and synthetic fragrances (complex mixtures of potential EDCs). Choose fragrance-free, BPA-free, paraben-free products. Organic period products reduce exposure to dioxins and pesticide residues.',
+    concerns: ['PMOS management', 'Period care', 'Skin and hair'],
+    content: 'People with PMOS should be cautious about endocrine-disrupting chemicals (EDCs) in personal care and period products. Key EDCs to avoid: BPA (plastics, some applicators), phthalates (fragrances), parabens (preservatives in cosmetics), and synthetic fragrances (complex mixtures of potential EDCs). Choose fragrance-free, BPA-free, paraben-free products. Organic period products reduce exposure to dioxins and pesticide residues.',
   },
   // -- ENDOMETRIOSIS --------------------------------------------------------
   {
@@ -123,13 +123,13 @@ export const CLINICAL_KNOWLEDGE = [
     topic: 'fertility conception supplements tracking',
     conditions: [],
     concerns: ['Fertility and conception'],
-    content: 'ACOG recommends preconception care including 400-800mcg folic acid daily (ideally 3 months before conception), maintaining healthy weight, and avoiding alcohol and smoking. Cycle tracking to identify fertile window (5 days before + day of ovulation) maximizes conception chances. BBT, LH surge tests, and cervical mucus monitoring are all validated methods. ACOG recommends evaluation after 12 months trying (6 months if over 35, immediately if known conditions like PCOS or endometriosis).',
+    content: 'ACOG recommends preconception care including 400-800mcg folic acid daily (ideally 3 months before conception), maintaining healthy weight, and avoiding alcohol and smoking. Cycle tracking to identify fertile window (5 days before + day of ovulation) maximizes conception chances. BBT, LH surge tests, and cervical mucus monitoring are all validated methods. ACOG recommends evaluation after 12 months trying (6 months if over 35, immediately if known conditions like PMOS or endometriosis).',
   },
   {
     topic: 'prenatal supplements TTC trying to conceive',
     conditions: [],
     concerns: ['Fertility and conception'],
-    content: 'When trying to conceive, NIH recommends starting prenatal vitamins before conception. Key nutrients: folate/folic acid (400-800mcg), iron (27mg), DHA (200mg), iodine (150mcg), vitamin D (600 IU). Choose methylfolate if you have MTHFR gene variants. Avoid supplements with high-dose vitamin A (retinol form), which is teratogenic. Myo-inositol supports ovulation in PCOS. Coenzyme Q10 has emerging evidence for egg quality in women over 35.',
+    content: 'When trying to conceive, NIH recommends starting prenatal vitamins before conception. Key nutrients: folate/folic acid (400-800mcg), iron (27mg), DHA (200mg), iodine (150mcg), vitamin D (600 IU). Choose methylfolate if you have MTHFR gene variants. Avoid supplements with high-dose vitamin A (retinol form), which is teratogenic. Myo-inositol supports ovulation in PMOS. Coenzyme Q10 has emerging evidence for egg quality in women over 35.',
   },
   // -- MENTAL HEALTH AND MOOD ------------------------------------------------
   {
@@ -150,20 +150,20 @@ export const CLINICAL_KNOWLEDGE = [
     topic: 'ingredient safety fragrance parabens BPA endocrine disruptors',
     conditions: ['endometriosis', 'PCOS'],
     concerns: ['Period care', 'Skin and hair', 'Hormone balance'],
-    content: 'Key ingredients to flag for hormone-sensitive conditions: (1) Synthetic fragrance - complex mixtures containing potential EDCs including phthalates; (2) Parabens (methylparaben, propylparaben) - preservatives with weak estrogenic activity; (3) BPA - found in some plastic applicators and packaging, disrupts estrogen signaling; (4) Dioxins - byproducts of chlorine bleaching in conventional cotton, accumulate in fatty tissue; (5) Oxybenzone in sunscreens - potential EDC. People with PCOS or endometriosis are often advised to minimize these exposures.',
+    content: 'Key ingredients to flag for hormone-sensitive conditions: (1) Synthetic fragrance - complex mixtures containing potential EDCs including phthalates; (2) Parabens (methylparaben, propylparaben) - preservatives with weak estrogenic activity; (3) BPA - found in some plastic applicators and packaging, disrupts estrogen signaling; (4) Dioxins - byproducts of chlorine bleaching in conventional cotton, accumulate in fatty tissue; (5) Oxybenzone in sunscreens - potential EDC. People with PMOS or endometriosis are often advised to minimize these exposures.',
   },
   {
     topic: 'supplement ingredient interactions safety',
     conditions: [],
-    concerns: ['PCOS management', 'Cramp and pain relief', 'Hormone balance', 'Fertility and conception'],
+    concerns: ['PMOS management', 'Cramp and pain relief', 'Hormone balance', 'Fertility and conception'],
     content: "Key supplement safety considerations: (1) High-dose vitamin A (retinol) is teratogenic - avoid in pregnancy; (2) St. John's Wort reduces efficacy of hormonal contraceptives; (3) High-dose vitamin E and fish oil increase bleeding risk, especially before surgery; (4) Iron supplements should be taken with vitamin C for absorption, not with calcium; (5) Vitex (chasteberry) may interfere with hormonal contraceptives and dopaminergic medications; (6) Always disclose supplements to your clinician, especially if trying to conceive or on medication.",
   },
   // -- SKIN AND HAIR ---------------------------------------------------------
   {
-    topic: 'hormonal acne skin hair PCOS cycle',
+    topic: 'hormonal acne skin hair PMOS cycle',
     conditions: ['PCOS'],
-    concerns: ['Skin and hair', 'PCOS management'],
-    content: 'Hormonal acne is driven by androgens stimulating sebum production. In PCOS, elevated androgens cause acne along the jawline/chin, hirsutism, and scalp hair thinning. ACOG-recognized treatments: combined oral contraceptives (reduce androgens), spironolactone (androgen blocker), and topical retinoids. Zinc supplements (30mg/day) have evidence for inflammatory acne. Spearmint has small evidence for reducing free testosterone. Avoid comedogenic ingredients (heavy oils, silicones) and sulfates that strip skin barrier.',
+    concerns: ['Skin and hair', 'PMOS management'],
+    content: 'Hormonal acne is driven by androgens stimulating sebum production. In PMOS, elevated androgens cause acne along the jawline/chin, hirsutism, and scalp hair thinning. ACOG-recognized treatments: combined oral contraceptives (reduce androgens), spironolactone (androgen blocker), and topical retinoids. Zinc supplements (30mg/day) have evidence for inflammatory acne. Spearmint has small evidence for reducing free testosterone. Avoid comedogenic ingredients (heavy oils, silicones) and sulfates that strip skin barrier.',
   },
 ];
 

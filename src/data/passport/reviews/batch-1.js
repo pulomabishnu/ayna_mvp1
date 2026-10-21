@@ -257,7 +257,7 @@ const R = {
     },
   },
   'p-inositol-wholesome': {
-    ...head('needs_clinician_review', 'none_found', 'Checked Vitacost listing (label text) and the 2023 PCOS guideline meta-analysis on inositol. Variant: Myo & D-Chiro Inositol 120 vegetarian capsules (30 servings of 4). Not the "with MTHF folate + D3" version. Catalog $25 vs Vitacost $27.95. No recall found. PCOS/fertility use and pregnancy-planning population: clinician review.'),
+    ...head('needs_clinician_review', 'none_found', 'Checked Vitacost listing (label text) and the 2023 international guideline meta-analysis on inositol. Variant: Myo & D-Chiro Inositol 120 vegetarian capsules (30 servings of 4). Not the "with MTHF folate + D3" version. Catalog $25 vs Vitacost $27.95. No recall found. PMOS/fertility use and pregnancy-planning population: clinician review.'),
     corrections: [
       { field: 'pricing.price', catalog: '$25 for 30 servings', source_says: '$27.95 for 120 capsules (30 servings) at Vitacost', source_url: 'https://www.vitacost.com/products/wholesome-story-myo-d-chiro-inositol-120-vegetarian-capsules-114887' },
     ],
@@ -274,22 +274,22 @@ const R = {
       'safety.pregnancy': f('Label: consult a healthcare provider before use if pregnant or contemplating pregnancy.', 'Vitacost listing (label)', 'https://www.vitacost.com/products/wholesome-story-myo-d-chiro-inositol-120-vegetarian-capsules-114887', 'retailer'),
       'safety.breastfeeding': f('Label: consult a healthcare provider before use if nursing.', 'Vitacost listing (label)', 'https://www.vitacost.com/products/wholesome-story-myo-d-chiro-inositol-120-vegetarian-capsules-114887', 'retailer'),
       'safety.medication_interactions': f('Label: consult a healthcare provider if taking medications. No specific interactions named.', 'Vitacost listing (label)', 'https://www.vitacost.com/products/wholesome-story-myo-d-chiro-inositol-120-vegetarian-capsules-114887', 'retailer'),
-      'safety.side_effects': f('The PCOS guideline review found gastrointestinal side effects were more common with metformin than with inositol; no product-specific side-effect data.', 'PCOS guideline meta-analysis (JCEM 2024)', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11099481', 'research'),
+      'safety.side_effects': f('The international guideline review found gastrointestinal side effects were more common with metformin than with inositol; no product-specific side-effect data.', 'Inositol guideline meta-analysis (JCEM 2024)', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11099481', 'research'),
       'safety.age_restriction': f('For adult use only', 'Vitacost listing (label)', 'https://www.vitacost.com/products/wholesome-story-myo-d-chiro-inositol-120-vegetarian-capsules-114887', 'retailer'),
       'safety.regulatory_status': f('Dietary supplement; brand says third-party tested (Clean Label Project Purity Award), lab and results not published', 'Vitacost listing', 'https://www.vitacost.com/products/wholesome-story-myo-d-chiro-inositol-120-vegetarian-capsules-114887', 'retailer'),
       'safety.recalls': f('No recall found (recall search, Oct 2026).', 'Web recall search', 'https://www.walmart.com/ip/253300772', 'retailer'),
-      'health.intended_use': f('Manufacturer: supports healthy hormone levels, menstrual cycles and ovarian health (PCOS-oriented)', 'Vitacost listing (manufacturer claims)', 'https://www.vitacost.com/products/wholesome-story-myo-d-chiro-inositol-120-vegetarian-capsules-114887', 'retailer'),
+      'health.intended_use': f('Manufacturer: supports healthy hormone levels, menstrual cycles and ovarian health (PMOS-oriented)', 'Vitacost listing (manufacturer claims)', 'https://www.vitacost.com/products/wholesome-story-myo-d-chiro-inositol-120-vegetarian-capsules-114887', 'retailer'),
       'evidence.sources': f([
         { title: 'Inositol for PCOS: systematic review and meta-analysis informing the 2023 international PCOS guideline (JCEM 2024)', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11099481', evidence_type: 'clinical_guideline', supports: 'Inositol may help some metabolic measures but evidence for PCOS outcomes is limited and inconclusive; not this specific product' },
       ], 'PubMed Central', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11099481', 'research'),
       'evidence.claims': f([
-        { claim: 'Inositol improves PCOS symptoms (cycles, ovulation, metabolic markers)', strength: 'limited', evidence_type: 'clinical_guideline', source_url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11099481', product_specific: false },
+        { claim: 'Inositol improves PMOS symptoms (cycles, ovulation, metabolic markers)', strength: 'limited', evidence_type: 'clinical_guideline', source_url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11099481', product_specific: false },
       ], 'PubMed Central', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11099481', 'research'),
     },
   },
 
   'p-spearmint-pcos': {
-    ...head('in_review', 'none_found', 'Checked Whole Foods and Fullscript listings: single ingredient organic spearmint leaf, 16 tea bags, no label warnings. No pregnancy or interaction statement found on the label (left unknown). Evidence for PCOS is one small 30-day RCT (Grant 2010). Recall search found only a 2018 Canadian recall of a different Traditional Medicinals tea (Throat Coat). Price not re-verified.'),
+    ...head('in_review', 'none_found', 'Checked Whole Foods and Fullscript listings: single ingredient organic spearmint leaf, 16 tea bags, no label warnings. No pregnancy or interaction statement found on the label (left unknown). Evidence for PMOS is one small 30-day RCT (Grant 2010). Recall search found only a 2018 Canadian recall of a different Traditional Medicinals tea (Throat Coat). Price not re-verified.'),
     facts: {
       'identity.variant': f('Organic Spearmint, caffeine free, 16 tea bags', 'Whole Foods listing', 'https://www.wholefoodsmarket.com/product/traditional-medicinals-organic-spearmint-tea-16-tea-bag-b014uhixam', 'retailer'),
       'pricing.size_count': f('16 tea bags', 'Whole Foods listing', 'https://www.wholefoodsmarket.com/product/traditional-medicinals-organic-spearmint-tea-16-tea-bag-b014uhixam', 'retailer'),
@@ -301,12 +301,12 @@ const R = {
       'safety.warnings': f('Label carries no specific warnings (per Fullscript label data).', 'Fullscript listing', 'https://fullscript.com/en-CA/catalog/products/organic-spearmint-tea', 'retailer'),
       'safety.regulatory_status': f('Herbal tea sold as food/dietary supplement; certified organic', 'Whole Foods listing', 'https://www.wholefoodsmarket.com/product/traditional-medicinals-organic-spearmint-tea-16-tea-bag-b014uhixam', 'retailer'),
       'safety.recalls': f('No recall found for Spearmint tea; a 2018 Canadian recall covered one lot of Traditional Medicinals Throat Coat Lemon Echinacea (different product).', 'Health Canada recall', 'https://recalls-rappels.canada.ca/en/alert-recall/one-lot-traditional-medicinals-throat-coat-lemon-echinacea-herbal-tea-recalled-because', 'regulatory'),
-      'health.intended_use': f('Caffeine-free herbal tea (brand positions it for digestion/enjoyment); used in PCOS research as a possible anti-androgen', 'Fullscript listing + PubMed', 'https://pubmed.ncbi.nlm.nih.gov/19585478', 'research'),
+      'health.intended_use': f('Caffeine-free herbal tea (brand positions it for digestion/enjoyment); used in PMOS research as a possible anti-androgen', 'Fullscript listing + PubMed', 'https://pubmed.ncbi.nlm.nih.gov/19585478', 'research'),
       'evidence.sources': f([
         { title: 'Grant 2010, Spearmint herbal tea has significant anti-androgen effects in PCOS: a randomized controlled trial (Phytother Res)', url: 'https://pubmed.ncbi.nlm.nih.gov/19585478', evidence_type: 'ingredient_research', supports: 'Small 30-day RCT (42 women): spearmint tea twice daily lowered free testosterone; self-reported hirsutism improved, objective hirsutism scores did not change in that time' },
       ], 'PubMed', 'https://pubmed.ncbi.nlm.nih.gov/19585478', 'research'),
       'evidence.claims': f([
-        { claim: 'Spearmint tea lowers androgens / helps hirsutism in PCOS', strength: 'limited', evidence_type: 'ingredient_research', source_url: 'https://pubmed.ncbi.nlm.nih.gov/19585478', product_specific: false },
+        { claim: 'Spearmint tea lowers androgens / helps hirsutism in PMOS', strength: 'limited', evidence_type: 'ingredient_research', source_url: 'https://pubmed.ncbi.nlm.nih.gov/19585478', product_specific: false },
       ], 'PubMed', 'https://pubmed.ncbi.nlm.nih.gov/19585478', 'research'),
     },
   },
@@ -1218,7 +1218,7 @@ const STRENGTH = {
   'p-uqora-control': ['limited: one phase 2 trial of the Urox ingredient blend', 'https://clinicaltrials.gov/study/NCT02396160'],
   'p-d-mannose-now': ['limited: 2024 RCT found no benefit for recurrent UTI prevention', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11334993'],
   'p-cystex': ['moderate for short-term symptom relief (OTC monograph-style label); none for curing UTI', 'https://drugs.com/otc/433290/cystex-plus.html'],
-  'p-inositol-wholesome': ['limited: guideline meta-analysis finds inconclusive benefit for PCOS outcomes (ingredient-level)', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11099481'],
+  'p-inositol-wholesome': ['limited: guideline meta-analysis finds inconclusive benefit for PMOS outcomes (ingredient-level)', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11099481'],
   'p-spearmint-pcos': ['limited: one small 30-day RCT (ingredient-level)', 'https://pubmed.ncbi.nlm.nih.gov/19585478'],
   'p-love-wellness-bloat': ['limited: single-arm, self-reported product study without control', 'https://citruslabs.com/testedproducts/love-wellness-bye-bye-bloat'],
   'p-pelvic-wand': ['limited: FDA-cleared device type; no product outcome trials found', 'https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfPMN/pmn.cfm?ID=K250419'],

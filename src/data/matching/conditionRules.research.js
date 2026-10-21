@@ -679,7 +679,7 @@ export default [
    ]
   },
   "verdict": "caution",
-  "message": "Evidence on inositol for fertility with PCOS is low quality and uncertain, so treat it as an add-on to care, not a replacement.",
+  "message": "Evidence on inositol for fertility with PMOS is low quality and uncertain, so treat it as an add-on to care, not a replacement.",
   "source_url": "https://www.cochrane.org/evidence/CD012378_inositol-women-diagnosis-polycystic-ovary-syndrome-and-subfertility"
  },
  {

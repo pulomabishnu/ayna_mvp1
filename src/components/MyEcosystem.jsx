@@ -117,7 +117,7 @@ const CONCERN_LABEL_MAP = {
   'cramp and pain relief (devices, supplements, heat)': 'Cramp & Pain Relief',
   'hormone balance (supplements, lifestyle)': 'Hormone Balance',
   'hormonal bloating': 'Hormonal Bloating',
-  'pcos management (supplements, telehealth, apps)': 'PCOS Management',
+  'pcos management (supplements, telehealth, apps)': 'PMOS Management',
   'endometriosis management (supplements, devices, telehealth)': 'Endometriosis Support',
   'fertility and conception (supplements, trackers, telehealth)': 'Fertility & Conception',
   'uti support': 'UTI Support',
@@ -149,7 +149,7 @@ function normalizeConcernLabel(raw) {
   if (CONCERN_LABEL_MAP[key]) return CONCERN_LABEL_MAP[key];
   // Keyword fallback for LLM-embellished variants
   if (key.includes('routine') || key.includes('build my health') || key.includes('apps and services')) return 'Building a Health Routine';
-  if (key.includes('pcos') || key.includes('polycystic')) return 'PCOS Management';
+  if (key.includes('pcos') || key.includes('pmos') || key.includes('polycystic') || key.includes('polyendocrine')) return 'PMOS Management';
   if (key.includes('endometriosis') || key.includes('endo')) return 'Endometriosis Support';
   if (key.includes('hormone balance') || key.includes('hormonal bloating')) return 'Hormone Balance';
   if (key.includes('period care') || key.includes('menstrual')) return 'Period Care';

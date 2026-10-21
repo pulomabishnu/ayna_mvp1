@@ -1158,7 +1158,7 @@ export function scoreProductForNeed(productOrProfile, up, needIdIn, opts = {}) {
   };
 }
 function conditionPhrase(id) {
-  return { pcos: 'PCOS', endometriosis: 'endometriosis', fibroids: 'fibroids', adenomyosis: 'adenomyosis', pmdd: 'PMDD', pms: 'PMS', anemia: 'iron deficiency', anxiety: 'anxiety', depression: 'depression', ibs_digestive: 'digestive condition', infertility: 'infertility' }[id] || CONTEXTS[id]?.phrase || id;
+  return { pcos: 'PMOS', endometriosis: 'endometriosis', fibroids: 'fibroids', adenomyosis: 'adenomyosis', pmdd: 'PMDD', pms: 'PMS', anemia: 'iron deficiency', anxiety: 'anxiety', depression: 'depression', ibs_digestive: 'digestive condition', infertility: 'infertility' }[id] || CONTEXTS[id]?.phrase || id;
 }
 
 /**

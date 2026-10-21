@@ -11,7 +11,7 @@ import '../styles/match-ui.css';
 
 const GOAL = new Set(['primaryGoal', 'otherNeeds', 'periodFlow', 'periodPain', 'utiFrequency']);
 const PROFILE = new Set(['age', 'lifeStage', 'breastfeeding', 'postpartumTiming', 'pregnancyTrimester', 'perimenopauseLastPeriod', 'diagnoses', 'triedBefore']);
-const ACRONYM_RE = /\b(adhd|pcos|pmdd|pms|ibs|uti|utis|hrt|iud|bv|ivf)\b/gi;
+const ACRONYM_RE = /\b(adhd|pcos|pmos|pmdd|pms|ibs|uti|utis|hrt|iud|bv|ivf)\b/gi;
 const tidy = (t) => String(t || '').replace(ACRONYM_RE, (m) => (m.toLowerCase() === 'utis' ? 'UTIs' : m.toUpperCase()));
 const kind = (c) => (GOAL.has(c) ? 'Your needs' : PROFILE.has(c) ? 'Your profile' : 'Your preferences');
 const TONE = { excellent: 'is-strong', strong: 'is-good', exploratory: 'is-partial', browse: 'is-partial' };
