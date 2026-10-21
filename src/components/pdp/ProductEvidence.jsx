@@ -20,6 +20,7 @@ import { researchSourceCount } from './commerce';
 import GlossaryTerm from '../GlossaryTerm';
 import { findHardTerms, planGlossaryTerms } from '../../data/glossary';
 import ProductCommunityReviews from './ProductCommunityReviews.jsx';
+import ProductPeopleSay from './ProductPeopleSay.jsx';
 import PdpTabs from './PdpTabs.jsx';
 import { useProductReviews } from './useProductReviews.js';
 import { summarizeReviewRows, takeProductTab } from '../../utils/community/reviewRatings.js';
@@ -369,7 +370,7 @@ function stepIcon(text) {
   return '';
 }
 
-export default function ProductEvidence({ product: baseProduct, safetyLead = '', glance = null, aynaData = null, aynaRating: aynaRatingProp = null, ratingCount: ratingCountProp = 0, rateControls = null, safety = null, recall = null, heroLine = '', extraRows = [], onOpenReview = null }) {
+export default function ProductEvidence({ product: baseProduct, safetyLead = '', glance = null, aynaData = null, aynaRating: aynaRatingProp = null, ratingCount: ratingCountProp = 0, rateControls = null, safety = null, recall = null, heroLine = '', extraRows = [], onOpenReview = null, onWriteReview = null }) {
   // Research the team approved in /admin/research fills any empty section.
   const product = useApprovedResearch(baseProduct);
   const d = useEvidence(product, aynaData);
@@ -825,6 +826,9 @@ export default function ProductEvidence({ product: baseProduct, safetyLead = '',
           )}
         </div>
       )}
+
+      {/* Member reviews where she scrolls, not only in the Reviews tab. */}
+      <ProductPeopleSay productId={baseProduct?.id} reviews={reviewRows} onSeeAll={() => goTo('reviews')} onWriteReview={onWriteReview} onOpenPost={onOpenReview} hasOnline={Boolean(communityText || d.communitySummary || d.brandRating || onlineLinks.length)} />
 
     </div>
     </TermsCtx.Provider>

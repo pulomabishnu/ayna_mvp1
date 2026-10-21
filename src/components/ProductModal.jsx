@@ -982,7 +982,7 @@ export default function ProductModal({
         </div>
 
         {/* ayna's summary + At a glance, then the tabs (Clinical opinion, Scientific literature, Reviews, Safety, How to use, Details). */}
-        <ProductEvidence product={product} image={images[0] || ''} safetyLead={topWarning} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} recall={recall} heroLine={firstSentence(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '').replace(/\s*—\s*/g, ', ').trim(), { min: 20, max: 240 })} safety={<ProductSafety product={product} glance={glance} recall={recall} alertText={glance?.alert || ''} />} extraRows={(() => {
+        <ProductEvidence product={product} image={images[0] || ''} safetyLead={topWarning} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null} recall={recall} heroLine={firstSentence(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '').replace(/\s*—\s*/g, ', ').trim(), { min: 20, max: 240 })} safety={<ProductSafety product={product} glance={glance} recall={recall} alertText={glance?.alert || ''} />} extraRows={(() => {
           const pp = getPassport(product);
           const checked = pp?.pricing?.price?.verified_at;
           let seller = '';

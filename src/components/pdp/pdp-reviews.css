@@ -1,0 +1,120 @@
+/* "What people say" on the product page (ProductPeopleSay.jsx), website and
+   app. Own file so the global sheets (theme-v3, ayna-system, app-*) stay
+   untouched. docs/design-direction.md: the summary is a Group (#f6e3a1, no
+   border), each review and post is an object card (1.5px espresso border,
+   radius 16), DM Sans body, the heading uses .ay-h2 so the heading font token
+   applies. Website colours come from --ay-* (ayna-system.css, dark under
+   .app-container[data-theme='brand-dark']); the app's from --d-* (app-
+   direction.css, dark under .ayna-mobile[data-theme='dark']). Both scopes
+   carry ID weight so the older broad rules never win. */
+
+.app-container .ayp-wps {
+  --wps-ink: var(--ay-text, #3e2723);
+  --wps-ink2: var(--ay-text-2, rgba(62, 39, 35, .75));
+  --wps-group: var(--ay-group, #f6e3a1);
+  --wps-page: var(--ay-page, #ffedac);
+  --wps-line: var(--ay-hairline, rgba(62, 39, 35, .15));
+  --wps-ui: var(--ay-sans-stack, 'DM Sans', system-ui, sans-serif);
+  --wps-btn-bg: var(--ay-feature-bg, #3e2723);
+  --wps-btn-fg: var(--ay-feature-fg, #ffedac);
+  --wps-shadow: var(--ay-press-shadow, 3px 3px 0 #3e2723);
+  --wps-focus: #769ebe;
+  --wps-gap: 24px;
+}
+.app-container[data-theme='brand-dark'] .ayp-wps { --wps-ink2: rgba(255, 237, 172, .78); --wps-shadow: 3px 3px 0 #f7badd; }
+.ayna-mobile .ay-pdp .ayp-wps {
+  --wps-ink: var(--d-ink, #3e2723);
+  --wps-ink2: var(--d-ink-2, rgba(62, 39, 35, .75));
+  --wps-group: var(--d-group, #f6e3a1);
+  --wps-page: var(--d-page, #ffedac);
+  --wps-line: rgba(62, 39, 35, .15);
+  --wps-ui: var(--f-ui, 'DM Sans', system-ui, sans-serif);
+  --wps-btn-bg: #3e2723;
+  --wps-btn-fg: #ffedac;
+  --wps-shadow: 3px 3px 0 #3e2723;
+  --wps-focus: var(--d-ink, #3e2723);
+  --wps-gap: 16px;
+}
+.ayna-mobile[data-theme='dark'] .ay-pdp .ayp-wps { --wps-line: rgba(255, 237, 172, .18); --wps-btn-bg: #ffedac; --wps-btn-fg: #3e2723; --wps-shadow: 3px 3px 0 #f7badd; }
+
+/* One rule set for both: :is() takes the heavier (ID-weight) branch. */
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps {
+  color: var(--wps-ink) !important;
+  font-family: var(--wps-ui);
+  text-align: left;
+}
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps :is(p, ul, li) { margin: 0 !important; padding: 0 !important; list-style: none !important; letter-spacing: 0 !important; }
+
+/* Heading row: "What people say" + See all */
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; margin: 0 0 var(--wps-gap); }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__head .ay-h2 { margin: 0 !important; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__all {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0;
+  color: var(--wps-ink) !important; font: 600 15px/1.2 var(--wps-ui) !important;
+  text-decoration: underline !important; text-underline-offset: 3px; text-decoration-thickness: 1.5px; cursor: pointer;
+}
+
+/* Summary (a Group) beside the cards on desktop; stacked on phones */
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__grid { display: grid; grid-template-columns: minmax(260px, 320px) minmax(0, 1fr); gap: var(--wps-gap); align-items: start; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__summary { display: grid; gap: 12px; padding: 24px; border-radius: 20px; background: var(--wps-group); }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__avg { display: flex !important; align-items: center; gap: 12px; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__avg b { font: 600 40px/1 var(--wps-ui) !important; font-variant-numeric: tabular-nums; color: var(--wps-ink) !important; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .cr-stars { color: var(--wps-ink) !important; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__count { font: 500 14px/1.4 var(--wps-ui) !important; color: var(--wps-ink2) !important; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__bars { display: grid !important; gap: 8px; margin: 4px 0 0 !important; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__bars li { display: grid !important; grid-template-columns: 30px 1fr 28px; align-items: center; gap: 10px; font: 500 13px/1 var(--wps-ui) !important; font-variant-numeric: tabular-nums; color: var(--wps-ink) !important; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__bars i { display: block; height: 8px; border-radius: 4px; background: var(--wps-page); box-shadow: inset 0 0 0 1px var(--wps-line); overflow: hidden; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__bars s { display: block; height: 100%; border-radius: 4px; background: var(--wps-ink); text-decoration: none; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__barnum { text-align: right; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__cta { margin-top: 8px; }
+
+/* Primary button: espresso fill + the 3px offset shadow */
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__btn {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 22px;
+  border: 1.5px solid var(--wps-btn-bg) !important; border-radius: 999px; background: var(--wps-btn-bg) !important; color: var(--wps-btn-fg) !important;
+  box-shadow: var(--wps-shadow) !important; font: 600 16px/1 var(--wps-ui) !important; cursor: pointer;
+}
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__summary .ayp-wps__btn { width: 100%; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__btn:active { box-shadow: none !important; transform: translateY(1px); }
+
+/* Review cards and community posts: object cards */
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__cards { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr)); gap: 16px; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__posts { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 12px; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps :is(.ayp-wps__card, .ayp-wps__post) {
+  display: flex; flex-direction: column; gap: 8px; height: 100%; box-sizing: border-box; padding: 16px;
+  border: 1.5px solid var(--wps-ink) !important; border-radius: 16px; background: transparent !important;
+  color: var(--wps-ink) !important; text-decoration: none !important;
+}
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps :is(.ayp-wps__card, .ayp-wps__post):hover { background: var(--wps-group) !important; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps :is(.ayp-wps__card, .ayp-wps__post, .ayp-wps__all, .ayp-wps__btn):focus-visible { outline: 3px solid var(--wps-focus) !important; outline-offset: 2px; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__cardtop { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__helpful { font: 500 13px/1.3 var(--wps-ui) !important; color: var(--wps-ink2) !important; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__body {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 5; overflow: hidden;
+  font: 400 16px/1.5 var(--wps-ui) !important; color: var(--wps-ink) !important; overflow-wrap: anywhere;
+}
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__body.is-short { -webkit-line-clamp: 3; font-size: 15px !important; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__meta { font: 500 13px/1.4 var(--wps-ui) !important; color: var(--wps-ink2) !important; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__go { margin-top: auto; font: 600 14px/1.3 var(--wps-ui) !important; color: var(--wps-ink) !important; text-decoration: underline; text-underline-offset: 3px; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__kind { font: 600 13px/1.3 var(--wps-ui) !important; color: var(--wps-ink) !important; }
+
+/* No reviews yet: one line and the button, no empty box */
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__empty { display: grid; gap: 16px; justify-items: start; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__empty p { font: 400 17px/1.5 var(--wps-ui) !important; color: var(--wps-ink) !important; max-width: 60ch; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__emptyactions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+
+/* From the community */
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__mentions { margin-top: 32px; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__mentions .ayp-subh { margin: 0 0 4px !important; }
+:is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__note { margin: 0 0 12px !important; font: 500 14px/1.45 var(--wps-ui) !important; color: var(--wps-ink2) !important; }
+
+@media (max-width: 760px) {
+  :is(html body .app-container.app-container.app-container, .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp) .ayp-wps .ayp-wps__grid { grid-template-columns: minmax(0, 1fr); }
+}
+/* The app is always phone width. */
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp .ayp-wps .ayp-wps__grid { grid-template-columns: minmax(0, 1fr); }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp .ayp-wps .ayp-wps__summary { padding: 16px; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-pdp .ayp-wps .ayp-wps__empty p { font-size: 16px !important; }
+@media (prefers-reduced-motion: reduce) {
+  :is(html body .app-container.app-container.app-container, .ayna-mobile .ay-pdp) .ayp-wps .ayp-wps__btn:active { transform: none; }
+}
