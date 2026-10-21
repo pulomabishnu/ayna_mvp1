@@ -75,3 +75,26 @@ Order of operations for every product and every need she chose:
   the place to measure whether picks are used and kept.
 - Research rows are an evidence review, not a clinician sign-off; a
   clinician review layer (`NEED_MAP_REVIEWED` in `v2.js`) is ready for it.
+
+## Team copy to check (found during the review, not changed)
+
+These are in team-written fields, so they were left for the founders:
+
+- Aleve: price, where-to-buy and review text cite a Target listing that no
+  longer exists.
+- Nature's Bounty D3 5,000 IU is above the 4,000 IU daily upper limit for
+  adults (NIH ODS).
+- Balance app effectiveness text and the Oboo review claim have no source
+  left after the .com sources were removed.
+- Article library guideline bullets that were credited to UpToDate now link
+  MedlinePlus; skim that the wording still matches.
+- The Good Bug enzyme study (Nutrition and Dietary Supplements 2024) and the
+  Elitone pilot (J Women's Health Phys Ther 2019) are not in PubMed/PMC, so
+  their links were removed; the Elitone ClinicalTrials.gov trial remains.
+- Variant mismatches: Rael regular vs long, Poise with/without wings, Ulta mini.
+- Planned Parenthood Direct "where to buy" still says ppd.plannedparenthood.org
+  (the link itself now goes to plannedparenthooddirect.org).
+- BGSU and UC campus contact details may be stale.
+- Qvin has no product url.
+- Iron should only be suggested with a known deficiency (not linked to
+  fatigue or heavy periods in the need map for that reason).

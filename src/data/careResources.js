@@ -119,7 +119,7 @@ export function getCareResourceBundle(quizResults, healthProfile, zipCode) {
   }
   if (tags.has('menopause') || frustrations.some((f) => f.includes('Menopause'))) {
     telehealthLinks.unshift({
-      href: 'https://www.nia.nih.gov/health/menopause',
+      href: 'https://www.nichd.nih.gov/health/topics/menopause',
       label: 'NIH: Menopause overview',
       hint: 'Symptoms and discussion points for a clinician.',
     });

@@ -4,7 +4,7 @@ import { InfoPage } from './InfoPage';
 
 // Common helpful digital services for screenings
 const TELEHEALTH_SERVICES = [
-    { name: 'Planned Parenthood Direct', focus: 'STI Care & Birth Control', benefit: 'Affordable, sliding-scale care via app.', url: 'https://ppd.plannedparenthood.org' },
+    { name: 'Planned Parenthood Direct', focus: 'STI Care & Birth Control', benefit: 'Affordable, sliding-scale care via app.', url: 'https://plannedparenthooddirect.org/' },
     { name: 'Tia Clinic', focus: 'Integrative GYN Care', benefit: 'OB-GYN care and mental health care in one practice.', url: 'https://asktia.com' },
     { name: 'Wisp', focus: 'Sexual Health & UTIs', benefit: 'Same-day medication for UTIs & BV.', url: 'https://hellowisp.com' }
 ];
