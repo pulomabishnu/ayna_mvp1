@@ -1,0 +1,1006 @@
+{
+ "generated_at": "2026-10-21T07:18:47.089Z",
+ "site": "https://www.aynahealth.co",
+ "external": [
+  {
+   "url": "https://www.atvp.org/",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://atvp.org/",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://shopdiva.com/pages/how-to-use-a-diva-cup",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://shopdiva.com/pages/how-to-use-a-diva-cup",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://www.sephora.com/product/maude-vibe-3-speed-flutter-tip-vibrator-P481115",
+   "files": [
+    "candidates"
+   ],
+   "status": 403,
+   "final_url": "https://www.sephora.com/product/maude-vibe-3-speed-flutter-tip-vibrator-P481115",
+   "state": "blocked",
+   "via": "browser",
+   "captcha": true,
+   "title": "Access Denied",
+   "fetch_status": 403,
+   "wayback": {
+    "status": "200",
+    "timestamp": "20250719092735",
+    "url": "http://web.archive.org/web/20250719092735/https://www.sephora.com/product/maude-vibe-3-speed-flutter-tip-vibrator-P481115"
+   }
+  },
+  {
+   "url": "https://caps.uga.edu/caps/",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://caps.uga.edu/caps/",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://leaflets.ekhuft.nhs.uk/general-care-of-vulval-skin",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "error": "UNABLE_TO_VERIFY_LEAF_SIGNATURE",
+   "state": "broken",
+   "via": "browser",
+   "final_url": "https://leaflets.ekhuft.nhs.uk/general-care-of-vulval-skin",
+   "captcha": false,
+   "title": "404 Not Found",
+   "fetch_status": 0,
+   "wayback": {
+    "status": "200",
+    "timestamp": "20240806203237",
+    "url": "http://web.archive.org/web/20240806203237/https://leaflets.ekhuft.nhs.uk/general-care-of-vulval-skin/"
+   }
+  },
+  {
+   "url": "https://www.ob-tampons.com/pages/tss",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.ob-tampons.com/pages/tss",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://ritual.com/pages/clinical-study",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://ritual.com/pages/clinical-study",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://shop.elitone.com/wp-content/uploads/2024/09/HP-Hero-1200x1120-JPG.jpg",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://shop.elitone.com/wp-content/uploads/2024/09/HP-Hero-1200x1120-JPG.jpg",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://www.uofmhealth.org/health-library/hw228097",
+   "files": [
+    "candidates"
+   ],
+   "status": 403,
+   "final_url": "https://www.uofmhealth.org/health-library/hw228097",
+   "state": "blocked",
+   "via": "browser",
+   "captcha": false,
+   "title": "Just a moment...",
+   "fetch_status": 403,
+   "wayback": {
+    "status": "200",
+    "timestamp": "20250427110244",
+    "url": "http://web.archive.org/web/20250427110244/https://www.uofmhealth.org/health-library/hw228097"
+   }
+  },
+  {
+   "url": "https://wuka.co.uk/products/stretch-cotton-midi-brief-heavy",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "final_url": "https://wuka.co.uk/products/stretch-cotton-midi-brief-heavy",
+   "state": "broken",
+   "via": "browser",
+   "captcha": false,
+   "title": "404 Not Found – WUKA",
+   "fetch_status": 404,
+   "wayback": {
+    "status": "200",
+    "timestamp": "20250908030556",
+    "url": "http://web.archive.org/web/20250908030556/https://wuka.co.uk/products/stretch-cotton-midi-brief-heavy"
+   }
+  },
+  {
+   "url": "https://www.apple.com/newsroom/2023/03/findings-from-apple-womens-health-study-advance-science-around-menstrual-cycles",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.apple.com/newsroom/2023/03/findings-from-apple-womens-health-study-advance-science-around-menstrual-cycles/",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/17621244/",
+   "files": [
+    "candidates"
+   ],
+   "status": 203,
+   "final_url": "https://pubmed.ncbi.nlm.nih.gov/17621244/",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
+   "state": "ok",
+   "via": "browser",
+   "captcha": false,
+   "title": "Vulvovaginal Candidiasis - STI Treatment Guidelines",
+   "fetch_status": 403
+  },
+  {
+   "url": "https://gennev.com/patients/how-gennev-works/",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://gennev.com/patients/how-gennev-works/",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://www.haakaa.co.nz/products/silicone-breast-pump",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.haakaa.co.nz/products/silicone-breast-pump",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://www.heb.com/product-detail/thermacare-menstrual-pain-therapy-heatwraps/10241521",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.heb.com/product-detail/thermacare-menstrual-pain-therapy-heatwraps/10241521",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://www.ulta.com/p/unscented-gentle-soothing-wipes-pimprod2007177",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "final_url": "https://www.ulta.com/p/unscented-gentle-soothing-wipes-pimprod2007177",
+   "state": "broken",
+   "via": "browser",
+   "captcha": false,
+   "title": "Page Not Found - Ulta Beauty",
+   "fetch_status": 404,
+   "wayback": {
+    "status": "200",
+    "timestamp": "20250508132923",
+    "url": "http://web.archive.org/web/20250508132923/https://www.ulta.com/p/unscented-gentle-soothing-wipes-pimprod2007177"
+   }
+  },
+  {
+   "url": "https://kinseyinstitute.org/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "final_url": "https://kinseyinstitute.org/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
+   "state": "broken",
+   "via": "browser",
+   "captcha": false,
+   "title": "Page Not Found: Error: Kinsey Institute: Indiana University Bloomington",
+   "fetch_status": 404,
+   "wayback": {
+    "status": "200",
+    "timestamp": "20250718223752",
+    "url": "http://web.archive.org/web/20250718223752/https://www.kinseyinstitute.org/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf"
+   }
+  },
+  {
+   "url": "https://ouraring.com/science-and-research",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://ouraring.com/science-and-research",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://eoatix.dartmouth.edu/support-services/sexual-respect-and-title-ix/resources",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://eoatix.dartmouth.edu/support-services/sexual-respect-and-title-ix/resources",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://target.com/p/the-honey-pot-sensitive-feminine-wash-5-51-fl-oz/-/A-51130592",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.target.com/p/the-honey-pot-sensitive-feminine-wash-5-51-fl-oz/-/A-51130592",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://womenshealth.gov/sites/default/files/documents/fact-sheet-pelvic-organ-prolapse.pdf",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://womenshealth.gov/sites/default/files/documents/fact-sheet-pelvic-organ-prolapse.pdf",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://www.cdc.gov/folic-acid/about/intake-and-sources.html",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.cdc.gov/folic-acid/about/intake-and-sources.html",
+   "state": "ok",
+   "via": "browser",
+   "captcha": false,
+   "title": "Folic Acid: Sources and Recommended Intake | Folic Acid | CDC",
+   "fetch_status": 403
+  },
+  {
+   "url": "https://www.cochrane.org/evidence/CD007807_antioxidants-female-subfertility",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.cochrane.org/evidence/CD007807_vitamins-and-minerals-subfertility-women",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://www.walmart.com/ip/seort/634726416",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.walmart.com/blocked?url=L2lwL3Nlb3J0LzYzNDcyNjQxNg==&uuid=a8db6fb0-cd1f-11f1-8be3-8f7c927cda9b&vid=&g=b",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://www.healthcenter.txst.edu/AFTER-HOURS/sexual-assault-resources",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "final_url": "https://www.healthcenter.txst.edu/after-hours/sexual-assault-resources.html",
+   "state": "broken",
+   "via": "browser",
+   "captcha": false,
+   "title": "Page Not Found - 404 : University Health Services : Texas State University",
+   "fetch_status": 404,
+   "wayback": null
+  },
+  {
+   "url": "https://www.naturalresources-sf.com/products/silverette-silver-nursing-cups",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "final_url": "https://www.naturalresources-sf.com/products/silverette-silver-nursing-cups",
+   "state": "broken",
+   "via": "browser",
+   "captcha": false,
+   "title": "404 Not Found – Natural Resources: Pregnancy + Parenting",
+   "fetch_status": 404,
+   "wayback": {
+    "status": "200",
+    "timestamp": "20250807062931",
+    "url": "http://web.archive.org/web/20250807062931/https://www.naturalresources-sf.com/products/silverette-silver-nursing-cups"
+   }
+  },
+  {
+   "url": "https://www.target.com/p/poise-ultra-thin-pads-with-wings-moderate-absorbency/-/A-91045365",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.target.com/p/poise-ultra-thin-pads-with-wings-moderate-absorbency/-/A-91045365",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://giantfood.com/groceries/health-beauty/pain-fever/pain-fever-relief/naproxen-sodium/aleve-naproxen-sodium-pain-relief-fever-reducer-220-mg-tablets-50-ct-btl.html",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://giantfood.com/groceries/product/aleve-naproxen-sodium-pain-relief-fever-reducer-220-mg-tablets-50-ct-btl/315995",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://www.asrm.org/practice-guidance/ethics-opinions/assisted-reproduction-with-advancing-paternal-and-maternal-age-an-ethics-committee-opinion-2025/",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "error": "TypeError",
+   "state": "ok",
+   "via": "browser",
+   "final_url": "https://www.asrm.org/practice-guidance/ethics-opinions/assisted-reproduction-with-advancing-paternal-and-maternal-age-an-ethics-committee-opinion-2025/",
+   "captcha": false,
+   "title": "Assisted reproduction with advancing paternal and maternal age: an Ethics Committee opinion (2025) | American Society fo",
+   "fetch_status": 0
+  },
+  {
+   "url": "https://giantfoodstores.com/groceries/health-beauty/pain-fever/urinary-pain-relief/winx-health-fast-acting-maximum-strength-uti-pain-relief-tablets-24-ct-box.html",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "final_url": "https://giantfoodstores.com/groceries/health-beauty/pain-fever/urinary-pain-relief/winx-health-fast-acting-maximum-strength-uti-pain-relief-tablets-24-ct-box.html",
+   "state": "broken",
+   "via": "browser",
+   "captcha": false,
+   "title": "Page not found | GIANT Food Stores",
+   "fetch_status": 404,
+   "wayback": {
+    "status": "200",
+    "timestamp": "20260513153334",
+    "url": "http://web.archive.org/web/20260513153334/https://giantfoodstores.com/groceries/health-beauty/pain-fever/urinary-pain-relief/winx-health-fast-acting-maximum-strength-uti-pain-relief-tablets-24-ct-box.html"
+   }
+  },
+  {
+   "url": "https://www.mskcc.org/cancer-care/integrative-medicine/herbs/fenugreek",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.mskcc.org/cancer-care/integrative-medicine/herbs/fenugreek",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://studentaffairs.indiana.edu/health-safety/sexual-violence/index.html",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "final_url": "https://studentaffairs.indiana.edu/health-safety/sexual-violence/index.html",
+   "state": "broken",
+   "via": "browser",
+   "captcha": false,
+   "title": "404 Not Found",
+   "fetch_status": 404,
+   "wayback": {
+    "status": "200",
+    "timestamp": "20230714022747",
+    "url": "http://web.archive.org/web/20230714022747/https://studentaffairs.indiana.edu/health-safety/sexual-violence/index.html"
+   }
+  },
+  {
+   "url": "https://tienda.fisaude.com/files/Product_Sheet_LWE_ES_EU_20170425%20(2).pdf",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://tienda.fisaude.com/files/Product_Sheet_LWE_ES_EU_20170425%20(2).pdf",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://wellbeing.missouri.edu/medical-care-services/sexual-partner-violence",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "final_url": "https://wellbeing.missouri.edu/medical-care-services/sexual-partner-violence",
+   "state": "broken",
+   "via": "browser",
+   "captcha": false,
+   "title": "Page not found - Student Health & Well-Being",
+   "fetch_status": 404,
+   "wayback": {
+    "status": "200",
+    "timestamp": "20250614170606",
+    "url": "http://web.archive.org/web/20250614170606/https://wellbeing.missouri.edu/medical-care-services/sexual-partner-violence/"
+   }
+  },
+  {
+   "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/enforcement-reports",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/enforcement-reports",
+   "state": "ok",
+   "via": "browser",
+   "captcha": false,
+   "title": "Enforcement Reports | FDA",
+   "fetch_status": 404
+  },
+  {
+   "url": "https://www.auanet.org/guidelines-and-quality/guidelines/recurrent-uti",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.auanet.org/guidelines-and-quality/guidelines/recurrent-uti",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://www.walmart.com/ip/seort/848961429",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.walmart.com/blocked?url=L2lwL3Nlb3J0Lzg0ODk2MTQyOQ==&uuid=a9437203-cd1f-11f1-bb51-0aa68310ffe6&vid=&g=b",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://giantfoodstores.com/groceries/health-beauty/pain-fever/heat-cold-therapy/thermacare-heat-therapy-menstrual-pain-heat-wraps-4-ct-pkg.html",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://giantfoodstores.com/groceries/product/thermacare-heat-therapy-menstrual-pain-heat-wraps-4-ct-pkg/352810",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://health.colostate.edu/about-hn-mental-health-services/",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://health.colostate.edu/about-hn-mental-health-services/",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://menopause.org/patient-education/menopause-topics/premature-menopause",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://menopause.org/patient-education/menopause-topics/premature-menopause",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://www.lookfantastic.com/p/intimina-ziggy-cup-2-size-a/13761957",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.lookfantastic.com/p/intimina-ziggy-cup-2-size-a/13761957/",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://tomboyx.com/collections/period-underwear",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://tomboyx.com/collections/period-underwear",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://onewillow.com/products/willow-360",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://onewillow.com/products/willow-pump-360",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://alwaysdiscreet.com/en-us/incontinence-products/liners-and-pads/boutique-very-light-liners",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://alwaysdiscreet.com/en-us/incontinence-products/liners-and-pads/boutique-very-light-long-liners",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://www.bgsu.edu/dean-of-students/interpersonal-relations.html",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.bgsu.edu/dean-of-students/interpersonal-relations.html",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://www.cdc.gov/std/treatment-guidelines/BV.htm",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.cdc.gov/std/treatment-guidelines/BV.htm",
+   "state": "ok",
+   "via": "browser",
+   "captcha": false,
+   "title": "Bacterial Vaginosis - STI Treatment Guidelines",
+   "fetch_status": 403
+  },
+  {
+   "url": "https://help.eightsleep.com/en_us/how-do-i-maintain-the-pod-HyWYigaKN.md",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://help.eightsleep.com/en_us/how-do-i-maintain-the-pod-HyWYigaKN.md",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://www.walmart.com/ip/1462332262",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.walmart.com/blocked?url=L2lwLzE0NjIzMzIyNjI=&uuid=a9c936af-cd1f-11f1-921f-8f7c927cda9b&vid=&g=b",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://menopause.org/patient-education/menopause-topics/hot-flashes",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://menopause.org/patient-education/menopause-topics/hot-flashes",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://www.ob-tampons.com/collections/all",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.ob-tampons.com/collections/all",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://qvin.com/",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "final_url": "https://qvin.com/",
+   "state": "broken",
+   "via": "browser",
+   "captcha": false,
+   "title": "Site Not Configured | 404 Not Found",
+   "fetch_status": 404,
+   "wayback": null
+  },
+  {
+   "url": "https://www.med.uc.edu/uhs",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.med.uc.edu/landing-pages/university-health/home",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://equity.unl.edu/",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://equity.unl.edu/",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://divacup.com/cleaning-your-menstrual-cup/",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "final_url": "https://shopdiva.com/cleaning-your-menstrual-cup/",
+   "state": "broken",
+   "via": "browser",
+   "captcha": false,
+   "title": "404 Not Found – DIVA US",
+   "fetch_status": 404,
+   "wayback": {
+    "status": "200",
+    "timestamp": "20231207002922",
+    "url": "http://web.archive.org/web/20231207002922/https://divacup.com/cleaning-your-menstrual-cup/"
+   }
+  },
+  {
+   "url": "https://www.gennev.com/how-gennev-works",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "final_url": "https://gennev.com/how-gennev-works",
+   "state": "broken",
+   "via": "browser",
+   "captcha": false,
+   "title": "Page not found - Gennev: Expert Virtual Menopause Care",
+   "fetch_status": 404,
+   "wayback": {
+    "status": "200",
+    "timestamp": "20240728052255",
+    "url": "http://web.archive.org/web/20240728052255/https://www.gennev.com/how-gennev-works"
+   }
+  },
+  {
+   "url": "https://well.wvu.edu/resources/sexual-violence",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://well.wvu.edu/educational-resources/sexual-violence",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://knix.com/pages/period-underwear",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://knix.com/pages/period-underwear",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://miamioh.edu/life-at-miami/university-safety/sexual-assault-misconduct-harassment/index.html",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://miamioh.edu/life-at-miami/university-safety/sexual-assault-misconduct-harassment/",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://uberlube.com/shop/50-ml-bottle",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://uberlube.com/products/uberlube-glass-bottle?variant=45948458238266",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://womenscenter.missouri.edu/relationship-sexual-violence-stalking",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "error": "ECONNRESET",
+   "state": "broken",
+   "via": "browser",
+   "final_url": "https://getinvolved.missouri.edu/womens-center/relationship-sexual-violence-stalking",
+   "captcha": false,
+   "title": "Page not found - Get Involved",
+   "fetch_status": 0,
+   "wayback": {
+    "status": "200",
+    "timestamp": "20251115020845",
+    "url": "http://web.archive.org/web/20251115020845/https://womenscenter.missouri.edu/relationship-sexual-violence-stalking/"
+   }
+  },
+  {
+   "url": "https://www.apa.org/members/your-growth/practice-management/telepsychology",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.apa.org/research-practice/telepsychology",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://www.bodyform.co.uk/shop-our-products/available-in-store/ultra-towels/",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.bodyform.co.uk/shop-our-products/available-in-store/ultra-towels/",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://www.cdc.gov/std/prevention/",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.cdc.gov/sti/prevention/",
+   "state": "ok",
+   "via": "browser",
+   "captcha": false,
+   "title": "How to Prevent STIs | STI | CDC",
+   "fetch_status": 403
+  },
+  {
+   "url": "https://www.menopause.org/for-women/menopause-faqs-expert-answers-to-frequently-asked-questions-about-menopause",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "final_url": "https://menopause.org/for-women/menopause-faqs-expert-answers-to-frequently-asked-questions-about-menopause",
+   "state": "broken",
+   "via": "browser",
+   "captcha": false,
+   "title": "Page not found | The Menopause Society",
+   "fetch_status": 404,
+   "wayback": {
+    "status": "200",
+    "timestamp": "20240714005103",
+    "url": "http://web.archive.org/web/20240714005103/https://menopause.org/for-women/menopause-faqs-expert-answers-to-frequently-asked-questions-about-menopause"
+   }
+  },
+  {
+   "url": "https://www.ohio.edu/survivor",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.ohio.edu/survivor",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://stayfree.com/products/stayfree-ultra-thin-pads-regular-with-wings",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://stayfree.com/products/stayfree-ultra-thin-pads-regular-with-wings",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://www.ulta.com/p/mini-lets-spin-intimacy-gel-pimprod2052232",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "final_url": "https://www.ulta.com/p/mini-lets-spin-intimacy-gel-pimprod2052232",
+   "state": "broken",
+   "via": "browser",
+   "captcha": false,
+   "title": "Page Not Found - Ulta Beauty",
+   "fetch_status": 404,
+   "wayback": null
+  },
+  {
+   "url": "https://www.suicideandco.org/support-links/bloom-app",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "final_url": "https://www.suicideandco.org/support-links/bloom-app",
+   "state": "broken",
+   "via": "browser",
+   "captcha": false,
+   "title": "Suicide&Co | Support after Suicide Bereavement",
+   "fetch_status": 404,
+   "wayback": null
+  },
+  {
+   "url": "https://www.walmart.com/ip/LOLA-Heavy-Organic-Cotton-Pads-36-Count-Ultra-Thin-Pad-with-Wings-HSA-FSA-Approved/16001906674",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://www.walmart.com/blocked?url=L2lwL0xPTEEtSGVhdnktT3JnYW5pYy1Db3R0b24tUGFkcy0zNi1Db3VudC1VbHRyYS1UaGluLVBhZC13aXRoLVdpbmdzLUhTQS1GU0EtQXBwcm92ZWQvMTYwMDE5MDY2NzQ=&uuid=aa6cb5ec-cd1f-11f1-8b30-1d1a14a4231f&vid=&g=b",
+   "state": "ok",
+   "via": "fetch"
+  },
+  {
+   "url": "https://well.ca/products/leachco-snoogle-chic-total-body-pillow_129572.html",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "final_url": "https://well.ca/index.php?main_page=error404",
+   "state": "broken",
+   "via": "browser",
+   "captcha": false,
+   "title": "Page Not Found | Well.ca - Canada's online health, beauty, and skin care store | Free Shipping $35+ in Canada",
+   "fetch_status": 404,
+   "wayback": {
+    "status": "200",
+    "timestamp": "20240419023741",
+    "url": "http://web.archive.org/web/20240419023741/https://well.ca/products/leachco-snoogle-chic-total-body-pillow_129572.html"
+   }
+  },
+  {
+   "url": "https://wuka.co.uk/products/wuka-ultimate-midi-brief-heavy-overnight",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "final_url": "https://wuka.co.uk/products/wuka-ultimate-midi-brief-heavy-overnight",
+   "state": "broken",
+   "via": "browser",
+   "captcha": false,
+   "title": "404 Not Found – WUKA",
+   "fetch_status": 404,
+   "wayback": {
+    "status": "200",
+    "timestamp": "20251015105830",
+    "url": "http://web.archive.org/web/20251015105830/https://wuka.co.uk/products/wuka-ultimate-midi-brief-heavy-overnight"
+   }
+  },
+  {
+   "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "final_url": "https://kinseyinstitute.org/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
+   "state": "broken",
+   "via": "browser",
+   "captcha": false,
+   "title": "Page Not Found: Error: Kinsey Institute: Indiana University Bloomington",
+   "fetch_status": 404,
+   "wayback": {
+    "status": "200",
+    "timestamp": "20250718223752",
+    "url": "http://web.archive.org/web/20250718223752/https://www.kinseyinstitute.org/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf"
+   }
+  },
+  {
+   "url": "https://fullscript.com/en-CA/catalog/products/organic-spearmint-tea",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "final_url": "https://fullscript.com/en-CA/catalog/products/organic-spearmint-tea",
+   "state": "broken",
+   "via": "browser",
+   "captcha": false,
+   "title": "Fullscript: Easily build supplement plans for optimal health",
+   "fetch_status": 404,
+   "wayback": null
+  },
+  {
+   "url": "https://knix.ca/products/leak-proof-high-rise",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "final_url": "https://knix.ca/products/leak-proof-high-rise",
+   "state": "broken",
+   "via": "browser",
+   "captcha": false,
+   "title": "404 Not Found – Knix Canada",
+   "fetch_status": 404,
+   "wayback": null
+  },
+  {
+   "url": "https://support.mavenclinic.com/hc/en-us/articles/34227140983955-How-much-does-an-appointment-cost",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "final_url": "https://support.mavenclinic.com/hc/en-us/articles/34227140983955-How-much-does-an-appointment-cost",
+   "state": "broken",
+   "via": "browser",
+   "captcha": false,
+   "title": "The page you were looking for doesn't exist – Maven Help Center",
+   "fetch_status": 404,
+   "wayback": {
+    "status": "200",
+    "timestamp": "20260217050525",
+    "url": "http://web.archive.org/web/20260217050525/https://support.mavenclinic.com/hc/en-us/articles/34227140983955-How-much-does-an-appointment-cost"
+   }
+  },
+  {
+   "url": "https://redesign.time.com/7094898/winx-health-uti-test-and-treat",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "final_url": "https://redesign.time.com/7094898/winx-health-uti-test-and-treat",
+   "state": "broken",
+   "via": "browser",
+   "captcha": false,
+   "title": "",
+   "fetch_status": 404,
+   "wayback": null
+  },
+  {
+   "url": "https://www.fda.gov/NewsEvents/Newsroom/PressAnnouncements/ucm616511.htm",
+   "files": [
+    "candidates"
+   ],
+   "status": 404,
+   "final_url": "https://www.fda.gov/news-events/press-announcements/fda-allows-marketing-first-direct-consumer-app-contraceptive-use-prevent-pregnancy",
+   "state": "broken",
+   "via": "browser",
+   "captcha": false,
+   "title": "Page Not Found | FDA",
+   "fetch_status": 404,
+   "wayback": {
+    "status": "200",
+    "timestamp": "20190426190128",
+    "url": "http://web.archive.org/web/20190426190128/https://www.fda.gov/newsevents/newsroom/pressannouncements/ucm616511.htm"
+   }
+  },
+  {
+   "url": "https://uhcs.northeastern.edu/",
+   "files": [
+    "candidates"
+   ],
+   "status": 200,
+   "final_url": "https://uhcs.northeastern.edu/",
+   "state": "ok",
+   "via": "fetch"
+  }
+ ],
+ "internal": [],
+ "summary": {
+  "external": 79,
+  "external_broken": 24,
+  "external_unverified": 2,
+  "internal": 0,
+  "internal_broken": 0,
+  "broken_images_on_pages": 0
+ }
+}
