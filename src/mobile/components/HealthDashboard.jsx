@@ -75,7 +75,7 @@ function CycleHero({ cycle, estimate }) {
 }
 
 
-export default function HealthDashboard({ authUser, userName = '', selectedNeedIds = [], onConnect, onAddGoal, onOpenRoutine, onSignIn, products = [], matches = [], onOpenProduct }) {
+export default function HealthDashboard({ authUser, userName = '', selectedNeedIds = [], hormonalBC = false, onConnect, onAddGoal, onOpenRoutine, onSignIn, products = [], matches = [], onOpenProduct }) {
   const openAsk = useContext(AskContext);
   const health = useHealthData(authUser?.id || null, selectedNeedIds);
   const [range, setRange] = useState('month');
@@ -146,17 +146,18 @@ export default function HealthDashboard({ authUser, userName = '', selectedNeedI
           {!editing && (
             <HealthBento
               name={(userName || authUser?.user_metadata?.first_name || authUser?.user_metadata?.name || '').split(' ')[0]}
-              week={week}
               cycle={week.cycle?.cycleDay ? week.cycle : null}
               estimate={estimate}
               pinnedCharts={pinned.filter((id) => id !== 'cycle').map((id) => itemById[id]?.chart && { ...itemById[id].chart, group: itemById[id].group }).filter(Boolean)}
-              ready={ready}
+              rows={health.insightRows || []}
+              needIds={selectedNeedIds}
+              hormonalBC={hormonalBC}
               today={today}
               onOpenArea={setView}
               products={products}
               matches={matches}
               onOpenProduct={onOpenProduct}
-              onAsk={openAsk ? (question) => openAsk({ question, context: dashboardContext({ cycle: week.cycle?.cycleDay ? week.cycle : null, estimate, ready, products }) }) : undefined}
+              onAsk={openAsk ? (question, extra) => openAsk({ question, context: dashboardContext({ cycle: week.cycle?.cycleDay ? week.cycle : null, estimate, ready, products, insights: extra?.insights || [] }) }) : undefined}
             />
           )}
           <section aria-labelledby="ay-hd-pinned" className="ay-hd-pinsec">
@@ -178,8 +179,9 @@ export default function HealthDashboard({ authUser, userName = '', selectedNeedI
           </section>
 
           {ready.length > 0 && (
-            <section aria-labelledby="ay-hd-changed">
-              <h2 id="ay-hd-changed" className="ay-hd-h2">Your week, in short</h2>
+            <details className="ay-hd-fold">
+              {/* Folded: "This week, explained" above carries the changes that matter; this is every area, one line each. */}
+              <summary><span className="ay-hd-h2">Your week, in short</span><small>Every area, one line each</small></summary>
               <ul className="ay-hd-lines">
                 {ready.map((s) => {
                   const boosted = s.signal && health.matchContext?.byNeed?.[s.signal.needId];
@@ -193,7 +195,7 @@ export default function HealthDashboard({ authUser, userName = '', selectedNeedI
                 })}
               </ul>
               {sources.length > 0 && <p className="ay-hd-small">From {sourceNames(sources)}. Trends, not diagnoses.</p>}
-            </section>
+            </details>
           )}
 
           {suggestions.length > 0 && onAddGoal && (

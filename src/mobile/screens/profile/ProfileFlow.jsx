@@ -25,6 +25,7 @@ import InlineError from '../../../components/InlineError.jsx';
 import { clearError, errorSummary, firstErrorKey, revealField, warnHaptic } from '../../../utils/formErrors.js';
 import HealthConnectionsScreen from './HealthConnectionsScreen.jsx';
 import HealthInsightsScreen from './HealthInsightsScreen.jsx';
+import { usesHormonalBC } from '../../../health/weekInsights.js';
 import { ALL_PRODUCTS, getSelectedNeeds } from '../../../data/products.js';
 import './about-scrapbook.css';
 import { buildShopperProfile } from '../../utils/shopperProfile.js';
@@ -3688,6 +3689,7 @@ export default function ProfileFlow({
           <HealthInsightsScreen
             authUser={authUser}
             selectedNeedIds={selectedNeedIds}
+            hormonalBC={usesHormonalBC(quizAnswers)}
             products={myProducts}
             matches={matchProducts}
             onOpenProduct={onOpenProduct}
