@@ -57,3 +57,10 @@
 /* Website dark: the Ask panel keeps its butter surface, so its Share
    button keeps espresso ink too (it was inheriting butter and vanished). */
 .app-container[data-theme='brand-dark'] .ayna-ask-panel .ay-share-answer__btn { color: #3e2723 !important; border-color: #3e2723 !important; background: transparent !important; }
+
+/* Phones: compact chips so two fit per row instead of a tall stack. */
+@media (max-width: 480px) {
+  .ay-followups { gap: 6px; }
+  .ay-followups .ay-followup.ay-followup { min-height: 36px; padding: 4px 12px; font-size: 13px !important; gap: 4px; }
+  .ay-followups .ay-followup.ay-followup svg { width: 14px; height: 14px; }
+}
