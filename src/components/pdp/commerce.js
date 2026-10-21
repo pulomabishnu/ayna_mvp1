@@ -216,7 +216,7 @@ export function compareRows(products, { matchFor = null } = {}) {
       const preg = getPassport(p)?.safety?.pregnancy;
       const pv = preg?.known && !preg.notApplicable ? String(Array.isArray(preg.value) ? preg.value.join(' ') : preg.value || '') : '';
       if (pv && /not|avoid|consult|ask|doctor|clinician|don.t|do not|unsafe|caution/i.test(pv)) notes.push('Pregnancy caution');
-      return notes.length ? `${notes.join(', ')}, see its page` : 'None flagged';
+      return notes.length ? `${notes.join(', ')}. See its page.` : 'None flagged';
     } },
     { label: 'FSA/HSA', get: (p) => { if (['pad', 'tampon', 'cup', 'disc'].includes(p?.category)) return 'Eligible'; const f = getPassport(p)?.pricing?.fsa_hsa; return f?.known ? (f.value === 'eligible' ? 'Eligible' : 'Not eligible') : NOT_ON_FILE; } },
     matchFor ? { label: 'Your match', get: (p) => { const m = matchFor(p); return Number.isFinite(m) && m > 0 ? `${Math.round(m)}%` : 'No clear match'; } } : null,

@@ -4,7 +4,7 @@ import { TESTING_WATERS_NOTICE } from '../data/investRound';
 import { useRecommendationViews } from '../utils/recommendationAnalytics';
 import { BASICS_PRODUCTS } from '../data/basicsProducts.js';
 import { productsForNeed } from './landingNeeds';
-import { isPlainLeftClick } from '../utils/productRoute';
+import { isPlainLeftClick, productHref } from '../utils/productRoute';
 import { isPartnerBrandItem, PARTNER_BRANDS } from '../utils/partnerBrands';
 import { getWeeklyTrendingLineup } from '../utils/trendingLineup';
 import { ALL_PRODUCTS, MACRO_GROUPS } from '../data/products';
@@ -216,7 +216,7 @@ function Familiar({ onSearch, onStartQuiz }) {
 }
 
 /* ---------- one plain statement, with real products around it ---------- */
-function Statement() {
+function Statement({ onOpenProduct }) {
   const reveal = useReveal('home-statement');
   // The next four of this week's picks (the first four are in the shelf above),
   // our own product photos first.
@@ -228,12 +228,17 @@ function Statement() {
     const own = [...weekly, ...core.filter((p) => !weekly.includes(p))];
     return own.length >= 4 ? own.slice(0, 4) : [];
   }, []);
-  const sticker = (p, i) => <span key={p.id} className={`ed-statement__sticker is-${i}`}><img src={p.image} alt="" loading="lazy" onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }} /></span>;
+  // Die-cut product stickers: each one opens that product.
+  const sticker = (p, i) => (
+    <a key={p.id} href={productHref(p)} className={`ed-statement__sticker is-${i}`} aria-label={`${p.brand ? `${p.brand} ` : ''}${p.name}`} onClick={(e) => { if (!onOpenProduct || !isPlainLeftClick(e)) return; e.preventDefault(); onOpenProduct(p); }}>
+      <img src={p.image} alt="" loading="lazy" decoding="async" width="120" height="120" onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }} />
+    </a>
+  );
   return (
     <section className="ed-statement" aria-labelledby="ed-statement-title">
-      <div className="ed-statement__stickers is-left" aria-hidden="true">{cut.slice(0, 2).map(sticker)}</div>
+      <div className="ed-statement__stickers is-left">{cut.slice(0, 2).map(sticker)}</div>
       <p id="ed-statement-title" className="ed-statement__line">ayna matches women’s health products to your answers, and shows <mark>the research beside each one</mark>.</p>
-      <div ref={reveal} className="ed-statement__stickers is-right" aria-hidden="true">{cut.slice(2, 4).map((p, i) => sticker(p, i + 2))}</div>
+      <div ref={reveal} className="ed-statement__stickers is-right">{cut.slice(2, 4).map((p, i) => sticker(p, i + 2))}</div>
     </section>
   );
 }
@@ -271,7 +276,6 @@ function ShopBand({ onOpenProduct, onViewDiscovery }) {
         </div>
       </div>
       <Strip />
-      <span className="ay-checker" aria-hidden="true" />
     </section>
   );
 }
@@ -518,7 +522,7 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
       {!personal?.dashboard && personalSlot}
       <Picks onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={personal?.topPicks || null} />
       {!personal && <Familiar onSearch={onSearch} onStartQuiz={onStartQuiz} />}
-      <Statement />
+      <Statement onOpenProduct={onOpenProduct} />
       <ShopBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
       <How onViewHowItWorks={onViewHowItWorks} />
       <Evidence onViewArticles={onViewArticles} />

@@ -828,3 +828,18 @@ html body .app-container .ed .ed-prose > :is(section, .ed-psec) :is(h2, h3) { co
 .app-container[data-theme='brand-dark'] .ed .ed-step__big.is-0, .app-container[data-theme='brand-dark'] .ed .ed-step__big.is-3,
 .app-container[data-theme='dark'] .ed .ed-step__big.is-0, .app-container[data-theme='dark'] .ed .ed-step__big.is-3 { color: #ffedac; }
 @media (max-width: 767px) { .ed .ed-step__big { top: 50%; right: 10px; translate: 0 -50%; font-size: 44px; } }
+
+/* Long reads (legal, how we make money): the reading column is centred on the
+   page and the sticky contents list sits in the left margin, so the page is
+   balanced instead of a left column with an empty right half (anti-vibe
+   checklist, Layout). Below 1180px it falls back to contents + column. */
+@media (min-width: 1180px) {
+  .ed .ed-page__layout:has(> .ed-toc, > nav.ed-toc, > aside .ed-toc) { grid-template-columns: minmax(0, 1fr) minmax(0, var(--ed-reading)) minmax(0, 1fr); column-gap: 48px; }
+  .ed .ed-page__layout:has(> .ed-toc, > nav.ed-toc, > aside .ed-toc) > :first-child { max-width: 260px; }
+  .ed .ed-page__layout:has(> .ed-toc, > nav.ed-toc, > aside .ed-toc) > :nth-child(2) { grid-column: 2; }
+}
+/* The statement stickers are product links now. */
+.ed .ed-statement__stickers { pointer-events: auto; }
+.app-container .ed .ed-statement__sticker { transition: transform var(--t-fast) var(--ease-out); }
+@media (hover: hover) and (pointer: fine) { .app-container .ed a.ed-statement__sticker:hover { transform: translateY(-3px); } }
+.app-container .ed a.ed-statement__sticker:focus-visible { outline: 3px solid #3e2723; outline-offset: 4px; }
