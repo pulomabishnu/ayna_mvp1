@@ -130,7 +130,7 @@ const CONFIDENCE_NOTES = {
   similar_reaction_caution: 'Similar to a past reaction',
   flow_contradiction: 'Period answers need a check',
   stage_needs_clarification: 'Life stage needs a check',
-  unusual_combination: 'Age and life stage are unusual together',
+  unusual_combination: 'Life stage is less common at your age',
   medications_not_shared: 'Medicines not on file',
   pregnancy_status_unknown: 'Life stage not on file',
   pregnancy_reported: 'Confirm your life stage',

@@ -1768,6 +1768,29 @@ const COMPONENT_WEIGHT = { primaryGoal: 40, diagnoses: 10, lifeStage: 10, triedB
 
 const NOT_A_SUBSTITUTE = 'Not a substitute for getting checked';
 
+// Age x life stage and stage-pair notes. Wording follows the sources in
+// matching/ontology.js STAGE_SOURCES (government and medical-society only).
+const PROFILE_LEVEL_CODES = new Set(['unusual_combination', 'stage_needs_clarification']);
+const AGE_STAGE_TEXT = {
+    early_perimenopause: 'Perimenopause usually starts in the mid- to late 40s, sometimes the mid-30s, so we are less sure about this life stage at your age. Update it if it has changed.',
+    pregnancy_over_55: 'Pregnancy after 55 is uncommon, so we are less sure about this life stage at your age. Update it if it has changed.',
+    ttc_over_55: 'Trying to conceive after 55 is uncommon, so we are less sure about this life stage at your age. Update it if it has changed.',
+    postpartum_over_55: 'Giving birth after 55 is uncommon, so we are less sure about this life stage at your age. Update it if it has changed.',
+    periods_after_55: 'Periods usually stop between 45 and 55, so we are less sure about this life stage at your age. Update it if it has changed.',
+};
+function ageStageNote(up) {
+    const f = (up?.physiology?.compatibility?.ageStageFindings || []).find((x) => x.kind === 'unusual');
+    return (f && AGE_STAGE_TEXT[f.code]) || 'We are less sure about your life stage at your age. Update it if it has changed.';
+}
+const stagePhrase = (st) => (st === 'breastfeeding' ? 'breastfeeding' : LIFE_STAGE_BY_ID[st]?.phrase || st);
+function stagePairNote(up) {
+    const combo = (up?.physiology?.compatibility?.combos || []).find((c) => c.verdict === 'needs_clarification');
+    if (!combo) return 'Some life stages you chose do not usually go together. Update your life stage so we can use it.';
+    const [a, b] = combo.stages.map(stagePhrase);
+    const tail = combo.reconcile === 'menopause_transition' ? ' Until then we match you for the menopause transition, which fits either answer.' : ' Until then we leave life stage out of your match.';
+    return `You chose ${a} and ${b}, which do not usually go together. Update your life stage.${tail}`;
+}
+
 // Confidence penalties that are not already shown as a caution, as plain "could not confirm" notes.
 const UNKNOWN_TEXT = {
     medication_unknown: () => 'Medication compatibility was not fully assessed for this product.',
@@ -1775,8 +1798,8 @@ const UNKNOWN_TEXT = {
     ttc_pregnancy_unknown: () => 'Pregnancy safety is not confirmed, which matters while trying to conceive.',
     breastfeeding_unknown: () => 'Breastfeeding safety is not confirmed for this product.',
     low_metadata: () => 'We have limited product data for this one, so the score is held lower.',
-    unusual_combination: () => 'Your age and life stage are an unusual combination, so we are less certain.',
-    stage_needs_clarification: () => 'Some life stages you chose need clarifying, so life-stage fit is not used yet.',
+    unusual_combination: (p, up) => ageStageNote(up),
+    stage_needs_clarification: (p, up) => stagePairNote(up),
     allergy_status_unsure: () => 'You were not sure about allergies. Check the label.',
     urgent_not_sure_high_risk: () => 'You were not sure if something is urgent. Check with a clinician before starting this.',
     pain_varies: () => 'Your period pain varies, so the cramp fit is less certain.',
@@ -1800,7 +1823,7 @@ function inputsFor(best, up) {
     out.push({ kind: 'need', text: `${needLabel(need || { id: best.needId })} (${verb})` });
     const ctx = best.contextUsed;
     if (ctx) {
-        const label = ctx.type === 'life_stage' ? `${LIFE_STAGE_BY_ID[ctx.id]?.option ? cap(LIFE_STAGE_BY_ID[ctx.id].phrase) : cap(ctx.phrase)} (you shared)`
+        const label = ctx.reconciled ? `${cap(ctx.phrase)} (fits the life stages you shared)` : ctx.type === 'life_stage' ? `${LIFE_STAGE_BY_ID[ctx.id]?.option ? cap(LIFE_STAGE_BY_ID[ctx.id].phrase) : cap(ctx.phrase)} (you shared)`
             : ctx.type === 'condition' ? `${ctx.phrase} diagnosis (you shared)` : ctx.type === 'free_text' ? `${cap(ctx.phrase)} (you mentioned)` : `${cap(ctx.phrase)} (you shared)`;
         out.push({ kind: ctx.type === 'condition' ? 'diagnosis' : 'context', text: label });
     }
@@ -1986,8 +2009,12 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
         }
         const unknowns = [];
         for (const p of best?.confidenceReasons || safety.penalties || []) {
+            // Notes about her profile only mean something on a product that
+            // matches one of her needs; on unrelated products they are noise.
+            if (!best && PROFILE_LEVEL_CODES.has(p.code)) continue;
             const fn = UNKNOWN_TEXT[p.code];
-            if (fn) unknowns.push(fn(p));
+            const text = fn ? fn(p, up) : null;
+            if (text) unknowns.push(text);
         }
         if (safety.restricted) {
             const fields = safety.missingFields.map((f) => REQUIRED_FIELD_TEXT[f]).filter(Boolean);
@@ -2062,7 +2089,13 @@ function careFlagsFor(up) {
     if (symptomCare.length) notes.push({ code: 'symptom_check', text: 'Some symptoms you chose are best checked by a clinician.' });
     if (up.safety.pregnant) notes.push({ code: 'pregnancy_unknown', text: 'Pregnancy safety is not confirmed for most products. Check new products with your clinician.' });
     if (up.safety.breastfeeding === 'yes') notes.push({ code: 'breastfeeding_unknown', text: 'Breastfeeding safety is not confirmed for most products. Check new products with your clinician.' });
-    if (up.physiology.confidenceFlags.includes('needs_clarification')) notes.push({ code: 'stage_needs_clarification', text: 'Some life stages you chose do not usually go together. Update your profile so we can match better.' });
+    if (up.physiology.confidenceFlags.includes('needs_clarification')) notes.push({ code: 'stage_needs_clarification', text: stagePairNote(up) });
+    const compat = up.physiology.compatibility || {};
+    // MedlinePlus: tell your provider about any bleeding after 12 months with no period.
+    if ((compat.combos || []).some((c) => c.care === 'postmenopausal_bleeding')) notes.push({ code: 'postmenopausal_bleeding', text: 'Any bleeding after 12 months with no period is worth telling a clinician about, even a small amount.' });
+    // OWH: if your periods stop before 40, you can ask about testing. Induced
+    // menopause (surgery, chemotherapy) also counts (Menopause Society).
+    if ((compat.ageStageFindings || []).some((f) => f.code === 'premature_menopause')) notes.push({ code: 'premature_menopause', text: 'Menopause before 40 is called premature menopause. It can follow surgery or cancer treatment. If your periods stopped on their own, you can ask a clinician about testing.' });
     for (const c of up.contradictions.filter((x) => x.code === 'period_need_vs_stage')) notes.push({ code: c.code, text: c.text });
     return {
         urgent: up.safety.urgent,

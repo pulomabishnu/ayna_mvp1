@@ -98,11 +98,18 @@ describe('pregnancy gate', () => {
 });
 
 describe('age and life stage', () => {
-  it('age 22 + post-menopause keeps the stage, with a confidence flag', () => {
+  it('age 22 + post-menopause keeps the stage with no confidence penalty (premature menopause is recognized)', () => {
     const up = user({ age: '22', lifeStageSelections: ['I am post-menopause'], supportSelections: ['Vaginal dryness'] });
     const r = score('p-kindra-lotion', up, 'vaginal.dryness');
     expect(r.explanations).toContain('Matches your vaginal dryness and the post-menopause stage you shared');
+    expect(r.confidenceReasons.map((c) => c.code)).not.toContain('unusual_combination');
+  });
+
+  it('age 30 + perimenopause lowers confidence, never the match', () => {
+    const base = score('p-kindra-lotion', user({ age: '45', lifeStageSelections: ['I am in perimenopause'], supportSelections: ['Vaginal dryness'] }), 'vaginal.dryness');
+    const r = score('p-kindra-lotion', user({ age: '30', lifeStageSelections: ['I am in perimenopause'], supportSelections: ['Vaginal dryness'] }), 'vaginal.dryness');
     expect(r.confidenceReasons.map((c) => c.code)).toContain('unusual_combination');
+    expect(r.score).toBe(base.score);
   });
 
   it('excludes products outside a stated age range', () => {

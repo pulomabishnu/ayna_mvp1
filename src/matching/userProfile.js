@@ -19,7 +19,7 @@
 
 import {
   needIdForOption, NON_NEED_OPTIONS, NEED_BY_ID, canonicalize, CONDITION_ID_BY_OPTION, CONDITION_ID_BY_LEGACY, NON_CONDITION_OPTIONS,
-  LIFE_STAGE_ID_BY_OPTION, LIFE_STAGE_COMPATIBILITY, ageBandFor, UNUSUAL_AGE_FOR_STAGE, FORMAT_ID_BY_OPTION, LEAVE_OUT_BY_OPTION,
+  LIFE_STAGE_ID_BY_OPTION, LIFE_STAGE_COMPATIBILITY, ageBandFor, ageStageFindings, FORMAT_ID_BY_OPTION, LEAVE_OUT_BY_OPTION,
   VALUE_ID_BY_OPTION, ALLERGEN_BY_OPTION, ALLERGEN_BY_ID, PCOS_REINFORCING_NEEDS, URINARY_UTI_NEEDS, MENSTRUAL_PRODUCT_NEEDS, POSTPARTUM_NEEDS,
   normalizeText, LEGACY_FRUSTRATION_NEEDS, LEGACY_CONCERN_NEEDS, LEGACY_SYMPTOM_NEEDS, LEGACY_PREFERENCE, LEGACY_SENSITIVITY_ALLERGEN,
   CONTEXTS, LIFE_STAGE_BY_ID, needKind,
@@ -389,12 +389,19 @@ export function buildUserProfile(intakeInput, options = {}) {
   const confidenceFlags = [];
   const combos = [];
   for (const rule of LIFE_STAGE_COMPATIBILITY) {
-    if (rule.stages.every((st) => stageSet.has(st))) combos.push({ stages: rule.stages, verdict: rule.verdict });
+    if (rule.stages.every((st) => stageSet.has(st))) {
+      combos.push({ stages: rule.stages, verdict: rule.verdict, ...(rule.reconcile ? { reconcile: rule.reconcile } : {}), ...(rule.care ? { care: rule.care } : {}) });
+    }
   }
   const conflictingStages = new Set(combos.filter((c) => c.verdict === 'needs_clarification').flatMap((c) => c.stages));
   if (conflictingStages.size) confidenceFlags.push('needs_clarification');
-  const ageStageFlags = lifeStages.filter((st) => age != null && UNUSUAL_AGE_FOR_STAGE[st]?.(age));
+  // Sourced age x stage rules (ontology AGE_STAGE_RULES). 'recognized'
+  // situations (premature/early menopause) are never a confidence flag.
+  const ageStageFindingList = ageStageFindings(age, lifeStages);
+  const ageStageFlags = [...new Set(ageStageFindingList.filter((f) => f.kind === 'unusual').map((f) => f.stage))];
   if (ageStageFlags.length) confidenceFlags.push('unusual_combination');
+  // Contexts that hold under either reading of a conflicting pair.
+  const reconciledContexts = new Set(combos.filter((c) => c.verdict === 'needs_clarification' && c.reconcile).map((c) => c.reconcile));
 
   let flow = Object.prototype.hasOwnProperty.call(FLOW_BY_OPTION, intake.periodFlow) ? FLOW_BY_OPTION[intake.periodFlow] : null;
   if (!flow && intake.flowLevel) flow = LEGACY_FLOW[String(intake.flowLevel).toLowerCase()] || null;
@@ -463,6 +470,12 @@ export function buildUserProfile(intakeInput, options = {}) {
     for (const c of def.conditions || []) if (conditionIds.has(c)) sources.push({ type: 'condition', id: c, strength: 1, phrase: def.phrase });
     for (const [needId, strength] of Object.entries(def.needs || {})) if (needIds.has(needId)) sources.push({ type: 'need', id: needId, strength, phrase: NEED_BY_ID[needId]?.phrase || needId });
     for (const st of def.freeText || []) if (reportedStages.includes(st)) sources.push({ type: 'free_text', id: st, strength: 0.9, phrase: st === 'breastfeeding' ? 'breastfeeding' : LIFE_STAGE_BY_ID[st]?.phrase || st });
+    // A conflicting pair whose readings all share this context (menopause +
+    // regular periods = either way, the menopause transition): keep it, a
+    // little weaker, so her matches do not empty out while she clarifies.
+    if (reconciledContexts.has(ctxId) && !sources.some((x) => x.type === 'life_stage')) {
+      sources.push({ type: 'life_stage', id: 'reconciled', strength: 0.8, phrase: def.phrase, reconciled: true });
+    }
     if (ctxId === 'pregnancy' && [1, 2, 3].includes(trimester) && !lifeStages.includes('pregnant')) sources.push({ type: 'answer', id: 'trimester', strength: 1, phrase: 'pregnancy' });
     if (ctxId === 'postpartum' && postpartumTiming && postpartumTiming !== 'gt_12m' && !lifeStages.includes('postpartum')) sources.push({ type: 'answer', id: 'postpartumTiming', strength: 0.8, phrase: 'postpartum' });
     if (!sources.length) continue;
@@ -790,7 +803,7 @@ export function buildUserProfile(intakeInput, options = {}) {
       lifeStages,
       customLifeStages,
       breastfeeding,
-      compatibility: { combos, conflictingStages: [...conflictingStages], ageStageFlags },
+      compatibility: { combos, conflictingStages: [...conflictingStages], ageStageFlags, ageStageFindings: ageStageFindingList, reconciledContexts: [...reconciledContexts] },
       confidenceFlags,
       flow,
       menstruation,

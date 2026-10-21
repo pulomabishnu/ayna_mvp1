@@ -449,26 +449,55 @@ Object.assign(LIFE_STAGE_ID_BY_OPTION, {
 });
 export const LIFE_STAGE_BY_ID = Object.fromEntries(LIFE_STAGES.map((s) => [s.id, s]));
 
-// LIFE STAGE COMPATIBILITY (clinician review). Pairs not listed are treated
-// as compatible. 'needs_clarification' never drops either stage: both are
-// kept, stage-based boosts/suppressions for the pair are neutralized, and
+// LIFE STAGE COMPATIBILITY (clinician review, sourced). Pairs not listed are
+// treated as compatible. 'needs_clarification' never drops either stage: both
+// are kept, stage-based boosts/suppressions for the pair are neutralized, and
 // confidence is lowered, so a contradiction cannot produce random picks.
+// 'reconcile' names a context that is true under EITHER reading of the pair
+// and so stays in use while she clarifies (see userProfile contexts).
+// Sources: STAGE_SOURCES below.
 export const LIFE_STAGE_COMPATIBILITY = [
   { stages: ['postpartum', 'breastfeeding'], verdict: 'legit' },
   { stages: ['hormonal_birth_control', 'regular_periods'], verdict: 'legit' },
   { stages: ['hormonal_birth_control', 'no_periods'], verdict: 'legit' },
   { stages: ['ttc', 'irregular_periods'], verdict: 'legit' },
-  { stages: ['perimenopause', 'irregular_periods'], verdict: 'legit' },
+  // Periods continue (often irregular) through perimenopause. [owh_basics, medlineplus_menopause]
+  { stages: ['perimenopause', 'irregular_periods'], verdict: 'legit', sources: ['owh_basics', 'medlineplus_menopause'] },
+  { stages: ['perimenopause', 'regular_periods'], verdict: 'legit', sources: ['owh_basics'] },
+  // Pregnancy is still possible in perimenopause. [owh_basics]
+  { stages: ['perimenopause', 'ttc'], verdict: 'legit', sources: ['owh_basics'] },
+  { stages: ['menopause', 'no_periods'], verdict: 'legit', sources: ['owh_basics'] },
+  { stages: ['postmenopause', 'no_periods'], verdict: 'legit', sources: ['owh_basics'] },
   { stages: ['pregnant', 'regular_periods'], verdict: 'needs_clarification' },
-  { stages: ['menopause', 'regular_periods'], verdict: 'needs_clarification' },
-  { stages: ['postmenopause', 'ttc'], verdict: 'needs_clarification' },
-  // Same shape as the spec's examples (a stage that rules out the other).
-  { stages: ['postmenopause', 'regular_periods'], verdict: 'needs_clarification' },
-  { stages: ['menopause', 'ttc'], verdict: 'needs_clarification' },
+  // Menopause = 12 months in a row with no period; after it you cannot get
+  // pregnant naturally. Both readings of these pairs still mean the menopause
+  // transition (perimenopause has periods and pregnancy is possible), so that
+  // context stays. [owh_basics, medlineplus_menopause]
+  { stages: ['menopause', 'regular_periods'], verdict: 'needs_clarification', reconcile: 'menopause_transition', sources: ['owh_basics'] },
+  { stages: ['menopause', 'irregular_periods'], verdict: 'needs_clarification', reconcile: 'menopause_transition', sources: ['owh_basics'] },
+  { stages: ['postmenopause', 'regular_periods'], verdict: 'needs_clarification', reconcile: 'menopause_transition', care: 'postmenopausal_bleeding', sources: ['owh_basics', 'medlineplus_menopause'] },
+  { stages: ['postmenopause', 'irregular_periods'], verdict: 'needs_clarification', reconcile: 'menopause_transition', care: 'postmenopausal_bleeding', sources: ['owh_basics', 'medlineplus_menopause'] },
+  { stages: ['menopause', 'ttc'], verdict: 'needs_clarification', reconcile: 'menopause_transition', sources: ['owh_basics'] },
+  { stages: ['postmenopause', 'ttc'], verdict: 'needs_clarification', reconcile: 'menopause_transition', sources: ['owh_basics'] },
+  { stages: ['menopause', 'pregnant'], verdict: 'needs_clarification', sources: ['owh_basics'] },
+  { stages: ['postmenopause', 'pregnant'], verdict: 'needs_clarification', sources: ['owh_basics'] },
   { stages: ['regular_periods', 'irregular_periods'], verdict: 'needs_clarification' },
   { stages: ['regular_periods', 'no_periods'], verdict: 'needs_clarification' },
   { stages: ['pregnant', 'ttc'], verdict: 'needs_clarification' },
 ];
+
+// Every age or life-stage rule cites one of these. Only government (.gov,
+// nhs.uk), academic, or medical-society (.org) sources: see
+// src/data/sourcePolicy.js. Each was opened and read on 2026-10-21.
+export const STAGE_SOURCES = {
+  owh_basics: { url: 'https://womenshealth.gov/menopause/menopause-basics', label: 'Office on Women\'s Health (HHS): Menopause basics', says: 'US average age of menopause is 52; the transition usually happens between 45 and 55. Perimenopause usually begins in the mid- to late 40s, some notice symptoms in the mid- to late 30s, and it lasts about 4 years (up to 10). Menopause is 12 months in a row with no period. Pregnancy is possible during perimenopause. If periods stop before 40, ask about testing.' },
+  nichd_menopause: { url: 'https://www.nichd.nih.gov/health/topics/factsheets/menopause', label: 'NICHD (NIH): Menopause', says: 'Menopause typically occurs between 45 and 55; average age 51. Induced menopause follows removal of the ovaries, chemotherapy or hormone therapy for breast cancer.' },
+  medlineplus_menopause: { url: 'https://medlineplus.gov/ency/article/000894.htm', label: 'MedlinePlus (NIH): Menopause', says: 'Menopause most often occurs between 45 and 55. Tell your provider about any bleeding that returns after 12 months with no period, even a small amount.' },
+  nichd_poi: { url: 'https://www.nichd.nih.gov/health/topics/POI', label: 'NICHD (NIH): Primary ovarian insufficiency', says: 'POI is when the ovaries stop working normally before age 40; it can start as early as the teens. Many with POI still get irregular periods.' },
+  menopause_society_premature: { url: 'https://menopause.org/for-women/menopause-faqs-premature-early-and-induced-menopause', label: 'The Menopause Society: Premature, early and induced menopause', says: 'Premature menopause (natural or induced) is at 40 or younger, about 1 in 100 US women. Induced menopause follows ovary removal, chemotherapy, radiation or medicines.' },
+  nhs_early_menopause: { url: 'https://www.nhs.uk/conditions/early-menopause/', label: 'NHS: Early menopause', says: 'Early menopause is periods stopping before 45; premature is before 40. It can happen naturally or after surgery, radiotherapy, chemotherapy or hormone medicines.' },
+  asrm_advanced_age: { url: 'https://asrm.org/globalassets/_asrm/practice-guidance/ethics-opinions/pdf/oocyte_or_embryo_donation_to_women_of_advanced_maternal_age_an_ethics_commitee_opinion.pdf', label: 'ASRM Ethics Committee: Oocyte or embryo donation to women of advanced reproductive age', says: 'Embryo transfer to women over 55 should generally be discouraged; many women 45 to 54 are reasonable candidates with a full medical evaluation.' },
+};
 
 // AGE BANDS (spec Q1). Age is a small prior only; it never infers periods,
 // fertility, menopause, sexual activity, pregnancy or PCOS.
@@ -485,17 +514,47 @@ export function ageBandFor(age) {
   if (!Number.isFinite(age)) return null;
   return AGE_BANDS.find((b) => age >= b.min && age <= b.max)?.id || null;
 }
-// Age x explicit stage combinations that are unusual (explicit stage still
-// wins; this only adds confidenceFlag 'unusual_combination').
-export const UNUSUAL_AGE_FOR_STAGE = {
-  menopause: (age) => age < 35,
-  postmenopause: (age) => age < 35,
-  perimenopause: (age) => age < 30,
-  pregnant: (age) => age >= 55,
-  ttc: (age) => age >= 55,
-  regular_periods: (age) => age >= 60,
-  postpartum: (age) => age >= 55,
+// Age x explicit stage (sourced). The stage she chose always wins; age never
+// infers or overrides a stage. Two kinds of rule:
+//   recognized  a real clinical situation that is less common at this age
+//               (premature, early or induced menopause). Not "unusual": no
+//               confidence penalty, only a sourced note when the source says
+//               to talk to a clinician.
+//   unusual     outside what the sources describe, so we are less sure the
+//               answer is what she meant (confidenceFlag 'unusual_combination').
+// Each rule: test(age) -> true when it applies.
+export const AGE_STAGE_RULES = {
+  menopause: [
+    { kind: 'recognized', code: 'premature_menopause', test: (age) => age < 40, sources: ['nichd_poi', 'menopause_society_premature', 'owh_basics'] },
+    { kind: 'recognized', code: 'early_menopause', test: (age) => age >= 40 && age < 45, sources: ['nhs_early_menopause'] },
+  ],
+  postmenopause: [
+    { kind: 'recognized', code: 'premature_menopause', test: (age) => age < 40, sources: ['nichd_poi', 'menopause_society_premature', 'owh_basics'] },
+    { kind: 'recognized', code: 'early_menopause', test: (age) => age >= 40 && age < 45, sources: ['nhs_early_menopause'] },
+  ],
+  // Perimenopause usually starts in the mid- to late 40s; some notice it in
+  // their mid- to late 30s. Before 35 is outside that. [owh_basics]
+  perimenopause: [{ kind: 'unusual', code: 'early_perimenopause', test: (age) => age < 35, sources: ['owh_basics'] }],
+  // ASRM discourages embryo transfer over 55. [asrm_advanced_age]
+  pregnant: [{ kind: 'unusual', code: 'pregnancy_over_55', test: (age) => age > 55, sources: ['asrm_advanced_age'] }],
+  ttc: [{ kind: 'unusual', code: 'ttc_over_55', test: (age) => age > 55, sources: ['asrm_advanced_age'] }],
+  postpartum: [{ kind: 'unusual', code: 'postpartum_over_55', test: (age) => age > 55, sources: ['asrm_advanced_age'] }],
+  // Menopause usually happens between 45 and 55. [nichd_menopause, medlineplus_menopause, owh_basics]
+  regular_periods: [{ kind: 'unusual', code: 'periods_after_55', test: (age) => age > 55, sources: ['nichd_menopause', 'medlineplus_menopause'] }],
+  irregular_periods: [{ kind: 'unusual', code: 'periods_after_55', test: (age) => age > 55, sources: ['nichd_menopause', 'medlineplus_menopause'] }],
 };
+
+/** Age-stage rules that apply to her: [{ stage, kind, code, sources }]. */
+export function ageStageFindings(age, lifeStages) {
+  if (!Number.isFinite(age)) return [];
+  return lifeStages.flatMap((stage) => (AGE_STAGE_RULES[stage] || [])
+    .filter((r) => r.test(age))
+    .map(({ kind, code, sources }) => ({ stage, kind, code, sources })));
+}
+
+// Back-compat: stages whose age combination is 'unusual' (not 'recognized').
+export const UNUSUAL_AGE_FOR_STAGE = Object.fromEntries(Object.entries(AGE_STAGE_RULES)
+  .map(([stage, rules]) => [stage, (age) => rules.some((r) => r.kind === 'unusual' && r.test(age))]));
 
 // ─── Formats ────────────────────────────────────────────────────────────────
 export const FORMATS = [

@@ -543,7 +543,7 @@ export function resolveRelevance(pp, up, needId) {
       const src = active.sources[0];
       base = scaled;
       level = c.level;
-      contextUsed = { context: active.id, type: src.type, id: src.id, phrase: src.phrase, strength: active.strength, rule: c.rule, via: 'contextual' };
+      contextUsed = { context: active.id, type: src.type, id: src.id, phrase: src.phrase, strength: active.strength, rule: c.rule, via: 'contextual', ...(src.reconciled ? { reconciled: true } : {}) };
     }
   }
   const contextualOnly = Boolean(contextUsed) && !(entry.score > 0);
@@ -973,6 +973,7 @@ export function computeAccess(productOrProfile, up) {
 const VERB_BY_SOURCE = { selected: 'selected', legacy: 'shared', custom: 'added', free_text: 'mentioned', adhoc: 'selected' };
 function contextPhrase(ctx) {
   if (!ctx) return null;
+  if (ctx.reconciled) return `the ${ctx.phrase}, which fits the life stages you shared`;
   if (ctx.type === 'life_stage') return ctx.id === 'breastfeeding' ? 'the breastfeeding you shared' : `the ${LIFE_STAGE_BY_ID[ctx.id]?.phrase || ctx.phrase} stage you shared`;
   if (ctx.type === 'condition') return `the ${ctx.phrase} diagnosis you shared`;
   if (ctx.type === 'need') return `the ${ctx.phrase} you selected`;

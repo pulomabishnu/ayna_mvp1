@@ -14,11 +14,52 @@ describe('buildUserProfile layers', () => {
     expect(up.healthIntent.needs).toHaveLength(0); // no nausea or constipation assumed
   });
 
-  it('age 22 + post-menopause keeps the stage and flags unusual_combination', () => {
+  it('age 22 + post-menopause keeps the stage as premature menopause, not "unusual" (NICHD, Menopause Society)', () => {
     const up = buildUserProfile(intake({ age: '22', lifeStageSelections: ['I am post-menopause'] }));
     expect(up.physiology.lifeStages).toEqual(['postmenopause']);
     expect(up.physiology.ageBand).toBe('emerging_adult');
-    expect(up.physiology.confidenceFlags).toContain('unusual_combination');
+    expect(up.physiology.confidenceFlags).not.toContain('unusual_combination');
+    expect(up.physiology.compatibility.ageStageFindings).toEqual([{ stage: 'postmenopause', kind: 'recognized', code: 'premature_menopause', sources: ['nichd_poi', 'menopause_society_premature', 'owh_basics'] }]);
+  });
+
+  it('age 42 + menopause is early menopause: recognized, no flag (NHS)', () => {
+    const up = buildUserProfile(intake({ age: '42', lifeStageSelections: ['I am in menopause'] }));
+    expect(up.physiology.confidenceFlags).not.toContain('unusual_combination');
+    expect(up.physiology.compatibility.ageStageFindings.map((f) => f.code)).toEqual(['early_menopause']);
+  });
+
+  it('perimenopause is only flagged before 35 (OWH: some notice it in their mid-30s)', () => {
+    expect(buildUserProfile(intake({ age: '34', lifeStageSelections: ['I am in perimenopause'] })).physiology.confidenceFlags).toContain('unusual_combination');
+    expect(buildUserProfile(intake({ age: '35', lifeStageSelections: ['I am in perimenopause'] })).physiology.confidenceFlags).not.toContain('unusual_combination');
+  });
+
+  it('pregnancy is flagged over 55, not at 55 (ASRM)', () => {
+    expect(buildUserProfile(intake({ age: '55', lifeStageSelections: ['I am pregnant'] })).physiology.confidenceFlags).not.toContain('unusual_combination');
+    expect(buildUserProfile(intake({ age: '56', lifeStageSelections: ['I am pregnant'] })).physiology.confidenceFlags).toContain('unusual_combination');
+  });
+
+  it('periods are flagged after 55 (NICHD, MedlinePlus: menopause usually 45 to 55)', () => {
+    expect(buildUserProfile(intake({ age: '55', lifeStageSelections: ['I get periods regularly'] })).physiology.confidenceFlags).not.toContain('unusual_combination');
+    expect(buildUserProfile(intake({ age: '57', lifeStageSelections: ['I get periods regularly'] })).physiology.confidenceFlags).toContain('unusual_combination');
+  });
+
+  it('menopause + regular periods keeps the menopause-transition context while she clarifies (OWH)', () => {
+    const up = buildUserProfile(intake({ age: '48', lifeStageSelections: ['I am in menopause', 'I get periods regularly'] }));
+    expect(up.physiology.confidenceFlags).toContain('needs_clarification');
+    expect(up.physiology.compatibility.reconciledContexts).toEqual(['menopause_transition']);
+    expect(up.contexts.menopause_transition).toMatchObject({ strength: 0.8 });
+    expect(up.contexts.menopause_transition.sources[0]).toMatchObject({ reconciled: true });
+  });
+
+  it('pregnant + regular periods reconciles nothing (no context fits both)', () => {
+    const up = buildUserProfile(intake({ lifeStageSelections: ['I am pregnant', 'I get periods regularly'] }));
+    expect(up.physiology.compatibility.reconciledContexts).toEqual([]);
+    expect(up.contexts.pregnancy).toBeUndefined();
+  });
+
+  it('perimenopause + trying to conceive is compatible (OWH: pregnancy is possible in perimenopause)', () => {
+    const up = buildUserProfile(intake({ age: '44', lifeStageSelections: ['I am in perimenopause', 'I am trying to conceive'] }));
+    expect(up.physiology.compatibility.conflictingStages).toEqual([]);
   });
 
   it('keeps the exact age, including minors the legacy snapshot drops', () => {

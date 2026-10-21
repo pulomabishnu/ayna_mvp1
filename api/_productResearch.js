@@ -6,6 +6,7 @@
  * science sources, reviews only when real ones can be linked, plain words and
  * no dashes. Everything here is pure so it can be tested without a network.
  */
+import { isCredibleScienceSource } from '../src/data/sourcePolicy.js';
 
 export const SECTIONS = ['who', 'how', 'clinical', 'science', 'reviews'];
 
@@ -25,7 +26,9 @@ export function isCredibleUrl(url) {
   try {
     const u = new URL(url);
     if (u.protocol !== 'https:' || isSearchUrl(url)) return false;
-    return CREDIBLE_HOST.test(u.hostname.replace(/^www\./, ''));
+    // Both the host allowlist and the site-wide source policy (no .com
+    // science sources: journal papers are linked through PubMed or PMC).
+    return CREDIBLE_HOST.test(u.hostname.replace(/^www\./, '')) && isCredibleScienceSource(url);
   } catch {
     return false;
   }
@@ -50,8 +53,8 @@ const STYLE = `Tone: plain, warm, direct, short sentences, "you" where natural. 
 const TASKS = {
   who: `Write "whoItsFor": 3 or 4 short bullets on who this product suits, based on what the brand says it is for and what credible sources support. You may add one bullet starting "Not the pick for" when the brand or a credible source states a limit or contraindication. Return {"whoItsFor": [...], "sources": [{"url","label"}], "skipped": ""}.`,
   how: `Write "howToUse" from the BRAND'S OWN instructions (product page, FAQ, label or user guide). For a generic product type with no brand instructions, use official guidance (FDA, NHS, Mayo Clinic) and say so in the intro. 3 to 6 short imperative steps. For supplements, give dose and timing exactly as the label states. For apps and services, how to get started. Return {"howToUse": {"intro": "Per {Brand}'s instructions:", "steps": [...], "sourceUrl": "...", "sourceLabel": "..."}, "skipped": ""}.`,
-  clinical: `Find 1 to 3 CLINICAL GUIDANCE sources relevant to using this product or product type, ONLY from government health agencies, medical societies or academic medical centers (FDA, CDC, NIH, NHS, ACOG, AAFP, ASRM, The Menopause Society, Mayo Clinic, Cleveland Clinic, Johns Hopkins, MedlinePlus). Never brand sites, news, blogs or Healthline. Return {"clinicalSources": [{"url","label","summary": "one sentence on what it says that matters for this product"}], "skipped": ""}.`,
-  science: `Find 1 to 3 STUDIES (trials, systematic reviews, meta-analyses) about this exact product, its key ingredients, or its product type, ONLY from peer-reviewed journals or government research sites (PubMed, PMC, Cochrane, DOI links, JAMA, BMJ, Lancet, Springer, Wiley, MDPI, Frontiers, PLOS). Prefer a study of this exact product. Say plainly when a study is about the ingredient or product type, not this product. Return {"scienceSources": [{"url","label","summary": "one sentence on what it found"}], "skipped": ""}.`,
+  clinical: `Find 1 to 3 CLINICAL GUIDANCE sources relevant to using this product or product type, ONLY from government health agencies, medical societies or academic medical centers (FDA, CDC, NIH, NHS, ACOG, AAFP, ASRM, The Menopause Society, Mayo Clinic, Cleveland Clinic, Johns Hopkins, MedlinePlus). Only .gov, .edu or medical-society and academic-medical-center .org sites. Never .com, brand sites, news, blogs or Healthline. Return {"clinicalSources": [{"url","label","summary": "one sentence on what it says that matters for this product"}], "skipped": ""}.`,
+  science: `Find 1 to 3 STUDIES (trials, systematic reviews, meta-analyses) about this exact product, its key ingredients, or its product type, ONLY peer-reviewed papers, linked through their PubMed record (https://pubmed.ncbi.nlm.nih.gov/<PMID>/) or PMC full text (https://pmc.ncbi.nlm.nih.gov/articles/PMC<id>/), never the publisher's .com page, never preprints (medRxiv, bioRxiv). Strongest designs first: systematic reviews and meta-analyses, then randomized controlled trials; animal, cell, case-report or small observational studies only when nothing stronger exists, and say so. State the design and sample size in the summary. Prefer a study of this exact product. Say plainly when a study is about the ingredient or product type, not this product. Return {"scienceSources": [{"url","label","summary": "one sentence on what it found"}], "skipped": ""}.`,
   reviews: `Read real, public customer reviews or discussions (retailer reviews, Trustpilot, Reddit threads, YouTube reviews). Write "communityReview": 2 to 4 sentences on recurring themes, positive AND negative ("Reviewers often praise X. Common complaints are Y."). No star numbers unless you saw them. If reviews are only brand-picked testimonials, look unreliable, or you can't find real ones, return an empty review and say why. Return {"communityReview": "...", "sources": [{"url","label"}], "skipped": ""}.`,
 };
 
