@@ -13,6 +13,7 @@ const DUPLICATE_FREE_OPTIONS = ['Fragrance-free', 'Dye-free', 'Paraben-free', 'S
 import { ALL_PRODUCTS } from '../data/products.js';
 import { mapIntakeToLegacyQuizProfile } from '../utils/healthIntake';
 import { saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore';
+import { autoFocusAfterTap } from '../utils/delightRuntime.js';
 
 const DRAFT_KEY = 'ayna_intake_redesign_draft_v1';
 
@@ -1342,7 +1343,7 @@ export default function HealthIntakeForm({ onComplete }) {
           placeholder="e.g. Jordan"
           maxLength={50}
           autoComplete="given-name"
-          autoFocus
+          ref={autoFocusAfterTap}
         />
       );
     }

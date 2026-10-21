@@ -145,6 +145,7 @@ button.cr-ann-name:hover { text-decoration: underline; text-underline-offset: 3p
 :is(.app-container, .ayna-mobile) .cr-ann-reply p { margin: 0; font: 500 var(--ay-fs-secondary)/1.5 var(--ay-sans); white-space: pre-wrap; overflow-wrap: anywhere; }
 :is(.app-container, .ayna-mobile) .cr-ann-reply-box { display: grid; gap: 8px; margin-top: 4px; }
 :is(.app-container, .ayna-mobile) .cr-ann-reply-box .cr-btn { justify-self: start; }
+:is(.app-container, .ayna-mobile) .cr-ann-reply-box .cr-ring { justify-self: end; margin-top: -4px; }
 :is(.app-container, .ayna-mobile) .cr-ann-thread > .cr-btn { justify-self: start; }
 :is(.app-container, .ayna-mobile) .cr-ann-empty { display: grid; gap: 8px; justify-items: center; padding: 48px 24px; border: 2px dashed var(--ay-ink-faint); border-radius: 20px; text-align: center; }
 :is(.app-container, .ayna-mobile) .cr-ann-empty h2 { margin: 0; color: var(--ay-ink); font: 400 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
@@ -205,6 +206,7 @@ button.cr-ann-name:hover { text-decoration: underline; text-underline-offset: 3p
 .cr-rte__box:focus-visible { box-shadow: 0 0 0 3px #769ebe; }
 .cr-rte__box.is-empty::before { content: attr(data-placeholder); color: rgba(62, 39, 35, .5); pointer-events: none; }
 .cr-rte__box ul, .cr-rte__box ol { margin: .3em 0; padding-left: 1.4em; }
+.cr-rte > .cr-ring { display: grid; margin: 4px 0 0 auto; }
 .cr-rte__box ul { list-style: disc; }
 .cr-rte__box ol { list-style: decimal; }
 .cr-rte__box div { min-height: 1.4em; }

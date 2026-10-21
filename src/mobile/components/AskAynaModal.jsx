@@ -12,6 +12,7 @@ import { haptic } from '../../utils/haptics.js';
 import { useSheetDrag } from '../hooks/useSheetDrag.js';
 import AskHome, { AskStatCard } from '../../components/AskHome.jsx';
 import { recentQuestions } from '../../utils/askRecent.js';
+import { mayAutoFocus } from '../../utils/delightRuntime.js';
 
 // Ask ayna's first screen: tiles fill the box so she can edit before asking.
 function askTiles(hasHealthData) {
@@ -142,6 +143,20 @@ export default function AskAynaModal({
   useEffect(() => {
     if (open) setHasOpened(true);
   }, [open]);
+
+  // Opened by a tap on Ask: the question box takes focus (keyboard up). Never
+  // on load or from a script (utils/delightRuntime.js, autofocus rules).
+  // The box is disabled while the sign-in check runs, so the decision is
+  // taken at open and the focus waits for the box to be ready.
+  const wantFocus = useRef(false);
+  useEffect(() => { wantFocus.current = open && !seed && mayAutoFocus(); }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
+  const inputReady = open && session !== undefined && !sending;
+  useEffect(() => {
+    if (!inputReady || !wantFocus.current) return undefined;
+    wantFocus.current = false;
+    const id = requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
+    return () => cancelAnimationFrame(id);
+  }, [inputReady]);
 
   // A suggested question (from the dashboard): ask it once the sign-in check
   // is done. Signed out, it waits in the box so nothing is lost.

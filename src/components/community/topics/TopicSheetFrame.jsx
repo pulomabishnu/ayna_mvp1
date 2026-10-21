@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useSheetViewport, backdropTap } from '../useSheetViewport.js';
+import { autofocusTarget } from '../../../utils/delightRuntime.js';
 
 const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
@@ -20,7 +21,7 @@ export default function TopicSheetFrame({ variant = 'web', title, onClose, child
   useEffect(() => {
     const opener = document.activeElement;
     const node = ref.current;
-    const first = node?.querySelector('[data-autofocus]') || node?.querySelector(FOCUSABLE);
+    const first = autofocusTarget(node, FOCUSABLE); // no surprise keyboard (utils/delightRuntime.js)
     (first || node)?.focus({ preventScroll: true });
     const onKey = (e) => {
       const wrap = wrapRef.current;

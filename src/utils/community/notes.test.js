@@ -7,10 +7,10 @@ const ago = (ms) => new Date(NOW - ms).toISOString();
 describe('relTime', () => {
   it('reads like a person', () => {
     expect(relTime(ago(10 * 1000), NOW)).toBe('Just now');
-    expect(relTime(ago(5 * 60 * 1000), NOW)).toBe('5m');
-    expect(relTime(ago(3 * 3600 * 1000), NOW)).toBe('3h');
+    expect(relTime(ago(5 * 60 * 1000), NOW)).toBe('5m ago');
+    expect(relTime(ago(3 * 3600 * 1000), NOW)).toBe('3h ago');
     expect(relTime(new Date('2026-10-20T09:00:00').toISOString(), NOW)).toBe('Yesterday');
-    expect(relTime(new Date('2026-10-17T09:00:00').toISOString(), NOW)).toBe('4d');
+    expect(relTime(new Date('2026-10-17T09:00:00').toISOString(), NOW)).toBe('4d ago');
     expect(relTime(new Date('2026-09-02T09:00:00').toISOString(), NOW)).toBe('Sep 2');
     expect(relTime(new Date('2025-09-02T09:00:00').toISOString(), NOW)).toBe('Sep 2, 2025');
     expect(relTime(null, NOW)).toBe('');

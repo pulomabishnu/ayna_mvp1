@@ -439,7 +439,7 @@ export default function ProductDetailScreen({
         <div className={`ayq-apphero tone-${tone}${image ? '' : ' is-missing-image'}`}>
           <div className="ayq-apphero__stage">
             <div className="ayq-stamp ayq-apphero__stamp">
-              <div className="ayq-apphero__tile">
+              <div className="ayq-apphero__tile" data-vt-target="product">
                 <ProductImage key={shownImage} product={product} src={shownImage} alt={name} allowBrandLogo={product?.type === 'digital'} />
                 {images.length > 0 && (
                   <button type="button" className="ay-pdp-zoom-open" aria-label={`View ${name} photo full screen`} onClick={() => setZoomOpen(true)}>

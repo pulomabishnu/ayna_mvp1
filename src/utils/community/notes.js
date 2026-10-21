@@ -1,28 +1,11 @@
 // Small pure helpers for the Community redesign (website + app).
 // Relative times, the one highlighted member quote, prompt tiles and the
-// share link. No React here so they're easy to test.
+// share link. No components here, so they are easy to test.
 
-const MIN = 60 * 1000;
-const HOUR = 60 * MIN;
-const DAY = 24 * HOUR;
+import { relativeTime } from '../relativeTime.js';
 
-/** "Just now", "5m", "3h", "Yesterday", "4d", "Oct 12", "Oct 12, 2025". */
-export function relTime(value, now = Date.now()) {
-  if (!value) return '';
-  const t = new Date(value).getTime();
-  if (!Number.isFinite(t)) return '';
-  const diff = Math.max(0, now - t);
-  if (diff < 45 * 1000) return 'Just now';
-  if (diff < HOUR) return `${Math.max(1, Math.round(diff / MIN))}m`;
-  const startToday = new Date(now); startToday.setHours(0, 0, 0, 0);
-  const t0 = startToday.getTime();
-  if (t >= t0 && diff < DAY) return `${Math.floor(diff / HOUR)}h`;
-  if (t >= t0 - DAY) return 'Yesterday';
-  if (t >= t0 - 6 * DAY) return `${Math.ceil((t0 - t) / DAY)}d`;
-  const d = new Date(t);
-  const sameYear = d.getFullYear() === new Date(now).getFullYear();
-  return d.toLocaleDateString('en-US', sameYear ? { month: 'short', day: 'numeric' } : { month: 'short', day: 'numeric', year: 'numeric' });
-}
+/** "Just now", "5m ago", "Yesterday", "Oct 12": the one shared formatter (utils/relativeTime.js). */
+export const relTime = relativeTime;
 
 /** The full date for a tooltip / screen readers. */
 export function fullTime(value) {

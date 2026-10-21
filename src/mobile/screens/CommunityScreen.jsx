@@ -40,7 +40,8 @@ import '../community-play.css';
 import './community-notes.css';
 import { relTime, fullTime, pickMemberQuote, PROMPTS, isOnlyStarter, sharePost, applyToggle, faceTone } from '../../utils/community/notes.js';
 import { CharRing, DefaultFace, PromptIcon } from '../../components/community/notesKit.jsx';
-import { useNow } from '../../components/community/useNow.js';
+import { useMinuteNow as useNow } from '../../utils/relativeTime.js';
+import { growTransition } from '../../utils/viewTransition.js';
 import { displayName } from '../utils/displayName.js';
 import { fetchWithTimeout } from '../../utils/network.js';
 import TopicPage from '../../components/community/topics/TopicPage.jsx';
@@ -53,6 +54,8 @@ import '../../components/community/topics/user-topics.css';
 const TABS = [ ['for-you', 'For you'], ['following', 'Following'], ['question', 'Questions'], ['review', 'Reviews'], ['playlists', 'Playlists'], ['announcements', 'Announcements'] ];
 const POST_KINDS = { question: 'Question', review: 'Review', post: 'Post' };
 const POST_MAX = 2000;
+const COMMENT_MAX = 1000; // same limits as the website (WebCommunity.jsx)
+const BIO_MAX = 160;
 
 function CommunityIcon({ name, size = 20 }) {
   const paths = {
@@ -191,9 +194,10 @@ function SuggestTopicSheet({ onClose, onSent, onShowRules }) {
     <div className="am-sheet-head"><h2 id="am-suggest-title">Suggest a topic</h2><button type="button" aria-label="Close" onClick={onClose}>×</button></div>
     <p className="am-detail-copy">Tell us which topic you want in Community. The team reads every one.</p>
     <label className="am-field-label" htmlFor="am-suggest-name">Topic name</label>
-    <RuleField as="input" id="am-suggest-name" value={name} maxLength={60} onChange={(e) => setName(e.target.value)} placeholder="e.g. Adenomyosis" onShowRules={onShowRules} />
+    <RuleField as="input" id="am-suggest-name" data-autofocus value={name} maxLength={60} onChange={(e) => setName(e.target.value)} placeholder="e.g. Adenomyosis" onShowRules={onShowRules} />
     <label className="am-field-label" htmlFor="am-suggest-why">Why (optional)</label>
     <RuleField id="am-suggest-why" value={why} maxLength={500} onChange={(e) => setWhy(e.target.value)} placeholder="What would you want to talk about there?" onShowRules={onShowRules} />
+    <CharRing length={why.length} max={500} className="ay-ring am-ring" />
     {problem && <p className="am-error" role="alert">{problem}</p>}
     <button type="button" className="am-primary" disabled={sending || name.trim().length < 2 || breaksCommunityRules(name, why)} onClick={send}>{sending ? 'Sending…' : 'Send suggestion'}</button>
   </div></div>;
@@ -435,7 +439,8 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
   };
 
   const openPost = async (post) => {
-    setPage({ type: 'post', id: post.id }); setDetails(post); setError('');
+    // The tapped note grows into the open post (utils/viewTransition.js).
+    growTransition(() => { setPage({ type: 'post', id: post.id }); setDetails(post); setError(''); }, { target: 'post' });
     try { setComments(await community.listComments(supabase, post.id)); } catch (e) { notifyError(e); }
   };
   const openPlaylist = async (playlist) => {
@@ -924,7 +929,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     const long = !full && String(post.body || '').length > 260;
     const armed = armedDelete === post.id;
     const likeWord = kind === 'post' ? 'Like' : 'Helpful';
-    return <article ref={engagement.trackView(post.id)} className={`am-note is-${kind}${full ? ' is-full' : ''}`} style={{ '--i': Math.min(typeof i === 'number' ? i : 0, 6) }} key={post.id}>
+    return <article ref={engagement.trackView(post.id)} className={`am-note is-${kind}${full ? ' is-full' : ''}`} style={{ '--i': Math.min(typeof i === 'number' ? i : 0, 6) }} data-vt-target={full ? 'post' : undefined} key={post.id}>
       {kind === 'review' && <span className="am-tape" aria-hidden="true" />}
       {kind === 'question' && <span className="am-ear">Question</span>}
       <div className="am-note-head">
@@ -995,7 +1000,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       {page ? <div className="am-subpage" key={`${page.type}-${page.id || 'current'}`}>
         <div className="am-subpage-header"><button type="button" className="am-back" onClick={closePage} aria-label="Back to Community"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6" /></svg></button><span className="am-subpage-title">{({ playlist: 'Playlist', profile: 'Profile', notifications: 'Updates', post: 'Post', friends: 'Friends', topic: 'Topic', topics: 'Topics by members' })[page.type] || 'Community'}</span></div>
         {!details && <p className="am-empty" role="status">Loading…</p>}
-        {page.type === 'post' && details && <>{renderPost(details)}<h2 className="am-section">Replies</h2>{comments.map((c) => <div className="am-comment" key={c.id}><div className="am-meta"><div className="am-author"><CommunityAvatar name={c.author_display_name || c.author_username} path={!c.is_anonymous && c.author_id ? profileById.get(c.author_id)?.avatar_url : null} anonymous={c.is_anonymous || !c.author_id} /><span>{c.is_anonymous || !c.author_id ? 'Anonymous' : c.author_display_name || c.author_username}</span><VerifiedBadge title={badgeFor(c.author_id, c.is_anonymous)} compact /></div><span>{timeLabel(c.created_at)}</span></div><p>{c.body}</p>{c.product_id && <ProductMention productId={c.product_id} productsById={productsById} quizAnswers={quizAnswers} matchOpts={matchOpts} onOpenProduct={onOpenProduct} />}<button type="button" onClick={() => setReplyTo(c.id)}>Reply</button></div>)}<div className="am-compose-inline">{replyTo && <button type="button" onClick={() => setReplyTo(null)}>Replying · cancel</button>}<RuleField value={commentBody} onChange={(e) => setCommentBody(e.target.value)} placeholder="Add to the conversation" aria-label="Your reply" onShowRules={openRules} /><ProductPicker products={products} value={productId} onChange={setProductId} /><button type="button" className="am-primary" disabled={busy || !commentBody.trim() || breaksCommunityRules(commentBody)} onClick={submitComment}>Post reply</button></div></>}
+        {page.type === 'post' && details && <>{renderPost(details)}<h2 className="am-section">Replies</h2>{comments.map((c) => <div className="am-comment" key={c.id}><div className="am-meta"><div className="am-author"><CommunityAvatar name={c.author_display_name || c.author_username} path={!c.is_anonymous && c.author_id ? profileById.get(c.author_id)?.avatar_url : null} anonymous={c.is_anonymous || !c.author_id} /><span>{c.is_anonymous || !c.author_id ? 'Anonymous' : c.author_display_name || c.author_username}</span><VerifiedBadge title={badgeFor(c.author_id, c.is_anonymous)} compact /></div><span>{timeLabel(c.created_at)}</span></div><p>{c.body}</p>{c.product_id && <ProductMention productId={c.product_id} productsById={productsById} quizAnswers={quizAnswers} matchOpts={matchOpts} onOpenProduct={onOpenProduct} />}<button type="button" onClick={() => setReplyTo(c.id)}>Reply</button></div>)}<div className="am-compose-inline">{replyTo && <button type="button" onClick={() => setReplyTo(null)}>Replying · cancel</button>}<RuleField value={commentBody} maxLength={COMMENT_MAX} onChange={(e) => setCommentBody(e.target.value)} placeholder="Add to the conversation" aria-label="Your reply" onShowRules={openRules} /><CharRing length={commentBody.length} max={COMMENT_MAX} className="ay-ring am-ring" /><ProductPicker products={products} value={productId} onChange={setProductId} /><button type="button" className="am-primary" disabled={busy || !commentBody.trim() || breaksCommunityRules(commentBody)} onClick={submitComment}>Post reply</button></div></>}
         {page.type === 'topic' && <TopicPage variant="app" supabase={supabase} user={authUser} topicId={page.id} refreshKey={refresh} renderPost={(p, i) => renderPost(p, i)}
           onCompose={(t) => { setPostTopicId(t.id); openCompose('post'); }} onRequireAuth={requireAccount} onShowRules={openRules}
           onDeleted={() => openTopics()} onTopicsChanged={userTopics.reload} toast={setNotice} />}
@@ -1103,7 +1108,8 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       <input id="am-profile-username" value={editProfileHandle} maxLength={24} autoCapitalize="none" onChange={(event) => setEditProfileHandle(event.target.value.toLowerCase())} />
       <small className="am-profile-help">You can change your username once every 30 days.</small>
       <label className="am-field-label" htmlFor="am-profile-bio">Bio</label>
-      <RuleField id="am-profile-bio" value={editProfileBio} maxLength={160} onChange={(event) => setEditProfileBio(event.target.value)} placeholder="A little about you" onShowRules={openRules} />
+      <RuleField id="am-profile-bio" value={editProfileBio} maxLength={BIO_MAX} onChange={(event) => setEditProfileBio(event.target.value)} placeholder="A little about you" onShowRules={openRules} />
+      <CharRing length={editProfileBio.length} max={BIO_MAX} className="ay-ring am-ring" />
       <small className="am-profile-help">{editProfileBio.length}/160</small>
       {error && <p className="am-error" role="alert">{error}</p>}
       <button type="button" className="am-primary" disabled={busy || !editProfileName.trim() || !editProfileHandle.trim() || breaksCommunityRules(editProfileName, editProfileBio)} onClick={saveProfileEdit}>{busy ? 'Saving…' : 'Save profile'}</button>
@@ -1136,7 +1142,8 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       <div className="am-sheet-head"><h2>{editPost.kind === 'review' ? 'Edit review' : 'Edit post'}</h2><button type="button" aria-label="Close" onClick={() => setEditPost(null)}>×</button></div>
       {editPost.kind === 'review' && <div className="am-rating"><span id="am-edit-rating-label">Your rating</span><RatingPicker value={editRating} onChange={setEditRating} label="Your rating" /></div>}
       <label className="am-field-label" htmlFor="am-edit-text">{editPost.kind === 'review' ? 'Your experience' : 'Your post'}</label>
-      <RuleField id="am-edit-text" value={editBody} onChange={(e) => setEditBody(e.target.value)} onShowRules={openRules} />
+      <RuleField id="am-edit-text" value={editBody} maxLength={POST_MAX} onChange={(e) => setEditBody(e.target.value)} onShowRules={openRules} />
+      <CharRing length={editBody.length} max={POST_MAX} className="ay-ring am-ring" />
       {error && <p className="am-error" role="alert">{error}</p>}
       <button type="button" className="am-primary am-submit" disabled={busy || !editBody.trim() || breaksCommunityRules(editBody) || (editPost.kind === 'review' && !normalizeRating(editRating))} onClick={saveEdit}>{busy ? 'Saving…' : 'Save changes'}</button>
     </div></div>}
@@ -1144,7 +1151,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     {compose && <div className="am-sheet-backdrop" {...backdropTap(requestCloseCompose)}><div className="am-sheet am-compose-sheet" role="dialog" aria-modal="true" aria-label="Create in Community" onClick={(e) => e.stopPropagation()}>
       <div className="am-sheet-head"><div><h2>{({ post: 'New post', question: 'Ask a question', review: 'Write a review', playlist: 'Create a playlist', recommend: 'Recommend a product' })[compose]}</h2></div><button type="button" aria-label="Close" onClick={requestCloseCompose}>×</button></div>
       <div className="am-type-row" aria-label="What would you like to share?">{[['post','Post'],['question','Question'],['review','Review'],['playlist','Playlist'],['recommend','Recommend']].map(([kind,label]) => <button type="button" key={kind} className={compose === kind ? 'is-active' : ''} aria-pressed={compose === kind} onClick={() => { if (!authUser && ['review','playlist','recommend'].includes(kind)) { requireAccount(kind === 'review' ? 'reviews' : kind === 'playlist' ? 'playlists' : 'friend recommendations'); return; } setCompose(kind); setError(''); }}>{label}</button>)}</div>
-      {compose === 'playlist' ? <><label className="am-field-label" htmlFor="am-playlist-name">Playlist name</label><RuleField as="input" id="am-playlist-name" value={playlistTitle} onChange={(e) => setPlaylistTitle(e.target.value)} placeholder="e.g. My everyday essentials" onShowRules={openRules} /><PlaylistAudiencePicker id="am-new-playlist-visibility" value={playlistVisibility} onChange={setPlaylistVisibility} /><PlaylistCoverPicker title={playlistTitle} mode={coverMode} onMode={setCoverMode} color={coverColor} onColor={setCoverColor} text={coverText} onText={setCoverText} photo={coverPhoto} onPhoto={setCoverPhoto} /></> : <><label className="am-field-label" htmlFor="am-post-text">{compose === 'question' ? 'Your question' : compose === 'review' ? 'Your experience' : compose === 'recommend' ? 'A note to your friends' : 'Your post'}</label><RuleField id="am-post-text" value={body} maxLength={POST_MAX} onChange={(e) => setBody(e.target.value)} onShowRules={openRules} placeholder={compose === 'question' ? 'What would you like to ask? Add #topics if helpful.' : compose === 'review' ? 'How was it for you?' : compose === 'recommend' ? 'Add a note (optional)' : 'What’s on your mind? Add #topics if helpful.'} /><CharRing length={body.length} max={POST_MAX} className="ay-ring am-ring" />{hashtagSuggestions.length > 0 && <div className="am-hashtags" aria-label="Suggested hashtags">{hashtagSuggestions.map((tag) => <button type="button" key={tag.key} onClick={() => setBody((text) => text.replace(/#(?:[A-Za-z][\w-]*)?$/, `${tag.tag} `))}>{tag.tag}</button>)}</div>}</>}
+      {compose === 'playlist' ? <><label className="am-field-label" htmlFor="am-playlist-name">Playlist name</label><RuleField as="input" id="am-playlist-name" data-autofocus value={playlistTitle} onChange={(e) => setPlaylistTitle(e.target.value)} placeholder="e.g. My everyday essentials" onShowRules={openRules} /><PlaylistAudiencePicker id="am-new-playlist-visibility" value={playlistVisibility} onChange={setPlaylistVisibility} /><PlaylistCoverPicker title={playlistTitle} mode={coverMode} onMode={setCoverMode} color={coverColor} onColor={setCoverColor} text={coverText} onText={setCoverText} photo={coverPhoto} onPhoto={setCoverPhoto} /></> : <><label className="am-field-label" htmlFor="am-post-text">{compose === 'question' ? 'Your question' : compose === 'review' ? 'Your experience' : compose === 'recommend' ? 'A note to your friends' : 'Your post'}</label><RuleField id="am-post-text" data-autofocus={compose !== 'review' || undefined} value={body} maxLength={POST_MAX} onChange={(e) => setBody(e.target.value)} onShowRules={openRules} placeholder={compose === 'question' ? 'What would you like to ask? Add #topics if helpful.' : compose === 'review' ? 'How was it for you?' : compose === 'recommend' ? 'Add a note (optional)' : 'What’s on your mind? Add #topics if helpful.'} /><CharRing length={body.length} max={POST_MAX} className="ay-ring am-ring" />{hashtagSuggestions.length > 0 && <div className="am-hashtags" aria-label="Suggested hashtags">{hashtagSuggestions.map((tag) => <button type="button" key={tag.key} onClick={() => setBody((text) => text.replace(/#(?:[A-Za-z][\w-]*)?$/, `${tag.tag} `))}>{tag.tag}</button>)}</div>}</>}
       {compose === 'review' && <div className="am-rating" role="radiogroup" aria-label="Your rating"><span>Your rating</span><div className="am-stars">{[1, 2, 3, 4, 5].map((n) => <button type="button" key={n} role="radio" aria-checked={rating === n} aria-label={`${n} out of 5`} className={n <= rating ? 'is-on' : ''} onClick={() => setRating(n)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9L12 3.5Z" /></svg></button>)}</div></div>}
       {userTopics.available && compose !== 'review' && compose !== 'recommend' && compose !== 'playlist' && <PostInPicker id="am-post-in" className="is-app" topics={userTopics.mine} value={postTopicId} onChange={setPostTopicId} />}
       <ProductPicker products={products} value={productId} onChange={setProductId} />

@@ -95,6 +95,7 @@ import './app-motion.css';
 // the stylesheet consolidation on style/consolidate; loaded last.
 import './app-polish-2.css';
 import OfflineBanner from './components/OfflineBanner.jsx';
+import { growTransition } from '../utils/viewTransition.js';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
 // accountMonogram, Hero.jsx's displayNameFromUser, EcosystemBubbles.jsx,
@@ -975,7 +976,7 @@ export default function MobileApp() {
     onOpenSaved: () => setScreen('saved'),
     onGoEco: () => setScreen(hasEcosystem ? 'eco' : 'ecointro'),
     onGoLanding: () => setScreen('landing'),
-    onOpenProduct: (p) => setOverlay({ type: 'product', item: p }),
+    onOpenProduct: (p) => growTransition(() => setOverlay({ type: 'product', item: p }), { target: 'product', from: 'img' }),
     onOpenArticle: (a) => {
       setReadArticleIds((ids) => ids.includes(a.id) ? ids : [...ids, a.id]);
       setOverlay({ type: 'article', item: a });
@@ -1295,7 +1296,7 @@ export default function MobileApp() {
             onRequireAuth={(feature) => requestAuth(feature || 'Ask ayna', () => { setScreen(screen); setOverlay({ type: 'product', item: overlay.item }); })}
             quizAnswers={authUser ? effectiveQuizAnswers : null}
             ecosystemProducts={myProducts}
-            onOpenProduct={(item) => setOverlay({ type: 'product', item })}
+            onOpenProduct={(item) => growTransition(() => setOverlay({ type: 'product', item }), { target: 'product', from: 'img' })}
             theme={theme}
             onToggleTheme={setThemeMode}
           />
@@ -1368,7 +1369,7 @@ export default function MobileApp() {
           onOpenRoutine={() => { setEcoTab('dashboard'); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
           onOpenMonthlyCheckin={() => setScreen('checkin')}
           readProgress={readProgress}
-          onOpenProduct={(product) => setOverlay({ type: 'product', item: product })}
+          onOpenProduct={(product) => growTransition(() => setOverlay({ type: 'product', item: product }), { target: 'product', from: 'img' })}
           onOpenArticle={(article) => { setReadArticleIds((ids) => ids.includes(article.id) ? ids : [...ids, article.id]); setOverlay({ type: 'article', item: article }); }}
           onOpenCommunity={(seed) => { setOverlay(null); setCommunitySeed({ ...seed, token: Date.now() }); setScreen('community'); }}
         />

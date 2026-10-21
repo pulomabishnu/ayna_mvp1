@@ -66,3 +66,13 @@ html body .app-container.app-container .eco3-cat:hover { transform: rotate(0) tr
 html body .app-container.app-container .eco3-grid .ayna-discover-card.ayna-browse-card:hover { transform: translateY(-3px) !important; }
 html body .app-container.app-container .eco3-peek:hover .eco3-peek__card:nth-child(2) { transform: translateY(-4px) rotate(0) !important; }
 html body .app-container.app-container .lx .lx-shelf__item:hover .lx-shelf__img { transform: translateY(-3px) rotate(-1.2deg) !important; }
+
+/* ---- Cards grow into the page they open (utils/viewTransition.js) ----
+   Only while a transition runs: the tapped card and the opened element share
+   the name "ay-grow" and morph; the rest of the screen cross-fades. The app's
+   push slide steps aside so the two motions don't fight. Reduced motion never
+   starts a view transition. */
+::view-transition-group(ay-grow) { animation-duration: var(--t-sheet, 360ms); animation-timing-function: var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)); }
+::view-transition-old(ay-grow), ::view-transition-new(ay-grow) { height: 100%; object-fit: contain; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: var(--t-base, 240ms); }
+html[data-ay-vt] .ay-push-in { animation: none !important; }

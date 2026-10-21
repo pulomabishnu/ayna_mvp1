@@ -758,7 +758,7 @@ export default function ProductModal({
   const galleryTile = (
     <div className="ayp-gallery">
       <div className="ayq-stamp ayp-gallery__stamp">
-      <div className="ayp-gallery__tile">
+      <div className="ayp-gallery__tile" data-vt-target="product">
         {heroImageSrc ? (
           <button
             type="button"

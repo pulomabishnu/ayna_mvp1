@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 // and the app, refreshed once a minute by one shared timer (not one per row).
 
 export function relativeTime(when, now = Date.now()) {
+  if (when == null || when === '') return '';
   const t = when instanceof Date ? when.getTime() : new Date(when).getTime();
   if (!Number.isFinite(t)) return '';
   const s = Math.max(0, Math.round((now - t) / 1000));
