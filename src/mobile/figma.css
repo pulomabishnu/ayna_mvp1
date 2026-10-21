@@ -39,7 +39,7 @@
 .ayna-mobile .ayna-figma-header { min-height:49px; padding:12px 16px 9px!important; background:var(--ayna-figma-paper)!important; color:var(--ayna-figma-ink)!important; }
 .ayna-mobile .ayna-figma-header>div>span { font-family:'Bricolage Grotesque',var(--ayna-font-ui)!important; color:var(--ayna-figma-ink)!important; font-size:25px!important; letter-spacing:-.085em!important; }
 .ayna-mobile .ayna-figma-header>div>span span { color:var(--ayna-figma-berry)!important; }
-.ayna-mobile .ayna-figma-header button { border-radius:5px!important; border-color:#d6dcda!important; background:#fff!important; }
+.ayna-mobile .ayna-figma-header button { border-color:#d6dcda!important; background:#fff!important; }
 .ayna-mobile .ayna-bottom-nav { width:100%!important; grid-template-columns:repeat(5,minmax(0,1fr))!important; margin:0!important; border:0!important; border-top:1px solid var(--ayna-border)!important; border-radius:0!important; box-shadow:none!important; background:var(--ayna-figma-paper)!important; }
 .ayna-mobile .ayna-bottom-nav button { min-width:0; gap:2px!important; color:var(--ayna-figma-ink)!important; }
 .ayna-mobile .ayna-bottom-nav button.is-active { color:var(--ayna-figma-ink)!important; }
@@ -144,8 +144,6 @@
 .ayna-mobile .ayna-figma-community-empty>button { align-self:flex-start; min-height:38px; padding:8px 12px; border-radius:3px; background:var(--ayna-figma-ink); color:#fff; }
 
 /* Shared secondary screens retain their content but adopt the same surfaces. */
-.ayna-mobile .ayna-fresh-auth { background:var(--ayna-figma-mint)!important; }
-.ayna-mobile .ayna-fresh-saved>div:first-child { background:var(--ayna-figma-mist)!important; }
 
 /* One visual language on the remaining screens and their controls. */
 .ayna-mobile .ayna-fresh-auth { background:var(--ayna-figma-mint)!important; color:var(--ayna-figma-ink)!important; padding:22px 18px 30px!important; }

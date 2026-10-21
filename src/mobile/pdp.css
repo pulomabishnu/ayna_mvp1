@@ -114,7 +114,7 @@
    8pt rhythm: 8 / 16 / 24. */
 .ayna-mobile .ay-pdp-match { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
 .ayna-mobile .ay-pdp-match > span { color: var(--ay-ink); opacity: .72; font: 400 15px/1.45 var(--ay-font-ui); }
-.ayna-mobile .ay-pdp-passport { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; gap: 24px; margin: 32px var(--ay-gutter) 0; }
+.ayna-mobile .ay-pdp-passport { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; margin: 32px var(--ay-gutter) 0; }
 .ayna-mobile .ay-pdp-passport .ay-psec-body p { font-size: calc(15px * var(--ayna-text-scale, 1)); line-height: 1.45; font-weight: 400; }
 .ayna-mobile .ay-pdp-passport .ay-pdp-omit { justify-content: flex-start; margin: 0; }
 .ayna-mobile .ay-pdp-passport .ay-pdp-omit button { min-height: 44px; }

@@ -123,7 +123,7 @@ html body .app-container.app-container.app-container.app-container {
   .ct-line { position: sticky; top: var(--ay-lib-sticky-top, 0px); z-index: 20; height: 3px; margin: 0 calc(-1 * var(--ay-margin)); background: var(--ay-hairline); }
   .ct-line > span { display: block; height: 100%; background: var(--ay-text); transition: width .2s linear; }
   .ct-crumbs { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; margin-top: var(--ay-s16); font: 500 14px/1.2 var(--ay-sans-stack); color: var(--ay-text-2); }
-  .ct-crumb { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0; border: 0; background: none; color: var(--ay-text) !important; font: 600 15px/1 var(--ay-sans-stack) !important; cursor: pointer; }
+  .ct-crumb { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0; border: 0; background: none; font: 600 15px/1 var(--ay-sans-stack) !important; cursor: pointer; }
   .ct-crumb { font-weight: 500 !important; color: var(--ay-text-2) !important; text-decoration: underline; text-underline-offset: 3px; }
   .ct-read-layout { display: grid; grid-template-columns: minmax(0, 680px) minmax(240px, 320px); justify-content: space-between; gap: var(--ay-s48); align-items: start; margin-top: var(--ay-s16); }
   .ct-article { min-width: 0; }

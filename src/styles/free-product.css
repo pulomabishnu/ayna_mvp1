@@ -17,7 +17,6 @@
 
 /* ---------- Page head: v3 band ---------- */
 .app-container .fp .fp-head { margin: 0 0 40px; padding: 40px 0 32px; background: transparent !important; color: var(--ay-ink); border-bottom: 1.5px solid currentColor; }
-@media (max-width: 767px) { .app-container .fp .fp-head { padding-top: 20px; padding-bottom: 24px; margin-bottom: 28px; } }
 .app-container .fp .fp-head.is-center { text-align: center; }
 .app-container .fp .fp-head.is-center .fp-sub { margin-inline: auto; }
 .app-container .fp .fp-head.ay3-band--paper { border-bottom: 2px solid var(--ay-ink); }

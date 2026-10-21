@@ -22,7 +22,7 @@
 .ayna-browse__filters { display:grid; grid-template-columns:repeat(6,minmax(120px,1fr)); gap:.75rem; padding:1rem; margin-bottom:1.4rem; border:1px solid rgba(26,23,20,.08); border-radius:14px; background:rgba(255,255,255,.58); }
 .ayna-browse__filters label { display:flex; flex-direction:column; gap:.38rem; }
 .ayna-browse__filters label>span { font-family:var(--ay-sans); font-size:var(--ay-fs-secondary); letter-spacing:normal; text-transform:none; color:var(--color-text-muted); font-weight: 600; }
-.ayna-browse-card__match { position:absolute; top:.65rem; left:.65rem; z-index:2; border-radius:var(--radius-pill); padding:.32rem .55rem; background:rgba(255,255,255,.93); font-family:var(--ay-sans); font-size:var(--ay-fs-caption); letter-spacing:normal; color:var(--color-amber-deep); }
+.ayna-browse-card__match { position:absolute; z-index:2; font-family:var(--ay-sans); font-size:var(--ay-fs-caption); letter-spacing:normal; color:var(--color-amber-deep); }
 /* Wraps a MatchGauge (a circle already carries its own white "hole" and
    shadow) instead of text, the pill padding/background above would just
    add a mismatched square-ish halo around a circle. */

@@ -53,16 +53,12 @@ html body .app-container.app-container.app-container .ayshop__related-h { margin
 html body .app-container.app-container.app-container .ayshop .ay-suggest { margin: var(--ay-s16) 0 var(--ay-s48); }
 
 @media (max-width: 767px) {
-  html body .app-container.app-container.app-container .ayshop { padding-top: var(--ay-s20); }
-  html body .app-container.app-container.app-container .ayshop__top { gap: var(--ay-s12); padding-bottom: var(--ay-s16); }
-  html body .app-container.app-container.app-container .ayshop__note { font-size: 14px !important; }
-  html body .app-container.app-container.app-container .ayshop__toolbar { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: var(--ay-s8) var(--ay-s12); margin-top: var(--ay-s12); }
+  html body .app-container.app-container.app-container .ayshop__toolbar { grid-template-columns: auto 1fr; align-items: center; gap: var(--ay-s8) var(--ay-s12); margin-top: var(--ay-s12); }
   html body .app-container.app-container.app-container .ayshop__toolbar-left { display: contents; }
   html body .app-container.app-container.app-container .ayshop__filters { grid-column: 1; grid-row: 1; }
   html body .app-container.app-container.app-container .ayshop__sort { grid-column: 2; grid-row: 1; justify-self: end; }
   html body .app-container.app-container.app-container .ayshop__toolbar-left > :not(.ayshop__filters) { grid-column: 1 / -1; justify-self: start; }
   html body .app-container.app-container.app-container .ayshop__sort > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-  html body .app-container.app-container.app-container .ayshop__applied { margin: var(--ay-s12) 0 var(--ay-s16); }
 }
 
 /* Final layout pass (Oct 21, P1-3): on phones the first product shows on the
@@ -82,7 +78,7 @@ html body .app-container.app-container.app-container .ayshop__matches.is-phone {
   html body .app-container.app-container.app-container .ayshop__head .ayshop__needs { margin-top: 8px; }
   html body .app-container.app-container.app-container .ayshop__head .ayshop__seal { width: 64px; height: 64px; top: 12px; }
   html body .app-container.app-container.app-container .ayshop__find { position: sticky; top: 61px; z-index: 20; display: flex; gap: 8px; align-items: center; margin: 0 calc(-1 * var(--ay-gutter, 20px)); padding: 8px var(--ay-gutter, 20px); background: var(--ay-page, #ffedac); }
-  html body .app-container.app-container.app-container .ayshop__find .ayshop__search { flex: 1 1 auto; min-width: 0; }
+  html body .app-container.app-container.app-container .ayshop__find .ayshop__search { min-width: 0; }
   html body .app-container.app-container.app-container .ayshop__search input[type='search'] { height: 48px; min-height: 48px; }
   html body .app-container.app-container.app-container .ayshop__search-icon { top: 24px; }
   html body .app-container.app-container.app-container .ayshop__quick { display: none; }

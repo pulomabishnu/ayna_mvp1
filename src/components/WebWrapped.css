@@ -14,7 +14,7 @@
 @keyframes wwr-in { from { opacity: 0; transform: translateY(18px); } }
 .wwr-kicker { margin: 0; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); }
 .wwr h1 { margin: 0; font: 400 var(--ay-fs-display)/1.1 var(--ay-serif); letter-spacing: -0.01em; }
-.wwr h1 em { font-style: normal; color: var(--paper); -webkit-text-stroke: 2px var(--ink); paint-order: stroke fill; }
+.wwr h1 em { paint-order: stroke fill; }
 .wwr h1.is-persona { font-size: var(--ay-fs-display); font-family: var(--ay-serif); font-weight: 400; letter-spacing: -0.01em; } .wwr h1.is-sm { font-size: var(--ay-fs-display); font-family: var(--ay-serif); font-weight: 400; letter-spacing: -0.01em; }
 .wwr-shapes i { position: absolute; border: 2px solid var(--ink); }
 .wwr-shapes i:nth-child(1) { top: 4%; right: -6%; width: 120px; height: 120px; border-radius: 50%; background: var(--butter); }

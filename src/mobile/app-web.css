@@ -50,7 +50,7 @@
 }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ay-shop-titlebar, .ay-lib-title) { justify-content: center !important; position: relative; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ay-shop-titlebar, .ay-lib-title) h1 { font-size: calc(28px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 400 !important; color: var(--b-espresso) !important; margin: 0 auto 14px !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-title .ay-lib-total { position: absolute; right: 0; top: 50%; transform: translateY(-80%); color: var(--b-espresso) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-title .ay-lib-total { right: 0; top: 50%; color: var(--b-espresso) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-shop-titlebar > :not(h1) { position: absolute; right: 0; top: 4px; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-shop-heading { --band: var(--b-sky); }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-lib-head { --band: var(--b-rose); }
@@ -112,7 +112,6 @@
 /* the plank: a board the cards stand on */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-area-collection) .ayna-editorial-product-grid { position: relative; z-index: 1; padding-bottom: 0 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-editorial-product-grid > * { margin-bottom: 0 !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-shelf-count { background: var(--b-butter); color: var(--b-espresso); }
 /* the mix chart now sits after the shelves, on its own card */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-shelf-count { background: var(--b-butter) !important; color: var(--b-espresso) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-cabinet-section-head:not(.ay-shelf-head) { background: none !important; border: 0 !important; box-shadow: none !important; }

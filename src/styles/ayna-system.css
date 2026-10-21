@@ -396,7 +396,7 @@
    SITE FOOTER (.ay-foot). Brand + three link columns on one grid, then
    the copyright line and the legal row, all on the same left edge.
    ===================================================================== */
-.app-container.app-container footer.ay-foot { margin-top: var(--ay-section); padding: var(--ay-s48) 0 calc(var(--ay-s32) + env(safe-area-inset-bottom)); background: var(--ay-page) !important; color: var(--ay-text) !important; border-top: 1px solid var(--ay-hairline) !important; box-shadow: none !important; }
+.app-container.app-container footer.ay-foot { margin-top: var(--ay-section); padding: var(--ay-s48) 0 calc(var(--ay-s32) + env(safe-area-inset-bottom)); background: var(--ay-page) !important; color: var(--ay-text) !important; box-shadow: none !important; }
 .app-container.app-container .ay-foot__inner { width: 100%; max-width: calc(var(--ay-container) + 2 * var(--ay-margin)); margin: 0 auto; padding: 0 var(--ay-margin); box-sizing: border-box; }
 .app-container.app-container .ay-foot__grid { display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); gap: var(--ay-s32) var(--ay-gutter-grid); align-items: start; }
 .app-container.app-container .ay-foot__logo { margin: 0 0 var(--ay-s12); color: var(--ay-text) !important; font: 800 30px/1 'Bricolage Grotesque', var(--ay-sans-stack) !important; letter-spacing: -.04em !important; }
@@ -440,12 +440,9 @@
 }
 @media (min-width: 900px) { html body .app-container.app-container nav.ay-tabbar { display: none !important; } }
 .app-container.app-container .ay-nav__dot { position: absolute; top: 0; right: 0; width: 11px; height: 11px; border-radius: 50%; background: #f7badd; border: 2px solid var(--ay-page); }
-.app-container.app-container .ay-product-card__kind { display: flex; flex-wrap: wrap; gap: 0 6px; margin: 2px 0 0; }
-.app-container.app-container .ay-product-card__kind { flex-direction: column; gap: 2px; }
 .app-container.app-container .ay-product-card__tag { color: var(--ay-text); font-weight: 600; }
 .app-container.app-container .ay-product-card__eco { font-weight: 600; }
-.app-container.app-container .ay-product-card__kind { margin-top: auto; padding-top: 4px; }
-.app-container.app-container .ay-product-card__kind ~ .ay-product-card__price { margin-top: 0; padding-top: 2px; }
+.app-container.app-container .ay-product-card__kind { margin-top: auto; }
 @media (max-width: 359px) { html body .app-container.app-container nav.ay-tabbar { padding-inline: 2px !important; } html body .app-container.app-container nav.ay-tabbar .ay-tabbar__label { letter-spacing: -0.03em !important; } html body .app-container.app-container nav.ay-tabbar .ay-tabbar__icon { width: 44px !important; } }
 /* [hidden] always wins over component display rules */
 .app-container.app-container [hidden] { display: none !important; }

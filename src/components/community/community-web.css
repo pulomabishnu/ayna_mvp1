@@ -28,11 +28,7 @@ html body .app-container.app-container.app-container.app-container {
   .ay-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
   .cm { padding-top: var(--ay-s40); padding-bottom: var(--ay-s48); }
   .cm :is(p, li, span, small, strong, button, label, time) { letter-spacing: 0; text-transform: none; }
-  .cm-muted { margin: 0; font: 400 15px/1.5 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; }
-  .cm-error, .cm-notice { margin: var(--ay-s16) 0 0; padding: var(--ay-s12) var(--ay-s16); border-radius: var(--ay-r-card); font: 500 15px/1.45 var(--ay-sans-stack); }
-  .cm-error { background: #f7badd; color: #3e2723 !important; }
-  .cm-notice { background: var(--ay-group); color: var(--ay-text); }
-  .cm-h2 { display: flex; align-items: baseline; gap: 10px; margin: var(--ay-s32) 0 var(--ay-s12) !important; font: 700 var(--ay-type-h3)/1.2 var(--ay-serif-stack) !important; letter-spacing: -.02em !important; color: var(--ay-text) !important; }
+  .cm-h2 { letter-spacing: -.02em !important; }
 
   /* ---------- header band (sky), search with the ⌘K hint ---------- */
   .cm-head { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: var(--ay-s16) var(--ay-s32); }
@@ -103,10 +99,6 @@ html body .app-container.app-container.app-container.app-container {
   .cm-prompt.is-espresso { background: #3e2723; color: #ffedac !important; }
   .cm-prompt:hover { transform: translateY(-2px) rotate(-.4deg); }
   .cm-prompt:active { transform: translateY(1px); }
-
-  .cm-guest { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--ay-s12) var(--ay-s16); padding: var(--ay-s16) var(--ay-inset); border-radius: var(--ay-r-group); background: var(--ay-group); }
-  .cm-guest p { margin: 0; flex: 1 1 280px; font: 400 15px/1.5 var(--ay-sans-stack); color: var(--ay-text); }
-  .cm-guest strong { font-weight: 600; }
 
   /* ---------- posts as paper notes ---------- */
   .cm-note { position: relative; min-width: 0; display: grid; gap: var(--ay-s12); padding: var(--ay-s16) var(--ay-s20) var(--ay-s4); border: 1.5px solid var(--ay-outline); border-radius: var(--ay-r-card); background-color: var(--ay-page);  color: var(--ay-text); animation: cm-in var(--cm-dur) var(--cm-ease) both; animation-delay: calc(var(--i, 0) * 45ms); }

@@ -121,8 +121,7 @@ html body .app-container .ay-ps-glance__h { margin: 0; color: #3e2723; font: 400
 /* ---------- Phone: sections fold to one-line rows ---------- */
 @media (max-width: 760px) {
   html body .app-container .ay-ps { gap: 0; }
-  html body .app-container .ay-ps-sec.is-fold { gap: 0; border-top: 1.5px solid #3e2723; }
-  html body .app-container .ay-ps-sec.is-fold:last-child { border-bottom: 1.5px solid #3e2723; }
+  html body .app-container .ay-ps-sec.is-fold { gap: 0; }
 }
 html body .app-container .ay-ps-fold { margin: 0; font: inherit !important; }
 html body .app-container .ay-ps-fold button { all: unset; box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) 24px; gap: 12px; align-items: center; width: 100%; min-height: 56px; padding: 16px 0; color: #3e2723; cursor: pointer; }

@@ -135,7 +135,6 @@ html body .app-container.app-container #ayeco .eco-rail__slot .fq__actions { dis
 /* ---------- Search + jump ---------- */
 html body .app-container.app-container #ayeco .eco3-stickybar { margin: 18px 0 22px !important; }
 @media (max-width: 767px) {
-  html body .app-container.app-container #ayeco .eco3-stickybar { margin: 14px 0 14px !important; gap: 4px 20px !important; }
   html body .app-container.app-container #ayeco .eco3-search input[type='search'] { height: 46px !important; min-height: 46px !important; }
   html body .app-container.app-container #ayeco .eco3-jump { overflow-x: auto; scrollbar-width: none; max-width: 100%; }
 }
@@ -159,7 +158,7 @@ html body .app-container.app-container #ayeco .ay-shelf__name {
 html body .app-container.app-container #ayeco .ay-shelf[style*='--shelf-tab'] .ay-shelf__name { padding-left: 16px !important; }
 html body .app-container.app-container #ayeco .ay-shelf[style*='--shelf-tab'] .ay-shelf__name::before { display: none !important; content: none !important; }
 html body .app-container.app-container #ayeco .ay-shelf__rename input { min-height: 44px; }
-html body .app-container.app-container #ayeco .ay-shelf__count { font: 600 14px/1 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; font-variant-numeric: tabular-nums; }
+html body .app-container.app-container #ayeco .ay-shelf__count { font: 600 14px/1 var(--ay-sans-stack) !important; font-variant-numeric: tabular-nums; }
 html body .app-container.app-container #ayeco .ay-shelf__tools { display: inline-flex; gap: 0; }
 html body .app-container.app-container #ayeco .ay-shelf__tool { width: 40px; height: 40px; border-radius: 50% !important; transition: background-color .15s, transform .15s; }
 html body .app-container.app-container #ayeco .ay-shelf__tool:hover { background: var(--ay-group) !important; }
@@ -260,7 +259,6 @@ html body .app-container.app-container[data-theme='brand-dark'] #ayeco .eco-stac
   html body .app-container.app-container #ayeco .ayeco__head { grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: 'text' 'card' 'actions' !important; }
   html body .app-container.app-container #ayeco .eco-stack { margin: 14px 10px 14px 0; }
   html body .app-container.app-container #ayeco .eco-stack__card { padding: 18px 18px 14px; gap: 12px; }
-  html body .app-container.app-container #ayeco .eco-stack__stats b { font-size: 28px !important; }
   html body .app-container.app-container #ayeco .eco-stack .eco-oval { top: -16px; right: 12px; }
   html body .app-container.app-container #ayeco .ayeco__head .eco3-head__sub { font-size: 15px !important; }
 }
@@ -271,7 +269,7 @@ html body .app-container.app-container #ayeco .eco-toc { display: none; }
   html body .app-container.app-container #ayeco .eco-toc { display: block; margin: 0 0 40px; }
   html body .app-container.app-container #ayeco .eco-toc__h { margin: 0 0 8px !important; font: 600 15px/1.2 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; letter-spacing: 0 !important; }
   html body .app-container.app-container #ayeco .eco-toc ol { margin: 0; padding: 0; list-style: none; }
-  html body .app-container.app-container #ayeco .eco-toc a { display: flex; align-items: baseline; gap: 6px; min-height: 40px; padding: 8px 0 0; color: var(--ay-text) !important; text-decoration: none !important; font: 600 15.5px/1.3 var(--ay-sans-stack); }
+  html body .app-container.app-container #ayeco .eco-toc a { display: flex; align-items: baseline; gap: 6px; padding: 8px 0 0; color: var(--ay-text) !important; text-decoration: none !important; font: 600 15.5px/1.3 var(--ay-sans-stack); }
   html body .app-container.app-container #ayeco .eco-toc__name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   html body .app-container.app-container #ayeco .eco-toc__dots { flex: 1; min-width: 16px; border-bottom: 2px dotted var(--ay-text); opacity: .45; transform: translateY(-4px); }
   html body .app-container.app-container #ayeco .eco-toc__n { font-variant-numeric: tabular-nums; }

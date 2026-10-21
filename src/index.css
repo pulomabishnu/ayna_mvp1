@@ -172,11 +172,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--ay-serif);
-  font-weight: 400;
   line-height: 1.2;
-  color: var(--color-text-main);
-  letter-spacing: -0.02em;
 }
 
 a {
@@ -206,42 +202,26 @@ button {
   padding: 0.875rem 1.75rem;
   border-radius: var(--radius-pill);
   font-family: var(--ay-sans);
-  font-weight: 500;
-  font-size: var(--ay-fs-body);
   transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
   cursor: pointer;
 }
 
-.btn-primary {
-  background-color: var(--color-primary);
-  color: var(--color-text-main);
-  box-shadow: 0 2px 10px rgba(232, 169, 79, 0.3);
-}
-
 .btn-primary:hover {
-  background-color: var(--color-primary-hover);
   box-shadow: 0 4px 16px rgba(232, 169, 79, 0.36);
   transform: translateY(-1px);
 }
 
 .btn-outline {
-  border: 1px solid var(--color-border);
   background: transparent;
-  color: var(--color-text-main);
 }
 
 .btn-outline:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
-  background: var(--color-secondary-fade);
 }
 
 .card {
-  background: var(--color-surface-soft);
-  border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--color-border);
   transition: box-shadow var(--transition-smooth), transform var(--transition-smooth), border-color var(--transition-smooth);
 }
 
@@ -548,7 +528,6 @@ html {
 }
 
 .ayna-landing-hero {
-  background: var(--mockup-hero-gradient);
   color: #F4F0FA;
   padding: 78px 0 56px;
 }
@@ -759,7 +738,6 @@ html {
 /* 1c, returning user */
 
 .ayna-landing-hero--returning {
-  background: var(--mockup-hero-gradient-returning);
   padding: 52px 0 54px;
 }
 

@@ -11,19 +11,18 @@
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel.is-pink,
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel.is-mint,
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel.is-peri {
-  --reel-bg: transparent; height: 320px; padding: 0 !important; border: 0 !important; border-radius: 0 !important;
+  --reel-bg: transparent; padding: 0 !important; border: 0 !important; border-radius: 0 !important;
   background: transparent !important; box-shadow: none !important; overflow: visible !important;
 }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-head { font: 600 17px/1 var(--ay-font-ui) !important; letter-spacing: -.01em !important; }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-head span:last-child { font-variant-numeric: tabular-nums; opacity: .6; }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-stage { padding: 16px 0; }
-.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-eco { gap: 8px; }
-.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-track { min-height: 64px; padding: 0 16px 0 12px !important; gap: 16px; border: 1.5px solid var(--ay-ink) !important; border-radius: 16px; background: var(--ay-paper); }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-track { padding: 0 16px 0 12px !important; gap: 16px; border: 1.5px solid var(--ay-ink) !important; border-radius: 16px; background: var(--ay-paper); }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-track:first-child { background: var(--ay-ink); color: var(--ay-paper); }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-cover { width: 40px !important; height: 40px !important; border-width: 1.5px; border-radius: 10px; }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-track strong { font: 600 17px/1 var(--ay-font-ui) !important; letter-spacing: -.02em; }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-track:not(:first-child) .ay-reel-eq { color: var(--ay-ink); opacity: .2; }
-.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-progress i { height: 4px; background: rgba(62, 39, 35, .16); }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-progress i { background: rgba(62, 39, 35, .16); }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-ask p { border-width: 1.5px; }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags span { border-width: 1.5px; }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck span { border-width: 1.5px; }
@@ -44,10 +43,7 @@
 }
 /* Scale the reel with the screen so the free space isn't two big gaps */
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel { height: clamp(272px, 46vh, 420px) !important; }
-.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-eco { gap: 12px; }
-.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-track { min-height: clamp(52px, 8vh, 72px); }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-match svg { width: clamp(150px, 26vh, 220px); height: clamp(150px, 26vh, 220px); }
-.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck { width: clamp(130px, 22vh, 190px); height: clamp(156px, 26vh, 228px); }
 /* Sparkles live in the space under the header, clear of every control */
 /* Match frame: sticker ring (ink edge, paper track, butter fill) + palette tags */
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-match .edge { fill: var(--ay-paper); stroke: var(--ay-ink); stroke-width: 18; }
@@ -56,7 +52,7 @@
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags span:nth-child(1) { background: var(--ay-mint); }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags span:nth-child(2) { background: var(--ay-butter); }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags span:nth-child(3) { background: var(--ay-pink); }
-.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags { margin-top: 16px; gap: 8px; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags { gap: 8px; }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags span { padding: 7px 12px; font-size: 13px; font-weight: 500; }
 /* Tap-to-advance overlay: no ring on tap; rounded ring only for keyboard users */
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-next { outline: none; border-radius: 20px; -webkit-tap-highlight-color: transparent; }
@@ -68,7 +64,7 @@
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-match { display: grid; grid-template-columns: auto; justify-content: center; justify-items: center; }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-match > svg,
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-score { grid-area: 1 / 1; }
-.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-score { position: static !important; translate: none !important; align-self: center; justify-self: center; display: grid; justify-items: center; gap: 4px; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-score { translate: none !important; align-self: center; justify-self: center; display: grid; justify-items: center; gap: 4px; }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags { grid-row: 2; }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-score { position: relative !important; z-index: 1; }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-score { top: auto !important; left: auto !important; }
@@ -104,12 +100,8 @@
 }
 
 /* Spacing system (8pt): header 48 → 32 → reel title → [stage: the only flexible space] → progress → 40 → headline → 8 → line → 32 → slider → 8 → links */
-.ayna-mobile.ayna-mobile .ay-cover-widget { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
-.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel,
-.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel.is-pink,
-.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel.is-mint,
-.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel.is-peri { flex: 1 1 auto; height: auto !important; min-height: 248px; max-height: 520px; }
-.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-stage { flex: 1 1 auto; min-height: 0; padding-block: 24px; display: grid; place-items: center; }
+.ayna-mobile.ayna-mobile .ay-cover-widget { flex-direction: column; min-height: 0; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-stage { min-height: 0; display: grid; place-items: center; }
 /* One small sparkle in the 32px band under the header; the second sits by the headline */
 /* Stars: a loose constellation around the edges, varied size/colour, staggered twinkle, never over controls */
 @keyframes lp-twinkle { 0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; } 50% { transform: scale(.7) rotate(20deg); opacity: .7; } }
@@ -131,8 +123,6 @@
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck { width: clamp(124px, 19vh, 168px) !important; height: clamp(150px, 23vh, 200px) !important; }
 /* Stars follow the groups: one by the reel title, one at each side of the art, two by the headline */
 /* Play/pause: 28px visual, 44px tap target */
-.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-foot { gap: 12px !important; }
-.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-progress i { height: 3px !important; }
 /* Compact progress: four short segments + pause, centred under the art */
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-foot { justify-content: center; gap: 12px !important; }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-progress { flex: none !important; gap: 4px !important; }

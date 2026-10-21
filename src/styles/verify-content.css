@@ -28,7 +28,7 @@
 .app-container .pdp-tabs--app button.is-active[data-tone='peri'] { background: var(--ay-peri) !important; }
 .app-container .pdp-tabs--app button.is-active[data-tone='pink'] { background: var(--ay-pink) !important; }
 .app-container .pdp-tabs--app button.is-active[data-tone='cream'] { background: var(--ay-ink) !important; color: var(--ay-paper) !important; }
-.app-container .pdp-panel[data-tone] .pdp-panel__title { margin: -20px -20px 16px; padding: 14px 20px; border-bottom: 2px solid var(--ay-ink); border-radius: 18px 18px 0 0; }
+.app-container .pdp-panel[data-tone] .pdp-panel__title { border-bottom: 2px solid var(--ay-ink); }
 .app-container .pdp-panel[data-tone='butter'] .pdp-panel__title { background: var(--ay-butter); }
 .app-container .pdp-panel[data-tone='mint'] .pdp-panel__title { background: var(--ay-mint); }
 .app-container .pdp-panel[data-tone='peri'] .pdp-panel__title { background: var(--ay-peri); }

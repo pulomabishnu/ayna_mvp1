@@ -208,7 +208,6 @@ html body .app-container.app-container.app-container .ayp-toast { display: inlin
   html body .app-container.app-container.app-container .ayp-hero { grid-template-columns: minmax(0, 1fr); gap: var(--ay-s20); }
   html body .app-container.app-container.app-container .ayp-hero__media { position: static; }
   html body .app-container.app-container.app-container .ayp-gallery { grid-template-columns: minmax(0, 1fr); }
-  html body .app-container.app-container.app-container .ayp-gallery__tile { aspect-ratio: 4 / 3; }
   html body .app-container.app-container.app-container .ayp-gallery__zoom { padding: 20px; }
   html body .app-container.app-container.app-container .ayp-gallery .ay-thumbs button { width: 52px; height: 52px; }
   html body .app-container.app-container.app-container .ayp-buy { padding-top: 0; }

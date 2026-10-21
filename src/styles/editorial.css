@@ -222,7 +222,7 @@
 }
 
 /* how it works: a real sequence */
-.ed .ed-steps { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; counter-reset: step; }
+.ed .ed-steps { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); counter-reset: step; }
 .ed .ed-step { position: relative; }
 .ed .ed-step__img { position: relative; aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; margin-bottom: 16px; }
 .ed .ed-step__badge { display: none; }
@@ -231,11 +231,10 @@
 .ed .ed-step__n::after { content: ''; flex: 1; height: 1.5px; background: var(--ed-text); opacity: .35; }
 .ed .ed-step:last-child .ed-step__n::after { opacity: 0; }
 .ed .ed-step h3 { margin-bottom: 4px; }
-.ed .ed-step p { font: 400 15px/1.5 var(--ed-sans); color: var(--ed-text-2); }
+.ed .ed-step p { font: 400 15px/1.5 var(--ed-sans); }
 @media (max-width: 767px) {
-  .ed .ed-steps { grid-template-columns: 1fr; gap: 0; }
-  .ed .ed-step { display: grid; grid-template-columns: 84px 1fr; gap: 0 16px; align-items: center; padding-block: 12px; border-top: 1px solid var(--ed-hairline); }
-  .ed .ed-step:last-child { border-bottom: 1px solid var(--ed-hairline); }
+  .ed .ed-steps { grid-template-columns: 1fr; }
+  .ed .ed-step { grid-template-columns: 84px 1fr; gap: 0 16px; align-items: center; }
   .ed .ed-step__img { grid-row: 1 / 4; aspect-ratio: 1; margin: 0; border-radius: 12px; }
   .ed .ed-step__n { display: none; }
   .ed .ed-step__badge { display: grid; place-items: center; position: absolute; left: 6px; top: 6px; width: 26px; height: 26px; border-radius: 50%; background: #ffedac; color: #3e2723; border: 1.5px solid #3e2723; font: 600 13px/1 var(--ed-sans); }
@@ -299,7 +298,6 @@
 .ed .ed-invest__legal { display: grid; gap: 8px; max-width: 72ch; padding-top: 16px; border-top: 1px solid var(--ed-hairline); }
 .ed .ed-invest img { width: 100%; height: 100%; aspect-ratio: auto; max-height: 360px; object-fit: cover; border-radius: 12px; }
 @media (max-width: 767px) {
-  .ed .ed-us { grid-template-columns: 1fr; gap: 16px; }
   .ed .ed-invest { grid-template-columns: 1fr; padding: 20px; gap: 20px; }
   .ed .ed-invest img { display: none; }
 }
@@ -577,7 +575,7 @@ html body .app-container.app-container[data-theme='brand-dark'] .ed .ed-field :i
 @media (max-width: 767px) {
   .ed .ed-hero__ph:first-child { grid-row: auto; }
   .ed .ed-hero__ph { border-radius: 14px; }
-  .ed .ed-hero__seal { left: auto; right: -6px; bottom: auto; top: -54px; }
+  .ed .ed-hero__seal { left: auto; bottom: auto; }
 }
 /* brand ribbon */
 .ed .ed-brands-band { margin-top: 8px; }
@@ -592,7 +590,7 @@ html body .app-container.app-container[data-theme='brand-dark'] .ed .ed-field :i
 @media (max-width: 1023px) { .ed .ed-foryou__notes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 767px) {
   .ed .ed-foryou { padding-block: 40px 32px; }
-  .ed .ed-foryou__notes { gap: 24px 14px; margin: 28px 0 16px; }
+  .ed .ed-foryou__notes { margin: 28px 0 16px; }
   .app-container .ed .ed-foryou .ay-note { min-height: 108px; padding: 20px 14px 14px; }
   .ed .ed-foryou__q { font-size: 20px; }
 }
@@ -621,7 +619,7 @@ html body .app-container.app-container[data-theme='brand-dark'] .ed .ed-field :i
   .ed .ed-step .ay-sticker svg { width: 22px; height: 22px; }
 }
 /* community on pink: polaroid photo, posts as taped notes */
-.ed .ed-sky.ay-band { margin-top: calc(var(--ed-section) + 16px); padding-block: 64px; }
+.ed .ed-sky.ay-band { padding-block: 64px; }
 .ed .ed-sky.ay-band .ed-sky__photo { aspect-ratio: auto; overflow: visible; border-radius: 6px; }
 .ed .ed-sky.ay-band .ed-sky__photo img { aspect-ratio: 4 / 5; object-fit: cover; }
 .ed .ed-sky.ay-band .ed-news { border-top-color: #3e2723; }
@@ -641,13 +639,12 @@ html body .app-container.app-container[data-theme='brand-dark'] .ed .ed-field :i
 .app-container .ed .ed-final.ay-band .ay-btn--primary { color: #ffedac !important; }
 .app-container .ed .ed-final.ay-band .ay-btn--primary :is(span, svg) { color: #ffedac; }
 .ed .ed-final.ay-band .ed-final__in { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); padding-block: 72px 80px; }
-.ed .ed-final__photo { aspect-ratio: 4 / 5; }
 .ed .ed-final__photo img { aspect-ratio: auto; height: 100%; border-radius: 0; }
 .ed .ed-final__letter .ed-lead { margin: 12px auto 0; }
 .ed .ed-final__letter .ed-final__cta { justify-content: center; margin-top: 20px; }
 @media (max-width: 767px) {
   .ed .ed-final.ay-band .ed-final__in { grid-template-columns: 1fr; padding-block: 48px 56px; gap: 28px; }
-  .ed .ed-final__photo { aspect-ratio: 16 / 9; order: 2; }
+  .ed .ed-final__photo { order: 2; }
   .app-container .ed .ay-envelope__letter { margin: 0 12px; padding: 24px 18px 92px; }
 }
 /* brand dark: bands keep their colours (espresso ink); the page is espresso */
@@ -755,7 +752,7 @@ html body .app-container.app-container[data-theme='brand-dark'] .ed .ed-field :i
 .ed .ed-us__photo.ay-folder { max-width: 500px; width: 100%; margin: 0; }
 .ed .ed-us .ay-folder__photo img { aspect-ratio: 3 / 2; border-radius: 2px; }
 .app-container .ed :is(.ed-display, .ed-h1) { letter-spacing: -.025em !important; }
-@media (max-width: 767px) { .ed .ed-us__photo.ay-folder { margin: 8px auto 0; } .ed .ed-evidence__oval { top: -18px; right: 10px; } }
+@media (max-width: 767px) { .ed .ed-evidence__oval { top: -18px; right: 10px; } }
 @media (max-width: 767px) { .ed .ed-step.ay-tabcard { align-items: stretch; } }
 /* prose headings follow the theme (they were espresso on espresso in brand dark on How we make money) */
 html body .app-container .ed .ed-prose > :is(section, .ed-psec) :is(h2, h3) { color: var(--ed-text) !important; }
@@ -796,8 +793,6 @@ html body .app-container .ed .ed-prose > :is(section, .ed-psec) :is(h2, h3) { co
 .ed .ed-familiar__q.is-ink a:focus-visible { outline-color: #ffedac; }
 @media (max-width: 767px) {
   .ed .ed-familiar__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); border-radius: 16px; }
-  .ed .ed-familiar__q a { padding: 16px; }
-  .ed .ed-familiar__go { font-size: 14px; }
 }
 
 /* The statement: one plain line, real products stuck either side of it */
@@ -805,7 +800,7 @@ html body .app-container .ed .ed-prose > :is(section, .ed-psec) :is(h2, h3) { co
 .ed .ed-statement__line { margin: 0; font: 700 clamp(26px, 2vw + 18px, 44px)/1.15 var(--ed-serif); letter-spacing: -.015em; color: var(--ed-text); text-wrap: balance; }
 .ed .ed-statement__line mark { color: inherit; background: linear-gradient(transparent 55%, #f7badd 55%, #f7badd 95%, transparent 95%); padding: 0 .08em; }
 .app-container[data-theme='brand-dark'] .ed .ed-statement__line mark, .app-container[data-theme='dark'] .ed .ed-statement__line mark { background: linear-gradient(transparent 55%, rgba(247, 186, 221, .45) 55%, rgba(247, 186, 221, .45) 95%, transparent 95%); }
-.ed .ed-statement__stickers { display: flex; justify-content: center; gap: 18px; pointer-events: none; }
+.ed .ed-statement__stickers { display: flex; justify-content: center; gap: 18px; }
 .ed .ed-statement__sticker { display: block; width: 120px; height: 120px; padding: 8px; box-sizing: border-box; background: #fff; border: 1.5px solid #3e2723; border-radius: 22px; box-shadow: 4px 4px 0 #3e2723; }
 .ed .ed-statement__sticker img { width: 100%; height: 100%; object-fit: contain; }
 .ed .ed-statement__sticker.is-0 { rotate: -8deg; translate: 0 -18px; }
@@ -881,15 +876,9 @@ html body .app-container .ed .ed-prose > :is(section, .ed-psec) :is(h2, h3) { co
 .ed .ed-how .ay-envelope { width: 100%; }
 @media (max-width: 1023px) { .ed .ed-how__in { grid-template-columns: 1fr; gap: 32px; } }
 @media (max-width: 767px) {
-  .ed .ed-how__in { padding-block: 44px 48px; gap: 28px; }
   html body .app-container .ed .ed-how .ed-steps { gap: 10px !important; }
   html body .app-container .ed .ed-how .ed-step.ay-tabcard .ed-step__in { padding: 8px 8px 10px; gap: 8px; }
   .ed .ed-how .ay-tabcard__strip { min-height: 32px; }
-  .app-container .ed .ed-how .ay-envelope { padding-bottom: 56px; }
-  .app-container .ed .ed-how .ay-envelope__letter { padding: 24px 20px 72px; }
-  .app-container .ed .ed-how .ay-envelope__back { height: 150px; }
-  .app-container .ed .ed-how .ay-envelope__flap { height: 118px; }
-  .app-container .ed .ed-how .ay-envelope__seal { width: 52px; height: 52px; margin-left: -26px; bottom: 20px; }
 }
 
 /* Evidence: the plain statement leads the proof */
@@ -906,8 +895,6 @@ html body .app-container .ed .ed-prose > :is(section, .ed-psec) :is(h2, h3) { co
 
 /* Founders + invest: tighter on phones, all copy kept */
 @media (max-width: 767px) {
-  .ed .ed-us__photo.ay-folder { max-width: 300px; }
-  .ed .ed-us { gap: 12px; }
   .ed .ed-invest { margin-top: 32px; }
 }
 @media (max-width: 767px) {
@@ -1007,14 +994,11 @@ html body .app-container .ed .ed-prose > :is(section, .ed-psec) :is(h2, h3) { co
   html body .app-container .ed.ed-home .ed-shopband { padding-bottom: 24px; }
   html body .app-container .ed.ed-home .ed-shopband .ed-band__foot { margin-top: 16px; }
   html body .app-container .ed.ed-home .ed-familiar__head { margin-bottom: 12px; }
-  html body .app-container .ed.ed-home .ed-familiar__grid > li { aspect-ratio: 4 / 3; }
   html body .app-container .ed.ed-home .ed-familiar__q a { padding: 12px 14px; }
   html body .app-container .ed.ed-home .ed-how.ay-band { margin-top: 32px; }
   html body .app-container .ed.ed-home .ed-how__in { padding-block: 36px 32px; gap: 20px; }
   html body .app-container .ed.ed-home .ed-how .ed-step .ed-step__img { aspect-ratio: 5 / 2; }
   html body .app-container .ed.ed-home .ed-how .ed-head { margin-bottom: 12px; }
-  html body .app-container .ed.ed-home .ed-how .ay-envelope { padding-bottom: 30px; }
-  html body .app-container .ed.ed-home .ed-how .ay-envelope__letter { margin: 0 14px; padding: 18px 16px 34px; }
   html body .app-container .ed.ed-home .ed-how .ay-envelope__letter .ed-h1 { font-size: 26px; line-height: 1.08; }
   html body .app-container .ed.ed-home .ed-how .ay-envelope__letter .ed-lead { margin-top: 6px; font-size: 17px; }
   html body .app-container .ed.ed-home .ed-how .ay-envelope__letter .ed-final__cta { margin-top: 12px; gap: 4px 16px; }

@@ -11,7 +11,7 @@
 .ayna-mobile .ay-btn.is-ghost { background: transparent; color: var(--ay-ink) !important; }
 
 /* empty + error states */
-.ayna-mobile .ay-empty { display: grid; justify-items: start; gap: 10px; padding: 40px var(--ay-gutter); text-align: left; animation: ay-empty-in .5s var(--ay-ease) both; }
+.ayna-mobile .ay-empty { display: grid; gap: 10px; padding: 40px var(--ay-gutter); animation: ay-empty-in .5s var(--ay-ease) both; }
 .ayna-mobile .ay-empty.is-compact { padding: 28px 16px; }
 @keyframes ay-empty-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 .ay-empty-art { position: relative; width: 96px; height: 96px; margin-bottom: 8px; }
@@ -22,7 +22,7 @@
 .ay-empty--peri { --tone: var(--ay-mint); }
 .ayna-mobile .ay-empty h2 { margin: 0; max-width: 16ch; color: var(--ay-ink) !important; font: 400 28px/1.15 var(--ay-font-display) !important; letter-spacing: -.045em !important; text-wrap: balance; }
 .ayna-mobile .ay-empty p { margin: 0; max-width: 28ch; color: var(--ay-ink-soft); font: 400 15px/1.45 var(--ay-font-ui); }
-.ay-empty-actions { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 10px; margin-top: 10px; }
+.ay-empty-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
 
 /* skeleton loading */
 .ayna-mobile .ay-skeleton { border-radius: 18px; background: linear-gradient(90deg, var(--ay-ink-faint) 0 40%, rgba(62, 39, 35,.06) 50%, var(--ay-ink-faint) 60%) 0 0 / 300% 100%; animation: ay-shimmer 1.4s linear infinite; }
@@ -146,7 +146,7 @@
 
 /* Shop: swipe-to-discover entry card */
 .ayna-mobile .ay-discover-cta {
-  display: flex; align-items: center; gap: var(--ay-space-3); width: calc(100% - 40px); margin: 0 20px var(--ay-space-4); padding: 12px 12px 12px 14px;
+  display: flex; align-items: center; gap: var(--ay-space-3); padding: 12px 12px 12px 14px;
   border: 2px solid var(--ay-ink); border-radius: var(--ay-radius-lg); background: var(--ay-peri); color: var(--ay-ink); text-align: left; cursor: pointer;
   box-shadow: 2px 2px 0 var(--ay-ink); transition: transform var(--ay-dur-1) var(--ay-ease), box-shadow var(--ay-dur-1);
 }
@@ -222,8 +222,8 @@
 @keyframes ay-fan-a { 50% { rotate: 7deg; } }
 @keyframes ay-fan-b { 50% { rotate: -8deg; } }
 .ay-cover-copy { position: relative; }
-.ayna-mobile .ay-cover-copy h1 { margin: 0; color: var(--ay-ink) !important; font: 400 calc(28px * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display) !important; letter-spacing: -.055em !important; }
-.ayna-mobile .ay-cover-copy h1 em { font-style: normal; background: linear-gradient(transparent 58%, var(--ay-butter) 58%, var(--ay-butter) 92%, transparent 92%); }
+.ayna-mobile .ay-cover-copy h1 { margin: 0; color: var(--ay-ink) !important; font: 400 calc(28px * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display) !important; }
+.ayna-mobile .ay-cover-copy h1 em { font-style: normal; }
 .ay-cover-copy p { max-width: 30ch; margin: 12px 0 0; font: 400 15px/1.45 var(--ay-font-ui); color: var(--ay-ink-soft); }
 @media (max-height: 700px) { .ay-cover-copy p { display: none; } }
 
@@ -233,7 +233,7 @@
 .ay-reel.is-pink { --reel-bg: var(--ay-pink); }
 .ay-reel.is-mint { --reel-bg: var(--ay-mint); }
 .ay-reel.is-peri { --reel-bg: #cfd5f7; }
-.ay-reel-head { display: flex; justify-content: space-between; font: 500 13px/1 var(--ay-font-ui); letter-spacing: .06em; text-transform: uppercase; }
+.ay-reel-head { display: flex; justify-content: space-between; font: 500 13px/1 var(--ay-font-ui); }
 .ay-reel-next { position: absolute; inset: 0; z-index: 1; border: 0; background: transparent; cursor: pointer; }
 .ay-reel-stage { flex: 1; min-height: 0; display: grid; place-items: center; animation: ay-reel-in .5s var(--ay-ease) both; }
 @keyframes ay-reel-in { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: none; } }
@@ -334,13 +334,12 @@
 /* ===== Polish pass: product card info, community, ecosystem ===== */
 
 /* Product card: brand (quiet) / name / price. Same on Shop, Ecosystem, Saved. */
-.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy { display: grid !important; gap: 4px !important; padding: 10px 2px 0 !important; text-align: left !important; }
-.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-category { display: block !important; margin: 0 !important; color: var(--ay-ink-soft) !important; font: 500 13px/1.2 var(--ay-font-ui) !important; letter-spacing: 0 !important; text-transform: none !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-category { display: block !important; margin: 0 !important; color: var(--ay-ink-soft) !important; letter-spacing: 0 !important; text-transform: none !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-category::before { display: none !important; }
-.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { margin: 0 !important; color: var(--ay-ink) !important; font: 600 17px/1.25 var(--ay-font-ui) !important; min-height: 2.5em !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { margin: 0 !important; color: var(--ay-ink) !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot { margin: 2px 0 0 !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot b { color: var(--ay-ink) !important; font: 500 13px/1 var(--ay-font-ui) !important; }
-.ayna-mobile.ayna-mobile .ayna-fresh-match-badge { right: auto !important; bottom: auto !important; display: inline-flex !important; gap: 3px !important; align-items: baseline !important; padding: 5px 9px !important; border-radius: 99px !important; background: var(--ay-ink) !important; color: var(--ay-paper) !important; box-shadow: none !important; border: 0 !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-match-badge { bottom: auto !important; display: inline-flex !important; gap: 3px !important; align-items: baseline !important; padding: 5px 9px !important; border-radius: 99px !important; background: var(--ay-ink) !important; color: var(--ay-paper) !important; box-shadow: none !important; border: 0 !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-match-badge { position: absolute !important; top: 8px !important; left: 8px !important; }
 .ayna-mobile .ayna-fresh-match-badge strong { font: 500 13px/1 var(--ay-font-ui) !important; color: inherit !important; }
 .ayna-mobile .ayna-fresh-match-badge span { font: 500 11.5px/1 var(--ay-font-ui) !important; letter-spacing: .04em !important; color: inherit !important; }
@@ -350,7 +349,7 @@
 .ayna-mobile .am-search { margin-bottom: var(--ay-space-3) !important; }
 
 /* Whole-page empty states sit in the middle; inline (compact) ones stay left. */
-.ayna-mobile .ay-empty:not(.is-compact) { justify-items: center; text-align: center; padding-top: 56px; }
+.ayna-mobile .ay-empty:not(.is-compact) { justify-items: center; text-align: center; }
 .ayna-mobile .ay-empty:not(.is-compact) .ay-empty-actions { justify-content: center; }
 .ayna-mobile .ay-empty:not(.is-compact) p { margin-inline: auto; }
 
@@ -441,7 +440,7 @@
 .ayna-mobile.ayna-mobile .ayna-fresh-photo-placeholder { background: var(--ay-tile) !important; border: 0 !important; }
 
 /* Product cards: centred copy under the photo (title, brand, price). */
-.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy { align-items: center !important; text-align: center !important; padding: 12px 6px 0 !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy { text-align: center !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { width: 100%; text-align: center !important; }
 .ayna-mobile .ayna-fresh-product-foot b.is-muted { font-weight: 600 !important; color: var(--ay-ink-soft) !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-match-badge { left: 50% !important; right: auto !important; translate: -50% 0; }
@@ -466,7 +465,7 @@
 
 /* Checkboxes: ayna style instead of the browser default. */
 .ayna-mobile input[type='checkbox']:not([role='switch']) {
-  appearance: none; -webkit-appearance: none; flex: none; width: 22px; height: 22px; margin: 0; border: 2px solid var(--ay-ink); border-radius: 7px; background: var(--ay-paper);
+  appearance: none; -webkit-appearance: none; flex: none; margin: 0; border: 2px solid var(--ay-ink); border-radius: 7px; background: var(--ay-paper);
   display: inline-grid; place-content: center; cursor: pointer; transition: background-color var(--ay-dur-1, 140ms);
 }
 .ayna-mobile input[type='checkbox']:not([role='switch'])::after { content: ''; width: 10px; height: 6px; border: solid var(--ay-paper); border-width: 0 0 2.5px 2.5px; rotate: -45deg; translate: 0 -1px; scale: 0; transition: scale .2s var(--ay-pop); }

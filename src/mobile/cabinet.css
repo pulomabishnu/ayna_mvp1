@@ -226,7 +226,7 @@
 .ayna-mobile .ayna-figma-discover { --shop-title:28px; --shop-product:15px; --shop-micro:11.5px; }
 .ayna-mobile .ayna-figma-discover .ayna-shop-heading h1 { font-size:var(--shop-title); }
 .ayna-mobile .ayna-shop-category { flex:1; width:auto; min-height:44px; max-width:none; white-space:normal; font:500 13px/1.2 var(--ayna-font-ui); border-bottom:2px solid transparent; }
-.ayna-mobile .ayna-shop-category[aria-pressed='true'] { color:var(--ayna-accent-dark); border-bottom-color:var(--ayna-accent-dark); }
+.ayna-mobile .ayna-shop-category[aria-pressed='true'] { border-bottom-color:var(--ayna-accent-dark); }
 .ayna-mobile .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image { aspect-ratio:1.55!important; background:transparent!important; border-radius:0!important; }
 .ayna-mobile .ayna-figma-discover .ayna-fresh-product-image::before { content:''; position:absolute; z-index:0; left:13%; top:15%; width:74%; height:70%; border-radius:50%; background:var(--product-halo,#F7BADD); transform:rotate(-12deg); }
 .ayna-mobile .ayna-figma-discover .tone-lilac { --product-halo:#dda7c3; }
