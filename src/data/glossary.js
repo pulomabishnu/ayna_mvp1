@@ -210,6 +210,17 @@ export const GLOSSARY_ENTRIES = [
   entry('Randomized controlled trial', 'A study where people are randomly given the real treatment or a comparison. It is one of the more reliable kinds of study.', { aliases: ['randomized', 'RCT', 'randomised controlled trial'] }),
   entry('Meta-analysis', 'A study that pools the results of many earlier studies to look for an overall answer.', { aliases: ['meta-analyses'] }),
   entry('In vitro', 'Done in a lab dish or test tube, not in people. Results may not carry over to the body.', { aliases: ['in-vitro'] }),
+  // Product page audit, Oct 21: words the product pages used without explaining them.
+  entry('Systematic review', 'A study that gathers the good studies on one question and weighs them together.', { aliases: ['systematic reviews'] }),
+  entry('Double-blind', 'Neither the people in a study nor the researchers know who got the real treatment, so expectations can’t sway the result.', { aliases: ['double blind'] }),
+  entry('TSST-1', 'Toxic shock syndrome toxin 1. A toxin some Staphylococcus aureus bacteria make. It causes most cases of toxic shock syndrome linked to tampons.', { caseSensitive: true, related: ['Toxic shock syndrome'] }),
+  entry('SPF', 'Sun protection factor. How well a sunscreen blocks the UVB rays that cause sunburn, when you apply the full amount it was tested with.', { caseSensitive: true }),
+  entry('Broad spectrum', 'A sunscreen that protects against both UVA and UVB rays.', { aliases: ['broad-spectrum'] }),
+  entry('PA++++', 'A UVA protection rating used in Asia. More plus signs mean more UVA protection, and four is the highest. It is not an FDA rating.', { caseSensitive: true }),
+  entry('CE-marked', 'Carries the CE mark, which says a product meets EU safety rules. It is a European mark, not an FDA review.', { aliases: ['CE marked', 'CE mark', 'CE-marking'] }),
+  entry('HIPAA', 'The US law that protects health information held by doctors, hospitals and health insurers. It usually doesn’t cover apps you use on your own.', { caseSensitive: true }),
+  entry('GDPR', 'The EU’s data protection law. It sets rules for how companies collect, use, share and delete personal data.', { caseSensitive: true }),
+  entry('Photoallergic', 'An allergic skin reaction that only happens when sunlight hits skin after something was put on it.', { aliases: ['photoallergic reaction', 'photoallergic reactions'] }),
 ];
 
 // The app's quiz glossary (src/mobile/data/glossary.js) and the site glossary

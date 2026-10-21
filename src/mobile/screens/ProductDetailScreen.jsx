@@ -10,7 +10,9 @@ import { isPartnerBrandItem, getPartnerDisclosureText } from '../../utils/partne
 import WhyMatchScreen from './WhyMatchScreen.jsx';
 import { exclusionLines } from '../../utils/matchDisplay.js';
 import MatchPill from '../../components/MatchPill.jsx';
-import ProductEvidence, { ProductSafety } from '../../components/pdp/ProductEvidence.jsx';
+import ProductEvidence from '../../components/pdp/ProductEvidence.jsx';
+import { useResearchState } from '../../data/researchLoader.js';
+import { attributeBadges, noDash } from '../../components/pdp/evidenceModel.js';
 import { firstSentence } from '../../components/pdp/sentences.js';
 import { getPassport } from '../../data/passport';
 import { recallFacts } from '../../utils/productFacts.js';
@@ -170,7 +172,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
               {m.role === 'assistant' ? renderMarkdownLite(m.text) : m.text}
             </div>
           ))}
-          {sending && <div style={{ alignSelf: 'flex-start', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>Ayna is thinking…</div>}
+          {sending && <div style={{ alignSelf: 'flex-start', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>Looking into it…</div>}
         </div>
       )}
 
@@ -211,7 +213,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
 }
 
 export default function ProductDetailScreen({
-  product,
+  product: catalogProduct,
   onBack,
   isSaved = false,
   onToggleSaved,
@@ -234,6 +236,8 @@ export default function ProductDetailScreen({
   // "ayna" in Works with opens You > Health data.
   onOpenHealthData = null,
 }) {
+  // The same research layer the website loads (data/researchLoader.js), so the app shows every field.
+  const { product, loaded: researchLoaded } = useResearchState(catalogProduct);
   const [partnerOpen, setPartnerOpen] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
   // Rendered locally (not through MobileApp's shared `overlay` state, which
@@ -324,7 +328,7 @@ export default function ProductDetailScreen({
   // Details tabs with their source cards.
   const glance = buildGlance(product, { details: quizAnswers ? matchDetails : null, whyMatched });
   const brandLine = brand && String(brand).trim().toLowerCase() !== String(name || '').trim().toLowerCase() ? brand : categoryLabel;
-  const heroLine = firstSentence(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '').replace(/\s*—\s*/g, ', ').trim(), { min: 20, max: 240 });
+  const heroLine = firstSentence(noDash(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '')), { min: 20, max: 420 });
   // One recall answer for the page (utils/productFacts), as on the website.
   const recall = (() => {
     const live = getPassport(product)?.recall;
@@ -377,6 +381,12 @@ export default function ProductDetailScreen({
   const shownPrice = formatPrice(product);
   const hasDisplayPrice = shownPrice.main !== 'Price at retailer';
 
+  // Round badges beside the photo: only facts on file (FSA/HSA, fragrance, prescription, app).
+  const badges = attributeBadges(product, glance);
+  const variantLabels = (product.variants || []).map((v) => String(v?.label || '').replace(/\s*—\s*/g, ', ')).filter(Boolean);
+  const variantKind = variantLabels.some((l) => /\d|\b(xs|s|m|l|xl|small|medium|large|regular|super|light|heavy|mini|plus|size|pack|count|oz|ml)\b/i.test(l)) ? 'Sizes' : 'Options';
+  const barPrice = hasDisplayPrice && String(shownPrice.main).length <= 9 ? shownPrice.main : '';
+
   return (
     <div id="ay-pdp" className="ayna-fresh-product-detail ay-pdp" style={{ flex: 1, minWidth: 0, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--ayna-bg)', color: 'var(--ayna-text)' }}>
       <div key={product.id} className="ay-pdp-scroll" style={{ flex: 1, overflowY: 'auto', animation: 'ay-page .25s ease-out' }}>
@@ -390,32 +400,38 @@ export default function ProductDetailScreen({
           </button>
         </div>
 
-        <div className={`ayna-fresh-detail-image ay-pdp-hero tone-${tone}${image ? '' : ' is-missing-image'}`} style={{ margin: '16px 20px 0', borderRadius: 17, padding: 0, background: 'var(--ayna-bg-alt)', overflow: 'hidden' }}>
-          <div
-            style={{
-              position: 'relative',
-              width: '100%',
-              aspectRatio: '4 / 5',
-              background: 'var(--ayna-surface)',
-              borderRadius: 17,
-              boxShadow: 'none',
-              overflow: 'hidden',
-            }}
-          >
-            <ProductImage key={shownImage} product={product} src={shownImage} alt={name} allowBrandLogo={product?.type === 'digital'} />
-            {images.length > 0 && (
-              <button type="button" className="ay-pdp-zoom-open" aria-label={`View ${name} photo full screen`} onClick={() => setZoomOpen(true)}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m20 20-4.2-4.2M11 8.5v5M8.5 11h5" /></svg>
-              </button>
+        {/* Tinted stage with the product on a white stamp, then a rounded sheet that overlaps it. */}
+        <div className={`ayq-apphero tone-${tone}${image ? '' : ' is-missing-image'}`}>
+          <div className="ayq-apphero__stage">
+            <div className="ayq-stamp ayq-apphero__stamp">
+              <div className="ayq-apphero__tile">
+                <ProductImage key={shownImage} product={product} src={shownImage} alt={name} allowBrandLogo={product?.type === 'digital'} />
+                {images.length > 0 && (
+                  <button type="button" className="ay-pdp-zoom-open" aria-label={`View ${name} photo full screen`} onClick={() => setZoomOpen(true)}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m20 20-4.2-4.2M11 8.5v5M8.5 11h5" /></svg>
+                  </button>
+                )}
+              </div>
+            </div>
+            {badges.length > 0 && (
+              <ul className="ayq-badges" aria-label="Facts about this product">
+                {badges.map((b) => <li key={b.id}><span>{b.label}</span>{b.note && <small>{b.note}</small>}</li>)}
+              </ul>
             )}
           </div>
+          {images.length > 1 && <div className="ay-pdp-thumbs ayq-apphero__thumbs"><GalleryThumbs images={images} index={photo} onSelect={setPhoto} name={name} /></div>}
         </div>
-        {images.length > 1 && <div className="ay-pdp-thumbs"><GalleryThumbs images={images} index={photo} onSelect={setPhoto} name={name} /></div>}
 
-        <div className="ayna-fresh-detail-title ay-pdp-title ay-pdp-head2">
+        <div className="ayq-sheet ay-pdp-title">
           {brandLine && <div className="ay-pdp-eyebrow">{brandLine}</div>}
           <h1>{shownName}</h1>
           {heroLine && <p className="ay-pdp-lede">{heroLine}</p>}
+          {variantLabels.length > 0 && (
+            <div className="ayq-variants">
+              <p>{variantKind}</p>
+              <ul>{variantLabels.map((l) => <li key={l}>{l}</li>)}</ul>
+            </div>
+          )}
           {(price || perUnit) && <div className="ay-pdp-price">
             {price && <span className={hasDisplayPrice ? 'is-price' : 'is-note'}>{shownPrice.main}</span>}
             {perUnit && <small className="is-unit">{perUnit}</small>}
@@ -425,11 +441,11 @@ export default function ProductDetailScreen({
             <MatchPill percent={matchPercent} onClick={openWhyMatch} label={`${matchPercent}% match${headLine ? `. ${headLine}` : ''}. See why`} />
             {headLine && <span>{headLine}</span>}
           </div>}
-          {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && quizAnswers && <button type="button" className="ay-pdp-fitnote" onClick={openWhyMatch}>{matchDetails.matchStatus === 'excluded' ? (exclusions[0] || 'Not a fit right now') : 'No clear match'} <span aria-hidden="true">→</span></button>}
+          {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && quizAnswers && <button type="button" className="ay-pdp-fitnote" onClick={openWhyMatch}>{matchDetails.matchStatus === 'excluded' ? (exclusions[0] || 'Not a fit right now') : 'No clear match'}</button>}
           {matchDetails.matchStatus === 'no-profile' && <button type="button" className="ayna-figma-guest-match" onClick={onStartQuiz}>Get matched</button>}
           {onToggleOmit && <div className="ay-pdp-omit"><button type="button" onClick={onToggleOmit} aria-pressed={isOmitted}>{isOmitted ? 'Undo “Not for me”' : 'Not for me'}</button>{isOmitted && <small>Hidden from your matches.</small>}</div>}
           {topWarning && <SafetyFlag text={topWarning} />}
-          {works.ayna && onOpenHealthData && <button type="button" className="ay-pdp-works" onClick={onOpenHealthData}>Works with ayna: connect {works.ayna.name} in Health data <span aria-hidden="true">→</span></button>}
+          {works.ayna && onOpenHealthData && <button type="button" className="ay-pdp-works" onClick={onOpenHealthData}>Works with ayna: connect {works.ayna.name} in Health data</button>}
           {retailers.length > 0 && (
             <div className="ay-retailers">
               <span id="ay-pdp-also-at">Also at</span>
@@ -443,14 +459,14 @@ export default function ProductDetailScreen({
               <button type="button" onClick={() => setPartnerOpen((v) => !v)} aria-expanded={partnerOpen}>
                 <span>Partner</span><span>{partnerOpen ? 'Hide disclosure' : 'We may earn a commission'}</span><span aria-hidden="true">{partnerOpen ? '−' : '+'}</span>
               </button>
-              {partnerOpen && <div className="ayna-figma-partner-copy">{partnerDisclosure}<a href="https://www.aynahealth.co/startups" target="_blank" rel="noopener noreferrer">Read about our brand partnerships →</a></div>}
+              {partnerOpen && <div className="ayna-figma-partner-copy">{partnerDisclosure}<a href="https://www.aynahealth.co/startups" target="_blank" rel="noopener noreferrer">Read about our brand partnerships</a></div>}
             </div>
           ) : buyUrl && <p className="ay-pdp-commission">Some links earn ayna a commission. It never changes your matches.</p>}
         </div>
-
         <div className="ay-pdp-passport">
           <ProductEvidence
             key={product.id}
+            loading={!researchLoaded}
             product={product}
             image={images[0] || ''}
             safetyLead={topWarning}
@@ -459,7 +475,7 @@ export default function ProductDetailScreen({
             heroLine={heroLine}
             onOpenReview={onOpenReview}
             onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null}
-            safety={<ProductSafety product={product} glance={glance} recall={recall} alertText={glance?.alert || ''} />}
+            extraRows={[{ label: 'Sold by', value: buyUrl ? (/amazon\.|amzn\./i.test(buyUrl) ? 'Amazon' : (() => { try { return new URL(buyUrl).hostname.replace(/^www\./, ''); } catch { return ''; } })()) : '' }]}
           />
 
           <section className="ay-pdp-askcard" id="ay-sec-ask" tabIndex={-1} aria-labelledby="ay-pdp-ask-h">
@@ -514,84 +530,20 @@ export default function ProductDetailScreen({
       </div>
       {zoomOpen && images.length > 0 && <ImageZoomViewer images={images} startIndex={Math.min(photo, images.length - 1)} name={name} onClose={() => setZoomOpen(false)} />}
 
-      <div className="ayna-product-purchase-bar ay-pdp-bar" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '12px 20px max(20px, env(safe-area-inset-bottom))', background: 'var(--ayna-surface)', borderTop: '1px solid var(--ayna-border)', display: 'flex', gap: 8, alignItems: 'center' }}>
-        <button
-          type="button"
-          onClick={onToggleSaved}
-          aria-label={isSaved ? 'Remove from Saved' : 'Save'}
-          aria-pressed={isSaved}
-          style={{ width: 50, height: 50, borderRadius: 99, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'var(--ayna-surface)', border: '1px solid ' + (isSaved ? 'var(--ayna-accent-dark)' : 'var(--ayna-border)') }}
-        >
-          <svg width="19" height="19" viewBox="0 0 24 24" fill={isSaved ? 'var(--ayna-accent-dark)' : 'none'} stroke={isSaved ? 'var(--ayna-accent-dark)' : 'var(--ayna-heading)'} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-            <path d={HEART_PATH} />
-          </svg>
-        </button>
-        <button
-          type="button"
-          aria-pressed={isInEcosystem}
-          aria-label={isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'}
-          className="ay-pdp-eco-btn"
-          onClick={onAddToEcosystem}
-          style={{
-            flex: 'none',
-            height: 50,
-            boxSizing: 'border-box',
-            display: 'flex',
-            alignItems: 'center',
-            padding: '0 16px',
-            borderRadius: 99,
-            cursor: 'pointer',
-            fontFamily: "var(--ayna-font-ui)",
-            fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
-            fontWeight: 500,
-            background: isInEcosystem ? 'var(--ayna-chip-bg)' : 'var(--ayna-surface)',
-            color: 'var(--ayna-heading)',
-            border: '1px solid ' + (isInEcosystem ? 'var(--ayna-accent-dark)' : 'var(--ayna-border)'),
-          }}
-        >
-          {/* The bar is tight at 320px: "Remove" says it there; the
-              aria-label keeps the full wording for screen readers. */}
-          {isInEcosystem ? 'Remove' : 'Add to ecosystem'}
-        </button>
-        {buyUrl ? (
-          <a
-            href={buyUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: 'product_detail' })}
-            style={{
-              flex: 1,
-              textAlign: 'center',
-              background: 'var(--ayna-cta-bg)',
-              color: 'var(--ayna-cta-text)',
-              borderRadius: 99,
-              padding: '15px 0',
-              fontFamily: "var(--ayna-font-ui)",
-              fontWeight: 600,
-              fontSize: 'calc(17px * var(--ayna-text-scale, 1))',
-              boxShadow: '0 14px 26px -14px rgba(36,42,82,.7)',
-              textDecoration: 'none',
-            }}
-          >
-            {category === 'telehealth' ? 'Explore' : product.type === 'digital' ? 'View app' : 'Shop'}
-          </a>
-        ) : (
-          <div
-            style={{
-              flex: 1,
-              textAlign: 'center',
-              background: 'var(--ayna-border)',
-              color: 'var(--ayna-text-muted)',
-              borderRadius: 99,
-              padding: '15px 0',
-              fontFamily: "var(--ayna-font-ui)",
-              fontWeight: 600,
-              fontSize: 'calc(17px * var(--ayna-text-scale, 1))',
-            }}
-          >
-            <span className="ayna-seller-unavailable">No shop link</span>
-          </div>
-        )}
+      {/* One dark pill: price, save, ecosystem, buy. */}
+      <div className="ayq-bar">
+        <div className="ayq-bar__pill">
+          {barPrice && <span className="ayq-bar__price">{barPrice}</span>}
+          <button type="button" className="ayq-bar__icon" onClick={onToggleSaved} aria-label={isSaved ? 'Remove from Saved' : 'Save'} aria-pressed={isSaved}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill={isSaved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={HEART_PATH} /></svg>
+          </button>
+          <button type="button" className={`ayq-bar__eco${isInEcosystem ? ' is-on' : ''}`} aria-pressed={isInEcosystem} aria-label={isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'} onClick={onAddToEcosystem}>
+            {isInEcosystem ? 'In ecosystem' : '+ Ecosystem'}
+          </button>
+          {buyUrl
+            ? <a className="ayq-bar__buy" href={buyUrl} target="_blank" rel="noopener noreferrer" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: 'product_detail' })}>{category === 'telehealth' ? 'Book' : product.type === 'digital' ? 'Get the app' : 'Shop'}<span className="sr-only"> (opens the seller’s site)</span></a>
+            : <span className="ayq-bar__buy is-off ayna-seller-unavailable">No shop link</span>}
+        </div>
       </div>
     </div>
   );
