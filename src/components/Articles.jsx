@@ -948,6 +948,7 @@ const KEEP_ILLUSTRATION = TEAM_COVER_READS;
    search, read time and the app. */
 const DESIGNED_READS = {
   'postpartum-stretch-marks': { Component: PostpartumStretchMarksArticle, next: 'pelvic-floor-dysfunction' },
+  'genitourinary-syndrome-of-menopause': { Component: VaginalAtrophyGsmArticle, next: 'postpartum-stretch-marks' },
 };
 
 /* The reads featured at the top of the Library, each with a "New" sticker.
@@ -980,6 +981,7 @@ function FeaturedRead({ feature, onOpen }) {
 }
 import TopicCover from './v3/TopicCover.jsx';
 import PostpartumStretchMarksArticle from './library/PostpartumStretchMarksArticle.jsx';
+import VaginalAtrophyGsmArticle from './library/VaginalAtrophyGsmArticle.jsx';
 import useRotatingPlaceholder from '../utils/useRotatingPlaceholder.js';
 const LIB_SEARCH_EXAMPLES = ['heavy periods', 'PMOS', 'period pain', 'when to see a doctor', 'UTI', 'perimenopause', 'fibroids', 'endometriosis', 'yeast vs BV', 'pelvic floor', 'night sweats', 'missed period'];
 
