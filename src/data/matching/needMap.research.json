@@ -1025,7 +1025,7 @@
   "strength": "none",
   "grade": "C",
   "rationale": "A virtual prenatal/postpartum care service, not an ovulation-tracking tool.",
-  "source_url": "https://integration.reproductivefacts.org/globalassets/_rf/news-and-publications/bookletsfact-sheets/english-pdf/ovulation_detection_factsheet.pdf",
+  "source_url": "https://www.reproductivefacts.org/news-and-publications/fact-sheets-and-infographics/ovulation-detection/",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1085,7 +1085,7 @@
   "strength": "primary",
   "grade": "A",
   "rationale": "Includes urine LH (fertile window) plus PdG to confirm ovulation; LH tests are accurate per ASRM/FDA, and PdG confirmation is supported only by small validation studies.",
-  "source_url": "https://integration.reproductivefacts.org/globalassets/_rf/news-and-publications/bookletsfact-sheets/english-pdf/ovulation_detection_factsheet.pdf",
+  "source_url": "https://www.reproductivefacts.org/news-and-publications/fact-sheets-and-infographics/ovulation-detection/",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1135,7 +1135,7 @@
   "strength": "secondary",
   "grade": "B",
   "rationale": "Useful for spotting absent ovulation to bring to a clinician; not a treatment.",
-  "source_url": "https://integration.reproductivefacts.org/globalassets/_rf/news-and-publications/bookletsfact-sheets/english-pdf/ovulation_detection_factsheet.pdf",
+  "source_url": "https://www.reproductivefacts.org/news-and-publications/fact-sheets-and-infographics/ovulation-detection/",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1165,7 +1165,7 @@
   "strength": "primary",
   "grade": "A",
   "rationale": "Monthly Proov kits include LH and PdG testing; LH tests are an established ovulation tool.",
-  "source_url": "https://integration.reproductivefacts.org/globalassets/_rf/news-and-publications/bookletsfact-sheets/english-pdf/ovulation_detection_factsheet.pdf",
+  "source_url": "https://www.reproductivefacts.org/news-and-publications/fact-sheets-and-infographics/ovulation-detection/",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1175,7 +1175,7 @@
   "strength": "secondary",
   "grade": "B",
   "rationale": "The app itself only logs habits; ovulation data comes from the paired Surearly LH/PdG reader, and calendar-style apps are poor at predicting ovulation (ASRM: at most 21%).",
-  "source_url": "https://integration.asrm.org/globalassets/_asrm/practice-guidance/practice-guidelines/pdf/optimizing_natural_fertility.pdf",
+  "source_url": "https://www.asrm.org/practice-guidance/practice-committee-documents/optimizing-natural-fertility-a-committee-opinion-2021/",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1245,7 +1245,7 @@
   "strength": "primary",
   "grade": "A",
   "rationale": "Measures LH (predicts ovulation) plus PdG/P3G (confirms ovulation) from urine; LH testing is established per ASRM/FDA.",
-  "source_url": "https://integration.reproductivefacts.org/globalassets/_rf/news-and-publications/bookletsfact-sheets/english-pdf/ovulation_detection_factsheet.pdf",
+  "source_url": "https://www.reproductivefacts.org/news-and-publications/fact-sheets-and-infographics/ovulation-detection/",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1265,7 +1265,7 @@
   "strength": "secondary",
   "grade": "B",
   "rationale": "Can reveal absent ovulation to discuss with a clinician; not a treatment.",
-  "source_url": "https://integration.reproductivefacts.org/globalassets/_rf/news-and-publications/bookletsfact-sheets/english-pdf/ovulation_detection_factsheet.pdf",
+  "source_url": "https://www.reproductivefacts.org/news-and-publications/fact-sheets-and-infographics/ovulation-detection/",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1285,7 +1285,7 @@
   "strength": "secondary",
   "grade": "C",
   "rationale": "Calendar/symptom-based app; ASRM notes calendar apps predicted ovulation day at most 21% of the time.",
-  "source_url": "https://integration.asrm.org/globalassets/_asrm/practice-guidance/practice-guidelines/pdf/optimizing_natural_fertility.pdf",
+  "source_url": "https://www.asrm.org/practice-guidance/practice-committee-documents/optimizing-natural-fertility-a-committee-opinion-2021/",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1325,7 +1325,7 @@
   "strength": "secondary",
   "grade": "C",
   "rationale": "Standard Clue predictions are calendar-based (ASRM: at most 21% accurate for ovulation day); the separately FDA-cleared Clue Birth Control mode was not verified this session.",
-  "source_url": "https://integration.asrm.org/globalassets/_asrm/practice-guidance/practice-guidelines/pdf/optimizing_natural_fertility.pdf",
+  "source_url": "https://www.asrm.org/practice-guidance/practice-committee-documents/optimizing-natural-fertility-a-committee-opinion-2021/",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1345,7 +1345,7 @@
   "strength": "secondary",
   "grade": "B",
   "rationale": "Calendar predictions plus Apple Watch wrist-temperature retrospective ovulation estimates; temperature only confirms ovulation after the fact (ASRM), and the feature itself is not an FDA-cleared fertility device.",
-  "source_url": "https://integration.reproductivefacts.org/globalassets/_rf/news-and-publications/bookletsfact-sheets/english-pdf/ovulation_detection_factsheet.pdf",
+  "source_url": "https://www.reproductivefacts.org/news-and-publications/fact-sheets-and-infographics/ovulation-detection/",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1355,7 +1355,7 @@
   "strength": "secondary",
   "grade": "C",
   "rationale": "Calendar/retrospective estimates are poor for timing intercourse ahead of ovulation.",
-  "source_url": "https://integration.asrm.org/globalassets/_asrm/practice-guidance/practice-guidelines/pdf/optimizing_natural_fertility.pdf",
+  "source_url": "https://www.asrm.org/practice-guidance/practice-committee-documents/optimizing-natural-fertility-a-committee-opinion-2021/",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1365,7 +1365,7 @@
   "strength": "secondary",
   "grade": "C",
   "rationale": "Calendar/symptom-based app; ASRM notes calendar apps predicted ovulation day at most 21% of the time.",
-  "source_url": "https://integration.asrm.org/globalassets/_asrm/practice-guidance/practice-guidelines/pdf/optimizing_natural_fertility.pdf",
+  "source_url": "https://www.asrm.org/practice-guidance/practice-committee-documents/optimizing-natural-fertility-a-committee-opinion-2021/",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1385,7 +1385,7 @@
   "strength": "secondary",
   "grade": "C",
   "rationale": "Calendar-based period app (lunar features have no basis); ASRM notes calendar apps are poor at predicting ovulation.",
-  "source_url": "https://integration.asrm.org/globalassets/_asrm/practice-guidance/practice-guidelines/pdf/optimizing_natural_fertility.pdf",
+  "source_url": "https://www.asrm.org/practice-guidance/practice-committee-documents/optimizing-natural-fertility-a-committee-opinion-2021/",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1415,7 +1415,7 @@
   "strength": "primary",
   "grade": "A",
   "rationale": "Includes LH (fertile window) and PdG (ovulation confirmation) testing; LH tests are established per ASRM/FDA.",
-  "source_url": "https://integration.reproductivefacts.org/globalassets/_rf/news-and-publications/bookletsfact-sheets/english-pdf/ovulation_detection_factsheet.pdf",
+  "source_url": "https://www.reproductivefacts.org/news-and-publications/fact-sheets-and-infographics/ovulation-detection/",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1455,7 +1455,7 @@
   "strength": "secondary",
   "grade": "B",
   "rationale": "Finger temperature trends can confirm ovulation after the fact, like BBT (ASRM); the ring alone is not an FDA-cleared fertility device, so it was graded B rather than the draft A.",
-  "source_url": "https://integration.reproductivefacts.org/globalassets/_rf/news-and-publications/bookletsfact-sheets/english-pdf/ovulation_detection_factsheet.pdf",
+  "source_url": "https://www.reproductivefacts.org/news-and-publications/fact-sheets-and-infographics/ovulation-detection/",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1625,7 +1625,7 @@
   "strength": "none",
   "grade": "C",
   "rationale": "No credible evidence that this topical progesterone plus herbal blend improves conception; herbs taken in the luteal phase may also overlap early pregnancy.",
-  "source_url": "https://integration.asrm.org/globalassets/_asrm/practice-guidance/practice-guidelines/pdf/optimizing_natural_fertility.pdf",
+  "source_url": "https://www.asrm.org/practice-guidance/practice-committee-documents/optimizing-natural-fertility-a-committee-opinion-2021/",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1635,7 +1635,7 @@
   "strength": "secondary",
   "grade": "C",
   "rationale": "Skin-temperature/HRV wearable with no validation found; temperature can only confirm ovulation retrospectively.",
-  "source_url": "https://integration.reproductivefacts.org/globalassets/_rf/news-and-publications/bookletsfact-sheets/english-pdf/ovulation_detection_factsheet.pdf",
+  "source_url": "https://www.reproductivefacts.org/news-and-publications/fact-sheets-and-infographics/ovulation-detection/",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1695,7 +1695,7 @@
   "strength": "secondary",
   "grade": "C",
   "rationale": "External, drug-free cold pad; perineal cooling trials reported no adverse effects, though harms were poorly studied and it is a postpartum product.",
-  "source_url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD006304.pub4",
+  "source_url": "https://www.cochrane.org/evidence/CD006304_local-cooling-relieving-pain-perineal-trauma-sustained-during-childbirth",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1705,7 +1705,7 @@
   "strength": "secondary",
   "grade": "C",
   "rationale": "External, drug-free cold pad; perineal cooling trials reported no adverse effects, though harms were poorly studied and it is a postpartum product.",
-  "source_url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD006304.pub4",
+  "source_url": "https://www.cochrane.org/evidence/CD006304_local-cooling-relieving-pain-perineal-trauma-sustained-during-childbirth",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1745,7 +1745,7 @@
   "strength": "primary",
   "grade": "B",
   "rationale": "Includes ice pads; Cochrane found cold pads may reduce perineal pain in the first hours to two days (very low to low certainty), best combined with pain relief.",
-  "source_url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD006304.pub4",
+  "source_url": "https://www.cochrane.org/evidence/CD006304_local-cooling-relieving-pain-perineal-trauma-sustained-during-childbirth",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1785,7 +1785,7 @@
   "strength": "primary",
   "grade": "B",
   "rationale": "Reusable cold gel pad; Cochrane found cold gel pads work about as well as ice for early perineal pain (very low to low certainty).",
-  "source_url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD006304.pub4",
+  "source_url": "https://www.cochrane.org/evidence/CD006304_local-cooling-relieving-pain-perineal-trauma-sustained-during-childbirth",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -1795,7 +1795,7 @@
   "strength": "primary",
   "grade": "B",
   "rationale": "Reusable cold gel pad; Cochrane found cold gel pads work about as well as ice for early perineal pain (very low to low certainty).",
-  "source_url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD006304.pub4",
+  "source_url": "https://www.cochrane.org/evidence/CD006304_local-cooling-relieving-pain-perineal-trauma-sustained-during-childbirth",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -2635,7 +2635,7 @@
   "strength": "primary",
   "grade": "B",
   "rationale": "Cochrane 2024: high- and low-frequency TENS may reduce period pain vs placebo (low certainty); NHS lists TENS for period pain.",
-  "source_url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD013331.pub2/pdf/CDSR/CD013331/CD013331_abstract.pdf",
+  "source_url": "https://www.cochrane.org/evidence/CD013331_tens-electrical-nerve-stimulation-through-skin-effective-treatment-period-pain-and-does-it-cause",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -2675,7 +2675,7 @@
   "strength": "secondary",
   "grade": "B",
   "rationale": "Cochrane found very limited low-quality evidence that fish oil reduces period pain; evening primrose oil was not shown effective for menstrual pain and NCCIH draws no conclusion for omega-3 and cramps.",
-  "source_url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002124.pub2",
+  "source_url": "https://www.cochrane.org/evidence/CD002124_dietary-supplements-dysmenorrhoea",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },
@@ -2785,7 +2785,7 @@
   "strength": "secondary",
   "grade": "B",
   "rationale": "Consumable for a TENS device; TENS may reduce period pain (Cochrane, low certainty) but the refills alone do nothing.",
-  "source_url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD013331.pub2/pdf/CDSR/CD013331/CD013331_abstract.pdf",
+  "source_url": "https://www.cochrane.org/evidence/CD013331_tens-electrical-nerve-stimulation-through-skin-effective-treatment-period-pain-and-does-it-cause",
   "reviewer": "research",
   "reviewed": "2026-10-17"
  },

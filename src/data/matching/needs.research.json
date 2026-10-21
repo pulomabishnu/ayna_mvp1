@@ -1364,7 +1364,7 @@
     "sources": [
      "https://www.asrm.org/practice-guidance/practice-committee-documents/optimizing-natural-fertility-a-committee-opinion-2021",
      "https://www.fda.gov/medical-devices/home-use-tests/ovulation-urine-test",
-     "https://integration.reproductivefacts.org/globalassets/_rf/news-and-publications/bookletsfact-sheets/english-pdf/ovulation_detection_factsheet.pdf"
+     "https://www.reproductivefacts.org/news-and-publications/fact-sheets-and-infographics/ovulation-detection/"
     ]
    },
    {
@@ -1372,14 +1372,14 @@
     "grade": "A",
     "sources": [
      "https://www.asrm.org/practice-guidance/practice-committee-documents/optimizing-natural-fertility-a-committee-opinion-2021",
-     "https://integration.reproductivefacts.org/globalassets/_rf/news-and-publications/bookletsfact-sheets/english-pdf/ovulation_detection_factsheet.pdf"
+     "https://www.reproductivefacts.org/news-and-publications/fact-sheets-and-infographics/ovulation-detection/"
     ]
    },
    {
     "type": "basal body temperature charting / temperature-based algorithm (confirms, does not predict)",
     "grade": "B",
     "sources": [
-     "https://integration.reproductivefacts.org/globalassets/_rf/news-and-publications/bookletsfact-sheets/english-pdf/ovulation_detection_factsheet.pdf",
+     "https://www.reproductivefacts.org/news-and-publications/fact-sheets-and-infographics/ovulation-detection/",
      "https://www.fda.gov/NewsEvents/Newsroom/PressAnnouncements/ucm616511.htm"
     ]
    },
@@ -1387,14 +1387,14 @@
     "type": "urine PdG (progesterone metabolite) test to confirm ovulation",
     "grade": "B",
     "sources": [
-     "https://integration.reproductivefacts.org/globalassets/_rf/news-and-publications/bookletsfact-sheets/english-pdf/ovulation_detection_factsheet.pdf"
+     "https://www.reproductivefacts.org/news-and-publications/fact-sheets-and-infographics/ovulation-detection/"
     ]
    },
    {
     "type": "calendar-only period/fertility app",
     "grade": "C",
     "sources": [
-     "https://integration.asrm.org/globalassets/_asrm/practice-guidance/practice-guidelines/pdf/optimizing_natural_fertility.pdf"
+     "https://www.asrm.org/practice-guidance/practice-committee-documents/optimizing-natural-fertility-a-committee-opinion-2021/"
     ]
    },
    {
@@ -1463,7 +1463,7 @@
     "type": "herbal remedies",
     "grade": "C",
     "sources": [
-     "https://integration.asrm.org/globalassets/_asrm/practice-guidance/practice-guidelines/pdf/optimizing_natural_fertility.pdf"
+     "https://www.asrm.org/practice-guidance/practice-committee-documents/optimizing-natural-fertility-a-committee-opinion-2021/"
     ]
    }
   ],
@@ -1517,7 +1517,7 @@
     "grade": "C",
     "sources": [
      "https://www.cochrane.org/evidence/CD012396_what-effectiveness-and-safety-luteal-support-infertile-women-trying-conceive-intrauterine",
-     "https://integration.asrm.org/globalassets/_asrm/practice-guidance/practice-guidelines/pdf/optimizing_natural_fertility.pdf"
+     "https://www.asrm.org/practice-guidance/practice-committee-documents/optimizing-natural-fertility-a-committee-opinion-2021/"
     ]
    }
   ],
@@ -1778,7 +1778,7 @@
     "type": "perineal cooling (ice pack or cold gel pad, 10 to 20 min, first 48 h)",
     "grade": "B",
     "sources": [
-     "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD006304.pub4"
+     "https://www.cochrane.org/evidence/CD006304_local-cooling-relieving-pain-perineal-trauma-sustained-during-childbirth"
     ]
    },
    {
@@ -2779,7 +2779,7 @@
     "type": "TENS device",
     "grade": "B",
     "sources": [
-     "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD013331.pub2/pdf/CDSR/CD013331/CD013331_abstract.pdf",
+     "https://www.cochrane.org/evidence/CD013331_tens-electrical-nerve-stimulation-through-skin-effective-treatment-period-pain-and-does-it-cause",
      "https://www.nhs.uk/tests-and-treatments/transcutaneous-electrical-nerve-stimulation-tens/",
      "https://mayoclinic.org/diseases-conditions/menstrual-cramps/diagnosis-treatment/drc-20374944?p=1"
     ]
@@ -2788,7 +2788,7 @@
     "type": "fish oil / omega-3",
     "grade": "B",
     "sources": [
-     "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002124.pub2",
+     "https://www.cochrane.org/evidence/CD002124_dietary-supplements-dysmenorrhoea",
      "https://www.cochrane.org/evidence/CD002124_dietary-supplements-dysmenorrhoea"
     ]
    },
@@ -2796,7 +2796,7 @@
     "type": "ginger",
     "grade": "B",
     "sources": [
-     "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002124.pub2",
+     "https://www.cochrane.org/evidence/CD002124_dietary-supplements-dysmenorrhoea",
      "https://www.cochrane.org/evidence/CD002124_dietary-supplements-dysmenorrhoea"
     ]
    },
@@ -2804,7 +2804,7 @@
     "type": "vitamin B1 (thiamine)",
     "grade": "B",
     "sources": [
-     "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002124.pub2",
+     "https://www.cochrane.org/evidence/CD002124_dietary-supplements-dysmenorrhoea",
      "https://mayoclinic.org/diseases-conditions/menstrual-cramps/diagnosis-treatment/drc-20374944?p=1"
     ]
    },
@@ -2813,7 +2813,7 @@
     "grade": "C",
     "sources": [
      "https://mayoclinic.org/diseases-conditions/menstrual-cramps/diagnosis-treatment/drc-20374944?p=1",
-     "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002124.pub2"
+     "https://www.cochrane.org/evidence/CD002124_dietary-supplements-dysmenorrhoea"
     ]
    },
    {
@@ -2972,7 +2972,7 @@
      "https://my.clevelandclinic.org/health/diseases/15723-vaginismus",
      "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
      "https://www.mayoclinic.org/diseases-conditions/vulvodynia/diagnosis-treatment/drc-20353427",
-     "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD001760.pub2/pdf/CDSR/CD001760/CD001760_abstract.pdf"
+     "https://www.cochrane.org/evidence/CD001760_interventions-vaginismus"
     ]
    },
    {
