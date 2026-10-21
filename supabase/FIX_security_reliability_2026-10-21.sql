@@ -16,20 +16,23 @@ begin;
 -- with detail.day first (api/_smsStore.js claimReminderDay) and this index
 -- makes the second claim fail with 23505, which the code treats as "skip".
 --
--- If an older double-send already left two reminder rows with the same day,
--- the index would fail to build; this keeps the newest and only touches
--- reminder rows that carry a day (older rows have no day and are ignored).
-delete from public.sms_events e
-using public.sms_events newer
-where e.kind = 'reminder' and newer.kind = 'reminder'
-  and e.user_id = newer.user_id
-  and e.detail ? 'day' and newer.detail ? 'day'
-  and e.detail->>'day' = newer.detail->>'day'
-  and (e.created_at, e.id) < (newer.created_at, newer.id);
-
-create unique index if not exists sms_events_one_reminder_per_day
-  on public.sms_events (user_id, (detail->>'day'))
-  where kind = 'reminder' and detail ? 'day';
+-- Nothing is deleted (founders' rule). If an older double-send already left
+-- two reminder rows with the same day, the index is skipped and a notice
+-- says so; the code-side claim still prevents new double texts.
+do $$
+begin
+  if exists (
+    select 1 from public.sms_events
+    where kind = 'reminder' and detail ? 'day'
+    group by user_id, detail->>'day' having count(*) > 1
+  ) then
+    raise notice 'sms_events has duplicate reminder rows for a day; unique index skipped (no rows deleted).';
+  else
+    create unique index if not exists sms_events_one_reminder_per_day
+      on public.sms_events (user_id, (detail->>'day'))
+      where kind = 'reminder' and detail ? 'day';
+  end if;
+end $$;
 
 -- ── 2. Suggestions only through /api/suggestions ─────────────────────────────
 -- The table allowed INSERT from anon with `with check (true)`, so anyone with
