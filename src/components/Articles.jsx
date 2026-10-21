@@ -950,23 +950,29 @@ const DESIGNED_READS = {
   'postpartum-stretch-marks': { Component: PostpartumStretchMarksArticle, next: 'pelvic-floor-dysfunction' },
 };
 
-/* The read featured at the top of the Library, with a "New" sticker. */
-const FEATURED_READ = { id: 'postpartum-stretch-marks', by: 'Geena Yousry, MS1', reviewedBy: 'Dr. Anuja Vyas, Board-Certified OBGYN' };
+/* The reads featured at the top of the Library, each with a "New" sticker.
+   width/height are the cover image's own size; a cover that isn't square is
+   shown whole instead of cropped. */
+const FEATURED_READS = [
+  { id: 'postpartum-stretch-marks', by: 'Geena Yousry, MS1', reviewedBy: 'Dr. Anuja Vyas, Board-Certified OBGYN', width: 794, height: 798 },
+  { id: 'genitourinary-syndrome-of-menopause', by: 'Shruti Gajjar, MS1', reviewedBy: 'Dr. Anuja Vyas, Board-Certified OBGYN', width: 1400, height: 933 },
+];
 
-function FeaturedRead({ onOpen }) {
-  const art = ARTICLES.find((a) => a.id === FEATURED_READ.id);
+function FeaturedRead({ feature, onOpen }) {
+  const art = ARTICLES.find((a) => a.id === feature.id);
   if (!art) return null;
   const cut = art.title.indexOf('? ');
   const [lead, rest] = cut > 0 ? [art.title.slice(0, cut + 1), art.title.slice(cut + 2)] : [art.title, ''];
+  const square = Math.abs(feature.width - feature.height) < 20;
   return (
     <a href={`/library/${art.id}`} className="ay-lib-feature" onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); onOpen(art.id); }}>
       <span className="ay-lib-feature__new" aria-hidden="true">New</span>
-      <img className="ay-lib-feature__img" src={art.image} alt="" width="794" height="798" />
+      <img className="ay-lib-feature__img" src={art.image} alt="" width={feature.width} height={feature.height} style={square ? undefined : { aspectRatio: 'auto' }} />
       <span className="ay-lib-feature__text">
         <small className="ay-lib-feature__kicker"><span className="sr-only">New. </span>Featured read · {sectionOf(art.id)?.label}</small>
         <strong className="ay-lib-feature__title">{lead}{rest && <> <em>{rest}</em></>}</strong>
         <span className="ay-lib-feature__teaser">{art.teaser}</span>
-        <span className="ay-lib-feature__by">By {FEATURED_READ.by} · {minutesFor(art)} min read<span style={{ display: 'block', marginTop: 4 }}>Reviewed by {FEATURED_READ.reviewedBy}</span></span>
+        <span className="ay-lib-feature__by">By {feature.by} · {minutesFor(art)} min read<span style={{ display: 'block', marginTop: 4 }}>Reviewed by {feature.reviewedBy}</span></span>
         <span className="ay-lib-feature__cta">Read it <span aria-hidden="true">→</span></span>
       </span>
     </a>
@@ -1329,7 +1335,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
     body = <ul className="ay-web-lib-grid">{items.map(card)}</ul>;
   } else {
     body = <>
-      <FeaturedRead onOpen={open} />
+      {FEATURED_READS.map((f) => <FeaturedRead key={f.id} feature={f} onOpen={open} />)}
       {shelf('keep', 'Keep reading', keepReading)}
       {hasProfile ? <>{shelf('foryou', 'Top 3 for you', forYou.slice(0, 3))}{(() => {
         // Say why these are "for you", in her words from the quiz.
