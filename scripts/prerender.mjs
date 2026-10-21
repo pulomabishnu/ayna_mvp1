@@ -12,6 +12,7 @@ import { productHref } from '../src/utils/productRoute.js';
 import { productSeoTitle, productSeoDescription } from '../src/utils/seoMeta.js';
 import { productJsonLd, breadcrumbJsonLd } from '../src/components/pdp/commerce.js';
 import { resolveBuyUrl } from '../src/utils/buyLink.js';
+import { buildHeroSeed } from '../src/components/pdp/heroSeed.js';
 
 const SITE = 'https://www.aynahealth.co';
 const DIST = new URL('../dist/', import.meta.url);
@@ -91,9 +92,29 @@ const chunkLinks = (name) => {
   const js = new Set(own.filter((f) => f.endsWith('.js')).flatMap((f) => [...staticDeps(f)]));
   return [...[...js].map((f) => `<link rel="modulepreload" crossorigin href="/assets/${f}" />`), ...own.filter((f) => f.endsWith('.css')).map((f) => `<link rel="preload" as="style" href="/assets/${f}" />`)].join('\n  ');
 };
+// Everything Vite loads for a lazy page: its JS and CSS, read from the entry's
+// __vite__mapDeps table. Vite waits for a lazy page's CSS before running it,
+// so CSS it doesn't preload here (the shared chunks' styles) starts late and
+// holds the page back (perf: about 0.4s on a throttled phone's product page).
+// The catalog chunk (products-*.js) is in these lists, so it downloads with the entry.
+const entryFile = (shell.match(/<script type="module"[^>]*src="\/assets\/([^"]+\.js)"/) || [])[1];
+const entryCode = entryFile ? fs.readFileSync(new URL(`assets/${entryFile}`, DIST), 'utf8') : '';
+const depTable = (() => { try { return JSON.parse((entryCode.match(/m\.f=(\[[^\]]*\])/) || [])[1] || 'null'); } catch { return null; } })();
+const inShell = new Set([...shell.matchAll(/(?:src|href)="\/(assets\/[^"]+)"/g)].map((m) => m[1]));
+const routeLinks = (name, { cssRel = 'preload' } = {}) => {
+  const m = depTable && entryCode.match(new RegExp(`import\\("\\./(${name}-[\\w-]+\\.js)"\\),__vite__mapDeps\\(\\[([\\d,]+)\\]\\)`));
+  if (!m) return chunkLinks(name);
+  const files = [...new Set([`assets/${m[1]}`, ...m[2].split(',').map((i) => depTable[Number(i)])])].filter((f) => f && !inShell.has(f));
+  return [
+    ...files.filter((f) => f.endsWith('.js')).map((f) => `<link rel="modulepreload" crossorigin href="/${f}" />`),
+    ...files.filter((f) => f.endsWith('.css')).map((f) => (cssRel === 'stylesheet' ? `<link rel="stylesheet" crossorigin href="/${f}" />` : `<link rel="preload" as="style" href="/${f}" />`)),
+  ].join('\n  ');
+};
 const withHead = (html, extra) => (extra ? html.replace('</head>', () => `  ${extra}\n</head>`) : html);
-const SHOP_PRELOAD = chunkLinks('Discovery');
-const PDP_PRELOAD = chunkLinks('ProductModal');
+const SHOP_PRELOAD = routeLinks('Discovery');
+// Product pages paint their hero before the page code runs (ProductHeroPreview),
+// so the product page styles apply from the start (about 37KB, beside index.css).
+const PDP_PRELOAD = routeLinks('ProductModal', { cssRel: 'stylesheet' });
 
 // Home: the first hero photo starts with the HTML (the right width via imagesrcset).
 // dist/index.html is also the shell for routes without their own page, so it
@@ -145,9 +166,15 @@ for (const p of ALL_PRODUCTS) {
     productJsonLd(p, { origin: SITE, buyUrl, url: `${SITE}${url}` }),
     breadcrumbJsonLd(p, { origin: SITE }),
   ]);
-  // The product photo is the page's largest paint: fetch it with the entry, not after it.
-  const heroImg = typeof p.image === 'string' && p.image.startsWith('/') && !/\.svg$/i.test(p.image) ? `<link rel="preload" as="image" fetchpriority="high" href="${esc(p.image)}" />` : '';
-  write(url, withHead(page(url, title, description, { image: absImage(p.image), jsonLd, body: productBody(p, description) }), [PDP_PRELOAD, heroImg].filter(Boolean).join('\n  ')));
+  // The hero the page paints first (ProductHeroPreview), worked out with
+  // ProductModal's own helpers. "<" escaped so catalog text can't close the tag.
+  const seed = buildHeroSeed(p);
+  const seedTag = seed ? `<script type="application/json" id="ay-product-seed">${JSON.stringify(seed).replace(/</g, '\\u003c')}</script>` : '';
+  // The product photo is the page's largest paint: fetch it with the entry, not after it
+  // (the same address the hero shows, which can be a cleaned-up studio photo).
+  const heroSrc = seed?.image || (typeof p.image === 'string' ? p.image : '');
+  const heroImg = heroSrc && /^(\/|https:\/\/)/.test(heroSrc) && !/\.svg(\?|$)/i.test(heroSrc) ? `<link rel="preload" as="image" fetchpriority="high" href="${esc(heroSrc)}" />` : '';
+  write(url, withHead(page(url, title, description, { image: absImage(p.image), jsonLd, body: productBody(p, description) }), [PDP_PRELOAD, heroImg, seedTag].filter(Boolean).join('\n  ')));
   count += 1;
 }
 const dupes = (m) => [...m.entries()].filter(([, ids]) => ids.length > 1);

@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, getProfileMatchLabelsForProduct } from '../data/products.js';
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, getProfileMatchLabelsForProduct } from '../data/catalog.js';
 
 // A product added to the ecosystem is stored as a frozen JSON snapshot
 // (user_ecosystems.product_data, see src/utils/ecosystemStore.js) taken at
@@ -17,7 +17,13 @@ import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, getProf
 //      anything ("device", "wellness", ...) or missing entirely (found
 //      live: "Lumie Bodyclock Starter 30," a real product with full content,
 //      whose category matched nothing here or anywhere in the catalog).
-const CURRENT_CATEGORY_BY_ID = new Map(ALL_PRODUCTS.map((p) => [p.id, p.category]));
+// Built on first use from whichever catalog is loaded (data/catalog.js loads it after first paint).
+let currentCategoryById = null;
+let currentCategorySource = null;
+const currentCategoryFor = (id) => {
+  if (currentCategorySource !== ALL_PRODUCTS) { currentCategoryById = new Map(ALL_PRODUCTS.map((p) => [p.id, p.category])); currentCategorySource = ALL_PRODUCTS; }
+  return currentCategoryById.get(id);
+};
 
 // A single bare word, shared with an unrelated everyday meaning, is weak
 // evidence on its own for which of several possible areas a product belongs
@@ -49,7 +55,7 @@ function scoreGroupMatch(product, group) {
 }
 
 function resolveArea(product, areas) {
-  const category = CURRENT_CATEGORY_BY_ID.get(product?.id) || product?.category;
+  const category = currentCategoryFor(product?.id) || product?.category;
   if (category) {
     const area = areas.find((a) => a.categories.includes(category));
     if (area) return area;

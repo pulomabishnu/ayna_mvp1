@@ -9,10 +9,13 @@ import { createPortal } from 'react-dom';
 import SuggestBox from './SuggestBox';
 import './Discovery.css';
 import './shop-page.css';
-import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct, isTeenProduct } from '../data/products.js';
+// The catalog and the search engine load after first paint (data/catalog.js,
+// utils/search/lazy.js): the page head renders at once and the grid shows
+// placeholder cards until both have arrived (`ready` below).
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct, isTeenProduct, useCatalogReady } from '../data/catalog.js';
 import { behaviorFrom, matchBadge } from '../utils/matchDisplay';
 import { loadProductCatalog } from '../utils/productCatalog';
-import { scoreSearchMatch, correctedSearchQuery } from '../utils/search/index.js';
+import { scoreSearchMatch, correctedSearchQuery, useSearchReady } from '../utils/search/lazy.js';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import SearchAssist from './search/SearchAssist.jsx';
 import { findConfidentProductMatch } from '../utils/naturalLanguageSearch';
@@ -514,6 +517,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const memoUid = user?.id || '';
     if (shopMemo.uid !== memoUid) { shopMemo.uid = memoUid; shopMemo.v = readShopMemo(memoUid); }
     const arrivedWithIntent = Boolean(initialSearch || initialCategory || initialMacroGroup || initialPadFlow || initialPadPreference || initialPadUseCase || initialSymptom);
+    // Catalog and search engine both here (they load after first paint).
+    const catalogReady = useCatalogReady();
+    const searchReady = useSearchReady();
+    const ready = catalogReady && searchReady;
     const memo = (key, fallback) => (!arrivedWithIntent && shopMemo.v[key] !== undefined ? shopMemo.v[key] : fallback);
 
     const [macroGroup, setMacroGroup] = useState(() => {
@@ -536,7 +543,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [gridSettled, setGridSettled] = useState(false);
     // The count waits until the list stops changing (it read 246, 245, 244 while the catalog loaded).
     const [shownCount, setShownCount] = useState(null);
-    useEffect(() => { const t = window.setTimeout(() => setGridSettled(true), 1200); return () => window.clearTimeout(t); }, []);
+    useEffect(() => { if (!ready) return undefined; const t = window.setTimeout(() => setGridSettled(true), 1200); return () => window.clearTimeout(t); }, [ready]);
     // Freshly generated on every mount, Discovery unmounts/remounts on each navigation to it,
     // so this reshuffles the browsing grid's default order every time a user lands on the page,
     // without reshuffling mid-visit as filters/sort change.
@@ -585,6 +592,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [aiError, setAiError] = useState(null);
     const [searchSubmitted, setSearchSubmitted] = useState(false);
     const aiAbortRef = useRef(null);
+    const pendingSearchRef = useRef(null);
     const inferredCategoryRef = useRef(null);
     const debounceRef = useRef(null);
     // Browse-mode AI extension (no-query browsing): fully separate from the
@@ -694,6 +702,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // one, category nudges and all.
     React.useEffect(() => {
         if (initialSearch === undefined) return;
+        // A preset search runs once the catalog and engine are here (corrections, nudges, matches).
+        if (!ready) return;
         if (initialSearch && initialSearch.trim().length >= 2) {
             // runSearch is a plain (non-memoized) function defined later in this
             // component, intentionally NOT a dependency here, since its identity
@@ -704,7 +714,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             setSubmittedQuery(initialSearch || '');
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [initialSearch]);
+    }, [initialSearch, ready]);
 
     // Mirror the submitted query into ?q= so a tab discard/reload while browsing
     // Discovery (or coming back to a backgrounded tab that got reloaded) restores
@@ -732,6 +742,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     }, [initialPadFlow, initialPadPreference, initialPadUseCase]);
 
     const combined = useMemo(() => {
+        if (!ready) return [];
         // Ayna doesn't sell or dispense prescriptions, so prescription-only items
         // (birth control requiring an Rx, HRT patches/inserts, etc.) never show as
         // shoppable products here, searching what they treat (e.g. "hormone
@@ -750,7 +761,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         // just stamp isStartup like the other two sources for consistent shape.
         const discovered = filterPrescriptionCareGate(discoveredProducts).map(p => ({ ...p, isStartup: false }));
         return [...products, ...releasedAsProducts, ...discovered];
-    }, [discoveredProducts]);
+    }, [discoveredProducts, ready]);
 
     // Behavior signals for the matching engine (saved, Not for me, in her
     // ecosystem). Memoized: the engine caches profiles by this object.
@@ -783,8 +794,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const recommendedSet = personalizedSet;
 
     const availableMacroGroups = useMemo(
-        () => MACRO_GROUPS.filter((group) => group.id === 'all' || combined.some((item) => itemMatchesMacroGroup(item, group.id))),
-        [combined]
+        // Before the catalog arrives, every area (each has products), so the tab row never jumps.
+        () => (ready ? MACRO_GROUPS.filter((group) => group.id === 'all' || combined.some((item) => itemMatchesMacroGroup(item, group.id))) : MACRO_GROUPS),
+        [combined, ready]
     );
 
 
@@ -1122,9 +1134,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // so it reads the same on every load (it used to move between 243 and 270).
     const catalogShown = useMemo(() => gridItems.filter((p) => !p.llmGenerated).length, [gridItems]);
     useEffect(() => {
+        if (!ready) return undefined;
         const t = window.setTimeout(() => setShownCount(catalogShown), 700);
         return () => window.clearTimeout(t);
-    }, [catalogShown]);
+    }, [catalogShown, ready]);
     const firstWebIndex = useMemo(() => gridItems.findIndex((p) => p.llmGenerated), [gridItems]);
 
     useEffect(() => {
@@ -1374,6 +1387,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // Both share: under the round cap, not already loading, and visibleCount has caught up
     // to everything currently available (catalog + AI so far).
     useEffect(() => {
+        // An empty grid only means "nothing left" once the catalog is here.
+        if (!ready) return;
         if (qTrimForAi) {
             if (!searchSubmitted || aiLoading) return;
             // The first search already failed: one retry round, then stop.
@@ -1385,7 +1400,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         if (browseAiLoading) return;
         if (gridItems.length > visibleCount) return;
         runBrowseAiRound(browseAiContextKey, browseAiRounds);
-    }, [qTrimForAi, searchSubmitted, aiLoading, aiError, macroGroup, categoryFilter, browseAiRounds, browseAiLoading, gridItems.length, visibleCount, browseAiContextKey, runBrowseAiRound]);
+    }, [ready, qTrimForAi, searchSubmitted, aiLoading, aiError, macroGroup, categoryFilter, browseAiRounds, browseAiLoading, gridItems.length, visibleCount, browseAiContextKey, runBrowseAiRound]);
 
     useEffect(() => {
         if (qTrimForAi.length < 2) {
@@ -1416,6 +1431,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const runSearch = (rawQuery) => {
         const q = (rawQuery || '').trim();
         if (!q || q.length < 2) return;
+        // Searched in the first moment, before the catalog and engine arrived: run it when they do.
+        if (!ready) { setSearchQuery(q); pendingSearchRef.current = q; return; }
         recordSearch(q);
         setSearchQuery(q);
         // Typos fixed before the category nudges and live search ("tampoons" -> "tampons").
@@ -1511,12 +1528,20 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         runAiSearch(qFixed, searchCategory, symptomFilter);
     };
 
+    useEffect(() => {
+        if (!ready || !pendingSearchRef.current) return;
+        const q = pendingSearchRef.current;
+        pendingSearchRef.current = null;
+        runSearch(q);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ready]);
+
     const [searchFocused, setSearchFocused] = useState(false);
     // Quick filters beside the search (the same values as the Filters sheet).
     const quickFilters = [
         ['Under $25', 'under-25', priceFilter, setPriceFilter],
         ['FSA/HSA eligible', 'fsa-hsa', eligibilityFilter, setEligibilityFilter],
-        ...(preferenceOptions.some((o) => o.value === 'fragrance-free') ? [['Fragrance-free', 'fragrance-free', preferenceFilter, setPreferenceFilter]] : []),
+        ...(!ready || preferenceOptions.some((o) => o.value === 'fragrance-free') ? [['Fragrance-free', 'fragrance-free', preferenceFilter, setPreferenceFilter]] : []),
         ['Clinician backed', 'clinician', aynaFilter, setAynaFilter],
     ];
     // The selected folder tab shows one real product from that area peeking out (one we host).
@@ -1713,7 +1738,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 const applied = [[typeFilter, setTypeFilter], [priceFilter, setPriceFilter], [eligibilityFilter, setEligibilityFilter], [lifeStageFilter, setLifeStageFilter], [preferenceFilter, setPreferenceFilter], [sustainabilityFilter, setSustainabilityFilter], [aynaFilter, setAynaFilter]].filter(([v]) => v && v !== 'all');
                 return (
                     <div className="ayshop__applied" role="status">
-                        <span className="ayshop__count">{submittedQuery ? ((shownCount ?? catalogShown) === 0 ? '\u00a0' : `${shownCount ?? catalogShown} result${(shownCount ?? catalogShown) === 1 ? '' : 's'} for “${submittedQuery}”`) : applied.length > 0 || (categoryFilter && categoryFilter !== 'all') || macroGroup !== 'all' ? `Showing ${shownCount ?? catalogShown} of ${combined.filter((it) => !isTeenProduct(it)).length}` : shownCount == null ? '\u00a0' : shownCount > visibleCount ? `Showing ${visibleCount} of ${shownCount} products` : (shownCount === 1 ? '1 product' : `${shownCount} products`)}</span>
+                        <span className="ayshop__count">{!ready ? '\u00a0' : submittedQuery ? ((shownCount ?? catalogShown) === 0 ? '\u00a0' : `${shownCount ?? catalogShown} result${(shownCount ?? catalogShown) === 1 ? '' : 's'} for “${submittedQuery}”`) : applied.length > 0 || (categoryFilter && categoryFilter !== 'all') || macroGroup !== 'all' ? `Showing ${shownCount ?? catalogShown} of ${combined.filter((it) => !isTeenProduct(it)).length}` : shownCount == null ? '\u00a0' : shownCount > visibleCount ? `Showing ${visibleCount} of ${shownCount} products` : (shownCount === 1 ? '1 product' : `${shownCount} products`)}</span>
                         {/* Partner placement is disclosed by each card's 'ayna partner' label and the header line (Oct 16: no extra note). */}
                         {applied.map(([v, set]) => (
                             <button key={v} type="button" className="ay-chip is-on" onClick={() => set('all')} aria-label={`Remove filter ${LABELS[v] || v}`}>{LABELS[v] || v} <span aria-hidden="true">×</span></button>
@@ -1766,8 +1791,24 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 </>
             )}
 
+            {/* Until the catalog arrives (first moment of a visit), cards hold their place. */}
+            {!ready && (
+                <div className="ay-product-grid ayshop__grid" role="status" aria-label="Loading products">
+                    {Array.from({ length: 8 }, (_, i) => (
+                        <div key={i} className="ay-product-card is-skeleton" aria-hidden="true">
+                            <div className="ay-product-card__tile skeleton-shimmer" />
+                            <div className="ay-product-card__body">
+                                <span className="ay-product-card__line is-short" />
+                                <span className="ay-product-card__line" />
+                                <span className="ay-product-card__line is-short" />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
             {/* Product Grid */}
-            {(!searchSubmitted || !aiLoading || gridItems.length > 0) && (
+            {ready && (!searchSubmitted || !aiLoading || gridItems.length > 0) && (
             <>
             <div id="ayshop-grid" role="tabpanel" aria-label={submittedQuery ? `Results for ${submittedQuery}` : (availableMacroGroups.find((g) => g.id === macroGroup)?.label || 'All products')} className={`ay-product-grid ayshop__grid${gridSettled ? ' is-settled' : ''}`}>
                 {gridItems.slice(0, visibleCount).map((item, idx) => {
@@ -1849,7 +1890,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     );
                 })}
             </div>
-            {gridItems.length === 0 && !(searchSubmitted && aiLoading) && (
+            {ready && gridItems.length === 0 && !(searchSubmitted && aiLoading) && (
                 <div className="ayshop__empty">
                     <h2 className="ay-h2">{submittedQuery ? `Nothing for “${submittedQuery}”.` : 'Nothing here with these filters.'}</h2>
                     <div className="ayshop__empty-actions">

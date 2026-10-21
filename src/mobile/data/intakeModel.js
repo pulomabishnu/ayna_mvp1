@@ -2,7 +2,6 @@
 // (src/mobile/screens/IntakeScreen.jsx) and the website's quiz
 // (src/components/WebIntake.jsx), so both always ask the same questions and
 // save the same answers. Change questions here, not in either screen.
-import { ALL_PRODUCTS } from '../../data/products.js';
 import { normalizeAge, normalizeLifeStages, selectLifeStage } from '../../utils/intakeSelections.js';
 
 export const SUPPORT_GROUPS = [
@@ -167,14 +166,12 @@ export const MEDICATION_SUGGESTIONS = [
   'Nexplanon', 'Depo-Provera', 'NuvaRing', 'Xulane patch',
 ];
 
-export const CATALOG_PRODUCT_NAMES = [...new Set((ALL_PRODUCTS || []).map((p) => p?.name).filter(Boolean))];
-export const CATALOG_BRANDS = [...new Set((ALL_PRODUCTS || []).flatMap((p) => [p?.brand, p?.brandName, p?.manufacturer, p?.company]).filter(Boolean))];
 export const COMMON_BRAND_SUGGESTIONS = [
   'LOLA', 'Cora', 'The Honey Pot', 'Rael', 'Saalt', 'August', 'Always', 'Tampax', 'U by Kotex',
   'Ritual', 'O Positiv', 'Love Wellness', 'Thorne', 'Nature Made', 'Garden of Life', 'Good Clean Love',
 ];
-export const BRAND_SUGGESTIONS = [...new Set([...CATALOG_BRANDS, ...COMMON_BRAND_SUGGESTIONS])];
-export const PRODUCT_OR_BRAND_SUGGESTIONS = [...new Set([...CATALOG_PRODUCT_NAMES, ...BRAND_SUGGESTIONS])];
+// Catalog-derived suggestion lists live in intakeCatalog.js (they need the
+// whole catalog, which loads after first paint).
 
 export const PRODUCT_FORMATS = [
   'Pills or capsules', 'Gummies', 'Powders', 'Drinks or teas', 'Creams, lotions, or gels', 'Patches',

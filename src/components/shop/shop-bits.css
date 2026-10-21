@@ -27,6 +27,8 @@
   background: #fff; border-radius: 16px; border: 1.5px solid #3e2723; box-shadow: 3px 3px 0 #3e2723;
 }
 .ay-needsticker__die img { display: block; width: 100%; height: 100%; object-fit: contain; border-radius: 10px; }
+/* The frame before its photo arrives (the catalog loads after first paint). */
+.ay-needsticker__wait { display: block; width: 100%; height: 100%; border-radius: 10px; background: rgba(62, 39, 35, 0.06); }
 .ay-needsticker__label { white-space: nowrap; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; text-decoration-color: transparent; transition: text-decoration-color var(--t-fast) var(--ease-in-out); }
 @media (hover: hover) and (pointer: fine) {
   .app-container .ay-needsticker:hover { transform: rotate(0deg) translateY(-3px); }

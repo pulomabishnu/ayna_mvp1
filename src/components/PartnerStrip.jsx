@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ALL_PRODUCTS } from '../data/products.js';
+import { ALL_PRODUCTS, useCatalogReady } from '../data/catalog.js';
 import { PARTNER_BRANDS } from '../utils/partnerBrands';
 import '../styles/partner-strip.css';
 
@@ -63,7 +63,9 @@ function PartnerTile({ brand, onSelectBrand, showPhotos }) {
 }
 
 export default function PartnerStrip({ variant = 'web', onSelectBrand, showPhotos = true, title = 'Our brand partners', className = '' }) {
-  const brands = useMemo(() => PARTNER_BRANDS.map((b) => ({ ...b, photo: firstPhotoFor(b.pattern) })), []);
+  // Photos come from the catalog, which loads after first paint (data/catalog.js).
+  const catalogReady = useCatalogReady();
+  const brands = useMemo(() => PARTNER_BRANDS.map((b) => ({ ...b, photo: firstPhotoFor(b.pattern) })), [catalogReady]);
   const reducedMotion = usePrefersReducedMotion();
   const rootRef = useRef(null);
   const [perView, setPerView] = useState(variant === 'app' ? 2 : 4);

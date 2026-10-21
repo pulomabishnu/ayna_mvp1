@@ -1,6 +1,6 @@
 import React from 'react';
 import { CheckIcon } from './icons/UiIcons.jsx';
-import { CATEGORY_LABELS } from '../data/products.js';
+import { CATEGORY_LABELS } from '../data/catalogTaxonomy.js';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
 import { formatPrice } from '../utils/formatPrice';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';

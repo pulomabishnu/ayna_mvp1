@@ -12,6 +12,7 @@ import { NEEDS, CONDITIONS, LIFE_STAGES, FORMATS, VALUES, ALLERGENS, LEAVE_OUT, 
 import { MEDICATIONS } from '../../matching/medications.js';
 import { buildProductProfile } from '../../matching/productProfile.js';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../naturalLanguageSearch.js';
+import { provideSearch } from './searchRegistry.js';
 
 export { createSearchEngine } from './engine.js';
 export { tokenize, normalizeText, damerauDistance } from './text.js';
@@ -174,3 +175,6 @@ export function warmSearchEngine() {
     if (idle) window.cancelIdleCallback?.(handle); else clearTimeout(handle);
   };
 }
+
+// Tell the lazy wrappers (lazy.js) the engine is here, whichever chunk loaded this file.
+provideSearch({ analyzeSearch, searchSuggestions, registerSearchVocabulary, warmSearchEngine, scoreSearchMatch, correctedSearchQuery, searchFallbacks, searchArticles });

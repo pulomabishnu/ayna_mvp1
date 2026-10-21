@@ -33,8 +33,6 @@ import {
   AVOID_PAIRS,
   BRAND_OPENNESS,
   BREASTFEEDING_STATUS,
-  BRAND_SUGGESTIONS,
-  CATALOG_PRODUCT_NAMES,
   CONDITIONS,
   EMPTY,
   FOLLOWUP_QUESTIONS,
@@ -56,7 +54,6 @@ import {
   PREGNANCY_TRIMESTER,
   PRICE_RANGES,
   PRODUCT_FORMATS,
-  PRODUCT_OR_BRAND_SUGGESTIONS,
   STOP_REASONS,
   SUPPORT_GROUPS,
   UTI_FREQUENCY,
@@ -73,6 +70,7 @@ import {
   requiredReady,
   ttcDurationOptions,
 } from '../data/intakeModel.js';
+import { BRAND_SUGGESTIONS, CATALOG_PRODUCT_NAMES, PRODUCT_OR_BRAND_SUGGESTIONS } from '../data/intakeCatalog.js';
 
 // The app's quiz. Questions, order, required/optional rules, branching and
 // saved answers all live in mobile/data/intakeModel.js (shared with the

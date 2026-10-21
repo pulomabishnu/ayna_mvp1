@@ -9,10 +9,9 @@
  */
 import { normalizeFdaStatus } from '../../utils/fdaStatus.js';
 import { recallFacts } from '../../utils/productFacts.js';
-import { HEALTH_FUNCTIONS, CATEGORY_LABELS } from '../products.js';
+import { HEALTH_FUNCTIONS, CATEGORY_LABELS } from '../catalogTaxonomy.js';
 import { getPassport } from './index.js';
-import { formatPrice } from '../../utils/formatPrice.js';
-import { getPricePerUnitLabel } from '../../utils/pricePerUnit.js';
+import { priceParts } from './priceParts.js';
 import { whyMatch, confidenceNotes, exclusionLines, isClaimBlocked, MIN_BADGE_SCORE } from '../../utils/matchDisplay.js';
 import { planGlossaryTerms } from '../glossary.js';
 import { getAynaRatingCount } from '../aynaReviews.js';
@@ -139,10 +138,7 @@ export function headerFacts(product, { blockedClaims = [], max = 3 } = {}) {
 }
 
 /** Price line: main + per-unit (only when computable) + small detail. */
-export function priceParts(product) {
-  const p = formatPrice(product);
-  return { main: p.main, sub: p.sub, perUnit: getPricePerUnitLabel(product), known: p.main !== 'Price at retailer' };
-}
+export { priceParts };
 
 /** The flagged concern on file (⚠️ convention), shown regardless of section. */
 export function safetyAlertText(product) {

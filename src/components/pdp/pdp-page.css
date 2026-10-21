@@ -77,6 +77,8 @@ html body .app-container.app-container.app-container .ayp-price__notes { display
 html body .app-container.app-container.app-container .ayp-price__notes li + li::before { content: '·'; margin: 0 8px; }
 html body .app-container.app-container.app-container .ayp-buy__rx { margin: var(--ay-s8) 0 0; font: 500 14px/1.5 var(--ay-sans-stack); color: var(--ay-text); }
 html body .app-container.app-container.app-container .ayp-buy__section { margin-top: var(--ay-s24); display: grid; gap: var(--ay-s16); }
+/* The Buy box's place in the first-paint hero (ProductHeroPreview), about a Buy button's height. */
+html body .app-container.app-container.app-container .ayp-buy__skel { height: 52px; width: 100%; border-radius: 999px; }
 html body .app-container.app-container.app-container .ayp-buy__warn p { margin: 0; font: 500 15px/1.45 var(--ay-sans-stack); }
 html body .app-container.app-container.app-container .ayp-buy__box { display: grid; gap: var(--ay-s12); }
 html body .app-container.app-container.app-container .ayp-options__h { margin: 0 0 6px; font: 600 14px/1.3 var(--ay-sans-stack); color: var(--ay-text); }
@@ -102,6 +104,8 @@ html body .app-container.app-container.app-container .ayp-buy__fine { margin: 0;
 html body .app-container.app-container.app-container .ayp-buy__fine .ayp-textlink { font-weight: 500; }
 html body .app-container.app-container.app-container .ayp-buy__disclosure { max-width: 60ch; }
 html body .app-container.app-container.app-container .ayp-fit { margin-top: var(--ay-s24); padding-top: var(--ay-s20); border-top: 1px solid var(--ay-hairline); display: grid; gap: var(--ay-s8); }
+/* Her match, for the moment before it fills in (ProductModal settled): about the match block's height. */
+html body .app-container.app-container.app-container .ayp-fit__skel { height: 72px; width: 100%; border-radius: 12px; }
 html body .app-container.app-container.app-container .ayp-fit__note { margin: 0; font: 600 14px/1.4 var(--ay-sans-stack); }
 html body .app-container.app-container.app-container .ayp-fit__omit { justify-self: start; min-height: 44px; font-weight: 500 !important; color: var(--ay-text-2) !important; }
 /* ProductMatch (passport/ProductSections.jsx) inside the buy column: plain, no box */
