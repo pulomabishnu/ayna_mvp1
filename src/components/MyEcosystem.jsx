@@ -2072,38 +2072,6 @@ export default function MyEcosystem({
                             </div>
                         );
                     })()}
-                    <div className="eco3-actions ayeco__actions" role="group" aria-label="Ecosystem actions">
-                        <button type="button" className="ay-btn ay-btn--primary" onClick={() => setShowAddModal(true)}><PlusIcon size={16} className="is-lead" />Add a product</button>
-                        {typeof onRedoQuiz === 'function' && <button type="button" className="ay-btn ay-btn--secondary eco-redo" onClick={onRedoQuiz}>Redo quiz</button>}
-                        {/* One primary action; the rest live in More (Pass 7: four equal buttons said nothing about where to start). */}
-                        <details className="eco3-more">
-                            <summary className="ay-btn ay-btn--secondary">More</summary>
-                            <div className="eco3-more__menu" role="menu">
-                                {typeof onRedoQuiz === 'function' && (
-                                    <button type="button" role="menuitem" className="eco-more-redo" onClick={(e) => { e.currentTarget.closest('details').open = false; onRedoQuiz(); }}>Redo quiz</button>
-                                )}
-                                {typeof onEditHealthProfile === 'function' && (
-                                    <button type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; onEditHealthProfile(); }}>Update my answers</button>
-                                )}
-                                {typeof onOpenDoctorPrep === 'function' && (
-                                    <button type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; onOpenDoctorPrep(); }}>Doctor prep</button>
-                                )}
-                                <button type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; setShowMoreTools(true); }}>More tools</button>
-                                {/* Partner news lives here, not among her tools (it read as an ad in a private space). */}
-                                <button type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; posthog.capture('resa_sync_chip_clicked'); setShowResaPartnership(true); }}>About our Rèsa partnership</button>
-                                {typeof onBuildEcosystem === 'function' && (
-                                    myProductList.length ? (
-                                        <ConfirmButton role="menuitem" className="ay-confirm" armedLabel="Tap again to refresh. Products you added stay." onConfirm={(e) => { e.currentTarget.closest('details').open = false; onBuildEcosystem(); }}>Refresh picks from my answers (your shelves stay)</ConfirmButton>
-                                    ) : (
-                                        <button type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; onBuildEcosystem(); }}>Build my ecosystem</button>
-                                    )
-                                )}
-                                {typeof onResetEcosystem === 'function' && (
-                                    <ConfirmButton role="menuitem" className="ay-confirm" armedLabel="Tap again to reset. Clears your ecosystem and answers." onConfirm={(e) => { e.currentTarget.closest('details').open = false; onResetEcosystem(); }}>Reset my ecosystem</ConfirmButton>
-                                )}
-                            </div>
-                        </details>
-                    </div>
                 </header>
 
                 {careFirst && (
@@ -2154,6 +2122,39 @@ export default function MyEcosystem({
                     />
                     <svg className="ayna-browse__search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
                 </form>
+                    {/* P1-14: one toolbar row (search, Add, More) instead of three stacked rows. */}
+                    <div className="eco3-actions ayeco__actions" role="group" aria-label="Ecosystem actions">
+                        <button type="button" className="ay-btn ay-btn--primary" onClick={() => setShowAddModal(true)}><PlusIcon size={16} className="is-lead" /><span className="eco3-add__long">Add a product</span><span className="eco3-add__short" aria-hidden="true">Add</span></button>
+                        {typeof onRedoQuiz === 'function' && <button type="button" className="ay-btn ay-btn--secondary eco-redo" onClick={onRedoQuiz}>Redo quiz</button>}
+                        {/* One primary action; the rest live in More (Pass 7: four equal buttons said nothing about where to start). */}
+                        <details className="eco3-more">
+                            <summary className="ay-btn ay-btn--secondary">More</summary>
+                            <div className="eco3-more__menu" role="menu">
+                                {typeof onRedoQuiz === 'function' && (
+                                    <button type="button" role="menuitem" className="eco-more-redo" onClick={(e) => { e.currentTarget.closest('details').open = false; onRedoQuiz(); }}>Redo quiz</button>
+                                )}
+                                {typeof onEditHealthProfile === 'function' && (
+                                    <button type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; onEditHealthProfile(); }}>Update my answers</button>
+                                )}
+                                {typeof onOpenDoctorPrep === 'function' && (
+                                    <button type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; onOpenDoctorPrep(); }}>Doctor prep</button>
+                                )}
+                                <button type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; setShowMoreTools(true); }}>More tools</button>
+                                {/* Partner news lives here, not among her tools (it read as an ad in a private space). */}
+                                <button type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; posthog.capture('resa_sync_chip_clicked'); setShowResaPartnership(true); }}>About our Rèsa partnership</button>
+                                {typeof onBuildEcosystem === 'function' && (
+                                    myProductList.length ? (
+                                        <ConfirmButton role="menuitem" className="ay-confirm" armedLabel="Tap again to refresh. Products you added stay." onConfirm={(e) => { e.currentTarget.closest('details').open = false; onBuildEcosystem(); }}>Refresh picks from my answers (your shelves stay)</ConfirmButton>
+                                    ) : (
+                                        <button type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; onBuildEcosystem(); }}>Build my ecosystem</button>
+                                    )
+                                )}
+                                {typeof onResetEcosystem === 'function' && (
+                                    <ConfirmButton role="menuitem" className="ay-confirm" armedLabel="Tap again to reset. Clears your ecosystem and answers." onConfirm={(e) => { e.currentTarget.closest('details').open = false; onResetEcosystem(); }}>Reset my ecosystem</ConfirmButton>
+                                )}
+                            </div>
+                        </details>
+                    </div>
                 <nav className="eco3-jump" aria-label="On this page" ref={jumpRef}>
                     <span className="eco-ink" aria-hidden="true" style={jumpInk} />
                     {/* Same order as the page; the section you're in is underlined. */}

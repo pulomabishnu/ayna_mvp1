@@ -319,3 +319,27 @@ html.ay-motion-paused body .app-container.app-container #ayeco .eco-skel__row sp
   html body .app-container.app-container #ayeco .ayeco__actions { flex-wrap: nowrap !important; gap: 10px !important; }
   html body .app-container.app-container #ayeco .ayeco__actions .ay-btn { padding: 0 16px !important; font-size: 15px !important; white-space: nowrap; }
 }
+
+/* Final layout pass (Oct 21, P1-14): stats card, then ONE toolbar row
+   (search · Add · More), then "For you" as one dismissible line. */
+html body .app-container.app-container #ayeco .eco3-stickybar .eco3-actions { display: flex; flex-wrap: nowrap; align-items: center; gap: 8px; margin: 0 !important; }
+html body .app-container.app-container #ayeco .eco3-add__short { display: none; }
+html body .app-container.app-container #ayeco .eco-rail__line { display: flex; align-items: center; gap: 8px; max-width: 640px; }
+html body .app-container.app-container #ayeco .eco-rail__line .eco-rail__strip { flex: 1; min-width: 0; }
+html body .app-container.app-container #ayeco .eco-rail__stripx { flex: none; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--ay-text); cursor: pointer; }
+html body .app-container.app-container #ayeco .eco-rail__stripx svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+html body .app-container.app-container #ayeco .eco-rail__stripx:focus-visible { outline: 3px solid var(--ay-focus); outline-offset: 2px; }
+@media (min-width: 1100px) { html body .app-container.app-container #ayeco .eco-rail__line { display: none; } }
+@media (max-width: 767px) {
+  html body .app-container.app-container #ayeco .eco3-stickybar { flex-direction: row !important; flex-wrap: nowrap !important; align-items: center !important; gap: 8px !important; margin: 12px 0 8px !important; }
+  html body .app-container.app-container #ayeco .eco3-stickybar .eco3-search { flex: 1 1 auto !important; min-width: 0; }
+  html body .app-container.app-container #ayeco .eco3-stickybar .eco3-jump { display: none !important; }
+  html body .app-container.app-container #ayeco .eco3-stickybar .eco-redo { display: none !important; }
+  html body .app-container.app-container #ayeco .eco3-stickybar .eco3-actions .ay-btn { min-height: 48px; padding-inline: 14px !important; }
+  html body .app-container.app-container #ayeco .eco3-add__long { display: none; }
+  html body .app-container.app-container #ayeco .eco3-add__short { display: inline; }
+  html body .app-container.app-container #ayeco .eco-rail__strip { min-height: 44px !important; padding: 6px 12px 6px 8px !important; border-radius: 999px !important; }
+  html body .app-container.app-container #ayeco .eco-rail__count { width: 26px; height: 26px; font-size: 13px; }
+  html body .app-container.app-container #ayeco .eco-rail__striptext { display: flex !important; align-items: baseline; gap: 6px !important; white-space: nowrap; overflow: hidden; }
+  html body .app-container.app-container #ayeco .eco-rail__striptext span { min-width: 0; }
+}

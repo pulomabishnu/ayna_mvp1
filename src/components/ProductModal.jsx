@@ -425,15 +425,17 @@ export default function ProductModal({
   const [showWhy, setShowWhy] = useState(false);
   const [showDisclosure, setShowDisclosure] = useState(false);
   // One Buy on screen at a time: the sticky buy bar (bottom on phones, under
-  // the header on desktop) shows only while the in-page Buy button is out of
-  // view, above or below. The margins leave out the fixed bars that would
+  // the header on desktop) shows only after the in-page Buy button has
+  // scrolled up out of view. The margins leave out the fixed bars that would
   // cover the in-page button.
   const [buyAway, setBuyAway] = useState(false);
   useEffect(() => {
     const el = document.querySelector('.ayp-buy__actions') || document.querySelector('.ayp-buy__box');
     if (!el || typeof IntersectionObserver === 'undefined') return undefined;
     const phone = typeof window.matchMedia === 'function' && window.matchMedia(MOBILE_QUERY).matches;
-    const io = new IntersectionObserver(([e]) => setBuyAway(!e.isIntersecting), { rootMargin: phone ? '0px 0px -140px 0px' : '-140px 0px 0px 0px' });
+    // P1-5: only once the in-page Buy has scrolled up and away (never on load
+    // while it is still below the fold).
+    const io = new IntersectionObserver(([e]) => setBuyAway(!e.isIntersecting && e.boundingClientRect.bottom < (e.rootBounds ? e.rootBounds.top : 0) + 1), { rootMargin: phone ? '-60px 0px -140px 0px' : '-140px 0px 0px 0px' });
     io.observe(el);
     return () => io.disconnect();
   }, [product?.id]);

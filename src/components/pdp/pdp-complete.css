@@ -511,3 +511,11 @@ html body .app-container.app-container.app-container .ayq.ayq.ayq .ay-gloss.ay-g
   html body .app-container .ayq-badges.is-web span { font-size: 10.5px !important; line-height: 1.1 !important; }
   html body .app-container .ayq-badges.is-web small { font-size: 9px !important; line-height: 1.1 !important; }
 }
+
+/* Final layout pass (Oct 21, P1-5): "What it is" + "Who it's for" in one
+   plain prose section (no espresso Feature box around one sentence). */
+.ayq-over > .ayq-about:not(.ayq-what) { grid-column: 1 / span 7; grid-row: 1; align-self: start; }
+.ayq-over:not(:has(.ayq-glance)) > .ayq-about:not(.ayq-what) { grid-column: 1 / -1; }
+.ayq.ayq .ayq-about .ayq-who { margin-top: 24px; grid-column: auto; }
+.ayq.ayq .ayq-about .ayq-prose { max-width: 68ch; }
+@media (max-width: 760px) { .ayq.ayq .ayq-about .ayq-who { margin-top: 16px; } }

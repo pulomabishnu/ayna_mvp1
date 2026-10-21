@@ -320,3 +320,10 @@
   :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh :is(.ay-hh-panel, .ay-hh-insight, .ay-hh-tile, .ay-hh-ring-arc) { animation: none !important; }
   :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh * { transition: none !important; }
 }
+
+/* Final layout pass (Oct 21): the no-data state uses the HealthHome hello + Feature. */
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-hh.is-empty { display: grid; gap: 16px; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-hh-hero-ring.is-blank b { opacity: .7; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-hh-empty-cta { justify-self: start; display: inline-flex; align-items: center; min-height: 48px; margin: 4px 0 0; padding: 0 20px; border: 1.5px solid var(--x-on); border-radius: 999px; background: var(--x-on); color: var(--x-feature); font: 600 15px/1 var(--x-sans); cursor: pointer; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-hh-empty-cta:focus-visible { outline: 3px solid #f7badd; outline-offset: 3px; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-hh.is-empty .ay-wx-starter { display: grid; gap: 16px; }

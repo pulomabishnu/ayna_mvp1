@@ -6,6 +6,7 @@ import CategoryNav from '../components/CategoryNav.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
 import SuggestBox from '../../components/SuggestBox.jsx';
+import { sentenceCase } from '../../utils/sentenceCase.js';
 import { getPersonalizedProductIds, getProfileMatchPercentForProduct, productSearchText, MACRO_GROUPS, itemMatchesMacroGroup, CATEGORY_LABELS, isTeenProduct } from '../../data/products.js';
 import { getVerificationLinks } from '../../utils/verificationLinks.js';
 import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
@@ -469,8 +470,15 @@ export default function BrowseScreen({
           <button {...filterGrabber} aria-label="Close filters" />
           <div className="ayna-shop-filter-head"><strong>Filters</strong><button ref={filterCloseRef} type="button" aria-label="Close filters" onClick={() => { setShowFilters(false); filterButtonRef.current?.focus(); }}>Close</button></div>
           <div className="ayna-shop-filter-fields">
-          <label className="ay-field">Sort<select aria-label="Sort products" value={sortBy} onChange={(event) => setSortBy(event.target.value)}><option value="default">Featured</option><option value="rating">Highest rated</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option></select></label>
-          {FILTER_FIELDS.map(([key, label, options]) => <label key={key} className="ay-field">{label}<select value={filters[key]} onChange={(event) => setFilters((current) => ({ ...current, [key]: event.target.value }))}>{(key === 'category' ? [...options, ...[...new Set(products.map((p) => p.category).filter(Boolean))].sort().map((category) => [category, CATEGORY_LABELS[category] || category.replaceAll('-', ' ')])] : options).map(([value, text]) => <option key={value} value={value}>{text}</option>)}</select></label>)}
+          {/* P2-15: the same filter control as the website's sheet: chip groups (selected = pink + check), tap again to clear. */}
+          <fieldset className="ay-chipgroup"><legend>Sort</legend><div className="ay-chipgroup__chips">{[['default', 'Featured'], ['rating', 'Highest rated'], ['price-asc', 'Price: low to high'], ['price-desc', 'Price: high to low']].map(([value, text]) => <button key={value} type="button" className="ay-chipgroup__chip" aria-pressed={sortBy === value} onClick={() => setSortBy(value)}>{text}</button>)}</div></fieldset>
+          {FILTER_FIELDS.map(([key, label, options]) => (
+            <fieldset key={key} className="ay-chipgroup"><legend>{label}</legend><div className="ay-chipgroup__chips">
+              {(key === 'category' ? [...options, ...[...new Set(products.map((p) => p.category).filter(Boolean))].sort().map((category) => [category, sentenceCase(CATEGORY_LABELS[category] || category.replaceAll('-', ' '))])] : options).filter(([value]) => value !== 'all').map(([value, text]) => (
+                <button key={value} type="button" className="ay-chipgroup__chip" aria-pressed={filters[key] === value} onClick={() => setFilters((current) => ({ ...current, [key]: current[key] === value ? 'all' : value }))}>{text}</button>
+              ))}
+            </div></fieldset>
+          ))}
           </div>
           <div className="ayna-shop-filter-actions"><button type="button" onClick={() => { setFilters(EMPTY_FILTERS); setSortBy('default'); }}>Clear</button><button type="button" onClick={() => setShowFilters(false)}>Apply</button></div>
           </div>

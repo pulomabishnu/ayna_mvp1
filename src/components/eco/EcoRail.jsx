@@ -83,14 +83,18 @@ export default function EcoRail({ clash, onFixStages, quizSlot, quizKey = 'quiz'
         </nav>
       )}
       {/* Small screens: one strip that opens. Wide screens hide it (CSS) and show the cards. */}
-      {count > 0 && <button type="button" className="eco-rail__strip" aria-expanded={open} aria-controls="eco-rail-list" onClick={() => setOpen((v) => !v)}>
-        <span className="eco-rail__count" aria-hidden="true">{count}</span>
-        <span className="eco-rail__striptext">
-          <b>{count === 1 ? '1 thing for you' : `${count} things for you`}</b>
-          <span>{items[0].short}</span>
-        </span>
-        <svg className="eco-rail__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
-      </button>}
+      {/* P1-14: on small screens "For you" is one dismissible line that opens. */}
+      {count > 0 && <div className="eco-rail__line">
+        <button type="button" className="eco-rail__strip" aria-expanded={open} aria-controls="eco-rail-list" onClick={() => setOpen((v) => !v)}>
+          <span className="eco-rail__count" aria-hidden="true">{count}</span>
+          <span className="eco-rail__striptext">
+            <b>For you</b>
+            <span>{items[0].short}{count > 1 ? ` and ${count - 1} more` : ''}</span>
+          </span>
+          <svg className="eco-rail__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+        </button>
+        {items.some((it) => it.key !== 'finish') && <button type="button" className="eco-rail__stripx" aria-label="Hide these suggestions" onClick={() => { items.forEach((it) => { if (it.key !== 'finish') dismiss(it.key); }); setOpen(false); }}>{X}</button>}
+      </div>}
       {count > 0 && <h2 className="eco-rail__h">For you</h2>}
       {count > 0 && <div id="eco-rail-list" className="eco-rail__list">
         {items.map((it) => <div key={it.key} className="eco-rail__item">{it.node}</div>)}

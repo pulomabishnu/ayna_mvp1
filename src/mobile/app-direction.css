@@ -1078,3 +1078,22 @@
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-match { position: relative !important; top: auto !important; left: auto !important; align-self: flex-start; margin: 6px 0 0 2px; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-photo .ay-pc-badge { position: absolute; left: 8px; bottom: 8px; z-index: 1; height: 22px; padding: 0 8px; border-color: #3e2723; background: #ffedac; color: #3e2723; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-photo .ay-pc-badge.is-alert { background: #f7badd; }
+
+/* P2-10 (final layout pass): the Health data search is a full 48px field
+   (it collapsed to 21px and its outline looked clipped); unavailable sources
+   show no chevron, since there is nothing to open beyond the note. */
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-hc-scroll .ay-hc-search.ay-hc-search { box-sizing: border-box; height: 48px !important; min-height: 48px !important; margin: 4px 0 18px !important; padding: 0 !important; overflow: visible !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-hc-scroll .ay-hc-search.ay-hc-search input { height: 100% !important; min-height: 0 !important; padding: 0 44px 0 46px !important; line-height: 1.2 !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-hc-row.is-unavailable { cursor: default; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-hc-row-end { width: 18px; flex: none; }
+/* P2-18: the About intro "Matched to you" mark is a rubber stamp, not a button: tilted, dashed ink, no fill. */
+.ayna-mobile:is(#ay,.ayna-mobile) .ayna-scrapbook__intro-stamp { transform: rotate(-5deg); border-style: dashed !important; background: transparent !important; box-shadow: none !important; cursor: default; pointer-events: none; }
+/* P2-15: Filters sheet as chip groups, same as the website (design-direction "Chips (filters only)"). */
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-chipgroup { margin: 0; padding: 14px 0; border: 0; border-top: 1px solid var(--d-hair, rgba(62, 39, 35, .15)); min-width: 0; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-chipgroup:first-child { border-top: 0; padding-top: 4px; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-chipgroup legend { float: left; width: 100%; margin: 0 0 10px; padding: 0; font: 600 calc(14px * var(--ayna-text-scale, 1))/1.3 var(--f-ui); color: var(--d-ink); }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-chipgroup__chips { clear: both; display: flex; flex-wrap: wrap; gap: 8px; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-chipgroup__chip { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border: 1.5px solid var(--d-ink); border-radius: 999px; background: transparent; color: var(--d-ink); font: 500 calc(14px * var(--ayna-text-scale, 1))/1 var(--f-ui); cursor: pointer; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-chipgroup__chip[aria-pressed='true'] { background: #f7badd; color: #3e2723; border-color: #3e2723; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-chipgroup__chip[aria-pressed='true']::before { content: ''; width: 12px; height: 7px; margin-top: -3px; border: solid currentColor; border-width: 0 0 2px 2px; transform: rotate(-45deg); }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-chipgroup__chip:focus-visible { outline: 3px solid var(--d-ink); outline-offset: 2px; }

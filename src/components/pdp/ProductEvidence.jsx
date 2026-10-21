@@ -645,7 +645,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const researchCount = new Set([...ex.sources, ...rs.studies, ...rs.ingredients.flatMap((i) => i.links)].filter((l) => l.kind.tier === 'credible').map((l) => l.url)).size;
   const previews = [
     tabs.some((t) => t.id === 'literature') && (rs.negative.length
-      ? { id: 'literature', icon: 'paper', label: 'Research', num: String(rs.negative.length), caption: rs.negative.length === 1 ? 'study found no clear benefit' : 'studies found no clear benefit', short: 'no benefit found', tone: 'alert' }
+      ? { id: 'literature', icon: 'paper', label: 'Research', num: String(rs.negative.length), caption: rs.negative.length === 1 ? 'study found no clear benefit' : 'studies found no clear benefit', short: 'no benefit found' }
       : researchCount
         ? { id: 'literature', icon: 'paper', label: 'Research', num: String(researchCount), caption: `${researchCount === 1 ? 'study or health-body source' : 'studies and health-body sources'}${levelWord ? `. ${levelWord}` : ''}`, short: 'sources' }
         : { id: 'literature', icon: 'paper', label: 'Research', caption: levelWord || (rs.ingredients.length ? plural(rs.ingredients.length, rs.ingredientsAreTopics ? 'topic' : 'ingredient') + ' explained' : 'What the research says'), short: levelWord ? levelWord.replace(' evidence', '') : 'Read it' }),
@@ -662,9 +662,11 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     tabs.some((t) => t.id === 'how-to-use') && m.how && { id: 'how-to-use', icon: 'steps', label: 'How to use', num: String(m.how.steps.length), caption: m.how.steps.length === 1 ? 'step' : 'steps', short: m.how.steps.length === 1 ? 'step' : 'steps' },
   ].filter(Boolean);
 
+  // P1-5: "What it is" and "Who it's for" are one plain section (no Feature
+  // box): every team sentence once, read in one place under the buy column's lead.
   const whoBlock = (m.who.length > 0 || (glance?.who?.helps || []).length > 0) && (
     <section id="ayq-who" className="ayq-who" aria-labelledby="ayq-who-h">
-      <h2 id="ayq-who-h" className="ayq-h3">Who it’s for</h2>
+      <h3 id="ayq-who-h" className="ayq-h3">Who it’s for</h3>
       <ol className="ayq-checks">{m.who.map((w, i) => <li key={w}><span className="ayq-checks__n" aria-hidden="true">{i + 1}</span><span><Tx>{w}</Tx></span></li>)}</ol>
       {(glance?.who?.helps || []).length > 0 && <p className="ayq-meta"><b>Helps with:</b> {glance.who.helps.join(', ')}</p>}
     </section>
@@ -680,10 +682,11 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
               <ul className="ayq-bottom__list">{shortList.map((s) => <li key={s}><Tx>{s}</Tx></li>)}</ul>
               {ex.attribution && <p className="ayq-bottom__by">{m.independent ? 'ayna’s summary of the research' : 'Summary of the research, with claims credited to the brand'}. <button type="button" onClick={() => goTo('clinical')}>Read the full expert view</button></p>}
             </article>
-          ) : m.summary.length > 0 ? (
-            <article className="ayq-bottom" aria-labelledby="ayq-bottom-h">
-              <h2 id="ayq-bottom-h" className="ayq-bottom__h">What it is</h2>
-              <div className="ayq-bottom__prose"><Paras list={m.summary} /></div>
+          ) : (m.summary.length > 0 || whoBlock) ? (
+            <article className="ayq-about" aria-labelledby="ayq-about-h">
+              <h2 id="ayq-about-h" className="ayq-h3">{m.summary.length > 0 ? 'What it is' : 'Who it’s for'}</h2>
+              {m.summary.length > 0 && <div className="ayq-prose"><Paras list={m.summary} /></div>}
+              {m.summary.length > 0 ? whoBlock : whoBlock && <div className="ayq-about__who">{whoBlock}</div>}
             </article>
           ) : null}
 
@@ -717,13 +720,13 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
             </nav>
           )}
 
-          {shortList.length > 0 && m.summary.length > 0 && (
-            <section className="ayq-what" aria-labelledby="ayq-what-h">
-              <h2 id="ayq-what-h" className="ayq-h3">What it is</h2>
-              <div className="ayq-prose"><Paras list={m.summary} /></div>
+          {shortList.length > 0 && (m.summary.length > 0 || whoBlock) && (
+            <section className="ayq-what ayq-about" aria-labelledby="ayq-what-h">
+              {m.summary.length > 0 && <h2 id="ayq-what-h" className="ayq-h3">What it is</h2>}
+              {m.summary.length > 0 && <div className="ayq-prose"><Paras list={m.summary} /></div>}
+              {whoBlock}
             </section>
           )}
-          {whoBlock}
         </section>
 
         {tabs.length > 0 && (

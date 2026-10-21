@@ -159,6 +159,39 @@ function Hero({ cycle, ctx, insights, fallback, onAsk }) {
   );
 }
 
+/**
+ * No health data yet (app): the same greeting and the same Feature as the
+ * full screen, so connecting data fills this page in rather than swapping it
+ * for another design. The ring is a blank cycle (no day), never fake data.
+ */
+export function HealthEmpty({ name = '', today, onConnect, children }) {
+  const hour = new Date().getHours();
+  const hello = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  return (
+    <div className="ay-hh is-app is-empty">
+      <header className="ay-hh-hello">
+        <p>{fmtLongDay(today)}</p>
+        <h2>{hello}{name ? `, ${name}` : ''}</h2>
+      </header>
+      <section className="ay-hh-hero" aria-labelledby="ay-hh-empty-title">
+        <div className="ay-hh-hero-top">
+          <div className="ay-hh-hero-head">
+            <h3 id="ay-hh-empty-title">Your sleep, cycle and heart, side by side</h3>
+            <p className="ay-hh-hero-sub">Connect an app or wearable, or upload a file. Your cycle, sleep, heart and activity show up here, compared with your own usual.</p>
+          </div>
+          <div className="ay-hh-hero-ring is-blank" aria-hidden="true">
+            <CycleRing cycleDay={null} avgLength={28} periodLength={0} />
+            <span><small>Day</small><b>?</b></span>
+          </div>
+        </div>
+        {onConnect && <button type="button" className="ay-hh-empty-cta" onClick={onConnect}>Connect health data</button>}
+        <p className="ay-hh-hero-foot">Compared only with your own usual. Patterns, not a diagnosis.</p>
+      </section>
+      {children}
+    </div>
+  );
+}
+
 /** What ayna adds to Apple Health: one line, then four short facts with her own counts. */
 function Adds({ items }) {
   return (

@@ -101,7 +101,13 @@ import './app-motion.css';
 // entirely, so a Google sign-in always fell through to "You" everywhere.
 function displayNameFromUser(user) {
   const meta = user?.user_metadata || {};
-  const raw = meta.first_name || meta.firstName || meta.given_name || meta.full_name || meta.name || '';
+  // The name she typed (sign-up, or You > Account information) is kept as
+  // typed: cutting it to its first word made an edit like "Mary Ann" turn
+  // back into "Mary" on the next refresh, so the edit looked unsaved.
+  const own = String(meta.first_name || meta.firstName || '').trim();
+  if (own) return own;
+  // Provider names (Google, Apple) are full names: use the first word.
+  const raw = meta.given_name || meta.full_name || meta.name || '';
   return String(raw).trim().split(/\s+/).filter(Boolean)[0] || '';
 }
 

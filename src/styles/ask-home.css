@@ -99,3 +99,30 @@ html body .app-container .ayna-ask-panel .ay-askh-homebtn svg { width: 22px; hei
   :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh :is(.ay-askh-ribbon, .ay-askh-tiles > li) { animation: none !important; }
   :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh * { transition: none !important; }
 }
+
+/* Final layout pass (Oct 21): on phone-sized web screens the Ask home fits
+   without scrolling (iPhone SE 667 to 14 Pro 844): tighter gaps and tiles,
+   and the decorative ribbon steps aside under 720px of height. */
+@media (max-width: 767px) and (max-height: 800px) {
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh { gap: 12px; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-tiles { gap: 8px; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-tiles button { min-height: 82px; padding: 12px !important; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-icon { width: 30px; height: 30px; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-icon svg { width: 16px; height: 16px; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-tile-label { margin-top: 2px; font-size: 14.5px; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-tiles .is-tall .ay-askh-tile-label { font-size: 17px; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-tiles[data-count='4'] > li:nth-child(4) button { min-height: 64px; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-note { font-size: 12.5px !important; line-height: 1.4 !important; }
+}
+@media (max-width: 767px) and (max-height: 720px) {
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-ribbon { display: none; }
+}
+@media (max-width: 767px) and (max-height: 720px) {
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh { gap: 10px; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-tiles button { min-height: 72px; gap: 2px; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-tiles[data-count='4'] > li:nth-child(4) button { min-height: 56px; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-new { top: 8px; right: 8px; height: 22px; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ayna-ask-panel__messages.is-home { padding-top: 12px !important; }
+}
+/* Brand dark on the website: the Ask panel stays butter paper, so its ink stays espresso (the greeting and note were butter on butter). */
+html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ayna-ask-panel:not(#ay-none) .ay-askh { --k-ink: #3e2723; --k-soft: rgba(62, 39, 35, .78); --k-hair: rgba(62, 39, 35, .15); --k-group: #f6e3a1; --k-page: #ffedac; }

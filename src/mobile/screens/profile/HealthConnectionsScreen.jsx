@@ -106,7 +106,7 @@ function SourceList({ connections, records, onOpen, onOpenInsights, hasInsights,
                     <span className="ay-hc-row-title">{source.name}</span>
                     <span className={`ay-hc-row-sub is-${status?.tone || 'off'}`}>{sub}</span>
                   </span>
-                  {status?.tone === 'on' ? <span className="ay-hc-pill is-on">On</span> : <Chevron />}
+                  {status?.tone === 'on' ? <span className="ay-hc-pill is-on">On</span> : source.availability === 'blocked' && !via ? <span className="ay-hc-row-end" aria-hidden="true" /> : <Chevron />}
                 </button>
               );
             })}

@@ -5,7 +5,7 @@ import { buildDashboard } from '../../health/dashboard.js';
 import { localToday, useHealthData } from '../hooks/useHealthData.js';
 import { CycleRing } from './HealthChart.jsx';
 import { HealthStarter } from './HealthBento.jsx';
-import HealthHome from './HealthHome.jsx';
+import HealthHome, { HealthEmpty } from './HealthHome.jsx';
 import '../screens/profile/health-connections.css';
 
 /**
@@ -42,18 +42,18 @@ export default function HealthDashboard({ authUser, userName = '', selectedNeedI
       </div>
     );
   }
+  const meta = authUser?.user_metadata || {};
+  const name = String(userName || meta.first_name || meta.given_name || meta.name || meta.full_name || '').trim().split(/\s+/)[0];
   if (week.empty && !sections.length) {
     return (
-      <div className="ay-wx-empty">
-        <h2>Your sleep, cycle and heart, side by side</h2>
-        <p>Connect an app or wearable, or upload a file. Your cycle, sleep, heart and activity show up here, compared with your own usual.</p>
-        {/* Still useful before any data: her goals matched to her products, from the quiz. */}
-        <HealthStarter needIds={selectedNeedIds} products={products} matches={matches} onOpenProduct={onOpenProduct} onConnect={onConnect} />
+      <div className="ay-hd">
+        <HealthEmpty name={name} today={today} onConnect={onConnect}>
+          {/* Still useful before any data: her goals matched to her products, from the quiz. */}
+          <HealthStarter needIds={selectedNeedIds} products={products} matches={matches} onOpenProduct={onOpenProduct} onConnect={null} />
+        </HealthEmpty>
       </div>
     );
   }
-  const meta = authUser?.user_metadata || {};
-  const name = String(userName || meta.first_name || meta.given_name || meta.name || meta.full_name || '').trim().split(/\s+/)[0];
   return (
     <div className="ay-hd">
       <HealthHome
