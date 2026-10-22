@@ -94,8 +94,10 @@
 
 /* ---- App: the same pieces inside the Shop tab ---- */
 .ayna-mobile .ay-app-needs { margin: 12px 0 4px; padding: 6px 2px 10px; gap: 4px; }
-.ayna-mobile .ay-app-needs .ay-needsticker { min-width: 74px; font-size: calc(13px * var(--ayna-text-scale, 1)) !important; color: var(--ayna-heading) !important; }
-.ayna-mobile .ay-app-needs .ay-needsticker__die { width: 62px; height: 62px; padding: 4px; border-radius: 16px; }
+.ayna-mobile .ay-app-needs .ay-needsticker { min-width: 68px; font-size: calc(13px * var(--ayna-text-scale, 1)) !important; color: var(--ayna-heading) !important; }
+.ayna-mobile .ay-app-needs .ay-needsticker__die { width: 56px; height: 56px; padding: 4px; border-radius: 50%; }
+.ayna-mobile .ay-app-needs .ay-needsticker__die img,
+.ayna-mobile .ay-app-needs .ay-needsticker__wait { border-radius: 50%; }
 .ayna-mobile[data-theme='dark'] .ay-needsticker__die { border-color: #ffedac; box-shadow: 3px 3px 0 #ffedac; }
 .ayna-mobile .ay-app-quick { display: flex; gap: 8px; margin: 10px -20px 0; padding: 2px 20px 4px; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 24px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 24px), transparent); }
 .ayna-mobile .ay-app-quick::-webkit-scrollbar { display: none; }
