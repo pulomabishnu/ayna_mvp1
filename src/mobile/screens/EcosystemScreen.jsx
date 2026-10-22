@@ -4,6 +4,7 @@ import EcosystemOrbit from '../components/EcosystemOrbit.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import ArticleCard from '../components/ArticleCard.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
+import { useRoutine, ROUTINE_BUCKETS, ROUTINE_BUCKET_LABELS } from '../hooks/useRoutine.js';
 
 export default function EcosystemScreen({
   myProducts = [],
@@ -22,6 +23,7 @@ export default function EcosystemScreen({
 }) {
   const [selectedKey, setSelectedKey] = useState(null);
   const [selectedSeat, setSelectedSeat] = useState(null);
+  const { routineMap, setProductBucket, removeFromRoutine } = useRoutine();
   const showingArea = selectedSeat && !selectedSeat.gap;
   const listTitle = showingArea ? selectedSeat.label : 'In your ecosystem';
   const listProducts = showingArea ? selectedSeat.products : myProducts;
@@ -56,6 +58,29 @@ export default function EcosystemScreen({
           {listProducts.slice(0, 8).map((p) => <ProductCard key={p.id} product={p} variant="list" onClick={() => onOpenProduct?.(p)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />)}
         </div>
         <button type="button" onClick={onBrowse} style={{ width: '100%', marginTop: 16, border: '1px solid var(--ayna-border)', background: '#fff', color: 'var(--ayna-deep-space)', borderRadius: 13, minHeight: 46, fontWeight: 750, cursor: 'pointer' }}>+ Add something</button>
+      </section>
+
+      <section style={{ padding: '28px 20px 0' }} aria-labelledby="ayna-routine-title">
+        <h2 id="ayna-routine-title" style={{ margin: '0 0 5px', fontSize: 'calc(18px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>Your routine</h2>
+        <p style={{ margin: '0 0 14px', color: 'var(--ayna-text-muted)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.5 }}>Make your ecosystem fit your day. Choose when each product belongs in your routine.</p>
+        {myProducts.length ? (
+          <div style={{ display: 'grid', gap: 9 }}>
+            {myProducts.map((product) => (
+              <label key={product.id} style={{ display: 'grid', gap: 7, padding: 13, border: '1px solid var(--ayna-border)', borderRadius: 14, background: '#fff' }}>
+                <span style={{ fontWeight: 700, color: 'var(--ayna-heading)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>{product.name}</span>
+                <select
+                  aria-label={`Time for ${product.name}`}
+                  value={routineMap[product.id] || ''}
+                  onChange={(event) => event.target.value ? setProductBucket(product.id, event.target.value) : removeFromRoutine(product.id)}
+                  style={{ minHeight: 44, width: '100%', border: '1px solid var(--ayna-border)', borderRadius: 10, padding: '0 10px', background: 'var(--ayna-bg)', color: 'var(--ayna-text)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}
+                >
+                  <option value="">Choose a time</option>
+                  {ROUTINE_BUCKETS.map((bucket) => <option key={bucket} value={bucket}>{ROUTINE_BUCKET_LABELS[bucket]}</option>)}
+                </select>
+              </label>
+            ))}
+          </div>
+        ) : <p style={{ color: 'var(--ayna-text-muted)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>Add a product to your ecosystem to start a routine.</p>}
       </section>
 
       {relatedReads.length > 0 && (
