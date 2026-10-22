@@ -92,3 +92,24 @@ html[data-ay-vt] .ay-push-in { animation: none !important; }
 /* "≈ €23" next to a US price, outside the US only (src/utils/localPrice.js). */
 .app-container .ay-price-local, .ayna-mobile .ay-price-local { margin-left: 8px; font: 500 var(--ay-fs-secondary, 14px)/1.3 var(--ay-sans, inherit); color: inherit; opacity: .75; white-space: nowrap; }
 .app-container .ay-price-region { margin: 6px 0 0; font: 400 var(--ay-fs-caption, 13px)/1.4 var(--ay-sans, inherit); opacity: .8; }
+
+/* You: daily 3-tap check-in (src/components/you/DailyCheckin.jsx), web and app. */
+:is(.app-container, .ayna-mobile) .ay-checkin { display: grid; gap: 12px; }
+:is(.app-container, .ayna-mobile) .ay-checkin__takeaway { margin: 0 0 4px; font: 600 var(--ay-fs-body, 16px)/1.35 var(--ay-sans); color: var(--ay-text, #3e2723); }
+:is(.app-container, .ayna-mobile) .ay-checkin__row { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; align-items: center; gap: 8px 12px; }
+:is(.app-container, .ayna-mobile) .ay-checkin__label { font: 600 var(--ay-fs-secondary, 14px)/1.2 var(--ay-sans); }
+:is(.app-container, .ayna-mobile) .ay-checkin__opts { display: flex; flex-wrap: wrap; gap: 8px; }
+:is(.app-container, .ayna-mobile) .ay-checkin__opts .ay-chip[aria-pressed='true'] { background: #3e2723 !important; color: #ffedac !important; }
+:is(.app-container, .ayna-mobile) .ay-checkin__week { display: inline-flex; gap: 4px; }
+:is(.app-container, .ayna-mobile) .ay-checkin__week i { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid currentColor; background: transparent; }
+:is(.app-container, .ayna-mobile) .ay-checkin__week i.is-1 { background: #f7badd; }
+:is(.app-container, .ayna-mobile) .ay-checkin__week i.is-2 { background: #769ebe; }
+:is(.app-container, .ayna-mobile) .ay-checkin__week i.is-3 { background: currentColor; }
+@media (max-width: 520px) { :is(.app-container, .ayna-mobile) .ay-checkin__row { grid-template-columns: 56px minmax(0, 1fr); } :is(.app-container, .ayna-mobile) .ay-checkin__week { grid-column: 2; } }
+
+.ayna-mobile .ay-checkin { padding: 16px; border: 1.5px solid currentColor; border-radius: 20px; }
+.ayna-mobile .ay-checkin__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.ayna-mobile .ay-checkin__private { font-size: 13px; opacity: .75; }
+.ayna-mobile .ay-checkin .ay-chip { min-height: 40px; padding: 0 14px; border: 1.5px solid currentColor; border-radius: 999px; background: transparent; color: inherit; font: 600 14px/1 var(--f-ui, inherit); }
+.ayna-mobile .ay-checkin .ay-chip[aria-pressed='true'] { background: #3e2723 !important; color: #ffedac !important; }
+.ayna-mobile[data-theme='dark'] .ay-checkin .ay-chip[aria-pressed='true'] { background: #ffedac !important; color: #3e2723 !important; }

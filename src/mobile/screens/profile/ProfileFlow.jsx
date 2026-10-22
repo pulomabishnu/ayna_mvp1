@@ -1,4 +1,5 @@
 import { useEdgeSwipeBack } from '../../hooks/useEdgeSwipeBack.js';
+import DailyCheckin from '../../../components/you/DailyCheckin.jsx';
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import FinishQuizCard from '../../../components/FinishQuizCard.jsx';
 import { Capacitor } from '@capacitor/core';
@@ -534,6 +535,7 @@ function ProfileHub({ intake = null, onUpdateIntake = null, authUserId, name, in
         {quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
 
         <ThisWeek authUserId={authUserId} onOpenDashboard={() => onOpen('healthInsights')} onConnect={() => onOpen('healthData')} />
+        <DailyCheckin variant="app" />
 
         {recent.length > 0 && (
           <section className="ay-you-section" aria-labelledby="ay-you-recent">

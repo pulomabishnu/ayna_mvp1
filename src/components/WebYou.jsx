@@ -1,4 +1,5 @@
 import { avatarInitials } from '../utils/avatarInitials';
+import DailyCheckin from './you/DailyCheckin.jsx';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ALL_PRODUCTS } from '../data/products.js';
 import { getSupabaseClient } from '../utils/supabaseClient';
@@ -422,6 +423,7 @@ export default function WebYou({ onUpdateIntake = null, onOpenCommunity, onOpenA
         </section>
 
         <ThisWeek userId={user.id} onOpen={onOpenHealth || onOpenHealthData} onConnect={onOpenHealthData || onOpenHealth} />
+        <DailyCheckin />
 
         {recent.length > 0 && <section className="wy-sec" aria-labelledby="wy-recent-h">
           <div className="wy-sec__head"><h2 className="ay-group__title" id="wy-recent-h">Recently</h2><span className="wy-count">{recent.length}</span></div>
