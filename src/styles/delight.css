@@ -124,3 +124,35 @@ html[data-ay-vt] .ay-push-in { animation: none !important; }
 :is(.app-container, .ayna-mobile) .ay-box__form > button { justify-self: start; margin-top: 4px; }
 :is(.app-container, .ayna-mobile) .ay-box__done { margin: 0; font: 600 var(--ay-fs-body, 16px)/1.4 var(--ay-sans, inherit); }
 .ayna-mobile .ay-box { padding: 16px; border: 1.5px solid currentColor; border-radius: 20px; }
+
+/* Layout sweep (Oct 21, every page at 320-1440): */
+/* Card kind line: the short tag (FSA/HSA, "Heavy flow") never gets cut; the category name takes the ellipsis. */
+.app-container.app-container .ay-product-card__kind > :is(.ay-product-card__tag, .ay-lib-why) { flex: 0 0 auto !important; white-space: nowrap; }
+/* No-photo tile: the brand name clears the heart button; on small tiles only the brand shows. */
+.app-container.app-container .ay-product-card:has(.ay-product-card__heart) :is(.ay-product-card__tile, .ay-product-card__fallback):has(.ay-nophoto) { container-type: inline-size; }
+.app-container.app-container .ay-product-card:has(.ay-product-card__heart) .ay-nophoto { padding-top: 40px !important; }
+@container (max-width: 170px) {
+  .app-container.app-container .ay-nophoto > span:not(:first-child) { display: none; }
+  .app-container.app-container .ay-product-card:has(.ay-product-card__heart) .ay-nophoto { padding: 36px 8px 8px !important; }
+}
+/* Sign-in: Google and Apple buttons stack on narrow phones instead of spilling. */
+@media (max-width: 400px) { html body .app-container .ay-auth-oauth { grid-template-columns: 1fr !important; } }
+/* Signed-out Ecosystem preview: the lock card's line wraps instead of running off. */
+.app-container .ay-ecoprev__lock :is(.ay-ecoprev__locktext, h2, h3, p) { white-space: normal !important; overflow-wrap: anywhere; }
+.app-container .ay-ecoprev__note { white-space: normal !important; }
+/* The honest Ecosystem preview is a grid: let its column shrink to the phone instead of growing to 528px. */
+html body .app-container .ay-ecoprev__stage.is-honest { grid-template-columns: minmax(0, 1fr); }
+html body .app-container .ay-ecoprev__stage.is-honest > * { min-width: 0; }
+/* Narrow cards (2-up on small phones): the partner mark and the FSA/HSA tag wrap to a second line rather than being cut. */
+.app-container.app-container .ay-product-card__kind:has(> :is(.ay-product-card__tag, .ay-lib-why)) { flex-wrap: wrap !important; overflow: visible !important; row-gap: 2px !important; }
+/* Info pages (Partners and others): the title block fits small phones instead of running 44px past the edge. */
+.app-container .ed-page__head > * { min-width: 0; max-width: 100%; }
+/* App sign-in: the Privacy / Terms links get their own 44px tap areas without overlapping. */
+.ayna-mobile .ayna-fresh-auth .ay-legal { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 16px; }
+.ayna-mobile .ayna-fresh-auth .ay-legal a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; }
+/* App: 44px minimum for small controls the scan flagged (folder tabs, search, sign-in fields, age box). */
+.ayna-mobile .ayna-category-index .ay-folder-tab,
+.ayna-mobile .ayna-fresh-search input,
+.ayna-mobile .ay-auth-form label:has(> input[type='checkbox']) { min-height: 44px; }
+.ayna-mobile .ayna-fresh-auth-field input { min-height: 44px; }
+.ayna-mobile .ip-age-input { min-height: 44px; }
