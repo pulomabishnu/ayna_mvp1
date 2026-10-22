@@ -258,7 +258,7 @@ export default function EcosystemScreen({
     <span className="eco-app-foryou__count" aria-hidden="true">{forYou.length}</span>For you<span className="sr-only"> ({forYou.length})</span>
   </button>;
   const chev = <svg className="eco-app-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>;
-  const showTabs = myProducts.length > 0 && onEcoTab;
+  const showTabs = Boolean(onEcoTab);
 
   return <div ref={rootRef} className={`ayna-fresh-ecosystem ayna-cabinet-home eco-app${careFirst ? ' is-care-first' : ''}`}>
     <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
@@ -303,15 +303,15 @@ export default function EcosystemScreen({
       {ecosystemNotice && <p className="ayna-cabinet-notice" role="status">{ecosystemNotice}</p>}
     </section>
 
-    {showTabs && <div className="eco-seg" role="tablist" aria-label="Ecosystem view" data-on={ecoTab === 'dashboard' ? 'dashboard' : 'products'}>
+    {showTabs && <div className="eco-seg" role="group" aria-label="Ecosystem view" data-on={ecoTab === 'dashboard' ? 'dashboard' : 'products'}>
       <span className="eco-seg__thumb" aria-hidden="true" />
-      {[['products', 'Products'], ['dashboard', 'Dashboard']].map(([id, label]) => <button key={id} type="button" role="tab" aria-selected={ecoTab === id} className={ecoTab === id ? 'is-on' : ''} onClick={() => onEcoTab(id)}>{label}</button>)}
+      {[['products', 'Products'], ['dashboard', 'Dashboard']].map(([id, label]) => <button key={id} type="button" aria-pressed={ecoTab === id} className={ecoTab === id ? 'is-on' : ''} onClick={() => onEcoTab(id)}>{label}</button>)}
     </div>}
 
-    {ecoTab === 'dashboard' && myProducts.length > 0 ? <div className="ay-eco-routine">
+    {ecoTab === 'dashboard' && showTabs ? <div className="ay-eco-routine">
       <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} hormonalBC={usesHormonalBC(quizAnswers)} products={myProducts} matches={suggestedEcosystemProducts} onOpenProduct={onOpenProduct} onConnect={onConnectHealth} onAddGoal={onAddGoal} onSignIn={() => onRequireAuth?.('health data')} />
       <Routine folded products={myProducts} insights={healthInsights} onOpenProduct={onOpenProduct} budget={budgetMax(quizAnswers)} />
-      {checkin}
+      {onOpenMonthlyCheckin && checkin}
     </div> : <>
     {chipSections.length > 1 && !q && <div className="eco-app-chips" role="group" aria-label="Show a shelf">
       <button type="button" aria-pressed={activeChip === 'all'} onClick={() => setChip('all')}>All</button>
@@ -372,7 +372,7 @@ export default function EcosystemScreen({
     <section className="eco-app-list-wrap" aria-labelledby="ay-eco-manage-title">
       <h2 id="ay-eco-manage-title" className="eco-app-list-h">Manage your ecosystem</h2>
       <ul className="eco-app-list">
-        {authUser && onOpenHealthData && ecoTab !== 'dashboard' && <li><button type="button" onClick={() => { if (onEcoTab && myProducts.length) { onEcoTab('dashboard'); scrollToTabs(); } else onOpenHealthData(); }}>
+        {authUser && onOpenHealthData && ecoTab !== 'dashboard' && <li><button type="button" onClick={() => { if (onEcoTab) { onEcoTab('dashboard'); scrollToTabs(); } else onOpenHealthData(); }}>
           <span className="eco-app-list__ic is-pink" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" /></svg></span>
           <span className="eco-app-list__txt"><b>{healthConnectedCount ? 'Your health' : 'Bring in your health data'}</b><small>{healthSummary ? `${healthSummary.title}: ${healthSummary.headline}` : healthConnectedCount ? 'Your trends appear after about two weeks of data.' : 'Connect Apple Health, Oura or upload a file to see your trends.'}</small></span>{chev}
         </button></li>}
