@@ -518,3 +518,9 @@ html body .app-container.app-container.app-container.app-container[data-theme='b
   html body .app-container.app-container.app-container.app-container :is(.cm-folder, .cm-prompt, .cm-polaroid, .cm-iconbtn, .ay-ring svg) { transition: none !important; }
 }
 html.ay-motion-paused body .app-container :is(.cm-note, .cm-prompt, .cm-skel-post) { animation: none !important; }
+
+/* Followed topics (same list as the app): the chosen scope is filled. */
+.app-container .cm-topic[aria-pressed='true'] { background: var(--ay-text) !important; color: var(--ay-bg, #ffedac) !important; border-color: var(--ay-text); }
+.app-container .cm-topicset.cm-pods { display: flex; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-bottom: 12px; padding: 4px 2px; }
+.app-container .cm-topicset.is-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.app-container .cm-topic-empty { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }

@@ -6,7 +6,8 @@ import { getGuestClient, getGuestId, ensureGuestSession } from '../utils/communi
 import * as community from '../utils/community/communityStore.js';
 import { rankForYou, postProductIds } from '../utils/community/ranking.js';
 import { getRecentActivity } from '../utils/recentActivity.js';
-import { extractHashtagTopics, suggestHashtags, suggestTopicsForProducts } from '../utils/community/topics.js';
+import { extractHashtagTopics, suggestHashtags, suggestTopicsForProducts, COMMUNITY_TOPICS, topicLabel } from '../utils/community/topics.js';
+import { useFollowedTopics } from '../mobile/utils/communityTopicFollows.js';
 import { uploadCommunityImage, deleteCommunityImage, checkImageFile, MAX_POST_PHOTOS, publicMediaUrl } from '../utils/community/imageUpload.js';
 import { makePlaylistCoverFile } from '../mobile/components/playlistCoverImage.js';
 import { CATEGORY_LABELS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../data/products.js';
@@ -247,6 +248,18 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const [engageTick, setEngageTick] = useState(0);
   // ?tab=announcements (links from emails) opens that feed.
   const [tab, setTab] = useState(() => { try { const t = new URLSearchParams(window.location.search).get('tab'); return TABS.some(([k]) => k === t) ? t : 'for-you'; } catch { return 'for-you'; } });
+  // Followed topics, same list and storage as the app (defaults from her quiz,
+  // saved on this device). "My topics" filters For you, Questions and Reviews.
+  const [followedTopics, toggleTopic] = useFollowedTopics(user?.id, quizResults);
+  const followedKey = followedTopics.join(',');
+  const [topicScopeChoice, setTopicScope] = useState(null); // 'mine' | 'all' | topic key
+  const [topicSheetOpen, setTopicSheetOpen] = useState(false);
+  const topicScope = topicScopeChoice === 'mine' && !followedTopics.length ? 'all'
+    : topicScopeChoice && topicScopeChoice !== 'mine' && topicScopeChoice !== 'all' && !followedTopics.includes(topicScopeChoice) ? (followedTopics.length ? 'mine' : 'all')
+      : topicScopeChoice || (followedTopics.length ? 'mine' : 'all');
+  const topicsTab = tab === 'for-you' || tab === 'question' || tab === 'review';
+  const scopedTopicsKey = !topicsTab || topicScope === 'all' ? '' : topicScope === 'mine' ? followedKey : topicScope;
+  const scopedTopicList = scopedTopicsKey ? scopedTopicsKey.split(',').filter(Boolean) : null;
   const [posts, setPosts] = useState([]);
   const [cursor, setCursor] = useState(null);
   const [playlists, setPlaylists] = useState([]);
@@ -425,12 +438,12 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         const rows = await community.listPlaylists(supabase, { section: playlistSection });
         if (active) { setPlaylists(rows); setPosts([]); setCursor(null); }
       } else {
-        const rows = await community.listFeedPosts(supabase, { kind: tab === 'question' || tab === 'review' ? tab : null, authorIds: tab === 'following' ? followingIds : null });
+        const rows = await community.listFeedPosts(supabase, { kind: tab === 'question' || tab === 'review' ? tab : null, authorIds: tab === 'following' ? followingIds : null, topics: scopedTopicList });
         if (active) { setPosts(tab === 'for-you' ? rankForYou(rows, forYouSignals()) : rows); setCursor(rows.length === community.PAGE_SIZE ? community.nextCursor(rows, 'recent') : null); }
       }
     })().catch((e) => { if (active) notifyError(e); }).finally(() => { if (active) setLoading(false); markPerf('community_feed_loaded'); });
     return () => { active = false; };
-  }, [supabase, tab, page, search, refresh, followingIds, productsById, quizResults, playlistSection]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [supabase, tab, page, search, refresh, followingIds, productsById, quizResults, playlistSection, scopedTopicsKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (search.trim().length < 2 || !supabase) return undefined;
@@ -480,7 +493,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     if (!cursor || loading) return;
     setLoading(true);
     try {
-      const rows = await community.listFeedPosts(supabase, { kind: tab === 'question' || tab === 'review' ? tab : null, authorIds: tab === 'following' ? followingIds : null, cursor });
+      const rows = await community.listFeedPosts(supabase, { kind: tab === 'question' || tab === 'review' ? tab : null, authorIds: tab === 'following' ? followingIds : null, topics: scopedTopicList, cursor });
       setPosts((prev) => [...prev, ...(tab === 'for-you' ? rankForYou(rows, forYouSignals()) : rows)]);
       setCursor(rows.length === community.PAGE_SIZE ? community.nextCursor(rows, 'recent') : null);
     } catch (e) { notifyError(e); } finally { setLoading(false); }
@@ -1337,6 +1350,13 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         </div>
       </nav>
       <div className="cm-main">
+        {onFeed && topicsTab && <div className="cm-topicset cm-pods" role="group" aria-label="Filter posts by topic">
+          {followedTopics.length > 0 && <button type="button" className="cm-topic" aria-pressed={topicScope === 'mine'} onClick={() => setTopicScope('mine')}>My topics</button>}
+          <button type="button" className="cm-topic" aria-pressed={topicScope === 'all'} onClick={() => setTopicScope('all')}>All</button>
+          {followedTopics.map((key) => <button type="button" key={key} className="cm-topic" aria-pressed={topicScope === key} onClick={() => setTopicScope(topicScope === key ? 'mine' : key)}>{topicLabel(key)}</button>)}
+          <button type="button" className="cm-topic is-suggest" onClick={() => setTopicSheetOpen(true)}>{followedTopics.length ? 'Edit topics' : 'Follow topics'}</button>
+        </div>}
+        {onFeed && topicsTab && scopedTopicList && !loading && posts.length === 0 && <div className="ay-group is-padded cm-topic-empty"><p className="cm-muted">{topicScope === 'mine' ? 'Nothing in your topics yet. New posts tagged with them show up here.' : `No ${topicLabel(topicScope)} posts yet.`}</p><button type="button" className="ay-btn ay-btn--secondary cm-small" onClick={() => setTopicScope('all')}>See all posts</button></div>}
         {onFeed && (topics.length > 0 || userTopics.available) && tab !== 'announcements' && tab !== 'playlists' && topicChips('is-row')}
         {user && !profile && profileChecked ? <div className="ay-group is-padded cm-join"><h2 className="ay-h3">Join the community</h2><p className="cm-muted">Pick a name people will see. Your health answers stay private.</p>
           <div className="cm-join__fields">
@@ -1398,6 +1418,10 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     {startTopic && <TopicEditor variant="web" supabase={supabase} user={user} onShowRules={openRules} onClose={() => setStartTopic(false)}
       onSaved={(t) => { setStartTopic(false); userTopics.reload(); toast(t?.status === 'pending' ? 'Topic started. It shows in Community once the ayna team has checked it.' : 'Topic started'); if (t?.id) openTopic(t); }} />}
     {showRules && <Sheet title="Community rules" onClose={() => setShowRules(false)} className="cm-rules-sheet"><CommunityRulesList /><button type="button" className="ay-btn ay-btn--primary" onClick={() => setShowRules(false)}>Got it</button></Sheet>}
+    {topicSheetOpen && <Sheet title="Your topics" onClose={() => setTopicSheetOpen(false)}>
+      <p className="cm-muted">Follow topics to see their posts in My topics. Change them any time.</p>
+      <div className="cm-topicset is-grid">{COMMUNITY_TOPICS.map((t) => { const on = followedTopics.includes(t.key); return <button type="button" key={t.key} className="cm-topic" aria-pressed={on} onClick={() => toggleTopic(t.key)}>{on ? <Icon name="check" size={14} /> : <Icon name="plus" size={14} />}{t.label}</button>; })}</div>
+    </Sheet>}
     {suggestTopic && <Sheet title="Suggest a topic" onClose={() => { setSuggestTopic(false); setTopicState('idle'); }}>
       {topicState === 'sent' ? <><p className="cm-muted">Thanks. The team reads every suggestion.</p><button type="button" className="ay-btn ay-btn--primary" data-autofocus onClick={() => { setSuggestTopic(false); setTopicState('idle'); setTopicName(''); setTopicWhy(''); }}>Done</button></> : <>
         <p className="cm-muted">Tell us which topic you want in Community. The team reads every one.</p>
