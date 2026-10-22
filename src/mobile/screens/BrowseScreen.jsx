@@ -252,7 +252,10 @@ export default function BrowseScreen({
   // Default order (shopOrder.js): one shuffle per app session, so it does
   // not reshuffle on every visit; with quiz answers, ranked by the matching
   // engine so what fits her age, life stage and budget comes first.
-  const rankByProfile = hasQuizAnswers(quizAnswers);
+  // The switch changes both the visible set and its default order. Ranking
+  // everything by her profile while the switch is off made "All" look the
+  // same as "My matches only" even though more products were available below.
+  const rankByProfile = personalized && hasQuizAnswers(quizAnswers);
   const shuffled = useMemo(() => {
     const base = stableShopOrder(products);
     return rankByProfile ? rankShopForProfile(base, quizAnswers, matchOpts) : base;
