@@ -7,6 +7,7 @@ import { CATEGORY_LABELS } from '../data/catalogTaxonomy.js';
 import { sentenceCase } from './sentenceCase.js';
 import { isPartnerBrandItem } from './partnerBrands.js';
 import { formatPrice } from './formatPrice.js';
+import { localEstimate, visitorLocale } from './localPrice.js';
 
 export function isSponsoredProduct(item) {
   return item?.sponsored === true || item?.isSponsored === true || String(item?.placementType || '').toLowerCase() === 'sponsored';
@@ -31,9 +32,13 @@ export function cardBadge(product, { partner = true } = {}) {
   return '';
 }
 
-export function cardPrice(product) {
+// Outside the US the second line also carries a "≈ €23" estimate in the
+// visitor's currency (src/utils/localPrice.js). The main line stays in USD.
+export function cardPrice(product, { locale } = {}) {
   if (product?.userAdded === true) return { main: 'Added by you', sub: '' };
   if (/deposit/i.test(String(product?.price || ''))) return { main: 'Coming soon', sub: 'Waitlist' };
   const raw = formatPrice(product);
-  return /check (the )?retailer|varies by retailer/i.test(String(raw.main || '')) ? { main: 'Price at retailer', sub: '' } : raw;
+  if (/check (the )?retailer|varies by retailer/i.test(String(raw.main || ''))) return { main: 'Price at retailer', sub: '' };
+  const estimate = localEstimate(raw.main, locale || visitorLocale());
+  return estimate ? { ...raw, sub: [raw.sub, estimate].filter(Boolean).join(' · '), estimate } : raw;
 }
