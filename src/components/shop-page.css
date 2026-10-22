@@ -110,3 +110,13 @@ html body .app-container.app-container.app-container[data-theme='brand-dark'] .a
   html body .app-container.app-container.app-container .ayshop__find { display: flex !important; flex-wrap: nowrap !important; grid-template-columns: none; }
   html body .app-container.app-container.app-container .ayshop__find .ayshop__search { flex: 1 1 0% !important; width: auto; }
 }
+
+/* Rollout: Shop cards use the homepage's card language (outlined tile, hard
+   4px offset shadow, small lift on hover), so the same object looks the same
+   on every page. Phones get 3px. Dark mode uses butter for the line. */
+.app-container.app-container .ayshop__grid .ay-product-card__tile { border: 1.5px solid #3e2723; border-radius: 20px; box-shadow: 4px 4px 0 #3e2723; transition: transform .15s, box-shadow .15s; }
+@media (hover: hover) { .app-container.app-container .ayshop__grid .ay-product-card__link:hover .ay-product-card__tile { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #3e2723; } }
+@media (max-width: 699px) { .app-container.app-container .ayshop__grid .ay-product-card__tile { border-radius: 16px; box-shadow: 3px 3px 0 #3e2723; } }
+@media (prefers-reduced-motion: reduce) { .app-container.app-container .ayshop__grid .ay-product-card__tile { transition: none; } }
+.app-container[data-theme='brand-dark'] .ayshop__grid .ay-product-card__tile,
+.app-container[data-theme='dark'] .ayshop__grid .ay-product-card__tile { border-color: #ffedac; box-shadow: 4px 4px 0 #ffedac; }
