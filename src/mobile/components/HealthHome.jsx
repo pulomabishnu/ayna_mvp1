@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { buildDashboard, formatMetric, isFlat, RANGES } from '../../health/dashboard.js';
 import { estimatePhase, PHASE_SOURCES } from '../../health/phase.js';
 import { explainWeek, cycleLine } from '../../health/weekInsights.js';
-import { weekPicks } from '../../health/weekPicks.js';
+import { pickForInsight, weekPicks } from '../../health/weekPicks.js';
 import { comingUp } from '../../health/comingUp.js';
 import { phaseCompare, normalRanges, goalsCovered, effectChecks, aynaAdds } from '../../health/beyondNumbers.js';
 import { SOURCE_NAMES } from '../data/healthConnections.js';
@@ -110,13 +110,14 @@ function Tabs({ tabs, value, onChange, label, idBase, className = '' }) {
 }
 
 /** The one Feature: this week read against her cycle, one insight at a time. */
-function Hero({ cycle, ctx, insights, fallback, onAsk }) {
+function Hero({ cycle, ctx, insights, fallback, picks, onOpenProduct, onAsk }) {
   const [at, setAt] = useState(0);
   const phase = cycle ? estimatePhase(cycle) : null;
   const line = cycleLine(cycle, ctx);
   const rest = line ? line.replace(/^Cycle day \d+,?\s*/, '') : '';
   const sub = rest ? rest.charAt(0).toUpperCase() + rest.slice(1) : '';
   const it = insights[Math.min(at, insights.length - 1)];
+  const linkedPick = pickForInsight(it, picks);
   return (
     <section className="ay-hh-hero" aria-labelledby="ay-hh-hero-title">
       <div className="ay-hh-hero-top">
@@ -140,6 +141,13 @@ function Hero({ cycle, ctx, insights, fallback, onAsk }) {
           <div className="ay-hh-insight" role={insights.length > 1 ? 'tabpanel' : undefined} id="ay-hh-ins-panel" aria-labelledby={insights.length > 1 ? `ay-hh-ins-tab-${Math.min(at, insights.length - 1)}` : undefined} key={it.id}>
             {insights.length === 1 && <b className="ay-hh-k">{INSIGHT_KEY[it.id] || it.id}</b>}
             <p>{it.text}</p>
+            {linkedPick && onOpenProduct && (
+              <div className="ay-hh-insight-pick">
+                <span>For this change</span>
+                <button type="button" onClick={() => onOpenProduct(linkedPick.product)}>{linkedPick.product.name} <span aria-hidden="true">→</span></button>
+                <small>{linkedPick.reason}</small>
+              </div>
+            )}
             <div className="ay-hh-insight-actions">
               <details>
                 <summary>Why we say this</summary>
@@ -411,7 +419,7 @@ export default function HealthHome({
   const summary = (
     <div className="ay-hh-summary">
       <div className="ay-hh-main">
-        <Hero cycle={cycle} ctx={ctx} insights={insights} fallback={weekSummary(ready)} onAsk={ask} />
+        <Hero cycle={cycle} ctx={ctx} insights={insights} fallback={weekSummary(ready)} picks={picks} onOpenProduct={onOpenProduct} onAsk={ask} />
         <Adds items={adds} />
         <section className="ay-hh-tiles-sec" aria-labelledby="ay-hh-tiles-title">
           <div className="ay-hh-sechead">

@@ -126,3 +126,9 @@ export function weekPicks({ ctx = {}, insights = [], needIds = [], products = []
   const order = needs.map((n) => n.needId);
   return picks.sort((a, b) => order.indexOf(a.needId) - order.indexOf(b.needId) || (b.owned - a.owned)).slice(0, limit);
 }
+
+/** A direct next step for a measured change, only when a pick fits that change. */
+export function pickForInsight(insight, picks = []) {
+  if (insight?.signal !== 'sleep-short') return null;
+  return picks.find((pick) => pick.needId === 'sleep.trouble') || null;
+}
