@@ -157,8 +157,8 @@ describe('privacy', () => {
       expect(READ_TABLES).toContain(t);
     }
   });
-  it('exports no account emails or phones outside contact, claims and partners', async () => {
-    for (const source of SOURCE_NAMES.filter((s) => !['contact', 'claims'].includes(s))) {
+  it('exports no account emails or phones outside contact, claims, box waitlist (opt-in, given to be contacted) and partners', async () => {
+    for (const source of SOURCE_NAMES.filter((s) => !['contact', 'claims', 'box_waitlist'].includes(s))) {
       const out = await buildExport(source, { admin: fake.admin });
       const text = JSON.stringify(out);
       expect(text).not.toMatch(/private\.co|\+1555|ship@x\.co/);

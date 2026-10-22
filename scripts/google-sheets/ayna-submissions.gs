@@ -26,6 +26,7 @@ var AYNA_SOURCES = [
   { source: 'survey', tab: 'Survey' },
   { source: 'reviews', tab: 'Reviews' },
   { source: 'contact', tab: 'Contact' },
+  { source: 'box_waitlist', tab: 'Box waitlist' },
   { source: 'topics', tab: 'Topics' },
   { source: 'partners', tab: 'Partners' },
   { source: 'invites', tab: 'Invites' },

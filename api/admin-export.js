@@ -297,6 +297,18 @@ const SOURCES = {
     },
   },
 
+  box_waitlist: {
+    mode: 'append',
+    columns: ['id', 'created_at', 'email', 'wants', 'source', 'platform'],
+    async load(admin, since) {
+      let q = admin.from('box_waitlist').select('id,created_at,email,wants,source,platform')
+        .order('created_at', { ascending: true }).limit(PAGE_SIZE);
+      if (since) q = q.gte('created_at', since);
+      const rows = check(await q, 'box_waitlist').map((r) => ({ ...r, created_at: iso(r.created_at) }));
+      return pageResult(rows, 'created_at');
+    },
+  },
+
   topics: {
     mode: 'append',
     columns: ['id', 'created_at', 'kind', 'topic', 'product_name', 'link', 'reason', 'where', 'platform'],
@@ -498,4 +510,5 @@ export const READ_TABLES = Object.freeze([
   'reward_claims', 'reward_products', 'reward_shipping', 'campaign_feedback', 'product_catalog',
   'community_posts', 'community_profiles', 'user_reviews', 'contact_messages', 'suggestions',
   'product_submissions', 'early_stage_startups', 'invite_stats', 'sms_preferences', 'email_preferences',
+  'box_waitlist',
 ]);
