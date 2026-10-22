@@ -66,7 +66,7 @@ export default function ComparePanel({ product, others = [], onOpen, matchFor = 
                   const n = /^evidence/i.test(r.label) ? Number((String(v).match(/^(\d+)\s/) || [])[1]) : 0;
                   return <td key={cols[i].id} className={`${i === 0 ? 'is-this' : ''}${v === NOT_ON_FILE ? ' is-unknown' : ''}`.trim() || undefined}>
                     {n > 0 && <span className="ay-compare__dots" aria-hidden="true">{Array.from({ length: Math.min(n, 10) }, (_, k) => <i key={k} />)}{n > 10 ? <small>+</small> : null}</span>}
-                    {v}
+                    {v === NOT_ON_FILE ? '' : v}
                   </td>;
                 })}
               </tr>

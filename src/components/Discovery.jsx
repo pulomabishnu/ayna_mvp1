@@ -560,9 +560,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // Freshly generated on every mount, Discovery unmounts/remounts on each navigation to it,
     // so this reshuffles the browsing grid's default order every time a user lands on the page,
     // without reshuffling mid-visit as filters/sort change.
-    // Audit B20: stable for the whole day (same order on every visit today), so a
-    // returning shopper doesn't lose her place; it still rotates daily for fairness.
-    const [shuffleSeed] = useState(() => `day-${new Date().toISOString().slice(0, 10)}`);
+    // A new order every time she opens Browse (Eliz, 2026-10-21), so she isn't
+    // shown the same products each visit. Partner brands keep their ranked spots
+    // at the top; which product each partner shows rotates with the same seed.
+    // Coming back from a product page keeps the order (App.jsx keeps the Shop
+    // mounted then), so she doesn't lose her place.
+    const [shuffleSeed] = useState(() => `visit-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`);
     // Personalization requires an actual account (quiz results / health import /
     // real recommendations all live behind login) -- never on for a logged-out
     // visitor, regardless of any of those other signals somehow being truthy.
@@ -984,11 +987,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             list = sortByBestMatch(list, (it) => shownPct.get(it.id), matchTieBreak);
         } else {
             const browsingWithoutTextQuery = !scoreById;
+            // Only Featured (the default order) reshuffles on each visit (main #74). "Best match"
+            // picked before she has a profile falls back here, but keeps one fixed order.
+            const orderSeed = sortBy === 'best' ? 'best-match-stable' : shuffleSeed;
             // Featured leads with one product per partner brand; the brand's other
             // products stay in the Shop in their normal place (they used to be
             // hidden, so the count changed from load to load).
             const featuredLead = browsingWithoutTextQuery && !personalizationFilter
-                ? new Set(pickOnePerPartnerBrand(list, shuffleSeed).filter((it) => getPartnerBrandRank(it) !== null).map((it) => it.id))
+                ? new Set(pickOnePerPartnerBrand(list, orderSeed).filter((it) => getPartnerBrandRank(it) !== null).map((it) => it.id))
                 : null;
             const leadRank = (it) => (featuredLead && featuredLead.has(it.id) ? getPartnerBrandRank(it) : null);
             list = [...list].sort((a, b) => {
@@ -1027,8 +1033,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 // (found live, 2026-09-15: two brand-new pelvic-health devices, tagged and
                 // scoring correctly for "menopause"/"postpartum" searches, never appeared
                 // because ~30 other equally-relevant products all outrank them on reviews).
-                const qa = baseA + shuffleJitter(a, shuffleSeed, baseA);
-                const qb = baseB + shuffleJitter(b, shuffleSeed, baseB);
+                const qa = baseA + shuffleJitter(a, orderSeed, baseA);
+                const qb = baseB + shuffleJitter(b, orderSeed, baseB);
                 return qb - qa;
             });
             // Same reasoning as the jitter above: a cold-start product needs a guaranteed

@@ -268,3 +268,19 @@
 .app-container[data-theme='brand-dark'] .fp .fp-cta { background: #ffedac; color: #3e2723; border-color: #ffedac; }
 .app-container[data-theme='brand-dark'] .fp .fp-head { color: #ffedac; }
 .app-container[data-theme='brand-dark'] .fp .fp-head :is(.fp-h1, .fp-kicker, .fp-sub) { color: #ffedac !important; }
+
+/* Admin: all feedback */
+.app-container .fp-allfb { display: grid; gap: 14px; }
+.app-container .fp-allfb__bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.app-container .fp-allfb__tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.app-container .fp-allfb__tabs button { min-height: 40px; padding: 0 14px; border: 2px solid var(--ay-ink); border-radius: 999px; background: transparent; color: var(--ay-ink); font: 600 14px/1 var(--ay-font-ui, 'Figtree', sans-serif); cursor: pointer; }
+.app-container .fp-allfb__tabs button.is-on { background: var(--ay-ink); color: var(--ay-paper, #ffedac); }
+.app-container .fp-allfb__tabs button span { margin-left: 6px; opacity: .75; }
+.app-container .fp-allfb__search { flex: 1 1 220px; max-width: 320px; min-height: 40px; padding: 0 14px; border: 2px solid var(--ay-ink); border-radius: 999px; background: #fff; color: var(--ay-ink); font: 400 15px/1 var(--ay-font-ui, 'Figtree', sans-serif); }
+.app-container .fp-allfb__q { margin: 0; font: 400 20px/1.3 var(--ay-font-display, 'ayna Display', Georgia, serif); }
+.app-container .fp-allfb__list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.app-container .fp-allfb__list li { padding: 14px 16px; border: 2px solid var(--ay-ink); border-radius: 14px; background: #fff; }
+.app-container .fp-allfb__list p { margin: 0 0 6px; white-space: pre-wrap; font: 400 15px/22px var(--ay-font-ui, 'Figtree', sans-serif); color: var(--ay-ink); }
+.app-container .fp-allfb__list small { color: var(--ay-ink); opacity: .7; font: 500 13px/18px var(--ay-font-ui, 'Figtree', sans-serif); }
+.app-container .fp-allfb__empty { margin: 0; opacity: .7; }
+.app-container .fp-allfb > .fp-btn { justify-self: start; }

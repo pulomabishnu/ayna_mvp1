@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   FEEDBACK_MIN_CHARS,
   answerLength,
+  feedbackAsText,
+  feedbackByQuestion,
   joinLinkFor,
   referralCodeFor,
   remainingLabel,
@@ -104,5 +106,38 @@ describe('remaining label', () => {
     expect(remainingLabel({ campaign, verified: true, feedbackComplete: 2, referralsVerified: 3 })).toBe('1 more answer to go');
     expect(remainingLabel({ campaign, verified: true, feedbackComplete: 0, referralsVerified: 0 })).toBe('3 answers and 3 friends to go');
     expect(remainingLabel({ campaign, verified: true, feedbackComplete: 3, referralsVerified: 3 })).toBeNull();
+  });
+});
+
+describe('admin: all feedback', () => {
+  const people = [
+    { userId: 'a', email: 'a@x.co', feedback: { like: { response: ' Love the matches ', complete: true, updatedAt: '2026-10-21T10:00:00Z' }, friction: { response: '', complete: false } } },
+    { userId: 'b', email: 'b@x.co', feedback: { like: { response: 'The quiz', complete: false, updatedAt: '2026-10-21T12:00:00Z' } } },
+    { userId: 'c', email: 'c@x.co', feedback: {} },
+  ];
+  it('groups by question, newest first, skips empty answers', () => {
+    const g = feedbackByQuestion(people);
+    expect(g.map((x) => x.key)).toEqual(['like', 'friction', 'change']);
+    expect(g[0].answers.map((a) => a.email)).toEqual(['b@x.co', 'a@x.co']);
+    expect(g[0].answers[1].response).toBe('Love the matches');
+    expect(g[1].answers).toHaveLength(0);
+  });
+  it('search matches the answer or the email', () => {
+    expect(feedbackByQuestion(people, { search: 'quiz' })[0].answers.map((a) => a.email)).toEqual(['b@x.co']);
+    expect(feedbackByQuestion(people, { search: 'a@x' })[0].answers.map((a) => a.email)).toEqual(['a@x.co']);
+  });
+  it('copy text names the question and flags drafts', () => {
+    const t = feedbackAsText(feedbackByQuestion(people)[0]);
+    expect(t.split('\n')[0]).toMatch(/actually like/);
+    expect(t).toContain('b@x.co (in progress)');
+    expect(t).not.toMatch(/—/);
+  });
+});
+
+describe('vintedIdsFromText', () => {
+  it('pulls listing ids out of pasted links, once each', async () => {
+    const { vintedIdsFromText } = await import('./freeProductCampaign.js');
+    expect(vintedIdsFromText('https://www.vinted.com/items/10464820310-new-sealed-saza-150ml\n10452332267, 10464820310')).toEqual(['10464820310', '10452332267']);
+    expect(vintedIdsFromText('150ml 30')).toEqual([]);
   });
 });

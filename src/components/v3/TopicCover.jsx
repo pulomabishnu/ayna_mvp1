@@ -19,6 +19,7 @@ const COVERS = {
   'ovarian-cysts': ['Cysts', 'pink', 'bubbles'],
   'hormonal-birth-control': ['Birth control', 'peri', 'pills'],
   'postpartum-stretch-marks': ['Stretch marks', 'mint', null],
+  'genitourinary-syndrome-of-menopause': ['GSM', 'ink', 'drops'],
 };
 
 const SECTION_TONE = {
@@ -26,6 +27,7 @@ const SECTION_TONE = {
   'pcos-basics': 'peri', 'menopause-basics': 'peri', pmdd: 'peri', 'hormonal-birth-control': 'peri',
   'endometriosis-basics': 'butter', 'pelvic-floor-dysfunction': 'butter', 'ovarian-cysts': 'butter',
   'intimate-wash': 'ink', 'uti-prevention': 'ink', 'yeast-infection-basics': 'ink', 'bacterial-vaginosis': 'ink',
+  'genitourinary-syndrome-of-menopause': 'ink',
   'postpartum-stretch-marks': 'mint',
 };
 

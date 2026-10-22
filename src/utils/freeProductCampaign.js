@@ -234,3 +234,35 @@ export function remainingLabel(status) {
   if (fr) return `${fr} more verified friend${fr === 1 ? '' : 's'} to go`;
   return null;
 }
+
+/* ------------------------------ Admin: all feedback ------------------------------ */
+
+/**
+ * Every saved answer, grouped by question, newest first. Drafts (not yet
+ * complete) are kept and flagged so the team sees what people are writing.
+ * @returns {{ key, title, question, answers: { email, userId, response, updatedAt, complete }[] }[]}
+ */
+export function feedbackByQuestion(people = [], { search = '' } = {}) {
+  const needle = String(search || '').trim().toLowerCase();
+  return FEEDBACK_QUESTIONS.map((q) => {
+    const answers = people
+      .map((p) => ({ p, f: p?.feedback?.[q.key] }))
+      .filter(({ f }) => f && String(f.response || '').trim())
+      .map(({ p, f }) => ({ email: p.email || '', userId: p.userId, response: String(f.response).trim(), updatedAt: f.updatedAt || null, complete: Boolean(f.complete) }))
+      .filter((a) => !needle || a.response.toLowerCase().includes(needle) || a.email.toLowerCase().includes(needle))
+      .sort((a, b) => (Date.parse(b.updatedAt || 0) || 0) - (Date.parse(a.updatedAt || 0) || 0));
+    return { key: q.key, title: q.title, question: q.question, answers };
+  });
+}
+
+/** Plain text of one question's answers, for pasting into a doc. */
+export function feedbackAsText(group) {
+  const lines = [group.question, ''];
+  for (const a of group.answers) lines.push(`"${a.response}"`, `${a.email}${a.complete ? '' : ' (in progress)'}`, '');
+  return lines.join('\n').trim();
+}
+
+/** Vinted listing ids from pasted links or ids ("vinted.com/items/10464820310-saza-..." -> "10464820310"). */
+export function vintedIdsFromText(text) {
+  return [...new Set(String(text || '').match(/\d{6,15}/g) || [])];
+}

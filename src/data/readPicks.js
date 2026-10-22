@@ -19,6 +19,7 @@ export const ARTICLE_TOPIC_TAGS = {
   'iron-deficiency-anemia': ['heavy-flow'],
   'ovarian-cysts': ['cramps', 'pelvic-floor'],
   'hormonal-birth-control': ['irregular', 'cramps', 'pcos'],
+  'genitourinary-syndrome-of-menopause': ['menopause', 'vaginal-health', 'uti'],
 };
 
 export const FRUSTRATION_TO_TAG = {
@@ -51,6 +52,7 @@ export const READ_SUMMARIES = {
   "iron-deficiency-anemia": { title: "Iron Deficiency & Anemia from Heavy Periods", teaser: "How heavy periods deplete iron, symptoms to watch for, and how to address deficiency through diet, supplements, and treating the root cause." },
   "ovarian-cysts": { title: "Ovarian Cysts", teaser: "Most ovarian cysts are harmless and resolve on their own. Here's how to tell when monitoring is enough and when to seek care." },
   "hormonal-birth-control": { title: "Hormonal Birth Control: Types, Benefits & Side Effects", teaser: "A plain-language guide to pills, patches, rings, shots, implants, and hormonal IUDs. How they work, what side effects to expect, and how to choose." },
+  "genitourinary-syndrome-of-menopause": { title: "What Is Vaginal Atrophy / Genitourinary Syndrome of Menopause (GSM)?", teaser: "Why falling estrogen causes GSM, its most common symptoms, and the treatments that help, from moisturizers and lubricants to vaginal estrogen." },
 };
 
 // Words from her quiz answers (the web quiz stores labels, not tags).

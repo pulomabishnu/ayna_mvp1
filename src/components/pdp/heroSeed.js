@@ -4,7 +4,7 @@
 // code load, then ProductModal takes over with the same photo, name and price.
 // Every value comes from the same helpers ProductModal uses, so the two match.
 import { galleryImages, breadcrumbs } from './commerce.js';
-import { buildGlance, perUnitLabel } from './glance.js';
+import { buildGlance, categoryLabel, perUnitLabel } from './glance.js';
 import { heroPriceView } from './heroPrice.js';
 import { firstSentence } from './sentences.js';
 import { attributeBadges, noDash } from './evidenceModel.js';
@@ -34,6 +34,8 @@ export function buildHeroSeed(product) {
     id: product.id,
     name: displayName,
     brand: showBrand ? brand : '',
+    // Brand · category tag above the name, as ProductModal shows it (main #73).
+    tag: [brand || product.brand, categoryLabel(product)].filter(Boolean).join(' · '),
     image: images[0] || '',
     alt: productImageAlt({ ...product, name: displayName }, 0, images.length),
     thumbs: images.length > 1 ? images.map((src, i) => ({ src, alt: productImageAlt(product, i, images.length) })) : [],

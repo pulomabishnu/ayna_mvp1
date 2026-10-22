@@ -15,7 +15,7 @@ import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import WhyMatchPanel from './WhyMatchPanel';
 import MatchPill from './MatchPill';
 import { matchLine, priceParts } from '../data/passport/content';
-import { buildGlance, perUnitLabel } from './pdp/glance';
+import { buildGlance, categoryLabel, perUnitLabel } from './pdp/glance';
 import { heroPriceView } from './pdp/heroPrice';
 import HeroPrice from './pdp/HeroPrice';
 import { getPassport } from '../data/passport';
@@ -44,6 +44,7 @@ import '../styles/verify-content.css';
 import './pdp/pdp.css';
 import './pdp/pdp-story.css';
 import './pdp/pdp-page.css';
+import '../styles/pdp-v4.css';
 import { fetchWithTimeout } from '../utils/network.js';
 
 /**
@@ -868,7 +869,7 @@ export default function ProductModal({
   };
 
   return (
-    <div className="ayp">
+    <div className="ayp" id="pdp-v4">
       <div className="ay-container ayp__page">
 
         {showWhy && <WhyMatchPanel product={product} quizResults={quizResults} healthProfile={healthProfile} matchOpts={matchOpts} onClose={() => setShowWhy(false)} onUpdateHealth={() => { window.location.href = '/quiz'; }} />}
@@ -887,18 +888,18 @@ export default function ProductModal({
         </div>
 
         {/* Gallery left, everything to decide and buy on the right. No box around it. */}
-        <div className="ayp-hero" ref={boardRef}>
-          <div className="ayp-hero__media">
+        <div className="ayp-hero pdp-head" ref={boardRef}>
+          <div className="ayp-hero__media pdp-head__media">
             {galleryTile}
           </div>
 
-          <div className="ayp-buy" id="ay-buycard">
+          <div className="ayp-buy pdp-head__detail" id="ay-buycard">
             {(() => {
-              const showBrand = brand && !String(displayName || '').toLowerCase().startsWith(String(brand).toLowerCase());
-              // Brand only: the category is already in the breadcrumbs.
-              return showBrand ? <p className="ayp-buy__brand">{brand}</p> : null;
+              // Brand · category tag above the name (main #73, the Neycher page design).
+              const tag = [brand || product.brand, categoryLabel(product)].filter(Boolean).join(' · ');
+              return tag ? <p className="ayp-buy__brand pdp-tag">{tag}</p> : null;
             })()}
-            <h1 className="ay-h1 ayp-buy__name">{displayName}</h1>
+            <h1 className="ay-h1 ayp-buy__name pdp-head__name">{displayName}</h1>
             {aynaRating != null && ratingCount > 0 && (
               <button type="button" className="ayp-buy__rating" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'reviews' }))}>
                 <span className="ayp-stars" aria-hidden="true">{[1, 2, 3, 4, 5].map((n) => <span key={n} className={n <= Math.round(aynaRating) ? 'is-on' : undefined}>★</span>)}</span>
@@ -909,21 +910,24 @@ export default function ProductModal({
             {(() => {
               const raw = noDash(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, ''));
               const lead = firstSentence(raw, { min: 20, max: 420 });
-              return lead ? <p className="ayp-buy__lead">{lead}</p> : null;
+              return lead ? <p className="ayp-buy__lead pdp-lead">{lead}</p> : null;
             })()}
 
             <HeroPrice view={heroPriceView(product, { price, perUnit, glance, brand })} />
 
-            <section className="ayp-buy__section" aria-labelledby="ay-buy-h">
+            <section className="ayp-buy__section ay-story--buy" aria-labelledby="ay-buy-h">
               <h2 id="ay-buy-h" className="sr-only">Buy</h2>
+              {actionButtons}
               {/* One line: the single most important thing to know, then the full Safety tab. */}
               {topWarning && (
-                <div className="ay-alert ayp-buy__warn" role="note">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 21h20L12 3Z" /><path d="M12 10v5M12 18v.5" /></svg>
-                  <p>{topWarning} <button type="button" className="ayp-textlink" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'safety' }))}>All safety info</button></p>
+                <div className="ay-buy__warn" role="note">
+                  <span className="ay-buy__bang" aria-hidden="true">!</span>
+                  <span className="ay-buy__warntext">
+                    <span>{topWarning}</span>
+                    <button type="button" className="ayp-textlink pdp-textlink" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'safety' }))}>All safety info</button>
+                  </span>
                 </div>
               )}
-              {actionButtons}
             </section>
 
             {/* How well it fits you sits right after Buy, in the same column. */}
@@ -941,30 +945,23 @@ export default function ProductModal({
               )}
             </div>
           </div>
+          <div className="ayp-hero__info pdp-head__info">
+            {/* Main's structure (#73): the tabs (Overview first) sit under the photo on desktop and
+                after Buy on phones, so no second Buy row is needed. No sticky buy bar. */}
+          <ProductEvidence v4 loading={!researchLoaded} product={product} image={images[0] || ''} safetyLead={topWarning} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null} recall={recall} heroLine={firstSentence(noDash(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '')), { min: 20, max: 420 })} extraRows={(() => {
+            const pp = getPassport(product);
+            const checked = pp?.pricing?.price?.verified_at;
+            let seller = '';
+            try { seller = buyUrl ? (isAmazonBuyLink ? 'Amazon' : isPartner ? `${brand || product.brand} (ayna partner)` : new URL(buyUrl).hostname.replace(/^www\./, '')) : ''; } catch { seller = ''; }
+            const d = checked ? new Date(`${String(checked).slice(0, 10)}T12:00:00`) : null;
+            return [
+              { label: 'Sold by', value: seller },
+              { label: 'Price check', value: d && !Number.isNaN(d.getTime()) && price.known && !price.isPlaceholder ? `Checked ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : '' },
+            ];
+          })()} />
+          </div>
         </div>
 
-        {/* ayna's summary + At a glance, then the tabs (Clinical opinion, Scientific literature, Reviews, Safety, How to use, Details).
-            No sticky buy bar: on phones one Buy row follows the summary, in the page flow. */}
-        <ProductEvidence afterOverview={buyUrl ? (
-          <div className="ayp-buyline">
-            {buyButton('ayp-buyline__buy')}
-            {onToggleSaved && (
-              <button type="button" className="ayp-buyline__heart" aria-pressed={isSaved} aria-label={isSaved ? 'Saved' : 'Save'} onClick={() => onToggleSaved(product)}>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg>
-              </button>
-            )}
-          </div>
-        ) : null} loading={!researchLoaded} product={product} image={images[0] || ''} safetyLead={topWarning} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null} recall={recall} heroLine={firstSentence(noDash(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '')), { min: 20, max: 420 })} extraRows={(() => {
-          const pp = getPassport(product);
-          const checked = pp?.pricing?.price?.verified_at;
-          let seller = '';
-          try { seller = buyUrl ? (isAmazonBuyLink ? 'Amazon' : isPartner ? `${brand || product.brand} (ayna partner)` : new URL(buyUrl).hostname.replace(/^www\./, '')) : ''; } catch { seller = ''; }
-          const d = checked ? new Date(`${String(checked).slice(0, 10)}T12:00:00`) : null;
-          return [
-            { label: 'Sold by', value: seller },
-            { label: 'Price check', value: d && !Number.isNaN(d.getTime()) && price.known && !price.isPlaceholder ? `Checked ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : '' },
-          ];
-        })()} />
 
         {/* Compare, then Ask or share side by side on desktop. */}
         {settled && <section className="ay-section ayp-compare" aria-label="Compare with similar">

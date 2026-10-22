@@ -38,22 +38,53 @@ const REFS = [
 
 // Her product picks, styled as she drew them. A pick that is in the ayna
 // catalog links to its ayna product page (opened in place on a plain click);
-// the rest stay labels until they have a product card.
+// picks she gave a store link for open that store in a new tab; the rest stay
+// labels until they have a product card.
 const PICK_IDS = {
   'BUNI Transform Body and Scar Oil': 'p-buni-transform-scar-body-oil',
   'TRANSFORM Scar & Body Treatment Oil': 'p-buni-transform-scar-body-oil',
 };
+const ORDINARY_URL = 'https://www.ulta.com/p/retinol-05-in-squalane-intermediate-retinol-serum-pimprod2007127';
+const NEMAH_URL = 'https://www.target.com/p/nemah-revitalizing-stretch-mark-cream-3-4-fl-oz/-/A-1004133786';
+const MEDERMA_URL = 'https://www.amazon.com/dp/B08SSB2QDQ';
+const PICK_URLS = {
+  'The Ordinary Retinol 0.5% in Squalane': ORDINARY_URL,
+  'Nēmah Revitalizing Stretch Mark Cream': NEMAH_URL,
+  'Nēmah Stretch Mark Cream': NEMAH_URL,
+  'Mederma Stretch Marks Therapy': MEDERMA_URL,
+  'ScarAway Silicone Scar Sheets': 'https://www.target.com/p/scaraway-clear-silicone-scar-sheets-6ct/-/A-81826383',
+  'Kelo-cote Silicone Scar Gel': 'https://theskinhut.shop/products/kelo-cote-silicone-scar-gel-15g?variant=56689415946613',
+  'La Roche-Posay Cicaplast Defense Gel Scar': 'https://www.target.com/p/la-roche-posay-cicaplast-defense-gel-1-35oz/-/A-89209534',
+  'SKIN1004 Madagascar Centella Soothing Cream': 'https://www.skin1004.com/products/skin1004-madagascar-centella-soothing-cream',
+  'Cowshed Mother Stretch Mark Balm': 'https://www.cowshed.com/products/mother-stretch-mark-balm?variant=48672365314396',
+  'Summer Fridays Babymoon Belly Balm': 'https://summerfridays.com/products/babymoon-belly-balm',
+  'Earth Mama Belly Butter': 'https://www.target.com/p/earth-mama-belly-bundle-pregnancy-skincare-kit-20oz-2pk/-/A-94759979',
+  'ORA Body Microneedle Roller System': 'https://beautyora.com/products/ora-body-microneedle-roller-system-anti-wrinkles-stretch-marks-scars-cellulite?variant=16216632131650',
+};
 const OpenProductContext = createContext(null);
 const PILL_STYLE = { padding: '9px 14px', borderRadius: '99px', background: 'var(--g-butter)', color: '#3e2723', font: "700 14px/1 'Figtree'" };
 
-function Pill({ name }) {
+// A link to the pick's ayna page or store page, or null when it has neither.
+function usePickLink(name) {
   const onOpenProduct = useContext(OpenProductContext);
   useCatalogReady(); // the product link appears once the catalog has loaded
   const product = PICK_IDS[name] ? ALL_PRODUCTS.find((p) => p.id === PICK_IDS[name]) : null;
-  if (!product) return <span className="ay-geena__pill" style={PILL_STYLE}>{name}</span>;
-  return (
-    <a className="ay-geena__pill" href={productHref(product)} style={{ ...PILL_STYLE, textDecoration: 'none' }} onClick={(e) => { if (!onOpenProduct || !isPlainLeftClick(e)) return; e.preventDefault(); onOpenProduct(product); }}>{name}</a>
-  );
+  if (product) return { href: productHref(product), onClick: (e) => { if (!onOpenProduct || !isPlainLeftClick(e)) return; e.preventDefault(); onOpenProduct(product); } };
+  if (PICK_URLS[name]) return { href: PICK_URLS[name], target: '_blank', rel: 'noopener noreferrer' };
+  return null;
+}
+
+function Pill({ name }) {
+  const link = usePickLink(name);
+  if (!link) return <span className="ay-geena__pill" style={PILL_STYLE}>{name}</span>;
+  return <a className="ay-geena__pill" {...link} style={{ ...PILL_STYLE, textDecoration: 'none' }}>{name}</a>;
+}
+
+// A product named in her text, bold as she wrote it, linked like its pill.
+function PickName({ name }) {
+  const link = usePickLink(name);
+  if (!link) return <strong>{name}</strong>;
+  return <a {...link} style={{ textUnderlineOffset: '3px' }}><strong>{name}</strong></a>;
 }
 
 // The site's stylesheets restyle every p, span and card with !important, which
@@ -260,9 +291,9 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
               <div style={{ display: "grid", gap: "14px", padding: "24px 26px", borderRadius: "24px", border: "2px dashed var(--g-fg)" }}>
                 <span style={{ font: "600 13px/1.4 'Figtree'", color: "var(--g-pink)" }}>What to shop</span>
                 <p style={{ margin: "0", font: "400 17px/1.65 'Figtree'" }}>Prescription tretinoin isn't exactly a casual add-to-cart situation. 0.1% tretinoin needs to be prescribed by your doctor.</p>
-                <p style={{ margin: "0", font: "400 17px/1.65 'Figtree'" }}>But shhh… if you're looking for an OTC retinol body lotion, I've got my eye on <strong>The Ordinary Retinol 0.5% in Squalane</strong>. Don't forget to pair it with a gentle, fragrance-free moisturizer!</p>
-                <p style={{ margin: "0", font: "400 17px/1.65 'Figtree'" }}>AND for my expecting mothers and breastfeeders, there's <strong>Nēmah Revitalizing Stretch Mark Cream</strong> and <strong>Mederma Stretch Marks Therapy</strong>, which are pregnancy-friendly options.</p>
-                <p style={{ margin: "0", font: "400 17px/1.65 'Figtree'" }}>After delivery, <strong>BUNI Transform Body and Scar Oil</strong> incorporates a milder retinoid (retinyl palmitate) with snail secretion filtrate to hydrate and reduce the appearance of stretch marks. This is safe during breastfeeding and the large roller ball design makes it especially appealing for quick application and scar massage.</p>
+                <p style={{ margin: "0", font: "400 17px/1.65 'Figtree'" }}>But shhh… if you're looking for an OTC retinol body lotion, I've got my eye on <PickName name="The Ordinary Retinol 0.5% in Squalane" />. Don't forget to pair it with a gentle, fragrance-free moisturizer!</p>
+                <p style={{ margin: "0", font: "400 17px/1.65 'Figtree'" }}>AND for my expecting mothers and breastfeeders, there's <PickName name="Nēmah Revitalizing Stretch Mark Cream" /> and <PickName name="Mederma Stretch Marks Therapy" />, which are pregnancy-friendly options.</p>
+                <p style={{ margin: "0", font: "400 17px/1.65 'Figtree'" }}>After delivery, <PickName name="BUNI Transform Body and Scar Oil" /> incorporates a milder retinoid (retinyl palmitate) with snail secretion filtrate to hydrate and reduce the appearance of stretch marks. This is safe during breastfeeding and the large roller ball design makes it especially appealing for quick application and scar massage.</p>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
                   <Pill name="The Ordinary Retinol 0.5% in Squalane" />
                   <Pill name="Nēmah Stretch Mark Cream" />

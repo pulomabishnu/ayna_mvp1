@@ -9,7 +9,7 @@ import { hostLabel } from '../../utils/verificationLinks';
 import { summarizeReviewRows, takeProductTab } from '../../utils/community/reviewRatings.js';
 import GlossaryTerm from '../GlossaryTerm';
 import { findHardTerms, planGlossaryTerms } from '../../data/glossary';
-import { splitNote } from './sentences';
+import { splitNote, splitSentences } from './sentences';
 import { fmtDate } from './fmtDate';
 import { buildEvidence, noDash, linkKind, publisherOf, cleanTitle } from './evidenceModel';
 import PdpIcon from './PdpIcon.jsx';
@@ -35,7 +35,7 @@ import './pdp-complete.css';
 
 const RESEARCH_BY_PRODUCT = NEED_MAP_RESEARCH.reduce((m, r) => { if (!m.has(r.product)) m.set(r.product, []); m.get(r.product).push(r); return m; }, new Map());
 const GRADE_WORDS = { A: 'Strong evidence', B: 'Some evidence', C: 'Limited evidence' };
-const TAB_IDS = ['clinical', 'literature', 'reviews', 'safety', 'how-to-use', 'details'];
+const TAB_IDS = ['overview', 'clinical', 'literature', 'reviews', 'safety', 'how-to-use', 'details'];
 const PHONE = '(max-width: 760px)';
 const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 const cap = (t) => String(t || '').replace(/^./, (c) => c.toUpperCase());
@@ -207,6 +207,19 @@ function Addition({ a }) {
   );
 }
 
+/** An ingredient list split into its items (commas outside brackets), or null when it isn't a plain list (main #73). */
+function ingredientChips(text) {
+  const parts = []; let cur = ''; let depth = 0;
+  for (const ch of String(text || '')) {
+    if (ch === '(' || ch === '[') depth += 1;
+    if (ch === ')' || ch === ']') depth = Math.max(0, depth - 1);
+    if (ch === ',' && depth === 0) { parts.push(cur); cur = ''; } else cur += ch;
+  }
+  parts.push(cur);
+  const items = parts.map((x) => x.trim().replace(/\.$/, '')).filter(Boolean);
+  return items.length >= 3 && items.every((x) => x.length <= 70 && !/[.:;]\s/.test(x)) ? items : null;
+}
+
 function Rows({ rows }) {
   const list = rows.filter((r) => r && r.value);
   if (!list.length) return null;
@@ -220,34 +233,31 @@ function Rows({ rows }) {
 // ---------------------------------------------------------------------------
 // Tabs (segmented: every tab visible on a phone, no sideways scroll)
 // ---------------------------------------------------------------------------
-function SegTabs({ tabs, active, onChange }) {
+function SegTabs({ tabs, active, onChange, explore = false }) {
   const listRef = useRef(null);
-  // Phones: the tabs are one sideways-scrolling row (underline tabs). The edge
-  // that still has tabs past it fades, and the next label stays half visible,
-  // so it's clear there is more (GitLab Pajamas / Material "scrollable tabs").
-  const [edges, setEdges] = useState({ left: false, right: false });
+  // The tab row (main #73, Neycher HydroBloom design): a box with "Explore",
+  // "2 of 7", arrows and a bar showing how far the row is scrolled. The edge
+  // that still has tabs past it fades, so it's clear there is more.
+  const [m, setM] = useState({ sl: 0, sw: 1, cw: 1 });
   useEffect(() => {
     const el = listRef.current;
     if (!el) return undefined;
-    const update = () => {
-      const max = el.scrollWidth - el.clientWidth;
-      setEdges((prev) => {
-        const next = { left: el.scrollLeft > 4, right: max > 4 && el.scrollLeft < max - 4 };
-        return prev.left === next.left && prev.right === next.right ? prev : next;
-      });
-    };
+    const update = () => setM((prev) => (prev.sl === el.scrollLeft && prev.sw === el.scrollWidth && prev.cw === el.clientWidth ? prev : { sl: el.scrollLeft, sw: el.scrollWidth, cw: el.clientWidth }));
     update();
     el.addEventListener('scroll', update, { passive: true });
     window.addEventListener('resize', update);
     return () => { el.removeEventListener('scroll', update); window.removeEventListener('resize', update); };
   }, [tabs.length]);
+  const over = m.sw - m.cw > 4; const atStart = m.sl < 4; const atEnd = m.sl >= m.sw - m.cw - 4;
+  const reduce = () => typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const step = (dir) => { const el = listRef.current; if (el) el.scrollBy({ left: dir * Math.max(160, el.clientWidth * 0.6), behavior: reduce() ? 'auto' : 'smooth' }); };
   useEffect(() => {
     const el = listRef.current;
     const tab = el?.querySelector(`[data-tab="${active}"]`);
     if (!el || !tab || el.scrollWidth <= el.clientWidth) return;
     const left = tab.getBoundingClientRect().left - el.getBoundingClientRect().left + el.scrollLeft;
     if (left < el.scrollLeft || left + tab.offsetWidth > el.scrollLeft + el.clientWidth) {
-      el.scrollTo({ left: Math.max(0, left - 24), behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      el.scrollTo({ left: Math.max(0, left - 24), behavior: reduce() ? 'auto' : 'smooth' });
     }
   }, [active]);
   const choose = (id, focus) => {
@@ -261,27 +271,67 @@ function SegTabs({ tabs, active, onChange }) {
     e.preventDefault();
     choose(tabs[next].id, true);
   };
+  const at = Math.max(0, tabs.findIndex((t) => t.id === active));
+  // Colour keys for the dots and the open tab (pdp-v4.css uses main's tab names).
+  const KEY = { overview: 'overview', clinical: 'clinical', literature: 'science', reviews: 'reviews', safety: 'safety', 'how-to-use': 'how', details: 'details' };
+  const panels = tabs.map((t) => (
+    <div key={t.id} role="tabpanel" id={`ay-panel-${t.id}`} aria-labelledby={`ay-tab-${t.id}`} tabIndex={0} hidden={t.id !== active} className={`ayq-panel${explore ? ' ay-itabs__panel' : ''} is-${t.id}`}>
+      <h3 className="sr-only">{t.label}</h3>
+      {t.body}
+    </div>
+  ));
+  // The app keeps its underline tabs (scrollable row, faded edge).
+  if (!explore) {
+    return (
+      <>
+        <div className={`ayq-tabsbar${over && !atStart ? ' has-left' : ''}${over && !atEnd ? ' has-right' : ''}`}>
+          <div className={`ayq-tabs is-${tabs.length}`} role="tablist" aria-label="Product details" ref={listRef} onKeyDown={onKeyDown}>
+            {tabs.map((t) => {
+              const on = t.id === active;
+              return (
+                <button key={t.id} type="button" role="tab" id={`ay-tab-${t.id}`} data-tab={t.id} aria-selected={on} aria-controls={`ay-panel-${t.id}`} tabIndex={on ? 0 : -1} className={`ayq-tab${on ? ' is-on' : ''}${t.tone ? ` is-${t.tone}` : ''}`} onClick={() => choose(t.id)}>
+                  <PdpIcon name={t.icon} size={18} />
+                  <span>{t.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        {panels}
+      </>
+    );
+  }
   return (
     <>
-      <div className={`ayq-tabsbar${edges.left ? ' has-left' : ''}${edges.right ? ' has-right' : ''}`}>
-        <div className={`ayq-tabs is-${tabs.length}`} role="tablist" aria-label="Product details" ref={listRef} onKeyDown={onKeyDown}>
-          {tabs.map((t) => {
-            const on = t.id === active;
-            return (
-              <button key={t.id} type="button" role="tab" id={`ay-tab-${t.id}`} data-tab={t.id} aria-selected={on} aria-controls={`ay-panel-${t.id}`} tabIndex={on ? 0 : -1} className={`ayq-tab${on ? ' is-on' : ''}${t.tone ? ` is-${t.tone}` : ''}`} onClick={() => choose(t.id)}>
-                <PdpIcon name={t.icon} size={18} />
-                <span>{t.label}</span>
-              </button>
-            );
-          })}
+      <div className="ay-explore">
+        <div className="ay-explore__head">
+          <p className="ay-explore__label"><span>Explore</span><span>{at + 1} of {tabs.length}</span></p>
+          <div className="ay-explore__arrows">
+            <button type="button" aria-label="Scroll tabs left" className={over && !atStart ? '' : 'is-dim'} onClick={() => step(-1)}>←</button>
+            <button type="button" aria-label="Scroll tabs right" className={`is-next${over && !atEnd ? '' : ' is-dim'}`} onClick={() => step(1)}>→</button>
+          </div>
         </div>
+        <div className={`ay-explore__rowwrap${over && !atStart ? ' fade-l' : ''}${over && !atEnd ? ' fade-r' : ''}`}>
+          <div className="ay-itabs__bar" role="tablist" aria-label="Product details" ref={listRef} onKeyDown={onKeyDown}>
+            {tabs.map((t) => {
+              const on = t.id === active;
+              return (
+                <button key={t.id} type="button" role="tab" id={`ay-tab-${t.id}`} data-tab={t.id} aria-selected={on} aria-controls={`ay-panel-${t.id}`} tabIndex={on ? 0 : -1} className={`is-${KEY[t.id] || t.id}${on ? ' is-on' : ''}${t.tone ? ` is-tone-${t.tone}` : ''}`} onClick={() => choose(t.id)}>
+                  <i aria-hidden="true" />
+                  <span>{t.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        {over && (
+          <div className="ay-explore__foot">
+            <span className="ay-explore__track" aria-hidden="true"><b style={{ left: `${((m.sl / m.sw) * 100).toFixed(1)}%`, width: `${Math.min(100, (m.cw / m.sw) * 100).toFixed(1)}%` }} /></span>
+            <span className="ay-explore__hint">{atEnd ? '← Scroll back' : 'Scroll for more →'}</span>
+          </div>
+        )}
       </div>
-      {tabs.map((t) => (
-        <div key={t.id} role="tabpanel" id={`ay-panel-${t.id}`} aria-labelledby={`ay-tab-${t.id}`} tabIndex={0} hidden={t.id !== active} className={`ayq-panel is-${t.id}`}>
-          <h3 className="sr-only">{t.label}</h3>
-          {t.body}
-        </div>
-      ))}
+      {panels}
     </>
   );
 }
@@ -289,7 +339,7 @@ function SegTabs({ tabs, active, onChange }) {
 // ---------------------------------------------------------------------------
 // The page part
 // ---------------------------------------------------------------------------
-export default function ProductEvidence({ product: baseProduct, glance = null, aynaData = null, aynaRating: aynaRatingProp = null, ratingCount: ratingCountProp = 0, rateControls = null, heroLine = '', extraRows = [], onOpenReview = null, onWriteReview = null, fitSlot = null, afterOverview = null, loading = false }) {
+export default function ProductEvidence({ product: baseProduct, glance = null, aynaData = null, aynaRating: aynaRatingProp = null, ratingCount: ratingCountProp = 0, rateControls = null, heroLine = '', extraRows = [], onOpenReview = null, onWriteReview = null, fitSlot = null, afterOverview = null, loading = false, v4 = false }) {
   const product = useApprovedResearch(baseProduct);
   const m = useMemo(() => buildEvidence(product, { heroLine, glance }), [product, heroLine, glance]);
   const works = worksWith(product);
@@ -327,7 +377,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const ALIAS = { science: 'literature', evidence: 'literature', how: 'how-to-use', sources: 'details', overview: 'overview', inside: 'literature' };
   const goTo = (raw) => {
     const id = ALIAS[raw] || raw;
-    if (id === 'overview') { document.getElementById('ayq-who')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+    if (id === 'overview' && !v4) { document.getElementById('ayq-who')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     chooseTab(id);
     scrollToTabs();
   };
@@ -629,7 +679,11 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       <div className="ayq-cols">
         <div className="ayq-main">
           {(dt.ingredientsText || dt.materials) && <h4 className="ayq-subh">{m.isDigital ? 'What’s included' : 'What’s in it'}</h4>}
-          {dt.ingredientsText && <>{dt.materials && <h5 className="ayq-subh5">{m.isDigital ? 'Included' : 'Ingredients'}</h5>}<p className="ayq-p ayq-pre">{dt.ingredientsText}</p></>}
+          {dt.ingredientsText && <>{dt.materials && <h5 className="ayq-subh5">{m.isDigital ? 'Included' : 'Ingredients'}</h5>}{(() => {
+            // Website (main #73): a plain ingredient list reads as chips; anything else stays as written.
+            const chips = v4 ? ingredientChips(dt.ingredientsText) : null;
+            return chips ? <ul className="ay-chips" aria-label={m.isDigital ? 'Included' : 'Ingredients'}>{chips.map((c, i) => <li key={`${c}-${i}`}>{c}</li>)}</ul> : <p className="ayq-p ayq-pre">{dt.ingredientsText}</p>;
+          })()}</>}
           {dt.materials && <>{dt.ingredientsText && <h5 className="ayq-subh5">Materials</h5>}<p className="ayq-p"><Tx>{dt.materials}</Tx></p></>}
           {dt.badges.length > 0 && <><h4 className="ayq-subh">Labels on file</h4><ul className="ayq-tags">{dt.badges.map((b) => <li key={b}>{b}</li>)}</ul><p className="ayq-meta">Claims and labels from the brand or listing. ayna hasn’t checked each one.</p></>}
           {works.items.length > 0 && <p className="ayq-meta"><b>Works with:</b> {works.items.map((t, i) => <React.Fragment key={t}>{i > 0 && ', '}{t === 'ayna' && works.ayna ? <a href="/health-data">ayna</a> : t}</React.Fragment>)}</p>}
@@ -703,62 +757,115 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     </div>
   );
 
+  // Website (main #73, Neycher HydroBloom design): colour-coded cards, one per
+  // section, each with its first line; they open the tab. Same numbers as the app's previews.
+  const firstLine = (t) => { const x = splitSentences(noDash(String(t || '')))[0] || ''; return x.length > 120 ? `${x.slice(0, 110).replace(/\s+\S*$/, '')}…` : x; };
+  const PREVIEW_KEY = { clinical: 'clinical', literature: 'science', safety: 'safety', reviews: 'reviews', 'how-to-use': 'how' };
+  const cards = v4 ? [
+    tabs.some((t) => t.id === 'clinical') && { id: 'clinical', label: 'Expert view', tag: '', text: firstLine(ex.opinion[0] || ex.short[0] || ex.note[0] || ex.sourceSummary?.text) || 'What the clinical guidance says' },
+    ...previews.map((pv) => ({
+      id: pv.id,
+      label: pv.label,
+      tag: [pv.num, pv.caption].filter(Boolean).join(' '),
+      text: pv.id === 'safety' ? firstLine(sf.alert[0] || sf.warnings[0] || sf.sideEffects)
+        : pv.id === 'reviews' ? (rv.text.length ? firstLine(rv.text[0]) : 'Tried it? Be the first to review it.')
+          : pv.id === 'literature' ? firstLine(rs.summary[0] || rs.sourceSummary)
+            : pv.id === 'how-to-use' ? firstLine(m.how?.intro || m.how?.steps?.[0]) : '',
+      tone: pv.tone,
+    })),
+  ].filter((c) => c && (c.text || c.tag)) : [];
+  const glanceCards = cards.length > 0 && (
+    <ul className="ay-glance" aria-label="Jump to a section">
+      {cards.map((c) => (
+        <li key={c.id} className={`is-${PREVIEW_KEY[c.id] || c.id}${c.tone ? ` is-tone-${c.tone}` : ''}`}>
+          <button type="button" onClick={() => goTo(c.id)}>
+            <span className="ay-glance__label">{c.label}</span>
+            {c.tag && <span className="ay-glance__tag">{c.tag}</span>}
+            {c.text && <span className="ay-glance__text">{c.text}</span>}
+            <span className="ay-glance__go" aria-hidden="true">→</span>
+          </button>
+        </li>
+      ))}
+    </ul>
+  );
+
+  const overview = (
+    <section className="ayq-over" aria-label="Overview">
+      {shortList.length > 0 ? (
+        <article className="ayq-bottom" aria-labelledby="ayq-bottom-h">
+          <h2 id="ayq-bottom-h" className="ayq-bottom__h">The short answer</h2>
+          <ul className="ayq-bottom__list">{shortList.map((s) => <li key={s}><Tx>{s}</Tx></li>)}</ul>
+          {ex.attribution && <p className="ayq-bottom__by">{m.independent ? 'ayna’s summary of the research' : 'Summary of the research, with claims credited to the brand'}. <button type="button" onClick={() => goTo('clinical')}>Read the full expert view</button></p>}
+        </article>
+      ) : (hasWhat || hasWho) ? (
+        <article className="ayq-about" aria-labelledby="ayq-about-h">
+          <h2 id="ayq-about-h" className="ayq-h3">{aboutTitle}</h2>
+          {hasWhat && <div className="ayq-prose"><Paras list={m.summary} /></div>}
+          {whoBlock}
+        </article>
+      ) : null}
+
+      {(level > 0 || tiles.length > 0) && (
+        <div className="ayq-glance" aria-labelledby="ayq-glance-h">
+          <h2 id="ayq-glance-h" className="ayq-h3">At a glance</h2>
+          {level > 0 && (
+            <button type="button" className="ayq-glance__ev" onClick={() => goTo('literature')}>
+              <span className="ayq-meter" data-level={level}><span className="ayq-meter__word">{levelWord}{topGrade && <span className="ayq-meter__for"> for {needPhrase(topGrade.need)}</span>}</span><span className="ayq-meter__bars" role="img" aria-label={`${levelWord}, ${level} of 3`}><i /><i /><i /></span></span>
+              <span className="ayq-glance__go">See the research</span>
+            </button>
+          )}
+          {tiles.length > 0 && (
+            <ul className="ayq-tiles">
+              {tiles.map((t) => <li key={t.id}><PdpIcon name={t.icon} size={20} /><span><span className="ayq-tiles__label">{t.label}</span><span className="ayq-tiles__value">{t.main}</span>{t.note && <span className="ayq-tiles__note">{t.note}</span>}</span></li>)}
+            </ul>
+          )}
+          {fitSlot}
+        </div>
+      )}
+
+      {v4 ? glanceCards : previews.length > 0 && (
+        <nav className="ayq-previews" aria-label="Jump to a section">
+          {previews.map((p) => (
+            <button key={p.id} type="button" className={`ayq-preview${p.tone ? ` is-${p.tone}` : ''}`} onClick={() => goTo(p.id)}>
+              <span className="ayq-preview__top"><PdpIcon name={p.icon} size={18} /><span>{p.label}</span></span>
+              <span className="ayq-preview__main">{p.num && <b className="ayq-preview__num">{p.num}</b>}<span className="ayq-preview__cap">{p.caption}</span><span className="ayq-preview__short" aria-hidden="true">{p.short}</span></span>
+              <span className="ayq-preview__go" aria-hidden="true"><PdpIcon name="arrow" size={18} /></span>
+            </button>
+          ))}
+        </nav>
+      )}
+
+      {shortList.length > 0 && (hasWhat || hasWho) && (
+        <section className="ayq-what ayq-about" aria-labelledby="ayq-what-h">
+          <h2 id="ayq-what-h" className="ayq-h3">{aboutTitle}</h2>
+          {hasWhat && <div className="ayq-prose"><Paras list={m.summary} /></div>}
+          {whoBlock}
+        </section>
+      )}
+    </section>
+  );
+
+  // Website: Overview is the first tab, inside the Explore box under the photo (main's structure).
+  if (v4) {
+    const allTabs = [{ id: 'overview', label: 'Overview', icon: 'format', body: overview }, ...tabs];
+    const activeV4 = allTabs.some((t) => t.id === tab) ? tab : 'overview';
+    return (
+      <TermsCtx.Provider value={plan}>
+        <div id="ay-tabs" className="ayq ayq--v4">
+          <section id="ay-pt" className="ayq-tabsec ay-itabs" aria-label="Overview, expert view, research, reviews, safety, how to use and details">
+            <SegTabs explore tabs={allTabs} active={activeV4} onChange={(id) => chooseTab(id)} />
+          </section>
+          {afterOverview}
+          {reviewRows.length > 0 && <ProductPeopleSay productId={baseProduct?.id} reviews={reviewRows} onSeeAll={() => goTo('reviews')} onWriteReview={onWriteReview} onOpenPost={onOpenReview} hasOnline={Boolean(rv.text.length || rv.brandRating || rv.online.length || rv.elsewhere.length)} />}
+        </div>
+      </TermsCtx.Provider>
+    );
+  }
+
   return (
     <TermsCtx.Provider value={plan}>
       <div id="ay-tabs" className="ayq">
-        <section className="ayq-over" aria-label="Overview">
-          {shortList.length > 0 ? (
-            <article className="ayq-bottom" aria-labelledby="ayq-bottom-h">
-              <h2 id="ayq-bottom-h" className="ayq-bottom__h">The short answer</h2>
-              <ul className="ayq-bottom__list">{shortList.map((s) => <li key={s}><Tx>{s}</Tx></li>)}</ul>
-              {ex.attribution && <p className="ayq-bottom__by">{m.independent ? 'ayna’s summary of the research' : 'Summary of the research, with claims credited to the brand'}. <button type="button" onClick={() => goTo('clinical')}>Read the full expert view</button></p>}
-            </article>
-          ) : (hasWhat || hasWho) ? (
-            <article className="ayq-about" aria-labelledby="ayq-about-h">
-              <h2 id="ayq-about-h" className="ayq-h3">{aboutTitle}</h2>
-              {hasWhat && <div className="ayq-prose"><Paras list={m.summary} /></div>}
-              {whoBlock}
-            </article>
-          ) : null}
-
-          {(level > 0 || tiles.length > 0) && (
-            <div className="ayq-glance" aria-labelledby="ayq-glance-h">
-              <h2 id="ayq-glance-h" className="ayq-h3">At a glance</h2>
-              {level > 0 && (
-                <button type="button" className="ayq-glance__ev" onClick={() => goTo('literature')}>
-                  <span className="ayq-meter" data-level={level}><span className="ayq-meter__word">{levelWord}{topGrade && <span className="ayq-meter__for"> for {needPhrase(topGrade.need)}</span>}</span><span className="ayq-meter__bars" role="img" aria-label={`${levelWord}, ${level} of 3`}><i /><i /><i /></span></span>
-                  <span className="ayq-glance__go">See the research</span>
-                </button>
-              )}
-              {tiles.length > 0 && (
-                <ul className="ayq-tiles">
-                  {tiles.map((t) => <li key={t.id}><PdpIcon name={t.icon} size={20} /><span><span className="ayq-tiles__label">{t.label}</span><span className="ayq-tiles__value">{t.main}</span>{t.note && <span className="ayq-tiles__note">{t.note}</span>}</span></li>)}
-                </ul>
-              )}
-              {fitSlot}
-            </div>
-          )}
-
-          {previews.length > 0 && (
-            <nav className="ayq-previews" aria-label="Jump to a section">
-              {previews.map((p) => (
-                <button key={p.id} type="button" className={`ayq-preview${p.tone ? ` is-${p.tone}` : ''}`} onClick={() => goTo(p.id)}>
-                  <span className="ayq-preview__top"><PdpIcon name={p.icon} size={18} /><span>{p.label}</span></span>
-                  <span className="ayq-preview__main">{p.num && <b className="ayq-preview__num">{p.num}</b>}<span className="ayq-preview__cap">{p.caption}</span><span className="ayq-preview__short" aria-hidden="true">{p.short}</span></span>
-                  <span className="ayq-preview__go" aria-hidden="true"><PdpIcon name="arrow" size={18} /></span>
-                </button>
-              ))}
-            </nav>
-          )}
-
-          {shortList.length > 0 && (hasWhat || hasWho) && (
-            <section className="ayq-what ayq-about" aria-labelledby="ayq-what-h">
-              <h2 id="ayq-what-h" className="ayq-h3">{aboutTitle}</h2>
-              {hasWhat && <div className="ayq-prose"><Paras list={m.summary} /></div>}
-              {whoBlock}
-            </section>
-          )}
-        </section>
+        {overview}
 
         {afterOverview}
 

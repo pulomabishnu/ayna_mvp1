@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import '../styles/free-product.css';
 import { adminAction, getAdminOverview } from './freeProduct/campaignClient';
-import { FEEDBACK_QUESTIONS, FULFILLMENT_LABELS, REFERRAL_STATUS_LABELS } from '../utils/freeProductCampaign';
+import { FEEDBACK_QUESTIONS, FULFILLMENT_LABELS, REFERRAL_STATUS_LABELS, feedbackAsText, feedbackByQuestion, vintedIdsFromText } from '../utils/freeProductCampaign';
 import ConfirmButton from './ui/ConfirmButton.jsx';
 
 /**
@@ -30,6 +30,99 @@ function downloadCsv(people) {
   a.download = `free-product-campaign-${new Date().toISOString().slice(0, 10)}.csv`;
   a.click();
   URL.revokeObjectURL(a.href);
+}
+
+/** Every answer, grouped by question, so the team can read them without opening people one by one. */
+function AllFeedback({ people }) {
+  const [tab, setTab] = useState(FEEDBACK_QUESTIONS[0].key);
+  const [search, setSearch] = useState('');
+  const [copied, setCopied] = useState(false);
+  const groups = feedbackByQuestion(people, { search });
+  const totals = Object.fromEntries(feedbackByQuestion(people).map((g) => [g.key, g.answers.length]));
+  const group = groups.find((g) => g.key === tab) || groups[0];
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(feedbackAsText(group)); setCopied(true); window.setTimeout(() => setCopied(false), 2000); } catch { /* clipboard blocked */ }
+  };
+  return (
+    <section className="fp-section" aria-labelledby="fp-allfb-h">
+      <div className="fp-section__head"><h2 id="fp-allfb-h">All feedback</h2><p>Every answer people wrote, newest first. Answers still being written are marked in progress.</p></div>
+      <div className="fp-panel fp-allfb">
+        <div className="fp-allfb__bar">
+          <div className="fp-allfb__tabs" role="tablist" aria-label="Question">
+            {FEEDBACK_QUESTIONS.map((q) => (
+              <button key={q.key} type="button" role="tab" aria-selected={tab === q.key} className={tab === q.key ? 'is-on' : ''} onClick={() => setTab(q.key)}>
+                {q.title} <span>{totals[q.key] || 0}</span>
+              </button>
+            ))}
+          </div>
+          <input type="search" className="fp-allfb__search" placeholder="Search answers or emails" aria-label="Search answers or emails" value={search} onChange={(e) => setSearch(e.target.value)} />
+        </div>
+        <p className="fp-allfb__q">{group.question}</p>
+        {group.answers.length ? (
+          <>
+            <ul className="fp-allfb__list">
+              {group.answers.map((a) => (
+                <li key={a.userId}>
+                  <p>{a.response}</p>
+                  <small>{a.email}{a.updatedAt ? ` · ${new Date(a.updatedAt).toLocaleString()}` : ''}{a.complete ? '' : ' · in progress'}</small>
+                </li>
+              ))}
+            </ul>
+            <button type="button" className="fp-btn is-ghost" onClick={copy}>{copied ? 'Copied' : `Copy all ${group.answers.length}`}</button>
+          </>
+        ) : <p className="fp-allfb__empty">{search ? 'No answers match.' : 'No answers yet.'}</p>}
+      </div>
+    </section>
+  );
+}
+
+/** Ameera's Vinted listings that are prizes. A sold listing can't be won. */
+const VINTED_LABELS = { available: 'For sale', reserved: 'Reserved', sold: 'Sold' };
+
+function VintedPrizes({ act }) {
+  const [rows, setRows] = useState(null);
+  const [paste, setPaste] = useState('');
+  const refresh = useCallback(() => adminAction({ action: 'vinted_list' }).then((r) => setRows(r.listings || []), () => setRows([])), []);
+  useEffect(() => { refresh(); }, [refresh]);
+  if (!rows || !rows.length) return null;
+  const mark = async (results, done) => { if (await act({ action: 'vinted', results }, done)) refresh(); };
+  const known = new Set(rows.map((r) => String(r.listing_id)));
+  const pasted = vintedIdsFromText(paste).filter((id) => known.has(id));
+  const forSale = rows.filter((r) => r.status === 'available' && !r.claimed).length;
+  return (
+    <section className="fp-section" aria-labelledby="fp-vinted-h">
+      <div className="fp-section__head">
+        <h2 id="fp-vinted-h">Vinted prizes</h2>
+        <p>{forSale} of {rows.length} listings can still be won. Checked daily; a listing marked sold leaves the pool (a unit already won stays won). Their units follow these listings, so change them here, not in the pool total.</p>
+      </div>
+      <div className="fp-panel" style={{ overflowX: 'auto' }}>
+        <form className="fp-additem" onSubmit={(e) => { e.preventDefault(); if (pasted.length) mark(pasted.map((id) => ({ listingId: id, status: 'sold' })), `Marked ${pasted.length} sold.`).then(() => setPaste('')); }}>
+          <label className="fp-field" style={{ gridColumn: '1 / -1' }}><span>Sold on Vinted? Paste the listing links or ids</span>
+            <textarea rows={2} value={paste} onChange={(e) => setPaste(e.target.value)} aria-label="Sold Vinted listing links or ids" />
+          </label>
+          <button type="submit" className="fp-btn is-ink" disabled={!pasted.length}>Mark {pasted.length || ''} sold</button>
+        </form>
+        <table className="fp-table">
+          <thead><tr><th>Product</th><th>Listing</th><th>On Vinted</th><th>Won</th><th>Last checked</th><th /></tr></thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.listing_id} data-vinted-listing={r.listing_id} data-vinted-status={r.status}>
+                <td><b>{r.product}</b></td>
+                <td><a href={`https://www.vinted.com/items/${r.listing_id}`} target="_blank" rel="noreferrer">{r.listing_id}</a></td>
+                <td>{VINTED_LABELS[r.status] || r.status}</td>
+                <td>{r.claimed ? 'Yes' : ''}</td>
+                <td>{r.last_checked_at ? new Date(r.last_checked_at).toLocaleDateString() : 'Not yet'}</td>
+                <td>
+                  {r.status !== 'sold' && <button type="button" className="fp-link" onClick={() => mark([{ listingId: String(r.listing_id), status: 'sold' }], 'Marked sold.')}>Mark sold</button>}
+                  {r.status !== 'available' && <button type="button" className="fp-link" onClick={() => mark([{ listingId: String(r.listing_id), status: 'available' }], 'Back in the pool.')}>For sale again</button>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
 }
 
 export default function CampaignAdminPage({ onBack }) {
@@ -107,6 +200,8 @@ export default function CampaignAdminPage({ onBack }) {
         ))}
       </ul>
 
+      <AllFeedback people={data.people} />
+
       <section className="fp-section">
         <div className="fp-section__head"><h2>Reward pool</h2><p>Only these products can be won. A product with 0 left is never offered.</p></div>
         <div className="fp-panel" style={{ overflowX: 'auto' }}>
@@ -142,6 +237,8 @@ export default function CampaignAdminPage({ onBack }) {
           </form>
         </div>
       </section>
+
+      <VintedPrizes act={act} />
 
       <section className="fp-section">
         <div className="fp-section__head"><h2>People</h2><p>Sorted by verified friends. Shipping details are shown here only.</p></div>

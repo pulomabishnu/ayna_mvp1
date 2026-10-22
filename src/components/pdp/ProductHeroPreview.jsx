@@ -20,7 +20,7 @@ export default function ProductHeroPreview({ seed, onPainted = null }) {
     return () => { cancelAnimationFrame(first); cancelAnimationFrame(second); clearTimeout(timer); };
   }, [onPainted]);
   return (
-    <div className="ayp" aria-busy="true">
+    <div className="ayp" id="pdp-v4" aria-busy="true">
       <div className="ay-container ayp__page">
         <div className="ayp-top">
           <button type="button" className="ayp-top__back" onClick={() => window.history.back()} aria-label="Back">
@@ -41,8 +41,8 @@ export default function ProductHeroPreview({ seed, onPainted = null }) {
           </button>
         </div>
 
-        <div className="ayp-hero">
-          <div className="ayp-hero__media">
+        <div className="ayp-hero pdp-head">
+          <div className="ayp-hero__media pdp-head__media">
             <div className="ayp-gallery">
               <div className="ayq-stamp ayp-gallery__stamp">
                 <div className="ayp-gallery__tile">
@@ -64,21 +64,22 @@ export default function ProductHeroPreview({ seed, onPainted = null }) {
             </div>
           </div>
 
-          <div className="ayp-buy" id="ay-buycard">
-            {seed.brand && <p className="ayp-buy__brand">{seed.brand}</p>}
-            <h1 className="ay-h1 ayp-buy__name">{seed.name}</h1>
-            {seed.lead && <p className="ayp-buy__lead">{seed.lead}</p>}
+          <div className="ayp-buy pdp-head__detail" id="ay-buycard">
+            {(seed.tag || seed.brand) && <p className="ayp-buy__brand pdp-tag">{seed.tag || seed.brand}</p>}
+            <h1 className="ay-h1 ayp-buy__name pdp-head__name">{seed.name}</h1>
+            {seed.lead && <p className="ayp-buy__lead pdp-lead">{seed.lead}</p>}
             <HeroPrice view={seed.price} />
             <section className="ayp-buy__section" aria-hidden="true">
               <div className="ay-skel__bar is-title ayp-buy__skel" />
             </section>
             <p className="sr-only" role="status">Loading the product…</p>
           </div>
-        </div>
-
-        <div className="ayq is-loading" aria-hidden="true">
-          <div className="ayq-over"><div className="ayq-skel ayq-skel--bottom" /><div className="ayq-skel ayq-skel--glance" /><div className="ayq-skel ayq-skel--row" /></div>
-          <div className="ayq-tabsec"><div className="ayq-skel ayq-skel--tabs" /><div className="ayq-skel ayq-skel--panel" /></div>
+          <div className="ayp-hero__info pdp-head__info">
+            <div className="ayq is-loading" aria-hidden="true">
+              <div className="ayq-over"><div className="ayq-skel ayq-skel--bottom" /><div className="ayq-skel ayq-skel--glance" /><div className="ayq-skel ayq-skel--row" /></div>
+              <div className="ayq-tabsec"><div className="ayq-skel ayq-skel--tabs" /><div className="ayq-skel ayq-skel--panel" /></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

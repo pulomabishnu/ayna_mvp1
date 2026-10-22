@@ -21,7 +21,7 @@ export const ARTICLE_CATEGORIES = [
   {
     id: 'vaginal-urinary',
     label: 'Vaginal & Urinary Health',
-    articleIds: ['intimate-wash', 'uti-prevention', 'yeast-infection-basics', 'bacterial-vaginosis'],
+    articleIds: ['intimate-wash', 'uti-prevention', 'yeast-infection-basics', 'bacterial-vaginosis', 'genitourinary-syndrome-of-menopause'],
   },
   {
     id: 'pelvic',

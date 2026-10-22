@@ -696,10 +696,10 @@ const ARTICLES = [
         <p>AND for my expecting mothers and breastfeeders, there's Nēmah Revitalizing Stretch Mark Cream and Mederma Stretch Marks Therapy, which are pregnancy-friendly options.</p>
         <p>After delivery, BUNI Transform Body and Scar Oil incorporates a milder retinoid (retinyl palmitate) with snail secretion filtrate to hydrate and reduce the appearance of stretch marks. This is safe during breastfeeding and the large roller ball design makes it especially appealing for quick application and scar massage.</p>
         <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
-          <li>The Ordinary Retinol 0.5% in Squalane</li>
-          <li>Nēmah Stretch Mark Cream</li>
-          <li>Mederma Stretch Marks Therapy</li>
-          <li>BUNI Transform Body and Scar Oil</li>
+          <li><a href="https://www.ulta.com/p/retinol-05-in-squalane-intermediate-retinol-serum-pimprod2007127" target="_blank" rel="noopener noreferrer">The Ordinary Retinol 0.5% in Squalane</a></li>
+          <li><a href="https://www.target.com/p/nemah-revitalizing-stretch-mark-cream-3-4-fl-oz/-/A-1004133786" target="_blank" rel="noopener noreferrer">Nēmah Stretch Mark Cream</a></li>
+          <li><a href="https://www.amazon.com/dp/B08SSB2QDQ" target="_blank" rel="noopener noreferrer">Mederma Stretch Marks Therapy</a></li>
+          <li><a href="/product/buni-transform-scar-body-treatment-oil">BUNI Transform Body and Scar Oil</a></li>
         </ul>
         <p>Remember these are alternatives but a prescription product may be the better option.</p>
 
@@ -718,9 +718,9 @@ const ARTICLES = [
         <p>One of the first at-home treatments worth discussing for a C-section scar. Only begin after the incision has fully closed and your clinician has cleared you to use it. Scar improvement generally takes consistent use over weeks to months.</p>
         <p><strong>Products worth looking at</strong></p>
         <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
-          <li>ScarAway Silicone Scar Sheets</li>
-          <li>Kelo-cote Silicone Scar Gel</li>
-          <li>La Roche-Posay Cicaplast Defense Gel Scar</li>
+          <li><a href="https://www.target.com/p/scaraway-clear-silicone-scar-sheets-6ct/-/A-81826383" target="_blank" rel="noopener noreferrer">ScarAway Silicone Scar Sheets</a></li>
+          <li><a href="https://theskinhut.shop/products/kelo-cote-silicone-scar-gel-15g?variant=56689415946613" target="_blank" rel="noopener noreferrer">Kelo-cote Silicone Scar Gel</a></li>
+          <li><a href="https://www.target.com/p/la-roche-posay-cicaplast-defense-gel-1-35oz/-/A-89209534" target="_blank" rel="noopener noreferrer">La Roche-Posay Cicaplast Defense Gel Scar</a></li>
         </ul>
         <p>These are product examples, not independently tested rankings.</p>
         <blockquote style={{ margin: '1rem 0', paddingLeft: '1rem', borderLeft: '3px solid var(--color-primary)' }}>
@@ -749,11 +749,11 @@ const ARTICLES = [
         <p><strong>What to shop</strong></p>
         <p>A fragrance-free body moisturizer, a hyaluronic-acid body lotion, or a Centella-containing cream. Prioritize comfort, formulation, and price over dramatic stretch-mark claims.</p>
         <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
-          <li>TRANSFORM Scar &amp; Body Treatment Oil</li>
-          <li>SKIN1004 Madagascar Centella Soothing Cream</li>
-          <li>Cowshed Mother Stretch Mark Balm</li>
-          <li>Summer Fridays Babymoon Belly Balm</li>
-          <li>Earth Mama Belly Butter</li>
+          <li><a href="/product/buni-transform-scar-body-treatment-oil">TRANSFORM Scar &amp; Body Treatment Oil</a></li>
+          <li><a href="https://www.skin1004.com/products/skin1004-madagascar-centella-soothing-cream" target="_blank" rel="noopener noreferrer">SKIN1004 Madagascar Centella Soothing Cream</a></li>
+          <li><a href="https://www.cowshed.com/products/mother-stretch-mark-balm?variant=48672365314396" target="_blank" rel="noopener noreferrer">Cowshed Mother Stretch Mark Balm</a></li>
+          <li><a href="https://summerfridays.com/products/babymoon-belly-balm" target="_blank" rel="noopener noreferrer">Summer Fridays Babymoon Belly Balm</a></li>
+          <li><a href="https://www.target.com/p/earth-mama-belly-bundle-pregnancy-skincare-kit-20oz-2pk/-/A-94759979" target="_blank" rel="noopener noreferrer">Earth Mama Belly Butter</a></li>
         </ul>
 
         <h2 className="ay-lib-h2">04 · Microneedling</h2>
@@ -781,7 +781,7 @@ const ARTICLES = [
         <p><strong>What to shop</strong></p>
         <p>Hydrating skincare for intact skin and professionally recommended aftercare. For the microneedling itself, prioritize a qualified provider over an at-home device. But after talking with your provider, an at home device I would suggest:</p>
         <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
-          <li>ORA Body Microneedle Roller System</li>
+          <li><a href="https://beautyora.com/products/ora-body-microneedle-roller-system-anti-wrinkles-stretch-marks-scars-cellulite?variant=16216632131650" target="_blank" rel="noopener noreferrer">ORA Body Microneedle Roller System</a></li>
         </ul>
 
         <h2 className="ay-lib-h2">05 · Laser treatments</h2>
@@ -839,6 +839,54 @@ const ARTICLES = [
           <li>Tian, T., Luo, Y. J., Wang, H., Chen, H. D., &amp; Li, Y. H. (2019). Efficacy and safety of a sublative bipolar fractional radiofrequency system combined with topical tretinoin in treating striae gravidarum: A randomized pilot study. Dermatologic Surgery, 45(10), 1245–1252. <a href="https://doi.org/10.1097/DSS.0000000000001933" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>doi:10.1097/DSS.0000000000001933</a></li>
           <li>Tran, B., Wu, J. J., Ratner, D., &amp; Han, G. (2020). Topical scar treatment products for wounds: A systematic review. Dermatologic Surgery, 46(12), 1564–1571. <a href="https://doi.org/10.1097/DSS.0000000000002712" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>doi:10.1097/DSS.0000000000002712</a></li>
           <li>Wang, F., Li, X., Wang, X., &amp; Jiang, X. (2020). Efficacy of topical silicone gel in scar management: A systematic review and meta-analysis of randomised controlled trials. International Wound Journal, 17(3), 765–773. <a href="https://doi.org/10.1111/iwj.13337" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>doi:10.1111/iwj.13337</a></li>
+        </ul>
+      </>
+    ),
+  },
+  {
+    id: 'genitourinary-syndrome-of-menopause',
+    image: '/articles/gsm/estrogen-decline.webp',
+    title: 'What Is Vaginal Atrophy / Genitourinary Syndrome of Menopause (GSM)?',
+    source: 'Shruti Gajjar, MS1 · Mayo Clinic, AUA, Cleveland Clinic',
+    tags: ['Menopause', 'Vaginal & urinary health'],
+    teaser: 'Why falling estrogen causes GSM, its most common symptoms, and the treatments that help, from moisturizers and lubricants to vaginal estrogen.',
+    body: (
+      <>
+        <div style={{ marginBottom: '1rem' }}><em>Written by Shruti Gajjar, MS1, Medical Student. Reviewed by Dr. Anuja Vyas, Board-Certified OBGYN, Co-founder of <a href="/partners#brand-buni">BUNI Body</a>.</em></div>
+        <p>Genitourinary syndrome of menopause (GSM), previously called vaginal atrophy or atrophic vulvovaginitis, is a group of symptoms that occur in the genital and urinary areas when the body’s estrogen levels drop around and after menopause. A decline in estrogen can happen for many other reasons other than perimenopause and menopause, including during breastfeeding, after surgical removal of the ovaries, due to certain autoimmune (when the body’s immune system mistakenly attacks its own healthy cells and tissues) conditions or while taking medications that impact estrogen level (e.g. birth control or hormonal therapy for breast cancer).</p>
+        <figure style={{ margin: '0 0 1.5rem' }}>
+          <img src="/articles/gsm/estrogen-decline.webp" alt="Illustration of three women from younger to older, with fewer estrogen molecules around each and an arrow trending down" width="1400" height="933" style={{ width: '100%', maxWidth: 560, height: 'auto', borderRadius: 16, display: 'block' }} />
+        </figure>
+        <figure style={{ margin: '0 0 1.5rem' }}>
+          <img src="/articles/gsm/anatomy.webp" alt="Labeled diagram of the vulva, and a side view showing the bladder, urethra and vagina" width="1400" height="933" loading="lazy" style={{ width: '100%', maxWidth: 560, height: 'auto', borderRadius: 16, display: 'block' }} />
+        </figure>
+        <p>GSM affects tissues of the vulva (the outer genital area), the vagina, the urethra (the tube where urine passes through), and the bladder. Because these estrogen-related changes involve both the genital and urinary systems, we now call it genitourinary syndrome of menopause. This term is more representative of the range of affected tissues and related symptoms.</p>
+        <p>The most common symptoms of GSM include dryness and thinning of the vaginal walls (which can result in painful intercourse) and urinary urgency paired with recurrent urinary tract infections (UTIs). People diagnosed with GSM may also experience burning/itching in the vagina or vulva.</p>
+        <figure style={{ margin: '0 0 1.5rem' }}>
+          <img src="/articles/gsm/symptoms.webp" alt="Common symptoms of GSM, and the good news? Many symptoms are treatable. Vaginal dryness: less natural moisture, which can cause discomfort. Itching or irritation: the vaginal and vulvar tissues can become thinner and more sensitive. Discomfort during sex: tissues may be less elastic and more sensitive, leading to discomfort (dyspareunia). Urinary symptoms: can include urgency, frequency, or recurrent urinary tract infections (UTIs). Reduced lubrication: less natural lubrication can make sex less comfortable." width="1400" height="480" loading="lazy" style={{ width: '100%', height: 'auto', borderRadius: 16, display: 'block' }} />
+        </figure>
+        <p>While these symptoms undoubtedly cause discomfort and irritation, the good news is that GSM can be diagnosed with one physical exam, and a variety of treatment options are available. Your medical provider can diagnose GSM based on your symptoms and a pelvic exam to note any vaginal or vulvar changes. Some traditional treatment options include vaginal lubricants or moisturizers that can significantly improve vaginal dryness. Vaginal lubricants can be used during sex and are helpful in reducing some of the intercourse discomfort caused by GSM symptoms. Vaginal moisturizers also treat vaginal dryness, but are generally inserted every 1-3 days as the formulas are longer-acting. Vulvar skin protectants specially formulated for this area of the body are meant to treat external dryness and are also an important part of treating GSM. Explore our recommendations for vaginal lubricants and moisturizers as well as vulvar skin protectants <a href="/discovery?q=lubricant">here</a>.</p>
+        <figure style={{ margin: '0 0 1.5rem' }}>
+          <img src="/articles/gsm/lubricants.webp" alt="Illustration of a lubricant tube and pump bottle, with an arrow to moisturized vaginal tissue" width="784" height="502" loading="lazy" style={{ width: '100%', maxWidth: 480, height: 'auto', borderRadius: 16, display: 'block' }} />
+        </figure>
+        <figure style={{ margin: '0 0 1.5rem' }}>
+          <img src="/articles/gsm/vaginal-estrogen.webp" alt="Illustration of vaginal estrogen as a cream, a tablet and a ring, each going directly to the vaginal tissue" width="832" height="562" loading="lazy" style={{ width: '100%', maxWidth: 480, height: 'auto', borderRadius: 16, display: 'block' }} />
+        </figure>
+        <p>If symptoms continue to persist despite use of vaginal moisturizers and lubricants, your provider may recommend use of topical estrogen in the form of vaginal creams, tablets, or rings. These topical treatments alleviate the symptoms of GSM that are driven by estrogen decline by directly targeting the affected tissues with low dose estrogen. This is a more targeted approach than hormonal estrogen pills, systemic patches, or gels although these can be especially useful treatments for women who have other menopausal symptoms. These prescription medications increase estrogen levels throughout the whole body whereas topical vaginal preparations do not. This is an important distinction as some women may not be able to take systemic therapy but the vast majority of women can use locally acting topical options.</p>
+        <figure style={{ margin: '0 0 1.5rem' }}>
+          <img src="/articles/gsm/systemic-estrogen.webp" alt="Illustration of estrogen pills reaching the whole body, including the brain, heart, bones and vaginal tissue" width="1400" height="399" loading="lazy" style={{ width: '100%', height: 'auto', borderRadius: 16, display: 'block' }} />
+        </figure>
+        <p><strong>Eliminating the Stigma:</strong></p>
+        <figure style={{ margin: '0 0 1.5rem' }}>
+          <img src="/articles/gsm/talk-to-provider.webp" alt="Illustration of a worried woman, then the same woman smiling as she talks with her doctor" width="1400" height="933" loading="lazy" style={{ width: '100%', maxWidth: 560, height: 'auto', borderRadius: 16, display: 'block' }} />
+        </figure>
+        <p>GSM symptoms are not something that fade over time. In fact they usually worsen and require treatment for improvement. Despite GSM being fairly common and impacting roughly half or more of women after menopause, stigma around GSM can cause many women to feel uncomfortable in speaking with their providers about this highly treatable condition. If you are reading this article, and you feel that you may be experiencing symptoms of GSM, we encourage you to speak with your medical provider about it.</p>
+        <p><strong>When to seek care:</strong> Any vaginal bleeding after menopause (including bleeding after sex), as this always needs evaluation. Other notable symptoms include unusual vaginal discharge and any signs of fever, back or side pain, or blood in the urine. Symptoms that do not improve with over-the-counter moisturizers and lubricants should also be discussed with your provider. Remember, GSM often goes undiagnosed or untreated despite there being a variety of treatment options that can make you feel more comfortable. You know your body best and if something feels off—and if you are experiencing these symptoms—we would like to empower you to speak with your providers.</p>
+        <p><strong>Sources:</strong></p>
+        <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
+          <li><a href="https://www.mayoclinic.org/diseases-conditions/vaginal-atrophy/symptoms-causes/syc-20352288" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Mayo Clinic – Vaginal atrophy</a></li>
+          <li><a href="https://www.auanet.org/guidelines-and-quality/guidelines/genitourinary-syndrome-of-menopause" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>American Urological Association – Genitourinary Syndrome of Menopause</a></li>
+          <li><a href="https://my.clevelandclinic.org/health/diseases/15500-vaginal-atrophy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Cleveland Clinic – Vaginal atrophy</a></li>
         </ul>
       </>
     ),
@@ -908,22 +956,31 @@ const KEEP_ILLUSTRATION = TEAM_COVER_READS;
    search, read time and the app. */
 const DESIGNED_READS = {
   'postpartum-stretch-marks': { Component: PostpartumStretchMarksArticle, next: 'pelvic-floor-dysfunction' },
+  'genitourinary-syndrome-of-menopause': { Component: VaginalAtrophyGsmArticle, next: 'postpartum-stretch-marks' },
 };
 
-/* The read featured at the top of the Library, with a "New" sticker. */
-const FEATURED_READ = { id: 'postpartum-stretch-marks', by: 'Geena Yousry, MS1', reviewedBy: 'Dr. Anuja Vyas, Board-Certified OBGYN' };
+/* The reads featured at the top of the Library, each with a "New" sticker.
+   width/height are the cover image's own size; a cover that isn't square is
+   shown whole instead of cropped. */
+const FEATURED_READS = [
+  { id: 'postpartum-stretch-marks', by: 'Geena Yousry, MS1', reviewedBy: 'Dr. Anuja Vyas, Board-Certified OBGYN', width: 794, height: 798 },
+  { id: 'genitourinary-syndrome-of-menopause', by: 'Shruti Gajjar, MS1', reviewedBy: 'Dr. Anuja Vyas, Board-Certified OBGYN', width: 1400, height: 933 },
+];
 
-function FeaturedRead({ onOpen }) {
-  const art = ARTICLES.find((a) => a.id === FEATURED_READ.id);
+function FeaturedRead({ feature, onOpen }) {
+  const art = ARTICLES.find((a) => a.id === feature.id);
   if (!art) return null;
+  const cut = art.title.indexOf('? ');
+  const [lead, rest] = cut > 0 ? [art.title.slice(0, cut + 1), art.title.slice(cut + 2)] : [art.title, ''];
+  const square = Math.abs(feature.width - feature.height) < 20;
   return (
     <a href={`/library/${art.id}`} className="ct-feature ay-feature" onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); onOpen(art.id); }}>
-      <span className="ct-feature__img"><img src={art.image} alt="" width="794" height="798" /></span>
+      <span className="ct-feature__img" style={square ? undefined : { aspectRatio: 'auto' }}><img src={art.image} alt="" width={feature.width} height={feature.height} style={square ? undefined : { height: 'auto' }} /></span>
       <span className="ct-feature__text">
-        <span className="ct-feature__kicker">Featured read · {sectionOf(art.id)?.label}</span>
-        <strong className="ct-feature__title">{art.title}</strong>
+        <span className="ct-feature__kicker"><span className="ct-feature__new">New<span className="sr-only">.</span></span> Featured read · {sectionOf(art.id)?.label}</span>
+        <strong className="ct-feature__title">{lead}{rest && <> <em>{rest}</em></>}</strong>
         <span className="ct-feature__teaser">{art.teaser}</span>
-        <span className="ct-feature__by">By {FEATURED_READ.by} · Reviewed by {FEATURED_READ.reviewedBy} · {minutesFor(art)} min read</span>
+        <span className="ct-feature__by">By {feature.by} · {minutesFor(art)} min read<span style={{ display: 'block', marginTop: 4 }}>Reviewed by {feature.reviewedBy}</span></span>
         <span className="ct-feature__cta">Read it <span aria-hidden="true">→</span></span>
       </span>
     </a>
@@ -931,6 +988,7 @@ function FeaturedRead({ onOpen }) {
 }
 import TopicCover from './v3/TopicCover.jsx';
 import PostpartumStretchMarksArticle from './library/PostpartumStretchMarksArticle.jsx';
+import VaginalAtrophyGsmArticle from './library/VaginalAtrophyGsmArticle.jsx';
 import useRotatingPlaceholder from '../utils/useRotatingPlaceholder.js';
 const LIB_SEARCH_EXAMPLES = ['heavy periods', 'PMOS', 'period pain', 'when to see a doctor', 'UTI', 'perimenopause', 'fibroids', 'endometriosis', 'yeast vs BV', 'pelvic floor', 'night sweats', 'missed period'];
 
@@ -1015,16 +1073,19 @@ function renderArticleCard(art, setSelectedId, progress = 0, showTopic = true) {
   );
 }
 
+const titleOf = (id) => ARTICLES.find((a) => a.id === id)?.title || id;
 // One taxonomy: every read lives in exactly one section, and the read's own
 // header, the filter chips and "Next in …" all use it.
 const ARTICLE_CATEGORIES = [
   { id: 'menstrual', label: 'Menstrual health', articleIds: ['heavy-bleeding', 'period-pain-when-to-seek-care', 'fibroids', 'iron-deficiency-anemia'] },
   { id: 'hormonal', label: 'Hormonal health', articleIds: ['pcos-basics', 'menopause-basics', 'pmdd', 'hormonal-birth-control'] },
   { id: 'chronic', label: 'Chronic and pelvic conditions', articleIds: ['endometriosis-basics', 'pelvic-floor-dysfunction', 'ovarian-cysts'] },
-  { id: 'vaginal-urinary', label: 'Vaginal and urinary health', articleIds: ['intimate-wash', 'uti-prevention', 'yeast-infection-basics', 'bacterial-vaginosis'] },
-
+  { id: 'vaginal-urinary', label: 'Vaginal and urinary health', articleIds: ['intimate-wash', 'uti-prevention', 'yeast-infection-basics', 'bacterial-vaginosis', 'genitourinary-syndrome-of-menopause'] },
   { id: 'postpartum', label: 'Pregnancy and postpartum', articleIds: ['postpartum-stretch-marks'] },
-];
+]
+  // A to Z: sections by name, and the reads in each section by title (Eliz, 2026-10-21).
+  .map((c) => ({ ...c, articleIds: [...c.articleIds].sort((a, b) => titleOf(a).localeCompare(titleOf(b))) }))
+  .sort((a, b) => a.label.localeCompare(b.label));
 const sectionOf = (id) => ARTICLE_CATEGORIES.find((c) => c.articleIds.includes(id)) || null;
 // Next read: the next one in the same section, looping (never a funnel to one page).
 function nextInSection(id) {
@@ -1322,14 +1383,14 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
     // Say why these are "for you", in her words from the quiz.
     const said = [...new Set([...(quizResults?.fullHealthIntake?.supportSelections || []), ...(quizResults?.frustrations || [])].map((x) => String(x).trim()).filter(Boolean))].slice(0, 3);
     body = <>
-      <FeaturedRead onOpen={open} />
+      {FEATURED_READS.map((f) => <FeaturedRead key={f.id} feature={f} onOpen={open} />)}
       {shelf('keep', 'Keep reading', keepReading)}
       {hasProfile ? <>
         {shelf('foryou', 'Top 3 for you', forYou.slice(0, 3), forYou.length > 3 ? <button type="button" className="ct-shelf__all" onClick={() => setTopic('foryou')}>All {forYou.length} for you</button> : null)}
         {said.length > 0 && forYou.length > 0 && <p className="ct-foryou-why">Based on what you told us: {said.map((x) => x.toLowerCase()).join(', ')}.</p>}
       </> : <p className="ct-personal"><span>Get reads picked for what you told us.</span> <a className="ay-btn ay-btn--secondary" href="/quiz">See my matches <span aria-hidden="true">→</span></a></p>}
       {/* The featured read isn't repeated in its topic shelf (P1-25). */}
-      {rows.map((r) => shelf(r.id, r.label, r.items.filter((a) => a.id !== FEATURED_READ.id)))}
+      {rows.map((r) => shelf(r.id, r.label, r.items.filter((a) => !FEATURED_READS.some((f) => f.id === a.id))))}
     </>;
   }
   const azList = [...(shown || ARTICLES.filter(inTopic))].sort((a, b) => a.title.localeCompare(b.title));

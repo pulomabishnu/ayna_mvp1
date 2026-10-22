@@ -88,6 +88,10 @@ html body .app-container.app-container.app-container.app-container {
   .ct-feature__cta { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 var(--ay-s20); border-radius: 999px; background: var(--ay-feature-fg); color: var(--ay-feature-bg) !important; font: 600 15px/1 var(--ay-sans-stack); }
   .ct-feature:hover .ct-feature__cta { text-decoration: underline; text-underline-offset: 3px; }
   .ct-feature:focus-visible { outline: 3px solid var(--ay-focus) !important; outline-offset: 3px; }
+  /* Main (#69-#70): two featured reads, each with a New sticker; a cover that isn't square shows whole. */
+  .ct-feature + .ct-feature { margin-top: var(--ay-s24); }
+  .ct-feature__new { display: inline-flex; align-items: center; min-height: 24px; padding: 0 10px; border-radius: 999px; background: var(--ay-feature-fg); color: var(--ay-feature-bg) !important; font: 600 13px/1 var(--ay-sans-stack); }
+  .ct-feature__title em { font-style: italic; }
 
   .ct-personal { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--ay-s12) var(--ay-s16); margin: var(--ay-s24) 0 0; padding: var(--ay-s12) 0; border-top: 1px solid var(--ay-hairline); border-bottom: 1px solid var(--ay-hairline); font: 500 16px/1.4 var(--ay-sans-stack); color: var(--ay-text); }
   .ct-foryou-why { margin: var(--ay-s12) 0 0; font: 500 14px/1.45 var(--ay-sans-stack); color: var(--ay-text-2); }
