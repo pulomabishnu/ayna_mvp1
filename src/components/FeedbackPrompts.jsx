@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import CharRing from './ui/CharRing.jsx';
 import { isOverLimit } from '../utils/charLimit.js';
-import { FEEDBACK_CAMPAIGN, setFeedbackOwner, readPurchaseQueue, writePurchaseQueue, updatePurchase, readyPurchase, removePurchase, sendFeedback } from '../utils/feedbackClient';
+import { FEEDBACK_CAMPAIGN, markSurveySeen, surveySeenRecently, setFeedbackOwner, readPurchaseQueue, writePurchaseQueue, updatePurchase, readyPurchase, removePurchase, sendFeedback } from '../utils/feedbackClient';
 
 const REFERRALS = ['TikTok', 'Instagram', 'LinkedIn', 'Google / search', 'Friend / word of mouth', 'Event / conference', 'Brand / partner', 'Other'];
 const PURCHASE_PROMPTS_ON = false;
@@ -70,10 +70,12 @@ function FeedbackDialog({ prompt, onClose }) {
   </div>;
 }
 
-export default function FeedbackPrompts({ user, authLoading, currentView }) {
+export default function FeedbackPrompts({ user, authLoading, currentView, safeViews = SAFE_VIEWS }) {
   const [prompt, setPrompt] = useState(null);
   const active = useRef(false);
   const view = useRef(currentView);
+  const safe = useRef(safeViews);
+  useEffect(() => { safe.current = safeViews; }, [safeViews]);
   const surveyReceipt = useRef(null);
   useEffect(() => { view.current = currentView; }, [currentView]);
   const checked = useRef(new Set());
@@ -91,7 +93,7 @@ export default function FeedbackPrompts({ user, authLoading, currentView }) {
     const showPurchase = () => {
       // Purchase check-ins ("Did you buy this item?") are off (founder, Oct 20).
       if (!PURCHASE_PROMPTS_ON) return;
-      if (document.visibilityState !== 'visible' || !document.hasFocus() || active.current || competingDialog() || !SAFE_VIEWS.has(currentView)) return;
+      if (document.visibilityState !== 'visible' || !document.hasFocus() || active.current || competingDialog() || !safe.current.has(currentView)) return;
       const row = readyPurchase(readPurchaseQueue());
       if (!row) return;
       active.current = true;
@@ -118,15 +120,18 @@ export default function FeedbackPrompts({ user, authLoading, currentView }) {
     const key = `${FEEDBACK_CAMPAIGN}:${user.id}`;
     let cancelled = false;
     const timer = setInterval(async () => {
-      if (cancelled || !SAFE_VIEWS.has(view.current) || document.visibilityState !== 'visible' || active.current || competingDialog() || readPurchaseQueue().length) return;
+      if (cancelled || !safe.current.has(view.current) || document.visibilityState !== 'visible' || active.current || competingDialog() || readPurchaseQueue().length) return;
       if (surveyReceipt.current) {
         active.current = true;
+        markSurveySeen(user.id);
         setPrompt({ kind: 'survey', receipt: surveyReceipt.current });
         surveyReceipt.current = null;
         return;
       }
       if (checked.current.has(key)) return;
       checked.current.add(key);
+      // Asked, closed or answered on this device in the last 14 days: don't ask the server.
+      if (surveySeenRecently(user.id)) return;
       active.current = true;
       try {
         const result = await sendFeedback({ action: 'claim-survey' }, true);
@@ -139,6 +144,8 @@ export default function FeedbackPrompts({ user, authLoading, currentView }) {
   }, [user?.id, authLoading]);
   const close = () => {
     if (prompt?.kind === 'purchase') removePurchase(prompt.id);
+    // Closing counts as asked, and an answer restarts the 14 days too.
+    else if (prompt?.kind === 'survey' && user?.id) markSurveySeen(user.id);
     setPrompt(null); active.current = false;
   };
   return prompt ? <FeedbackDialog key={prompt.receipt} prompt={prompt} onClose={close} /> : null;

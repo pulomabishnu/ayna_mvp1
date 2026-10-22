@@ -9,10 +9,10 @@ let root, host, fetchMock, claims;
 async function tick(ms) { await act(async () => { await vi.advanceTimersByTimeAsync(ms); }); }
 const button = text => [...host.querySelectorAll('button')].find(b => b.textContent === text);
 async function click(el) { await act(async () => el.click()); }
-async function mount(user = null, view = 'welcome') { await act(async () => root.render(<FeedbackPrompts key={user?.id || 'guest'} user={user} authLoading={false} currentView={view} />)); }
+async function mount(user = null, view = 'welcome', extra = {}) { await act(async () => root.render(<FeedbackPrompts key={user?.id || 'guest'} user={user} authLoading={false} currentView={view} {...extra} />)); }
 beforeEach(() => {
   globalThis.IS_REACT_ACT_ENVIRONMENT = true;
-  vi.useFakeTimers(); sessionStorage.clear(); claims = 0;
+  vi.useFakeTimers(); sessionStorage.clear(); localStorage.clear(); claims = 0;
   vi.spyOn(document, 'hasFocus').mockReturnValue(true);
   Object.defineProperty(document, 'visibilityState', { configurable: true, value: 'visible' });
   fetchMock = vi.fn(async (_url, options) => {
@@ -101,5 +101,27 @@ describe('feedback popup lifecycle', () => {
     await act(async () => recordRetailerVisit({ id: 'pads', name: 'Pads' }));
     await mount({ id: 'account-b' }, 'welcome');
     expect(readPurchaseQueue()).toHaveLength(0);
+  });
+  it('re-asks after 14 days on a new visit, not sooner, and counts closing as asked on this device', async () => {
+    const user = { id: 'repeat-account' };
+    await mount(user); await tick(16000);
+    expect(host.textContent).toContain('How are you liking ayna?');
+    await click(button('Not now'));
+    // A new visit 13 days later: this device doesn't even ask the server.
+    await act(async () => root.unmount()); root = createRoot(host);
+    vi.setSystemTime(Date.now() + 13 * 86400000);
+    await mount(user); await tick(16000);
+    expect(claims).toBe(1);
+    // 14 days after closing it: asks the server again, which decides.
+    await act(async () => root.unmount()); root = createRoot(host);
+    vi.setSystemTime(Date.now() + 1 * 86400000);
+    claims = 0;
+    await mount(user); await tick(16000);
+    expect(claims).toBe(1);
+    expect(host.textContent).toContain('How are you liking ayna?');
+  });
+  it('uses the app screen names when given its safe screens', async () => {
+    await mount({ id: 'app-account' }, 'eco', { safeViews: new Set(['eco']) }); await tick(16000);
+    expect(host.textContent).toContain('How are you liking ayna?');
   });
 });

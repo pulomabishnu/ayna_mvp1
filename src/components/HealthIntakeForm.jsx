@@ -1254,7 +1254,7 @@ export default function HealthIntakeForm({ onComplete }) {
       { id: 'avoidRepeat', section: 'history', title: 'Are there any products or brands you definitely do not want recommended again?', type: 'tokens', optional: true },
       { id: 'safety', section: 'safety', title: 'Are any symptoms you are experiencing new, rapidly worsening, or concerning to you right now?', type: 'safety', optional: false },
       { id: 'formats', section: 'preferences', title: 'Which product formats do you prefer?', type: 'formats', optional: true },
-      { id: 'priceRange', section: 'preferences', title: 'What price range do you usually prefer for health and wellness products?', type: 'price', optional: true },
+      { id: 'priceRange', section: 'preferences', title: 'Budget per item', subtitle: 'What you usually spend on one item, not your total. We use it to rank picks within your range first. Skip it and we assume nothing.', type: 'price', optional: true },
       { id: 'largePurchaseFrequency', section: 'preferences', title: 'How often do you make larger health or wellness purchases of $75 or more?', subtitle: 'This is about purchase frequency, not your usual preferred price per product.', type: 'largeSpend', optional: true },
       { id: 'brandOpenness', section: 'preferences', title: 'How do you feel about trying new brands?', type: 'brand', optional: true },
       ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Which brands do you already trust?', type: 'tokens', optional: true }] : []),
