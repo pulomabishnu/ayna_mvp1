@@ -270,13 +270,13 @@ export default function EcosystemScreen({
       <div className="eco-app-titlerow">
         <h1 id="ayna-cabinet-title" ref={titleRef}>Your ecosystem</h1>
       </div>
-      {currentProducts.length > 0 && <form className="eco-app-search" role="search" onSubmit={(e) => { e.preventDefault(); if (q && !anyMatch) onBrowse?.(query.trim()); }}>
+      {ecoTab !== 'dashboard' && currentProducts.length > 0 && <form className="eco-app-search" role="search" onSubmit={(e) => { e.preventDefault(); if (q && !anyMatch) onBrowse?.(query.trim()); }}>
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
         <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search your ecosystem" aria-label="Search your ecosystem" />
       </form>}
       {/* One progress card (counts, needs covered, Wrapped) in place of the ring: the shelf counts live on the chips below. */}
       {/* Stacked-card summary (the one stamp lives on its corner): real counts, needs covered, Wrapped. */}
-      {myProducts.length > 0 && <div className="eco-app-stack">
+      {ecoTab !== 'dashboard' && myProducts.length > 0 && <div className="eco-app-stack">
         <span className="eco-app-stack__back" aria-hidden="true" />
         <div className="eco-app-stack__card">
           <span className="eco-oval"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9" /></svg>Matched to you</span>
@@ -293,13 +293,13 @@ export default function EcosystemScreen({
           </div>}
         </div>
       </div>}
-      {myProducts.length === 0 && forYouButton && <div className="eco-app-stack__row is-loose">{forYouButton}</div>}
+      {ecoTab !== 'dashboard' && myProducts.length === 0 && forYouButton && <div className="eco-app-stack__row is-loose">{forYouButton}</div>}
       {/* Empty: one clear way in (the quiz), the Shop as the quiet second choice. */}
-      {!hasAnything && !quizDraft && (hasAnswers
+      {ecoTab !== 'dashboard' && !hasAnything && !quizDraft && (hasAnswers
         ? <EmptyState compact art="search" tone="mint" title="No strong matches yet" body="Nothing in the catalog fits your answers well enough yet. Change an answer, or browse the Shop by need." actionLabel={onRetake ? 'Edit my answers' : undefined} onAction={onRetake} secondaryLabel="Browse the Shop" onSecondary={() => onBrowse?.()} />
         : <EmptyState compact art="search" tone="mint" title="Nothing here yet" body="Answer six questions and your matches land here, on a shelf for each need." actionLabel={onStartQuiz ? 'See my matches' : undefined} onAction={onStartQuiz} secondaryLabel="Browse the Shop" onSecondary={() => onBrowse?.()} />)}
       {/* An unfinished quiz stays in view; everything else waits in "For you". */}
-      {quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
+      {ecoTab !== 'dashboard' && quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
       {ecosystemNotice && <p className="ayna-cabinet-notice" role="status">{ecosystemNotice}</p>}
     </section>
 
