@@ -76,3 +76,15 @@ html body .app-container.app-container .lx .lx-shelf__item:hover .lx-shelf__img 
 ::view-transition-old(ay-grow), ::view-transition-new(ay-grow) { height: 100%; object-fit: contain; }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: var(--t-base, 240ms); }
 html[data-ay-vt] .ay-push-in { animation: none !important; }
+
+/* Product card heart: say what it does on hover and keyboard focus (focus group
+   note: people didn't know the heart saves to favorites). Same tip as the
+   header heart; anchored right so it never runs off the card. */
+.app-container .ay-product-card__heart[data-tip]::after {
+  content: attr(data-tip); position: absolute; top: calc(100% + 6px); right: 0; transform: translateY(-4px);
+  padding: 6px 10px; border-radius: 8px; background: #3e2723; color: #ffedac; font: 600 var(--ay-fs-caption)/1.2 var(--ay-sans); white-space: nowrap;
+  opacity: 0; pointer-events: none; transition: opacity .15s, transform .15s; z-index: 5;
+}
+@media (hover: hover) { .app-container .ay-product-card__heart[data-tip]:hover::after { opacity: 1; transform: translateY(0); } }
+.app-container .ay-product-card__heart[data-tip]:focus-visible::after { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) { .app-container .ay-product-card__heart[data-tip]::after { transition: none; } }
