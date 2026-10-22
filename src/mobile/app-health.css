@@ -129,6 +129,7 @@
 
 /* ---------- Routine ---------- */
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt { display: grid; gap: 12px; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-plan { display: grid; gap: 28px; padding-top: 20px; scroll-margin-top: 20px; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-lede { margin: 0; color: var(--hd-soft); font: 500 calc(13px * var(--ayna-text-scale, 1))/1.5 var(--f-ui); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-slot { padding: 14px 14px 6px; border: 2px solid var(--hd-ink); border-radius: 20px; background: var(--hd-card); box-shadow: var(--ay-shadow); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-slot h3 { display: inline-block; margin: 0 0 8px; padding: 6px 12px; border: 2px solid var(--b-espresso); border-radius: 99px; background: var(--b-sky); color: var(--b-espresso); font: 500 calc(13px * var(--ayna-text-scale, 1))/1 var(--f-ui); }

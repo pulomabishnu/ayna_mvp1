@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { explainWeek, heartInsight, sleepInsight, tempInsight, periodInsight, findTempRise, cycleContext, cycleLine, usesHormonalBC, EVIDENCE } from './weekInsights.js';
+import { explainWeek, heartInsight, sleepInsight, stepsInsight, tempInsight, periodInsight, findTempRise, cycleContext, cycleLine, usesHormonalBC, EVIDENCE } from './weekInsights.js';
 import { weekPicks, weekNeeds, fitFor } from './weekPicks.js';
 import { comingUp } from './comingUp.js';
 import { resolveDaily } from './dedupe.js';
@@ -162,6 +162,20 @@ describe('explainWeek', () => {
       expect(i.text).not.toMatch(/—/);
       expect(i.basis.length).toBeGreaterThan(20);
     }
+  });
+});
+
+describe('activity change', () => {
+  it('flags a sustained drop against the person’s own steps, with source and comparison', () => {
+    const change = stepsInsight(res(rowsOf('steps', 35, (i) => (i < 7 ? 4800 : 8000))), TODAY);
+    expect(change.signal).toBe('steps-lower');
+    expect(change.text).toContain('4,800 steps');
+    expect(change.text).toContain('8,000');
+    expect(change.from).toEqual(['apple_health']);
+  });
+  it('does not flag a normal week or thin history', () => {
+    expect(stepsInsight(res(rowsOf('steps', 35, (i) => (i < 7 ? 7600 : 8000))), TODAY)).toBeNull();
+    expect(stepsInsight(res(rowsOf('steps', 12, (i) => (i < 7 ? 4000 : 8000))), TODAY)).toBeNull();
   });
 });
 

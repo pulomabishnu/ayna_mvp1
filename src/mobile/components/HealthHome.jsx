@@ -53,7 +53,7 @@ function loadLayout() {
 function saveLayout(v) { try { localStorage.setItem(LAYOUT_KEY, JSON.stringify(v)); } catch { /* storage blocked: lasts this visit */ } }
 
 const SUGGEST_LABEL = { 'sleep.trouble': 'sleep', 'cycle.irregular': 'irregular cycles', 'energy.fatigue': 'low energy' };
-const INSIGHT_KEY = { heart: 'Heart', sleep: 'Sleep', temperature: 'Temperature', period: 'Cycle' };
+const INSIGHT_KEY = { heart: 'Heart', sleep: 'Sleep', activity: 'Activity', temperature: 'Temperature', period: 'Cycle' };
 const TILE_TONES = ['sky', 'butter', 'group', 'group', 'group'];
 const RING_TONES = ['pink', 'sky', 'ink', 'butter'];
 
@@ -109,24 +109,37 @@ function Tabs({ tabs, value, onChange, label, idBase, className = '' }) {
   );
 }
 
-/** The one Feature: this week read against her cycle, one insight at a time. */
-function Hero({ cycle, ctx, insights, fallback, picks, onOpenProduct, onAsk }) {
+const INSIGHT_PRIORITY = { 'sleep-short': 0, 'heart-up': 1, 'steps-lower': 2, 'period-soon': 3, 'temp-rise': 4, 'heart-down': 5, 'sleep-long': 6 };
+const INSIGHT_TITLES = { 'sleep-short': 'Your sleep changed', 'heart-up': 'Your heart trend changed', 'steps-lower': 'Your steps changed', 'period-soon': 'Your period may be close', 'temp-rise': 'Your temperature changed', 'heart-down': 'Your heart trend changed', 'sleep-long': 'Your sleep changed' };
+const INSIGHT_ACTIONS = {
+  'sleep-short': ['Look at your recent nights alongside your usual sleep.', 'If this matters to you, choose a sleep goal or review a product matched to that goal.'],
+  'sleep-long': ['Look at your recent nights alongside your usual sleep.', 'Keep tracking to see whether this is a short-lived change.'],
+  'heart-up': ['Review the heart readings and the dates behind this change.', 'Consider whether a change in your routine happened around the same time.'],
+  'heart-down': ['Review the heart readings and the dates behind this change.', 'Keep tracking to see whether this pattern continues.'],
+  'steps-lower': ['Compare the last week with your usual activity.', 'Think about whether your schedule, energy, or routine changed on those days.'],
+  'temp-rise': ['Review the temperature readings behind this pattern.', 'Keep logging your cycle and temperature to add context to future changes.'],
+  'period-soon': ['Check the estimate against your own period logs.', 'Review your period products and routine before the expected date.'],
+};
+
+/** The most actionable change leads; the cycle remains available below. */
+function Hero({ cycle, ctx, insights, fallback, onOpenInsight }) {
   const [at, setAt] = useState(0);
   const phase = cycle ? estimatePhase(cycle) : null;
   const line = cycleLine(cycle, ctx);
   const rest = line ? line.replace(/^Cycle day \d+,?\s*/, '') : '';
   const sub = rest ? rest.charAt(0).toUpperCase() + rest.slice(1) : '';
   const it = insights[Math.min(at, insights.length - 1)];
-  const linkedPick = pickForInsight(it, picks);
   return (
     <section className="ay-hh-hero" aria-labelledby="ay-hh-hero-title">
       <div className="ay-hh-hero-top">
         <div className="ay-hh-hero-head">
-          <h3 id="ay-hh-hero-title">This week, explained</h3>
-          {sub && <p className="ay-hh-hero-sub">{sub}</p>}
+          <p className="ay-hh-hero-eyebrow">Your health this week</p>
+          <h3 id="ay-hh-hero-title">{it ? INSIGHT_TITLES[it.signal] || 'A change worth a look' : 'Your week at a glance'}</h3>
+          {it && <p className="ay-hh-hero-sub">A change in your own data, with a next step.</p>}
+          {!it && sub && <p className="ay-hh-hero-sub">{sub}</p>}
           {!cycle && !insights.length && fallback && <p className="ay-hh-hero-sub">{fallback}</p>}
         </div>
-        {cycle?.cycleDay && (
+        {!it && cycle?.cycleDay && (
           <div className="ay-hh-hero-ring" role="img" aria-label={`Cycle day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength}` : ''}`}>
             <CycleRing cycleDay={cycle.cycleDay} avgLength={cycle.avgLength} periodLength={cycle.periodLength} windowStart={phase?.windowStart} windowEnd={phase?.windowEnd} />
             <span aria-hidden="true"><small>Day</small><b>{cycle.cycleDay}</b></span>
@@ -141,29 +154,42 @@ function Hero({ cycle, ctx, insights, fallback, picks, onOpenProduct, onAsk }) {
           <div className="ay-hh-insight" role={insights.length > 1 ? 'tabpanel' : undefined} id="ay-hh-ins-panel" aria-labelledby={insights.length > 1 ? `ay-hh-ins-tab-${Math.min(at, insights.length - 1)}` : undefined} key={it.id}>
             {insights.length === 1 && <b className="ay-hh-k">{INSIGHT_KEY[it.id] || it.id}</b>}
             <p>{it.text}</p>
-            {linkedPick && onOpenProduct && (
-              <div className="ay-hh-insight-pick">
-                <span>For this change</span>
-                <button type="button" onClick={() => onOpenProduct(linkedPick.product)}>{linkedPick.product.name} <span aria-hidden="true">→</span></button>
-                <small>{linkedPick.reason}</small>
-              </div>
-            )}
-            <div className="ay-hh-insight-actions">
-              <details>
-                <summary>Why we say this</summary>
-                <div className="ay-hh-why">
-                  {it.basis && <p>{it.basis}</p>}
-                  {it.sources.length > 0 && <p>Source{it.sources.length > 1 ? 's' : ''}: {it.sources.map((src, i) => <span key={src.url}>{i ? '; ' : ''}<SourceLink source={src} /></span>)}</p>}
-                  {it.from?.length > 0 && <p>Your data: {it.from.map((x) => SOURCE_NAMES[x] || x).join(' and ')}.</p>}
-                </div>
-              </details>
-              {onAsk && it.question && <button type="button" className="ay-hh-hero-ask" onClick={() => onAsk(it.question)}>Ask ayna<span className="sr-only">: {it.question}</span></button>}
-            </div>
+            <button type="button" className="ay-hh-insight-cta" onClick={() => onOpenInsight(it)}>See what to do <span aria-hidden="true">↗</span></button>
           </div>
         </>
       )}
       <p className="ay-hh-hero-foot">Compared only with your own last 4 weeks. Patterns, not a diagnosis.</p>
     </section>
+  );
+}
+
+function InsightDetail({ insight, chart, pick, onBack, onOpenMetric, onOpenProduct, onOpenRoutine, onAsk }) {
+  const actions = INSIGHT_ACTIONS[insight.signal] || ['Review the readings behind this change.', 'Keep tracking to see how the pattern develops.'];
+  return (
+    <article className="ay-hh-action" aria-labelledby="ay-hh-action-title">
+      <button type="button" className="ay-hh-action-back" onClick={onBack}>← Back to your dashboard</button>
+      <p className="ay-hh-action-kicker">Your data · {INSIGHT_KEY[insight.id] || insight.id}</p>
+      <h3 id="ay-hh-action-title">{INSIGHT_TITLES[insight.signal] || 'Your health changed'}</h3>
+      <p className="ay-hh-action-lede">{insight.text}</p>
+      <div className="ay-hh-action-grid">
+        <section aria-labelledby="ay-hh-action-data">
+          <h4 id="ay-hh-action-data">What we noticed</h4>
+          <p>{insight.basis}</p>
+          {chart && <p className="ay-hh-action-comparison">This week: <b>{shortMetric(chart, chart.week ?? chart.avg)}</b> <span>·</span> Your usual: <b>{chart.usual == null ? 'Still building' : shortMetric(chart, chart.usual)}</b></p>}
+          {insight.from?.length > 0 && <p className="ay-hh-action-source">Your data came from {sourceNames(insight.from)}.</p>}
+          {chart && <button type="button" className="ay-hh-action-link" onClick={onOpenMetric}>See the full {INSIGHT_KEY[insight.id]?.toLowerCase() || 'health'} trend →</button>}
+        </section>
+        <section aria-labelledby="ay-hh-action-next">
+          <h4 id="ay-hh-action-next">What you can do</h4>
+          <ol>{actions.map((action) => <li key={action}>{action}</li>)}</ol>
+          {pick && onOpenProduct && <div className="ay-hh-action-product"><small>{pick.owned ? 'Already in your ecosystem' : 'Matched to your goal'}</small><button type="button" onClick={() => onOpenProduct(pick.product)}>{pick.product.name} →</button><p>{pick.reason}</p></div>}
+          {onOpenRoutine && <button type="button" className="ay-hh-action-link" onClick={onOpenRoutine}>See your routine and shopping list →</button>}
+          {onAsk && insight.question && <button type="button" className="ay-hh-action-ask" onClick={() => onAsk(insight.question)}>Ask ayna about this</button>}
+        </section>
+      </div>
+      {insight.sources?.length > 0 && <div className="ay-hh-action-reading"><h4>Read the research</h4><ul>{insight.sources.map((src) => <li key={src.url}><SourceLink source={src} /></li>)}</ul></div>}
+      <p className="ay-hh-note">This is a pattern in your data, not a diagnosis. If a change concerns you, talk to a clinician.</p>
+    </article>
   );
 }
 
@@ -325,6 +351,7 @@ export default function HealthHome({
   const [editing, setEditing] = useState(false);
   const [layout, setLayout] = useState(loadLayout);
   const [added, setAdded] = useState({});
+  const [activeInsight, setActiveInsight] = useState(null);
   const topRef = useRef(null);
 
   const days = RANGES.find((r) => r.id === range).days;
@@ -336,7 +363,9 @@ export default function HealthHome({
   const sources = [...new Set(sections.flatMap((s) => s.sources || []))];
   const phase = cycle ? estimatePhase(cycle) : null;
 
-  const { insights, ctx } = explainWeek(rows, { today, cycle, estimate, hormonalBC });
+  const explained = explainWeek(rows, { today, cycle, estimate, hormonalBC, max: 6 });
+  const insights = explained.insights.slice().sort((a, b) => (INSIGHT_PRIORITY[a.signal] ?? 9) - (INSIGHT_PRIORITY[b.signal] ?? 9));
+  const ctx = explained.ctx;
   const picks = weekPicks({ ctx, insights, needIds, products, matches });
   const coming = comingUp(cycle, estimate, today, { hormonalBC, hasProducts: products.length > 0 });
   const compare = phaseCompare(rows, { today, cycle, hormonalBC });
@@ -376,7 +405,13 @@ export default function HealthHome({
   const pickTab = (id) => { if (id !== current) haptic('selection'); setTab(id); };
   const open = (id) => {
     haptic('selection');
+    setActiveInsight(null);
     setTab(id);
+    window.requestAnimationFrame(() => topRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' }));
+  };
+  const showInsight = (insight) => {
+    haptic('selection');
+    setActiveInsight(insight.id);
     window.requestAnimationFrame(() => topRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' }));
   };
   const add = (needId) => { if (onAddGoal?.(needId)) { haptic('success'); setAdded((a) => ({ ...a, [needId]: true })); } };
@@ -419,7 +454,7 @@ export default function HealthHome({
   const summary = (
     <div className="ay-hh-summary">
       <div className="ay-hh-main">
-        <Hero cycle={cycle} ctx={ctx} insights={insights} fallback={weekSummary(ready)} picks={picks} onOpenProduct={onOpenProduct} onAsk={ask} />
+        <Hero cycle={cycle} ctx={ctx} insights={insights} fallback={weekSummary(ready)} onOpenInsight={showInsight} />
         <Adds items={adds} />
         <section className="ay-hh-tiles-sec" aria-labelledby="ay-hh-tiles-title">
           <div className="ay-hh-sechead">
@@ -485,7 +520,8 @@ export default function HealthHome({
             {sources.length > 0 && <p className="ay-hh-note">From {sourceNames(sources)}. Trends, not diagnoses.</p>}
           </details>
         )}
-        {onOpenRoutine && <button type="button" className="ay-hh-routine" onClick={onOpenRoutine}><span><b>Your routine and shopping list</b><small>Built from your matches and your data</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>}
+        {onOpenRoutine && <button type="button" className="ay-hh-routine" onClick={onOpenRoutine}><span><b>Your routine and shopping list</b><small>Choose products, track what you have, shop your routine</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>}
+        {effects.length > 0 && <section className="ay-hh-effects" aria-labelledby="ay-hh-effects-title"><h3 id="ay-hh-effects-title" className="ay-hh-h3">Is your routine working?</h3><p>Changes since you added a product, using the data you connected.</p>{effects.slice(0, 2).map((effect) => <div key={effect.product.id}><b>{effect.product.name}</b><p>{effect.text}</p><small>{effect.caveat}</small></div>)}</section>}
       </div>
     </div>
   );
@@ -573,6 +609,10 @@ export default function HealthHome({
     </div>
   );
 
+  const selectedInsight = insights.find((insight) => insight.id === activeInsight);
+  const selectedChart = selectedInsight && allCharts.find((chart) => chart.metric === selectedInsight.metric);
+  const selectedPick = selectedInsight && pickForInsight(selectedInsight, picks);
+
   return (
     <div className={`ay-hh is-${surface}`}>
       <header className="ay-hh-hello" ref={topRef}>
@@ -581,7 +621,9 @@ export default function HealthHome({
       </header>
       <div className="ay-hh-areas"><Tabs tabs={tabs} value={current} onChange={pickTab} label="Health areas" idBase="ay-hh-area" className="is-areas" /></div>
       <div className="ay-hh-panel" role="tabpanel" id="ay-hh-area-panel" aria-labelledby={`ay-hh-area-tab-${current}`} key={current}>
-        {current === 'summary' && summary}
+        {current === 'summary' && (selectedInsight
+          ? <InsightDetail insight={selectedInsight} chart={selectedChart} pick={selectedPick} onBack={() => setActiveInsight(null)} onOpenMetric={() => open(selectedChart?.group || 'cycle')} onOpenProduct={onOpenProduct} onOpenRoutine={onOpenRoutine} onAsk={ask} />
+          : summary)}
         {current === 'cycle' && cycleTab}
         {group && groupTab}
         {current === 'products' && productsTab}

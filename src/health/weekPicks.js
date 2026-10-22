@@ -129,6 +129,8 @@ export function weekPicks({ ctx = {}, insights = [], needIds = [], products = []
 
 /** A direct next step for a measured change, only when a pick fits that change. */
 export function pickForInsight(insight, picks = []) {
-  if (insight?.signal !== 'sleep-short') return null;
-  return picks.find((pick) => pick.needId === 'sleep.trouble') || null;
+  const needIds = insight?.signal === 'sleep-short' ? ['sleep.trouble']
+    : insight?.signal === 'period-soon' ? ['period.product_support', 'pain.menstrual_cramp']
+      : [];
+  return picks.find((pick) => needIds.includes(pick.needId)) || null;
 }

@@ -51,6 +51,9 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero-head { display: grid; gap: 6px; min-width: 0; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) :is(.ay-hh-hero h3, main .ay-hh-hero h3) { font: 700 calc(24px * var(--x-scale))/1.1 var(--x-serif) !important; letter-spacing: -0.02em !important; color: var(--x-on) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero-sub { font: 500 calc(15px * var(--x-scale))/1.4 var(--x-sans) !important; color: var(--x-on-2) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero-eyebrow { font: 700 11px/1.3 var(--x-sans) !important; letter-spacing: .12em; text-transform: uppercase; color: var(--hh-pink) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-insight-cta { justify-self: start; min-height: 46px; margin: 10px 0 2px !important; padding: 0 18px !important; border: 1px solid var(--hh-pink) !important; border-radius: 999px !important; background: var(--hh-pink) !important; color: var(--hh-espresso) !important; box-shadow: none !important; font: 700 14px/1 var(--x-sans) !important; cursor: pointer; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-insight-cta span { margin-left: 8px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero-ring { position: relative; width: 104px; height: 104px; flex: none; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero-ring svg { width: 100%; height: 100%; display: block; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero-ring > span { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; line-height: 1; }
@@ -328,6 +331,36 @@
 /* Final layout pass (Oct 21): the no-data state uses the HealthHome hello + Feature. */
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-hh.is-empty { display: grid; gap: 16px; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-hh-hero-ring.is-blank b { opacity: .7; }
+
+/* Insight detail: one subject, one readable path from data to action. */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action { display: grid; gap: 18px; padding: 22px !important; border-radius: 24px; background: var(--x-group); color: var(--x-ink); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-back { justify-self: start; min-height: 44px; margin: -8px 0 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; color: var(--x-ink) !important; font: 600 14px/1.3 var(--x-sans) !important; cursor: pointer; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-kicker { font: 700 11px/1.3 var(--x-sans) !important; letter-spacing: .11em; text-transform: uppercase; color: var(--x-soft) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action h3 { font: 700 calc(30px * var(--x-scale))/1.08 var(--x-serif) !important; letter-spacing: -.025em; color: var(--x-ink) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-lede { max-width: 60ch; font: 500 calc(17px * var(--x-scale))/1.5 var(--x-sans) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-grid { display: grid; gap: 12px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-grid > section { display: grid; align-content: start; gap: 12px; padding: 18px !important; border: 1px solid var(--x-hair); border-radius: 18px; background: var(--hh-page); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action h4 { font: 700 18px/1.2 var(--x-serif) !important; color: var(--x-ink) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-grid p, :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-grid li { font: 400 calc(14px * var(--x-scale))/1.5 var(--x-sans) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-comparison { display: flex; flex-wrap: wrap; gap: 4px; align-items: baseline; padding: 10px 0 !important; border-top: 1px solid var(--x-hair); border-bottom: 1px solid var(--x-hair); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-comparison b { font-weight: 700; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-source { color: var(--x-soft) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-grid ol { display: grid; gap: 9px; counter-reset: steps; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-grid li { display: grid; grid-template-columns: 24px 1fr; gap: 9px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-grid li::before { counter-increment: steps; content: counter(steps); display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--hh-pink); font: 700 12px/1 var(--x-sans); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-link { justify-self: start; min-height: 44px; margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; color: var(--x-ink) !important; text-align: left; text-decoration: underline; text-underline-offset: 3px; font: 700 14px/1.3 var(--x-sans) !important; cursor: pointer; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-product { display: grid; gap: 5px; padding: 12px !important; border-radius: 12px; background: var(--hh-pink); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-product small { font: 700 11px/1.3 var(--x-sans); text-transform: uppercase; letter-spacing: .06em; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-product button { justify-self: start; min-height: 40px; margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; color: var(--hh-espresso) !important; text-align: left; font: 700 16px/1.3 var(--x-sans) !important; cursor: pointer; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-ask { justify-self: start; min-height: 44px; margin: 0 !important; padding: 0 16px !important; border: 1px solid var(--x-ink) !important; border-radius: 999px !important; background: var(--x-ink) !important; color: var(--hh-page) !important; font: 700 14px/1 var(--x-sans) !important; cursor: pointer; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-reading { display: grid; gap: 8px; padding-top: 4px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-reading ul { display: grid; gap: 6px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-reading a { color: var(--x-ink) !important; font: 600 14px/1.4 var(--x-sans); text-decoration: underline; text-underline-offset: 3px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-effects { display: grid; gap: 8px; padding: 16px !important; border-radius: 20px; background: var(--x-group); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-effects > div { display: grid; gap: 3px; padding-top: 10px; border-top: 1px solid var(--x-hair); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-effects p { font: 400 14px/1.45 var(--x-sans) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-effects small { color: var(--x-soft); font: 400 12px/1.4 var(--x-sans); }
+@media (min-width: 700px) { :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-hh-empty-cta { justify-self: start; display: inline-flex; align-items: center; min-height: 48px; margin: 4px 0 0; padding: 0 20px; border: 1.5px solid var(--x-on); border-radius: 999px; background: var(--x-on); color: var(--x-feature); font: 600 15px/1 var(--x-sans); cursor: pointer; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-hh-empty-cta:focus-visible { outline: 3px solid #f7badd; outline-offset: 3px; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-hh.is-empty .ay-wx-starter { display: grid; gap: 16px; }

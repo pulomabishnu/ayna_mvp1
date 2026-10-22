@@ -165,6 +165,22 @@ export function sleepInsight(resolved, today, ctx) {
   };
 }
 
+/* Activity: a clear change against the person's own previous four weeks. */
+export function stepsInsight(resolved, today) {
+  const pts = sorted(series(resolved, 'steps'));
+  const c = compare(pts, today);
+  if (!c || c.usual < 1) return null;
+  const lowerDays = c.recent.filter((p) => p.value <= c.usual * 0.8).length;
+  if (lowerDays < 4 || c.recentAvg > c.usual * 0.8) return null;
+  return {
+    id: 'activity', metric: 'steps', signal: 'steps-lower',
+    text: `Your steps were below your usual on ${lowerDays} of the last ${c.recent.length} days. You averaged ${Math.round(c.recentAvg).toLocaleString('en-US')} steps a day this week, compared with ${Math.round(c.usual).toLocaleString('en-US')} before.`,
+    basis: `We compared days in the last week with your own average from the 4 weeks before. A day counts here when its steps are at least 20% below that average.`,
+    sources: [], from: sourcesOf(pts),
+    question: 'What changed in my activity this week?',
+  };
+}
+
 /* ------------------------------- Temperature ------------------------------- */
 const TEMP_METRICS = ['basal_temp_c', 'temp_deviation_c', 'skin_temp_night_c'];
 
@@ -245,6 +261,7 @@ export function explainWeek(rows, opts = {}) {
   const all = [
     heartInsight(resolved, today, ctx),
     sleepInsight(resolved, today, ctx),
+    stepsInsight(resolved, today),
     tempInsight(resolved, today, ctx, { hormonalBC: opts.hormonalBC }),
     periodInsight(ctx, opts.estimate, opts.cycle),
   ].filter(Boolean);
