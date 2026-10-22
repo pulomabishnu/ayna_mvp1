@@ -22,9 +22,19 @@ function Thumb({ product }) {
 
 const OverBudget = () => <span className="ay-rt-budget">Over your budget</span>;
 
-export function Routine({ products, insights, onOpenProduct, budget = null, folded = false }) {
-  const routine = useMemo(() => buildRoutine(products, insights), [products, insights]);
-  if (!routine.slots.length) return null;
+export function Routine({ products, insights, onOpenProduct, budget = null, folded = false, excluded = {}, onToggleExcluded }) {
+  const selected = useMemo(() => products.filter((p) => p && !excluded[p.id]), [products, excluded]);
+  const routine = useMemo(() => buildRoutine(selected, insights), [selected, insights]);
+  if (!products.length) return null;
+  const choices = onToggleExcluded && (
+    <details className="ay-rt-choices">
+      <summary>Choose products for your routine</summary>
+      <p>Start with ayna's matches, then keep the products you want. Your shopping list follows this choice.</p>
+      <ul>{products.map((product) => <li key={product.id}>
+        <label><input type="checkbox" checked={!excluded[product.id]} onChange={() => onToggleExcluded(product.id)} />{product.name}</label>
+      </li>)}</ul>
+    </details>
+  );
   const slots = routine.slots.map((slot) => (
         <div key={slot.id} className={`ay-rt-slot is-${slot.id}`}>
           <h3>{slot.title}</h3>
@@ -46,7 +56,7 @@ export function Routine({ products, insights, onOpenProduct, budget = null, fold
           </ul>
         </div>
       ));
-  const lede = <p className="ay-rt-lede">Where each of your matches fits in your week, with a how-to line from its own instructions.</p>;
+  const lede = <p className="ay-rt-lede">Where each product you choose fits in your week, with a how-to line from its own instructions.</p>;
   // Folded (Ecosystem > Dashboard): one disclosure row, since the full routine
   // is also on her plan and the dashboard was six screens long.
   if (folded) return (
@@ -55,11 +65,13 @@ export function Routine({ products, insights, onOpenProduct, budget = null, fold
         <summary>
           <span className="ay-fold__text">
             <h2 id="ay-rt-title">Your routine</h2>
-            <p className="ay-rt-lede">{routine.slots.map((x) => x.title).join(' · ')}</p>
+            <p className="ay-rt-lede">{routine.slots.length ? routine.slots.map((x) => x.title).join(' · ') : 'Choose products to start your routine'}</p>
           </span>
           <svg className="ay-fold__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
         </summary>
         {lede}
+        {choices}
+        {!routine.count && <p className="ay-rt-lede">No products selected yet.</p>}
         {slots}
       </details>
     </section>
@@ -68,13 +80,16 @@ export function Routine({ products, insights, onOpenProduct, budget = null, fold
     <section className="ay-rt" aria-labelledby="ay-rt-title">
       <h2 id="ay-rt-title">Your routine</h2>
       {lede}
+      {choices}
+      {!routine.count && <p className="ay-rt-lede">No products selected yet.</p>}
       {slots}
     </section>
   );
 }
 
-export function ShoppingList({ products, insights, have = {}, onToggleHave, onOpenProduct, onSavePlaylist, onOpenPlaylist, budget = null, onRequireAuth }) {
-  const list = useMemo(() => buildShoppingList(products, insights, { getBuyUrl }), [products, insights]);
+export function ShoppingList({ products, insights, excluded = {}, have = {}, onToggleHave, onOpenProduct, onSavePlaylist, onOpenPlaylist, budget = null, onRequireAuth }) {
+  const selected = useMemo(() => products.filter((p) => p && !excluded[p.id]), [products, excluded]);
+  const list = useMemo(() => buildShoppingList(selected, insights, { getBuyUrl }), [selected, insights]);
   if (!list.count) return null;
   const owned = list.groups.flatMap((g) => g.items).filter((i) => have[i.product.id]).length;
   return (

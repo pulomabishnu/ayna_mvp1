@@ -24,7 +24,8 @@ const fromLine = (sources = []) => {
 
 export default function PlanScreen({
   planProducts = [], planInsights = null, planSuggestions = [], planAddedGoals = {}, onAddPlanGoal,
-  routineHave = {}, onToggleHave, onOpenProduct, onSeeMatches, onBack, planAnswers = null,
+  routineHave = {}, onToggleHave, routineExcluded = {}, onToggleRoutineProduct,
+  onOpenProduct, onSeeMatches, onBack, planAnswers = null,
 }) {
   const budget = budgetMax(planAnswers);
   const ready = (planInsights?.sections || []).filter((s) => s.status === 'ready');
@@ -70,8 +71,8 @@ export default function PlanScreen({
         </section>
       )}
 
-      <Routine products={planProducts} insights={planInsights} onOpenProduct={onOpenProduct} budget={budget} />
-      <ShoppingList products={planProducts} insights={planInsights} have={routineHave} onToggleHave={onToggleHave} onOpenProduct={onOpenProduct} budget={budget} />
+      <Routine products={planProducts} insights={planInsights} onOpenProduct={onOpenProduct} budget={budget} excluded={routineExcluded} onToggleExcluded={onToggleRoutineProduct} />
+      <ShoppingList products={planProducts} insights={planInsights} excluded={routineExcluded} have={routineHave} onToggleHave={onToggleHave} onOpenProduct={onOpenProduct} budget={budget} />
 
       <footer className="ay-qc-foot">
         <button type="button" className="ay-qc-primary" onClick={onSeeMatches}>See my matches</button>

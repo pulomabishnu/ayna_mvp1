@@ -616,3 +616,14 @@
 /* Health data search (walkthrough P2-10): one outline only. The field draws
    its own pill; the wrapper's second border made it look clipped. */
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-hc-search.ay-hc-search { min-height: 0 !important; border: 0 !important; border-radius: 0 !important; }
+
+/* The routine starts with all matched products; these controls let her keep
+   only the ones she wants without changing her Ecosystem matches. */
+.ayna-mobile .ay-rt-choices { margin: 14px 0; padding: 12px 14px; border: 1px solid var(--hd-line); border-radius: 14px; }
+.ayna-mobile .ay-rt-choices summary { cursor: pointer; font: 600 14px/1.4 var(--f-ui); }
+.ayna-mobile .ay-rt-choices summary:focus-visible { outline: 3px solid var(--b-sky); outline-offset: 3px; }
+.ayna-mobile .ay-rt-choices p { margin: 10px 0; color: var(--hd-soft); font: 500 13px/1.45 var(--f-ui); }
+.ayna-mobile .ay-rt-choices ul { margin: 0; padding: 0; list-style: none; }
+.ayna-mobile .ay-rt-choices li + li { border-top: 1px solid var(--hd-line); }
+.ayna-mobile .ay-rt-choices label { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 7px 0; cursor: pointer; font: 500 14px/1.35 var(--f-ui); }
+.ayna-mobile .ay-rt-choices input { flex: none; width: 18px; height: 18px; accent-color: var(--b-espresso); }
