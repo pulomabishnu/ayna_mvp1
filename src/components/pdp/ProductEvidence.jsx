@@ -35,7 +35,7 @@ import './pdp-complete.css';
 
 const RESEARCH_BY_PRODUCT = NEED_MAP_RESEARCH.reduce((m, r) => { if (!m.has(r.product)) m.set(r.product, []); m.get(r.product).push(r); return m; }, new Map());
 const GRADE_WORDS = { A: 'Strong evidence', B: 'Some evidence', C: 'Limited evidence' };
-const TAB_IDS = ['overview', 'clinical', 'literature', 'reviews', 'safety', 'how-to-use', 'details'];
+const TAB_IDS = ['overview', 'clinical', 'literature', 'evidence', 'reviews', 'safety', 'how-to-use', 'safety-use', 'details'];
 const PHONE = '(max-width: 760px)';
 const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 const cap = (t) => String(t || '').replace(/^./, (c) => c.toUpperCase());
@@ -375,8 +375,9 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   };
   // Old ids used by other parts of the page map onto the tabs.
   const ALIAS = { science: 'literature', evidence: 'literature', how: 'how-to-use', sources: 'details', overview: 'overview', inside: 'literature' };
+  const v4Tab = (id) => ({ clinical: 'evidence', literature: 'evidence', safety: 'safety-use', 'how-to-use': 'safety-use' })[id] || id;
   const goTo = (raw) => {
-    const id = ALIAS[raw] || raw;
+    const id = v4 ? v4Tab(ALIAS[raw] || raw) : ALIAS[raw] || raw;
     if (id === 'overview' && !v4) { document.getElementById('ayq-who')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     chooseTab(id);
     scrollToTabs();
@@ -388,7 +389,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   }, []);
   useEffect(() => {
     const on = (e) => goTo(!e.detail || e.detail === 'details' ? 'safety' : e.detail);
-    const onHash = () => { const h = window.location.hash.slice(1); if (TAB_IDS.includes(h)) { setTab(h); scrollToTabs(); } };
+    const onHash = () => { const h = window.location.hash.slice(1); if (TAB_IDS.includes(h)) { setTab(v4 ? v4Tab(h) : h); scrollToTabs(); } };
     window.addEventListener('ay-open-tab', on);
     window.addEventListener('hashchange', onHash);
     return () => { window.removeEventListener('ay-open-tab', on); window.removeEventListener('hashchange', onHash); };
@@ -847,12 +848,24 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
 
   // Website: Overview is the first tab, inside the Explore box under the photo (main's structure).
   if (v4) {
-    const allTabs = [{ id: 'overview', label: 'Overview', icon: 'format', body: overview }, ...tabs];
-    const activeV4 = allTabs.some((t) => t.id === tab) ? tab : 'overview';
+    const allTabs = [
+      { id: 'overview', label: 'Overview', icon: 'format', body: overview },
+      (expertBody || researchBody) && { id: 'evidence', label: 'Evidence', icon: 'paper', body: <div className="ayq-combined">
+        {expertBody && <section aria-label="Expert view"><h3 className="ayq-h3">Expert view</h3>{expertBody}</section>}
+        {researchBody && <section aria-label="Research"><h3 className="ayq-h3">Research</h3>{researchBody}</section>}
+      </div> },
+      hasReviews && { id: 'reviews', label: 'Reviews', icon: 'community', body: reviewsBody },
+      (safetyBody || howBody) && { id: 'safety-use', label: 'Safety & use', icon: 'shield', tone: sf.alert.length ? 'alert' : '', body: <div className="ayq-combined">
+        {safetyBody && <section aria-label="Safety"><h3 className="ayq-h3">Safety</h3>{safetyBody}</section>}
+        {howBody && <section aria-label="How to use"><h3 className="ayq-h3">How to use</h3>{howBody}</section>}
+      </div> },
+      { id: 'details', label: 'Details', icon: 'format', body: detailsBody },
+    ].filter(Boolean);
+    const activeV4 = allTabs.some((t) => t.id === v4Tab(tab)) ? v4Tab(tab) : 'overview';
     return (
       <TermsCtx.Provider value={plan}>
         <div id="ay-tabs" className="ayq ayq--v4">
-          <section id="ay-pt" className="ayq-tabsec ay-itabs" aria-label="Overview, expert view, research, reviews, safety, how to use and details">
+          <section id="ay-pt" className="ayq-tabsec ay-itabs" aria-label="Overview, evidence, reviews, safety and use, details">
             <SegTabs explore tabs={allTabs} active={activeV4} onChange={(id) => chooseTab(id)} />
           </section>
           {afterOverview}

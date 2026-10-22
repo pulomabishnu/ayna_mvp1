@@ -330,6 +330,9 @@ html body .app-container:not([data-theme='brand-dark']) #pdp-v4 .ay-glance > li.
 /* The panels are one column in the left column (two columns only on a very wide page). */
 #pdp-v4 .ayq--v4 .ayq-cols { grid-template-columns: minmax(0, 1fr) !important; gap: 24px !important; }
 #pdp-v4 .ayq--v4 .ayq-cols + *, #pdp-v4 .ayq--v4 * + .ayq-cols { margin-top: 24px !important; }
+#pdp-v4 .ayq--v4 .ayq-combined { display: grid; gap: 32px; }
+#pdp-v4 .ayq--v4 .ayq-combined > section { min-width: 0; }
+#pdp-v4 .ayq--v4 .ayq-combined > section > h3 { margin: 0 0 16px; }
 
 /* Overview */
 #pdp-v4 .ayq--v4 .ayq-over { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; gap: 24px !important; margin: 0 !important; padding: 0 !important; }
@@ -341,6 +344,12 @@ html body .app-container:not([data-theme='brand-dark']) #pdp-v4 .ay-glance > li.
 #pdp-v4 .ayq .ayq-glance { padding: 22px !important; border-radius: 26px !important; background: var(--v-butter) !important; }
 #pdp-v4 .ayq .ayq-glance :is(h2, span, b, p, li) { color: var(--v-ink) !important; }
 #pdp-v4 .ayq .ayq-about, #pdp-v4 .ayq .ayq-what { padding: 26px !important; border: 2px dashed rgba(var(--v-fg-rgb), .5) !important; border-radius: 30px !important; background: none !important; }
+@media (min-width: 1280px) {
+  #pdp-v4 .ayq .ayq-about:has(.ayq-prose):has(.ayq-who) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(210px, .8fr); gap: 16px 24px; }
+  #pdp-v4 .ayq .ayq-about:has(.ayq-prose):has(.ayq-who) > h2 { grid-column: 1 / -1; }
+  #pdp-v4 .ayq .ayq-about:has(.ayq-prose):has(.ayq-who) > .ayq-prose { grid-column: 1; grid-row: 2; }
+  #pdp-v4 .ayq .ayq-about:has(.ayq-prose):has(.ayq-who) > .ayq-who { grid-column: 2; grid-row: 2; margin-top: 0 !important; }
+}
 #pdp-v4 .ayq .ayq-checks > li { border-radius: 22px !important; background: rgba(var(--v-fg-rgb), .07) !important; }
 #pdp-v4 .ayq .ayq-checks > li:nth-child(3n + 2) .ayq-checks__n { background: var(--v-pink) !important; color: var(--v-ink) !important; }
 #pdp-v4 .ayq .ayq-checks > li:nth-child(3n) .ayq-checks__n { background: var(--v-sky) !important; color: var(--v-deep) !important; }
