@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import CharRing from './ui/CharRing.jsx';
 import { isOverLimit } from '../utils/charLimit.js';
 import { FEEDBACK_CAMPAIGN, markSurveySeen, surveySeenRecently, setFeedbackOwner, readPurchaseQueue, writePurchaseQueue, updatePurchase, readyPurchase, removePurchase, sendFeedback } from '../utils/feedbackClient';
+import './feedbackPrompts.css';
 
 const REFERRALS = ['TikTok', 'Instagram', 'LinkedIn', 'Google / search', 'Friend / word of mouth', 'Event / conference', 'Brand / partner', 'Other'];
 const PURCHASE_PROMPTS_ON = false;
@@ -148,5 +150,6 @@ export default function FeedbackPrompts({ user, authLoading, currentView, safeVi
     else if (prompt?.kind === 'survey' && user?.id) markSurveySeen(user.id);
     setPrompt(null); active.current = false;
   };
-  return prompt ? <FeedbackDialog key={prompt.receipt} prompt={prompt} onClose={close} /> : null;
+  // Keep the fixed backdrop centered even when an ancestor of the app is transformed.
+  return prompt ? createPortal(<FeedbackDialog key={prompt.receipt} prompt={prompt} onClose={close} />, document.body) : null;
 }
