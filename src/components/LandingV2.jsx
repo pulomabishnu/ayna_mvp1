@@ -17,6 +17,7 @@ import '../styles/editorial.css';
 import '../styles/home.css';
 import { Seal, Ribbon } from './personality/Bits.jsx';
 import Photo from './ui/Photo.jsx';
+import { HOME_SEARCH_HINTS } from './shop/homeSearchHints.js';
 import { edgeFadeRef } from '../utils/edgeFade';
 
 /* The website home (v2, Oct 21). Styles: src/styles/home.css (hm-*).
@@ -38,7 +39,7 @@ import { edgeFadeRef } from '../utils/edgeFade';
  * hover, focus, the footer's Pause motion and reduced motion. */
 
 // Plain words first (5-second test, P2-4): what people actually type.
-const SEARCH_HINTS = ['bad cramps', 'heavy flow overnight', 'organic pads', 'UTI burning', 'vaginal dryness', 'pelvic floor', 'night sweats', 'leaking when I sneeze', 'sleep and stress', 'menopause', 'itchy down there', 'hormonal acne', 'trying to conceive', 'PMOS support', 'postpartum pads'];
+const SEARCH_HINTS = HOME_SEARCH_HINTS; // tested against the real search (suggestionChips.test.js)
 const NEEDS_PHOTO = (p) => !/tampon tribe|herau|r[eè]sa/i.test(`${p?.brand || ''} ${p?.name || ''}`);
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
