@@ -1,0 +1,62 @@
+/* Library cover (ReadCover.jsx). Sizes come from the cover's own width
+   (container units), so a 148px app cover and a 300px desktop cover are the
+   same drawing. Brand colours only; outlines 1.5px like every ayna card. */
+.rc {
+  --rc-field: #f7badd; --rc-band: #769ebe; --rc-label: #ffedac; --rc-ink: #3e2723; --rc-line: #3e2723;
+  container-type: inline-size;
+  position: relative; display: block; width: 100%; aspect-ratio: 4 / 5; overflow: hidden; isolation: isolate;
+  border-radius: 18px;
+  background: var(--rc-field); color: var(--rc-ink);
+  font-family: 'Figtree', system-ui, sans-serif; text-align: left;
+}
+.rc::after { content: ''; position: absolute; inset: 0; z-index: 3; border-radius: inherit; border: 1.5px solid var(--rc-line); box-sizing: border-box; pointer-events: none; }
+.rc.rc--hormonal { --rc-field: #769ebe; --rc-band: #f7badd; }
+.rc.rc--pelvic { --rc-field: #3e2723; --rc-band: #f7badd; --rc-ink: #ffedac; }
+.rc.rc--vaginal { --rc-field: #ffedac; --rc-band: #769ebe; --rc-label: #f7badd; }
+.rc.rc--postpartum { --rc-field: #f7badd; --rc-band: #ffedac; }
+.app-container[data-theme='brand-dark'] .rc, .ayna-mobile[data-theme='dark'] .rc { --rc-line: #ffedac; }
+
+/* Band across the top with an even scalloped edge: 8 whole bumps, each a
+   true half circle (radius = half the period). */
+.rc__band {
+  --p: calc(100cqi / 8); --r: calc(var(--p) / 2);
+  position: absolute; inset: 0 0 auto; height: 22cqi; z-index: 0;
+  background:
+    radial-gradient(circle at 50% 0, var(--rc-band) calc(var(--r) - .6px), transparent var(--r)) 0 100% / var(--p) var(--r) repeat-x,
+    linear-gradient(var(--rc-band), var(--rc-band)) 0 0 / 100% calc(100% - var(--r) + .5px) no-repeat;
+}
+.rc__photo { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.rc__spot {
+  position: absolute; right: 7cqi; bottom: 6cqi; z-index: 1; width: 22cqi; height: 22cqi;
+  fill: none; stroke: var(--rc-ink); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round;
+}
+.rc__label {
+  position: absolute; left: 7cqi; right: 7cqi; top: 33cqi; z-index: 1;
+  display: grid; justify-items: start; gap: 4cqi; padding: 6cqi 6cqi 7cqi;
+  border-radius: 6cqi; background: var(--rc-label); color: #3e2723;
+  border: 1.5px solid #3e2723; box-sizing: border-box;
+}
+.rc__pill {
+  display: inline-block; padding: 1.4cqi 3.4cqi; border-radius: 99px;
+  background: var(--rc-band); color: #3e2723;
+  font: 600 clamp(12px, 4.4cqi, 14px)/1.15 'Figtree', system-ui, sans-serif; letter-spacing: 0; white-space: nowrap;
+}
+.rc--vaginal .rc__pill { background: #ffedac; }
+.rc--postpartum .rc__pill, .rc--photo .rc__pill { background: #f7badd; }
+.rc__word {
+  display: block; max-width: 100%;
+  font: 700 clamp(19px, 13.5cqi, 42px)/.96 'ayna Display', 'Bricolage Grotesque', sans-serif; letter-spacing: -.025em;
+  color: #3e2723; text-wrap: balance;
+}
+.rc--w2 .rc__word { font-size: clamp(17px, 11.5cqi, 36px); }
+.rc--w3 .rc__word { font-size: clamp(14px, 10cqi, 31px); }
+.rc__foot {
+  position: absolute; left: 7cqi; bottom: 6.5cqi; z-index: 1; display: inline-flex; align-items: center; gap: 2cqi;
+  font: 600 clamp(12px, 4.4cqi, 15px)/1 'Figtree', system-ui, sans-serif; color: var(--rc-ink);
+}
+.rc__mark { width: clamp(9px, 3.6cqi, 12px); height: auto; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linejoin: round; }
+.rc--photo .rc__foot { padding: 1.8cqi 3.4cqi; border-radius: 99px; background: #ffedac; color: #3e2723; border: 1.5px solid #3e2723; }
+.rc--photo .rc__label { top: auto; bottom: calc(6.5cqi + clamp(12px, 4.4cqi, 15px) + 3.6cqi + 4cqi); }
+
+/* Large cover (featured read in the app) */
+.rc--hero { border-radius: 22px; }
