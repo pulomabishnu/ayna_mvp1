@@ -17,7 +17,7 @@ import MatchPill from './MatchPill';
 import { matchLine, priceParts } from '../data/passport/content';
 import { buildGlance, categoryLabel, perUnitLabel } from './pdp/glance';
 import { heroPriceView } from './pdp/heroPrice';
-import HeroPrice from './pdp/HeroPrice';
+import HeroPrice from './pdp/HeroPrice.jsx';
 import { getPassport } from '../data/passport';
 import { ProductMatch, ProductAsk } from './passport/ProductSections';
 import { firstSentence } from './pdp/sentences';
