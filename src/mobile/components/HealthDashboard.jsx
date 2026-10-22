@@ -42,6 +42,15 @@ export default function HealthDashboard({ authUser, userName = '', selectedNeedI
       </div>
     );
   }
+  if (health.status === 'error' && !health.insightRows?.length) {
+    return (
+      <div className="ay-hd-empty" role="alert">
+        <h2>We couldn't load your health data</h2>
+        <p>Check your connection and try again. Your data has not changed.</p>
+        <button type="button" className="ay-qc-primary" onClick={() => health.refresh()}>Try again</button>
+      </div>
+    );
+  }
   const meta = authUser?.user_metadata || {};
   const name = String(userName || meta.first_name || meta.given_name || meta.name || meta.full_name || '').trim().split(/\s+/)[0];
   if (week.empty && !sections.length) {
