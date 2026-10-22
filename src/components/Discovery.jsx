@@ -26,7 +26,7 @@ import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
 import { recordSearch } from '../utils/recentActivity';
 import { availablePreferenceOptions, matchesProductPreference } from '../utils/productPreferences';
 import useRotatingPlaceholder from '../utils/useRotatingPlaceholder.js';
-import { ROTATING_EXAMPLES } from '../data/searchPhrases.research.js';
+import { SHOP_SEARCH_EXAMPLES } from './shop/searchExamples.js';
 import { getVerificationLinks } from '../utils/verificationLinks';
 import { hasFlaggedRecall } from '../utils/productSafetyAlert';
 import { RELEASED_STARTUPS } from '../data/startups';
@@ -52,21 +52,8 @@ import { isPlainLeftClick } from '../utils/productRoute';
 export { MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, resolveBrowseAiRoundQuery, getSortPrice, pickOnePerPartnerBrand };
 
 // Example searches for the Browse search box's placeholder: one is picked at random each time
-// Browse is opened or refreshed and then stays put. Grouped by care theme, in life-stage order,
-// for an 18+ audience.
-const SEARCH_PLACEHOLDER_THEMES = [
-    ['magnesium for period cramps', 'organic tampons for a heavy flow', 'period underwear for overnight leaks'],
-    ['non-hormonal vaginal moisturizers', 'lubricant for sensitive skin', 'pH-balanced intimate wash'],
-    ['prenatal vitamins with choline', 'pregnancy pillow for back pain', 'morning sickness relief'],
-    ['postpartum recovery kit', 'wearable breast pump for work', 'nipple balm for breastfeeding'],
-    ['pelvic floor trainer for leaks', 'bladder leak pads that stay dry', 'pelvic floor therapy app'],
-    ['best perimenopause telehealth provider', 'supplements for perimenopause sleep', 'perimenopause mood and anxiety support'],
-    ['hot flash relief without hormones', 'cooling products for night sweats', 'menopause telehealth clinics'],
-    ['postmenopausal bone health supplements', 'vaginal dryness after menopause', 'calcium and vitamin D for bone density'],
-    ['at-home hormone test', 'sleep support for hormonal changes', 'probiotics for bloating'],
-];
-// Everyday phrasings first (search research, Oct 17), then the themed examples.
-const SEARCH_PLACEHOLDER_EXAMPLES = [...ROTATING_EXAMPLES.filter((x) => !/poop/.test(x)), ...SEARCH_PLACEHOLDER_THEMES.flat()];
+// Browse is opened or refreshed and then stays put (shop/searchExamples.js, tested against the search).
+const SEARCH_PLACEHOLDER_EXAMPLES = SHOP_SEARCH_EXAMPLES;
 
 /** Natural-language phrase for the browse-AI extension's `query` param, prefers the
  * more specific active scope (a chosen sub-category) over the broader macro group, and
