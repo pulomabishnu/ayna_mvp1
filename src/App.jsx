@@ -610,6 +610,11 @@ function App() {
   // Stable insertion-order array of product IDs, prevents cards from reordering on swap/add
   const [ecosystemOrder, setEcosystemOrder] = useState([]);
   const [omittedProducts, setOmittedProducts] = useState({});
+  // Signed-out "Add to ecosystem" survives a refresh (focus group Oct 19): the
+  // guest shelf is mirrored to this browser and merged into the account at
+  // sign-in, then cleared. Best effort: storage can be blocked.
+  const GUEST_ECO_KEY = 'ayna_guest_ecosystem_v1';
+  const guestEcoRestoredRef = useRef(false);
   // Product page → Community: which composer to open and for which product.
   const [communitySeed, setCommunitySeed] = useState(null);
   useEffect(() => {
@@ -674,6 +679,24 @@ function App() {
   const seedSavePromiseRef = useRef(Promise.resolve());
   useEffect(() => { myProductsRef.current = myProducts; }, [myProducts]);
   const [authLoading, setAuthLoading] = useState(true);
+  useEffect(() => {
+    if (authLoading || user || guestEcoRestoredRef.current) return;
+    guestEcoRestoredRef.current = true;
+    try {
+      const saved = JSON.parse(localStorage.getItem(GUEST_ECO_KEY) || 'null');
+      if (saved && saved.myProducts && typeof saved.myProducts === 'object' && Object.keys(saved.myProducts).length) {
+        setMyProducts((prev) => ({ ...saved.myProducts, ...prev }));
+        setEcosystemOrder((prev) => [...(Array.isArray(saved.order) ? saved.order : Object.keys(saved.myProducts)).filter((id) => !prev.includes(id)), ...prev]);
+      }
+    } catch { /* storage blocked or bad JSON */ }
+  }, [authLoading, user]);
+  useEffect(() => {
+    if (authLoading || user || !guestEcoRestoredRef.current) return;
+    try {
+      if (Object.keys(myProducts).length) localStorage.setItem(GUEST_ECO_KEY, JSON.stringify({ myProducts, order: ecosystemOrder, at: Date.now() }));
+      else localStorage.removeItem(GUEST_ECO_KEY);
+    } catch { /* storage blocked or full */ }
+  }, [authLoading, user, myProducts, ecosystemOrder]);
   const [dataLoading, setDataLoading] = useState(false);
   // Bumped by the ecosystem skeleton's Retry button: re-runs the per-user data
   // load effect without touching any state that is already on screen.
@@ -1031,6 +1054,7 @@ function App() {
           // in flight is already persisted, and clobbering it here made her
           // change vanish from the UI a few seconds after she made it.
           setMyProducts(prev => (Object.keys(prev).length ? { ...visibleEcosystem.myProducts, ...prev } : visibleEcosystem.myProducts));
+          try { localStorage.removeItem(GUEST_ECO_KEY); } catch { /* ignore */ }
           setEcosystemOrder(prev => {
             const merged = Object.keys(visibleEcosystem.myProducts);
             const extra = prev.filter(id => !merged.includes(id));
