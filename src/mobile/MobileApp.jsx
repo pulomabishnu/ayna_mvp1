@@ -29,9 +29,15 @@ import { useHealthData, DEV_HEALTH_DEMO } from './hooks/useHealthData.js';
 import { useTextSize } from './hooks/useTextSize.js';
 import { useEcosystemSession } from './hooks/useEcosystemSession.js';
 import { recordRoutineOutcome } from '../health/routineOutcome.js';
+import { productNotesFromRoutine, readGuide, saveGuide } from './utils/aynaGuide.js';
+import { buildDashboard } from '../health/dashboard.js';
+import { explainWeek, usesHormonalBC } from '../health/weekInsights.js';
+import { weekSummary } from './utils/dashboardAsk.js';
+import { LIVE_ONLY_SOURCES } from '../health/metrics.js';
 import { useSupabaseAuth, MOBILE_OAUTH_PENDING_KEY } from './hooks/useSupabaseAuth.js';
 import { fetchNotificationPreferences } from './utils/notificationPreferencesApi.js';
 import { ECOSYSTEM_AREAS as AREA_LABELS } from './data/ecosystemAreas.js';
+import { SOURCE_NAMES } from './data/healthConnections.js';
 import { getNextArticle } from './utils/nextArticle.js';
 import { INTAKE_DRAFT_KEY, getIntakeSteps, isStepAnswered, reconstructIntakeFromSnapshot } from './data/intakeModel.js';
 import { clearIntakeDraft, readDraftProgress } from './data/quizDraftProgress.js';
@@ -351,6 +357,13 @@ export default function MobileApp() {
   const { user: realAuthUser, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
   // DEVELOPMENT ONLY: a stand-in signed-in user for the ?healthdemo=1 preview. Never in production.
   const authUser = realAuthUser || (DEV_HEALTH_DEMO ? DEV_DEMO_USER : null);
+  const [guideState, setGuideState] = useState({ userId: null, value: null });
+  const guide = useMemo(() => guideState.userId === authUser?.id && guideState.value ? guideState.value : readGuide(authUser?.id), [guideState, authUser?.id]);
+  const updateGuide = (next) => {
+    if (!authUser?.id) return;
+    setGuideState({ userId: authUser.id, value: next });
+    saveGuide(authUser.id, next);
+  };
   const [loadedAccountId, setLoadedAccountId] = useState(null);
   useEffect(() => {
     if (authLoading || !authUser || screen !== 'landing') return;
@@ -652,6 +665,18 @@ export default function MobileApp() {
     try { return effectiveQuizAnswers ? getSelectedNeeds(effectiveQuizAnswers).map((n) => n.id) : []; } catch { return []; }
   }, [effectiveQuizAnswers]);
   const health = useHealthData(authUser?.id || null, selectedNeedIds);
+  const guideRecap = useMemo(() => {
+    if (!authUser?.id || !personalizeWithData) return '';
+    const sections = health.insights?.sections || [];
+    const ready = sections.filter((section) => section.status === 'ready');
+    const today = new Date().toLocaleDateString('en-CA');
+    const week = buildDashboard(health.insightRows || [], { days: 30, today });
+    const estimate = sections.find((section) => section.id === 'cycle')?.estimate || null;
+    const explained = explainWeek(health.insightRows || [], { today, cycle: week.cycle?.cycleDay ? week.cycle : null, estimate, hormonalBC: usesHormonalBC(effectiveQuizAnswers), max: 2 });
+    return explained.insights.length ? explained.insights.map((insight) => insight.text).join(' ') : weekSummary(ready) || '';
+  }, [authUser?.id, personalizeWithData, health.insights, health.insightRows, effectiveQuizAnswers]);
+  const guideSources = personalizeWithData ? [...new Set((health.insights?.sections || []).filter((section) => section.status === 'ready').flatMap((section) => section.sources || []))].map((source) => SOURCE_NAMES[source] || source).join(', ') : '';
+  const guideRecapExportable = !(health.insights?.sections || []).some((section) => section.status === 'ready' && (section.sources || []).some((source) => LIVE_ONLY_SOURCES.includes(source)));
   // Her own switch for health data in matches (Preferences and Health data), shared with the website.
   const healthInMatches = useHealthMatchPref(authUser?.id || null).on;
   const healthDataOn = personalizeWithData && healthInMatches;
@@ -1399,6 +1424,13 @@ export default function MobileApp() {
         seed={askSeed}
         enabled={!!authUser || !!(import.meta.env.DEV && new URLSearchParams(window.location.search).get('ask'))}
         profile={effectiveQuizAnswers}
+        guide={guide}
+        onGuideChange={updateGuide}
+        recap={guideRecap}
+        recapSources={guideSources}
+        recapExportable={guideRecapExportable}
+        productNotes={productNotesFromRoutine(myProducts, authUser?.id ? session.routineOutcomesByUser?.[authUser.id] || {} : {})}
+        allowGuideContext={personalizeWithData}
         onProfileUpdate={(answers) => updateSession({ lastQuizAnswers: answers })}
         chatHistory={askAynaHistory}
         onChatHistoryUpdate={setAskAynaHistory}

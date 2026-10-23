@@ -15,7 +15,8 @@ import { stripDiagnosticLanguage } from './_llm.js';
 export const MAX_FOLLOW_UPS = 4;
 export const MAX_ASK_TEXT = 60;
 export const MAX_LABEL = 36;
-export const FOLLOW_UP_TYPES = ['open_product', 'browse', 'ask', 'open_dashboard', 'open_library'];
+export const FOLLOW_UP_TYPES = ['open_product', 'browse', 'ask', 'open_dashboard', 'open_library', 'open_guide'];
+const GUIDE_LABELS = { recap: 'See my week', memory: 'Manage memory', trial: 'Try & check back', report: 'Prepare an appointment note' };
 
 const CATALOG_BY_ID = new Map(ALL_PRODUCTS.filter((p) => p?.id && p?.name).map((p) => [String(p.id), p]));
 export const BROWSE_CATEGORIES = new Set(ALL_PRODUCTS.map((p) => p?.category).filter(Boolean));
@@ -103,6 +104,7 @@ export function followUpPromptContext(ctx) {
  *   { type: 'ask', text, label }
  *   { type: 'open_dashboard', label }
  *   { type: 'open_library', articleId, label }
+ *   { type: 'open_guide', page, label }
  */
 export function validateFollowUps(raw, ctx) {
   if (!Array.isArray(raw) || !ctx) return [];
@@ -153,6 +155,10 @@ export function validateFollowUps(raw, ctx) {
       const title = ctx.articles.get(id);
       if (!title) continue;
       push({ type: 'open_library', articleId: id, label: shorten(`Read ${readTitleSentenceCase(title)}`, MAX_LABEL) }, `l:${id}`);
+    } else if (f.type === 'open_guide') {
+      const page = typeof f.page === 'string' ? f.page : '';
+      if (!Object.hasOwn(GUIDE_LABELS, page)) continue;
+      push({ type: 'open_guide', page, label: GUIDE_LABELS[page] }, `g:${page}`);
     }
   }
   return out;

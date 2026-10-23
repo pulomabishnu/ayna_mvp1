@@ -8,7 +8,7 @@ import posthog from 'posthog-js';
  */
 
 export const ASK_ELSE = { type: 'ask_else', label: 'Ask something else' };
-const KNOWN = new Set(['open_product', 'browse', 'ask', 'open_dashboard', 'open_library']);
+const KNOWN = new Set(['open_product', 'browse', 'ask', 'open_dashboard', 'open_library', 'open_guide']);
 
 // "SootheHer's Elaris Pod" -> "Elaris Pod", so a chip reads "Open Elaris Pod".
 function shortName(p) {
@@ -36,10 +36,11 @@ export function followUpRequestFields({ products = [], reads = [], hasHealthData
  * Server follow-ups this screen can act on, plus the closing "Ask something
  * else". canOpen(f) lets a screen drop a product or read it can't resolve.
  */
-export function chipsFor(followUps, { canOpen = () => true, hasDashboard = true } = {}) {
+export function chipsFor(followUps, { canOpen = () => true, hasDashboard = true, hasGuide = false } = {}) {
   const out = (Array.isArray(followUps) ? followUps : [])
     .filter((f) => f && KNOWN.has(f.type) && typeof f.label === 'string' && f.label.trim())
     .filter((f) => (f.type === 'open_dashboard' ? hasDashboard : true))
+    .filter((f) => (f.type === 'open_guide' ? hasGuide : true))
     .filter((f) => (f.type === 'open_product' || f.type === 'open_library' ? canOpen(f) : true))
     .slice(0, 4);
   return [...out, ASK_ELSE];

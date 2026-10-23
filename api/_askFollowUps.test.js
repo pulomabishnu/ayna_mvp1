@@ -81,6 +81,14 @@ describe('validateFollowUps', () => {
     expect(validateFollowUps([{ type: 'open_dashboard' }], ctx({ hasHealthData: false, screenContext: 'Cycle: day 1.' }))).toHaveLength(1);
   });
 
+  it('accepts only known personal guide destinations with fixed labels', () => {
+    expect(validateFollowUps([
+      { type: 'open_guide', page: 'trial', label: 'Buy this now' },
+      { type: 'open_guide', page: 'trial' },
+      { type: 'open_guide', page: 'billing' },
+    ], ctx())).toEqual([{ type: 'open_guide', page: 'trial', label: 'Try & check back' }]);
+  });
+
   it('tells the model which ids exist', () => {
     const text = followUpPromptContext(ctx());
     expect(text).toContain('p-sootheher-elaris-pod | Elaris Pod');

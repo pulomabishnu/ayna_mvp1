@@ -13,6 +13,8 @@ import { useSheetDrag } from '../hooks/useSheetDrag.js';
 import AskHome, { AskStatCard } from '../../components/AskHome.jsx';
 import { recentQuestions } from '../../utils/askRecent.js';
 import { mayAutoFocus } from '../../utils/delightRuntime.js';
+import { guideContext } from '../utils/aynaGuide.js';
+import AynaGuideHub from './AynaGuideHub.jsx';
 
 // Ask ayna's first screen: tiles fill the box so she can edit before asking.
 function askTiles(hasHealthData) {
@@ -81,6 +83,13 @@ export default function AskAynaModal({
   open,
   enabled = true,
   profile,
+  guide = { memories: [], trials: [], shareWithAsk: false },
+  onGuideChange,
+  recap = '',
+  recapSources = '',
+  recapExportable = true,
+  productNotes = [],
+  allowGuideContext = false,
   onProfileUpdate,
   chatHistory = [],
   onChatHistoryUpdate,
@@ -116,6 +125,7 @@ export default function AskAynaModal({
   const [screenContext, setScreenContext] = useState('');
   // Home (tiles + recent questions) until she asks something.
   const [home, setHome] = useState(true);
+  const [guidePage, setGuidePage] = useState('');
   // Back on the home view: start at the top, not where the chat was scrolled.
   useEffect(() => { if (home) bottomRef.current?.parentElement?.scrollTo({ top: 0 }); }, [home]);
   const seedDone = useRef(null);
@@ -164,7 +174,7 @@ export default function AskAynaModal({
     if (!open || !seed || seedDone.current === seed.id || session === undefined || sending) return;
     seedDone.current = seed.id;
     setScreenContext(seed.context || '');
-    if (session?.access_token) send(seed.question, seed.context || '', Array.isArray(seed.stats) ? seed.stats : null);
+    if (session?.access_token) { setGuidePage(''); send(seed.question, seed.context || '', Array.isArray(seed.stats) ? seed.stats : null); }
     else setInput(seed.question);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, seed, session]);
@@ -198,7 +208,7 @@ export default function AskAynaModal({
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           message: msg,
-          profileSummary: summarizeProfile(profile || {}),
+          profileSummary: [summarizeProfile(profile || {}), allowGuideContext ? guideContext(guide) : ''].filter(Boolean).join('\n').slice(0, 2000),
           chatHistory: messages.slice(-6),
           ...(context ? { screenContext: context } : {}),
           ...followUpRequestFields({ products, reads, hasHealthData }),
@@ -213,13 +223,12 @@ export default function AskAynaModal({
 
       const merged = mergeProfileUpdate(profile || {}, data.profileUpdate || {});
       if (merged) {
-        onProfileUpdate?.(merged.profile);
         const parts = [];
         if (merged.added.frustrations.length) parts.push(`Concerns: ${merged.added.frustrations.join(', ')}`);
         if (merged.added.sensitivities.length) parts.push(`Sensitivities: ${merged.added.sensitivities.join(', ')}`);
         if (merged.added.productsToAvoid.length) parts.push(`Avoiding: ${merged.added.productsToAvoid.join(', ')}`);
         if (merged.added.preference) parts.push(`Priority: ${merged.added.preference}`);
-        newMessages.push({ role: 'system', text: `Updated your profile, ${parts.join(' · ')}.`, showViewRecommendations: true });
+        newMessages.push({ role: 'system', text: `Remember this in your profile? ${parts.join(' · ')}.`, pendingProfile: merged.profile });
       }
 
       // A browse suggestion is now a chip under the answer (she reads the
@@ -258,12 +267,22 @@ export default function AskAynaModal({
     if (f.type === 'open_product') { const p = resolveProduct?.(f.productId); if (p) onOpenProduct?.(p); return; }
     if (f.type === 'browse') { onBrowse?.(f.intent || {}); return; }
     if (f.type === 'open_dashboard') { onOpenDashboard?.(); return; }
+    if (f.type === 'open_guide' && ['recap', 'memory', 'trial', 'report'].includes(f.page)) { setGuidePage(f.page); return; }
     if (f.type === 'open_library') { const a = reads.find((r) => r.id === f.articleId); if (a) onOpenRead?.(a); }
   };
 
   const handleSend = (e) => {
     e.preventDefault();
     send(input.trim());
+  };
+
+  const decideProfile = (index, save) => {
+    const pending = messages[index]?.pendingProfile;
+    if (!pending) return;
+    if (save) onProfileUpdate?.(pending);
+    const next = messages.map((item, i) => i === index ? { role: 'system', text: save ? 'Added to your profile. You can edit it in Profile.' : 'Not saved.' } : item);
+    setMessages(next);
+    onChatHistoryUpdate?.(next);
   };
 
   if (!enabled || (!open && !hasOpened)) return null;
@@ -295,7 +314,7 @@ export default function AskAynaModal({
           borderBottom: '1px solid var(--ayna-border)',
         }}
       >
-        {!home && (
+        {!home && !guidePage && (
           <button type="button" className="ay-askh-homebtn" aria-label="Back to Ask ayna home" onClick={() => setHome(true)}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
           </button>
@@ -307,7 +326,14 @@ export default function AskAynaModal({
       </div>
 
       <div className={home && !sending ? 'ay-askh-scroll' : undefined} style={{ flex: 1, overflowY: 'auto', padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {home && !sending && (
+        {guidePage ? <AynaGuideHub page={guidePage} guide={guide} onChange={onGuideChange} recap={recap} recapSources={recapSources} recapExportable={recapExportable} productNotes={productNotes} profile={summarizeProfile(profile || {})} onAsk={recapExportable ? (question) => { setGuidePage(''); send(question, recap); } : null} onBack={() => setGuidePage('')} /> : null}
+        {home && !sending && !guidePage && (<>
+          <div className="ay-guide-launches" aria-label="Your personal guide">
+            <button type="button" onClick={() => setGuidePage('recap')}>Your week<span>What changed for you</span></button>
+            <button type="button" onClick={() => setGuidePage('memory')}>Memory<span>What ayna can remember</span></button>
+            <button type="button" onClick={() => setGuidePage('trial')}>Try & check back<span>See how it felt later</span></button>
+            <button type="button" onClick={() => setGuidePage('report')}>Appointment note<span>Review before sharing</span></button>
+          </div>
           <AskHome
             name={name ? String(name).split(' ')[0] : ''}
             intro="Ask about a product, your week, or what to try. Not medical advice."
@@ -316,8 +342,8 @@ export default function AskAynaModal({
             onPick={(q) => { setInput(q); inputRef.current?.focus({ preventScroll: true }); }}
             onContinue={messages.some((m) => m.role === 'user') ? () => setHome(false) : null}
           />
-        )}
-        {!(home && !sending) && messages.map((m, i) => (
+        </>)}
+        {!guidePage && !(home && !sending) && messages.map((m, i) => (
           <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
             {m.role === 'assistant' && <AskStatCard stats={m.stats} />}
             <div
@@ -335,6 +361,7 @@ export default function AskAynaModal({
             >
               {m.role === 'assistant' ? renderMarkdownLite(m.text) : m.text}
             </div>
+            {m.pendingProfile && <div className="ay-guide-actions" style={{ marginTop: 6 }}><button type="button" onClick={() => decideProfile(i, true)}>Remember</button><button type="button" onClick={() => decideProfile(i, false)}>Not now</button></div>}
             {m.role === 'assistant' && questionForAnswer(messages, i) && (
               <ShareAnswerButton
                 question={questionForAnswer(messages, i)}
@@ -354,6 +381,7 @@ export default function AskAynaModal({
               <AskFollowUps
                 chips={chipsFor(m.followUps, {
                   hasDashboard: !!onOpenDashboard,
+                  hasGuide: true,
                   canOpen: (f) => (f.type === 'open_product' ? !!(onOpenProduct && resolveProduct?.(f.productId)) : !!(onOpenRead && reads.some((r) => r.id === f.articleId))),
                 })}
                 disabled={sending}
@@ -380,7 +408,7 @@ export default function AskAynaModal({
             )}
           </div>
         ))}
-        {sending && <div className="ay-typing" role="status" aria-label="Looking into it"><i /><i /><i /></div>}
+        {sending && !guidePage && <div className="ay-typing" role="status" aria-label="Looking into it"><i /><i /><i /></div>}
         <div ref={bottomRef} />
       </div>
 
@@ -391,7 +419,7 @@ export default function AskAynaModal({
         </div>
       )}
 
-      <form
+      {!guidePage && <form
         onSubmit={handleSend}
         style={{
           display: 'flex',
@@ -438,7 +466,7 @@ export default function AskAynaModal({
         >
           Ask
         </button>
-      </form>
+      </form>}
       </div>
     </div>
   );

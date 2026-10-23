@@ -6,6 +6,7 @@ const ICON = {
   browse: '→',
   open_dashboard: '→',
   open_library: '→',
+  open_guide: '→',
   ask: '↗',
   ask_else: '+',
 };
