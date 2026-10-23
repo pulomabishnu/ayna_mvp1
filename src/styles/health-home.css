@@ -68,6 +68,11 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero-ring .ay-hd-ring-tick.is-past { fill: var(--x-on-2); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero-ring .ay-hd-ring-today { fill: var(--x-on); stroke: var(--x-feature); stroke-width: 3; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tabs.is-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+@media (max-width: 599px) {
+  :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tabs.is-chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 4px 0 !important; }
+  :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tabs.is-chips::-webkit-scrollbar { display: none; }
+  :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tabs.is-chips button { flex: none; }
+}
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tabs.is-chips button { min-height: 36px; margin: 0 !important; padding: 0 14px !important; border: 1.5px solid var(--x-on-hair) !important; border-radius: 999px !important; background: transparent !important; box-shadow: none !important; color: var(--x-on) !important; font: 600 14px/1 var(--x-sans) !important; cursor: pointer; transition: background-color var(--t-fast) var(--ease-in-out), color var(--t-fast) var(--ease-in-out), border-color var(--t-fast) var(--ease-in-out); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tabs.is-chips button.is-on { background: var(--hh-pink) !important; border-color: var(--hh-pink) !important; color: var(--hh-espresso) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tabs.is-chips button:focus-visible { outline-color: var(--x-on) !important; }

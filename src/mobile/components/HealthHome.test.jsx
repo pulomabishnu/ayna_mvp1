@@ -34,6 +34,7 @@ describe('health dashboard action flow', () => {
     expect(host.textContent).toContain('What you can do');
     expect(host.textContent).toContain('Your usual');
     expect(host.textContent).toContain('Your data came from');
+    expect(host.querySelector('a[href="https://www.cdc.gov/heart-disease/about/sleep-and-heart-health.html"]')).toBeTruthy();
 
     act(() => [...host.querySelectorAll('button')].find((button) => button.textContent.includes('Back to your dashboard')).click());
     expect(host.textContent).toContain('Your routine and shopping list');

@@ -120,6 +120,13 @@ const INSIGHT_ACTIONS = {
   'temp-rise': ['Review the temperature readings behind this pattern.', 'Keep logging your cycle and temperature to add context to future changes.'],
   'period-soon': ['Check the estimate against your own period logs.', 'Review your period products and routine before the expected date.'],
 };
+const INSIGHT_READING = {
+  'sleep-short': { label: 'CDC: Sleep and heart health', url: 'https://www.cdc.gov/heart-disease/about/sleep-and-heart-health.html' },
+  'sleep-long': { label: 'CDC: Sleep and heart health', url: 'https://www.cdc.gov/heart-disease/about/sleep-and-heart-health.html' },
+  'heart-up': { label: 'American Heart Association: All about heart rate', url: 'https://www.heart.org/en/health-topics/high-blood-pressure/the-facts-about-high-blood-pressure/all-about-heart-rate-pulse' },
+  'heart-down': { label: 'American Heart Association: All about heart rate', url: 'https://www.heart.org/en/health-topics/high-blood-pressure/the-facts-about-high-blood-pressure/all-about-heart-rate-pulse' },
+  'steps-lower': { label: 'CDC: Benefits of physical activity', url: 'https://www.cdc.gov/physical-activity-basics/health-benefits/adults.html' },
+};
 
 /** The most actionable change leads; the cycle remains available below. */
 function Hero({ cycle, ctx, insights, fallback, onOpenInsight }) {
@@ -165,6 +172,7 @@ function Hero({ cycle, ctx, insights, fallback, onOpenInsight }) {
 
 function InsightDetail({ insight, chart, pick, onBack, onOpenMetric, onOpenProduct, onOpenRoutine, onAsk }) {
   const actions = INSIGHT_ACTIONS[insight.signal] || ['Review the readings behind this change.', 'Keep tracking to see how the pattern develops.'];
+  const reading = [...(insight.sources || []), ...(INSIGHT_READING[insight.signal] ? [INSIGHT_READING[insight.signal]] : [])].filter((source, index, all) => all.findIndex((candidate) => candidate.url === source.url) === index);
   return (
     <article className="ay-hh-action" aria-labelledby="ay-hh-action-title">
       <button type="button" className="ay-hh-action-back" onClick={onBack}>← Back to your dashboard</button>
@@ -187,7 +195,7 @@ function InsightDetail({ insight, chart, pick, onBack, onOpenMetric, onOpenProdu
           {onAsk && insight.question && <button type="button" className="ay-hh-action-ask" onClick={() => onAsk(insight.question)}>Ask ayna about this</button>}
         </section>
       </div>
-      {insight.sources?.length > 0 && <div className="ay-hh-action-reading"><h4>Read the research</h4><ul>{insight.sources.map((src) => <li key={src.url}><SourceLink source={src} /></li>)}</ul></div>}
+      {reading.length > 0 && <div className="ay-hh-action-reading"><h4>Read more</h4><ul>{reading.map((src) => <li key={src.url}><SourceLink source={src} /></li>)}</ul></div>}
       <p className="ay-hh-note">This is a pattern in your data, not a diagnosis. If a change concerns you, talk to a clinician.</p>
     </article>
   );
@@ -231,8 +239,8 @@ function Adds({ items }) {
   return (
     <section className="ay-hh-adds" aria-labelledby="ay-hh-adds-title">
       <div className="ay-hh-adds-head">
-        <h3 id="ay-hh-adds-title">What ayna adds to Apple Health</h3>
-        <p>Apple Health stores the numbers. ayna reads them against your cycle and tells you which of your products fit this week.</p>
+        <h3 id="ay-hh-adds-title">What ayna adds to your data</h3>
+        <p>Your connected apps provide the numbers. ayna reads them against your cycle and shows which products fit this week.</p>
       </div>
       <ul>
         {items.map((x) => <li key={x.id}><b>{x.label}</b><span>{x.text}</span></li>)}
@@ -367,7 +375,7 @@ export default function HealthHome({
   const insights = explained.insights.slice().sort((a, b) => (INSIGHT_PRIORITY[a.signal] ?? 9) - (INSIGHT_PRIORITY[b.signal] ?? 9));
   const ctx = explained.ctx;
   const picks = weekPicks({ ctx, insights, needIds, products, matches });
-  const coming = comingUp(cycle, estimate, today, { hormonalBC, hasProducts: products.length > 0 });
+  const coming = comingUp(cycle, estimate, today, { hormonalBC, hasProducts: products.length > 0 && Boolean(onOpenRoutine) });
   const compare = phaseCompare(rows, { today, cycle, hormonalBC });
   const ranges = normalRanges(rows, { today, hormonalBC });
   const goals = goalsCovered({ needIds, products, matches });
