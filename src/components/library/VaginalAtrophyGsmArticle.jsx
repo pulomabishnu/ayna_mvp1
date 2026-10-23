@@ -53,8 +53,6 @@ export default function VaginalAtrophyGsmArticle({ onBack, nextArticle, onOpenNe
 
         <section style={{ display: "grid", gap: "22px", maxWidth: "900px" }}>
           <h1 style={{ margin: "0", font: "400 clamp(38px,5.2vw,68px)/1.04 'ayna Display',Georgia,serif", letterSpacing: "-.01em", textWrap: "balance" }}>What is vaginal atrophy / <em style={{ color: "var(--g-pink)" }}>genitourinary syndrome of menopause (GSM)?</em></h1>
-          <p style={{ margin: "0", font: "400 clamp(19px,1.8vw,23px)/1.5 'Figtree'", maxWidth: "56ch", textWrap: "pretty" }}>A common, highly treatable group of genital and urinary symptoms that can show up when estrogen levels drop.</p>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", font: "600 14px/1 'Figtree'" }}><span style={{ padding: "6px 11px", borderRadius: "99px", background: "#f7badd", color: "#3e2723", fontWeight: "700" }}>BUNI × ayna</span>Medical article</div>
           {credits}
         </section>
 
