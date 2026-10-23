@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { explainWeek, heartInsight, sleepInsight, stepsInsight, tempInsight, periodInsight, findTempRise, cycleContext, cycleLine, usesHormonalBC, EVIDENCE } from './weekInsights.js';
+import { explainWeek, heartInsight, sleepInsight, stepsInsight, cycleLengthInsight, tempInsight, periodInsight, findTempRise, cycleContext, cycleLine, usesHormonalBC, EVIDENCE } from './weekInsights.js';
 import { weekPicks, weekNeeds, fitFor } from './weekPicks.js';
 import { comingUp } from './comingUp.js';
 import { resolveDaily } from './dedupe.js';
@@ -176,6 +176,20 @@ describe('activity change', () => {
   it('does not flag a normal week or thin history', () => {
     expect(stepsInsight(res(rowsOf('steps', 35, (i) => (i < 7 ? 7600 : 8000))), TODAY)).toBeNull();
     expect(stepsInsight(res(rowsOf('steps', 12, (i) => (i < 7 ? 4000 : 8000))), TODAY)).toBeNull();
+  });
+});
+
+describe('cycle length change', () => {
+  it('compares a shorter completed cycle only with her own recent cycles', () => {
+    const insight = cycleLengthInsight({ lengths: [28, 29, 27, 21].map((days) => ({ days })), sources: ['apple_health'] });
+    expect(insight.signal).toBe('cycle-shorter');
+    expect(insight.text).toContain('21 days');
+    expect(insight.text).toContain('previous three-cycle average');
+    expect(insight.sources).toEqual([EVIDENCE.cycle]);
+  });
+  it('waits for enough history and ignores small differences', () => {
+    expect(cycleLengthInsight({ lengths: [28, 27, 22].map((days) => ({ days })) })).toBeNull();
+    expect(cycleLengthInsight({ lengths: [28, 29, 27, 26].map((days) => ({ days })) })).toBeNull();
   });
 });
 

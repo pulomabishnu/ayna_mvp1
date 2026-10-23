@@ -53,7 +53,8 @@ function loadLayout() {
 function saveLayout(v) { try { localStorage.setItem(LAYOUT_KEY, JSON.stringify(v)); } catch { /* storage blocked: lasts this visit */ } }
 
 const SUGGEST_LABEL = { 'sleep.trouble': 'sleep', 'cycle.irregular': 'irregular cycles', 'energy.fatigue': 'low energy' };
-const INSIGHT_KEY = { heart: 'Heart', sleep: 'Sleep', activity: 'Activity', temperature: 'Temperature', period: 'Cycle' };
+const INSIGHT_KEY = { heart: 'Heart', sleep: 'Sleep', activity: 'Activity', temperature: 'Temperature', period: 'Cycle', cycle_length: 'Cycle' };
+const INSIGHT_TAB_LABEL = { cycle_length: 'Cycle length', period: 'Period' };
 const TILE_TONES = ['sky', 'butter', 'group', 'group', 'group'];
 const RING_TONES = ['pink', 'sky', 'ink', 'butter'];
 
@@ -109,14 +110,15 @@ function Tabs({ tabs, value, onChange, label, idBase, className = '' }) {
   );
 }
 
-const INSIGHT_PRIORITY = { 'sleep-short': 0, 'heart-up': 1, 'steps-lower': 2, 'period-soon': 3, 'temp-rise': 4, 'heart-down': 5, 'sleep-long': 6 };
-const INSIGHT_TITLES = { 'sleep-short': 'Your sleep changed', 'heart-up': 'Your heart trend changed', 'steps-lower': 'Your steps changed', 'period-soon': 'Your period may be close', 'temp-rise': 'Your temperature changed', 'heart-down': 'Your heart trend changed', 'sleep-long': 'Your sleep changed' };
+const INSIGHT_PRIORITY = { 'sleep-short': 0, 'cycle-shorter': 1, 'heart-up': 2, 'steps-lower': 3, 'period-soon': 4, 'temp-rise': 5, 'heart-down': 6, 'sleep-long': 7 };
+const INSIGHT_TITLES = { 'sleep-short': 'Your sleep changed', 'cycle-shorter': 'Your last cycle was shorter', 'heart-up': 'Your heart trend changed', 'steps-lower': 'Your steps changed', 'period-soon': 'Your period may be close', 'temp-rise': 'Your temperature changed', 'heart-down': 'Your heart trend changed', 'sleep-long': 'Your sleep changed' };
 const INSIGHT_ACTIONS = {
   'sleep-short': ['Look at your recent nights alongside your usual sleep.', 'If this matters to you, choose a sleep goal or review a product matched to that goal.'],
   'sleep-long': ['Look at your recent nights alongside your usual sleep.', 'Keep tracking to see whether this is a short-lived change.'],
   'heart-up': ['Review the heart readings and the dates behind this change.', 'Consider whether a change in your routine happened around the same time.'],
   'heart-down': ['Review the heart readings and the dates behind this change.', 'Keep tracking to see whether this pattern continues.'],
   'steps-lower': ['Compare the last week with your usual activity.', 'Think about whether your schedule, energy, or routine changed on those days.'],
+  'cycle-shorter': ['Review the period start dates behind this comparison.', 'Keep logging future cycles. If the change continues or worries you, ask a clinician about it.'],
   'temp-rise': ['Review the temperature readings behind this pattern.', 'Keep logging your cycle and temperature to add context to future changes.'],
   'period-soon': ['Check the estimate against your own period logs.', 'Review your period products and routine before the expected date.'],
 };
@@ -156,7 +158,7 @@ function Hero({ cycle, ctx, insights, fallback, onOpenInsight }) {
       {insights.length > 0 && (
         <>
           {insights.length > 1 && (
-            <Tabs tabs={insights.map((x, i) => ({ id: String(i), label: INSIGHT_KEY[x.id] || x.id }))} value={String(Math.min(at, insights.length - 1))} onChange={(v) => setAt(Number(v))} label="This week's changes" idBase="ay-hh-ins" className="is-chips" />
+            <Tabs tabs={insights.map((x, i) => ({ id: String(i), label: INSIGHT_TAB_LABEL[x.id] || INSIGHT_KEY[x.id] || x.id }))} value={String(Math.min(at, insights.length - 1))} onChange={(v) => setAt(Number(v))} label="This week's changes" idBase="ay-hh-ins" className="is-chips" />
           )}
           <div className="ay-hh-insight" role={insights.length > 1 ? 'tabpanel' : undefined} id="ay-hh-ins-panel" aria-labelledby={insights.length > 1 ? `ay-hh-ins-tab-${Math.min(at, insights.length - 1)}` : undefined} key={it.id}>
             {insights.length === 1 && <b className="ay-hh-k">{INSIGHT_KEY[it.id] || it.id}</b>}
@@ -371,7 +373,7 @@ export default function HealthHome({
   const sources = [...new Set(sections.flatMap((s) => s.sources || []))];
   const phase = cycle ? estimatePhase(cycle) : null;
 
-  const explained = explainWeek(rows, { today, cycle, estimate, hormonalBC, max: 6 });
+  const explained = explainWeek(rows, { today, cycle, estimate, hormonalBC, max: 7 });
   const insights = explained.insights.slice().sort((a, b) => (INSIGHT_PRIORITY[a.signal] ?? 9) - (INSIGHT_PRIORITY[b.signal] ?? 9));
   const ctx = explained.ctx;
   const picks = weekPicks({ ctx, insights, needIds, products, matches });
@@ -618,7 +620,12 @@ export default function HealthHome({
   );
 
   const selectedInsight = insights.find((insight) => insight.id === activeInsight);
-  const selectedChart = selectedInsight && allCharts.find((chart) => chart.metric === selectedInsight.metric);
+  const selectedChart = selectedInsight && (allCharts.find((chart) => chart.metric === selectedInsight.metric)
+    || (selectedInsight.metric === 'cycle_length' && cycle?.lengths?.length >= 4 ? {
+      metric: 'cycle_length', week: cycle.lengths.at(-1).days,
+      usual: cycle.lengths.slice(-4, -1).reduce((total, item) => total + item.days, 0) / 3,
+      group: 'cycle',
+    } : null));
   const selectedPick = selectedInsight && pickForInsight(selectedInsight, picks);
 
   return (

@@ -46,6 +46,7 @@ export const EVIDENCE = {
   cramps: { label: 'MedlinePlus: Period pain', url: 'https://medlineplus.gov/periodpain.html' },
   // Luteal phase is fairly steady at 12 to 14 days (how phase.js estimates ovulation).
   luteal: { label: 'Cleveland Clinic: Luteal phase', url: 'https://my.clevelandclinic.org/health/body/24417-luteal-phase' },
+  cycle: { label: 'ACOG: Abnormal uterine bleeding', url: 'https://www.acog.org/womens-health/faqs/abnormal-uterine-bleeding' },
 };
 
 function windows(points, today) {
@@ -181,6 +182,23 @@ export function stepsInsight(resolved, today) {
   };
 }
 
+/** A completed cycle compared with at least three of her own prior cycles. */
+export function cycleLengthInsight(cycle) {
+  const lengths = cycle?.lengths || [];
+  if (lengths.length < 4) return null;
+  const latest = lengths[lengths.length - 1];
+  const prior = lengths.slice(-4, -1);
+  const usual = mean(prior.map((item) => item.days));
+  if (!usual || latest.days > usual - 5 || latest.days > usual * 0.85) return null;
+  return {
+    id: 'cycle_length', metric: 'cycle_length', signal: 'cycle-shorter',
+    text: `Your last completed cycle was ${latest.days} days, about ${Math.round(usual - latest.days)} days shorter than your previous three-cycle average. One shorter cycle does not tell us why it changed.`,
+    basis: `Your last completed cycle: ${latest.days} days. The three cycles before it averaged ${Math.round(usual)} days. This compares only your logged period start dates.`,
+    sources: [EVIDENCE.cycle], from: cycle.sources || [],
+    question: 'My last cycle was shorter than usual. What should I track?',
+  };
+}
+
 /* ------------------------------- Temperature ------------------------------- */
 const TEMP_METRICS = ['basal_temp_c', 'temp_deviation_c', 'skin_temp_night_c'];
 
@@ -263,6 +281,7 @@ export function explainWeek(rows, opts = {}) {
     sleepInsight(resolved, today, ctx),
     stepsInsight(resolved, today),
     tempInsight(resolved, today, ctx, { hormonalBC: opts.hormonalBC }),
+    cycleLengthInsight(opts.cycle),
     periodInsight(ctx, opts.estimate, opts.cycle),
   ].filter(Boolean);
   return { insights: all.slice(0, opts.max || 3), ctx };
