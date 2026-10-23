@@ -18,6 +18,23 @@ afterEach(() => {
 });
 
 describe('health dashboard action flow', () => {
+  it('shows the selected routine and a dated self-report on Today', () => {
+    const product = { id: 'heat-wrap', name: 'Heat wrap' };
+    const onOpenRoutine = vi.fn();
+    host = document.createElement('div');
+    document.body.append(host);
+    root = createRoot(host);
+    act(() => root.render(<HealthHome today={today} routineProducts={[product]} routineOutcomes={{ 'heat-wrap': [{ day: today, rating: 'helping' }] }} onOpenRoutine={onOpenRoutine} />));
+
+    expect(host.textContent).toContain('What fits in your routine');
+    expect(host.textContent).toContain('Heat wrap');
+    expect(host.textContent).toContain('You marked this product “helping”');
+    expect(host.textContent).toContain('not a measure of medical effectiveness');
+    expect(host.querySelector('[aria-label="Health areas"]')).toBeNull();
+    act(() => [...host.querySelectorAll('button')].find((button) => button.textContent.includes('View and edit your routine')).click());
+    expect(onOpenRoutine).toHaveBeenCalledOnce();
+  });
+
   it('opens a measured change, keeps its data and next steps together, and returns to the dashboard', () => {
     const rows = devDemoRows(today);
     const sections = buildInsights(rows, { today }).sections;

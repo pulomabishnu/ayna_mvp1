@@ -268,7 +268,7 @@ export default function EcosystemScreen({
 
     {careBlock}
 
-    <section className="eco-app-hero" aria-labelledby="ayna-cabinet-title">
+    <section className={`eco-app-hero${ecoTab === 'dashboard' && showTabs ? ' is-today' : ''}`} aria-labelledby="ayna-cabinet-title">
       <div className="eco-app-titlerow">
         <h1 id="ayna-cabinet-title" ref={titleRef}>Your ecosystem</h1>
       </div>
@@ -307,11 +307,11 @@ export default function EcosystemScreen({
 
     {showTabs && <div className="eco-seg" role="group" aria-label="Ecosystem view" data-on={ecoTab === 'dashboard' ? 'dashboard' : 'products'}>
       <span className="eco-seg__thumb" aria-hidden="true" />
-      {[['products', 'Products'], ['dashboard', 'Dashboard']].map(([id, label]) => <button key={id} type="button" aria-pressed={ecoTab === id} className={ecoTab === id ? 'is-on' : ''} onClick={() => onEcoTab(id)}>{label}</button>)}
+      {[['dashboard', 'Today'], ['products', 'Products']].map(([id, label]) => <button key={id} type="button" aria-pressed={ecoTab === id} className={ecoTab === id ? 'is-on' : ''} onClick={() => onEcoTab(id)}>{label}</button>)}
     </div>}
 
     {ecoTab === 'dashboard' && showTabs ? <div className="ay-eco-routine">
-      <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} hormonalBC={usesHormonalBC(quizAnswers)} products={myProducts} matches={suggestedEcosystemProducts} onOpenProduct={onOpenProduct} onConnect={onConnectHealth} onAddGoal={onAddGoal} onOpenRoutine={myProducts.length ? () => routineRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' }) : undefined} onSignIn={() => onRequireAuth?.('health data')} />
+      <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} hormonalBC={usesHormonalBC(quizAnswers)} products={myProducts} routineProducts={myProducts.filter((product) => !routineExcluded[product.id])} routineOutcomes={routineOutcomes} matches={suggestedEcosystemProducts} onOpenProduct={onOpenProduct} onConnect={onConnectHealth} onAddGoal={onAddGoal} onOpenRoutine={myProducts.length ? () => routineRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' }) : undefined} onSignIn={() => onRequireAuth?.('health data')} />
       {myProducts.length > 0 && <div ref={routineRef} className="ay-eco-plan" id="ay-eco-plan">
         <Routine products={myProducts} insights={healthInsights} needIds={goalIds} outcomes={routineOutcomes} onLogOutcome={onLogRoutineOutcome} onOpenProduct={onOpenProduct} budget={budgetMax(quizAnswers)} excluded={routineExcluded} onToggleExcluded={onToggleRoutineProduct} />
         <ShoppingList products={myProducts} insights={healthInsights} excluded={routineExcluded} have={routineHave} onToggleHave={onToggleHave} onOpenProduct={onOpenProduct} onSavePlaylist={onSavePlaylist} onOpenPlaylist={onOpenPlaylist} budget={budgetMax(quizAnswers)} onRequireAuth={onRequireAuth} />

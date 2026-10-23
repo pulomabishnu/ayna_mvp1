@@ -3,7 +3,6 @@ import { AskContext } from '../askContext.js';
 import { dashboardContext } from '../utils/dashboardAsk.js';
 import { buildDashboard } from '../../health/dashboard.js';
 import { localToday, useHealthData } from '../hooks/useHealthData.js';
-import { CycleRing } from './HealthChart.jsx';
 import { HealthStarter } from './HealthBento.jsx';
 import HealthHome, { HealthEmpty } from './HealthHome.jsx';
 import '../screens/profile/health-connections.css';
@@ -15,7 +14,7 @@ import '../screens/profile/health-connections.css';
  * Compared only with her own usual. Never a diagnosis.
  */
 
-export default function HealthDashboard({ authUser, userName = '', selectedNeedIds = [], hormonalBC = false, onConnect, onAddGoal, onOpenRoutine, onSignIn, products = [], matches = [], onOpenProduct }) {
+export default function HealthDashboard({ authUser, userName = '', selectedNeedIds = [], hormonalBC = false, onConnect, onAddGoal, onOpenRoutine, onSignIn, products = [], routineProducts = [], routineOutcomes = {}, matches = [], onOpenProduct }) {
   const openAsk = useContext(AskContext);
   const health = useHealthData(authUser?.id || null, selectedNeedIds);
   const today = localToday();
@@ -26,11 +25,10 @@ export default function HealthDashboard({ authUser, userName = '', selectedNeedI
 
   if (!authUser?.id) {
     return (
-      <div className="ay-hd-empty">
-        <CycleRing cycleDay={null} avgLength={28} periodLength={0} />
-        <h2>Your sleep, cycle and heart, side by side</h2>
-        <p>Sign in to connect your apps and wearables. Your cycle, sleep, heart and activity show up here, compared with your own usual.</p>
-        {onSignIn && <button type="button" className="ay-qc-primary" onClick={onSignIn}>Sign in</button>}
+      <div className="ay-hd">
+        <HealthEmpty today={today} onConnect={onSignIn} goalCount={selectedNeedIds.length} signedOut>
+          <HealthStarter needIds={selectedNeedIds} products={products} matches={matches} onOpenProduct={onOpenProduct} onConnect={null} compact />
+        </HealthEmpty>
       </div>
     );
   }
@@ -56,9 +54,9 @@ export default function HealthDashboard({ authUser, userName = '', selectedNeedI
   if (week.empty && !sections.length) {
     return (
       <div className="ay-hd">
-        <HealthEmpty name={name} today={today} onConnect={onConnect}>
+        <HealthEmpty name={name} today={today} onConnect={onConnect} goalCount={selectedNeedIds.length}>
           {/* Still useful before any data: her goals matched to her products, from the quiz. */}
-          <HealthStarter needIds={selectedNeedIds} products={products} matches={matches} onOpenProduct={onOpenProduct} onConnect={null} />
+          <HealthStarter needIds={selectedNeedIds} products={products} matches={matches} onOpenProduct={onOpenProduct} onConnect={null} compact />
         </HealthEmpty>
       </div>
     );
@@ -74,6 +72,8 @@ export default function HealthDashboard({ authUser, userName = '', selectedNeedI
         needIds={selectedNeedIds}
         hormonalBC={hormonalBC}
         products={products}
+        routineProducts={routineProducts}
+        routineOutcomes={routineOutcomes}
         matches={matches}
         onOpenProduct={onOpenProduct}
         onAddGoal={onAddGoal}

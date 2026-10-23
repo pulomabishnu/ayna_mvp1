@@ -9,4 +9,8 @@ describe('routine product check-ins', () => {
     expect(revised['product-1']).toEqual([{ day: '2026-10-22', rating: 'same' }]);
     expect(recordRoutineOutcome(revised, 'product-1', 'diagnosis')).toBe(revised);
   });
+  it('uses the local calendar day for a check-in made at night', () => {
+    const entry = recordRoutineOutcome({}, 'product-1', 'helping', new Date(2026, 9, 22, 22, 30));
+    expect(entry['product-1'][0].day).toBe('2026-10-22');
+  });
 });

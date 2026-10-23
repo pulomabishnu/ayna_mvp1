@@ -185,12 +185,12 @@ export function GoalsCovered({ goals, effects = [], onOpenProduct, title = 'Your
  * For someone with no connected health data yet: what ayna adds, her goals
  * matched to her products (from the quiz alone), and how to connect.
  */
-export function HealthStarter({ needIds = [], products = [], matches = [], onOpenProduct, onConnect, connectLabel = 'Connect health data' }) {
+export function HealthStarter({ needIds = [], products = [], matches = [], onOpenProduct, onConnect, connectLabel = 'Connect health data', compact = false }) {
   const goals = goalsCovered({ needIds, products, matches });
   const adds = aynaAdds({ products, needIds });
   return (
     <div className="ay-bn ay-wx-starter">
-      <AddsStrip items={adds} />
+      {!compact && <AddsStrip items={adds} />}
       <GoalsCovered goals={goals} onOpenProduct={onOpenProduct} title="Your goals, covered today" />
       {onConnect && (
         <div className="ay-wx-connect">

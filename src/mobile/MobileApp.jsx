@@ -246,7 +246,7 @@ export default function MobileApp() {
     // so they are never stranded.
     || (session.pendingQuiz ? quizStepToResume() || 'connect' : null)
     || (!hasEcosystem && hasSavedIntakeDraft() ? 'ecointro' : 'landing'));
-  const [ecoTab, setEcoTab] = useState('products');
+  const [ecoTab, setEcoTab] = useState('dashboard');
   const [planAddedGoals, setPlanAddedGoals] = useState({});
   const [hasIntakeDraft, setHasIntakeDraft] = useState(hasSavedIntakeDraft);
   // Product/article detail render as an overlay ON TOP of whichever base
