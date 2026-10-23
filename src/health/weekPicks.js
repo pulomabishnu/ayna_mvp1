@@ -8,7 +8,7 @@
  *   luteal phase -> PMS-type needs, only if she chose them in the quiz;
  *   ovulation window coming -> ovulation tests, only if she chose fertility.
  * - her metrics: short nights (weekInsights sleep) -> sleep products;
- *   heart changes -> energy products, only if she chose energy.
+ *   lower steps or heart changes -> energy products, only if she chose energy.
  * Needs she chose in the quiz rank first.
  *
  * Products: only ones already in her Ecosystem, then her matches. A product
@@ -85,6 +85,7 @@ export function weekNeeds({ ctx = {}, insights = [], needIds = [] } = {}) {
   }
   const sleep = insights.find((i) => i.id === 'sleep' && i.signal === 'sleep-short');
   if (sleep) add('sleep.trouble', `You've slept less than usual ${sleep.shortNights} of the last 7 nights`);
+  if (insights.some((i) => i.signal === 'steps-lower')) add('energy.fatigue', 'Your steps are below your usual, and you chose low energy as a goal', { onlyIfChosen: true });
   if (phase === 'luteal') {
     for (const n of ['cycle.pms', 'cycle.breast_tenderness', 'bloating.cycle_related', 'mood.cycle_related']) add(n, "You're probably in your luteal phase", { onlyIfChosen: true });
   }
@@ -131,6 +132,7 @@ export function weekPicks({ ctx = {}, insights = [], needIds = [], products = []
 export function pickForInsight(insight, picks = []) {
   const needIds = insight?.signal === 'sleep-short' ? ['sleep.trouble']
     : insight?.signal === 'period-soon' ? ['period.product_support', 'pain.menstrual_cramp']
+      : insight?.signal === 'steps-lower' ? ['energy.fatigue']
       : [];
   return picks.find((pick) => needIds.includes(pick.needId)) || null;
 }

@@ -146,6 +146,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-thumb span { color: var(--b-espresso); font: 400 22px/1.15 var(--f-display); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-text { flex: 1; min-width: 0; display: grid; gap: 3px; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-text b { font: 600 calc(17px * var(--ayna-text-scale, 1))/1.3 var(--f-ui); }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-why { color: var(--hd-ink); font: 700 calc(12px * var(--ayna-text-scale, 1))/1.35 var(--f-ui); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-how { font: 500 calc(13px * var(--ayna-text-scale, 1))/1.45 var(--f-ui); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-text small { color: var(--hd-soft); font: 500 calc(11.5px * var(--ayna-text-scale, 1))/1.3 var(--f-ui); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-item:focus-visible { outline: 3px solid var(--b-sky); outline-offset: 2px; border-radius: 12px; }

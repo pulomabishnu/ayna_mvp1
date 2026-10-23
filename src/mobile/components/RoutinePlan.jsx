@@ -3,7 +3,7 @@ import { PlaylistIcon } from '../../components/icons/UiIcons.jsx';
 import { trackApp } from '../utils/appAnalytics.js';
 import PlaylistCoverPicker from './PlaylistCoverPicker.jsx';
 import PlaylistAudiencePicker from './PlaylistAudiencePicker.jsx';
-import { buildRoutine, buildShoppingList, overBudget } from '../../health/plan.js';
+import { buildRoutine, buildShoppingList, overBudget, reasonForProduct } from '../../health/plan.js';
 import { getBuyUrl } from '../data/buyUrl.js';
 import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
 import { productImageOverride } from '../../data/productImageOverrides.js';
@@ -22,7 +22,7 @@ function Thumb({ product }) {
 
 const OverBudget = () => <span className="ay-rt-budget">Over your budget</span>;
 
-export function Routine({ products, insights, onOpenProduct, budget = null, folded = false, excluded = {}, onToggleExcluded }) {
+export function Routine({ products, insights, needIds = [], onOpenProduct, budget = null, folded = false, excluded = {}, onToggleExcluded }) {
   const selected = useMemo(() => products.filter((p) => p && !excluded[p.id]), [products, excluded]);
   const routine = useMemo(() => buildRoutine(selected, insights), [selected, insights]);
   if (!products.length) return null;
@@ -40,19 +40,23 @@ export function Routine({ products, insights, onOpenProduct, budget = null, fold
           <h3>{slot.title}</h3>
           {slot.note && <p className="ay-rt-note">{slot.note}</p>}
           <ul>
-            {slot.items.map(({ product, how }) => (
+            {slot.items.map(({ product, how }) => {
+              const why = reasonForProduct(product, needIds);
+              return (
               <li key={product.id}>
                 <button type="button" className="ay-rt-item" onClick={() => onOpenProduct?.(product)}>
                   <Thumb product={product} />
                   <span className="ay-rt-text">
                     <b>{product.name}</b>
+                    {why && <span className="ay-rt-why">{why}</span>}
                     {overBudget(product, budget) && <OverBudget />}
                     {how && <span className="ay-rt-how">{how.text}</span>}
                     {how?.source && <small>From {how.source}</small>}
                   </span>
                 </button>
               </li>
-            ))}
+              );
+            })}
           </ul>
         </div>
       ));
