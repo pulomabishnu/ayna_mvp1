@@ -14,7 +14,7 @@ import '../screens/profile/health-connections.css';
  * Compared only with her own usual. Never a diagnosis.
  */
 
-export default function HealthDashboard({ authUser, userName = '', selectedNeedIds = [], hormonalBC = false, onConnect, onAddGoal, onOpenRoutine, onSignIn, products = [], routineProducts = [], routineOutcomes = {}, matches = [], onOpenProduct }) {
+export default function HealthDashboard({ authUser, userName = '', selectedNeedIds = [], hormonalBC = false, onConnect, onAddGoal, onOpenRoutine, onOpenCheckin, onSignIn, products = [], routineProducts = [], routineOutcomes = {}, matches = [], onOpenProduct }) {
   const openAsk = useContext(AskContext);
   const health = useHealthData(authUser?.id || null, selectedNeedIds);
   const today = localToday();
@@ -54,7 +54,7 @@ export default function HealthDashboard({ authUser, userName = '', selectedNeedI
   if (week.empty && !sections.length) {
     return (
       <div className="ay-hd">
-        <HealthEmpty name={name} today={today} onConnect={onConnect} goalCount={selectedNeedIds.length}>
+        <HealthEmpty name={name} today={today} onConnect={onConnect} onOpenCheckin={onOpenCheckin} goalCount={selectedNeedIds.length}>
           {/* Still useful before any data: her goals matched to her products, from the quiz. */}
           <HealthStarter needIds={selectedNeedIds} products={products} matches={matches} onOpenProduct={onOpenProduct} onConnect={null} compact />
         </HealthEmpty>
@@ -78,6 +78,7 @@ export default function HealthDashboard({ authUser, userName = '', selectedNeedI
         onOpenProduct={onOpenProduct}
         onAddGoal={onAddGoal}
         onOpenRoutine={onOpenRoutine}
+        onOpenCheckin={onOpenCheckin}
         onAsk={openAsk ? (question, extra) => openAsk({ question, context: dashboardContext({ cycle: week.cycle?.cycleDay ? week.cycle : null, estimate, ready, products, insights: extra?.insights || [] }), stats: extra?.stats || null }) : undefined}
         footer={<button type="button" className="ay-hc-ghost" onClick={onConnect}>Manage connected apps</button>}
         surface="app"

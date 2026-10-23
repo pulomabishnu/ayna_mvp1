@@ -210,7 +210,7 @@ function InsightDetail({ insight, chart, pick, onBack, onOpenMetric, onOpenProdu
  * full screen, so connecting data fills this page in rather than swapping it
  * for another design. The ring is a blank cycle (no day), never fake data.
  */
-export function HealthEmpty({ name = '', today, onConnect, goalCount = 0, signedOut = false, children }) {
+export function HealthEmpty({ name = '', today, onConnect, onOpenCheckin, goalCount = 0, signedOut = false, children }) {
   const hour = new Date().getHours();
   const hello = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
   return (
@@ -234,6 +234,7 @@ export function HealthEmpty({ name = '', today, onConnect, goalCount = 0, signed
         <p className="ay-hh-hero-foot">Compared only with your own usual. Patterns, not a diagnosis.</p>
       </section>
       {children}
+      {onOpenCheckin && <button type="button" className="ay-hh-checkin-link" onClick={onOpenCheckin}>Log how you felt this month →</button>}
     </div>
   );
 }
@@ -276,6 +277,23 @@ function RecentCheckin({ products, outcomes, onOpenRoutine }) {
     <p>You marked this product “{OUTCOME_LABELS[latest.rating].toLowerCase()}” on {fmtDay(latest.day)}. This is your report, not a measure of medical effectiveness.</p>
     <button type="button" onClick={onOpenRoutine}>See your product check-ins →</button>
   </section>;
+}
+
+function TriedSoFar({ products, outcomes, onOpenRoutine }) {
+  const tried = products.map((product) => {
+    const history = Array.isArray(outcomes[product.id]) ? outcomes[product.id].filter((entry) => OUTCOME_LABELS[entry?.rating]) : [];
+    return { product, history, helping: history.filter((entry) => entry.rating === 'helping').length };
+  }).filter((item) => item.history.length);
+  if (!tried.length) return null;
+  return <details className="ay-hh-tried">
+    <summary>What you’ve tried <span>{tried.length} {tried.length === 1 ? 'product' : 'products'}</span></summary>
+    <ul>{tried.map(({ product, history, helping }) => <li key={product.id}>
+      <b>{product.name}</b>
+      <span>{history.length >= 3 ? `Marked helping on ${helping} of ${history.length} check-ins` : `${history.length} dated ${history.length === 1 ? 'check-in' : 'check-ins'} so far`}</span>
+    </li>)}</ul>
+    <p>These are your impressions. They do not show that a product caused a health change.</p>
+    {onOpenRoutine && <button type="button" onClick={onOpenRoutine}>Review product check-ins →</button>}
+  </details>;
 }
 
 /** Mini phase bar for the Cycle tile: the four phases, today marked. */
@@ -381,7 +399,7 @@ function Tile({ tone, label, big, sub, onOpen, aria, children, i }) {
 
 export default function HealthHome({
   name = '', rows = [], sections = [], matchContext = null, today, needIds = [], hormonalBC = false,
-  products = [], routineProducts = [], routineOutcomes = {}, matches = [], onOpenProduct, onAsk, onAddGoal, onOpenRoutine, footer = null, surface = 'app',
+  products = [], routineProducts = [], routineOutcomes = {}, matches = [], onOpenProduct, onAsk, onAddGoal, onOpenRoutine, onOpenCheckin, footer = null, surface = 'app',
 }) {
   const [tab, setTab] = useState('summary');
   const [range, setRange] = useState('month');
@@ -494,6 +512,8 @@ export default function HealthHome({
         <Hero cycle={cycle} ctx={ctx} insights={insights.slice(0, 3)} fallback={weekSummary(ready)} onOpenInsight={showInsight} />
         <TodayPlan products={routineProducts} needIds={needIds} onOpenRoutine={onOpenRoutine} />
         <RecentCheckin products={routineProducts} outcomes={routineOutcomes} onOpenRoutine={onOpenRoutine} />
+        <TriedSoFar products={routineProducts} outcomes={routineOutcomes} onOpenRoutine={onOpenRoutine} />
+        {onOpenCheckin && <button type="button" className="ay-hh-checkin-link" onClick={onOpenCheckin}>Log how you felt this month →</button>}
         {surface === 'app' && tabs.length > 1 && <button type="button" className="ay-hh-health-link" onClick={() => open(tabs[1].id)}>Explore all health data →</button>}
         <section className="ay-hh-tiles-sec" aria-labelledby="ay-hh-tiles-title">
           <div className="ay-hh-sechead">

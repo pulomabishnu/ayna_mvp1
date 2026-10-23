@@ -35,6 +35,22 @@ describe('health dashboard action flow', () => {
     expect(onOpenRoutine).toHaveBeenCalledOnce();
   });
 
+  it('summarizes repeated product reports and opens the monthly symptom check-in', () => {
+    const product = { id: 'heat-wrap', name: 'Heat wrap' };
+    const onOpenCheckin = vi.fn();
+    host = document.createElement('div');
+    document.body.append(host);
+    root = createRoot(host);
+    act(() => root.render(<HealthHome today={today} routineProducts={[product]} routineOutcomes={{ 'heat-wrap': [
+      { day: '2026-10-19', rating: 'helping' }, { day: '2026-10-20', rating: 'same' }, { day: today, rating: 'helping' },
+    ] }} onOpenRoutine={() => {}} onOpenCheckin={onOpenCheckin} />));
+
+    expect(host.textContent).toContain('Marked helping on 2 of 3 check-ins');
+    expect(host.textContent).toContain('do not show that a product caused a health change');
+    act(() => [...host.querySelectorAll('button')].find((button) => button.textContent.includes('Log how you felt this month')).click());
+    expect(onOpenCheckin).toHaveBeenCalledOnce();
+  });
+
   it('opens a measured change, keeps its data and next steps together, and returns to the dashboard', () => {
     const rows = devDemoRows(today);
     const sections = buildInsights(rows, { today }).sections;
