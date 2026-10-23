@@ -95,6 +95,13 @@ describe('feedback popup lifecycle', () => {
     expect(claims).toBe(1);
     expect(document.body.querySelector('[role="dialog"]')).toBeNull();
   });
+  it('asks soon after login and dismisses when the person navigates away', async () => {
+    await mount({ id: 'account-a' });
+    await tick(2000);
+    expect(document.body.textContent).toContain('How are you liking ayna?');
+    await mount({ id: 'account-a' }, 'discovery');
+    expect(document.body.querySelector('[role="dialog"]')).toBeNull();
+  });
   it('never interrupts onboarding and clears a pending purchase when accounts switch', async () => {
     await mount({ id: 'account-a' }, 'quiz'); await tick(24000);
     expect(claims).toBe(0);

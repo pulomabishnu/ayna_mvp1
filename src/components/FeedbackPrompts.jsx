@@ -126,7 +126,7 @@ export default function FeedbackPrompts({ user, authLoading, currentView, safeVi
       if (surveyReceipt.current) {
         active.current = true;
         markSurveySeen(user.id);
-        setPrompt({ kind: 'survey', receipt: surveyReceipt.current });
+        setPrompt({ kind: 'survey', receipt: surveyReceipt.current, view: view.current });
         surveyReceipt.current = null;
         return;
       }
@@ -141,9 +141,15 @@ export default function FeedbackPrompts({ user, authLoading, currentView, safeVi
       } catch {
         // If the survey service is down, ask once per visit, not every 8 seconds.
       } finally { active.current = false; }
-    }, 8000);
+    }, 1000);
     return () => { cancelled = true; clearInterval(timer); };
   }, [user?.id, authLoading]);
+  useEffect(() => {
+    if (prompt?.view && prompt.view !== currentView) {
+      setPrompt(null);
+      active.current = false;
+    }
+  }, [currentView, prompt]);
   const close = () => {
     if (prompt?.kind === 'purchase') removePurchase(prompt.id);
     // Closing counts as asked, and an answer restarts the 14 days too.
