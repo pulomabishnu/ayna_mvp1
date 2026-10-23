@@ -28,6 +28,7 @@ import { usePushNotifications } from './hooks/usePushNotifications.js';
 import { useHealthData, DEV_HEALTH_DEMO } from './hooks/useHealthData.js';
 import { useTextSize } from './hooks/useTextSize.js';
 import { useEcosystemSession } from './hooks/useEcosystemSession.js';
+import { recordRoutineOutcome } from '../health/routineOutcome.js';
 import { useSupabaseAuth, MOBILE_OAUTH_PENDING_KEY } from './hooks/useSupabaseAuth.js';
 import { fetchNotificationPreferences } from './utils/notificationPreferencesApi.js';
 import { ECOSYSTEM_AREAS as AREA_LABELS } from './data/ecosystemAreas.js';
@@ -870,7 +871,7 @@ export default function MobileApp() {
       await clearHealthIntakeForCurrentUser();
       pendingQuizEcosystemRef.current = null;
       ecosystemFlagsRef.current = { trackedProducts: {}, omittedProducts: {} };
-      updateSession({ myProducts: [], lastQuizAnswers: null, hasEcosystem: false, pendingIntakeSync: false, pendingQuiz: null, routineHave: {}, routineExcluded: {} });
+      updateSession({ myProducts: [], lastQuizAnswers: null, hasEcosystem: false, pendingIntakeSync: false, pendingQuiz: null, routineHave: {}, routineExcluded: {}, routineOutcomesByUser: {} });
       setEcosystemNotice('');
       try { localStorage.removeItem('ayna_intake_draft_v1'); } catch { /* storage unavailable */ }
       setHasIntakeDraft(false);
@@ -996,6 +997,13 @@ export default function MobileApp() {
     onEcoTab: setEcoTab,
     routineHave: session.routineHave || {},
     routineExcluded: session.routineExcluded || {},
+    routineOutcomes: authUser?.id ? session.routineOutcomesByUser?.[authUser.id] || {} : {},
+    onLogRoutineOutcome: authUser?.id ? (productId, rating) => updateSession((prev) => ({
+      routineOutcomesByUser: {
+        ...(prev.routineOutcomesByUser || {}),
+        [authUser.id]: recordRoutineOutcome(prev.routineOutcomesByUser?.[authUser.id] || {}, productId, rating),
+      },
+    })) : null,
     onToggleRoutineProduct: (id) => updateSession((prev) => {
       const next = { ...(prev.routineExcluded || {}) };
       if (next[id]) delete next[id]; else next[id] = true;

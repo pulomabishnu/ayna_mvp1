@@ -26,6 +26,8 @@ const DEFAULT_SESSION = {
   routineHave: {},
   // Products hidden from the editable routine and its shopping list.
   routineExcluded: {},
+  // Private product check-ins on this device, keyed by signed-in user ID.
+  routineOutcomesByUser: {},
 };
 
 function loadSession() {
@@ -43,6 +45,7 @@ function loadSession() {
       pendingQuiz: parsed?.pendingQuiz && typeof parsed.pendingQuiz === 'object' && parsed.pendingQuiz.answers && typeof parsed.pendingQuiz.answers === 'object' ? { answers: parsed.pendingQuiz.answers, mode: parsed.pendingQuiz.mode === 'add' ? 'add' : 'new' } : null,
       routineHave: parsed?.routineHave && typeof parsed.routineHave === 'object' && !Array.isArray(parsed.routineHave) ? parsed.routineHave : {},
       routineExcluded: parsed?.routineExcluded && typeof parsed.routineExcluded === 'object' && !Array.isArray(parsed.routineExcluded) ? parsed.routineExcluded : {},
+      routineOutcomesByUser: parsed?.routineOutcomesByUser && typeof parsed.routineOutcomesByUser === 'object' && !Array.isArray(parsed.routineOutcomesByUser) ? parsed.routineOutcomesByUser : {},
     };
   } catch {
     return DEFAULT_SESSION;

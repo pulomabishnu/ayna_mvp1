@@ -4,6 +4,7 @@ import { trackApp } from '../utils/appAnalytics.js';
 import PlaylistCoverPicker from './PlaylistCoverPicker.jsx';
 import PlaylistAudiencePicker from './PlaylistAudiencePicker.jsx';
 import { buildRoutine, buildShoppingList, overBudget, reasonForProduct } from '../../health/plan.js';
+import { OUTCOME_LABELS } from '../../health/routineOutcome.js';
 import { getBuyUrl } from '../data/buyUrl.js';
 import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
 import { productImageOverride } from '../../data/productImageOverrides.js';
@@ -22,7 +23,7 @@ function Thumb({ product }) {
 
 const OverBudget = () => <span className="ay-rt-budget">Over your budget</span>;
 
-export function Routine({ products, insights, needIds = [], onOpenProduct, budget = null, folded = false, excluded = {}, onToggleExcluded }) {
+export function Routine({ products, insights, needIds = [], outcomes = {}, onLogOutcome, onOpenProduct, budget = null, folded = false, excluded = {}, onToggleExcluded }) {
   const selected = useMemo(() => products.filter((p) => p && !excluded[p.id]), [products, excluded]);
   const routine = useMemo(() => buildRoutine(selected, insights), [selected, insights]);
   if (!products.length) return null;
@@ -42,6 +43,7 @@ export function Routine({ products, insights, needIds = [], onOpenProduct, budge
           <ul>
             {slot.items.map(({ product, how }) => {
               const why = reasonForProduct(product, needIds);
+              const history = Array.isArray(outcomes[product.id]) ? outcomes[product.id] : [];
               return (
               <li key={product.id}>
                 <button type="button" className="ay-rt-item" onClick={() => onOpenProduct?.(product)}>
@@ -54,6 +56,14 @@ export function Routine({ products, insights, needIds = [], onOpenProduct, budge
                     {how?.source && <small>From {how.source}</small>}
                   </span>
                 </button>
+                {onLogOutcome && <details className="ay-rt-checkin">
+                  <summary>{history.length ? `Your latest check-in: ${OUTCOME_LABELS[history.at(-1).rating] || 'Recorded'}` : 'Tried it? Log how it is going'}</summary>
+                  <p>Your impression of this product. This check-in stays on this device.</p>
+                  <div role="group" aria-label={`How ${product.name} is going`}>
+                    {Object.entries(OUTCOME_LABELS).map(([rating, label]) => <button key={rating} type="button" onClick={() => onLogOutcome(product.id, rating)}>{label}</button>)}
+                  </div>
+                  {history.length > 1 && <small>{history.length} dated check-ins saved on this device.</small>}
+                </details>}
               </li>
               );
             })}

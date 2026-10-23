@@ -57,7 +57,7 @@ export default function EcosystemScreen({
   quizAnswers = null, matchOpts, onOpenWhyMatch, onAddToEcosystem, onToggleSaved, onReplayStory,
   onOpenHealthData, healthSummary = null, healthConnectedCount = 0,
   healthInsights = null, onAddGoal, ecoTab = 'products', onEcoTab, routineHave = {}, onToggleHave,
-  routineExcluded = {}, onToggleRoutineProduct,
+  routineExcluded = {}, onToggleRoutineProduct, routineOutcomes = {}, onLogRoutineOutcome,
   onSavePlaylist, onOpenPlaylist, onConnectHealth, onRequireAuth, onPersonalize, lastQuizAnswers = null,
   quizDraft = null, onResumeQuiz, onStartOverQuiz, onFixLifeStages, onStartQuiz,
 }) {
@@ -313,7 +313,7 @@ export default function EcosystemScreen({
     {ecoTab === 'dashboard' && showTabs ? <div className="ay-eco-routine">
       <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} hormonalBC={usesHormonalBC(quizAnswers)} products={myProducts} matches={suggestedEcosystemProducts} onOpenProduct={onOpenProduct} onConnect={onConnectHealth} onAddGoal={onAddGoal} onOpenRoutine={myProducts.length ? () => routineRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' }) : undefined} onSignIn={() => onRequireAuth?.('health data')} />
       {myProducts.length > 0 && <div ref={routineRef} className="ay-eco-plan" id="ay-eco-plan">
-        <Routine products={myProducts} insights={healthInsights} needIds={goalIds} onOpenProduct={onOpenProduct} budget={budgetMax(quizAnswers)} excluded={routineExcluded} onToggleExcluded={onToggleRoutineProduct} />
+        <Routine products={myProducts} insights={healthInsights} needIds={goalIds} outcomes={routineOutcomes} onLogOutcome={onLogRoutineOutcome} onOpenProduct={onOpenProduct} budget={budgetMax(quizAnswers)} excluded={routineExcluded} onToggleExcluded={onToggleRoutineProduct} />
         <ShoppingList products={myProducts} insights={healthInsights} excluded={routineExcluded} have={routineHave} onToggleHave={onToggleHave} onOpenProduct={onOpenProduct} onSavePlaylist={onSavePlaylist} onOpenPlaylist={onOpenPlaylist} budget={budgetMax(quizAnswers)} onRequireAuth={onRequireAuth} />
       </div>}
       {onOpenMonthlyCheckin && checkin}

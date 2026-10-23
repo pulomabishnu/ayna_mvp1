@@ -150,6 +150,13 @@
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-how { font: 500 calc(13px * var(--ayna-text-scale, 1))/1.45 var(--f-ui); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-text small { color: var(--hd-soft); font: 500 calc(11.5px * var(--ayna-text-scale, 1))/1.3 var(--f-ui); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-item:focus-visible { outline: 3px solid var(--b-sky); outline-offset: 2px; border-radius: 12px; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-checkin { margin: 0 0 12px 64px; color: var(--hd-ink); font: 500 calc(12px * var(--ayna-text-scale, 1))/1.4 var(--f-ui); }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-checkin summary { cursor: pointer; font-weight: 700; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-checkin p { margin: 8px 0; color: var(--hd-soft); }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-checkin div { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-checkin button { min-height: 36px; padding: 6px 10px; border: 1px solid var(--hd-ink); border-radius: 999px; background: var(--hd-card); color: var(--hd-ink); font: 700 calc(12px * var(--ayna-text-scale, 1))/1.2 var(--f-ui); cursor: pointer; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-checkin button:focus-visible { outline: 3px solid var(--b-sky); outline-offset: 2px; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-rt-checkin small { color: var(--hd-soft); }
 
 /* ---------- Shopping list ---------- */
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-sl { display: grid; gap: 12px; }
