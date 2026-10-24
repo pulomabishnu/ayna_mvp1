@@ -143,6 +143,61 @@ export const HEALTH_SOURCES = [
   },
 ];
 
+/**
+ * The four kinds of data a source can provide, in the words the connection
+ * screen uses (team direction 42). Each maps to the consent categories in
+ * src/health/metrics.js, which stay the per-category switches.
+ */
+export const PROVIDE_GROUPS = [
+  { id: 'sleep', label: 'Sleep', cats: ['sleep'] },
+  { id: 'cycle', label: 'Cycle and temperature', cats: ['cycle', 'temperature'] },
+  { id: 'activity', label: 'Activity', cats: ['activity'] },
+  { id: 'heart', label: 'Heart rate and recovery', cats: ['heart', 'recovery'] },
+];
+
+/** Which of the four groups this source can provide, in screen order. */
+export function providesFor(source) {
+  const cats = new Set(source?.categories || []);
+  return PROVIDE_GROUPS.filter((g) => g.cats.some((c) => cats.has(c)));
+}
+
+/** "Sleep, activity and heart rate and recovery" style list, or ''. */
+export function providesLine(source) {
+  const labels = providesFor(source).map((g) => g.label);
+  if (labels.length <= 1) return labels[0] || '';
+  return `${labels.slice(0, -1).join(', ')} and ${labels.at(-1).charAt(0).toLowerCase()}${labels.at(-1).slice(1)}`;
+}
+
+/**
+ * What happens when she taps Connect, step by step (team direction 43).
+ * Plain facts about each platform's own flow, no health claims.
+ */
+export function connectSteps(source) {
+  if (!source) return [];
+  if (source.availability === 'device' && source.platform === 'ios') {
+    return [
+      'Tap Connect. Your iPhone shows the Health access sheet.',
+      'Turn on the items you want ayna to read, then tap Allow.',
+      'ayna reads up to your last 90 days and shows when it last synced.',
+    ];
+  }
+  if (source.availability === 'device') {
+    return [
+      'Tap Connect. Health Connect asks which data ayna can read.',
+      'Allow the items you want, then come back to ayna.',
+      'ayna reads up to your last 90 days and shows when it last synced.',
+    ];
+  }
+  if (source.availability === 'oauth') {
+    return [
+      `Tap Connect. You go to ${source.name} to sign in and approve ayna.`,
+      'You come back here automatically.',
+      'ayna reads your recent days and shows when it last synced.',
+    ];
+  }
+  return [];
+}
+
 export const sourceById = (id) => HEALTH_SOURCES.find((s) => s.id === id) || null;
 
 /** API source id for a screen source (the upload and Flo screens both save as 'manual_import'). */
@@ -163,6 +218,14 @@ export function availabilityFor(source, { isNative = false, nativePlatform = 'we
     return { ok: true };
   }
   return { ok: false, reason: source.pending || 'Not available yet.' };
+}
+
+/** "Last synced Oct 24, 9:14 AM", for the connected view. */
+export function lastSyncedLine(iso) {
+  if (!iso) return 'Not synced yet';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return 'Not synced yet';
+  return `Last synced ${d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}`;
 }
 
 export function formatSynced(iso, now = Date.now()) {

@@ -88,3 +88,23 @@ describe('screens render honestly when signed out', () => {
     expect(renderToStaticMarkup(createElement(HealthInsightsScreen, { authUser: null }))).toContain('Sign in');
   });
 });
+
+describe('what each source can provide (team direction 42-43)', () => {
+  it('names the four groups each source can provide', async () => {
+    const { providesFor, providesLine, sourceById } = await import('./healthConnections.js');
+    expect(providesFor(sourceById('apple_health')).map((g) => g.id)).toEqual(['sleep', 'cycle', 'activity', 'heart']);
+    expect(providesLine(sourceById('flo'))).toBe('Cycle and temperature');
+    expect(providesLine(sourceById('request'))).toBe('');
+  });
+  it('explains the permission steps for phone and sign-in sources only', async () => {
+    const { connectSteps, sourceById } = await import('./healthConnections.js');
+    expect(connectSteps(sourceById('apple_health'))[0]).toMatch(/Health access sheet/);
+    expect(connectSteps(sourceById('oura'))[0]).toMatch(/go to Oura/);
+    expect(connectSteps(sourceById('upload'))).toEqual([]);
+  });
+  it('shows the last sync time in words', async () => {
+    const { lastSyncedLine } = await import('./healthConnections.js');
+    expect(lastSyncedLine(null)).toBe('Not synced yet');
+    expect(lastSyncedLine('2026-10-24T13:14:00Z')).toMatch(/^Last synced Oct 24/);
+  });
+});
