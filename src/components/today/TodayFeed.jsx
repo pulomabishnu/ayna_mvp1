@@ -150,7 +150,7 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
 }) {
   // DEV only (?fixture=today): sample logs and tries, dropped from production builds.
   const [fixture] = useState(() => (import.meta.env.DEV && todayFixtureOn() ? makeTodayFixture() : null));
-  const t = useToday({ userId, intake: fixture?.intake || intake, healthRows, cycle, hormonalBC, products, fixture, onSaveToProfile, onEditStep: onEditAnswers ? (step) => onEditAnswers(step) : null });
+  const t = useToday({ userId, intake: fixture?.intake || intake, healthRows: fixture?.healthRows || healthRows, cycle, hormonalBC, products, fixture, onSaveToProfile, onEditStep: onEditAnswers ? (step) => onEditAnswers(step) : null });
   const { items } = t.decision;
   const checkinId = `ay-today-log-${variant}`;
   return (
@@ -174,6 +174,8 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
         onExplore={onExplore}
         onFindCare={onFindCare}
         onEditAnswers={onEditAnswers}
+        variant={variant}
+        onSeeData={(d) => { try { window.dispatchEvent(new CustomEvent('ayna:health-tab', { detail: { tab: d?.tab } })); } catch { /* old browser */ } }}
       />
       {items.length > 0
         ? <ul className="ay-today__list">{items.map((item) => <Item key={item.id} item={item} t={t} onOpenProduct={onOpenProduct} onAsk={onAsk} onEditAnswers={onEditAnswers} onFindCare={onFindCare} checkinId={checkinId} />)}</ul>

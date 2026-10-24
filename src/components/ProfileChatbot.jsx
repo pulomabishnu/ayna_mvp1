@@ -10,6 +10,8 @@ import AskFollowUps from './AskFollowUps.jsx';
 import { chipsFor, followUpRequestFields } from '../utils/askFollowUps.js';
 import { localMatchAnswer } from '../utils/askMatch.js';
 import { localHistoryAnswer } from '../utils/askHistory.js';
+import { localTodayAnswer } from '../utils/askToday.js';
+import { guidedTiles } from '../utils/askGuided.js';
 import { fetchWithTimeout, isNetworkError } from '../utils/network.js';
 import AskHome, { AskStatCard } from './AskHome.jsx';
 import { recentQuestions } from '../utils/askRecent.js';
@@ -65,6 +67,7 @@ function getFirstName(user) {
 }
 
 // Ask ayna's first screen: tiles fill the box so she can edit before asking.
+// Starters follow where she is (src/utils/askStarters.js); this list is the fallback.
 function askTiles(hasHealthData) {
   return [
     { label: 'Ask about your week', sub: hasHealthData ? 'Read against your cycle' : 'Best with health data connected', question: 'What stands out in my health data this week?', icon: 'week', tone: 'pink', isNew: true },
@@ -87,9 +90,11 @@ function buildWelcome() {
   }];
 }
 
-export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery, onViewRecommendations, openSignal = 0, prefill = '', prefillStats = null, onRequireAuth, products = {}, hasHealthData = false, resolveProduct = null, onOpenProduct = null, onOpenDashboard = null, onOpenRead = null, matchOpts = undefined, healthProfile = null, focusProduct = null }) {
+export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery, onViewRecommendations, openSignal = 0, prefill = '', prefillStats = null, onRequireAuth, products = {}, hasHealthData = false, resolveProduct = null, onOpenProduct = null, onOpenDashboard = null, onOpenRead = null, matchOpts = undefined, healthProfile = null, focusProduct = null, asPage = false }) {
   const firstName = getFirstName(user);
-  const [open, setOpen] = useState(false);
+  // asPage: the Ask ayna tab (/ask) shows the conversation inline, always open.
+  const [openState, setOpen] = useState(false);
+  const open = asPage || openState;
   // The header's Ask ayna button bumps openSignal to open the chat.
   // Numbers from the dashboard that go with a prefilled question (shown back as a stat card).
   const statsRef = useRef(null);
@@ -346,6 +351,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     const local = retryOf == null
       ? (await localMatchAnswer(msg, { quizAnswers: profile, healthProfile, matchOpts, focusProduct }).catch(() => null))
         || (await localHistoryAnswer(msg).catch(() => null))
+        || (await localTodayAnswer(msg).catch(() => null))
       : null;
     if (local) {
       setInput('');
@@ -427,7 +433,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
 
   return (
     <>
-      {tucked && !open ? (
+      {asPage ? null : tucked && !open ? (
         <button type="button" className="ayna-ask-tab" aria-label="Show Ask ayna" onClick={() => setTuck(false)}>
           <span className="ayna-ask-orb ayna-ask-orb--small" aria-hidden="true" />
           <span className="ayna-ask-tab__label">Ask ayna</span>
@@ -450,9 +456,9 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
       )}
 
       {/* Phones: the panel is a bottom sheet over a flat 40% scrim, like the app's Ask sheet (P1-24). */}
-      {open && <div className="ayna-ask-scrim" aria-hidden="true" onClick={() => setOpen(false)} />}
+      {open && !asPage && <div className="ayna-ask-scrim" aria-hidden="true" onClick={() => setOpen(false)} />}
       {open && (
-        <section className="ayna-ask-panel" aria-label="Ask ayna">
+        <section className={`ayna-ask-panel${asPage ? ' is-page' : ''}`} aria-label="Ask ayna">
           <header className={`ayna-ask-panel__header${messages.length > 1 ? " is-compact" : ""}`}>
             <div className="ayna-ask-panel__identity">
               {!home && (
@@ -463,14 +469,14 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
               <h3>Ask ayna</h3>
             </div>
 
-            <button
+            {!asPage && <button
               type="button"
               className="ayna-ask-panel__close"
               aria-label="Close Ask ayna"
               onClick={() => setOpen(false)}
             >
               ×
-            </button>
+            </button>}
           </header>
 
           <div className="ayna-ask-mode">
@@ -530,7 +536,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
                 name={firstName}
                 intro="Ask about a product, an ingredient, or what to try."
                 note={WELCOME}
-                tiles={askTiles(hasHealthData)}
+                tiles={guidedTiles({ focusProduct, hasHealthData, fallback: askTiles(hasHealthData) })}
                 recent={recentQuestions(messages)}
                 onPick={(q) => { setInput(q); inputRef.current?.focus({ preventScroll: true }); }}
                 onContinue={messages.some((m) => m.role === 'user') ? () => setHome(false) : null}

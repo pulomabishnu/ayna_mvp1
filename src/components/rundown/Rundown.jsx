@@ -1,8 +1,11 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { buildRundown } from './buildRundown.js';
 import { buildWeeklyRecap } from './weeklyRecap.js';
 import RundownStory from './RundownStory.jsx';
-import { markCardSeen, markNotUseful, markWeeklySeen, readRundownMemory, setRundownOwner } from './rundownStore.js';
+import { markCardSeen, markNotUseful, markRundownViewed, markWeeklySeen, readRundownMemory, setRundownOwner } from './rundownStore.js';
+import { autoLaunchDecision, listenForExternalOpens, openedExternally, urlIsDeepLink } from './autoLaunch.js';
+import { setTodayAskContext } from '../../utils/askToday.js';
+import { getAskHealthPref } from '../../health/askHealthPref.js';
 import { getProductMatchDetailsForProduct, useCatalogReady } from '../../data/catalog.js';
 import { whyLine } from '../../utils/whyLine.js';
 import { evidenceLevel } from '../pdp/evidenceLevel.js';
@@ -27,8 +30,8 @@ const REMIND_TEXT = {
  * handlers it can offer. A card with no handler simply has no button for it.
  */
 export default function Rundown({
-  t, userId = null, intake = null, products = [], saved = [], community = [],
-  onAsk, onOpenProduct, onWhyMatch, onToggleSaved, onCompare, onOpenRead, onExplore, onFindCare, onEditAnswers,
+  t, userId = null, intake = null, products = [], saved = [], community = [], variant = 'app',
+  onAsk, onSeeData, onOpenProduct, onWhyMatch, onToggleSaved, onCompare, onOpenRead, onExplore, onFindCare, onEditAnswers,
 }) {
   const [memory, setMemory] = useState(() => { setRundownOwner(userId); return readRundownMemory(); });
   const [open, setOpen] = useState(null); // 'daily' | 'weekly' | null
@@ -57,12 +60,74 @@ export default function Rundown({
   const weekly = useMemo(() => buildWeeklyRecap({ today, log: t.log, tries: t.tries, patterns: t.patterns, saved }), [today, t.log, t.tries, t.patterns, saved]);
   const cards = open === 'weekly' ? weekly.cards : daily.cards;
 
-  const start = (kind) => {
+  const [highlight, setHighlight] = useState(false);
+  const start = (kind, { auto = false } = {}) => {
     const list = kind === 'weekly' ? weekly.cards : daily.cards;
     trackToday('rundown_opened', { kind, count: list.length, categories: [...new Set(list.map((c) => c.category))] });
     if (kind === 'weekly') markWeeklySeen(today);
+    else setMemory(markRundownViewed(today, { auto }));
+    setHighlight(false);
     setOpen(kind);
   };
+
+  // Ask ayna reads today's picture from here (on this device only; see utils/askToday.js).
+  useEffect(() => {
+    const y = addDays(today, -1);
+    const has = (e) => Boolean(e && ['pain', 'flow', 'pms', 'sleep', 'mood', 'skin'].some((f) => e[f] != null));
+    const content = daily.cards.filter((c) => c.category !== 'frame');
+    const weekChanges = weekly.cards.find((c) => c.key === 'weekly:changes')?.lines || [];
+    setTodayAskContext({
+      today,
+      signals: {
+        hasRundown: content.length > 0,
+        hasYesterdayLog: has(t.log?.[y]),
+        lowSleepOrEnergy: [t.log?.[today], t.log?.[y]].some((e) => e?.sleep === 1 || e?.mood === 1) || content.some((c) => c.explain?.kind === 'sleep'),
+        hasRecentChanges: weekChanges.length > 0 || content.some((c) => c.category === 'change'),
+        hasHistory: (t.tries || []).some((x) => x?.outcome),
+      },
+      focus: (t.decision?.items || []).map((it) => ({ title: it.title, reason: it.reason })),
+      rundown: content.map(({ category, title, changed, canDo, explain }) => ({ category, title, changed, canDo, explain })),
+      log: { today: t.log?.[today] || null, yesterday: t.log?.[y] || null },
+      recent: weekChanges,
+    });
+  }, [today, daily.cards, weekly.cards, t.log, t.tries, t.decision]);
+
+  // Auto-launch: the first open of the day at or after 8 (autoLaunch.js).
+  const hasContent = daily.cards.length > 0;
+  useEffect(() => {
+    listenForExternalOpens();
+    const check = () => {
+      if (document.visibilityState === 'hidden') return;
+      const mem = readRundownMemory();
+      let reduced = false;
+      try { reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { reduced = false; }
+      const firstTime = !Object.keys(mem.shown || {}).length && !Object.keys(t.log || {}).some((d) => d < today);
+      const decision = autoLaunchDecision({
+        now: new Date(), today, surface: variant, hasContent, memory: mem, reducedMotion: reduced,
+        externalOpen: openedExternally() || urlIsDeepLink(), firstTime,
+        dialogOpen: Boolean(document.querySelector('[aria-modal="true"]')),
+      });
+      if (decision === 'open') {
+        trackToday('rundown_opened', { kind: 'daily', count: daily.cards.length, categories: [...new Set(daily.cards.map((c) => c.category))] });
+        setMemory(markRundownViewed(today, { auto: true }));
+        setOpen('daily');
+      }
+      else if (decision === 'highlight') setHighlight(true);
+    };
+    const id = setTimeout(check, 600); // after the screen settles (and any deep link has landed)
+    document.addEventListener('visibilitychange', check);
+    return () => { clearTimeout(id); document.removeEventListener('visibilitychange', check); };
+  }, [today, variant, hasContent]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // End of the rundown: Ask about a card she just saw. Answers that need
+  // her health data only get it when Ask's health switch is on.
+  const askFollowUp = onAsk ? (f) => {
+    const card = daily.cards.find((c) => c.key === f.cardKey);
+    const text = card ? [card.title, card.changed, card.canDo].filter(Boolean).join(' ') : '';
+    const context = text ? `From her Daily Rundown today: ${text}` : '';
+    close({ seen: daily.cards.length, count: daily.cards.length });
+    onAsk(f.question, { usesHealth: Boolean(context), buildContext: (on) => (on ? context : ''), context: getAskHealthPref()?.on ? context : '' });
+  } : undefined;
   const onSeen = useCallback((card) => { if (open === 'daily') markCardSeen(card, today); }, [open, today]);
   const onAction = (card, action) => trackToday('rundown_card_action', { kind: open, category: card.category, action });
   const close = ({ seen, count }) => {
@@ -75,7 +140,8 @@ export default function Rundown({
   return (
     <section className="ay-rd-hero" aria-labelledby="ay-rd-hero-h">
       {daily.cards.length > 0 && (
-        <div className="ay-rd-hero__card">
+        <div className={`ay-rd-hero__card${highlight ? ' is-new' : ''}`}>
+          {highlight && <p className="ay-rd-hero__new">Ready for today</p>}
           <p className="ay-rd-hero__kicker">{daily.cards.some((c) => c.protected) ? 'Something important today' : 'Today'}</p>
           <h2 id="ay-rd-hero-h">Your Daily Rundown</h2>
           <p>60 seconds. The things worth knowing about your health today.</p>
@@ -98,6 +164,8 @@ export default function Rundown({
           onCheckIn={(field, value) => t.saveLog(today, { [field]: value })}
           onOutcome={(item, outcome) => t.recordOutcome(item, outcome)}
           onAsk={onAsk ? (q) => { close({ seen: 0, count: cards.length }); onAsk(q); } : undefined}
+          onAskFollowUp={open === 'daily' ? askFollowUp : undefined}
+          onSeeData={onSeeData ? (d) => { close({ seen: 0, count: cards.length }); onSeeData(d); } : undefined}
           onWhyMatch={onWhyMatch || onOpenProduct ? (p) => { close({ seen: 0, count: cards.length }); (onWhyMatch || onOpenProduct)(p); } : undefined}
           onSave={onToggleSaved ? (p) => onToggleSaved(p) : undefined}
           onUnsave={onToggleSaved ? (p) => onToggleSaved(p) : undefined}

@@ -165,7 +165,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   const CONTEXT_COPY = {
     saved: { title: 'Looking for what you saved?', line: 'Sign in to see what you saved.' },
     'save-item': { title: 'Save this to your ayna', line: 'Sign in to keep products, resources and recommendations in one place. New here? Start with the quiz, then save.' },
-    ecosystem: { title: 'Your ecosystem lives here', line: 'Sign in to see your shelves, or build one with a short quiz.' },
+    // Logged-out copy from the UX spec (24): say what she gets, not "Sign in required".
+    ecosystem: { title: 'Build your health ecosystem', line: 'Sign in to save your health interests, matches and recommendations in one place.' },
+    personalize: { title: 'See how well this matches you', line: 'Create your health profile to see your personalized match and why.' },
     feature: { title: feature ? (FEATURE_TITLES[feature] || `Sign in for ${feature}`) : 'This needs an account', line: 'Take the short quiz to start, or sign in if you already have an account.' },
     login: { title: 'Sign in', line: 'Welcome to ayna. New here? Start with the quiz.' },
   };

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { buildDashboard, formatMetric, isFlat, RANGES } from '../../health/dashboard.js';
 import { estimatePhase, PHASE_SOURCES } from '../../health/phase.js';
 import { explainWeek, cycleLine } from '../../health/weekInsights.js';
@@ -473,6 +473,12 @@ export default function HealthHome({
     setActiveInsight(insight.id);
     window.requestAnimationFrame(() => topRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' }));
   };
+  // "See data" from the Daily Rundown (src/components/rundown): open that area's tab.
+  useEffect(() => {
+    const onTab = (e) => { const id = e?.detail?.tab; if (id && tabs.some((x) => x.id === id)) open(id); };
+    window.addEventListener('ayna:health-tab', onTab);
+    return () => window.removeEventListener('ayna:health-tab', onTab);
+  });
   const add = (needId) => { if (onAddGoal?.(needId)) { haptic('success'); setAdded((a) => ({ ...a, [needId]: true })); } };
 
   let ti = 0;

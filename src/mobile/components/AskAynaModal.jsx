@@ -16,6 +16,8 @@ import { mayAutoFocus } from '../../utils/delightRuntime.js';
 import { guideContext } from '../utils/aynaGuide.js';
 import { localMatchAnswer } from '../../utils/askMatch.js';
 import { localHistoryAnswer } from '../../utils/askHistory.js';
+import { localTodayAnswer } from '../../utils/askToday.js';
+import { guidedTiles } from '../../utils/askGuided.js';
 import AynaGuideHub from './AynaGuideHub.jsx';
 import { useAskHealthPref, ASK_HEALTH_LABEL } from '../../health/askHealthPref.js';
 
@@ -116,6 +118,9 @@ export default function AskAynaModal({
   // For "what's my % match for X": the same engine and inputs the cards use.
   matchOpts = undefined,
   focusProduct = null,
+  // The Ask ayna tab: the same conversation as the tab's content, not a sheet
+  // (no grabber, no Done, the tab bar stays below it).
+  asTab = false,
 }) {
   const [messages, setMessages] = useState(chatHistory.length > 0 ? chatHistory : buildWelcome(name));
   const [input, setInput] = useState('');
@@ -212,7 +217,8 @@ export default function AskAynaModal({
     // Her match for a product comes from ayna's match engine on this device,
     // never from the language model, so it is the same % the product shows.
     const local = (await localMatchAnswer(msg, { quizAnswers: profile, matchOpts, focusProduct }).catch(() => null))
-      || (await localHistoryAnswer(msg, { guideTrials: guide?.trials || [], guide: true }).catch(() => null));
+      || (await localHistoryAnswer(msg, { guideTrials: guide?.trials || [], guide: true }).catch(() => null))
+      || (await localTodayAnswer(msg).catch(() => null));
     if (local) {
       setInput('');
       setSendError('');
@@ -323,7 +329,7 @@ export default function AskAynaModal({
 
   return (
     <div
-      className="ayna-ask-drawer"
+      className={`ayna-ask-drawer${asTab ? ' is-tab' : ''}`}
       data-open={open ? 'true' : 'false'}
       style={{
         position: 'absolute',
@@ -334,7 +340,7 @@ export default function AskAynaModal({
         flexDirection: 'column',
       }}
     >
-      <div ref={sheetRef} className="ayna-ask-drawer-content" role="dialog" aria-label="Ask ayna" aria-modal={open ? true : undefined} aria-hidden={!open} inert={!open ? true : undefined}>
+      <div ref={sheetRef} className="ayna-ask-drawer-content" role={asTab ? 'region' : 'dialog'} aria-label="Ask ayna" aria-modal={open && !asTab ? true : undefined} aria-hidden={!open} inert={!open ? true : undefined}>
       {onClose && <button {...grabberProps} aria-label="Close Ask ayna" />}
       <div
         style={{
@@ -372,7 +378,7 @@ export default function AskAynaModal({
           <AskHome
             name={name ? String(name).split(' ')[0] : ''}
             intro="Ask about a product, your week, or what to try. Not medical advice."
-            tiles={askTiles(hasHealthData)}
+            tiles={guidedTiles({ focusProduct, hasHealthData, fallback: askTiles(hasHealthData) })}
             recent={recentQuestions(messages)}
             onPick={(q) => { setInput(q); inputRef.current?.focus({ preventScroll: true }); }}
             onContinue={messages.some((m) => m.role === 'user') ? () => setHome(false) : null}
