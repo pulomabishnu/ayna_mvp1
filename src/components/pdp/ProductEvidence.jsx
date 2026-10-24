@@ -791,15 +791,16 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       tone: pv.tone,
     })),
   ].filter((c) => c && (c.text || c.tag)) : [];
+  // Plain rows, not coloured cards (master prompt 154: no bento): the part,
+  // its one fact, its first line, and a link into that tab.
   const glanceCards = cards.length > 0 && (
-    <ul className="ay-glance" aria-label="Jump to a section">
+    <ul className="ay-jumprows" aria-label="Jump to a section">
       {cards.map((c) => (
         <li key={c.id} className={`is-${PREVIEW_KEY[c.id] || c.id}${c.tone ? ` is-tone-${c.tone}` : ''}`}>
           <button type="button" onClick={() => goTo(c.id)}>
-            <span className="ay-glance__label">{c.label}</span>
-            {c.tag && <span className="ay-glance__tag">{c.tag}</span>}
-            {c.text && <span className="ay-glance__text">{c.text}</span>}
-            <span className="ay-glance__go" aria-hidden="true">→</span>
+            <span className="ay-jumprows__head"><span className="ay-jumprows__label">{c.label}</span>{c.tag && <span className="ay-jumprows__tag">{c.tag}</span>}</span>
+            {c.text && <span className="ay-jumprows__text">{c.text}</span>}
+            <svg className="ay-jumprows__go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
           </button>
         </li>
       ))}

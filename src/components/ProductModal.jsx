@@ -22,6 +22,7 @@ import { getPassport } from '../data/passport';
 import { ProductMatch, ProductAsk } from './passport/ProductSections';
 import { firstSentence } from './pdp/sentences';
 import ProductEvidence from './pdp/ProductEvidence';
+import { evidenceLevel } from './pdp/evidenceLevel';
 import { attributeBadges, noDash } from './pdp/evidenceModel';
 import { galleryImages, retailerLinks, similarProducts, sameNeedProducts, productJsonLd, breadcrumbJsonLd } from './pdp/commerce';
 import GalleryThumbs from './pdp/GalleryThumbs';
@@ -413,6 +414,16 @@ export default function ProductModal({
     const frame = requestAnimationFrame(() => { timer = setTimeout(() => setSettled(true), 0); });
     return () => { cancelAnimationFrame(frame); clearTimeout(timer); };
   }, [settled]);
+  // Phones (under 760px, the same width the sections use) get the app's first
+  // screen: photo, name, price, why with the % match, evidence, fit, Buy.
+  const [isPhone, setIsPhone] = useState(() => typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 760px)').matches);
+  useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return undefined;
+    const mq = window.matchMedia('(max-width: 760px)');
+    const on = () => setIsPhone(mq.matches);
+    mq.addEventListener?.('change', on);
+    return () => mq.removeEventListener?.('change', on);
+  }, []);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   // Size / pack options (product.variants): Buy now, photo, name and price
   // follow the chosen option.
@@ -910,10 +921,23 @@ export default function ProductModal({
             {(() => {
               const raw = noDash(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, ''));
               const lead = firstSentence(raw, { min: 20, max: 420 });
-              return lead ? <p className="ayp-buy__lead pdp-lead">{lead}</p> : null;
+              // On phones the line moves into "What it is" (ProductEvidence gets no heroLine).
+              return lead && !isPhone ? <p className="ayp-buy__lead pdp-lead">{lead}</p> : null;
             })()}
 
             <HeroPrice view={heroPriceView(product, { price, perUnit, glance, brand })} />
+
+            {isPhone && (() => {
+              // Phone first screen (master prompt 112): why ayna surfaced it with the % match,
+              // the evidence in one line, how it fits. Each row opens the full part.
+              const ev = evidenceLevel(product);
+              const rows = [];
+              if (matchPercent > 0) rows.push(<li key="why"><button type="button" className="ayp-why__row" onClick={() => setShowWhy(true)} aria-label={`${matchPercent}% match${headMatchLine ? `. ${headMatchLine}` : ''}. See why`}><MatchPill percent={matchPercent} size="sm" /><span className="ayp-why__main">{headMatchLine || 'Why ayna picked this for you'}</span><span className="ayp-why__go">See why</span></button></li>);
+              if (ev.level > 0) rows.push(<li key="ev"><button type="button" className="ayp-why__row" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'literature' }))}><span className="ayp-why__bars" data-level={ev.level} aria-hidden="true"><i /><i /><i /></span><span className="ayp-why__main"><b>{ev.word}</b>{ev.need && ` for ${ev.need}`}</span><span className="sr-only">. See the evidence</span></button></li>);
+              if (settled && !(matchPercent > 0) && quizResults) rows.push(<li key="fit"><button type="button" className="ayp-why__row" onClick={() => setShowWhy(true)}><span className="ayp-why__main">{matchExclusions[0] || 'No clear match for what you told us'}</span><span className="ayp-why__go">See why</span></button></li>);
+              if (!quizResults && !user && onStartQuiz) rows.push(<li key="fit"><button type="button" className="ayp-why__row" onClick={onStartQuiz}><span className="ayp-why__main">How well does this fit you?</span><span className="ayp-why__go">See my matches</span></button></li>);
+              return rows.length ? <ul className="ayp-why" aria-label="Why it is here">{rows}</ul> : null;
+            })()}
 
             <section className="ayp-buy__section ay-story--buy" aria-labelledby="ay-buy-h">
               <h2 id="ay-buy-h" className="sr-only">Buy</h2>
@@ -933,7 +957,7 @@ export default function ProductModal({
             {/* How well it fits you sits right after Buy, in the same column. */}
             <div className="ayp-fit">
               {/* With a profile, her match fills in a moment after the hero (settled above). */}
-              {!settled && (quizResults || healthProfile) ? <div className="ay-skel__bar is-sub ayp-fit__skel" role="status" aria-label="Checking your match" /> : <ProductMatch glance={glance} matchPercent={matchPercent} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz ? onStartQuiz : null} hasProfile={Boolean(quizResults)} exclusions={matchExclusions} health={matchDetails?.healthData ? { section: matchDetails.healthData.section, tracker: ['tracker', 'wearable'].includes(String(product?.category || '').toLowerCase()) } : null} />}
+              {!settled && (quizResults || healthProfile) ? <div className="ay-skel__bar is-sub ayp-fit__skel" role="status" aria-label="Checking your match" /> : <ProductMatch glance={glance} matchPercent={matchPercent} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz && !isPhone ? onStartQuiz : null} hasProfile={Boolean(quizResults)} exclusions={matchExclusions} health={matchDetails?.healthData ? { section: matchDetails.healthData.section, tracker: ['tracker', 'wearable'].includes(String(product?.category || '').toLowerCase()) } : null} />}
               {!(matchPercent > 0) && !matchExclusions.length && isInEcosystem && (
                 <p className="ayp-fit__note">In your ecosystem</p>
               )}
@@ -948,7 +972,7 @@ export default function ProductModal({
           <div className="ayp-hero__info pdp-head__info">
             {/* Main's structure (#73): the tabs (Overview first) sit under the photo on desktop and
                 after Buy on phones, so no second Buy row is needed. No sticky buy bar. */}
-          <ProductEvidence v4 loading={!researchLoaded} product={product} image={images[0] || ''} safetyLead={topWarning} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null} recall={recall} heroLine={firstSentence(noDash(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '')), { min: 20, max: 420 })} extraRows={(() => {
+          <ProductEvidence v4 loading={!researchLoaded} product={product} image={images[0] || ''} safetyLead={topWarning} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null} recall={recall} heroLine={isPhone ? '' : firstSentence(noDash(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '')), { min: 20, max: 420 })} extraRows={(() => {
             const pp = getPassport(product);
             const checked = pp?.pricing?.price?.verified_at;
             let seller = '';

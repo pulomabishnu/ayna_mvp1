@@ -122,24 +122,6 @@ html body .app-container:not([data-theme='brand-dark']) #pdp-v4 .ay-itabs__bar >
 #pdp-v4 .ay-itabs__panel > * { grid-area: auto !important; grid-column: 1 / -1 !important; margin: 0 !important; }
 
 /* ---------- Overview cards ---------- */
-#pdp-v4 .ay-glance { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)) !important; gap: 12px !important; margin: 0 !important; padding: 0 !important; list-style: none; }
-#pdp-v4 .ay-glance > li { --card: var(--v-butter); --card-fg: var(--v-ink); --go-bg: var(--v-ink); --go-fg: var(--card); margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; }
-#pdp-v4 .ay-glance > li.is-clinical { --card: var(--v-pink); }
-#pdp-v4 .ay-glance > li.is-safety { --card: var(--v-sky); --card-fg: var(--v-deep); --go-bg: var(--v-deep); }
-#pdp-v4 .ay-glance > li.is-reviews { --card: transparent; --card-fg: var(--v-fg); --go-bg: var(--v-fg); --go-fg: var(--v-bg); }
-#pdp-v4 .ay-glance > li > button { display: grid !important; gap: 10px; align-content: start; width: 100%; height: 100%; min-height: 0 !important; text-align: left; padding: 22px !important; border: 2px solid var(--card) !important; border-radius: 26px !important; background: var(--card) !important; color: var(--card-fg) !important; cursor: pointer; box-shadow: none !important; transition: transform .15s, box-shadow .15s; }
-html body .app-container:not([data-theme='brand-dark']) #pdp-v4 .ay-glance > li.is-science > button { border-color: var(--v-ink) !important; }
-html body .app-container:not([data-theme='brand-dark']) #pdp-v4 .ay-glance > li.is-reviews { --go-bg: var(--v-butter); --go-fg: var(--v-ink); }
-#pdp-v4 .ay-glance > li.is-reviews > button { border-color: var(--v-fg) !important; }
-#pdp-v4 .ay-glance > li > button:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--v-fg) !important; }
-#pdp-v4 .ay-glance > li > button > * { color: var(--card-fg) !important; }
-#pdp-v4 .ay-glance__label { font: 700 12px/1 'Figtree', sans-serif !important; letter-spacing: .08em; text-transform: uppercase; }
-#pdp-v4 .ay-glance__tag { justify-self: start; padding: 4px 8px; border-radius: 99px; border: 1.5px solid var(--card-fg); font: 700 12px/1 'Figtree', sans-serif !important; }
-#pdp-v4 .ay-glance > li.is-safety .ay-glance__tag { background: var(--v-deep); border-color: var(--v-deep); color: #ffedac !important; }
-#pdp-v4 .ay-glance__text { display: block !important; font: 400 17px/1.5 'Figtree', sans-serif !important; }
-#pdp-v4 .ay-glance > li > button > .ay-glance__go { position: static !important; inset: auto !important; justify-self: end; display: grid !important; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--go-bg) !important; color: var(--go-fg) !important; font: 700 15px/1 'Figtree', sans-serif !important; }
-html body .app-container:not([data-theme='brand-dark']) #pdp-v4 .ay-glance > li:not(.is-reviews) > button > .ay-glance__go { color: var(--card) !important; }
-html body .app-container:not([data-theme='brand-dark']) #pdp-v4 .ay-glance > li.is-science > button > .ay-glance__go { color: #fffaeb !important; }
 
 #pdp-v4 .ay-ov-what { display: grid; gap: 12px; padding: 26px; border: 2px dashed rgba(var(--v-fg-rgb), .5); border-radius: 30px; }
 #pdp-v4 .ay-ov-what .ay-part__h, #pdp-v4 .ay-ov-who .ay-part__h { font-size: 32px !important; }
@@ -353,8 +335,6 @@ html body .app-container:not([data-theme='brand-dark']) #pdp-v4 .ay-glance > li.
 #pdp-v4 .ayq .ayq-checks > li { border-radius: 22px !important; background: rgba(var(--v-fg-rgb), .07) !important; }
 #pdp-v4 .ayq .ayq-checks > li:nth-child(3n + 2) .ayq-checks__n { background: var(--v-pink) !important; color: var(--v-ink) !important; }
 #pdp-v4 .ayq .ayq-checks > li:nth-child(3n) .ayq-checks__n { background: var(--v-sky) !important; color: var(--v-deep) !important; }
-#pdp-v4 .ay-glance > li.is-how { --card: var(--v-sky); --card-fg: var(--v-deep); --go-bg: var(--v-deep); }
-#pdp-v4 .ay-glance > li.is-science { --card: var(--v-butter); }
 
 /* Boxes: folders become the design's rounded cards. */
 #pdp-v4 .ayq .ayq-folder__tab { padding: 0 0 8px !important; border-radius: 0 !important; background: none !important; font: 700 12px/1.2 'Figtree', sans-serif !important; letter-spacing: .08em; text-transform: uppercase; color: var(--v-accent-text) !important; }
@@ -396,3 +376,33 @@ html body .app-container:not([data-theme='brand-dark']) #pdp-v4 .ay-glance > li.
 /* Reviews: what people say online in a speech bubble. */
 #pdp-v4 .ayq .ayq-panel.is-reviews .ayq-readshelf, #pdp-v4 .ayq .ayq-panel.is-reviews .ayq-prose { padding: 22px 24px; border-radius: 30px 30px 30px 8px; background: var(--v-butter); }
 #pdp-v4 .ayq .ayq-panel.is-reviews :is(.ayq-readshelf, .ayq-prose) :is(p, span, b, button) { color: var(--v-ink) !important; }
+
+/* ---------- Phones: the app's first screen (master prompt 112) ----------
+   Photo first and smaller, then name, price, why with the % match, the
+   evidence in one line, how it fits, Buy; ayna's take follows in the
+   sections. The big % in the match block below is not repeated. */
+@media (max-width: 760px) {
+  #pdp-v4 .pdp-head { grid-template-areas: 'media' 'detail' 'info' !important; gap: 20px !important; }
+  #pdp-v4 .ayp-gallery { justify-items: center; }
+  #pdp-v4 .ayp-gallery__stamp { width: min(100%, 200px); }
+  #pdp-v4 .ayp-gallery .ay-thumbs button { width: 44px; height: 44px; padding: 4px; }
+  #pdp-v4 .pdp-head > .pdp-head__detail { gap: 14px !important; }
+  #pdp-v4 .pdp-head__name { font-size: 32px !important; }
+  #pdp-v4 .ayp-fit .ay-match__score { display: none !important; }
+  /* Buy comes first; the size picker sits right under it (Buy still opens the option picked). */
+  #pdp-v4 .ayp-buy__box { display: flex !important; flex-direction: column; gap: 14px; }
+  #pdp-v4 .ayp-buy__box > .ayp-buy__actions { order: -1; }
+}
+#pdp-v4 .ayp-why { display: grid; margin: -4px 0 0 !important; padding: 0 !important; list-style: none; border-top: 1px solid rgba(var(--v-fg-rgb), .15); }
+#pdp-v4 .ayp-why > li { margin: 0 !important; padding: 0 !important; border-bottom: 1px solid rgba(var(--v-fg-rgb), .15); }
+#pdp-v4 .ayp-why__row { display: flex !important; align-items: center; gap: 10px; width: 100%; min-height: 48px; margin: 0; padding: 10px 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: var(--v-fg) !important; font: 400 15px/1.4 'Figtree', sans-serif !important; text-align: left; cursor: pointer; }
+#pdp-v4 .ayp-why__row:focus-visible { outline: 3px solid var(--v-fg); outline-offset: 2px; border-radius: 10px !important; }
+#pdp-v4 .ayp-why__row .ay-match-pill { flex: none; }
+#pdp-v4 .ayp-why__main { flex: 1; min-width: 0; color: var(--v-fg) !important; }
+#pdp-v4 .ayp-why__main b { font-weight: 600; color: inherit !important; }
+#pdp-v4 .ayp-why__go { flex: none; font: 600 14px/1.2 'Figtree', sans-serif !important; text-decoration: underline; text-underline-offset: 3px; color: var(--v-fg) !important; }
+#pdp-v4 .ayp-why__bars { flex: none; display: grid; grid-template-columns: repeat(3, 14px); gap: 3px; }
+#pdp-v4 .ayp-why__bars i { height: 8px; border: 1.5px solid var(--v-fg); border-radius: 99px; box-sizing: border-box; }
+#pdp-v4 .ayp-why__bars:is([data-level='1'], [data-level='2'], [data-level='3']) i:nth-child(1),
+#pdp-v4 .ayp-why__bars:is([data-level='2'], [data-level='3']) i:nth-child(2),
+#pdp-v4 .ayp-why__bars[data-level='3'] i:nth-child(3) { background: var(--v-fg); }
