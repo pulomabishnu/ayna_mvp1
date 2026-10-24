@@ -85,9 +85,11 @@ function buildWelcome() {
   }];
 }
 
-export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery, onViewRecommendations, openSignal = 0, prefill = '', prefillStats = null, onRequireAuth, products = {}, hasHealthData = false, resolveProduct = null, onOpenProduct = null, onOpenDashboard = null, onOpenRead = null, matchOpts = undefined, healthProfile = null, focusProduct = null }) {
+export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery, onViewRecommendations, openSignal = 0, prefill = '', prefillStats = null, onRequireAuth, products = {}, hasHealthData = false, resolveProduct = null, onOpenProduct = null, onOpenDashboard = null, onOpenRead = null, matchOpts = undefined, healthProfile = null, focusProduct = null, asPage = false }) {
   const firstName = getFirstName(user);
-  const [open, setOpen] = useState(false);
+  // asPage: the Ask ayna tab (/ask) shows the conversation inline, always open.
+  const [openState, setOpen] = useState(false);
+  const open = asPage || openState;
   // The header's Ask ayna button bumps openSignal to open the chat.
   // Numbers from the dashboard that go with a prefilled question (shown back as a stat card).
   const statsRef = useRef(null);
@@ -425,7 +427,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
 
   return (
     <>
-      {tucked && !open ? (
+      {asPage ? null : tucked && !open ? (
         <button type="button" className="ayna-ask-tab" aria-label="Show Ask ayna" onClick={() => setTuck(false)}>
           <span className="ayna-ask-orb ayna-ask-orb--small" aria-hidden="true" />
           <span className="ayna-ask-tab__label">Ask ayna</span>
@@ -448,9 +450,9 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
       )}
 
       {/* Phones: the panel is a bottom sheet over a flat 40% scrim, like the app's Ask sheet (P1-24). */}
-      {open && <div className="ayna-ask-scrim" aria-hidden="true" onClick={() => setOpen(false)} />}
+      {open && !asPage && <div className="ayna-ask-scrim" aria-hidden="true" onClick={() => setOpen(false)} />}
       {open && (
-        <section className="ayna-ask-panel" aria-label="Ask ayna">
+        <section className={`ayna-ask-panel${asPage ? ' is-page' : ''}`} aria-label="Ask ayna">
           <header className={`ayna-ask-panel__header${messages.length > 1 ? " is-compact" : ""}`}>
             <div className="ayna-ask-panel__identity">
               {!home && (
@@ -461,14 +463,14 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
               <h3>Ask ayna</h3>
             </div>
 
-            <button
+            {!asPage && <button
               type="button"
               className="ayna-ask-panel__close"
               aria-label="Close Ask ayna"
               onClick={() => setOpen(false)}
             >
               ×
-            </button>
+            </button>}
           </header>
 
           <div className="ayna-ask-mode">
