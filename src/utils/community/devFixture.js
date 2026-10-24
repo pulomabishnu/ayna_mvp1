@@ -9,7 +9,8 @@ const ago = (m) => new Date(Date.now() - m * MIN).toISOString();
 
 const author = (n) => ({ author_id: `00000000-0000-4000-8000-0000000001${n}0`, author_username: `sample_member_${n}`, author_display_name: `Sample member ${n}` });
 
-const POSTS = [
+// Built on first use (functions, not top-level calls) so a production build can drop all of it.
+const posts = () => [
   { id: '00000000-0000-4000-8000-000000000001', kind: 'post', ...author(1), body: 'Sample post: switching to a cup took me three cycles to get right. Fold it smaller than you think, and give it a full minute before you decide it leaks. #periods', topics: ['periods'], helpful_count: 7, comment_count: 3, created_at: ago(12), is_mine: true, tagged_product_ids: ['p-saalt-cup'] },
   { id: '00000000-0000-4000-8000-000000000002', kind: 'question', ...author(2), body: 'Sample question: has anyone tried an iron supplement that does not upset your stomach? What time of day do you take it?', topics: ['nutrition'], helpful_count: 2, comment_count: 4, created_at: ago(55) },
   { id: '00000000-0000-4000-8000-000000000003', kind: 'review', ...author(3), body: 'Sample review: soft, no smell, and the pad stayed put on a long walking day. Runs a little short for overnight.', topics: ['periods'], rating: 4, product_id: 'p-rael-organic-pad', helpful_count: 5, comment_count: 1, created_at: ago(180) },
@@ -17,11 +18,11 @@ const POSTS = [
   { id: '00000000-0000-4000-8000-000000000005', kind: 'post', is_anonymous: true, author_id: null, body: 'Sample anonymous post: reminder that it is fine to ask your doctor the same question twice if the first answer did not make sense.', topics: ['wellbeing'], helpful_count: 1, comment_count: 2, created_at: ago(60 * 50) },
 ].map((p) => ({ media: [], viewer_found_helpful: false, viewer_saved: false, is_anonymous: false, is_mine: false, edited_at: null, rating: null, product_id: null, tagged_product_ids: [], ...p }));
 
-const PLAYLISTS = [
+const playlists = () => [
   { id: '00000000-0000-4000-8000-0000000000a1', title: 'Sample playlist: period kit', owner_id: '00000000-0000-4000-8000-000000000110', owner_display_name: 'Sample member 1', item_count: 3, visibility: 'public', preview_product_ids: ['p-saalt-cup', 'p-rael-organic-pad', 'p-honeypot-pad'], cover_url: null, updated_at: ago(90), is_mine: false },
 ];
 
-const PROFILES = [1, 2, 3, 4].map((n) => ({ user_id: `00000000-0000-4000-8000-0000000001${n}0`, username: `sample_member_${n}`, display_name: `Sample member ${n}`, bio: 'Sample profile for the dev fixture.', avatar_url: null }));
+const profiles = () => [1, 2, 3, 4].map((n) => ({ user_id: `00000000-0000-4000-8000-0000000001${n}0`, username: `sample_member_${n}`, display_name: `Sample member ${n}`, bio: 'Sample profile for the dev fixture.', avatar_url: null }));
 
 const likers = (postId, n) => Array.from({ length: Math.min(n, 5) }, (_, i) => ({ post_id: postId, user_id: i === 2 ? null : `00000000-0000-4000-8000-0000000001${(i % 4) + 1}0`, username: i === 2 ? null : `sample_member_${(i % 4) + 1}`, display_name: i === 2 ? null : `Sample member ${(i % 4) + 1}`, is_anonymous: i === 2, total_count: n }));
 
@@ -33,15 +34,16 @@ export function communityFixtureOn() {
 
 function tableRows(table, filters) {
   let rows = [];
-  if (table === 'community_feed_posts') rows = POSTS;
-  else if (table === 'community_feed_playlists') rows = PLAYLISTS;
-  else if (table === 'community_playlist_items') rows = PLAYLISTS[0].preview_product_ids.map((product_id, position) => ({ product_id, position, note: null, added_at: ago(90), added_by: null }));
-  else if (table === 'community_profiles') rows = PROFILES;
+  if (table === 'community_feed_posts') rows = posts();
+  else if (table === 'community_feed_playlists') rows = playlists();
+  else if (table === 'community_playlist_items') rows = playlists()[0].preview_product_ids.map((product_id, position) => ({ product_id, position, note: null, added_at: ago(90), added_by: null }));
+  else if (table === 'community_profiles') rows = profiles();
   for (const [col, val] of filters) rows = rows.filter((r) => !(col in r) || r[col] === val);
   return rows;
 }
 
 function rpcRows(name, args = {}) {
+  const POSTS = posts();
   if (name === 'community_post_view_counts') return POSTS.filter((p) => p.is_mine && (args.p_post_ids || []).includes(p.id)).map((p) => ({ post_id: p.id, view_count: 128, views_today: 9 }));
   if (name === 'community_post_likers_preview') return POSTS.filter((p) => (args.p_post_ids || []).includes(p.id)).flatMap((p) => likers(p.id, p.helpful_count));
   if (name === 'community_post_likers') { const p = POSTS.find((x) => x.id === args.p_post_id); return p ? likers(p.id, p.helpful_count) : []; }
