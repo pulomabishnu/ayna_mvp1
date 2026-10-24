@@ -3,7 +3,7 @@ import { hasClinicalSources, CLINICAL_SOURCES_LABEL } from '../utils/clinicalSou
 import PartnerStrip from './PartnerStrip';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import * as communityStore from '../utils/community/communityStore.js';
-import { matchBadge } from '../utils/matchDisplay';
+import { shownMatchPercent } from '../utils/bestMatchSort.js';
 import '../styles/eco-redesign.css';
 import '../styles/landing.css';
 // The catalog loads after first paint (data/catalog.js); WelcomeBack re-renders when it lands.
@@ -534,7 +534,7 @@ function WelcomeBack({ heroBanner = null, user, myProducts, recommendedProductId
       const BASICS_IDS = basicsProductIds();
       // Top picks by the same match % the cards show; nothing under 70% is
       // called "for your needs".
-      const scored = list.map((p) => ({ p, m: matchBadge(getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts))?.percent ?? 0 }))
+      const scored = list.map((p) => ({ p, m: shownMatchPercent(getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts)) }))
         .filter((x) => x.m >= 70 && x.p.image).sort((a, b) => (BASICS_IDS.has(a.p.id) - BASICS_IDS.has(b.p.id)) || (b.m - a.m));
       if (scored.length >= 4) {
         // Spread across her needs: one per area first (on "All"), then fill by score.

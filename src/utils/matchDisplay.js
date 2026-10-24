@@ -72,8 +72,8 @@ function bestNeed(details, needId = null) {
 }
 
 /**
- * Card badge: the product's one match score, only when she has a profile and
- * it is 50+. One product shows one percent on every surface (card, shelf,
+ * Card badge: the product's one match score, only when she has a profile.
+ * 50+ shows the %, 1 to 49 is "Partial fit" (partial: true). One product shows one percent on every surface (card, shelf,
  * Swipe, product page, Wrapped): always `details.percent`, the engine's best
  * need score for her. Pass { needId } on a need shelf: the label names that
  * shelf's need only when that need is the one the percent comes from, so a
@@ -84,14 +84,24 @@ function bestNeed(details, needId = null) {
 export function matchBadge(details, { needId = null } = {}) {
   if (!details || details.matchStatus !== 'scored' || details.eligible === false) return null;
   const percent = details.percent;
-  if (!Number.isFinite(percent) || percent < MIN_BADGE_SCORE) return null;
+  if (!Number.isFinite(percent) || percent <= 0) return null;
   const best = bestNeed(details);
+  // Under 50: the card still says something, "Partial fit", never a low number
+  // (founder, Oct 24: one rule on every surface). `percent` keeps the engine
+  // score so MatchPill renders the words; `partial` lets callers tell it apart.
+  if (percent < MIN_BADGE_SCORE) {
+    return {
+      percent, partial: true, phrase: '', needId: best?.needId || details.needId || null, label: PARTIAL_FIT,
+      basedOn: BASED_ON_LINE, restricted: details.eligibility === 'restricted' || Boolean(best?.restricted), confidenceLevel: best?.confidenceLevel || details.confidence || null,
+    };
+  }
   const focus = needId ? bestNeed(details, needId) : null;
   // On a shelf: name the shelf's need only if it scores the same as the badge.
   const named = needId ? (focus && focus.needId === needId && focus.score === percent ? focus : null) : best;
   const phrase = named?.phrase || '';
   return {
     percent,
+    partial: false,
     phrase,
     needId: (named || best)?.needId || details.needId || null,
     label: needHeadline(percent, phrase),

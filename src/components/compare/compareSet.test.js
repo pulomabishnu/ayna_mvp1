@@ -45,3 +45,22 @@ describe('bestForProfile', () => {
     expect(bestForProfile([a, b], (p) => d(p === a ? 80 : 79))).toBeNull();
   });
 });
+
+describe('compare rows a shopper needs (TD 21)', () => {
+  const pad = ALL_PRODUCTS.find((p) => p.id === 'p-viboos-heating-pad');
+  it('always has Match, Preferences and Reviews rows', () => {
+    const ids = compareSetRows([a, b]).map((r) => r.id);
+    for (const id of ['match', 'prefs', 'reviews', 'safety']) expect(ids).toContain(id);
+  });
+  it('format is the real format, not the category', () => {
+    const fmt = compareSetRows([a, pad]).find((r) => r.id === 'format').values;
+    expect(fmt.some((v) => /cramp relief/i.test(v))).toBe(false);
+    expect(fmt[1]).toMatch(/Device/);
+  });
+  it('safety shows label warnings when they exist', () => {
+    const safety = compareSetRows([a, { ...pad, warnings: ['Never use a heating pad while you are asleep.'] }]).find((r) => r.id === 'safety').values;
+    expect(safety[1]).toMatch(/asleep/);
+    expect(compareSetRows([a, pad]).find((r) => r.id === 'safety').values[1]).toMatch(/burn/i);
+    expect(safety[1]).not.toBe('None flagged');
+  });
+});

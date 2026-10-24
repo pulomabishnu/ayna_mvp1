@@ -26,7 +26,7 @@ describe('matchDisplay', () => {
 
   it('card badge only at 50+ with a profile', () => {
     expect(matchBadge(details())).toMatchObject({ percent: 82, phrase: 'period cramps', label: '82% for period cramps', basedOn: 'Based on what you\u2019ve shared', restricted: false });
-    expect(matchBadge(details({ percent: 49 }))).toBe(null);
+    expect(matchBadge(details({ percent: 49 }))).toMatchObject({ partial: true, label: 'Partial fit' });
     expect(matchBadge(details({ matchStatus: 'no-profile', percent: null }))).toBe(null);
     expect(matchBadge(details({ matchStatus: 'excluded', eligible: false, percent: 0 }))).toBe(null);
   });

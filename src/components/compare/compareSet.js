@@ -18,6 +18,9 @@ import { compareRows } from '../pdp/commerce.js';
 import { formatLabel, NOT_ON_FILE } from '../pdp/glance.js';
 import { gradedResearch, LEVEL_WORDS } from '../pdp/evidenceLevel.js';
 import { needPhrase } from '../../matching/ontology.js';
+import { buildProductProfile } from '../../matching/productProfile.js';
+import { recallFacts } from '../../utils/productFacts.js';
+import { safetyAlertText } from '../../data/passport/content.js';
 import { matchText } from '../../utils/matchDisplay.js';
 import { whyFirstLine, whyLine } from '../../utils/whyLine.js';
 
@@ -54,8 +57,49 @@ export function govEvidence(product) {
   return level ? `${LEVEL_WORDS[level]} for ${needPhrase(top.need)}` : 'Not graded yet';
 }
 
+// The physical form, from the product profile (not the shop category).
+const FORMAT_WORDS = {
+  pill_capsule: 'Pills or capsules', gummy: 'Gummies', powder: 'Powder', drink_tea: 'Drink or tea',
+  topical: 'Cream, gel or lotion', patch: 'Patch or wrap', suppository: 'Suppository', device: 'Device',
+  period_care: 'Period product', app_service: 'App or service', test_kit: 'At-home test', apparel_support: 'Wearable support',
+};
+/** "Device · plug-in", "Patch or wrap", "Pills or capsules": the real format, never the category. */
+export function formatOf(product) {
+  let formats = [];
+  try { formats = buildProductProfile(product)?.formats || []; } catch { formats = []; }
+  const words = formats.map((f) => FORMAT_WORDS[f]).filter(Boolean);
+  const text = `${product?.name || ''} ${product?.summary || ''}`.toLowerCase();
+  const power = /plug-?in|electric|corded/.test(text) ? 'plug-in' : /cordless|rechargeable|battery/.test(text) ? 'rechargeable' : /microwav/.test(text) ? 'microwavable' : /air-activated|self-heating|disposable/.test(text) ? 'single use' : '';
+  if (words.length) return [...new Set(words)].slice(0, 2).join(', ') + (power && formats.some((f) => ['device', 'patch'].includes(f)) ? ` · ${power}` : '');
+  const fallback = formatLabel(product);
+  return fallback || NOT_ON_FILE;
+}
+
+const shortWarning = (t) => {
+  const s = String(t || '').replace(/\s+/g, ' ').trim().replace(/\.$/, '');
+  return s.length > 90 ? `${s.slice(0, 88).replace(/[\s,;:]+\S*$/, '')}…` : s;
+};
+/**
+ * Safety considerations: the label warnings on file first (product.warnings,
+ * then the side effects line), then recall and pregnancy flags. "None flagged"
+ * only when nothing at all is on file.
+ */
+export function safetyOf(product) {
+  const notes = [];
+  const warnings = (product?.warnings || []).map(shortWarning).filter(Boolean);
+  const side = String(product?.safety?.sideEffects || '').replace(/\s+/g, ' ').trim();
+  const first = side.match(/^(.{12,200}?[.!?])(\s|$)/);
+  if (side && !/^(none|n\/a|no known|not applicable)/i.test(side)) notes.push(shortWarning(first ? first[1] : side));
+  notes.push(...warnings.slice(0, notes.length ? 1 : 2));
+  if (recallFacts(product).status === 'past') notes.push('Past recall');
+  const alert = safetyAlertText(product);
+  if (alert && !notes.length) notes.push(shortWarning(alert));
+  const more = notes.length < warnings.length + (side ? 1 : 0) ? ' More on its page.' : '';
+  return notes.length ? `${notes.map((n) => (/[.!?…]$/.test(n) ? n : `${n}.`)).join(' ')}${more}` : 'None flagged';
+}
+
 function preferences(details) {
-  if (!details) return NOT_ON_FILE;
+  if (!details) return NO_PROFILE;
   const texts = (details.reasonDetails || []).map((r) => String(r?.text || '')).filter((t) => PREF_TEXTS.some((re) => re.test(t)));
   return texts.length ? [...new Set(texts)].join(', ') : 'None of your preferences named';
 }
@@ -64,8 +108,11 @@ function reviews(product, ratingFor) {
   const ours = ratingFor ? ratingFor(product) : null;
   if (ours && Number.isFinite(ours.value) && ours.count > 0) return `★ ${ours.value.toFixed(1)} from ${ours.count} ayna member${ours.count === 1 ? '' : 's'}`;
   if (product?.userRating && product?.userRatingSourceUrl) return `★ ${product.userRating} online rating, not checked by ayna`;
-  return NOT_ON_FILE;
+  return 'No ayna reviews yet';
 }
+
+// Match and Preferences always have a row (team direction 21); without her answers they say so.
+const NO_PROFILE = 'Needs your health profile';
 
 /**
  * @param {Array} products 2 to 4 products
@@ -76,7 +123,9 @@ export function compareSetRows(products = [], { matchFor = null, detailsFor = nu
   const list = products.filter(Boolean).slice(0, COMPARE_MAX);
   const base = Object.fromEntries(compareRows(list).map((r) => [r.label, r.values]));
   const rows = [];
-  if (matchFor || detailsFor) {
+  if (!matchFor && !detailsFor) {
+    rows.push({ id: 'match', label: 'Your match', values: list.map(() => NO_PROFILE), keep: true });
+  } else {
     rows.push({
       id: 'match', label: 'Your match',
       values: list.map((p) => {
@@ -86,17 +135,18 @@ export function compareSetRows(products = [], { matchFor = null, detailsFor = nu
         return Number(pct) > 0 ? matchText(pct) : 'No clear match';
       }),
       notes: list.map((p) => (detailsFor ? whyLine(p, detailsFor(p)) : '')),
+      keep: true,
     });
   }
   rows.push({ id: 'price', label: 'Price', values: base.Price || list.map(() => NOT_ON_FILE) });
   rows.push({ id: 'use', label: 'Intended use', values: list.map(intendedUse), hint: 'What the brand or ayna’s team says it is for' });
-  rows.push({ id: 'format', label: 'Format', values: list.map((p) => formatLabel(p) || NOT_ON_FILE) });
+  rows.push({ id: 'format', label: 'Format', values: list.map(formatOf) });
   rows.push({ id: 'evidence', label: 'Evidence', values: list.map(govEvidence), hint: 'Graded only from .gov health pages' });
   if (base['Ingredients or materials']) rows.push({ id: 'ingredients', label: 'Ingredients or materials', values: base['Ingredients or materials'] });
-  if (base['Safety notes']) rows.push({ id: 'safety', label: 'Safety considerations', values: base['Safety notes'] });
-  if (detailsFor) rows.push({ id: 'prefs', label: 'Your preferences', values: list.map((p) => preferences(detailsFor(p))) });
-  rows.push({ id: 'reviews', label: 'Reviews', values: list.map((p) => reviews(p, ratingFor)) });
-  return rows.filter((r) => r.values.some((v) => v && v !== NOT_ON_FILE));
+  rows.push({ id: 'safety', label: 'Safety considerations', values: list.map(safetyOf), hint: 'From the label and the brand’s warnings' });
+  rows.push({ id: 'prefs', label: 'Your preferences', values: list.map((p) => preferences(detailsFor ? detailsFor(p) : null)), keep: true });
+  rows.push({ id: 'reviews', label: 'Reviews', values: list.map((p) => reviews(p, ratingFor)), keep: true });
+  return rows.filter((r) => r.keep || r.values.some((v) => v && v !== NOT_ON_FILE));
 }
 
 /**

@@ -962,7 +962,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             // Featured leads with one product per partner brand; the brand's other
             // products stay in the Shop in their normal place (they used to be
             // hidden, so the count changed from load to load).
-            const featuredLead = browsingWithoutTextQuery && !personalizationFilter
+            // Never for someone with a profile, even with the switch off: her order is
+            // personal relevance first, and partnership never moves it (UX 12, 30).
+            const featuredLead = browsingWithoutTextQuery && !personalizationFilter && !hasQuizFrustrations && !hasHealthImport
                 ? new Set(pickOnePerPartnerBrand(list, orderSeed).filter((it) => getPartnerBrandRank(it) !== null).map((it) => it.id))
                 : null;
             const leadRank = (it) => (featuredLead && featuredLead.has(it.id) ? getPartnerBrandRank(it) : null);
@@ -1602,6 +1604,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
     // Only the values inside the Filters sheet (not search, category or sort).
     const clearSheetFilters = () => {
+        if (inExplore) setMacroGroup('all');
         setTypeFilter('all');
         setPriceFilter('all');
         setEligibilityFilter('all');
@@ -1610,8 +1613,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         setSustainabilityFilter('all');
         setAynaFilter('all');
     };
-    const sheetFilterCount = [typeFilter, priceFilter, eligibilityFilter, lifeStageFilter, preferenceFilter, sustainabilityFilter, aynaFilter].filter((v) => v && v !== 'all').length;
-    const activeFilterCount = [priceFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, typeFilter].filter((v) => v && v !== 'all').length + (categoryFilter !== 'all' && !submittedQuery ? 1 : 0);
+    const areaOn = inExplore && macroGroup !== 'all' ? 1 : 0;
+    const sheetFilterCount = [typeFilter, priceFilter, eligibilityFilter, lifeStageFilter, preferenceFilter, sustainabilityFilter, aynaFilter].filter((v) => v && v !== 'all').length + areaOn;
+    const activeFilterCount = [priceFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, typeFilter].filter((v) => v && v !== 'all').length + (categoryFilter !== 'all' && !submittedQuery ? 1 : 0) + areaOn;
+    // Explore's Filters sheet picks the area (the folder tabs did this outside Explore).
+    const pickArea = (id) => {
+        setMacroGroup(id);
+        setCategoryFilter('all');
+    };
 
     const sortValue = hasProfileForSort
         ? (personalizationFilter && (sortBy === 'default' || sortBy === 'best') ? 'best' : (sortBy === 'best' ? 'default' : sortBy))
@@ -1717,11 +1726,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg>
                 {activeFilterCount ? <span className="ayshop__barfilters-n">{activeFilterCount}</span> : null}
             </button>
-            <div className="ayshop__quick" role="group" aria-label="Quick filters">
+            {/* Inside Explore the quick chips repeat the Filters sheet (team direction 17). */}
+            {!inExplore && <div className="ayshop__quick" role="group" aria-label="Quick filters">
                 {quickFilters.map(([label, value, current, set]) => (
                     <button key={label} type="button" className="ay-chip" aria-pressed={current === value} onClick={() => set(current === value ? 'all' : value)}>{label}</button>
                 ))}
-            </div>
+            </div>}
             </div>
             {submittedQuery && filtered.length > 0 && <SearchAssist query={submittedQuery} resultCount={filtered.length} showTries={false} onUse={(text) => runSearch(text)} />}
             {submittedQuery && categoryFilter !== 'all' && (
@@ -1732,7 +1742,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 </div>
             )}
 
-            <FolderTabs
+            {/* Inside Explore, areas are a group in the Filters sheet, not a third tab row (team direction 17). */}
+            {!inExplore && <FolderTabs
                 tabs={availableMacroGroups.map((g) => ({ id: g.id, label: g.id === 'all' ? 'All' : sentenceCase(g.label) }))}
                 active={submittedQuery ? '' : macroGroup}
                 label="Shop areas"
@@ -1747,7 +1758,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     setAiSuggestions([]);
                     setAiRelatedSearches([]);
                 }}
-            />
+            />}
             <div className="ayshop__toolbar">
                 <div className="ayshop__toolbar-left">
                     <button type="button" className={`ay-btn ay-btn--secondary ayshop__filters${activeFilterCount ? ' is-active' : ''}${showFilters ? ' is-open' : ''}`} onClick={() => setShowFilters((v) => !v)} aria-expanded={showFilters}>
@@ -1774,14 +1785,15 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             {bestQuizNote}
 
             {(() => {
+                const AREA_LABEL = (v) => { const g = MACRO_GROUPS.find((x) => x.id === v); return g ? sentenceCase(g.label) : v; };
                 const LABELS = { 'under-25': 'Under $25', '25-50': '$25–49', '50-100': '$50–99', '100-plus': '$100+', subscription: 'Subscription or membership', 'fsa-hsa': 'FSA/HSA eligible', fsa: 'FSA', hsa: 'HSA', 'fragrance-free': 'Fragrance-free', 'sensitive-skin': 'Sensitive skin', vegan: 'Vegan', 'cruelty-free': 'Cruelty-free', organic: 'Organic', 'clean-ingredients': 'Paraben or chlorine free', reusable: 'Reusable', recyclable: 'Recyclable', 'low-waste': 'Low waste', packaging: 'Sustainable packaging', clinician: CLINICAL_SOURCES_LABEL, community: 'Community favorite', 'best-match': 'Best matches', ecosystem: 'In my routine', fertility: 'Trying to conceive', pregnancy: 'Pregnant', postpartum: 'Postpartum', perimenopause: 'Perimenopause and menopause', menopause: 'Menopause', period: 'Period years', products: 'Products', services: 'Apps & services' };
-                const applied = [[typeFilter, setTypeFilter], [priceFilter, setPriceFilter], [eligibilityFilter, setEligibilityFilter], [lifeStageFilter, setLifeStageFilter], [preferenceFilter, setPreferenceFilter], [sustainabilityFilter, setSustainabilityFilter], [aynaFilter, setAynaFilter]].filter(([v]) => v && v !== 'all');
+                const applied = [...(inExplore && macroGroup !== 'all' ? [[macroGroup, () => setMacroGroup('all')]] : []), [typeFilter, setTypeFilter], [priceFilter, setPriceFilter], [eligibilityFilter, setEligibilityFilter], [lifeStageFilter, setLifeStageFilter], [preferenceFilter, setPreferenceFilter], [sustainabilityFilter, setSustainabilityFilter], [aynaFilter, setAynaFilter]].filter(([v]) => v && v !== 'all');
                 return (
                     <div className="ayshop__applied" role="status">
                         <span className="ayshop__count">{!gridReady ? '\u00a0' : submittedQuery ? ((shownCount ?? catalogShown) === 0 ? '\u00a0' : `${shownCount ?? catalogShown} result${(shownCount ?? catalogShown) === 1 ? '' : 's'} for “${submittedQuery}”`) : applied.length > 0 || (categoryFilter && categoryFilter !== 'all') || macroGroup !== 'all' ? `Showing ${shownCount ?? catalogShown} of ${combined.filter((it) => !isTeenProduct(it)).length}` : shownCount == null ? '\u00a0' : shownCount > visibleCount ? `Showing ${visibleCount} of ${shownCount} products` : (shownCount === 1 ? '1 product' : `${shownCount} products`)}</span>
                         {/* Partner placement is disclosed by each card's 'ayna partner' label and the header line (Oct 16: no extra note). */}
                         {applied.map(([v, set]) => (
-                            <button key={v} type="button" className="ay-chip is-on" onClick={() => set('all')} aria-label={`Remove filter ${LABELS[v] || v}`}>{LABELS[v] || v} <span aria-hidden="true">×</span></button>
+                            <button key={v} type="button" className="ay-chip is-on" onClick={() => set('all')} aria-label={`Remove filter ${LABELS[v] || AREA_LABEL(v)}`}>{LABELS[v] || AREA_LABEL(v)} <span aria-hidden="true">×</span></button>
                         ))}
                         {applied.length > 0 && <button type="button" className="ay-btn ay-btn--text ayshop__clear" onClick={clearSheetFilters}>Clear all</button>}
                         {!user && <button type="button" className="ay-btn ay-btn--text ayshop__matches is-phone" onClick={() => onRequirePersonalizeAuth?.()}>See my matches →</button>}
@@ -1792,6 +1804,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             {showFilters && (
                 <FilterSheet
                     groups={[
+                        ...(inExplore ? [['Area', macroGroup, pickArea, availableMacroGroups.filter((g) => g.id !== 'all').map((g) => [g.id, sentenceCase(g.label)])]] : []),
                         ['Type', typeFilter, setTypeFilter, [['products', 'Products'], ['services', 'Apps & services']]],
                         ['Price', priceFilter, setPriceFilter, [['under-25', 'Under $25'], ['25-50', '$25–49'], ['50-100', '$50–99'], ['100-plus', '$100+']]],
                         ['Billing', priceFilter, setPriceFilter, [['subscription', 'Subscription or membership']]],
@@ -1877,7 +1890,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const isInEcosystem = !!myProducts[item.id];
                     return (
                         <React.Fragment key={item.id}>
-                        {idx === 8 && !submittedQuery && activeFilterCount === 0 && (
+                        {idx === 8 && !inExplore && !submittedQuery && activeFilterCount === 0 && (
                             <div className="ayshop__ribbon">
                                 <Ribbon items={FAMILIAR_PHRASES} label="Searches people make" onPick={(q) => { setSearchQuery(q); runSearch(q); window.scrollTo({ top: 0, behavior: 'smooth' }); }} tab={<span className="ay-ribbon__tab is-label">Does this sound familiar?</span>} className="ay-ribbon--pink" />
                             </div>

@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { loadResearch } from '../../data/researchLoader.js';
+import { withResearch } from '../../data/products.js';
 import { NOT_ON_FILE } from '../pdp/glance.js';
 import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
 import { productImageOverride } from '../../data/productImageOverrides.js';
@@ -16,7 +18,11 @@ function Thumb({ product }) {
  * compareSet.js. "Best match for your profile" shows only when the engine
  * has enough to say so, with why.
  */
-export default function CompareTable({ products = [], matchFor = null, detailsFor = null, ratingFor = null, onOpen, onRemove, variant = 'app', headingId }) {
+export default function CompareTable({ products: picked = [], matchFor = null, detailsFor = null, ratingFor = null, onOpen, onRemove, variant = 'app', headingId }) {
+  // Label warnings live in the on-demand research file (same as the product page).
+  const [research, setResearch] = useState(null);
+  useEffect(() => { let live = true; loadResearch().then((r) => { if (live) setResearch(r); }); return () => { live = false; }; }, []);
+  const products = useMemo(() => (research ? picked.map((p) => withResearch(p, research)) : picked), [picked, research]);
   const rows = compareSetRows(products, { matchFor, detailsFor, ratingFor });
   const best = bestForProfile(products, detailsFor);
   if (products.length < COMPARE_MIN) return null;
