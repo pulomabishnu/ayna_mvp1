@@ -14,8 +14,24 @@ const user = (over) => buildUserProfile({ ...EMPTY, ...over }, { catalog: ALL_PR
 const codes = (r) => [...(r.safety?.reasons || []), ...(r.reasons || [])].map((x) => x.code);
 
 describe('research data', () => {
-  it('every row cites a credible source', () => {
-    for (const r of [...NEED_MAP_RESEARCH, ...SAFETY_RESEARCH]) expect(r.source_url).toMatch(/^https:\/\//);
+  // Founder rule (Oct 24): .gov pages for clinical claims, the brand's own site for its label.
+  const GOV = /(^|\.)(nih\.gov|medlineplus\.gov|fda\.gov|cdc\.gov|womenshealth\.gov|ahrq\.gov|hhs\.gov)$/;
+  const govPage = (u) => { const h = new URL(u).hostname; return GOV.test(h) && !/^(pubmed|pmc)\./.test(h); };
+  it('every graded need row cites a .gov page; rows without one are draft, ungraded', () => {
+    for (const r of NEED_MAP_RESEARCH) {
+      if (r.grade) expect(govPage(r.source_url), `${r.product}|${r.need}`).toBe(true);
+      else { expect(r.grade_status).toBe('draft_unverified'); expect(r.source_url).toBeNull(); }
+    }
+  });
+  it('every safety status cites a .gov page or the brand label, or is labelled ayna policy (cautious only)', () => {
+    for (const r of SAFETY_RESEARCH) {
+      for (const key of ['pregnancy', 'breastfeeding']) {
+        const src = r[`${key}_source`];
+        if (src) expect(govPage(src) || (r.source_kind === 'brand_label' && src.startsWith('https://')), `${r.product} ${key}`).toBe(true);
+        else if (r[key] !== 'unknown') { expect(r[`${key}_basis`], `${r.product} ${key}`).toBe('ayna_policy'); expect(['avoid', 'ask_clinician']).toContain(r[key]); }
+      }
+      if (r.source_url) expect(govPage(r.source_url) || r.source_kind === 'brand_label').toBe(true);
+    }
   });
   it('a sourced "ok" only fills an unknown; it never overrides a caution from the label', () => {
     // Differin's label says ask a doctor if pregnant: research cannot clear that.

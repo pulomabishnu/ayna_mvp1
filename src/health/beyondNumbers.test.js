@@ -56,7 +56,8 @@ describe('your goals, covered (works with no health data)', () => {
   const products = DEV_DEMO_PRODUCT_IDS.map(getProductById).filter(Boolean);
   it('lists her products graded for each goal she chose', () => {
     const g = goalsCovered({ needIds: DEV_DEMO_NEEDS, products });
-    expect(g.map((x) => x.label)).toEqual(['Cramps or period pain', 'Heavy periods', 'Vaginal dryness']);
+    // Heavy periods and dryness grades for these products cited non-.gov pages, so they are draft and not counted (Oct 24).
+    expect(g.map((x) => x.label)).toEqual(['Cramps or period pain']);
     expect(g[0].owned[0].product.id).toBe('p-thermacare');
     expect(g[0].owned[0].level).toBe(3);
   });
@@ -72,7 +73,7 @@ describe('your goals, covered (works with no health data)', () => {
 });
 
 describe('before and since a product', () => {
-  const mag = { ...getProductById('p-magnesium-glycinate'), addedAt: devDemoAddedAt(TODAY)['p-magnesium-glycinate'] };
+  const mag = { ...getProductById('p-magnumsolace-nighttime-magnesium-cream'), addedAt: devDemoAddedAt(TODAY)['p-magnumsolace-nighttime-magnesium-cream'] };
   it('compares sleep before and since, with the caveat', () => {
     const e = effectChecks(demo, { today: TODAY, products: [mag] });
     expect(e).toHaveLength(1);
@@ -83,6 +84,8 @@ describe('before and since a product', () => {
     expect(effectChecks(demo, { today: TODAY, products: [{ ...mag, addedAt: undefined }] })).toEqual([]);
     expect(effectChecks(demo, { today: TODAY, products: [{ ...getProductById('p-thermacare'), addedAt: iso(6) }] })).toEqual([]);
     expect(effectChecks(demo, { today: TODAY, products: [{ ...mag, addedAt: iso(2) }] })).toEqual([]);
+    // A draft (non-.gov) sleep grade does not count.
+    expect(effectChecks(demo, { today: TODAY, products: [{ ...getProductById('p-magnesium-glycinate'), addedAt: mag.addedAt }] })).toEqual([]);
   });
 });
 
