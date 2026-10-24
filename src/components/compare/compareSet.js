@@ -69,7 +69,7 @@ export function formatOf(product) {
   try { formats = buildProductProfile(product)?.formats || []; } catch { formats = []; }
   const words = formats.map((f) => FORMAT_WORDS[f]).filter(Boolean);
   const text = `${product?.name || ''} ${product?.summary || ''}`.toLowerCase();
-  const power = /plug-?in|electric|corded/.test(text) ? 'plug-in' : /cordless|rechargeable|battery/.test(text) ? 'rechargeable' : /microwav/.test(text) ? 'microwavable' : /air-activated|self-heating|disposable/.test(text) ? 'single use' : '';
+  const power = /\bplug-?in\b|\belectric\b|\bcorded\b/.test(text) ? 'plug-in' : /\bcordless\b|\brechargeable\b|\bbattery\b/.test(text) ? 'rechargeable' : /\bmicrowav/.test(text) ? 'microwavable' : /\bair-activated\b|\bself-heating\b|\bdisposable\b/.test(text) ? 'single use' : '';
   if (words.length) return [...new Set(words)].slice(0, 2).join(', ') + (power && formats.some((f) => ['device', 'patch'].includes(f)) ? ` · ${power}` : '');
   const fallback = formatLabel(product);
   return fallback || NOT_ON_FILE;
