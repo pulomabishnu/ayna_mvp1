@@ -76,6 +76,7 @@ function Locked({ signedIn, connected, onSignIn, onOpenConnections }) {
         ) : (
           <>
             <h2 id="ay-wh-lock-title">Your health dashboard lives in the app</h2>
+            <p><b>Want a more personalized rundown?</b> Connect health data or keep using quick check-ins on Today. Either works.</p>
             <p>It joins ayna Pro when the app launches. Beta testers use it free now.</p>
             <div className="ay-wh-lockjoin">
               <figure className="ay-wh-qr">

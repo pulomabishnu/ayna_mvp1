@@ -990,7 +990,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
   const renderEmpty = () => {
     const copy = {
       'for-you': ['No posts yet', 'Be the first to post.', 'Post', 'post', 'chat', 'pink'],
-      following: ['No posts yet', 'Follow someone to see their posts.', 'Explore', null, 'spark', 'peri'],
+      following: ['Nothing here yet', 'Your feed gets better when you follow topics and people you care about.', 'Explore', null, 'spark', 'peri'],
       question: ['No questions yet', null, 'Ask', 'question', 'chat', 'butter'],
       review: ['No reviews yet', null, 'Review', 'review', 'spark', 'mint'],
       playlists: ['No playlists yet', 'Collect your favorites.', 'Create', 'playlist', 'bookmark', 'pink'],

@@ -6,6 +6,7 @@ import IntakeSceneArt from '../components/intake/IntakeSceneArt.jsx';
 import { haptic } from '../../utils/haptics.js';
 import { INTAKE_SCENES, SECTION_TONES, SECTION_LABELS } from '../components/intake/intakeScenes.js';
 import '../intake-play.css';
+import '../../styles/onboarding.css';
 import RecommendationCountPicker from '../components/RecommendationCountPicker.jsx';
 import QuizIntro from './intake/QuizIntro.jsx';
 import SmartSearchInput from '../../components/search/SmartSearchInput.jsx';
@@ -71,6 +72,7 @@ import {
   ttcDurationOptions,
 } from '../data/intakeModel.js';
 import { BRAND_SUGGESTIONS, CATALOG_PRODUCT_NAMES, PRODUCT_OR_BRAND_SUGGESTIONS } from '../data/intakeCatalog.js';
+import { GOALS, HELP_TOPICS, NOTHING_SPECIFIC, ONBOARDING_SCREENS, SOMETHING_ELSE, getOnboardingSteps, onboardingProgress, supportGroupsForTopics } from '../data/onboardingFlow.js';
 
 // The app's quiz. Questions, order, required/optional rules, branching and
 // saved answers all live in mobile/data/intakeModel.js (shared with the
@@ -542,12 +544,20 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
 /* --------------------------------- Main screen --------------------------------- */
 
 
-export default function IntakeScreen({ onBack, onComplete, onDraftChange, initialSnapshot = null, startAtBeginning = false, startAtOptional = false, startAtStep = '', introEnabled = true }) {
+export default function IntakeScreen({ onBack, onComplete, onDraftChange, initialSnapshot = null, startAtBeginning = false, startAtOptional = false, startAtStep = '', introEnabled = true, flow = 'auto' }) {
+  // First run (no saved profile): the seven short setup screens
+  // (onboardingFlow.js). Editing a saved profile keeps the full quiz.
+  // Editing just her topics or goals (only the setup screens ask them): that one screen, then save.
+  const singleStep = Boolean(initialSnapshot && ['helpTopics', 'goals'].includes(startAtStep));
+  // flow 'more': the optional setup questions, opened from the reveal's
+  // "Make my matches more personal" (team direction, section 29).
+  const onboarding = flow === 'onboarding' || flow === 'more' || singleStep || (flow === 'auto' && !initialSnapshot && !startAtBeginning);
+  const obPart = singleStep ? 'all' : flow === 'more' ? 'more' : 'core';
   const [savedDraft] = useState(() => !initialSnapshot && !startAtBeginning ? readIntakeDraft() : null);
   // Opened from "Make my matches more personal" (Ecosystem): straight into the optional questions.
   const [enteredAtOptional] = useState(() => Boolean(startAtOptional && initialSnapshot && !savedDraft));
   const [intake, setIntake] = useState(() => savedDraft ? { ...EMPTY, ...savedDraft.intake } : reconstructIntakeFromSnapshot(initialSnapshot));
-  const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || (startAtStep && initialSnapshot ? startAtStep : null) || savedDraft?.stepId || (startAtOptional && initialSnapshot ? firstOptionalResumeStepId(reconstructIntakeFromSnapshot(initialSnapshot)) : startAtBeginning || !initialSnapshot ? 'age' : firstUnansweredStepId(reconstructIntakeFromSnapshot(initialSnapshot))));
+  const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || (startAtStep && initialSnapshot ? startAtStep : null) || (flow === 'more' ? getOnboardingSteps(reconstructIntakeFromSnapshot(initialSnapshot), { part: 'more' })[0]?.id : null) || (onboarding ? (savedDraft && getOnboardingSteps({ ...EMPTY, ...savedDraft.intake }, { part: 'core' }).some((st) => st.id === savedDraft.stepId) ? savedDraft.stepId : 'helpTopics') : null) || savedDraft?.stepId || (startAtOptional && initialSnapshot ? firstOptionalResumeStepId(reconstructIntakeFromSnapshot(initialSnapshot)) : startAtBeginning || !initialSnapshot ? 'age' : firstUnansweredStepId(reconstructIntakeFromSnapshot(initialSnapshot))));
   const [search, setSearch] = useState('');
   // Computed once, from how things stood when this resume started (not
   // re-derived as answers change), so a step's flag clears only by actually
@@ -560,7 +570,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   });
   useEffect(() => {
     if (initialSnapshot || startAtBeginning) return;
-    const hasProgress = stepId !== 'age' || JSON.stringify(intake) !== JSON.stringify(EMPTY);
+    const hasProgress = (stepId !== 'age' && stepId !== 'helpTopics') || JSON.stringify(intake) !== JSON.stringify(EMPTY);
     try {
       if (hasProgress) localStorage.setItem(INTAKE_DRAFT_KEY, JSON.stringify({ version: 1, intake, stepId }));
       else localStorage.removeItem(INTAKE_DRAFT_KEY);
@@ -595,9 +605,10 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   // Part 1: the required minimum (with the follow-ups that apply). Then a
   // checkpoint. Part 2: optional refinements, each one skippable.
   const { required: requiredSteps, optional: optionalSteps } = useMemo(() => splitIntakeSteps(intake), [intake]);
-  const atCheckpoint = stepId === CHECKPOINT_STEP;
-  const phase = optionalSteps.some((s) => s.id === stepId) ? 'optional' : 'required';
-  const visibleSteps = phase === 'optional' ? optionalSteps : requiredSteps;
+  const onboardingSteps = useMemo(() => (onboarding ? getOnboardingSteps(intake, { part: obPart }) : []), [onboarding, obPart, intake]);
+  const atCheckpoint = !onboarding && stepId === CHECKPOINT_STEP;
+  const phase = onboarding ? 'onboarding' : optionalSteps.some((s) => s.id === stepId) ? 'optional' : 'required';
+  const visibleSteps = onboarding ? onboardingSteps : phase === 'optional' ? optionalSteps : requiredSteps;
   const currentIndex = Math.max(0, visibleSteps.findIndex((s) => s.id === stepId));
   const step = atCheckpoint ? { id: CHECKPOINT_STEP, section: 'checkpoint', title: '', type: 'checkpoint' } : (visibleSteps[currentIndex] || visibleSteps[0]);
   const isLast = currentIndex === visibleSteps.length - 1;
@@ -632,6 +643,20 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     setSearch('');
   };
 
+  const [helpOtherOpen, setHelpOtherOpen] = useState(false);
+  const toggleHelpTopic = (value) => {
+    if (value === SOMETHING_ELSE) {
+      const open = helpOtherOpen || String(intake.supportOtherText || '').trim();
+      setHelpOtherOpen(!open);
+      if (open) set('supportOtherText', '');
+      return;
+    }
+    setIntake((prev) => {
+      const cur = prev.helpTopics || [];
+      return { ...prev, helpTopics: cur.includes(value) ? cur.filter((x) => x !== value) : [...cur, value] };
+    });
+  };
+
   const goTo = (id, dir) => { setSearch(''); setZipError(''); setDirection(dir); setStepId(id); };
   const finish = (answers = intake) => {
     try { localStorage.removeItem(INTAKE_DRAFT_KEY); } catch { /* storage unavailable */ }
@@ -640,12 +665,18 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   };
   const goBack = () => {
     if (atCheckpoint) { goTo(requiredSteps[requiredSteps.length - 1].id, 'back'); return; }
+    if (onboarding) { if (currentIndex > 0) goTo(visibleSteps[currentIndex - 1].id, 'back'); else if (onBack) onBack(); return; }
     if (currentIndex > 0) goTo(visibleSteps[currentIndex - 1].id, 'back');
     else if (phase === 'optional' && enteredAtOptional && onBack) onBack();
     else if (phase === 'optional') goTo(CHECKPOINT_STEP, 'back');
     else if (onBack) onBack();
   };
   const advance = (answers = intake) => {
+    // Recompute: an answer on this step can add or remove follow-ups after it.
+    const list = onboarding ? getOnboardingSteps(answers, { part: obPart }) : visibleSteps;
+    const at = list.findIndex((s) => s.id === step.id);
+    if (singleStep) { finish(answers); return; }
+    if (onboarding) { if (at >= 0 && at < list.length - 1) goTo(list[at + 1].id, 'forward'); else finish(answers); return; }
     if (!isLast) { goTo(visibleSteps[currentIndex + 1].id, 'forward'); return; }
     if (phase === 'required') goTo(CHECKPOINT_STEP, 'forward');
     else finish(answers);
@@ -703,10 +734,35 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
       {zipError && <div className="ip-zip-err" role="alert">{zipError}</div>}
     </div>;
 
+    if (step.type === 'topics') return (
+      <>
+        <ChipList items={HELP_TOPICS} selected={[...(intake.helpTopics || []), ...(String(intake.supportOtherText || '').trim() || helpOtherOpen ? [SOMETHING_ELSE] : [])]} onToggle={toggleHelpTopic} />
+        {(helpOtherOpen || String(intake.supportOtherText || '').trim()) && (
+          <label className="ip-other-text">
+            <span>Tell us in your own words</span>
+            <input value={intake.supportOtherText} maxLength={80} placeholder="For example, migraines" onChange={(e) => set('supportOtherText', e.target.value)} />
+          </label>
+        )}
+        <p className="ip-hint">Not sure? Tap Next and we will show everything.</p>
+      </>
+    );
+    if (step.type === 'goals') return <ChipList items={GOALS} selected={intake.goals || []} onToggle={(v) => setIntake((prev) => ({ ...prev, goals: (prev.goals || []).includes(v) ? prev.goals.filter((x) => x !== v) : [...(prev.goals || []), v] }))} />;
+
+    if (step.type === 'support' && onboarding) return (
+      <>
+        <TopicPicker key={(intake.helpTopics || []).join('|')} groups={supportGroupsForTopics(intake.helpTopics)} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, [NOTHING_SPECIFIC])} onAdd={(value) => addCustomSelection('supportSelections', value, [NOTHING_SPECIFIC])} />
+        <div className="ip-gap"><ChipList items={[NOTHING_SPECIFIC]} selected={intake.supportSelections} onToggle={(item) => toggleExclusive('supportSelections', item, [NOTHING_SPECIFIC])} muted={[NOTHING_SPECIFIC]} compact /></div>
+      </>
+    );
     if (step.type === 'support') return (
       <TopicPicker groups={SUPPORT_GROUPS} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, ['Nothing right now'])} onAdd={(value) => addCustomSelection('supportSelections', value, ['Nothing right now'])} />
     );
 
+    // First run: named answers instead of an unlabeled level meter (team direction, section 33).
+    if (onboarding && (step.type === 'flow' || step.type === 'pain')) {
+      const key = step.type === 'flow' ? 'periodFlow' : 'periodPain';
+      return <ChipList items={step.type === 'flow' ? PERIOD_FLOW : PERIOD_PAIN} selected={intake[key] ? [intake[key]] : []} onToggle={(v) => set(key, intake[key] === v ? '' : v)} />;
+    }
     if (step.type === 'flow') return <LevelMeter options={PERIOD_FLOW} value={intake.periodFlow} onChange={(v) => set('periodFlow', v)} shape="drop" />;
     if (step.type === 'pain') return <LevelMeter options={PERIOD_PAIN} value={intake.periodPain} onChange={(v) => set('periodPain', v)} shape="bar" />;
     if (step.type === 'utiFrequency') return <TrackLine options={UTI_FREQUENCY} value={intake.utiFrequency} onChange={(v) => set('utiFrequency', v)} />;
@@ -797,12 +853,14 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         <>
           <PriceStacks options={PRICE_RANGES.filter((opt) => opt !== notAFactor)} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} />
           <ChipList items={[notAFactor]} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} compact />
-          <DotScale label={FOLLOWUP_QUESTIONS.largePurchaseFrequency} options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} />
+          {onboarding
+            ? <div className="ip-followup"><strong>{FOLLOWUP_QUESTIONS.largePurchaseFrequency}</strong><ChipList items={LARGE_PURCHASE_FREQUENCY} selected={intake.largePurchaseFrequency ? [intake.largePurchaseFrequency] : []} onToggle={(v) => set('largePurchaseFrequency', intake.largePurchaseFrequency === v ? '' : v)} compact /></div>
+            : <DotScale label={FOLLOWUP_QUESTIONS.largePurchaseFrequency} options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} />}
         </>
       );
     }
     if (step.type === 'brand') return <BrandSpectrum options={BRAND_OPENNESS} value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;
-    if (step.type === 'avoidIngredients') {
+    if (step.type === 'avoidIngredients' || step.type === 'avoidOnly' || step.type === 'wantOnly') {
       // "Leave out: Fragrance" also stores "Fragrance-free", the value the match engine already scores, so logic is unchanged.
       const selected = intake.avoidIngredients || [];
       const isOn = (v) => selected.includes(v) || (AVOID_PAIRS[v] && selected.includes(AVOID_PAIRS[v]));
@@ -818,6 +876,16 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         const next = on ? cur.filter((x) => x !== v && x !== pair) : [...cur, v, ...(pair ? [pair] : [])];
         return { ...prev, avoidIngredients: next };
       });
+      if (step.type === 'avoidOnly' || step.type === 'wantOnly') {
+        const isAvoid = step.type === 'avoidOnly';
+        const items = isAvoid ? [...AVOID_GROUPS.avoid, ...customAvoid] : [...AVOID_GROUPS.want, ...customWant];
+        return (
+          <>
+            <ChipList items={items.map((v) => AVOID_LABELS[v] || v)} selected={items.filter(isOn).concat(isAvoid ? customAvoid : customWant).map((v) => AVOID_LABELS[v] || v)} onToggle={(text) => toggleAvoid(AVOID_VALUE_BY_LABEL[text] || text)} />
+            <div className="ip-gap"><AddOwn placeholder={isAvoid ? 'Add something to avoid' : 'Add something you prefer'} onAdd={(v) => (isAvoid ? addCustomSelection('avoidIngredients', `No ${v.replace(/^no\s+/i, '')}`, ['No preference']) : addCustomSelection('avoidIngredients', v, ['No preference']))} /></div>
+          </>
+        );
+      }
       return (
         <AvoidMustHave
           avoidItems={[...AVOID_GROUPS.avoid, ...customAvoid]}
@@ -841,6 +909,8 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   };
 
   const countForStep =
+    step.id === 'helpTopics' ? (intake.helpTopics || []).length :
+    step.id === 'goals' ? (intake.goals || []).length :
     step.id === 'support' ? intake.supportSelections.length :
     step.id === 'conditions' ? intake.diagnosisSelections.length :
     step.id === 'allergies' ? intake.allergyItems.length :
@@ -926,6 +996,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     );
   }
 
+  const obProgress = onboarding ? onboardingProgress(step, obPart, visibleSteps) : null;
   const scene = { tone: SECTION_TONES[step.section] || 'peri', art: INTAKE_SCENES[step.id]?.art || null, label: SECTION_LABELS[step.section] };
 
   return (
@@ -939,24 +1010,34 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
           </button>
           {/* Later questions depend on earlier answers, so the total can grow mid-quiz.
               Show a fill bar for progress instead of a "02/08" total that shifts. */}
-          <span className="ip-count ip-count--plain">{phase === 'optional' ? `Optional ${countedIndex + 1} of ${countedSteps.length}` : `Question ${countedIndex + 1}`}</span>
-          {step.optional ? <button type="button" className="ip-skip" onClick={skipStep}>Skip</button> : <span className="ip-skip-spacer" />}
+          <span className="ip-count ip-count--plain">{onboarding ? obProgress.label : phase === 'optional' ? `Optional ${countedIndex + 1} of ${countedSteps.length}` : `Question ${countedIndex + 1}`}</span>
+          {step.optional || step.type === 'topics' ? <button type="button" className="ip-skip" onClick={skipStep}>Skip</button> : <span className="ip-skip-spacer" />}
         </div>
-        <div className="ip-progress ip-progress--fill" role="progressbar" aria-label="Quiz progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(((countedIndex + 1) / Math.max(1, countedSteps.length)) * 100)}>
-          <span style={{ width: `${((countedIndex + 1) / Math.max(1, countedSteps.length)) * 100}%` }} />
-        </div>
+        {onboarding ? (
+          <div className="ip-progress ip-progress--fill" role="progressbar" aria-label="Setup progress" aria-valuemin={1} aria-valuemax={obProgress.total} aria-valuenow={obProgress.now}>
+            <span style={{ width: `${(obProgress.now / Math.max(1, obProgress.total)) * 100}%` }} />
+          </div>
+        ) : (
+          <div className="ip-progress ip-progress--fill" role="progressbar" aria-label="Quiz progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(((countedIndex + 1) / Math.max(1, countedSteps.length)) * 100)}>
+            <span style={{ width: `${((countedIndex + 1) / Math.max(1, countedSteps.length)) * 100}%` }} />
+          </div>
+        )}
       </header>
 
       <div className="ip-body">
         <div className="ip-question" key={`q-${step.id}`}>
           <div className="ip-label-row">
-            {scene.label && <span className={`ip-label ip-label--${step.section}`}>{scene.label}</span>}
-            {phase === 'optional' && <span className="ip-tag-optional">Optional</span>}
-            {flaggedStepIds.has(step.id) && <span className="ip-flag">Not answered yet</span>}
-            {step.info && <button type="button" className="ip-info" aria-label={`About this question: ${step.title}`} aria-expanded={infoOpen === step.id} onClick={() => setInfoOpen((v) => v === step.id ? null : step.id)}>i</button>}
+            {onboarding
+              ? <span className={`ip-label ip-label--${step.section}`}>{ONBOARDING_SCREENS[step.screen - 1]?.label}</span>
+              : scene.label && <span className={`ip-label ip-label--${step.section}`}>{scene.label}</span>}
+            {(phase === 'optional' || (onboarding && step.optional)) && <span className="ip-tag-optional">Optional</span>}
+            {onboarding && step.safety && <span className="ip-tag-optional ip-tag-safety">For your safety</span>}
+            {!onboarding && flaggedStepIds.has(step.id) && <span className="ip-flag">Not answered yet</span>}
+            {step.info && !onboarding && <button type="button" className="ip-info" aria-label={`About this question: ${step.title}`} aria-expanded={infoOpen === step.id} onClick={() => setInfoOpen((v) => v === step.id ? null : step.id)}>i</button>}
           </div>
           <h1 className="ip-title">{step.title}</h1>
           {step.subtitle && <p className="ip-subtitle">{step.subtitle}</p>}
+          {onboarding && step.why && <p className="ip-why"><b>Why we ask:</b> {step.why}</p>}
           {step.info && infoOpen === step.id && <p className="ip-info-pop" role="note">{step.info}</p>}
           <span className="ip-spacer is-top" aria-hidden="true" />
           <div className="ip-answer" onPointerDown={startHold} onPointerUp={endHold} onPointerLeave={endHold} onPointerCancel={endHold} onPointerMove={(e) => { if (Math.abs(e.movementX) + Math.abs(e.movementY) > 6) endHold(); }} onClickCapture={swallowClickAfterHold} onContextMenu={(e) => { if (holdRef.current.fired) e.preventDefault(); }}>{renderBody()}</div>
@@ -964,7 +1045,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         </div>
       </div>
 
-      <QuizIntro variant="app" enabled={introEnabled} />
+      <QuizIntro variant="app" enabled={introEnabled && !onboarding} />
       {glossary && <div className="ip-glossary" role="dialog" aria-label={glossary.term} onClick={() => setGlossary(null)}>
         <div className="ip-glossary-card" onClick={(e) => e.stopPropagation()}>
           <strong>{glossary.term}</strong>

@@ -1,4 +1,5 @@
 import { avatarInitials } from '../utils/avatarInitials';
+import WhatAynaKnows from './you/WhatAynaKnows.jsx';
 import DailyCheckin from './you/DailyCheckin.jsx';
 import BoxWaitlist, { SHOW_BOX_WAITLIST } from './you/BoxWaitlist.jsx';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -242,7 +243,7 @@ function HealthMatchStatus({ userId, onOpen }) {
   );
 }
 
-export default function WebYou({ section = null, nav = null, onOpenSection, recentAsks = [], savedSlot = null, onOpenPost, onUpdateIntake = null, onOpenCommunity, onOpenArticle, user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenProduct, onOpenPhoneVerify, onSignOut, onDeleteAccount, onStartQuiz, onSignIn, theme = 'light', onThemeChange, onOpenFreeProduct, onOpenHealthData, onOpenHealth, healthSummary = null, healthConnectedCount = 0, quizSlot = null }) {
+export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = null, healthConnected = [], section = null, nav = null, onOpenSection, recentAsks = [], savedSlot = null, onOpenPost, onUpdateIntake = null, onOpenCommunity, onOpenArticle, user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenProduct, onOpenPhoneVerify, onSignOut, onDeleteAccount, onStartQuiz, onSignIn, theme = 'light', onThemeChange, onOpenFreeProduct, onOpenHealthData, onOpenHealth, healthSummary = null, healthConnectedCount = 0, quizSlot = null }) {
   const products = useMemo(() => Object.values(myProducts || {}).filter(Boolean), [myProducts]);
   const checkin = useCheckinCountStatus(user?.id);
   const checkinCount = checkin.count;
@@ -355,6 +356,8 @@ export default function WebYou({ section = null, nav = null, onOpenSection, rece
         <p className="ct-lede">Keep your concerns, matches, saved products and health insights connected in one place.</p>
         <div className="wy-signedout__doors">{!quizSlot && <button type="button" className="ay-btn ay-btn--primary" onClick={onStartQuiz}>Build mine</button>}{onSignIn && <button type="button" className="ay-btn ay-btn--secondary" onClick={onSignIn}>Sign in</button>}</div>
       </div>
+      {/* Explore first: her answers already work on this device, so she can see and change them. */}
+      {quizResults?.fullHealthIntake && <div className="wy-know"><WhatAynaKnows variant="web" quizAnswers={quizResults} connected={healthConnected} onUpdateIntake={onUpdateIntakeLocal} onEditStep={onEditAnswerAt || (() => onEditProfile?.())} onManageData={onOpenHealthData} /></div>}
     </section>;
   }
 
@@ -477,6 +480,8 @@ export default function WebYou({ section = null, nav = null, onOpenSection, rece
         </section>
         <HouseBlend className="wy-sec" intake={intake} onSave={onUpdateIntake} />
       </div>
+      {/* See and edit what ayna believes about you (UX spec 29, trust center). */}
+      <div className="wy-know"><WhatAynaKnows variant="web" quizAnswers={quizResults} userId={user?.id || null} connected={healthConnected} onUpdateIntake={onUpdateIntakeLocal || onUpdateIntake} onEditStep={(step) => (step && onEditAnswerAt ? onEditAnswerAt(step) : onEditProfile?.())} onManageData={onOpenHealthData} /></div>
       <div className="wy-col">
         {shopper ? <Glance profile={shopper} products={products} quizResults={quizResults} /> : <section className="wy-sec"><h2 className="ay-group__title">At a glance</h2><div className="ay-group is-padded wy-week is-empty"><p className="wy-note">Take the quiz to see it.</p><button type="button" className="ay-btn ay-btn--secondary cm-small" onClick={onStartQuiz}>Take the quiz</button></div></section>}
         {/* The per-type counts repeated "Your shelves" in At a glance (audit), so only the interest chips stay. */}

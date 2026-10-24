@@ -9,7 +9,7 @@
  * Analytics carry no health details (todayAnalytics.js).
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { decide, dismiss, markInteracted, markShown } from './decisionEngine.js';
+import { decide, dismiss, dismissWithReason, markInteracted, markShown } from './decisionEngine.js';
 import { INTERVENTION_CLASSES } from './interventions.js';
 import { addDays, todayKey } from './dailyLog.js';
 import { createTry, dueDay, readTries, recordOutcome, saveTry } from './outcomes.js';
@@ -94,6 +94,13 @@ export function useToday({ userId = null, intake = null, healthRows = [], cycle 
       setStore(writeToday('dismissed', dismiss(store.dismissed, item, today)));
       put('seen', markInteracted(readToday().seen, item.id, today));
       action(item, 'not_relevant');
+    },
+    /** "Not useful" with a reason (NotUsefulMenu). Returns the reason so the caller can open the profile for info_changed. */
+    notUseful(item, reason) {
+      setStore(writeToday('dismissed', dismissWithReason(readToday().dismissed, item, today, reason)));
+      put('seen', markInteracted(readToday().seen, item.id, today));
+      trackToday('today_item_action', { type: item.type, action: 'not_useful', reason });
+      return reason;
     },
     showOptions(item, need) {
       setIntent({ showOptions: true, need: need || item?.need || undefined });

@@ -32,6 +32,7 @@ import HealthConnectionsScreen from './HealthConnectionsScreen.jsx';
 import { useHealthMatchPref } from '../../../health/matchPref.js';
 import { useAskHealthPref, ASK_HEALTH_LABEL } from '../../../health/askHealthPref.js';
 import HealthInsightsScreen from './HealthInsightsScreen.jsx';
+import WhatAynaKnows from '../../../components/you/WhatAynaKnows.jsx';
 import { usesHormonalBC } from '../../../health/weekInsights.js';
 import { ALL_PRODUCTS, getSelectedNeeds } from '../../../data/products.js';
 import './about-scrapbook.css';
@@ -121,6 +122,7 @@ const HUB_ICONS = {
   saved: <><path d="M12 19.5s-7-4.3-7-9.3A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.2c0 5-7 9.3-7 9.3Z" /></>,
   checkin: <><rect x="4" y="5" width="16" height="15" rx="2.5" /><path d="M8 3v4M16 3v4M4 10h16M9 14.5l2 2 4-4" /></>,
   healthData: <><path d="M3 12h4l2-5 4 10 2-5h6" /></>,
+  beliefs: <><circle cx="12" cy="8" r="3.5" /><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5" /><path d="M17.5 4.5l1.5 1.5 2.5-2.5" /></>,
   shopper: <><path d="M6 9h12l-1 11H7L6 9Z" /><path d="M9.5 9V7a2.5 2.5 0 0 1 5 0v2" /></>,
   startups: <><path d="M12 3.5l2.2 5.3 5.3 2.2-5.3 2.2L12 18.5l-2.2-5.3L4.5 11l5.3-2.2Z" /><path d="M18.5 17.5l.8 1.7 1.7.8-1.7.8-.8 1.7-.8-1.7-1.7-.8 1.7-.8Z" /></>,
   badges: <><circle cx="12" cy="9.5" r="5.5" /><path d="M8.8 14 7.5 21l4.5-2.5 4.5 2.5-1.3-7" /></>,
@@ -550,6 +552,7 @@ function ProfileHub({ recentAsks = [], intake = null, authUserId, name, initial,
         ))}
 
         {group('health', 'My health', [
+          { key: 'beliefs', title: 'What ayna knows about you', sub: 'See, change or remove anything ayna uses', onClick: () => onOpen('beliefs') },
           signedIn && onEditProfile && { key: 'profile', icon: 'checkin', title: 'Health profile', sub: 'Symptoms, goals, life stage and preferences', value: `${profileFilledPct}%`, onClick: onEditProfile },
           showBlend && { key: 'blend', icon: 'startups', title: 'Your blend', sub: 'How much each answer counts', onClick: () => onOpen('blend') },
           { key: 'shopper', title: 'Shopper profile', value: alerts, onClick: () => onOpen('shopper') },
@@ -3559,6 +3562,9 @@ function ContactScreen({ onBack }) {
 
 export default function ProfileFlow({
   onUpdateIntake = null,
+  onUpdateIntakeLocal = null,
+  onEditProfileAt = null,
+  healthConnected = [],
   onClose,
   theme,
   onToggleTheme,
@@ -3839,6 +3845,22 @@ export default function ProfileFlow({
     );
   } else if (screen === 'manageData') {
     body = <ManageDataScreen onBack={goBack} />;
+  } else if (screen === 'beliefs' || screen.startsWith('beliefs:')) {
+    body = (
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
+        <BackHeader title="My health" onBack={goBack} />
+        <WhatAynaKnows
+          variant="app"
+          focus={screen.slice('beliefs:'.length)}
+          quizAnswers={quizAnswers}
+          userId={authUser?.id || null}
+          connected={healthConnected}
+          onUpdateIntake={onUpdateIntakeLocal || onUpdateIntake}
+          onEditStep={(onEditProfileAt || onEditProfile) ? (step) => { onClose(); (step && onEditProfileAt ? onEditProfileAt(step) : onEditProfile?.()); } : undefined}
+          onManageData={() => pushScreen('healthData')}
+        />
+      </div>
+    );
   }
 
   return (

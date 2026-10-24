@@ -1,4 +1,5 @@
 import { getProductMatchDetailsForProduct } from '../../data/products.js';
+import MatchFeedback from '../../components/today/MatchFeedback.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
 import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, whyMatch, BASED_ON_LINE, shownMatchPercent, PARTIAL_FIT } from '../../utils/matchDisplay.js';
 import '../match.css';
@@ -129,6 +130,7 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
           </section>
         )}
         {matchStatus === 'no-profile' && onUpdateHealth && <button type="button" className="ayna-match-update" onClick={onUpdateHealth}>Complete health profile</button>}
+        {hasScore && <MatchFeedback productId={product?.id} onUpdateHealth={onUpdateHealth} />}
         <p className="ayna-match-disclaimer">A match to what you shared, not a diagnosis or a promise of results. We never guess why you have a symptom. Availability is shown separately and never changes the score.</p>
         <LegalFooter />
       </div>

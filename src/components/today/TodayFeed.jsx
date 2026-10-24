@@ -5,6 +5,8 @@ import { DailyCheckinCard } from '../you/DailyCheckin.jsx';
 import { getProductById } from '../../data/catalog.js';
 import { todayFixtureOn, makeTodayFixture } from '../../health/todayDevFixture.js';
 import Rundown from '../rundown/Rundown.jsx';
+import NotUsefulMenu from './NotUsefulMenu.jsx';
+import ProfileAskCard from './ProfileAskCard.jsx';
 import '../../styles/today-feed.css';
 
 /**
@@ -77,6 +79,9 @@ function TriageForm({ questions, onDone }) {
   );
 }
 
+// "My information changed": which part of her profile to open.
+const infoSection = (item) => (['pregnancy', 'breastfeeding'].includes(item.basis?.field) ? 'lifeStage' : item.basis?.field || 'support');
+
 function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checkinId }) {
   const protectedItem = PROTECTED.has(item.tier);
   const noteText = t.notes[item.id];
@@ -135,7 +140,7 @@ function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checki
         {acts.filter((a) => a.id === 'try_this').map((a) => <button key={a.id} type="button" className="ay-today__primary" onClick={() => t.startTry(item, a)}>Try this</button>)}
         {!protectedItem && REMINDABLE.has(item.type) && <button type="button" className="ay-today__text" onClick={() => t.remindTonight(item)}>Remind me tonight</button>}
         {!protectedItem && !noteText && <button type="button" className="ay-today__text" onClick={() => t.useful(item)}>Useful</button>}
-        {!protectedItem && <button type="button" className="ay-today__text" onClick={() => t.notRelevant(item)}>Not relevant</button>}
+        {!protectedItem && <NotUsefulMenu className="ay-today__text" onPick={(reason) => { t.notUseful(item, reason); if (reason === 'info_changed') onEditAnswers?.(infoSection(item)); }} />}
       </div>
       {noteText && <p className="ay-today__note" role="status">{noteText}</p>}
     </li>
@@ -178,8 +183,15 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
         onSeeData={(d) => { try { window.dispatchEvent(new CustomEvent('ayna:health-tab', { detail: { tab: d?.tab } })); } catch { /* old browser */ } }}
       />
       {items.length > 0
-        ? <ul className="ay-today__list">{items.map((item) => <Item key={item.id} item={item} t={t} onOpenProduct={onOpenProduct} onAsk={onAsk} onEditAnswers={onEditAnswers} onFindCare={onFindCare} checkinId={checkinId} />)}</ul>
-        : <p className="ay-today__empty">{t.decision.empty}</p>}
+        ? <ul className="ay-today__list">
+          {items.map((item) => <Item key={item.id} item={item} t={t} onOpenProduct={onOpenProduct} onAsk={onAsk} onEditAnswers={onEditAnswers} onFindCare={onFindCare} checkinId={checkinId} />)}
+          {/* One skipped setup question at a time (profileCompleteness.nextProgressiveAsk). */}
+          {items.length < 3 && !items.some((i) => i.type === 'ask' || i.level === 'urgent') && <ProfileAskCard intake={intake} today={t.today} onAnswer={onEditAnswers} />}
+        </ul>
+        : <>
+          <p className="ay-today__empty">{t.decision.empty}</p>
+          <ProfileAskCard asList intake={intake} today={t.today} onAnswer={onEditAnswers} />
+        </>}
       {(t.pendingProfileSaves.length > 0 || t.notes['save:done']) && (
         <div className="ay-today__save" role="group" aria-label="Save to your health profile">
           {t.pendingProfileSaves.map((p) => (

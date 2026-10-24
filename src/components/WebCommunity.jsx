@@ -1279,7 +1279,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         {!loading && posts.length === 0 && (tab === 'following' ? <div className="cm-empty">
           {(() => {
             const named = followingIds.map((id) => profileById.get(id)).filter(Boolean).slice(0, 3);
-            if (!followingIds.length) return <><h2>You’re not following anyone yet</h2><p>Follow people to see their posts here.</p></>;
+            if (!followingIds.length) return <><h2>You’re not following anyone yet</h2><p>Your feed gets better when you follow topics and people you care about.</p></>;
             if (!named.length) return <><h2>People you follow haven’t posted yet</h2><p>Their posts will show up here.</p></>;
             const extra = followingIds.length - named.length;
             return <><h2>{named.map((p, i) => <Fragment key={p.user_id}>{i > 0 && (i === named.length - 1 && !extra ? ' and ' : ', ')}<button type="button" className="cm-inline-name" onClick={() => openProfile(p.username)}>{p.display_name || p.username}</button></Fragment>)}{extra > 0 ? ` and ${extra} more` : ''} {named.length + Math.max(extra, 0) === 1 ? 'hasn’t' : 'haven’t'} posted yet</h2><p>Their posts will show up here.</p></>;

@@ -29,7 +29,7 @@ export default function SavedForLater({
 
       {items.length === 0 ? (
         <div className="ay-group is-padded ay-saved2__empty">
-          <p>Nothing saved yet. Use the heart on anything in Shop to keep it here.</p>
+          <p><strong>Nothing saved yet.</strong> When something catches your eye, tap Save and it’ll live here.</p>
           <button type="button" className="ay-btn ay-btn--secondary" onClick={onBrowse}>Go to Shop</button>
         </div>
       ) : (

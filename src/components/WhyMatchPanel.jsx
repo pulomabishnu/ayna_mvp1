@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom';
+import MatchFeedback from './today/MatchFeedback.jsx';
 import { useEffect } from 'react';
 import { getProductMatchDetailsForProduct } from '../data/products.js';
 import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, whyMatch, BASED_ON_LINE, shownMatchPercent, PARTIAL_FIT } from '../utils/matchDisplay';
@@ -82,6 +83,7 @@ export default function WhyMatchPanel({ product, quizResults, healthProfile = nu
         {unknowns.map((n) => <p key={n}>{tidy(n)}</p>)}
       </section>}
       {matchStatus === 'no-profile' && onUpdateHealth && <button type="button" className="ay-why-cta" onClick={onUpdateHealth}>Take the quiz</button>}
+      {hasScore && <MatchFeedback productId={product?.id} onUpdateHealth={onUpdateHealth} />}
       <p className="ay-why-fine">A match to what you shared, not a diagnosis or a promise of results. We never guess why you have a symptom. Availability is shown separately and never changes the score.</p>
     </aside>
   </div>, document.body);

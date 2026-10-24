@@ -215,8 +215,8 @@ export function HealthEmpty({ name = '', today, onConnect, onOpenCheckin, goalCo
       <section className="ay-hh-hero" aria-labelledby="ay-hh-empty-title">
         <div className="ay-hh-hero-top">
           <div className="ay-hh-hero-head">
-            <h3 id="ay-hh-empty-title">{goalCount ? "We're starting with your goals" : 'Your health, in one place'}</h3>
-            <p className="ay-hh-hero-sub">{goalCount ? `You chose ${goalCount} ${goalCount === 1 ? 'goal' : 'goals'}. Your matches are below. ${signedOut ? 'Sign in and connect health data' : 'Connect health data'} to learn your usual patterns and explain meaningful changes.` : `${signedOut ? 'Sign in to connect' : 'Connect'} an app or wearable, or upload a file. Your cycle, sleep, heart and activity can appear here once there is enough data.`}</p>
+            <h3 id="ay-hh-empty-title">{goalCount ? "We're starting with your goals" : 'Want a more personalized rundown?'}</h3>
+            <p className="ay-hh-hero-sub">{goalCount ? `You chose ${goalCount} ${goalCount === 1 ? 'goal' : 'goals'}. Your matches are below. ${signedOut ? 'Sign in to connect health data' : 'Connect health data'} or keep using quick check-ins. Either works.` : `${signedOut ? 'Sign in to connect health data' : 'Connect health data'} or keep using quick check-ins. Either works. Your cycle, sleep, heart and activity can appear here once there is enough data.`}</p>
           </div>
           <div className="ay-hh-hero-ring is-blank" aria-hidden="true">
             <CycleRing cycleDay={null} avgLength={28} periodLength={0} />

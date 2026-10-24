@@ -16,7 +16,9 @@ import posthog from 'posthog-js';
 export const ITEM_TYPES = ['insight', 'check_in', 'follow_up', 'option', 'care', 'ask', 'products'];
 export const ITEM_TIERS = ['safety', 'care', 'symptom', 'wellness', 'products'];
 export const OUTPUTS = ['answer', 'ask_more', 'show_options', 'monitor', 'escalate', 'abstain', 'no_action'];
-export const ITEM_ACTIONS = ['useful', 'not_relevant', 'show_options', 'remind', 'start_try', 'answer', 'open'];
+export const ITEM_ACTIONS = ['useful', 'not_relevant', 'not_useful', 'show_options', 'remind', 'start_try', 'answer', 'open'];
+// Why it was not useful (UX spec section 9). Words about the item, never about her health.
+export const NOT_USEFUL_REASON_VALUES = ['already_knew', 'not_relevant', 'dont_show_type', 'info_changed', 'no_reason'];
 // How much history she has, in coarse buckets (for retention by history).
 export const HISTORY_BUCKETS = ['none', 'under_7', 'under_30', 'under_90', '90_plus'];
 
@@ -27,7 +29,7 @@ export const RUNDOWN_ACTIONS = ['answer', 'open', 'ask', 'save', 'not_relevant',
 
 export const TODAY_EVENTS = {
   today_items_shown: { count: 'count', types: ITEM_TYPES, tiers: ITEM_TIERS, output: OUTPUTS, history: HISTORY_BUCKETS },
-  today_item_action: { type: ITEM_TYPES, action: ITEM_ACTIONS },
+  today_item_action: { type: ITEM_TYPES, action: ITEM_ACTIONS, reason: NOT_USEFUL_REASON_VALUES },
   followup_due: { count: 'count' },
   followup_completed: { completed: [true] },
   rundown_opened: { kind: RUNDOWN_KINDS, count: 'count', categories: RUNDOWN_CATEGORIES },
