@@ -16,7 +16,7 @@ import UrgentSigns from './UrgentSigns.jsx';
 import ProductCommunityReviews from './ProductCommunityReviews.jsx';
 import ProductPeopleSay from './ProductPeopleSay.jsx';
 import { useProductReviews } from './useProductReviews.js';
-import { evidenceLevel } from './evidenceLevel.js';
+import { evidenceLevel, gradeWords } from './evidenceLevel.js';
 import './pdp-complete.css';
 import './pdp-sections.css';
 
@@ -35,7 +35,6 @@ import './pdp-sections.css';
  * (src/data/pdpAdditions.js) are labelled as ayna's check with their source.
  */
 
-const GRADE_WORDS = { A: 'Strong evidence', B: 'Some evidence', C: 'Limited evidence' };
 
 const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 const cap = (t) => String(t || '').replace(/^./, (c) => c.toUpperCase());
@@ -400,7 +399,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   }
 
   // ---- shared numbers -------------------------------------------------------
-  const { graded, topGrade, level, word: levelWord } = evidenceLevel({ id: baseProduct?.id, evidenceStrength: m.research.evidenceStrength });
+  const { graded, topGrade, level, word: levelWord, scope: evScope, line: evLine } = evidenceLevel({ ...(baseProduct || {}), evidenceStrength: m.research.evidenceStrength });
   const allSources = (() => {
     // The index under Details: each page once (same URL, or the same title from the same publisher).
     const seen = new Set();
@@ -443,7 +442,9 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const expertBody = (ex.opinion.length || ex.note.length || ex.sourceSummary || ex.sources.length || ex.other.length) ? (
     <div className="ayq-cols">
       <div className="ayq-main">
-        {ex.attribution && <p className="ayq-byline"><b>Who wrote this:</b> <Tx>{ex.attribution}</Tx></p>}
+        {/* The tab is named "Clinical opinion" (founder); say plainly who wrote it. The team's note stays as written. */}
+        {ex.synthesis && <p className="ayq-byline"><b>Who wrote this:</b> ayna’s clinical summary, not reviewed by a named clinician.</p>}
+        {ex.attribution && <p className={ex.synthesis ? 'ayq-meta' : 'ayq-byline'}>{ex.synthesis ? <>Note on file: <Tx>{ex.attribution}</Tx></> : <><b>Who wrote this:</b> <Tx>{ex.attribution}</Tx></>}</p>}
         {ex.opinion.length > 0 && <ReadShelf list={ex.opinion} label="The full expert view" leadIn />}
         {ex.note.length > 0 && <Folder id="ayq-more-clinical" title="More clinical context" icon="stethoscope"><ReadShelf list={ex.note} label="More clinical context" /><p className="ayq-meta">From the clinical guidance in the sources.</p></Folder>}
         {ex.sourceSummary && (
@@ -480,7 +481,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
           try { pub = new URL(g.source_url).hostname.replace(/^www\./, ''); } catch { pub = hostLabel(g.source_url); }
           return (
             <li key={g.need}>
-              <div className="ayq-meter" data-level={g.strength === 'none' ? 0 : ({ A: 3, B: 2, C: 1 })[g.grade] || 0}><span className="ayq-meter__word">{g.strength === 'none' ? 'Not a fit' : GRADE_WORDS[g.grade]}</span><span className="ayq-meter__bars" aria-hidden="true"><i /><i /><i /></span></div>
+              <div className="ayq-meter" data-level={g.strength === 'none' ? 0 : Math.min(({ A: 3, B: 2, C: 1 })[g.grade] || 0, evScope === 'product' ? 3 : 2)}><span className="ayq-meter__word">{g.strength === 'none' ? 'Not a fit' : gradeWords(g.grade, evScope === 'product')}</span><span className="ayq-meter__bars" aria-hidden="true"><i /><i /><i /></span></div>
               <p className="ayq-grades__need">{cap(needPhrase(g.need))}</p>
               <p className="ayq-p"><Tx>{noDash(PLAIN[`${g.product}|${g.need}`] || g.rationale)}</Tx></p>
               {g.source_url && <a className="ayq-src__go" href={g.source_url} target="_blank" rel="noopener noreferrer">Source: {pub}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a>}
@@ -768,7 +769,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
         {level > 0 ? (
           <div className="ayq-evo__level">
             <span className="ayq-meter" data-level={level}><span className="ayq-meter__word">{levelWord}{topGrade && <span className="ayq-meter__for"> for {needPhrase(topGrade.need)}</span>}</span><span className="ayq-meter__bars" role="img" aria-label={`${levelWord}, ${level} of 3`}><i /><i /><i /></span></span>
-            <p className="ayq-meta">{graded.length ? 'Graded by ayna from .gov health sources.' : 'The level the team recorded. Not yet checked against .gov health sources.'}</p>
+            <p className="ayq-meta">{evScope === 'type' ? <Tx>{evLine}</Tx> : graded.length ? 'Graded by ayna from .gov health sources.' : 'The level the team recorded. Not yet checked against .gov health sources.'}</p>
           </div>
         ) : (
           <div className="ayq-evo__none">

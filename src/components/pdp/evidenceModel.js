@@ -203,6 +203,9 @@ export function buildEvidence(product, { heroLine = '', glance = null } = {}) {
     opinion: paragraphs(meaningful(product.doctorOpinion)),
     note: paragraphs(meaningful(product.clinicalNote)),
     attribution: clean(product.clinicianAttribution),
+    // The team's own note says it is an ayna synthesis, not a named clinician's words.
+    synthesis: /ayna synthesis|not a direct clinician|not reviewed by a (named )?clinician|ayna['’]s (summary|synthesis)/i.test(clean(product.clinicianAttribution))
+      || (Boolean(clean(product.doctorOpinion)) && !clean(product.clinicianAttribution) && !/\bDr\.|\b(MD|DO|NP|RN|PA-C|CNM|PharmD)\b/.test(String(product.doctorOpinion || ''))),
     // A named doctor we can't trace to a source is shown, but labelled.
     sourceSummary: doctorAi && normText(doctorAi) !== normText(product.doctorOpinion) ? { text: doctorAi, untraced: /\bDr\.\s+[A-Z][a-z]+/.test(doctorAi) } : null,
     sources: clinicalAll.filter((l) => l.kind.tier === 'credible'),

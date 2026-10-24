@@ -959,7 +959,7 @@ export default function ProductModal({
                 const ev = evidenceLevel(product);
                 return (
                   <p className="ayp-buy__ev">
-                    <b>Evidence: </b>{ev.level > 0 ? `${ev.word}${ev.need ? ` for ${ev.need}` : ''}.` : 'No .gov-checked evidence yet.'}{' '}
+                    <b>Evidence: </b>{ev.scope === 'type' ? ev.line : ev.level > 0 ? `${ev.word}${ev.need ? ` for ${ev.need}` : ''}.` : 'No .gov-checked evidence yet.'}{' '}
                     <button type="button" className="ayp-textlink" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'literature' }))}>See the literature</button>
                   </p>
                 );

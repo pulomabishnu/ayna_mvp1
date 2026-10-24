@@ -63,6 +63,11 @@ const FRIENDLY_HOSTS = {
   'www.healthline.com': 'Healthline',
   'webmd.com': 'WebMD',
   'www.webmd.com': 'WebMD',
+  'womenshealth.gov': 'womenshealth.gov',
+  'dailymed.nlm.nih.gov': 'DailyMed',
+  'effectivehealthcare.ahrq.gov': 'AHRQ',
+  'nichd.nih.gov': 'NICHD',
+  'niddk.nih.gov': 'NIDDK',
 };
 
 // Host names of organisations known by their initials (shown in capitals, never re-cased).

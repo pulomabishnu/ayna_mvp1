@@ -16,8 +16,7 @@
  */
 import { compareRows } from '../pdp/commerce.js';
 import { formatLabel, NOT_ON_FILE } from '../pdp/glance.js';
-import { gradedResearch, LEVEL_WORDS } from '../pdp/evidenceLevel.js';
-import { needPhrase } from '../../matching/ontology.js';
+import { evidenceLevel } from '../pdp/evidenceLevel.js';
 import { buildProductProfile } from '../../matching/productProfile.js';
 import { recallFacts } from '../../utils/productFacts.js';
 import { safetyAlertText } from '../../data/passport/content.js';
@@ -28,7 +27,6 @@ import { COMPARE_MAX, COMPARE_MIN } from '../../utils/compareStore.js';
 
 export { COMPARE_MAX, COMPARE_MIN };
 
-const GRADE_LEVEL = { A: 3, B: 2, C: 1 };
 const PREF_TEXTS = [
   /^Within your budget$/i, /^Above your usual budget$/i, /^In a format you prefer$/i,
   /^From a brand you said you like$/i, /^From a brand you trust$/i, /^Costs less over time/i,
@@ -49,12 +47,14 @@ export function intendedUse(product) {
   return firstSentence(product?.summary) || NOT_ON_FILE;
 }
 
-/** Only .gov-graded evidence: "Some evidence for period cramps", else "Not graded yet". */
+/**
+ * Only .gov-graded evidence, worded for what it is: "Supported for this type
+ * (MedlinePlus), for period cramps. No study of this exact product." Else "Not graded yet".
+ */
 export function govEvidence(product) {
-  const top = gradedResearch(product?.id).find((g) => g.strength !== 'none');
-  if (!top) return 'Not graded yet';
-  const level = GRADE_LEVEL[top.grade] || 0;
-  return level ? `${LEVEL_WORDS[level]} for ${needPhrase(top.need)}` : 'Not graded yet';
+  const ev = evidenceLevel(product || {});
+  if (!ev.topGrade || !ev.level) return 'Not graded yet';
+  return ev.scope === 'type' ? ev.line : `${ev.word}${ev.need ? ` for ${ev.need}` : ''}`;
 }
 
 // The physical form, from the product profile (not the shop category).

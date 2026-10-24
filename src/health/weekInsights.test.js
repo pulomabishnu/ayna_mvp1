@@ -198,7 +198,7 @@ describe('what might help this week', () => {
   const sleepShort = { id: 'sleep', signal: 'sleep-short', shortNights: 5 };
 
   it('uses the research grade for fit and evidence', () => {
-    expect(fitFor(thermacare, 'pain.menstrual_cramp')).toEqual({ level: 3, graded: true });
+    expect(fitFor(thermacare, 'pain.menstrual_cramp')).toEqual({ level: 2, graded: true });
     expect(fitFor(proov, 'hormonal.general')).toBeNull();
     expect(fitFor({ id: 'x', tags: ['cramps'] }, 'pain.menstrual_cramp')).toEqual({ level: 0, graded: false });
   });
