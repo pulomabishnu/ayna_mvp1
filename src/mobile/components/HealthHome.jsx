@@ -12,7 +12,9 @@ import { haptic } from '../../utils/haptics.js';
 import { reasonForProduct } from '../../health/plan.js';
 import { OUTCOME_LABELS } from '../../health/routineOutcome.js';
 import HealthChart, { CycleRing } from './HealthChart.jsx';
-import { Line, PhaseStrip, SourceLink, PhaseCompare, NormalRanges, GoalsCovered, WeekPicks, Meter } from './HealthBento.jsx';
+import { PhaseStrip, SourceLink, PhaseCompare, NormalRanges, GoalsCovered, WeekPicks, Meter } from './HealthBento.jsx';
+import InsightStory, { StoryFlag } from './InsightStory.jsx';
+import { insightStories, metricHeadline } from '../../health/insightStory.js';
 import '../../styles/week-explained.css';
 import '../../styles/health-home.css';
 
@@ -112,22 +114,13 @@ function Tabs({ tabs, value, onChange, label, idBase, className = '' }) {
   );
 }
 
-const INSIGHT_TITLES = { 'sleep-short': 'Your sleep changed', 'cycle-shorter': 'Your last cycle was shorter', 'heart-up': 'Your heart trend changed', 'steps-lower': 'Your steps changed', 'period-soon': 'Your period may be close', 'temp-rise': 'Your temperature changed', 'heart-down': 'Your heart trend changed', 'sleep-long': 'Your sleep changed' };
-const INSIGHT_ACTIONS = {
-  'sleep-short': ['Look at your recent nights alongside your usual sleep.', 'If this matters to you, choose a sleep goal or review a product matched to that goal.'],
-  'sleep-long': ['Look at your recent nights alongside your usual sleep.', 'Keep tracking to see whether this is a short-lived change.'],
-  'heart-up': ['Review the heart readings and the dates behind this change.', 'Consider whether a change in your routine happened around the same time.'],
-  'heart-down': ['Review the heart readings and the dates behind this change.', 'Keep tracking to see whether this pattern continues.'],
-  'steps-lower': ['Compare the last week with your usual activity.', 'Think about whether your schedule, energy, or routine changed on those days.'],
-  'cycle-shorter': ['Review the period start dates behind this comparison.', 'Keep logging future cycles. If the change continues or worries you, ask a clinician about it.'],
-  'temp-rise': ['Review the temperature readings behind this pattern.', 'Keep logging your cycle and temperature to add context to future changes.'],
-  'period-soon': ['Check the estimate against your own period logs.', 'Review your period products and routine before the expected date.'],
-};
+// Further reading under See data. .gov pages only (founder rule, Oct 24 2026);
+// the American Heart Association links were removed (not .gov).
 const INSIGHT_READING = {
   'sleep-short': { label: 'CDC: Sleep and heart health', url: 'https://www.cdc.gov/heart-disease/about/sleep-and-heart-health.html' },
   'sleep-long': { label: 'CDC: Sleep and heart health', url: 'https://www.cdc.gov/heart-disease/about/sleep-and-heart-health.html' },
-  'heart-up': { label: 'American Heart Association: All about heart rate', url: 'https://www.heart.org/en/health-topics/high-blood-pressure/the-facts-about-high-blood-pressure/all-about-heart-rate-pulse' },
-  'heart-down': { label: 'American Heart Association: All about heart rate', url: 'https://www.heart.org/en/health-topics/high-blood-pressure/the-facts-about-high-blood-pressure/all-about-heart-rate-pulse' },
+  'heart-up': { label: 'MedlinePlus: Pulse', url: 'https://medlineplus.gov/ency/article/003399.htm' },
+  'heart-down': { label: 'MedlinePlus: Pulse', url: 'https://medlineplus.gov/ency/article/003399.htm' },
   'steps-lower': { label: 'CDC: Benefits of physical activity', url: 'https://www.cdc.gov/physical-activity-basics/health-benefits/adults.html' },
 };
 
@@ -135,22 +128,24 @@ const INSIGHT_READING = {
  * This week in her connected data. Not the top of Today any more: what leads
  * is decide()'s output (TodayFeed). Insights keep explainWeek's own order.
  */
-function Hero({ cycle, ctx, insights, fallback, onOpenInsight }) {
+function Hero({ cycle, ctx, stories, fallback, onOpenInsight }) {
   const [at, setAt] = useState(0);
   const phase = cycle ? estimatePhase(cycle) : null;
   const line = cycleLine(cycle, ctx);
   const rest = line ? line.replace(/^Cycle day \d+,?\s*/, '') : '';
   const sub = rest ? rest.charAt(0).toUpperCase() + rest.slice(1) : '';
-  const it = insights[Math.min(at, insights.length - 1)];
+  const cur = stories[Math.min(at, stories.length - 1)];
+  const it = cur?.insight;
+  const story = cur?.story;
   return (
-    <section className="ay-hh-hero" aria-labelledby="ay-hh-hero-title">
+    <section className={`ay-hh-hero${story?.flag ? ' is-flagged' : ''}`} aria-labelledby="ay-hh-hero-title">
       <div className="ay-hh-hero-top">
         <div className="ay-hh-hero-head">
-          <p className="ay-hh-hero-eyebrow">Your health this week</p>
-          <h3 id="ay-hh-hero-title">{it ? INSIGHT_TITLES[it.signal] || 'A change worth a look' : 'Your week at a glance'}</h3>
-          {it && <p className="ay-hh-hero-sub">A change in your own data, with a next step.</p>}
+          <p className="ay-hh-hero-eyebrow">This week, explained</p>
+          {story?.flag && <StoryFlag flag={story.flag} />}
+          <h3 id="ay-hh-hero-title">{story ? story.changed : 'Your week at a glance'}</h3>
           {!it && sub && <p className="ay-hh-hero-sub">{sub}</p>}
-          {!cycle && !insights.length && fallback && <p className="ay-hh-hero-sub">{fallback}</p>}
+          {!cycle && !stories.length && fallback && <p className="ay-hh-hero-sub">{fallback}</p>}
         </div>
         {!it && cycle?.cycleDay && (
           <div className="ay-hh-hero-ring" role="img" aria-label={`Cycle day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength}` : ''}`}>
@@ -159,15 +154,14 @@ function Hero({ cycle, ctx, insights, fallback, onOpenInsight }) {
           </div>
         )}
       </div>
-      {insights.length > 0 && (
+      {stories.length > 0 && (
         <>
-          {insights.length > 1 && (
-            <Tabs tabs={insights.map((x, i) => ({ id: String(i), label: INSIGHT_TAB_LABEL[x.id] || INSIGHT_KEY[x.id] || x.id }))} value={String(Math.min(at, insights.length - 1))} onChange={(v) => setAt(Number(v))} label="This week's changes" idBase="ay-hh-ins" className="is-chips" />
+          {stories.length > 1 && (
+            <Tabs tabs={stories.map(({ insight: x }, i) => ({ id: String(i), label: INSIGHT_TAB_LABEL[x.id] || INSIGHT_KEY[x.id] || x.id }))} value={String(Math.min(at, stories.length - 1))} onChange={(v) => setAt(Number(v))} label="This week's changes" idBase="ay-hh-ins" className="is-chips" />
           )}
-          <div className="ay-hh-insight" role={insights.length > 1 ? 'tabpanel' : undefined} id="ay-hh-ins-panel" aria-labelledby={insights.length > 1 ? `ay-hh-ins-tab-${Math.min(at, insights.length - 1)}` : undefined} key={it.id}>
-            {insights.length === 1 && <b className="ay-hh-k">{INSIGHT_KEY[it.id] || it.id}</b>}
-            <p>{it.text}</p>
-            <button type="button" className="ay-hh-insight-cta" onClick={() => onOpenInsight(it)}>See what to do <span aria-hidden="true">↗</span></button>
+          <div className="ay-hh-insight" role={stories.length > 1 ? 'tabpanel' : undefined} id="ay-hh-ins-panel" aria-labelledby={stories.length > 1 ? `ay-hh-ins-tab-${Math.min(at, stories.length - 1)}` : undefined} key={it.id}>
+            {stories.length === 1 && <b className="ay-hh-k">{INSIGHT_KEY[it.id] || it.id}</b>}
+            <InsightStory story={story} mode="hero" hideChanged hideFlag onMore={() => onOpenInsight(it)} idBase="ay-hh-hero-story" />
           </div>
         </>
       )}
@@ -176,32 +170,28 @@ function Hero({ cycle, ctx, insights, fallback, onOpenInsight }) {
   );
 }
 
-function InsightDetail({ insight, chart, pick, onBack, onOpenMetric, onOpenProduct, onOpenRoutine, onAsk }) {
-  const actions = INSIGHT_ACTIONS[insight.signal] || ['Review the readings behind this change.', 'Keep tracking to see how the pattern develops.'];
-  const reading = [...(insight.sources || []), ...(INSIGHT_READING[insight.signal] ? [INSIGHT_READING[insight.signal]] : [])].filter((source, index, all) => all.findIndex((candidate) => candidate.url === source.url) === index);
+function InsightDetail({ insight, story, chart, pick, onBack, onOpenMetric, onOpenProduct, onOpenRoutine, onAsk }) {
+  const reading = [...(INSIGHT_READING[insight.signal] ? [INSIGHT_READING[insight.signal]] : [])].filter((source) => !(insight.sources || []).some((s) => s.url === source.url));
+  const data = (
+    <>
+      {chart && <p className="ay-hh-action-comparison">This week: <b>{shortMetric(chart, chart.week ?? chart.avg)}</b> <span>·</span> Your usual: <b>{chart.usual == null ? 'Still building' : shortMetric(chart, chart.usual)}</b></p>}
+      {insight.from?.length > 0 && <p className="ay-hh-action-source">Your data came from {sourceNames(insight.from)}.</p>}
+      {chart && <button type="button" className="ay-hh-action-link" onClick={onOpenMetric}>See the full {INSIGHT_KEY[insight.id]?.toLowerCase() || 'health'} trend →</button>}
+      {reading.length > 0 && <p className="ay-is-basis">Read more: {reading.map((src) => <SourceLink key={src.url} source={src} />)}</p>}
+    </>
+  );
   return (
-    <article className="ay-hh-action" aria-labelledby="ay-hh-action-title">
+    <article className="ay-hh-action" aria-labelledby="ay-hh-action-changed">
       <button type="button" className="ay-hh-action-back" onClick={onBack}>← Back to your dashboard</button>
       <p className="ay-hh-action-kicker">Your data · {INSIGHT_KEY[insight.id] || insight.id}</p>
-      <h3 id="ay-hh-action-title">{INSIGHT_TITLES[insight.signal] || 'Your health changed'}</h3>
-      <p className="ay-hh-action-lede">{insight.text}</p>
-      <div className="ay-hh-action-grid">
-        <section aria-labelledby="ay-hh-action-data">
-          <h4 id="ay-hh-action-data">What we noticed</h4>
-          <p>{insight.basis}</p>
-          {chart && <p className="ay-hh-action-comparison">This week: <b>{shortMetric(chart, chart.week ?? chart.avg)}</b> <span>·</span> Your usual: <b>{chart.usual == null ? 'Still building' : shortMetric(chart, chart.usual)}</b></p>}
-          {insight.from?.length > 0 && <p className="ay-hh-action-source">Your data came from {sourceNames(insight.from)}.</p>}
-          {chart && <button type="button" className="ay-hh-action-link" onClick={onOpenMetric}>See the full {INSIGHT_KEY[insight.id]?.toLowerCase() || 'health'} trend →</button>}
-        </section>
-        <section aria-labelledby="ay-hh-action-next">
-          <h4 id="ay-hh-action-next">What you can do</h4>
-          <ol>{actions.map((action) => <li key={action}>{action}</li>)}</ol>
+      <InsightStory story={story} mode="full" data={data} idBase="ay-hh-action" />
+      {((pick && onOpenProduct) || onOpenRoutine || (onAsk && insight.question)) && (
+        <div className="ay-hh-action-more">
           {pick && onOpenProduct && <div className="ay-hh-action-product"><small>{pick.owned ? 'Already in your ecosystem' : 'Matched to your goal'}</small><button type="button" onClick={() => onOpenProduct(pick.product)}>{pick.product.name} →</button><p>{pick.reason}</p></div>}
           {onOpenRoutine && <button type="button" className="ay-hh-action-link" onClick={onOpenRoutine}>See your routine and shopping list →</button>}
           {onAsk && insight.question && <button type="button" className="ay-hh-action-ask" onClick={() => onAsk(insight.question)}>Ask ayna about this</button>}
-        </section>
-      </div>
-      {reading.length > 0 && <div className="ay-hh-action-reading"><h4>Read more</h4><ul>{reading.map((src) => <li key={src.url}><SourceLink source={src} /></li>)}</ul></div>}
+        </div>
+      )}
       <p className="ay-hh-note">This is a pattern in your data, not a diagnosis. If a change concerns you, talk to a clinician.</p>
     </article>
   );
@@ -424,6 +414,9 @@ export default function HealthHome({
 
   const explained = explainWeek(rows, { today, cycle, estimate, hormonalBC, max: 7 });
   const insights = explained.insights;
+  // Anything worth checking first, then explainWeek's own order (team direction 46).
+  const stories = insightStories(insights, { hormonalBC });
+  const storyFor = (id) => stories.find((x) => x.insight.id === id)?.story || null;
   const ctx = explained.ctx;
   const picks = weekPicks({ ctx, insights, needIds, products, matches });
   const coming = comingUp(cycle, estimate, today, { hormonalBC, hasProducts: products.length > 0 && Boolean(onOpenRoutine) });
@@ -479,7 +472,7 @@ export default function HealthHome({
   const tiles = [];
   if (pinned.includes('cycle') && cycle) {
     tiles.push(
-      <Tile key="cycle" i={ti} tone="pink" label="Cycle" big={cycle.avgLength ? `${cycle.avgLength} days` : `Day ${cycle.cycleDay}`} sub={cycle.avgLength ? (phase ? `Usual length. Now: ${phase.id === 'ovulation' ? 'around ovulation' : phase.name.toLowerCase()}` : 'Usual length') : 'Cycle day'} onOpen={() => open('cycle')} aria={`Cycle: usual length ${cycle.avgLength || 'not known yet'} days${phase ? `, now ${phase.name.toLowerCase()}` : ''}. Open cycle details.`}>
+      <Tile key="cycle" i={ti} tone="pink" label="Cycle" big={phase ? (phase.id === 'period' ? 'On your period' : phase.id === 'ovulation' ? 'Around ovulation' : `Probably ${phase.name.toLowerCase()}`) : 'Where you are'} sub={`Day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength}` : ''}`} onOpen={() => open('cycle')} aria={`Cycle: usual length ${cycle.avgLength || 'not known yet'} days${phase ? `, now ${phase.name.toLowerCase()}` : ''}. Open cycle details.`}>
         <MiniPhases cycle={cycle} />
       </Tile>,
     );
@@ -488,12 +481,12 @@ export default function HealthHome({
   pinned.filter((id) => id !== 'cycle').forEach((id, k) => {
     const c = byId[id]?.chart;
     if (!c) return;
-    const big = shortMetric(c, c.week ?? c.avg);
+    // Words first (how it compares with her usual); the number sits underneath (team direction 45).
+    const num = shortMetric(c, c.week ?? c.avg);
     const per = c.metric === 'sleep_minutes' ? 'a night' : 'a day';
+    const head = metricHeadline(c, isFlat);
     tiles.push(
-      <Tile key={id} i={ti} tone={TILE_TONES[k] || 'group'} label={c.label} big={big} sub={vsUsual(c)} onOpen={() => open(c.group)} aria={`${c.label}: ${big} ${per}, last 7 days. ${vsUsual(c)}. Open ${c.group} details.`}>
-        <Line points={c.points} usual={c.usual} />
-      </Tile>,
+      <Tile key={id} i={ti} tone={TILE_TONES[k] || 'group'} label={c.label} big={head} sub={`${num} ${per}, last 7 days`} onOpen={() => open(c.group)} aria={`${c.label}: ${head}. ${num} ${per}, last 7 days. ${vsUsual(c)}. See the data.`} />,
     );
     ti += 1;
   });
@@ -513,13 +506,14 @@ export default function HealthHome({
   const summary = (
     <div className="ay-hh-summary">
       <div className="ay-hh-main">
+        <Hero cycle={cycle} ctx={ctx} stories={stories.slice(0, 3)} fallback={weekSummary(ready)} onOpenInsight={showInsight} />
         <RecentCheckin products={routineProducts} outcomes={routineOutcomes} onOpenRoutine={onOpenRoutine} />
         <TriedSoFar products={routineProducts} outcomes={routineOutcomes} onOpenRoutine={onOpenRoutine} />
         {onOpenCheckin && <button type="button" className="ay-hh-checkin-link" onClick={onOpenCheckin}>Log how you felt this month →</button>}
         {surface === 'app' && tabs.length > 1 && <button type="button" className="ay-hh-health-link" onClick={() => open(tabs[1].id)}>Explore all health data →</button>}
         <section className="ay-hh-tiles-sec" aria-labelledby="ay-hh-tiles-title">
           <div className="ay-hh-sechead">
-            <h3 id="ay-hh-tiles-title" className="ay-hh-h3">{editing ? 'Choose your tiles' : 'Last 7 days'}</h3>
+            <h3 id="ay-hh-tiles-title" className="ay-hh-h3">{editing ? 'Choose your tiles' : 'Your areas, last 7 days'}</h3>
             {items.length > 0 && <button type="button" className="ay-hh-link" aria-expanded={editing} onClick={() => setEditing((v) => !v)}>{editing ? 'Done' : 'Edit'}</button>}
           </div>
           {editing ? (
@@ -535,7 +529,6 @@ export default function HealthHome({
             <ul className="ay-hh-tiles" data-count={tiles.length}>{tiles}</ul>
           )}
         </section>
-        <Hero cycle={cycle} ctx={ctx} insights={insights.slice(0, 3)} fallback={weekSummary(ready)} onOpenInsight={showInsight} />
         <details className="ay-hh-personalized"><summary>How ayna puts this together</summary><Adds items={adds} /></details>
       </div>
       <div className="ay-hh-rail">
@@ -645,21 +638,28 @@ export default function HealthHome({
       </div>
       {(week.groups.find((g) => g.id === current)?.charts || []).map((wc) => {
         const c = dash.groups.find((g) => g.id === current)?.charts.find((x) => x.metric === wc.metric);
+        const story = stories.find((x) => x.insight.metric === wc.metric)?.story || null;
         return (
           <article key={wc.metric} className="ay-hh-chart">
-            <header>
+            <header className="ay-hh-chart-head">
               <h3>{wc.label}</h3>
-              <p className="ay-hh-big">{shortMetric(wc, wc.week ?? wc.avg)}<small>{wc.metric === 'sleep_minutes' ? ' a night' : ''}, last 7 days</small></p>
-              <p className="ay-hh-vs">{vsUsual(wc)}</p>
-              <span className="ay-hh-stats">{weekStats(wc).map((s) => <span key={s.k}><b>{s.v}</b><small>{s.k}</small></span>)}</span>
+              {!story && <p className="ay-hh-chart-status">{metricHeadline(wc, isFlat)}</p>}
+              {!story && <p className="ay-hh-vs">{vsUsual(wc)}</p>}
             </header>
-            {c ? (
-              <>
-                <p className="ay-hh-avg"><b>{formatMetric(c.metric, c.avg)}</b> average, last {days} days</p>
-                <HealthChart chart={c} />
-              </>
-            ) : <p className="ay-hh-note">No readings in the last {days} days. Try a longer range.</p>}
-            {wc.sources.length > 0 && <p className="ay-hh-from">From {sourceNames(wc.sources)}</p>}
+            {story && <InsightStory story={story} mode="full" idBase={`ay-hh-story-${wc.metric}`} headingLevel={4} />}
+            {/* The numbers and the chart sit behind See data (team direction 45). */}
+            <details className="ay-hh-seedata">
+              <summary>{story ? 'See the chart' : 'See data'}</summary>
+              <p className="ay-hh-big">{shortMetric(wc, wc.week ?? wc.avg)}<small>{wc.metric === 'sleep_minutes' ? ' a night' : ''}, last 7 days</small></p>
+              <span className="ay-hh-stats">{weekStats(wc).map((s) => <span key={s.k}><b>{s.v}</b><small>{s.k}</small></span>)}</span>
+              {c ? (
+                <>
+                  <p className="ay-hh-avg"><b>{formatMetric(c.metric, c.avg)}</b> average, last {days} days</p>
+                  <HealthChart chart={c} />
+                </>
+              ) : <p className="ay-hh-note">No readings in the last {days} days. Try a longer range.</p>}
+              {wc.sources.length > 0 && <p className="ay-hh-from">From {sourceNames(wc.sources)}</p>}
+            </details>
           </article>
         );
       })}
@@ -693,7 +693,7 @@ export default function HealthHome({
       <div className="ay-hh-panel" role={surface === 'app' && current === 'summary' ? 'region' : 'tabpanel'} id="ay-hh-area-panel" aria-label={surface === 'app' && current === 'summary' ? 'Today' : undefined} aria-labelledby={surface === 'app' && current === 'summary' ? undefined : `ay-hh-area-tab-${current}`} key={current}>
         {current === 'summary' && !selectedInsight && todayFeed}
         {current === 'summary' && (selectedInsight
-          ? <InsightDetail insight={selectedInsight} chart={selectedChart} pick={selectedPick} onBack={() => setActiveInsight(null)} onOpenMetric={() => open(selectedChart?.group || 'cycle')} onOpenProduct={onOpenProduct} onOpenRoutine={onOpenRoutine} onAsk={ask} />
+          ? <InsightDetail insight={selectedInsight} story={storyFor(selectedInsight.id)} chart={selectedChart} pick={selectedPick} onBack={() => setActiveInsight(null)} onOpenMetric={() => open(selectedChart?.group || 'cycle')} onOpenProduct={onOpenProduct} onOpenRoutine={onOpenRoutine} onAsk={ask} />
           : summary)}
         {current === 'cycle' && cycleTab}
         {group && groupTab}

@@ -27,8 +27,15 @@ const isoDay = (t) => new Date(t).toISOString().slice(0, 10);
 const mean = (xs) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
 const fmtDay = (iso) => new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
 
-/** FIGO 2018 normal menstrual parameters (non-pregnant, reproductive years), as tabled by the MSD Manual. */
-export const FIGO = { label: 'FIGO 2018 normal menstrual parameters (MSD Manual)', url: 'https://www.msdmanuals.com/professional/multimedia/table/normal-menstrual-parameters' };
+/**
+ * Typical ranges shown next to her own cycle. Source on screen: womenshealth.gov
+ * (opened Oct 24 2026): periods are "regular" if they usually come every 24 to
+ * 38 days, and cycle length "might be different from month-to-month". The
+ * period-length (up to 8 days) and change-between-cycles (7 to 9 days) rows
+ * come from FIGO 2018 (MSD Manual, not .gov): kept as ayna policy until a .gov
+ * page is found (flagged for the founder). Was the MSD Manual link.
+ */
+export const FIGO = { label: 'womenshealth.gov: Your menstrual cycle', url: 'https://womenshealth.gov/menstrual-cycle/your-menstrual-cycle' };
 
 const COMPARE = [
   { metric: 'resting_hr_bpm', label: 'Resting heart rate', flat: 2, fmt: (v) => `${Math.round(v)} bpm` },
