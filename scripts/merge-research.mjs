@@ -10,8 +10,12 @@ import path from 'node:path';
 
 const dir = process.argv[2];
 if (!dir) { console.error('usage: node scripts/merge-research.mjs <dir>'); process.exit(1); }
-const ALLOW = /(^|\.)(nih\.gov|medlineplus\.gov|cochranelibrary\.com|cochrane\.org|cdc\.gov|who\.int|fda\.gov|nice\.org\.uk|nhs\.uk|acog\.org|endocrine\.org|menopause\.org|auanet\.org|aad\.org|aafp\.org|augs\.org|voicesforpfd\.org|asrm\.org|reproductivefacts\.org|mayoclinic\.org|clevelandclinic\.org|health\.harvard\.edu|hopkinsmedicine\.org|uspreventiveservicestaskforce\.org|aasm\.org|sleepeducation\.org|gastro\.org|gi\.org|monash\.edu|eshre\.eu|womenshealth\.gov|nccih\.nih\.gov)$/i;
-const credible = (u) => { try { return ALLOW.test(new URL(u).hostname); } catch { return false; } };
+// Founder rule (Oct 24 2026): clinical claims cite reputable .gov health sites only
+// (MedlinePlus, NIH and its institutes incl. NLM, FDA, CDC, womenshealth.gov, AHRQ).
+// PubMed/PMC papers are left out until someone has opened and checked them.
+const ALLOW = /(^|\.)(nih\.gov|medlineplus\.gov|fda\.gov|cdc\.gov|womenshealth\.gov|ahrq\.gov|hhs\.gov)$/i;
+const PAPER = /^(pubmed|pmc)\.ncbi\.nlm\.nih\.gov$/i;
+const credible = (u) => { try { const h = new URL(u).hostname; return ALLOW.test(h) && !PAPER.test(h); } catch { return false; } };
 const STRENGTH = new Set(['primary', 'secondary', 'none']);
 const GRADE = new Set(['A', 'B', 'C']);
 const STATUS = new Set(['ok', 'avoid', 'ask_clinician', 'unknown']);
