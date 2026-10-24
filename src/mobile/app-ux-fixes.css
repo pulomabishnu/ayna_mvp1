@@ -625,3 +625,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-category-index.is-embedded .ay-shop-count { margin: 0 0 0 auto !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-category-index.is-embedded .ay-shop-matchrow { display: flex; justify-content: flex-start; padding: 0 var(--d-gutter, 20px) 10px; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-category-index.is-embedded .ay-shop-note.is-embedded { margin: 0 var(--d-gutter, 20px) 12px !important; }
+
+/* PDP: routine, variants, "Not for me" and other stores, below the tabs (team direction 9). */
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-more { display: grid; gap: 12px; margin: 8px 0 0; padding: 16px var(--d-gutter, 20px); }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-more:empty { display: none; }

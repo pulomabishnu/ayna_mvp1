@@ -486,28 +486,10 @@ export default function ProductDetailScreen({
             {matchDetails.matchStatus === 'no-profile' && <li><button type="button" className="ay-pdp-why__row is-fit" onClick={onStartQuiz}><span>See how it fits you</span><span className="ay-pdp-why__go">Get matched</span></button></li>}
           </ul>
           {buyBar}
-          {shopAction && <button type="button" className={`ay-pdp-ecolink${isInEcosystem ? ' is-on' : ''}`} aria-pressed={isInEcosystem} onClick={onAddToEcosystem}>{isInEcosystem ? `${IN_ROUTINE}. Remove` : ADD_TO_ROUTINE}</button>}
-          {!isInEcosystem && explainRoutine && <p className="ay-pdp-commission">{ROUTINE_EXPLAINER}</p>}
           {shopAction && <p className="ay-pdp-commission">{leavingLine(shopAction.href, null, shopAction.label === 'Book' ? 'book' : shopAction.label === 'Get the app' ? 'get it' : 'buy')}</p>}
           <SaveFollowUpInline product={product} onCompare={onCompare} />
           {topWarning && <SafetyFlag text={topWarning} />}
           {!shopAction && <p className="ay-pdp-nolink">{storesOnFile.length ? `${product.type === 'digital' ? 'On' : 'Sold at'} ${andList(storesOnFile.slice(0, 4))}. We don’t have a direct link yet.` : 'We don’t have a store link for this yet.'}</p>}
-          {variantLabels.length > 0 && (
-            <div className="ayq-variants">
-              <p>{variantKind}</p>
-              <ul>{variantLabels.map((l) => <li key={l}>{l}</li>)}</ul>
-            </div>
-          )}
-          {onToggleOmit && <div className="ay-pdp-omit"><button type="button" onClick={onToggleOmit} aria-pressed={isOmitted}>{isOmitted ? 'Undo “Not for me”' : 'Not for me'}</button>{isOmitted && <small>Hidden from your matches.</small>}</div>}
-          {works.ayna && onOpenHealthData && <button type="button" className="ay-pdp-works" onClick={onOpenHealthData}>Works with ayna: connect {works.ayna.name} in Health data</button>}
-          {retailers.length > 0 && (
-            <div className="ay-retailers">
-              <span id="ay-pdp-also-at">Also at</span>
-              <ul aria-labelledby="ay-pdp-also-at">
-                {retailers.map((r) => <li key={r.url}><a href={r.url} target="_blank" rel="noopener noreferrer">{r.name}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg></a></li>)}
-              </ul>
-            </div>
-          )}
           {isPartner ? (
             <div className="ayna-figma-partner-disclosure">
               <button type="button" onClick={() => setPartnerOpen((v) => !v)} aria-expanded={partnerOpen}>
@@ -533,6 +515,28 @@ export default function ProductDetailScreen({
             extraRows={[{ label: 'Sold by', value: buyUrl ? (/amazon\.|amzn\./i.test(buyUrl) ? 'Amazon' : (() => { try { return new URL(buyUrl).hostname.replace(/^www\./, ''); } catch { return ''; } })()) : '' }]}
           />
 
+          {/* Team direction 9: the first screen is Buy, Save and the match row.
+              Routine, variants, "Not for me", connections and other stores sit here. */}
+          <section className="ayq-sheet ay-pdp-more" aria-label="More for this product">
+            {shopAction && <button type="button" className={`ay-pdp-ecolink${isInEcosystem ? ' is-on' : ''}`} aria-pressed={isInEcosystem} onClick={onAddToEcosystem}>{isInEcosystem ? `${IN_ROUTINE}. Remove` : ADD_TO_ROUTINE}</button>}
+            {!isInEcosystem && explainRoutine && <p className="ay-pdp-commission">{ROUTINE_EXPLAINER}</p>}
+            {variantLabels.length > 0 && (
+              <div className="ayq-variants">
+                <p>{variantKind}</p>
+                <ul>{variantLabels.map((l) => <li key={l}>{l}</li>)}</ul>
+              </div>
+            )}
+            {onToggleOmit && <div className="ay-pdp-omit"><button type="button" onClick={onToggleOmit} aria-pressed={isOmitted}>{isOmitted ? 'Undo “Not for me”' : 'Not for me'}</button>{isOmitted && <small>Hidden from your matches.</small>}</div>}
+            {works.ayna && onOpenHealthData && <button type="button" className="ay-pdp-works" onClick={onOpenHealthData}>Works with ayna: connect {works.ayna.name} in Health data</button>}
+            {retailers.length > 0 && (
+              <div className="ay-retailers">
+                <span id="ay-pdp-also-at">Also at</span>
+                <ul aria-labelledby="ay-pdp-also-at">
+                  {retailers.map((r) => <li key={r.url}><a href={r.url} target="_blank" rel="noopener noreferrer">{r.name}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg></a></li>)}
+                </ul>
+              </div>
+            )}
+          </section>
           <section className="ay-pdp-askcard" id="ay-sec-ask" tabIndex={-1} aria-labelledby="ay-pdp-ask-h">
             <div className="ay-pdp-sechead">
               <h2 id="ay-pdp-ask-h">Questions? Ask ayna</h2>
