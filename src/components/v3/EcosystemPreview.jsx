@@ -62,8 +62,8 @@ export default function EcosystemPreview({ products = [], onBuild, onSignIn, mat
   return (
     <section className="ay-ecoprev" aria-labelledby="ay-ecoprev-title">
       <header className="ay-ecoprev__head">
-        <h1 id="ay-ecoprev-title" className="ay-ecoprev__title">Your ecosystem</h1>
-        <p className="ay-ecoprev__lede">The products that fit your body, sorted onto shelves by what you need them for.</p>
+        <h1 id="ay-ecoprev-title" className="ay-ecoprev__title">Build your health ecosystem</h1>
+        <p className="ay-ecoprev__lede">Keep your concerns, matches, saved products and health insights connected in one place.</p>
       </header>
 
       <ol className="ay-ecoprev__steps">
@@ -95,7 +95,7 @@ export default function EcosystemPreview({ products = [], onBuild, onSignIn, mat
           </span>
           <h2 className="ay-ecoprev__locktitle">Your shelves are waiting</h2>
           <p className="ay-ecoprev__locktext">Build your ecosystem to fill these with products picked for you.</p>
-          <button type="button" className="ay-ecoprev__primary" onClick={onBuild}>See my matches</button>
+          <button type="button" className="ay-ecoprev__primary" onClick={onBuild}>Build mine</button>
           <button type="button" className="ay-ecoprev__secondary" onClick={onSignIn}>I already have one. Sign in</button>
         </div>
       </div>

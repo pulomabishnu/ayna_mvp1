@@ -59,7 +59,7 @@ export default function EcosystemScreen({
   healthInsights = null, onAddGoal, ecoTab = 'products', onEcoTab, routineHave = {}, onToggleHave,
   routineExcluded = {}, onToggleRoutineProduct, routineOutcomes = {}, onLogRoutineOutcome,
   onSavePlaylist, onOpenPlaylist, onConnectHealth, onRequireAuth, onPersonalize, lastQuizAnswers = null,
-  quizDraft = null, onResumeQuiz, onStartOverQuiz, onFixLifeStages, onStartQuiz,
+  quizDraft = null, onResumeQuiz, onStartOverQuiz, onFixLifeStages, onStartQuiz, onBack,
 }) {
   const rootRef = useRef(null);
   const titleRef = useRef(null);
@@ -263,14 +263,14 @@ export default function EcosystemScreen({
   const showTabs = Boolean(onEcoTab);
 
   return <div ref={rootRef} className={`ayna-fresh-ecosystem ayna-cabinet-home eco-app${careFirst ? ' is-care-first' : ''}`}>
-    <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
+    <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onBack={onBack} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
     <div className="eco-awning eco-awning--app" aria-hidden="true" />
 
     {careBlock}
 
     <section className={`eco-app-hero${ecoTab === 'dashboard' && showTabs ? ' is-today' : ''}`} aria-labelledby="ayna-cabinet-title">
       <div className="eco-app-titlerow">
-        <h1 id="ayna-cabinet-title" ref={titleRef}>Your ecosystem</h1>
+        <h1 id="ayna-cabinet-title" ref={titleRef}>My ecosystem</h1>
       </div>
       {ecoTab !== 'dashboard' && currentProducts.length > 0 && <form className="eco-app-search" role="search" onSubmit={(e) => { e.preventDefault(); if (q && !anyMatch) onBrowse?.(query.trim()); }}>
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
@@ -298,8 +298,8 @@ export default function EcosystemScreen({
       {ecoTab !== 'dashboard' && myProducts.length === 0 && forYouButton && <div className="eco-app-stack__row is-loose">{forYouButton}</div>}
       {/* Empty: one clear way in (the quiz), the Shop as the quiet second choice. */}
       {ecoTab !== 'dashboard' && !hasAnything && !quizDraft && (hasAnswers
-        ? <EmptyState compact art="search" tone="mint" title="No strong matches yet" body="Nothing in the catalog fits your answers well enough yet. Change an answer, or browse the Shop by need." actionLabel={onRetake ? 'Edit my answers' : undefined} onAction={onRetake} secondaryLabel="Browse the Shop" onSecondary={() => onBrowse?.()} />
-        : <EmptyState compact art="search" tone="mint" title="Nothing here yet" body="Answer six questions and your matches land here, on a shelf for each need." actionLabel={onStartQuiz ? 'See my matches' : undefined} onAction={onStartQuiz} secondaryLabel="Browse the Shop" onSecondary={() => onBrowse?.()} />)}
+        ? <EmptyState compact art="search" tone="mint" title="No strong matches yet" body="Nothing in the catalog fits your answers well enough yet. Change an answer, or browse the Shop by need." actionLabel={onRetake ? 'Edit my answers' : undefined} onAction={onRetake} secondaryLabel="Explore products" onSecondary={() => onBrowse?.()} />
+        : <EmptyState compact art="search" tone="mint" title="Nothing here yet" body="Answer six questions and your matches land here, on a shelf for each need." actionLabel={onStartQuiz ? 'See my matches' : undefined} onAction={onStartQuiz} secondaryLabel="Explore products" onSecondary={() => onBrowse?.()} />)}
       {/* An unfinished quiz stays in view; everything else waits in "For you". */}
       {ecoTab !== 'dashboard' && quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
       {ecosystemNotice && <p className="ayna-cabinet-notice" role="status">{ecosystemNotice}</p>}
