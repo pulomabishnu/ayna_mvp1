@@ -24,9 +24,9 @@ export default function Comparison({ onBack = null, compareList, onRemove, onCle
 
                 <div className="aycmp__start">
                     <section className="ay-group is-padded aycmp__opt" aria-labelledby="aycmp-shop-h">
-                        <h2 id="aycmp-shop-h" className="ay-h3">Go to Shop</h2>
-                        <p>Search the Shop and add products from the full catalog.</p>
-                        <button type="button" className="ay-btn ay-btn--primary" onClick={onBrowseProducts}>Go to Shop</button>
+                        <h2 id="aycmp-shop-h" className="ay-h3">Go to Explore</h2>
+                        <p>Search Explore and add products from the full catalog.</p>
+                        <button type="button" className="ay-btn ay-btn--primary" onClick={onBrowseProducts}>Go to Explore</button>
                     </section>
 
                     <section className="ay-group is-padded aycmp__opt" aria-labelledby="aycmp-eco-h">

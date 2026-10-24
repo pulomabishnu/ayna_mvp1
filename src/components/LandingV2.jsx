@@ -210,7 +210,7 @@ function ShopBand({ onOpenProduct, onViewDiscovery, picks = null }) {
     <section className="hm-shop ay-band ay-band--pink ay-band--scallop-bottom" aria-labelledby="hm-shop-title" aria-busy={need ? undefined : 'true'}>
       <div className="hm-wrap">
         <header className="hm-head">
-          <h2 id="hm-shop-title" className="hm-h2">Shop by need</h2>
+          <h2 id="hm-shop-title" className="hm-h2">Explore by need</h2>
         </header>
         <div className="hm-chips" role="group" aria-label="Choose picks or a need" ref={edgeFadeRef}>
           {need ? tabs.map((n) => (<button key={n.id} type="button" className="ay-chip" aria-pressed={n.id === need.id} onClick={() => setId(n.id)}>{n.label}{!n.picks && <span className="ay-chip__count"><span className="ed-sr">, </span>{n.pool.length}<span className="ed-sr"> products</span></span>}</button>))
@@ -363,7 +363,7 @@ function useCatalogNumbers() {
     }
     const needs = MACRO_GROUPS.filter((g) => g.id !== 'all').length;
     return [
-      { n: ALL_PRODUCTS.length, label: 'products in the Shop' },
+      { n: ALL_PRODUCTS.length, label: 'products in Explore' },
       { n: brands.size, label: 'brands, big and small' },
       { n: sources.size, label: 'sources linked on product pages' },
       { n: needs, label: 'areas of care, from periods to menopause' },

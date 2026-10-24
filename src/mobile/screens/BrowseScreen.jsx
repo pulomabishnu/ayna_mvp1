@@ -451,7 +451,7 @@ export default function BrowseScreen({
         onGoCommunity={onGoCommunity}
         onToggleTheme={onToggleTheme}
         onOpenProfile={onOpenProfile}
-        title="Shop"
+        title="Products"
         titleFor="ay-shop-title"
       />}
 
@@ -460,7 +460,7 @@ export default function BrowseScreen({
           Areas, quick filters and sort all live in the Filters sheet; the
           "Searches people make" phrases moved to the Categories tab. */}
       <div className={`ayna-fresh-browse-heading ayna-shop-heading${embedded ? ' is-embedded' : ''}`}>
-        <div className="ay-shop-titlebar">{embedded ? <h2 id="ay-shop-title" className="sr-only">Products</h2> : <h1 id="ay-shop-title">Shop</h1>}{!embedded && hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}</div>
+        <div className="ay-shop-titlebar">{embedded ? <h2 id="ay-shop-title" className="sr-only">Products</h2> : <h1 id="ay-shop-title">Products</h1>}{!embedded && hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}</div>
         {!embedded && <p className="ay-shop-note">Some links earn ayna a commission. It never changes your matches.</p>}
         {!embedded && <NeedStickers className="ay-app-needs" active={searchValue} onPick={(q) => setSearchValue(q)} />}
         <SearchBar placeholder="Search products or brands" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }} onPick={(s) => setSearchValue(s.query)} />

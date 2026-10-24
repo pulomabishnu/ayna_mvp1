@@ -105,7 +105,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
       {onToggleSaved && <button type="button" className="ayna-card-save" aria-label={isSaved ? `Remove ${name} from Saved` : `Save ${name}`} aria-pressed={isSaved} onClick={(e) => { saveFeedback(e, !isSaved); onToggleSaved(product); }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></button>}
       {isList && <div className="ayna-fresh-product-actions">
         <button type="button" onClick={onClick}>Details</button>
-        {buyUrl && <a href={buyUrl} target="_blank" rel="noopener noreferrer sponsored" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: 'product_card' })} aria-label={`Shop ${name} on the seller's site`}>{isService ? 'See care options' : 'Shop'} <span aria-hidden="true">↗</span></a>}
+        {buyUrl && <a href={buyUrl} target="_blank" rel="noopener noreferrer sponsored" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: 'product_card' })} aria-label={`Buy ${name} on the seller's site`}>{isService ? 'See care options' : 'Buy'} <span aria-hidden="true">↗</span></a>}
       </div>}
       {isList && buyUrl && <small className="ayna-fresh-product-seller-note">{isPartner ? 'Partner link. ' : ''}Opens the seller’s site</small>}
       <CompareCheck product={product} />

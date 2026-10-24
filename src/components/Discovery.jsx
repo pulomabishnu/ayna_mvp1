@@ -1671,7 +1671,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 </p>
             ) : (
             <header className="ayshop__head ay-pagehead ay-band ay-band--espresso">
-                    <h1 className="ay-h1">Shop by need</h1>
+                    <h1 className="ay-h1">Explore by need</h1>
                     <Seal className="ayshop__seal" />
                     {/* One disclosure for the whole page instead of a pill on every card (S09). */}
                     <p className="ayshop__note">

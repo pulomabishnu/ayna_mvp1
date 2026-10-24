@@ -155,7 +155,7 @@ function ShopTogether({ routine }) {
   if (!items.length) return null;
   return (
     <details className="ay-rx__shop">
-      <summary>Shop this routine</summary>
+      <summary>Buy this routine</summary>
       <p className="ay-rx__note">Only if you want to. Everything here is optional, and you can start with what you have.</p>
       <ul>{items.map(({ it, url }) => (
         <li key={it.key}><span>{it.title}</span><a href={url} target="_blank" rel="noopener noreferrer sponsored">Buy<span className="sr-only"> {it.title} (opens the seller’s site)</span></a><small>{leavingLine(url)}</small></li>

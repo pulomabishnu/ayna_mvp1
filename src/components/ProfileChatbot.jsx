@@ -407,7 +407,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
         if (merged?.added.preference) parts.push(`priority: ${merged.added.preference}`);
         newMessages.push({
           role: 'system',
-          text: parts.length ? `Add “${parts.join(' · ')}” to your profile so Shop can match it?` : '',
+          text: parts.length ? `Add “${parts.join(' · ')}” to your profile so ayna can match it?` : '',
           pendingProfile: merged ? merged.profile : null,
           browseCategory: category,
           browseLabel: category ? (data.browseIntent.label || String(category).replace(/[-_]/g, ' ')) : '',

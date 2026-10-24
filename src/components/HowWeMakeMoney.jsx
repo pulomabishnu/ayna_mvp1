@@ -14,7 +14,7 @@ const SECTIONS = [
         eyebrow: 'What partnership means (and doesn’t mean)',
         paragraphs: [
             'Confirmed brand partners can be displayed higher in general Browse, which is the page where you freely explore the catalog. That is separate from personalized recommendation ranking.',
-            'In the Shop and on Home, the “ayna partner” label identifies products from confirmed partner brands, and the product page says the same thing next to the Buy button. A product can still use an affiliate retailer link without being a brand partner; affiliate-only products do not receive partner Browse promotion.',
+            'In Explore and on Home, the “ayna partner” label identifies products from confirmed partner brands, and the product page says the same thing next to the Buy button. A product can still use an affiliate retailer link without being a brand partner; affiliate-only products do not receive partner Browse promotion.',
         ],
     },
     {

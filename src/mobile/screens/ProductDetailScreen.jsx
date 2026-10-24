@@ -404,8 +404,8 @@ export default function ProductDetailScreen({
   // record names one (the website does the same), else the stores it lists.
   const siteOnFile = !buyUrl ? (product.whereToBuy || []).map((w) => String(w).trim()).find((w) => /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(w)) : null;
   const shopAction = buyUrl
-    ? { href: buyUrl, label: category === 'telehealth' ? 'Book' : product.type === 'digital' ? 'Get the app' : 'Shop', sr: '(opens the seller’s site)', placement: 'product_detail' }
-    : retailers[0] ? { href: retailers[0].url, label: 'Shop', sr: `at ${retailers[0].name} (opens the store’s site)`, placement: 'product_detail_retailer' }
+    ? { href: buyUrl, label: category === 'telehealth' ? 'Book' : product.type === 'digital' ? 'Get the app' : 'Buy', sr: '(opens the seller’s site)', placement: 'product_detail' }
+    : retailers[0] ? { href: retailers[0].url, label: 'Buy', sr: `at ${retailers[0].name} (opens the store’s site)`, placement: 'product_detail_retailer' }
     : siteOnFile ? { href: `https://${siteOnFile.toLowerCase()}`, label: 'Visit site', sr: `(opens ${siteOnFile.toLowerCase()})`, placement: 'product_detail_site' } : null;
   const storesOnFile = !shopAction ? [...new Set((product.whereToBuy || []).map((w) => String(w).trim()).filter(Boolean))].map((w) => (/^app store$/i.test(w) ? 'the App Store' : w)) : [];
   const andList = (xs) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`);

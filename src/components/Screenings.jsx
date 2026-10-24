@@ -164,7 +164,7 @@ export default function Screenings({ checkinData, onNavigate, onOpenCheckin = nu
                                             <div className="ay-info__small">{rec.suggestedProduct.desc}</div>
                                         </div>
                                         <button type="button" className="ay-info-btn" onClick={() => onNavigate?.('discovery')}>
-                                            Find in Shop
+                                            Find in Explore
                                         </button>
                                     </div>
                                 )}

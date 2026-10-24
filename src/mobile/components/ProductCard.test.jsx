@@ -30,9 +30,9 @@ describe('product card match display', () => {
     const shop = renderToStaticMarkup(<ProductCard variant="list" product={{ ...pad, productUrl: 'https://example.com/products/flow-pad' }} onClick={() => {}} />);
     const search = renderToStaticMarkup(<ProductCard variant="list" product={{ ...pad, productUrl: 'https://example.com/search?q=flow-pad' }} onClick={() => {}} />);
     expect(shop).toContain('href="https://example.com/products/flow-pad"');
-    expect(shop).toContain('Shop');
+    expect(shop).toContain('Buy');
     expect(shop).toContain('Details');
-    expect(search).not.toContain('>Shop');
+    expect(search).not.toContain('>Buy');
   });
 
   it('keeps availability text out of the price row', () => {

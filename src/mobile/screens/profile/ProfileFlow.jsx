@@ -536,11 +536,11 @@ function ProfileHub({ recentAsks = [], intake = null, authUserId, name, initial,
         {quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
 
         {group('ecosystem', 'My ecosystem', [
-          onOpenEcosystem && { key: 'ecosystem', title: 'Your shelves', sub: 'One for each need, with what fits next', value: ecosystemCount ? pickWord(ecosystemCount) : '', onClick: onOpenEcosystem },
+          onOpenEcosystem && { key: 'ecosystem', title: 'My ecosystem', sub: 'Your shelves, one for each need', value: ecosystemCount ? pickWord(ecosystemCount) : '', onClick: onOpenEcosystem },
         ])}
 
         {group('saved', 'Saved', [
-          onOpenSaved && { key: 'saved', title: 'Saved products', value: savedCount ? fmtCount(savedCount) : '', onClick: onOpenSaved },
+          onOpenSaved && { key: 'saved', title: 'Saved', sub: 'Products and posts you saved', value: savedCount ? fmtCount(savedCount) : '', onClick: onOpenSaved },
           { key: 'startups', title: 'Startups', sub: 'Waitlists and new companies', onClick: () => onOpen('startups') },
         ], signedIn && savedPosts.posts.length > 0 && onOpenCommunity && (
           <ul className="ay-you-posts-list" aria-label="Saved posts">
@@ -555,7 +555,7 @@ function ProfileHub({ recentAsks = [], intake = null, authUserId, name, initial,
           { key: 'beliefs', title: 'What ayna knows about you', sub: 'See, change or remove anything ayna uses', onClick: () => onOpen('beliefs') },
           signedIn && onEditProfile && { key: 'profile', icon: 'checkin', title: 'Health profile', sub: 'Symptoms, goals, life stage and preferences', value: `${profileFilledPct}%`, onClick: onEditProfile },
           showBlend && { key: 'blend', icon: 'startups', title: 'Your blend', sub: 'How much each answer counts', onClick: () => onOpen('blend') },
-          { key: 'shopper', title: 'Shopper profile', value: alerts, onClick: () => onOpen('shopper') },
+          { key: 'shopper', title: 'At a glance', sub: 'Your routine, brands and safety alerts', value: alerts, onClick: () => onOpen('shopper') },
         ])}
 
         {group('tracking', 'Tracking', [
@@ -567,7 +567,7 @@ function ProfileHub({ recentAsks = [], intake = null, authUserId, name, initial,
         </>)}
 
         {group('connected', 'Connected data', [
-          { key: 'healthData', title: 'Health data', sub: 'Apple Health, Oura, uploads', onClick: () => onOpen('healthData') },
+          { key: 'healthData', title: 'Health data', sub: 'Apple Health, Oura and uploads', onClick: () => onOpen('healthData') },
         ])}
 
         <section className="ay-you-section ay-you-group" aria-labelledby="ay-you-sec-activity">
@@ -623,7 +623,7 @@ function ProfileHub({ recentAsks = [], intake = null, authUserId, name, initial,
         </section>
 
         {group('settings', 'Settings and privacy', [
-          { key: 'settings', icon: 'checkin', title: 'Settings', sub: 'Account, notifications, appearance', onClick: onOpenSettings },
+          { key: 'settings', icon: 'checkin', title: 'Settings', sub: 'Account, notifications and appearance', onClick: onOpenSettings },
           { key: 'privacy', icon: 'healthData', title: 'Privacy and your data', onClick: () => onOpen('privacyData') },
         ])}
       </div>
@@ -653,7 +653,7 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
 
   return (
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-      <BackHeader title="Shopper profile" onBack={onBack} />
+      <BackHeader title="At a glance" onBack={onBack} />
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 30px', display: 'flex', flexDirection: 'column', gap: 24 }}>
         {shopperProfile && <ShopperCard profile={shopperProfile} />}
 
@@ -861,7 +861,7 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
               ))}
               {onBrowse && (
                 <div style={{ padding: '12px 0 14px', borderTop: '1px solid var(--ayna-border)' }}>
-                  <button type="button" className="ay-plain-btn" onClick={onBrowse} style={{ display: 'inline-block', border: '1px solid var(--ayna-border)', color: 'var(--ayna-brown)', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', padding: '8px 14px', borderRadius: 99, cursor: 'pointer' }}>Shop this category</button>
+                  <button type="button" className="ay-plain-btn" onClick={onBrowse} style={{ display: 'inline-block', border: '1px solid var(--ayna-border)', color: 'var(--ayna-brown)', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', padding: '8px 14px', borderRadius: 99, cursor: 'pointer' }}>Explore this category</button>
                 </div>
               )}
             </div>
@@ -3683,7 +3683,7 @@ export default function ProfileFlow({
           <nav className="ay-you-section ay-you-list" aria-label="More about your answers">
             <button type="button" className="ay-you-row" onClick={() => pushScreen('shopper')}>
               <svg className="ay-you-row-icon" viewBox="0 0 24 24" aria-hidden="true">{HUB_ICONS.shopper}</svg>
-              <span className="ay-you-row-title">Shopper profile</span>
+              <span className="ay-you-row-title">At a glance</span>
               {shopperAlertsCount > 0 && <span className="ay-you-row-value">{shopperAlertsCount} {shopperAlertsCount === 1 ? 'alert' : 'alerts'}</span>}
               <ChevronIcon />
             </button>
