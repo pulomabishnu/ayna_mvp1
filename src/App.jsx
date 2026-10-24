@@ -3110,6 +3110,9 @@ function App() {
           onNavigateToDiscovery={handleViewDiscovery}
           onViewRecommendations={() => handleViewEcosystem()}
           products={myProducts}
+          matchOpts={matchOpts}
+          healthProfile={healthProfile}
+          focusProduct={currentView === 'product' ? lastClickedProduct : null}
           hasHealthData={!!user && health.connected.length > 0}
           resolveProduct={(id) => myProducts[id] || Object.values(myProducts).find((p) => String(p?.id) === String(id)) || getProductById(id) || null}
           onOpenProduct={(product) => handleOpenProduct(product, { source: 'ask_followup' })}

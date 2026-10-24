@@ -8,6 +8,7 @@ import { questionForAnswer } from '../utils/sharedAnswer.js';
 import { getAppSessionId } from '../utils/conversationId';
 import AskFollowUps from './AskFollowUps.jsx';
 import { chipsFor, followUpRequestFields } from '../utils/askFollowUps.js';
+import { localMatchAnswer } from '../utils/askMatch.js';
 import { fetchWithTimeout, isNetworkError } from '../utils/network.js';
 import AskHome, { AskStatCard } from './AskHome.jsx';
 import { recentQuestions } from '../utils/askRecent.js';
@@ -83,7 +84,7 @@ function buildWelcome() {
   }];
 }
 
-export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery, onViewRecommendations, openSignal = 0, prefill = '', prefillStats = null, onRequireAuth, products = {}, hasHealthData = false, resolveProduct = null, onOpenProduct = null, onOpenDashboard = null, onOpenRead = null }) {
+export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery, onViewRecommendations, openSignal = 0, prefill = '', prefillStats = null, onRequireAuth, products = {}, hasHealthData = false, resolveProduct = null, onOpenProduct = null, onOpenDashboard = null, onOpenRead = null, matchOpts = undefined, healthProfile = null, focusProduct = null }) {
   const firstName = getFirstName(user);
   const [open, setOpen] = useState(false);
   // The header's Ask ayna button bumps openSignal to open the chat.
@@ -337,6 +338,18 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
   // retryOf: index of a failed-answer bubble to replace when retrying.
   const sendText = async (msg, retryOf = null) => {
     if (!msg || sending || disabled) return;
+    // Her match for a product: ayna's match engine on this device, never the
+    // language model, so it is the same % the card shows (works signed out).
+    const local = retryOf == null ? await localMatchAnswer(msg, { quizAnswers: profile, healthProfile, matchOpts, focusProduct }).catch(() => null) : null;
+    if (local) {
+      setInput('');
+      setSendError('');
+      setHome(false);
+      const next = [...messages, { role: 'user', text: msg }, { role: 'assistant', text: local.answer, followUps: local.followUps }];
+      setMessages(next);
+      onChatHistoryUpdate?.(next);
+      return;
+    }
     setInput('');
     setSendError('');
     setHome(false);

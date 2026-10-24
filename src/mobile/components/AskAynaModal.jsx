@@ -14,6 +14,7 @@ import AskHome, { AskStatCard } from '../../components/AskHome.jsx';
 import { recentQuestions } from '../../utils/askRecent.js';
 import { mayAutoFocus } from '../../utils/delightRuntime.js';
 import { guideContext } from '../utils/aynaGuide.js';
+import { localMatchAnswer } from '../../utils/askMatch.js';
 import AynaGuideHub from './AynaGuideHub.jsx';
 
 // Ask ayna's first screen: tiles fill the box so she can edit before asking.
@@ -107,6 +108,9 @@ export default function AskAynaModal({
   onBrowse = null,
   onOpenDashboard = null,
   onOpenRead = null,
+  // For "what's my % match for X": the same engine and inputs the cards use.
+  matchOpts = undefined,
+  focusProduct = null,
 }) {
   const [messages, setMessages] = useState(chatHistory.length > 0 ? chatHistory : buildWelcome(name));
   const [input, setInput] = useState('');
@@ -190,6 +194,19 @@ export default function AskAynaModal({
 
   const send = async (msg, context = screenContext, stats = null) => {
     if (!msg || sending) return;
+    // Her match for a product comes from ayna's match engine on this device,
+    // never from the language model, so it is the same % the product shows.
+    const local = await localMatchAnswer(msg, { quizAnswers: profile, matchOpts, focusProduct }).catch(() => null);
+    if (local) {
+      setInput('');
+      setSendError('');
+      setFailedMsg('');
+      setHome(false);
+      const next = [...messages, { role: 'user', text: msg }, { role: 'assistant', text: local.answer, followUps: local.followUps }];
+      setMessages(next);
+      onChatHistoryUpdate?.(next);
+      return;
+    }
     if (!session?.access_token) { onRequireAuth?.('Ask ayna'); return; }
     setInput('');
     setSendError('');

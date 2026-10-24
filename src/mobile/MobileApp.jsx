@@ -1438,6 +1438,8 @@ export default function MobileApp() {
         onClose={() => setAskAynaOpen(false)}
         onNavigateToDiscovery={() => { setAskAynaOpen(false); setScreen('browse'); }}
         products={myProducts}
+        matchOpts={matchOpts}
+        focusProduct={overlay?.type === 'product' ? overlay.item : null}
         reads={rankedEcosystemReads}
         hasHealthData={!!authUser && health.connected.length > 0}
         resolveProduct={(id) => myProducts.find((p) => String(p.id) === String(id)) || browseProducts.find((p) => String(p.id) === String(id)) || null}
