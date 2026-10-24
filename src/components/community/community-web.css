@@ -364,7 +364,8 @@ html body .app-container.app-container.app-container.app-container {
   .cm-prof-bio { margin: 4px 0 0; font: 400 16px/1.5 var(--ay-sans-stack); color: var(--ay-text); }
   .cm-prof-bio.is-empty { justify-self: start; padding: 0; border: 0; background: none; text-align: left; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-weight: 600; }
   /* stat boxes: small outlined boxes, one per count (rule 8) */
-  .cm-prof-counts { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; max-width: 560px; margin: 0; padding: 0; list-style: none; }
+  .cm-prof-counts { display: flex; gap: 8px; max-width: 560px; margin: 0; padding: 0 4px 4px 0; list-style: none; }
+  .cm-prof-counts li { flex: 1 1 0; min-width: 0; }
   .cm-prof-counts button { display: grid; justify-items: center; gap: 2px; width: 100%; min-height: 64px; padding: 8px; border: 1.5px solid var(--ay-outline); border-radius: 16px; background: var(--ay-page); box-shadow: var(--cm-shadow-sm); color: var(--ay-text) !important; cursor: pointer; }
   .cm-prof-counts strong { font: 600 22px/1.1 var(--ay-sans-stack); font-variant-numeric: tabular-nums; }
   .cm-prof-counts span { font: 500 13px/1.2 var(--ay-sans-stack); color: var(--ay-text-2); }
