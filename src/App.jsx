@@ -2198,6 +2198,8 @@ function App() {
       products={Object.values(myProducts)}
       needIds={healthNeedIds}
       hormonalBC={usesHormonalBC(quizResults)}
+      quizAnswers={quizResults}
+      onEditAnswers={handleStartQuiz}
       onOpenProduct={(p) => handleOpenProduct(p, { source: 'health_dashboard' })}
       onAsk={(q, extra) => openAsk(q, extra?.stats)}
       onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}

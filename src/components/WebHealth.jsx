@@ -6,6 +6,7 @@ import { getProductById } from '../data/products.js';
 import { DEV_HEALTH_DEMO, DEV_HEALTH_DEMO_EMPTY, localToday } from '../mobile/hooks/useHealthData.js';
 import { HealthStarter } from '../mobile/components/HealthBento.jsx';
 import HealthHome from '../mobile/components/HealthHome.jsx';
+import TodayFeed from './today/TodayFeed.jsx';
 import '../styles/web-health.css';
 
 /**
@@ -103,7 +104,7 @@ function Locked({ signedIn, connected, onSignIn, onOpenConnections }) {
   );
 }
 
-export default function WebHealth({ user, health, products = [], needIds = [], hormonalBC = false, onOpenProduct, onAsk, onSignIn, onOpenConnections }) {
+export default function WebHealth({ user, health, products = [], needIds = [], hormonalBC = false, quizAnswers = null, onOpenProduct, onAsk, onSignIn, onOpenConnections, onEditAnswers }) {
   // DEVELOPMENT ONLY (?healthdemo=1 on the local dev server, signed out):
   // the made-up demo rows from devDemo.js, so the unlocked layout can be
   // checked without an account. import.meta.env.DEV is false in production builds.
@@ -129,6 +130,22 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
   const hasData = rows.length > 0 && !(dash.empty && week.empty && !sections.length);
   const name = demo ? '' : (user?.user_metadata?.first_name || user?.user_metadata?.name || '').split(' ')[0];
 
+  // Today with ayna leads every state: it runs on her local log, signed out too.
+  const todayFeed = (
+    <TodayFeed
+      variant="web"
+      userId={user?.id || null}
+      intake={quizAnswers}
+      healthRows={rows}
+      cycle={week.cycle?.cycleDay ? week.cycle : null}
+      hormonalBC={hormonalBC}
+      products={demoData?.products || products}
+      onOpenProduct={onOpenProduct}
+      onAsk={onAsk ? (q) => onAsk(q) : undefined}
+      onEditAnswers={onEditAnswers}
+    />
+  );
+
   const header = (
     <header className="ay-wh-top">
       <h1 id="ay-wh-title" className="sr-only">Your health</h1>
@@ -141,6 +158,7 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
     return (
       <section className="ay-wh" aria-labelledby="ay-wh-title" aria-busy="true">
         {header}
+        {todayFeed}
         <div className="ay-wh-loading" role="status"><i /><i /><i /><span>Loading your health data</span></div>
       </section>
     );
@@ -149,6 +167,7 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
     return (
       <section className="ay-wh" aria-labelledby="ay-wh-title">
         {header}
+        {todayFeed}
         <div className="ay-wh-error">
           <h2>We couldn't load your health data</h2>
           <p>Nothing was changed. Check your connection and try again.</p>
@@ -161,6 +180,7 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
     return (
       <section className="ay-wh is-locked" aria-labelledby="ay-wh-title">
         {header}
+        {todayFeed}
         <Locked signedIn={signedIn} connected={(h.connected || []).length > 0} onSignIn={onSignIn} onOpenConnections={onOpenConnections} />
         {/* Signed in without health data: her goals matched to her products still work from the quiz. */}
         {signedIn && (needIds.length > 0 || products.length > 0 || demo) && (
@@ -188,6 +208,7 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
         onOpenProduct={onOpenProduct}
         onAsk={onAsk}
         surface="web"
+        todayFeed={todayFeed}
       />
     </section>
   );

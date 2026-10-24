@@ -22,7 +22,8 @@ installDelight()
 // DEV only: remember ?fixture=community for this tab before the router tidies
 // the URL (src/utils/community/devFixture.js). Removed from production builds.
 if (import.meta.env.DEV) {
-  try { if (new URLSearchParams(window.location.search).get('fixture') === 'community') sessionStorage.setItem('ayna_dev_fixture', 'community') } catch { /* private mode */ }
+  // ?fixture=today (and today-care, today-pregnant): src/health/todayDevFixture.js.
+  try { const f = new URLSearchParams(window.location.search).get('fixture'); if (/^(community|today(-care|-pregnant)?)$/.test(f || '')) sessionStorage.setItem('ayna_dev_fixture', f) } catch { /* private mode */ }
 }
 import posthog from 'posthog-js'
 import { getInternalIds, tagInternalUserIfNeeded } from './utils/posthogInternal'

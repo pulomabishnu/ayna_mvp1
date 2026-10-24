@@ -37,6 +37,10 @@
     {
       "path": "/api/campaign-notify",
       "schedule": "17 * * * *"
+    },
+    {
+      "path": "/api/today-reminders?sweep=1",
+      "schedule": "*/15 * * * *"
     }
   ],
   "headers": [
