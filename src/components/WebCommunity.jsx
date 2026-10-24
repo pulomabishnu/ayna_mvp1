@@ -896,7 +896,8 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     const long = !full && String(post.body || '').length > 360;
     const replyWord = kind === 'question' ? 'Answer' : 'Reply';
     return <article ref={engagement.trackView(post.id)} className={`cm-post cm-note is-${kind}${full ? ' is-full' : ''}`} style={{ '--i': Math.min(i, 6) }} data-kind={kind} data-vt-target={full ? 'post' : undefined} key={post.id}>
-      {kind === 'review' && <span className="cm-tape" aria-hidden="true" />}
+      {/* Folder tab on the card's top edge (inspo rule 9): what kind of note this is. */}
+      {kind === 'review' && <span className="cm-ear is-review" aria-hidden="true">Review</span>}
       {kind === 'question' && <span className="cm-ear">Question</span>}
       <header className="cm-post-head">
         <Avatar size={40} name={name} path={!anon ? profileById.get(post.author_id)?.avatar_url : null} anonymous={anon} />
@@ -1085,7 +1086,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const peopleBlock = (where) => {
     const list = user ? suggestedPeople.slice(0, SIDE_MAX) : [];
     if (!list.length) return null;
-    return <section className={`cm-mod cm-people-mod ${where}`}><div className="cm-mod__head"><h2>People to follow</h2></div><ul className="ay-group cm-mod__list">{list.map((p) => <li key={p.user_id} className="cm-mod-person"><button type="button" className="cm-suggest-who" onClick={() => openProfile(p.username)}><Avatar size={32} name={p.display_name || p.username} path={p.avatar_url} /><span><strong>{p.display_name || p.username}</strong><small>@{p.username}</small><TeamTag title={badgeFor(p.user_id)} /></span></button><button type="button" className="ay-btn ay-btn--secondary cm-small" onClick={() => toggleFollow(p.user_id)}>Follow</button></li>)}</ul></section>;
+    return <section className={`cm-mod cm-people-mod ${where}`}><div className="cm-mod__head"><h2 className="cm-mod__tab">People to follow</h2></div><ul className="ay-group cm-mod__list">{list.map((p) => <li key={p.user_id} className="cm-mod-person"><button type="button" className="cm-suggest-who" onClick={() => openProfile(p.username)}><Avatar size={32} name={p.display_name || p.username} path={p.avatar_url} /><span><strong>{p.display_name || p.username}</strong><small>@{p.username}</small><TeamTag title={badgeFor(p.user_id)} /></span></button><button type="button" className="ay-btn ay-btn--secondary cm-small" onClick={() => toggleFollow(p.user_id)}>Follow</button></li>)}</ul></section>;
   };
 
   let main;
@@ -1370,8 +1371,8 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       </div>
       <aside className="cm-side" aria-label="More from Community">
         {onFeed && tab === 'for-you' && quoteBlock('is-side')}
-        {questionsSide.length > 0 && <section className="cm-mod"><div className="cm-mod__head"><h2>Recent questions</h2>{!(onFeed && tab === 'question') && <button type="button" className="ct-shelf__all" onClick={() => switchTab('question')}>All</button>}</div><ul className="ay-group cm-mod__list">{questionsSide.map((q) => <li key={q.id}><button type="button" className="cm-mod-q" onClick={() => openPost(q)}><span>{q.body}</span><small>{Number(q.comment_count) ? `${q.comment_count} ${Number(q.comment_count) === 1 ? 'answer' : 'answers'}` : 'No answers yet'}</small></button></li>)}</ul></section>}
-        {playlistsSide.length > 0 && <section className="cm-mod"><div className="cm-mod__head"><h2>Playlists</h2>{!(onFeed && tab === 'playlists') && <button type="button" className="ct-shelf__all" onClick={() => switchTab('playlists')}>All</button>}</div><ul className="ay-group cm-mod__list">{playlistsSide.map((p) => <li key={p.id}><button type="button" className="cm-mod-pl" onClick={() => openPlaylist(p)}><PlaylistCover playlist={p} productsById={productsById} /><span><strong>{p.title}</strong><small>{p.item_count || 0} {(p.item_count || 0) === 1 ? 'product' : 'products'} · {p.owner_display_name || 'ayna community'}</small></span></button></li>)}</ul></section>}
+        {questionsSide.length > 0 && <section className="cm-mod"><div className="cm-mod__head"><h2 className="cm-mod__tab">Recent questions</h2>{!(onFeed && tab === 'question') && <button type="button" className="ct-shelf__all cm-seeall" onClick={() => switchTab('question')} aria-label="See all questions">See all</button>}</div><ul className="ay-group cm-mod__list">{questionsSide.map((q) => <li key={q.id}><button type="button" className="cm-mod-q" onClick={() => openPost(q)}><span>{q.body}</span><small>{Number(q.comment_count) ? `${q.comment_count} ${Number(q.comment_count) === 1 ? 'answer' : 'answers'}` : 'No answers yet'}</small></button></li>)}</ul></section>}
+        {playlistsSide.length > 0 && <section className="cm-mod"><div className="cm-mod__head"><h2 className="cm-mod__tab">Playlists</h2>{!(onFeed && tab === 'playlists') && <button type="button" className="ct-shelf__all cm-seeall" onClick={() => switchTab('playlists')} aria-label="See all playlists">See all</button>}</div><ul className="ay-group cm-mod__list">{playlistsSide.map((p) => <li key={p.id}><button type="button" className="cm-mod-pl" onClick={() => openPlaylist(p)}><PlaylistCover playlist={p} productsById={productsById} /><span><strong>{p.title}</strong><small>{p.item_count || 0} {(p.item_count || 0) === 1 ? 'product' : 'products'} · {p.owner_display_name || 'ayna community'}</small></span></button></li>)}</ul></section>}
         {peopleBlock('is-side')}
       </aside>
     </div>
