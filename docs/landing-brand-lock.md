@@ -1,6 +1,6 @@
 # ayna landing: locked brand system
 
-Source of truth: `src/styles/landing-v2.css` (tokens on `.lv`) and `src/components/LandingV2.jsx`. Palette rule: lilac and mint are not used.
+Historical. `src/styles/landing-v2.css` was never imported and was removed in the CSS consolidation (Oct 21); the live system is `docs/design-direction.md` with tokens in `src/index.css` and `src/styles/ayna-system.css`. `src/components/LandingV2.jsx` uses `editorial.css`. Palette rule: lilac and mint are not used.
 
 ## Color (60-30-10, WCAG AA checked)
 Researched rule: one dominant color (60%), one secondary (30%), one scarce accent (10%); accent only on key actions; text 4.5:1, large text and UI 3:1.
