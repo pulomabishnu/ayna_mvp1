@@ -83,6 +83,50 @@
       ]
     }
   ],
+  "redirects": [
+    {
+      "source": "/ecosystem",
+      "has": [
+        {
+          "type": "query",
+          "key": "view",
+          "value": "dashboard"
+        }
+      ],
+      "destination": "/today",
+      "permanent": true
+    },
+    {
+      "source": "/shop",
+      "destination": "/explore/products",
+      "permanent": true
+    },
+    {
+      "source": "/discovery",
+      "destination": "/explore/products",
+      "permanent": true
+    },
+    {
+      "source": "/library",
+      "destination": "/explore/resources",
+      "permanent": true
+    },
+    {
+      "source": "/ecosystem",
+      "destination": "/you/ecosystem",
+      "permanent": true
+    },
+    {
+      "source": "/my-ecosystem",
+      "destination": "/you/ecosystem",
+      "permanent": true
+    },
+    {
+      "source": "/health",
+      "destination": "/today",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/a/:slug([A-Za-z0-9]{10})",
@@ -101,11 +145,11 @@
       "destination": "https://us.i.posthog.com/:path"
     },
     {
-      "source": "/:page(about|product|wrapped|admin|appointment-prep|auth|campus-resources|community|comparison|confirmed|consumer-health-data|contact|delete-account|discovery|health|health-data|free-product|join|ecosystem|how-it-works|how-we-make-money|internal|library|mobile-preview|my-ecosystem|omitted|partner-brands|partners|privacy|privacy-policy|profile|quiz|recalls|recommendations|screenings|shop|startups|terms|terms-of-use|text-ayna|tracked|you)",
+      "source": "/:page(about|product|wrapped|admin|appointment-prep|auth|campus-resources|community|comparison|confirmed|consumer-health-data|contact|delete-account|discovery|explore|health|health-data|free-product|join|ecosystem|how-it-works|how-we-make-money|internal|library|mobile-preview|my-ecosystem|omitted|partner-brands|partners|privacy|privacy-policy|profile|quiz|recalls|recommendations|screenings|shop|startups|terms|terms-of-use|text-ayna|today|ask|tracked|you)",
       "destination": "/index.html"
     },
     {
-      "source": "/:page(about|product|wrapped|admin|appointment-prep|auth|campus-resources|community|comparison|confirmed|consumer-health-data|contact|delete-account|discovery|health|health-data|free-product|join|ecosystem|how-it-works|how-we-make-money|internal|library|mobile-preview|my-ecosystem|omitted|partner-brands|partners|privacy|privacy-policy|profile|quiz|recalls|recommendations|screenings|shop|startups|terms|terms-of-use|text-ayna|tracked|you)/:rest*",
+      "source": "/:page(about|product|wrapped|admin|appointment-prep|auth|campus-resources|community|comparison|confirmed|consumer-health-data|contact|delete-account|discovery|explore|health|health-data|free-product|join|ecosystem|how-it-works|how-we-make-money|internal|library|mobile-preview|my-ecosystem|omitted|partner-brands|partners|privacy|privacy-policy|profile|quiz|recalls|recommendations|screenings|shop|startups|terms|terms-of-use|text-ayna|today|ask|tracked|you)/:rest*",
       "destination": "/index.html"
     }
   ]

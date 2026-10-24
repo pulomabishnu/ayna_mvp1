@@ -79,3 +79,14 @@ describe('Today shows the rundown hero only with real content', () => {
     expect(host.textContent).not.toContain('Your Daily Rundown');
   });
 });
+
+describe('End of the rundown', () => {
+  it('Ask follow-ups about the cards she saw open Ask with that question', () => {
+    const onAskFollowUp = vi.fn();
+    const cards = [CARDS[0], { ...CARDS[4], followUps: [{ question: 'Why was my sleep flagged?', cardKey: 'change:sleep' }] }];
+    mount(<RundownStory cards={cards} onClose={() => {}} onAskFollowUp={onAskFollowUp} />);
+    act(() => btn('Next card').click());
+    act(() => [...document.querySelectorAll('.ay-rd-asks button')][0].click());
+    expect(onAskFollowUp).toHaveBeenCalledWith({ question: 'Why was my sleep flagged?', cardKey: 'change:sleep' });
+  });
+});

@@ -6,7 +6,7 @@ import { ALL_PRODUCTS, isTeenProduct } from '../src/data/products.js';
 import { productHref } from '../src/utils/productRoute.js';
 
 const SITE = 'https://www.aynahealth.co';
-const STATIC = ['/', '/shop', '/library', '/community', '/about', '/how-it-works', '/how-we-make-money', '/partners', '/contact', '/privacy-policy', '/terms-of-use', '/consumer-health-data', '/quiz'];
+const STATIC = ['/', '/explore', '/explore/products', '/explore/resources', '/community', '/about', '/how-it-works', '/how-we-make-money', '/partners', '/contact', '/privacy-policy', '/terms-of-use', '/consumer-health-data', '/quiz'];
 const articlesSrc = fs.readFileSync(new URL('../src/components/Articles.jsx', import.meta.url), 'utf8');
 const start = articlesSrc.indexOf('const ARTICLES = [');
 // Only the ARTICLES array itself (the section list after it also has ids, which are not reads).

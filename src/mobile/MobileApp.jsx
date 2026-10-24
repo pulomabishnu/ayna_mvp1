@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { trackApp, appScreenName } from './utils/appAnalytics.js';
+import { navTabFor } from './utils/navTab.js';
 import { useRecommendationViews } from '../utils/recommendationAnalytics.js';
 import './mobile.css';
 import './editorial.css';
@@ -10,7 +11,7 @@ import './reference-system.css';
 import './tokens.css';
 import './app-play.css';
 import './no-focus-ring.css';
-import { ALL_PRODUCTS, getEcosystemAlternatives, getEcosystemSeedFromQuiz, filterPrescriptionCareGate, hydrateCatalogProduct, getSelectedNeeds } from '../data/products.js';
+import { ALL_PRODUCTS, getProductById, getEcosystemAlternatives, getEcosystemSeedFromQuiz, filterPrescriptionCareGate, hydrateCatalogProduct, getSelectedNeeds } from '../data/products.js';
 import { RELEASED_STARTUPS } from '../data/startups.js';
 import { loadProductCatalog } from '../utils/productCatalog.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
@@ -24,7 +25,7 @@ import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } 
 import { useSavedProducts } from './hooks/useSavedProducts.js';
 import { useThemeMode } from './hooks/useThemeMode.js';
 import { usePersonalizedFeed } from './hooks/usePersonalizedFeed.js';
-import { usePushNotifications } from './hooks/usePushNotifications.js';
+import { usePushNotifications, usePushRoutes } from './hooks/usePushNotifications.js';
 import { useHealthData, DEV_HEALTH_DEMO } from './hooks/useHealthData.js';
 import { useTextSize } from './hooks/useTextSize.js';
 import { useEcosystemSession } from './hooks/useEcosystemSession.js';
@@ -51,7 +52,9 @@ import AskAynaModal from './components/AskAynaModal.jsx';
 import ProfileFlow, { AboutAynaScreen } from './screens/profile/ProfileFlow.jsx';
 
 import LandingScreen from './screens/LandingScreen.jsx';
-import BrowseScreen from './screens/BrowseScreen.jsx';
+import TodayScreen from './screens/TodayScreen.jsx';
+import ExploreScreen from './screens/ExploreScreen.jsx';
+import AskTabScreen from './screens/AskTabScreen.jsx';
 import ProductDetailScreen from './screens/ProductDetailScreen.jsx';
 import ArticleDetailScreen from './screens/ArticleDetailScreen.jsx';
 import EcosystemIntroScreen from './screens/EcosystemIntroScreen.jsx';
@@ -65,7 +68,6 @@ import EcosystemScreen from './screens/EcosystemScreen.jsx';
 import EcosystemResetDialog from './components/EcosystemResetDialog.jsx';
 import SavedScreen from './screens/SavedScreen.jsx';
 import WhyMatchScreen from './screens/WhyMatchScreen.jsx';
-import LibraryScreen from './screens/LibraryScreen.jsx';
 import { AskContext } from './askContext.js';
 import MonthlyCheckinScreen from './screens/MonthlyCheckinScreen.jsx';
 import CommunityScreen from './screens/CommunityScreen.jsx';
@@ -129,7 +131,14 @@ function displayNameFromUser(user) {
 
 const SCREENS = {
   landing: LandingScreen,
-  browse: BrowseScreen,
+  // Main tabs (founder, Oct 24 2026): Today · Explore · Ask ayna · Community · You.
+  // Explore's Products section keeps the 'browse' key and Resources keeps
+  // 'library', so their $screen names (and the app dashboard) do not change.
+  today: TodayScreen,
+  explore: ExploreScreen,
+  browse: ExploreScreen,
+  library: ExploreScreen,
+  ask: AskTabScreen,
   ecointro: EcosystemIntroScreen,
   quiz: IntakeScreen,
   building: BuildingScreen,
@@ -139,7 +148,6 @@ const SCREENS = {
   saved: SavedScreen,
   community: CommunityScreen,
   checkin: MonthlyCheckinScreen,
-  library: LibraryScreen,
   connect: QuizConnectScreen,
   plan: PlanScreen,
 };
@@ -241,7 +249,7 @@ function hasSavedIntakeDraft() {
 }
 
 // Screens where the feedback survey may appear (never the quiz, sign-in or a sheet).
-const APP_FEEDBACK_SCREENS = new Set(['landing', 'eco', 'browse', 'library', 'saved']);
+const APP_FEEDBACK_SCREENS = new Set(['landing', 'today', 'explore', 'eco', 'browse', 'library', 'saved']);
 
 // Screens that make no sense to return to after signing in.
 const AUTH_NO_RETURN = new Set(['landing', 'signin', 'quiz', 'building', 'reveal', 'connect', 'checkin', 'plan']);
@@ -258,7 +266,8 @@ export default function MobileApp() {
     // so they are never stranded.
     || (session.pendingQuiz ? quizStepToResume() || 'connect' : null)
     || (!hasEcosystem && hasSavedIntakeDraft() ? 'ecointro' : 'landing'));
-  const [ecoTab, setEcoTab] = useState('dashboard');
+  // Explore's section when it is not Products ('browse') or Resources ('library').
+  const [exploreSection, setExploreSection] = useState('overview');
   const [planAddedGoals, setPlanAddedGoals] = useState({});
   const [hasIntakeDraft, setHasIntakeDraft] = useState(hasSavedIntakeDraft);
   // Product/article detail render as an overlay ON TOP of whichever base
@@ -279,7 +288,10 @@ export default function MobileApp() {
   useEffect(() => {
     const name = appScreenName(screen, overlayType);
     try { window.__aynaView = name; } catch { /* no window */ }
-    trackApp('$screen', { $screen_name: name });
+    // $screen_name keeps the old names where a screen moved (browse, library,
+    // eco, profile), so the app dashboard keeps counting; nav_tab says which
+    // of the five tabs it now sits under.
+    trackApp('$screen', { $screen_name: name, nav_tab: navTabFor(screen, overlayType) || 'none' });
   }, [screen, overlayType]);
   // recommendation_viewed: the products ayna matched to her needs (seeded with
   // a needId), on her Ecosystem screen, in shelf order.
@@ -337,7 +349,7 @@ export default function MobileApp() {
   const rootRef = useRef(null);
   const prevScreenRef = useRef(screen);
   useEffect(() => {
-    const TABS = ['eco', 'ecointro', 'browse', 'library', 'community', 'saved'];
+    const TABS = ['today', 'explore', 'ask', 'eco', 'ecointro', 'browse', 'library', 'community', 'saved'];
     const was = prevScreenRef.current;
     prevScreenRef.current = screen;
     if (was === screen || !TABS.includes(screen) || !TABS.includes(was)) return;
@@ -346,7 +358,7 @@ export default function MobileApp() {
   }, [screen]);
   const swipeStart = useRef(null);
   const handleMainTouchStart = (event) => {
-    if (overlay || !['browse', 'eco'].includes(screen) || event.touches.length !== 1) return;
+    if (overlay || !['today', 'browse', 'explore'].includes(screen) || event.touches.length !== 1) return;
     const target = event.target;
     if (target.closest('input, textarea, select, [contenteditable="true"], [data-no-page-swipe]')) return;
     swipeStart.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
@@ -357,8 +369,9 @@ export default function MobileApp() {
     const dy = event.changedTouches[0].clientY - swipeStart.current.y;
     swipeStart.current = null;
     if (Math.abs(dx) < 85 || Math.abs(dx) < Math.abs(dy) * 1.6) return;
-    if (screen === 'eco' && dx < 0) { setBrowseQuery(''); setScreen('browse'); }
-    if (screen === 'browse' && dx > 0 && hasEcosystem) setScreen('eco');
+    // Swipe between the first two tabs, Today and Explore.
+    if (screen === 'today' && dx < 0) { setExploreSection('overview'); setScreen('explore'); }
+    if ((screen === 'explore' || screen === 'browse') && dx > 0) setScreen('today');
   };
   const { user: realAuthUser, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
   // DEVELOPMENT ONLY: a stand-in signed-in user for the ?healthdemo=1 preview. Never in production.
@@ -373,7 +386,7 @@ export default function MobileApp() {
   const [loadedAccountId, setLoadedAccountId] = useState(null);
   useEffect(() => {
     if (authLoading || !authUser || screen !== 'landing') return;
-    Promise.resolve().then(() => setScreen(hasEcosystem ? 'eco' : 'ecointro'));
+    Promise.resolve().then(() => setScreen('today'));
   }, [authLoading, authUser, hasEcosystem, screen]);
   const requestAuth = (feature, resume = null) => {
     authResumeRef.current = resume || (() => setScreen(screen));
@@ -451,6 +464,15 @@ export default function MobileApp() {
   const [askPush, setAskPush] = useState(() => { try { return localStorage.getItem('ayna_push_asked_v1') === '1'; } catch { return false; } });
   const markPushMoment = () => { if (askPush) return; try { localStorage.setItem('ayna_push_asked_v1', '1'); } catch { /* storage blocked */ } setAskPush(true); };
   usePushNotifications(authUser?.id, askPush);
+  // A tapped notification opens Today, or the product a recall alert is about.
+  usePushRoutes((route) => {
+    setAskAynaOpen(false);
+    if (route.screen === 'today') { setOverlay(null); setScreen('today'); return; }
+    if (route.screen === 'product') {
+      const item = getProductById(route.productId) || ALL_PRODUCTS.find((p) => String(p.id) === route.productId);
+      if (item) setOverlay({ type: 'product', item: hydrateCatalogProduct(item) });
+    }
+  });
   const { textSizeIndex, setTextSizeIndex, textScale } = useTextSize();
   const [askAynaOpen, setAskAynaOpen] = useState(() => !!(import.meta.env.DEV && new URLSearchParams(window.location.search).get('ask')));
   const [askAynaHistoryState, setAskAynaHistoryState] = useState({ userId: null, messages: [] });
@@ -613,7 +635,7 @@ export default function MobileApp() {
       }));
 
       // Mid quiz-end steps: stay there so her new answers get applied.
-      if (remoteProducts.length > 0 && !session.pendingQuiz) setScreen('eco');
+      if (remoteProducts.length > 0 && !session.pendingQuiz) setScreen('today');
       setLoadedAccountId(userId);
     })().catch((error) => {
       console.warn('[Ayna] mobile ecosystem sync failed:', error);
@@ -765,7 +787,7 @@ export default function MobileApp() {
     // the way react-hooks/set-state-in-effect expects it.
     Promise.resolve().then(() => {
       updateSession((prev) => ({ userName: firstName || prev.userName }));
-      setScreen(hasEcosystem ? 'eco' : 'ecointro');
+      setScreen('today');
     });
   }, [authUser]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -1024,6 +1046,15 @@ export default function MobileApp() {
     onGoCommunity: () => { setCommunitySeed(null); setScreen('community'); },
     onOpenSaved: () => setScreen('saved'),
     onGoEco: () => setScreen(hasEcosystem ? 'eco' : 'ecointro'),
+    onGoToday: () => setScreen('today'),
+    exploreSection: screen === 'browse' ? 'products' : screen === 'library' ? 'resources' : exploreSection,
+    onExploreSection: (key, search = '') => {
+      if (key === 'products') { setBrowseQuery(search || ''); setScreen('browse'); return; }
+      if (key === 'resources') { setScreen('library'); return; }
+      setExploreSection(key);
+      setScreen('explore');
+    },
+    onOpenCommunityPost: (postId) => { setOverlay(null); setCommunitySeed({ postId, token: Date.now() }); setScreen('community'); },
     onGoLanding: () => setScreen('landing'),
     onOpenProduct: (p) => growTransition(() => setOverlay({ type: 'product', item: p }), { target: 'product', from: 'img' }),
     onOpenArticle: (a) => {
@@ -1040,8 +1071,6 @@ export default function MobileApp() {
     // Today: open one quiz question, or save a quick answer she chose to keep (signed in).
     onEditIntakeStep: (step) => { setIntakeMode('add'); setIntakeAtOptional(false); setIntakeAtStep(step || 'lifeStage'); setEditingHealthProfile(true); setScreen('quiz'); },
     onUpdateIntake: authUser ? handleUpdateIntake : null,
-    ecoTab,
-    onEcoTab: setEcoTab,
     routineHave: session.routineHave || {},
     routineExcluded: session.routineExcluded || {},
     routineOutcomes: authUser?.id ? session.routineOutcomesByUser?.[authUser.id] || {} : {},
@@ -1085,8 +1114,10 @@ export default function MobileApp() {
         resumeQuizAtLastStep();
         return;
       }
-      if (screen === 'plan') { setScreen(session.pendingQuiz?.fromCheckin ? (hasEcosystem ? 'eco' : 'ecointro') : 'connect'); return; }
-      setScreen(screen === 'quiz' ? (hasEcosystem ? 'eco' : 'ecointro') : screen === 'ecointro' ? 'landing' : screen === 'eco' ? 'browse' : hasEcosystem ? 'eco' : 'landing');
+      if (screen === 'plan') { setScreen(session.pendingQuiz?.fromCheckin ? 'today' : 'connect'); return; }
+      // My ecosystem sits under You: its back goes to You.
+      if (screen === 'eco' || screen === 'saved' || (screen === 'ecointro' && authUser)) { openProfile(); return; }
+      setScreen(screen === 'quiz' ? (authUser || hasEcosystem ? 'today' : 'landing') : screen === 'ecointro' ? 'landing' : authUser || hasEcosystem ? 'today' : 'landing');
     },
     onRetake: () => { setIntakeMode('add'); setIntakeAtOptional(false); setEditingHealthProfile(true); setScreen('quiz'); },
     onPersonalize: () => { setIntakeMode('add'); setIntakeAtOptional(true); setEditingHealthProfile(true); setScreen('quiz'); },
@@ -1216,9 +1247,9 @@ export default function MobileApp() {
       if (resume) resume();
       else if (session.pendingQuiz && authReturnScreenRef.current === 'connect') setScreen('connect');
       // Back to where she signed in from (Community invites, Saved, Today...), not always the
-      // ecosystem: signing in should never move her away from what she was doing (team direction 55).
+      // first tab: signing in should never move her away from what she was doing (team direction 55).
       else if (authReturnScreenRef.current && !AUTH_NO_RETURN.has(authReturnScreenRef.current)) setScreen(authReturnScreenRef.current);
-      else setScreen(hasEcosystem ? 'eco' : 'ecointro');
+      else setScreen('today');
     },
     hasEcosystem,
   };
@@ -1233,11 +1264,7 @@ export default function MobileApp() {
     .filter((article) => !readArticleIds.includes(article.id))
     .concat(rankedEcosystemReads.filter((article) => readArticleIds.includes(article.id)))
     .slice(0, 3);
-  const activeTab = ['profile', 'profile-auth'].includes(overlay?.type) ? 'profile'
-    : screen === 'browse' ? 'browse'
-      : screen === 'library' ? 'library'
-      : screen === 'community' ? 'community'
-        : ['eco', 'ecointro'].includes(screen) ? 'home' : null;
+  const activeTab = navTabFor(screen, overlay?.type);
 
   if (authLoading || (authUser?.id && !DEV_HEALTH_DEMO && loadedAccountId !== authUser.id)) {
     return <div className="ayna-mobile" data-theme={resolvedTheme} style={{ display: 'grid', placeItems: 'center', minHeight: '100dvh', background: 'var(--ayna-bg)' }} role="status" aria-live="polite"><div style={{ textAlign: 'center', color: 'var(--ayna-heading)' }}><div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 34 }}>ayna</div><p style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 400, lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))' }}>Opening your ecosystem…</p></div></div>;
@@ -1311,11 +1338,12 @@ export default function MobileApp() {
       )}
       {showTabBar && <MobileTabBar
         active={activeTab}
-        onHome={() => { setAskAynaOpen(false); setOverlay(null); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
-        onBrowse={() => { setAskAynaOpen(false); setOverlay(null); setBrowseQuery(''); setScreen('browse'); }}
+        onToday={() => { setAskAynaOpen(false); setOverlay(null); setScreen('today'); }}
+        onExplore={() => { setAskAynaOpen(false); setOverlay(null); setBrowseQuery(''); setExploreSection('overview'); setScreen('explore'); }}
+        onAsk={() => { setAskAynaOpen(false); setOverlay(null); setAskSeed(null); setScreen('ask'); }}
         onCommunity={() => { setAskAynaOpen(false); setOverlay(null); setCommunitySeed(null); setScreen('community'); }}
-        onLibrary={() => { setAskAynaOpen(false); setOverlay(null); setScreen('library'); }}
-        onProfile={() => { setAskAynaOpen(false); openProfile(); }}
+        // You opens for everyone: signed out it says what an account keeps, and Settings still works.
+        onProfile={() => { setAskAynaOpen(false); authResumeRef.current = null; setOverlay({ type: 'profile' }); }}
       />}
       {saveNudge && !authUser && (
         <div className="ay-save-nudge" role="status">
@@ -1440,18 +1468,20 @@ export default function MobileApp() {
           onResumeQuiz={resumeQuiz}
           onStartOverQuiz={startQuizOver}
           onAddGoal={handleAddGoal}
-          onOpenRoutine={() => { setEcoTab('dashboard'); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
+          onOpenRoutine={() => { setOverlay(null); setScreen('today'); }}
           onOpenMonthlyCheckin={() => setScreen('checkin')}
           readProgress={readProgress}
           onOpenProduct={(product) => growTransition(() => setOverlay({ type: 'product', item: product }), { target: 'product', from: 'img' })}
           onOpenArticle={(article) => { setReadArticleIds((ids) => ids.includes(article.id) ? ids : [...ids, article.id]); setOverlay({ type: 'article', item: article }); }}
           onOpenCommunity={(seed) => { setOverlay(null); setCommunitySeed({ ...seed, token: Date.now() }); setScreen('community'); }}
+          recentAsks={askAynaHistory}
         />
         </AskContext.Provider>
       )}
       <AskAynaModal
         key={authUser?.id || 'anonymous'}
-        open={askAynaOpen}
+        open={askAynaOpen || (screen === 'ask' && !overlay)}
+        asTab={screen === 'ask' && !askAynaOpen}
         seed={askSeed}
         enabled={!!authUser || !!(import.meta.env.DEV && new URLSearchParams(window.location.search).get('ask'))}
         profile={effectiveQuizAnswers}
@@ -1467,7 +1497,7 @@ export default function MobileApp() {
         chatHistory={askAynaHistory}
         onChatHistoryUpdate={setAskAynaHistory}
         name={resolvedName}
-        onClose={() => setAskAynaOpen(false)}
+        onClose={screen === 'ask' && !askAynaOpen ? null : () => setAskAynaOpen(false)}
         onNavigateToDiscovery={() => { setAskAynaOpen(false); setScreen('browse'); }}
         products={myProducts}
         matchOpts={matchOpts}
@@ -1477,7 +1507,7 @@ export default function MobileApp() {
         resolveProduct={(id) => myProducts.find((p) => String(p.id) === String(id)) || browseProducts.find((p) => String(p.id) === String(id)) || null}
         onOpenProduct={(product) => { setAskAynaOpen(false); setOverlay({ type: 'product', item: product }); }}
         onBrowse={(intent) => { setAskAynaOpen(false); setOverlay(null); setBrowseQuery(String(intent?.query || intent?.category || '').replace(/[-_]/g, ' ')); setScreen('browse'); }}
-        onOpenDashboard={hasEcosystem ? () => { setAskAynaOpen(false); setOverlay(null); setEcoTab('dashboard'); setScreen('eco'); } : null}
+        onOpenDashboard={hasEcosystem ? () => { setAskAynaOpen(false); setOverlay(null); setScreen('today'); } : null}
         onOpenRead={(article) => { setAskAynaOpen(false); setReadArticleIds((ids) => ids.includes(article.id) ? ids : [...ids, article.id]); setOverlay({ type: 'article', item: article }); }}
         onViewRecommendations={() => { setAskAynaOpen(false); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
         onRequireAuth={(feature) => requestAuth(feature || 'Ask ayna', () => { setScreen(screen); setAskAynaOpen(true); })}
