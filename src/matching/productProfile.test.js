@@ -117,10 +117,12 @@ describe('pregnancy and breastfeeding', () => {
     expect(prof('p-neycher-vaginal-moisturizer').pregnancy.overall).toBe('caution');
     expect(prof('p-sootheher-elaris-pod').life_stage.pregnant).toBe('contraindicated');
   });
-  it('marks pregnancy verified only from a credible research source, never from catalog copy', () => {
+  it('marks pregnancy or breastfeeding verified only from a .gov research source, never from catalog copy', () => {
     ALL_PRODUCTS.forEach((p) => {
-      const preg = buildProductProfile(p).pregnancy;
-      if (preg.overall === 'verified') expect(preg.evidence_source).toMatch(/^https:\/\/(www\.)?(cdc\.gov|ncbi\.nlm\.nih\.gov|ods\.od\.nih\.gov|nccih\.nih\.gov|mayoclinic\.org|nhs\.uk|acog\.org)/);
+      const pp = buildProductProfile(p);
+      for (const stage of [pp.pregnancy, pp.breastfeeding]) {
+        if (stage.overall === 'verified') expect(new URL(stage.evidence_source).hostname).toMatch(/(^|\.)(nih\.gov|medlineplus\.gov|fda\.gov|cdc\.gov|womenshealth\.gov)$/);
+      }
     });
   });
 });
