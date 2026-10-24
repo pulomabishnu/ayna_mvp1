@@ -89,14 +89,22 @@ function Body({ card, h, done }) {
     case 'list':
       return <ul className="ay-rd-lines">{card.lines.map((l) => <li key={l}>{l}</li>)}</ul>;
     case 'closing':
-      return (
+      return (<>
+        {h.askFollowUp && card.followUps?.length > 0 && (
+          <div className="ay-rd-asks">
+            <p className="ay-rd-basis">Ask ayna about today</p>
+            <ul>
+              {card.followUps.map((f) => <li key={f.question}><button type="button" onClick={() => h.askFollowUp(f)}><span>{f.question}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>)}
+            </ul>
+          </div>
+        )}
         <span className="ay-rd-actions">
           {h.ask && <button type="button" className="ay-rd-primary" onClick={() => h.ask('')}>Ask ayna</button>}
           {h.explore && <button type="button" className="ay-rd-link" onClick={h.explore}>Explore for you</button>}
           <button type="button" className="ay-rd-link" onClick={h.close}>Done</button>
           {h.remindTomorrow && <button type="button" className="ay-rd-link" onClick={h.remindTomorrow}>Remind me tomorrow</button>}
         </span>
-      );
+      </>);
     default:
       return null;
   }
@@ -105,7 +113,7 @@ function Body({ card, h, done }) {
 /**
  * @param {{ cards, title, onClose, onSeen, onCheckIn, onOutcome, onAsk, onWhyMatch, onSave, onCompare, onUnsave, onOpenRead, onExplore, onFindCare, onNotUseful, onRemindTomorrow, onAction }} props
  */
-export default function RundownStory({ cards, title = 'Your daily rundown', onClose, onSeen, onCheckIn, onOutcome, onAsk, onWhyMatch, onSave, onCompare, onUnsave, onOpenRead, onExplore, onFindCare, onNotUseful, onRemindTomorrow, onAction }) {
+export default function RundownStory({ cards, title = 'Your daily rundown', onClose, onSeen, onCheckIn, onOutcome, onAsk, onAskFollowUp, onSeeData, onWhyMatch, onSave, onCompare, onUnsave, onOpenRead, onExplore, onFindCare, onNotUseful, onRemindTomorrow, onAction }) {
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
   const [done, setDone] = useState({});
@@ -151,6 +159,7 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
     openRead: onOpenRead ? (id) => { onAction?.(card, 'open'); onOpenRead(id); } : null,
     ask: onAsk ? (q) => { onAction?.(card, 'ask'); onAsk(q); } : null,
     explore: onExplore ? () => { onAction?.(card, 'open'); onExplore(); } : null,
+    askFollowUp: onAskFollowUp ? (f) => { onAction?.(card, 'ask'); onAskFollowUp(f); } : null,
     findCare: onFindCare,
     remindTomorrow: onRemindTomorrow ? async () => { setMsg(await onRemindTomorrow()); onAction?.(card, 'remind'); } : null,
   };
@@ -186,6 +195,14 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
           <h2 id={`ay-rd-t-${i}`} className="ay-rd-title">{card.title}</h2>
           {card.body && <p className="ay-rd-body">{card.body}</p>}
           {card.facts && <dl className="ay-rd-facts">{card.facts.map((f) => <div key={f.k}><dt>{f.k}</dt><dd>{f.v}</dd></div>)}</dl>}
+          {(card.changed || card.mayAffect || card.canDo) && (
+            <dl className="ay-rd-steps">
+              {card.changed && <div><dt>What changed</dt><dd>{card.changed}</dd></div>}
+              {card.mayAffect && <div><dt>What it may affect</dt><dd>{card.mayAffect}</dd></div>}
+              {card.canDo && <div><dt>What you can do</dt><dd>{card.canDo}</dd></div>}
+            </dl>
+          )}
+          {card.seeData && onSeeData && <span className="ay-rd-actions"><button type="button" className="ay-rd-primary" onClick={() => { onAction?.(card, 'open'); onSeeData(card.seeData); }}>See data</button></span>}
           {card.reason && <p className="ay-rd-basis">{card.reason}</p>}
           {card.basisLine && <p className="ay-rd-basis">{card.basisLine}</p>}
           {card.footnote && <p className="ay-rd-basis">{card.footnote}</p>}

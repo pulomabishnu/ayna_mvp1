@@ -10,6 +10,8 @@ import AskFollowUps from './AskFollowUps.jsx';
 import { chipsFor, followUpRequestFields } from '../utils/askFollowUps.js';
 import { localMatchAnswer } from '../utils/askMatch.js';
 import { localHistoryAnswer } from '../utils/askHistory.js';
+import { localTodayAnswer } from '../utils/askToday.js';
+import { guidedTiles } from '../utils/askGuided.js';
 import { fetchWithTimeout, isNetworkError } from '../utils/network.js';
 import AskHome, { AskStatCard } from './AskHome.jsx';
 import { recentQuestions } from '../utils/askRecent.js';
@@ -65,6 +67,7 @@ function getFirstName(user) {
 }
 
 // Ask ayna's first screen: tiles fill the box so she can edit before asking.
+// Starters follow where she is (src/utils/askStarters.js); this list is the fallback.
 function askTiles(hasHealthData) {
   return [
     { label: 'Ask about your week', sub: hasHealthData ? 'Read against your cycle' : 'Best with health data connected', question: 'What stands out in my health data this week?', icon: 'week', tone: 'pink', isNew: true },
@@ -346,6 +349,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     const local = retryOf == null
       ? (await localMatchAnswer(msg, { quizAnswers: profile, healthProfile, matchOpts, focusProduct }).catch(() => null))
         || (await localHistoryAnswer(msg).catch(() => null))
+        || (await localTodayAnswer(msg).catch(() => null))
       : null;
     if (local) {
       setInput('');
@@ -530,7 +534,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
                 name={firstName}
                 intro="Ask about a product, an ingredient, or what to try."
                 note={WELCOME}
-                tiles={askTiles(hasHealthData)}
+                tiles={guidedTiles({ focusProduct, hasHealthData, fallback: askTiles(hasHealthData) })}
                 recent={recentQuestions(messages)}
                 onPick={(q) => { setInput(q); inputRef.current?.focus({ preventScroll: true }); }}
                 onContinue={messages.some((m) => m.role === 'user') ? () => setHome(false) : null}

@@ -16,6 +16,8 @@ import { mayAutoFocus } from '../../utils/delightRuntime.js';
 import { guideContext } from '../utils/aynaGuide.js';
 import { localMatchAnswer } from '../../utils/askMatch.js';
 import { localHistoryAnswer } from '../../utils/askHistory.js';
+import { localTodayAnswer } from '../../utils/askToday.js';
+import { guidedTiles } from '../../utils/askGuided.js';
 import AynaGuideHub from './AynaGuideHub.jsx';
 import { useAskHealthPref, ASK_HEALTH_LABEL } from '../../health/askHealthPref.js';
 
@@ -212,7 +214,8 @@ export default function AskAynaModal({
     // Her match for a product comes from ayna's match engine on this device,
     // never from the language model, so it is the same % the product shows.
     const local = (await localMatchAnswer(msg, { quizAnswers: profile, matchOpts, focusProduct }).catch(() => null))
-      || (await localHistoryAnswer(msg, { guideTrials: guide?.trials || [], guide: true }).catch(() => null));
+      || (await localHistoryAnswer(msg, { guideTrials: guide?.trials || [], guide: true }).catch(() => null))
+      || (await localTodayAnswer(msg).catch(() => null));
     if (local) {
       setInput('');
       setSendError('');
@@ -372,7 +375,7 @@ export default function AskAynaModal({
           <AskHome
             name={name ? String(name).split(' ')[0] : ''}
             intro="Ask about a product, your week, or what to try. Not medical advice."
-            tiles={askTiles(hasHealthData)}
+            tiles={guidedTiles({ focusProduct, hasHealthData, fallback: askTiles(hasHealthData) })}
             recent={recentQuestions(messages)}
             onPick={(q) => { setInput(q); inputRef.current?.focus({ preventScroll: true }); }}
             onContinue={messages.some((m) => m.role === 'user') ? () => setHome(false) : null}
