@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { findTerm } from '../../data/glossary.js';
+import { conditionDisplayName } from '../../../utils/conditionRename.js';
 import SmartSearchInput from '../../../components/search/SmartSearchInput.jsx';
 import { matchesSearchOption } from '../../../utils/search/index.js';
 
@@ -21,7 +22,7 @@ export function ChipList({ items, selected = [], onToggle, compact = false, mute
         const on = selected.includes(item);
         return (
           <button type="button" key={item} aria-pressed={on} className={`ip-chip${muted.includes(item) ? ' is-muted' : ''}${findTerm(item) ? ' has-term' : ''}`} onClick={() => onToggle(item)}>
-            {on && <Check />}<span>{item}</span>
+            {on && <Check />}<span>{conditionDisplayName(item)}</span>
           </button>
         );
       })}
@@ -43,7 +44,7 @@ export function StickerGrid({ items, selected = [], onToggle, labels = {}, glyph
             onClick={() => onToggle(item)}>
             {icon && <span className="ip-sticker-icon">{icon}</span>}
             {!icon && glyphs[item] && <span className="ip-sticker-glyph" data-glyph={glyphs[item]} aria-hidden="true" />}
-            <span className="ip-sticker-label">{labels[item] || item}</span>
+            <span className="ip-sticker-label">{labels[item] || conditionDisplayName(item)}</span>
             <span className="ip-sticker-badge" aria-hidden="true"><Check /></span>
           </button>
         );

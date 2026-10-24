@@ -24,7 +24,7 @@ function imageFor(product) {
 }
 
 
-export default function RevealScreen({ myProducts = [], topAreas = [], onContinue, onBack, onGoBrowse, authUser, quizAnswers, lastQuizAnswers, matchOpts, revealStartAtEnd = false }) {
+export default function RevealScreen({ myProducts = [], topAreas = [], onContinue, onBack, onExitStory = null, onGoBrowse, authUser, quizAnswers, lastQuizAnswers, matchOpts, revealStartAtEnd = false }) {
   const answers = quizAnswers || lastQuizAnswers;
   // "#1 match" is her highest-scoring product (same scorer as every card), not
   // just the first one saved; ties keep her ecosystem's order.
@@ -105,10 +105,14 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
         {slides.map((slide, i) => <span key={slide}><i style={{ width: i < index ? '100%' : i === index ? `${progress * 100}%` : '0%' }} /></span>)}
       </div>
       <div className="ayw-top">
-        <button type="button" onClick={(event) => { event.stopPropagation(); if (index > 0) previous(); else onBack?.(); }} aria-label={index > 0 ? 'Previous slide' : 'Back to answers'}>
+        {/* Back: the previous card. On the first card of a replay it leaves, like Close. */}
+        <button type="button" onClick={(event) => { event.stopPropagation(); if (index > 0) previous(); else (onExitStory || onBack)?.(); }} aria-label={index > 0 ? 'Previous card' : onExitStory ? 'Close your summary' : 'Back to answers'}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
         </button>
-        <span>ayna Wrapped</span>
+        <span>Your ayna summary</span>
+        {onExitStory && <button type="button" className="ayw-close" onClick={(event) => { event.stopPropagation(); onExitStory(); }} aria-label="Close your summary">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+        </button>}
         {!last ? (
           <button type="button" onClick={() => setPaused((value) => !value)} aria-label={paused ? 'Play story' : 'Pause story'}>
             {paused ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg> : <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14" /></svg>}
@@ -120,7 +124,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
         {active === 'intro' && <>
           <Stamp id="ayw-stamp" className="ayw-stamp" />
           <p className="ayw-kicker">Your ecosystem is ready</p>
-          <h1 className="ayw-title">Your ayna,<br />wrapped</h1>
+          <h1 className="ayw-title">Your ayna,<br />at a glance</h1>
           <div className="ayw-stat-row">
             <div><strong>{counts.products}</strong><span>{productWord}</span></div>
             {counts.needs > 0 && <div><strong>{counts.needsCovered} of {counts.needs}</strong><span>{counts.needs === 1 ? 'need' : 'needs'} covered</span></div>}
@@ -148,7 +152,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
         </>}
 
         {active === 'persona' && persona && <>
-          <p className="ayw-kicker">Your shopper type</p>
+          <p className="ayw-kicker">How you shop</p>
           <h1 className="ayw-title ayw-title--persona">{persona.title}</h1>
           <dl className="ayw-facts">
             {persona.facts.map(([label, value], i) => <div key={label} style={{ '--i': i }}><dt>{label}</dt><dd>{value}</dd></div>)}
@@ -179,7 +183,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
             </ul>
           </div>
           <div className="ayw-actions">
-            <button className="ayw-cta" type="button" onClick={onContinue}>{authUser ? 'Open my ecosystem' : 'Save my ecosystem'}<i aria-hidden="true">→</i></button>
+            <button className="ayw-cta" type="button" onClick={authUser && onExitStory ? onExitStory : onContinue}>{authUser ? (onExitStory ? 'Done' : 'Open my ecosystem') : 'Save to a free account'}<i aria-hidden="true">→</i></button>
             <div className="ayw-secondary">
               <button className="ayw-link" type="button" onClick={share}>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13" /></svg>

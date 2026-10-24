@@ -105,3 +105,5 @@
 /* Email code step (same 8-digit code as the website, src/utils/authCodes.js). */
 .ayna-mobile.ayna-mobile .ay-auth .ay-auth-code { display: grid; gap: 12px; width: 100%; max-width: 360px; margin: 0 auto 14px; }
 .ayna-mobile.ayna-mobile .ay-auth .ay-auth-code .ayna-fresh-auth-field { display: grid; gap: 2px; }
+/* What an account adds, under the sign-in sheet title (team direction 56). */
+.ayna-mobile .ayna-profile-auth-sheet .ayna-profile-auth-why { margin: -8px 0 18px; color: var(--ay-ink, #3e2723); font: 400 15px/1.45 var(--ay-font-ui, 'Figtree'), sans-serif; }

@@ -75,7 +75,7 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
       <div className="wwr-progress">{slides.map((s, i) => <span key={s}><i style={{ width: i < index ? '100%' : i === index ? `${progress * 100}%` : '0%' }} /></span>)}</div>
       <div className="wwr-top">
         <button type="button" onClick={back} disabled={index === 0 && !onBack} aria-label={index === 0 && onBack ? 'Back to the quiz' : 'Previous slide'}><svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg></button>
-        <span>ayna Wrapped</span>
+        <span>Your ayna summary</span>
         <div>
           {!last && <button type="button" className="wwr-skip" onClick={() => { progressRef.current = 0; setProgress(0); setIndex(slides.length - 1); }}>Skip to my matches</button>}
           {!last && <button type="button" onClick={() => setPaused((v) => !v)} aria-label={paused ? 'Play story' : 'Pause story'}>{paused ? <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z" /></svg> : <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M8 5v14M16 5v14" /></svg>}</button>}
@@ -104,7 +104,7 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
           <div className="wwr-product">{first.brand && <span>{first.brand}</span>}<strong>{first.name}</strong>{firstWhy && <small className="wwr-why">{firstWhy}</small>}</div>
         </>}
         {active === 'persona' && persona && <>
-          <p className="wwr-kicker">Your shopper type</p>
+          <p className="wwr-kicker">How you shop</p>
           <h1 className="is-persona">{persona.title}</h1>
           <dl className="wwr-facts">{persona.facts.map(([l, v], i) => <div key={l} style={{ '--i': i }}><dt>{l}</dt><dd>{v}</dd></div>)}</dl>
         </>}

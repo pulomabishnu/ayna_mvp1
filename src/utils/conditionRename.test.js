@@ -54,3 +54,14 @@ describe('renamePcos', () => {
     expect(renamePcos(42)).toBe(42);
   });
 });
+
+describe('PMOS (formerly PCOS) where she picks it', () => {
+  it('shows the old name once in setup, and the page-wide rename keeps it', async () => {
+    const { conditionDisplayName, renamePcos } = await import('./conditionRename.js');
+    expect(conditionDisplayName('PCOS')).toBe('PMOS (formerly PCOS)');
+    expect(conditionDisplayName('PCOS support')).toBe('PMOS (formerly PCOS) support');
+    expect(conditionDisplayName('Endometriosis')).toBe('Endometriosis');
+    expect(renamePcos('PMOS (formerly PCOS) support')).toBe('PMOS (formerly PCOS) support');
+    expect(renamePcos('PCOS support')).toBe('PMOS support');
+  });
+});

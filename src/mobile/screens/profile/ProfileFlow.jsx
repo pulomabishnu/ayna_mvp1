@@ -536,7 +536,7 @@ function ProfileHub({ recentAsks = [], intake = null, authUserId, name, initial,
         {quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
 
         {group('ecosystem', 'My ecosystem', [
-          onOpenEcosystem && { key: 'ecosystem', title: 'Your shelves', sub: 'One for each need, with what fits next', value: ecosystemCount ? pickWord(ecosystemCount) : '', onClick: onOpenEcosystem },
+          onOpenEcosystem && { key: 'ecosystem', title: 'My ecosystem', sub: 'Your matches and routine, grouped by need', value: ecosystemCount ? pickWord(ecosystemCount) : '', onClick: onOpenEcosystem },
         ])}
 
         {group('saved', 'Saved', [
@@ -707,7 +707,7 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
 
         <div>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 11 }}>
-            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-accent-dark)' }}>Your routine</div>
+            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-accent-dark)' }}>When you use them</div>
           </div>
           <div style={{ background: 'var(--d-group)', border: 0, borderRadius: 20, padding: 16 }}>
             <div style={{ display: 'flex', gap: 7, overflowX: 'auto', touchAction: 'pan-x', paddingBottom: 2, marginBottom: 14, scrollbarWidth: 'none' }}>
@@ -734,7 +734,7 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
 
             {!myProducts.length ? (
               <div style={{ padding: '10px 2px', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>
-                Add products to build a routine.
+                Add products to your routine to choose when you use them.
                 {onBrowse && (
                   <button type="button" className="ay-plain-btn" onClick={onBrowse} style={{ display: 'inline-block', marginTop: 10, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', padding: '9px 16px', borderRadius: 99, cursor: 'pointer' }}>Browse products</button>
                 )}
@@ -755,7 +755,7 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
                   </div>
                 ) : (
                   <div style={{ fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5, marginBottom: 16 }}>
-                    Nothing in your {ROUTINE_BUCKET_LABELS[activeBucket].toLowerCase()} routine yet, tap a product below to add it.
+                    Nothing set for {ROUTINE_BUCKET_LABELS[activeBucket].toLowerCase()} yet. Tap a product below to add it.
                   </div>
                 )}
 
@@ -779,7 +779,7 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
             )}
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 14, paddingTop: 13, borderTop: '1px solid var(--ayna-border)' }}>
-              <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>{sortedCount} of {myProducts.length} sorted into a routine</div>
+              <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>{sortedCount} of {myProducts.length} given a time</div>
             </div>
           </div>
         </div>

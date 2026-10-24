@@ -781,7 +781,7 @@ export default function FreeProductPage({ user, authLoading, stage = 'progress',
         <Equation />
         <div className="fp-intro__actions">
           <Cta onClick={onSignIn}>Sign in to start</Cta>
-          <button type="button" className="fp-link" onClick={onStartQuiz}>New to ayna? Start with six questions</button>
+          <button type="button" className="fp-link" onClick={onStartQuiz}>New to ayna? Start with a few short questions</button>
         </div>
         <p className="fp-fine">Products are limited and go to whoever claims them first. One free product per person.</p>
       </div>

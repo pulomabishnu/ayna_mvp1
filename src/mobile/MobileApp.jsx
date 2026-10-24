@@ -263,6 +263,13 @@ function hasSavedIntakeDraft() {
 // Screens where the feedback survey may appear (never the quiz, sign-in or a sheet).
 const APP_FEEDBACK_SCREENS = new Set(['landing', 'today', 'explore', 'eco', 'browse', 'library', 'saved']);
 
+// What an account adds, said before asking her to sign in (team direction 56).
+const AUTH_VALUE = {
+  'Ask ayna': 'ayna’s AI answers this from your health profile and checked sources. A free account keeps your questions private to you. Questions about your matches, what helped before and your day already work without one.',
+  'health data': 'Connecting Apple Health or Oura needs a free account, so your data stays tied to you and only you can see it.',
+  playlists: 'Saving a list to Community needs a free account, so it is yours to share or keep private.',
+};
+
 // Screens that make no sense to return to after signing in.
 const AUTH_NO_RETURN = new Set(['landing', 'signin', 'quiz', 'building', 'reveal', 'connect', 'checkin', 'plan']);
 
@@ -431,7 +438,7 @@ export default function MobileApp() {
     setAuthPrompt(null);
     setAskAynaOpen(false);
     setOverlay(null);
-    if (lastQuizAnswers && !authUser) { setRevealAtEnd(true); setScreen('reveal'); return; }
+    if (lastQuizAnswers && !authUser) { setRevealFrom(AUTH_NO_RETURN.has(screen) ? 'today' : screen); setRevealAtEnd(true); setScreen('reveal'); return; }
     setIntakeMode('new');
     setEditingHealthProfile(false);
     setScreen('quiz');
@@ -532,6 +539,9 @@ export default function MobileApp() {
   // "Update life stages" (Ecosystem): the quiz opens on the life stage question.
   const [intakeAtStep, setIntakeAtStep] = useState('');
   const [revealAtEnd, setRevealAtEnd] = useState(false);
+  // Where a replayed story was opened from: leaving it goes back there
+  // (team direction 35), never into setup. Null for the first-run story.
+  const [revealFrom, setRevealFrom] = useState(null);
   const lastIntakeModeRef = useRef('new');
   // "Get matched" on a product page: after the quiz, land back on that product with her match.
   const returnProductRef = useRef(null);
@@ -1076,7 +1086,9 @@ export default function MobileApp() {
     // force it back to light.
     onStartQuiz: () => { setIntakeMode(hasEcosystem ? 'add' : 'new'); setEditingHealthProfile(hasEcosystem); setScreen('quiz'); },
     onOpenMonthlyCheckin: () => setScreen('checkin'),
-    onReplayStory: () => { setRevealAtEnd(false); setScreen('reveal'); },
+    onReplayStory: () => { setRevealFrom(screen); setRevealAtEnd(false); setScreen('reveal'); },
+    // Leaving a replayed story: back to where she opened it.
+    onExitStory: revealFrom ? () => { const to = revealFrom; setRevealFrom(null); setScreen(to); } : null,
     // An Ecosystem shelf's "Shop" passes its need label as the search.
     onBrowse: (query) => { setBrowseQuery(typeof query === 'string' ? query : ''); setScreen('browse'); },
     onGoCommunity: () => { setCommunitySeed(null); setScreen('community'); },
@@ -1145,10 +1157,13 @@ export default function MobileApp() {
     // that question with what she's looking at (e.g. her dashboard numbers).
     onAskAyna: (opts) => {
       if (opts && typeof opts.question === 'string') setAskSeed({ id: Date.now(), question: opts.question, context: typeof opts.context === 'string' ? opts.context : '', buildContext: typeof opts.buildContext === 'function' ? opts.buildContext : null, usesHealth: opts.usesHealth === true, stats: Array.isArray(opts.stats) ? opts.stats.slice(0, 3) : null });
-      if (authUser) setAskAynaOpen(true); else requestAuth('Ask ayna', () => { setScreen(screen); setAskAynaOpen(true); });
+      // Signed out too: the guided chat opens, answers what it can on this
+      // phone, and asks to sign in only for questions that need the AI.
+      setAskAynaOpen(true);
     },
     onBack: () => {
       if (screen === 'quiz' && intakeFlow === 'more') { setIntakeFlow('auto'); setScreen('ready'); return; }
+      if (screen === 'reveal' && revealFrom) { const to = revealFrom; setRevealFrom(null); setScreen(to); return; }
       if (['building', 'reveal', 'connect'].includes(screen)) {
         resumeQuizAtLastStep();
         return;
@@ -1266,7 +1281,7 @@ export default function MobileApp() {
     // (a monthly check-in, a retaken quiz, an edited profile) already has an
     // account and this same ecosystem attached to it, routing them through
     // "sign in" again after finishing is a dead end, not a next step.
-    onFinish: () => { setRevealAtEnd(false); setScreen('reveal'); },
+    onFinish: () => { setRevealFrom(null); setRevealAtEnd(false); setScreen('reveal'); },
     onContinue: () => authUser ? setScreen('eco') : openAuth('signup'),
     initialMode: authMode,
     onAuthBack: () => {
@@ -1422,9 +1437,10 @@ export default function MobileApp() {
             <button {...authSheet.grabberProps} aria-label="Close sign in" />
             <button type="button" className="ayna-profile-auth-close" aria-label="Close" onClick={closeAuthSheet}><svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg></button>
             <h2 id="ayna-profile-auth-title">{authPrompt ? `Sign in for ${authPrompt.feature}` : 'Sign in to ayna'}</h2>
+            {authPrompt && AUTH_VALUE[authPrompt.feature] && <p className="ayna-profile-auth-why">{AUTH_VALUE[authPrompt.feature]}</p>}
             <button type="button" className="ayna-profile-auth-primary" onClick={() => openAuth('signin', !!authPrompt)}>Sign in</button>
             {!authPrompt && quizDraft && <FinishQuizCard progress={quizDraft} onContinue={resumeQuiz} onStartOver={startQuizOver} />}
-            {!(quizDraft && !authPrompt) && <button type="button" className="ayna-profile-auth-new" onClick={startEcosystemFlow}>{hasEcosystem ? <>New here? <b>Save your ecosystem to an account</b></> : <>Don’t have an account? <b>Build your ecosystem</b></>}</button>}
+            {!(quizDraft && !authPrompt) && <button type="button" className="ayna-profile-auth-new" onClick={startEcosystemFlow}>{hasEcosystem || lastQuizAnswers ? <>New here? <b>Keep your profile and matches with a free account</b></> : <>Don’t have an account? <b>Set up my ayna</b></>}</button>}
           </section>
         </div>
       )}
@@ -1570,7 +1586,7 @@ export default function MobileApp() {
         open={askAynaOpen || (screen === 'ask' && !overlay)}
         asTab={screen === 'ask' && !askAynaOpen}
         seed={askSeed}
-        enabled={!!authUser || !!(import.meta.env.DEV && new URLSearchParams(window.location.search).get('ask'))}
+        enabled
         profile={effectiveQuizAnswers}
         guide={guide}
         onGuideChange={updateGuide}

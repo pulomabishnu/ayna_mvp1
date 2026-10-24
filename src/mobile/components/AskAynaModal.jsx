@@ -130,6 +130,8 @@ export default function AskAynaModal({
   // "Try again", so a dropped connection never loses what she typed.
   const [failedMsg, setFailedMsg] = useState('');
   const [session, setSession] = useState(undefined); // undefined = still checking
+  // Signed out and the last question needed ayna's AI: say why, inline.
+  const [needsAccount, setNeedsAccount] = useState(false);
   const [hasOpened, setHasOpened] = useState(open);
   // A bottom sheet: grabber, drag down to close (useSheetDrag).
   const { sheetRef, grabberProps } = useSheetDrag(onClose);
@@ -198,8 +200,9 @@ export default function AskAynaModal({
       setHealthAsk({ buildContext: seed.buildContext });
       try { localStorage.setItem('ayna_ask_health_prompt_seen', '1'); } catch { /* private mode */ }
     } else setHealthAsk(null);
-    if (session?.access_token) { setGuidePage(''); send(seed.question, seed.context || '', Array.isArray(seed.stats) ? seed.stats : null); }
-    else setInput(seed.question);
+    // Signed out too: questions ayna answers on this phone (matches, history,
+    // today, the rundown) are answered; the rest keep the question and ask to sign in.
+    if (seed.question) { setGuidePage(''); send(seed.question, seed.context || '', Array.isArray(seed.stats) ? seed.stats : null); }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, seed, session]);
 
@@ -229,7 +232,14 @@ export default function AskAynaModal({
       onChatHistoryUpdate?.(next);
       return;
     }
-    if (!session?.access_token) { onRequireAuth?.('Ask ayna'); return; }
+    if (!session?.access_token) {
+      // Kept in the box, so signing in (or closing the sheet) loses nothing.
+      setInput(msg);
+      setNeedsAccount(true);
+      onRequireAuth?.('Ask ayna');
+      return;
+    }
+    setNeedsAccount(false);
     setInput('');
     setSendError('');
     setFailedMsg('');
@@ -369,12 +379,13 @@ export default function AskAynaModal({
         {guidePage ? <AynaGuideHub page={guidePage} guide={guide} onChange={onGuideChange} recap={recap} recapSources={recapSources} recapExportable={recapExportable} productNotes={productNotes} profile={summarizeProfile(profile || {})} onAsk={recapExportable ? (question) => { setGuidePage(''); send(question, recapAskable ? recap : ''); } : null} onBack={() => setGuidePage('')} /> : null}
         {home && !sending && !guidePage && (<>
           {/* A list of rows like the Ask home, not a 2x2 grid (master prompt 154). */}
-          <ul className="ay-guide-launches" aria-label="Your personal guide">
+          {session === null && <p className="ay-ask-local">Questions about your matches, what helped before, your day and your Daily Rundown are answered on this phone, no account needed. Other questions use ayna’s AI and need a free account.</p>}
+          {session !== null && <ul className="ay-guide-launches" aria-label="Your personal guide">
             <li><button type="button" onClick={() => setGuidePage('recap')}><span className="ay-guide-launch__text"><b>Your week</b><span>What changed for you</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
             <li><button type="button" onClick={() => setGuidePage('memory')}><span className="ay-guide-launch__text"><b>Memory</b><span>What ayna can remember</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
             <li><button type="button" onClick={() => setGuidePage('trial')}><span className="ay-guide-launch__text"><b>Try & check back</b><span>See how it felt later</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
             <li><button type="button" onClick={() => setGuidePage('report')}><span className="ay-guide-launch__text"><b>Appointment note</b><span>Review before sharing</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
-          </ul>
+          </ul>}
           <AskHome
             name={name ? String(name).split(' ')[0] : ''}
             intro="Ask about a product, your week, or what to try. Not medical advice."
@@ -466,6 +477,12 @@ export default function AskAynaModal({
         <div ref={bottomRef} />
       </div>
 
+      {needsAccount && session === null && (
+        <div className="ay-ask-error ay-ask-account" role="status">
+          <span>This question uses ayna’s AI, so it needs a free account. Your question is kept below.</span>
+          <button type="button" onClick={() => onRequireAuth?.('Ask ayna')}>Sign in</button>
+        </div>
+      )}
       {sendError && (
         <div className="ay-ask-error" role="alert">
           <span>{sendError}</span>

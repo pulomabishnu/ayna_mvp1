@@ -45,8 +45,8 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
             <text><textPath href="#ay-land-stamp-path" textLength="455" lengthAdjust="spacing">matched to you {'★'} matched to you {'★'}</textPath></text></svg>
           <span>you</span>
         </div>
-        <h1 id="ay-land-title">Build your ecosystem</h1>
-        <p>Health products matched to your body.</p>
+        <h1 id="ay-land-title">Find what fits your body</h1>
+        <p>Women’s health products matched to you, with the evidence beside each one.</p>
       </div>
     </section>
     <div className="ay-land-ticker" aria-hidden="true">

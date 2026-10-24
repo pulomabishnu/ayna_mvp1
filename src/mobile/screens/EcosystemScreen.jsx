@@ -301,7 +301,7 @@ export default function EcosystemScreen({
           </>}
           {showCheckin && <button type="button" className="eco-app-checkin" onClick={onOpenMonthlyCheckin}>{checkinLabel}</button>}
           {(onReplayStory || forYouButton) && <div className="eco-app-stack__row">
-            {onReplayStory && <button type="button" className="eco-app-replay" onClick={onReplayStory}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>Replay Wrapped</button>}
+            {onReplayStory && <button type="button" className="eco-app-replay" onClick={onReplayStory}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>Replay your summary</button>}
             {forYouButton}
           </div>}
         </div>
@@ -310,7 +310,7 @@ export default function EcosystemScreen({
       {/* Empty: one clear way in (the quiz), the Shop as the quiet second choice. */}
       {ecoTab !== 'dashboard' && !hasAnything && !quizDraft && (hasAnswers
         ? <EmptyState compact art="search" tone="mint" title="No strong matches yet" body="Nothing in the catalog fits your answers well enough yet. Change an answer, or browse the Shop by need." actionLabel={onRetake ? 'Edit my answers' : undefined} onAction={onRetake} secondaryLabel="Explore products" onSecondary={() => onBrowse?.()} />
-        : <EmptyState compact art="search" tone="mint" title="Nothing here yet" body="Answer six questions and your matches land here, on a shelf for each need." actionLabel={onStartQuiz ? 'See my matches' : undefined} onAction={onStartQuiz} secondaryLabel="Explore products" onSecondary={() => onBrowse?.()} />)}
+        : <EmptyState compact art="search" tone="mint" title="Nothing here yet" body="Answer a few short questions and your matches land here, grouped by need." actionLabel={onStartQuiz ? 'See my matches' : undefined} onAction={onStartQuiz} secondaryLabel="Explore products" onSecondary={() => onBrowse?.()} />)}
       {/* An unfinished quiz stays in view; everything else waits in "For you". */}
       {ecoTab !== 'dashboard' && quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
       {ecosystemNotice && <p className="ayna-cabinet-notice" role="status">{ecosystemNotice}</p>}

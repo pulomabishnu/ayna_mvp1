@@ -19,8 +19,8 @@ export default function ShopperCard({ profile }) {
       <header className="ay-shopper2__head">
         <span className="ay-shopper2__emblem" aria-hidden="true"><svg viewBox="0 0 24 24">{SHOPPER_EMBLEMS[profile.kind]}</svg></span>
         <div>
-          <span className="ay-shopper2__kicker">Shopper type</span>
-          <h2 id="ay-shopper2-title">{profile.kind === 'original' ? 'The Original' : profile.title}</h2>
+          <span className="ay-shopper2__kicker">How you shop</span>
+          <h2 id="ay-shopper2-title">{profile.kind === 'original' ? 'Your own way' : profile.title}</h2>
           <p>{profile.tagline}</p>
         </div>
       </header>

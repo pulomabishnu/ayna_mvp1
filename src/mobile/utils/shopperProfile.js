@@ -12,9 +12,9 @@ const BRAND_SHORT = {
   'I enjoy discovering new brands': 'Explorer',
 };
 const ERA = {
-  'I get periods regularly': 'Cycle era', 'My periods are irregular': 'Cycle era', 'I am trying to conceive': 'TTC era',
-  'I am pregnant': 'Pregnancy era', 'I am postpartum': 'Postpartum era', 'I am in perimenopause': 'Perimenopause era',
-  'I am in menopause': 'Menopause era', 'I am post-menopause': 'Post-menopause era', 'I use hormonal birth control': 'Birth control era',
+  'I get periods regularly': 'Regular periods', 'My periods are irregular': 'Irregular periods', 'I am trying to conceive': 'Trying to conceive',
+  'I am pregnant': 'Pregnant', 'I am postpartum': 'Postpartum', 'I am in perimenopause': 'Perimenopause',
+  'I am in menopause': 'Menopause', 'I am post-menopause': 'Post-menopause', 'I use hormonal birth control': 'Hormonal birth control',
 };
 
 export function buildPersona(intake) {
@@ -28,7 +28,7 @@ export function buildPersona(intake) {
     format && ['Format', format],
   ].filter(Boolean);
   if (!facts.length) return null;
-  return { title: trust?.title || (brand === 'Explorer' ? 'The Explorer' : 'The Original'), facts };
+  return { title: trust?.title || (brand === 'Explorer' ? 'The Explorer' : 'Your own way'), facts };
 }
 
 const prettyCategory = (c) => String(c || '').replace(/-/g, ' ').replace(/^\w/, (m) => m.toUpperCase());
@@ -50,7 +50,7 @@ export function buildShopperProfile(intake, myProducts = []) {
     priority && { key: 'priority', label: 'Shopping priority', value: priority, tone: 'mint' },
     (topCategory || format) && { key: 'type', label: 'Best-match type', value: topCategory ? prettyCategory(topCategory) : format, tone: 'peri' },
     nonNeg.length > 0 && { key: 'non', label: 'Non-negotiables', value: nonNeg.map((v) => (/^No /.test(v) ? v : `No ${v.toLowerCase()}`)).join(' · '), tone: 'butter' },
-    ERA[stage] && { key: 'era', label: 'Health era', value: ERA[stage], tone: 'pink' },
+    ERA[stage] && { key: 'era', label: 'Life stage', value: ERA[stage], tone: 'pink' },
   ].filter(Boolean);
   if (!persona && !rows.length) return null;
   const kind = { 'The Researcher': 'researcher', 'The Listener': 'listener', 'The Curator': 'curator', 'The Explorer': 'explorer' }[persona?.title] || 'original';

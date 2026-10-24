@@ -385,7 +385,11 @@ if (Capacitor.isNativePlatform()) {
 // While the app code loads: the page colour of the theme she picked (espresso in dark,
 // butter in light), so there is no off-white flash before the first screen.
 function mobileLoadingBackground() {
-  try { return localStorage.getItem('ayna_mobile_theme_v1') === 'dark' ? '#3e2723' : '#ffedac'; } catch { return '#ffedac'; }
+  try {
+    const pick = localStorage.getItem('ayna_mobile_theme_pick_v2') || (localStorage.getItem('ayna_mobile_theme_v1') === 'dark' ? 'dark' : null);
+    const dark = pick ? pick === 'dark' : window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+    return dark ? '#3e2723' : '#ffedac';
+  } catch { return '#ffedac'; }
 }
 
 installNoEmDash(document.body)

@@ -70,7 +70,7 @@ export function Routine({ products, insights, needIds = [], outcomes = {}, onLog
           </ul>
         </div>
       ));
-  const lede = <p className="ay-rt-lede">Where each product you choose fits in your week, with a how-to line from its own instructions.</p>;
+  const lede = <p className="ay-rt-lede">Where each product in your routine fits in your week, with a how-to line from its own instructions.</p>;
   // Folded (Ecosystem > Dashboard): one disclosure row, since the full routine
   // is also on her plan and the dashboard was six screens long.
   if (folded) return (
@@ -78,7 +78,7 @@ export function Routine({ products, insights, needIds = [], outcomes = {}, onLog
       <details className="ay-fold">
         <summary>
           <span className="ay-fold__text">
-            <h2 id="ay-rt-title">Your routine</h2>
+            <h2 id="ay-rt-title">When to use each product</h2>
             <p className="ay-rt-lede">{routine.slots.length ? routine.slots.map((x) => x.title).join(' · ') : 'Choose products to start your routine'}</p>
           </span>
           <svg className="ay-fold__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
@@ -92,7 +92,7 @@ export function Routine({ products, insights, needIds = [], outcomes = {}, onLog
   );
   return (
     <section className="ay-rt" aria-labelledby="ay-rt-title">
-      <h2 id="ay-rt-title">Your routine</h2>
+      <h2 id="ay-rt-title">When to use each product</h2>
       {lede}
       {choices}
       {!routine.count && <p className="ay-rt-lede">No products selected yet.</p>}
@@ -134,7 +134,7 @@ export function ShoppingList({ products, insights, excluded = {}, have = {}, onT
           </ul>
         </div>
       ))}
-      {!onSavePlaylist && onRequireAuth && <button type="button" className="ay-sl-pl-open" onClick={() => onRequireAuth('playlists')}><PlaylistIcon size={18} />Sign in to save as a playlist</button>}
+      {!onSavePlaylist && onRequireAuth && <button type="button" className="ay-sl-pl-open" onClick={() => onRequireAuth('playlists')}><PlaylistIcon size={18} />Sign in to save and share this list</button>}
       {onSavePlaylist && <SavePlaylist items={list.groups.flatMap((g) => g.items).map((it) => it.product)} have={have} onSave={onSavePlaylist} onOpen={onOpenPlaylist} />}
     </section>
   );
@@ -178,10 +178,10 @@ function SavePlaylist({ items, have, onSave, onOpen }) {
       </div>
     );
   }
-  if (!open) return <button type="button" className="ay-sl-pl-open" onClick={() => setOpen(true)}><PlaylistIcon size={18} />Save as a playlist</button>;
+  if (!open) return <button type="button" className="ay-sl-pl-open" onClick={() => setOpen(true)}><PlaylistIcon size={18} />Save this list to Community</button>;
   return (
     <div className="ay-sl-pl">
-      <h3>Save as a playlist</h3>
+      <h3>Save this list to Community</h3>
       <label htmlFor="ay-sl-pl-title">Name</label>
       <input id="ay-sl-pl-title" value={title} maxLength={60} onChange={(e) => setTitle(e.target.value)} />
       {toBuy.length !== items.length && <div className="ay-sl-pl-which" role="radiogroup" aria-label="Which products">

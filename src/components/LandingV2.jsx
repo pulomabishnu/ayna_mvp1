@@ -101,7 +101,7 @@ function Hero({ onStartQuiz, onSearch, personal = null, banner = null, posts = [
             <p className="hm-lead">{personal.ecoCount > 0 ? `${personal.ecoCount} product${personal.ecoCount === 1 ? '' : 's'} in your ecosystem.` : 'Health products matched to your body.'}</p>
           </> : <>
             <h1 id="hm-hero-title" className="ed-display hm-display">Health products <span className="hm-swipe">matched</span> to you.</h1>
-            <p className="hm-lead">Search what you need, or answer six questions. ayna shows what fits your body and life stage, with the evidence beside each product.</p>
+            <p className="hm-lead">Search what you need, or answer a few short questions. ayna shows what fits your body and life stage, with the evidence beside each product.</p>
           </>}
           <div className="hm-hero__actions">{cta}</div>
           <Search onSearch={onSearch} />
@@ -277,7 +277,7 @@ function Familiar({ onSearch }) {
 /* ---------- how it works: huge coloured numerals, a real photo per step ---------- */
 // Each step shows the real piece of ayna it describes (was a mood-board photo).
 const STEPS = [
-  { t: 'Answer six questions', d: 'About your body, your life stage and what you avoid.', ui: 'quiz' },
+  { t: 'Answer a few short questions', d: 'About your body, your life stage and what you avoid.', ui: 'quiz' },
   { t: 'We check the evidence', d: 'Across products, apps and care.', ui: 'evidence' },
   { t: 'Get matches that fit you', d: 'Ranked for you, each with a plain reason.', ui: 'matches' },
   { t: 'You decide', d: 'Nothing is bought until you say so.', ui: 'decide' },
@@ -326,7 +326,7 @@ function Start({ onStartQuiz }) {
         <div className="hm-start">
           <span className="hm-tab" aria-hidden="true">Start here</span>
           <div>
-            <h2 id="hm-start-title" className="hm-h2">Start with six questions.</h2>
+            <h2 id="hm-start-title" className="hm-h2">Start with a few short questions.</h2>
             <p className="hm-lead">Then see what fits you, with the evidence beside it.</p>
           </div>
           <div className="hm-start__cta">
