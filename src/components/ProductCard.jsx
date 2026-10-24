@@ -27,6 +27,9 @@ export default function ProductCard({
   matchPercent = null,
   // "82% for period cramps": accessible name for the match pill (no tooltip).
   matchLabel = '',
+  // One plain line under the % on why it fits her, from the engine's reasons
+  // (src/utils/whyLine.js), so the number is explained.
+  why = '',
   isSaved = false,
   inEcosystem = false,
   labels = null,
@@ -96,6 +99,7 @@ export default function ProductCard({
               {inEcosystem && <span className="ay-product-card__eco"><CheckIcon size={14} />In your ecosystem</span>}
             </span>
           )}
+          {why && matchPercent != null && matchPercent > 0 && <span className="ay-product-card__why">{why}</span>}
           {rating && Number.isFinite(rating.value) && rating.count > 0 && (
             <span className="ay-product-card__rating" data-reviews-link="true"><span aria-hidden="true">★</span> <span className="sr-only">Rated </span>{formatAverage(rating.value)}<span className="sr-only"> out of 5</span> · <u>{rating.count} review{rating.count === 1 ? '' : 's'}</u></span>
           )}

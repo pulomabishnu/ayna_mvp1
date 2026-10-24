@@ -135,3 +135,4 @@ body .ay-why .ay-why-restricted { margin: 16px 0 0; padding: 16px; border: 2px s
 body .ay-why .ay-why-restricted h3 { margin: 0 0 6px; color: inherit; font: 800 18px/1.2 var(--ay-font-display, 'Figtree', sans-serif); }
 body .ay-why .ay-why-restricted p { margin: 0 0 12px; color: inherit; font: 500 14px/1.45 var(--ay-font-ui, 'Figtree', sans-serif); }
 @media (prefers-reduced-motion: reduce) { .ay-why-hint button { transition: none; } }
+.ay-why-line { margin: 6px 0 0; font: 600 15px/1.4 var(--ay-font-ui, 'Figtree', sans-serif); }

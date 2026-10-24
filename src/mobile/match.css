@@ -34,3 +34,4 @@
 .ayna-mobile.ayna-mobile .ayna-match-cautions button, .ayna-mobile.ayna-mobile .ayna-match-update { margin-top: 10px; min-height: 40px; padding: 0 16px; border: 1.5px solid var(--ay-ink) !important; border-radius: 99px !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; font-weight: 600; }
 .ayna-mobile.ayna-mobile .ayna-match-update { background: var(--ay-ink) !important; color: var(--ay-paper) !important; justify-self: start; }
 .ayna-mobile .ayna-match-disclaimer { margin: 4px 0 0; font-size: 13px; font-weight: 500; opacity: .65; text-align: center; }
+.ayna-mobile .ay-match-why { margin: 6px 0 0; font: 600 15px/1.4 var(--ay-font-ui); }

@@ -146,3 +146,4 @@
 .ayw--lineup { --ip-deep: var(--ay-mint-deep); }
 .ayna-wrapped > :not(.ip-art) { position: relative; z-index: 1; }
 .ayna-wrapped > .ip-art { z-index: 0; }
+.ayw-product .ayw-why { display: block; margin-top: 8px; font: 500 15px/1.4 var(--ay-font-ui); }

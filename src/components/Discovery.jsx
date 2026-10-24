@@ -14,6 +14,7 @@ import './shop-page.css';
 // placeholder cards until both have arrived (`ready` below).
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct, isTeenProduct, useCatalogReady } from '../data/catalog.js';
 import { behaviorFrom, matchBadge } from '../utils/matchDisplay';
+import { whyLine } from '../utils/whyLine';
 import { sortByBestMatch, bestMatchNeedsQuiz } from '../utils/bestMatchSort.js';
 import { loadProductCatalog } from '../utils/productCatalog';
 import { scoreSearchMatch, correctedSearchQuery, useSearchReady } from '../utils/search/lazy.js';
@@ -117,24 +118,6 @@ function hasCommunitySupport(item, reviewBucket) {
     const reviewCount = Array.isArray(reviewBucket?.reviews) ? reviewBucket.reviews.length : 0;
     const communityLinks = getVerificationLinks(item, 'community');
     return (Number.isFinite(rating) && rating >= 4) || reviewCount > 0 || Boolean(item?.communityReview) || communityLinks.length > 0;
-}
-
-function getExplicitMatchPercent(item) {
-    const candidates = [
-        item?.aynaMatch,
-        item?.aynaMatchPercent,
-        item?.matchPercent,
-        item?.matchPercentage,
-        item?.personalizationScore,
-    ];
-    for (const value of candidates) {
-        if (value == null || value === '') continue;
-        const numeric = typeof value === 'string' ? Number(value.replace('%', '').trim()) : Number(value);
-        if (!Number.isFinite(numeric)) continue;
-        const normalized = numeric > 0 && numeric <= 1 ? numeric * 100 : numeric;
-        if (normalized >= 0 && normalized <= 100) return Math.round(normalized);
-    }
-    return null;
 }
 
 const SUSTAINABILITY_OPTIONS = [
@@ -1875,7 +1858,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     // Personalized off means no scores on cards (the toggle does what it says).
                     const hasProfile = Boolean(hasQuizFrustrations || hasHealthImport) && personalizationFilter;
                     const badge = hasProfile ? matchBadge(getProductMatchDetailsForProduct(item, quizResults, healthProfile, matchOpts)) : null;
-                    const matchPercent = hasProfile ? (badge ? badge.percent : null) : (personalizationFilter ? getExplicitMatchPercent(item) : null);
+                    // No profile, no %: a number needs her answers to be honest.
+                    const matchPercent = hasProfile && badge ? badge.percent : null;
+                    const why = matchPercent != null ? whyLine(item, getProductMatchDetailsForProduct(item, quizResults, healthProfile, matchOpts)) : '';
                     const eligibility = getExplicitEligibility(item);
                     const eligibilityLabel = eligibility.fsa && eligibility.hsa ? 'FSA/HSA' : eligibility.fsa ? 'FSA' : eligibility.hsa ? 'HSA' : '';
                     const isWishlisted = !!savedProducts[item.id];
@@ -1898,6 +1883,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             style={undefined}
                             matchPercent={matchPercent}
                             matchLabel={badge ? badge.label : ''}
+                            why={why}
                             rating={(() => { const d = aynaReviews[item.id]; const v = getAynaRating(item, d); const n = getAynaRatingCount(d); return v != null && n > 0 ? { value: Number(v), count: n } : null; })()}
                             isSaved={isWishlisted}
                             inEcosystem={isInEcosystem}
