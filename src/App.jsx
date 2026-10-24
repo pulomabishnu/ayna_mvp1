@@ -548,6 +548,8 @@ function App() {
     const initialUrl = (currentView === 'auth-callback' || currentView === 'campus-resources' || currentView === 'free-product' || currentView === 'free-product-reward')
       ? `${path}${window.location.search}${window.location.hash}`
       : currentView === 'waitlist' && /^#brand-[a-z0-9-]+$/.test(window.location.hash) ? `${path}${window.location.hash}`
+      // A product link can open one of its tabs (#reviews, #literature, #safety).
+      : currentView === 'product' && /^#[a-z-]{2,20}$/.test(window.location.hash) ? `${path}${window.location.hash}`
       : communityQ ? `${path}?q=${encodeURIComponent(communityQ)}`
       // Ecosystem keeps ?view=dashboard so a link can open its Dashboard tab.
       : currentView === 'ecosystem' && new URLSearchParams(window.location.search).get('view') === 'dashboard' ? `${path}?view=dashboard` : path;
@@ -2929,6 +2931,11 @@ function App() {
               onOpenProduct={handleOpenProduct}
               onBack={handleBackFromProduct}
               onOpenShop={(category) => handleViewDiscovery(category ? { initialCategory: category } : '')}
+              onOpenRead={(articleId) => {
+                handleViewArticle(articleId);
+                const next = `/library/${articleId}`;
+                if (window.location.pathname !== next) window.history.pushState({ view: 'articles' }, '', next);
+              }}
               onOpenReview={(postId) => {
                 setCommunitySeed({ postId, token: Date.now() });
                 setCurrentView('community');

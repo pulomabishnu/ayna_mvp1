@@ -8,9 +8,9 @@ import { hostLabel } from '../../utils/verificationLinks';
 import { summarizeReviewRows, takeProductTab } from '../../utils/community/reviewRatings.js';
 import GlossaryTerm from '../GlossaryTerm';
 import { findHardTerms, planGlossaryTerms } from '../../data/glossary';
-import { splitNote, splitSentences } from './sentences';
+import { splitNote } from './sentences';
 import { fmtDate } from './fmtDate';
-import { buildEvidence, noDash, linkKind, publisherOf, cleanTitle } from './evidenceModel';
+import { buildEvidence, noDash, linkKind, publisherOf, cleanTitle, claimRows, evidenceLayers } from './evidenceModel';
 import PdpIcon from './PdpIcon.jsx';
 import UrgentSigns from './UrgentSigns.jsx';
 import ProductCommunityReviews from './ProductCommunityReviews.jsx';
@@ -24,19 +24,19 @@ import './pdp-sections.css';
  * The inside of the product page (website and app): everything the team
  * wrote, grouped so it reads at a glance and nothing is lost.
  *
- * 1. Overview: the short answer (the team's bottom line), At a glance, one
- *    preview tile per section that jumps to it, what it is, who it's for.
- * 2. Sticky segmented tabs: Expert view, Research, Reviews, Safety, How to
- *    use, Details. Each panel is laid out in columns on wide screens, with
- *    sources on a shelf on phones. Every panel is in the HTML from the start.
+ * Four sticky top tabs (founder, Oct 24), the same on phone and desktop,
+ * website and app: Clinical opinion (the team's clinician notes), Scientific
+ * literature (evidence overview, then why ayna rated it, then the sources,
+ * then ingredient by ingredient), ayna summary (ayna's take, her match, what
+ * it is, safety, ingredients and dose, how to use) and Reviews (community,
+ * then online; never evidence). Every panel is in the HTML from the start.
  *
  * The words are the team's (src/data); ayna's own additions
  * (src/data/pdpAdditions.js) are labelled as ayna's check with their source.
  */
 
 const GRADE_WORDS = { A: 'Strong evidence', B: 'Some evidence', C: 'Limited evidence' };
-const TAB_IDS = ['overview', 'clinical', 'literature', 'evidence', 'reviews', 'safety', 'how-to-use', 'safety-use', 'details'];
-const PHONE = '(max-width: 760px)';
+
 const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 const cap = (t) => String(t || '').replace(/^./, (c) => c.toUpperCase());
 // Justifications that only praise the publisher say nothing about the product.
@@ -231,35 +231,28 @@ function Rows({ rows }) {
 }
 
 // ---------------------------------------------------------------------------
-// Tabs (segmented: every tab visible on a phone, no sideways scroll)
+// Sticky top tabs (founder, Oct 24): Clinical opinion, Scientific literature,
+// ayna summary, Reviews. Same on phone and desktop, website and app. The tab
+// row sticks under the site header once she scrolls past the product hero.
+// WAI-ARIA tabs pattern: arrow keys, Home and End move and select.
 // ---------------------------------------------------------------------------
-function SegTabs({ tabs, active, onChange, explore = false }) {
+const TAB_ORDER = ['clinical', 'literature', 'summary', 'reviews'];
+const TAB_LABELS = { clinical: 'Clinical opinion', literature: 'Scientific literature', summary: 'ayna summary', reviews: 'Reviews' };
+// Every id other parts of the site link to, mapped onto a tab (and a spot in it).
+const TARGETS = {
+  summary: { tab: 'summary' }, overview: { tab: 'summary' }, fit: { tab: 'summary', anchor: 'ay-sum-fit' },
+  clinical: { tab: 'clinical' }, expert: { tab: 'clinical' },
+  literature: { tab: 'literature' }, evidence: { tab: 'literature' }, science: { tab: 'literature' }, research: { tab: 'literature' },
+  why: { tab: 'literature', anchor: 'ay-lit-why' }, sources: { tab: 'literature', anchor: 'ay-lit-sources' }, ingredients: { tab: 'literature', anchor: 'ay-lit-ings' },
+  reviews: { tab: 'reviews' },
+  safety: { tab: 'summary', anchor: 'ay-sum-safety' }, 'safety-use': { tab: 'summary', anchor: 'ay-sum-safety' },
+  'how-to-use': { tab: 'summary', anchor: 'ay-sum-how' }, how: { tab: 'summary', anchor: 'ay-sum-how' },
+  details: { tab: 'summary', anchor: 'ay-sum-details' }, inside: { tab: 'summary', anchor: 'ay-sum-details' },
+};
+const resolveTarget = (raw) => TARGETS[String(raw || '').replace(/^#/, '')] || null;
+
+function StickyTabs({ tabs, active, onChange, stickTop }) {
   const listRef = useRef(null);
-  // The tab row (main #73, Neycher HydroBloom design): a box with "Explore",
-  // "2 of 7", arrows and a bar showing how far the row is scrolled. The edge
-  // that still has tabs past it fades, so it's clear there is more.
-  const [m, setM] = useState({ sl: 0, sw: 1, cw: 1 });
-  useEffect(() => {
-    const el = listRef.current;
-    if (!el) return undefined;
-    const update = () => setM((prev) => (prev.sl === el.scrollLeft && prev.sw === el.scrollWidth && prev.cw === el.clientWidth ? prev : { sl: el.scrollLeft, sw: el.scrollWidth, cw: el.clientWidth }));
-    update();
-    el.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update);
-    return () => { el.removeEventListener('scroll', update); window.removeEventListener('resize', update); };
-  }, [tabs.length]);
-  const over = m.sw - m.cw > 4; const atStart = m.sl < 4; const atEnd = m.sl >= m.sw - m.cw - 4;
-  const reduce = () => typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const step = (dir) => { const el = listRef.current; if (el) el.scrollBy({ left: dir * Math.max(160, el.clientWidth * 0.6), behavior: reduce() ? 'auto' : 'smooth' }); };
-  useEffect(() => {
-    const el = listRef.current;
-    const tab = el?.querySelector(`[data-tab="${active}"]`);
-    if (!el || !tab || el.scrollWidth <= el.clientWidth) return;
-    const left = tab.getBoundingClientRect().left - el.getBoundingClientRect().left + el.scrollLeft;
-    if (left < el.scrollLeft || left + tab.offsetWidth > el.scrollLeft + el.clientWidth) {
-      el.scrollTo({ left: Math.max(0, left - 24), behavior: reduce() ? 'auto' : 'smooth' });
-    }
-  }, [active]);
   const choose = (id, focus) => {
     onChange(id);
     if (focus) window.requestAnimationFrame(() => listRef.current?.querySelector(`[data-tab="${id}"]`)?.focus());
@@ -271,75 +264,46 @@ function SegTabs({ tabs, active, onChange, explore = false }) {
     e.preventDefault();
     choose(tabs[next].id, true);
   };
-  const at = Math.max(0, tabs.findIndex((t) => t.id === active));
-  // Colour keys for the dots and the open tab (pdp-v4.css uses main's tab names).
-  const KEY = { overview: 'overview', clinical: 'clinical', literature: 'science', reviews: 'reviews', safety: 'safety', 'how-to-use': 'how', details: 'details' };
-  const panels = tabs.map((t) => (
-    <div key={t.id} role="tabpanel" id={`ay-panel-${t.id}`} aria-labelledby={`ay-tab-${t.id}`} tabIndex={0} hidden={t.id !== active} className={`ayq-panel${explore ? ' ay-itabs__panel' : ''} is-${t.id}`}>
-      <h3 className="sr-only">{t.label}</h3>
-      {t.body}
-    </div>
-  ));
-  // The app keeps its underline tabs (scrollable row, faded edge).
-  if (!explore) {
-    return (
-      <>
-        <div className={`ayq-tabsbar${over && !atStart ? ' has-left' : ''}${over && !atEnd ? ' has-right' : ''}`}>
-          <div className={`ayq-tabs is-${tabs.length}`} role="tablist" aria-label="Product details" ref={listRef} onKeyDown={onKeyDown}>
-            {tabs.map((t) => {
-              const on = t.id === active;
-              return (
-                <button key={t.id} type="button" role="tab" id={`ay-tab-${t.id}`} data-tab={t.id} aria-selected={on} aria-controls={`ay-panel-${t.id}`} tabIndex={on ? 0 : -1} className={`ayq-tab${on ? ' is-on' : ''}${t.tone ? ` is-${t.tone}` : ''}`} onClick={() => choose(t.id)}>
-                  <PdpIcon name={t.icon} size={18} />
-                  <span>{t.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-        {panels}
-      </>
-    );
-  }
   return (
     <>
-      <div className="ay-explore">
-        <div className="ay-explore__head">
-          <p className="ay-explore__label"><span>Explore</span><span>{at + 1} of {tabs.length}</span></p>
-          <div className="ay-explore__arrows">
-            <button type="button" aria-label="Scroll tabs left" className={over && !atStart ? '' : 'is-dim'} onClick={() => step(-1)}>←</button>
-            <button type="button" aria-label="Scroll tabs right" className={`is-next${over && !atEnd ? '' : ' is-dim'}`} onClick={() => step(1)}>→</button>
-          </div>
+      <div className="ayq-st" style={{ '--ayq-stick-top': `${stickTop}px` }}>
+        <div className="ayq-st__list" role="tablist" aria-label="About this product" ref={listRef} onKeyDown={onKeyDown}>
+          {tabs.map((t) => {
+            const on = t.id === active;
+            return (
+              <button key={t.id} type="button" role="tab" id={`ay-tab-${t.id}`} data-tab={t.id} aria-selected={on} aria-controls={`ay-panel-${t.id}`} tabIndex={on ? 0 : -1} className={`ayq-st__tab is-${t.id}${on ? ' is-on' : ''}`} onClick={() => choose(t.id)}>
+                <span>{t.label}</span>
+              </button>
+            );
+          })}
         </div>
-        <div className={`ay-explore__rowwrap${over && !atStart ? ' fade-l' : ''}${over && !atEnd ? ' fade-r' : ''}`}>
-          <div className="ay-itabs__bar" role="tablist" aria-label="Product details" ref={listRef} onKeyDown={onKeyDown}>
-            {tabs.map((t) => {
-              const on = t.id === active;
-              return (
-                <button key={t.id} type="button" role="tab" id={`ay-tab-${t.id}`} data-tab={t.id} aria-selected={on} aria-controls={`ay-panel-${t.id}`} tabIndex={on ? 0 : -1} className={`is-${KEY[t.id] || t.id}${on ? ' is-on' : ''}${t.tone ? ` is-tone-${t.tone}` : ''}`} onClick={() => choose(t.id)}>
-                  <i aria-hidden="true" />
-                  <span>{t.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-        {over && (
-          <div className="ay-explore__foot">
-            <span className="ay-explore__track" aria-hidden="true"><b style={{ left: `${((m.sl / m.sw) * 100).toFixed(1)}%`, width: `${Math.min(100, (m.cw / m.sw) * 100).toFixed(1)}%` }} /></span>
-            <span className="ay-explore__hint">{atEnd ? '← Scroll back' : 'Scroll for more →'}</span>
-          </div>
-        )}
       </div>
-      {panels}
+      {tabs.map((t) => (
+        <div key={t.id} role="tabpanel" id={`ay-panel-${t.id}`} aria-labelledby={`ay-tab-${t.id}`} tabIndex={0} hidden={t.id !== active} className={`ayq-panel ayq-tp is-${t.id}`}>
+          {t.body}
+        </div>
+      ))}
     </>
+  );
+}
+
+/** A progressive-disclosure step inside a tab (closed until she asks for it). */
+function Step({ id, title, meta = '', children, open = false }) {
+  return (
+    <details id={id} className="ayq-step ayq-anchor" open={open || undefined}>
+      <summary className="ayq-step__sum">
+        <span className="ayq-step__text"><span className="ayq-step__h">{title}</span>{meta && <span className="ayq-step__meta">{meta}</span>}</span>
+        <PdpIcon name="chevron" size={20} className="ayq-step__chev" />
+      </summary>
+      <div className="ayq-step__body">{children}</div>
+    </details>
   );
 }
 
 // ---------------------------------------------------------------------------
 // The page part
 // ---------------------------------------------------------------------------
-export default function ProductEvidence({ product: baseProduct, glance = null, aynaData = null, aynaRating: aynaRatingProp = null, ratingCount: ratingCountProp = 0, rateControls = null, heroLine = '', extraRows = [], onOpenReview = null, onWriteReview = null, fitSlot = null, afterOverview = null, loading = false, v4 = false, sections = false }) {
+export default function ProductEvidence({ product: baseProduct, glance = null, aynaData = null, aynaRating: aynaRatingProp = null, ratingCount: ratingCountProp = 0, rateControls = null, heroLine = '', extraRows = [], onOpenReview = null, onWriteReview = null, fitSlot = null, afterOverview = null, loading = false }) {
   const product = useApprovedResearch(baseProduct);
   const m = useMemo(() => buildEvidence(product, { heroLine, glance }), [product, heroLine, glance]);
   const works = worksWith(product);
@@ -348,73 +312,65 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const aynaRating = liveStats ? liveStats.average : aynaRatingProp;
   const ratingCount = liveStats ? liveStats.count : ratingCountProp;
 
-  const [isPhone, setIsPhone] = useState(() => typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia(PHONE).matches);
-  useEffect(() => {
-    if (typeof window.matchMedia !== 'function') return undefined;
-    const mq = window.matchMedia(PHONE);
-    const on = () => setIsPhone(mq.matches);
-    mq.addEventListener?.('change', on);
-    return () => mq.removeEventListener?.('change', on);
-  }, []);
-  // Phones read the page as one column of sections, open by default, in the
-  // master prompt's order (section 113); wide screens keep the tab box.
-  const asSections = sections || (v4 && isPhone);
   const [tab, setTab] = useState(() => {
-    if (typeof window === 'undefined') return '';
-    const h = window.location.hash.slice(1);
-    return TAB_IDS.includes(h) ? h : '';
+    if (typeof window === 'undefined') return 'summary';
+    return resolveTarget(window.location.hash.slice(1))?.tab || 'summary';
   });
-  const scrollToTabs = () => {
-    window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+  // The tab row sticks just under the website's header (the app has none above it).
+  const [stickTop, setStickTop] = useState(0);
+  useEffect(() => {
+    const read = () => {
+      const nav = document.querySelector('.app-nav-wrap');
+      const pos = nav ? window.getComputedStyle(nav).position : '';
+      setStickTop(nav && (pos === 'sticky' || pos === 'fixed') ? Math.round(nav.getBoundingClientRect().height) : 0);
+    };
+    read();
+    window.addEventListener('resize', read);
+    return () => window.removeEventListener('resize', read);
+  }, []);
+  const reduce = () => Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
+  const scrollToEl = (el) => el?.scrollIntoView({ behavior: reduce() ? 'auto' : 'smooth', block: 'start' });
+  // Back to the top of the tabs when the row is stuck, so the new tab starts at its beginning.
+  const toTabTop = (force = false) => {
+    window.requestAnimationFrame(() => {
       const el = document.getElementById('ay-pt');
       if (!el) return;
-      const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-      el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-    }));
-  };
-  const chooseTab = (id) => {
-    setTab(id);
-    try { window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}#${id}`); } catch { /* sandboxed */ }
-  };
-  // Old ids used by other parts of the page map onto the tabs.
-  const ALIAS = { science: 'literature', evidence: 'literature', how: 'how-to-use', sources: 'details', overview: 'overview', inside: 'literature' };
-  const v4Tab = (id) => ({ clinical: 'evidence', literature: 'evidence', safety: 'safety-use', 'how-to-use': 'safety-use' })[id] || id;
-  // Sections: which section holds each old tab id.
-  const SEC = { clinical: 'evidence', literature: 'evidence', evidence: 'evidence', science: 'evidence', inside: 'evidence', reviews: 'reviews', safety: 'safety', 'safety-use': 'safety', 'how-to-use': 'how', how: 'how', details: 'details', sources: 'sources', overview: 'overview' };
-  const openSection = (raw, scroll = true) => {
-    const id = SEC[raw] || raw;
-    window.requestAnimationFrame(() => {
-      const el = document.getElementById(id === 'overview' ? 'ayq-who' : `ay-sec-${id}`);
-      if (!el) return;
-      if (el.tagName === 'DETAILS') el.open = true;
-      if (!scroll) return;
-      const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-      el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      const top = el.getBoundingClientRect().top;
+      if (force || top < stickTop - 2) scrollToEl(el);
     });
   };
+  const setHash = (id) => {
+    try { window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}#${id}`); } catch { /* sandboxed */ }
+  };
+  const chooseTab = (id) => { setTab(id); setHash(id); toTabTop(); };
+  /** Open the tab that holds `raw` (an old tab id, a section id) and bring it into view. */
   const goTo = (raw) => {
-    if (asSections) { openSection(ALIAS[raw] === 'overview' ? 'overview' : raw); return; }
-    const id = v4 ? v4Tab(ALIAS[raw] || raw) : ALIAS[raw] || raw;
-    if (id === 'overview' && !v4) { document.getElementById('ayq-who')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
-    chooseTab(id);
-    scrollToTabs();
+    const t = resolveTarget(raw) || { tab: 'summary' };
+    setTab(t.tab);
+    setHash(raw && resolveTarget(raw) ? raw : t.tab);
+    window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+      const el = t.anchor ? document.getElementById(t.anchor) : null;
+      if (el) {
+        if (el.tagName === 'DETAILS') el.open = true;
+        scrollToEl(el);
+      } else toTabTop(true);
+    }));
   };
   const goToRef = useRef(goTo);
-  const sectionsRef = useRef(asSections);
-  useEffect(() => { goToRef.current = goTo; sectionsRef.current = asSections; });
+  useEffect(() => { goToRef.current = goTo; });
   useEffect(() => {
-    if (takeProductTab() === 'reviews') goTo('reviews');
-    else if (TAB_IDS.includes(window.location.hash.slice(1))) { if (asSections) openSection(window.location.hash.slice(1)); else scrollToTabs(); }
+    if (takeProductTab() === 'reviews') { goTo('reviews'); return; }
+    const h = window.location.hash.slice(1);
+    if (resolveTarget(h)) goTo(h);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
-    // Through a ref: the listeners are added once, the layout can change with the width.
-    const on = (e) => goToRef.current(!e.detail || e.detail === 'details' ? 'safety' : e.detail);
-    const onHash = () => { const h = window.location.hash.slice(1); if (!TAB_IDS.includes(h)) return; if (sectionsRef.current) { goToRef.current(h); return; } setTab(v4 ? v4Tab(h) : h); scrollToTabs(); };
+    // Through a ref: listeners are added once.
+    const on = (e) => goToRef.current(e.detail || 'summary');
+    const onHash = () => { const h = window.location.hash.slice(1); if (resolveTarget(h)) goToRef.current(h); };
     window.addEventListener('ay-open-tab', on);
     window.addEventListener('hashchange', onHash);
     return () => { window.removeEventListener('ay-open-tab', on); window.removeEventListener('hashchange', onHash); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Every hard word on the page gets a tap-to-define underline, once, where it first appears.
@@ -506,63 +462,81 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   ) : null;
 
   const rs = m.research;
-  const hasResearch = graded.length || rs.summary.length || rs.sourceSummary || rs.studies.length || rs.ingredients.length || rs.other.length || rs.evidenceStrength;
-  const researchBody = hasResearch ? (
+  const claims = claimRows(product);
+  const negativeBlock = rs.negative.length > 0 && (
+    <Folder id="ayq-neg" title="Results to know about" tone="alert" icon="paper" className="ayq-wide">
+      <p className="ayq-p">{rs.negative.length === 1 ? 'This study found no clear benefit:' : `${rs.negative.length} studies found no clear benefit:`}</p>
+      <ul className="ayq-neglist">{rs.negative.map((s) => <li key={s.url}><span className="ayq-neglist__meta">{[s.publisher, s.type, s.year].filter(Boolean).join(', ')}</span><b>{s.title}</b> <Tx>{s.summary}</Tx> <a href={s.url} target="_blank" rel="noopener noreferrer">Read the source<span aria-hidden="true"> ↗</span><span className="sr-only">: {s.title} (opens in a new tab)</span></a></li>)}</ul>
+    </Folder>
+  );
+  // Step 2: why ayna rated it this way (grades per need, the team's reading of the research, each claim and what backs it).
+  const gradeBlock = graded.length > 0 && (
+    <div className="ayq-gradebox">
+      <h4 className="ayq-subh">ayna’s evidence check</h4>
+      <ul className="ayq-grades">
+        {graded.map((g) => {
+          let pub = '';
+          // The site's own address: a one-word publisher ("Menopause") reads like a topic.
+          try { pub = new URL(g.source_url).hostname.replace(/^www\./, ''); } catch { pub = hostLabel(g.source_url); }
+          return (
+            <li key={g.need}>
+              <div className="ayq-meter" data-level={g.strength === 'none' ? 0 : ({ A: 3, B: 2, C: 1 })[g.grade] || 0}><span className="ayq-meter__word">{g.strength === 'none' ? 'Not a fit' : GRADE_WORDS[g.grade]}</span><span className="ayq-meter__bars" aria-hidden="true"><i /><i /><i /></span></div>
+              <p className="ayq-grades__need">{cap(needPhrase(g.need))}</p>
+              <p className="ayq-p"><Tx>{noDash(PLAIN[`${g.product}|${g.need}`] || g.rationale)}</Tx></p>
+              {g.source_url && <a className="ayq-src__go" href={g.source_url} target="_blank" rel="noopener noreferrer">Source: {pub}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a>}
+            </li>
+          );
+        })}
+      </ul>
+      <p className="ayq-meta">Graded only from .gov health sources. Strong means those sources back this kind of product for this need. Limited means little or no good evidence.</p>
+    </div>
+  );
+  const claimBlock = claims.length > 0 && (
+    <div className="ayq-claims">
+      <h4 className="ayq-subh">Claims, one by one</h4>
+      <ul className="ayq-claimlist">
+        {claims.map((c) => (
+          <li key={`${c.claim}-${c.url}`} className={`is-${c.kind}`}>
+            <span className="ayq-claimlist__kind">{c.label}</span>
+            <p className="ayq-p">{c.kind === 'brand' ? <>The brand says: <Tx>{c.claim}</Tx></> : <Tx>{c.claim}</Tx>}</p>
+            <p className="ayq-meta">{[c.strength && `Strength on file: ${c.strength.toLowerCase()}`, c.via].filter(Boolean).join('. ')}{c.url && <>{(c.strength || c.via) ? '. ' : ''}<a href={c.url} target="_blank" rel="noopener noreferrer">{c.publisher || 'Source'}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a></>}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+  const whyRated = (graded.length || rs.summary.length || rs.sourceSummary || rs.evidenceStrength || claims.length) ? (
     <>
-      {rs.negative.length > 0 && (
-        <Folder id="ayq-neg" title="Results to know about" tone="alert" icon="paper" className="ayq-wide">
-          <p className="ayq-p">{rs.negative.length === 1 ? 'This study found no clear benefit:' : `${rs.negative.length} studies found no clear benefit:`}</p>
-          <ul className="ayq-neglist">{rs.negative.map((s) => <li key={s.url}><span className="ayq-neglist__meta">{[s.publisher, s.type, s.year].filter(Boolean).join(', ')}</span><b>{s.title}</b> <Tx>{s.summary}</Tx> <a href={s.url} target="_blank" rel="noopener noreferrer">Read the source<span aria-hidden="true"> ↗</span><span className="sr-only">: {s.title} (opens in a new tab)</span></a></li>)}</ul>
-        </Folder>
-      )}
-      <div className="ayq-cols">
-        <div className="ayq-main">
-          {rs.summary.length > 0 && <><h4 className="ayq-subh">In short</h4><ReadShelf list={rs.summary} label="Research in short" /></>}
-          {rs.sourceSummary && <><h4 className="ayq-subh">What the linked research says</h4><p className="ayq-p"><Tx>{rs.sourceSummary}</Tx></p></>}
-          {rs.evidenceStrength && <p className="ayq-meta">Evidence level on file: {rs.evidenceStrength}</p>}
-        </div>
-        {graded.length > 0 && (
-          <aside className="ayq-side">
-            <Folder id="ayq-grade" title="ayna’s evidence check">
-              <ul className="ayq-grades">
-                {graded.map((g) => {
-                  let pub = '';
-                  // The site's own address: a one-word publisher ("Menopause") reads like a topic.
-                  try { pub = new URL(g.source_url).hostname.replace(/^www\./, ''); } catch { pub = hostLabel(g.source_url); }
-                  return (
-                    <li key={g.need}>
-                      <div className="ayq-meter" data-level={g.strength === 'none' ? 0 : ({ A: 3, B: 2, C: 1 })[g.grade] || 0}><span className="ayq-meter__word">{g.strength === 'none' ? 'Not a fit' : GRADE_WORDS[g.grade]}</span><span className="ayq-meter__bars" aria-hidden="true"><i /><i /><i /></span></div>
-                      <p className="ayq-grades__need">{cap(needPhrase(g.need))}</p>
-                      <p className="ayq-p"><Tx>{noDash(PLAIN[`${g.product}|${g.need}`] || g.rationale)}</Tx></p>
-                      {g.source_url && <a className="ayq-src__go" href={g.source_url} target="_blank" rel="noopener noreferrer">Source: {pub}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a>}
-                    </li>
-                  );
-                })}
-              </ul>
-              <p className="ayq-meta">Graded from clinical guidelines, systematic reviews and government health sources. Strong means guidelines back this kind of product for this need. Limited means little or no good evidence.</p>
-            </Folder>
-          </aside>
-        )}
-      </div>
-      <SourceGrid items={rs.studies.filter((x) => !x.negative)} label={rs.negative.length ? 'Other .gov health sources' : '.gov health sources'} id="ayq-studies" />
-      {rs.ingredients.length > 0 && (
-        <div className="ayq-ings">
-          <h4 className="ayq-subh">{rs.ingredientsAreTopics ? 'Point by point' : 'Ingredient by ingredient'} <span className="ayq-count">{rs.ingredients.length}</span></h4>
-          <ul className="ayq-inggrid" tabIndex={0} aria-label="Ingredient notes">
-            {rs.ingredients.map((i) => (
-              <li key={i.name} className="ayq-ing">
-                <h5 className="ayq-ing__name">{i.name}</h5>
-                {i.text.length ? <Paras list={i.text} /> : <p className="ayq-meta">No explanation on file yet.</p>}
-                {i.links.length > 0 && <ul className="ayq-minilinks">{i.links.map((l) => <li key={l.url}><a href={l.url} target="_blank" rel="noopener noreferrer"><span className="ayq-minilinks__pub">{[l.publisher, l.year].filter(Boolean).join(', ')}</span> {l.title}{l.kind.tier !== 'credible' && <em> ({l.kind.label})</em>}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a></li>)}</ul>}
-              </li>
-            ))}
-          </ul>
-          {rs.ingredientNote && <p className="ayq-meta">{rs.ingredientNote}</p>}
-        </div>
-      )}
+      {gradeBlock}
+      {rs.summary.length > 0 && <><h4 className="ayq-subh">In short</h4><ReadShelf list={rs.summary} label="Research in short" /></>}
+      {rs.sourceSummary && <><h4 className="ayq-subh">What the linked research says</h4><p className="ayq-p"><Tx>{rs.sourceSummary}</Tx></p></>}
+      {rs.evidenceStrength && <p className="ayq-meta">Evidence level the team recorded: {rs.evidenceStrength}</p>}
+      {claimBlock}
+    </>
+  ) : null;
+  // Step 3: the sources themselves. Step 4: ingredient by ingredient.
+  const studyCards = rs.studies.filter((x) => !x.negative);
+  const studiesBlock = (studyCards.length || adds('research').length || rs.other.length) ? (
+    <>
+      <SourceGrid items={studyCards} label={rs.negative.length ? 'Other .gov health sources' : '.gov health sources'} id="ayq-studies" />
       {adds('research').map((a) => <Addition key={a.id} a={a} />)}
       <OtherLinks items={rs.other} label="Other pages the team used" note="Not .gov health sources, so ayna has not checked them. Each is labelled by what it is." />
     </>
+  ) : null;
+  const ingredientsBlock = rs.ingredients.length > 0 ? (
+    <div className="ayq-ings">
+      <ul className="ayq-inggrid" aria-label="Ingredient notes">
+        {rs.ingredients.map((i) => (
+          <li key={i.name} className="ayq-ing">
+            <h5 className="ayq-ing__name">{i.name}</h5>
+            {i.text.length ? <Paras list={i.text} /> : <p className="ayq-meta">No explanation on file yet.</p>}
+            {i.links.length > 0 && <ul className="ayq-minilinks">{i.links.map((l) => <li key={l.url}><a href={l.url} target="_blank" rel="noopener noreferrer"><span className="ayq-minilinks__pub">{[l.publisher, l.year].filter(Boolean).join(', ')}</span> {l.title}{l.kind.tier !== 'credible' && <em> ({l.kind.label})</em>}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a></li>)}</ul>}
+          </li>
+        ))}
+      </ul>
+      <p className="ayq-meta">Research on an ingredient is not research on this exact product.</p>
+      {rs.ingredientNote && <p className="ayq-meta">{rs.ingredientNote}</p>}
+    </div>
   ) : null;
 
   const rv = m.reviews;
@@ -572,7 +546,6 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     rv.userRating && <p key="u" className="ayq-rating"><b><span aria-hidden="true">★ </span>{rv.userRating.value}</b> {rv.userRating.url ? <a href={rv.userRating.url} target="_blank" rel="noopener noreferrer">online rating<span aria-hidden="true"> ↗</span></a> : 'online rating'} <span className="ayq-flag">Not verified by ayna</span></p>,
   ].filter(Boolean);
   const onlineLinks = [...rv.online, ...(m.brand ? [{ url: `https://www.trustpilot.com/search?query=${encodeURIComponent(m.brand)}`, title: `${m.brand} on Trustpilot`, publisher: 'Trustpilot', summary: '', kind: { label: 'Search of company reviews' } }] : [])];
-  const hasReviews = ratingLines.length || reviewRows.length || rv.text.length || rv.sourceSummary || rv.ratingNote || rv.elsewhere.length || rv.online.length || memberReviews.length || rateControls;
   const reviewsBody = (
     <div className="ayq-cols">
       <div className="ayq-main">
@@ -698,7 +671,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
           {(dt.ingredientsText || dt.materials) && <h4 className="ayq-subh">{m.isDigital ? 'What’s included' : 'What’s in it'}</h4>}
           {dt.ingredientsText && <>{dt.materials && <h5 className="ayq-subh5">{m.isDigital ? 'Included' : 'Ingredients'}</h5>}{(() => {
             // Website (main #73): a plain ingredient list reads as chips; anything else stays as written.
-            const chips = v4 ? ingredientChips(dt.ingredientsText) : null;
+            const chips = ingredientChips(dt.ingredientsText);
             return chips ? <ul className="ay-chips" aria-label={m.isDigital ? 'Included' : 'Ingredients'}>{chips.map((c, i) => <li key={`${c}-${i}`}>{c}</li>)}</ul> : <p className="ayq-p ayq-pre">{dt.ingredientsText}</p>;
           })()}</>}
           {dt.materials && <>{dt.ingredientsText && <h5 className="ayq-subh5">Materials</h5>}<p className="ayq-p"><Tx>{dt.materials}</Tx></p></>}
@@ -720,240 +693,131 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
           </ul>
         </div>
   );
-  const detailsBody = <>{insideBody}{sourcesBody}</>;
 
-  const tabs = [
-    expertBody && { id: 'clinical', label: 'Expert view', icon: 'stethoscope', body: expertBody },
-    researchBody && { id: 'literature', label: 'Evidence', icon: 'paper', body: researchBody },
-    hasReviews && { id: 'reviews', label: 'Reviews', icon: 'community', body: reviewsBody },
-    safetyBody && { id: 'safety', label: 'Safety', icon: 'shield', tone: sf.alert.length ? 'alert' : '', body: safetyBody },
-    howBody && { id: 'how-to-use', label: 'How to use', icon: 'steps', body: howBody },
-    { id: 'details', label: 'Details', icon: 'format', body: detailsBody },
-  ].filter(Boolean);
-  const activeTab = tabs.some((t) => t.id === tab) ? tab : (tabs[0]?.id || '');
-
-  // ---- Overview: the short answer, at a glance, one preview per section --------
+  // ---- ayna summary --------------------------------------------------------------
   const shortList = ex.short;
-  const alertHead = (() => {
-    const t = sf.alert[0] || '';
-    const colon = t.indexOf(':');
-    if (colon > 8 && colon <= 70) return `${t.slice(0, colon)}.`;
-    return '';
-  })();
-  // Each preview leads with one real number (studies on file, things to check, a rating, steps).
-  const researchCount = new Set([...ex.sources, ...rs.studies, ...rs.ingredients.flatMap((i) => i.links)].filter((l) => l.kind.tier === 'credible').map((l) => l.url)).size;
-  const previews = [
-    tabs.some((t) => t.id === 'literature') && (rs.negative.length
-      ? { id: 'literature', icon: 'paper', label: 'Evidence', num: String(rs.negative.length), caption: rs.negative.length === 1 ? 'study found no clear benefit' : 'studies found no clear benefit', short: 'no benefit found' }
-      : researchCount
-        ? { id: 'literature', icon: 'paper', label: 'Evidence', num: String(researchCount), caption: `${researchCount === 1 ? 'study or health-body source' : 'studies and health-body sources'}${levelWord ? `. ${levelWord}` : ''}`, short: 'sources' }
-        : { id: 'literature', icon: 'paper', label: 'Evidence', caption: levelWord || (rs.ingredients.length ? plural(rs.ingredients.length, rs.ingredientsAreTopics ? 'topic' : 'ingredient') + ' explained' : 'What the research says'), short: levelWord ? levelWord.replace(' evidence', '') : 'Read it' }),
-    tabs.some((t) => t.id === 'safety') && (sf.alert.length
-      ? { id: 'safety', icon: 'shield', label: 'Safety', caption: alertHead || 'Safety note on file', short: 'Note on file', tone: 'alert' }
-      : sf.warnings.length
-        ? { id: 'safety', icon: 'shield', label: 'Safety', num: String(sf.warnings.length), caption: sf.warnings.length === 1 ? 'thing to check first' : 'things to check first', short: 'to check' }
-        : { id: 'safety', icon: 'shield', label: 'Safety', caption: 'Label and regulator facts', short: 'Label facts' }),
-    tabs.some((t) => t.id === 'reviews') && (hasMemberRating
-      ? { id: 'reviews', icon: 'community', label: 'Reviews', num: aynaRating.toFixed(1), caption: `from ${plural(ratingCount, 'ayna member')}`, short: 'members' }
-      : rv.brandRating
-        ? { id: 'reviews', icon: 'community', label: 'Reviews', num: rv.brandRating.value, caption: `from ${rv.brandRating.count} online reviews, not verified`, short: 'online' }
-        : { id: 'reviews', icon: 'community', label: 'Reviews', caption: rv.text.length ? 'What people say online' : 'No reviews yet', short: rv.text.length ? 'Online' : 'None yet' }),
-    tabs.some((t) => t.id === 'how-to-use') && m.how && { id: 'how-to-use', icon: 'steps', label: 'How to use', num: String(m.how.steps.length), caption: m.how.steps.length === 1 ? 'step' : 'steps', short: m.how.steps.length === 1 ? 'step' : 'steps' },
-  ].filter(Boolean);
-
-  // P1-5 / R2: "What it is" and "Who it's for" are one plain section with ONE
-  // heading that names what's in it (no second "Who it's for" heading under
-  // the first). Every team sentence still shows once, in one place.
   const hasWho = m.who.length > 0 || (glance?.who?.helps || []).length > 0;
   const hasWhat = m.summary.length > 0;
   const aboutTitle = hasWhat && hasWho ? 'What it is and who it’s for' : hasWhat ? 'What it is' : 'Who it’s for';
-  const whoBlock = hasWho && (
-    <div id="ayq-who" className="ayq-who">
-      {m.who.length > 0 && <ol className="ayq-checks" aria-label="Who it’s for">{m.who.map((w, i) => <li key={w}><span className="ayq-checks__n" aria-hidden="true">{i + 1}</span><span><Tx>{w}</Tx></span></li>)}</ol>}
-      {(glance?.who?.helps || []).length > 0 && <p className="ayq-meta"><b>Helps with:</b> {glance.who.helps.join(', ')}</p>}
+  const hasInside = Boolean(dt.ingredientsText || dt.materials || dt.badges.length || works.items.length || priceRows.length);
+  const jumps = [
+    fitSlot && { id: 'ay-sum-fit', label: 'Your match' },
+    (hasWhat || hasWho) && { id: 'ay-sum-about', label: 'What it is' },
+    safetyBody && { id: 'ay-sum-safety', label: 'Safety', tone: sf.alert.length ? 'alert' : '' },
+    hasInside && { id: 'ay-sum-details', label: m.isDigital ? 'What’s included' : 'Ingredients' },
+    howBody && { id: 'ay-sum-how', label: 'How to use' },
+  ].filter(Boolean);
+  const jumpTo = (id) => { const el = document.getElementById(id); if (el) scrollToEl(el); };
+  const summaryBody = (
+    <div className="ayq-sum">
+      {jumps.length > 1 && (
+        <nav className="ayq-sum__jump" aria-label="In ayna summary">
+          {jumps.map((j) => <button key={j.id} type="button" className={j.tone ? `is-${j.tone}` : undefined} onClick={() => jumpTo(j.id)}>{j.label}</button>)}
+        </nav>
+      )}
+      {shortList.length > 0 && (
+        <article className="ayq-bottom" aria-labelledby="ayq-bottom-h">
+          <h3 id="ayq-bottom-h" className="ayq-bottom__h">ayna’s take</h3>
+          <ul className="ayq-bottom__list">{shortList.map((s) => <li key={s}><Tx>{s}</Tx></li>)}</ul>
+          {ex.attribution && <p className="ayq-bottom__by">{m.independent ? 'ayna’s summary of the research' : 'Summary of the research, with claims credited to the brand'}. <button type="button" onClick={() => goTo('clinical')}>Read the clinical opinion</button></p>}
+        </article>
+      )}
+      {fitSlot && <div id="ay-sum-fit" className="ayq-anchor ayq-sum__fit">{fitSlot}</div>}
+      {(hasWhat || hasWho) && (
+        <section id="ay-sum-about" className="ayq-anchor ayq-about" aria-labelledby="ayq-about-h">
+          <h3 id="ayq-about-h" className="ayq-h3">{aboutTitle}</h3>
+          {hasWhat && <div className="ayq-prose"><Paras list={m.summary} /></div>}
+          {hasWho && (
+            <div id="ayq-who" className="ayq-who">
+              {m.who.length > 0 && <ol className="ayq-checks" aria-label="Who it’s for">{m.who.map((w, i) => <li key={w}><span className="ayq-checks__n" aria-hidden="true">{i + 1}</span><span><Tx>{w}</Tx></span></li>)}</ol>}
+              {(glance?.who?.helps || []).length > 0 && <p className="ayq-meta"><b>Helps with:</b> {glance.who.helps.join(', ')}</p>}
+            </div>
+          )}
+        </section>
+      )}
+      {tiles.length > 0 && (
+        <section className="ayq-glance" aria-labelledby="ayq-glance-h">
+          <h3 id="ayq-glance-h" className="ayq-h3">At a glance</h3>
+          <ul className="ayq-tiles">
+            {tiles.map((t) => <li key={t.id}><PdpIcon name={t.icon} size={20} /><span><span className="ayq-tiles__label">{t.label}</span><span className="ayq-tiles__value">{t.main}</span>{t.note && <span className="ayq-tiles__note">{t.note}</span>}</span></li>)}
+          </ul>
+        </section>
+      )}
+      {safetyBody && <section id="ay-sum-safety" className={`ayq-anchor ayq-sumsec${sf.alert.length ? ' is-alert' : ''}`} aria-labelledby="ay-sum-safety-h"><h3 id="ay-sum-safety-h" className="ayq-h3">Safety</h3>{safetyBody}</section>}
+      {hasInside && <section id="ay-sum-details" className="ayq-anchor ayq-sumsec" aria-labelledby="ay-sum-details-h"><h3 id="ay-sum-details-h" className="ayq-h3">{m.isDigital ? 'What’s included and details' : 'Ingredients and dose'}</h3>{insideBody}</section>}
+      {howBody && <section id="ay-sum-how" className="ayq-anchor ayq-sumsec" aria-labelledby="ay-sum-how-h"><h3 id="ay-sum-how-h" className="ayq-h3">How to use</h3>{howBody}</section>}
     </div>
   );
 
-  // Website (main #73, Neycher HydroBloom design): colour-coded cards, one per
-  // section, each with its first line; they open the tab. Same numbers as the app's previews.
-  const firstLine = (t) => { const x = splitSentences(noDash(String(t || '')))[0] || ''; return x.length > 120 ? `${x.slice(0, 110).replace(/\s+\S*$/, '')}…` : x; };
-  const PREVIEW_KEY = { clinical: 'clinical', literature: 'science', safety: 'safety', reviews: 'reviews', 'how-to-use': 'how' };
-  const cards = v4 ? [
-    tabs.some((t) => t.id === 'clinical') && { id: 'clinical', label: 'Expert view', tag: '', text: firstLine(ex.opinion[0] || ex.short[0] || ex.note[0] || ex.sourceSummary?.text) || 'What the clinical guidance says' },
-    ...previews.map((pv) => ({
-      id: pv.id,
-      label: pv.label,
-      tag: [pv.num, pv.caption].filter(Boolean).join(' '),
-      text: pv.id === 'safety' ? firstLine(sf.alert[0] || sf.warnings[0] || sf.sideEffects)
-        : pv.id === 'reviews' ? (rv.text.length ? firstLine(rv.text[0]) : 'Tried it? Be the first to review it.')
-          : pv.id === 'literature' ? firstLine(rs.summary[0] || rs.sourceSummary)
-            : pv.id === 'how-to-use' ? firstLine(m.how?.intro || m.how?.steps?.[0]) : '',
-      tone: pv.tone,
-    })),
-  ].filter((c) => c && (c.text || c.tag)) : [];
-  // Plain rows, not coloured cards (master prompt 154: no bento): the part,
-  // its one fact, its first line, and a link into that tab.
-  const glanceCards = cards.length > 0 && (
-    <ul className="ay-jumprows" aria-label="Jump to a section">
-      {cards.map((c) => (
-        <li key={c.id} className={`is-${PREVIEW_KEY[c.id] || c.id}${c.tone ? ` is-tone-${c.tone}` : ''}`}>
-          <button type="button" onClick={() => goTo(c.id)}>
-            <span className="ay-jumprows__head"><span className="ay-jumprows__label">{c.label}</span>{c.tag && <span className="ay-jumprows__tag">{c.tag}</span>}</span>
-            {c.text && <span className="ay-jumprows__text">{c.text}</span>}
-            <svg className="ay-jumprows__go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
-          </button>
-        </li>
-      ))}
-    </ul>
+  // ---- Clinical opinion --------------------------------------------------------
+  const clinicalBody = (
+    <div className="ayq-clin">
+      {!m.independent && (ex.opinion.length > 0 || ex.short.length > 0) && <p className="ayq-callout ayq-callout--brand">This comes from the brand’s own materials, not an independent clinician.</p>}
+      {expertBody || <p className="ayq-empty">No clinician has written about this product for ayna yet. The ayna summary and Scientific literature tabs have what we know.</p>}
+    </div>
   );
 
-  const overview = (
-    <section className="ayq-over" aria-label="Overview">
-      {shortList.length > 0 ? (
-        <article className="ayq-bottom" aria-labelledby="ayq-bottom-h">
-          <h2 id="ayq-bottom-h" className="ayq-bottom__h">ayna’s take</h2>
-          <ul className="ayq-bottom__list">{shortList.map((s) => <li key={s}><Tx>{s}</Tx></li>)}</ul>
-          {ex.attribution && <p className="ayq-bottom__by">{m.independent ? 'ayna’s summary of the research' : 'Summary of the research, with claims credited to the brand'}. <button type="button" onClick={() => goTo('clinical')}>Read the full expert view</button></p>}
-        </article>
-      ) : (hasWhat || hasWho) ? (
-        <article className="ayq-about" aria-labelledby="ayq-about-h">
-          <h2 id="ayq-about-h" className="ayq-h3">{aboutTitle}</h2>
-          {hasWhat && <div className="ayq-prose"><Paras list={m.summary} /></div>}
-          {whoBlock}
-        </article>
-      ) : null}
-
-      {(level > 0 || tiles.length > 0) && (
-        <div className="ayq-glance" aria-labelledby="ayq-glance-h">
-          <h2 id="ayq-glance-h" className="ayq-h3">At a glance</h2>
-          {level > 0 && (
-            <button type="button" className="ayq-glance__ev" onClick={() => goTo('literature')}>
-              <span className="ayq-meter" data-level={level}><span className="ayq-meter__word">{levelWord}{topGrade && <span className="ayq-meter__for"> for {needPhrase(topGrade.need)}</span>}</span><span className="ayq-meter__bars" role="img" aria-label={`${levelWord}, ${level} of 3`}><i /><i /><i /></span></span>
-              <span className="ayq-glance__go">See the research</span>
-            </button>
-          )}
-          {tiles.length > 0 && (
-            <ul className="ayq-tiles">
-              {tiles.map((t) => <li key={t.id}><PdpIcon name={t.icon} size={20} /><span><span className="ayq-tiles__label">{t.label}</span><span className="ayq-tiles__value">{t.main}</span>{t.note && <span className="ayq-tiles__note">{t.note}</span>}</span></li>)}
-            </ul>
-          )}
-          {fitSlot}
-        </div>
-      )}
-
-      {asSections ? null : v4 ? glanceCards : previews.length > 0 && (
-        <nav className="ayq-previews" aria-label="Jump to a section">
-          {previews.map((p) => (
-            <button key={p.id} type="button" className={`ayq-preview${p.tone ? ` is-${p.tone}` : ''}`} onClick={() => goTo(p.id)}>
-              <span className="ayq-preview__top"><PdpIcon name={p.icon} size={18} /><span>{p.label}</span></span>
-              <span className="ayq-preview__main">{p.num && <b className="ayq-preview__num">{p.num}</b>}<span className="ayq-preview__cap">{p.caption}</span><span className="ayq-preview__short" aria-hidden="true">{p.short}</span></span>
-              <span className="ayq-preview__go" aria-hidden="true"><PdpIcon name="arrow" size={18} /></span>
-            </button>
-          ))}
-        </nav>
-      )}
-
-      {shortList.length > 0 && (hasWhat || hasWho) && (
-        <section className="ayq-what ayq-about" aria-labelledby="ayq-what-h">
-          <h2 id="ayq-what-h" className="ayq-h3">{aboutTitle}</h2>
-          {hasWhat && <div className="ayq-prose"><Paras list={m.summary} /></div>}
-          {whoBlock}
-        </section>
-      )}
-    </section>
-  );
-
-  // ---- Phones: one column of sections, open by default (master prompt 112-113) ----
-  // Order (prompt 113): ayna's take and what it is, At a glance, then What the
-  // evidence says, Safety, Ingredients and dose, Community experiences, Research
-  // and sources, How to use. Important sections open; the source index (secondary
-  // detail) starts closed. Each heading carries the one fact its preview tile
-  // used to show, so the tiles (and the tab row) can go.
-  if (asSections) {
-    const metaOf = (id) => { const p = previews.find((x) => x.id === id); return p ? [p.num, p.caption].filter(Boolean).join(' ') : ''; };
-    const hasInside = Boolean(dt.ingredientsText || dt.materials || dt.badges.length || works.items.length || priceRows.length);
-    const secs = [
-      (expertBody || researchBody) && { id: 'evidence', title: 'What the evidence says', icon: 'paper', meta: metaOf('literature'), body: <>
-        {expertBody && <section className="ayq-sec__part" aria-labelledby="ayq-part-expert"><h3 id="ayq-part-expert" className="ayq-sec__parth">Expert view</h3>{expertBody}</section>}
-        {researchBody && <section className="ayq-sec__part" aria-labelledby="ayq-part-research"><h3 id="ayq-part-research" className="ayq-sec__parth">Research</h3>{researchBody}</section>}
-      </> },
-      safetyBody && { id: 'safety', title: 'Safety', icon: 'shield', tone: sf.alert.length ? 'alert' : '', meta: metaOf('safety'), body: safetyBody },
-      hasInside && { id: 'details', title: m.isDigital ? 'What’s included and details' : 'Ingredients and dose', icon: 'format', body: insideBody },
-      hasReviews && { id: 'reviews', title: 'Community experiences', icon: 'community', meta: metaOf('reviews'), body: reviewsBody },
-      sourcesBody && { id: 'sources', title: 'Research and sources', icon: 'paper', meta: plural(allSources.length, 'source'), body: sourcesBody, closed: true },
-      howBody && { id: 'how', title: 'How to use', icon: 'steps', meta: metaOf('how-to-use'), body: howBody },
-    ].filter(Boolean);
-    return (
-      <TermsCtx.Provider value={plan}>
-        <div id="ay-tabs" className={`ayq ayq--sections${v4 ? ' ayq--v4' : ''}`}>
-          {/* The jump tiles became each section's heading line (overview leaves them out here). */}
-          {overview}
-          {afterOverview}
-          <div id="ay-pt" className="ayq-secs">
-            {secs.map((x) => (
-              <details key={x.id} id={`ay-sec-${x.id}`} className={`ayq-sec is-${x.id}${x.tone ? ` is-${x.tone}` : ''}`} open={!x.closed}>
-                <summary className="ayq-sec__sum">
-                  <PdpIcon name={x.icon} size={20} />
-                  <span className="ayq-sec__text">
-                    <h2 className="ayq-sec__h">{x.title}</h2>
-                    {x.meta && <span className="ayq-sec__meta">{x.meta}</span>}
-                  </span>
-                  <PdpIcon name="chevron" size={20} className="ayq-sec__chev" />
-                </summary>
-                <div className="ayq-sec__body">{x.body}</div>
-              </details>
-            ))}
+  // ---- Scientific literature: overview, then why, then sources, then deeper ------
+  const reviewCount = (reviewRows.length || 0) + (rv.text.length ? 1 : 0) + rv.online.length + rv.elsewhere.length;
+  const layers = evidenceLayers(product, m, { communityCount: reviewCount });
+  const sourceCount = studyCards.length + rs.other.length + allSources.length;
+  const literatureBody = (
+    <div className="ayq-lit">
+      <section className="ayq-evo" aria-labelledby="ayq-evo-h">
+        <h3 id="ayq-evo-h" className="ayq-h3">Evidence overview</h3>
+        {level > 0 ? (
+          <div className="ayq-evo__level">
+            <span className="ayq-meter" data-level={level}><span className="ayq-meter__word">{levelWord}{topGrade && <span className="ayq-meter__for"> for {needPhrase(topGrade.need)}</span>}</span><span className="ayq-meter__bars" role="img" aria-label={`${levelWord}, ${level} of 3`}><i /><i /><i /></span></span>
+            <p className="ayq-meta">{graded.length ? 'Graded by ayna from .gov health sources.' : 'The level the team recorded. Not yet checked against .gov health sources.'}</p>
           </div>
-          {reviewRows.length > 0 && <ProductPeopleSay productId={baseProduct?.id} reviews={reviewRows} onSeeAll={() => goTo('reviews')} onWriteReview={onWriteReview} onOpenPost={onOpenReview} hasOnline={Boolean(rv.text.length || rv.brandRating || rv.online.length || rv.elsewhere.length)} />}
-        </div>
-      </TermsCtx.Provider>
-    );
-  }
+        ) : (
+          <div className="ayq-evo__none">
+            <p className="ayq-evo__noneh">No .gov-checked evidence yet</p>
+            <p className="ayq-p">ayna checks health claims only against .gov sources such as MedlinePlus, NIH and FDA. None is linked to this product yet, so it has no grade. What is on file is listed below for what it is.</p>
+          </div>
+        )}
+        {negativeBlock}
+        {layers.length > 0 && (
+          <ul className="ayq-layers" aria-label="What is on file">
+            {layers.map((l) => (
+              <li key={l.id} className={`is-${l.id}`}>
+                <span className="ayq-layers__label">{l.label}{l.n ? <span className="ayq-count">{l.n}</span> : null}</span>
+                <span className="ayq-layers__note">{l.note}</span>
+                {l.id === 'community' && <button type="button" className="ayq-textbtn" onClick={() => goTo('reviews')}>Read the reviews</button>}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+      {whyRated
+        ? <Step id="ay-lit-why" title="Why ayna rated it this way">{whyRated}</Step>
+        : <p className="ayq-meta">ayna has not graded this product yet, because no .gov source is linked to it.</p>}
+      {(studiesBlock || sourcesBody) && <Step id="ay-lit-sources" title="View studies and sources" meta={sourceCount ? plural(sourceCount, 'link') : ''}>{studiesBlock}{sourcesBody}</Step>}
+      {ingredientsBlock && <Step id="ay-lit-ings" title={rs.ingredientsAreTopics ? 'Point by point' : 'Ingredient by ingredient'} meta={plural(rs.ingredients.length, rs.ingredientsAreTopics ? 'topic' : 'ingredient')}>{ingredientsBlock}</Step>}
+    </div>
+  );
 
-  // Website: Overview is the first tab, inside the Explore box under the photo (main's structure).
-  if (v4) {
-    const allTabs = [
-      { id: 'overview', label: 'Overview', icon: 'format', body: overview },
-      (expertBody || researchBody) && { id: 'evidence', label: 'Evidence', icon: 'paper', body: <div className="ayq-combined">
-        {expertBody && <section aria-label="Expert view"><h3 className="ayq-h3">Expert view</h3>{expertBody}</section>}
-        {researchBody && <section aria-label="Research"><h3 className="ayq-h3">Research</h3>{researchBody}</section>}
-      </div> },
-      hasReviews && { id: 'reviews', label: 'Reviews', icon: 'community', body: reviewsBody },
-      (safetyBody || howBody) && { id: 'safety-use', label: 'Safety & use', icon: 'shield', tone: sf.alert.length ? 'alert' : '', body: <div className="ayq-combined">
-        {safetyBody && <section aria-label="Safety"><h3 className="ayq-h3">Safety</h3>{safetyBody}</section>}
-        {howBody && <section aria-label="How to use"><h3 className="ayq-h3">How to use</h3>{howBody}</section>}
-      </div> },
-      { id: 'details', label: 'Details', icon: 'format', body: detailsBody },
-    ].filter(Boolean);
-    const activeV4 = allTabs.some((t) => t.id === v4Tab(tab)) ? v4Tab(tab) : 'overview';
-    return (
-      <TermsCtx.Provider value={plan}>
-        <div id="ay-tabs" className="ayq ayq--v4">
-          <section id="ay-pt" className="ayq-tabsec ay-itabs" aria-label="Overview, evidence, reviews, safety and use, details">
-            <SegTabs explore tabs={allTabs} active={activeV4} onChange={(id) => chooseTab(id)} />
-          </section>
-          {afterOverview}
-          {reviewRows.length > 0 && <ProductPeopleSay productId={baseProduct?.id} reviews={reviewRows} onSeeAll={() => goTo('reviews')} onWriteReview={onWriteReview} onOpenPost={onOpenReview} hasOnline={Boolean(rv.text.length || rv.brandRating || rv.online.length || rv.elsewhere.length)} />}
-        </div>
-      </TermsCtx.Provider>
-    );
-  }
+  // ---- Reviews: community first, then online; never evidence ----------------------
+  const reviewsTab = (
+    <div className="ayq-rev">
+      <p className="ayq-callout">Reviews are people’s experiences. They are not evidence that a product works.</p>
+      {reviewRows.length > 0 && <ProductPeopleSay productId={baseProduct?.id} reviews={reviewRows} onWriteReview={onWriteReview} onOpenPost={onOpenReview} />}
+      {reviewsBody}
+      {!reviewRows.length && onWriteReview && <button type="button" className="ayq-cta" onClick={onWriteReview}>Write a review</button>}
+    </div>
+  );
+
+  const bodies = { clinical: clinicalBody, literature: literatureBody, summary: summaryBody, reviews: reviewsTab };
+  const tabs = TAB_ORDER.map((id) => ({ id, label: TAB_LABELS[id], body: bodies[id] }));
+  const activeTab = TAB_ORDER.includes(tab) ? tab : 'summary';
 
   return (
     <TermsCtx.Provider value={plan}>
-      <div id="ay-tabs" className="ayq">
-        {overview}
-
+      <div id="ay-tabs" className="ayq ayq--tabs">
+        <section id="ay-pt" className="ayq-tabsec" aria-label="Clinical opinion, scientific literature, ayna summary and reviews">
+          <StickyTabs tabs={tabs} active={activeTab} onChange={chooseTab} stickTop={stickTop} />
+        </section>
         {afterOverview}
-
-        {tabs.length > 0 && (
-          <section id="ay-pt" className="ayq-tabsec" aria-label="Expert view, research, reviews, safety, how to use and details">
-            <SegTabs tabs={tabs} active={activeTab} onChange={(id) => { chooseTab(id); if (isPhone) scrollToTabs(); }} />
-          </section>
-        )}
-
-        {/* Member reviews where she scrolls: only when there are some (the empty version repeated 'Tried it?'). */}
-        {reviewRows.length > 0 && <ProductPeopleSay productId={baseProduct?.id} reviews={reviewRows} onSeeAll={() => goTo('reviews')} onWriteReview={onWriteReview} onOpenPost={onOpenReview} hasOnline={Boolean(rv.text.length || rv.brandRating || rv.online.length || rv.elsewhere.length)} />}
       </div>
     </TermsCtx.Provider>
   );

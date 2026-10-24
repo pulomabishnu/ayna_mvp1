@@ -16,14 +16,14 @@ import ProductEvidence from '../../components/pdp/ProductEvidence.jsx';
 import { useResearchState } from '../../data/researchLoader.js';
 import { attributeBadges } from '../../components/pdp/evidenceModel.js';
 import { firstSentence } from '../../components/pdp/sentences.js';
-import { evidenceLevel } from '../../components/pdp/evidenceLevel.js';
 import { getPassport } from '../../data/passport';
 import { recallFacts } from '../../utils/productFacts.js';
 import { matchLine } from '../../data/passport/content.js';
 import { buildGlance, perUnitLabel } from '../../components/pdp/glance.js';
 import { galleryImages, retailerLinks, similarProducts, sameNeedProducts } from '../../components/pdp/commerce.js';
-import GalleryThumbs from '../../components/pdp/GalleryThumbs.jsx';
-import ImageZoomViewer from '../components/ImageZoomViewer.jsx';
+import ProductGallery from '../../components/pdp/ProductGallery.jsx';
+import { ProductMatch } from '../../components/passport/ProductSections.jsx';
+import '../../components/pdp/pdp-tabs.css';
 import ComparePanel from '../../components/pdp/ComparePanel.jsx';
 import { worksWith } from '../../utils/aynaIntegrations.js';
 import LegalFooter from '../components/LegalFooter.jsx';
@@ -336,8 +336,6 @@ export default function ProductDetailScreen({
   // Details tabs with their source cards.
   const glance = buildGlance(product, { details: quizAnswers ? matchDetails : null, whyMatched });
   const brandLine = brand && String(brand).trim().toLowerCase() !== String(name || '').trim().toLowerCase() ? brand : categoryLabel;
-  // Evidence in one line under the price; the same meter as At a glance.
-  const evidence = evidenceLevel(product);
   // One recall answer for the page (utils/productFacts), as on the website.
   const recall = (() => {
     const live = getPassport(product)?.recall;
@@ -362,7 +360,6 @@ export default function ProductDetailScreen({
     return w ? first(w) : '';
   })();
   const images = galleryImages(product);
-  const shownImage = images[Math.min(photo, Math.max(images.length - 1, 0))] || image;
   const retailers = retailerLinks(product, buyUrl);
   const matchFor = quizAnswers ? (p) => matchPercentFor(p, quizAnswers, matchOpts) : null;
   const detailsFor = quizAnswers ? (p) => getProductMatchDetailsForProduct(p, quizAnswers, null, matchOpts) : null;
@@ -406,26 +403,23 @@ export default function ProductDetailScreen({
   const storesOnFile = !shopAction ? [...new Set((product.whereToBuy || []).map((w) => String(w).trim()).filter(Boolean))].map((w) => (/^app store$/i.test(w) ? 'the App Store' : w)) : [];
   const andList = (xs) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`);
 
-  // One dark pill: price, save, ecosystem, buy. In the page under the price,
-  // not pinned to the bottom (founder: nothing stays put while the page
-  // scrolls; deep round 2).
+  // First screen (team direction 9): one primary Buy and Save. Adding to the
+  // ecosystem is a quiet text action under them (it is not a second Buy).
+  // In the page under the price, not pinned to the bottom.
   const buyBar = (
-    <div className="ayq-bar">
-      <div className="ayq-bar__pill">
-        {barPrice && <span className="ayq-bar__price">{barPrice}</span>}
-        <button type="button" className="ayq-bar__icon" onClick={onToggleSaved} aria-label={isSaved ? 'Remove from Saved' : 'Save'} aria-pressed={isSaved}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill={isSaved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={HEART_PATH} /></svg>
-        </button>
-        {/* No store link: never a dead primary (same rule as the website's
-            product page). Her own site if we know it, else "Add to ecosystem"
-            takes the primary slot and the page says where it is sold. */}
-        <button type="button" className={`ayq-bar__eco${isInEcosystem ? ' is-on' : ''}${shopAction ? '' : ' is-primary'}`} aria-pressed={isInEcosystem} aria-label={isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'} onClick={onAddToEcosystem}>
-          {isInEcosystem ? 'In ecosystem' : shopAction ? '+ Ecosystem' : '+ Add to ecosystem'}
-        </button>
-        {shopAction && <a className="ayq-bar__buy" href={shopAction.href} target="_blank" rel="noopener noreferrer" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: shopAction.placement })}>{shopAction.label}<span className="sr-only"> {shopAction.sr}</span></a>}
-      </div>
+    <div className="ay-pdp-buyrow">
+      {shopAction
+        ? <a className="ay-pdp-buyrow__buy" href={shopAction.href} target="_blank" rel="noopener noreferrer" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: shopAction.placement })}>{shopAction.label}{barPrice && <span className="ay-pdp-buyrow__price"> · {barPrice}</span>}<span aria-hidden="true"> ↗</span><span className="sr-only"> {shopAction.sr}</span></a>
+        : <button type="button" className={`ay-pdp-buyrow__buy${isInEcosystem ? ' is-on' : ''}`} aria-pressed={isInEcosystem} onClick={onAddToEcosystem}>{isInEcosystem ? 'In my ecosystem' : 'Add to my ecosystem'}</button>}
+      <button type="button" className={`ay-pdp-buyrow__save${isSaved ? ' is-on' : ''}`} onClick={onToggleSaved} aria-label={isSaved ? `Saved. Remove ${name} from Saved` : `Save ${name}`} aria-pressed={isSaved}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill={isSaved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={HEART_PATH} /></svg>
+        <span>{isSaved ? 'Saved' : 'Save'}</span>
+      </button>
     </div>
   );
+  const fitBlock = quizAnswers ? (
+    <ProductMatch glance={glance} matchPercent={matchPercent} why={headLine} fallback={matchLine(matchDetails)} onShowWhy={openWhyMatch} hasProfile exclusions={exclusions} />
+  ) : null;
 
   return (
     <div id="ay-pdp" className="ayna-fresh-product-detail ay-pdp" style={{ flex: 1, minWidth: 0, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--ayna-bg)', color: 'var(--ayna-text)' }}>
@@ -440,17 +434,23 @@ export default function ProductDetailScreen({
           </button>
         </div>
 
-        {/* Tinted stage with the product on a white stamp, then a rounded sheet that overlaps it. */}
+        {/* Tinted stage with the product photos on a white stamp: swipe between photos, tap to zoom. */}
         <div className={`ayq-apphero tone-${tone}${image ? '' : ' is-missing-image'}`}>
           <div className="ayq-apphero__stage">
             <div className="ayq-stamp ayq-apphero__stamp">
               <div className="ayq-apphero__tile" data-vt-target="product">
-                <ProductImage key={shownImage} product={product} src={shownImage} alt={name} allowBrandLogo={product?.type === 'digital'} />
-                {images.length > 0 && (
-                  <button type="button" className="ay-pdp-zoom-open" aria-label={`View ${name} photo full screen`} onClick={() => setZoomOpen(true)}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m20 20-4.2-4.2M11 8.5v5M8.5 11h5" /></svg>
-                  </button>
-                )}
+                <ProductGallery
+                  images={images}
+                  index={photo}
+                  onIndex={setPhoto}
+                  name={name}
+                  product={product}
+                  thumbs={false}
+                  renderImage={(src) => <ProductImage product={product} src={src} alt={name} allowBrandLogo={product?.type === 'digital'} />}
+                  fallback={<ProductImage product={product} src={image} alt={name} allowBrandLogo={product?.type === 'digital'} />}
+                  zoomOpen={zoomOpen}
+                  onZoom={setZoomOpen}
+                />
               </div>
             </div>
             {badges.length > 0 && (
@@ -459,7 +459,6 @@ export default function ProductDetailScreen({
               </ul>
             )}
           </div>
-          {images.length > 1 && <div className="ay-pdp-thumbs ayq-apphero__thumbs"><GalleryThumbs images={images} index={photo} onSelect={setPhoto} name={name} /></div>}
         </div>
 
         <div className="ayq-sheet ay-pdp-title">
@@ -476,15 +475,11 @@ export default function ProductDetailScreen({
           </div>}
           <ul className="ay-pdp-why" aria-label="Why it is here">
             {matchPercent != null && <li><button type="button" className="ay-pdp-why__row is-match" onClick={openWhyMatch} aria-label={`${matchText(matchPercent)}${headLine ? `. ${headLine}` : ''}. See why`}><MatchPill percent={matchPercent} size="sm" /><span>{headLine || 'Why ayna picked this for you'}</span><span className="ay-pdp-why__go">See why</span></button></li>}
-            {evidence.level > 0 && <li><button type="button" className="ay-pdp-why__row ay-pdp-evline" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'literature' }))}>
-              <span className="ay-pdp-evline__bars" data-level={evidence.level} aria-hidden="true"><i /><i /><i /></span>
-              <span><b>{evidence.word}</b>{evidence.need && ` for ${evidence.need}`}</span>
-              <span className="sr-only">. See the evidence</span>
-            </button></li>}
             {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && quizAnswers && <li><button type="button" className="ay-pdp-why__row is-fit" onClick={openWhyMatch}><span>{matchDetails.matchStatus === 'excluded' ? (exclusions[0] || 'Not a fit right now') : 'No clear match'}</span><span className="ay-pdp-why__go">See why</span></button></li>}
             {matchDetails.matchStatus === 'no-profile' && <li><button type="button" className="ay-pdp-why__row is-fit" onClick={onStartQuiz}><span>See how it fits you</span><span className="ay-pdp-why__go">Get matched</span></button></li>}
           </ul>
           {buyBar}
+          {shopAction && <button type="button" className={`ay-pdp-ecolink${isInEcosystem ? ' is-on' : ''}`} aria-pressed={isInEcosystem} onClick={onAddToEcosystem}>{isInEcosystem ? 'In my ecosystem. Remove' : 'Add to my ecosystem'}</button>}
           {topWarning && <SafetyFlag text={topWarning} />}
           {!shopAction && <p className="ay-pdp-nolink">{storesOnFile.length ? `${product.type === 'digital' ? 'On' : 'Sold at'} ${andList(storesOnFile.slice(0, 4))}. We don’t have a direct link yet.` : 'We don’t have a store link for this yet.'}</p>}
           {variantLabels.length > 0 && (
@@ -522,7 +517,7 @@ export default function ProductDetailScreen({
             glance={glance}
             recall={recall}
             heroLine=""
-            sections
+            fitSlot={fitBlock}
             onOpenReview={onOpenReview}
             onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null}
             extraRows={[{ label: 'Sold by', value: buyUrl ? (/amazon\.|amzn\./i.test(buyUrl) ? 'Amazon' : (() => { try { return new URL(buyUrl).hostname.replace(/^www\./, ''); } catch { return ''; } })()) : '' }]}
@@ -579,7 +574,6 @@ export default function ProductDetailScreen({
         )}
         <LegalFooter />
       </div>
-      {zoomOpen && images.length > 0 && <ImageZoomViewer images={images} startIndex={Math.min(photo, images.length - 1)} name={name} onClose={() => setZoomOpen(false)} />}
     </div>
   );
 }

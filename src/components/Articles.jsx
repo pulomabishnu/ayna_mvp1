@@ -17,6 +17,7 @@ import { READ_SECTIONS } from '../data/readSections.js';
 
 /** Article id → topic-specific tags. Products must have at least one of these to appear under the article. No broad tags (e.g. discomfort), only tags that match the article heading. */
 import { ARTICLE_TOPIC_TAGS, FRUSTRATION_TO_TAG } from '../data/readPicks.js';
+import { ARTICLE_PRODUCTS, TAG_REASON, ROW_NOTES } from '../data/readLinks.js';
 export { ARTICLE_TOPIC_TAGS };
 
 /** Optional: article id → filter fn. Further narrows products to match article heading (e.g. intimate wash = only wash/cleanser products). */
@@ -85,55 +86,6 @@ function getRelevantTelehealth(articleId) {
  * Capped at MAX_ARTICLE_PRODUCTS.
  */
 const MAX_ARTICLE_PRODUCTS = 6;
-const TAG_REASON = {
-  'vaginal-health': 'Vaginal health',
-  'heavy-flow': 'Heavy flow',
-  anemia: 'Iron',
-  menopause: 'Menopause',
-  perimenopause: 'Perimenopause',
-  uti: 'UTI',
-  'uti-prevention': 'UTI',
-  'cramp-relief': 'Cramp relief',
-  cramps: 'Cramps',
-  pcos: 'PMOS',
-  irregular: 'Cycle tracking',
-  'pelvic-floor': 'Pelvic floor',
-  incontinence: 'Bladder leaks',
-  endometriosis: 'Endometriosis',
-  pms: 'PMS',
-  'mental-health': 'Mood support',
-  fibroids: 'Fibroids',
-  contraception: 'Contraception',
-};
-const ARTICLE_PRODUCTS = {
-  'intimate-wash': { tags: ['vaginal-health'], categories: ['intimate-care'], reason: 'External wash' },
-  'heavy-bleeding': { tags: ['heavy-flow', 'anemia'] },
-  'menopause-basics': { tags: ['menopause', 'perimenopause'], categories: ['menopause', 'telehealth', 'supplement', 'tracker', 'intimate-care', 'sleep'] },
-  'uti-prevention': { tags: ['uti', 'uti-prevention'], exclude: ['p-boric-acid'] },
-  'yeast-infection-basics': {
-    ids: { 'p-winx-vaginal-health-test-treat': 'pH test', 'p-probiotics-women': 'Vaginal flora', 'p-winx-vaginal-probiotic': 'Vaginal flora' },
-  },
-  'period-pain-when-to-seek-care': { tags: ['cramp-relief', 'cramps'] },
-  'pcos-basics': { tags: ['pcos', 'irregular'] },
-  'pelvic-floor-dysfunction': { ids: { 'p-intimate-rose': 'Dilators' }, tags: ['pelvic-floor', 'incontinence'] },
-  'endometriosis-basics': { tags: ['endometriosis', 'cramp-relief'] },
-  'bacterial-vaginosis': {
-    ids: {
-      'p-winx-vaginal-health-test-treat': 'pH test',
-      'p-boric-acid': 'Boric acid',
-      'p-neycher-odor-be-gone': 'Boric acid',
-      'p-queen-v-pop': 'Boric acid',
-      'p-probiotics-women': 'Probiotic',
-      'p-winx-vaginal-probiotic': 'Probiotic',
-    },
-  },
-  pmdd: { tags: ['pms', 'mental-health'] },
-  fibroids: { tags: ['fibroids', 'anemia', 'heavy-flow'] },
-  'iron-deficiency-anemia': { tags: ['anemia', 'heavy-flow'] },
-  'ovarian-cysts': { tags: ['cramp-relief'], reason: 'Pain relief' },
-  'hormonal-birth-control': { tags: ['contraception'] },
-};
-
 /** Up to 6 products for this article, each with a short "why". Profile matches go first within the same rank. */
 function getArticleProducts(articleId, quizResults = null, healthProfile = null) {
   const spec = ARTICLE_PRODUCTS[articleId];
@@ -165,19 +117,6 @@ function getArticleProducts(articleId, quizResults = null, healthProfile = null)
   return ranked.slice(0, MAX_ARTICLE_PRODUCTS);
 }
 
-// What to know before the product row, so it never contradicts the read above it.
-const ROW_NOTES = {
-  'intimate-wash': 'Most people don’t need a wash. If you use one, choose fragrance-free and outside use only.',
-  'yeast-infection-basics': 'The usual first step is an over-the-counter antifungal from a pharmacy. The products below are tests and support, not treatment.',
-  'bacterial-vaginosis': 'BV is treated with a prescription. The products below are tests and support, not treatment.',
-  'iron-deficiency-anemia': 'Check your iron levels with a blood test before you start a supplement.',
-  'uti-prevention': 'Evidence for these is mixed. Each card shows what research is linked.',
-  'ovarian-cysts': 'Most cysts need no treatment. Sudden, severe pain needs care right away.',
-  fibroids: 'Fibroids are diagnosed and treated by a clinician. These help with heavy bleeding in the meantime.',
-  'heavy-bleeding': 'Products can make heavy periods easier to manage. They don’t treat the cause, so check in with a clinician too.',
-  'pcos-basics': 'PMOS care is led by a clinician. These are tracking and support tools, not treatment.',
-  'menopause-basics': 'Talk to a clinician first about treatment options. The rest is support for common symptoms.',
-};
 const CARE_FIRST = new Set(['menopause-basics', 'pmdd', 'endometriosis-basics', 'fibroids', 'pcos-basics']);
 // Menopause rows keep to products made for it (no $2,000 mattress or gym creatine next to it).
 const MENOPAUSE_RE = /menopaus|perimenopaus|hot[- ]?flash|night sweat|vaginal dryness/i;
@@ -1342,6 +1281,15 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
         {/* Shopping sits outside the medical read, labelled as products. */}
         <div className="ay-container lb-products">
           <ArticleProducts articleId={selected.id} quizResults={quizResults} healthProfile={healthProfile} onOpenProduct={onOpenProduct} />
+          {/* Content connects to Ask (team direction 58): her questions about this read, answered in Ask ayna. */}
+          {onAsk && (
+            <section className="lb-ask" aria-labelledby="lb-ask-h">
+              <h2 id="lb-ask-h" className="lb-shelf__title">Questions about this?</h2>
+              <div className="lb-ask__row">
+                {[['Is this relevant to me?', 'Is this relevant to me?'], ['When should I see a clinician?', 'When should I see a clinician?'], ['Ask your own question', '']].map(([label, q]) => <button key={label} type="button" className="lb-btn lb-btn--small" onClick={() => onAsk(`About the read "${selected.title}": ${q}`)}>{label}</button>)}
+              </div>
+            </section>
+          )}
         </div>
       </section>
     );
