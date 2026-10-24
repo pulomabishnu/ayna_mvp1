@@ -68,19 +68,31 @@ export function whyClauses(details) {
 /** Lead phrase: "For your period cramps" / "Another option for your ...". */
 export function whyLead(details) {
   const first = String(reasonTexts(details)[0] || '');
-  const phrase = bestNeedMatch(details)?.phrase || '';
+  const phrase = needWords(details);
   const m = first.match(/^(Matches|A secondary option for) (?:the|your) (.+?)(?: you \w+| and .+)?$/i);
   const need = phrase || (m ? m[2] : '');
   if (!need) return '';
-  if (/^A secondary option/i.test(first)) return `Another option for your ${need}`;
+  const rel = bestNeedMatch(details)?.relationship;
+  if (/^A secondary option/i.test(first) || (!m && rel === 'secondary')) return `Another option for your ${need}`;
   if (/^Loosely related/i.test(first)) return `Loosely related to your ${need}`;
   return `For your ${need}`;
 }
 
-/** True when the engine scored this product as a match worth explaining. */
+/**
+ * True when the engine scored this product as a match worth explaining.
+ * 'restricted' (a safety detail is missing, e.g. her medicines) still gets a
+ * why line: the line says why it fits, the page's safety notes say what to
+ * check. Only excluded products get none.
+ */
 export function hasWhy(details) {
   return Boolean(details && details.matchStatus === 'scored' && details.eligible !== false
-    && details.eligibility !== 'restricted' && Number.isFinite(details.percent) && details.percent >= MIN_WHY_SCORE);
+    && details.eligibility !== 'excluded' && Number.isFinite(details.percent) && details.percent >= MIN_WHY_SCORE);
+}
+
+/** Her need in plain words from the engine's own need match (phrase, else label). */
+function needWords(details) {
+  const m = bestNeedMatch(details);
+  return String(m?.phrase || m?.label || '').trim();
 }
 
 /**

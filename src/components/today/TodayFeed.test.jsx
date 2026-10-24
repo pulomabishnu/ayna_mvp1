@@ -68,3 +68,35 @@ describe('Today with ayna', () => {
     expect(act1[1]).toEqual({ type: 'check_in', action: 'not_relevant' });
   });
 });
+
+describe('Save to your health profile (her tap only)', () => {
+  it('a quick answer stays on the device until she taps save', async () => {
+    const { writeToday } = await import('../../health/todayStore.js');
+    saveLogEntry(todayKey(), { pain: 0, flow: 'none', pms: 0, sleep: 2, mood: 2, skin: 2 });
+    writeToday('answers', { medications: 'none', handled: [] });
+    const onSave = vi.fn(async () => true);
+    const intake = { fullHealthIntake: { age: '27', lifeStageSelections: ['I get periods regularly'], lifeStage: 'I get periods regularly', takesCurrent: '' } };
+    render({ intake, onSaveToProfile: onSave });
+    expect(onSave).not.toHaveBeenCalled();
+    expect(host.textContent).toContain('You said you do not take regular medicines.');
+    await act(async () => { button('Save to your health profile').click(); });
+    expect(onSave).toHaveBeenCalledOnce();
+    expect(onSave.mock.calls[0][0]).toMatchObject({ takesCurrent: 'No' });
+    expect(host.textContent).toContain('Saved to your health profile.');
+  });
+  it('keep on this device: no save, prompt gone', async () => {
+    const { writeToday } = await import('../../health/todayStore.js');
+    writeToday('answers', { medications: 'none', handled: [] });
+    const onSave = vi.fn();
+    render({ intake: { fullHealthIntake: { takesCurrent: '' } }, onSaveToProfile: onSave });
+    act(() => button('Keep on this device').click());
+    expect(onSave).not.toHaveBeenCalled();
+    expect(host.textContent).not.toContain('You said you do not take regular medicines.');
+  });
+  it('signed out (no save handler): no prompt at all', async () => {
+    const { writeToday } = await import('../../health/todayStore.js');
+    writeToday('answers', { medications: 'none', handled: [] });
+    render();
+    expect(host.textContent).not.toContain('Save to your health profile');
+  });
+});

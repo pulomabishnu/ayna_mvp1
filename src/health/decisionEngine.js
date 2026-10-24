@@ -26,6 +26,7 @@
  *   profile    buildUserProfile() output (src/matching/userProfile.js)
  *   phase      estimatePhase() output (src/health/phase.js) or null
  *   cycleStarts  known period start days, if any
+ *   pregnancyStartDay  'YYYY-MM-DD' when known (cycle patterns before it are not shown)
  *   triage     her answers to today's symptom questions (see TRIAGE_FIELDS)
  *   redFlags   red-flag ids from src/data/matching/redFlags.research.json
  *   seen, dismissed   SeenMap / DismissedMap (markShown, dismiss)
@@ -488,10 +489,26 @@ function patternTitle(p) {
   return `${metric.label} is ${word} ${when}`;
 }
 
-function insightCandidates(patterns, removed) {
+/**
+ * Cycle patterns describe her periods. While she is pregnant they say nothing
+ * about now: a pattern observed before the pregnancy started is not shown,
+ * and when we don't know when it started, no cycle pattern is shown.
+ */
+export function patternBeforePregnancy(p, { pregnant, pregnancyStartDay = null } = {}) {
+  if (!pregnant) return false;
+  if (!pregnancyStartDay) return true;
+  const to = p?.observed?.to;
+  return !to || to < pregnancyStartDay;
+}
+
+function insightCandidates(patterns, removed, pregnancy = {}) {
   const out = [];
   for (const p of patterns) {
     if (!p?.id) continue;
+    if (patternBeforePregnancy(p, pregnancy)) {
+      removed.push({ id: `insight:${p.id}`, code: 'pregnancy_pattern', reason: pregnancy.pregnancyStartDay ? 'Observed before this pregnancy.' : 'Cycle patterns are not shown while pregnant when the start of the pregnancy is not known.' });
+      continue;
+    }
     if (!strongPattern(p)) { removed.push({ id: `insight:${p.id}`, code: 'weak_pattern', reason: 'Pattern seen in too few cycles to show.' }); continue; }
     const need = p.direction === 'easier' ? null : needForMetric(p.metric);
     const { cycles, of } = p.basis;
@@ -620,7 +637,7 @@ export function decide(state = {}) {
   const candidates = [
     ...careCandidates({ state, ctx, logs, today, tries, window }),
     ...followUpCandidates(tries, today, state.labels),
-    ...insightCandidates(patterns, removedOther),
+    ...insightCandidates(patterns, removedOther, { pregnant: isPregnant(ctx), pregnancyStartDay: state.pregnancyStartDay || null }),
   ];
   candidates.push(...optionCandidates({ needs, ctx, ready, intent: state.intent, products: state.products, removedBySafety, asks, triagePassed }));
 

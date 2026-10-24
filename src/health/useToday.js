@@ -18,6 +18,7 @@ import { syncUserData } from './userDataSync.js';
 import { readToday, setTodayOwner, writeToday } from './todayStore.js';
 import { buildTodayState, daysLogged } from './todayState.js';
 import { historyBucket, trackToday } from './todayAnalytics.js';
+import { ANSWER_FIELDS, patchIntakeWithTodayAnswer, saveOptionFor } from './todayProfilePatch.js';
 import { FOLLOW_UP_HOUR, localAt, scheduleTodayReminder, tonightAt } from './todayReminders.js';
 import { ALL_PRODUCTS, useCatalogReady } from '../data/catalog.js';
 
@@ -29,7 +30,7 @@ const REMIND_NOTE = {
   error: 'We could not set the reminder. Try again in a moment.',
 };
 
-export function useToday({ userId = null, intake = null, healthRows = [], cycle = null, hormonalBC = false, products = [], today: todayProp = null, fixture = null } = {}) {
+export function useToday({ userId = null, intake = null, healthRows = [], cycle = null, hormonalBC = false, products = [], today: todayProp = null, fixture = null, onSaveToProfile = null, onEditStep = null } = {}) {
   const today = todayProp || todayKey();
   const daily = useDailyLog(userId);
   const log = fixture?.log || daily.log;
@@ -97,8 +98,28 @@ export function useToday({ userId = null, intake = null, healthRows = [], cycle 
       action(item, 'answer');
     },
     answerSafety(item, field, value) {
-      put('answers', { ...store.answers, [field]: value, at: new Date().toISOString() });
+      // Device only until she taps "Save to your health profile" (pendingProfileSaves).
+      const opt = saveOptionFor(field, value);
+      const handled = (store.answers?.handled || []).filter((f) => f !== field);
+      put('answers', { ...store.answers, [field]: value, handled: opt ? handled : [...handled, field], at: new Date().toISOString() });
       action(item, 'answer');
+    },
+    async saveAnswerToProfile(field) {
+      const value = store.answers?.[field];
+      const opt = saveOptionFor(field, value);
+      if (!opt) return;
+      const markHandled = () => put('answers', { ...readToday().answers, handled: [...new Set([...(readToday().answers?.handled || []), field])] });
+      if (opt.kind === 'open_step') { markHandled(); onEditStep?.(opt.step); return; }
+      const snapshot = intake?.fullHealthIntake || intake;
+      const patched = patchIntakeWithTodayAnswer(snapshot, field, value);
+      if (!patched || !onSaveToProfile) { note(`save:${field}`, 'We could not save this to your profile. It stays on this device.'); return; }
+      const ok = await Promise.resolve(onSaveToProfile(patched)).catch(() => false);
+      if (ok === false) { note(`save:${field}`, 'We could not save this to your profile. It stays on this device.'); return; }
+      markHandled();
+      note('save:done', 'Saved to your health profile.');
+    },
+    keepOnDevice(field) {
+      put('answers', { ...store.answers, handled: [...new Set([...(store.answers?.handled || []), field])] });
     },
     recordOutcome(item, outcome) {
       const t = tries.find((x) => x.id === item.basis?.tryId);
@@ -132,8 +153,16 @@ export function useToday({ userId = null, intake = null, healthRows = [], cycle 
     opened(item) { action(item, 'open'); },
   };
 
+  // Today answers she has not yet saved or kept: offer "Save to your health profile".
+  const canSave = Boolean(onSaveToProfile || onEditStep);
+  const pendingProfileSaves = canSave ? ANSWER_FIELDS
+    .filter((f) => store.answers?.[f] != null && !(store.answers?.handled || []).includes(f))
+    .map((f) => ({ field: f, value: store.answers[f], ...saveOptionFor(f, store.answers[f]) }))
+    .filter((x) => x.kind && (x.kind === 'open_step' ? Boolean(onEditStep) : Boolean(onSaveToProfile && (intake?.fullHealthIntake || intake))))
+    : [];
+
   return {
-    today, decision, notes, intent, store,
+    today, decision, notes, intent, store, pendingProfileSaves,
     log, saveLog: daily.save, saveState: daily.saveState,
     remindedTonight: Boolean(store.reminders?.[today]?.tonight),
     ...api,
