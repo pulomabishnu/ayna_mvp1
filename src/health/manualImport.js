@@ -274,3 +274,27 @@ export function parseHealthFile({ name, type = '', text, declaredApp }) {
 export function categoriesFor(candidates) {
   return [...new Set(candidates.map((c) => METRICS[c.metric]?.category).filter(Boolean))];
 }
+
+/**
+ * What ayna found in a file, in words (team direction 44): one line per kind
+ * of data with how many days and the date range. Describes the file only;
+ * never interprets a value, never a diagnosis.
+ * @returns {Array<{ metric, label, days, from, to, line }>}
+ */
+export function foundSummary(rows) {
+  const fmt = (iso) => new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+  const by = new Map();
+  for (const r of rows || []) {
+    if (!METRICS[r?.metric] || !r.day) continue;
+    const g = by.get(r.metric) || { metric: r.metric, label: METRICS[r.metric].label, days: new Set() };
+    g.days.add(r.day);
+    by.set(r.metric, g);
+  }
+  return [...by.values()].map((g) => {
+    const days = [...g.days].sort();
+    const from = days[0]; const to = days[days.length - 1];
+    const n = days.length;
+    const range = from === to ? `on ${fmt(from)}` : `from ${fmt(from)} to ${fmt(to)}`;
+    return { metric: g.metric, label: g.label, days: n, from, to, line: `${g.label}: ${n} ${n === 1 ? 'day' : 'days'} ${range}` };
+  });
+}
