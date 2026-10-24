@@ -51,7 +51,8 @@ describe('heart insight', () => {
   it('says both when HRV is also down', () => {
     const it2 = heartInsight(res(rhr(62, 58), hrv(38, 46)), TODAY, lutealCtx);
     expect(it2.text).toMatch(/^Your resting heart rate is 4 bpm above your usual and your heart rate variability is 17% lower\. Both are common in the luteal phase/);
-    expect(it2.sources).toEqual(expect.arrayContaining([EVIDENCE.rhr, EVIDENCE.hrv]));
+    expect(it2.sources).toEqual(expect.arrayContaining([EVIDENCE.rhr]));
+    expect(it2.sources).not.toContain(EVIDENCE.hrv);
   });
   it('says the luteal phase starts soon when she is near ovulation', () => {
     const near = { cycleDay: 13, avgLength: 28, periodLength: 5, lastStart: iso(12) };

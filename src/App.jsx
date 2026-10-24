@@ -1229,6 +1229,10 @@ function App() {
       // Back to the shared answer she was on; the page sends the friend request.
       const pending = readPendingFriend();
       if (pending?.slug) openSharedAnswer(pending.slug);
+    } else if (pendingAction === 'stay') {
+      // Signed in from a page that needs an account (free product feedback and
+      // invites, You, Today, Health data): stay on it, so the thing she was
+      // doing still works (team direction 55). Nothing to navigate.
     } else if (pendingAction === 'delete-account') {
       // Returning from the Google re-confirmation redirect the delete-account
       // page kicks off before it lets someone delete a Google-linked account.
@@ -2257,10 +2261,10 @@ function App() {
       rundown={{ saved: Object.values(savedProducts || {}), onToggleSaved: toggleSavedProduct, onOpenRead: handleViewArticle, onExplore: () => handleViewDiscovery('') }}
       onOpenProduct={(p) => handleOpenProduct(p, { source: 'health_dashboard' })}
       onAsk={(q, extra) => openAsk(q, extra?.stats)}
-      onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+      onSignIn={() => { setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true); }}
       onOpenConnections={() => {
         if (user) { setCurrentView('health-data'); return; }
-        setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true);
+        setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true);
       }}
     />
   );
@@ -2370,7 +2374,7 @@ function App() {
                 <button
                   type="button"
                   className="ay-nav__login"
-                  onClick={() => { setShowAccountMenu(false); setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+                  onClick={() => { setShowAccountMenu(false); const next = ['welcome', 'hero'].includes(currentView) ? 'login' : 'stay'; setPendingAction(next); pendingActionRef.current = next; setShowAuthModal(true); }}
                   aria-label="Log in"
                 >
                   Log in
@@ -2390,7 +2394,7 @@ function App() {
               {showAccountMenu && !user && (
                 <div className="nav-account-menu" role="menu">
                   <button type="button" role="menuitem" onClick={() => { setShowAccountMenu(false); setCurrentView('quiz'); }}>Build your ecosystem</button>
-                  <button type="button" role="menuitem" onClick={() => { setShowAccountMenu(false); setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}>Log in</button>
+                  <button type="button" role="menuitem" onClick={() => { setShowAccountMenu(false); const next = ['welcome', 'hero'].includes(currentView) ? 'login' : 'stay'; setPendingAction(next); pendingActionRef.current = next; setShowAuthModal(true); }}>Log in</button>
                 </div>
               )}
             </div>
@@ -2516,7 +2520,7 @@ function App() {
               setCurrentView('community');
             }}
             onOpenArticle={(a) => { setSelectedArticleId(a.id); setCurrentView('articles'); }}
-            onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+            onSignIn={() => { setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true); }}
             user={user}
             quizResults={quizResults}
             myProducts={myProducts}
@@ -2660,7 +2664,7 @@ function App() {
             user={user}
             quizResults={quizResults}
             onBack={() => setCurrentView('you')}
-            onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+            onSignIn={() => { setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true); }}
             onEditProfile={() => setCurrentView(quizResults ? 'profile-edit' : 'quiz')}
           />
         )}
@@ -2675,7 +2679,7 @@ function App() {
             authLoading={authLoading}
             stage={currentView === 'free-product-reward' ? 'reward' : 'progress'}
             onNavigate={(view) => setCurrentView(view)}
-            onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+            onSignIn={() => { setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true); }}
             onStartQuiz={handleStartQuiz}
           />
         )}

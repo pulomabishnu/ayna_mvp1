@@ -697,6 +697,18 @@ function WelcomeBack({ heroBanner = null, user, myProducts, recommendedProductId
 /* ------------------------------------------------------------------ */
 
 function FirstVisitLanding({ heroBanner = null, onStartQuiz, onViewCommunity, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onViewHowItWorks, onViewDiscovery, onOpenProduct }) {
+  // Real community posts for the hero scatter and the community band (the same
+  // public feed guests can read in Community). None loaded: nothing is shown.
+  const [posts, setPosts] = useState([]);
+  useEffect(() => {
+    let live = true;
+    const supabase = getSupabaseClient();
+    if (!supabase) return undefined;
+    communityStore.listFeedPosts(supabase, { limit: 12, sort: 'helpful' }).then((rows) => {
+      if (live) setPosts((rows || []).filter((r) => String(r.body || '').trim().length >= 20).slice(0, 2));
+    }).catch(() => {});
+    return () => { live = false; };
+  }, []);
   return (
     <div className="mockup-landing mockup-landing--first">
       <LandingV2
@@ -711,6 +723,7 @@ function FirstVisitLanding({ heroBanner = null, onStartQuiz, onViewCommunity, on
         onViewHowItWorks={onViewHowItWorks}
         onSearch={(q) => onViewDiscovery?.(discoveryTargetFor(q))}
         heroBanner={heroBanner}
+        communityPosts={posts}
       />
     </div>
   );

@@ -102,3 +102,6 @@
 /* Dark mode keeps espresso text on the pink error fill (beats the dark consent-text rule in app-landing.css). */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-check-invalid .ay-auth-consent-text { color: #3e2723 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-auth-heard select.is-invalid { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233e2723' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); }
+/* Email code step (same 8-digit code as the website, src/utils/authCodes.js). */
+.ayna-mobile.ayna-mobile .ay-auth .ay-auth-code { display: grid; gap: 12px; width: 100%; max-width: 360px; margin: 0 auto 14px; }
+.ayna-mobile.ayna-mobile .ay-auth .ay-auth-code .ayna-fresh-auth-field { display: grid; gap: 2px; }

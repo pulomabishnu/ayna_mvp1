@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { getSupabaseClient, setRememberMe } from '../utils/supabaseClient';
+import { CODE_COPY, EMAIL_CODE_LENGTH, SMS_CODE_LENGTH, cleanCode, codeErrorText, isEmailNotConfirmed, verifyEmailCode } from '../utils/authCodes.js';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 import { CONSENT_VERSION, stashPendingConsent, stashPendingSignupMeta } from '../utils/pendingConsent.js';
 import { pendingReferralMeta } from '../utils/freeProductCampaign.js';
@@ -296,7 +297,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         } else {
           setEmailSignupStep('code');
           setEmailCode('');
-          setSuccessMsg(`We sent a verification code to ${cleanEmail}. Enter it below to finish creating your account.`);
+          setSuccessMsg(CODE_COPY.emailSent(cleanEmail));
           setNeedsConfirmation(true);
         }
       } else {
@@ -305,11 +306,11 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
           // Real, known failure mode (found live 2026-08-25): a user whose
           // email was never verified tries to sign in anyway. Offer the
           // verification code step right here instead of a dead-end error.
-          if (error.code === 'email_not_confirmed' || /email[_ ]not[_ ]confirmed|confirm your email|not verified/i.test(error.message || '')) {
+          if (isEmailNotConfirmed(error)) {
             setNeedsConfirmation(true);
             setEmailSignupStep('code');
             setEmailCode('');
-            setSuccessMsg('Your email still needs verification. Enter the code from your email below.');
+            setSuccessMsg(CODE_COPY.emailNotConfirmed);
           }
           throw error;
         }
@@ -335,7 +336,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         options: { emailRedirectTo: 'https://www.aynahealth.co/confirmed' },
       });
       if (error) throw error;
-      setResendMsg('New code sent. Check your inbox and spam folder.');
+      setResendMsg(CODE_COPY.resent);
     } catch (err) {
       setResendMsg(err.message || 'Could not resend right now. Try again in a moment.');
     } finally {
@@ -346,34 +347,22 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   const handleVerifyEmailOtp = async (e) => {
     e.preventDefault();
     if (!supabase || !email) return;
-    const token = emailCode.replace(/\D/g, '').slice(0, 8);
-    if (!/^\d{8}$/.test(token)) {
-      setError('Enter the 8-digit verification code from your email.');
+    if (cleanCode(emailCode, EMAIL_CODE_LENGTH).length !== EMAIL_CODE_LENGTH) {
+      setError(CODE_COPY.emailPrompt);
       return;
     }
     setError('');
     setSuccessMsg('');
     setLoading(true);
     try {
-      const { data, error } = await supabase.auth.verifyOtp({
-        email: email.trim().toLowerCase(),
-        token,
-        type: 'email',
-      });
-      if (error) throw error;
-      if (!data?.session) {
-        throw new Error('Your email was verified, but we could not start your session. Please sign in.');
-      }
+      // Same check, length and words as the app (src/utils/authCodes.js).
+      const data = await verifyEmailCode(supabase, email, emailCode);
       setNeedsConfirmation(false);
       setResendMsg('');
-      setSuccessMsg('Email verified. Signing you in...');
+      setSuccessMsg(CODE_COPY.verified);
       onAuthenticated?.(data.user || data.session.user, data.session);
     } catch (err) {
-      setError(
-        /expired|invalid|token/i.test(err?.message || '')
-          ? 'That code is invalid or expired. Request a new code and try again.'
-          : (err.message || 'Could not verify that code. Please try again.')
-      );
+      setError(err.message || CODE_COPY.wrongOrExpired);
     } finally {
       setLoading(false);
     }
@@ -434,7 +423,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
     try {
       const { data, error } = await supabase.auth.verifyOtp({
         phone: phoneNumber,
-        token: phoneCode.trim(),
+        token: cleanCode(phoneCode, SMS_CODE_LENGTH),
         type: 'sms',
       });
       if (error) throw error;
@@ -442,7 +431,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
       // only on onAuthStateChange could hang), the SIGNED_IN handler still runs.
       if (data?.session?.user) onAuthenticated?.(data.user || data.session.user, data.session);
     } catch (err) {
-      setError(err.message || 'That code is wrong or expired. Please try again.');
+      setError(codeErrorText(err));
     } finally {
       setLoading(false);
     }
@@ -781,13 +770,14 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
                 <input
                   type="text"
                   inputMode="numeric"
-                  placeholder="6-digit code"
+                  placeholder={CODE_COPY.smsPlaceholder}
+                  aria-label={CODE_COPY.smsPrompt}
                   value={phoneCode}
-                  onChange={(e) => setPhoneCode(e.target.value)}
+                  onChange={(e) => setPhoneCode(cleanCode(e.target.value, SMS_CODE_LENGTH))}
                   required
                   style={styles.input}
                   autoComplete="one-time-code"
-                  maxLength={6}
+                  maxLength={SMS_CODE_LENGTH}
                 />
                 <button
                   type="button"
@@ -809,12 +799,12 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
                   name="emailCode"
                   type="text"
                   inputMode="numeric"
-                  placeholder="8-digit code"
+                  placeholder={CODE_COPY.emailPlaceholder}
                   value={emailCode}
-                  onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                  onChange={(e) => setEmailCode(cleanCode(e.target.value, EMAIL_CODE_LENGTH))}
                   style={styles.input}
                   autoComplete="one-time-code"
-                  maxLength={8}
+                  maxLength={EMAIL_CODE_LENGTH}
                   autoFocus
                 />
               </Field>

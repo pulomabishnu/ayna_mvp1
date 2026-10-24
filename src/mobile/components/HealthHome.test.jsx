@@ -63,11 +63,14 @@ describe('health dashboard action flow', () => {
     // The week's changes keep explainWeek's own order (no hard-coded priority): pick Sleep.
     const sleepTab = [...host.querySelectorAll('.ay-hh-hero [role="tab"]')].find((b) => b.textContent === 'Sleep');
     if (sleepTab) act(() => sleepTab.click());
-    const open = [...host.querySelectorAll('button')].find((button) => button.textContent.includes('See what to do'));
+    const open = [...host.querySelectorAll('button')].find((button) => button.textContent.includes('What you can do and the data'));
     expect(open).toBeTruthy();
     act(() => open.click());
-    expect(host.textContent).toContain('What we noticed');
+    // What changed -> What it may affect -> What you can do -> See data.
+    expect(host.textContent).toContain('What it may affect');
     expect(host.textContent).toContain('What you can do');
+    expect(host.textContent).toContain('See data');
+    expect(host.querySelector('.ay-hh-action h3').textContent).not.toMatch(/\d/);
     expect(host.textContent).toContain('Your usual');
     expect(host.textContent).toContain('Your data came from');
     expect(host.querySelector('a[href="https://www.cdc.gov/heart-disease/about/sleep-and-heart-health.html"]')).toBeTruthy();

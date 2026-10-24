@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { CATEGORIES } from '../../../health/metrics.js';
 import {
-  HEALTH_SOURCES, SOURCE_GROUPS, apiSourceFor, availabilityFor, sourceById, statusLine,
+  HEALTH_SOURCES, SOURCE_GROUPS, apiSourceFor, availabilityFor, connectSteps, lastSyncedLine, providesFor, providesLine, sourceById, statusLine,
 } from '../../data/healthConnections.js';
 import {
   HealthApiError, connectDeviceSource, deleteAllHealthData, disconnectSource, pauseSource, requestSource, resumeSource,
@@ -59,7 +59,7 @@ function SourceList({ connections, records, onOpen, onOpenInsights, hasInsights,
   const anyMatch = HEALTH_SOURCES.some((src) => src.id !== 'request' && matches(src));
   return (
     <>
-      {!compact && <p className="ay-hc-intro">Bring your health data into ayna to sharpen your matches and see your trends. You choose what to share. Brands never see it.</p>}
+      {!compact && <p className="ay-hc-intro">Optional. Connect an app or wearable if you want ayna to personalize your insights and routine with it. Quick check-ins on Today work without it. You choose what to share, and brands never see it.</p>}
       {signedIn && !compact && <div className="ay-hc-matchpref"><HealthMatchToggle userId={userId} /></div>}
       {!signedIn && (
         <div className="ay-hc-note">Sign in to connect apps and upload data. <button type="button" className="ay-hc-link" onClick={onSignIn}>Sign in</button></div>
@@ -105,6 +105,7 @@ function SourceList({ connections, records, onOpen, onOpenInsights, hasInsights,
                   <span className="ay-hc-row-text">
                     <span className="ay-hc-row-title">{source.name}</span>
                     <span className={`ay-hc-row-sub is-${status?.tone || 'off'}`}>{sub}</span>
+                    {providesLine(source) && source.availability !== 'blocked' && <span className="ay-hc-row-provides">Can provide: {providesLine(source)}</span>}
                   </span>
                   {status?.tone === 'on' ? <span className="ay-hc-pill is-on">On</span> : source.availability === 'blocked' && !via ? <span className="ay-hc-row-end" aria-hidden="true" /> : <Chevron />}
                 </button>
@@ -155,11 +156,15 @@ function DeleteAll({ onRefresh }) {
 
 /* -------------------------------- Detail --------------------------------- */
 function CategoryToggles({ source, selected, onToggle, disabled }) {
+  // In the four groups she reads about (Sleep, Cycle and temperature, Activity,
+  // Heart rate and recovery); each switch is still one consent category.
+  const ordered = providesFor(source).flatMap((g) => g.cats.filter((c) => source.categories.includes(c)).map((id, i) => ({ id, group: i === 0 ? g.label : null })));
   return (
     <div className="ay-hc-card">
-      {source.categories.map((id) => (
+      {ordered.map(({ id, group }) => (
         <div key={id} className="ay-hc-row is-static">
           <span className="ay-hc-row-text">
+            {group && <span className="ay-hc-catgroup">{group}</span>}
             <span className="ay-hc-row-title">{CATEGORIES[id].label}</span>
             <span className="ay-hc-row-sub">{CATEGORIES[id].why}</span>
           </span>
@@ -179,20 +184,25 @@ function DisconnectChoice({ source, onCancel, onConfirm, busy }) {
       <div className="ay-hc-stack">
         <button type="button" className="ay-hc-ghost" onClick={() => onConfirm(false)} disabled={busy}>Disconnect only</button>
         <button type="button" className="ay-hc-danger is-solid" onClick={() => onConfirm(true)} disabled={busy}>Disconnect and delete my ayna data from {source.name}</button>
+        <p className="ay-hc-small">Deleting removes the days ayna saved from {source.name}. Insights and match changes built from them go too, because ayna works them out from those days each time.</p>
         <button type="button" className="ay-hc-link" onClick={onCancel} disabled={busy}>Keep connected</button>
       </div>
     </div>
   );
 }
 
-function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefresh }) {
+function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefresh, message = null, setMessage = () => {} }) {
   const isNative = Capacitor.isNativePlatform();
   const availability = availabilityFor(source, { isNative, nativePlatform: Capacitor.getPlatform() });
   const live = connection && connection.status !== 'disconnected';
   const [selected, setSelected] = useState(() => (live ? connection.categories : []));
   const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState(null);
+  // The success message lives in the parent: connecting reloads the connection,
+  // which remounts this view (see the key below). Kept here, the "Connected"
+  // line vanished the moment it appeared, so people tapped Connect again
+  // (the Apple Health retry friction from the focus group).
   const [error, setError] = useState(null);
+  const [denied, setDenied] = useState(false);
   const [confirming, setConfirming] = useState(null); // 'disconnect' | { remove: cat }
   const [storeState, setStoreState] = useState(null);
 
@@ -222,7 +232,7 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
   };
 
   const connect = async () => {
-    setBusy(true); setError(null); setMessage(null);
+    setBusy(true); setError(null); setMessage(null); setDenied(false);
     try {
       if (source.availability === 'oauth') {
         const { url } = await startOAuth(apiSource, selected, isNative ? 'app' : 'web');
@@ -244,7 +254,13 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
           } catch (err) { console.warn('[ayna health] failed', name, err?.message || err); throw Object.assign(err || new Error(name), { step: err?.step || name }); }
           finally { clearTimeout(timer); console.info('[ayna health] done', name); }
         };
-        await step('permission', requestHealthAccess(selected), 200000);
+        const access = await step('permission', requestHealthAccess(selected), 200000);
+        // Android says what was allowed. Nothing allowed: stop here, nothing saved, offer a retry.
+        if (Array.isArray(access?.granted) && access.granted.length === 0) {
+          setDenied(true);
+          setError(`${source.name} didn't give ayna access, so nothing was shared. That's fine: ayna works without it. You can try again, or allow it in Health Connect.`);
+          return;
+        }
         // Saving the connection: one automatic retry for a flaky network.
         try { await step('save_connection', connectDeviceSource(apiSource, selected, Capacitor.getPlatform()), 30000); }
         catch (first) {
@@ -257,7 +273,7 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
         step('refresh', refresh(), 30000)
           .then(() => step('sync', syncPhoneSource({ force: true }), 120000))
           .then((out) => {
-            if (out?.empty) setMessage(`Connected. No data came through yet. If you turned permissions off in the ${source.name} sheet, or there's no data for what you picked, ayna won't see anything. ${source.platform === 'ios' ? 'You can change this in the Health app under your picture, Privacy, Apps, ayna.' : ''}`);
+            if (out?.empty) { setDenied(true); setMessage(`Connected, but no data came through yet. Either access was turned off in the ${source.name} sheet or there is no data yet for what you picked. ${source.platform === 'ios' ? 'To check, open the Health app, tap your picture, then Privacy, Apps, ayna, and turn on what you want. Then tap Check again.' : 'To check, open Health Connect, App permissions, ayna. Then tap Check again.'}`); }
             else if (out && !out.skipped) setMessage('Connected and synced. Your trends show on the Dashboard tab of your ecosystem.');
             return refresh();
           })
@@ -278,7 +294,8 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
     setBusy(true); setError(null);
     try {
       const out = source.availability === 'device' ? await syncPhoneSource({ force: true }) : await syncCloudSource(apiSource, { force: true });
-      setMessage(out?.empty ? 'Synced. Nothing new came through.' : 'Synced.');
+      setMessage(out?.empty ? 'Synced. Nothing new came through.' : 'Synced. Your insights use the new data.');
+      if (!out?.empty) setDenied(false);
     } catch (e) { setError(errorText(e)); } finally { setBusy(false); }
   };
 
@@ -306,7 +323,7 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
         <Icon name={source.icon} lg />
         <div>
           <h2>{source.name}</h2>
-          <p>{live ? status?.text : source.kind}</p>
+          <p>{live ? (connection.status === 'active' || !connection.status ? `Connected · ${lastSyncedLine(connection.last_synced_at)}` : status?.text) : source.kind}</p>
         </div>
       </div>
 
@@ -316,13 +333,15 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
       {connection?.status === 'error' && <p className="ay-hc-note is-alert">The last sync failed. Try Sync now; if it keeps failing, reconnect.</p>}
 
       <div className="ay-hc-facts">
+        {providesLine(source) && <p><b>Can provide.</b> {providesLine(source)}.</p>}
         <p><b>What ayna reads.</b> {source.reads}</p>
         <p><b>What ayna never reads.</b> {source.never}</p>
         {source.note && <p className="ay-hc-small">{source.note}</p>}
       </div>
 
       <section className="ay-hc-group is-peri" aria-label="What to share">
-        <h2>{live ? 'You share' : 'Choose what to share'}</h2>
+        <h2>{live ? 'You share' : 'Choose what ayna can use'}</h2>
+        <p className="ay-hc-usedfor">Used to personalize your insights and routine. Turn on only what you want. You can change this any time.</p>
         <CategoryToggles source={source} selected={selected} onToggle={toggle} disabled={busy || !availability.ok} />
       </section>
 
@@ -336,24 +355,33 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
         </div>
       )}
 
+      {!live && availability.ok && connectSteps(source).length > 0 && (
+        <div className="ay-hc-facts">
+          <p><b>How connecting works</b></p>
+          <ol className="ay-hc-steps">{connectSteps(source).map((t) => <li key={t}>{t}</li>)}</ol>
+          <p className="ay-hc-small">If you change your mind, nothing breaks. Disconnect any time, and choose whether ayna keeps or deletes what it has.</p>
+        </div>
+      )}
+
       {!live && availability.ok && (
         <>
           <p className="ay-hc-consent">
             {selected.length
-              ? `ayna will collect ${selected.map((c) => CATEGORIES[c].label.toLowerCase()).join(', ')} from ${source.name} to personalize your matches and show your trends. Not used for ads, not shared with brands. You can stop or delete it any time.`
+              ? `ayna will collect ${selected.map((c) => CATEGORIES[c].label.toLowerCase()).join(', ')} from ${source.name} to personalize your insights, routine and matches. Not used for ads, not shared with brands. You can stop or delete it any time.`
               : 'Turn on at least one to connect. Nothing is collected until you do.'}
           </p>
           {signedIn
-            ? <button type="button" className="ay-hc-primary" disabled={!canConnect || busy} onClick={connect}>{busy ? 'Connecting…' : `Connect ${source.name}`}</button>
+            ? <button type="button" className="ay-hc-primary" disabled={!canConnect || busy} onClick={connect}>{busy ? 'Connecting…' : error ? 'Try again' : `Connect ${source.name}`}</button>
             : <button type="button" className="ay-hc-primary" onClick={onSignIn}>Sign in to connect</button>}
         </>
       )}
 
       {live && (
         <div className="ay-hc-stack">
-          {connection.status !== 'paused' && <button type="button" className="ay-hc-primary" onClick={syncNow} disabled={busy}>{busy ? 'Working…' : 'Sync now'}</button>}
+          {connection.status !== 'paused' && <button type="button" className="ay-hc-primary" onClick={syncNow} disabled={busy}>{busy ? 'Working…' : denied ? 'Check again' : 'Sync now'}</button>}
           {connection.status === 'needs_reauth' && source.availability === 'oauth' && <button type="button" className="ay-hc-primary" onClick={connect} disabled={busy}>Reconnect {source.name}</button>}
           {source.availability === 'device' && Capacitor.getPlatform() === 'android' && <button type="button" className="ay-hc-ghost" onClick={() => openHealthPermissions()}>Manage permissions in Health Connect</button>}
+          {source.availability === 'device' && Capacitor.getPlatform() === 'ios' && denied && <p className="ay-hc-small">iOS has no direct link to these settings. In the Health app: your picture, Privacy, Apps, ayna.</p>}
           <button type="button" className="ay-hc-ghost" onClick={pauseResume} disabled={busy}>{connection.status === 'paused' ? 'Resume syncing' : 'Pause syncing'}</button>
           {confirming === 'disconnect'
             ? <DisconnectChoice source={source} busy={busy} onCancel={() => setConfirming(null)} onConfirm={disconnect} />
@@ -361,6 +389,7 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
         </div>
       )}
 
+      {!live && denied && source.availability === 'device' && Capacitor.getPlatform() === 'android' && <button type="button" className="ay-hc-ghost" onClick={() => openHealthPermissions()}>Open Health Connect permissions</button>}
       {message && <p className="ay-hc-done" role="status">{message}</p>}
       {error && <p className="ay-hc-error" role="alert">{error}</p>}
     </div>
@@ -444,6 +473,7 @@ function RequestSource({ signedIn, onSignIn, presetName = '' }) {
 export default function HealthConnectionsScreen({ selectedId, onSelect, onBack, authUser, onSignIn, onOpenInsights, compact = false }) {
   const health = useHealthData(authUser?.id || null);
   const [flash] = useState(takeHealthFlash);
+  const [notice, setNotice] = useState(null); // { sourceId, text }: survives SourceDetail remounts
   const [baseId, preset] = String(selectedId || '').split(':');
   const source = useMemo(() => (baseId ? sourceById(baseId) : null), [baseId]);
   const signedIn = Boolean(authUser?.id);
@@ -486,6 +516,8 @@ export default function HealthConnectionsScreen({ selectedId, onSelect, onBack, 
       onSignIn={onSignIn}
       onDone={done}
       onRefresh={health.refresh}
+      message={notice?.sourceId === source.id ? notice.text : null}
+      setMessage={(text) => setNotice(text ? { sourceId: source.id, text } : null)}
     />
   );
 }

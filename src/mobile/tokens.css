@@ -3,7 +3,7 @@
    aliased here so every screen draws from the same palette. */
 .ayna-mobile {
   --ay-ink: #3e2723;
-  --ay-ink-soft: rgba(62, 39, 35, .62);
+  --ay-ink-soft: rgba(62, 39, 35, .78); /* .62 was 3.9:1 on butter; .78 is 6.2:1 (team direction 52) */
   --ay-ink-faint: rgba(62, 39, 35, .16);
   --ay-paper: #ffffff;
   --ay-cream: #ffedac;

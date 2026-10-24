@@ -31,7 +31,7 @@ export const takeHealthFlash = () => { const m = flash; flash = null; return m; 
 
 const RETURN_TEXT = {
   connected: (n) => `${n} connected. Your data is syncing.`,
-  declined: (n) => `${n} wasn't connected. Nothing was shared.`,
+  declined: (n) => `${n} wasn't connected, so nothing was shared. That's fine: ayna works without it, and you can try again any time.`,
   expired: () => 'That took too long. Try connecting again.',
   invalid_state: () => "That connection link wasn't valid. Try again from Health data.",
   failed: (n) => `${n} couldn't be connected. Try again.`,

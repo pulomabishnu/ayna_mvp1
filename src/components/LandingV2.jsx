@@ -31,9 +31,15 @@ import { edgeFadeRef } from '../utils/edgeFade';
  * band), Feel Fits (checkerboard), Glossier (stat callouts beside a photo),
  * "Academy" (colourful read covers with a scalloped edge), Samba (taped photo).
  *
- * Order:  hero → brand ribbon (attached) → shop by need (pink) → does this
- *         sound familiar → how it works (espresso) → evidence in numbers →
- *         reads → community (pink) → founders → invest (sky, last).
+ * Order (team direction 48, Oct 24): hero (one CTA, search as the value
+ *         proposition, a moving scatter of real products, real ayna UI and
+ *         real community posts) → brand ribbon → product examples (shop by
+ *         need, sound familiar) → personalization (how it works, as UI) →
+ *         community → evidence and trust (numbers, reads, founders) → the one
+ *         clear CTA → invest (sky, last).
+ * Imagery (team direction 49-50): generic mood-board photos were replaced
+ * by real product photos and real UI wherever one could do the job; the
+ * slots that still want real ayna photography are listed in the report.
  * Members get the same page with their name, their dashboard row and their picks.
  * Nothing on the page is sticky; the ribbon is the one moving row and follows
  * hover, focus, the footer's Pause motion and reduced motion. */
@@ -82,7 +88,7 @@ function Search({ onSearch }) {
   );
 }
 
-function Hero({ onStartQuiz, onSearch, personal = null, banner = null }) {
+function Hero({ onStartQuiz, onSearch, personal = null, banner = null, posts = [] }) {
   const cta = personal && (personal.ecoCount > 0 || personal.hasQuiz)
     ? <Go className="ay-btn ay-btn--primary" href="/ecosystem" onGo={personal.onOpenEcosystem}>Open my ecosystem<Arrow /></Go>
     : banner || <Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>See my matches<Arrow /></Go>;
@@ -94,19 +100,51 @@ function Hero({ onStartQuiz, onSearch, personal = null, banner = null }) {
             <h1 id="hm-hero-title" className="ed-display hm-display hm-display--personal">Welcome back, <span className="hm-swipe">{personal.name}</span>.</h1>
             <p className="hm-lead">{personal.ecoCount > 0 ? `${personal.ecoCount} product${personal.ecoCount === 1 ? '' : 's'} in your ecosystem.` : 'Health products matched to your body.'}</p>
           </> : <>
-            <h1 id="hm-hero-title" className="ed-display hm-display">Build your <span className="hm-swipe">ecosystem</span>.</h1>
-            <p className="hm-lead">Health products matched to your body.</p>
+            <h1 id="hm-hero-title" className="ed-display hm-display">Health products <span className="hm-swipe">matched</span> to you.</h1>
+            <p className="hm-lead">Search what you need, or answer six questions. ayna shows what fits your body and life stage, with the evidence beside each product.</p>
           </>}
           <div className="hm-hero__actions">{cta}</div>
           <Search onSearch={onSearch} />
         </div>
-        <div className="hm-hero__art">
-          <span className="hm-hero__main"><Photo src="/landing/pink-stripe-floor.webp" alt="A woman sitting on a pink striped bathroom floor, her products spread around her" sizes="(max-width: 767px) 68vw, (max-width: 1279px) 40vw, 460px" fetchPriority="high" /></span>
-          <span className="hm-hero__card"><Photo src="/landing/robe-kiss.webp" alt="A woman in a striped robe blowing a kiss to the mirror light" sizes="(max-width: 767px) 36vw, 240px" loading="lazy" /></span>
-          <Seal className="hm-hero__seal" />
-        </div>
+        <HeroScatter posts={posts} />
       </div>
     </section>
+  );
+}
+
+/* ---------- hero visual: a slow scatter of real things from ayna ----------
+   Real catalog photos (this week's picks), two pieces of real ayna UI (the
+   evidence meter and the matched-to-you seal), and real community posts when
+   there are any. No stock photo, no invented quote, no invented number.
+   Movement is a slow drift (home.css), off under reduced motion and Pause. */
+function HeroScatter({ posts = [] }) {
+  const ready = useCatalogReady();
+  const products = useMemo(() => (ready ? weeklyLineup().slice(0, 5) : []), [ready]);
+  const post = posts.find((x) => String(x?.body || '').trim().length >= 20) || null;
+  const who = post ? (post.is_anonymous || !post.author_id ? 'Anonymous' : post.author_display_name || post.author_username || 'Community member') : '';
+  const body = post ? String(post.body).trim() : '';
+  return (
+    <div className="hm-hero__art hm-scatter" role="img" aria-label="Real products from the ayna shop, an evidence rating and a post from the ayna community">
+      {products.length
+        ? products.map((p, i) => (
+          <span key={p.id} className={`hm-scatter__item hm-scatter__prod is-${i + 1}`} aria-hidden="true">
+            <img src={p.image} alt="" loading={i < 2 ? 'eager' : 'lazy'} decoding="async" />
+          </span>
+        ))
+        : [1, 2, 3].map((i) => <span key={i} className={`hm-scatter__item hm-scatter__prod is-${i} is-skel`} aria-hidden="true" />)}
+      <span className="hm-scatter__item hm-scatter__ui is-evidence" aria-hidden="true">
+        <small>Evidence</small>
+        <span className="ay-meter" data-level="3"><span className="ay-meter__word">Strong evidence</span><span className="ay-meter__bars">{[1, 2, 3].map((b) => <i key={b} />)}</span></span>
+        <span className="hm-scatter__note">Research on the product itself</span>
+      </span>
+      {post && (
+        <span className="hm-scatter__item hm-scatter__ui is-post" aria-hidden="true">
+          <small>{post.kind === 'question' ? 'Question' : post.kind === 'review' ? 'Review' : 'Post'} from {who}</small>
+          <span className="hm-scatter__body">{body.length > 110 ? `${body.slice(0, 107).trim()}…` : body}</span>
+        </span>
+      )}
+      <Seal className="hm-hero__seal hm-scatter__seal" />
+    </div>
   );
 }
 
@@ -173,7 +211,6 @@ function ShopBand({ onOpenProduct, onViewDiscovery, picks = null }) {
       <div className="hm-wrap">
         <header className="hm-head">
           <h2 id="hm-shop-title" className="hm-h2">Shop by need</h2>
-          <Go className="ay-btn ay-btn--text hm-head__all" href="/shop" onGo={() => onViewDiscovery?.('')}><span className="hm-head__long">Browse the whole Shop</span><span className="hm-head__short">See all<span className="ed-sr"> products in the Shop</span></span><Arrow /></Go>
         </header>
         <div className="hm-chips" role="group" aria-label="Choose picks or a need" ref={edgeFadeRef}>
           {need ? tabs.map((n) => (<button key={n.id} type="button" className="ay-chip" aria-pressed={n.id === need.id} onClick={() => setId(n.id)}>{n.label}{!n.picks && <span className="ay-chip__count"><span className="ed-sr">, </span>{n.pool.length}<span className="ed-sr"> products</span></span>}</button>))
@@ -198,13 +235,23 @@ function ShopBand({ onOpenProduct, onViewDiscovery, picks = null }) {
    and "See what helps" (searches the Shop for it). Each quote is a common need
    from the quiz (WebIntake.jsx COMMON_NEEDS). These are prompts, not
    testimonials. Rows, not a checkerboard (master prompt 154: no bento). */
+// Each need shows a real product for it from the catalog (was a mood-board photo).
 const FAMILIAR = [
-  { q: 'My cramps knock me out every month.', need: 'Cramps or period pain', photo: '/landing/pajamas-overhead.webp', alt: 'A woman in red striped pajamas on the phone, from above' },
-  { q: 'I bleed through everything.', need: 'Heavy periods', photo: '/landing/sink-flatlay.webp', alt: 'A sink full of brushes, makeup and hair tools, from above' },
-  { q: 'I leak a little when I sneeze.', need: 'Bladder leakage or incontinence', photo: '/landing/curlers-call.webp', alt: 'A woman in hair curlers on a phone call' },
-  { q: 'Things feel dry down there.', need: 'Vaginal dryness', photo: '/landing/robe-vanity.webp', alt: 'A woman in a white robe at a marble vanity in a pink room' },
+  { q: 'My cramps knock me out every month.', need: 'Cramps or period pain', match: /cramp|period pain|menstrual pain|dysmenorr|heat/i },
+  { q: 'I bleed through everything.', need: 'Heavy periods', match: /heavy|period underwear|overnight pad|super/i },
+  { q: 'I leak a little when I sneeze.', need: 'Bladder leakage or incontinence', match: /bladder|incontinen|leak|pelvic floor/i },
+  { q: 'Things feel dry down there.', need: 'Vaginal dryness', match: /dryness|lubric|moistur|vaginal dry/i },
 ];
+function productFor(t, taken) {
+  const text = (p) => `${p.name || ''} ${p.category || ''} ${(p.healthFunctions || []).join(' ')} ${(p.tags || []).join(' ')}`;
+  return ALL_PRODUCTS.find((p) => p?.image && NEEDS_PHOTO(p) && !taken.has(p.id) && t.match.test(text(p)) && !/\banal\b|vibrator|dildo/i.test(String(p.name || ''))) || null;
+}
 function Familiar({ onSearch }) {
+  const ready = useCatalogReady();
+  const rows = useMemo(() => {
+    const taken = new Set();
+    return FAMILIAR.map((t) => { const p = ready ? productFor(t, taken) : null; if (p) taken.add(p.id); return { ...t, product: p }; });
+  }, [ready]);
   return (
     <section className="hm-sec hm-familiar" aria-labelledby="hm-familiar-title">
       <div className="hm-wrap">
@@ -212,10 +259,10 @@ function Familiar({ onSearch }) {
           <h2 id="hm-familiar-title" className="hm-h2">Does this sound familiar?</h2>
         </header>
         <ul className="hm-needs">
-          {FAMILIAR.map((t) => (
+          {rows.map((t) => (
             <li key={t.q}>
               <a className="hm-needs__row" href={`/shop?q=${encodeURIComponent(t.need)}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onSearch?.(t.need); }}>
-                <span className="hm-needs__ph"><Photo src={t.photo} alt={t.alt} sizes="96px" loading="lazy" /></span>
+                <span className="hm-needs__ph is-product">{t.product ? <img src={t.product.image} alt="" loading="lazy" decoding="async" /> : null}</span>
                 <span className="hm-needs__quote">“{t.q}”</span>
                 <span className="hm-needs__go">See what helps <Arrow /></span>
               </a>
@@ -228,24 +275,36 @@ function Familiar({ onSearch }) {
 }
 
 /* ---------- how it works: huge coloured numerals, a real photo per step ---------- */
+// Each step shows the real piece of ayna it describes (was a mood-board photo).
 const STEPS = [
-  { t: 'Answer six questions', d: 'About your body and what you avoid.', src: '/landing/hiw-questions-cabinet.webp', alt: 'A woman in a white robe reaching into her bathroom cabinet', pos: '50% 35%' },
-  { t: 'We check the evidence', d: 'Across products, apps and care.', src: '/landing/hiw-evidence-reading.webp', alt: 'Two friends in glasses reading a book together in front of bookshelves', pos: '50% 40%' },
-  { t: 'Get your ecosystem', d: 'Ranked for you.', src: '/landing/hiw-ecosystem-cabinet.webp', alt: 'A medicine cabinet with shelves full of skincare and beauty products', pos: '50% 50%' },
-  { t: 'You decide', d: 'Nothing is bought until you say so.', src: '/landing/hiw-decide-basket.webp', alt: 'Looking down at a red shopping basket of products between two sneakers', pos: '50% 45%' },
+  { t: 'Answer six questions', d: 'About your body, your life stage and what you avoid.', ui: 'quiz' },
+  { t: 'We check the evidence', d: 'Across products, apps and care.', ui: 'evidence' },
+  { t: 'Get matches that fit you', d: 'Ranked for you, each with a plain reason.', ui: 'matches' },
+  { t: 'You decide', d: 'Nothing is bought until you say so.', ui: 'decide' },
 ];
-function How({ onViewHowItWorks, onStartQuiz, onViewDiscovery, showStart = true }) {
+// Real life-stage options from the quiz (intakeModel LIFE_STAGE_LABELS), so the first step shows who ayna is for.
+const STAGE_CHIPS = ['Regular periods', 'Trying to conceive', 'Postpartum', 'Perimenopause', 'Post-menopause'];
+function StepUI({ kind, products }) {
+  if (kind === 'quiz') return <span className="hm-stepui is-quiz" aria-hidden="true"><small>Your life stage</small>{STAGE_CHIPS.map((c, i) => <span key={c} className={`ay-chip${i === 3 ? ' is-on' : ''}`}>{c}</span>)}</span>;
+  if (kind === 'evidence') return <span className="hm-stepui is-evidence" aria-hidden="true">{LEVELS.map((l) => <span key={l.n} className="ay-meter" data-level={l.n}><span className="ay-meter__word">{l.word}</span><span className="ay-meter__bars">{[1, 2, 3].map((b) => <i key={b} />)}</span></span>)}</span>;
+  if (kind === 'matches') return <span className="hm-stepui is-matches" aria-hidden="true">{products.slice(0, 3).map((p) => <span key={p.id} className="hm-stepui__prod"><img src={p.image} alt="" loading="lazy" decoding="async" /></span>)}</span>;
+  return <span className="hm-stepui is-decide" aria-hidden="true"><span className="hm-stepui__btn">Save</span><span className="hm-stepui__btn is-quiet">Compare</span><small>Buy only when you choose</small></span>;
+}
+function How({ onViewHowItWorks }) {
+  const ready = useCatalogReady();
+  // Three real products not already in the hero (the start of the list when the week is short).
+  const products = useMemo(() => { if (!ready) return []; const all = weeklyLineup(); return (all.length >= 8 ? all.slice(5, 8) : all.slice(0, 3)); }, [ready]);
   return (
     <section className="hm-sec hm-how ay-band ay-band--espresso ay-band--scallop" aria-labelledby="hm-how-title">
       <div className="hm-wrap">
         <header className="hm-head">
-          <h2 id="hm-how-title" className="hm-h2">How it works</h2>
+          <h2 id="hm-how-title" className="hm-h2">How ayna fits it to you</h2>
           <Go className="ay-btn ay-btn--text hm-head__all" href="/how-it-works" onGo={onViewHowItWorks}><span className="hm-head__long">The full method</span><span className="hm-head__short">See all<span className="ed-sr"> of the method</span></span><Arrow /></Go>
         </header>
         <ol className="hm-steps">
           {STEPS.map((st, i) => (
             <li key={st.t} className="hm-step">
-              <span className="hm-step__ph"><Photo src={st.src} alt={st.alt} sizes="(max-width: 767px) 34vw, 280px" style={{ objectPosition: st.pos }} loading="lazy" /></span>
+              <span className="hm-step__ph is-ui"><StepUI kind={st.ui} products={products} /></span>
               <span className="hm-step__n" aria-hidden="true">{i + 1}</span>
               <div className="hm-step__text">
                 <h3 className="hm-h3"><span className="ed-sr">Step {i + 1}: </span>{st.t}</h3>
@@ -254,19 +313,26 @@ function How({ onViewHowItWorks, onStartQuiz, onViewDiscovery, showStart = true 
             </li>
           ))}
         </ol>
-        {showStart && (
-          <div className="hm-start" aria-labelledby="hm-start-title" role="region">
-            <span className="hm-tab" aria-hidden="true">Start here</span>
-            <div>
-              <h2 id="hm-start-title" className="hm-h2">Start with six questions.</h2>
-              <p className="hm-lead">Then a shop matched to you.</p>
-            </div>
-            <div className="hm-start__cta">
-              <Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>See my matches<Arrow /></Go>
-              <Go className="ay-btn ay-btn--text" href="/shop" onGo={() => onViewDiscovery?.('')}>Browse the Shop</Go>
-            </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- the one clear call to action, near the end ---------- */
+function Start({ onStartQuiz }) {
+  return (
+    <section className="hm-sec hm-startsec" aria-labelledby="hm-start-title">
+      <div className="hm-wrap">
+        <div className="hm-start">
+          <span className="hm-tab" aria-hidden="true">Start here</span>
+          <div>
+            <h2 id="hm-start-title" className="hm-h2">Start with six questions.</h2>
+            <p className="hm-lead">Then see what fits you, with the evidence beside it.</p>
           </div>
-        )}
+          <div className="hm-start__cta">
+            <Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>See my matches<Arrow /></Go>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -322,7 +388,6 @@ function Evidence({ onViewArticles }) {
           </dl>
         </div>
         <div className="hm-ev__side">
-          <span className="hm-ev__ph"><Photo src="/landing/blue-sink.webp" alt="A woman in pink getting ready at a sink full of products, against a bright blue wall" sizes="(max-width: 767px) 92vw, 460px" loading="lazy" /></span>
           <ul className="hm-levels" aria-label="The three evidence levels">
             {LEVELS.map((l) => (
               <li key={l.n}>
@@ -392,17 +457,15 @@ function Community({ onViewCommunity, posts = [] }) {
   const news = useLatestAnnouncement();
   return (
     <section className="hm-sec hm-comm ay-band ay-band--pink ay-band--scallop" aria-labelledby="hm-comm-title">
-      <div className="hm-wrap hm-comm__grid">
-        <span className="hm-comm__ph"><Photo sizes="(max-width: 767px) 92vw, 520px" src="/landing/story-reviews-phones.webp" alt="Friends in a circle looking down at their phones, blue sky above" loading="lazy" /></span>
+      <div className="hm-wrap hm-comm__grid is-nophoto">
         <div className="hm-comm__copy">
           <h2 id="hm-comm-title" className="hm-h2 hm-h2--big">Real talk about what women actually use.</h2>
           <p className="hm-body">Reviews, questions and routines from women who use these products. Ask a question, review what you use or share a playlist.</p>
-          <Go className="ay-btn ay-btn--primary" href="/community" onGo={onViewCommunity}>Read reviews<Arrow /></Go>
           <article className="hm-news" aria-labelledby="hm-news-title">
             <span className="hm-tab hm-news__label">ayna news</span>
             <h3 id="hm-news-title" className="hm-h3">{news ? news.title : 'ayna Community is open.'}</h3>
             <p>{news ? news.body : 'Ask questions, review what you use and share playlists with women who get it.'}</p>
-            <Go className="ay-btn ay-btn--text" href="/community" onGo={onViewCommunity}>{news ? 'Read it in Community' : 'See Community'}<Arrow /></Go>
+            <Go className="ay-btn ay-btn--secondary" href="/community" onGo={onViewCommunity}>{news ? 'Read it in Community' : 'Read reviews and questions'}<Arrow /></Go>
           </article>
           {posts.length > 0 && (
             <ul className="hm-posts" aria-label="From the Powder Room">
@@ -452,16 +515,15 @@ function Us({ onViewAbout }) {
 function Invest() {
   return (
     <section className="hm-invest ay-band ay-band--sky ay-band--scallop" aria-labelledby="hm-invest-title">
-      <div className="hm-invest__grid">
+      <div className="hm-invest__grid is-nophoto">
         <div className="hm-invest__copy">
           <h2 id="hm-invest-title" className="hm-h2 hm-h2--big">Invest in ayna</h2>
           <p className="hm-body">We&rsquo;re so excited to extend an opportunity for you to invest in ayna, whether you&rsquo;re one of our earliest ayna users or a part of the greater community passionate about ayna&rsquo;s work to expand the future of women&rsquo;s health. Join our community round and learn more on Wefunder.</p>
-          <a className="ay-btn ay-btn--primary" href={WEFUNDER_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackInvestClick('landing')}>
+          <a className="ay-btn ay-btn--secondary" href={WEFUNDER_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackInvestClick('landing')}>
             Invest on Wefunder<span className="ed-sr"> (opens in a new tab)</span><Arrow />
           </a>
           <p className="hm-invest__legal">{TESTING_WATERS_NOTICE}</p>
         </div>
-        <span className="hm-invest__ph"><Photo sizes="(max-width: 767px) 100vw, 50vw" src="/landing/laundry-duo.webp" alt="Two friends in curlers reading magazines together on a laundry room floor" loading="lazy" width="736" height="981" /></span>
       </div>
     </section>
   );
@@ -476,17 +538,18 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
   const rest = useAfterHeroPaint();
   return (
     <div className={`ed ed-home hm${paused ? ' is-paused' : ''}`}>
-      <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} personal={personal} banner={heroBanner} />
+      <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} personal={personal} banner={heroBanner} posts={communityPosts} />
       {personal?.dashboard ? <div className="hm-slot">{personalSlot}</div> : <Brands onViewWaitlist={onViewWaitlist} />}
       {!personal?.dashboard && personalSlot && <div className="hm-slot">{personalSlot}</div>}
       <ShopBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={personal?.topPicks || null} />
       {rest && <>
       {!personal && <Familiar onSearch={onSearch} />}
-      <How onViewHowItWorks={onViewHowItWorks} onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} showStart={!(personal && personal.hasQuiz)} />
+      <How onViewHowItWorks={onViewHowItWorks} />
+      <Community onViewCommunity={onViewCommunity} posts={communityPosts} />
       <Evidence onViewArticles={onViewArticles} />
       <Reads onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
-      <Community onViewCommunity={onViewCommunity} posts={communityPosts} />
       <Us onViewAbout={onViewAbout} />
+      {!(personal && personal.hasQuiz) && <Start onStartQuiz={onStartQuiz} />}
       <Invest />
       </>}
     </div>

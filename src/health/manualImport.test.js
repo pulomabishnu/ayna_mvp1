@@ -71,3 +71,16 @@ describe('manual import parsing', () => {
     expect(out.candidates).toHaveLength(1);
   });
 });
+
+describe('foundSummary: what ayna found, in words', () => {
+  it('counts days per kind of data with the date range', async () => {
+    const { foundSummary } = await import('./manualImport.js');
+    const out = foundSummary([
+      { metric: 'sleep_minutes', day: '2026-10-01', value: 400 },
+      { metric: 'sleep_minutes', day: '2026-10-03', value: 420 },
+      { metric: 'steps', day: '2026-10-02', value: 5000 },
+      { metric: 'nope', day: '2026-10-02', value: 1 },
+    ]);
+    expect(out.map((x) => x.line)).toEqual(['Sleep: 2 days from Oct 1, 2026 to Oct 3, 2026', 'Steps: 1 day on Oct 2, 2026']);
+  });
+});

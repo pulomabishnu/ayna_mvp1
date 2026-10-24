@@ -718,11 +718,18 @@ export default function FreeProductPage({ user, authLoading, stage = 'progress',
   useEffect(() => {
     if (authLoading || !user) return undefined;
     let active = true;
-    api.getCampaignStatus().then(
+    let retry = null;
+    const get = (again) => api.getCampaignStatus().then(
       (s) => { if (active) { setStatus(s); setLoadError(null); } },
-      (err) => { if (active) setLoadError(err.code || 'error'); },
+      (err) => {
+        if (!active) return;
+        // Just signed in: the session can still be settling. Try once more before saying it ended.
+        if (err.code === 'auth_required' && again) { retry = setTimeout(() => get(false), 1500); return; }
+        setLoadError(err.code || 'error');
+      },
     );
-    return () => { active = false; };
+    get(true);
+    return () => { active = false; clearTimeout(retry); };
   }, [authLoading, user]);
 
   // Arrived from the announcement email (utm survives into this view).
@@ -781,7 +788,7 @@ export default function FreeProductPage({ user, authLoading, stage = 'progress',
     );
   } else if (!status) {
     content = (
-      <Notice tone="alert" action={<button type="button" className="fp-btn" onClick={load}>Try again</button>}>
+      <Notice tone="alert" action={loadError === 'auth_required' && onSignIn ? <button type="button" className="fp-btn" onClick={onSignIn}>Sign in again</button> : <button type="button" className="fp-btn" onClick={load}>Try again</button>}>
         {loadError === 'auth_required' ? 'Your session ended. Sign in again to see your progress.' : "We couldn't load your progress. Nothing you did is lost."}
       </Notice>
     );

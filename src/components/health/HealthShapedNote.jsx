@@ -67,7 +67,7 @@ function WhySheet({ changes, userId, insightsOnly, onClose }) {
             <li>What you told us comes first, then safety. Your data can only move picks around after that.</li>
             <li>It compares this week with your own usual, never one night.</li>
             <li>It never changes Shop, brand placement or ads, and brands never see it.</li>
-            {timing && <li>Period pain relievers work best started a day or two before your period, so when yours is close, things you use around it come first. <a href={PERIOD_TIMING_SOURCE} target="_blank" rel="noopener noreferrer">Source</a></li>}
+            {timing && <li>MedlinePlus suggests starting a pain reliever the day before your period is expected, so when yours is close, things you use around it come first. <a href={PERIOD_TIMING_SOURCE} target="_blank" rel="noopener noreferrer">Source</a></li>}
             {insightsOnly.length > 0 && <li>{joinNames(insightsOnly.map(sourceName))} data shows in your insights but does not change your matches yet.</li>}
           </ul>
         </section>

@@ -35,18 +35,27 @@ export const EVIDENCE = {
   // Sleeping pulse rate: +2.1 bpm in the fertile window vs menses, mid-luteal +3.8 bpm vs menses (n=91).
   rhr: { label: 'Shilaih et al. 2017, Scientific Reports', url: 'https://pubmed.ncbi.nlm.nih.gov/28465583/' },
   // Meta-analysis of 37 studies: cardiac vagal activity (HRV) falls from the follicular to the luteal phase, d = -0.39.
+  // A journal page, not .gov and not opened on PubMed/PMC: no longer shown as a source (founder rule, Oct 24 2026).
   hrv: { label: 'Schmalenberger et al. 2019, J Clin Med (meta-analysis)', url: 'https://www.mdpi.com/2077-0383/8/11/1946' },
   // Oura ring study: late-luteal heart rate +2.49 bpm and skin temperature higher vs menses; sleep largely unchanged.
   oura: { label: 'Alzueta et al. 2022, Int J Womens Health', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9005074/' },
-  // BBT rises 0.22 to 0.56 °C after ovulation, stays up, drops a day or two before the period.
-  bbt: { label: 'Cleveland Clinic: Basal body temperature', url: 'https://my.clevelandclinic.org/health/articles/21065-basal-body-temperature' },
-  // "Self-reported sleep quality ... worsens in some, but not all, women when premenstrual symptoms emerge."
-  sleep: { label: 'Baker and Lee 2018, Sleep Medicine Clinics', url: 'https://www.sri.com/publication/biosciences-health-pubs/menstrual-cycle-effects-on-sleep/' },
+  // womenshealth.gov (opened Oct 24 2026): "A woman's basal body temperature rises slightly
+  // with ovulation"; "The rise in temperature doesn't show exactly when the egg is released";
+  // alcohol, poor sleep and fever can skew readings. Replaces a Cleveland Clinic page (not .gov).
+  bbt: { label: 'womenshealth.gov: Trying to conceive', url: 'https://www.womenshealth.gov/pregnancy/you-get-pregnant/trying-conceive' },
+  // womenshealth.gov PMS (opened Oct 24 2026): symptoms include "Sleep problems (sleeping too
+  // much or too little)", "about a week or two before their period". Replaces Baker and Lee 2018
+  // on sri.com (not .gov).
+  sleep: { label: 'womenshealth.gov: Premenstrual syndrome (PMS)', url: 'https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome' },
   // "The pain can start a day or two before your period."
   cramps: { label: 'MedlinePlus: Period pain', url: 'https://medlineplus.gov/periodpain.html' },
-  // Luteal phase is fairly steady at 12 to 14 days (how phase.js estimates ovulation).
+  // Not cited on screen (no .gov page we found says the luteal phase is steady at 12 to 14 days;
+  // womenshealth.gov gives 7 to 19 days). Kept for phase.js's comment trail only.
   luteal: { label: 'Cleveland Clinic: Luteal phase', url: 'https://my.clevelandclinic.org/health/body/24417-luteal-phase' },
-  cycle: { label: 'ACOG: Abnormal uterine bleeding', url: 'https://www.acog.org/womens-health/faqs/abnormal-uterine-bleeding' },
+  // womenshealth.gov (opened Oct 24 2026): "a woman's menstrual cycle length might be different
+  // from month-to-month"; "Talk to your doctor or nurse if you have menstrual cycles that are
+  // longer than 38 days or shorter than 24 days". Replaces ACOG (not .gov).
+  cycle: { label: 'womenshealth.gov: Your menstrual cycle', url: 'https://womenshealth.gov/menstrual-cycle/your-menstrual-cycle' },
 };
 
 function windows(points, today) {
@@ -118,7 +127,6 @@ export function heartInsight(resolved, today, ctx) {
     }
     if (phase === 'luteal' || (ctx.daysToLuteal != null && ctx.daysToLuteal <= 5)) {
       if (rhrUp) sources.push(EVIDENCE.rhr);
-      if (hrvDown) sources.push(EVIDENCE.hrv);
       sources.push(EVIDENCE.oura);
     }
   }
@@ -130,6 +138,7 @@ export function heartInsight(resolved, today, ctx) {
     basis: `${rhrUp || rhrDown ? `Resting heart rate: ${Math.round(r.recentAvg)} bpm on average over the last 7 days, against ${Math.round(r.usual)} bpm over the 4 weeks before.` : ''}${hrvDown ? `${rhrUp || rhrDown ? ' ' : ''}Heart rate variability: ${Math.round(h.recentAvg)} ms against ${Math.round(h.usual)} ms.` : ''}`,
     sources,
     from: sourcesOf(pts),
+    rhrRecent: r ? r.recentAvg : null,
     question: rhrUp ? 'Why is my resting heart rate higher this week?' : rhrDown ? 'Why is my resting heart rate lower this week?' : 'Why is my heart rate variability lower this week?',
     signal: rhrUp || hrvDown ? 'heart-up' : 'heart-down',
   };
@@ -194,7 +203,7 @@ export function cycleLengthInsight(cycle) {
     id: 'cycle_length', metric: 'cycle_length', signal: 'cycle-shorter',
     text: `Your last completed cycle was ${latest.days} days, about ${Math.round(usual - latest.days)} days shorter than your previous three-cycle average. One shorter cycle does not tell us why it changed.`,
     basis: `Your last completed cycle: ${latest.days} days. The three cycles before it averaged ${Math.round(usual)} days. This compares only your logged period start dates.`,
-    sources: [EVIDENCE.cycle], from: cycle.sources || [],
+    sources: [EVIDENCE.cycle], from: cycle.sources || [], latestDays: latest.days,
     question: 'My last cycle was shorter than usual. What should I track?',
   };
 }

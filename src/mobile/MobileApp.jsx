@@ -258,6 +258,9 @@ function hasSavedIntakeDraft() {
 // Screens where the feedback survey may appear (never the quiz, sign-in or a sheet).
 const APP_FEEDBACK_SCREENS = new Set(['landing', 'today', 'explore', 'eco', 'browse', 'library', 'saved']);
 
+// Screens that make no sense to return to after signing in.
+const AUTH_NO_RETURN = new Set(['landing', 'signin', 'quiz', 'building', 'reveal', 'connect', 'checkin', 'plan']);
+
 export default function MobileApp() {
   const { session, update: updateSession, reset: resetSession } = useEcosystemSession();
   const { hasEcosystem, myProducts: storedProducts, lastQuizAnswers, userName, omittedProducts = {} } = session;
@@ -1271,6 +1274,9 @@ export default function MobileApp() {
       authResumeRef.current = null;
       if (resume) resume();
       else if (session.pendingQuiz && authReturnScreenRef.current === 'connect') setScreen('connect');
+      // Back to where she signed in from (Community invites, Saved, Today...), not always the
+      // first tab: signing in should never move her away from what she was doing (team direction 55).
+      else if (authReturnScreenRef.current && !AUTH_NO_RETURN.has(authReturnScreenRef.current)) setScreen(authReturnScreenRef.current);
       else setScreen('today');
     },
     hasEcosystem,

@@ -214,7 +214,9 @@ export const PERIOD_SOON_DAYS = 5;
 // and kept up for the first 2 to 3 days (Royal Children's Hospital Melbourne
 // clinical guideline, Dysmenorrhoea). That is why a period due within a few
 // days moves things used around the period ahead of things that take weeks.
-export const PERIOD_TIMING_SOURCE = 'https://www.rch.org.au/clinicalguide/guideline_index/Dysmenorrhoea/';
+// MedlinePlus 003150 (checked Oct 24 2026, GOV_SOURCES.md): start an NSAID the day before your
+// period is expected. Replaces the Royal Children's Hospital guideline (not .gov).
+export const PERIOD_TIMING_SOURCE = 'https://medlineplus.gov/ency/article/003150.htm';
 
 /**
  * "Your period is due in about 3 days" / "You're on your period": a timing
