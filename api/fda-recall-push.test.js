@@ -165,7 +165,11 @@ describe('recall sweep — push notifications', () => {
     const res = await run();
     expect(res.statusCode).toBe(200);
     expect(pushToUser).toHaveBeenCalledTimes(1);
-    expect(pushToUser.mock.calls[0][2].title).toContain('Iron Supplement');
+    const sent = pushToUser.mock.calls[0][2];
+    // Lock screen: never the product name; the app opens it by id.
+    expect(`${sent.title} ${sent.body}`).not.toContain('Iron Supplement');
+    expect(sent.body).toBe('An update about a product you saved');
+    expect(sent.data.productId).toBe('p-iron');
     expect(twilioCreate).not.toHaveBeenCalled();
   });
 

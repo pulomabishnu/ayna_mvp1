@@ -405,9 +405,15 @@ function computeRecallSignature(activeRecalls) {
     .join(',');
 }
 
-function buildRecallSmsBody(productName, reason) {
-  const cleanReason = String(reason || '').replace(/\s+/g, ' ').trim().slice(0, 200);
-  return `⚠️ Ayna Safety Alert: ${productName} has a new FDA safety alert${cleanReason ? `: ${cleanReason}` : '.'} Open the Ayna app for details and alternatives. Reply STOP to opt out.`;
+// Lock screens and SMS previews are read by anyone nearby: never the product
+// name or the FDA reason (both can reveal a condition). The details are in
+// the app, behind her sign-in.
+export const RECALL_ALERT_TITLE = 'ayna';
+export const RECALL_ALERT_BODY = 'An update about a product you saved';
+
+// Kept the old signature so callers stay the same; the arguments are unused on purpose.
+function buildRecallSmsBody() {
+  return `ayna: ${RECALL_ALERT_BODY}. Open the ayna app to see it. Reply STOP to opt out.`;
 }
 
 /**
@@ -499,10 +505,10 @@ async function notifyUsersOfRecall(admin, { productId, productName, recallSignat
     let delivered = false;
     if (pushDevices > 0) {
       try {
-        const cleanReason = String(reason || '').replace(/\s+/g, ' ').trim().slice(0, 140);
+        // No product name or reason on the lock screen; productId opens it in the app.
         const push = await pushToUser(admin, user_id, {
-          title: `Safety alert: ${productName}`,
-          body: cleanReason ? `New FDA safety alert: ${cleanReason}` : 'There is a new FDA safety alert for a product you track. Tap for details and alternatives.',
+          title: RECALL_ALERT_TITLE,
+          body: RECALL_ALERT_BODY,
           data: { type: 'recall', productId },
         });
         delivered = push.sent > 0;
