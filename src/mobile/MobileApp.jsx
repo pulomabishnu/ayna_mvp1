@@ -277,7 +277,9 @@ export default function MobileApp() {
     // provider or Google sign-in redirect, a refresh, or the app relaunching),
     // so they are never stranded.
     || (session.pendingQuiz ? quizStepToResume() || 'connect' : null)
-    || (!hasEcosystem && hasSavedIntakeDraft() ? 'ecointro' : 'landing'));
+    // Returning on this phone (signed out too): her profile or ecosystem is
+    // saved here, so she lands on Today, never back on the first-run welcome.
+    || (hasEcosystem || session.lastQuizAnswers ? 'today' : hasSavedIntakeDraft() ? 'ecointro' : 'landing'));
   // Explore's section when it is not Products ('browse') or Resources ('library').
   const [exploreSection, setExploreSection] = useState('overview');
   const [planAddedGoals, setPlanAddedGoals] = useState({});

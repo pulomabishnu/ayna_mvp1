@@ -40,6 +40,8 @@ const CHECKIN_BY_NEED = {
   pms: { field: 'pms', title: 'How is PMS today?' },
   cycle_sleep: { field: 'sleep', title: 'How did you sleep?' },
 };
+// What each wedge need is called in a card title.
+const NEED_WORDS = { period_pain: 'period pain', pms: 'PMS', cycle_sleep: 'sleep' };
 const FIELD_OPTIONS = {
   pain: { values: [0, 1, 2, 3], labels: ['None', 'Mild', 'Moderate', 'Severe'] },
   pms: { values: [0, 1, 2, 3], labels: ['None', 'Mild', 'Moderate', 'Severe'] },
@@ -98,6 +100,20 @@ export function logChange(log, field, today) {
   const diff = v - usual;
   const worse = LOG_WORSE[field] === 'higher' ? diff >= 1 : diff <= -1;
   return worse ? { field, value: v, usual, word: LOG_WORDS[field][v], usualWord: LOG_WORDS[field][Math.round(usual)] } : null;
+}
+
+/**
+ * The match card's title says why it is here, from where the need came from
+ * (decide()'s activeNeeds sources): what she logged, a pattern in her
+ * check-ins, or a goal she picked. Never "what you logged" when she logged nothing.
+ */
+export function matchTitle(match, needs = {}, needLabels = {}) {
+  const wedge = Object.keys(WEDGE_TO_INTAKE_NEED).find((n) => WEDGE_TO_INTAKE_NEED[n].includes(match?.needId) && needs[n]);
+  const sources = new Set((needs[wedge]?.sources || []).map((x) => x.source));
+  const words = NEED_WORDS[wedge] || String(needLabels[match?.needId] || '').trim().toLowerCase();
+  if (sources.has('log')) return words ? `A match for the ${words} you logged` : 'A match for what you logged';
+  if (sources.has('pattern')) return words ? `A match for a ${words} pattern in your check-ins` : 'A match for a pattern in your check-ins';
+  return words ? `A match for your ${words} goal` : 'A match for one of your goals';
 }
 
 function suppressed(memory, card, today) {
@@ -175,7 +191,7 @@ export function buildRundown(input = {}) {
   const sc = sleepChange(healthRows, today);
   if (sc && sc.diff <= -RUNDOWN_RULES.sleepChangeMinutes) {
     add({
-      key: `change:sleep:${today}`, category: 'change', kind: 'text', kicker: 'Your focus today',
+      key: `change:sleep:${today}`, category: 'change', topic: 'sleep', kind: 'text', kicker: 'Your focus today',
       title: 'Sleep may matter a little more today.',
       body: 'You slept less than your recent average last night.',
       facts: [{ k: 'Recent average', v: fmtMinutes(sc.avg) }, { k: 'Last night', v: fmtMinutes(sc.lastNight) }],
@@ -215,7 +231,7 @@ export function buildRundown(input = {}) {
     const lc = logChange(log, field, today);
     if (!lc) continue;
     add({
-      key: `change:log:${field}:${today}`, category: 'change', kind: 'text', kicker: 'From your check-ins',
+      key: `change:log:${field}:${today}`, category: 'change', topic: field, kind: 'text', kicker: 'From your check-ins',
       title: `Yesterday your ${LOG_NAME[field]} was ${lc.word}.`,
       changed: `Usually it is closer to ${lc.usualWord}, from your last check-ins.`,
       canDo: (log?.[today]?.[field] == null) ? 'Check in today so ayna can see whether it continues.' : null,
@@ -248,8 +264,12 @@ export function buildRundown(input = {}) {
   if (checkNeed) {
     const c = CHECKIN_BY_NEED[checkNeed];
     add({ key: `checkin:${c.field}:${today}`, category: 'symptom', kind: 'checkin', kicker: 'Your check-in', title: c.title, field: c.field, options: FIELD_OPTIONS[c.field], body: 'One tap. It goes into your log and shapes tomorrow.' });
+  } else if (input.hasProfile && !needs.some((n) => CHECKIN_BY_NEED[n]) && todays.sleep == null) {
+    // No cycle need to ask about (no goal picked yet, or a goal like hot
+    // flashes that has no log field): one plain sleep check-in, so a first
+    // rundown still has something real to do. Only once she has a profile.
+    add({ key: `checkin:sleep:${today}`, category: 'symptom', topic: 'sleep', kind: 'checkin', kicker: 'Your check-in', title: CHECKIN_BY_NEED.cycle_sleep.title, field: 'sleep', options: FIELD_OPTIONS.sleep, body: 'One tap. It goes into your log, so ayna can see how you are doing over time.' });
   }
-  // No need yet: no check-in card here (Today's own check-in item covers it).
 
   // 5. Patterns: cycle context when she is about to enter a window where a
   //    pattern usually shows; otherwise the pattern insights decide() chose.
@@ -291,8 +311,12 @@ export function buildRundown(input = {}) {
     // Strongest current need first: a need she only hinted at (needSignal
     // 'weak', src/matching/forYou.js) never takes the card from one she picked.
     const weakLast = (m) => (m.needSignal === 'weak' ? 1 : 0);
-    const best = matches.filter((m) => m?.product && wanted.has(m.needId) && m.percent >= RUNDOWN_RULES.matchMinPercent).sort((a, b) => weakLast(a) - weakLast(b) || b.percent - a.percent)[0];
-    if (best) add({ key: `match:${best.product.id}`, category: 'match', kind: 'match', kicker: 'Matched to you', title: 'One of your matches fits what you logged', match: best, followUps: [`Why is ${best.product.name} my match?`] });
+    const rank = (list) => list.sort((a, b) => weakLast(a) - weakLast(b) || b.percent - a.percent)[0];
+    const strong = (m) => m?.product && m.percent >= RUNDOWN_RULES.matchMinPercent;
+    // A need ayna is tracking today; with none (e.g. after menopause, hot
+    // flashes), her best match for a goal she picked herself. Never filler.
+    const best = rank(matches.filter((m) => strong(m) && wanted.has(m.needId))) || (wanted.size ? null : rank(matches.filter((m) => strong(m) && m.needSignal !== 'weak' && (input.needLabels || {})[m.needId])));
+    if (best) add({ key: `match:${best.product.id}`, category: 'match', kind: 'match', kicker: 'Matched to you', title: matchTitle(best, decision?.debug?.needs || {}, input.needLabels || {}), match: best, followUps: [`Why is ${best.product.name} my match?`] });
   }
 
   // 8. Saved: something she saved at least a few days ago.
@@ -320,6 +344,12 @@ export function buildRundown(input = {}) {
     kept.push(c);
   }
   kept.sort((a, b) => CATEGORY_RANK[a.category] - CATEGORY_RANK[b.category]);
+  // One card per topic among the "what changed" cards (no two sleep cards in a row).
+  for (let k = kept.length - 1; k >= 0; k -= 1) {
+    const c = kept[k];
+    if (c.category !== 'change' || !c.topic) continue;
+    if (kept.slice(0, k).some((x) => x.category === 'change' && x.topic === c.topic)) { skipped.push({ key: c.key, why: 'same_topic' }); kept.splice(k, 1); }
+  }
   const protectedCards = kept.filter((c) => c.protected);
   const rest = kept.filter((c) => !c.protected).slice(0, Math.max(0, RUNDOWN_RULES.maxContentCards - protectedCards.length));
   const content = [...protectedCards, ...rest];

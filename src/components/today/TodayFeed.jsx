@@ -151,7 +151,7 @@ function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checki
  * @param {{ variant: 'app'|'web', userId, intake, healthRows, cycle, hormonalBC, products, onOpenProduct, onAsk, onEditAnswers, onFindCare }} props
  */
 export default function TodayFeed({ variant = 'app', userId = null, intake = null, healthRows = [], cycle = null, hormonalBC = false, products = [], onOpenProduct, onAsk, onEditAnswers, onFindCare, onSaveToProfile = null,
-  saved = [], community = [], onWhyMatch, onToggleSaved, onCompare, onOpenRead, onExplore, matchOpts = undefined, healthProfile = null,
+  saved = [], community = [], onWhyMatch, onToggleSaved, onCompare, onOpenRead, onExplore, matchOpts = undefined, healthProfile = null, onSetUp, moreHeading = true,
 }) {
   // DEV only (?fixture=today): sample logs and tries, dropped from production builds.
   const [fixture] = useState(() => (import.meta.env.DEV && todayFixtureOn() ? makeTodayFixture() : null));
@@ -181,6 +181,7 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
         onExplore={onExplore}
         onFindCare={onFindCare}
         onEditAnswers={onEditAnswers}
+        onSetUp={onSetUp}
         variant={variant}
         onSeeData={(d) => { try { window.dispatchEvent(new CustomEvent('ayna:health-tab', { detail: { tab: d?.tab } })); } catch { /* old browser */ } }}
       />
@@ -210,8 +211,10 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
         </div>
       )}
       <div id={checkinId} className="ay-today__log">
-        <DailyCheckinCard variant={variant} log={t.log} save={t.saveLog} saveState={t.saveState} today={t.today} headingId={`${checkinId}-h`} title="Your log" />
+        <DailyCheckinCard variant={variant} log={t.log} save={t.saveLog} saveState={t.saveState} today={t.today} headingId={`${checkinId}-h`} title="Your log" noCycle={Boolean(t.postCycle)} />
       </div>
+      {/* The top of Today ends here (rundown, 1 to 3 items, her log); the rest is below this line. */}
+      {moreHeading && <h2 className="ay-today__more" id={`ay-today-more-${variant}`}>More for you</h2>}
     </section>
   );
 }

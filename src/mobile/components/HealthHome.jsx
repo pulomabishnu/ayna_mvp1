@@ -218,12 +218,8 @@ export function HealthEmpty({ name = '', today, onConnect, onOpenCheckin, goalCo
             <h3 id="ay-hh-empty-title">{goalCount ? "We're starting with your goals" : 'Want a more personalized rundown?'}</h3>
             <p className="ay-hh-hero-sub">{goalCount ? `You chose ${goalCount} ${goalCount === 1 ? 'goal' : 'goals'}. Your matches are below. ${signedOut ? 'Sign in to connect health data' : 'Connect health data'} or keep using quick check-ins. Either works.` : `${signedOut ? 'Sign in to connect health data' : 'Connect health data'} or keep using quick check-ins. Either works. Your cycle, sleep, heart and activity can appear here once there is enough data.`}</p>
           </div>
-          <div className="ay-hh-hero-ring is-blank" aria-hidden="true">
-            <CycleRing cycleDay={null} avgLength={28} periodLength={0} />
-            <span><small>Day</small><b>?</b></span>
-          </div>
         </div>
-        {onConnect && <button type="button" className="ay-hh-empty-cta" onClick={onConnect}>{signedOut ? 'Sign in to get started' : 'Connect health data'}</button>}
+        {onConnect && <button type="button" className="ay-hh-empty-cta" onClick={onConnect}>{signedOut ? 'Sign in to connect health data' : 'Connect health data'}</button>}
         <p className="ay-hh-hero-foot">Compared only with your own usual. Patterns, not a diagnosis.</p>
       </section>
       {children}

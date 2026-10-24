@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildRundown, sleepChange, cyclePosition, RUNDOWN_RULES } from './buildRundown.js';
+import { buildRundown, sleepChange, cyclePosition, matchTitle, RUNDOWN_RULES } from './buildRundown.js';
 import { buildWeeklyRecap } from './weeklyRecap.js';
 import { buildTodayState } from '../../health/todayState.js';
 import { decide } from '../../health/decisionEngine.js';
@@ -54,6 +54,35 @@ describe('Daily Rundown', () => {
     expect(cats(buildRundown({ ...base, matches: [{ product, percent: 90, needId: 'pain.menstrual_cramp' }] }))).toContain('match');
     expect(cats(buildRundown({ ...base, matches: [{ product, percent: 45, needId: 'pain.menstrual_cramp' }] }))).not.toContain('match');
     expect(cats(buildRundown({ ...base, matches: [{ product, percent: 90, needId: 'uti.recurrent' }] }))).not.toContain('match');
+  });
+
+  it('match card title says the real reason, never "what you logged" without logs', () => {
+    const product = { id: 'p-thermacare', name: 'ThermaCare' };
+    const r = buildRundown({ ...fromFixture(), matches: [{ product, percent: 90, needId: 'pain.menstrual_cramp' }] });
+    const card = r.cards.find((c) => c.category === 'match');
+    expect(card.title).not.toBe('One of your matches fits what you logged');
+    expect(matchTitle({ needId: 'pain.menstrual_cramp' }, { period_pain: { sources: [{ source: 'intake' }] } })).toBe('A match for your period pain goal');
+    expect(matchTitle({ needId: 'pain.menstrual_cramp' }, { period_pain: { sources: [{ source: 'intake' }, { source: 'log' }] } })).toBe('A match for the period pain you logged');
+    expect(matchTitle({ needId: 'meno.hot_flashes' }, {}, { 'meno.hot_flashes': 'Hot flashes' })).toBe('A match for your hot flashes goal');
+  });
+
+  it('no wedge need (post-menopause): a sleep check-in and her match for a goal she picked', () => {
+    const product = { id: 'p-fan', name: 'Cooling fan' };
+    const decision = decide(buildTodayState({ today: TODAY }));
+    const r = buildRundown({ today: TODAY, decision, hasProfile: true, needLabels: { 'meno.hot_flashes': 'hot flashes' }, matches: [{ product, percent: 80, needId: 'meno.hot_flashes' }] });
+    expect(r.cards.find((c) => c.kind === 'checkin')).toMatchObject({ field: 'sleep' });
+    expect(r.cards.find((c) => c.kind === 'match').title).toBe('A match for your hot flashes goal');
+    // Without a profile, nothing is made up.
+    expect(buildRundown({ today: TODAY, decision }).cards).toEqual([]);
+  });
+
+  it('one card per topic among what-changed cards (no two sleep cards)', () => {
+    const rows = Array.from({ length: 14 }, (_, i) => ({ metric: 'sleep_minutes', day: addDays(TODAY, -(i + 1)), value: i === 0 ? 300 : 480 }));
+    const log = {};
+    for (let i = 1; i <= 12; i += 1) log[addDays(TODAY, -i)] = { day: addDays(TODAY, -i), sleep: i === 1 ? 1 : 3 };
+    const r = buildRundown({ today: TODAY, decision: decide(buildTodayState({ today: TODAY, log })), log, healthRows: rows });
+    expect(r.cards.filter((c) => c.category === 'change' && c.topic === 'sleep')).toHaveLength(1);
+    expect(r.skipped.some((x) => x.why === 'same_topic')).toBe(true);
   });
 
   it('Not useful hides the card or the whole type; rotation skips yesterday\'s extras', () => {

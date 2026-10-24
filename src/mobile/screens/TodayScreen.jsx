@@ -1,14 +1,12 @@
 import './profile/health-connections.css';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { loadMonthlyCheckinStatus } from '../../utils/monthlyCheckinStore.js';
 import MobileHeader from '../components/MobileHeader.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
 import { getSelectedNeeds } from '../../data/products.js';
-import { Routine, ShoppingList } from '../components/RoutinePlan.jsx';
 import RoutineSummary from '../../components/routine/RoutineSummary.jsx';
 import HealthDashboard from '../components/HealthDashboard.jsx';
 import { usesHormonalBC } from '../../health/weekInsights.js';
-import { budgetMax } from '../../health/plan.js';
 import FinishQuizCard from '../../components/FinishQuizCard.jsx';
 import '../eco-needs.css';
 import '../eco-app-best.css';
@@ -24,14 +22,15 @@ import '../explore.css';
 export default function TodayScreen({
   authUser = null, quizAnswers = null, lastQuizAnswers = null, myProducts = [], suggestedEcosystemProducts = [],
   onOpenProduct, onOpenSaved, onConnectHealth, onAddGoal, onOpenMonthlyCheckin, onRequireAuth, onRetake,
-  healthInsights = null, routineOutcomes = {}, onLogRoutineOutcome, routineExcluded = {}, onToggleRoutineProduct,
-  routineHave = {}, onToggleHave, onSavePlaylist, onOpenPlaylist, onStartQuiz, quizDraft = null, onResumeQuiz, onStartOverQuiz,
+  routineOutcomes = {}, routineExcluded = {},
+  routineHave = {}, onStartQuiz, quizDraft = null, onResumeQuiz, onStartOverQuiz,
   // Rundown and Today quick answers (same as the Ecosystem screen passed before Today became a tab).
   onEditIntakeStep, onUpdateIntake, savedProducts = {}, onToggleSaved, onOpenWhyMatch, articles = [], onOpenArticle, onBrowse,
   // The app's match inputs (Not for me, saved, history), so the Rundown shows the same % as Shop.
   matchOpts, omittedProducts = {}, onGoEco,
 }) {
-  const routineRef = useRef(null);
+  // "See your routine": her full routine, schedule and shopping list in You > My ecosystem.
+  const openRoutine = () => { onGoEco?.(); setTimeout(() => document.getElementById('ay-routines')?.scrollIntoView({ block: 'start', behavior: 'smooth' }), 400); };
   const [checkinDue, setCheckinDue] = useState(false);
   useEffect(() => {
     if (!authUser?.id) return undefined;
@@ -48,28 +47,23 @@ export default function TodayScreen({
     {/* The greeting and date below (HealthHome) are the visible title, as on the website. */}
     <h1 id="ay-today-title" className="sr-only">Today</h1>
 
-    {/* No profile yet: one clear way in, never a dead end (UX spec 3, 34). */}
-    {!hasProfile && (quizDraft && onResumeQuiz
-      ? <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />
-      : onStartQuiz && <section className="ay-today-welcome" aria-labelledby="ay-today-welcome-h">
-        <h2 id="ay-today-welcome-h">Make Today yours</h2>
-        <p>Create your health profile and Today shows what matters for you, with the reason for each thing.</p>
-        <button type="button" className="eco-app-go" onClick={onStartQuiz}>Create your health profile</button>
-      </section>)}
+    {/* An unfinished setup stays in view; with no profile at all, the Daily
+        Rundown card itself says how to make one (UX spec 3, 34). */}
+    {!hasProfile && quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
 
+    {/* Today = the Daily Rundown card, then 1 to 3 decision items (safety and
+        care can be more), then her log (founder, Oct 24). Everything else
+        sits under "More for you"; the full routine schedule and shopping list
+        live in You > My ecosystem. */}
     <div className="ay-eco-routine">
-      <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} hormonalBC={usesHormonalBC(quizAnswers)} products={myProducts} routineProducts={myProducts.filter((product) => !routineExcluded[product.id])} routineOutcomes={routineOutcomes} matches={suggestedEcosystemProducts} onOpenProduct={onOpenProduct} onConnect={onConnectHealth} onAddGoal={onAddGoal} onOpenRoutine={myProducts.length ? () => routineRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' }) : undefined} onOpenCheckin={showCheckin ? onOpenMonthlyCheckin : undefined} onSignIn={() => onRequireAuth?.('health data')} quizAnswers={quizAnswers} onEditAnswers={onEditIntakeStep || onRetake} onSaveToProfile={onUpdateIntake || null} rundown={{ matchOpts, saved: Object.values(savedProducts || {}), onToggleSaved, onWhyMatch: onOpenWhyMatch, onOpenRead: (id) => { const a = articles.find((x) => x.id === id); if (a) onOpenArticle?.(a); }, onExplore: onBrowse ? () => onBrowse() : undefined }} />
+      <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} hormonalBC={usesHormonalBC(quizAnswers)} products={myProducts} routineProducts={myProducts.filter((product) => !routineExcluded[product.id])} routineOutcomes={routineOutcomes} matches={suggestedEcosystemProducts} onOpenProduct={onOpenProduct} onConnect={onConnectHealth} onAddGoal={onAddGoal} onOpenRoutine={myProducts.length && onGoEco ? openRoutine : undefined} onOpenCheckin={showCheckin ? onOpenMonthlyCheckin : undefined} onSignIn={() => onRequireAuth?.('health data')} quizAnswers={quizAnswers} onEditAnswers={onEditIntakeStep || onRetake} onSaveToProfile={onUpdateIntake || null} rundown={{ matchOpts, saved: Object.values(savedProducts || {}), onToggleSaved, onWhyMatch: onOpenWhyMatch, onOpenRead: (id) => { const a = articles.find((x) => x.id === id); if (a) onOpenArticle?.(a); }, onExplore: onBrowse ? () => onBrowse() : undefined, onSetUp: !hasProfile && !quizDraft ? onStartQuiz : undefined }} />
       {/* Her routine per need, short (src/components/routine); the full one is in You > My ecosystem. */}
       <div className="ay-today-routines">
-        <RoutineSummary variant="app" userId={authUser?.id || null} quizAnswers={lastQuizAnswers || quizAnswers} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts} have={routineHave} showMatch={Boolean(authUser)}
-          onOpenRoutine={onGoEco ? () => { onGoEco(); setTimeout(() => document.getElementById('ay-routines')?.scrollIntoView({ block: 'start', behavior: 'smooth' }), 400); } : undefined}
+        <RoutineSummary variant="app" userId={authUser?.id || null} quizAnswers={lastQuizAnswers || quizAnswers} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts} have={routineHave}
+          onOpenRoutine={onGoEco ? openRoutine : undefined}
           onOpenProduct={onOpenProduct}
           onCheckIn={() => document.getElementById('ay-today-log-app')?.scrollIntoView({ block: 'start', behavior: 'smooth' })} />
       </div>
-      {myProducts.length > 0 && <div ref={routineRef} className="ay-eco-plan" id="ay-eco-plan">
-        <Routine products={myProducts} insights={healthInsights} needIds={goalIds} outcomes={routineOutcomes} onLogOutcome={onLogRoutineOutcome} onOpenProduct={onOpenProduct} budget={budgetMax(quizAnswers)} excluded={routineExcluded} onToggleExcluded={onToggleRoutineProduct} />
-        <ShoppingList products={myProducts} insights={healthInsights} excluded={routineExcluded} have={routineHave} onToggleHave={onToggleHave} onOpenProduct={onOpenProduct} onSavePlaylist={onSavePlaylist} onOpenPlaylist={onOpenPlaylist} budget={budgetMax(quizAnswers)} onRequireAuth={onRequireAuth} />
-      </div>}
       {hasProfile && onOpenMonthlyCheckin && <section className="ayna-home-today ay-eco-checkin"><div><h2>Monthly check-in</h2><p>A few quick questions so your matches keep up with how you feel.</p></div><button type="button" onClick={onOpenMonthlyCheckin}>Start</button></section>}
     </div>
     <LegalFooter />

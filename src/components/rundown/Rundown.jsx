@@ -6,7 +6,7 @@ import { markCardSeen, markNotUseful, markRundownViewed, markWeeklySeen, readRun
 import { autoLaunchDecision, listenForExternalOpens, openedExternally, urlIsDeepLink } from './autoLaunch.js';
 import { setTodayAskContext } from '../../utils/askToday.js';
 import { getAskHealthPref } from '../../health/askHealthPref.js';
-import { getProductMatchDetailsForProduct, useCatalogReady } from '../../data/catalog.js';
+import { getProductMatchDetailsForProduct, getSelectedNeeds, useCatalogReady } from '../../data/catalog.js';
 import { whyLine } from '../../utils/whyLine.js';
 import { evidenceLevel } from '../pdp/evidenceLevel.js';
 import { addDays } from '../../health/dailyLog.js';
@@ -33,6 +33,8 @@ const REMIND_TEXT = {
 export default function Rundown({
   t, userId = null, intake = null, products = [], saved = [], community = [], variant = 'app', matchOpts = undefined, healthProfile = null,
   onAsk, onSeeData, onOpenProduct, onWhyMatch, onToggleSaved, onCompare, onOpenRead, onExplore, onFindCare, onEditAnswers,
+  // No profile yet: the Rundown card still leads Today and says how to get one.
+  onSetUp,
 }) {
   const [memory, setMemory] = useState(() => { setRundownOwner(userId); return readRundownMemory(); });
   const [open, setOpen] = useState(null); // 'daily' | 'weekly' | null
@@ -57,10 +59,15 @@ export default function Rundown({
     }).filter(Boolean);
   }, [products, intake, catalogReady, t.tries, saved, healthProfile, matchOpts]);
 
+  // Her goals in her own words, for the match card's title ("A match for your hot flashes goal").
+  const needLabels = useMemo(() => {
+    if (!intake || !catalogReady) return {};
+    try { return Object.fromEntries(getSelectedNeeds(intake).map((n) => [n.id, n.phrase || n.label || ''])); } catch { return {}; }
+  }, [intake, catalogReady]);
   const daily = useMemo(() => buildRundown({
     today, decision: t.decision, patterns: t.patterns, log: t.log, tries: t.tries, healthRows: t.healthRows,
-    matches, saved, reads: Boolean(onOpenRead), community, memory,
-  }), [today, t.decision, t.patterns, t.log, t.tries, t.healthRows, matches, saved, onOpenRead, community, memory]);
+    matches, saved, reads: Boolean(onOpenRead), community, memory, hasProfile: Boolean(intake), needLabels,
+  }), [today, t.decision, t.patterns, t.log, t.tries, t.healthRows, matches, saved, onOpenRead, community, memory, intake, needLabels]);
   const weekly = useMemo(() => buildWeeklyRecap({ today, log: t.log, tries: t.tries, patterns: t.patterns, saved }), [today, t.log, t.tries, t.patterns, saved]);
   const cards = open === 'weekly' ? weekly.cards : daily.cards;
 
@@ -144,7 +151,19 @@ export default function Rundown({
     setMemory(readRundownMemory());
   };
 
-  if (!daily.cards.length && !weekly.cards.length) return null;
+  if (!daily.cards.length && !weekly.cards.length) {
+    if (intake || !onSetUp) return null;
+    return (
+      <section className="ay-rd-hero" aria-labelledby="ay-rd-hero-h">
+        <div className="ay-rd-hero__card is-setup">
+          <p className="ay-rd-hero__kicker">Today</p>
+          <h2 id="ay-rd-hero-h">Your Daily Rundown</h2>
+          <p>Create your health profile and this becomes 60 seconds on what matters for your health each day, with the reason for each thing.</p>
+          <button type="button" className="ay-rd-hero__go" onClick={onSetUp}>Create your health profile</button>
+        </div>
+      </section>
+    );
+  }
   return (
     <section className="ay-rd-hero" aria-labelledby="ay-rd-hero-h">
       {daily.cards.length > 0 && (

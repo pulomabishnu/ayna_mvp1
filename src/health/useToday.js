@@ -10,7 +10,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { decide, dismiss, dismissWithReason, markInteracted, markShown } from './decisionEngine.js';
-import { INTERVENTION_CLASSES } from './interventions.js';
+import { INTERVENTION_CLASSES, isPostCycle, safetyContextFrom } from './interventions.js';
 import { addDays, todayKey } from './dailyLog.js';
 import { createTry, dueDay, readTries, recordOutcome, saveTry } from './outcomes.js';
 import { useDailyLog } from './useDailyLog.js';
@@ -178,6 +178,8 @@ export function useToday({ userId = null, intake = null, healthRows = [], cycle 
     today, decision, notes, intent, store, pendingProfileSaves,
     // For the rundown (src/components/rundown): the same state decide() read.
     patterns: state.patterns, tries, healthRows,
+    // After menopause: the log hides PMS and asks about bleeding, not flow.
+    postCycle: isPostCycle(safetyContextFrom(state.profile)),
     log, saveLog: daily.save, saveState: daily.saveState,
     remindedTonight: Boolean(store.reminders?.[today]?.tonight),
     ...api,
