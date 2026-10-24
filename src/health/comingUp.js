@@ -18,15 +18,15 @@ export function comingUp(cycle, estimate, today, { hormonalBC = false, hasProduc
     const ws = addDays(cycle.lastStart, phase.windowStart - 1);
     const we = addDays(cycle.lastStart, phase.windowEnd - 1);
     if (daysBetween(today, we) >= 0) {
-      out.push({ day: ws < today ? today : ws, title: 'Likely ovulation window', sub: `${fmtDay(ws)} to ${fmtDay(we)}. An estimate, not birth control.`, expect: 'Temperature often rises about 0.2 to 0.5\u00a0°C after ovulation.', source: EVIDENCE.bbt, tone: 'sky' });
+      out.push({ day: ws < today ? today : ws, title: 'Possible ovulation days', sub: `${fmtDay(ws)} to ${fmtDay(we)}. Ovulation varies, so this is a range, not a date. Not birth control.`, expect: 'Body temperature rises slightly with ovulation, often by only 0.4 to 0.8\u00a0°F.', source: EVIDENCE.bbt, tone: 'sky' });
       const ls = addDays(cycle.lastStart, phase.windowEnd);
-      out.push({ day: ls, title: 'Luteal phase likely starts', sub: 'Lasts until your next period.', expect: 'Resting heart rate often runs a few beats higher until your period.', source: EVIDENCE.rhr, tone: 'ink' });
+      out.push({ day: ls, title: 'Ovulation has probably happened by now', sub: 'From here until your next period.', expect: 'Some people notice PMS symptoms in the week or two before a period.', source: EVIDENCE.sleep, tone: 'ink' });
     }
   }
   if (estimate?.day && daysBetween(today, estimate.day) >= 0) {
     const pms = addDays(estimate.day, -5);
     if (daysBetween(today, pms) >= 0) out.push({ day: pms, title: 'Restock before your period', sub: hasProducts ? 'Your shopping list is below your routine.' : '', expect: 'Cramps can start a day or two before your period.', source: EVIDENCE.cramps, tone: 'butter' });
-    out.push({ day: estimate.day, title: 'Next period, estimated', sub: 'From your last cycles. Can be off by a few days.', expect: hormonalBC ? '' : 'Temperature usually drops a day or two before.', source: hormonalBC ? null : EVIDENCE.bbt, tone: 'pink' });
+    out.push({ day: estimate.day, title: 'Next period, estimated', sub: 'From your last cycles. Can be off by a few days.', expect: hormonalBC ? '' : 'Cycle length can change from month to month.', source: hormonalBC ? null : EVIDENCE.cycle, tone: 'pink' });
   }
   return out.sort((a, b) => a.day.localeCompare(b.day)).slice(0, 4);
 }

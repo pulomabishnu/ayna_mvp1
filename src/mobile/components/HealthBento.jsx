@@ -55,7 +55,7 @@ export function PhaseStrip({ cycle }) {
     { id: 'ovulation', from: phase.windowStart, to: phase.windowEnd },
     { id: 'luteal', from: phase.windowEnd + 1, to: L },
   ].filter((x) => x.to >= x.from);
-  const short = { period: 'Period', follicular: 'Follicular', ovulation: 'Ovulation', luteal: 'Luteal' };
+  const short = { period: 'Period', follicular: 'Before', ovulation: 'Possible ovulation', luteal: 'After' };
   return (
     <section className="ay-bn-phases" aria-label="Your cycle phases">
       <div className="ay-bn-phasebar">
@@ -143,7 +143,7 @@ export function NormalRanges({ data }) {
           </li>
         ))}
       </ul>
-      <p className="ay-wx-note">{data.note} Source: <SourceLink source={data.source} /></p>
+      <p className="ay-wx-note">{data.note} {(data.sources || [data.source]).length > 1 ? 'Sources' : 'Source'}: {(data.sources || [data.source]).map((src, i) => <span key={src.url}>{i ? ', ' : ''}<SourceLink source={src} /></span>)}</p>
     </section>
   );
 }

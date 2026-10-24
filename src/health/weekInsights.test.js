@@ -25,7 +25,7 @@ describe('cycle context', () => {
   it('knows the phase and the days to her period', () => {
     expect(lutealCtx.phase.id).toBe('luteal');
     expect(lutealCtx.daysToPeriod).toBe(5);
-    expect(cycleLine(luteal, lutealCtx)).toBe('Cycle day 24, probably in your luteal phase, period due in about 5 days');
+    expect(cycleLine(luteal, lutealCtx)).toBe('Cycle day 24, probably after ovulation, period due in about 5 days');
   });
   it('has no phase without cycle data or on hormonal birth control', () => {
     expect(noCycle.phase).toBeNull();
@@ -43,21 +43,17 @@ describe('heart insight', () => {
   const rhr = (recent, usual) => rowsOf('resting_hr_bpm', 35, (i) => (i < 7 ? recent : usual));
   const hrv = (recent, usual) => rowsOf('hrv_sdnn_ms', 35, (i) => (i < 7 ? recent : usual));
 
-  it('ties a higher RHR to the luteal phase, with sources', () => {
+  // No .gov page supports the luteal-phase heart-rate claim, so the insight
+  // describes her own change only, in any phase (founder rule, Oct 24 2026).
+  it('describes a higher RHR as her own change, with no phase claim, even in the luteal phase', () => {
     const it1 = heartInsight(res(rhr(62, 58)), TODAY, lutealCtx);
-    expect(it1.text).toBe("Your resting heart rate is 4 bpm above your usual. That's common in the luteal phase, which you're probably in now.");
-    expect(it1.sources).toContain(EVIDENCE.rhr);
+    expect(it1.text).toBe('Your resting heart rate is 4 bpm above your usual.');
+    expect(it1.sources).toEqual([]);
   });
-  it('says both when HRV is also down', () => {
+  it('says both when HRV is also down, still without a phase claim', () => {
     const it2 = heartInsight(res(rhr(62, 58), hrv(38, 46)), TODAY, lutealCtx);
-    expect(it2.text).toMatch(/^Your resting heart rate is 4 bpm above your usual and your heart rate variability is 17% lower\. Both are common in the luteal phase/);
-    expect(it2.sources).toEqual(expect.arrayContaining([EVIDENCE.rhr]));
-    expect(it2.sources).not.toContain(EVIDENCE.hrv);
-  });
-  it('says the luteal phase starts soon when she is near ovulation', () => {
-    const near = { cycleDay: 13, avgLength: 28, periodLength: 5, lastStart: iso(12) };
-    const ctx = cycleContext({ cycle: near, today: TODAY });
-    expect(heartInsight(res(rhr(62, 58)), TODAY, ctx).text).toMatch(/which starts in about 3 days\.$/);
+    expect(it2.text).toBe('Your resting heart rate is 4 bpm above your usual and your heart rate variability is 17% lower.');
+    expect(it2.text).not.toMatch(/luteal/);
   });
   it('only states the number with no cycle info (no phase claim, no source)', () => {
     const it3 = heartInsight(res(rhr(62, 58)), TODAY, noCycle);
@@ -111,11 +107,11 @@ describe('temperature insight', () => {
     expect(t.text).toBe('Your temperature rose about 0.3\u00a0°C over the last 3 days, a pattern that often follows ovulation.');
     expect(t.sources).toEqual([EVIDENCE.bbt]);
   });
-  it('describes a longer rise as sustained, and the drop before a period when due within 3 days', () => {
+  it('describes a longer rise as sustained (no drop-before-a-period claim: no .gov page says it)', () => {
     const ctx = cycleContext({ cycle: luteal, estimate: { day: iso(-2) }, today: TODAY });
     const t = tempInsight(res(temp(12)), TODAY, ctx);
     expect(t.text).toMatch(/has stayed about 0\.3\u00a0°C higher for 12 days/);
-    expect(t.text).toMatch(/drops a day or two before a period\.$/);
+    expect(t.text).not.toMatch(/drops/);
   });
   it('ignores 2 days, rises under 0.2 °C, and stale data', () => {
     expect(tempInsight(res(temp(2)), TODAY, noCycle)).toBeNull();
@@ -217,7 +213,7 @@ describe('what might help this week', () => {
     const near = { cycleDay: 8, avgLength: 28, periodLength: 5, lastStart: iso(7) };
     const ctx = cycleContext({ cycle: near, today: TODAY });
     expect(weekNeeds({ ctx })).toEqual([]);
-    expect(weekPicks({ ctx, needIds: ['fertility.ovulation_tracking'], products: [proov] })[0].reason).toMatch(/^Your likely ovulation window starts around/);
+    expect(weekPicks({ ctx, needIds: ['fertility.ovulation_tracking'], products: [proov] })[0].reason).toMatch(/^Your possible ovulation days start around/);
   });
   it('hides when nothing fits or nothing is implied', () => {
     expect(weekPicks({ ctx: lutealCtx, products: [{ id: 'p-good-clean-love', category: 'lubricant' }] })).toEqual([]);
@@ -245,7 +241,7 @@ describe('coming up', () => {
   it('shows the ovulation window and luteal start before ovulation', () => {
     const early = { cycleDay: 8, avgLength: 28, periodLength: 5, lastStart: iso(7) };
     const titles = comingUp(early, { day: iso(-21) }, TODAY).map((e) => e.title);
-    expect(titles.slice(0, 2)).toEqual(['Likely ovulation window', 'Luteal phase likely starts']);
+    expect(titles.slice(0, 2)).toEqual(['Possible ovulation days', 'Ovulation has probably happened by now']);
   });
   it('is empty without cycle data, and skips cycle-pattern lines on hormonal birth control', () => {
     expect(comingUp(null, null, TODAY)).toEqual([]);
