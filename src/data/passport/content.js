@@ -12,7 +12,7 @@ import { recallFacts } from '../../utils/productFacts.js';
 import { HEALTH_FUNCTIONS, CATEGORY_LABELS } from '../catalogTaxonomy.js';
 import { getPassport } from './index.js';
 import { priceParts } from './priceParts.js';
-import { whyMatch, confidenceNotes, exclusionLines, isClaimBlocked, MIN_BADGE_SCORE } from '../../utils/matchDisplay.js';
+import { whyMatch, confidenceNotes, exclusionLines, isClaimBlocked, MIN_BADGE_SCORE, matchText } from '../../utils/matchDisplay.js';
 import { planGlossaryTerms } from '../glossary.js';
 import { getAynaRatingCount } from '../aynaReviews.js';
 
@@ -312,7 +312,7 @@ export function buildProductSections(product, ctx = {}) {
       strongNeeds.length ? { type: 'chips', label: 'Also fits', items: strongNeeds } : null,
       notes.length ? { type: 'chips', label: 'Good to know', items: notes } : null,
       details.matchStatus === 'excluded' ? { type: 'list', items: exclusionLines(details) } : null,
-    ], details.matchStatus === 'scored' && Number.isFinite(details.percent) ? `${details.percent}% match` : '');
+    ], details.matchStatus === 'scored' && Number.isFinite(details.percent) ? matchText(details.percent) : '');
   }
 
   // 13. Sources

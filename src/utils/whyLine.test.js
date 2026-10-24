@@ -26,7 +26,9 @@ describe('whyLine', () => {
     const line = whyLine({}, d({ reasonDetails: [{ text: 'Matches the heavy periods you selected' }, { text: 'Above your usual budget' }], outputs: {} }));
     expect(line).toBe('For your heavy periods');
     expect(line).not.toMatch(/%/);
-    expect(whyLine({}, d({ percent: 40 }))).toBe('');
+    // Under 50 still gets a line (it sits beside "Partial fit", never a number).
+    expect(whyLine({}, d({ percent: 40 }))).toBe('For your heavy periods, holds a heavy flow');
+    expect(whyLine({}, d({ percent: 0 }))).toBe('');
     expect(whyLine({}, d({ matchStatus: 'no-profile' }))).toBe('');
     expect(whyLine({}, d({ eligibility: 'restricted' }))).toBe('');
     expect(whyLine({ userAdded: true }, d())).toBe('');
@@ -56,7 +58,7 @@ describe('whyFirstLine', () => {
   });
   it('handles ties, a single scored product, and nothing scored', () => {
     expect(whyFirstLine([a, { ...b, details: d({ percent: 90 }) }])).toBe('These fit what you told us about the same.');
-    expect(whyFirstLine([a, { product: { name: 'X' }, details: d({ percent: 10 }) }])).toBe('Cup A is the only one here that matches what you told us.');
+    expect(whyFirstLine([a, { product: { name: 'X' }, details: d({ percent: 0 }) }])).toBe('Cup A is the only one here that matches what you told us.');
     expect(whyFirstLine([{ product: { name: 'X' }, details: null }])).toBe('');
   });
 });
@@ -65,6 +67,6 @@ describe('whyLineForPick', () => {
   it('names the shelf need and uses the pick reasons', async () => {
     const { whyLineForPick } = await import('./whyLine.js');
     expect(whyLineForPick({ needId: 'x', score: 70, explanations: ['Matches the cramps you selected', 'Within your budget'] }, 'period cramps')).toBe('For your period cramps, within your budget');
-    expect(whyLineForPick({ needId: 'x', score: 30, explanations: [] }, 'cramps')).toBe('');
+    expect(whyLineForPick({ needId: 'x', score: 0, explanations: [] }, 'cramps')).toBe('');
   });
 });

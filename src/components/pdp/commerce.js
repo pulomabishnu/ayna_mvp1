@@ -5,6 +5,7 @@
  * "Not on file", and nothing here makes up ratings, stock or shipping.
  */
 import { ALL_PRODUCTS, HEALTH_FUNCTIONS } from '../../data/products.js';
+import { matchText } from '../../utils/matchDisplay.js';
 import { whyLine } from '../../utils/whyLine.js';
 import { PRODUCT_IMAGE_OVERRIDES, productImageOverride } from '../../data/productImageOverrides.js';
 import { getPassport } from '../../data/passport/index.js';
@@ -235,7 +236,8 @@ export function compareRows(products, { matchFor = null, detailsFor = null } = {
       return notes.length ? `${notes.join(', ')}. See its page.` : 'None flagged';
     } },
     { label: 'FSA/HSA', get: (p) => { if (['pad', 'tampon', 'cup', 'disc'].includes(p?.category)) return 'Eligible'; const f = getPassport(p)?.pricing?.fsa_hsa; return f?.known ? (f.value === 'eligible' ? 'Eligible' : 'Not eligible') : NOT_ON_FILE; } },
-    matchFor ? { label: 'Your match', get: (p) => { const m = matchFor(p); return Number.isFinite(m) && m > 0 ? `${Math.round(m)}%` : 'No clear match'; } } : null,
+    // Same rule as the cards: under 50 no number, just "Partial fit".
+    matchFor ? { label: 'Your match', get: (p) => { const m = matchFor(p); return Number.isFinite(m) && m > 0 ? matchText(m) : 'No clear match'; } } : null,
     // Plain reasons behind the %, from the engine (src/utils/whyLine.js).
     detailsFor ? { label: 'Why it fits you', get: (p) => whyLine(p, detailsFor(p), { max: 2 }) || 'Not one of your needs' } : null,
     detailsFor ? { label: 'Fits your budget', get: (p) => reasonFlag(detailsFor(p), /^Within your budget$/i, /^Above your usual budget$/i) } : null,

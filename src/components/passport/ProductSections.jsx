@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { shownMatchPercent, matchText, PARTIAL_FIT } from '../../utils/matchDisplay.js';
 import HealthBackedBadge from '../health/HealthBackedBadge.jsx';
 import { GlossaryText } from '../GlossaryTerm';
 import { LONG_TEXT, NOT_ON_FILE } from '../pdp/glance';
@@ -566,8 +567,10 @@ export function ProductMatch({ glance, matchPercent, why = '', fallback = '', on
   const isMiss = (t) => /\b(above|over|outside|not|no|doesn.t|does not|isn.t|missing|lower|less|unknown|can.t|cannot|without)\b/i.test(t);
   return (
     <section className={`ay-story ay-story--match is-${band}`} aria-labelledby="ay-match-h">
-      <button type="button" className="ay-match__score" onClick={onShowWhy} aria-label={`${matchPercent}% match. See why`}>
-        <span className="ay-match__big"><b>{matchPercent}%</b> match</span>
+      <button type="button" className="ay-match__score" onClick={onShowWhy} aria-label={`${matchText(matchPercent)}. See why`}>
+        {shownMatchPercent(matchPercent) != null
+          ? <span className="ay-match__big"><b>{shownMatchPercent(matchPercent)}%</b> match</span>
+          : <span className="ay-match__big is-partial">{PARTIAL_FIT}</span>}
       </button>
       <div className="ay-match__body">
         <h2 id="ay-match-h">{heading}</h2>

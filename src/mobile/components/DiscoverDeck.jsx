@@ -4,6 +4,7 @@ import ProductImage from './ProductImage.jsx';
 import EmptyState from './EmptyState.jsx';
 import { matchPercentFor, productMatch } from '../utils/matchScore.js';
 import { whyLine } from '../../utils/whyLine.js';
+import { matchText } from '../../utils/matchDisplay.js';
 import { displayName } from '../utils/displayName.js';
 
 // One-card-at-a-time product discovery. Drag right (or tap Save) to save,
@@ -110,7 +111,7 @@ export default function DiscoverDeck({ products = [], quizAnswers = null, matchO
                 <strong>{displayName(current.product)}</strong>
                 <div className="ay-deck-meta">
                   {current.product.price && <b>{String(current.product.price)}</b>}
-                  {currentMatch != null && <em>{currentMatch}% match</em>}
+                  {currentMatch != null && <em>{matchText(currentMatch)}</em>}
                   {currentWhy && <small className="ay-deck-why">{currentWhy}</small>}
                 </div>
               </div>

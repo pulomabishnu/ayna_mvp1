@@ -9,7 +9,7 @@ import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 import { isPartnerBrandItem, getPartnerDisclosureText } from '../../utils/partnerBrands.js';
 import WhyMatchScreen from './WhyMatchScreen.jsx';
-import { exclusionLines } from '../../utils/matchDisplay.js';
+import { exclusionLines, matchText } from '../../utils/matchDisplay.js';
 import MatchPill from '../../components/MatchPill.jsx';
 import { whyLine } from '../../utils/whyLine.js';
 import ProductEvidence from '../../components/pdp/ProductEvidence.jsx';
@@ -475,7 +475,7 @@ export default function ProductDetailScreen({
             {price && shownPrice.sub && <small>{shownPrice.sub}</small>}
           </div>}
           <ul className="ay-pdp-why" aria-label="Why it is here">
-            {matchPercent != null && <li><button type="button" className="ay-pdp-why__row is-match" onClick={openWhyMatch} aria-label={`${matchPercent}% match${headLine ? `. ${headLine}` : ''}. See why`}><MatchPill percent={matchPercent} size="sm" /><span>{headLine || 'Why ayna picked this for you'}</span><span className="ay-pdp-why__go">See why</span></button></li>}
+            {matchPercent != null && <li><button type="button" className="ay-pdp-why__row is-match" onClick={openWhyMatch} aria-label={`${matchText(matchPercent)}${headLine ? `. ${headLine}` : ''}. See why`}><MatchPill percent={matchPercent} size="sm" /><span>{headLine || 'Why ayna picked this for you'}</span><span className="ay-pdp-why__go">See why</span></button></li>}
             {evidence.level > 0 && <li><button type="button" className="ay-pdp-why__row ay-pdp-evline" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'literature' }))}>
               <span className="ay-pdp-evline__bars" data-level={evidence.level} aria-hidden="true"><i /><i /><i /></span>
               <span><b>{evidence.word}</b>{evidence.need && ` for ${evidence.need}`}</span>

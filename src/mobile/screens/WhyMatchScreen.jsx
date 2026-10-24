@@ -1,6 +1,6 @@
 import { getProductMatchDetailsForProduct } from '../../data/products.js';
 import LegalFooter from '../components/LegalFooter.jsx';
-import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, whyMatch, BASED_ON_LINE } from '../../utils/matchDisplay.js';
+import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, whyMatch, BASED_ON_LINE, shownMatchPercent, PARTIAL_FIT } from '../../utils/matchDisplay.js';
 import '../match.css';
 import '../eco-needs.css';
 import '../../styles/match-ui.css';
@@ -55,7 +55,9 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
       <div className="ayna-match-scroll">
         {hasScore ? (
           <section className={`ayna-match-result ay-match-hero ${TONE[tier] || 'is-partial'}`} aria-label={needHeadline(percent, best?.phrase)}>
-            <div className="ayna-match-ring" aria-hidden="true" style={{ '--match-angle': `${percent * 3.6}deg` }}><span>{percent}<small>%</small></span></div>
+            {shownMatchPercent(percent) != null
+              ? <div className="ayna-match-ring" aria-hidden="true" style={{ '--match-angle': `${percent * 3.6}deg` }}><span>{percent}<small>%</small></span></div>
+              : <div className="ayna-match-ring is-partial" aria-hidden="true" style={{ '--match-angle': '0deg' }}><span><small>{PARTIAL_FIT}</small></span></div>}
             <div>
               <span className="ay-match-tier">{tierWord(tier, percent)}</span>
               <h2>{needHeadline(percent, best?.phrase)}</h2>
@@ -106,8 +108,9 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
             <h2>Your needs</h2>
             {scoredRows.length > 0 && <ul className="ay-need-rows">{scoredRows.map((r) => <li key={r.needId} className={r.score > 0 ? `is-${r.tier}` : 'is-none'}>
               <span className="ay-need-rows__label">{tidy(r.short)}</span>
-              <span className="ay-need-rows__bar" aria-hidden="true"><i style={{ width: `${r.score}%` }} /></span>
-              <strong>{r.score}</strong>
+              {/* Under 50: no bar, no number (one rule with the cards). */}
+              <span className="ay-need-rows__bar" aria-hidden="true">{shownMatchPercent(r.score) != null && <i style={{ width: `${r.score}%` }} />}</span>
+              <strong>{shownMatchPercent(r.score) ?? ''}</strong>
               <small>{r.word}</small>
             </li>)}</ul>}
             {offRows.length > 0 && <p className="ay-need-rows__off">Not for this: {offRows.map((r) => tidy(r.short)).join(', ')}</p>}

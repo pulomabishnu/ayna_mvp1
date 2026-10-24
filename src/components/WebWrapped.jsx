@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { shownMatchPercent, PARTIAL_FIT } from '../utils/matchDisplay.js';
 import { createPortal } from 'react-dom';
 import { getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../data/products.js';
 import { whyLine } from '../utils/whyLine';
@@ -99,7 +100,7 @@ export default function WebWrapped({ products = [], quizResults, onClose, onBrow
         </>}
         {active === 'match' && first && <>
           <p className="wwr-kicker">Your #1 match</p>
-          <div className="wwr-arch"><div className="wwr-arch-clip"><Photo product={first} /></div>{firstMatch && <span className="wwr-badge"><strong>{firstMatch}%</strong>match</span>}</div>
+          <div className="wwr-arch"><div className="wwr-arch-clip"><Photo product={first} /></div>{firstMatch && (shownMatchPercent(firstMatch) != null ? <span className="wwr-badge"><strong>{firstMatch}%</strong>match</span> : <span className="wwr-badge is-partial">{PARTIAL_FIT}</span>)}</div>
           <div className="wwr-product">{first.brand && <span>{first.brand}</span>}<strong>{first.name}</strong>{firstWhy && <small className="wwr-why">{firstWhy}</small>}</div>
         </>}
         {active === 'persona' && persona && <>
