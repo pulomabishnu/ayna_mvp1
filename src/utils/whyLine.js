@@ -9,7 +9,9 @@
 // Nothing here is invented: every clause maps one engine reason, and a
 // reason we do not have a plain phrasing for is left out rather than guessed.
 
-export const MIN_WHY_SCORE = 50;
+// Any scored match gets a why line; under 50 it sits beside "Partial fit"
+// instead of a number (src/utils/matchDisplay.js matchText).
+export const MIN_WHY_SCORE = 1;
 
 // Positive engine reasons -> short clause. Order here does not matter; the
 // engine's own order does (first usable reason wins).
@@ -71,6 +73,7 @@ export function whyLead(details) {
   const need = phrase || (m ? m[2] : '');
   if (!need) return '';
   if (/^A secondary option/i.test(first)) return `Another option for your ${need}`;
+  if (/^Loosely related/i.test(first)) return `Loosely related to your ${need}`;
   return `For your ${need}`;
 }
 

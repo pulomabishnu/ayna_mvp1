@@ -17,6 +17,7 @@ import { uploadCommunityImage, deleteCommunityImage, checkImageFile, MAX_POST_PH
 import { CATEGORY_LABELS } from '../../data/products.js';
 import { matchPercentFor, productMatch } from '../utils/matchScore.js';
 import { hasWhy, whyLead } from '../../utils/whyLine.js';
+import { matchText } from '../../utils/matchDisplay.js';
 import { scoreSearchMatch } from '../../utils/search/index.js';
 import { searchCommunityTolerant } from '../../utils/search/communitySearch.js';
 import SmartSearchInput from '../../components/search/SmartSearchInput.jsx';
@@ -99,7 +100,7 @@ function ProductMention({ productId, productsById, quizAnswers, matchOpts, onOpe
   return <button type="button" className="am-product" onClick={() => onOpenProduct(product)}>
     <span className="am-product-photo"><ProductImage product={product} src={product.image || product.imageUrl || product.images?.[0]} alt="" allowBrandLogo={product.type === 'digital'} style={{ objectFit: 'contain' }} /></span>
     <span><strong>{displayName(product)}</strong><small>{why || product.brand || 'ayna product'}</small></span>
-    <em>{showMatch ? `${percent}% match` : 'View'}</em>
+    <em>{showMatch ? matchText(percent) : 'View'}</em>
   </button>;
 }
 

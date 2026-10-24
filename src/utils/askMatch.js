@@ -4,7 +4,8 @@
 // Ask can never make up a different percent. Anything else goes to Ask ayna.
 
 import { findConfidentProductMatch } from './naturalLanguageSearch.js';
-import { whyMatch, exclusionLines, confidenceNotes, needBreakdown, tierWord } from './matchDisplay.js';
+import { whyMatch, exclusionLines, confidenceNotes, needBreakdown, tierWord, shownMatchPercent } from './matchDisplay.js';
+import { whyLine } from './whyLine.js';
 
 // Questions about her fit for one product. Kept narrow on purpose: "does this
 // match my skin tone" style questions still go to Ask.
@@ -87,9 +88,14 @@ export function answerMatchQuestion(text, ctx) {
   }
 
   const best = needBreakdown(details).find((r) => r.needId === details.needId) || needBreakdown(details)[0];
-  const head = best?.phrase
-    ? `**${name}** is a **${percent}% match** for you, for ${best.phrase} (${tierWord(details.tier, percent).toLowerCase()}).`
-    : `**${name}** is a **${percent}% match** for you (${tierWord(details.tier, percent).toLowerCase()}).`;
+  // Same rule as the cards: under 50 there is no number, just "a partial fit".
+  const shown = shownMatchPercent(percent);
+  const line = whyLine(product, details);
+  const head = shown == null
+    ? `**${name}** is a **partial fit** for you${best?.phrase ? `, for ${best.phrase}` : ''}.${line ? ` ${line}.` : ''}`
+    : best?.phrase
+      ? `**${name}** is a **${shown}% match** for you, for ${best.phrase} (${tierWord(details.tier, percent).toLowerCase()}).`
+      : `**${name}** is a **${shown}% match** for you (${tierWord(details.tier, percent).toLowerCase()}).`;
   const notes = confidenceNotes(details, product);
   const parts = [
     head,

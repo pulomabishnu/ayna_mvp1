@@ -18,10 +18,29 @@ describe('dashboard Ask card', () => {
     expect(weekSummary([sleepDown])).toBe('Sleep is 1h 12m less than usual.');
   });
 
-  it('passes her numbers as context', () => {
-    const ctx = dashboardContext({ cycle, ready: [sleepDown], products: [pad] });
+  it('sends no health line unless she opted in (off by default)', () => {
+    const off = dashboardContext({ cycle, estimate: { day: '2026-11-10' }, ready: [sleepDown], products: [pad], insights: [{ text: 'Sleep dipped.', from: ['apple_health'] }] });
+    expect(off).not.toMatch(/Cycle|Sleep|period|explained/i);
+    expect(off).toContain('Products in her ecosystem');
+  });
+
+  it('passes her numbers as context once she opts in', () => {
+    const ctx = dashboardContext({ cycle, ready: [sleepDown], products: [pad], allowHealth: true });
     expect(ctx).toContain('Cycle: day 7 of about 27 days');
     expect(ctx).toContain('1h 12m less than your usual');
+  });
+
+  it('never sends Oura or WHOOP data, even opted in', () => {
+    const ctx = dashboardContext({
+      cycle: { ...cycle, sources: ['oura'] },
+      estimate: { day: '2026-11-10' },
+      ready: [{ ...sleepDown, sources: ['apple_health', 'whoop'] }, { id: 'activity', title: 'Activity', headline: 'Steps', sources: ['apple_health'] }],
+      insights: [{ text: 'HRV fell.', from: ['oura'] }, { text: 'You walked less.', from: ['apple_health'] }],
+      allowHealth: true,
+    });
+    expect(ctx).not.toMatch(/Cycle|Next period|Sleep|HRV/);
+    expect(ctx).toContain('You walked less.');
+    expect(ctx).toContain('Activity: Steps');
   });
 });
 

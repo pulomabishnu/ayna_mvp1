@@ -25,6 +25,9 @@ const BOOLEAN_FIELDS = [
   // DEFAULT_PREFERENCES: the column's own default (true) fills new rows, so a
   // database that has not run the ALTER yet still creates rows fine.
   'health_data_in_matches_enabled',
+  // Added Oct 24 (supabase/notification_preferences_ask_health_2026-10-24.sql).
+  // Opt-in, column default false; not in DEFAULT_PREFERENCES for the same reason.
+  'ask_health_data_enabled',
   'quiet_hours_enabled',
 ];
 const TIME_HHMM = /^([01][0-9]|2[0-3]):[0-5][0-9]$/;
@@ -73,6 +76,8 @@ function toClientShape(row, phoneVerified) {
     personalizeWithDataEnabled: row.personalize_with_data_enabled,
     // Missing column (ALTER not run yet) reads as the default: on.
     healthDataInMatchesEnabled: row.health_data_in_matches_enabled !== false,
+    // Opt-in: only an explicit true is on (a missing column reads as off).
+    askHealthDataEnabled: row.ask_health_data_enabled === true,
     quietHoursEnabled: row.quiet_hours_enabled,
     quietHoursStart: row.quiet_hours_start,
     quietHoursEnd: row.quiet_hours_end,

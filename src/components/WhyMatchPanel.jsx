@@ -1,7 +1,7 @@
 import { createPortal } from 'react-dom';
 import { useEffect } from 'react';
 import { getProductMatchDetailsForProduct } from '../data/products.js';
-import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, whyMatch, BASED_ON_LINE } from '../utils/matchDisplay';
+import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, whyMatch, BASED_ON_LINE, shownMatchPercent, PARTIAL_FIT } from '../utils/matchDisplay';
 import '../styles/match-ui.css';
 import HealthWhyLine from './health/HealthWhyLine.jsx';
 import { whyLine } from '../utils/whyLine';
@@ -40,7 +40,9 @@ export default function WhyMatchPanel({ product, quizResults, healthProfile = nu
     <aside className="ay-why" role="dialog" aria-modal="true" aria-label={title} onClick={(e) => e.stopPropagation()}>
       <header><h2>{title}</h2><button type="button" onClick={onClose} aria-label="Close">×</button></header>
       {hasScore ? <section className={`ay-why-hero ${TONE[tier] || 'is-partial'}`}>
-        <div className="ay-why-ring" style={{ '--a': `${percent * 3.6}deg` }}><span>{percent}<small>%</small></span></div>
+        {shownMatchPercent(percent) != null
+          ? <div className="ay-why-ring" style={{ '--a': `${percent * 3.6}deg` }}><span>{percent}<small>%</small></span></div>
+          : <div className="ay-why-ring is-partial" style={{ '--a': '0deg' }}><span><small>{PARTIAL_FIT}</small></span></div>}
         <div>
           <span className="ay-why-tier">{tierWord(tier, percent)}</span>
           <strong>{needHeadline(percent, best?.phrase)}</strong>
@@ -67,8 +69,9 @@ export default function WhyMatchPanel({ product, quizResults, healthProfile = nu
         <h3>Your needs it helps with</h3>
         <ul className="ay-need-rows">{rows.filter((r) => r.score > 0).map((r) => <li key={r.needId} className={r.score > 0 ? `is-${r.tier}` : 'is-none'}>
           <span className="ay-need-rows__label" title={r.label}>{tidy(r.short)}</span>
-          <span className="ay-need-rows__bar" aria-hidden="true"><i style={{ width: `${r.score}%` }} /></span>
-          <strong>{r.score}</strong>
+          {/* Under 50: no bar, no number (one rule with the cards). */}
+          <span className="ay-need-rows__bar" aria-hidden="true">{shownMatchPercent(r.score) != null && <i style={{ width: `${r.score}%` }} />}</span>
+          <strong>{shownMatchPercent(r.score) ?? ''}</strong>
           <small>{r.word}</small>
         </li>)}</ul>
         {rows.some((r) => !(r.score > 0)) && <details className="ay-why-more"><summary>Doesn’t address: {rows.filter((r) => !(r.score > 0)).length} other need{rows.filter((r) => !(r.score > 0)).length === 1 ? '' : 's'}</summary><ul className="ay-why-chips">{rows.filter((r) => !(r.score > 0)).map((r) => <li key={r.needId}>{tidy(r.short)}</li>)}</ul></details>}

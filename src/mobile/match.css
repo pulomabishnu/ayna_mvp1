@@ -35,3 +35,5 @@
 .ayna-mobile.ayna-mobile .ayna-match-update { background: var(--ay-ink) !important; color: var(--ay-paper) !important; justify-self: start; }
 .ayna-mobile .ayna-match-disclaimer { margin: 4px 0 0; font-size: 13px; font-weight: 500; opacity: .65; text-align: center; }
 .ayna-mobile .ay-match-why { margin: 6px 0 0; font: 600 15px/1.4 var(--ay-font-ui); }
+/* Under 50 the ring shows words, not a number (src/utils/matchDisplay.js). */
+.ayna-mobile .ayna-match-ring.is-partial span small { display: block; font-size: 13px; line-height: 1.2; text-align: center; }

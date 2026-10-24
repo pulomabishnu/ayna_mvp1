@@ -3,6 +3,7 @@ import { Stamp } from '../components/BrandBits.jsx';
 import ProductImage from '../components/ProductImage.jsx';
 import { matchPercentFor, productMatch } from '../utils/matchScore.js';
 import { whyLine } from '../../utils/whyLine.js';
+import { shownMatchPercent, PARTIAL_FIT } from '../../utils/matchDisplay.js';
 import { ecosystemCounts } from '../../utils/ecosystemCounts.js';
 import IntakeSceneArt from '../components/intake/IntakeSceneArt.jsx';
 import '../wrapped.css';
@@ -137,7 +138,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
           <p className="ayw-kicker">Your #1 match</p>
           <div className="ayw-arch">
             <div className="ayw-arch-clip"><ProductImage product={first} src={imageFor(first)} alt={first.name} allowBrandLogo={first.type === 'digital'} /></div>
-            {firstMatch && <span className="ayw-badge"><svg className="ayw-ring" viewBox="0 0 100 100" aria-hidden="true" style={{ '--ring-gap': 100 - Math.min(100, firstMatch) }}><circle cx="50" cy="50" r="48" pathLength="100" /></svg><strong>{firstMatch}%</strong>match</span>}
+            {firstMatch && (shownMatchPercent(firstMatch) != null ? <span className="ayw-badge"><svg className="ayw-ring" viewBox="0 0 100 100" aria-hidden="true" style={{ '--ring-gap': 100 - Math.min(100, firstMatch) }}><circle cx="50" cy="50" r="48" pathLength="100" /></svg><strong>{firstMatch}%</strong>match</span> : <span className="ayw-badge is-partial">{PARTIAL_FIT}</span>)}
           </div>
           <div className="ayw-product">
             {first.brand && <span>{first.brand}</span>}

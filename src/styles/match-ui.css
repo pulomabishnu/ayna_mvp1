@@ -136,3 +136,6 @@ body .ay-why .ay-why-restricted h3 { margin: 0 0 6px; color: inherit; font: 800 
 body .ay-why .ay-why-restricted p { margin: 0 0 12px; color: inherit; font: 500 14px/1.45 var(--ay-font-ui, 'Figtree', sans-serif); }
 @media (prefers-reduced-motion: reduce) { .ay-why-hint button { transition: none; } }
 .ay-why-line { margin: 6px 0 0; font: 600 15px/1.4 var(--ay-font-ui, 'Figtree', sans-serif); }
+
+/* Under 50 the ring shows words, not a number (src/utils/matchDisplay.js). */
+.ay-why-ring.is-partial span small { display: block; font-size: 13px; line-height: 1.2; text-align: center; }

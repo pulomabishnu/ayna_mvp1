@@ -270,7 +270,10 @@ const HISTORY_BY_OUTCOME = {
   helpful: { worked: 'Helped somewhat' },
   no_change: { worked: 'No difference' },
   worse: { worked: 'Made things worse', current: 'No' },
-  side_effect: { reaction: 'Mild', stopReasons: ['I had side effects or a reaction'], current: 'No' },
+  // sideEffect: hides the product from her matches, like "Worse" (userProfile.js
+  // outcome:side_effect, score.js history_side_effect). Undoing the outcome drops
+  // this entry, so the product comes back.
+  side_effect: { reaction: 'Mild', stopReasons: ['I had side effects or a reaction'], current: 'No', sideEffect: true },
   unsure: { worked: 'Not sure' },
   stopped: { current: 'No' },
 };

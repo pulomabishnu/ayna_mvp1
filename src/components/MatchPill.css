@@ -40,3 +40,6 @@ button.ay-match-pill:focus-visible { outline: 3px solid var(--ay-peri, #b9c2f4);
 :root[data-ay-theme='dark'] .app-container.app-container .ay-match-pill.ay-match-pill { background: #fff !important; color: #1d1a2b !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-match-pill.ay-match-pill > :is(strong, span),
 .app-container.app-container .ay-match-pill.ay-match-pill > :is(strong, span) { color: inherit !important; }
+/* Under 50: "Partial fit", outlined so it never reads as a score. */
+.ay-match-pill.is-partial { background: transparent; color: var(--ay-ink, #3e2723); box-shadow: inset 0 0 0 1.5px var(--ay-ink, #3e2723); }
+.ay-match-pill.is-partial span { font-weight: 600; }

@@ -111,7 +111,7 @@ describe('to the matcher', () => {
     const later = recordOutcome(tries[0], 'no_change', { day: '2026-10-10' });
     expect(outcomesToProductHistory([tries[0], { ...later, id: 'try:later' }], PRODUCTS)[0].worked).toBe('No difference');
   });
-  it('"Worse" removes the same product from her matches; "Side effect" moves it strongly down', () => {
+  it('"Worse" and "Side effect" both remove the same product from her matches', () => {
     const intake = withOutcomeHistory({ productHistory: [{ name: 'Something else', worked: 'Not sure' }] }, outcomesToProductHistory(tries, PRODUCTS));
     expect(intake.productHistory).toHaveLength(4);
     const up = buildUserProfile(intake, { catalog: PRODUCTS });
@@ -119,6 +119,8 @@ describe('to the matcher', () => {
     expect(mag.hardSuppress).toBe(true);
     const serum = up.experience.history.find((x) => x.resolvedProductId === SERUM.id);
     expect(serum.effects.map((e) => e.from)).toEqual(expect.arrayContaining(['reaction:mild', 'stop:reaction']));
+    expect(serum.hardSuppress).toBe(true);
+    expect(JSON.stringify(scoreProduct(buildProductProfile({ ...SERUM, healthFunctions: [], tags: [] }), up))).toMatch(/history_side_effect/);
     const result = scoreProduct(buildProductProfile({ ...MAG, healthFunctions: [], tags: [] }), up);
     expect(JSON.stringify(result)).toMatch(/history_made_worse/);
   });

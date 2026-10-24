@@ -4,7 +4,7 @@ import { useResearchState } from '../data/researchLoader';
 import { ProductImageFallback } from './ProductTileImage';
 import ProductCard from './ProductCard';
 import { ALL_PRODUCTS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../data/products.js';
-import { exclusionLines } from '../utils/matchDisplay';
+import { exclusionLines, matchText } from '../utils/matchDisplay';
 import { whyLine } from '../utils/whyLine';
 import '../styles/match-ui.css';
 import { getAynaRating, getAynaRatingCount } from '../data/aynaReviews';
@@ -937,7 +937,7 @@ export default function ProductModal({
               const ev = evidenceLevel(product);
               const rows = [];
               const why = whyLine(product, matchDetails) || headMatchLine;
-              if (matchPercent > 0) rows.push(<li key="why"><button type="button" className="ayp-why__row" onClick={() => setShowWhy(true)} aria-label={`${matchPercent}% match${why ? `. ${why}` : ''}. See why`}><MatchPill percent={matchPercent} size="sm" /><span className="ayp-why__main">{why || 'Why ayna picked this for you'}</span><span className="ayp-why__go">See why</span></button></li>);
+              if (matchPercent > 0) rows.push(<li key="why"><button type="button" className="ayp-why__row" onClick={() => setShowWhy(true)} aria-label={`${matchText(matchPercent)}${why ? `. ${why}` : ''}. See why`}><MatchPill percent={matchPercent} size="sm" /><span className="ayp-why__main">{why || 'Why ayna picked this for you'}</span><span className="ayp-why__go">See why</span></button></li>);
               if (ev.level > 0) rows.push(<li key="ev"><button type="button" className="ayp-why__row" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'literature' }))}><span className="ayp-why__bars" data-level={ev.level} aria-hidden="true"><i /><i /><i /></span><span className="ayp-why__main"><b>{ev.word}</b>{ev.need && ` for ${ev.need}`}</span><span className="sr-only">. See the evidence</span></button></li>);
               if (settled && !(matchPercent > 0) && quizResults) rows.push(<li key="fit"><button type="button" className="ayp-why__row" onClick={() => setShowWhy(true)}><span className="ayp-why__main">{matchExclusions[0] || 'No clear match for what you told us'}</span><span className="ayp-why__go">See why</span></button></li>);
               if (!quizResults && !user && onStartQuiz) rows.push(<li key="fit"><button type="button" className="ayp-why__row" onClick={onStartQuiz}><span className="ayp-why__main">How well does this fit you?</span><span className="ayp-why__go">See my matches</span></button></li>);

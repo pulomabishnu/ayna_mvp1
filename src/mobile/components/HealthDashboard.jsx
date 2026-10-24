@@ -1,6 +1,7 @@
 import { useContext, useMemo } from 'react';
 import { AskContext } from '../askContext.js';
 import { dashboardContext } from '../utils/dashboardAsk.js';
+import { useAskHealthPref } from '../../health/askHealthPref.js';
 import { buildDashboard } from '../../health/dashboard.js';
 import { localToday, useHealthData } from '../hooks/useHealthData.js';
 import { HealthStarter } from './HealthBento.jsx';
@@ -16,6 +17,7 @@ import '../screens/profile/health-connections.css';
 
 export default function HealthDashboard({ authUser, userName = '', selectedNeedIds = [], hormonalBC = false, onConnect, onAddGoal, onOpenRoutine, onOpenCheckin, onSignIn, products = [], routineProducts = [], routineOutcomes = {}, matches = [], onOpenProduct }) {
   const openAsk = useContext(AskContext);
+  const askHealth = useAskHealthPref(authUser?.id || null);
   const health = useHealthData(authUser?.id || null, selectedNeedIds);
   const today = localToday();
   const week = useMemo(() => buildDashboard(health.insightRows || [], { days: 30, today }), [health.insightRows, today]);
@@ -79,7 +81,14 @@ export default function HealthDashboard({ authUser, userName = '', selectedNeedI
         onAddGoal={onAddGoal}
         onOpenRoutine={onOpenRoutine}
         onOpenCheckin={onOpenCheckin}
-        onAsk={openAsk ? (question, extra) => openAsk({ question, context: dashboardContext({ cycle: week.cycle?.cycleDay ? week.cycle : null, estimate, ready, products, insights: extra?.insights || [] }), stats: extra?.stats || null }) : undefined}
+        onAsk={openAsk ? (question, extra) => {
+          // Health lines only with her opt-in (src/health/askHealthPref.js, off by
+          // default); the Ask sheet can rebuild with it once she turns it on.
+          const buildContext = (allowHealth) => dashboardContext({ cycle: week.cycle?.cycleDay ? week.cycle : null, estimate, ready, products, insights: extra?.insights || [], allowHealth });
+          const withHealth = buildContext(true);
+          const without = buildContext(false);
+          openAsk({ question, context: askHealth.on ? withHealth : without, buildContext, usesHealth: withHealth !== without, stats: extra?.stats || null });
+        } : undefined}
         footer={<button type="button" className="ay-hc-ghost" onClick={onConnect}>Manage connected apps</button>}
         surface="app"
       />

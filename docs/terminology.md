@@ -65,6 +65,10 @@ here is wrong, change it here first and then sweep.
   "Another option for your trouble sleeping". Never invent a reason.
   Compare adds a "Why it fits you" row and one sentence on why the top one
   ranks first (`whyFirstLine`).
+- **Under 50, no number.** One rule everywhere a % shows (cards, product
+  page, Compare, Why this match, Swipe, Wrapped, Community, Ask): under 50
+  it says **Partial fit** with the why line (`matchText` /
+  `shownMatchPercent` in `src/utils/matchDisplay.js`).
 - **No profile, no %.** Without her answers there is nothing honest to
   score: show the quiz prompt ("See my matches") or nothing.
 - No dots, bars or rings that grade a source count.
