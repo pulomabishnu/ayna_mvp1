@@ -1,3 +1,4 @@
+import { legacyPathFor } from './components/nav/mainTabs.js';
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
@@ -150,7 +151,10 @@ function sanitizePosthogEvent(event) {
   // platform on every event, including the first pageview (which can be sent
   // before the `loaded` register below takes effect). Free text typed into
   // Shop/Community search (?q=) is stripped from every URL property.
-  return sanitizeEventPayload(event, { platform: ANALYTICS_PLATFORM });
+  // Pageviews on a moved page also carry the old address (legacy_path: /shop,
+  // /library, /ecosystem, /health), so dashboards built on those keep counting.
+  const legacy = event?.event === '$pageview' && typeof window !== 'undefined' ? legacyPathFor(window.location.pathname) : null;
+  return sanitizeEventPayload(event, legacy ? { platform: ANALYTICS_PLATFORM, legacy_path: legacy } : { platform: ANALYTICS_PLATFORM });
 }
 
 if (!POSTHOG_KEY) {

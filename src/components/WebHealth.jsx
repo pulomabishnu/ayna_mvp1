@@ -104,7 +104,7 @@ function Locked({ signedIn, connected, onSignIn, onOpenConnections }) {
   );
 }
 
-export default function WebHealth({ user, health, products = [], needIds = [], hormonalBC = false, quizAnswers = null, onOpenProduct, onAsk, onSignIn, onOpenConnections, onEditAnswers }) {
+export default function WebHealth({ user, health, products = [], needIds = [], hormonalBC = false, quizAnswers = null, onOpenProduct, onAsk, onSignIn, onOpenConnections, onEditAnswers, title = 'Your health', intro = null }) {
   // DEVELOPMENT ONLY (?healthdemo=1 on the local dev server, signed out):
   // the made-up demo rows from devDemo.js, so the unlocked layout can be
   // checked without an account. import.meta.env.DEV is false in production builds.
@@ -146,12 +146,16 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
     />
   );
 
+  // Today (the first main tab) passes its title and, with no profile yet, a way to make one.
   const header = (
-    <header className="ay-wh-top">
-      <h1 id="ay-wh-title" className="sr-only">Your health</h1>
-      <p className="ay-wh-kicker" aria-hidden="true"><b>Your health</b>{!(signedIn && hasData) && <span>{fmtLongDay(today)}</span>}</p>
-      {signedIn && hasData && onOpenConnections && <button type="button" className="ay-wh-btn is-quiet is-small" onClick={onOpenConnections}>Connected apps</button>}
-    </header>
+    <>
+      <header className="ay-wh-top">
+        <h1 id="ay-wh-title" className="sr-only">{title}</h1>
+        <p className="ay-wh-kicker" aria-hidden="true"><b>{title}</b>{!(signedIn && hasData) && <span>{fmtLongDay(today)}</span>}</p>
+        {signedIn && hasData && onOpenConnections && <button type="button" className="ay-wh-btn is-quiet is-small" onClick={onOpenConnections}>Connected apps</button>}
+      </header>
+      {intro}
+    </>
   );
 
   if (signedIn && (h.status === 'loading' || h.status === 'idle') && !rows.length) {
