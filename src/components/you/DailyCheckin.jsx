@@ -19,18 +19,23 @@ const SAVE_TEXT = {
 };
 
 export default function DailyCheckin({ variant = 'web', userId = null }) {
-  const app = variant === 'app';
   const { log, save, saveState } = useDailyLog(userId);
-  const today = todayKey();
+  return <DailyCheckinCard variant={variant} log={log} save={save} saveState={saveState} />;
+}
+
+/** The card itself, for screens that already hold the log (Today: src/components/today/TodayFeed.jsx). */
+export function DailyCheckinCard({ variant = 'web', log, save, saveState = 'idle', today: todayProp = null, headingId = 'wy-checkin-h', title = 'Today' }) {
+  const app = variant === 'app';
+  const today = todayProp || todayKey();
   const todays = log[today] || {};
   const [more, setMore] = useState(() => todays.mood != null || todays.skin != null);
   const pick = (fieldId, value) => save(today, { [fieldId]: todays[fieldId] === value ? null : value });
   const loggedWeek = lastWeek(log, 'day', today).map((d) => ({ day: d.day, logged: Boolean(log[d.day] && LOG_FIELDS.some((f) => log[d.day][f.id] != null)) }));
   const rows = LOG_FIELDS.filter((f) => f.primary || more);
   return (
-    <section className={app ? 'ay-you-section' : 'wy-sec'} aria-labelledby="wy-checkin-h">
+    <section className={app ? 'ay-you-section' : 'wy-sec'} aria-labelledby={headingId}>
       <div className={app ? 'ay-checkin__head' : 'wy-sec__head'}>
-        <h2 className={app ? 'ay-you-h2' : 'ay-group__title'} id="wy-checkin-h">Today</h2>
+        <h2 className={app ? 'ay-you-h2' : 'ay-group__title'} id={headingId}>{title}</h2>
         <span className={app ? 'ay-checkin__private' : 'wy-count'}>Only you can see this</span>
       </div>
       <div className="ay-group is-padded ay-checkin">

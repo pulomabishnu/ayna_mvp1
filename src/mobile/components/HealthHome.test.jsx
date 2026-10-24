@@ -60,6 +60,9 @@ describe('health dashboard action flow', () => {
     root = createRoot(host);
     act(() => root.render(<HealthHome today={today} rows={rows} sections={sections} onOpenRoutine={onOpenRoutine} />));
 
+    // The week's changes keep explainWeek's own order (no hard-coded priority): pick Sleep.
+    const sleepTab = [...host.querySelectorAll('.ay-hh-hero [role="tab"]')].find((b) => b.textContent === 'Sleep');
+    if (sleepTab) act(() => sleepTab.click());
     const open = [...host.querySelectorAll('button')].find((button) => button.textContent.includes('See what to do'));
     expect(open).toBeTruthy();
     act(() => open.click());

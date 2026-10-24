@@ -112,7 +112,6 @@ function Tabs({ tabs, value, onChange, label, idBase, className = '' }) {
   );
 }
 
-const INSIGHT_PRIORITY = { 'sleep-short': 0, 'cycle-shorter': 1, 'heart-up': 2, 'steps-lower': 3, 'period-soon': 4, 'temp-rise': 5, 'heart-down': 6, 'sleep-long': 7 };
 const INSIGHT_TITLES = { 'sleep-short': 'Your sleep changed', 'cycle-shorter': 'Your last cycle was shorter', 'heart-up': 'Your heart trend changed', 'steps-lower': 'Your steps changed', 'period-soon': 'Your period may be close', 'temp-rise': 'Your temperature changed', 'heart-down': 'Your heart trend changed', 'sleep-long': 'Your sleep changed' };
 const INSIGHT_ACTIONS = {
   'sleep-short': ['Look at your recent nights alongside your usual sleep.', 'If this matters to you, choose a sleep goal or review a product matched to that goal.'],
@@ -132,7 +131,10 @@ const INSIGHT_READING = {
   'steps-lower': { label: 'CDC: Benefits of physical activity', url: 'https://www.cdc.gov/physical-activity-basics/health-benefits/adults.html' },
 };
 
-/** The most actionable change leads; the cycle remains available below. */
+/**
+ * This week in her connected data. Not the top of Today any more: what leads
+ * is decide()'s output (TodayFeed). Insights keep explainWeek's own order.
+ */
 function Hero({ cycle, ctx, insights, fallback, onOpenInsight }) {
   const [at, setAt] = useState(0);
   const phase = cycle ? estimatePhase(cycle) : null;
@@ -210,7 +212,7 @@ function InsightDetail({ insight, chart, pick, onBack, onOpenMetric, onOpenProdu
  * full screen, so connecting data fills this page in rather than swapping it
  * for another design. The ring is a blank cycle (no day), never fake data.
  */
-export function HealthEmpty({ name = '', today, onConnect, onOpenCheckin, goalCount = 0, signedOut = false, children }) {
+export function HealthEmpty({ name = '', today, onConnect, onOpenCheckin, goalCount = 0, signedOut = false, todayFeed = null, children }) {
   const hour = new Date().getHours();
   const hello = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
   return (
@@ -219,6 +221,7 @@ export function HealthEmpty({ name = '', today, onConnect, onOpenCheckin, goalCo
         <p>{fmtLongDay(today)}</p>
         <h2>{hello}{name ? `, ${name}` : ''}</h2>
       </header>
+      {todayFeed}
       <section className="ay-hh-hero" aria-labelledby="ay-hh-empty-title">
         <div className="ay-hh-hero-top">
           <div className="ay-hh-hero-head">
@@ -400,6 +403,7 @@ function Tile({ tone, label, big, sub, onOpen, aria, children, i }) {
 export default function HealthHome({
   name = '', rows = [], sections = [], matchContext = null, today, needIds = [], hormonalBC = false,
   products = [], routineProducts = [], routineOutcomes = {}, matches = [], onOpenProduct, onAsk, onAddGoal, onOpenRoutine, onOpenCheckin, footer = null, surface = 'app',
+  todayFeed = null,
 }) {
   const [tab, setTab] = useState('summary');
   const [range, setRange] = useState('month');
@@ -419,7 +423,7 @@ export default function HealthHome({
   const phase = cycle ? estimatePhase(cycle) : null;
 
   const explained = explainWeek(rows, { today, cycle, estimate, hormonalBC, max: 7 });
-  const insights = explained.insights.slice().sort((a, b) => (INSIGHT_PRIORITY[a.signal] ?? 9) - (INSIGHT_PRIORITY[b.signal] ?? 9));
+  const insights = explained.insights;
   const ctx = explained.ctx;
   const picks = weekPicks({ ctx, insights, needIds, products, matches });
   const coming = comingUp(cycle, estimate, today, { hormonalBC, hasProducts: products.length > 0 && Boolean(onOpenRoutine) });
@@ -509,8 +513,6 @@ export default function HealthHome({
   const summary = (
     <div className="ay-hh-summary">
       <div className="ay-hh-main">
-        <Hero cycle={cycle} ctx={ctx} insights={insights.slice(0, 3)} fallback={weekSummary(ready)} onOpenInsight={showInsight} />
-        <TodayPlan products={routineProducts} needIds={needIds} onOpenRoutine={onOpenRoutine} />
         <RecentCheckin products={routineProducts} outcomes={routineOutcomes} onOpenRoutine={onOpenRoutine} />
         <TriedSoFar products={routineProducts} outcomes={routineOutcomes} onOpenRoutine={onOpenRoutine} />
         {onOpenCheckin && <button type="button" className="ay-hh-checkin-link" onClick={onOpenCheckin}>Log how you felt this month →</button>}
@@ -533,6 +535,7 @@ export default function HealthHome({
             <ul className="ay-hh-tiles" data-count={tiles.length}>{tiles}</ul>
           )}
         </section>
+        <Hero cycle={cycle} ctx={ctx} insights={insights.slice(0, 3)} fallback={weekSummary(ready)} onOpenInsight={showInsight} />
         <details className="ay-hh-personalized"><summary>How ayna puts this together</summary><Adds items={adds} /></details>
       </div>
       <div className="ay-hh-rail">
@@ -580,6 +583,7 @@ export default function HealthHome({
             {sources.length > 0 && <p className="ay-hh-note">From {sourceNames(sources)}. Trends, not diagnoses.</p>}
           </details>
         )}
+        <TodayPlan products={routineProducts} needIds={needIds} onOpenRoutine={onOpenRoutine} />
         {onOpenRoutine && <button type="button" className="ay-hh-routine" onClick={onOpenRoutine}><span><b>Your routine and shopping list</b><small>Choose products, track what you have, shop your routine</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>}
         {effects.length > 0 && <section className="ay-hh-effects" aria-labelledby="ay-hh-effects-title"><h3 id="ay-hh-effects-title" className="ay-hh-h3">Is your routine working?</h3><p>Changes since you added a product, using the data you connected.</p>{effects.slice(0, 2).map((effect) => <div key={effect.product.id}><b>{effect.product.name}</b><p>{effect.text}</p><small>{effect.caveat}</small></div>)}</section>}
       </div>
@@ -687,6 +691,7 @@ export default function HealthHome({
       </header>
       {(surface !== 'app' || current !== 'summary') && <div className="ay-hh-areas"><Tabs tabs={tabs} value={current} onChange={pickTab} label="Health areas" idBase="ay-hh-area" className="is-areas" /></div>}
       <div className="ay-hh-panel" role={surface === 'app' && current === 'summary' ? 'region' : 'tabpanel'} id="ay-hh-area-panel" aria-label={surface === 'app' && current === 'summary' ? 'Today' : undefined} aria-labelledby={surface === 'app' && current === 'summary' ? undefined : `ay-hh-area-tab-${current}`} key={current}>
+        {current === 'summary' && !selectedInsight && todayFeed}
         {current === 'summary' && (selectedInsight
           ? <InsightDetail insight={selectedInsight} chart={selectedChart} pick={selectedPick} onBack={() => setActiveInsight(null)} onOpenMetric={() => open(selectedChart?.group || 'cycle')} onOpenProduct={onOpenProduct} onOpenRoutine={onOpenRoutine} onAsk={ask} />
           : summary)}

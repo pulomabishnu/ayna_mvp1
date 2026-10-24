@@ -6,6 +6,7 @@ import { buildDashboard } from '../../health/dashboard.js';
 import { localToday, useHealthData } from '../hooks/useHealthData.js';
 import { HealthStarter } from './HealthBento.jsx';
 import HealthHome, { HealthEmpty } from './HealthHome.jsx';
+import TodayFeed from '../../components/today/TodayFeed.jsx';
 import '../screens/profile/health-connections.css';
 
 /**
@@ -15,7 +16,7 @@ import '../screens/profile/health-connections.css';
  * Compared only with her own usual. Never a diagnosis.
  */
 
-export default function HealthDashboard({ authUser, userName = '', selectedNeedIds = [], hormonalBC = false, onConnect, onAddGoal, onOpenRoutine, onOpenCheckin, onSignIn, products = [], routineProducts = [], routineOutcomes = {}, matches = [], onOpenProduct }) {
+export default function HealthDashboard({ authUser, userName = '', selectedNeedIds = [], hormonalBC = false, onConnect, onAddGoal, onOpenRoutine, onOpenCheckin, onSignIn, products = [], routineProducts = [], routineOutcomes = {}, matches = [], onOpenProduct, quizAnswers = null, onEditAnswers }) {
   const openAsk = useContext(AskContext);
   const askHealth = useAskHealthPref(authUser?.id || null);
   const health = useHealthData(authUser?.id || null, selectedNeedIds);
@@ -24,11 +25,27 @@ export default function HealthDashboard({ authUser, userName = '', selectedNeedI
   const { sections } = health.insights;
   const ready = sections.filter((s) => s.status === 'ready');
   const estimate = sections.find((s) => s.id === 'cycle')?.estimate || null;
+  // Today with ayna leads every state (signed out and offline too: the log is local first).
+  const feedProducts = useMemo(() => [...products, ...matches], [products, matches]);
+  const todayFeed = (
+    <TodayFeed
+      variant="app"
+      userId={authUser?.id || null}
+      intake={quizAnswers}
+      healthRows={health.insightRows || []}
+      cycle={week.cycle?.cycleDay ? week.cycle : null}
+      hormonalBC={hormonalBC}
+      products={feedProducts}
+      onOpenProduct={onOpenProduct}
+      onAsk={openAsk ? (question) => openAsk({ question }) : undefined}
+      onEditAnswers={onEditAnswers}
+    />
+  );
 
   if (!authUser?.id) {
     return (
       <div className="ay-hd">
-        <HealthEmpty today={today} onConnect={onSignIn} goalCount={selectedNeedIds.length} signedOut>
+        <HealthEmpty today={today} onConnect={onSignIn} goalCount={selectedNeedIds.length} signedOut todayFeed={todayFeed}>
           <HealthStarter needIds={selectedNeedIds} products={products} matches={matches} onOpenProduct={onOpenProduct} onConnect={null} compact />
         </HealthEmpty>
       </div>
@@ -36,19 +53,19 @@ export default function HealthDashboard({ authUser, userName = '', selectedNeedI
   }
   if (health.status === 'loading') {
     return (
-      <div className="ay-hh-skeleton" role="status" aria-busy="true">
+      <div className="ay-hd">{todayFeed}<div className="ay-hh-skeleton" role="status" aria-busy="true">
         <span className="sr-only">Loading your health data</span>
         <i className="is-hello" /><i className="is-hero" /><span><i /><i /><i /><i /></span>
-      </div>
+      </div></div>
     );
   }
   if (health.status === 'error' && !health.insightRows?.length) {
     return (
-      <div className="ay-hd-empty" role="alert">
+      <div className="ay-hd">{todayFeed}<div className="ay-hd-empty" role="alert">
         <h2>We couldn't load your health data</h2>
         <p>Check your connection and try again. Your data has not changed.</p>
         <button type="button" className="ay-qc-primary" onClick={() => health.refresh()}>Try again</button>
-      </div>
+      </div></div>
     );
   }
   const meta = authUser?.user_metadata || {};
@@ -56,7 +73,7 @@ export default function HealthDashboard({ authUser, userName = '', selectedNeedI
   if (week.empty && !sections.length) {
     return (
       <div className="ay-hd">
-        <HealthEmpty name={name} today={today} onConnect={onConnect} onOpenCheckin={onOpenCheckin} goalCount={selectedNeedIds.length}>
+        <HealthEmpty name={name} today={today} onConnect={onConnect} onOpenCheckin={onOpenCheckin} goalCount={selectedNeedIds.length} todayFeed={todayFeed}>
           {/* Still useful before any data: her goals matched to her products, from the quiz. */}
           <HealthStarter needIds={selectedNeedIds} products={products} matches={matches} onOpenProduct={onOpenProduct} onConnect={null} compact />
         </HealthEmpty>
@@ -91,6 +108,7 @@ export default function HealthDashboard({ authUser, userName = '', selectedNeedI
         } : undefined}
         footer={<button type="button" className="ay-hc-ghost" onClick={onConnect}>Manage connected apps</button>}
         surface="app"
+        todayFeed={todayFeed}
       />
     </div>
   );
