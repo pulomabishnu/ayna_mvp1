@@ -82,10 +82,10 @@ const UTI_OPTIONS = [
   ['new', 'Yes, new / first time this month'],
 ];
 const RECS_OPTIONS = [
-  ['not_tried', 'Haven’t tried them yet', 'We will hold off on new suggestions'],
-  ['helped', 'Helped', 'More like these, and we will keep the dose steady'],
-  ['didnt_help', 'Didn’t help', 'Next time we’ll suggest a different kind of product, not just another brand'],
-  ['worse', 'Made things worse', 'We will pull them and flag the ingredient'],
+  ['not_tried', 'Haven’t tried them yet', 'Nothing changes. We ask again next month'],
+  ['helped', 'Helped', 'Saved with this month’s check-in'],
+  ['didnt_help', 'Didn’t help', 'Saved. Rate each product in your routine to change your picks'],
+  ['worse', 'Made things worse', 'Saved. In your routine, mark the one that made it harder and we stop suggesting it'],
   ['na', 'I didn’t get any picks', 'Nothing to score'],
 ];
 const MEDICATION_OPTIONS = [
@@ -514,7 +514,7 @@ function CompletionCard({ month, justFinished }) {
     <div className="ip-done">
       <div className={`ip-done-stamp${justFinished ? ' ay-dot-fill' : ''}`} aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" /></svg></div>
       <h1 className="ip-title">{justFinished ? `${monthLabel(month)} is logged` : `${monthLabel(month)} is done`}</h1>
-      <p className="ip-subtitle">{justFinished ? 'Your matches update overnight.' : 'See you next month.'}</p>
+      <p className="ip-subtitle">{justFinished ? 'Your matches now use these answers.' : 'See you next month.'}</p>
     </div>
   );
 }

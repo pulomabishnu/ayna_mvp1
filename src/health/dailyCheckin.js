@@ -1,3 +1,6 @@
+// LEGACY (2026-10-24): replaced by dailyLog.js. Nothing writes this key any
+// more; dailyLog.js reads it once to bring sleep/mood/skin answers into the
+// new log and leaves it untouched. Kept so old data and tests stay readable.
 // Daily 3-tap check-in (beta users, Oct 4 meeting): sleep, mood and skin, each
 // on a 3-point scale, one answer per day. Kept on this device only (private by
 // default, nothing is sent anywhere), so it works signed out and offline.
