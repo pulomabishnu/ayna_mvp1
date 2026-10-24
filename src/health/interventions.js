@@ -117,6 +117,10 @@ export function safetyContextFrom(profile) {
     breastfeeding: s?.breastfeeding || 'unknown', // yes | no | unknown
     postpartum: stages.includes('postpartum'),
     menopause: stages.some((st) => st === 'menopause' || st === 'postmenopause'),
+    // No menstrual cycle now (menopause, post-menopause, pregnancy), from her
+    // own answers (userProfile.js physiology.menstruation). Today never offers
+    // cycle tracking or treats her pain as period pain then.
+    noCycle: phys.menstruation === 'none',
     allergyStatus: s?.allergyStatus || 'unknown',
     allergyIds: new Set((s?.allergies || []).map((a) => a?.id).filter(Boolean)),
     medicationsState: s?.medicationsState || 'skipped',
@@ -132,6 +136,14 @@ export function safetyContextFrom(profile) {
   };
 }
 export const isPregnant = (ctx) => ctx.pregnancy === 'pregnant' || ctx.pregnancy === 'reported';
+/** After menopause (no cycle, not pregnant): period and PMS needs do not apply. */
+export const isPostCycle = (ctx) => Boolean(ctx.noCycle && ctx.menopause && !isPregnant(ctx));
+
+/** How a need reads for her: "your sleep" rather than "sleep around your cycle" once she has no cycle. */
+export function needLabelFor(need, ctx) {
+  if (need === 'cycle_sleep' && ctx?.noCycle) return 'sleep';
+  return NEEDS[need]?.label || need;
+}
 
 const gate = (verdict, code, reason, source = null, field = null) => ({ verdict, code, reason, source, field });
 

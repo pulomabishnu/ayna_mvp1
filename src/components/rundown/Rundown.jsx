@@ -30,7 +30,7 @@ const REMIND_TEXT = {
  * handlers it can offer. A card with no handler simply has no button for it.
  */
 export default function Rundown({
-  t, userId = null, intake = null, products = [], saved = [], community = [], variant = 'app',
+  t, userId = null, intake = null, products = [], saved = [], community = [], variant = 'app', matchOpts = undefined, healthProfile = null,
   onAsk, onSeeData, onOpenProduct, onWhyMatch, onToggleSaved, onCompare, onOpenRead, onExplore, onFindCare, onEditAnswers,
 }) {
   const [memory, setMemory] = useState(() => { setRundownOwner(userId); return readRundownMemory(); });
@@ -38,20 +38,23 @@ export default function Rundown({
   const catalogReady = useCatalogReady();
   const today = t.today;
 
-  // Her matches, scored by the one engine (no other source of a percent).
-  // Not what she already has, said no to, tried without luck, or saved
-  // (Saved has its own card) (team direction 65; src/health/remembered.js).
+  // Her matches, scored by the one engine (no other source of a percent),
+  // with the same inputs as Shop and the product page (health profile,
+  // history), so the Rundown never shows a different number. Not what she
+  // already has, said no to, tried without luck, saved (Saved has its own
+  // card), or accessories (team direction 65; src/health/remembered.js).
   const matches = useMemo(() => {
     if (!intake || !catalogReady) return [];
     const seen = new Set();
     const remembered = rememberedOnDevice({ tries: t.tries, saved: Object.fromEntries((saved || []).filter((p) => p?.id).map((p) => [p.id, true])), prefs: readRoutinePrefs() });
     return withoutRemembered(products, remembered).filter((p) => p?.id && !seen.has(p.id) && seen.add(p.id)).map((product) => {
       let details = null;
-      try { details = getProductMatchDetailsForProduct(product, intake); } catch { details = null; }
+      try { details = getProductMatchDetailsForProduct(product, intake, healthProfile, matchOpts); } catch { details = null; }
       if (!details || details.matchStatus !== 'scored' || !Number.isFinite(details.percent)) return null;
-      return { product, percent: details.percent, needId: details.needId, why: whyLine(product, details), evidence: evidenceLevel(product).level };
+      if (details.recommendable === false || ['dismissed', 'tried', 'not_for_me'].includes(details.history)) return null;
+      return { product, percent: details.percent, needId: details.needId, needSignal: details.needSignal || null, why: whyLine(product, details), evidence: evidenceLevel(product).level };
     }).filter(Boolean);
-  }, [products, intake, catalogReady, t.tries, saved]);
+  }, [products, intake, catalogReady, t.tries, saved, healthProfile, matchOpts]);
 
   const daily = useMemo(() => buildRundown({
     today, decision: t.decision, patterns: t.patterns, log: t.log, tries: t.tries, healthRows: t.healthRows,

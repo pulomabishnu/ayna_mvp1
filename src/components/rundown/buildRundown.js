@@ -288,7 +288,10 @@ export function buildRundown(input = {}) {
   // 7. Recommendation: her best match for a need she has right now, never next to care.
   if (!hasCare) {
     const wanted = new Set(needs.flatMap((n) => WEDGE_TO_INTAKE_NEED[n] || []));
-    const best = matches.filter((m) => m?.product && wanted.has(m.needId) && m.percent >= RUNDOWN_RULES.matchMinPercent).sort((a, b) => b.percent - a.percent)[0];
+    // Strongest current need first: a need she only hinted at (needSignal
+    // 'weak', src/matching/forYou.js) never takes the card from one she picked.
+    const weakLast = (m) => (m.needSignal === 'weak' ? 1 : 0);
+    const best = matches.filter((m) => m?.product && wanted.has(m.needId) && m.percent >= RUNDOWN_RULES.matchMinPercent).sort((a, b) => weakLast(a) - weakLast(b) || b.percent - a.percent)[0];
     if (best) add({ key: `match:${best.product.id}`, category: 'match', kind: 'match', kicker: 'Matched to you', title: 'One of your matches fits what you logged', match: best, followUps: [`Why is ${best.product.name} my match?`] });
   }
 

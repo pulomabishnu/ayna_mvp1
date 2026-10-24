@@ -39,24 +39,31 @@ const nameOf = (p) => String(p?.name || p?.title || 'This product').trim();
 /**
  * @param {string} text her question
  * @param {{ catalog: object[], quizAnswers: object|null, healthProfile?: object|null,
- *   matchOpts?: object, categoryLabels?: object, getDetails: Function, focusProduct?: object|null }} ctx
+ *   matchOpts?: object, categoryLabels?: object, getDetails: Function, getTop?: Function, focusProduct?: object|null }} ctx
  *   getDetails = getProductMatchDetailsForProduct (passed in so this file stays light).
+ *   getTop = getTopMatch (her first For you match), for "explain my top match".
  *   focusProduct = the product she is looking at, used when the question names none.
  * @returns {{ answer: string, followUps: object[], productId: string|null } | null}
  *   null when it is not a match question (send it to Ask as usual).
  */
 export function answerMatchQuestion(text, ctx) {
   if (!isMatchQuestion(text)) return null;
-  const { catalog = [], quizAnswers = null, healthProfile = null, matchOpts, categoryLabels = {}, getDetails, focusProduct = null } = ctx || {};
+  const { catalog = [], quizAnswers = null, healthProfile = null, matchOpts, categoryLabels = {}, getDetails, getTop = null, focusProduct = null } = ctx || {};
   const query = TOP_MATCH.test(text) ? '' : productQueryFrom(text);
-  // "Explain my top match": her highest match in the catalog, from the same engine.
+  // "Explain my top match": the first product of her For you order, from the
+  // same engine (getTopMatch: eligible, not held back, not something she said
+  // was not relevant or already has, life stage checked first).
   if (TOP_MATCH.test(text) && quizAnswers && typeof getDetails === 'function') {
-    let top = null;
-    for (const p of catalog) {
-      const d = getDetails(p, quizAnswers, healthProfile, matchOpts);
-      if (d?.matchStatus === 'scored' && d.eligible !== false && Number.isFinite(d.percent) && (!top || d.percent > top.percent)) top = { p, percent: d.percent };
+    let top = typeof getTop === 'function' ? getTop(quizAnswers, healthProfile, matchOpts) : null;
+    if (!top) {
+      let best = null;
+      for (const p of catalog) {
+        const d = getDetails(p, quizAnswers, healthProfile, matchOpts);
+        if (d?.matchStatus === 'scored' && d.eligible !== false && !d.restricted && d.recommendable !== false && Number.isFinite(d.percent) && (!best || d.percent > best.percent)) best = { p, percent: d.percent };
+      }
+      top = best?.p || null;
     }
-    if (top) return answerMatchQuestion(`why is this matched to me`, { ...ctx, focusProduct: top.p });
+    if (top) return answerMatchQuestion(`why is this matched to me`, { ...ctx, focusProduct: top });
   }
   const id = query ? findConfidentProductMatch(query, catalog, null, categoryLabels) : undefined;
   const product = (id && catalog.find((p) => String(p.id) === String(id))) || (!query ? focusProduct : null);
@@ -124,6 +131,6 @@ export function answerMatchQuestion(text, ctx) {
 /** Loads the catalog and engine only when a match question comes in. */
 export async function localMatchAnswer(text, { quizAnswers, healthProfile = null, matchOpts, focusProduct = null } = {}) {
   if (!isMatchQuestion(text)) return null;
-  const { ALL_PRODUCTS, CATEGORY_LABELS, getProductMatchDetailsForProduct } = await import('../data/products.js');
-  return answerMatchQuestion(text, { catalog: ALL_PRODUCTS, categoryLabels: CATEGORY_LABELS, quizAnswers, healthProfile, matchOpts, focusProduct, getDetails: getProductMatchDetailsForProduct });
+  const { ALL_PRODUCTS, CATEGORY_LABELS, getProductMatchDetailsForProduct, getTopMatch } = await import('../data/products.js');
+  return answerMatchQuestion(text, { catalog: ALL_PRODUCTS, categoryLabels: CATEGORY_LABELS, quizAnswers, healthProfile, matchOpts, focusProduct, getDetails: getProductMatchDetailsForProduct, getTop: getTopMatch });
 }

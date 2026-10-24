@@ -41,7 +41,7 @@ import { OUTCOMES, OUTCOME_LABELS, tryStatus } from './outcomes.js';
 import { cycleStartsFrom, MIN_CYCLES, MIN_SHARE, PATTERN_METRICS } from './cyclePatterns.js';
 import {
   INTERVENTION_CLASSES, INTAKE_NEED_MAP, NEEDS, SOURCES,
-  classesForNeed, evaluateClassSafety, isPregnant, productsForClass, safetyContextFrom,
+  classesForNeed, evaluateClassSafety, isPregnant, isPostCycle, needLabelFor, productsForClass, safetyContextFrom,
 } from './interventions.js';
 
 export { addDays };
@@ -183,10 +183,16 @@ export function activeNeeds({ profile, logs = [], patterns = [], today, cycleSta
   const entries = cleanLogs(logs);
   const ctx = safetyContextFrom(profile || null);
   const pregnant = isPregnant(ctx);
+  // Life stage before anything else (team direction 14): after menopause her
+  // logged pain is not period pain and there is no PMS, so only a need she
+  // picked herself can bring them up; sleep stays (labelled plainly).
+  const postCycle = isPostCycle(ctx);
   const out = {};
   const add = (need, source, detail) => {
     const id = pregnant && need === 'period_pain' ? 'pregnancy_pain' : need;
     if (!NEEDS[id]) return;
+    if (postCycle && source !== 'intake' && (id === 'period_pain' || id === 'pms')) return;
+    if (postCycle && source === 'intake' && id === 'pms') return;
     out[id] = out[id] || { id, sources: [] };
     out[id].sources.push({ source, detail });
   };
@@ -579,6 +585,8 @@ function optionCandidates({ needs, ctx, ready, intent, products, removedBySafety
     const preg = need === 'pregnancy_pain';
     classesForNeed(need).forEach((cls, rank) => {
       if (cls.id === 'care') return;
+      // "Track it for three cycles" needs a cycle: never for someone without one.
+      if (cls.id === 'tracking' && ctx.noCycle && need !== 'pregnancy_pain') return;
       const id = `option:${cls.id}:${need}`;
       const safetyResult = evaluateClassSafety(cls.id, ctx, need);
       if (safetyResult.verdict === 'block') {
@@ -600,7 +608,7 @@ function optionCandidates({ needs, ctx, ready, intent, products, removedBySafety
         id, tier: 'symptom', type: 'option', priority: PRIORITY.option - rank * 10,
         title: cls.label,
         body: `${lead}${summary}${caution ? ` ${caution}` : ''}`,
-        reason: `For your ${NEEDS[need].label}.`,
+        reason: `For your ${needLabelFor(need, ctx)}.`,
         actions: [
           ...(consult ? [] : [{ id: 'try_this', label: 'Try this', classId: cls.id, need, horizonDays: cls.followUpDays }]),
           { id: 'not_relevant', label: 'Not relevant' },
@@ -616,7 +624,7 @@ function optionCandidates({ needs, ctx, ready, intent, products, removedBySafety
           id: `products:${cls.id}:${need}`, tier: 'products', type: 'products', priority: PRIORITY.products - rank,
           title: `${cls.label} products`,
           body: 'Products that fit this option. Check each label before use.',
-          reason: `You asked to see options for your ${NEEDS[need].label}.`,
+          reason: `You asked to see options for your ${needLabelFor(need, ctx)}.`,
           actions: [{ id: 'see_products', label: 'See products', productIds: list.map((p) => p.id) }, { id: 'not_relevant', label: 'Not relevant' }],
           basis: { kind: 'products', classId: cls.id, need },
           classId: cls.id, need, productIds: list.map((p) => p.id),

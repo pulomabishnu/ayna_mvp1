@@ -226,6 +226,34 @@ function singleState(value, { no = [], notSure = [], preferNot = [] } = {}) {
 }
 
 /**
+ * "Not relevant" answers -> Map(productId -> Set of needIds, '*' = every need).
+ * Accepts ['id'], [{ id|productId, needId }], or { id: true | needId | [needIds] | { needId } }.
+ */
+function dismissedMap(v) {
+  const out = new Map();
+  const add = (id, needId) => {
+    if (id == null || id === '') return;
+    const key = String(id);
+    const set = out.get(key) || new Set();
+    set.add(needId ? String(needId) : '*');
+    out.set(key, set);
+  };
+  if (!v) return out;
+  if (v instanceof Set) v.forEach((id) => add(id, null));
+  else if (Array.isArray(v)) v.forEach((x) => (x && typeof x === 'object' ? add(x.id ?? x.productId, x.needId) : add(x, null)));
+  else if (typeof v === 'object') {
+    for (const [id, val] of Object.entries(v)) {
+      if (!val) continue;
+      if (Array.isArray(val)) { if (val.length) val.forEach((n) => add(id, n)); else add(id, null); }
+      else if (typeof val === 'string') add(id, val);
+      else if (typeof val === 'object') add(id, val.needId || null);
+      else add(id, null);
+    }
+  }
+  return out;
+}
+
+/**
  * Behavior events -> { id: { saved: weight, ... } } with time decay.
  * Each signal accepts an id array, a Set, a product array, or { id: truthy | timestamp | { at } } map.
  */
@@ -682,6 +710,17 @@ export function buildUserProfile(intakeInput, options = {}) {
     reordered: new Set(idList(b.reordered)),
     // Prices of past purchases (numbers). Used only to soften the budget curve a little.
     purchasedPrices: arr(b.purchasedPrices).map(Number).filter(Number.isFinite),
+    // Remembered history the engine honors (src/matching/forYou.js historyState).
+    // All of it is read fresh each time, so removing an entry is the undo.
+    // dismissed: "Not relevant" -> Map(productId -> Set(needIds | '*')).
+    dismissed: dismissedMap(b.dismissed),
+    // In her routine (counts as already having it).
+    routine: new Set(idList(b.routine)),
+    // Tried and it did not help (her product history: "No difference", or
+    // stopped because it did not help or stopped working).
+    triedWithoutHelp: new Set(history
+      .filter((h) => h.resolvedProductId && (h.outcome === 'no_difference' || h.stopReasons.some((r) => r === 'did_not_help' || r === 'stopped_working')))
+      .map((h) => String(h.resolvedProductId))),
   };
 
   const urgent = intake.safetyConcern === 'Yes' ? 'yes' : intake.safetyConcern === 'Not sure' ? 'not_sure' : intake.safetyConcern === 'No' ? 'no' : null;

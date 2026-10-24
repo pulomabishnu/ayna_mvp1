@@ -22,6 +22,8 @@ import {
 import { getListingStatus as passportListingStatus } from './passport/index.js';
 import { needPhrase, canonicalNeedId, LIFE_STAGE_BY_ID, FORMAT_BY_ID, VALUE_BY_ID, ATTRIBUTE_PHRASE } from '../matching/ontology.js';
 import { buildEcosystemV2, scoreProductV2, withV2Score, userKeyOf } from '../matching/v2.js';
+import { isRecommendable, recommendationEligibility } from '../matching/eligibility.js';
+import { needSignals, orderForYou, historyState, NOT_RECOMMENDED_AGAIN } from '../matching/forYou.js';
 import { shapeEcosystemWithHealth } from '../matching/healthShaping.js';
 import { getCareResourceBundle } from './careResources.js';
 import { withImageOverride } from './productImageOverrides.js';
@@ -1372,7 +1374,10 @@ function asIdList(value) {
 
 /**
  * Map caller behavior signals to the engine's behavior layer.
- * @param {{ saved?, omitted?, hidden?, notForMe?, inEcosystem?, tracked?, owned?, purchased?, reordered?, viewed?, purchasedPrices? }} [behavior]
+ * @param {{ saved?, omitted?, hidden?, notForMe?, inEcosystem?, tracked?, owned?, purchased?, reordered?, viewed?, purchasedPrices?, dismissed?, notRelevant?, routine?, inRoutine? }} [behavior]
+ *   dismissed / notRelevant: "Not relevant" (ids, { id: needId | true }, or [{ id, needId }]);
+ *   kept out of her recommendations (that need, or all), still in Shop with its match.
+ *   routine / inRoutine: in her routine (treated like owned: not recommended as new).
  */
 export function normalizeBehaviorSignals(behavior) {
     if (!behavior || typeof behavior !== 'object') return null;
@@ -1385,7 +1390,26 @@ export function normalizeBehaviorSignals(behavior) {
         viewed: behavior.viewed && typeof behavior.viewed === 'object' && !Array.isArray(behavior.viewed) ? behavior.viewed : {},
         purchasedPrices: Array.isArray(behavior.purchasedPrices) ? behavior.purchasedPrices : [],
         owned,
+        dismissed: mergeDismissed(behavior.dismissed, behavior.notRelevant),
+        routine: [...asIdList(behavior.routine), ...asIdList(behavior.inRoutine)],
     };
+}
+// "Not relevant" keeps its per-need shape (userProfile.js dismissedMap reads it).
+function mergeDismissed(a, b) {
+    const list = [];
+    for (const v of [a, b]) {
+        if (!v) continue;
+        if (v instanceof Set) v.forEach((id) => list.push(String(id)));
+        else if (Array.isArray(v)) list.push(...v);
+        else if (typeof v === 'object') for (const [id, val] of Object.entries(v)) {
+            if (!val) continue;
+            if (Array.isArray(val)) { if (val.length) val.forEach((needId) => list.push({ id, needId })); else list.push(id); }
+            else if (typeof val === 'string') list.push({ id, needId: val });
+            else if (typeof val === 'object' && val.needId) list.push({ id, needId: val.needId });
+            else list.push(id);
+        }
+    }
+    return list;
 }
 
 // Imported health data (healthProfile) joins the intake as conditions,
@@ -1696,6 +1720,15 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
         profileCompleteness: up.completeness,
         contradictions: up.contradictions.map((c) => c.text),
         focusNeedId: focus ? focus.needId : null,
+        // Catalog eligibility (src/matching/eligibility.js): false for an
+        // accessory or a listing that failed validation. Its match still shows
+        // here; it is just never put forward as a recommendation.
+        recommendable: recommendationEligibility(product, pp).eligible,
+        notRecommendedBecause: recommendationEligibility(product, pp).reason,
+        // What she already did with it (src/matching/forYou.js historyState).
+        history: pp.product_id ? historyState(up, pp.product_id, best?.needId) : null,
+        // How strongly she told ayna about the need this match is for.
+        needSignal: best ? (needSignals(up).get(best.needId)?.tier || null) : null,
         // Which engine produced the percent, v2's numbers for the best need
         // (health fit, evidence grade, band) and the v1 percent for comparison.
         engine: result.engine || 'v1',
@@ -1894,11 +1927,19 @@ function rankCatalog(quizAnswers, healthProfile, opts) {
         if (pp.product_id && up.behavior.hidden.has(pp.product_id)) continue;
         profilesById.set(pp.product_id, pp);
         const best = result.best;
-        if (best && !best.filtered && !best.restricted && best.explainable && best.score >= MIN_RECOMMEND_SCORE) matched.push({ product, best });
+        // Catalog eligibility (accessories, failed validation) and her history
+        // ("Not relevant", tried without help) keep a product out of her
+        // matches; it stays in Shop with its percent (src/matching/forYou.js).
+        const recommendable = isRecommendable(product, pp) && !NOT_RECOMMENDED_AGAIN.has(historyState(up, pp.product_id, best?.needId));
+        if (recommendable && best && !best.filtered && !best.restricted && best.explainable && best.score >= MIN_RECOMMEND_SCORE) matched.push({ product, best });
         else if (best && best.score > 0) weaker.push({ product, best });
         else unrelated.push(product);
     }
-    const order = new Map(sortResults(matched.map((m) => m.best), up, profilesById).map((r, i) => [r.productId, i]));
+    // Engine order, then the For you rules (forYou.js): strongest needs first
+    // within a percent, weak needs capped, curated discovery, fresh before
+    // what she already has.
+    const sorted = orderForYou(sortResults(matched.map((m) => m.best), up, profilesById), up, { profileOf: (id) => profilesById.get(id), commodityIds: BASICS_PRODUCT_IDS });
+    const order = new Map(sorted.map((r, i) => [r.productId, i]));
     matched.sort((a, b) => order.get(a.best.productId) - order.get(b.best.productId));
     weaker.sort((a, b) => b.best.score - a.best.score);
     return { up, matches: matched.map((m) => m.product), others: [...weaker.map((w) => w.product), ...unrelated], offShelf };
@@ -1930,13 +1971,27 @@ export function getPersonalizedProductIds(quizAnswers, healthProfile = null, opt
     return matches.map((p) => p.id);
 }
 
+/**
+ * Her single top match (Ask's "explain my top match", the Rundown): the
+ * first product of her For you order, skipping what she already has when a
+ * fresh match exists. null without a profile or a match.
+ */
+export function getTopMatch(quizAnswers, healthProfile = null, opts = {}) {
+    const { up, matches } = rankCatalog(quizAnswers, healthProfile, opts);
+    if (!hasProfileSignals(up) || !up.healthIntent.needs.length || !matches.length) return null;
+    return matches.find((p) => !['owned', 'saved'].includes(historyState(up, p.id))) || matches[0];
+}
+
 const categoryForId = (id) => { const p = getProductById(id); return p ? buildProductProfile(p)?.category : null; };
 
 function ecosystemFor(quizAnswers, healthProfile, opts = {}) {
     const up = userProfileFor(quizAnswers, healthProfile, opts);
     const engine = engineFor(opts);
-    const built = (engine === 'v1' ? buildEcosystem : buildEcosystemV2)(up, filterPrescriptionCareGate(ALL_PRODUCTS), {
+    // Catalog eligibility (src/matching/eligibility.js) before matching:
+    // accessories and listings that failed validation never reach a shelf.
+    const built = (engine === 'v1' ? buildEcosystem : buildEcosystemV2)(up, filterPrescriptionCareGate(ALL_PRODUCTS).filter((p) => isRecommendable(p)), {
         getCareResourceBundle,
+        commodityIds: BASICS_PRODUCT_IDS,
         ...(opts.picksPerNeed ? { picksPerNeed: opts.picksPerNeed } : {}),
         ...(opts.minTier ? { minTier: opts.minTier } : {}),
     });
@@ -2051,12 +2106,13 @@ export function getEcosystemAlternatives(productId, tag, quizAnswers, healthProf
             const pp = buildProductProfile(product);
             if (!pp.health_need_relevance[needId]) continue;
             if (up.behavior.hidden.has(pp.product_id)) continue;
+            if (!isRecommendable(product, pp) || NOT_RECOMMENDED_AGAIN.has(historyState(up, pp.product_id, needId))) continue;
             const { result } = engineResultFor(product, up, engine);
             if (!result.safety.eligible) continue;
             let r = result.needs.find((n) => n.needId === needId);
             if (!r) {
                 r = scoreProductForNeed(pp, up, needId, { safety: result.safety });
-                if (engine !== 'v1') r = withV2Score(pp, r, new Set(up.healthIntent.needs.map((n) => n.id)), userKeyOf(up));
+                if (engine !== 'v1') r = withV2Score(pp, r, new Set(up.healthIntent.needs.map((n) => n.id)), userKeyOf(up), needSignals(up));
             }
             if (r.filtered || r.restricted || !r.explainable || r.score < MIN_RECOMMEND_SCORE) continue;
             profilesById.set(pp.product_id, pp);
@@ -2299,6 +2355,7 @@ provideCatalog({
     getProductById,
     getRecommendations,
     getPersonalizedProductIds,
+    getTopMatch,
     getSelectedNeeds,
     getProductMatchDetailsForProduct,
     getProfileMatchLabelsForProduct,
