@@ -930,7 +930,8 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     const armed = armedDelete === post.id;
     const likeWord = kind === 'post' ? 'Like' : 'Helpful';
     return <article ref={engagement.trackView(post.id)} className={`am-note is-${kind}${full ? ' is-full' : ''}`} style={{ '--i': Math.min(typeof i === 'number' ? i : 0, 6) }} data-vt-target={full ? 'post' : undefined} key={post.id}>
-      {kind === 'review' && <span className="am-tape" aria-hidden="true" />}
+      {/* Folder tab on the card's top edge (inspo rule 9): what kind of note this is. */}
+      {kind === 'review' && <span className="am-ear is-review" aria-hidden="true">Review</span>}
       {kind === 'question' && <span className="am-ear">Question</span>}
       <div className="am-note-head">
         <CommunityAvatar name={authorName} path={!anon ? profileById.get(post.author_id)?.avatar_url : null} anonymous={anon} />
