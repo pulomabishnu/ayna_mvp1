@@ -338,15 +338,7 @@ class ErrorBoundary extends React.Component {
 // check, they always show the mobile UI. The web build still gates it
 // behind the path, so the live website's normal routing is unaffected.
 const isMobilePreview = window.location.pathname === '/mobile-preview' || Capacitor.isNativePlatform();
-// The app's typefaces load only for the app; the website keeps to its two.
-if (isMobilePreview) {
-  try {
-    const l = document.createElement('link');
-    l.rel = 'stylesheet';
-    l.href = 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap';
-    document.head.appendChild(l);
-  } catch { /* fonts are progressive */ }
-}
+// The app's typefaces are self-hosted (styles/fonts.css): nothing loads from Google at runtime, so the app works offline.
 
 // Native app: shop and article links open in an in-app browser sheet
 // (SFSafariViewController / Custom Tabs) instead of leaving ayna, so people
