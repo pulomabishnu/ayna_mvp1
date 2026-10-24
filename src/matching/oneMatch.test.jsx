@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ALL_PRODUCTS, getProductMatchDetailsForProduct, getProfileMatchPercentForProduct, getEcosystemSeedFromQuiz, getRecommendationMatchesAndRest } from '../data/products.js';
-import { matchBadge, needBreakdown } from '../utils/matchDisplay.js';
+import { matchBadge, needBreakdown, matchText } from '../utils/matchDisplay.js';
 import { shownMatchPercent, sortByBestMatch } from '../utils/bestMatchSort.js';
 import { compareRows } from '../components/pdp/commerce.js';
 import { matchPercentFor } from '../mobile/utils/matchScore.js';
@@ -55,10 +55,11 @@ describe('one match percent per product (v2) on every surface', () => {
         const shelfCard = renderToStaticMarkup(<ProductCard product={product} quizAnswers={q} needId={picks.find((p) => p.productId === id)?.shelfNeed || null} onClick={() => {}} />);
         if (shown != null) { expect(pctIn(card)).toBe(shown); expect(pctIn(shelfCard)).toBe(shown); }
         // Why this matches.
-        if (d.percent > 0) expect(ringPct(renderToStaticMarkup(<WhyMatchScreen product={product} quizAnswers={q} onBack={() => {}} />))).toBe(d.percent);
+        if (d.percent >= 50) expect(ringPct(renderToStaticMarkup(<WhyMatchScreen product={product} quizAnswers={q} onBack={() => {}} />))).toBe(d.percent);
         // Compare.
         const row = compareRows([product], { matchFor: (p) => getProfileMatchPercentForProduct(p, q) }).find((r) => r.label === 'Your match');
-        expect(row.values[0]).toBe(d.percent > 0 ? `${d.percent}%` : 'No clear match');
+        // Under 50 no number, "Partial fit" (one rule everywhere, matchDisplay.matchText).
+        expect(row.values[0]).toBe(d.percent > 0 ? matchText(d.percent) : 'No clear match');
         // Best match sorts by the card's number.
         expect(shownMatchPercent(d)).toBe(shown ?? 0);
         // Per-need rows (Why screen breakdown) carry v2 per-need scores.
