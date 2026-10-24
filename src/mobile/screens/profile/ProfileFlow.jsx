@@ -28,6 +28,7 @@ import InlineError from '../../../components/InlineError.jsx';
 import { clearError, errorSummary, firstErrorKey, revealField, warnHaptic } from '../../../utils/formErrors.js';
 import HealthConnectionsScreen from './HealthConnectionsScreen.jsx';
 import { useHealthMatchPref } from '../../../health/matchPref.js';
+import { useAskHealthPref, ASK_HEALTH_LABEL } from '../../../health/askHealthPref.js';
 import HealthInsightsScreen from './HealthInsightsScreen.jsx';
 import { usesHormonalBC } from '../../../health/weekInsights.js';
 import { ALL_PRODUCTS, getSelectedNeeds } from '../../../data/products.js';
@@ -1289,6 +1290,7 @@ function PreferencesScreen({
   const [clearHistoryConfirm, setClearHistoryConfirm] = useState(false);
   // Shared with MobileApp and the website (src/health/matchPref.js); MobileApp loads it for her account.
   const healthPref = useHealthMatchPref();
+  const askHealth = useAskHealthPref();
 
   // Initial state is already 'loading', so the mount effect below doesn't
   // need to (and per the react-hooks lint rule, shouldn't) set it again
@@ -1421,7 +1423,9 @@ function PreferencesScreen({
         )}
         <SectionLabel>AI & personalization</SectionLabel>
         {loadState === 'ready' && prefs && <div style={{ background: 'var(--d-group)', border: 0, borderRadius: 20, padding: '4px 18px' }}>
-          <ToggleRow first title="Personalize with my data" sub="Your quiz answers, cycle logs and connected health data shape your matches and Ask ayna replies. Off: none of it is used." on={personalizeWithData} onClick={handlePersonalizeToggle} />
+          <ToggleRow first title="Personalize with my data" sub="Your quiz answers, cycle logs and connected health data shape your matches and insights. Off: none of it is used." on={personalizeWithData} onClick={handlePersonalizeToggle} />
+          {/* Opt-in, off by default (src/health/askHealthPref.js). Oura and WHOOP data is never sent. */}
+          <ToggleRow title={ASK_HEALTH_LABEL} sub={askHealth.on ? 'On. Questions you ask from Your health can include your cycle day, next period estimate, sleep, heart and activity trends. Never Oura or WHOOP data.' : 'Off. Ask ayna answers without your cycle and sleep data.'} on={askHealth.on} onClick={() => askHealth.set(!askHealth.on)} />
           {/* One setting in one place (walkthrough P1-19): the switch lives in Health data; this row says where it stands and goes there. */}
           <DrillRow title="Health data in your matches" sub={!personalizeWithData ? 'Off while Personalize with my data is off. Change it in Health data.' : `${healthPref.on ? 'On' : 'Off'}. Change it in Health data.`} onClick={onOpenHealthData} />
         </div>}

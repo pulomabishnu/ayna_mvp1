@@ -5,8 +5,18 @@
  *   insights - shown back to her in Health Insights
  *   matching - allowed to strengthen Health Match (src/health/matchContext.js)
  *
- * Nothing from ANY source is ever sent to an LLM, analytics, ads, or a brand;
- * that is enforced by design (no code path does it), not by this table.
+ * Nothing from ANY source is ever sent to analytics, ads, or a brand; that is
+ * enforced by design (no code path does it), not by this table.
+ *
+ * Language model (Ask ayna): only with her opt-in, "Let Ask ayna use my cycle
+ * and sleep data" (src/health/askHealthPref.js), which is OFF by default. With
+ * it on, a question asked from Your health carries her cycle day, next period
+ * estimate, and sleep, heart, recovery and activity trends from Apple Health,
+ * Health Connect or her own logs and imports
+ * (src/mobile/utils/dashboardAsk.js dashboardContext, NEVER_TO_LLM). With it
+ * off, the question goes without them. Oura and WHOOP data is NEVER sent to a
+ * language model, whatever she chose: their terms bar it (WHOOP: AI training;
+ * Oura: until Oura confirms in writing).
  *
  * Oura: the Oura API Agreement (effective June 8, 2026) bars "advertising,
  * marketing, or commercial targeting" use. Personal product matching in a

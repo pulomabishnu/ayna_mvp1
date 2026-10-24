@@ -34,7 +34,8 @@ import { syncUserData } from '../health/userDataSync.js';
 import { productNotesFromRoutine, readGuide, saveGuide } from './utils/aynaGuide.js';
 import { buildDashboard } from '../health/dashboard.js';
 import { explainWeek, usesHormonalBC } from '../health/weekInsights.js';
-import { weekSummary } from './utils/dashboardAsk.js';
+import { weekSummary, NEVER_TO_LLM } from './utils/dashboardAsk.js';
+import { useAskHealthPref } from '../health/askHealthPref.js';
 import { LIVE_ONLY_SOURCES } from '../health/metrics.js';
 import { useSupabaseAuth, MOBILE_OAUTH_PENDING_KEY } from './hooks/useSupabaseAuth.js';
 import { fetchNotificationPreferences } from './utils/notificationPreferencesApi.js';
@@ -679,6 +680,10 @@ export default function MobileApp() {
   }, [authUser?.id, personalizeWithData, health.insights, health.insightRows, effectiveQuizAnswers]);
   const guideSources = personalizeWithData ? [...new Set((health.insights?.sections || []).filter((section) => section.status === 'ready').flatMap((section) => section.sources || []))].map((source) => SOURCE_NAMES[source] || source).join(', ') : '';
   const guideRecapExportable = !(health.insights?.sections || []).some((section) => section.status === 'ready' && (section.sources || []).some((source) => LIVE_ONLY_SOURCES.includes(source)));
+  // The recap may go to Ask ayna only with her opt-in, and never when any of it
+  // came from Oura or WHOOP (their terms; src/health/policy.js).
+  const askHealthPref = useAskHealthPref(authUser?.id || null);
+  const guideRecapAskable = askHealthPref.on && !(health.insights?.sections || []).some((section) => section.status === 'ready' && (section.sources || []).some((source) => NEVER_TO_LLM.has(source)));
   // Her own switch for health data in matches (Preferences and Health data), shared with the website.
   const healthInMatches = useHealthMatchPref(authUser?.id || null).on;
   const healthDataOn = personalizeWithData && healthInMatches;
@@ -1066,7 +1071,7 @@ export default function MobileApp() {
     // onAskAyna() opens the drawer; onAskAyna({ question, context }) also asks
     // that question with what she's looking at (e.g. her dashboard numbers).
     onAskAyna: (opts) => {
-      if (opts && typeof opts.question === 'string') setAskSeed({ id: Date.now(), question: opts.question, context: typeof opts.context === 'string' ? opts.context : '', stats: Array.isArray(opts.stats) ? opts.stats.slice(0, 3) : null });
+      if (opts && typeof opts.question === 'string') setAskSeed({ id: Date.now(), question: opts.question, context: typeof opts.context === 'string' ? opts.context : '', buildContext: typeof opts.buildContext === 'function' ? opts.buildContext : null, usesHealth: opts.usesHealth === true, stats: Array.isArray(opts.stats) ? opts.stats.slice(0, 3) : null });
       if (authUser) setAskAynaOpen(true); else requestAuth('Ask ayna', () => { setScreen(screen); setAskAynaOpen(true); });
     },
     onBack: () => {
@@ -1446,6 +1451,7 @@ export default function MobileApp() {
         recap={guideRecap}
         recapSources={guideSources}
         recapExportable={guideRecapExportable}
+        recapAskable={guideRecapAskable}
         productNotes={productNotesFromRoutine(myProducts, authUser?.id ? session.routineOutcomesByUser?.[authUser.id] || {} : {})}
         allowGuideContext={personalizeWithData}
         onProfileUpdate={(answers) => updateSession({ lastQuizAnswers: answers })}

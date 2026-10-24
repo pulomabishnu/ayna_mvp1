@@ -16,6 +16,7 @@ import { mayAutoFocus } from '../../utils/delightRuntime.js';
 import { guideContext } from '../utils/aynaGuide.js';
 import { localMatchAnswer } from '../../utils/askMatch.js';
 import AynaGuideHub from './AynaGuideHub.jsx';
+import { useAskHealthPref, ASK_HEALTH_LABEL } from '../../health/askHealthPref.js';
 
 // Ask ayna's first screen: tiles fill the box so she can edit before asking.
 function askTiles(hasHealthData) {
@@ -89,6 +90,8 @@ export default function AskAynaModal({
   recap = '',
   recapSources = '',
   recapExportable = true,
+  // Her opt-in is on and nothing in the recap came from Oura or WHOOP (MobileApp).
+  recapAskable = false,
   productNotes = [],
   allowGuideContext = false,
   onProfileUpdate,
@@ -127,6 +130,10 @@ export default function AskAynaModal({
   // What she was looking at when she asked (e.g. her dashboard week), sent
   // along with this conversation's questions.
   const [screenContext, setScreenContext] = useState('');
+  // Her opt-in for sending cycle and sleep data (src/health/askHealthPref.js).
+  // Shown inline once, when a dashboard question could have used it.
+  const askHealth = useAskHealthPref();
+  const [healthAsk, setHealthAsk] = useState(null); // { buildContext } while the inline switch shows
   // Home (tiles + recent questions) until she asks something.
   const [home, setHome] = useState(true);
   const [guidePage, setGuidePage] = useState('');
@@ -178,6 +185,12 @@ export default function AskAynaModal({
     if (!open || !seed || seedDone.current === seed.id || session === undefined || sending) return;
     seedDone.current = seed.id;
     setScreenContext(seed.context || '');
+    let seenPrompt = false;
+    try { seenPrompt = localStorage.getItem('ayna_ask_health_prompt_seen') === '1'; } catch { /* private mode */ }
+    if (seed.usesHealth && typeof seed.buildContext === 'function' && !askHealth.on && !seenPrompt) {
+      setHealthAsk({ buildContext: seed.buildContext });
+      try { localStorage.setItem('ayna_ask_health_prompt_seen', '1'); } catch { /* private mode */ }
+    } else setHealthAsk(null);
     if (session?.access_token) { setGuidePage(''); send(seed.question, seed.context || '', Array.isArray(seed.stats) ? seed.stats : null); }
     else setInput(seed.question);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -226,7 +239,8 @@ export default function AskAynaModal({
         body: JSON.stringify({
           message: msg,
           profileSummary: [summarizeProfile(profile || {}), allowGuideContext ? guideContext(guide) : ''].filter(Boolean).join('\n').slice(0, 2000),
-          chatHistory: messages.slice(-6),
+          // Text only: the stat cards beside answers are hers to see, not to send.
+          chatHistory: messages.slice(-6).map((m) => ({ role: m.role, text: m.text })),
           ...(context ? { screenContext: context } : {}),
           ...followUpRequestFields({ products, reads, hasHealthData }),
         }),
@@ -343,7 +357,7 @@ export default function AskAynaModal({
       </div>
 
       <div className={home && !sending ? 'ay-askh-scroll' : undefined} style={{ flex: 1, overflowY: 'auto', padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {guidePage ? <AynaGuideHub page={guidePage} guide={guide} onChange={onGuideChange} recap={recap} recapSources={recapSources} recapExportable={recapExportable} productNotes={productNotes} profile={summarizeProfile(profile || {})} onAsk={recapExportable ? (question) => { setGuidePage(''); send(question, recap); } : null} onBack={() => setGuidePage('')} /> : null}
+        {guidePage ? <AynaGuideHub page={guidePage} guide={guide} onChange={onGuideChange} recap={recap} recapSources={recapSources} recapExportable={recapExportable} productNotes={productNotes} profile={summarizeProfile(profile || {})} onAsk={recapExportable ? (question) => { setGuidePage(''); send(question, recapAskable ? recap : ''); } : null} onBack={() => setGuidePage('')} /> : null}
         {home && !sending && !guidePage && (<>
           {/* A list of rows like the Ask home, not a 2x2 grid (master prompt 154). */}
           <ul className="ay-guide-launches" aria-label="Your personal guide">
@@ -427,6 +441,19 @@ export default function AskAynaModal({
           </div>
         ))}
         {sending && !guidePage && <div className="ay-typing" role="status" aria-label="Looking into it"><i /><i /><i /></div>}
+        {healthAsk && !guidePage && (
+          <div className="ay-ask-health">
+            <p>{askHealth.on ? 'Your next questions here can use your cycle and sleep data. Oura and WHOOP data is never sent.' : 'This answer did not use your cycle and sleep data.'}</p>
+            <button type="button" role="switch" aria-checked={askHealth.on} className="ay-ask-health__switch" onClick={() => {
+              const next = !askHealth.on;
+              askHealth.set(next);
+              setScreenContext(healthAsk.buildContext(next));
+            }}>
+              <span>{ASK_HEALTH_LABEL}</span>
+              <b aria-hidden="true">{askHealth.on ? 'On' : 'Off'}</b>
+            </button>
+          </div>
+        )}
         <div ref={bottomRef} />
       </div>
 

@@ -74,17 +74,33 @@ export function suggestedQuestions({ cycle = null, estimate = null, ready = [], 
   return [...new Set(out)].slice(0, 3);
 }
 
-/** What the dashboard shows, as plain lines for Ask ayna. */
-export function dashboardContext({ cycle = null, estimate = null, ready = [], products = [], insights = [] } = {}) {
-  const phase = cycle?.cycleDay ? estimatePhase(cycle) : null;
+// Sources whose API terms bar sending their data to a language model. Their
+// lines are never sent, whatever she chose (src/health/policy.js).
+export const NEVER_TO_LLM = new Set(['oura', 'whoop']);
+const fromBarred = (sources) => (Array.isArray(sources) ? sources : []).some((src) => NEVER_TO_LLM.has(String(src).toLowerCase()));
+
+/**
+ * What the dashboard shows, as plain lines for Ask ayna.
+ * allowHealth: her opt-in ("Let Ask ayna use my cycle and sleep data",
+ * src/health/askHealthPref.js), off by default. Off: no cycle, period, sleep,
+ * heart, activity or "This week, explained" line is sent, only her products.
+ * On: those lines, minus anything that came from Oura or WHOOP.
+ */
+export function dashboardContext({ cycle = null, estimate = null, ready = [], products = [], insights = [], allowHealth = false } = {}) {
   const lines = [];
-  // What "This week, explained" told her, so the answer starts from the same facts.
-  if (insights.length) lines.push(`This week, explained (compared with her own last 4 weeks): ${insights.map((i) => i.text).join(' ')}`);
-  if (cycle?.cycleDay) lines.push(`Cycle: day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength} days` : ''}${phase ? `, ${phase.name.toLowerCase()} (an estimate from her logs)` : ''}.`);
-  if (estimate?.day) lines.push(`Next period estimated around ${fmtDay(estimate.day)}.`);
-  ready.filter((s) => METRIC_ORDER.includes(s.id)).forEach((s) => {
-    lines.push(`${s.title}: ${s.headline || ''}${s.change?.text ? `. ${s.change.text}` : ''}.`.replace(/\.\./g, '.'));
-  });
+  if (allowHealth) {
+    const phase = cycle?.cycleDay && !fromBarred(cycle.sources) ? estimatePhase(cycle) : null;
+    // What "This week, explained" told her, so the answer starts from the same facts.
+    const okInsights = insights.filter((i) => !fromBarred(i?.from));
+    if (okInsights.length) lines.push(`This week, explained (compared with her own last 4 weeks): ${okInsights.map((i) => i.text).join(' ')}`);
+    if (cycle?.cycleDay && !fromBarred(cycle.sources)) {
+      lines.push(`Cycle: day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength} days` : ''}${phase ? `, ${phase.name.toLowerCase()} (an estimate from her logs)` : ''}.`);
+      if (estimate?.day) lines.push(`Next period estimated around ${fmtDay(estimate.day)}.`);
+    }
+    ready.filter((s) => METRIC_ORDER.includes(s.id) && !fromBarred(s.sources)).forEach((s) => {
+      lines.push(`${s.title}: ${s.headline || ''}${s.change?.text ? `. ${s.change.text}` : ''}.`.replace(/\.\./g, '.'));
+    });
+  }
   if (products.length) {
     lines.push(`Products in her ecosystem: ${products.slice(0, 10).map((p) => `${displayName(p)}${brandOf(p) ? ` by ${brandOf(p)}` : ''} (${String(p.category || 'product').replace(/-/g, ' ')})`).join('; ')}.`);
   }
