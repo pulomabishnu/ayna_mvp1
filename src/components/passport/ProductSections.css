@@ -130,6 +130,8 @@
 .ay-gl-type:is(.is-product_study, .is-clinical_guideline, .is-regulatory) { background: var(--ay-peri); color: var(--gl-tag-ink); }
 .ay-gl-type.is-community { background: var(--ay-butter); color: var(--gl-tag-ink); }
 .ay-gl-type.is-manufacturer { background: transparent; border: 1.5px solid var(--ay-ink); }
+/* Not a .gov source (founder rule, Oct 24): never styled like a guideline or regulator. */
+.ay-gl-type.is-tier-unchecked { background: transparent; color: var(--ay-ink); border: 1.5px solid var(--ay-ink); }
 .ay-gl-srclist { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; }
 .ay-gl-srclist li:nth-child(-n + 2) { border-top: 0; }
 

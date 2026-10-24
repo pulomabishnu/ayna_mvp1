@@ -3,6 +3,7 @@
 // in her answers; the engine never adds a need on its own.
 import { COOCCURRENCE } from '../data/matching/needLinks.research.js';
 import { NEED_BY_ID, canonicalNeedId, CONDITION_SUPPORT_NEED } from './ontology.js';
+import { isGovHealthSource } from '../utils/govSources.js';
 
 // A linked condition shows as the need it is felt as.
 const CONDITION_AS_NEED = { anemia: 'energy.fatigue', ibs_digestive: 'bloating.digestive' };
@@ -19,6 +20,8 @@ export function relatedNeedSuggestions(needIds = [], conditionIds = [], limit = 
   const best = new Map();
   for (const r of COOCCURRENCE) {
     if (!from.has(r.from)) continue;
+    // The rate and its source are shown, so only rows from a .gov page (founder rule, Oct 24).
+    if (!isGovHealthSource(r.source_url)) continue;
     const conditionTarget = r.to_kind === 'condition';
     const target = canonicalNeedId(conditionTarget ? CONDITION_AS_NEED[r.to] : r.to);
     if (!target || !NEED_BY_ID[target] || have.has(target)) continue;

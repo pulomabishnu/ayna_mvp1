@@ -499,8 +499,8 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
         {m.safety.alert.length > 0 && <p className="ayq-meta">There’s a safety note for this product. <button type="button" className="ayq-textbtn" onClick={() => goTo('safety')}>Read it in Safety</button></p>}
       </div>
       <aside className="ayq-side">
-        <SourceGrid items={ex.sources} label="Health bodies and journals" id="ayq-clin-src" compact />
-        <OtherLinks items={ex.other} label="Other pages the team used" note="Brand pages and other links that aren’t independent research." />
+        <SourceGrid items={ex.sources} label=".gov health sources" id="ayq-clin-src" compact />
+        <OtherLinks items={ex.other} label="Other pages the team used" note="Not .gov health sources, so ayna has not checked them. Each is labelled by what it is." />
       </aside>
     </div>
   ) : null;
@@ -544,7 +544,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
           </aside>
         )}
       </div>
-      <SourceGrid items={rs.studies.filter((x) => !x.negative)} label={rs.negative.length ? 'Other studies and reviews' : 'Studies and reviews'} id="ayq-studies" />
+      <SourceGrid items={rs.studies.filter((x) => !x.negative)} label={rs.negative.length ? 'Other .gov health sources' : '.gov health sources'} id="ayq-studies" />
       {rs.ingredients.length > 0 && (
         <div className="ayq-ings">
           <h4 className="ayq-subh">{rs.ingredientsAreTopics ? 'Point by point' : 'Ingredient by ingredient'} <span className="ayq-count">{rs.ingredients.length}</span></h4>
@@ -561,7 +561,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
         </div>
       )}
       {adds('research').map((a) => <Addition key={a.id} a={a} />)}
-      <OtherLinks items={rs.other} label="Other pages the team used" note="Not peer-reviewed research. Labelled by what they are." />
+      <OtherLinks items={rs.other} label="Other pages the team used" note="Not .gov health sources, so ayna has not checked them. Each is labelled by what it is." />
     </>
   ) : null;
 
