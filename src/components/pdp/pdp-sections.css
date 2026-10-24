@@ -30,13 +30,13 @@
 .ayq.ayq.ayq--sections .ayq-cols { display: grid; grid-template-columns: minmax(0, 1fr) !important; gap: 24px; }
 .ayq.ayq.ayq--sections .ayq-cols + *, .ayq.ayq.ayq--sections * + .ayq-cols { margin-top: 24px; }
 
-/* At a glance: the meter is the Group's first row, not a box inside the box. */
-.ayq.ayq.ayq--sections .ayq-glance__ev { padding: 0 0 14px !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; min-height: 44px; }
+/* At a glance (phones, and the website's Overview tab): the meter is the Group's first row, not a box inside the box. */
+#pdp-v4 .ayq.ayq.ayq--v4 .ayq-glance__ev, .ayq.ayq.ayq--sections .ayq-glance__ev { padding: 0 0 14px !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; min-height: 44px; }
 /* At a glance: rows divided by hairlines inside the one Group, not a tile per fact. */
-.ayq.ayq.ayq--sections .ayq-tiles { display: grid; grid-template-columns: minmax(0, 1fr) !important; gap: 0 !important; }
-.ayq.ayq.ayq--sections .ayq-tiles > li { grid-template-columns: auto minmax(0, 1fr) !important; gap: 12px !important; padding: 12px 0 !important; border-radius: 0 !important; background: none !important; border-top: 1px solid var(--q-hair); }
-.ayq.ayq.ayq--sections .ayq-tiles > li > .ay-ico { display: block !important; margin-top: 2px; }
-.ayq.ayq.ayq--sections .ayq-tiles > li:last-child:nth-child(odd) { grid-column: auto; }
+#pdp-v4 .ayq.ayq.ayq--v4 .ayq-tiles, .ayq.ayq.ayq--sections .ayq-tiles { display: grid; grid-template-columns: minmax(0, 1fr) !important; gap: 0 !important; }
+#pdp-v4 .ayq.ayq.ayq--v4 .ayq-tiles > li, .ayq.ayq.ayq--sections .ayq-tiles > li { grid-template-columns: auto minmax(0, 1fr) !important; gap: 12px !important; padding: 12px 0 !important; border-radius: 0 !important; background: none !important; border-top: 1px solid var(--q-hair); }
+#pdp-v4 .ayq.ayq.ayq--v4 .ayq-tiles > li > .ay-ico, .ayq.ayq.ayq--sections .ayq-tiles > li > .ay-ico { display: block !important; margin-top: 2px; }
+#pdp-v4 .ayq.ayq.ayq--v4 .ayq-tiles > li:last-child:nth-child(odd), .ayq.ayq.ayq--sections .ayq-tiles > li:last-child:nth-child(odd) { grid-column: auto; }
 
 @media (prefers-reduced-motion: reduce) {
   .ayq.ayq.ayq--sections .ayq-sec__chev { transition: none; }
@@ -48,3 +48,18 @@
 /* The count badge next to a sub-heading: the website's heading colour rule painted
    the number the same espresso as the badge, so it read as an empty dot. */
 .ayq.ayq .ayq-subh .ayq-count, #pdp-v4 .ayq.ayq .ayq-subh .ayq-count { color: var(--q-page) !important; }
+
+/* Website Overview tab: the jump list (one row per part, its fact, its first
+   line, a chevron) instead of colour-coded cards. */
+#pdp-v4 .ay-jumprows { display: grid; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--q-hair); }
+#pdp-v4 .ay-jumprows > li { margin: 0; padding: 0; border-bottom: 1px solid var(--q-hair); }
+#pdp-v4 .ay-jumprows > li > button { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'head go' 'text go'; align-items: center; gap: 4px 16px; width: 100%; min-height: 64px; margin: 0; padding: 14px 0; border: 0; border-radius: 0; background: none; box-shadow: none; color: var(--q-ink); text-align: left; cursor: pointer; }
+#pdp-v4 .ay-jumprows > li > button:focus-visible { outline: 3px solid var(--q-line); outline-offset: 2px; border-radius: 10px; }
+#pdp-v4 .ay-jumprows__head { grid-area: head; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+#pdp-v4 .ay-jumprows__label { font: 600 calc(17px * var(--q-scale)) / 1.3 var(--q-sans); color: var(--q-ink); }
+#pdp-v4 .ay-jumprows__tag { font: 500 calc(14px * var(--q-scale)) / 1.35 var(--q-sans); color: var(--q-ink2) !important; }
+#pdp-v4 .ay-jumprows > li.is-tone-alert .ay-jumprows__label::before { content: ''; display: inline-block; width: 10px; height: 10px; margin-right: 8px; border-radius: 50%; background: var(--q-pink); box-shadow: inset 0 0 0 1.5px #3e2723; vertical-align: 1px; }
+#pdp-v4 .ay-jumprows__text { grid-area: text; max-width: 68ch; font: 400 calc(16px * var(--q-scale)) / 1.5 var(--q-sans); color: var(--q-ink); }
+#pdp-v4 .ay-jumprows__go { grid-area: go; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: translate var(--t-fast, 160ms) var(--ease-out, ease-out); }
+@media (hover: hover) { #pdp-v4 .ay-jumprows > li > button:hover .ay-jumprows__go { translate: 3px 0; } #pdp-v4 .ay-jumprows > li > button:hover .ay-jumprows__label { text-decoration: underline; text-underline-offset: 3px; } }
+@media (prefers-reduced-motion: reduce) { #pdp-v4 .ay-jumprows__go { transition: none; } }

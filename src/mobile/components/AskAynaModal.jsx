@@ -345,12 +345,13 @@ export default function AskAynaModal({
       <div className={home && !sending ? 'ay-askh-scroll' : undefined} style={{ flex: 1, overflowY: 'auto', padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
         {guidePage ? <AynaGuideHub page={guidePage} guide={guide} onChange={onGuideChange} recap={recap} recapSources={recapSources} recapExportable={recapExportable} productNotes={productNotes} profile={summarizeProfile(profile || {})} onAsk={recapExportable ? (question) => { setGuidePage(''); send(question, recap); } : null} onBack={() => setGuidePage('')} /> : null}
         {home && !sending && !guidePage && (<>
-          <div className="ay-guide-launches" aria-label="Your personal guide">
-            <button type="button" onClick={() => setGuidePage('recap')}>Your week<span>What changed for you</span></button>
-            <button type="button" onClick={() => setGuidePage('memory')}>Memory<span>What ayna can remember</span></button>
-            <button type="button" onClick={() => setGuidePage('trial')}>Try & check back<span>See how it felt later</span></button>
-            <button type="button" onClick={() => setGuidePage('report')}>Appointment note<span>Review before sharing</span></button>
-          </div>
+          {/* A list of rows like the Ask home, not a 2x2 grid (master prompt 154). */}
+          <ul className="ay-guide-launches" aria-label="Your personal guide">
+            <li><button type="button" onClick={() => setGuidePage('recap')}><span className="ay-guide-launch__text"><b>Your week</b><span>What changed for you</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
+            <li><button type="button" onClick={() => setGuidePage('memory')}><span className="ay-guide-launch__text"><b>Memory</b><span>What ayna can remember</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
+            <li><button type="button" onClick={() => setGuidePage('trial')}><span className="ay-guide-launch__text"><b>Try & check back</b><span>See how it felt later</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
+            <li><button type="button" onClick={() => setGuidePage('report')}><span className="ay-guide-launch__text"><b>Appointment note</b><span>Review before sharing</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
+          </ul>
           <AskHome
             name={name ? String(name).split(' ')[0] : ''}
             intro="Ask about a product, your week, or what to try. Not medical advice."
