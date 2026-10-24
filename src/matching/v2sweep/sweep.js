@@ -4,6 +4,7 @@
 import { SUPPORT_GROUPS, LIFE_STAGES } from '../../mobile/data/intakeModel.js';
 import { getEcosystemSeedFromQuiz, ALL_PRODUCTS } from '../../data/products.js';
 import { buildProductProfile } from '../productProfile.js';
+import { isCycleTrackingProduct, isRecommendable } from '../eligibility.js';
 
 const SUPPORT = SUPPORT_GROUPS.flatMap((g) => g.items).filter((x) => x !== 'Nothing right now');
 const AVOID = ['Fragrance', 'Latex', 'Parabens', 'Hormones', 'Dyes'];
@@ -28,10 +29,14 @@ export function makeProfiles(count = 400, seed = 7) {
 }
 
 const SENSITIVE = new Set(['I am pregnant', 'I am trying to conceive']);
+// No menstrual cycle now: never a cycle tracker or ovulation test (team direction 14).
+const NO_CYCLE = new Set(['I am pregnant', 'I am in menopause', 'I am post-menopause']);
 export function runSweep(engine, profiles) {
   const exposure = new Map();
   let shelves = 0; let empty = 0; let violations = 0; let picks = 0; let strong = 0; let ecosystems = 0;
   const violationsList = [];
+  const lifeStageList = [];
+  const gatedList = [];
   for (const intake of profiles) {
     const seed = getEcosystemSeedFromQuiz({ fullHealthIntake: intake, personalizationCompleted: true }, null, { engine });
     const ids = new Set();
@@ -42,6 +47,11 @@ export function runSweep(engine, profiles) {
       for (const p of sh.picks || []) { picks += 1; if (p.v2?.band === 'strong' || (!p.v2 && p.score >= 85)) strong += 1; }
     }
     if (ids.size) ecosystems += 1;
+    for (const id of ids) {
+      const product = ALL_PRODUCTS.find((p) => p.id === id);
+      if (intake.lifeStageSelections.some((l) => NO_CYCLE.has(l)) && isCycleTrackingProduct(buildProductProfile(product))) lifeStageList.push(`${id} for ${intake.lifeStageSelections[0]}`);
+      if (!isRecommendable(product)) gatedList.push(id);
+    }
     ids.forEach((id) => exposure.set(id, (exposure.get(id) || 0) + 1));
     if (intake.lifeStageSelections.some((l) => SENSITIVE.has(l)) || intake.breastfeeding === 'Yes') {
       for (const id of ids) {
@@ -59,6 +69,8 @@ export function runSweep(engine, profiles) {
     engine,
     profiles: profiles.length,
     violations, violationsList: violationsList.slice(0, 10),
+    lifeStageViolations: lifeStageList.length, lifeStageList: lifeStageList.slice(0, 10),
+    gatedShown: gatedList.length,
     catalogShown: n,
     catalogCoverage: Math.round((n / ALL_PRODUCTS.length) * 100) / 100,
     topShare: Math.round(((top[0]?.[1] || 0) / Math.max(1, ecosystems)) * 100) / 100,

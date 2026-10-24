@@ -216,7 +216,20 @@ export function careNotes(careFlags) {
   return (careFlags?.notes || []).map((n) => n.text).filter(Boolean);
 }
 
-/** Behavior object for the engine, from the maps the screens already hold. */
-export function behaviorFrom({ saved, omitted, inEcosystem } = {}) {
-  return { behavior: { saved: saved || {}, omitted: omitted || {}, inEcosystem: inEcosystem || {} } };
+/**
+ * Behavior object for the engine, from the maps the screens already hold.
+ * Optional history the engine honors (src/matching/forYou.js historyState),
+ * each { productId: true } or, for dismissed, { productId: needId | true }:
+ *   dismissed  "Not relevant" (that need, or every need); off her recommendations
+ *   routine    in her routine (already has it)
+ *   purchased  bought it (already has it)
+ * Removing an entry is the undo: the engine reads these fresh every time.
+ */
+export function behaviorFrom({ saved, omitted, inEcosystem, dismissed, routine, purchased } = {}) {
+  return {
+    behavior: {
+      saved: saved || {}, omitted: omitted || {}, inEcosystem: inEcosystem || {},
+      ...(dismissed ? { dismissed } : {}), ...(routine ? { routine } : {}), ...(purchased ? { purchased } : {}),
+    },
+  };
 }

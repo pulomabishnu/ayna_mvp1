@@ -25,6 +25,8 @@
 import { buildProductProfile } from './productProfile.js';
 import { scoreProduct, scoreProductForNeed, evaluateSafety, evidenceFor, MAX_SCORE, EXPERIENCE_POINTS } from './score.js';
 import { qualificationForEcosystem, buildEcosystem } from './ecosystem.js';
+import { needSignals, discoveryValue, historyState, NOT_RECOMMENDED_AGAIN } from './forYou.js';
+import { isRecommendable } from './eligibility.js';
 
 export const V2 = {
   S: { direct: 1.0, strong: 1.0, secondary: 0.6 },
@@ -51,6 +53,19 @@ export const V2 = {
   // Added to a chosen need's weight when her connected health data shows a trend supporting it.
   corroborationBoost: 0.15,
   fallbackPerNeed: 2,
+  // A need she did not pick herself (or one her life stage contradicts) while
+  // she picked others: its fit counts for this much (team direction 15). It
+  // can never read as a Strong match, and it gets one ecosystem pick.
+  weakFitFactor: 0.8,
+  weakPerNeed: 1,
+  // Breadth (team direction 59): after the coverage gain falls under stopGain,
+  // keep adding a different type of product for a need while it is itself a
+  // good fit (fit >= breadthFloor), up to her picks per need. Never a partial
+  // fit, never a weak need: no padding when nothing else fits.
+  breadthFloor: 0.6,
+  // Ecosystem choices within this much value count as tied; curated discovery
+  // (forYou.js discoveryValue) decides between them.
+  nearTie: 0.005,
 };
 
 // Reviewed product x need rows (clinical sign-off). Empty until the review
@@ -152,7 +167,7 @@ function hash01(s) {
 }
 
 /** v2 numbers for one v1 result (r = scoreProductForNeed output). */
-export function scoreV2(pp, r, needIds, userKey = '') {
+export function scoreV2(pp, r, needIds, userKey = '', signals = null) {
   const isEffect = !NO_EFFECT_CATEGORIES.has(String(pp.category || '').toLowerCase());
   const grade = evidenceGrade(pp, r.needId);
   const needFit = strengthOf(pp, r.needId, r.relationship) * (isEffect ? V2.E[grade] : 1);
@@ -161,7 +176,9 @@ export function scoreV2(pp, r, needIds, userKey = '') {
   // as the ratio of v1 health to the plain relationship level.
   const base = { direct: 1, strong: 0.8, secondary: 0.55, adjacent: 0.3, weak: 0.1 }[r.relationship] || 1;
   const modifiers = Math.max(0.5, Math.min(1.1, (r.components?.health ?? base) / base));
-  const health = Math.min(1, needFit * (1 - V2.focusWeight + V2.focusWeight * focus) * modifiers);
+  const signal = signals?.get(r.needId) || null;
+  const weak = Boolean(signal?.weak);
+  const health = Math.min(1, needFit * (1 - V2.focusWeight + V2.focusWeight * focus) * modifiers * (weak ? V2.weakFitFactor : 1));
   const pref = Number.isFinite(r.outputs?.preferenceFit) ? r.outputs.preferenceFit : 1;
   // Her product history (v1 experience points, scaled to the cap). Before Oct 24
   // this read components.experience, a 0..1 index with a 0.6 "no history"
@@ -171,7 +188,7 @@ export function scoreV2(pp, r, needIds, userKey = '') {
   const fit = Math.max(0, Math.min(1, health + experience));
   const rankKey = health * (1 - V2.prefWeight + V2.prefWeight * pref) + experience + hash01(`${userKey}|${pp.product_id}`) * 0.001;
   const band = bandFor(fit, r.confidence ?? 1);
-  return { health: round3(health), fit: round3(fit), experience: round3(experience), needFit: round3(needFit), focus: round3(focus), grade, pref: round3(pref), rankKey: round3(rankKey), band, bandLabel: BAND_LABEL[band] || null };
+  return { health: round3(health), fit: round3(fit), experience: round3(experience), needFit: round3(needFit), focus: round3(focus), grade, pref: round3(pref), rankKey: round3(rankKey), band, bandLabel: BAND_LABEL[band] || null, needTier: signal?.tier || null, ...(weak ? { weakNeed: signal.reason } : {}) };
 }
 
 /** The key that ties her v2 ecosystem order to one user (stable tie-break). */
@@ -184,9 +201,9 @@ export function userKeyOf(up) {
  * come from v2; v1Score keeps the old number for comparison. Safety, relevance,
  * explanations and every other field stay v1's (safety runs first).
  */
-export function withV2Score(pp, r, needIds, userKey = '') {
+export function withV2Score(pp, r, needIds, userKey = '', signals = null) {
   if (!r || !r.safety?.eligible || !(r.relevance > 0)) return { ...r, v1Score: r?.score ?? 0, score: 0, tier: 'browse', v2: null };
-  const v2 = scoreV2(pp, r, needIds, userKey);
+  const v2 = scoreV2(pp, r, needIds, userKey, signals);
   const score = v2Percent(v2);
   return { ...r, v1Score: r.score, score, tier: score > 0 ? BAND_TIER[v2.band] : 'browse', v2 };
 }
@@ -200,8 +217,9 @@ export function scoreProductV2(pp, up) {
   const v1 = scoreProduct(pp, up);
   const needIds = new Set(up.healthIntent.needs.map((n) => n.id));
   const key = userKeyOf(up);
+  const signals = needSignals(up);
   const needs = v1.needs
-    .map((r) => withV2Score(pp, r, needIds, key))
+    .map((r) => withV2Score(pp, r, needIds, key, signals))
     .sort((a, b) => b.score - a.score || (b.v2?.rankKey ?? 0) - (a.v2?.rankKey ?? 0) || b.relevance - a.relevance);
   const best = needs.find((r) => r.relevance > 0) || null;
   return { ...v1, needs, best, engine: 'v2' };
@@ -225,9 +243,16 @@ export function buildEcosystemV2(up, products, options = {}) {
   const needs = up.healthIntent.needs;
   const needIds = new Set(needs.map((n) => n.id));
   // Health-data trends can strengthen a need she chose (never create one): see src/health/matchContext.js.
-  const baseWeight = (n, i) => (['legacy', 'inferred', 'life_stage'].includes(n.source) ? V2.needWeight.inferred : i === 0 ? V2.needWeight.first : V2.needWeight.picked);
+  const signals = needSignals(up);
+  const baseWeight = (n, i) => (['legacy', 'inferred', 'life_stage'].includes(n.source) || signals.get(n.id)?.weak ? V2.needWeight.inferred : i === 0 ? V2.needWeight.first : V2.needWeight.picked);
   const weight = new Map(needs.map((n, i) => [n.id, Math.min(1, baseWeight(n, i) + (n.corroborated ? V2.corroborationBoost : 0))]));
   const userKey = userKeyOf(up);
+  const isWeak = (needId) => Boolean(signals.get(needId)?.weak);
+  const hasStrongNeed = needs.some((n) => !isWeak(n.id));
+  const needCap = (needId) => (hasStrongNeed && isWeak(needId) ? Math.min(perNeed, V2.weakPerNeed) : perNeed);
+  // History she can undo (forYou.js historyState): "Not relevant" for this
+  // need, or tried without help, keeps a product off that shelf.
+  const skipForHistory = (pp, needId) => NOT_RECOMMENDED_AGAIN.has(historyState(up, pp.product_id, needId));
 
   const candidates = []; // { pp, results: Map(needId -> { r, v2 }) }
   const seen = new Set();
@@ -237,18 +262,22 @@ export function buildEcosystemV2(up, products, options = {}) {
     if (!pp?.product_id || seen.has(pp.product_id)) continue;
     seen.add(pp.product_id);
     profileById.set(pp.product_id, pp);
+    // Catalog eligibility (eligibility.js): accessories and listings that
+    // failed validation are not recommendations.
+    if (!isRecommendable(p, pp)) continue;
     const relevant = needs.filter((n) => pp.health_need_relevance?.[n.id]);
     if (!relevant.length) continue;
     const safety = evaluateSafety(pp, up);
     if (!safety.eligible) continue;
     const results = new Map();
     for (const n of relevant) {
+      if (skipForHistory(pp, n.id)) continue;
       const r = scoreProductForNeed(pp, up, n.id, { safety });
       if (!r.safety.eligible || r.filtered || r.restricted || !r.explainable) continue;
       // v1's ingested-product floors stay as a safety net (e.g. "PMS" in a name alone never qualifies).
       const q = qualificationForEcosystem(r, pp, 50);
       if (q.effectiveScore < q.floor) continue;
-      const scored = withV2Score(pp, r, needIds, userKey);
+      const scored = withV2Score(pp, r, needIds, userKey, signals);
       const { v2 } = scored;
       if (v2.fit < V2.partialFloor) continue;
       results.set(n.id, { r: scored, v2, partial: v2.fit < V2.ecosystemFloor });
@@ -269,8 +298,18 @@ export function buildEcosystemV2(up, products, options = {}) {
   const brandCount = new Map();
   let universal = 0;
   const slots = options.slots ?? Math.min(V2.slots, Math.max(3, needs.length * perNeed));
+  // One option beats another: more value, and within V2.nearTie the curated
+  // discovery value (forYou.js) and then the stable per-user rankKey.
+  const beats = (a, b) => {
+    if (!b) return true;
+    if (Math.abs(a.value - b.value) > V2.nearTie) return a.value > b.value;
+    if (Math.abs(a.disc - b.disc) > 1e-9) return a.disc > b.disc;
+    if (Math.abs(a.value - b.value) > 1e-9) return a.value > b.value;
+    return a.home.v2.rankKey > b.home.v2.rankKey;
+  };
   while (chosen.length < slots) {
-    let best = null;
+    let best = null; // best pick on coverage gain
+    let wide = null; // best breadth pick, used once the gain is too small
     for (const c of candidates) {
       if (chosen.some((x) => x.pp.product_id === c.pp.product_id)) continue;
       const brand = c.pp.brand?.key;
@@ -283,16 +322,21 @@ export function buildEcosystemV2(up, products, options = {}) {
       let home = null;
       for (const [needId, x] of c.results) if (!home || x.v2.fit > home.v2.fit) home = { needId, ...x };
       if ((typesByNeed.get(home.needId) || new Set()).has(typeKey(c.pp, home.needId))) continue;
-      if (chosen.filter((x) => x.home.needId === home.needId).length >= perNeed) continue;
+      const homeCount = chosen.filter((x) => x.home.needId === home.needId).length;
+      if (homeCount >= needCap(home.needId)) continue;
       let gain = 0;
       for (const [needId, x] of c.results) {
         const before = cover.get(needId) || 0;
         gain += (weight.get(needId) || 0) * ((1 - (1 - before) * (1 - x.v2.fit)) - before);
       }
-      const value = gain * (1 - V2.prefWeight + V2.prefWeight * home.v2.pref);
-      if (!best || value > best.value + 1e-9 || (Math.abs(value - best.value) <= 1e-9 && home.v2.rankKey > best.home.v2.rankKey)) best = { c, home, value, isUniversal };
+      const option = { c, home, value: gain * (1 - V2.prefWeight + V2.prefWeight * home.v2.pref), isUniversal, disc: discoveryValue(c.pp, options.commodityIds || null) };
+      if (beats(option, best)) best = option;
+      // Breadth (team direction 59): another type of good fit for a need with
+      // fewer picks than she asked for. Never partial, never a weak need.
+      if (!home.partial && home.v2.fit >= V2.breadthFloor && !isWeak(home.needId) && homeCount < perNeed && beats(option, wide)) wide = option;
     }
-    if (!best || best.value < V2.stopGain) break;
+    if (best && best.value < V2.stopGain) best = wide;
+    if (!best) break;
     chosen.push({ pp: best.c.pp, home: best.home, results: best.c.results });
     for (const [needId, x] of best.c.results) cover.set(needId, 1 - (1 - (cover.get(needId) || 0)) * (1 - x.v2.fit));
     const set = typesByNeed.get(best.home.needId) || new Set();
@@ -316,11 +360,12 @@ export function buildEcosystemV2(up, products, options = {}) {
     if (!homed.length && Array.isArray(shelf.picks) && shelf.picks.length) {
       const fallback = shelf.picks
         .filter((r) => { const row = REVIEWED.get(`${r.productId}|${shelf.needId}`); return !row || row.strength !== 'none'; })
+        .filter((r) => { const pp = profileById.get(r.productId); return pp && !skipForHistory(pp, shelf.needId); })
         .slice(0, V2.fallbackPerNeed)
         .map((r) => {
           // The shown percent is still v2's for this need (same number as the product page).
           const pp = profileById.get(r.productId);
-          const scored = pp ? withV2Score(pp, r, needIds, userKey) : { ...r, v1Score: r.score, score: 0, tier: 'browse', v2: null };
+          const scored = pp ? withV2Score(pp, r, needIds, userKey, signals) : { ...r, v1Score: r.score, score: 0, tier: 'browse', v2: null };
           return { ...scored, v2: { ...(scored.v2 || {}), band: 'partial', bandLabel: BAND_LABEL.partial || null, fallback: true }, alsoCovers: [] };
         });
       if (fallback.length) {

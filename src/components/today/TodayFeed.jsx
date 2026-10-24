@@ -146,7 +146,7 @@ function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checki
  * @param {{ variant: 'app'|'web', userId, intake, healthRows, cycle, hormonalBC, products, onOpenProduct, onAsk, onEditAnswers, onFindCare }} props
  */
 export default function TodayFeed({ variant = 'app', userId = null, intake = null, healthRows = [], cycle = null, hormonalBC = false, products = [], onOpenProduct, onAsk, onEditAnswers, onFindCare, onSaveToProfile = null,
-  saved = [], community = [], onWhyMatch, onToggleSaved, onCompare, onOpenRead, onExplore,
+  saved = [], community = [], onWhyMatch, onToggleSaved, onCompare, onOpenRead, onExplore, matchOpts = undefined, healthProfile = null,
 }) {
   // DEV only (?fixture=today): sample logs and tries, dropped from production builds.
   const [fixture] = useState(() => (import.meta.env.DEV && todayFixtureOn() ? makeTodayFixture() : null));
@@ -163,6 +163,8 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
         userId={userId}
         intake={fixture?.intake || intake}
         products={products}
+        matchOpts={matchOpts}
+        healthProfile={healthProfile}
         saved={saved}
         community={community}
         onAsk={onAsk}

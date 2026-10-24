@@ -64,6 +64,7 @@ const call = (name, empty) => (...args) => (catalog ? catalog[name](...args) : e
 export const getProductById = call('getProductById', () => null);
 export const getRecommendations = call('getRecommendations', () => []);
 export const getPersonalizedProductIds = call('getPersonalizedProductIds', () => []);
+export const getTopMatch = call('getTopMatch', () => null);
 export const getSelectedNeeds = call('getSelectedNeeds', () => []);
 export const getProductMatchDetailsForProduct = call('getProductMatchDetailsForProduct', () => null);
 export const getProfileMatchLabelsForProduct = call('getProfileMatchLabelsForProduct', () => []);

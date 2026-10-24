@@ -610,6 +610,9 @@ function App() {
   // Stable insertion-order array of product IDs, prevents cards from reordering on swap/add
   const [ecosystemOrder, setEcosystemOrder] = useState([]);
   const [omittedProducts, setOmittedProducts] = useState({});
+  // Seeding her ecosystem from the quiz honors "Not for me" (same as the app's
+  // planBaseOpts): a product she hid never comes back when she retakes the quiz.
+  const seedOpts = useMemo(() => behaviorFrom({ omitted: omittedProducts }), [omittedProducts]);
   // Signed-out "Add to ecosystem" survives a refresh (focus group Oct 19): the
   // guest shelf is mirrored to this browser and merged into the account at
   // sign-in, then cleared. Best effort: storage can be blocked.
@@ -1124,7 +1127,7 @@ function App() {
     setShowAuthModal(false);
     if (pendingAction === 'quiz-complete' && pendingQuizResults) {
       setQuizResults(pendingQuizResults);
-      const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(pendingQuizResults, healthProfile);
+      const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(pendingQuizResults, healthProfile, seedOpts);
       setEcosystemSeedMeta(seedMeta);
       // Tagged so a later AI rebuild can tell these generated picks apart from
       // products she added herself (handleBuildEcosystemFromLlm).
@@ -1656,13 +1659,13 @@ function App() {
       // get), then ask her to create an account to keep them.
       setPendingQuizResults(completedResults);
       setPendingAction('quiz-complete'); pendingActionRef.current = 'quiz-complete';
-      const { mergedProducts: guestSeed } = getEcosystemSeedFromQuiz(completedResults, healthProfile);
+      const { mergedProducts: guestSeed } = getEcosystemSeedFromQuiz(completedResults, healthProfile, seedOpts);
       const guestProducts = Object.values(guestSeed || {});
       setGuestPreview({ results: completedResults, products: guestProducts });
       return;
     }
     setQuizResults(completedResults);
-    const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(completedResults, healthProfile);
+    const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(completedResults, healthProfile, seedOpts);
     setEcosystemSeedMeta(seedMeta);
     // Tagged so a later AI rebuild can tell these generated picks apart from
     // products she added herself (handleBuildEcosystemFromLlm).
@@ -1721,7 +1724,7 @@ function App() {
     }
     await loadCatalog(); // her matches come from the catalog
     setQuizResults(updatedResults);
-    const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(updatedResults, healthProfile);
+    const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(updatedResults, healthProfile, seedOpts);
     setEcosystemSeedMeta(seedMeta);
     // Tagged so a later AI rebuild can tell these generated picks apart from
     // products she added herself (handleBuildEcosystemFromLlm).
@@ -2201,7 +2204,7 @@ function App() {
       quizAnswers={quizResults}
       onEditAnswers={(step) => { if (!user) { handleStartQuiz(); return; } setEditAtStep(step || ''); setCurrentView('profile-edit'); }}
       onSaveToProfile={user && quizResults?.fullHealthIntake ? handleUpdateIntake : null}
-      rundown={{ saved: Object.values(savedProducts || {}), onToggleSaved: toggleSavedProduct, onOpenRead: handleViewArticle, onExplore: () => handleViewDiscovery('') }}
+      rundown={{ saved: Object.values(savedProducts || {}), onToggleSaved: toggleSavedProduct, onOpenRead: handleViewArticle, onExplore: () => handleViewDiscovery(''), matchOpts, healthProfile }}
       onOpenProduct={(p) => handleOpenProduct(p, { source: 'health_dashboard' })}
       onAsk={(q, extra) => openAsk(q, extra?.stats)}
       onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
@@ -3073,7 +3076,7 @@ function App() {
               setShowAuthModal(false);
               if (pendingAction === 'quiz-complete' && pendingQuizResults) {
                 setQuizResults(pendingQuizResults);
-                const { seedMeta } = getEcosystemSeedFromQuiz(pendingQuizResults, healthProfile);
+                const { seedMeta } = getEcosystemSeedFromQuiz(pendingQuizResults, healthProfile, seedOpts);
                 setEcosystemSeedMeta(seedMeta);
                 setCurrentView('ecosystem');
                 setPendingQuizResults(null);
