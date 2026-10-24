@@ -15,21 +15,44 @@ export class CampaignRequestError extends Error {
   }
 }
 
-async function token() {
+/**
+ * Return a usable access token for campaign API calls.
+ *
+ * App.jsx can still have a user object while Supabase is rotating an expired
+ * access token, especially after a tab has been in the background. A campaign
+ * request used to read that one stale/missing token once and immediately show
+ * auth_required, even though the refresh token was still valid. Get the normal
+ * session first, then fall back to an explicit refresh. When a server request
+ * itself comes back 401, callers can force one refresh and retry exactly once.
+ */
+async function token({ forceRefresh = false } = {}) {
   const supabase = getSupabaseClient();
   if (!supabase) return null;
-  const { data } = await supabase.auth.getSession();
-  return data?.session?.access_token || null;
+
+  if (!forceRefresh) {
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      if (!error && data?.session?.access_token) return data.session.access_token;
+    } catch {
+      // A refresh below may still recover a temporarily stale stored session.
+    }
+  }
+
+  try {
+    const { data, error } = await supabase.auth.refreshSession();
+    if (error) return null;
+    return data?.session?.access_token || null;
+  } catch {
+    return null;
+  }
 }
 
-async function call(path, { method = 'GET', body } = {}) {
-  const t = await token();
-  if (!t) throw new CampaignRequestError('auth_required', 401);
+async function request(path, { method = 'GET', body } = {}, accessToken) {
   let res;
   try {
     res = await fetch(path, {
       method,
-      headers: { Authorization: `Bearer ${t}`, ...(body ? { 'Content-Type': 'application/json' } : {}) },
+      headers: { Authorization: `Bearer ${accessToken}`, ...(body ? { 'Content-Type': 'application/json' } : {}) },
       body: body ? JSON.stringify(body) : undefined,
     });
   } catch {
@@ -39,6 +62,25 @@ async function call(path, { method = 'GET', body } = {}) {
   try { json = await res.json(); } catch { json = null; }
   if (!res.ok) throw new CampaignRequestError(json?.error || `http_${res.status}`, res.status, json);
   return json;
+}
+
+async function call(path, options = {}) {
+  const firstToken = await token();
+  if (!firstToken) throw new CampaignRequestError('auth_required', 401);
+
+  try {
+    return await request(path, options, firstToken);
+  } catch (err) {
+    // A 401 is returned before api/campaign performs the requested action, so
+    // it is safe to refresh and retry once even for POST actions such as spin.
+    if (!(err instanceof CampaignRequestError) || err.status !== 401) throw err;
+
+    const refreshedToken = await token({ forceRefresh: true });
+    if (!refreshedToken || refreshedToken === firstToken) {
+      throw new CampaignRequestError('auth_required', 401, err.body);
+    }
+    return request(path, options, refreshedToken);
+  }
 }
 
 export const getCampaignStatus = () => call('/api/campaign');
