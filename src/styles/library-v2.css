@@ -236,3 +236,7 @@ html body .app-container.app-container.app-container.app-container[data-theme='b
 @media (prefers-reduced-motion: reduce) {
   html body .app-container.app-container.app-container.app-container .lb :is(.lb-card .rc, .lb-btn, .lb-more__row) { transition: none; }
 }
+
+/* /explore/resources at 390 (review, Oct 24): on phones the sideways read shelves
+   widened the page to 635px. Paint containment keeps each row's overflow inside it. */
+.lb .lb-shelf__row, .lb .lb-chips { contain: paint; }

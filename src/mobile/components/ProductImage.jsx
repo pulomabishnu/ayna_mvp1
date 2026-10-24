@@ -2,18 +2,20 @@ import { useEffect, useState } from 'react';
 import { safeProductImageSrc, resolveProductImage } from '../../utils/resolveProductImage.js';
 import { productImageOverride } from '../../data/productImageOverrides.js';
 
-// No photo yet: a designed tile (the product's initial in the logo face on a
-// tint picked from its name, with the brand under it), never a blank logo.
+// No photo yet: the same designed tile as the website (ProductTileImage.jsx):
+// the brand in the display face on a tint picked from its name, a hairline,
+// then "Photo coming soon". Not a letter avatar (review, Oct 24).
 const TINTS = ['pink', 'butter', 'sky'];
 function PhotoPlaceholder({ style, product }) {
   const name = String(product?.name || '').trim();
   const brand = String(product?.brand || '').trim();
-  const initial = (brand || name).charAt(0).toUpperCase() || 'a';
-  const tint = TINTS[[...(brand || name)].reduce((n, c) => n + c.charCodeAt(0), 0) % TINTS.length];
+  const key = brand || name || 'ayna';
+  const tint = TINTS[[...key].reduce((n, c) => n + c.charCodeAt(0), 0) % TINTS.length];
   return (
     <div className={`ayna-fresh-photo-placeholder ay-ph is-${tint}`} role="img" aria-label={name ? `No photo yet for ${name}` : 'Product photo unavailable'} style={{ position: 'absolute', inset: 0, ...style }}>
-      <span aria-hidden="true" className="ay-ph-initial">{initial}</span>
-      {brand && <span aria-hidden="true" className="ay-ph-brand">{brand}</span>}
+      <span aria-hidden="true" className="ay-ph-name">{key}</span>
+      <span aria-hidden="true" className="ay-ph-rule" />
+      <span aria-hidden="true" className="ay-ph-soon">Photo coming soon</span>
     </div>
   );
 }

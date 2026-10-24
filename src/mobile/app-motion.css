@@ -77,3 +77,6 @@
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-ph.is-sky { background: #769ebe !important; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-ph-initial { display: grid; place-items: center; width: 56px; height: 56px; border: 1.5px solid #3e2723; border-radius: 50%; background: #ffedac; color: #3e2723; font: 700 28px/1 var(--ay-font-display, 'ayna Display', sans-serif); box-shadow: 2px 2px 0 #3e2723; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-ph-brand { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 600 12px/1.2 var(--ay-font-ui); color: #3e2723; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-ph-name { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; max-width: 100%; color: #3e2723; font: 700 18px/1.05 var(--ay-font-display, 'ayna Display', sans-serif); letter-spacing: -.01em; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-ph-rule { width: 28px; height: 1.5px; background: #3e2723; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-ph-soon { color: #3e2723; font: 500 12px/1.2 var(--ay-font-ui, 'Figtree', sans-serif); }
