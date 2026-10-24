@@ -11,6 +11,7 @@ import { buildProductProfile } from './productProfile.js';
 import { buildUserProfile } from './userProfile.js';
 import { scoreProductV2, scoreV2, evidenceGrade, v2Percent, BAND_TIER, bandFor, V2 } from './v2.js';
 import { MAX_SCORE } from './score.js';
+import { outcomesToProductHistory } from '../health/outcomes.js';
 
 // Founder decision, Oct 24: one "NN% match" per product, from the v2 engine,
 // on every surface (card, shelf, product page, Why this matches, Compare,
@@ -186,6 +187,20 @@ describe('v2 respects her product history (intake.productHistory) like v1', () =
 
   it('no history means no experience change (no hidden baseline)', () => {
     expect(getProductMatchDetailsForProduct(thermacare, quiz(base)).v2.experience).toBe(0);
+  });
+
+  it('Phase 1 outcomes (opts.outcomeHistory) move the v2 percent the same way', () => {
+    const q = quiz(base);
+    const opts = (outcome) => ({ outcomeHistory: outcomesToProductHistory([{ id: 'try_test1', kind: 'product', ref: thermacare.id, outcome, startedDay: '2026-09-20', recordedDay: '2026-10-20' }], ALL_PRODUCTS) });
+    expect(opts('helpful').outcomeHistory.length).toBe(1);
+    expect(getProductMatchDetailsForProduct(thermacare, q, null, opts('worse')).matchStatus).toBe('excluded');
+    const side = getProductMatchDetailsForProduct(thermacare, q, null, opts('side_effect'));
+    expect(side.percent).toBeLessThan(none);
+    const helped = getProductMatchDetailsForProduct(thermacare, q, null, opts('helpful'));
+    expect(helped.v2.experience).toBeGreaterThan(0);
+    expect(helped.v2.experience).toBeLessThanOrEqual(V2.experienceCap);
+    const pick = getEcosystemSeedFromQuiz(q, null, opts('side_effect')).shelves.flatMap((s) => s.picks).find((p) => p.productId === thermacare.id);
+    if (pick) expect(pick.score).toBe(side.percent);
   });
 
   it('the ecosystem uses the same history-adjusted number', () => {
