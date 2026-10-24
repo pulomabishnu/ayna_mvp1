@@ -9,6 +9,7 @@ import { getAppSessionId } from '../utils/conversationId';
 import AskFollowUps from './AskFollowUps.jsx';
 import { chipsFor, followUpRequestFields } from '../utils/askFollowUps.js';
 import { localMatchAnswer } from '../utils/askMatch.js';
+import { localHistoryAnswer } from '../utils/askHistory.js';
 import { fetchWithTimeout, isNetworkError } from '../utils/network.js';
 import AskHome, { AskStatCard } from './AskHome.jsx';
 import { recentQuestions } from '../utils/askRecent.js';
@@ -340,7 +341,10 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     if (!msg || sending || disabled) return;
     // Her match for a product: ayna's match engine on this device, never the
     // language model, so it is the same % the card shows (works signed out).
-    const local = retryOf == null ? await localMatchAnswer(msg, { quizAnswers: profile, healthProfile, matchOpts, focusProduct }).catch(() => null) : null;
+    const local = retryOf == null
+      ? (await localMatchAnswer(msg, { quizAnswers: profile, healthProfile, matchOpts, focusProduct }).catch(() => null))
+        || (await localHistoryAnswer(msg).catch(() => null))
+      : null;
     if (local) {
       setInput('');
       setSendError('');
