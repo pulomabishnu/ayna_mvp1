@@ -958,7 +958,6 @@ const DESIGNED_READS = {
 
 /* The reads featured at the top of the Library: Geena's and Shruti's designed reads (team, Oct 21). */
 const FEATURED_READS = ['postpartum-stretch-marks', 'genitourinary-syndrome-of-menopause'].map((id) => ({ id, ...READ_CREDITS[id] }));
-const FEATURED_READ = FEATURED_READS[0];
 import ReadCover from './library/ReadCover.jsx';
 import ReadVideo from './library/ReadVideo.jsx';
 import { textOf, minutesFor } from './library/readTime.js';
@@ -970,85 +969,77 @@ const LIB_SEARCH_EXAMPLES = ['heavy periods', 'PMOS', 'period pain', 'when to se
 
 const plainClick = (e) => !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0);
 
-/* One oval stamp per page (inspo a00214f5 / 1bed1ebe). Only on the featured
-   read, because only that read has a named clinician reviewer. */
-function ReviewedStamp() {
-  return (
-    <svg className="lb-stamp" viewBox="0 0 168 104" aria-hidden="true">
-      <ellipse cx="84" cy="52" rx="81" ry="49" className="lb-stamp__fill" />
-      <ellipse cx="84" cy="52" rx="73" ry="41" className="lb-stamp__ring" />
-      <text x="84" y="48" textAnchor="middle" className="lb-stamp__t">Clinician</text>
-      <text x="84" y="72" textAnchor="middle" className="lb-stamp__t">reviewed</text>
-    </svg>
-  );
-}
-
-/* Top of the Library as a bento (spacing rule 3): one big featured tile and
-   two small ones, each an outlined card with a hard offset shadow. Labels sit
-   on the card edge like the retro decks' folder tabs (rule 9). */
-function FeatureTile({ feature, onOpen, first = false }) {
+/* Top of the Library as plain rows (master prompt 154: no bento): the
+   featured reads, each with its photo, section, time, title, one line and who
+   wrote and reviewed it; then one row for her pick (or getting matched) and
+   one for asking or suggesting a read. */
+function FeatureRow({ feature, onOpen, first = false }) {
   const art = ARTICLES.find((a) => a.id === feature.id);
   if (!art) return null;
   const go = (id) => (e) => { if (!plainClick(e)) return; e.preventDefault(); onOpen(id); };
   return (
-    <article className="lb-tile lb-feature" id={first ? 'lib-featured' : `lib-featured-${feature.id}`} aria-labelledby={`lb-feature-h-${feature.id}`}>
-      <span className="lb-tab">Featured read</span>
-      <a href={`/library/${art.id}`} className="lb-feature__media" tabIndex={-1} aria-hidden="true" onClick={go(art.id)}>
-        <img src={readPhoto(art.id) || art.image} alt="" width="794" height="798" />
+    <li className="lb-frow" id={first ? 'lib-featured' : `lib-featured-${feature.id}`}>
+      <a href={`/library/${art.id}`} className="lb-frow__media" tabIndex={-1} aria-hidden="true" onClick={go(art.id)}>
+        <img src={readPhoto(art.id) || art.image} alt="" width="794" height="798" loading={first ? undefined : 'lazy'} />
       </a>
-      <ReviewedStamp />
-      <div className="lb-feature__text">
-        <p className="lb-feature__sec">{sectionOf(art.id)?.label} <span aria-hidden="true">·</span> {minutesFor(art)} min read</p>
-        <h2 id={`lb-feature-h-${feature.id}`} className="lb-feature__title">
+      <div className="lb-frow__text">
+        <p className="lb-frow__sec">{sectionOf(art.id)?.label} <span aria-hidden="true">·</span> {minutesFor(art)} min read</p>
+        <h3 id={`lb-feature-h-${feature.id}`} className="lb-frow__title">
           <a href={`/library/${art.id}`} onClick={go(art.id)}>{art.title}</a>
-        </h2>
-        <p className="lb-feature__teaser">{art.teaser}</p>
+        </h3>
+        <p className="lb-frow__teaser">{art.teaser}</p>
         <dl className="lb-credits">
           <div><dt>Written by</dt><dd>{feature.by}</dd></div>
           <div><dt>Reviewed by</dt><dd>{feature.reviewedBy}</dd></div>
         </dl>
-        <p className="lb-feature__go">
-          <a href={`/library/${art.id}`} className="lb-btn" onClick={go(art.id)}>Read it <span aria-hidden="true">→</span></a>
-        </p>
       </div>
-    </article>
+    </li>
   );
 }
 
-function LibraryBento({ onOpen, pick = null, onAsk = null }) {
-  const art = ARTICLES.find((a) => a.id === FEATURED_READ.id);
-  if (!art) return null;
+function LibraryFeatured({ onOpen, pick = null, onAsk = null }) {
   const go = (id) => (e) => { if (!plainClick(e)) return; e.preventDefault(); onOpen(id); };
   return (
-    <div className="lb-bento">
-      <FeatureTile feature={FEATURED_READ} onOpen={onOpen} first />
-      <div className="lb-bento__side">
-        {pick ? (
-          <a href={`/library/${pick.id}`} className="lb-tile lb-tile--pick" onClick={go(pick.id)}>
-            <span className="lb-tab">Top pick for you</span>
-            <span className="lb-tile__cover"><ReadCover article={pick} /></span>
-            <span className="lb-tile__body">
-              <strong className="lb-tile__title">{pick.title}</strong>
-              <span className="lb-tile__meta">{minutesFor(pick)} min read</span>
+    <section className="lb-featured" aria-labelledby="lib-featured-h">
+      <header className="lb-shelf__head"><h2 id="lib-featured-h" className="lb-shelf__title">Featured reads</h2></header>
+      <ul className="lb-flist">
+        {FEATURED_READS.map((f, i) => <FeatureRow key={f.id} feature={f} onOpen={onOpen} first={i === 0} />)}
+      </ul>
+      <ul className="lb-more">
+        <li>
+          {pick ? (
+            <a href={`/library/${pick.id}`} className="lb-more__row" onClick={go(pick.id)}>
+              <span className="lb-more__cover"><ReadCover article={pick} /></span>
+              <span className="lb-more__body">
+                <span className="lb-more__label">Top pick for you</span>
+                <strong className="lb-more__title">{pick.title}</strong>
+                <span className="lb-more__meta">{minutesFor(pick)} min read</span>
+              </span>
+            </a>
+          ) : (
+            <div className="lb-more__row">
+              <span className="lb-more__body">
+                <span className="lb-more__label">For you</span>
+                <strong className="lb-more__title">Get reads picked for what you told us.</strong>
+              </span>
+              <a className="lb-btn lb-btn--small" href="/quiz">See my matches <span aria-hidden="true">→</span></a>
+            </div>
+          )}
+        </li>
+        <li>
+          <div className="lb-more__row">
+            <span className="lb-more__body">
+              <span className="lb-more__label">Can’t find it?</span>
+              <strong className="lb-more__title">Ask about anything, or tell us what to write next.</strong>
             </span>
-          </a>
-        ) : (
-          <div className="lb-tile lb-tile--pink">
-            <span className="lb-tab">For you</span>
-            <p className="lb-tile__title">Get reads picked for what you told us.</p>
-            <a className="lb-btn lb-btn--small" href="/quiz">See my matches <span aria-hidden="true">→</span></a>
+            <span className="lb-more__actions">
+              {onAsk && <button type="button" className="lb-btn lb-btn--small" onClick={() => onAsk('')}>Ask ayna</button>}
+              <button type="button" className="lb-link" onClick={() => document.querySelector('.ct-suggest')?.scrollIntoView({ behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' })}>Suggest a read</button>
+            </span>
           </div>
-        )}
-        <div className="lb-tile lb-tile--sky">
-          <span className="lb-tab">Can’t find it?</span>
-          <p className="lb-tile__title">Ask about anything, or tell us what to write next.</p>
-          <p className="lb-tile__actions">
-            {onAsk && <button type="button" className="lb-btn lb-btn--small" onClick={() => onAsk('')}>Ask ayna</button>}
-            <button type="button" className="lb-link" onClick={() => document.querySelector('.ct-suggest')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>Suggest a read</button>
-          </p>
-        </div>
-      </div>
-    </div>
+        </li>
+      </ul>
+    </section>
   );
 }
 
@@ -1401,8 +1392,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
     </section>;
   } else {
     body = <>
-      <LibraryBento onOpen={open} pick={hasProfile ? forYou.find((a) => !FEATURED_READS.some((f) => f.id === a.id)) || null : null} onAsk={onAsk} />
-      {FEATURED_READS.slice(1).map((f) => <div key={f.id} className="lb-bento lb-bento--solo"><FeatureTile feature={f} onOpen={open} /></div>)}
+      <LibraryFeatured onOpen={open} pick={hasProfile ? forYou.find((a) => !FEATURED_READS.some((f) => f.id === a.id)) || null : null} onAsk={onAsk} />
       {shelf('keep', 'Keep reading', keepReading, { sub: finished > 0 ? `${finished} of ${ARTICLES.length} finished` : null })}
       {hasProfile && shelf('foryou', 'Top 3 for you', forYou.slice(0, 3), {
         sub: said.length > 0 ? `Based on what you told us: ${said.map((x) => x.toLowerCase()).join(', ')}` : null,
