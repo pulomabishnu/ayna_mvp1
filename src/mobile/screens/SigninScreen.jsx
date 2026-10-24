@@ -6,7 +6,8 @@ import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
 import { productImageOverride } from '../../data/productImageOverrides.js';
 import { HEARD_ABOUT_OPTIONS, HEARD_ABOUT_OTHER_MAX, heardAboutMetadata } from '../../utils/heardAbout.js';
 import { stashPendingSignupMeta } from '../../utils/pendingConsent.js';
-import { setRememberMe } from '../../utils/supabaseClient.js';
+import { getSupabaseClient, setRememberMe } from '../../utils/supabaseClient.js';
+import { CODE_COPY, EMAIL_CODE_LENGTH, cleanCode, isEmailNotConfirmed, verifyEmailCode } from '../../utils/authCodes.js';
 import { clearError, errorSummary, firstErrorKey, revealField, warnHaptic } from '../../utils/formErrors.js';
 import InlineError from '../../components/InlineError.jsx';
 import '../auth.css';
@@ -227,6 +228,11 @@ export default function SigninScreen({
   const [summaryAction, setSummaryAction] = useState('create your account');
   const [resending, setResending] = useState(false);
   const [resendMsg, setResendMsg] = useState('');
+  // The emailed code, same as the website (src/utils/authCodes.js).
+  const [emailCode, setEmailCode] = useState('');
+  const [codeError, setCodeError] = useState('');
+  const [verifying, setVerifying] = useState(false);
+  const [checkNote, setCheckNote] = useState('');
 
   // Cross-tab pickup: confirming email in a different tab establishes the
   // session there via localStorage, which fires onAuthStateChange back in
@@ -306,7 +312,7 @@ export default function SigninScreen({
     setRememberMe(true);
     try {
       const { needsConfirmation } = await onSignUp({ email: email.trim(), password, firstName: firstName.trim(), metadata: heardAboutMetadata(heardAbout, heardOther) });
-      if (needsConfirmation) setMode('check-email');
+      if (needsConfirmation) { setCheckNote(CODE_COPY.emailSent(email.trim())); setEmailCode(''); setMode('check-email'); }
       else onAuthenticated(firstName.trim() || undefined);
     } catch (e) {
       if (e.code === 'email_already_exists') setMode('signin');
@@ -325,6 +331,8 @@ export default function SigninScreen({
       await onSignIn({ email: email.trim(), password });
       onAuthenticated();
     } catch (e) {
+      // Same as the website: an account that was never verified goes to the code step, not a dead end.
+      if (isEmailNotConfirmed(e)) { setCheckNote(CODE_COPY.emailNotConfirmed); setEmailCode(''); setMode('check-email'); return; }
       setError(e.message || 'We couldn’t sign you in. Check your connection and try again.');
     } finally {
       setLoading(false);
@@ -373,11 +381,27 @@ export default function SigninScreen({
     setResendMsg('');
     try {
       await onResendConfirmation(email.trim());
-      setResendMsg('Sent. Check your inbox (and spam folder) again in a minute.');
+      setResendMsg(CODE_COPY.resent);
     } catch (e) {
       setResendMsg(e.message || 'Could not resend right now, try again in a moment.');
     } finally {
       setResending(false);
+    }
+  };
+
+  const handleVerifyCode = async (e) => {
+    e?.preventDefault?.();
+    if (cleanCode(emailCode, EMAIL_CODE_LENGTH).length !== EMAIL_CODE_LENGTH) { setCodeError(CODE_COPY.emailPrompt); return; }
+    setCodeError('');
+    setVerifying(true);
+    try {
+      await verifyEmailCode(getSupabaseClient(), email, emailCode);
+      setResendMsg(CODE_COPY.verified);
+      // onAuthStateChange delivers the session; the check-email effect above then moves on.
+    } catch (err) {
+      setCodeError(err.message || CODE_COPY.wrongOrExpired);
+    } finally {
+      setVerifying(false);
     }
   };
 
@@ -407,11 +431,31 @@ export default function SigninScreen({
             Almost there.
           </div>
           <div className="ay-auth-check-copy">
-            A confirmation email is on its way from ayna (puloma@aynahealth.co). Check your spam folder if you don't see it. Once confirmed, come back here, this screen updates on its own.
+            {checkNote || CODE_COPY.emailSent(email.trim())} It comes from ayna (puloma@aynahealth.co). Check your spam folder if you don't see it.
           </div>
+          <form className="ay-auth-code" onSubmit={handleVerifyCode} noValidate>
+            <label className={`ayna-fresh-auth-field${codeError ? ' is-invalid' : ''}`} htmlFor="ay-auth-email-code">
+              <span>Verification code</span>
+              <input
+                id="ay-auth-email-code"
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                placeholder={CODE_COPY.emailPlaceholder}
+                maxLength={EMAIL_CODE_LENGTH}
+                value={emailCode}
+                onChange={(e) => { setEmailCode(cleanCode(e.target.value, EMAIL_CODE_LENGTH)); setCodeError(''); }}
+                aria-invalid={codeError ? true : undefined}
+                aria-describedby={codeError ? 'ay-auth-code-err' : undefined}
+                style={inputStyle}
+              />
+            </label>
+            {codeError && <div id="ay-auth-code-err" className="ay-auth-check-msg" role="alert">{codeError}</div>}
+            <PrimaryButton onClick={handleVerifyCode} disabled={verifying}>{verifying ? 'Checking…' : 'Verify and continue'}</PrimaryButton>
+          </form>
           {resendMsg && <div className="ay-auth-check-msg" role="status">{resendMsg}</div>}
           <button type="button" className="ay-auth-link" disabled={resending} onClick={handleResend}>
-            {resending ? 'Sending…' : 'Resend confirmation email'}
+            {resending ? 'Sending…' : 'Resend code'}
           </button>
           <div style={{ flex: 1 }} />
         </>

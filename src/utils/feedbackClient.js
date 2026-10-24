@@ -1,4 +1,4 @@
-import { getSupabaseClient } from './supabaseClient';
+import { withAuthRetry } from './authToken.js';
 import { fetchWithTimeout } from './network.js';
 import { apiUrl } from './apiUrl.js';
 export const FEEDBACK_CAMPAIGN = '2026-09-26';
@@ -27,14 +27,17 @@ export function surveySeenRecently(userId, now = Date.now()) {
   return Number.isFinite(last) && now - last < SURVEY_INTERVAL_MS;
 }
 export async function sendFeedback(body, authenticated = false) {
-  const headers = { 'Content-Type': 'application/json' };
-  if (authenticated) {
-    const { data } = await getSupabaseClient()?.auth.getSession() || {};
-    const token = data?.session?.access_token;
-    if (!token) throw new Error('Sign in required');
-    headers.Authorization = `Bearer ${token}`;
-  }
-  const response = await fetchWithTimeout(apiUrl('/api/feedback'), { method: 'POST', headers, body: JSON.stringify(body), keepalive: true });
+  const post = (token) => fetchWithTimeout(apiUrl('/api/feedback'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    body: JSON.stringify(body),
+    keepalive: true,
+  });
+  // Signed-in calls get a fresh token and one refresh-and-retry on 401
+  // (src/utils/authToken.js); reading the session once failed right after sign-in.
+  const response = authenticated ? await withAuthRetry(post) : await post(null);
+  if (!response) { const e = new Error('Sign in required'); e.code = 'auth_required'; throw e; }
+  if (response.status === 401) { const e = new Error('Sign in required'); e.code = 'auth_required'; throw e; }
   if (!response.ok) throw new Error('Could not save. Please try again.');
   return response.json();
 }

@@ -3,7 +3,7 @@
  * person's own Supabase session; never sends a user id of its own.
  * Nothing here logs values or sends them to analytics.
  */
-import { getSupabaseClient } from '../utils/supabaseClient.js';
+import { withAuthRetry } from '../utils/authToken.js';
 import { apiUrl } from '../utils/apiUrl.js';
 import { fetchWithTimeout } from '../utils/network.js';
 
@@ -11,26 +11,19 @@ export class HealthApiError extends Error {
   constructor(code, status) { super(code); this.code = code; this.status = status; }
 }
 
-async function token() {
-  const supabase = getSupabaseClient();
-  if (!supabase) return null;
-  const { data } = await supabase.auth.getSession();
-  return data?.session?.access_token || null;
-}
-
 async function call(path, { method = 'GET', body } = {}) {
-  const t = await token();
-  if (!t) throw new HealthApiError('not_signed_in', 401);
   let res;
   try {
-    res = await fetchWithTimeout(apiUrl(path), {
+    // Fresh token, one refresh-and-retry on 401 (src/utils/authToken.js).
+    res = await withAuthRetry((t) => fetchWithTimeout(apiUrl(path), {
       method,
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
       ...(body ? { body: JSON.stringify(body) } : {}),
-    });
+    }));
   } catch {
     throw new HealthApiError('network', 0);
   }
+  if (!res) throw new HealthApiError('not_signed_in', 401);
   let data = {};
   try { data = await res.json(); } catch { /* empty */ }
   if (!res.ok) throw new HealthApiError(data?.error || `http_${res.status}`, res.status);

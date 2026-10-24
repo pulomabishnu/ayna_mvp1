@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { CODE_COPY, SMS_CODE_LENGTH, cleanCode } from '../utils/authCodes.js';
 import { EdPage } from './editorial/EdPage';
 import { maskedChange, formatUsPhone } from '../utils/inputMask.js';
 
@@ -35,7 +36,7 @@ const ERROR_MESSAGES = {
   rate_limited: 'Too many attempts. Please try again in an hour.',
   twilio_send_failed: "We couldn't send a code right now. Please try again.",
   twilio_check_failed: "We couldn't check that code right now. Please try again.",
-  invalid_or_expired_code: 'That code is wrong or expired. Please try again.',
+  invalid_or_expired_code: CODE_COPY.wrongOrExpired,
   code_required: 'Please enter the code we texted you.',
   phone_already_linked: 'That phone number is already linked to another account.',
   auth_required: 'Please sign in first.',
@@ -128,14 +129,15 @@ export default function PhoneVerification({ userSession, onVerified, onCancel })
                 type="text"
                 inputMode="numeric"
                 autoComplete="one-time-code"
-                placeholder="123456"
+                placeholder={CODE_COPY.smsPlaceholder}
+                maxLength={SMS_CODE_LENGTH}
                 value={code}
-                onChange={(e) => setCode(e.target.value)}
+                onChange={(e) => setCode(cleanCode(e.target.value, SMS_CODE_LENGTH))}
               />
             </div>
             {error && <div role="alert" className="ed-notice ed-notice--err">{error}</div>}
             <div className="ed-btnrow">
-              <button type="button" className="ay-btn ay-btn--primary" onClick={handleConfirmCode} disabled={sending || !code.trim()}>
+              <button type="button" className="ay-btn ay-btn--primary" onClick={handleConfirmCode} disabled={sending || code.length !== SMS_CODE_LENGTH}>
                 {sending ? 'Verifying…' : 'Verify'}
               </button>
               <button type="button" className="ay-btn ay-btn--secondary" onClick={() => setStep('phone')}>Change number</button>

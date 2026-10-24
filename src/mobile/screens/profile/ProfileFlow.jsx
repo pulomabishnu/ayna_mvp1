@@ -1,4 +1,5 @@
 import { useEdgeSwipeBack } from '../../hooks/useEdgeSwipeBack.js';
+import { CODE_COPY, SMS_CODE_LENGTH, cleanCode } from '../../../utils/authCodes.js';
 import DailyCheckin from '../../../components/you/DailyCheckin.jsx';
 import BoxWaitlist, { SHOW_BOX_WAITLIST } from '../../../components/you/BoxWaitlist.jsx';
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
@@ -1068,7 +1069,7 @@ const PHONE_ERROR_MESSAGES = {
   rate_limited: 'Too many attempts. Please try again in an hour.',
   twilio_send_failed: "We couldn't send a code right now. Please try again.",
   twilio_check_failed: "We couldn't check that code right now. Please try again.",
-  invalid_or_expired_code: 'That code is wrong or expired. Please try again.',
+  invalid_or_expired_code: CODE_COPY.wrongOrExpired,
   code_required: 'Please enter the code we texted you.',
   phone_already_linked: 'That phone number is already linked to another account.',
   too_many_attempts: 'Too many attempts. Please request a new code.',
@@ -1704,7 +1705,7 @@ function SettingsScreen({ onBack, onOpenTexts, onOpenPreferences, onOpenHowItWor
 // Backed by /api/sms (api/sms.js). Consent wording follows carrier (CTIA) rules.
 const SMS_ERRORS = {
   invalid_phone_number: 'That number doesn’t look right. Use a US mobile number.',
-  invalid_or_expired_code: 'That code didn’t work or has expired. Send a new one.',
+  invalid_or_expired_code: CODE_COPY.wrongOrExpired,
   phone_already_linked: 'That number is already linked to another ayna account.',
   rate_limited: 'Too many tries. Wait a few minutes, then try again.',
   too_many_attempts: 'Too many tries. Wait a few minutes, then try again.',
@@ -1801,10 +1802,10 @@ function TextMessagesScreen({ onBack, authUser }) {
           <InlineError className="ay-inline-err--summary">{smsSummary}</InlineError>
           <button type="button" className="ay-qc-primary" disabled={busy} onClick={send}>{busy ? 'Sending…' : 'Send code'}</button>
         </> : <>
-          <label htmlFor="ay-sms-code">Code we texted to {phone}</label>
-          <input id="ay-sms-code" inputMode="numeric" autoComplete="one-time-code" maxLength={8} value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} />
+          <label htmlFor="ay-sms-code">{SMS_CODE_LENGTH}-digit code we texted to {phone}</label>
+          <input id="ay-sms-code" inputMode="numeric" autoComplete="one-time-code" maxLength={SMS_CODE_LENGTH} placeholder={CODE_COPY.smsPlaceholder} value={code} onChange={(e) => setCode(cleanCode(e.target.value, SMS_CODE_LENGTH))} />
           <div className="ay-sms-row">
-            <button type="button" className="ay-qc-primary" disabled={busy || code.length < 4} onClick={verify}>{busy ? 'Checking…' : 'Verify'}</button>
+            <button type="button" className="ay-qc-primary" disabled={busy || code.length !== SMS_CODE_LENGTH} onClick={verify}>{busy ? 'Checking…' : 'Verify'}</button>
             <button type="button" className="ay-qc-skip" disabled={busy} onClick={() => { setSent(false); setCode(''); setError(''); }}>Change number</button>
           </div>
         </>}

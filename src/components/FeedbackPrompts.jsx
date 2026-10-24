@@ -81,6 +81,7 @@ export default function FeedbackPrompts({ user, authLoading, currentView, safeVi
   const surveyReceipt = useRef(null);
   useEffect(() => { view.current = currentView; }, [currentView]);
   const checked = useRef(new Set());
+  const authRetried = useRef(false);
   useEffect(() => {
     if (!authLoading) {
       const owner = user?.id || null;
@@ -138,8 +139,10 @@ export default function FeedbackPrompts({ user, authLoading, currentView, safeVi
       try {
         const result = await sendFeedback({ action: 'claim-survey' }, true);
         if (!cancelled && result.claimed) surveyReceipt.current = result.receipt;
-      } catch {
+      } catch (e) {
         // If the survey service is down, ask once per visit, not every 8 seconds.
+        // Right after sign-in the session can still be settling: try once more a little later.
+        if (e?.code === 'auth_required' && !authRetried.current) { authRetried.current = true; setTimeout(() => checked.current.delete(key), 5000); }
       } finally { active.current = false; }
     }, 1000);
     return () => { cancelled = true; clearInterval(timer); };
