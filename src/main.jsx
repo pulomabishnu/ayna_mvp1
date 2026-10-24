@@ -19,6 +19,11 @@ const MobileApp = React.lazy(() => import('./mobile/MobileApp.jsx'))
 import './styles/search-focus.css'
 import { installNoEmDash } from './utils/noEmDashDom.js'
 installDelight()
+// DEV only: remember ?fixture=community for this tab before the router tidies
+// the URL (src/utils/community/devFixture.js). Removed from production builds.
+if (import.meta.env.DEV) {
+  try { if (new URLSearchParams(window.location.search).get('fixture') === 'community') sessionStorage.setItem('ayna_dev_fixture', 'community') } catch { /* private mode */ }
+}
 import posthog from 'posthog-js'
 import { getInternalIds, tagInternalUserIfNeeded } from './utils/posthogInternal'
 import { hasInternalBrowserMarker, tagFounderAnalyticsIfNeeded } from './utils/founderAnalytics'
