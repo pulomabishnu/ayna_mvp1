@@ -15,6 +15,7 @@ import { recentQuestions } from '../../utils/askRecent.js';
 import { mayAutoFocus } from '../../utils/delightRuntime.js';
 import { guideContext } from '../utils/aynaGuide.js';
 import { localMatchAnswer } from '../../utils/askMatch.js';
+import { localHistoryAnswer } from '../../utils/askHistory.js';
 import AynaGuideHub from './AynaGuideHub.jsx';
 
 // Ask ayna's first screen: tiles fill the box so she can edit before asking.
@@ -196,7 +197,8 @@ export default function AskAynaModal({
     if (!msg || sending) return;
     // Her match for a product comes from ayna's match engine on this device,
     // never from the language model, so it is the same % the product shows.
-    const local = await localMatchAnswer(msg, { quizAnswers: profile, matchOpts, focusProduct }).catch(() => null);
+    const local = (await localMatchAnswer(msg, { quizAnswers: profile, matchOpts, focusProduct }).catch(() => null))
+      || (await localHistoryAnswer(msg, { guideTrials: guide?.trials || [], guide: true }).catch(() => null));
     if (local) {
       setInput('');
       setSendError('');
