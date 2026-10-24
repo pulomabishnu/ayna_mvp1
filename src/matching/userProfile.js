@@ -104,6 +104,8 @@ export const EXPERIENCE_EFFECTS = {
     no_difference: { same: -0.45, similar: -0.15, dimension: 'health', facet: 'mechanism', note: 'near duplicates down' },
     made_worse: { same: 0, similar: -0.2, dimension: 'safety', facet: 'ingredients', hardSuppress: true, note: 'shared formulations down' },
     not_sure: { same: 0, similar: 0, dimension: 'health', facet: 'mechanism' },
+    // Only from a tracked try (outcomes.js sideEffect), never inferred.
+    side_effect: { same: 0, similar: 0, dimension: 'safety', facet: 'ingredients', hardSuppress: true, safetyFlag: true, note: 'hide the same product' },
   },
   reaction: {
     none: { same: 0, similar: 0, dimension: 'safety', facet: 'ingredients' },
@@ -530,6 +532,8 @@ export function buildUserProfile(intakeInput, options = {}) {
     if (outcome) effects.push({ from: `outcome:${outcome}`, ...EXPERIENCE_EFFECTS.outcome[outcome] });
     if (reaction) effects.push({ from: `reaction:${reaction}`, ...EXPERIENCE_EFFECTS.reaction[reaction] });
     stopReasons.forEach((r) => effects.push({ from: `stop:${r}`, ...EXPERIENCE_EFFECTS.stop[r] }));
+    // "Side effect" recorded on a try (src/health/outcomes.js): hide this product, like "Worse".
+    if (h.sideEffect === true) effects.push({ from: 'outcome:side_effect', ...EXPERIENCE_EFFECTS.outcome.side_effect });
     return {
       name: h.name,
       normalized: normalizeName(h.name),

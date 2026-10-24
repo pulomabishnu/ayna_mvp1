@@ -259,6 +259,7 @@ export function evaluateSafety(productOrProfile, up) {
   for (const h of up.experience.history) {
     if (!sameProduct(h, pp)) continue;
     if (h.effects.some((e) => e.from === 'outcome:made_worse')) reasons.push({ code: 'history_made_worse', text: 'You said this made things worse' });
+    if (h.effects.some((e) => e.from === 'outcome:side_effect')) reasons.push({ code: 'history_side_effect', text: 'You reported a side effect from this' });
     if (h.exclude) reasons.push({ code: 'history_serious_reaction', text: 'You had a serious reaction to this product' });
     if (h.effects.some((e) => e.from === 'stop:clinician_stop')) reasons.push({ code: 'history_clinician_stop', text: 'A clinician recommended you stop this product' });
   }
