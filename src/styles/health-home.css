@@ -393,3 +393,27 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tried li span, :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tried > p { color: var(--x-soft) !important; font: 400 12px/1.4 var(--x-sans) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tried > p { padding: 8px 0 !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh :is(.ay-hh-tried > button, .ay-hh-checkin-link) { justify-self: start; min-height: 44px; margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; color: var(--x-ink) !important; font: 700 14px/1.3 var(--x-sans) !important; text-align: left; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+
+/* ---------- Last 7 days: one Group of rows, not a bento of coloured tiles ----------
+   (master prompt 154-155: no bento.) Same tiles, same order, same numbers and
+   charts, same tap target: each is a row with the label and number on the left,
+   its small chart on the right, hairlines between rows. Layout only. */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tiles,
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh.is-web .ay-hh-tiles[data-count] { display: grid; grid-template-columns: minmax(0, 1fr) !important; gap: 0; padding: 4px 16px; border-radius: 20px; background: var(--x-group, #f6e3a1); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tile + .ay-hh-tile { border-top: 1px solid var(--x-hair, rgba(62, 39, 35, .15)); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tile > button {
+  display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(88px, 128px); grid-template-areas: 'label art' 'big art' 'sub art'; column-gap: 16px; row-gap: 2px; align-items: center !important;
+  min-height: 72px !important; height: auto; padding: 12px 0 !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; color: var(--x-ink, #3e2723) !important; overflow: visible;
+}
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tile > button:is(:hover, :active) { transform: none; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tile > button:focus-visible { outline-offset: 2px !important; border-radius: 10px !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tile-label { grid-area: label; justify-content: flex-start; gap: 6px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tile-big { grid-area: big; margin-top: 0; font-size: calc(22px * var(--x-scale, 1)); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tile-sub { grid-area: sub; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tile > button > :is(.ay-bn-line, .ay-hh-mini, .ay-hh-stack) { grid-area: art; grid-row: 1 / -1; align-self: center; margin-top: 0; padding-top: 0; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tile > button > .ay-hh-stack { justify-self: end; }
+/* Dark: the cycle strip now sits on the dark Group, so its marks take the light ink. */
+.ayna-mobile:is(#ay, .ayna-mobile)[data-theme='dark'] .ay-hh .ay-hh-tile .ay-hh-mini i,
+:is(#ay, html body) .app-container[data-theme='brand-dark'] .ay-wh.ay-wh .ay-hh .ay-hh-tile .ay-hh-mini i { border-color: var(--x-ink); }
+.ayna-mobile:is(#ay, .ayna-mobile)[data-theme='dark'] .ay-hh .ay-hh-tile .ay-hh-mini :is(i.is-period, em),
+:is(#ay, html body) .app-container[data-theme='brand-dark'] .ay-wh.ay-wh .ay-hh .ay-hh-tile .ay-hh-mini :is(i.is-period, em) { background: var(--x-ink); }

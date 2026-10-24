@@ -13,8 +13,9 @@ import { exclusionLines } from '../../utils/matchDisplay.js';
 import MatchPill from '../../components/MatchPill.jsx';
 import ProductEvidence from '../../components/pdp/ProductEvidence.jsx';
 import { useResearchState } from '../../data/researchLoader.js';
-import { attributeBadges, noDash } from '../../components/pdp/evidenceModel.js';
+import { attributeBadges } from '../../components/pdp/evidenceModel.js';
 import { firstSentence } from '../../components/pdp/sentences.js';
+import { evidenceLevel } from '../../components/pdp/evidenceLevel.js';
 import { getPassport } from '../../data/passport';
 import { recallFacts } from '../../utils/productFacts.js';
 import { matchLine } from '../../data/passport/content.js';
@@ -333,7 +334,8 @@ export default function ProductDetailScreen({
   // Details tabs with their source cards.
   const glance = buildGlance(product, { details: quizAnswers ? matchDetails : null, whyMatched });
   const brandLine = brand && String(brand).trim().toLowerCase() !== String(name || '').trim().toLowerCase() ? brand : categoryLabel;
-  const heroLine = firstSentence(noDash(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '')), { min: 20, max: 420 });
+  // Evidence in one line under the price; the same meter as At a glance.
+  const evidence = evidenceLevel(product);
   // One recall answer for the page (utils/productFacts), as on the website.
   const recall = (() => {
     const live = getPassport(product)?.recall;
@@ -458,30 +460,37 @@ export default function ProductDetailScreen({
         </div>
 
         <div className="ayq-sheet ay-pdp-title">
+          {/* First screen (master prompt 112): name, brand, price, why ayna
+              surfaced it, the evidence in one line, how it fits, one action.
+              The % match sits with its one-line why (founder, Oct 24). The line
+              under the name now opens "What it is" further down. */}
           {brandLine && <div className="ay-pdp-eyebrow">{brandLine}</div>}
           <h1>{shownName}</h1>
-          {heroLine && <p className="ay-pdp-lede">{heroLine}</p>}
+          {(price || perUnit) && <div className="ay-pdp-price">
+            {price && <span className={hasDisplayPrice ? 'is-price' : 'is-note'}>{shownPrice.main}</span>}
+            {perUnit && <small className="is-unit">{perUnit}</small>}
+            {price && shownPrice.sub && <small>{shownPrice.sub}</small>}
+          </div>}
+          <ul className="ay-pdp-why" aria-label="Why it is here">
+            {matchPercent != null && <li><button type="button" className="ay-pdp-why__row is-match" onClick={openWhyMatch} aria-label={`${matchPercent}% match${headLine ? `. ${headLine}` : ''}. See why`}><MatchPill percent={matchPercent} size="sm" /><span>{headLine || 'Why ayna picked this for you'}</span><span className="ay-pdp-why__go">See why</span></button></li>}
+            {evidence.level > 0 && <li><button type="button" className="ay-pdp-why__row ay-pdp-evline" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'literature' }))}>
+              <span className="ay-pdp-evline__bars" data-level={evidence.level} aria-hidden="true"><i /><i /><i /></span>
+              <span><b>{evidence.word}</b>{evidence.need && ` for ${evidence.need}`}</span>
+              <span className="sr-only">. See the evidence</span>
+            </button></li>}
+            {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && quizAnswers && <li><button type="button" className="ay-pdp-why__row is-fit" onClick={openWhyMatch}><span>{matchDetails.matchStatus === 'excluded' ? (exclusions[0] || 'Not a fit right now') : 'No clear match'}</span><span className="ay-pdp-why__go">See why</span></button></li>}
+            {matchDetails.matchStatus === 'no-profile' && <li><button type="button" className="ay-pdp-why__row is-fit" onClick={onStartQuiz}><span>See how it fits you</span><span className="ay-pdp-why__go">Get matched</span></button></li>}
+          </ul>
+          {buyBar}
+          {topWarning && <SafetyFlag text={topWarning} />}
+          {!shopAction && <p className="ay-pdp-nolink">{storesOnFile.length ? `${product.type === 'digital' ? 'On' : 'Sold at'} ${andList(storesOnFile.slice(0, 4))}. We don’t have a direct link yet.` : 'We don’t have a store link for this yet.'}</p>}
           {variantLabels.length > 0 && (
             <div className="ayq-variants">
               <p>{variantKind}</p>
               <ul>{variantLabels.map((l) => <li key={l}>{l}</li>)}</ul>
             </div>
           )}
-          {(price || perUnit) && <div className="ay-pdp-price">
-            {price && <span className={hasDisplayPrice ? 'is-price' : 'is-note'}>{shownPrice.main}</span>}
-            {perUnit && <small className="is-unit">{perUnit}</small>}
-            {price && shownPrice.sub && <small>{shownPrice.sub}</small>}
-          </div>}
-          {!shopAction && <p className="ay-pdp-nolink">{storesOnFile.length ? `${product.type === 'digital' ? 'On' : 'Sold at'} ${andList(storesOnFile.slice(0, 4))}. We don’t have a direct link yet.` : 'We don’t have a store link for this yet.'}</p>}
-          {matchPercent != null && <div className="ay-pdp-match">
-            <MatchPill percent={matchPercent} onClick={openWhyMatch} label={`${matchPercent}% match${headLine ? `. ${headLine}` : ''}. See why`} />
-            {headLine && <span>{headLine}</span>}
-          </div>}
-          {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && quizAnswers && <button type="button" className="ay-pdp-fitnote" onClick={openWhyMatch}>{matchDetails.matchStatus === 'excluded' ? (exclusions[0] || 'Not a fit right now') : 'No clear match'}</button>}
-          {matchDetails.matchStatus === 'no-profile' && <button type="button" className="ayna-figma-guest-match" onClick={onStartQuiz}>Get matched</button>}
-          {buyBar}
           {onToggleOmit && <div className="ay-pdp-omit"><button type="button" onClick={onToggleOmit} aria-pressed={isOmitted}>{isOmitted ? 'Undo “Not for me”' : 'Not for me'}</button>{isOmitted && <small>Hidden from your matches.</small>}</div>}
-          {topWarning && <SafetyFlag text={topWarning} />}
           {works.ayna && onOpenHealthData && <button type="button" className="ay-pdp-works" onClick={onOpenHealthData}>Works with ayna: connect {works.ayna.name} in Health data</button>}
           {retailers.length > 0 && (
             <div className="ay-retailers">
@@ -491,23 +500,6 @@ export default function ProductDetailScreen({
               </ul>
             </div>
           )}
-          {/* One dark pill: price, save, ecosystem, buy. In the page flow, under the
-              price (founder, Oct 21: nothing stays on screen while the page scrolls). */}
-          <div className="ayq-bar">
-            <div className="ayq-bar__pill">
-              {barPrice && <span className="ayq-bar__price">{barPrice}</span>}
-              <button type="button" className="ayq-bar__icon" onClick={onToggleSaved} aria-label={isSaved ? 'Remove from Saved' : 'Save'} aria-pressed={isSaved}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill={isSaved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={HEART_PATH} /></svg>
-              </button>
-              {/* No store link: never a dead primary (same rule as the website's
-                  product page). Her own site if we know it, else "Add to ecosystem"
-                  takes the primary slot and the page says where it is sold. */}
-              <button type="button" className={`ayq-bar__eco${isInEcosystem ? ' is-on' : ''}${shopAction ? '' : ' is-primary'}`} aria-pressed={isInEcosystem} aria-label={isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'} onClick={onAddToEcosystem}>
-                {isInEcosystem ? 'In ecosystem' : shopAction ? '+ Ecosystem' : '+ Add to ecosystem'}
-              </button>
-              {shopAction && <a className="ayq-bar__buy" href={shopAction.href} target="_blank" rel="noopener noreferrer" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: shopAction.placement })}>{shopAction.label}<span className="sr-only"> {shopAction.sr}</span></a>}
-            </div>
-          </div>
           {isPartner ? (
             <div className="ayna-figma-partner-disclosure">
               <button type="button" onClick={() => setPartnerOpen((v) => !v)} aria-expanded={partnerOpen}>
@@ -526,7 +518,8 @@ export default function ProductDetailScreen({
             safetyLead={topWarning}
             glance={glance}
             recall={recall}
-            heroLine={heroLine}
+            heroLine=""
+            sections
             onOpenReview={onOpenReview}
             onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null}
             extraRows={[{ label: 'Sold by', value: buyUrl ? (/amazon\.|amzn\./i.test(buyUrl) ? 'Amazon' : (() => { try { return new URL(buyUrl).hostname.replace(/^www\./, ''); } catch { return ''; } })()) : '' }]}

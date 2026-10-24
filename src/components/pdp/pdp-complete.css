@@ -342,12 +342,14 @@ html body .app-container.app-container.app-container .ayp-gallery__stamp .ayp-ga
 html body .app-container .ayq-badges.is-web { margin-top: 14px; }
 
 /* ---------- App: tinted stage, overlapping sheet, dark pill bar ---------- */
-.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero { position: relative; margin: 0; padding: 64px var(--d-gutter, 20px) 56px; background: #f6e3a1; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero { position: relative; margin: 0; padding: 60px var(--d-gutter, 20px) 48px; background: #f6e3a1; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero.tone-pink { background: #f7badd; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero.tone-peri { background: #cfdeea; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile)[data-theme='dark'] .ay-pdp .ayq-apphero { background: #4a312c; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__stage { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px; align-items: center; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__stage:not(:has(.ayq-badges)) { grid-template-columns: minmax(0, 1fr); padding: 0 24px; }
+/* The photo stays small enough that price, why, evidence and Buy fit on the first screen (master prompt 112). */
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__stamp { width: min(100%, 210px); justify-self: center; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__stamp { --r: 6px; transform: rotate(-1.5deg); }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__tile { position: relative; aspect-ratio: 1 / 1; overflow: hidden; border: 1.5px solid #3e2723; border-radius: 10px; background: #fff; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__tile img { width: 100%; height: 100%; object-fit: contain; }

@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import NEED_MAP_RESEARCH from '../../data/matching/needMap.research.js';
 import PLAIN from '../../data/matching/plainRationales.js';
 import { needPhrase } from '../../matching/ontology';
 import { useApprovedResearch } from '../../utils/approvedResearch';
@@ -17,7 +16,9 @@ import UrgentSigns from './UrgentSigns.jsx';
 import ProductCommunityReviews from './ProductCommunityReviews.jsx';
 import ProductPeopleSay from './ProductPeopleSay.jsx';
 import { useProductReviews } from './useProductReviews.js';
+import { evidenceLevel } from './evidenceLevel.js';
 import './pdp-complete.css';
+import './pdp-sections.css';
 
 /**
  * The inside of the product page (website and app): everything the team
@@ -33,7 +34,6 @@ import './pdp-complete.css';
  * (src/data/pdpAdditions.js) are labelled as ayna's check with their source.
  */
 
-const RESEARCH_BY_PRODUCT = NEED_MAP_RESEARCH.reduce((m, r) => { if (!m.has(r.product)) m.set(r.product, []); m.get(r.product).push(r); return m; }, new Map());
 const GRADE_WORDS = { A: 'Strong evidence', B: 'Some evidence', C: 'Limited evidence' };
 const TAB_IDS = ['overview', 'clinical', 'literature', 'evidence', 'reviews', 'safety', 'how-to-use', 'safety-use', 'details'];
 const PHONE = '(max-width: 760px)';
@@ -339,7 +339,7 @@ function SegTabs({ tabs, active, onChange, explore = false }) {
 // ---------------------------------------------------------------------------
 // The page part
 // ---------------------------------------------------------------------------
-export default function ProductEvidence({ product: baseProduct, glance = null, aynaData = null, aynaRating: aynaRatingProp = null, ratingCount: ratingCountProp = 0, rateControls = null, heroLine = '', extraRows = [], onOpenReview = null, onWriteReview = null, fitSlot = null, afterOverview = null, loading = false, v4 = false }) {
+export default function ProductEvidence({ product: baseProduct, glance = null, aynaData = null, aynaRating: aynaRatingProp = null, ratingCount: ratingCountProp = 0, rateControls = null, heroLine = '', extraRows = [], onOpenReview = null, onWriteReview = null, fitSlot = null, afterOverview = null, loading = false, v4 = false, sections = false }) {
   const product = useApprovedResearch(baseProduct);
   const m = useMemo(() => buildEvidence(product, { heroLine, glance }), [product, heroLine, glance]);
   const works = worksWith(product);
@@ -356,6 +356,9 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     mq.addEventListener?.('change', on);
     return () => mq.removeEventListener?.('change', on);
   }, []);
+  // Phones read the page as one column of sections, open by default, in the
+  // master prompt's order (section 113); wide screens keep the tab box.
+  const asSections = sections || (v4 && isPhone);
   const [tab, setTab] = useState(() => {
     if (typeof window === 'undefined') return '';
     const h = window.location.hash.slice(1);
@@ -376,20 +379,38 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   // Old ids used by other parts of the page map onto the tabs.
   const ALIAS = { science: 'literature', evidence: 'literature', how: 'how-to-use', sources: 'details', overview: 'overview', inside: 'literature' };
   const v4Tab = (id) => ({ clinical: 'evidence', literature: 'evidence', safety: 'safety-use', 'how-to-use': 'safety-use' })[id] || id;
+  // Sections: which section holds each old tab id.
+  const SEC = { clinical: 'evidence', literature: 'evidence', evidence: 'evidence', science: 'evidence', inside: 'evidence', reviews: 'reviews', safety: 'safety', 'safety-use': 'safety', 'how-to-use': 'how', how: 'how', details: 'details', sources: 'sources', overview: 'overview' };
+  const openSection = (raw, scroll = true) => {
+    const id = SEC[raw] || raw;
+    window.requestAnimationFrame(() => {
+      const el = document.getElementById(id === 'overview' ? 'ayq-who' : `ay-sec-${id}`);
+      if (!el) return;
+      if (el.tagName === 'DETAILS') el.open = true;
+      if (!scroll) return;
+      const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    });
+  };
   const goTo = (raw) => {
+    if (asSections) { openSection(ALIAS[raw] === 'overview' ? 'overview' : raw); return; }
     const id = v4 ? v4Tab(ALIAS[raw] || raw) : ALIAS[raw] || raw;
     if (id === 'overview' && !v4) { document.getElementById('ayq-who')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     chooseTab(id);
     scrollToTabs();
   };
+  const goToRef = useRef(goTo);
+  const sectionsRef = useRef(asSections);
+  useEffect(() => { goToRef.current = goTo; sectionsRef.current = asSections; });
   useEffect(() => {
     if (takeProductTab() === 'reviews') goTo('reviews');
-    else if (TAB_IDS.includes(window.location.hash.slice(1))) scrollToTabs();
+    else if (TAB_IDS.includes(window.location.hash.slice(1))) { if (asSections) openSection(window.location.hash.slice(1)); else scrollToTabs(); }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
-    const on = (e) => goTo(!e.detail || e.detail === 'details' ? 'safety' : e.detail);
-    const onHash = () => { const h = window.location.hash.slice(1); if (TAB_IDS.includes(h)) { setTab(v4 ? v4Tab(h) : h); scrollToTabs(); } };
+    // Through a ref: the listeners are added once, the layout can change with the width.
+    const on = (e) => goToRef.current(!e.detail || e.detail === 'details' ? 'safety' : e.detail);
+    const onHash = () => { const h = window.location.hash.slice(1); if (!TAB_IDS.includes(h)) return; if (sectionsRef.current) { goToRef.current(h); return; } setTab(v4 ? v4Tab(h) : h); scrollToTabs(); };
     window.addEventListener('ay-open-tab', on);
     window.addEventListener('hashchange', onHash);
     return () => { window.removeEventListener('ay-open-tab', on); window.removeEventListener('hashchange', onHash); };
@@ -423,11 +444,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   }
 
   // ---- shared numbers -------------------------------------------------------
-  const graded = (RESEARCH_BY_PRODUCT.get(baseProduct?.id) || []).slice().sort((x, y) => (x.strength === 'none') - (y.strength === 'none') || x.grade.localeCompare(y.grade));
-  const topGrade = graded.find((g) => g.strength !== 'none');
-  const level = topGrade ? ({ A: 3, B: 2, C: 1 })[topGrade.grade] || 0
-    : /strong/i.test(m.research.evidenceStrength) ? 3 : /moderate|some/i.test(m.research.evidenceStrength) ? 2 : /limited|weak|low|insufficient/i.test(m.research.evidenceStrength) ? 1 : 0;
-  const levelWord = ['', 'Limited evidence', 'Some evidence', 'Strong evidence'][level];
+  const { graded, topGrade, level, word: levelWord } = evidenceLevel({ id: baseProduct?.id, evidenceStrength: m.research.evidenceStrength });
   const allSources = (() => {
     // The index under Details: each page once (same URL, or the same title from the same publisher).
     const seen = new Set();
@@ -675,8 +692,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     { label: 'Sold at', value: dt.whereToBuy.join(', ') },
     { label: 'In stock at', value: dt.inStock.join(', ') },
   ].filter((r, i, arr) => r.value && arr.findIndex((x) => x.label === r.label) === i);
-  const detailsBody = (
-    <>
+  const insideBody = (
       <div className="ayq-cols">
         <div className="ayq-main">
           {(dt.ingredientsText || dt.materials) && <h4 className="ayq-subh">{m.isDigital ? 'What’s included' : 'What’s in it'}</h4>}
@@ -691,7 +707,8 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
         </div>
         {priceRows.length > 0 && <aside className="ayq-side"><Folder id="ayq-price" title="Size and price" icon="tag"><Rows rows={priceRows} /></Folder></aside>}
       </div>
-      {allSources.length > 0 && (
+  );
+  const sourcesBody = allSources.length > 0 && (
         <div className="ayq-index">
           <h4 className="ayq-subh">Every source we checked <span className="ayq-count">{allSources.length}</span></h4>
           <ul className="ayq-indexlist">
@@ -702,9 +719,8 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
             })}
           </ul>
         </div>
-      )}
-    </>
   );
+  const detailsBody = <>{insideBody}{sourcesBody}</>;
 
   const tabs = [
     expertBody && { id: 'clinical', label: 'Expert view', icon: 'stethoscope', body: expertBody },
@@ -794,7 +810,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     <section className="ayq-over" aria-label="Overview">
       {shortList.length > 0 ? (
         <article className="ayq-bottom" aria-labelledby="ayq-bottom-h">
-          <h2 id="ayq-bottom-h" className="ayq-bottom__h">The short answer</h2>
+          <h2 id="ayq-bottom-h" className="ayq-bottom__h">ayna’s take</h2>
           <ul className="ayq-bottom__list">{shortList.map((s) => <li key={s}><Tx>{s}</Tx></li>)}</ul>
           {ex.attribution && <p className="ayq-bottom__by">{m.independent ? 'ayna’s summary of the research' : 'Summary of the research, with claims credited to the brand'}. <button type="button" onClick={() => goTo('clinical')}>Read the full expert view</button></p>}
         </article>
@@ -824,7 +840,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
         </div>
       )}
 
-      {v4 ? glanceCards : previews.length > 0 && (
+      {asSections ? null : v4 ? glanceCards : previews.length > 0 && (
         <nav className="ayq-previews" aria-label="Jump to a section">
           {previews.map((p) => (
             <button key={p.id} type="button" className={`ayq-preview${p.tone ? ` is-${p.tone}` : ''}`} onClick={() => goTo(p.id)}>
@@ -845,6 +861,53 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       )}
     </section>
   );
+
+  // ---- Phones: one column of sections, open by default (master prompt 112-113) ----
+  // Order (prompt 113): ayna's take and what it is, At a glance, then What the
+  // evidence says, Safety, Ingredients and dose, Community experiences, Research
+  // and sources, How to use. Important sections open; the source index (secondary
+  // detail) starts closed. Each heading carries the one fact its preview tile
+  // used to show, so the tiles (and the tab row) can go.
+  if (asSections) {
+    const metaOf = (id) => { const p = previews.find((x) => x.id === id); return p ? [p.num, p.caption].filter(Boolean).join(' ') : ''; };
+    const hasInside = Boolean(dt.ingredientsText || dt.materials || dt.badges.length || works.items.length || priceRows.length);
+    const secs = [
+      (expertBody || researchBody) && { id: 'evidence', title: 'What the evidence says', icon: 'paper', meta: metaOf('literature'), body: <>
+        {expertBody && <section className="ayq-sec__part" aria-labelledby="ayq-part-expert"><h3 id="ayq-part-expert" className="ayq-sec__parth">Expert view</h3>{expertBody}</section>}
+        {researchBody && <section className="ayq-sec__part" aria-labelledby="ayq-part-research"><h3 id="ayq-part-research" className="ayq-sec__parth">Research</h3>{researchBody}</section>}
+      </> },
+      safetyBody && { id: 'safety', title: 'Safety', icon: 'shield', tone: sf.alert.length ? 'alert' : '', meta: metaOf('safety'), body: safetyBody },
+      hasInside && { id: 'details', title: m.isDigital ? 'What’s included and details' : 'Ingredients and dose', icon: 'format', body: insideBody },
+      hasReviews && { id: 'reviews', title: 'Community experiences', icon: 'community', meta: metaOf('reviews'), body: reviewsBody },
+      sourcesBody && { id: 'sources', title: 'Research and sources', icon: 'paper', meta: plural(allSources.length, 'source'), body: sourcesBody, closed: true },
+      howBody && { id: 'how', title: 'How to use', icon: 'steps', meta: metaOf('how-to-use'), body: howBody },
+    ].filter(Boolean);
+    return (
+      <TermsCtx.Provider value={plan}>
+        <div id="ay-tabs" className={`ayq ayq--sections${v4 ? ' ayq--v4' : ''}`}>
+          {/* The jump tiles became each section's heading line (overview leaves them out here). */}
+          {overview}
+          {afterOverview}
+          <div id="ay-pt" className="ayq-secs">
+            {secs.map((x) => (
+              <details key={x.id} id={`ay-sec-${x.id}`} className={`ayq-sec is-${x.id}${x.tone ? ` is-${x.tone}` : ''}`} open={!x.closed}>
+                <summary className="ayq-sec__sum">
+                  <PdpIcon name={x.icon} size={20} />
+                  <span className="ayq-sec__text">
+                    <h2 className="ayq-sec__h">{x.title}</h2>
+                    {x.meta && <span className="ayq-sec__meta">{x.meta}</span>}
+                  </span>
+                  <PdpIcon name="chevron" size={20} className="ayq-sec__chev" />
+                </summary>
+                <div className="ayq-sec__body">{x.body}</div>
+              </details>
+            ))}
+          </div>
+          {reviewRows.length > 0 && <ProductPeopleSay productId={baseProduct?.id} reviews={reviewRows} onSeeAll={() => goTo('reviews')} onWriteReview={onWriteReview} onOpenPost={onOpenReview} hasOnline={Boolean(rv.text.length || rv.brandRating || rv.online.length || rv.elsewhere.length)} />}
+        </div>
+      </TermsCtx.Provider>
+    );
+  }
 
   // Website: Overview is the first tab, inside the Explore box under the photo (main's structure).
   if (v4) {

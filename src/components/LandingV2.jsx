@@ -193,20 +193,16 @@ function ShopBand({ onOpenProduct, onViewDiscovery, picks = null }) {
   );
 }
 
-/* ---------- does this sound familiar? A checkerboard of real needs ----------
-   Quote tiles alternate with lifestyle photos (2 columns on phones, 4 on
-   desktop). Each quote is a common need from the quiz (WebIntake.jsx
-   COMMON_NEEDS), said the way people say it; it searches the Shop for that
-   need. These are prompts, not testimonials. */
+/* ---------- does this sound familiar? A list of real needs ----------
+   One row per need: a lifestyle photo, the need said the way people say it,
+   and "See what helps" (searches the Shop for it). Each quote is a common need
+   from the quiz (WebIntake.jsx COMMON_NEEDS). These are prompts, not
+   testimonials. Rows, not a checkerboard (master prompt 154: no bento). */
 const FAMILIAR = [
-  { q: 'My cramps knock me out every month.', need: 'Cramps or period pain', tone: 'pink' },
-  { photo: '/landing/pajamas-overhead.webp', alt: 'A woman in red striped pajamas on the phone, from above' },
-  { photo: '/landing/sink-flatlay.webp', alt: 'A sink full of brushes, makeup and hair tools, from above' },
-  { q: 'I bleed through everything.', need: 'Heavy periods', tone: 'ink' },
-  { q: 'I leak a little when I sneeze.', need: 'Bladder leakage or incontinence', tone: 'ink' },
-  { photo: '/landing/curlers-call.webp', alt: 'A woman in hair curlers on a phone call' },
-  { photo: '/landing/robe-vanity.webp', alt: 'A woman in a white robe at a marble vanity in a pink room' },
-  { q: 'Things feel dry down there.', need: 'Vaginal dryness', tone: 'pink' },
+  { q: 'My cramps knock me out every month.', need: 'Cramps or period pain', photo: '/landing/pajamas-overhead.webp', alt: 'A woman in red striped pajamas on the phone, from above' },
+  { q: 'I bleed through everything.', need: 'Heavy periods', photo: '/landing/sink-flatlay.webp', alt: 'A sink full of brushes, makeup and hair tools, from above' },
+  { q: 'I leak a little when I sneeze.', need: 'Bladder leakage or incontinence', photo: '/landing/curlers-call.webp', alt: 'A woman in hair curlers on a phone call' },
+  { q: 'Things feel dry down there.', need: 'Vaginal dryness', photo: '/landing/robe-vanity.webp', alt: 'A woman in a white robe at a marble vanity in a pink room' },
 ];
 function Familiar({ onSearch }) {
   return (
@@ -215,15 +211,14 @@ function Familiar({ onSearch }) {
         <header className="hm-head">
           <h2 id="hm-familiar-title" className="hm-h2">Does this sound familiar?</h2>
         </header>
-        <ul className="hm-checker">
+        <ul className="hm-needs">
           {FAMILIAR.map((t) => (
-            <li key={t.q || t.photo} className={t.q ? `hm-checker__q is-${t.tone}` : 'hm-checker__ph'}>
-              {t.q ? (
-                <a href={`/shop?q=${encodeURIComponent(t.need)}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onSearch?.(t.need); }}>
-                  <span className="hm-checker__quote">“{t.q}”</span>
-                  <span className="hm-checker__go">See what helps <Arrow /></span>
-                </a>
-              ) : <Photo src={t.photo} alt={t.alt} sizes="(max-width: 767px) 50vw, 320px" loading="lazy" />}
+            <li key={t.q}>
+              <a className="hm-needs__row" href={`/shop?q=${encodeURIComponent(t.need)}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onSearch?.(t.need); }}>
+                <span className="hm-needs__ph"><Photo src={t.photo} alt={t.alt} sizes="96px" loading="lazy" /></span>
+                <span className="hm-needs__quote">“{t.q}”</span>
+                <span className="hm-needs__go">See what helps <Arrow /></span>
+              </a>
             </li>
           ))}
         </ul>
@@ -346,7 +341,7 @@ function Evidence({ onViewArticles }) {
   );
 }
 
-/* ---------- reads: colourful covers (today's word + three reads) ---------- */
+/* ---------- reads: three reads and today's word, as plain rows ---------- */
 const LEAD_READS = [
   { id: 'heavy-bleeding', title: 'Heavy menstrual bleeding', teaser: 'What counts as heavy bleeding, possible causes, when to seek care, and how it’s evaluated.', source: 'UpToDate · ACOG · CDC', src: '/landing/articles-heavy-bleeding-satin.webp', alt: 'Pads and tampons scattered on red satin', tone: 'pink' },
   { id: 'period-pain-when-to-seek-care', title: 'Period Pain: When to Seek Care', teaser: 'Normal cramps vs. signs that something else may be going on, and what clinicians may suggest.', source: 'ACOG · UpToDate · Mayo Clinic', src: '/landing/articles-period-pain-hotwater.webp', alt: 'A woman in striped pajamas holding a hot water bottle', tone: 'sky' },
@@ -362,29 +357,30 @@ function Reads({ onViewArticle, onViewArticles }) {
           <h2 id="hm-reads-title" className="hm-h2">Quick reads about your body, with sources</h2>
           <a className="ay-btn ay-btn--text hm-head__all" href="/library" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onViewArticles?.(); }}><span className="hm-head__long">Open the Library</span><span className="hm-head__short">See all<span className="ed-sr"> reads in the Library</span></span><Arrow /></a>
         </header>
-        <ul className="hm-covers" ref={edgeFadeRef}>
-          {fact && (
-            <li className="is-word">
-              <aside className="hm-cover is-ink" aria-label="Word of the day">
-                <span className="hm-cover__pill">Word of the day</span>
-                <strong className="hm-cover__title hm-cover__title--xl">{fact.term}</strong>
-                <p className="hm-cover__teaser">{fact.text}</p>
-                <svg className="hm-cover__star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5c.8 5.6 4.9 9.7 10.5 10.5-5.6.8-9.7 4.9-10.5 10.5-.8-5.6-4.9-9.7-10.5-10.5C7.1 11.2 11.2 7.1 12 1.5z" /></svg>
-                <small className="hm-cover__src">From the ayna glossary. General information, not medical advice.</small>
-              </aside>
-            </li>
-          )}
-          {LEAD_READS.map((r, i) => (
-            <li key={r.id} className={i === 0 ? 'is-big' : undefined}>
-              <a className={`hm-cover is-${r.tone}`} href={`/library/${r.id}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); open(r.id); }}>
-                <span className="hm-cover__ph"><Photo src={r.src} alt={r.alt} sizes="(max-width: 767px) 70vw, 300px" loading="lazy" /></span>
-                <span className="hm-cover__pill">Read</span>
-                <strong className="hm-cover__title">{r.title}</strong>
-                <span className="hm-cover__teaser">{r.teaser}</span>
-                <small className="hm-cover__src">Sources: {String(r.source || '').replace(/\s*·\s*/g, ', ')}</small>
+        {/* Plain rows (master prompt 154: no bento): photo, title, one line, sources. */}
+        <ul className="hm-readlist">
+          {LEAD_READS.map((r) => (
+            <li key={r.id}>
+              <a className="hm-readlist__row" href={`/library/${r.id}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); open(r.id); }}>
+                <span className="hm-readlist__ph"><Photo src={r.src} alt={r.alt} sizes="(max-width: 767px) 96px, 160px" loading="lazy" /></span>
+                <span className="hm-readlist__text">
+                  <strong className="hm-readlist__title">{r.title}</strong>
+                  <span className="hm-readlist__teaser">{r.teaser}</span>
+                  <small className="hm-readlist__src">Sources: {String(r.source || '').replace(/\s*·\s*/g, ', ')}</small>
+                </span>
               </a>
             </li>
           ))}
+          {fact && (
+            <li>
+              <aside className="hm-readlist__word" aria-label="Word of the day">
+                <span className="hm-readlist__label">Word of the day</span>
+                <strong className="hm-readlist__title">{fact.term}</strong>
+                <span className="hm-readlist__teaser">{fact.text}</span>
+                <small className="hm-readlist__src">From the ayna glossary. General information, not medical advice.</small>
+              </aside>
+            </li>
+          )}
         </ul>
       </div>
     </section>

@@ -247,3 +247,20 @@
 @media (prefers-reduced-motion: reduce) {
   .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayp-fold__chev { transition: none !important; }
 }
+
+/* ---------- First screen: why it's here, evidence, fit (master prompt 112) ----------
+   Plain rows under the price, one line each, then the one buy pill. No % match. */
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-why { display: grid !important; gap: 0 !important; margin: 4px 0 0 !important; padding: 0 !important; list-style: none !important; border-top: 1px solid var(--d-hair) !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-why:empty { display: none !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-why > li { margin: 0 !important; padding: 0 !important; border-bottom: 1px solid var(--d-hair) !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-why__row { display: flex !important; align-items: center !important; gap: 10px !important; width: 100% !important; min-height: 48px !important; margin: 0 !important; padding: 10px 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: var(--d-ink) !important; font: 400 calc(15px * var(--ayna-text-scale, 1))/1.4 var(--f-ui) !important; text-align: left !important; cursor: pointer; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-why__row > span:not(.ay-pdp-why__go):not(.ay-pdp-evline__bars):not(.sr-only):not(.ay-match-pill) { flex: 1; min-width: 0; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-why__row > .ay-match-pill { flex: none; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-why__row b { font-weight: 600 !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-why__go { flex: none; font: 600 calc(14px * var(--ayna-text-scale, 1))/1.2 var(--f-ui) !important; text-decoration: underline; text-underline-offset: 3px; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-why__row:focus-visible { outline: 3px solid var(--d-ink) !important; outline-offset: 2px !important; border-radius: 10px !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-evline__bars { flex: none; display: grid; grid-template-columns: repeat(3, 14px); gap: 3px; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-evline__bars i { height: 8px; border: 1.5px solid var(--d-ink); border-radius: 99px; box-sizing: border-box; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-evline__bars:is([data-level='1'], [data-level='2'], [data-level='3']) i:nth-child(1),
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-evline__bars:is([data-level='2'], [data-level='3']) i:nth-child(2),
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-evline__bars[data-level='3'] i:nth-child(3) { background: var(--d-ink); }
