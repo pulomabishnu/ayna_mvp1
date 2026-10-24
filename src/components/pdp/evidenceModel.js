@@ -10,6 +10,7 @@
  * - The words are the team's. Only em dashes become sentence breaks, and
  *   placeholders like "N/A (Software)" are left out because they say nothing.
  */
+import { brandHowTo } from '../../utils/howToSource.js';
 import { splitSentences } from './sentences.js';
 import { isCredible, isMedicalNonGov } from './credible.js';
 import { isPaperLink } from '../../utils/govSources.js';
@@ -295,10 +296,13 @@ export function buildEvidence(product, { heroLine = '', glance = null } = {}) {
   };
 
   // How to use
-  const how = product.howToUse?.steps?.length ? {
-    intro: clean(product.howToUse.intro),
-    steps: product.howToUse.steps.map(clean).filter(Boolean),
-    source: product.howToUse.sourceUrl ? collectLinks([{ url: product.howToUse.sourceUrl, title: product.howToUse.sourceLabel }], brand)[0] : null,
+  const howRaw = brandHowTo(product.howToUse, brand);
+  const how = howRaw?.steps?.length ? {
+    intro: clean(howRaw.intro),
+    steps: howRaw.steps.map(clean).filter(Boolean),
+    // The brand's own page (or a .gov label); a seller's page is never cited (src/utils/howToSource.js).
+    source: howRaw.sourceUrl ? collectLinks([{ url: howRaw.sourceUrl, title: howRaw.sourceLabel }], brand)[0] : null,
+    fromListing: Boolean(howRaw.fromListing),
     faq: /^https:\/\//.test(String(product.faqUrl || '')) ? collectLinks([{ url: product.faqUrl, title: `${brand || 'The brand'}’s FAQ` }], brand)[0] : null,
   } : null;
 
@@ -353,7 +357,10 @@ const CLAIM_KIND = {
   product: 'Study of this product',
   ingredient: 'About an ingredient, not this exact product',
   gov: 'Independent .gov health source',
-  expert: 'Expert guidance, not a .gov source',
+  expert: 'Medical society or clinic page, not a .gov source',
+  listing: 'A seller’s listing, not evidence',
+  paper: 'Study record, not yet checked by ayna',
+  other: 'Not a .gov source, not checked by ayna',
   community: 'Community experience, not evidence',
 };
 
@@ -372,7 +379,9 @@ export function claimRows(product) {
     if (c.evidence_type === 'community') kind = 'community';
     else if (c.evidence_type === 'ingredient_research') kind = 'ingredient';
     else if (c.evidence_type === 'product_study' && c.product_specific) kind = 'product';
-    else if (['clinical_guideline', 'regulatory', 'expert_guidance'].includes(c.evidence_type)) kind = gov ? 'gov' : 'expert';
+    // Only a medical organisation's page is "expert"; a seller's page (Amazon,
+    // a reseller) or any other site is labelled for what it is.
+    else if (['clinical_guideline', 'regulatory', 'expert_guidance'].includes(c.evidence_type)) kind = gov ? 'gov' : tier === 'nongov' ? 'expert' : tier === 'retail' ? 'listing' : tier === 'paper' ? 'paper' : 'other';
     else if (gov) kind = 'gov';
     const via = kind !== 'brand' && fromBrand ? 'Cited by the brand, not checked by ayna' : kind === 'product' && !gov ? 'Not checked by ayna' : '';
     return {

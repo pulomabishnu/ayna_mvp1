@@ -1,3 +1,4 @@
+import { brandHowTo } from '../utils/howToSource.js';
 /**
  * Her routine and shopping list, built from the products ayna matched her to.
  *
@@ -56,7 +57,9 @@ export function howLine(product) {
   const steps = product?.howToUse?.steps;
   if (!Array.isArray(steps) || !steps.length) return null;
   const step = steps.find((s) => !/^wash (your )?hands/i.test(String(s).trim())) || steps[0];
-  return { text: String(step).trim(), source: product.howToUse.sourceLabel || null, sourceUrl: product.howToUse.sourceUrl || null };
+  // Brand's own site only; a seller's page reads "the product listing", unlinked (src/utils/howToSource.js).
+  const how = brandHowTo(product.howToUse, product.brand);
+  return { text: String(step).trim(), source: how.sourceLabel || (how.fromListing ? 'the product listing' : null), sourceUrl: how.sourceUrl || null };
 }
 
 /** Explain a routine item using a goal she actually selected and this product supports. */

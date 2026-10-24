@@ -17,6 +17,7 @@ import ProductCommunityReviews from './ProductCommunityReviews.jsx';
 import ProductPeopleSay from './ProductPeopleSay.jsx';
 import { useProductReviews } from './useProductReviews.js';
 import { evidenceLevel, gradeWords } from './evidenceLevel.js';
+import { FROM_LISTING } from '../../utils/howToSource.js';
 import './pdp-complete.css';
 import './pdp-sections.css';
 
@@ -650,6 +651,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       <div className="ayq-main">
         {m.how.intro && <p className="ayq-p ayq-intro"><Tx>{m.how.intro}</Tx></p>}
         <ol className="ayq-steps">{m.how.steps.map((st, i) => <li key={st}><span className="ayq-steps__n" aria-hidden="true">{i + 1}</span><span><Tx>{st}</Tx></span></li>)}</ol>
+        {!m.how.source && m.how.fromListing && <p className="ayq-meta">{FROM_LISTING}.</p>}
         {(m.how.source || m.how.faq) && (
           <p className="ayq-meta">Source: {[m.how.source, m.how.faq].filter(Boolean).map((l, i) => <React.Fragment key={l.url}>{i > 0 && ', '}<a href={l.url} target="_blank" rel="noopener noreferrer">{l.publisher && !l.title.toLowerCase().includes(String(l.publisher).toLowerCase()) ? `${l.publisher}: ` : ''}{l.title}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a></React.Fragment>)}</p>
         )}
@@ -682,16 +684,27 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
         {priceRows.length > 0 && <aside className="ayq-side"><Folder id="ayq-price" title="Size and price" icon="tag"><Rows rows={priceRows} /></Folder></aside>}
       </div>
   );
+  // Founder rule (Oct 24): only .gov health pages are "checked". Everything else
+  // on file is listed apart, labelled for what it is (a seller's listing, a
+  // study record not yet checked, a brand page), never as a checked source.
+  const sourceRow = (x) => {
+    const kind = linkKind(x.url, m.brand);
+    const pub = x.publisher || publisherOf(x.url, m.brand);
+    const tag = kind.tier === 'credible' ? (x.label && !/expert guidance/i.test(x.label) ? x.label : '.gov health source') : kind.label || 'Not checked by ayna';
+    return <li key={x.url}><a href={x.url} target="_blank" rel="noopener noreferrer"><span className="ayq-indexlist__tag">{tag}</span><span className="ayq-indexlist__title">{cleanTitle(noDash(x.title), pub)}</span><span className="ayq-indexlist__pub">{[pub, x.year].filter(Boolean).join(', ')}</span><span className="sr-only"> (opens in a new tab)</span></a></li>;
+  };
+  const govSources = allSources.filter((x) => linkKind(x.url, m.brand).tier === 'credible');
+  const otherSources = allSources.filter((x) => linkKind(x.url, m.brand).tier !== 'credible');
   const sourcesBody = allSources.length > 0 && (
         <div className="ayq-index">
-          <h4 className="ayq-subh">Every source we checked <span className="ayq-count">{allSources.length}</span></h4>
-          <ul className="ayq-indexlist">
-            {allSources.map((x) => {
-              const kind = linkKind(x.url, m.brand);
-              const pub = x.publisher || publisherOf(x.url, m.brand);
-              return <li key={x.url}><a href={x.url} target="_blank" rel="noopener noreferrer"><span className="ayq-indexlist__tag">{x.label || kind.label || 'Source'}</span><span className="ayq-indexlist__title">{cleanTitle(noDash(x.title), pub)}</span><span className="ayq-indexlist__pub">{[pub, x.year].filter(Boolean).join(', ')}</span><span className="sr-only"> (opens in a new tab)</span></a></li>;
-            })}
-          </ul>
+          {govSources.length > 0 && <>
+            <h4 className="ayq-subh">.gov sources we checked <span className="ayq-count">{govSources.length}</span></h4>
+            <ul className="ayq-indexlist">{govSources.map(sourceRow)}</ul>
+          </>}
+          {otherSources.length > 0 && <>
+            <h4 className="ayq-subh">Other pages on file, not checked by ayna <span className="ayq-count">{otherSources.length}</span></h4>
+            <ul className="ayq-indexlist">{otherSources.map(sourceRow)}</ul>
+          </>}
         </div>
   );
 
