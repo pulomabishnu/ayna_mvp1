@@ -202,6 +202,8 @@ export default function BrowseScreen({
   onGoLibrary,
   // Search to open with (an ecosystem shelf's "Shop" link for one need).
   initialSearch = '',
+  // Mounted inside Explore (Products): Explore owns the header and the page title.
+  embedded = false,
 }) {
   const mode = 'products'; // Reads moved to the Library tab
   const [searchValue, setSearchValue] = useState(initialSearch || '');
@@ -438,7 +440,7 @@ export default function BrowseScreen({
 
   return (
     <div className="ayna-fresh-browse-screen ayna-figma-discover">
-      <MobileHeader
+      {!embedded && <MobileHeader
         variant={theme}
         activeTab="browse"
         initial={headerInitial}
@@ -449,12 +451,13 @@ export default function BrowseScreen({
         onOpenProfile={onOpenProfile}
         title="Shop"
         titleFor="ay-shop-title"
-      />
+      />}
 
       <div className="ayna-fresh-browse-heading ayna-shop-heading">
-        <div className="ay-shop-titlebar"><h1 id="ay-shop-title">Shop</h1>{hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}</div>
+        <div className="ay-shop-titlebar">{embedded ? <h2 id="ay-shop-title" className="ay-shop-embedded-title">Products</h2> : <h1 id="ay-shop-title">Shop</h1>}{hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}</div>
         <p className="ay-shop-note">Some links earn ayna a commission. It never changes your matches.</p>
-        <NeedStickers className="ay-app-needs" active={searchValue} onPick={(q) => setSearchValue(q)} />
+        {/* Inside Explore, Categories is its own tab: the need icons would be a second category system (team direction 17). */}
+        {!embedded && <NeedStickers className="ay-app-needs" active={searchValue} onPick={(q) => setSearchValue(q)} />}
         <SearchBar placeholder="Search products or brands" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }} onPick={(s) => setSearchValue(s.query)} />
         <div className="ay-app-quick" role="group" aria-label="Quick filters">
           {quick.map(([label, key, value]) => <button key={key} type="button" className="ayna-shop-category" aria-pressed={filters[key] === value} onClick={() => setFilters((cur) => ({ ...EMPTY_FILTERS, ...(cur || {}), [key]: (cur || {})[key] === value ? 'all' : value }))}>{label}</button>)}
@@ -569,7 +572,7 @@ export default function BrowseScreen({
           {matchingReads.length > 0 && <section style={{ marginTop: 25 }} aria-label="Related reads">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '0 20px 12px' }}>
               <strong style={{ fontWeight: 600, fontSize: 'calc(17px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Learn about this</strong>
-              <button type="button" onClick={() => onGoLibrary?.()} style={{ border: 0, background: 'transparent', color: 'var(--ayna-accent-dark)', fontWeight: 600 }}>Library →</button>
+              <button type="button" onClick={() => onGoLibrary?.()} style={{ border: 0, background: 'transparent', color: 'var(--ayna-accent-dark)', fontWeight: 600 }}>All reads →</button>
             </div>
             <div style={{ display: 'flex', gap: 12, overflowX: 'auto', padding: '0 20px 6px' }}>
               {matchingReads.slice(0, 4).map((article) => <LibraryCard key={article.id} article={article} onClick={() => onOpenArticle?.(article)} />)}

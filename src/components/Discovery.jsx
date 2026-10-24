@@ -488,7 +488,7 @@ function FilterSheet({ groups, personalizedToggle, sort = null, resultCount, act
     );
 }
 
-export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null, onAsk = null, matchOpts: matchOptsProp = null }) {
+export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null, onAsk = null, matchOpts: matchOptsProp = null, inExplore = false }) {
     // Arriving with an intent (a category link, a search) starts fresh; plain "Shop" restores her own filters.
     const memoUid = user?.id || '';
     if (shopMemo.uid !== memoUid) { shopMemo.uid = memoUid; shopMemo.v = readShopMemo(memoUid); }
@@ -1651,6 +1651,15 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         <section className="ayshop">
             <div className="ay-container">
             <div className="ayshop__top">
+            {/* Inside Explore (Products) the page title and the Categories tab already
+                exist, so the need stickers and title would be a second browse system
+                (team direction 17): only the commission note stays. */}
+            {inExplore ? (
+                <p className="ayshop__note ayshop__note--explore">
+                    Some links earn ayna a commission. It never changes your matches.{' '}
+                    <a href="/how-we-make-money" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); setCurrentView?.('how-we-make-money'); }}>How we make money</a>
+                </p>
+            ) : (
             <header className="ayshop__head ay-pagehead ay-band ay-band--espresso">
                     <h1 className="ay-h1">Shop by need</h1>
                     <Seal className="ayshop__seal" />
@@ -1661,6 +1670,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     </p>
                     <NeedStickers className="ayshop__needs" active={submittedQuery} onPick={(q) => { setSearchQuery(q); runSearch(q); }} />
             </header>
+            )}
             </div>
 
             <div className="ayshop__find">
