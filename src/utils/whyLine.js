@@ -56,8 +56,10 @@ export function whyClauses(details) {
       if (m) { out.push(fn(m)); break; }
     }
   }
-  // Product-level studies for this need, per the evidence model.
-  if (details?.outputs?.evidence === 'product_specific') out.push('with its own studies');
+  // No evidence clause on purpose: the engine's "product_specific" level comes
+  // from matching link text (a cup review that says "menstrual" counts), so it
+  // can't back "studied" on its own. Compare's "Finished product studied" row
+  // reads the reviewed passport instead.
   return [...new Set(out)];
 }
 

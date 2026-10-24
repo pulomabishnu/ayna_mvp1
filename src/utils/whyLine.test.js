@@ -13,7 +13,9 @@ const d = (over = {}) => ({
 describe('whyLine', () => {
   it('leads with her need and adds one real reason', () => {
     expect(whyLine({}, d())).toBe('For your heavy periods, holds a heavy flow');
-    expect(whyLine({}, d(), { max: 3 })).toBe('For your heavy periods, holds a heavy flow, within your budget, with its own studies');
+    expect(whyLine({}, d(), { max: 3 })).toBe('For your heavy periods, holds a heavy flow, within your budget');
+    // Never claims studies from the engine's loose evidence level.
+    expect(whyLine({}, d(), { max: 5 })).not.toMatch(/stud/);
   });
 
   it('says "another option" for secondary matches', () => {
@@ -50,7 +52,7 @@ describe('whyFirstLine', () => {
   const a = { product: { name: 'Cup A' }, details: d({ percent: 90 }) };
   const b = { product: { name: 'Pad B' }, details: d({ percent: 70, reasonDetails: [{ text: 'Matches the heavy periods you selected' }, { text: 'Within your budget' }], outputs: {} }) };
   it('names the top-ranked product and the reason the others lack', () => {
-    expect(whyFirstLine([b, a])).toBe('Cup A ranks first for you: holds a heavy flow, with its own studies.');
+    expect(whyFirstLine([b, a])).toBe('Cup A ranks first for you: holds a heavy flow.');
   });
   it('handles ties, a single scored product, and nothing scored', () => {
     expect(whyFirstLine([a, { ...b, details: d({ percent: 90 }) }])).toBe('These fit what you told us about the same.');
