@@ -322,6 +322,37 @@ export default function MobileApp() {
     if (!overlayProductId) return;
     trackApp('product_card_opened', { productId: overlayProductId, category: overlayProductCategory });
   }, [overlayProductId, overlayProductCategory]);
+  // Browser Back (the web preview, Android back): each screen or drill-in
+  // she opens is one history step, so Back returns to the previous one in
+  // the app instead of leaving the page. Overlay items stay in memory here
+  // (not in history.state, which only holds an index).
+  const navStackRef = useRef([]);
+  const restoringRef = useRef(false);
+  useEffect(() => {
+    if (restoringRef.current) { restoringRef.current = false; return; }
+    const stack = navStackRef.current;
+    const last = stack[stack.length - 1];
+    if (last && last.screen === screen && last.overlay === overlay) return;
+    stack.push({ screen, overlay });
+    if (stack.length > 60) stack.splice(0, stack.length - 60);
+    try {
+      if (stack.length === 1) window.history.replaceState({ ...(window.history.state || {}), aynaNav: 0 }, '');
+      else window.history.pushState({ aynaNav: stack.length - 1 }, '');
+    } catch { /* history unavailable */ }
+  }, [screen, overlay]);
+  useEffect(() => {
+    const onPop = () => {
+      const stack = navStackRef.current;
+      if (stack.length < 2) return;
+      stack.pop();
+      const prev = stack[stack.length - 1];
+      restoringRef.current = true;
+      setOverlay(prev.overlay);
+      setScreen(prev.screen);
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
   const [readArticleIds, setReadArticleIds] = useState([]);
   // How far each read has been scrolled (0–1). Per-device convenience, so localStorage is fine.
   const [readProgress, setReadProgress] = useState(() => { try { return JSON.parse(localStorage.getItem('ayna_read_progress_v1') || '{}') || {}; } catch { return {}; } });

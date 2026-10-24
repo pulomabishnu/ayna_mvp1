@@ -342,3 +342,8 @@ html body .app-container.app-container .ay-wh.ay-wh :is(.ay-wh-tabs, .ay-wh-rang
   html body .app-container.app-container .ay-wh.ay-wh :is(.ay-wh-tabs, .ay-wh-range) { margin: 0 calc(var(--ay-margin, 20px) * -1); padding: 0 var(--ay-margin, 20px); }
 }
 html body .app-container.app-container .ay-wh.ay-wh .ay-bn-phases { border: 0 !important; border-radius: 20px !important; background: var(--ay-group, #f6e3a1) !important; padding: 20px !important; }
+/* Today: the short "connect health data" note under More for you (no app pitch). */
+.app-container .ay-wh.ay-wh .ay-wh-connect { display: grid; gap: 10px; max-width: 720px; padding: 20px; border-radius: 20px; background: var(--x-group, rgba(62, 39, 35, 0.06)); color: var(--x-ink, #3e2723); }
+html body .app-container main .ay-wh.ay-wh .ay-wh-connect h3 { margin: 0; font: 700 20px/1.2 var(--ay-serif) !important; color: inherit !important; }
+.app-container .ay-wh.ay-wh .ay-wh-connect p { margin: 0; max-width: 60ch; font: 500 var(--ay-fs-secondary)/1.5 var(--ay-sans); color: inherit; }
+.app-container .ay-wh.ay-wh .ay-wh-connect .ay-wh-lockactions { justify-content: flex-start; }

@@ -2595,13 +2595,11 @@ function App() {
           <div className="wx-today">
             {React.cloneElement(webHealth, {
               title: 'Today',
-              intro: !quizResults && !dataLoading ? (finishQuizCard() || (
-                <section className="wx-invite wx-today-invite" aria-labelledby="wx-today-invite-h">
-                  <h3 id="wx-today-invite-h">Make Today yours</h3>
-                  <p>Create your health profile and Today shows what matters for you, with the reason for each thing.</p>
-                  <button type="button" className="ay-btn ay-btn--primary" onClick={handleStartQuiz}>Create your health profile</button>
-                </section>
-              )) : null,
+              // Same model as the app: the Daily Rundown card leads (with no profile
+              // it says how to make one), then the decision items and her log.
+              intro: !quizResults && !dataLoading ? finishQuizCard() || null : null,
+              compact: true,
+              rundown: { ...webHealth.props.rundown, onSetUp: !quizResults && !dataLoading && !finishQuizCard() ? handleStartQuiz : undefined },
             })}
             {/* Her routine per need, short; the full one is in You > My ecosystem (src/components/routine). */}
             <div className="ay-container wx-today-routine">

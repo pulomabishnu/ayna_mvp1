@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { getRecommendationMatchesAndRest } from '../data/products.js';
 import ProductCard from './components/ProductCard.jsx';
@@ -20,7 +21,7 @@ function files(dir) {
 
 describe('signed-out match %', () => {
   it('no app surface gates her answers or the % on being signed in', () => {
-    const offenders = files(join(__dirname)).filter((f) => {
+    const offenders = files(dirname(fileURLToPath(import.meta.url))).filter((f) => {
       const src = readFileSync(f, 'utf8');
       return /authUser\s*\?\s*(effectiveQuizAnswers|quizAnswers|lastQuizAnswers)\s*:\s*null/.test(src)
         || /showMatch[=:]\s*\{?\s*Boolean\(authUser\)/.test(src)

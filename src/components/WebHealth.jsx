@@ -59,6 +59,22 @@ function WhatItShows() {
   );
 }
 
+/** Today (compact): one short card under "More for you", not the full app pitch. */
+function ConnectNote({ signedIn, onSignIn, onOpenConnections }) {
+  return (
+    <section className="ay-wh-connect" aria-labelledby="ay-wh-connect-h">
+      <h3 id="ay-wh-connect-h">Want a more personal rundown?</h3>
+      <p>Connect health data, or keep using quick check-ins on Today. Either works. Apple Health connects in the ayna iPhone app (beta).</p>
+      <div className="ay-wh-lockactions">
+        {signedIn
+          ? <button type="button" className="ay-wh-btn is-quiet" onClick={onOpenConnections}>Upload a file or connect Oura</button>
+          : <button type="button" className="ay-wh-btn is-quiet" onClick={onSignIn}>Sign in to connect</button>}
+        <a className="ay-wh-btn is-quiet" href={BETA_URL} target="_blank" rel="noopener noreferrer">Join the iPhone beta<span className="sr-only"> (opens in a new tab)</span></a>
+      </div>
+    </section>
+  );
+}
+
 function Locked({ signedIn, connected, onSignIn, onOpenConnections }) {
   const waiting = signedIn && connected;
   return (
@@ -77,7 +93,6 @@ function Locked({ signedIn, connected, onSignIn, onOpenConnections }) {
           <>
             <h2 id="ay-wh-lock-title">Your health dashboard lives in the app</h2>
             <p><b>Want a more personalized rundown?</b> Connect health data or keep using quick check-ins on Today. Either works.</p>
-            <p>It joins ayna Pro when the app launches. Beta testers use it free now.</p>
             <div className="ay-wh-lockjoin">
               <figure className="ay-wh-qr">
                 <img src="/ayna-beta-qr.svg" width="132" height="132" alt={`QR code for the ayna beta on TestFlight: ${BETA_URL}`} />
@@ -105,7 +120,7 @@ function Locked({ signedIn, connected, onSignIn, onOpenConnections }) {
   );
 }
 
-export default function WebHealth({ user, health, products = [], needIds = [], hormonalBC = false, quizAnswers = null, onOpenProduct, onAsk, onSignIn, onOpenConnections, onEditAnswers, onSaveToProfile = null, rundown = {}, title = 'Your health', intro = null }) {
+export default function WebHealth({ user, health, products = [], needIds = [], hormonalBC = false, quizAnswers = null, onOpenProduct, onAsk, onSignIn, onOpenConnections, onEditAnswers, onSaveToProfile = null, rundown = {}, title = 'Your health', intro = null, compact = false }) {
   // DEVELOPMENT ONLY (?healthdemo=1 on the local dev server, signed out):
   // the made-up demo rows from devDemo.js, so the unlocked layout can be
   // checked without an account. import.meta.env.DEV is false in production builds.
@@ -188,7 +203,9 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
       <section className="ay-wh is-locked" aria-labelledby="ay-wh-title">
         {header}
         {todayFeed}
-        <Locked signedIn={signedIn} connected={(h.connected || []).length > 0} onSignIn={onSignIn} onOpenConnections={onOpenConnections} />
+        {compact && !(signedIn && (h.connected || []).length > 0)
+          ? <ConnectNote signedIn={signedIn} onSignIn={onSignIn} onOpenConnections={onOpenConnections} />
+          : <Locked signedIn={signedIn} connected={(h.connected || []).length > 0} onSignIn={onSignIn} onOpenConnections={onOpenConnections} />}
         {/* Signed in without health data: her goals matched to her products still work from the quiz. */}
         {signedIn && (needIds.length > 0 || products.length > 0 || demo) && (
           <div className="ay-wh-starter">
