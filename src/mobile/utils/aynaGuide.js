@@ -79,7 +79,7 @@ export function productNotesFromRoutine(products = [], outcomes = {}) {
     const latest = entries.slice().sort((a, b) => String(b.day).localeCompare(String(a.day)))[0];
     if (!latest || !['helping', 'same', 'worse'].includes(latest.rating)) return [];
     const rating = { helping: 'helping', same: 'no change yet', worse: 'making it harder' }[latest.rating];
-    return [`${clean(product.name || product.title, 80)} — I marked it “${rating}” on ${latest.day}`];
+    return [`${clean(product.name || product.title, 80)}: I marked it “${rating}” on ${latest.day}`];
   }).slice(0, 12);
 }
 

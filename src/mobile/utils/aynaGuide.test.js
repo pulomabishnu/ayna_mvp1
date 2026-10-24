@@ -32,7 +32,7 @@ describe('Ayna personal guide', () => {
 
   it('includes routine product self-reports only when chosen for an appointment note', () => {
     const notes = productNotesFromRoutine([{ id: 'p1', name: 'Heat wrap' }], { p1: [{ day: '2026-10-20', rating: 'same' }, { day: '2026-10-23', rating: 'helping' }] });
-    expect(notes).toEqual(['Heat wrap — I marked it “helping” on 2026-10-23']);
+    expect(notes).toEqual(['Heat wrap: I marked it “helping” on 2026-10-23']);
     const guide = readGuide('a', storage());
     expect(appointmentSummary({ guide, productNotes: notes })).toContain('Self-reports, not evidence a product caused the change.');
     expect(appointmentSummary({ guide })).not.toContain('Heat wrap');
