@@ -136,7 +136,11 @@ describe('bug 2: a format preference does not empty the Ecosystem', () => {
         expect(teaShelf.productIds.length, shelf.needId).toBeGreaterThanOrEqual(shelf.productIds.length);
       }
       // Never padded: every pick still clears the bar for its own need.
-      tea.shelves.forEach((s) => s.picks.forEach((p) => expect(p.score).toBeGreaterThanOrEqual(50)));
+      // v2: a partial fit (35+) only where nothing clears 50, or a labelled fallback.
+      tea.shelves.forEach((s) => s.picks.forEach((p) => {
+        if (engine === 'v1') expect(p.score).toBeGreaterThanOrEqual(50);
+        else if (!p.v2?.fallback) expect(p.score).toBeGreaterThanOrEqual(35);
+      }));
     });
   }
 

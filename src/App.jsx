@@ -2395,6 +2395,8 @@ function App() {
           <WebWrapped
             products={Object.values(myProducts || {})}
             quizResults={quizResults}
+            healthProfile={healthProfile}
+            matchOpts={matchOpts}
             onClose={() => setShowWrapped(false)}
             onBack={handleWrappedBackToQuiz}
             onBrowse={() => { setShowWrapped(false); handleViewDiscovery(''); }}
@@ -2420,6 +2422,8 @@ function App() {
             user={user}
             products={ALL_PRODUCTS}
             quizResults={quizResults}
+            healthProfile={healthProfile}
+            matchOpts={matchOpts}
             myProducts={myProducts}
             onOpenProduct={handleOpenProduct}
             onOpenArticle={(a) => { setSelectedArticleId(a.id); setCurrentView('articles'); }}
@@ -2878,6 +2882,8 @@ function App() {
             user={user}
             products={ALL_PRODUCTS}
             quizResults={quizResults}
+            healthProfile={healthProfile}
+            matchOpts={matchOpts}
             onOpenProduct={handleOpenProduct}
             onRequireAuth={(feature) => { setAuthFeature(typeof feature === 'string' ? feature : ''); setPendingAction(typeof feature === 'string' && feature ? 'feature' : 'login'); pendingActionRef.current = typeof feature === 'string' && feature ? 'feature' : 'login'; setShowAuthModal(true); }}
             onDone={() => setComposerSeed(null)}

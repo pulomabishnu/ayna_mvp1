@@ -135,7 +135,7 @@ function SkeletonPlaylists() {
   return <div className="cm-pl-grid" aria-hidden="true">{[0, 1, 2, 3].map((i) => <div key={i} className="cm-skel-pl"><span className="cm-skel-cover" /><span className="cm-skel-line is-mid" /><span className="cm-skel-line is-short" /></div>)}</div>;
 }
 
-function Mention({ productId, productsById, quizResults, onOpenProduct, hideView = false }) {
+function Mention({ productId, productsById, quizResults, healthProfile = null, matchOpts = undefined, onOpenProduct, hideView = false }) {
   const product = productsById.get(String(productId));
   if (!product) {
     const customName = customProductName(String(productId || ''));
@@ -145,7 +145,8 @@ function Mention({ productId, productsById, quizResults, onOpenProduct, hideView
       <span><strong>{customName}</strong><small>Not in the ayna catalog yet</small></span>
     </span>;
   }
-  const match = quizResults ? getProductMatchDetailsForProduct(product, quizResults) : null;
+  // Same engine inputs as her cards, so the chip shows the card's percent.
+  const match = quizResults ? getProductMatchDetailsForProduct(product, quizResults, healthProfile, matchOpts) : null;
   const show = match?.matchStatus === 'scored' && Number.isFinite(match.percent);
   // The % explained in plain words ("For your period cramps").
   const why = show && hasWhy(match) ? whyLead(match) : '';
@@ -236,7 +237,7 @@ function Sheet({ title, onClose, children, className = '', overlay = null }) {
   </div>{overlay}</div>, host);
 }
 
-export default function WebCommunity({ user, products = [], quizResults = null, myProducts = null, onOpenProduct, onOpenArticle, onRequireAuth, seedKind = null, seedProductId = null, seedRating = null, initialProfileHandle = null, onProfileChange, initialPostId = null, onPostChange, composeOnly = false, onDone }) {
+export default function WebCommunity({ user, products = [], quizResults = null, healthProfile = null, matchOpts = undefined, myProducts = null, onOpenProduct, onOpenArticle, onRequireAuth, seedKind = null, seedProductId = null, seedRating = null, initialProfileHandle = null, onProfileChange, initialPostId = null, onPostChange, composeOnly = false, onDone }) {
   const supabase = user ? getSupabaseClient() : (getGuestClient() || getSupabaseClient());
   const productsById = useMemo(() => new Map(products.map((p) => [String(p.id), p])), [products]);
   // Relative times ("5m", "Yesterday") refresh every minute.
@@ -391,7 +392,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     community.getProfilesByIds(supabase, missing).then((m) => { if (active) setProfileById((prev) => new Map([...prev, ...m])); }).catch(() => {});
     return () => { active = false; };
   }, [supabase, tab, followingIds]); // eslint-disable-line react-hooks/exhaustive-deps
-  const matchFor = (id) => { const p = productsById.get(String(id)); return p && quizResults ? getProfileMatchPercentForProduct(p, quizResults) : null; };
+  const matchFor = (id) => { const p = productsById.get(String(id)); return p && quizResults ? getProfileMatchPercentForProduct(p, quizResults, healthProfile, matchOpts) : null; };
 
   useEffect(() => {
     if (!supabase) return undefined;
@@ -924,7 +925,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       {media.length > 0 && <div className={`cm-photos n-${Math.min(media.length, 4)}`}>{media.slice(0, 4).map((m, k) => (full
         ? <span key={m.path} className="cm-polaroid" style={{ '--tilt': `${k % 2 ? 1.2 : -1.2}deg` }}><img src={publicMediaUrl(m.path)} alt="" loading="lazy" /></span>
         : <button type="button" key={m.path} className="cm-polaroid" style={{ '--tilt': `${k % 2 ? 1.2 : -1.2}deg` }} onClick={() => openPost(post)} aria-label={`Open ${name}'s post, photo ${k + 1}`}><img src={publicMediaUrl(m.path)} alt="" loading="lazy" /></button>))}</div>}
-      {postProductIds(post).slice(0, 1).map((id) => <Mention key={id} productId={id} productsById={productsById} quizResults={quizResults} onOpenProduct={onOpenProduct} />)}
+      {postProductIds(post).slice(0, 1).map((id) => <Mention key={id} productId={id} productsById={productsById} quizResults={quizResults} healthProfile={healthProfile} matchOpts={matchOpts} onOpenProduct={onOpenProduct} />)}
       <PostStats post={post} engagement={engagement} onOpenLikers={setLikersPost} />
       <footer className="cm-actions">
         <button type="button" className="cm-act-helpful" aria-pressed={Boolean(post.viewer_found_helpful)} aria-label={`Helpful${helpful ? `, ${helpful}` : ''}`} onClick={(e) => { if (user && !post.viewer_found_helpful) popIcon(e); togglePost(post, 'helpful'); }}><Icon name="thumb" size={18} /><span aria-hidden="true">Helpful{helpful ? <b>{helpful}</b> : null}</span></button>
@@ -1101,7 +1102,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       {comments.map((c) => <div className="cm-comment" key={c.id}>
         <header><Avatar size={30} name={c.author_display_name || c.author_username} path={!c.is_anonymous && c.author_id ? profileById.get(c.author_id)?.avatar_url : null} anonymous={c.is_anonymous || !c.author_id} /><strong>{c.is_anonymous || !c.author_id ? 'Anonymous' : c.author_display_name || c.author_username}</strong><TeamTag title={badgeFor(c.author_id, c.is_anonymous)} /><small>{timeLabel(c.created_at)}</small></header>
         <p>{c.body}</p>
-        {c.product_id && <Mention productId={c.product_id} productsById={productsById} quizResults={quizResults} onOpenProduct={onOpenProduct} />}
+        {c.product_id && <Mention productId={c.product_id} productsById={productsById} quizResults={quizResults} healthProfile={healthProfile} matchOpts={matchOpts} onOpenProduct={onOpenProduct} />}
         <button type="button" className="ct-link cm-link" onClick={() => setReplyTo(c.id)}>Reply</button>
       </div>)}
       {comments.length > 0 && REPLY_BOX}
@@ -1132,7 +1133,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       </div>
       <ul className="ay-group cm-pl-list" aria-label="Products in this playlist">
         {items.map((it) => <li key={it.product_id} className="cm-pl-row">
-          <Mention productId={it.product_id} productsById={productsById} quizResults={quizResults} onOpenProduct={onOpenProduct} hideView={canEdit} />
+          <Mention productId={it.product_id} productsById={productsById} quizResults={quizResults} healthProfile={healthProfile} matchOpts={matchOpts} onOpenProduct={onOpenProduct} hideView={canEdit} />
           {addedBy(it) && <small className="cm-pl-by">Added by {addedBy(it)}</small>}
           {canEdit && <button type="button" className="ct-link cm-pl-remove" disabled={busy} onClick={() => removeItem(it.product_id)} aria-label={`Remove ${productsById.get(String(it.product_id))?.name || customProductName(String(it.product_id)) || 'product'}`}>Remove</button>}
         </li>)}

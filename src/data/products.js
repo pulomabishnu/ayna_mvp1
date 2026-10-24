@@ -21,7 +21,7 @@ import {
 } from '../matching/index.js';
 import { getListingStatus as passportListingStatus } from './passport/index.js';
 import { needPhrase, canonicalNeedId, LIFE_STAGE_BY_ID, FORMAT_BY_ID, VALUE_BY_ID, ATTRIBUTE_PHRASE } from '../matching/ontology.js';
-import { buildEcosystemV2 } from '../matching/v2.js';
+import { buildEcosystemV2, scoreProductV2, withV2Score, userKeyOf } from '../matching/v2.js';
 import { shapeEcosystemWithHealth } from '../matching/healthShaping.js';
 import { getCareResourceBundle } from './careResources.js';
 import { withImageOverride } from './productImageOverrides.js';
@@ -1457,14 +1457,22 @@ function userProfileFor(quizAnswers, healthProfile = null, opts = {}) {
     return up;
 }
 
+// The one engine call behind every match percent (card badge, product page,
+// Why this matches, Compare, Swipe, Browse, community, Best match sort).
+// v2 (src/matching/v2.js scoreProductV2) everywhere since Oct 24; opts.engine
+// or ?match=v1 picks v1 for comparison. The ecosystem shelves use the same
+// v2 per-need numbers (buildEcosystemV2 -> withV2Score).
+function engineFor(opts) {
+    return (opts && opts.engine) || matchEngine();
+}
 const SCORE_CACHE = new WeakMap();
-function engineResultFor(product, up) {
+function engineResultFor(product, up, engine = matchEngine()) {
     let byProduct = SCORE_CACHE.get(up);
     if (!byProduct) { byProduct = new Map(); SCORE_CACHE.set(up, byProduct); }
-    const key = product?.id ? `${product.id}|${product.name || ''}` : null;
+    const key = product?.id ? `${engine}|${product.id}|${product.name || ''}` : null;
     if (key && byProduct.has(key)) return byProduct.get(key);
     const pp = buildProductProfile(product);
-    const result = engineScoreProduct(pp, up);
+    const result = engine === 'v1' ? engineScoreProduct(pp, up) : scoreProductV2(pp, up);
     const entry = { pp, result, details: null };
     if (key) byProduct.set(key, entry);
     return entry;
@@ -1590,6 +1598,8 @@ function toNeedMatch(r, up) {
         contextUsed: r.contextUsed,
         explainable: r.explainable,
         outputs: r.outputs,
+        v2: r.v2 || null,
+        v1Score: r.v1Score ?? r.score,
     };
 }
 
@@ -1626,6 +1636,7 @@ export function isTeenProduct(p) {
     return Boolean(p) && (TEEN_RE.test(String(p.name || '')) || (Array.isArray(p.tags) && p.tags.some((t) => /^(teen|tween)s?$/i.test(String(t)))));
 }
 const TEEN_EXCLUDED = {
+    matchKind: 'ayna_match', matchMeaning: 'fit_to_what_she_told_ayna_not_a_probability_it_works',
     percent: 0, eligible: false, matchStatus: 'excluded', reasonDetails: [], needMatches: [], unknowns: [], unmetNeeds: [], labels: [], reasons: [],
     excludedBecause: ['it is made for teens, and ayna is for adults 18 and over'],
     considerations: [{ text: 'Made for teens. ayna is for adults 18 and over, so we don’t match it to anyone.' }],
@@ -1636,7 +1647,8 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
     if (isTeenProduct(savedProduct)) return { ...TEEN_EXCLUDED };
     const product = hydrateCatalogProduct(savedProduct);
     const up = userProfileFor(quizAnswers, healthProfile, opts);
-    const entry = engineResultFor(product, up);
+    const engine = engineFor(opts);
+    const entry = engineResultFor(product, up, engine);
     if (entry.details && !opts?.needId) return entry.details;
     const { pp, result } = entry;
     const safety = result.safety;
@@ -1684,6 +1696,16 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
         profileCompleteness: up.completeness,
         contradictions: up.contradictions.map((c) => c.text),
         focusNeedId: focus ? focus.needId : null,
+        // Which engine produced the percent, v2's numbers for the best need
+        // (health fit, evidence grade, band) and the v1 percent for comparison.
+        engine: result.engine || 'v1',
+        // What the percent is: an ayna match, how well the product fits what
+        // she told ayna (needs, life stage, safety, history). It is NOT a
+        // probability that the product will work for her.
+        matchKind: 'ayna_match',
+        matchMeaning: 'fit_to_what_she_told_ayna_not_a_probability_it_works',
+        v2: best?.v2 || null,
+        v1Percent: best ? (best.v1Score ?? best.score) : null,
     };
 
     let details;
@@ -1749,10 +1771,10 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
             percent: best ? best.score : 0,
             matchStatus: best ? 'scored' : 'no-relevance',
             score: best ? best.score : 0,
-            goalMatch: best ? Math.round(best.components.health * 100) : 0,
+            goalMatch: best ? Math.round((best.v2 ? best.v2.health : best.components.health) * 100) : 0,
             // null = not known for her (never a 0 that reads as a bad fit).
             profileFit: best && best.components.context != null ? Math.round(best.components.context * 100) : null,
-            healthMatch: best ? Math.round(best.components.health * 100) : 0,
+            healthMatch: best ? Math.round((best.v2 ? best.v2.health : best.components.health) * 100) : 0,
             preferenceMatch: best && best.components.preference != null ? Math.round(best.components.preference * 100) : null,
             confidence: confidenceLevel,
             confidenceScore: confidence,
@@ -1861,8 +1883,9 @@ function rankCatalog(quizAnswers, healthProfile, opts) {
     const weaker = [];
     const unrelated = [];
     const offShelf = [];
+    const engine = engineFor(opts);
     for (const product of candidates) {
-        const { pp, result } = engineResultFor(product, up);
+        const { pp, result } = engineResultFor(product, up, engine);
         if (['recalled', 'discontinued', 'unavailable', 'removed'].includes(pp.status?.state)) {
             offShelf.push(product);
             continue;
@@ -1911,8 +1934,8 @@ const categoryForId = (id) => { const p = getProductById(id); return p ? buildPr
 
 function ecosystemFor(quizAnswers, healthProfile, opts = {}) {
     const up = userProfileFor(quizAnswers, healthProfile, opts);
-    const engine = opts.engine || matchEngine();
-    const built = (engine === 'v2' ? buildEcosystemV2 : buildEcosystem)(up, filterPrescriptionCareGate(ALL_PRODUCTS), {
+    const engine = engineFor(opts);
+    const built = (engine === 'v1' ? buildEcosystem : buildEcosystemV2)(up, filterPrescriptionCareGate(ALL_PRODUCTS), {
         getCareResourceBundle,
         ...(opts.picksPerNeed ? { picksPerNeed: opts.picksPerNeed } : {}),
         ...(opts.minTier ? { minTier: opts.minTier } : {}),
@@ -2013,10 +2036,11 @@ export function getEcosystemSeedFromQuiz(quizAnswers, healthProfile = null, opts
  */
 export function getEcosystemAlternatives(productId, tag, quizAnswers, healthProfile = null, limit = 3, opts = {}) {
     const up = userProfileFor(quizAnswers || {}, healthProfile, opts);
+    const engine = engineFor(opts);
     let needId = tag && NEED_BY_ID[canonicalNeedId(tag)] ? canonicalNeedId(tag) : null;
     if (!needId && productId) {
         const current = getProductById(productId);
-        const best = current ? engineResultFor(hydrateCatalogProduct(current), up).result.best : null;
+        const best = current ? engineResultFor(hydrateCatalogProduct(current), up, engine).result.best : null;
         if (best && best.score > 0) needId = best.needId;
     }
     if (needId) {
@@ -2027,9 +2051,13 @@ export function getEcosystemAlternatives(productId, tag, quizAnswers, healthProf
             const pp = buildProductProfile(product);
             if (!pp.health_need_relevance[needId]) continue;
             if (up.behavior.hidden.has(pp.product_id)) continue;
-            const { result } = engineResultFor(product, up);
+            const { result } = engineResultFor(product, up, engine);
             if (!result.safety.eligible) continue;
-            const r = result.needs.find((n) => n.needId === needId) || scoreProductForNeed(pp, up, needId, { safety: result.safety });
+            let r = result.needs.find((n) => n.needId === needId);
+            if (!r) {
+                r = scoreProductForNeed(pp, up, needId, { safety: result.safety });
+                if (engine !== 'v1') r = withV2Score(pp, r, new Set(up.healthIntent.needs.map((n) => n.id)), userKeyOf(up));
+            }
             if (r.filtered || r.restricted || !r.explainable || r.score < MIN_RECOMMEND_SCORE) continue;
             profilesById.set(pp.product_id, pp);
             rows.push(r);

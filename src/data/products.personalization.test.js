@@ -102,7 +102,12 @@ describe('personalized relevance scoring', () => {
         expect(getProductRelevanceScore(vitex, { fullHealthIntake: { supportSelections: ['PCOS support'] } })).toBe(0);
         const pmsMatch = getProductRelevanceScore(vitex, { fullHealthIntake: { supportSelections: ['PMS symptoms'] } });
         expect(pmsMatch).toBeGreaterThan(0);
-        expect(pmsMatch).toBeLessThan(60);
+        // v2: research grade B for PMS (NCCIH: low-to-moderate quality trials) and
+        // a secondary relevance (an unreviewed research row can't lift it), so
+        // never a Strong match. v1 held it under 60 for "limited" evidence.
+        expect(pmsMatch).toBeLessThan(75);
+        expect(getProductMatchDetailsForProduct(vitex, { fullHealthIntake: { supportSelections: ['PMS symptoms'] } }).v2.grade).toBe('B');
+        expect(getProductRelevanceScore(vitex, { fullHealthIntake: { supportSelections: ['PMS symptoms'] } }, null, { engine: 'v1' })).toBeLessThan(60);
     });
 
     it('does not match evening primrose oil to PCOS, cramps, or bloating', () => {
@@ -369,9 +374,14 @@ describe('matching engine integration', () => {
         const omitted = getProductMatchDetailsForProduct(byId('p-thermacare'), quiz, null, { behavior: { omitted: { 'p-thermacare': true } } });
         expect(omitted).toEqual(expect.objectContaining({ percent: 0, matchStatus: 'excluded' }));
         expect(getPersonalizedProductIds(quiz, null, { behavior: { omitted: ['p-thermacare'] } })).not.toContain('p-thermacare');
+        // v2: saving re-orders at most, it never changes the shown percent.
         const saved = getProfileMatchPercentForProduct(byId('p-thermacare'), quiz, null, { behavior: { saved: ['p-thermacare'] } });
-        expect(saved).toBeGreaterThan(base);
-        expect(saved - base).toBeLessThanOrEqual(3);
+        expect(saved).toBe(base);
+        // v1 (?match=v1): saved is a small positive.
+        const baseV1 = getProfileMatchPercentForProduct(byId('p-thermacare'), quiz, null, { engine: 'v1' });
+        const savedV1 = getProfileMatchPercentForProduct(byId('p-thermacare'), quiz, null, { engine: 'v1', behavior: { saved: ['p-thermacare'] } });
+        expect(savedV1).toBeGreaterThan(baseV1);
+        expect(savedV1 - baseV1).toBeLessThanOrEqual(3);
         const owned = getProductMatchDetailsForProduct(byId('p-thermacare'), quiz, null, { behavior: { inEcosystem: { 'p-thermacare': {} } } });
         expect(owned.owned).toBe(true);
     });

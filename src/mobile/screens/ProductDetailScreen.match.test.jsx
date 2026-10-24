@@ -4,13 +4,13 @@ import { ALL_PRODUCTS, getProductMatchDetailsForProduct } from '../../data/produ
 import ProductDetailScreen from './ProductDetailScreen.jsx';
 
 describe('ProductDetailScreen match display', () => {
-  it('shows a relevant score below 60 as the one match pill', () => {
+  it('shows a relevant mid-range score as the one match pill', () => {
     const product = ALL_PRODUCTS.find((item) => item.id === 'p-vitex');
     const quizAnswers = { fullHealthIntake: { supportSelections: ['PMS symptoms'] } };
     const details = getProductMatchDetailsForProduct(product, quizAnswers);
     const percent = details.percent;
     expect(percent).toBeGreaterThan(0);
-    expect(percent).toBeLessThan(60);
+    expect(percent).toBeLessThan(75);
     const html = renderToStaticMarkup(<ProductDetailScreen product={product} quizAnswers={quizAnswers} />);
     expect(html).toContain('ay-match-pill');
     expect(html).toContain(`<strong>${percent}%</strong><span>match</span>`);
