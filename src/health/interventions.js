@@ -24,23 +24,35 @@
  * (CLINICAL_REVIEW_REQUIRED in decisionEngine.js).
  */
 
-// ─── Sources (claims below were checked against these pages, Oct 24 2026) ──
+// ─── Sources ──────────────────────────────────────────────────────────────
+// Founder rule (Oct 24 2026): clinical claims are checked only against .gov
+// sources (MedlinePlus, NIH, NLM/DailyMed, FDA, CDC, womenshealth.gov).
+// Product facts and label warnings come from the brand's own official site,
+// recorded as the brand's label, never as evidence it works. Every page here
+// was re-read on Oct 24 2026 (scratchpad GOV_SOURCES.md has the claim table).
 export const SOURCES = {
-  nhsPeriodPain: { label: 'NHS: Period pain', url: 'https://www.nhs.uk/conditions/period-pain/' },
   medlinePeriodPain: { label: 'MedlinePlus: Painful menstrual periods', url: 'https://medlineplus.gov/ency/article/003150.htm' },
-  cochraneExercise: { label: 'Cochrane: Exercise for dysmenorrhoea (Armour 2019)', url: 'https://www.cochrane.org/CD004142/MENSTR_exercise-dysmenorrhoea' },
-  cochraneNsaids: { label: 'Cochrane: NSAIDs for dysmenorrhoea (Marjoribanks 2015)', url: 'https://www.cochrane.org/CD001751/MENSTR_nonsteroidal-anti-inflammatory-drugs-for-dysmenorrhoea' },
-  ibuprofenLabel: { label: 'Ibuprofen 200 mg Drug Facts label', url: 'https://otclabels.com/lib/otc/otc-meds/ibuprofen-200-mg/' },
-  acetaminophenLabel: { label: 'Acetaminophen 500 mg Drug Facts label', url: 'https://otclabels.com/lib/otc/otc-meds/acetaminophen-500-mg-4/' },
-  nhsIbuprofen: { label: 'NHS: Who can and cannot take ibuprofen', url: 'https://www.nhs.uk/medicines/ibuprofen-for-adults/who-can-and-cannot-take-ibuprofen' },
+  owhPeriodProblems: { label: 'womenshealth.gov: Period problems', url: 'https://womenshealth.gov/menstrual-cycle/period-problems' },
+  ibuprofenLabel: { label: 'DailyMed: Motrin IB (ibuprofen 200 mg) Drug Facts label', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=d21129f8-4d96-4e36-bc39-a534306dd77e' },
+  // The DailyMed page exists; its Warnings text did not render when checked,
+  // so NSAID gate wording is taken from the ibuprofen label and the FDA page.
+  naproxenLabel: { label: 'DailyMed: Aleve (naproxen sodium 220 mg) label', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=00ef5b30-71d0-4cb4-84a3-48c67d1cea2a' },
+  acetaminophenLabel: { label: 'DailyMed: Tylenol Extra Strength (acetaminophen 500 mg) Drug Facts label', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=fba711c1-4e69-49b0-8994-97c455aebcb2' },
+  medlineIbuprofen: { label: 'MedlinePlus: Ibuprofen', url: 'https://medlineplus.gov/druginfo/meds/a682159.html' },
   fdaNsaidPregnancy: { label: 'FDA: Avoid NSAIDs at 20 weeks of pregnancy or later', url: 'https://www.fda.gov/drugs/drug-safety-and-availability/fda-recommends-avoiding-use-nsaids-pregnancy-20-weeks-or-later-because-they-can-result-low-amniotic' },
-  thermacareLabel: { label: 'ThermaCare Menstrual HeatWraps label', url: 'https://www.orderroombox.com/product/thermacare-heatwraps-menstrual-pain-therapy/' },
-  acogExercisePregnancy: { label: 'ACOG Committee Opinion 804: Exercise in pregnancy (summary by Tommy’s)', url: 'https://www.tommys.org/pregnancy-information/im-pregnant/exercise-pregnancy/when-stop-exercising-pregnancy' },
-  nhsPms: { label: 'NHS: Premenstrual syndrome (PMS)', url: 'https://www.nhs.uk/conditions/pre-menstrual-syndrome/' },
-  nhsInsomnia: { label: 'NHS: Insomnia', url: 'https://www.nhs.uk/conditions/insomnia/' },
-  nhsHeavyPeriods: { label: 'nidirect (adapted from NHS): Heavy periods', url: 'https://www.nidirect.gov.uk/conditions/heavy-periods' },
-  nhsPregnancyBleeding: { label: 'nidirect (adapted from NHS): Bleeding and pain in pregnancy', url: 'https://www.nidirect.gov.uk/node/12609' },
-  nhsPostmenopausalBleeding: { label: 'NHS: Postmenopausal bleeding', url: 'https://www.nhs.uk/conditions/post-menopausal-bleeding/' },
+  // Brand's own label (not on DailyMed, which lists drugs; FDA only lists
+  // device recalls for it). A label, not evidence.
+  thermacareLabel: { label: 'ThermaCare HeatWraps Menstrual label (thermacare.com)', url: 'https://www.thermacare.com/product-labels/LBL-00000248-WEB-READY-THERMACARE-MENSTRUAL.PDF' },
+  owhExercisePregnancy: { label: 'womenshealth.gov: Staying healthy and safe in pregnancy', url: 'https://womenshealth.gov/pregnancy/youre-pregnant-now-what/staying-healthy-and-safe' },
+  cdcMaternalWarningSigns: { label: 'CDC: Urgent maternal warning signs', url: 'https://www.cdc.gov/hearher/maternal-warning-signs/index.html' },
+  owhPms: { label: 'womenshealth.gov: Premenstrual syndrome (PMS)', url: 'https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome' },
+  medlinePms: { label: 'MedlinePlus: Premenstrual syndrome', url: 'https://medlineplus.gov/ency/article/001505.htm' },
+  nhlbiInsomnia: { label: 'NIH NHLBI: Insomnia treatment', url: 'https://www.nhlbi.nih.gov/health/insomnia/treatment' },
+  medlineSleepHabits: { label: 'MedlinePlus: Changing your sleep habits', url: 'https://medlineplus.gov/ency/patientinstructions/000757.htm' },
+  cdcHeavyBleeding: { label: 'CDC: About heavy menstrual bleeding', url: 'https://www.cdc.gov/female-blood-disorders/about/heavy-menstrual-bleeding.html' },
+  medlinePregnancyBleeding: { label: 'MedlinePlus: Vaginal bleeding in pregnancy', url: 'https://medlineplus.gov/ency/article/003264.htm' },
+  medlineVaginalBleeding: { label: 'MedlinePlus: Vaginal or uterine bleeding', url: 'https://medlineplus.gov/ency/article/007496.htm' },
+  medlineEctopic: { label: 'MedlinePlus: Ectopic pregnancy', url: 'https://medlineplus.gov/ency/article/000895.htm' },
 };
 
 // Needs the wedge serves. Ids are internal; labels are what she reads.
@@ -122,7 +134,7 @@ function underAgePolicy(ctx) {
 }
 function pregnancyPainGate(ctx, need) {
   return need === 'pregnancy_pain'
-    ? gate('block', 'pregnancy_pain_clinician', 'With pain in pregnancy, your midwife or clinician should say which pain relief is right.', SOURCES.nhsPregnancyBleeding)
+    ? gate('block', 'pregnancy_pain_clinician', 'With pain in pregnancy, your midwife or clinician should say which pain relief is right.', SOURCES.medlineIbuprofen)
     : null;
 }
 function unknownGates(ctx) {
@@ -135,18 +147,19 @@ function unknownGates(ctx) {
   return out;
 }
 
-// NSAIDs (ibuprofen, naproxen). Ibuprofen Drug Facts: "Do not use if you
-// have ever had an allergic reaction to any other pain reliever/fever
-// reducer"; "Ask a doctor before use if stomach bleeding warning applies to
-// you" (ulcers or bleeding problems, a blood thinner or steroid, other
-// NSAIDs) or "you have high blood pressure, heart disease, liver cirrhosis,
-// kidney disease, or asthma", or take a diuretic; "Ask a doctor or
-// pharmacist ... if taking aspirin for heart attack or stroke"; "If pregnant
-// or breast-feeding, ask a health professional before use"; not in the last
-// 3 months of pregnancy unless directed. FDA 2020: avoid NSAIDs at 20 weeks
-// or later unless a health professional advises it. NHS ibuprofen:
-// antidepressants and blood pressure medicines may not mix well; may not be
-// suitable when trying to get pregnant.
+// NSAIDs (ibuprofen, naproxen). Ibuprofen Drug Facts (DailyMed, Motrin IB,
+// Oct 2025): "Do not use" if you have ever had an allergic reaction to
+// ibuprofen or any other pain reliever/fever reducer; "Ask a doctor before
+// use if" the stomach bleeding warning applies (ulcers or bleeding problems,
+// a blood thinner or steroid, other NSAIDs) or you have high blood pressure,
+// heart disease, liver cirrhosis, kidney disease or asthma, or take a
+// diuretic; "Ask a doctor or pharmacist before use if you are" taking aspirin
+// for heart attack or stroke, or "taking any other drug" (this covers blood
+// pressure medicines); "If pregnant or breast-feeding, ask a health
+// professional before use", and not at 20 weeks or later unless a doctor
+// directs it. FDA 2020: avoid NSAIDs at 20 weeks or later unless advised.
+// MedlinePlus ibuprofen: tell your doctor if you take SSRI or SNRI
+// antidepressants, or if you plan to become pregnant.
 const NSAID_CONSULT_CONDITIONS = {
   stomach_ulcer: 'a stomach ulcer or stomach bleeding',
   bleeding_disorder: 'a bleeding problem',
@@ -163,8 +176,8 @@ const NSAID_CONSULT_MEDS = {
   nsaid: { words: 'another NSAID', source: SOURCES.ibuprofenLabel },
   antiplatelet_salicylate: { words: 'aspirin', source: SOURCES.ibuprofenLabel },
   diuretic: { words: 'a diuretic (water pill)', source: SOURCES.ibuprofenLabel },
-  blood_pressure: { words: 'a blood pressure medicine', source: SOURCES.nhsIbuprofen },
-  antidepressant: { words: 'an antidepressant', source: SOURCES.nhsIbuprofen },
+  blood_pressure: { words: 'a blood pressure medicine', source: SOURCES.ibuprofenLabel },
+  antidepressant: { words: 'an antidepressant', source: SOURCES.medlineIbuprofen },
 };
 function nsaidGates(ctx, need) {
   const out = [underAgePolicy(ctx), pregnancyPainGate(ctx, need)];
@@ -178,7 +191,7 @@ function nsaidGates(ctx, need) {
   }
   if (ctx.breastfeeding === 'yes') out.push(gate('consult', 'breastfeeding', 'If breastfeeding, ask a health professional before use.', SOURCES.ibuprofenLabel));
   else if (ctx.postpartum && ctx.breastfeeding === 'unknown') out.push(gate('ask', 'breastfeeding_unknown', 'We do not know if you are breastfeeding, which changes this.', null, 'breastfeeding'));
-  if (ctx.ttc) out.push(gate('consult', 'ttc', 'You are trying to conceive. The NHS says ibuprofen may not be suitable, so ask a pharmacist.', SOURCES.nhsIbuprofen));
+  if (ctx.ttc) out.push(gate('consult', 'ttc', 'You are trying to conceive. MedlinePlus says to tell your doctor if you plan to become pregnant before taking ibuprofen, so ask first.', SOURCES.medlineIbuprofen));
   const conds = Object.keys(NSAID_CONSULT_CONDITIONS).filter((c) => ctx.conditionIds.has(c));
   if (conds.length) out.push(gate('consult', 'ask_doctor_condition', `You have ${listWords(conds.map((c) => NSAID_CONSULT_CONDITIONS[c]))}. The label says ask a doctor before use.`, SOURCES.ibuprofenLabel));
   const meds = Object.keys(NSAID_CONSULT_MEDS).filter((c) => ctx.medClasses.has(c));
@@ -190,7 +203,8 @@ function nsaidGates(ctx, need) {
   return out.filter(Boolean);
 }
 
-// Acetaminophen (paracetamol). Drug Facts: liver warning (severe liver damage
+// Acetaminophen (paracetamol). Drug Facts (DailyMed, Tylenol Extra
+// Strength, Jul 2025): liver warning (severe liver damage
 // with more than directed, with other acetaminophen products, or with 3 or
 // more alcoholic drinks a day); "Do not use with any other drug containing
 // acetaminophen"; allergy alert; "Ask a doctor before use if you have liver
@@ -214,9 +228,11 @@ function acetaminophenGates(ctx, need) {
 // given, the name pattern). productsAllowed false: Shop never attaches any.
 
 export const INTERVENTION_CLASSES = {
-  // Sources: NHS period pain (heat pad or hot water bottle on the tummy,
-  // wrapped in a towel; warm bath); MedlinePlus 003150 (heating pad on the
-  // lower belly, never fall asleep with it on).
+  // Source: MedlinePlus 003150 ("Apply a heating pad to your lower belly
+  // area"; "Take warm showers or baths"; "Never fall asleep with the heating
+  // pad on"). "Hot water bottle" was dropped from the summary (no .gov page
+  // we found). "Wrap it in a towel" is kept as ayna policy (a burn
+  // precaution), not evidence.
   // Pregnancy: left out as advice. The review allows only low-temperature
   // heat after triage, and we could not verify that guidance ourselves, so
   // we leave it out ("or leave it out if unsure"). Heat PRODUCTS also follow
@@ -225,19 +241,22 @@ export const INTERVENTION_CLASSES = {
     id: 'heat',
     label: 'Heat',
     drugClass: null,
-    summary: 'A heat pad or hot water bottle on your lower belly can ease period cramps. A warm bath or shower can help too.',
+    summary: 'A heating pad on your lower belly can ease period cramps. A warm bath or shower can help too.',
     caution: 'Wrap it in a towel and never fall asleep with it on.',
     needs: ['period_pain'],
-    sources: [SOURCES.nhsPeriodPain, SOURCES.medlinePeriodPain],
+    sources: [SOURCES.medlinePeriodPain],
     followUpDays: 28,
     productsAllowed: true,
     catalog: { categories: ['cramp-relief'], nameRegex: /heat|thermacare/i },
     gates: (ctx) => [isPregnant(ctx) ? gate('block', 'pregnancy_heat_not_reviewed', 'We leave heat suggestions out in pregnancy until a clinician has reviewed them. Your midwife can advise.') : null].filter(Boolean),
   },
 
-  // Information only, never products. Sources: NHS period pain; MedlinePlus
-  // 003150 (start the day before your period is due); Cochrane CD001751;
-  // ibuprofen Drug Facts; FDA 2020; NHS ibuprofen.
+  // Information only, never products. Sources: MedlinePlus 003150 (try an
+  // OTC anti-inflammatory such as ibuprofen or naproxen; start the day before
+  // your period is expected); womenshealth.gov period problems ("A majority
+  // of period pain can be relieved by" OTC NSAIDs); ibuprofen Drug Facts;
+  // FDA 2020; MedlinePlus ibuprofen. The Cochrane NSAID review (Marjoribanks
+  // 2015, PubMed 26224322) is not cited: PubMed could not be read to verify it.
   nsaid_pain_relief: {
     id: 'nsaid_pain_relief',
     label: 'Ibuprofen or naproxen (NSAIDs)',
@@ -245,7 +264,7 @@ export const INTERVENTION_CLASSES = {
     summary: 'NSAID pain relievers such as ibuprofen and naproxen are a common first option for period pain. Some people start the day before their period is due.',
     caution: 'Follow the label. Do not take two NSAIDs together.',
     needs: ['period_pain', 'pms', 'pregnancy_pain'],
-    sources: [SOURCES.nhsPeriodPain, SOURCES.medlinePeriodPain, SOURCES.cochraneNsaids, SOURCES.ibuprofenLabel, SOURCES.fdaNsaidPregnancy, SOURCES.nhsIbuprofen],
+    sources: [SOURCES.medlinePeriodPain, SOURCES.owhPeriodProblems, SOURCES.ibuprofenLabel, SOURCES.naproxenLabel, SOURCES.fdaNsaidPregnancy, SOURCES.medlineIbuprofen],
     followUpDays: 28,
     informationOnly: true,
     productsAllowed: false,
@@ -253,17 +272,17 @@ export const INTERVENTION_CLASSES = {
     gates: nsaidGates,
   },
 
-  // Information only, never products. Sources: acetaminophen Drug Facts;
-  // NHS period pain (paracetamol tends to work less well than ibuprofen for
-  // period pain, per the nidirect adaptation of the NHS page).
+  // Information only, never products. Source: acetaminophen Drug Facts
+  // (DailyMed). The old line "tends to work less well than ibuprofen for
+  // period pain" (NHS) was removed: no .gov page we could read says it.
   acetaminophen_pain_relief: {
     id: 'acetaminophen_pain_relief',
     label: 'Acetaminophen (paracetamol)',
     drugClass: 'acetaminophen',
-    summary: 'Acetaminophen can ease pain, though the NHS says it tends to work less well than ibuprofen for period pain.',
+    summary: 'Acetaminophen can ease pain.',
     caution: 'Follow the label, and do not take it with any other product that contains acetaminophen. If you have 3 or more alcoholic drinks a day, ask a doctor first.',
     needs: ['period_pain', 'pms', 'pregnancy_pain'],
-    sources: [SOURCES.acetaminophenLabel, SOURCES.nhsPeriodPain],
+    sources: [SOURCES.acetaminophenLabel],
     followUpDays: 28,
     informationOnly: true,
     productsAllowed: false,
@@ -271,56 +290,68 @@ export const INTERVENTION_CLASSES = {
     gates: acetaminophenGates,
   },
 
-  // Sources: Cochrane CD004142 (exercise may reduce period pain, low
-  // certainty); NHS period pain (keeping active, yoga, pilates); NHS PMS
-  // (exercise regularly). Pregnancy: ACOG Committee Opinion 804, activity is
-  // generally safe in an uncomplicated pregnancy; stop and contact the
-  // maternity team for bleeding, belly pain, regular painful tightening,
-  // leaking fluid or dizziness. In pregnancy it is offered only after triage.
+  // Sources: MedlinePlus 003150 ("Walk or exercise regularly, including
+  // pelvic rocking exercises"); womenshealth.gov PMS ("Get regular aerobic
+  // physical activity throughout the month"); MedlinePlus PMS (regular
+  // exercise helps). "Yoga or pilates" as examples is ayna wording, not a
+  // .gov claim. The Cochrane exercise review (Armour 2019, PMC6753056) is not
+  // cited: PMC could not be read to verify it.
+  // Pregnancy: womenshealth.gov ("For most healthy moms-to-be who do not have
+  // any pregnancy-related problems, exercise is a safe and valuable habit";
+  // walking as an example; stop and contact your provider for vaginal
+  // bleeding, fluid leaking, contractions, dizziness or abdominal pain).
+  // Replaces the Tommy's summary of ACOG Committee Opinion 804. In pregnancy
+  // it is offered only after triage.
   movement: {
     id: 'movement',
     label: 'Gentle movement',
     drugClass: null,
-    summary: 'Regular exercise may ease period pain and PMS. Gentle options like walking, yoga or pilates count.',
+    summary: 'Regular exercise may ease period pain and PMS. Gentle options like walking count.',
     summaryPregnancy: 'Gentle activity like walking is generally safe in an uncomplicated pregnancy and may help you feel better.',
     caution: null,
-    cautionPregnancy: 'Stop if it makes the pain worse. Stop and contact your midwife if you get bleeding, leaking fluid, regular painful tightening, dizziness or belly pain.',
+    cautionPregnancy: 'Stop if it makes the pain worse. Stop and contact your midwife if you get bleeding, leaking fluid, contractions, dizziness or belly pain.',
     needs: ['period_pain', 'pms', 'cycle_sleep', 'pregnancy_pain'],
-    sources: [SOURCES.cochraneExercise, SOURCES.nhsPeriodPain, SOURCES.nhsPms],
-    sourcesPregnancy: [SOURCES.acogExercisePregnancy],
+    sources: [SOURCES.medlinePeriodPain, SOURCES.owhPms, SOURCES.medlinePms],
+    sourcesPregnancy: [SOURCES.owhExercisePregnancy],
     followUpDays: 56,
     productsAllowed: false,
     catalog: null,
     gates: () => [],
   },
 
-  // Sources: NHS insomnia (same bed and wake time, wind down for an hour,
-  // dark and quiet room); NHS PMS (get plenty of sleep).
+  // Sources: NIH NHLBI insomnia ("Go to sleep and wake up around the same
+  // time"; "Follow a routine that helps you wind down and relax before bed";
+  // "Sleep in a cool, quiet, dark place"); MedlinePlus sleep habits (same);
+  // womenshealth.gov PMS ("about eight hours of sleep each night"). Neither
+  // page gives "for an hour", so that was removed from the summary.
   sleep_routine: {
     id: 'sleep_routine',
     label: 'A steady sleep routine',
     drugClass: null,
-    summary: 'Going to bed and waking up at the same time, winding down for an hour before bed and keeping the room dark and quiet can help sleep.',
+    summary: 'Going to bed and waking up at the same time, winding down before bed and keeping the room dark and quiet can help sleep.',
     caution: null,
     needs: ['cycle_sleep', 'pms'],
-    sources: [SOURCES.nhsInsomnia, SOURCES.nhsPms],
+    sources: [SOURCES.nhlbiInsomnia, SOURCES.medlineSleepHabits, SOURCES.owhPms],
     followUpDays: 28,
     productsAllowed: false,
     catalog: null,
     gates: () => [],
   },
 
-  // Source: NHS PMS (keep a diary of your symptoms for at least 2 cycles).
+  // Sources: womenshealth.gov PMS (PMS is likely when symptoms happen "for at
+  // least three menstrual cycles in a row"); MedlinePlus PMS ("Keep a daily
+  // diary or log for at least 3 months"). Changed from two cycles (NHS),
+  // which the .gov pages contradict.
   tracking: {
     id: 'tracking',
-    label: 'Track it for two cycles',
+    label: 'Track it for three cycles',
     drugClass: null,
-    summary: 'Logging symptoms for at least two cycles shows whether they follow your cycle, and gives a clinician something clear to look at.',
+    summary: 'Logging symptoms for at least three cycles shows whether they follow your cycle, and gives a clinician something clear to look at.',
     summaryPregnancy: 'Noting when the pain comes, how strong it is and anything that comes with it gives your midwife something clear to look at.',
     caution: null,
     needs: ['period_pain', 'pms', 'cycle_sleep', 'pregnancy_pain'],
-    sources: [SOURCES.nhsPms],
-    followUpDays: 56,
+    sources: [SOURCES.owhPms, SOURCES.medlinePms],
+    followUpDays: 84,
     productsAllowed: false,
     catalog: null,
     gates: () => [],
@@ -334,7 +365,7 @@ export const INTERVENTION_CLASSES = {
     summary: 'A GP, gynecologist or nurse can look for a cause and offer treatments you cannot get on your own.',
     caution: null,
     needs: ['period_pain', 'pms', 'cycle_sleep', 'pregnancy_pain'],
-    sources: [SOURCES.nhsPeriodPain, SOURCES.medlinePeriodPain, SOURCES.nhsPms, SOURCES.nhsInsomnia],
+    sources: [SOURCES.medlinePeriodPain, SOURCES.owhPeriodProblems, SOURCES.medlinePms, SOURCES.medlineSleepHabits],
     followUpDays: 28,
     productsAllowed: false,
     catalog: null,
@@ -383,7 +414,11 @@ export function evaluateClassSafety(classId, ctxOrProfile, need = null) {
 export const PRODUCT_LABEL_RULES = {
   'p-thermacare': {
     source: SOURCES.thermacareLabel,
-    // "Ask a doctor before use if you have: diabetes; poor circulation or heart disease; rheumatoid arthritis; or are pregnant."
+    // Brand label, confirmed on thermacare.com Oct 24 2026: "Ask a doctor
+    // before use if you have: DIABETES; poor circulation or heart disease;
+    // rheumatoid arthritis; or are pregnant." Poor circulation and rheumatoid
+    // arthritis have no condition id in src/matching/ontology.js yet, so only
+    // diabetes, heart disease and pregnancy are checked.
     askDoctorIf: { pregnant: true, conditions: ['diabetes', 'heart_disease'] },
     notes: 'Do not wear while sleeping. Do not wear for more than 8 hours in any 24-hour period.',
   },

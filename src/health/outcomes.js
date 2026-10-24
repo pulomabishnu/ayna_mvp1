@@ -39,26 +39,29 @@ export const TRY_KINDS = ['product', 'action'];
  * How long to wait before asking whether something helped, per kind of
  * intervention. Data, not magic numbers: change a row here, not the code.
  *
- * CYCLE_DAYS: a typical cycle is about 28 to 29 days (Bull et al. 2019,
- * npj Digital Medicine, "Real-world menstrual cycle characteristics of more
- * than 600,000 menstrual cycles": mean 29.3 days). We use 28.
+ * Sources are .gov only (founder rule, Oct 24 2026); see the scratchpad
+ * GOV_SOURCES.md table.
+ *
+ * CYCLE_DAYS: womenshealth.gov, "Your menstrual cycle": "The typical
+ * menstrual cycle is 28 days long" (normal 24 to 38 days). We use 28.
+ * (Bull et al. 2019 was dropped: PMC could not be read to verify it.)
  *
  * - pain_relief (heat, TENS, pain relief for cramps): acts during a period,
  *   so the next period is the first fair check. One cycle.
  * - period_product (pads, cups, discs, period underwear): she knows after
  *   using it through one period. One cycle.
- * - supplement: 2 to 3 cycles. Cycle-linked symptoms need two cycles of
- *   prospective tracking to show a pattern (ACOG criteria for PMS, as
- *   summarised in AAFP 2016;94(3):236, "symptoms must occur reproducibly
- *   during two cycles of prospective recording"); the calcium trial that
- *   review cites ran three months. Ask at 60 days, window to 90.
- * - skincare: 6 to 8 weeks. The American Academy of Dermatology says to give
- *   an acne treatment at least 4 weeks and expect some improvement in 4 to
- *   6 weeks (aad.org, "9 things to try when acne won't clear"). Ask at 6
- *   weeks, window to 8.
- * - behavioural (sleep, movement, food, habits): two cycles, for the same
- *   two-cycle reason as supplements, so one cycle's natural variation isn't
- *   read as an effect.
+ * - supplement: 2 to 3 cycles. ayna policy, not evidence: asking after two
+ *   cycles and up to three keeps one cycle's natural variation from being
+ *   read as an effect. (The old basis, ACOG's two-cycle PMS criteria via
+ *   AAFP, is not a .gov source; womenshealth.gov and MedlinePlus use three
+ *   cycles / 3 months of tracking to recognise PMS, which the window's upper
+ *   end, 90 days, covers.) Ask at 60 days, window to 90.
+ * - skincare: 6 to 8 weeks. MedlinePlus, "Acne": acne "often responds well
+ *   to treatment, but responses may take 6 to 8 weeks" (MedlinePlus
+ *   benzoyl peroxide: "It may take 4 to 6 weeks to see the effects").
+ *   Ask at 6 weeks, window to 8. (Replaces the AAD page.)
+ * - behavioural (sleep, movement, food, habits): two cycles. ayna policy,
+ *   same reason as supplements.
  * - default: one cycle when we don't know the kind.
  */
 export const CYCLE_DAYS = 28;

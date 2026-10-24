@@ -1,9 +1,9 @@
 import { urgentSignsFor } from '../../utils/urgentSigns';
 
-// The signs come from NHS, Mayo, CDC and FDA pages; the page reads in US English.
+// The signs come from .gov pages (MedlinePlus, CDC, FDA, NIMH; founder rule Oct 24 2026), some older wording from NHS pages is kept; the page reads in US English.
 const US = [[/diarrhoea/gi, 'diarrhea'], [/haemorrhag/gi, 'hemorrhag'], [/oedema/gi, 'edema'], [/anaemi/gi, 'anemi'], [/paediatric/gi, 'pediatric'], [/oestrogen/gi, 'estrogen'], [/\bfoetus/gi, 'fetus'], [/colour/gi, 'color'], [/\bgrey\b/gi, 'gray'], [/behaviour/gi, 'behavior'], [/\bGP\b/g, 'doctor'], [/\bA&E\b/g, 'the ER'], [/\b999\b/g, '911']];
 const us = (t) => US.reduce((acc, [re, to]) => acc.replace(re, (m) => (/^[a-z]/.test(m) || /^[A-Z&0-9]{2,}$/.test(m) ? to : to.charAt(0).toUpperCase() + to.slice(1))), String(t || ''));
-const SOURCE_NAMES = { 'nhs.uk': 'NHS (UK health service)', 'mayoclinic.org': 'Mayo Clinic', 'cdc.gov': 'CDC', 'fda.gov': 'FDA', 'acog.org': 'ACOG', 'medlineplus.gov': 'MedlinePlus' };
+const SOURCE_NAMES = { 'nhs.uk': 'NHS (UK health service)', 'mayoclinic.org': 'Mayo Clinic', 'cdc.gov': 'CDC', 'fda.gov': 'FDA', 'acog.org': 'ACOG', 'medlineplus.gov': 'MedlinePlus', 'nimh.nih.gov': 'NIMH', 'nichd.nih.gov': 'NICHD', 'womenshealth.gov': 'womenshealth.gov' };
 const ACTION = { 'call 911': 'Call 911', 'go to ER': 'Go to the ER', 'call your clinician today': 'Call your clinician today' };
 
 /** "Get help now" signs for this kind of product. Renders nothing for most products. */
