@@ -272,7 +272,7 @@
 .app-container .hm .hm-news p { margin: 0; font: 400 16px/1.5 var(--ay-sans-stack); color: var(--hm-ink); }
 .app-container .hm .hm-news .ay-btn--text { padding: 0; min-height: 40px; color: var(--hm-ink) !important; }
 .app-container .hm .hm-posts { list-style: none; margin: 0; padding: 0; width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-.app-container .hm .hm-post { width: 100%; height: 100%; display: grid; gap: 6px; align-content: start; padding: 16px; text-align: left; background: #fff6d3; color: var(--hm-ink); border: 1.5px solid var(--hm-ink); border-radius: 16px; cursor: pointer; font: inherit; }
+.app-container .hm .hm-post { width: 100%; height: 100%; display: grid; gap: 6px; align-content: start; padding: 16px; text-align: left; background: var(--hm-butter); color: var(--hm-ink); border: 1.5px solid var(--hm-ink); border-radius: 16px; cursor: pointer; font: inherit; }
 .app-container .hm .hm-post__meta { font: 600 13px/1.3 var(--ay-sans-stack); }
 .app-container .hm .hm-post__body { font: 400 15px/1.45 var(--ay-sans-stack); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 @media (max-width: 767px) {
@@ -340,3 +340,77 @@
 @media (max-width: 767px) { .app-container .hm .hm-tab { left: 16px; } }
 /* shaped edges sit above the neighbouring section */
 .app-container .hm .ay-band--scallop, .app-container .hm .ay-band--scallop-bottom { z-index: 1; }
+
+/* =====================================================================
+   Oct 24 (team direction 48-52): one CTA, real products and real UI in
+   place of mood-board photos, readable type over butter.
+   ===================================================================== */
+/* hero: a slow scatter of real products, ayna UI and a community post */
+.app-container .hm .hm-scatter { position: relative; aspect-ratio: 1 / .92; min-height: 320px; }
+.app-container .hm .hm-scatter__item { position: absolute; display: block; border: 1.5px solid var(--hm-ink); background: var(--hm-butter); color: var(--hm-ink); box-sizing: border-box; }
+.app-container .hm .hm-scatter__prod { width: 26%; aspect-ratio: 1 / 1; padding: 10px; border-radius: 22px; background: #fff; overflow: hidden; }
+.app-container .hm .hm-scatter__prod img { display: block; width: 100%; height: 100%; object-fit: contain; border-radius: 0 !important; }
+.app-container .hm .hm-scatter__prod.is-skel { background: var(--hm-butter-2); }
+.app-container .hm .hm-scatter__prod.is-1 { top: 4%; left: 30%; width: 34%; rotate: -3deg; }
+.app-container .hm .hm-scatter__prod.is-2 { top: 0; right: 0; rotate: 4deg; }
+.app-container .hm .hm-scatter__prod.is-3 { top: 44%; left: 4%; rotate: -5deg; }
+.app-container .hm .hm-scatter__prod.is-4 { bottom: 2%; left: 40%; rotate: 2deg; }
+.app-container .hm .hm-scatter__prod.is-5 { bottom: 10%; right: 2%; width: 22%; rotate: -2deg; }
+.app-container .hm .hm-scatter__ui { display: grid; gap: 6px; padding: 12px 14px; border-radius: 18px; box-shadow: 3px 3px 0 var(--hm-ink); }
+.app-container .hm .hm-scatter__ui small { font: 700 12px/1.2 var(--ay-sans-stack); letter-spacing: .04em; text-transform: uppercase; }
+.app-container .hm .hm-scatter__ui.is-evidence { top: 38%; right: 4%; width: 42%; max-width: 230px; background: var(--hm-pink); }
+.app-container .hm .hm-scatter__note { font: 500 13px/1.35 var(--ay-sans-stack); }
+.app-container .hm .hm-scatter__ui.is-post { bottom: 0; left: 0; width: 44%; max-width: 260px; background: var(--hm-butter); }
+.app-container .hm .hm-scatter__body { font: 500 14px/1.4 var(--ay-sans-stack); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.app-container .hm .hm-scatter__seal { top: -18px; left: 2%; right: auto; bottom: auto; }
+.app-container[data-theme='brand-dark'] .hm .hm-scatter__item { border-color: var(--hm-butter); }
+@media (prefers-reduced-motion: no-preference) {
+  .app-container .hm:not(.is-paused) .hm-scatter__item { animation: hm-drift 9s var(--ease-in-out, ease-in-out) infinite alternate; }
+  .app-container .hm:not(.is-paused) .hm-scatter__item:nth-child(2n) { animation-duration: 11s; animation-delay: -3s; }
+  .app-container .hm:not(.is-paused) .hm-scatter__item:nth-child(3n) { animation-duration: 13s; animation-delay: -6s; }
+}
+@keyframes hm-drift { from { translate: 0 0; } to { translate: 0 -8px; } }
+@media (max-width: 767px) {
+  .app-container .hm .hm-scatter { aspect-ratio: 1 / .7; min-height: 0; }
+  .app-container .hm .hm-scatter__prod { padding: 6px; border-radius: 16px; }
+  .app-container .hm .hm-scatter__prod.is-5 { display: none; }
+  .app-container .hm .hm-scatter__ui { padding: 8px 10px; border-radius: 14px; }
+  .app-container .hm .hm-scatter__ui.is-evidence { width: 48%; top: 40%; }
+  .app-container .hm .hm-scatter__ui.is-post { width: 50%; }
+  .app-container .hm .hm-scatter__body { font-size: 13px; -webkit-line-clamp: 3; }
+  .app-container .hm .hm-scatter__note { display: none; }
+}
+/* the hero headline stays readable: a little smaller now it is a sentence */
+.app-container.app-container .hm h1.hm-display:not(.hm-display--personal) { font-size: clamp(56px, 6.6vw, 100px) !important; }
+@media (max-width: 767px) { .app-container.app-container .hm h1.hm-display:not(.hm-display--personal) { font-size: clamp(40px, 12vw, 52px) !important; } }
+.app-container .hm .hm-hero__copy .hm-lead { max-width: 40ch; }
+
+/* sound familiar: a real product for each need */
+.app-container .hm .hm-needs__ph.is-product { background: #fff; padding: 6px; box-sizing: border-box; }
+.app-container .hm .hm-needs__ph.is-product img { object-fit: contain; }
+
+/* how it works: real UI instead of photos */
+.app-container .hm .hm-step__ph.is-ui { display: grid; place-items: center; aspect-ratio: 4 / 4; padding: 14px; background: var(--hm-butter); color: var(--hm-ink); box-sizing: border-box; --ay-text: var(--hm-ink); --ay-text-2: var(--hm-ink); --ay-outline: var(--hm-ink); --ay-ink: var(--hm-ink); }
+.app-container .hm .hm-scatter__ui { --ay-text: var(--hm-ink); --ay-text-2: var(--hm-ink); --ay-outline: var(--hm-ink); --ay-ink: var(--hm-ink); }
+.app-container .hm .hm-stepui { display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 6px; width: 100%; }
+.app-container .hm .hm-stepui small { flex-basis: 100%; text-align: center; font: 700 12px/1.2 var(--ay-sans-stack); letter-spacing: .04em; text-transform: uppercase; }
+.app-container .hm .hm-stepui .ay-chip { pointer-events: none; min-height: 32px; font-size: 13px; }
+.app-container.app-container .hm .hm-stepui .ay-chip { height: 32px; }
+.app-container.app-container .hm .hm-stepui .ay-chip.is-on { background: var(--hm-ink) !important; color: var(--hm-butter) !important; }
+.app-container .hm .hm-stepui.is-evidence { flex-direction: column; align-items: stretch; gap: 10px; }
+.app-container .hm .hm-stepui.is-matches { flex-wrap: nowrap; }
+.app-container .hm .hm-stepui__prod { width: 32%; aspect-ratio: 1 / 1; padding: 6px; border: 1.5px solid var(--hm-ink); border-radius: 14px; background: #fff; box-sizing: border-box; }
+.app-container .hm .hm-stepui__prod:nth-child(2) { translate: 0 -10px; }
+.app-container .hm .hm-stepui__prod img { width: 100%; height: 100%; object-fit: contain; border-radius: 0 !important; }
+.app-container .hm .hm-stepui.is-decide { flex-direction: column; align-items: center; gap: 8px; }
+.app-container .hm .hm-stepui__btn { display: inline-flex; align-items: center; justify-content: center; min-width: 120px; min-height: 40px; padding: 0 18px; border: 1.5px solid var(--hm-ink); border-radius: 999px; background: var(--hm-pink); font: 700 15px/1 var(--ay-sans-stack); }
+.app-container .hm .hm-stepui__btn.is-quiet { background: transparent; }
+.app-container .hm .hm-step__text p { color: var(--ay-text) !important; }
+
+/* the one clear call to action, its own section near the end */
+.app-container .hm .hm-startsec .hm-start { margin-top: 0; }
+
+/* photo slots removed: the copy takes the width */
+.app-container .hm .hm-comm__grid.is-nophoto { grid-template-columns: minmax(0, 1fr); }
+.app-container .hm .hm-comm__grid.is-nophoto .hm-news { margin-top: 8px; }
+.app-container .hm .hm-invest__grid.is-nophoto { grid-template-columns: minmax(0, 1fr); }
