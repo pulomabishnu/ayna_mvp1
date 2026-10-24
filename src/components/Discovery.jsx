@@ -14,7 +14,7 @@ import './shop-page.css';
 // placeholder cards until both have arrived (`ready` below).
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct, isTeenProduct, useCatalogReady } from '../data/catalog.js';
 import { behaviorFrom, matchBadge } from '../utils/matchDisplay';
-import { sortByBestMatch, bestMatchNeedsQuiz } from '../utils/bestMatchSort.js';
+import { sortByBestMatch, bestMatchNeedsQuiz, shownMatchPercent } from '../utils/bestMatchSort.js';
 import { loadProductCatalog } from '../utils/productCatalog';
 import { scoreSearchMatch, correctedSearchQuery, useSearchReady } from '../utils/search/lazy.js';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
@@ -925,7 +925,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         // 'best' is also saved as-is when picked before she had a profile; once
         // she has one it sorts by match, until then it keeps the Featured order.
         const sortByShownMatch = (sortBy === 'default' || sortBy === 'best') && personalizationFilter && Boolean(hasQuizFrustrations || hasHealthImport);
-        const shownPct = sortByShownMatch ? new Map(list.map((it) => [it.id, matchBadge(getProductMatchDetailsForProduct(it, quizResults, healthProfile, matchOpts))?.percent ?? 0])) : null;
+        const shownPct = sortByShownMatch ? new Map(list.map((it) => [it.id, shownMatchPercent(getProductMatchDetailsForProduct(it, quizResults, healthProfile, matchOpts))])) : null;
 
         // Price sorts compare like with like: products first, then apps and services
         // (a free app or "$0-15/visit" used to lead "low to high").

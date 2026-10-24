@@ -1,3 +1,5 @@
+import { matchBadge } from './matchDisplay.js';
+
 // "Best match" sort, shared by the website Shop and the app Shop: highest
 // match % first (the same % the cards show), ties keep their incoming order
 // or fall to an optional tie break. A missing score counts as 0.
@@ -15,4 +17,12 @@ export function sortByBestMatch(list, scoreOf, tieBreak = null) {
 // one it keeps the Featured order and the Shop shows the quiz note instead.
 export function bestMatchNeedsQuiz(sortBy, hasProfile) {
     return sortBy === 'best' && !hasProfile;
+}
+
+// The percent a card shows for this product (v2 engine details, see
+// getProductMatchDetailsForProduct), or 0 when the card shows none (under
+// 50, excluded, no profile). Best match sorts by exactly this number on the
+// website Shop and the app Shop, so the order never contradicts the cards.
+export function shownMatchPercent(details) {
+    return matchBadge(details)?.percent ?? 0;
 }

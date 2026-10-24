@@ -7,7 +7,7 @@ import ProductCard from '../components/ProductCard.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
 import SuggestBox from '../../components/SuggestBox.jsx';
 import { sentenceCase } from '../../utils/sentenceCase.js';
-import { getPersonalizedProductIds, getProfileMatchPercentForProduct, productSearchText, MACRO_GROUPS, itemMatchesMacroGroup, CATEGORY_LABELS, isTeenProduct } from '../../data/products.js';
+import { getPersonalizedProductIds, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct, productSearchText, MACRO_GROUPS, itemMatchesMacroGroup, CATEGORY_LABELS, isTeenProduct } from '../../data/products.js';
 import { getVerificationLinks } from '../../utils/verificationLinks.js';
 import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
 import { scoreSearchMatch, correctedSearchQuery, searchArticles, analyzeSearch } from '../../utils/search/index.js';
@@ -16,7 +16,7 @@ import { fetchSearchSuggestions } from '../../utils/fetchSearchSuggestions.js';
 import { trackApp } from '../utils/appAnalytics.js';
 import { stableShopOrder, rankShopForProfile } from '../utils/shopOrder.js';
 import { hasQuizAnswers } from '../utils/personalReads.js';
-import { sortByBestMatch, bestMatchNeedsQuiz } from '../../utils/bestMatchSort.js';
+import { sortByBestMatch, bestMatchNeedsQuiz, shownMatchPercent } from '../../utils/bestMatchSort.js';
 import { useSheetDrag } from '../hooks/useSheetDrag.js';
 import usePersistentState from '../../hooks/usePersistentState.js';
 import { NeedStickers } from '../../components/shop/ShopBits.jsx';
@@ -356,12 +356,12 @@ export default function BrowseScreen({
   const bestNeedsQuiz = bestMatchNeedsQuiz(sortBy, canSortByMatch);
   const featuredOrder = sortBy === 'default' || bestNeedsQuiz;
   if (sortBy === 'best' && canSortByMatch) {
-    filtered = sortByBestMatch(filtered, (product) => getProfileMatchPercentForProduct(product, quizAnswers, null, matchOpts));
+    filtered = sortByBestMatch(filtered, (product) => shownMatchPercent(getProductMatchDetailsForProduct(product, quizAnswers, null, matchOpts)));
   }
   if (sortBy === 'default' && personalized && hasProfile && !searchTermRaw) {
     const matchScores = new Map(filtered.map((product) => [
       product.id,
-      getProfileMatchPercentForProduct(product, quizAnswers, null, matchOpts) ?? 0,
+      shownMatchPercent(getProductMatchDetailsForProduct(product, quizAnswers, null, matchOpts)),
     ]));
     filtered = [...filtered].sort((a, b) =>
       matchScores.get(b.id) - matchScores.get(a.id));

@@ -28,18 +28,16 @@ export function hasStatedLifeStage(quizAnswers) {
         || asStringArray(intake?.lifeStage).length > 0;
 }
 
-// Algorithm v2 (src/matching/v2.js) is off for everyone until it passes its
-// release gates and clinical review. To compare on one browser: ?match=v2
-// (remembered), ?match=v1 to go back.
+// Which matching engine computes the "NN% match". v2 (src/matching/v2.js:
+// evidence-graded fit, safety first) is the default everywhere: website,
+// app (Capacitor and /mobile-preview) and server routes, since Oct 24
+// (founder decision). ?match=v1 switches one browser back to the old engine
+// for comparison (remembered), ?match=v2 returns to v2.
 export function matchEngine() {
     try {
-        if (typeof window === 'undefined') return 'v1';
-        // The native app keeps its own engine (app changes ship separately).
-        if (window.Capacitor?.isNativePlatform?.() || /^\/mobile-preview/.test(window.location.pathname)) return 'v1';
+        if (typeof window === 'undefined') return 'v2';
         const q = new URLSearchParams(window.location.search).get('match');
         if (q === 'v2' || q === 'v1') { try { localStorage.setItem('ayna_match_engine', q); } catch { /* private mode */ } return q; }
-        // v2 (evidence-graded, research-backed) is the default on the website
-        // since Oct 17; ?match=v1 switches a browser back to the old engine.
         return localStorage.getItem('ayna_match_engine') === 'v1' ? 'v1' : 'v2';
     } catch { return 'v2'; }
 }

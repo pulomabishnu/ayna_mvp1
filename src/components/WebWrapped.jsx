@@ -17,14 +17,14 @@ function Photo({ product }) {
   return <ProductTileImage product={product} imgStyle={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', padding: '12%' }} letterNode={<ProductImageFallback style={{ position: 'absolute', inset: 0 }} />} />;
 }
 
-export default function WebWrapped({ products = [], quizResults, onClose, onBrowse, onBack, startAtEnd = false, primaryLabel = 'Open my ecosystem →', onPrimary }) {
+export default function WebWrapped({ products = [], quizResults, healthProfile = null, matchOpts = undefined, onClose, onBrowse, onBack, startAtEnd = false, primaryLabel = 'Open my ecosystem →', onPrimary }) {
   const picks = products.filter(Boolean);
   const top = picks.slice(0, 4);
   const first = top[0];
   const intake = quizResults?.fullHealthIntake || null;
   const persona = buildPersona(intake);
   const areas = [...new Set(picks.map((p) => resolveEcosystemProductArea(p, ECOSYSTEM_AREAS)?.label).filter(Boolean))];
-  const raw = first && quizResults ? getProfileMatchPercentForProduct(first, quizResults) : null;
+  const raw = first && quizResults ? getProfileMatchPercentForProduct(first, quizResults, healthProfile, matchOpts) : null;
   const firstMatch = Number.isFinite(raw) && raw > 0 ? Math.round(raw) : null;
   const goals = (intake?.supportSelections || []).filter((s) => s !== 'Nothing right now').length;
   const slides = picks.length ? ['intro', ...(areas.length ? ['focus'] : []), 'match', ...(persona ? ['persona'] : []), 'lineup', 'finish'] : ['empty'];
