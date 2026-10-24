@@ -14,6 +14,7 @@ import { trackToday } from '../../health/todayAnalytics.js';
 import { localAt, RUNDOWN_HOUR, scheduleTodayReminder } from '../../health/todayReminders.js';
 import { rememberedOnDevice, withoutRemembered } from '../../health/remembered.js';
 import { readRoutinePrefs } from '../../health/routines.js';
+import { onboardingDoneAt, onboardingJustFinished } from '../../health/onboardingSignal.js';
 import './rundown.css';
 
 const REMIND_TEXT = {
@@ -104,7 +105,11 @@ export default function Rundown({
       const mem = readRundownMemory();
       let reduced = false;
       try { reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { reduced = false; }
-      const firstTime = !Object.keys(mem.shown || {}).length && !Object.keys(t.log || {}).some((d) => d < today);
+      // Never right after setup: the onboarding signal when this device has one
+      // (set on "See my Today"), else the old guess from empty history.
+      const firstTime = onboardingDoneAt()
+        ? onboardingJustFinished({ hours: 12 })
+        : !Object.keys(mem.shown || {}).length && !Object.keys(t.log || {}).some((d) => d < today);
       const decision = autoLaunchDecision({
         now: new Date(), today, surface: variant, hasContent, memory: mem, reducedMotion: reduced,
         externalOpen: openedExternally() || urlIsDeepLink(), firstTime,
