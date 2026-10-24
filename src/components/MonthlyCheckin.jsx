@@ -165,10 +165,34 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
     const satisfaction = answers.howIsRoutine;
     const focusAreas = answers.focusAreas || [];
     const tips = [];
-    if (focusAreas.includes('More cramps')) tips.push('Magnesium glycinate may help. It can reduce cramps.');
-    if (focusAreas.includes('Heavier flow')) tips.push('Iron-rich foods or a supplement can help if you’re losing more blood than usual.');
-    if (focusAreas.includes('UTIs')) tips.push('Wisp and Planned Parenthood Direct offer same-day UTI treatment.');
-    if (focusAreas.includes('Mood or sleep')) tips.push('Tracking your cycle can help.');
+    // Every tip is worded to its source (founder rule, Oct 24: .gov for health
+    // claims, the brand's own site for what a brand offers). Checked Oct 24 2026.
+    // Cramps: MedlinePlus "Painful menstrual periods"
+    //   https://medlineplus.gov/ency/article/003150.htm ("Apply a heating pad to
+    //   your lower belly area, below your belly button"; "Try vitamin B6, calcium,
+    //   and magnesium supplements, especially if your pain is from PMS").
+    //   Was "Magnesium glycinate may help. It can reduce cramps.": no .gov source
+    //   says that, and the 2016 Cochrane review found no high-quality evidence for
+    //   any supplement for period pain.
+    if (focusAreas.includes('More cramps')) tips.push('Try a heating pad on your lower belly, below your belly button. If your cramps come with PMS, you could also try vitamin B6, calcium or magnesium supplements.');
+    // Heavier flow: womenshealth.gov "Iron-deficiency anemia"
+    //   https://womenshealth.gov/a-z-topics/iron-deficiency-anemia ("heavy bleeding
+    //   during their periods"; "Good sources of iron include meat, fish, eggs,
+    //   beans, peas, and fortified foods"; "Do not take any iron pills without
+    //   first talking to your doctor or nurse").
+    if (focusAreas.includes('Heavier flow')) tips.push('Heavy periods can lead to low iron. Iron is in meat, fish, eggs, beans, peas and fortified foods. Talk to your doctor or nurse before taking iron pills.');
+    // UTIs: worded as each brand's own offer, from its own site.
+    //   Wisp: https://hellowisp.com/products/uti-antibiotics ("If prescribed,
+    //   treatment will be sent same-day to your local pharmacy").
+    //   Planned Parenthood Direct: https://www.plannedparenthood.org/get-care/ppdirect/ppd-app-one
+    //   ("UTI treatment sent to the pharmacy of your choice"; no same-day claim).
+    if (focusAreas.includes('UTIs')) tips.push('Wisp says that after an online visit, a prescribed UTI treatment is sent to your local pharmacy the same day. The Planned Parenthood Direct app says it sends UTI treatment to the pharmacy you choose.');
+    // Mood or sleep: womenshealth.gov "Premenstrual syndrome (PMS)"
+    //   https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome ("Write down
+    //   your symptoms each day on a calendar or with an app on your phone";
+    //   "Take this information with you when you see your doctor").
+    //   Was "Tracking your cycle can help." (no claim of what it helps).
+    if (focusAreas.includes('Mood or sleep')) tips.push('Write down your symptoms each day for a few months, on a calendar or in an app, and take it with you when you see your doctor.');
     if (focusAreas.includes('Different period product') || focusAreas.includes('Different supplement') || focusAreas.includes('Different app')) {
       tips.push('Your picks haven’t changed for this. Browse to compare other options.');
     }
