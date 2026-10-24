@@ -128,3 +128,37 @@
 /* P1-22: the header keeps two actions (your profile, notifications); Friends
    moved into your own profile, beside Edit profile and Change photo. */
 .ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-profile-owner { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* ---------- Rollout (Oct 24): the approved card language ----------
+   Same as the website and the homepage/Library: 1.5px outlines with the hard
+   offset shadow on tappable cards, kind labels as folder tabs ON the card
+   edge (INSPO rule 9), 12px between cards and 20px radius with 14-16px
+   inside (rule 8), chip rows on one scrolling line with a fade (rule 6),
+   section titles left with their action right (rule 7). The app's
+   "primary buttons only" shadow rule (app-direction.css section 1) gives
+   way here on purpose: rule 8 puts the hard shadow on tappable cards. Likes and who-liked
+   stay visible; views stay private to the author. Header stays the shared
+   app tab header so every tab keeps the same top. */
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen { --amn-shadow: var(--d-shadow, 3px 3px 0 #3e2723); }
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-note-slot { gap: 12px; margin-bottom: 12px; }
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-note { margin-bottom: 12px; padding: 14px 16px 4px; border-radius: 20px; box-shadow: var(--amn-shadow) !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-note:is(.is-question, .is-review),
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-note-slot > .am-note:is(.is-question, .is-review) { margin-top: 28px; border-top-left-radius: 6px; }
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-ear { left: -1.5px; top: -1.5px; bottom: auto; transform: translateY(-100%); display: inline-flex; align-items: center; height: 26px; padding: 0 12px; border-radius: 12px 12px 0 0; font: 600 13px/1 var(--ay-font-ui); box-sizing: border-box; }
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-ear.is-review { background: #f7badd; }
+/* the member quote: espresso feature with its label as a pink tab on the edge */
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-quote { position: relative; margin-top: 28px; padding: 16px; border-radius: 6px 20px 20px 20px; }
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-quote-label { position: absolute; left: 0; top: 0; transform: translateY(-100%) rotate(0deg); display: inline-flex; align-items: center; height: 26px; padding: 0 12px; border: 0; border-radius: 12px 12px 0 0; background: #f7badd; color: #3e2723; font: 600 13px/1 var(--ay-font-ui); }
+/* ways to start: tappable tiles carry the shadow; room below so it isn't clipped */
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-prompts { gap: 8px; padding-bottom: 6px; }
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-prompts .am-prompt { border-radius: 20px; box-shadow: var(--amn-shadow) !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-prompt:active { transform: translate(2px, 2px); box-shadow: none !important; }
+/* topic chips: one line, fade at the end (rule 6) */
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-pods { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); }
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-pods > :last-child { margin-right: 28px; }
+/* playlists: each row is an outlined, tappable card, 12px apart */
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-playlist-rows { display: grid; gap: 12px; margin: 0; padding: 0 0 4px; list-style: none; }
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-playlist-row { border: 1.5px solid var(--d-ink) !important; border-radius: 20px !important; background: var(--d-page) !important; box-shadow: var(--amn-shadow) !important; }
+@media (prefers-reduced-motion: reduce) {
+  .ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-prompt:active { transform: none; }
+}
