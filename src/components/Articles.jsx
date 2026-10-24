@@ -313,6 +313,9 @@ function TelehealthSuggestions({ articleId, onOpenProduct }) {
   );
 }
 
+// Each read may also carry an optional `video` ({ provider: 'youtube' | 'vimeo',
+// id, title, credit, poster? }), see src/utils/readVideo.js. None are set yet:
+// add one only for a real video from a source you've checked.
 const ARTICLES = [
   {
     id: 'intimate-wash',
@@ -957,6 +960,7 @@ const DESIGNED_READS = {
 const FEATURED_READS = ['postpartum-stretch-marks', 'genitourinary-syndrome-of-menopause'].map((id) => ({ id, ...READ_CREDITS[id] }));
 const FEATURED_READ = FEATURED_READS[0];
 import ReadCover from './library/ReadCover.jsx';
+import ReadVideo from './library/ReadVideo.jsx';
 import { textOf, minutesFor } from './library/readTime.js';
 import PostpartumStretchMarksArticle from './library/PostpartumStretchMarksArticle.jsx';
 import VaginalAtrophyGsmArticle from './library/VaginalAtrophyGsmArticle.jsx';
@@ -1329,6 +1333,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
         <div className="lb-wrap">
           <article key={selected.id} className="lb-article" aria-label={selected.title}>
             <div className="lb-prose" ref={bodyRef}>
+              <ReadVideo video={selected.video} />
               {withHeadings(selected.body)}
             </div>
             <TelehealthSuggestions articleId={selected.id} onOpenProduct={onOpenProduct} />
