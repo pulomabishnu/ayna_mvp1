@@ -52,6 +52,17 @@ export default function EcosystemViewTabs({ dashboard, onHero = false, children 
     choose(TABS[next][0], { focus: true });
   };
 
+  // No dashboard passed: My ecosystem under You (Today is its own tab now), so
+  // the page is the products view alone, under its awning, with no switch.
+  if (!dashboard) {
+    return (
+      <>
+        <div className="eco-awning" aria-hidden="true" />
+        <div className="ay-ecoview2__panel">{children}</div>
+      </>
+    );
+  }
+
   return (
     <>
       {/* Over the Products hero the strip takes the hero's espresso, so the

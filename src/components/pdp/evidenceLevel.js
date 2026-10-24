@@ -10,7 +10,8 @@ const RESEARCH_BY_PRODUCT = NEED_MAP_RESEARCH.reduce((m, r) => { if (!m.has(r.pr
 export const LEVEL_WORDS = ['', 'Limited evidence', 'Some evidence', 'Strong evidence'];
 
 export function gradedResearch(productId) {
-  return (RESEARCH_BY_PRODUCT.get(productId) || []).slice().sort((x, y) => (x.strength === 'none') - (y.strength === 'none') || x.grade.localeCompare(y.grade));
+  // Only rows graded from a .gov page; draft_unverified rows (grade null) are not shown as evidence.
+  return (RESEARCH_BY_PRODUCT.get(productId) || []).filter((r) => r.grade).sort((x, y) => (x.strength === 'none') - (y.strength === 'none') || x.grade.localeCompare(y.grade));
 }
 
 export function evidenceLevel(product) {

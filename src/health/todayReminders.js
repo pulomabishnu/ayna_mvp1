@@ -10,6 +10,7 @@ import { fetchWithTimeout } from '../utils/network.js';
 
 export const TONIGHT_HOUR = 20; // 8pm her time
 export const FOLLOW_UP_HOUR = 9; // 9am on the due day
+export const RUNDOWN_HOUR = 8; // 8am: "Your daily rundown is ready."
 
 /** Local time `hour`:00 on `day` ('YYYY-MM-DD'), as an ISO instant. */
 export function localAt(day, hour, minute = 0) {

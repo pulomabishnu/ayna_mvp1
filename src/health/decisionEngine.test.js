@@ -3,7 +3,7 @@ import { EMPTY } from '../mobile/data/intakeModel.js';
 import { buildUserProfile } from '../matching/userProfile.js';
 import { createTry, recordOutcome } from './outcomes.js';
 import {
-  decide, activeNeeds, needsWindow, markShown, markInteracted, dismiss, addDays, daysBetween,
+  decide, activeNeeds, needsWindow, patternBeforePregnancy, markShown, markInteracted, dismiss, addDays, daysBetween,
   MAX_ITEMS, NOTHING_TODAY, OUTPUTS, CLINICAL_REVIEW_REQUIRED, RANKING_HEURISTICS, TIERS,
 } from './decisionEngine.js';
 import {
@@ -141,6 +141,16 @@ describe('interventions', () => {
     expect(productSafety(HEAT[1], ctx)).toMatchObject({ ok: false, code: 'product_label_not_checked' });
     expect(productSafety(HEAT[0], safetyContextFrom(profile(CLEAR)))).toMatchObject({ ok: true });
     expect(productSafety(HEAT[0], safetyContextFrom(profile({ ...CLEAR, diagnosisSelections: ['Diabetes'] })))).toMatchObject({ ok: false, code: 'product_label_condition' });
+  });
+
+  it('ThermaCare label: typed poor circulation or rheumatoid arthritis holds it back; other autoimmune conditions do not', () => {
+    const typed = (t) => safetyContextFrom(profile({ ...CLEAR, conditionOtherText: t }));
+    expect(productSafety(HEAT[0], typed('poor circulation'))).toMatchObject({ ok: false, code: 'product_label_condition' });
+    expect(productSafety(HEAT[0], typed("Raynaud's"))).toMatchObject({ ok: false, code: 'product_label_condition' });
+    expect(productSafety(HEAT[0], typed('rheumatoid arthritis'))).toMatchObject({ ok: false, code: 'product_label_condition' });
+    expect(typed('rheumatoid arthritis').conditionIds.has('autoimmune')).toBe(true);
+    expect(productSafety(HEAT[0], typed('lupus'))).toMatchObject({ ok: true });
+    expect(productSafety(HEAT[0], safetyContextFrom(profile({ ...CLEAR, diagnosisSelections: ['Heart disease'] })))).toMatchObject({ ok: false, code: 'product_label_condition' });
   });
 
   it('heat is fine outside pregnancy; pregnancy alone does not block movement', () => {
@@ -331,6 +341,14 @@ describe('rule 3: immediate red-flag overrides', () => {
       expect(decide({ today: TODAY, redFlags: [id] }).items[0]).toMatchObject({ id: `care:${id}`, level: 'urgent' });
     }
   });
+  it('postpartum hemorrhage follows CDC Hear Her: warning signs apply in the year after delivery, not 12 weeks', async () => {
+    const flags = (await import('../data/matching/redFlags.research.json')).default;
+    const pph = flags.find((f) => f.id === 'rf.postpartum_hemorrhage');
+    expect(pph.condition).toMatch(/year after birth/);
+    expect(pph.condition).not.toMatch(/12 weeks/);
+    expect(JSON.stringify(pph.ayna_policy_signs)).not.toMatch(/12 weeks/);
+    expect(pph.source_url).toMatch(/cdc\.gov\/hearher/);
+  });
   it('every red flag cites a .gov page', () => {
     const d = decide({ today: TODAY, redFlags: ['rf.ectopic_rupture', 'rf.ectopic_suspected', 'rf.postpartum_hemorrhage', 'rf.preeclampsia', 'rf.toxic_shock_severe', 'rf.hyperemesis'] });
     for (const it of d.items.filter((i) => i.basis?.kind === 'red_flag')) {
@@ -481,4 +499,23 @@ describe('interest is not history (section 39)', () => {
 it('date helpers come from dailyLog', () => {
   expect(addDays('2026-10-24', 30)).toBe('2026-11-23');
   expect(daysBetween('2026-10-24', '2026-11-23')).toBe(30);
+});
+
+describe('cycle patterns and pregnancy', () => {
+  const PREG = buildUserProfile({ ...EMPTY, ...CLEAR, lifeStageSelections: ['I am pregnant'], lifeStage: 'I am pregnant', pregnancyTrimester: 'Second trimester', supportSelections: [] });
+  const pat = { ...sleepPattern, observed: { from: '2026-01-05', to: '2026-04-02' } };
+  it('pregnancy start unknown: no cycle pattern shows', () => {
+    const d = decide({ today: TODAY, logs: [fullLog(TODAY)], patterns: [pat], profile: PREG });
+    expect(d.items.some((i) => i.type === 'insight')).toBe(false);
+    expect(d.debug.removed).toEqual([expect.objectContaining({ id: 'insight:sleep:premenstrual', code: 'pregnancy_pattern' })]);
+  });
+  it('a pattern observed before the pregnancy started is not shown', () => {
+    const d = decide({ today: TODAY, logs: [fullLog(TODAY)], patterns: [pat], profile: PREG, pregnancyStartDay: '2026-05-01' });
+    expect(d.items.some((i) => i.type === 'insight')).toBe(false);
+  });
+  it('one observed after the start may show; not pregnant: unchanged', () => {
+    const later = { ...pat, observed: { from: '2026-06-01', to: '2026-10-01' } };
+    expect(patternBeforePregnancy(later, { pregnant: true, pregnancyStartDay: '2026-05-01' })).toBe(false);
+    expect(decide({ today: TODAY, logs: [fullLog(TODAY)], patterns: [pat], profile: profile(CLEAR) }).items[0].type).toBe('insight');
+  });
 });

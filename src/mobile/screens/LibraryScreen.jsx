@@ -43,7 +43,7 @@ function FeaturedRead({ article, label, progress, onOpen }) {
   </section>;
 }
 
-export default function LibraryScreen({ articles = [], quizAnswers = null, lastQuizAnswers = null, readProgress = {}, onOpenArticle, onOpenSaved, onStartQuiz }) {
+export default function LibraryScreen({ articles = [], quizAnswers = null, lastQuizAnswers = null, readProgress = {}, onOpenArticle, onOpenSaved, onStartQuiz, embedded = false }) {
   const [query, setQuery] = useState('');
   const [topic, setTopic] = useState('all');
   const q = query.trim().toLowerCase();
@@ -86,9 +86,10 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
   }
 
   return <main className="ay-lib al">
-    <MobileHeader onOpenSaved={onOpenSaved} title="Library" titleFor="ay-lib-title" />
+    {!embedded && <MobileHeader onOpenSaved={onOpenSaved} title="Library" titleFor="ay-lib-title" />}
     <header className="al-top ay-lib-head">
-      <h1 id="ay-lib-title" className="al-top__title">Library</h1>
+      {/* Inside Explore the Library is the Resources section; Explore owns the page title. */}
+      {embedded ? <h2 id="ay-lib-title" className="al-top__title">Resources</h2> : <h1 id="ay-lib-title" className="al-top__title">Library</h1>}
       <p className="al-top__lede">Plain-language reads, each one checked against clinical sources.</p>
       <SearchBar placeholder="Search reads" ariaLabel="Search reads" value={query} onChange={(e) => setQuery(e.target.value)} />
     </header>

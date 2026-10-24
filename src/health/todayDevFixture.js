@@ -55,5 +55,14 @@ export function makeTodayFixture(scenario = todayFixtureOn() || 'today', today =
     supportSelections: ['Cramps or period pain', 'Trouble sleeping'], diagnosisSelections: ['None that I know of'],
     allergyStatus: 'No', takesCurrent: 'No', safetyConcern: 'No',
   };
-  return { tag: FIXTURE_TAG, log, tries, intake, store: null };
+  // Connected-data sample (sleep and HRV) so the rundown's data -> action cards can be checked.
+  const healthRows = [];
+  for (let i = 1; i <= 20; i += 1) {
+    const d = plus(today, -i);
+    healthRows.push({ metric: 'sleep_minutes', day: d, value: 420 + ((i % 3) - 1) * 12, source: 'apple_health' });
+    healthRows.push({ metric: 'hrv_rmssd_ms', day: d, value: 52 + ((i % 3) - 1) * 3, source: 'apple_health' });
+  }
+  healthRows.push({ metric: 'sleep_minutes', day: today, value: 334, source: 'apple_health' });
+  healthRows.push({ metric: 'hrv_rmssd_ms', day: today, value: 39, source: 'apple_health' });
+  return { tag: FIXTURE_TAG, log, tries, intake, healthRows, store: null };
 }

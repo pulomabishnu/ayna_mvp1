@@ -11,7 +11,8 @@
  *   placeholders like "N/A (Software)" are left out because they say nothing.
  */
 import { splitSentences } from './sentences.js';
-import { isCredible } from './credible.js';
+import { isCredible, isMedicalNonGov } from './credible.js';
+import { isPaperLink } from '../../utils/govSources.js';
 import { getVerificationLinks, hostLabel } from '../../utils/verificationLinks.js';
 import { humanPublisher } from './glance.js';
 import { normalizeFdaStatus } from '../../utils/fdaStatus.js';
@@ -77,12 +78,15 @@ export function linkKind(url, brand) {
   const slug = String(brand || '').toLowerCase().replace(/[^a-z0-9]/g, '');
   if (!host) return { tier: 'other', label: 'Link' };
   if (isSearch(url)) return { tier: 'other', label: FORUM.test(host) ? 'Search of community posts' : 'Search page, not a single source' };
+  // Founder rule (Oct 24): only .gov health pages count as checked sources.
   if (isCredible(url)) return { tier: 'credible', label: '' };
+  if (isPaperLink(url)) return { tier: 'paper', label: 'Study record, not yet checked by ayna' };
   if (RETAIL.test(host)) return { tier: 'retail', label: 'Retailer listing' };
   if (slug.length >= 3 && host.replace(/[^a-z0-9]/g, '').includes(slug)) return { tier: 'brand', label: 'Brand’s own page, not independent' };
   if (FORUM.test(host)) return { tier: 'community', label: 'Community post' };
   if (LEGAL.test(host)) return { tier: 'legal', label: 'Court record or legal news' };
   if (PRESS.test(host)) return { tier: 'press', label: 'Magazine or health site, not peer reviewed' };
+  if (isMedicalNonGov(url)) return { tier: 'nongov', label: 'Not a .gov source, not checked by ayna' };
   return { tier: 'other', label: 'Not peer reviewed' };
 }
 
@@ -213,7 +217,7 @@ export function buildEvidence(product, { heroLine = '', glance = null } = {}) {
   }));
   const studiesAll = collectLinks([...getVerificationLinks(product, 'scientific'), ...(product.scientificCitations || []), ...(product.researchScienceSources || [])], brand);
   // Ingredient sources with a negative finding are pulled up too.
-  const ingNegatives = ingredients.flatMap((i) => i.links).filter((l) => l.negative && !studiesAll.some((s) => s.url === l.url));
+  const ingNegatives = ingredients.flatMap((i) => i.links).filter((l) => l.negative && l.kind.tier === 'credible' && !studiesAll.some((s) => s.url === l.url));
   const studies = studiesAll.filter((l) => l.kind.tier === 'credible');
   const sciAi = clean(product.verificationLinks?.scientific?.aiSummary);
   const research = {

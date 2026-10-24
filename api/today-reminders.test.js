@@ -62,3 +62,14 @@ describe('today reminders', () => {
     expect(updates.find((u) => u.id === 'b')).toMatchObject({ status: 'skipped', skip_reason: 'daily_cap' });
   });
 });
+
+describe('rundown reminder', () => {
+  it('private copy, and it waits rather than being dropped', async () => {
+    const { RUNDOWN_PUSH_MESSAGE, messageFor, KINDS, planDelivery: plan } = await import('./today-reminders.js');
+    expect(KINDS.has('rundown')).toBe(true);
+    expect(RUNDOWN_PUSH_MESSAGE.body).toBe('Your daily rundown is ready.');
+    expect(messageFor('rundown')).toBe(RUNDOWN_PUSH_MESSAGE);
+    expect(messageFor('tonight').body).toBe('Your ayna check-in is ready');
+    expect(plan({ kind: 'rundown', tz: 'America/New_York' }, {}, new Set(['2026-10-24']), Date.parse('2026-10-25T00:00:00Z')).action).toBe('defer');
+  });
+});

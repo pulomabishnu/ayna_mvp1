@@ -2,7 +2,7 @@
  * /api/today-reminders: "Remind me tonight" and the follow-up nudge on the
  * day a try is due (Phase 1, step 7; master prompt sections 95 to 97).
  *
- *   POST  (her Supabase JWT)   { kind: 'tonight' | 'follow_up', sendAt: ISO, tz: IANA }
+ *   POST  (her Supabase JWT)   { kind: 'tonight' | 'follow_up' | 'rundown', sendAt: ISO, tz: IANA }
  *         schedules one nudge. Nothing about what it is for is sent or stored.
  *   GET/POST with Authorization: Bearer $CRON_SECRET (Vercel cron, ?sweep=1)
  *         sends what is due through APNs (api/_apns.js).
@@ -20,8 +20,11 @@ import { createClient } from '@supabase/supabase-js';
 import { verifyUser } from './_usageLimit.js';
 import { apnsConfigured, pushToUser } from './_apns.js';
 
-export const KINDS = new Set(['tonight', 'follow_up']);
+export const KINDS = new Set(['tonight', 'follow_up', 'rundown']);
 export const PUSH_MESSAGE = Object.freeze({ title: 'ayna', body: 'Your ayna check-in is ready', data: { route: 'today' } });
+// UX spec 23: private wording, nothing about her health on the lock screen.
+export const RUNDOWN_PUSH_MESSAGE = Object.freeze({ title: 'ayna', body: 'Your daily rundown is ready.', data: { route: 'today' } });
+export const messageFor = (kind) => (kind === 'rundown' ? RUNDOWN_PUSH_MESSAGE : PUSH_MESSAGE);
 const MAX_AHEAD_MS = 120 * 86400000;
 const MAX_SCHEDULED = 30;
 const PAGE = 300;
@@ -72,7 +75,8 @@ export function planDelivery(row, prefs = {}, sentDays = new Set(), now = Date.n
     if (capped) return { action: 'skip', reason: 'daily_cap' };
     return { action: 'send' };
   }
-  // A follow-up can wait: try again in an hour (quiet hours) or tomorrow (cap).
+  // A follow-up or a morning rundown can wait: try again in an hour (quiet
+  // hours) or tomorrow (cap).
   if (quiet) return { action: 'defer', until: new Date(now + 3600000).toISOString() };
   if (capped) return { action: 'defer', until: new Date(now + 86400000).toISOString() };
   return { action: 'send' };
@@ -144,7 +148,7 @@ export async function sweep(admin, { now = Date.now(), push = pushToUser } = {})
       continue;
     }
     let result = { sent: 0, devices: 0 };
-    try { result = await push(admin, row.user_id, PUSH_MESSAGE); } catch { result = { sent: 0, devices: -1 }; }
+    try { result = await push(admin, row.user_id, messageFor(row.kind)); } catch { result = { sent: 0, devices: -1 }; }
     if (result.sent > 0) {
       await admin.from('today_reminders').update({ status: 'sent', sent_at: new Date(now).toISOString() }).eq('id', row.id);
       sentDays.get(row.user_id)?.add(localParts(now, validTz(row.tz) ? row.tz : 'America/New_York').day);

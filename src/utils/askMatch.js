@@ -16,7 +16,10 @@ const MATCH_INTENT = [
   /\bhow\s+(?:well\s+)?(?:does|do|would|will)\b.+\b(?:match|fit)\s+me\b/i,
   /\b(?:is|are)\b.+\b(?:a\s+)?good\s+(?:match|fit)\s+for\s+me\b/i,
   /\bwhy\b.+\b(?:match|matched|matches)\b/i,
+  /\b(?:my\s+)?(?:top|best)\s+match\b/i,
 ];
+
+const TOP_MATCH = /\b(?:top|best)\s+match\b/i;
 
 const FILLER = /\b(what(?:'|’)?s|what|is|are|my|me|the|a|an|for|with|on|how|well|does|do|would|will|match(?:es|ed)?|score|percent|per|cent|fit|good|and|why|it|this|that|tell|show|please|ayna|to|of)\b|[%?!.,"“”]/gi;
 
@@ -45,7 +48,16 @@ const nameOf = (p) => String(p?.name || p?.title || 'This product').trim();
 export function answerMatchQuestion(text, ctx) {
   if (!isMatchQuestion(text)) return null;
   const { catalog = [], quizAnswers = null, healthProfile = null, matchOpts, categoryLabels = {}, getDetails, focusProduct = null } = ctx || {};
-  const query = productQueryFrom(text);
+  const query = TOP_MATCH.test(text) ? '' : productQueryFrom(text);
+  // "Explain my top match": her highest match in the catalog, from the same engine.
+  if (TOP_MATCH.test(text) && quizAnswers && typeof getDetails === 'function') {
+    let top = null;
+    for (const p of catalog) {
+      const d = getDetails(p, quizAnswers, healthProfile, matchOpts);
+      if (d?.matchStatus === 'scored' && d.eligible !== false && Number.isFinite(d.percent) && (!top || d.percent > top.percent)) top = { p, percent: d.percent };
+    }
+    if (top) return answerMatchQuestion(`why is this matched to me`, { ...ctx, focusProduct: top.p });
+  }
   const id = query ? findConfidentProductMatch(query, catalog, null, categoryLabels) : undefined;
   const product = (id && catalog.find((p) => String(p.id) === String(id))) || (!query ? focusProduct : null);
 
@@ -60,7 +72,8 @@ export function answerMatchQuestion(text, ctx) {
   }
 
   const name = nameOf(product);
-  const open = [{ type: 'open_product', productId: String(product.id) }];
+  // Chips need a label (askFollowUps.chipsFor drops unlabelled ones).
+  const open = [{ type: 'open_product', productId: String(product.id), label: 'See full match details' }];
   if (!quizAnswers || typeof getDetails !== 'function') {
     return { productId: String(product.id), followUps: open, answer: `I can’t give you a match for **${name}** yet. Answer a few questions about your needs in your profile and I’ll show your match and why.` };
   }
@@ -99,9 +112,9 @@ export function answerMatchQuestion(text, ctx) {
   const notes = confidenceNotes(details, product);
   const parts = [
     head,
-    why.reasons.length ? `Why:\n${list(why.reasons.slice(0, 4))}` : '',
-    why.basedOn.length ? `Based on: ${why.basedOn.slice(0, 5).join(', ')}.` : '',
-    notes.length ? `Worth knowing:\n${list(notes.slice(0, 3))}` : '',
+    why.reasons.length ? `**Why**\n${why.reasons.slice(0, 4).map((r) => `- ✓ ${r}`).join('\n')}` : '',
+    notes.length ? `**Worth checking**\n${notes.slice(0, 3).map((n) => `- △ ${n}`).join('\n')}` : '',
+    why.basedOn.length ? `**What ayna used:** ${why.basedOn.slice(0, 5).join(', ')}.` : '',
     why.hint ? `${why.hint}.` : '',
     'The match is how well it fits what you’ve told ayna, not a medical judgement.',
   ];

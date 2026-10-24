@@ -67,3 +67,11 @@
 
 /* The log card inside Today follows the dashboard ink (light and dark). */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__log :is(.ay-checkin__takeaway, .ay-checkin__label) { color: var(--x-ink) !important; }
+
+/* Quick answers kept on this device, with a one-tap save to her profile. */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__save { display: grid; gap: 0; border: 1px solid var(--x-hair); border-radius: 20px; min-width: 0; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__saverow { display: grid; gap: 6px; padding: 14px 18px !important; border-top: 1px solid var(--x-hair); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__saverow:first-child { border-top: 0; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__saverow > p { font: 500 calc(14px * var(--x-scale))/1.45 var(--x-sans) !important; color: var(--x-ink) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__save > .ay-today__note { padding: 12px 18px !important; }
+@media (min-width: 900px) { html body .app-container .ay-wh.ay-wh .ay-today__save { grid-column: 1; } }

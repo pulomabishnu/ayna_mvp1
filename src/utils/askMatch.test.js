@@ -28,9 +28,9 @@ describe('answerMatchQuestion', () => {
     const out = answerMatchQuestion(`what's my % match for ${p.name}`, ctx());
     expect(out.productId).toBe(String(p.id));
     expect(out.answer).toContain(`${d.percent}% match`);
-    expect(out.answer).toContain('Why:');
+    expect(out.answer).toContain('**Why**');
     expect(out.answer).not.toMatch(/—/);
-    expect(out.followUps).toEqual([{ type: 'open_product', productId: String(p.id) }]);
+    expect(out.followUps).toEqual([{ type: 'open_product', productId: String(p.id), label: 'See full match details' }]);
   });
 
   it('no profile: asks for the profile, never invents a number', () => {
@@ -54,5 +54,14 @@ describe('answerMatchQuestion', () => {
 
   it('strips question words', () => {
     expect(productQueryFrom("What's my % match for the Thinx Super?")).toBe('Thinx Super');
+  });
+});
+
+describe('top match', () => {
+  it('explains her highest match from the engine', () => {
+    const out = answerMatchQuestion('Explain my top match', ctx());
+    const best = Math.max(...ALL_PRODUCTS.map((p) => getProductMatchDetailsForProduct(p, q)).filter((d) => d.matchStatus === 'scored' && d.eligible !== false).map((d) => d.percent));
+    expect(out.answer).toContain(`${best}% match`);
+    expect(out.followUps[0].label).toBe('See full match details');
   });
 });

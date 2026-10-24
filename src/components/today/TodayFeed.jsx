@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useToday } from '../../health/useToday.js';
+import { STEP_FOR_FIELD } from '../../health/todayProfilePatch.js';
 import { DailyCheckinCard } from '../you/DailyCheckin.jsx';
 import { getProductById } from '../../data/catalog.js';
 import { todayFixtureOn, makeTodayFixture } from '../../health/todayDevFixture.js';
+import Rundown from '../rundown/Rundown.jsx';
 import NotUsefulMenu from './NotUsefulMenu.jsx';
 import ProfileAskCard from './ProfileAskCard.jsx';
 import '../../styles/today-feed.css';
@@ -94,7 +96,7 @@ function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checki
 
   const answer = (a) => {
     const [, field, value] = a.id.split(':');
-    if (value === 'add' || (value === 'yes' && ['allergies', 'medications', 'conditions'].includes(field))) { t.opened(item); onEditAnswers?.(field); return; }
+    if (value === 'add' || (value === 'yes' && ['allergies', 'medications', 'conditions'].includes(field))) { t.opened(item); onEditAnswers?.(STEP_FOR_FIELD[field] || field); return; }
     t.answerSafety(item, field, value);
   };
 
@@ -148,10 +150,12 @@ function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checki
 /**
  * @param {{ variant: 'app'|'web', userId, intake, healthRows, cycle, hormonalBC, products, onOpenProduct, onAsk, onEditAnswers, onFindCare }} props
  */
-export default function TodayFeed({ variant = 'app', userId = null, intake = null, healthRows = [], cycle = null, hormonalBC = false, products = [], onOpenProduct, onAsk, onEditAnswers, onFindCare }) {
+export default function TodayFeed({ variant = 'app', userId = null, intake = null, healthRows = [], cycle = null, hormonalBC = false, products = [], onOpenProduct, onAsk, onEditAnswers, onFindCare, onSaveToProfile = null,
+  saved = [], community = [], onWhyMatch, onToggleSaved, onCompare, onOpenRead, onExplore,
+}) {
   // DEV only (?fixture=today): sample logs and tries, dropped from production builds.
   const [fixture] = useState(() => (import.meta.env.DEV && todayFixtureOn() ? makeTodayFixture() : null));
-  const t = useToday({ userId, intake: fixture?.intake || intake, healthRows, cycle, hormonalBC, products, fixture });
+  const t = useToday({ userId, intake: fixture?.intake || intake, healthRows: fixture?.healthRows || healthRows, cycle, hormonalBC, products, fixture, onSaveToProfile, onEditStep: onEditAnswers ? (step) => onEditAnswers(step) : null });
   const { items } = t.decision;
   const checkinId = `ay-today-log-${variant}`;
   return (
@@ -159,15 +163,50 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
       <div className="ay-today__head">
         <h2 id={`ay-today-h-${variant}`}>Today with ayna</h2>
       </div>
+      <Rundown
+        t={t}
+        userId={userId}
+        intake={fixture?.intake || intake}
+        products={products}
+        saved={saved}
+        community={community}
+        onAsk={onAsk}
+        onOpenProduct={onOpenProduct}
+        onWhyMatch={onWhyMatch}
+        onToggleSaved={onToggleSaved}
+        onCompare={onCompare}
+        onOpenRead={onOpenRead}
+        onExplore={onExplore}
+        onFindCare={onFindCare}
+        onEditAnswers={onEditAnswers}
+        variant={variant}
+        onSeeData={(d) => { try { window.dispatchEvent(new CustomEvent('ayna:health-tab', { detail: { tab: d?.tab } })); } catch { /* old browser */ } }}
+      />
       {items.length > 0
         ? <ul className="ay-today__list">
           {items.map((item) => <Item key={item.id} item={item} t={t} onOpenProduct={onOpenProduct} onAsk={onAsk} onEditAnswers={onEditAnswers} onFindCare={onFindCare} checkinId={checkinId} />)}
+          {/* One skipped setup question at a time (profileCompleteness.nextProgressiveAsk). */}
           {items.length < 3 && !items.some((i) => i.type === 'ask' || i.level === 'urgent') && <ProfileAskCard intake={intake} today={t.today} onAnswer={onEditAnswers} />}
         </ul>
         : <>
           <p className="ay-today__empty">{t.decision.empty}</p>
           <ProfileAskCard asList intake={intake} today={t.today} onAnswer={onEditAnswers} />
         </>}
+      {(t.pendingProfileSaves.length > 0 || t.notes['save:done']) && (
+        <div className="ay-today__save" role="group" aria-label="Save to your health profile">
+          {t.pendingProfileSaves.map((p) => (
+            <div key={p.field} className="ay-today__saverow">
+              <p>{p.text} Kept on this device for now.</p>
+              <span className="ay-today__actions">
+                <button type="button" className="ay-today__primary" onClick={() => t.saveAnswerToProfile(p.field)}>{p.kind === 'direct' ? 'Save to your health profile' : 'Update your health profile'}</button>
+                <button type="button" className="ay-today__text" onClick={() => t.keepOnDevice(p.field)}>Keep on this device</button>
+              </span>
+              {t.notes[`save:${p.field}`] && <p className="ay-today__note" role="status">{t.notes[`save:${p.field}`]}</p>}
+            </div>
+          ))}
+          {t.notes['save:done'] && <p className="ay-today__note" role="status">{t.notes['save:done']}</p>}
+        </div>
+      )}
       <div id={checkinId} className="ay-today__log">
         <DailyCheckinCard variant={variant} log={t.log} save={t.saveLog} saveState={t.saveState} today={t.today} headingId={`${checkinId}-h`} title="Your log" />
       </div>

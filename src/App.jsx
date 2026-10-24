@@ -1,4 +1,5 @@
 import FeedbackPrompts from './components/FeedbackPrompts';
+import { markOnboardingDone } from './health/onboardingSignal.js';
 import React, { Suspense, useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import AynaLanding from './components/AynaLanding';
@@ -46,6 +47,7 @@ const WebCommunity = lazyView(() => import('./components/WebCommunity'), <ViewSk
 const WebWrapped = lazyView(() => import('./components/WebWrapped'), null);
 const DeleteAccountPage = lazyView(() => import('./components/DeleteAccountPage'));
 const WebHealth = lazyView(() => import('./components/WebHealth'));
+const WebExplore = lazyView(() => import('./components/explore/WebExplore'));
 const AdminReviewsPage = lazyView(() => import('./components/AdminReviewsPage'));
 const AdminResearchPage = lazyView(() => import('./components/AdminResearchPage'));
 const AdminTopicsPage = lazyView(() => import('./components/AdminTopicsPage'));
@@ -147,17 +149,22 @@ import { setDarkAccentSwap } from './utils/darkAccentSwap.js';
 import { recordProductView } from './utils/recentActivity';
 import GlobalToast from './components/v3/GlobalToast';
 import { MAIN_TABS, TabIcon, AskMark } from './components/nav/tabs.jsx';
+import { YOU_SECTIONS } from './components/nav/mainTabs.js';
+import { ExploreHeader, YouNav } from './components/explore/ExploreNav.jsx';
 import { loadProductReviewStats, mergeReviewBuckets, REVIEWS_CHANGED_EVENT } from './utils/community/reviewRatings.js';
 
-const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
-/** Which views light up each phone tab (MAIN_TABS keys). */
+/** Which views light up each main tab (MAIN_TABS keys), in the top nav and the phone tab bar. */
 const WEB_TAB_VIEWS = {
-  library: ['articles'],
-  browse: ['discovery', 'product'],
-  home: ECOSYSTEM_NAV_VIEWS,
+  today: ['today'],
+  explore: ['explore', 'explore-topics', 'explore-services', 'discovery', 'product', 'articles', 'screenings'],
+  ask: ['ask'],
   community: ['community'],
-  profile: ['you', 'health', 'health-data', 'delete-account', 'text-ayna', 'tracked'],
+  // My ecosystem and everything reached from it live under You.
+  profile: ['you', 'ecosystem', 'comparison', 'omitted', 'recalls', 'health-data', 'delete-account', 'phone-verify', 'tracked', 'doctor-prep', 'recommendations'],
 };
+/** Explore's sections as views (Products is the Shop, Resources the Library). */
+const EXPLORE_VIEW = { overview: 'explore', topics: 'explore-topics', services: 'explore-services', products: 'discovery', resources: 'articles' };
+const EXPLORE_SECTION_OF = Object.fromEntries(Object.entries(EXPLORE_VIEW).map(([k, v]) => [v, k]));
 /** Focused flows: a minimal header (logo · Exit), no tab bar, no footer (P1-28). */
 const FOCUSED_FLOW_VIEWS = ['quiz', 'profile-edit'];
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
@@ -184,13 +191,18 @@ function clearPendingEcosystemReset(userId) {
   try { localStorage.removeItem(ecosystemResetKey(userId)); } catch { /* ignore */ }
 }
 
+// Main tabs (founder, Oct 24 2026): /today, /explore, /ask, /community, /you.
+// Shop is Explore > Products, Library is Explore > Resources, Ecosystem is
+// You > My ecosystem. The old addresses still work (PATH_TO_VIEW below and
+// the permanent redirects in vercel.json).
 const VIEW_TO_PATH = {
-  welcome: '/', hero: '/', quiz: '/quiz', ecosystem: '/ecosystem', you: '/you', community: '/community',
-  discovery: '/shop', waitlist: '/partners', recommendations: '/recommendations',
-  articles: '/library', screenings: '/screenings', omitted: '/omitted',
+  welcome: '/', hero: '/', quiz: '/quiz', ecosystem: '/you/ecosystem', you: '/you', community: '/community',
+  today: '/today', explore: '/explore', 'explore-topics': '/explore/topics', 'explore-services': '/explore/services', ask: '/ask',
+  discovery: '/explore/products', waitlist: '/partners', recommendations: '/recommendations',
+  articles: '/explore/resources', screenings: '/screenings', omitted: '/omitted',
   comparison: '/comparison', recalls: '/recalls',
   'doctor-prep': '/appointment-prep', 'profile-edit': '/profile', 'phone-verify': '/text-ayna', tracked: '/tracked',
-  'delete-account': '/delete-account', 'health-data': '/health-data', health: '/health',
+  'delete-account': '/delete-account', 'health-data': '/health-data',
   'privacy-policy': '/privacy-policy',
   'consumer-health-data': '/consumer-health-data',
   'terms-of-use': '/terms-of-use',
@@ -218,11 +230,12 @@ const VIEW_TO_PATH = {
 // Friendly document.title per view'welcome'/'hero' and any view not
 // listed here fall back to the site's base title (see the title effect).
 const VIEW_TITLES = {
-  quiz: 'Get matched', ecosystem: 'Your ecosystem', discovery: 'Shop', you: 'You', community: 'Community',
-  waitlist: 'Partner brands', recommendations: 'Your recommendations', articles: 'Library', screenings: 'Screenings',
+  quiz: 'Get matched', ecosystem: 'My ecosystem', discovery: 'Products', you: 'You', community: 'Community',
+  today: 'Today', explore: 'Explore', 'explore-topics': 'Health topics', 'explore-services': 'Services', ask: 'Ask ayna',
+  waitlist: 'Partner brands', recommendations: 'Your recommendations', articles: 'Resources', screenings: 'Screenings',
   omitted: 'Omitted products', comparison: 'Compare products', recalls: 'Recalls',
   'doctor-prep': 'Appointment prep', 'profile-edit': 'Edit my answers',
-  'phone-verify': 'Verify phone', tracked: 'Tracked products', 'delete-account': 'Delete account', 'health-data': 'Health data', health: 'Your health',
+  'phone-verify': 'Verify phone', tracked: 'Tracked products', 'delete-account': 'Delete account', 'health-data': 'Health data',
   'privacy-policy': 'Privacy policy', 'consumer-health-data': 'Consumer health data privacy notice', 'terms-of-use': 'Terms of use',
   'how-we-make-money': 'How we make money', 'how-it-works': 'How it works',
   about: 'About', contact: 'Contact', 'not-found': 'Page not found',
@@ -237,6 +250,8 @@ const VIEW_TITLES = {
 
 const DEFAULT_DESCRIPTION = "Personalized women's health product recommendations, matched to your body and backed by real research, doctor input, and other women's experiences.";
 const VIEW_DESCRIPTIONS = {
+  explore: "Explore women's health: search products, symptoms, topics, services and plain-language reads.",
+  today: 'Today with ayna: what matters for you today, and your daily log.',
   discovery: "Shop women's health products ranked by how well they fit you: period care, intimate care, fertility, menopause and more.",
   articles: "Plain-language guides to women's health topics, with sources, from the ayna Library.",
   ecosystem: 'Your ecosystem: the products and care you use, what each one is for and what fits next.',
@@ -278,15 +293,20 @@ function setShareCard({ title, image } = {}) {
 const PATH_TO_VIEW = Object.fromEntries(
   Object.entries(VIEW_TO_PATH).filter(([, p]) => p !== '/').map(([v, p]) => [p, v])
 );
-// The redesign previews linked the ecosystem page as /my-ecosystem; keep it working.
+// Old addresses keep working (bookmarks, texts, emails, shared links). Each
+// is replaced with its new address on load (the initial replaceState below).
 PATH_TO_VIEW['/my-ecosystem'] = 'ecosystem';
+PATH_TO_VIEW['/ecosystem'] = 'ecosystem';
+PATH_TO_VIEW['/shop'] = 'discovery';
+PATH_TO_VIEW['/library'] = 'articles';
+PATH_TO_VIEW['/health'] = 'today';
 PATH_TO_VIEW['/terms'] = 'terms-of-use';
 PATH_TO_VIEW['/privacy'] = 'privacy-policy';
 PATH_TO_VIEW['/startups'] = 'waitlist'; // old address keeps working
 PATH_TO_VIEW['/partner-brands'] = 'waitlist';
 
 PATH_TO_VIEW['/'] = 'welcome';
-// Old Shop URL keeps working (bookmarks, shared links); it is replaced with /shop on load.
+// Old Shop URL keeps working (bookmarks, shared links); it is replaced on load.
 PATH_TO_VIEW['/discovery'] = 'discovery';
 // Campaign invite links: /join?ref=<code>. The code is stored first-touch
 // (badges.js) before the URL is tidied to '/', then the visitor lands on home.
@@ -306,16 +326,25 @@ function communityPostFromPath(path) {
   const m = String(path || '').match(/^\/community\/p\/([a-z0-9-]+)\/?$/i);
   return m ? m[1] : null;
 }
+// You's sections: /you/saved, /you/health, ... (/you/ecosystem is the ecosystem view).
+const YOU_SECTION_KEYS = YOU_SECTIONS.map((x) => x.key).filter((k) => k !== 'ecosystem');
+function youSectionFromPath(path) {
+  const m = String(path || '').match(/^\/you\/([a-z]+)\/?$/i);
+  return m && YOU_SECTION_KEYS.includes(m[1].toLowerCase()) ? m[1].toLowerCase() : null;
+}
 function viewFromSubPath(path) {
   if (slugFromPath(path)) return 'shared-answer';
   if (articleIdFromPath(path)) return 'articles';
   if (communityHandleFromPath(path) || communityPostFromPath(path)) return 'community';
+  if (youSectionFromPath(path)) return 'you';
   return null;
 }
 
 function getInitialView() {
   const path = window.location.pathname;
   if (parseProductIdFromPath(path)) return 'product';
+  // The old Ecosystem "Dashboard" tab is Today now.
+  try { if (/^\/(ecosystem|my-ecosystem)\/?$/.test(path) && new URLSearchParams(window.location.search).get('view') === 'dashboard') return 'today'; } catch { /* no URL */ }
   const sub = viewFromSubPath(path);
   if (sub) return sub;
   // An unrecognized path used to silently resolve to 'welcome', a typo'd
@@ -433,6 +462,8 @@ function App() {
   // it) so VIEW_TO_PATH/PATH_TO_VIEW stay simple static maps for every other
   // route.
   const [productRouteId, setProductRouteId] = useState(getInitialProductId);
+  // You's open section (/you/saved, /you/health, ...); null is the You overview.
+  const [youSection, setYouSection] = useState(() => youSectionFromPath(window.location.pathname));
   const [publicRouteProduct, setPublicRouteProduct] = useState(null);
   const [publicRouteProductLoading, setPublicRouteProductLoading] = useState(false);
   // Ref always mirrors currentView synchronously, safe to read inside Supabase callbacks
@@ -461,7 +492,7 @@ function App() {
     if (view === 'product') return id ? productHref(id) : '/';
     return VIEW_TO_PATH[view] || '/';
   }, []);
-  const setCurrentView = useCallback((view, { replace = false } = {}) => {
+  const setCurrentView = useCallback((view, { replace = false, path: pathOverride = null } = {}) => {
     if (view === 'profile-edit' && currentViewRef.current !== 'profile-edit') profileEditFromRef.current = currentViewRef.current || 'ecosystem';
     // Any explicit navigation (nav tab, "browse products" button, etc.) is a
     // genuine departure from wherever Shop's kept-alive state came from, so
@@ -473,7 +504,8 @@ function App() {
     currentViewRef.current = view;
     setCurrentViewRaw(view);
     if (view !== 'product') setProductRouteId(null);
-    const path = pathForView(view, null);
+    if (view === 'you') setYouSection(youSectionFromPath(pathOverride));
+    const path = pathOverride || pathForView(view, null);
     if (window.location.pathname !== path) {
       if (replace) window.history.replaceState({ view }, '', path);
       else { window.history.pushState({ view }, '', path); inAppPushCountRef.current += 1; window.scrollTo(0, 0); }
@@ -544,13 +576,14 @@ function App() {
     const path = keepPath ? window.location.pathname : pathForView(currentView, productRouteId);
     // Community search lives in ?q= (shareable, survives a refresh); keep only that.
     const communityQ = currentView === 'community' ? new URLSearchParams(window.location.search).get('q') : null;
+    const exploreQ = ['explore', 'explore-topics', 'explore-services'].includes(currentView) ? new URLSearchParams(window.location.search).get('q') : null;
     // Partners keeps its #brand-… hash so a link can open one brand's card.
     const initialUrl = (currentView === 'auth-callback' || currentView === 'campus-resources' || currentView === 'free-product' || currentView === 'free-product-reward')
       ? `${path}${window.location.search}${window.location.hash}`
       : currentView === 'waitlist' && /^#brand-[a-z0-9-]+$/.test(window.location.hash) ? `${path}${window.location.hash}`
       : communityQ ? `${path}?q=${encodeURIComponent(communityQ)}`
-      // Ecosystem keeps ?view=dashboard so a link can open its Dashboard tab.
-      : currentView === 'ecosystem' && new URLSearchParams(window.location.search).get('view') === 'dashboard' ? `${path}?view=dashboard` : path;
+      // Explore keeps its search (?q=) so a shared search opens with it.
+      : exploreQ ? `${path}?q=${encodeURIComponent(exploreQ)}` : path;
     window.history.replaceState({ view: currentView, productId: productRouteId }, '', initialUrl);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -560,6 +593,7 @@ function App() {
       const view = pathProductId ? 'product' : (viewFromSubPath(window.location.pathname) || e.state?.view || PATH_TO_VIEW[window.location.pathname] || PATH_TO_VIEW[window.location.pathname.replace(/\/+$/, '')] || 'not-found');
       setSelectedArticleId(articleIdFromPath(window.location.pathname));
       setCommunityHandle(communityHandleFromPath(window.location.pathname));
+      setYouSection(youSectionFromPath(window.location.pathname));
       currentViewRef.current = view;
       setCurrentViewRaw(view);
       setProductRouteId(pathProductId);
@@ -877,6 +911,7 @@ function App() {
       'welcome', 'hero', 'quiz', 'discovery', 'product', 'waitlist', 'articles', 'you', 'community',
       'how-it-works', 'how-we-make-money', 'campus-resources', 'about', 'contact', 'waitlist', 'not-found', 'ecosystem',
       'free-product', 'free-product-reward', 'health', 'shared-answer',
+      'today', 'explore', 'explore-topics', 'explore-services', 'ask',
     ];
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       // A different account (or none) must never reuse the previous account's cached intake.
@@ -1173,13 +1208,13 @@ function App() {
       setShowWrapped(true);
     } else if (pendingAction === 'browse' || pendingAction === 'personalize') {
       handleViewDiscovery('');
-    } else if (pendingAction === 'login' || pendingAction === 'ecosystem') {
+    } else if (pendingAction === 'login') {
+      // Signing in lands on Today, the home for signed-in accounts.
+      setCurrentView('today');
+    } else if (pendingAction === 'ecosystem') {
       setCurrentView('ecosystem');
     } else if (pendingAction === 'saved') {
-      setCurrentView('ecosystem');
-      window.setTimeout(() => {
-        document.getElementById('ayna-wishlist')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 400);
+      setCurrentView('you', { path: '/you/saved' });
     } else if (pendingAction === 'share-friend') {
       // Back to the shared answer she was on; the page sends the friend request.
       const pending = readPendingFriend();
@@ -1523,15 +1558,13 @@ function App() {
   const handleOpenDeleteAccount = () => setCurrentView('delete-account');
   const handleViewWaitlist = () => setCurrentView('waitlist');
   const handleViewEcosystem = () => setCurrentView('ecosystem');
-  // Ecosystem on its Dashboard tab (?view=dashboard, read by EcosystemViewTabs).
-  const handleViewEcosystemDashboard = () => {
-    const wasThere = currentViewRef.current === 'ecosystem';
-    setCurrentView('ecosystem');
-    try {
-      window.history.replaceState(window.history.state, '', `${VIEW_TO_PATH.ecosystem}?view=dashboard`);
-      // Already on Ecosystem: the tabs are mounted, so tell them the URL changed.
-      if (wasThere) window.dispatchEvent(new PopStateEvent('popstate', { state: window.history.state }));
-    } catch { /* history unavailable: Ecosystem opens on Products */ }
+  // The old Ecosystem "Dashboard" tab is Today now (Ask's "open my dashboard" lands there).
+  const handleViewEcosystemDashboard = () => setCurrentView('today');
+  // You's sections: /you/saved, /you/health, ... ('ecosystem' is its own view, /you/ecosystem).
+  const openYou = (key = null) => {
+    const section = key === 'overview' ? null : key;
+    if (section === 'ecosystem') { setCurrentView('ecosystem'); return; }
+    setCurrentView('you', { path: section ? `/you/${section}` : '/you' });
   };
   const handleViewWishlist = () => {
     if (!user) {
@@ -1540,16 +1573,13 @@ function App() {
       setShowAuthModal(true);
       return;
     }
-
-    setCurrentView('ecosystem');
-    // The Saved section renders after the page loads; keep looking for up to ~3s.
-    let tries = 0;
-    const seek = () => {
-      const el = document.getElementById('ayna-wishlist');
-      if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
-      if ((tries += 1) < 20) window.setTimeout(seek, 150);
-    };
-    window.setTimeout(seek, 150);
+    openYou('saved');
+  };
+  // Explore's sections. Products (the Shop) and Resources (the Library) are their own views.
+  const openExplore = (section = 'overview', query = '') => {
+    if (section === 'products') { handleViewDiscovery(query || ''); return; }
+    if (section === 'resources') { setSelectedArticleId(null); setCurrentView('articles'); return; }
+    setCurrentView(EXPLORE_VIEW[section] || 'explore');
   };
   const handleViewDiscovery = (queryOrOptions = '') => {
     if (typeof queryOrOptions === 'object' && queryOrOptions !== null) {
@@ -1639,9 +1669,10 @@ function App() {
   });
   const savedCount = Object.keys(savedProducts || {}).length;
 
+  // The logo: Today for a signed-in account with a profile, the welcome page otherwise.
   const navigateHome = () => {
     setDiscoverySearch('');
-    setCurrentView('welcome');
+    setCurrentView(user && quizResults ? 'today' : 'welcome');
   };
 
   const handleQuizComplete = async (results, opts = {}) => {
@@ -1663,9 +1694,10 @@ function App() {
       setGuestPreview({ results: completedResults, products: guestProducts, done: toToday });
       if (toToday) {
         // Explore first: her answers work signed out; Save stays one tap away.
+        markOnboardingDone();
         setQuizResults(completedResults);
         setPendingAction(null); pendingActionRef.current = null;
-        setCurrentView('health');
+        setCurrentView('today');
       }
       return;
     }
@@ -1703,7 +1735,7 @@ function App() {
       concernsCount: Array.isArray(completedResults.primaryConcerns) ? completedResults.primaryConcerns.length : 0,
       conditionsCount: Array.isArray(completedResults.conditions) ? completedResults.conditions.length : 0,
     });
-    if (toToday) { setCurrentView('health'); return; }
+    if (toToday) { markOnboardingDone(); setCurrentView('today'); return; }
     setCurrentView('ecosystem');
     setShowWrapped(true);
   };
@@ -2208,7 +2240,9 @@ function App() {
       needIds={healthNeedIds}
       hormonalBC={usesHormonalBC(quizResults)}
       quizAnswers={quizResults}
-      onEditAnswers={handleStartQuiz}
+      onEditAnswers={(step) => { if (!user) { handleStartQuiz(); return; } setEditAtStep(step || ''); setCurrentView('profile-edit'); }}
+      onSaveToProfile={user && quizResults?.fullHealthIntake ? handleUpdateIntake : null}
+      rundown={{ saved: Object.values(savedProducts || {}), onToggleSaved: toggleSavedProduct, onOpenRead: handleViewArticle, onExplore: () => handleViewDiscovery('') }}
       onOpenProduct={(p) => handleOpenProduct(p, { source: 'health_dashboard' })}
       onAsk={(q, extra) => openAsk(q, extra?.stats)}
       onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
@@ -2218,6 +2252,23 @@ function App() {
       }}
     />
   );
+
+  // Today is home for a signed-in account with a profile (founder, Oct 24 2026):
+  // the welcome page hands over to Today once her account and answers are in.
+  useEffect(() => {
+    if (currentView !== 'welcome' && currentView !== 'hero') return;
+    if (!user || !quizResults || authLoading || dataLoading || showWrapped) return;
+    setCurrentView('today', { replace: true });
+  }, [currentView, user, quizResults, authLoading, dataLoading, showWrapped, setCurrentView]);
+
+  // Where each main tab goes (top nav and phone tab bar).
+  const mainTabGo = {
+    today: () => setCurrentView('today'),
+    explore: () => openExplore('overview'),
+    ask: () => setCurrentView('ask'),
+    community: () => setCurrentView('community'),
+    profile: () => openYou(null),
+  };
 
   return (
     <div className="app-container" data-theme={themeAttr} data-view={currentView} data-scroll-end={headerScroll.atEnd ? '1' : undefined}>
@@ -2264,16 +2315,14 @@ function App() {
             <span className="ay-nav__beta">beta</span>
           </a>
 
-          {/* Shop and My Ecosystem lead (filled pills); Library and Community follow, quieter. Real links (G02). */}
-          {/* Four text links, underline on the current page (no pills). */}
+          {/* The five main tabs, same names and order as the app (Today, Explore, Ask ayna, Community, You). Real links (G02). */}
           <div className="ay-nav__links">
-            <a href="/shop" className="ay-nav__link" aria-current={['discovery', 'product'].includes(currentView) ? 'page' : undefined} {...linkProps(() => handleViewDiscovery(''))}>Shop</a>
-            <a href="/ecosystem" className="ay-nav__link" aria-current={ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'page' : undefined} {...linkProps(() => handleViewEcosystem())}>
-              My ecosystem
-              {!user && !authLoading && <span className="ay-nav__start">Start here</span>}
-            </a>
-            <a href="/library" className="ay-nav__link" aria-current={currentView === 'articles' ? 'page' : undefined} {...linkProps(() => { setSelectedArticleId(null); setCurrentView('articles'); })}>Library</a>
-            <a href="/community" className="ay-nav__link" aria-current={currentView === 'community' ? 'page' : undefined} {...linkProps(() => setCurrentView('community'))}>Community</a>
+            {MAIN_TABS.map((t) => (
+              <a key={t.key} href={t.href} className="ay-nav__link" aria-current={WEB_TAB_VIEWS[t.key].includes(currentView) ? 'page' : undefined} {...linkProps(mainTabGo[t.key])}>
+                {t.label}
+                {t.key === 'today' && !user && !authLoading && <span className="ay-nav__start">Start here</span>}
+              </a>
+            ))}
           </div>
 
           {currentView === 'quiz' && (
@@ -2284,23 +2333,12 @@ function App() {
           )}
           <div className="ay-nav__actions">
             {/* Phone: Ask ayna sits in the header, as in the app (one tab set, P1-7). */}
-            {!FOCUSED_FLOW_VIEWS.includes(currentView) && currentView !== 'campus-resources' && (
+            {!FOCUSED_FLOW_VIEWS.includes(currentView) && currentView !== 'campus-resources' && currentView !== 'ask' && (
               <button type="button" className="ay-nav__ask" onClick={() => openAsk('')}>
                 <span className="ay-nav__ask-orb" aria-hidden="true"><AskMark /></span>Ask ayna
               </button>
             )}
-            <a
-              href="/ecosystem"
-              className="ay-nav__icon app-nav__circle--wishlist"
-              {...linkProps(handleViewWishlist)}
-              aria-label={`Saved products${user && savedCount ? `, ${savedCount}` : ''}`}
-              data-tip={user ? 'Saved products' : 'Saved products · sign in'}
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" />
-              </svg>
-              {user && savedCount > 0 && <span className="ay-badge is-corner">{savedCount}</span>}
-            </a>
+            {/* No unlabeled heart in the header (team direction 25): Saved lives in You (You > Saved, or the account menu). */}
             <div ref={accountMenuRef} className="ay-nav__account">
               {user ? (
                 // Avatar opens a small account menu: profile, health profile, saved, log out.
@@ -2329,10 +2367,11 @@ function App() {
               {showAccountMenu && user && (
                 <div className="nav-account-menu" role="menu">
                   <a role="menuitem" href="/you" {...linkProps(() => { setShowAccountMenu(false); setCurrentView('you'); })}>Your profile</a>
-                  <a role="menuitem" href="/health" {...linkProps(() => { setShowAccountMenu(false); setCurrentView('health'); })}>Your health</a>
+                  <a role="menuitem" href="/today" {...linkProps(() => { setShowAccountMenu(false); setCurrentView('today'); })}>Today</a>
                   <button type="button" role="menuitem" onClick={() => { setShowAccountMenu(false); handleOpenHealthProfileEditor(); }}>Health profile</button>
-                  <a role="menuitem" href="/ecosystem" {...linkProps(() => { setShowAccountMenu(false); handleViewWishlist(); })}>Saved products</a>
-                  <a role="menuitem" href="/you" {...linkProps(() => { setShowAccountMenu(false); setCurrentView('you'); window.setTimeout(() => document.getElementById('wyou-account')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 250); })}>Account settings</a>
+                  <a role="menuitem" href="/you/ecosystem" {...linkProps(() => { setShowAccountMenu(false); handleViewEcosystem(); })}>My ecosystem</a>
+                  <a role="menuitem" href="/you/saved" {...linkProps(() => { setShowAccountMenu(false); handleViewWishlist(); })}>Saved{savedCount ? <span className="nav-account-menu__count"> {savedCount}</span> : null}</a>
+                  <a role="menuitem" href="/you/settings" {...linkProps(() => { setShowAccountMenu(false); openYou('settings'); })}>Settings and privacy</a>
                   <button type="button" role="menuitem" className="is-quiet" onClick={() => { setShowAccountMenu(false); handleSignOut(); }}>Log out</button>
                 </div>
               )}
@@ -2443,6 +2482,21 @@ function App() {
         )}
         {currentView === 'you' && (
           <WebYou
+            section={youSection}
+            nav={<YouNav active={youSection || 'overview'} onGo={(key) => openYou(key === 'overview' ? null : key)} />}
+            onOpenSection={openYou}
+            recentAsks={chatHistory}
+            savedSlot={(
+              <SavedForLater
+                savedProducts={savedProducts}
+                onOpenProduct={handleOpenProduct}
+                onToggleSaved={toggleSavedProduct}
+                onAddToEcosystem={toggleMyProduct}
+                myProducts={myProducts}
+                onBrowse={() => handleViewDiscovery('')}
+              />
+            )}
+            onOpenPost={(postId) => { setCommunitySeed({ postId, token: Date.now() }); setCurrentView('community'); }}
             onUpdateIntake={user ? handleUpdateIntake : null}
             onUpdateIntakeLocal={handleUpdateIntake}
             onEditAnswerAt={(step) => { setEditAtStep(step); setCurrentView(quizResults ? 'profile-edit' : 'quiz'); }}
@@ -2470,7 +2524,7 @@ function App() {
             onSignOut={handleSignOut}
             onDeleteAccount={handleOpenDeleteAccount}
             onOpenHealthData={() => setCurrentView('health-data')}
-            onOpenHealth={() => setCurrentView('health')}
+            onOpenHealth={() => setCurrentView('today')}
             healthSummary={health.insights.sections.find((sec) => sec.status === 'ready') || null}
             healthConnectedCount={health.connected.length}
             theme={themeMode}
@@ -2504,7 +2558,87 @@ function App() {
         {currentView === 'delete-account' && (
           <DeleteAccountPage onBack={() => setCurrentView('you')} />
         )}
-        {currentView === 'health' && webHealth}
+        {/* Today: the first main tab and the home for signed-in accounts. Same page /health showed. */}
+        {currentView === 'today' && (
+          <div className="wx-today">
+            {React.cloneElement(webHealth, {
+              title: 'Today',
+              intro: !quizResults && !dataLoading ? (finishQuizCard() || (
+                <section className="wx-invite wx-today-invite" aria-labelledby="wx-today-invite-h">
+                  <h3 id="wx-today-invite-h">Make Today yours</h3>
+                  <p>Create your health profile and Today shows what matters for you, with the reason for each thing.</p>
+                  <button type="button" className="ay-btn ay-btn--primary" onClick={handleStartQuiz}>Create your health profile</button>
+                </section>
+              )) : null,
+            })}
+          </div>
+        )}
+        {(currentView === 'explore' || currentView === 'explore-topics' || currentView === 'explore-services') && (
+          <WebExplore
+            section={EXPLORE_SECTION_OF[currentView] || 'overview'}
+            onSection={openExplore}
+            quizResults={quizResults}
+            healthProfile={healthProfile}
+            matchOpts={matchOpts}
+            savedProducts={savedProducts}
+            myProducts={myProducts}
+            onToggleSaved={toggleSavedProduct}
+            onOpenProduct={handleOpenProduct}
+            onOpenArticle={handleViewArticle}
+            onStartQuiz={handleStartQuiz}
+            recommendedProductIds={recommendedProductIds}
+            onOpenCommunityPost={(postId) => { setCommunitySeed({ postId, token: Date.now() }); setCurrentView('community'); }}
+            onOpenCommunity={(q) => {
+              setCurrentView('community');
+              // Community reads its search from ?q= when it mounts.
+              if (q) window.history.replaceState({ view: 'community' }, '', `/community?q=${encodeURIComponent(q)}`);
+            }}
+          />
+        )}
+        {/* Ask ayna as a page: the same conversation as the floating panel. */}
+        {currentView === 'ask' && (
+          <div className="ay-container wx-askpage">
+            <h1 className="ay-sr">Ask ayna</h1>
+            {user && quizResults ? (
+              <ProfileChatbot
+                asPage
+                onRequireAuth={(feature) => { setAuthFeature(typeof feature === 'string' ? feature : ''); setPendingAction(typeof feature === 'string' && feature ? 'feature' : 'login'); pendingActionRef.current = typeof feature === 'string' && feature ? 'feature' : 'login'; setShowAuthModal(true); }}
+                openSignal={askOpenSignal}
+                prefill={askPrefill}
+                prefillStats={askPrefillStats}
+                profile={quizResults}
+                user={user}
+                onProfileUpdate={setQuizResults}
+                chatHistory={chatHistory}
+                onChatHistoryUpdate={setChatHistory}
+                disabled={false}
+                onNavigateToDiscovery={handleViewDiscovery}
+                onViewRecommendations={() => handleViewEcosystem()}
+                products={myProducts}
+                matchOpts={matchOpts}
+                healthProfile={healthProfile}
+                focusProduct={null}
+                hasHealthData={!!user && health.connected.length > 0}
+                resolveProduct={(id) => myProducts[id] || Object.values(myProducts).find((p) => String(p?.id) === String(id)) || getProductById(id) || null}
+                onOpenProduct={(product) => handleOpenProduct(product, { source: 'ask_followup' })}
+                onOpenDashboard={handleViewEcosystemDashboard}
+                onOpenRead={handleViewArticle}
+              />
+            ) : (
+              <>
+                <p className="ay-h1 wx-title" aria-hidden="true">Ask ayna</p>
+                <section className="wx-invite" aria-labelledby="wx-ask-invite-h">
+                  <h3 id="wx-ask-invite-h">Ask about your health, products and the evidence</h3>
+                  <p>ayna answers from your health profile, the products you use and checked sources, and tells you why. {user ? 'Create your health profile to start asking.' : 'Create your health profile, or log in, to start asking.'}</p>
+                  <div className="wx-invite__acts">
+                    <button type="button" className="ay-btn ay-btn--primary" onClick={handleStartQuiz}>Create your health profile</button>
+                    {!user && <button type="button" className="ay-btn ay-btn--secondary" onClick={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}>Log in</button>}
+                  </div>
+                </section>
+              </>
+            )}
+          </div>
+        )}
         {currentView === 'health-data' && user && (
           <WebHealthData
             user={user}
@@ -2592,6 +2726,7 @@ function App() {
             />
           </Suspense>
         )}
+        {currentView === 'articles' && !selectedArticleId && <ExploreHeader compact active="resources" onGo={(key) => openExplore(key)} />}
         {currentView === 'articles' && (
           <Suspense fallback={<ViewLoadingFallback />}>
             <Articles
@@ -2600,7 +2735,8 @@ function App() {
               initialArticleId={selectedArticleId}
               onArticleChange={(id) => {
                 setSelectedArticleId(id);
-                const next = id ? `/library/${id}` : '/library';
+                // A read keeps its /library/:id address (search engines know it); the list is Explore > Resources.
+                const next = id ? `/library/${id}` : VIEW_TO_PATH.articles;
                 if (window.location.pathname !== next) window.history.pushState({ view: 'articles' }, '', next);
               }}
               onOpenProduct={handleOpenProduct} quizResults={quizResults} healthProfile={healthProfile} />
@@ -2659,10 +2795,10 @@ function App() {
             else setCurrentView('welcome');
           }} />
         )}
-        {/* Ecosystem: "Products | Dashboard" at the top, like the app's Ecosystem
-            screen. Dashboard is the same WebHealth element /health renders. */}
+        {/* My ecosystem (You > My ecosystem, /you/ecosystem). Its old Dashboard tab is Today. */}
         {currentView === 'ecosystem' && (
-          <EcosystemViewTabs dashboard={webHealth} onHero={!!user && !(dataLoading && Object.keys(myProducts).length === 0)}>
+          <EcosystemViewTabs dashboard={null} onHero={!!user && !(dataLoading && Object.keys(myProducts).length === 0)}>
+          <YouNav active="ecosystem" onGo={(key) => openYou(key)} />
         {currentView === 'ecosystem' && dataLoading && Object.keys(myProducts).length === 0 && (
           <ViewSkeleton
             label="Loading your ecosystem"
@@ -2749,6 +2885,7 @@ function App() {
         )}
         {(currentView === 'discovery' || (currentView === 'product' && discoveryKeepAliveRef.current)) && (
           <div style={currentView === 'discovery' ? undefined : { display: 'none' }}>
+          <ExploreHeader compact active="products" onGo={(key) => openExplore(key)} />
           <Suspense fallback={<ViewLoadingFallback />}>
           <Discovery
             matchOpts={matchOpts}
@@ -2781,6 +2918,7 @@ function App() {
             user={user}
             onRequirePersonalizeAuth={handleRequirePersonalizeAuth}
             onAsk={(q) => openAsk(`Help me find ${q}`)}
+            inExplore
           />
           </Suspense>
           </div>
@@ -2869,13 +3007,7 @@ function App() {
             {/* The app's tab bar, same order, names and icons (src/components/nav/tabs.jsx). */}
             {MAIN_TABS.map((t) => {
               const on = WEB_TAB_VIEWS[t.key].includes(currentView);
-              const go = {
-                library: () => { setSelectedArticleId(null); setCurrentView('articles'); },
-                browse: () => handleViewDiscovery(''),
-                home: () => handleViewEcosystem(),
-                community: () => setCurrentView('community'),
-                profile: () => setCurrentView('you'),
-              }[t.key];
+              const go = mainTabGo[t.key];
               return (
                 <a key={t.key} href={t.href} className={`${on ? 'is-on' : ''}${t.center ? ' is-center' : ''}`} aria-current={on ? 'page' : undefined} {...linkProps(go)}>
                   <span className="ay-tabbar__icon" aria-hidden="true"><TabIcon kind={t.key} on={on} /></span><span className="ay-tabbar__label">{t.label}</span>
@@ -3117,7 +3249,7 @@ function App() {
         onViewCommunity={() => setCurrentView('community')}
       />}
       {/* Floating Ask pill comes after the page and footer in the DOM, so it is the last stop when tabbing, not the first. */}
-      {!FOCUSED_FLOW_VIEWS.includes(currentView) && currentView !== 'campus-resources' && (
+      {!FOCUSED_FLOW_VIEWS.includes(currentView) && currentView !== 'campus-resources' && currentView !== 'ask' && (
         <ProfileChatbot
           onRequireAuth={(feature) => { setAuthFeature(typeof feature === 'string' ? feature : ''); setPendingAction(typeof feature === 'string' && feature ? 'feature' : 'login'); pendingActionRef.current = typeof feature === 'string' && feature ? 'feature' : 'login'; setShowAuthModal(true); }}
           openSignal={askOpenSignal}

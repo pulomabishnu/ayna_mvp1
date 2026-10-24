@@ -54,7 +54,7 @@ export function answerHistoryQuestion(text, { tries = [], productName = () => nu
 
   if (!all.length) {
     return {
-      followUps: guide ? [{ type: 'open_guide', page: 'trial' }] : [],
+      followUps: guide ? [{ type: 'open_guide', page: 'trial', label: 'Start a Try & check back' }] : [],
       answer: 'You haven’t recorded anything you tried yet, so I can’t say what helped you. When you try something, mark it in your routine or start a “Try & check back”, and I’ll ask you how it went at the right time.',
     };
   }

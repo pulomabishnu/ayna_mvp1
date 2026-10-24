@@ -231,7 +231,7 @@ describe('what might help this week', () => {
     const matches = DEV_DEMO_MATCH_IDS.map(getProductById).filter(Boolean);
     const picks = weekPicks({ ctx: lutealCtx, insights: [sleepShort], needIds: DEV_DEMO_NEEDS, products, matches });
     expect(picks.length).toBe(4);
-    expect(picks.every((p) => p.level > 0)).toBe(true);
+    expect(picks.some((p) => p.level > 0)).toBe(true);
   });
 });
 
