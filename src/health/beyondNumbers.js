@@ -5,8 +5,8 @@
  *
  * - phaseCompare: this phase so far against the SAME cycle days of her last
  *   cycles (Whoop plots metrics by phase; here it is one plain comparison).
- * - normalRanges: her cycle and period lengths next to the FIGO 2018 normal
- *   menstrual parameters ("is this normal?"), never a diagnosis.
+ * - normalRanges: her cycle and period lengths next to the typical ranges on
+ *   womenshealth.gov and NICHD ("is this normal?"), never a diagnosis.
  * - goalsCovered: each goal she chose in the quiz, the products in her
  *   Ecosystem graded for it (needMap.research grade), or the best match if
  *   none. Works with no health data at all.
@@ -28,14 +28,17 @@ const mean = (xs) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : nu
 const fmtDay = (iso) => new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
 
 /**
- * Typical ranges shown next to her own cycle. Source on screen: womenshealth.gov
- * (opened Oct 24 2026): periods are "regular" if they usually come every 24 to
- * 38 days, and cycle length "might be different from month-to-month". The
- * period-length (up to 8 days) and change-between-cycles (7 to 9 days) rows
- * come from FIGO 2018 (MSD Manual, not .gov): kept as ayna policy until a .gov
- * page is found (flagged for the founder). Was the MSD Manual link.
+ * Typical ranges shown next to her own cycle, all from .gov pages opened Oct 24 2026:
+ *   Cycle length 24 to 38 days: womenshealth.gov ("still 'regular' if they
+ *     usually come every 24 to 38 days"; talk to a doctor or nurse outside it).
+ *   Period up to 8 days: NICHD ("Prolonged menstrual bleeding: Bleeding that
+ *     exceeds 8 days in duration on a regular basis"; average about 5 days).
+ *   Change between cycles up to 20 days: NICHD (irregular periods have "a
+ *     cycle-to-cycle variation of more than 20 days"). Was 7 to 9 days from
+ *     FIGO 2018 (MSD Manual, not .gov); the .gov number is followed.
  */
 export const FIGO = { label: 'womenshealth.gov: Your menstrual cycle', url: 'https://womenshealth.gov/menstrual-cycle/your-menstrual-cycle' };
+export const NICHD_MENSTRUATION = { label: 'NICHD: Menstruation and menstrual problems', url: 'https://www.nichd.nih.gov/health/topics/factsheets/menstruation' };
 
 const COMPARE = [
   { metric: 'resting_hr_bpm', label: 'Resting heart rate', flat: 2, fmt: (v) => `${Math.round(v)} bpm` },
@@ -45,7 +48,7 @@ const COMPARE = [
   { metric: 'temp_deviation_c', label: 'Temperature', flat: 0.15, fmt: (v) => `${v > 0 ? '+' : v < 0 ? '-' : ''}${Math.abs(v).toFixed(2)}\u00a0°C` },
   { metric: 'basal_temp_c', label: 'Temperature', flat: 0.15, fmt: (v) => `${v.toFixed(2)}\u00a0°C` },
 ];
-const PHASE_WORD = { period: 'period', follicular: 'follicular phase', ovulation: 'ovulation window', luteal: 'luteal phase' };
+const PHASE_WORD = { period: 'period', follicular: 'stretch before ovulation', ovulation: 'stretch of possible ovulation days', luteal: 'stretch after ovulation' };
 
 /** First cycle day of the phase she is in now. */
 function phaseStartDay(phase, periodLength) {
@@ -126,7 +129,7 @@ export function normalRanges(rows, { today, hormonalBC = false, preferred } = {}
     const lo = Math.min(...lengths);
     const hi = Math.max(...lengths);
     out.push({ id: 'length', label: 'Cycle length', value: lo === hi ? `${lo} days` : `${lo} to ${hi} days`, typical: '24 to 38 days', ok: lo >= 24 && hi <= 38 });
-    if (lengths.length >= 3) out.push({ id: 'variation', label: 'Change between cycles', value: `${hi - lo} ${hi - lo === 1 ? 'day' : 'days'}`, typical: 'up to 7 to 9 days', ok: hi - lo <= 9 });
+    if (lengths.length >= 3) out.push({ id: 'variation', label: 'Change between cycles', value: `${hi - lo} ${hi - lo === 1 ? 'day' : 'days'}`, typical: 'up to 20 days', ok: hi - lo <= 20 });
   }
   // Only finished periods (the last one may still be going).
   const pl = periodLengths(flow).slice(0, -1).filter((n) => n > 0).slice(-6);
@@ -144,6 +147,7 @@ export function normalRanges(rows, { today, hormonalBC = false, preferred } = {}
       ? `From your last ${lengths.length || pl.length} logged cycles. Everything is inside the typical ranges.`
       : 'One cycle can fall outside these ranges. If it keeps happening, it is worth mentioning to a clinician.',
     source: FIGO,
+    sources: [FIGO, NICHD_MENSTRUATION],
   };
 }
 

@@ -60,3 +60,13 @@ describe('insightStory: data becomes action', () => {
     expect(metricHeadline({ metric: 'steps', delta: null, usual: null }, flat)).toBe('Still learning your usual');
   });
 });
+
+describe('no unchecked cycle claims on heart changes', () => {
+  it('never ties a heart change to the cycle', () => {
+    const cyc = [{ label: 'paper', url: 'https://pubmed.ncbi.nlm.nih.gov/28465583/' }];
+    for (const signal of ['heart-up', 'heart-down']) {
+      const st = insightStory({ id: 'heart', signal, metric: 'resting_hr_bpm', text: 't', basis: 'b', sources: cyc, from: [] });
+      expect(st.affects).not.toMatch(/cycle|period|luteal/i);
+    }
+  });
+});

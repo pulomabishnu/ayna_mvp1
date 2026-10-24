@@ -126,7 +126,7 @@ export function phasePicks({ cycle = null, estimate = null, ready = [], products
   if (phase && ['follicular', 'ovulation'].includes(phase.id) && phase.windowStart && cycle.lastStart && today) {
     const ws = addDays(cycle.lastStart, phase.windowStart - 1);
     const we = addDays(cycle.lastStart, phase.windowEnd - 1);
-    if (daysBetween(today, we) >= 0) rules.push({ test: isFertilityTest, reason: `For your likely ovulation window, ${fmtDay(ws)} to ${fmtDay(we)}` });
+    if (daysBetween(today, we) >= 0) rules.push({ test: isFertilityTest, reason: `For your possible ovulation days, ${fmtDay(ws)} to ${fmtDay(we)}` });
   }
   const sleep = ready.find((s) => s.id === 'sleep');
   if (sleep?.change?.direction === 'down') rules.push({ test: isSleepProduct, reason: 'For sleep, which is below your usual this week' });

@@ -85,7 +85,6 @@ export function insightStory(insight, { safetyCtx = null, hormonalBC = false } =
         ? 'How recovered you feel is hard to read from this alone. Looking at it next to your sleep and cycle helps.'
         : 'How you feel day to day. A faster resting pulse can come with things like an infection or not drinking enough.';
       affectsSources = hrvOnly ? [] : [STORY_SOURCES.medlinePulse];
-      if (cyclePart && !hormonalBC) affects += ' It can also shift with your cycle.';
       actions = [
         step('look_together', 'Look at it with your sleep', 'Compare the same days with your sleep and cycle in See data.'),
         step('keep_tracking', 'Keep tracking', 'Give it another week. One week of change is not a pattern yet.'),
@@ -98,10 +97,8 @@ export function insightStory(insight, { safetyCtx = null, hormonalBC = false } =
     }
     case 'heart-down':
       changed = 'Your resting heart rate is lower than your recent pattern';
-      affects = cyclePart
-        ? 'Usually not much. Resting heart rate often runs lowest around your period.'
-        : 'ayna cannot tell why from this alone. If you also feel dizzy or faint, talk to a clinician.';
-      affectsSources = cyclePart ? insight.sources : [STORY_SOURCES.medlinePulse];
+      affects = 'ayna cannot tell why from this alone. If you also feel dizzy or faint, talk to a clinician.';
+      affectsSources = [STORY_SOURCES.medlinePulse];
       actions = [step('keep_tracking', 'Keep tracking', 'Keep your data coming to see whether this pattern continues.')];
       break;
     case 'steps-lower':

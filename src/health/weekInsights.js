@@ -32,11 +32,13 @@ const fmtDay = (iso) => new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-US',
 
 /** Sources behind each sentence. Only claims these pages make. */
 export const EVIDENCE = {
+  // Not shown on screen any more (unopened paper, no .gov page). Kept for the record.
   // Sleeping pulse rate: +2.1 bpm in the fertile window vs menses, mid-luteal +3.8 bpm vs menses (n=91).
   rhr: { label: 'Shilaih et al. 2017, Scientific Reports', url: 'https://pubmed.ncbi.nlm.nih.gov/28465583/' },
   // Meta-analysis of 37 studies: cardiac vagal activity (HRV) falls from the follicular to the luteal phase, d = -0.39.
   // A journal page, not .gov and not opened on PubMed/PMC: no longer shown as a source (founder rule, Oct 24 2026).
   hrv: { label: 'Schmalenberger et al. 2019, J Clin Med (meta-analysis)', url: 'https://www.mdpi.com/2077-0383/8/11/1946' },
+  // Not shown on screen any more (unopened paper, no .gov page). Kept for the record.
   // Oura ring study: late-luteal heart rate +2.49 bpm and skin temperature higher vs menses; sleep largely unchanged.
   oura: { label: 'Alzueta et al. 2022, Int J Womens Health', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9005074/' },
   // womenshealth.gov (opened Oct 24 2026): "A woman's basal body temperature rises slightly
@@ -96,7 +98,10 @@ export function cycleContext({ cycle = null, estimate = null, today, hormonalBC 
 const inDays = (n) => (n <= 0 ? 'today' : n === 1 ? 'tomorrow' : `in about ${n} days`);
 
 /* ----------------------------- Heart: RHR + HRV ---------------------------- */
-export function heartInsight(resolved, today, ctx) {
+// Describes her own change only. The luteal-phase heart-rate sentences rested
+// on PubMed/PMC papers nobody at ayna has opened, and no .gov page we found
+// says it, so they were removed (founder rule, Oct 24 2026).
+export function heartInsight(resolved, today) {
   const rhr = sorted(series(resolved, 'resting_hr_bpm'));
   const hrvMetric = series(resolved, 'hrv_rmssd_ms').length >= series(resolved, 'hrv_sdnn_ms').length ? 'hrv_rmssd_ms' : 'hrv_sdnn_ms';
   const hrv = sorted(series(resolved, hrvMetric));
@@ -108,27 +113,15 @@ export function heartInsight(resolved, today, ctx) {
   const rhrDown = bpm <= -3;
   const hrvDown = pct <= -10;
   if (!rhrUp && !rhrDown && !hrvDown) return null;
-  const phase = ctx.phase?.id;
   let text;
   const sources = [];
   if (rhrDown && !hrvDown) {
     text = `Your resting heart rate is ${-bpm} bpm below your usual this week.`;
-    if (phase === 'period' || phase === 'follicular') { text += ' It often runs lowest around your period.'; sources.push(EVIDENCE.rhr); }
   } else {
     const parts = [];
     if (rhrUp) parts.push(`resting heart rate is ${bpm} bpm above your usual`);
     if (hrvDown) parts.push(`heart rate variability is ${-pct}% ${rhrUp ? 'lower' : 'below your usual'}`);
     text = `Your ${parts.join(' and your ')}.`;
-    const both = parts.length > 1;
-    if (phase === 'luteal') {
-      text += ` ${both ? 'Both are' : "That's"} common in the luteal phase, which you're probably in now.`;
-    } else if (ctx.daysToLuteal != null && ctx.daysToLuteal >= 1 && ctx.daysToLuteal <= 5) {
-      text += ` ${both ? 'Both are' : "That's"} common in the luteal phase, which starts ${inDays(ctx.daysToLuteal)}.`;
-    }
-    if (phase === 'luteal' || (ctx.daysToLuteal != null && ctx.daysToLuteal <= 5)) {
-      if (rhrUp) sources.push(EVIDENCE.rhr);
-      sources.push(EVIDENCE.oura);
-    }
   }
   const pts = [...(r ? rhr : []), ...(h ? hrv : [])];
   return {
@@ -246,7 +239,6 @@ export function tempInsight(resolved, today, ctx, { hormonalBC = false } = {}) {
     sources.length = 0;
   } else {
     text += ', a pattern that often follows ovulation.';
-    if (ctx.daysToPeriod != null && ctx.daysToPeriod <= 3) text += ' It usually drops a day or two before a period.';
   }
   return {
     id: 'temperature',
@@ -286,7 +278,7 @@ export function explainWeek(rows, opts = {}) {
   const resolved = resolveDaily(rows || [], opts.preferred);
   const ctx = cycleContext({ cycle: opts.cycle, estimate: opts.estimate, today, hormonalBC: opts.hormonalBC });
   const all = [
-    heartInsight(resolved, today, ctx),
+    heartInsight(resolved, today),
     sleepInsight(resolved, today, ctx),
     stepsInsight(resolved, today),
     tempInsight(resolved, today, ctx, { hormonalBC: opts.hormonalBC }),
@@ -296,11 +288,11 @@ export function explainWeek(rows, opts = {}) {
   return { insights: all.slice(0, opts.max || 3), ctx };
 }
 
-/** "Day 24 · probably luteal phase · period in about 5 days", or null. */
+/** "Day 24 · probably after ovulation · period in about 5 days", or null. */
 export function cycleLine(cycle, ctx) {
   if (!cycle?.cycleDay) return null;
   const bits = [`Cycle day ${cycle.cycleDay}`];
-  if (ctx?.phase) bits.push(ctx.phase.id === 'period' ? 'on your period' : ctx.phase.id === 'ovulation' ? 'probably around ovulation' : `probably in your ${ctx.phase.name.toLowerCase()}`);
+  if (ctx?.phase) bits.push(ctx.phase.id === 'period' ? 'on your period' : ctx.phase.id === 'ovulation' ? 'ovulation possible' : ctx.phase.id === 'luteal' ? 'probably after ovulation' : 'probably before ovulation');
   if (ctx?.daysToPeriod != null && ctx.phase?.id !== 'period') bits.push(`period due ${inDays(ctx.daysToPeriod)}`);
   return bits.join(', ');
 }

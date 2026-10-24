@@ -478,7 +478,7 @@ export default function HealthHome({
   const tiles = [];
   if (pinned.includes('cycle') && cycle) {
     tiles.push(
-      <Tile key="cycle" i={ti} tone="pink" label="Cycle" big={phase ? (phase.id === 'period' ? 'On your period' : phase.id === 'ovulation' ? 'Around ovulation' : `Probably ${phase.name.toLowerCase()}`) : 'Where you are'} sub={`Day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength}` : ''}`} onOpen={() => open('cycle')} aria={`Cycle: usual length ${cycle.avgLength || 'not known yet'} days${phase ? `, now ${phase.name.toLowerCase()}` : ''}. Open cycle details.`}>
+      <Tile key="cycle" i={ti} tone="pink" label="Cycle" big={phase ? (phase.id === 'period' ? 'On your period' : phase.id === 'ovulation' ? 'Ovulation possible' : phase.id === 'luteal' ? 'Probably after ovulation' : 'Probably before ovulation') : 'Where you are'} sub={`Day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength}` : ''}`} onOpen={() => open('cycle')} aria={`Cycle: usual length ${cycle.avgLength || 'not known yet'} days${phase ? `, now ${phase.name.toLowerCase()}` : ''}. Open cycle details.`}>
         <MiniPhases cycle={cycle} />
       </Tile>,
     );
@@ -604,9 +604,9 @@ export default function HealthHome({
             <span><small>Cycle day</small><b id="ay-hh-cycle-title">{cycle.cycleDay}</b>{cycle.avgLength && <small>of about {cycle.avgLength}</small>}</span>
           </div>
           <div className="ay-hh-cyclehero-text">
-            {phase && <p className="ay-hh-phase-name">{phase.id === 'period' ? 'You are on your period' : `You are probably in your ${phase.name === 'Around ovulation' ? 'ovulation window' : phase.name.toLowerCase()}`}</p>}
+            {phase && <p className="ay-hh-phase-name">{phase.id === 'period' ? 'You are on your period' : phase.id === 'ovulation' ? 'Ovulation could happen in these days' : phase.id === 'luteal' ? 'Ovulation has probably happened' : 'Ovulation probably has not happened yet'}</p>}
             <p className="ay-hh-next">{estimate ? <b>Next period around {fmtDay(estimate.day)}</b> : 'Log a few more periods and ayna can estimate your next one.'}</p>
-            <ul className="ay-hh-ringkey" aria-hidden="true"><li><i className="is-period" />Period</li>{phase?.windowStart && <li><i className="is-window" />Likely ovulation</li>}<li><i className="is-today" />Today</li></ul>
+            <ul className="ay-hh-ringkey" aria-hidden="true"><li><i className="is-period" />Period</li>{phase?.windowStart && <li><i className="is-window" />Possible ovulation days</li>}<li><i className="is-today" />Today</li></ul>
           </div>
         </section>
       )}

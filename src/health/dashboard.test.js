@@ -118,7 +118,11 @@ describe('estimatePhase', () => {
     expect(estimatePhase({ ...c, cycleDay: 8 }).id).toBe('follicular');
     expect(estimatePhase({ ...c, cycleDay: 14 }).id).toBe('ovulation');
     expect(estimatePhase({ ...c, cycleDay: 22 }).id).toBe('luteal');
-    expect(estimatePhase({ ...c, cycleDay: 14 }).ovulationDay).toBe(14);
+    // A range of possible ovulation days, 19 to 7 days before the next period (womenshealth.gov), never one day.
+    const p = estimatePhase({ ...c, cycleDay: 14 });
+    expect(p.ovulationDay).toBeUndefined();
+    expect([p.windowStart, p.windowEnd]).toEqual([9, 21]);
+    expect(p.basis).toMatch(/7 to 19 days/);
   });
   it('moves ovulation with her cycle length', () => {
     expect(estimatePhase({ avgLength: 35, periodLength: 5, cycleDay: 14 }).id).toBe('follicular');

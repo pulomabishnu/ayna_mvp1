@@ -15,8 +15,8 @@ const demoCycle = buildDashboard(demo, { today: TODAY, days: 30 }).cycle;
 describe('this phase vs your last cycles', () => {
   it('compares the same cycle days in the demo (luteal, last 3)', () => {
     const c = phaseCompare(demo, { today: TODAY, cycle: demoCycle });
-    expect(c.title).toBe('This luteal phase vs your last 3');
-    expect(c.days).toEqual([16, 24]);
+    expect(c.title).toBe('This stretch after ovulation vs your last 3');
+    expect(c.days).toEqual([22, 24]); // after the possible ovulation days (28 - 7 + 1 = day 22), womenshealth.gov range
     const rhr = c.rows.find((r) => r.metric === 'resting_hr_bpm');
     expect(rhr.word).toBe('Higher');
     expect(c.rows.find((r) => r.label === 'Temperature').word).toBe('About the same');

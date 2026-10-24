@@ -91,11 +91,11 @@ export function weekNeeds({ ctx = {}, insights = [], needIds = [] } = {}) {
   if (sleep) add('sleep.trouble', `You've slept less than usual ${sleep.shortNights} of the last 7 nights`);
   if (insights.some((i) => i.signal === 'steps-lower')) add('energy.fatigue', 'Your steps are below your usual, and you chose low energy as a goal', { onlyIfChosen: true });
   if (phase === 'luteal') {
-    for (const n of ['cycle.pms', 'cycle.breast_tenderness', 'bloating.cycle_related', 'mood.cycle_related']) add(n, "You're probably in your luteal phase", { onlyIfChosen: true });
+    for (const n of ['cycle.pms', 'cycle.breast_tenderness', 'bloating.cycle_related', 'mood.cycle_related']) add(n, 'Ovulation has probably happened this cycle', { onlyIfChosen: true });
   }
   if (insights.some((i) => i.signal === 'heart-up')) add('energy.fatigue', 'Your heart numbers are off your usual this week', { onlyIfChosen: true });
   if ((phase === 'follicular' || phase === 'ovulation') && ctx.ovulationStart) {
-    add('fertility.ovulation_tracking', `Your likely ovulation window starts around ${fmtDay(ctx.ovulationStart)}`, { onlyIfChosen: true });
+    add('fertility.ovulation_tracking', `Your possible ovulation days start around ${fmtDay(ctx.ovulationStart)}`, { onlyIfChosen: true });
   }
   // Stable: needs she chose first, otherwise in the order above.
   return out.map((n, i) => ({ n, i })).sort((a, b) => (b.n.chosen - a.n.chosen) || (a.i - b.i)).map((x) => x.n);
