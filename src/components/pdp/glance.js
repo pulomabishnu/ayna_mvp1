@@ -21,6 +21,7 @@ import { planGlossaryTerms } from '../../data/glossary.js';
 import { brandOf } from '../../mobile/data/brandFallback.js';
 import { getAynaRatingCount } from '../../data/aynaReviews.js';
 import { HOST_ACRONYMS } from '../../utils/verificationLinks.js';
+import { isGovHealthSource } from '../../utils/govSources.js';
 
 export const NOT_ON_FILE = 'Not on file';
 const GENERIC_USES = new Set(['supplement', 'telehealth']);
@@ -144,18 +145,28 @@ function numberSources(passport) {
   const list = [...all, ...extra]
     .map((s, i) => ({ ...s, _i: i }))
     .sort((a, b) => (SOURCE_ORDER.indexOf(a.evidence_type) - SOURCE_ORDER.indexOf(b.evidence_type)) || (a._i - b._i))
-    .map((s, i) => ({
-      n: i + 1,
-      url: s.url,
-      title: noDash(s.title || s.publisher || 'Source'),
-      publisher: humanPublisher(s.publisher) || hostOf(s.url),
-      // A store listing or a forum thread must never look like the FDA.
-      type: RETAIL_RE.test(String(s.url || '')) ? 'retailer' : FORUM_RE.test(String(s.url || '')) ? 'community' : s.evidence_type,
-      label: RETAIL_RE.test(String(s.url || '')) ? 'Retailer listing' : FORUM_RE.test(String(s.url || '')) ? 'Community post' : (s.evidence_label || EVIDENCE_TYPES[s.evidence_type] || EXTRA_LABELS[s.evidence_type] || 'Source'),
-      tier: RETAIL_RE.test(String(s.url || '')) || FORUM_RE.test(String(s.url || '')) || ['community', 'manufacturer'].includes(s.evidence_type) ? 'low' : ['regulatory', 'clinical_guideline', 'product_study'].includes(s.evidence_type) ? 'high' : 'mid',
-      summary: clean(s.summary),
-      year: s.year || null,
-    }));
+    .map((s, i) => {
+      const url = String(s.url || '');
+      const retail = RETAIL_RE.test(url);
+      const forum = FORUM_RE.test(url);
+      const lowType = retail || forum || ['community', 'manufacturer'].includes(s.evidence_type);
+      // Founder rule (Oct 24): a health claim's source counts only when it is a
+      // .gov health page. Anything else is shown, labelled, and never "backs" a product.
+      const unchecked = !lowType && !isGovHealthSource(url);
+      const baseLabel = retail ? 'Retailer listing' : forum ? 'Community post' : (s.evidence_label || EVIDENCE_TYPES[s.evidence_type] || EXTRA_LABELS[s.evidence_type] || 'Source');
+      return {
+        n: i + 1,
+        url: s.url,
+        title: noDash(s.title || s.publisher || 'Source'),
+        publisher: humanPublisher(s.publisher) || hostOf(s.url),
+        // A store listing or a forum thread must never look like the FDA.
+        type: retail ? 'retailer' : forum ? 'community' : s.evidence_type,
+        label: unchecked ? `${baseLabel}, not a .gov source` : baseLabel,
+        tier: lowType ? 'low' : unchecked ? 'unchecked' : ['regulatory', 'clinical_guideline', 'product_study'].includes(s.evidence_type) ? 'high' : 'mid',
+        summary: clean(s.summary),
+        year: s.year || null,
+      };
+    });
   return list;
 }
 const RETAIL_RE = /\/\/(www\.)?(walmart|amazon|target|cvs|walgreens|ulta|sephora|costco|iherb|ebay)\./i;
@@ -336,7 +347,8 @@ export function buildGlance(product, ctx = {}) {
   };
 
   // Evidence
-  const publishers = [...new Set(evidenceSources.filter((x) => x.tier !== 'low').map((x) => x.publisher).filter(Boolean))];
+  // Only .gov health sources can back a product (founder rule, Oct 24).
+  const publishers = [...new Set(evidenceSources.filter((x) => x.tier === 'high' || x.tier === 'mid').map((x) => x.publisher).filter(Boolean))];
   const backedBy = publishers.length ? `${publishers.slice(0, 3).join(', ')}${publishers.length > 3 ? ` and ${publishers.length - 3} more` : ''}` : '';
   const strength = clean(product.evidenceStrength);
   const doctorSummary = clean(product.verificationLinks?.doctor?.aiSummary);

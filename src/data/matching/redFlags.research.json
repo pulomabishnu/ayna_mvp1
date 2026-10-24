@@ -39,7 +39,7 @@
  },
  {
   "id": "rf.postpartum_hemorrhage",
-  "condition": "Postpartum hemorrhage (first 24 hours up to 12 weeks after birth)",
+  "condition": "Postpartum hemorrhage (in the year after birth)",
   "signs": [
    "Heavy bleeding soaking one or more pads in an hour",
    "Clots bigger than an egg or golf ball, or passing tissue",
@@ -54,7 +54,6 @@
    "https://medlineplus.gov/ency/patientinstructions/000628.htm"
   ],
   "ayna_policy_signs": [
-   "the \"first 24 hours up to 12 weeks\" window (CDC says warning signs apply in the year after delivery)",
    "pale or clammy skin",
    "swelling in the vagina or perineum"
   ],

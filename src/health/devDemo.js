@@ -42,8 +42,9 @@ export const DEV_DEMO_CONNECTIONS = [
 ];
 
 /** Catalog ids for the demo Ecosystem on the website preview (signed out, ?healthdemo=1). */
-export const DEV_DEMO_PRODUCT_IDS = ['p-thermacare', 'p-lola-tampon', 'p-saalt-cup', 'p-good-clean-love', 'p-proov-complete', 'p-magnesium-glycinate'];
+export const DEV_DEMO_PRODUCT_IDS = ['p-thermacare', 'p-lola-tampon', 'p-saalt-cup', 'p-good-clean-love', 'p-proov-complete', 'p-magnumsolace-nighttime-magnesium-cream'];
 export const DEV_DEMO_MATCH_IDS = ['p-advil-ibuprofen-200', 'p-neycher-vaginal-moisturizer'];
-/** Demo: she added the magnesium herself 6 days ago (so the before-and-since check has something to show). */
-export const devDemoAddedAt = (today = iso(Date.now())) => ({ 'p-magnesium-glycinate': iso(Date.parse(`${today}T00:00:00Z`) - 6 * DAY) });
+/** Demo: she added the magnesium cream herself 6 days ago (so the before-and-since check has something to show).
+ * The cream's sleep grade cites ODS; magnesium glycinate's cited a PubMed paper, so it is draft and ungraded (Oct 24). */
+export const devDemoAddedAt = (today = iso(Date.now())) => ({ 'p-magnumsolace-nighttime-magnesium-cream': iso(Date.parse(`${today}T00:00:00Z`) - 6 * DAY) });
 export const DEV_DEMO_NEEDS = ['pain.menstrual_cramp', 'period.heavy', 'vaginal.dryness'];

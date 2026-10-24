@@ -84,6 +84,18 @@ const UNKNOWN_STATES = new Set(['skipped', 'not_sure', 'prefer_not', 'unknown', 
 const STEROID_RE = /\b(prednisone|prednisolone|methylprednisolone|dexamethasone|hydrocortisone|medrol|deltasone|steroid)\b/i;
 const DIURETIC_RE = /\b(furosemide|lasix|hydrochlorothiazide|hctz|chlorthalidone|bumetanide|torsemide|diuretic|water pill)\b/i;
 
+// Rheumatoid arthritis has no intake option: free text such as "rheumatoid
+// arthritis" maps to the broader 'autoimmune' id. Add a specific id only when
+// her own words name it, so a label that says "ask a doctor with rheumatoid
+// arthritis" can be checked without treating every autoimmune condition as RA.
+const RA_RE = /\brheumatoid\b/i;
+function conditionIdsFrom(conditions) {
+  const list = Array.isArray(conditions) ? conditions : [];
+  const ids = new Set(list.map((c) => c?.id).filter(Boolean));
+  if (list.some((c) => RA_RE.test(String(c?.raw || '')))) ids.add('rheumatoid_arthritis');
+  return ids;
+}
+
 /**
  * Flatten a profile from buildUserProfile (src/matching/userProfile.js) into
  * the facts the gates read. A missing profile means everything is unknown.
@@ -112,7 +124,7 @@ export function safetyContextFrom(profile) {
     medGenerics: new Set(meds.map((m) => m?.generic).filter(Boolean)),
     unrecognizedMeds: meds.filter((m) => m && m.source !== 'life_stage' && !m.recognized && !STEROID_RE.test(m.raw || '') && !DIURETIC_RE.test(m.raw || '')).map((m) => m.raw),
     conditionsState: s?.conditionsState || 'skipped',
-    conditionIds: new Set((s?.conditions || []).map((c) => c?.id).filter(Boolean)),
+    conditionIds: conditionIdsFrom(s?.conditions),
     age: s?.age ?? null,
     underSupportedAge: Boolean(s?.underSupportedAge),
     careFirst: Boolean(s?.careFirst),
@@ -414,12 +426,12 @@ export function evaluateClassSafety(classId, ctxOrProfile, need = null) {
 export const PRODUCT_LABEL_RULES = {
   'p-thermacare': {
     source: SOURCES.thermacareLabel,
-    // Brand label, confirmed on thermacare.com Oct 24 2026: "Ask a doctor
+    // Brand label, re-confirmed on thermacare.com Oct 24 2026: "Ask a doctor
     // before use if you have: DIABETES; poor circulation or heart disease;
     // rheumatoid arthritis; or are pregnant." Poor circulation and rheumatoid
-    // arthritis have no condition id in src/matching/ontology.js yet, so only
-    // diabetes, heart disease and pregnancy are checked.
-    askDoctorIf: { pregnant: true, conditions: ['diabetes', 'heart_disease'] },
+    // arthritis have no intake option, so they come from her typed conditions
+    // only (ontology 'poor_circulation'; 'rheumatoid_arthritis' above).
+    askDoctorIf: { pregnant: true, conditions: ['diabetes', 'heart_disease', 'poor_circulation', 'rheumatoid_arthritis'] },
     notes: 'Do not wear while sleeping. Do not wear for more than 8 hours in any 24-hour period.',
   },
 };

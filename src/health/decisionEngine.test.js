@@ -143,6 +143,16 @@ describe('interventions', () => {
     expect(productSafety(HEAT[0], safetyContextFrom(profile({ ...CLEAR, diagnosisSelections: ['Diabetes'] })))).toMatchObject({ ok: false, code: 'product_label_condition' });
   });
 
+  it('ThermaCare label: typed poor circulation or rheumatoid arthritis holds it back; other autoimmune conditions do not', () => {
+    const typed = (t) => safetyContextFrom(profile({ ...CLEAR, conditionOtherText: t }));
+    expect(productSafety(HEAT[0], typed('poor circulation'))).toMatchObject({ ok: false, code: 'product_label_condition' });
+    expect(productSafety(HEAT[0], typed("Raynaud's"))).toMatchObject({ ok: false, code: 'product_label_condition' });
+    expect(productSafety(HEAT[0], typed('rheumatoid arthritis'))).toMatchObject({ ok: false, code: 'product_label_condition' });
+    expect(typed('rheumatoid arthritis').conditionIds.has('autoimmune')).toBe(true);
+    expect(productSafety(HEAT[0], typed('lupus'))).toMatchObject({ ok: true });
+    expect(productSafety(HEAT[0], safetyContextFrom(profile({ ...CLEAR, diagnosisSelections: ['Heart disease'] })))).toMatchObject({ ok: false, code: 'product_label_condition' });
+  });
+
   it('heat is fine outside pregnancy; pregnancy alone does not block movement', () => {
     expect(evaluateClassSafety('heat', profile(CLEAR)).verdict).toBe('pass');
     expect(evaluateClassSafety('movement', profile(PREGNANT()), 'pregnancy_pain').verdict).toBe('pass');
@@ -330,6 +340,14 @@ describe('rule 3: immediate red-flag overrides', () => {
     for (const id of ['rf.toxic_shock', 'rf.postpartum_psychosis']) {
       expect(decide({ today: TODAY, redFlags: [id] }).items[0]).toMatchObject({ id: `care:${id}`, level: 'urgent' });
     }
+  });
+  it('postpartum hemorrhage follows CDC Hear Her: warning signs apply in the year after delivery, not 12 weeks', async () => {
+    const flags = (await import('../data/matching/redFlags.research.json')).default;
+    const pph = flags.find((f) => f.id === 'rf.postpartum_hemorrhage');
+    expect(pph.condition).toMatch(/year after birth/);
+    expect(pph.condition).not.toMatch(/12 weeks/);
+    expect(JSON.stringify(pph.ayna_policy_signs)).not.toMatch(/12 weeks/);
+    expect(pph.source_url).toMatch(/cdc\.gov\/hearher/);
   });
   it('every red flag cites a .gov page', () => {
     const d = decide({ today: TODAY, redFlags: ['rf.ectopic_rupture', 'rf.ectopic_suspected', 'rf.postpartum_hemorrhage', 'rf.preeclampsia', 'rf.toxic_shock_severe', 'rf.hyperemesis'] });

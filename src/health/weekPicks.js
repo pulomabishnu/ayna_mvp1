@@ -53,6 +53,10 @@ export const LEVEL_WORD = ['', 'Limited evidence', 'Some evidence', 'Strong evid
 /** Does this product fit this need, and with what evidence level (0 = no grade on file)? */
 export function fitFor(product, needId) {
   const row = GRADED.get(`${product?.id}|${needId}`);
+  if (row && !row.grade) {
+    // draft_unverified (no .gov source): it fits, but is not graded.
+    return row.strength === 'primary' || row.strength === 'secondary' ? { level: 0, graded: false } : null;
+  }
   if (row) return row.strength === 'primary' || row.strength === 'secondary' ? { level: GRADE_LEVEL[row.grade] || 0, graded: true } : null;
   if (FALLBACK[needId]?.(product)) {
     const s = String(product.evidenceStrength || '').toLowerCase();

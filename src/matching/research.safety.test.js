@@ -14,8 +14,24 @@ const user = (over) => buildUserProfile({ ...EMPTY, ...over }, { catalog: ALL_PR
 const codes = (r) => [...(r.safety?.reasons || []), ...(r.reasons || [])].map((x) => x.code);
 
 describe('research data', () => {
-  it('every row cites a credible source', () => {
-    for (const r of [...NEED_MAP_RESEARCH, ...SAFETY_RESEARCH]) expect(r.source_url).toMatch(/^https:\/\//);
+  // Founder rule (Oct 24): .gov pages for clinical claims, the brand's own site for its label.
+  const GOV = /(^|\.)(nih\.gov|medlineplus\.gov|fda\.gov|cdc\.gov|womenshealth\.gov|ahrq\.gov|hhs\.gov)$/;
+  const govPage = (u) => { const h = new URL(u).hostname; return GOV.test(h) && !/^(pubmed|pmc)\./.test(h); };
+  it('every graded need row cites a .gov page; rows without one are draft, ungraded', () => {
+    for (const r of NEED_MAP_RESEARCH) {
+      if (r.grade) expect(govPage(r.source_url), `${r.product}|${r.need}`).toBe(true);
+      else { expect(r.grade_status).toBe('draft_unverified'); expect(r.source_url).toBeNull(); }
+    }
+  });
+  it('every safety status cites a .gov page or the brand label, or is labelled ayna policy (cautious only)', () => {
+    for (const r of SAFETY_RESEARCH) {
+      for (const key of ['pregnancy', 'breastfeeding']) {
+        const src = r[`${key}_source`];
+        if (src) expect(govPage(src) || (r.source_kind === 'brand_label' && src.startsWith('https://')), `${r.product} ${key}`).toBe(true);
+        else if (r[key] !== 'unknown') { expect(r[`${key}_basis`], `${r.product} ${key}`).toBe('ayna_policy'); expect(['avoid', 'ask_clinician']).toContain(r[key]); }
+      }
+      if (r.source_url) expect(govPage(r.source_url) || r.source_kind === 'brand_label').toBe(true);
+    }
   });
   it('a sourced "ok" only fills an unknown; it never overrides a caution from the label', () => {
     // Differin's label says ask a doctor if pregnant: research cannot clear that.
@@ -69,5 +85,30 @@ describe('condition rules (research, Oct 17)', () => {
   it('a heat wrap with iron powder is not a dose of iron', () => {
     const r = scoreProductForNeed(P('p-thermacare'), up('Thyroid condition'), 'pain.menstrual_cramp');
     expect(r.safety.cautions.some((c) => c.code === 'condition_caution')).toBe(false);
+  });
+});
+
+import CONDITION_RULES from '../data/matching/conditionRules.research.js';
+import { RESEARCH_INTERACTIONS } from '../data/matching/medInteractions.research.js';
+describe('medication and condition rules cite .gov pages only (Oct 24)', () => {
+  const GOV = /(^|\.)(nih\.gov|medlineplus\.gov|fda\.gov|cdc\.gov|womenshealth\.gov|ahrq\.gov|hhs\.gov)$/;
+  it('every interaction row cites a .gov page', () => {
+    for (const r of RESEARCH_INTERACTIONS) expect(new URL(r.source).hostname, `${r.medication_class}|${r.product_ingredient}`).toMatch(GOV);
+  });
+  it('CoQ10 with blood pressure medicine is gone: NCCIH says CoQ10 probably has no meaningful effect on blood pressure', () => {
+    expect(RESEARCH_INTERACTIONS.some((r) => r.medication_class === 'blood_pressure' && r.product_ingredient === 'coq10')).toBe(false);
+    // CoQ10 with warfarin stays (NCCIH: may interact).
+    expect(RESEARCH_INTERACTIONS.find((r) => r.medication_class === 'vitamin_k_antagonist' && r.product_ingredient === 'coq10').source).toMatch(/nccih\.nih\.gov\/health\/coenzyme-q10/);
+  });
+  it('every condition rule cites a .gov page, or is a cautious rule labelled ayna policy', () => {
+    for (const r of CONDITION_RULES) {
+      if (r.source_url) expect(new URL(r.source_url).hostname, `${r.condition}|${r.product_class}`).toMatch(GOV);
+      else { expect(r.source_basis).toBe('ayna_policy'); expect(r.message).toMatch(/^ayna policy: /); expect(['avoid', 'caution']).toContain(r.verdict); }
+    }
+  });
+  it('the biotin rule no longer gives an unsourced number of days', () => {
+    const biotin = CONDITION_RULES.find((r) => r.condition === 'thyroid' && r.product_class === 'biotin');
+    expect(biotin.message).not.toMatch(/\d+ to \d+ days/);
+    expect(biotin.source_url).toMatch(/ods\.od\.nih\.gov/);
   });
 });

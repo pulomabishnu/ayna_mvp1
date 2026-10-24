@@ -69,7 +69,9 @@ const UNIVERSAL_CATEGORIES = new Set(['telehealth', 'therapy']);
 /** Draft GRADE-style evidence grade for this product and need. */
 export function evidenceGrade(pp, needId) {
   const reviewed = REVIEWED.get(`${pp.product_id}|${needId}`);
-  if (reviewed) return reviewed.grade;
+  // A research row without a grade (draft_unverified: its source was not a
+  // .gov page, Oct 24) falls through to the draft grade from the evidence on file.
+  if (reviewed?.grade) return reviewed.grade;
   const level = evidenceFor(pp, needId).level;
   if (level === 'product_specific') return 'A';
   if (level === 'guideline' || level === 'ingredient_only') return 'B';

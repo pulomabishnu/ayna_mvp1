@@ -1,5 +1,6 @@
 // Generated from the condition research (Oct 17). Do not edit by hand.
 // Conditions members can choose; avoid and caution rules only.
+// Oct 24: every source is a .gov page; rules with none are labelled source_basis 'ayna_policy' (cautious only).
 export default [
  {
   "condition": "hypertension",
@@ -11,21 +12,8 @@ export default [
    ]
   },
   "verdict": "caution",
-  "message": "Some over-the-counter pain relievers like ibuprofen and naproxen can raise blood pressure, so check with your doctor or pharmacist first.",
-  "source_url": "https://newsroom.heart.org/news/most-u-s-adults-unaware-that-over-the-counter-pain-relievers-may-increase-blood-pressure"
- },
- {
-  "condition": "hypertension",
-  "product_class": "nsaid",
-  "match": {
-   "name_regex": "\\b(ibuprofen|naproxen|nsaids?|aspirin|advil|motrin|aleve|midol)\\b",
-   "categories": [
-    "pain_relief"
-   ]
-  },
-  "verdict": "caution",
-  "message": "NSAIDs can make the body hold on to fluid, which can raise blood pressure.",
-  "source_url": "https://www.mayoclinic.org/diseases-conditions/high-blood-pressure/in-depth/blood-pressure/art-20045245"
+  "message": "MedlinePlus says to tell your doctor before taking ibuprofen or similar pain relievers if you have high blood pressure, so check with your doctor or pharmacist first.",
+  "source_url": "https://medlineplus.gov/druginfo/meds/a682159.html"
  },
  {
   "condition": "kidney_disease",
@@ -392,8 +380,8 @@ export default [
    ]
   },
   "verdict": "caution",
-  "message": "Biotin can make thyroid blood tests look wrong, so pause it for 3 to 5 days before testing and tell your doctor you take it.",
-  "source_url": "https://www.thyroid.org/patient-thyroid-information/ct-for-patients/january-2022/vol-15-issue-1-p-7-8/"
+  "message": "Biotin can make thyroid blood tests look wrong, so tell your doctor you take it before any thyroid test.",
+  "source_url": "https://ods.od.nih.gov/factsheets/Biotin-HealthProfessional/"
  },
  {
   "condition": "depression",
@@ -434,8 +422,9 @@ export default [
    ]
   },
   "verdict": "avoid",
-  "message": "The American Heart Association lists St. John's wort among supplements to avoid if you have high blood pressure.",
-  "source_url": "https://www.heart.org/-/media/Files/Health-Topics/High-Blood-Pressure/BP-Raisers.pdf?sc_lang=en"
+  "message": "ayna policy: check with your doctor before taking St. John's wort with high blood pressure. It interacts with many medicines.",
+  "source_url": null,
+  "source_basis": "ayna_policy"
  },
  {
   "condition": "hypertension",
@@ -549,8 +538,8 @@ export default [
    ]
   },
   "verdict": "caution",
-  "message": "Insoluble fiber like bran often worsens IBS symptoms.",
-  "source_url": "https://www.nice.org.uk/guidance/cg61/chapter/Key-priorities-for-implementation"
+  "message": "Soluble fiber tends to help IBS more than the insoluble fiber in bran, and too much fiber at once can cause gas that triggers symptoms. Add it slowly.",
+  "source_url": "https://www.niddk.nih.gov/health-information/digestive-diseases/irritable-bowel-syndrome/eating-diet-nutrition"
  },
  {
   "condition": "ibs_digestive",
@@ -679,8 +668,9 @@ export default [
    ]
   },
   "verdict": "caution",
-  "message": "Evidence on inositol for fertility with PMOS is low quality and uncertain, so treat it as an add-on to care, not a replacement.",
-  "source_url": "https://www.cochrane.org/evidence/CD012378_inositol-women-diagnosis-polycystic-ovary-syndrome-and-subfertility"
+  "message": "ayna policy: talk with your care team before adding inositol to PCOS or fertility care.",
+  "source_url": null,
+  "source_basis": "ayna_policy"
  },
  {
   "condition": "infertility",
@@ -693,8 +683,9 @@ export default [
    ]
   },
   "verdict": "caution",
-  "message": "Evidence on inositol for fertility is low quality and uncertain, so discuss it with your fertility team.",
-  "source_url": "https://www.cochrane.org/evidence/CD012378_inositol-women-diagnosis-polycystic-ovary-syndrome-and-subfertility"
+  "message": "ayna policy: talk with your fertility team before adding inositol.",
+  "source_url": null,
+  "source_basis": "ayna_policy"
  },
  {
   "condition": "anxiety",
@@ -723,8 +714,8 @@ export default [
    ]
   },
   "verdict": "caution",
-  "message": "Keep caffeine under 300 mg a day with high blood pressure, and avoid it if your blood pressure is not controlled.",
-  "source_url": "https://www.heart.org/-/media/Files/Health-Topics/High-Blood-Pressure/BP-Raisers.pdf?sc_lang=en"
+  "message": "MedlinePlus lists high blood pressure among reasons to limit caffeine. Ask your doctor how much is right for you.",
+  "source_url": "https://medlineplus.gov/ency/article/002445.htm"
  },
  {
   "condition": "pms",
@@ -738,8 +729,8 @@ export default [
    ]
   },
   "verdict": "caution",
-  "message": "Cutting back on caffeine is one of the lifestyle steps suggested for PMS.",
-  "source_url": "https://www.mayoclinic.org/diseases-conditions/premenstrual-syndrome/diagnosis-treatment/drc-20376787"
+  "message": "MedlinePlus suggests skipping drinks with caffeine to help with PMS bloating.",
+  "source_url": "https://medlineplus.gov/ency/article/001505.htm"
  },
  {
   "condition": "diabetes",

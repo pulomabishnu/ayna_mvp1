@@ -35,7 +35,9 @@ function researchStage(productId, key, applicable) {
   if (r[key] === 'ok') return { overall: 'verified', trimester_1: 'verified', trimester_2: 'verified', trimester_3: 'verified', evidence_source: r[`${key}_source`] || r.source_url, last_reviewed: r.reviewed, onlyIfUnknown: true };
   const overall = RESEARCH_STATUS[r[key]];
   if (!overall) return null;
-  return { overall, trimester_1: overall, trimester_2: overall, trimester_3: overall, evidence_source: r[`${key}_source`] || r.source_url, last_reviewed: r.reviewed };
+  // No .gov page (or brand label) found: the cautious status is kept as ayna policy (Oct 24).
+  const evidence = r[`${key}_basis`] === 'ayna_policy' ? 'ayna policy (no .gov source found)' : r[`${key}_source`] || r.source_url;
+  return { overall, trimester_1: overall, trimester_2: overall, trimester_3: overall, evidence_source: evidence, last_reviewed: r.reviewed };
 }
 
 // ─── Relevance levels (spec) ────────────────────────────────────────────────
