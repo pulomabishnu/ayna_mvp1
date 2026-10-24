@@ -27,7 +27,7 @@ const isObj = (v) => v && typeof v === 'object' && !Array.isArray(v);
 export function readRundownMemory(storage = globalThis.localStorage) {
   const m = bucketOf(loadState(RUNDOWN_KEY, storage)).items.memory;
   const v = isObj(m) ? m : {};
-  return { shown: isObj(v.shown) ? v.shown : {}, shownCategories: isObj(v.shownCategories) ? v.shownCategories : {}, signatures: isObj(v.signatures) ? v.signatures : {}, notUseful: isObj(v.notUseful) ? v.notUseful : {}, weeklySeen: v.weeklySeen || null };
+  return { shown: isObj(v.shown) ? v.shown : {}, shownCategories: isObj(v.shownCategories) ? v.shownCategories : {}, signatures: isObj(v.signatures) ? v.signatures : {}, notUseful: isObj(v.notUseful) ? v.notUseful : {}, weeklySeen: v.weeklySeen || null, viewedDay: v.viewedDay || null, autoDay: v.autoDay || null };
 }
 
 function write(memory, storage) {
@@ -64,4 +64,10 @@ export function markNotUseful(card, reasonId, today, storage = globalThis.localS
 
 export function markWeeklySeen(today, storage = globalThis.localStorage) {
   return write({ ...readRundownMemory(storage), weeklySeen: today }, storage);
+}
+
+/** She opened (or skipped) today's rundown: it never opens on its own again today. */
+export function markRundownViewed(today, { auto = false } = {}, storage = globalThis.localStorage) {
+  const m = readRundownMemory(storage);
+  return write({ ...m, viewedDay: today, ...(auto ? { autoDay: today } : {}) }, storage);
 }

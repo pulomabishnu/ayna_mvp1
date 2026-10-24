@@ -20,8 +20,10 @@ const shell = fs.readFileSync(new URL('index.html', DIST), 'utf8');
 
 const DEFAULT_TITLE = "ayna | Personalized Women's Health Product Discovery";
 const PAGES = {
-  '/shop': ['Shop | ayna', "Shop women's health products ranked by how well they fit you: period care, intimate care, fertility, menopause and more."],
-  '/library': ['Library | ayna', "Plain-language guides to women's health topics, with sources, from the ayna Library."],
+  // /shop and /library are permanent redirects now (vercel.json): Explore > Products and Resources.
+  '/explore': ['Explore | ayna', "Explore women's health: search products, symptoms, topics, services and plain-language reads."],
+  '/explore/products': ['Products | ayna', "Shop women's health products ranked by how well they fit you: period care, intimate care, fertility, menopause and more."],
+  '/explore/resources': ['Resources | ayna', "Plain-language guides to women's health topics, with sources, from the ayna Library."],
   '/community': ['Community | ayna', "Real experiences with women's health products from the ayna community."],
   '/about': ['About | ayna', "Women's wellness products matched to your needs, with the research and reviews beside them. Meet ayna's founders and advisors."],
   '/how-it-works': ['How it works | ayna', 'How ayna matches products to you: your profile, the market, the evidence and your shop.'],
@@ -134,7 +136,7 @@ const PDP_PRELOAD = routeLinks('ProductModal', { cssRel: 'stylesheet' });
 }
 
 let count = 0;
-for (const [url, [title, desc]] of Object.entries(PAGES)) { write(url, withHead(page(url, title, desc), url === '/shop' ? SHOP_PRELOAD : '')); count += 1; }
+for (const [url, [title, desc]] of Object.entries(PAGES)) { write(url, withHead(page(url, title, desc), url === '/explore/products' ? SHOP_PRELOAD : '')); count += 1; }
 
 const absImage = (src) => (!src ? null : /^https?:/i.test(src) ? src : `${SITE}${src.startsWith('/') ? '' : '/'}${src}`);
 const asList = (v) => (Array.isArray(v) ? v : v ? [v] : []).map((x) => String(x ?? '').trim()).filter(Boolean);
