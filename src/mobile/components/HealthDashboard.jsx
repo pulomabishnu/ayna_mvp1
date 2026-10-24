@@ -37,7 +37,7 @@ export default function HealthDashboard({ authUser, userName = '', selectedNeedI
       hormonalBC={hormonalBC}
       products={feedProducts}
       onOpenProduct={onOpenProduct}
-      onAsk={openAsk ? (question) => openAsk({ question }) : undefined}
+      onAsk={openAsk ? (question, extra) => openAsk({ question, ...(extra || {}) }) : undefined}
       onEditAnswers={onEditAnswers}
       onSaveToProfile={onSaveToProfile}
       {...rundown}

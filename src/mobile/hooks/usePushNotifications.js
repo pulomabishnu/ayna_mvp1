@@ -78,3 +78,29 @@ export function usePushNotifications(userId, askNow = false) {
 
   return { token, status };
 }
+
+/**
+ * Where a tapped notification opens. The server sends `data.route: 'today'`
+ * (Today reminders, api/today-reminders.js) and `data.productId` (recall
+ * alerts, api/fda-recall.js); broadcasts carry neither and just open the app.
+ */
+export function routeForPush(data = {}) {
+  if (!data || typeof data !== 'object') return null;
+  if (data.productId) return { screen: 'product', productId: String(data.productId) };
+  if (data.route === 'today') return { screen: 'today' };
+  return null;
+}
+
+/** Calls onRoute(route) when she taps a notification (iOS). */
+export function usePushRoutes(onRoute) {
+  const ref = useRef(onRoute);
+  useEffect(() => { ref.current = onRoute; });
+  useEffect(() => {
+    if (Capacitor.getPlatform() !== 'ios') return undefined;
+    const handle = PushNotifications.addListener('pushNotificationActionPerformed', (action) => {
+      const route = routeForPush(action?.notification?.data);
+      if (route) ref.current?.(route);
+    });
+    return () => { handle.then((h) => h.remove()).catch(() => {}); };
+  }, []);
+}

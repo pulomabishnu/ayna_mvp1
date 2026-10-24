@@ -18,13 +18,14 @@ function StartButton({ onStart, label }) {
   </button>;
 }
 
-export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount, authUser, onOpenSaved, onBrowse, onGoCommunity, headerInitial = 'A', onOpenProfile, hasIntakeDraft = false, quizDraft = null, onResumeQuiz, onStartOverQuiz }) {
+export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount, authUser, onOpenSaved, onBrowse, onGoCommunity, headerInitial = 'A', onOpenProfile, hasIntakeDraft = false, quizDraft = null, onResumeQuiz, onStartOverQuiz, onBack }) {
   return <main className="ayna-ecosystem-start ay-intro">
-    <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
+    <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onBack={authUser ? onBack : undefined} onOpenSaved={onOpenSaved} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
     <div className="ayna-ecosystem-start-scroll ay-intro-body">
       <header className="ay-intro-head">
-        <h1>{hasIntakeDraft ? 'Your ecosystem is taking shape' : 'Tell us about you'}</h1>
-        <p>{hasIntakeDraft ? 'Pick up where you left off.' : 'Six questions, then your matches.'}</p>
+        {/* Signed out, this is My ecosystem's logged-out state: what it keeps, then one way in (team direction 24). */}
+        <h1>{hasIntakeDraft ? 'Your ecosystem is taking shape' : authUser ? 'Tell us about you' : 'Build your health ecosystem'}</h1>
+        <p>{hasIntakeDraft ? 'Pick up where you left off.' : authUser ? 'Six questions, then your matches.' : 'Keep your concerns, matches, saved products and health insights connected in one place. Six questions to start.'}</p>
       </header>
 
       <ol className="ay-intro-steps" aria-label="What shapes your ecosystem">
@@ -40,7 +41,7 @@ export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount
       <div className="ayna-ecosystem-start-actions ay-intro-actions">
         {quizDraft && onResumeQuiz
           ? <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} className="ay-intro-finish" />
-          : <StartButton onStart={onStartQuiz} label={hasIntakeDraft ? 'Finish the quiz' : 'See my matches'} />}
+          : <StartButton onStart={onStartQuiz} label={hasIntakeDraft ? 'Finish the quiz' : authUser ? 'See my matches' : 'Build mine'} />}
         {!authUser && <p className="ay-intro-signin">Already have an account? <button type="button" onClick={onAlreadyHaveAccount}>Sign in</button></p>}
       </div>
     </div>

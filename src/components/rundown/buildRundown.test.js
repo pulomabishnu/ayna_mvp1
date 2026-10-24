@@ -76,7 +76,7 @@ describe('Daily Rundown', () => {
     expect(sleepChange([...rows, { metric: 'sleep_minutes', day: TODAY, value: 340 }], TODAY).diff).toBe(-80);
     const r = buildRundown({ ...fromFixture(), healthRows: [...rows, { metric: 'sleep_minutes', day: TODAY, value: 340 }] });
     expect(r.cards.find((c) => c.category === 'change')).toMatchObject({ title: 'Sleep may matter a little more today.', facts: [{ k: 'Recent average', v: '7h 00m' }, { k: 'Last night', v: '5h 40m' }] });
-    expect(cats(buildRundown({ ...fromFixture(), healthRows: [...rows, { metric: 'sleep_minutes', day: TODAY, value: 400 }] }))).not.toContain('change');
+    expect(buildRundown({ ...fromFixture(), healthRows: [...rows, { metric: 'sleep_minutes', day: TODAY, value: 400 }] }).cards.some((c) => c.key.startsWith('change:sleep'))).toBe(false);
   });
 
   it('cycle position from her own period logs', () => {
@@ -101,5 +101,45 @@ describe('Your week on ayna', () => {
     expect(text).toContain('Pain was mostly mild this week, and moderate the week before.');
     expect(text).toContain('told ayna how 1 thing went');
     expect(text).not.toMatch(/worse|fail|goal|streak|—/i);
+  });
+});
+
+describe('Rundown weighted to last night and recent context (data -> action)', () => {
+  const rowsFor = (metric, base, last, days = 14) => [
+    ...Array.from({ length: days }, (_, i) => ({ metric, day: addDays(TODAY, -(i + 1)), value: base + (i % 2 ? 1 : -1) })),
+    { metric, day: TODAY, value: last },
+  ];
+  it('sleep card says what changed, what it may affect, what you can do, with .gov sources and See data', () => {
+    const rows = Array.from({ length: 10 }, (_, i) => ({ metric: 'sleep_minutes', day: addDays(TODAY, -(i + 1)), value: 420 }));
+    const c = buildRundown({ ...fromFixture(), healthRows: [...rows, { metric: 'sleep_minutes', day: TODAY, value: 340 }] }).cards.find((x) => x.category === 'change');
+    expect(c.changed).toBe('Last night: 5h 40m, about 1h 20m less than your recent average of 7h 00m.');
+    expect(c.mayAffect).toMatch(/focus/);
+    expect(c.canDo).toMatch(/same time/);
+    expect(c.sources.every((s) => /\.gov\//.test(s.url))).toBe(true);
+    expect(c.seeData).toEqual({ tab: 'sleep' });
+  });
+  it('recovery signal below her own range: a card, no claimed meaning', () => {
+    const r = buildRundown({ ...fromFixture(), healthRows: rowsFor('hrv_rmssd_ms', 50, 30) });
+    const c = r.cards.find((x) => x.key.startsWith('change:hrv_rmssd_ms'));
+    expect(c.title).toBe('Your recovery signal is lower than your recent range.');
+    expect(c.mayAffect).toBeUndefined();
+    expect(c.seeData).toEqual({ tab: 'heart' });
+    expect(buildRundown({ ...fromFixture(), healthRows: rowsFor('hrv_rmssd_ms', 50, 50) }).cards.some((x) => x.key.startsWith('change:hrv'))).toBe(false);
+  });
+  it('yesterday clearly off her usual check-in', () => {
+    const log = {};
+    for (let i = 2; i < 20; i += 1) { const d = addDays(TODAY, -i); log[d] = { day: d, pain: 0 }; }
+    log[addDays(TODAY, -1)] = { day: addDays(TODAY, -1), pain: 2 };
+    const r = buildRundown({ ...fromFixture(), log: { ...fromFixture().log, ...log } });
+    expect(r.cards.find((x) => x.key.startsWith('change:log:pain'))?.title).toBe('Yesterday your pain was moderate.');
+  });
+  it('routine progress for something she is trying, and the closing card offers Ask follow-ups about what she saw', () => {
+    const tries = [{ id: 'r1', kind: 'action', ref: 'movement', startedDay: addDays(TODAY, -11), horizonDays: 56, status: 'pending', outcome: null }];
+    const r = buildRundown({ ...fromFixture(), tries });
+    expect(r.cards.find((x) => x.key === 'goal:progress:r1').title).toBe('Day 12 of trying gentle movement.');
+    const closing = r.cards.at(-1);
+    expect(closing.followUps.length).toBeGreaterThan(0);
+    expect(closing.followUps.length).toBeLessThanOrEqual(3);
+    expect(closing.followUps.map((f) => f.question)).toContain('Does this change my routine?');
   });
 });
