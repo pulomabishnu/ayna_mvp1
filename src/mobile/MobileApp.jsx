@@ -29,6 +29,8 @@ import { useHealthData, DEV_HEALTH_DEMO } from './hooks/useHealthData.js';
 import { useTextSize } from './hooks/useTextSize.js';
 import { useEcosystemSession } from './hooks/useEcosystemSession.js';
 import { recordRoutineOutcome } from '../health/routineOutcome.js';
+import { fromRoutineOutcomes, outcomesToProductHistory, readTries, saveTry, setTriesOwner } from '../health/outcomes.js';
+import { syncUserData } from '../health/userDataSync.js';
 import { productNotesFromRoutine, readGuide, saveGuide } from './utils/aynaGuide.js';
 import { buildDashboard } from '../health/dashboard.js';
 import { explainWeek, usesHormonalBC } from '../health/weekInsights.js';
@@ -684,10 +686,18 @@ export default function MobileApp() {
   // Apple Health Records she saved on this phone: allergies and medicines for
   // safety, conditions as context. Never sent anywhere.
   const healthRecords = personalizeWithData ? health.records : null;
+  // What she reported trying (routine check-ins and tries, src/health/outcomes.js).
+  // Only recorded outcomes count; "Worse" and "Side effect" move that product down.
+  const routineOutcomesForUser = authUser?.id ? session.routineOutcomesByUser?.[authUser.id] : null;
+  const outcomeHistory = useMemo(() => {
+    if (!authUser?.id) return null;
+    const history = outcomesToProductHistory([...fromRoutineOutcomes(routineOutcomesForUser || {}, ALL_PRODUCTS), ...readTries()], ALL_PRODUCTS);
+    return history.length ? history : null;
+  }, [authUser?.id, routineOutcomesForUser]);
   const matchOpts = useMemo(() => {
-    if (!healthContext && !healthRecords) return baseMatchOpts;
-    return { ...baseMatchOpts, ...(healthContext ? { healthContext } : {}), ...(healthRecords ? { healthRecords } : {}) };
-  }, [baseMatchOpts, healthContext, healthRecords]);
+    if (!healthContext && !healthRecords && !outcomeHistory) return baseMatchOpts;
+    return { ...baseMatchOpts, ...(healthContext ? { healthContext } : {}), ...(healthRecords ? { healthRecords } : {}), ...(outcomeHistory ? { outcomeHistory } : {}) };
+  }, [baseMatchOpts, healthContext, healthRecords, outcomeHistory]);
   const suggestedEcosystemProducts = useMemo(() => {
     if (!effectiveQuizAnswers) return [];
     const savedIds = new Set(myProducts.map((product) => product.id));
@@ -714,7 +724,8 @@ export default function MobileApp() {
     ...planBaseOpts,
     ...(planHealthContext ? { healthContext: planHealthContext } : {}),
     ...(healthRecords ? { healthRecords } : {}),
-  }), [planBaseOpts, planHealthContext, healthRecords]);
+    ...(outcomeHistory ? { outcomeHistory } : {}),
+  }), [planBaseOpts, planHealthContext, healthRecords, outcomeHistory]);
   const planSeeded = useMemo(() => {
     if (!pendingAnswers || !['connect', 'plan'].includes(screen)) return [];
     try { return seedEcosystemFromAnswers(pendingAnswers, planMatchOpts); } catch { return []; }
@@ -1023,12 +1034,18 @@ export default function MobileApp() {
     routineHave: session.routineHave || {},
     routineExcluded: session.routineExcluded || {},
     routineOutcomes: authUser?.id ? session.routineOutcomesByUser?.[authUser.id] || {} : {},
-    onLogRoutineOutcome: authUser?.id ? (productId, rating) => updateSession((prev) => ({
-      routineOutcomesByUser: {
-        ...(prev.routineOutcomesByUser || {}),
-        [authUser.id]: recordRoutineOutcome(prev.routineOutcomesByUser?.[authUser.id] || {}, productId, rating),
-      },
-    })) : null,
+    onLogRoutineOutcome: authUser?.id ? (productId, rating) => {
+      updateSession((prev) => ({
+        routineOutcomesByUser: {
+          ...(prev.routineOutcomesByUser || {}),
+          [authUser.id]: recordRoutineOutcome(prev.routineOutcomesByUser?.[authUser.id] || {}, productId, rating),
+        },
+      }));
+      // The same check-in as a try, so it reaches her account (src/health/outcomes.js).
+      const next = recordRoutineOutcome(session.routineOutcomesByUser?.[authUser.id] || {}, productId, rating);
+      const asTry = fromRoutineOutcomes({ [productId]: next[productId] }, ALL_PRODUCTS)[0];
+      if (asTry) { setTriesOwner(authUser.id); saveTry(asTry); syncUserData({ userId: authUser.id, force: true }).catch(() => {}); }
+    } : null,
     onToggleRoutineProduct: (id) => updateSession((prev) => {
       const next = { ...(prev.routineExcluded || {}) };
       if (next[id]) delete next[id]; else next[id] = true;

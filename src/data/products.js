@@ -31,6 +31,7 @@ import { provideCatalog } from './catalogRegistry.js';
 import { HEALTH_FUNCTIONS, CATEGORY_LABELS, MACRO_GROUPS, BROWSE_GROUPS, browseGroupIdFor, productSearchText, itemMatchesMacroGroup } from './catalogTaxonomy.js';
 export { HEALTH_FUNCTIONS, CATEGORY_LABELS, MACRO_GROUPS, BROWSE_GROUPS, browseGroupIdFor, productSearchText, itemMatchesMacroGroup };
 import { rawIntakeFromProfile, asStringArray, hasStatedLifeStage, matchEngine } from './profileSignals.js';
+import { withOutcomeHistory } from '../health/outcomes.js';
 export { hasStatedLifeStage, matchEngine };
 
 // Tags used for quiz → product matching
@@ -1437,16 +1438,21 @@ function userProfileFor(quizAnswers, healthProfile = null, opts = {}) {
     // Browse ranking and partner placement never pass it.
     const healthContext = opts?.healthContext || null;
     const healthRecords = opts?.healthRecords || null;
+    // Her recorded outcomes (src/health/outcomes.js outcomesToProductHistory):
+    // join intake.productHistory, so "Worse" or "Side effect" moves that product
+    // down the same way an intake answer would.
+    const outcomeHistory = Array.isArray(opts?.outcomeHistory) && opts.outcomeHistory.length ? opts.outcomeHistory : null;
     let entries = USER_PROFILE_CACHE.get(key);
     if (!entries) { entries = []; USER_PROFILE_CACHE.set(key, entries); }
-    const hit = entries.find((e) => e.healthProfile === healthProfile && e.behaviorRaw === behaviorRaw && e.healthContext === healthContext && e.healthRecords === healthRecords);
+    const hit = entries.find((e) => e.healthProfile === healthProfile && e.behaviorRaw === behaviorRaw && e.healthContext === healthContext && e.healthRecords === healthRecords && e.outcomeHistory === outcomeHistory);
     if (hit) return hit.up;
-    const up = buildUserProfile(engineIntake(key, withHealthRecords(healthProfile, healthRecords)), {
+    const intake = engineIntake(key, withHealthRecords(healthProfile, healthRecords));
+    const up = buildUserProfile(outcomeHistory ? withOutcomeHistory(intake.fullHealthIntake && typeof intake.fullHealthIntake === 'object' ? { ...intake, ...intake.fullHealthIntake, fullHealthIntake: undefined } : intake, outcomeHistory) : intake, {
         catalog: ALL_PRODUCTS,
         behavior: normalizeBehaviorSignals(behaviorRaw) || undefined,
         healthContext: healthContext || undefined,
     });
-    entries.push({ healthProfile, behaviorRaw, healthContext, healthRecords, up });
+    entries.push({ healthProfile, behaviorRaw, healthContext, healthRecords, outcomeHistory, up });
     if (entries.length > 6) entries.shift();
     return up;
 }

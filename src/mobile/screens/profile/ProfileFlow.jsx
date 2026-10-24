@@ -536,7 +536,7 @@ function ProfileHub({ intake = null, onUpdateIntake = null, authUserId, name, in
         {quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
 
         <ThisWeek authUserId={authUserId} onOpenDashboard={() => onOpen('healthInsights')} onConnect={() => onOpen('healthData')} />
-        <DailyCheckin variant="app" />
+        <DailyCheckin variant="app" userId={authUserId || null} />
         <BoxWaitlist variant="app" />
 
         {recent.length > 0 && (

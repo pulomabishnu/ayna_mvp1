@@ -32,7 +32,7 @@ const FOCUS_TO_SYMPTOM = {
 const STEP_MAIN = {
   id: 'howIsRoutine',
   question: "How's your current routine working?",
-  subtitle: 'If something’s off, we’ll adjust your picks.',
+  subtitle: 'Tell us how it’s going.',
   type: 'single',
   options: [
     'Great. No changes',
@@ -45,7 +45,7 @@ const STEP_MAIN = {
 const STEP_FOCUS = {
   id: 'focusAreas',
   question: 'What should we focus on this month?',
-  subtitle: 'Pick everything that fits. We’ll update your recommendations',
+  subtitle: 'Pick everything that fits.',
   type: 'multi',
   options: [
     'Heavier flow',
@@ -168,14 +168,17 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
     if (focusAreas.includes('More cramps')) tips.push('Magnesium glycinate may help. It can reduce cramps.');
     if (focusAreas.includes('Heavier flow')) tips.push('Iron-rich foods or a supplement can help if you’re losing more blood than usual.');
     if (focusAreas.includes('UTIs')) tips.push('Wisp and Planned Parenthood Direct offer same-day UTI treatment.');
-    if (focusAreas.includes('Mood or sleep')) tips.push('Tracking your cycle can help. We’ve updated your recommendations.');
+    if (focusAreas.includes('Mood or sleep')) tips.push('Tracking your cycle can help.');
     if (focusAreas.includes('Different period product') || focusAreas.includes('Different supplement') || focusAreas.includes('Different app')) {
-      tips.push('Your product recommendations have been updated. Check your list.');
+      tips.push('Your picks haven’t changed for this. Browse to compare other options.');
     }
-    const title = satisfaction === 'Great. No changes' ? 'You’re all set' : 'Updated for you';
+    // Only promise what happens: focus areas with a FOCUS_TO_FRUSTRATION
+    // mapping change her picks (onProfileUpdate); the rest are saved only.
+    const changedPicks = focusAreas.some((f) => FOCUS_TO_FRUSTRATION[f]);
+    const title = satisfaction === 'Great. No changes' ? 'You’re all set' : changedPicks ? 'Updated for you' : 'Saved';
     const message = satisfaction === 'Great. No changes'
-      ? 'We’ll keep watching for recalls and new products that fit you.'
-      : 'We’ve updated your profile and recommendations based on this check-in.';
+      ? 'We keep checking your products for recalls.'
+      : changedPicks ? 'Your picks now include what you told us.' : 'Saved with this month’s check-in.';
 
     return (
       <div

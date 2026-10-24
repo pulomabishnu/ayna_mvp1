@@ -424,7 +424,7 @@ export default function WebYou({ onUpdateIntake = null, onOpenCommunity, onOpenA
         </section>
 
         <ThisWeek userId={user.id} onOpen={onOpenHealth || onOpenHealthData} onConnect={onOpenHealthData || onOpenHealth} />
-        <DailyCheckin />
+        <DailyCheckin userId={user?.id || null} />
         <BoxWaitlist email={user?.email || ''} />
 
         {recent.length > 0 && <section className="wy-sec" aria-labelledby="wy-recent-h">
