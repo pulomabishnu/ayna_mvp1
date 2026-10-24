@@ -29,7 +29,7 @@ function GradientBanner({ onClick, title = 'Build your ecosystem', buttonLabel =
             fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
             padding: '9px 18px',
             borderRadius: 99,
-            animation: 'ay-bob 2.5s ease-in-out infinite',
+            animation: 'ay-bob 2.5s ease-in-out 1',
           }}
         >
           {buttonLabel}

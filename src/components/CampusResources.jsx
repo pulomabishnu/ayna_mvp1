@@ -173,7 +173,7 @@ export default function CampusResources() {
         Leave this page quickly
       </button>
       <div className="cr-wrap">
-        <header className="ay3-band ay3-band--paper ay3-crhero">
+        <header className="cr-edhead">
           <h1 className="cr-h1">Campus resources</h1>
           <p className="cr-sub">Find sexual assault support and resources at your school.</p>
           <p className="cr-lede">Search for your college or university to find confidential support, reporting options, medical care, and other resources available to your campus community.</p>

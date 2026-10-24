@@ -12,6 +12,9 @@
 // { cover, gallery: [...] } where the gallery holds up to 4 extra clean shots
 // (other angles, contents, label / ingredients panel). The cover is always the
 // box or the product itself; it is what product cards show.
+import { OFFICIAL_IMAGE_OVERRIDES } from './imageOverrides.js';
+import { safeProductImageSrc } from '../utils/resolveProductImage.js';
+
 export const PRODUCT_IMAGE_OVERRIDES = Object.freeze({
   'p-aisle-underwear': '/products/catalog/p-aisle-underwear.webp',
   'p-alubri-calming-cream': '/products/catalog/p-alubri-calming-cream.webp',
@@ -324,7 +327,10 @@ export const PRODUCT_IMAGE_OVERRIDES = Object.freeze({
 function entryFor(productOrId) {
   const id = typeof productOrId === 'string' ? productOrId : productOrId?.id;
   if (!id) return null;
-  return PRODUCT_IMAGE_OVERRIDES[id] || null;
+  if (PRODUCT_IMAGE_OVERRIDES[id]) return PRODUCT_IMAGE_OVERRIDES[id];
+  // Official remote image (imageOverrides.js), served through the image proxy.
+  const official = OFFICIAL_IMAGE_OVERRIDES[id];
+  return official ? safeProductImageSrc(official.src, true) || null : null;
 }
 
 /** The cleaned studio cover photo for a catalog product (or id), or '' when none. */
@@ -350,8 +356,14 @@ export function productGallery(productOrId) {
   return [...new Set(list)];
 }
 
-/** Returns the product with its image swapped for the studio cover, if any. */
+/**
+ * Returns the product with its image swapped for the local studio cover, if
+ * any. Only the local packshots: the catalog's `image` fields are team-locked
+ * (teamCopy.lock.json fingerprints them), so official remote images are
+ * applied at render time through productImageOverride() instead.
+ */
 export function withImageOverride(product) {
-  const src = productImageOverride(product);
+  const entry = product?.id ? PRODUCT_IMAGE_OVERRIDES[product.id] : null;
+  const src = !entry ? '' : typeof entry === 'string' ? entry : entry.cover || '';
   return src && product ? { ...product, image: src } : product;
 }

@@ -27,3 +27,16 @@ export function useResearch(product) {
   }, [research]);
   return useMemo(() => (research && product ? withResearch(product, research) : product), [product, research]);
 }
+
+/** Same as useResearch, plus whether the research has arrived (for a skeleton while it loads). */
+export function useResearchState(product) {
+  const [research, setResearch] = useState(loaded);
+  useEffect(() => {
+    if (research) return undefined;
+    let live = true;
+    loadResearch().then((r) => { if (live) setResearch(r); });
+    return () => { live = false; };
+  }, [research]);
+  const filled = useMemo(() => (research && product ? withResearch(product, research) : product), [product, research]);
+  return { product: filled, loaded: Boolean(research) };
+}

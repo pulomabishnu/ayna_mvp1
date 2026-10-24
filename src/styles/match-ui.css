@@ -12,11 +12,11 @@ body .ay-why-hero strong { display: block; font-size: 24px; line-height: 1.1; le
 body .ay-why-ring { background: conic-gradient(var(--ay-ink, #1d1a2b) var(--a), var(--ay-paper, #fffcf5) 0); }
 body .ay-why-ring span { display: flex; align-items: baseline; justify-content: center; gap: 1px; background: var(--ay-paper, #fffcf5); color: var(--ay-ink, #1d1a2b); }
 body .ay-why-ring span { line-height: 62px; }
-.ay-why-tier { display: inline-block; margin-bottom: 8px; padding: 4px 10px; border: 1.5px solid var(--ay-ink, #1d1a2b); border-radius: 99px; background: var(--ay-paper, #fffcf5); font: 700 12px/1.2 var(--ay-font-ui, 'DM Sans', sans-serif); }
+.ay-why-tier { display: inline-block; margin-bottom: 8px; padding: 4px 10px; border: 1.5px solid var(--ay-ink, #1d1a2b); border-radius: 99px; background: var(--ay-paper, #fffcf5); font: 700 12px/1.2 var(--ay-font-ui, 'Figtree', sans-serif); }
 body .ay-why p.ay-why-access { margin: 8px 0 0; font-weight: 600; font-size: 13px; }
 .ay-why-access span { font-size: 9px; vertical-align: 2px; }
 .ay-why-notes { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 0; padding: 0; list-style: none; }
-.ay-why-notes li { padding: 6px 11px; border: 1.5px dashed var(--ay-ink, #1d1a2b); border-radius: 99px; font: 600 12.5px/1.2 var(--ay-font-ui, 'DM Sans', sans-serif); }
+.ay-why-notes li { padding: 6px 11px; border: 1.5px dashed var(--ay-ink, #1d1a2b); border-radius: 99px; font: 600 12.5px/1.2 var(--ay-font-ui, 'Figtree', sans-serif); }
 .ay-why-excluded { padding: 16px; border: 2px solid var(--ay-ink, #1d1a2b); border-radius: 18px; background: var(--ay-pink, #f7badd); }
 body .ay-why .ay-why-excluded p { margin: 0; font-weight: 600; }
 body .ay-why-reasons li { border-color: var(--ay-ink, #1d1a2b); }
@@ -27,14 +27,14 @@ body .ay-why-chips li { border-color: var(--ay-ink, #1d1a2b); }
 
 .ay-need-rows { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
 .ay-need-rows li { display: grid; grid-template-columns: minmax(0, 9em) minmax(0, 1fr) 2.4em; grid-template-rows: auto auto; column-gap: 12px; align-items: center; }
-.ay-need-rows__label { font: 700 14px/1.2 var(--ay-font-ui, 'DM Sans', sans-serif); overflow-wrap: anywhere; }
+.ay-need-rows__label { font: 700 14px/1.2 var(--ay-font-ui, 'Figtree', sans-serif); overflow-wrap: anywhere; }
 .ay-need-rows__bar { height: 10px; border: 1.5px solid var(--ay-ink, #1d1a2b); border-radius: 99px; overflow: hidden; background: var(--ay-cream, #faf8f1); }
 .ay-need-rows__bar i { display: block; height: 100%; background: var(--ay-mint, #bdebd6); }
 .ay-need-rows li.is-strong .ay-need-rows__bar i { background: var(--ay-peri, #b9c2f4); }
 .ay-need-rows li.is-exploratory .ay-need-rows__bar i { background: var(--ay-butter, #f7e78e); }
 .ay-need-rows li.is-browse .ay-need-rows__bar i { background: var(--ay-pink, #f7badd); }
-.ay-need-rows li strong { font: 800 16px/1 var(--ay-font-display, 'DM Sans', sans-serif); text-align: right; }
-.ay-need-rows li small { grid-column: 2 / 4; color: var(--ay-ink-soft, rgba(29, 26, 43, .62)); font: 600 12px/1.3 var(--ay-font-ui, 'DM Sans', sans-serif); }
+.ay-need-rows li strong { font: 800 16px/1 var(--ay-font-display, 'Figtree', sans-serif); text-align: right; }
+.ay-need-rows li small { grid-column: 2 / 4; color: var(--ay-ink-soft, rgba(29, 26, 43, .62)); font: 600 12px/1.3 var(--ay-font-ui, 'Figtree', sans-serif); }
 .ay-need-rows li.is-none .ay-need-rows__label { opacity: .6; }
 
 /* ---------- Product page: lead with the need ---------- */
@@ -120,18 +120,18 @@ body .ay-why-chips li { border-color: var(--ay-ink, #1d1a2b); }
 /* ---------- Why this matches (ASK2): based-on line, inputs, profile hint, restricted ----------
    Website panel (.ay-why, tokens flip with the theme) and app screen
    (.ayna-mobile, inside its own section cards). */
-body .ay-why p.ay-why-based { margin: 6px 0 0; color: inherit; opacity: .78; font: 500 13px/1.35 var(--ay-font-ui, 'DM Sans', sans-serif); }
-.ayna-mobile.ayna-mobile .ay-match-hero p.ay-match-based { margin: 6px 0 0 !important; color: #1d1a2b !important; opacity: .72; font: 500 13px/1.35 var(--ay-font-ui, 'DM Sans', sans-serif) !important; }
+body .ay-why p.ay-why-based { margin: 6px 0 0; color: inherit; opacity: .78; font: 500 13px/1.35 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ayna-mobile.ayna-mobile .ay-match-hero p.ay-match-based { margin: 6px 0 0 !important; color: #1d1a2b !important; opacity: .72; font: 500 13px/1.35 var(--ay-font-ui, 'Figtree', sans-serif) !important; }
 .ayna-mobile ul.ay-why-inputs { margin: 0; padding: 0; }
 .ay-why-inputs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
-.ay-why-inputs li { padding: 6px 12px; border: 1.5px solid var(--ay-ink, #1d1a2b); border-radius: 16px; color: var(--ay-ink, #1d1a2b); font: 600 13px/1.3 var(--ay-font-ui, 'DM Sans', sans-serif); }
+.ay-why-inputs li { padding: 6px 12px; border: 1.5px solid var(--ay-ink, #1d1a2b); border-radius: 16px; color: var(--ay-ink, #1d1a2b); font: 600 13px/1.3 var(--ay-font-ui, 'Figtree', sans-serif); }
 .ay-why-hint { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin: 16px 0 0; padding: 12px 16px; border: 1.5px dashed var(--ay-ink, #1d1a2b); border-radius: 16px; color: var(--ay-ink, #1d1a2b); }
-.ay-why-hint p { margin: 0; max-width: 46ch; font: 500 14px/1.45 var(--ay-font-ui, 'DM Sans', sans-serif); color: inherit; }
+.ay-why-hint p { margin: 0; max-width: 46ch; font: 500 14px/1.45 var(--ay-font-ui, 'Figtree', sans-serif); color: inherit; }
 .ayna-mobile .ay-why-hint p { margin: 0 !important; color: inherit !important; }
-.ay-why-hint button { min-height: 44px; padding: 0 16px; border: 2px solid var(--ay-ink, #1d1a2b); border-radius: 99px; background: var(--ay-butter, #f7e78e); color: #1d1a2b; font: 700 14px/1 var(--ay-font-ui, 'DM Sans', sans-serif); cursor: pointer; transition: transform 150ms ease; }
+.ay-why-hint button { min-height: 44px; padding: 0 16px; border: 2px solid var(--ay-ink, #1d1a2b); border-radius: 99px; background: var(--ay-butter, #f7e78e); color: #1d1a2b; font: 700 14px/1 var(--ay-font-ui, 'Figtree', sans-serif); cursor: pointer; transition: transform 150ms ease; }
 body .ay-why .ay-why-hint button { color: var(--ay-ink, #1d1a2b); }
 .ay-why-hint button:active { transform: scale(.98); }
 body .ay-why .ay-why-restricted { margin: 16px 0 0; padding: 16px; border: 2px solid var(--ay-ink, #1d1a2b); border-radius: 18px; background: var(--ay-butter, #f7e78e); color: var(--ay-ink, #1d1a2b); }
-body .ay-why .ay-why-restricted h3 { margin: 0 0 6px; color: inherit; font: 800 18px/1.2 var(--ay-font-display, 'DM Sans', sans-serif); }
-body .ay-why .ay-why-restricted p { margin: 0 0 12px; color: inherit; font: 500 14px/1.45 var(--ay-font-ui, 'DM Sans', sans-serif); }
+body .ay-why .ay-why-restricted h3 { margin: 0 0 6px; color: inherit; font: 800 18px/1.2 var(--ay-font-display, 'Figtree', sans-serif); }
+body .ay-why .ay-why-restricted p { margin: 0 0 12px; color: inherit; font: 500 14px/1.45 var(--ay-font-ui, 'Figtree', sans-serif); }
 @media (prefers-reduced-motion: reduce) { .ay-why-hint button { transition: none; } }

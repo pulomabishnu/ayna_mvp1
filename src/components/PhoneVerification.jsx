@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { InfoPage } from './InfoPage';
+import { EdPage } from './editorial/EdPage';
+import { maskedChange, formatUsPhone } from '../utils/inputMask.js';
 
 const AYNA_SMS_NUMBER = import.meta.env.VITE_AYNA_SMS_NUMBER || '';
 
@@ -80,18 +81,18 @@ export default function PhoneVerification({ userSession, onVerified, onCancel })
     }
   };
 
+  // Editorial footer-page layout (EdPage): back link, H1 and intro in the
+  // reading column, then the form in one Group. No colour band.
   return (
-    <InfoPage photos={['curlers-call', 'bed-selfie', 'pajamas-overhead']} tone="sky"
-      eyebrow="By text"
+    <EdPage
       title="Text ayna"
       lede="Get personalized health texts from ayna anytime, without opening the app."
       onBack={onCancel}
-      width="narrow"
     >
-      <div className="ay-info-card ay-info-card--pad ay-info-form">
+      <div className="ay-group is-padded ed-form" style={{ maxWidth: 560 }}>
         {step === 'phone' && (
           <>
-            <div className="ay-info-field">
+            <div className="ed-field">
               <label htmlFor="text-ayna-phone">Phone number</label>
               <input
                 id="text-ayna-phone"
@@ -99,26 +100,28 @@ export default function PhoneVerification({ userSession, onVerified, onCancel })
                 autoComplete="tel"
                 placeholder="(555) 555-5555"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                onChange={(e) => setPhoneNumber(maskedChange(e, formatUsPhone))}
               />
             </div>
-            <p className="ay-info__small">{CONSENT_TEXT}</p>
-            {error && <div role="alert" className="ay-info-notice ay-info-notice--err">{error}</div>}
-            <button
-              type="button"
-              className="ay-info-btn ay-info-btn--block"
-              onClick={handleSendCode}
-              disabled={sending || !phoneNumber.trim()}
-            >
-              {sending ? 'Sending…' : 'Send code'}
-            </button>
+            <p className="ed-small">{CONSENT_TEXT}</p>
+            {error && <div role="alert" className="ed-notice ed-notice--err">{error}</div>}
+            <div>
+              <button
+                type="button"
+                className="ay-btn ay-btn--primary"
+                onClick={handleSendCode}
+                disabled={sending || !phoneNumber.trim()}
+              >
+                {sending ? 'Sending…' : 'Send code'}
+              </button>
+            </div>
           </>
         )}
 
         {step === 'code' && (
           <>
-            <p className="ay-info__body">We texted a code to {phoneNumber}. Enter it below.</p>
-            <div className="ay-info-field">
+            <p className="ed-body">We texted a code to {phoneNumber}. Enter it below.</p>
+            <div className="ed-field">
               <label htmlFor="text-ayna-code">Verification code</label>
               <input
                 id="text-ayna-code"
@@ -130,25 +133,27 @@ export default function PhoneVerification({ userSession, onVerified, onCancel })
                 onChange={(e) => setCode(e.target.value)}
               />
             </div>
-            {error && <div role="alert" className="ay-info-notice ay-info-notice--err">{error}</div>}
-            <div className="ay-info-btn-row">
-              <button type="button" className="ay-info-btn ay-info-btn--ghost" onClick={() => setStep('phone')}>Change number</button>
-              <button type="button" className="ay-info-btn" onClick={handleConfirmCode} disabled={sending || !code.trim()}>
+            {error && <div role="alert" className="ed-notice ed-notice--err">{error}</div>}
+            <div className="ed-btnrow">
+              <button type="button" className="ay-btn ay-btn--primary" onClick={handleConfirmCode} disabled={sending || !code.trim()}>
                 {sending ? 'Verifying…' : 'Verify'}
               </button>
+              <button type="button" className="ay-btn ay-btn--secondary" onClick={() => setStep('phone')}>Change number</button>
             </div>
           </>
         )}
 
         {step === 'done' && (
           <>
-            <h2 className="ay-info__h3">You're all set</h2>
-            {AYNA_SMS_NUMBER && <p className="ay-info-sms-number">{AYNA_SMS_NUMBER}</p>}
-            <p className="ay-info__body">Try texting: "what helps with PMOS bloating"</p>
-            <button type="button" className="ay-info-btn" onClick={onCancel}>Done</button>
+            <h2 className="ed-h3">You're all set</h2>
+            {AYNA_SMS_NUMBER && <p className="ed-body"><strong>{AYNA_SMS_NUMBER}</strong></p>}
+            <p className="ed-body">Try texting: "what helps with PMOS bloating"</p>
+            <div>
+              <button type="button" className="ay-btn ay-btn--primary" onClick={onCancel}>Done</button>
+            </div>
           </>
         )}
       </div>
-    </InfoPage>
+    </EdPage>
   );
 }

@@ -34,3 +34,61 @@ export function firstSentence(text, { min = 20, max = 240 } = {}) {
   }
   return lead;
 }
+
+/**
+ * "60 capsules (1 daily, or 2 before sex)" → { value: "60 capsules", note: "1 daily, or 2 before sex" }.
+ * Splits at the first " (" only when the bracket closes the value, so a tile
+ * shows a short bold value with the detail on a small line under it.
+ */
+export function splitNote(text) {
+  const s = String(text || '').trim();
+  const at = s.indexOf(' (');
+  if (at < 1 || !s.endsWith(')')) return { value: s, note: '' };
+  const inner = s.slice(at + 2, -1).trim();
+  // Nested or unbalanced brackets stay as they are.
+  if (!inner || /[()]/.test(inner)) return { value: s, note: '' };
+  return { value: s.slice(0, at).trim(), note: inner };
+}
+
+/** Normalised text for comparing two sentences (case, quotes, spacing, end punctuation). */
+const norm = (t) => String(t || '').toLowerCase().replace(/[“”"‘’']/g, '').replace(/\s+/g, ' ').replace(/[.!?…\s]+$/, '').trim();
+
+/**
+ * A paragraph without the lead sentence it starts with (the row already shows
+ * that sentence). Returns '' when the paragraph was only the lead.
+ */
+export function stripLead(paragraph, lead) {
+  const p = String(paragraph || '').trim();
+  const l = norm(lead);
+  if (!p || l.length < 12) return p;
+  const parts = splitSentences(p);
+  let used = '';
+  for (let i = 0; i < parts.length; i += 1) {
+    used = norm(parts.slice(0, i + 1).join(' '));
+    if (used === l) return parts.slice(i + 1).join(' ').trim();
+    if (used.length > l.length) break;
+  }
+  return p;
+}
+
+// Places a long sentence can end early and still say one whole thing.
+const CLAUSE = /(?:,|;|:)\s+|\s+(?=(?:rather than|while|whereas|though|although|but|because|since|which|so that|unless|including|with)\s)/gi;
+
+/**
+ * A complete short takeaway for a folded row: the first sentence when it fits
+ * in about two lines, otherwise that sentence ended at its last clause break
+ * that fits. Never an ellipsis.
+ */
+export function shortLine(text, max = 92) {
+  const first = splitSentences(String(text || ''))[0] || '';
+  if (first.length <= max) return first;
+  let best = 0;
+  let m;
+  CLAUSE.lastIndex = 0;
+  while ((m = CLAUSE.exec(first))) {
+    if (m.index > max) break;
+    if (m.index >= 32) best = m.index;
+  }
+  if (!best) return first;
+  return `${first.slice(0, best).replace(/[,;:\s]+$/, '')}.`;
+}

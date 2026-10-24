@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
+import AccountHead from './nav/AccountHead.jsx';
 import { trackRecommendationViews } from '../utils/recommendationAnalytics';
 import { getRecommendationExplanation, ALL_PRODUCTS, CATEGORY_LABELS, getRecommendationsGroupedByWorkflow } from '../data/products.js';
 import { getRecommendedArticles } from './Articles';
@@ -25,6 +26,8 @@ const TYPE_OPTIONS = [
 ];
 
 export default function Recommendations({
+    onBack = null,
+    onAsk = null,
     results,
     onRetake,
     trackedProducts,
@@ -328,42 +331,30 @@ export default function Recommendations({
         );
     };
 
-    return (
-        <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
+    const hasOtherPicks = workflowWithFilter.length > 0 || displayedSections.some((sec) => (sec.products || []).length > 0);
 
-            {/* Header + Retake at top */}
-            <div className="ay3-pagehead ay3-band ay3-band--rose ay3-torn ay3-edge-bottom" style={{ textAlign: 'center', margin: '0 auto var(--spacing-lg)' }}>
-                <div style={{
-                    background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)',
-                    padding: '0.5rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: 14,
-                    fontWeight: '600', marginBottom: '1rem', display: 'inline-block'
-                }}>
-                    Your personalized ecosystem
-                </div>
-                <h2 style={{ fontSize: 'var(--ay-fs-title)', marginBottom: '0.75rem' }}>Products picked <em>for you.</em></h2>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: 16 }}>
+    return (
+        <section className="container ay-acct-page animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
+
+            <AccountHead
+                title="Products picked for you"
+                back={onBack ? { label: 'Your ecosystem', href: '/ecosystem', onClick: onBack } : null}
+                actions={<>
+                    <button type="button" className="ay-btn ay-btn--secondary" onClick={onRetake}>Edit my answers</button>
+                    {onAsk && <button type="button" className="ay-btn ay-btn--text" onClick={() => onAsk('')}>Add something in Ask ayna</button>}
+                </>}
+            >
+                <p>
                     {results?.frustrations?.length > 0
-                        ? <>We picked these using your quiz answers (<strong>{results.frustrations.join(', ')}</strong>), your chat messages, any medical records you've uploaded, and wearable data from My Account.</>
-                        : "We picked these using your quiz answers, chat messages, uploaded medical records, and wearable data. Once you add them under My Account."
-                    }
+                        ? <>Picked from your answers (<strong>{results.frustrations.join(', ')}</strong>), plus any health records or wearable data you added in You.</>
+                        : 'Picked from your answers, plus any health records or wearable data you added in You.'}
+                    {' '}Every pick comes from ayna&rsquo;s reviewed catalog. We never sell your data.
                 </p>
                 {inferTagsFromHealthProfile(healthProfile).length > 0 && (
-                    <p style={{ color: 'var(--color-primary)', fontSize: 16, marginTop: '0.75rem', lineHeight: 1.5 }}>
-                        We're also using your uploaded health info. Conditions, medications, medical records, or wearable data. To help pick these. This isn't a diagnosis, just extra information to help find a better fit.
-                    </p>
+                    <p>Your uploaded health info (conditions, medications, records or wearable data) helped too. It isn&rsquo;t a diagnosis.</p>
                 )}
-                <p style={{ color: 'var(--color-text-muted)', fontSize: 14, marginTop: '0.5rem' }}>
-                    We never sell your data. The "For [concern]" picks below come from our reviewed catalog. The picks above come from your own health profile, so always double check with a doctor before you decide.
-                </p>
-                <p style={{ color: 'var(--color-primary)', fontSize: 14, marginTop: '0.5rem', fontWeight: '500' }}>
-                    Forgot something? Use the chat button to speak or type more. We’ll refresh your ecosystem.
-                </p>
-                <div style={{ marginTop: '1.25rem' }}>
-                    <button type="button" className="btn btn-outline" onClick={onRetake}>
-                        Retake Assessment
-                    </button>
-                </div>
-            </div>
+                <p>Check with your doctor before you decide.</p>
+            </AccountHead>
 
             <CareNearYouPanel
                 quizResults={results}
@@ -384,7 +375,8 @@ export default function Recommendations({
                 </div>
             )}
 
-            {results?.fullHealthIntake && Object.keys(results.fullHealthIntake).length > 0 && !llmLoading && !llmError && tiered.length === 0 && (
+            {/* Only when nothing at all is picked: the category picks below count too. */}
+            {results?.fullHealthIntake && Object.keys(results.fullHealthIntake).length > 0 && !llmLoading && !llmError && tiered.length === 0 && !hasOtherPicks && (
                 <div style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', textAlign: 'center', padding: '2rem', color: 'var(--color-text-muted)' }}>
                     <p style={{ fontSize: 16 }}>We couldn't find picks for you. Try refreshing the page, or tell us more in chat.</p>
                 </div>

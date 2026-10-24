@@ -3,6 +3,7 @@ import { defineOption } from '../data/glossary.js';
 import { mapIntakeToLegacyQuizProfile } from '../../utils/healthIntake.js';
 import { ChipList, StickerGrid, SearchField, ChoiceRows, AgeDial, ZipTicket, LevelMeter, TrackLine, PriceStacks, DotScale, BrandSpectrum, AccountCards, TrustPodium, StickyNote, TopicPicker } from '../components/intake/IntakeControls.jsx';
 import IntakeSceneArt from '../components/intake/IntakeSceneArt.jsx';
+import { haptic } from '../../utils/haptics.js';
 import { INTAKE_SCENES, SECTION_TONES, SECTION_LABELS } from '../components/intake/intakeScenes.js';
 import '../intake-play.css';
 import RecommendationCountPicker from '../components/RecommendationCountPicker.jsx';
@@ -32,8 +33,6 @@ import {
   AVOID_PAIRS,
   BRAND_OPENNESS,
   BREASTFEEDING_STATUS,
-  BRAND_SUGGESTIONS,
-  CATALOG_PRODUCT_NAMES,
   CONDITIONS,
   EMPTY,
   FOLLOWUP_QUESTIONS,
@@ -55,7 +54,6 @@ import {
   PREGNANCY_TRIMESTER,
   PRICE_RANGES,
   PRODUCT_FORMATS,
-  PRODUCT_OR_BRAND_SUGGESTIONS,
   STOP_REASONS,
   SUPPORT_GROUPS,
   UTI_FREQUENCY,
@@ -72,6 +70,7 @@ import {
   requiredReady,
   ttcDurationOptions,
 } from '../data/intakeModel.js';
+import { BRAND_SUGGESTIONS, CATALOG_PRODUCT_NAMES, PRODUCT_OR_BRAND_SUGGESTIONS } from '../data/intakeCatalog.js';
 
 // The app's quiz. Questions, order, required/optional rules, branching and
 // saved answers all live in mobile/data/intakeModel.js (shared with the
@@ -86,34 +85,34 @@ import {
 // each tile's badge can recolor with the tile's own selected/unselected ink.
 const FORMAT_ICONS = {
   'Pills or capsules': (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="10.5" width="18" height="7" rx="3.5" transform="rotate(-35 12 14)" stroke="currentColor" strokeWidth="1.8" /><path d="M9.5 8.2l5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="10.5" width="18" height="7" rx="3.5" transform="rotate(-35 12 14)" stroke="currentColor" strokeWidth="1.75" /><path d="M9.5 8.2l5 5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" /></svg>
   ),
   Gummies: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 4c3 0 5 2.2 5 5 0 1-.3 1.7-.8 2.4.9.5 1.6 1.5 1.6 3 0 2.5-2.1 4.6-4.7 4.6-1 0-1.9-.3-2.6-.8-.7.5-1.6.8-2.6.8-2.6 0-4.7-2-4.7-4.6 0-1.5.7-2.5 1.6-3-.5-.7-.8-1.4-.8-2.4 0-2.8 2-5 5-5" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 4c3 0 5 2.2 5 5 0 1-.3 1.7-.8 2.4.9.5 1.6 1.5 1.6 3 0 2.5-2.1 4.6-4.7 4.6-1 0-1.9-.3-2.6-.8-.7.5-1.6.8-2.6.8-2.6 0-4.7-2-4.7-4.6 0-1.5.7-2.5 1.6-3-.5-.7-.8-1.4-.8-2.4 0-2.8 2-5 5-5" stroke="currentColor" strokeWidth="1.75" strokeLinejoin="round" /></svg>
   ),
   Powders: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8 3h8l1 4H7l1-4Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /><path d="M6 8h12l1.2 10.4a2 2 0 0 1-2 2.6H6.8a2 2 0 0 1-2-2.6L6 8Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /><path d="M9 12h6M8.5 15.5h7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8 3h8l1 4H7l1-4Z" stroke="currentColor" strokeWidth="1.75" strokeLinejoin="round" /><path d="M6 8h12l1.2 10.4a2 2 0 0 1-2 2.6H6.8a2 2 0 0 1-2-2.6L6 8Z" stroke="currentColor" strokeWidth="1.75" strokeLinejoin="round" /><path d="M9 12h6M8.5 15.5h7" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" /></svg>
   ),
   'Drinks or teas': (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 8h11l-1 9.5A2 2 0 0 1 13 19.3H8a2 2 0 0 1-2-1.8L5 8Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /><path d="M16 9.5h1.5a2.5 2.5 0 0 1 0 5H16" stroke="currentColor" strokeWidth="1.8" /><path d="M8 5.2c.4-.7 0-1-.3-1.5M12 5.2c.4-.7 0-1-.3-1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 8h11l-1 9.5A2 2 0 0 1 13 19.3H8a2 2 0 0 1-2-1.8L5 8Z" stroke="currentColor" strokeWidth="1.75" strokeLinejoin="round" /><path d="M16 9.5h1.5a2.5 2.5 0 0 1 0 5H16" stroke="currentColor" strokeWidth="1.75" /><path d="M8 5.2c.4-.7 0-1-.3-1.5M12 5.2c.4-.7 0-1-.3-1.5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" /></svg>
   ),
   'Creams, lotions, or gels': (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8 10c0-3 1.8-6 4-6.8C14.2 4 16 7 16 10v8a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-8Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /><path d="M8 10h8" stroke="currentColor" strokeWidth="1.8" /></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8 10c0-3 1.8-6 4-6.8C14.2 4 16 7 16 10v8a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-8Z" stroke="currentColor" strokeWidth="1.75" strokeLinejoin="round" /><path d="M8 10h8" stroke="currentColor" strokeWidth="1.75" /></svg>
   ),
   Patches: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="5" stroke="currentColor" strokeWidth="1.8" /><circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.6" /><path d="M7 7l1.6 1.6M17 7l-1.6 1.6M7 17l1.6-1.6M17 17l-1.6-1.6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" /></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="5" stroke="currentColor" strokeWidth="1.75" /><circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.75" /><path d="M7 7l1.6 1.6M17 7l-1.6 1.6M7 17l1.6-1.6M17 17l-1.6-1.6" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" /></svg>
   ),
   Suppositories: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3c2 2 3 5 3 8.5 0 4-1.3 7-3 9.5-1.7-2.5-3-5.5-3-9.5C9 8 10 5 12 3Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3c2 2 3 5 3 8.5 0 4-1.3 7-3 9.5-1.7-2.5-3-5.5-3-9.5C9 8 10 5 12 3Z" stroke="currentColor" strokeWidth="1.75" strokeLinejoin="round" /></svg>
   ),
   'Devices or wearables': (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="7" y="2.5" width="10" height="19" rx="2.5" stroke="currentColor" strokeWidth="1.8" /><path d="M10.5 18.5h3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="7" y="2.5" width="10" height="19" rx="2.5" stroke="currentColor" strokeWidth="1.75" /><path d="M10.5 18.5h3" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" /></svg>
   ),
   'Period-care products': (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3.5c3 4 6 8 6 11.5a6 6 0 1 1-12 0c0-3.5 3-7.5 6-11.5Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3.5c3 4 6 8 6 11.5a6 6 0 1 1-12 0c0-3.5 3-7.5 6-11.5Z" stroke="currentColor" strokeWidth="1.75" strokeLinejoin="round" /></svg>
   ),
   'No preference': (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.8" /><path d="M6.5 17.5l11-11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.75" /><path d="M6.5 17.5l11-11" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" /></svg>
   ),
 };
 /** Small "type your own" field: shows as a + chip, opens to an input. */
@@ -482,7 +481,7 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
       <div style={{ flex: 'none', padding: 'max(16px, env(safe-area-inset-top)) 20px 12px', borderBottom: '1px solid ' + ROW_BORDER, background: CARD_BG }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <button type="button" className="ayna-intake-control" aria-label="Change age" onClick={onChangeAge} style={{ width: 30, height: 30, borderRadius: 99, border: '1.5px solid ' + ROW_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flex: 'none' }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
           </button>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: LABEL_GOLD }}>About you</div>
@@ -494,7 +493,7 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
       <div style={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto' }}>
         <div style={{ padding: '38px 24px 30px', background: `linear-gradient(170deg, ${WARNING_BG}, ${CARD_BG})` }}>
           <div style={{ width: 54, height: 54, borderRadius: 99, background: CARD_BG, border: '1.5px solid ' + WARNING_BORDER_SOFT, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 20px -10px rgba(180,64,42,.3)' }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={WARNING_BORDER} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l8 4v5c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V7l8-4z" /><path d="M12 10v3.5" /><path d="M12 16.5h.01" /></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={WARNING_BORDER} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l8 4v5c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V7l8-4z" /><path d="M12 10v3.5" /><path d="M12 16.5h.01" /></svg>
           </div>
           <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: LABEL_GOLD, marginTop: 20 }}>Age requirement</div>
           <div style={{ fontFamily: "var(--ayna-font-display)", fontWeight: 400, fontSize: 'calc(28px * var(--ayna-text-scale, 1))', lineHeight: 1.15, color: INK, marginTop: 9 }}>We can't take you through the quiz</div>
@@ -543,12 +542,12 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
 /* --------------------------------- Main screen --------------------------------- */
 
 
-export default function IntakeScreen({ onBack, onComplete, onDraftChange, initialSnapshot = null, startAtBeginning = false, startAtOptional = false, introEnabled = true }) {
+export default function IntakeScreen({ onBack, onComplete, onDraftChange, initialSnapshot = null, startAtBeginning = false, startAtOptional = false, startAtStep = '', introEnabled = true }) {
   const [savedDraft] = useState(() => !initialSnapshot && !startAtBeginning ? readIntakeDraft() : null);
   // Opened from "Make my matches more personal" (Ecosystem): straight into the optional questions.
   const [enteredAtOptional] = useState(() => Boolean(startAtOptional && initialSnapshot && !savedDraft));
   const [intake, setIntake] = useState(() => savedDraft ? { ...EMPTY, ...savedDraft.intake } : reconstructIntakeFromSnapshot(initialSnapshot));
-  const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || savedDraft?.stepId || (startAtOptional && initialSnapshot ? firstOptionalResumeStepId(reconstructIntakeFromSnapshot(initialSnapshot)) : startAtBeginning || !initialSnapshot ? 'age' : firstUnansweredStepId(reconstructIntakeFromSnapshot(initialSnapshot))));
+  const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || (startAtStep && initialSnapshot ? startAtStep : null) || savedDraft?.stepId || (startAtOptional && initialSnapshot ? firstOptionalResumeStepId(reconstructIntakeFromSnapshot(initialSnapshot)) : startAtBeginning || !initialSnapshot ? 'age' : firstUnansweredStepId(reconstructIntakeFromSnapshot(initialSnapshot))));
   const [search, setSearch] = useState('');
   // Computed once, from how things stood when this resume started (not
   // re-derived as answers change), so a step's flag clears only by actually
@@ -584,11 +583,13 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     clearTimeout(holdRef.current.timer);
     holdRef.current.fired = false;
     if (!hit) return;
-    holdRef.current.timer = setTimeout(() => { holdRef.current.fired = true; setGlossary({ ...hit, term: hit.term === value ? raw : hit.term }); navigator.vibrate?.(8); }, 450);
+    holdRef.current.timer = setTimeout(() => { holdRef.current.fired = true; setGlossary({ ...hit, term: hit.term === value ? raw : hit.term }); haptic('selection'); }, 450);
   };
   const endHold = () => clearTimeout(holdRef.current.timer);
   const swallowClickAfterHold = (event) => {
-    if (holdRef.current.fired) { event.preventDefault(); event.stopPropagation(); holdRef.current.fired = false; }
+    if (holdRef.current.fired) { event.preventDefault(); event.stopPropagation(); holdRef.current.fired = false; return; }
+    // A picked answer gets a selection tick on the phone (no-op on the web).
+    if (event.target.closest('button, [role="radio"], [role="checkbox"], label')) haptic('selection');
   };
 
   // Part 1: the required minimum (with the follow-ups that apply). Then a
@@ -776,7 +777,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         {['Yes', 'Not sure'].includes(intake.safetyConcern) && (
           <div className="ip-alert" role="note">
             <strong><span aria-hidden="true">!</span>Worth a closer look</strong>
-            <p>Some new or worsening symptoms need a clinician. ayna helps you discover products and doesn’t diagnose. If it feels urgent or severe, get care promptly.{intake.safetyConcern === 'Yes' ? ' We’ll show care options first.' : ''}</p>
+            <p>Some new or worsening symptoms need a clinician. ayna helps you find products and doesn’t diagnose. If it feels urgent or severe, get care promptly.{intake.safetyConcern === 'Yes' ? ' We’ll show care options first.' : ''}</p>
           </div>
         )}
       </>
@@ -891,7 +892,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     const careFirst = intake.safetyConcern === 'Yes';
     return (
       <div className="ayna-play-intake ip-tone--mint ip-checkpoint" data-section="checkpoint" data-step={CHECKPOINT_STEP} data-direction={direction}>
-        <IntakeSceneArt art="sparkle" key="art-checkpoint" />
+        <IntakeSceneArt art="bloom" key="art-checkpoint" />
         <header className="ip-head">
           <div className="ip-head-row">
             <button type="button" className="ip-round" aria-label="Go back" onClick={goBack}>
@@ -910,7 +911,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
             {careFirst && <div className="ip-care-now" role="note"><b>If this is an emergency, call 911.</b> <span>If you're thinking about harming yourself, call or text 988.</span> <span>Your results open with clinician and urgent care options.</span></div>}
             {remainingOptional > 0 && <div className="ip-checkpoint-more">
               <strong>Want closer matches?</strong>
-              <p>Answer {remainingOptional} more quick question{remainingOptional === 1 ? '' : 's'} anytime. They are optional, and you can start them later from your Ecosystem.</p>
+              <p>Answer {remainingOptional} more quick question{remainingOptional === 1 ? '' : 's'} anytime. They are optional, and you can start them later from your ecosystem.</p>
             </div>}
           </div>
         </div>

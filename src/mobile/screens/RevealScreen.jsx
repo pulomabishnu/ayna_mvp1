@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Stamp } from '../components/BrandBits.jsx';
 import ProductImage from '../components/ProductImage.jsx';
-import { getProfileMatchPercentForProduct } from '../../data/products.js';
+import { matchPercentFor } from '../utils/matchScore.js';
+import { ecosystemCounts } from '../../utils/ecosystemCounts.js';
 import IntakeSceneArt from '../components/intake/IntakeSceneArt.jsx';
 import '../wrapped.css';
 import { buildPersona } from '../utils/shopperProfile.js';
@@ -21,17 +22,22 @@ function imageFor(product) {
 }
 
 
-export default function RevealScreen({ myProducts = [], topAreas = [], onContinue, onBack, onGoBrowse, authUser, quizAnswers, lastQuizAnswers, revealStartAtEnd = false }) {
-  const products = myProducts.slice(0, 4);
-  const first = products[0];
-  const areaCount = new Set(myProducts.map((product) => product.areaKey).filter(Boolean)).size;
+export default function RevealScreen({ myProducts = [], topAreas = [], onContinue, onBack, onGoBrowse, authUser, quizAnswers, lastQuizAnswers, matchOpts, revealStartAtEnd = false }) {
   const answers = quizAnswers || lastQuizAnswers;
+  // "#1 match" is her highest-scoring product (same scorer as every card), not
+  // just the first one saved; ties keep her ecosystem's order.
+  const ranked = answers
+    ? myProducts.map((product, i) => ({ product, i, pct: matchPercentFor(product, answers, matchOpts) ?? -1 })).sort((a, b) => b.pct - a.pct || a.i - b.i).map((x) => x.product)
+    : myProducts;
+  const products = ranked.slice(0, 4);
+  const first = products[0];
+  // Same counts as the Ecosystem hero and the website (utils/ecosystemCounts).
+  const counts = ecosystemCounts(myProducts, answers, { matchOpts });
+  const productWord = counts.products === 1 ? 'product' : 'products';
   const intake = answers?.fullHealthIntake || null;
   const persona = buildPersona(intake);
-  const rawMatch = first && answers ? getProfileMatchPercentForProduct(first, answers) : null;
-  const firstMatch = Number.isFinite(rawMatch) && rawMatch > 0 ? Math.round(rawMatch) : null;
-  const supportCount = (intake?.supportSelections || []).filter((s) => s !== 'Nothing right now').length;
-  const needCount = supportCount || (answers?.supportSelections || []).filter((s) => s !== 'Nothing right now').length;
+  // Same scorer and inputs as the card and product page, so "#1 match 97%" here is 97% there too.
+  const firstMatch = first && answers ? matchPercentFor(first, answers, matchOpts) : null;
 
   const slides = products.length
     ? ['intro', ...(topAreas.length ? ['focus'] : []), 'match', ...(persona ? ['persona'] : []), 'lineup', 'finish']
@@ -111,16 +117,15 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
         {active === 'intro' && <>
           <Stamp id="ayw-stamp" className="ayw-stamp" />
           <p className="ayw-kicker">Your ecosystem is ready</p>
-          <h1 className="ayw-title">Your ayna,<br /><em>wrapped.</em></h1>
+          <h1 className="ayw-title">Your ayna,<br />wrapped</h1>
           <div className="ayw-stat-row">
-            <div><strong>{myProducts.length}</strong><span>{myProducts.length === 1 ? 'pick' : 'picks'}</span></div>
-            {areaCount || topAreas.length ? <div><strong>{areaCount || topAreas.length}</strong><span>{(areaCount || topAreas.length) === 1 ? 'area' : 'areas'}</span></div> : needCount > 0 && <div><strong>{needCount}</strong><span>{needCount === 1 ? 'need' : 'needs'}</span></div>}
-            {supportCount > 0 && <div><strong>{supportCount}</strong><span>{supportCount === 1 ? 'goal' : 'goals'}</span></div>}
+            <div><strong>{counts.products}</strong><span>{productWord}</span></div>
+            {counts.needs > 0 && <div><strong>{counts.needsCovered} of {counts.needs}</strong><span>{counts.needs === 1 ? 'need' : 'needs'} covered</span></div>}
           </div>
         </>}
 
         {active === 'focus' && <>
-          <p className="ayw-kicker">Your Ecosystem covers</p>
+          <p className="ayw-kicker">Your ecosystem covers</p>
           <ol className="ayw-ranks">
             {topAreas.slice(0, 3).map((area, i) => <li key={area} style={{ '--i': i }}><span>{i + 1}</span><strong>{area}</strong></li>)}
           </ol>
@@ -130,7 +135,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
           <p className="ayw-kicker">Your #1 match</p>
           <div className="ayw-arch">
             <div className="ayw-arch-clip"><ProductImage product={first} src={imageFor(first)} alt={first.name} allowBrandLogo={first.type === 'digital'} /></div>
-            {firstMatch && <span className="ayw-badge"><strong>{firstMatch}%</strong>match</span>}
+            {firstMatch && <span className="ayw-badge"><svg className="ayw-ring" viewBox="0 0 100 100" aria-hidden="true" style={{ '--ring-gap': 100 - Math.min(100, firstMatch) }}><circle cx="50" cy="50" r="48" pathLength="100" /></svg><strong>{firstMatch}%</strong>match</span>}
           </div>
           <div className="ayw-product">
             {first.brand && <span>{first.brand}</span>}
@@ -147,8 +152,8 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
         </>}
 
         {active === 'lineup' && <>
-          <p className="ayw-kicker">The lineup</p>
-          <h1 className="ayw-title ayw-title--sm">{myProducts.length} {myProducts.length === 1 ? 'pick' : 'picks'},<br />made for you.</h1>
+          <p className="ayw-kicker">Your picks</p>
+          <h1 className="ayw-title ayw-title--sm">{counts.products} {productWord} that fit<br />your answers</h1>
           <div className="ayw-grid">
             {products.map((product, i) => (
               <div key={product.id || i} className="ayw-tile" style={{ '--i': i }}>
@@ -163,13 +168,14 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
             <span className="ayw-card-mark">ayna</span>
             <strong className="ayw-card-title">{persona?.title || 'My ecosystem'}</strong>
             <ul>
-              <li><span>Picks</span><b>{myProducts.length}</b></li>
-              {(topAreas.length > 0 || areaCount > 0) ? <li><span>Areas</span><b>{topAreas.slice(0, 2).join(', ') || areaCount}</b></li> : needCount > 0 && <li><span>Needs</span><b>{needCount}</b></li>}
+              <li><span>Products</span><b>{counts.products}</b></li>
+              {counts.needs > 0 && <li><span>Needs covered</span><b>{counts.needsCovered} of {counts.needs}</b></li>}
+              {topAreas.length > 0 && <li><span>Areas</span><b>{topAreas.slice(0, 2).join(', ')}</b></li>}
               {first && <li><span>#1 match</span><b>{first.name}</b></li>}
             </ul>
           </div>
           <div className="ayw-actions">
-            <button className="ayw-cta" type="button" onClick={onContinue}>{authUser ? 'Open my Ecosystem' : 'Save my Ecosystem'}<i aria-hidden="true">→</i></button>
+            <button className="ayw-cta" type="button" onClick={onContinue}>{authUser ? 'Open my ecosystem' : 'Save my ecosystem'}<i aria-hidden="true">→</i></button>
             <div className="ayw-secondary">
               <button className="ayw-link" type="button" onClick={share}>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13" /></svg>
@@ -181,11 +187,10 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
         </>}
 
         {active === 'empty' && <>
-          <p className="ayw-kicker">Your next chapter</p>
-          <h1 className="ayw-title">Still<br /><em>exploring.</em></h1>
-          <p className="ayw-foot">No strong match yet.</p>
+          <h1 className="ayw-title">No strong<br />match yet</h1>
+          <p className="ayw-foot">No strong match yet. Your answers didn’t point to one clear pick. The Shop is sorted by need.</p>
           <div className="ayw-actions">
-            <button className="ayw-cta" type="button" onClick={onGoBrowse}>Explore products<i aria-hidden="true">→</i></button>
+            <button className="ayw-cta" type="button" onClick={onGoBrowse}>Go to the Shop<i aria-hidden="true">→</i></button>
             <div><button className="ayw-link" type="button" onClick={onBack}>Edit answers</button></div>
           </div>
         </>}

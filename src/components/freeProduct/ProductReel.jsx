@@ -110,7 +110,7 @@ export default function ProductReel({ pool, spinning, result, onSettled }) {
           ref={trackRef}
           style={{
             transform: `translate3d(${-offset}px, 0, 0)`,
-            transition: animating ? `transform ${DURATION_MS}ms cubic-bezier(.12,.72,.16,1)` : 'none',
+            transition: animating ? `transform ${DURATION_MS}ms var(--ease-out)` : 'none',
           }}
         >
           {tiles}

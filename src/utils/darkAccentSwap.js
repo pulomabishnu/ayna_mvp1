@@ -18,6 +18,7 @@ const rgbRe = (c) => new RegExp(`rgba?\\(\\s*${c[0]}\\s*,\\s*${c[1]}\\s*,\\s*${c
 const HEX_SKY = /#769ebe\b/gi;
 const HEX_ROSE = /#f7badd\b/gi;
 const MARK = '\u0000';
+const SAFETY_SEL = /safety|alert|warn|caution|recall|sensitivity|danger|-err\b|error/i;
 
 /** Swap sky and rose in one CSS value (hex or rgb/rgba). Exported for tests. */
 export function swapAccents(value) {
@@ -33,6 +34,9 @@ export function swapAccents(value) {
 function swappedRule(rule) {
   const sel = rule.selectorText;
   if (!sel || /brand-dark/.test(sel)) return '';
+  // Safety alerts stay pink-family in both themes (pink means "careful"
+  // everywhere, matching the app), so their rules are never swapped.
+  if (SAFETY_SEL.test(sel)) return '';
   const style = rule.style;
   const decls = [];
   for (let i = 0; i < style.length; i += 1) {

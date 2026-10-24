@@ -67,6 +67,26 @@ export async function logSmsEvent(admin, userId, kind, detail = null) {
   }
 }
 
+/**
+ * Claim today's reminder for one person BEFORE texting her. Returns false when
+ * another run already claimed it. With supabase/FIX_security_reliability_2026-10-21.sql
+ * applied, a unique index on (user_id, detail->>'day') for kind 'reminder'
+ * makes two overlapping cron runs (Vercel can deliver a cron twice) unable to
+ * both pass; without it this behaves like the old log-then-send.
+ */
+export async function claimReminderDay(admin, userId, day, type) {
+  try {
+    const { error } = await admin.from('sms_events').insert({ user_id: userId, kind: 'reminder', detail: { type, day }, created_at: new Date().toISOString() });
+    if (!error) return true;
+    if (error.code === '23505') return false;
+    console.error('[sms] reminder claim failed:', error.message);
+    return true;
+  } catch (e) {
+    console.error('[sms] reminder claim failed:', e?.message);
+    return true;
+  }
+}
+
 const etFmt = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' });
 /** Calendar day in New York, 'YYYY-MM-DD'. Every "per day" rule uses this. */
 export const etDay = (t = Date.now()) => etFmt.format(new Date(t));

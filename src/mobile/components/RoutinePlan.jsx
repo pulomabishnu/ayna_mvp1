@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react';
+import { PlaylistIcon } from '../../components/icons/UiIcons.jsx';
 import { trackApp } from '../utils/appAnalytics.js';
 import PlaylistCoverPicker from './PlaylistCoverPicker.jsx';
 import PlaylistAudiencePicker from './PlaylistAudiencePicker.jsx';
-import { buildRoutine, buildShoppingList, overBudget } from '../../health/plan.js';
+import { buildRoutine, buildShoppingList, overBudget, reasonForProduct } from '../../health/plan.js';
+import { OUTCOME_LABELS } from '../../health/routineOutcome.js';
 import { getBuyUrl } from '../data/buyUrl.js';
 import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
 import { productImageOverride } from '../../data/productImageOverrides.js';
@@ -21,40 +23,87 @@ function Thumb({ product }) {
 
 const OverBudget = () => <span className="ay-rt-budget">Over your budget</span>;
 
-export function Routine({ products, insights, onOpenProduct, budget = null }) {
-  const routine = useMemo(() => buildRoutine(products, insights), [products, insights]);
-  if (!routine.slots.length) return null;
-  return (
-    <section className="ay-rt" aria-labelledby="ay-rt-title">
-      <h2 id="ay-rt-title">Your routine</h2>
-      <p className="ay-rt-lede">Where each of your matches fits in your week, with a how-to line from its own instructions.</p>
-      {routine.slots.map((slot) => (
+export function Routine({ products, insights, needIds = [], outcomes = {}, onLogOutcome, onOpenProduct, budget = null, folded = false, excluded = {}, onToggleExcluded }) {
+  const selected = useMemo(() => products.filter((p) => p && !excluded[p.id]), [products, excluded]);
+  const routine = useMemo(() => buildRoutine(selected, insights), [selected, insights]);
+  if (!products.length) return null;
+  const choices = onToggleExcluded && (
+    <details className="ay-rt-choices">
+      <summary>Choose products for your routine</summary>
+      <p>Start with ayna's matches, then keep the products you want. Your shopping list follows this choice.</p>
+      <ul>{products.map((product) => <li key={product.id}>
+        <label><input type="checkbox" checked={!excluded[product.id]} onChange={() => onToggleExcluded(product.id)} />{product.name}</label>
+      </li>)}</ul>
+    </details>
+  );
+  const slots = routine.slots.map((slot) => (
         <div key={slot.id} className={`ay-rt-slot is-${slot.id}`}>
           <h3>{slot.title}</h3>
           {slot.note && <p className="ay-rt-note">{slot.note}</p>}
           <ul>
-            {slot.items.map(({ product, how }) => (
+            {slot.items.map(({ product, how }) => {
+              const why = reasonForProduct(product, needIds);
+              const history = Array.isArray(outcomes[product.id]) ? outcomes[product.id] : [];
+              return (
               <li key={product.id}>
                 <button type="button" className="ay-rt-item" onClick={() => onOpenProduct?.(product)}>
                   <Thumb product={product} />
                   <span className="ay-rt-text">
                     <b>{product.name}</b>
+                    {why && <span className="ay-rt-why">{why}</span>}
                     {overBudget(product, budget) && <OverBudget />}
                     {how && <span className="ay-rt-how">{how.text}</span>}
                     {how?.source && <small>From {how.source}</small>}
                   </span>
                 </button>
+                {onLogOutcome && <details className="ay-rt-checkin">
+                  <summary>{history.length ? `Your latest check-in: ${OUTCOME_LABELS[history.at(-1).rating] || 'Recorded'}` : 'Tried it? Log how it is going'}</summary>
+                  <p>Your impression of this product. This check-in stays on this device.</p>
+                  <div role="group" aria-label={`How ${product.name} is going`}>
+                    {Object.entries(OUTCOME_LABELS).map(([rating, label]) => <button key={rating} type="button" onClick={() => onLogOutcome(product.id, rating)}>{label}</button>)}
+                  </div>
+                  {history.length > 1 && <small>{history.length} dated check-ins saved on this device.</small>}
+                </details>}
               </li>
-            ))}
+              );
+            })}
           </ul>
         </div>
-      ))}
+      ));
+  const lede = <p className="ay-rt-lede">Where each product you choose fits in your week, with a how-to line from its own instructions.</p>;
+  // Folded (Ecosystem > Dashboard): one disclosure row, since the full routine
+  // is also on her plan and the dashboard was six screens long.
+  if (folded) return (
+    <section className="ay-rt is-folded" aria-labelledby="ay-rt-title">
+      <details className="ay-fold">
+        <summary>
+          <span className="ay-fold__text">
+            <h2 id="ay-rt-title">Your routine</h2>
+            <p className="ay-rt-lede">{routine.slots.length ? routine.slots.map((x) => x.title).join(' · ') : 'Choose products to start your routine'}</p>
+          </span>
+          <svg className="ay-fold__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+        </summary>
+        {lede}
+        {choices}
+        {!routine.count && <p className="ay-rt-lede">No products selected yet.</p>}
+        {slots}
+      </details>
+    </section>
+  );
+  return (
+    <section className="ay-rt" aria-labelledby="ay-rt-title">
+      <h2 id="ay-rt-title">Your routine</h2>
+      {lede}
+      {choices}
+      {!routine.count && <p className="ay-rt-lede">No products selected yet.</p>}
+      {slots}
     </section>
   );
 }
 
-export function ShoppingList({ products, insights, have = {}, onToggleHave, onOpenProduct, onSavePlaylist, onOpenPlaylist, budget = null, onRequireAuth }) {
-  const list = useMemo(() => buildShoppingList(products, insights, { getBuyUrl }), [products, insights]);
+export function ShoppingList({ products, insights, excluded = {}, have = {}, onToggleHave, onOpenProduct, onSavePlaylist, onOpenPlaylist, budget = null, onRequireAuth }) {
+  const selected = useMemo(() => products.filter((p) => p && !excluded[p.id]), [products, excluded]);
+  const list = useMemo(() => buildShoppingList(selected, insights, { getBuyUrl }), [selected, insights]);
   if (!list.count) return null;
   const owned = list.groups.flatMap((g) => g.items).filter((i) => have[i.product.id]).length;
   return (
@@ -85,7 +134,7 @@ export function ShoppingList({ products, insights, have = {}, onToggleHave, onOp
           </ul>
         </div>
       ))}
-      {!onSavePlaylist && onRequireAuth && <button type="button" className="ay-sl-pl-open" onClick={() => onRequireAuth('playlists')}><span aria-hidden="true">♫</span>Sign in to save as a playlist</button>}
+      {!onSavePlaylist && onRequireAuth && <button type="button" className="ay-sl-pl-open" onClick={() => onRequireAuth('playlists')}><PlaylistIcon size={18} />Sign in to save as a playlist</button>}
       {onSavePlaylist && <SavePlaylist items={list.groups.flatMap((g) => g.items).map((it) => it.product)} have={have} onSave={onSavePlaylist} onOpen={onOpenPlaylist} />}
     </section>
   );
@@ -129,7 +178,7 @@ function SavePlaylist({ items, have, onSave, onOpen }) {
       </div>
     );
   }
-  if (!open) return <button type="button" className="ay-sl-pl-open" onClick={() => setOpen(true)}><span aria-hidden="true">♫</span>Save as a playlist</button>;
+  if (!open) return <button type="button" className="ay-sl-pl-open" onClick={() => setOpen(true)}><PlaylistIcon size={18} />Save as a playlist</button>;
   return (
     <div className="ay-sl-pl">
       <h3>Save as a playlist</h3>

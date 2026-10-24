@@ -1,5 +1,5 @@
 import React from 'react';
-import { InfoPage } from './InfoPage';
+import { EdPage } from './editorial/EdPage';
 
 const SECTIONS = [
     {
@@ -37,30 +37,32 @@ const SECTIONS = [
     },
 ];
 
-export default function HowWeMakeMoney({ onBack }) {
+export default function HowWeMakeMoney({ onBack, backLabel }) {
     return (
-        <InfoPage photos={['bag-tubes', 'pad-thread-art', 'sink-flatlay']} tone="rose"
-            eyebrow="Transparency"
+        <EdPage
             title="How we make money"
             lede="Health-product recommendations and commercial relationships should be easy to tell apart. Here is how ayna handles both."
-            onBack={onBack}
-            width="read"
+            onBack={onBack} backLabel={backLabel}
+            photo="bag-tubes"
+            tone="espresso"
+            frame="frame"
+            toc
         >
-            <div className="ay-info-card ay-info-card--pad ay-info-card--butter ay-info-summary">
-                <h2 className="ay-info__h3">Partnerships never change your matches</h2>
-                <p className="ay-info__body">
+            <div className="ay-group is-padded ed-keyline">
+                <h2>Partnerships never change your matches</h2>
+                <p>
                     Partnerships and affiliate links help support ayna. They can affect visibility in general Browse when clearly labeled, but they do not decide your personalized match score or recommendation order.
                 </p>
             </div>
 
             {SECTIONS.map((section) => (
-                <section key={section.eyebrow} className="ay-info__section ay-info__section--prose">
-                    <h2 className="ay-info__h2 ay-info__h2--sm">{section.eyebrow}</h2>
+                <section key={section.eyebrow}>
+                    <h2>{section.eyebrow}</h2>
                     {section.paragraphs.map((p, i) => (
-                        <p key={i} className="ay-info__body">{p}</p>
+                        <p key={i}>{p}</p>
                     ))}
                 </section>
             ))}
-        </InfoPage>
+        </EdPage>
     );
 }

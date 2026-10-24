@@ -5,7 +5,7 @@
  * "Not on file", and nothing here makes up ratings, stock or shipping.
  */
 import { ALL_PRODUCTS, HEALTH_FUNCTIONS } from '../../data/products.js';
-import { PRODUCT_IMAGE_OVERRIDES } from '../../data/productImageOverrides.js';
+import { PRODUCT_IMAGE_OVERRIDES, productImageOverride } from '../../data/productImageOverrides.js';
 import { getPassport } from '../../data/passport/index.js';
 import { priceParts, safetyAlertText } from '../../data/passport/content.js';
 import { isPlaceholderProductImage } from '../../utils/resolveProductImage.js';
@@ -36,7 +36,11 @@ export function galleryImages(product) {
     add(override.cover);
     (override.gallery || []).forEach(add);
   } else if (override) add(override);
-  add(product.image);
+  // An official replacement image (data/imageOverrides.js) stands in for the
+  // stored one, which was broken, low-res or the wrong product.
+  const official = override ? '' : productImageOverride(product);
+  if (official) add(official);
+  else add(product.image);
   (Array.isArray(product.gallery) ? product.gallery : []).forEach(add);
   (Array.isArray(product.images) ? product.images : []).forEach(add);
   return list;
@@ -113,8 +117,13 @@ export function similarProducts(product, { pool = ALL_PRODUCTS, limit = 3, exclu
   if (!product) return [];
   const skip = new Set([product.id, ...exclude]);
   const brand = brandOf(product).toLowerCase();
+  // A sunscreen is compared with sunscreens, not acne washes from the same "skincare" category:
+  // when the product has a specific tag, a candidate must share one.
+  const GENERIC = new Set(['skin', 'hair', 'vegan', 'organic', 'comfort', 'cost', 'privacy', 'safety-concern', 'cruelty-free', 'natural', 'budget', 'fsa', 'hsa', 'clean', 'sensitive']);
+  const specific = (product.tags || []).filter((t) => !GENERIC.has(String(t).toLowerCase()));
   const scored = pool
     .filter((p) => p && p.id && p.name && !skip.has(p.id) && p.category === product.category && p.type === product.type)
+    .filter((p) => !specific.length || (p.tags || []).some((t) => specific.includes(t)))
     .map((p) => {
       let s = overlap(p.healthFunctions, product.healthFunctions) * 3 + overlap(p.tags, product.tags) * 2;
       if (brandOf(p).toLowerCase() !== brand) s += 2;
@@ -211,7 +220,7 @@ export function compareRows(products, { matchFor = null } = {}) {
       const preg = getPassport(p)?.safety?.pregnancy;
       const pv = preg?.known && !preg.notApplicable ? String(Array.isArray(preg.value) ? preg.value.join(' ') : preg.value || '') : '';
       if (pv && /not|avoid|consult|ask|doctor|clinician|don.t|do not|unsafe|caution/i.test(pv)) notes.push('Pregnancy caution');
-      return notes.length ? `${notes.join(', ')}, see its page` : 'None flagged';
+      return notes.length ? `${notes.join(', ')}. See its page.` : 'None flagged';
     } },
     { label: 'FSA/HSA', get: (p) => { if (['pad', 'tampon', 'cup', 'disc'].includes(p?.category)) return 'Eligible'; const f = getPassport(p)?.pricing?.fsa_hsa; return f?.known ? (f.value === 'eligible' ? 'Eligible' : 'Not eligible') : NOT_ON_FILE; } },
     matchFor ? { label: 'Your match', get: (p) => { const m = matchFor(p); return Number.isFinite(m) && m > 0 ? `${Math.round(m)}%` : 'No clear match'; } } : null,

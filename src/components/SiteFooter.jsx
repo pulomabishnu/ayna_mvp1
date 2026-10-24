@@ -6,7 +6,7 @@ import '../styles/verify-people.css';
 import '../styles/site-footer.css';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { installReferralCapture } from '../utils/badges';
-import { WEFUNDER_URL } from '../data/investRound';
+import { WEFUNDER_URL, trackInvestClick } from '../data/invest';
 
 /**
  * Site footer: brand blurb + Explore / Company / Get in touch columns, a
@@ -15,7 +15,7 @@ import { WEFUNDER_URL } from '../data/investRound';
  * The legal row is the ONE place the medical disclaimer appears on the
  * website (audit G21), and it carries the same items as the app's
  * LegalFooter (audit AP04): 18+ only, Privacy Policy, Consumer Health Data
- * Privacy (the standalone /consumer-health-data.html notice), Terms, How We
+ * Privacy notice (/consumer-health-data, the in-site page), Terms, How We
  * Make Money, and the usage-analytics switch.
  *
  * The analytics switch uses the same analyticsConsent helpers as the
@@ -61,10 +61,10 @@ export function AnalyticsToggle() {
 
 function FooterColumn({ title, children }) {
   return (
-    <div className="ay-footer-col">
-      <div className="ay-footer-col__title">{title}</div>
-      <div className="ay-footer-col__links">{children}</div>
-    </div>
+    <nav className="ay-foot__col" aria-label={title}>
+      <h2 className="ay-foot__title">{title}</h2>
+      {children}
+    </nav>
   );
 }
 
@@ -94,6 +94,7 @@ export default function SiteFooter({
   onViewArticles,
   onViewPrivacyPolicy,
   onViewTermsOfUse,
+  onViewConsumerHealthData,
   onViewHowWeMakeMoney,
   onViewEcosystem,
   onViewCommunity,
@@ -105,57 +106,59 @@ export default function SiteFooter({
   }, []);
 
   return (
-    <footer className="site-footer ay-footer">
-      <div className="site-footer__columns ay-footer__columns">
-        <div className="ay-footer__brand">
-          <div className="site-footer__logo ay-footer__logo">ayna</div>
-          <p className="ay-footer__blurb">
-            Personalized women's health discovery. Matched to your body, your goals, your data.
+    <footer className="ay-foot">
+      <div className="ay-foot__inner">
+      <div className="ay-foot__grid">
+        <div className="ay-foot__brand">
+          <p className="ay-foot__logo">ayna</p>
+          <p className="ay-foot__blurb">
+            Women's health products matched to your answers, with the research beside each one.
           </p>
         </div>
 
         <FooterColumn title="Explore">
-          <a className="ay-footer-link" href="/how-it-works" onClick={(e) => footerGo(e, onViewHowItWorks)}>How it works</a>
-          <a className="ay-footer-link" href="/shop" onClick={(e) => footerGo(e, () => onViewDiscovery?.(''))}>Shop</a>
-          <a className="ay-footer-link" href="/ecosystem" onClick={(e) => footerGo(e, onViewEcosystem)}>My Ecosystem</a>
-          <a className="ay-footer-link" href="/library" onClick={(e) => footerGo(e, onViewArticles)}>Library</a>
-          <a className="ay-footer-link" href="/community" onClick={(e) => footerGo(e, onViewCommunity)}>Community</a>
-          <a className="ay-footer-link" href="/campus-resources">Campus resources</a>
+          <a className="ay-foot__link" href="/how-it-works" onClick={(e) => footerGo(e, onViewHowItWorks)}>How it works</a>
+          <a className="ay-foot__link" href="/shop" onClick={(e) => footerGo(e, () => onViewDiscovery?.(''))}>Shop</a>
+          <a className="ay-foot__link" href="/ecosystem" onClick={(e) => footerGo(e, onViewEcosystem)}>My ecosystem</a>
+          <a className="ay-foot__link" href="/library" onClick={(e) => footerGo(e, onViewArticles)}>Library</a>
+          <a className="ay-foot__link" href="/community" onClick={(e) => footerGo(e, onViewCommunity)}>Community</a>
+          <a className="ay-foot__link" href="/campus-resources">Campus resources</a>
         </FooterColumn>
 
         <FooterColumn title="Company">
-          <a className="ay-footer-link" href="/about" onClick={(e) => footerGo(e, onViewAbout)}>About</a>
-          <a className="ay-footer-link" href="/partners" onClick={(e) => footerGo(e, onViewWaitlist)}>Partner brands</a>
-          <a className="ay-footer-link" href={WEFUNDER_URL} target="_blank" rel="noopener noreferrer" onClick={() => { try { posthog.capture('invest_cta_clicked', { location: 'footer' }); } catch { /* analytics never blocks */ } }}>Invest in ayna <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
+          <a className="ay-foot__link" href="/about" onClick={(e) => footerGo(e, onViewAbout)}>About</a>
+          <a className="ay-foot__link" href="/partners" onClick={(e) => footerGo(e, onViewWaitlist)}>Partner brands</a>
+          <a className="ay-foot__link" href={WEFUNDER_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackInvestClick('footer')}>Invest in ayna <span aria-hidden="true">↗</span><span className="sr-only"> (opens Wefunder in a new tab)</span></a>
         </FooterColumn>
 
         <FooterColumn title="Get in touch">
-          <a className="ay-footer-link" href="/contact" onClick={(e) => footerGo(e, onViewContact)}>Contact</a>
-          <a className="ay-footer-link" href="https://form.typeform.com/to/Jt7rx3BS?typeform-source=aynahealth.co" target="_blank" rel="noreferrer">Give us feedback <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
-          <a className="ay-footer-link" href="https://www.instagram.com/ayna.health/" target="_blank" rel="noreferrer">Instagram <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
-          <a className="ay-footer-link" href="https://www.tiktok.com/@aynahealth" target="_blank" rel="noreferrer">TikTok <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
+          <a className="ay-foot__link" href="/contact" onClick={(e) => footerGo(e, onViewContact)}>Contact</a>
+          <a className="ay-foot__link" href="https://form.typeform.com/to/Jt7rx3BS?typeform-source=aynahealth.co" target="_blank" rel="noreferrer">Give us feedback <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
+          <a className="ay-foot__link" href="https://www.instagram.com/ayna.health/" target="_blank" rel="noreferrer">Instagram <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
+          <a className="ay-foot__link" href="https://www.tiktok.com/@aynahealth" target="_blank" rel="noreferrer">TikTok <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
         </FooterColumn>
       </div>
 
-      <div className="site-footer__baseline ay-footer__baseline">
+      <div className="ay-foot__base">
         <span>© ayna 2026</span>
         <span>Made for women, by women.</span>
       </div>
 
-      <div className="site-footer__legal ay-footer-legal">
-        <p className="ay-footer-legal__text">
+      <div className="ay-foot__legal">
+        <p className="ay-foot__legaltext">
           <strong>18+ only.</strong> ayna provides wellness information only, not medical advice. Always consult a
           qualified healthcare provider for medical decisions. We do not sell your personal health information.
           {' '}Our Wefunder round is testing the waters under Regulation Crowdfunding: no money is accepted and a reservation involves no obligation until a Form C is filed.
         </p>
-        <nav className="ay-footer-legal__links" aria-label="Legal">
+        <nav className="ay-foot__legallinks" aria-label="Legal">
           <a className="ay-footer-legal__link" href="/privacy-policy" onClick={(e) => footerGo(e, onViewPrivacyPolicy)}>Privacy policy</a>
-          <a className="ay-footer-legal__link" href="/consumer-health-data">Consumer health data privacy</a>
+          <a className="ay-footer-legal__link" href="/consumer-health-data" onClick={(e) => footerGo(e, onViewConsumerHealthData)}>Consumer health data notice</a>
           <a className="ay-footer-legal__link" href="/terms-of-use" onClick={(e) => footerGo(e, onViewTermsOfUse)}>Terms of use</a>
           <a className="ay-footer-legal__link" href="/how-we-make-money" onClick={(e) => footerGo(e, onViewHowWeMakeMoney)}>How we make money</a>
           <AnalyticsToggle />
           <MotionToggle />
         </nav>
+      </div>
       </div>
     </footer>
   );

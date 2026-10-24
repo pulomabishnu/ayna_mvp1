@@ -8,7 +8,7 @@
 .app-container .hs-needs__refresh:hover { transform: translate(-2px, -2px); box-shadow: var(--ay-shadow); }
 .app-container .hs-needs__refresh:active { transform: scale(.98); box-shadow: none; }
 .app-container .hs-needs__refresh:focus-visible, .app-container .hs-needs__all:focus-visible { outline: 3px solid var(--ay-ink); outline-offset: 2px; }
-.app-container .hs-needs__refresh svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s ease-out; }
+.app-container .hs-needs__refresh svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s ease-out; }
 .app-container .hs-needs__refresh:hover svg { transform: rotate(-180deg); }
 .app-container .hs-needs__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
 .app-container .hs-need { display: grid; grid-template-columns: 128px minmax(0, 1fr); align-items: center; gap: 24px; padding: 16px; border: 2px solid var(--ay-ink); border-radius: 24px; background: var(--ay-paper); transition: transform .15s ease-out, box-shadow .15s ease-out; }

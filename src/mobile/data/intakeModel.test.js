@@ -313,3 +313,18 @@ describe('optional questions after results', () => {
     expect(firstOptionalResumeStepId(intake({}))).toBe('age');
   });
 });
+
+// Minah (Oct 5): editing her profile, "Continue" stayed disabled on "Anything
+// urgent?" with an answer picked. Readiness must follow the answer, including
+// when a saved profile is loaded back in for editing.
+import { EMPTY as EMPTY_INTAKE_FOR_SAFETY, requiredReady as readyForSafety } from './intakeModel.js';
+describe('safety question readiness (Minah)', () => {
+  it('is not ready until answered, then ready for every option', () => {
+    expect(readyForSafety('safety', { ...EMPTY_INTAKE_FOR_SAFETY })).toBe(false);
+    for (const v of ['Yes', 'No', 'Not sure']) expect(readyForSafety('safety', { ...EMPTY_INTAKE_FOR_SAFETY, safetyConcern: v })).toBe(true);
+  });
+  it('stays ready when a saved profile with an answer is edited', () => {
+    const saved = { ...EMPTY_INTAKE_FOR_SAFETY, age: '27', lifeStages: ['None of these'], safetyConcern: 'No' };
+    expect(readyForSafety('safety', saved)).toBe(true);
+  });
+});

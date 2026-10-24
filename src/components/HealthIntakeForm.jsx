@@ -13,6 +13,7 @@ const DUPLICATE_FREE_OPTIONS = ['Fragrance-free', 'Dye-free', 'Paraben-free', 'S
 import { ALL_PRODUCTS } from '../data/products.js';
 import { mapIntakeToLegacyQuizProfile } from '../utils/healthIntake';
 import { saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore';
+import { autoFocusAfterTap } from '../utils/delightRuntime.js';
 
 const DRAFT_KEY = 'ayna_intake_redesign_draft_v1';
 
@@ -920,7 +921,7 @@ function TrustRanker({ order, onChange, onTouch, confirmed = false }) {
       ))}
       <div style={{ textAlign: 'center', marginTop: 14 }}>
         <button type="button" className={`ayna-pill${confirmed ? ' selected' : ''}`} aria-pressed={confirmed} onClick={() => !confirmed && onTouch()}>
-          {confirmed ? '✓ Ranking saved' : 'Keep this order'}
+          {confirmed ? 'Ranking saved' : 'Keep this order'}
         </button>
       </div>
     </div>
@@ -1253,14 +1254,14 @@ export default function HealthIntakeForm({ onComplete }) {
       { id: 'avoidRepeat', section: 'history', title: 'Are there any products or brands you definitely do not want recommended again?', type: 'tokens', optional: true },
       { id: 'safety', section: 'safety', title: 'Are any symptoms you are experiencing new, rapidly worsening, or concerning to you right now?', type: 'safety', optional: false },
       { id: 'formats', section: 'preferences', title: 'Which product formats do you prefer?', type: 'formats', optional: true },
-      { id: 'priceRange', section: 'preferences', title: 'What price range do you usually prefer for health and wellness products?', type: 'price', optional: true },
+      { id: 'priceRange', section: 'preferences', title: 'Budget per item', subtitle: 'What you usually spend on one item, not your total. We use it to rank picks within your range first. Skip it and we assume nothing.', type: 'price', optional: true },
       { id: 'largePurchaseFrequency', section: 'preferences', title: 'How often do you make larger health or wellness purchases of $75 or more?', subtitle: 'This is about purchase frequency, not your usual preferred price per product.', type: 'largeSpend', optional: true },
       { id: 'brandOpenness', section: 'preferences', title: 'How do you feel about trying new brands?', type: 'brand', optional: true },
       ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Which brands do you already trust?', type: 'tokens', optional: true }] : []),
       { id: 'avoidIngredients', section: 'preferences', title: 'What should your products avoid, or be?', subtitle: 'Select anything that applies, we use these to filter and rank what we suggest. Allergies are asked separately.', type: 'avoidIngredients', optional: true },
       { id: 'fsaHsa', section: 'preferences', title: 'Do you have an FSA or HSA you would like to use?', type: 'fsa', optional: true },
       { id: 'trust', section: 'trust', title: 'What matters most to you when deciding whether to trust a product?', type: 'trust', optional: false },
-      { id: 'anythingElse', section: 'trust', title: 'Anything else you want Ayna to know?', subtitle: 'Share anything else that could help us personalize your recommendations.', type: 'textarea', optional: true },
+      { id: 'anythingElse', section: 'trust', title: 'Anything else you want ayna to know?', subtitle: 'Share anything else that could help us personalize your recommendations.', type: 'textarea', optional: true },
     ];
     return steps;
   }, [intake]);
@@ -1342,7 +1343,7 @@ export default function HealthIntakeForm({ onComplete }) {
           placeholder="e.g. Jordan"
           maxLength={50}
           autoComplete="given-name"
-          autoFocus
+          ref={autoFocusAfterTap}
         />
       );
     }
@@ -1412,11 +1413,11 @@ export default function HealthIntakeForm({ onComplete }) {
         </div>
       )}
     </>;
-    if (step.type === 'medications') return <><Segmented options={['Yes', 'No', 'Prefer not to say']} value={intake.takesCurrent} onChange={(value) => set('takesCurrent', value)} />{intake.takesCurrent === 'Yes' && <div style={{ marginTop: 14 }}><TokenInput values={intake.currentMedicationItems} onChange={(values) => set('currentMedicationItems', values)} placeholder="Start typing a medication, supplement, vitamin, or birth control" suggestions={MEDICATION_SUGGESTIONS} suggestionLimit={10} /></div>}<div className="ayna-mini-note">Always consult a clinician before starting a new supplement or medication. Ayna surfaces options relevant to the profile you shared, but you should still check product ingredients, labels, and instructions.</div></>;
+    if (step.type === 'medications') return <><Segmented options={['Yes', 'No', 'Prefer not to say']} value={intake.takesCurrent} onChange={(value) => set('takesCurrent', value)} />{intake.takesCurrent === 'Yes' && <div style={{ marginTop: 14 }}><TokenInput values={intake.currentMedicationItems} onChange={(values) => set('currentMedicationItems', values)} placeholder="Start typing a medication, supplement, vitamin, or birth control" suggestions={MEDICATION_SUGGESTIONS} suggestionLimit={10} /></div>}<div className="ayna-mini-note">Always consult a clinician before starting a new supplement or medication. ayna shows options that fit the profile you shared, but still check product ingredients, labels, and instructions.</div></>;
     if (step.type === 'products') return <ProductHistoryBuilder products={intake.productHistory} onChange={(products) => set('productHistory', products)} />;
     if (step.type === 'tokens' && step.id === 'avoidRepeat') return <TokenInput values={intake.avoidRepeat} onChange={(values) => set('avoidRepeat', values)} placeholder="Start typing a product or brand" suggestions={PRODUCT_OR_BRAND_SUGGESTIONS} />;
     if (step.type === 'tokens' && step.id === 'trustedBrands') return <TokenInput values={intake.trustedBrands} onChange={(values) => set('trustedBrands', values)} placeholder="Start typing a brand" suggestions={BRAND_SUGGESTIONS} />;
-    if (step.type === 'safety') return <><Segmented options={['Yes', 'No', 'Not sure']} value={intake.safetyConcern} onChange={(value) => set('safetyConcern', value)} />{['Yes', 'Not sure'].includes(intake.safetyConcern) && <div className="ayna-mini-note">Some new or worsening symptoms may need evaluation by a healthcare professional. Ayna helps with product discovery and education and does not diagnose medical conditions or replace professional medical care. If symptoms feel urgent or severe, seek appropriate medical care promptly.</div>}</>;
+    if (step.type === 'safety') return <><Segmented options={['Yes', 'No', 'Not sure']} value={intake.safetyConcern} onChange={(value) => set('safetyConcern', value)} />{['Yes', 'Not sure'].includes(intake.safetyConcern) && <div className="ayna-mini-note">Some new or worsening symptoms may need evaluation by a healthcare professional. ayna helps you find and learn about products. It doesn't diagnose medical conditions or replace professional medical care. If symptoms feel urgent or severe, seek appropriate medical care promptly.</div>}</>;
     if (step.type === 'formats') return <><div className="ayna-choice-grid">{PRODUCT_FORMATS.map((option) => <ChoiceCard key={option} label={option} selected={intake.preferredFormats.includes(option)} onClick={() => toggleExclusive('preferredFormats', option, ['No preference'])} />)}</div>{intake.preferredFormats.includes('Other') && <div className="ayna-other-box"><label>What format do you prefer?</label><input className="ayna-text-input" value={intake.formatOtherText} onChange={(e) => set('formatOtherText', e.target.value)} placeholder="Type here..." /></div>}</>;
     if (step.type === 'price') { const selectedPrices = Array.isArray(intake.priceRange) ? intake.priceRange : (intake.priceRange ? [intake.priceRange] : []); return <div className="ayna-pills">{PRICE_RANGES.map((option) => <Pill key={option} label={option} selected={selectedPrices.includes(option)} onClick={() => toggleExclusive('priceRange', option, ['Price is not a major factor for me'])} />)}</div>; }
     if (step.type === 'largeSpend') return <Timeline options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(value) => set('largePurchaseFrequency', value)} />;

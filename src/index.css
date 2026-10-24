@@ -1,9 +1,10 @@
 :root {
   /* Brand type: the only two families on the website. Every older font
      variable (--ay-font-display, --font-body, --display, --ui, ...) is an
-     alias of one of these. DM Serif Display 400 is for headings 22px and up. */
-  --ay-serif: 'DM Serif Display', Georgia, serif;
-  --ay-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+     alias of one of these. ayna Display 400 is for headings 22px and up. */
+  --ay-heading: 'ayna Display', 'Figtree', system-ui, sans-serif; /* the ONE heading family token (website) */
+  --ay-serif: var(--ay-heading);
+  --ay-sans: 'Figtree', system-ui, -apple-system, sans-serif;
 
   /* One type scale, fluid between 390px and 1280px wide. */
   --ay-fs-display: clamp(40px, 32.989px + 1.7978vw, 56px); /* serif, one per page */
@@ -24,7 +25,7 @@
   --color-text-light: #FFFFFF;
 
   --color-primary: #1d1a2b;
-  --color-primary-hover: #000;
+  --color-primary-hover: #2a1915;
   --color-secondary: #bdebd6;
   --color-secondary-fade: rgba(189, 235, 214, .35);
   --color-primary-fade: rgba(185, 194, 244, .35);
@@ -67,16 +68,16 @@
   --shadow-md: 0 8px 32px rgba(28, 25, 23, 0.08);
   --shadow-lg: 0 20px 48px rgba(28, 25, 23, 0.09);
 
-  --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-bounce: 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-fast: 0.2s var(--ease-out);
+  --transition-smooth: 0.4s var(--ease-out);
+  --transition-bounce: 0.6s var(--ease-out);
 
   /* Second welcome screen: landing column enter. */
   --welcome-second-enter-duration: 0.95s;
-  --welcome-second-enter-ease: cubic-bezier(0.22, 0.8, 0.28, 1);
+  --welcome-second-enter-ease: var(--ease-out);
   /* Nav: slower, smoother fade (mount can otherwise read as a pop). */
   --welcome-nav-enter-duration: 1.7s;
-  --welcome-nav-enter-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --welcome-nav-enter-ease: var(--ease-out);
 }
 
 /* Base Reset */
@@ -303,7 +304,7 @@ button {
   font-family: var(--ay-sans);
   font-weight: 500;
   font-size: var(--ay-fs-body);
-  transition: all var(--transition-fast);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
   cursor: pointer;
 }
 
@@ -337,7 +338,7 @@ button {
   padding: var(--spacing-lg);
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--color-border);
-  transition: all var(--transition-smooth);
+  transition: box-shadow var(--transition-smooth), transform var(--transition-smooth), border-color var(--transition-smooth);
 }
 
 /* Waitlist-style eyebrow above hero / welcome titles */
@@ -883,7 +884,7 @@ button {
   color: #fff;
   background: var(--color-navy);
   border: none;
-  transition: all var(--transition-fast);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
   cursor: pointer;
 }
 
@@ -1016,20 +1017,20 @@ button {
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeInUp 0.8s var(--ease-out) forwards;
 }
 
 /* Scroll Visibility Classes */
 .reveal {
   opacity: 0;
-  transform: translateY(40px) scale(0.98);
-  transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(12px);
+  transition: opacity 400ms var(--ease-out), transform 400ms var(--ease-out);
   will-change: transform, opacity;
 }
 
 .reveal.active {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: none;
 }
 
 /* Smooth Scrolling */
@@ -3128,7 +3129,7 @@ footer a[href*="career" i],
   --shadow-lg: 0 14px 40px rgba(26, 23, 20, 0.12);
 }
 
-/* Headings are Playfair at book weight, as on every board, not DM Sans 600. */
+/* Headings are Playfair at book weight, as on every board, not Figtree 600. */
 h1,
 h2,
 h3,
@@ -3400,7 +3401,7 @@ textarea {
   box-shadow:
     inset 0 0 20px rgba(255,255,255,0.12),
     0 5px 14px rgba(36,42,82,0.22);
-  animation: aynaAskBlob 7s ease-in-out infinite;
+  /* still: the Ask blob no longer drifts */
 }
 
 .ayna-ask-orb--small {
@@ -4042,8 +4043,8 @@ html[data-v6-site-theme='dark'] .resa-modal__logo {
 }
 
 /* ── About page (2026-10-05 redesign) ──────────────────────────────────
-   Values taken from the "About Us" design export: DM Serif Display headings,
-   DM Sans body, navy #242A52 ink, #5B5870 body copy, #D97A2B eyebrows.
+   Values taken from the "About Us" design export: ayna Display headings,
+   Figtree body, navy #242A52 ink, #5B5870 body copy, #D97A2B eyebrows.
    Selectors are prefixed with .ab so the older hiw-/about- overrides in the
    v6 stylesheets can't reach them. */
 .ab { background: #FBF8F4; }

@@ -28,7 +28,7 @@ export default function ComparePanel({ product, others = [], onOpen, matchFor = 
   return (
     <section className="ay-compare" id="ay-sec-compare" tabIndex={-1} aria-labelledby="ay-compare-h">
       <div className="ay-pdp-sechead">
-        <h2 id="ay-compare-h">Compare with <em>similar.</em></h2>
+        <h2 id="ay-compare-h">Compare with similar</h2>
       </div>
       <div className="ay-compare__pick">
         <label className="ay-compare__search">
@@ -61,7 +61,14 @@ export default function ComparePanel({ product, others = [], onOpen, matchFor = 
             {rows.map((r) => (
               <tr key={r.label}>
                 <th scope="row">{r.label}</th>
-                {r.values.map((v, i) => <td key={cols[i].id} className={`${i === 0 ? 'is-this' : ''}${v === NOT_ON_FILE ? ' is-unknown' : ''}`.trim() || undefined}>{v === NOT_ON_FILE ? '' : v}</td>)}
+                {r.values.map((v, i) => {
+                  // Evidence on file: one dot per source counted (the number is in the text too).
+                  const n = /^evidence/i.test(r.label) ? Number((String(v).match(/^(\d+)\s/) || [])[1]) : 0;
+                  return <td key={cols[i].id} className={`${i === 0 ? 'is-this' : ''}${v === NOT_ON_FILE ? ' is-unknown' : ''}`.trim() || undefined}>
+                    {n > 0 && <span className="ay-compare__dots" aria-hidden="true">{Array.from({ length: Math.min(n, 10) }, (_, k) => <i key={k} />)}{n > 10 ? <small>+</small> : null}</span>}
+                    {v === NOT_ON_FILE ? '' : v}
+                  </td>;
+                })}
               </tr>
             ))}
           </tbody>

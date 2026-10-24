@@ -1,4 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
+import { supabaseFetch } from '../network.js';
+import { communityFixtureOn, makeCommunityFixtureClient } from './devFixture.js';
 
 /**
  * Guest identity for Community (people using ayna without an account).
@@ -23,11 +25,14 @@ let guestClient = null;
 
 export function getGuestClient() {
   if (guestClient) return guestClient;
+  // DEV only (?fixture=community): sample posts without Supabase. Dropped from production builds.
+  if (import.meta.env.DEV && communityFixtureOn()) { guestClient = makeCommunityFixtureClient(); return guestClient; }
   const url = import.meta.env.VITE_SUPABASE_URL;
   const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
   if (!url || !anonKey) return null;
   try {
     guestClient = createClient(url, anonKey, {
+      global: { fetch: supabaseFetch },
       auth: {
         storageKey: STORAGE_KEY,
         persistSession: true,

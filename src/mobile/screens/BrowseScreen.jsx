@@ -6,7 +6,8 @@ import CategoryNav from '../components/CategoryNav.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
 import SuggestBox from '../../components/SuggestBox.jsx';
-import { getPersonalizedProductIds, getProfileMatchPercentForProduct, productSearchText, MACRO_GROUPS, itemMatchesMacroGroup, CATEGORY_LABELS } from '../../data/products.js';
+import { sentenceCase } from '../../utils/sentenceCase.js';
+import { getPersonalizedProductIds, getProfileMatchPercentForProduct, productSearchText, MACRO_GROUPS, itemMatchesMacroGroup, CATEGORY_LABELS, isTeenProduct } from '../../data/products.js';
 import { getVerificationLinks } from '../../utils/verificationLinks.js';
 import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
 import { scoreSearchMatch, correctedSearchQuery, searchArticles, analyzeSearch } from '../../utils/search/index.js';
@@ -15,18 +16,25 @@ import { fetchSearchSuggestions } from '../../utils/fetchSearchSuggestions.js';
 import { trackApp } from '../utils/appAnalytics.js';
 import { stableShopOrder, rankShopForProfile } from '../utils/shopOrder.js';
 import { hasQuizAnswers } from '../utils/personalReads.js';
+import { sortByBestMatch, bestMatchNeedsQuiz } from '../../utils/bestMatchSort.js';
+import { useSheetDrag } from '../hooks/useSheetDrag.js';
+import usePersistentState from '../../hooks/usePersistentState.js';
+import { NeedStickers } from '../../components/shop/ShopBits.jsx';
+import { FAMILIAR_PHRASES } from '../../components/shop/shopNeeds.js';
+import { Ribbon } from '../../components/personality/Bits.jsx';
 
 
 const FILTER_FIELDS = [
   ['category', 'Product type', [['all', 'All products']]],
   ['price', 'Price', [['all', 'Any price'], ['under-25', 'Under $25'], ['25-50', '$25–$50'], ['50-100', '$50–$100'], ['100-plus', '$100+']]],
   ['rating', 'Rating', [['all', 'Any rating'], ['4-plus', '4+ stars']]],
-  ['ayna', 'Match & sources', [['all', 'Any'], ['best-match', 'Best match'], ['clinician', 'Clinician backed'], ['community', 'Community favorite'], ['ecosystem', 'In my Ecosystem']]],
+  ['ayna', 'Match & sources', [['all', 'Any'], ['best-match', 'Best match'], ['clinician', 'Clinician backed'], ['community', 'Community favorite'], ['ecosystem', 'In my ecosystem']]],
   ['preference', 'Preferences', [['all', 'Any'], ['fragrance-free', 'Fragrance free'], ['sensitive-skin', 'Sensitive skin'], ['vegan', 'Vegan'], ['cruelty-free', 'Cruelty free'], ['organic', 'Organic'], ['clean-ingredients', 'Clean ingredients']]],
   ['eligibility', 'Eligibility', [['all', 'Any'], ['fsa-hsa', 'FSA/HSA eligible'], ['fsa', 'FSA eligible'], ['hsa', 'HSA eligible']]],
   ['sustainability', 'Sustainability', [['all', 'Any'], ['reusable', 'Reusable'], ['recyclable', 'Recyclable'], ['low-waste', 'Low waste'], ['packaging', 'Sustainable packaging']]],
   ['lifeStage', 'Life stage', [['all', 'Any'], ['fertility', 'Fertility'], ['pregnancy', 'Pregnancy'], ['postpartum', 'Postpartum'], ['perimenopause', 'Perimenopause'], ['menopause', 'Menopause']]],
 ];
+const SORT_LABELS = { best: 'Best match', rating: 'Highest rated', 'price-asc': 'Price: low to high', 'price-desc': 'Price: high to low' };
 const EMPTY_FILTERS = Object.fromEntries(FILTER_FIELDS.map(([key]) => [key, 'all']));
 const PRICE_VALUE = (item) => {
   const raw = String(item.price || item.priceDisplay || '');
@@ -55,11 +63,12 @@ function PersonalizedToggle({ on, disabled, onClick }) {
 
 
 function SkeletonCard() {
+  // One shared skeleton timing (.ay-skel in styles/delight.css, synced by utils/delightRuntime.js).
   return (
-    <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 18, padding: 10 }}>
-      <div style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 13, background: 'var(--ayna-chip-bg)', animation: 'ay-skeleton 1.2s ease-in-out infinite' }} />
-      <div style={{ height: 12, width: '70%', background: 'var(--ayna-chip-bg)', borderRadius: 4, marginTop: 9, animation: 'ay-skeleton 1.2s ease-in-out infinite' }} />
-      <div style={{ height: 10, width: '40%', background: 'var(--ayna-chip-bg)', borderRadius: 4, marginTop: 6, animation: 'ay-skeleton 1.2s ease-in-out infinite' }} />
+    <div className="ay-skel-card" aria-hidden="true">
+      <div className="ay-skel" style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 13 }} />
+      <div className="ay-skel" style={{ height: 12, width: '70%', borderRadius: 4, marginTop: 9 }} />
+      <div className="ay-skel" style={{ height: 10, width: '40%', borderRadius: 4, marginTop: 6 }} />
     </div>
   );
 }
@@ -98,7 +107,7 @@ function PixelateGrid({ count = 6 }) {
 // visibleCount naturally, instead of needing a manual reset that either
 // calls setState in an effect body or reads/writes a ref during render
 // (both flagged by this project's react-hooks lint rules).
-function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = null, onOpenWhyMatch, onStartQuiz, showOnboarding = false, savedProducts = {}, onToggleSaved, matchOpts }) {
+function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = null, onOpenWhyMatch, onStartQuiz, showOnboarding = false, savedProducts = {}, onToggleSaved, matchOpts, onPickPhrase = null }) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [loadingMore, setLoadingMore] = useState(false);
   const sentinelRef = useRef(null);
@@ -139,6 +148,7 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = n
           <Fragment key={p.id}>
             <ProductCard product={p} variant={layout} onClick={() => onOpenProduct && onOpenProduct(p)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} isSaved={!!savedProducts[p.id]} onToggleSaved={onToggleSaved} matchOpts={matchOpts} />
             {showOnboarding && index === Math.min(3, visibleProducts.length - 1) && <section className="ayna-figma-discover-cta"><button type="button" onClick={onStartQuiz}>Get matched <span aria-hidden="true">→</span></button></section>}
+            {onPickPhrase && index === 7 && <div className="ay-app-ribbon"><Ribbon items={FAMILIAR_PHRASES} label="Searches people make" onPick={onPickPhrase} tab={<span className="ay-ribbon__tab is-label">Does this sound familiar?</span>} className="ay-ribbon--pink" /></div>}
           </Fragment>
         ))}
         {loadingMore && !isList && (
@@ -184,12 +194,12 @@ export default function BrowseScreen({
   onOpenWhyMatch,
   // Controlled from MobileApp.jsx (and persisted there) so the toggle
   // survives this screen unmounting when the user navigates away (e.g. to
-  // My Ecosystem) and back, it should stay on until the user explicitly
+  // My ecosystem) and back, it should stay on until the user explicitly
   // turns it off, not reset just because they left the tab.
   personalized: personalizedProp,
   onPersonalizedChange,
   onGoLibrary,
-  // Search to open with (an Ecosystem shelf's "Shop" link for one need).
+  // Search to open with (an ecosystem shelf's "Shop" link for one need).
   initialSearch = '',
 }) {
   const mode = 'products'; // Reads moved to the Library tab
@@ -203,12 +213,14 @@ export default function BrowseScreen({
     if (onPersonalizedChange) onPersonalizedChange(next);
     else setPersonalizedLocal(next);
   };
-  const [activeGroup, setActiveGroup] = useState('all');
+  // Area, filters and sort survive a refresh (usePersistentState, localStorage).
+  const [activeGroup, setActiveGroup] = usePersistentState('app-shop:area', 'all');
   const [showFilters, setShowFilters] = useState(false);
   const [showDeck, setShowDeck] = useState(false);
   const filterButtonRef = useRef(null);
   const filterCloseRef = useRef(null);
   const filterSheetRef = useRef(null);
+  const { grabberProps: filterGrabber } = useSheetDrag(() => setShowFilters(false), filterSheetRef);
   useEffect(() => {
     if (!showFilters) return undefined;
     filterCloseRef.current?.focus();
@@ -227,8 +239,10 @@ export default function BrowseScreen({
     window.addEventListener('keydown', handleFilterKeys);
     return () => window.removeEventListener('keydown', handleFilterKeys);
   }, [showFilters]);
-  const [filters, setFilters] = useState(EMPTY_FILTERS);
-  const [sortBy, setSortBy] = useState('default');
+  const [storedFilters, setFilters] = usePersistentState('app-shop:filters', EMPTY_FILTERS);
+  const filters = { ...EMPTY_FILTERS, ...(storedFilters || {}) };
+  const [sortBy, setSortBy] = usePersistentState('app-shop:sort', 'default');
+  const quick = [['Under $25', 'price', 'under-25'], ['FSA/HSA eligible', 'eligibility', 'fsa-hsa'], ['Fragrance free', 'preference', 'fragrance-free'], ['Clinician backed', 'ayna', 'clinician']];
   const cardLayout = 'grid';
   // AI fallback for a typed search the local catalog scoring found nothing
   // for, same /api/search-suggestions the desktop Discovery page falls
@@ -238,7 +252,10 @@ export default function BrowseScreen({
   // Default order (shopOrder.js): one shuffle per app session, so it does
   // not reshuffle on every visit; with quiz answers, ranked by the matching
   // engine so what fits her age, life stage and budget comes first.
-  const rankByProfile = hasQuizAnswers(quizAnswers);
+  // The switch changes both the visible set and its default order. Ranking
+  // everything by her profile while the switch is off made "All" look the
+  // same as "My matches only" even though more products were available below.
+  const rankByProfile = personalized && hasQuizAnswers(quizAnswers);
   const shuffled = useMemo(() => {
     const base = stableShopOrder(products);
     return rankByProfile ? rankShopForProfile(base, quizAnswers, matchOpts) : base;
@@ -303,6 +320,8 @@ export default function BrowseScreen({
     filtered = filtered.filter((p) => itemMatchesMacroGroup(p, activeGroup));
   }
   filtered = filtered.filter((item) => {
+    // ayna is 18+: products made for teens are not listed (same rule as the website's Shop, so both count the same).
+    if (isTeenProduct(item)) return false;
     if (filters.category !== 'all' && item.category !== filters.category) return false;
     const price = PRICE_VALUE(item);
     if (filters.price === 'under-25' && !(price != null && price < 25)) return false;
@@ -331,6 +350,14 @@ export default function BrowseScreen({
     return sortBy === 'price-asc' ? pa - pb : pb - pa;
   });
   if (sortBy === 'rating') filtered = [...filtered].sort((a, b) => (RATING_VALUE(b) ?? -1) - (RATING_VALUE(a) ?? -1));
+  // Best match: the match % on her cards, highest first. Signed out or no
+  // quiz yet, it keeps the Featured order and the quiz note shows instead.
+  const canSortByMatch = Boolean(authUser) && hasProfile;
+  const bestNeedsQuiz = bestMatchNeedsQuiz(sortBy, canSortByMatch);
+  const featuredOrder = sortBy === 'default' || bestNeedsQuiz;
+  if (sortBy === 'best' && canSortByMatch) {
+    filtered = sortByBestMatch(filtered, (product) => getProfileMatchPercentForProduct(product, quizAnswers, null, matchOpts));
+  }
   if (sortBy === 'default' && personalized && hasProfile && !searchTermRaw) {
     const matchScores = new Map(filtered.map((product) => [
       product.id,
@@ -344,7 +371,7 @@ export default function BrowseScreen({
   // page you browse freely, never placement inside an actual text search
   // or a personalized order (For You, or the default order once she has
   // quiz answers).
-  if (sortBy === 'default' && !searchTermRaw && !(personalized && hasProfile) && !rankByProfile) {
+  if (featuredOrder && !searchTermRaw && !(personalized && hasProfile) && !rankByProfile) {
     filtered = [...filtered].sort((a, b) => (isPartnerBrandItem(b) ? 1 : 0) - (isPartnerBrandItem(a) ? 1 : 0));
   }
   let moreResults = [];
@@ -352,6 +379,16 @@ export default function BrowseScreen({
     if (searchTermRaw) moreResults = filtered.filter((p) => !personalizedIds.has(p.id));
     filtered = filtered.filter((p) => personalizedIds.has(p.id));
   }
+  // Best match is always listed: first once she has a profile, last before.
+  const sortChoices = canSortByMatch
+    ? [['best', 'Best match'], ['default', 'Featured'], ['rating', 'Highest rated'], ['price-asc', 'Price: low to high'], ['price-desc', 'Price: high to low']]
+    : [['default', 'Featured'], ['rating', 'Highest rated'], ['price-asc', 'Price: low to high'], ['price-desc', 'Price: high to low'], ['best', 'Best match']];
+  const bestQuizNote = (
+    <p className="ay-shop-sortnote" role="status">
+      Take the 6-question quiz to sort by match.{' '}
+      <button type="button" onClick={() => { setShowFilters(false); onStartQuiz?.(); }}>Take the quiz</button>
+    </p>
+  );
   const filterKey = `${searchTerm}|${personalized}|${activeGroup}|${JSON.stringify(filters)}|${sortBy}`;
 
   useEffect(() => {
@@ -388,6 +425,9 @@ export default function BrowseScreen({
     };
   }, [searchTermRaw, searchScored.length, activeGroup]);
 
+  // Applied filters, shown as removable chips under the toolbar.
+  const activeFilters = FILTER_FIELDS.filter(([key]) => filters[key] !== 'all').map(([key, , options]) => [key, (options.find(([value]) => value === filters[key]) || [])[1] || CATEGORY_LABELS[filters[key]] || String(filters[key]).replaceAll('-', ' ')]);
+  const activeFilterCount = activeFilters.length;
   const matchingReads = searchTermRaw.length >= 2 ? searchArticles(searchTermRaw, articles) : [];
   // SearchAssist above already says "No results for 'xyz'" in this case;
   // the grid's own empty line would say it a second time.
@@ -406,41 +446,62 @@ export default function BrowseScreen({
         onGoCommunity={onGoCommunity}
         onToggleTheme={onToggleTheme}
         onOpenProfile={onOpenProfile}
+        title="Shop"
+        titleFor="ay-shop-title"
       />
 
       <div className="ayna-fresh-browse-heading ayna-shop-heading">
-        <div className="ay-shop-titlebar"><h1>Shop</h1>{hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}</div>
+        <div className="ay-shop-titlebar"><h1 id="ay-shop-title">Shop</h1>{hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}</div>
+        <p className="ay-shop-note">Some links earn ayna a commission. It never changes your matches.</p>
+        <NeedStickers className="ay-app-needs" active={searchValue} onPick={(q) => setSearchValue(q)} />
         <SearchBar placeholder="Search products or brands" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }} onPick={(s) => setSearchValue(s.query)} />
+        <div className="ay-app-quick" role="group" aria-label="Quick filters">
+          {quick.map(([label, key, value]) => <button key={key} type="button" className="ayna-shop-category" aria-pressed={filters[key] === value} onClick={() => setFilters((cur) => ({ ...EMPTY_FILTERS, ...(cur || {}), [key]: (cur || {})[key] === value ? 'all' : value }))}>{label}</button>)}
+        </div>
       </div>
       {searchTermRaw.length >= 2 && <SearchAssist variant="app" query={searchTermRaw} resultCount={searchScored.length} onUse={setSearchValue} />}
 
       {mode === 'products' && (
-        <CategoryNav groups={MACRO_GROUPS} active={activeGroup} onSelect={setActiveGroup} action={
-          <button ref={filterButtonRef} className="ayna-shop-filter-toggle" type="button" aria-label="Filters" aria-expanded={showFilters} onClick={() => setShowFilters((value) => !value)}>
-            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 7h16M4 17h16" /><circle cx="9" cy="7" r="2.5" fill="var(--ayna-bg)" /><circle cx="15" cy="17" r="2.5" fill="var(--ayna-bg)" /></svg>
-            {Object.values(filters).filter((value) => value !== 'all').length > 0 && <span>{Object.values(filters).filter((value) => value !== 'all').length}</span>}
-          </button>
-        } />
+        <CategoryNav groups={MACRO_GROUPS} active={activeGroup} onSelect={setActiveGroup} action={<>
+          <div className="ay-shop-toolbar">
+            <button ref={filterButtonRef} className="ayna-shop-filter-toggle" type="button" aria-expanded={showFilters} onClick={() => setShowFilters((value) => !value)}>
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"><path d="M4 7h16M4 17h16" /><circle cx="9" cy="7" r="2.5" fill="var(--ayna-bg)" /><circle cx="15" cy="17" r="2.5" fill="var(--ayna-bg)" /></svg>
+              Filters
+              {activeFilterCount > 0 && <span aria-label={`${activeFilterCount} on`}>{activeFilterCount}</span>}
+            </button>
+            <p className="ay-shop-count" role="status">{filtered.length} {filtered.length === 1 ? 'product' : 'products'}</p>
+            {!searchValue.trim() && <button type="button" className="ay-discover-cta" aria-label="Swipe through products: right to save, left to skip" onClick={() => setShowDeck(true)}>
+              <svg className="ay-discover-fan" viewBox="0 0 56 44" aria-hidden="true">
+                <rect className="c1" x="6" y="6" width="22" height="30" rx="5" transform="rotate(-12 17 21)" />
+                <rect className="c2" x="17" y="5" width="22" height="30" rx="5" />
+                <rect className="c3" x="28" y="6" width="22" height="30" rx="5" transform="rotate(12 39 21)" />
+              </svg>
+              <span className="ay-discover-copy"><strong>Swipe</strong></span>
+            </button>}
+          </div>
+          {(activeFilters.length > 0 || sortBy !== 'default') && <div className="ay-shop-applied" role="group" aria-label="Filters on">
+            {sortBy !== 'default' && SORT_LABELS[sortBy] && <button type="button" className="ayna-shop-category" aria-pressed="true" onClick={() => setSortBy('default')} aria-label={`Remove sort: ${SORT_LABELS[sortBy]}`}>{SORT_LABELS[sortBy]}<span aria-hidden="true">×</span></button>}
+            {activeFilters.map(([key, text]) => <button key={key} type="button" className="ayna-shop-category" aria-pressed="true" onClick={() => setFilters((current) => ({ ...current, [key]: 'all' }))} aria-label={`Remove filter: ${text}`}>{text}<span aria-hidden="true">×</span></button>)}
+          </div>}
+          {bestNeedsQuiz && !showFilters && bestQuizNote}
+        </>} />
       )}
-      {mode === 'products' && !searchValue.trim() && (
-        <button type="button" className="ay-discover-cta" onClick={() => setShowDeck(true)}>
-          <svg className="ay-discover-fan" viewBox="0 0 56 44" aria-hidden="true">
-            <rect className="c1" x="6" y="6" width="22" height="30" rx="5" transform="rotate(-12 17 21)" />
-            <rect className="c2" x="17" y="5" width="22" height="30" rx="5" />
-            <rect className="c3" x="28" y="6" width="22" height="30" rx="5" transform="rotate(12 39 21)" />
-          </svg>
-          <span className="ay-discover-copy"><strong>Swipe to discover</strong><small>Right to save, left to skip</small></span>
-          <span className="ay-discover-go" aria-hidden="true">→</span>
-        </button>
-      )}
-      {showDeck && <DiscoverDeck products={filtered} quizAnswers={authUser ? quizAnswers : null} savedProducts={savedProducts} onToggleSaved={onToggleSaved} onOpenProduct={(product) => { setShowDeck(false); onOpenProduct?.(product); }} onClose={() => setShowDeck(false)} />}
+      {showDeck && <DiscoverDeck products={filtered} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} onOpenProduct={(product) => { setShowDeck(false); onOpenProduct?.(product); }} onClose={() => setShowDeck(false)} />}
       {mode === 'products' && <>
         {showFilters && <div className="ayna-shop-filter-backdrop" onClick={() => setShowFilters(false)}>
           <div ref={filterSheetRef} className="ayna-shop-filter-sheet" role="dialog" aria-modal="true" aria-label="Shop filters" onClick={(event) => event.stopPropagation()}>
+          <button {...filterGrabber} aria-label="Close filters" />
           <div className="ayna-shop-filter-head"><strong>Filters</strong><button ref={filterCloseRef} type="button" aria-label="Close filters" onClick={() => { setShowFilters(false); filterButtonRef.current?.focus(); }}>Close</button></div>
           <div className="ayna-shop-filter-fields">
-          <label className="ay-field">Sort<select aria-label="Sort products" value={sortBy} onChange={(event) => setSortBy(event.target.value)}><option value="default">Featured</option><option value="rating">Highest rated</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option></select></label>
-          {FILTER_FIELDS.map(([key, label, options]) => <label key={key} className="ay-field">{label}<select value={filters[key]} onChange={(event) => setFilters((current) => ({ ...current, [key]: event.target.value }))}>{(key === 'category' ? [...options, ...[...new Set(products.map((p) => p.category).filter(Boolean))].sort().map((category) => [category, CATEGORY_LABELS[category] || category.replaceAll('-', ' ')])] : options).map(([value, text]) => <option key={value} value={value}>{text}</option>)}</select></label>)}
+          {/* P2-15: the same filter control as the website's sheet: chip groups (selected = pink + check), tap again to clear. */}
+          <fieldset className="ay-chipgroup"><legend>Sort</legend><div className="ay-chipgroup__chips">{sortChoices.map(([value, text]) => <button key={value} type="button" className="ay-chipgroup__chip" aria-pressed={sortBy === value} onClick={() => setSortBy(value)}>{text}</button>)}</div>{bestNeedsQuiz && bestQuizNote}</fieldset>
+          {FILTER_FIELDS.map(([key, label, options]) => (
+            <fieldset key={key} className="ay-chipgroup"><legend>{label}</legend><div className="ay-chipgroup__chips">
+              {(key === 'category' ? [...options, ...[...new Set(products.map((p) => p.category).filter(Boolean))].sort().map((category) => [category, sentenceCase(CATEGORY_LABELS[category] || category.replaceAll('-', ' '))])] : options).filter(([value]) => value !== 'all').map(([value, text]) => (
+                <button key={value} type="button" className="ay-chipgroup__chip" aria-pressed={filters[key] === value} onClick={() => setFilters((current) => ({ ...current, [key]: current[key] === value ? 'all' : value }))}>{text}</button>
+              ))}
+            </div></fieldset>
+          ))}
           </div>
           <div className="ayna-shop-filter-actions"><button type="button" onClick={() => { setFilters(EMPTY_FILTERS); setSortBy('default'); }}>Clear</button><button type="button" onClick={() => setShowFilters(false)}>Apply</button></div>
           </div>
@@ -462,7 +523,7 @@ export default function BrowseScreen({
                 </p>
               )}
               {filtered.length > 0 && moreResults.length > 0 && <h2 className="ay-shop-results-label">Your matches</h2>}
-              {filtered.length > 0 && <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />}
+              {filtered.length > 0 && <ProductGrid onPickPhrase={!searchTermRaw && activeFilterCount === 0 ? (q) => { setSearchValue(q); document.querySelector('.ayna-shop-heading')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); } : null} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />}
               {moreResults.length > 0 && <>
                 <h2 className="ay-shop-results-label">More results</h2>
                 <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`more-${filterKey}`} products={moreResults} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
@@ -470,14 +531,14 @@ export default function BrowseScreen({
             </>
           ) : searchTermRaw.length >= 2 && aiState.loading ? (
             <>
-              <div style={{ padding: '0 20px 14px', fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
+              <div className="ay-shop-meta">
                 Searching beyond our catalog…
               </div>
               <PixelateGrid />
             </>
           ) : searchTermRaw.length >= 2 && aiState.query === searchTermRaw && aiState.suggestions.length > 0 ? (
             <>
-              <div style={{ padding: '0 20px 14px', fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
+              <div className="ay-shop-meta">
                 Not in our catalog yet, found via AI search
               </div>
               <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`ai-${filterKey}`} products={aiState.suggestions} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />

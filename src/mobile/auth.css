@@ -79,12 +79,12 @@
 .ayna-mobile .ay-auth .ay-auth-eco-thumbs > span > * { position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; }
 .ayna-mobile .ay-auth .ay-auth-eco-thumbs img { padding: 6px; box-sizing: border-box; object-fit: contain; }
 .ayna-mobile .ay-auth .ay-auth-eco-copy { display: grid !important; gap: 3px; min-width: 0; order: 1; }
-.ayna-mobile .ay-auth .ay-auth-eco-copy strong { display: block; color: var(--ay-ink) !important; font: 600 17px/1.1 'DM Sans', system-ui, sans-serif !important; letter-spacing: -.02em; }
+.ayna-mobile .ay-auth .ay-auth-eco-copy strong { display: block; color: var(--ay-ink) !important; font: 600 17px/1.1 'Figtree', system-ui, sans-serif !important; letter-spacing: -.02em; }
 .ayna-mobile .ay-auth .ay-auth-eco-copy span { color: var(--ay-ink) !important; font: 500 13px/1.3 var(--ay-font-ui) !important; opacity: .72; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ay-auth-link b { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 
 /* Auth sheet: sign in only; new people go build their Ecosystem first */
-.ayna-mobile .ayna-profile-auth-sheet .ayna-profile-auth-new { display: block; width: 100%; min-height: 44px; margin-top: 8px; padding: 8px 0; border: 0; background: none; color: var(--ay-ink, #3e2723); font: 400 15px/1.45 var(--ay-font-ui, 'Poppins'), sans-serif; text-align: center; cursor: pointer; }
+.ayna-mobile .ayna-profile-auth-sheet .ayna-profile-auth-new { display: block; width: 100%; min-height: 44px; margin-top: 8px; padding: 8px 0; border: 0; background: none; color: var(--ay-ink, #3e2723); font: 400 15px/1.45 var(--ay-font-ui, 'Figtree'), sans-serif; text-align: center; cursor: pointer; }
 .ayna-mobile .ayna-profile-auth-sheet .ayna-profile-auth-new b { font-weight: 600; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
 .ayna-mobile .ayna-profile-auth-sheet .ayna-profile-auth-new:focus-visible { outline: 3px solid var(--ay-peri, #769ebe); outline-offset: 2px; border-radius: 8px; }
 

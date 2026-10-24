@@ -1,6 +1,7 @@
 /* global process */
 /** Shared helpers for the free product campaign routes. */
 import { createClient } from '@supabase/supabase-js';
+import { isAdminEmail as isAdminEmailFor, isAdminUser } from './_admin.js';
 
 let _service = null;
 /** Service-role client for routes that are not tied to a signed-in user (cron). */
@@ -25,12 +26,12 @@ export function setPrivateHeaders(res) {
  * also get the claim and shipping alerts. Both empty means nobody.
  */
 export function isAdminEmail(email) {
-  if (!email) return false;
-  const allow = `${process.env.ADMIN_EMAILS || ''},${process.env.CAMPAIGN_TEAM_EMAIL || ''}`
-    .split(',')
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
-  return allow.includes(String(email).trim().toLowerCase());
+  return isAdminEmailFor(email, { includeCampaignTeam: true });
+}
+
+/** Confirmed, non-guest account on the campaign allowlist (api/_admin.js). */
+export function isCampaignAdmin(user) {
+  return isAdminUser(user, { includeCampaignTeam: true });
 }
 
 /** supabase.rpc that returns { data } or throws a tagged error. */

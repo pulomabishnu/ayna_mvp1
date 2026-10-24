@@ -58,14 +58,16 @@ export default async function handler(req, res) {
     // feedback uses ON DELETE SET NULL rather than CASCADE, so remove it
     // explicitly to avoid retaining a deleted user's message/email.
     const feedbackDeletes = [admin.from('feedback').delete().eq('user_id', user.id)];
-    if (user.email) feedbackDeletes.push(admin.from('feedback').delete().eq('email', user.email));
+    // Email-matched rows only for a confirmed inbox (see account-data.js).
+    const ownsEmail = Boolean(user.email && user.email_confirmed_at);
+    if (ownsEmail) feedbackDeletes.push(admin.from('feedback').delete().eq('email', user.email));
     const feedbackResults = await Promise.all(feedbackDeletes);
     const feedbackError = feedbackResults.find((r) => r.error)?.error;
     if (feedbackError) throw new Error(`feedback: ${feedbackError.message}`);
 
     // The beta allowlist is keyed by email rather than auth user id, so it does
     // not cascade from auth.users. Treat it as account-linked personal data.
-    if (user.email) {
+    if (ownsEmail) {
       const { error: approvedError } = await admin.from('approved_users').delete().eq('email', user.email);
       if (approvedError) throw new Error(`approved_users: ${approvedError.message}`);
     }

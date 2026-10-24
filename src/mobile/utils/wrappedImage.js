@@ -1,8 +1,8 @@
 // Draws the Wrapped summary as a 1080×1920 story image (Spotify-style) so
 // sharing sends a picture, not a link. Uses only what's on the final slide.
 const C = { ink: '#3e2723', paper: '#ffffff', butter: '#ffedac', pink: '#f7badd', mint: '#769ebe', peri: '#769ebe' };
-const DISPLAY = "'Bricolage Grotesque', Poppins, system-ui, sans-serif";
-const UI = "Poppins, system-ui, sans-serif";
+const DISPLAY = "'ayna Display', 'Figtree', system-ui, sans-serif";
+const UI = "'Figtree', system-ui, sans-serif";
 
 function wrap(ctx, text, maxWidth) {
   const words = String(text).split(/\s+/); const lines = []; let line = '';

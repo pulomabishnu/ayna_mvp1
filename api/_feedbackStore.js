@@ -20,10 +20,40 @@ function secret() {
 }
 function digest(value) { return createHmac('sha256', secret()).update(`feedback:${value}`).digest('hex'); }
 
-// Only a permanent, campaign-specific yes/no marker is linked to an account.
-// It never holds a response ID, answer, receipt, product or submission timestamp.
-export async function claimSurvey(userId, store = feedbackStore()) {
-  return (await store.set(`${prefix()}:shown:${SURVEY_CAMPAIGN}:${digest(userId)}`, 1, { nx: true })) === 'OK';
+// The survey is offered again every 14 days (founder, Oct 20). Per account we keep
+// one value: when it was last offered. Showing it counts as asking, so closing it
+// with "Not now" waits the same 14 days. The key holds no response ID, answer,
+// receipt or product, and answers stay unlinked from the account.
+export const SURVEY_INTERVAL_MS = 14 * 24 * 60 * 60 * 1000;
+// An account younger than this is in its first session: never ask then.
+export const FIRST_SESSION_MS = 24 * 60 * 60 * 1000;
+const CLAIM_SCRIPT = `
+  local last = redis.call('GET', KEYS[1])
+  local now = tonumber(ARGV[1])
+  if not last then
+    redis.call('SET', KEYS[1], ARGV[1])
+    if ARGV[3] == '1' or redis.call('EXISTS', KEYS[2]) == 1 then return 0 end
+    return 1
+  end
+  if now - tonumber(last) >= tonumber(ARGV[2]) then
+    redis.call('SET', KEYS[1], ARGV[1])
+    return 1
+  end
+  return 0
+`;
+/**
+ * One atomic check-and-mark, so two devices can't both show it.
+ * - First time we see an account: start its clock without asking when the
+ *   account is new (first session) or already saw the old once-only survey.
+ * - Afterwards: ask when 14 or more days have passed since the last ask.
+ */
+export async function claimSurvey(userId, store = feedbackStore(), { now = Date.now(), createdAt = null } = {}) {
+  const created = createdAt ? Date.parse(createdAt) : NaN;
+  const newAccount = Number.isFinite(created) && now - created < FIRST_SESSION_MS;
+  const result = await store.eval(CLAIM_SCRIPT,
+    [`${prefix()}:last-asked:${digest(userId)}`, `${prefix()}:shown:${SURVEY_CAMPAIGN}:${digest(userId)}`],
+    [String(now), String(SURVEY_INTERVAL_MS), newAccount ? '1' : '0']);
+  return Number(result) === 1;
 }
 export function issueReceipt(kind, product = null) {
   const payload = {

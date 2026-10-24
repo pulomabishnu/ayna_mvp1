@@ -20,12 +20,12 @@
 }
 
 /* ---------- Share control under a reply ---------- */
-.ay-share-answer { margin-top: 8px; font-family: 'DM Sans', system-ui, sans-serif; color: var(--sa-ink); }
+.ay-share-answer { margin-top: 8px; font-family: 'Figtree', system-ui, sans-serif; color: var(--sa-ink); }
 .ay-share-answer__row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .ay-share-answer__btn {
   min-height: 36px; padding: 0 14px; border-radius: 99px;
   border: 1.5px solid currentColor; background: transparent; color: inherit;
-  font: 600 13px/1 'DM Sans', system-ui, sans-serif; cursor: pointer;
+  font: 600 13px/1 'Figtree', system-ui, sans-serif; cursor: pointer;
 }
 .ay-share-answer__btn.is-primary { background: var(--sa-ink); color: var(--sa-bg); border-color: var(--sa-ink); }
 .ay-share-answer__btn.is-quiet { border-color: transparent; text-decoration: underline; text-underline-offset: 3px; padding: 0 4px; }

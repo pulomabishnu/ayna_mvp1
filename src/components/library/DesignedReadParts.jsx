@@ -24,16 +24,16 @@ export function ShadowPage({ children, fallback }) {
 export function NextRead({ article, onOpen }) {
   if (!article) return null;
   return (
-    <a href={`/library/${article.id}`} className="ay-read__next" onClick={inPlace(() => onOpen?.(article.id))} style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 44px', alignItems: 'center', gap: '16px', minHeight: '80px', padding: '18px 20px', border: '2px solid var(--g-fg)', borderRadius: '20px', background: 'var(--g-butter)', color: '#3e2723', boxShadow: '4px 4px 0 #f7badd', textDecoration: 'none', font: "700 19px/1.3 'DM Sans'" }}>
+    <a href={`/library/${article.id}`} className="ay-read__next" onClick={inPlace(() => onOpen?.(article.id))} style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 44px', alignItems: 'center', gap: '16px', minHeight: '80px', padding: '18px 20px', border: '2px solid var(--g-fg)', borderRadius: '20px', background: 'var(--g-butter)', color: '#3e2723', boxShadow: '4px 4px 0 #f7badd', textDecoration: 'none', font: "700 19px/1.3 'Figtree'" }}>
       {article.title}
-      <span aria-hidden="true" style={{ display: 'grid', placeItems: 'center', width: '44px', height: '44px', borderRadius: '50%', background: '#3e2723', color: '#ffedac', font: "700 18px/1 'DM Sans'" }}>→</span>
+      <span aria-hidden="true" style={{ display: 'grid', placeItems: 'center', width: '44px', height: '44px', borderRadius: '50%', background: '#3e2723', color: '#ffedac', font: "700 18px/1 'Figtree'" }}>→</span>
     </a>
   );
 }
 
-const AVATAR = { display: 'grid', placeItems: 'center', flex: 'none', width: '44px', height: '44px', borderRadius: '50%', background: '#f7badd', color: '#3e2723', font: "400 20px/1 'DM Serif Display',serif" };
-const KICKER = { font: "700 12px/1 'DM Sans'", letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--g-pink)' };
-const NAME = { font: "700 16px/1.3 'DM Sans'" };
+const AVATAR = { display: 'grid', placeItems: 'center', flex: 'none', width: '44px', height: '44px', borderRadius: '50%', background: '#f7badd', color: '#3e2723', font: "400 20px/1 'ayna Display',serif" };
+const KICKER = { font: "700 12px/1 'Figtree'", letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--g-pink)' };
+const NAME = { font: "700 16px/1.3 'Figtree'" };
 
 // The OB-GYN who reviews the medical reads (founders' wording, 2026-10-19).
 export function ReviewerVyas() {

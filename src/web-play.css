@@ -1,6 +1,6 @@
 /* ayna website, app style.
    Same palette, type and shapes as the mobile app: ink + paper + four
-   pastels, Bricolage display type, 'DM Sans' UI type, 2px ink outlines,
+   pastels, Bricolage display type, 'Figtree' UI type, 2px ink outlines,
    rounded tiles and a small offset shadow. Loaded last, scoped to the
    desktop shell (.app-container) so the mobile app is untouched. */
 
@@ -21,7 +21,7 @@
   --ay-font-ui: var(--ay-sans);
   --ay-shadow: 3px 3px 0 var(--ay-ink);
   --ay-shadow-lg: 5px 5px 0 var(--ay-ink);
-  --ay-pop: cubic-bezier(.3, 1.5, .5, 1);
+  --ay-pop: var(--ease-out);
   --ay-radius-sm: 10px; --ay-radius-md: 14px; --ay-radius-lg: 20px;
   --ay-web-gutter: clamp(16px, 4vw, 56px);
   --ay-web-max: 1200px;
@@ -39,7 +39,7 @@
   --color-text-main: var(--ay-ink);
   --color-text-muted: var(--ay-ink-soft);
   --color-primary: var(--ay-ink);
-  --color-primary-hover: #000;
+  --color-primary-hover: #2a1915;
   --color-primary-fade: rgba(185, 194, 244, .35);
   --color-secondary: var(--ay-mint);
   --color-secondary-fade: rgba(189, 235, 214, .35);
@@ -68,7 +68,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 .app-container :is(input, textarea, select):focus { box-shadow: none !important; }
 .app-container :is(button, a):focus-visible { outline: 2px solid var(--ay-ink) !important; outline-offset: 2px; }
 
-/* Type: chunky display headings, everything else 'DM Sans' */
+/* Type: chunky display headings, everything else 'Figtree' */
 .app-container main :is(h1, h2) { font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; color: var(--ay-ink); }
 .app-container main h3 { font-family: var(--ay-sans) !important; letter-spacing: -.01em; color: var(--ay-ink); }
 .app-container main :is(p, li, label, span, small) { font-family: var(--ay-sans); }
@@ -111,7 +111,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 .app-container .btn:disabled, .app-container button:disabled { opacity: .45; transform: none !important; box-shadow: none !important; }
 
 /* ---------- Fields ---------- */
-.app-container main :is(input[type='text'], input[type='search'], input[type='email'], input[type='number'], input[type='tel'], input[type='password'], input:not([type]), textarea, select):not(.wq-page *):not(.ay-web-lib-search *):not(.wc-search *):not(.ayna-landing-searchbar *) {
+.app-container main :is(input[type='text'], input[type='search'], input[type='email'], input[type='number'], input[type='tel'], input[type='password'], input:not([type]), textarea, select):not(.wq-page *):not(.ay-web-lib-search *):not(.wc-search *):not(.ayna-landing-searchbar *):not(.ed *):not(.ct *):not(.cm-sheet *):not(.ay-auth-card *) {
   border: 2px solid var(--ay-ink) !important; border-radius: var(--ay-radius-md) !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; font: 500 var(--ay-fs-secondary)/1.3 var(--ay-sans) !important;
 }
 .app-container main :is(input, textarea)::placeholder { color: var(--ay-ink-soft) !important; opacity: 1; }
@@ -371,7 +371,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 /* ---------- Sign-in modal ---------- */
 .ay-auth-card { border: 2px solid #1d1a2b !important; border-radius: 28px !important; background: #fffcf5 !important; box-shadow: 6px 6px 0 #1d1a2b !important; font-family: var(--ay-sans); }
 .ay-auth-card :is(input, button, p, a, span) { font-family: var(--ay-sans) !important; }
-.ay-auth-logo { color: #1d1a2b !important; font: 800 34px/1 'Bricolage Grotesque', 'DM Sans', sans-serif !important; font-style: normal !important; letter-spacing: -.085em !important; }
+.ay-auth-logo { color: #1d1a2b !important; font: 800 34px/1 'Bricolage Grotesque', 'Figtree', sans-serif !important; font-style: normal !important; letter-spacing: -.085em !important; }
 .ay-auth-card input { border: 2px solid #1d1a2b !important; border-radius: 14px !important; background: #fffcf5 !important; color: #1d1a2b !important; }
 .ay-auth-toggle { padding: 3px !important; border: 2px solid #1d1a2b !important; border-radius: 99px !important; background: #fffcf5 !important; }
 .ay-auth-toggle button { border: 0 !important; border-radius: 99px !important; background: transparent !important; color: #1d1a2b !important; font-weight: 600 !important; box-shadow: none !important; }
@@ -427,7 +427,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 
 /* ---------- Product page: app features ---------- */
 .app-container .pdp-share { position: absolute; top: 20px; right: 20px; z-index: 2; display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); cursor: pointer; }
-.app-container .pdp-share svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.app-container .pdp-share svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
 
 .ay-why-backdrop { position: fixed; inset: 0; z-index: 3000; display: flex; justify-content: flex-end; background: rgba(29, 26, 43, .45); }
 .ay-why { width: min(480px, 100%); height: 100%; overflow-y: auto; padding: 28px; border-left: 2px solid #1d1a2b; background: #fffcf5; color: #1d1a2b; font-family: var(--ay-sans); animation: ay-why-in .25s ease-out both; }
@@ -482,7 +482,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 .app-container[data-theme='dark'] :is(h1, h2, h3, h4, p, li, span, label, small, strong, b, dt, dd, a):not(.site-footer *) { color: inherit; }
 .app-container[data-theme='dark'] main { color: var(--ay-ink); }
 .app-container[data-theme='dark'] :is(.btn-primary, .btn-navy, .ayna-landing-btn, .pdp-btn--navy, .wyou-btn, .wc-btn, .wq-btn, .ay-web-lib-match) { background: var(--ay-ink) !important; color: #0c0b11 !important; }
-.app-container[data-theme='dark'] .site-footer { background: #000 !important; color: #f4f2ff !important; }
+.app-container[data-theme='dark'] .site-footer { background: #2a1915 !important; color: #ffedac !important; }
 .app-container[data-theme='dark'] .site-footer * { color: inherit; }
 .app-container[data-theme='dark'] :is(.ayna-landing-shop, .ayna-landing-shop--returning) { background: var(--ay-cream) !important; }
 .app-container[data-theme='dark'] img { filter: none; }
@@ -539,7 +539,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 .app-container .pdp-tabs { flex-wrap: nowrap !important; overflow-x: auto; scrollbar-width: none; gap: 8px !important; margin: 0 -4px; padding: 20px 4px 8px !important; }
 .app-container .pdp-tabs::-webkit-scrollbar { display: none; }
 .app-container .pdp-tabs button { flex: none; display: inline-flex; align-items: center; gap: 7px; min-height: 42px; padding: 0 16px !important; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans) !important; white-space: nowrap; transition: transform .15s, box-shadow .15s; }
-.app-container .pdp-tabs button svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.app-container .pdp-tabs button svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
 .app-container .pdp-tabs button.is-active { background: var(--tone, var(--ay-butter)) !important; color: var(--ay-ink) !important; box-shadow: 3px 3px 0 var(--ay-ink) !important; transform: translate(-1px, -1px); }
 .app-container :is(.pdp-tabs button, .pdp-panel-head)[data-tone='butter'] { --tone: var(--ay-butter); }
 .app-container :is(.pdp-tabs button, .pdp-panel-head)[data-tone='mint'] { --tone: var(--ay-mint); }
@@ -986,7 +986,7 @@ body:has(.ay-auth-card, .wdeck-backdrop, .wwr-backdrop, .ay-why-backdrop, [role=
 .app-container .mockup-landing--first .ayna-landing-hero { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; align-items: center !important; max-width: none; min-height: min(640px, calc(100vh - 76px)); padding-inline: max(var(--mockup-gutter, 40px), calc((100vw - var(--mockup-page-width, 1320px)) / 2 + var(--mockup-gutter, 40px))) !important; }
 .app-container .mockup-landing--first .ayna-landing-hero-col { padding-left: 0 !important; padding-right: 0 !important; margin: 0 !important; }
 .app-container .mockup-landing--first .ayna-landing-hero-visual { display: grid; place-items: center; padding: 40px 0; }
-.app-container .mockup-landing--first .ayna-landing-hero-col > * { animation: ayHeroIn .6s cubic-bezier(.22, 1, .36, 1) both; }
+.app-container .mockup-landing--first .ayna-landing-hero-col > * { animation: ayHeroIn .6s var(--ease-out) both; }
 .app-container .mockup-landing--first .ayna-landing-hero-col > :nth-child(2) { animation-delay: .06s; }
 .app-container .mockup-landing--first .ayna-landing-hero-col > :nth-child(3) { animation-delay: .12s; }
 .app-container .mockup-landing--first .ayna-landing-hero-col > :nth-child(4) { animation-delay: .18s; }
@@ -997,7 +997,7 @@ body:has(.ay-auth-card, .wdeck-backdrop, .wwr-backdrop, .ay-why-backdrop, [role=
 .app-container .ayna-landing-news { padding: 64px 0 8px; background: var(--ay-cream); }
 .app-container .ayna-landing-news .whc { min-height: 420px; border: 2px solid var(--ay-ink); border-radius: 28px; box-shadow: var(--ay-shadow-lg); }
 /* Sections fade up as they scroll in */
-.app-container .ay-reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s cubic-bezier(.22, 1, .36, 1); }
+.app-container .ay-reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s var(--ease-out); }
 .app-container .ay-reveal.is-in { opacity: 1; transform: none; }
 @keyframes ayCardIn { from { opacity: 0; transform: translateY(18px) scale(.98); } }
 .app-container :is(.ayna-landing-shop-card, .ayna-browse-card) { transition: transform .18s var(--ay-pop), box-shadow .18s !important; }
@@ -1068,7 +1068,7 @@ body:has(.ay-auth-card, .wdeck-backdrop, .wwr-backdrop, .ay-why-backdrop, [role=
 .app-container .ay-steps__row li strong { color: var(--ay-ink); font: 600 var(--ay-fs-body)/1.2 var(--ay-sans); }
 .app-container .ay-steps__row li span { color: var(--ay-ink-soft); font: 500 var(--ay-fs-secondary)/1.4 var(--ay-sans); }
 .app-container .ay-steps__row li:not(:last-child)::after { content: '→'; position: absolute; right: -14px; top: 50%; translate: 0 -50%; z-index: 1; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--ay-cream); color: var(--ay-ink); font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); }
-.app-container .ay-reveal.is-in .ay-steps__row li { animation: ayCardIn .5s cubic-bezier(.22, 1, .36, 1) both; }
+.app-container .ay-reveal.is-in .ay-steps__row li { animation: ayCardIn .5s var(--ease-out) both; }
 .app-container .ay-reveal.is-in .ay-steps__row li:nth-child(2) { animation-delay: .08s; } .app-container .ay-reveal.is-in .ay-steps__row li:nth-child(3) { animation-delay: .16s; } .app-container .ay-reveal.is-in .ay-steps__row li:nth-child(4) { animation-delay: .24s; }
 @media (max-width: 900px) { .app-container .ay-steps__row { grid-template-columns: repeat(2, minmax(0, 1fr)); } .app-container .ay-steps__row li::after { display: none; } .app-container .ay-steps { padding: 40px 0; } }
 /* HI01 skeleton */

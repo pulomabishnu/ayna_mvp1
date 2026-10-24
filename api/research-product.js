@@ -16,16 +16,13 @@
  * /admin/reviews). No env var means no one gets in.
  */
 import { verifyUser, getServiceClient } from './_usageLimit.js';
+import { isAdminUser } from './_admin.js';
 import { extractBalancedJsonObject, tryParseJsonCandidate } from './_llm.js';
 import { isSafePublicUrl } from './_ssrfSafeFetch.js';
 import { SECTIONS, buildPrompt, sanitizeDraft, draftUrls, dropUrls } from './_productResearch.js';
 
 const MODEL = () => process.env.ANTHROPIC_RESEARCH_MODEL || 'claude-sonnet-5-5';
 
-function isAdminEmail(email) {
-  const allow = String(process.env.ADMIN_EMAILS || '').split(',').map((e) => e.trim().toLowerCase()).filter(Boolean);
-  return Boolean(email) && allow.includes(String(email).trim().toLowerCase());
-}
 
 function privateHeaders(res) {
   res.setHeader('Cache-Control', 'private, no-store, max-age=0');
@@ -127,7 +124,7 @@ export default async function handler(req, res) {
   privateHeaders(res);
   const { user, error, admin } = await verifyUser(req);
   if (error || !user || !admin) return res.status(error === 'server_misconfigured' ? 503 : 401).json({ error: error || 'auth_required' });
-  if (!isAdminEmail(user.email)) return res.status(403).json({ error: 'forbidden' });
+  if (!isAdminUser(user)) return res.status(403).json({ error: 'forbidden' });
 
   if (req.method === 'GET') {
     const { data, error: e } = await admin.from('product_research').select('*').order('updated_at', { ascending: false }).limit(500);

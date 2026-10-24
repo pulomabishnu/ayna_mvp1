@@ -131,7 +131,7 @@ export default function ProductEvidenceRail({ product, matchLabels = [], matchPe
       </div>
 
       <div className="pdp-rail__card">
-        <div className="pdp-rail__label">Clinician Opinion</div>
+        <div className="pdp-rail__label">Clinician opinion</div>
         {clinicianNote ? (
           <>
             <div className="pdp-rail__body pdp-rail__body--dark">{clinicianNote}</div>

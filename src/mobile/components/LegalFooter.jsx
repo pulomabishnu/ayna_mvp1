@@ -5,7 +5,7 @@ import PrivacyPreferencesLink from '../../components/PrivacyPreferencesLink.jsx'
 // too rather than threading in-app navigation callbacks through every
 // screen this footer appears on.
 const PRIVACY_POLICY_URL = 'https://www.aynahealth.co/privacy-policy';
-const CONSUMER_HEALTH_DATA_URL = 'https://www.aynahealth.co/consumer-health-data.html';
+const CONSUMER_HEALTH_DATA_URL = 'https://www.aynahealth.co/consumer-health-data';
 const TERMS_URL = 'https://www.aynahealth.co/terms-of-use';
 const HOW_WE_MAKE_MONEY_URL = 'https://www.aynahealth.co/how-we-make-money';
 
@@ -46,13 +46,13 @@ export default function LegalFooter({ variant = 'default' }) {
       }}
     >
       18+ only. ayna provides wellness information only, not medical advice. We do not sell your personal health information.{' '}
-      <a href={PRIVACY_POLICY_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>Privacy Policy</a>
+      <a href={PRIVACY_POLICY_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>Privacy policy</a>
       {' · '}
-      <a href={CONSUMER_HEALTH_DATA_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>Consumer Health Data Privacy</a>
+      <a href={CONSUMER_HEALTH_DATA_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>Consumer health data notice</a>
       {' · '}
-      <a href={TERMS_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>Terms of Use</a>
+      <a href={TERMS_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>Terms of use</a>
       {' · '}
-      <a href={HOW_WE_MAKE_MONEY_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>How We Make Money</a>
+      <a href={HOW_WE_MAKE_MONEY_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>How we make money</a>
       <PrivacyPreferencesLink style={LINK_STYLE} />
     </div>
   );

@@ -12,13 +12,15 @@
  * - sources are numbered once and cited inline like footnotes.
  */
 import { normalizeFdaStatus } from '../../utils/fdaStatus.js';
-import { HEALTH_FUNCTIONS, CATEGORY_LABELS } from '../../data/products.js';
+import { HEALTH_FUNCTIONS } from '../../data/catalogTaxonomy.js';
+import { categoryLabel } from './categoryLabel.js';
 import { getPassport, EVIDENCE_TYPES } from '../../data/passport/index.js';
 import { priceParts, safetyAlertText, humanizeTag, noDash, matchLine, buildTypedTags } from '../../data/passport/content.js';
 import { whyMatch, confidenceNotes, exclusionLines, isClaimBlocked, MIN_BADGE_SCORE } from '../../utils/matchDisplay.js';
 import { planGlossaryTerms } from '../../data/glossary.js';
 import { brandOf } from '../../mobile/data/brandFallback.js';
 import { getAynaRatingCount } from '../../data/aynaReviews.js';
+import { HOST_ACRONYMS } from '../../utils/verificationLinks.js';
 
 export const NOT_ON_FILE = 'Not on file';
 const GENERIC_USES = new Set(['supplement', 'telehealth']);
@@ -35,12 +37,7 @@ const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 const sentences = (text) => String(text || '').split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter(Boolean);
 
 /** Category label without the emoji some labels carry. */
-export function categoryLabel(product) {
-  return String(CATEGORY_LABELS[product?.category] || product?.category || '')
-    .replace(/^[^\w]+\s*/, '')
-    .replace(/-/g, ' ')
-    .replace(/^\w/, (c) => c.toUpperCase());
-}
+export { categoryLabel };
 
 // ---------------------------------------------------------------------------
 // Size, count, per unit
@@ -192,6 +189,8 @@ export function humanPublisher(raw) {
   if (/^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(t)) {
     const parts = t.split('.');
     const core = parts.length > 2 ? parts[parts.length - 2] : parts[0];
+    // Organisations known by their initials keep them ("doaj.org" is DOAJ, not Doaj).
+    if (HOST_ACRONYMS.has(core.toLowerCase())) return core.toUpperCase();
     return core.charAt(0).toUpperCase() + core.slice(1);
   }
   return t;

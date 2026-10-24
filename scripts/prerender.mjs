@@ -12,6 +12,7 @@ import { productHref } from '../src/utils/productRoute.js';
 import { productSeoTitle, productSeoDescription } from '../src/utils/seoMeta.js';
 import { productJsonLd, breadcrumbJsonLd } from '../src/components/pdp/commerce.js';
 import { resolveBuyUrl } from '../src/utils/buyLink.js';
+import { buildHeroSeed } from '../src/components/pdp/heroSeed.js';
 
 const SITE = 'https://www.aynahealth.co';
 const DIST = new URL('../dist/', import.meta.url);
@@ -72,8 +73,68 @@ function write(url, html) {
   fs.writeFileSync(file, html);
 }
 
+// Route chunks to fetch in parallel with the entry script (perf, pass 2):
+// without these, the Shop and product page code only starts downloading after
+// the entry has run. Found by the chunk name Vite gives each lazy import.
+const ASSETS = fs.existsSync(new URL('assets/', DIST)) ? fs.readdirSync(new URL('assets/', DIST)) : [];
+// A chunk plus the chunks it imports statically (read from its own import
+// lines), so the whole route arrives in one round trip instead of a waterfall.
+const staticDeps = (file, seen = new Set()) => {
+  if (seen.has(file)) return seen;
+  seen.add(file);
+  let code = '';
+  try { code = fs.readFileSync(new URL(`assets/${file}`, DIST), 'utf8').slice(0, 4000); } catch { return seen; }
+  for (const m of code.matchAll(/(?:import|from)\s*["']\.\/([\w.-]+\.js)["']/g)) if (!/^(index|vendor-)/.test(m[1])) staticDeps(m[1], seen);
+  return seen;
+};
+const chunkLinks = (name) => {
+  const own = ASSETS.filter((f) => f.startsWith(`${name}-`) && /\.(js|css)$/.test(f));
+  const js = new Set(own.filter((f) => f.endsWith('.js')).flatMap((f) => [...staticDeps(f)]));
+  return [...[...js].map((f) => `<link rel="modulepreload" crossorigin href="/assets/${f}" />`), ...own.filter((f) => f.endsWith('.css')).map((f) => `<link rel="preload" as="style" href="/assets/${f}" />`)].join('\n  ');
+};
+// Everything Vite loads for a lazy page: its JS and CSS, read from the entry's
+// __vite__mapDeps table. Vite waits for a lazy page's CSS before running it,
+// so CSS it doesn't preload here (the shared chunks' styles) starts late and
+// holds the page back (perf: about 0.4s on a throttled phone's product page).
+// The catalog chunk (products-*.js) is in these lists, so it downloads with the entry.
+const entryFile = (shell.match(/<script type="module"[^>]*src="\/assets\/([^"]+\.js)"/) || [])[1];
+const entryCode = entryFile ? fs.readFileSync(new URL(`assets/${entryFile}`, DIST), 'utf8') : '';
+const depTable = (() => { try { return JSON.parse((entryCode.match(/m\.f=(\[[^\]]*\])/) || [])[1] || 'null'); } catch { return null; } })();
+const inShell = new Set([...shell.matchAll(/(?:src|href)="\/(assets\/[^"]+)"/g)].map((m) => m[1]));
+const routeLinks = (name, { cssRel = 'preload' } = {}) => {
+  const m = depTable && entryCode.match(new RegExp(`import\\("\\./(${name}-[\\w-]+\\.js)"\\),__vite__mapDeps\\(\\[([\\d,]+)\\]\\)`));
+  if (!m) return chunkLinks(name);
+  const files = [...new Set([`assets/${m[1]}`, ...m[2].split(',').map((i) => depTable[Number(i)])])].filter((f) => f && !inShell.has(f));
+  return [
+    ...files.filter((f) => f.endsWith('.js')).map((f) => `<link rel="modulepreload" crossorigin href="/${f}" />`),
+    ...files.filter((f) => f.endsWith('.css')).map((f) => (cssRel === 'stylesheet' ? `<link rel="stylesheet" crossorigin href="/${f}" />` : `<link rel="preload" as="style" href="/${f}" />`)),
+  ].join('\n  ');
+};
+const withHead = (html, extra) => (extra ? html.replace('</head>', () => `  ${extra}\n</head>`) : html);
+// Shop on a phone shows its first products on the first screen (final layout
+// pass, P1-3), so the catalog chunk is that page's LCP path: it starts with the
+// HTML instead of after the entry has run (it was 1.5s late on a throttled phone).
+const CATALOG_CHUNK = ASSETS.find((f) => /^products-[\w-]+\.js$/.test(f));
+// The Shop grid also waits for the search engine (utils/search/index.js, its own
+// index-*.js chunk that imports the catalog), so it starts with the HTML too.
+const SEARCH_CHUNK = CATALOG_CHUNK && ASSETS.find((f) => { if (!/^index-[\w-]+\.js$/.test(f)) return false; try { const head = fs.readFileSync(new URL(`assets/${f}`, DIST), 'utf8').slice(0, 3000); return head.includes(`from"./${CATALOG_CHUNK}"`) && head.includes('naturalLanguageSearch'); } catch { return false; } });
+const SHOP_PRELOAD = [routeLinks('Discovery'), ...[CATALOG_CHUNK, SEARCH_CHUNK].filter(Boolean).map((f) => `<link rel="modulepreload" crossorigin href="/assets/${f}" />`)].join('\n  ');
+// Product pages paint their hero before the page code runs (ProductHeroPreview),
+// so the product page styles apply from the start (about 37KB, beside index.css).
+const PDP_PRELOAD = routeLinks('ProductModal', { cssRel: 'stylesheet' });
+
+// Home: the first hero photo starts with the HTML (the right width via imagesrcset).
+// dist/index.html is also the shell for routes without their own page, so it
+// is a small AVIF (15KB at 390w, 20KB at 480w, 49KB at 736w; the source is 736px).
+{
+  const shellFile = new URL('index.html', DIST);
+  const heroPreload = '<link rel="preload" as="image" type="image/avif" fetchpriority="high" imagesrcset="/landing/pink-stripe-floor-390.avif 390w, /landing/pink-stripe-floor-480.avif 480w, /landing/pink-stripe-floor.avif 736w" imagesizes="(max-width: 767px) 68vw, (max-width: 1279px) 40vw, 460px" />';
+  const html = fs.readFileSync(shellFile, 'utf8');
+  if (!html.includes('pink-stripe-floor-480.avif') && fs.existsSync(new URL('landing/pink-stripe-floor-480.avif', DIST))) fs.writeFileSync(shellFile, withHead(html, heroPreload));
+}
+
 let count = 0;
-for (const [url, [title, desc]] of Object.entries(PAGES)) { write(url, page(url, title, desc)); count += 1; }
+for (const [url, [title, desc]] of Object.entries(PAGES)) { write(url, withHead(page(url, title, desc), url === '/shop' ? SHOP_PRELOAD : '')); count += 1; }
 
 const absImage = (src) => (!src ? null : /^https?:/i.test(src) ? src : `${SITE}${src.startsWith('/') ? '' : '/'}${src}`);
 const asList = (v) => (Array.isArray(v) ? v : v ? [v] : []).map((x) => String(x ?? '').trim()).filter(Boolean);
@@ -112,7 +173,15 @@ for (const p of ALL_PRODUCTS) {
     productJsonLd(p, { origin: SITE, buyUrl, url: `${SITE}${url}` }),
     breadcrumbJsonLd(p, { origin: SITE }),
   ]);
-  write(url, page(url, title, description, { image: absImage(p.image), jsonLd, body: productBody(p, description) }));
+  // The hero the page paints first (ProductHeroPreview), worked out with
+  // ProductModal's own helpers. "<" escaped so catalog text can't close the tag.
+  const seed = buildHeroSeed(p);
+  const seedTag = seed ? `<script type="application/json" id="ay-product-seed">${JSON.stringify(seed).replace(/</g, '\\u003c')}</script>` : '';
+  // The product photo is the page's largest paint: fetch it with the entry, not after it
+  // (the same address the hero shows, which can be a cleaned-up studio photo).
+  const heroSrc = seed?.image || (typeof p.image === 'string' ? p.image : '');
+  const heroImg = heroSrc && /^(\/|https:\/\/)/.test(heroSrc) && !/\.svg(\?|$)/i.test(heroSrc) ? `<link rel="preload" as="image" fetchpriority="high" href="${esc(heroSrc)}" />` : '';
+  write(url, withHead(page(url, title, description, { image: absImage(p.image), jsonLd, body: productBody(p, description) }), [PDP_PRELOAD, heroImg, seedTag].filter(Boolean).join('\n  ')));
   count += 1;
 }
 const dupes = (m) => [...m.entries()].filter(([, ids]) => ids.length > 1);

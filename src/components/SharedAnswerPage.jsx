@@ -8,7 +8,6 @@ import {
   fetchSharedAnswer, rememberShareReferral, trackSharedAnswerOpened, rememberPendingFriend,
   readPendingFriend, clearPendingFriend, trackFriendAddedFromShare, revokeShareLink,
 } from '../utils/shareAnswerClient.js';
-import './shareAnswer.css';
 
 function setMeta(attr, key, value) {
   try {
@@ -22,7 +21,7 @@ function Avatar({ name, path }) {
   const [failed, setFailed] = useState(false);
   const src = path && !failed ? publicMediaUrl(path) : null;
   const initial = (firstNameOf(name) || 'a')[0].toUpperCase();
-  return <span className="ay-sa__avatar" aria-hidden="true">{src ? <img src={src} alt="" onError={() => setFailed(true)} /> : initial}</span>;
+  return <span className="sa__avatar" aria-hidden="true">{src ? <img src={src} alt="" onError={() => setFailed(true)} /> : initial}</span>;
 }
 
 const FRIEND_LABEL = { none: 'Add friend', requested: 'Request sent', friends: 'Friends', incoming: 'Accept friend request' };
@@ -159,17 +158,17 @@ export default function SharedAnswerPage({ slug, user, session, onRequireAuth, o
   };
 
   if (state.status === 'loading') {
-    return <div className="ay-sa" aria-busy="true"><div className="ay-sa__skeleton" /><div className="ay-sa__skeleton is-short" /></div>;
+    return <div className="ct sa ay-container" aria-busy="true"><div className="sa__skeleton" /><div className="sa__skeleton is-short" /></div>;
   }
 
   if (state.status === 'gone') {
     return (
-      <div className="ay-sa ay-sa--gone">
-        <h1 className="ay-sa__title">This answer isn’t shared anymore.</h1>
-        <p className="ay-sa__lede">The person who shared it turned the link off.</p>
-        <div className="ay-sa__ctas">
-          <button type="button" className="ay-sa__primary" onClick={onAskOwn}>Ask ayna your own question</button>
-          <a className="ay-sa__link" href="/" onClick={(e) => { e.preventDefault(); onHome?.(); }}>Go to ayna</a>
+      <div className="ct sa sa--gone ay-container">
+        <h1 className="sa__title">This answer isn’t shared anymore.</h1>
+        <p className="sa__lede">The person who shared it turned the link off.</p>
+        <div className="sa__ctas">
+          <button type="button" className="ay-btn ay-btn--primary" onClick={onAskOwn}>Ask ayna your own question</button>
+          <a className="ct-link" href="/" onClick={(e) => { e.preventDefault(); onHome?.(); }}>Go to ayna</a>
         </div>
       </div>
     );
@@ -177,10 +176,10 @@ export default function SharedAnswerPage({ slug, user, session, onRequireAuth, o
 
   if (state.status === 'error') {
     return (
-      <div className="ay-sa ay-sa--gone">
-        <h1 className="ay-sa__title">Couldn’t load this answer</h1>
-        <p className="ay-sa__lede">Check your connection and try again.</p>
-        <div className="ay-sa__ctas"><button type="button" className="ay-sa__primary" onClick={() => setReload((n) => n + 1)}>Try again</button></div>
+      <div className="ct sa sa--gone ay-container">
+        <h1 className="sa__title">Couldn’t load this answer</h1>
+        <p className="sa__lede">Check your connection and try again.</p>
+        <div className="sa__ctas"><button type="button" className="ay-btn ay-btn--primary" onClick={() => setReload((n) => n + 1)}>Try again</button></div>
       </div>
     );
   }
@@ -188,37 +187,45 @@ export default function SharedAnswerPage({ slug, user, session, onRequireAuth, o
   const sources = Array.isArray(answer.sources) ? answer.sources : [];
   const friendLabel = FRIEND_LABEL[friend.state] || 'Add friend';
   return (
-    <div className="ay-sa">
-      <h1 className="ay-sa__title">{title}</h1>
+    <div className="ct sa ay-container">
+      <h1 className="sa__title">{title}</h1>
 
-      <section className="ay-sa__qa" aria-label="Question and answer">
-        <p className="ay-sa__question">{answer.question}</p>
-        <div className="ay-sa__answer">{renderMarkdownLite(answer.answer)}</div>
+      <section className="sa__qa" aria-label="Question and answer">
+        <p className="sa__question">{answer.question}</p>
+        <div className="sa__answer">{renderMarkdownLite(answer.answer)}</div>
         {sources.length > 0 && (
-          <div className="ay-sa__sources">
+          <div className="sa__sources">
             <h2>Sources</h2>
-            <ol>
-              {sources.map((s, i) => (
-                <li key={i}>{s.url ? <a href={s.url} target="_blank" rel="noopener noreferrer nofollow">{s.title || s.url}</a> : s.title}</li>
-              ))}
+            <ol className="ay-source-grid is-stack">
+              {sources.map((s, i) => {
+                let host = '';
+                try { host = s.url ? new URL(s.url).hostname.replace(/^www\./, '') : ''; } catch { /* not a URL */ }
+                return (
+                  <li key={i} className="ay-source-card">
+                    {host && <p className="ay-source-card__meta"><span className="ay-source-card__pub">{host}</span></p>}
+                    <p className="ay-source-card__title">{s.title || s.url}</p>
+                    {s.url && <a className="ay-source-card__go" href={s.url} target="_blank" rel="noopener noreferrer nofollow">Read the source <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>}
+                  </li>
+                );
+              })}
             </ol>
           </div>
         )}
-        <p className="ay-sa__disclaimer">ayna’s answers are educational, not medical advice.</p>
+        <p className="sa__disclaimer">ayna’s answers are educational, not medical advice.</p>
       </section>
 
-      <section className="ay-sa__owner" aria-label="Shared by">
+      <section className="sa__owner" aria-label="Shared by">
         <Avatar name={owner.display_name} path={owner.avatar_url} />
-        <div className="ay-sa__who">
+        <div className="sa__who">
           <strong>{owner.display_name || 'An ayna member'}</strong>
           {owner.username && <span>@{owner.username}</span>}
         </div>
         {isOwner ? (
-          <button type="button" className="ay-sa__ghost" onClick={stopSharing}>Stop sharing</button>
+          <button type="button" className="ay-btn ay-btn--secondary" onClick={stopSharing}>Stop sharing</button>
         ) : (
           <button
             type="button"
-            className={`ay-sa__ghost${friend.state === 'none' || friend.state === 'incoming' ? '' : ' is-done'}`}
+            className={`ay-btn ay-btn--secondary${friend.state === 'none' || friend.state === 'incoming' ? '' : ' is-done'}`}
             onClick={onAddFriend}
             disabled={friendBusy || friend.state === 'requested' || friend.state === 'friends'}
           >
@@ -226,22 +233,22 @@ export default function SharedAnswerPage({ slug, user, session, onRequireAuth, o
           </button>
         )}
       </section>
-      {friendError && <p className="ay-sa__error" role="alert">{friendError}</p>}
+      {friendError && <p className="sa__error" role="alert">{friendError}</p>}
 
       {prompt && !signedIn && (
-        <section ref={promptRef} className="ay-sa__prompt" role="dialog" aria-labelledby="ay-sa-prompt-title">
-          <p id="ay-sa-prompt-title" className="ay-sa__prompt-title">{name ? `Sign up to add ${name} as a friend` : 'Sign up to add this friend'}</p>
-          <p className="ay-sa__prompt-line">We’ll send the request as soon as you’re in.</p>
-          <div className="ay-sa__row">
-            <button ref={signUpRef} type="button" className="ay-sa__primary" onClick={() => onRequireAuth?.('signup')}>Sign up</button>
-            <button type="button" className="ay-sa__ghost" onClick={() => onRequireAuth?.('signin')}>Sign in</button>
+        <section ref={promptRef} className="sa__prompt" role="dialog" aria-labelledby="sa-prompt-title">
+          <p id="sa-prompt-title" className="sa__prompt-title">{name ? `Sign up to add ${name} as a friend` : 'Sign up to add this friend'}</p>
+          <p className="sa__prompt-line">We’ll send the request as soon as you’re in.</p>
+          <div className="sa__row">
+            <button ref={signUpRef} type="button" className="ay-btn ay-btn--primary" onClick={() => onRequireAuth?.('signup')}>Sign up</button>
+            <button type="button" className="ay-btn ay-btn--secondary" onClick={() => onRequireAuth?.('signin')}>Sign in</button>
           </div>
-          <button type="button" className="ay-sa__link" onClick={() => { clearPendingFriend(); setPrompt(false); }}>Not now</button>
+          <button type="button" className="ct-link" onClick={() => { clearPendingFriend(); setPrompt(false); }}>Not now</button>
         </section>
       )}
 
-      <div className="ay-sa__ctas">
-        <button type="button" className="ay-sa__primary is-feature" onClick={onAskOwn}>Ask ayna your own question</button>
+      <div className="sa__ctas">
+        <button type="button" className="ay-btn ay-btn--primary" onClick={onAskOwn}>Ask ayna your own question</button>
       </div>
     </div>
   );

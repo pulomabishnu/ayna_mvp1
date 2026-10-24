@@ -1,0 +1,158 @@
+/* Delight details shared by the website and the app
+   (docs/anti-vibe-checklist.md, "Delight details"). Tokens from motion.css.
+   Colours resolve to the site tokens (--ay-*) or the app tokens (--ayna-*). */
+
+.ay-sr, .ay-charring .sr-only, .ay-confirm .sr-only, .ayna-mobile .sr-only {
+  position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ---- Character-limit ring ---- */
+.ay-charfield { position: relative; display: block; width: 100%; }
+.ay-charfield > textarea { padding-bottom: 32px !important; }
+.ay-charring {
+  position: absolute; right: 10px; bottom: 8px; display: inline-flex; align-items: center; gap: 6px;
+  color: var(--ay-text, var(--ayna-text, #3e2723)); pointer-events: none;
+  font: 600 13px/1 var(--ay-sans-stack, var(--ayna-font-ui, 'Figtree', system-ui, sans-serif));
+  font-variant-numeric: tabular-nums;
+}
+.ay-charring svg { width: 20px; height: 20px; flex: none; }
+.ay-charring__track { fill: none; stroke: currentColor; stroke-width: 2.25; opacity: .18; }
+.ay-charring__fill { fill: none; stroke: currentColor; stroke-width: 2.25; stroke-linecap: round; transition: stroke-dashoffset var(--t-fast) var(--ease-out), stroke var(--t-fast) var(--ease-in-out); }
+.ay-charring.is-late .ay-charring__fill, .ay-charring.is-over .ay-charring__fill { stroke: #f7badd; }
+.ay-charring.is-late .ay-charring__track, .ay-charring.is-over .ay-charring__track { opacity: .35; }
+.ay-charring.is-over .ay-charring__n { background: #f7badd; color: #3e2723; border-radius: 999px; padding: 2px 6px; }
+
+/* ---- Two-step destructive confirm ---- */
+.ay-confirm.is-armed, button[data-armed='true'] {
+  background: #f7badd !important; color: #3e2723 !important; border-color: #3e2723 !important;
+}
+.ay-confirm.is-armed > span, button[data-armed='true'] > span { animation: ay-morph-in var(--t-fast) var(--ease-out) both; }
+
+/* ---- One skeleton timing everywhere (synced in utils/delightRuntime.js) ---- */
+@keyframes ay-skel { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+.ay-skel { background: var(--ay-group, var(--ayna-chip-bg, #f6e3a1)); border-radius: 10px; animation: ay-skel 1.4s var(--ease-in-out) infinite; }
+@media (prefers-reduced-motion: reduce) { .ay-skel { animation: none; opacity: .8; } }
+
+/* ---- App toast: above the tab bar, same ink card as the website ---- */
+.ayna-mobile ~ .ay-gtoast, .ay-gtoast.is-app { bottom: calc(96px + env(safe-area-inset-bottom)); width: calc(100% - 32px); max-width: 420px; }
+.ay-gtoast.is-app .ay-gtoast__card { justify-content: space-between; font-family: var(--ayna-font-ui, 'Figtree', system-ui, sans-serif); }
+
+/* ---- Spring press on web cards and tiles (buttons and chips already have it) ---- */
+.app-container :is(.ay-product-card, .ayshop__need, .ayshop__tab, .ay-blend__opt, .ed-familiar__q a):active { transform: scale(.97); transition: transform var(--t-press) var(--ease-pop); }
+@media (prefers-reduced-motion: reduce) { .app-container :is(.ay-product-card, .ayshop__need, .ayshop__tab, .ed-familiar__q a):active { transform: none; } }
+
+/* ---- Pointer only on things that do something ---- */
+.app-container button:disabled, .ayna-mobile button:disabled { cursor: default; }
+.ay-skel-card { background: var(--ayna-surface, var(--ay-page)); border: 1px solid var(--ayna-border, rgba(62,39,35,.15)); border-radius: 16px; padding: 10px; }
+.ayna-mobile[data-theme='dark'] .ay-gtoast.is-app .ay-gtoast__card { background: #ffedac; color: #3e2723; border-color: #ffedac; }
+.ayna-mobile[data-theme='dark'] .ay-gtoast.is-app .ay-gtoast__card button { border-color: #3e2723; color: #3e2723; }
+.app-container[data-theme='brand-dark'] .ay-gtoast__card { background: #ffedac; color: #3e2723; border-color: #ffedac; }
+.app-container[data-theme='brand-dark'] .ay-gtoast__card button { border-color: #3e2723; color: #3e2723; }
+/* Leading line icons in buttons and labels (components/icons/UiIcons.jsx). */
+.ay-ui-icon { flex: none; vertical-align: -0.22em; }
+.ay-ui-icon.is-lead { margin-inline-end: .35em; }
+
+/* Hover: lift 2-4px or a colour change, never a big scale (anti-vibe checklist,
+   Layout). Caps the older Ecosystem hovers that scaled up to 1.12 or lifted 8-10px. */
+html body .app-container.app-container .eco-bubble:hover { transform: translateY(-2px) !important; }
+html body .app-container.app-container .ay3-pile:hover .ay3-pile__hint { transform: rotate(-3deg) !important; }
+html body .app-container.app-container .eco3-slot:hover span { transform: none !important; }
+html body .app-container.app-container .eco3-pick:hover .eco3-pick__img img { transform: none !important; }
+html body .app-container.app-container :is(.eco3-pick__add, .eco3-mini__add):hover { transform: none !important; }
+html body .app-container.app-container .eco3-mini:hover { transform: rotate(0) translateY(-3px) !important; }
+html body .app-container.app-container .eco3-cl.is-closed .eco3-cl__label:hover { transform: rotate(0) !important; }
+html body .app-container.app-container .eco3-cat:hover { transform: rotate(0) translateY(-2px) !important; }
+html body .app-container.app-container .eco3-grid .ayna-discover-card.ayna-browse-card:hover { transform: translateY(-3px) !important; }
+html body .app-container.app-container .eco3-peek:hover .eco3-peek__card:nth-child(2) { transform: translateY(-4px) rotate(0) !important; }
+html body .app-container.app-container .lx .lx-shelf__item:hover .lx-shelf__img { transform: translateY(-3px) rotate(-1.2deg) !important; }
+
+/* ---- Cards grow into the page they open (utils/viewTransition.js) ----
+   Only while a transition runs: the tapped card and the opened element share
+   the name "ay-grow" and morph; the rest of the screen cross-fades. The app's
+   push slide steps aside so the two motions don't fight. Reduced motion never
+   starts a view transition. */
+::view-transition-group(ay-grow) { animation-duration: var(--t-sheet, 360ms); animation-timing-function: var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)); }
+::view-transition-old(ay-grow), ::view-transition-new(ay-grow) { height: 100%; object-fit: contain; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: var(--t-base, 240ms); }
+html[data-ay-vt] .ay-push-in { animation: none !important; }
+
+/* Product card heart: say what it does on hover and keyboard focus (focus group
+   note: people didn't know the heart saves to favorites). Same tip as the
+   header heart; anchored right so it never runs off the card. */
+.app-container .ay-product-card__heart[data-tip]::after {
+  content: attr(data-tip); position: absolute; top: calc(100% + 6px); right: 0; transform: translateY(-4px);
+  padding: 6px 10px; border-radius: 8px; background: #3e2723; color: #ffedac; font: 600 var(--ay-fs-caption)/1.2 var(--ay-sans); white-space: nowrap;
+  opacity: 0; pointer-events: none; transition: opacity .15s, transform .15s; z-index: 5;
+}
+@media (hover: hover) { .app-container .ay-product-card__heart[data-tip]:hover::after { opacity: 1; transform: translateY(0); } }
+.app-container .ay-product-card__heart[data-tip]:focus-visible::after { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) { .app-container .ay-product-card__heart[data-tip]::after { transition: none; } }
+
+/* "≈ €23" next to a US price, outside the US only (src/utils/localPrice.js). */
+.app-container .ay-price-local, .ayna-mobile .ay-price-local { margin-left: 8px; font: 500 var(--ay-fs-secondary, 14px)/1.3 var(--ay-sans, inherit); color: inherit; opacity: .75; white-space: nowrap; }
+.app-container .ay-price-region { margin: 6px 0 0; font: 400 var(--ay-fs-caption, 13px)/1.4 var(--ay-sans, inherit); opacity: .8; }
+
+/* You: daily 3-tap check-in (src/components/you/DailyCheckin.jsx), web and app. */
+:is(.app-container, .ayna-mobile) .ay-checkin { display: grid; gap: 12px; }
+:is(.app-container, .ayna-mobile) .ay-checkin__takeaway { margin: 0 0 4px; font: 600 var(--ay-fs-body, 16px)/1.35 var(--ay-sans); color: var(--ay-text, #3e2723); }
+:is(.app-container, .ayna-mobile) .ay-checkin__row { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; align-items: center; gap: 8px 12px; }
+:is(.app-container, .ayna-mobile) .ay-checkin__label { font: 600 var(--ay-fs-secondary, 14px)/1.2 var(--ay-sans); }
+:is(.app-container, .ayna-mobile) .ay-checkin__opts { display: flex; flex-wrap: wrap; gap: 8px; }
+:is(.app-container, .ayna-mobile) .ay-checkin__opts .ay-chip[aria-pressed='true'] { background: #3e2723 !important; color: #ffedac !important; }
+:is(.app-container, .ayna-mobile) .ay-checkin__week { display: inline-flex; gap: 4px; }
+:is(.app-container, .ayna-mobile) .ay-checkin__week i { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid currentColor; background: transparent; }
+:is(.app-container, .ayna-mobile) .ay-checkin__week i.is-1 { background: #f7badd; }
+:is(.app-container, .ayna-mobile) .ay-checkin__week i.is-2 { background: #769ebe; }
+:is(.app-container, .ayna-mobile) .ay-checkin__week i.is-3 { background: currentColor; }
+@media (max-width: 520px) { :is(.app-container, .ayna-mobile) .ay-checkin__row { grid-template-columns: 56px minmax(0, 1fr); } :is(.app-container, .ayna-mobile) .ay-checkin__week { grid-column: 2; } }
+
+.ayna-mobile .ay-checkin { padding: 16px; border: 1.5px solid currentColor; border-radius: 20px; }
+.ayna-mobile .ay-checkin__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.ayna-mobile .ay-checkin__private { font-size: 13px; opacity: .75; }
+.ayna-mobile .ay-checkin .ay-chip { min-height: 40px; padding: 0 14px; border: 1.5px solid currentColor; border-radius: 999px; background: transparent; color: inherit; font: 600 14px/1 var(--f-ui, inherit); }
+.ayna-mobile .ay-checkin .ay-chip[aria-pressed='true'] { background: #3e2723 !important; color: #ffedac !important; }
+.ayna-mobile[data-theme='dark'] .ay-checkin .ay-chip[aria-pressed='true'] { background: #ffedac !important; color: #3e2723 !important; }
+
+/* You: monthly box waitlist (src/components/you/BoxWaitlist.jsx), web and app. */
+:is(.app-container, .ayna-mobile) .ay-box__form { display: grid; gap: 8px; }
+:is(.app-container, .ayna-mobile) .ay-box__lede { margin: 0 0 4px; font: 600 var(--ay-fs-body, 16px)/1.35 var(--ay-sans, inherit); }
+:is(.app-container, .ayna-mobile) .ay-box__label { font: 600 14px/1.3 var(--ay-sans, inherit); }
+:is(.app-container, .ayna-mobile) .ay-box__label small { font-weight: 400; opacity: .75; }
+:is(.app-container, .ayna-mobile) .ay-box__input { min-height: 44px; padding: 0 14px; border: 1.5px solid currentColor; border-radius: 12px; background: transparent; color: inherit; font: 400 16px/1.2 var(--ay-sans, inherit); }
+:is(.app-container, .ayna-mobile) .ay-box__err { margin: 0; font: 600 14px/1.35 var(--ay-sans, inherit); }
+:is(.app-container, .ayna-mobile) .ay-box__form > button { justify-self: start; margin-top: 4px; }
+:is(.app-container, .ayna-mobile) .ay-box__done { margin: 0; font: 600 var(--ay-fs-body, 16px)/1.4 var(--ay-sans, inherit); }
+.ayna-mobile .ay-box { padding: 16px; border: 1.5px solid currentColor; border-radius: 20px; }
+
+/* Layout sweep (Oct 21, every page at 320-1440): */
+/* Card kind line: the short tag (FSA/HSA, "Heavy flow") never gets cut; the category name takes the ellipsis. */
+.app-container.app-container .ay-product-card__kind > :is(.ay-product-card__tag, .ay-lib-why) { flex: 0 0 auto !important; white-space: nowrap; }
+/* No-photo tile: the brand name clears the heart button; on small tiles only the brand shows. */
+.app-container.app-container .ay-product-card:has(.ay-product-card__heart) :is(.ay-product-card__tile, .ay-product-card__fallback):has(.ay-nophoto) { container-type: inline-size; }
+.app-container.app-container .ay-product-card:has(.ay-product-card__heart) .ay-nophoto { padding-top: 40px !important; }
+@container (max-width: 170px) {
+  .app-container.app-container .ay-nophoto > span:not(:first-child) { display: none; }
+  .app-container.app-container .ay-product-card:has(.ay-product-card__heart) .ay-nophoto { padding: 36px 8px 8px !important; }
+}
+/* Sign-in: Google and Apple buttons stack on narrow phones instead of spilling. */
+@media (max-width: 400px) { html body .app-container .ay-auth-oauth { grid-template-columns: 1fr !important; } }
+/* Signed-out Ecosystem preview: the lock card's line wraps instead of running off. */
+.app-container .ay-ecoprev__lock :is(.ay-ecoprev__locktext, h2, h3, p) { white-space: normal !important; overflow-wrap: anywhere; }
+.app-container .ay-ecoprev__note { white-space: normal !important; }
+/* The honest Ecosystem preview is a grid: let its column shrink to the phone instead of growing to 528px. */
+html body .app-container .ay-ecoprev__stage.is-honest { grid-template-columns: minmax(0, 1fr); }
+html body .app-container .ay-ecoprev__stage.is-honest > * { min-width: 0; }
+/* Narrow cards (2-up on small phones): the partner mark and the FSA/HSA tag wrap to a second line rather than being cut. */
+.app-container.app-container .ay-product-card__kind:has(> :is(.ay-product-card__tag, .ay-lib-why)) { flex-wrap: wrap !important; overflow: visible !important; row-gap: 2px !important; }
+/* Info pages (Partners and others): the title block fits small phones instead of running 44px past the edge. */
+.app-container .ed-page__head > * { min-width: 0; max-width: 100%; }
+/* App sign-in: the Privacy / Terms links get their own 44px tap areas without overlapping. */
+.ayna-mobile .ayna-fresh-auth .ay-legal { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 16px; }
+.ayna-mobile .ayna-fresh-auth .ay-legal a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; }
+/* App: 44px minimum for small controls the scan flagged (folder tabs, search, sign-in fields, age box). */
+.ayna-mobile .ayna-category-index .ay-folder-tab,
+.ayna-mobile .ayna-fresh-search input,
+.ayna-mobile .ay-auth-form label:has(> input[type='checkbox']) { min-height: 44px; }
+.ayna-mobile .ayna-fresh-auth-field input { min-height: 44px; }
+.ayna-mobile .ip-age-input { min-height: 44px; }

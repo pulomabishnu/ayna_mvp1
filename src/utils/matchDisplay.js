@@ -52,25 +52,32 @@ function bestNeed(details, needId = null) {
 }
 
 /**
- * Card badge: a need score, only when she has a profile and it is 50+.
- * Pass { needId } on a need shelf so the badge names that shelf's need and
- * shows its score (never a different need than the shelf it sits on).
+ * Card badge: the product's one match score, only when she has a profile and
+ * it is 50+. One product shows one percent on every surface (card, shelf,
+ * Swipe, product page, Wrapped): always `details.percent`, the engine's best
+ * need score for her. Pass { needId } on a need shelf: the label names that
+ * shelf's need only when that need is the one the percent comes from, so a
+ * badge never names a different need than the shelf it sits on and never
+ * shows a second, shelf-only number.
  * @returns {{ percent: number, phrase: string, needId: string, label: string, basedOn: string, restricted: boolean, confidenceLevel: string|null } | null}
  */
 export function matchBadge(details, { needId = null } = {}) {
   if (!details || details.matchStatus !== 'scored' || details.eligible === false) return null;
-  const best = bestNeed(details, needId);
-  const percent = needId && best?.needId === needId ? best.score : details.percent;
+  const percent = details.percent;
   if (!Number.isFinite(percent) || percent < MIN_BADGE_SCORE) return null;
-  const phrase = best?.phrase || '';
+  const best = bestNeed(details);
+  const focus = needId ? bestNeed(details, needId) : null;
+  // On a shelf: name the shelf's need only if it scores the same as the badge.
+  const named = needId ? (focus && focus.needId === needId && focus.score === percent ? focus : null) : best;
+  const phrase = named?.phrase || '';
   return {
     percent,
     phrase,
-    needId: best?.needId || details.needId || null,
+    needId: (named || best)?.needId || details.needId || null,
     label: needHeadline(percent, phrase),
     basedOn: BASED_ON_LINE,
-    restricted: details.eligibility === 'restricted' || Boolean(best?.restricted),
-    confidenceLevel: best?.confidenceLevel || details.confidence || null,
+    restricted: details.eligibility === 'restricted' || Boolean((named || best)?.restricted),
+    confidenceLevel: (named || best)?.confidenceLevel || details.confidence || null,
   };
 }
 

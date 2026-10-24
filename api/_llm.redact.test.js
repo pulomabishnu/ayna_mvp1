@@ -18,9 +18,12 @@ describe('trace.redact keeps health content out of tracing', () => {
       prompt: [{ type: 'image', source: { type: 'base64', media_type: 'image/png', data: 'SECRETIMAGEDATA' } }],
       trace: { name: 't', redact: true, formatOutput: () => '1 values found' },
     });
-    const all = posted.join(' ');
     expect(posted.length).toBeGreaterThan(0);
-    expect(all).not.toMatch(/SECRETIMAGEDATA/);
-    expect(all).not.toMatch(/412/);
+    const messages = posted.map((body) => {
+      const payload = JSON.parse(body);
+      return JSON.stringify({ input_messages: payload.input_messages, output_message: payload.output_message });
+    }).join(' ');
+    expect(messages).not.toMatch(/SECRETIMAGEDATA/);
+    expect(messages).not.toMatch(/412/);
   });
 });

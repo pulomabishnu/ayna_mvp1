@@ -70,3 +70,8 @@ button.ay-compare__name:hover { text-decoration-color: currentColor; }
 .ay-ev2__grade.is-b { background: #f7badd; }
 .ay-ev2__grade.is-c, .ay-ev2__grade.is-none { background: transparent; }
 [data-theme='brand-dark'] .ay-ev2__grade.is-c, [data-theme='brand-dark'] .ay-ev2__grade.is-none { color: #ffedac; border-color: #ffedac; }
+
+/* Text kept in the page for search but folded until tapped (sources past the
+   first two, the full version of a long note). */
+.ay-src li[hidden],
+.ay-ev__stf > [hidden] { display: none !important; }

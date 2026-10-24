@@ -1,23 +1,29 @@
 import { useEffect, useMemo, useState } from 'react';
 import { trackApp } from '../utils/appAnalytics.js';
 import { PANEL_ICONS } from '../components/pdpIcons.jsx';
-import { ALL_PRODUCTS, CATEGORY_LABELS, getProductMatchDetailsForProduct } from '../../data/products.js';
+import { ALL_PRODUCTS, getProductMatchDetailsForProduct } from '../../data/products.js';
 import ProductCard from '../components/ProductCard.jsx';
 import { getBuyUrl } from '../data/buyUrl.js';
+import { matchPercentFor } from '../utils/matchScore.js';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 import { isPartnerBrandItem, getPartnerDisclosureText } from '../../utils/partnerBrands.js';
 import WhyMatchScreen from './WhyMatchScreen.jsx';
 import { exclusionLines } from '../../utils/matchDisplay.js';
 import MatchPill from '../../components/MatchPill.jsx';
-import ProductSections from '../../components/passport/ProductSections.jsx';
+import ProductEvidence from '../../components/pdp/ProductEvidence.jsx';
+import { useResearchState } from '../../data/researchLoader.js';
+import { attributeBadges, noDash } from '../../components/pdp/evidenceModel.js';
+import { firstSentence } from '../../components/pdp/sentences.js';
+import { getPassport } from '../../data/passport';
+import { recallFacts } from '../../utils/productFacts.js';
 import { matchLine } from '../../data/passport/content.js';
 import { buildGlance, perUnitLabel } from '../../components/pdp/glance.js';
 import { galleryImages, retailerLinks, similarProducts, sameNeedProducts } from '../../components/pdp/commerce.js';
 import GalleryThumbs from '../../components/pdp/GalleryThumbs.jsx';
 import ImageZoomViewer from '../components/ImageZoomViewer.jsx';
 import ComparePanel from '../../components/pdp/ComparePanel.jsx';
-import { jumpTo } from '../../components/pdp/jump.js';
+import { worksWith } from '../../utils/aynaIntegrations.js';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
 import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
@@ -27,14 +33,12 @@ import { productHref } from '../../utils/productRoute.js';
 import { HEART_PATH } from '../utils/heart.js';
 import { formatPrice } from '../../utils/formatPrice.js';
 import { displayName } from '../utils/displayName.js';
-import ProductCommunityReviews from '../../components/pdp/ProductCommunityReviews.jsx';
-import { useProductReviews } from '../../components/pdp/useProductReviews.js';
-import { RatingStars } from '../../components/community/RatingStars.jsx';
-import { summarizeReviewRows, formatAverage } from '../../utils/community/reviewRatings.js';
-import { worksWith } from '../../utils/aynaIntegrations.js';
+import { cardKind } from '../../utils/productCardFacts.js';
 import '../pdp.css';
 import '../eco-needs.css';
 import '../pdp-polish.css';
+import '../app-pdp.css';
+import { fetchWithTimeout } from '../../utils/network.js';
 
 function toneFor(product) {
   const functions = product?.healthFunctions || [];
@@ -45,12 +49,14 @@ function toneFor(product) {
   return 'pink';
 }
 
-/** One line in the header; the full note lives in the Safety section. */
-function SafetyFlag() {
+/** The one safety line next to Buy (pink, the alert colour); Safety tab has the rest. */
+function SafetyFlag({ text }) {
   return (
-    <button type="button" className="ay-pdp-safetyflag" onClick={() => jumpTo('ay-sec-safety')}>
-      <span aria-hidden="true" className="ay-safety-mark">!</span><strong>Safety note on file</strong><span>See it</span>
-    </button>
+    <div className="ay-pdp-safetyflag" role="note">
+      <span aria-hidden="true" className="ay-safety-mark">!</span>
+      <p>{text || 'Safety note on file.'}</p>
+      <button type="button" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'safety' }))}>All safety info</button>
+    </div>
   );
 }
 
@@ -99,7 +105,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
     try {
       const token = session?.access_token;
       if (!token) throw Object.assign(new Error('not_signed_in'), { code: 'not_signed_in' });
-      const res = await fetch(apiUrl('/api/product-chat'), {
+      const res = await fetchWithTimeout(apiUrl('/api/product-chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
@@ -169,7 +175,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
               {m.role === 'assistant' ? renderMarkdownLite(m.text) : m.text}
             </div>
           ))}
-          {sending && <div style={{ alignSelf: 'flex-start', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>Ayna is thinking…</div>}
+          {sending && <div style={{ alignSelf: 'flex-start', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>Looking into it…</div>}
         </div>
       )}
 
@@ -180,7 +186,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={session === undefined ? 'Loading…' : 'Ask about this product…'}
+          placeholder={session === undefined ? 'One moment…' : 'Ask about this product…'}
           disabled={sending || session === undefined}
           style={{ flex: 1, minWidth: 0, padding: '11px 14px', borderRadius: 99, border: '1px solid var(--ayna-border)', fontSize: 'max(16px, calc(13.5px * var(--ayna-text-scale, 1)))', background: 'var(--ayna-surface)', color: 'var(--ayna-text)' }}
         />
@@ -210,7 +216,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
 }
 
 export default function ProductDetailScreen({
-  product,
+  product: catalogProduct,
   onBack,
   isSaved = false,
   onToggleSaved,
@@ -233,10 +239,8 @@ export default function ProductDetailScreen({
   // "ayna" in Works with opens You > Health data.
   onOpenHealthData = null,
 }) {
-  // Live community reviews: the average and count come from these rows, so
-  // an edited or deleted review changes them on the next read.
-  const reviewRows = useProductReviews(product?.id);
-  const reviewStats = reviewRows.length ? summarizeReviewRows(reviewRows)[product?.id] : null;
+  // The same research layer the website loads (data/researchLoader.js), so the app shows every field.
+  const { product, loaded: researchLoaded } = useResearchState(catalogProduct);
   const [partnerOpen, setPartnerOpen] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
   // Rendered locally (not through MobileApp's shared `overlay` state, which
@@ -303,7 +307,8 @@ export default function ProductDetailScreen({
   }
 
   const matchDetails = getProductMatchDetailsForProduct(product, quizAnswers, null, matchOpts);
-  const matchPercent = quizAnswers && matchDetails.matchStatus === 'scored' && Number.isFinite(matchDetails.percent) && matchDetails.percent > 0 ? matchDetails.percent : null;
+  // The same number as the Shop card, shelf and Swipe (utils/matchScore).
+  const matchPercent = quizAnswers ? matchPercentFor(product, quizAnswers, matchOpts) : null;
   // One pill + one short line. Per-need numbers live in the Why view only.
   const headLine = matchPercent != null ? matchLine(matchDetails) : '';
   const exclusions = quizAnswers && matchDetails.matchStatus === 'excluded' ? exclusionLines(matchDetails) : [];
@@ -317,25 +322,45 @@ export default function ProductDetailScreen({
     image,
   } = product;
 
-  const categoryLabel = CATEGORY_LABELS[category] || (category ? category.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : '');
-  const eyebrowLine = [categoryLabel, brand && String(brand).trim().toLowerCase() !== String(name || '').trim().toLowerCase() ? brand : null].filter(Boolean).join(' · ');
+  // Sentence case at render (docs/terminology.md): the data keeps the team's casing.
+  const categoryLabel = cardKind({ category });
   const buyUrl = getBuyUrl(product);
   const isPartner = isPartnerBrandItem(product);
   const partnerDisclosure = getPartnerDisclosureText(product);
-  const glanceRaw = buildGlance(product, { details: quizAnswers ? matchDetails : null, whyMatched });
-  // On the app the Overview tab already shows the full Ingredients section, so the
-  // short "Ingredients or materials" fact above it would repeat the same list.
-  const glance = glanceRaw && Array.isArray(glanceRaw.facts) && (glanceRaw.sections || []).some((sec) => sec.id === 'inside')
-    ? { ...glanceRaw, facts: glanceRaw.facts.filter((f) => f.id !== 'inside') }
-    : glanceRaw;
+  // Same information architecture as the website's product page
+  // (components/pdp/ProductEvidence): ayna's summary, At a glance, then the
+  // Clinical opinion / Scientific literature / Reviews / Safety / How to use /
+  // Details tabs with their source cards.
+  const glance = buildGlance(product, { details: quizAnswers ? matchDetails : null, whyMatched });
+  const brandLine = brand && String(brand).trim().toLowerCase() !== String(name || '').trim().toLowerCase() ? brand : categoryLabel;
+  const heroLine = firstSentence(noDash(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '')), { min: 20, max: 420 });
+  // One recall answer for the page (utils/productFacts), as on the website.
+  const recall = (() => {
+    const live = getPassport(product)?.recall;
+    if (live?.status === 'recalled') return { status: 'past', label: 'Active recall found', detail: '' };
+    return recallFacts(product);
+  })();
+  // The one caution that sits next to Buy, in plain words from the record (same rule as the website).
+  const topWarning = (() => {
+    const first = (t) => {
+      const one = firstSentence(t, { min: 8, max: 400 }).replace(/\s*—\s*/g, ', ').trim();
+      const colon = one.indexOf(':');
+      if (one.length > 100 && colon > 8 && colon <= 70) return `${one.slice(0, colon)}.`;
+      return one.length > 120 ? firstSentence(one, { max: 120 }) : one;
+    };
+    if (recall.status === 'past' || recall.status === 'note') return first(recall.detail || recall.label);
+    if (glance?.alert) return first(glance.alert);
+    const preg = getPassport(product)?.safety?.pregnancy;
+    const pv = preg?.known && !preg.notApplicable ? (Array.isArray(preg.value) ? preg.value.join(', ') : String(preg.value || '')) : '';
+    if (pv && /not|avoid|consult|ask|doctor|clinician|don.t|do not|unsafe|caution/i.test(pv)) return `Pregnancy: ${firstSentence(pv, { min: 8, max: 200 })}`.replace(/^Pregnancy:\s*Brand:\s*(.*?)\.?$/i, 'Pregnancy: $1 (per the brand).');
+    const TIP = /^(wash|rinse|boil|clean|store|keep it|dry|sanitize|sterili[sz]e|empty)\b/i;
+    const w = (product.warnings || []).find((x) => x && !TIP.test(String(x).trim()));
+    return w ? first(w) : '';
+  })();
   const images = galleryImages(product);
   const shownImage = images[Math.min(photo, Math.max(images.length - 1, 0))] || image;
   const retailers = retailerLinks(product, buyUrl);
-  const matchFor = quizAnswers ? (p) => { const d = getProductMatchDetailsForProduct(p, quizAnswers, null, matchOpts); return d?.matchStatus === 'scored' ? d.percent : null; } : null;
-  const openProductByName = (target) => {
-    const found = ALL_PRODUCTS.find((p) => String(p?.name || '').toLowerCase() === String(target || '').toLowerCase());
-    if (found && onOpenProduct) onOpenProduct(found);
-  };
+  const matchFor = quizAnswers ? (p) => matchPercentFor(p, quizAnswers, matchOpts) : null;
 
   const handleShare = async () => {
     const origin = /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname)
@@ -361,6 +386,42 @@ export default function ProductDetailScreen({
   const shownPrice = formatPrice(product);
   const hasDisplayPrice = shownPrice.main !== 'Price at retailer';
 
+  // Round badges beside the photo: only facts on file (FSA/HSA, fragrance, prescription, app).
+  const badges = attributeBadges(product, glance);
+  const variantLabels = (product.variants || []).map((v) => String(v?.label || '').replace(/\s*—\s*/g, ', ')).filter(Boolean);
+  const variantKind = variantLabels.some((l) => /\d|\b(xs|s|m|l|xl|small|medium|large|regular|super|light|heavy|mini|plus|size|pack|count|oz|ml)\b/i.test(l)) ? 'Sizes' : 'Options';
+  const barPrice = hasDisplayPrice && String(shownPrice.main).length <= 9 ? shownPrice.main : '';
+  // Where to buy without a verified product link: the brand's own site when the
+  // record names one (the website does the same), else the stores it lists.
+  const siteOnFile = !buyUrl ? (product.whereToBuy || []).map((w) => String(w).trim()).find((w) => /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(w)) : null;
+  const shopAction = buyUrl
+    ? { href: buyUrl, label: category === 'telehealth' ? 'Book' : product.type === 'digital' ? 'Get the app' : 'Shop', sr: '(opens the seller’s site)', placement: 'product_detail' }
+    : retailers[0] ? { href: retailers[0].url, label: 'Shop', sr: `at ${retailers[0].name} (opens the store’s site)`, placement: 'product_detail_retailer' }
+    : siteOnFile ? { href: `https://${siteOnFile.toLowerCase()}`, label: 'Visit site', sr: `(opens ${siteOnFile.toLowerCase()})`, placement: 'product_detail_site' } : null;
+  const storesOnFile = !shopAction ? [...new Set((product.whereToBuy || []).map((w) => String(w).trim()).filter(Boolean))].map((w) => (/^app store$/i.test(w) ? 'the App Store' : w)) : [];
+  const andList = (xs) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`);
+
+  // One dark pill: price, save, ecosystem, buy. In the page under the price,
+  // not pinned to the bottom (founder: nothing stays put while the page
+  // scrolls; deep round 2).
+  const buyBar = (
+    <div className="ayq-bar">
+      <div className="ayq-bar__pill">
+        {barPrice && <span className="ayq-bar__price">{barPrice}</span>}
+        <button type="button" className="ayq-bar__icon" onClick={onToggleSaved} aria-label={isSaved ? 'Remove from Saved' : 'Save'} aria-pressed={isSaved}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill={isSaved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={HEART_PATH} /></svg>
+        </button>
+        {/* No store link: never a dead primary (same rule as the website's
+            product page). Her own site if we know it, else "Add to ecosystem"
+            takes the primary slot and the page says where it is sold. */}
+        <button type="button" className={`ayq-bar__eco${isInEcosystem ? ' is-on' : ''}${shopAction ? '' : ' is-primary'}`} aria-pressed={isInEcosystem} aria-label={isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'} onClick={onAddToEcosystem}>
+          {isInEcosystem ? 'In ecosystem' : shopAction ? '+ Ecosystem' : '+ Add to ecosystem'}
+        </button>
+        {shopAction && <a className="ayq-bar__buy" href={shopAction.href} target="_blank" rel="noopener noreferrer" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: shopAction.placement })}>{shopAction.label}<span className="sr-only"> {shopAction.sr}</span></a>}
+      </div>
+    </div>
+  );
+
   return (
     <div id="ay-pdp" className="ayna-fresh-product-detail ay-pdp" style={{ flex: 1, minWidth: 0, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--ayna-bg)', color: 'var(--ayna-text)' }}>
       <div key={product.id} className="ay-pdp-scroll" style={{ flex: 1, overflowY: 'auto', animation: 'ay-page .25s ease-out' }}>
@@ -374,44 +435,54 @@ export default function ProductDetailScreen({
           </button>
         </div>
 
-        <div className={`ayna-fresh-detail-image ay-pdp-hero tone-${tone}${image ? '' : ' is-missing-image'}`} style={{ margin: '16px 20px 0', borderRadius: 17, padding: 0, background: 'var(--ayna-bg-alt)', overflow: 'hidden' }}>
-          <div
-            style={{
-              position: 'relative',
-              width: '100%',
-              aspectRatio: '4 / 5',
-              background: 'var(--ayna-surface)',
-              borderRadius: 17,
-              boxShadow: 'none',
-              overflow: 'hidden',
-            }}
-          >
-            <ProductImage key={shownImage} product={product} src={shownImage} alt={name} allowBrandLogo={product?.type === 'digital'} />
-            {images.length > 0 && (
-              <button type="button" className="ay-pdp-zoom-open" aria-label={`View ${name} photo full screen`} onClick={() => setZoomOpen(true)}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m20 20-4.2-4.2M11 8.5v5M8.5 11h5" /></svg>
-              </button>
+        {/* Tinted stage with the product on a white stamp, then a rounded sheet that overlaps it. */}
+        <div className={`ayq-apphero tone-${tone}${image ? '' : ' is-missing-image'}`}>
+          <div className="ayq-apphero__stage">
+            <div className="ayq-stamp ayq-apphero__stamp">
+              <div className="ayq-apphero__tile" data-vt-target="product">
+                <ProductImage key={shownImage} product={product} src={shownImage} alt={name} allowBrandLogo={product?.type === 'digital'} />
+                {images.length > 0 && (
+                  <button type="button" className="ay-pdp-zoom-open" aria-label={`View ${name} photo full screen`} onClick={() => setZoomOpen(true)}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m20 20-4.2-4.2M11 8.5v5M8.5 11h5" /></svg>
+                  </button>
+                )}
+              </div>
+            </div>
+            {badges.length > 0 && (
+              <ul className="ayq-badges" aria-label="Facts about this product">
+                {badges.map((b) => <li key={b.id}><span>{b.label}</span>{b.note && <small>{b.note}</small>}</li>)}
+              </ul>
             )}
           </div>
+          {images.length > 1 && <div className="ay-pdp-thumbs ayq-apphero__thumbs"><GalleryThumbs images={images} index={photo} onSelect={setPhoto} name={name} /></div>}
         </div>
-        {images.length > 1 && <div className="ay-pdp-thumbs"><GalleryThumbs images={images} index={photo} onSelect={setPhoto} name={name} /></div>}
 
-        <div className="ayna-fresh-detail-title ay-pdp-title ay-pdp-head2">
-          {eyebrowLine && <div className="ay-pdp-eyebrow">{eyebrowLine}</div>}
+        <div className="ayq-sheet ay-pdp-title">
+          {brandLine && <div className="ay-pdp-eyebrow">{brandLine}</div>}
           <h1>{shownName}</h1>
+          {heroLine && <p className="ay-pdp-lede">{heroLine}</p>}
+          {variantLabels.length > 0 && (
+            <div className="ayq-variants">
+              <p>{variantKind}</p>
+              <ul>{variantLabels.map((l) => <li key={l}>{l}</li>)}</ul>
+            </div>
+          )}
           {(price || perUnit) && <div className="ay-pdp-price">
             {price && <span className={hasDisplayPrice ? 'is-price' : 'is-note'}>{shownPrice.main}</span>}
             {perUnit && <small className="is-unit">{perUnit}</small>}
             {price && shownPrice.sub && <small>{shownPrice.sub}</small>}
           </div>}
+          {!shopAction && <p className="ay-pdp-nolink">{storesOnFile.length ? `${product.type === 'digital' ? 'On' : 'Sold at'} ${andList(storesOnFile.slice(0, 4))}. We don’t have a direct link yet.` : 'We don’t have a store link for this yet.'}</p>}
           {matchPercent != null && <div className="ay-pdp-match">
             <MatchPill percent={matchPercent} onClick={openWhyMatch} label={`${matchPercent}% match${headLine ? `. ${headLine}` : ''}. See why`} />
             {headLine && <span>{headLine}</span>}
           </div>}
-          {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && quizAnswers && <button type="button" className="ay-pdp-fitnote" onClick={openWhyMatch}>{matchDetails.matchStatus === 'excluded' ? (exclusions[0] || 'Not a fit right now') : 'No clear match'} <span aria-hidden="true">→</span></button>}
+          {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && quizAnswers && <button type="button" className="ay-pdp-fitnote" onClick={openWhyMatch}>{matchDetails.matchStatus === 'excluded' ? (exclusions[0] || 'Not a fit right now') : 'No clear match'}</button>}
           {matchDetails.matchStatus === 'no-profile' && <button type="button" className="ayna-figma-guest-match" onClick={onStartQuiz}>Get matched</button>}
+          {buyBar}
           {onToggleOmit && <div className="ay-pdp-omit"><button type="button" onClick={onToggleOmit} aria-pressed={isOmitted}>{isOmitted ? 'Undo “Not for me”' : 'Not for me'}</button>{isOmitted && <small>Hidden from your matches.</small>}</div>}
-          {glance?.alert && <SafetyFlag />}
+          {topWarning && <SafetyFlag text={topWarning} />}
+          {works.ayna && onOpenHealthData && <button type="button" className="ay-pdp-works" onClick={onOpenHealthData}>Works with ayna: connect {works.ayna.name} in Health data</button>}
           {retailers.length > 0 && (
             <div className="ay-retailers">
               <span id="ay-pdp-also-at">Also at</span>
@@ -420,26 +491,45 @@ export default function ProductDetailScreen({
               </ul>
             </div>
           )}
-        </div>
-
-        {isPartner && (
-          <div className="ayna-figma-partner-disclosure">
-            <button type="button" onClick={() => setPartnerOpen((v) => !v)} aria-expanded={partnerOpen}>
-              <span>Partner</span><span>{partnerOpen ? 'Hide disclosure' : 'We may earn a commission'}</span><span aria-hidden="true">{partnerOpen ? '−' : '+'}</span>
-            </button>
-            {partnerOpen && <div className="ayna-figma-partner-copy">{partnerDisclosure}<a href="https://www.aynahealth.co/startups" target="_blank" rel="noopener noreferrer">Read about our brand partnerships →</a></div>}
+          {/* One dark pill: price, save, ecosystem, buy. In the page flow, under the
+              price (founder, Oct 21: nothing stays on screen while the page scrolls). */}
+          <div className="ayq-bar">
+            <div className="ayq-bar__pill">
+              {barPrice && <span className="ayq-bar__price">{barPrice}</span>}
+              <button type="button" className="ayq-bar__icon" onClick={onToggleSaved} aria-label={isSaved ? 'Remove from Saved' : 'Save'} aria-pressed={isSaved}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill={isSaved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={HEART_PATH} /></svg>
+              </button>
+              {/* No store link: never a dead primary (same rule as the website's
+                  product page). Her own site if we know it, else "Add to ecosystem"
+                  takes the primary slot and the page says where it is sold. */}
+              <button type="button" className={`ayq-bar__eco${isInEcosystem ? ' is-on' : ''}${shopAction ? '' : ' is-primary'}`} aria-pressed={isInEcosystem} aria-label={isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'} onClick={onAddToEcosystem}>
+                {isInEcosystem ? 'In ecosystem' : shopAction ? '+ Ecosystem' : '+ Add to ecosystem'}
+              </button>
+              {shopAction && <a className="ayq-bar__buy" href={shopAction.href} target="_blank" rel="noopener noreferrer" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: shopAction.placement })}>{shopAction.label}<span className="sr-only"> {shopAction.sr}</span></a>}
+            </div>
           </div>
-        )}
-
-
+          {isPartner ? (
+            <div className="ayna-figma-partner-disclosure">
+              <button type="button" onClick={() => setPartnerOpen((v) => !v)} aria-expanded={partnerOpen}>
+                <span>Partner</span><span>{partnerOpen ? 'Hide disclosure' : 'We may earn a commission'}</span><span aria-hidden="true">{partnerOpen ? '−' : '+'}</span>
+              </button>
+              {partnerOpen && <div className="ayna-figma-partner-copy">{partnerDisclosure}<a href="https://www.aynahealth.co/startups" target="_blank" rel="noopener noreferrer">Read about our brand partnerships</a></div>}
+            </div>
+          ) : buyUrl && <p className="ay-pdp-commission">Some links earn ayna a commission. It never changes your matches.</p>}
+        </div>
         <div className="ay-pdp-passport">
-          <ProductSections
+          <ProductEvidence
             key={product.id}
+            loading={!researchLoaded}
+            product={product}
+            image={images[0] || ''}
+            safetyLead={topWarning}
             glance={glance}
-            onXref={openProductByName}
-            extras={{ match: <button type="button" className="ay-psec-action" onClick={openWhyMatch}>See the full breakdown</button> }}
-            extraNav={[{ id: 'ask', label: 'Ask ayna' }, ...(related.compare.length ? [{ id: 'compare', label: 'Compare' }] : [])]}
-            worksWith={works.items.length ? { ...works, onOpenAyna: onOpenHealthData } : null}
+            recall={recall}
+            heroLine={heroLine}
+            onOpenReview={onOpenReview}
+            onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null}
+            extraRows={[{ label: 'Sold by', value: buyUrl ? (/amazon\.|amzn\./i.test(buyUrl) ? 'Amazon' : (() => { try { return new URL(buyUrl).hostname.replace(/^www\./, ''); } catch { return ''; } })()) : '' }]}
           />
 
           <section className="ay-pdp-askcard" id="ay-sec-ask" tabIndex={-1} aria-labelledby="ay-pdp-ask-h">
@@ -464,14 +554,9 @@ export default function ProductDetailScreen({
 
         {related.more.length > 0 && <section className="ayna-cabinet-collection ay-pdp-related" aria-labelledby="ay-pdp-related-more">
           <div className="ay-pdp-sechead"><h2 id="ay-pdp-related-more">You may also like</h2><p>{related.personal ? 'Picks that fit your profile.' : 'For the same needs, from other parts of the shop.'}</p></div>
-          <div className="ayna-editorial-product-grid">{related.more.map((p) => <ProductCard key={p.id} product={p} quizAnswers={quizAnswers} onClick={() => onOpenProduct(p)} />)}</div>
+          <div className="ay-shelf2-row">{related.more.map((p) => <ProductCard key={p.id} product={p} quizAnswers={quizAnswers} onClick={() => onOpenProduct(p)} />)}</div>
         </section>}
 
-        {reviewStats && <section className="ay-pdp-community-actions ay-pdp-reviews" aria-labelledby="ay-pdp-reviews-h" id="ay-pdp-reviews">
-          <div className="ay-pdp-community-head"><svg viewBox="0 0 24 24" aria-hidden="true">{PANEL_ICONS.community}</svg><h2 id="ay-pdp-reviews-h">Reviews</h2></div>
-          <p className="ay-pdp-reviews__sum"><span aria-hidden="true"><RatingStars value={Math.round(reviewStats.average)} size={16} /></span> <b>{formatAverage(reviewStats.average)}</b> from {reviewStats.count} {reviewStats.count === 1 ? 'review' : 'reviews'}</p>
-          <ProductCommunityReviews productId={product?.id} rows={reviewRows} onOpenReview={onOpenReview} heading="What ayna members say" />
-        </section>}
 
         {onCommunityAction && <section className="ay-pdp-community-actions" aria-label="Community">
           <div className="ay-pdp-community-head"><svg viewBox="0 0 24 24" aria-hidden="true">{PANEL_ICONS.community}</svg><h2>Community</h2></div>
@@ -481,113 +566,23 @@ export default function ProductDetailScreen({
         </section>}
 
         {reads.length > 0 && (
-          <div className="ay-pdp-reads">
-            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', marginBottom: 12 }}>Reads</div>
-            {reads.map((r) => (
-              <div
-                key={r.id || r.title}
-                onClick={r.onClick}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 12,
-                  background: 'var(--ayna-surface)',
-                  border: '1px solid var(--ayna-border)',
-                  borderRadius: 16,
-                  padding: '13px 15px',
-                  marginBottom: 8,
-                  cursor: r.onClick ? 'pointer' : 'default',
-                }}
-              >
-                <div style={{ flex: 1, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', lineHeight: 1.45, fontWeight: 400 }}>{r.title}</div>
-                {r.mins && <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', whiteSpace: 'nowrap' }}>{r.mins}</div>}
-              </div>
-            ))}
-          </div>
+          <section className="ay-pdp-reads" aria-labelledby="ay-pdp-reads-h">
+            <h2 id="ay-pdp-reads-h">Reads</h2>
+            <ul className="ay-group">
+              {reads.map((r) => (
+                <li key={r.id || r.title}>
+                  <button type="button" onClick={r.onClick} disabled={!r.onClick}>
+                    <span>{r.title}</span>
+                    {r.mins && <small>{r.mins}</small>}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
         )}
         <LegalFooter />
       </div>
       {zoomOpen && images.length > 0 && <ImageZoomViewer images={images} startIndex={Math.min(photo, images.length - 1)} name={name} onClose={() => setZoomOpen(false)} />}
-
-      <div className="ayna-product-purchase-bar ay-pdp-bar" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '12px 20px max(20px, env(safe-area-inset-bottom))', background: 'var(--ayna-surface)', borderTop: '1px solid var(--ayna-border)', display: 'flex', gap: 8, alignItems: 'center' }}>
-        <button
-          type="button"
-          onClick={onToggleSaved}
-          aria-label={isSaved ? 'Remove from Saved' : 'Save'}
-          aria-pressed={isSaved}
-          style={{ width: 50, height: 50, borderRadius: 99, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'var(--ayna-surface)', border: '1px solid ' + (isSaved ? 'var(--ayna-accent-dark)' : 'var(--ayna-border)') }}
-        >
-          <svg width="19" height="19" viewBox="0 0 24 24" fill={isSaved ? 'var(--ayna-accent-dark)' : 'none'} stroke={isSaved ? 'var(--ayna-accent-dark)' : 'var(--ayna-heading)'} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-            <path d={HEART_PATH} />
-          </svg>
-        </button>
-        <button
-          type="button"
-          aria-pressed={isInEcosystem}
-          aria-label={isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'}
-          className="ay-pdp-eco-btn"
-          onClick={onAddToEcosystem}
-          style={{
-            flex: 'none',
-            height: 50,
-            boxSizing: 'border-box',
-            display: 'flex',
-            alignItems: 'center',
-            padding: '0 16px',
-            borderRadius: 99,
-            cursor: 'pointer',
-            fontFamily: "var(--ayna-font-ui)",
-            fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
-            fontWeight: 500,
-            background: isInEcosystem ? 'var(--ayna-chip-bg)' : 'var(--ayna-surface)',
-            color: 'var(--ayna-heading)',
-            border: '1px solid ' + (isInEcosystem ? 'var(--ayna-accent-dark)' : 'var(--ayna-border)'),
-          }}
-        >
-          {/* The bar is tight at 320px: "Remove" says it there; the
-              aria-label keeps the full wording for screen readers. */}
-          {isInEcosystem ? 'Remove' : 'Add to ecosystem'}
-        </button>
-        {buyUrl ? (
-          <a
-            href={buyUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: 'product_detail' })}
-            style={{
-              flex: 1,
-              textAlign: 'center',
-              background: 'var(--ayna-cta-bg)',
-              color: 'var(--ayna-cta-text)',
-              borderRadius: 99,
-              padding: '15px 0',
-              fontFamily: "var(--ayna-font-ui)",
-              fontWeight: 600,
-              fontSize: 'calc(17px * var(--ayna-text-scale, 1))',
-              boxShadow: '0 14px 26px -14px rgba(36,42,82,.7)',
-              textDecoration: 'none',
-            }}
-          >
-            {category === 'telehealth' ? 'Explore' : product.type === 'digital' ? 'View app' : 'Shop'}
-          </a>
-        ) : (
-          <div
-            style={{
-              flex: 1,
-              textAlign: 'center',
-              background: 'var(--ayna-border)',
-              color: 'var(--ayna-text-muted)',
-              borderRadius: 99,
-              padding: '15px 0',
-              fontFamily: "var(--ayna-font-ui)",
-              fontWeight: 600,
-              fontSize: 'calc(17px * var(--ayna-text-scale, 1))',
-            }}
-          >
-            <span className="ayna-seller-unavailable">No shop link</span>
-          </div>
-        )}
-      </div>
     </div>
   );
 }

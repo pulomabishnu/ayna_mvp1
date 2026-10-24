@@ -1,12 +1,11 @@
-import { useMemo, useState } from 'react';
-import { SOURCE_NAMES } from '../mobile/data/healthConnections.js';
-import { buildDashboard, formatMetric, isFlat, RANGES } from '../health/dashboard.js';
+import { useMemo } from 'react';
+import { buildDashboard } from '../health/dashboard.js';
 import { buildInsights } from '../health/insights.js';
-import { estimatePhase, PHASE_SOURCES } from '../health/phase.js';
-import { DEV_DEMO_CONNECTIONS, devDemoRows } from '../health/devDemo.js';
-import { DEV_HEALTH_DEMO, localToday } from '../mobile/hooks/useHealthData.js';
-import HealthBento from '../mobile/components/HealthBento.jsx';
-import HealthChart, { CycleRing } from '../mobile/components/HealthChart.jsx';
+import { DEV_DEMO_CONNECTIONS, DEV_DEMO_MATCH_IDS, DEV_DEMO_NEEDS, DEV_DEMO_PRODUCT_IDS, devDemoAddedAt, devDemoRows } from '../health/devDemo.js';
+import { getProductById } from '../data/products.js';
+import { DEV_HEALTH_DEMO, DEV_HEALTH_DEMO_EMPTY, localToday } from '../mobile/hooks/useHealthData.js';
+import { HealthStarter } from '../mobile/components/HealthBento.jsx';
+import HealthHome from '../mobile/components/HealthHome.jsx';
 import '../styles/web-health.css';
 
 /**
@@ -25,54 +24,44 @@ import '../styles/web-health.css';
 // a QR code of this same address: regenerate it if the link changes.
 const BETA_URL = 'https://testflight.apple.com/join/f3C9PypD';
 
-const DEFAULT_PINS = ['sleep_minutes', 'resting_hr_bpm', 'steps', 'readiness_score'];
-const sourceNames = (sources) => sources.map((s) => SOURCE_NAMES[s] || s).join(' and ');
 const fmtLongDay = (iso) => new Date(`${iso}T12:00:00`).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-
-function Delta({ metric, delta, week }) {
-  const wk = week != null ? `This week ${formatMetric(metric, week)}` : null;
-  if (delta == null) return <p className="ay-wh-delta is-none">{wk ? `${wk}. ` : ''}Building your usual</p>;
-  if (isFlat(metric, delta)) return <p className="ay-wh-delta">{wk ? `${wk}, about` : 'About'} your usual</p>;
-  return <p className="ay-wh-delta">{wk ? `${wk}, ` : ''}{formatMetric(metric, delta, { signed: true }).replace(/^[+-]/, '')} {delta > 0 ? 'above' : 'below'} your usual</p>;
-}
 
 function LockIcon() {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="3" /><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" /></svg>;
 }
 
-/** A drawing of the dashboard's layout. No numbers: nothing here is anyone's data. */
-function LockedIllustration() {
-  const bars = [0.55, 0.7, 0.45, 0.8, 0.6, 0.75, 0.5, 0.65, 0.85, 0.6, 0.7, 0.9];
+/**
+ * What the dashboard shows, as plain rows (walkthrough P1-13: no blurred
+ * mock-up behind the card; the checklist bans ghost data). Words only:
+ * nothing here is anyone's data.
+ */
+const DASH_PARTS = [
+  { k: 'cycle', t: 'Cycle day and phase', d: 'Where you are in your cycle, and what usually comes next for you.', icon: <><circle cx="12" cy="12" r="8" /><path d="M12 4a8 8 0 0 1 8 8h-8z" /></> },
+  { k: 'sleep', t: 'Sleep', d: 'Last night and this week, next to your own usual.', icon: <path d="M19 14.5A7.5 7.5 0 0 1 9.5 5a7.5 7.5 0 1 0 9.5 9.5z" /> },
+  { k: 'heart', t: 'Resting heart rate', d: 'Day by day, so a change stands out.', icon: <path d="M3 12h4l2-4 4 8 2-4h6" /> },
+  { k: 'steps', t: 'Steps', d: 'Your daily movement against your own average.', icon: <><path d="M8 20c-1.7 0-3-1.6-3-4s1.3-5 3-5 3 2.6 3 5-1.3 4-3 4z" /><path d="M16 14c-1.7 0-3-1.6-3-4s1.3-5 3-5 3 2.6 3 5-1.3 4-3 4z" /></> },
+];
+function WhatItShows() {
   return (
-    <div className="ay-wh-ghost" aria-hidden="true">
-      <div className="ay-wh-ghost-hello"><i /><i /></div>
-      <div className="ay-wh-ghost-row">
-        <div className="ay-wh-ghost-cycle">
-          <span><i /><i /><i /></span>
-          <CycleRing cycleDay={null} avgLength={28} periodLength={5} />
-        </div>
-        <div className="ay-wh-ghost-coming"><i /><b /><b /><b /></div>
-      </div>
-      <div className="ay-wh-ghost-phase"><span className="is-period" /><span className="is-follicular" /><span className="is-ovulation" /><span className="is-luteal" /></div>
-      <div className="ay-wh-ghost-grid">
-        {['sky', 'ink', 'butter', 'pink'].map((tone, t) => (
-          <div key={tone} className={`is-${tone}`}>
-            <i /><i />
-            <svg viewBox="0 0 100 40" preserveAspectRatio="none">
-              {bars.map((h, i) => <rect key={i} x={i * 8.3 + 1.5} y={40 - ((h + t * 0.03) % 1) * 36} width="5" height={((h + t * 0.03) % 1) * 36} rx="2.5" />)}
-            </svg>
-          </div>
+    <section className="ay-wh-shows" aria-labelledby="ay-wh-shows-h">
+      <h2 id="ay-wh-shows-h" className="ay-wh-shows__title">What the dashboard shows</h2>
+      <ul className="ay-wh-shows__list">
+        {DASH_PARTS.map((p) => (
+          <li key={p.k}>
+            <svg viewBox="0 0 24 24" aria-hidden="true">{p.icon}</svg>
+            <span><b>{p.t}</b><small>{p.d}</small></span>
+          </li>
         ))}
-      </div>
-    </div>
+      </ul>
+      <p className="ay-wh-shows__note">Each one is compared only with your own usual. Never a diagnosis.</p>
+    </section>
   );
 }
 
 function Locked({ signedIn, connected, onSignIn, onOpenConnections }) {
   const waiting = signedIn && connected;
   return (
-    <div className="ay-wh-locked">
-      <LockedIllustration />
+    <div className="ay-wh-locked is-honest">
       <div className="ay-wh-lockpanel" role="region" aria-labelledby="ay-wh-lock-title">
         <span className="ay-wh-lockicon"><LockIcon /></span>
         {waiting ? (
@@ -85,9 +74,7 @@ function Locked({ signedIn, connected, onSignIn, onOpenConnections }) {
           </>
         ) : (
           <>
-            <span className="ay-wh-pro">ayna Pro</span>
             <h2 id="ay-wh-lock-title">Your health dashboard lives in the app</h2>
-            <p>Your cycle day and phase, sleep, resting heart rate and steps, each next to your own usual.</p>
             <p>It joins ayna Pro when the app launches. Beta testers use it free now.</p>
             <div className="ay-wh-lockjoin">
               <figure className="ay-wh-qr">
@@ -111,11 +98,12 @@ function Locked({ signedIn, connected, onSignIn, onOpenConnections }) {
           </>
         )}
       </div>
+      <WhatItShows />
     </div>
   );
 }
 
-export default function WebHealth({ user, health, onSignIn, onOpenConnections }) {
+export default function WebHealth({ user, health, products = [], needIds = [], hormonalBC = false, onOpenProduct, onAsk, onSignIn, onOpenConnections }) {
   // DEVELOPMENT ONLY (?healthdemo=1 on the local dev server, signed out):
   // the made-up demo rows from devDemo.js, so the unlocked layout can be
   // checked without an account. import.meta.env.DEV is false in production builds.
@@ -123,22 +111,20 @@ export default function WebHealth({ user, health, onSignIn, onOpenConnections })
   const today = localToday();
   const demoData = useMemo(() => {
     if (!demo) return null;
-    const rows = devDemoRows(today);
-    return { status: 'ready', insightRows: rows, connected: DEV_DEMO_CONNECTIONS, insights: buildInsights(rows, { today }) };
+    const rows = DEV_HEALTH_DEMO_EMPTY ? [] : devDemoRows(today);
+    return {
+      status: 'ready', insightRows: rows, connected: DEV_HEALTH_DEMO_EMPTY ? [] : DEV_DEMO_CONNECTIONS, insights: buildInsights(rows, { today }),
+      products: DEV_DEMO_PRODUCT_IDS.map(getProductById).filter(Boolean).map((p) => (devDemoAddedAt(today)[p.id] ? { ...p, addedAt: devDemoAddedAt(today)[p.id] } : p)),
+      matches: DEV_DEMO_MATCH_IDS.map(getProductById).filter(Boolean),
+    };
   }, [demo, today]);
   const h = demoData || health || { status: 'idle', insightRows: [], connected: [], insights: { sections: [] } };
 
-  const [range, setRange] = useState('month');
-  const [area, setArea] = useState(null);
-  const days = RANGES.find((r) => r.id === range).days;
   const rows = h.insightRows || [];
   // Plain calls: the React Compiler memoizes these (manual useMemo here trips it).
-  const dash = buildDashboard(rows, { days, today });
+  const dash = buildDashboard(rows, { days: 7, today });
   const week = buildDashboard(rows, { days: 30, today });
   const sections = h.insights?.sections || [];
-  const ready = sections.filter((s) => s.status === 'ready');
-  const estimate = sections.find((s) => s.id === 'cycle')?.estimate || null;
-  const sources = [...new Set(sections.flatMap((s) => s.sources))];
   const signedIn = Boolean(user?.id) || demo;
   const hasData = rows.length > 0 && !(dash.empty && week.empty && !sections.length);
   const name = demo ? '' : (user?.user_metadata?.first_name || user?.user_metadata?.name || '').split(' ')[0];
@@ -146,7 +132,7 @@ export default function WebHealth({ user, health, onSignIn, onOpenConnections })
   const header = (
     <header className="ay-wh-top">
       <h1 id="ay-wh-title" className="sr-only">Your health</h1>
-      <p className="ay-wh-kicker" aria-hidden="true"><b>Your health</b><span>{fmtLongDay(today)}</span></p>
+      <p className="ay-wh-kicker" aria-hidden="true"><b>Your health</b>{!(signedIn && hasData) && <span>{fmtLongDay(today)}</span>}</p>
       {signedIn && hasData && onOpenConnections && <button type="button" className="ay-wh-btn is-quiet is-small" onClick={onOpenConnections}>Connected apps</button>}
     </header>
   );
@@ -176,95 +162,33 @@ export default function WebHealth({ user, health, onSignIn, onOpenConnections })
       <section className="ay-wh is-locked" aria-labelledby="ay-wh-title">
         {header}
         <Locked signedIn={signedIn} connected={(h.connected || []).length > 0} onSignIn={onSignIn} onOpenConnections={onOpenConnections} />
+        {/* Signed in without health data: her goals matched to her products still work from the quiz. */}
+        {signedIn && (needIds.length > 0 || products.length > 0 || demo) && (
+          <div className="ay-wh-starter">
+            <HealthStarter needIds={demo ? DEV_DEMO_NEEDS : needIds} products={demoData?.products || products} matches={demoData?.matches || []} onOpenProduct={onOpenProduct} />
+          </div>
+        )}
       </section>
     );
   }
 
-  const allCharts = week.groups.flatMap((g) => g.charts.map((c) => ({ ...c, group: g.id })));
-  const pinned = DEFAULT_PINS.map((m) => allCharts.find((c) => c.metric === m)).filter(Boolean);
-  const cycle = week.cycle?.cycleDay ? week.cycle : null;
-  const phase = cycle ? estimatePhase(cycle) : null;
-  const areas = [
-    ...(week.cycle ? [{ id: 'cycle', label: 'Cycle' }] : []),
-    ...dash.groups.map((g) => ({ id: g.id, label: g.label })),
-  ];
-  const current = areas.some((a) => a.id === area) ? area : areas[0]?.id;
-  const openArea = (id) => {
-    setArea(id);
-    window.setTimeout(() => document.getElementById('ay-wh-areas')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
-  };
-
   return (
     <section className="ay-wh" aria-labelledby="ay-wh-title">
       {header}
-      <div className="ay-wh-bento" data-count={pinned.length} data-cycle={cycle ? 'yes' : 'no'}>
-        <HealthBento name={name} week={week} cycle={cycle} estimate={estimate} pinnedCharts={pinned} ready={ready} today={today} onOpenArea={openArea} />
-      </div>
-
-      {ready.length > 0 && (
-        <section className="ay-wh-week" aria-labelledby="ay-wh-week-title">
-          <div className="ay-wh-week-head">
-            <h2 id="ay-wh-week-title">Your week, in short</h2>
-            {sources.length > 0 && <p>From {sourceNames(sources)}. Trends, not diagnoses.</p>}
-          </div>
-          <ul className="ay-wh-lines">
-            {ready.map((s) => (
-              <li key={s.id}>
-                <b>{s.title}</b>
-                <span>{s.plain || s.explanation || s.headline}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {areas.length > 0 && (
-        <section className="ay-wh-areas" id="ay-wh-areas" aria-labelledby="ay-wh-areas-title">
-          <div className="ay-wh-areas-head">
-            <h2 id="ay-wh-areas-title">Charts</h2>
-            <div className="ay-wh-tabs" role="tablist" aria-label="Health areas">
-              {areas.map((a) => <button key={a.id} type="button" role="tab" aria-selected={current === a.id} className={current === a.id ? 'is-on' : ''} onClick={() => setArea(a.id)}>{a.label}</button>)}
-            </div>
-            <div className="ay-wh-range" role="tablist" aria-label="Time range">
-              {RANGES.map((r) => <button key={r.id} type="button" role="tab" aria-selected={range === r.id} className={range === r.id ? 'is-on' : ''} onClick={() => setRange(r.id)}>{r.label}</button>)}
-            </div>
-          </div>
-
-          <div className="ay-wh-charts">
-            {current === 'cycle' && dash.cycle && dash.cycle.lengths.length >= 2 && (
-              <article className="ay-wh-chart">
-                <h3>Cycle length</h3>
-                <p className="ay-wh-avg">{dash.cycle.avgLength} days <span>average of your last {dash.cycle.lengths.length}</span></p>
-                <HealthChart chart={{ metric: 'cycle_length', label: 'Cycle length', type: 'bar', usual: null, points: dash.cycle.lengths.map((c) => ({ day: c.start, value: c.days })) }} />
-                {dash.cycle.sources.length > 0 && <p className="ay-wh-from">From {sourceNames(dash.cycle.sources)}</p>}
-              </article>
-            )}
-            {current === 'cycle' && phase && (
-              <article className="ay-wh-chart is-about">
-                <h3>How we estimate your phase</h3>
-                <p>{phase.basis}</p>
-                {estimate && <p>{estimate.basis}</p>}
-                <p className="ay-wh-from">Sources: {PHASE_SOURCES.map((src, i) => <span key={src.url}>{i ? ', ' : ''}<a href={src.url} target="_blank" rel="noopener noreferrer">{src.label}</a></span>)}</p>
-              </article>
-            )}
-            {current === 'cycle' && !(dash.cycle && dash.cycle.lengths.length >= 2) && !phase && (
-              <p className="ay-wh-note">Log a few more periods and ayna can chart your cycle length.</p>
-            )}
-            {dash.groups.filter((g) => g.id === current).map((g) => g.charts.map((c) => (
-              <article key={c.metric} className="ay-wh-chart">
-                <h3>{c.label}</h3>
-                <p className="ay-wh-avg">{formatMetric(c.metric, c.avg)} <span>average, last {days} days</span></p>
-                <Delta metric={c.metric} delta={c.delta} week={c.week} />
-                <HealthChart chart={c} />
-                {c.sources.length > 0 && <p className="ay-wh-from">From {sourceNames(c.sources)}</p>}
-              </article>
-            )))}
-            {current !== 'cycle' && !dash.groups.some((g) => g.id === current) && <p className="ay-wh-note">No readings in the last {days} days. Try a longer range.</p>}
-          </div>
-        </section>
-      )}
-
-      <p className="ay-wh-foot">These describe your data. They aren't medical advice. If something worries you, talk to a clinician.</p>
+      <HealthHome
+        name={name}
+        rows={rows}
+        sections={sections}
+        matchContext={h.matchContext || null}
+        today={today}
+        needIds={demo ? DEV_DEMO_NEEDS : needIds}
+        hormonalBC={hormonalBC}
+        products={demoData?.products || products}
+        matches={demoData?.matches || []}
+        onOpenProduct={onOpenProduct}
+        onAsk={onAsk}
+        surface="web"
+      />
     </section>
   );
 }

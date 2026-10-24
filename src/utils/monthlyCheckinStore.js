@@ -85,3 +85,17 @@ export async function saveMonthlyCheckin(answers) {
     return { saved: false, reason: error?.message || 'server_save_failed' };
   }
 }
+
+/** How many monthly check-ins she has done (her rows only, RLS). null when unknown. */
+export async function countMonthlyCheckins() {
+  const supabase = getSupabaseClient();
+  const userId = await resolveUserId(supabase);
+  if (!supabase || !userId) return null;
+  try {
+    const { count, error } = await supabase.from(TABLE).select('check_in_month', { count: 'exact', head: true }).eq('user_id', userId);
+    if (error) return null;
+    return Number.isFinite(count) ? count : null;
+  } catch {
+    return null;
+  }
+}

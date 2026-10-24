@@ -17,7 +17,7 @@ function Photo({ product }) {
   return <ProductTileImage product={product} imgStyle={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', padding: '12%' }} letterNode={<ProductImageFallback style={{ position: 'absolute', inset: 0 }} />} />;
 }
 
-export default function WebWrapped({ products = [], quizResults, onClose, onBrowse, onBack, startAtEnd = false, primaryLabel = 'Open my Ecosystem →', onPrimary }) {
+export default function WebWrapped({ products = [], quizResults, onClose, onBrowse, onBack, startAtEnd = false, primaryLabel = 'Open my ecosystem →', onPrimary }) {
   const picks = products.filter(Boolean);
   const top = picks.slice(0, 4);
   const first = top[0];
@@ -71,12 +71,12 @@ export default function WebWrapped({ products = [], quizResults, onClose, onBrow
     <div className={`wwr is-${active}`} role="dialog" aria-modal="true" aria-label="Your ayna Wrapped">
       <div className="wwr-progress">{slides.map((s, i) => <span key={s}><i style={{ width: i < index ? '100%' : i === index ? `${progress * 100}%` : '0%' }} /></span>)}</div>
       <div className="wwr-top">
-        <button type="button" onClick={back} disabled={index === 0 && !onBack} aria-label={index === 0 && onBack ? 'Back to the quiz' : 'Previous slide'}>←</button>
+        <button type="button" onClick={back} disabled={index === 0 && !onBack} aria-label={index === 0 && onBack ? 'Back to the quiz' : 'Previous slide'}><svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg></button>
         <span>ayna Wrapped</span>
         <div>
           {!last && <button type="button" className="wwr-skip" onClick={() => { progressRef.current = 0; setProgress(0); setIndex(slides.length - 1); }}>Skip to my matches</button>}
-          {!last && <button type="button" onClick={() => setPaused((v) => !v)} aria-label={paused ? 'Play' : 'Pause'}>{paused ? '▶' : '❚❚'}</button>}
-          <button type="button" onClick={onClose} aria-label="Close">×</button>
+          {!last && <button type="button" onClick={() => setPaused((v) => !v)} aria-label={paused ? 'Play story' : 'Pause story'}>{paused ? <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z" /></svg> : <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M8 5v14M16 5v14" /></svg>}</button>}
+          <button type="button" onClick={onClose} aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M6 6l12 12M18 6 6 18" /></svg></button>
         </div>
       </div>
 
@@ -84,7 +84,7 @@ export default function WebWrapped({ products = [], quizResults, onClose, onBrow
         {active === 'intro' && <>
           <span className="wwr-shapes" aria-hidden="true"><i /><i /><i /></span>
           <p className="wwr-kicker">Your ecosystem is ready</p>
-          <h1>Your ayna,<br /><em>wrapped.</em></h1>
+          <h1>Your ayna,<br /><em>wrapped</em></h1>
           <div className="wwr-stats">
             <div><strong>{picks.length}</strong><span>{picks.length === 1 ? 'pick' : 'picks'}</span></div>
             <div><strong>{areas.length}</strong><span>{areas.length === 1 ? 'area' : 'areas'}</span></div>
@@ -92,7 +92,7 @@ export default function WebWrapped({ products = [], quizResults, onClose, onBrow
           </div>
         </>}
         {active === 'focus' && <>
-          <p className="wwr-kicker">Your Ecosystem covers</p>
+          <p className="wwr-kicker">Your ecosystem covers</p>
           <ol className="wwr-ranks">{areas.slice(0, 3).map((a, i) => <li key={a} style={{ '--i': i }}><span>{i + 1}</span><strong>{a}</strong></li>)}</ol>
         </>}
         {active === 'match' && first && <>
@@ -106,8 +106,8 @@ export default function WebWrapped({ products = [], quizResults, onClose, onBrow
           <dl className="wwr-facts">{persona.facts.map(([l, v], i) => <div key={l} style={{ '--i': i }}><dt>{l}</dt><dd>{v}</dd></div>)}</dl>
         </>}
         {active === 'lineup' && <>
-          <p className="wwr-kicker">The lineup</p>
-          <h1 className="is-sm">{picks.length} {picks.length === 1 ? 'pick' : 'picks'},<br />made for you.</h1>
+          <p className="wwr-kicker">Your picks</p>
+          <h1 className="is-sm">{picks.length} {picks.length === 1 ? 'pick' : 'picks'} that fit<br />your <em>answers</em></h1>
           <div className="wwr-grid">{top.map((p, i) => <div key={p.id || i} className="wwr-tile" style={{ '--i': i }}><Photo product={p} /></div>)}</div>
         </>}
         {active === 'finish' && <>
@@ -132,10 +132,9 @@ export default function WebWrapped({ products = [], quizResults, onClose, onBrow
           </div>
         </>}
         {active === 'empty' && <>
-          <p className="wwr-kicker">Your next chapter</p>
-          <h1>Still<br /><em>exploring.</em></h1>
-          <p>No strong match yet.</p>
-          <div className="wwr-actions"><button type="button" className="wwr-cta" onClick={onBrowse}>Explore products →</button></div>
+          <h1>No strong<br /><em>match</em> yet</h1>
+          <p>Your answers didn’t point to one clear pick. The Shop is sorted by need.</p>
+          <div className="wwr-actions"><button type="button" className="wwr-cta" onClick={onBrowse}>Go to the Shop</button></div>
         </>}
       </div>
       {!last && <p className="wwr-hint">Click to continue</p>}

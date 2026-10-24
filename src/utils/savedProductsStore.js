@@ -1,5 +1,6 @@
 import { compactLegacyAuthMetadata } from './authMetadataCleanup';
 import { filterProductMapToCatalog } from './catalogIntegrity';
+import { loadCatalog } from '../data/catalog.js';
 
 /**
  * Wishlist / Save for later persistence.
@@ -18,6 +19,9 @@ function isMissingColumn(error) {
   return error.code === UNDEFINED_COLUMN || /column .*is_saved.* does not exist/i.test(error.message || '');
 }
 
+// Reads the device's saved list, checked against the catalog, so call it only
+// once the catalog has loaded (data/catalog.js isCatalogReady): before that
+// every product would read as unknown (App.jsx restores it on load).
 export function loadSavedProducts() {
   try {
     const raw = localStorage.getItem(LS_KEY);
@@ -67,6 +71,8 @@ export async function loadSavedForUser(supabase, userId) {
     return null;
   }
 
+  // Checked against the catalog below, which loads after first paint.
+  await loadCatalog();
   const out = {};
   for (const row of data || []) {
     out[row.product_id] = row.product_data || {

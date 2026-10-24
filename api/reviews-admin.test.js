@@ -15,7 +15,7 @@ function reviewer(id, date, feedback = '') {
 beforeEach(() => {
   vi.clearAllMocks();
   vi.stubEnv('ADMIN_EMAILS', 'ADMIN@example.test');
-  verifyUser.mockResolvedValue({ user: { email: 'admin@example.test' }, admin: { auth: { admin: { listUsers } } } });
+  verifyUser.mockResolvedValue({ user: { email: 'admin@example.test', email_confirmed_at: '2026-10-01T00:00:00Z' }, admin: { auth: { admin: { listUsers } } } });
 });
 afterEach(() => vi.unstubAllEnvs());
 describe('popup review administration', () => {

@@ -41,7 +41,7 @@ export default function CareNearYouPanel({
         border: '1px solid var(--color-border)',
       }}
     >
-      {/* Compact (inside My Ecosystem's "Care near you" card): the card
+      {/* Compact (inside My ecosystem's "Care near you" card): the card
           already carries the title and frame, so no second box or heading. */}
       {!compact && (
         <h3 style={{ fontSize: 16, marginBottom: '0.5rem', color: 'var(--color-text-main)' }}>
@@ -103,7 +103,7 @@ export default function CareNearYouPanel({
           <h4 style={{ fontSize: 12.5, textTransform: 'none', letterSpacing: 'normal', color: 'var(--color-primary)', marginBottom: '0.5rem' }}>
             In-person &amp; community clinics
           </h4>
-          <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: 14, lineHeight: 1.55, color: 'var(--color-text-main)' }}>
+          <ul style={{ margin: 0, padding: 0, listStyle: 'none', fontSize: 14, lineHeight: 1.55, color: 'var(--color-text-main)' }}>
             {bundle.clinicLinks.map((link) => (
               <li key={link.href} style={{ marginBottom: '0.5rem' }}>
                 <a href={link.href} target="_blank" rel="noopener noreferrer" style={{ fontWeight: '600', color: 'var(--color-primary)' }}>
@@ -118,7 +118,7 @@ export default function CareNearYouPanel({
           <h4 style={{ fontSize: 12.5, textTransform: 'none', letterSpacing: 'normal', color: 'var(--color-primary)', marginBottom: '0.5rem' }}>
             Education &amp; virtual care context
           </h4>
-          <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: 14, lineHeight: 1.55, color: 'var(--color-text-main)' }}>
+          <ul style={{ margin: 0, padding: 0, listStyle: 'none', fontSize: 14, lineHeight: 1.55, color: 'var(--color-text-main)' }}>
             {bundle.telehealthLinks.filter((link) => !/hhs\.gov/.test(link.href)).map((link) => (
               <li key={link.href} style={{ marginBottom: '0.5rem' }}>
                 <a href={link.href} target="_blank" rel="noopener noreferrer" style={{ fontWeight: '600', color: 'var(--color-primary)' }}>

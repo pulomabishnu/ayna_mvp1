@@ -32,7 +32,7 @@ describe('api/campaign-admin', () => {
 
   it('403 for everyone when ADMIN_EMAILS is not set', async () => {
     vi.stubEnv('ADMIN_EMAILS', '');
-    verifyUser.mockResolvedValue({ user: { id: 'u', email: 'team@aynahealth.co' }, error: null, admin: mockSupabase() });
+    verifyUser.mockResolvedValue({ user: { id: 'u', email: 'team@aynahealth.co', email_confirmed_at: '2026-10-01T00:00:00Z' }, error: null, admin: mockSupabase() });
     const res = mockRes();
     await adminHandler(mockReq({ method: 'GET' }), res);
     expect(res.statusCode).toBe(403);
@@ -40,7 +40,7 @@ describe('api/campaign-admin', () => {
 
   it('returns the overview for an admin', async () => {
     const admin = mockSupabase({ rpcResults: { campaign_admin_overview: { data: { campaign: { id: 'free-product-2026' }, people: [], inventory: [] }, error: null } } });
-    verifyUser.mockResolvedValue({ user: { id: 'u', email: 'Team@aynahealth.co' }, error: null, admin });
+    verifyUser.mockResolvedValue({ user: { id: 'u', email: 'Team@aynahealth.co', email_confirmed_at: '2026-10-01T00:00:00Z' }, error: null, admin });
     const res = mockRes();
     await adminHandler(mockReq({ method: 'GET' }), res);
     expect(res.statusCode).toBe(200);
@@ -48,7 +48,7 @@ describe('api/campaign-admin', () => {
   });
 
   it('rejects an unknown fulfillment status', async () => {
-    verifyUser.mockResolvedValue({ user: { id: 'u', email: 'team@aynahealth.co' }, error: null, admin: mockSupabase() });
+    verifyUser.mockResolvedValue({ user: { id: 'u', email: 'team@aynahealth.co', email_confirmed_at: '2026-10-01T00:00:00Z' }, error: null, admin: mockSupabase() });
     const res = mockRes();
     await adminHandler(mockReq({ body: { action: 'fulfillment', claimId: '11111111-2222-4333-8444-555555555555', status: 'lost' } }), res);
     expect(res.statusCode).toBe(400);
@@ -56,7 +56,7 @@ describe('api/campaign-admin', () => {
 });
 
 describe('api/campaign-admin add_product', () => {
-  const asAdmin = (admin) => verifyUser.mockResolvedValue({ user: { id: 'u', email: 'team@aynahealth.co' }, error: null, admin });
+  const asAdmin = (admin) => verifyUser.mockResolvedValue({ user: { id: 'u', email: 'team@aynahealth.co', email_confirmed_at: '2026-10-01T00:00:00Z' }, error: null, admin });
 
   it('adds a reward-only item with only https links and no catalog id', async () => {
     const admin = mockSupabase({ tableResults: { 'reward_products.insert': { data: null, error: null } } });
@@ -86,7 +86,7 @@ describe('api/campaign-notify (cron)', () => {
 });
 
 describe('api/campaign-admin vinted', () => {
-  const asAdmin = (admin) => verifyUser.mockResolvedValue({ user: { id: 'u', email: 'team@aynahealth.co' }, error: null, admin });
+  const asAdmin = (admin) => verifyUser.mockResolvedValue({ user: { id: 'u', email: 'team@aynahealth.co', email_confirmed_at: '2026-10-01T00:00:00Z' }, error: null, admin });
 
   it('lists the Vinted listings', async () => {
     const admin = mockSupabase({ rpcResults: { campaign_vinted_listings: { data: [{ listing_id: 1, status: 'available', claimed: false, product: 'A' }], error: null } } });

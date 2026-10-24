@@ -15,7 +15,7 @@ export default async function handler(req, res) {
       if (error || !user) return res.status(401).json({ error: 'auth_required' });
       // Build receipt before claiming so a configuration error never consumes a display.
       const receipt = issueReceipt('survey');
-      const claimed = await claimSurvey(user.id, store);
+      const claimed = await claimSurvey(user.id, store, { createdAt: user.created_at });
       return res.status(200).json({ claimed, ...(claimed ? { receipt } : {}) });
     }
     if (!['begin-purchase', 'submit'].includes(body.action)) return res.status(400).json({ error: 'invalid_action' });

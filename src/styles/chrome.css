@@ -1,0 +1,320 @@
+/* =====================================================================
+   CHROME: the parts of the website that frame every page and must match
+   the app (walkthrough Oct 21: P1-7 navigation, P1-8 back control,
+   P1-24 Ask sheet, P1-28 focused flows, P1-2 phone footer).
+   Loaded last (after content.css). Tokens only; see design-direction.md.
+   ===================================================================== */
+
+/* ---------- Header: Ask ayna pill (every width, like the app) ----------
+   The floating Ask pill is gone (founder, Oct 21: nothing floats over the page);
+   Ask lives in the header on desktop too. */
+.app-container.app-container .ay-nav__ask {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px 0 6px;
+  border: 1.5px solid var(--ay-outline); border-radius: 999px; background: transparent;
+  color: var(--ay-text); font: 600 15px/1 var(--ay-sans-stack); white-space: nowrap; cursor: pointer;
+  transition: transform var(--t-press, 110ms) var(--ease-pop, ease-out), background-color var(--t-fast, 160ms) var(--ease-out, ease-out);
+}
+.app-container.app-container .ay-nav__ask:hover { background: var(--ay-hover); }
+.app-container.app-container .ay-nav__ask:active { transform: scale(.97); }
+.app-container.app-container .ay-nav__ask:focus-visible { outline: 3px solid var(--ay-focus) !important; outline-offset: 2px !important; }
+.app-container.app-container .ay-nav__ask-orb { display: grid; place-items: center; width: 32px; height: 32px; border: 1.5px solid var(--ay-outline); border-radius: 50%; background: var(--ay-alert-bg); color: #3e2723; }
+.app-container.app-container .ay-nav__ask-orb svg { width: 16px; height: 16px; }
+html body .app-container .ayna-ask-dock, html body .app-container .ayna-ask-tab { display: none !important; }
+@media (max-width: 899px) {
+  .app-container.app-container .ay-nav__actions { gap: var(--ay-s8); }
+  /* "beta" stays on desktop; on phones the header carries logo · Ask · Saved, as in the app. */
+  .app-container.app-container .ay-nav__beta { display: none; }
+}
+@media (max-width: 339px) {
+  .app-container.app-container .ay-nav__ask { padding-right: 12px; font-size: 14px; }
+}
+
+/* ---------- Phone tab bar: five equal columns, the centre is Ecosystem ---------- */
+@media (max-width: 899px) {
+  html body .app-container.app-container nav.ay-tabbar.ay-tabbar--main { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; }
+  html body .app-container.app-container nav.ay-tabbar--main .ay-tabbar__icon svg path,
+  html body .app-container.app-container nav.ay-tabbar--main .ay-tabbar__icon svg circle { vector-effect: non-scaling-stroke; }
+  /* Selected icons are filled (the paths carry fill="currentColor"); outline otherwise. */
+  html body .app-container.app-container nav.ay-tabbar--main > a.is-on .ay-tabbar__icon svg { fill: none !important; }
+  html body .app-container.app-container nav.ay-tabbar--main > a { transition: transform var(--t-press, 110ms) var(--ease-pop, ease-out); }
+  html body .app-container.app-container nav.ay-tabbar--main > a:active { transform: scale(.97) !important; }
+  html body .app-container { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+  html body .app-container.app-container footer.ay-foot { padding-bottom: calc(var(--ay-s24) + 84px + env(safe-area-inset-bottom)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html body .app-container.app-container nav.ay-tabbar--main > a { transition: none; }
+}
+
+/* ---------- Focused flows (quiz, editing answers): logo · Exit only ---------- */
+.app-container.app-container .ay-nav.is-focused :is(.ay-nav__links, .ay-nav__actions) { display: none !important; }
+.app-container.app-container .ay-nav.is-focused .ay-nav__exit { margin-left: auto; }
+.app-container.app-container button.ay-nav__exit { border: 0; background: none; cursor: pointer; }
+.app-container.app-container:has(.ay-nav.is-focused) { padding-bottom: 0; }
+.app-container.app-container .ay-flow-editbar { justify-content: flex-start; }
+
+/* ---------- One back control (BackLink): chevron + parent name, 44px, top left ---------- */
+.app-container.app-container .ay-backlink {
+  display: inline-flex; align-items: center; gap: 4px; min-height: 44px; margin: 0 0 var(--ay-s8) -6px; padding: 0 10px 0 2px;
+  border: 0; border-radius: 10px; background: none; box-shadow: none;
+  color: var(--ay-text) !important; font: 600 15px/1.2 var(--ay-sans-stack) !important; letter-spacing: 0 !important; text-transform: none !important;
+  text-decoration: none !important; cursor: pointer; width: auto; max-width: 100%;
+}
+.app-container.app-container .ay-backlink svg { flex: none; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform var(--t-fast, 160ms) var(--ease-out, ease-out); }
+.app-container.app-container .ay-backlink:hover { background: var(--ay-hover); }
+.app-container.app-container .ay-backlink:hover svg { transform: translateX(-2px); }
+.app-container.app-container .ay-backlink:focus-visible { outline: 3px solid var(--ay-focus) !important; outline-offset: 2px !important; }
+.app-container.app-container .ay-backlink:disabled { opacity: .5; cursor: default; }
+.app-container.app-container :is(.ay-band, .ay-pagehead) .ay-backlink { color: var(--ay-text) !important; }
+@media (prefers-reduced-motion: reduce) { .app-container.app-container .ay-backlink svg { transition: none; } }
+
+/* ---------- Account page header (AccountHead, P1-12) ---------- */
+.app-container.app-container .ay-acct-head { display: grid; justify-items: start; gap: var(--ay-s12); max-width: 680px; margin: 0 0 var(--ay-s32); text-align: left; }
+.app-container.app-container .ay-acct-head__title { margin: 0; color: var(--ay-text) !important; font: 700 30px/1.08 var(--ay-heading) !important; letter-spacing: -.02em !important; text-align: left; }
+@media (min-width: 900px) { .app-container.app-container .ay-acct-head__title { font-size: 44px !important; } }
+.app-container.app-container .ay-acct-head__lede { display: grid; gap: var(--ay-s8); }
+.app-container.app-container .ay-acct-head__lede p { margin: 0; max-width: 62ch; color: var(--ay-text-2) !important; font: 400 16px/1.55 var(--ay-sans-stack) !important; text-align: left !important; }
+.app-container.app-container .ay-acct-head__actions { display: flex; flex-wrap: wrap; gap: var(--ay-s12); margin-top: var(--ay-s4); }
+.app-container.app-container :is(.ay-acct-page) { text-align: left; }
+.app-container.app-container .ay-acct-empty { display: grid; justify-items: start; gap: var(--ay-s12); max-width: 680px; padding: var(--ay-s24); border-radius: 20px; background: var(--ay-group); text-align: left; }
+.app-container.app-container .ay-acct-empty p { margin: 0; color: var(--ay-text) !important; font: 400 16px/1.5 var(--ay-sans-stack); }
+.app-container.app-container .ay-info__head--calm { margin: 0 0 var(--ay-s24); padding: var(--ay-s32) 0 0; background: none !important; text-align: left; }
+.app-container.app-container .ay-info__head--calm::before, .app-container.app-container .ay-info__head--calm::after { content: none !important; display: none !important; }
+.app-container.app-container .ay-info__head--calm .ay-info__eyebrow { margin: 0; color: var(--ay-text-2) !important; font: 600 13px/1.3 var(--ay-sans-stack) !important; letter-spacing: 0 !important; text-transform: none !important; background: none !important; border: 0 !important; padding: 0 !important; }
+.app-container.app-container .ay-info-empty .ay-btn { justify-self: start; margin-top: var(--ay-s12); }
+.app-container.app-container .ay-acct-page { padding-top: var(--ay-s24) !important; }
+.app-container.app-container .wy-hmatch { display: grid; justify-items: start; gap: var(--ay-s8); }
+.app-container.app-container .wy-hmatch p { margin: 0; font: 400 15px/1.45 var(--ay-sans-stack); color: var(--ay-text); }
+
+/* ---------- Footer (P1-2): compact on phones, arrow spacing (P2-13) ---------- */
+.app-container.app-container .ay-foot__link { gap: 4px; }
+@media (max-width: 767px) {
+  .app-container.app-container footer.ay-foot { margin-top: var(--ay-s48); padding-top: var(--ay-s32); }
+  .app-container.app-container .ay-foot__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--ay-s20) var(--ay-s12); }
+  .app-container.app-container .ay-foot__brand { grid-column: 1 / -1; display: grid; grid-template-columns: auto 1fr; align-items: center; gap: var(--ay-s12); }
+  .app-container.app-container .ay-foot__logo { margin: 0; font-size: 26px !important; }
+  .app-container.app-container .ay-foot__blurb { font-size: 14px !important; line-height: 1.4 !important; }
+  .app-container.app-container .ay-foot__title { margin-bottom: var(--ay-s4); font-size: 13px !important; }
+  .app-container.app-container .ay-foot__link { min-height: 36px; font-size: 14px !important; line-height: 1.25 !important; }
+  .app-container.app-container .ay-foot__base { margin-top: var(--ay-s20); padding-top: var(--ay-s12); gap: var(--ay-s4) var(--ay-s16); font-size: 13px; }
+  .app-container.app-container .ay-foot__legal { gap: var(--ay-s8); margin-top: var(--ay-s8); }
+  .app-container.app-container .ay-foot__legaltext { font-size: 12.5px !important; }
+  .app-container.app-container .ay-foot__legallinks { gap: 0 var(--ay-s16); }
+  .app-container.app-container .ay-foot__legallinks :is(a, button), .app-container.app-container .ay-foot .ay-footer-legal__link { min-height: 36px; }
+}
+
+/* ---------- Consumer health data privacy notice, in the site (P0-7) ----------
+   The text is the legal team's; only its presentation changes here: theme
+   tokens (dark mode), the "does not sell" callout as a Group, the recipients
+   table as hairline rows, tighter rhythm so it scans. */
+html body .app-container.app-container .ed .ay-chd :is(p, li, td, th, strong) { color: var(--ed-text, var(--ay-text)) !important; }
+html body .app-container.app-container .ed .ay-chd h2 { margin: var(--ay-s40) 0 var(--ay-s12) !important; color: var(--ed-text, var(--ay-text)) !important; font: 700 24px/1.15 var(--ay-heading) !important; letter-spacing: -.02em !important; scroll-margin-top: 96px; }
+html body .app-container.app-container .ed .ay-chd > h2:first-of-type { margin-top: var(--ay-s32) !important; }
+html body .app-container.app-container .ed .ay-chd p, html body .app-container.app-container .ed .ay-chd li { margin: 0 0 var(--ay-s12); font: 400 16px/1.6 var(--ay-sans-stack) !important; }
+html body .app-container.app-container .ed .ay-chd ul { margin: 0 0 var(--ay-s16); padding-left: 1.2em; }
+html body .app-container.app-container .ed .ay-chd li { margin-bottom: var(--ay-s8); }
+html body .app-container.app-container .ed .ay-chd .updated { margin: 0 0 var(--ay-s16); font: 600 14px/1.4 var(--ay-sans-stack) !important; color: var(--ed-text-2, var(--ay-text-2)) !important; }
+html body .app-container.app-container .ed .ay-chd .callout { margin: var(--ay-s16) 0 0; padding: var(--ay-s20) var(--ay-s24); border: 0 !important; border-radius: 20px; background: var(--ay-group) !important; font: 400 16px/1.55 var(--ay-sans-stack); color: var(--ay-text); }
+html body .app-container.app-container .ed .ay-chd table { display: table; width: 100%; margin: var(--ay-s8) 0 var(--ay-s16); border-collapse: collapse; border-radius: 20px; background: var(--ay-group); overflow: hidden; }
+html body .app-container.app-container .ed .ay-chd thead { display: none; }
+html body .app-container.app-container .ed .ay-chd tr + tr :is(td, th) { border-top: 1px solid var(--ay-hairline) !important; }
+html body .app-container.app-container .ed .ay-chd :is(td, th) { border-top: 0 !important; padding: var(--ay-s12) var(--ay-s16) !important; font: 400 15px/1.5 var(--ay-sans-stack) !important; vertical-align: top; }
+html body .app-container.app-container .ed .ay-chd td:first-child { width: 30%; font-weight: 600 !important; }
+@media (max-width: 650px) {
+  html body .app-container.app-container .ed .ay-chd :is(table, tbody, tr, td) { display: block; width: auto; }
+  html body .app-container.app-container .ed .ay-chd td:first-child { width: auto; padding-bottom: 2px !important; }
+  html body .app-container.app-container .ed .ay-chd td + td { padding-top: 0 !important; border-top: 0 !important; }
+  html body .app-container.app-container .ed .ay-chd tr + tr td:first-child { border-top: 1px solid var(--ay-hairline) !important; }
+}
+
+/* ---------- Dark mode: search fields inside pink/sky header bands, Campus title (P0-2) ----------
+   In brand dark the page token turns espresso, and the band text token stays
+   espresso, so the field became a solid espresso bar with espresso text.
+   Inside a light band the field keeps the butter page colour (as on Shop). */
+html body .app-container.app-container[data-theme='brand-dark'] :is(.ay-band--pink, .ay-band--sky, .ay-band--butter) :is(.ct-search, .ct-search input) { background: #ffedac !important; color: #3e2723 !important; border-color: #3e2723 !important; }
+html body .app-container.app-container[data-theme='brand-dark'] :is(.ay-band--pink, .ay-band--sky, .ay-band--butter) .ct-search :is(svg, kbd, button) { color: #3e2723 !important; stroke: currentColor; }
+html body .app-container.app-container[data-theme='brand-dark'] :is(.ay-band--pink, .ay-band--sky, .ay-band--butter) .ct-search input::placeholder { color: rgba(62, 39, 35, .7) !important; opacity: 1; }
+html body .app-container.app-container[data-theme='brand-dark'] .cr-page :is(.cr-h1, .cr-edhead) { color: var(--ay-text) !important; }
+
+/* ---------- Ask ayna on phones: bottom sheet + scrim (P1-24) ---------- */
+.app-container .ayna-ask-scrim { display: none; }
+@media (max-width: 899px) {
+  html body .app-container .ayna-ask-scrim { display: block; position: fixed; inset: 0; z-index: 2000; background: var(--sheet-dim, rgba(62, 39, 35, .4)); animation: ay-dim-in var(--t-base, 240ms) var(--ease-out, ease-out) both; }
+  html body .app-container.app-container .ayna-ask-panel {
+    top: calc(env(safe-area-inset-top, 0px) + 24px) !important; bottom: 0 !important; left: 0 !important; right: 0 !important;
+    width: auto !important; height: auto !important; max-height: none !important; z-index: 2100 !important;
+    border-radius: 24px 24px 0 0 !important; border-bottom: 0 !important; box-shadow: none !important;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    animation: ay-ask-sheet-up var(--t-sheet, 360ms) var(--ease-out, ease-out) both;
+  }
+  html body:has(.ayna-ask-panel) { overflow: hidden; }
+}
+@keyframes ay-ask-sheet-up { from { transform: translateY(24px); opacity: .6; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { html body .app-container .ayna-ask-scrim, html body .app-container.app-container .ayna-ask-panel { animation: none !important; } }
+
+/* ---------- Your health, locked state: no blurred mock (P1-13) ---------- */
+html body .app-container .ay-wh.ay-wh .ay-wh-locked.is-honest { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--ay-s24); align-items: start; }
+html body .app-container .ay-wh.ay-wh .ay-wh-locked.is-honest > * { grid-area: auto; }
+html body .app-container .ay-wh.ay-wh .ay-wh-locked.is-honest .ay-wh-lockpanel { margin-top: 0 !important; justify-self: stretch; width: auto; }
+@media (min-width: 900px) { html body .app-container .ay-wh.ay-wh .ay-wh-locked.is-honest { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); } }
+.app-container .ay-wh-shows { display: grid; gap: var(--ay-s12); padding: var(--ay-s24); border-radius: 20px; background: var(--ay-group); color: var(--ay-text); }
+.app-container .ay-wh-shows__title { margin: 0; font: 700 22px/1.15 var(--ay-heading) !important; letter-spacing: -.02em; color: var(--ay-text) !important; }
+.app-container .ay-wh-shows__list { display: grid; margin: 0; padding: 0; list-style: none; }
+.app-container .ay-wh-shows__list li { display: grid; grid-template-columns: 24px 1fr; gap: var(--ay-s12); padding: var(--ay-s12) 0; }
+.app-container .ay-wh-shows__list li + li { border-top: 1px solid var(--ay-hairline); }
+.app-container .ay-wh-shows__list svg { width: 22px; height: 22px; margin-top: 1px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.app-container .ay-wh-shows__list span { display: grid; gap: 2px; }
+.app-container .ay-wh-shows__list b { font: 600 16px/1.3 var(--ay-sans-stack); }
+.app-container .ay-wh-shows__list small { font: 400 14px/1.45 var(--ay-sans-stack); color: var(--ay-text-2); }
+.app-container .ay-wh-shows__note { margin: 0; font: 500 13px/1.4 var(--ay-sans-stack); color: var(--ay-text-2); }
+
+/* ---------- Ecosystem, signed out (P2-14): left-aligned, example shelves in the open ---------- */
+html body .app-container .ay-ecoprev__head { text-align: left; }
+html body .app-container .ay-ecoprev__lede { margin-left: 0; }
+html body .app-container .ay-ecoprev__title { font: 700 30px/1.08 var(--ay-heading) !important; letter-spacing: -.02em; }
+@media (min-width: 900px) { html body .app-container .ay-ecoprev__title { font-size: 44px !important; } }
+html body .app-container .ay-ecoprev__steps { margin-left: 0; }
+html body .app-container .ay-ecoprev__stage.is-honest { display: grid; gap: 0; min-height: 0; box-shadow: none; border-width: 1.5px; }
+html body .app-container .ay-ecoprev__stage.is-honest .ay-ecoprev__shelves { filter: none !important; opacity: 1 !important; }
+html body .app-container .ay-ecoprev__stage.is-honest .ay-ecoprev__note { margin: 0 0 var(--ay-s16); text-align: left; opacity: 1; font: 500 13px/1.4 var(--ay-sans-stack); color: #3e2723; }
+html body .app-container .ay-ecoprev__stage.is-honest .ay-ecoprev__lock { position: static; transform: none; inset: auto; width: auto; margin: 0; border: 0; border-top: 1.5px solid #3e2723; border-radius: 0; box-shadow: none; text-align: left; display: grid; justify-items: start; gap: 4px; }
+html body .app-container .ay-ecoprev__stage.is-honest .ay-ecoprev__lockicon { display: none; }
+html body .app-container .ay-ecoprev__stage.is-honest :is(.ay-ecoprev__primary, .ay-ecoprev__secondary) { width: auto; padding: 0 24px; }
+@media (min-width: 900px) {
+  html body .app-container .ay-ecoprev__stage.is-honest { grid-template-columns: minmax(0, 1fr) 340px; }
+  html body .app-container .ay-ecoprev__stage.is-honest .ay-ecoprev__lock { border-top: 0; border-left: 1.5px solid #3e2723; align-content: center; }
+}
+
+/* ---------- Quiz as a focused flow (P1-28): progress starts at the content edge ---------- */
+html body .app-container .qz-head .qz-round.is-spacer { display: none !important; }
+html body .app-container .qz-head:has(.qz-round.is-spacer) .qz-progress { grid-column: 1 / 3; grid-row: 1; }
+html body .app-container .qz-head:has(.qz-round.is-spacer) .qz-count { grid-column: 3; grid-row: 1; }
+html body .app-container .qz-head:has(.qz-round.is-spacer) .qz-saved-note { grid-column: 1 / -1; }
+
+/* Sentence case, no uppercase tracked eyebrows (P1-11). */
+html body .app-container :is(.eco3-carefirst__eyebrow, .eco3-secondary__label) { text-transform: none !important; letter-spacing: 0 !important; font-size: 13px !important; font-weight: 600 !important; }
+
+/* ---------- One tabcard spec (P1-26) ----------
+   Strip = colour + the numeral when the cards are a real sequence (steps),
+   a plain colour strip when they are not (About principles: no "Principle n").
+   Phones lay the four cards out 2 x 2 instead of stacking them. */
+html body .app-container .ay-tabcard__strip--num { min-height: 44px; font: 700 26px/1 var(--ay-heading) !important; letter-spacing: -.02em; }
+html body .app-container .ed .ed-step.ay-tabcard .ed-step__in { display: grid; gap: var(--ay-s12); padding: var(--ay-s12) var(--ay-s12) var(--ay-s16); }
+html body .app-container .ed .ed-step.ay-tabcard .ed-step__img { aspect-ratio: 4 / 3; width: 100%; }
+@media (max-width: 767px) {
+  html body .app-container .ed .ed-steps:has(.ay-tabcard) { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: var(--ay-s12) !important; border: 0 !important; }
+  html body .app-container .ed .ed-step.ay-tabcard { display: flex !important; flex-direction: column; padding: 0 !important; border: 1.5px solid var(--ay-outline) !important; }
+  html body .app-container .ed .ed-step.ay-tabcard .ed-rowtitle { font-size: 15px !important; }
+  html body .app-container .ed .ed-step.ay-tabcard p { font-size: 14px !important; line-height: 1.4 !important; }
+  html body .app-container .ed .ed-step.ay-tabcard .ed-step__in { padding: var(--ay-s8) var(--ay-s8) var(--ay-s12); gap: var(--ay-s8); }
+}
+html body .app-container .ed.ed-page--toned .ed-principles li > b { min-height: 12px !important; padding: 0 !important; font-size: 0 !important; }
+html body .app-container .ed.ed-page--toned .ed-principles li > b::before { content: none !important; }
+@media (max-width: 767px) and (min-width: 360px) {
+  html body .app-container .ed.ed-page--toned .ed-principles { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: var(--ay-s12) !important; }
+  html body .app-container .ed.ed-page--toned .ed-principles li .ed-rowtitle { font-size: 15px !important; }
+  html body .app-container .ed.ed-page--toned .ed-principles li p { font-size: 14px !important; line-height: 1.45 !important; }
+  html body .app-container .ed.ed-page--toned .ed-principles li > :not(b) { padding-inline: 12px !important; }
+}
+
+/* ---------- Free product (P1-27 dead space, P2-17 primary button) ---------- */
+@media (min-width: 1024px) {
+  html body .app-container .fp .fp-intro { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--ay-s16) var(--ay-s48); align-items: end; }
+  html body .app-container .fp .fp-intro > .fp-head { grid-column: 1 / -1; }
+  html body .app-container .fp .fp-intro > .fp-eq { grid-column: 2; grid-row: 2 / span 2; align-self: start; justify-self: stretch; width: auto; margin: 0; }
+  html body .app-container .fp .fp-intro > .fp-intro__actions { grid-column: 1; grid-row: 2; }
+  html body .app-container .fp .fp-intro > .fp-fine { grid-column: 1; grid-row: 3; margin-top: var(--ay-s16); }
+}
+html body .app-container .fp .fp-cta { min-height: 52px; padding: 0 24px !important; border: 1.5px solid var(--ay-feature-bg) !important; border-radius: 999px !important; background: var(--ay-feature-bg) !important; color: var(--ay-feature-fg) !important; box-shadow: var(--ay-press-shadow, 3px 3px 0 #3e2723) !important; font: 600 16px/1 var(--ay-sans-stack) !important; }
+html body .app-container .fp .fp-cta .fp-cta__arrow { width: auto !important; height: auto !important; margin: 0 0 0 8px !important; border: 0 !important; background: none !important; color: inherit !important; }
+html body .app-container .fp .fp-cta .fp-cta__arrow svg { width: 18px; height: 18px; }
+html body .app-container .fp .fp-cta:active { box-shadow: none !important; transform: translate(1px, 1px); }
+
+/* ---------- Sign-in sheet (P2-5, P2-6): provider buttons never wrap; "or sign in" divider ---------- */
+@media (max-width: 520px) {
+  html body .ay-auth-oauth { flex-direction: column !important; align-items: stretch !important; }
+  html body .ay-auth-oauth > button { width: 100% !important; white-space: nowrap; justify-content: center; }
+}
+html body .ay-auth-doors__or { display: flex; align-items: center; gap: 12px; text-transform: none; }
+html body .ay-auth-doors__or::before, html body .ay-auth-doors__or::after { content: ''; flex: 1; height: 1px; background: currentColor; opacity: .25; }
+
+/* ---------- 404 popular links (P2-12); health profile notice close (P2-16) ---------- */
+.app-container .ed-state__links { display: grid; gap: var(--ay-s8); margin-top: var(--ay-s24); }
+.app-container .ed-state__links p { margin: 0; font: 600 14px/1.3 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container .ed-state__links ul { display: flex; flex-wrap: wrap; gap: var(--ay-s8) var(--ay-s24); margin: 0; padding: 0; list-style: none; }
+.app-container .ed-state__links a { display: inline-flex; align-items: center; min-height: 44px; color: var(--ay-text) !important; font: 600 16px/1.2 var(--ay-sans-stack); text-decoration: underline; text-underline-offset: 3px; }
+.app-container .ay-hpu__card { position: relative; }
+.app-container .ay-hpu__close { position: absolute; top: 8px; right: 8px; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: none; color: inherit; cursor: pointer; }
+.app-container .ay-hpu__close:hover { background: var(--ay-hover); }
+.app-container .ay-hpu__close svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+/* P2-22: a status line is not a button. */
+html body .app-container .wy-week[role='status'], html body .app-container .wy-week[role='status'] * { cursor: default !important; }
+/* P2-20: small text buttons get a 44px hit area without moving the layout. */
+html body .app-container :is(.cm-name, .cm-rules-foot) { padding-block: 12px !important; margin-block: -12px !important; }
+
+/* P2-3: one highlighter swipe per page. The homepage keeps it on the mission
+   line (<mark>); the hero keeps its italic accent word without a second swipe,
+   and section headings carry no accent. */
+html body .app-container .ed .ed-display em { background: none !important; }
+html body .app-container .ed .ed-h2 em { background: none !important; font-style: normal !important; padding: 0 !important; }
+
+/* ================= Close-out pass (Oct 21, RECHECK.md) ================= */
+
+/* R1: theme-v3 still forces espresso text on the old pink callout in dark mode.
+   The callout is a Group now (#4a312c in dark), so its text follows the theme. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ed .ay-chd .callout,
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ed .ay-chd .callout * { color: var(--ed-text, #ffedac) !important; }
+
+/* P1-4: one small card mark (Pre-order, Sponsored, ayna partner) as text at the
+   end of the kind line, never a sticker on the photo. A small pink dot leads it,
+   so it reads as a disclosure, not as part of the kind. Same on the app (.ay-pc-mark). */
+.app-container.app-container .ay-product-card__mark { flex: none !important; display: inline-flex; align-items: center; gap: 5px; font: 600 12.5px/1.3 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .ay-product-card__mark::before { content: ''; width: 9px; height: 9px; box-sizing: border-box; border-radius: 50%; background: #f7badd; border: 1.5px solid var(--ay-text); }
+.app-container.app-container .ay-product-card__kindtext + .ay-product-card__mark { margin-left: 2px; }
+
+/* P1-12: Appointment prep as three numbered steps on the page (no box in a box).
+   Facts sit in one Group as hairline rows; products are hairline rows, two
+   columns from 760px; questions are a numbered list. Print keeps .dp-summary. */
+.app-container.app-container .dp2 { max-width: 1040px; padding: var(--ay-s24) var(--ay-s20) var(--ay-s48) !important; }
+.app-container.app-container .dp2-sheet { display: grid; gap: var(--ay-s32); margin-top: var(--ay-s16); }
+.app-container.app-container .dp2-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--ay-s12) var(--ay-s16); padding-bottom: var(--ay-s16); border-bottom: 1.5px solid var(--ay-outline, #3e2723); }
+.app-container.app-container .dp2-title { margin: 0; font: 700 24px/1.15 var(--ay-heading) !important; letter-spacing: -.02em; color: var(--ay-text) !important; }
+.app-container.app-container .dp2-date { margin: 2px 0 0; font: 500 14px/1.4 var(--ay-sans-stack); color: var(--ay-text-2); }
+.app-container.app-container .dp2-print { min-height: 44px; }
+.app-container.app-container .dp2-step { display: grid; gap: var(--ay-s12); }
+.app-container.app-container .dp2-h { display: flex; align-items: center; gap: var(--ay-s12); margin: 0; font: 700 20px/1.2 var(--ay-heading) !important; letter-spacing: -.02em; color: var(--ay-text) !important; text-transform: none !important; }
+.app-container.app-container .dp2-n { display: grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--ay-text); color: var(--ay-page, #ffedac); font: 700 15px/1 var(--ay-heading); }
+.app-container.app-container .dp2-facts { display: grid; grid-template-columns: minmax(0, 1fr); margin: 0; padding: var(--ay-s4) var(--ay-s16); border-radius: 20px; background: var(--ay-group); }
+.app-container.app-container .dp2-fact { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: var(--ay-s12); padding: var(--ay-s12) 0; border-top: 1px solid var(--ay-hairline); }
+.app-container.app-container .dp2-fact:first-child { border-top: 0; }
+.app-container.app-container .dp2-fact dt { font: 500 14px/1.4 var(--ay-sans-stack); color: var(--ay-text-2); }
+.app-container.app-container .dp2-fact dd { margin: 0; font: 600 15px/1.45 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .dp2-products { display: grid; grid-template-columns: minmax(0, 1fr); margin: 0; padding: 0; list-style: none; }
+.app-container.app-container .dp2-products li { display: grid; gap: 2px; padding: var(--ay-s12) 0; border-top: 1px solid var(--ay-hairline); }
+.app-container.app-container .dp2-products strong { font: 600 16px/1.3 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .dp2-products span { font: 400 14px/1.45 var(--ay-sans-stack); color: var(--ay-text-2); }
+.app-container.app-container .dp2-products b { font-weight: 600; color: var(--ay-text); }
+.app-container.app-container .dp2-note { margin: 0; font: 500 14px/1.45 var(--ay-sans-stack); color: var(--ay-text-2); }
+.app-container.app-container .dp2-questions { display: grid; gap: 0; margin: 0; padding: 0 0 0 1.4em; }
+.app-container.app-container .dp2-questions li { padding: var(--ay-s8) 0 var(--ay-s8) 4px; font: 400 16px/1.5 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .dp2-questions li::marker { font-weight: 700; }
+.app-container.app-container .dp2-told { display: grid; gap: var(--ay-s12); margin: 0; padding: 0; list-style: none; }
+.app-container.app-container .dp2-told blockquote { margin: 2px 0 var(--ay-s4); padding-left: var(--ay-s12); border-left: 3px solid var(--ay-text); font: 400 14px/1.45 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .dp2-told p:not(.dp2-note) { margin: 0; font: 500 14px/1.45 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .dp2 .dp-shared { margin: 0; border-width: 1.5px; border-radius: 16px; }
+.app-container.app-container .dp2-foot { margin: var(--ay-s32) 0 0; font: 500 13px/1.45 var(--ay-sans-stack); color: var(--ay-text-2); }
+@media (min-width: 760px) {
+  .app-container.app-container .dp2-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--ay-s32); padding: var(--ay-s8) var(--ay-s24); }
+  .app-container.app-container .dp2-fact:nth-child(2) { border-top: 0; }
+  .app-container.app-container .dp2-products { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--ay-s32); }
+}
+
+/* P1-12: /tracked Health data import notice: one-line summary, full text in a disclosure. */
+.app-container.app-container .hdi-sum { margin: 0 0 var(--ay-s8); font: 500 16px/1.5 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .hdi-full { margin: 0 0 var(--ay-s20); }
+.app-container.app-container .hdi-full > summary { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; cursor: pointer; list-style: none; font: 600 15px/1.3 var(--ay-sans-stack); color: var(--ay-text); text-decoration: underline; text-underline-offset: 3px; }
+.app-container.app-container .hdi-full > summary::-webkit-details-marker { display: none; }
+.app-container.app-container .hdi-full > summary::after { content: ''; width: 8px; height: 8px; margin-left: 2px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: translateY(-2px) rotate(45deg); transition: transform var(--t-fast, 160ms) var(--ease-out, ease-out); }
+.app-container.app-container .hdi-full[open] > summary::after { transform: translateY(2px) rotate(-135deg); }
+.app-container.app-container .hdi-full > summary:focus-visible { outline: 3px solid var(--ay-focus); outline-offset: 2px; border-radius: 6px; }
+.app-container.app-container .hdi-full > p { margin: var(--ay-s4) 0 0; font: 400 15px/1.55 var(--ay-sans-stack); color: var(--ay-text-2); }
+@media (prefers-reduced-motion: reduce) { .app-container.app-container .hdi-full > summary::after { transition: none; } }

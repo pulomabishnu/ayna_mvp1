@@ -28,13 +28,21 @@ import { usePushNotifications } from './hooks/usePushNotifications.js';
 import { useHealthData, DEV_HEALTH_DEMO } from './hooks/useHealthData.js';
 import { useTextSize } from './hooks/useTextSize.js';
 import { useEcosystemSession } from './hooks/useEcosystemSession.js';
+import { recordRoutineOutcome } from '../health/routineOutcome.js';
+import { productNotesFromRoutine, readGuide, saveGuide } from './utils/aynaGuide.js';
+import { buildDashboard } from '../health/dashboard.js';
+import { explainWeek, usesHormonalBC } from '../health/weekInsights.js';
+import { weekSummary } from './utils/dashboardAsk.js';
+import { LIVE_ONLY_SOURCES } from '../health/metrics.js';
 import { useSupabaseAuth, MOBILE_OAUTH_PENDING_KEY } from './hooks/useSupabaseAuth.js';
 import { fetchNotificationPreferences } from './utils/notificationPreferencesApi.js';
 import { ECOSYSTEM_AREAS as AREA_LABELS } from './data/ecosystemAreas.js';
+import { SOURCE_NAMES } from './data/healthConnections.js';
 import { getNextArticle } from './utils/nextArticle.js';
 import { INTAKE_DRAFT_KEY, getIntakeSteps, isStepAnswered, reconstructIntakeFromSnapshot } from './data/intakeModel.js';
 import { clearIntakeDraft, readDraftProgress } from './data/quizDraftProgress.js';
 import FinishQuizCard from '../components/FinishQuizCard.jsx';
+import FeedbackPrompts from '../components/FeedbackPrompts.jsx';
 import MobileTabBar from './components/MobileTabBar.jsx';
 import AskAynaModal from './components/AskAynaModal.jsx';
 import ProfileFlow, { AboutAynaScreen } from './screens/profile/ProfileFlow.jsx';
@@ -61,6 +69,7 @@ import CommunityScreen from './screens/CommunityScreen.jsx';
 import QuizConnectScreen from './screens/QuizConnectScreen.jsx';
 import PlanScreen from './screens/PlanScreen.jsx';
 import { healthMatchContext } from '../health/matchContext.js';
+import { useHealthMatchPref } from '../health/matchPref.js';
 import { addNeedToAnswers } from '../matching/addNeed.js';
 import * as communityStore from '../utils/community/communityStore.js';
 import { uploadCommunityImage, deleteCommunityImage } from '../utils/community/imageUpload.js';
@@ -79,7 +88,22 @@ import './app-polish.css';
 import './app-landing.css';
 import './app-health.css';
 import './app-ux-fixes.css';
+import './app-compact.css';
+// Design direction (docs/design-direction.md): loaded last, outranks the layers above.
+import './app-direction.css';
 import './keyboardModality.js';
+import { savedHaptic, addedHaptic } from '../utils/feedback.js';
+import { useSheetDrag } from './hooks/useSheetDrag.js';
+import PushLayer from './components/PushLayer.jsx';
+import GlobalToast from '../components/v3/GlobalToast.jsx';
+import { toast } from '../utils/toast.js';
+// Motion moments (sheets, push, tab fade) and app-wide press states; last so it wins.
+import './app-motion.css';
+// Deep round 2 (Oct 21): native-feel fixes. Own file so it doesn't collide with
+// the stylesheet consolidation on style/consolidate; loaded last.
+import './app-polish-2.css';
+import OfflineBanner from './components/OfflineBanner.jsx';
+import { growTransition } from '../utils/viewTransition.js';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
 // accountMonogram, Hero.jsx's displayNameFromUser, EcosystemBubbles.jsx,
@@ -90,7 +114,13 @@ import './keyboardModality.js';
 // entirely, so a Google sign-in always fell through to "You" everywhere.
 function displayNameFromUser(user) {
   const meta = user?.user_metadata || {};
-  const raw = meta.first_name || meta.firstName || meta.given_name || meta.full_name || meta.name || '';
+  // The name she typed (sign-up, or You > Account information) is kept as
+  // typed: cutting it to its first word made an edit like "Mary Ann" turn
+  // back into "Mary" on the next refresh, so the edit looked unsaved.
+  const own = String(meta.first_name || meta.firstName || '').trim();
+  if (own) return own;
+  // Provider names (Google, Apple) are full names: use the first word.
+  const raw = meta.given_name || meta.full_name || meta.name || '';
   return String(raw).trim().split(/\s+/).filter(Boolean)[0] || '';
 }
 
@@ -207,6 +237,9 @@ function hasSavedIntakeDraft() {
   } catch { return false; }
 }
 
+// Screens where the feedback survey may appear (never the quiz, sign-in or a sheet).
+const APP_FEEDBACK_SCREENS = new Set(['landing', 'eco', 'browse', 'library', 'saved']);
+
 export default function MobileApp() {
   const { session, update: updateSession, reset: resetSession } = useEcosystemSession();
   const { hasEcosystem, myProducts: storedProducts, lastQuizAnswers, userName, omittedProducts = {} } = session;
@@ -219,11 +252,11 @@ export default function MobileApp() {
     // so they are never stranded.
     || (session.pendingQuiz ? quizStepToResume() || 'connect' : null)
     || (!hasEcosystem && hasSavedIntakeDraft() ? 'ecointro' : 'landing'));
-  const [ecoTab, setEcoTab] = useState('products');
+  const [ecoTab, setEcoTab] = useState('dashboard');
   const [planAddedGoals, setPlanAddedGoals] = useState({});
   const [hasIntakeDraft, setHasIntakeDraft] = useState(hasSavedIntakeDraft);
   // Product/article detail render as an overlay ON TOP of whichever base
-  // screen (Browse, My Ecosystem, Saved) is currently mounted, instead of
+  // screen (Browse, My ecosystem, Saved) is currently mounted, instead of
   // replacing it`screen` never changes when one opens. That's what makes
   // "back" free: the underlying screen was never unmounted, so its own
   // state (search text, personalized toggle, scroll position, infinite-
@@ -284,6 +317,27 @@ export default function MobileApp() {
     setCommunitySeed({ token: Date.now() });
     setScreen('community');
   }, []);
+  const closeAuthSheetNow = () => { setOverlay(null); setAuthPrompt(null); authResumeRef.current = null; };
+  const authSheet = useSheetDrag(closeAuthSheetNow);
+  const closeAuthSheet = () => authSheet.close();
+  const authSheetOpen = overlay?.type === 'profile-auth' || !!authPrompt;
+  useEffect(() => {
+    if (!authSheetOpen) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') closeAuthSheetNow(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  });
+  // Tab switches cross-fade in 120ms (never slide); drill-ins push (PushLayer).
+  const rootRef = useRef(null);
+  const prevScreenRef = useRef(screen);
+  useEffect(() => {
+    const TABS = ['eco', 'ecointro', 'browse', 'library', 'community', 'saved'];
+    const was = prevScreenRef.current;
+    prevScreenRef.current = screen;
+    if (was === screen || !TABS.includes(screen) || !TABS.includes(was)) return;
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    rootRef.current?.firstElementChild?.animate?.([{ opacity: 0 }, { opacity: 1 }], { duration: 120, easing: 'linear' });
+  }, [screen]);
   const swipeStart = useRef(null);
   const handleMainTouchStart = (event) => {
     if (overlay || !['browse', 'eco'].includes(screen) || event.touches.length !== 1) return;
@@ -303,6 +357,13 @@ export default function MobileApp() {
   const { user: realAuthUser, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
   // DEVELOPMENT ONLY: a stand-in signed-in user for the ?healthdemo=1 preview. Never in production.
   const authUser = realAuthUser || (DEV_HEALTH_DEMO ? DEV_DEMO_USER : null);
+  const [guideState, setGuideState] = useState({ userId: null, value: null });
+  const guide = useMemo(() => guideState.userId === authUser?.id && guideState.value ? guideState.value : readGuide(authUser?.id), [guideState, authUser?.id]);
+  const updateGuide = (next) => {
+    if (!authUser?.id) return;
+    setGuideState({ userId: authUser.id, value: next });
+    saveGuide(authUser.id, next);
+  };
   const [loadedAccountId, setLoadedAccountId] = useState(null);
   useEffect(() => {
     if (authLoading || !authUser || screen !== 'landing') return;
@@ -355,9 +416,13 @@ export default function MobileApp() {
   const handleToggleSaved = (product) => {
     const adding = !savedMap[product?.id];
     toggleSaved(product);
+    if (adding) { savedHaptic(); markPushMoment(); }
     if (!authUser && adding && !saveNudgeShownRef.current) {
       saveNudgeShownRef.current = true;
       setSaveNudge(true);
+    } else {
+      // A toast named after the action (the guest nudge says it instead, once).
+      toast(adding ? 'Saved' : 'Removed from Saved');
     }
   };
   useEffect(() => {
@@ -375,13 +440,15 @@ export default function MobileApp() {
   );
   const { theme, resolvedTheme, setThemeMode } = useThemeMode();
   const [personalized, setPersonalized] = usePersonalizedFeed(authUser?.id);
-  // Requests push permission and registers this device on launch (iOS only
-  // for now); stores the token against authUser once both are available.
-  // Registration only, nothing sends a push yet.
-  usePushNotifications(authUser?.id);
+  // Push permission is asked in context: after her first save or add, never
+  // on launch (iOS only for now). Registration only, nothing sends a push yet.
+  const [askPush, setAskPush] = useState(() => { try { return localStorage.getItem('ayna_push_asked_v1') === '1'; } catch { return false; } });
+  const markPushMoment = () => { if (askPush) return; try { localStorage.setItem('ayna_push_asked_v1', '1'); } catch { /* storage blocked */ } setAskPush(true); };
+  usePushNotifications(authUser?.id, askPush);
   const { textSizeIndex, setTextSizeIndex, textScale } = useTextSize();
   const [askAynaOpen, setAskAynaOpen] = useState(() => !!(import.meta.env.DEV && new URLSearchParams(window.location.search).get('ask')));
   const [askAynaHistoryState, setAskAynaHistoryState] = useState({ userId: null, messages: [] });
+  const [askSeed, setAskSeed] = useState(null);
   const askAynaHistory = askAynaHistoryState.userId === authUser?.id ? askAynaHistoryState.messages : [];
   const setAskAynaHistory = (messages) => setAskAynaHistoryState({ userId: authUser?.id, messages });
   // App-wide gate for Preferences > AI & Personalization > "Personalize with
@@ -399,6 +466,8 @@ export default function MobileApp() {
   const [resumeQuizDraft, setResumeQuizDraft] = useState(false);
   // "Make my matches more personal" opens the quiz at her next optional question.
   const [intakeAtOptional, setIntakeAtOptional] = useState(false);
+  // "Update life stages" (Ecosystem): the quiz opens on the life stage question.
+  const [intakeAtStep, setIntakeAtStep] = useState('');
   const [revealAtEnd, setRevealAtEnd] = useState(false);
   const lastIntakeModeRef = useRef('new');
   // "Get matched" on a product page: after the quiz, land back on that product with her match.
@@ -424,7 +493,8 @@ export default function MobileApp() {
   }, [screen, resumeQuizDraft]);
   useEffect(() => {
     if (screen !== 'quiz' && intakeAtOptional) Promise.resolve().then(() => setIntakeAtOptional(false));
-  }, [screen, intakeAtOptional]);
+    if (screen !== 'quiz' && intakeAtStep) Promise.resolve().then(() => setIntakeAtStep(''));
+  }, [screen, intakeAtOptional, intakeAtStep]);
   const resumeQuizAtLastStep = () => {
     // From the quiz-end steps, go back into the answers she just gave (not yet saved).
     const fromPending = Boolean(session.pendingQuiz?.answers);
@@ -595,7 +665,22 @@ export default function MobileApp() {
     try { return effectiveQuizAnswers ? getSelectedNeeds(effectiveQuizAnswers).map((n) => n.id) : []; } catch { return []; }
   }, [effectiveQuizAnswers]);
   const health = useHealthData(authUser?.id || null, selectedNeedIds);
-  const healthContext = personalizeWithData ? health.matchContext : null;
+  const guideRecap = useMemo(() => {
+    if (!authUser?.id || !personalizeWithData) return '';
+    const sections = health.insights?.sections || [];
+    const ready = sections.filter((section) => section.status === 'ready');
+    const today = new Date().toLocaleDateString('en-CA');
+    const week = buildDashboard(health.insightRows || [], { days: 30, today });
+    const estimate = sections.find((section) => section.id === 'cycle')?.estimate || null;
+    const explained = explainWeek(health.insightRows || [], { today, cycle: week.cycle?.cycleDay ? week.cycle : null, estimate, hormonalBC: usesHormonalBC(effectiveQuizAnswers), max: 2 });
+    return explained.insights.length ? explained.insights.map((insight) => insight.text).join(' ') : weekSummary(ready) || '';
+  }, [authUser?.id, personalizeWithData, health.insights, health.insightRows, effectiveQuizAnswers]);
+  const guideSources = personalizeWithData ? [...new Set((health.insights?.sections || []).filter((section) => section.status === 'ready').flatMap((section) => section.sources || []))].map((source) => SOURCE_NAMES[source] || source).join(', ') : '';
+  const guideRecapExportable = !(health.insights?.sections || []).some((section) => section.status === 'ready' && (section.sources || []).some((source) => LIVE_ONLY_SOURCES.includes(source)));
+  // Her own switch for health data in matches (Preferences and Health data), shared with the website.
+  const healthInMatches = useHealthMatchPref(authUser?.id || null).on;
+  const healthDataOn = personalizeWithData && healthInMatches;
+  const healthContext = healthDataOn ? health.matchContext : null;
   // Apple Health Records she saved on this phone: allergies and medicines for
   // safety, conditions as context. Never sent anywhere.
   const healthRecords = personalizeWithData ? health.records : null;
@@ -620,8 +705,8 @@ export default function MobileApp() {
     try { return pendingAnswers ? getSelectedNeeds(pendingAnswers).map((n) => n.id) : []; } catch { return []; }
   }, [pendingAnswers]);
   const planHealthContext = useMemo(
-    () => (personalizeWithData && health.matchSignals?.length ? healthMatchContext(health.matchSignals, pendingNeedIds) : null),
-    [personalizeWithData, health.matchSignals, pendingNeedIds],
+    () => (healthDataOn && health.matchSignals?.length ? healthMatchContext(health.matchSignals, pendingNeedIds) : null),
+    [healthDataOn, health.matchSignals, pendingNeedIds],
   );
   // Same behavior inputs the quiz always seeded with ("Not for me" only), plus health context.
   const planBaseOpts = useMemo(() => behaviorFrom({ omitted: omittedProducts }), [omittedProducts]);
@@ -711,6 +796,7 @@ export default function MobileApp() {
         }).catch((error) => console.warn('[Ayna] mobile ecosystem remove sync failed:', error));
         delete ecosystemFlagsRef.current.trackedProducts[product.id];
       }
+      toast('Removed from your ecosystem', { label: 'Undo', onClick: () => addToEcosystemRef.current?.(product) });
       return;
     }
 
@@ -721,6 +807,8 @@ export default function MobileApp() {
       areaKey: product.areaKey || area?.key || null,
     };
 
+    addedHaptic();
+    markPushMoment();
     updateSession((prev) => ({
       myProducts: prev.myProducts.some((p) => p.id === ecosystemProduct.id)
         ? prev.myProducts
@@ -733,6 +821,8 @@ export default function MobileApp() {
     if (!authUser && !ecoNudgeShownRef.current) {
       ecoNudgeShownRef.current = true;
       setSaveNudge('eco');
+    } else {
+      toast('Added to your ecosystem');
     }
 
     const supabase = getSupabaseClient();
@@ -748,6 +838,24 @@ export default function MobileApp() {
       ecosystemFlagsRef.current.trackedProducts[ecosystemProduct.id] = ecosystemProduct;
     }
   };
+
+  // One quiz answer changed in place (You > Your blend). Same save path as the
+  // quiz; matches re-rank from the new answers. Rolls back if nothing saved.
+  const handleUpdateIntake = async (nextIntake) => {
+    if (!nextIntake) return false;
+    const previous = lastQuizAnswers;
+    updateSession({ lastQuizAnswers: mapIntakeToLegacyQuizProfile(nextIntake) });
+    try {
+      const r = await saveHealthIntakeForCurrentUser(nextIntake);
+      if (r?.saved || r?.localSaved) return true;
+    } catch { /* rolled back below */ }
+    updateSession({ lastQuizAnswers: previous });
+    return false;
+  };
+
+  // Undo in a toast runs after later renders, so it calls the latest handler.
+  const addToEcosystemRef = useRef(null);
+  addToEcosystemRef.current = handleAddToEcosystem;
 
   // "Not for me" (same as the website's toggleOmitProduct): hides the product
   // from every recommendation, seed and swap, and takes it out of the
@@ -788,7 +896,7 @@ export default function MobileApp() {
       await clearHealthIntakeForCurrentUser();
       pendingQuizEcosystemRef.current = null;
       ecosystemFlagsRef.current = { trackedProducts: {}, omittedProducts: {} };
-      updateSession({ myProducts: [], lastQuizAnswers: null, hasEcosystem: false, pendingIntakeSync: false, pendingQuiz: null, routineHave: {} });
+      updateSession({ myProducts: [], lastQuizAnswers: null, hasEcosystem: false, pendingIntakeSync: false, pendingQuiz: null, routineHave: {}, routineExcluded: {}, routineOutcomesByUser: {} });
       setEcosystemNotice('');
       try { localStorage.removeItem('ayna_intake_draft_v1'); } catch { /* storage unavailable */ }
       setHasIntakeDraft(false);
@@ -813,7 +921,7 @@ export default function MobileApp() {
 
   // "Add to my goals" on a health-data suggestion (You -> Health, Ecosystem):
   // the goal is added exactly as if she had picked it in the quiz, and the
-  // new matches for it join her Ecosystem. Nothing is added without the tap.
+  // new matches for it join her ecosystem. Nothing is added without the tap.
   const handleAddGoal = (needId) => {
     if (!lastQuizAnswers) {
       setEcosystemNotice('Take the quiz first, then you can add goals from your health data.');
@@ -830,7 +938,7 @@ export default function MobileApp() {
     updateSession({ lastQuizAnswers: nextAnswers, myProducts: nextProducts, hasEcosystem: nextProducts.length > 0 });
     let label = needId;
     try { label = getSelectedNeeds(nextAnswers).find((n) => n.id === needId)?.phrase || needId; } catch { /* keep id */ }
-    setEcosystemNotice(added.length ? `Added ${label} to your goals. ${added.length} new match${added.length === 1 ? '' : 'es'} in your Ecosystem.` : `Added ${label} to your goals. No new strong matches for it yet.`);
+    setEcosystemNotice(added.length ? `Added ${label} to your goals. ${added.length} new match${added.length === 1 ? '' : 'es'} in your ecosystem.` : `Added ${label} to your goals. No new strong matches for it yet.`);
     const supabase = getSupabaseClient();
     if (authUser && supabase && added.length) {
       upsertProductsBatch(supabase, authUser.id, added, { inEcosystem: true, isTracked: false, isOmitted: false })
@@ -856,10 +964,8 @@ export default function MobileApp() {
       if (uploaded && !playlist) await deleteCommunityImage(supabase, uploaded.path).catch(() => {});
       throw new Error(error?.message && !/^\w+_\w+$/.test(error.message) ? error.message : 'The playlist could not be saved. Try again.');
     }
-    let added = 0;
-    for (const id of productIds) {
-      try { await communityStore.addToPlaylist(supabase, playlist.id, id); added += 1; } catch { /* counted below */ }
-    }
+    // One request for all products instead of one per product.
+    const added = await communityStore.addManyToPlaylist(supabase, playlist.id, productIds);
     return { playlist, added, missed: productIds.length - added };
   };
 
@@ -900,7 +1006,7 @@ export default function MobileApp() {
     onOpenSaved: () => setScreen('saved'),
     onGoEco: () => setScreen(hasEcosystem ? 'eco' : 'ecointro'),
     onGoLanding: () => setScreen('landing'),
-    onOpenProduct: (p) => setOverlay({ type: 'product', item: p }),
+    onOpenProduct: (p) => growTransition(() => setOverlay({ type: 'product', item: p }), { target: 'product', from: 'img' }),
     onOpenArticle: (a) => {
       setReadArticleIds((ids) => ids.includes(a.id) ? ids : [...ids, a.id]);
       setOverlay({ type: 'article', item: a });
@@ -909,12 +1015,25 @@ export default function MobileApp() {
     onOpenHealthData: () => { if (authUser) setOverlay({ type: 'profile', screen: health.insights.sections.length ? 'healthInsights' : 'healthData' }); else openProfile(); },
     healthSummary: authUser ? health.insights.sections.find((sec) => sec.status === 'ready') || null : null,
     healthConnectedCount: health.connected.length,
-    healthSuggestions: personalizeWithData && authUser ? health.matchContext?.suggestions || [] : [],
+    healthSuggestions: healthDataOn && authUser ? health.matchContext?.suggestions || [] : [],
     healthInsights: healthInsightsForPlan,
     onAddGoal: handleAddGoal,
     ecoTab,
     onEcoTab: setEcoTab,
     routineHave: session.routineHave || {},
+    routineExcluded: session.routineExcluded || {},
+    routineOutcomes: authUser?.id ? session.routineOutcomesByUser?.[authUser.id] || {} : {},
+    onLogRoutineOutcome: authUser?.id ? (productId, rating) => updateSession((prev) => ({
+      routineOutcomesByUser: {
+        ...(prev.routineOutcomesByUser || {}),
+        [authUser.id]: recordRoutineOutcome(prev.routineOutcomesByUser?.[authUser.id] || {}, productId, rating),
+      },
+    })) : null,
+    onToggleRoutineProduct: (id) => updateSession((prev) => {
+      const next = { ...(prev.routineExcluded || {}) };
+      if (next[id]) delete next[id]; else next[id] = true;
+      return { routineExcluded: next };
+    }),
     onSavePlaylist: authUser ? handleSaveShoppingPlaylist : null,
     onOpenPlaylist: (playlistId) => { setOverlay(null); setCommunitySeed({ playlistId, token: Date.now() }); setScreen('community'); },
     onConnectHealth: () => (authUser ? setOverlay({ type: 'profile', screen: 'healthData' }) : requestAuth('health data')),
@@ -927,17 +1046,23 @@ export default function MobileApp() {
     onAlreadyHaveAccount: () => openAuth('signin'),
     onAboutAyna: () => setOverlay({ type: 'about' }),
     onOpenWhyMatch: (p) => setOverlay({ type: 'why-match', item: p }),
-    onAskAyna: () => authUser ? setAskAynaOpen(true) : requestAuth('Ask ayna', () => { setScreen(screen); setAskAynaOpen(true); }),
+    // onAskAyna() opens the drawer; onAskAyna({ question, context }) also asks
+    // that question with what she's looking at (e.g. her dashboard numbers).
+    onAskAyna: (opts) => {
+      if (opts && typeof opts.question === 'string') setAskSeed({ id: Date.now(), question: opts.question, context: typeof opts.context === 'string' ? opts.context : '', stats: Array.isArray(opts.stats) ? opts.stats.slice(0, 3) : null });
+      if (authUser) setAskAynaOpen(true); else requestAuth('Ask ayna', () => { setScreen(screen); setAskAynaOpen(true); });
+    },
     onBack: () => {
       if (['building', 'reveal', 'connect'].includes(screen)) {
         resumeQuizAtLastStep();
         return;
       }
-      if (screen === 'plan') { setScreen('connect'); return; }
+      if (screen === 'plan') { setScreen(session.pendingQuiz?.fromCheckin ? (hasEcosystem ? 'eco' : 'ecointro') : 'connect'); return; }
       setScreen(screen === 'quiz' ? (hasEcosystem ? 'eco' : 'ecointro') : screen === 'ecointro' ? 'landing' : screen === 'eco' ? 'browse' : hasEcosystem ? 'eco' : 'landing');
     },
     onRetake: () => { setIntakeMode('add'); setIntakeAtOptional(false); setEditingHealthProfile(true); setScreen('quiz'); },
     onPersonalize: () => { setIntakeMode('add'); setIntakeAtOptional(true); setEditingHealthProfile(true); setScreen('quiz'); },
+    onFixLifeStages: () => { setIntakeMode('add'); setIntakeAtOptional(false); setIntakeAtStep('lifeStage'); setEditingHealthProfile(true); setScreen('quiz'); },
     onRequestEcosystemReset: () => setResetDialogOpen(true),
     onUpdateHealth: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
     onEditProfile: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
@@ -953,6 +1078,18 @@ export default function MobileApp() {
       setIntakeAtOptional(false);
       setIntakeMode('new');
       setScreen(authUser && health.connected.length ? 'plan' : 'connect');
+    },
+    // Monthly check-in: she already has an account and an ecosystem, so it
+    // goes straight to her updated plan instead of back through the
+    // onboarding "Connect your health data" step (deep round 2).
+    onCheckinComplete: (quizAnswers) => {
+      trackApp('intake_completed', { concernsCount: Array.isArray(quizAnswers?.primaryConcerns) ? quizAnswers.primaryConcerns.length : 0, mode: 'checkin' });
+      updateSession({ pendingQuiz: { answers: quizAnswers, mode: 'add', fromCheckin: true } });
+      setPlanAddedGoals({});
+      setResumeQuizDraft(false);
+      setIntakeAtOptional(false);
+      setIntakeMode('new');
+      setScreen('plan');
     },
     onQuizConnectContinue: () => setScreen('plan'),
     onQuizConnectSignIn: () => { authResumeRef.current = null; authReturnScreenRef.current = 'connect'; setAuthMode('signup'); setScreen('signin'); },
@@ -984,8 +1121,8 @@ export default function MobileApp() {
       });
       if (mode === 'add') {
         setEcosystemNotice(addedProducts.length
-          ? `${addedProducts.length} new product${addedProducts.length === 1 ? '' : 's'} added. Your existing Ecosystem stayed in place.`
-          : 'No new strong matches this time. Your existing Ecosystem stayed in place.');
+          ? `${addedProducts.length} new product${addedProducts.length === 1 ? '' : 's'} added. Your existing ecosystem stayed in place.`
+          : 'No new strong matches this time. Your existing ecosystem stayed in place.');
       } else {
         setEcosystemNotice('');
       }
@@ -1055,7 +1192,9 @@ export default function MobileApp() {
     hasEcosystem,
   };
 
-  const showTabBar = !['landing', 'quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan'].includes(screen) && (!overlay || ['profile', 'profile-auth'].includes(overlay.type));
+  const showTabBar = !['landing', 'quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan'].includes(screen) && (!overlay || ['profile', 'profile-auth', 'product', 'article', 'why-match'].includes(overlay.type));
+  // Deep round 2: the tab bar stays on drilled-in screens (product, read, why
+  // this match), as in iOS; tapping a tab pops back to that tab's root.
   // Reads ranked from her app answers (personalReads.js): matching reads
   // first, reads for another life stage (e.g. menopause at 24) last.
   const rankedEcosystemReads = rankReadsForProfile(ARTICLES, effectiveQuizAnswers);
@@ -1070,15 +1209,16 @@ export default function MobileApp() {
         : ['eco', 'ecointro'].includes(screen) ? 'home' : null;
 
   if (authLoading || (authUser?.id && !DEV_HEALTH_DEMO && loadedAccountId !== authUser.id)) {
-    return <div className="ayna-mobile" data-theme={resolvedTheme} style={{ display: 'grid', placeItems: 'center', minHeight: '100dvh', background: 'var(--ayna-bg)' }} role="status" aria-live="polite"><div style={{ textAlign: 'center', color: 'var(--ayna-heading)' }}><div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 34 }}>ayna</div><p style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 400, lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))' }}>Opening your Ecosystem…</p></div></div>;
+    return <div className="ayna-mobile" data-theme={resolvedTheme} style={{ display: 'grid', placeItems: 'center', minHeight: '100dvh', background: 'var(--ayna-bg)' }} role="status" aria-live="polite"><div style={{ textAlign: 'center', color: 'var(--ayna-heading)' }}><div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 34 }}>ayna</div><p style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 400, lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))' }}>Opening your ecosystem…</p></div></div>;
   }
 
   return (
-    <div className="ayna-mobile" data-theme={resolvedTheme} data-screen={screen} data-preview={window.location.pathname === '/mobile-preview' ? 'true' : undefined} style={{ '--ayna-text-scale': textScale }} onTouchStart={handleMainTouchStart} onTouchEnd={handleMainTouchEnd}>
+    <div ref={rootRef} className="ayna-mobile" data-theme={resolvedTheme} data-screen={screen} data-preview={window.location.pathname === '/mobile-preview' ? 'true' : undefined} style={{ '--ayna-text-scale': textScale }} onTouchStart={handleMainTouchStart} onTouchEnd={handleMainTouchEnd}>
       <AskContext.Provider value={nav.onAskAyna}>
       <Screen
-        key={screen === 'community' ? communitySeed?.token || 'community' : screen === 'signin' ? `signin-${authMode}` : screen}
+        key={screen === 'community' ? communitySeed?.token || 'community' : screen === 'signin' ? `signin-${authMode}` : screen === 'browse' && browseQuery ? `browse-${browseQuery}` : screen}
         {...nav}
+        {...(screen === 'checkin' ? { onComplete: nav.onCheckinComplete } : {})}
         seedKind={communitySeed?.kind}
         seedProductId={communitySeed?.productId}
         seedPlaylistId={communitySeed?.playlistId}
@@ -1111,7 +1251,8 @@ export default function MobileApp() {
         initialSnapshot={editingHealthProfile && !resumeQuizDraft ? lastQuizAnswers?.fullHealthIntake || null : null}
         startAtBeginning={intakeMode === 'add' && !resumeQuizDraft && !intakeAtOptional && editingHealthProfile}
         startAtOptional={intakeAtOptional && !resumeQuizDraft}
-        introEnabled={!resumeQuizDraft && !intakeAtOptional}
+        startAtStep={intakeAtStep && !resumeQuizDraft ? intakeAtStep : ''}
+        introEnabled={!resumeQuizDraft && !intakeAtOptional && !intakeAtStep}
         revealStartAtEnd={revealAtEnd}
         ecosystemNotice={ecosystemNotice}
         name={resolvedName}
@@ -1147,26 +1288,27 @@ export default function MobileApp() {
       />}
       {saveNudge && !authUser && (
         <div className="ay-save-nudge" role="status">
-          <span>{saveNudge === 'eco' ? 'Added to your Ecosystem on this phone. Sign in to keep it on every device.' : 'Saved on this phone. Sign in to keep your saves on every device.'}</span>
+          <span>{saveNudge === 'eco' ? 'Added to your ecosystem on this phone. Sign in to keep it on every device.' : 'Saved on this phone. Sign in to keep your saves on every device.'}</span>
           <button type="button" onClick={() => { setSaveNudge(false); openAuth('signin'); }}>Sign in</button>
-          <button type="button" className="ay-save-nudge-x" aria-label="Dismiss" onClick={() => setSaveNudge(false)}>×</button>
+          <button type="button" className="ay-save-nudge-x" aria-label="Dismiss" onClick={() => setSaveNudge(false)}><svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg></button>
         </div>
       )}
       <EcosystemResetDialog open={resetDialogOpen} busy={resettingEcosystem} onCancel={() => setResetDialogOpen(false)} onConfirm={handleResetEcosystem} />
       {(overlay?.type === 'profile-auth' || authPrompt) && (
-        <div className="ayna-profile-auth-backdrop" style={authPrompt ? { zIndex: 100, bottom: 0 } : undefined} onClick={() => { setOverlay(null); setAuthPrompt(null); authResumeRef.current = null; }}>
-          <section className="ayna-profile-auth-sheet" role="dialog" aria-modal="true" aria-labelledby="ayna-profile-auth-title" onClick={(event) => event.stopPropagation()}>
-            <button type="button" className="ayna-profile-auth-close" aria-label="Close" onClick={() => { setOverlay(null); setAuthPrompt(null); authResumeRef.current = null; }}>×</button>
+        <div className="ayna-profile-auth-backdrop ay-sheet-dim" style={authPrompt ? { zIndex: 100, bottom: 0 } : undefined} onClick={closeAuthSheet}>
+          <section ref={authSheet.sheetRef} className="ayna-profile-auth-sheet ay-sheet-in" role="dialog" aria-modal="true" aria-labelledby="ayna-profile-auth-title" onClick={(event) => event.stopPropagation()}>
+            <button {...authSheet.grabberProps} aria-label="Close sign in" />
+            <button type="button" className="ayna-profile-auth-close" aria-label="Close" onClick={closeAuthSheet}><svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg></button>
             <h2 id="ayna-profile-auth-title">{authPrompt ? `Sign in for ${authPrompt.feature}` : 'Sign in to ayna'}</h2>
             <button type="button" className="ayna-profile-auth-primary" onClick={() => openAuth('signin', !!authPrompt)}>Sign in</button>
             {!authPrompt && quizDraft && <FinishQuizCard progress={quizDraft} onContinue={resumeQuiz} onStartOver={startQuizOver} />}
-            {!(quizDraft && !authPrompt) && <button type="button" className="ayna-profile-auth-new" onClick={startEcosystemFlow}>{hasEcosystem ? <>New here? <b>Save your Ecosystem to an account</b></> : <>Don’t have an account? <b>Build your Ecosystem</b></>}</button>}
+            {!(quizDraft && !authPrompt) && <button type="button" className="ayna-profile-auth-new" onClick={startEcosystemFlow}>{hasEcosystem ? <>New here? <b>Save your ecosystem to an account</b></> : <>Don’t have an account? <b>Build your ecosystem</b></>}</button>}
           </section>
         </div>
       )}
-      {overlay?.type === 'about' && <div className="ayna-fresh-detail-overlay" style={{ position: 'fixed', inset: 0, zIndex: 80, background: 'var(--ayna-surface)', display: 'flex' }}><AboutAynaScreen onBack={() => setOverlay(null)} /></div>}
+      {overlay?.type === 'about' && <PushLayer zIndex={80} onBack={() => setOverlay(null)}><AboutAynaScreen onBack={() => setOverlay(null)} /></PushLayer>}
       {overlay?.type === 'product' && (
-        <div className="ayna-fresh-detail-overlay" style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'var(--ayna-surface)', display: 'flex' }}>
+        <PushLayer key={`p-${overlay.item?.id}`} onBack={() => setOverlay(null)}>
           <ProductDetailScreen
             product={overlay.item}
             onBack={() => setOverlay(null)}
@@ -1197,14 +1339,14 @@ export default function MobileApp() {
             onRequireAuth={(feature) => requestAuth(feature || 'Ask ayna', () => { setScreen(screen); setOverlay({ type: 'product', item: overlay.item }); })}
             quizAnswers={authUser ? effectiveQuizAnswers : null}
             ecosystemProducts={myProducts}
-            onOpenProduct={(item) => setOverlay({ type: 'product', item })}
+            onOpenProduct={(item) => growTransition(() => setOverlay({ type: 'product', item }), { target: 'product', from: 'img' })}
             theme={theme}
             onToggleTheme={setThemeMode}
           />
-        </div>
+        </PushLayer>
       )}
       {overlay?.type === 'article' && (
-        <div className="ayna-fresh-detail-overlay" style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'var(--ayna-surface)', display: 'flex' }}>
+        <PushLayer key={`a-${overlay.item?.id}`} onBack={() => setOverlay(null)}>
           <ArticleDetailScreen
             key={overlay.item.id}
             article={overlay.item}
@@ -1218,10 +1360,10 @@ export default function MobileApp() {
             }}
             theme={theme}
           />
-        </div>
+        </PushLayer>
       )}
       {overlay?.type === 'why-match' && (
-        <div className="ayna-fresh-detail-overlay" style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'var(--ayna-surface)', display: 'flex' }}>
+        <PushLayer key={`w-${overlay.item?.id}`} onBack={() => setOverlay(null)}>
           <WhyMatchScreen
             product={overlay.item}
             quizAnswers={effectiveQuizAnswers}
@@ -1230,11 +1372,12 @@ export default function MobileApp() {
             onUpdateHealth={() => { setOverlay(null); setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); }}
             onViewDetails={() => setOverlay({ type: 'product', item: overlay.item })}
           />
-        </div>
+        </PushLayer>
       )}
       {overlay?.type === 'profile' && (
         <AskContext.Provider value={nav.onAskAyna}>
         <ProfileFlow
+          onUpdateIntake={authUser ? handleUpdateIntake : null}
           key={overlay.screen || 'hub'}
           initialScreen={overlay.screen || null}
           onClose={() => setOverlay(null)}
@@ -1249,6 +1392,7 @@ export default function MobileApp() {
           savedCount={Object.keys(savedMap || {}).length}
           quizAnswers={effectiveQuizAnswers}
           myProducts={myProducts}
+          matchProducts={suggestedEcosystemProducts}
           savedProducts={savedMap}
           onViewAlternative={handleViewAlternative}
           onBrowse={() => setScreen('browse')}
@@ -1268,7 +1412,7 @@ export default function MobileApp() {
           onOpenRoutine={() => { setEcoTab('dashboard'); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
           onOpenMonthlyCheckin={() => setScreen('checkin')}
           readProgress={readProgress}
-          onOpenProduct={(product) => setOverlay({ type: 'product', item: product })}
+          onOpenProduct={(product) => growTransition(() => setOverlay({ type: 'product', item: product }), { target: 'product', from: 'img' })}
           onOpenArticle={(article) => { setReadArticleIds((ids) => ids.includes(article.id) ? ids : [...ids, article.id]); setOverlay({ type: 'article', item: article }); }}
           onOpenCommunity={(seed) => { setOverlay(null); setCommunitySeed({ ...seed, token: Date.now() }); setScreen('community'); }}
         />
@@ -1277,16 +1421,37 @@ export default function MobileApp() {
       <AskAynaModal
         key={authUser?.id || 'anonymous'}
         open={askAynaOpen}
+        seed={askSeed}
         enabled={!!authUser || !!(import.meta.env.DEV && new URLSearchParams(window.location.search).get('ask'))}
         profile={effectiveQuizAnswers}
+        guide={guide}
+        onGuideChange={updateGuide}
+        recap={guideRecap}
+        recapSources={guideSources}
+        recapExportable={guideRecapExportable}
+        productNotes={productNotesFromRoutine(myProducts, authUser?.id ? session.routineOutcomesByUser?.[authUser.id] || {} : {})}
+        allowGuideContext={personalizeWithData}
         onProfileUpdate={(answers) => updateSession({ lastQuizAnswers: answers })}
         chatHistory={askAynaHistory}
         onChatHistoryUpdate={setAskAynaHistory}
         name={resolvedName}
+        onClose={() => setAskAynaOpen(false)}
         onNavigateToDiscovery={() => { setAskAynaOpen(false); setScreen('browse'); }}
+        products={myProducts}
+        reads={rankedEcosystemReads}
+        hasHealthData={!!authUser && health.connected.length > 0}
+        resolveProduct={(id) => myProducts.find((p) => String(p.id) === String(id)) || browseProducts.find((p) => String(p.id) === String(id)) || null}
+        onOpenProduct={(product) => { setAskAynaOpen(false); setOverlay({ type: 'product', item: product }); }}
+        onBrowse={(intent) => { setAskAynaOpen(false); setOverlay(null); setBrowseQuery(String(intent?.query || intent?.category || '').replace(/[-_]/g, ' ')); setScreen('browse'); }}
+        onOpenDashboard={hasEcosystem ? () => { setAskAynaOpen(false); setOverlay(null); setEcoTab('dashboard'); setScreen('eco'); } : null}
+        onOpenRead={(article) => { setAskAynaOpen(false); setReadArticleIds((ids) => ids.includes(article.id) ? ids : [...ids, article.id]); setOverlay({ type: 'article', item: article }); }}
         onViewRecommendations={() => { setAskAynaOpen(false); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
         onRequireAuth={(feature) => requestAuth(feature || 'Ask ayna', () => { setScreen(screen); setAskAynaOpen(true); })}
       />
+      {/* Same 14-day feedback survey as the website, only on resting screens. */}
+      <FeedbackPrompts key={realAuthUser?.id || 'guest'} user={realAuthUser} authLoading={authLoading} currentView={overlayType || askAynaOpen ? 'busy' : screen} safeViews={APP_FEEDBACK_SCREENS} />
+      <OfflineBanner rootRef={rootRef} />
+      <GlobalToast variant="app" />
     </div>
   );
 }

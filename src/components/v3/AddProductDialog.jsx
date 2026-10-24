@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import ProductTileImage, { ProductImageFallback } from '../ProductTileImage';
 import { ECOSYSTEM_AREAS, CATEGORY_LABELS } from '../EcosystemBubbles';
 import { toast } from '../../utils/toast';
+import { PlusIcon, CheckIcon, CloseIcon } from '../icons/UiIcons.jsx';
 
 /* "+ Add a product" on My Ecosystem. A real dialog (labelled, × to close,
    below the site header), catalog rows that say what a product is rather
@@ -62,7 +63,7 @@ export default function AddProductDialog({ products, searchTerm, onSearch, myPro
       >
         <header className="ay-addprod__head">
           <h2 id="ay-addprod-title">Add to your ecosystem</h2>
-          <button type="button" className="ay-addprod__close" onClick={onClose} aria-label="Close">×</button>
+          <button type="button" className="ay-addprod__close" onClick={onClose} aria-label="Close"><CloseIcon size={18} /></button>
         </header>
         <label className="sr-only" htmlFor="ay-addprod-q">Search products</label>
         <input
@@ -112,7 +113,7 @@ export default function AddProductDialog({ products, searchTerm, onSearch, myPro
                           <span className="ay-addprod__name">{product.name}{product.outOfBusiness && <em> · No longer sold</em>}</span>
                           <span className="ay-addprod__meta">{[product.brand, label].filter(Boolean).join(' · ')}</span>
                         </span>
-                        <span className="ay-addprod__state">{isAdded ? '✓ Added' : '+ Add'}</span>
+                        <span className="ay-addprod__state">{isAdded ? <><CheckIcon size={16} className="is-lead" />Added</> : <><PlusIcon size={16} className="is-lead" />Add</>}</span>
                       </button>
                     </li>
                   );

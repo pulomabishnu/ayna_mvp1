@@ -27,7 +27,7 @@ const CURATED_SAFETY_NOTES = [
     {
         id: 'recall-3',
         productName: 'U by Kotex Tampons',
-        date: 'Recent Class Action',
+        date: 'Recent class action',
         reason: 'Reports of tampons unraveling or pieces being left inside the body after removal.',
         action: 'If you experience unraveling, stop use and report to FDA MedWatch. Use alternatives if concerned.',
         severity: 'high'
@@ -35,7 +35,7 @@ const CURATED_SAFETY_NOTES = [
     // Additional recalls can be layered in here as needed.
 ];
 
-export default function Recalls({ myProducts = {} }) {
+export default function Recalls({ myProducts = {}, onBack = null }) {
     const ecosystemList = Object.values(myProducts);
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -45,15 +45,15 @@ export default function Recalls({ myProducts = {} }) {
     );
 
     return (
-        <InfoPage tone="sky"
+        <InfoPage onBack={onBack}
             className="ay-recalls"
             eyebrow="Safety"
             title="Safety and recall center"
-            lede="Curated safety notes, plus a live FDA recall check on every product page. This is not a complete recall list, so always confirm with the FDA."
+            lede="ayna’s safety notes, plus a live FDA recall check on every product page. This is not a complete recall list, so always confirm with the FDA."
             width="wide"
         >
             <div className="ay-info-search">
-                <label htmlFor="recalls-search" className="ay-info-label">Search the curated notes</label>
+                <label htmlFor="recalls-search" className="ay-info-label">Search our safety notes</label>
                 <SmartSearchInput
                     id="recalls-search"
                     type="search"
@@ -65,7 +65,7 @@ export default function Recalls({ myProducts = {} }) {
 
             <div className="ay-info-split ay-info-split--main">
                 <div>
-                    <InfoSection title="Curated safety notes">
+                    <InfoSection title="Our safety notes">
                         <div className="ay-info-stack ay-info-stack--tight">
                             {filteredRecalls.length === 0 ? (
                                 // Deliberately NOT "No alerts found for X": this list is a

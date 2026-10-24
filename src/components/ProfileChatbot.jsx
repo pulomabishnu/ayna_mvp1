@@ -6,6 +6,12 @@ import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import ShareAnswerButton from './ShareAnswerButton.jsx';
 import { questionForAnswer } from '../utils/sharedAnswer.js';
 import { getAppSessionId } from '../utils/conversationId';
+import AskFollowUps from './AskFollowUps.jsx';
+import { chipsFor, followUpRequestFields } from '../utils/askFollowUps.js';
+import { fetchWithTimeout, isNetworkError } from '../utils/network.js';
+import AskHome, { AskStatCard } from './AskHome.jsx';
+import { recentQuestions } from '../utils/askRecent.js';
+import { mayAutoFocus } from '../utils/delightRuntime.js';
 
 /** Merges a profileUpdate the backend returned into the current profile, deduping against what's already there. */
 function mergeProfileUpdate(currentProfile, update) {
@@ -56,23 +62,38 @@ function getFirstName(user) {
   return raw ? raw.trim().split(/\s+/)[0] : '';
 }
 
-const STARTERS = ['What helps with period cramps?', 'What fits heavy periods?', 'Fragrance-free options for sensitive skin'];
+// Ask ayna's first screen: tiles fill the box so she can edit before asking.
+function askTiles(hasHealthData) {
+  return [
+    { label: 'Ask about your week', sub: hasHealthData ? 'Read against your cycle' : 'Best with health data connected', question: 'What stands out in my health data this week?', icon: 'week', tone: 'pink', isNew: true },
+    { label: 'What helps with period cramps?', question: 'What helps with period cramps?', icon: 'cramps', tone: 'sky' },
+    { label: 'What fits heavy periods?', question: 'What fits heavy periods?', icon: 'heavy', tone: 'group' },
+    { label: 'Fragrance-free options for sensitive skin', sub: 'Graded Limited, Some or Strong', question: 'Fragrance-free options for sensitive skin', icon: 'leaf', tone: 'ink' },
+  ];
+}
+const WELCOME = 'Ask about a product, an ingredient, or what to try for something you’re dealing with. I can point you to products and, if you say so, save what you tell me to your health profile. I’m not a doctor, so this isn’t medical advice.';
 
 function buildWelcome() {
   // Name is already in the panel header; the first bubble goes straight to
   // what she can ask. Starter prompts render under it.
   return [{
     role: 'assistant',
-    text: 'Ask about a product, an ingredient, or what to try for something you’re dealing with. I can point you to products and, if you say so, save what you tell me to your health profile. I’m not a doctor, so this isn’t medical advice.',
+    text: WELCOME,
     starters: true,
   }];
 }
 
-export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery, onViewRecommendations, openSignal = 0, prefill = '', onRequireAuth }) {
+export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery, onViewRecommendations, openSignal = 0, prefill = '', prefillStats = null, onRequireAuth, products = {}, hasHealthData = false, resolveProduct = null, onOpenProduct = null, onOpenDashboard = null, onOpenRead = null }) {
   const firstName = getFirstName(user);
   const [open, setOpen] = useState(false);
   // The header's Ask ayna button bumps openSignal to open the chat.
-  useEffect(() => { if (openSignal) { setOpen(true); if (prefill) setInput(prefill); } }, [openSignal]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Numbers from the dashboard that go with a prefilled question (shown back as a stat card).
+  const statsRef = useRef(null);
+  useEffect(() => { if (openSignal) { setOpen(true); if (prefill) setInput(prefill); statsRef.current = prefill && prefillStats?.length ? { text: prefill, stats: prefillStats } : null; } }, [openSignal]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Home (tiles + recent questions) until she asks something.
+  const [home, setHome] = useState(true);
+  // Back on the home view: start at the top, not where the chat was scrolled.
+  useEffect(() => { if (home) messagesRef.current?.scrollTo({ top: 0 }); }, [home]);
   const [messages, setMessages] = useState(
     chatHistory?.length > 0 ? chatHistory : buildWelcome()
   );
@@ -91,6 +112,17 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
   const [speaking, setSpeaking] = useState(false);
   const bottomRef = useRef(null);
   const formRef = useRef(null);
+  const inputRef = useRef(null);
+  // Opened by a click or a tap on Ask: the question box takes focus. Never on
+  // load, and on phones only after a tap (utils/delightRuntime.js, autofocus rules).
+  useEffect(() => {
+    if (!open || !mayAutoFocus()) return undefined;
+    const id = requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
+    return () => cancelAnimationFrame(id);
+  }, [open]);
+  // Reads she could be pointed to, ranked for her. Articles is a lazy chunk
+  // on the website, so it loads only once the panel is opened.
+  const [reads, setReads] = useState([]);
   const autoSubmitVoiceRef = useRef(false);
   const lastSpokenRef = useRef('');
   const speech = useSpeechToText();
@@ -279,12 +311,37 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     setSpeaking(false);
   }, [mode, open]);
 
+  useEffect(() => {
+    if (!open || reads.length) return undefined;
+    let cancelled = false;
+    Promise.all([import('./Articles.jsx'), import('../mobile/utils/personalReads.js')])
+      .then(([a, r]) => {
+        if (cancelled) return;
+        const ranked = r.rankReadsForProfile(a.ARTICLES || [], profile || {});
+        setReads(ranked.slice(0, 12).map((x) => ({ id: x.id, title: x.title })));
+      })
+      .catch(() => { /* reads unavailable: no read chips */ });
+    return () => { cancelled = true; };
+  }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const runFollowUp = (f) => {
+    if (f.type === 'ask') { sendText(f.text); return; }
+    if (f.type === 'ask_else') { inputRef.current?.focus({ preventScroll: true }); return; }
+    if (f.type === 'open_product') { const p = resolveProduct?.(f.productId); if (p) { setOpen(false); onOpenProduct?.(p); } return; }
+    if (f.type === 'browse') { setOpen(false); onNavigateToDiscovery?.({ initialCategory: f.intent?.category || null, query: f.intent?.category ? '' : (f.intent?.query || '') }); return; }
+    if (f.type === 'open_dashboard') { setOpen(false); onOpenDashboard?.(); return; }
+    if (f.type === 'open_library') { setOpen(false); onOpenRead?.(f.articleId); }
+  };
+
   const handleSend = (e) => { e.preventDefault(); sendText(input.trim()); };
   // retryOf: index of a failed-answer bubble to replace when retrying.
   const sendText = async (msg, retryOf = null) => {
     if (!msg || sending || disabled) return;
     setInput('');
     setSendError('');
+    setHome(false);
+    const stats = statsRef.current && statsRef.current.text === msg ? statsRef.current.stats : null;
+    statsRef.current = null;
     const userMsg = { role: 'user', text: msg };
     const base = retryOf != null ? messages.filter((_, j) => j !== retryOf) : messages;
     const messagesWithUser = retryOf != null ? base : [...base, userMsg];
@@ -294,7 +351,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     try {
       const token = session?.access_token;
       if (!token) throw Object.assign(new Error('not_signed_in'), { code: 'not_signed_in' });
-      const res = await fetch('/api/ask-ayna', {
+      const res = await fetchWithTimeout('/api/ask-ayna', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
@@ -302,6 +359,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
           profileSummary: summarizeProfile(profile || {}),
           chatHistory: messages.slice(-6),
           conversationId: getAppSessionId(),
+          ...followUpRequestFields({ products, reads, hasHealthData }),
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -309,7 +367,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
       if (res.status === 429) throw Object.assign(new Error('weekly_limit_reached'), { code: 'weekly_limit_reached' });
       if (!res.ok || !data?.answer) throw new Error(data?.error || 'Could not get an answer right now.');
 
-      const newMessages = [...messagesWithUser, { role: 'assistant', text: data.answer }];
+      const newMessages = [...messagesWithUser, { role: 'assistant', text: data.answer, followUps: Array.isArray(data.followUps) ? data.followUps : [], ...(stats ? { stats } : {}) }];
 
       // Nothing happens without her tap: a profile change is OFFERED with
       // Add / Not now, and a browse suggestion is a button, never an
@@ -340,7 +398,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
         setSendError("You've used your free chats for this week. They reset weekly, or upgrade for unlimited.");
       } else {
         // The failure lives in the conversation, next to the question, with a way forward.
-        const failed = [...messagesWithUser, { role: 'assistant', failed: true, question: msg, text: 'I couldn’t answer that just now.' }];
+        const failed = [...messagesWithUser, { role: 'assistant', failed: true, question: msg, text: isNetworkError(err) ? err.message : 'I couldn’t answer that just now.' }];
         setMessages(failed);
       }
     } finally {
@@ -372,17 +430,18 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
         </div>
       )}
 
+      {/* Phones: the panel is a bottom sheet over a flat 40% scrim, like the app's Ask sheet (P1-24). */}
+      {open && <div className="ayna-ask-scrim" aria-hidden="true" onClick={() => setOpen(false)} />}
       {open && (
         <section className="ayna-ask-panel" aria-label="Ask ayna">
           <header className={`ayna-ask-panel__header${messages.length > 1 ? " is-compact" : ""}`}>
             <div className="ayna-ask-panel__identity">
-              <span className="ayna-ask-orb ayna-ask-orb--small" aria-hidden="true" />
-
-              <div>
-                <div className="ayna-ask-panel__eyebrow">ASK AYNA</div>
-                <h3>{firstName ? `Hey, ${firstName}.` : 'Hey.'}</h3>
-                <p>What can I help you figure out?</p>
-              </div>
+              {!home && (
+                <button type="button" className="ay-askh-homebtn" aria-label="Back to Ask ayna home" onClick={() => setHome(true)}>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+                </button>
+              )}
+              <h3>Ask ayna</h3>
             </div>
 
             <button
@@ -446,8 +505,19 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
             </div>
           )}
 
-          <div className="ayna-ask-panel__messages" ref={messagesRef}>
-            {messages.map((m, i) => (
+          <div className={`ayna-ask-panel__messages${home && !sending ? ' is-home' : ''}`} ref={messagesRef}>
+            {home && !sending && (
+              <AskHome
+                name={firstName}
+                intro="Ask about a product, an ingredient, or what to try."
+                note={WELCOME}
+                tiles={askTiles(hasHealthData)}
+                recent={recentQuestions(messages)}
+                onPick={(q) => { setInput(q); inputRef.current?.focus({ preventScroll: true }); }}
+                onContinue={messages.some((m) => m.role === 'user') ? () => setHome(false) : null}
+              />
+            )}
+            {!(home && !sending) && messages.map((m, i) => (
               m.role === 'system' ? (
                 <div key={i} className="ayna-ask-message ayna-ask-message--system">
                   {m.text && <span>{m.text}</span>}
@@ -469,6 +539,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
                       : 'ayna-ask-message--ayna'
                   }`}
                 >
+                  {m.role === 'assistant' && <AskStatCard stats={m.stats} />}
                   {m.role === 'assistant' ? renderMarkdownLite(m.text) : m.text}
                   {m.role === 'assistant' && !m.failed && !m.starters && questionForAnswer(messages, i) && (
                     <ShareAnswerButton
@@ -481,15 +552,20 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
                       surface="web"
                     />
                   )}
+                  {m.role === 'assistant' && !m.failed && !m.starters && questionForAnswer(messages, i) && (
+                    <AskFollowUps
+                      chips={chipsFor(m.followUps, {
+                        hasDashboard: !!onOpenDashboard,
+                        canOpen: (f) => (f.type === 'open_product' ? !!(onOpenProduct && resolveProduct?.(f.productId)) : !!(onOpenRead && reads.some((r) => r.id === f.articleId))),
+                      })}
+                      disabled={sending}
+                      onAction={runFollowUp}
+                    />
+                  )}
                   {m.failed && (
                     <div className="ayna-ask-actions">
                       <button type="button" className="is-primary" onClick={() => sendText(m.question, i)}>Retry</button>
                       {onNavigateToDiscovery && <button type="button" onClick={() => onNavigateToDiscovery(m.question)}>Search the shop instead</button>}
-                    </div>
-                  )}
-                  {m.starters && messages.length === 1 && (
-                    <div className="ayna-ask-starters">
-                      {STARTERS.map((q) => <button type="button" key={q} onClick={() => sendText(q)}>{q}</button>)}
                     </div>
                   )}
                 </div>
@@ -499,7 +575,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
             {sending && (
               <div className="ayna-ask-message ayna-ask-message--ayna ayna-ask-message--typing" role="status" aria-label="ayna is typing">
                 <span className="ayna-typing" aria-hidden="true"><i /><i /><i /></span>
-                {slow && <span className="ayna-typing__slow">Still thinking…</span>}
+                {slow && <span className="ayna-typing__slow">Still looking into it…</span>}
               </div>
             )}
 
@@ -511,6 +587,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
           <form ref={formRef} className="ayna-ask-panel__composer" onSubmit={handleSend}>
             <div className="ayna-ask-panel__inputrow">
               <input
+                ref={inputRef}
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}

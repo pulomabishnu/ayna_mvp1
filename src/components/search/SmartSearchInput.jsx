@@ -1,6 +1,7 @@
 import { forwardRef, useCallback, useEffect, useId, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { analyzeSearch, searchSuggestions, registerSearchVocabulary, warmSearchEngine } from '../../utils/search/index.js';
+// Lazy wrappers: the engine (and the catalog it reads) loads after first paint.
+import { analyzeSearch, searchSuggestions, registerSearchVocabulary, warmSearchEngine, useSearchReady } from '../../utils/search/lazy.js';
 import './smart-search.css';
 
 /**
@@ -76,25 +77,31 @@ const SmartSearchInput = forwardRef(function SmartSearchInput({
   }, [value]);
 
   const text = String(value || '');
+  const searchReady = useSearchReady();
   const vocabReady = useMemo(() => { if (Array.isArray(vocabulary) && vocabulary.length) registerSearchVocabulary(vocabulary); return true; }, [vocabulary]);
-  const analysis = useMemo(() => (flagUnknown && settled.trim() && settled === text && vocabReady ? analyzeSearch(settled, { typing: focused }) : null), [flagUnknown, settled, text, focused, vocabReady]);
+  const analysis = useMemo(() => (flagUnknown && settled.trim() && settled === text && vocabReady ? analyzeSearch(settled, { typing: focused }) : null), [flagUnknown, settled, text, focused, vocabReady, searchReady]);
   const unknownTokens = analysis ? analysis.tokens.filter((t) => t.status === 'unknown') : [];
   const unknownWords = [...new Set(unknownTokens.map((t) => t.raw))];
 
   const items = useMemo(() => {
     if (!suggest || text.trim().length < 2) return [];
     try { return searchSuggestions(text, typeof suggest === 'object' ? suggest : {}); } catch { return []; }
-  }, [suggest, text]);
+  }, [suggest, text, searchReady]);
   const showList = Boolean(suggest) && open && focused && items.length > 0;
 
   // Position the overlay and dropdown by measuring where they actually landed
   // and nudging them onto the input / anchor. Works whatever the containing
   // block is (positioned ancestors, transforms in the app's slide views).
+  const fontsHookedRef = useRef(false);
   const place = useCallback(() => {
     const input = inputRef.current;
     if (!input) return;
-    const ir = input.getBoundingClientRect();
     const mirror = mirrorRef.current;
+    const list = listRef.current;
+    // Nothing to place: skip the measuring. Reading the input's box forces a
+    // full style and layout pass, and this runs after every render (perf).
+    if (!mirror && (!list || list.hidden)) return;
+    const ir = input.getBoundingClientRect();
     if (mirror) {
       const cs = window.getComputedStyle(input);
       const st = mirror.style;
@@ -110,7 +117,6 @@ const SmartSearchInput = forwardRef(function SmartSearchInput({
       st.left = `${(parseFloat(st.left) || 0) + (ir.left - mr.left)}px`;
       st.top = `${(parseFloat(st.top) || 0) + (ir.top - mr.top)}px`;
     }
-    const list = listRef.current;
     if (list && !list.hidden) {
       const anchorEl = (anchor && input.parentElement?.closest(anchor)) || input.parentElement || input;
       const ar = anchorEl.getBoundingClientRect();
@@ -121,7 +127,16 @@ const SmartSearchInput = forwardRef(function SmartSearchInput({
     }
   }, [anchor]);
 
-  useLayoutEffect(() => { place(); });
+  useLayoutEffect(() => {
+    place();
+    // Measure again once web fonts finish loading (they change the text's width).
+    // Hooked on the first real measure, not on mount: reading document.fonts.ready
+    // forces a full style pass, about 400ms of a throttled phone's first Shop render (perf).
+    if (!fontsHookedRef.current && (mirrorRef.current || (listRef.current && !listRef.current.hidden))) {
+      fontsHookedRef.current = true;
+      document.fonts?.ready?.then?.(() => place());
+    }
+  });
   useEffect(() => {
     if (!showList) return undefined;
     const onScroll = () => place();
@@ -134,7 +149,6 @@ const SmartSearchInput = forwardRef(function SmartSearchInput({
     let ro = null;
     if (input && typeof ResizeObserver !== 'undefined') { ro = new ResizeObserver(() => place()); ro.observe(input); }
     window.addEventListener('resize', place);
-    document.fonts?.ready?.then?.(() => place());
     return () => { ro?.disconnect(); window.removeEventListener('resize', place); };
   }, [place, flagUnknown, suggest]);
 

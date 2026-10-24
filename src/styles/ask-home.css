@@ -1,0 +1,128 @@
+/* Ask ayna home (AskHome.jsx) on the app sheet (.ayna-mobile) and the website
+   panel (.ayna-ask-panel). From the Cooper reference (cefbab0a): hello line,
+   a bento of question tiles with one "New" badge, recent questions with
+   coloured icon squares, a small stat card inside answers, and one
+   curved-text ribbon as the page's only seal. ayna inks, matte (shared grain in styles/finish.css), motion from styles/motion.css,
+   1.5px espresso outlines, no gloss or glow. */
+
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) :is(.ay-askh, .ay-askh-stats) {
+  --k-ink: var(--d-ink, var(--ay-text, #3e2723)); --k-soft: var(--d-ink-2, var(--ay-text-2, rgba(62, 39, 35, .78)));
+  --k-group: var(--d-group, var(--ay-group, #f6e3a1)); --k-hair: var(--d-hair, var(--ay-hairline, rgba(62, 39, 35, .15)));
+  --k-page: var(--d-page, var(--ay-page, #ffedac));
+  --k-display: var(--ay-app-heading, var(--ay-heading, 'ayna Display', serif)); --k-sans: 'Figtree', system-ui, sans-serif;
+}
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh { position: relative; display: grid; gap: 20px; min-width: 0; color: var(--k-ink); font-family: var(--k-sans); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh * { box-sizing: border-box; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh :is(h2, h3, p, ul) { margin: 0 !important; padding: 0 !important; list-style: none !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh :is(button):focus-visible { outline: 3px solid var(--k-ink) !important; outline-offset: 2px !important; }
+
+/* the seal: a pink band with curved text across the top corner */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-ribbon { display: block; width: calc(100% + 40px); max-width: none; height: auto; margin: -6px -20px -14px; overflow: hidden; pointer-events: none; animation: ay-askh-ribbon var(--t-delight) var(--ease-out) both; }
+@keyframes ay-askh-ribbon { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: none; } }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-ribbon #ay-askh-wave { fill: none; stroke: none; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-ribbon .ay-askh-band { fill: none; stroke: #f7badd; stroke-width: 22; stroke-linecap: butt; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-ribbon text { font: 600 12px/1 var(--k-sans); letter-spacing: .04em; fill: #3e2723; }
+
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-hello { display: grid; gap: 6px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) :is(.ay-askh-hello h2, main .ay-askh-hello h2) { font: 700 calc(30px * var(--ayna-text-scale, 1))/1.05 var(--k-display) !important; letter-spacing: -0.02em !important; color: var(--k-ink) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-hello p { font: 400 calc(14px * var(--ayna-text-scale, 1))/1.45 var(--k-sans) !important; color: var(--k-soft) !important; }
+
+/* bento of tiles: one tall, two stacked, one wide */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles > li { min-width: 0; animation: ay-askh-settle var(--t-push) var(--ease-out) both; animation-delay: calc(var(--i, 0) * var(--stagger, 45ms)); }
+@keyframes ay-askh-settle { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles > li.is-tall { grid-row: span 2; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles[data-count='4'] > li:nth-child(4) { grid-column: 1 / -1; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles button { position: relative; isolation: isolate; overflow: hidden; display: flex !important; flex-direction: column !important; align-items: flex-start !important; justify-content: flex-start; gap: 4px; width: 100%; height: 100%; min-height: 104px; margin: 0 !important; padding: 14px !important; border: 1.5px solid #3e2723 !important; border-radius: 20px !important; color: #3e2723 !important; text-align: left !important; box-shadow: none !important; cursor: pointer; transition: transform var(--t-fast) var(--ease-out); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles button:hover { transform: translateY(-2px); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles button:active { transform: translateY(1px); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles .is-pink button { background: #f7badd !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles .is-sky button { background: #769ebe !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles .is-group button { background: #f6e3a1 !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles .is-ink button { background: #3e2723 !important; color: #ffedac !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles .is-tall button { justify-content: space-between; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles .is-tall .ay-askh-tile-label { margin-top: auto; font-size: calc(19px * var(--ayna-text-scale, 1)); font-family: var(--k-display); font-weight: 700; letter-spacing: -0.01em; line-height: 1.15; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles[data-count='4'] > li:nth-child(4) button { flex-direction: row !important; align-items: center !important; flex-wrap: wrap; column-gap: 12px; min-height: 72px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles[data-count='4'] > li:nth-child(4) small { flex-basis: calc(100% - 48px); margin-left: 48px; margin-top: -6px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-icon { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border: 1.5px solid currentColor; border-radius: 50%; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tile-label { font: 600 calc(15px * var(--ayna-text-scale, 1))/1.25 var(--k-sans); margin-top: 6px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles[data-count='4'] > li:nth-child(4) .ay-askh-tile-label { margin-top: 0; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-tiles small { font: 500 12.5px/1.35 var(--k-sans); opacity: .9; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-new { position: absolute; top: 12px; right: 12px; display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border: 1.5px solid #3e2723; border-radius: 999px; background: #ffedac; color: #3e2723; font: 700 12px/1 var(--k-sans); transform: rotate(4deg); }
+
+/* recent questions */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-recent-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) :is(.ay-askh-recent h3, main .ay-askh-recent h3) { font: 700 calc(18px * var(--ayna-text-scale, 1))/1.2 var(--k-display) !important; letter-spacing: -0.01em !important; color: var(--k-ink) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-recent-head button { min-height: 44px; margin: -12px 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; color: var(--k-ink) !important; font: 600 14px/1 var(--k-sans) !important; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; cursor: pointer; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-recent li + li { border-top: 1px solid var(--k-hair); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-recent li button { display: flex !important; align-items: center !important; gap: 12px; width: 100%; min-height: 56px; margin: 0 !important; padding: 8px 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: var(--k-ink) !important; text-align: left !important; cursor: pointer; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-sq { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border: 1.5px solid #3e2723; border-radius: 10px; color: #3e2723; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-sq svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-sq.is-pink { background: #f7badd; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-sq.is-sky { background: #769ebe; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-sq.is-butter { background: #f6e3a1; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-sq.is-ink { background: #3e2723; color: #ffedac; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-q { flex: 1; min-width: 0; font: 500 calc(15px * var(--ayna-text-scale, 1))/1.35 var(--k-sans); overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-again { flex: none; font: 600 12.5px/1 var(--k-sans); color: var(--k-soft); text-decoration: underline; text-underline-offset: 3px; }
+
+/* a small stat card inside an answer: her own numbers that went with the question */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-stats { align-self: flex-start; max-width: 85%; margin: 0 0 8px !important; padding: 10px 14px !important; border: 0; border-left: 4px solid #f7badd; border-radius: 10px; background: var(--k-group); white-space: normal; color: var(--k-ink); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-stats figcaption { margin-bottom: 6px; font: 600 12px/1.2 var(--k-sans); color: var(--k-soft); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-stats ul { display: flex !important; flex-wrap: wrap; gap: 6px 18px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-stats li { display: grid; gap: 1px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-stats b { font: 700 20px/1.05 var(--k-display); letter-spacing: -0.01em; color: var(--k-ink); font-variant-numeric: tabular-nums; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-stats small { font: 500 11.5px/1.2 var(--k-sans); color: var(--k-soft); }
+
+/* back to home (web panel header) */
+html body .app-container .ayna-ask-panel .ayna-ask-panel__identity { display: flex !important; align-items: center !important; gap: 4px !important; }
+html body .app-container .ayna-ask-panel .ay-askh-homebtn { display: grid !important; place-items: center; flex: none; width: 44px !important; height: 44px !important; margin: 0 0 0 -10px !important; padding: 0 !important; border: 0 !important; border-radius: 50% !important; background: none !important; box-shadow: none !important; color: inherit !important; cursor: pointer; opacity: 1 !important; visibility: visible !important; }
+html body .app-container .ayna-ask-panel .ay-askh-homebtn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-note { padding-top: 12px !important; border-top: 1px solid var(--k-hair); font: 500 12.5px/1.45 var(--k-sans) !important; color: var(--k-soft) !important; }
+
+/* back to home (app header) */
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-askh-homebtn { display: grid; place-items: center; flex: none; width: 44px; height: 44px; margin: 0 -4px 0 -8px !important; padding: 0 !important; border: 0 !important; border-radius: 50% !important; background: none !important; color: var(--d-ink, #3e2723) !important; cursor: pointer; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-askh-homebtn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-askh-scroll { overflow-x: hidden; }
+
+/* dark: tiles keep their inks; the ink tile and squares flip to butter so they stay visible */
+.ayna-mobile:is(#ay, .ayna-mobile)[data-theme='dark'] .ay-askh-tiles .is-ink button,
+:is(#ay, html body) .app-container[data-theme='brand-dark'] .ay-askh-tiles .is-ink button { background: #ffedac !important; color: #3e2723 !important; }
+.ayna-mobile:is(#ay, .ayna-mobile)[data-theme='dark'] .ay-askh-tiles .is-group button,
+:is(#ay, html body) .app-container[data-theme='brand-dark'] .ay-askh-tiles .is-group button { background: var(--k-group) !important; color: var(--k-ink) !important; border-color: var(--k-ink) !important; }
+.ayna-mobile:is(#ay, .ayna-mobile)[data-theme='dark'] .ay-askh-sq.is-ink,
+:is(#ay, html body) .app-container[data-theme='brand-dark'] .ay-askh-sq.is-ink { background: #ffedac; color: #3e2723; }
+
+@media (max-width: 359px) {
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh :is(.ay-askh-ribbon, .ay-askh-tiles > li) { animation: none !important; }
+  :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh * { transition: none !important; }
+}
+
+/* Final layout pass (Oct 21): on phone-sized web screens the Ask home fits
+   without scrolling (iPhone SE 667 to 14 Pro 844): tighter gaps and tiles,
+   and the decorative ribbon steps aside under 720px of height. */
+@media (max-width: 767px) and (max-height: 800px) {
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh { gap: 12px; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-tiles { gap: 8px; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-tiles button { min-height: 82px; padding: 12px !important; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-icon { width: 30px; height: 30px; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-icon svg { width: 16px; height: 16px; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-tile-label { margin-top: 2px; font-size: 14.5px; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-tiles .is-tall .ay-askh-tile-label { font-size: 17px; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-tiles[data-count='4'] > li:nth-child(4) button { min-height: 64px; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-note { font-size: 12.5px !important; line-height: 1.4 !important; }
+}
+@media (max-width: 767px) and (max-height: 720px) {
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-ribbon { display: none; }
+}
+@media (max-width: 767px) and (max-height: 720px) {
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh { gap: 10px; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-tiles button { min-height: 72px; gap: 2px; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-tiles[data-count='4'] > li:nth-child(4) button { min-height: 56px; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ay-askh-new { top: 8px; right: 8px; height: 22px; }
+  html body .app-container .ayna-ask-panel:not(#ay-none) .ayna-ask-panel__messages.is-home { padding-top: 12px !important; }
+}
+/* Brand dark on the website: the Ask panel stays butter paper, so its ink stays espresso (the greeting and note were butter on butter). */
+html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ayna-ask-panel:not(#ay-none) .ay-askh { --k-ink: #3e2723; --k-soft: rgba(62, 39, 35, .78); --k-hair: rgba(62, 39, 35, .15); --k-group: #f6e3a1; --k-page: #ffedac; }

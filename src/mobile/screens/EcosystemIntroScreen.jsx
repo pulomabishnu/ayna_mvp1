@@ -1,4 +1,3 @@
-import { useRef, useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
 import '../ecointro.css';
 import FinishQuizCard from '../../components/FinishQuizCard.jsx';
@@ -10,61 +9,13 @@ const PARTS = [
   { key: 'preferences', label: 'Preferences', tone: 'mint', note: 'Formats, budget, brands and what to avoid.' },
 ];
 
-// Same slide-to-start control as the welcome screen (.ayna-slide-start*),
-// labelled "Continue". Slide past ~72% or tap the handle.
-function SlideToContinue({ onComplete, label = 'Continue', hint = 'slide' }) {
-  const trackRef = useRef(null);
-  const draggingRef = useRef(false);
-  const completedBySlideRef = useRef(false);
-  const movedRef = useRef(false);
-  const startXRef = useRef(0);
-  const [distance, setDistance] = useState(0);
-  const travel = () => Math.max(0, (trackRef.current?.clientWidth || 0) - 66);
-  const position = (event) => {
-    const rect = trackRef.current?.getBoundingClientRect();
-    if (!rect) return 0;
-    return Math.min(travel(), Math.max(0, event.clientX - rect.left - 31));
-  };
-  const start = (event) => {
-    draggingRef.current = true;
-    movedRef.current = false;
-    startXRef.current = event.clientX;
-    event.currentTarget.setPointerCapture?.(event.pointerId);
-    setDistance(position(event));
-  };
-  const move = (event) => {
-    if (!draggingRef.current) return;
-    if (Math.abs(event.clientX - startXRef.current) > 8) movedRef.current = true;
-    setDistance(position(event));
-  };
-  const finish = (event) => {
-    if (!draggingRef.current) return;
-    draggingRef.current = false;
-    const completed = position(event) >= travel() * .72;
-    setDistance(0);
-    if (completed) { completedBySlideRef.current = true; onComplete?.(); }
-  };
-  return <div className="ayna-slide-start ay-intro-slide" ref={trackRef}>
-    <span className="ayna-slide-start-fill" style={{ width: distance > 0 ? `${distance + 56}px` : 0 }} aria-hidden="true" />
-    <span className="ayna-slide-start-label" aria-hidden="true">{label} <span>{hint}</span></span>
-    <button
-      type="button"
-      className="ayna-slide-start-handle"
-      aria-label={`${label}: slide or tap`}
-      onPointerDown={start}
-      onPointerMove={move}
-      onPointerUp={finish}
-      onPointerCancel={() => { draggingRef.current = false; movedRef.current = true; setDistance(0); }}
-      onClick={() => {
-        if (completedBySlideRef.current) { completedBySlideRef.current = false; return; }
-        if (movedRef.current) { movedRef.current = false; return; }
-        onComplete?.();
-      }}
-      style={{ transform: `translateX(${distance}px)` }}
-    >
-      <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 12h16m-7-7 7 7-7 7" /></svg>
-    </button>
-  </div>;
+// One plain button starts the quiz (it used to be slide-to-start: a hidden
+// gesture, slower than a tap; anti-vibe guide 5d). Same as the welcome screen.
+function StartButton({ onStart, label }) {
+  return <button type="button" className="ay-intro-start" onClick={onStart}>
+    {label}
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+  </button>;
 }
 
 export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount, authUser, onOpenSaved, onBrowse, onGoCommunity, headerInitial = 'A', onOpenProfile, hasIntakeDraft = false, quizDraft = null, onResumeQuiz, onStartOverQuiz }) {
@@ -72,14 +23,14 @@ export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount
     <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
     <div className="ayna-ecosystem-start-scroll ay-intro-body">
       <header className="ay-intro-head">
-        <h1>{hasIntakeDraft ? <>Your Ecosystem is <em>taking shape.</em></> : <>Make it <em>yours.</em></>}</h1>
-        <p>{hasIntakeDraft ? 'Pick up where you left off.' : 'A few questions in three parts.'}</p>
+        <h1>{hasIntakeDraft ? 'Your ecosystem is taking shape' : 'Tell us about you'}</h1>
+        <p>{hasIntakeDraft ? 'Pick up where you left off.' : 'Six questions, then your matches.'}</p>
       </header>
 
-      <ol className="ay-intro-steps" aria-label="What shapes your Ecosystem">
+      <ol className="ay-intro-steps" aria-label="What shapes your ecosystem">
         {PARTS.map((part, i) => (
           <li key={part.key} className={i % 2 ? 'is-rose' : 'is-sky'}>
-            <span className="ay-intro-burst" aria-hidden="true"><b>{i + 1}</b></span>
+            <span className="ay-intro-num" aria-hidden="true">{i + 1}</span>
             <span><strong>{part.label}</strong><small>{part.note}</small></span>
           </li>
         ))}
@@ -89,7 +40,7 @@ export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount
       <div className="ayna-ecosystem-start-actions ay-intro-actions">
         {quizDraft && onResumeQuiz
           ? <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} className="ay-intro-finish" />
-          : <SlideToContinue onComplete={onStartQuiz} label={hasIntakeDraft ? 'Finish the quiz' : 'Start the quiz'} hint={hasIntakeDraft ? 'where you left off' : 'slide to start'} />}
+          : <StartButton onStart={onStartQuiz} label={hasIntakeDraft ? 'Finish the quiz' : 'See my matches'} />}
         {!authUser && <p className="ay-intro-signin">Already have an account? <button type="button" onClick={onAlreadyHaveAccount}>Sign in</button></p>}
       </div>
     </div>

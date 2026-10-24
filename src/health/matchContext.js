@@ -33,19 +33,40 @@ export function healthMatchContext(signals = [], selectedNeedIds = []) {
   const suggestions = [];
   for (const s of signals) {
     if (!s?.needId) continue;
-    const entry = { summary: s.summary, sources: s.sources || [], metric: s.metric, section: s.section };
+    const isTiming = s.kind === 'timing';
+    const entry = { kind: isTiming ? 'timing' : 'trend', summary: s.summary, sources: s.sources || [], metric: s.metric, section: s.section };
+    if (isTiming) entry.timing = { timing: s.timing, daysUntil: s.daysUntil, summary: s.summary, cite: s.cite || null };
     if (chosen.has(s.needId)) {
-      if (!byNeed[s.needId]) byNeed[s.needId] = entry;
-    } else if (SUGGESTABLE.has(s.needId) && !suggestions.some((x) => x.needId === s.needId)) {
+      const had = byNeed[s.needId];
+      if (!had) byNeed[s.needId] = entry;
+      // A trend and a timing fact for the same need: keep the trend as the
+      // headline and carry the timing with it.
+      else if (isTiming && !had.timing) had.timing = entry.timing;
+    } else if (!isTiming && SUGGESTABLE.has(s.needId) && !suggestions.some((x) => x.needId === s.needId)) {
+      // Timing never becomes a suggested goal: "your period is due" is not a reason to add one.
       suggestions.push({ needId: s.needId, ...entry });
     }
   }
   return { byNeed, suggestions };
 }
 
+const join = (names) => (names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0] || '');
+
 /** The line shown on Why this match when health data made a need more relevant. */
 export function whyLine(context, sourceName = (id) => id) {
   if (!context) return null;
-  const from = context.sources.map(sourceName).join(' and ');
-  return { text: 'Your recent trends made this more relevant to you', detail: `${context.summary}.${from ? ` From ${from}.` : ''}` };
+  const from = join((context.sources || []).map(sourceName));
+  const tail = from ? ` From ${from}.` : '';
+  if (context.kind === 'timing') {
+    return { text: 'Your cycle timing moved this up', detail: `${context.summary}, so things you use around your period come first.${tail}`, cite: context.timing?.cite || null };
+  }
+  const timing = context.timing ? ` ${context.timing.summary}, too.` : '';
+  return { text: 'Your recent trends made this more relevant to you', detail: `${context.summary}.${timing}${tail}` };
+}
+
+/** Short badge words for a pick on a need her data backs ("Backed by your sleep data"). */
+const SECTION_WORD = { sleep: 'sleep', cycle: 'cycle', heart: 'heart', recovery: 'recovery' };
+export function badgeText(context) {
+  if (!context) return null;
+  return `Backed by your ${SECTION_WORD[context.section] || 'health'} data`;
 }

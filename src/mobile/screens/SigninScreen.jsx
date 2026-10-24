@@ -216,7 +216,7 @@ export default function SigninScreen({
   const [heardAbout, setHeardAbout] = useState('');
   const [heardOther, setHeardOther] = useState('');
   // Create account is only offered in the save step after the quiz (opened
-  // in signup mode). Opened for sign-in, new people go build an Ecosystem.
+  // in signup mode). Opened for sign-in, new people go build an ecosystem.
   const canSignUp = initialMode === 'signup';
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -398,7 +398,7 @@ export default function SigninScreen({
       }}
     >
       <button className="ayna-fresh-auth-back ay-auth-back" type="button" onClick={onAuthBack} aria-label="Back">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
       </button>
       {mode === 'check-email' ? (
         <>
@@ -418,12 +418,12 @@ export default function SigninScreen({
       ) : (
         <>
           <header className="ay-auth-head">
-            <h1>{mode === 'signup' ? (showEcoSummary ? 'Save your Ecosystem' : 'Sign up') : 'Sign in'}</h1>
+            <h1>{mode === 'signup' ? (showEcoSummary ? 'Save your ecosystem' : 'Sign up') : 'Sign in'}</h1>
             {mode === 'signup' && showEcoSummary && <p>Create an account to keep it.</p>}
           </header>
 
           {mode === 'signup' && showEcoSummary && (
-            <section className="ay-auth-eco" aria-label="Your Ecosystem">
+            <section className="ay-auth-eco" aria-label="Your ecosystem">
               <div className="ay-auth-eco-copy">
                 <strong>{ecoPicks.length} {ecoPicks.length === 1 ? 'pick' : 'picks'}{topAreas.length ? ` · ${topAreas.length} ${topAreas.length === 1 ? 'area' : 'areas'}` : ''}</strong>
                 {topAreas.length > 0 && <span>{topAreas.slice(0, 4).join(', ')}</span>}
@@ -457,7 +457,7 @@ export default function SigninScreen({
           <InlineError id={errId('email')}>{fieldErrors.email}</InlineError>
 
           <Field label="Password" icon={LockIcon} invalid={Boolean(fieldErrors.password)}>
-            <input type="password" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} placeholder="••••••••" value={password} onChange={(e) => { setPassword(e.target.value); clearField('password'); }} style={inputStyle} {...invalidProps('password')} />
+            <input type="password" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} placeholder={mode === 'signup' ? 'At least 8 characters' : 'Your password'} value={password} onChange={(e) => { setPassword(e.target.value); clearField('password'); }} style={inputStyle} {...invalidProps('password')} />
           </Field>
           <InlineError id={errId('password')}>{fieldErrors.password}</InlineError>
 
@@ -512,7 +512,7 @@ export default function SigninScreen({
               <PrimaryButton onClick={handleSignUp} disabled={loading}>
                 <span>{loading ? 'Creating account…' : 'Create my account'}</span>
                 {!loading && (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ayna-heading)" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ayna-heading)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M5 12h14M13 6l6 6-6 6" />
                   </svg>
                 )}
@@ -538,7 +538,7 @@ export default function SigninScreen({
             else if (canSignUp) setMode('signup');
             else onStartEcosystem?.();
           }}>
-            {mode === 'signup' ? 'Already have an account? Sign in' : canSignUp ? <>Don’t have an account? <b>Create one</b></> : <>Don’t have an account? <b>Build your Ecosystem</b></>}
+            {mode === 'signup' ? 'Already have an account? Sign in' : canSignUp ? <>Don’t have an account? <b>Create one</b></> : <>Don’t have an account? <b>Build your ecosystem</b></>}
           </button>
 
           <div className="ayna-fresh-auth-trust" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 14, opacity: 0.6 }}>

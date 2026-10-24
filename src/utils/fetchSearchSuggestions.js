@@ -1,5 +1,6 @@
 import posthog from 'posthog-js';
 import { filterProductListToCatalog } from './catalogIntegrity';
+import { loadCatalog } from '../data/catalog.js';
 import { getAppSessionId } from './conversationId';
 import { redactErrorMessage } from './errorAnalytics';
 
@@ -108,6 +109,8 @@ export async function fetchSearchSuggestions(opts) {
 
   // Don't cache personalized results, they're user-specific
   const cacheKey = personalized ? null : sessionCacheKey(query, category, symptom, maxResults);
+  // Results are checked against the catalog, which loads after first paint.
+  await loadCatalog();
   if (cacheKey) {
     const cached = readSessionCache(cacheKey);
     if (cached) {

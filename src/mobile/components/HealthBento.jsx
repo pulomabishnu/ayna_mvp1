@@ -1,52 +1,24 @@
-import { formatMetric, isFlat, trendWord } from '../../health/dashboard.js';
-import { CycleRing } from './HealthChart.jsx';
 import { estimatePhase, PHASES } from '../../health/phase.js';
+import ProductImage from './ProductImage.jsx';
+import { displayName } from '../utils/displayName.js';
+import { brandOf } from '../data/brandFallback.js';
+import { formatPrice } from '../../utils/formatPrice.js';
+import { LEVEL_WORD, NEED_WORDS } from '../../health/weekPicks.js';
+import { goalsCovered, aynaAdds } from '../../health/beyondNumbers.js';
+import '../../styles/week-explained.css';
 
 /**
- * The Summary view of Your health as a bento grid (inspired by clinical
- * dashboards like Intelly: colour-blocked cards, one big number each, small
- * stats underneath, a glanceable chart, and a timeline of what's coming).
- * Every number comes from her own rows (src/health/dashboard.js). Nothing is
- * invented: a card only shows when there is data for it.
+ * Pieces of Your health shared by the app and the website: the evidence
+ * meter, source links, the phase strip, phase comparison, normal ranges,
+ * goals covered, this week's picks, what ayna adds, and the starter shown
+ * before any health data. The screen itself is HealthHome.jsx.
+ * Every number comes from her own rows. Nothing is invented.
  */
 
-const DAY = 86400000;
-const fmtDay = (iso) => new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
-const fmtWeekday = (iso) => new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' });
-const addDays = (iso, n) => new Date(Date.parse(`${iso}T12:00:00Z`) + n * DAY).toISOString().slice(0, 10);
-const daysBetween = (a, b) => Math.round((Date.parse(`${b}T12:00:00Z`) - Date.parse(`${a}T12:00:00Z`)) / DAY);
 
-const TONES = ['sky', 'ink', 'butter', 'pink'];
-
-function Shape({ kind }) {
-  // Soft decorative shapes, one per tone, like the reference. Purely visual.
-  if (kind === 'heart') return <svg className="ay-bn-shape" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 88 C20 66 6 50 6 32 C6 18 17 8 30 8 C39 8 46 13 50 20 C54 13 61 8 70 8 C83 8 94 18 94 32 C94 50 80 66 50 88Z" /></svg>;
-  if (kind === 'moon') return <svg className="ay-bn-shape" viewBox="0 0 100 100" aria-hidden="true"><path d="M64 6 A46 46 0 1 0 94 70 A38 38 0 1 1 64 6Z" /></svg>;
-  if (kind === 'star') return <svg className="ay-bn-shape" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 2 L60 30 L90 18 L74 46 L98 64 L66 68 L70 98 L50 76 L30 98 L34 68 L2 64 L26 46 L10 18 L40 30Z" /></svg>;
-  return <svg className="ay-bn-shape" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 8 H92 L50 92Z" /></svg>;
-}
-const SHAPE = { sky: 'moon', ink: 'star', pink: 'heart', butter: 'tri' };
-
-/** Last 14 days as bars; today's bar solid, the rest soft. */
-function Bars({ points }) {
-  const pts = points.slice(-14);
-  const vals = pts.map((p) => p.value).filter((v) => v != null);
-  if (vals.length < 2) return null;
-  const hi = Math.max(...vals) || 1;
-  const w = 100 / pts.length;
-  return (
-    <svg className="ay-bn-bars" viewBox="0 0 100 44" preserveAspectRatio="none" aria-hidden="true">
-      {pts.map((p, i) => {
-        if (p.value == null) return <rect key={p.day} x={i * w + w * 0.3} y={40} width={w * 0.4} height={2} rx={1} className="is-gap" />;
-        const h = Math.max(3, (p.value / hi) * 40);
-        return <rect key={p.day} x={i * w + w * 0.22} y={42 - h} width={w * 0.56} height={h} rx={w * 0.28} className={i === pts.length - 1 ? 'is-now' : ''} />;
-      })}
-    </svg>
-  );
-}
 
 /** Smooth line over the last 14 days with a dashed marker on the latest day. */
-function Line({ points, usual }) {
+export function Line({ points, usual }) {
   const pts = points.slice(-14).filter((p) => p.value != null);
   if (pts.length < 2) return null;
   const vals = pts.map((p) => p.value).concat(usual != null ? [usual] : []);
@@ -72,70 +44,8 @@ function Line({ points, usual }) {
   );
 }
 
-function stats(c) {
-  const vals = c.points.slice(-7).map((p) => p.value).filter((v) => v != null);
-  if (!vals.length) return [];
-  const show = (v) => (c.metric === 'steps' ? Math.round(v).toLocaleString('en-US') : formatMetric(c.metric, v));
-  return [
-    { k: 'Usual', v: c.usual != null ? show(c.usual) : 'Building' },
-    { k: 'Low', v: show(Math.min(...vals)) },
-    { k: 'High', v: show(Math.max(...vals)) },
-  ];
-}
-
-function vsUsual(c) {
-  if (c.delta == null || c.usual == null) return 'Building your usual, about two weeks of data';
-  if (isFlat(c.metric, c.delta)) return 'Right around your usual';
-  const amt = c.metric === 'steps' ? Math.abs(Math.round(c.delta)).toLocaleString('en-US') : formatMetric(c.metric, Math.abs(c.delta));
-  const more = c.metric === 'sleep_minutes' ? (c.delta > 0 ? 'more' : 'less') : c.metric === 'steps' ? (c.delta > 0 ? 'more' : 'fewer') : (c.delta > 0 ? 'higher' : 'lower');
-  return `${amt} ${more} than your usual`;
-}
-
-function MetricCard({ chart, tone, wide, onOpen }) {
-  const big = chart.metric === 'steps' ? Math.round(chart.week ?? chart.avg).toLocaleString('en-US') : formatMetric(chart.metric, chart.week ?? chart.avg);
-  const word = trendWord(chart.metric, chart.delta);
-  const per = chart.metric === 'sleep_minutes' ? 'a night, last 7 days' : 'a day, last 7 days';
-  return (
-    <li className={`ay-bn-card is-${tone}${wide ? ' is-wide' : ''}`}>
-      <button type="button" onClick={onOpen} aria-label={`${chart.label}: ${big} ${per}, ${word.toLowerCase()} than usual. Open charts.`}>
-        <Shape kind={SHAPE[tone]} />
-        <span className="ay-bn-label">{chart.label}</span>
-        <span className="ay-bn-big">{big}</span>
-        <span className="ay-bn-per">{per}</span>
-        <span className="ay-bn-vs">{vsUsual(chart)}</span>
-        <span className="ay-bn-stats">
-          {stats(chart).map((s) => <span key={s.k}><b>{s.v}</b><small>{s.k}</small></span>)}
-        </span>
-        {wide ? <Line points={chart.points} usual={chart.usual} /> : <Bars points={chart.points} />}
-      </button>
-    </li>
-  );
-}
-
-function CycleCard({ cycle, estimate, onOpen }) {
-  const phase = estimatePhase(cycle);
-  const phaseName = phase ? (phase.id === 'ovulation' ? 'Ovulation window' : phase.name) : 'Your cycle';
-  return (
-    <button type="button" className="ay-bn-cycle" onClick={onOpen} aria-label={`Cycle day ${cycle.cycleDay}. ${phaseName}. Open cycle charts.`}>
-      <Shape kind="heart" />
-      <span className="ay-bn-cycle-text">
-        <span className="ay-bn-label">Your cycle</span>
-        <span className="ay-bn-big">Day {cycle.cycleDay}</span>
-        <span className="ay-bn-phase">{phaseName}</span>
-        <span className="ay-bn-stats">
-          {cycle.avgLength && <span><b>{cycle.avgLength} days</b><small>Usual length</small></span>}
-          {estimate && <span><b>{fmtDay(estimate.day)}</b><small>Next period</small></span>}
-        </span>
-      </span>
-      <span className="ay-bn-ring">
-        <CycleRing cycleDay={cycle.cycleDay} avgLength={cycle.avgLength} periodLength={cycle.periodLength} windowStart={phase?.windowStart} windowEnd={phase?.windowEnd} />
-      </span>
-    </button>
-  );
-}
-
 /** The four phases across her cycle, with today marked and what this phase can mean. */
-function PhaseStrip({ cycle }) {
+export function PhaseStrip({ cycle }) {
   const phase = estimatePhase(cycle);
   if (!phase?.windowStart || !cycle.avgLength) return null;
   const L = Math.max(cycle.avgLength, cycle.cycleDay);
@@ -152,77 +62,186 @@ function PhaseStrip({ cycle }) {
         {seg.map((x) => (
           <span key={x.id} className={`is-${x.id}${x.id === phase.id ? ' is-now' : ''}`} style={{ flex: x.to - x.from + 1 }} title={short[x.id]} />
         ))}
-        <i className="ay-bn-today" style={{ left: `${((cycle.cycleDay - 0.5) / L) * 100}%` }} aria-hidden="true"><b>Today, day {cycle.cycleDay}</b></i>
+        <i className="ay-bn-today" style={{ left: `${((cycle.cycleDay - 0.5) / L) * 100}%` }} aria-hidden="true" />
       </div>
       <ul className="ay-bn-legend">
         {seg.map((x) => <li key={x.id} className={`is-${x.id}${x.id === phase.id ? ' is-now' : ''}`}><i aria-hidden="true" />{short[x.id]}<small>days {x.from}{x.to > x.from ? `-${x.to}` : ''}</small></li>)}
       </ul>
-      <p><b>{PHASES[phase.id]?.name}.</b> {PHASES[phase.id]?.what}</p>
+      <p>{PHASES[phase.id]?.what}</p>
     </section>
   );
 }
 
-/** What's coming, from her own cycle estimate. Only real dates, only when we have them. */
-function upcoming(cycle, estimate, today) {
-  const out = [];
-  if (!cycle?.lastStart) return out;
-  const phase = estimatePhase(cycle);
-  if (phase?.windowStart && phase?.windowEnd) {
-    const ws = addDays(cycle.lastStart, phase.windowStart - 1);
-    const we = addDays(cycle.lastStart, phase.windowEnd - 1);
-    if (daysBetween(today, we) >= 0) out.push({ day: ws < today ? today : ws, title: 'Likely ovulation window', sub: `${fmtDay(ws)} to ${fmtDay(we)}. An estimate, not birth control.`, tone: 'sky' });
-  }
-  if (estimate?.day && daysBetween(today, estimate.day) >= 0) {
-    const pms = addDays(estimate.day, -5);
-    if (daysBetween(today, pms) >= 0) out.push({ day: pms, title: 'Restock before your period', sub: 'Your shopping list is in Products.', tone: 'butter' });
-    out.push({ day: estimate.day, title: 'Next period, estimated', sub: estimate.basis ? 'From your last cycles. Can be off by a few days.' : '', tone: 'pink' });
-  }
-  return out.sort((a, b) => a.day.localeCompare(b.day)).slice(0, 4);
+
+/** A source link that opens in a new tab. */
+export function SourceLink({ source }) {
+  return <a href={source.url} target="_blank" rel="noopener noreferrer">{source.label}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a>;
 }
 
-export default function HealthBento({ name, week, cycle, estimate, pinnedCharts, ready, today, onOpenArea }) {
-  const phase = cycle?.cycleDay ? estimatePhase(cycle) : null;
-  const firstChange = ready.find((s) => s.id !== 'cycle' && s.change && s.change.direction !== 'flat');
-  const lead = [
-    cycle?.cycleDay ? `Day ${cycle.cycleDay} of your cycle${phase ? `, ${phase.id === 'ovulation' ? 'around ovulation' : phase.name.toLowerCase()}` : ''}.` : null,
-    firstChange ? `${firstChange.title} ${firstChange.change.text.replace(/than your usual$/, 'than usual')}.` : null,
-  ].filter(Boolean).join(' ');
-  const coming = upcoming(cycle, estimate, today);
-  const hour = new Date().getHours();
-  const hello = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
-
+/**
+ * What ayna adds to Apple Health: the founder's one line, then one sentence
+ * each for her data, evidence, products and community, with her own counts
+ * where they exist. Claims about ayna only, nothing about Apple beyond
+ * "stores the numbers".
+ */
+export function AddsStrip({ items, intro = true }) {
   return (
-    <div className="ay-bn">
-      <header className="ay-bn-hello">
-        <h2>{hello}{name ? `, ${name}` : ''}</h2>
-        {lead && <p>{lead}</p>}
-      </header>
-
-      {cycle?.cycleDay && <CycleCard cycle={cycle} estimate={estimate} onOpen={() => onOpenArea('cycle')} />}
-      {cycle?.cycleDay && <PhaseStrip cycle={cycle} />}
-
-      {pinnedCharts.length > 0 && (
-        <ul className="ay-bn-grid" aria-label="Your pinned numbers">
-          {pinnedCharts.map((c, i) => (
-            <MetricCard key={c.metric} chart={c} tone={TONES[i % TONES.length]} wide={i === 2 || (i === pinnedCharts.length - 1 && i % 2 === 0)} onOpen={() => onOpenArea(c.group)} />
-          ))}
+    <section className="ay-wx-adds" aria-labelledby="ay-wx-adds-title">
+      {/* A disclosure row, like iOS Settings: the facts open in place so the
+          dashboard isn't six screens long. */}
+      <details className="ay-fold">
+        <summary>
+          <span className="ay-fold__text">
+            <h3 id="ay-wx-adds-title">What ayna adds to Apple Health</h3>
+            {intro && <p className="ay-wx-adds-lead">Apple Health stores the numbers. ayna reads them against your cycle and tells you which of your products fit this week.</p>}
+          </span>
+          <svg className="ay-fold__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+        </summary>
+        <ul>
+          {items.map((x) => <li key={x.id}><b>{x.label}</b><span>{x.text}</span></li>)}
         </ul>
-      )}
+      </details>
+    </section>
+  );
+}
 
-      {coming.length > 0 && (
-        <section className="ay-bn-timeline" aria-labelledby="ay-bn-tl">
-          <h3 id="ay-bn-tl">Coming up</h3>
-          <ol>
-            {coming.map((e) => (
-              <li key={e.title + e.day} className={`is-${e.tone}`}>
-                <span className="ay-bn-tl-date"><b>{fmtDay(e.day).split(' ')[1]}</b><small>{fmtWeekday(e.day)}</small></span>
-                <span className="ay-bn-tl-card"><b>{e.title}</b>{e.sub && <small>{e.sub}</small>}</span>
-              </li>
-            ))}
-          </ol>
-        </section>
+/** This phase so far against the same cycle days of her last cycles. */
+export function PhaseCompare({ data }) {
+  if (!data) return null;
+  return (
+    <section className="ay-wx-group ay-wx-compare" aria-labelledby="ay-wx-compare-title">
+      <h3 id="ay-wx-compare-title">{data.title}</h3>
+      <table>
+        <thead><tr><th scope="col"><span className="sr-only">Measure</span></th><th scope="col">Now</th><th scope="col">Last {data.cycles}</th></tr></thead>
+        <tbody>
+          {data.rows.map((r) => (
+            <tr key={r.metric}>
+              <th scope="row">{r.label}<small>{r.word}</small></th>
+              <td>{r.now}</td>
+              <td>{r.usual}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="ay-wx-note">{data.note}</p>
+    </section>
+  );
+}
+
+/** Her cycle and period lengths next to the typical ranges, with the source. */
+export function NormalRanges({ data }) {
+  if (!data) return null;
+  return (
+    <section className="ay-wx-group ay-wx-normal" aria-labelledby="ay-wx-normal-title">
+      <h3 id="ay-wx-normal-title">Is this normal?</h3>
+      <ul>
+        {data.rows.map((r) => (
+          <li key={r.id} className={r.ok ? 'is-ok' : 'is-out'}>
+            <span className="ay-wx-normal-label">{r.label}</span>
+            <b>{r.value}</b>
+            <small>{r.ok ? 'Typical' : 'Outside the typical range of'} {r.typical}</small>
+          </li>
+        ))}
+      </ul>
+      <p className="ay-wx-note">{data.note} Source: <SourceLink source={data.source} /></p>
+    </section>
+  );
+}
+
+/** Each goal from her quiz, with what in her ecosystem is graded for it. */
+export function GoalsCovered({ goals, effects = [], onOpenProduct, title = 'Your goals, covered' }) {
+  if (!goals.length && !effects.length) return null;
+  const item = (product, level, prefix) => (
+    <button type="button" className="ay-wx-goal-product" onClick={() => onOpenProduct?.(product)}>
+      <span>{prefix}{displayName(product)}</span>
+      <Meter level={level} short />
+    </button>
+  );
+  return (
+    <section className="ay-wx-group ay-wx-goals" aria-labelledby="ay-wx-goals-title">
+      <h3 id="ay-wx-goals-title">{title}</h3>
+      <ul>
+        {goals.map((g) => (
+          <li key={g.needId}>
+            <span className="ay-wx-goal-label">{g.label}</span>
+            {g.owned.map((o) => <div key={o.product.id}>{item(o.product, o.level, '')}</div>)}
+            {!g.owned.length && g.match && <div>{item(g.match.product, g.match.level, 'Not in your ecosystem yet. Matched: ')}</div>}
+          </li>
+        ))}
+        {effects.map((e) => (
+          <li key={`fx-${e.product.id}`} className="is-effect">
+            <span className="ay-wx-goal-label">{displayName(e.product)}, before and since</span>
+            <p>{e.text}</p>
+            <p className="ay-wx-note">{e.caveat} <SourceLink source={e.sources[0]} /></p>
+          </li>
+        ))}
+      </ul>
+      <p className="ay-wx-note">Grades are ayna&rsquo;s reading of the research for that goal. Open a product for the studies.</p>
+    </section>
+  );
+}
+
+/**
+ * For someone with no connected health data yet: what ayna adds, her goals
+ * matched to her products (from the quiz alone), and how to connect.
+ */
+export function HealthStarter({ needIds = [], products = [], matches = [], onOpenProduct, onConnect, connectLabel = 'Connect health data', compact = false }) {
+  const goals = goalsCovered({ needIds, products, matches });
+  const adds = aynaAdds({ products, needIds });
+  return (
+    <div className="ay-bn ay-wx-starter">
+      {!compact && <AddsStrip items={adds} />}
+      <GoalsCovered goals={goals} onOpenProduct={onOpenProduct} title="Your goals, covered today" />
+      {onConnect && (
+        <div className="ay-wx-connect">
+          <p>Connect Apple Health, Health Connect or Oura and this page explains your week against your cycle: what changed, why it often does, and which of your products fit.</p>
+          <button type="button" className="ay-qc-primary ay-wx-connect-btn" onClick={onConnect}>{connectLabel}</button>
+        </div>
       )}
-      {week?.empty === false && null}
     </div>
+  );
+}
+
+export function Meter({ level, need, short = false }) {
+  if (!level) return null;
+  return (
+    <span className="ay-wx-meter" data-level={level}>
+      <span className="ay-wx-meter-bars" role="img" aria-label={`${LEVEL_WORD[level]}${need ? ` for ${need}` : ''}, ${level} of 3`}><i /><i /><i /></span>
+      <span className="ay-wx-meter-word">{short ? LEVEL_WORD[level].replace(' evidence', '') : LEVEL_WORD[level]}</span>
+    </span>
+  );
+}
+
+/**
+ * What might help this week: her products (then matches), each with the
+ * reason from her data and the product's evidence grade. One card anatomy
+ * (white tile, brand, name, price), the same in the app and on the website.
+ */
+export function WeekPicks({ picks, onOpenProduct }) {
+  if (!picks.length) return null;
+  return (
+    <section className="ay-wx-picks" aria-labelledby="ay-wx-picks-title">
+      <h3 id="ay-wx-picks-title">What might help this week</h3>
+      <ul className="ay-wx-picks-row">
+        {picks.map((pk) => {
+          const p = pk.product;
+          const brand = brandOf(p);
+          const name = displayName(p);
+          const price = formatPrice({ ...p, price: p.price || p.priceDisplay });
+          return (
+            <li key={p.id} className="ay-wx-pick">
+              <button type="button" className="ay-wx-card" onClick={() => onOpenProduct?.(p)} aria-label={`${name}${brand ? ` by ${brand}` : ''}. ${pk.reason} View product details`}>
+                <span className="ay-wx-tile"><ProductImage product={p} src={p.image || p.imageUrl} alt="" style={{ objectFit: 'contain' }} /></span>
+                {brand && brand.toLowerCase() !== String(name).toLowerCase() && <small className="ay-wx-brand">{brand}</small>}
+                <strong className="ay-wx-name">{name}</strong>
+                {price.main !== 'Price at retailer' && <span className="ay-wx-price">{price.main}</span>}
+              </button>
+              <p className="ay-wx-reason">{pk.reason}</p>
+              <Meter level={pk.level} need={NEED_WORDS[pk.needId]} />
+            </li>
+          );
+        })}
+      </ul>
+    </section>
   );
 }

@@ -40,7 +40,7 @@ export default function OrbHero({ showYou = true }) {
           margin: '-145px 0 0 -145px',
           borderRadius: '50%',
           background: 'radial-gradient(circle,rgba(255,199,116,.5),rgba(255,199,116,0) 68%)',
-          animation: 'ay-breathe 7s ease-in-out infinite',
+          animation: 'ay-breathe 7s ease-in-out 1',
         }}
       />
       <div
@@ -57,7 +57,7 @@ export default function OrbHero({ showYou = true }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          animation: 'ay-breathe 5s ease-in-out infinite',
+          animation: 'ay-breathe 5s ease-in-out 1',
         }}
       >
         {showYou && (

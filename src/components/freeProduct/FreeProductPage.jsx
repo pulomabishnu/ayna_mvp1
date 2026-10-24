@@ -70,10 +70,9 @@ function Equation({ compact = false }) {
 }
 
 /** Page header: a full-bleed v3 colour band with an edge, like every other ayna page head. */
-const EDGE = { rose: 'ay3-torn', sky: 'ay3-zigzag', ink: 'ay3-scallop', paper: '' };
 function PageHead({ tone = 'rose', kicker, title, lead, center = false, headingRef, children }) {
   return (
-    <header className={`fp-head ay3-band ay3-band--${tone} ${EDGE[tone]} ay3-edge-bottom${center ? ' is-center' : ''}`}>
+    <header className={`fp-head fp-head--${tone}${center ? ' is-center' : ''}`}>
       {kicker && <p className="fp-kicker">{kicker}</p>}
       <h1 className="fp-h1" tabIndex={headingRef ? -1 : undefined} ref={headingRef}>{title}</h1>
       {lead && <p className="fp-sub">{lead}</p>}

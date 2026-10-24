@@ -43,6 +43,8 @@ export function friendlyError(error) {
   for (const [code, text] of Object.entries(FRIENDLY_ERRORS)) {
     if (msg.includes(code)) return text;
   }
+  // src/utils/network.js: offline / timed out / unreachable already reads well.
+  if (error?.name === 'NetworkError' || /^NetworkError: /.test(msg)) return msg.replace(/^NetworkError: /, '');
   if (error?.code === '23505') return 'That already exists.';
   if (error?.code === '23503') return "That product isn't in the ayna catalog.";
   if (/row-level security|permission denied/i.test(msg)) return "You don't have access to do that.";
@@ -183,7 +185,7 @@ export async function getFeedPost(supabase, postId) {
   return check(await supabase.from('community_feed_posts').select('*').eq('id', postId).maybeSingle());
 }
 
-export async function createPost(supabase, userId, { kind, body, topics = [], isAnonymous = false, productId = null, rating = null, wouldRecommend = null, photoUrl = null, taggedProductIds = [], media = [] }) {
+export async function createPost(supabase, userId, { kind, body, topics = [], isAnonymous = false, productId = null, rating = null, wouldRecommend = null, photoUrl = null, taggedProductIds = [], media = [], topicId = null }) {
   const row = {
     author_id: userId,
     kind,
@@ -192,6 +194,9 @@ export async function createPost(supabase, userId, { kind, body, topics = [], is
     is_anonymous: Boolean(isAnonymous),
     photo_url: photoUrl || null,
   };
+  // A user-created topic (supabase/community_user_topics_2026-10-21.sql). Only
+  // sent when one is picked, so posting works before that migration runs.
+  if (topicId) row.topic_id = topicId;
   if (kind === 'review') {
     // The database only accepts 1 to 5 here; a missing or odd value would
     // otherwise save a review with no stars to show.
@@ -260,6 +265,24 @@ export async function listProductReviews(supabase, productId, { limit = 50 } = {
   return check(await supabase.from('community_feed_posts').select('*')
     .eq('kind', 'review').eq('product_id', String(productId))
     .order('created_at', { ascending: false }).order('id', { ascending: false }).limit(limit)) || [];
+}
+
+/**
+ * Community posts that are not reviews (questions, posts) and tag this
+ * product, newest first, for the product page's "From the community".
+ * Reviews show as reviews, so they are left out here. A post tags a product
+ * through community_post_products, which the community_feed_posts view
+ * exposes as tagged_product_ids. If that column is missing (an older view),
+ * only product_id is matched.
+ */
+export async function listProductMentions(supabase, productId, { limit = 6 } = {}) {
+  const safeId = String(productId || '').replace(/[^A-Za-z0-9_-]/g, '');
+  if (!supabase || !safeId) return [];
+  const base = () => supabase.from('community_feed_posts').select('*').neq('kind', 'review');
+  const order = (q) => q.order('created_at', { ascending: false }).order('id', { ascending: false }).limit(limit);
+  let res = await order(base().or(`product_id.eq.${safeId},tagged_product_ids.cs.{${safeId}}`));
+  if (res.error && isMissingSchemaError(res.error)) res = await order(base().eq('product_id', safeId));
+  return (check(res) || []).filter((r) => r?.kind !== 'review');
 }
 
 // ── Comments ────────────────────────────────────────────────────────────────
@@ -535,6 +558,27 @@ export async function addToPlaylist(supabase, playlistId, productId, note = null
     playlist_id: playlistId, product_id: productId, note: note || null, position: Date.now() % 2147483647,
   });
   if (error && error.code !== '23505') throw error;
+}
+
+/**
+ * Add several products in ONE request (was one insert per product). Already
+ * present products are skipped. If the batch is refused as a whole (e.g. the
+ * playlist size cap trigger), falls back to one-by-one so the ones that fit
+ * still land. Returns how many were added or already there.
+ */
+export async function addManyToPlaylist(supabase, playlistId, productIds) {
+  const ids = [...new Set((productIds || []).filter(Boolean))];
+  if (!ids.length) return 0;
+  const base = Date.now() % 2147483000;
+  const rows = ids.map((productId, i) => ({ playlist_id: playlistId, product_id: productId, note: null, position: base + i }));
+  const { error } = await supabase.from('community_playlist_items')
+    .upsert(rows, { onConflict: 'playlist_id,product_id', ignoreDuplicates: true });
+  if (!error) return ids.length;
+  let added = 0;
+  for (const id of ids) {
+    try { await addToPlaylist(supabase, playlistId, id); added += 1; } catch { /* counted by the caller */ }
+  }
+  return added;
 }
 
 export async function removeFromPlaylist(supabase, playlistId, productId) {

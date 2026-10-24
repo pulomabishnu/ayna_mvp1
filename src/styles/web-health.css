@@ -25,7 +25,7 @@
   font-family: var(--ay-sans);
   box-sizing: border-box;
 }
-.app-container[data-theme='dark'] .ay-wh.ay-wh {
+.app-container:is([data-theme='dark'], [data-theme='brand-dark']) .ay-wh.ay-wh {
   --wh-ink: #ffedac;
   --wh-bg: #3e2723;
   --wh-soft: rgba(255, 237, 172, .78);
@@ -35,7 +35,7 @@
 .app-container .ay-wh.ay-wh *, .app-container .ay-wh.ay-wh *::before, .app-container .ay-wh.ay-wh *::after { box-sizing: border-box; }
 .app-container .ay-wh.ay-wh button { font-family: inherit; cursor: pointer; }
 
-/* ---------- headings: DM Serif Display 400, sentence case ---------- */
+/* ---------- headings: ayna Display 400, sentence case ---------- */
 html body .app-container main .ay-wh.ay-wh :is(h2, h3) { margin: 0; color: var(--wh-ink) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: 0 !important; text-transform: none !important; line-height: 1.1 !important; }
 html body .app-container main .ay-wh.ay-wh h2 { font-size: var(--ay-fs-section) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
 html body .app-container main .ay-wh.ay-wh h3 { font-size: var(--ay-fs-section) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
@@ -109,6 +109,8 @@ html body .app-container main .ay-wh.ay-wh .ay-bn-hello h2 { font-size: var(--ay
 .app-container .ay-wh.ay-wh .ay-bn-legend .is-follicular i { background: #ffedac; box-shadow: inset 0 0 0 1.5px #3e2723; }
 .app-container .ay-wh.ay-wh .ay-bn-legend .is-ovulation i { background: #769ebe; }
 .app-container .ay-wh.ay-wh .ay-bn-legend .is-luteal i { background: #3e2723; }
+/* Dark: the luteal segment and dot get a butter outline so they show on espresso (as in the app). */
+.app-container:is([data-theme='dark'], [data-theme='brand-dark']) .ay-wh.ay-wh :is(.ay-bn-phasebar .is-luteal, .ay-bn-legend .is-luteal i) { background: transparent; box-shadow: inset 0 0 0 1.5px #ffedac; }
 .app-container .ay-wh.ay-wh .ay-bn-phases > p { max-width: 70ch; font: 500 var(--ay-fs-secondary)/1.5 var(--ay-sans); color: var(--wh-ink); }
 
 /* metric cards */
@@ -124,7 +126,7 @@ html body .app-container main .ay-wh.ay-wh .ay-bn-hello h2 { font-size: var(--ay
 .app-container .ay-wh.ay-wh .ay-bn-bars rect { fill: currentColor; opacity: .32; }
 .app-container .ay-wh.ay-wh .ay-bn-bars rect.is-now { opacity: 1; }
 .app-container .ay-wh.ay-wh .ay-bn-bars rect.is-gap { opacity: .2; }
-.app-container .ay-wh.ay-wh .ay-bn-line path { fill: none; stroke: currentColor; stroke-width: 1.8; vector-effect: non-scaling-stroke; }
+.app-container .ay-wh.ay-wh .ay-bn-line path { fill: none; stroke: currentColor; stroke-width: 1.75; vector-effect: non-scaling-stroke; }
 .app-container .ay-wh.ay-wh .ay-bn-line :is(.ay-bn-usual, .ay-bn-now) { stroke: currentColor; stroke-width: 1; stroke-dasharray: 3 3; opacity: .5; vector-effect: non-scaling-stroke; }
 .app-container .ay-wh.ay-wh .ay-bn-line circle { fill: currentColor; }
 
@@ -180,10 +182,10 @@ html body .app-container main .ay-wh.ay-wh .ay-bn-timeline h3 { margin-bottom: 1
 .app-container .ay-wh.ay-wh .ay-hd-chart svg { display: block; width: 100%; height: auto; max-height: 240px; overflow: visible; border-bottom: 1.5px solid var(--hd-ink); touch-action: pan-y; }
 .app-container .ay-wh.ay-wh .ay-hd-chart svg:focus-visible { outline: 3px solid var(--wh-sky); outline-offset: 4px; border-radius: 6px; }
 .app-container .ay-wh.ay-wh .ay-hd-chart.is-bar rect:not(.ay-hd-hit) { fill: var(--hd-bar); }
-.app-container .ay-wh.ay-wh .ay-hd-chart.is-bar rect.is-on { fill: var(--hd-on); stroke: var(--hd-ink); stroke-width: 1.5; }
-.app-container .ay-wh.ay-wh .ay-hd-line { fill: none; stroke: var(--hd-ink); stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
+.app-container .ay-wh.ay-wh .ay-hd-chart.is-bar rect.is-on { fill: var(--hd-on); stroke: var(--hd-ink); stroke-width: 1.75; }
+.app-container .ay-wh.ay-wh .ay-hd-line { fill: none; stroke: var(--hd-ink); stroke-width: 1.75; stroke-linejoin: round; stroke-linecap: round; }
 .app-container .ay-wh.ay-wh .ay-hd-chart circle { fill: var(--hd-bar); stroke: var(--hd-ink); stroke-width: 1.2; }
-.app-container .ay-wh.ay-wh .ay-hd-chart circle.is-on { fill: var(--hd-on); stroke-width: 1.8; }
+.app-container .ay-wh.ay-wh .ay-hd-chart circle.is-on { fill: var(--hd-on); stroke-width: 1.75; }
 .app-container .ay-wh.ay-wh .ay-hd-usual { stroke: var(--hd-ink); stroke-width: 1.4; stroke-dasharray: 5 4; opacity: .7; }
 .app-container .ay-wh.ay-wh .ay-hd-hit { fill: transparent; cursor: pointer; }
 .app-container .ay-wh.ay-wh .ay-hd-chart figcaption { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; font: 600 var(--ay-fs-caption)/1.2 var(--ay-sans); color: var(--wh-soft); }
@@ -240,7 +242,7 @@ html body .app-container main .ay-wh.ay-wh .ay-bn-timeline h3 { margin-bottom: 1
 html body .app-container main .ay-wh.ay-wh .ay-wh-lockpanel h2 { max-width: 22ch; text-wrap: balance; font-size: var(--ay-fs-title) !important; color: #3e2723 !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
 .app-container .ay-wh.ay-wh .ay-wh-lockpanel > p { max-width: 42ch; font: 500 var(--ay-fs-secondary)/1.5 var(--ay-sans); }
 .app-container .ay-wh.ay-wh .ay-wh-lockicon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: #f7badd; }
-.app-container .ay-wh.ay-wh .ay-wh-lockicon svg { width: 22px; height: 22px; fill: none; stroke: #3e2723; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.app-container .ay-wh.ay-wh .ay-wh-lockicon svg { width: 22px; height: 22px; fill: none; stroke: #3e2723; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
 .app-container .ay-wh.ay-wh .ay-wh-lockactions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 4px; }
 .app-container .ay-wh.ay-wh .ay-wh-lockpanel .ay-wh-btn { background: #3e2723 !important; border-color: #3e2723 !important; color: #ffedac !important; }
 .app-container .ay-wh.ay-wh .ay-wh-lockpanel .ay-wh-btn.is-quiet { background: transparent !important; color: #3e2723 !important; }
@@ -291,3 +293,52 @@ html body .app-container main .ay-wh.ay-wh .ay-wh-lockpanel h2 { max-width: 22ch
 @media (max-width: 639px) {
   .app-container .ay-wh.ay-wh .ay-bn-legend { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 12px; }
 }
+
+/* Oct 20 redo: the locked "Join the beta" panel is the page's one Feature
+   block (espresso, butter text, radius 24, no shadow); it flips in dark mode. */
+html body .app-container.app-container .ay-wh.ay-wh .ay-wh-lockpanel { border: 0 !important; border-radius: var(--ay-r-feature, 24px) !important; background: var(--ay-feature-bg, #3e2723) !important; color: var(--ay-feature-fg, #ffedac) !important; box-shadow: none !important; padding: 40px 32px !important; }
+html body .app-container.app-container main .ay-wh.ay-wh .ay-wh-lockpanel :is(h2, p, figcaption, span) { color: var(--ay-feature-fg, #ffedac) !important; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-wh-lockpanel > p { font: 400 16px/1.5 var(--ay-sans) !important; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-wh-lockpanel .ay-wh-btn { min-height: 48px; background: var(--ay-feature-fg, #ffedac) !important; border: 1.5px solid var(--ay-feature-fg, #ffedac) !important; color: var(--ay-feature-bg, #3e2723) !important; box-shadow: 3px 3px 0 #f7badd !important; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-wh-lockpanel .ay-wh-btn.is-quiet { background: transparent !important; color: var(--ay-feature-fg, #ffedac) !important; box-shadow: none !important; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-wh-lockpanel .ay-wh-locknote { border-top-color: rgba(255, 237, 172, .25) !important; opacity: .9; }
+html body .app-container.app-container[data-theme='brand-dark'] .ay-wh.ay-wh .ay-wh-lockpanel .ay-wh-locknote { border-top-color: rgba(62, 39, 35, .2) !important; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-wh-pro { border-color: var(--ay-feature-fg, #ffedac) !important; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-wh-pro, html body .app-container.app-container .ay-wh.ay-wh .ay-wh-lockicon svg { color: var(--ay-feature-fg, #ffedac); }
+html body .app-container.app-container .ay-wh.ay-wh .ay-wh-lockicon svg { stroke: #3e2723 !important; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-wh-qr img { padding: 8px; background: #ffffff; box-shadow: none !important; box-sizing: content-box; }
+
+/* ---------- Integration pass: the web dashboard on the design direction ----------
+   Same as the app dashboard: the cycle card is the one Feature (espresso),
+   metric tiles and Coming up are Groups (deeper butter, no border), the
+   area and range pickers are filter chips (outline, selected = pink + check).
+   Sky and pink stay as data colours (phase bar, charts), never as tile fills. */
+html body .app-container.app-container .ay-wh.ay-wh .ay-bn-cycle { background: var(--ay-feature-bg, #3e2723) !important; color: var(--ay-feature-fg, #ffedac) !important; border: 0 !important; border-radius: 24px !important; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-bn-cycle :is(h2, h3, p, b, small, span, strong) { color: inherit !important; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-bn-card > button { background: var(--ay-group, #f6e3a1) !important; color: var(--wh-ink) !important; border: 0 !important; box-shadow: none !important; border-radius: 20px !important; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-bn-card > button :is(b, small, span, strong, p) { color: inherit; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-bn-card .ay-bn-line { color: #769ebe; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-bn-card .ay-bn-bars { color: #769ebe; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-bn-timeline { padding: 20px; border-radius: 20px; background: var(--ay-group, #f6e3a1); }
+html body .app-container.app-container .ay-wh.ay-wh .ay-bn-timeline ol { gap: 0; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-bn-timeline li { padding: 12px 0; border-top: 1px solid var(--ay-hairline, rgba(62, 39, 35, .15)); }
+html body .app-container.app-container .ay-wh.ay-wh .ay-bn-timeline li:first-child { border-top: 0; padding-top: 0; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-bn-timeline li .ay-bn-tl-card { padding: 0; border-radius: 0; background: transparent !important; box-shadow: none !important; color: var(--wh-ink); }
+html body .app-container.app-container .ay-wh.ay-wh .ay-bn-tl-card small { color: var(--wh-soft); }
+html body .app-container.app-container .ay-wh.ay-wh .ay-bn-tl-card b { display: flex; align-items: center; gap: 8px; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-bn-tl-card b::before { content: ''; flex: none; width: 8px; height: 8px; border-radius: 50%; background: #769ebe; }
+html body .app-container.app-container .ay-wh.ay-wh li.is-pink .ay-bn-tl-card b::before { background: #f7badd; box-shadow: inset 0 0 0 1px #3e2723; }
+html body .app-container.app-container .ay-wh.ay-wh li.is-butter .ay-bn-tl-card b::before { background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; }
+html body .app-container.app-container .ay-wh.ay-wh .ay-wh-chart { border: 0 !important; border-radius: 20px !important; background: var(--ay-group, #f6e3a1) !important; }
+html body .app-container.app-container .ay-wh.ay-wh :is(.ay-wh-tabs, .ay-wh-range) { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+html body .app-container.app-container .ay-wh.ay-wh :is(.ay-wh-tabs, .ay-wh-range)::-webkit-scrollbar { display: none; }
+html body .app-container.app-container .ay-wh.ay-wh :is(.ay-wh-tabs, .ay-wh-range) button { position: relative; flex: none; display: inline-flex; align-items: center; gap: 6px; height: 36px; min-height: 36px; margin: 4px 0; padding: 0 14px !important; border: 1.5px solid var(--wh-ink) !important; border-radius: 99px !important; background: transparent !important; color: var(--wh-ink) !important; font: 500 14px/1 var(--ay-sans-stack, 'Figtree', sans-serif) !important; white-space: nowrap; }
+html body .app-container.app-container .ay-wh.ay-wh :is(.ay-wh-tabs, .ay-wh-range) button::after { content: ''; position: absolute; inset: -4px 0; }
+html body .app-container.app-container .ay-wh.ay-wh :is(.ay-wh-tabs, .ay-wh-range) button.is-on { padding-left: 10px !important; background: #f7badd !important; border-color: #3e2723 !important; color: #3e2723 !important; font-weight: 600 !important; }
+html body .app-container.app-container .ay-wh.ay-wh :is(.ay-wh-tabs, .ay-wh-range) button.is-on::before { content: ''; flex: none; width: 16px; height: 16px; background: #3e2723; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 16px no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 16px no-repeat; }
+@media (max-width: 720px) {
+  html body .app-container.app-container .ay-wh.ay-wh .ay-wh-areas-head { display: grid; gap: 8px; }
+  html body .app-container.app-container .ay-wh.ay-wh .ay-wh-range { margin-left: 0; }
+  html body .app-container.app-container .ay-wh.ay-wh :is(.ay-wh-tabs, .ay-wh-range) { margin: 0 calc(var(--ay-margin, 20px) * -1); padding: 0 var(--ay-margin, 20px); }
+}
+html body .app-container.app-container .ay-wh.ay-wh .ay-bn-phases { border: 0 !important; border-radius: 20px !important; background: var(--ay-group, #f6e3a1) !important; padding: 20px !important; }

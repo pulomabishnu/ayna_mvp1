@@ -1,5 +1,6 @@
 import React from 'react';
-import { InfoPage, InfoSection } from './InfoPage';
+import { EdPage, EdBlock } from './editorial/EdPage';
+import { Clip } from './personality/Bits.jsx';
 import { TEAM_CAPTION } from '../data/welcomeSlides.js';
 
 /**
@@ -26,7 +27,7 @@ const PRINCIPLES = [
   { title: 'Matched to you', body: 'Your profile shapes what you see.' },
   { title: 'Evidence-aware', body: 'Research and guidance add context.' },
   { title: 'Clinician + community', body: 'Two kinds of experience, side by side.' },
-  { title: 'Never pay-to-match', body: 'Sponsorship is never a match input.' },
+  { title: 'Never pay\u2011to\u2011match', body: 'Sponsorship is never a match input.' },
 ];
 
 
@@ -63,11 +64,11 @@ function initials(name) {
 
 function AdvisorPhoto({ advisor, small = false }) {
   const [failed, setFailed] = React.useState(false);
-  const cls = `ay-info-advisor__photo${small ? ' ay-info-advisor__photo--sm' : ''}`;
+  const cls = small ? 'ed-advisor__photo--sm' : '';
   if (advisor.photo && !failed) {
     return <img className={cls} src={advisor.photo} alt="" loading="lazy" onError={() => setFailed(true)} />;
   }
-  return <div className={`${cls} ay-info-advisor__photo--initials`} aria-hidden="true">{initials(advisor.name)}</div>;
+  return <div className={`ed-initials ${cls}`} aria-hidden="true">{initials(advisor.name)}</div>;
 }
 
 function FounderPhoto({ founder }) {
@@ -75,7 +76,6 @@ function FounderPhoto({ founder }) {
   if (founder.photo && !failed) {
     return (
       <img
-        className="ay-info-founder__photo"
         src={founder.photo}
         alt={founder.name}
         loading="lazy"
@@ -84,141 +84,136 @@ function FounderPhoto({ founder }) {
       />
     );
   }
-  return <div className="ay-info-founder__photo ay-info-founder__photo--initials" aria-hidden="true">{initials(founder.name)}</div>;
+  return <div className="ed-initials" aria-hidden="true">{initials(founder.name)}</div>;
 }
 
 function TeamPhoto() {
   const [failed, setFailed] = React.useState(false);
   if (failed) return null;
   return (
-    <figure className="ay-info-team__photo ay-info-story__photo">
-      <img src={TEAM_PHOTO} alt="The ayna founding team" style={{ objectPosition: '50% 70%' }} onError={() => setFailed(true)} />
+    <figure className="ay-polaroid ed-story__polaroid" style={{ '--tilt': '-1.5deg' }}>
+      <Clip />
+      <img src={TEAM_PHOTO} alt="The ayna founding team" style={{ objectPosition: '50% 70%' }} loading="lazy" onError={() => setFailed(true)} />
       <figcaption>{TEAM_CAPTION}</figcaption>
     </figure>
   );
 }
 
-export default function About({ onBack, onExplore, onStart }) {
+export default function About({ onBack, backLabel, onExplore, onStart }) {
   return (
-    <InfoPage photos={['robe-pickles', 'lilies', 'pink-stripe-floor']}
-      eyebrow="About ayna"
-      title={<>We built the place we wished we could turn to.</>}
+    <EdPage
+      title="We built the place we wished we could turn to."
       lede="Women’s wellness products matched to your needs, with the research and reviews beside them."
-      onBack={onBack}
+      onBack={onBack} backLabel={backLabel}
+      photo="robe-pickles"
+      tone="pink"
+      frame="stamp"
     >
-      <InfoSection
-        eyebrow="Our mission"
-        title="Your body. Your questions. A clearer place to start."
-        intro="ayna helps you discover women’s wellness products with your needs in mind. Explore product information, research and reviews in one place, so you can spend less time searching and more time understanding your options."
+      <EdBlock
+        title="Find what fits your body, with the research right next to it."
+        intro="ayna matches women’s health products to your answers and puts the research and reviews beside each one, so you spend less time searching."
       >
-        {/* Numbered like the landing's "Your counter, decoded" (was four colour blobs). */}
-        <ol className="ay-info-principles">
+        <ol className="ed-principles">
           {PRINCIPLES.map((p, i) => (
             <li key={p.title}>
-              <span className="ay-info-principles__n" aria-hidden="true">{i + 1}</span>
-              <div><h3>{p.title}</h3><p>{p.body}</p></div>
+              <b aria-hidden="true">{i + 1}</b>
+              <h3 className="ed-rowtitle">{p.title}</h3>
+              <p>{p.body}</p>
             </li>
           ))}
         </ol>
-      </InfoSection>
+      </EdBlock>
 
-      <InfoSection eyebrow="Our story" title="Three of us, one question: why is this so hard to find?">
-        <div className="ay-info-story">
-          <div className="ay-info-card ay-info-card--pad ay-info-story__text">
-            <p className="ay-info__body">
+      <EdBlock title="We kept asking the same thing: why is this so hard to find?">
+        <div className="ed-story">
+          <div className="ed-prose">
+            <p>
               For our co-founder Puloma, getting a PMOS diagnosis took visits to three doctors. When she asked her OB-GYN
               which products could help manage her symptoms, she was told to “look it up.” Finding guidance on
               non-prescription products brought another challenge: figuring out where to begin.
             </p>
-            <p className="ay-info__body">
+            <p>
               For Eliz and Ameera, growing up in households where intimate health wasn’t openly discussed meant looking
               online for answers to questions that were difficult to ask elsewhere.
             </p>
-            <p className="ay-info__body">
+            <p>
               We met at Cornell, bringing different experiences to the same question:{' '}
               <em>why does understanding our options require so much searching?</em>
             </p>
-            <p className="ay-info__body">
-              ayna grew out of that question. We’re building a place where women can explore wellness products,
+            <p>
+              ayna grew out of that question. We’re building a place where women can compare wellness products,
               understand the information behind them and find options that reflect their individual needs.
             </p>
+            <div className="ed-pull">
+              <p>ayna means “mirror.”</p>
+              <p>
+                Our name means mirror in Bengali and Turkish. To us, it expresses what we want this experience to feel like:
+                a place that reflects you, your questions and what matters to you.
+              </p>
+            </div>
           </div>
           <TeamPhoto />
         </div>
-        <div className="ay-info-card ay-info-card--pad ay-info-card--butter ay-info-mirror">
-          <h3 className="ay-info-card__title">ayna means “mirror.”</h3>
-          <p className="ay-info__body">
-            Our name means mirror in Bengali and Turkish. To us, it expresses what we want this experience to feel like:
-            a place that reflects you, your questions and what matters to you.
-          </p>
-        </div>
-      </InfoSection>
+      </EdBlock>
 
-      {/* The icon + title + line ×3 block was cut: the landing's "Your counter, decoded" says it better. */}
-      <InfoSection
-        eyebrow="Meet the founders"
-        title="The people building ayna."
-        intro="We’re Puloma, Eliz and Ameera: three women who met at Cornell and wanted a better starting point for women navigating wellness products."
+      <EdBlock
+        title="The people building ayna"
+        intro="We’re Puloma, Eliz and Ameera: three women who met at Cornell and wanted a better starting point for women trying to figure out wellness products."
       >
-        <ul className="ay-info-grid ay-info-grid--3 ay-info-founders">
+        <ul className="ed-people">
           {FOUNDERS.map((f) => (
-            <li key={f.name} className="ay-info-card ay-info-founder">
+            <li key={f.name} className="ed-person">
               <FounderPhoto founder={f} />
-              <div className="ay-info-founder__body">
-                <h3 className="ay-info-card__title">{f.name}</h3>
-                <div className="ay-info-team__role">{f.role}</div>
-                {f.linkedin && (
-                  <a className="ay-info-advisor__link" href={f.linkedin} target="_blank" rel="noopener noreferrer">
-                    LinkedIn <span aria-hidden="true">↗</span>
-                  </a>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
-      </InfoSection>
-
-      <InfoSection eyebrow="Advisors" title="Advised by physicians and health-industry operators.">
-        <ul className="ay-info-advisors" id="advisors">
-          {ADVISORS.map((advisor) => (
-            <li key={advisor.name} className="ay-info-advisor">
-              <AdvisorPhoto advisor={advisor} />
-              <div className="ay-info-advisor__name">{advisor.name}</div>
-              <div className="ay-info-advisor__title">{advisor.title}</div>
-              {advisor.linkedin && (
-                <a className="ay-info-advisor__link" href={advisor.linkedin} target="_blank" rel="noopener noreferrer">
-                  {advisor.linkLabel || 'LinkedIn'} <span aria-hidden="true">↗</span>
+              <h3 className="ed-rowtitle">{f.name}</h3>
+              <span className="ed-meta">{f.role}</span>
+              {f.linkedin && (
+                <a href={f.linkedin} target="_blank" rel="noopener noreferrer">
+                  LinkedIn <span aria-hidden="true">↗</span><span className="ed-sr"> (opens in a new tab)</span>
                 </a>
               )}
             </li>
           ))}
         </ul>
-        {SHOW_ADVISOR_IN_DISCUSSION && <div className="ay-info-advisor-note">
-          <AdvisorPhoto advisor={ADVISOR_IN_DISCUSSION} small />
-          <div>
-            <strong>{ADVISOR_IN_DISCUSSION.name}</strong>, {ADVISOR_IN_DISCUSSION.title}
-            <div className="ay-info-advisor-note__label">In conversation with ayna, not yet a confirmed advisor</div>
-          </div>
-        </div>}
-      </InfoSection>
+      </EdBlock>
 
-      <InfoSection>
-        <div className="ay-info-card ay-info-card--pad ay-info-card--peri ay-info-cta">
-          <div>
-            <h2 className="ay-info__h2 ay-info__h2--sm">A place to return to as your needs change.</h2>
-            <p className="ay-info__body">
-              The questions you have about your body can change over time. We want ayna to grow with those questions,
-              making women’s wellness easier to explore at every stage.
-            </p>
-          </div>
-          {(onStart || onExplore) && (
-            <div className="ay-info-btn-row">
-              {onStart && <button type="button" className="ay-info-btn" onClick={() => onStart()}>See my matches</button>}
-              {onExplore && <button type="button" className="ay-info-btn ay-info-btn--ghost" onClick={() => onExplore()}>Browse the Shop</button>}
-            </div>
-          )}
+      <EdBlock title="Advised by physicians and health-industry operators.">
+        <ul className="ed-advisors" id="advisors">
+          {ADVISORS.map((advisor) => (
+            <li key={advisor.name} className="ed-advisor">
+              <AdvisorPhoto advisor={advisor} />
+              <span className="ed-rowtitle">{advisor.name}</span>
+              <span className="ed-meta">{advisor.title}</span>
+              {advisor.linkedin && (
+                <a href={advisor.linkedin} target="_blank" rel="noopener noreferrer">
+                  {advisor.linkLabel || 'LinkedIn'} <span aria-hidden="true">↗</span><span className="ed-sr"> (opens in a new tab)</span>
+                </a>
+              )}
+            </li>
+          ))}
+        </ul>
+        {SHOW_ADVISOR_IN_DISCUSSION && <div className="ed-advisor">
+          <AdvisorPhoto advisor={ADVISOR_IN_DISCUSSION} small />
+          <span className="ed-rowtitle">{ADVISOR_IN_DISCUSSION.name}</span>
+          <span className="ed-meta">{ADVISOR_IN_DISCUSSION.title}</span>
+          <span className="ed-caption">In conversation with ayna, not yet a confirmed advisor</span>
+        </div>}
+      </EdBlock>
+
+      <section className="ed-block ay-band ay-band--espresso ay-band--bleed ay-band--scallop ed-closer ed-closer--band" aria-labelledby="ed-about-closer">
+        <div>
+          <h2 id="ed-about-closer" className="ed-h2">A place to return to as your needs change.</h2>
+          <p className="ed-body">
+            The questions you have about your body can change over time. We want ayna to grow with those questions,
+            making women’s wellness easier to explore at every stage.
+          </p>
         </div>
-      </InfoSection>
-    </InfoPage>
+        {(onStart || onExplore) && (
+          <div className="ed-closer__cta">
+            {onStart && <button type="button" className="ay-btn ay-btn--primary" onClick={() => onStart()}>See my matches</button>}
+            {onExplore && <button type="button" className="ay-btn ay-btn--secondary" onClick={() => onExplore()}>Browse the Shop</button>}
+          </div>
+        )}
+      </section>
+    </EdPage>
   );
 }

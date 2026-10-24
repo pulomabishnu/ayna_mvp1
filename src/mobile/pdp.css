@@ -196,7 +196,7 @@
   border: 2px solid var(--ay-ink) !important; border-radius: 999px !important;
   background: var(--ay-paper) !important; color: var(--ay-ink) !important;
   box-shadow: 2px 2px 0 var(--ay-ink) !important;
-  font: 600 17px/1 var(--ay-font-ui, 'Poppins', system-ui, sans-serif) !important;
+  font: 600 17px/1 var(--ay-font-ui, 'Figtree', system-ui, sans-serif) !important;
   text-decoration: none !important; cursor: pointer;
   transition: transform 150ms ease, box-shadow 150ms ease;
 }

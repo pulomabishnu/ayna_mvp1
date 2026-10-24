@@ -129,3 +129,14 @@
 /* cabinet.css styles every div/button in the actions row; undo that for the slider */
 .ayna-mobile.ayna-mobile .ay-intro-actions > .ay-intro-slide { display: block; margin-top: 0; }
 .ayna-mobile.ayna-mobile .ay-intro-actions > .ay-intro-slide .ayna-slide-start-handle { display: grid; place-items: center; padding: 0; border: 0; }
+
+/* Plain full-width start button (replaces slide-to-start). Primary: espresso
+   fill + 3px pink offset, 56px, in thumb reach. */
+.ayna-mobile.ayna-mobile .ay-intro-start { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 56px; margin: 0; padding: 0 24px; border: 1.5px solid #3e2723 !important; border-radius: 999px !important; background: #3e2723 !important; color: #ffedac !important; box-shadow: 3px 3px 0 #f7badd !important; font: 600 calc(17px * var(--ayna-text-scale, 1))/1 var(--ay-font-ui, 'Figtree', system-ui, sans-serif) !important; cursor: pointer; }
+.ayna-mobile.ayna-mobile .ay-intro-start svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.ayna-mobile.ayna-mobile .ay-intro-start:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #f7badd !important; }
+.ayna-mobile.ayna-mobile .ay-intro-start:focus-visible { outline: 3px solid #3e2723; outline-offset: 3px; }
+.ayna-mobile[data-theme='dark'] .ay-intro-start { background: #ffedac !important; color: #3e2723 !important; border-color: #ffedac !important; }
+/* The start button sits low, in thumb reach. */
+.ayna-mobile.ayna-mobile .ay-intro-body { display: flex; flex-direction: column; min-height: calc(100dvh - 160px - env(safe-area-inset-bottom)); }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-intro-body > .ay-intro-actions { margin-top: auto !important; padding-bottom: 24px !important; }

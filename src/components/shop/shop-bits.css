@@ -1,0 +1,118 @@
+/* Shop pieces shared by the website (.app-container) and the app (.ayna-mobile):
+   die-cut need stickers, folder tabs, the quick row, the ⌘K hint and the
+   "Does this sound familiar?" ribbon. Radii: 10 small, 16 card, 999 pill.
+   Elevation: outline + 3px espresso offset on tappable things only. */
+.app-container, .ayna-mobile {
+  --sb-ink: var(--ay-text, var(--ayna-heading, #3e2723));
+  --sb-line: var(--ay-outline, #3e2723);
+  --sb-tab: var(--ay-group, #f6e3a1);
+  --sb-page: var(--ay-page, #ffedac);
+}
+.ayna-mobile { --sb-ink: var(--ayna-heading, #3e2723); --sb-line: var(--ayna-heading, #3e2723); --sb-tab: #f6e3a1; --sb-page: var(--ayna-bg, #ffedac); }
+.ayna-mobile[data-theme='dark'] { --sb-tab: #4a312c; }
+
+/* ---- Die-cut need stickers ---- */
+.ay-needstickers { display: flex; gap: 14px; margin: 20px 0 0; padding: 6px 4px 10px; list-style: none; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x proximity; -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 32px), transparent); }
+.ay-needstickers::-webkit-scrollbar { display: none; }
+.ay-needstickers > li { flex: none; scroll-snap-align: start; }
+.app-container .ay-needsticker, .ayna-mobile .ay-needsticker {
+  display: grid; justify-items: center; gap: 8px; min-width: 88px; padding: 4px 2px; margin: 0;
+  border: 0 !important; background: none !important; box-shadow: none !important; color: inherit !important;
+  font: 600 14px/1.15 var(--ay-sans-stack, var(--ayna-font-ui, 'Figtree', system-ui, sans-serif)) !important;
+  cursor: pointer; transform: rotate(var(--tilt, 0deg));
+  transition: transform var(--t-fast) var(--ease-out);
+}
+.ay-needsticker__die {
+  display: block; width: 80px; height: 80px; padding: 5px; box-sizing: border-box;
+  background: #fff; border-radius: 16px; border: 1.5px solid #3e2723; box-shadow: 3px 3px 0 #3e2723;
+}
+.ay-needsticker__die img { display: block; width: 100%; height: 100%; object-fit: contain; border-radius: 10px; }
+/* The frame before its photo arrives (the catalog loads after first paint). */
+.ay-needsticker__wait { display: block; width: 100%; height: 100%; border-radius: 10px; background: rgba(62, 39, 35, 0.06); }
+.ay-needsticker__label { white-space: nowrap; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; text-decoration-color: transparent; transition: text-decoration-color var(--t-fast) var(--ease-in-out); }
+@media (hover: hover) and (pointer: fine) {
+  .app-container .ay-needsticker:hover { transform: rotate(0deg) translateY(-3px); }
+  .app-container .ay-needsticker:hover .ay-needsticker__label { text-decoration-color: currentColor; }
+}
+.app-container .ay-needsticker:active, .ayna-mobile .ay-needsticker:active { transform: rotate(0deg) scale(.97); transition-timing-function: var(--ease-pop); }
+.ay-needsticker[aria-pressed='true'] .ay-needsticker__die { background: #f7badd; }
+.ay-needsticker[aria-pressed='true'] .ay-needsticker__label { text-decoration-color: currentColor; }
+.ay-needsticker:focus-visible { outline: 3px solid currentColor; outline-offset: 4px; border-radius: 10px; }
+@media (prefers-reduced-motion: reduce) { .app-container .ay-needsticker, .ayna-mobile .ay-needsticker { transition: none; } }
+
+/* ---- Folder tabs on a rule ---- */
+.ay-folders { position: relative; display: flex; align-items: flex-end; gap: 4px; margin: 24px 0 0; padding: 26px 2px 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; border-bottom: 1.5px solid var(--sb-line); -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); }
+.ay-folders::-webkit-scrollbar { display: none; }
+.app-container .ay-folder-tab, .ayna-mobile .ay-folder-tab {
+  position: relative; isolation: isolate; flex: none; display: inline-flex; align-items: center; gap: 6px;
+  min-height: 42px; margin: 0 0 -1.5px; padding: 0 16px 1.5px;
+  border: 1.5px solid var(--sb-line) !important; border-bottom: 0 !important; border-radius: 10px 10px 0 0 !important;
+  background: var(--sb-tab) !important; color: var(--sb-ink) !important; box-shadow: none !important;
+  font: 600 14px/1 var(--ay-sans-stack, var(--ayna-font-ui, 'Figtree', system-ui, sans-serif)) !important; white-space: nowrap; cursor: pointer;
+  transition: min-height var(--t-fast) var(--ease-out), background-color var(--t-fast) var(--ease-in-out);
+}
+.app-container .ay-folder-tab.is-on, .ayna-mobile .ay-folder-tab.is-on { min-height: 50px; background: #f7badd !important; color: #3e2723 !important; z-index: 2; }
+@media (hover: hover) and (pointer: fine) { .app-container .ay-folder-tab:not(.is-on):hover { min-height: 46px; } }
+.ay-folder-tab:focus-visible { outline: 3px solid var(--sb-ink); outline-offset: -5px; }
+.ay-folder-tab__peek { position: absolute; z-index: -1; right: 6px; top: -24px; width: 38px; height: 38px; padding: 3px; box-sizing: border-box; background: #fff; border: 1.5px solid #3e2723; border-radius: 10px; transform: rotate(7deg); }
+.ay-folder-tab__peek img { width: 100%; height: 100%; object-fit: contain; }
+.ay-folder-tab.is-on > span:last-child { padding-right: 34px; }
+
+/* ---- One row: search pill + quick filter chips ---- */
+.app-container .ayshop__find { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
+.app-container .ayshop__find .ayshop__search { flex: 1 1 360px; max-width: 560px; }
+.app-container .ayshop__quick { display: flex; gap: 8px; min-width: 0; overflow-x: auto; scrollbar-width: none; padding: 4px 2px; }
+.app-container .ayshop__quick::-webkit-scrollbar { display: none; }
+@media (max-width: 719px) {
+  .app-container .ayshop__find { display: grid; gap: 10px; }
+  .app-container .ayshop__find .ayshop__search { max-width: none; }
+  .app-container .ayshop__quick { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 24px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 24px), transparent); }
+}
+.ay-kbd.ay-kbd--field { right: 16px; color: var(--sb-ink); }
+
+/* ---- "Does this sound familiar?" ribbon (pink, the page's one moving row) ---- */
+.app-container .ayshop__ribbon { grid-column: 1 / -1; margin: 4px 0; }
+.app-container .ay-ribbon.ay-ribbon--pink, .ayna-mobile .ay-ribbon.ay-ribbon--pink { background: #f7badd; color: #3e2723; border: 1.5px solid #3e2723; border-radius: 10px; }
+.app-container .ay-ribbon--pink .ay-ribbon__tab.is-label { background: #3e2723; color: #ffedac !important; text-decoration: none; border-color: #3e2723; }
+.app-container .ay-ribbon--pink .ay-ribbon__track li::after { background: #3e2723; }
+.app-container .ay-ribbon__pick, .ayna-mobile .ay-ribbon__pick { margin: 0; padding: 6px 0; border: 0 !important; background: none !important; box-shadow: none !important; color: inherit !important; font: inherit !important; white-space: nowrap; cursor: pointer; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 5px; text-decoration-color: transparent; }
+.app-container .ay-ribbon__pick:hover, .ay-ribbon__pick:focus-visible { text-decoration-color: currentColor; }
+.ay-ribbon__pick:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 10px; }
+.app-container[data-theme='brand-dark'] .ay-ribbon.ay-ribbon--pink { background: #f7badd; color: #3e2723; }
+
+/* Shop band: the seal sits beside the title; the sticker row runs the full width under it. */
+.app-container .ayshop__head .ayshop__seal { top: 24px; margin-top: 0; }
+.app-container .ayshop__head .ayshop__needs { margin-right: -140px; }
+@media (max-width: 767px) {
+  .app-container .ayshop__head .ayshop__seal { top: 18px; margin-top: 0; }
+  .app-container .ayshop__head .ayshop__needs { margin: 14px -84px 0 -4px; gap: 6px; }
+  .app-container .ayshop__head.ay-pagehead { padding-bottom: 24px !important; margin-bottom: 28px !important; }
+  .ay-needsticker__die { width: 64px; height: 64px; padding: 4px; border-radius: 16px; }
+  .app-container .ay-needsticker { min-width: 76px; font-size: 13px !important; }
+  .ay-folders { margin-top: 8px; padding-top: 22px; }
+}
+
+/* ---- App: the same pieces inside the Shop tab ---- */
+.ayna-mobile .ay-app-needs { margin: 12px 0 4px; padding: 6px 2px 10px; gap: 4px; }
+.ayna-mobile .ay-app-needs .ay-needsticker { min-width: 68px; font-size: calc(13px * var(--ayna-text-scale, 1)) !important; color: var(--ayna-heading) !important; }
+.ayna-mobile .ay-app-needs .ay-needsticker__die { width: 56px; height: 56px; padding: 4px; border-radius: 50%; }
+.ayna-mobile .ay-app-needs .ay-needsticker__die img,
+.ayna-mobile .ay-app-needs .ay-needsticker__wait { border-radius: 50%; }
+.ayna-mobile[data-theme='dark'] .ay-needsticker__die { border-color: #ffedac; box-shadow: 3px 3px 0 #ffedac; }
+.ayna-mobile .ay-app-quick { display: flex; gap: 8px; margin: 10px -20px 0; padding: 2px 20px 4px; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 24px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 24px), transparent); }
+.ayna-mobile .ay-app-quick::-webkit-scrollbar { display: none; }
+.ayna-mobile .ay-app-quick > button { flex: none; }
+.ayna-mobile .ayna-category-index .ay-folders { margin: 6px 20px 0; padding-top: 22px; }
+.ayna-mobile[data-theme='dark'] .ay-folders { border-color: #ffedac; }
+.ayna-mobile[data-theme='dark'] .ay-folder-tab:not(.is-on) { border-color: #ffedac !important; color: #ffedac !important; }
+.ayna-mobile .ay-app-ribbon { grid-column: 1 / -1; margin: 6px 0; }
+.ayna-mobile .ay-ribbon { position: relative; display: flex; flex-direction: column; overflow: hidden; }
+.ayna-mobile .ay-ribbon__tab { display: flex; align-items: center; min-height: 36px; padding: 0 14px; background: #3e2723; color: #ffedac; font: 600 calc(14px * var(--ayna-text-scale, 1))/1.2 var(--ayna-font-ui, 'Figtree', system-ui, sans-serif); }
+.ayna-mobile .ay-ribbon__view { overflow: hidden; display: flex; align-items: center; min-height: 48px; }
+.ayna-mobile .ay-ribbon__track { display: flex; width: max-content; animation: ay-ribbon 50s linear infinite; }
+.ayna-mobile .ay-ribbon__track ul { display: flex; margin: 0; padding: 0; list-style: none; }
+.ayna-mobile .ay-ribbon__track li { display: flex; align-items: center; gap: 18px; padding-left: 18px; font: 700 20px/1 var(--ay-app-heading, 'ayna Display', 'Bricolage Grotesque', sans-serif); white-space: nowrap; color: #3e2723; }
+.ayna-mobile .ay-ribbon__track li::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #3e2723; }
+.ayna-mobile .ay-ribbon.is-offscreen .ay-ribbon__track, .ayna-mobile .ay-ribbon:hover .ay-ribbon__track, .ayna-mobile .ay-ribbon:focus-within .ay-ribbon__track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .ayna-mobile .ay-ribbon__track { animation: none; } .ayna-mobile .ay-ribbon__view { overflow-x: auto; } }
+@keyframes ay-ribbon { to { transform: translateX(-50%); } }

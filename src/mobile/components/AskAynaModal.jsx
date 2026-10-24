@@ -1,12 +1,30 @@
 import { useEffect, useRef, useState } from 'react';
 
-// Tapping a starter fills the box so the person can edit before asking.
-const ASK_STARTERS = ['What helps with cramps?', 'Is this safe with my birth control?', 'Explain my top match'];
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 import { apiUrl } from '../../utils/apiUrl.js';
 import ShareAnswerButton from '../../components/ShareAnswerButton.jsx';
 import { questionForAnswer } from '../../utils/sharedAnswer.js';
+import AskFollowUps from '../../components/AskFollowUps.jsx';
+import { chipsFor, followUpRequestFields } from '../../utils/askFollowUps.js';
+import { fetchWithTimeout } from '../../utils/network.js';
+import { haptic } from '../../utils/haptics.js';
+import { useSheetDrag } from '../hooks/useSheetDrag.js';
+import AskHome, { AskStatCard } from '../../components/AskHome.jsx';
+import { recentQuestions } from '../../utils/askRecent.js';
+import { mayAutoFocus } from '../../utils/delightRuntime.js';
+import { guideContext } from '../utils/aynaGuide.js';
+import AynaGuideHub from './AynaGuideHub.jsx';
+
+// Ask ayna's first screen: tiles fill the box so she can edit before asking.
+function askTiles(hasHealthData) {
+  return [
+    { label: 'Ask about your week', sub: hasHealthData ? 'Read against your cycle' : 'Best with health data connected', question: 'What stands out in my health data this week?', icon: 'week', tone: 'pink', isNew: true },
+    { label: 'What helps with cramps?', question: 'What helps with cramps?', icon: 'cramps', tone: 'sky' },
+    { label: 'Is this safe with my birth control?', question: 'Is this safe with my birth control?', icon: 'safety', tone: 'group' },
+    { label: 'Explain my top match', sub: 'Why it fits you, with the evidence', question: 'Explain my top match', icon: 'match', tone: 'ink' },
+  ];
+}
 
 /**
  * Mobile port of ProfileChatbot's merge/summary logic
@@ -65,21 +83,54 @@ export default function AskAynaModal({
   open,
   enabled = true,
   profile,
+  guide = { memories: [], trials: [], shareWithAsk: false },
+  onGuideChange,
+  recap = '',
+  recapSources = '',
+  recapExportable = true,
+  productNotes = [],
+  allowGuideContext = false,
   onProfileUpdate,
   chatHistory = [],
   onChatHistoryUpdate,
   name,
-  onNavigateToDiscovery,
   onViewRecommendations,
   onRequireAuth,
+  seed = null,
+  onClose = null,
+  // Follow-ups: what she owns and can read, and where each chip goes.
+  products = [],
+  reads = [],
+  hasHealthData = false,
+  resolveProduct = null,
+  onOpenProduct = null,
+  onBrowse = null,
+  onOpenDashboard = null,
+  onOpenRead = null,
 }) {
   const [messages, setMessages] = useState(chatHistory.length > 0 ? chatHistory : buildWelcome(name));
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState('');
+  // The question that didn't go through: put back in the field and offered as
+  // "Try again", so a dropped connection never loses what she typed.
+  const [failedMsg, setFailedMsg] = useState('');
   const [session, setSession] = useState(undefined); // undefined = still checking
   const [hasOpened, setHasOpened] = useState(open);
+  // A bottom sheet: grabber, drag down to close (useSheetDrag).
+  const { sheetRef, grabberProps } = useSheetDrag(onClose);
+  useEffect(() => { if (open && sheetRef.current) { sheetRef.current.style.transform = ''; sheetRef.current.style.transition = ''; } }, [open, sheetRef]);
+  // What she was looking at when she asked (e.g. her dashboard week), sent
+  // along with this conversation's questions.
+  const [screenContext, setScreenContext] = useState('');
+  // Home (tiles + recent questions) until she asks something.
+  const [home, setHome] = useState(true);
+  const [guidePage, setGuidePage] = useState('');
+  // Back on the home view: start at the top, not where the chat was scrolled.
+  useEffect(() => { if (home) bottomRef.current?.parentElement?.scrollTo({ top: 0 }); }, [home]);
+  const seedDone = useRef(null);
   const bottomRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -103,22 +154,48 @@ export default function AskAynaModal({
     if (open) setHasOpened(true);
   }, [open]);
 
+  // Opened by a tap on Ask: the question box takes focus (keyboard up). Never
+  // on load or from a script (utils/delightRuntime.js, autofocus rules).
+  // The box is disabled while the sign-in check runs, so the decision is
+  // taken at open and the focus waits for the box to be ready.
+  const wantFocus = useRef(false);
+  useEffect(() => { wantFocus.current = open && !seed && mayAutoFocus(); }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
+  const inputReady = open && session !== undefined && !sending;
   useEffect(() => {
-    if (open) bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (!inputReady || !wantFocus.current) return undefined;
+    wantFocus.current = false;
+    const id = requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
+    return () => cancelAnimationFrame(id);
+  }, [inputReady]);
+
+  // A suggested question (from the dashboard): ask it once the sign-in check
+  // is done. Signed out, it waits in the box so nothing is lost.
+  useEffect(() => {
+    if (!open || !seed || seedDone.current === seed.id || session === undefined || sending) return;
+    seedDone.current = seed.id;
+    setScreenContext(seed.context || '');
+    if (session?.access_token) { setGuidePage(''); send(seed.question, seed.context || '', Array.isArray(seed.stats) ? seed.stats : null); }
+    else setInput(seed.question);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, seed, session]);
+
+  useEffect(() => {
+    // Scroll only the message list: scrollIntoView also scrolls every
+    // ancestor, which pushed the whole app shell up behind the sheet.
+    const list = bottomRef.current?.parentElement;
+    if (open && list) list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' });
     // Reopening preserves the existing scroll position.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
-  if (!enabled || (!open && !hasOpened)) return null;
-
-  const handleSend = async (e) => {
-    e.preventDefault();
-    const msg = input.trim();
+  const send = async (msg, context = screenContext, stats = null) => {
     if (!msg || sending) return;
     if (!session?.access_token) { onRequireAuth?.('Ask ayna'); return; }
     setInput('');
     setSendError('');
-    const userMsg = { role: 'user', text: msg };
+    setFailedMsg('');
+    setHome(false);
+    const userMsg = { role: 'user', text: msg, ...(stats?.length ? { stats } : {}) };
     const messagesWithUser = [...messages, userMsg];
     setMessages(messagesWithUser);
     setSending(true);
@@ -126,13 +203,15 @@ export default function AskAynaModal({
     try {
       const token = session?.access_token;
       if (!token) throw Object.assign(new Error('not_signed_in'), { code: 'not_signed_in' });
-      const res = await fetch(apiUrl('/api/ask-ayna'), {
+      const res = await fetchWithTimeout(apiUrl('/api/ask-ayna'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           message: msg,
-          profileSummary: summarizeProfile(profile || {}),
+          profileSummary: [summarizeProfile(profile || {}), allowGuideContext ? guideContext(guide) : ''].filter(Boolean).join('\n').slice(0, 2000),
           chatHistory: messages.slice(-6),
+          ...(context ? { screenContext: context } : {}),
+          ...followUpRequestFields({ products, reads, hasHealthData }),
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -140,26 +219,36 @@ export default function AskAynaModal({
       if (res.status === 429) throw Object.assign(new Error('weekly_limit_reached'), { code: 'weekly_limit_reached' });
       if (!res.ok || !data?.answer) throw new Error(data?.error || 'Could not get an answer right now.');
 
-      const newMessages = [...messagesWithUser, { role: 'assistant', text: data.answer }];
+      const newMessages = [...messagesWithUser, { role: 'assistant', text: data.answer, followUps: Array.isArray(data.followUps) ? data.followUps : [], ...(stats?.length ? { stats } : {}) }];
 
       const merged = mergeProfileUpdate(profile || {}, data.profileUpdate || {});
       if (merged) {
-        onProfileUpdate?.(merged.profile);
         const parts = [];
         if (merged.added.frustrations.length) parts.push(`Concerns: ${merged.added.frustrations.join(', ')}`);
         if (merged.added.sensitivities.length) parts.push(`Sensitivities: ${merged.added.sensitivities.join(', ')}`);
         if (merged.added.productsToAvoid.length) parts.push(`Avoiding: ${merged.added.productsToAvoid.join(', ')}`);
         if (merged.added.preference) parts.push(`Priority: ${merged.added.preference}`);
-        newMessages.push({ role: 'system', text: `Updated your profile, ${parts.join(' · ')}.`, showViewRecommendations: true });
+        newMessages.push({ role: 'system', text: `Remember this in your profile? ${parts.join(' · ')}.`, pendingProfile: merged.profile });
       }
 
-      if (data.browseIntent?.category && onNavigateToDiscovery) {
-        onNavigateToDiscovery();
+      // A browse suggestion is now a chip under the answer (she reads the
+      // answer first), not an automatic jump to Shop.
+      const last = newMessages[messagesWithUser.length];
+      if (data.browseIntent?.category && !last.followUps.some((f) => f.type === 'browse')) {
+        const cat = String(data.browseIntent.category).slice(0, 40);
+        last.followUps = [{ type: 'browse', intent: { category: cat }, label: `More ${cat.replace(/[-_]/g, ' ')}` }, ...last.followUps];
       }
 
       setMessages(newMessages);
       onChatHistoryUpdate?.(newMessages);
     } catch (err) {
+      if (err?.code !== 'not_signed_in' && err?.code !== 'weekly_limit_reached') {
+        // Roll the unanswered question back out of the thread and keep it.
+        setMessages(messages);
+        setInput(msg);
+        setFailedMsg(msg);
+        haptic('warning');
+      }
       if (err?.code === 'not_signed_in') {
         onRequireAuth?.('Ask ayna');
       } else if (err?.code === 'weekly_limit_reached') {
@@ -171,6 +260,32 @@ export default function AskAynaModal({
       setSending(false);
     }
   };
+
+  const runFollowUp = (f) => {
+    if (f.type === 'ask') { send(f.text); return; }
+    if (f.type === 'ask_else') { inputRef.current?.focus({ preventScroll: true }); return; }
+    if (f.type === 'open_product') { const p = resolveProduct?.(f.productId); if (p) onOpenProduct?.(p); return; }
+    if (f.type === 'browse') { onBrowse?.(f.intent || {}); return; }
+    if (f.type === 'open_dashboard') { onOpenDashboard?.(); return; }
+    if (f.type === 'open_guide' && ['recap', 'memory', 'trial', 'report'].includes(f.page)) { setGuidePage(f.page); return; }
+    if (f.type === 'open_library') { const a = reads.find((r) => r.id === f.articleId); if (a) onOpenRead?.(a); }
+  };
+
+  const handleSend = (e) => {
+    e.preventDefault();
+    send(input.trim());
+  };
+
+  const decideProfile = (index, save) => {
+    const pending = messages[index]?.pendingProfile;
+    if (!pending) return;
+    if (save) onProfileUpdate?.(pending);
+    const next = messages.map((item, i) => i === index ? { role: 'system', text: save ? 'Added to your profile. You can edit it in Profile.' : 'Not saved.' } : item);
+    setMessages(next);
+    onChatHistoryUpdate?.(next);
+  };
+
+  if (!enabled || (!open && !hasOpened)) return null;
 
   return (
     <div
@@ -185,7 +300,8 @@ export default function AskAynaModal({
         flexDirection: 'column',
       }}
     >
-      <div className="ayna-ask-drawer-content" role="dialog" aria-label="Ask ayna" aria-modal={open ? true : undefined} aria-hidden={!open} inert={!open ? true : undefined}>
+      <div ref={sheetRef} className="ayna-ask-drawer-content" role="dialog" aria-label="Ask ayna" aria-modal={open ? true : undefined} aria-hidden={!open} inert={!open ? true : undefined}>
+      {onClose && <button {...grabberProps} aria-label="Close Ask ayna" />}
       <div
         style={{
           paddingTop: 'max(20px, env(safe-area-inset-top))',
@@ -198,20 +314,44 @@ export default function AskAynaModal({
           borderBottom: '1px solid var(--ayna-border)',
         }}
       >
+        {!home && !guidePage && (
+          <button type="button" className="ay-askh-homebtn" aria-label="Back to Ask ayna home" onClick={() => setHome(true)}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+          </button>
+        )}
         <div style={{ flex: 1 }}>
           <h1 className="ay-ask-title">Ask ayna</h1>
         </div>
+        {onClose && <button type="button" className="ay-ask-done" onClick={onClose}>Done</button>}
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {messages.map((m, i) => (
+      <div className={home && !sending ? 'ay-askh-scroll' : undefined} style={{ flex: 1, overflowY: 'auto', padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {guidePage ? <AynaGuideHub page={guidePage} guide={guide} onChange={onGuideChange} recap={recap} recapSources={recapSources} recapExportable={recapExportable} productNotes={productNotes} profile={summarizeProfile(profile || {})} onAsk={recapExportable ? (question) => { setGuidePage(''); send(question, recap); } : null} onBack={() => setGuidePage('')} /> : null}
+        {home && !sending && !guidePage && (<>
+          <div className="ay-guide-launches" aria-label="Your personal guide">
+            <button type="button" onClick={() => setGuidePage('recap')}>Your week<span>What changed for you</span></button>
+            <button type="button" onClick={() => setGuidePage('memory')}>Memory<span>What ayna can remember</span></button>
+            <button type="button" onClick={() => setGuidePage('trial')}>Try & check back<span>See how it felt later</span></button>
+            <button type="button" onClick={() => setGuidePage('report')}>Appointment note<span>Review before sharing</span></button>
+          </div>
+          <AskHome
+            name={name ? String(name).split(' ')[0] : ''}
+            intro="Ask about a product, your week, or what to try. Not medical advice."
+            tiles={askTiles(hasHealthData)}
+            recent={recentQuestions(messages)}
+            onPick={(q) => { setInput(q); inputRef.current?.focus({ preventScroll: true }); }}
+            onContinue={messages.some((m) => m.role === 'user') ? () => setHome(false) : null}
+          />
+        </>)}
+        {!guidePage && !(home && !sending) && messages.map((m, i) => (
           <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
+            {m.role === 'assistant' && <AskStatCard stats={m.stats} />}
             <div
               style={{
                 maxWidth: '85%',
-                background: m.role === 'user' ? 'var(--ayna-heading)' : 'transparent',
+                background: m.role === 'user' ? 'var(--ayna-heading)' : 'var(--d-group, transparent)',
                 color: m.role === 'user' ? 'var(--ayna-bg)' : 'var(--ayna-text)',
-                border: m.role === 'user' ? 0 : '2px solid var(--ayna-heading)',
+                border: 0,
                 borderRadius: m.role === 'user' ? '18px 18px 6px 18px' : '18px 18px 18px 6px',
                 padding: '11px 14px',
                 fontWeight: 400, fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
@@ -221,6 +361,7 @@ export default function AskAynaModal({
             >
               {m.role === 'assistant' ? renderMarkdownLite(m.text) : m.text}
             </div>
+            {m.pendingProfile && <div className="ay-guide-actions" style={{ marginTop: 6 }}><button type="button" onClick={() => decideProfile(i, true)}>Remember</button><button type="button" onClick={() => decideProfile(i, false)}>Not now</button></div>}
             {m.role === 'assistant' && questionForAnswer(messages, i) && (
               <ShareAnswerButton
                 question={questionForAnswer(messages, i)}
@@ -236,8 +377,21 @@ export default function AskAynaModal({
                 surface="app"
               />
             )}
+            {m.role === 'assistant' && questionForAnswer(messages, i) && (
+              <AskFollowUps
+                chips={chipsFor(m.followUps, {
+                  hasDashboard: !!onOpenDashboard,
+                  hasGuide: true,
+                  canOpen: (f) => (f.type === 'open_product' ? !!(onOpenProduct && resolveProduct?.(f.productId)) : !!(onOpenRead && reads.some((r) => r.id === f.articleId))),
+                })}
+                disabled={sending}
+                onAction={runFollowUp}
+              />
+            )}
             {m.showViewRecommendations && onViewRecommendations && (
-              <div
+              <button
+                type="button"
+                className="ay-ask-viewrecs"
                 onClick={onViewRecommendations}
                 style={{
                   marginTop: 6,
@@ -250,24 +404,22 @@ export default function AskAynaModal({
                 }}
               >
                 View recommendations →
-              </div>
+              </button>
             )}
           </div>
         ))}
-        {!messages.some((m) => m.role === 'user') && !sending && (
-          <div className="ay-ask-starters" aria-label="Try asking">
-            {ASK_STARTERS.map((q, i) => <button type="button" key={q} className="ay-ask-starter" style={{ '--i': i }} onClick={() => setInput(q)}>{q}</button>)}
-          </div>
-        )}
-        {sending && <div className="ay-typing" role="status" aria-label="ayna is thinking"><i /><i /><i /></div>}
+        {sending && !guidePage && <div className="ay-typing" role="status" aria-label="Looking into it"><i /><i /><i /></div>}
         <div ref={bottomRef} />
       </div>
 
       {sendError && (
-        <div style={{ padding: '0 20px 8px', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>{sendError}</div>
+        <div className="ay-ask-error" role="alert">
+          <span>{sendError}</span>
+          {failedMsg && <button type="button" onClick={() => { const q = failedMsg; setFailedMsg(''); send(q); }} disabled={sending}>Try again</button>}
+        </div>
       )}
 
-      <form
+      {!guidePage && <form
         onSubmit={handleSend}
         style={{
           display: 'flex',
@@ -278,6 +430,7 @@ export default function AskAynaModal({
         }}
       >
         <input
+          ref={inputRef}
           type="text"
           className="ay-ask-input"
           value={input}
@@ -313,7 +466,7 @@ export default function AskAynaModal({
         >
           Ask
         </button>
-      </form>
+      </form>}
       </div>
     </div>
   );

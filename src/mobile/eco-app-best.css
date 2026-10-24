@@ -1,0 +1,265 @@
+/* App Ecosystem screen, the "best page" pass (Oct 21). Same thesis as the
+   website (src/styles/ecosystem-best.css): striped awning, a calm large title
+   with one oval sticker, shelves as the hero with folder-tab names, and
+   everything else behind one "things for you" row that opens a sheet.
+   iOS patterns: large title that hands over to a small title bar on scroll,
+   a segmented control with a sliding thumb, inset grouped list for settings,
+   press states on everything tappable, sheets for secondary things, safe
+   areas. Nothing moves with reduced motion or "Pause motion". */
+
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app { position: relative; }
+
+/* ---------- Small title bar ---------- */
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-nav { position: sticky; top: 0; z-index: 60; height: 0; overflow: visible; pointer-events: none; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-nav__bar {
+  position: absolute; left: 0; right: 0; top: 0; display: grid; place-items: center;
+  height: calc(48px + env(safe-area-inset-top, 0px)); padding-top: env(safe-area-inset-top, 0px); box-sizing: border-box;
+  background: var(--d-page, #ffedac); border-bottom: 1px solid var(--d-hair);
+  opacity: 0; transform: translateY(-8px); transition: opacity .2s ease, transform .25s ease;
+}
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-nav.is-on .eco-app-nav__bar { opacity: 1; transform: none; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-nav__bar span { font: 600 17px/1 var(--f-ui) !important; color: var(--d-ink) !important; letter-spacing: -.01em; }
+
+/* ---------- Awning ---------- */
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-awning--app { position: relative; height: 24px; margin: 0 0 2px; filter: drop-shadow(0 1.5px 0 #3e2723); transform-origin: 50% 0; animation: eco-app-unroll .7s var(--ease-out) both; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-awning--app::before {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(90deg, #769ebe 0 24px, #f6e3a1 24px 48px);
+  -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 11px) no-repeat, radial-gradient(circle at 50% 0, #000 11.5px, transparent 12px) left bottom / 24px 12px repeat-x;
+  mask: linear-gradient(#000 0 0) top / 100% calc(100% - 11px) no-repeat, radial-gradient(circle at 50% 0, #000 11.5px, transparent 12px) left bottom / 24px 12px repeat-x;
+}
+.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-awning--app { filter: none; }
+.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-awning--app::before { background: repeating-linear-gradient(90deg, #769ebe 0 24px, #f7badd 24px 48px); }
+@keyframes eco-app-unroll { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+
+/* ---------- Large title ---------- */
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-hero { display: grid; gap: 10px; margin: 0; padding: 14px var(--d-gutter) 6px; background: none; color: var(--d-ink); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-hero.is-today { padding-top: 0; padding-bottom: 0; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-hero.is-today .eco-app-titlerow { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-titlerow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-titlerow h1 { margin: 0 !important; font: 700 calc(34px * var(--ayna-text-scale, 1))/1.05 var(--ay-app-heading) !important; letter-spacing: -.025em !important; color: var(--d-ink) !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-oval {
+  display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border-radius: 50%;
+  background: #f7badd; color: #3e2723; border: 1.5px solid #3e2723; box-shadow: inset 0 0 0 3px #f7badd, inset 0 0 0 4.5px #3e2723;
+  font: 600 12.5px/1 var(--f-ui); white-space: nowrap; transform: rotate(-6deg);
+  animation: eco-app-stamp .55s var(--ease-pop) .25s both;
+}
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-oval svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; }
+@keyframes eco-app-stamp { from { opacity: 0; transform: rotate(-14deg) scale(1.35); } to { opacity: 1; transform: rotate(-6deg) scale(1); } }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 18px; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stats { margin: 0 !important; font: 500 calc(15px * var(--ayna-text-scale, 1))/1.3 var(--f-ui) !important; color: var(--d-ink-2, var(--d-ink)) !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stats b { font-weight: 700; color: var(--d-ink); font-variant-numeric: tabular-nums; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-replay { display: inline-flex !important; align-items: center; gap: 6px; min-height: 44px; margin: -8px 0; padding: 0 !important; border: 0 !important; background: none !important; color: var(--d-ink) !important; font: 600 calc(15px * var(--ayna-text-scale, 1))/1 var(--f-ui) !important; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-replay svg { width: 13px; height: 13px; fill: currentColor; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-hero .fq { margin: 4px 0 0 !important; }
+
+/* "N things for you": one inset row */
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-for {
+  display: flex !important; align-items: center; gap: 12px; width: 100%; min-height: 60px; margin: 4px 0 0; padding: 10px 12px !important;
+  border: 0 !important; border-radius: 16px !important; background: var(--d-group) !important; color: var(--d-ink) !important; text-align: left; box-shadow: none !important;
+  transition: transform .15s ease, background-color .15s ease; -webkit-tap-highlight-color: transparent;
+}
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-for:active { transform: scale(.98); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-for__count { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #f7badd; color: #3e2723; border: 1.5px solid #3e2723; font: 700 14px/1 var(--f-ui); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-for__text { display: grid; gap: 2px; flex: 1; min-width: 0; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-for__text b { font: 600 calc(16px * var(--ayna-text-scale, 1))/1.25 var(--f-ui); color: var(--d-ink); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-for__text span { font: 500 calc(14px * var(--ayna-text-scale, 1))/1.3 var(--f-ui); color: var(--d-ink-2, var(--d-ink)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-chev { flex: none; width: 20px; height: 20px; fill: none; stroke: var(--d-ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: .7; }
+
+/* ---------- Segmented control ---------- */
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-seg { position: relative; display: grid; grid-template-columns: 1fr 1fr; margin: 16px var(--d-gutter) 18px; padding: 3px; border-radius: 16px; background: var(--d-group); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-seg__thumb { position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); border-radius: 10px; background: var(--d-page, #ffedac); border: 1.5px solid var(--d-ink); box-sizing: border-box; transition: transform .38s var(--ease-pop); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-seg[data-on='products'] .eco-seg__thumb { transform: translateX(100%); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-seg button { position: relative; z-index: 1; min-height: 40px !important; margin: 0 !important; padding: 0 8px !important; border: 0 !important; border-radius: 10px !important; background: none !important; box-shadow: none !important; color: var(--d-ink) !important; font: 500 calc(15px * var(--ayna-text-scale, 1))/1 var(--f-ui) !important; transition: font-weight .2s; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-seg button.is-on { font-weight: 700 !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-seg button:active { opacity: .7; }
+
+/* ---------- Shelves: folder tabs ---------- */
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-shelf { margin: 0 0 28px !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-shelf .ay-shelf2-head { align-items: flex-end !important; gap: 8px !important; margin: 0 0 12px !important; border-bottom: 1.5px solid var(--d-ink) !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-shelf .ay-shelf2-head h2 {
+  margin: 0 0 -1.5px !important; padding: 8px 13px 7px !important; max-width: calc(100% - 96px);
+  background: var(--area-tone) !important; color: var(--area-ink) !important;
+  border: 1.5px solid var(--d-ink) !important; border-bottom-color: var(--area-tone) !important; border-radius: 16px 16px 0 0 !important;
+  font: 700 calc(18px * var(--ayna-text-scale, 1))/1.15 var(--ay-app-heading) !important; letter-spacing: -.015em !important; transform-origin: 50% 100%;
+}
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-shelf .ay-shelf2-count { align-self: flex-end; margin-bottom: 8px; padding: 3px 9px; border: 1.5px solid var(--d-ink); border-radius: 999px; font: 600 12.5px/1.2 var(--f-ui) !important; color: var(--d-ink) !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-shelf .ay-shelf2-add { align-self: flex-end !important; margin: 0 0 0 auto !important; padding: 0 2px !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .ay-shelf2-row > * { transition: transform .18s var(--ease-pop); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .ay-shelf2-row > *:active { transform: scale(.97); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app :is(.ay-pc-save, .ayna-card-save)[aria-pressed='true'] svg { animation: eco-app-pop .45s var(--ease-pop); }
+@keyframes eco-app-pop { 0% { transform: scale(1); } 40% { transform: scale(1.3); } 100% { transform: scale(1); } }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .ay-shelf2-empty { transform: rotate(-1deg); border: 1.5px solid var(--d-ink) !important; border-radius: 10px !important; }
+
+/* reveal once */
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app[data-eco-anim='1'] .eco-app-shelf[data-eco-in='0'] :is(.ay-shelf2-row > *, .ay-shelf2-head h2) { opacity: 0; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app[data-eco-anim='1'] .eco-app-shelf[data-eco-in='1'] .ay-shelf2-row > * { animation: eco-app-rise .5s var(--ease-out) both; animation-delay: 140ms; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app[data-eco-anim='1'] .eco-app-shelf[data-eco-in='1'] .ay-shelf2-row > :nth-child(1) { animation-delay: 45ms; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app[data-eco-anim='1'] .eco-app-shelf[data-eco-in='1'] .ay-shelf2-row > :nth-child(2) { animation-delay: 90ms; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app[data-eco-anim='1'] .eco-app-shelf[data-eco-in='1'] .ay-shelf2-row > :nth-child(3) { animation-delay: 135ms; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app[data-eco-anim='1'] .eco-app-shelf[data-eco-in='1'] .ay-shelf2-row > :nth-child(n + 4) { animation-delay: 180ms; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app[data-eco-anim='1'] .eco-app-shelf[data-eco-in='1'] .ay-shelf2-head h2 { animation: eco-app-tab .45s var(--ease-pop) both; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app[data-eco-anim='1'] :is(.ayna-cabinet-reads, .ay-eco-shop, .eco-app-list-wrap)[data-eco-in='0'] { opacity: 0; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app[data-eco-anim='1'] :is(.ayna-cabinet-reads, .ay-eco-shop, .eco-app-list-wrap)[data-eco-in='1'] { animation: eco-app-rise .5s var(--ease-out) both; }
+@keyframes eco-app-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes eco-app-tab { from { opacity: 0; transform: translateY(10px) scaleY(.85); } to { opacity: 1; transform: none; } }
+
+/* ---------- Inset grouped list ---------- */
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-list-wrap { margin: 8px var(--d-gutter) 28px; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-list-h { margin: 0 0 8px 4px !important; font: 600 calc(15px * var(--ayna-text-scale, 1))/1.3 var(--f-ui) !important; color: var(--d-ink-2, var(--d-ink)) !important; letter-spacing: 0 !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-list { margin: 0; padding: 0; list-style: none; border-radius: 16px; background: var(--d-group); overflow: hidden; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-list li { position: relative; margin: 0; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-list li + li::before { content: ''; position: absolute; left: 58px; right: 0; top: 0; height: 1px; background: var(--d-hair); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-list button { display: flex !important; align-items: center; gap: 14px; width: 100%; min-height: 60px; margin: 0 !important; padding: 10px 14px !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: var(--d-ink) !important; text-align: left; transition: background-color .12s; -webkit-tap-highlight-color: transparent; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-list button:active { background: rgba(62, 39, 35, .08) !important; }
+.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-list button:active { background: rgba(255, 237, 172, .08) !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-list__ic { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 10px; border: 1.5px solid #3e2723; color: #3e2723; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-list__ic.is-pink { background: #f7badd; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-list__ic.is-sky { background: #769ebe; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-list__ic.is-butter { background: #ffedac; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-list__ic.is-ink { background: #3e2723; color: #ffedac; }
+.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-list__ic { border-color: #ffedac; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-list__ic svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-list__txt { display: grid; gap: 2px; flex: 1; min-width: 0; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-list__txt b { font: 600 calc(16px * var(--ayna-text-scale, 1))/1.3 var(--f-ui); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-list__txt small { font: 400 calc(14px * var(--ayna-text-scale, 1))/1.4 var(--f-ui); color: var(--d-ink-2, var(--d-ink)); }
+
+/* ---------- Sheet ---------- */
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-sheet { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: flex-end; justify-content: center; background: rgba(62, 39, 35, .42); animation: eco-app-fade .2s ease both; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-sheet__panel { width: 100%; max-width: 560px; max-height: 86vh; overflow-y: auto; overscroll-behavior: contain; box-sizing: border-box; padding: 8px var(--d-gutter) calc(28px + env(safe-area-inset-bottom, 0px)); border-radius: 20px 20px 0 0; background: var(--d-page, #ffedac); color: var(--d-ink); animation: eco-app-up .38s var(--ease-out) both; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-sheet__grab { display: block; width: 38px; height: 5px; margin: 0 auto 6px; border-radius: 3px; background: var(--d-hair); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-sheet__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 8px; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-sheet__head h2 { margin: 0 !important; font: 700 calc(22px * var(--ayna-text-scale, 1))/1.2 var(--ay-app-heading) !important; color: var(--d-ink) !important; letter-spacing: -.015em; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-sheet__done { min-height: 44px !important; padding: 0 4px !important; border: 0 !important; background: none !important; box-shadow: none !important; color: var(--d-ink) !important; font: 700 calc(16px * var(--ayna-text-scale, 1))/1 var(--f-ui) !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-sheet__list { display: grid; gap: 26px; padding-top: 22px; }
+@keyframes eco-app-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes eco-app-up { from { transform: translateY(100%); } to { transform: none; } }
+
+/* sheet cards */
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-card { position: relative; margin: 0; padding: 16px; border: 1.5px solid var(--d-ink); border-radius: 0 16px 16px 16px; background: var(--d-page, #ffedac); color: var(--d-ink); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-card.is-quiz { border-radius: 16px; background: var(--d-group); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-card.is-stages { background: #f7badd; color: #3e2723; border-color: #3e2723; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-card__tab { position: absolute; left: -1.5px; top: -25px; height: 25px; margin: 0 !important; padding: 5px 12px 0 !important; box-sizing: border-box; border: 1.5px solid var(--d-ink); border-bottom: 0; border-radius: 10px 10px 0 0; font: 600 12.5px/1.2 var(--f-ui) !important; white-space: nowrap; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-card.is-stages .eco-app-card__tab { background: #3e2723; color: #ffedac !important; border-color: #3e2723; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-card.is-news .eco-app-card__tab { background: #769ebe; color: #3e2723 !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-card h3 { margin: 0 0 6px !important; padding-right: 30px; font: 600 calc(17px * var(--ayna-text-scale, 1))/1.3 var(--f-ui) !important; color: inherit !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-card.is-stages h3 { padding-right: 0; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-card p { margin: 0 0 10px !important; font: 400 calc(15px * var(--ayna-text-scale, 1))/1.5 var(--f-ui) !important; color: inherit !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-card p b { font-weight: 600; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-card__acts { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-go { min-height: 44px !important; padding: 0 20px !important; border: 0 !important; border-radius: 999px !important; background: #3e2723 !important; color: #ffedac !important; font: 600 calc(15px * var(--ayna-text-scale, 1))/1 var(--f-ui) !important; box-shadow: 3px 3px 0 #ffedac, 3px 3px 0 1.5px #3e2723 !important; transition: transform .12s, box-shadow .12s; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-go:active { transform: translate(2px, 2px); box-shadow: none !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-quiet { min-height: 44px !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; color: inherit !important; font: 600 calc(15px * var(--ayna-text-scale, 1))/1.2 var(--f-ui) !important; text-decoration: underline; text-underline-offset: 3px; text-align: left; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-x { position: absolute; top: 2px; right: 2px; display: grid; place-items: center; width: 44px; height: 44px; padding: 0 !important; border: 0 !important; border-radius: 50% !important; background: none !important; box-shadow: none !important; color: var(--d-ink) !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-x svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-card:not(.is-stages) .eco-app-go { background: #ffedac !important; color: #3e2723 !important; box-shadow: 3px 3px 0 #f7badd !important; }
+.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-card.is-stages .eco-app-card__tab { background: #ffedac; color: #3e2723 !important; }
+
+/* ---------- No motion ---------- */
+html.ay-motion-paused .ayna-mobile:is(#ay, .ayna-mobile) .eco-app :is(.eco-awning--app, .eco-oval, .ay-shelf2-row > *, .ay-shelf2-head h2, .ayna-cabinet-reads, .ay-eco-shop, .eco-app-list-wrap, .eco-app-sheet, .eco-app-sheet__panel, .ay-pc-save svg, .ayna-card-save svg) { animation: none !important; opacity: 1 !important; }
+html.ay-motion-paused .ayna-mobile:is(#ay, .ayna-mobile) .eco-app :is(.eco-seg__thumb, .eco-app-nav__bar) { transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .ayna-mobile:is(#ay, .ayna-mobile) .eco-app :is(.eco-awning--app, .eco-oval, .ay-shelf2-row > *, .ay-shelf2-head h2, .ayna-cabinet-reads, .ay-eco-shop, .eco-app-list-wrap, .eco-app-sheet, .eco-app-sheet__panel, .ay-pc-save svg, .ayna-card-save svg) { animation: none !important; opacity: 1 !important; }
+  .ayna-mobile:is(#ay, .ayna-mobile) .eco-app :is(.eco-seg__thumb, .eco-app-nav__bar, .ay-shelf2-row > *, .eco-app-for) { transition: none !important; }
+}
+
+/* ---------- Pill search ---------- */
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-search { position: relative; margin: 4px 0 0; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-search svg { position: absolute; left: 16px; top: 50%; width: 19px; height: 19px; margin-top: -9.5px; fill: none; stroke: var(--d-ink); stroke-width: 1.9; stroke-linecap: round; pointer-events: none; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-search input { width: 100%; height: 48px; box-sizing: border-box; margin: 0; padding: 0 16px 0 44px !important; border: 1.5px solid var(--d-ink) !important; border-radius: 999px !important; background: var(--d-page, #ffedac) !important; color: var(--d-ink) !important; font: 500 calc(16px * var(--ayna-text-scale, 1))/1.2 var(--f-ui) !important; box-shadow: none !important; -webkit-appearance: none; appearance: none; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-search input::placeholder { color: var(--d-ink-2, var(--d-ink)); opacity: .8; }
+
+/* ---------- Progress card: one ring, one big number ---------- */
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-progress { display: flex; align-items: center; gap: 16px; margin: 6px 0 0; padding: 14px 16px; border-radius: 20px; background: var(--d-group); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-ring { flex: none; width: 68px; height: 68px; transform: rotate(-90deg); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-ring circle { fill: none; stroke-width: 9; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-ring__track { stroke: rgba(62, 39, 35, .12); }
+.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-ring__track { stroke: rgba(255, 237, 172, .16); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-ring__fill { stroke: #f7badd; stroke-linecap: round; animation: eco-app-ring 1s var(--ease-out) .3s both; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-ring text { transform: rotate(90deg); transform-origin: 32px 32px; fill: var(--d-ink); font: 700 15px var(--ay-app-heading); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-progress__text { display: grid; gap: 2px; min-width: 0; justify-items: start; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-progress .eco-app-stats { font-size: calc(17px * var(--ayna-text-scale, 1)) !important; color: var(--d-ink) !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-progress__sub { margin: 0 !important; font: 500 calc(14px * var(--ayna-text-scale, 1))/1.3 var(--f-ui) !important; color: var(--d-ink-2, var(--d-ink)) !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-progress .eco-app-replay { margin: -6px 0 -10px !important; }
+@keyframes eco-app-ring { from { stroke-dasharray: 0 163.4; } }
+
+/* ---------- Shelf chips (solid when chosen) ---------- */
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-chips { display: flex; gap: 8px; margin: -2px 0 20px; padding: 2px var(--d-gutter) 4px; overflow-x: auto; scrollbar-width: none; scroll-padding-inline: var(--d-gutter); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-chips::-webkit-scrollbar { display: none; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-chips button { flex: none; display: inline-flex !important; align-items: center; gap: 7px; min-height: 40px !important; padding: 0 14px !important; border: 1.5px solid var(--d-ink) !important; border-radius: 999px !important; background: transparent !important; color: var(--d-ink) !important; box-shadow: none !important; font: 600 calc(14px * var(--ayna-text-scale, 1))/1 var(--f-ui) !important; white-space: nowrap; transition: background-color .15s, color .15s, transform .12s; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-chips button:active { transform: scale(.96); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-chips button i { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid currentColor; box-sizing: border-box; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-chips button small { font: 600 12px/1 var(--f-ui); opacity: .75; font-variant-numeric: tabular-nums; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-chips button[aria-pressed='true'] { background: var(--d-ink) !important; color: var(--d-page, #ffedac) !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-found { margin: -4px var(--d-gutter) 18px !important; font: 500 calc(15px * var(--ayna-text-scale, 1))/1.45 var(--f-ui) !important; color: var(--d-ink) !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-found button { display: inline; min-height: 44px; padding: 0 !important; border: 0 !important; background: none !important; color: var(--d-ink) !important; font: 600 inherit/1.45 var(--f-ui) !important; text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------- Cards on a soft mat in the shelf colour ---------- */
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-shelf { --mat: var(--d-group); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-shelf .ay-shelf2-row > :not(.ay-shelf2-slot) { padding: 6px 6px 8px; border-radius: 20px; background: var(--mat); box-sizing: border-box; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-shelf .ay-shelf2-row > :not(.ay-shelf2-slot) { flex-basis: clamp(136px, 40vw, 172px) !important; }
+/* one shelf picked: two staggered columns (masonry), more air */
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-shelf.is-grid .ay-shelf2-row { display: grid !important; grid-template-columns: 1fr 1fr; align-items: start; gap: 14px; margin: 0 !important; padding: 0 0 28px !important; overflow: visible !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-shelf.is-grid .ay-shelf2-row > * { width: auto !important; min-width: 0; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-shelf.is-grid .ay-shelf2-row > :nth-child(even) { margin-top: 28px; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-shelf.is-grid .ay-shelf2-row > .ay-shelf2-slot { height: auto !important; min-height: 120px; }
+
+/* ---------- Floating "things for you" pill ---------- */
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-float { position: sticky; bottom: var(--eco-float-bottom, -80px); z-index: 55; display: flex; justify-content: center; height: 0; overflow: visible; pointer-events: none; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-float button { display: inline-flex !important; align-items: center; gap: 10px; min-height: 48px !important; margin: 0 !important; padding: 0 18px 0 8px !important; transform: translateY(-100%); border: 1.5px solid #3e2723 !important; border-radius: 999px !important; background: #3e2723 !important; color: #ffedac !important; box-shadow: 3px 3px 0 #f7badd !important; font: 600 calc(15px * var(--ayna-text-scale, 1))/1 var(--f-ui) !important; pointer-events: auto; animation: eco-app-float-in .5s var(--ease-pop) .6s both; transition: transform .12s; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-float button:active { transform: translateY(-100%) scale(.96); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-float__count { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #f7badd; color: #3e2723; font: 700 14px/1 var(--f-ui); }
+.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-float button { background: #ffedac !important; color: #3e2723 !important; border-color: #ffedac !important; }
+@keyframes eco-app-float-in { from { opacity: 0; transform: translateY(-40%) scale(.85); } to { opacity: 1; transform: translateY(-100%) scale(1); } }
+html.ay-motion-paused .ayna-mobile:is(#ay, .ayna-mobile) .eco-app :is(.eco-app-float button, .eco-app-ring__fill) { animation: none !important; }
+@media (prefers-reduced-motion: reduce) { .ayna-mobile:is(#ay, .ayna-mobile) .eco-app :is(.eco-app-float button, .eco-app-ring__fill) { animation: none !important; } }
+
+/* ---------- Worth a look: two even columns ---------- */
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-worth .ay-shelf2-row { display: grid !important; grid-template-columns: 1fr 1fr; align-items: start; gap: 12px; margin: 0 !important; padding: 0 !important; overflow: visible !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-worth .ay-shelf2-row > * { width: auto !important; min-width: 0; }
+
+/* ---------- Stacked summary card (espresso, a pink card peeking behind) ---------- */
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack { position: relative; margin: 18px 10px 14px 0; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__back { position: absolute; inset: 0; transform: translate(9px, 9px) rotate(2deg); border: 1.5px solid #3e2723; border-radius: 20px; background: #f7badd; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__card { position: relative; display: grid; gap: 10px; padding: 18px 18px 12px; border: 1.5px solid #3e2723; border-radius: 20px; background: #3e2723; color: #ffedac; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack .eco-oval { position: absolute; top: -16px; right: 14px; z-index: 2; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__nums { display: flex; gap: 22px; margin: 0 !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__nums span { display: grid; gap: 2px; font: 500 calc(13px * var(--ayna-text-scale, 1))/1.2 var(--f-ui); color: #ffedac !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__nums b { font: 700 calc(28px * var(--ayna-text-scale, 1))/1 var(--ay-app-heading); letter-spacing: -.02em; color: #ffedac; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__needs { margin: 2px 0 0 !important; font: 500 calc(15px * var(--ayna-text-scale, 1))/1.3 var(--f-ui) !important; color: #ffedac !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__needs b { font-weight: 700; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__bar { display: block; height: 10px; border: 1.5px solid #ffedac; border-radius: 99px; overflow: hidden; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__bar i { display: block; height: 100%; background: repeating-linear-gradient(90deg, #f7badd 0 8px, #769ebe 8px 16px); transform-origin: 0 50%; animation: eco-app-fill .9s var(--ease-out) .35s both; }
+@keyframes eco-app-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack .eco-app-replay { justify-self: start; margin: -4px 0 -6px !important; color: #ffedac !important; }
+.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__card { background: #ffedac; border-color: #ffedac; }
+.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__card :is(.eco-app-stack__nums span, .eco-app-stack__nums b, .eco-app-stack__needs, .eco-app-replay) { color: #3e2723 !important; }
+.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__bar { border-color: #3e2723; }
+.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__back { border-color: #ffedac; }
+html.ay-motion-paused .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__bar i { animation: none !important; }
+@media (prefers-reduced-motion: reduce) { .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__bar i { animation: none !important; } }
+/* Pass 2: icon + label buttons (the text "+" glyphs became the shared PlusIcon). */
+.ayna-mobile .ay-shelf2-pick > button, .ayna-mobile .ay-shelf2-slot { display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.ayna-mobile .ay-shelf2-slot { flex-direction: column; }
+/* Pass 2: one primary action in thumb reach, "For you" beside it as the quiet choice. */
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-dock { display: flex; align-items: center; justify-content: center; gap: 10px; width: calc(100% - 40px); max-width: 420px; transform: translateY(-100%); pointer-events: none; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-dock button { transform: none; pointer-events: auto; animation: none; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-dock button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #f7badd !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-dock .eco-app-dock__primary { flex: 1; justify-content: center; min-height: 52px !important; padding: 0 20px !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-dock .eco-app-dock__for { flex: none; background: var(--ayna-bg, #ffedac) !important; color: var(--ayna-heading, #3e2723) !important; border-color: currentColor !important; box-shadow: none !important; min-height: 52px !important; }
+.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-dock .eco-app-dock__for { background: #3e2723 !important; color: #ffedac !important; }
+@media (prefers-reduced-motion: no-preference) { .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-dock { animation: ay-morph-in var(--t-base) var(--ease-out) both; } }
+
+/* Check-in and "For you" in the summary card (walkthrough P1-15): nothing
+   floats over the shelves. One pink primary, then a quiet row of two links. */
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-checkin { justify-self: stretch; min-height: 48px; margin: 4px 0 0 !important; padding: 0 18px !important; border: 1.5px solid #f7badd !important; border-radius: 999px !important; background: #f7badd !important; color: #3e2723 !important; box-shadow: 3px 3px 0 #ffedac !important; font: 700 calc(16px * var(--ayna-text-scale, 1))/1 var(--f-ui) !important; cursor: pointer; transition: transform var(--t-press) var(--ease-pop), box-shadow var(--t-press) var(--ease-out); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-checkin:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #ffedac !important; }
+.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-checkin { box-shadow: 3px 3px 0 #3e2723 !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__row .eco-app-replay { margin: 0 !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__row.is-loose { margin: 4px var(--d-gutter, 20px) 0; justify-content: center; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-foryou { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin: 0; padding: 0 14px 0 6px; border: 1.5px solid currentColor; border-radius: 999px; background: transparent; color: inherit; font: 600 calc(15px * var(--ayna-text-scale, 1))/1 var(--f-ui); cursor: pointer; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__card .eco-app-foryou { color: #ffedac; }
+.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__card .eco-app-foryou { color: #3e2723; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-foryou__count { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #f7badd; color: #3e2723; font: 700 14px/1 var(--f-ui); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-foryou:focus-visible, .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-checkin:focus-visible { outline: 3px solid #f7badd; outline-offset: 3px; }

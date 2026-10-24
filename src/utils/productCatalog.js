@@ -25,7 +25,7 @@ import { applyCatalogCorrections } from '../data/catalogCorrections.js';
  * Keep `scripts/export-catalog.mjs` either way: it is how the seed file is
  * regenerated, and `--check` proves the export is lossless.
  */
-import { ALL_PRODUCTS as BUNDLED_FALLBACK } from '../data/products.js';
+import { ALL_PRODUCTS as BUNDLED_FALLBACK, loadCatalog } from '../data/catalog.js';
 
 const API_PATH = '/api/products';
 const CACHE_KEY = 'ayna_product_catalog_v4';
@@ -90,6 +90,8 @@ export async function loadProductCatalog() {
     } catch (e) {
       // Deliberately NOT cached: a transient failure must not pin the fallback.
       console.warn('[Ayna] product catalog API unavailable, using bundled copy:', e?.message);
+      // The bundled copy loads after first paint (data/catalog.js): wait for it.
+      await loadCatalog().catch(() => null);
       return { products: BUNDLED_FALLBACK, source: 'bundled' };
     } finally {
       inFlight = null;

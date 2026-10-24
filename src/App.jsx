@@ -6,20 +6,34 @@ import SiteFooter from './components/SiteFooter';
 import ConsentBanner from './components/ConsentBanner';
 import SavedForLater from './components/SavedForLater';
 import EcosystemGenerationBar from './components/EcosystemGenerationBar';
-import WebYou from './components/WebYou';
 import { useWebTheme } from './utils/useWebTheme';
-import MonthlyCheckin from './components/MonthlyCheckin';
 import OmittedProducts from './components/OmittedProducts';
 import ViewSkeleton from './components/skeletons/ViewSkeleton';
 import { markPerf } from './utils/perfTimings';
+import ProductHeroPreview from './components/pdp/ProductHeroPreview';
+import { productSeedFor } from './utils/productSeed';
+
+// React.lazy that renders without a placeholder once its chunk has loaded.
+// The page being opened starts its chunk at once (its prerendered HTML already
+// preloads it), so the first render can show the page itself instead of a
+// placeholder and then a second style and layout pass (perf). React.lazy
+// accepts any thenable, and one that resolves synchronously never suspends.
+const START_PATH = typeof window !== 'undefined' ? window.location.pathname.replace(/\/+$/, '') : '';
+function routeLazy(loader, startNow = false) {
+  let mod = null;
+  let pending = null;
+  const load = () => (pending ||= loader().then((m) => { mod = m; return m; }, (err) => { pending = null; throw err; }));
+  if (startNow) load().catch(() => {});
+  return React.lazy(() => (mod ? { then: (resolve) => resolve(mod) } : load()));
+}
 
 // lazyView: React.lazy plus a built-in Suspense boundary, so converting an
 // eager view to a lazy one does not require touching its render site. Each
 // of these is a whole screen gated behind currentView; keeping them out of
 // the entry chunk means first paint does not pay for the quiz, Community,
 // admin tools or the post-quiz reveal.
-const lazyView = (loader, fallback) => {
-  const Lazy = React.lazy(loader);
+const lazyView = (loader, fallback, startNow = false) => {
+  const Lazy = routeLazy(loader, startNow);
   const fb = fallback === undefined ? <ViewSkeleton /> : fallback;
   return function LazyViewBoundary(props) {
     return <Suspense fallback={fb}><Lazy {...props} /></Suspense>;
@@ -34,6 +48,7 @@ const DeleteAccountPage = lazyView(() => import('./components/DeleteAccountPage'
 const WebHealth = lazyView(() => import('./components/WebHealth'));
 const AdminReviewsPage = lazyView(() => import('./components/AdminReviewsPage'));
 const AdminResearchPage = lazyView(() => import('./components/AdminResearchPage'));
+const AdminTopicsPage = lazyView(() => import('./components/AdminTopicsPage'));
 const FreeProductPage = lazyView(() => import('./components/freeProduct/FreeProductPage'));
 const CampaignAdminPage = lazyView(() => import('./components/CampaignAdminPage'));
 const PhoneVerification = lazyView(() => import('./components/PhoneVerification'));
@@ -42,32 +57,47 @@ const TrackedItems = lazyView(() => import('./components/TrackedItems'));
 const Comparison = lazyView(() => import('./components/Comparison'));
 const DoctorPrep = lazyView(() => import('./components/DoctorPrep'));
 const Recalls = lazyView(() => import('./components/Recalls'));
+// Pass 2 (perf): pages that Home, Shop and first paint never need. The
+// product page chunk is preloaded on /product/* pages (scripts/prerender.mjs).
+const WebYou = lazyView(() => import('./components/WebYou'));
+const MonthlyCheckin = lazyView(() => import('./components/MonthlyCheckin'));
+const WebHealthData = lazyView(() => import('./components/WebHealthData'));
+const ProductModal = lazyView(() => import('./components/ProductModal'), <ProductLoading fallback={<ViewSkeleton label="Loading the product" />} />, START_PATH.startsWith('/product/'));
+const PrivacyPolicy = lazyView(() => import('./components/PrivacyPolicy'));
+const ConsumerHealthData = lazyView(() => import('./components/ConsumerHealthData'));
+const HowWeMakeMoney = lazyView(() => import('./components/HowWeMakeMoney'));
+const HowItWorks = lazyView(() => import('./components/HowItWorks'));
+const About = lazyView(() => import('./components/About'));
+const Contact = lazyView(() => import('./components/Contact'));
+const TermsOfUse = lazyView(() => import('./components/TermsOfUse'));
+const AuthConfirm = lazyView(() => import('./components/AuthConfirm'));
+const EmailConfirmed = lazyView(() => import('./components/EmailConfirmed'));
 // Lazy: each of these pulls in src/data/startups.js (~1700 lines), deferring
 // them until the user actually navigates there keeps that out of the main
-// bundle. products.js itself is still eager (App.jsx needs getRecommendations/
-// getEcosystemSeedFromQuiz synchronously), so this doesn't fix everything,
-// but it's the safe part of the fix available without a bigger refactor of
-// how this file computes recommendations.
+// bundle. products.js itself now loads after first paint too (data/catalog.js).
 const BrandPartners = React.lazy(() => import('./components/BrandPartners'));
-const MyEcosystem = React.lazy(() => import('./components/MyEcosystem'));
-const Discovery = React.lazy(() => import('./components/Discovery'));
-const Articles = React.lazy(() => import('./components/Articles'));
+const MyEcosystem = routeLazy(() => import('./components/MyEcosystem'), /^\/(my-)?ecosystem$/.test(START_PATH));
+const Discovery = routeLazy(() => import('./components/Discovery'), /^\/(shop|discovery)$/.test(START_PATH));
+const Articles = routeLazy(() => import('./components/Articles'), /^\/library(\/|$)/.test(START_PATH));
 // Internal, read-only product passport audit (dev, or ?internal=1 opt-in).
 const ProductAudit = React.lazy(() => import('./components/ProductAudit'));
 const CampusResources = React.lazy(() => import('./components/CampusResources'));
 // Public page for a shared Ask ayna answer: /a/<slug>.
 const SharedAnswerPage = React.lazy(() => import('./components/SharedAnswerPage'));
-import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, hasStatedLifeStage, matchEngine, getSelectedNeeds } from './data/products.js';
+// The catalog (products, research, matching) loads after first paint as its
+// own chunk; App re-renders when it lands (data/catalog.js, catalogReady below).
+import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, hasStatedLifeStage, matchEngine, getSelectedNeeds, useCatalogReady, isCatalogReady, loadCatalog } from './data/catalog.js';
 import { behaviorFrom } from './utils/matchDisplay';
-import WebHealthData from './components/WebHealthData';
 import { useHealthData } from './mobile/hooks/useHealthData.js';
+import { useHealthMatchPref } from './health/matchPref.js';
+import { usesHormonalBC } from './health/weekInsights.js';
 import { captureReferralFromUrl } from './utils/badges';
 import { slugFromPath } from './utils/sharedAnswer.js';
 import { readPendingFriend } from './utils/shareAnswerClient.js';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
 const Screenings = lazyView(() => import('./components/Screenings'));
 import { useScrollPosition } from './hooks/useScrollPosition';
-import ProductModal from './components/ProductModal';
+import { useHeaderScroll } from './hooks/useHeaderScroll';
 import { enrichLlmProductForDiscovery } from './utils/enrichLlmProductForDiscovery';
 import ProfileChatbot from './components/ProfileChatbot';
 import { loadHealthProfile, hasHealthProfileSignals } from './utils/healthDataProfile.js';
@@ -75,27 +105,20 @@ import { loadHealthProfileForCurrentUser, saveHealthProfileForCurrentUser } from
 import { forgetSharedIntake, loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser, clearHealthIntakeForCurrentUser } from './utils/healthIntakeStore';
 import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
 import AuthGate, { ConsentGate } from './components/AuthGate';
-import PrivacyPolicy from './components/PrivacyPolicy';
-import ConsumerHealthData from './components/ConsumerHealthData';
-import HowWeMakeMoney from './components/HowWeMakeMoney';
-import HowItWorks from './components/HowItWorks';
-import About from './components/About';
-import Contact from './components/Contact';
 import './finalAynaPolish.css';
 import './brand-v2.css';
 import './web-play.css';
 import './styles/verify-core.css';
 import { installScrollMemory, isRestoringScroll } from './utils/scrollMemory';
 import { avatarInitials } from './utils/avatarInitials';
-import TermsOfUse from './components/TermsOfUse';
 import AuthCallback from './components/AuthCallback';
-import AuthConfirm from './components/AuthConfirm';
-import EmailConfirmed from './components/EmailConfirmed';
+import './styles/editorial.css';
 import { getSupabaseClient } from './utils/supabaseClient';
 import { clearGeneratedPicksForUser, isGeneratedPick, loadEcosystemForUser, upsertProductState, upsertProductsBatch, removeGeneratedProductsFromEcosystem, clearEcosystemForUser } from './utils/ecosystemStore';
 import { loadSavedProducts, persistSavedProducts, clearSavedProducts, loadSavedForUser, setSavedForUser } from './utils/savedProductsStore';
 import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/learningMemoryStore';
 import { loadReviewsForUser, upsertProductReviews } from './utils/reviewsStore';
+import { growTransition } from './utils/viewTransition.js';
 import { clearCachedLlmRecommendations, fingerprintIntake } from './utils/fetchLlmRecommendations';
 import posthog from 'posthog-js';
 import { identifyAccount } from './utils/analyticsIdentity';
@@ -109,18 +132,34 @@ import './styles/flow.css';
 import './styles/web-neon-dark.css';
 import './styles/web-density.css';
 import './styles/theme-v3.css';
+import './styles/site-polish.css';
+import './styles/ayna-system.css';
+import './styles/content.css';
+import './styles/chrome.css';
 import NewAccountStart from './components/NewAccountStart';
 import { markOAuthSource, takeOAuthSource, shouldOfferEcosystemStart } from './utils/oauthNewAccount';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './components/EcosystemBubbles';
 import EcosystemPreview from './components/v3/EcosystemPreview';
+import EcosystemViewTabs from './components/EcosystemViewTabs';
 import { clearPersonalStorage } from './utils/clearPersonalStorage';
 import { toast } from './utils/toast';
 import { setDarkAccentSwap } from './utils/darkAccentSwap.js';
 import { recordProductView } from './utils/recentActivity';
 import GlobalToast from './components/v3/GlobalToast';
+import { MAIN_TABS, TabIcon, AskMark } from './components/nav/tabs.jsx';
 import { loadProductReviewStats, mergeReviewBuckets, REVIEWS_CHANGED_EVENT } from './utils/community/reviewRatings.js';
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
+/** Which views light up each phone tab (MAIN_TABS keys). */
+const WEB_TAB_VIEWS = {
+  library: ['articles'],
+  browse: ['discovery', 'product'],
+  home: ECOSYSTEM_NAV_VIEWS,
+  community: ['community'],
+  profile: ['you', 'health', 'health-data', 'delete-account', 'text-ayna', 'tracked'],
+};
+/** Focused flows: a minimal header (logo · Exit), no tab bar, no footer (P1-28). */
+const FOCUSED_FLOW_VIEWS = ['quiz', 'profile-edit'];
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
 const GRADIENT_NAV_VIEWS = ['welcome', 'hero', 'about', 'how-it-works'];
 
@@ -169,6 +208,8 @@ const VIEW_TO_PATH = {
   'admin-reviews': '/admin/reviews',
   // Same: api/research-product checks ADMIN_EMAILS.
   'admin-research': '/admin/research',
+  // Same: api/community-topics-admin checks ADMIN_EMAILS.
+  'admin-topics': '/admin/topics',
   // Free product campaign (feedback + 3 verified friends). Server decides everything: api/campaign.js.
   'free-product': '/free-product',
   'free-product-reward': '/free-product/reward',
@@ -177,17 +218,18 @@ const VIEW_TO_PATH = {
 // Friendly document.title per view'welcome'/'hero' and any view not
 // listed here fall back to the site's base title (see the title effect).
 const VIEW_TITLES = {
-  quiz: 'Get matched', ecosystem: 'My ecosystem', discovery: 'Shop', you: 'You', community: 'Community',
+  quiz: 'Get matched', ecosystem: 'Your ecosystem', discovery: 'Shop', you: 'You', community: 'Community',
   waitlist: 'Partner brands', recommendations: 'Your recommendations', articles: 'Library', screenings: 'Screenings',
   omitted: 'Omitted products', comparison: 'Compare products', recalls: 'Recalls',
-  'doctor-prep': 'Appointment prep', 'profile-edit': 'Edit profile',
+  'doctor-prep': 'Appointment prep', 'profile-edit': 'Edit my answers',
   'phone-verify': 'Verify phone', tracked: 'Tracked products', 'delete-account': 'Delete account', 'health-data': 'Health data', health: 'Your health',
-  'privacy-policy': 'Privacy Policy', 'consumer-health-data': 'Consumer Health Data Privacy Notice', 'terms-of-use': 'Terms of Use',
+  'privacy-policy': 'Privacy policy', 'consumer-health-data': 'Consumer health data privacy notice', 'terms-of-use': 'Terms of use',
   'how-we-make-money': 'How we make money', 'how-it-works': 'How it works',
   about: 'About', contact: 'Contact', 'not-found': 'Page not found',
   'campus-resources': 'Campus resources',
   'admin-reviews': 'All reviews',
   'admin-research': 'Product research',
+  'admin-topics': 'Community topics',
   'free-product': 'Your free product',
   'free-product-reward': 'Your free product',
   'admin-campaign': 'Free product campaign',
@@ -329,6 +371,14 @@ function ViewLoadingFallback() {
   return <ViewSkeleton label="Loading" cards={3} lines={2} />;
 }
 
+// First visit to a product page: its hero (from the prerendered page's seed)
+// paints while the catalog and the product page code load; anywhere else, the
+// usual placeholder.
+function ProductLoading({ fallback, onPainted = null }) {
+  const seed = productSeedFor(typeof window !== 'undefined' ? window.location.pathname : '');
+  return seed ? <ProductHeroPreview seed={seed} onPainted={onPainted} /> : fallback;
+}
+
 /**
  * Shared "nothing here" state, a bad product link already showed a proper,
  * on-brand empty state (centered serif heading, muted subtext, single navy
@@ -337,20 +387,35 @@ function ViewLoadingFallback() {
  * live, 2026-08-24 bug bash). Same component now backs both, instead of a
  * one-off block duplicated just for products.
  */
-function NotFoundState({ title, subtitle, ctaLabel, onCta, onSearch, searchPlaceholder = 'Search the shop' }) {
+function NotFoundState({ title, subtitle, ctaLabel, onCta, onSearch, searchPlaceholder = 'Search the Shop', links = null }) {
   return (
-    <div className="mockup-page ay-404">
-      <span className="ay-404__badge" aria-hidden="true">404</span>
-      <h1>{title}</h1>
-      <p>{subtitle}</p>
-      {onSearch && (
-        <form className="ay-404__search" role="search" onSubmit={(e) => { e.preventDefault(); const q = String(new FormData(e.currentTarget).get('q') || '').trim(); onSearch(q); }}>
-          <label className="sr-only" htmlFor="ay-404-q">{searchPlaceholder}</label>
-          <input id="ay-404-q" name="q" type="search" placeholder={searchPlaceholder} autoComplete="off" />
-          <button type="submit" className="btn btn-navy">Search</button>
-        </form>
-      )}
-      <button type="button" className={onSearch ? 'ay-404__alt' : 'btn btn-navy'} onClick={onCta}>{ctaLabel}</button>
+    <div className="ed">
+      <div className="ed-wrap">
+        <div className="ed-state">
+          <p className="ed-state__mark">Error 404</p>
+          <h1 className="ed-h1">{title}</h1>
+          <p className="ed-lead">{subtitle}</p>
+          {onSearch && (
+            <form className="ed-search" role="search" onSubmit={(e) => { e.preventDefault(); const q = String(new FormData(e.currentTarget).get('q') || '').trim(); onSearch(q); }}>
+              <label>
+                <span className="ed-sr">{searchPlaceholder}</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
+                <input id="ay-404-q" name="q" type="search" placeholder={searchPlaceholder} autoComplete="off" />
+              </label>
+              <button type="submit" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg></button>
+            </form>
+          )}
+          {links && links.length > 0 && (
+            <nav className="ed-state__links" aria-label="Popular pages">
+              <p>Popular pages</p>
+              <ul>{links.map((l) => <li key={l.href}><a href={l.href} onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); l.go(); }}>{l.label}</a></li>)}</ul>
+            </nav>
+          )}
+          <div className="ed-state__actions">
+            <button type="button" className={onSearch ? 'ay-btn ay-btn--text' : 'ay-btn ay-btn--primary'} onClick={onCta}>{ctaLabel}</button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -383,6 +448,7 @@ function App() {
   // entry before the app even loads, making history.length > 1 true even
   // with zero in-app navigation.
   const inAppPushCountRef = useRef(0);
+  const viewOriginRef = useRef({});
   // Lets a product opened from Browse keep Browse mounted (hidden) behind it,
   // so clicking a card then going back doesn't blow away the personalization
   // toggle, filters, sort, or scroll position — see the Discovery render
@@ -401,6 +467,9 @@ function App() {
     // genuine departure from wherever Shop's kept-alive state came from, so
     // the next time Shop mounts it's a clean, fresh instance.
     discoveryKeepAliveRef.current = false;
+    // P1-8: remember where each page was opened from, so its back link can
+    // name that page ("Shop", "Home") instead of a bare "Back".
+    if (!replace && currentViewRef.current && currentViewRef.current !== view) viewOriginRef.current[view] = currentViewRef.current;
     currentViewRef.current = view;
     setCurrentViewRaw(view);
     if (view !== 'product') setProductRouteId(null);
@@ -460,6 +529,15 @@ function App() {
     if (inAppPushCountRef.current > 0) window.history.back();
     else setCurrentView('welcome', { replace: true });
   }, [setCurrentView]);
+  // The back link on a standalone page (legal, About, How it works…) names the
+  // page it returns to: the one it was opened from, or Home on a direct visit.
+  const standaloneBackLabel = (() => {
+    const from = inAppPushCountRef.current > 0 ? viewOriginRef.current[currentView] : 'welcome';
+    if (!from) return 'Back';
+    if (from === 'welcome' || from === 'hero') return 'Home';
+    if (from === 'product') return 'Product';
+    return VIEW_TITLES[from] || 'Back';
+  })();
   useEffect(() => {
     // A 404 keeps the URL she typed (it used to be rewritten to '/').
     const keepPath = currentView === 'not-found' || viewFromSubPath(window.location.pathname) === currentView;
@@ -470,7 +548,9 @@ function App() {
     const initialUrl = (currentView === 'auth-callback' || currentView === 'campus-resources' || currentView === 'free-product' || currentView === 'free-product-reward')
       ? `${path}${window.location.search}${window.location.hash}`
       : currentView === 'waitlist' && /^#brand-[a-z0-9-]+$/.test(window.location.hash) ? `${path}${window.location.hash}`
-      : communityQ ? `${path}?q=${encodeURIComponent(communityQ)}` : path;
+      : communityQ ? `${path}?q=${encodeURIComponent(communityQ)}`
+      // Ecosystem keeps ?view=dashboard so a link can open its Dashboard tab.
+      : currentView === 'ecosystem' && new URLSearchParams(window.location.search).get('view') === 'dashboard' ? `${path}?view=dashboard` : path;
     window.history.replaceState({ view: currentView, productId: productRouteId }, '', initialUrl);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -530,6 +610,11 @@ function App() {
   // Stable insertion-order array of product IDs, prevents cards from reordering on swap/add
   const [ecosystemOrder, setEcosystemOrder] = useState([]);
   const [omittedProducts, setOmittedProducts] = useState({});
+  // Signed-out "Add to ecosystem" survives a refresh (focus group Oct 19): the
+  // guest shelf is mirrored to this browser and merged into the account at
+  // sign-in, then cleared. Best effort: storage can be blocked.
+  const GUEST_ECO_KEY = 'ayna_guest_ecosystem_v1';
+  const guestEcoRestoredRef = useRef(false);
   // Product page → Community: which composer to open and for which product.
   const [communitySeed, setCommunitySeed] = useState(null);
   useEffect(() => {
@@ -558,7 +643,16 @@ function App() {
 
   const [aynaReviews, setAynaReviews] = useState({});
   const [healthProfile, setHealthProfile] = useState(() => loadHealthProfile());
-  const [savedProducts, setSavedProducts] = useState(() => loadSavedProducts());
+  // Saved products are checked against the catalog, which loads after first
+  // paint: until it has, start empty and restore them the moment it lands.
+  const catalogReady = useCatalogReady();
+  const [savedProducts, setSavedProducts] = useState(() => (isCatalogReady() ? loadSavedProducts() : {}));
+  const savedRestoredRef = useRef(isCatalogReady());
+  useEffect(() => {
+    if (!catalogReady || savedRestoredRef.current) return;
+    savedRestoredRef.current = true;
+    setSavedProducts((prev) => ({ ...loadSavedProducts(), ...prev }));
+  }, [catalogReady]);
   const [ecosystemSeedMeta, setEcosystemSeedMeta] = useState({});
   const [user, setUser] = useState(null);
   const [userSession, setUserSession] = useState(null);
@@ -585,6 +679,24 @@ function App() {
   const seedSavePromiseRef = useRef(Promise.resolve());
   useEffect(() => { myProductsRef.current = myProducts; }, [myProducts]);
   const [authLoading, setAuthLoading] = useState(true);
+  useEffect(() => {
+    if (authLoading || user || guestEcoRestoredRef.current) return;
+    guestEcoRestoredRef.current = true;
+    try {
+      const saved = JSON.parse(localStorage.getItem(GUEST_ECO_KEY) || 'null');
+      if (saved && saved.myProducts && typeof saved.myProducts === 'object' && Object.keys(saved.myProducts).length) {
+        setMyProducts((prev) => ({ ...saved.myProducts, ...prev }));
+        setEcosystemOrder((prev) => [...(Array.isArray(saved.order) ? saved.order : Object.keys(saved.myProducts)).filter((id) => !prev.includes(id)), ...prev]);
+      }
+    } catch { /* storage blocked or bad JSON */ }
+  }, [authLoading, user]);
+  useEffect(() => {
+    if (authLoading || user || !guestEcoRestoredRef.current) return;
+    try {
+      if (Object.keys(myProducts).length) localStorage.setItem(GUEST_ECO_KEY, JSON.stringify({ myProducts, order: ecosystemOrder, at: Date.now() }));
+      else localStorage.removeItem(GUEST_ECO_KEY);
+    } catch { /* storage blocked or full */ }
+  }, [authLoading, user, myProducts, ecosystemOrder]);
   const [dataLoading, setDataLoading] = useState(false);
   // Bumped by the ecosystem skeleton's Retry button: re-runs the per-user data
   // load effect without touching any state that is already on screen.
@@ -631,14 +743,18 @@ function App() {
   const [quizRun, setQuizRun] = useState(0);
   // "Make my matches more personal": the profile editor opens at the first open optional question.
   const [editAtOptional, setEditAtOptional] = useState(false);
-  useEffect(() => { if (currentView !== 'profile-edit') setEditAtOptional(false); }, [currentView]);
+  // "Update life stages" (Ecosystem): the profile editor opens on the life stage question.
+  const [editAtStep, setEditAtStep] = useState('');
+  useEffect(() => { if (currentView !== 'profile-edit') { setEditAtOptional(false); setEditAtStep(''); } }, [currentView]);
   const [askOpenSignal, setAskOpenSignal] = useState(0);
+  const [askPrefillStats, setAskPrefillStats] = useState(null);
   const [askPrefill, setAskPrefill] = useState('');
   // Opens Ask ayna, optionally with a question typed in (Shop's empty state).
-  const openAsk = useCallback((text = '') => {
+  const openAsk = useCallback((text = '', stats = null) => {
     if (!user) { setAuthFeature('Ask ayna'); setPendingAction('feature'); pendingActionRef.current = 'feature'; setShowAuthModal(true); return; }
     if (!quizResults) { setCurrentView('quiz'); return; }
     setAskPrefill(text);
+    setAskPrefillStats(Array.isArray(stats) ? stats.slice(0, 3) : null);
     setAskOpenSignal((n) => n + 1);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, quizResults]);
@@ -676,34 +792,8 @@ function App() {
     );
   }, [reportSaveFailure]);
   const accountMenuRef = useRef(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  // Phone menu: focus moves into the sheet, Tab stays inside it, Escape
-  // closes it, and focus returns to the menu button afterwards.
-  useEffect(() => {
-    if (!mobileMenuOpen) return undefined;
-    const opener = document.activeElement;
-    const sheet = () => document.querySelector('.mobile-nav-sheet');
-    const focusables = () => [...(sheet()?.querySelectorAll('a[href], button:not([disabled])') || [])];
-    const raf = window.requestAnimationFrame(() => (focusables()[1] || focusables()[0])?.focus());
-    const onKey = (e) => {
-      if (e.key === 'Escape') { e.preventDefault(); setMobileMenuOpen(false); return; }
-      if (e.key !== 'Tab') return;
-      const list = focusables();
-      if (!list.length) return;
-      const first = list[0]; const last = list[list.length - 1];
-      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-    };
-    document.addEventListener('keydown', onKey);
-    return () => {
-      window.cancelAnimationFrame(raf);
-      document.removeEventListener('keydown', onKey);
-      const btn = document.querySelector('.mobile-menu-btn');
-      if (btn && (!document.activeElement || document.activeElement === document.body || sheet()?.contains(document.activeElement))) btn.focus();
-      else if (opener && opener.isConnected && opener === btn) btn.focus();
-    };
-  }, [mobileMenuOpen]);
   const scrollY = useScrollPosition();
+  const headerScroll = useHeaderScroll();
 
   const hasHealthImport = useMemo(() => hasHealthProfileSignals(healthProfile), [healthProfile]);
   const hasStatedQuizLifeStage = useMemo(() => hasStatedLifeStage(quizResults), [quizResults]);
@@ -947,8 +1037,11 @@ function App() {
       if (saved) {
         // Merge rather than replace: anything saved while signed out on this
         // device should survive signing in.
+        // The device's list, if the catalog-load restore above hasn't run yet.
+        let local = {};
+        if (!savedRestoredRef.current) { savedRestoredRef.current = true; local = loadSavedProducts(); }
         setSavedProducts((prev) => {
-          const merged = { ...prev, ...saved };
+          const merged = { ...local, ...prev, ...saved };
           persistSavedProducts(merged);
           return merged;
         });
@@ -961,6 +1054,7 @@ function App() {
           // in flight is already persisted, and clobbering it here made her
           // change vanish from the UI a few seconds after she made it.
           setMyProducts(prev => (Object.keys(prev).length ? { ...visibleEcosystem.myProducts, ...prev } : visibleEcosystem.myProducts));
+          try { localStorage.removeItem(GUEST_ECO_KEY); } catch { /* ignore */ }
           setEcosystemOrder(prev => {
             const merged = Object.keys(visibleEcosystem.myProducts);
             const extra = prev.filter(id => !merged.includes(id));
@@ -1025,6 +1119,8 @@ function App() {
       // Stay on welcome so they can navigate themselves.
       return;
     }
+    // Her matches come from the catalog: on a fresh page load wait for it.
+    if (pendingAction === 'quiz-complete' && pendingQuizResults && !catalogReady) return;
     setShowAuthModal(false);
     if (pendingAction === 'quiz-complete' && pendingQuizResults) {
       setQuizResults(pendingQuizResults);
@@ -1094,7 +1190,7 @@ function App() {
       setCurrentView('delete-account');
     }
     setPendingAction(null); pendingActionRef.current = null;
-  }, [user, pendingAction]);
+  }, [user, pendingAction, catalogReady]);
 
   // Google/Apple from a sign-in form (not the post-quiz save) can create a
   // brand-new empty account. Once her saved data has loaded, offer the quiz
@@ -1208,20 +1304,22 @@ function App() {
   // matching only: never Browse ranking, partner placement or ads.
   const healthNeedIds = useMemo(() => {
     try { return quizResults ? getSelectedNeeds(quizResults).map((n) => n.id) : []; } catch { return []; }
-  }, [quizResults]);
+  }, [quizResults, catalogReady]);
   const health = useHealthData(user?.id || null, healthNeedIds);
+  // Her switch (You, Health data): "Use my health data in my matches". Shared with the app.
+  const healthInMatches = useHealthMatchPref(user?.id || null).on;
   const matchOpts = useMemo(
     () => {
       const base = behaviorFrom({ saved: savedProducts, omitted: omittedProducts, inEcosystem: myProducts });
-      return health.matchContext ? { ...base, healthContext: health.matchContext } : base;
+      return healthInMatches && health.matchContext ? { ...base, healthContext: health.matchContext } : base;
     },
-    [savedProducts, omittedProducts, myProducts, health.matchContext]
+    [savedProducts, omittedProducts, myProducts, health.matchContext, healthInMatches]
   );
 
   const recommendedProductIds = useMemo(() => {
     if (!hasCompletedPersonalization) return [];
     return getPersonalizedProductIds(quizResults || null, healthProfile, matchOpts);
-  }, [quizResults, healthProfile, hasCompletedPersonalization, matchOpts]);
+  }, [quizResults, healthProfile, hasCompletedPersonalization, matchOpts, catalogReady]);
 
   // Categories this person actually matches on, in match order, the landing
   // Shop's Personalize toggle sorts by these.
@@ -1232,7 +1330,7 @@ function App() {
       if (p.category && !seen.includes(p.category)) seen.push(p.category);
     });
     return seen;
-  }, [quizResults, healthProfile, hasCompletedPersonalization]);
+  }, [quizResults, healthProfile, hasCompletedPersonalization, catalogReady]);
 
   React.useEffect(() => {
     try {
@@ -1379,7 +1477,7 @@ function App() {
   // answers after she confirms. Saved products, check-ins and the account stay.
   const handleResetEcosystem = async () => {
     if (!user?.id) return;
-    if (!window.confirm('Reset your Ecosystem? This clears your Ecosystem, its product tracking and your quiz answers. Saved products, check-ins and your account stay.')) return;
+    // Confirmed on the button itself (two taps, components/ui/ConfirmButton.jsx), never window.confirm.
     const supabase = getSupabaseClient();
     try {
       if (supabase) await clearEcosystemForUser(supabase, user.id, { includeTracking: true });
@@ -1394,7 +1492,7 @@ function App() {
     setTrackedProducts({});
     setOmittedProducts({});
     setQuizResults(null);
-    toast('Your Ecosystem is reset.');
+    toast('Your ecosystem is reset.');
     handleRedoQuiz();
   };
   const handleOpenHealthProfileEditor = () => setCurrentView('profile-edit');
@@ -1425,6 +1523,16 @@ function App() {
   const handleOpenDeleteAccount = () => setCurrentView('delete-account');
   const handleViewWaitlist = () => setCurrentView('waitlist');
   const handleViewEcosystem = () => setCurrentView('ecosystem');
+  // Ecosystem on its Dashboard tab (?view=dashboard, read by EcosystemViewTabs).
+  const handleViewEcosystemDashboard = () => {
+    const wasThere = currentViewRef.current === 'ecosystem';
+    setCurrentView('ecosystem');
+    try {
+      window.history.replaceState(window.history.state, '', `${VIEW_TO_PATH.ecosystem}?view=dashboard`);
+      // Already on Ecosystem: the tabs are mounted, so tell them the URL changed.
+      if (wasThere) window.dispatchEvent(new PopStateEvent('popstate', { state: window.history.state }));
+    } catch { /* history unavailable: Ecosystem opens on Products */ }
+  };
   const handleViewWishlist = () => {
     if (!user) {
       setPendingAction('saved');
@@ -1461,6 +1569,23 @@ function App() {
     setCurrentView('discovery');
   };
   const handleViewHowWeMakeMoney = () => setCurrentView('how-we-make-money');
+  // Cmd/Ctrl+K focuses the search on this page, or opens the Shop search.
+  const viewDiscoveryRef = useRef(handleViewDiscovery);
+  viewDiscoveryRef.current = handleViewDiscovery;
+  useEffect(() => {
+    const onKey = (e) => {
+      if (!(e.metaKey || e.ctrlKey) || e.altKey || e.shiftKey || String(e.key).toLowerCase() !== 'k') return;
+      e.preventDefault();
+      const focusSearch = () => {
+        const input = [...document.querySelectorAll('input[type="search"], [role="search"] input')].find((el) => el.offsetParent !== null);
+        if (input) { input.focus(); input.select?.(); return true; }
+        return false;
+      };
+      if (!focusSearch()) { viewDiscoveryRef.current(''); window.setTimeout(focusSearch, 350); }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
   const handleViewHowItWorks = () => setCurrentView('how-it-works');
   const handleViewAbout = () => setCurrentView('about');
   const handleViewContact = () => setCurrentView('contact');
@@ -1520,6 +1645,7 @@ function App() {
   };
 
   const handleQuizComplete = async (results) => {
+    await loadCatalog(); // her matches come from the catalog (already loaded by the quiz page)
     const completedResults = {
       ...results,
       personalizationCompleted: true,
@@ -1573,11 +1699,27 @@ function App() {
     setShowWrapped(true);
   };
 
+  // One quiz answer changed in place (You > Your blend): same save path as the
+  // monthly check-in; matches re-rank from the new answers. Rolls back and
+  // returns false if neither the server nor the device copy saved.
+  const handleUpdateIntake = async (nextIntake) => {
+    if (!nextIntake) return false;
+    const previous = quizResults;
+    setQuizResults(mapIntakeToLegacyQuizProfile(nextIntake));
+    try {
+      const r = await saveHealthIntakeForCurrentUser(nextIntake);
+      if (r?.saved || r?.localSaved) return true;
+    } catch { /* falls through to the rollback */ }
+    setQuizResults(previous);
+    return false;
+  };
+
   const handleHealthProfileEditorSave = async (updatedResults) => {
     if (!updatedResults) {
       setCurrentView('ecosystem');
       return;
     }
+    await loadCatalog(); // her matches come from the catalog
     setQuizResults(updatedResults);
     const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(updatedResults, healthProfile);
     setEcosystemSeedMeta(seedMeta);
@@ -1710,6 +1852,8 @@ function App() {
       return next;
     });
 
+    // A toast named after the action; a more specific one (a shelf's Undo) replaces it.
+    toast(wasIn ? 'Removed from your ecosystem' : 'Added to your ecosystem', wasIn ? { label: 'Undo', onClick: () => toggleMyProductRef.current?.(product) } : { label: 'See it', onClick: () => setCurrentView('ecosystem') });
     if (!wasIn) {
       const origin = lastOpenOrigin?.productId === product.id ? lastOpenOrigin : null;
       posthog.capture('product_added', {
@@ -1727,6 +1871,10 @@ function App() {
       }).catch(e => reportSaveFailure('Could not save that change', e));
     }
   };
+
+  // Undo in a toast runs after later renders, so it calls the latest handler.
+  const toggleMyProductRef = useRef(null);
+  toggleMyProductRef.current = toggleMyProduct;
 
   /** Save for later, the wishlist shown at the bottom of My Ecosystem. */
   const toggleSavedProduct = (product) => {
@@ -1867,8 +2015,12 @@ function App() {
       position: meta.position,
     });
     setLastOpenOrigin(source === 'search_results' ? { productId: p.id, source, searchQuery: meta.searchQuery } : null);
-    setLastClickedProduct(p);
-    navigateToProduct(p);
+    // The tapped card's photo grows into the product page's photo (View
+    // Transitions where supported, else the page's usual fade).
+    growTransition(() => {
+      setLastClickedProduct(p);
+      navigateToProduct(p);
+    }, { target: 'product', from: 'img' });
   };
 
   // Resolves the product for the current /product/:id route. Checked in order:
@@ -1908,7 +2060,7 @@ function App() {
 
     if (!raw) return null;
     return raw.llmGenerated ? enrichLlmProductForDiscovery(raw) : raw;
-  }, [productRouteId, lastClickedProduct, myProducts, savedProducts, trackedProducts, omittedProducts]);
+  }, [productRouteId, lastClickedProduct, myProducts, savedProducts, trackedProducts, omittedProducts, catalogReady]);
   useEffect(() => {
     let cancelled = false;
     const controller = new AbortController();
@@ -1921,6 +2073,8 @@ function App() {
       || resolvedProduct
       || authLoading
       || dataLoading
+      // Not in the catalog is only known once the catalog has loaded.
+      || !catalogReady
     ) {
       setPublicRouteProductLoading(false);
       return () => {
@@ -1959,12 +2113,18 @@ function App() {
       cancelled = true;
       controller.abort();
     };
-  }, [currentView, productRouteId, resolvedProduct, authLoading, dataLoading]);
+  }, [currentView, productRouteId, resolvedProduct, authLoading, dataLoading, catalogReady]);
 
   const displayedProduct = resolvedProduct || publicRouteProduct;
 
   const productStillResolving = !displayedProduct
-    && (authLoading || dataLoading || publicRouteProductLoading);
+    && (authLoading || dataLoading || publicRouteProductLoading || !catalogReady);
+  // A first visit to a product page paints its hero from the page's seed
+  // (ProductHeroPreview); the full page takes over once that hero has actually
+  // been on screen, not in the same moment the catalog lands.
+  const [heroShown, setHeroShown] = useState(false);
+  const markHeroShown = useCallback(() => setHeroShown(true), []);
+  const heroPending = !heroShown && currentView === 'product' && Boolean(productSeedFor(window.location.pathname));
 
   // Every route showed the identical generic <title> from index.html, no
   // way to tell tabs apart, bookmark a specific page, or get a useful link
@@ -2027,9 +2187,27 @@ function App() {
     }
   };
 
+  // The website health dashboard: its own page (/health) and the Dashboard
+  // tab on Ecosystem render this same element.
+  const webHealth = (
+    <WebHealth
+      user={user}
+      health={health}
+      products={Object.values(myProducts)}
+      needIds={healthNeedIds}
+      hormonalBC={usesHormonalBC(quizResults)}
+      onOpenProduct={(p) => handleOpenProduct(p, { source: 'health_dashboard' })}
+      onAsk={(q, extra) => openAsk(q, extra?.stats)}
+      onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+      onOpenConnections={() => {
+        if (user) { setCurrentView('health-data'); return; }
+        setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true);
+      }}
+    />
+  );
 
   return (
-    <div className="app-container" data-theme={themeAttr} data-view={currentView}>
+    <div className="app-container" data-theme={themeAttr} data-view={currentView} data-scroll-end={headerScroll.atEnd ? '1' : undefined}>
       {/* Shared fixed stacking wrapper for top-of-viewport status rows, so the
           save-error banner and the ecosystem-generation bar stack instead of
           overlapping if both are showing at once, neither sets its own
@@ -2059,54 +2237,63 @@ function App() {
         <GlobalToast />
         <EcosystemGenerationBar intakeFingerprint={ecosystemIntakeFingerprint} onViewEcosystem={handleViewEcosystem} hasEcosystem={ecosystemCount > 0} />
       </div>
-      <main data-view={currentView}>
-        <a className="ay-skip" href="#ay-content">Skip to content</a>
-        <div className="app-nav-wrap">
+      <a className="ay-skip" href="#ay-content">Skip to content</a>
+      {/* The header sits outside <main>. It slides away while scrolling down and
+          comes back on any scroll up; its hairline shows only with content under it. */}
+        <div className={`app-nav-wrap${headerScroll.scrolled ? ' is-scrolled' : ''}${headerScroll.away ? ' is-away' : ''}`}>
         <nav
-          className={`app-nav ${navOnGradient ? `app-nav--landing${navGradientVariant}` : 'app-nav--cream'}${isScrolled ? ' app-nav--scrolled' : ''}`}
+          className={`ay-nav${isScrolled ? ' is-scrolled' : ''}${FOCUSED_FLOW_VIEWS.includes(currentView) ? ' is-focused' : ''}`}
+          data-on-gradient={navOnGradient ? navGradientVariant || 'yes' : undefined}
           aria-label="Primary"
         >
-          <div className="app-nav__brand">
-            <a className="app-nav__logo" href="/" aria-label="ayna home" {...linkProps(navigateHome)}>
-              ayna
-              <span className="app-nav__beta-badge">beta</span>
-            </a>
-          </div>
+          <a className="ay-nav__logo" href="/" aria-label="ayna home" {...linkProps(navigateHome)}>
+            ayna
+            <span className="ay-nav__beta">beta</span>
+          </a>
 
           {/* Shop and My Ecosystem lead (filled pills); Library and Community follow, quieter. Real links (G02). */}
-          <div className="app-nav__links desktop-only">
-            <a href="/shop" className={`app-nav__tab app-nav__tab--main ${['discovery', 'hero', 'product'].includes(currentView) ? 'app-nav__tab--active' : ''}`} aria-current={currentView === 'discovery' ? 'page' : undefined} {...linkProps(() => handleViewDiscovery(''))}>Shop</a>
-            <a href="/ecosystem" className={`app-nav__tab app-nav__tab--main app-nav__tab--eco ${!user && !authLoading ? 'is-start' : ''} ${ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'app-nav__tab--active' : ''}`} aria-current={ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'page' : undefined} {...linkProps(() => handleViewEcosystem())}>
-              {!user && !authLoading && <span className="app-nav__start" aria-hidden="true">Start here</span>}
-              My Ecosystem
+          {/* Four text links, underline on the current page (no pills). */}
+          <div className="ay-nav__links">
+            <a href="/shop" className="ay-nav__link" aria-current={['discovery', 'product'].includes(currentView) ? 'page' : undefined} {...linkProps(() => handleViewDiscovery(''))}>Shop</a>
+            <a href="/ecosystem" className="ay-nav__link" aria-current={ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'page' : undefined} {...linkProps(() => handleViewEcosystem())}>
+              My ecosystem
+              {!user && !authLoading && <span className="ay-nav__start">Start here</span>}
             </a>
-            <span className="app-nav__divider" aria-hidden="true" />
-            <a href="/library" className={`app-nav__tab app-nav__tab--quiet ${currentView === 'articles' ? 'app-nav__tab--active' : ''}`} aria-current={currentView === 'articles' ? 'page' : undefined} {...linkProps(() => { setSelectedArticleId(null); setCurrentView('articles'); })}>Library</a>
-            <a href="/community" className={`app-nav__tab app-nav__tab--quiet ${currentView === 'community' ? 'app-nav__tab--active' : ''}`} aria-current={currentView === 'community' ? 'page' : undefined} {...linkProps(() => setCurrentView('community'))}>Community</a>
+            <a href="/library" className="ay-nav__link" aria-current={currentView === 'articles' ? 'page' : undefined} {...linkProps(() => { setSelectedArticleId(null); setCurrentView('articles'); })}>Library</a>
+            <a href="/community" className="ay-nav__link" aria-current={currentView === 'community' ? 'page' : undefined} {...linkProps(() => setCurrentView('community'))}>Community</a>
           </div>
 
           {currentView === 'quiz' && (
-            <a href="/" className="app-nav__exitquiz" {...linkProps(navigateHome)}>Exit <span>· answers saved on this device</span></a>
+            <a href="/" className="ay-nav__exit" aria-label="Exit the quiz" {...linkProps(navigateHome)}>Exit</a>
           )}
-          <div className="app-nav__actions">
+          {currentView === 'profile-edit' && (
+            <button type="button" className="ay-nav__exit" aria-label="Exit without saving" onClick={handleExitProfileEdit}>Exit</button>
+          )}
+          <div className="ay-nav__actions">
+            {/* Phone: Ask ayna sits in the header, as in the app (one tab set, P1-7). */}
+            {!FOCUSED_FLOW_VIEWS.includes(currentView) && currentView !== 'campus-resources' && (
+              <button type="button" className="ay-nav__ask" onClick={() => openAsk('')}>
+                <span className="ay-nav__ask-orb" aria-hidden="true"><AskMark /></span>Ask ayna
+              </button>
+            )}
             <a
               href="/ecosystem"
-              className="app-nav__circle app-nav__circle--wishlist"
+              className="ay-nav__icon app-nav__circle--wishlist"
               {...linkProps(handleViewWishlist)}
               aria-label={`Saved products${user && savedCount ? `, ${savedCount}` : ''}`}
               data-tip={user ? 'Saved products' : 'Saved products · sign in'}
             >
-              <svg viewBox="0 0 24 24" aria-hidden="true" className="app-nav__wishlist-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" />
               </svg>
               {user && savedCount > 0 && <span className="ay-badge is-corner">{savedCount}</span>}
             </a>
-            <div ref={accountMenuRef} className="app-nav__account desktop-only">
+            <div ref={accountMenuRef} className="ay-nav__account">
               {user ? (
                 // Avatar opens a small account menu: profile, health profile, saved, log out.
                 <button
                   type="button"
-                  className="app-nav__circle app-nav__circle--account app-nav__circle--avatar ay-avatar"
+                  className="ay-nav__icon ay-avatar"
                   aria-label="Your account"
                   aria-haspopup="menu"
                   aria-expanded={showAccountMenu}
@@ -2114,16 +2301,16 @@ function App() {
                   onClick={() => setShowAccountMenu((v) => !v)}
                 >
                   <span className="ay-avatar__text">{accountInitials}</span>
-                  {checkinDue && <span className="app-nav__circle-dot" aria-hidden />}
+                  {checkinDue && <span className="ay-nav__dot" aria-hidden />}
                 </button>
               ) : (
                 <button
                   type="button"
-                  className="app-nav__circle app-nav__circle--account ay-login"
+                  className="ay-nav__login"
                   onClick={() => { setShowAccountMenu(false); setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
                   aria-label="Log in"
                 >
-                  <span className="ay-login-text">Log in</span>
+                  Log in
                 </button>
               )}
               {showAccountMenu && user && (
@@ -2143,56 +2330,11 @@ function App() {
                 </div>
               )}
             </div>
-            {/* Hamburger, mobile only, on the right with Saved (MW03) */}
-            <button
-              className="mobile-menu-btn"
-              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
-              aria-expanded={mobileMenuOpen}
-              onClick={() => setMobileMenuOpen(v => !v)}
-            >
-              {mobileMenuOpen ? (
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
-              ) : (
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
-              )}
-            </button>
           </div>
         </nav>
 
-        {/* Mobile menu: full-height sheet with backdrop (MW02). Delete account lives only in You → Account (MW01). */}
-        {mobileMenuOpen && (
-          <div className="mobile-nav-drawer" onClick={() => setMobileMenuOpen(false)}>
-            <div className="mobile-nav-sheet" role="dialog" aria-modal="true" aria-label="Menu" onClick={(e) => e.stopPropagation()}>
-              <button type="button" className="mobile-nav-close" aria-label="Close menu" onClick={() => setMobileMenuOpen(false)}>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
-              </button>
-              {[
-                ['discovery', '/shop', 'Shop', () => handleViewDiscovery('')],
-                ['ecosystem', '/ecosystem', 'My Ecosystem', () => handleViewEcosystem()],
-                ['articles', '/library', 'Library', () => { setSelectedArticleId(null); setCurrentView('articles'); }],
-                ['community', '/community', 'Community', () => setCurrentView('community')],
-                ['health', '/health', 'Your health', () => setCurrentView('health')],
-                ...(user ? [['you', '/you', 'You', () => setCurrentView('you')]] : []),
-              ].map(([view, href, label, go]) => (
-                <a key={view} href={href} className={`mobile-drawer-item${(view === 'ecosystem' ? ECOSYSTEM_NAV_VIEWS.includes(currentView) : currentView === view) ? ' is-active' : ''}`} {...linkProps(() => { go(); setMobileMenuOpen(false); })}>
-                  {label}
-                </a>
-              ))}
-              <a href="/ecosystem" className="mobile-drawer-item" {...linkProps(() => { handleViewWishlist(); setMobileMenuOpen(false); })}>
-                Saved {user && savedCount > 0 && <span className="ay-badge">{savedCount}</span>}
-              </a>
-              {user ? (
-                <button className="mobile-drawer-item is-quiet" onClick={() => { handleSignOut(); setMobileMenuOpen(false); }}>Log out</button>
-              ) : (
-                <>
-                  <button className="mobile-drawer-item" onClick={() => { setCurrentView('quiz'); setMobileMenuOpen(false); }}>Build your ecosystem</button>
-                  <button className="mobile-drawer-item is-quiet" onClick={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); setMobileMenuOpen(false); }}>Log in</button>
-                </>
-              )}
-            </div>
-          </div>
-        )}
         </div>
+      <main data-view={currentView}>
         <div id="ay-content" tabIndex={-1} />
 
         {(currentView === 'welcome' || currentView === 'hero') && (
@@ -2206,6 +2348,8 @@ function App() {
             onViewArticle={handleViewArticle}
             onViewAbout={handleViewAbout}
             onViewCommunity={() => setCurrentView('community')}
+            onViewWaitlist={() => setCurrentView('waitlist')}
+            onViewHowItWorks={handleViewHowItWorks}
             user={user}
             myProducts={myProducts}
             savedProducts={savedProducts}
@@ -2282,6 +2426,13 @@ function App() {
         )}
         {currentView === 'you' && (
           <WebYou
+            onUpdateIntake={user ? handleUpdateIntake : null}
+            onOpenCommunity={(to) => {
+              if (to?.username) setCommunityHandle(to.username);
+              else setCommunitySeed({ kind: to?.kind || null, token: Date.now() });
+              setCurrentView('community');
+            }}
+            onOpenArticle={(a) => { setSelectedArticleId(a.id); setCurrentView('articles'); }}
             onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
             user={user}
             quizResults={quizResults}
@@ -2313,18 +2464,18 @@ function App() {
 
         {currentView === 'profile-edit' && (
           <div className="ay-flow-editbar">
-            <button type="button" className="ay-flow-back" onClick={handleExitProfileEdit}>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
-              {profileEditFromRef.current === 'ecosystem' ? 'Back to Ecosystem' : 'Back'}
-            </button>
-            <span>Nothing changes until you finish.</span>
+            <span>Editing your answers. Nothing changes until you finish; Exit leaves them as they were.</span>
           </div>
         )}
-        {currentView === 'profile-edit' && (
+        {currentView === 'profile-edit' && (authLoading || dataLoading) && <ViewLoadingFallback />}
+        {currentView === 'profile-edit' && !authLoading && !dataLoading && (
           // Same as the app: editing your profile reopens the quiz with your answers filled in.
+          // WebIntake reads its snapshot once, so it waits for the saved answers on a cold
+          // load of /profile and remounts if they arrive later (P1-29).
           <WebIntake
-            key={editAtOptional ? 'profile-edit-optional' : 'profile-edit'}
+            key={`${editAtStep ? `profile-edit-${editAtStep}` : editAtOptional ? 'profile-edit-optional' : 'profile-edit'}${quizResults?.fullHealthIntake ? '-filled' : '-empty'}`}
             startAtOptional={editAtOptional}
+            startAtStep={editAtStep}
             initialSnapshot={quizResults?.fullHealthIntake || null}
             onComplete={handleHealthProfileEditorSave}
             onBrowseLibrary={handleViewArticles}
@@ -2333,17 +2484,7 @@ function App() {
         {currentView === 'delete-account' && (
           <DeleteAccountPage onBack={() => setCurrentView('you')} />
         )}
-        {currentView === 'health' && (
-          <WebHealth
-            user={user}
-            health={health}
-            onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
-            onOpenConnections={() => {
-              if (user) { setCurrentView('health-data'); return; }
-              setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true);
-            }}
-          />
-        )}
+        {currentView === 'health' && webHealth}
         {currentView === 'health-data' && user && (
           <WebHealthData
             user={user}
@@ -2371,6 +2512,9 @@ function App() {
         {currentView === 'admin-campaign' && (
           <CampaignAdminPage onBack={handleBackFromStandalonePage} />
         )}
+        {currentView === 'admin-topics' && (
+          <AdminTopicsPage onBack={handleBackFromStandalonePage} />
+        )}
         {currentView === 'admin-research' && (
           <AdminResearchPage onBack={handleBackFromStandalonePage} />
         )}
@@ -2383,8 +2527,10 @@ function App() {
         )}
         {currentView === 'recommendations' && (
           <Recommendations
+            onBack={() => handleViewEcosystem()}
+            onAsk={(q) => openAsk(q)}
             results={quizResults}
-            onRetake={handleStartQuiz}
+            onRetake={() => setCurrentView(quizResults ? 'profile-edit' : 'quiz')}
             trackedProducts={trackedProducts}
             toggleTrackProduct={toggleTrackProduct}
             myProducts={myProducts}
@@ -2399,6 +2545,7 @@ function App() {
         )}
         {currentView === 'tracked' && (
           <TrackedItems
+            onBack={() => setCurrentView('you')}
             trackedProducts={trackedProducts}
             joinedWaitlists={joinedWaitlists}
             onViewWaitlist={handleViewWaitlist}
@@ -2440,28 +2587,29 @@ function App() {
           </Suspense>
         )}
         {currentView === 'privacy-policy' && (
-          <PrivacyPolicy onBack={handleBackFromStandalonePage} />
+          <PrivacyPolicy onBack={handleBackFromStandalonePage} backLabel={standaloneBackLabel} />
         )}
         {currentView === 'consumer-health-data' && (
-          <ConsumerHealthData onBack={handleBackFromStandalonePage} />
+          <ConsumerHealthData onBack={handleBackFromStandalonePage} backLabel={standaloneBackLabel} />
         )}
         {currentView === 'terms-of-use' && (
-          <TermsOfUse onBack={handleBackFromStandalonePage} />
+          <TermsOfUse onBack={handleBackFromStandalonePage} backLabel={standaloneBackLabel} />
         )}
         {currentView === 'how-we-make-money' && (
-          <HowWeMakeMoney onBack={handleBackFromStandalonePage} />
+          <HowWeMakeMoney onBack={handleBackFromStandalonePage} backLabel={standaloneBackLabel} />
         )}
         {currentView === 'how-it-works' && (
           <HowItWorks
             onBack={handleBackFromStandalonePage}
+            backLabel={standaloneBackLabel}
             onViewSources={handleViewArticles}
           />
         )}
         {currentView === 'about' && (
-          <About onBack={handleBackFromStandalonePage} onExplore={() => handleViewDiscovery()} onStart={handleStartQuiz} />
+          <About onBack={handleBackFromStandalonePage} backLabel={standaloneBackLabel} onExplore={() => handleViewDiscovery()} onStart={handleStartQuiz} />
         )}
         {currentView === 'contact' && (
-          <Contact onBack={handleBackFromStandalonePage} user={user} />
+          <Contact onBack={handleBackFromStandalonePage} backLabel={standaloneBackLabel} user={user} />
         )}
         {currentView === 'campus-resources' && (
           <Suspense fallback={<ViewLoadingFallback />}>
@@ -2491,6 +2639,10 @@ function App() {
             else setCurrentView('welcome');
           }} />
         )}
+        {/* Ecosystem: "Products | Dashboard" at the top, like the app's Ecosystem
+            screen. Dashboard is the same WebHealth element /health renders. */}
+        {currentView === 'ecosystem' && (
+          <EcosystemViewTabs dashboard={webHealth} onHero={!!user && !(dataLoading && Object.keys(myProducts).length === 0)}>
         {currentView === 'ecosystem' && dataLoading && Object.keys(myProducts).length === 0 && (
           <ViewSkeleton
             label="Loading your ecosystem"
@@ -2525,6 +2677,8 @@ function App() {
           <Suspense fallback={<ViewLoadingFallback />}>
           <MyEcosystem
             quizSlot={ecosystemQuizCard}
+            quizSlotKind={webQuizDraft ? 'finish' : 'personal'}
+            onFixLifeStages={() => { setEditAtStep('lifeStage'); setCurrentView('profile-edit'); }}
             matchOpts={matchOpts}
             myProducts={myProducts}
             ecosystemOrder={ecosystemOrder}
@@ -2571,6 +2725,8 @@ function App() {
           />
           </Suspense>
         )}
+          </EcosystemViewTabs>
+        )}
         {(currentView === 'discovery' || (currentView === 'product' && discoveryKeepAliveRef.current)) && (
           <div style={currentView === 'discovery' ? undefined : { display: 'none' }}>
           <Suspense fallback={<ViewLoadingFallback />}>
@@ -2610,16 +2766,17 @@ function App() {
           </div>
         )}
         {currentView === 'screenings' && (
-          <Screenings checkinData={checkinData} onNavigate={setCurrentView} onOpenProduct={handleOpenProduct} />
+          <Screenings checkinData={checkinData} onNavigate={setCurrentView} onOpenProduct={handleOpenProduct} onOpenCheckin={() => setShowCheckin(true)} onBack={() => handleViewEcosystem()} />
         )}
         {currentView === 'omitted' && (
-          <OmittedProducts omittedProducts={omittedProducts} toggleOmitProduct={toggleOmitProduct} />
+          <OmittedProducts omittedProducts={omittedProducts} toggleOmitProduct={toggleOmitProduct} onBack={() => handleViewEcosystem()} onBrowse={() => handleViewDiscovery('')} />
         )}
         {currentView === 'recalls' && (
-          <Recalls trackedProducts={trackedProducts} myProducts={myProducts} />
+          <Recalls trackedProducts={trackedProducts} myProducts={myProducts} onBack={() => handleViewEcosystem()} />
         )}
         {currentView === 'comparison' && (
           <Comparison
+            onBack={() => handleViewEcosystem()}
             compareList={compareList}
             onRemove={toggleCompare}
             onClear={() => setCompareList([])}
@@ -2687,33 +2844,24 @@ function App() {
           />
         )}
 
-        {currentView !== 'quiz' && currentView !== 'campus-resources' && (
-          <nav className="ay-tabbar is-six" aria-label="Main, phone">
-            {/* Same four sections as the desktop nav, plus Ask and You (Home is the logo). */}
-            <a href="/shop" className={['discovery', 'product'].includes(currentView) ? 'is-on' : ''} {...linkProps(() => handleViewDiscovery(''))}>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2" /></svg><span>Shop</span>
-            </a>
-            <a href="/ecosystem" className={ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'is-on' : ''} {...linkProps(() => handleViewEcosystem())}>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2" /><path d="M4 10h16M4 15h16" /></svg><span>Ecosystem</span>
-            </a>
-            <button type="button" className="ay-tabbar__ask" onClick={() => openAsk('')}>
-              <span className="ay-tabbar__orb" aria-hidden="true">✦</span><span>Ask</span>
-            </button>
-            <a href="/library" className={currentView === 'articles' ? 'is-on' : ''} {...linkProps(() => setCurrentView('articles'))}>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H5zM19 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z" /></svg><span>Library</span>
-            </a>
-            <a href="/community" className={currentView === 'community' ? 'is-on' : ''} {...linkProps(() => setCurrentView('community'))}>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z" /></svg><span>Community</span>
-            </a>
-            {user ? (
-              <a href="/you" className={currentView === 'you' ? 'is-on' : ''} {...linkProps(() => setCurrentView('you'))}>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" /></svg><span>You</span>
-              </a>
-            ) : (
-              <button type="button" onClick={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" /></svg><span>Log in</span>
-              </button>
-            )}
+        {!FOCUSED_FLOW_VIEWS.includes(currentView) && currentView !== 'campus-resources' && (
+          <nav className="ay-tabbar ay-tabbar--main" aria-label="Main navigation">
+            {/* The app's tab bar, same order, names and icons (src/components/nav/tabs.jsx). */}
+            {MAIN_TABS.map((t) => {
+              const on = WEB_TAB_VIEWS[t.key].includes(currentView);
+              const go = {
+                library: () => { setSelectedArticleId(null); setCurrentView('articles'); },
+                browse: () => handleViewDiscovery(''),
+                home: () => handleViewEcosystem(),
+                community: () => setCurrentView('community'),
+                profile: () => setCurrentView('you'),
+              }[t.key];
+              return (
+                <a key={t.key} href={t.href} className={`${on ? 'is-on' : ''}${t.center ? ' is-center' : ''}`} aria-current={on ? 'page' : undefined} {...linkProps(go)}>
+                  <span className="ay-tabbar__icon" aria-hidden="true"><TabIcon kind={t.key} on={on} /></span><span className="ay-tabbar__label">{t.label}</span>
+                </a>
+              );
+            })}
           </nav>
         )}
 
@@ -2734,7 +2882,7 @@ function App() {
           />
         )}
         {currentView === 'product' && (
-          displayedProduct ? (
+          displayedProduct && !heroPending ? (
             // Keying by id forces a clean remount when navigating from one
             // product's page straight to another's, every internal tab,
             // the Summary/Evidence toggle, and the chat thread reset to that
@@ -2787,8 +2935,8 @@ function App() {
               }}
               searchOrigin={lastOpenOrigin?.productId === displayedProduct.id ? lastOpenOrigin : null}
             />
-          ) : productStillResolving ? (
-            <ViewLoadingFallback />
+          ) : productStillResolving || displayedProduct ? (
+            <ProductLoading fallback={<ViewLoadingFallback />} onPainted={markHeroShown} />
           ) : (
             <NotFoundState
               title="Product not found"
@@ -2827,6 +2975,12 @@ function App() {
             subtitle="That link may be broken, or the page may have moved."
             ctaLabel="Go to homepage"
             onCta={() => setCurrentView('welcome')}
+            onSearch={(q) => handleViewDiscovery(q)}
+            links={[
+              { href: '/shop', label: 'Shop', go: () => handleViewDiscovery('') },
+              { href: '/quiz', label: 'See my matches', go: () => setCurrentView('quiz') },
+              { href: '/library', label: 'Library', go: () => { setSelectedArticleId(null); setCurrentView('articles'); } },
+            ]}
           />
         )}
 
@@ -2834,7 +2988,10 @@ function App() {
           <div className="ay-hpu" role="dialog" aria-modal="true" aria-labelledby="ayna-health-profile-update-title">
             <div className="ay-hpu__card">
               <p className="ay-hpu__eyebrow">Health profile update</p>
-              <h2 id="ayna-health-profile-update-title">{accountFirstName(user) ? `Hi ${accountFirstName(user)},` : 'Hi,'}</h2>
+              <button type="button" className="ay-hpu__close" aria-label="Close and keep my current profile" onClick={handleKeepCurrentHealthProfile}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+              </button>
+              <h2 id="ayna-health-profile-update-title">{accountFirstName(user) ? `Hi ${accountFirstName(user)}` : 'Hi'}</h2>
               <p className="ay-hpu__body">
                 We’ve updated our health profile to make personalization more useful.
                 You can redo it now, or keep your current profile exactly as it is.
@@ -2923,7 +3080,7 @@ function App() {
           />
         )}
       </main>
-      <SiteFooter
+      {!FOCUSED_FLOW_VIEWS.includes(currentView) && <SiteFooter
           onViewHowItWorks={handleViewHowItWorks}
           onViewAbout={handleViewAbout}
           onViewContact={handleViewContact}
@@ -2932,16 +3089,18 @@ function App() {
           onViewArticles={handleViewArticles}
           onViewPrivacyPolicy={() => setCurrentView('privacy-policy')}
           onViewTermsOfUse={() => setCurrentView('terms-of-use')}
+          onViewConsumerHealthData={() => setCurrentView('consumer-health-data')}
         onViewHowWeMakeMoney={handleViewHowWeMakeMoney}
         onViewEcosystem={() => handleViewEcosystem()}
         onViewCommunity={() => setCurrentView('community')}
-      />
+      />}
       {/* Floating Ask pill comes after the page and footer in the DOM, so it is the last stop when tabbing, not the first. */}
-      {currentView !== 'quiz' && currentView !== 'campus-resources' && (
+      {!FOCUSED_FLOW_VIEWS.includes(currentView) && currentView !== 'campus-resources' && (
         <ProfileChatbot
           onRequireAuth={(feature) => { setAuthFeature(typeof feature === 'string' ? feature : ''); setPendingAction(typeof feature === 'string' && feature ? 'feature' : 'login'); pendingActionRef.current = typeof feature === 'string' && feature ? 'feature' : 'login'; setShowAuthModal(true); }}
           openSignal={askOpenSignal}
           prefill={askPrefill}
+          prefillStats={askPrefillStats}
           profile={quizResults}
           user={user}
           onProfileUpdate={setQuizResults}
@@ -2950,6 +3109,12 @@ function App() {
           disabled={false}
           onNavigateToDiscovery={handleViewDiscovery}
           onViewRecommendations={() => handleViewEcosystem()}
+          products={myProducts}
+          hasHealthData={!!user && health.connected.length > 0}
+          resolveProduct={(id) => myProducts[id] || Object.values(myProducts).find((p) => String(p?.id) === String(id)) || getProductById(id) || null}
+          onOpenProduct={(product) => handleOpenProduct(product, { source: 'ask_followup' })}
+          onOpenDashboard={user ? handleViewEcosystemDashboard : null}
+          onOpenRead={handleViewArticle}
         />
       )}
       {/* Outside the currentView switch on purpose — the same bar on every

@@ -1,19 +1,23 @@
-import { useState } from 'react';
+import { sentenceCase } from '../../utils/sentenceCase.js';
+import { FolderTabs } from '../../components/shop/ShopBits.jsx';
+import { ALL_PRODUCTS, itemMatchesMacroGroup, isTeenProduct } from '../../data/products.js';
 
+// One real product we host per area, for the photo peeking out of the selected tab.
+const photoCache = new Map();
+function areaPhoto(id) {
+  if (photoCache.has(id)) return photoCache.get(id);
+  const p = ALL_PRODUCTS.find((it) => String(it.image || '').startsWith('/') && !it.hidden && !isTeenProduct(it) && it.type !== 'digital' && (id === 'all' || itemMatchesMacroGroup(it, id)));
+  photoCache.set(id, p?.image || '');
+  return p?.image || '';
+}
+
+/**
+ * Shop areas as folder tabs on a rule (the same component as the website's
+ * Shop), then the toolbar the screen passes in as `action`.
+ */
 export default function CategoryNav({ groups, active, onSelect, action }) {
-  const [expanded, setExpanded] = useState(false);
-  const primary = groups.slice(0, 3);
-  const selected = groups.find((group) => group.id === active);
   return <div className="ayna-category-index">
-    {/* The filter button sits outside the scrolling row, so chips scroll
-        under its edge instead of sliding beneath the button itself. */}
-    <div className={`ayna-shop-category-bar${action ? ' has-action' : ''}`}>
-      <div className="ayna-shop-category-row" aria-label="Shop by need">
-        {primary.map((group) => <button className="ayna-shop-category" type="button" key={group.id} aria-pressed={active === group.id} onClick={() => onSelect(group.id)}>{group.label === 'Intimate Care' ? 'Intimate' : group.label}</button>)}
-        <button className="ayna-shop-category" type="button" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>{primary.some((group) => group.id === active) ? 'More' : selected?.label || 'More'}</button>
-      </div>
-      {action}
-    </div>
-    {expanded && <div className="ayna-category-expanded" aria-label="All health areas">{groups.slice(3).map((group) => <button type="button" key={group.id} aria-pressed={active === group.id} onClick={() => { onSelect(group.id); setExpanded(false); }}>{group.label}</button>)}</div>}
+    <FolderTabs tabs={groups.map((g) => ({ id: g.id, label: g.id === 'all' ? 'All' : sentenceCase(g.label) }))} active={active} onSelect={onSelect} label="Shop areas" photoFor={areaPhoto} />
+    {action}
   </div>;
 }

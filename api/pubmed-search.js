@@ -2,6 +2,7 @@
 // PubMed E-utilities, free, no API key required
 // Add NCBI_API_KEY to Vercel env vars for higher rate limits (optional, free at ncbi.nlm.nih.gov/account)
 // Docs: https://www.ncbi.nlm.nih.gov/books/NBK25501/
+import { getClientIp, rateLimit } from './_rateLimit.js';
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
@@ -9,7 +10,11 @@ export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
   const { query, limit = '5' } = req.query;
-  if (!query || query.trim().length < 3) return res.status(400).json({ error: 'missing_query' });
+  if (typeof query !== 'string' || query.trim().length < 3) return res.status(400).json({ error: 'missing_query' });
+  if (query.length > 300) return res.status(400).json({ error: 'query_too_long' });
+  // Our NCBI_API_KEY quota is shared by every visitor; keep one client from using it all.
+  const rl = await rateLimit(`pubmed:${getClientIp(req)}`, { max: 60, windowSec: 60 });
+  if (!rl.ok) return res.status(429).json({ error: 'rate_limited' });
 
   const n = Math.min(Math.max(parseInt(limit, 10) || 5, 1), 10);
   const apiKey = process.env.NCBI_API_KEY;
@@ -57,6 +62,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ articles, total: ids.length, source: 'PubMed' });
   } catch (e) {
     console.error('PubMed error:', e.message);
-    return res.status(200).json({ articles: [], source: 'PubMed', error: e.message });
+    // Never echo e.message: a URL parse error would include the api_key query param.
+    return res.status(200).json({ articles: [], source: 'PubMed', error: 'upstream_failed' });
   }
 }

@@ -5,7 +5,7 @@
 .ay-lib-ask { display: flex; align-items: center; gap: 12px; width: calc(100% - 2 * var(--ay-gutter)); margin: 0 var(--ay-gutter) 24px; min-height: 64px; padding: 0 16px 0 12px; border: 1.5px solid var(--ay-ink); border-radius: 20px; background: var(--ay-mint); box-shadow: 0 4px 0 var(--ay-ink); color: var(--ay-ink); text-align: left; cursor: pointer; }
 .ay-lib-ask:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--ay-ink); }
 .ay-lib-ask-art { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border: 1.5px solid var(--ay-ink); border-radius: 12px; background: var(--ay-paper); rotate: -6deg; }
-.ay-lib-ask-art svg { width: 20px; height: 20px; fill: none; stroke: var(--ay-ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ay-lib-ask-art svg { width: 20px; height: 20px; fill: none; stroke: var(--ay-ink); stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
 .ay-lib-ask strong { flex: 1; font: 600 17px/1 var(--ay-font-ui); letter-spacing: -.02em; }
 .ay-lib-ask-go { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; background: var(--ay-ink); color: var(--ay-paper); font-weight: 600; }
 .ay-lib-match { display: flex; justify-content: space-between; align-items: center; width: calc(100% - 2 * var(--ay-gutter)); margin: 0 var(--ay-gutter) 24px; min-height: 52px; padding: 0 20px; border: 0; border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper); font: 600 17px/1 var(--ay-font-ui); cursor: pointer; }
@@ -31,7 +31,7 @@
 .ayna-mobile[data-theme='dark'] .ay-lib-progress i::after { background: var(--ayna-heading, #fff); }
 
 /* Article reading status, sticky at the top of the article */
-.ay-read-status { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 12px; padding: 10px var(--ay-gutter); background: var(--ay-cream); border-bottom: 1px solid var(--ay-line); }
+.ay-read-status { display: flex; align-items: center; gap: 12px; padding: 10px var(--ay-gutter); background: var(--ay-cream); border-bottom: 1px solid var(--ay-line); }
 .ay-read-status-bar { flex: 1; height: 6px; border-radius: 99px; background: var(--ay-tile); overflow: hidden; }
 .ay-read-status-bar i { display: block; height: 100%; border-radius: inherit; background: var(--ay-ink); transition: width .15s linear; }
 .ay-read-status-label { flex: none; min-width: 72px; text-align: right; font: 500 13px/1 var(--ay-font-ui); color: var(--ay-ink); }
