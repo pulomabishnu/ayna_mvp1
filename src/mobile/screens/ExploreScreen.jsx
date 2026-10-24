@@ -53,7 +53,7 @@ function useCommunityResults(query) {
  */
 export default function ExploreScreen(props) {
   const {
-    exploreSection = 'overview', onExploreSection, products = [], articles = [], authUser = null, quizAnswers = null,
+    exploreSection = 'overview', onExploreSection, products = [], articles = [], quizAnswers = null,
     lastQuizAnswers = null, matchOpts, savedProducts = {}, onToggleSaved, onOpenProduct, onOpenArticle, onOpenSaved,
     onOpenWhyMatch, onStartQuiz, suggestedEcosystemProducts = [], onOpenCommunityPost, onGoCommunity,
   } = props;
@@ -76,7 +76,7 @@ export default function ExploreScreen(props) {
   const forYouProducts = hasProfile ? suggestedEcosystemProducts.slice(0, ROW) : [];
   const go = (key, search = '') => { setQuery(''); onExploreSection?.(key, search); };
 
-  const card = (p) => <div className="ax-item" key={p.id}><ProductCard product={p} onClick={() => onOpenProduct?.(p)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} onOpenWhyMatch={onOpenWhyMatch} isSaved={!!savedProducts[p.id]} onToggleSaved={onToggleSaved} /></div>;
+  const card = (p) => <div className="ax-item" key={p.id}><ProductCard product={p} onClick={() => onOpenProduct?.(p)} quizAnswers={quizAnswers} matchOpts={matchOpts} onOpenWhyMatch={onOpenWhyMatch} isSaved={!!savedProducts[p.id]} onToggleSaved={onToggleSaved} /></div>;
   const productRow = (items) => <div className="ax-row">{items.map(card)}</div>;
   const readRow = (items) => <div className="ax-row is-reads">{items.map((a) => <div className="ax-item is-read" key={a.id}><LibraryCard article={a} onClick={() => onOpenArticle?.(a)} /></div>)}</div>;
   const topicChips = (items) => <div className="ax-topics" role="group" aria-label="Categories">{items.map((t) => <button type="button" key={t.key} onClick={() => { setQuery(t.label); setRecent(rememberSearch(t.label)); }}>{t.label}</button>)}</div>;

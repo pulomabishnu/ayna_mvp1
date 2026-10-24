@@ -1460,7 +1460,7 @@ export default function MobileApp() {
             onStartQuiz={() => { returnProductRef.current = overlay.item || null; setOverlay(null); setIntakeMode(hasEcosystem ? 'add' : 'new'); setEditingHealthProfile(hasEcosystem); setScreen('quiz'); }}
             authUser={authUser}
             onRequireAuth={(feature) => requestAuth(feature || 'Ask ayna', () => { setScreen(screen); setOverlay({ type: 'product', item: overlay.item }); })}
-            quizAnswers={authUser ? effectiveQuizAnswers : null}
+            quizAnswers={effectiveQuizAnswers}
             ecosystemProducts={myProducts}
             onOpenProduct={(item) => growTransition(() => setOverlay({ type: 'product', item }), { target: 'product', from: 'img' })}
             reads={readsForProduct(overlay.item, 3).map((r) => {
@@ -1488,7 +1488,7 @@ export default function MobileApp() {
             products={productsForRead(overlay.item.id, browseProducts, 4)}
             productsNote={ROW_NOTES[overlay.item.id] || ''}
             onOpenProduct={(item) => setOverlay({ type: 'product', item })}
-            renderProduct={(item) => <ProductCard product={item} quizAnswers={authUser ? effectiveQuizAnswers : null} matchOpts={matchOpts} onClick={() => setOverlay({ type: 'product', item })} />}
+            renderProduct={(item) => <ProductCard product={item} quizAnswers={effectiveQuizAnswers} matchOpts={matchOpts} onClick={() => setOverlay({ type: 'product', item })} />}
             onAsk={nav.onAskAyna}
             theme={theme}
           />
@@ -1500,7 +1500,7 @@ export default function MobileApp() {
             onBack={() => setOverlay(null)}
             onOpenProduct={(item) => setOverlay({ type: 'product', item })}
             savedProducts={savedMap}
-            quizAnswers={authUser ? effectiveQuizAnswers : null}
+            quizAnswers={effectiveQuizAnswers}
             matchOpts={matchOpts}
           />
         </PushLayer>
