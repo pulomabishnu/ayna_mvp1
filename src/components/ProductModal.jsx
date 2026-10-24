@@ -644,7 +644,7 @@ export default function ProductModal({
           destination: buyUrl,
           variantId: choice.variant?.id,
           source: searchOrigin?.source,
-          searchQuery: searchOrigin?.searchQuery,
+          fromSearch: (searchOrigin?.source || '') === 'search_results',
         });
       }}
     >

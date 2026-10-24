@@ -1860,7 +1860,7 @@ function App() {
         category: product.category,
         type: product.type,
         source: origin?.source,
-        searchQuery: origin?.searchQuery,
+        fromSearch: (origin?.source || '') === 'search_results',
       });
     }
     if (user) {
@@ -2011,7 +2011,9 @@ function App() {
       productId: p?.id,
       category: p?.category,
       source,
-      searchQuery: source === 'search_results' ? meta.searchQuery : undefined,
+      // Never the typed text (it can name a condition): only that it came from search.
+      fromSearch: source === 'search_results',
+      queryLength: source === 'search_results' ? String(meta.searchQuery || '').length : undefined,
       position: meta.position,
     });
     setLastOpenOrigin(source === 'search_results' ? { productId: p.id, source, searchQuery: meta.searchQuery } : null);
