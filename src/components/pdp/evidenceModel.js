@@ -340,3 +340,68 @@ export function attributeBadges(product, glance = null) {
   if (product.type === 'digital') out.push({ id: 'app', label: 'App or online' });
   return out.slice(0, 3);
 }
+
+// ---------------------------------------------------------------------------
+// Claims, one by one (team direction 12, UX spec 15): what kind of evidence
+// stands behind each claim, in words that match the level actually on file.
+// ---------------------------------------------------------------------------
+const CLAIM_KIND = {
+  brand: 'The brand’s claim',
+  product: 'Study of this product',
+  ingredient: 'About an ingredient, not this exact product',
+  gov: 'Independent .gov health source',
+  expert: 'Expert guidance, not a .gov source',
+  community: 'Community experience, not evidence',
+};
+
+/** Each recorded claim with a plain label for the kind of evidence behind it. */
+export function claimRows(product) {
+  const pp = getPassport(product);
+  const raw = pp?.evidence?.claims;
+  const list = Array.isArray(raw) ? raw : raw?.known && Array.isArray(raw.value) ? raw.value : [];
+  const brand = product?.brand || '';
+  return list.filter((c) => c && c.claim).map((c) => {
+    const url = String(c.source_url || '');
+    const tier = url ? linkKind(url, brand).tier : 'other';
+    const fromBrand = tier === 'brand' || c.evidence_type === 'manufacturer';
+    const gov = url && isCredible(url);
+    let kind = 'brand';
+    if (c.evidence_type === 'community') kind = 'community';
+    else if (c.evidence_type === 'ingredient_research') kind = 'ingredient';
+    else if (c.evidence_type === 'product_study' && c.product_specific) kind = 'product';
+    else if (['clinical_guideline', 'regulatory', 'expert_guidance'].includes(c.evidence_type)) kind = gov ? 'gov' : 'expert';
+    else if (gov) kind = 'gov';
+    const via = kind !== 'brand' && fromBrand ? 'Cited by the brand, not checked by ayna' : kind === 'product' && !gov ? 'Not checked by ayna' : '';
+    return {
+      claim: noDash(c.claim),
+      kind,
+      label: CLAIM_KIND[kind],
+      via,
+      strength: String(c.strength || '').replace(/^./, (x) => x.toUpperCase()),
+      url,
+      publisher: url ? publisherOf(url, brand) : '',
+    };
+  });
+}
+
+/**
+ * The kinds of evidence on file for a product, each counted once, so the
+ * page can say plainly what is there: the brand's own claims, studies of the
+ * product, ingredient-level research, independent .gov sources and
+ * community experience. Never treats one as another.
+ */
+export function evidenceLayers(product, m, { communityCount = 0 } = {}) {
+  if (!product || !m) return [];
+  const claims = claimRows(product);
+  const count = (k) => claims.filter((c) => c.kind === k).length;
+  const govUrls = new Set([...m.expert.sources, ...m.research.studies, ...m.research.ingredients.flatMap((i) => i.links)].filter((l) => l.kind.tier === 'credible').map((l) => l.url));
+  const brandLinks = new Set([...m.expert.other, ...m.research.other].filter((l) => l.kind.tier === 'brand').map((l) => l.url));
+  const brandCount = count('brand') + brandLinks.size + (m.independent ? 0 : 1) + (m.details.badges.length ? 1 : 0);
+  return [
+    brandCount > 0 && { id: 'brand', label: 'The brand’s claims', note: 'What the brand says about its own product. Not checked by ayna.' },
+    count('product') > 0 && { id: 'product', label: 'Studies of this product', n: count('product'), note: 'Research on this exact product.' },
+    (m.research.ingredients.length > 0 || count('ingredient') > 0) && { id: 'ingredient', label: 'Ingredient research', n: m.research.ingredients.length || count('ingredient'), note: 'About an ingredient, not this exact product.' },
+    govUrls.size > 0 && { id: 'gov', label: 'Independent .gov sources', n: govUrls.size, note: 'Health pages from MedlinePlus, NIH, FDA, CDC and similar.' },
+    communityCount > 0 && { id: 'community', label: 'Community experience', n: communityCount, note: 'People’s experiences. Not evidence that it works.' },
+  ].filter(Boolean);
+}

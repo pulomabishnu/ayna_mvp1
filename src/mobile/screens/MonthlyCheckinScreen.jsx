@@ -426,7 +426,7 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
       {stepId === 'recs' && (
         <StepShell stepKey={stepId} title="How were your product picks?" footer={footer}>
           {myProducts.length > 0 && (
-            <div className="ip-onfile"><b>{myProducts.length}</b><span><small>In your ecosystem</small>{myProducts.slice(0, 3).map((p) => p.name).join(' · ')}</span></div>
+            <div className="ip-onfile"><b>{myProducts.length}</b><span><small>In your routine</small>{myProducts.slice(0, 3).map((p) => p.name).join(' · ')}</span></div>
           )}
           {RECS_OPTIONS.map(([value, label, sub]) => (
             <OptionCard key={value} selected={answers.recsVerdict === value} title={label} subtitle={sub} icon={<RecsIcon value={value} />} onClick={() => set('recsVerdict', value)} />

@@ -57,6 +57,8 @@ import TodayScreen from './screens/TodayScreen.jsx';
 import ExploreScreen from './screens/ExploreScreen.jsx';
 import AskTabScreen from './screens/AskTabScreen.jsx';
 import ProductDetailScreen from './screens/ProductDetailScreen.jsx';
+import ProductCard from './components/ProductCard.jsx';
+import { readsForProduct, productsForRead, ROW_NOTES } from '../data/readLinks.js';
 import ArticleDetailScreen from './screens/ArticleDetailScreen.jsx';
 import EcosystemIntroScreen from './screens/EcosystemIntroScreen.jsx';
 import IntakeScreen from './screens/IntakeScreen.jsx';
@@ -1459,6 +1461,10 @@ export default function MobileApp() {
             quizAnswers={authUser ? effectiveQuizAnswers : null}
             ecosystemProducts={myProducts}
             onOpenProduct={(item) => growTransition(() => setOverlay({ type: 'product', item }), { target: 'product', from: 'img' })}
+            reads={readsForProduct(overlay.item, 3).map((r) => {
+              const article = ARTICLES.find((x) => x.id === r.id);
+              return article ? { id: r.id, title: r.title, onClick: () => { setReadArticleIds((ids) => (ids.includes(r.id) ? ids : [...ids, r.id])); setOverlay({ type: 'article', item: article }); } } : null;
+            }).filter(Boolean)}
             theme={theme}
             onToggleTheme={setThemeMode}
           />
@@ -1477,6 +1483,11 @@ export default function MobileApp() {
               setReadArticleIds((ids) => ids.includes(article.id) ? ids : [...ids, article.id]);
               setOverlay({ type: 'article', item: article });
             }}
+            products={productsForRead(overlay.item.id, browseProducts, 4)}
+            productsNote={ROW_NOTES[overlay.item.id] || ''}
+            onOpenProduct={(item) => setOverlay({ type: 'product', item })}
+            renderProduct={(item) => <ProductCard product={item} quizAnswers={authUser ? effectiveQuizAnswers : null} matchOpts={matchOpts} onClick={() => setOverlay({ type: 'product', item })} />}
+            onAsk={nav.onAskAyna}
             theme={theme}
           />
         </PushLayer>

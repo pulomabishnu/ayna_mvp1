@@ -46,7 +46,7 @@ function splitBodyAndSources(body) {
   return { mainBody, sourceLinks };
 }
 
-export default function ArticleDetailScreen({ article, onBack, nextRead, onNext, onProgress, savedProgress = 0 }) {
+export default function ArticleDetailScreen({ article, onBack, nextRead, onNext, onProgress, savedProgress = 0, products = [], productsNote = '', onOpenProduct = null, onAsk = null, renderProduct = null }) {
   const scrollRef = useRef(null);
   const [progress, setProgress] = useState(0);
   // Read time from the words actually on screen: many bodies are components
@@ -119,6 +119,23 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
         <div className="ay-article-body" style={{ fontWeight: 400, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', lineHeight: 1.45, color: 'var(--ayna-text)' }}>{mainBody}</div>
 
         {(sourceLinks.length > 0 || source) && <section className="ayna-read-sources" aria-label="Article sources"><h2>Sources</h2>{source && <p>{source}</p>}{sourceLinks.map((link, index) => <a key={`${link.href}-${index}`} href={link.href} target="_blank" rel="noopener noreferrer">{link.text}</a>)}</section>}
+        {/* Content and products connect (team direction 58): products and a question to Ask, labelled as products, after the read. */}
+        {products.length > 0 && onOpenProduct && renderProduct && (
+          <section className="ay-read-products" aria-labelledby="ay-read-products-h">
+            <h2 id="ay-read-products-h">Products for this topic</h2>
+            <p className="ay-read-products__disc">Products, not medical advice. Some links earn ayna a commission. It never changes what we show.</p>
+            {productsNote && <p className="ay-read-products__note" role="note"><span aria-hidden="true">!</span>{productsNote}</p>}
+            <div className="ay-shelf2-row">{products.map(({ product }) => <div key={product.id}>{renderProduct(product)}</div>)}</div>
+          </section>
+        )}
+        {onAsk && (
+          <section className="ay-read-ask" aria-labelledby="ay-read-ask-h">
+            <h2 id="ay-read-ask-h">Questions about this?</h2>
+            <div className="ay-read-ask__row">
+              {['Is this relevant to me?', 'When should I see a clinician?'].map((q) => <button key={q} type="button" onClick={() => onAsk({ question: `About the read "${title}": ${q}` })}>{q}</button>)}
+            </div>
+          </section>
+        )}
         {nextRead?.article && <section className="ayna-read-next" aria-label="Next article"><span>{nextRead.label}</span><button type="button" onClick={openNext}>{nextRead.article.title}<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6 6 6-6 6" /></svg></button></section>}
       </div>
       <LegalFooter />

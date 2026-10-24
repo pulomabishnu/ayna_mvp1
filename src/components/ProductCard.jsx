@@ -6,6 +6,8 @@ import { sentenceCase } from '../utils/sentenceCase.js';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import MatchPill from './MatchPill';
+import { matchText } from '../utils/matchDisplay.js';
+import '../styles/card-fit.css';
 import { displayName } from '../mobile/utils/displayName.js';
 import { requestProductTab, formatAverage } from '../utils/community/reviewRatings.js';
 import { brandOf } from '../mobile/data/brandFallback.js';
@@ -39,6 +41,8 @@ export default function ProductCard({
   tile = null,
   onOpen,
   onToggleSaved,
+  // Opens Why this match for the card's product (else the product page opens on it).
+  onShowWhy = null,
   action = null,
   // Small line under the match, e.g. "Backed by your sleep data" (src/components/health).
   badge = null,
@@ -59,8 +63,9 @@ export default function ProductCard({
   const badgeText = isMine ? '' : cardBadge(product, { partner: partnerMark });
   const Link = isMine ? 'div' : 'a';
   const kind = !isMine && shownBrand ? cardKind(product) : '';
+  const hasMatch = !isMine && Number.isFinite(matchPercent) && matchPercent > 0;
   return (
-    <article className={`ay-product-card${inEcosystem ? ' is-in-eco' : ''} ${className}`.trim()} style={style}>
+    <article className={`ay-product-card${inEcosystem ? ' is-in-eco' : ''}${hasMatch ? ' has-fit' : ''} ${className}`.trim()} style={style}>
       <Link
         className={`ay-product-card__link${isMine ? ' is-static' : ''}`}
         {...(isMine ? {} : {
@@ -94,19 +99,31 @@ export default function ProductCard({
           <span className={`ay-product-card__price${price.main === 'Price at retailer' ? ' is-unknown' : ''}`}>{price.main}{price.sub && (/^list\s+\$/i.test(price.sub)
             ? (() => { const [was, ...rest] = price.sub.replace(/^list\s+/i, '').split(/\s+·\s+/); return <small><span className="sr-only">List price </span><s>{was}</s>{rest.length > 0 && <span> {rest.join(' · ')}</span>}</small>; })()
             : <small>{price.sub}</small>)}</span>
-          {/* Match and ownership read as text, never over the product photo. */}
-          {((matchPercent != null && matchPercent > 0) || inEcosystem) && (
-            <span className="ay-product-card__match">
-              {matchPercent != null && matchPercent > 0 && <MatchPill percent={matchPercent} size="sm" className="ay-product-card__pill" label={matchLabel || `${Math.round(matchPercent)}% match`} />}
-              {inEcosystem && <span className="ay-product-card__eco"><CheckIcon size={14} />{IN_ROUTINE}</span>}
-            </span>
-          )}
-          {why && matchPercent != null && matchPercent > 0 && <span className="ay-product-card__why">{why}</span>}
+          {/* Ownership reads as text, never over the product photo. */}
+          {inEcosystem && <span className="ay-product-card__match"><span className="ay-product-card__eco"><CheckIcon size={14} />{IN_ROUTINE}</span></span>}
           {rating && Number.isFinite(rating.value) && rating.count > 0 && (
             <span className="ay-product-card__rating" data-reviews-link="true"><span aria-hidden="true">★</span> <span className="sr-only">Rated </span>{formatAverage(rating.value)}<span className="sr-only"> out of 5</span> · <u>{rating.count} review{rating.count === 1 ? '' : 's'}</u></span>
           )}
         </div>
       </Link>
+      {/* Her match sits outside the open-the-product link: tapping it opens Why this match. */}
+      {hasMatch && (
+        <div className="ay-product-card__fit">
+          <MatchPill
+            percent={matchPercent}
+            size="sm"
+            className="ay-product-card__pill"
+            label={`${matchLabel || matchText(matchPercent)}. Why this match for ${product.name}`}
+            onClick={() => {
+              if (onShowWhy) { onShowWhy(product); return; }
+              requestProductTab('why');
+              if (onOpen) onOpen(product);
+              else window.location.assign(productHref(product));
+            }}
+          />
+          {why && <span className="ay-product-card__why">{why}</span>}
+        </div>
+      )}
       {onToggleSaved && (
         <button
           type="button"
