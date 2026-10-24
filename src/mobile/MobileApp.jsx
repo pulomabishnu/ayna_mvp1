@@ -353,6 +353,14 @@ export default function MobileApp() {
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
   }, []);
+  // Leaving something she opened: a history step back when that is where she
+  // came from (so Back does not reopen it), else straight to `to`.
+  const goBackTo = (to) => {
+    const stack = navStackRef.current;
+    const prev = stack[stack.length - 2];
+    if (prev && prev.screen === to && !prev.overlay) { try { window.history.back(); return; } catch { /* fall through */ } }
+    setScreen(to);
+  };
   const [readArticleIds, setReadArticleIds] = useState([]);
   // How far each read has been scrolled (0–1). Per-device convenience, so localStorage is fine.
   const [readProgress, setReadProgress] = useState(() => { try { return JSON.parse(localStorage.getItem('ayna_read_progress_v1') || '{}') || {}; } catch { return {}; } });
@@ -1119,7 +1127,7 @@ export default function MobileApp() {
     onOpenMonthlyCheckin: () => setScreen('checkin'),
     onReplayStory: () => { setRevealFrom(screen); setRevealAtEnd(false); setScreen('reveal'); },
     // Leaving a replayed story: back to where she opened it.
-    onExitStory: revealFrom ? () => { const to = revealFrom; setRevealFrom(null); setScreen(to); } : null,
+    onExitStory: revealFrom ? () => { const to = revealFrom; setRevealFrom(null); goBackTo(to); } : null,
     // An Ecosystem shelf's "Shop" passes its need label as the search.
     onBrowse: (query) => { setBrowseQuery(typeof query === 'string' ? query : ''); setScreen('browse'); },
     onGoCommunity: () => { setCommunitySeed(null); setScreen('community'); },
@@ -1194,7 +1202,7 @@ export default function MobileApp() {
     },
     onBack: () => {
       if (screen === 'quiz' && intakeFlow === 'more') { setIntakeFlow('auto'); setScreen('ready'); return; }
-      if (screen === 'reveal' && revealFrom) { const to = revealFrom; setRevealFrom(null); setScreen(to); return; }
+      if (screen === 'reveal' && revealFrom) { const to = revealFrom; setRevealFrom(null); goBackTo(to); return; }
       if (['building', 'reveal', 'connect'].includes(screen)) {
         resumeQuizAtLastStep();
         return;
