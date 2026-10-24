@@ -87,3 +87,28 @@ describe('condition rules (research, Oct 17)', () => {
     expect(r.safety.cautions.some((c) => c.code === 'condition_caution')).toBe(false);
   });
 });
+
+import CONDITION_RULES from '../data/matching/conditionRules.research.js';
+import { RESEARCH_INTERACTIONS } from '../data/matching/medInteractions.research.js';
+describe('medication and condition rules cite .gov pages only (Oct 24)', () => {
+  const GOV = /(^|\.)(nih\.gov|medlineplus\.gov|fda\.gov|cdc\.gov|womenshealth\.gov|ahrq\.gov|hhs\.gov)$/;
+  it('every interaction row cites a .gov page', () => {
+    for (const r of RESEARCH_INTERACTIONS) expect(new URL(r.source).hostname, `${r.medication_class}|${r.product_ingredient}`).toMatch(GOV);
+  });
+  it('CoQ10 with blood pressure medicine is gone: NCCIH says CoQ10 probably has no meaningful effect on blood pressure', () => {
+    expect(RESEARCH_INTERACTIONS.some((r) => r.medication_class === 'blood_pressure' && r.product_ingredient === 'coq10')).toBe(false);
+    // CoQ10 with warfarin stays (NCCIH: may interact).
+    expect(RESEARCH_INTERACTIONS.find((r) => r.medication_class === 'vitamin_k_antagonist' && r.product_ingredient === 'coq10').source).toMatch(/nccih\.nih\.gov\/health\/coenzyme-q10/);
+  });
+  it('every condition rule cites a .gov page, or is a cautious rule labelled ayna policy', () => {
+    for (const r of CONDITION_RULES) {
+      if (r.source_url) expect(new URL(r.source_url).hostname, `${r.condition}|${r.product_class}`).toMatch(GOV);
+      else { expect(r.source_basis).toBe('ayna_policy'); expect(r.message).toMatch(/^ayna policy: /); expect(['avoid', 'caution']).toContain(r.verdict); }
+    }
+  });
+  it('the biotin rule no longer gives an unsourced number of days', () => {
+    const biotin = CONDITION_RULES.find((r) => r.condition === 'thyroid' && r.product_class === 'biotin');
+    expect(biotin.message).not.toMatch(/\d+ to \d+ days/);
+    expect(biotin.source_url).toMatch(/ods\.od\.nih\.gov/);
+  });
+});
