@@ -626,6 +626,9 @@ export const SYNONYM_RULES = [
   { re: /\banemi(a|c)\b|\banaemi|\biron deficien|\blow iron\b|\blow ferritin\b/, kind: 'condition', id: 'anemia', confidence: 0.95 },
   { re: /\bibs\b|irritable bowel|\bcrohn|\bcolitis\b|\bceliac\b/, kind: 'condition', id: 'ibs_digestive', confidence: 0.93 },
   { re: /\blupus\b|\bautoimmune\b|\brheumatoid\b/, kind: 'condition', id: 'autoimmune', confidence: 0.9 },
+  // Free text only (no intake option): the ThermaCare label says ask a doctor
+  // before use with poor circulation. Read in src/health/interventions.js.
+  { re: /\bpoor (blood )?circulation\b|\bbad circulation\b|\bcirculation (problems?|issues?|disorder)\b|\braynaud|\bperipheral (arter(y|ial)|vascular) disease\b/, kind: 'condition', id: 'poor_circulation', confidence: 0.9 },
   // Health needs (sub-need level)
   { re: /\bhair (is )?(falling out|shedding|coming out)\b|\blosing (my )?hair\b|\bhair loss\b|\bthinning hair\b|\bhair thinning\b|\bbald(ing)? spots?\b/, kind: 'need', id: 'hair.loss', confidence: 0.96 },
   { re: /\bchin hair|facial hair|\bhirsut|\bexcess (body )?hair\b/, kind: 'need', id: 'hair.excess', confidence: 0.95 },
