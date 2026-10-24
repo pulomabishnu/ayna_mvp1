@@ -287,7 +287,7 @@ function Section({ section, plan, sources, extra, onXref, bare = false }) {
 // the research and safety say, what people say, and where it all comes from.
 const TAB_GROUPS = [
   { id: 'match', label: 'Your match', ids: ['match'], tone: 'pink' },
-  { id: 'evidence', label: 'Research & safety', ids: ['clinician', 'evidence', 'unknown', 'safety'], tone: 'peri' },
+  { id: 'evidence', label: 'Evidence & safety', ids: ['clinician', 'evidence', 'unknown', 'safety'], tone: 'peri' },
   { id: 'reviews', label: 'Reviews', ids: ['people', 'brand'], tone: 'pink' },
 ];
 // Ingredients and how to use sit under Overview.

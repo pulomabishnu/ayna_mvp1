@@ -33,7 +33,9 @@ here is wrong, change it here first and then sweep.
 | Posts and questions | **Community** | Forum, Feed (as a title) |
 | Her account area | **You** (tab, nav, title of the hub). Always "You", signed in or out; signed out it explains sign-in | Log in (as a tab), Profile (as a tab), My Account |
 | The AI helper | **Ask ayna** (button, sheet title); **Ask** only where a one-word label is unavoidable | Chat, chatbot, the chat button |
-| Saved items | **Saved** (heart, list title "Saved products") | Wishlist, Favorites |
+| Saved items | **Save** (the action, heart tooltip) and **Saved** (state, list title "Saved products") | Wishlist, Favorites, Save to favorites |
+| Marking a post or review useful | **Helpful** (button, count, aria "Helpful, 3", "Found this helpful") on posts, questions and reviews alike | Like, Likes, Liked by (the database columns and APIs keep their names) |
+| What the evidence says about a product | **Evidence** (the one section and tab name on the product page, website and app; "Evidence & safety" for the combined group) | Research, Science, The science, Studies, What the evidence says (as a section name) |
 | Health data area | **Health data** (connections and imports) and **Your health** (the dashboard) | Health connections, Health Data |
 | Visit planning tool | **Appointment prep** | Appointment Prep Tool, Doctor prep |
 
@@ -54,7 +56,30 @@ here is wrong, change it here first and then sweep.
 ## Matches and needs
 
 - **Match** / **matches** for products scored against her answers. The
-  score is "95% match".
+  score is "NN% match". It means how well the product fits what she told us
+  (her needs, profile and preferences), **not** medical certainty and not a
+  promise that it works. Say so wherever the number is explained.
+- Every % has a plain **why line** beside or under it, built only from the
+  engine's own reasons (`whyLine(product, details)` in
+  `src/utils/whyLine.js`): "For your heavy periods, within your budget",
+  "Another option for your trouble sleeping". Never invent a reason.
+  Compare adds a "Why it fits you" row and one sentence on why the top one
+  ranks first (`whyFirstLine`).
+- **No profile, no %.** Without her answers there is nothing honest to
+  score: show the quiz prompt ("See my matches") or nothing.
+- No dots, bars or rings that grade a source count.
+
+## Evidence labels
+
+- Say what was actually checked (master prompt, product claim
+  verification). The Shop filter is **Has clinical sources**: a non-brand
+  clinical view or a clinician source link is on file
+  (`src/utils/clinicalSources.js`). **Reviewed by a clinician** is only for
+  a product with a named clinician reviewer (`getNamedReviewer`; none yet).
+  **Studied** only where the evidence model has a finished-product study.
+- Never "clinically backed", "clinician backed" or "clinically proven"
+  unless verified finished-product evidence exists. A brand's or startup's
+  own claim is shown as theirs ("Says it has clinical research").
 - **Need** for what she asked help with (cramps, heavy flow, UTIs). A need
   is **covered** when her ecosystem holds at least one product for it:
   "3 of 4 needs covered". Never "needs have picks".

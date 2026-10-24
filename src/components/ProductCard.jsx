@@ -111,7 +111,7 @@ export default function ProductCard({
           className="ay-product-card__heart"
           aria-label={isSaved ? `Remove ${product.name} from Saved` : `Save ${product.name}`}
           aria-pressed={isSaved}
-          data-tip={isSaved ? 'Saved' : 'Save to favorites'}
+          data-tip={isSaved ? 'Saved' : 'Save'}
           onClick={(e) => { saveFeedback(e, !isSaved); onToggleSaved(product); }}
         >
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART} /></svg>

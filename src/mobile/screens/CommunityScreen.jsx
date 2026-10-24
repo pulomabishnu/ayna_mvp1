@@ -932,7 +932,8 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     const full = page?.type === 'post' && details?.id === post.id;
     const long = !full && String(post.body || '').length > 260;
     const armed = armedDelete === post.id;
-    const likeWord = kind === 'post' ? 'Like' : 'Helpful';
+    // One word everywhere (web and app): Helpful, never Like.
+    const likeWord = 'Helpful';
     return <article ref={engagement.trackView(post.id)} className={`am-note is-${kind}${full ? ' is-full' : ''}`} style={{ '--i': Math.min(typeof i === 'number' ? i : 0, 6) }} data-vt-target={full ? 'post' : undefined} key={post.id}>
       {/* Folder tab on the card's top edge (inspo rule 9): what kind of note this is. */}
       {kind === 'review' && <span className="am-ear is-review" aria-hidden="true">Review</span>}
@@ -958,7 +959,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       {long && <button type="button" className="am-readmore" onClick={() => openPost(post)}>Read the rest</button>}
       {media.length > 0 && <div className={`am-polaroids n-${Math.min(media.length, 4)}`}>{media.slice(0, 4).map((photo, k) => <button type="button" key={photo.path} className="am-polaroid" style={{ '--tilt': `${k % 2 ? 1.2 : -1.2}deg` }} onClick={() => openPost(post)} aria-label={`Open ${authorName}'s post, photo ${k + 1}`}><img src={publicMediaUrl(photo.path)} alt="" loading="lazy" /></button>)}</div>}
       {postProductIds(post).slice(0, 1).map((id) => <ProductMention key={id} productId={id} productsById={productsById} quizAnswers={quizAnswers} matchOpts={matchOpts} onOpenProduct={onOpenProduct} />)}
-      <PostStats post={post} engagement={engagement} variant="app" likeNoun={kind === 'post' ? 'liked this' : 'found this helpful'} onOpenLikers={setLikersPost} />
+      <PostStats post={post} engagement={engagement} variant="app" likeNoun="found this helpful" onOpenLikers={setLikersPost} />
       <div className="am-note-actions">
         <button type="button" className="am-act-like" aria-pressed={Boolean(post.viewer_found_helpful)} aria-label={`${likeWord}${helpful ? `, ${helpful}` : ''}`} onClick={(e) => { if (authUser && !post.viewer_found_helpful) popIcon(e); togglePost(post, 'helpful'); }}><CommunityIcon name="heart" size={18} /><span aria-hidden="true">{likeWord}{helpful ? <b>{helpful}</b> : null}</span></button>
         <button type="button" aria-label={`${kind === 'question' ? 'Answer' : 'Reply'}${replies ? `, ${replies}` : ''}`} onClick={() => openPost(post)}><CommunityIcon name="comment" size={18} /><span aria-hidden="true">{kind === 'question' ? 'Answer' : 'Reply'}{replies ? <b>{replies}</b> : null}</span></button>
@@ -1121,7 +1122,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     </div></div>}
     {deletePlaylistTarget && <div className="am-sheet-backdrop" {...backdropTap(() => setDeletePlaylistTarget(null))}><div className="am-sheet" role="dialog" aria-modal="true" aria-label="Delete playlist" onClick={(e) => e.stopPropagation()}><div className="am-sheet-head"><h2>Delete playlist?</h2><button type="button" aria-label="Close" onClick={() => setDeletePlaylistTarget(null)}>×</button></div><p className="am-detail-copy">This removes the playlist and its product list. This cannot be undone.</p><button type="button" className="am-primary" disabled={busy} onClick={confirmDeletePlaylist}>{busy ? 'Deleting…' : 'Delete playlist'}</button><button type="button" className="am-secondary" onClick={() => setDeletePlaylistTarget(null)}>Cancel</button></div></div>}
     {likersPost && <div className="am-sheet-backdrop" {...backdropTap(() => setLikersPost(null))}><div className="am-sheet am-likers-sheet" role="dialog" aria-modal="true" aria-labelledby="am-likers-title" onClick={(e) => e.stopPropagation()}>
-      <div className="am-sheet-head"><h2 id="am-likers-title">{likersPost.kind === 'post' ? 'Liked by' : 'Found this helpful'}</h2><button type="button" aria-label="Close" onClick={() => setLikersPost(null)}>×</button></div>
+      <div className="am-sheet-head"><h2 id="am-likers-title">Found this helpful</h2><button type="button" aria-label="Close" onClick={() => setLikersPost(null)}>×</button></div>
       <LikersList supabase={supabase} post={likersPost} user={authUser} friendships={friendships} refreshKey={refresh} variant="app"
         onRequireAuth={(f) => { setLikersPost(null); requireAccount(f); }}
         onOpenProfile={(handle) => { setLikersPost(null); openProfile(handle); }}

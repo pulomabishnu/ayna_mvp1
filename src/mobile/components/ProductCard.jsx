@@ -44,7 +44,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   const isPartner = isPartnerBrandItem(product);
   const buyUrl = getBuyUrl(product);
   const isList = variant === 'list';
-  const contexts = isList ? [['doctor', 'Clinical'], ['scientific', 'Research'], ['community', 'Community']]
+  const contexts = isList ? [['doctor', 'Clinical'], ['scientific', 'Evidence'], ['community', 'Community']]
     .filter(([kind]) => getVerificationLinks(product, kind).some((link) => link?.url || link?.href))
     .map(([, label]) => label) : [];
   const functions = product?.healthFunctions || [];

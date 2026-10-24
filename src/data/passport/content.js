@@ -221,7 +221,7 @@ export function buildProductSections(product, ctx = {}) {
   const sciSummary = clean(product.verificationLinks?.scientific?.aiSummary);
   const typeCounts = {};
   evidenceSources.forEach((s) => { typeCounts[s.evidence_label] = (typeCounts[s.evidence_label] || 0) + 1; });
-  push('evidence', 'What the evidence says', [
+  push('evidence', 'Evidence', [
     clean(product.evidenceStrength) ? { type: 'facts', rows: [{ label: 'Evidence on file', value: `${clean(product.evidenceStrength).charAt(0).toUpperCase()}${clean(product.evidenceStrength).slice(1)}` }] } : null,
     { type: 'text', label: 'ayna summary', text: clean(product.effectiveness) },
     !brandVoice ? { type: 'text', label: 'Clinician opinion', text: clean(product.doctorOpinion), note: clean(product.clinicianAttribution) } : null,

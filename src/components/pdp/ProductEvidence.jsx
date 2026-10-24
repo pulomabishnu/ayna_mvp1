@@ -708,7 +708,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
 
   const tabs = [
     expertBody && { id: 'clinical', label: 'Expert view', icon: 'stethoscope', body: expertBody },
-    researchBody && { id: 'literature', label: 'Research', icon: 'paper', body: researchBody },
+    researchBody && { id: 'literature', label: 'Evidence', icon: 'paper', body: researchBody },
     hasReviews && { id: 'reviews', label: 'Reviews', icon: 'community', body: reviewsBody },
     safetyBody && { id: 'safety', label: 'Safety', icon: 'shield', tone: sf.alert.length ? 'alert' : '', body: safetyBody },
     howBody && { id: 'how-to-use', label: 'How to use', icon: 'steps', body: howBody },
@@ -728,10 +728,10 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const researchCount = new Set([...ex.sources, ...rs.studies, ...rs.ingredients.flatMap((i) => i.links)].filter((l) => l.kind.tier === 'credible').map((l) => l.url)).size;
   const previews = [
     tabs.some((t) => t.id === 'literature') && (rs.negative.length
-      ? { id: 'literature', icon: 'paper', label: 'Research', num: String(rs.negative.length), caption: rs.negative.length === 1 ? 'study found no clear benefit' : 'studies found no clear benefit', short: 'no benefit found' }
+      ? { id: 'literature', icon: 'paper', label: 'Evidence', num: String(rs.negative.length), caption: rs.negative.length === 1 ? 'study found no clear benefit' : 'studies found no clear benefit', short: 'no benefit found' }
       : researchCount
-        ? { id: 'literature', icon: 'paper', label: 'Research', num: String(researchCount), caption: `${researchCount === 1 ? 'study or health-body source' : 'studies and health-body sources'}${levelWord ? `. ${levelWord}` : ''}`, short: 'sources' }
-        : { id: 'literature', icon: 'paper', label: 'Research', caption: levelWord || (rs.ingredients.length ? plural(rs.ingredients.length, rs.ingredientsAreTopics ? 'topic' : 'ingredient') + ' explained' : 'What the research says'), short: levelWord ? levelWord.replace(' evidence', '') : 'Read it' }),
+        ? { id: 'literature', icon: 'paper', label: 'Evidence', num: String(researchCount), caption: `${researchCount === 1 ? 'study or health-body source' : 'studies and health-body sources'}${levelWord ? `. ${levelWord}` : ''}`, short: 'sources' }
+        : { id: 'literature', icon: 'paper', label: 'Evidence', caption: levelWord || (rs.ingredients.length ? plural(rs.ingredients.length, rs.ingredientsAreTopics ? 'topic' : 'ingredient') + ' explained' : 'What the research says'), short: levelWord ? levelWord.replace(' evidence', '') : 'Read it' }),
     tabs.some((t) => t.id === 'safety') && (sf.alert.length
       ? { id: 'safety', icon: 'shield', label: 'Safety', caption: alertHead || 'Safety note on file', short: 'Note on file', tone: 'alert' }
       : sf.warnings.length

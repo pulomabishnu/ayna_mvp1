@@ -163,7 +163,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   };
   // Why we are asking, when the user came from a specific door (Saved heart, My ecosystem).
   const CONTEXT_COPY = {
-    saved: { title: 'Looking for your favorites?', line: 'Sign in to see what you saved.' },
+    saved: { title: 'Looking for what you saved?', line: 'Sign in to see what you saved.' },
     ecosystem: { title: 'Your ecosystem lives here', line: 'Sign in to see your shelves, or build one with a short quiz.' },
     feature: { title: feature ? (FEATURE_TITLES[feature] || `Sign in for ${feature}`) : 'This needs an account', line: 'Take the short quiz to start, or sign in if you already have an account.' },
     login: { title: 'Sign in', line: 'Welcome to ayna. New here? Start with the quiz.' },

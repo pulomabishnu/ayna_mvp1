@@ -581,7 +581,7 @@ function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommend
                   <option value="all">Any</option>
                   <option value="best-match">Best Match</option>
                   <option value="clinician">{CLINICAL_SOURCES_LABEL}</option>
-                  <option value="community">Community Favorite</option>
+                  <option value="community">Community favorite</option>
                   <option value="ecosystem">In My ecosystem</option>
                 </select>
               </label>
@@ -871,7 +871,7 @@ function FirstVisitLanding({ onLogIn, onStartQuiz, onViewDiscovery, onOpenProduc
                 <select value={aynaFilter} onChange={(e) => setAynaFilter(e.target.value)}>
                   <option value="all">Any</option>
                   <option value="clinician">{CLINICAL_SOURCES_LABEL}</option>
-                  <option value="community">Community Favorite</option>
+                  <option value="community">Community favorite</option>
                 </select>
               </label>
               <label>

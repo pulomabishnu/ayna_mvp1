@@ -341,7 +341,7 @@ export function buildGlance(product, ctx = {}) {
   const strength = clean(product.evidenceStrength);
   const doctorSummary = clean(product.verificationLinks?.doctor?.aiSummary);
   const sciSummary = clean(product.verificationLinks?.scientific?.aiSummary);
-  push('evidence', 'What the evidence says', 'evidence', [
+  push('evidence', 'Evidence', 'evidence', [
     (strength || evidenceSources.length) ? { type: 'tags', items: [
       ...(strength ? [{ text: `Evidence on file: ${strength.toLowerCase()}`, tone: 'strong' }] : []),
     ] } : null,
