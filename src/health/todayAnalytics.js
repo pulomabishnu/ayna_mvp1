@@ -20,11 +20,19 @@ export const ITEM_ACTIONS = ['useful', 'not_relevant', 'show_options', 'remind',
 // How much history she has, in coarse buckets (for retention by history).
 export const HISTORY_BUCKETS = ['none', 'under_7', 'under_30', 'under_90', '90_plus'];
 
+// Daily rundown and weekly recap (src/components/rundown): card categories only.
+export const RUNDOWN_KINDS = ['daily', 'weekly'];
+export const RUNDOWN_CATEGORIES = ['safety', 'goal', 'change', 'symptom', 'pattern', 'education', 'match', 'saved', 'community', 'win', 'week', 'frame'];
+export const RUNDOWN_ACTIONS = ['answer', 'open', 'ask', 'save', 'not_relevant', 'not_useful', 'remind'];
+
 export const TODAY_EVENTS = {
   today_items_shown: { count: 'count', types: ITEM_TYPES, tiers: ITEM_TIERS, output: OUTPUTS, history: HISTORY_BUCKETS },
   today_item_action: { type: ITEM_TYPES, action: ITEM_ACTIONS },
   followup_due: { count: 'count' },
   followup_completed: { completed: [true] },
+  rundown_opened: { kind: RUNDOWN_KINDS, count: 'count', categories: RUNDOWN_CATEGORIES },
+  rundown_card_action: { kind: RUNDOWN_KINDS, category: RUNDOWN_CATEGORIES, action: RUNDOWN_ACTIONS },
+  rundown_closed: { kind: RUNDOWN_KINDS, seen: 'count', count: 'count' },
 };
 
 const one = (allowed, v) => (allowed === 'count' ? (Number.isInteger(v) && v >= 0 && v <= 50 ? v : undefined) : allowed.includes(v) ? v : undefined);

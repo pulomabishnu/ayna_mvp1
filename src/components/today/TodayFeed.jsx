@@ -4,6 +4,7 @@ import { STEP_FOR_FIELD } from '../../health/todayProfilePatch.js';
 import { DailyCheckinCard } from '../you/DailyCheckin.jsx';
 import { getProductById } from '../../data/catalog.js';
 import { todayFixtureOn, makeTodayFixture } from '../../health/todayDevFixture.js';
+import Rundown from '../rundown/Rundown.jsx';
 import '../../styles/today-feed.css';
 
 /**
@@ -144,7 +145,9 @@ function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checki
 /**
  * @param {{ variant: 'app'|'web', userId, intake, healthRows, cycle, hormonalBC, products, onOpenProduct, onAsk, onEditAnswers, onFindCare }} props
  */
-export default function TodayFeed({ variant = 'app', userId = null, intake = null, healthRows = [], cycle = null, hormonalBC = false, products = [], onOpenProduct, onAsk, onEditAnswers, onFindCare, onSaveToProfile = null }) {
+export default function TodayFeed({ variant = 'app', userId = null, intake = null, healthRows = [], cycle = null, hormonalBC = false, products = [], onOpenProduct, onAsk, onEditAnswers, onFindCare, onSaveToProfile = null,
+  saved = [], community = [], onWhyMatch, onToggleSaved, onCompare, onOpenRead, onExplore,
+}) {
   // DEV only (?fixture=today): sample logs and tries, dropped from production builds.
   const [fixture] = useState(() => (import.meta.env.DEV && todayFixtureOn() ? makeTodayFixture() : null));
   const t = useToday({ userId, intake: fixture?.intake || intake, healthRows, cycle, hormonalBC, products, fixture, onSaveToProfile, onEditStep: onEditAnswers ? (step) => onEditAnswers(step) : null });
@@ -155,6 +158,23 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
       <div className="ay-today__head">
         <h2 id={`ay-today-h-${variant}`}>Today with ayna</h2>
       </div>
+      <Rundown
+        t={t}
+        userId={userId}
+        intake={fixture?.intake || intake}
+        products={products}
+        saved={saved}
+        community={community}
+        onAsk={onAsk}
+        onOpenProduct={onOpenProduct}
+        onWhyMatch={onWhyMatch}
+        onToggleSaved={onToggleSaved}
+        onCompare={onCompare}
+        onOpenRead={onOpenRead}
+        onExplore={onExplore}
+        onFindCare={onFindCare}
+        onEditAnswers={onEditAnswers}
+      />
       {items.length > 0
         ? <ul className="ay-today__list">{items.map((item) => <Item key={item.id} item={item} t={t} onOpenProduct={onOpenProduct} onAsk={onAsk} onEditAnswers={onEditAnswers} onFindCare={onFindCare} checkinId={checkinId} />)}</ul>
         : <p className="ay-today__empty">{t.decision.empty}</p>}

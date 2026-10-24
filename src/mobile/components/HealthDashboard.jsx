@@ -16,7 +16,7 @@ import '../screens/profile/health-connections.css';
  * Compared only with her own usual. Never a diagnosis.
  */
 
-export default function HealthDashboard({ authUser, userName = '', selectedNeedIds = [], hormonalBC = false, onConnect, onAddGoal, onOpenRoutine, onOpenCheckin, onSignIn, products = [], routineProducts = [], routineOutcomes = {}, matches = [], onOpenProduct, quizAnswers = null, onEditAnswers, onSaveToProfile = null }) {
+export default function HealthDashboard({ authUser, userName = '', selectedNeedIds = [], hormonalBC = false, onConnect, onAddGoal, onOpenRoutine, onOpenCheckin, onSignIn, products = [], routineProducts = [], routineOutcomes = {}, matches = [], onOpenProduct, quizAnswers = null, onEditAnswers, onSaveToProfile = null, rundown = {} }) {
   const openAsk = useContext(AskContext);
   const askHealth = useAskHealthPref(authUser?.id || null);
   const health = useHealthData(authUser?.id || null, selectedNeedIds);
@@ -40,6 +40,7 @@ export default function HealthDashboard({ authUser, userName = '', selectedNeedI
       onAsk={openAsk ? (question) => openAsk({ question }) : undefined}
       onEditAnswers={onEditAnswers}
       onSaveToProfile={onSaveToProfile}
+      {...rundown}
     />
   );
 

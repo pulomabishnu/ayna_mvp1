@@ -2201,6 +2201,7 @@ function App() {
       quizAnswers={quizResults}
       onEditAnswers={(step) => { if (!user) { handleStartQuiz(); return; } setEditAtStep(step || ''); setCurrentView('profile-edit'); }}
       onSaveToProfile={user && quizResults?.fullHealthIntake ? handleUpdateIntake : null}
+      rundown={{ saved: Object.values(savedProducts || {}), onToggleSaved: toggleSavedProduct, onOpenRead: handleViewArticle, onExplore: () => handleViewDiscovery('') }}
       onOpenProduct={(p) => handleOpenProduct(p, { source: 'health_dashboard' })}
       onAsk={(q, extra) => openAsk(q, extra?.stats)}
       onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}

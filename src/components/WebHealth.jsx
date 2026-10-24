@@ -104,7 +104,7 @@ function Locked({ signedIn, connected, onSignIn, onOpenConnections }) {
   );
 }
 
-export default function WebHealth({ user, health, products = [], needIds = [], hormonalBC = false, quizAnswers = null, onOpenProduct, onAsk, onSignIn, onOpenConnections, onEditAnswers, onSaveToProfile = null }) {
+export default function WebHealth({ user, health, products = [], needIds = [], hormonalBC = false, quizAnswers = null, onOpenProduct, onAsk, onSignIn, onOpenConnections, onEditAnswers, onSaveToProfile = null, rundown = {} }) {
   // DEVELOPMENT ONLY (?healthdemo=1 on the local dev server, signed out):
   // the made-up demo rows from devDemo.js, so the unlocked layout can be
   // checked without an account. import.meta.env.DEV is false in production builds.
@@ -144,6 +144,7 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
       onAsk={onAsk ? (q) => onAsk(q) : undefined}
       onEditAnswers={onEditAnswers}
       onSaveToProfile={onSaveToProfile}
+      {...rundown}
     />
   );
 

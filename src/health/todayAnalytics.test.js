@@ -10,6 +10,9 @@ describe('Today analytics whitelist (no health details)', () => {
       today_item_action: ['action', 'type'],
       followup_due: ['count'],
       followup_completed: ['completed'],
+      rundown_opened: ['categories', 'count', 'kind'],
+      rundown_card_action: ['action', 'category', 'kind'],
+      rundown_closed: ['count', 'kind', 'seen'],
     });
   });
 
@@ -34,6 +37,12 @@ describe('Today analytics whitelist (no health details)', () => {
     trackToday('followup_completed', { completed: true, outcome: 'side_effect' }, capture);
     expect(sent).toHaveLength(3);
     expect(JSON.stringify(sent)).not.toMatch(HEALTH_WORDS);
+  });
+
+  it('rundown events carry card categories, never card keys or text', () => {
+    expect(sanitizeTodayProps('rundown_card_action', { kind: 'daily', category: 'pattern', action: 'not_useful', key: 'pattern:sleep.premenstrual.harder', reason: 'already_knew', title: 'Sleep is rougher' }))
+      .toEqual({ kind: 'daily', category: 'pattern', action: 'not_useful' });
+    expect(sanitizeTodayProps('rundown_opened', { kind: 'weekly', count: 5, categories: ['week', 'frame', 'sleep.premenstrual'] })).toEqual({ kind: 'weekly', count: 5, categories: ['week', 'frame'] });
   });
 
   it('history is coarse', () => {

@@ -163,6 +163,8 @@ export function useToday({ userId = null, intake = null, healthRows = [], cycle 
 
   return {
     today, decision, notes, intent, store, pendingProfileSaves,
+    // For the rundown (src/components/rundown): the same state decide() read.
+    patterns: state.patterns, tries, healthRows,
     log, saveLog: daily.save, saveState: daily.saveState,
     remindedTonight: Boolean(store.reminders?.[today]?.tonight),
     ...api,
