@@ -71,6 +71,8 @@ function askTiles(hasHealthData) {
     { label: 'What helps with period cramps?', question: 'What helps with period cramps?', icon: 'cramps', tone: 'sky' },
     { label: 'What fits heavy periods?', question: 'What fits heavy periods?', icon: 'heavy', tone: 'group' },
     { label: 'Fragrance-free options for sensitive skin', sub: 'Graded Limited, Some or Strong', question: 'Fragrance-free options for sensitive skin', icon: 'leaf', tone: 'ink' },
+    { label: 'What helped last time?', sub: 'From what you recorded', question: 'What helped last time?', icon: 'chat', tone: 'group' },
+    { label: 'Explain my top match', sub: 'The % and why, from your profile', question: 'Explain my top match', icon: 'match', tone: 'ink' },
   ];
 }
 const WELCOME = 'Ask about a product, an ingredient, or what to try for something you’re dealing with. I can point you to products and, if you say so, save what you tell me to your health profile. I’m not a doctor, so this isn’t medical advice.';

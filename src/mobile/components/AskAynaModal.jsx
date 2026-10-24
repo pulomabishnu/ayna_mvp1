@@ -26,6 +26,7 @@ function askTiles(hasHealthData) {
     { label: 'What helps with cramps?', question: 'What helps with cramps?', icon: 'cramps', tone: 'sky' },
     { label: 'Is this safe with my birth control?', question: 'Is this safe with my birth control?', icon: 'safety', tone: 'group' },
     { label: 'Explain my top match', sub: 'Why it fits you, with the evidence', question: 'Explain my top match', icon: 'match', tone: 'ink' },
+    { label: 'What helped last time?', sub: 'From what you recorded', question: 'What helped last time?', icon: 'chat', tone: 'group' },
   ];
 }
 
