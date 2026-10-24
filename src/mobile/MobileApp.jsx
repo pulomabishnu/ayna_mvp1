@@ -1034,6 +1034,9 @@ export default function MobileApp() {
     healthSuggestions: healthDataOn && authUser ? health.matchContext?.suggestions || [] : [],
     healthInsights: healthInsightsForPlan,
     onAddGoal: handleAddGoal,
+    // Today: open one quiz question, or save a quick answer she chose to keep (signed in).
+    onEditIntakeStep: (step) => { setIntakeMode('add'); setIntakeAtOptional(false); setIntakeAtStep(step || 'lifeStage'); setEditingHealthProfile(true); setScreen('quiz'); },
+    onUpdateIntake: authUser ? handleUpdateIntake : null,
     ecoTab,
     onEcoTab: setEcoTab,
     routineHave: session.routineHave || {},

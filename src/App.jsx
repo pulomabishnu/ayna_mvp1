@@ -2199,7 +2199,8 @@ function App() {
       needIds={healthNeedIds}
       hormonalBC={usesHormonalBC(quizResults)}
       quizAnswers={quizResults}
-      onEditAnswers={handleStartQuiz}
+      onEditAnswers={(step) => { if (!user) { handleStartQuiz(); return; } setEditAtStep(step || ''); setCurrentView('profile-edit'); }}
+      onSaveToProfile={user && quizResults?.fullHealthIntake ? handleUpdateIntake : null}
       onOpenProduct={(p) => handleOpenProduct(p, { source: 'health_dashboard' })}
       onAsk={(q, extra) => openAsk(q, extra?.stats)}
       onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}

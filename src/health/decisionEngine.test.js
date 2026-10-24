@@ -3,7 +3,7 @@ import { EMPTY } from '../mobile/data/intakeModel.js';
 import { buildUserProfile } from '../matching/userProfile.js';
 import { createTry, recordOutcome } from './outcomes.js';
 import {
-  decide, activeNeeds, needsWindow, markShown, markInteracted, dismiss, addDays, daysBetween,
+  decide, activeNeeds, needsWindow, patternBeforePregnancy, markShown, markInteracted, dismiss, addDays, daysBetween,
   MAX_ITEMS, NOTHING_TODAY, OUTPUTS, CLINICAL_REVIEW_REQUIRED, RANKING_HEURISTICS, TIERS,
 } from './decisionEngine.js';
 import {
@@ -481,4 +481,23 @@ describe('interest is not history (section 39)', () => {
 it('date helpers come from dailyLog', () => {
   expect(addDays('2026-10-24', 30)).toBe('2026-11-23');
   expect(daysBetween('2026-10-24', '2026-11-23')).toBe(30);
+});
+
+describe('cycle patterns and pregnancy', () => {
+  const PREG = buildUserProfile({ ...EMPTY, ...CLEAR, lifeStageSelections: ['I am pregnant'], lifeStage: 'I am pregnant', pregnancyTrimester: 'Second trimester', supportSelections: [] });
+  const pat = { ...sleepPattern, observed: { from: '2026-01-05', to: '2026-04-02' } };
+  it('pregnancy start unknown: no cycle pattern shows', () => {
+    const d = decide({ today: TODAY, logs: [fullLog(TODAY)], patterns: [pat], profile: PREG });
+    expect(d.items.some((i) => i.type === 'insight')).toBe(false);
+    expect(d.debug.removed).toEqual([expect.objectContaining({ id: 'insight:sleep:premenstrual', code: 'pregnancy_pattern' })]);
+  });
+  it('a pattern observed before the pregnancy started is not shown', () => {
+    const d = decide({ today: TODAY, logs: [fullLog(TODAY)], patterns: [pat], profile: PREG, pregnancyStartDay: '2026-05-01' });
+    expect(d.items.some((i) => i.type === 'insight')).toBe(false);
+  });
+  it('one observed after the start may show; not pregnant: unchanged', () => {
+    const later = { ...pat, observed: { from: '2026-06-01', to: '2026-10-01' } };
+    expect(patternBeforePregnancy(later, { pregnant: true, pregnancyStartDay: '2026-05-01' })).toBe(false);
+    expect(decide({ today: TODAY, logs: [fullLog(TODAY)], patterns: [pat], profile: profile(CLEAR) }).items[0].type).toBe('insight');
+  });
 });
