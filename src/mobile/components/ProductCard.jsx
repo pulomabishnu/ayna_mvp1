@@ -15,6 +15,7 @@ import { saveFeedback } from '../../utils/feedback.js';
 import { whyLine } from '../../utils/whyLine.js';
 import HealthBackedBadge from '../../components/health/HealthBackedBadge.jsx';
 import { cardKind, cardBadge, cardPrice } from '../../utils/productCardFacts.js';
+import { CompareCheck } from '../../components/compare/CompareControls.jsx';
 
 export default function ProductCard({ product, onClick, variant = 'grid', quizAnswers = null, isSaved = false, onToggleSaved, onOpenWhyMatch, matchOpts, needId = null }) {
   const { name, category, price, priceDisplay, image, imageUrl, images } = product || {};
@@ -78,6 +79,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         </button>
         {showMatch && <MatchPill percent={badge.percent} size="sm" className="ay-pc-match" label={`${badge.label}. Why this match for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}
         {onToggleSaved && <button type="button" className={`ay-pc-save${isSaved ? ' is-on' : ''}`} aria-label={isSaved ? `Remove ${name} from Saved` : `Save ${name}`} aria-pressed={isSaved} onClick={(e) => { saveFeedback(e, !isSaved); onToggleSaved(product); }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></button>}
+        <CompareCheck product={product} />
       </article>
     );
   }
@@ -106,6 +108,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         {buyUrl && <a href={buyUrl} target="_blank" rel="noopener noreferrer sponsored" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: 'product_card' })} aria-label={`Shop ${name} on the seller's site`}>{isService ? 'See care options' : 'Shop'} <span aria-hidden="true">↗</span></a>}
       </div>}
       {isList && buyUrl && <small className="ayna-fresh-product-seller-note">{isPartner ? 'Partner link. ' : ''}Opens the seller’s site</small>}
+      <CompareCheck product={product} />
     </article>
   );
 }

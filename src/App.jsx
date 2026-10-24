@@ -86,7 +86,7 @@ const CampusResources = React.lazy(() => import('./components/CampusResources'))
 const SharedAnswerPage = React.lazy(() => import('./components/SharedAnswerPage'));
 // The catalog (products, research, matching) loads after first paint as its
 // own chunk; App re-renders when it lands (data/catalog.js, catalogReady below).
-import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, hasStatedLifeStage, matchEngine, getSelectedNeeds, useCatalogReady, isCatalogReady, loadCatalog } from './data/catalog.js';
+import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, getProductMatchDetailsForProduct, getProfileMatchPercentForProduct, hasStatedLifeStage, matchEngine, getSelectedNeeds, useCatalogReady, isCatalogReady, loadCatalog } from './data/catalog.js';
 import { behaviorFrom } from './utils/matchDisplay';
 import { useHealthData } from './mobile/hooks/useHealthData.js';
 import { useHealthMatchPref } from './health/matchPref.js';
@@ -148,6 +148,12 @@ import { recordProductView } from './utils/recentActivity';
 import GlobalToast from './components/v3/GlobalToast';
 import { MAIN_TABS, TabIcon, AskMark } from './components/nav/tabs.jsx';
 import { loadProductReviewStats, mergeReviewBuckets, REVIEWS_CHANGED_EVENT } from './utils/community/reviewRatings.js';
+import SaveAuthSheet from './components/save/SaveAuthSheet.jsx';
+import { SaveFollowUpStrip } from './components/save/SaveFollowUp.jsx';
+import { savePrompt, stashPendingSave, takePendingSave } from './utils/savePrompt.js';
+import { setSavedRemindersOwner } from './utils/savedReminders.js';
+import { compareStore, useCompare } from './utils/compareStore.js';
+import { addedToRoutineText, REMOVED_FROM_ROUTINE } from './utils/routineCopy.js';
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
 /** Which views light up each phone tab (MAIN_TABS keys). */
@@ -620,7 +626,11 @@ function App() {
   useEffect(() => {
     if (currentView !== 'community' && communitySeed) setCommunitySeed(null);
   }, [currentView, communitySeed]);
-  const [compareList, setCompareList] = useState([]);
+  // Compare 2 to 4 (src/utils/compareStore.js): the same list from Saved, cards and the save prompt.
+  const compare = useCompare((id) => (isCatalogReady() ? getProductById(id) : null));
+  const compareList = compare.products;
+  // Signed out, Save first explains the account (team direction 22).
+  const [saveSheet, setSaveSheet] = useState(null);
   const [showCheckin, setShowCheckin] = useState(false);
   const [checkinData, setCheckinData] = useState(null);
   const [checkinUpdatedProfile, setCheckinUpdatedProfile] = useState(false);
@@ -1253,7 +1263,7 @@ function App() {
     return () => clearTimeout(timer);
   }, [user, authLoading, currentView]);
 
-  const PROTECTED_VIEWS = ['comparison', 'omitted', 'recalls', 'doctor-prep', 'profile-edit', 'phone-verify', 'tracked', 'screenings', 'delete-account', 'health-data'];
+  const PROTECTED_VIEWS = ['omitted', 'recalls', 'doctor-prep', 'profile-edit', 'phone-verify', 'tracked', 'screenings', 'delete-account', 'health-data'];
   useEffect(() => {
     if (!authLoading && !user && PROTECTED_VIEWS.includes(currentView)) {
       // Say what the page was, so the sign-in sheet explains itself.
@@ -1791,14 +1801,23 @@ function App() {
   };
 
   const toggleCompare = (product) => {
-    setCompareList(prev => {
-      if (prev.find(p => p.id === product.id)) {
-        return prev.filter(p => p.id !== product.id);
-      }
-      if (prev.length >= 3) return prev;
-      return [...prev, product];
-    });
+    if (compareStore.toggle(product) === 'full') toast('You can compare up to 4. Remove one first.');
   };
+  const openCompare = (product = null) => {
+    if (product?.id) compareStore.add(product);
+    setCurrentView('comparison');
+  };
+  const openCompareRef = useRef(openCompare);
+  openCompareRef.current = openCompare;
+  useEffect(() => compareStore.setOpener(() => openCompareRef.current()), []);
+  const toggleSavedRef = useRef(null);
+  useEffect(() => { setSavedRemindersOwner(user?.id || null); }, [user?.id]);
+  // A save she started signed out finishes once she is signed in (also after a Google/Apple redirect).
+  useEffect(() => {
+    if (!user?.id || !catalogReady) return;
+    const pending = takePendingSave();
+    if (pending && !savedProducts[pending.id]) Promise.resolve().then(() => toggleSavedRef.current?.(getProductById(pending.id) || pending, { fromSheet: true }));
+  }, [user?.id, catalogReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleTrackProduct = (product) => {
     setSaveError(null);
@@ -1853,7 +1872,7 @@ function App() {
     });
 
     // A toast named after the action; a more specific one (a shelf's Undo) replaces it.
-    toast(wasIn ? 'Removed from your ecosystem' : 'Added to your ecosystem', wasIn ? { label: 'Undo', onClick: () => toggleMyProductRef.current?.(product) } : { label: 'See it', onClick: () => setCurrentView('ecosystem') });
+    toast(wasIn ? REMOVED_FROM_ROUTINE : addedToRoutineText(), wasIn ? { label: 'Undo', onClick: () => toggleMyProductRef.current?.(product) } : { label: 'See it', onClick: () => setCurrentView('ecosystem') });
     if (!wasIn) {
       const origin = lastOpenOrigin?.productId === product.id ? lastOpenOrigin : null;
       posthog.capture('product_added', {
@@ -1877,17 +1896,18 @@ function App() {
   toggleMyProductRef.current = toggleMyProduct;
 
   /** Save for later, the wishlist shown at the bottom of My Ecosystem. */
-  const toggleSavedProduct = (product) => {
+  const toggleSavedProduct = (product, { fromSheet = false } = {}) => {
     setSaveError(null);
     const wasSaved = !!savedProducts[product.id];
+    if (!wasSaved && !user && !fromSheet) { setSaveSheet(product); return; }
     const next = { ...savedProducts };
     if (wasSaved) delete next[product.id];
     else next[product.id] = product;
     setSavedProducts(next);
     persistSavedProducts(next);
     if (!wasSaved) posthog.capture('product_saved_for_later', { category: product.category });
-    // Say it saved, and where it went; give the header heart a small bump.
-    toast(wasSaved ? 'Removed from Saved' : 'Saved', wasSaved ? null : { label: 'View saved', onClick: () => handleViewWishlist() });
+    // Saved: "Remind me later · Compare" next to it (inline on its product page).
+    if (wasSaved) { savePrompt.hide(); toast('Removed from Saved', { label: 'Undo', onClick: () => toggleSavedRef.current?.(product, { fromSheet: true }) }); } else savePrompt.show(product);
     if (!wasSaved) {
       try {
         const h = document.querySelector('.app-nav__circle--wishlist');
@@ -1899,6 +1919,8 @@ function App() {
         .catch(e => reportSaveFailure('Could not save that change', e));
     }
   };
+
+  toggleSavedRef.current = toggleSavedProduct;
 
   const toggleOmitProduct = (product) => {
     setSaveError(null);
@@ -2693,6 +2715,9 @@ function App() {
             myProducts={myProducts}
             ecosystemOrder={ecosystemOrder}
             onToggleProduct={toggleMyProduct}
+            savedProducts={savedProducts}
+            onToggleSaved={toggleSavedProduct}
+            onOpenCheckIn={() => { setCurrentView('health'); window.setTimeout(() => document.getElementById('ay-today-log-web')?.scrollIntoView({ block: 'start', behavior: 'smooth' }), 500); }}
             trackedProducts={trackedProducts}
             toggleTrackProduct={toggleTrackProduct}
             toggleOmitProduct={toggleOmitProduct}
@@ -2789,11 +2814,15 @@ function App() {
             onBack={() => handleViewEcosystem()}
             compareList={compareList}
             onRemove={toggleCompare}
-            onClear={() => setCompareList([])}
+            onClear={() => compareStore.clear()}
             CATEGORY_LABELS={CATEGORY_LABELS}
             myProducts={myProducts}
             onBrowseProducts={() => handleViewDiscovery('')}
             onAddToCompare={toggleCompare}
+            savedProducts={savedProducts}
+            matchFor={quizResults ? (p) => getProfileMatchPercentForProduct(p, quizResults, healthProfile, matchOpts) : null}
+            detailsFor={quizResults ? (p) => getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts) : null}
+            onOpenProduct={(p) => handleOpenProduct(p, { source: 'compare' })}
           />
         )}
         {currentView === 'doctor-prep' && (
@@ -2909,6 +2938,7 @@ function App() {
               onOmit={toggleOmitProduct}
               isOmitted={!!omittedProducts[displayedProduct.id]}
               onToggleCompare={toggleCompare}
+              onCompare={openCompare}
               isInCompare={compareList.some(p => p.id === displayedProduct.id)}
               onAddToEcosystem={toggleMyProduct}
               isInEcosystem={!!myProducts[displayedProduct.id]}
@@ -3037,6 +3067,16 @@ function App() {
           />
         )}
 
+        {!showAuthModal && !saveSheet && <SaveFollowUpStrip onCompare={openCompare} variant="web" />}
+        {saveSheet && (
+          <SaveAuthSheet
+            variant="web"
+            product={saveSheet}
+            onContinue={() => { stashPendingSave(saveSheet); setSaveSheet(null); setAuthFeature(''); setPendingAction('save-item'); pendingActionRef.current = 'save-item'; setShowAuthModal(true); }}
+            onKeepHere={() => { const p = saveSheet; setSaveSheet(null); toggleSavedProduct(p, { fromSheet: true }); }}
+            onClose={() => setSaveSheet(null)}
+          />
+        )}
         {showAuthModal && (
           <AuthGate
             isModal
@@ -3058,7 +3098,7 @@ function App() {
             allowSignup={pendingAction === 'quiz-complete' || pendingAction === 'share-friend'}
             initialMode={pendingAction === 'share-friend' ? shareAuthMode : undefined}
             onStartEcosystem={() => { setShowAuthModal(false); setPendingAction(null); pendingActionRef.current = null; setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
-            context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : pendingAction === 'saved' ? 'saved' : pendingAction === 'ecosystem' ? 'ecosystem' : pendingAction === 'feature' ? 'feature' : undefined}
+            context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : pendingAction === 'saved' ? 'saved' : pendingAction === 'save-item' ? 'save-item' : pendingAction === 'ecosystem' ? 'ecosystem' : pendingAction === 'feature' ? 'feature' : undefined}
             feature={authFeature}
             onBeforeOAuthRedirect={() => {
               markOAuthSource(pendingAction === 'quiz-complete' ? 'save' : 'signin');

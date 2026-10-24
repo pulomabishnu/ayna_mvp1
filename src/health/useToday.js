@@ -21,6 +21,8 @@ import { historyBucket, trackToday } from './todayAnalytics.js';
 import { ANSWER_FIELDS, patchIntakeWithTodayAnswer, saveOptionFor } from './todayProfilePatch.js';
 import { FOLLOW_UP_HOUR, localAt, scheduleTodayReminder, tonightAt } from './todayReminders.js';
 import { ALL_PRODUCTS, useCatalogReady } from '../data/catalog.js';
+import { rememberedOnDevice, withoutRemembered } from './remembered.js';
+import { readRoutinePrefs } from './routines.js';
 
 const fmtDay = (iso) => new Date(`${iso}T12:00:00`).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 const REMIND_NOTE = {
@@ -47,7 +49,11 @@ export function useToday({ userId = null, intake = null, healthRows = [], cycle 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [today, triesVersion, daily.log, fixture]);
   // The catalog only matters once she asked for options (products stay out otherwise).
-  const catalog = intent?.showOptions && catalogReady ? ALL_PRODUCTS : products;
+  // Never the products she said no to, has already, or tried without luck (remembered.js).
+  const catalog = useMemo(() => {
+    const list = intent?.showOptions && catalogReady ? ALL_PRODUCTS : products;
+    return withoutRemembered(list, rememberedOnDevice({ tries, prefs: readRoutinePrefs() }));
+  }, [intent, catalogReady, products, tries]);
 
   const state = useMemo(() => buildTodayState({
     today, log, tries, intake, healthRows, cycle, hormonalBC, store: fixture?.store ? { ...store, ...fixture.store } : store, intent, products: catalog,

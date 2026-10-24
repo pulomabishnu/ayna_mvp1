@@ -62,7 +62,7 @@ export default function AddProductDialog({ products, searchTerm, onSearch, myPro
         onKeyDown={trap}
       >
         <header className="ay-addprod__head">
-          <h2 id="ay-addprod-title">Add to your ecosystem</h2>
+          <h2 id="ay-addprod-title">Add to your routine</h2>
           <button type="button" className="ay-addprod__close" onClick={onClose} aria-label="Close"><CloseIcon size={18} /></button>
         </header>
         <label className="sr-only" htmlFor="ay-addprod-q">Search products</label>
@@ -87,7 +87,7 @@ export default function AddProductDialog({ products, searchTerm, onSearch, myPro
             </select>
             <p className="ay-addprod__note">We don’t have this one checked yet, so it won’t get a match score, sources or recall alerts.</p>
             <div className="ay-addprod__actions">
-              <button type="submit" className="ay-addprod__primary">Add to my ecosystem</button>
+              <button type="submit" className="ay-addprod__primary">Add to my routine</button>
               <button type="button" className="ay-addprod__ghost" onClick={() => setOwn(null)}>Back to search</button>
             </div>
           </form>

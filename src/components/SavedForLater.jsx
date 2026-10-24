@@ -1,5 +1,7 @@
 import React from 'react';
 import ProductCard from './ProductCard';
+import { CompareToggle } from './compare/CompareControls.jsx';
+import SavedReminders from './save/SavedReminders.jsx';
 
 /**
  * Saved (website): the products she hearted for later, as one shelf of the
@@ -21,7 +23,9 @@ export default function SavedForLater({
       <div className="ay-shelf__head">
         <h2 id="ayna-wishlist-h" className="ay-h2">Saved</h2>
         {items.length > 0 && <span className="ay-shelf__count">{items.length}</span>}
+        {items.length > 1 && <CompareToggle className="ay-saved2__compare" />}
       </div>
+      <SavedReminders variant="web" resolve={(id) => savedProducts?.[id] || null} onOpenProduct={onOpenProduct} />
 
       {items.length === 0 ? (
         <div className="ay-group is-padded ay-saved2__empty">
@@ -41,7 +45,7 @@ export default function SavedForLater({
                   onOpen={onOpenProduct}
                   onToggleSaved={onToggleSaved}
                   action={inEcosystem ? null : (
-                    <button type="button" className="ay-btn ay-btn--secondary ay-saved2__add" onClick={() => onAddToEcosystem?.(product)}>+ Add to my ecosystem</button>
+                    <button type="button" className="ay-btn ay-btn--secondary ay-saved2__add" onClick={() => onAddToEcosystem?.(product)}>+ Add to my routine</button>
                   )}
                 />
               </li>

@@ -2,7 +2,7 @@
  * /api/today-reminders: "Remind me tonight" and the follow-up nudge on the
  * day a try is due (Phase 1, step 7; master prompt sections 95 to 97).
  *
- *   POST  (her Supabase JWT)   { kind: 'tonight' | 'follow_up' | 'rundown', sendAt: ISO, tz: IANA }
+ *   POST  (her Supabase JWT)   { kind: 'tonight' | 'follow_up' | 'rundown' | 'saved', sendAt: ISO, tz: IANA }
  *         schedules one nudge. Nothing about what it is for is sent or stored.
  *   GET/POST with Authorization: Bearer $CRON_SECRET (Vercel cron, ?sweep=1)
  *         sends what is due through APNs (api/_apns.js).
@@ -12,7 +12,8 @@
  * notification preferences: notifications off, quiet hours, and at most one
  * Today nudge per local day.
  *
- * Schema: supabase/today_reminders_2026-10-24.sql. Nothing is sent, and
+ * Schema: supabase/today_reminders_2026-10-24.sql (+ the rundown and saved kind
+ * migrations). Nothing is sent, and
  * nothing throws, while APNs is not configured.
  */
 /* global process */
@@ -20,11 +21,15 @@ import { createClient } from '@supabase/supabase-js';
 import { verifyUser } from './_usageLimit.js';
 import { apnsConfigured, pushToUser } from './_apns.js';
 
-export const KINDS = new Set(['tonight', 'follow_up', 'rundown']);
+export const KINDS = new Set(['tonight', 'follow_up', 'rundown', 'saved']);
 export const PUSH_MESSAGE = Object.freeze({ title: 'ayna', body: 'Your ayna check-in is ready', data: { route: 'today' } });
 // UX spec 23: private wording, nothing about her health on the lock screen.
 export const RUNDOWN_PUSH_MESSAGE = Object.freeze({ title: 'ayna', body: 'Your daily rundown is ready.', data: { route: 'today' } });
-export const messageFor = (kind) => (kind === 'rundown' ? RUNDOWN_PUSH_MESSAGE : PUSH_MESSAGE);
+// "Remind me later" on a saved item: the server never learns which item (it
+// stays on her device, src/utils/savedReminders.js), and the lock screen says
+// nothing about what it is.
+export const SAVED_PUSH_MESSAGE = Object.freeze({ title: 'ayna', body: 'Something you saved is waiting', data: { route: 'saved' } });
+export const messageFor = (kind) => (kind === 'rundown' ? RUNDOWN_PUSH_MESSAGE : kind === 'saved' ? SAVED_PUSH_MESSAGE : PUSH_MESSAGE);
 const MAX_AHEAD_MS = 120 * 86400000;
 const MAX_SCHEDULED = 30;
 const PAGE = 300;

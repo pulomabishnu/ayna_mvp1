@@ -18,6 +18,7 @@ import { trackApp } from '../utils/appAnalytics.js';
 import { stableShopOrder, rankShopForProfile } from '../utils/shopOrder.js';
 import { hasQuizAnswers } from '../utils/personalReads.js';
 import { sortByBestMatch, bestMatchNeedsQuiz, shownMatchPercent } from '../../utils/bestMatchSort.js';
+import { CompareToggle } from '../../components/compare/CompareControls.jsx';
 import { useSheetDrag } from '../hooks/useSheetDrag.js';
 import usePersistentState from '../../hooks/usePersistentState.js';
 import { NeedStickers } from '../../components/shop/ShopBits.jsx';
@@ -29,7 +30,7 @@ const FILTER_FIELDS = [
   ['category', 'Product type', [['all', 'All products']]],
   ['price', 'Price', [['all', 'Any price'], ['under-25', 'Under $25'], ['25-50', '$25–$50'], ['50-100', '$50–$100'], ['100-plus', '$100+']]],
   ['rating', 'Rating', [['all', 'Any rating'], ['4-plus', '4+ stars']]],
-  ['ayna', 'Match & sources', [['all', 'Any'], ['best-match', 'Best match'], ['clinician', CLINICAL_SOURCES_LABEL], ['community', 'Community favorite'], ['ecosystem', 'In my ecosystem']]],
+  ['ayna', 'Match & sources', [['all', 'Any'], ['best-match', 'Best match'], ['clinician', CLINICAL_SOURCES_LABEL], ['community', 'Community favorite'], ['ecosystem', 'In my routine']]],
   ['preference', 'Preferences', [['all', 'Any'], ['fragrance-free', 'Fragrance free'], ['sensitive-skin', 'Sensitive skin'], ['vegan', 'Vegan'], ['cruelty-free', 'Cruelty free'], ['organic', 'Organic'], ['clean-ingredients', 'Clean ingredients']]],
   ['eligibility', 'Eligibility', [['all', 'Any'], ['fsa-hsa', 'FSA/HSA eligible'], ['fsa', 'FSA eligible'], ['hsa', 'HSA eligible']]],
   ['sustainability', 'Sustainability', [['all', 'Any'], ['reusable', 'Reusable'], ['recyclable', 'Recyclable'], ['low-waste', 'Low waste'], ['packaging', 'Sustainable packaging']]],
@@ -485,6 +486,7 @@ export default function BrowseScreen({
             {activeFilters.map(([key, text]) => <button key={key} type="button" className="ayna-shop-category" aria-pressed="true" onClick={() => setFilters((current) => ({ ...current, [key]: 'all' }))} aria-label={`Remove filter: ${text}`}>{text}<span aria-hidden="true">×</span></button>)}
           </div>}
           {bestNeedsQuiz && !showFilters && bestQuizNote}
+          <div className="ay-shop-comparerow"><CompareToggle /></div>
         </>} />
       )}
       {showDeck && <DiscoverDeck products={filtered} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} onOpenProduct={(product) => { setShowDeck(false); onOpenProduct?.(product); }} onClose={() => setShowDeck(false)} />}

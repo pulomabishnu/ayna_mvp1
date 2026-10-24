@@ -1,3 +1,5 @@
+import NeedRoutines from './routine/NeedRoutines.jsx';
+import { useRoutines } from './routine/useRoutines.js';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import { ecosystemCounts } from '../utils/ecosystemCounts.js';
 import { relatedNeedSuggestions } from '../matching/relatedNeeds';
@@ -326,7 +328,7 @@ function EcosystemFunctionProductCard({
                     className="btn btn-outline"
                     style={{ flex: 1, minWidth: '72px', fontSize: 12.5, padding: '0.35rem 0.45rem' }}
                     onClick={() => onToggleProduct(product)}
-                    title={isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'}
+                    title={isInEcosystem ? 'Remove from my routine' : 'Add to my routine'}
                 >
                     {isInEcosystem ? 'Remove' : 'Add'}
                 </button>
@@ -604,7 +606,7 @@ function IntakeRecAltMini({ alt, myProducts, onToggleProduct, onOpenProduct, res
                     {alt.brand && <div style={{ fontSize: 12.5, color: 'var(--color-text-muted)' }}>{alt.brand}</div>}
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', marginTop: '0.45rem' }}>
                         <button type="button" className="btn btn-outline" style={{ padding: '0.3rem 0.55rem', fontSize: 12.5 }} onClick={() => onToggleProduct(alt)}>
-                            {inEco ? <><CheckIcon size={16} className="is-lead" />In ecosystem</> : <><PlusIcon size={16} className="is-lead" />Add to your ecosystem</>}
+                            {inEco ? <><CheckIcon size={16} className="is-lead" />In my routine</> : <><PlusIcon size={16} className="is-lead" />Add to my routine</>}
                         </button>
                         <button type="button" className="btn btn-primary" style={{ padding: '0.3rem 0.55rem', fontSize: 12.5 }} onClick={() => onOpenProduct(alt, { source: 'recommendation' })}>
                             Details
@@ -974,6 +976,9 @@ export default function MyEcosystem({
     userSession = null,
     isPremium: _isPremium = false,
     matchOpts: matchOptsProp = null,
+    savedProducts = {},
+    onToggleSaved = null,
+    onOpenCheckIn = null,
 }) {
     const [showAddModal, setShowAddModal] = useState(false);
     useEscapeToClose(showAddModal, () => setShowAddModal(false));
@@ -1147,6 +1152,12 @@ export default function MyEcosystem({
         () => matchOptsProp || behaviorFrom({ omitted: omittedProducts, inEcosystem: myProducts }),
         [matchOptsProp, omittedProducts, myProducts]
     );
+    // Her routines, one per active need: Start here, Track it, Other options (src/components/routine).
+    const routines = useRoutines({
+        userId: user?.id || null, quizAnswers: quizResults, matchOpts, products: myProducts,
+        saved: savedProducts, omitted: omittedProducts, onAddToRoutine: onToggleProduct,
+        onToggleSaved, onNotForMe: toggleOmitProduct,
+    });
     const needSeed = useMemo(
         () => (quizResults ? getEcosystemSeedFromQuiz(quizResults, healthProfile, matchOpts) : null),
         [quizResults, healthProfile, matchOpts]
@@ -2089,6 +2100,10 @@ export default function MyEcosystem({
                             onEditHealthProfile={onEditHealthProfile}
                         />
                     </section>
+                )}
+
+                {routines.routines.length > 0 && (
+                    <NeedRoutines state={routines} variant="web" id="eco-routines" onOpenProduct={onOpenProduct} onCheckIn={onOpenCheckIn} />
                 )}
 
                 <div className={`eco-body${railShown ? ' has-rail' : ''}`}>

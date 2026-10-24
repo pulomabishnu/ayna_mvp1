@@ -196,7 +196,7 @@ function InsightDetail({ insight, chart, pick, onBack, onOpenMetric, onOpenProdu
         <section aria-labelledby="ay-hh-action-next">
           <h4 id="ay-hh-action-next">What you can do</h4>
           <ol>{actions.map((action) => <li key={action}>{action}</li>)}</ol>
-          {pick && onOpenProduct && <div className="ay-hh-action-product"><small>{pick.owned ? 'Already in your ecosystem' : 'Matched to your goal'}</small><button type="button" onClick={() => onOpenProduct(pick.product)}>{pick.product.name} →</button><p>{pick.reason}</p></div>}
+          {pick && onOpenProduct && <div className="ay-hh-action-product"><small>{pick.owned ? 'Already in your routine' : 'Matched to your goal'}</small><button type="button" onClick={() => onOpenProduct(pick.product)}>{pick.product.name} →</button><p>{pick.reason}</p></div>}
           {onOpenRoutine && <button type="button" className="ay-hh-action-link" onClick={onOpenRoutine}>See your routine and shopping list →</button>}
           {onAsk && insight.question && <button type="button" className="ay-hh-action-ask" onClick={() => onAsk(insight.question)}>Ask ayna about this</button>}
         </section>

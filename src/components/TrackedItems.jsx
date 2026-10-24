@@ -105,7 +105,7 @@ export default function TrackedItems({ onBack = null, trackedProducts, joinedWai
                                             <span className="ay-group__label">
                                                 {CATEGORY_LABELS[product.category] || product.category}
                                                 {product.outOfBusiness && ' · No longer sold'}
-                                                {inEcosystem && ' · In your ecosystem'}
+                                                {inEcosystem && ' · In your routine'}
                                             </span>
                                             <span className="ay-group__value">{product.name}</span>
                                             <span className="ay-group__note">{reason}</span>

@@ -1,3 +1,4 @@
+import { CompareToggle } from './compare/CompareControls.jsx';
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { Seal, Ribbon } from './personality/Bits.jsx';
 import { NeedStickers, FolderTabs, KbdHint } from './shop/ShopBits.jsx';
@@ -1747,6 +1748,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         <button type="button" className="ay-btn ay-btn--text ayshop__matches" onClick={() => onRequirePersonalizeAuth?.()}>See my matches →</button>
                     )}
                     {hasProfileForSort && personalizedSwitch}
+                    <CompareToggle className="ayshop__compare" />
                 </div>
                 {/* "Best match" is a sort (first, and the default once she has a profile), not a separate switch. */}
                 <label className="ayshop__sort">
@@ -1762,7 +1764,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             {bestQuizNote}
 
             {(() => {
-                const LABELS = { 'under-25': 'Under $25', '25-50': '$25–49', '50-100': '$50–99', '100-plus': '$100+', subscription: 'Subscription or membership', 'fsa-hsa': 'FSA/HSA eligible', fsa: 'FSA', hsa: 'HSA', 'fragrance-free': 'Fragrance-free', 'sensitive-skin': 'Sensitive skin', vegan: 'Vegan', 'cruelty-free': 'Cruelty-free', organic: 'Organic', 'clean-ingredients': 'Paraben or chlorine free', reusable: 'Reusable', recyclable: 'Recyclable', 'low-waste': 'Low waste', packaging: 'Sustainable packaging', clinician: CLINICAL_SOURCES_LABEL, community: 'Community favorite', 'best-match': 'Best matches', ecosystem: 'In my ecosystem', fertility: 'Trying to conceive', pregnancy: 'Pregnant', postpartum: 'Postpartum', perimenopause: 'Perimenopause and menopause', menopause: 'Menopause', period: 'Period years', products: 'Products', services: 'Apps & services' };
+                const LABELS = { 'under-25': 'Under $25', '25-50': '$25–49', '50-100': '$50–99', '100-plus': '$100+', subscription: 'Subscription or membership', 'fsa-hsa': 'FSA/HSA eligible', fsa: 'FSA', hsa: 'HSA', 'fragrance-free': 'Fragrance-free', 'sensitive-skin': 'Sensitive skin', vegan: 'Vegan', 'cruelty-free': 'Cruelty-free', organic: 'Organic', 'clean-ingredients': 'Paraben or chlorine free', reusable: 'Reusable', recyclable: 'Recyclable', 'low-waste': 'Low waste', packaging: 'Sustainable packaging', clinician: CLINICAL_SOURCES_LABEL, community: 'Community favorite', 'best-match': 'Best matches', ecosystem: 'In my routine', fertility: 'Trying to conceive', pregnancy: 'Pregnant', postpartum: 'Postpartum', perimenopause: 'Perimenopause and menopause', menopause: 'Menopause', period: 'Period years', products: 'Products', services: 'Apps & services' };
                 const applied = [[typeFilter, setTypeFilter], [priceFilter, setPriceFilter], [eligibilityFilter, setEligibilityFilter], [lifeStageFilter, setLifeStageFilter], [preferenceFilter, setPreferenceFilter], [sustainabilityFilter, setSustainabilityFilter], [aynaFilter, setAynaFilter]].filter(([v]) => v && v !== 'all');
                 return (
                     <div className="ayshop__applied" role="status">
@@ -1788,7 +1790,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         ['Life stage', lifeStageFilter, setLifeStageFilter, [['period', 'Period years'], ['fertility', 'Trying to conceive'], ['pregnancy', 'Pregnant'], ['postpartum', 'Postpartum'], ['perimenopause', 'Perimenopause and menopause']]],
                         ['Preferences', preferenceFilter, setPreferenceFilter, [['fragrance-free', 'Fragrance-free'], ['sensitive-skin', 'Sensitive skin'], ['vegan', 'Vegan'], ['cruelty-free', 'Cruelty-free'], ['organic', 'Organic'], ['clean-ingredients', 'Paraben or chlorine free (as labeled)']].filter(([v]) => v === preferenceFilter || preferenceOptions.some((o) => o.value === v))],
                         ['Sustainability', sustainabilityFilter, setSustainabilityFilter, [['reusable', 'Reusable'], ['recyclable', 'Recyclable'], ['low-waste', 'Low waste'], ['packaging', 'Sustainable packaging']].filter(([v]) => sustainabilityOptions.some((o) => o.value === v))],
-                        ['Show only', aynaFilter, setAynaFilter, [['clinician', CLINICAL_SOURCES_LABEL], ['community', 'Community favorite'], ...(user ? [['ecosystem', 'In my ecosystem']] : [])]],
+                        ['Show only', aynaFilter, setAynaFilter, [['clinician', CLINICAL_SOURCES_LABEL], ['community', 'Community favorite'], ...(user ? [['ecosystem', 'In my routine']] : [])]],
                     ]}
                     personalizedToggle={hasProfileForSort ? personalizedSwitch : null}
                     sort={{ value: sortValue, choices: sortChoices, set: applySort, note: bestQuizNote }}

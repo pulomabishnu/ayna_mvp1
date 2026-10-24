@@ -73,3 +73,14 @@ describe('rundown reminder', () => {
     expect(plan({ kind: 'rundown', tz: 'America/New_York' }, {}, new Set(['2026-10-24']), Date.parse('2026-10-25T00:00:00Z')).action).toBe('defer');
   });
 });
+
+describe('saved reminder', () => {
+  it('says nothing about the item, and waits rather than being dropped', async () => {
+    const { SAVED_PUSH_MESSAGE, messageFor, KINDS, planDelivery: plan } = await import('./today-reminders.js');
+    expect(KINDS.has('saved')).toBe(true);
+    expect(SAVED_PUSH_MESSAGE.body).toBe('Something you saved is waiting');
+    expect(SAVED_PUSH_MESSAGE.data.route).toBe('saved');
+    expect(messageFor('saved')).toBe(SAVED_PUSH_MESSAGE);
+    expect(plan({ kind: 'saved', tz: 'America/New_York' }, {}, new Set(['2026-10-24']), Date.parse('2026-10-25T00:00:00Z')).action).toBe('defer');
+  });
+});

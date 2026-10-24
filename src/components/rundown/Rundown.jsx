@@ -9,6 +9,8 @@ import { evidenceLevel } from '../pdp/evidenceLevel.js';
 import { addDays } from '../../health/dailyLog.js';
 import { trackToday } from '../../health/todayAnalytics.js';
 import { localAt, RUNDOWN_HOUR, scheduleTodayReminder } from '../../health/todayReminders.js';
+import { rememberedOnDevice, withoutRemembered } from '../../health/remembered.js';
+import { readRoutinePrefs } from '../../health/routines.js';
 import './rundown.css';
 
 const REMIND_TEXT = {
@@ -34,16 +36,19 @@ export default function Rundown({
   const today = t.today;
 
   // Her matches, scored by the one engine (no other source of a percent).
+  // Not what she already has, said no to, tried without luck, or saved
+  // (Saved has its own card) (team direction 65; src/health/remembered.js).
   const matches = useMemo(() => {
     if (!intake || !catalogReady) return [];
     const seen = new Set();
-    return products.filter((p) => p?.id && !seen.has(p.id) && seen.add(p.id)).map((product) => {
+    const remembered = rememberedOnDevice({ tries: t.tries, saved: Object.fromEntries((saved || []).filter((p) => p?.id).map((p) => [p.id, true])), prefs: readRoutinePrefs() });
+    return withoutRemembered(products, remembered).filter((p) => p?.id && !seen.has(p.id) && seen.add(p.id)).map((product) => {
       let details = null;
       try { details = getProductMatchDetailsForProduct(product, intake); } catch { details = null; }
       if (!details || details.matchStatus !== 'scored' || !Number.isFinite(details.percent)) return null;
       return { product, percent: details.percent, needId: details.needId, why: whyLine(product, details), evidence: evidenceLevel(product).level };
     }).filter(Boolean);
-  }, [products, intake, catalogReady]);
+  }, [products, intake, catalogReady, t.tries, saved]);
 
   const daily = useMemo(() => buildRundown({
     today, decision: t.decision, patterns: t.patterns, log: t.log, tries: t.tries, healthRows: t.healthRows,

@@ -156,7 +156,7 @@ export default function Recalls({ myProducts = {}, onBack = null }) {
                     <div className="ay-info-card ay-info-card--pad">
                         <span className="ay-info__pill">Coming soon</span>
                         <p className="ay-info__body">
-                            <strong>Ingredient watchlist:</strong> get notified if a product in your ecosystem adds something on your sensitivity list.
+                            <strong>Ingredient watchlist:</strong> get notified if a product in your routine adds something on your sensitivity list.
                         </p>
                     </div>
                 </aside>

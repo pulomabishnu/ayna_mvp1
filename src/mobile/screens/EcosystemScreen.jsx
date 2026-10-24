@@ -27,6 +27,9 @@ import '../eco-app-best.css';
 import HealthShapedNote from '../../components/health/HealthShapedNote.jsx';
 import { PlusIcon } from '../../components/icons/UiIcons.jsx';
 import { ecosystemCounts, needsCoveredLine } from '../../utils/ecosystemCounts.js';
+import NeedRoutines from '../../components/routine/NeedRoutines.jsx';
+import { useRoutines } from '../../components/routine/useRoutines.js';
+import { ADD_TO_ROUTINE } from '../../utils/routineCopy.js';
 
 const AREA_TONES = ['#F7BADD', '#769EBE', '#3E2723', '#F7BADD', '#769EBE', '#3E2723'];
 const MIN_SHELF_SCORE = 50;
@@ -60,10 +63,18 @@ export default function EcosystemScreen({
   routineExcluded = {}, onToggleRoutineProduct, routineOutcomes = {}, onLogRoutineOutcome,
   onSavePlaylist, onOpenPlaylist, onConnectHealth, onRequireAuth, onPersonalize, lastQuizAnswers = null,
   quizDraft = null, onResumeQuiz, onStartOverQuiz, onFixLifeStages, onStartQuiz, onEditIntakeStep, onUpdateIntake, articles = [],
+  omittedProducts = {}, onToggleOmit,
 }) {
   const rootRef = useRef(null);
   const titleRef = useRef(null);
   const routineRef = useRef(null);
+  // Her routines, one per active need (period pain, PMS, sleep): Start here, Track it, Other options.
+  const routines = useRoutines({
+    userId: authUser?.id || null, quizAnswers, matchOpts, showMatch: Boolean(authUser),
+    products: myProducts, saved: savedProducts, omitted: omittedProducts, have: routineHave,
+    onAddToRoutine: onAddToEcosystem, onToggleSaved, onNotForMe: onToggleOmit, onToggleHave,
+  });
+  const openCheckIn = () => { onEcoTab?.('dashboard'); setTimeout(() => document.getElementById('ay-today-log-app')?.scrollIntoView({ block: 'start', behavior: 'smooth' }), 120); };
   const [sheet, setSheet] = useState(false);
   // This month's check-in: due until she has done it (signed in only).
   const [checkinDue, setCheckinDue] = useState(false);
@@ -318,6 +329,7 @@ export default function EcosystemScreen({
       </div>}
       {onOpenMonthlyCheckin && checkin}
     </div> : <>
+    {routines.routines.length > 0 && <div className="ay-eco-routines" style={{ padding: '0 var(--d-gutter, 20px)' }}><NeedRoutines state={routines} variant="app" onOpenProduct={onOpenProduct} onCheckIn={openCheckIn} /></div>}
     {chipSections.length > 1 && !q && <div className="eco-app-chips" role="group" aria-label="Show a shelf">
       <button type="button" aria-pressed={activeChip === 'all'} onClick={() => setChip('all')}>All</button>
       {chipSections.map((sct) => <button key={sct.key} type="button" aria-pressed={activeChip === sct.key} onClick={() => setChip(activeChip === sct.key ? 'all' : sct.key)}><i style={{ background: toneFor(sct) }} aria-hidden="true" />{shortNeedLabel(sct.label)}<small>{sct.products.length || sct.picks?.length || 0}</small></button>)}
@@ -343,10 +355,10 @@ export default function EcosystemScreen({
             <p>No strong matches for {section.phrase} yet.</p>
             <button type="button" onClick={() => onBrowse?.(shortNeedLabel(section.label))}>Shop {shortNeedLabel(section.label).toLowerCase()}</button>
           </div>}
-          {!section.products.length && shown.length > 0 && <p className="ay-shelf2-note">Not in your ecosystem yet</p>}
+          {!section.products.length && shown.length > 0 && <p className="ay-shelf2-note">Not in your routine yet</p>}
           {shown.length > 0 && <div className="ay-shelf2-row">{shown.map((product) => section.products.length
             ? <ProductCard key={product.id} product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} isSaved={!!savedProducts[product.id]} onToggleSaved={onToggleSaved} />
-            : <div className="ay-shelf2-pick" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}><PlusIcon size={16} />Add to your ecosystem</button></div>)}
+            : <div className="ay-shelf2-pick" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}><PlusIcon size={16} />{ADD_TO_ROUTINE}</button></div>)}
             <button type="button" className="ay-shelf2-slot" onClick={() => onBrowse?.(shortNeedLabel(section.label))} aria-label={`Add a product to ${section.label}`}><PlusIcon size={20} />Add</button>
           </div>}
           {shelf?.care && !careFirst && <details className="ay-shelf-care"><summary>Care options for {section.phrase}</summary><CareLinks care={shelf.care} /></details>}
@@ -362,7 +374,7 @@ export default function EcosystemScreen({
 
       {worthALook.length > 0 && activeChip === 'all' && !q && <section className="ay-shelf2 eco-app-shelf eco-app-worth" style={{ '--area-tone': '#769EBE', '--area-ink': '#3E2723' }} aria-labelledby="ayna-cabinet-next-title">
         <div className="ay-shelf2-head"><h2 id="ayna-cabinet-next-title">Worth a look</h2><span className="ay-shelf2-count">{worthALook.length}</span></div>
-        <div className="ay-shelf2-row">{worthALook.map((product) => <div className="ay-shelf2-pick" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}><PlusIcon size={16} />Add to your ecosystem</button></div>)}</div>
+        <div className="ay-shelf2-row">{worthALook.map((product) => <div className="ay-shelf2-pick" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}><PlusIcon size={16} />{ADD_TO_ROUTINE}</button></div>)}</div>
       </section>}
     </div>
     </>}

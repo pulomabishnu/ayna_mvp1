@@ -360,7 +360,7 @@ function FilterPanel({ f, set, productTypes, ecosystem = false, onClear }) {
           {ecosystem && <option value="best-match">Best match</option>}
           <option value="clinician">{CLINICAL_SOURCES_LABEL}</option>
           <option value="community">Community favorite</option>
-          {ecosystem && <option value="ecosystem">In my ecosystem</option>}
+          {ecosystem && <option value="ecosystem">In my routine</option>}
         </select>
       </label>
       <label>

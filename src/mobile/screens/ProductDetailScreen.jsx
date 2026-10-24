@@ -28,6 +28,9 @@ import ComparePanel from '../../components/pdp/ComparePanel.jsx';
 import { worksWith } from '../../utils/aynaIntegrations.js';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
+import { SaveFollowUpInline } from '../../components/save/SaveFollowUp.jsx';
+import { leavingLine } from '../../utils/leavingAyna.js';
+import { ADD_TO_ROUTINE, IN_ROUTINE, ROUTINE_EXPLAINER, routineExplainerDue } from '../../utils/routineCopy.js';
 import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
 import { productImageOverride } from '../../data/productImageOverrides.js';
 import { apiUrl } from '../../utils/apiUrl.js';
@@ -238,6 +241,8 @@ export default function ProductDetailScreen({
   matchOpts,
   isOmitted = false,
   onToggleOmit,
+  // After Save: "Remind me later · Compare" (src/components/save).
+  onCompare = null,
   // "ayna" in Works with opens You > Health data.
   onOpenHealthData = null,
 }) {
@@ -287,6 +292,8 @@ export default function ProductDetailScreen({
     return { compare, more, personal };
   }, [product, onOpenProduct, ecosystemProducts, quizAnswers, matchOpts]);
 
+  // The first time she sees "Add to my routine", one line says what it means.
+  const [explainRoutine] = useState(routineExplainerDue);
   if (!product) {
     return (
       <div style={{ padding: 40, textAlign: 'center', color: 'var(--ayna-text-muted)', fontWeight: 400, lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))' }}>
@@ -417,10 +424,10 @@ export default function ProductDetailScreen({
           <svg width="20" height="20" viewBox="0 0 24 24" fill={isSaved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={HEART_PATH} /></svg>
         </button>
         {/* No store link: never a dead primary (same rule as the website's
-            product page). Her own site if we know it, else "Add to ecosystem"
+            product page). Her own site if we know it, else "Add to my routine"
             takes the primary slot and the page says where it is sold. */}
-        <button type="button" className={`ayq-bar__eco${isInEcosystem ? ' is-on' : ''}${shopAction ? '' : ' is-primary'}`} aria-pressed={isInEcosystem} aria-label={isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'} onClick={onAddToEcosystem}>
-          {isInEcosystem ? 'In ecosystem' : shopAction ? '+ Ecosystem' : '+ Add to ecosystem'}
+        <button type="button" className={`ayq-bar__eco${isInEcosystem ? ' is-on' : ''}${shopAction ? '' : ' is-primary'}`} aria-pressed={isInEcosystem} aria-label={isInEcosystem ? 'Remove from my routine' : ADD_TO_ROUTINE} onClick={onAddToEcosystem}>
+          {isInEcosystem ? IN_ROUTINE : shopAction ? '+ Routine' : `+ ${ADD_TO_ROUTINE}`}
         </button>
         {shopAction && <a className="ayq-bar__buy" href={shopAction.href} target="_blank" rel="noopener noreferrer" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: shopAction.placement })}>{shopAction.label}<span className="sr-only"> {shopAction.sr}</span></a>}
       </div>
@@ -485,6 +492,9 @@ export default function ProductDetailScreen({
             {matchDetails.matchStatus === 'no-profile' && <li><button type="button" className="ay-pdp-why__row is-fit" onClick={onStartQuiz}><span>See how it fits you</span><span className="ay-pdp-why__go">Get matched</span></button></li>}
           </ul>
           {buyBar}
+          {!isInEcosystem && explainRoutine && <p className="ay-pdp-commission">{ROUTINE_EXPLAINER}</p>}
+          {shopAction && <p className="ay-pdp-commission">{leavingLine(shopAction.href, null, shopAction.label === 'Book' ? 'book' : shopAction.label === 'Get the app' ? 'get it' : 'buy')}</p>}
+          <SaveFollowUpInline product={product} onCompare={onCompare} />
           {topWarning && <SafetyFlag text={topWarning} />}
           {!shopAction && <p className="ay-pdp-nolink">{storesOnFile.length ? `${product.type === 'digital' ? 'On' : 'Sold at'} ${andList(storesOnFile.slice(0, 4))}. We don’t have a direct link yet.` : 'We don’t have a store link for this yet.'}</p>}
           {variantLabels.length > 0 && (

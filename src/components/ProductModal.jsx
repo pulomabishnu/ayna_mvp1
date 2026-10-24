@@ -48,6 +48,9 @@ import './pdp/pdp-story.css';
 import './pdp/pdp-page.css';
 import '../styles/pdp-v4.css';
 import { fetchWithTimeout } from '../utils/network.js';
+import { SaveFollowUpInline } from './save/SaveFollowUp.jsx';
+import { leavingLine } from '../utils/leavingAyna.js';
+import { ROUTINE_EXPLAINER, routineExplainerDue } from '../utils/routineCopy.js';
 
 /**
  * Product Q&A, for a user who doesn't know what a product actually IS (a
@@ -362,6 +365,8 @@ async function copyText(text) {
 
 export default function ProductModal({
   product: catalogProduct,
+  // After Save: "Remind me later · Compare" (src/components/save).
+  onCompare = null,
   onOmit,
   isOmitted,
   onAddToEcosystem,
@@ -579,6 +584,9 @@ export default function ProductModal({
     breadcrumbJsonLd(product, { origin }),
   ] : []);
 
+  // The first time she sees "Add to my routine", one line says what it means.
+  const [explainRoutine] = useState(routineExplainerDue);
+
   if (!product) return null;
 
   const basePrice = priceParts(product);
@@ -721,9 +729,9 @@ export default function ProductModal({
             className={`ay-btn ay-btn--secondary ayp-buy__eco${isInEcosystem ? ' is-on' : ''}`}
             aria-pressed={isInEcosystem}
             onClick={() => onAddToEcosystem(product)}
-            title={isInEcosystem ? 'Remove from my ecosystem' : undefined}
+            title={isInEcosystem ? 'Remove from my routine' : undefined}
           >
-            {isInEcosystem ? <><span className="ayp-eco__on">In my ecosystem ✓</span><span className="ayp-eco__off" aria-hidden="true">Remove</span></> : 'Add to my ecosystem'}
+            {isInEcosystem ? <><span className="ayp-eco__on">In my routine ✓</span><span className="ayp-eco__off" aria-hidden="true">Remove</span></> : 'Add to my routine'}
           </button>
         )}
         {!user && onToggleSaved && (
@@ -733,6 +741,9 @@ export default function ProductModal({
           </button>
         )}
       </div>
+      {!isInEcosystem && user && onAddToEcosystem && explainRoutine && <p className="ayp-buy__fine">{ROUTINE_EXPLAINER}</p>}
+      <SaveFollowUpInline product={product} onCompare={onCompare} />
+      {buyUrl && !isPrelaunch && <p className="ayp-buy__fine ayp-buy__leaving">{leavingLine(buyUrl, sellerName && sellerName.length <= 32 ? sellerName : '', verb === 'Book' ? 'book' : verb === 'Buy' ? 'buy' : 'get started')}</p>}
       {/* One commission line (there used to be two that said different things). */}
       {buyUrl && !isPrelaunch && (
         <p className="ayp-buy__fine">
@@ -964,7 +975,7 @@ export default function ProductModal({
               {/* With a profile, her match fills in a moment after the hero (settled above). */}
               {!settled && (quizResults || healthProfile) ? <div className="ay-skel__bar is-sub ayp-fit__skel" role="status" aria-label="Checking your match" /> : <ProductMatch glance={glance} matchPercent={matchPercent} why={whyLine(product, matchDetails)} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz && !isPhone ? onStartQuiz : null} hasProfile={Boolean(quizResults)} exclusions={matchExclusions} health={matchDetails?.healthData ? { section: matchDetails.healthData.section, tracker: ['tracker', 'wearable'].includes(String(product?.category || '').toLowerCase()) } : null} />}
               {!(matchPercent > 0) && !matchExclusions.length && isInEcosystem && (
-                <p className="ayp-fit__note">In your ecosystem</p>
+                <p className="ayp-fit__note">In your routine</p>
               )}
               {/* "Not for me" only means something once she has an ecosystem. */}
               {onOmit && user && (

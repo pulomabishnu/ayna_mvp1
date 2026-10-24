@@ -73,7 +73,7 @@ export default function NeedsStrip({ needs, isOwned, onOpenProduct, onToggleProd
                     badge={p.healthBacked ? <HealthBackedBadge backed={p.healthBacked} /> : null}
                     onOpen={onOpenProduct}
                     action={onToggleProduct && (
-                      <button type="button" className="ay-btn ay-btn--secondary ay-card-add" onClick={() => onToggleProduct(p.product)}><PlusIcon size={16} className="is-lead" />Add to my ecosystem</button>
+                      <button type="button" className="ay-btn ay-btn--secondary ay-card-add" onClick={() => onToggleProduct(p.product)}><PlusIcon size={16} className="is-lead" />Add to my routine</button>
                     )}
                   />
                 </li>

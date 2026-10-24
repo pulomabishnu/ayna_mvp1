@@ -13,6 +13,8 @@ import { saveFeedback } from '../utils/feedback.js';
 import '../styles/match-ui.css';
 import '../styles/verify-content.css';
 import { productImageAlt } from '../utils/seoMeta';
+import { CompareCheck } from './compare/CompareControls.jsx';
+import { IN_ROUTINE } from '../utils/routineCopy.js';
 
 const HEART = 'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z';
 
@@ -96,7 +98,7 @@ export default function ProductCard({
           {((matchPercent != null && matchPercent > 0) || inEcosystem) && (
             <span className="ay-product-card__match">
               {matchPercent != null && matchPercent > 0 && <MatchPill percent={matchPercent} size="sm" className="ay-product-card__pill" label={matchLabel || `${Math.round(matchPercent)}% match`} />}
-              {inEcosystem && <span className="ay-product-card__eco"><CheckIcon size={14} />In your ecosystem</span>}
+              {inEcosystem && <span className="ay-product-card__eco"><CheckIcon size={14} />{IN_ROUTINE}</span>}
             </span>
           )}
           {why && matchPercent != null && matchPercent > 0 && <span className="ay-product-card__why">{why}</span>}
@@ -118,6 +120,7 @@ export default function ProductCard({
         </button>
       )}
       {action && <div className="ay-product-card__action">{action}</div>}
+      <CompareCheck product={product} />
     </article>
   );
 }

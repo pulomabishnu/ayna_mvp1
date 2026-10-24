@@ -582,7 +582,7 @@ function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommend
                   <option value="best-match">Best Match</option>
                   <option value="clinician">{CLINICAL_SOURCES_LABEL}</option>
                   <option value="community">Community favorite</option>
-                  <option value="ecosystem">In My ecosystem</option>
+                  <option value="ecosystem">In my routine</option>
                 </select>
               </label>
               <label>
@@ -636,7 +636,7 @@ function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommend
           <div className="ayna-landing-shop-grid ayna-landing-shop-grid--returning">
             {shownProducts.map((product) => {
               const badge = ownedIds.has(product.id)
-                ? 'IN YOUR ECOSYSTEM'
+                ? 'In your routine'
                 : (personalize && recommendedIds.has(product.id) ? 'FOR YOU' : null);
               return (
                 <button

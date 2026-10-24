@@ -71,6 +71,13 @@ import MonthlyCheckinScreen from './screens/MonthlyCheckinScreen.jsx';
 import CommunityScreen from './screens/CommunityScreen.jsx';
 import QuizConnectScreen from './screens/QuizConnectScreen.jsx';
 import PlanScreen from './screens/PlanScreen.jsx';
+import CompareScreen from './screens/CompareScreen.jsx';
+import SaveAuthSheet from '../components/save/SaveAuthSheet.jsx';
+import { SaveFollowUpStrip } from '../components/save/SaveFollowUp.jsx';
+import { savePrompt, stashPendingSave, takePendingSave } from '../utils/savePrompt.js';
+import { setSavedRemindersOwner } from '../utils/savedReminders.js';
+import { compareStore } from '../utils/compareStore.js';
+import { addedToRoutineText, REMOVED_FROM_ROUTINE } from '../utils/routineCopy.js';
 import { healthMatchContext } from '../health/matchContext.js';
 import { useHealthMatchPref } from '../health/matchPref.js';
 import { addNeedToAnswers } from '../matching/addNeed.js';
@@ -415,25 +422,44 @@ export default function MobileApp() {
   // uses); signing in later merges these into her account. One gentle nudge
   // per visit, never a wall in front of the save.
   const [saveNudge, setSaveNudge] = useState(false);
-  const saveNudgeShownRef = useRef(false);
+  // Signed out, Save first says what an account is for (team direction 22):
+  // Continue signs in and finishes the save; she can keep it on this phone too.
+  const [saveSheet, setSaveSheet] = useState(null);
+  const finishSave = (product) => {
+    toggleSaved(product);
+    savedHaptic(); markPushMoment();
+    // "Remind me later · Compare" next to what she saved (inline on its page).
+    savePrompt.show(product);
+  };
   const handleToggleSaved = (product) => {
     const adding = !savedMap[product?.id];
+    if (adding && !authUser) { setSaveSheet(product); return; }
+    if (adding) { finishSave(product); return; }
     toggleSaved(product);
-    if (adding) { savedHaptic(); markPushMoment(); }
-    if (!authUser && adding && !saveNudgeShownRef.current) {
-      saveNudgeShownRef.current = true;
-      setSaveNudge(true);
-    } else {
-      // A toast named after the action (the guest nudge says it instead, once).
-      toast(adding ? 'Saved' : 'Removed from Saved');
-    }
+    savePrompt.hide();
+    toast('Removed from Saved', { label: 'Undo', onClick: () => finishSave(product) });
   };
+  const openCompare = (product = null) => {
+    if (product?.id) compareStore.add(product);
+    compareStore.setSelecting(false);
+    setOverlay({ type: 'compare' });
+  };
+  const openCompareRef = useRef(openCompare);
+  openCompareRef.current = openCompare;
+  useEffect(() => compareStore.setOpener(() => openCompareRef.current()), []);
   useEffect(() => {
     if (!saveNudge) return undefined;
     const t = setTimeout(() => setSaveNudge(false), 6000);
     return () => clearTimeout(t);
   }, [saveNudge]);
   useEffect(() => { if (authUser) Promise.resolve().then(() => setSaveNudge(false)); }, [authUser]);
+  useEffect(() => { setSavedRemindersOwner(authUser?.id || null); }, [authUser?.id]);
+  // A save she started signed out finishes once she is signed in.
+  useEffect(() => {
+    if (!authUser?.id || authLoading) return;
+    const pending = takePendingSave();
+    if (pending && !savedMap[pending.id]) Promise.resolve().then(() => finishSave(pending));
+  }, [authUser?.id, authLoading]); // eslint-disable-line react-hooks/exhaustive-deps
   const [browseQuery, setBrowseQuery] = useState('');
   // Behavior signals for the matching engine (saved, "Not for me", in her
   // Ecosystem). Memoized: the engine caches profiles by this object.
@@ -812,7 +838,7 @@ export default function MobileApp() {
         }).catch((error) => console.warn('[Ayna] mobile ecosystem remove sync failed:', error));
         delete ecosystemFlagsRef.current.trackedProducts[product.id];
       }
-      toast('Removed from your ecosystem', { label: 'Undo', onClick: () => addToEcosystemRef.current?.(product) });
+      toast(REMOVED_FROM_ROUTINE, { label: 'Undo', onClick: () => addToEcosystemRef.current?.(product) });
       return;
     }
 
@@ -838,7 +864,7 @@ export default function MobileApp() {
       ecoNudgeShownRef.current = true;
       setSaveNudge('eco');
     } else {
-      toast('Added to your ecosystem');
+      toast(addedToRoutineText());
     }
 
     const supabase = getSupabaseClient();
@@ -1020,6 +1046,8 @@ export default function MobileApp() {
     onBrowse: (query) => { setBrowseQuery(typeof query === 'string' ? query : ''); setScreen('browse'); },
     onGoCommunity: () => { setCommunitySeed(null); setScreen('community'); },
     onOpenSaved: () => setScreen('saved'),
+    onOpenCompare: openCompare,
+    onToggleOmit: handleToggleOmit,
     onGoEco: () => setScreen(hasEcosystem ? 'eco' : 'ecointro'),
     onGoLanding: () => setScreen('landing'),
     onOpenProduct: (p) => growTransition(() => setOverlay({ type: 'product', item: p }), { target: 'product', from: 'img' }),
@@ -1313,10 +1341,19 @@ export default function MobileApp() {
       />}
       {saveNudge && !authUser && (
         <div className="ay-save-nudge" role="status">
-          <span>{saveNudge === 'eco' ? 'Added to your ecosystem on this phone. Sign in to keep it on every device.' : 'Saved on this phone. Sign in to keep your saves on every device.'}</span>
+          <span>{saveNudge === 'eco' ? 'Added to your routine on this phone. Sign in to keep it on every device.' : 'Saved on this phone. Sign in to keep your saves on every device.'}</span>
           <button type="button" onClick={() => { setSaveNudge(false); openAuth('signin'); }}>Sign in</button>
           <button type="button" className="ay-save-nudge-x" aria-label="Dismiss" onClick={() => setSaveNudge(false)}><svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg></button>
         </div>
+      )}
+      {!overlay && !authPrompt && <SaveFollowUpStrip onCompare={openCompare} variant="app" />}
+      {saveSheet && (
+        <SaveAuthSheet
+          product={saveSheet}
+          onContinue={() => { stashPendingSave(saveSheet); setSaveSheet(null); openAuth('signin'); }}
+          onKeepHere={() => { const p = saveSheet; setSaveSheet(null); finishSave(p); }}
+          onClose={() => setSaveSheet(null)}
+        />
       )}
       <EcosystemResetDialog open={resetDialogOpen} busy={resettingEcosystem} onCancel={() => setResetDialogOpen(false)} onConfirm={handleResetEcosystem} />
       {(overlay?.type === 'profile-auth' || authPrompt) && (
@@ -1343,6 +1380,7 @@ export default function MobileApp() {
             onAddToEcosystem={() => handleAddToEcosystem(overlay.item)}
             isOmitted={!!omittedProducts[overlay.item?.id]}
             onToggleOmit={() => handleToggleOmit(overlay.item)}
+            onCompare={openCompare}
             onOpenHealthData={() => { if (authUser) setOverlay({ type: 'profile', screen: 'healthData' }); else requestAuth('health data', () => setOverlay({ type: 'profile', screen: 'healthData' })); }}
             matchOpts={matchOpts}
             onOpenReview={(postId) => { setCommunitySeed({ postId, token: Date.now() }); setOverlay(null); setScreen('community'); }}
@@ -1384,6 +1422,17 @@ export default function MobileApp() {
               setOverlay({ type: 'article', item: article });
             }}
             theme={theme}
+          />
+        </PushLayer>
+      )}
+      {overlay?.type === 'compare' && (
+        <PushLayer key="compare" onBack={() => setOverlay(null)}>
+          <CompareScreen
+            onBack={() => setOverlay(null)}
+            onOpenProduct={(item) => setOverlay({ type: 'product', item })}
+            savedProducts={savedMap}
+            quizAnswers={authUser ? effectiveQuizAnswers : null}
+            matchOpts={matchOpts}
           />
         </PushLayer>
       )}
