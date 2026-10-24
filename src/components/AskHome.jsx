@@ -4,9 +4,10 @@ import '../styles/ask-home.css';
 /**
  * Ask ayna's first screen, the same on the app sheet and the website panel.
  * From the founder's Cooper reference (cefbab0a), rebuilt in ayna's inks:
- * a hello line, a bento of question tiles (one "New"), recent questions,
- * and one curved-text ribbon as the page's single seal.
- * Tiles fill the box so she can edit before asking; nothing sends on its own.
+ * a hello line, the starter questions as a plain list of rows (one "New";
+ * master prompt 154: no bento), recent questions, and one curved-text ribbon
+ * as the page's single seal.
+ * A row fills the box so she can edit before asking; nothing sends on its own.
  */
 
 const ICONS = {
@@ -56,14 +57,16 @@ export default function AskHome({ name = '', intro = '', note = '', tiles = [], 
         <h2>{name ? `Hello, ${name}` : 'Hello'}</h2>
         {intro && <p>{intro}</p>}
       </div>
-      <ul className="ay-askh-tiles" data-count={tiles.length}>
+      <ul className="ay-askh-list" aria-label="Questions to start with">
         {tiles.map((t, i) => (
-          <li key={t.label} className={`is-${t.tone || 'group'}${i === 0 ? ' is-tall' : ''}`} style={{ '--i': i }}>
+          <li key={t.label} className={`is-${t.tone || 'group'}`} style={{ '--i': i }}>
             <button type="button" onClick={() => { haptic('selection'); onPick(t.question); }}>
               <span className="ay-askh-icon"><AskIcon name={t.icon} /></span>
-              {t.isNew && <span className="ay-askh-new">New</span>}
-              <span className="ay-askh-tile-label">{t.label}</span>
-              {t.sub && <small>{t.sub}</small>}
+              <span className="ay-askh-list-text">
+                <span className="ay-askh-tile-label">{t.label}{t.isNew && <span className="ay-askh-new">New</span>}</span>
+                {t.sub && <small>{t.sub}</small>}
+              </span>
+              <svg className="ay-askh-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
             </button>
           </li>
         ))}
