@@ -118,6 +118,9 @@ export default function AskAynaModal({
   // For "what's my % match for X": the same engine and inputs the cards use.
   matchOpts = undefined,
   focusProduct = null,
+  // The Ask ayna tab: the same conversation as the tab's content, not a sheet
+  // (no grabber, no Done, the tab bar stays below it).
+  asTab = false,
 }) {
   const [messages, setMessages] = useState(chatHistory.length > 0 ? chatHistory : buildWelcome(name));
   const [input, setInput] = useState('');
@@ -326,7 +329,7 @@ export default function AskAynaModal({
 
   return (
     <div
-      className="ayna-ask-drawer"
+      className={`ayna-ask-drawer${asTab ? ' is-tab' : ''}`}
       data-open={open ? 'true' : 'false'}
       style={{
         position: 'absolute',
@@ -337,7 +340,7 @@ export default function AskAynaModal({
         flexDirection: 'column',
       }}
     >
-      <div ref={sheetRef} className="ayna-ask-drawer-content" role="dialog" aria-label="Ask ayna" aria-modal={open ? true : undefined} aria-hidden={!open} inert={!open ? true : undefined}>
+      <div ref={sheetRef} className="ayna-ask-drawer-content" role={asTab ? 'region' : 'dialog'} aria-label="Ask ayna" aria-modal={open && !asTab ? true : undefined} aria-hidden={!open} inert={!open ? true : undefined}>
       {onClose && <button {...grabberProps} aria-label="Close Ask ayna" />}
       <div
         style={{

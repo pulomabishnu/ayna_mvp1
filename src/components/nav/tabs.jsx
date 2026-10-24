@@ -1,11 +1,9 @@
-export { MAIN_TABS } from './mainTabs.js';
+export { MAIN_TABS, EXPLORE_SECTIONS, YOU_SECTIONS } from './mainTabs.js';
 /**
- * The one set of main tabs for the phone website and the app (P1-7,
- * docs/terminology.md). Same order, names and icons in both places:
- * Library · Shop · Ecosystem (centre) · Community · You. Order agreed with
- * the founders on Oct 11 for the app; the website's phone bar follows it.
- * Ask ayna is an action, not a place, so it lives in the header (Apple HIG:
- * "use a tab bar only for navigation"), never in the bar.
+ * The one set of main tabs for the website and the app (docs/terminology.md).
+ * Same order, names and icons everywhere: Today · Explore · Ask ayna (centre)
+ * · Community · You (founder, Oct 24 2026). Ask ayna is also a place now, with
+ * its own tab; the header pill stays as a shortcut from any screen.
  *
  * Icons: one stroke rule (1.75, round caps). Outline when not selected,
  * filled when selected (HIG tab bar convention), so the current tab reads
@@ -15,6 +13,9 @@ export { MAIN_TABS } from './mainTabs.js';
 export function TabIcon({ kind, on = false }) {
   const common = { width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.75, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true, className: 'ay-tabicon' };
   const solid = on ? { fill: 'currentColor' } : {};
+  if (kind === 'today') return <svg {...common}><circle {...solid} cx="12" cy="12" r="4" /><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4" /></svg>;
+  if (kind === 'explore') return <svg {...common}><circle cx="12" cy="12" r="8.5" /><path {...solid} d="m15.2 8.8-2 4.4-4.4 2 2-4.4 4.4-2Z" /></svg>;
+  if (kind === 'ask') return <svg {...common}><path {...solid} d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z" /></svg>;
   if (kind === 'library') return <svg {...common}><path {...solid} {...(on ? { stroke: 'none' } : {})} d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5v-13ZM13 4h5.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H13V4Z" />{!on && <path d="M7 8h1.5M16 8h1.5" />}</svg>;
   if (kind === 'home') return <svg {...common}><circle {...solid} cx="12" cy="13" r="3" /><circle {...solid} cx="12" cy="4.5" r="1.8" /><circle {...solid} cx="5" cy="18" r="1.8" /><circle {...solid} cx="19" cy="18" r="1.8" /><path d="M12 10V6.3M9.5 14.6l-3 2.2M14.5 14.6l3 2.2" /></svg>;
   if (kind === 'browse') return <svg {...common}><path {...solid} d="M4 8h16l-1 12H5L4 8Z" /><path d="M9 9V6a3 3 0 0 1 6 0v3" /></svg>;
