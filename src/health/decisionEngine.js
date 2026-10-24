@@ -131,6 +131,17 @@ export function markInteracted(seen = {}, itemId, today) {
   const prev = seen[itemId] || { shownDays: [], timesShown: 0, signature: null };
   return { ...seen, [itemId]: { ...prev, lastInteracted: today } };
 }
+// "Not useful" reasons (UX spec section 9). dont_show_type also hides the
+// item's whole type (key `type:<type>`) for TYPE_DISMISS_DAYS.
+export const NOT_USEFUL_REASONS = ['already_knew', 'not_relevant', 'dont_show_type', 'info_changed', 'no_reason'];
+export const TYPE_DISMISS_DAYS = 90;
+export const typeKey = (type) => `type:${type}`;
+/** Store "Not useful" with its reason: the item, plus its type for dont_show_type. */
+export function dismissWithReason(dismissed = {}, item, today, reason = 'not_relevant') {
+  const why = NOT_USEFUL_REASONS.includes(reason) ? reason : 'not_relevant';
+  const next = dismiss(dismissed, item, today, why);
+  return why === 'dont_show_type' && item?.type ? dismiss(next, typeKey(item.type), today, why, TYPE_DISMISS_DAYS) : next;
+}
 export function dismiss(dismissed = {}, itemOrId, today, reason = 'not_relevant', days = DISMISS_DAYS) {
   const id = typeof itemOrId === 'string' ? itemOrId : itemOrId?.id;
   const signature = typeof itemOrId === 'object' ? itemOrId?.signature ?? null : null;
@@ -649,6 +660,12 @@ export function decide(state = {}) {
     const d = dismissed[c.id];
     if (!isProtected && d && d.until && daysBetweenDays(today, d.until) > 0 && !(c.signature && d.signature && c.signature !== d.signature)) {
       suppressed.push({ id: c.id, why: 'dismissed', until: d.until });
+      continue;
+    }
+    // "Don't show this type": the whole type stays hidden (never safety or care).
+    const dt = dismissed[typeKey(c.type)];
+    if (!isProtected && dt && dt.until && daysBetweenDays(today, dt.until) > 0) {
+      suppressed.push({ id: c.id, why: 'type_dismissed', until: dt.until });
       continue;
     }
     let priority = c.priority;

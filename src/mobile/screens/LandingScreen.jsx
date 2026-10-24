@@ -1,13 +1,35 @@
 import RotatingProducts from '../components/RotatingProducts.jsx';
 import { PARTNER_BRANDS } from '../../utils/partnerBrands';
 import '../landing.css';
+import { useState } from 'react';
 import FinishQuizCard from '../../components/FinishQuizCard.jsx';
+import { VALUE_POINTS } from '../data/onboardingFlow.js';
+import '../../styles/onboarding.css';
+
+// First run (UX spec section 3): welcome, then one screen on what ayna does,
+// then set up or explore first. Accounts are made after setup, on the reveal.
+
 
 // The feature reel (what the app does) on the website's hero parts: stamp,
 // headline, a still brand row. One plain button starts the quiz (it used to
 // be slide-to-start, a hidden gesture; anti-vibe guide 5d).
 export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAccount, onAboutAyna, quizDraft = null, onResumeQuiz, onStartOverQuiz }) {
   const names = PARTNER_BRANDS.map((b) => b.name);
+  const [valueOpen, setValueOpen] = useState(false);
+  if (valueOpen) {
+    return <main className="ay-land ay-ob-value" aria-labelledby="ay-ob-value-h">
+      <button type="button" className="ay-ob-back" onClick={() => setValueOpen(false)} aria-label="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
+      <h1 id="ay-ob-value-h">Here’s how ayna helps</h1>
+      <ol className="ay-ob-value__list">
+        {VALUE_POINTS.map(([t, d], i) => <li key={t}><span aria-hidden="true">{i + 1}</span><b>{t}</b><p>{d}</p></li>)}
+      </ol>
+      <div className="ay-ob-value__actions">
+        <button type="button" className="ay-ob-primary" onClick={onStartQuiz}>Set up my ayna</button>
+        <button type="button" className="ay-ob-quiet" onClick={onBrowse}>Explore first</button>
+        <p>Short questions. Skip anything you like.</p>
+      </div>
+    </main>;
+  }
   return <main className="ay-land">
     <section className="ay-land-hero" aria-labelledby="ay-land-title">
       <header className="ay-land-top">
@@ -36,10 +58,10 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
       {quizDraft && onResumeQuiz
         ? <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} className="ay-land-finish" />
         : <>
-          <button type="button" className="ay-land-start" onClick={onStartQuiz}>See my matches<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
-          <p className="ay-land-start-note">Six quick questions, then your matches.</p>
+          <button type="button" className="ay-land-start" onClick={() => setValueOpen(true)}>Get started<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
+          <p className="ay-land-start-note">A few short questions, then your Today.</p>
         </>}
-      <div className="ay-land-links"><button type="button" onClick={onBrowse}>Just browsing</button><button type="button" onClick={onAboutAyna}>About us</button></div>
+      <div className="ay-land-links"><button type="button" onClick={onBrowse}>Explore first</button><button type="button" onClick={onAboutAyna}>About us</button></div>
     </section>
   </main>;
 }

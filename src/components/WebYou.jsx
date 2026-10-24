@@ -1,4 +1,5 @@
 import { avatarInitials } from '../utils/avatarInitials';
+import WhatAynaKnows from './you/WhatAynaKnows.jsx';
 import DailyCheckin from './you/DailyCheckin.jsx';
 import BoxWaitlist, { SHOW_BOX_WAITLIST } from './you/BoxWaitlist.jsx';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -240,7 +241,7 @@ function HealthMatchStatus({ userId, onOpen }) {
   );
 }
 
-export default function WebYou({ onUpdateIntake = null, onOpenCommunity, onOpenArticle, user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenProduct, onOpenPhoneVerify, onSignOut, onDeleteAccount, onStartQuiz, onSignIn, theme = 'light', onThemeChange, onOpenFreeProduct, onOpenHealthData, onOpenHealth, healthSummary = null, healthConnectedCount = 0, quizSlot = null }) {
+export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = null, healthConnected = [], onUpdateIntake = null, onOpenCommunity, onOpenArticle, user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenProduct, onOpenPhoneVerify, onSignOut, onDeleteAccount, onStartQuiz, onSignIn, theme = 'light', onThemeChange, onOpenFreeProduct, onOpenHealthData, onOpenHealth, healthSummary = null, healthConnectedCount = 0, quizSlot = null }) {
   const products = useMemo(() => Object.values(myProducts || {}).filter(Boolean), [myProducts]);
   // The open tab survives a refresh.
   const [tab, setTab] = usePersistentState('you:tab', 'overview');
@@ -352,6 +353,8 @@ export default function WebYou({ onUpdateIntake = null, onOpenCommunity, onOpenA
         <p className="ct-lede">Your profile, safety alerts and settings live here once you have an account.</p>
         <div className="wy-signedout__doors">{!quizSlot && <button type="button" className="ay-btn ay-btn--primary" onClick={onStartQuiz}>New here? See my matches</button>}{onSignIn && <button type="button" className="ay-btn ay-btn--secondary" onClick={onSignIn}>Sign in</button>}</div>
       </div>
+      {/* Explore first: her answers already work on this device, so she can see and change them. */}
+      {quizResults?.fullHealthIntake && <div className="wy-know"><WhatAynaKnows variant="web" quizAnswers={quizResults} connected={healthConnected} onUpdateIntake={onUpdateIntakeLocal} onEditStep={onEditAnswerAt || (() => onEditProfile?.())} onManageData={onOpenHealthData} /></div>}
     </section>;
   }
 
@@ -401,9 +404,10 @@ export default function WebYou({ onUpdateIntake = null, onOpenCommunity, onOpenA
 
     {quizSlot}
 
-    <PillTabs label="Your page" idBase="wy-tab" active={tab} onChange={setTab} tabs={[{ id: 'overview', label: 'Overview' }, { id: 'blend', label: 'Your blend' }, { id: 'settings', label: 'Settings' }]} />
+    <PillTabs label="Your page" idBase="wy-tab" active={tab} onChange={setTab} tabs={[{ id: 'overview', label: 'Overview' }, { id: 'health', label: 'My health' }, { id: 'blend', label: 'Your blend' }, { id: 'settings', label: 'Settings' }]} />
 
     <div id="wy-tab-panel" role="tabpanel" aria-labelledby={`wy-tab-${tab}`} className={`wy-grid is-${tab}`}>
+      {tab === 'health' && <div className="wy-know"><WhatAynaKnows variant="web" quizAnswers={quizResults} userId={user?.id || null} connected={healthConnected} onUpdateIntake={onUpdateIntakeLocal || onUpdateIntake} onEditStep={(step) => (step && onEditAnswerAt ? onEditAnswerAt(step) : onEditProfile?.())} onManageData={onOpenHealthData} /></div>}
       {tab === 'overview' && <>
       <div className="wy-col">
         <section className="wy-sec" aria-labelledby="wy-safety-h">

@@ -2,6 +2,11 @@ import { useState } from 'react';
 import HealthConnectionsScreen from './profile/HealthConnectionsScreen.jsx';
 import { useHealthData } from '../hooks/useHealthData.js';
 import './profile/health-connections.css';
+import '../../styles/onboarding.css';
+import { CATEGORIES } from '../../health/metrics.js';
+
+// Step 7 of the first run: exactly what each kind of data is used for.
+const USED_FOR = ['sleep', 'cycle', 'temperature', 'heart', 'activity'].filter((k) => CATEGORIES[k]);
 
 /**
  * End of the quiz, before her matches: an optional step to bring in health
@@ -18,14 +23,16 @@ export default function QuizConnectScreen({ authUser, onQuizConnectContinue, onQ
         <button type="button" className="ay-qc-back" onClick={selected ? () => setSelected(null) : onBack} aria-label={selected ? 'Back to all sources' : 'Back to the quiz'}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
         </button>
-        <ol className="ay-qc-steps" aria-label="Almost done">
-          <li className="is-done">Quiz</li><li className="is-on" aria-current="step">Health data</li><li>Your plan</li>
-        </ol>
+        <span className="ay-qc-count">Step 5 of 5</span>
       </header>
       {!selected && (
         <div className="ay-qc-copy">
-          <h1>Connect your health data</h1>
-          <p>Bring in sleep, cycle, heart and activity from the apps you already use. ayna compares it with your own usual to sharpen your matches and build your routine. You choose what to share. Brands never see it.</p>
+          <p className="ay-qc-kicker">Optional</p>
+          <h1>Connect health data</h1>
+          <p>You don’t need to. Quick check-ins work too. If you connect, you choose each kind of data, and brands never see it.</p>
+          <dl className="ay-qc-uses">
+            {USED_FOR.map((k) => <div key={k}><dt>{CATEGORIES[k].label}</dt><dd>Used {CATEGORIES[k].why.charAt(0).toLowerCase()}{CATEGORIES[k].why.slice(1)}</dd></div>)}
+          </dl>
         </div>
       )}
       <div className="ay-qc-body">

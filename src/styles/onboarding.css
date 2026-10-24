@@ -1,0 +1,162 @@
+/* First run, reveal, "What ayna knows" and "Not useful" (app and website).
+   Palette only: butter #ffedac, pink #f7badd, sky #769ebe, espresso #3e2723
+   (plus the existing group butter #f6e3a1 and the app's dark page #2e1c18).
+   Fonts: ayna Display titles, Figtree body. Matte, no shadows. */
+
+:is(.ayna-mobile, .app-container, .ay-why) :is(.ay-ob-ready, .ay-ob-value, .ay-know, .ay-nu, .ay-ob-empty, .ay-qc-uses, .ip-why, .ay-matchfb) {
+  --o-butter: #ffedac; --o-pink: #f7badd; --o-sky: #769ebe; --o-espresso: #3e2723;
+  --o-page: #ffedac; --o-group: #f6e3a1; --o-ink: #3e2723; --o-soft: rgba(62, 39, 35, .75); --o-hair: rgba(62, 39, 35, .16);
+  --o-serif: 'ayna Display', var(--f-display, serif); --o-sans: 'Figtree', var(--f-ui, sans-serif);
+}
+:is(.ayna-mobile[data-theme='dark'], .app-container:is([data-theme='dark'], [data-theme='brand-dark']), html:is([data-ay-theme='dark'], [data-ay-theme='brand-dark']) .ay-why) :is(.ay-ob-ready, .ay-ob-value, .ay-know, .ay-nu, .ay-ob-empty, .ay-qc-uses, .ip-why, .ay-matchfb) {
+  --o-page: #2e1c18; --o-group: rgba(255, 237, 172, .08); --o-ink: #ffedac; --o-soft: rgba(255, 237, 172, .78); --o-hair: rgba(255, 237, 172, .16);
+}
+
+/* Shared buttons */
+:is(.ayna-mobile, .app-container) :is(.ay-ob-primary, .ay-ob-quiet) {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 0 26px !important;
+  border-radius: 999px !important; font: 700 16px/1 var(--o-sans, 'Figtree', sans-serif) !important; cursor: pointer; box-shadow: none !important;
+}
+:is(.ayna-mobile, .app-container) .ay-ob-primary { border: 0 !important; background: var(--o-ink, #3e2723) !important; color: var(--o-page, #ffedac) !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-quiet { border: 1.5px solid var(--o-hair, rgba(62, 39, 35, .16)) !important; background: transparent !important; color: var(--o-ink, #3e2723) !important; }
+:is(.ayna-mobile, .app-container) :is(.ay-ob-primary, .ay-ob-quiet):focus-visible { outline: 3px solid var(--o-sky, #769ebe) !important; outline-offset: 3px; }
+
+/* ── Reveal: "Your ayna is ready." ─────────────────────────────────────── */
+:is(.ayna-mobile, .app-container) .ay-ob-ready {
+  position: relative; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 14px;
+  min-height: 100%; min-height: 100dvh; width: 100%; margin: 0 auto; padding: max(56px, env(safe-area-inset-top)) 24px max(32px, env(safe-area-inset-bottom));
+  background: var(--o-page); color: var(--o-ink); font-family: var(--o-sans); overflow-x: hidden;
+}
+.app-container .ay-ob-ready.is-web { min-height: 70vh; max-width: 640px; padding: 48px 16px 64px; background: transparent; }
+:is(.ayna-mobile, .app-container) .ay-ob-back { position: absolute; top: max(14px, env(safe-area-inset-top)); left: 12px; display: grid; place-items: center; width: 44px; height: 44px; padding: 0 !important; border: 0 !important; border-radius: 999px !important; background: transparent !important; color: var(--o-ink) !important; cursor: pointer; }
+:is(.ayna-mobile, .app-container) .ay-ob-back svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__art { position: relative; width: 132px; height: 92px; margin: 0 0 8px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__art i { position: absolute; top: 0; width: 76px; height: 76px; border-radius: 50%; animation: ay-ob-pop 640ms cubic-bezier(.2, .9, .3, 1.2) both; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__art i:nth-child(1) { left: 0; background: var(--o-pink); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__art i:nth-child(2) { left: 28px; top: 16px; background: var(--o-sky); mix-blend-mode: multiply; animation-delay: 120ms; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__art i:nth-child(3) { left: 56px; background: var(--o-ink); opacity: .9; animation-delay: 240ms; }
+:is(.ayna-mobile[data-theme='dark'], .app-container:is([data-theme='dark'], [data-theme='brand-dark'])) .ay-ob-ready__art i:nth-child(2) { mix-blend-mode: normal; opacity: .9; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-ready__title { margin: 0 !important; color: var(--o-ink) !important; font: 400 clamp(38px, 11vw, 56px)/1.02 var(--o-serif) !important; letter-spacing: -.02em !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-ready__lead { margin: 6px 0 0 !important; max-width: 34ch; color: var(--o-ink) !important; font: 500 17px/1.45 var(--o-sans) !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__list { display: grid; gap: 10px; margin: 6px 0 0 !important; padding: 0 !important; list-style: none !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__list li {
+  display: flex; align-items: center; gap: 14px; min-height: 60px; padding: 10px 16px !important; border-radius: 20px;
+  background: var(--o-group); color: var(--o-ink); font: 600 18px/1.25 var(--o-sans);
+  animation: ay-ob-rise 520ms cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(360ms + var(--i, 0) * 140ms);
+}
+:is(.ayna-mobile, .app-container) .ay-ob-ready__list li span { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--o-pink); color: #3e2723; font: 400 20px/1 var(--o-serif); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__list li:nth-child(2) span { background: var(--o-sky); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__list li:nth-child(3) span { background: var(--o-butter); box-shadow: inset 0 0 0 1.5px #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready :is(.ay-ob-ready__goals, .ay-ob-ready__note) { margin: 0 !important; max-width: 40ch; color: var(--o-soft) !important; font: 500 14px/1.45 var(--o-sans) !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__actions { display: grid; gap: 10px; margin-top: 10px; }
+.app-container .ay-ob-ready.is-web .ay-ob-ready__actions { display: flex; flex-wrap: wrap; }
+@keyframes ay-ob-pop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); } }
+@keyframes ay-ob-rise { from { transform: translateY(14px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  :is(.ayna-mobile, .app-container) :is(.ay-ob-ready__art i, .ay-ob-ready__list li) { animation: none !important; }
+}
+
+/* ── Quiz: why we ask, the safety tag, "Something else" field ──────────── */
+.ayna-mobile .ayna-play-intake .ip-why, .app-container .qz-page .ip-why { margin: 8px 0 0 !important; max-width: 40ch; color: var(--o-soft) !important; font: 500 13.5px/1.45 var(--o-sans) !important; }
+.ayna-mobile .ayna-play-intake .ip-why b, .app-container .qz-page .ip-why b { color: var(--o-ink); font-weight: 700; }
+.ayna-mobile .ayna-play-intake .ip-tag-safety { background: #f7badd !important; color: #3e2723 !important; }
+.ayna-mobile .ayna-play-intake .ip-other-text, .app-container .qz-page .ip-other-text { display: grid; gap: 6px; margin: 14px 0 0; font: 600 14px/1.3 'Figtree', sans-serif; }
+.ayna-mobile .ayna-play-intake .ip-other-text input, .app-container .qz-page .ip-other-text input { box-sizing: border-box; width: 100%; min-height: 48px; padding: 0 16px; border: 1.5px solid currentColor; border-radius: 14px; background: transparent; color: inherit; font: 500 16px/1.2 'Figtree', sans-serif; }
+
+/* ── Health data step: what each kind of data is used for ──────────────── */
+:is(.ayna-mobile, .app-container) .ay-qc-uses { display: grid; gap: 0; margin: 16px 0 0 !important; border-radius: 20px; background: var(--o-group); overflow: hidden; }
+:is(.ayna-mobile, .app-container) .ay-qc-uses > div { padding: 12px 16px; border-top: 1px solid var(--o-hair); }
+:is(.ayna-mobile, .app-container) .ay-qc-uses > div:first-child { border-top: 0; }
+:is(.ayna-mobile, .app-container) .ay-qc-uses dt { margin: 0; color: var(--o-ink); font: 700 14px/1.3 var(--o-sans); }
+:is(.ayna-mobile, .app-container) .ay-qc-uses dd { margin: 2px 0 0; color: var(--o-soft); font: 500 13.5px/1.45 var(--o-sans); }
+.ayna-mobile .ay-qc-count { margin-left: auto; color: var(--hd-ink, #3e2723); font: 600 13px/1 'Figtree', sans-serif; }
+.ayna-mobile .ay-qc-kicker { margin: 0 0 6px !important; color: var(--hd-ink, #3e2723) !important; font: 700 12px/1 'Figtree', sans-serif !important; letter-spacing: .08em; text-transform: uppercase; }
+
+/* ── "Not useful" with reasons ─────────────────────────────────────────── */
+:is(.ayna-mobile, .app-container, .ay-why) .ay-nu { display: contents; }
+:is(.ayna-mobile, .app-container, .ay-why) .ay-nu__menu { flex-basis: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 0 0; }
+:is(.ayna-mobile, .app-container, .ay-why) .ay-nu__q { flex-basis: 100%; color: var(--o-soft); font: 600 13px/1.3 var(--o-sans); }
+:is(.ayna-mobile, .app-container, .ay-why) .ay-nu :is(.ay-nu__reason, .ay-nu__skip) {
+  min-height: 40px; margin: 0 !important; padding: 0 14px !important; border: 1.5px solid var(--o-hair) !important; border-radius: 999px !important;
+  background: transparent !important; color: var(--o-ink) !important; box-shadow: none !important; font: 600 14px/1 var(--o-sans) !important; cursor: pointer;
+}
+:is(.ayna-mobile, .app-container, .ay-why) .ay-nu .ay-nu__skip { border-color: transparent !important; text-decoration: underline; text-underline-offset: 3px; }
+:is(.ayna-mobile, .app-container, .ay-why) .ay-nu :is(.ay-nu__reason, .ay-nu__skip, .ay-nu__toggle):focus-visible { outline: 3px solid var(--o-sky) !important; outline-offset: 2px; }
+:is(.ayna-mobile, .app-container) .ay-today__empty.is-hint { color: var(--x-soft, rgba(62, 39, 35, .75)) !important; font-size: 14px !important; }
+
+/* ── What ayna knows about you ─────────────────────────────────────────── */
+:is(.ayna-mobile, .app-container) .ay-know { display: grid; gap: 14px; min-width: 0; margin: 0; padding: 0; color: var(--o-ink); font-family: var(--o-sans); }
+:is(.ayna-mobile, .app-container) .ay-know.is-app { padding: 8px 16px 40px; }
+:is(.ayna-mobile, .app-container) .ay-know .ay-know__title { margin: 0 !important; color: var(--o-ink) !important; font: 400 28px/1.1 var(--o-serif) !important; letter-spacing: -.01em; }
+:is(.ayna-mobile, .app-container) .ay-know :is(.ay-know__lead, .ay-know__foot) { margin: 0 !important; max-width: 60ch; color: var(--o-soft) !important; font: 500 14.5px/1.45 var(--o-sans) !important; }
+:is(.ayna-mobile, .app-container) .ay-know .ay-know__status { margin: 0 !important; padding: 10px 14px; border-radius: 14px; background: var(--o-sky); color: #3e2723 !important; font: 600 14px/1.4 var(--o-sans) !important; }
+:is(.ayna-mobile, .app-container) .ay-know__group { display: grid; gap: 6px; min-width: 0; scroll-margin-top: 72px; }
+:is(.ayna-mobile, .app-container) .ay-know__group h3 { margin: 6px 0 0 !important; color: var(--o-ink) !important; font: 700 16px/1.3 var(--o-sans) !important; }
+:is(.ayna-mobile, .app-container) .ay-know .ay-know__note { margin: 0 !important; color: var(--o-soft) !important; font: 500 13px/1.4 var(--o-sans) !important; }
+:is(.ayna-mobile, .app-container) .ay-know__group ul { display: grid; margin: 0 !important; padding: 0 !important; list-style: none !important; border-radius: 20px; background: var(--o-group); overflow: hidden; }
+:is(.ayna-mobile, .app-container) .ay-know__group li { display: flex; align-items: center; gap: 10px; min-width: 0; padding: 12px 8px 12px 16px !important; border-top: 1px solid var(--o-hair); }
+:is(.ayna-mobile, .app-container) .ay-know__group li:first-child { border-top: 0; }
+:is(.ayna-mobile, .app-container) .ay-know__what { flex: 1; min-width: 0; display: grid; gap: 2px; }
+:is(.ayna-mobile, .app-container) .ay-know__what b { color: var(--o-ink); font: 600 15px/1.3 var(--o-sans); overflow-wrap: anywhere; }
+:is(.ayna-mobile, .app-container) .ay-know__what span { color: var(--o-ink); font: 500 13.5px/1.35 var(--o-sans); overflow-wrap: anywhere; }
+:is(.ayna-mobile, .app-container) .ay-know__what small { color: var(--o-soft); font: 600 12px/1.3 var(--o-sans); letter-spacing: .02em; }
+:is(.ayna-mobile, .app-container) .ay-know__group li.is-missing small { color: var(--o-ink); }
+:is(.ayna-mobile, .app-container) .ay-know__group li.is-missing small::before { content: ''; display: inline-block; width: 8px; height: 8px; margin-right: 6px; border-radius: 50%; background: var(--o-pink); vertical-align: 1px; }
+:is(.ayna-mobile, .app-container) .ay-know__acts { flex: none; display: flex; gap: 0; }
+:is(.ayna-mobile, .app-container) .ay-know__acts button {
+  min-width: 44px; min-height: 44px; margin: 0 !important; padding: 0 10px !important; border: 0 !important; border-radius: 12px !important;
+  background: none !important; box-shadow: none !important; color: var(--o-ink) !important; font: 600 14px/1 var(--o-sans) !important;
+  text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+}
+:is(.ayna-mobile, .app-container) .ay-know__acts button:disabled { opacity: .5; }
+:is(.ayna-mobile, .app-container) .ay-know__acts button:focus-visible { outline: 3px solid var(--o-sky) !important; outline-offset: -2px; }
+
+/* ── Empty states (UX spec section 34) ─────────────────────────────────── */
+:is(.ayna-mobile, .app-container) .ay-ob-empty { display: grid; gap: 8px; justify-items: start; padding: 20px !important; border-radius: 20px; background: var(--o-group); color: var(--o-ink); }
+:is(.ayna-mobile, .app-container) .ay-ob-empty strong { color: var(--o-ink); font: 400 22px/1.15 var(--o-serif); }
+:is(.ayna-mobile, .app-container) .ay-ob-empty p { margin: 0 !important; max-width: 46ch; color: var(--o-ink) !important; font: 500 15px/1.45 var(--o-sans) !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-empty .ay-ob-primary { min-height: 46px; margin-top: 6px; }
+
+/* ── Match feedback (under "Why this matches") ─────────────────────────── */
+:is(.ayna-mobile, .app-container, .ay-why) .ay-matchfb { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin: 16px 0 8px; padding: 12px 16px; border-radius: 20px; background: var(--o-group); color: var(--o-ink); }
+:is(.ayna-mobile, .app-container, .ay-why) .ay-matchfb__q { font: 600 14.5px/1.3 var(--o-sans); }
+:is(.ayna-mobile, .app-container, .ay-why) .ay-matchfb__acts { display: flex; flex-wrap: wrap; align-items: center; gap: 0 4px; }
+:is(.ayna-mobile, .app-container, .ay-why) .ay-matchfb__done { color: var(--o-soft); font: 600 14px/1.3 var(--o-sans); }
+:is(.ayna-mobile, .app-container, .ay-why) .ay-matchfb .ay-matchfb__btn { min-height: 44px; margin: 0 !important; padding: 0 10px !important; border: 0 !important; background: none !important; box-shadow: none !important; color: var(--o-ink) !important; font: 600 14px/1 var(--o-sans) !important; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+
+/* Web You: My health spans the page width. */
+.app-container .wy-grid > .wy-know { grid-column: 1 / -1; max-width: 760px; }
+.app-container .wy > .wy-know { max-width: 760px; margin-top: 32px; }
+
+/* ── Welcome: what ayna does (one screen) ──────────────────────────────── */
+.ayna-mobile .ay-land.ay-ob-value { position: relative; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 18px; min-height: 100dvh; padding: max(64px, env(safe-area-inset-top)) 24px max(28px, env(safe-area-inset-bottom)); background: var(--o-page); color: var(--o-ink); }
+.ayna-mobile .ay-ob-value h1 { margin: 0 !important; color: var(--o-ink) !important; font: 400 clamp(34px, 10vw, 46px)/1.04 var(--o-serif) !important; letter-spacing: -.02em; }
+:is(.ayna-mobile, .app-container) .ay-ob-value__list { display: grid; gap: 10px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-value__list li { display: grid; grid-template-columns: 36px 1fr; column-gap: 14px; align-items: start; padding: 14px 16px !important; border-radius: 20px; background: var(--o-group); }
+:is(.ayna-mobile, .app-container) .ay-ob-value__list li span { grid-row: span 2; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--o-pink); color: #3e2723; font: 400 20px/1 var(--o-serif); }
+:is(.ayna-mobile, .app-container) .ay-ob-value__list li:nth-child(2) span { background: var(--o-sky); }
+:is(.ayna-mobile, .app-container) .ay-ob-value__list li:nth-child(3) span { background: var(--o-butter); box-shadow: inset 0 0 0 1.5px #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-value__list b { color: var(--o-ink); font: 700 16px/1.3 var(--o-sans); }
+:is(.ayna-mobile, .app-container) .ay-ob-value__list p { margin: 2px 0 0 !important; color: var(--o-ink) !important; font: 500 14.5px/1.45 var(--o-sans) !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-value__actions { display: grid; gap: 10px; margin-top: 6px; }
+:is(.ayna-mobile, .app-container) .ay-ob-value__actions p { margin: 2px 0 0 !important; color: var(--o-soft) !important; font: 500 13.5px/1.4 var(--o-sans) !important; text-align: center; }
+
+/* Web age: type it as well as slide it. */
+.app-container .qz-age-type { display: inline-flex; align-items: center; gap: 10px; margin: 10px 0 0; font: 600 14px/1.3 'Figtree', sans-serif; }
+.app-container .qz-age-type input { box-sizing: border-box; width: 84px; min-height: 44px; padding: 0 12px; border: 1.5px solid currentColor; border-radius: 12px; background: transparent; color: inherit; font: 600 16px/1 'Figtree', sans-serif; }
+
+/* "Make my matches more personal": a real button, not a tiny link (team direction, section 29). */
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-more {
+  display: grid; gap: 4px; justify-items: start; width: 100%; min-height: 64px; padding: 12px 20px !important; text-align: left;
+  border: 2px solid var(--o-ink) !important; border-radius: 20px !important; background: var(--o-pink) !important; color: #3e2723 !important; box-shadow: none !important; cursor: pointer;
+}
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-more span { font: 700 16px/1.25 var(--o-sans); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-more small { font: 500 13px/1.35 var(--o-sans); color: #3e2723; opacity: .85; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-more:focus-visible { outline: 3px solid var(--o-sky) !important; outline-offset: 3px; }
+.app-container .ay-ob-ready.is-web .ay-ob-more { width: auto; }
+
+/* The site styles every list item as its own card with a tick; here a row is a row. */
+:is(.ayna-mobile, .app-container) .ay-know .ay-know__group ul > li { margin: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; list-style: none !important; }
+:is(.ayna-mobile, .app-container) .ay-know .ay-know__group ul > li::before,
+:is(.ayna-mobile, .app-container) :is(.ay-ob-ready__list, .ay-ob-value__list) > li::before { content: none !important; display: none !important; }
+:is(.ayna-mobile, .app-container) .ay-know .ay-know__group li.is-missing small::before { content: '' !important; display: inline-block !important; }

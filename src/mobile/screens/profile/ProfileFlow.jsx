@@ -30,6 +30,7 @@ import HealthConnectionsScreen from './HealthConnectionsScreen.jsx';
 import { useHealthMatchPref } from '../../../health/matchPref.js';
 import { useAskHealthPref, ASK_HEALTH_LABEL } from '../../../health/askHealthPref.js';
 import HealthInsightsScreen from './HealthInsightsScreen.jsx';
+import WhatAynaKnows from '../../../components/you/WhatAynaKnows.jsx';
 import { usesHormonalBC } from '../../../health/weekInsights.js';
 import { ALL_PRODUCTS, getSelectedNeeds } from '../../../data/products.js';
 import './about-scrapbook.css';
@@ -117,6 +118,7 @@ const HUB_ICONS = {
   saved: <><path d="M12 19.5s-7-4.3-7-9.3A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.2c0 5-7 9.3-7 9.3Z" /></>,
   checkin: <><rect x="4" y="5" width="16" height="15" rx="2.5" /><path d="M8 3v4M16 3v4M4 10h16M9 14.5l2 2 4-4" /></>,
   healthData: <><path d="M3 12h4l2-5 4 10 2-5h6" /></>,
+  beliefs: <><circle cx="12" cy="8" r="3.5" /><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5" /><path d="M17.5 4.5l1.5 1.5 2.5-2.5" /></>,
   shopper: <><path d="M6 9h12l-1 11H7L6 9Z" /><path d="M9.5 9V7a2.5 2.5 0 0 1 5 0v2" /></>,
   startups: <><path d="M12 3.5l2.2 5.3 5.3 2.2-5.3 2.2L12 18.5l-2.2-5.3L4.5 11l5.3-2.2Z" /><path d="M18.5 17.5l.8 1.7 1.7.8-1.7.8-.8 1.7-.8-1.7-1.7-.8 1.7-.8Z" /></>,
   badges: <><circle cx="12" cy="9.5" r="5.5" /><path d="M8.8 14 7.5 21l4.5-2.5 4.5 2.5-1.3-7" /></>,
@@ -478,6 +480,7 @@ function ProfileHub({ intake = null, onUpdateIntake = null, authUserId, name, in
   // Ecosystem, Saved and the check-in are the stat boxes now (no repeated counts).
   const rows = [
     { key: 'shopper', title: 'Shopper profile', value: shopperAlertsCount > 0 ? `${shopperAlertsCount} ${shopperAlertsCount === 1 ? 'alert' : 'alerts'}` : '', onClick: () => onOpen('shopper') },
+    { key: 'beliefs', title: 'My health: what ayna knows', onClick: () => onOpen('beliefs') },
     { key: 'healthData', title: 'Health data', onClick: () => onOpen('healthData') },
     signedIn && { key: 'badges', title: 'Badges', onClick: () => onOpen('badges') },
     { key: 'startups', title: 'Startups', onClick: () => onOpen('startups') },
@@ -523,6 +526,11 @@ function ProfileHub({ intake = null, onUpdateIntake = null, authUserId, name, in
             <svg className="ay-you-row-icon" viewBox="0 0 24 24" aria-hidden="true">{HUB_ICONS.shopper}</svg>
             <span className="ay-you-row-title">Shopper profile</span>
             {shopperAlertsCount > 0 && <span className="ay-you-row-value">{shopperAlertsCount} {shopperAlertsCount === 1 ? 'alert' : 'alerts'}</span>}
+            <ChevronIcon />
+          </button>
+          <button type="button" className="ay-you-row" onClick={() => onOpen('beliefs')}>
+            <svg className="ay-you-row-icon" viewBox="0 0 24 24" aria-hidden="true">{HUB_ICONS.beliefs}</svg>
+            <span className="ay-you-row-title">My health: what ayna knows</span>
             <ChevronIcon />
           </button>
           <button type="button" className="ay-you-row" onClick={onEditProfile}>
@@ -3536,6 +3544,9 @@ function ContactScreen({ onBack }) {
 
 export default function ProfileFlow({
   onUpdateIntake = null,
+  onUpdateIntakeLocal = null,
+  onEditProfileAt = null,
+  healthConnected = [],
   onClose,
   theme,
   onToggleTheme,
@@ -3790,6 +3801,22 @@ export default function ProfileFlow({
     );
   } else if (screen === 'manageData') {
     body = <ManageDataScreen onBack={goBack} />;
+  } else if (screen === 'beliefs' || screen.startsWith('beliefs:')) {
+    body = (
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
+        <BackHeader title="My health" onBack={goBack} />
+        <WhatAynaKnows
+          variant="app"
+          focus={screen.slice('beliefs:'.length)}
+          quizAnswers={quizAnswers}
+          userId={authUser?.id || null}
+          connected={healthConnected}
+          onUpdateIntake={onUpdateIntakeLocal || onUpdateIntake}
+          onEditStep={(onEditProfileAt || onEditProfile) ? (step) => { onClose(); (step && onEditProfileAt ? onEditProfileAt(step) : onEditProfile?.()); } : undefined}
+          onManageData={() => pushScreen('healthData')}
+        />
+      </div>
+    );
   }
 
   return (

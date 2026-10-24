@@ -1644,7 +1644,9 @@ function App() {
     setCurrentView('welcome');
   };
 
-  const handleQuizComplete = async (results) => {
+  const handleQuizComplete = async (results, opts = {}) => {
+    // First run ends on the reveal's "See my Today" (WebIntake): open Today, not the story.
+    const toToday = opts?.land === 'today';
     await loadCatalog(); // her matches come from the catalog (already loaded by the quiz page)
     const completedResults = {
       ...results,
@@ -1658,7 +1660,13 @@ function App() {
       setPendingAction('quiz-complete'); pendingActionRef.current = 'quiz-complete';
       const { mergedProducts: guestSeed } = getEcosystemSeedFromQuiz(completedResults, healthProfile);
       const guestProducts = Object.values(guestSeed || {});
-      setGuestPreview({ results: completedResults, products: guestProducts });
+      setGuestPreview({ results: completedResults, products: guestProducts, done: toToday });
+      if (toToday) {
+        // Explore first: her answers work signed out; Save stays one tap away.
+        setQuizResults(completedResults);
+        setPendingAction(null); pendingActionRef.current = null;
+        setCurrentView('health');
+      }
       return;
     }
     setQuizResults(completedResults);
@@ -1695,6 +1703,7 @@ function App() {
       concernsCount: Array.isArray(completedResults.primaryConcerns) ? completedResults.primaryConcerns.length : 0,
       conditionsCount: Array.isArray(completedResults.conditions) ? completedResults.conditions.length : 0,
     });
+    if (toToday) { setCurrentView('health'); return; }
     setCurrentView('ecosystem');
     setShowWrapped(true);
   };
@@ -2435,6 +2444,9 @@ function App() {
         {currentView === 'you' && (
           <WebYou
             onUpdateIntake={user ? handleUpdateIntake : null}
+            onUpdateIntakeLocal={handleUpdateIntake}
+            onEditAnswerAt={(step) => { setEditAtStep(step); setCurrentView(quizResults ? 'profile-edit' : 'quiz'); }}
+            healthConnected={health.connected || []}
             onOpenCommunity={(to) => {
               if (to?.username) setCommunityHandle(to.username);
               else setCommunitySeed({ kind: to?.kind || null, token: Date.now() });
@@ -2467,7 +2479,7 @@ function App() {
           />
         )}
         {currentView === 'quiz' && (
-          <WebIntake key={quizResume ? 'quiz-resume' : `quiz-${quizRun}`} introEnabled={!quizResume} initialSnapshot={quizResume ? null : quizResults?.fullHealthIntake || null} onComplete={handleQuizComplete} onBrowseLibrary={handleViewArticles} />
+          <WebIntake key={quizResume ? 'quiz-resume' : `quiz-${quizRun}`} introEnabled={!quizResume} initialSnapshot={quizResume ? null : quizResults?.fullHealthIntake || null} onComplete={handleQuizComplete} onBrowseLibrary={handleViewArticles} onExplore={() => handleViewDiscovery('')} />
         )}
 
         {currentView === 'profile-edit' && (

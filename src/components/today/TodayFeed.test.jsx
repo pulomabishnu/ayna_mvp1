@@ -23,12 +23,12 @@ const render = (props = {}) => {
 const button = (text) => [...host.querySelectorAll('button')].find((b) => b.textContent === text);
 
 describe('Today with ayna', () => {
-  it('no data: one check-in item, Useful / Not relevant, and the log card', () => {
+  it('no data: one check-in item, Useful / Not useful, and the log card', () => {
     render();
     expect(host.querySelectorAll('.ay-today__item')).toHaveLength(1);
     expect(host.textContent).toContain('Start with a quick check-in');
     expect(button('Useful')).toBeTruthy();
-    expect(button('Not relevant')).toBeTruthy();
+    expect(button('Not useful')).toBeTruthy();
     expect(host.textContent).toContain('Your log');
   });
 
@@ -43,7 +43,7 @@ describe('Today with ayna', () => {
     render({ intake: { age: '27', lifeStageSelections: ['I get periods regularly'], lifeStage: 'I get periods regularly' } });
     const care = host.querySelector('.ay-today__item.is-care');
     expect(care.textContent).toContain('Get this pain checked today');
-    expect([...care.querySelectorAll('button')].some((b) => b.textContent === 'Not relevant')).toBe(false);
+    expect([...care.querySelectorAll('button')].some((b) => b.textContent === 'Not useful')).toBe(false);
   });
 
   it('a due follow-up records the outcome and logs completion without the outcome', () => {
@@ -60,11 +60,29 @@ describe('Today with ayna', () => {
     expect(JSON.stringify(posthog.capture.mock.calls)).not.toMatch(/heat|pain|period/);
   });
 
-  it('dismissing a check-in leaves nothing', () => {
+  it('Not useful asks why (optional), hides the item, and logs only the reason word', () => {
     render();
-    act(() => button('Not relevant').click());
+    act(() => button('Not useful').click());
+    for (const label of ['I already knew this', 'Not relevant to me', 'Don’t show this type', 'My information changed', 'Just hide it']) expect(button(label)).toBeTruthy();
+    act(() => button('Not relevant to me').click());
     expect(host.textContent).toContain('Nothing unusual stands out today');
     const act1 = posthog.capture.mock.calls.find(([e]) => e === 'today_item_action');
-    expect(act1[1]).toEqual({ type: 'check_in', action: 'not_relevant' });
+    expect(act1[1]).toEqual({ type: 'check_in', action: 'not_useful', reason: 'not_relevant' });
+  });
+
+  it('My information changed opens the profile', () => {
+    const onEditAnswers = vi.fn();
+    render({ onEditAnswers });
+    act(() => button('Not useful').click());
+    act(() => button('My information changed').click());
+    expect(onEditAnswers).toHaveBeenCalledWith('support');
+  });
+
+  it('Just hide it stores no reason word', () => {
+    render();
+    act(() => button('Not useful').click());
+    act(() => button('Just hide it').click());
+    const act1 = posthog.capture.mock.calls.find(([e]) => e === 'today_item_action');
+    expect(act1[1]).toEqual({ type: 'check_in', action: 'not_useful', reason: 'no_reason' });
   });
 });

@@ -7,7 +7,7 @@ describe('Today analytics whitelist (no health details)', () => {
   it('only these events and keys exist', () => {
     expect(Object.fromEntries(Object.entries(TODAY_EVENTS).map(([e, spec]) => [e, Object.keys(spec).sort()]))).toEqual({
       today_items_shown: ['count', 'history', 'output', 'tiers', 'types'],
-      today_item_action: ['action', 'type'],
+      today_item_action: ['action', 'reason', 'type'],
       followup_due: ['count'],
       followup_completed: ['completed'],
     });

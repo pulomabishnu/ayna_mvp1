@@ -70,6 +70,7 @@ import { AskContext } from './askContext.js';
 import MonthlyCheckinScreen from './screens/MonthlyCheckinScreen.jsx';
 import CommunityScreen from './screens/CommunityScreen.jsx';
 import QuizConnectScreen from './screens/QuizConnectScreen.jsx';
+import ReadyScreen from './screens/ReadyScreen.jsx';
 import PlanScreen from './screens/PlanScreen.jsx';
 import { healthMatchContext } from '../health/matchContext.js';
 import { useHealthMatchPref } from '../health/matchPref.js';
@@ -141,6 +142,7 @@ const SCREENS = {
   checkin: MonthlyCheckinScreen,
   library: LibraryScreen,
   connect: QuizConnectScreen,
+  ready: ReadyScreen,
   plan: PlanScreen,
 };
 
@@ -297,6 +299,8 @@ export default function MobileApp() {
     return next;
   });
   const [intakeMode, setIntakeMode] = useState('new');
+  // 'more': the optional setup questions, opened from the reveal (ReadyScreen).
+  const [intakeFlow, setIntakeFlow] = useState('auto');
   const [ecosystemNotice, setEcosystemNotice] = useState('');
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [resettingEcosystem, setResettingEcosystem] = useState(false);
@@ -483,8 +487,9 @@ export default function MobileApp() {
   }, [screen]);
   useEffect(() => {
     // Back in the quiz: her answers live in the quiz draft again until she finishes.
-    if (screen === 'quiz' && session.pendingQuiz) updateSession({ pendingQuiz: null });
-  }, [screen, session.pendingQuiz, updateSession]);
+    // (Not for the reveal's optional questions: those add to the answers she just gave.)
+    if (screen === 'quiz' && session.pendingQuiz && intakeFlow !== 'more') updateSession({ pendingQuiz: null });
+  }, [screen, session.pendingQuiz, updateSession, intakeFlow]);
   useEffect(() => {
     try {
       if (['connect', 'plan'].includes(screen)) sessionStorage.setItem(QUIZ_STEP_KEY, screen);
@@ -1075,6 +1080,7 @@ export default function MobileApp() {
       if (authUser) setAskAynaOpen(true); else requestAuth('Ask ayna', () => { setScreen(screen); setAskAynaOpen(true); });
     },
     onBack: () => {
+      if (screen === 'quiz' && intakeFlow === 'more') { setIntakeFlow('auto'); setScreen('ready'); return; }
       if (['building', 'reveal', 'connect'].includes(screen)) {
         resumeQuizAtLastStep();
         return;
@@ -1089,6 +1095,13 @@ export default function MobileApp() {
     onUpdateHealth: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
     onEditProfile: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
     onComplete: (quizAnswers) => {
+      // The reveal's optional questions: back to the reveal with the fuller answers.
+      if (intakeFlow === 'more') {
+        updateSession((prev) => ({ pendingQuiz: { ...(prev.pendingQuiz || { mode: 'new' }), answers: quizAnswers } }));
+        setIntakeFlow('auto');
+        setScreen('ready');
+        return;
+      }
       // Not saved as her answers yet: first the optional health step, then her plan.
       trackApp('intake_completed', {
         concernsCount: Array.isArray(quizAnswers?.primaryConcerns) ? quizAnswers.primaryConcerns.length : 0,
@@ -1099,7 +1112,8 @@ export default function MobileApp() {
       setResumeQuizDraft(false);
       setIntakeAtOptional(false);
       setIntakeMode('new');
-      setScreen(authUser && health.connected.length ? 'plan' : 'connect');
+      // First run: health data (step 7), then the reveal. Edits keep the plan step.
+      setScreen(authUser && health.connected.length ? (intakeMode === 'new' ? 'ready' : 'plan') : 'connect');
     },
     // Monthly check-in: she already has an account and an ecosystem, so it
     // goes straight to her updated plan instead of back through the
@@ -1113,7 +1127,15 @@ export default function MobileApp() {
       setIntakeMode('new');
       setScreen('plan');
     },
-    onQuizConnectContinue: () => setScreen('plan'),
+    onQuizConnectContinue: () => setScreen(session.pendingQuiz?.mode === 'new' ? 'ready' : 'plan'),
+    // The reveal (ReadyScreen): "See my Today" saves her first matches the
+    // same way "See my matches" does, then opens Today instead of the story.
+    onSeeMyToday: () => { nav.onSeeMatches(); setEcoTab('dashboard'); setScreen('eco'); },
+    onReadyCreateAccount: () => { authResumeRef.current = null; authReturnScreenRef.current = 'ready'; setAuthMode('signup'); setScreen('signin'); },
+    onReadyBack: () => setScreen('connect'),
+    onMakeMorePersonal: () => { setIntakeFlow('more'); setScreen('quiz'); },
+    // Open one question of a saved profile (Today's quick questions, "What ayna knows").
+    onEditAnswersAt: (stepId) => { setIntakeMode('add'); setIntakeAtOptional(false); setIntakeAtStep(stepId || ''); setEditingHealthProfile(true); setScreen('quiz'); },
     onQuizConnectSignIn: () => { authResumeRef.current = null; authReturnScreenRef.current = 'connect'; setAuthMode('signup'); setScreen('signin'); },
     planProducts,
     planAnswers: pendingAnswers,
@@ -1208,13 +1230,13 @@ export default function MobileApp() {
       const resume = authMode === 'signin' ? authResumeRef.current : null;
       authResumeRef.current = null;
       if (resume) resume();
-      else if (session.pendingQuiz && authReturnScreenRef.current === 'connect') setScreen('connect');
+      else if (session.pendingQuiz && ['connect', 'ready'].includes(authReturnScreenRef.current)) setScreen(authReturnScreenRef.current);
       else setScreen(hasEcosystem ? 'eco' : 'ecointro');
     },
     hasEcosystem,
   };
 
-  const showTabBar = !['landing', 'quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan'].includes(screen) && (!overlay || ['profile', 'profile-auth', 'product', 'article', 'why-match'].includes(overlay.type));
+  const showTabBar = !['landing', 'quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan', 'ready'].includes(screen) && (!overlay || ['profile', 'profile-auth', 'product', 'article', 'why-match'].includes(overlay.type));
   // Deep round 2: the tab bar stays on drilled-in screens (product, read, why
   // this match), as in iOS; tapping a tab pops back to that tab's root.
   // Reads ranked from her app answers (personalReads.js): matching reads
@@ -1270,7 +1292,8 @@ export default function MobileApp() {
         lastQuizAnswers={lastQuizAnswers}
         hasIntakeDraft={hasIntakeDraft && !hasEcosystem}
         onDraftChange={setHasIntakeDraft}
-        initialSnapshot={editingHealthProfile && !resumeQuizDraft ? lastQuizAnswers?.fullHealthIntake || null : null}
+        flow={screen === 'quiz' ? intakeFlow : undefined}
+        initialSnapshot={intakeFlow === 'more' ? session.pendingQuiz?.answers?.fullHealthIntake || null : editingHealthProfile && !resumeQuizDraft ? lastQuizAnswers?.fullHealthIntake || null : null}
         startAtBeginning={intakeMode === 'add' && !resumeQuizDraft && !intakeAtOptional && editingHealthProfile}
         startAtOptional={intakeAtOptional && !resumeQuizDraft}
         startAtStep={intakeAtStep && !resumeQuizDraft ? intakeAtStep : ''}
@@ -1292,7 +1315,7 @@ export default function MobileApp() {
         ]}
       />
       </AskContext.Provider>
-      {newAccountStart && authUser && !['quiz', 'building', 'connect', 'plan'].includes(screen) && (
+      {newAccountStart && authUser && !['quiz', 'building', 'connect', 'plan', 'ready'].includes(screen) && (
         <NewAccountStart
           name={resolvedName}
           onStart={() => { setNewAccountStart(false); startEcosystemFlow(); }}
@@ -1400,6 +1423,9 @@ export default function MobileApp() {
         <AskContext.Provider value={nav.onAskAyna}>
         <ProfileFlow
           onUpdateIntake={authUser ? handleUpdateIntake : null}
+          onUpdateIntakeLocal={handleUpdateIntake}
+          onEditProfileAt={nav.onEditAnswersAt}
+          healthConnected={health.connected}
           key={overlay.screen || 'hub'}
           initialScreen={overlay.screen || null}
           onClose={() => setOverlay(null)}

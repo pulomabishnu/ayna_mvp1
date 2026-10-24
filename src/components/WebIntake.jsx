@@ -11,13 +11,17 @@ import {
   PERIOD_FLOW, PERIOD_PAIN, POSTPARTUM_TIMING, PREGNANCY_TRIMESTER, PRICE_RANGES, PRODUCT_FORMATS,
   STOP_REASONS, SUPPORT_GROUPS, UTI_FREQUENCY, buildSnapshot,
   getLifeStages, isMinorAge, normalizeSuggestion, readIntakeDraft, reconstructIntakeFromSnapshot,
-  requiredReady, asksBreastfeedingOnTiming, ttcDurationOptions, isValidUsZip,
+  requiredReady, asksBreastfeedingOnTiming, ttcDurationOptions, isValidUsZip, setPerimenopausePeriods, syncPerimenopausePeriods,
 } from '../mobile/data/intakeModel.js';
 import { BRAND_SUGGESTIONS, CATALOG_PRODUCT_NAMES, PRODUCT_OR_BRAND_SUGGESTIONS } from '../mobile/data/intakeCatalog.js';
 import { WEB_FOLLOWUP_STEP_IDS } from '../mobile/data/quizDraftProgress.js';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import { rankSearchOptions as rankedSuggestions, matchesSearchOption } from '../utils/search/index.js';
 import { commonNeedOptions } from '../matching/commonNeeds.js';
+import { VALUE_POINTS, GOALS, HELP_TOPICS, NOTHING_SPECIFIC, ONBOARDING_SCREENS, SOMETHING_ELSE, getOnboardingSteps, onboardingProgress, supportGroupsForTopics } from '../mobile/data/onboardingFlow.js';
+import { CATEGORIES } from '../health/metrics.js';
+import ReadyReveal from './onboarding/ReadyReveal.jsx';
+import '../styles/onboarding.css';
 // Website-only conditions that change what is safe (condition research, Oct 17).
 const WEB_EXTRA_CONDITIONS = ['Kidney disease', 'Bleeding or clotting disorder', 'History of blood clots', 'Heart disease', 'Liver disease', 'Stomach ulcer or stomach bleeding', 'Asthma'];
 
@@ -143,6 +147,8 @@ function AgeField({ value, onChange, underage, onOpenGate }) {
       <button type="button" className="qz-age-step" aria-label="One year older" onClick={() => nudge(1)} disabled={set && slider >= 80}>+</button>
     </div>
     <p className="qz-age-ends" id="qz-age-ends"><span>18</span><span>80+</span></p>
+    {/* Team direction, Oct 24 (section 32): type it, or use the slider. Whichever is faster. */}
+    <label className="qz-age-type">Or type it <input type="text" inputMode="numeric" autoComplete="off" maxLength={3} value={value} placeholder="e.g. 34" onChange={(e) => onChange(e.target.value.replace(/\D/g, '').slice(0, 3))} /></label>
     {underage
       ? <p className="qz-alert" id="qz-age-alert">ayna is for people 18 and over. <button type="button" onClick={onOpenGate}>What you can do instead</button></p>
       : <button type="button" className="qz-age-under" onClick={onOpenGate}>Under 18?</button>}
@@ -270,10 +276,35 @@ function firstUnansweredStep(intake) {
   return id === 'lifeStage' ? 'age' : id;
 }
 
-export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot = null, startAtOptional = false, startAtStep = '' }) {
+// Website first run: the seven setup screens (onboardingFlow.js) with age and
+// life stage on one screen, then health data, then the reveal.
+const ONBOARDING_ONLY = ['helpTopics', 'goals'];
+// Minimum questions, health data, the reveal; then, only if she asks for it
+// ("Make my matches more personal"), the optional ones, and back to the reveal.
+function webOnboardingSteps(intake) {
+  const web = (list, obPart) => list.filter((s) => s.id !== 'lifeStage').map((s) => ({ ...(s.id === 'age'
+    ? { ...s, title: 'About you', type: 'aboutYou', why: 'Some products are not meant for every age or stage, for example pregnancy-safe picks only, or midlife support. You can be in perimenopause and still have regular periods. Not sure, or rather not say? Those count too.' }
+    : s), obPart }));
+  return [
+    { id: 'welcome', section: 'welcome', type: 'welcome', screen: 0, title: 'Here’s how ayna helps', optional: false, required: false, obPart: 'core' },
+    ...web(getOnboardingSteps(intake, { part: 'core' }), 'core'),
+    { id: 'connect', section: 'connect', type: 'connect', screen: 7, title: 'Connect health data', subtitle: 'Optional. Quick check-ins work too.', optional: true, required: false, obPart: 'core' },
+    { id: 'ready', section: 'ready', type: 'ready', screen: 7, title: '', optional: false, required: false, obPart: 'core' },
+    ...web(getOnboardingSteps(intake, { part: 'more' }), 'more'),
+  ];
+}
+
+export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = null, initialSnapshot = null, startAtOptional = false, startAtStep = '' }) {
+  const singleStep = Boolean(initialSnapshot && ONBOARDING_ONLY.includes(startAtStep));
+  const onboarding = !initialSnapshot || singleStep;
   const [savedDraft] = useState(() => (initialSnapshot ? null : readIntakeDraft()));
   const [intake, setIntake] = useState(() => (savedDraft ? { ...EMPTY, ...savedDraft.intake } : reconstructIntakeFromSnapshot(initialSnapshot)));
   const [stepId, setStepId] = useState(() => {
+    if (singleStep) return startAtStep;
+    if (onboarding) {
+      const draftId = savedDraft?.stepId === 'lifeStage' ? 'age' : savedDraft?.stepId;
+      return draftId && webOnboardingSteps({ ...EMPTY, ...(savedDraft?.intake || {}) }).some((s) => s.id === draftId && s.id !== 'ready') ? draftId : 'welcome';
+    }
     if (savedDraft?.stepId) return savedDraft.stepId === 'lifeStage' ? 'age' : savedDraft.stepId;
     if (!initialSnapshot) return 'age';
     // "Make my matches more personal": the first optional question still open.
@@ -306,21 +337,23 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
   const [avoidTab, setAvoidTab] = useState('avoid');
   const [supportTab, setSupportTab] = useState(null);
   const [showAllNeeds, setShowAllNeeds] = useState(false);
+  const [helpOtherOpen, setHelpOtherOpen] = useState(false);
 
   // Same draft the app keeps, so an unfinished quiz resumes on either.
   useEffect(() => {
     if (initialSnapshot) return;
-    const hasProgress = stepId !== 'age' || JSON.stringify(intake) !== JSON.stringify(EMPTY);
+    const hasProgress = !['age', 'helpTopics', 'welcome'].includes(stepId) || JSON.stringify(intake) !== JSON.stringify(EMPTY);
     try {
-      if (hasProgress) localStorage.setItem(INTAKE_DRAFT_KEY, JSON.stringify({ version: 1, intake, stepId }));
+      if (hasProgress) localStorage.setItem(INTAKE_DRAFT_KEY, JSON.stringify({ version: 1, intake, stepId: stepId === 'ready' ? 'connect' : stepId }));
       else localStorage.removeItem(INTAKE_DRAFT_KEY);
     } catch { /* storage unavailable */ }
   }, [intake, stepId, initialSnapshot]);
 
   const { core: coreSteps, more: moreSteps } = useMemo(() => splitSteps(intake), [intake]);
-  const atCheckpoint = stepId === CHECKPOINT;
-  const phase = moreSteps.some((s) => s.id === stepId) ? 'more' : 'core';
-  const steps = phase === 'more' ? moreSteps : coreSteps;
+  const obSteps = useMemo(() => (onboarding ? webOnboardingSteps(intake) : []), [onboarding, intake]);
+  const atCheckpoint = !onboarding && stepId === CHECKPOINT;
+  const phase = onboarding ? 'onboarding' : moreSteps.some((s) => s.id === stepId) ? 'more' : 'core';
+  const steps = onboarding ? obSteps : phase === 'more' ? moreSteps : coreSteps;
   const index = Math.max(0, steps.findIndex((s) => s.id === stepId));
   const step = steps[index] || steps[0];
   const isLast = index === steps.length - 1;
@@ -335,7 +368,8 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
   const set = (key, value) => setIntake((prev) => ({ ...prev, [key]: value }));
   const toggleLifeStage = (value) => setIntake((prev) => {
     const n = toggleLifeStageSelection(getLifeStages(prev), value);
-    return { ...prev, lifeStageSelections: n, lifeStage: n.find((v) => !LIFE_STAGE_EXCLUSIVE.includes(v)) || '' };
+    // Same as the app: Regular periods next to Perimenopause answers "How are your periods now?" for her.
+    return syncPerimenopausePeriods({ ...prev, lifeStageSelections: n, lifeStage: n.find((v) => !LIFE_STAGE_EXCLUSIVE.includes(v)) || '' });
   });
   const toggleExclusive = (key, value, exclusive = []) => setIntake((prev) => {
     const cur = Array.isArray(prev[key]) ? prev[key] : (prev[key] ? [prev[key]] : []);
@@ -356,6 +390,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
 
   const go = (id) => { setSearch(''); setInfoOpen(false); setZipError(''); setStepId(id); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   const back = () => {
+    if (onboarding) { if (index > 1) go(steps[index - 1].id); else go('welcome'); return; }
     if (atCheckpoint) { go(coreSteps[coreSteps.length - 1].id); return; }
     if (index > 0) go(steps[index - 1].id);
     else if (phase === 'more') go(CHECKPOINT);
@@ -364,11 +399,19 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
   // Editing one answer from the summary returns to the summary.
   const [fromSummary, setFromSummary] = useState(false);
   const advance = (answers = intake) => {
+    if (singleStep) { finish(answers); return; }
+    if (onboarding) {
+      const list = webOnboardingSteps(answers);
+      const at = list.findIndex((s) => s.id === step.id);
+      if (step.id === 'ready') return;
+      if (at >= 0 && at < list.length - 1) go(list[at + 1].id); else go('ready');
+      return;
+    }
     if (fromSummary) { setFromSummary(false); go(CHECKPOINT); return; }
     if (!isLast) { go(steps[index + 1].id); return; }
     if (phase === 'core') go(CHECKPOINT); else finish(answers);
   };
-  const finish = async (answers = intake) => {
+  const finish = async (answers = intake, opts = {}) => {
     const snapshot = buildSnapshot(answers);
     setSaving(true);
     try {
@@ -382,7 +425,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
     }
     try { localStorage.removeItem(INTAKE_DRAFT_KEY); } catch { /* storage unavailable */ }
     setSaving(false);
-    onComplete(mapIntakeToLegacyQuizProfile(snapshot));
+    onComplete(mapIntakeToLegacyQuizProfile(snapshot), opts);
   };
   const next = () => {
     if (step.id === 'age' && isMinorAge(intake.age)) return;
@@ -421,8 +464,25 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
   const lifeStages = getLifeStages(intake);
   const lifeStageOptions = intake.age !== '' && Number(intake.age) >= 40 ? [...MIDLIFE_LIFE_STAGES, ...LIFE_STAGES.filter((i) => !MIDLIFE_LIFE_STAGES.includes(i))] : LIFE_STAGES;
 
+  const helpOther = helpOtherOpen || String(intake.supportOtherText || '').trim();
+  const toggleHelpTopic = (value) => {
+    if (value === SOMETHING_ELSE) { setHelpOtherOpen(!helpOther); if (helpOther) set('supportOtherText', ''); return; }
+    setIntake((prev) => ({ ...prev, helpTopics: (prev.helpTopics || []).includes(value) ? prev.helpTopics.filter((x) => x !== value) : [...(prev.helpTopics || []), value] }));
+  };
   const body = () => {
     switch (step.type) {
+      case 'topics': return <>
+        <Chips label={step.title} items={HELP_TOPICS} selected={[...(intake.helpTopics || []), ...(helpOther ? [SOMETHING_ELSE] : [])]} onToggle={toggleHelpTopic} />
+        {helpOther && <label className="ip-other-text"><span>Tell us in your own words</span><input value={intake.supportOtherText} maxLength={80} placeholder="For example, migraines" onChange={(e) => set('supportOtherText', e.target.value)} /></label>}
+        <p className="qz-note">Not sure? Select Next and we will show everything.</p>
+      </>;
+      case 'goals': return <Chips label={step.title} items={GOALS} selected={intake.goals || []} onToggle={(v) => setIntake((prev) => ({ ...prev, goals: (prev.goals || []).includes(v) ? prev.goals.filter((x) => x !== v) : [...(prev.goals || []), v] }))} />;
+      case 'connect': return <>
+        <dl className="ay-qc-uses">
+          {['sleep', 'cycle', 'temperature', 'heart', 'activity'].filter((k) => CATEGORIES[k]).map((k) => <div key={k}><dt>{CATEGORIES[k].label}</dt><dd>Used {CATEGORIES[k].why.charAt(0).toLowerCase()}{CATEGORIES[k].why.slice(1)}</dd></div>)}
+        </dl>
+        <p className="qz-note">Connecting is never required. Apple Health and Health Connect connect in the ayna app. On the website you can upload a file or connect Oura from You, Health data, once you have an account. Brands never see it.</p>
+      </>;
       case 'aboutYou':
       case 'age':
       case 'lifeStage': return <>
@@ -431,7 +491,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
         <Tiles label="Your life stage" items={lifeStageOptions} selected={lifeStages} labels={LIFE_STAGE_LABELS} onToggle={toggleLifeStage} />
         <Chips small label="Other answers" items={LIFE_STAGE_EXCLUSIVE} selected={lifeStages} onToggle={toggleLifeStage} />
         {lifeStages.includes('I am postpartum') && <div className="qz-follow"><b>{FOLLOWUP_QUESTIONS.breastfeedingStatus}</b><Chips small single items={BREASTFEEDING_STATUS} selected={intake.breastfeedingStatus ? [intake.breastfeedingStatus] : []} onToggle={(v) => set('breastfeedingStatus', v)} /></div>}
-        {lifeStages.includes('I am in perimenopause') && <div className="qz-follow"><b>{FOLLOWUP_QUESTIONS.perimenopauseLastPeriod}</b><Chips small single items={PERIMENOPAUSE_LAST_PERIOD} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => set('perimenopauseLastPeriod', v)} /></div>}
+        {lifeStages.includes('I am in perimenopause') && <div className="qz-follow"><b>{FOLLOWUP_QUESTIONS.perimenopauseLastPeriod}</b><Chips small single items={PERIMENOPAUSE_LAST_PERIOD} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => setIntake((prev) => setPerimenopausePeriods(prev, v))} /></div>}
       </>;
       case 'zip': return <div className="qz-zip-wrap">
         <input className="qz-input qz-zip" inputMode="numeric" autoComplete="postal-code" value={intake.zipcode} placeholder="e.g. 10027" aria-label="ZIP code"
@@ -440,7 +500,26 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); next(); } }} />
         {zipError && <p className="qz-alert qz-zip-err" id="qz-zip-err" role="alert">{zipError}</p>}
       </div>;
-      case 'support': {
+      case 'support': if (onboarding) {
+        const groups = supportGroupsForTopics(intake.helpTopics);
+        const q = search.trim().toLowerCase();
+        const known = new Set(groups.flatMap((g) => g.items));
+        const custom = intake.supportSelections.filter((i) => !known.has(i) && i !== NOTHING_SPECIFIC);
+        const pick = (v) => toggleExclusive('supportSelections', v, [NOTHING_SPECIFIC]);
+        return <>
+          <Search value={search} onChange={setSearch} placeholder="Search, e.g. cramps, sleep, acne" />
+          <AddCustom query={search} options={[...known, ...intake.supportSelections]} onAdd={(v) => addCustom('supportSelections', v, [NOTHING_SPECIFIC])} />
+          <div className="qz-groups">
+            {(q ? SUPPORT_GROUPS : groups).map((g) => {
+              const items = q ? g.items.filter((i) => matchesSearchOption(q, i)) : g.items;
+              if (!items.length) return null;
+              return <section key={g.label} className="qz-group"><h3>{g.label}</h3><Chips label={g.label} items={items} selected={intake.supportSelections} onToggle={pick} /></section>;
+            })}
+          </div>
+          {custom.length > 0 && <section className="qz-group"><h3>Added by you</h3><Chips small items={custom} selected={custom} onToggle={pick} /></section>}
+          <Chips small items={[NOTHING_SPECIFIC]} selected={intake.supportSelections} onToggle={pick} />
+        </>;
+      } else {
         const q = search.trim().toLowerCase();
         const known = new Set(SUPPORT_GROUPS.flatMap((g) => g.items));
         const tailoredCommon = commonNeedOptions(intake, [...known], COMMON_NEEDS);
@@ -542,6 +621,8 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
         </>;
       }
       case 'brand': return <Rows options={BRAND_OPENNESS} value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;
+      case 'avoidOnly':
+      case 'wantOnly':
       case 'avoidIngredients': {
         const sel = intake.avoidIngredients || [];
         const isOn = (v) => sel.includes(v) || (AVOID_PAIRS[v] && sel.includes(AVOID_PAIRS[v]));
@@ -559,6 +640,18 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
         const avoidSel = [...AVOID_GROUPS.avoid.filter(isOn), ...customAvoid];
         const wantSel = [...AVOID_GROUPS.want.filter(isOn), ...customWant];
         const onAvoid = avoidTab === 'avoid';
+        // First run: two plain questions instead of one with tabs (team direction, section 30).
+        if (step.type !== 'avoidIngredients') {
+          const isAvoid = step.type === 'avoidOnly';
+          return <div className="qz-avoid">
+            <Chips label={step.title} items={isAvoid ? [...AVOID_GROUPS.avoid, ...customAvoid] : [...AVOID_GROUPS.want, ...customWant]} selected={isAvoid ? avoidSel : wantSel} onToggle={toggle} labels={AVOID_LABELS} />
+            <div className="qz-avoid-foot">
+              {isAvoid
+                ? <AddOwn key="avoid" placeholder="Add something to avoid" onAdd={(v) => addCustom('avoidIngredients', `No ${v.replace(/^no\s+/i, '')}`, ['No preference'])} />
+                : <AddOwn key="want" placeholder="Add something you prefer" onAdd={(v) => addCustom('avoidIngredients', v, ['No preference'])} />}
+            </div>
+          </div>;
+        }
         return <div className="qz-avoid">
           <div className="qz-avoid-tabs" role="tablist" aria-label="Leave out or should be">
             <button type="button" role="tab" aria-selected={onAvoid} className={`is-avoid${onAvoid ? ' is-on' : ''}`} onClick={() => setAvoidTab('avoid')}>Leave out{avoidSel.length > 0 && <span>{avoidSel.length}</span>}</button>
@@ -589,6 +682,30 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
 
   const minorBlocked = step.id === 'age' && isMinorAge(intake.age);
   const ready = step.id === 'zip' ? String(intake.zipcode || '').length > 0 : requiredReady(answerId, intake) && isStepAnswered(answerId, intake) && !minorBlocked;
+
+  // First run, first screen: what ayna does, then set up or explore first.
+  if (onboarding && step.type === 'welcome') {
+    return <div className="ct qz-page" data-step="welcome">
+      <div className="qz-stage"><div className="qz-card ay-ob-value is-web">
+        <h1 className="qz-title">Here’s how ayna helps</h1>
+        <ol className="ay-ob-value__list">{VALUE_POINTS.map(([t, d], i) => <li key={t}><span aria-hidden="true">{i + 1}</span><b>{t}</b><p>{d}</p></li>)}</ol>
+        <div className="ay-ob-value__actions">
+          <button type="button" className="ay-ob-primary" onClick={() => go('helpTopics')}>Set up my ayna</button>
+          {onExplore && <button type="button" className="ay-ob-quiet" onClick={onExplore}>Explore first</button>}
+          <p>Short questions. Skip anything you like.</p>
+        </div>
+      </div></div>
+    </div>;
+  }
+
+  // First run, last screen: the reveal. "See my Today" saves and opens Today.
+  if (onboarding && step.type === 'ready') {
+    const preview = mapIntakeToLegacyQuizProfile(buildSnapshot(intake));
+    return <div className="ct qz-page" data-step="ready">
+      <ReadyReveal variant="web" answers={preview} signedIn onSeeToday={() => finish(intake, { land: 'today' })} onBack={back} onMorePersonal={() => { const more = steps.find((s) => s.obPart === 'more'); if (more) go(more.id); }} />
+      {saveError && <p className="qz-alert">{saveError}</p>}
+    </div>;
+  }
 
   // A returning person editing her profile sees her answers, each with Edit,
   // not the first-timer's "matches are ready" celebration.
@@ -641,26 +758,33 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
     </div>;
   }
 
+  const obProgress = onboarding ? onboardingProgress(step, step.obPart === 'more' ? 'more' : 'core', steps.filter((s) => s.obPart === 'more')) : null;
   return <div className="ct qz-page" data-step={step.id} data-phase={phase}>
     <div className="qz-stage">
     <div className="qz-card" key={step.id}>
       <header className="qz-head">
-        {index === 0 && phase === 'core' ? <span className="qz-round is-spacer" aria-hidden="true" /> : <button type="button" className="qz-round" aria-label="Previous question" onClick={back}>←</button>}
-        <div className="qz-progress" aria-hidden="true">{Array.from({ length: shownTotal }, (_, i) => <span key={i} className={i + 1 < shownIndex ? 'is-done' : i + 1 === shownIndex ? 'is-now' : ''} />)}</div>
-        <span className="qz-count" aria-label={`${phase === 'more' ? 'Optional question' : 'Question'} ${shownIndex} of ${shownTotal}`}>{shownIndex}<i>/{shownTotal}</i></span>
+        {index === 0 && (phase === 'core' || phase === 'onboarding') ? <span className="qz-round is-spacer" aria-hidden="true" /> : <button type="button" className="qz-round" aria-label="Previous question" onClick={back}>←</button>}
+        {onboarding ? <>
+          <div className="qz-progress" aria-hidden="true">{Array.from({ length: obProgress.total }, (_, i) => <span key={i} className={i + 1 < obProgress.now ? 'is-done' : i + 1 === obProgress.now ? 'is-now' : ''} />)}</div>
+          <span className="qz-count" aria-label={obProgress.label}>{obProgress.now}<i>/{obProgress.total}</i></span>
+        </> : <>
+          <div className="qz-progress" aria-hidden="true">{Array.from({ length: shownTotal }, (_, i) => <span key={i} className={i + 1 < shownIndex ? 'is-done' : i + 1 === shownIndex ? 'is-now' : ''} />)}</div>
+          <span className="qz-count" aria-label={`${phase === 'more' ? 'Optional question' : 'Question'} ${shownIndex} of ${shownTotal}`}>{shownIndex}<i>/{shownTotal}</i></span>
+        </>}
         {!initialSnapshot && <p className="qz-saved-note">Answers are saved on this device</p>}
       </header>
 
       <div className="qz-label-row">
-        <span className="qz-section">{phase === 'more' ? 'Optional' : SECTION_NAMES[step.section]}</span>
+        <span className="qz-section">{onboarding ? `${ONBOARDING_SCREENS[step.screen - 1]?.label}${step.optional ? ', optional' : step.safety ? ', for your safety' : ''}` : phase === 'more' ? 'Optional' : SECTION_NAMES[step.section]}</span>
         <span className="qz-label-tools">
           {phase === 'more' && <button type="button" className="qz-skip qz-to-results" onClick={() => finish()} disabled={saving}>See my results</button>}
-          {step.info && <button type="button" className="qz-info" aria-label={`About this question: ${step.title}`} aria-expanded={infoOpen} onClick={() => setInfoOpen((v) => !v)}>i</button>}
+          {step.info && !onboarding && <button type="button" className="qz-info" aria-label={`About this question: ${step.title}`} aria-expanded={infoOpen} onClick={() => setInfoOpen((v) => !v)}>i</button>}
         </span>
       </div>
       <h1 className="qz-title">{step.title}</h1>
       {step.subtitle && <p className="qz-subtitle">{step.subtitle}</p>}
       {infoOpen && step.info && <p className="qz-info-pop" role="note">{step.info}</p>}
+      {onboarding && step.why && <p className="ip-why"><b>Why we ask:</b> {step.why}</p>}
 
       <div className="qz-answer" onPointerDown={startHold} onPointerUp={endHold} onPointerLeave={endHold} onPointerCancel={endHold}
         onPointerMove={(e) => { if (Math.abs(e.movementX) + Math.abs(e.movementY) > 6) endHold(); }} onClickCapture={swallow}
@@ -670,9 +794,9 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
 
       {saveError && <p className="qz-alert">{saveError}</p>}
       <footer className="qz-foot">
-        {step.optional ? <button type="button" className="qz-skip" onClick={skip} disabled={saving}>Skip</button> : <span className="qz-required">{step.section === 'safety' ? 'Needed for safety' : 'Needed for your matches'}</span>}
+        {step.optional || step.type === 'topics' ? <button type="button" className="qz-skip" onClick={skip} disabled={saving}>Skip</button> : <span className="qz-required">{step.section === 'safety' ? 'Needed for safety' : 'Needed for your matches'}</span>}
         {ready && !saving && <span className="qz-noted" aria-hidden="true">noted</span>}
-        <button type="button" className="qz-btn" onClick={next} disabled={!ready || saving}>{saving ? 'Saving…' : (isLast && phase === 'more') ? 'See my results' : 'Next'} <span aria-hidden="true">→</span></button>
+        <button type="button" className="qz-btn" onClick={next} disabled={!ready || saving}>{saving ? 'Saving…' : (isLast && phase === 'more') || singleStep ? (singleStep ? 'Save' : 'See my results') : 'Next'} <span aria-hidden="true">→</span></button>
       </footer>
     </div>
     </div>

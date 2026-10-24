@@ -228,6 +228,9 @@ export const EMPTY = {
   avoidIngredients: [], avoidIngredientsOtherText: '', fsaHsaAnswer: '',
   trustRanking: TRUST_ITEMS, trustRankingTouched: false, anythingElse: '',
   skippedSteps: [], recommendationCountTouched: false,
+  // First-run setup (onboardingFlow.js): what she wants help with (an
+  // interest, never a need) and her goals. Neither changes a match.
+  helpTopics: [], goals: [],
 };
 
 // Field-name map from the legacy snapshot shape (buildSnapshot()'s output,
@@ -251,6 +254,7 @@ export const RESUMABLE_PASSTHROUGH_FIELDS = [
   'brandOpenness', 'trustedBrands', 'brandSupportPreferences',
   'avoidIngredients', 'avoidIngredientsOtherText',
   'anythingElse', 'skippedSteps', 'recommendationCountTouched',
+  'helpTopics', 'goals',
 ];
 
 export function reconstructIntakeFromSnapshot(snapshot) {
@@ -629,7 +633,8 @@ export function buildSnapshot(intake) {
     fsaHsa,
     trustRanking: intake.trustRankingTouched ? intake.trustRanking : [],
     anythingElse: intake.anythingElse.trim(),
-    goals: [],
+    goals: [...new Set((intake.goals || []).filter(Boolean))],
+    helpTopics: [...new Set((intake.helpTopics || []).filter(Boolean))],
     // Steps she chose to skip, and every question's answer state
     // (answered / explicit_no / not_sure / prefer_not / skipped / not_asked).
     // Skipped is neutral: it never lowers a match.
@@ -699,6 +704,9 @@ export function isStepAnswered(stepId, intake) {
     case 'fsaHsa': return filled(intake.fsaHsaAnswer);
     case 'trust': return intake.trustRankingTouched === true;
     case 'anythingElse': return filled(intake.anythingElse);
+    // First-run setup only (onboardingFlow.js).
+    case 'goals': return filled(intake.goals);
+    case 'preferIngredients': return filled(intake.avoidIngredients);
     default: return true;
   }
 }
