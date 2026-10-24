@@ -29,6 +29,15 @@ describe('Today with ayna', () => {
     expect(host.textContent).toContain('Start with a quick check-in');
     expect(button('Useful')).toBeTruthy();
     expect(button('Not useful')).toBeTruthy();
+    // The check-in item stands in for the log (no duplicate); its Check in opens it.
+    expect(host.textContent).not.toContain('Your log');
+    act(() => [...host.querySelectorAll('a')].find((a) => a.textContent === 'Check in').click());
+    expect(host.textContent).toContain('Your log');
+  });
+
+  it('no check-in item: the log card shows on its own', () => {
+    saveLogEntry(todayKey(), { pain: 0, flow: 'none', pms: 0, sleep: 2, mood: 2, skin: 2 });
+    render();
     expect(host.textContent).toContain('Your log');
   });
 

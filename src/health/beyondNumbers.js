@@ -20,6 +20,7 @@ import { estimatePhase } from './phase.js';
 import { fitFor, LEVEL_WORD } from './weekPicks.js';
 import { EVIDENCE } from './weekInsights.js';
 import { NEED_BY_ID, needPhrase } from '../matching/ontology.js';
+import { withoutMedicines } from './medicineProduct.js';
 
 const DAY = 86400000;
 const toTime = (day) => Date.parse(`${day}T00:00:00Z`);
@@ -160,7 +161,10 @@ export function goalLabel(needId) {
  * Each goal she chose, with what in her Ecosystem is graded for it.
  * @returns Array<{ needId, label, owned: [{ product, level }], match: { product, level } | null }>
  */
-export function goalsCovered({ needIds = [], products = [], matches = [], limit = 4 } = {}) {
+export function goalsCovered({ needIds = [], products: allProducts = [], matches: allMatches = [], limit = 4 } = {}) {
+  // Today shows no medicine as a pick (src/health/medicineProduct.js).
+  const products = withoutMedicines(allProducts);
+  const matches = withoutMedicines(allMatches);
   const out = [];
   for (const needId of needIds) {
     if (out.length >= limit) break;

@@ -159,6 +159,7 @@ import { savePrompt, stashPendingSave, takePendingSave } from './utils/savePromp
 import { setSavedRemindersOwner } from './utils/savedReminders.js';
 import { compareStore, useCompare } from './utils/compareStore.js';
 import { addedToRoutineText, REMOVED_FROM_ROUTINE } from './utils/routineCopy.js';
+import { openTodayLog } from './components/today/openLog.js';
 
 /** Which views light up each main tab (MAIN_TABS keys), in the top nav and the phone tab bar. */
 const WEB_TAB_VIEWS = {
@@ -2603,10 +2604,10 @@ function App() {
             })}
             {/* Her routine per need, short; the full one is in You > My ecosystem (src/components/routine). */}
             <div className="ay-container wx-today-routine">
-              <RoutineSummary variant="web" userId={user?.id || null} quizAnswers={quizResults} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts}
+              <RoutineSummary variant="web" hideMedicines userId={user?.id || null} quizAnswers={quizResults} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts}
                 onOpenRoutine={() => { handleViewEcosystem(); window.setTimeout(() => document.getElementById('eco-routines')?.scrollIntoView({ block: 'start', behavior: 'smooth' }), 600); }}
                 onOpenProduct={(p) => handleOpenProduct(p, { source: 'today_routine' })}
-                onCheckIn={() => document.getElementById('ay-today-log-web')?.scrollIntoView({ block: 'start', behavior: 'smooth' })} />
+                onCheckIn={() => openTodayLog('web')} />
             </div>
           </div>
         )}
@@ -2878,7 +2879,7 @@ function App() {
             onToggleProduct={toggleMyProduct}
             savedProducts={savedProducts}
             onToggleSaved={toggleSavedProduct}
-            onOpenCheckIn={() => { setCurrentView('today'); window.setTimeout(() => document.getElementById('ay-today-log-web')?.scrollIntoView({ block: 'start', behavior: 'smooth' }), 500); }}
+            onOpenCheckIn={() => { setCurrentView('today'); window.setTimeout(() => openTodayLog('web'), 500); }}
             trackedProducts={trackedProducts}
             toggleTrackProduct={toggleTrackProduct}
             toggleOmitProduct={toggleOmitProduct}

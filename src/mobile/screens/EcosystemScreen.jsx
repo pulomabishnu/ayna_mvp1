@@ -30,6 +30,7 @@ import { ecosystemCounts, needsCoveredLine } from '../../utils/ecosystemCounts.j
 import NeedRoutines from '../../components/routine/NeedRoutines.jsx';
 import { useRoutines } from '../../components/routine/useRoutines.js';
 import { ADD_TO_ROUTINE } from '../../utils/routineCopy.js';
+import { openTodayLog } from '../../components/today/openLog.js';
 
 const AREA_TONES = ['#F7BADD', '#769EBE', '#3E2723', '#F7BADD', '#769EBE', '#3E2723'];
 const MIN_SHELF_SCORE = 50;
@@ -74,7 +75,7 @@ export default function EcosystemScreen({
     products: myProducts, saved: savedProducts, omitted: omittedProducts, have: routineHave,
     onAddToRoutine: onAddToEcosystem, onToggleSaved, onNotForMe: onToggleOmit, onToggleHave,
   });
-  const openCheckIn = onGoToday ? () => { onGoToday(); setTimeout(() => document.getElementById('ay-today-log-app')?.scrollIntoView({ block: 'start', behavior: 'smooth' }), 400); } : null;
+  const openCheckIn = onGoToday ? () => { onGoToday(); setTimeout(() => openTodayLog('app'), 400); } : null;
   const [sheet, setSheet] = useState(false);
   // This month's check-in: due until she has done it (signed in only).
   const [checkinDue, setCheckinDue] = useState(false);

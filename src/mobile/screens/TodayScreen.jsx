@@ -11,6 +11,7 @@ import FinishQuizCard from '../../components/FinishQuizCard.jsx';
 import '../eco-needs.css';
 import '../eco-app-best.css';
 import '../explore.css';
+import { openTodayLog } from '../../components/today/openLog.js';
 
 /**
  * Today: the first tab (founder, Oct 24 2026). The same content the
@@ -59,10 +60,10 @@ export default function TodayScreen({
       <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} hormonalBC={usesHormonalBC(quizAnswers)} products={myProducts} routineProducts={myProducts.filter((product) => !routineExcluded[product.id])} routineOutcomes={routineOutcomes} matches={suggestedEcosystemProducts} onOpenProduct={onOpenProduct} onConnect={onConnectHealth} onAddGoal={onAddGoal} onOpenRoutine={myProducts.length && onGoEco ? openRoutine : undefined} onOpenCheckin={showCheckin ? onOpenMonthlyCheckin : undefined} onSignIn={() => onRequireAuth?.('health data')} quizAnswers={quizAnswers} onEditAnswers={onEditIntakeStep || onRetake} onSaveToProfile={onUpdateIntake || null} rundown={{ matchOpts, saved: Object.values(savedProducts || {}), onToggleSaved, onWhyMatch: onOpenWhyMatch, onOpenRead: (id) => { const a = articles.find((x) => x.id === id); if (a) onOpenArticle?.(a); }, onExplore: onBrowse ? () => onBrowse() : undefined, onSetUp: !hasProfile && !quizDraft ? onStartQuiz : undefined }} />
       {/* Her routine per need, short (src/components/routine); the full one is in You > My ecosystem. */}
       <div className="ay-today-routines">
-        <RoutineSummary variant="app" userId={authUser?.id || null} quizAnswers={lastQuizAnswers || quizAnswers} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts} have={routineHave}
+        <RoutineSummary variant="app" userId={authUser?.id || null} quizAnswers={lastQuizAnswers || quizAnswers} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts} have={routineHave} hideMedicines
           onOpenRoutine={onGoEco ? openRoutine : undefined}
           onOpenProduct={onOpenProduct}
-          onCheckIn={() => document.getElementById('ay-today-log-app')?.scrollIntoView({ block: 'start', behavior: 'smooth' })} />
+          onCheckIn={() => openTodayLog('app')} />
       </div>
       {hasProfile && onOpenMonthlyCheckin && <section className="ayna-home-today ay-eco-checkin"><div><h2>Monthly check-in</h2><p>A few quick questions so your matches keep up with how you feel.</p></div><button type="button" onClick={onOpenMonthlyCheckin}>Start</button></section>}
     </div>

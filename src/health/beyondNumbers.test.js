@@ -62,10 +62,16 @@ describe('your goals, covered (works with no health data)', () => {
     expect(g[0].owned[0].level).toBe(3);
   });
   it('offers a match only when nothing she owns fits, and skips goals with nothing', () => {
-    const g = goalsCovered({ needIds: ['pain.menstrual_cramp', 'hair.loss'], products: [], matches: [{ id: 'p-advil-ibuprofen-200' }] });
+    const g = goalsCovered({ needIds: ['pain.menstrual_cramp', 'hair.loss'], products: [], matches: [{ id: 'p-thermacare' }] });
     expect(g).toHaveLength(1);
-    expect(g[0].match.product.id).toBe('p-advil-ibuprofen-200');
+    expect(g[0].match.product.id).toBe('p-thermacare');
     expect(goalsCovered({})).toEqual([]);
+  });
+  it('never shows a medicine on Today (information only), owned or matched', () => {
+    const advil = { id: 'p-advil-ibuprofen-200', category: 'medication' };
+    expect(goalsCovered({ needIds: ['pain.menstrual_cramp'], products: [advil], matches: [advil] })).toEqual([]);
+    const g = goalsCovered({ needIds: ['pain.menstrual_cramp'], products: [advil, { id: 'p-thermacare' }] });
+    expect(g[0].owned.map((o) => o.product.id)).toEqual(['p-thermacare']);
   });
   it('labels goals the way the quiz does', () => {
     expect(goalLabel('sleep.trouble')).toBe('Trouble sleeping');

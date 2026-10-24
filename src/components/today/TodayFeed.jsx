@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { OPEN_LOG_EVENT } from './openLog.js';
 import { useToday } from '../../health/useToday.js';
 import { STEP_FOR_FIELD } from '../../health/todayProfilePatch.js';
 import { DailyCheckinCard } from '../you/DailyCheckin.jsx';
@@ -82,7 +83,7 @@ function TriageForm({ questions, onDone }) {
 // "My information changed": which part of her profile to open.
 const infoSection = (item) => (['pregnancy', 'breastfeeding'].includes(item.basis?.field) ? 'lifeStage' : item.basis?.field || 'support');
 
-function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checkinId }) {
+function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checkinId, onOpenLog }) {
   const protectedItem = PROTECTED.has(item.tier);
   const noteText = t.notes[item.id];
   const kicker = item.type === 'care' ? CARE_KICKER[item.level] || 'Care' : KICKER[item.type] || '';
@@ -135,7 +136,7 @@ function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checki
           ? <button type="button" className="ay-today__primary" onClick={() => { t.opened(item); onFindCare(item); }}>Find care</button>
           : <a className="ay-today__primary" href={HRSA_FIND_CARE} target="_blank" rel="noopener noreferrer" onClick={() => t.opened(item)}>Find care<span className="sr-only"> (opens in a new tab)</span></a>)}
         {has('care_summary') && onAsk && <button type="button" className="ay-today__text" onClick={() => { t.opened(item); onAsk('Help me write a short summary of my pain to bring to a doctor visit.'); }}>Make a summary for my visit</button>}
-        {has('open_check_in') && <a className="ay-today__primary" href={`#${checkinId}`} onClick={(e) => { e.preventDefault(); t.opened(item); document.getElementById(checkinId)?.scrollIntoView({ block: 'start', behavior: 'smooth' }); }}>Check in</a>}
+        {has('open_check_in') && <a className="ay-today__primary" href={`#${checkinId}`} onClick={(e) => { e.preventDefault(); t.opened(item); onOpenLog?.(); requestAnimationFrame(() => document.getElementById(checkinId)?.scrollIntoView({ block: 'start', behavior: 'smooth' })); }}>Check in</a>}
         {acts.filter((a) => a.id === 'show_options').map((a) => <button key={a.id} type="button" className="ay-today__primary" onClick={() => t.showOptions(item, a.need)}>Show options</button>)}
         {acts.filter((a) => a.id === 'try_this').map((a) => <button key={a.id} type="button" className="ay-today__primary" onClick={() => t.startTry(item, a)}>Try this</button>)}
         {!protectedItem && REMINDABLE.has(item.type) && <button type="button" className="ay-today__text" onClick={() => t.remindTonight(item)}>Remind me tonight</button>}
@@ -158,6 +159,16 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
   const t = useToday({ userId, intake: fixture?.intake || intake, healthRows: fixture?.healthRows || healthRows, cycle, hormonalBC, products, fixture, onSaveToProfile, onEditStep: onEditAnswers ? (step) => onEditAnswers(step) : null });
   const { items } = t.decision;
   const checkinId = `ay-today-log-${variant}`;
+  // The check-in item and the full log are one action: while the item is on
+  // screen, the log opens from its "Check in" instead of also sitting below it.
+  const checkInItem = items.some((it) => (it.actions || []).some((a) => a.id === 'open_check_in'));
+  const [logOpen, setLogOpen] = useState(false);
+  const showLog = !checkInItem || logOpen;
+  useEffect(() => {
+    const open = () => setLogOpen(true);
+    window.addEventListener(OPEN_LOG_EVENT, open);
+    return () => window.removeEventListener(OPEN_LOG_EVENT, open);
+  }, []);
   return (
     <section className={`ay-today is-${variant}`} aria-labelledby={`ay-today-h-${variant}`}>
       <div className="ay-today__head">
@@ -187,7 +198,7 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
       />
       {items.length > 0
         ? <ul className="ay-today__list">
-          {items.map((item) => <Item key={item.id} item={item} t={t} onOpenProduct={onOpenProduct} onAsk={onAsk} onEditAnswers={onEditAnswers} onFindCare={onFindCare} checkinId={checkinId} />)}
+          {items.map((item) => <Item key={item.id} item={item} t={t} onOpenProduct={onOpenProduct} onAsk={onAsk} onEditAnswers={onEditAnswers} onFindCare={onFindCare} checkinId={checkinId} onOpenLog={() => setLogOpen(true)} />)}
           {/* One skipped setup question at a time (profileCompleteness.nextProgressiveAsk). */}
           {items.length < 3 && !items.some((i) => i.type === 'ask' || i.level === 'urgent') && <ProfileAskCard intake={intake} today={t.today} onAnswer={onEditAnswers} />}
         </ul>
@@ -210,9 +221,9 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
           {t.notes['save:done'] && <p className="ay-today__note" role="status">{t.notes['save:done']}</p>}
         </div>
       )}
-      <div id={checkinId} className="ay-today__log">
+      {showLog && <div id={checkinId} className="ay-today__log">
         <DailyCheckinCard variant={variant} log={t.log} save={t.saveLog} saveState={t.saveState} today={t.today} headingId={`${checkinId}-h`} title="Your log" noCycle={Boolean(t.postCycle)} />
-      </div>
+      </div>}
       {/* The top of Today ends here (rundown, 1 to 3 items, her log); the rest is below this line. */}
       {moreHeading && <h2 className="ay-today__more" id={`ay-today-more-${variant}`}>More for you</h2>}
     </section>

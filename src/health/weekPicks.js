@@ -18,6 +18,7 @@
  * name the need. The evidence meter shows that grade and nothing else.
  */
 import NEED_MAP_RESEARCH from '../data/matching/needMap.research.js';
+import { withoutMedicines } from './medicineProduct.js';
 
 const GRADED = NEED_MAP_RESEARCH.reduce((m, r) => m.set(`${r.product}|${r.need}`, r), new Map());
 
@@ -104,7 +105,10 @@ export function weekNeeds({ ctx = {}, insights = [], needIds = [] } = {}) {
 /**
  * @returns Array<{ product, needId, reason, owned, level }>  [] when nothing fits.
  */
-export function weekPicks({ ctx = {}, insights = [], needIds = [], products = [], matches = [], limit = 4, perNeed = 2 } = {}) {
+export function weekPicks({ ctx = {}, insights = [], needIds = [], products: allProducts = [], matches: allMatches = [], limit = 4, perNeed = 2 } = {}) {
+  // Today shows no medicine as a pick (src/health/medicineProduct.js).
+  const products = withoutMedicines(allProducts);
+  const matches = withoutMedicines(allMatches);
   const needs = weekNeeds({ ctx, insights, needIds });
   const owned = new Set(products.map((p) => p?.id));
   const pool = [...products, ...matches].filter((p, i, a) => p?.id && a.findIndex((x) => x?.id === p.id) === i);

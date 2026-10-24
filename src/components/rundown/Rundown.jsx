@@ -13,6 +13,7 @@ import { addDays } from '../../health/dailyLog.js';
 import { trackToday } from '../../health/todayAnalytics.js';
 import { localAt, RUNDOWN_HOUR, scheduleTodayReminder } from '../../health/todayReminders.js';
 import { rememberedOnDevice, withoutRemembered } from '../../health/remembered.js';
+import { withoutMedicines } from '../../health/medicineProduct.js';
 import { readRoutinePrefs } from '../../health/routines.js';
 import { onboardingDoneAt, onboardingJustFinished } from '../../health/onboardingSignal.js';
 import './rundown.css';
@@ -50,7 +51,8 @@ export default function Rundown({
     if (!intake || !catalogReady) return [];
     const seen = new Set();
     const remembered = rememberedOnDevice({ tries: t.tries, saved: Object.fromEntries((saved || []).filter((p) => p?.id).map((p) => [p.id, true])), prefs: readRoutinePrefs() });
-    return withoutRemembered(products, remembered).filter((p) => p?.id && !seen.has(p.id) && seen.add(p.id)).map((product) => {
+    // No medicine as a Rundown pick (src/health/medicineProduct.js).
+    return withoutMedicines(withoutRemembered(products, remembered)).filter((p) => p?.id && !seen.has(p.id) && seen.add(p.id)).map((product) => {
       let details = null;
       try { details = getProductMatchDetailsForProduct(product, intake, healthProfile, matchOpts); } catch { details = null; }
       if (!details || details.matchStatus !== 'scored' || !Number.isFinite(details.percent)) return null;

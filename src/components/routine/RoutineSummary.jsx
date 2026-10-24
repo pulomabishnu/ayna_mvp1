@@ -1,4 +1,5 @@
 import { useRoutines } from './useRoutines.js';
+import { isMedicineProduct } from '../../health/medicineProduct.js';
 import './routine.css';
 
 /**
@@ -11,10 +12,11 @@ import './routine.css';
  * saved, omitted, needs (optional: Today's decision.debug.needs), variant
  * 'app' | 'web', onOpenRoutine(), onOpenProduct(product), onCheckIn().
  */
-export default function RoutineSummary({ variant = 'app', onOpenRoutine, onOpenProduct, onCheckIn, max = 2, ...source }) {
+export default function RoutineSummary({ variant = 'app', onOpenRoutine, onOpenProduct, onCheckIn, max = 2, hideMedicines = false, ...source }) {
   const { routines } = useRoutines(source);
   if (!routines.length) return null;
-  const list = routines.slice(0, max);
+  // Today: medicines are information only, never a product line here (src/health/medicineProduct.js).
+  const list = routines.slice(0, max).map((r) => (hideMedicines ? { ...r, start: r.start.filter((it) => !(it.kind === 'product' && isMedicineProduct(it.product))) } : r));
   return (
     <section className={`ay-rxr ay-rxs is-${variant}`} aria-labelledby={`ay-rxs-h-${variant}`}>
       <div className="ay-rxs__head">
