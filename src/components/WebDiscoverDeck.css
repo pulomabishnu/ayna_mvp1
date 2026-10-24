@@ -52,3 +52,4 @@
 .wdeck-back__price b { font: 600 var(--ay-fs-body)/1 var(--ay-sans); }
 .wdeck-back__price small { color: rgba(29, 26, 43, .62); font: 500 var(--ay-fs-caption)/1.3 var(--ay-sans); }
 @media (prefers-reduced-motion: reduce) { .wdeck-flip { transition: none; } }
+.wdeck-copy .wdeck-why { display: block; font: 500 14px/1.35 var(--ay-sans, 'Figtree', sans-serif); }

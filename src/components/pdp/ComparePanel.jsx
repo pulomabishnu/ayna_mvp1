@@ -3,20 +3,23 @@ import { useEdgeFade } from './useEdgeFade';
 import { ALL_PRODUCTS } from '../../data/products';
 import { compareRows } from './commerce';
 import { NOT_ON_FILE } from './glance';
+import { whyFirstLine } from '../../utils/whyLine';
 import './pdp.css';
 
 /**
  * "Compare with similar": this product beside 2-3 close alternatives from the
  * catalog, real fields only. Scrolls sideways on phones.
  */
-export default function ComparePanel({ product, others = [], onOpen, matchFor = null, renderThumb = null }) {
+export default function ComparePanel({ product, others = [], onOpen, matchFor = null, detailsFor = null, renderThumb = null }) {
   // Starts with the closest alternatives; she can swap in anything from the catalog.
   const [picked, setPicked] = useState(() => others.slice(0, 2).map((p) => p.id));
   const [q, setQ] = useState('');
   const byId = useMemo(() => new Map(ALL_PRODUCTS.map((p) => [p.id, p])), []);
   const chosen = picked.map((id) => byId.get(id) || others.find((o) => o.id === id)).filter(Boolean);
   const cols = [product, ...chosen].filter(Boolean);
-  const rows = compareRows(cols, { matchFor });
+  const rows = compareRows(cols, { matchFor, detailsFor });
+  // One plain sentence on why the top one ranks first, from the engine's reasons.
+  const firstLine = detailsFor && cols.length > 1 ? whyFirstLine(cols.map((p) => ({ product: p, details: detailsFor(p) }))) : '';
   const term = q.trim().toLowerCase();
   const results = term.length < 2 ? [] : ALL_PRODUCTS.filter((p) => p.id !== product.id && !picked.includes(p.id) && `${p.brand || ''} ${p.name}`.toLowerCase().includes(term)).slice(0, 6);
   const suggestions = others.filter((o) => !picked.includes(o.id)).slice(0, 5);
@@ -42,6 +45,7 @@ export default function ComparePanel({ product, others = [], onOpen, matchFor = 
           <div className="ay-compare__sugg"><span>Related:</span>{suggestions.map((p) => <button key={p.id} type="button" onClick={() => add(p)}>+ {p.name}</button>)}</div>
         )}
       </div>
+      {firstLine && cols.length > 1 && rows.length > 0 && <p className="ay-compare__first">{firstLine}</p>}
       {cols.length < 2 || !rows.length ? <p className="ay-compare__empty">Pick a product above to compare.</p> : <div className="ay-compare__frame"><div className="ay-compare__scroll" ref={scrollRef} role="region" aria-labelledby="ay-compare-h" tabIndex={0}>
         <table>
           <thead>
@@ -61,14 +65,12 @@ export default function ComparePanel({ product, others = [], onOpen, matchFor = 
             {rows.map((r) => (
               <tr key={r.label}>
                 <th scope="row">{r.label}</th>
-                {r.values.map((v, i) => {
-                  // Evidence on file: one dot per source counted (the number is in the text too).
-                  const n = /^evidence/i.test(r.label) ? Number((String(v).match(/^(\d+)\s/) || [])[1]) : 0;
-                  return <td key={cols[i].id} className={`${i === 0 ? 'is-this' : ''}${v === NOT_ON_FILE ? ' is-unknown' : ''}`.trim() || undefined}>
-                    {n > 0 && <span className="ay-compare__dots" aria-hidden="true">{Array.from({ length: Math.min(n, 10) }, (_, k) => <i key={k} />)}{n > 10 ? <small>+</small> : null}</span>}
+                {/* Plain text only: source counts are not a grade, so no dots. */}
+                {r.values.map((v, i) => (
+                  <td key={cols[i].id} className={`${i === 0 ? 'is-this' : ''}${v === NOT_ON_FILE ? ' is-unknown' : ''}`.trim() || undefined}>
                     {v === NOT_ON_FILE ? '' : v}
-                  </td>;
-                })}
+                  </td>
+                ))}
               </tr>
             ))}
           </tbody>

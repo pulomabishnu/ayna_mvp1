@@ -5,6 +5,7 @@ import '../match.css';
 import '../eco-needs.css';
 import '../../styles/match-ui.css';
 import HealthWhyLine from '../../components/health/HealthWhyLine.jsx';
+import { whyLine } from '../../utils/whyLine.js';
 
 // Why this matches: what matched and the inputs it used. It never says why
 // she has a symptom; missing answers lower confidence, never the percent.
@@ -58,6 +59,7 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
             <div>
               <span className="ay-match-tier">{tierWord(tier, percent)}</span>
               <h2>{needHeadline(percent, best?.phrase)}</h2>
+              {whyLine(product, details, { max: 2 }) && <p className="ay-match-why">{whyLine(product, details, { max: 2 })}</p>}
               <p className="ay-match-based">{BASED_ON_LINE}</p>
               {access?.label && <p className="ay-match-access"><span aria-hidden="true">●</span> {access.label}</p>}
             </div>

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { hasClinicalSources, CLINICAL_SOURCES_LABEL } from '../utils/clinicalSources';
 import { availablePreferenceOptions, matchesProductPreference } from '../utils/productPreferences';
 import { ALL_PRODUCTS, CATEGORY_LABELS, getProductMatchDetailsForProduct } from '../data/products.js';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
@@ -105,10 +106,7 @@ function explicitRating(product) {
   return Number.isFinite(value) ? value : null;
 }
 
-function hasClinicianSupport(product) {
-  const links = getVerificationLinks(product, 'doctor');
-  return Boolean(product?.doctorOpinion || product?.clinicianOpinion || product?.clinicianReview || links.length > 0);
-}
+const hasClinicianSupport = hasClinicalSources;
 
 function hasCommunitySupport(product) {
   const rating = explicitRating(product);
@@ -582,8 +580,8 @@ function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommend
                 <select value={aynaFilter} onChange={(e) => setAynaFilter(e.target.value)}>
                   <option value="all">Any</option>
                   <option value="best-match">Best Match</option>
-                  <option value="clinician">Clinical Context</option>
-                  <option value="community">Community Favorite</option>
+                  <option value="clinician">{CLINICAL_SOURCES_LABEL}</option>
+                  <option value="community">Community favorite</option>
                   <option value="ecosystem">In My ecosystem</option>
                 </select>
               </label>
@@ -872,8 +870,8 @@ function FirstVisitLanding({ onLogIn, onStartQuiz, onViewDiscovery, onOpenProduc
                 <span>ayna</span>
                 <select value={aynaFilter} onChange={(e) => setAynaFilter(e.target.value)}>
                   <option value="all">Any</option>
-                  <option value="clinician">Clinical Context</option>
-                  <option value="community">Community Favorite</option>
+                  <option value="clinician">{CLINICAL_SOURCES_LABEL}</option>
+                  <option value="community">Community favorite</option>
                 </select>
               </label>
               <label>

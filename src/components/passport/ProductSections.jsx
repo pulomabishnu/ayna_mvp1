@@ -287,7 +287,7 @@ function Section({ section, plan, sources, extra, onXref, bare = false }) {
 // the research and safety say, what people say, and where it all comes from.
 const TAB_GROUPS = [
   { id: 'match', label: 'Your match', ids: ['match'], tone: 'pink' },
-  { id: 'evidence', label: 'Research & safety', ids: ['clinician', 'evidence', 'unknown', 'safety'], tone: 'peri' },
+  { id: 'evidence', label: 'Evidence & safety', ids: ['clinician', 'evidence', 'unknown', 'safety'], tone: 'peri' },
   { id: 'reviews', label: 'Reviews', ids: ['people', 'brand'], tone: 'pink' },
 ];
 // Ingredients and how to use sit under Overview.
@@ -527,7 +527,7 @@ function MatchSeal({ children }) {
   );
 }
 
-export function ProductMatch({ glance, matchPercent, fallback = '', onShowWhy, onFindFit = null, hasProfile = false, exclusions = [], health = null }) {
+export function ProductMatch({ glance, matchPercent, why = '', fallback = '', onShowWhy, onFindFit = null, hasProfile = false, exclusions = [], health = null }) {
   if (!glance) return null;
   // Signed in with a profile but no score (a partner bundle, an excluded item):
   // the block still shows, worded honestly, instead of disappearing.
@@ -571,6 +571,8 @@ export function ProductMatch({ glance, matchPercent, fallback = '', onShowWhy, o
       </button>
       <div className="ay-match__body">
         <h2 id="ay-match-h">{heading}</h2>
+        {/* The % explained in one plain line from the engine's reasons. */}
+        {why && <p className="ay-match__lede">{why}</p>}
         {health && <HealthBackedBadge backed={health} />}
         {lines.length > 0 && <ul className="ay-match__reasons">{lines.map((r) => <li key={r} className={isMiss(r) ? 'is-miss' : 'is-hit'}><span className="sr-only">{isMiss(r) ? 'Counts against: ' : 'Fits: '}</span>{r}</li>)}</ul>}
         <div className="ay-match__links">

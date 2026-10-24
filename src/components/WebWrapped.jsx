@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { getProfileMatchPercentForProduct } from '../data/products.js';
+import { getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../data/products.js';
+import { whyLine } from '../utils/whyLine';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { buildPersona } from '../mobile/utils/shopperProfile.js';
@@ -26,6 +27,7 @@ export default function WebWrapped({ products = [], quizResults, onClose, onBrow
   const areas = [...new Set(picks.map((p) => resolveEcosystemProductArea(p, ECOSYSTEM_AREAS)?.label).filter(Boolean))];
   const raw = first && quizResults ? getProfileMatchPercentForProduct(first, quizResults) : null;
   const firstMatch = Number.isFinite(raw) && raw > 0 ? Math.round(raw) : null;
+  const firstWhy = firstMatch ? whyLine(first, getProductMatchDetailsForProduct(first, quizResults)) : '';
   const goals = (intake?.supportSelections || []).filter((s) => s !== 'Nothing right now').length;
   const slides = picks.length ? ['intro', ...(areas.length ? ['focus'] : []), 'match', ...(persona ? ['persona'] : []), 'lineup', 'finish'] : ['empty'];
 
@@ -98,7 +100,7 @@ export default function WebWrapped({ products = [], quizResults, onClose, onBrow
         {active === 'match' && first && <>
           <p className="wwr-kicker">Your #1 match</p>
           <div className="wwr-arch"><div className="wwr-arch-clip"><Photo product={first} /></div>{firstMatch && <span className="wwr-badge"><strong>{firstMatch}%</strong>match</span>}</div>
-          <div className="wwr-product">{first.brand && <span>{first.brand}</span>}<strong>{first.name}</strong></div>
+          <div className="wwr-product">{first.brand && <span>{first.brand}</span>}<strong>{first.name}</strong>{firstWhy && <small className="wwr-why">{firstWhy}</small>}</div>
         </>}
         {active === 'persona' && persona && <>
           <p className="wwr-kicker">Your shopper type</p>

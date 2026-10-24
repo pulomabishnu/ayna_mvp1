@@ -4,6 +4,7 @@ import { getProductMatchDetailsForProduct } from '../data/products.js';
 import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, whyMatch, BASED_ON_LINE } from '../utils/matchDisplay';
 import '../styles/match-ui.css';
 import HealthWhyLine from './health/HealthWhyLine.jsx';
+import { whyLine } from '../utils/whyLine';
 
 // "Why this match" from the app, for the website: the same match engine
 // output (getProductMatchDetailsForProduct), shown as a side panel.
@@ -43,6 +44,7 @@ export default function WhyMatchPanel({ product, quizResults, healthProfile = nu
         <div>
           <span className="ay-why-tier">{tierWord(tier, percent)}</span>
           <strong>{needHeadline(percent, best?.phrase)}</strong>
+          {whyLine(product, details, { max: 2 }) && <p className="ay-why-line">{whyLine(product, details, { max: 2 })}</p>}
           <p className="ay-why-based">{BASED_ON_LINE}</p>
         </div>
       </section> : excluded ? <section className="ay-why-excluded">

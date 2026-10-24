@@ -5,6 +5,7 @@
  * "Not on file", and nothing here makes up ratings, stock or shipping.
  */
 import { ALL_PRODUCTS, HEALTH_FUNCTIONS } from '../../data/products.js';
+import { whyLine } from '../../utils/whyLine.js';
 import { PRODUCT_IMAGE_OVERRIDES, productImageOverride } from '../../data/productImageOverrides.js';
 import { getPassport } from '../../data/passport/index.js';
 import { priceParts, safetyAlertText } from '../../data/passport/content.js';
@@ -204,7 +205,16 @@ function evidenceSummary(product) {
  * Rows for the compare table. Each row: { label, values: [string per product] }.
  * Rows where every product is "Not on file" are dropped.
  */
-export function compareRows(products, { matchFor = null } = {}) {
+// Engine reasons -> a Yes/No for one comparison row; null when the engine
+// did not say (shown as "Not on file", never guessed).
+function reasonFlag(details, yes, no = null) {
+  const texts = (details?.reasonDetails || []).map((r) => String(r?.text || ''));
+  if (texts.some((t) => yes.test(t))) return 'Yes';
+  if (no && texts.some((t) => no.test(t))) return 'No';
+  return NOT_ON_FILE;
+}
+
+export function compareRows(products, { matchFor = null, detailsFor = null } = {}) {
   const isDigital = products.every((p) => p?.type === 'digital');
   const rows = [
     { label: 'Price', get: (p) => { const pr = priceParts(p); return pr.known ? pr.main : 'At the retailer'; } },
@@ -213,6 +223,8 @@ export function compareRows(products, { matchFor = null } = {}) {
     isDigital ? { label: 'Available on', get: (p) => String(p.platform || '').trim() || NOT_ON_FILE } : null,
     !isDigital ? { label: 'Ingredients or materials', get: (p) => ingredientHeadline(p, 48) || NOT_ON_FILE } : null,
     { label: 'Evidence on file', get: evidenceSummary },
+    // Finished-product evidence vs ingredient evidence (never collapsed).
+    { label: 'Finished product studied', get: (p) => (getPassport(p)?.evidence?.product_specific ? 'Yes' : researchSourceCount(p) > 0 ? 'No product study found' : NOT_ON_FILE) },
     { label: 'Safety notes', get: (p) => {
       const notes = [];
       if (recallFacts(p).status === 'past') notes.push('Past recall');
@@ -224,6 +236,10 @@ export function compareRows(products, { matchFor = null } = {}) {
     } },
     { label: 'FSA/HSA', get: (p) => { if (['pad', 'tampon', 'cup', 'disc'].includes(p?.category)) return 'Eligible'; const f = getPassport(p)?.pricing?.fsa_hsa; return f?.known ? (f.value === 'eligible' ? 'Eligible' : 'Not eligible') : NOT_ON_FILE; } },
     matchFor ? { label: 'Your match', get: (p) => { const m = matchFor(p); return Number.isFinite(m) && m > 0 ? `${Math.round(m)}%` : 'No clear match'; } } : null,
+    // Plain reasons behind the %, from the engine (src/utils/whyLine.js).
+    detailsFor ? { label: 'Why it fits you', get: (p) => whyLine(p, detailsFor(p), { max: 2 }) || 'Not one of your needs' } : null,
+    detailsFor ? { label: 'Fits your budget', get: (p) => reasonFlag(detailsFor(p), /^Within your budget$/i, /^Above your usual budget$/i) } : null,
+    detailsFor ? { label: 'Format you prefer', get: (p) => reasonFlag(detailsFor(p), /^In a format you prefer$/i) } : null,
   ].filter(Boolean);
   return rows
     .map((r) => ({ label: r.label, values: products.map((p) => r.get(p)) }))

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './campusResources.css';
+import { dashToSentence } from '../utils/dashToSentence';
 import { SCHOOLS, getSchoolById, searchSchools, groupResources, formatVerified } from '../data/campusResources';
 import { NATIONAL_RESOURCES, EMERGENCY_NOTICE } from '../data/campusResources/national';
 import { PETITION, CASE_BLOCKS, SOURCES } from '../data/campusResources/janeDoe';
@@ -48,7 +49,7 @@ function ResourceCard({ r }) {
       </dl>
 
       <p className="cr-card__source">
-        <ExternalLink href={r.sourceUrl}>Official source: {r.sourceLabel}</ExternalLink>
+        <ExternalLink href={r.sourceUrl}>Official source: {dashToSentence(r.sourceLabel, { label: true })}</ExternalLink>
         <span className="cr-card__verified">Last verified: {formatVerified(r.lastVerified)}</span>
       </p>
     </li>

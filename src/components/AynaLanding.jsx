@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { hasClinicalSources, CLINICAL_SOURCES_LABEL } from '../utils/clinicalSources';
 import PartnerStrip from './PartnerStrip';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import * as communityStore from '../utils/community/communityStore.js';
@@ -102,10 +103,7 @@ function explicitRating(product) {
   return Number.isFinite(value) ? value : null;
 }
 
-function hasClinicianSupport(product) {
-  const links = getVerificationLinks(product, 'doctor');
-  return Boolean(product?.doctorOpinion || product?.clinicianOpinion || product?.clinicianReview || links.length > 0);
-}
+const hasClinicianSupport = hasClinicalSources;
 
 function hasCommunitySupport(product) {
   const rating = explicitRating(product);
@@ -360,7 +358,7 @@ function FilterPanel({ f, set, productTypes, ecosystem = false, onClear }) {
         <select value={f.ayna} onChange={(e) => set('ayna', e.target.value)}>
           <option value="all">Any</option>
           {ecosystem && <option value="best-match">Best match</option>}
-          <option value="clinician">Clinician backed</option>
+          <option value="clinician">{CLINICAL_SOURCES_LABEL}</option>
           <option value="community">Community favorite</option>
           {ecosystem && <option value="ecosystem">In my ecosystem</option>}
         </select>

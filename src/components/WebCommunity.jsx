@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { hasWhy, whyLead } from '../utils/whyLine';
 import BackLink from './nav/BackLink.jsx';
 import { createPortal } from 'react-dom';
 import { getSupabaseClient } from '../utils/supabaseClient';
@@ -146,9 +147,11 @@ function Mention({ productId, productsById, quizResults, onOpenProduct, hideView
   }
   const match = quizResults ? getProductMatchDetailsForProduct(product, quizResults) : null;
   const show = match?.matchStatus === 'scored' && Number.isFinite(match.percent);
+  // The % explained in plain words ("For your period cramps").
+  const why = show && hasWhy(match) ? whyLead(match) : '';
   return <button type="button" className="cm-mention" onClick={() => onOpenProduct(product)}>
     <span className="cm-mention-photo"><ProductTileImage product={product} imgStyle={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', padding: 6 }} letterNode={<ProductImageFallback style={{ position: 'absolute', inset: 0 }} />} /></span>
-    <span><strong>{product.name}</strong><small>{product.brand || 'ayna product'}</small></span>
+    <span><strong>{product.name}</strong><small>{why || product.brand || 'ayna product'}</small></span>
     {show ? <em className="cm-match"><b>{match.percent}%</b> match</em> : !hideView && <em className="cm-view">View</em>}
   </button>;
 }

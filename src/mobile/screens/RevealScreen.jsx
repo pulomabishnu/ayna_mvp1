@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Stamp } from '../components/BrandBits.jsx';
 import ProductImage from '../components/ProductImage.jsx';
-import { matchPercentFor } from '../utils/matchScore.js';
+import { matchPercentFor, productMatch } from '../utils/matchScore.js';
+import { whyLine } from '../../utils/whyLine.js';
 import { ecosystemCounts } from '../../utils/ecosystemCounts.js';
 import IntakeSceneArt from '../components/intake/IntakeSceneArt.jsx';
 import '../wrapped.css';
@@ -38,6 +39,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
   const persona = buildPersona(intake);
   // Same scorer and inputs as the card and product page, so "#1 match 97%" here is 97% there too.
   const firstMatch = first && answers ? matchPercentFor(first, answers, matchOpts) : null;
+  const firstWhy = firstMatch ? whyLine(first, productMatch(first, answers, matchOpts)) : '';
 
   const slides = products.length
     ? ['intro', ...(topAreas.length ? ['focus'] : []), 'match', ...(persona ? ['persona'] : []), 'lineup', 'finish']
@@ -140,6 +142,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
           <div className="ayw-product">
             {first.brand && <span>{first.brand}</span>}
             <strong>{first.name}</strong>
+            {firstWhy && <small className="ayw-why">{firstWhy}</small>}
           </div>
         </>}
 

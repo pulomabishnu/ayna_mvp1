@@ -29,6 +29,7 @@ import { getInternalIds, tagInternalUserIfNeeded } from './utils/posthogInternal
 import { hasInternalBrowserMarker, tagFounderAnalyticsIfNeeded } from './utils/founderAnalytics'
 import { applyStoredConsent, getStoredConsent, isMandatoryGpcVisitor } from './utils/analyticsConsent'
 import { appErrorProperties } from './utils/errorAnalytics'
+import { sanitizeEventPayload } from './utils/analyticsSanitize'
 import { analyticsPlatform, resolvePosthogKey } from './utils/analyticsPlatform'
 
 if (window.location.hostname === 'aynamvp1.vercel.app') {
@@ -135,33 +136,6 @@ if (originalIdentify) {
   };
 }
 
-// Health-related free text and direct account identifiers should never become
-// analytics payload. Exact keys only so useful non-sensitive counters such as
-// queryLength/concernsCount and product/category analytics remain available.
-const SENSITIVE_ANALYTICS_KEYS = new Set([
-  'query', 'searchquery', 'search_query', 'email', 'useremail', 'prompt', 'message', 'notes',
-  'healthprofile', 'health_profile', 'fullhealthintake', 'full_health_intake',
-  'conditions', 'medications', 'allergies', 'symptoms', 'diagnosis', 'diagnoses',
-  'concerns', 'intake', 'fhirsummary', 'fhir_summary', 'wearablesummary',
-  'wearable_summary', 'freetext', 'free_text', 'supportothertext',
-  'support_other_text', 'customconcerns', 'custom_concerns',
-  'userid', 'user_id', 'authuserid', 'auth_user_id', 'phone', 'phonenumber',
-  'phone_number', 'zipcode', 'zip', 'full_name', 'first_name', 'last_name',
-]);
-
-function sanitizeAnalyticsObject(value) {
-  if (Array.isArray(value)) return value.map(sanitizeAnalyticsObject);
-  if (!value || typeof value !== 'object') return value;
-
-  const clean = {};
-  for (const [key, nestedValue] of Object.entries(value)) {
-    const normalized = String(key).toLowerCase();
-    if (SENSITIVE_ANALYTICS_KEYS.has(normalized)) continue;
-    clean[key] = sanitizeAnalyticsObject(nestedValue);
-  }
-  return clean;
-}
-
 function sanitizePosthogEvent(event) {
   // Once this browser has been recognized as one of the three founders, do not
   // send further analytics at all. The PostHog person is also tagged internal
@@ -172,10 +146,10 @@ function sanitizePosthogEvent(event) {
   // from this page. A pageview or click there would reveal that a specific
   // visitor looked for these resources.
   if (typeof window !== 'undefined' && /^\/campus-resources(\/|$)/.test(window.location.pathname)) return null;
-  if (!event?.properties) return event;
   // platform on every event, including the first pageview (which can be sent
-  // before the `loaded` register below takes effect).
-  return { ...event, properties: { platform: ANALYTICS_PLATFORM, ...sanitizeAnalyticsObject(event.properties) } };
+  // before the `loaded` register below takes effect). Free text typed into
+  // Shop/Community search (?q=) is stripped from every URL property.
+  return sanitizeEventPayload(event, { platform: ANALYTICS_PLATFORM });
 }
 
 if (!POSTHOG_KEY) {

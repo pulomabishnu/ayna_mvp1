@@ -12,6 +12,7 @@ import { HEART_PATH } from '../utils/heart.js';
 import { matchBadge } from '../../utils/matchDisplay.js';
 import MatchPill from '../../components/MatchPill.jsx';
 import { saveFeedback } from '../../utils/feedback.js';
+import { whyLine } from '../../utils/whyLine.js';
 import HealthBackedBadge from '../../components/health/HealthBackedBadge.jsx';
 import { cardKind, cardBadge, cardPrice } from '../../utils/productCardFacts.js';
 
@@ -31,6 +32,8 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   // Badge = her best need score, only with a profile and 50+ ("82% for period cramps").
   const badge = matchBadge(match, { needId });
   const showMatch = Boolean(badge);
+  // The % explained in one plain line from the engine's reasons (src/utils/whyLine.js).
+  const why = showMatch ? whyLine(product, match) : '';
   // "Backed by your sleep data": her connected data supports the need this card is shown for.
   const backedBy = showMatch ? match?.needMatches?.find((m) => m.needId === (needId || match.needId))?.healthData : null;
   const healthBacked = backedBy ? { section: backedBy.section, tracker: ['tracker', 'wearable'].includes(String(category || '').toLowerCase()) } : null;
@@ -41,7 +44,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   const isPartner = isPartnerBrandItem(product);
   const buyUrl = getBuyUrl(product);
   const isList = variant === 'list';
-  const contexts = isList ? [['doctor', 'Clinical'], ['scientific', 'Research'], ['community', 'Community']]
+  const contexts = isList ? [['doctor', 'Clinical'], ['scientific', 'Evidence'], ['community', 'Community']]
     .filter(([kind]) => getVerificationLinks(product, kind).some((link) => link?.url || link?.href))
     .map(([, label]) => label) : [];
   const functions = product?.healthFunctions || [];
@@ -69,6 +72,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
             <strong className="ay-pc-name">{brandRepeatsName ? name : displayName(product)}</strong>
             <span className="ay-pc-kind" aria-hidden="true">{kind && <span className="ay-pc-kindtext">{kind}</span>}{oneBadge && <span className={`ay-pc-mark${oneBadge === 'Pre-order' ? ' is-alert' : ''}`}>{oneBadge}</span>}{!kind && !oneBadge && '\u00a0'}</span>
             <span className="ay-pc-price">{facts.main !== 'Price at retailer' ? <b>{facts.main}</b> : <b className="is-muted">{facts.main}</b>}{facts.sub && <small className="ay-pc-unit">{facts.sub}</small>}</span>
+            {why && <small className="ay-pc-why">{why}</small>}
             {healthBacked && <HealthBackedBadge backed={healthBacked} className="ay-pc-hbadge" />}
           </span>
         </button>
@@ -87,7 +91,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
       <span className="ayna-fresh-product-copy">
         {isList && <span className="ayna-fresh-product-category" aria-hidden={secondaryLabel ? undefined : true}>{secondaryLabel || '\u00a0'}{isPartner ? ' / Partner' : ''}</span>}
         <strong>{brandRepeatsName ? name : displayName(product)}</strong>
-        {isList && relevantReason && <span className="ayna-fresh-product-reason">{relevantReason.text}</span>}
+        {isList && (why || relevantReason) && <span className="ayna-fresh-product-reason">{why || relevantReason.text}</span>}
         {!isList && <small className="ayna-card-brand" aria-hidden={secondaryLabel && !brandRepeatsName ? undefined : true}>{secondaryLabel && !brandRepeatsName ? secondaryLabel : '\u00a0'}</small>}
         <span className="ayna-fresh-product-foot">{hasDisplayPrice ? <b>{shownPrice.main}</b> : <b className="is-muted">{shownPrice.main}</b>}</span>
         {!isList && <small className="ayna-card-price-sub" aria-hidden={shownPrice.sub ? undefined : true}>{shownPrice.sub || '\u00a0'}</small>}

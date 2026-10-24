@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import { hasClinicalSources, CLINICAL_SOURCES_LABEL } from '../../utils/clinicalSources.js';
 import MobileHeader from '../components/MobileHeader.jsx';
 import SearchBar from '../components/SearchBar.jsx';
 import DiscoverDeck from '../components/DiscoverDeck.jsx';
@@ -28,7 +29,7 @@ const FILTER_FIELDS = [
   ['category', 'Product type', [['all', 'All products']]],
   ['price', 'Price', [['all', 'Any price'], ['under-25', 'Under $25'], ['25-50', '$25–$50'], ['50-100', '$50–$100'], ['100-plus', '$100+']]],
   ['rating', 'Rating', [['all', 'Any rating'], ['4-plus', '4+ stars']]],
-  ['ayna', 'Match & sources', [['all', 'Any'], ['best-match', 'Best match'], ['clinician', 'Clinician backed'], ['community', 'Community favorite'], ['ecosystem', 'In my ecosystem']]],
+  ['ayna', 'Match & sources', [['all', 'Any'], ['best-match', 'Best match'], ['clinician', CLINICAL_SOURCES_LABEL], ['community', 'Community favorite'], ['ecosystem', 'In my ecosystem']]],
   ['preference', 'Preferences', [['all', 'Any'], ['fragrance-free', 'Fragrance free'], ['sensitive-skin', 'Sensitive skin'], ['vegan', 'Vegan'], ['cruelty-free', 'Cruelty free'], ['organic', 'Organic'], ['clean-ingredients', 'Clean ingredients']]],
   ['eligibility', 'Eligibility', [['all', 'Any'], ['fsa-hsa', 'FSA/HSA eligible'], ['fsa', 'FSA eligible'], ['hsa', 'HSA eligible']]],
   ['sustainability', 'Sustainability', [['all', 'Any'], ['reusable', 'Reusable'], ['recyclable', 'Recyclable'], ['low-waste', 'Low waste'], ['packaging', 'Sustainable packaging']]],
@@ -242,7 +243,7 @@ export default function BrowseScreen({
   const [storedFilters, setFilters] = usePersistentState('app-shop:filters', EMPTY_FILTERS);
   const filters = { ...EMPTY_FILTERS, ...(storedFilters || {}) };
   const [sortBy, setSortBy] = usePersistentState('app-shop:sort', 'default');
-  const quick = [['Under $25', 'price', 'under-25'], ['FSA/HSA eligible', 'eligibility', 'fsa-hsa'], ['Fragrance free', 'preference', 'fragrance-free'], ['Clinician backed', 'ayna', 'clinician']];
+  const quick = [['Under $25', 'price', 'under-25'], ['FSA/HSA eligible', 'eligibility', 'fsa-hsa'], ['Fragrance free', 'preference', 'fragrance-free'], [CLINICAL_SOURCES_LABEL, 'ayna', 'clinician']];
   const cardLayout = 'grid';
   // AI fallback for a typed search the local catalog scoring found nothing
   // for, same /api/search-suggestions the desktop Discovery page falls
@@ -330,7 +331,7 @@ export default function BrowseScreen({
     if (filters.price === '100-plus' && !(price != null && price > 100)) return false;
     if (filters.rating === '4-plus' && !(RATING_VALUE(item) >= 4)) return false;
     if (filters.ayna === 'best-match' && !(getProfileMatchPercentForProduct(item, quizAnswers, null, matchOpts) >= 50)) return false;
-    if (filters.ayna === 'clinician' && !(item.doctorOpinion || item.clinicianOpinion || getVerificationLinks(item, 'doctor').length)) return false;
+    if (filters.ayna === 'clinician' && !hasClinicalSources(item)) return false;
     if (filters.ayna === 'community' && !(item.communityReview || getVerificationLinks(item, 'community').length || RATING_VALUE(item) >= 4)) return false;
     if (filters.ayna === 'ecosystem' && !myProducts.some((p) => String(p.id) === String(item.id))) return false;
     const eligibility = ELIGIBILITY(item);

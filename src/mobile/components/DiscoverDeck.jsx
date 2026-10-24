@@ -2,7 +2,8 @@ import { HEART_PATH } from '../utils/heart.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import ProductImage from './ProductImage.jsx';
 import EmptyState from './EmptyState.jsx';
-import { matchPercentFor } from '../utils/matchScore.js';
+import { matchPercentFor, productMatch } from '../utils/matchScore.js';
+import { whyLine } from '../../utils/whyLine.js';
 import { displayName } from '../utils/displayName.js';
 
 // One-card-at-a-time product discovery. Drag right (or tap Save) to save,
@@ -43,6 +44,7 @@ export default function DiscoverDeck({ products = [], quizAnswers = null, matchO
 
   const current = deck[index];
   const currentMatch = current && quizAnswers ? matchPercentFor(current.product, quizAnswers, matchOpts) : null;
+  const currentWhy = currentMatch != null ? whyLine(current.product, productMatch(current.product, quizAnswers, matchOpts)) : '';
   const reduced = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
   function act(kind) {
@@ -109,6 +111,7 @@ export default function DiscoverDeck({ products = [], quizAnswers = null, matchO
                 <div className="ay-deck-meta">
                   {current.product.price && <b>{String(current.product.price)}</b>}
                   {currentMatch != null && <em>{currentMatch}% match</em>}
+                  {currentWhy && <small className="ay-deck-why">{currentWhy}</small>}
                 </div>
               </div>
             </article>

@@ -75,3 +75,6 @@ button.ay-compare__name:hover { text-decoration-color: currentColor; }
    first two, the full version of a long note). */
 .ay-src li[hidden],
 .ay-ev__stf > [hidden] { display: none !important; }
+
+/* Compare: why the top one ranks first (one plain sentence). */
+.app-container .ay-compare__first { margin: 0 0 12px; font: 500 var(--ay-fs-body, 15px)/1.5 var(--ay-sans-stack, 'Figtree', sans-serif); color: var(--ay-text); }

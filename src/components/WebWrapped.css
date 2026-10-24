@@ -61,3 +61,4 @@
 .wwr h1 em { color: var(--ink); -webkit-text-stroke: 0; font-style: italic; }
 .wwr-card li { border-top-color: rgba(62, 39, 35, .18); }
 .wwr-top .wwr-skip { width: auto !important; padding: 0 14px !important; border-radius: 99px !important; font: 600 var(--ay-fs-caption)/1 var(--ay-sans) !important; white-space: nowrap; }
+.wwr-product .wwr-why { font: 500 var(--ay-fs-secondary, 15px)/1.4 var(--ay-sans); }

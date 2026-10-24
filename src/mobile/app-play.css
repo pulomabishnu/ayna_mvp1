@@ -824,3 +824,4 @@
 /* Wrapped montage match art: word form, no invented percent. */
 .ay-reel-score.is-word span { font: 500 13px/1 var(--ay-font-ui); letter-spacing: .08em; text-transform: uppercase; opacity: .7; }
 .ay-reel-score.is-word strong { font-size: 30px; line-height: 1.15; font-weight: 600; letter-spacing: -0.01em; }
+.ay-deck-meta { flex-wrap: wrap; } .ay-deck-meta .ay-deck-why { flex-basis: 100%; font: 500 13px/1.35 var(--ay-font-ui); }

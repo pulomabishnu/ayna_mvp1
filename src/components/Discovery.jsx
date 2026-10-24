@@ -14,6 +14,8 @@ import './shop-page.css';
 // placeholder cards until both have arrived (`ready` below).
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct, isTeenProduct, useCatalogReady } from '../data/catalog.js';
 import { behaviorFrom, matchBadge } from '../utils/matchDisplay';
+import { whyLine } from '../utils/whyLine';
+import { hasClinicalSources, CLINICAL_SOURCES_LABEL } from '../utils/clinicalSources';
 import { sortByBestMatch, bestMatchNeedsQuiz } from '../utils/bestMatchSort.js';
 import { loadProductCatalog } from '../utils/productCatalog';
 import { scoreSearchMatch, correctedSearchQuery, useSearchReady } from '../utils/search/lazy.js';
@@ -107,34 +109,13 @@ function getExplicitEligibility(item) {
 
 const matchesPreference = matchesProductPreference;
 
-function hasClinicianSupport(item) {
-    const links = getVerificationLinks(item, 'doctor');
-    return Boolean(item?.doctorOpinion || item?.clinicianOpinion || item?.clinicianReview || links.length > 0);
-}
+const hasClinicianSupport = hasClinicalSources;
 
 function hasCommunitySupport(item, reviewBucket) {
     const rating = item?.ratingNote ? null : (getAynaRating(item, reviewBucket) ?? (item?.userRating != null ? Number(item.userRating) : null));
     const reviewCount = Array.isArray(reviewBucket?.reviews) ? reviewBucket.reviews.length : 0;
     const communityLinks = getVerificationLinks(item, 'community');
     return (Number.isFinite(rating) && rating >= 4) || reviewCount > 0 || Boolean(item?.communityReview) || communityLinks.length > 0;
-}
-
-function getExplicitMatchPercent(item) {
-    const candidates = [
-        item?.aynaMatch,
-        item?.aynaMatchPercent,
-        item?.matchPercent,
-        item?.matchPercentage,
-        item?.personalizationScore,
-    ];
-    for (const value of candidates) {
-        if (value == null || value === '') continue;
-        const numeric = typeof value === 'string' ? Number(value.replace('%', '').trim()) : Number(value);
-        if (!Number.isFinite(numeric)) continue;
-        const normalized = numeric > 0 && numeric <= 1 ? numeric * 100 : numeric;
-        if (normalized >= 0 && normalized <= 100) return Math.round(normalized);
-    }
-    return null;
 }
 
 const SUSTAINABILITY_OPTIONS = [
@@ -1561,7 +1542,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         ['Under $25', 'under-25', priceFilter, setPriceFilter],
         ['FSA/HSA eligible', 'fsa-hsa', eligibilityFilter, setEligibilityFilter],
         ...(!ready || preferenceOptions.some((o) => o.value === 'fragrance-free') ? [['Fragrance-free', 'fragrance-free', preferenceFilter, setPreferenceFilter]] : []),
-        ['Clinician backed', 'clinician', aynaFilter, setAynaFilter],
+        [CLINICAL_SOURCES_LABEL, 'clinician', aynaFilter, setAynaFilter],
     ];
     // The selected folder tab shows one real product from that area peeking out (one we host).
     const folderPhoto = (id) => {
@@ -1781,7 +1762,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             {bestQuizNote}
 
             {(() => {
-                const LABELS = { 'under-25': 'Under $25', '25-50': '$25–49', '50-100': '$50–99', '100-plus': '$100+', subscription: 'Subscription or membership', 'fsa-hsa': 'FSA/HSA eligible', fsa: 'FSA', hsa: 'HSA', 'fragrance-free': 'Fragrance-free', 'sensitive-skin': 'Sensitive skin', vegan: 'Vegan', 'cruelty-free': 'Cruelty-free', organic: 'Organic', 'clean-ingredients': 'Paraben or chlorine free', reusable: 'Reusable', recyclable: 'Recyclable', 'low-waste': 'Low waste', packaging: 'Sustainable packaging', clinician: 'Clinician backed', community: 'Community favorite', 'best-match': 'Best matches', ecosystem: 'In my ecosystem', fertility: 'Trying to conceive', pregnancy: 'Pregnant', postpartum: 'Postpartum', perimenopause: 'Perimenopause and menopause', menopause: 'Menopause', period: 'Period years', products: 'Products', services: 'Apps & services' };
+                const LABELS = { 'under-25': 'Under $25', '25-50': '$25–49', '50-100': '$50–99', '100-plus': '$100+', subscription: 'Subscription or membership', 'fsa-hsa': 'FSA/HSA eligible', fsa: 'FSA', hsa: 'HSA', 'fragrance-free': 'Fragrance-free', 'sensitive-skin': 'Sensitive skin', vegan: 'Vegan', 'cruelty-free': 'Cruelty-free', organic: 'Organic', 'clean-ingredients': 'Paraben or chlorine free', reusable: 'Reusable', recyclable: 'Recyclable', 'low-waste': 'Low waste', packaging: 'Sustainable packaging', clinician: CLINICAL_SOURCES_LABEL, community: 'Community favorite', 'best-match': 'Best matches', ecosystem: 'In my ecosystem', fertility: 'Trying to conceive', pregnancy: 'Pregnant', postpartum: 'Postpartum', perimenopause: 'Perimenopause and menopause', menopause: 'Menopause', period: 'Period years', products: 'Products', services: 'Apps & services' };
                 const applied = [[typeFilter, setTypeFilter], [priceFilter, setPriceFilter], [eligibilityFilter, setEligibilityFilter], [lifeStageFilter, setLifeStageFilter], [preferenceFilter, setPreferenceFilter], [sustainabilityFilter, setSustainabilityFilter], [aynaFilter, setAynaFilter]].filter(([v]) => v && v !== 'all');
                 return (
                     <div className="ayshop__applied" role="status">
@@ -1807,7 +1788,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         ['Life stage', lifeStageFilter, setLifeStageFilter, [['period', 'Period years'], ['fertility', 'Trying to conceive'], ['pregnancy', 'Pregnant'], ['postpartum', 'Postpartum'], ['perimenopause', 'Perimenopause and menopause']]],
                         ['Preferences', preferenceFilter, setPreferenceFilter, [['fragrance-free', 'Fragrance-free'], ['sensitive-skin', 'Sensitive skin'], ['vegan', 'Vegan'], ['cruelty-free', 'Cruelty-free'], ['organic', 'Organic'], ['clean-ingredients', 'Paraben or chlorine free (as labeled)']].filter(([v]) => v === preferenceFilter || preferenceOptions.some((o) => o.value === v))],
                         ['Sustainability', sustainabilityFilter, setSustainabilityFilter, [['reusable', 'Reusable'], ['recyclable', 'Recyclable'], ['low-waste', 'Low waste'], ['packaging', 'Sustainable packaging']].filter(([v]) => sustainabilityOptions.some((o) => o.value === v))],
-                        ['Show only', aynaFilter, setAynaFilter, [['clinician', 'Clinician backed'], ['community', 'Community favorite'], ...(user ? [['ecosystem', 'In my ecosystem']] : [])]],
+                        ['Show only', aynaFilter, setAynaFilter, [['clinician', CLINICAL_SOURCES_LABEL], ['community', 'Community favorite'], ...(user ? [['ecosystem', 'In my ecosystem']] : [])]],
                     ]}
                     personalizedToggle={hasProfileForSort ? personalizedSwitch : null}
                     sort={{ value: sortValue, choices: sortChoices, set: applySort, note: bestQuizNote }}
@@ -1875,7 +1856,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     // Personalized off means no scores on cards (the toggle does what it says).
                     const hasProfile = Boolean(hasQuizFrustrations || hasHealthImport) && personalizationFilter;
                     const badge = hasProfile ? matchBadge(getProductMatchDetailsForProduct(item, quizResults, healthProfile, matchOpts)) : null;
-                    const matchPercent = hasProfile ? (badge ? badge.percent : null) : (personalizationFilter ? getExplicitMatchPercent(item) : null);
+                    // No profile, no %: a number needs her answers to be honest.
+                    const matchPercent = hasProfile && badge ? badge.percent : null;
+                    const why = matchPercent != null ? whyLine(item, getProductMatchDetailsForProduct(item, quizResults, healthProfile, matchOpts)) : '';
                     const eligibility = getExplicitEligibility(item);
                     const eligibilityLabel = eligibility.fsa && eligibility.hsa ? 'FSA/HSA' : eligibility.fsa ? 'FSA' : eligibility.hsa ? 'HSA' : '';
                     const isWishlisted = !!savedProducts[item.id];
@@ -1898,6 +1881,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             style={undefined}
                             matchPercent={matchPercent}
                             matchLabel={badge ? badge.label : ''}
+                            why={why}
                             rating={(() => { const d = aynaReviews[item.id]; const v = getAynaRating(item, d); const n = getAynaRatingCount(d); return v != null && n > 0 ? { value: Number(v), count: n } : null; })()}
                             isSaved={isWishlisted}
                             inEcosystem={isInEcosystem}

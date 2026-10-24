@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ProductCard from '../ProductCard';
+import { whyLineForPick } from '../../utils/whyLine.js';
 import HealthBackedBadge from '../health/HealthBackedBadge.jsx';
 import { PlusIcon, ChevronLeftIcon, ChevronRightIcon } from '../icons/UiIcons.jsx';
 
@@ -67,6 +68,7 @@ export default function NeedsStrip({ needs, isOwned, onOpenProduct, onToggleProd
                     product={p.product}
                     matchPercent={p.score}
                     matchLabel={`${p.score}% match for ${cur.phrase}`}
+                    why={whyLineForPick(p, cur.phrase)}
                     badge={p.healthBacked ? <HealthBackedBadge backed={p.healthBacked} /> : null}
                     onOpen={onOpenProduct}
                     action={onToggleProduct && (

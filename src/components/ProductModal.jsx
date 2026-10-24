@@ -5,6 +5,7 @@ import { ProductImageFallback } from './ProductTileImage';
 import ProductCard from './ProductCard';
 import { ALL_PRODUCTS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../data/products.js';
 import { exclusionLines } from '../utils/matchDisplay';
+import { whyLine } from '../utils/whyLine';
 import '../styles/match-ui.css';
 import { getAynaRating, getAynaRatingCount } from '../data/aynaReviews';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
@@ -486,7 +487,8 @@ export default function ProductModal({
     () => (settled ? getProfileMatchPercentForProduct(product, quizResults, healthProfile, matchOpts) : null),
     [product, quizResults, healthProfile, matchOpts, settled]
   );
-  const matchPercent = profileMatchPercent ?? explicitMatchPercent;
+  // No profile, no %: a stored number on the product is not a fit to her.
+  const matchPercent = quizResults ? (profileMatchPercent ?? explicitMatchPercent) : null;
   // The engine's per-need view feeds the one-line "what it matches" and the
   // "Why ayna matched it to you" section. Raw per-need numbers are never
   // shown in the header.
@@ -550,7 +552,7 @@ export default function ProductModal({
         .filter((x) => Number.isFinite(x.m) && x.m >= 50)
         .sort((x, y) => y.m - x.m)
         .slice(0, 4)
-        .map((x) => ({ ...x.p, _match: Math.round(x.m) }));
+        .map((x) => ({ ...x.p, _match: Math.round(x.m), _why: whyLine(x.p, getProductMatchDetailsForProduct(x.p, quizResults, healthProfile, matchOpts)) }));
     }
     if (more.length < 4) {
       const have = new Set([...used, ...more.map((p) => p.id)]);
@@ -642,7 +644,7 @@ export default function ProductModal({
           destination: buyUrl,
           variantId: choice.variant?.id,
           source: searchOrigin?.source,
-          searchQuery: searchOrigin?.searchQuery,
+          fromSearch: (searchOrigin?.source || '') === 'search_results',
         });
       }}
     >
@@ -794,6 +796,7 @@ export default function ProductModal({
       key={item.id}
       product={item}
       matchPercent={item._match || null}
+      why={item._why || ''}
       isSaved={Boolean(savedProducts && savedProducts[item.id])}
       inEcosystem={ownedIds.has(item.id)}
       onOpen={(p) => onOpenProduct && onOpenProduct(p)}
@@ -802,6 +805,7 @@ export default function ProductModal({
   );
 
   const matchFor = quizResults ? (p) => getProfileMatchPercentForProduct(p, quizResults, healthProfile, matchOpts) : null;
+  const detailsFor = quizResults ? (p) => getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts) : null;
   const compareThumb = (p) => {
     const src = galleryImages(p)[0];
     return src ? <img src={src} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : null;
@@ -933,7 +937,7 @@ export default function ProductModal({
             {/* How well it fits you sits right after Buy, in the same column. */}
             <div className="ayp-fit">
               {/* With a profile, her match fills in a moment after the hero (settled above). */}
-              {!settled && (quizResults || healthProfile) ? <div className="ay-skel__bar is-sub ayp-fit__skel" role="status" aria-label="Checking your match" /> : <ProductMatch glance={glance} matchPercent={matchPercent} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz ? onStartQuiz : null} hasProfile={Boolean(quizResults)} exclusions={matchExclusions} health={matchDetails?.healthData ? { section: matchDetails.healthData.section, tracker: ['tracker', 'wearable'].includes(String(product?.category || '').toLowerCase()) } : null} />}
+              {!settled && (quizResults || healthProfile) ? <div className="ay-skel__bar is-sub ayp-fit__skel" role="status" aria-label="Checking your match" /> : <ProductMatch glance={glance} matchPercent={matchPercent} why={whyLine(product, matchDetails)} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz ? onStartQuiz : null} hasProfile={Boolean(quizResults)} exclusions={matchExclusions} health={matchDetails?.healthData ? { section: matchDetails.healthData.section, tracker: ['tracker', 'wearable'].includes(String(product?.category || '').toLowerCase()) } : null} />}
               {!(matchPercent > 0) && !matchExclusions.length && isInEcosystem && (
                 <p className="ayp-fit__note">In your ecosystem</p>
               )}
@@ -966,7 +970,7 @@ export default function ProductModal({
         {/* Compare, then Ask or share side by side on desktop. */}
         {settled && <section className="ay-section ayp-compare" aria-label="Compare with similar">
           <PhoneFold id="pdp-compare" title="Compare with similar" line={suggestions.compare.length ? `Side by side with ${suggestions.compare.slice(0, 2).map((p) => p.name).join(' and ')}.` : 'Pick products to compare side by side.'}>
-            <ComparePanel product={product} others={suggestions.compare} onOpen={(p) => onOpenProduct && onOpenProduct(p)} matchFor={matchFor} renderThumb={compareThumb} />
+            <ComparePanel product={product} others={suggestions.compare} onOpen={(p) => onOpenProduct && onOpenProduct(p)} matchFor={matchFor} detailsFor={detailsFor} renderThumb={compareThumb} />
           </PhoneFold>
         </section>}
 

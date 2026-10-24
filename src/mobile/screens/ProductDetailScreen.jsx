@@ -11,6 +11,7 @@ import { isPartnerBrandItem, getPartnerDisclosureText } from '../../utils/partne
 import WhyMatchScreen from './WhyMatchScreen.jsx';
 import { exclusionLines } from '../../utils/matchDisplay.js';
 import MatchPill from '../../components/MatchPill.jsx';
+import { whyLine } from '../../utils/whyLine.js';
 import ProductEvidence from '../../components/pdp/ProductEvidence.jsx';
 import { useResearchState } from '../../data/researchLoader.js';
 import { attributeBadges } from '../../components/pdp/evidenceModel.js';
@@ -311,7 +312,8 @@ export default function ProductDetailScreen({
   // The same number as the Shop card, shelf and Swipe (utils/matchScore).
   const matchPercent = quizAnswers ? matchPercentFor(product, quizAnswers, matchOpts) : null;
   // One pill + one short line. Per-need numbers live in the Why view only.
-  const headLine = matchPercent != null ? matchLine(matchDetails) : '';
+  // The line beside the pill explains the % in plain words (engine reasons).
+  const headLine = matchPercent != null ? (whyLine(product, matchDetails) || matchLine(matchDetails)) : '';
   const exclusions = quizAnswers && matchDetails.matchStatus === 'excluded' ? exclusionLines(matchDetails) : [];
   const openWhyMatch = () => setShowWhyMatch(true);
 
@@ -363,6 +365,7 @@ export default function ProductDetailScreen({
   const shownImage = images[Math.min(photo, Math.max(images.length - 1, 0))] || image;
   const retailers = retailerLinks(product, buyUrl);
   const matchFor = quizAnswers ? (p) => matchPercentFor(p, quizAnswers, matchOpts) : null;
+  const detailsFor = quizAnswers ? (p) => getProductMatchDetailsForProduct(p, quizAnswers, null, matchOpts) : null;
 
   const handleShare = async () => {
     const origin = /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname)
@@ -539,6 +542,7 @@ export default function ProductDetailScreen({
               others={related.compare}
               onOpen={(p) => onOpenProduct(p)}
               matchFor={matchFor}
+              detailsFor={detailsFor}
               renderThumb={(p) => { const src = galleryImages(p)[0]; return src ? <img src={src} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : null; }}
             />
           )}
