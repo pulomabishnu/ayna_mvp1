@@ -1,5 +1,7 @@
-// "Get help now" signs from the evidence research (NHS, Mayo, CDC, FDA pages;
-// src/data/matching/redFlags.research.json). Shown beside products where the
+// "Get help now" signs from the evidence research, sourced to .gov pages
+// (MedlinePlus, CDC, FDA, NIMH; src/data/matching/redFlags.research.json).
+// Signs a .gov page does not state are listed per entry in
+// ayna_policy_signs (kept as conservative ayna policy). Shown beside products where the
 // sign is relevant: toxic shock for anything worn inside, pregnancy warning
 // signs for pregnancy products, postpartum warning signs for postpartum ones.
 // This never diagnoses; it lists signs and what to do, with the source.

@@ -94,7 +94,7 @@ export const CLINICAL_REVIEW_REQUIRED = [
   { id: 'care:severe_pattern', kind: 'copy+threshold', note: 'Severe pain on 2 or more days in the window: extra escalation signal, routine care when nothing today triggers.' },
   { id: 'red_flags', kind: 'copy+rule', note: 'Immediate red flags (RED_FLAG_RULES) and their urgent vs prompt levels, including the combinations mapped to rf.ectopic_rupture.' },
   { id: 'ask:pregnancy_triage', kind: 'copy+rule', note: 'Pregnancy pain triage questions and the mapping: red flag, severe, persistent or worsening to care; moderate to routine care plus gentle options; mild to gentle options.' },
-  { id: 'care:pregnancy_pain_today', kind: 'copy', note: 'Contact your midwife or maternity unit today.' },
+  { id: 'care:pregnancy_pain_today', kind: 'copy', note: 'Severe: contact your midwife or maternity unit now (CDC). Constant or worsening: today (ayna policy).' },
   { id: 'care:pregnancy_pain_mention', kind: 'copy', note: 'Moderate pain in pregnancy without red flags: tell your midwife.' },
   { id: 'care:pregnancy_bleeding', kind: 'copy', note: 'Any bleeding logged in pregnancy: contact midwife or clinician.' },
   { id: 'care:postmenopausal_bleeding', kind: 'copy', note: 'Any bleeding logged after menopause: get it checked.' },
@@ -258,25 +258,37 @@ export function redFlagItems(flags = [], ctx) {
   const out = [];
   const push = (x) => { if (x && !out.some((o) => o.id === x.id)) out.push(x); };
   // Shoulder tip pain, or dizziness/fainting, with pain or bleeding: possible
-  // internal bleeding (NHS ectopic pregnancy; ACOG per review). An ectopic
+  // ruptured ectopic pregnancy (MedlinePlus 000895: rupture symptoms include
+  // "Fainting or feeling faint", "Pain in the shoulder area" and "Severe,
+  // sharp, and sudden pain in the lower abdomen"; emergency help). An ectopic
   // pregnancy can happen before she knows she is pregnant, so this applies
   // unless she is past menopause.
   if ((f.has('shoulder_tip_pain') || f.has('dizzy_faint')) && (pain || bleeding || f.has('shoulder_tip_pain')) && !ctx.menopause) {
     push(rfItem('rf.ectopic_rupture', 'You told us about pain or bleeding with dizziness or shoulder tip pain.'));
   }
   if (ctx.postpartum && f.has('heavy_bleeding')) push(rfItem('rf.postpartum_hemorrhage', 'You told us about heavy bleeding after giving birth.'));
-  // MedlinePlus 003150: seek care right away for fever with pelvic pain, or increased or foul-smelling discharge.
+  // MedlinePlus 003150: contact your provider right away for "Fever and pelvic pain" or "Increased or foul-smelling vaginal discharge". Urgent level is ayna policy.
   if (f.has('fever_pelvic_pain')) push(safety({ id: 'care:fever_pelvic_pain', type: 'care', level: 'urgent', priority: PRIORITY.urgent, title: 'Get care right away', body: 'Fever with pelvic pain needs care right away.', reason: 'You told us you have a fever with pelvic pain.', actions: [{ id: 'get_care', label: 'Get care now' }], basis: { kind: 'red_flag', code: 'fever_pelvic_pain', sources: [SOURCES.medlinePeriodPain] } }));
   if (f.has('foul_discharge')) push(safety({ id: 'care:foul_discharge', type: 'care', level: 'urgent', priority: PRIORITY.urgent, title: 'Get care right away', body: 'More discharge than usual, or discharge that smells bad, needs care right away.', reason: 'You told us about unusual discharge.', actions: [{ id: 'get_care', label: 'Get care now' }], basis: { kind: 'red_flag', code: 'foul_discharge', sources: [SOURCES.medlinePeriodPain] } }));
   if (pregnant) {
     if (bleeding && pain) push(rfItem('rf.ectopic_suspected', 'You told us about pain and bleeding in pregnancy.'));
-    if (bleeding) push(safety({ id: 'care:pregnancy_bleeding_now', type: 'care', level: 'prompt', priority: PRIORITY.prompt, title: 'Contact your midwife or maternity unit now', body: 'Bleeding in pregnancy should always be checked.', reason: 'You told us about bleeding in pregnancy.', actions: [{ id: 'get_care', label: 'Find care' }], basis: { kind: 'red_flag', code: 'bleeding', sources: [SOURCES.nhsPregnancyBleeding] } }));
-    // ACOG Committee Opinion 804: leaking fluid or regular painful contractions: contact the obstetric team.
-    if (f.has('fluid_leak') || f.has('regular_contractions')) push(safety({ id: 'care:pregnancy_labour_signs', type: 'care', level: 'prompt', priority: PRIORITY.prompt, title: 'Contact your midwife or maternity unit now', body: 'Leaking fluid or regular, painful tightening in pregnancy should be checked now.', reason: f.has('fluid_leak') ? 'You told us about leaking fluid.' : 'You told us about regular, painful tightening.', actions: [{ id: 'get_care', label: 'Find care' }], basis: { kind: 'red_flag', code: f.has('fluid_leak') ? 'fluid_leak' : 'regular_contractions', sources: [SOURCES.acogExercisePregnancy] } }));
+    // MedlinePlus 003264: "You have any vaginal bleeding during pregnancy. Treat this as a potential emergency."
+    if (bleeding) push(safety({ id: 'care:pregnancy_bleeding_now', type: 'care', level: 'prompt', priority: PRIORITY.prompt, title: 'Contact your midwife or maternity unit now', body: 'Bleeding in pregnancy should always be checked.', reason: 'You told us about bleeding in pregnancy.', actions: [{ id: 'get_care', label: 'Find care' }], basis: { kind: 'red_flag', code: 'bleeding', sources: [SOURCES.medlinePregnancyBleeding, SOURCES.cdcMaternalWarningSigns] } }));
+    // CDC urgent maternal warning signs: "fluid leaking from the vagina" during pregnancy: seek care immediately;
+    // womenshealth.gov: stop exercising and contact your provider for fluid leaking or contractions.
+    if (f.has('fluid_leak') || f.has('regular_contractions')) push(safety({ id: 'care:pregnancy_labour_signs', type: 'care', level: 'prompt', priority: PRIORITY.prompt, title: 'Contact your midwife or maternity unit now', body: 'Leaking fluid or regular, painful tightening in pregnancy should be checked now.', reason: f.has('fluid_leak') ? 'You told us about leaking fluid.' : 'You told us about regular, painful tightening.', actions: [{ id: 'get_care', label: 'Find care' }], basis: { kind: 'red_flag', code: f.has('fluid_leak') ? 'fluid_leak' : 'regular_contractions', sources: [SOURCES.cdcMaternalWarningSigns, SOURCES.owhExercisePregnancy] } }));
   }
-  if (f.has('heavy_bleeding') && !out.length) push(safety({ id: 'care:heavy_bleeding', type: 'care', level: f.has('dizzy_faint') ? 'urgent' : 'prompt', priority: f.has('dizzy_faint') ? PRIORITY.urgent : PRIORITY.prompt, title: f.has('dizzy_faint') ? 'Get care right away' : 'Get heavy bleeding checked today', body: 'Very heavy bleeding, like changing pads or tampons every hour or two, should be checked.', reason: 'You told us about heavy bleeding.', actions: [{ id: 'get_care', label: 'Find care' }], basis: { kind: 'red_flag', code: 'heavy_bleeding', sources: [SOURCES.nhsHeavyPeriods] } }));
-  if (pain && !out.length) push(safety({ id: 'care:sudden_severe_pain', type: 'care', level: 'prompt', priority: PRIORITY.prompt, title: 'Get sudden or severe pain checked today', body: 'Sudden or severe pain should be checked today.', reason: 'You told us the pain is sudden or severe.', actions: [{ id: 'get_care', label: 'Find care' }, { id: 'urgent_signs', label: 'When to get help now' }], basis: { kind: 'red_flag', code: 'sudden_severe_pain', sources: [SOURCES.medlinePeriodPain] } }));
-  if (f.has('dizzy_faint') && !out.length) push(safety({ id: 'care:dizzy_faint', type: 'care', level: 'prompt', priority: PRIORITY.prompt, title: 'Get dizziness or fainting checked today', body: 'Feeling dizzy or faint with your symptoms should be checked today.', reason: 'You told us you feel dizzy or faint.', actions: [{ id: 'get_care', label: 'Find care' }], basis: { kind: 'red_flag', code: 'dizzy_faint', sources: [SOURCES.medlinePeriodPain] } }));
+  // CDC heavy menstrual bleeding: changing a pad or tampon "after less than 2 hours", or soaking one or more "every hour for
+  // several hours in a row", is heavy; see a provider. MedlinePlus 007496: contact your provider if bleeding causes
+  // "weakness or lightheadedness". Same-day and urgent-with-dizziness levels are ayna policy (conservative).
+  if (f.has('heavy_bleeding') && !out.length) push(safety({ id: 'care:heavy_bleeding', type: 'care', level: f.has('dizzy_faint') ? 'urgent' : 'prompt', priority: f.has('dizzy_faint') ? PRIORITY.urgent : PRIORITY.prompt, title: f.has('dizzy_faint') ? 'Get care right away' : 'Get heavy bleeding checked today', body: 'Very heavy bleeding, like changing pads or tampons every hour or two, should be checked.', reason: 'You told us about heavy bleeding.', actions: [{ id: 'get_care', label: 'Find care' }], basis: { kind: 'red_flag', code: 'heavy_bleeding', sources: [SOURCES.cdcHeavyBleeding, SOURCES.medlineVaginalBleeding] } }));
+  // MedlinePlus 003150: contact your provider right away for "Sudden or severe pain" (was "today": changed to match).
+  if (pain && !out.length) push(safety({ id: 'care:sudden_severe_pain', type: 'care', level: 'prompt', priority: PRIORITY.prompt, title: 'Get sudden or severe pain checked right away', body: 'Sudden or severe pain should be checked right away.', reason: 'You told us the pain is sudden or severe.', actions: [{ id: 'get_care', label: 'Find care' }, { id: 'urgent_signs', label: 'When to get help now' }], basis: { kind: 'red_flag', code: 'sudden_severe_pain', sources: pregnant ? [SOURCES.medlinePeriodPain, SOURCES.cdcMaternalWarningSigns] : [SOURCES.medlinePeriodPain] } }));
+  // Dizziness or fainting: CDC lists it as an urgent maternal warning sign ("Seek medical care immediately") during
+  // pregnancy and the year after, so then it is "now" (was "today"). Otherwise "today" is ayna policy; MedlinePlus
+  // 007496 says contact your provider for bleeding that causes weakness or lightheadedness.
+  const dizzyNow = pregnant || ctx.postpartum;
+  if (f.has('dizzy_faint') && !out.length) push(safety({ id: 'care:dizzy_faint', type: 'care', level: 'prompt', priority: PRIORITY.prompt, title: dizzyNow ? 'Get dizziness or fainting checked now' : 'Get dizziness or fainting checked today', body: dizzyNow ? 'Feeling dizzy or faint during or after pregnancy should be checked now.' : 'Feeling dizzy or faint with your symptoms should be checked today.', reason: 'You told us you feel dizzy or faint.', actions: [{ id: 'get_care', label: 'Find care' }], basis: { kind: 'red_flag', code: 'dizzy_faint', sources: dizzyNow ? [SOURCES.cdcMaternalWarningSigns] : [SOURCES.medlineVaginalBleeding] } }));
   return out;
 }
 
@@ -322,14 +334,15 @@ function careCandidates({ state, ctx, logs, today, tries, window }) {
   const pregnant = isPregnant(ctx);
 
   if (pregnant) {
-    // Logged bleeding in pregnancy: always checked (nidirect, adapted from NHS).
+    // Logged bleeding in pregnancy: always checked. MedlinePlus 003264: light early spotting is "most often nothing to be
+    // concerned about", but "Treat this as a potential emergency" and contact your provider right away.
     if (bleeding.length) out.push(care({
       id: 'care:pregnancy_bleeding', type: 'care', level: 'prompt', priority: PRIORITY.prompt,
       title: 'Contact your midwife or clinician about bleeding',
       body: 'You logged bleeding while pregnant. Light bleeding can be common, but it should always be checked.',
       reason: 'You logged bleeding and said you are pregnant.',
       actions: [{ id: 'get_care', label: 'Find care' }, { id: 'urgent_signs', label: 'When to get help now' }],
-      basis: { kind: 'log', days: bleeding.map((l) => l.day), sources: [SOURCES.nhsPregnancyBleeding] },
+      basis: { kind: 'log', days: bleeding.map((l) => l.day), sources: [SOURCES.medlinePregnancyBleeding] },
     }));
     const painRecent = recent.filter((l) => l.pain >= 1 && daysBetweenDays(l.day, today) <= 2);
     if (painRecent.length) {
@@ -341,26 +354,32 @@ function careCandidates({ state, ctx, logs, today, tries, window }) {
           body: 'Pain in pregnancy is not treated like period cramps. Your answers tell us whether to point you to care.',
           reason: 'You logged pain and said you are pregnant.',
           actions: [{ id: 'open_triage', label: 'Answer', questions: PREGNANCY_TRIAGE_QUESTIONS }],
-          basis: { kind: 'triage', days: painRecent.map((l) => l.day), sources: [SOURCES.nhsPregnancyBleeding, SOURCES.acogExercisePregnancy] },
+          // Questions map to CDC urgent maternal warning signs (bleeding, fluid leaking, dizziness, severe belly pain
+          // that doesn't go away) and womenshealth.gov stop signs (contractions).
+          basis: { kind: 'triage', days: painRecent.map((l) => l.day), sources: [SOURCES.cdcMaternalWarningSigns, SOURCES.owhExercisePregnancy] },
         }));
       } else if (!(tri.flags || []).length) {
         if (tri.severity === 'severe' || tri.persistent || tri.worsening) {
+          // CDC: "Severe belly pain that doesn't go away": seek medical care immediately, so severe pain is "now"
+          // (was "today"). Constant or worsening pain that is not severe: "today" is ayna policy.
+          const severeNow = tri.severity === 'severe';
           out.push(care({
             id: 'care:pregnancy_pain_today', type: 'care', level: 'prompt', priority: PRIORITY.prompt,
-            title: 'Contact your midwife or maternity unit today',
-            body: 'Pain in pregnancy that is severe, constant or getting worse should be checked today.',
+            title: severeNow ? 'Contact your midwife or maternity unit now' : 'Contact your midwife or maternity unit today',
+            body: severeNow ? 'Severe pain in pregnancy should be checked now.' : 'Pain in pregnancy that is constant or getting worse should be checked today.',
             reason: tri.severity === 'severe' ? 'You said the pain is severe.' : 'You said the pain is constant or getting worse.',
             actions: [{ id: 'get_care', label: 'Find care' }, { id: 'urgent_signs', label: 'When to get help now' }],
-            basis: { kind: 'triage', triage: tri, sources: [SOURCES.nhsPregnancyBleeding] },
+            basis: { kind: 'triage', triage: tri, sources: [SOURCES.cdcMaternalWarningSigns] },
           }));
         } else if (tri.severity === 'moderate') {
+          // ayna policy (no .gov page gives a rule for moderate pain): mention it, with the escalation signs.
           out.push(care({
             id: 'care:pregnancy_pain_mention', type: 'care', level: 'routine', priority: PRIORITY.routine,
             title: 'Tell your midwife about this pain',
             body: 'Mention it at your next contact, or sooner if it gets stronger, comes with bleeding or leaking fluid, or you feel faint.',
             reason: 'You said the pain is moderate.',
             actions: [{ id: 'get_care', label: 'Find care' }, { id: 'urgent_signs', label: 'When to get help now' }],
-            basis: { kind: 'triage', triage: tri, sources: [SOURCES.nhsPregnancyBleeding] },
+            basis: { kind: 'triage', triage: tri, sources: [SOURCES.cdcMaternalWarningSigns] },
           }));
         }
       }
@@ -374,7 +393,10 @@ function careCandidates({ state, ctx, logs, today, tries, window }) {
         body: 'Pain that is severe, new, sudden, worse than usual, stops you doing normal things or is not easing with your usual self-care should be checked today. If painkillers have not helped, contact your doctor or an urgent care clinic today.',
         reason: `You told us ${listWords(triggers.map((x) => TRIGGER_WORDS[x]))}.`,
         actions: [{ id: 'get_care', label: 'Find care' }, { id: 'urgent_signs', label: 'When to get help now' }, { id: 'care_summary', label: 'Make a summary for my visit' }],
-        basis: { kind: 'pain_today', triggers, painToday, signals: severeDays.length >= 2 ? ['severe_repeat'] : [], severeDays, sources: [SOURCES.nhsPeriodPain, SOURCES.medlinePeriodPain] },
+        // MedlinePlus 003150 (sudden or severe pain: right away; treatments not relieving pain: contact provider) and
+        // womenshealth.gov period problems (OTC pain medicine not helping, or pain that interferes with work or school:
+        // talk to a doctor or nurse). "New" and "worse than usual" as same-day triggers are ayna policy.
+        basis: { kind: 'pain_today', triggers, painToday, signals: severeDays.length >= 2 ? ['severe_repeat'] : [], severeDays, sources: [SOURCES.medlinePeriodPain, SOURCES.owhPeriodProblems] },
         signature: triggers.join(','),
       }));
     } else if (severeDays.length >= 2) {
@@ -384,20 +406,22 @@ function careCandidates({ state, ctx, logs, today, tries, window }) {
         body: 'Severe period pain, or periods that become more painful, are worth raising with a doctor.',
         reason: `You logged severe pain on ${severeDays.length} days recently.`,
         actions: [{ id: 'get_care', label: 'Find care' }, { id: 'care_summary', label: 'Make a summary for my visit' }],
-        basis: { kind: 'pattern', signal: 'severe_repeat', days: severeDays, sources: [SOURCES.nhsPeriodPain] },
+        // ayna policy: no .gov page we read says "severe pain on 2+ days"; womenshealth.gov notes some have severe cramps.
+        basis: { kind: 'pattern', signal: 'severe_repeat', days: severeDays, sources: [SOURCES.owhPeriodProblems] },
         signature: `severe:${severeDays.length}`,
       }));
     }
   }
 
-  // Bleeding after menopause: get it checked (NHS).
+  // Bleeding after menopause: get it checked. MedlinePlus 007496: contact your provider if "You have bleeding or spotting
+  // after reaching menopause".
   if (ctx.menopause && bleeding.length) out.push(care({
     id: 'care:postmenopausal_bleeding', type: 'care', level: 'prompt', priority: PRIORITY.prompt,
     title: 'Get bleeding after menopause checked',
-    body: 'The NHS says any bleeding after menopause should be checked by a doctor, even if it is light or happened once.',
+    body: 'MedlinePlus says to contact your provider about any bleeding or spotting after menopause.',
     reason: 'You logged bleeding and said you are in menopause or post-menopause.',
     actions: [{ id: 'get_care', label: 'Find care' }],
-    basis: { kind: 'log', days: bleeding.map((l) => l.day), sources: [SOURCES.nhsPostmenopausalBleeding] },
+    basis: { kind: 'log', days: bleeding.map((l) => l.day), sources: [SOURCES.medlineVaginalBleeding] },
   }));
   if (ctx.careFirst) out.push(care({
     id: 'care:intake_urgent', type: 'care', level: 'prompt', priority: PRIORITY.prompt - 20,
@@ -416,7 +440,8 @@ function careCandidates({ state, ctx, logs, today, tries, window }) {
       body: 'A doctor can help when ordinary painkillers do not work well enough.',
       reason: `You said ${lowerFirst(cls.label)} made no difference.`,
       actions: [{ id: 'get_care', label: 'Find care' }],
-      basis: { kind: 'outcome', tryId: t.id, drugClass: cls.drugClass, sources: [SOURCES.nhsPeriodPain] },
+      // womenshealth.gov period problems: if OTC pain medicine such as ibuprofen or naproxen doesn't help, talk to a doctor or nurse.
+      basis: { kind: 'outcome', tryId: t.id, drugClass: cls.drugClass, sources: [SOURCES.owhPeriodProblems, SOURCES.medlinePeriodPain] },
     }));
     if (t.outcome === 'side_effect' || t.outcome === 'worse') out.push(care({
       id: `care:reaction:${t.id}`, type: 'care', level: 'routine', priority: PRIORITY.routine,

@@ -33,6 +33,13 @@ const ids = (d) => d.items.map((i) => i.id);
 const history = (days = 30, over = {}) => Array.from({ length: days }, (_, i) => fullLog(addDays(TODAY, -(i + 1)), over));
 
 describe('interventions', () => {
+  it('every class cites only .gov sources (founder rule, Oct 24); tracking asks for three cycles', () => {
+    for (const c of Object.values(INTERVENTION_CLASSES)) {
+      for (const src of [...c.sources, ...(c.sourcesPregnancy || [])]) expect(new URL(src.url).hostname).toMatch(/\.gov$/);
+    }
+    expect(INTERVENTION_CLASSES.tracking.summary).toMatch(/three cycles/);
+    expect(INTERVENTION_CLASSES.tracking.followUpDays).toBe(84);
+  });
   it('every class has a label, needs, sources, a follow-up horizon and gates; medicine classes name their drug class', () => {
     for (const id of CLASS_IDS) {
       const c = INTERVENTION_CLASSES[id];
@@ -287,9 +294,9 @@ describe('rule 3: immediate red-flag overrides', () => {
     [['fever_pelvic_pain'], 'care:fever_pelvic_pain', 'urgent', /medlineplus/],
     [['foul_discharge'], 'care:foul_discharge', 'urgent', /medlineplus/],
     [['sudden_severe_pain'], 'care:sudden_severe_pain', 'prompt', /medlineplus/],
-    [['heavy_bleeding'], 'care:heavy_bleeding', 'prompt', /nidirect/],
-    [['heavy_bleeding', 'dizzy_faint'], 'care:rf.ectopic_rupture', 'urgent', /nhs\.uk/],
-    [['sudden_severe_pain', 'shoulder_tip_pain'], 'care:rf.ectopic_rupture', 'urgent', /nhs\.uk/],
+    [['heavy_bleeding'], 'care:heavy_bleeding', 'prompt', /cdc\.gov/],
+    [['heavy_bleeding', 'dizzy_faint'], 'care:rf.ectopic_rupture', 'urgent', /medlineplus\.gov\/ency\/article\/000895/],
+    [['sudden_severe_pain', 'shoulder_tip_pain'], 'care:rf.ectopic_rupture', 'urgent', /medlineplus\.gov\/ency\/article\/000895/],
     [['dizzy_faint'], 'care:dizzy_faint', 'prompt', /medlineplus/],
   ])('%j -> %s', (flags, id, level, src) => {
     const d = decide({ today: TODAY, logs: [fullLog(TODAY)], patterns: [sleepPattern], profile: profile(CLEAR), triage: tri(flags) });
@@ -309,6 +316,26 @@ describe('rule 3: immediate red-flag overrides', () => {
   it('postpartum heavy bleeding maps to the existing postpartum hemorrhage red flag', () => {
     const p = profile({ ...CLEAR, lifeStageSelections: ['I am postpartum'], lifeStage: 'I am postpartum', postpartumTiming: 'Less than 6 weeks ago', breastfeedingStatus: 'No' });
     expect(decide({ today: TODAY, profile: p, triage: tri(['heavy_bleeding']) }).items[0]).toMatchObject({ id: 'care:rf.postpartum_hemorrhage', level: 'urgent' });
+  });
+  it('.gov checks (Oct 24): sudden or severe pain is "right away"; dizziness in pregnancy is "now"', () => {
+    const d = decide({ today: TODAY, logs: [fullLog(TODAY)], profile: profile(CLEAR), triage: tri(['sudden_severe_pain']) });
+    expect(d.items.find((i) => i.id === 'care:sudden_severe_pain').title).toMatch(/right away/);
+    const dz = decide({ today: TODAY, profile: profile(PREGNANT()), triage: tri(['dizzy_faint']) }).items.find((i) => i.id === 'care:dizzy_faint');
+    expect(dz.title).toMatch(/now$/);
+    expect(JSON.stringify(dz.basis.sources)).toMatch(/cdc\.gov\/hearher/);
+    const dzc = decide({ today: TODAY, profile: profile(CLEAR), triage: tri(['dizzy_faint']) }).items.find((i) => i.id === 'care:dizzy_faint');
+    expect(dzc.title).toMatch(/today$/);
+  });
+  it('toxic shock and postpartum psychosis are "go to the ER" (FDA, MedlinePlus, NIMH), not "call today"', () => {
+    for (const id of ['rf.toxic_shock', 'rf.postpartum_psychosis']) {
+      expect(decide({ today: TODAY, redFlags: [id] }).items[0]).toMatchObject({ id: `care:${id}`, level: 'urgent' });
+    }
+  });
+  it('every red flag cites a .gov page', () => {
+    const d = decide({ today: TODAY, redFlags: ['rf.ectopic_rupture', 'rf.ectopic_suspected', 'rf.postpartum_hemorrhage', 'rf.preeclampsia', 'rf.toxic_shock_severe', 'rf.hyperemesis'] });
+    for (const it of d.items.filter((i) => i.basis?.kind === 'red_flag')) {
+      for (const src of it.basis.sources) expect(new URL(src.url).hostname).toMatch(/\.gov$/);
+    }
   });
   it('reported red-flag ids still work, and are never dismissed', () => {
     const base = { today: TODAY, redFlags: ['rf.toxic_shock_severe'] };
@@ -332,10 +359,11 @@ describe('rule 4: pregnancy + pain', () => {
     expect(activeNeeds({ profile: p, logs: painLogs, today: TODAY })).toHaveProperty('pregnancy_pain');
   });
 
-  it('severe, persistent or worsening -> care today', () => {
+  it('severe, persistent or worsening -> care today; severe -> now (CDC)', () => {
     for (const triage of [{ severity: 'severe' }, { severity: 'mild', persistent: true }, { severity: 'mild', worsening: true }]) {
       const d = decide({ today: TODAY, logs: painLogs, profile: p, triage: { day: TODAY, ...triage } });
       expect(d.items[0]).toMatchObject({ id: 'care:pregnancy_pain_today', type: 'care' });
+      expect(d.items[0].title).toMatch(triage.severity === 'severe' ? /now$/ : /today$/);
     }
   });
 
@@ -344,7 +372,7 @@ describe('rule 4: pregnancy + pain', () => {
     expect(d.output).toBe('show_options');
     const move = d.items.find((i) => i.classId === 'movement');
     expect(move.body).toMatch(/Stop if it makes the pain worse/);
-    expect(JSON.stringify(move.basis.sources)).toMatch(/Committee Opinion 804/);
+    expect(JSON.stringify(move.basis.sources)).toMatch(/womenshealth\.gov/);
     const removed = Object.fromEntries(d.debug.removedBySafety.map((r) => [r.classId, r.reasons.map((x) => x.code)]));
     expect(removed.nsaid_pain_relief).toEqual(expect.arrayContaining(['pregnancy_20_weeks', 'pregnancy_pain_clinician']));
     expect(removed.acetaminophen_pain_relief).toContain('pregnancy_pain_clinician');

@@ -9,7 +9,15 @@
    "Shoulder tip pain (can mean internal bleeding)"
   ],
   "action": "call 911",
-  "source_url": "https://www.nhs.uk/conditions/ectopic-pregnancy/symptoms/"
+  "source_url": "https://medlineplus.gov/ency/article/000895.htm",
+  "source_label": "MedlinePlus: Ectopic pregnancy",
+  "also_source_urls": [
+   "https://www.cdc.gov/hearher/maternal-warning-signs/index.html"
+  ],
+  "ayna_policy_signs": [
+   "Feeling sick, with possible or known early pregnancy"
+  ],
+  "checked": "2026-10-24"
  },
  {
   "id": "rf.ectopic_suspected",
@@ -20,7 +28,14 @@
    "Pain when pooping or peeing, or diarrhoea, when you might be pregnant"
   ],
   "action": "call your clinician today",
-  "source_url": "https://www.nhs.uk/conditions/ectopic-pregnancy/symptoms/"
+  "source_url": "https://medlineplus.gov/ency/article/000895.htm",
+  "source_label": "MedlinePlus: Ectopic pregnancy",
+  "ayna_policy_signs": [
+   "the weeks 4 to 12 timing",
+   "the bleeding details (watery, dark brown, on and off)",
+   "Pain when pooping or peeing, or diarrhoea, when you might be pregnant"
+  ],
+  "checked": "2026-10-24"
  },
  {
   "id": "rf.postpartum_hemorrhage",
@@ -33,7 +48,17 @@
    "Pain or swelling in the vagina or perineum"
   ],
   "action": "go to ER",
-  "source_url": "https://my.clevelandclinic.org/health/diseases/22228-postpartum-hemorrhage"
+  "source_url": "https://www.cdc.gov/hearher/maternal-warning-signs/index.html",
+  "source_label": "CDC: Urgent maternal warning signs",
+  "also_source_urls": [
+   "https://medlineplus.gov/ency/patientinstructions/000628.htm"
+  ],
+  "ayna_policy_signs": [
+   "the \"first 24 hours up to 12 weeks\" window (CDC says warning signs apply in the year after delivery)",
+   "pale or clammy skin",
+   "swelling in the vagina or perineum"
+  ],
+  "checked": "2026-10-24"
  },
  {
   "id": "rf.preeclampsia",
@@ -46,7 +71,13 @@
    "Sudden swelling of the face or hands"
   ],
   "action": "go to ER",
-  "source_url": "https://www.mayoclinic.org/diseases-conditions/preeclampsia/symptoms-causes/syc-20355745"
+  "source_url": "https://medlineplus.gov/ency/article/000898.htm",
+  "source_label": "MedlinePlus: Preeclampsia",
+  "also_source_urls": [
+   "https://www.cdc.gov/hearher/maternal-warning-signs/index.html",
+   "https://www.nichd.nih.gov/health/topics/factsheets/preeclampsia"
+  ],
+  "checked": "2026-10-24"
  },
  {
   "id": "rf.postpartum_preeclampsia",
@@ -61,7 +92,13 @@
    "Blood pressure 140/90 or higher"
   ],
   "action": "go to ER",
-  "source_url": "https://www.mayoclinic.org/diseases-conditions/postpartum-preeclampsia/symptoms-causes/syc-20376646"
+  "source_url": "https://medlineplus.gov/ency/article/000898.htm",
+  "source_label": "MedlinePlus: Preeclampsia",
+  "also_source_urls": [
+   "https://www.nichd.nih.gov/health/topics/factsheets/preeclampsia",
+   "https://www.cdc.gov/hearher/maternal-warning-signs/index.html"
+  ],
+  "checked": "2026-10-24"
  },
  {
   "id": "rf.postpartum_psychosis_danger",
@@ -71,7 +108,12 @@
    "Hallucinations or delusions with risk of imminent harm"
   ],
   "action": "call 911",
-  "source_url": "https://www.nhs.uk/mental-health/conditions/post-partum-psychosis/"
+  "source_url": "https://www.nimh.nih.gov/health/publications/perinatal-depression",
+  "source_label": "NIMH: Perinatal depression (postpartum psychosis)",
+  "also_source_urls": [
+   "https://www.cdc.gov/hearher/maternal-warning-signs/index.html"
+  ],
+  "checked": "2026-10-24"
  },
  {
   "id": "rf.postpartum_psychosis",
@@ -83,8 +125,16 @@
    "Rapidly changing moods or severe low mood",
    "Significant confusion"
   ],
-  "action": "call your clinician today",
-  "source_url": "https://www.nhs.uk/mental-health/conditions/post-partum-psychosis/"
+  "action": "go to ER",
+  "source_url": "https://www.nimh.nih.gov/health/publications/perinatal-depression",
+  "source_label": "NIMH: Perinatal depression (postpartum psychosis)",
+  "action_was": "call your clinician today",
+  "ayna_policy_signs": [
+   "the \"usually within 2 weeks of birth\" timing",
+   "racing thoughts, restlessness",
+   "rapidly changing moods or severe low mood"
+  ],
+  "checked": "2026-10-24"
  },
  {
   "id": "rf.toxic_shock_severe",
@@ -97,7 +147,17 @@
    "Large areas of peeling skin"
   ],
   "action": "call 911",
-  "source_url": "https://www.nhs.uk/conditions/toxic-shock-syndrome/"
+  "source_url": "https://medlineplus.gov/ency/article/000653.htm",
+  "source_label": "MedlinePlus: Toxic shock syndrome",
+  "also_source_urls": [
+   "https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely"
+  ],
+  "ayna_policy_signs": [
+   "Blue, grey, pale or blotchy skin, lips or tongue",
+   "Rash that does not fade under a glass",
+   "Difficulty breathing or very fast breathing"
+  ],
+  "checked": "2026-10-24"
  },
  {
   "id": "rf.toxic_shock",
@@ -109,8 +169,17 @@
    "Bright red palms, soles, tongue or eye whites",
    "Feeling dizzy or confused"
   ],
-  "action": "call your clinician today",
-  "source_url": "https://www.nhs.uk/conditions/toxic-shock-syndrome/"
+  "action": "go to ER",
+  "source_url": "https://medlineplus.gov/ency/article/000653.htm",
+  "source_label": "MedlinePlus: Toxic shock syndrome",
+  "also_source_urls": [
+   "https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely"
+  ],
+  "action_was": "call your clinician today",
+  "ayna_policy_signs": [
+   "Sandpaper-like rash (MedlinePlus: a widespread red rash that looks like a sunburn)"
+  ],
+  "checked": "2026-10-24"
  },
  {
   "id": "rf.hyperemesis_dehydration",
@@ -121,7 +190,16 @@
    "Light-headedness, rapid heartbeat"
   ],
   "action": "go to ER",
-  "source_url": "https://guysandstthomas.nhs.uk/health-information/hyperemesis-gravidarum"
+  "source_url": "https://medlineplus.gov/ency/article/001499.htm",
+  "source_label": "MedlinePlus: Hyperemesis gravidarum",
+  "also_source_urls": [
+   "https://www.cdc.gov/hearher/maternal-warning-signs/index.html"
+  ],
+  "ayna_policy_signs": [
+   "the 24-hour vomiting and 8-hour no-drinking thresholds (MedlinePlus says contact your provider if unable to keep fluids down for over 12 hours; 8 hours is stricter)",
+   "rapid heartbeat (MedlinePlus: \"Your pulse may be high\" on exam)"
+  ],
+  "checked": "2026-10-24"
  },
  {
   "id": "rf.hyperemesis",
@@ -132,6 +210,8 @@
    "Vomiting stopping you eating or drinking normally"
   ],
   "action": "call your clinician today",
-  "source_url": "https://guysandstthomas.nhs.uk/health-information/hyperemesis-gravidarum"
+  "source_url": "https://medlineplus.gov/ency/article/001499.htm",
+  "source_label": "MedlinePlus: Hyperemesis gravidarum",
+  "checked": "2026-10-24"
  }
 ]

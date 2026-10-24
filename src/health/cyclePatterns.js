@@ -12,6 +12,11 @@
  * Rules (master prompt sections 56, 57, 148):
  *  - At least MIN_CYCLES cycles with data for that metric and window, and the
  *    pattern must show in at least MIN_CYCLES of them and in most of them.
+ *    MIN_CYCLES = 3 matches womenshealth.gov PMS ("at least three menstrual
+ *    cycles in a row", https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome)
+ *    and MedlinePlus PMS ("Keep a daily diary or log for at least 3 months",
+ *    https://medlineplus.gov/ency/article/001505.htm). MIN_SHARE and
+ *    MAX_CYCLES are ayna policy, not clinical thresholds.
  *  - Every pattern says how many cycles it is based on.
  *  - Observations only: never a cause, never a diagnosis.
  *  - Missing days are missing, not "fine". A cycle only counts when both the
