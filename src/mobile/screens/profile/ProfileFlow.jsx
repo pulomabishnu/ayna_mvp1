@@ -893,6 +893,10 @@ function sortByRelevance(startups, quizAnswers) {
 // field that doesn't exist, there's no dedicated "clinical" flag, so this is
 // the closest honest proxy: some form of clinical/medical validation.
 const CLINICAL_BADGES = new Set(['Clinically Backed', 'Doctor-Founded', 'FDA-Cleared']);
+// Airtable tags are what the startup told us, not something ayna verified, so
+// a claim of clinical backing is shown as the brand's claim.
+const BADGE_LABELS = { 'Clinically Backed': 'Says it has clinical research', 'Doctor-Founded': 'Doctor-founded', 'FDA-Cleared': 'Says FDA-cleared' };
+const badgeLabel = (t) => BADGE_LABELS[t] || t;
 
 function matchesFilter(startup, filter) {
   if (filter === 'women') return startup.womenFounded === true;
@@ -938,7 +942,7 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
         <div className="ay-startups-filters" role="group" aria-label="Filter startups">
           {['all', 'women', 'preseed', 'clinical'].map((key) => (
             <button type="button" key={key} aria-pressed={filter === key} onClick={() => setFilter(key)}>
-              {key === 'all' ? 'All' : key === 'women' ? 'Women-founded' : key === 'preseed' ? 'Pre-seed' : 'Clinical'}
+              {key === 'all' ? 'All' : key === 'women' ? 'Women-founded' : key === 'preseed' ? 'Pre-seed' : 'Clinical claims'}
             </button>
           ))}
         </div>
@@ -981,7 +985,7 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
                   {s.badges?.length > 0 && (
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
                       {s.badges.map((t) => (
-                        <div key={t} style={{ background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', padding: '5px 10px', borderRadius: 99 }}>{t}</div>
+                        <div key={t} style={{ background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', padding: '5px 10px', borderRadius: 99 }}>{badgeLabel(t)}</div>
                       ))}
                     </div>
                   )}
@@ -1004,7 +1008,7 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
                   <div style={{ fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.45 }}>{s.description || s.tagline}</div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
                     {(s.badges || []).slice(0, 2).map((t) => (
-                      <div key={t} style={{ background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', padding: '4px 9px', borderRadius: 99 }}>{t}</div>
+                      <div key={t} style={{ background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', padding: '4px 9px', borderRadius: 99 }}>{badgeLabel(t)}</div>
                     ))}
                     {s.stage && <div style={{ fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>{s.stage}</div>}
                   </div>
