@@ -2,6 +2,7 @@ import TopicCover from '../../components/v3/TopicCover.jsx';
 import { hasTeamCover } from '../../data/readCovers.js';
 import { Children, isValidElement, useEffect, useRef, useState } from 'react';
 import LegalFooter from '../components/LegalFooter.jsx';
+import ReadVideo from '../../components/library/ReadVideo.jsx';
 import './article-detail.css';
 
 function extractText(node) {
@@ -112,6 +113,8 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
           </div>
         )}
 
+
+        <ReadVideo video={article.video} />
 
         <div className="ay-article-body" style={{ fontWeight: 400, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', lineHeight: 1.45, color: 'var(--ayna-text)' }}>{mainBody}</div>
 
