@@ -6,6 +6,10 @@ import { apiUrl } from '../../utils/apiUrl.js';
  * build anything: email plus an optional "what would you want in it".
  * Calm states: idle, saving, saved, couldn't save (input kept).
  */
+// Hidden for now (founder, Oct 24): the card stays in code and the API stays
+// live; flip to true to show it on You (website and app) again.
+export const SHOW_BOX_WAITLIST = false;
+
 export default function BoxWaitlist({ variant = 'web', email: knownEmail = '' }) {
   const app = variant === 'app';
   const [email, setEmail] = useState(knownEmail || '');
