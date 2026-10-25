@@ -18,6 +18,12 @@ describe('oauth new-account guard', () => {
     markOAuthSource('save');
     expect(takeOAuthSource()).toBe('save');
   });
+  it('a new account made from the free product page goes back to the campaign, not the quiz', () => {
+    markOAuthSource('free-product');
+    const source = takeOAuthSource();
+    expect(source).toBe('free-product');
+    expect(shouldOfferEcosystemStart({ user: fresh, source, now: NOW })).toBe(false);
+  });
   it('ignores a stale stash', () => {
     markOAuthSource('signin');
     expect(takeOAuthSource(Date.now() + 31 * 60 * 1000)).toBeNull();

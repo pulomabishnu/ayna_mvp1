@@ -266,3 +266,22 @@ export function feedbackAsText(group) {
 export function vintedIdsFromText(text) {
   return [...new Set(String(text || '').match(/\d{6,15}/g) || [])];
 }
+
+/**
+ * New people who start the quiz from /free-product come back to it after they
+ * save their matches (the account is made in that save step). Tab-scoped and
+ * short-lived, so an abandoned quiz never redirects someone days later.
+ */
+const RETURN_KEY = 'ayna_return_to_free_product';
+const RETURN_MAX_AGE_MS = 2 * 60 * 60 * 1000;
+export function markReturnToFreeProduct(storage = globalThis.sessionStorage) {
+  try { storage?.setItem(RETURN_KEY, String(Date.now())); } catch { /* storage blocked */ }
+}
+/** Read once and clear. */
+export function takeReturnToFreeProduct(storage = globalThis.sessionStorage, now = Date.now()) {
+  try {
+    const at = Number(storage?.getItem(RETURN_KEY));
+    storage?.removeItem(RETURN_KEY);
+    return Number.isFinite(at) && at > 0 && now - at < RETURN_MAX_AGE_MS;
+  } catch { return false; }
+}
