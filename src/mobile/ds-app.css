@@ -235,7 +235,7 @@
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) :is(.ax-row, .ax-grid, .ay-browse-grid, .ayna-shelf-row) { padding-bottom: 10px; padding-right: 8px; }
 
 /* =====================================================================
-   HOME DIRECTIONS (preview, ?homelook=a|b|c). Same structure, content and
+   HOME DIRECTIONS (preview, ?homestyle=a|b|c). Same structure, content and
    one-screen fit; three dressings. Shared: the widgets slot, the art layer,
    and micro-interactions that answer taps (none with reduced motion).
    ===================================================================== */

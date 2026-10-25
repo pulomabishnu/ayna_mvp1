@@ -7,13 +7,21 @@ import { DateStamp, Mark } from '../../components/personality/DS.jsx';
  *   a  Sticker board    filled colour blocks, die-cut product stickers, a tilted stamp, washi tape
  *   b  Data as graphics her cycle as a drawn ring, sleep nights as bars, the Rundown as a scalloped espresso block
  *   c  Folder/scrapbook layered folder tabs, a taped polaroid, a hand-drawn underline and arrow
- * Preview only for now: `?homelook=a|b|c` in development. Production keeps the current Home.
+ * Preview: `?homestyle=a|b|c` (any build, kept for the tab). Without it, Home is the current one.
  */
 export function readHomeLook() {
-  if (!import.meta.env.DEV || typeof window === 'undefined') return '';
+  if (typeof window === 'undefined') return '';
   try {
-    const q = new URLSearchParams(window.location.search).get('homelook');
-    return ['a', 'b', 'c'].includes(q) ? q : '';
+    // `?homestyle=a|b|c` picks a direction (live previews too); `?homestyle=` or `off` goes back to the current Home.
+    // The pick is kept for this tab only, so moving between screens doesn't lose it.
+    const q = new URLSearchParams(window.location.search).get('homestyle');
+    if (q !== null) {
+      const v = ['a', 'b', 'c'].includes(q) ? q : '';
+      if (v) sessionStorage.setItem('ayna_homestyle', v); else sessionStorage.removeItem('ayna_homestyle');
+      return v;
+    }
+    const kept = sessionStorage.getItem('ayna_homestyle');
+    return ['a', 'b', 'c'].includes(kept) ? kept : '';
   } catch { return ''; }
 }
 
