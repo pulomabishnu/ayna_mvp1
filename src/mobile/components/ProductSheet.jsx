@@ -38,7 +38,7 @@ const reduceMotion = () => { try { return window.matchMedia('(prefers-reduced-mo
  */
 export default function ProductSheet({ product: baseProduct, onClose, matchState = null, saved = false, onToggleSaved, inRoutine = false, onAddToRoutine, renderFull = null,
   // The match engine's details for her (null signed out): the one match line and Is it for you.
-  details = null, onShowWhy = null, onFixSafety = null,
+  details = null, onShowWhy = null, onFixSafety = null, pregnancyFirst = false,
   // Ask about this product: a starter or her question goes to the chat, anchored to the product.
   onAsk = null }) {
   const { product, loaded } = useResearchState(baseProduct);
@@ -98,7 +98,7 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
   const price = formatPrice(product);
   const brand = product.brand && String(product.brand).trim().toLowerCase() !== String(product.name || '').trim().toLowerCase() ? product.brand : '';
   const glance = buildGlance(product, {});
-  const topWarning = topWarningFor(product, glance);
+  const topWarning = topWarningFor(product, glance, undefined, { pregnancyFirst });
   const buy = buyModel(product, { brand, name });
   const priceNotes = heroNotes(heroPriceView(product, { price: priceParts(product), perUnit: perUnitLabel(product), glance, brand }).notes).keep;
   const still = reduceMotion();

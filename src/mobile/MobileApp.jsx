@@ -63,6 +63,7 @@ import { APP_TABS, APP_TABS_CHAT_FIRST } from '../components/nav/mainTabs.js';
 import ExploreScreen from './screens/ExploreScreen.jsx';
 import LibraryScreen from './screens/LibraryScreen.jsx';
 import ProductSheet from './components/ProductSheet.jsx';
+import { pregnancyFirstFrom } from '../components/pdp/pdpParts.js';
 import { ProductSheetContext } from './productSheetContext.js';
 import { matchState as productMatchState } from '../utils/matchState.js';
 import { useRundownCommunity } from './hooks/useRundownCommunity.js';
@@ -1790,6 +1791,7 @@ export default function MobileApp() {
           onClose={() => setSheetProduct(null)}
           matchState={productMatchState(sheetProduct, effectiveQuizAnswers, matchOpts)}
           details={effectiveQuizAnswers ? getProductMatchDetailsForProduct(sheetProduct, effectiveQuizAnswers, null, matchOpts) : null}
+          pregnancyFirst={pregnancyFirstFrom(effectiveQuizAnswers)}
           onAsk={(q) => { setSheetProduct(null); nav.onAskAyna({ question: q }); }}
           saved={isSaved(sheetProduct.id)}
           onToggleSaved={handleToggleSaved}

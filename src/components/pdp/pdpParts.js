@@ -170,7 +170,16 @@ export function pageRecall(product) {
 
 const TIP = /^(wash|rinse|boil|clean|store|keep it|dry|sanitize|sterili[sz]e|empty)\b/i;
 
-export function topWarningFor(product, glance, recall = pageRecall(product)) {
+// Warnings about death, poisoning, overdose, children or "never" outrank a label's "ask a doctor if pregnant" line.
+export const SEVERE = /\b(fatal|death|die|poison(ing)?|overdose|children|child|infant|never)\b/i;
+/** True when her answers say pregnant, trying to conceive or postpartum (then pregnancy cautions lead). */
+export function pregnancyFirstFrom(answers) {
+  const i = answers?.fullHealthIntake || answers || {};
+  const text = [...(i.lifeStageSelections || []), ...(i.supportSelections || []), i.pregnancyTrimester, i.ttcDuration, i.postpartumTiming].filter(Boolean).join(' ');
+  return /pregnan|conceive|ttc|fertility|postpartum|breastfeed/i.test(text);
+}
+
+export function topWarningFor(product, glance, recall = pageRecall(product), { pregnancyFirst = false } = {}) {
   if (!product) return '';
   const first = (t) => {
     // A long note becomes its headline ("2021 lawsuit, later dropped"); the full story is in Safety.
@@ -183,9 +192,14 @@ export function topWarningFor(product, glance, recall = pageRecall(product)) {
   if (glance?.alert) return first(glance.alert);
   const preg = getPassport(product)?.safety?.pregnancy;
   const pv = preg?.known && !preg.notApplicable ? (Array.isArray(preg.value) ? preg.value.join(', ') : String(preg.value || '')) : '';
-  if (pv && /not|avoid|consult|ask|doctor|clinician|don.t|do not|unsafe|caution/i.test(pv)) return `Pregnancy: ${firstSentence(pv, { min: 8, max: 200 })}`.replace(/^Pregnancy:\s*Brand:\s*(.*?)\.?$/i, 'Pregnancy: $1 (per the brand).');
-  const w = (product.warnings || []).find((x) => x && !TIP.test(String(x).trim()));
-  return w ? first(w) : '';
+  const pregLine = pv && /not|avoid|consult|ask|doctor|clinician|don.t|do not|unsafe|caution/i.test(pv) ? `Pregnancy: ${firstSentence(pv, { min: 8, max: 200 })}`.replace(/^Pregnancy:\s*Brand:\s*(.*?)\.?$/i, 'Pregnancy: $1 (per the brand).') : '';
+  const real = (product.warnings || []).filter((x) => x && !TIP.test(String(x).trim()));
+  const severe = real.find((x) => SEVERE.test(String(x)));
+  // Pregnancy leads only when she is pregnant, trying to conceive or postpartum; otherwise a severe warning does.
+  if (pregLine && pregnancyFirst) return pregLine;
+  if (severe) return first(severe);
+  if (pregLine) return pregLine;
+  return real[0] ? first(real[0]) : '';
 }
 
 /** The most important caution for "The short answer", not the one already in the safety box. */
@@ -261,6 +275,14 @@ export function criticalIndex(texts, topWarning) {
 // ---------------------------------------------------------------------------
 const SPEC = /^\s*(\d[\d.,]*\s*(mg|mcg|µg|iu|g|ml|mL|oz|%)\b|\d+\s*(count|ct|pack|capsules?|tablets?|softgels?))/i;
 /** The one-liner: the summary's first sentence, unless it is a spec ("65 mg elemental iron…"), which becomes Key facts "Strength". */
+const CLAIM = /^(supports?|helps?|promotes?|boosts?|improves?|relieves?|reduces?|balances?|soothes?|eases?|restores?|strengthens?|protects?|enhances?|maintains?|nourishes?|calms?)\b/i;
+/** A one-liner that is a benefit claim from the brand's copy reads as the brand's ("Nature Made says it supports…"), never as ayna's verdict. */
+export function brandVoice(lead, brand) {
+  const t = String(lead || '').trim();
+  if (!t || !CLAIM.test(t)) return t;
+  return `${String(brand || '').trim() || 'The brand'} says it ${t.charAt(0).toLowerCase()}${t.slice(1)}`;
+}
+
 export function splitLead(product) {
   const parts = splitSentences(noDash(String(product?.summary || '').replace(/\s*\(see [^()]+\)/i, '')));
   if (parts.length > 1 && SPEC.test(parts[0])) return { strength: parts[0], lead: parts[1], used: `${parts[0]} ${parts[1]}` };

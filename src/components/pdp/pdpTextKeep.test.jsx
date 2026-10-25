@@ -83,7 +83,7 @@ const renamed = (c) => RENAMED_LABELS.some((r) => (typeof r === 'string' ? r ===
 // A paragraph the redesign splits (its first sentence leads The short answer) still counts when every sentence is there.
 const squash = (t) => t.toLowerCase().replace(/[\s,]+/g, '');
 // Bold first clauses and list rows split a line into pieces: compare without spaces, and a comma list item by item.
-const present = (after, c) => after.includes(c) || after.toLowerCase().includes(c.toLowerCase()) || squash(after).includes(squash(c)) || (c.includes(', ') && c.split(', ').every((x) => after.toLowerCase().includes(x.trim().toLowerCase()))) || after.includes(c.replace(/\.$/, '')) || (splitSentences(c).length > 1 && splitSentences(c).every((x) => after.includes(x)));
+const present = (after, c) => after.includes(c) || after.toLowerCase().includes(c.toLowerCase()) || squash(after).includes(squash(c)) || (c.includes(', ') && c.split(', ').every((x) => after.toLowerCase().includes(x.trim().toLowerCase()))) || after.includes(c.replace(/\.$/, '')) || (splitSentences(c).length > 1 && splitSentences(c).every((x) => after.toLowerCase().includes(x.toLowerCase())));
 
 describe('product page keeps every piece of information', () => {
   let products;

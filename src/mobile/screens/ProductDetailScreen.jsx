@@ -15,7 +15,7 @@ import { MatchLine, SafetyLine, WhereToBuy, StickyBuy, PriceLine } from '../../c
 import { buyModel } from '../../components/pdp/buyModel.js';
 import { heroPriceView } from '../../components/pdp/heroPrice.js';
 import { priceParts } from '../../data/passport/priceParts.js';
-import { matchLineState, topWarningFor, pageRecall, heroNotes } from '../../components/pdp/pdpParts.js';
+import { matchLineState, topWarningFor, pageRecall, heroNotes, pregnancyFirstFrom } from '../../components/pdp/pdpParts.js';
 import { useResearchState } from '../../data/researchLoader.js';
 import { attributeBadges } from '../../components/pdp/evidenceModel.js';
 import { matchLine } from '../../data/passport/content.js';
@@ -28,7 +28,6 @@ import { worksWith } from '../../utils/aynaIntegrations.js';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
 import { SaveFollowUpInline } from '../../components/save/SaveFollowUp.jsx';
-import { leavingLine } from '../../utils/leavingAyna.js';
 import { ADD_TO_ROUTINE, IN_ROUTINE } from '../../utils/routineCopy.js';
 import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
 import { productImageOverride } from '../../data/productImageOverrides.js';
@@ -341,7 +340,7 @@ export default function ProductDetailScreen({
   const brandLine = brand && String(brand).trim().toLowerCase() !== String(name || '').trim().toLowerCase() ? brand : categoryLabel;
   // One recall answer and the one critical caution for the page, as on the website (pdp/pdpParts).
   const recall = pageRecall(product);
-  const topWarning = topWarningFor(product, glance, recall);
+  const topWarning = topWarningFor(product, glance, recall, { pregnancyFirst: pregnancyFirstFrom(quizAnswers) });
   const images = galleryImages(product);
   const matchFor = quizAnswers ? (p) => matchPercentFor(p, quizAnswers, matchOpts) : null;
   const detailsFor = quizAnswers ? (p) => getProductMatchDetailsForProduct(p, quizAnswers, null, matchOpts) : null;
@@ -447,7 +446,9 @@ export default function ProductDetailScreen({
           {matchState?.kind !== 'quiz' && <MatchLine state={matchState} onWhy={openWhyMatch} onFix={onFixSafety} onQuiz={onStartQuiz} />}
           {buyBar}
           {/* One tiny muted line: the price check, where Buy goes and the commission. */}
-          {shopAction && <p className="ay-pdp-commission ayv-fine">{buy.checked && `${buy.checked}. `}{leavingLine(shopAction.href, buy.retailer, buy.verb)}{!isPartner && ' Some links earn ayna a commission. It never changes your matches.'}</p>}
+          {/* The price check on its own muted line; the ↗ on Buy already says she leaves ayna (founder, Oct 25). */}
+          {shopAction && buy.checked && <p className="ay-pdp-commission ayv-fine">{buy.checked}</p>}
+          {shopAction && !isPartner && <p className="ay-pdp-commission ayv-fine">Some links earn ayna a commission. It never changes your matches.</p>}
           <WhereToBuy rows={buy?.rows} />
           <SaveFollowUpInline product={product} onCompare={onCompare} />
           {matchState?.kind === 'quiz' && <div className="ayv-quizline"><MatchLine state={matchState} onWhy={openWhyMatch} onFix={onFixSafety} onQuiz={onStartQuiz} /></div>}

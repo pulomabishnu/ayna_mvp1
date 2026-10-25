@@ -16,7 +16,7 @@ import ProductCommunityReviews from './ProductCommunityReviews.jsx';
 import ProductPeopleSay from './ProductPeopleSay.jsx';
 import { useProductReviews } from './useProductReviews.js';
 import { evidenceLevel, gradeWords } from './evidenceLevel.js';
-import { evidenceMeter, sortSources, clinicianOf, DOC, whoLists, keyFormat, criticalIndex, splitLead, heroNotes, dedupeList, leadClause } from './pdpParts.js';
+import { evidenceMeter, sortSources, clinicianOf, DOC, whoLists, keyFormat, criticalIndex, splitLead, heroNotes, dedupeList, leadClause, brandVoice, SEVERE } from './pdpParts.js';
 import { formatPrice } from '../../utils/formatPrice.js';
 import { EvidenceMeter, ShowAll } from './PdpParts.jsx';
 import { FROM_LISTING } from '../../utils/howToSource.js';
@@ -686,6 +686,9 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     ...sf.privacy.map((r) => ({ key: `p-${r.label}`, text: r.value, node: <p className="ayq-p"><b className="ayv-item__lead">{r.label}: </b><Tx>{r.value}</Tx></p> })),
     ...[...adds('safety'), ...adds('privacy')].map((a) => ({ key: `a-${a.id}`, text: a.title, node: <Addition a={a} /> })),
   ].filter(Boolean);
+  // Severe warnings (fatal, poisoning, overdose, children, never) come before label lines; the hero's item leads.
+  const sevRank = (x) => (x.key === 'alert' ? 0 : /^[dw]-/.test(x.key) && SEVERE.test(x.text) ? 1 : 2);
+  safetyItems.sort((a, b) => sevRank(a) - sevRank(b));
   const crit = criticalIndex(safetyItems.map((x) => x.text), safetyLead);
   if (crit > 0) safetyItems.unshift(safetyItems.splice(crit, 1)[0]);
   const hasSafety = safetyItems.length > 0 || urgent.length > 0;
@@ -791,7 +794,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     <div className="ayq-sum ayv-read">
       {(lead || m.summary.length > 0) && (
         <section id="ay-sum-about" className="ayq-anchor ayv-sec ayv-sec--lead" aria-label="What it is">
-          {lead && <p className="ayv-oneline"><Tx>{lead}</Tx></p>}
+          {lead && <p className="ayv-oneline"><Tx>{brandVoice(lead, m.brand || glance?.brand)}</Tx></p>}
           {m.summary.length > 0 && <div className="ayq-prose"><Paras list={m.summary.filter((x) => !(teamShort && x.startsWith(leadParts.used)))} /></div>}
         </section>
       )}

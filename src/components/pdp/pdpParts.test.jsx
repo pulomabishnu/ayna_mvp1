@@ -2,8 +2,10 @@
 import { describe, it, expect } from 'vitest';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { topWarningFor, brandVoice, pregnancyFirstFrom } from './pdpParts.js';
 import { fitChecklist, matchLineState, evidenceMeter, splitShow, shortAnswer, mainCaution, sortSources, clinicianOf, glanceTiles, whoLists, keyFormat, criticalIndex, splitLead, heroNotes, dedupeList, leadClause } from './pdpParts.js';
 import { buyModel } from './buyModel.js';
+import ProductEvidence from './ProductEvidence.jsx';
 import { MatchLine, ShowAll, EvidenceMeter, SafetyLine } from './PdpParts.jsx';
 import { ALL_PRODUCTS, withResearch } from '../../data/products.js';
 import { PRODUCT_RESEARCH } from '../../data/productResearch.js';
@@ -179,5 +181,27 @@ describe('shopper pass', () => {
     expect(leadClause('People with period cramps who want heat')).toEqual(['People with period cramps', ' who want heat']);
     expect(leadClause('Those who like to adjust the heat, since it has 3 settings')).toEqual(['Those who like to adjust the heat', ', since it has 3 settings']);
     expect(leadClause('Short line')).toEqual(['', 'Short line']);
+  });
+});
+
+describe('last round', () => {
+  it('a severe warning leads the safety line, unless she is pregnant, trying or postpartum', () => {
+    const iron = product('p-nature-made-iron-65mg');
+    const g = buildGlance(iron, {});
+    expect(topWarningFor(iron, g)).toMatch(/fatal poisoning in children/);
+    expect(topWarningFor(iron, g, undefined, { pregnancyFirst: true })).toMatch(/^Pregnancy:/);
+    expect(pregnancyFirstFrom({ fullHealthIntake: { lifeStageSelections: ['I am pregnant'] } })).toBe(true);
+    expect(pregnancyFirstFrom({ fullHealthIntake: { lifeStageSelections: ['I get periods regularly'] } })).toBe(false);
+  });
+  it('the Safety list leads with the same item as the hero line', () => {
+    const iron = product('p-nature-made-iron-65mg');
+    const html = renderToStaticMarkup(<ProductEvidence product={iron} glance={buildGlance(iron, {})} safetyLead={topWarningFor(iron, buildGlance(iron, {}))} syncHash={false} />);
+    const safety = html.slice(html.indexOf('id="ay-sum-safety"'));
+    const first = safety.slice(safety.indexOf('is-critical'), safety.indexOf('</li>', safety.indexOf('is-critical')));
+    expect(first).toMatch(/fatal poisoning in children/);
+  });
+  it('a benefit claim from the summary is the brand\'s, never ayna\'s', () => {
+    expect(brandVoice('Supports red blood cell formation and energy.', 'Nature Made')).toBe('Nature Made says it supports red blood cell formation and energy.');
+    expect(brandVoice('Rechargeable, wearable heating pad.', 'Comfytemp')).toBe('Rechargeable, wearable heating pad.');
   });
 });

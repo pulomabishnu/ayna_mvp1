@@ -22,7 +22,7 @@ import ProductEvidence from './pdp/ProductEvidence';
 import { MatchLine, SafetyLine, WhereToBuy, StickyBuy } from './pdp/PdpParts.jsx';
 import { buyModel } from './pdp/buyModel.js';
 import { heroNotes } from './pdp/pdpParts.js';
-import { matchLineState, topWarningFor, pageRecall } from './pdp/pdpParts.js';
+import { matchLineState, topWarningFor, pageRecall, pregnancyFirstFrom } from './pdp/pdpParts.js';
 import { HealthBackedBadge } from './health';
 import { attributeBadges } from './pdp/evidenceModel';
 import { galleryImages, similarProducts, sameNeedProducts, productJsonLd, breadcrumbJsonLd } from './pdp/commerce';
@@ -561,7 +561,7 @@ export default function ProductModal({
   // never shown as "No recalls", and "check current notices" isn't a check.
   const recall = pageRecall(product);
   // The one critical line for the safety box near the top (pdp/pdpParts topWarningFor, shared with the app).
-  const topWarning = topWarningFor(product, glance, recall);
+  const topWarning = topWarningFor(product, glance, recall, { pregnancyFirst: pregnancyFirstFrom(quizResults) });
   // Who actually sells it, so the button says where it goes ("Buy at LOLA ↗").
   let sellerName = '';
   const brandName = brand || product.brand || '';

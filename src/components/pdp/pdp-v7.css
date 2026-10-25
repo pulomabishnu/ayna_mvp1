@@ -269,3 +269,9 @@
 }
 :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-where__host { display: block; font: 600 12.5px/1.3 var(--v-ui) !important; color: var(--v-mute) !important; overflow: hidden; text-overflow: ellipsis; }
 :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-where__list a { padding: 6px 0 !important; }
+/* the sheet's scroll area has bottom padding: the sticky bar sits flush with the sheet's edge */
+#ay-psheet#ay-psheet#ay-psheet#ay-psheet .ayv-stickybuy.is-scroll { bottom: calc(-1 * max(24px, env(safe-area-inset-bottom, 0px))); margin: 0 calc(-1 * var(--d-gutter, 20px)) !important; width: auto; }
+/* app page: Ask starters as full-width single-line rows */
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp-ask .ayv-askstarters { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; gap: 8px !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp-ask .ayv-askstarters button { display: block !important; width: 100% !important; min-height: 48px !important; padding: 0 16px !important; border: 1.5px solid var(--v-ink) !important; border-radius: 16px !important; background: transparent !important; color: var(--v-ink) !important; font: 600 15px/1.35 var(--v-ui) !important; text-align: left !important; white-space: normal !important; padding-top: 12px !important; padding-bottom: 12px !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ayv-ask .ay-pdp-askcard .ay-pdp-ask { padding: 0 !important; background: none !important; }
