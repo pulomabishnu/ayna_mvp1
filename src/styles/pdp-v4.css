@@ -416,3 +416,5 @@ html body .app-container[data-theme='brand-dark'] #pdp-v4 .ayq .ayq-glance .ayq-
 html body .app-container[data-theme='brand-dark'] #pdp-v4 .ayq .ayq-glance .ayq-tiles > li :is(span, b, small, p, svg) { color: var(--v-ink) !important; }
 /* Step numbers: pink on espresso in both modes (a folder's span rule turned them espresso on espresso). */
 #pdp-v4 .ayq .ayq-folder .ayq-steps__n, #pdp-v4 .ayq .ayq-steps .ayq-steps__n { background: var(--v-ink) !important; color: var(--v-pink) !important; }
+/* Oct 25 system pass: no cut-line (dashed) frames; the about block is a filled group like At a glance. */
+#pdp-v4 .ayq .ayq-about, #pdp-v4 .ayq .ayq-what, #pdp-v4 .ay-ov-what, #pdp-v4 .ay-box.is-dashed { border: 0 !important; border-radius: 24px !important; background: var(--ds-group, rgba(62, 39, 35, .06)) !important; }

@@ -287,3 +287,5 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-askpage .ay-a
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-askpage .ay-askh-note { display: none; }
 /* Categories: the example searches, six at most (fewer, larger elements) */
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec[aria-labelledby='wx-phrases-h'] .wx-topics > :nth-child(n+7) { display: none; }
+/* Explore band on phones: the seal never sits over the section tabs (compact band has no room for it) */
+@media (max-width: 767px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.is-compact .wx-seal { display: none; } }
