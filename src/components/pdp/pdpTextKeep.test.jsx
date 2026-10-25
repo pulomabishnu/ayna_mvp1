@@ -18,6 +18,7 @@ import { loadResearch } from '../../data/researchLoader.js';
 import ProductModal from '../ProductModal.jsx';
 import ProductDetailScreen from '../../mobile/screens/ProductDetailScreen.jsx';
 import ProductSheet from '../../mobile/components/ProductSheet.jsx';
+import { splitSentences } from './sentences.js';
 
 const FIXTURE = path.join(path.dirname(new URL(import.meta.url).pathname), '__fixtures__', 'pdpText.before.json');
 const IDS = ['p-portable-heating', 'p-nature-made-iron-65mg', 'd-ppd'];
@@ -40,7 +41,17 @@ function renders(product) {
 }
 
 // UI labels the redesign renamed or folded into a new control (never product text).
-export const RENAMED_LABELS = [];
+const RENAMED_LABELS = [
+  'Your match', // the jump row in ayna summary; her match is the line under the price and Is it for you
+  'What it is and who it’s for', // now "What it is" (in Read more) and "Is it for you" (above the tabs)
+  'Label and regulator facts', // now "Label and regulatory facts" (founder's brief wording)
+  'ayna’s take', // now "The short answer"
+  'Evidence:', // the line next to Buy; the same words are in the evidence meter
+  /^\d+ parts\. Swipe to read on\.$/, // sideways reading shelves became "Show all N parts"
+];
+const renamed = (c) => RENAMED_LABELS.some((r) => (typeof r === 'string' ? r === c : r.test(c)));
+// A paragraph the redesign splits (its first sentence leads The short answer) still counts when every sentence is there.
+const present = (after, c) => after.includes(c) || (splitSentences(c).length > 1 && splitSentences(c).every((x) => after.includes(x)));
 
 describe('product page keeps every piece of information', () => {
   let products;
@@ -53,7 +64,7 @@ describe('product page keeps every piece of information', () => {
 
   it('captures or compares the page text', () => {
     const now = Object.fromEntries(products.map((p) => [p.id, Object.fromEntries(Object.entries(renders(p)).map(([k, html]) => [k, chunks(html)]))]));
-    if (process.env.CAPTURE) { fs.mkdirSync(path.dirname(FIXTURE), { recursive: true }); fs.writeFileSync(FIXTURE, JSON.stringify(now, null, 1)); return; }
+    if (globalThis.process?.env?.CAPTURE) { fs.mkdirSync(path.dirname(FIXTURE), { recursive: true }); fs.writeFileSync(FIXTURE, JSON.stringify(now, null, 1)); return; }
     const before = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
     const missing = [];
     for (const p of products) {
@@ -61,11 +72,12 @@ describe('product page keeps every piece of information', () => {
       for (const surface of ['web', 'app', 'sheet']) {
         const after = flat(html[surface]);
         for (const c of before[p.id][surface]) {
-          if (RENAMED_LABELS.includes(c)) continue;
-          if (!after.includes(c)) missing.push(`${p.id} ${surface}: ${c}`);
+          if (renamed(c)) continue;
+          if (!present(after, c)) missing.push(`${p.id} ${surface}: ${c}`);
         }
       }
     }
+    if (missing.length) globalThis.process?.stdout?.write(`\nMISSING\n${missing.join('\n')}\n`);
     expect(missing).toEqual([]);
   });
 });

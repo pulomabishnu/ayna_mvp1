@@ -1,0 +1,218 @@
+/**
+ * The product page, redesigned (founder, Oct 25: "easy to read and good"):
+ * the pure part. Every value here comes from data that is already on the page
+ * (the match engine's details, the team's who/warnings lines, the evidence
+ * grade, At a glance facts). Nothing is invented; this only decides what goes
+ * where. Research: scratchpad/PDP_RESEARCH.md.
+ */
+import { isSafetyHold, isBleedingEvaluation, whyMatch, exclusionLines, BLEEDING_EVALUATION, MATCH_UNAVAILABLE } from '../../utils/matchDisplay.js';
+import { firstSentence, splitNote } from './sentences.js';
+import { getPassport } from '../../data/passport/index.js';
+import { recallFacts } from '../../utils/productFacts.js';
+import { noDash } from './evidenceModel.js';
+
+const cap = (t) => String(t || '').replace(/^./, (c) => c.toUpperCase());
+const norm = (t) => String(t || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+
+/** Long lists show this many, then "Show all N" in place (PDP rule 8). */
+export const SHOW_FIRST = 3;
+
+/** Split a list into what shows and what waits behind "Show all N". */
+export function splitShow(list, n = SHOW_FIRST) {
+  const all = (list || []).filter((x) => x != null && x !== '');
+  return { shown: all.slice(0, n), rest: all.slice(n), total: all.length };
+}
+
+// ---------------------------------------------------------------------------
+// The one match line under the price (founder, Oct 24): a % with its plain why,
+// or a safety hold, or the bleeding evaluation message. Never 0%.
+// ---------------------------------------------------------------------------
+/**
+ * @returns {{kind:'pct', percent:number, why:string}
+ *   | {kind:'hold', hold:object}
+ *   | {kind:'evaluation', note:object, text:string}
+ *   | {kind:'none', text:string}
+ *   | {kind:'quiz'}
+ *   | null}
+ */
+export function matchLineState({ details = null, percent = null, hasProfile = false, why = '', fallback = '', canQuiz = false } = {}) {
+  if (!hasProfile || !details || details.matchStatus === 'no-profile') return canQuiz ? { kind: 'quiz' } : null;
+  if (isBleedingEvaluation(details)) return { kind: 'evaluation', note: details.bleedingEvaluation || null, text: details.bleedingEvaluation?.text || BLEEDING_EVALUATION };
+  if (isSafetyHold(details) || details.eligibility === 'restricted') return { kind: 'hold', hold: details.safetyHold || null, text: MATCH_UNAVAILABLE };
+  if (Number.isFinite(percent) && percent > 0) return { kind: 'pct', percent: Math.round(percent), why: why || fallback || '' };
+  if (details.matchStatus === 'excluded') return { kind: 'none', text: exclusionLines(details)[0] || 'Not a fit right now' };
+  return { kind: 'none', text: 'No clear match for what you told us' };
+}
+
+// ---------------------------------------------------------------------------
+// "Is it for you": a checklist against her answers, from data on file only.
+// ✓ yes (fits), ! check (with a clinician, a hold), ✕ no (not for).
+// ---------------------------------------------------------------------------
+const NOT_FOR = /^(not (for|the pick|a (good )?fit|meant|recommended|suitable|ideal)|avoid\b|skip\b|don['’]t use|do not use|isn['’]t for)/i;
+export const DOC = /\b(doctor|provider|clinician|gyn(a)?ecologist|ob\/?gyn|physician|pharmacist|midwife|lactation|consult|talk to|ask your|healthcare)\b/i;
+const MISS = /\b(above|over|outside|not|no|doesn.t|does not|isn.t|missing|lower|less|unknown|can.t|cannot|without)\b/i;
+
+/**
+ * @param {object} o
+ * @param {object|null} o.details   the engine's details for her (null without a profile)
+ * @param {string[]} o.who          the team's "who it's for" lines
+ * @param {string[]} o.warnings     the product's warnings (the ones that say to check with a clinician become "!")
+ * @returns {{tone:'yes'|'check'|'no', text:string, from:'match'|'hold'|'who'|'warning'}[]}
+ */
+export function fitChecklist({ details = null, who = [], warnings = [] } = {}) {
+  const out = [];
+  const seen = new Set();
+  const add = (tone, text, from) => {
+    const t = noDash(String(text || '')).trim();
+    const k = norm(t);
+    if (!t || seen.has(k)) return;
+    seen.add(k);
+    out.push({ tone, text: t, from });
+  };
+  const personal = details && details.matchStatus && details.matchStatus !== 'no-profile';
+  if (personal) {
+    if (isBleedingEvaluation(details)) add('check', details.bleedingEvaluation?.text || BLEEDING_EVALUATION, 'hold');
+    else if (isSafetyHold(details)) add('check', details.safetyHold?.reason || MATCH_UNAVAILABLE, 'hold');
+    else {
+      if (details.matchStatus === 'scored') whyMatch(details).reasons.forEach((r) => add(MISS.test(r) ? 'no' : 'yes', r, 'match'));
+      if (details.matchStatus === 'excluded') exclusionLines(details).forEach((r) => add('no', r, 'match'));
+    }
+  }
+  const whoLines = (who || []).map((w) => String(w || '').trim()).filter(Boolean);
+  const docs = (warnings || []).map((w) => String(w || '').trim()).filter((w) => w && DOC.test(w));
+  docs.forEach((w) => add('check', w, 'warning'));
+  whoLines.filter((w) => NOT_FOR.test(w)).forEach((w) => add('no', w, 'who'));
+  whoLines.filter((w) => !NOT_FOR.test(w)).forEach((w) => add('yes', w, 'who'));
+  // Her own results first, then the clinician checks, then who it is for and not for.
+  const rank = (x) => (x.from === 'hold' ? 0 : x.from === 'match' ? 1 : x.tone === 'check' ? 2 : x.tone === 'yes' ? 3 : 4);
+  return out.map((x, i) => ({ ...x, i })).sort((a, b) => rank(a) - rank(b) || a.i - b.i).map(({ i, ...x }) => x); // eslint-disable-line no-unused-vars
+}
+
+// ---------------------------------------------------------------------------
+// Evidence meter: the existing grade (evidenceLevel) drawn as 3 bars + a word.
+// No grade is its own state, never an empty bar that reads as "bad".
+// ---------------------------------------------------------------------------
+export function evidenceMeter(ev) {
+  const level = Math.max(0, Math.min(3, Number(ev?.level) || 0));
+  if (!level) return { level: 0, of: 3, empty: true, label: 'No .gov-checked evidence yet', note: '' };
+  const label = ev.word || '';
+  const note = ev.scope === 'type' ? (ev.line || '') : ev.scope === 'team' ? 'The level the team recorded. Not yet checked against .gov health sources.' : 'Graded by ayna from .gov health sources.';
+  return { level, of: 3, empty: false, label, need: ev.need || '', note };
+}
+
+// ---------------------------------------------------------------------------
+// At a glance: 4-6 tiles, each a label and one big value (+ a small note).
+// ---------------------------------------------------------------------------
+export function glanceTiles({ glance = null, m = null } = {}) {
+  if (!m) return [];
+  const factOf = (id) => (glance?.facts || []).find((f) => f.id === id && !f.unknown && f.value);
+  const howText = m.how ? [m.how.intro, ...m.how.steps].join(' ') : '';
+  const wear = howText.match(/\b(?:up to|every|for up to|for)\s+\d+(?:\s*(?:to|-|–)\s*\d+)?\s*hours?\b/i);
+  const tiles = [
+    factOf('format') && { id: 'format', icon: 'format', label: 'Format', value: factOf('format').value },
+    factOf('size') && String(factOf('size').value).length <= 60 && { id: 'size', icon: 'size', label: 'Size or count', value: factOf('size').value },
+    factOf('perunit') && { id: 'perunit', icon: 'tag', label: 'Price per unit', value: factOf('perunit').value },
+    factOf('fsa')?.value === 'Eligible' && { id: 'fsa', icon: 'card', label: 'FSA/HSA', value: 'Eligible' },
+    m.safety.fda && { id: 'reg', icon: 'regulator', label: m.isDigital ? 'Regulation' : 'FDA status', value: m.safety.fda.label },
+    !m.safety.fda && m.isDigital && m.safety.fdaRaw && m.safety.fdaRaw.length <= 60 && { id: 'reg', icon: 'regulator', label: 'Regulation', value: m.safety.fdaRaw },
+    wear && { id: 'wear', icon: 'clock', label: 'How long it lasts', value: cap(wear[0]), note: 'From the instructions' },
+    (m.details.platform || m.details.integrations.length > 0) && { id: 'works', icon: 'format', label: 'Works with', value: [m.details.platform, ...m.details.integrations].filter(Boolean).join(', ') },
+  ].filter(Boolean).slice(0, 6);
+  return tiles.map((t) => {
+    const dot = String(t.value).split(/\s+·\s+/);
+    if (dot.length > 1) return { ...t, main: cap(dot[dot.length - 1]), note: [cap(dot.slice(0, -1).join(', ')), t.note].filter(Boolean).join('. ') };
+    const sp = splitNote(noDash(t.value));
+    return { ...t, main: sp.value, note: [cap(sp.note), t.note].filter(Boolean).join('. ') };
+  });
+}
+
+// ---------------------------------------------------------------------------
+// The short answer: 3 bullets max. The team's own short take when there is
+// one; otherwise what it is (first sentence), how strong the evidence is, and
+// who it is for (first line), all existing text.
+// ---------------------------------------------------------------------------
+export function leadSentence(product) {
+  return firstSentence(noDash(String(product?.summary || '').replace(/\s*\(see [^()]+\)/i, '')), { min: 20, max: 420 });
+}
+
+export function shortAnswer({ m = null, lead = '', ev = null } = {}) {
+  if (!m) return { bullets: [], rest: [], fromTeam: false };
+  if (m.expert.short.length) {
+    return { bullets: m.expert.short.slice(0, 3), rest: m.expert.short.slice(3), fromTeam: true };
+  }
+  const out = [];
+  if (lead) out.push(lead);
+  const evLine = ev?.scope === 'type' && ev.line ? ev.line : '';
+  if (evLine) out.push(evLine);
+  const forLine = (m.who || []).find((w) => !NOT_FOR.test(String(w)));
+  if (forLine && out.length < 3) out.push(forLine);
+  return { bullets: out.slice(0, 3), rest: [], fromTeam: false };
+}
+
+// ---------------------------------------------------------------------------
+// Safety: the one critical line for the box near the top (recall, the
+// product's safety note, a pregnancy caution, the first real warning), and
+// the single most important caution for the summary.
+// ---------------------------------------------------------------------------
+export function pageRecall(product) {
+  const live = getPassport(product)?.recall;
+  if (live?.status === 'recalled') return { status: 'past', label: 'Active recall found', detail: '' };
+  return recallFacts(product);
+}
+
+const TIP = /^(wash|rinse|boil|clean|store|keep it|dry|sanitize|sterili[sz]e|empty)\b/i;
+
+export function topWarningFor(product, glance, recall = pageRecall(product)) {
+  if (!product) return '';
+  const first = (t) => {
+    // A long note becomes its headline ("2021 lawsuit, later dropped"); the full story is in Safety.
+    const one = firstSentence(t, { min: 8, max: 400 }).replace(/\s*—\s*/g, ', ').trim();
+    const colon = one.indexOf(':');
+    if (one.length > 100 && colon > 8 && colon <= 70) return `${one.slice(0, colon)}.`;
+    return one.length > 120 ? firstSentence(one, { max: 120 }) : one;
+  };
+  if (recall?.status === 'past' || recall?.status === 'note') return first(recall.detail || recall.label);
+  if (glance?.alert) return first(glance.alert);
+  const preg = getPassport(product)?.safety?.pregnancy;
+  const pv = preg?.known && !preg.notApplicable ? (Array.isArray(preg.value) ? preg.value.join(', ') : String(preg.value || '')) : '';
+  if (pv && /not|avoid|consult|ask|doctor|clinician|don.t|do not|unsafe|caution/i.test(pv)) return `Pregnancy: ${firstSentence(pv, { min: 8, max: 200 })}`.replace(/^Pregnancy:\s*Brand:\s*(.*?)\.?$/i, 'Pregnancy: $1 (per the brand).');
+  const w = (product.warnings || []).find((x) => x && !TIP.test(String(x).trim()));
+  return w ? first(w) : '';
+}
+
+/** The most important caution for "The short answer", not the one already in the safety box. */
+export function mainCaution(m, topWarning = '') {
+  if (!m) return '';
+  const top = norm(topWarning);
+  const same = (t) => top && (norm(t) === top || norm(t).startsWith(top.replace(/ $/, '')) || top.startsWith(norm(t)));
+  const real = m.safety.warnings.filter((w) => !TIP.test(String(w).trim()));
+  const pick = [...real.filter((w) => DOC.test(w)), ...real.filter((w) => !DOC.test(w))].find((w) => !same(w));
+  return pick || '';
+}
+
+// ---------------------------------------------------------------------------
+// Sources, strongest first: graded rows (A, B, C), then systematic reviews and
+// meta-analyses, trials, other study types, then guidance pages. A study that
+// found no clear benefit keeps its flag.
+// ---------------------------------------------------------------------------
+export function studyRank(s) {
+  const t = `${s?.type || ''} ${s?.title || ''}`.toLowerCase();
+  if (/meta-?analys|systematic review/.test(t)) return 0;
+  if (/randomi[sz]ed|controlled trial|\brct\b|clinical trial/.test(t)) return 1;
+  if (/cohort|observational|study/.test(t)) return 2;
+  if (/review/.test(t)) return 3;
+  return 4;
+}
+
+export function sortSources(list) {
+  return (list || []).map((s, i) => ({ s, i })).sort((a, b) => studyRank(a.s) - studyRank(b.s) || (Number(b.s.year) || 0) - (Number(a.s.year) || 0) || a.i - b.i).map((x) => x.s);
+}
+
+/** A named clinician (who, credential) from the team's attribution line, or null for an ayna synthesis. */
+export function clinicianOf(expert) {
+  if (!expert || expert.synthesis || !expert.attribution) return null;
+  const a = String(expert.attribution);
+  const name = a.match(/\bDr\.?\s+[A-Z][\w'’-]+(?:\s+[A-Z][\w'’-]+){0,2}/);
+  const cred = a.match(/\b(MD|DO|NP|RN|PA-C|CNM|PharmD|MPH|PhD|FACOG|OB-?GYN|IBCLC)\b(?:,\s*(?:MD|DO|NP|RN|PA-C|CNM|PharmD|MPH|PhD|FACOG|OB-?GYN|IBCLC)\b)*/);
+  return { who: name ? name[0] : '', credential: cred ? cred[0] : '', line: a };
+}
