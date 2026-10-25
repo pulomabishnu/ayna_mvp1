@@ -406,3 +406,13 @@ html body .app-container:not([data-theme='brand-dark']) #pdp-v4 .ay-itabs__bar >
 #pdp-v4 .ayp-why__bars:is([data-level='1'], [data-level='2'], [data-level='3']) i:nth-child(1),
 #pdp-v4 .ayp-why__bars:is([data-level='2'], [data-level='3']) i:nth-child(2),
 #pdp-v4 .ayp-why__bars[data-level='3'] i:nth-child(3) { background: var(--v-fg); }
+
+/* Dark mode (review, Oct 24): the butter boxes keep espresso text. "At a glance",
+   the folder titles ("Label and regulator facts", "Size and price") and the tile
+   values were butter on butter or espresso on espresso (1.0:1). */
+html body .app-container[data-theme='brand-dark'] #pdp-v4 .ayq .ayq-glance .ayq-h3,
+html body .app-container[data-theme='brand-dark'] #pdp-v4 .ayq .ayq-folder:not(.is-alert) .ayq-folder__tab { color: var(--v-ink) !important; }
+html body .app-container[data-theme='brand-dark'] #pdp-v4 .ayq .ayq-glance .ayq-tiles > li { background: transparent !important; box-shadow: inset 0 0 0 1.5px rgba(62, 39, 35, .25); }
+html body .app-container[data-theme='brand-dark'] #pdp-v4 .ayq .ayq-glance .ayq-tiles > li :is(span, b, small, p, svg) { color: var(--v-ink) !important; }
+/* Step numbers: pink on espresso in both modes (a folder's span rule turned them espresso on espresso). */
+#pdp-v4 .ayq .ayq-folder .ayq-steps__n, #pdp-v4 .ayq .ayq-steps .ayq-steps__n { background: var(--v-ink) !important; color: var(--v-pink) !important; }

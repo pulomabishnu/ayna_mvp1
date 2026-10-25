@@ -58,7 +58,9 @@ export function fitFor(product, needId) {
     // draft_unverified (no .gov source): it fits, but is not graded.
     return row.strength === 'primary' || row.strength === 'secondary' ? { level: 0, graded: false } : null;
   }
-  if (row) return row.strength === 'primary' || row.strength === 'secondary' ? { level: GRADE_LEVEL[row.grade] || 0, graded: true } : null;
+  // A grade is from one .gov page about this TYPE of product, not a study of it:
+  // never shown as the strongest level (team direction 12, src/components/pdp/evidenceLevel.js).
+  if (row) return row.strength === 'primary' || row.strength === 'secondary' ? { level: Math.min(GRADE_LEVEL[row.grade] || 0, 2), graded: true } : null;
   if (FALLBACK[needId]?.(product)) {
     const s = String(product.evidenceStrength || '').toLowerCase();
     return { level: s === 'strong' ? 3 : s === 'moderate' || s === 'some' ? 2 : s === 'limited' ? 1 : 0, graded: false };

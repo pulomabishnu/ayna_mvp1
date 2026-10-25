@@ -327,6 +327,7 @@
 /* Shop: "My matches only" switch and the matches / more results split. */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-for-me { min-height: 44px !important; white-space: nowrap; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-shop-results-note { margin: 0 20px 14px !important; padding: 12px 14px !important; border-radius: 14px !important; background: #f7badd !important; color: #3e2723 !important; font: 400 calc(15px * var(--ayna-text-scale, 1))/1.45 'Figtree', system-ui, sans-serif !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-shop-results-note .ay-shop-results-all { border: 0; background: none; padding: 0; color: inherit; font: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; min-height: 0; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-shop-results-label { margin: 6px 20px 12px !important; color: #3e2723 !important; font: 600 calc(17px * var(--ayna-text-scale, 1))/1.3 'Figtree', system-ui, sans-serif !important; letter-spacing: 0 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-editorial-product-grid + .ay-shop-results-label { margin-top: 26px !important; padding-top: 18px !important; border-top: 1.5px solid rgba(62, 39, 35, .16) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-shop-results-label { color: #ffedac !important; }
@@ -617,3 +618,18 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-ask-input::placeholder { color: rgba(62, 39, 35, .6) !important; }
 /* Playlist owner "Edit" (espresso fill in light): butter text, not white. */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile:not([data-theme='dark']) .am-playlist-owner-actions button:first-child { color: #ffedac !important; }
+
+/* Explore > Products (team direction 17): search, then one toolbar. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-shop-heading.is-embedded { padding-top: 6px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-category-index.is-embedded .ay-shop-toolbar { flex-wrap: wrap; gap: 10px; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-category-index.is-embedded .ay-shop-count { flex: 1 1 auto; min-width: 0; margin: 0 !important; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-category-index.is-embedded .ay-shop-toolbar .ay-discover-cta { margin: -4px 0 -4px 4px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-category-index.is-embedded .ay-shop-matchrow { display: flex; justify-content: flex-start; padding: 0 20px 10px; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-category-index.is-embedded .ay-shop-note.is-embedded { margin: 0 20px 12px !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-category-index.is-embedded .ay-shop-note.is-embedded b { font-weight: 600; color: var(--d-ink, #3e2723); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-category-index.is-embedded .ay-shop-toolbar .ay-discover-cta { margin-left: auto !important; }
+
+/* PDP: routine, variants, "Not for me" and other stores, below the tabs (team direction 9). */
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-more { display: grid; gap: 12px; margin: 8px 0 0; padding: 16px var(--d-gutter, 20px); }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-more:empty { display: none; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-category-index.is-embedded .ay-shop-toolbar :is(.ayna-shop-filter-toggle, .ay-cmpt, .ay-cmpt-on) { margin-left: 0 !important; margin-right: 0 !important; }

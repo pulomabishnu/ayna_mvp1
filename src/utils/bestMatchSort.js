@@ -24,5 +24,6 @@ export function bestMatchNeedsQuiz(sortBy, hasProfile) {
 // 50, excluded, no profile). Best match sorts by exactly this number on the
 // website Shop and the app Shop, so the order never contradicts the cards.
 export function shownMatchPercent(details) {
-    return matchBadge(details)?.percent ?? 0;
+    const badge = matchBadge(details);
+    return badge && !badge.partial ? badge.percent : 0;
 }

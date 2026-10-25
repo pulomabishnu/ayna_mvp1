@@ -2132,8 +2132,8 @@ export default function MyEcosystem({
                         type="search"
                         value={ecoQuery}
                         onChange={(e) => setEcoQuery(e.target.value)}
-                        placeholder={myProductList.length ? 'Search your ecosystem' : 'Search the Shop'}
-                        aria-label={myProductList.length ? 'Search your ecosystem' : 'Search the Shop'}
+                        placeholder={myProductList.length ? 'Search your ecosystem' : 'Search products'}
+                        aria-label={myProductList.length ? 'Search your ecosystem' : 'Search products'}
                     />
                     <svg className="ayna-browse__search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
                 </form>
@@ -2234,12 +2234,12 @@ export default function MyEcosystem({
                     areaGroups.length > 0 ? null : !llmLoading && (
                         <div className="eco3-empty">
                             <p className="eco3-empty__title">Nothing here yet</p>
-                            <p className="eco3-empty__body">Answer a few questions or pick things from the Shop.</p>
+                            <p className="eco3-empty__body">Answer a few questions or pick things in Explore.</p>
                             <div className="eco3-empty__actions">
                                 {typeof onBuildEcosystem === 'function' && (
                                     <button type="button" className="ay-btn ay-btn--primary" onClick={onBuildEcosystem}>See my matches</button>
                                 )}
-                                <button type="button" className="ay-btn ay-btn--secondary" onClick={() => searchShop('')}>Go to Shop</button>
+                                <button type="button" className="ay-btn ay-btn--secondary" onClick={() => searchShop('')}>Go to Explore</button>
                             </div>
                         </div>
                     )

@@ -1367,7 +1367,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
         <div className="lb-wrap lb-top__grid">
           <div className="lb-top__main">
             <h1 className="lb-top__title">Quick reads about <span className="lb-hl">your body</span></h1>
-            <p className="lb-top__lede">Plain-language reads on women&apos;s health, each one checked against clinical sources.</p>
+            <p className="lb-top__lede">Plain-language reads on women&apos;s health, written by the ayna team. Each read lists the sources it uses.</p>
             <label className="lb-search">
               <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
               <SmartSearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder={libPlaceholder} aria-label="Search reads" />

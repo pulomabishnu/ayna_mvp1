@@ -310,7 +310,7 @@ export default function EcosystemScreen({
       {ecoTab !== 'dashboard' && myProducts.length === 0 && forYouButton && <div className="eco-app-stack__row is-loose">{forYouButton}</div>}
       {/* Empty: one clear way in (the quiz), the Shop as the quiet second choice. */}
       {ecoTab !== 'dashboard' && !hasAnything && !quizDraft && (hasAnswers
-        ? <EmptyState compact art="search" tone="mint" title="No strong matches yet" body="Nothing in the catalog fits your answers well enough yet. Change an answer, or browse the Shop by need." actionLabel={onRetake ? 'Edit my answers' : undefined} onAction={onRetake} secondaryLabel="Explore products" onSecondary={() => onBrowse?.()} />
+        ? <EmptyState compact art="search" tone="mint" title="No strong matches yet" body="Nothing in the catalog fits your answers well enough yet. Change an answer, or browse Explore by need." actionLabel={onRetake ? 'Edit my answers' : undefined} onAction={onRetake} secondaryLabel="Explore products" onSecondary={() => onBrowse?.()} />
         : <EmptyState compact art="search" tone="mint" title="Nothing here yet" body="Answer a few short questions and your matches land here, grouped by need." actionLabel={onStartQuiz ? 'See my matches' : undefined} onAction={onStartQuiz} secondaryLabel="Explore products" onSecondary={() => onBrowse?.()} />)}
       {/* An unfinished quiz stays in view; everything else waits in "For you". */}
       {ecoTab !== 'dashboard' && quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
@@ -354,7 +354,7 @@ export default function EcosystemScreen({
           {shelf && shelf.shortBy > 0 && shelf.picks.length > 0 && <p className="ay-shelf2-note">{onlyNote(shelf.picks.length, section.phrase)}</p>}
           {empty && <div className="ay-shelf2-empty">
             <p>No strong matches for {section.phrase} yet.</p>
-            <button type="button" onClick={() => onBrowse?.(shortNeedLabel(section.label))}>Shop {shortNeedLabel(section.label).toLowerCase()}</button>
+            <button type="button" onClick={() => onBrowse?.(shortNeedLabel(section.label))}>Explore {shortNeedLabel(section.label).toLowerCase()}</button>
           </div>}
           {!section.products.length && shown.length > 0 && <p className="ay-shelf2-note">Not in your routine yet</p>}
           {shown.length > 0 && <div className="ay-shelf2-row">{shown.map((product) => section.products.length

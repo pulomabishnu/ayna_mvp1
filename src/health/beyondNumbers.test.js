@@ -59,7 +59,7 @@ describe('your goals, covered (works with no health data)', () => {
     // Heavy periods and dryness grades for these products cited non-.gov pages, so they are draft and not counted (Oct 24).
     expect(g.map((x) => x.label)).toEqual(['Cramps or period pain']);
     expect(g[0].owned[0].product.id).toBe('p-thermacare');
-    expect(g[0].owned[0].level).toBe(3);
+    expect(g[0].owned[0].level).toBe(2) // type-level grade: never the top level (TD 12);
   });
   it('offers a match only when nothing she owns fits, and skips goals with nothing', () => {
     const g = goalsCovered({ needIds: ['pain.menstrual_cramp', 'hair.loss'], products: [], matches: [{ id: 'p-thermacare' }] });

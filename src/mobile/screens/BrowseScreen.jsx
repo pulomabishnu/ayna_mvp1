@@ -255,10 +255,9 @@ export default function BrowseScreen({
   // Default order (shopOrder.js): one shuffle per app session, so it does
   // not reshuffle on every visit; with quiz answers, ranked by the matching
   // engine so what fits her age, life stage and budget comes first.
-  // The switch changes both the visible set and its default order. Ranking
-  // everything by her profile while the switch is off made "All" look the
-  // same as "My matches only" even though more products were available below.
-  const rankByProfile = personalized && hasQuizAnswers(quizAnswers);
+  // With a profile the default order is always hers (UX 12): the switch only
+  // narrows the set. Partner placement never reorders it (see below).
+  const rankByProfile = hasQuizAnswers(quizAnswers);
   const shuffled = useMemo(() => {
     const base = stableShopOrder(products);
     return rankByProfile ? rankShopForProfile(base, quizAnswers, matchOpts) : base;
@@ -382,6 +381,7 @@ export default function BrowseScreen({
     if (searchTermRaw) moreResults = filtered.filter((p) => !personalizedIds.has(p.id));
     filtered = filtered.filter((p) => personalizedIds.has(p.id));
   }
+  const shownTotal = filtered.length + moreResults.length;
   // Best match is always listed: first once she has a profile, last before.
   const sortChoices = canSortByMatch
     ? [['best', 'Best match'], ['default', 'Featured'], ['rating', 'Highest rated'], ['price-asc', 'Price: low to high'], ['price-desc', 'Price: high to low']]
@@ -430,7 +430,8 @@ export default function BrowseScreen({
 
   // Applied filters, shown as removable chips under the toolbar.
   const activeFilters = FILTER_FIELDS.filter(([key]) => filters[key] !== 'all').map(([key, , options]) => [key, (options.find(([value]) => value === filters[key]) || [])[1] || CATEGORY_LABELS[filters[key]] || String(filters[key]).replaceAll('-', ' ')]);
-  const activeFilterCount = activeFilters.length;
+  const activeFilterCount = activeFilters.length + (embedded && activeGroup !== 'all' ? 1 : 0);
+  const areaLabel = (id) => sentenceCase(MACRO_GROUPS.find((g) => g.id === id)?.label || String(id).replaceAll('-', ' '));
   const matchingReads = searchTermRaw.length >= 2 ? searchArticles(searchTermRaw, articles) : [];
   // SearchAssist above already says "No results for 'xyz'" in this case;
   // the grid's own empty line would say it a second time.
@@ -449,31 +450,34 @@ export default function BrowseScreen({
         onGoCommunity={onGoCommunity}
         onToggleTheme={onToggleTheme}
         onOpenProfile={onOpenProfile}
-        title="Shop"
+        title="Products"
         titleFor="ay-shop-title"
       />}
 
-      <div className="ayna-fresh-browse-heading ayna-shop-heading">
-        <div className="ay-shop-titlebar">{embedded ? <h2 id="ay-shop-title" className="ay-shop-embedded-title">Products</h2> : <h1 id="ay-shop-title">Shop</h1>}{hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}</div>
-        <p className="ay-shop-note">Some links earn ayna a commission. It never changes your matches.</p>
-        {/* Inside Explore, Categories is its own tab: the need icons would be a second category system (team direction 17). */}
+      {/* Inside Explore (team direction 17): one browsing hierarchy. Search, the
+          Explore text tabs above, then one toolbar (Filters, Compare, Swipe).
+          Areas, quick filters and sort all live in the Filters sheet; the
+          "Searches people make" phrases moved to the Categories tab. */}
+      <div className={`ayna-fresh-browse-heading ayna-shop-heading${embedded ? ' is-embedded' : ''}`}>
+        <div className="ay-shop-titlebar">{embedded ? <h2 id="ay-shop-title" className="sr-only">Products</h2> : <h1 id="ay-shop-title">Products</h1>}{!embedded && hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}</div>
+        {!embedded && <p className="ay-shop-note">Some links earn ayna a commission. It never changes your matches.</p>}
         {!embedded && <NeedStickers className="ay-app-needs" active={searchValue} onPick={(q) => setSearchValue(q)} />}
         <SearchBar placeholder="Search products or brands" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }} onPick={(s) => setSearchValue(s.query)} />
-        <div className="ay-app-quick" role="group" aria-label="Quick filters">
+        {!embedded && <div className="ay-app-quick" role="group" aria-label="Quick filters">
           {quick.map(([label, key, value]) => <button key={key} type="button" className="ayna-shop-category" aria-pressed={filters[key] === value} onClick={() => setFilters((cur) => ({ ...EMPTY_FILTERS, ...(cur || {}), [key]: (cur || {})[key] === value ? 'all' : value }))}>{label}</button>)}
-        </div>
+        </div>}
       </div>
       {searchTermRaw.length >= 2 && <SearchAssist variant="app" query={searchTermRaw} resultCount={searchScored.length} onUse={setSearchValue} />}
 
-      {mode === 'products' && (
-        <CategoryNav groups={MACRO_GROUPS} active={activeGroup} onSelect={setActiveGroup} action={<>
+      {mode === 'products' && (() => { const toolbar = <>
           <div className="ay-shop-toolbar">
             <button ref={filterButtonRef} className="ayna-shop-filter-toggle" type="button" aria-expanded={showFilters} onClick={() => setShowFilters((value) => !value)}>
               <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"><path d="M4 7h16M4 17h16" /><circle cx="9" cy="7" r="2.5" fill="var(--ayna-bg)" /><circle cx="15" cy="17" r="2.5" fill="var(--ayna-bg)" /></svg>
               Filters
               {activeFilterCount > 0 && <span aria-label={`${activeFilterCount} on`}>{activeFilterCount}</span>}
             </button>
-            <p className="ay-shop-count" role="status">{filtered.length} {filtered.length === 1 ? 'product' : 'products'}</p>
+            {embedded && <CompareToggle className="ay-shop-compare" />}
+            {!embedded && <p className="ay-shop-count" role="status">{shownTotal} {shownTotal === 1 ? 'product' : 'products'}</p>}
             {!searchValue.trim() && <button type="button" className="ay-discover-cta" aria-label="Swipe through products: right to save, left to skip" onClick={() => setShowDeck(true)}>
               <svg className="ay-discover-fan" viewBox="0 0 56 44" aria-hidden="true">
                 <rect className="c1" x="6" y="6" width="22" height="30" rx="5" transform="rotate(-12 17 21)" />
@@ -483,14 +487,20 @@ export default function BrowseScreen({
               <span className="ay-discover-copy"><strong>Swipe</strong></span>
             </button>}
           </div>
-          {(activeFilters.length > 0 || sortBy !== 'default') && <div className="ay-shop-applied" role="group" aria-label="Filters on">
+          {embedded && hasProfile && <div className="ay-shop-matchrow"><PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} /></div>}
+          {(activeFilters.length > 0 || sortBy !== 'default' || (embedded && activeGroup !== 'all')) && <div className="ay-shop-applied" role="group" aria-label="Filters on">
+            {embedded && activeGroup !== 'all' && <button type="button" className="ayna-shop-category" aria-pressed="true" onClick={() => setActiveGroup('all')} aria-label={`Remove area: ${areaLabel(activeGroup)}`}>{areaLabel(activeGroup)}<span aria-hidden="true">×</span></button>}
             {sortBy !== 'default' && SORT_LABELS[sortBy] && <button type="button" className="ayna-shop-category" aria-pressed="true" onClick={() => setSortBy('default')} aria-label={`Remove sort: ${SORT_LABELS[sortBy]}`}>{SORT_LABELS[sortBy]}<span aria-hidden="true">×</span></button>}
             {activeFilters.map(([key, text]) => <button key={key} type="button" className="ayna-shop-category" aria-pressed="true" onClick={() => setFilters((current) => ({ ...current, [key]: 'all' }))} aria-label={`Remove filter: ${text}`}>{text}<span aria-hidden="true">×</span></button>)}
           </div>}
           {bestNeedsQuiz && !showFilters && bestQuizNote}
-          <div className="ay-shop-comparerow"><CompareToggle /></div>
-        </>} />
-      )}
+          {!embedded && <div className="ay-shop-comparerow"><CompareToggle /></div>}
+          {embedded && <p className="ay-shop-note is-embedded"><b role="status">{shownTotal} {shownTotal === 1 ? 'product' : 'products'}</b>. Some links earn ayna a commission. It never changes your matches.</p>}
+        </>;
+        return embedded
+          ? <div className="ayna-category-index is-embedded">{toolbar}</div>
+          : <CategoryNav groups={MACRO_GROUPS} active={activeGroup} onSelect={setActiveGroup} action={toolbar} />;
+      })()}
       {showDeck && <DiscoverDeck products={filtered} quizAnswers={quizAnswers} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} onOpenProduct={(product) => { setShowDeck(false); onOpenProduct?.(product); }} onClose={() => setShowDeck(false)} />}
       {mode === 'products' && <>
         {showFilters && <div className="ayna-shop-filter-backdrop" onClick={() => setShowFilters(false)}>
@@ -500,6 +510,7 @@ export default function BrowseScreen({
           <div className="ayna-shop-filter-fields">
           {/* P2-15: the same filter control as the website's sheet: chip groups (selected = pink + check), tap again to clear. */}
           <fieldset className="ay-chipgroup"><legend>Sort</legend><div className="ay-chipgroup__chips">{sortChoices.map(([value, text]) => <button key={value} type="button" className="ay-chipgroup__chip" aria-pressed={sortBy === value} onClick={() => setSortBy(value)}>{text}</button>)}</div>{bestNeedsQuiz && bestQuizNote}</fieldset>
+          {embedded && <fieldset className="ay-chipgroup"><legend>Area</legend><div className="ay-chipgroup__chips">{MACRO_GROUPS.filter((g) => g.id !== 'all').map((g) => <button key={g.id} type="button" className="ay-chipgroup__chip" aria-pressed={activeGroup === g.id} onClick={() => setActiveGroup(activeGroup === g.id ? 'all' : g.id)}>{sentenceCase(g.label)}</button>)}</div></fieldset>}
           {FILTER_FIELDS.map(([key, label, options]) => (
             <fieldset key={key} className="ay-chipgroup"><legend>{label}</legend><div className="ay-chipgroup__chips">
               {(key === 'category' ? [...options, ...[...new Set(products.map((p) => p.category).filter(Boolean))].sort().map((category) => [category, sentenceCase(CATEGORY_LABELS[category] || category.replaceAll('-', ' '))])] : options).filter(([value]) => value !== 'all').map(([value, text]) => (
@@ -508,7 +519,7 @@ export default function BrowseScreen({
             </div></fieldset>
           ))}
           </div>
-          <div className="ayna-shop-filter-actions"><button type="button" onClick={() => { setFilters(EMPTY_FILTERS); setSortBy('default'); }}>Clear</button><button type="button" onClick={() => setShowFilters(false)}>Apply</button></div>
+          <div className="ayna-shop-filter-actions"><button type="button" onClick={() => { setFilters(EMPTY_FILTERS); setSortBy('default'); setActiveGroup('all'); }}>Clear</button><button type="button" onClick={() => setShowFilters(false)}>Apply</button></div>
           </div>
         </div>}
       </>}
@@ -521,16 +532,19 @@ export default function BrowseScreen({
         <>
           {filtered.length > 0 || moreResults.length > 0 ? (
             <>
-              {moreResults.length > 0 && (
+              {/* TD 16: a search never looks empty because of the switch. Every result is
+                  listed; her matches come first and the count is all results. */}
+              {narrowToMatches && searchTermRaw && (
                 <p className="ay-shop-results-note" role="status">
-                  {filtered.length > 0 ? 'Your matches first. ' : 'None of your matches fit this search. '}
-                  Showing everything else that does too.
+                  {filtered.length > 0 ? 'Showing matches for you' : 'Showing all results'}
+                  {' · '}
+                  <button type="button" className="ay-shop-results-all" onClick={() => setPersonalized(false)}>See all {shownTotal} {shownTotal === 1 ? 'result' : 'results'}</button>
                 </p>
               )}
               {filtered.length > 0 && moreResults.length > 0 && <h2 className="ay-shop-results-label">Your matches</h2>}
-              {filtered.length > 0 && <ProductGrid onPickPhrase={!searchTermRaw && activeFilterCount === 0 ? (q) => { setSearchValue(q); document.querySelector('.ayna-shop-heading')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); } : null} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />}
+              {filtered.length > 0 && <ProductGrid onPickPhrase={!embedded && !searchTermRaw && activeFilterCount === 0 ? (q) => { setSearchValue(q); document.querySelector('.ayna-shop-heading')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); } : null} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />}
               {moreResults.length > 0 && <>
-                <h2 className="ay-shop-results-label">More results</h2>
+                {filtered.length > 0 && <h2 className="ay-shop-results-label">More results</h2>}
                 <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`more-${filterKey}`} products={moreResults} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
               </>}
             </>

@@ -12,7 +12,7 @@ export function NeedStickers({ active = '', onPick, className = '' }) {
   const stickers = needStickers();
   if (!stickers.length) return null;
   return (
-    <ul className={`ay-needstickers ${className}`} aria-label="Shop by need">
+    <ul className={`ay-needstickers ${className}`} aria-label="Explore by need">
       {stickers.map((n, i) => (
         <li key={n.id} style={{ '--tilt': `${[-3, 2, -1.5, 3, -2.5, 1.5, -2, 2.5][i % 8]}deg` }}>
           <button type="button" className="ay-needsticker" aria-pressed={active.toLowerCase() === n.query.toLowerCase()} onClick={() => onPick?.(n.query)}>

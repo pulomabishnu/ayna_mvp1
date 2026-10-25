@@ -30,7 +30,7 @@ export default function SavedForLater({
       {items.length === 0 ? (
         <div className="ay-group is-padded ay-saved2__empty">
           <p><strong>Nothing saved yet.</strong> When something catches your eye, tap Save and it’ll live here.</p>
-          <button type="button" className="ay-btn ay-btn--secondary" onClick={onBrowse}>Go to Shop</button>
+          <button type="button" className="ay-btn ay-btn--secondary" onClick={onBrowse}>Go to Explore</button>
         </div>
       ) : (
         <ul className="ay-shelf__row" aria-label="Saved products">

@@ -42,7 +42,7 @@ export default function EcosystemPreview({ products = [], onBuild, onSignIn, mat
           <p>Save them with a free account so they’re here next time. Your answers stay on this device until you do.</p>
           <div>
             <button type="button" className="ay-ecoprev__primary" onClick={onSave}>Save my matches</button>
-            {onBrowse && <button type="button" className="ay-ecoprev__secondary" onClick={onBrowse}>Browse the Shop by best match</button>}
+            {onBrowse && <button type="button" className="ay-ecoprev__secondary" onClick={onBrowse}>Browse products by best match</button>}
           </div>
         </div>
         <ul className="ay-ecoprev__mine">
@@ -74,7 +74,7 @@ export default function EcosystemPreview({ products = [], onBuild, onSignIn, mat
 
       <div className="ay-ecoprev__stage is-honest">
         <div className="ay-ecoprev__shelves">
-          <p className="ay-ecoprev__note">An example from the Shop, not your matches.</p>
+          <p className="ay-ecoprev__note">An example from Explore, not your matches.</p>
           {shelves.map((s) => (
             <div key={s.key} className="ay-ecoprev__shelf">
               <p className="ay-ecoprev__shelfname">{s.label}</p>

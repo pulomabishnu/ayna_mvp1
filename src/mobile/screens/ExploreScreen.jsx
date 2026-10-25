@@ -13,6 +13,7 @@ import { searchCommunity } from '../../utils/community/communityStore.js';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { rankReadsForProfile } from '../utils/personalReads.js';
 import { readRecentSearches, rememberSearch, clearRecentSearches } from '../../utils/search/recentSearches.js';
+import { FAMILIAR_PHRASES } from '../../components/shop/shopNeeds.js';
 import '../explore.css';
 
 const ROW = 8;
@@ -111,7 +112,13 @@ export default function ExploreScreen(props) {
       </section>}
     </div>;
   } else if (section === 'topics') {
-    body = <section className="ax-sec" aria-labelledby="ax-topics-h"><SectionHead id="ax-topics-h" title="Categories" /><p className="ax-note">Pick one to see products, services, reads and what the Community says.</p>{topicChips(HEALTH_TOPICS)}</section>;
+    body = <>
+      <section className="ax-sec" aria-labelledby="ax-topics-h"><SectionHead id="ax-topics-h" title="Categories" /><p className="ax-note">Pick one to see products, services, reads and what the Community says.</p>{topicChips(HEALTH_TOPICS)}</section>
+      {/* The "Does this sound familiar?" phrases, moved here from the product grid (team direction 17). */}
+      <section className="ax-sec" aria-labelledby="ax-phrases-h"><SectionHead id="ax-phrases-h" title="Searches people make" />
+        <div className="ax-topics" role="group" aria-label="Searches people make">{FAMILIAR_PHRASES.map((t) => <button type="button" key={t} onClick={() => { setQuery(t); setRecent(rememberSearch(t)); }}>{t}</button>)}</div>
+      </section>
+    </>;
   } else if (section === 'services') {
     body = <section className="ax-sec" aria-labelledby="ax-services-h"><SectionHead id="ax-services-h" title="Services" /><p className="ax-note">Telehealth, at-home tests, apps and programs from women’s health companies.</p><div className="ax-grid">{services.map(card)}</div></section>;
   } else {
@@ -127,7 +134,7 @@ export default function ExploreScreen(props) {
             {onStartQuiz && <button type="button" className="ax-invite__go" onClick={onStartQuiz}>Create your health profile</button>}
           </div></>}
       </section>
-      {!(hasProfile && forYouProducts.length > 0) && <section className="ax-sec" aria-labelledby="ax-products-h"><SectionHead id="ax-products-h" title="Products" onAll={() => go('products')} allLabel="Shop all" />{productRow(catalog.slice(0, ROW))}</section>}
+      {!(hasProfile && forYouProducts.length > 0) && <section className="ax-sec" aria-labelledby="ax-products-h"><SectionHead id="ax-products-h" title="Products" onAll={() => go('products')} allLabel="See all" />{productRow(catalog.slice(0, ROW))}</section>}
       {(forYouReads.length > 0 || articles.length > 0) && <section className="ax-sec" aria-labelledby="ax-res-h"><SectionHead id="ax-res-h" title={forYouReads.length ? 'Reads for you' : 'Resources'} onAll={() => go('resources')} allLabel={`All ${articles.length} reads`} />{readRow(forYouReads.length ? forYouReads : articles.slice(0, 4))}</section>}
     </>;
   }

@@ -15,6 +15,7 @@ import { searchCommunityTolerant } from '../../utils/search/communitySearch.js';
 import { searchCommunity } from '../../utils/community/communityStore.js';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { postLine } from '../../hooks/useSavedPosts.js';
+import { FAMILIAR_PHRASES } from '../shop/shopNeeds.js';
 
 const ROW = 8;
 const plainClick = (e) => !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0);
@@ -124,7 +125,11 @@ export default function WebExplore({
       </section>}
     </div>;
   } else if (section === 'topics') {
-    body = <section className="wx-sec" aria-labelledby="wx-topics-h">{head('wx-topics-h', 'Categories')}<p className="wx-note">Pick one to see products, services, reads and what the Community says.</p>{topicChips(HEALTH_TOPICS)}</section>;
+    body = <>
+      <section className="wx-sec" aria-labelledby="wx-topics-h">{head('wx-topics-h', 'Categories')}<p className="wx-note">Pick one to see products, services, reads and what the Community says.</p>{topicChips(HEALTH_TOPICS)}</section>
+      {/* The "Does this sound familiar?" phrases, moved here from the product grid (team direction 17). */}
+      <section className="wx-sec" aria-labelledby="wx-phrases-h">{head('wx-phrases-h', 'Searches people make')}<div className="wx-topics" role="group" aria-label="Searches people make">{FAMILIAR_PHRASES.map((t) => <button key={t} type="button" className="ay-chip" onClick={() => { commit(t); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>{t}</button>)}</div></section>
+    </>;
   } else if (section === 'services') {
     body = <section className="wx-sec" aria-labelledby="wx-services-h">{head('wx-services-h', 'Services')}<p className="wx-note">Telehealth, at-home tests, apps and programs from women’s health companies.</p><div className="ay-product-grid wx-grid">{services.map((p, i) => card(p, i, 'explore_services'))}</div></section>;
   } else {
@@ -142,7 +147,7 @@ export default function WebExplore({
             {onStartQuiz && <button type="button" className="ay-btn ay-btn--primary" onClick={onStartQuiz}>Create your health profile</button>}
           </div>
         </section>}
-      {!(hasProfile && forYou.length > 0) && <section className="wx-sec" aria-labelledby="wx-products-h">{head('wx-products-h', 'Products', allLink('products', 'Shop all products'))}{productRow(products.slice(0, ROW), 'explore_overview')}</section>}
+      {!(hasProfile && forYou.length > 0) && <section className="wx-sec" aria-labelledby="wx-products-h">{head('wx-products-h', 'Products', allLink('products', 'See all products'))}{productRow(products.slice(0, ROW), 'explore_overview')}</section>}
       <section className="wx-sec" aria-labelledby="wx-res-h">{head('wx-res-h', 'Resources', allLink('resources', `All ${ARTICLES.length} reads`))}{readRow(ARTICLES.slice(0, 6))}</section>
     </>;
   }

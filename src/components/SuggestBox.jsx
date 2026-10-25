@@ -56,7 +56,7 @@ async function flushQueue() {
 }
 
 const COPY = {
-  product: { title: "Can't find it?", sub: 'Tell us what to add to Shop.', open: 'Suggest a product' },
+  product: { title: "Can't find it?", sub: 'Tell us what to add to Explore.', open: 'Suggest a product' },
   read: { title: 'Want a read on something?', sub: 'Tell us what to write about next.', open: 'Suggest a read' },
 };
 

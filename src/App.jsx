@@ -424,7 +424,7 @@ function ProductLoading({ fallback, onPainted = null }) {
  * live, 2026-08-24 bug bash). Same component now backs both, instead of a
  * one-off block duplicated just for products.
  */
-function NotFoundState({ title, subtitle, ctaLabel, onCta, onSearch, searchPlaceholder = 'Search the Shop', links = null }) {
+function NotFoundState({ title, subtitle, ctaLabel, onCta, onSearch, searchPlaceholder = 'Search products', links = null }) {
   return (
     <div className="ed">
       <div className="ed-wrap">
@@ -3146,7 +3146,7 @@ function App() {
             <NotFoundState
               title="Product not found"
               subtitle="This product may have been removed, or the link may be incorrect."
-              ctaLabel="Or browse the whole Shop"
+              ctaLabel="Or browse all products"
               onCta={() => handleViewDiscovery('')}
               onSearch={(q) => handleViewDiscovery(q || (productRouteId ? String(productRouteId).replace(/[-_]+/g, ' ') : ''))}
               searchPlaceholder="Search for the product"
@@ -3182,7 +3182,7 @@ function App() {
             onCta={() => setCurrentView('welcome')}
             onSearch={(q) => handleViewDiscovery(q)}
             links={[
-              { href: '/shop', label: 'Shop', go: () => handleViewDiscovery('') },
+              { href: '/explore/products', label: 'Explore', go: () => handleViewDiscovery('') },
               { href: '/quiz', label: 'See my matches', go: () => setCurrentView('quiz') },
               { href: '/library', label: 'Library', go: () => { setSelectedArticleId(null); setCurrentView('articles'); } },
             ]}

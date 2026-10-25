@@ -210,7 +210,7 @@ export default function About({ onBack, backLabel, onExplore, onStart }) {
         {(onStart || onExplore) && (
           <div className="ed-closer__cta">
             {onStart && <button type="button" className="ay-btn ay-btn--primary" onClick={() => onStart()}>See my matches</button>}
-            {onExplore && <button type="button" className="ay-btn ay-btn--secondary" onClick={() => onExplore()}>Browse the Shop</button>}
+            {onExplore && <button type="button" className="ay-btn ay-btn--secondary" onClick={() => onExplore()}>Browse products</button>}
           </div>
         )}
       </section>

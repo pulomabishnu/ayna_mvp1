@@ -9,13 +9,13 @@ export default function OmittedProducts({ omittedProducts, toggleOmitProduct, on
     return (
         <div className="container ay-acct-page animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
             <AccountHead title="Not for me" back={onBack ? { label: 'Your ecosystem', href: '/ecosystem', onClick: onBack } : null}>
-                <p>Products you hid. They won&rsquo;t appear in the Shop or your matches. Restore one any time.</p>
+                <p>Products you hid. They won&rsquo;t appear in Explore or your matches. Restore one any time.</p>
             </AccountHead>
 
             {omittedList.length === 0 ? (
                 <div className="ay-acct-empty">
                     <p>Nothing hidden. When a product isn&rsquo;t for you, choose &ldquo;Not for me&rdquo; on it and it lands here.</p>
-                    {onBrowse && <button type="button" className="ay-btn ay-btn--secondary" onClick={onBrowse}>Browse the Shop</button>}
+                    {onBrowse && <button type="button" className="ay-btn ay-btn--secondary" onClick={onBrowse}>Browse products</button>}
                 </div>
             ) : (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem', maxWidth: '1000px' }}>

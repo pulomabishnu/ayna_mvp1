@@ -32,7 +32,8 @@ export function CompareCheck({ product, onOpenCompare }) {
         {disabled ? `${COMPARE_MAX} picked` : 'Compare'}
         <span className="sr-only"> {product.name}</span>
       </button>
-      {on && c.count >= COMPARE_MIN && (onOpenCompare || compareStore.canOpen()) && <button type="button" className="ay-cmpc__go" onClick={(e) => { e.preventDefault(); e.stopPropagation(); compareStore.setSelecting(false); (onOpenCompare || (() => compareStore.open()))(); }}>Compare {c.count} now</button>}
+      {/* Once, on the last product picked (it repeated under every pick). */}
+      {on && c.count >= COMPARE_MIN && c.ids[c.ids.length - 1] === product.id && (onOpenCompare || compareStore.canOpen()) && <button type="button" className="ay-cmpc__go" onClick={(e) => { e.preventDefault(); e.stopPropagation(); compareStore.setSelecting(false); (onOpenCompare || (() => compareStore.open()))(); }}>Compare {c.count} now</button>}
     </span>
   );
 }

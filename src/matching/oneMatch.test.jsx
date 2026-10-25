@@ -45,7 +45,10 @@ describe('one match percent per product (v2) on every surface', () => {
         expect(d.percent).toBe(v2Percent(d.v2));
         expect(d.percent).toBeLessThanOrEqual(MAX_SCORE);
         expect(d.percent).toBe(Math.max(...d.needMatches.map((m) => m.score)));
-        const shown = matchBadge(d)?.percent ?? null;
+        const badge = matchBadge(d);
+        // Under 50 the badge is "Partial fit" (no number on the card).
+        const shown = badge && !badge.partial ? badge.percent : null;
+        if (badge?.partial) expect(badge.label).toBe('Partial fit');
         if (shown != null) expect(shown).toBe(d.percent);
         // Product page (app reads matchPercentFor; web reads the same details).
         expect(matchPercentFor(product, q)).toBe(d.percent > 0 ? d.percent : null);
@@ -54,6 +57,7 @@ describe('one match percent per product (v2) on every surface', () => {
         const card = renderToStaticMarkup(<ProductCard product={product} quizAnswers={q} onClick={() => {}} />);
         const shelfCard = renderToStaticMarkup(<ProductCard product={product} quizAnswers={q} needId={picks.find((p) => p.productId === id)?.shelfNeed || null} onClick={() => {}} />);
         if (shown != null) { expect(pctIn(card)).toBe(shown); expect(pctIn(shelfCard)).toBe(shown); }
+        if (badge?.partial) { expect(card).toContain('Partial fit'); expect(card).not.toMatch(new RegExp(`>${d.percent}%`)); }
         // Why this matches.
         if (d.percent >= 50) expect(ringPct(renderToStaticMarkup(<WhyMatchScreen product={product} quizAnswers={q} onBack={() => {}} />))).toBe(d.percent);
         // Compare.
