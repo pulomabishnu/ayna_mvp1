@@ -112,6 +112,17 @@
   ],
   "redirects": [
     {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "aynahealth.co"
+        }
+      ],
+      "destination": "https://www.aynahealth.co/:path*",
+      "permanent": true
+    },
+    {
       "source": "/ecosystem",
       "has": [
         {
@@ -151,19 +162,6 @@
     {
       "source": "/health",
       "destination": "/today",
-      "permanent": true
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "aynahealth.co"
-        }
-      ],
-      "destination": "https://www.aynahealth.co/:path*",
       "permanent": true
     }
   ],
