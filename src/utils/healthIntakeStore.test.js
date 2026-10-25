@@ -40,3 +40,19 @@ describe('intake persistence boundaries', () => {
     expect(calls.filter((call) => call.op === 'delete').every((call) => call.table === 'health_intakes' && call.user_id === 'user-a')).toBe(true);
   });
 });
+
+describe('a save never overwrites saved answers with blanks', () => {
+  it('a quiz finished before her answers loaded keeps her saved fields; explicit new answers still win', async () => {
+    rows.set('user-a', { age: 34, lifeStage: 'perimenopause', supportSelections: ['Heavy periods'], cycle: { length: 28, flow: 'heavy' }, conditions: ['PCOS'] });
+    const res = await saveHealthIntakeForCurrentUser({ age: null, lifeStage: '', supportSelections: [], cycle: { flow: 'light' }, conditions: ['Endometriosis'], recommendedProductsPerArea: 3 });
+    expect(res.saved).toBe(true);
+    expect(rows.get('user-a')).toEqual({ age: 34, lifeStage: 'perimenopause', supportSelections: ['Heavy periods'], cycle: { length: 28, flow: 'light' }, conditions: ['Endometriosis'], recommendedProductsPerArea: 3 });
+  });
+  it('after a reset there is nothing to keep', async () => {
+    rows.set('user-a', { age: 34 });
+    await clearHealthIntakeForCurrentUser();
+    rows.set('user-a', { age: 34 }); // stale remote row while the delete is pending
+    await saveHealthIntakeForCurrentUser({ age: null, recommendedProductsPerArea: 2 });
+    expect(rows.get('user-a')).toEqual({ age: null, recommendedProductsPerArea: 2 });
+  });
+});
