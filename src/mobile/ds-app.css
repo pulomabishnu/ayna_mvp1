@@ -280,3 +280,24 @@
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-pc-save.is-on svg { fill: #f7badd; stroke: #3e2723; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) :is(.ax-row, .ax-grid, .ay-browse-grid, .ayna-shelf-row) { padding-bottom: 10px; padding-right: 8px; }
 
+
+/* ---------------------------------------------------------------------
+   ASK HOME (app chat): "Hello" + a bento of colour action tiles with one
+   New pill (cefbab0a): the first tile tall, no outlines, filled blocks.
+   --------------------------------------------------------------------- */
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-askh-list { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 0 !important; border: 0 !important; background: none !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-askh-list > li { border-top: 0 !important; border-radius: 22px; background: #f6e3a1; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-askh-list > li.is-pink { background: #f7badd; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-askh-list > li.is-sky { background: #769ebe; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-askh-list > li.is-ink { background: #3e2723; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-askh-list > li:not(.is-ink) :is(button, small, .ay-askh-tile-label) { color: #3e2723 !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-askh-list > li:not(.is-ink) .ay-askh-icon { border-color: #3e2723; color: #3e2723; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-askh-list > li.is-ink :is(button, small, .ay-askh-tile-label) { color: #ffedac !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-askh-list > li.is-ink .ay-askh-icon { border-color: #ffedac; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-askh-list > li:first-child { grid-row: span 2; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-askh-list button { flex-direction: column !important; align-items: flex-start !important; justify-content: space-between; gap: 10px; height: 100%; min-height: 96px; padding: 14px !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-askh-list .ay-askh-go { display: none; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-askh-list small { display: none; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-askh-list > li:first-child .ay-askh-tile-label { font: 700 20px/1.15 var(--ay-app-heading) !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-askh-list button:active { transform: scale(.97); }
+@media (prefers-reduced-motion: reduce) { .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-askh-list button:active { transform: none; } }
