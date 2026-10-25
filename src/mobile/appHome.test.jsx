@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
-// The app's ayna home (founder, Oct 24 20:12): routing, the product sheet over
-// the Rundown and the chat (exact return position), the Rundown to chat
-// hand-off, and starters that work on this phone.
+// The app's Home (founder Oct 24 22:03 and 22:12, team sync Oct 25): routing
+// and the chat-first variant, facts first with Ask why, the Ask ayna sheet,
+// the product sheet over the Rundown and the chat (exact return position),
+// the Rundown to chat hand-off, and starters that work on this phone.
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -21,6 +22,10 @@ const { default: ProductSheet } = await import('./components/ProductSheet.jsx');
 const { SheetMatch } = await import('./components/ProductQuick.jsx');
 const { default: AskAynaModal } = await import('./components/AskAynaModal.jsx');
 const { default: HomeSwitch } = await import('./components/HomeSwitch.jsx');
+const { default: HomeAskSheet } = await import('./components/HomeAskSheet.jsx');
+const { default: TodayFeed } = await import('../components/today/TodayFeed.jsx');
+const { readHomeVariant } = await import('./utils/homeVariant.js');
+const { homePrompts } = await import('../utils/askPrompts.js');
 const { ProductSheetContext } = await import('./productSheetContext.js');
 const { ALL_PRODUCTS } = await import('../data/products.js');
 const { addDays, todayKey } = await import('../health/dailyLog.js');
@@ -32,7 +37,7 @@ beforeEach(() => { localStorage.clear(); reduce(true); if (!Element.prototype.sc
 afterEach(() => {
   act(() => root?.unmount());
   host?.remove(); root = null; host = null;
-  document.querySelectorAll('.ayna-mobile, .ay-rd, .ay-psheet-layer').forEach((n) => n.remove());
+  document.querySelectorAll('.ayna-mobile, .ay-rd, .ay-psheet-layer, .ay-asksheet-layer').forEach((n) => n.remove());
   vi.useRealTimers();
 });
 // Mounted inside an .ayna-mobile shell, like the app (portals land in it).
@@ -42,20 +47,29 @@ const flush = async () => { await act(async () => { await new Promise((r) => set
 
 const product = ALL_PRODUCTS.find((p) => p.id && p.name && (p.image || p.imageUrl)) || ALL_PRODUCTS[0];
 
-describe('app routing: ayna is home', () => {
-  it('a profile or ecosystem on this phone opens the ayna chat; nothing opens the welcome', () => {
-    expect(initialAppRoute({ hasProfile: true })).toEqual({ screen: 'ayna', view: null });
+describe('app routing: Home, dashboard first', () => {
+  it('a profile or ecosystem on this phone opens Home on its dashboard; nothing opens the welcome', () => {
+    expect(initialAppRoute({ hasProfile: true })).toEqual({ screen: 'ayna', view: 'home' });
     expect(initialAppRoute({})).toEqual({ screen: 'landing', view: null });
     expect(initialAppRoute({ hasDraft: true })).toEqual({ screen: 'ecointro', view: null });
     expect(initialAppRoute({ pendingQuiz: true, quizStep: 'plan', hasProfile: true })).toEqual({ screen: 'plan', view: null });
   });
-  it('old routes keep working: today is My dashboard, ask is the chat (push, links, dev ?screen=)', () => {
-    expect(initialAppRoute({ devScreen: 'today', hasProfile: true })).toEqual({ screen: 'ayna', view: 'dashboard' });
+  it('old routes keep working: today and ayna open Home, ask the chat (push, links, dev ?screen=)', () => {
+    expect(initialAppRoute({ devScreen: 'today', hasProfile: true })).toEqual({ screen: 'ayna', view: 'home' });
     expect(aynaRoute('ask')).toEqual({ screen: 'ayna', view: 'chat' });
-    expect(navTabFor('today')).toBe('ayna');
-    expect(navTabFor('library')).toBe('library');
+    expect(navTabFor('today')).toBe('home');
+    expect(navTabFor('library')).toBe('explore');
   });
-  it('the switch is a tablist; arrows move between Chat, Products and My dashboard', () => {
+  it('?home=chat keeps the chat-first Home for the focus group (and remembers it); default is the dashboard', () => {
+    const store = { v: {}, getItem(k) { return this.v[k] ?? null; }, setItem(k, x) { this.v[k] = x; }, removeItem(k) { delete this.v[k]; } };
+    expect(readHomeVariant({ search: '', storage: store })).toBe('dashboard');
+    expect(readHomeVariant({ search: '?home=chat', storage: store })).toBe('chat');
+    expect(readHomeVariant({ search: '', storage: store })).toBe('chat');
+    expect(initialAppRoute({ hasProfile: true, variant: 'chat' })).toEqual({ screen: 'ayna', view: 'chat' });
+    expect(readHomeVariant({ search: '?home=dashboard', storage: store })).toBe('dashboard');
+    expect(readHomeVariant({ search: '', storage: store })).toBe('dashboard');
+  });
+  it('chat-first Home: the switch is a tablist; arrows move between Chat, Products and My dashboard', () => {
     const onChange = vi.fn();
     mount(<HomeSwitch view="chat" onChange={onChange} />);
     const tabs = [...document.querySelectorAll('[role="tab"]')];
@@ -63,6 +77,70 @@ describe('app routing: ayna is home', () => {
     expect(tabs[0].getAttribute('aria-selected')).toBe('true');
     act(() => tabs[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true })));
     expect(onChange).toHaveBeenCalledWith('dashboard');
+  });
+});
+
+describe('Home: facts first, Ask why, and the Ask ayna sheet', () => {
+  const ctx = {
+    today: '2026-10-24',
+    signals: { hasRundown: true, hasYesterdayLog: true, hasHistory: true },
+    focus: [{ title: 'Your pain was higher yesterday', reason: '' }],
+    rundown: [
+      { category: 'change', title: 'Sleep may matter a little more today.', explain: { kind: 'sleep', lastNight: 340, avg: 424, nights: 10 } },
+      { category: 'change', title: 'Your recovery signal is lower than your recent range.', explain: { kind: 'signal', what: 'Heart rate variability', last: '31 ms', low: '38 ms', high: '52 ms', n: 14 } },
+    ],
+    log: {}, recent: [],
+  };
+  it('each prompt comes from a fact in her data, with that fact as its one-line reason (3 or 4)', () => {
+    const p = homePrompts({ ctx, signedIn: true, hasProfile: true });
+    expect(p.length).toBeGreaterThanOrEqual(3);
+    expect(p.length).toBeLessThanOrEqual(4);
+    expect(p[0]).toMatchObject({ question: 'Why was my sleep so low?', reason: 'You slept 5h 40m last night, less than your usual 7h 04m.' });
+    expect(p[1]).toMatchObject({ question: 'Why was my heart rate variability flagged?', reason: 'Heart rate variability: 31 ms, outside your usual 38 ms to 52 ms.' });
+    expect(p[2]).toMatchObject({ question: 'What should I focus on today?', reason: 'Your pain was higher yesterday' });
+  });
+  it('signed out, only prompts answered on this phone', async () => {
+    setTodayAskContext(ctx);
+    const p = homePrompts({ ctx, signedIn: false, hasProfile: true });
+    expect(p[0].question).toBe('Why was my sleep flagged?');
+    for (const x of p) {
+      const local = (await localMatchAnswer(x.question, { quizAnswers: null })) || (await localHistoryAnswer(x.question, {})) || (await localTodayAnswer(x.question));
+      expect(local?.answer, x.question).toBeTruthy();
+    }
+  });
+  it('the sheet shows the prompts with their reasons, the box and the mic; sending opens the chat', async () => {
+    setTodayAskContext(ctx);
+    const onAsk = vi.fn(); const onClose = vi.fn();
+    mount(<HomeAskSheet signedIn hasProfile onAsk={onAsk} onClose={onClose} />);
+    await flush();
+    const dlg = document.querySelector('.ay-asksheet[role="dialog"]');
+    expect(dlg.getAttribute('aria-modal')).toBe('true');
+    expect(dlg.textContent).toContain('You slept 5h 40m last night');
+    expect(dlg.querySelector('.ay-asksheet__input')).toBeTruthy();
+    act(() => [...dlg.querySelectorAll('.ay-asksheet__prompts button')][0].click());
+    expect(onClose).toHaveBeenCalled();
+    expect(onAsk.mock.calls[0][0]).toMatchObject({ question: 'Why was my sleep so low?', usesHealth: true });
+    // The fact goes to the AI only with her health opt-in.
+    expect(onAsk.mock.calls[0][0].context).toBe('');
+  });
+  it('one-screen Home feed: the Rundown card and up to three things, each with Ask why; no log, no long lists', async () => {
+    sessionStorage.setItem('ayna_dev_fixture', 'today');
+    const onAsk = vi.fn(); const onOpenFull = vi.fn();
+    mount(<TodayFeed compact variant="app" onAsk={onAsk} onOpenFull={onOpenFull} moreHeading={false} />);
+    await flush();
+    const items = [...document.querySelectorAll('.ay-today__item.is-compact')];
+    expect(items.length).toBeGreaterThan(0);
+    expect(items.filter((n) => !/is-(safety|care)/.test(n.className)).length).toBeLessThanOrEqual(3);
+    expect(document.querySelector('.ay-today__log')).toBeNull();
+    expect(document.querySelector('.ay-today__more')).toBeNull();
+    const why = btn('Ask why');
+    if (why) {
+      act(() => why.click());
+      expect(onAsk.mock.calls[0][0]).toMatch(/^Why might this be\? /);
+    }
+    act(() => btn('More', items[0]) ? btn('More', items[0]).click() : btn('Answer', items[0]).click());
+    expect(onOpenFull).toHaveBeenCalled();
+    sessionStorage.removeItem('ayna_dev_fixture');
   });
 });
 
@@ -228,6 +306,25 @@ describe('New in Community: real public posts only', () => {
   });
 });
 
+describe('a tapped prompt is sent right away (founder, Oct 24 22:17)', () => {
+  it('a starter in the chat is asked on tap; typed text waits for Ask', async () => {
+    setTodayAskContext({ today: '2026-10-24', signals: {}, focus: [], rundown: [], log: {}, recent: [] });
+    mount(<AskAynaModal open asTab onBackHome={() => {}} />);
+    await flush();
+    const input = document.querySelector('.ay-ask-input');
+    const typed = 'my own words';
+    act(() => { const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set; set.call(input, typed); input.dispatchEvent(new Event('input', { bubbles: true })); });
+    await flush();
+    expect(document.body.textContent).not.toContain('Here\'s what stands out today');
+    const tile = [...document.querySelectorAll('.ay-askh-list button')].find((b) => b.textContent.includes('What should I focus on today?'));
+    await act(async () => { tile.click(); await new Promise((r) => setTimeout(r, 0)); });
+    await flush();
+    // Sent: her question and ayna's answer are in the thread, not waiting in the box.
+    expect(document.body.textContent).toContain('What should I focus on today?');
+    expect(document.body.textContent).toMatch(/Nothing unusual stands out today|Here's what stands out today/);
+  });
+});
+
 describe('Rundown to chat hand-off', () => {
   const today = todayKey();
   const sleepRows = [...Array.from({ length: 10 }, (_, i) => ({ metric: 'sleep_minutes', day: addDays(today, -(i + 1)), value: 420 })), { metric: 'sleep_minutes', day: today, value: 330 }];
@@ -251,7 +348,7 @@ describe('Rundown to chat hand-off', () => {
     mount(<Rundown t={t} onFinish={onFinish} onAsk={onAsk} />);
     act(() => btn('Start rundown').click());
     act(() => btn('Next card').click());
-    act(() => btn('Ask ayna about this').click());
+    act(() => btn('Ask why').click());
     expect(onFinish.mock.calls[0][0].toChat).toBe(false);
     expect(onAsk).toHaveBeenCalled();
   });
@@ -259,12 +356,15 @@ describe('Rundown to chat hand-off', () => {
   it('the chat home shows them as "From your Daily Rundown today"; a tap asks it', async () => {
     const onStarter = vi.fn();
     const starters = [{ question: 'Why was my sleep flagged?', context: '', usesHealth: true, buildContext: () => '' }];
-    mount(<AskAynaModal open asTab renderHomeTop={(leading) => <HomeSwitch view="chat" leading={leading} />} starters={starters} onStarter={onStarter} />);
+    const onBackHome = vi.fn();
+    mount(<AskAynaModal open asTab onBackHome={onBackHome} starters={starters} onStarter={onStarter} />);
     await flush();
     expect(document.body.textContent).toContain('From your Daily Rundown today');
     act(() => btn('Why was my sleep flagged?').click());
     expect(onStarter).toHaveBeenCalledWith(starters[0]);
-    // The switch sits in place of the title.
-    expect([...document.querySelectorAll('[role="tab"]')].map((x) => x.textContent)).toEqual(['Chat', 'Products', 'My dashboard']);
+    // Full screen from Home: Back returns to Home.
+    expect(document.querySelector('.ayna-ask-drawer.is-full')).toBeTruthy();
+    act(() => btn('Home').click());
+    expect(onBackHome).toHaveBeenCalled();
   });
 });

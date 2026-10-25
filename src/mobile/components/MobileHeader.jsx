@@ -9,7 +9,8 @@ import './mobile-header.css';
 // screen while the page scrolls), so there is no collapsing small-title bar.
 // `title` and `titleFor` are still accepted from callers and ignored.
 // onOpenSaved is still accepted from callers and ignored.
-export default function MobileHeader({ onOpenSettings, onBack }) {
+// hideAsk: Home has its own "Ask ayna" bar right under the header.
+export default function MobileHeader({ onOpenSettings, onBack, hideAsk = false }) {
   const openAsk = useContext(AskContext);
   // Header is on every app tab: capture invite codes (idempotent).
   useEffect(() => { installReferralCapture(getSupabaseClient()); }, []);
@@ -21,7 +22,7 @@ export default function MobileHeader({ onOpenSettings, onBack }) {
       <span className="ayna-shared-wordmark">ayna</span>
     </div>
     <div className="ay-header-actions">
-    {openAsk && <button type="button" onClick={openAsk} aria-label="Ask ayna" className="ay-header-ask ay-header-ask-pill">
+    {openAsk && !hideAsk && <button type="button" onClick={openAsk} aria-label="Ask ayna" className="ay-header-ask ay-header-ask-pill">
       <span className="ay-header-ask-orb" aria-hidden="true" />
       Ask ayna
     </button>}

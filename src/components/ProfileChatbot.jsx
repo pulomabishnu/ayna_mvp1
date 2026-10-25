@@ -98,7 +98,9 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
   // The header's Ask ayna button bumps openSignal to open the chat.
   // Numbers from the dashboard that go with a prefilled question (shown back as a stat card).
   const statsRef = useRef(null);
-  useEffect(() => { if (openSignal) { setOpen(true); if (prefill) setInput(prefill); statsRef.current = prefill && prefillStats?.length ? { text: prefill, stats: prefillStats } : null; } }, [openSignal]); // eslint-disable-line react-hooks/exhaustive-deps
+  // A tapped prompt (Ask why, a Rundown question, a dashboard question) is sent
+  // straight away (founder, Oct 24 22:17); only typing waits for Send.
+  useEffect(() => { if (openSignal) { setOpen(true); statsRef.current = prefill && prefillStats?.length ? { text: prefill, stats: prefillStats } : null; if (prefill) sendText(prefill); } }, [openSignal]); // eslint-disable-line react-hooks/exhaustive-deps
   // Home (tiles + recent questions) until she asks something.
   const [home, setHome] = useState(true);
   // Back on the home view: start at the top, not where the chat was scrolled.
@@ -543,7 +545,8 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
                 note={WELCOME}
                 tiles={guidedTiles({ focusProduct, hasHealthData, fallback: askTiles(hasHealthData) })}
                 recent={recentQuestions(messages)}
-                onPick={(q) => { setInput(q); inputRef.current?.focus({ preventScroll: true }); }}
+                // A starter is sent on tap (founder, Oct 24 22:17).
+                onPick={(q) => sendText(q)}
                 onContinue={messages.some((m) => m.role === 'user') ? () => setHome(false) : null}
               />
             )}
