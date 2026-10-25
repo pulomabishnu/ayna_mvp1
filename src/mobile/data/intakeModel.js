@@ -765,7 +765,9 @@ export function missingAnswerHint(stepId, intake) {
   const any = 'None, Not sure and Prefer not to answer all count.';
   if (stepId === 'allergies') return intake?.allergyStatus === 'Yes' ? 'Add at least one allergy, or pick another answer.' : `Pick an answer to go on. ${any}`;
   if (stepId === 'medications') return intake?.takesCurrent === 'Yes' ? 'Add at least one medicine or supplement, or pick another answer.' : `Pick an answer to go on. ${any}`;
-  if (stepId === 'conditions' || stepId === 'safety') return `Pick an answer to go on. ${any}`;
+  // "Anything urgent?" has its own options: name those (QA round 2).
+  if (stepId === 'safety') return `Pick ${URGENT_STATUS.slice(0, -1).join(', ')} or ${URGENT_STATUS.at(-1)} to go on.`;
+  if (stepId === 'conditions') return `Pick an answer to go on. ${any}`;
   return '';
 }
 

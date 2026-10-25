@@ -13,6 +13,8 @@ describe('safety step', () => {
     expect(missingAnswerHint('medications', { ...EMPTY, takesCurrent: 'Yes' })).toMatch(/Add at least one medicine/);
     expect(missingAnswerHint('medications', { ...EMPTY, takesCurrent: 'No' })).toBe('');
     expect(missingAnswerHint('age', { ...EMPTY })).toBe('');
+    // "Anything urgent?" is Yes / No / Not sure only (QA round 2).
+    expect(missingAnswerHint('safety', { ...EMPTY })).toBe('Pick Yes, No or Not sure to go on.');
   });
   it('the "why we ask" line says Prefer not to answer, like the button', () => {
     expect(ONBOARDING_WHY.conditions).toContain('Prefer not to answer');
