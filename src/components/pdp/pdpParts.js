@@ -217,3 +217,33 @@ export function clinicianOf(expert) {
   const cred = a.match(/\b(MD|DO|NP|RN|PA-C|CNM|PharmD|MPH|PhD|FACOG|OB-?GYN|IBCLC)\b(?:,\s*(?:MD|DO|NP|RN|PA-C|CNM|PharmD|MPH|PhD|FACOG|OB-?GYN|IBCLC)\b)*/);
   return { who: name ? name[0] : '', credential: cred ? cred[0] : '', line: a };
 }
+
+// ---------------------------------------------------------------------------
+// Oct 25 rework (founder: "organized horribly"): one reading column, each
+// fact once. Who it's for = ✓ rows (her reasons, then the team's lines),
+// Not for = ✕ rows. Clinician checks belong to Safety, not here.
+// ---------------------------------------------------------------------------
+export function whoLists({ details = null, who = [] } = {}) {
+  const items = fitChecklist({ details, who, warnings: [] }).filter((x) => x.from !== 'hold');
+  return { yes: items.filter((x) => x.tone === 'yes').map((x) => x.text), no: items.filter((x) => x.tone === 'no').map((x) => x.text) };
+}
+
+const FORM_WORD = /\b(capsules?|softgels?|tablets?|gummies|powder|tea|drink mix|liquid|tincture|spray|mist|gel|cream|oil|balm|lotion|serum|wash|cleanser|wipes?|suppositor(?:y|ies)|patch(?:es)?|roll-on)\b/i;
+/** What the product physically is, for Key facts ("Tablets", "Portable heating pad", "Digital service"), never its shop category. */
+export function keyFormat(product, brand = '') {
+  if (!product) return '';
+  if (product.type === 'digital') return product.category === 'telehealth' ? 'Virtual care service' : 'Digital service';
+  const m = `${product.name || ''} ${product.price || ''}`.match(FORM_WORD);
+  if (m) return cap(m[1].toLowerCase().replace(/^capsule$/, 'capsules').replace(/^softgel$/, 'softgels').replace(/^tablet$/, 'tablets'));
+  let name = String(product.name || '').replace(/\s*[,(].*$/, '').trim();
+  const b = String(brand || product.brand || '').trim();
+  if (b && name.toLowerCase().startsWith(b.toLowerCase() + ' ')) name = name.slice(b.length + 1);
+  return cap(name.toLowerCase());
+}
+
+/** Index of the safety item the hero line echoes (its text starts with, or contains, the hero line). */
+export function criticalIndex(texts, topWarning) {
+  const t = norm(topWarning).replace(/^pregnancy /, '');
+  if (!t) return -1;
+  return (texts || []).findIndex((x) => { const n = norm(x); return n && (n.startsWith(t.slice(0, 40)) || t.startsWith(n.slice(0, 40)) || n.includes(t.slice(0, 40))); });
+}

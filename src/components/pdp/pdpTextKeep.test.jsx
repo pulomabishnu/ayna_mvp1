@@ -19,6 +19,9 @@ import ProductModal from '../ProductModal.jsx';
 import ProductDetailScreen from '../../mobile/screens/ProductDetailScreen.jsx';
 import ProductSheet from '../../mobile/components/ProductSheet.jsx';
 import { splitSentences } from './sentences.js';
+import { buildEvidence } from './evidenceModel.js';
+import { buildGlance } from './glance.js';
+import { topWarningFor } from './pdpParts.js';
 
 const FIXTURE = path.join(path.dirname(new URL(import.meta.url).pathname), '__fixtures__', 'pdpText.before.json');
 const IDS = ['p-portable-heating', 'p-nature-made-iron-65mg', 'd-ppd'];
@@ -48,10 +51,16 @@ const RENAMED_LABELS = [
   'ayna’s take', // now "The short answer"
   'Evidence:', // the line next to Buy; the same words are in the evidence meter
   /^\d+ parts\. Swipe to read on\.$/, // sideways reading shelves became "Show all N parts"
+  // Oct 25 rework: ayna summary is one column of plain sections (In one line, Who it's for,
+  // Key facts, How to use, Safety, Evidence, Ingredients); these old headings and links went with the old boxes.
+  'All safety info', // the hero's safety line now says "Safety"
+  'See the literature', // now "See the research"
+  'What it is', 'Helps with:', 'At a glance', 'Before you use it', 'Ingredients and dose', 'What’s in it', 'What’s included', 'Size and price',
+  'What’s included and details', 'Works with:', 'Check with a clinician first', 'Possible side effects', 'Also worth knowing', 'Downsides to know', 'Label and regulatory facts', 'Labels on file', 'Privacy',
 ];
 const renamed = (c) => RENAMED_LABELS.some((r) => (typeof r === 'string' ? r === c : r.test(c)));
 // A paragraph the redesign splits (its first sentence leads The short answer) still counts when every sentence is there.
-const present = (after, c) => after.includes(c) || after.includes(c.replace(/\.$/, '')) || (splitSentences(c).length > 1 && splitSentences(c).every((x) => after.includes(x)));
+const present = (after, c) => after.includes(c) || after.toLowerCase().includes(c.toLowerCase()) || after.includes(c.replace(/\.$/, '')) || (splitSentences(c).length > 1 && splitSentences(c).every((x) => after.includes(x)));
 
 describe('product page keeps every piece of information', () => {
   let products;
@@ -79,5 +88,25 @@ describe('product page keeps every piece of information', () => {
     }
     if (missing.length) globalThis.process?.stdout?.write(`\nMISSING\n${missing.join('\n')}\n`);
     expect(missing).toEqual([]);
+  });
+
+  it('every who-it\'s-for and safety line is rendered once (the hero safety line is the one echo)', () => {
+    const count = (hay, needle) => hay.split(needle).length - 1;
+    const twice = [];
+    for (const p of products) {
+      const html = renders(p);
+      const m = buildEvidence(p, {});
+      const top = topWarningFor(p, buildGlance(p, {}));
+      for (const surface of ['web', 'app', 'sheet']) {
+        const after = flat(html[surface]);
+        for (const line of [...m.who, ...m.safety.warnings]) {
+          const n = count(after, line);
+          const allowed = top && (line.startsWith(top.replace(/\.$/, '')) || top.startsWith(line)) ? 2 : 1;
+          if (n !== 1 && n > allowed) twice.push(`${p.id} ${surface} x${n}: ${line}`);
+          if (n === 0) twice.push(`${p.id} ${surface} missing: ${line}`);
+        }
+      }
+    }
+    expect(twice).toEqual([]);
   });
 });

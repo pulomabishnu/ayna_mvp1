@@ -8,7 +8,7 @@ import { useResearchState } from '../../data/researchLoader.js';
 import { formatPrice } from '../../utils/formatPrice.js';
 import { displayName } from '../utils/displayName.js';
 import { SheetMatch, ProductQuickActions } from './ProductQuick.jsx';
-import { MatchLine, SafetyBox } from '../../components/pdp/PdpParts.jsx';
+import { MatchLine, SafetyLine } from '../../components/pdp/PdpParts.jsx';
 import { matchLineState, topWarningFor } from '../../components/pdp/pdpParts.js';
 import { ProductAsk } from '../../components/passport/ProductSections.jsx';
 import { whyLine } from '../../utils/whyLine.js';
@@ -119,7 +119,7 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
               ? <MatchLine state={matchLineState({ details, percent: details.percent, hasProfile: true, why: whyLine(product, details) })} onWhy={onShowWhy} onFix={onFixSafety} />
               : <SheetMatch state={matchState} />}
             <ProductQuickActions product={product} saved={saved} onToggleSaved={onToggleSaved} inRoutine={inRoutine} onAddToRoutine={onAddToRoutine} big />
-            <SafetyBox text={topWarning} />
+            <SafetyLine text={topWarning} />
             <ProductEvidence key={product.id} product={product} glance={glance} loading={!loaded} swipeTabs syncHash={false} safetyLead={topWarning} fit={{ details, hasProfile: Boolean(details && details.matchStatus !== 'no-profile'), onShowWhy }} askSlot={onAsk ? <ProductAsk productName={name} onAsk={onAsk} hasProfile={Boolean(details && details.matchStatus !== 'no-profile')} /> : null} />
             {renderFull && <button type="button" className="ay-psheet__more" onClick={() => setFull(true)}>Read more <span aria-hidden="true">→</span><span className="sr-only"> about {name} on its full page</span></button>}
           </div>

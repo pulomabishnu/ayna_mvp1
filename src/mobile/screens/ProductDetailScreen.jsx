@@ -12,7 +12,7 @@ import WhyMatchScreen from './WhyMatchScreen.jsx';
 import { isBleedingEvaluation } from '../../utils/matchDisplay.js';
 import { whyLine } from '../../utils/whyLine.js';
 import ProductEvidence from '../../components/pdp/ProductEvidence.jsx';
-import { MatchLine, SafetyBox } from '../../components/pdp/PdpParts.jsx';
+import { MatchLine, SafetyLine } from '../../components/pdp/PdpParts.jsx';
 import { matchLineState, topWarningFor, pageRecall } from '../../components/pdp/pdpParts.js';
 import { useResearchState } from '../../data/researchLoader.js';
 import { attributeBadges } from '../../components/pdp/evidenceModel.js';
@@ -455,9 +455,10 @@ export default function ProductDetailScreen({
           </div>}
           <MatchLine state={matchState} onWhy={openWhyMatch} onFix={onFixSafety} onQuiz={onStartQuiz} />
           {buyBar}
-          {shopAction && <p className="ay-pdp-commission">{leavingLine(shopAction.href, null, shopAction.label === 'Book' ? 'book' : shopAction.label === 'Get the app' ? 'get it' : 'buy')}</p>}
+          {/* One tiny muted line: where Buy goes and the commission (founder, Oct 25). */}
+          {shopAction && <p className="ay-pdp-commission ayv-fine">{leavingLine(shopAction.href, null, shopAction.label === 'Book' ? 'book' : shopAction.label === 'Get the app' ? 'get it' : 'buy')}{!isPartner && buyUrl && ' Some links earn ayna a commission. It never changes your matches.'}</p>}
           <SaveFollowUpInline product={product} onCompare={onCompare} />
-          <SafetyBox text={topWarning} />
+          <SafetyLine text={topWarning} />
           {!shopAction && <p className="ay-pdp-nolink">{storesOnFile.length ? `${product.type === 'digital' ? 'On' : 'Sold at'} ${andList(storesOnFile.slice(0, 4))}. We don’t have a direct link yet.` : 'We don’t have a store link for this yet.'}</p>}
           {isPartner ? (
             <div className="ayna-figma-partner-disclosure">
@@ -466,7 +467,7 @@ export default function ProductDetailScreen({
               </button>
               {partnerOpen && <div className="ayna-figma-partner-copy">{partnerDisclosure}<a href="https://www.aynahealth.co/startups" target="_blank" rel="noopener noreferrer">Read about our brand partnerships</a></div>}
             </div>
-          ) : buyUrl && <p className="ay-pdp-commission">Some links earn ayna a commission. It never changes your matches.</p>}
+          ) : null}
         </div>
         <div className="ay-pdp-passport">
           <ProductEvidence

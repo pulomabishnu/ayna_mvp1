@@ -1,11 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import MatchPill from '../MatchPill.jsx';
 import SafetyHoldNote from '../match/SafetyHoldNote.jsx';
 import BleedingEvaluationNote from '../match/BleedingEvaluationNote.jsx';
 import { matchText, MATCH_UNAVAILABLE, SAFETY_HOLD } from '../../utils/matchDisplay.js';
-import { buildEvidence } from './evidenceModel.js';
-import { fitChecklist, splitShow, SHOW_FIRST } from './pdpParts.js';
-import PdpIcon from './PdpIcon.jsx';
+import { splitShow, SHOW_FIRST } from './pdpParts.js';
 import './pdp-v7.css';
 
 /**
@@ -29,7 +27,7 @@ export function ShowAll({ items, n = SHOW_FIRST, render, className = '', label =
       </ul>
       {rest.length > 0 && (
         <button type="button" className="ayv-showall" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
-          {open ? 'Show fewer' : `Show all ${total} ${label}`}
+          {open ? 'Show fewer' : `Show all ${total}${label ? ` ${label}` : ''}`}
         </button>
       )}
     </>
@@ -72,66 +70,6 @@ export function MatchLine({ state, onWhy = null, onFix = null, onQuiz = null }) 
   return null;
 }
 
-const MARKS = {
-  yes: <path d="m5 12.5 4.5 4.5L19 7.5" />,
-  check: <><path d="M12 6.5v7" /><path d="M12 17.2v.3" /></>,
-  no: <path d="M7 7l10 10M17 7 7 17" />,
-};
-const TONE_SR = { yes: 'Fits: ', check: 'Check first: ', no: 'Not for: ' };
-
-/** "Is it for you": ✓ fits, ! check with a clinician, ✕ not for. Built from what is on file. */
-export function IsItForYou({ product, details = null, hasProfile = false, onShowWhy = null, helps = [], extra = null, heading = 'Is it for you', id = 'ayv-fit' }) {
-  const m = useMemo(() => (product ? buildEvidence(product, {}) : null), [product]);
-  const items = useMemo(() => fitChecklist({ details: hasProfile ? details : null, who: m?.who || [], warnings: m?.safety?.warnings || [] }), [m, details, hasProfile]);
-  if (!items.length && !helps.length) return null;
-  return (
-    <section className="ayv-fit ayq-anchor" id={id} aria-labelledby={`${id}-h`}>
-      <h2 id={`${id}-h`} className="ayv-h">{heading}</h2>
-      {!hasProfile && items.length > 0 && <p className="ayv-fit__sub">Who it’s for</p>}
-      <ShowAll
-        items={items}
-        n={4}
-        label="points"
-        className="ayv-checks"
-        itemClass={(x) => `is-${x.tone}`}
-        render={(x) => (
-          <>
-            <span className="ayv-checks__mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">{MARKS[x.tone]}</svg></span>
-            <span className="ayv-checks__text"><span className="sr-only">{TONE_SR[x.tone]}</span>{x.text}</span>
-          </>
-        )}
-      />
-      {helps.length > 0 && <p className="ayv-fit__helps"><b>Helps with:</b> {helps.join(', ')}</p>}
-      {extra}
-      {hasProfile && onShowWhy && (
-        <p className="ayv-fit__links">
-          <button type="button" className="ayv-textbtn" onClick={onShowWhy}>See the breakdown</button>
-          <a className="ayv-textbtn" href="/how-it-works">How we match</a>
-        </p>
-      )}
-    </section>
-  );
-}
-
-/** At a glance: a bento of 4-6 tiles, each a label and one big value. */
-export function GlanceBento({ tiles, id = 'ayv-glance' }) {
-  if (!tiles?.length) return null;
-  return (
-    <section className="ayv-glance" aria-labelledby={`${id}-h`}>
-      <h2 id={`${id}-h`} className="ayv-h">At a glance</h2>
-      <ul className={`ayv-bento is-${tiles.length}`}>
-        {tiles.map((t, i) => (
-          <li key={t.id} className={`ayv-tile is-${t.id}${i === 0 ? ' is-lead' : ''}`}>
-            <span className="ayv-tile__label"><PdpIcon name={t.icon} size={18} />{t.label}</span>
-            <span className="ayv-tile__value">{t.main}</span>
-            {t.note && <span className="ayv-tile__note">{t.note}</span>}
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-
 /** The evidence grade as 3 bars + its word. The bars fill once (none under reduced motion). */
 export function EvidenceMeter({ meter, onMore = null, moreLabel = 'See the literature', size = 'md' }) {
   if (!meter) return null;
@@ -154,15 +92,19 @@ export function EvidenceMeter({ meter, onMore = null, moreLabel = 'See the liter
   );
 }
 
-/** The one critical safety line, in a clearly coloured box near the top; "All safety info" opens the full list. */
-export function SafetyBox({ text, onAll = null }) {
+/**
+ * The one critical safety line under the action row (founder, Oct 25): a pink
+ * mark, the line, and "Safety", which jumps to the Safety section. No box, and
+ * the full text lives only in Safety.
+ */
+export function SafetyLine({ text, onGo = null }) {
   if (!text) return null;
-  const all = onAll || (() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'safety' })));
+  const go = onGo || (() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'safety' })));
   return (
-    <div className="ayv-safety" role="note">
-      <span className="ayv-safety__mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3 2 21h20L12 3Z" /><path d="M12 10v5M12 18v.5" /></svg></span>
-      <p className="ayv-safety__text"><span className="sr-only">Safety note: </span>{text}</p>
-      <button type="button" className="ayv-safety__all" onClick={all}>All safety info</button>
-    </div>
+    <p className="ayv-safeline" role="note">
+      <span className="ayv-safeline__mark" aria-hidden="true">!</span>
+      <span className="ayv-safeline__text"><span className="sr-only">Safety: </span>{text}</span>
+      <button type="button" className="ayv-textbtn ayv-safeline__go" onClick={go}>Safety</button>
+    </p>
   );
 }

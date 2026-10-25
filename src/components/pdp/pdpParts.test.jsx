@@ -2,8 +2,8 @@
 import { describe, it, expect } from 'vitest';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { fitChecklist, matchLineState, evidenceMeter, splitShow, shortAnswer, mainCaution, sortSources, clinicianOf, glanceTiles } from './pdpParts.js';
-import { MatchLine, ShowAll, EvidenceMeter, IsItForYou, SafetyBox } from './PdpParts.jsx';
+import { fitChecklist, matchLineState, evidenceMeter, splitShow, shortAnswer, mainCaution, sortSources, clinicianOf, glanceTiles, whoLists, keyFormat, criticalIndex } from './pdpParts.js';
+import { MatchLine, ShowAll, EvidenceMeter, SafetyLine } from './PdpParts.jsx';
 import { ALL_PRODUCTS, withResearch } from '../../data/products.js';
 import { PRODUCT_RESEARCH } from '../../data/productResearch.js';
 import { buildEvidence } from './evidenceModel.js';
@@ -45,13 +45,12 @@ describe('Is it for you: built only from data on file', () => {
     expect(items.length).toBeGreaterThan(2);
     for (const x of items) expect(source.some((s) => s.includes(x.text) || x.text.includes(s))).toBe(true);
   });
-  it('renders ✓ ! ✕ with screen-reader words, 4 first and Show all N', () => {
-    const html = text(<IsItForYou product={product('d-ppd')} />);
-    expect(html).toContain('Is it for you');
-    expect(html).toMatch(/Fits: /);
-    expect(html).toMatch(/Check first: /);
-    expect(html).toMatch(/Show all 5 points/);
+  it('Who it\'s for and Not for come from her reasons and the team lines; clinician checks go to Safety', () => {
+    const l = whoLists({ details: { matchStatus: 'scored', reasonDetails: [{ text: 'Fits your heavy flow' }, { text: 'Price is above your budget' }] }, who: ['People with cramps', 'Not for sleeping in'] });
+    expect(l).toEqual({ yes: ['Fits your heavy flow', 'People with cramps'], no: ['Price is above your budget', 'Not for sleeping in'] });
+    expect(whoLists({ details: { matchStatus: 'safety-hold', safetyHold: { reason: 'x' } }, who: ['A'] })).toEqual({ yes: ['A'], no: [] });
   });
+});
 });
 
 describe('the match line: never 0%, hold and evaluation replace the number', () => {
@@ -137,10 +136,21 @@ describe('summary pieces', () => {
     expect(tiles.length).toBeLessThanOrEqual(6);
     for (const t of tiles) { expect(t.label).toBeTruthy(); expect(t.main).toBeTruthy(); }
   });
-  it('the safety box shows the line and the way to the full list', () => {
-    const html = text(<SafetyBox text="Never use while asleep." />);
+  it('the hero safety line shows the line and a jump to Safety, no box', () => {
+    const html = text(<SafetyLine text="Never use while asleep." />);
     expect(html).toContain('Never use while asleep.');
-    expect(html).toContain('All safety info');
-    expect(renderToStaticMarkup(<SafetyBox text="" />)).toBe('');
+    expect(html).toContain('Safety');
+    expect(renderToStaticMarkup(<SafetyLine text="" />)).toBe('');
   });
+  it('Key facts format is the product\'s form, never its shop category', () => {
+    expect(keyFormat(product('p-portable-heating'), 'Comfytemp')).toBe('Portable heating pad');
+    expect(keyFormat(product('p-nature-made-iron-65mg'))).toBe('Tablets');
+    expect(keyFormat(product('d-ppd'))).toBe('Virtual care service');
+  });
+  it('the critical safety item is the one the hero line echoes', () => {
+    expect(criticalIndex(['Wash it.', 'Never use a heating pad while you are asleep.'], 'Never use a heating pad while you are asleep.')).toBe(1);
+    expect(criticalIndex(['Pregnancy: Label: consult a physician'], 'Pregnancy: Label: consult a physician before use if pregnant.')).toBe(0);
+    expect(criticalIndex(['a'], '')).toBe(-1);
+  });
+
 });

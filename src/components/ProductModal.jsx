@@ -20,7 +20,7 @@ import HeroPrice from './pdp/HeroPrice.jsx';
 import { getPassport } from '../data/passport';
 import { ProductAsk } from './passport/ProductSections';
 import ProductEvidence from './pdp/ProductEvidence';
-import { MatchLine, SafetyBox, IsItForYou } from './pdp/PdpParts.jsx';
+import { MatchLine, SafetyLine } from './pdp/PdpParts.jsx';
 import { matchLineState, topWarningFor, pageRecall } from './pdp/pdpParts.js';
 import { HealthBackedBadge } from './health';
 import { attributeBadges } from './pdp/evidenceModel';
@@ -378,15 +378,6 @@ export default function ProductModal({
     const frame = requestAnimationFrame(() => { timer = setTimeout(() => setSettled(true), 0); });
     return () => { cancelAnimationFrame(frame); clearTimeout(timer); };
   }, [settled]);
-  // Wide screens (1100px+) use the width: photos, then name and buy, then a column of what matters to her.
-  const [isWide, setIsWide] = useState(() => typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(min-width: 1100px)').matches);
-  useEffect(() => {
-    if (typeof window.matchMedia !== 'function') return undefined;
-    const mq = window.matchMedia('(min-width: 1100px)');
-    const on = () => setIsWide(mq.matches);
-    mq.addEventListener?.('change', on);
-    return () => mq.removeEventListener?.('change', on);
-  }, []);
   const [zoomOpen, setZoomOpen] = useState(false);
   // Size / pack options (product.variants): Buy now, photo, name and price
   // follow the chosen option.
@@ -677,7 +668,6 @@ export default function ProductModal({
       </div>
       {!isInEcosystem && user && onAddToEcosystem && explainRoutine && <p className="ayp-buy__fine">{ROUTINE_EXPLAINER}</p>}
       <SaveFollowUpInline product={product} onCompare={onCompare} />
-      {buyUrl && !isPrelaunch && <p className="ayp-buy__fine ayp-buy__leaving">{leavingLine(buyUrl, sellerName && sellerName.length <= 32 ? sellerName : '', verb === 'Buy' ? 'buy' : verb === 'Book' ? 'book' : 'get started')}</p>}
       {onOmit && user && (
         <p className="ayp-buy__more">
           {onOmit && user && (
@@ -689,44 +679,28 @@ export default function ProductModal({
       )}
     </div>
   );
-  // Commission, partner disclosure, other stores: under Buy on phones, in the right column on wide screens.
-  const purchaseNotes = (
+  // One tiny muted line under the actions (founder, Oct 25): where Buy goes and the commission, together.
+  const purchaseNotes = buyUrl && !isPrelaunch ? (
     <>
-      {/* One commission line (there used to be two that said different things). */}
-      {buyUrl && !isPrelaunch && (
-        <p className="ayp-buy__fine">
-          {isPartner
-            ? 'ayna partner. We may earn a commission.'
-            : isAmazonBuyLink
-              ? 'ayna may earn a commission from Amazon.'
-              : 'ayna may earn a commission.'}
-          {' '}{isPartner && <button type="button" className="ayp-textlink" aria-expanded={showDisclosure} onClick={() => setShowDisclosure((v) => !v)}>{showDisclosure ? 'Less' : 'How partnerships work'}</button>}
-          {/* Returns are the seller's: link Amazon's own policy when Buy goes there (product page audit). */}
-          {isAmazonBuyLink && <>{' '}<a className="ayp-textlink" href="https://www.amazon.com/gp/help/customer/display.html?nodeId=GKM69DUUYKQWKWX7" target="_blank" rel="noopener noreferrer">Amazon’s return policy<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a></>}
-        </p>
-      )}
+      <p className="ayp-buy__fine ayv-fine">
+        {leavingLine(buyUrl, sellerName && sellerName.length <= 32 ? sellerName : '', verb === 'Buy' ? 'buy' : verb === 'Book' ? 'book' : 'get started')}{' '}
+        {isPartner ? 'ayna partner. We may earn a commission.' : isAmazonBuyLink ? 'ayna may earn a commission from Amazon.' : 'ayna may earn a commission.'}
+        {' '}{isPartner && <button type="button" className="ayp-textlink" aria-expanded={showDisclosure} onClick={() => setShowDisclosure((v) => !v)}>{showDisclosure ? 'Less' : 'How partnerships work'}</button>}
+        {/* Returns are the seller's: link Amazon's own policy when Buy goes there (product page audit). */}
+        {isAmazonBuyLink && <>{' '}<a className="ayp-textlink" href="https://www.amazon.com/gp/help/customer/display.html?nodeId=GKM69DUUYKQWKWX7" target="_blank" rel="noopener noreferrer">Amazon’s return policy<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a></>}
+      </p>
       {isPartner && showDisclosure && <p className="ayp-buy__fine ayp-buy__disclosure">{getPartnerDisclosureText(product)}</p>}
-      {retailers.length > 0 && (
-        <p className="ayp-buy__fine ayp-retailers">
-          <span id="pdp-also-at">Also at </span>
-          {retailers.map((r, i) => (
-            <React.Fragment key={r.url}>
-              {i > 0 && ', '}
-              <a
-                href={r.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="ayp-textlink"
-                onClick={() => posthog.capture('product_retailer_clicked', { productId: product.id, retailer: r.name })}
-              >
-                {r.name}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span>
-              </a>
-            </React.Fragment>
-          ))}
-        </p>
-      )}
     </>
-  );
+  ) : null;
+  // Other stores: a row in Key facts.
+  const alsoAt = retailers.length > 0 ? retailers.map((r, i) => (
+    <React.Fragment key={r.url}>
+      {i > 0 && ', '}
+      <a href={r.url} target="_blank" rel="noopener noreferrer" className="ayp-textlink" onClick={() => posthog.capture('product_retailer_clicked', { productId: product.id, retailer: r.name })}>
+        {r.name}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span>
+      </a>
+    </React.Fragment>
+  )) : null;
 
   const galleryTile = (
     <div className="ayp-gallery">
@@ -841,7 +815,7 @@ export default function ProductModal({
   // Is it for you: the website's right column on wide screens, above the tabs otherwise.
   const fitData = { details: matchDetails, hasProfile: Boolean(quizResults), onShowWhy: () => setShowWhy(true), extra: matchDetails?.healthData ? <HealthBackedBadge backed={{ section: matchDetails.healthData.section, tracker: ['tracker', 'wearable'].includes(String(product?.category || '').toLowerCase()) }} /> : null };
   // The one critical caution, in the safety box right under Buy.
-  const warningLine = <SafetyBox text={topWarning} />;
+  const warningLine = <SafetyLine text={topWarning} />;
   const relatedReads = readsForProduct(product, 3);
 
   return (
@@ -863,7 +837,10 @@ export default function ProductModal({
           </button>
         </div>
 
-        {/* Photos, then name, price and Buy, then (wide screens) a column of what matters to her. No box around it. */}
+        {/* Wide screens (1024+): two columns, the product on the left (sticky), the tabs on the right (founder, Oct 25). */}
+        <div className="ayv-split">
+        <div className="ayv-split__left">
+        {/* Photos, then name, price, her match, Buy. No box around it. */}
         <div className="ayp-hero pdp-head ayp-hero--3" ref={boardRef}>
           <div className="ayp-hero__media pdp-head__media">
             {galleryTile}
@@ -892,21 +869,17 @@ export default function ProductModal({
             <section className="ayp-buy__section ay-story--buy" aria-labelledby="ay-buy-h">
               <h2 id="ay-buy-h" className="sr-only">Buy</h2>
               {actionButtons}
-              {warningLine}
               {purchaseNotes}
+              {warningLine}
             </section>
           </div>
 
-          {isWide && (
-            <aside className="ayp-rail" aria-label="For you">
-              <IsItForYou product={product} details={fitData.details} hasProfile={fitData.hasProfile} onShowWhy={fitData.onShowWhy} helps={glance?.who?.helps || []} extra={fitData.extra} id="ayv-fit" />
-            </aside>
-          )}
+        </div>
         </div>
 
         {/* Sticky tabs: Clinical opinion, Scientific literature, ayna summary, Reviews (founder, Oct 24). */}
-        <div className="ayp-tabsarea pdp-head__info">
-          <ProductEvidence loading={!researchLoaded} product={product} safetyLead={topWarning} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null} fit={fitData} showFit={!isWide} askSlot={onAskAyna ? <ProductAsk productName={displayName} onAsk={onAskAyna} hasProfile={Boolean(quizResults)} /> : null} extraRows={(() => {
+        <div className="ayv-split__right ayp-tabsarea pdp-head__info">
+          <ProductEvidence loading={!researchLoaded} product={product} safetyLead={topWarning} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null} fit={fitData} askSlot={onAskAyna ? <ProductAsk productName={displayName} onAsk={onAskAyna} hasProfile={Boolean(quizResults)} /> : null} extraRows={(() => {
             const pp = getPassport(product);
             const checked = pp?.pricing?.price?.verified_at;
             let seller = '';
@@ -914,9 +887,11 @@ export default function ProductModal({
             const d = checked ? new Date(`${String(checked).slice(0, 10)}T12:00:00`) : null;
             return [
               { label: 'Sold by', value: seller },
+              { label: 'Also at', value: alsoAt ? retailers.map((r) => r.name).join(', ') : '', node: alsoAt },
               { label: 'Price check', value: d && !Number.isNaN(d.getTime()) && price.known && !price.isPlaceholder ? `Checked ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : '' },
             ];
           })()} />
+        </div>
         </div>
 
         {/* Compare, then Ask or share side by side on desktop. */}
