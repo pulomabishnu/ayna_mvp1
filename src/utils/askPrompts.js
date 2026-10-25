@@ -30,7 +30,8 @@ export function homePrompts({ ctx = null, signedIn = false, hasProfile = false, 
     } else if (e.kind === 'log' && e.field && e.word) {
       const reason = `Yesterday your ${e.field} was ${e.word}${e.usual ? `; usually it is ${e.usual}` : ''}.`;
       const question = ['sleep', 'mood'].includes(e.field) ? 'What can I do about my energy today?' : `What can help with ${e.field} today?`;
-      add({ question, reason, local: false, health: reason });
+      // Answered on this phone from the card when signed out (askToday.js localItemAnswer).
+      add({ question, reason, local: true, health: reason });
     }
   }
   const focus = (ctx?.focus || []).find((f) => f?.title);
