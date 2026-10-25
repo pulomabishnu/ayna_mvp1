@@ -13,20 +13,26 @@ export const MAIN_TABS = [
 ];
 
 /**
- * The app's tab bar (founder, Oct 24 20:12, "App home = ayna chat"): Explore,
- * Library, ayna (centre, the chat as home), Community, You. The website keeps
- * MAIN_TABS for now. `today` and `ask` are not tabs in the app any more: they
- * open the ayna tab (My dashboard and Chat).
+ * The app's tab bar (founder, Oct 24 22:12): four tabs, Home first. Home,
+ * Explore, Community, You. Home opens on her dashboard with an "Ask ayna"
+ * bar on top; the chat and her Products are one tap from it. The Library is
+ * not a tab: Explore links to it ("Open Library") and it opens as a pushed
+ * screen with Back. The website keeps MAIN_TABS for now. The old `today`,
+ * `ask` and `ayna` screens open Home (navTab.js aynaRoute).
  */
 export const APP_TABS = [
+  { key: 'home', label: 'Home' },
   { key: 'explore', label: 'Explore' },
-  { key: 'library', label: 'Library' },
-  { key: 'ayna', label: 'ayna', center: true },
   { key: 'community', label: 'Community' },
   { key: 'profile', label: 'You' },
 ];
 
-/** The small switch at the top of the app's ayna tab. Chat is the home. */
+/**
+ * The chat-first Home kept for Monday's focus group (?home=chat): the centre
+ * tab is "ayna", the chat is home, and a small switch flips to Products and
+ * My dashboard (founder, Oct 24 20:12).
+ */
+export const APP_TABS_CHAT_FIRST = APP_TABS.map((t) => (t.key === 'home' ? { ...t, label: 'ayna', icon: 'ask' } : t));
 export const AYNA_HOME_VIEWS = [
   { key: 'chat', label: 'Chat' },
   { key: 'products', label: 'Products' },

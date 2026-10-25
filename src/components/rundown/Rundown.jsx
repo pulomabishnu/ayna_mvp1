@@ -43,6 +43,8 @@ export default function Rundown({
   // ayna chat as its starters; toChat is false when she left for something
   // else (a read, a post), so only the starters carry over.
   onFinish,
+  // The app's one-screen Home: the card only (the weekly recap is on the full dashboard).
+  compact = false,
 }) {
   const [memory, setMemory] = useState(() => { setRundownOwner(userId); return readRundownMemory(); });
   const [open, setOpen] = useState(null); // 'daily' | 'weekly' | null
@@ -183,7 +185,7 @@ export default function Rundown({
     );
   }
   return (
-    <section className="ay-rd-hero" aria-labelledby="ay-rd-hero-h">
+    <section className={`ay-rd-hero${compact ? ' is-compact' : ''}`} aria-labelledby="ay-rd-hero-h">
       {daily.cards.length > 0 && (
         <div className={`ay-rd-hero__card${highlight ? ' is-new' : ''}`}>
           {highlight && <p className="ay-rd-hero__new">Ready for today</p>}
@@ -193,7 +195,7 @@ export default function Rundown({
           <button type="button" className="ay-rd-hero__go" onClick={() => start('daily')}>Start rundown</button>
         </div>
       )}
-      {weekly.cards.length > 0 && (
+      {weekly.cards.length > 0 && !compact && (
         <button type="button" className="ay-rd-hero__week" onClick={() => start('weekly')}>
           <span><b>Your week on ayna</b><small>Here is what changed.</small></span>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>

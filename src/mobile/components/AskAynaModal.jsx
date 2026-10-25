@@ -115,8 +115,8 @@ function VoiceSettings({ tapSupported, onBack }) {
  * Mobile equivalent of ProfileChatbot.jsx, adapted to a full-screen overlay
  * instead of a corner-anchored panel (mobile has no room for that) and to
  * this app's own nav-style callbacks instead of desktop's. In the app's
- * ayna tab it is the home (renderHomeTop draws the Chat · Products · My
- * dashboard switch in place of the title). Tap-to-talk uses the web speech
+ * Home tab it opens full screen from the "Ask ayna" bar (onBackHome draws a
+ * Back to Home in place of Done). Tap-to-talk uses the web speech
  * API where the web view has it (useTapToTalk); no always-on listening.
  */
 export default function AskAynaModal({
@@ -155,7 +155,10 @@ export default function AskAynaModal({
   // The Ask ayna tab: the same conversation as the tab's content, not a sheet
   // (no grabber, no Done, the tab bar stays below it).
   asTab = false,
-  // The ayna tab's home: (leading) => the switch row, drawn in place of the title.
+  // Opened from Home's "Ask ayna" bar: full screen with Back to Home.
+  onBackHome = null,
+  // The chat-first Home (?home=chat, focus group): (leading) => the
+  // Chat · Products · My dashboard switch, drawn in place of the title.
   renderHomeTop = null,
   // The end-of-rundown questions, as this session's starters: [{ question, context, usesHealth, buildContext }].
   starters = [],
@@ -192,7 +195,10 @@ export default function AskAynaModal({
   const seedDone = useRef(null);
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
-  const homeMode = Boolean(asTab && renderHomeTop);
+  const homeMode = Boolean(asTab && (onBackHome || renderHomeTop));
+  // Opened from Home (the bar, or the end of the rundown): start on the chat's
+  // first screen; a chip or a rundown question sends straight away (seed).
+  useEffect(() => { if (open && homeMode && !(seed && seedDone.current !== seed.id)) { setHome(true); setGuidePage(''); } }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
   // Tap to talk: her words go into the box, she checks them and taps Ask.
   const voice = useTapToTalk({ onText: (t) => { setInput((prev) => (prev ? `${prev} ${t}` : t)); requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true })); } });
   // "Say ayna" only with a native on-device listener and her switch on (never today).
@@ -399,7 +405,7 @@ export default function AskAynaModal({
 
   return (
     <div
-      className={`ayna-ask-drawer${asTab ? ' is-tab' : ''}${homeMode ? ' is-home' : ''}`}
+      className={`ayna-ask-drawer${asTab ? ' is-tab' : ''}${homeMode ? ' is-home' : ''}${homeMode && onBackHome ? ' is-full' : ''}`}
       data-open={open ? 'true' : 'false'}
       style={{
         position: 'absolute',
@@ -412,10 +418,16 @@ export default function AskAynaModal({
     >
       <div ref={sheetRef} className="ayna-ask-drawer-content" role={asTab ? 'region' : 'dialog'} aria-label="Ask ayna" aria-modal={open && !asTab ? true : undefined} aria-hidden={!open} inert={!open ? true : undefined}>
       {onClose && <button {...grabberProps} aria-label="Close Ask ayna" />}
-      {homeMode ? (<>
+      {homeMode && renderHomeTop ? (<>
         <h1 className="sr-only">ayna chat</h1>
         {renderHomeTop(!home && !guidePage ? <button type="button" className="ay-home-top__back" aria-label="Back to the chat home" onClick={() => setHome(true)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button> : null)}
-      </>) : <div
+      </>) : homeMode ? (
+        <div className="ay-chat-top">
+          <button type="button" className="ay-chat-top__back" onClick={onBackHome}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>Home</button>
+          <h1>Ask ayna</h1>
+          <span className="ay-chat-top__spacer" aria-hidden="true" />
+        </div>
+      ) : <div
         style={{
           paddingTop: 'max(20px, env(safe-area-inset-top))',
           paddingLeft: 20,
@@ -463,7 +475,8 @@ export default function AskAynaModal({
               ? onDeviceStarters({ hasProfile: Boolean(profile), signals: getTodayAskContext()?.signals || {} })
               : guidedTiles({ focusProduct, hasHealthData, fallback: askTiles(hasHealthData) })}
             recent={recentQuestions(messages)}
-            onPick={(q) => { setInput(q); inputRef.current?.focus({ preventScroll: true }); }}
+            // A starter is sent on tap (founder, Oct 24 22:17); typing still waits for Ask.
+            onPick={(q) => send(q)}
             onContinue={messages.some((m) => m.role === 'user') ? () => setHome(false) : null}
           />
           {homeMode && session === null && <div className="ay-chat-intro"><button type="button" className="ay-chat-intro__signin" onClick={() => onRequireAuth?.('Ask ayna')}>Sign in for ayna’s AI answers</button></div>}

@@ -20,7 +20,12 @@ let current = null;
  *   recent: [string]                                   plain week-on-week change lines
  * }
  */
-export function setTodayAskContext(ctx) { current = ctx || null; }
+export const TODAY_ASK_EVENT = 'ayna:today-ask-context';
+export function setTodayAskContext(ctx) {
+  current = ctx || null;
+  // The app's Home starter chips follow it (useHomeStarters).
+  try { window.dispatchEvent(new CustomEvent(TODAY_ASK_EVENT)); } catch { /* no window */ }
+}
 export function getTodayAskContext() { return current; }
 
 const KINDS = [

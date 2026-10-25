@@ -255,7 +255,8 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
           {card.kind !== 'opening' && card.kind !== 'closing' && (
             <div className="ay-rd-foot">
               {savable && onSave && !sheet && <button type="button" className="ay-rd-link" onClick={() => { onSave(savable); setMsg('Saved.'); onAction?.(card, 'save'); }}>Save</button>}
-              {onAsk && card.ask && <button type="button" className="ay-rd-link" onClick={() => h.ask(card.ask)}>Ask ayna about this</button>}
+              {/* A fact from her data: "Ask why" under it (team sync, Oct 25). */}
+              {onAsk && card.ask && <button type="button" className="ay-rd-link" onClick={() => h.ask(card.ask)}>{['change', 'pattern'].includes(card.category) ? 'Ask why' : 'Ask ayna about this'}</button>}
               {!card.protected && onNotUseful && <NotUsefulMenu onPick={(reason) => { onNotUseful(card, reason); setHidden((s) => ({ ...s, [card.key]: true })); setMsg('Thanks. You will see less like this.'); }} />}
             </div>
           )}
