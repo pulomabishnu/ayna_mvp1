@@ -92,3 +92,12 @@
 .ds-scallop::after { content: ''; position: absolute; left: 0; right: 0; bottom: -15px; height: 16px; pointer-events: none; background: radial-gradient(circle at 12px 0, var(--sc, #3e2723) 11.5px, transparent 12px) 0 0 / 24px 16px repeat-x; }
 
 @media (prefers-reduced-motion: reduce) { .ds-stamp, .ds-sticker { transition: none; } }
+
+/* ---- awning: sky/butter stripes with a scalloped hem (Oct 21 Ecosystem) ---- */
+.ds-awning { position: relative; height: 26px; pointer-events: none; filter: drop-shadow(0 1.5px 0 var(--ds-line)); }
+.ds-awning::before {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(90deg, #769ebe 0 24px, #f6e3a1 24px 48px);
+  -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 11px) no-repeat, radial-gradient(circle at 50% 0, #000 11.5px, transparent 12px) left bottom / 24px 12px repeat-x;
+  mask: linear-gradient(#000 0 0) top / 100% calc(100% - 11px) no-repeat, radial-gradient(circle at 50% 0, #000 11.5px, transparent 12px) left bottom / 24px 12px repeat-x;
+}

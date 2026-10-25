@@ -404,6 +404,8 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
   </>;
 
   return <section className="ct wy ay-container">
+    {/* Oct 21-22 Ecosystem's striped awning with a scalloped hem (decoration). */}
+    <div className="ds-awning wy-awning" aria-hidden="true" />
     <header className="wy-head">
       <ArchAvatar className="wy-arch" src={cp?.avatar_url && !avatarFailed ? publicMediaUrl(cp.avatar_url) : ''} initial={initial} onError={() => setAvatarFailed(true)} />
       <div className="wy-who">

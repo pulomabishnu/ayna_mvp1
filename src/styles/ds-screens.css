@@ -161,3 +161,47 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-askpage .wx-i
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-askpage .wx-invite::before { content: ''; position: absolute; left: -1.5px; bottom: calc(100% - 1.5px); width: 96px; height: 30px; box-sizing: border-box; border: 1.5px solid var(--ds-line); border-bottom: 0; border-radius: 10px 10px 0 0; background: #f7badd radial-gradient(circle, #3e2723 3px, transparent 3.5px) 0 50% / 18px 30px repeat-x; background-origin: content-box; padding: 0 12px; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-askpage .wx-invite::after { content: ''; position: absolute; top: -20px; right: 24px; width: 48px; height: 48px; box-sizing: border-box; border: 1.5px solid #3e2723; border-radius: 50%; background: #ffedac url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1.5c.7 5.6 4.9 9.8 10.5 10.5-5.6.7-9.8 4.9-10.5 10.5-.7-5.6-4.9-9.8-10.5-10.5C7.1 11.3 11.3 7.1 12 1.5z' fill='%233e2723'/%3E%3C/svg%3E") center / 22px no-repeat; transform: rotate(10deg); }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-askpage .wx-invite h3 { font: 700 var(--ay-type-h3)/1.2 var(--ay-heading) !important; color: var(--ds-ink) !important; }
+
+/* ---------------------------------------------------------------------
+   YOU (/you and its sections). The Ecosystem awning across the top, name
+   at H1, the stat boxes in three pops, the section links as folder tabs on
+   a rule (Shop's categories), section titles as folder tabs on outlined
+   groups (pink, sky, butter in turn).
+   --------------------------------------------------------------------- */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-awning { width: 100vw; margin: -28px 0 28px calc(50% - 50vw); }
+@media (max-width: 767px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-awning { margin: -20px 0 20px calc(50% - 50vw); height: 22px; } }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) main .wy-who h1.ay-h1 { font: 700 var(--ay-type-h1)/1.02 var(--ay-heading) !important; letter-spacing: -.02em !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-stats > li .ay-stat { background: #f7badd !important; color: #3e2723 !important; border-color: #3e2723 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-stats > li:nth-child(2) .ay-stat { background: #769ebe !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-stats > li:nth-child(3) .ay-stat { background: #ffedac !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-stats > li .ay-stat :is(b, span) { color: #3e2723 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-progress { border: 1.5px solid var(--ds-line) !important; }
+/* section links as folder tabs on a rule */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-younav .wx-nav { display: flex; align-items: flex-end; gap: 4px; padding: 10px 2px 0; border-bottom: 1.5px solid var(--ds-line) !important; overflow-x: auto; scrollbar-width: none; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-younav .wx-nav a {
+  flex: none; display: inline-flex; align-items: center; min-height: 42px; margin: 0 0 -1.5px; padding: 0 16px 1.5px !important;
+  border: 1.5px solid var(--ds-line) !important; border-bottom: 0 !important; border-radius: 10px 10px 0 0 !important;
+  background: var(--ds-group); color: var(--ds-ink) !important; opacity: 1 !important; font: 600 14px/1 var(--ay-sans-stack) !important; text-decoration: none; white-space: nowrap;
+  transition: min-height var(--t-fast, 160ms) var(--ease-out, ease-out);
+}
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-younav .wx-nav a::after { content: none !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-younav .wx-nav a.is-on { min-height: 50px; background: #f7badd; color: #3e2723 !important; }
+@media (hover: hover) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-younav .wx-nav a:not(.is-on):hover { min-height: 46px; } }
+/* section titles as folder tabs on outlined groups */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy .wy-sec { --tab: #f7badd; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy .wy-col .wy-sec:nth-child(3n+2) { --tab: #769ebe; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy .wy-col .wy-sec:nth-child(3n) { --tab: #ffedac; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy .wy-sec__head { align-items: flex-end; margin-bottom: 0 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy .wy-sec__head .ay-group__title {
+  position: relative; z-index: 1; display: inline-flex; align-items: center; min-height: 32px; margin: 0 0 -1.5px !important; padding: 0 14px !important;
+  border: 1.5px solid var(--ds-line); border-bottom: 0; border-radius: 10px 10px 0 0; background: var(--tab); color: #3e2723 !important;
+  font: 600 14px/1 var(--ay-sans-stack) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy .wy-sec__head .wy-count { padding-bottom: 6px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy .wy-sec__head + :is(.ay-group, ul, div, p) { border: 1.5px solid var(--ds-line) !important; border-top-left-radius: 0 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy .wy-sec > .ay-group__title:first-child {
+  position: relative; z-index: 1; display: inline-flex; align-items: center; min-height: 32px; margin: 0 0 -1.5px !important; padding: 0 14px !important;
+  border: 1.5px solid var(--ds-line); border-bottom: 0; border-radius: 10px 10px 0 0; background: var(--tab); color: #3e2723 !important;
+  font: 600 14px/1 var(--ay-sans-stack) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy .wy-sec > .ay-group__title:first-child + * { border: 1.5px solid var(--ds-line) !important; border-top-left-radius: 0 !important; margin-top: 0 !important; }
