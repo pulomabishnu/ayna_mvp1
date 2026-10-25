@@ -469,7 +469,7 @@ function Community({ onViewCommunity, posts = [] }) {
           </article>
           {posts.length > 0 && (
             <ul className="hm-posts" aria-label="From the Powder Room">
-              {posts.slice(0, 2).map((post) => {
+              {posts.slice(0, 3).map((post) => {
                 const anon = post.is_anonymous || !post.author_id;
                 const who = anon ? 'Anonymous' : post.author_display_name || post.author_username || 'Community member';
                 return (
@@ -538,7 +538,8 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
   const rest = useAfterHeroPaint();
   return (
     <div className={`ed ed-home hm${paused ? ' is-paused' : ''}`}>
-      <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} personal={personal} banner={heroBanner} posts={communityPosts} />
+      {/* Community posts sit lower down, after how it works, never above the value prop (founder, Oct 24). */}
+      <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} personal={personal} banner={heroBanner} posts={[]} />
       {personal?.dashboard ? <div className="hm-slot">{personalSlot}</div> : <Brands onViewWaitlist={onViewWaitlist} />}
       {!personal?.dashboard && personalSlot && <div className="hm-slot">{personalSlot}</div>}
       <ShopBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={personal?.topPicks || null} />
