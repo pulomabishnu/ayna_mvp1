@@ -18,6 +18,10 @@ import { localMatchAnswer } from '../../utils/askMatch.js';
 import { localHistoryAnswer } from '../../utils/askHistory.js';
 import { localTodayAnswer } from '../../utils/askToday.js';
 import { guidedTiles } from '../../utils/askGuided.js';
+import { onDeviceStarters } from '../../utils/askStarters.js';
+import { getTodayAskContext } from '../../utils/askToday.js';
+import { useTapToTalk } from '../hooks/useTapToTalk.js';
+import { readWakeWordPref, startWakeWord, wakeWordSupport, writeWakeWordPref } from '../utils/wakeWord.js';
 import AynaGuideHub from './AynaGuideHub.jsx';
 import { useAskHealthPref, ASK_HEALTH_LABEL } from '../../health/askHealthPref.js';
 
@@ -78,12 +82,42 @@ function buildWelcome() {
 }
 
 /**
+ * Voice settings, reached from the chat home. Tap to talk works where the
+ * web view has speech recognition. "Say ayna" stays off and unavailable until
+ * the app has an on-device wake word (src/mobile/utils/wakeWord.js).
+ */
+function VoiceSettings({ tapSupported, onBack }) {
+  const [support, setSupport] = useState({ available: false, reason: '' });
+  const [on, setOn] = useState(readWakeWordPref);
+  useEffect(() => { let live = true; wakeWordSupport().then((r) => { if (live) setSupport(r); }); return () => { live = false; }; }, []);
+  const shownOn = on && support.available;
+  return (
+    <div className="ay-voice">
+      <button type="button" className="ay-askh-homebtn" aria-label="Back to chat" onClick={onBack}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
+      <h2>Voice</h2>
+      <ul className="ay-voice__group">
+        <li>
+          <div className="ay-voice__row"><span>Tap the mic to talk</span><b>{tapSupported ? 'On' : 'Not here'}</b></div>
+          <p>{tapSupported ? 'You see when ayna is listening, and your words go into the box for you to check. Your device or browser turns speech into text; ayna never records or keeps the audio.' : 'This device or browser has no speech input ayna can use. Type your question instead.'}</p>
+        </li>
+        <li>
+          <button type="button" className="ay-voice__row" role="switch" aria-checked={shownOn} disabled={!support.available} onClick={() => setOn(writeWakeWordPref(!on))}>
+            <span>Say “ayna” to start</span><b>{shownOn ? 'On' : 'Off'}</b>
+          </button>
+          <p>{support.available ? 'While the app is open, saying “ayna” starts listening. The listening stays on this phone and nothing is recorded or stored.' : support.reason}</p>
+        </li>
+      </ul>
+    </div>
+  );
+}
+
+/**
  * Mobile equivalent of ProfileChatbot.jsx, adapted to a full-screen overlay
  * instead of a corner-anchored panel (mobile has no room for that) and to
- * this app's own nav-style callbacks instead of desktop's. Voice ("Talk")
- * mode is intentionally left out, it depends on the browser
- * SpeechRecognition API, which the Capacitor WKWebView shell doesn't
- * support without a native plugin this change doesn't add.
+ * this app's own nav-style callbacks instead of desktop's. In the app's
+ * ayna tab it is the home (renderHomeTop draws the Chat · Products · My
+ * dashboard switch in place of the title). Tap-to-talk uses the web speech
+ * API where the web view has it (useTapToTalk); no always-on listening.
  */
 export default function AskAynaModal({
   open,
@@ -121,6 +155,13 @@ export default function AskAynaModal({
   // The Ask ayna tab: the same conversation as the tab's content, not a sheet
   // (no grabber, no Done, the tab bar stays below it).
   asTab = false,
+  // The ayna tab's home: (leading) => the switch row, drawn in place of the title.
+  renderHomeTop = null,
+  // The end-of-rundown questions, as this session's starters: [{ question, context, usesHealth, buildContext }].
+  starters = [],
+  onStarter = null,
+  // Text to put in the box (a Siri / Shortcuts link: co.aynahealth.app://ask?q=...): { id, text }.
+  draft = null,
 }) {
   const [messages, setMessages] = useState(chatHistory.length > 0 ? chatHistory : buildWelcome(name));
   const [input, setInput] = useState('');
@@ -151,6 +192,25 @@ export default function AskAynaModal({
   const seedDone = useRef(null);
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
+  const homeMode = Boolean(asTab && renderHomeTop);
+  // Tap to talk: her words go into the box, she checks them and taps Ask.
+  const voice = useTapToTalk({ onText: (t) => { setInput((prev) => (prev ? `${prev} ${t}` : t)); requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true })); } });
+  // "Say ayna" only with a native on-device listener and her switch on (never today).
+  useEffect(() => {
+    if (!open || !homeMode || !readWakeWordPref()) return undefined;
+    let stop = () => {};
+    let live = true;
+    startWakeWord(() => { if (!voice.listening) voice.start(); }).then((fn) => { if (live) stop = fn; else fn(); });
+    return () => { live = false; stop(); };
+  }, [open, homeMode]); // eslint-disable-line react-hooks/exhaustive-deps
+  const draftDone = useRef(null);
+  useEffect(() => {
+    if (!open || !draft?.id || draftDone.current === draft.id) return;
+    draftDone.current = draft.id;
+    setGuidePage('');
+    setHome(true);
+    setInput(String(draft.text || '').slice(0, 500));
+  }, [open, draft]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -339,7 +399,7 @@ export default function AskAynaModal({
 
   return (
     <div
-      className={`ayna-ask-drawer${asTab ? ' is-tab' : ''}`}
+      className={`ayna-ask-drawer${asTab ? ' is-tab' : ''}${homeMode ? ' is-home' : ''}`}
       data-open={open ? 'true' : 'false'}
       style={{
         position: 'absolute',
@@ -352,7 +412,10 @@ export default function AskAynaModal({
     >
       <div ref={sheetRef} className="ayna-ask-drawer-content" role={asTab ? 'region' : 'dialog'} aria-label="Ask ayna" aria-modal={open && !asTab ? true : undefined} aria-hidden={!open} inert={!open ? true : undefined}>
       {onClose && <button {...grabberProps} aria-label="Close Ask ayna" />}
-      <div
+      {homeMode ? (<>
+        <h1 className="sr-only">ayna chat</h1>
+        {renderHomeTop(!home && !guidePage ? <button type="button" className="ay-home-top__back" aria-label="Back to the chat home" onClick={() => setHome(true)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button> : null)}
+      </>) : <div
         style={{
           paddingTop: 'max(20px, env(safe-area-inset-top))',
           paddingLeft: 20,
@@ -373,13 +436,18 @@ export default function AskAynaModal({
           <h1 className="ay-ask-title">Ask ayna</h1>
         </div>
         {onClose && <button type="button" className="ay-ask-done" onClick={onClose}>Done</button>}
-      </div>
+      </div>}
 
       <div className={home && !sending ? 'ay-askh-scroll' : undefined} style={{ flex: 1, overflowY: 'auto', padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {guidePage ? <AynaGuideHub page={guidePage} guide={guide} onChange={onGuideChange} recap={recap} recapSources={recapSources} recapExportable={recapExportable} productNotes={productNotes} profile={summarizeProfile(profile || {})} onAsk={recapExportable ? (question) => { setGuidePage(''); send(question, recapAskable ? recap : ''); } : null} onBack={() => setGuidePage('')} /> : null}
+        {guidePage === 'voice' ? <VoiceSettings tapSupported={voice.supported} onBack={() => setGuidePage('')} /> : guidePage ? <AynaGuideHub page={guidePage} guide={guide} onChange={onGuideChange} recap={recap} recapSources={recapSources} recapExportable={recapExportable} productNotes={productNotes} profile={summarizeProfile(profile || {})} onAsk={recapExportable ? (question) => { setGuidePage(''); send(question, recapAskable ? recap : ''); } : null} onBack={() => setGuidePage('')} /> : null}
         {home && !sending && !guidePage && (<>
+          {/* After today's Daily Rundown: questions about the cards she just saw (this session only). */}
+          {homeMode && starters.length > 0 && <section className="ay-chat-starters" aria-labelledby="ay-chat-starters-h">
+            <h2 id="ay-chat-starters-h">From your Daily Rundown today</h2>
+            <ul>{starters.map((st) => <li key={st.question}><button type="button" onClick={() => (onStarter ? onStarter(st) : send(st.question))}><span>{st.question}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>)}</ul>
+          </section>}
           {/* A list of rows like the Ask home, not a 2x2 grid (master prompt 154). */}
-          {session === null && <p className="ay-ask-local">Questions about your matches, what helped before, your day and your Daily Rundown are answered on this phone, no account needed. Other questions use ayna’s AI and need a free account.</p>}
+          {session === null && !homeMode && <p className="ay-ask-local">Questions about your matches, what helped before, your day and your Daily Rundown are answered on this phone, no account needed. Other questions use ayna’s AI and need a free account.</p>}
           {session !== null && <ul className="ay-guide-launches" aria-label="Your personal guide">
             <li><button type="button" onClick={() => setGuidePage('recap')}><span className="ay-guide-launch__text"><b>Your week</b><span>What changed for you</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
             <li><button type="button" onClick={() => setGuidePage('memory')}><span className="ay-guide-launch__text"><b>Memory</b><span>What ayna can remember</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
@@ -388,12 +456,18 @@ export default function AskAynaModal({
           </ul>}
           <AskHome
             name={name ? String(name).split(' ')[0] : ''}
-            intro="Ask about a product, your week, or what to try. Not medical advice."
-            tiles={guidedTiles({ focusProduct, hasHealthData, fallback: askTiles(hasHealthData) })}
+            intro={homeMode && session === null
+              ? 'Ask about your day, your matches and what helped. These questions are answered on this phone from what you saved here, no account needed. Questions that use ayna’s AI need a free account. Not medical advice.'
+              : 'Ask about a product, your week, or what to try. Not medical advice.'}
+            tiles={homeMode && session === null
+              ? onDeviceStarters({ hasProfile: Boolean(profile), signals: getTodayAskContext()?.signals || {} })
+              : guidedTiles({ focusProduct, hasHealthData, fallback: askTiles(hasHealthData) })}
             recent={recentQuestions(messages)}
             onPick={(q) => { setInput(q); inputRef.current?.focus({ preventScroll: true }); }}
             onContinue={messages.some((m) => m.role === 'user') ? () => setHome(false) : null}
           />
+          {homeMode && session === null && <div className="ay-chat-intro"><button type="button" className="ay-chat-intro__signin" onClick={() => onRequireAuth?.('Ask ayna')}>Sign in for ayna’s AI answers</button></div>}
+          {homeMode && <button type="button" className="ay-chat-voicelink" onClick={() => setGuidePage('voice')}>Voice settings</button>}
         </>)}
         {!guidePage && !(home && !sending) && messages.map((m, i) => (
           <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
@@ -490,6 +564,16 @@ export default function AskAynaModal({
         </div>
       )}
 
+      {voice.listening && !guidePage && (
+        <div className="ay-listening" role="status" aria-live="polite">
+          <i className="ay-listening__dot" aria-hidden="true" />
+          <span>{voice.text ? `Listening: ${voice.text}` : 'Listening… say your question.'}</span>
+          <button type="button" onClick={() => voice.stop()}>Done</button>
+        </div>
+      )}
+      {voice.error && !voice.listening && !guidePage && (
+        <div className="ay-ask-error" role="alert"><span>{voice.error}</span><button type="button" onClick={voice.clearError}>OK</button></div>
+      )}
       {!guidePage && <form
         onSubmit={handleSend}
         style={{
@@ -500,6 +584,11 @@ export default function AskAynaModal({
           borderTop: '1px solid var(--ayna-border)',
         }}
       >
+        {voice.supported && (
+          <button type="button" className="ay-mic" aria-pressed={voice.listening} aria-label={voice.listening ? 'Stop listening' : 'Speak your question'} disabled={sending || session === undefined} onClick={() => (voice.listening ? voice.stop() : voice.start())}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" /></svg>
+          </button>
+        )}
         <input
           ref={inputRef}
           type="text"

@@ -251,8 +251,36 @@ const TARGETS = {
 };
 const resolveTarget = (raw) => TARGETS[String(raw || '').replace(/^#/, '')] || null;
 
-function StickyTabs({ tabs, active, onChange, stickTop }) {
+// A row inside a tab that scrolls sideways (a reading shelf, a wide table) keeps its own swipe.
+function scrollsSideways(el, stop) {
+  for (let n = el; n && n !== stop; n = n.parentElement) {
+    const ox = window.getComputedStyle(n).overflowX;
+    if ((ox === 'auto' || ox === 'scroll') && n.scrollWidth > n.clientWidth + 1) return true;
+  }
+  return false;
+}
+
+function StickyTabs({ tabs, active, onChange, stickTop, swipe = false }) {
   const listRef = useRef(null);
+  // The app's product sheet: swipe left or right on a tab to move to the next one.
+  const touch = useRef(null);
+  const swipeProps = swipe ? {
+    onTouchStart: (e) => {
+      if (e.touches.length !== 1 || scrollsSideways(e.target, e.currentTarget)) { touch.current = null; return; }
+      touch.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    },
+    onTouchEnd: (e) => {
+      const t0 = touch.current;
+      touch.current = null;
+      if (!t0 || !e.changedTouches.length) return;
+      const dx = e.changedTouches[0].clientX - t0.x;
+      const dy = e.changedTouches[0].clientY - t0.y;
+      if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+      const i = tabs.findIndex((t) => t.id === active);
+      const next = tabs[i + (dx < 0 ? 1 : -1)];
+      if (next) onChange(next.id);
+    },
+  } : {};
   const choose = (id, focus) => {
     onChange(id);
     if (focus) window.requestAnimationFrame(() => listRef.current?.querySelector(`[data-tab="${id}"]`)?.focus());
@@ -279,7 +307,7 @@ function StickyTabs({ tabs, active, onChange, stickTop }) {
         </div>
       </div>
       {tabs.map((t) => (
-        <div key={t.id} role="tabpanel" id={`ay-panel-${t.id}`} aria-labelledby={`ay-tab-${t.id}`} tabIndex={0} hidden={t.id !== active} className={`ayq-panel ayq-tp is-${t.id}`}>
+        <div key={t.id} role="tabpanel" id={`ay-panel-${t.id}`} aria-labelledby={`ay-tab-${t.id}`} tabIndex={0} hidden={t.id !== active} className={`ayq-panel ayq-tp is-${t.id}`} {...swipeProps}>
           {t.body}
         </div>
       ))}
@@ -303,7 +331,10 @@ function Step({ id, title, meta = '', children, open = false }) {
 // ---------------------------------------------------------------------------
 // The page part
 // ---------------------------------------------------------------------------
-export default function ProductEvidence({ product: baseProduct, glance = null, aynaData = null, aynaRating: aynaRatingProp = null, ratingCount: ratingCountProp = 0, rateControls = null, heroLine = '', extraRows = [], onOpenReview = null, onWriteReview = null, fitSlot = null, afterOverview = null, loading = false }) {
+export default function ProductEvidence({ product: baseProduct, glance = null, aynaData = null, aynaRating: aynaRatingProp = null, ratingCount: ratingCountProp = 0, rateControls = null, heroLine = '', extraRows = [], onOpenReview = null, onWriteReview = null, fitSlot = null, afterOverview = null, loading = false,
+  // The app's product sheet: tabs also switch with a sideways swipe, and the
+  // address bar is left alone (the sheet is not a page of its own).
+  swipeTabs = false, syncHash = true }) {
   const product = useApprovedResearch(baseProduct);
   const m = useMemo(() => buildEvidence(product, { heroLine, glance }), [product, heroLine, glance]);
   const works = worksWith(product);
@@ -313,7 +344,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const ratingCount = liveStats ? liveStats.count : ratingCountProp;
 
   const [tab, setTab] = useState(() => {
-    if (typeof window === 'undefined') return 'summary';
+    if (typeof window === 'undefined' || !syncHash) return 'summary';
     return resolveTarget(window.location.hash.slice(1))?.tab || 'summary';
   });
   // The tab row sticks just under the website's header (the app has none above it).
@@ -340,6 +371,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     });
   };
   const setHash = (id) => {
+    if (!syncHash) return;
     try { window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}#${id}`); } catch { /* sandboxed */ }
   };
   const chooseTab = (id) => { setTab(id); setHash(id); toTabTop(); };
@@ -359,6 +391,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const goToRef = useRef(goTo);
   useEffect(() => { goToRef.current = goTo; });
   useEffect(() => {
+    if (!syncHash) return;
     if (takeProductTab() === 'reviews') { goTo('reviews'); return; }
     const h = window.location.hash.slice(1);
     if (resolveTarget(h)) goTo(h);
@@ -367,11 +400,11 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   useEffect(() => {
     // Through a ref: listeners are added once.
     const on = (e) => goToRef.current(e.detail || 'summary');
-    const onHash = () => { const h = window.location.hash.slice(1); if (resolveTarget(h)) goToRef.current(h); };
+    const onHash = () => { if (!syncHash) return; const h = window.location.hash.slice(1); if (resolveTarget(h)) goToRef.current(h); };
     window.addEventListener('ay-open-tab', on);
     window.addEventListener('hashchange', onHash);
     return () => { window.removeEventListener('ay-open-tab', on); window.removeEventListener('hashchange', onHash); };
-  }, []);
+  }, [syncHash]);
 
   // Every hard word on the page gets a tap-to-define underline, once, where it first appears.
   const plan = useMemo(() => {
@@ -829,7 +862,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     <TermsCtx.Provider value={plan}>
       <div id="ay-tabs" className="ayq ayq--tabs">
         <section id="ay-pt" className="ayq-tabsec" aria-label="Clinical opinion, scientific literature, ayna summary and reviews">
-          <StickyTabs tabs={tabs} active={activeTab} onChange={chooseTab} stickTop={stickTop} />
+          <StickyTabs tabs={tabs} active={activeTab} onChange={chooseTab} stickTop={stickTop} swipe={swipeTabs} />
         </section>
         {afterOverview}
       </div>

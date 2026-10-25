@@ -85,5 +85,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>ayna uses the microphone only while you tap the mic to ask a question by voice. ayna never records or keeps the audio.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>ayna turns what you say into text for your question when you tap the mic. Apple's speech recognition does the transcription; ayna never keeps the audio.</string>
 </dict>
 </plist>

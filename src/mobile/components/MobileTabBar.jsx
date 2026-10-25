@@ -1,12 +1,12 @@
 import { useEffect, useRef } from 'react';
-import { MAIN_TABS, TabIcon } from '../../components/nav/tabs.jsx';
+import { APP_TABS, TabIcon } from '../../components/nav/tabs.jsx';
 
-// One tab set for the app and the website (src/components/nav/tabs.jsx):
-// Today · Explore · Ask ayna (centre) · Community · You.
-const tabs = MAIN_TABS.map((t) => [t.key, t.label, !!t.center]);
+// The app's tabs (founder, Oct 24 20:12): Explore · Library · ayna (centre,
+// the chat as home) · Community · You. The website keeps its own five.
+const tabs = APP_TABS.map((t) => [t.key, t.label, !!t.center]);
 
-export default function MobileTabBar({ active, onToday, onExplore, onAsk, onCommunity, onProfile }) {
-  const actions = { today: onToday, explore: onExplore, ask: onAsk, community: onCommunity, profile: onProfile };
+export default function MobileTabBar({ active, onExplore, onLibrary, onAyna, onCommunity, onProfile }) {
+  const actions = { explore: onExplore, library: onLibrary, ayna: onAyna, community: onCommunity, profile: onProfile };
   // No seam (founder, Oct 21): the bar is the page colour and shows its hairline
   // only while the screen's content runs on under it (iOS scroll-edge behaviour).
   const navRef = useRef(null);

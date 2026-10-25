@@ -36,6 +36,13 @@ export default function Rundown({
   onAsk, onSeeData, onOpenProduct, onWhyMatch, onToggleSaved, onCompare, onOpenRead, onExplore, onFindCare, onEditAnswers,
   // No profile yet: the Rundown card still leads Today and says how to get one.
   onSetUp,
+  // A Community card's "Read the post".
+  onOpenPost,
+  // The app (founder, Oct 24 20:12): when the daily rundown ends or she exits,
+  // onFinish({ starters, toChat }) hands the end-of-rundown questions to the
+  // ayna chat as its starters; toChat is false when she left for something
+  // else (a read, a post), so only the starters carry over.
+  onFinish,
 }) {
   const [memory, setMemory] = useState(() => { setRundownOwner(userId); return readRundownMemory(); });
   const [open, setOpen] = useState(null); // 'daily' | 'weekly' | null
@@ -57,6 +64,8 @@ export default function Rundown({
       try { details = getProductMatchDetailsForProduct(product, intake, healthProfile, matchOpts); } catch { details = null; }
       if (!details || details.matchStatus !== 'scored' || !Number.isFinite(details.percent)) return null;
       if (details.recommendable === false || ['dismissed', 'tried', 'not_for_me'].includes(details.history)) return null;
+      // Held back for safety: never a Rundown match (founder decision 3).
+      if (details.eligibility === 'restricted' || details.restricted === true) return null;
       return { product, percent: details.percent, needId: details.needId, needSignal: details.needSignal || null, why: whyLine(product, details), evidence: evidenceLevel(product).level };
     }).filter(Boolean);
   }, [products, intake, catalogReady, t.tries, saved, healthProfile, matchOpts]);
@@ -138,12 +147,19 @@ export default function Rundown({
 
   // End of the rundown: Ask about a card she just saw. Answers that need
   // her health data only get it when Ask's health switch is on.
-  const askFollowUp = onAsk ? (f) => {
+  const askExtra = (f) => {
     const card = daily.cards.find((c) => c.key === f.cardKey);
     const text = card ? [card.title, card.changed, card.canDo].filter(Boolean).join(' ') : '';
     const context = text ? `From her Daily Rundown today: ${text}` : '';
+    return { usesHealth: Boolean(context), buildContext: (on) => (on ? context : ''), context: getAskHealthPref()?.on ? context : '' };
+  };
+  // The closing card's questions, as the chat's starters for this session.
+  const starters = () => (daily.cards.find((c) => c.kind === 'closing')?.followUps || []).map((f) => ({ question: f.question, cardKey: f.cardKey, ...askExtra(f) }));
+  const finish = (toChat) => { if (open === 'daily' && onFinish) onFinish({ starters: starters(), toChat }); };
+  const askFollowUp = onAsk ? (f) => {
     close({ seen: daily.cards.length, count: daily.cards.length });
-    onAsk(f.question, { usesHealth: Boolean(context), buildContext: (on) => (on ? context : ''), context: getAskHealthPref()?.on ? context : '' });
+    finish(false);
+    onAsk(f.question, askExtra(f));
   } : undefined;
   const onSeen = useCallback((card) => { if (open === 'daily') markCardSeen(card, today); }, [open, today]);
   const onAction = (card, action) => trackToday('rundown_card_action', { kind: open, category: card.category, action });
@@ -187,19 +203,20 @@ export default function Rundown({
         <RundownStory
           cards={cards}
           title={open === 'weekly' ? 'Your week on ayna' : 'Your daily rundown'}
-          onClose={close}
+          onClose={(s) => { close(s); finish(true); }}
           onSeen={onSeen}
           onAction={onAction}
           onCheckIn={(field, value) => t.saveLog(today, { [field]: value })}
           onOutcome={(item, outcome) => t.recordOutcome(item, outcome)}
-          onAsk={onAsk ? (q) => { close({ seen: 0, count: cards.length }); onAsk(q); } : undefined}
+          onAsk={onAsk ? (q) => { close({ seen: 0, count: cards.length }); finish(false); onAsk(q); } : undefined}
           onAskFollowUp={open === 'daily' ? askFollowUp : undefined}
           onSeeData={onSeeData ? (d) => { close({ seen: 0, count: cards.length }); onSeeData(d); } : undefined}
           onWhyMatch={onWhyMatch || onOpenProduct ? (p) => { close({ seen: 0, count: cards.length }); (onWhyMatch || onOpenProduct)(p); } : undefined}
           onSave={onToggleSaved ? (p) => onToggleSaved(p) : undefined}
           onUnsave={onToggleSaved ? (p) => onToggleSaved(p) : undefined}
           onCompare={onCompare ? (p) => { close({ seen: 0, count: cards.length }); onCompare(p); } : undefined}
-          onOpenRead={onOpenRead ? (id) => { close({ seen: 0, count: cards.length }); onOpenRead(id); } : undefined}
+          onOpenRead={onOpenRead ? (id) => { close({ seen: 0, count: cards.length }); finish(false); onOpenRead(id); } : undefined}
+          onOpenPost={onOpenPost ? (id) => { close({ seen: 0, count: cards.length }); finish(false); onOpenPost(id); } : undefined}
           onExplore={onExplore ? () => { close({ seen: 0, count: cards.length }); onExplore(); } : undefined}
           onFindCare={onFindCare}
           onNotUseful={(card, reason) => {
