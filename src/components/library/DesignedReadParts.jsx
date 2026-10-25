@@ -32,7 +32,7 @@ export function NextRead({ article, onOpen }) {
 }
 
 const AVATAR = { display: 'grid', placeItems: 'center', flex: 'none', width: '44px', height: '44px', borderRadius: '50%', background: '#f7badd', color: '#3e2723', font: "400 20px/1 'ayna Display',serif" };
-const KICKER = { font: "700 12px/1 'Figtree'", letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--g-pink)' };
+const KICKER = { font: "700 13px/1.2 'Figtree'", letterSpacing: 0, textTransform: 'none', color: 'var(--g-pink)' };
 const NAME = { font: "700 16px/1.3 'Figtree'" };
 
 // The OB-GYN who reviews the medical reads (founders' wording, 2026-10-19).

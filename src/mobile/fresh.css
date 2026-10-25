@@ -61,7 +61,7 @@
 .ayna-fresh-product-image img { box-sizing: border-box; }
 .ayna-fresh-match-badge { position: absolute; z-index: 2; padding: 7px 8px; border-radius: 8px; background: #3e2723; color: #fff; font: 500 11.5px var(--ayna-font-ui); }
 .ayna-fresh-product-copy { display: flex; flex: 1; flex-direction: column; min-width: 0; }
-.ayna-fresh-product-category { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: #3e2723; text-transform: uppercase; letter-spacing: .06em; font: 500 11.5px var(--ayna-font-ui); }
+.ayna-fresh-product-category { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: #3e2723; text-transform: none; letter-spacing: 0; font: 500 13px var(--ayna-font-ui); }
 .ayna-fresh-product-copy > strong { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; color: #3e2723; font: 600 17px/1.25 var(--ayna-font-ui); }
 .ayna-fresh-product-reason { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin-top: 6px; color: #525252; font: 500 11.5px/1.35 var(--ayna-font-ui); }
 .ayna-fresh-product-foot { display: flex; justify-content: space-between; align-items: center; gap: 5px; margin-top: auto; padding-top: 10px; }

@@ -70,7 +70,7 @@
 :is(.ayna-mobile, .app-container) .ay-qc-uses dt { margin: 0; color: var(--o-ink); font: 700 14px/1.3 var(--o-sans); }
 :is(.ayna-mobile, .app-container) .ay-qc-uses dd { margin: 2px 0 0; color: var(--o-soft); font: 500 13.5px/1.45 var(--o-sans); }
 .ayna-mobile .ay-qc-count { margin-left: auto; color: var(--hd-ink, #3e2723); font: 600 13px/1 'Figtree', sans-serif; }
-.ayna-mobile .ay-qc-kicker { margin: 0 0 6px !important; color: var(--hd-ink, #3e2723) !important; font: 700 12px/1 'Figtree', sans-serif !important; letter-spacing: .08em; text-transform: uppercase; }
+.ayna-mobile .ay-qc-kicker { margin: 0 0 6px !important; color: var(--hd-ink, #3e2723) !important; font: 700 12px/1 'Figtree', sans-serif !important; letter-spacing: 0; text-transform: none; }
 
 /* ── "Not useful" with reasons ─────────────────────────────────────────── */
 :is(.ayna-mobile, .app-container, .ay-why) .ay-nu { display: contents; }
