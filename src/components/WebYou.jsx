@@ -89,7 +89,7 @@ function Glance({ profile, products, quizResults }) {
   return <section className="wy-sec" aria-labelledby="wyou-glance-h">
     <h2 className="ay-group__title" id="wyou-glance-h">At a glance</h2>
     <dl className="ay-group wy-rows">
-      {shelves.length > 0 && <div className="ay-group__row"><span className="ay-group__text"><dt className="ay-group__label">Your shelves</dt><dd className="ay-group__value">{shelves.map(([k, n]) => `${k} ${n}`).join(', ')}</dd></span></div>}
+      {shelves.length > 0 && <div className="ay-group__row"><span className="ay-group__text"><dt className="ay-group__label">Your shelves</dt><dd className="ay-group__value">{shelves.map(([k, n]) => `${k} (${n})`).join(', ')}</dd></span></div>}
       {rows.map((r) => <div className="ay-group__row" key={r.key}><span className="ay-group__text"><dt className="ay-group__label">{r.label}</dt><dd className="ay-group__value">{r.value}</dd></span></div>)}
     </dl>
   </section>;
@@ -434,8 +434,13 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
         (App.jsx YouNav); /you is the overview, each section has its own address. */}
     <div className={`wy-grid is-${section || 'overview'}`}>
       {!section && <>
+      {/* Overview, like Apple Health's Summary: what matters now (safety), her
+          profile at a glance and her week, then the sections. The left column
+          no longer ends after one short box. */}
       <div className="wy-col">
         {safetySection}
+        {shopper && <Glance profile={shopper} products={products} quizResults={quizResults} />}
+        <ThisWeek userId={user.id} onOpen={onOpenHealth || onOpenHealthData} onConnect={onOpenHealthData || onOpenHealth} />
       </div>
       <div className="wy-col">
         {onOpenFreeProduct && <FreeProductAccountCard onOpen={onOpenFreeProduct} />}

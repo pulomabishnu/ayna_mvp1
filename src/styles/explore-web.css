@@ -129,3 +129,6 @@ html body .app-container .wx-askpage .ayna-ask-panel.is-page .ayna-ask-panel__id
   html body .app-container .wx-ask__lead { font-size: 16px; }
   html body .app-container .wx-ask__based, html body .app-container .wx-ask__note { display: none; }
 }
+
+/* You (web), Oct 25: her name as the page's display moment (INSPO 59f3adc7 / 72419ae7 profile header). */
+html body :is(#ay-x, .app-container.app-container.app-container) main .wy-who h1.ay-h1.ay-h1.ay-h1.ay-h1 { font: 700 clamp(44px, 5vw, 72px)/.92 var(--ay-heading, var(--ay-serif)) !important; letter-spacing: -.035em !important; }
