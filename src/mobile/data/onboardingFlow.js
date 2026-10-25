@@ -97,12 +97,12 @@ export function topicsFromSupport(support = []) {
 // why ayna is asking each health question"). Short, plain, one line each.
 const WHY = {
   helpTopics: 'This only picks which options we show next. It is not added to your health profile.',
-  support: 'Each one you pick gets its own matches and its own place on Today.',
+  support: 'Each one you pick gets its own matches and its own place on Home.',
   periodFlow: 'We use it to match absorbency for pads, tampons, cups and period underwear.',
   periodPain: 'Stronger pain moves heat, TENS and pain relief options up, and tells us when to suggest care.',
   utiFrequency: 'Symptoms right now point you to testing and care first. Repeat symptoms bring prevention forward.',
   safety: 'ayna does not diagnose. If something is new or getting worse quickly, we show care before products.',
-  goals: 'Goals shape what Today talks about. They never change a match score.',
+  goals: 'Goals shape what Home talks about. They never change a match score.',
   age: 'Some products are not meant for every age, like menopause supplements in your 20s.',
   lifeStage: 'It changes what is safe to show, for example pregnancy-safe picks only.',
   ttcDuration: 'It changes whether we lead with tracking and prenatal basics or with fertility care.',
@@ -119,6 +119,11 @@ const WHY = {
   medications: 'Some supplements interact with medicines, for example St. John’s wort with birth control. We flag those.',
 };
 export const ONBOARDING_WHY = WHY;
+// The app's tab is Home; the website's is still Today (QA, Oct 25).
+const WHY_WEB = {
+  support: 'Each one you pick gets its own matches and its own place on Today.',
+  goals: 'Goals shape what Today talks about. They never change a match score.',
+};
 
 // New first-run titles (sentence case, plain words). Step types and saved
 // fields stay those of intakeModel.js.
@@ -159,18 +164,19 @@ export const LATER_STEP_IDS = ['zip', 'products', 'avoidRepeat', 'recommendation
  * Required steps (getIntakeSteps' required list) are all here, so finishing
  * the first run is the same "minimum complete" as finishing the old quiz.
  */
-export function getOnboardingSteps(intake, { part = 'all' } = {}) {
+export function getOnboardingSteps(intake, { part = 'all', surface = 'app' } = {}) {
+  const WHY_FOR = surface === 'web' ? { ...WHY, ...WHY_WEB } : WHY;
   const all = getIntakeSteps(intake);
   const byId = new Map(all.map((s) => [s.id, s]));
   // Same saved field as "avoid", asked as its own plain question (team direction, section 30).
   const avoid = byId.get('avoidIngredients');
   if (avoid) byId.set('preferIngredients', { ...avoid, id: 'preferIngredients', type: 'wantOnly', title: 'Anything you prefer your products to have or be?' });
-  const decorate = (s, screen, extra = {}) => ({ ...s, ...(TITLES[s.id] || {}), screen, why: WHY[s.id] || s.info, ...extra });
+  const decorate = (s, screen, extra = {}) => ({ ...s, ...(TITLES[s.id] || {}), screen, why: WHY_FOR[s.id] || s.info, ...extra });
   const out = [];
-  out.push({ id: 'helpTopics', section: 'help', type: 'topics', title: 'What would you like ayna to help you with?', subtitle: 'Pick as many as you like. You don’t need a diagnosis to use ayna.', screen: 1, why: WHY.helpTopics, required: false, optional: false, phase: 'required' });
+  out.push({ id: 'helpTopics', section: 'help', type: 'topics', title: 'What would you like ayna to help you with?', subtitle: 'Pick as many as you like. You don’t need a diagnosis to use ayna.', screen: 1, why: WHY_FOR.helpTopics, required: false, optional: false, phase: 'required' });
   for (const n of [2, 3, 4, 5, 6]) {
     if (n === 3) {
-      out.push({ id: 'goals', section: 'goals', type: 'goals', title: 'What are your goals?', subtitle: 'Pick any that matter to you', screen: 3, why: WHY.goals, required: false, optional: true, phase: 'optional' });
+      out.push({ id: 'goals', section: 'goals', type: 'goals', title: 'What are your goals?', subtitle: 'Pick any that matter to you', screen: 3, why: WHY_FOR.goals, required: false, optional: true, phase: 'optional' });
       continue;
     }
     for (const id of SCREEN_ORDER[n]) {
@@ -183,7 +189,7 @@ export function getOnboardingSteps(intake, { part = 'all' } = {}) {
     if (n === 6) {
       for (const id of DEEPER_OPTIONAL) {
         const s = byId.get(id);
-        if (s && !s.required && !out.some((o) => o.id === id)) out.push(decorate(s, 6, { why: `${WHY[id]} Optional.` }));
+        if (s && !s.required && !out.some((o) => o.id === id)) out.push(decorate(s, 6, { why: `${WHY_FOR[id]} Optional.` }));
       }
     }
   }

@@ -293,10 +293,10 @@ function webOnboardingSteps(intake) {
     : s), obPart }));
   return [
     { id: 'welcome', section: 'welcome', type: 'welcome', screen: 0, title: 'Here’s how ayna helps', optional: false, required: false, obPart: 'core' },
-    ...web(getOnboardingSteps(intake, { part: 'core' }), 'core'),
+    ...web(getOnboardingSteps(intake, { part: 'core', surface: 'web' }), 'core'),
     { id: 'connect', section: 'connect', type: 'connect', screen: 7, title: 'Connect health data', subtitle: 'Optional. Quick check-ins work too.', optional: true, required: false, obPart: 'core' },
     { id: 'ready', section: 'ready', type: 'ready', screen: 7, title: '', optional: false, required: false, obPart: 'core' },
-    ...web(getOnboardingSteps(intake, { part: 'more' }), 'more'),
+    ...web(getOnboardingSteps(intake, { part: 'more', surface: 'web' }), 'more'),
   ];
 }
 

@@ -153,7 +153,7 @@ export function answerItemQuestion(text, ctx = current) {
 export function answerTodayQuestion(text, ctx = current) {
   const kind = todayQuestionKind(text);
   if (!kind) return null;
-  if (!ctx) return { answer: "ayna doesn't have today's picture on this device yet. Open Today, check in, and ask again." };
+  if (!ctx) return { answer: "ayna doesn't have today's picture on this device yet. Do today's check-in and ask again." };
   if (kind === 'focus') return answerFocus(ctx);
   if (kind === 'explain_rundown') return answerRundown(ctx);
   if (kind === 'yesterday') return answerYesterday(ctx);
