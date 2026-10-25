@@ -20,7 +20,12 @@ import { applyStoredConsent, getStoredConsent, isMandatoryGpcVisitor } from './u
 import { appErrorProperties } from './utils/errorAnalytics'
 import { analyticsPlatform, resolvePosthogKey } from './utils/analyticsPlatform'
 
-if (window.location.hostname === 'aynamvp1.vercel.app') {
+// One origin only. Sign-in keeps its session (and the PKCE code verifier) per
+// origin, and Supabase sends every sign-in back to www.aynahealth.co. Someone who
+// started on aynahealth.co (the Luma and Instagram links) came back to www with
+// nothing to finish the sign-in with, then landed on aynahealth.co signed out.
+// vercel.json redirects aynahealth.co to www too; this covers a cached page.
+if (window.location.hostname === 'aynamvp1.vercel.app' || window.location.hostname === 'aynahealth.co') {
   window.location.replace(
     'https://www.aynahealth.co' + window.location.pathname + window.location.search + window.location.hash
   );
