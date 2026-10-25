@@ -478,7 +478,7 @@ export default function BrowseScreen({
               {activeFilterCount > 0 && <span aria-label={`${activeFilterCount} on`}>{activeFilterCount}</span>}
             </button>
             {embedded && <CompareToggle className="ay-shop-compare" />}
-            <p className="ay-shop-count" role="status">{shownTotal} {shownTotal === 1 ? 'product' : 'products'}</p>
+            {!embedded && <p className="ay-shop-count" role="status">{shownTotal} {shownTotal === 1 ? 'product' : 'products'}</p>}
             {!searchValue.trim() && <button type="button" className="ay-discover-cta" aria-label="Swipe through products: right to save, left to skip" onClick={() => setShowDeck(true)}>
               <svg className="ay-discover-fan" viewBox="0 0 56 44" aria-hidden="true">
                 <rect className="c1" x="6" y="6" width="22" height="30" rx="5" transform="rotate(-12 17 21)" />
@@ -496,7 +496,7 @@ export default function BrowseScreen({
           </div>}
           {bestNeedsQuiz && !showFilters && bestQuizNote}
           {!embedded && <div className="ay-shop-comparerow"><CompareToggle /></div>}
-          {embedded && <p className="ay-shop-note is-embedded">Some links earn ayna a commission. It never changes your matches.</p>}
+          {embedded && <p className="ay-shop-note is-embedded"><b role="status">{shownTotal} {shownTotal === 1 ? 'product' : 'products'}</b>. Some links earn ayna a commission. It never changes your matches.</p>}
         </>;
         return embedded
           ? <div className="ayna-category-index is-embedded">{toolbar}</div>

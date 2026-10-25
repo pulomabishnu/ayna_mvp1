@@ -622,10 +622,14 @@
 /* Explore > Products (team direction 17): search, then one toolbar. */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-shop-heading.is-embedded { padding-top: 6px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-category-index.is-embedded .ay-shop-toolbar { flex-wrap: wrap; gap: 10px; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-category-index.is-embedded .ay-shop-count { margin: 0 0 0 auto !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-category-index.is-embedded .ay-shop-matchrow { display: flex; justify-content: flex-start; padding: 0 var(--d-gutter, 20px) 10px; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-category-index.is-embedded .ay-shop-note.is-embedded { margin: 0 var(--d-gutter, 20px) 12px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-category-index.is-embedded .ay-shop-count { flex: 1 1 auto; min-width: 0; margin: 0 !important; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-category-index.is-embedded .ay-shop-toolbar .ay-discover-cta { margin: -4px 0 -4px 4px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-category-index.is-embedded .ay-shop-matchrow { display: flex; justify-content: flex-start; padding: 0 20px 10px; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-category-index.is-embedded .ay-shop-note.is-embedded { margin: 0 20px 12px !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-category-index.is-embedded .ay-shop-note.is-embedded b { font-weight: 600; color: var(--d-ink, #3e2723); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-category-index.is-embedded .ay-shop-toolbar .ay-discover-cta { margin-left: auto !important; }
 
 /* PDP: routine, variants, "Not for me" and other stores, below the tabs (team direction 9). */
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-more { display: grid; gap: 12px; margin: 8px 0 0; padding: 16px var(--d-gutter, 20px); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-more:empty { display: none; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-category-index.is-embedded .ay-shop-toolbar :is(.ayna-shop-filter-toggle, .ay-cmpt, .ay-cmpt-on) { margin-left: 0 !important; margin-right: 0 !important; }
