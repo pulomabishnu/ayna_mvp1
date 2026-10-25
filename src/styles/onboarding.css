@@ -160,3 +160,38 @@
 :is(.ayna-mobile, .app-container) .ay-know .ay-know__group ul > li::before,
 :is(.ayna-mobile, .app-container) :is(.ay-ob-ready__list, .ay-ob-value__list) > li::before { content: none !important; display: none !important; }
 :is(.ayna-mobile, .app-container) .ay-know .ay-know__group li.is-missing small::before { content: '' !important; display: inline-block !important; }
+
+/* =====================================================================
+   Oct 25 design pass: "Your ayna is ready" as the onboarding's one
+   orchestrated moment (UX spec 5 "should feel rewarding"; INSPO
+   onboarding 0 + 4: dark playful splash, result as a seal; homepage
+   huge coloured numerals). Espresso field, the seal stamps in once, the
+   title huge and tight, her focus as three big numbered rows whose
+   numerals are type-as-form (pink, sky, butter). Rows rise in, 45ms
+   apart. Reduced motion: everything static.
+   ===================================================================== */
+:is(.ayna-mobile, .app-container) .ay-ob-ready:not(.is-web) { background: #3e2723 !important; --o-ink: #ffedac; --o-soft: rgba(255, 237, 172, .86); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.is-web { max-width: 720px; margin: 32px auto 64px; padding: 40px 40px 44px !important; border-radius: 32px; background: #3e2723 !important; --o-ink: #ffedac; --o-soft: rgba(255, 237, 172, .86); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-back { color: #ffedac !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__art { width: auto; height: auto; margin: 0 0 4px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__seal { position: relative !important; inset: auto !important; display: grid; place-items: center; width: 112px; height: 112px; border-radius: 50%; background: #f7badd; color: #3e2723; border: 1.5px solid #ffedac; rotate: -8deg; animation: ay-ob-stamp 620ms var(--ease-pop, cubic-bezier(.34, 1.2, .64, 1)) 120ms both; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__seal svg { position: absolute; inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); overflow: visible; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__seal text { font: 600 12.5px 'Figtree', sans-serif; letter-spacing: .06em; fill: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__seal b { position: relative; display: grid; place-items: center; width: 50px; height: 50px; border-radius: 50%; background: #3e2723; color: #ffedac; font: 800 17px/1 'ayna Display', sans-serif; }
+@keyframes ay-ob-stamp { from { opacity: 0; transform: scale(1.35); } 60% { opacity: 1; } to { opacity: 1; transform: none; } }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-ready__title { font: 700 clamp(44px, 12.5vw, 64px)/.92 var(--o-serif) !important; letter-spacing: -.035em !important; color: #ffedac !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-ready__lead { color: #ffedac !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__list { gap: 0; border-top: 1.5px solid rgba(255, 237, 172, .3); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__list li { display: flex !important; align-items: center; gap: 16px; min-height: 64px; padding: 6px 0 !important; border: 0 !important; border-bottom: 1.5px solid rgba(255, 237, 172, .3) !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: #ffedac !important; font: 700 22px/1.15 var(--o-serif) !important; letter-spacing: -.01em; animation: ay-ob-rise 420ms var(--ease-out, ease-out) both; animation-delay: calc(360ms + var(--i, 0) * 45ms); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__list li span { width: auto !important; height: auto !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: #f7badd !important; font: 700 56px/.8 var(--o-serif) !important; letter-spacing: -.05em; min-width: 40px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__list li:nth-child(2) span { color: #769ebe !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__list li:nth-child(3) span { color: #ffedac !important; }
+@keyframes ay-ob-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-primary { background: #ffedac !important; color: #3e2723 !important; box-shadow: 3px 3px 0 #f7badd !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-quiet { color: #ffedac !important; }
+@media (prefers-reduced-motion: reduce) {
+  :is(.ayna-mobile, .app-container) :is(.ay-ob-ready__seal, .ay-ob-ready__list li) { animation: none !important; }
+}
+/* the optional extra questions are a quiet second action on the espresso field, not a second pink block */
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-more { background: transparent !important; border: 1.5px solid rgba(255, 237, 172, .55) !important; box-shadow: none !important; color: #ffedac !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-more small { color: #ffedac !important; opacity: .86; }

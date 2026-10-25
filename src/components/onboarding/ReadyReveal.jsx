@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { getSelectedNeeds, useCatalogReady } from '../../data/catalog.js';
 import { moreRemaining } from '../../mobile/data/onboardingFlow.js';
 import { reconstructIntakeFromSnapshot } from '../../mobile/data/intakeModel.js';
+import { Seal } from '../personality/Bits.jsx';
 import '../../styles/onboarding.css';
 
 /**
@@ -32,7 +33,9 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
         </button>
       )}
-      <div className="ay-ob-ready__art" aria-hidden="true"><i /><i /><i /></div>
+      {/* The reveal is a stamp moment (INSPO onboarding 4: result as a seal): the
+          "matched to you" seal lands once; still under reduced motion. */}
+      <div className="ay-ob-ready__art" aria-hidden="true"><Seal className="ay-ob-ready__seal" /></div>
       <h1 id="ay-ob-ready-h" className="ay-ob-ready__title">Your ayna is ready.</h1>
       {needs.length ? (
         <>
