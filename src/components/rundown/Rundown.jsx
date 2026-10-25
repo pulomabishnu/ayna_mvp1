@@ -187,7 +187,7 @@ export default function Rundown({
   return (
     <section className={`ay-rd-hero${compact ? ' is-compact' : ''}`} aria-labelledby="ay-rd-hero-h">
       {daily.cards.length > 0 && (
-        <div className={`ay-rd-hero__card${highlight ? ' is-new' : ''}`}>
+        <div className={`ay-rd-hero__card${highlight ? ' is-new' : ''}`} data-tour="rundown-card">
           {highlight && <p className="ay-rd-hero__new">Ready for today</p>}
           <p className="ay-rd-hero__kicker">{daily.cards.some((c) => c.protected) ? 'Something important today' : 'Today'}</p>
           <h2 id="ay-rd-hero-h">Your Daily Rundown</h2>

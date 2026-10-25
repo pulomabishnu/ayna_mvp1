@@ -89,7 +89,7 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
   const node = (
     <div ref={rootRef} className={`ay-psheet-layer${still ? ' is-still' : ''}${full ? ' is-full' : ''}`} data-product-sheet="">
       <div className="ay-psheet-dim" aria-hidden="true" onClick={() => (full ? setFull(false) : close())} />
-      <section ref={sheetRef} className="ay-psheet" role="dialog" aria-modal="true" aria-labelledby="ay-psheet-title">
+      <section ref={sheetRef} className="ay-psheet" data-tour="psheet" role="dialog" aria-modal="true" aria-labelledby="ay-psheet-title">
         {full && renderFull ? renderFull(product, () => setFull(false)) : (<>
           <button {...grabberProps} aria-label={`Close ${name}`} />
           <div className="ay-psheet__bar">

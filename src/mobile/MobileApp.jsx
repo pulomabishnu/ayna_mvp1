@@ -128,6 +128,7 @@ import './app-motion.css';
 // the stylesheet consolidation on style/consolidate; loaded last.
 import './app-polish-2.css';
 import OfflineBanner from './components/OfflineBanner.jsx';
+import TutorialLayer from './tutorial/TutorialLayer.jsx';
 import { growTransition } from '../utils/viewTransition.js';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
@@ -1810,6 +1811,8 @@ export default function MobileApp() {
       <FeedbackPrompts key={realAuthUser?.id || 'guest'} user={realAuthUser} authLoading={authLoading} currentView={overlayType || askAynaOpen ? 'busy' : screen} safeViews={APP_FEEDBACK_SCREENS} />
       <OfflineBanner rootRef={rootRef} />
       <GlobalToast variant="app" />
+      {/* First-visit tips (src/mobile/tutorial): one overlay, reads data-tour anchors. */}
+      <TutorialLayer userId={authUser?.id || null} />
     </div>
   );
 }
