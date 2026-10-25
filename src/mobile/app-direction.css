@@ -1056,10 +1056,8 @@
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-you-head .ay-you-avatar { border: 1.5px solid #3e2723 !important; background: #ffedac !important; color: #3e2723 !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-you-head .ay-you-progress > i { background: rgba(255, 237, 172, .7) !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-you-head .ay-you-progress > i > i { background: #3e2723 !important; }
-/* empty states: a taped paper card, the burst sticker on its corner */
+/* empty states: a paper card, the burst sticker on its corner (no tape strip: founder, no office-supply devices) */
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-empty:not(.is-compact) { position: relative; margin: 40px var(--d-gutter) 24px !important; padding: 28px 20px 24px !important; background: #ffedac !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; border-radius: 6px !important; }
-.ayna-mobile:is(#ay,.ayna-mobile) .ay-empty:not(.is-compact)::before { content: ''; position: absolute; top: -12px; left: 50%; width: 84px; height: 24px; margin-left: -42px; background: rgba(247, 186, 221, .75); border-inline: 2px dotted rgba(62, 39, 35, .35); transform: rotate(-3deg); }
-.ayna-mobile:is(#ay,.ayna-mobile) .ay-empty--sky:not(.is-compact)::before, .ayna-mobile:is(#ay,.ayna-mobile) .ay-empty--mint:not(.is-compact)::before { background: rgba(118, 158, 190, .6); }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-empty:not(.is-compact) :is(h2, p) { color: #3e2723 !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-empty:not(.is-compact) .ay-btn:not(.is-ghost) { background: #3e2723 !important; color: #ffedac !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-empty:not(.is-compact) .ay-btn.is-ghost { color: #3e2723 !important; border-color: #3e2723 !important; }
