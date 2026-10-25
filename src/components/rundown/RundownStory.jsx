@@ -7,6 +7,9 @@ import { READ_PHOTOS } from '../../data/readCovers.js';
 import { ProductSheetContext } from '../../mobile/productSheetContext.js';
 import { ProductQuickActions } from '../../mobile/components/ProductQuick.jsx';
 import { holdLine } from '../../utils/matchState.js';
+import { DateStamp, Mark } from '../personality/DS.jsx';
+import { Seal } from '../personality/Bits.jsx';
+import './rundown-ds.css';
 
 /**
  * The rundown as a full-screen story (UX spec 8): progress at the top, tap
@@ -29,18 +32,28 @@ function Evidence({ level }) {
   return <span className="ay-rd-meter" role="img" aria-label={LEVEL_WORDS[level]} data-level={level}><i /><i /><i /><b>{LEVEL_WORDS[level]}</b></span>;
 }
 
+/* One drawn mark per kind of card, in a disc beside its label (decoration only). */
+const KICKER_MARK = { pattern: 'wave', change: 'star', match: 'heart', saved: 'heart', education: 'asterisk', symptom: 'flower', goal: 'star', community: 'flower', win: 'sparkle', week: 'moon', safety: 'asterisk', frame: 'sparkle' };
+
 /* Type as form (Wrapped 2024): one big visual per card, only from real data:
    today's date, the story's own contents, the read's real photo, her own count. */
 function CardArt({ card }) {
   if (card.kind === 'opening') {
     const day = String(card.key || '').split(':')[1] || '';
     const d = day ? new Date(`${day}T12:00:00`) : null;
-    return d ? <div className="ay-rd-art is-opening" aria-hidden="true"><span className="ay-rd-art__num">{d.getDate()}</span></div> : null;
+    // Oct 21-22 language: today's date in a perforated stamp with two drawn marks, not a giant numeral.
+    return d ? <div className="ay-rd-art is-opening" aria-hidden="true"><DateStamp iso={day} className="ay-rd-art__stamp" /><Mark name="sparkle" className="ay-rd-art__m1" /><Mark name="flower" className="ay-rd-art__m2" /></div> : null;
   }
+  if (card.kind === 'closing') return <div className="ay-rd-art is-closing" aria-hidden="true"><Seal className="ay-rd-art__seal" text="your rundown · see you tomorrow · " /></div>;
   if (card.kind === 'read' && READ_PHOTOS[card.readId]) return <div className="ay-rd-art is-photo" aria-hidden="true"><img src={READ_PHOTOS[card.readId]} alt="" /></div>;
   if (card.kind === 'stat') {
     const m = String(card.title || '').match(/\d+/);
     return m ? <div className="ay-rd-art is-stat" aria-hidden="true"><span className="ay-rd-art__num">{m[0]}</span></div> : null;
+  }
+  // Cards that are only words get a small drawn composition from their own kind (Wrapped's layered shapes, ayna's marks).
+  if (!card.facts && !card.steps && (['text', 'checkin', 'followup', 'safety'].includes(card.kind) || card.category === 'symptom' || card.category === 'safety')) {
+    const mark = KICKER_MARK[card.category] || 'sparkle';
+    return <div className="ay-rd-art is-marks" aria-hidden="true"><span className="ay-rd-art__disc"><Mark name={mark} /></span><Mark name="sparkle" className="ay-rd-art__s1" /><Mark name={mark === 'flower' ? 'star' : 'flower'} className="ay-rd-art__s2" /></div>;
   }
   return null;
 }
@@ -261,7 +274,7 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
       >
         <article className="ay-rd-card" key={card.key} aria-labelledby={`ay-rd-t-${i}`}>
           <CardArt card={card} />
-          <p className="ay-rd-kicker">{card.kicker}</p>
+          <p className="ay-rd-kicker"><span className="ay-rd-kicker__disc" aria-hidden="true"><Mark name={KICKER_MARK[card.category] || 'sparkle'} /></span>{card.kicker}</p>
           <h2 id={`ay-rd-t-${i}`} className={`ay-rd-title${String(card.title || '').length > 64 ? ' is-long' : ''}`}>{card.title}</h2>
           {card.body && <p className="ay-rd-body">{card.body}</p>}
           {card.facts && <dl className="ay-rd-facts">{card.facts.map((f) => <div key={f.k}><dt>{f.k}</dt><dd>{f.v}</dd></div>)}</dl>}

@@ -1,0 +1,86 @@
+/* =====================================================================
+   Daily Rundown story in the Oct 21-22 language (DESIGN_SYSTEM_OCT25.md,
+   rules W1-W3, S1). Wrapped's layered-shape idea in ayna's kit: a flat
+   palette field per card, then stickers (a mark disc on the label), a
+   perforated date stamp, outlined stat boxes with the hard shadow, die-cut
+   product tiles, the seal at the end. Claims at 30 (phone) / 36 (desktop
+   stage), not 40-64. Shared by the website and the app.
+   ===================================================================== */
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-card { gap: 14px; }
+
+/* label: an outlined pill sticker with a drawn mark in a disc */
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-kicker {
+  justify-self: start; display: inline-flex; align-items: center; gap: 8px; min-height: 34px; padding: 0 14px 0 3px;
+  border: 1.5px solid var(--rd-ink); border-radius: 999px; background: var(--rd-bg);
+  font: 600 14px/1.2 var(--f-ui, var(--ay-sans-stack, 'Figtree'), sans-serif);
+}
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-kicker::before { content: none; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-kicker__disc { display: grid; place-items: center; width: 26px; height: 26px; box-sizing: border-box; border: 1.5px solid #3e2723; border-radius: 50%; background: #f7badd; color: #3e2723; font-size: 13px; transform: rotate(-8deg); }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-pink .ay-rd-kicker__disc { background: #ffedac; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-butter .ay-rd-kicker__disc { background: #769ebe; }
+
+/* the claim at the restored scale */
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-title { font: 700 calc(30px * var(--ayna-text-scale, 1))/1.06 var(--f-display, var(--ay-heading, 'ayna Display'), sans-serif) !important; letter-spacing: -.025em; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-title.is-long { font-size: calc(26px * var(--ayna-text-scale, 1)) !important; line-height: 1.1; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-checkin .ay-rd-title { font-size: calc(30px * var(--ayna-text-scale, 1)) !important; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-body { font-size: calc(16px * var(--ayna-text-scale, 1)); }
+
+/* her numbers as stat boxes (outline + hard shadow), the second in pink */
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 4px 4px 4px 0; border: 0; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-facts > div { display: grid; gap: 6px; align-content: start; padding: 12px 14px; border: 1.5px solid #3e2723; border-radius: 16px; background: #ffedac; color: #3e2723; box-shadow: 3px 3px 0 #3e2723 !important; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-facts > div:nth-child(2) { background: #f7badd; transform: rotate(1.5deg); }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-facts dt { color: #3e2723 !important; opacity: 1 !important; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-facts dd { margin: 0; font: 700 calc(28px * var(--ayna-text-scale, 1))/1 var(--f-display, 'ayna Display', sans-serif) !important; letter-spacing: -.03em; color: #3e2723; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-ink .ay-rd-facts > div { box-shadow: 3px 3px 0 #ffedac !important; }
+
+/* opening: the date stamp, a sparkle and a flower, then what is inside with coloured numerals */
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-opening { position: relative; display: grid; justify-items: start; gap: 22px; padding: 8px 0 0 6px; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__stamp { --tilt: -5deg; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__stamp .ds-stamp__in { min-width: 104px; min-height: 128px; gap: 4px; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__stamp b { font-size: 44px; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__stamp small { font-size: 14px; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__m1 { position: absolute; left: 132px; top: 10px; width: 34px; height: 34px; color: #f7badd; transform: rotate(12deg); }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__m2 { position: absolute; left: 150px; top: 74px; width: 40px; height: 40px; color: #769ebe; transform: rotate(-10deg); }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__inside { border-top: 0; display: grid; gap: 8px; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__inside li { padding: 0; border: 0; font-size: 16px; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__inside li::before { border: 1.5px solid #3e2723; box-sizing: border-box; background: #f7badd; color: #3e2723; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__inside li:nth-child(3n+2)::before { background: #769ebe; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__inside li:nth-child(3n)::before { background: #ffedac; }
+
+/* a win: her number inside a round sticker, not a 260px numeral */
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-stat { display: grid; place-items: center; width: 136px; height: 136px; border: 1.5px solid #3e2723; border-radius: 50%; background: #ffedac; box-shadow: inset 0 0 0 5px #ffedac, inset 0 0 0 6.5px #3e2723, 3px 3px 0 #3e2723 !important; transform: rotate(-6deg); }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-stat .ay-rd-art__num { margin: 0; font-size: 56px !important; line-height: 1; color: #3e2723 !important; letter-spacing: -.04em; }
+
+/* closing: the seal */
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-closing { position: relative; height: 120px; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-closing .ay-seal { position: absolute; left: 0; top: 0; display: grid; place-items: center; width: 116px; height: 116px; border-radius: 50%; background: #f7badd; color: #3e2723; border: 1.5px solid #3e2723; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-closing .ay-seal svg { position: absolute; inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); overflow: visible; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-closing .ay-seal text { font: 600 12px var(--f-ui, 'Figtree', sans-serif); letter-spacing: .04em; fill: #3e2723; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-closing .ay-seal b { position: relative; display: grid; place-items: center; width: 50px; height: 50px; border-radius: 50%; background: #3e2723; color: #ffedac; font: 800 16px/1 'ayna Display', sans-serif; letter-spacing: -.03em; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-closing .ay-rd-asks { padding: 4px 14px; border: 1.5px solid currentColor; border-radius: 18px; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-closing .ay-rd-asks button { font-size: 17px !important; }
+
+/* check-in answers as raised pills */
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-chip { border: 1.5px solid var(--rd-ink) !important; box-shadow: 3px 3px 0 var(--rd-ink) !important; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-chip[aria-pressed='true'] { background: #f7badd !important; color: #3e2723 !important; transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--rd-ink) !important; }
+/* the read photo: a taped polaroid */
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-photo { overflow: visible; padding: 8px 8px 22px; background: #ffedac; border-radius: 6px; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-photo img { border: 1px solid rgba(62, 39, 35, .25); border-radius: 2px; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-photo::before { content: ''; position: absolute; top: -12px; left: 50%; width: 80px; height: 24px; margin-left: -40px; background: rgba(247, 186, 221, .8); border-inline: 2px dotted rgba(62, 39, 35, .35); transform: rotate(-3deg); }
+
+@media (min-width: 768px) {
+  :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-title { font-size: 36px !important; }
+  :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-title.is-long { font-size: 30px !important; }
+}
+@media (prefers-reduced-motion: reduce) { :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-closing .ay-seal svg { animation: none; } }
+
+/* word-only cards: a big disc with the card's mark, two small marks around it */
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-marks { position: relative; width: 210px; height: 150px; margin-bottom: 8px; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__disc { position: absolute; left: 0; top: 6px; display: grid; place-items: center; width: 132px; height: 132px; box-sizing: border-box; border: 1.5px solid #3e2723; border-radius: 50%; background: #f7badd; color: #3e2723; font-size: 60px; box-shadow: 4px 4px 0 #3e2723 !important; transform: rotate(-8deg); }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-pink .ay-rd-art__disc { background: #ffedac; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-butter .ay-rd-art__disc { background: #769ebe; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-ink .ay-rd-art__disc { box-shadow: 4px 4px 0 #ffedac !important; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__s1 { position: absolute; left: 150px; top: 0; width: 30px; height: 30px; color: var(--rd-ink); transform: rotate(14deg); }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__s2 { position: absolute; left: 156px; top: 92px; width: 40px; height: 40px; color: #f7badd; transform: rotate(-12deg); filter: drop-shadow(1.5px 0 0 #3e2723) drop-shadow(-1.5px 0 0 #3e2723) drop-shadow(0 1.5px 0 #3e2723) drop-shadow(0 -1.5px 0 #3e2723); }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-pink .ay-rd-art__s2 { color: #ffedac; }
+@media (max-height: 700px) { :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-marks { display: none; } }
