@@ -1,5 +1,6 @@
 import { EXPLORE_SECTIONS, YOU_SECTIONS } from '../nav/mainTabs.js';
 import '../../styles/explore-web.css';
+import { Seal } from '../personality/Bits.jsx';
 
 const plainClick = (e) => !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0);
 
@@ -28,6 +29,8 @@ export function ExploreHeader({ active, onGo, children = null, compact = false, 
     // The approved Shop header, kept for all of Explore: a full-bleed espresso band with a scalloped edge (INSPO 1: colour separates sections).
     <header className={`wx-top ay-container ay-pagehead ay-band ay-band--espresso${compact ? ' is-compact' : ''}`}>
       <Title className="ay-h1 wx-title">Explore</Title>
+      {/* The band's one seal, as on the Oct 21-22 Shop band. */}
+      <Seal className="wx-seal" />
       {children}
       <SectionNav label="Explore sections" sections={EXPLORE_SECTIONS} active={active} onGo={onGo} />
     </header>

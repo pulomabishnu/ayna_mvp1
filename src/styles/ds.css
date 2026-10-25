@@ -46,16 +46,18 @@
 /* ---- perforated stamp (mask technique, as .ay-stamp) ---- */
 .ds-stamp {
   --r: 5px; --st: var(--ds-pink);
-  position: relative; display: inline-grid; place-items: center; box-sizing: border-box;
-  padding: calc(2.2 * var(--r)); background: var(--st); color: #3e2723;
+  position: relative; display: inline-block; color: #3e2723;
   filter: drop-shadow(1.5px 0 0 #3e2723) drop-shadow(-1.5px 0 0 #3e2723) drop-shadow(0 1.5px 0 #3e2723) drop-shadow(0 -1.5px 0 #3e2723);
+  transform: rotate(var(--tilt, 4deg));
+}
+.ds-stamp__in {
+  outline: 1.5px dashed rgba(62, 39, 35, .45); outline-offset: -9px;
+  display: grid; justify-items: center; align-content: center; gap: 2px; min-width: 76px; min-height: 92px; padding: calc(2.4 * var(--r)) 14px; box-sizing: border-box; background: var(--st);
   -webkit-mask: radial-gradient(var(--r), #0000 98%, #000) round calc(-1.5 * var(--r)) calc(-1.5 * var(--r)) / calc(3 * var(--r)) calc(3 * var(--r)), linear-gradient(#000 0 0) no-repeat 50% / calc(100% - 3 * var(--r)) calc(100% - 3 * var(--r));
   mask: radial-gradient(var(--r), #0000 98%, #000) round calc(-1.5 * var(--r)) calc(-1.5 * var(--r)) / calc(3 * var(--r)) calc(3 * var(--r)), linear-gradient(#000 0 0) no-repeat 50% / calc(100% - 3 * var(--r)) calc(100% - 3 * var(--r));
-  transform: rotate(var(--tilt, 4deg));
 }
 .ds-stamp--butter { --st: #ffedac; }
 .ds-stamp--sky { --st: #769ebe; }
-.ds-stamp__in { display: grid; justify-items: center; align-content: center; gap: 2px; min-width: 64px; min-height: 76px; padding: 6px 8px; box-sizing: border-box; border: 1.5px dashed rgba(62, 39, 35, .45); }
 .ds-datestamp b { font: 700 36px/.9 var(--ds-display); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
 .ds-datestamp small { font: 600 12.5px/1.1 var(--ds-ui); }
 

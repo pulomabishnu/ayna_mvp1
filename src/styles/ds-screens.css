@@ -96,3 +96,48 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--tod
 }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-today { gap: 24px !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-today__list { margin-top: 8px; }
+
+/* ---------------------------------------------------------------------
+   EXPLORE (/explore/*). The Shop band at Shop's size: title 44/30 (was
+   80/44), the round seal on the band's right edge, tabs on its scallop.
+   Categories: need stickers (die-cut, hard shadow) and categories as
+   sticker chips; product rows use the Shop tile (outline + 4px shadow);
+   services without a photo get an oval label sticker instead of a slab.
+   --------------------------------------------------------------------- */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) main .wx-top.ay-pagehead :is(h1, p).wx-title { margin: 0 0 20px !important; font: 700 var(--ay-type-h1)/1.02 var(--ay-heading) !important; letter-spacing: -.02em !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.ay-pagehead { position: relative; padding-right: 140px !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal { right: 0; top: 22px; width: 104px; height: 104px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal b { width: 46px; height: 46px; font-size: 15px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.is-compact .wx-seal { top: 14px; width: 84px; height: 84px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.is-compact .wx-seal b { width: 38px; height: 38px; font-size: 13px; }
+@media (max-width: 767px) {
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.ay-pagehead { padding-right: 0 !important; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) main .wx-top.ay-pagehead :is(h1, p).wx-title { margin-bottom: 14px !important; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal { top: 6px; right: 0; width: 58px; height: 58px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal b { width: 26px; height: 26px; font-size: 10px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) main .wx-top.ay-pagehead :is(h1, p).wx-title { min-height: 48px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal text { font-size: 15px; }
+}
+/* section titles at H2 with a small drawn sparkle in pink */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-head .ay-h2 { font: 700 var(--ay-type-h2)/1.12 var(--ay-heading) !important; letter-spacing: -.02em !important; }
+/* product rows: Shop's tile */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-row { padding: 4px 6px 10px 2px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) :is(.wx-row, .wx-grid) .ay-product-card__tile { border: 1.5px solid var(--ds-line) !important; border-radius: var(--ds-r) !important; box-shadow: var(--ds-shadow) !important; transition: transform .15s, box-shadow .15s; }
+@media (hover: hover) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) :is(.wx-row, .wx-grid) .ay-product-card__link:hover .ay-product-card__tile { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ds-line) !important; } }
+/* category chips as stickers: outline + 3px hard shadow, a pop of pink when on */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-topics { gap: 10px 10px; padding: 2px 4px 6px 0; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec:not(.wx-phrases) .wx-topics .ay-chip { border: 1.5px solid var(--ds-line) !important; background: var(--ds-group) !important; color: var(--ds-ink) !important; box-shadow: 3px 3px 0 var(--ds-line) !important; font-weight: 600 !important; transition: transform .15s, box-shadow .15s; }
+@media (hover: hover) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ds-line) !important; } }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ds-line) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:nth-child(5n+1) { background: #f7badd !important; color: #3e2723 !important; }
+/* reads: covers get the outline + small shadow */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-reads { padding: 4px 6px 10px 2px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-reads a > :first-child { border: 1.5px solid var(--ds-line); border-radius: 16px; box-shadow: var(--ds-shadow-sm); overflow: hidden; }
+
+/* no-photo tiles (services, a few products): the page colour with an oval label sticker, not a colour slab */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-nophoto { position: relative; isolation: isolate; background: var(--ds-group) !important; color: #3e2723 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-nophoto::before { content: ''; position: absolute; z-index: -1; left: 16%; right: 16%; top: 50%; height: 44%; max-height: 120px; transform: translateY(-50%) rotate(-6deg); border-radius: 50%; border: 1.5px solid #3e2723; box-shadow: inset 0 0 0 4px var(--ov, #f7badd), inset 0 0 0 5.5px #3e2723, 3px 3px 0 #3e2723; background: var(--ov, #f7badd); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) :is(.wx-row, .ayshop__grid, .ay-grid, .ay-product-grid) > :nth-child(3n+2) .ay-nophoto::before { --ov: #769ebe; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) :is(.wx-row, .ayshop__grid, .ay-grid, .ay-product-grid) > :nth-child(3n) .ay-nophoto::before { --ov: #ffedac; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-nophoto::before { border-color: #ffedac; box-shadow: inset 0 0 0 4px var(--ov, #f7badd), inset 0 0 0 5.5px #3e2723, 3px 3px 0 #ffedac; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-nophoto > span:first-child { max-width: 66% !important; }
