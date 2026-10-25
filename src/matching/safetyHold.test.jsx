@@ -42,3 +42,25 @@ describe('safety hold', () => {
     expect(row.notes[0]).toMatch(/medicines/);
   });
 });
+
+describe('safety hold rate with the real setup shape', async () => {
+  const { EMPTY, buildSnapshot } = await import('../mobile/data/intakeModel.js');
+  const { mapIntakeToLegacyQuizProfile } = await import('../utils/healthIntake.js');
+  const base = { ...EMPTY, age: '29', lifeStageSelections: ['I get periods regularly'], supportSelections: ['Cramps or period pain', 'Trouble sleeping', 'PMS symptoms'], safetyConcern: 'No', diagnosisSelections: ['None that I know of'], allergyStatus: 'No', takesCurrent: 'No' };
+  const held = (intake) => {
+    const q = mapIntakeToLegacyQuizProfile(buildSnapshot(intake));
+    return ALL_PRODUCTS.map((p) => getProductMatchDetailsForProduct(p, q)).filter((d) => d.matchStatus === 'safety-hold');
+  };
+  it('answering None holds nothing back; a real medicine is checked, not held', () => {
+    expect(held(base)).toHaveLength(0);
+    expect(held({ ...base, takesCurrent: 'Yes', currentMedicationItems: ['Sertraline'] })).toHaveLength(0);
+  });
+  it('Not sure / Prefer not to answer hold only relevant products that depend on that answer', () => {
+    for (const takesCurrent of ["I'm not sure", 'Prefer not to say']) {
+      const h = held({ ...base, takesCurrent });
+      expect(h.length).toBeGreaterThan(0);
+      expect(h.length).toBeLessThan(20);
+      for (const d of h) expect(d.missingSafetyFields).toContain('medications');
+    }
+  });
+});
