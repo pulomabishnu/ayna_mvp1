@@ -24,11 +24,11 @@
 }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-viz svg { display: block; width: 100%; height: auto; overflow: visible; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-viz text { font-family: var(--f-ui, 'Figtree', sans-serif); fill: currentColor; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-axis { font-size: 12px; font-weight: 600; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-axis { font-size: 13px; font-weight: 600; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-axis.is-today { font-weight: 800; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-tag { font-size: 12px; font-weight: 700; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-tag { font-size: 13px; font-weight: 700; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-big { font: 700 17px var(--f-display, var(--ay-heading, 'ayna Display', sans-serif)) !important; letter-spacing: -0.02em; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-small { font-size: 9.5px; font-weight: 600; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-small { font-size: 11px; font-weight: 700; }
 
 /* Steps (inspo 13a05788 bars, cefbab0a stat card): butter bars on a sky block, today pink. */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-steps svg { max-width: 420px; }
@@ -36,7 +36,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-bar.is-today { fill: #f7badd; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-miss { fill: none; stroke: #3e2723; stroke-width: 1.5; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-usual { stroke: #3e2723; stroke-width: 2; stroke-dasharray: 6 5; transform-box: fill-box; transform-origin: 0 50%; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-usual-label { font-size: 12px; font-weight: 700; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-usual-label { font-size: 13px; font-weight: 700; }
 
 /* Sleep (inspo a1120fb9 ring tiles): one ring filled to the share of her usual, the hours on a pink disc. */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-sleep { justify-items: center; }

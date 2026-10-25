@@ -19,10 +19,11 @@
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-butter .ay-rd-kicker__disc { background: #769ebe; }
 
 /* the claim at the restored scale */
-:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-title { font: 700 calc(30px * var(--ayna-text-scale, 1))/1.06 var(--f-display, var(--ay-heading, 'ayna Display'), sans-serif) !important; letter-spacing: -.025em; }
-:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-title.is-long { font-size: calc(26px * var(--ayna-text-scale, 1)) !important; line-height: 1.1; }
-:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-checkin .ay-rd-title { font-size: calc(30px * var(--ayna-text-scale, 1)) !important; }
-:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-body { font-size: calc(16px * var(--ayna-text-scale, 1)); }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-title { font: 700 calc(28px * var(--ayna-text-scale, 1))/1.08 var(--f-display, var(--ay-heading, 'ayna Display'), sans-serif) !important; letter-spacing: -.025em; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-title.is-long { font-size: calc(24px * var(--ayna-text-scale, 1)) !important; line-height: 1.12; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-checkin .ay-rd-title { font-size: calc(28px * var(--ayna-text-scale, 1)) !important; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-body { font-size: calc(16px * var(--ayna-text-scale, 1)); font-weight: 500; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) :is(.ay-rd-basis, .ay-rd-note) { font-size: 14px !important; font-weight: 600; opacity: 1 !important; }
 
 /* her numbers as stat boxes (outline + hard shadow), the second in pink */
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 4px 4px 4px 0; border: 0; }
@@ -69,8 +70,8 @@
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-photo { border-radius: 24px; }
 
 @media (min-width: 768px) {
-  :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-title { font-size: 36px !important; }
-  :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-title.is-long { font-size: 30px !important; }
+  :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-title { font-size: 34px !important; }
+  :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-title.is-long { font-size: 28px !important; }
 }
 @media (prefers-reduced-motion: reduce) { :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-closing .ay-seal svg { animation: none; } }
 
