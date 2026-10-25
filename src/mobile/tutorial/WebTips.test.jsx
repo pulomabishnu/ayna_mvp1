@@ -25,7 +25,7 @@ function fakeLayout() {
 }
 
 const NAV = `<div class="app-nav-wrap" data-rect='{"left":0,"top":0,"width":1024,"height":68}'><nav class="ay-nav">nav</nav></div>`;
-const TODAY = `<div data-tour="today"><div data-tour="rundown-card">Rundown</div><ul data-tour="today-things"><li>Check in</li></ul></div>`;
+const TODAY = `<div data-tour="today"><div data-tour="rundown-card">Rundown</div><ul data-tour="today-things"><li>Check in</li><li>Answer</li></ul></div>`;
 const EXPLORE = `<div data-tour="explore"><form data-tour="explore-search"><input aria-label="Search" /></form><nav aria-label="Explore sections">x</nav></div>`;
 
 function mountWeb({ view = 'today', html, ready = true }) {
@@ -148,6 +148,14 @@ describe('website first visit', () => {
     mountWeb({ view: 'explore', html: `${EXPLORE}<section class="ayna-ask-panel">chat</section>` });
     wait(3000);
     expect(dialog()).toBeNull();
+  });
+
+  it('a safety item first in today’s things is never a tip’s anchor', () => {
+    setTipsEnabled(true);
+    mountWeb({ html: '<div data-tour="today"><div data-tour="rundown-card">Rundown</div><ul data-tour="today-things"><li class="ay-today__item is-safety">Get checked</li></ul></div>' });
+    wait(1000);
+    expect(dialog().textContent).toContain('Daily Rundown');
+    expect(document.querySelectorAll('.ay-tour__dots i')).toHaveLength(0);
   });
 
   it('an anchor under the top nav is skipped', () => {

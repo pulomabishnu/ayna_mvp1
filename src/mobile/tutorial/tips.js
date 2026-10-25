@@ -113,7 +113,8 @@ export const WEB_SCREENS = [
     welcome: true,
     tips: [
       { id: 'today-rundown', anchor: '[data-tour="today"] [data-tour="rundown-card"]', text: 'Your Daily Rundown is new each morning, 60 seconds long.' },
-      { id: 'today-things', anchor: '[data-tour="today"] [data-tour="today-things"]', text: 'A few things for today, picked from your answers.' },
+      // The first of today's things (a safety or care item is never a tip's anchor, so then it's skipped).
+      { id: 'today-things', anchor: '[data-tour="today"] [data-tour="today-things"] > li:first-child', text: 'A few things for today, picked from your answers.' },
     ],
   },
   {
@@ -144,7 +145,8 @@ export const WEB_SCREENS = [
     id: 'you',
     root: '[data-tour="you"]',
     tips: [
-      { id: 'you-know', anchor: '[data-tour="you"] [data-tour="you-know"]', text: 'See or change anything ayna uses to match you.' },
+      // Big blocks point at their heading, so the anchor fits on screen.
+      { id: 'you-know', anchor: '[data-tour="you"] [data-tour="you-know"] h2', text: 'See or change anything ayna uses to match you.' },
       { id: 'you-sections', anchor: '[data-tour="you"] [data-tour="you-sections"]', text: 'Your ecosystem, saved products and health live here.' },
       { id: 'you-settings', anchor: '[aria-label="You sections"] a[href="/you/settings"]', text: 'Turn tips off or replay them in Settings and privacy.' },
     ],
