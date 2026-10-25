@@ -133,9 +133,11 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.is-compac
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.is-compact .wx-seal b { width: 38px; height: 38px; font-size: 13px; }
 @media (max-width: 767px) {
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.ay-pagehead { padding-right: 0 !important; }
+  /* The band runs to the edge for the seal, but the search keeps the same 20px gutter as its left (QA round 2). */
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.ay-pagehead .wx-search { margin-right: 20px !important; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) main .wx-top.ay-pagehead :is(h1, p).wx-title { margin-bottom: 14px !important; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal { top: 6px; right: 0; width: 58px; height: 58px; }
-  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal b { width: 26px; height: 26px; font-size: 10px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal b { width: 30px; height: 30px; font-size: 8.5px; letter-spacing: -.02em; overflow: hidden; } /* the word stays inside its ring (QA round 2) */
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) main .wx-top.ay-pagehead :is(h1, p).wx-title { min-height: 48px; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal text { font-size: 15px; }
 }
