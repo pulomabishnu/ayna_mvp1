@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Seal } from '../../components/personality/Bits.jsx';
 import MobileHeader from '../components/MobileHeader.jsx';
 import SearchBar from '../components/SearchBar.jsx';
 import ProductCard from '../components/ProductCard.jsx';
@@ -89,7 +90,7 @@ export default function ExploreScreen(props) {
   if (section === 'products') {
     return <div className="ax ax--embed">
       <MobileHeader onOpenSaved={onOpenSaved} />
-      <header className="ax-top"><h1 className="ax-title">Explore</h1>{chips}</header>
+      <header className="ax-top"><h1 className="ax-title">Explore</h1><Seal className="ax-seal" />{chips}</header>
       <BrowseScreen {...props} embedded />
     </div>;
   }
@@ -140,6 +141,7 @@ export default function ExploreScreen(props) {
     <MobileHeader onOpenSaved={onOpenSaved} />
     <header className="ax-top">
       <h1 className="ax-title">Explore</h1>
+      <Seal className="ax-seal" />
       <SearchBar placeholder="Search products, symptoms, topics, services..." ariaLabel="Search Explore" value={query} onChange={(e) => setQuery(e.target.value)} suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }} onPick={(s) => setQuery(s.query)} />
       {q.length < 2 && recent.length > 0 && <div className="ax-recent" role="group" aria-label="Recent searches"><span>Recent</span>{recent.map((r) => <button type="button" key={r} onClick={() => setQuery(r)}>{r}</button>)}<button type="button" className="ax-recent__clear" onClick={() => setRecent(clearRecentSearches())}>Clear</button></div>}
       {chips}
