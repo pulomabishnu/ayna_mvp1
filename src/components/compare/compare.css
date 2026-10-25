@@ -45,3 +45,16 @@
 
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-shop-comparerow { display: flex; justify-content: flex-start; margin: 8px 0 4px; padding: 0 20px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-saved2__compare, :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ayshop__compare { margin-left: auto !important; }
+
+/* Oct 25 design pass (web): lead each column with the product itself, the way
+   product comparisons do (big photo on the white shelf tile, name in the
+   display face), so the table reads by product before it reads by row. */
+:is(#ay-x, html body .app-container.app-container) .ay-cmp2.is-web thead th { vertical-align: bottom; padding-bottom: 16px; min-width: 180px; }
+:is(#ay-x, html body .app-container.app-container) .ay-cmp2.is-web .ay-cmp2__thumb { width: 120px; height: 120px; margin-bottom: 12px; padding: 8px; box-sizing: border-box; border: 1.5px solid var(--s-esp, #3e2723); border-radius: 18px; font: 700 28px/1 var(--ay-heading, var(--ay-serif)); }
+:is(#ay-x, html body .app-container.app-container) .ay-cmp2.is-web .ay-cmp2__name { font: 700 18px/1.15 var(--ay-heading, var(--ay-serif)) !important; letter-spacing: -.01em; }
+:is(#ay-x, html body .app-container.app-container) .ay-cmp2.is-web .ay-cmp2__x { margin-top: 6px !important; font-weight: 500 !important; font-size: 13px !important; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 720px) {
+  :is(#ay-x, html body .app-container.app-container) .ay-cmp2.is-web thead th { min-width: 150px; }
+  :is(#ay-x, html body .app-container.app-container) .ay-cmp2.is-web .ay-cmp2__thumb { width: 88px; height: 88px; }
+  :is(#ay-x, html body .app-container.app-container) .ay-cmp2.is-web .ay-cmp2__name { font-size: 16px !important; }
+}
