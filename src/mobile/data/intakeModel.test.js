@@ -87,6 +87,7 @@ import {
   firstUnansweredStepId, getAnswerStates, isStepAnswered, markSkipped, minimumComplete, requiredReady, splitIntakeSteps,
   toggleLifeStageSelection,
   firstOptionalResumeStepId, getLifeStages, optionalProgress, setPerimenopausePeriods, syncPerimenopausePeriods,
+  lifeStageFollowUps, resumeStepId, withSavedOption, FOLLOWUP_QUESTIONS,
 } from './intakeModel.js';
 
 const requiredIds = (i) => splitIntakeSteps(intake(i)).required.map((s) => s.id);
@@ -183,7 +184,9 @@ describe('conditionally required follow-ups (spec)', () => {
   });
 
   it('TTC duration: required when actively trying; optional with "Not trying yet" for fertility support or ovulation tracking', () => {
-    expect(requiredIds({ lifeStageSelections: ['I am trying to conceive'] })).toContain('ttcDuration');
+    // The stage asks it under the tiles (required there); the need alone keeps its own step.
+    expect(requiredIds({ lifeStageSelections: ['I am trying to conceive'] })).not.toContain('ttcDuration');
+    expect(requiredReady('lifeStage', intake({ lifeStageSelections: ['I am trying to conceive'] }))).toBe(false);
     expect(requiredIds({ supportSelections: ['Trying to conceive'] })).toContain('ttcDuration');
     expect(ttcDurationOptions(intake({ supportSelections: ['Trying to conceive'] }))).toEqual(['Less than 6 months', '6–12 months', 'More than 12 months', 'Prefer not to say']);
     expect(requiredIds({ supportSelections: ['Ovulation tracking or support'] })).not.toContain('ttcDuration');
@@ -201,10 +204,11 @@ describe('conditionally required follow-ups (spec)', () => {
 
   it('postpartum timing + breastfeeding: postpartum stage or need; breastfeeding asked once', () => {
     const stage = intake({ lifeStageSelections: ['I am postpartum'] });
-    expect(requiredIds({ lifeStageSelections: ['I am postpartum'] })).toContain('postpartumTiming');
+    expect(requiredIds({ lifeStageSelections: ['I am postpartum'] })).not.toContain('postpartumTiming');
     expect(requiredReady('lifeStage', stage)).toBe(false);
-    expect(requiredReady('lifeStage', { ...stage, breastfeedingStatus: 'Prefer not to say' })).toBe(true);
-    expect(requiredReady('postpartumTiming', { ...stage, postpartumTiming: '3–6 months ago' })).toBe(true);
+    expect(requiredReady('lifeStage', { ...stage, breastfeedingStatus: 'Prefer not to say' })).toBe(false);
+    expect(requiredReady('lifeStage', { ...stage, postpartumTiming: '3–6 months ago' })).toBe(false);
+    expect(requiredReady('lifeStage', { ...stage, postpartumTiming: '3–6 months ago', breastfeedingStatus: 'Prefer not to say' })).toBe(true);
     const need = intake({ supportSelections: ['Postpartum recovery'], postpartumTiming: '3–6 months ago' });
     expect(requiredReady('postpartumTiming', need)).toBe(false);
     expect(requiredReady('postpartumTiming', { ...need, breastfeedingStatus: 'No' })).toBe(true);
@@ -212,7 +216,9 @@ describe('conditionally required follow-ups (spec)', () => {
   });
 
   it('trimester: required only for "Pregnant"; optional for a pregnancy need alone', () => {
-    expect(requiredIds({ lifeStageSelections: ['I am pregnant'] })).toContain('pregnancyTrimester');
+    expect(stepIds(intake({ lifeStageSelections: ['I am pregnant'] }))).not.toContain('pregnancyTrimester');
+    expect(requiredReady('lifeStage', intake({ lifeStageSelections: ['I am pregnant'] }))).toBe(false);
+    expect(requiredReady('lifeStage', intake({ lifeStageSelections: ['I am pregnant'], pregnancyTrimester: 'Not sure' }))).toBe(true);
     expect(requiredIds({ supportSelections: ['Pregnancy-safe product discovery'] })).not.toContain('pregnancyTrimester');
     expect(optionalIds({ supportSelections: ['Pregnancy-safe product discovery'] })).toContain('pregnancyTrimester');
   });
@@ -326,5 +332,92 @@ describe('safety question readiness (Minah)', () => {
   it('stays ready when a saved profile with an answer is edited', () => {
     const saved = { ...EMPTY_INTAKE_FOR_SAFETY, age: '27', lifeStages: ['None of these'], safetyConcern: 'No' };
     expect(readyForSafety('safety', saved)).toBe(true);
+  });
+});
+
+describe('life stage follow-ups sit under the tiles (founder, Oct 24)', () => {
+  const SAFE = { age: '30', supportSelections: ['Acne'], diagnosisSelections: ['None that I know of'], allergyStatus: 'No', takesCurrent: 'No', safetyConcern: 'No' };
+
+  it('lists the inline follow-ups for each picked stage, in tile order', () => {
+    expect(lifeStageFollowUps(intake({ lifeStageSelections: ['I am in perimenopause', 'I am trying to conceive'] }))).toEqual(['ttcDuration', 'perimenopauseLastPeriod']);
+    expect(lifeStageFollowUps(intake({ lifeStageSelections: ['I am pregnant'] }))).toEqual(['pregnancyTrimester']);
+    expect(lifeStageFollowUps(intake({ lifeStageSelections: ['I am postpartum'] }))).toEqual(['postpartumTiming', 'breastfeedingStatus']);
+    expect(lifeStageFollowUps(intake({ lifeStageSelections: ['I get periods regularly', 'I use hormonal birth control', 'I am in menopause'] }))).toEqual([]);
+    expect(lifeStageFollowUps(intake({ lifeStageSelections: ['Prefer not to say'] }))).toEqual([]);
+  });
+
+  it('keeps the same wording and options, with the "Not sure"/"Prefer not to say" answers', () => {
+    expect(FOLLOWUP_QUESTIONS.ttcDuration).toBe('How long have you been trying?');
+    expect(FOLLOWUP_QUESTIONS.pregnancyTrimester).toBe('How far along are you?');
+    expect(FOLLOWUP_QUESTIONS.postpartumTiming).toBe('How long ago did you give birth?');
+    expect(getIntakeSteps(intake({ supportSelections: ['Trying to conceive'] })).find((s) => s.id === 'ttcDuration').title).toBe(FOLLOWUP_QUESTIONS.ttcDuration);
+    expect(ttcDurationOptions(intake({ lifeStageSelections: ['I am trying to conceive'] }))).toContain('Prefer not to say');
+    expect(withSavedOption(['A', 'B'], 'Old answer')).toEqual(['A', 'B', 'Old answer']);
+    expect(withSavedOption(['A', 'B'], 'A')).toEqual(['A', 'B']);
+    expect(withSavedOption(['A', 'B'], '')).toEqual(['A', 'B']);
+  });
+
+  it('never asks twice: a stage answered inline has no later step', () => {
+    const all = intake({ ...SAFE, lifeStageSelections: ['I am trying to conceive', 'I am postpartum'], supportSelections: ['Trying to conceive', 'Postpartum recovery'], ttcDuration: '6–12 months', postpartumTiming: '3–6 months ago', breastfeedingStatus: 'Yes' });
+    expect(stepIds(all)).not.toContain('ttcDuration');
+    expect(stepIds(all)).not.toContain('postpartumTiming');
+    expect(stepIds(intake({ lifeStageSelections: ['I am pregnant'], supportSelections: ['Pregnancy-safe product discovery'] }))).not.toContain('pregnancyTrimester');
+    expect(minimumComplete(all)).toBe(true);
+    expect(firstUnansweredStepId(all)).toBe(CHECKPOINT_STEP);
+  });
+
+  it('keeps the separate step for a need picked without the stage', () => {
+    expect(requiredIds({ supportSelections: ['Trying to conceive'] })).toContain('ttcDuration');
+    expect(optionalIds({ supportSelections: ['Fertility support'] })).toContain('ttcDuration');
+    expect(optionalIds({ supportSelections: ['Prenatal or pregnancy support'] })).toContain('pregnancyTrimester');
+    const need = intake({ supportSelections: ['Postpartum recovery'] });
+    expect(requiredIds(need)).toContain('postpartumTiming');
+    expect(asksBreastfeedingOnTiming(need)).toBe(true);
+    expect(lifeStageFollowUps(need)).toEqual([]);
+  });
+
+  it('the life stage counts as answered only when every inline follow-up is', () => {
+    const base = intake({ ...SAFE, lifeStageSelections: ['I am trying to conceive', 'I am postpartum', 'I am in perimenopause'] });
+    expect(isStepAnswered('lifeStage', base)).toBe(false);
+    expect(isStepAnswered('aboutYou', base)).toBe(false);
+    expect(firstUnansweredStepId(base)).toBe('lifeStage');
+    const almost = { ...base, ttcDuration: 'Prefer not to say', postpartumTiming: 'Less than 6 weeks ago', perimenopauseLastPeriod: "I'm not sure" };
+    expect(isStepAnswered('lifeStage', almost)).toBe(false);
+    const done = { ...almost, breastfeedingStatus: 'No' };
+    expect(isStepAnswered('lifeStage', done)).toBe(true);
+    expect(isStepAnswered('aboutYou', done)).toBe(true);
+    expect(firstUnansweredStepId(done)).toBe(CHECKPOINT_STEP);
+  });
+
+  it('saves the same fields and values, and answer states still report them', () => {
+    const answered = intake({ ...SAFE, lifeStageSelections: ['I am pregnant'], pregnancyTrimester: 'Second trimester' });
+    const snap = buildSnapshot(answered);
+    expect(snap.pregnancyTrimester).toBe('Second trimester');
+    expect(snap.answerStates.pregnancyTrimester).toBe('answered');
+    expect(reconstructIntakeFromSnapshot(snap).pregnancyTrimester).toBe('Second trimester');
+    const ttc = buildSnapshot(intake({ ...SAFE, lifeStageSelections: ['I am trying to conceive'], ttcDuration: 'Prefer not to say' }));
+    expect(ttc.ttcDuration).toBe('Prefer not to say');
+    expect(ttc.answerStates.ttcDuration).toBe('prefer_not');
+    const pp = buildSnapshot(intake({ ...SAFE, lifeStageSelections: ['I am postpartum'], postpartumTiming: '6–12 months ago', breastfeedingStatus: 'Yes' }));
+    expect(pp.postpartumTiming).toBe('6–12 months ago');
+    expect(pp.breastfeedingStatus).toBe('Yes');
+    expect(pp.answerStates.postpartumTiming).toBe('answered');
+  });
+
+  it('old saved profiles and drafts still load and resume', () => {
+    // A profile saved before the move (answers on the old separate steps) is complete as it was.
+    const saved = buildSnapshot(intake({ ...SAFE, lifeStageSelections: ['I am postpartum'], postpartumTiming: '3–6 months ago', breastfeedingStatus: 'No' }));
+    const back = reconstructIntakeFromSnapshot(saved);
+    expect(back.postpartumTiming).toBe('3–6 months ago');
+    expect(firstUnansweredStepId(back)).toBe(CHECKPOINT_STEP);
+    // A profile missing the follow-up resumes on the life stage, not on a step that is gone.
+    expect(firstUnansweredStepId(intake({ ...SAFE, lifeStageSelections: ['I am pregnant'] }))).toBe('lifeStage');
+    // A draft left on one of the old steps opens the life stage question.
+    expect(resumeStepId(intake({ lifeStageSelections: ['I am trying to conceive'] }), 'ttcDuration')).toBe('lifeStage');
+    expect(resumeStepId(intake({ lifeStageSelections: ['I am pregnant'] }), 'pregnancyTrimester')).toBe('lifeStage');
+    expect(resumeStepId(intake({ lifeStageSelections: ['I am postpartum'] }), 'postpartumTiming')).toBe('lifeStage');
+    // Need-only drafts still land on their own step.
+    expect(resumeStepId(intake({ supportSelections: ['Trying to conceive'] }), 'ttcDuration')).toBe('ttcDuration');
+    expect(resumeStepId(intake({}), 'conditions')).toBe('conditions');
   });
 });
