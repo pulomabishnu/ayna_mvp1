@@ -121,3 +121,17 @@
 /* signed out: the setup card keeps its sentence, title at section size */
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-rd-hero.is-compact .ay-rd-hero__card.is-setup { grid-template-areas: 'title title' 'text text' 'go go'; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-rd-hero.is-compact .ay-rd-hero__card.is-setup > p:not(.ay-rd-hero__kicker) { display: block !important; grid-area: text; font-size: calc(14px * var(--ayna-text-scale, 1)) !important; }
+
+/* ---------------------------------------------------------------------
+   ASK (full screen chat home). The Rundown follow-ups as an outlined
+   card with a pink folder tab, the starter list outlined, the composer
+   with a raised Ask.
+   --------------------------------------------------------------------- */
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-chat-starters { position: relative; margin-top: 24px; border: 1.5px solid var(--d-ink); border-top-left-radius: 0 !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-chat-starters h2 {
+  position: absolute; left: -1.5px; bottom: calc(100% - 1.5px); display: inline-flex; align-items: center; min-height: 26px; margin: 0 !important; padding: 0 12px;
+  border: 1.5px solid var(--d-ink); border-bottom: 0; border-radius: 10px 10px 0 0; background: #f7badd; color: #3e2723 !important;
+  font: 600 calc(12.5px * var(--ayna-text-scale, 1))/1 var(--ay-font-ui, 'Figtree', sans-serif) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-guide-launches { border: 1.5px solid var(--d-ink); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-askh-hello h2 { font-size: calc(28px * var(--ayna-text-scale, 1)) !important; }
