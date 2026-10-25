@@ -25,7 +25,8 @@ function SectionNav({ label, sections, active, onGo, className = '' }) {
 export function ExploreHeader({ active, onGo, children = null, compact = false, titleAs = 'h1' }) {
   const Title = titleAs;
   return (
-    <header className={`wx-top ay-container${compact ? ' is-compact' : ''}`}>
+    // The approved Shop header, kept for all of Explore: a full-bleed espresso band with a scalloped edge (INSPO 1: colour separates sections).
+    <header className={`wx-top ay-container ay-pagehead ay-band ay-band--espresso${compact ? ' is-compact' : ''}`}>
       <Title className="ay-h1 wx-title">Explore</Title>
       {children}
       <SectionNav label="Explore sections" sections={EXPLORE_SECTIONS} active={active} onGo={onGo} />

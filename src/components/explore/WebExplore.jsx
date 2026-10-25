@@ -16,6 +16,7 @@ import { searchCommunity } from '../../utils/community/communityStore.js';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { postLine } from '../../hooks/useSavedPosts.js';
 import { FAMILIAR_PHRASES } from '../shop/shopNeeds.js';
+import { NeedStickers } from '../shop/ShopBits.jsx';
 
 const ROW = 8;
 const plainClick = (e) => !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0);
@@ -126,6 +127,8 @@ export default function WebExplore({
     </div>;
   } else if (section === 'topics') {
     body = <>
+      {/* The approved "Shop by need" photo stickers (a real product per need) lead the one browse tab. */}
+      <section className="wx-sec wx-needs" aria-labelledby="wx-needs-h">{head('wx-needs-h', 'By need')}<NeedStickers onPick={(text) => { commit(text); window.scrollTo({ top: 0, behavior: 'smooth' }); }} /></section>
       <section className="wx-sec" aria-labelledby="wx-topics-h">{head('wx-topics-h', 'Categories')}<p className="wx-note">Pick one to see products, services, reads and what the Community says.</p>{topicChips(HEALTH_TOPICS)}</section>
       {/* The "Does this sound familiar?" phrases, moved here from the product grid (team direction 17). */}
       <section className="wx-sec" aria-labelledby="wx-phrases-h">{head('wx-phrases-h', 'Searches people make')}<div className="wx-topics" role="group" aria-label="Searches people make">{FAMILIAR_PHRASES.map((t) => <button key={t} type="button" className="ay-chip" onClick={() => { commit(t); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>{t}</button>)}</div></section>

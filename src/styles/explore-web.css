@@ -72,3 +72,32 @@ html body .app-container .wx-askpage .ayna-ask-panel.is-page { position: relativ
 /* Explore > Resources: the read list has the page's H1, so "Explore" is a <p>
    there (one H1 per page). It keeps the size the H1 version gets elsewhere. */
 html body .app-container.app-container main p.wx-title { font-size: var(--ay-fs-title) !important; line-height: 1.1 !important; }
+
+/* =====================================================================
+   Oct 25 design pass: Explore's header is the approved Shop band again
+   (espresso, scalloped edge, butter type; dark theme flips to butter).
+   Title huge and tight (INSPO rule 4), search as a butter field on the
+   band, section tabs as underline tabs on the band's bottom edge.
+   ===================================================================== */
+html body .app-container .wx-top.ay-pagehead { --ph-top: 0px; padding-top: 32px !important; padding-bottom: 0 !important; margin-bottom: 40px !important; color: var(--ay-text); }
+html body :is(#ay-x, .app-container.app-container.app-container) main .wx-top.ay-pagehead.ay-pagehead :is(h1, p).wx-title.wx-title.wx-title.wx-title { margin: 0 0 20px; font: 700 clamp(48px, 5.4vw, 80px)/.92 var(--ay-heading, var(--ay-serif)) !important; letter-spacing: -.035em !important; color: var(--ay-text) !important; }
+html body .app-container .wx-top.ay-pagehead .wx-search label { background: var(--ay-text); border-color: var(--ay-text); color: var(--band); }
+html body .app-container .wx-top.ay-pagehead .wx-search svg { color: var(--band); }
+html body .app-container .wx-top.ay-pagehead .wx-search input#wx-q { color: var(--band) !important; }
+html body .app-container.app-container .wx-top.ay-pagehead .wx-search input#wx-q::placeholder { color: var(--band) !important; opacity: .8 !important; -webkit-text-fill-color: var(--band) !important; }
+html body .app-container .wx-top.ay-pagehead .wx-clear { color: var(--band); }
+html body .app-container .wx-top.ay-pagehead .wx-search label:focus-within { box-shadow: 0 0 0 3px #f7badd; }
+html body .app-container .wx-top.ay-pagehead .wx-nav { margin-top: 8px; border-bottom: 0; padding-bottom: 4px; }
+html body .app-container .wx-top.ay-pagehead .wx-nav a { color: var(--ay-text); opacity: .86; font-size: 16px; }
+html body .app-container .wx-top.ay-pagehead .wx-nav a.is-on { opacity: 1; border-bottom-color: #f7badd; font-weight: 700; }
+html body .app-container[data-theme='brand-dark'] .wx-top.ay-pagehead .wx-nav a.is-on { border-bottom-color: #3e2723; }
+html body .app-container .wx-top.ay-pagehead .wx-nav a:focus-visible { outline-color: var(--ay-text); }
+html body .app-container .wx-top.ay-pagehead.is-compact { margin-bottom: 32px !important; }
+@media (max-width: 720px) {
+  html body .app-container .wx-top.ay-pagehead { padding-top: 20px !important; margin-bottom: 28px !important; }
+  html body :is(#ay-x, .app-container.app-container.app-container) main .wx-top.ay-pagehead.ay-pagehead :is(h1, p).wx-title.wx-title.wx-title.wx-title { font-size: 44px !important; margin-bottom: 16px; }
+}
+
+/* Categories: the need stickers a little larger on desktop */
+@media (min-width: 900px) { html body .app-container .wx-needs .ay-needstickers { gap: 16px; } html body .app-container .wx-needs .ay-needsticker__die { width: 104px; height: 104px; } }
+html body .app-container .wx-needs .ay-needstickers { color: var(--ay-text); }
