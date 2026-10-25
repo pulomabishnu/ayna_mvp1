@@ -1435,7 +1435,8 @@ export default function MobileApp() {
   // "New in Community" for the Daily Rundown: real public posts for her topics and follows.
   const rundownCommunity = useRundownCommunity(authUser?.id || null, effectiveQuizAnswers);
   // The Daily Rundown ended (or she closed it): its questions become the chat's
-  // starters; ending or exiting lands her in the chat (founder, Oct 24 20:12).
+  // starters; finishing it lands her in the chat (founder, Oct 24 20:12), X
+  // mid-story stays on Home (QA, Oct 25: toChat is false then).
   const handleRundownFinish = ({ starters = [], toChat = false } = {}) => {
     setAskStarters(Array.isArray(starters) ? starters.slice(0, 3) : []);
     if (!toChat) return;

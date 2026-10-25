@@ -86,3 +86,9 @@ export function markPeriodAnswer(today, answer, storage = globalThis.localStorag
   const periodAnswers = Object.fromEntries(Object.entries({ ...m.periodAnswers, [today]: answer }).filter(([d]) => d >= cutoff));
   return write({ ...m, periodAnswers }, storage);
 }
+
+/**
+ * Closing the story: only finishing it (every card seen) goes on to the chat
+ * with its follow-ups; X mid-story stays on Home (QA, Oct 25).
+ */
+export const finishedRundown = (s) => Boolean(s && s.count > 0 && s.seen >= s.count);
