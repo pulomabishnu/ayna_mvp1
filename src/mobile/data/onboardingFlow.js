@@ -114,7 +114,7 @@ const WHY = {
   preferIngredients: 'Products that match move up in your picks, including eco-friendly and reusable ones.',
   fsaHsa: 'If you have a pre-tax health account, we point out products that are usually eligible.',
   trust: 'Choose what you trust most when picking a product. Skip it and ayna puts evidence first.',
-  conditions: 'Some products are not a good fit with certain conditions, so we filter those out. Prefer not to say is fine.',
+  conditions: 'Some products are not a good fit with certain conditions, so we filter those out. Prefer not to answer is fine.',
   allergies: 'Products with these ingredients or materials never show up in your picks.',
   medications: 'Some supplements interact with medicines, for example St. John’s wort with birth control. We flag those.',
 };

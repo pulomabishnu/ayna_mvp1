@@ -3,6 +3,7 @@ import { findTerm } from '../../data/glossary.js';
 import { conditionDisplayName } from '../../../utils/conditionRename.js';
 import SmartSearchInput from '../../../components/search/SmartSearchInput.jsx';
 import { matchesSearchOption } from '../../../utils/search/index.js';
+import { AGE_MIN, AGE_MAX } from '../../data/intakeModel.js';
 
 // Game-style answer controls for the mobile intake. Every control keeps the
 // exact value contract of the widget it replaced (same option strings, same
@@ -85,8 +86,8 @@ export function ChoiceRows({ options, value, onChange, labels = {} }) {
 
 /* ---------- age ---------- */
 
-const MIN_AGE = 18;
-const MAX_AGE = 90;
+const MIN_AGE = AGE_MIN;
+const MAX_AGE = AGE_MAX;
 
 /** Type your age, or use −/+ and the ruler. Commits on 2+ digits or blur so "2…" doesn't flash the under-18 note. */
 function AgeInput({ value, onCommit }) {
@@ -116,7 +117,7 @@ export function AgeDial({ value, onChange, underage, onOpenGate }) {
       </div>
       <input className="ip-ruler" type="range" min={MIN_AGE} max={MAX_AGE} value={hasValue ? Math.min(MAX_AGE, n) : MIN_AGE}
         onChange={(e) => onChange(e.target.value)} aria-label="Slide to choose your age" style={{ '--fill': `${fill}%` }} />
-      <div className="ip-ruler-ends" aria-hidden="true"><span>18</span><span>{hasValue ? 'years' : 'choose age'}</span><span>90+</span></div>
+      <div className="ip-ruler-ends" aria-hidden="true"><span>18</span><span>{hasValue ? 'years' : 'choose age'}</span><span>{MAX_AGE}+</span></div>
       {underage && (
         <button type="button" className="ip-warning" onClick={onOpenGate}>
           <strong>ayna is for ages 18 and up</strong>
