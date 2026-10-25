@@ -143,7 +143,7 @@ import './styles/chrome.css';
 import './styles/ds.css';
 import './styles/ds-screens.css';
 import './styles/product-card-ds.css';
-import { readHomeLook } from './mobile/components/HomeArt.jsx';
+import { readHomeLook } from './mobile/components/homeLook.js';
 // Keep the ?homestyle=a|b preview pick before the router rewrites the address (Today loads lazily).
 readHomeLook();
 import NewAccountStart from './components/NewAccountStart';

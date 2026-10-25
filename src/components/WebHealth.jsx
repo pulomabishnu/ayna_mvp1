@@ -8,7 +8,7 @@ import { HealthStarter } from '../mobile/components/HealthBento.jsx';
 import HealthHome from '../mobile/components/HealthHome.jsx';
 import TodayFeed from './today/TodayFeed.jsx';
 import { CurvedRing, CycleRing, DayStrip, ProductStickers, Shapes } from './personality/DS.jsx';
-import { readHomeLook } from '../mobile/components/HomeArt.jsx';
+import { readHomeLook } from '../mobile/components/homeLook.js';
 import '../styles/web-health.css';
 import '../styles/today-web.css';
 
