@@ -66,15 +66,18 @@ describe('1. life stage before preference', () => {
     for (const id of [...s.eco, ...s.shop]) expect(PERIOD_CATS.has(pp(id).category), id).toBe(false);
   });
 
-  it('menopause + an explicit bleeding pick: period products stay, but as a weak need (never Strong, care note)', () => {
+  it('menopause + an explicit bleeding pick: no products for that bleeding, a prompt-evaluation note with a .gov source (founder, Oct 24)', () => {
     const answers = q({ age: '55', lifeStageSelections: ['I am in menopause'], supportSelections: ['Hot flashes', 'Heavy periods'] });
-    const signals = needSignals(buildUserProfile(answers.fullHealthIntake, { catalog: ALL_PRODUCTS }));
-    expect(signals.get('period.heavy')).toMatchObject({ tier: 'weak', reason: 'contradicts_life_stage' });
     const seed = getEcosystemSeedFromQuiz(answers);
     const heavy = seed.shelves.find((s) => s.needId === 'period.heavy');
-    expect(heavy.picks.length).toBeLessThanOrEqual(V2.weakPerNeed);
-    for (const p of heavy.picks) expect(p.v2.band).not.toBe('strong');
-    expect(seed.careFlags.notes.map((n) => n.text).join(' ')).toMatch(/Bleeding after menopause/);
+    // Care services may stay (the evaluation path); no product is put forward for the bleeding.
+    for (const id of heavy?.productIds || []) { const p = pp(id); expect(Boolean(p.is_digital || p.access?.is_care_service), id).toBe(true); }
+    const note = seed.careFlags.notes.find((n) => n.code === 'period_need_vs_stage');
+    expect(note.text).toMatch(/12 months or more after your last period should be checked promptly by an ob-gyn/);
+    expect(note.source.url).toMatch(/^https:\/\/medlineplus\.gov\//);
+    expect(seed.careFlags.careProminent).toBe(true);
+    // Unrelated needs still get recommendations.
+    expect(seed.shelves.find((s) => s.needId !== 'period.heavy' && s.productIds.length)).toBeTruthy();
   });
 
   it('pregnant: no cycle tracker or ovulation test, and nothing swallowed with unknown pregnancy safety', () => {

@@ -729,7 +729,9 @@ export function buildUserProfile(intakeInput, options = {}) {
   // ── Contradictions between explicit answers (spec B) ─────────────────
   const periodNeeds = needs.filter((n) => MENSTRUAL_PRODUCT_NEEDS.has(n.id) || n.id === 'pain.menstrual_cramp').map((n) => n.id);
   if (periodNeeds.length && ['menopause', 'postmenopause'].some((st) => lifeStages.includes(st))) {
-    contradictions.push({ code: 'period_need_vs_stage', affects: periodNeeds, text: 'You asked for period support and also chose menopause or post-menopause. Bleeding after menopause is worth raising with a clinician.' });
+    // Founder, Oct 24: bleeding or spotting after menopause gets a prompt-evaluation
+    // message and no products for it (src/matching/eligibility.js postmenopausalBleedingBlock).
+    contradictions.push({ code: 'period_need_vs_stage', affects: periodNeeds, prominent: true, source: { label: 'MedlinePlus: Vaginal or uterine bleeding', url: 'https://medlineplus.gov/ency/article/007496.htm' }, text: 'You chose period or bleeding support and also menopause or post-menopause. Bleeding or spotting 12 months or more after your last period should be checked promptly by an ob-gyn or your clinician. ayna does not suggest products for it.' });
   }
   if ((needIds.has('fertility.ttc') || lifeStages.includes('ttc')) && lifeStages.includes('postmenopause')) {
     contradictions.push({ code: 'ttc_vs_postmenopause', affects: ['fertility.ttc'], text: 'Trying to conceive and post-menopause do not usually go together.' });

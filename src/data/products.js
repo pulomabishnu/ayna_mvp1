@@ -1886,11 +1886,11 @@ function careFlagsFor(up) {
     if (up.safety.pregnant) notes.push({ code: 'pregnancy_unknown', text: 'Pregnancy safety is not confirmed for most products. Check new products with your clinician.' });
     if (up.safety.breastfeeding === 'yes') notes.push({ code: 'breastfeeding_unknown', text: 'Breastfeeding safety is not confirmed for most products. Check new products with your clinician.' });
     if (up.physiology.confidenceFlags.includes('needs_clarification')) notes.push({ code: 'stage_needs_clarification', text: 'Some life stages you chose do not usually go together. Update your profile so we can match better.' });
-    for (const c of up.contradictions.filter((x) => x.code === 'period_need_vs_stage')) notes.push({ code: c.code, text: c.text });
+    for (const c of up.contradictions.filter((x) => x.code === 'period_need_vs_stage')) notes.push({ code: c.code, text: c.text, source: c.source || null, prominent: Boolean(c.prominent) });
     return {
         urgent: up.safety.urgent,
         careFirst: up.safety.careFirst,
-        careProminent: Boolean(up.safety.careProminent || utiRightNow || (utiFirstTime && utiNeed) || severePain || veryHeavyFlow || symptomCare.length),
+        careProminent: Boolean(up.safety.careProminent || up.contradictions.some((x) => x.code === 'period_need_vs_stage') || utiRightNow || (utiFirstTime && utiNeed) || severePain || veryHeavyFlow || symptomCare.length),
         utiRightNow,
         utiFirstTime,
         severePain,
