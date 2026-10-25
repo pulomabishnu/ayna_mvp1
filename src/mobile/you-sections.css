@@ -10,3 +10,8 @@
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-you-posts-list button { cursor: pointer; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-you-posts-list small { font: 600 calc(12px * var(--ayna-text-scale, 1))/1 var(--ay-font-ui); letter-spacing: 0; text-transform: none; color: var(--d-ink-2); }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-you-empty { margin: 0; color: var(--d-ink-2); font: 400 calc(14.5px * var(--ayna-text-scale, 1))/1.45 var(--ay-font-ui); }
+
+/* Oct 25 (spacing rule 2: heading 12px above its content, air between groups, not inside) */
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-you-section.ay-you-group { display: grid; gap: 10px; margin-top: 28px; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-you-section.ay-you-group > .ay-you-h2 { margin: 0 !important; padding: 0 !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-you-section.ay-you-group > .ay-you-list { margin: 0 !important; }
