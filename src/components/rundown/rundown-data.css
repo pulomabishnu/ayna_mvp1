@@ -38,7 +38,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-usual { stroke: #3e2723; stroke-width: 2; stroke-dasharray: 6 5; transform-box: fill-box; transform-origin: 0 50%; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-usual-label { font-size: 11px; font-weight: 700; }
 
-/* Sleep (inspo a1120fb9 ring tiles): one ring filled to the share of her usual, the hours in a pink seal. */
+/* Sleep (inspo a1120fb9 ring tiles): one ring filled to the share of her usual, the hours on a pink disc. */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-sleep { grid-template-columns: minmax(120px, 156px) 1fr; align-items: center; justify-items: stretch; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-ring { max-width: 156px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-track { fill: none; stroke: currentColor; stroke-opacity: .2; stroke-width: 12; }
@@ -53,7 +53,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-dots i { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid currentColor; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-dots i.is-on { background: #f7badd; }
 
-/* Period (inspo 8cd3b680 countdown tiles; Clue's lighter predicted days): day tiles + a days-left stamp. */
+/* Period (inspo 8cd3b680 countdown tiles; Clue's lighter predicted days): day tiles + a big numeral on an espresso block. */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-period { grid-template-columns: 1fr auto; align-items: center; justify-items: start; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-tile { transform-box: fill-box; transform-origin: 50% 100%; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-tile rect { stroke: #3e2723; stroke-width: 1.5; fill: transparent; }
@@ -64,13 +64,13 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-tile:is(.is-ahead, .is-maybe, .is-gap) rect { stroke-dasharray: 4 3; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-tile.is-maybe rect { fill: #f7badd; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-pin { fill: #3e2723; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-stamp {
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-num {
   display: grid; justify-items: center; align-content: center; min-width: 76px; min-height: 76px; padding: 8px; border-radius: 10px;
-  background: #3e2723; color: #ffedac; outline: 1.5px dashed #ffedac; outline-offset: -6px; transform: rotate(-4deg);
+  background: #3e2723; color: #ffedac;
 }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-stamp b { font: 700 30px/1 var(--f-display, 'ayna Display', serif); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-stamp small { font: 600 11px/1.2 var(--f-ui, 'Figtree', sans-serif); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-stamp.is-round { border-radius: 50%; min-width: 104px; min-height: 104px; transform: rotate(-6deg); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-num b { font: 700 30px/1 var(--f-display, 'ayna Display', serif); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-num small { font: 600 11px/1.2 var(--f-ui, 'Figtree', sans-serif); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-num.is-round { border-radius: 50%; min-width: 104px; min-height: 104px; }
 
 /* Cycle (Stardust wheel, inspo bf3f538c ring): one ring, period pink, possible ovulation days sky, today a dot. */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-cycle { grid-template-columns: minmax(120px, 156px) 1fr; align-items: center; justify-items: stretch; }
@@ -110,6 +110,15 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-check .ay-rd-basis { flex-basis: 100%; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-check .ay-rd-chip { min-height: 48px; padding: 0 20px; background: var(--rd-ink); color: var(--rd-bg); }
 
+/* Playful drawn shapes, one per card, in a corner of the block (decorative). */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-shape { position: absolute; top: -12px; right: 14px; width: 30px; height: 30px; pointer-events: none; animation: ay-rdd-pop 600ms var(--rdd-ease) 500ms both; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-shape.is-sparkle path { fill: #f7badd; stroke: #3e2723; stroke-width: 1.5; stroke-linejoin: round; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-shape.is-asterisk path { fill: none; stroke: #3e2723; stroke-width: 3; stroke-linecap: round; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-shape.is-flower ellipse { fill: #f7badd; stroke: #3e2723; stroke-width: 1.2; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-shape.is-flower .is-core { fill: #ffedac; stroke: #3e2723; stroke-width: 1.2; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-still .ay-rdd-shape { animation: none; }
+@media (prefers-reduced-motion: reduce) { :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-shape { animation: none; } }
+
 /* Motion. */
 @keyframes ay-rdd-grow { from { transform: scaleY(0); } }
 @keyframes ay-rdd-wipe { from { transform: scaleX(0); } }
@@ -122,7 +131,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-usual.ay-rdd-anim { animation: ay-rdd-wipe 600ms var(--rdd-ease) var(--d, 0ms) both; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-arc.ay-rdd-anim { animation: ay-rdd-draw 900ms var(--rdd-ease) var(--d, 0ms) both; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-seg.ay-rdd-anim { animation: ay-rdd-draw1 700ms var(--rdd-ease) var(--d, 0ms) both; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) :is(.ay-rdd-pop, .ay-rdd-tile, .ay-rdd-dots i, .ay-rdd-stamp).ay-rdd-anim { animation: ay-rdd-pop 600ms var(--rdd-ease) var(--d, 0ms) both; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) :is(.ay-rdd-pop, .ay-rdd-tile, .ay-rdd-dots i, .ay-rdd-num).ay-rdd-anim { animation: ay-rdd-pop 600ms var(--rdd-ease) var(--d, 0ms) both; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-band.ay-rdd-anim { animation: ay-rdd-wipe 700ms var(--rdd-ease) var(--d, 0ms) both; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-fade.ay-rdd-anim { animation: ay-rdd-fade 400ms ease-out var(--d, 0ms) both; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-deltas li.ay-rdd-anim { animation: ay-rdd-rise 600ms var(--rdd-ease) var(--d, 0ms) both; }

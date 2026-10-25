@@ -10,8 +10,25 @@ import { FMT } from './rundownData.js';
 
 const stagger = (i, base = 0) => ({ '--i': i, '--d': `${base + i * 60}ms` });
 
+/** Playful drawn shapes (founder 23:49): one per card, decorative only. */
+const SHAPES = {
+  sparkle: 'M12 1c1 6 5 10 11 11-6 1-10 5-11 11-1-6-5-10-11-11 6-1 10-5 11-11z',
+  asterisk: 'M12 2v20M3.3 7l17.4 10M3.3 17l17.4-10',
+};
+export function Shape({ name, className = '' }) {
+  if (name === 'flower') {
+    return (
+      <svg className={`ay-rdd-shape is-flower ${className}`} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        {[0, 72, 144, 216, 288].map((a) => <ellipse key={a} cx="12" cy="6.5" rx="3.6" ry="5" transform={`rotate(${a} 12 12)`} />)}
+        <circle cx="12" cy="12" r="3" className="is-core" />
+      </svg>
+    );
+  }
+  return <svg className={`ay-rdd-shape is-${name} ${className}`} viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={SHAPES[name]} /></svg>;
+}
+
 /** Last 7 days as bars, today highlighted ("so far"), her usual as a dashed line. */
-export function StepsChart({ week = [], usual = null }) {
+export function StepsChart({ week = [], usual = null, level = null }) {
   const W = 320; const H = 150; const top = 22; const bottom = 26;
   const vals = week.map((d) => d.value).filter((v) => v != null);
   const max = Math.max(...vals, usual || 0, 1) * 1.08;
@@ -38,6 +55,7 @@ export function StepsChart({ week = [], usual = null }) {
           <text className="ay-rdd-usual-label ay-rdd-anim ay-rdd-fade" style={stagger(0, 800)} x={W - 4} y={uy - 6} textAnchor="end">your usual</text>
         </>}
       </svg>
+      {(level === 'good' || level === 'steady') && <Shape name="sparkle" />}
       <ul className="sr-only">
         {week.map((d) => <li key={d.day}>{d.today ? 'Today so far' : d.label}: {d.value == null ? 'no data' : `${FMT.steps(d.value)} steps`}</li>)}
         {usual != null && <li>Your usual: about {FMT.steps(usual)} steps a day</li>}
@@ -46,7 +64,7 @@ export function StepsChart({ week = [], usual = null }) {
   );
 }
 
-/** Last night as a ring filled to the share of her usual, the hours in the centre (the card's seal). */
+/** Last night as a ring filled to the share of her usual, the hours in the centre (a pink disc). */
 export function SleepRing({ lastNight, usual = null, pct = null, nights = 0, learning = false }) {
   const r = 46; const C = 2 * Math.PI * r;
   const fill = pct == null ? 0 : Math.min(pct, 100);
@@ -92,7 +110,8 @@ export function PeriodStrip({ strip = [], left = null }) {
           );
         })}
       </svg>
-      {left != null && left > 0 && <span className="ay-rdd-stamp ay-rdd-anim" style={stagger(0, 450)} aria-hidden="true"><b>{left}</b><small>{left === 1 ? 'day left' : 'days left'}</small></span>}
+      {left != null && left > 0 && <span className="ay-rdd-num ay-rdd-anim" style={stagger(0, 450)} aria-hidden="true"><b>{left}</b><small>{left === 1 ? 'day left' : 'days left'}</small></span>}
+      <Shape name="asterisk" />
       <ul className="sr-only">{strip.map((t) => <li key={t.n}>Day {t.n}: {TILE_WORD[t.kind]}</li>)}</ul>
     </figure>
   );
@@ -108,7 +127,8 @@ export function CycleRing({ cycleDay, avgLength, periodLength = 0, phase = null 
   if (!avgLength) {
     return (
       <figure className="ay-rdd-viz ay-rdd-cycle is-solo" role="img" aria-label={`Cycle day ${cycleDay}`}>
-        <span className="ay-rdd-stamp is-round ay-rdd-anim" style={stagger(0)} aria-hidden="true"><small>cycle day</small><b>{cycleDay}</b></span>
+        <span className="ay-rdd-num is-round ay-rdd-anim" style={stagger(0)} aria-hidden="true"><small>cycle day</small><b>{cycleDay}</b></span>
+        <Shape name="flower" />
       </figure>
     );
   }
@@ -129,6 +149,7 @@ export function CycleRing({ cycleDay, avgLength, periodLength = 0, phase = null 
         <text className="ay-rdd-big" x={cx} y={cy + 9} textAnchor="middle">{cycleDay}</text>
         <text className="ay-rdd-small" x={cx} y={cy + 23} textAnchor="middle">of about {avgLength}</text>
       </svg>
+      <Shape name="flower" />
       <ul className="ay-rdd-key">
         {periodLength > 0 && <li><i className="is-period" aria-hidden="true" />Period</li>}
         {phase?.windowStart && <li><i className="is-window" aria-hidden="true" />Possible ovulation days</li>}
@@ -182,7 +203,7 @@ export const DATA_KINDS = new Set(['steps', 'sleep', 'period', 'cycle', 'signal'
 
 export function DataViz({ card }) {
   switch (card.kind) {
-    case 'steps': return <StepsChart week={card.week} usual={card.usual} />;
+    case 'steps': return <StepsChart week={card.week} usual={card.usual} level={card.level} />;
     case 'sleep': return <SleepRing lastNight={card.lastNight} usual={card.usual} pct={card.pct ?? null} nights={card.nights || 0} learning={Boolean(card.learning)} />;
     case 'period': return card.strip ? <PeriodStrip strip={card.strip} left={card.check ? null : card.left} /> : null;
     case 'cycle': return card.cycleDay ? <CycleRing cycleDay={card.cycleDay} avgLength={card.avgLength} periodLength={card.periodLength || 0} phase={card.phase} /> : null;
