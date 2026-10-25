@@ -159,7 +159,7 @@ describe('since yesterday', () => {
     expect(deltaCard(rows('sleep_minutes', [400, 430]), TODAY)).toBeNull();
     const c = deltaCard([...rows('sleep_minutes', [400, 430]), ...rows('steps', [3000, 6000, 100])], TODAY);
     expect(c.deltas).toEqual([
-      expect.objectContaining({ id: 'sleep', change: '+0h 30m', dir: 'up' }),
+      expect.objectContaining({ id: 'sleep', change: '+30m', dir: 'up' }),
       expect.objectContaining({ id: 'steps', change: '+3,000', dir: 'up' }),
     ]);
   });

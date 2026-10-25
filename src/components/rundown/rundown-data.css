@@ -27,7 +27,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-axis { font-size: 11px; font-weight: 600; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-axis.is-today { font-weight: 800; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-tag { font-size: 11px; font-weight: 700; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-big { font: 700 17px var(--f-display, var(--ay-serif, 'ayna Display', serif)) !important; letter-spacing: -0.02em; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-big { font: 700 17px var(--f-display, var(--ay-heading, 'ayna Display', sans-serif)) !important; letter-spacing: -0.02em; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-small { font-size: 8.5px; font-weight: 600; }
 
 /* Steps (inspo 13a05788 bars, cefbab0a stat card): butter bars on a sky block, today pink. */
@@ -48,7 +48,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-sleep .ay-rdd-seal ~ text { fill: #3e2723; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-pair { display: grid; gap: 10px; margin: 0; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-pair dt { font: 600 13px/1.2 var(--f-ui, 'Figtree', sans-serif); opacity: .85; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-pair dd { margin: 2px 0 0; font: 700 22px/1.1 var(--f-display, 'ayna Display', serif); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-pair dd { margin: 2px 0 0; font: 700 22px/1.1 var(--f-display, var(--ay-heading, 'ayna Display', sans-serif)); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-dots { display: flex; gap: 8px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-dots i { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid currentColor; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-dots i.is-on { background: #f7badd; }
@@ -68,7 +68,7 @@
   display: grid; justify-items: center; align-content: center; min-width: 76px; min-height: 76px; padding: 8px; border-radius: 10px;
   background: #3e2723; color: #ffedac;
 }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-num b { font: 700 30px/1 var(--f-display, 'ayna Display', serif); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-num b { font: 700 30px/1 var(--f-display, var(--ay-heading, 'ayna Display', sans-serif)); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-num small { font: 600 11px/1.2 var(--f-ui, 'Figtree', sans-serif); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-num.is-round { border-radius: 50%; min-width: 104px; min-height: 104px; }
 
@@ -96,12 +96,13 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-dot { transform-box: fill-box; transform-origin: center; }
 
 /* Since yesterday (inspo 72419ae7 stat boxes, Apple Trends arrows). */
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-deltas { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); justify-items: stretch; gap: 8px; padding: 12px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-deltas { grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); justify-items: stretch; gap: 8px; padding: 12px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-deltas li { min-width: 0; padding: 10px !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-deltas li { display: grid; gap: 4px; padding: 12px; border: 1.5px solid #3e2723; border-radius: 16px; background: #ffedac; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-deltas li:nth-child(2) { background: #f7badd; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-deltas li:nth-child(3) { background: #769ebe; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-delta-label { font: 600 13px/1.2 var(--f-ui, 'Figtree', sans-serif); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-deltas b { font: 700 22px/1.1 var(--f-display, 'ayna Display', serif); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-deltas b { font: 700 18px/1.1 var(--f-display, var(--ay-heading, 'ayna Display', sans-serif)); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-delta { display: inline-flex; align-items: center; gap: 4px; font: 700 13px/1.2 var(--f-ui, 'Figtree', sans-serif); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-delta svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
@@ -111,11 +112,11 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-check .ay-rd-chip { min-height: 48px; padding: 0 20px; background: var(--rd-ink); color: var(--rd-bg); }
 
 /* Playful drawn shapes, one per card, in a corner of the block (decorative). */
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-shape { position: absolute; top: -12px; right: 14px; width: 30px; height: 30px; pointer-events: none; animation: ay-rdd-pop 600ms var(--rdd-ease) 500ms both; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-shape.is-sparkle path { fill: #f7badd; stroke: #3e2723; stroke-width: 1.5; stroke-linejoin: round; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-shape.is-asterisk path { fill: none; stroke: #3e2723; stroke-width: 3; stroke-linecap: round; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-shape.is-flower ellipse { fill: #f7badd; stroke: #3e2723; stroke-width: 1.2; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-shape.is-flower .is-core { fill: #ffedac; stroke: #3e2723; stroke-width: 1.2; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-viz .ay-rdd-shape { position: absolute; top: -12px; right: 14px; width: 30px; height: 30px; pointer-events: none; animation: ay-rdd-pop 600ms var(--rdd-ease) 500ms both; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-viz .ay-rdd-shape.is-sparkle path { fill: #f7badd; stroke: #3e2723; stroke-width: 1.5; stroke-linejoin: round; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-viz .ay-rdd-shape.is-asterisk path { fill: none; stroke: #3e2723; stroke-width: 3; stroke-linecap: round; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-viz .ay-rdd-shape.is-flower ellipse { fill: #f7badd; stroke: #3e2723; stroke-width: 1.2; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-viz .ay-rdd-shape.is-flower .is-core { fill: #ffedac; stroke: #3e2723; stroke-width: 1.2; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-still .ay-rdd-shape { animation: none; }
 @media (prefers-reduced-motion: reduce) { :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-shape { animation: none; } }
 

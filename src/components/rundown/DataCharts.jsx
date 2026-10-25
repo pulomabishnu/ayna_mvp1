@@ -52,7 +52,7 @@ export function StepsChart({ week = [], usual = null, level = null }) {
         })}
         {uy != null && <>
           <line className="ay-rdd-usual ay-rdd-anim" pathLength="1" x1="2" x2={W - 2} y1={uy} y2={uy} style={stagger(0, 520)} />
-          <text className="ay-rdd-usual-label ay-rdd-anim ay-rdd-fade" style={stagger(0, 800)} x={W - 4} y={uy - 6} textAnchor="end">your usual</text>
+          <text className="ay-rdd-usual-label ay-rdd-anim ay-rdd-fade" style={stagger(0, 800)} x="4" y={uy - 6} textAnchor="start">your usual</text>
         </>}
       </svg>
       {(level === 'good' || level === 'steady') && <Shape name="sparkle" />}
@@ -144,10 +144,10 @@ export function CycleRing({ cycleDay, avgLength, periodLength = 0, phase = null 
         {periodLength > 0 && <path className="ay-rdd-seg is-period ay-rdd-anim" pathLength="1" d={arc(cx, cy, r, ang(1), ang(periodLength + 1) - 0.04)} style={stagger(0)} />}
         {phase?.windowStart && <path className="ay-rdd-seg is-window ay-rdd-anim" pathLength="1" d={arc(cx, cy, r, ang(phase.windowStart), ang(phase.windowEnd + 1) - 0.04)} style={stagger(2)} />}
         <circle className="ay-rdd-today ay-rdd-anim ay-rdd-pop" cx={cx + r * Math.cos(dot)} cy={cy + r * Math.sin(dot)} r="7" style={stagger(0, 600)} />
-        <circle className="ay-rdd-seal" cx={cx} cy={cy} r={r - 15} />
-        <text className="ay-rdd-small" x={cx} y={cy - 9} textAnchor="middle">day</text>
-        <text className="ay-rdd-big" x={cx} y={cy + 9} textAnchor="middle">{cycleDay}</text>
-        <text className="ay-rdd-small" x={cx} y={cy + 23} textAnchor="middle">of about {avgLength}</text>
+        <circle className="ay-rdd-seal" cx={cx} cy={cy} r={r - 13} />
+        <text className="ay-rdd-small" x={cx} y={cy - 10} textAnchor="middle">day</text>
+        <text className="ay-rdd-big" x={cx} y={cy + 8} textAnchor="middle">{cycleDay}</text>
+        <text className="ay-rdd-small" x={cx} y={cy + 20} textAnchor="middle" style={{ fontSize: 7.5 }}>of about {avgLength}</text>
       </svg>
       <Shape name="flower" />
       <ul className="ay-rdd-key">
@@ -172,8 +172,8 @@ export function RangeTrack({ range }) {
       <svg viewBox="0 0 320 78" aria-hidden="true" focusable="false">
         <line className="ay-rdd-axisline" x1="12" x2="308" y1="40" y2="40" />
         <rect className="ay-rdd-band ay-rdd-anim" x={x(low)} y="30" width={Math.max(4, x(high) - x(low))} height="20" rx="10" style={stagger(0)} />
-        <text className="ay-rdd-axis" x={x(low)} y="70" textAnchor="middle">{lowLabel}</text>
-        <text className="ay-rdd-axis" x={x(high)} y="70" textAnchor="middle">{highLabel}</text>
+        <text className="ay-rdd-axis" x={x(low)} y="70" textAnchor={x(high) - x(low) < 70 ? 'end' : 'middle'}>{lowLabel}</text>
+        <text className="ay-rdd-axis" x={x(high)} y="70" textAnchor={x(high) - x(low) < 70 ? 'start' : 'middle'}>{highLabel}</text>
         <g className="ay-rdd-dot ay-rdd-anim ay-rdd-pop" style={stagger(0, 450)}>
           <circle cx={x(last)} cy="40" r="9" />
           <text className="ay-rdd-tag" x={Math.min(296, Math.max(24, x(last)))} y="18" textAnchor="middle">{lastLabel}</text>

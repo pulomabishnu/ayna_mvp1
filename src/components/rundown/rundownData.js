@@ -33,7 +33,7 @@ export const DATA_RULES = {
 };
 
 export const FMT = {
-  minutes: (m) => `${Math.floor(Math.round(m) / 60)}h ${String(Math.round(m) % 60).padStart(2, '0')}m`,
+  minutes: (m) => (Math.round(m) < 60 ? `${Math.round(m)}m` : `${Math.floor(Math.round(m) / 60)}h ${String(Math.round(m) % 60).padStart(2, '0')}m`),
   steps: (n) => Math.round(n).toLocaleString('en-US'),
 };
 const mean = (xs) => xs.reduce((a, b) => a + b, 0) / xs.length;
