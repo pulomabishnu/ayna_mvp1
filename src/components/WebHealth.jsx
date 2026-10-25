@@ -7,6 +7,7 @@ import { DEV_HEALTH_DEMO, DEV_HEALTH_DEMO_EMPTY, localToday } from '../mobile/ho
 import { HealthStarter } from '../mobile/components/HealthBento.jsx';
 import HealthHome from '../mobile/components/HealthHome.jsx';
 import TodayFeed from './today/TodayFeed.jsx';
+import { DateStamp } from './personality/DS.jsx';
 import '../styles/web-health.css';
 import '../styles/today-web.css';
 
@@ -181,11 +182,13 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
     const more = [aside, connect].filter(Boolean);
     return (
       <section className="ay-wh ay-wh--today" aria-labelledby="ay-wh-title">
-        <header className="ay-wh-hello">
+        {/* Oct 21-22 page top: an espresso band with a scalloped edge (like Shop), the greeting at title size, today's date in a stamp. */}
+        <header className="ay-wh-hello ay-pagehead ay-band--espresso">
           <h1 id="ay-wh-title" className="sr-only">{title}</h1>
           <p className="ay-wh-hello__date">{fmtLongDay(today)}</p>
           <p className="ay-wh-hello__hi">{hello}{name ? `, ${name}` : ''}.</p>
           <p className="ay-wh-hello__lead">Here’s what’s worth knowing today.</p>
+          <DateStamp iso={today} className="ay-wh-hello__stamp" />
         </header>
         {intro}
         <div className={`ay-wh-day${more.length ? ' has-more' : ''}`}>

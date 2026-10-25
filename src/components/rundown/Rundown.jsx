@@ -17,6 +17,7 @@ import { withoutMedicines } from '../../health/medicineProduct.js';
 import { readRoutinePrefs } from '../../health/routines.js';
 import { onboardingDoneAt, onboardingJustFinished } from '../../health/onboardingSignal.js';
 import './rundown.css';
+import { MarkSticker } from '../personality/DS.jsx';
 
 const REMIND_TEXT = {
   scheduled: 'We will send “Your daily rundown is ready.” tomorrow morning, if notifications are on in the ayna app.',
@@ -188,6 +189,7 @@ export default function Rundown({
         <div className={`ay-rd-hero__card${highlight ? ' is-new' : ''}`}>
           {/* The date as type (Wrapped: numerals as form); only today's real date. */}
           <span className="ay-rd-hero__date" aria-hidden="true"><b>{Number(String(today).slice(8, 10))}</b><small>{new Date(`${today}T12:00:00`).toLocaleDateString('en-US', { weekday: 'long' })}</small></span>
+          <MarkSticker name="sparkle" tone="pink" className="ay-rd-hero__sticker" />
           {highlight && <p className="ay-rd-hero__new">Ready for today</p>}
           <p className="ay-rd-hero__kicker">{daily.cards.some((c) => c.protected) ? 'Something important today' : 'Today'}</p>
           <h2 id="ay-rd-hero-h">Your Daily Rundown</h2>

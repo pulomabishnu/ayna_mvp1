@@ -1,0 +1,92 @@
+/* =====================================================================
+   ayna design language, Oct 21-22, as one shared kit for the website
+   (.app-container) and the app (.ayna-mobile). Source of truth:
+   scratchpad DESIGN_SYSTEM_OCT25.md, docs/design-direction.md.
+   Devices (decoration only, aria-hidden in markup):
+     .ds-stamp     perforated postage stamp (pink | butter | sky)
+     .ds-datestamp the stamp holding today's date
+     .ds-sticker   round sticker with one drawn mark, on a card corner
+     .ds-mark      a drawn glyph (asterisk, sparkle, flower, wave, heart, star)
+     .ds-tabbed    a card that carries a folder tab on its top edge
+     .ds-tab       the folder tab itself (pink | sky | butter | espresso)
+     .ds-num       circle numeral (1-3 sequences only)
+     .ds-hard      outline + hard offset shadow, for tappable things
+     .ds-scallop   scalloped bottom edge in the element's colour
+   Type scale (restored Oct 21-22): web H1 44/30, H2 30/24, H3 22/20;
+   app title 28, section 22, number 30. Nothing here is bigger.
+   ===================================================================== */
+.app-container, .ayna-mobile {
+  --ds-ink: #3e2723;
+  --ds-on: #ffedac;
+  --ds-page: #ffedac;
+  --ds-group: #f6e3a1;
+  --ds-line: #3e2723;
+  --ds-pink: #f7badd;
+  --ds-sky: #769ebe;
+  --ds-shadow: 4px 4px 0 var(--ds-line);
+  --ds-shadow-sm: 3px 3px 0 var(--ds-line);
+  --ds-r: 20px;
+  --ds-display: var(--ay-heading, var(--ay-app-heading, 'ayna Display', 'Bricolage Grotesque', system-ui, sans-serif));
+  --ds-ui: var(--ay-sans-stack, var(--ayna-font-ui, 'Figtree', system-ui, sans-serif));
+}
+.app-container:is([data-theme='brand-dark'], [data-theme='dark']), .ayna-mobile[data-theme='dark'] {
+  --ds-ink: #ffedac;
+  --ds-on: #3e2723;
+  --ds-page: #3e2723;
+  --ds-group: #4a312c;
+  --ds-line: #ffedac;
+}
+.ayna-mobile[data-theme='dark'] { --ds-page: #2e1c18; }
+@media (max-width: 699px) { .app-container { --ds-shadow: 3px 3px 0 var(--ds-line); --ds-r: 16px; } }
+.ayna-mobile { --ds-shadow: 3px 3px 0 var(--ds-line); --ds-r: 18px; }
+
+/* ---- drawn marks ---- */
+.ds-mark { display: block; width: 1em; height: 1em; flex: none; }
+
+/* ---- perforated stamp (mask technique, as .ay-stamp) ---- */
+.ds-stamp {
+  --r: 5px; --st: var(--ds-pink);
+  position: relative; display: inline-grid; place-items: center; box-sizing: border-box;
+  padding: calc(2.2 * var(--r)); background: var(--st); color: #3e2723;
+  filter: drop-shadow(1.5px 0 0 #3e2723) drop-shadow(-1.5px 0 0 #3e2723) drop-shadow(0 1.5px 0 #3e2723) drop-shadow(0 -1.5px 0 #3e2723);
+  -webkit-mask: radial-gradient(var(--r), #0000 98%, #000) round calc(-1.5 * var(--r)) calc(-1.5 * var(--r)) / calc(3 * var(--r)) calc(3 * var(--r)), linear-gradient(#000 0 0) no-repeat 50% / calc(100% - 3 * var(--r)) calc(100% - 3 * var(--r));
+  mask: radial-gradient(var(--r), #0000 98%, #000) round calc(-1.5 * var(--r)) calc(-1.5 * var(--r)) / calc(3 * var(--r)) calc(3 * var(--r)), linear-gradient(#000 0 0) no-repeat 50% / calc(100% - 3 * var(--r)) calc(100% - 3 * var(--r));
+  transform: rotate(var(--tilt, 4deg));
+}
+.ds-stamp--butter { --st: #ffedac; }
+.ds-stamp--sky { --st: #769ebe; }
+.ds-stamp__in { display: grid; justify-items: center; align-content: center; gap: 2px; min-width: 64px; min-height: 76px; padding: 6px 8px; box-sizing: border-box; border: 1.5px dashed rgba(62, 39, 35, .45); }
+.ds-datestamp b { font: 700 36px/.9 var(--ds-display); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.ds-datestamp small { font: 600 12.5px/1.1 var(--ds-ui); }
+
+/* ---- round sticker with a mark ---- */
+.ds-sticker { position: absolute; z-index: 2; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: #ffedac; color: #3e2723; border: 1.5px solid #3e2723; transform: rotate(var(--tilt, 10deg)); pointer-events: none; font-size: 22px; }
+.ds-sticker--pink { background: #f7badd; }
+.ds-sticker--sky { background: #769ebe; }
+.ds-sticker--espresso { background: #3e2723; color: #f7badd; }
+
+/* ---- folder tab on a card's top edge (INSPO spacing rule 9) ---- */
+.ds-tabbed { position: relative; margin-top: 30px !important; }
+.ds-tab, :is(.app-container, .ayna-mobile) .ds-tabbed > .ds-tab {
+  position: absolute; z-index: 1; left: 20px; bottom: calc(100% - 1.5px); top: auto;
+  display: inline-flex; align-items: center; gap: 6px; min-height: 30px; margin: 0 !important; padding: 0 14px !important; box-sizing: border-box;
+  border: 1.5px solid var(--ds-line) !important; border-bottom: 0 !important; border-radius: 10px 10px 0 0 !important;
+  background: var(--tab, var(--ds-pink)) !important; color: #3e2723 !important;
+  font: 600 13px/1 var(--ds-ui) !important; letter-spacing: 0 !important; text-transform: none !important; white-space: nowrap; opacity: 1 !important;
+}
+.ds-tab--sky { --tab: #769ebe; }
+.ds-tab--butter { --tab: #ffedac; }
+.ds-tab--group { --tab: var(--ds-group); color: var(--ds-ink) !important; }
+.ds-tab--espresso { --tab: #3e2723; color: #ffedac !important; }
+
+/* ---- circle numerals for real sequences ---- */
+.ds-num { display: inline-grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid #3e2723; background: var(--n, #f7badd); color: #3e2723; font: 700 14px/1 var(--ds-display); font-variant-numeric: tabular-nums; box-sizing: border-box; }
+
+/* ---- outline + hard offset shadow (tappable things) ---- */
+.ds-hard { border: 1.5px solid var(--ds-line) !important; box-shadow: var(--ds-shadow) !important; }
+
+/* ---- scalloped bottom edge in the element's own colour ---- */
+.ds-scallop { position: relative; }
+.ds-scallop::after { content: ''; position: absolute; left: 0; right: 0; bottom: -15px; height: 16px; pointer-events: none; background: radial-gradient(circle at 12px 0, var(--sc, #3e2723) 11.5px, transparent 12px) 0 0 / 24px 16px repeat-x; }
+
+@media (prefers-reduced-motion: reduce) { .ds-stamp, .ds-sticker { transition: none; } }

@@ -124,6 +124,9 @@ import './app-motion.css';
 // Deep round 2 (Oct 21): native-feel fixes. Own file so it doesn't collide with
 // the stylesheet consolidation on style/consolidate; loaded last.
 import './app-polish-2.css';
+// Oct 21-22 design language kit + the app pass (DESIGN_SYSTEM_OCT25); last so it wins.
+import '../styles/ds.css';
+import './ds-app.css';
 import OfflineBanner from './components/OfflineBanner.jsx';
 import { growTransition } from '../utils/viewTransition.js';
 

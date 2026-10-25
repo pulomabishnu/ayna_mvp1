@@ -1,0 +1,98 @@
+/* =====================================================================
+   Website screens in the Oct 21-22 language (DESIGN_SYSTEM_OCT25.md).
+   Loaded after every other stylesheet; selectors carry two ID-weight
+   :is() steps so lazily loaded component CSS can't undo the type scale.
+   Type: H1 44/30, H2 30/24, H3 22/20, card title 17/16, body 17/16.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   TODAY (/today). Shop's page top (espresso band + scallop, title at H1,
+   a stamp instead of the seal), then the Rundown as an outlined card with
+   a pink folder tab and a sparkle sticker, the 1 to 3 things as cards
+   with folder tabs, and More for you as a tabbed paper column.
+   --------------------------------------------------------------------- */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today { padding-top: 0 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello.ay-pagehead {
+  --ph-top: 40px;
+  display: grid; gap: 6px; align-content: center; min-height: 168px; margin: 0 0 56px !important; padding: 32px 140px 40px 0 !important;
+  color: var(--ay-text);
+}
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello.ay-pagehead p { margin: 0 !important; color: var(--ay-text) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__date { font: 600 14px/1.3 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__hi { font: 700 var(--ay-type-h1)/1.02 var(--ay-heading) !important; letter-spacing: -.02em !important; text-wrap: balance; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__lead { margin-top: 4px !important; font: 400 17px/1.45 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__stamp { position: absolute; right: 8px; top: 50%; margin-top: -48px; --tilt: 5deg; }
+@media (max-width: 767px) {
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello.ay-pagehead { --ph-top: 24px; min-height: 0; margin-bottom: 44px !important; padding: 20px 92px 28px 0 !important; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__lead { font-size: 15px !important; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__stamp { right: 0; margin-top: -42px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__stamp .ds-stamp__in { min-width: 56px; min-height: 68px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__stamp b { font-size: 30px; }
+}
+
+/* the Rundown: an outlined card with the hard shadow, its label as a pink folder tab, a sparkle sticker on the corner */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-rd-hero { gap: 12px; margin-top: 30px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-rd-hero__card {
+  --x-feature: var(--ds-page); --x-on: var(--ds-ink); --x-on-2: var(--ay-text-2); --x-on-hair: var(--ay-hairline);
+  position: relative; overflow: visible; min-height: 0; align-content: start; gap: 10px;
+  padding: 28px 28px 26px !important; border-radius: var(--ds-r) !important; border-top-left-radius: 0 !important;
+  border: 1.5px solid var(--ds-line); box-shadow: var(--ds-shadow); background: var(--ds-page) !important; color: var(--ds-ink);
+}
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-rd-hero__card.is-new { outline: 0; box-shadow: 6px 6px 0 #f7badd, 7.5px 7.5px 0 var(--ds-line); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-rd-hero__date { display: none; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-rd-hero__kicker {
+  position: absolute; left: -1.5px; bottom: calc(100% - 1.5px); display: inline-flex; align-items: center; min-height: 30px; padding: 0 14px !important;
+  border: 1.5px solid var(--ds-line); border-bottom: 0; border-radius: 10px 10px 0 0; background: #f7badd; color: #3e2723 !important; opacity: 1;
+  font: 600 13px/1 var(--ay-sans-stack) !important;
+}
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-rd-hero__sticker { top: -18px; right: 22px; --tilt: 12deg; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-rd-hero__new { position: absolute; left: 132px; bottom: calc(100% + 4px); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-rd-hero__card h2 { max-width: none; font: 700 var(--ay-type-h2)/1.1 var(--ay-heading) !important; letter-spacing: -.02em !important; color: var(--ds-ink) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-rd-hero__card > p:not(.ay-rd-hero__kicker):not(.ay-rd-hero__new) { max-width: 46ch; color: var(--ay-text-2) !important; font: 400 16px/1.45 var(--ay-sans-stack) !important; }
+/* what is inside, as pill stickers with coloured numerals (it is the story's order) */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-rd-hero__inside { gap: 8px; margin: 6px 0 4px !important; padding: 0 !important; border: 0; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-rd-hero__inside li { min-height: 36px; padding: 0 14px 0 4px; gap: 8px; border: 1.5px solid var(--ds-line); border-radius: 999px; background: var(--ds-group); color: var(--ds-ink); font: 600 14px/1.2 var(--ay-sans-stack); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-rd-hero__inside li::before { width: 26px; height: 26px; border: 1.5px solid #3e2723; box-sizing: border-box; background: #ffedac; color: #3e2723; font: 700 13px/1 var(--ay-heading); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-rd-hero__inside li:is(.is-match, .is-saved, .is-win, .is-safety)::before { background: #f7badd; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-rd-hero__inside li:is(.is-pattern, .is-change, .is-community)::before { background: #769ebe; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-rd-hero__go { min-height: 52px; margin-top: 8px !important; padding: 0 26px !important; border: 1.5px solid #3e2723 !important; background: #3e2723 !important; color: #ffedac !important; box-shadow: 3px 3px 0 #f7badd !important; font: 600 16px/1 var(--ay-sans-stack) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-wh.ay-wh--today .ay-rd-hero__go { border-color: #ffedac !important; background: #ffedac !important; color: #3e2723 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-rd-hero__week { min-height: 56px; border: 1.5px solid var(--ds-line) !important; border-radius: 999px !important; padding: 8px 18px !important; }
+
+/* the 1 to 3 things: each its own outlined card, the label is the folder tab on its edge */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-today__list { gap: 42px; padding-top: 30px; overflow: visible; border-radius: 0; background: none; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-today__item {
+  position: relative; padding: 22px 24px !important; border: 1.5px solid var(--ds-line) !important; border-radius: var(--ds-r); border-top-left-radius: 0; background: var(--ds-group);
+}
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-today__item:is(.is-care, .is-safety) { background: #f7badd; color: #3e2723; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-today__item .ay-today__kicker {
+  position: absolute; left: -1.5px; bottom: calc(100% - 1.5px); display: inline-flex; align-items: center; min-height: 30px; padding: 0 14px !important;
+  border: 1.5px solid var(--ds-line) !important; border-bottom: 0 !important; border-radius: 10px 10px 0 0 !important; background: #769ebe !important; color: #3e2723 !important; opacity: 1;
+  font: 600 13px/1 var(--ay-sans-stack) !important;
+}
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-today__item:is(.is-care, .is-safety) .ay-today__kicker { background: #f7badd !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-today__item:nth-child(3n+2):not(.is-care):not(.is-safety) .ay-today__kicker { background: #ffedac !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-today__item.is-urgent { background: #3e2723; color: #ffedac; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-today__title { font: 700 var(--ay-type-h3)/1.2 var(--ay-heading) !important; letter-spacing: -.01em !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-today__primary { box-shadow: 3px 3px 0 #f7badd !important; }
+
+/* More for you: a paper column with its title as a sky folder tab */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day__more { position: relative; margin-top: 30px; padding: 24px; border: 1.5px solid var(--ds-line); border-radius: var(--ds-r); border-top-left-radius: 0; background: var(--ds-group); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) main .ay-wh.ay-wh--today .ay-wh-day__moreh {
+  position: absolute; left: -1.5px; bottom: calc(100% - 1.5px); display: inline-flex; align-items: center; min-height: 34px; margin: 0 !important; padding: 0 16px !important;
+  border: 1.5px solid var(--ds-line); border-bottom: 0; border-radius: 10px 10px 0 0; background: #769ebe; color: #3e2723 !important;
+  font: 700 17px/1 var(--ay-heading) !important; letter-spacing: -.01em !important;
+}
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day__mod:first-of-type { padding-top: 0; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day__more .ay-rxr .ay-rxs__list > li::before { border: 1.5px solid #3e2723; box-sizing: border-box; background: #f7badd; color: #3e2723; font-family: var(--ay-heading); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day__more .ay-rxr .ay-rxs__list > li:nth-child(2)::before { background: #769ebe; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day__more .ay-rxr .ay-rxs__list > li.is-track::before { background: #ffedac; color: #3e2723; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) main .ay-wh.ay-wh--today .ay-wh-day__more .ay-rxr .ay-rxs__head h2 { font: 700 var(--ay-type-h3)/1.15 var(--ay-heading) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-tread__cover { border: 1.5px solid var(--ds-line); border-radius: 12px; box-shadow: var(--ds-shadow-sm); transform: rotate(-2deg); overflow: hidden; }
+@media (max-width: 767px) {
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-rd-hero__card { padding: 24px 18px 20px !important; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-today__item { padding: 20px 18px !important; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day__more { padding: 20px 18px; }
+}
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-today { gap: 24px !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-today__list { margin-top: 8px; }
