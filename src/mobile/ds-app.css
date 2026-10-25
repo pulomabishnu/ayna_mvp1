@@ -18,7 +18,7 @@
    charts (455687ac); links as pills; the tab bar a floating pill
    (186125f6, 8cd3b680). One screen at 390x844, no scrolling.
    --------------------------------------------------------------------- */
-.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen { gap: 10px; padding-bottom: 10px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen { gap: 10px; padding-bottom: 4px; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-hello { display: grid; gap: 10px; margin-top: -6px !important; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-hello__hi { margin: 0; font: 700 calc(28px * var(--ayna-text-scale, 1))/1.08 var(--ay-app-heading); letter-spacing: -.02em; color: var(--d-ink); }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-hello__days { justify-content: space-between; color: var(--d-ink); }
@@ -42,7 +42,7 @@
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-rd-hero.is-compact { margin: 0 0 12px; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-rd-hero.is-compact .ay-rd-hero__card {
   position: relative; overflow: visible; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: 'kicker' 'title' 'go'; align-content: start; justify-items: start; row-gap: 8px;
-  min-height: 152px; padding: 16px 150px 18px 18px !important; border-radius: 26px 26px 6px 6px !important;
+  min-height: 146px; padding: 16px 150px 18px 18px !important; border-radius: 26px 26px 6px 6px !important;
 }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-rd-hero.is-compact .ay-rd-hero__card::before { content: ''; position: absolute; left: 0; right: 0; bottom: -11px; height: 12px; pointer-events: none; background: radial-gradient(circle at 9px 0, var(--d-feature, #3e2723) 8.5px, transparent 9px) 0 0 / 18px 12px repeat-x; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-rd-hero.is-compact :is(.ay-rd-hero__date, .ay-rd-hero__sticker, .ay-rd-hero__inside) { display: none !important; }
@@ -118,12 +118,14 @@
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) :is(.ay-w__sub, .ay-w__empty, .ay-w__lines, .ay-w__products) { font-size: 13px !important; font-weight: 500; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-w-chart rect { rx: 3px; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-w-chart figcaption { font-size: 13px !important; font-weight: 600; }
-.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-w--health { flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; background: #769ebe; color: #3e2723; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-w--health { flex-direction: row; align-items: center; justify-content: space-between; gap: 10px; padding-top: 10px !important; padding-bottom: 10px !important; background: #769ebe; color: #3e2723; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-w--health :is(h2, p, button) { color: #3e2723 !important; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-w--health h2 { margin: 0 0 2px; font: 700 13px/1.2 var(--ay-font-ui, 'Figtree', sans-serif) !important; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-w--health p { margin: 0; font: 600 calc(15px * var(--ayna-text-scale, 1))/1.3 var(--ay-font-ui, 'Figtree', sans-serif) !important; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-w--health .ay-homehealth__actions { flex: none; display: flex; gap: 6px; }
-.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-w--health .ay-homehealth__actions button { min-height: 34px; padding: 0 12px; border: 1.5px solid #3e2723 !important; border-radius: 999px; background: #ffedac !important; text-decoration: none !important; font: 600 13px/1 var(--ay-font-ui, 'Figtree', sans-serif) !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-w--health .ay-homehealth__text { min-width: 0; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-w--health .ay-homehealth__actions button::after { content: ''; position: absolute; inset: -5px -2px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-w--health .ay-homehealth__actions button { position: relative; min-height: 34px; padding: 0 14px !important; white-space: nowrap; border: 1.5px solid #3e2723 !important; border-radius: 999px; background: #ffedac !important; text-decoration: none !important; font: 600 13px/1 var(--ay-font-ui, 'Figtree', sans-serif) !important; }
 /* the links and Edit: pills, the matches link with a circle arrow */
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homewidgets__bar { align-items: center; gap: 8px; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homelinks { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }

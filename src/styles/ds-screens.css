@@ -37,6 +37,16 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__sti
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art:not(.has-ring) .ay-wh-hello__stickers { right: 90px; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__stickers .ds-psticker.is-1 { right: 0; top: 4px; width: 84px; height: 84px; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__stickers .ds-psticker.is-2 { right: 64px; top: 52px; width: 64px; height: 64px; }
+/* homestyle b: curved-text ring around the headline number (or the cutout) and one sparkle */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__curvebox { position: absolute; right: 36px; top: 50%; width: 136px; height: 136px; margin-top: -68px; color: #f7badd; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art:not(.has-ring) .ay-wh-hello__curvebox { right: 74px; top: 18px; width: 116px; height: 116px; margin-top: 0; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .is-look-b .ay-wh-hello__art:not(.has-ring) .ay-wh-hello__stickers .ds-psticker.is-2 { right: 150px; top: 70px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .is-look-b .ay-wh-hello__art:not(.has-ring) .ay-wh-hello__shapes .is-asterisk { right: 30px; top: 70px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__curve text { font-size: 8.5px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__spark { position: absolute; right: 52px; bottom: 26px; width: 22px; height: 22px; color: #ffedac; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-wh-hello__curvebox { color: #3e2723; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-wh-hello__spark { color: #3e2723; }
+@media (max-width: 760px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__curvebox, html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__spark { display: none; } }
 @media (max-width: 767px) {
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello.ay-pagehead { --ph-top: 24px; min-height: 0; margin-bottom: 40px !important; padding: 20px 112px 32px 0 !important; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__days { margin-right: -112px; gap: 4px; }

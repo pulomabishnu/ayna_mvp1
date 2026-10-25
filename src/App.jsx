@@ -143,6 +143,9 @@ import './styles/chrome.css';
 import './styles/ds.css';
 import './styles/ds-screens.css';
 import './styles/product-card-ds.css';
+import { readHomeLook } from './mobile/components/HomeArt.jsx';
+// Keep the ?homestyle=a|b preview pick before the router rewrites the address (Today loads lazily).
+readHomeLook();
 import NewAccountStart from './components/NewAccountStart';
 import { markOAuthSource, takeOAuthSource, shouldOfferEcosystemStart } from './utils/oauthNewAccount';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './components/EcosystemBubbles';
