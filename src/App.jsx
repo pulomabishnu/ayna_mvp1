@@ -1077,6 +1077,8 @@ function App() {
       setShowWrapped(true);
     } else if (pendingAction === 'browse' || pendingAction === 'personalize') {
       handleViewDiscovery('');
+    } else if (pendingAction === 'free-product') {
+      setCurrentView('free-product');
     } else if (pendingAction === 'login' || pendingAction === 'ecosystem') {
       setCurrentView('ecosystem');
     } else if (pendingAction === 'saved') {
@@ -2364,7 +2366,8 @@ function App() {
             authLoading={authLoading}
             stage={currentView === 'free-product-reward' ? 'reward' : 'progress'}
             onNavigate={(view) => setCurrentView(view)}
-            onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+            // Back to this page after signing in (Google, Apple or email), not to My Ecosystem.
+            onSignIn={() => { setPendingAction('free-product'); pendingActionRef.current = 'free-product'; setShowAuthModal(true); }}
             onStartQuiz={handleStartQuiz}
           />
         )}
@@ -2889,10 +2892,10 @@ function App() {
             allowSignup={pendingAction === 'quiz-complete' || pendingAction === 'share-friend'}
             initialMode={pendingAction === 'share-friend' ? shareAuthMode : undefined}
             onStartEcosystem={() => { setShowAuthModal(false); setPendingAction(null); pendingActionRef.current = null; setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
-            context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : pendingAction === 'saved' ? 'saved' : pendingAction === 'ecosystem' ? 'ecosystem' : pendingAction === 'feature' ? 'feature' : undefined}
+            context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' || pendingAction === 'free-product' ? 'login' : pendingAction === 'saved' ? 'saved' : pendingAction === 'ecosystem' ? 'ecosystem' : pendingAction === 'feature' ? 'feature' : undefined}
             feature={authFeature}
             onBeforeOAuthRedirect={() => {
-              markOAuthSource(pendingAction === 'quiz-complete' ? 'save' : 'signin');
+              markOAuthSource(pendingAction === 'quiz-complete' ? 'save' : pendingAction === 'free-product' ? 'free-product' : 'signin');
               try {
                 if (pendingAction) sessionStorage.setItem('ayna_pending_auth_action', pendingAction);
                 if (pendingAction === 'quiz-complete' && pendingQuizResults) {

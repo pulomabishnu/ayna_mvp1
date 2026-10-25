@@ -5,6 +5,8 @@
  *
  *  - right before the OAuth redirect, remember where it started:
  *      'save'   = the post-quiz save flow (expected to create an account)
+ *      'free-product' = the free product page (a new account is expected:
+ *                       she goes straight back to the campaign, not the quiz)
  *      'signin' = any other sign-in form
  *  - after the return trip, once her saved data has loaded, a 'signin' that
  *    produced a brand-new, empty account gets a friendly
@@ -16,7 +18,7 @@ const NEW_ACCOUNT_MS = 15 * 60 * 1000;
 
 export function markOAuthSource(source) {
   try {
-    window.localStorage.setItem(KEY, JSON.stringify({ source: source === 'save' ? 'save' : 'signin', at: Date.now() }));
+    window.localStorage.setItem(KEY, JSON.stringify({ source: source === 'save' || source === 'free-product' ? source : 'signin', at: Date.now() }));
   } catch { /* storage unavailable: the step just won't show */ }
 }
 
