@@ -1,3 +1,4 @@
+import { useId } from 'react';
 /**
  * Oct 21-22 design language, shared by the website and the app
  * (scratchpad DESIGN_SYSTEM_OCT25.md). Decoration only: every piece here is
@@ -21,22 +22,6 @@ export function Mark({ name = 'sparkle', className = '', style }) {
     <svg className={`ds-mark ${className}`.trim()} style={style} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       {MARKS[name] || MARKS.sparkle}
     </svg>
-  );
-}
-
-/** A perforated postage stamp holding today's date: the day as the numeral, the weekday under it. */
-export function DateStamp({ iso, tone = 'pink', className = '' }) {
-  if (!iso) return null;
-  const d = new Date(`${iso}T12:00:00`);
-  if (Number.isNaN(d.getTime())) return null;
-  return (
-    <span className={`ds-stamp ds-stamp--${tone} ds-datestamp ${className}`.trim()} aria-hidden="true">
-      <span className="ds-stamp__in">
-        <small>{d.toLocaleDateString('en-US', { month: 'short' })}</small>
-        <b>{d.getDate()}</b>
-        <small>{d.toLocaleDateString('en-US', { weekday: 'short' })}</small>
-      </span>
-    </span>
   );
 }
 
@@ -76,5 +61,45 @@ export function CycleRing({ day, length = null, className = '' }) {
       </svg>
       <b><small>Cycle day</small>{day}</b>
     </span>
+  );
+}
+
+/** Seven date pills around today, today filled (decorative: the date is also in text). */
+export function DayStrip({ iso, className = '' }) {
+  const base = iso ? new Date(`${iso}T12:00:00`) : null;
+  if (!base || Number.isNaN(base.getTime())) return null;
+  const days = Array.from({ length: 7 }, (_, i) => { const d = new Date(base); d.setDate(base.getDate() + i - 3); return d; });
+  return (
+    <ol className={`ds-days ${className}`.trim()} aria-hidden="true">
+      {days.map((d, i) => (
+        <li key={i} className={i === 3 ? 'is-today' : ''}>
+          <small>{d.toLocaleDateString('en-US', { weekday: 'narrow' })}</small>
+          <b>{d.getDate()}</b>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+/** Geometric drawn shapes around a hero (flower, asterisk, slash, dot), stroke matched to the display face. */
+export function Shapes({ className = '' }) {
+  return (
+    <span className={`ds-shapes ${className}`.trim()} aria-hidden="true">
+      <Mark name="flower" className="ds-shape is-flower" />
+      <Mark name="asterisk" className="ds-shape is-asterisk" />
+      <svg className="ds-shape is-slash" viewBox="0 0 24 24"><path d="M6 21L18 3" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" /></svg>
+      <i className="ds-shape is-dot" />
+    </span>
+  );
+}
+
+/** A curved-text ring around a number ("your week · your week"). Decorative. */
+export function CurvedRing({ text = 'your week · your week · ', className = '' }) {
+  const id = `ds-curved-${useId().replace(/:/g, '')}`;
+  return (
+    <svg className={`ds-curved ${className}`.trim()} viewBox="0 0 100 100" aria-hidden="true">
+      <defs><path id={id} d="M50 50m-41 0a41 41 0 1 1 82 0a41 41 0 1 1 -82 0" /></defs>
+      <text><textPath href={`#${id}`}>{text}</textPath></text>
+    </svg>
   );
 }

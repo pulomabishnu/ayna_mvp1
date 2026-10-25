@@ -7,7 +7,8 @@ import { DEV_HEALTH_DEMO, DEV_HEALTH_DEMO_EMPTY, localToday } from '../mobile/ho
 import { HealthStarter } from '../mobile/components/HealthBento.jsx';
 import HealthHome from '../mobile/components/HealthHome.jsx';
 import TodayFeed from './today/TodayFeed.jsx';
-import { CycleRing, DateStamp, ProductStickers } from './personality/DS.jsx';
+import { CycleRing, DayStrip, ProductStickers, Shapes } from './personality/DS.jsx';
+import { readHomeLook } from '../mobile/components/HomeArt.jsx';
 import '../styles/web-health.css';
 import '../styles/today-web.css';
 
@@ -182,19 +183,19 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
       ? <ConnectNote signedIn={signedIn} onSignIn={onSignIn} onOpenConnections={onOpenConnections} />
       : null;
     const more = [aside, connect].filter(Boolean);
+    const look = readHomeLook();
     return (
       <section className="ay-wh ay-wh--today" aria-labelledby="ay-wh-title">
-        {/* Oct 21-22 page top: an espresso band with a scalloped edge (like Shop), the greeting at title size, today's date in a stamp. */}
-        <header className="ay-wh-hello ay-pagehead ay-band--espresso">
+        {/* Page top: an espresso band with a wavy edge; the greeting at title size, a day strip, her number as the one bold graphic. */}
+        <header className={`ay-wh-hello ay-pagehead ay-band--espresso is-look-${look}`}>
           <h1 id="ay-wh-title" className="sr-only">{title}</h1>
           <p className="ay-wh-hello__date">{fmtLongDay(today)}</p>
           <p className="ay-wh-hello__hi">{hello}{name ? `, ${name}` : ''}.</p>
-          <p className="ay-wh-hello__lead">Here’s what’s worth knowing today.</p>
-          {/* One real graphic: her cycle day as a ring when known, her products as stickers, today's stamp. */}
+          <DayStrip iso={today} className="ay-wh-hello__days" />
           <span className={`ay-wh-hello__art${week.cycle?.cycleDay ? ' has-ring' : ''}`} aria-hidden="true">
-            <ProductStickers products={demoData?.products || products} max={2} className="ay-wh-hello__stickers" />
+            <Shapes className="ay-wh-hello__shapes" />
             <CycleRing day={week.cycle?.cycleDay} length={week.cycle?.avgLength} className="ay-wh-hello__ring" />
-            <DateStamp iso={today} className="ay-wh-hello__stamp" />
+            <ProductStickers products={demoData?.products || products} max={look === 'b' ? 2 : 1} className="ay-wh-hello__stickers" />
           </span>
         </header>
         {intro}

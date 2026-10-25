@@ -1,13 +1,13 @@
 /* =====================================================================
    Need routines (web My ecosystem, app Your matches) in the Oct 21-22
    language (DESIGN_SYSTEM_OCT25.md). The steps are a sequence (start with
-   one or two), so each is an outlined card with a circle numeral sticker
-   on its corner (pink, sky, butter in turn) and its label as a folder tab;
-   the one primary is raised with the hard shadow. Shared web + app.
+   one or two), so each is a filled block with a circle numeral on its
+   corner (pink, sky, butter in turn) and its label as a small pill; the
+   one primary is raised with the hard shadow. Shared web + app.
    ===================================================================== */
-:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rx__list { counter-reset: rxn; display: grid; gap: 40px; padding: 30px 0 4px 6px !important; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rx__list { counter-reset: rxn; display: grid; gap: 16px; padding: 18px 0 4px 0 !important; }
 :is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rx__item {
-  counter-increment: rxn; position: relative; padding: 20px 16px 14px 18px !important; border: 1.5px solid var(--ds-line) !important; border-radius: 18px !important; border-top-left-radius: 0 !important;
+  counter-increment: rxn; position: relative; padding: 20px 18px 16px !important; border: 0 !important; border-radius: 24px !important;
   background: var(--ds-group) !important; color: var(--ds-ink);
 }
 :is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rx__item::after {
@@ -17,8 +17,7 @@
 :is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rx__item:nth-child(3n+2)::after { background: #769ebe; }
 :is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rx__item:nth-child(3n)::after { background: #ffedac; }
 :is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rx__item .ay-rx__kicker {
-  position: absolute; left: -1.5px; top: auto; bottom: calc(100% - 1.5px); display: inline-flex; align-items: center; min-height: 28px; margin: 0 !important; padding: 0 12px !important;
-  border: 1.5px solid var(--ds-line); border-bottom: 0; border-radius: 10px 10px 0 0; background: #769ebe; color: #3e2723 !important; opacity: 1 !important;
+  display: inline-flex; align-items: center; min-height: 26px; margin: 0 0 6px !important; padding: 0 12px !important; border-radius: 999px; background: #769ebe; color: #3e2723 !important; opacity: 1 !important;
   font: 600 13px/1 var(--ds-ui) !important; letter-spacing: 0 !important; text-transform: none !important;
 }
 :is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rx__item.is-product .ay-rx__kicker { background: #f7badd; }

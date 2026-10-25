@@ -1,97 +1,67 @@
-import { DateStamp, Mark } from '../../components/personality/DS.jsx';
+import { CurvedRing, DayStrip, Mark, ProductStickers, Shapes } from '../../components/personality/DS.jsx';
 
 /**
- * Home directions for the founder to pick from (Oct 25, 23:24). Decoration
- * only: every piece is aria-hidden and drawn from her real data (her
- * products' photos, her cycle day, her sleep nights); nothing is invented.
- *   a  Sticker board    filled colour blocks, die-cut product stickers, a tilted stamp, washi tape
- *   b  Data as graphics her cycle as a drawn ring, sleep nights as bars, the Rundown as a scalloped espresso block
- *   c  Folder/scrapbook layered folder tabs, a taped polaroid, a hand-drawn underline and arrow
- * Preview: `?homestyle=a|b|c` (any build, kept for the tab). Without it, Home is the current one.
+ * Home in the chosen direction (founder, Oct 25 23:50): data as graphics,
+ * with a light sticker touch. Decoration only (aria-hidden), drawn from her
+ * real data: her cycle day or last night's sleep as the headline number,
+ * her products' photos as cutouts. Nothing is invented; with no data the
+ * hero keeps only its drawn shapes.
+ *   ?homestyle=a  stickers very light (one product cutout)      [default]
+ *   ?homestyle=b  stickers medium (cutout + curved-text ring + sparkle)
+ * The pick is kept for the tab.
  */
 export function readHomeLook() {
-  if (typeof window === 'undefined') return '';
+  if (typeof window === 'undefined') return 'a';
   try {
-    // `?homestyle=a|b|c` picks a direction (live previews too); `?homestyle=` or `off` goes back to the current Home.
-    // The pick is kept for this tab only, so moving between screens doesn't lose it.
     const q = new URLSearchParams(window.location.search).get('homestyle');
     if (q !== null) {
-      const v = ['a', 'b', 'c'].includes(q) ? q : '';
-      if (v) sessionStorage.setItem('ayna_homestyle', v); else sessionStorage.removeItem('ayna_homestyle');
+      const v = q === 'b' ? 'b' : 'a';
+      sessionStorage.setItem('ayna_homestyle', v);
       return v;
     }
-    const kept = sessionStorage.getItem('ayna_homestyle');
-    return ['a', 'b', 'c'].includes(kept) ? kept : '';
-  } catch { return ''; }
+    return sessionStorage.getItem('ayna_homestyle') === 'b' ? 'b' : 'a';
+  } catch { return 'a'; }
 }
 
-const imgOf = (p) => p?.image || p?.imageUrl || p?.image_url || '';
-
-/** The art that sits over the top of the Rundown card (height 0, positioned pieces). */
-export function HomeHeroArt({ look, products = [], today, cycle = null, sleepPoints = [] }) {
-  if (!look) return null;
-  const withPhotos = products.filter((p) => imgOf(p)).slice(0, 2);
-  if (look === 'a') {
-    return (
-      <div className="ay-home-art is-a" aria-hidden="true">
-        <DateStamp iso={today} className="ay-home-art__stamp" />
-        {withPhotos.map((p, i) => <span key={p.id} className={`ay-home-art__sticker is-${i + 1}`}><img src={imgOf(p)} alt="" /></span>)}
-      </div>
-    );
-  }
-  if (look === 'b') {
-    const day = cycle?.cycleDay || null;
-    const len = cycle?.avgLength || null;
-    if (day) {
-      // The arc is drawn only against her own usual length; without one, the day sits in a dotted ring.
-      const frac = len ? Math.min(1, day / len) : null;
-      const C = 2 * Math.PI * 38;
-      return (
-        <div className="ay-home-art is-b" aria-hidden="true">
-          <span className="ay-home-art__ring">
-            <svg viewBox="0 0 92 92">
-              <circle cx="46" cy="46" r="38" className="is-track" />
-              {frac != null && <circle cx="46" cy="46" r="38" className="is-arc" strokeDasharray={`${C * frac} ${C}`} transform="rotate(-90 46 46)" />}
-              {frac != null && <circle cx={46 + 38 * Math.sin(2 * Math.PI * frac)} cy={46 - 38 * Math.cos(2 * Math.PI * frac)} r="5.5" className="is-dot" />}
-            </svg>
-            <b><small>Day</small>{day}</b>
-          </span>
-        </div>
-      );
-    }
-    const nights = sleepPoints.slice(-7).filter((p) => Number.isFinite(p?.value));
-    if (nights.length >= 3) {
-      const last = nights[nights.length - 1].value;
-      return (
-        <div className="ay-home-art is-b" aria-hidden="true">
-          <span className="ay-home-art__ring is-sleep"><b><small>Last night</small>{Math.floor(last / 60)}h {Math.round(last % 60)}m</b></span>
-        </div>
-      );
-    }
-    return null;
-  }
-  if (look === 'c') {
-    return (
-      <div className="ay-home-art is-c" aria-hidden="true">
-        <svg className="ay-home-art__arrow" viewBox="0 0 60 40"><path d="M4 8c14 0 28 4 38 18" /><path d="M34 24l9 4 1-10" /></svg>
-      </div>
-    );
-  }
+/** The headline number for the hero: her cycle day, else last night's sleep; null without data. */
+export function headline({ cycle = null, sleepPoints = [] }) {
+  if (cycle?.cycleDay) return { label: 'Cycle day', value: String(cycle.cycleDay), frac: cycle.avgLength ? Math.min(1, cycle.cycleDay / cycle.avgLength) : null };
+  const nights = sleepPoints.filter((p) => Number.isFinite(p?.value));
+  if (nights.length) { const m = nights[nights.length - 1].value; return { label: 'Last night', value: `${Math.floor(m / 60)}h ${Math.round(m % 60)}m`, frac: null, small: true }; }
   return null;
 }
 
-/** A small graphic inside the health row: her last nights as bars (b), a sticker mark (a, c). */
-export function HomeHealthArt({ look, sleepPoints = [], products = [] }) {
-  if (!look) return null;
-  if (look === 'c') {
-    const p = products.find((x) => imgOf(x));
-    if (p) return <figure className="ay-home-hart is-polaroid" aria-hidden="true"><img src={imgOf(p)} alt="" /></figure>;
-  }
-  if (look === 'b') {
-    const nights = sleepPoints.slice(-7).filter((p) => Number.isFinite(p?.value));
-    if (nights.length < 3) return null;
-    const max = Math.max(...nights.map((p) => p.value));
-    return <span className="ay-home-hart is-bars" aria-hidden="true">{nights.map((p, i) => <i key={p.day} className={i === nights.length - 1 ? 'is-last' : ''} style={{ height: `${Math.max(18, Math.round((p.value / max) * 100))}%` }} />)}</span>;
-  }
-  return <span className={`ay-home-hart is-mark is-${look}`} aria-hidden="true"><Mark name={look === 'a' ? 'moon' : 'star'} /></span>;
+/** Greeting and the day strip over Home. */
+export function HomeHello({ name = '', today }) {
+  const hour = new Date().getHours();
+  const hello = hour < 5 ? 'Hello' : hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  return (
+    <div className="ay-home-hello">
+      <p className="ay-home-hello__hi">{hello}{name ? `, ${name}` : ''}</p>
+      <DayStrip iso={today} className="ay-home-hello__days" />
+    </div>
+  );
+}
+
+/** The hero art over the Rundown block: the number (ring), drawn shapes, stickers by density. */
+export function HomeHeroArt({ look = 'a', products = [], cycle = null, sleepPoints = [] }) {
+  const h = headline({ cycle, sleepPoints });
+  const C = 2 * Math.PI * 38;
+  return (
+    <div className={`ay-home-art is-${look}`} aria-hidden="true">
+      <Shapes className="ay-home-art__shapes" />
+      {h && (
+        <span className={`ay-home-art__num${h.small ? ' is-small' : ''}`}>
+          {look === 'b' && <CurvedRing className="ay-home-art__curve" text="your week · your week · your week · " />}
+          <svg viewBox="0 0 92 92" className="ay-home-art__ring">
+            <circle cx="46" cy="46" r="38" className="is-track" />
+            {h.frac != null && <circle cx="46" cy="46" r="38" className="is-arc" strokeDasharray={`${C * h.frac} ${C}`} transform="rotate(-90 46 46)" />}
+          </svg>
+          <b><small>{h.label}</small>{h.value}</b>
+        </span>
+      )}
+      <ProductStickers products={products} max={1} className="ay-home-art__stickers" />
+      {look === 'b' && <Mark name="sparkle" className="ay-home-art__spark" />}
+    </div>
+  );
 }

@@ -7,7 +7,7 @@ import { READ_PHOTOS } from '../../data/readCovers.js';
 import { ProductSheetContext } from '../../mobile/productSheetContext.js';
 import { ProductQuickActions } from '../../mobile/components/ProductQuick.jsx';
 import { holdLine } from '../../utils/matchState.js';
-import { DateStamp, Mark } from '../personality/DS.jsx';
+import { Mark, Shapes } from '../personality/DS.jsx';
 import { Seal } from '../personality/Bits.jsx';
 import './rundown-ds.css';
 
@@ -41,8 +41,8 @@ function CardArt({ card }) {
   if (card.kind === 'opening') {
     const day = String(card.key || '').split(':')[1] || '';
     const d = day ? new Date(`${day}T12:00:00`) : null;
-    // Oct 21-22 language: today's date in a perforated stamp with two drawn marks, not a giant numeral.
-    return d ? <div className="ay-rd-art is-opening" aria-hidden="true"><DateStamp iso={day} className="ay-rd-art__stamp" /><Mark name="sparkle" className="ay-rd-art__m1" /><Mark name="flower" className="ay-rd-art__m2" /></div> : null;
+    // Today's date as a big Bricolage numeral on a colour disc, with drawn shapes around it.
+    return d ? <div className="ay-rd-art is-opening" aria-hidden="true"><span className="ay-rd-art__date"><b>{d.getDate()}</b><small>{d.toLocaleDateString('en-US', { weekday: 'long' })}</small></span><Shapes className="ay-rd-art__shapes" /></div> : null;
   }
   if (card.kind === 'closing') return <div className="ay-rd-art is-closing" aria-hidden="true"><Seal className="ay-rd-art__seal" text="your rundown · see you tomorrow · " /></div>;
   if (card.kind === 'read' && READ_PHOTOS[card.readId]) return <div className="ay-rd-art is-photo" aria-hidden="true"><img src={READ_PHOTOS[card.readId]} alt="" /></div>;
