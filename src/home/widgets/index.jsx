@@ -55,7 +55,7 @@ function SleepChart({ size, ctx }) {
   const pts = logSeries(ctx.log, 'sleep', ctx.today, days);
   const n = pts.filter((p) => p.value != null).length;
   return (
-    <Card id="sleep_chart" size={size} title="Sleep" empty={n ? null : 'No sleep data yet. Log your sleep or connect a sleep app.'} action={<Act onClick={n ? ctx.on.openHealth : ctx.on.openLog}>{n ? 'See more' : 'Log today'}</Act>}>
+    <Card id="sleep_chart" size={size} title="Sleep" empty={n ? null : size === 'small' ? 'No sleep data yet.' : 'No sleep data yet. Log your sleep or connect a sleep app.'} action={<Act onClick={n ? ctx.on.openHealth : ctx.on.openLog}>{n ? 'See more' : 'Log today'}</Act>}>
       <p className="ay-w__sub">From your log: rough, okay or good</p>
       <MiniChart points={pts} kind="bar" min={0} max={3} label={`Sleep from your log, ${n} of ${days} days logged.`} />
     </Card>
@@ -80,7 +80,7 @@ function LogChart({ id, field, title, max, size, ctx }) {
   const pts = logSeries(ctx.log, field, ctx.today, days);
   const n = pts.filter((p) => p.value != null).length;
   return (
-    <Card id={id} size={size} title={title} empty={n ? null : `No ${title.toLowerCase()} logged in the last ${days} days.`} action={<Act onClick={ctx.on.openLog}>Log today</Act>}>
+    <Card id={id} size={size} title={title} empty={n ? null : size === 'small' ? `No ${title.toLowerCase()} logged yet.` : `No ${title.toLowerCase()} logged in the last ${days} days.`} action={<Act onClick={ctx.on.openLog}>Log today</Act>}>
       <MiniChart points={pts} kind="curve" min={field === 'pain' ? -0.3 : 0.7} max={max + 0.3} label={`${title} from your log, ${n} of ${days} days logged.`} />
     </Card>
   );
@@ -144,7 +144,7 @@ function Health({ size, ctx }) {
     <section className={`ay-homehealth ay-w ay-w--${size} ay-w--health`} aria-labelledby={`ay-homehealth-h-${ctx.surface}`}>
       <div className="ay-homehealth__text">
         <h2 id={`ay-homehealth-h-${ctx.surface}`}>{summary ? summary.title : 'Your log'}</h2>
-        <p>{summary?.headline || (connected ? 'Your health data is still coming in.' : 'Log how you feel today; it shapes tomorrow.')}</p>
+        <p className={summary?.headline ? 'has-data' : undefined}>{summary?.headline || (connected ? 'Your health data is still coming in.' : 'Log how you feel today; it shapes tomorrow.')}</p>
       </div>
       <div className="ay-homehealth__actions">
         {summary?.headline && ctx.on.ask && <button type="button" className="ay-today__text" onClick={() => ctx.on.ask({ question: 'What stands out in my health data this week?' })}>Ask why</button>}

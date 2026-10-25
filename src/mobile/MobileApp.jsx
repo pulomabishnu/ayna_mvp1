@@ -1481,6 +1481,9 @@ export default function MobileApp() {
     inRoutine: (id) => myProducts.some((p) => p.id === id),
     addToRoutine: (product) => handleAddToEcosystem(product),
     matchStateFor: (product) => productMatchState(product, effectiveQuizAnswers, matchOpts),
+    // The same engine inputs as every other card, for the product card inside the Rundown.
+    quizAnswers: effectiveQuizAnswers,
+    matchOpts,
   };
 
   if (authLoading || (authUser?.id && !DEV_HEALTH_DEMO && loadedAccountId !== authUser.id)) {

@@ -246,7 +246,7 @@ describe('Rundown product card and the sheet over the story', () => {
     expect(ctx.addToRoutine).toHaveBeenCalledWith(product);
     act(() => btn(`Save ${product.name}`, story).click());
     expect(ctx.toggleSaved).toHaveBeenCalledWith(product);
-    act(() => story.querySelector('.ay-rd-product__open').click());
+    act(() => story.querySelector('.ay-rd-product .ay-pc-main').click());
     expect(ctx.open).toHaveBeenCalledWith(product);
     // The sheet is up: no auto-advance, Escape and arrows are the sheet's.
     act(() => root.render(ui({ ...ctx, isOpen: true })));

@@ -23,7 +23,8 @@
 .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer.is-home .ay-home-top { padding-top: max(14px, env(safe-area-inset-top)); border-bottom: 1px solid var(--d-hair); }
 
 /* ---- The chat from Home: full screen (no tab bar), a Back to Home ---- */
-.ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer.is-full { bottom: 0 !important; z-index: 80 !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer.is-full, .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer.is-tab.is-full { bottom: 0 !important; z-index: 80 !important; }
+/* QA Oct 25: the full-screen chat has no tab bar under it, so its composer sits on the bottom edge (safe area kept by the content padding) */
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-chat-top { display: flex; align-items: center; gap: 8px; padding: max(12px, env(safe-area-inset-top)) var(--d-gutter, 20px) 10px; border-bottom: 1px solid var(--d-hair); background: var(--d-page); color: var(--d-ink); }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-chat-top__back { flex: none; display: inline-flex; align-items: center; gap: 4px; min-height: 44px; margin-left: -8px; padding: 0 8px; border: 0; border-radius: 999px; background: transparent; color: var(--d-ink); font: 500 calc(15px * var(--ayna-text-scale, 1))/1 var(--ay-font-ui, 'Figtree', sans-serif); }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-chat-top__back svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }

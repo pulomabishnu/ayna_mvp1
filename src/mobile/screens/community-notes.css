@@ -1,8 +1,9 @@
 /* Community redesign, app (CommunityScreen.jsx). Same idea as the website
-   (src/components/community/community-web.css): feeds as folder tabs,
-   posts as paper notes, washi tape on reviews, a sky index ear on
-   questions, photos as polaroids, prompt tiles to start a post, one real
-   member quote with a pink highlighter. App tokens from app-direction.css
+   (src/components/community/community-web.css). Oct 25 system pass (end of
+   this file): feeds as pills, kind labels as pills inside the card, photos
+   as plain rounded images, product mentions as the founder's product card,
+   prompt tiles to start a post, one real member quote with a pink
+   highlighter. No folder tabs, washi, ears or polaroids. App tokens from app-direction.css
    (--d-page, --d-group, --d-ink, --d-hair, --d-feature). The app already
    lays a paper grain over everything, so notes stay flat and matte. */
 .ayna-mobile:is(#ay,.ayna-mobile) .am-screen {
@@ -162,3 +163,20 @@
 @media (prefers-reduced-motion: reduce) {
   .ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-prompt:active { transform: none; }
 }
+
+/* ---------- Oct 25 system pass (DESIGN_SYSTEM_OCT25 section 6) ----------
+   Feeds: a pill row, the open one filled pink (no folder tabs on a rule).
+   Kind labels (Question, Review, the quote's label): pills inside the card.
+   Photos: plain rounded images. Post content untouched. */
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-screen .am-folders { gap: 8px; padding: 2px var(--d-gutter, 20px) 6px; border-bottom: 0; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-screen .am-folder { min-height: 44px; margin: 0; border-radius: 999px; background: var(--d-group); border-color: transparent; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-screen .am-folder.is-active { min-height: 44px; margin-top: 0; background: #f7badd; color: #3e2723; border-color: #f7badd; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-screen .am-note:is(.is-question, .is-review),
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-screen .am-note-slot > .am-note:is(.is-question, .is-review) { margin-top: 0; border-top-left-radius: 20px; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-screen :is(.am-ear, .am-quote-label) { position: static; transform: none; justify-self: start; height: 26px; padding: 0 12px; border: 0; border-radius: 999px; font: 600 13px/1 var(--ay-font-ui); }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-screen .am-ear { margin: 2px 0 -2px; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-screen .am-quote { margin-top: 0; border-radius: 20px; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-screen .am-tape { display: none; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-screen .am-polaroid { padding: 0; border: 0; border-radius: 16px; background: none; transform: none; overflow: hidden; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-screen .am-polaroid img { border-radius: 16px; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-screen .am-note .ay-pc.is-row { margin: 2px 0 6px; }

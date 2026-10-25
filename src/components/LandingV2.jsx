@@ -594,14 +594,12 @@ function Community({ onViewCommunity, posts = [] }) {
   );
 }
 
-/* ---------- who we are: a taped polaroid ---------- */
+/* ---------- who we are: the founders' photo, rounded, caption under it ---------- */
 function Us({ onViewAbout }) {
   return (
     <section className="hm-sec hm-us" aria-labelledby="hm-us-title">
       <div className="hm-wrap hm-us__grid">
         <figure className="hm-polaroid">
-          <span className="hm-tape hm-tape--l" aria-hidden="true" />
-          <span className="hm-tape hm-tape--r" aria-hidden="true" />
           <span className="hm-polaroid__ph"><Photo sizes="(max-width: 767px) 88vw, 600px" src="/team/ayna-founders.jpg" alt="Puloma, Eliz and Ameera, ayna's founders, sitting together in Central Park" loading="lazy" width="1800" height="1198" /></span>
           <figcaption>Puloma, Eliz &amp; Ameera</figcaption>
         </figure>

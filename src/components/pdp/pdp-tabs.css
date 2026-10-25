@@ -238,7 +238,7 @@ html body #pdp-v4 .ayq .ayq-meta, .ayna-mobile .ay-pdp .ayq .ayq-meta { font-siz
 /* App: gutters for the tabs (the passport box has none), a bigger photo. */
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq--tabs { padding: 0 var(--d-gutter, 16px); }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq--tabs .ayq-st { margin: 0 calc(-1 * var(--d-gutter, 16px)); padding: 10px var(--d-gutter, 16px); }
-.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__stamp { width: min(100%, 300px); transform: rotate(-1deg); }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__stamp { width: min(100%, 300px); transform: none; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__tile .ay-gal__open img { padding: 4%; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__tile { overflow: visible; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__tile .ay-gal__track { border-radius: 9px; }
@@ -251,22 +251,19 @@ html body #pdp-v4 .ay-buy__warn .ayp-textlink, html body #pdp-v4 .ayp-buy__fine 
 html body #pdp-v4 .ayp-stars span { color: var(--pt-ink) !important; }
 
 /* =====================================================================
-   Oct 25 design pass: the four tabs as folder tabs that stand on the
-   panel's top rule (INSPO 1bed1ebe / ab7c8179 Bordeaux folder tabs;
-   spacing rule 9: tabs sit ON the edge). The open tab is pink and joins
-   the rule; the others are outlined tabs. The in-tab jump row is quiet
-   underlined links, so there is one row of tabs, not two rows of pills.
+   Oct 25 system pass (DESIGN_SYSTEM_OCT25 section 6: no folder tabs): the
+   four tabs are a segmented pill control on a solid strip, so nothing shows
+   through behind or between them while it sticks; the open tab is filled
+   pink. The in-tab jump row stays quiet underlined links.
    ===================================================================== */
-.ayq--tabs .ayq-st { padding-bottom: 0 !important; border-bottom: 1.5px solid var(--pt-ink); }
-.ayq--tabs .ayq-st__list { align-items: end; gap: 4px !important; }
-.ayq--tabs .ayq-st__tab { margin-bottom: -1.5px; border-radius: 14px 14px 0 0 !important; border-bottom-color: transparent; box-shadow: none !important; }
-.ayq--tabs .ayq-st__tab.is-on { min-height: 56px; border-color: var(--pt-ink); border-bottom-color: var(--pt-on); font-weight: 700; box-shadow: none !important; }
-[data-theme='brand-dark'] .ayq--tabs .ayq-st__tab.is-on { border-color: #ffedac; border-bottom-color: var(--pt-on); }
-.ayq--tabs .ayq-st__tab:not(.is-on):hover { background: rgba(var(--v-fg-rgb, 62, 39, 35), .06); }
+html body .ayq--tabs .ayq-st { padding-top: 10px !important; padding-bottom: 10px !important; border-bottom: 1.5px solid var(--pt-line) !important; background: var(--pt-bg) !important; }
+html body .ayq--tabs .ayq-st__list { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: stretch; gap: 4px !important; padding: 4px !important; border: 1.5px solid var(--pt-ink); border-radius: 26px; background: var(--pt-bg); }
+html body .ayq--tabs .ayq-st__tab { min-height: 44px; margin: 0 !important; padding: 4px 6px !important; border: 0 !important; border-radius: 22px !important; background: transparent; box-shadow: none !important; }
+html body .ayq--tabs .ayq-st__tab.is-on { min-height: 44px; background: var(--pt-on) !important; color: #3e2723 !important; font-weight: 700; }
+html body .ayq--tabs .ayq-st__tab:not(.is-on):hover { background: rgba(var(--v-fg-rgb, 62, 39, 35), .08); }
 @media (min-width: 768px) {
-  .ayq--tabs .ayq-st__list { flex-wrap: nowrap !important; }
-  .ayq--tabs .ayq-st__tab { min-height: 48px; padding: 0 24px !important; border-radius: 16px 16px 0 0 !important; }
-  .ayq--tabs .ayq-st__tab.is-on { min-height: 56px; }
+  html body .ayq--tabs .ayq-st__list { display: inline-flex !important; flex-wrap: nowrap !important; max-width: 100%; border-radius: 999px; }
+  html body .ayq--tabs .ayq-st__tab { min-height: 44px; padding: 0 22px !important; border-radius: 999px !important; white-space: nowrap; }
 }
 .ayq--tabs .ayq-sum__jump { gap: 4px 20px; }
 .ayq--tabs .ayq-sum__jump button { min-height: 44px; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }

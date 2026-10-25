@@ -85,3 +85,10 @@
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__s2 { position: absolute; left: 156px; top: 92px; width: 40px; height: 40px; color: #f7badd; transform: rotate(-12deg); filter: drop-shadow(1.5px 0 0 #3e2723) drop-shadow(-1.5px 0 0 #3e2723) drop-shadow(0 1.5px 0 #3e2723) drop-shadow(0 -1.5px 0 #3e2723); }
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-pink .ay-rd-art__s2 { color: #ffedac; }
 @media (max-height: 700px) { :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-marks { display: none; } }
+
+/* Match and saved cards: the founder's product card (row), then the evidence meter and actions under it. */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-product { grid-template-columns: minmax(0, 1fr) !important; gap: 14px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-product > :is(.ay-product-card, .ay-pc) { max-width: 520px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-product > .ay-rd-meter { justify-self: start; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-holdline { margin: 0; font: 500 14px/1.4 var(--ay-font-ui, 'Figtree', sans-serif); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-holdline .ay-rd-hold { display: block; font-weight: 700; }

@@ -329,7 +329,8 @@
 /* ---------- Photo: the product on a white postage stamp (the page's one stamp) ---------- */
 /* Scalloped edge: a radial-gradient mask repeated with "round" (Temani Afif's
    CSS shapes technique, also used by .ay-stamp in ayna-system.css). */
-.ayq-stamp { --r: 7px; display: block; padding: calc(2 * var(--r)); background: #fff; -webkit-mask: radial-gradient(var(--r), #0000 98%, #000) round calc(-1.5 * var(--r)) calc(-1.5 * var(--r)) / calc(3 * var(--r)) calc(3 * var(--r)), linear-gradient(#000 0 0) no-repeat 50% / calc(100% - 3 * var(--r)) calc(100% - 3 * var(--r)); mask: radial-gradient(var(--r), #0000 98%, #000) round calc(-1.5 * var(--r)) calc(-1.5 * var(--r)) / calc(3 * var(--r)) calc(3 * var(--r)), linear-gradient(#000 0 0) no-repeat 50% / calc(100% - 3 * var(--r)) calc(100% - 3 * var(--r)); }
+/* The product photo in the product card's light inset panel (no postage-stamp edge: banned Oct 25). */
+.ayq-stamp { display: block; padding: 12px; box-sizing: border-box; border: 1.5px solid rgba(62, 39, 35, .16); border-radius: 16px; background: #fbfaf6; }
 html body .app-container.app-container.app-container .ayp-gallery__stamp .ayp-gallery__tile { border-radius: 10px; }
 
 /* Round badges beside the photo: facts on file only. */
@@ -350,7 +351,7 @@ html body .app-container .ayq-badges.is-web { margin-top: 14px; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__stage:not(:has(.ayq-badges)) { grid-template-columns: minmax(0, 1fr); padding: 0 24px; }
 /* The photo stays small enough that price, why, evidence and Buy fit on the first screen (master prompt 112). */
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__stamp { width: min(100%, 210px); justify-self: center; }
-.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__stamp { --r: 6px; transform: rotate(-1.5deg); }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__stamp { transform: none; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__tile { position: relative; aspect-ratio: 1 / 1; overflow: hidden; border: 1.5px solid #3e2723; border-radius: 10px; background: #fff; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__tile img { width: 100%; height: 100%; object-fit: contain; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero .ayq-badges { flex-direction: column; flex-wrap: nowrap; }
@@ -556,3 +557,6 @@ html body .app-container.app-container.app-container .ayq.ayq.ayq .ay-gloss.ay-g
 }
 /* Oct 25: the round stickers keep espresso ink on their light fills in dark mode (they read as blank discs before). */
 html body .app-container[data-theme='brand-dark'] :is(#pdp-v4, #ay-x) .ayq-badges > li, html body .app-container[data-theme='brand-dark'] :is(#pdp-v4, #ay-x) .ayq-badges > li :is(span, small) { color: #3e2723 !important; }
+/* one frame only: the light panel; the photo inside it has no second outline */
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__stamp :is(.ayq-apphero__tile, .ay-gal__track) { border: 0 !important; box-shadow: none !important; background: transparent !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__stamp img { mix-blend-mode: multiply; }

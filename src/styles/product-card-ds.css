@@ -70,3 +70,19 @@
   :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__heart { width: 44px !important; height: 44px !important; right: 10px !important; bottom: 10px !important; }
   :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__pill { top: 16px; left: 16px; }
 }
+
+/* The same card as a row (Rundown story, Community mentions): photo panel left, text right,
+   the match stamp still on the photo corner, the why line under the text. */
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row { height: auto; padding: 12px !important; --pc-shadow: 5px 5px 0 var(--pc-ink); }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-product-card.is-row { --pc-shadow: 5px 5px 0 #ffedac; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row .ay-product-card__link { flex-direction: row; align-items: flex-start; gap: 14px; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row .ay-product-card__tile { flex: none; width: 112px; padding: 8px !important; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row .ay-product-card__body { gap: 4px; padding: 2px 0 0 !important; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row .ay-product-card__price { margin-top: 4px !important; padding-top: 2px !important; font-size: 16px !important; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row:not(:has(.ay-product-card__heart)) :is(.ay-product-card__price, .ay-product-card__why) { padding-right: 0 !important; margin-right: 0; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row .ay-product-card__pill { top: 6px; left: 6px; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row .ay-product-card__why { margin: 6px 0 0 126px; }
+@media (max-width: 699px) {
+  :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row .ay-product-card__tile { width: 92px; }
+  :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row .ay-product-card__why { margin-left: 106px; }
+}
