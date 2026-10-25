@@ -418,7 +418,7 @@
 }
 @media (max-width: 767px) {
   .app-container .hm .hm-scatter { aspect-ratio: 1 / .9; min-height: 0; margin-bottom: 40px; }
-  .app-container .hm .hm-slot--main { width: 56%; }
+  .app-container .hm .hm-slot--main { width: 46%; right: 4%; }
   .app-container .hm .hm-slot--photo .hm-slot__layer { border-width: 5px; border-radius: 14px; }
   .app-container .hm :is(.hm-slot--left, .hm-slot--right) .hm-slot__layer { border-radius: 14px; padding: 8%; }
   .app-container .hm .hm-slot--ev { width: 46%; height: 26%; top: 31%; }
